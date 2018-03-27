@@ -1,287 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752188AbeC0JIr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:08:47 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35025 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751246AbeC0JIp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:08:45 -0400
-X-Google-Smtp-Source: AG47ELuG3d7yUkrLky65Re5wMasObkY20lMyZ622fAt7EMKklkKkvvEcm9PEYjF7+lmGt/vFUlC8/Q==
-Date: Tue, 27 Mar 2018 12:08:41 +0300
-From: Vladimir Davydov <vdavydov.dev@gmail.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Li RongQing <lirongqing@baidu.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>
-Subject: Re: [PATCH] mm/list_lru: replace spinlock with RCU in
- __list_lru_count_one
-Message-ID: <20180327090841.ujscbnb54cepencf@esperanza>
-References: <1522137544-27496-1-git-send-email-lirongqing@baidu.com>
- <20180327081546.GZ5652@dhcp22.suse.cz>
+        id S1752362AbeC0JKE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:10:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:51266 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752325AbeC0JKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 05:10:00 -0400
+From: <yael.chemla@foss.arm.com>
+To: "'Milan Broz'" <gmazyland@gmail.com>,
+        "'Eric Biggers'" <ebiggers3@gmail.com>,
+        "'Mike Snitzer'" <snitzer@redhat.com>
+Cc: "'Alasdair Kergon'" <agk@redhat.com>, <dm-devel@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <ofir.drang@gmail.com>,
+        "'Yael Chemla'" <yael.chemla@arm.com>, <linux-crypto@vger.kernel.org>,
+        <gilad@benyossef.com>
+References: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com> <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com> <20180327065519.GA745@sol.localdomain> <24539e45-a018-f1e9-feb0-ea7a315e8284@gmail.com>
+In-Reply-To: <24539e45-a018-f1e9-feb0-ea7a315e8284@gmail.com>
+Subject: RE: [dm-devel] [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
+Date: Tue, 27 Mar 2018 12:09:54 +0300
+Message-ID: <001701d3c5ab$621e9fd0$265bdf70$@foss.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327081546.GZ5652@dhcp22.suse.cz>
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-il
+Thread-Index: AQFItUMWMAamikjrHplfXoGQQvWTaQKnGKjBApP/jaMCRtZUPqS92Ntw
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc Kirill]
+Hi Milan,
+I will run veritysetup test on next version of these patches and contact you about verity-compat-test testsuits.
+Thank you,
+Yael
 
-AFAIU this has already been fixed in exactly the same fashion by Kirill
-(mmotm commit 8e7d1201ec71 "mm: make counting of list_lru_one::nr_items
-lockless"). Kirill is working on further optimizations right now, see
+-----Original Message-----
+From: Milan Broz <gmazyland@gmail.com> 
+Sent: Tuesday, 27 March 2018 11:05
+To: Eric Biggers <ebiggers3@gmail.com>; Yael Chemla <yael.chemla@foss.arm.com>; Mike Snitzer <snitzer@redhat.com>
+Cc: Alasdair Kergon <agk@redhat.com>; dm-devel@redhat.com; linux-kernel@vger.kernel.org; ofir.drang@gmail.com; Yael Chemla <yael.chemla@arm.com>; linux-crypto@vger.kernel.org; gilad@benyossef.com
+Subject: Re: [dm-devel] [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
 
-  https://lkml.kernel.org/r/152163840790.21546.980703278415599202.stgit@localhost.localdomain
+Mike and others,
 
-On Tue, Mar 27, 2018 at 10:15:46AM +0200, Michal Hocko wrote:
-> [CC Dave]
+did anyone even try to run veritysetup tests?
+
+We have verity-compat-test in our testsuite, is has even basic FEC tests included.
+
+We just added userspace verification of FEC RS codes to compare if kernel behaves the same.
+
+I tried to apply three last dm-verity patches from your tree to Linus mainline.
+
+It does even pass the *first* line of the test script and blocks the kernel forever...
+(Running on 32bit Intel VM.)
+
+*NACK* to the last two dm-verity patches.
+
+(The "validate hashes once" is ok, despite I really do not like this approach...)
+
+And comments from Eric are very valid as well, I think all this need to be fixed before it can go to mainline.
+
+Thanks,
+Milan
+
+On 03/27/2018 08:55 AM, Eric Biggers wrote:
+> [+Cc linux-crypto]
 > 
-> On Tue 27-03-18 15:59:04, Li RongQing wrote:
-> > when reclaim memory, shink_slab will take lots of time even if
-> > no memory is reclaimed, since list_lru_count_one called by it
-> > needs to take a spinlock
-> >
-> > try to optimize it by replacing spinlock with RCU in
-> > __list_lru_count_one
+> Hi Yael,
 > 
-> Isn't the RCU overkill here? Why cannot we simply do an optimistic
-> lockless check for nr_items? It would be racy but does it actually
-> matter? We should be able to tolerate occasional 0 to non-zero and vice
-> versa transitions AFAICS.
+> On Sun, Mar 25, 2018 at 07:41:30PM +0100, Yael Chemla wrote:
+>>  Allow parallel processing of bio blocks by moving to async. 
+>> completion  handling. This allows for better resource utilization of 
+>> both HW and  software based hash tfm and therefore better performance 
+>> in many cases,  depending on the specific tfm in use.
+>>  
+>>  Tested on ARM32 (zynq board) and ARM64 (Juno board).
+>>  Time of cat command was measured on a filesystem with various file sizes.
+>>  12% performance improvement when HW based hash was used (ccree driver).
+>>  SW based hash showed less than 1% improvement.
+>>  CPU utilization when HW based hash was used presented 10% less 
+>> context  switch, 4% less cycles and 7% less instructions. No 
+>> difference in  CPU utilization noticed with SW based hash.
+>>  
+>> Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
 > 
-> > 
-> >     $dd if=aaa  of=bbb  bs=1k count=3886080
-> >     $rm -f bbb
-> >     $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
-> > 
-> > Before: 0m0.415s ===> after: 0m0.395s
-> > 
-> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> > ---
-> >  include/linux/list_lru.h |  2 ++
-> >  mm/list_lru.c            | 69 ++++++++++++++++++++++++++++++++++--------------
-> >  2 files changed, 51 insertions(+), 20 deletions(-)
-> > 
-> > diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
-> > index bb8129a3474d..ae472538038e 100644
-> > --- a/include/linux/list_lru.h
-> > +++ b/include/linux/list_lru.h
-> > @@ -29,6 +29,7 @@ struct list_lru_one {
-> >  	struct list_head	list;
-> >  	/* may become negative during memcg reparenting */
-> >  	long			nr_items;
-> > +	struct rcu_head		rcu;
-> >  };
-> >  
-> >  struct list_lru_memcg {
-> > @@ -46,6 +47,7 @@ struct list_lru_node {
-> >  	struct list_lru_memcg	*memcg_lrus;
-> >  #endif
-> >  	long nr_items;
-> > +	struct rcu_head		rcu;
-> >  } ____cacheline_aligned_in_smp;
-> >  
-> >  struct list_lru {
-> > diff --git a/mm/list_lru.c b/mm/list_lru.c
-> > index fd41e969ede5..4c58ed861729 100644
-> > --- a/mm/list_lru.c
-> > +++ b/mm/list_lru.c
-> > @@ -52,13 +52,13 @@ static inline bool list_lru_memcg_aware(struct list_lru *lru)
-> >  static inline struct list_lru_one *
-> >  list_lru_from_memcg_idx(struct list_lru_node *nlru, int idx)
-> >  {
-> > -	/*
-> > -	 * The lock protects the array of per cgroup lists from relocation
-> > -	 * (see memcg_update_list_lru_node).
-> > -	 */
-> > -	lockdep_assert_held(&nlru->lock);
-> > -	if (nlru->memcg_lrus && idx >= 0)
-> > -		return nlru->memcg_lrus->lru[idx];
-> > +	struct list_lru_memcg *tmp;
-> > +
-> > +	WARN_ON_ONCE(!rcu_read_lock_held());
-> > +
-> > +	tmp = rcu_dereference(nlru->memcg_lrus);
-> > +	if (tmp && idx >= 0)
-> > +		return rcu_dereference(tmp->lru[idx]);
-> >  
-> >  	return &nlru->lru;
-> >  }
-> > @@ -113,14 +113,17 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
-> >  	struct list_lru_one *l;
-> >  
-> >  	spin_lock(&nlru->lock);
-> > +	rcu_read_lock();
-> >  	if (list_empty(item)) {
-> >  		l = list_lru_from_kmem(nlru, item);
-> >  		list_add_tail(item, &l->list);
-> >  		l->nr_items++;
-> >  		nlru->nr_items++;
-> > +		rcu_read_unlock();
-> >  		spin_unlock(&nlru->lock);
-> >  		return true;
-> >  	}
-> > +	rcu_read_unlock();
-> >  	spin_unlock(&nlru->lock);
-> >  	return false;
-> >  }
-> > @@ -133,14 +136,17 @@ bool list_lru_del(struct list_lru *lru, struct list_head *item)
-> >  	struct list_lru_one *l;
-> >  
-> >  	spin_lock(&nlru->lock);
-> > +	rcu_read_lock();
-> >  	if (!list_empty(item)) {
-> >  		l = list_lru_from_kmem(nlru, item);
-> >  		list_del_init(item);
-> >  		l->nr_items--;
-> >  		nlru->nr_items--;
-> > +		rcu_read_unlock();
-> >  		spin_unlock(&nlru->lock);
-> >  		return true;
-> >  	}
-> > +	rcu_read_unlock();
-> >  	spin_unlock(&nlru->lock);
-> >  	return false;
-> >  }
-> > @@ -166,12 +172,13 @@ static unsigned long __list_lru_count_one(struct list_lru *lru,
-> >  {
-> >  	struct list_lru_node *nlru = &lru->node[nid];
-> >  	struct list_lru_one *l;
-> > -	unsigned long count;
-> > +	unsigned long count = 0;
-> >  
-> > -	spin_lock(&nlru->lock);
-> > +	rcu_read_lock();
-> >  	l = list_lru_from_memcg_idx(nlru, memcg_idx);
-> > -	count = l->nr_items;
-> > -	spin_unlock(&nlru->lock);
-> > +	if (l)
-> > +		count = l->nr_items;
-> > +	rcu_read_unlock();
-> >  
-> >  	return count;
-> >  }
-> > @@ -204,6 +211,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
-> >  	unsigned long isolated = 0;
-> >  
-> >  	spin_lock(&nlru->lock);
-> > +	rcu_read_lock();
-> >  	l = list_lru_from_memcg_idx(nlru, memcg_idx);
-> >  restart:
-> >  	list_for_each_safe(item, n, &l->list) {
-> > @@ -250,6 +258,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
-> >  		}
-> >  	}
-> >  
-> > +	rcu_read_unlock();
-> >  	spin_unlock(&nlru->lock);
-> >  	return isolated;
-> >  }
-> > @@ -296,9 +305,14 @@ static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
-> >  					  int begin, int end)
-> >  {
-> >  	int i;
-> > +	struct list_lru_one *tmp;
-> >  
-> > -	for (i = begin; i < end; i++)
-> > -		kfree(memcg_lrus->lru[i]);
-> > +	for (i = begin; i < end; i++) {
-> > +		tmp = memcg_lrus->lru[i];
-> > +		rcu_assign_pointer(memcg_lrus->lru[i], NULL);
-> > +		if (tmp)
-> > +			kfree_rcu(tmp, rcu);
-> > +	}
-> >  }
-> >  
-> >  static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
-> > @@ -314,7 +328,7 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
-> >  			goto fail;
-> >  
-> >  		init_one_lru(l);
-> > -		memcg_lrus->lru[i] = l;
-> > +		rcu_assign_pointer(memcg_lrus->lru[i], l);
-> >  	}
-> >  	return 0;
-> >  fail:
-> > @@ -325,25 +339,37 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
-> >  static int memcg_init_list_lru_node(struct list_lru_node *nlru)
-> >  {
-> >  	int size = memcg_nr_cache_ids;
-> > +	struct list_lru_memcg *tmp;
-> >  
-> > -	nlru->memcg_lrus = kvmalloc(size * sizeof(void *), GFP_KERNEL);
-> > -	if (!nlru->memcg_lrus)
-> > +	tmp = kvmalloc(size * sizeof(void *), GFP_KERNEL);
-> > +	if (!tmp)
-> >  		return -ENOMEM;
-> >  
-> > -	if (__memcg_init_list_lru_node(nlru->memcg_lrus, 0, size)) {
-> > -		kvfree(nlru->memcg_lrus);
-> > +	if (__memcg_init_list_lru_node(tmp, 0, size)) {
-> > +		kvfree(tmp);
-> >  		return -ENOMEM;
-> >  	}
-> >  
-> > +	rcu_assign_pointer(nlru->memcg_lrus, tmp);
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > -static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
-> > +static void memcg_destroy_list_lru_node_rcu(struct rcu_head *rcu)
-> >  {
-> > +	struct list_lru_node *nlru;
-> > +
-> > +	nlru = container_of(rcu, struct list_lru_node, rcu);
-> > +
-> >  	__memcg_destroy_list_lru_node(nlru->memcg_lrus, 0, memcg_nr_cache_ids);
-> >  	kvfree(nlru->memcg_lrus);
-> >  }
-> >  
-> > +static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
-> > +{
-> > +	call_rcu(&nlru->rcu, memcg_destroy_list_lru_node_rcu);
-> > +}
-> > +
-> >  static int memcg_update_list_lru_node(struct list_lru_node *nlru,
-> >  				      int old_size, int new_size)
-> >  {
-> > @@ -371,9 +397,10 @@ static int memcg_update_list_lru_node(struct list_lru_node *nlru,
-> >  	 * we have to use IRQ-safe primitives here to avoid deadlock.
-> >  	 */
-> >  	spin_lock_irq(&nlru->lock);
-> > -	nlru->memcg_lrus = new;
-> > +	rcu_assign_pointer(nlru->memcg_lrus, new);
-> >  	spin_unlock_irq(&nlru->lock);
-> >  
-> > +	synchronize_rcu();
-> >  	kvfree(old);
-> >  	return 0;
-> >  }
-> > @@ -487,6 +514,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
-> >  	 * we have to use IRQ-safe primitives here to avoid deadlock.
-> >  	 */
-> >  	spin_lock_irq(&nlru->lock);
-> > +	rcu_read_lock();
-> >  
-> >  	src = list_lru_from_memcg_idx(nlru, src_idx);
-> >  	dst = list_lru_from_memcg_idx(nlru, dst_idx);
-> > @@ -495,6 +523,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
-> >  	dst->nr_items += src->nr_items;
-> >  	src->nr_items = 0;
-> >  
-> > +	rcu_read_unlock();
-> >  	spin_unlock_irq(&nlru->lock);
-> >  }
-> >  
-> > -- 
-> > 2.11.0
+> Okay, I definitely would like to see dm-verity better support hardware 
+> crypto accelerators, but these patches were painful to read.
 > 
-> -- 
-> Michal Hocko
-> SUSE Labs
+> There are lots of smaller bugs, but the high-level problem which you 
+> need to address first is that on every bio you are always allocating 
+> all the extra memory to hold a hash request and scatterlist for every 
+> data block.  This will not only hurt performance when the hashing is 
+> done in software (I'm skeptical that your performance numbers are 
+> representative of that case), but it will also fall apart under memory 
+> pressure.  We are trying to get low-end Android devices to start using 
+> dm-verity, and such devices often have only 1 GB or even only 512 MB 
+> of RAM, so memory allocations are at increased risk of failing.  In 
+> fact I'm pretty sure you didn't do any proper stress testing of these 
+> patches, since the first thing they do for every bio is try to 
+> allocate a physically contiguous array that is nearly as long as the 
+> full bio data itself (n_blocks * sizeof(struct dm_verity_req_data) = 
+> n_blocks * 3264, at least on a 64-bit platform, mostly due to the 'struct dm_verity_fec_io'), so potentially up to about 1 MB; that's going to fail a lot even on systems with gigabytes of RAM...
 > 
+> (You also need to verify that your new code is compatible with the 
+> forward error correction feature, with the "ignore_zero_blocks" 
+> option, and with the new "check_at_most_once" option.  From my reading 
+> of the code, all of those seemed broken; the dm_verity_fec_io 
+> structures, for example, weren't even being
+> initialized...)
+> 
+> I think you need to take a close look at how dm-crypt handles async 
+> crypto implementations, since it seems to do it properly without 
+> hurting the common case where the crypto happens synchronously.  What 
+> it does, is it reserves space in the per-bio data for a single cipher 
+> request.  Then, *only* if the cipher implementation actually processes 
+> the request asynchronously (as indicated by -EINPROGRESS being 
+> returned) is a new cipher request allocated dynamically, using a 
+> mempool (not kmalloc, which is prone to fail).  Note that unlike your 
+> patches it also properly handles the case where the hardware crypto 
+> queue is full, as indicated by the cipher implementation returning -EBUSY; in that case, dm-crypt waits to start another request until there is space in the queue.
+> 
+> I think it would be possible to adapt dm-crypt's solution to dm-verity.
+> 
+> Thanks,
+> 
+> Eric
