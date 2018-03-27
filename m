@@ -1,87 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeC0Veb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:34:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54022 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751088AbeC0Ve3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:34:29 -0400
-From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 28 Mar 2018 08:34:19 +1100
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] rhashtable: support guaranteed successful insertion.
-In-Reply-To: <20180327155610.GD14001@gondor.apana.org.au>
-References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718434.11435.6551477417902631683.stgit@noble> <20180327155610.GD14001@gondor.apana.org.au>
-Message-ID: <87y3id42zo.fsf@notabene.neil.brown.name>
+        id S1752008AbeC0Vh5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:37:57 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:41016 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751020AbeC0Vhz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:37:55 -0400
+X-Google-Smtp-Source: AIpwx4+X3bGzzRTgkpTWOnKs5qofP2DvfUuBbbKM4l4ZO1p+iOckrs0AhqYqx3Zbsv9nzfGv3unFokG9HcGOjjZRaa0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <1521785487-29866-4-git-send-email-mgautam@codeaurora.org>
+References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org> <1521785487-29866-4-git-send-email-mgautam@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 27 Mar 2018 14:37:53 -0700
+X-Google-Sender-Auth: SOzlhwjTurgvU0WMa8tq5eX3YY0
+Message-ID: <CAD=FV=Vwx2nW=pwEzJJSVXLctxOU5uGormBn=t_P6_xyfrrLAw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: phy-qcom-qmp: Update bindings for sdm845
+To: Manu Gautam <mgautam@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Varadarajan Narayanan <varada@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Tue, Mar 27 2018, Herbert Xu wrote:
-
-> On Tue, Mar 27, 2018 at 10:33:04AM +1100, NeilBrown wrote:
->> The current rhashtable will fail an insertion if the hashtable
->> it "too full", one of:
->>  - table already has 2^31 elements (-E2BIG)
->>  - a max_size was specified and table already has that
->>    many elements (rounded up to power of 2) (-E2BIG)
->>  - a single chain has more than 16 elements (-EBUSY)
->>  - table has more elements than the current table size,
->>    and allocating a new table fails (-ENOMEM)
->>  - a new page needed to be allocated for a nested table,
->>    and the memory allocation failed (-ENOMEM).
->>=20
->> A traditional hash table does not have a concept of "too full", and
->> insertion only fails if the key already exists.  Many users of hash
->> tables have separate means of limiting the total number of entries,
->> and are not susceptible to an attack which could cause unusually large
->> hash chains.  For those users, the need to check for errors when
->> inserting objects to an rhashtable is an unnecessary burden and hence
->> a potential source of bugs (as these failures are likely to be rare).
+On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
+> Update compatible strings for USB3 PHYs on SDM845.
+> One is QMPv3 DisplayPort-USB combo PHY and other one
+> is USB UNI PHY which is single lane USB3 PHY without
+> DP capability.
 >
-> Did you actually encounter an insertion failure? The current code
-> should never fail an insertion until you actually run ouf memory.
-> That is unless you're using rhashtable when you should be using
-> rhlist instead.
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> index dcf1b8f..cef8765 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> @@ -9,7 +9,9 @@ Required properties:
+>                "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
+>                "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
+>                "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
+> -              "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy.
+> +              "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy,
+> +              "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
+> +              "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845.
 
-It is easy to get an -EBUSY insertion failure when .disable_count is
-enabled, and I did get that.  Blindly propagating that up caused lustre
-to get terribly confused - not too surprising really.
+I'm confused.  What value does "qcom,qmp-v3-usb3-phy" have as a
+separate entry from "qcom,sdm845-qmp-usb3-phy"?  Is
+"qcom,qmp-v3-usb3-phy" expected to work on some non-SDM845 based
+device?
 
-Even if I didn't seem errors in practive, if the interface can return an
-error, then I need to check for the error and really should test that
-handling each error works correctly.  It is much easier to write
-reliable code when errors cannot happen, so I'd rather have that option.
+Personally I think you should remove "qcom,qmp-v3-usb3-phy" from the
+bindings as part of this patch (replacing it with the new string
+qcom,sdm845-qmp-usb3-phy)".  Yeah, yeah bindings are forever.  ...but
+that particular string was added about a month ago and (I believe) it
+was intended for SDM845 anyway.  As per
+<https://patchwork.kernel.org/patch/10302759/> match to the exact same
+PHY data which leads extra credence to my belief.
 
-Thanks,
-NeilBrown
+If later on you find that some future chip can use the exact same
+driver / settings as the SDM845 you can always list the
+"qcom,sdm845-qmp-usb3-phy" string as a secondary compatible anyway.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq6uNsACgkQOeye3VZi
-gbkoRA/9FR1eT6z4NUj1YbDVyUfZUKROfMiIk3s5TFS0yrgk6LSxqvpJshjgEw5z
-SwBj4s0u7Rb6cwJzYDLrF6bGN6Plh3gMgeftofjyn7u0DjS70JsgN6gOe6QGEX9R
-f7285QHAH1m3YFJn402Y+J0BdgSPL8ZZLZ1QY4bIfPKBOd3I/JTBCfMUwjy2/Utk
-78/ul8cdFyt0xzNCb4zs0GZTB8VdCk3rLzaYm/IyUGP8BVGw4HAqOhCmnMu0lcNv
-4/8NzMOoc2IJOh+kF8B5fMs8bDknvqoiX3DYWuAQuRJJGDm2YQoS2lhQXk2DFdhc
-PXdqLPtQAdM3nywIKWWXgc3SwuHkCSiSw+irYVmFpuJ7wwS8rToWOH+9bgdk1Htu
-F+8shb/MVq/GqlkSLMsiIm3XbuC1uXsHzJK2kjA/fUufXEAVtKdPVDjS4TQKTRjM
-XaHYiH9DNXoQc4E6MRRhawgen2vMkbtEwdD/SjqBjNo2uln/mRFfhy/ya9uI36Rl
-l/sOYn4ymSkT63VyV46LfT+rMALoqv3IA9KS1Hx1BPpW1PT69Ry8zlbsorK/f50a
-I0AFsurfKxRRBDU72VpTUwgP3tpVgs4xHQcrbqI53uIMyg3s5rDerYw7WSteLnyk
-sf0Vo/edHOMGP0W5eLn5XheVxcUgGkEfgkSF+ENKHGbfkJuVTb0=
-=5Aze
------END PGP SIGNATURE-----
---=-=-=--
+-Doug
