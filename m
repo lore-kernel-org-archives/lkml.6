@@ -1,91 +1,127 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522207603; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AG47ELvVZELS/X8L+ACttoB2RTldj8TSPvd3z/2PofBcZhbpVzZVYvGKFGn602kzceDpyeCMEILR
+ARC-Seal: i=1; a=rsa-sha256; t=1522128618; cv=none;
         d=google.com; s=arc-20160816;
-        b=x9wQZy4irYGGORxVMDrWls7ltGhkrT9380PcJPyxrQ8Aw2v1UOVFXNtsXK5kSkfjRo
-         efTYSBkUPN84ImP0EoOWs6isATJ1uQCNrNp1YhAcKjyeI8So8xWCKaBJAazZlvZYG0Nb
-         9B5/Ikg+ehO0zmfpkethjZGeMtJJKL4SnKOlKmVo4Hr1vbCI+uepPtlLKX9RLgtyCJlV
-         urzZ0mVBff/KH57OqGXlIMZsMT6jff0sGdIA3c+RTDbLUci1UH4AnqSFjIzj4xmhR4RV
-         Z7dx3no25GhWB0uJlcwsJgVj8z6TBoT9iXMr/jk+8g9VTp/zQXCtFpaeWab6trzE2IJQ
-         OpWg==
+        b=RcJgni2hhwdnmk8MM/Rl2fCS4CN+d99MwvN88oCKH3wo0w62MayZ+b/sRUuPc3MOr/
+         Xtpy1WboJo+UXaetwDgim6TG3vwi9m36yjJME7ZPo16S/DU/zc4LaZbuV7krdLhqKKdw
+         xZGFnPC33dBtDnC0rwdf/E1s2RilEXD6xBGvUNFLIv+70dnlWc7AOgTWhahljXWzLBQ6
+         MG6P/QxyaqZReatk9EJ/FQrwFwAqwEx8NY/rBD9ykUcnAiaUJJGBu7wSRUl3zFQs6rx4
+         skfX5t80RUQSV6YiYHDSR6tR/er44TxnA8Qv7NxXclgmHwH+fGgtiz1nKkAi94XeRvlP
+         mbyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=jXgPajrPc9C1MmKqUkor2sGjcL9W/o6CTNgcgeH82FQ=;
-        b=D/QcCOUS0KypDlRcqB8mTR8sAHQ8ETXTUkHJi4RQQ3Jj4IHtzPLRxdBWf4GSqDQWsc
-         Qd54vEo1qvXpq5Nj4a3D8o/ijl9EvynhQ/wyjLH++tM3yRB6R7xEV+D9QpAxO9dIZQ3X
-         zfsAuUMQgig78l5+p2Ltks0DTqg81+aQxY6HHm+3N1wQRKlO2qLkh809mtTC/JnskGn9
-         xHHySo9AzIKc0HBCx4UZc78PEX8LK2ayKlaaRB4QHVv7vLpJgBLv7JnpNeI+9jgcBTGl
-         XAK4AaFjLUjDGDKqTHDCwNo3MXZoAPgNgUi/t++5Du+JSxAz6qXofm0+gJM0japSH9Qj
-         coYA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=Y0EgiF5xffNcee7N9S9KbbQwPIhX8Hv7iF7h8moPLZY=;
+        b=KphpJu/ZArGl/wVanEGjjrQvExQUF3peHLkMPmu6jVpWeN/x8FK+ZTBGDM5rPutfwI
+         Fq3qsxKdGjoo77pO02sbu/brgF9eDkKgSYGLtYRsnlUUl/QhGwWaBzNnZyzXQzanOqK3
+         I0z+UIgXxzDxoTrPOsYTgVOaribv55+wyL8x2QUansInuBYxFi6Pb2JC3GZIy8FJUj60
+         V+E3fjb2O3C/KKLWHp2lDmU01Na5g9xOhf91xJMyrV3Thw+d9Tm0Fc4Y2yVKqyVcFMYX
+         xk4VKUWF0cnKJd92Qjy28Xr9MhPFBASXr3zoyd/rox3CSHacaAeiQMriDMRAKdkvquEW
+         xAFg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=WOuW8n/x;
-       dkim=pass header.i=@chromium.org header.s=google header.b=ZsVQ6iAX;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=BUh/7azb;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=WOuW8n/x;
-       dkim=pass header.i=@chromium.org header.s=google header.b=ZsVQ6iAX;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AIpwx4+kz2q49UqN4rXiZLUOniwv4svDx2uIw7LspMUcSgzVyFM5VykdKDNvQaz/ou+1YFaQ0MKY0o65/60gyfz8hDQ=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <1522128575-5326-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-2-git-send-email-yamada.masahiro@socionext.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Mar 2018 20:26:41 -0700
-X-Google-Sender-Auth: ICK88JyrAZyGUkYTAml0ebDlg7Q
-Message-ID: <CAGXu5jJBePX5b6zbSa5rM=ouFgSeLvqxEg3kxTViKdnOukmnGA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/21] kbuild: remove kbuild cache
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=BUh/7azb;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R5TaLv011947
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 12/21] kconfig: show compiler version text in the top comment
+Date: Tue, 27 Mar 2018 14:29:26 +0900
+Message-Id: <1522128575-5326-13-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067538031163827?=
-X-GMAIL-MSGID: =?utf-8?q?1596150359363595749?=
+X-GMAIL-THRID: =?utf-8?q?1596067537912515581?=
+X-GMAIL-MSGID: =?utf-8?q?1596067537912515581?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> The kbuild cache was introduced to remember the result of shell
-> commands, some of which are expensive to compute, such as
-> $(call cc-option,...).
->
-> However, this turned out not so clever as I had first expected.
-> Actually, it is problematic.  For example, "$(CC) -print-file-name"
-> is cached.  If the compiler is updated, the stale search path causes
-> build error, which is difficult to figure out.  Another problem
-> scenario is cache files could be touched while install targets are
-> running under the root permission.  We can patch them if desired,
-> but the build infrastructure is getting uglier and uglier.
->
-> Now, we are going to move compiler flag tests to the configuration
-> phase.  If this is completed, the result of compiler tests will be
-> naturally cached in the .config file.  We will not have performance
-> issues of incremental building since this testing only happens at
-> Kconfig time.
->
-> To start this work with a cleaner code base, remove the kbuild
-> cache first.
->
-> Revert the following commits:
-> Commit 9a234a2e3843 ("kbuild: create directory for make cache only when necessary")
-> Commit e17c400ae194 ("kbuild: shrink .cache.mk when it exceeds 1000 lines")
-> Commit 4e56207130ed ("kbuild: Cache a few more calls to the compiler")
-> Commit 3298b690b21c ("kbuild: Add a cache for generated variables")
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+The kernel configuration phase is now tightly coupled with the compiler
+in use.  It will be nice to show the compiler information in Kconfig.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+The compiler information will be displayed like this:
 
--Kees
+  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- config
+  scripts/kconfig/conf  --oldaskconfig Kconfig
+  *
+  * Linux/arm64 4.16.0-rc1 Kernel Configuration
+  *
+  *
+  * Compiler: aarch64-linux-gnu-gcc (Linaro GCC 7.2-2017.11) 7.2.1 20171011
+  *
+  *
+  * General setup
+  *
+  Compile also drivers which will not load (COMPILE_TEST) [N/y/?]
 
+If you use GUI methods such as menuconfig, it will be displayed in the
+top menu.
+
+This is simply implemented by using 'comment'.  So, it will be saved
+into the .config file as well.
+
+This commit has a very important meaning.  If the compiler is upgraded,
+Kconfig must be re-run since different compilers have different sets
+of supported options.
+
+All referenced environments are written to include/config/auto.conf.cmd
+so that any environment change triggers syncconfig, and prompt the user
+to input new values if needed.
+
+With this commit, something like follows will be added to
+include/config/auto.conf.cmd
+
+  ifneq "$(CC_VERSION_TEXT)" "aarch64-linux-gnu-gcc (Linaro GCC 7.2-2017.11) 7.2.1 20171011"
+  include/config/auto.conf: FORCE
+  endif
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2: None
+
+ Kconfig  | 2 ++
+ Makefile | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/Kconfig b/Kconfig
+index e6ece5b..99ed4b8 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -5,4 +5,6 @@
+ #
+ mainmenu "Linux/$ARCH $KERNELVERSION Kernel Configuration"
+ 
++comment "Compiler: $CC_VERSION_TEXT"
++
+ source "arch/$SRCARCH/Kconfig"
+diff --git a/Makefile b/Makefile
+index 5cadffa..3dc9eb8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -450,6 +450,8 @@ export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
+ export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
+ export KBUILD_ARFLAGS
+ 
++export CC_VERSION_TEXT := $(shell $(CC) --version | head -n 1)
++
+ # When compiling out-of-tree modules, put MODVERDIR in the module
+ # tree rather than in the kernel tree. The kernel tree might
+ # even be read-only.
 -- 
-Kees Cook
-Pixel Security
+2.7.4
