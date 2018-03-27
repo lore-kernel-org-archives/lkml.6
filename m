@@ -1,69 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeC0BGi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:06:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53072 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751935AbeC0BGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:06:37 -0400
-Date: Mon, 26 Mar 2018 21:06:33 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Yael Chemla <yael.chemla@foss.arm.com>
-Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, ofir.drang@gmail.com,
-        Yael Chemla <yael.chemla@arm.com>
-Subject: Re: [PATCH 2/2] md: dm-verity: allow parallel processing of bio
- blocks
-Message-ID: <20180327010633.GB23487@redhat.com>
-References: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com>
- <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com>
+        id S1752088AbeC0BJe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:09:34 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57452 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751866AbeC0BJd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 21:09:33 -0400
+From: Tushar Dave <tushar.n.dave@oracle.com>
+Subject: intel-iommu: Is this a bug?
+To: dwmw2@infradead.org, joro@8bytes.org, iommu@lists.linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+Message-ID: <66db7b28-5749-1d13-b228-88b34087f3b6@oracle.com>
+Date: Mon, 26 Mar 2018 18:09:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=870
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803270010
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 25 2018 at  2:41pm -0400,
-Yael Chemla <yael.chemla@foss.arm.com> wrote:
+Hi,
 
->  Allow parallel processing of bio blocks by moving to async. completion
->  handling. This allows for better resource utilization of both HW and
->  software based hash tfm and therefore better performance in many cases,
->  depending on the specific tfm in use.
->  
->  Tested on ARM32 (zynq board) and ARM64 (Juno board).
->  Time of cat command was measured on a filesystem with various file sizes.
->  12% performance improvement when HW based hash was used (ccree driver).
->  SW based hash showed less than 1% improvement.
->  CPU utilization when HW based hash was used presented 10% less context
->  switch, 4% less cycles and 7% less instructions. No difference in
->  CPU utilization noticed with SW based hash.
->  
-> Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
+I am analyzing network performance with intel-iommu enabled.
+And found that running with iommu=pt, for every dma map/unmap it
+executes this code:
 
-This one had various issues.  I've fixed most of what I saw and staged
-in linux-next (purely for build test coverage purposes).  I may drop
-this patch if others disagree with it (or my sg deallocation in the
-error path question isn't answered).
+/*
+          * At boot time, we don't yet know if devices will be 64-bit 
+capable.
+          * Assume that they will — if they turn out not to be, then we can
+          * take them out of the 1:1 domain later.
+          */
+         if (!startup) {
+                 /*
+                  * If the device's dma_mask is less than the system's 
+memory
+                  * size then this is not a candidate for identity mapping.
+                  */
+                 u64 dma_mask = *dev->dma_mask;
 
-I've staged the changes here (and in linux-next via 'for-next'):
-https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/log/?h=dm-4.17
+                 if (dev->coherent_dma_mask &&
+                     dev->coherent_dma_mask < dma_mask)
+                         dma_mask = dev->coherent_dma_mask;
 
-I switched all the new GFP_KERNEL uses to GFP_NOIO.  The fact that
-you're doing allocations at all (per IO) is bad enough.  Using
-GFP_KERNEL is a serious liability (risk of deadlock if dm-verity were to
-be used for something like.. swap.. weird setup but possible).
+                 return dma_mask >= dma_get_required_mask(dev);
+         }
 
-But the gfp flags aside, the need for additional memory and the
-expectation of scalable async parallel IO is potentially at odds with
-changes like this (that I just staged, and had to rebase your 2 patches
-ontop of):
-https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-4.17&id=a89f6a2cfec86fba7a115642ff082cb4e9450ea6
 
-So I'm particulalry interested to hear from google folks to understand
-if they are OK with your proposed verity async crypto API use.
+Do we really need this check for every dma/unmap?
+Considering it should be only during startup, shouldn't it be,
 
-Mike
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 582fd01..3c8f14e 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2929,7 +2929,7 @@ static int iommu_should_identity_map(struct device 
+*dev, int startup)
+          * Assume that they will — if they turn out not to be, then we can
+          * take them out of the 1:1 domain later.
+          */
+-       if (!startup) {
++       if (startup) {
+                 /*
+                  * If the device's dma_mask is less than the system's 
+memory
+                  * size then this is not a candidate for identity mapping.
+
+
+Thanks.
+
+-Tushar
