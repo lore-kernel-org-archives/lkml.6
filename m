@@ -1,93 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeC0MOm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 08:14:42 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47802 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbeC0MOk (ORCPT
+        id S1752484AbeC0MPD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 08:15:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41076 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752271AbeC0MPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 08:14:40 -0400
-Date: Tue, 27 Mar 2018 14:14:38 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v2] locking/rtmutex: Handle non enqueued waiters gracefully
- in remove_waiter()
-Message-ID: <20180327121438.sss7hxg3crqy4ecd@linutronix.de>
-References: <20180312142845.m4ohqyg3mak34umf@linutronix.de>
- <20180316122041.GE4064@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1803191611120.2010@nanos.tec.linutronix.de>
+        Tue, 27 Mar 2018 08:15:01 -0400
+Date: Tue, 27 Mar 2018 20:14:41 +0800
+From: Mark Brown <broonie@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180327121441.GH29239@sirena.org.uk>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+ <20180322204804.GA26871@amd>
+ <20180322234832.o24ut5ahon46mdu4@earth.universe>
+ <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nFBW6CQlri5Qm8JQ"
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1803191611120.2010@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180326155828.ttnduivadob4iqmd@earth.universe>
+X-Cookie: Serenity through viciousness.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
 
-In -RT task_blocks_on_rt_mutex() may return with -EAGAIN due to
-(->pi_blocked_on == PI_WAKEUP_INPROGRESS) before it added itself as a
-waiter. In such a case we must not call remove_waiter() because without
-a waiter it will trigger the BUG_ON() statement.
+--nFBW6CQlri5Qm8JQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This was initially reported by Yimin Deng. Thomas Gleixner fixed it then
-with an explicit check for waiters before calling remove_waiter().
-Instead of an explicit check before calling rt_mutex_top_waiter() we
-could make it return NULL if there are no waiters.
+On Mon, Mar 26, 2018 at 05:58:28PM +0200, Sebastian Reichel wrote:
 
-Now that it is possible to call remove_waiter() unconditionally I also
-remove that check from rt_mutex_slowlock().
+> My understanding is, that we only need to replace the audio-graph-card
+> driver to something more complex. The VOICE DAI needs to be configured
+> differently based on the use case:
 
-Link: https://lkml.kernel.org/CAAh1qt=DCL9aUXNxanP5BKtiPp3m+qj4yB+gDohhXPVFCxWwzg@mail.gmail.com
-Reported-and-debugged-by: Yimin Deng <yimin11.deng@gmail.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/locking/rtmutex.c        |  3 +--
- kernel/locking/rtmutex_common.h | 11 ++++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+No, this is exactly the sort of use case with multiple DAIs that the
+graph card is intended to enable over the old simple-card.
 
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index 65cc0cb984e6..355716d03b1a 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1268,8 +1268,7 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
- 
- 	if (unlikely(ret)) {
- 		__set_current_state(TASK_RUNNING);
--		if (rt_mutex_has_waiters(lock))
--			remove_waiter(lock, &waiter);
-+		remove_waiter(lock, &waiter);
- 		rt_mutex_handle_deadlock(ret, chwalk, &waiter);
- 	}
- 
-diff --git a/kernel/locking/rtmutex_common.h b/kernel/locking/rtmutex_common.h
-index 68686b3ec3c1..d1d62f942be2 100644
---- a/kernel/locking/rtmutex_common.h
-+++ b/kernel/locking/rtmutex_common.h
-@@ -52,12 +52,13 @@ static inline int rt_mutex_has_waiters(struct rt_mutex *lock)
- static inline struct rt_mutex_waiter *
- rt_mutex_top_waiter(struct rt_mutex *lock)
- {
--	struct rt_mutex_waiter *w;
--
--	w = rb_entry(lock->waiters.rb_leftmost,
--		     struct rt_mutex_waiter, tree_entry);
--	BUG_ON(w->lock != lock);
-+	struct rb_node *leftmost = rb_first_cached(&lock->waiters);
-+	struct rt_mutex_waiter *w = NULL;
- 
-+	if (leftmost) {
-+		w = rb_entry(leftmost, struct rt_mutex_waiter, tree_entry);
-+		BUG_ON(w->lock != lock);
-+	}
- 	return w;
- }
- 
--- 
-2.16.3
+> "audio-graph-card" is not capable of doing this. I was planning to
+> try "audio-graph-scu-card" in combination with adding codecs for the
+> modem and BT to DT. If that does not work we need a Droid 4 specific
+> soundcard driver.
+
+That's just the audio graph card with some hacks for working with a DPCM
+based SoC driver set.
+
+--nFBW6CQlri5Qm8JQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlq6NbEACgkQJNaLcl1U
+h9B3oAf8DFja7E3t6S5AyZX1NtVgh8eJn596ExCt8AVnePFYiplaATZ6Ep943zrd
+UzT1lYfV6O9HJeF3rw6hTQWdH5YMIH8OIGFN7fWmXlrHrpFzKkmi9Q9cNMukPo96
+DP5sWk1bsyCay5R0utl/A89SBHlImiB9IDHzS4mZnzALl3cWVP+ldjeZ56K4/haT
+sRH+pH+fcFH3IVklo5HZY3xnovBr9eXwS6na24SAR7jX+WSCGGLQQoyCVpnoZfFT
+7mIw59VLDaBmi+YA+rPsBJAmMlq2buiwtk9HPf2j800sAJd/hkyyID+GvmgQekBD
+10Oq5Nhdcf7b7XQC+T2ISH5bxL8nYA==
+=nvVV
+-----END PGP SIGNATURE-----
+
+--nFBW6CQlri5Qm8JQ--
