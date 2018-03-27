@@ -1,48 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750978AbeC0E4H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 00:56:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47146 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750742AbeC0E4F (ORCPT
+        id S1751025AbeC0E6k (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 00:58:40 -0400
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:33591 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750753AbeC0E6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 00:56:05 -0400
-Date: Tue, 27 Mar 2018 00:55:58 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate
- the next instruction"
-Message-ID: <20180327045558.GC16974@char.us.oracle.com>
-References: <1522116735-4861-1-git-send-email-wanpengli@tencent.com>
- <1522116735-4861-3-git-send-email-wanpengli@tencent.com>
- <20180327044020.GB16974@char.us.oracle.com>
+        Tue, 27 Mar 2018 00:58:38 -0400
+Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-5-linux@dominikbrodowski.net>
+ <20180318174014.GR30522@ZenIV.linux.org.uk>
+ <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
+ <20180318181848.GU30522@ZenIV.linux.org.uk>
+ <20180319042300.GW30522@ZenIV.linux.org.uk>
+ <20180319092920.tbh2xwkruegshzqe@gmail.com>
+ <20180319232342.GX30522@ZenIV.linux.org.uk>
+ <20180322001532.GA18399@ZenIV.linux.org.uk>
+ <20180326004017.GA2211@ZenIV.linux.org.uk>
+ <20180326034750.GN30522@ZenIV.linux.org.uk>
+ <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
+ <428751c8-6920-096b-8694-a3f1b8990bdf@physik.fu-berlin.de>
+ <CA+55aFwp-T-WFN95j7u5nn2BExxviJCx1-RgD3Mnu1AN_GYD3w@mail.gmail.com>
+ <8a8ee344-fb19-3ed9-f7dc-db63f703e6d3@physik.fu-berlin.de>
+ <CA+55aFzHL1L_SEt_xqmJBfRRngTm4qbQGwxFvqSXw-MD2BiAOQ@mail.gmail.com>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <7753539f-c72d-9e5a-eb2d-939e5514404b@physik.fu-berlin.de>
+Date: Tue, 27 Mar 2018 13:58:18 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327044020.GB16974@char.us.oracle.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=702
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803270044
+In-Reply-To: <CA+55aFzHL1L_SEt_xqmJBfRRngTm4qbQGwxFvqSXw-MD2BiAOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: 121.86.247.13
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 12:40:20AM -0400, Konrad Rzeszutek Wilk wrote:
-> On Mon, Mar 26, 2018 at 07:12:15PM -0700, Wanpeng Li wrote:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> > 
-> > This patch introduces a Force Emulation Prefix (ud2a; .ascii "kvm") for 
-> > "emulate the next instruction", the codes will be executed by emulator 
-> > instead of processor, for testing purposes.
+On 03/27/2018 12:40 PM, Linus Torvalds wrote:
+> On Mon, Mar 26, 2018 at 4:37 PM, John Paul Adrian Glaubitz
+> <glaubitz@physik.fu-berlin.de> wrote:
+>>
+>> What about a tarball with a minimal Debian x32 chroot? Then you can
+>> install interesting packages you would like to test yourself.
 > 
-> Can you expand a bit ? Why do you want this in KVM in the first place?
-> Should this be controlled by a boolean parameter? 
+> That probably works fine.
 
-.. per guest. That is instead of a global one, have a per guest one?
+I just created a fresh Debian x32 unstable chroot using this command:
+
+$ debootstrap --no-check-gpg --variant=minbase --arch=x32 unstable debian-x32-unstable http://ftp.ports.debian.org/debian-ports
+
+It can be downloaded from my Debian webspace along checksum files for
+verification:
+
+> https://people.debian.org/~glaubitz/chroots/
+
+Let me know if you run into any issues.
+
+Adrian
+
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
