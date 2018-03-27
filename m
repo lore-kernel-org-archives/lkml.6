@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4805cXxm2tL45KpRS8QJnImjUrzkfcRBaJBSq5yZzlVHVBa26jYktETvfQAXyJFNp/d+CJE
-ARC-Seal: i=1; a=rsa-sha256; t=1522168412; cv=none;
+X-Google-Smtp-Source: AIpwx4+jssgwC5us2T2SFSQS9/gb+NYVBG2HtDmSaXBhT/fA0HdqcKfHbRdKd5OWhl0VhFZge64d
+ARC-Seal: i=1; a=rsa-sha256; t=1522168409; cv=none;
         d=google.com; s=arc-20160816;
-        b=FofRu1N8HzJ8AcgNeU9rvu0KZLCpda+yMMIE4YamNPTEjsVRApObEG7nLeF/+GJnNu
-         BfK4EXHgBwT7vsoD7PdE/pt49pNOPV1MwanAd+svygHsSqiiN443+ZjRi/f8nG+SXkWe
-         5bmnx3Vnrp7LukUm4xSN419DWW3woj1+tXG4f7AoUGlVgKk0Gmsm8wJ2v4TaE1iYVoyL
-         f8WUyeRiP2ZDVlKxN4cxB/ujuCjPH7d/Tn9ddJY2RF0APDL9Xq17ZEUJv7hpNkytoeiw
-         k2/19JJmWCcONOMauIIX6ovFE32S28qTL4xIbIAnUU2k7fHvlZXeO8kKMaWzIMF0HPLR
-         zx2w==
+        b=L1NCxEFyS7guHTAR/DEu6Rk1LveFtk4JE4/RzG3tGWJy/DPHfoaKrqmCrf7/PF4r9d
+         UqswqJScWC1jt6H2uevwJ0PMGzItiYSysCkwT+YBuTz958ZMvVviZtZBlNofxF/JF37W
+         9fCkPCQd/nVJQXj52DHvg4ptxWcF0qebrPvufir8/wNgAZir/Qw40b1y/8pSYRybiLYQ
+         aZaRwWbJJ6rc6AqSllJEdj6vA4fYAkG8xtGq63KOpuU8CBkCtho0py1a8Y4Dhb0Bv/3Q
+         tT39mmnXqeSiKiXCiGXySHDIRPAkRBSD80WUT3m4L566SxMiM2rH0W97VQ6yYEADAGDw
+         MRag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dzVmKpvh7MVK3QfvpXMD7f+o8SehUNRV4AypIuCcY9I=;
-        b=NhQxr4uaoJRainfaxyxE+YjDcAYBGb7ruQjNLRUdh61w5M1xZ+CC7qbj/P2JRjnD+P
-         vbxvRTIL8eqEV7/OfZOpihOnyc5LzGxmHhG9UUdTh49wZvpBWnuNTYm1QelXB2OKY3xW
-         lTIGh29fnE0QodugQ+pgwxfNnDsl6Ty92MQOkVfQqLNihzymq9UDbTIJnAnhY71eQn8h
-         8BBN9vtMIDsSzWm4W7v9ro1Q+skBvWqc0f2BSgZtl5INikVkWW7auNlUvXHW+6M/Pg5m
-         2sKh7QuEpDHKq1j4TJxebbTNFNlnMn9xI7oNHaHIMHDye3QyXxZ7/jHC5LjevwE/7g8G
-         jUdA==
+        bh=rnHSVkc2Vek8v4g+qIQRZyZ5/QfR0DEARkrvs2qRUwQ=;
+        b=jLmRVOEgKizjr/0483xH7CAWXHUGwq4Kg4nbBgVda3EbcWKQM4t5MKoWdshoVvB4Jv
+         N/EIy5mcsoHW4TM+iO4M2Wq8FRTFa294baFwz9Tjp9JLz3D0tWv7OYbTH5JON9atRwUE
+         yAO/3/lrG8pvfS6MppXMYRKJSKGlBk+PyLCPOqNCnGPKaV66w5lAvxSgPmNvUbgGHOix
+         hOSGwJgQh0LhtcJ5SGJtUewRkw1pR6i6mxgxge77D2bUOL2iREr+nt0FKvcfMqoFc3dE
+         3bAjK4ZZ7QfayFcx1NANc9fqcaboe3Yzdl9rxuHR5gi9cpowDJygGb/jsfv41OQ4FL61
+         zufw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jagdish Gediya <jagdish.gediya@nxp.com>,
-	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.9 39/67] mtd: nand: fsl_ifc: Fix nand waitfunc return value
-Date: Tue, 27 Mar 2018 18:27:31 +0200
-Message-Id: <20180327162729.151278230@linuxfoundation.org>
+	James Holderness <j4_james@hotmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 48/67] tty: vt: fix up tabstops properly
+Date: Tue, 27 Mar 2018 18:27:40 +0200
+Message-Id: <20180327162729.950559791@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109017538454485?=
-X-GMAIL-MSGID: =?utf-8?q?1596109265365225418?=
+X-GMAIL-THRID: =?utf-8?q?1596109032191105201?=
+X-GMAIL-MSGID: =?utf-8?q?1596109262710003242?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +49,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jagdish Gediya <jagdish.gediya@nxp.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit fa8e6d58c5bc260f4369c6699683d69695daed0a upstream.
+commit f1869a890cdedb92a3fab969db5d0fd982850273 upstream.
 
-As per the IFC hardware manual, Most significant 2 bytes in
-nand_fsr register are the outcome of NAND READ STATUS command.
+Tabs on a console with long lines do not wrap properly, so correctly
+account for the line length when computing the tab placement location.
 
-So status value need to be shifted and aligned as per the nand
-framework requirement.
-
-Fixes: 82771882d960 ("NAND Machine support for Integrated Flash Controller")
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
-Reviewed-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reported-by: James Holderness <j4_james@hotmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/fsl_ifc_nand.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/vt/vt.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/mtd/nand/fsl_ifc_nand.c
-+++ b/drivers/mtd/nand/fsl_ifc_nand.c
-@@ -656,6 +656,7 @@ static int fsl_ifc_wait(struct mtd_info
- 	struct fsl_ifc_ctrl *ctrl = priv->ctrl;
- 	struct fsl_ifc_runtime __iomem *ifc = ctrl->rregs;
- 	u32 nand_fsr;
-+	int status;
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1727,7 +1727,7 @@ static void reset_terminal(struct vc_dat
+ 	default_attr(vc);
+ 	update_attr(vc);
  
- 	/* Use READ_STATUS command, but wait for the device to be ready */
- 	ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
-@@ -670,12 +671,12 @@ static int fsl_ifc_wait(struct mtd_info
- 	fsl_ifc_run_command(mtd);
- 
- 	nand_fsr = ifc_in32(&ifc->ifc_nand.nand_fsr);
--
-+	status = nand_fsr >> 24;
- 	/*
- 	 * The chip always seems to report that it is
- 	 * write-protected, even when it is not.
- 	 */
--	return nand_fsr | NAND_STATUS_WP;
-+	return status | NAND_STATUS_WP;
- }
- 
- static int fsl_ifc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
+-	vc->vc_tab_stop[0]	= 0x01010100;
++	vc->vc_tab_stop[0]	=
+ 	vc->vc_tab_stop[1]	=
+ 	vc->vc_tab_stop[2]	=
+ 	vc->vc_tab_stop[3]	=
+@@ -1771,7 +1771,7 @@ static void do_con_trol(struct tty_struc
+ 		vc->vc_pos -= (vc->vc_x << 1);
+ 		while (vc->vc_x < vc->vc_cols - 1) {
+ 			vc->vc_x++;
+-			if (vc->vc_tab_stop[vc->vc_x >> 5] & (1 << (vc->vc_x & 31)))
++			if (vc->vc_tab_stop[7 & (vc->vc_x >> 5)] & (1 << (vc->vc_x & 31)))
+ 				break;
+ 		}
+ 		vc->vc_pos += (vc->vc_x << 1);
+@@ -1831,7 +1831,7 @@ static void do_con_trol(struct tty_struc
+ 			lf(vc);
+ 			return;
+ 		case 'H':
+-			vc->vc_tab_stop[vc->vc_x >> 5] |= (1 << (vc->vc_x & 31));
++			vc->vc_tab_stop[7 & (vc->vc_x >> 5)] |= (1 << (vc->vc_x & 31));
+ 			return;
+ 		case 'Z':
+ 			respond_ID(tty);
+@@ -2024,7 +2024,7 @@ static void do_con_trol(struct tty_struc
+ 			return;
+ 		case 'g':
+ 			if (!vc->vc_par[0])
+-				vc->vc_tab_stop[vc->vc_x >> 5] &= ~(1 << (vc->vc_x & 31));
++				vc->vc_tab_stop[7 & (vc->vc_x >> 5)] &= ~(1 << (vc->vc_x & 31));
+ 			else if (vc->vc_par[0] == 3) {
+ 				vc->vc_tab_stop[0] =
+ 					vc->vc_tab_stop[1] =
