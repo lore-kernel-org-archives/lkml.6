@@ -1,43 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752309AbeC0K2O (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 06:28:14 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37086 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbeC0K2M (ORCPT
+        id S1751859AbeC0Khr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 06:37:47 -0400
+Received: from mail-pl0-f53.google.com ([209.85.160.53]:44932 "EHLO
+        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeC0Khp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 06:28:12 -0400
-X-Google-Smtp-Source: AG47ELurkC/RX7N+Q7p2qo2U1D/+L949RHhSoXYvJngP8KrBlOdZcEgX2WJwcPCxJqgKiBeaIi1D8A==
-Subject: Re: [PATCH script] hwmon: Use octal not symbolic permissions
-To: Joe Perches <joe@perches.com>, Jean Delvare <jdelvare@suse.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        patches@opensource.cirrus.com
-References: <1522096136.12357.21.camel@perches.com>
- <9b112651-d0cf-5f3b-b643-3328028a95cd@roeck-us.net>
- <1522136107.12357.58.camel@perches.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <5ec8703b-2979-7a1d-fbc3-bd528d7a5e29@roeck-us.net>
-Date: Tue, 27 Mar 2018 03:28:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Mar 2018 06:37:45 -0400
+X-Google-Smtp-Source: AG47ELv830RPLdAYzQwwP3FqSxng3LO7ZfJgeGaxNsuer+VcZf+RZiPbp5+WbFVPV4Sz8jgv6bgPPw==
+Date: Tue, 27 Mar 2018 19:37:40 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: bugzilla-daemon@bugzilla.kernel.org
+Cc: sergey.senozhatsky@gmail.com,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
+Message-ID: <20180327103740.GA4872@jagdpanzerIV>
+References: <bug-199003-14532@https.bugzilla.kernel.org/>
+ <bug-199003-14532-IBTfRpvy7t@https.bugzilla.kernel.org/>
 MIME-Version: 1.0
-In-Reply-To: <1522136107.12357.58.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bug-199003-14532-IBTfRpvy7t@https.bugzilla.kernel.org/>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 12:35 AM, Joe Perches wrote:
-> On Mon, 2018-03-26 at 23:33 -0700, Guenter Roeck wrote:
->> Since the hwmon subsystem has been labeled as both "obsolete" and "obscure",
-> 
-> fyi: It's marked Maintained in MAINTAINERS
-> 
+I'll Cc blockdev
 
-I did not say that it was not maintained, and I am aware of the information
-in the MAINTAINERS file, thanks.
+On (03/27/18 08:36), bugzilla-daemon@bugzilla.kernel.org wrote:
+> > --- Comment #17 from sergey.senozhatsky.work@gmail.com ---
+> > On (03/26/18 13:05), bugzilla-daemon@bugzilla.kernel.org wrote:
+> > > Therefore the serial console is actually pretty fast. It seems that the
+> > > deadline
+> > > 10ms-per-character is not in the game here.
+> > 
+> > As the name suggests this is dmesg - content of logbuf. We can't tell
+> > anything about serial consoles speed from it.
+> 
+> Grrr, you are right. It would be interesting to see the output from
+> the serial port as well.
+> 
+> Anyway, it does not change the fact that printing so many same lines is
+> useless. The throttling still would make sense and probably would
+> solve the problem.
 
-Guenter
+You are right.
+
+Looking at backtraces (https://bugzilla.kernel.org/attachment.cgi?id=274953&action=edit)
+there *probably* was just one CPU doing all printk-s and all printouts. And
+there was one CPU waiting for that printing CPU to unlock the queue spin_lock.
+
+The printing CPU was looping in scsi_request_fn() picking up requests
+and calling sdev_printk() for each of them, because the device was
+offline. Given that serial console is not very fast, that we called
+serial console under queue spin_lock and the number of printks called,
+it was enough to lockup the CPU which was spining on queue spin_lock and
+to hard lockup the system.
+
+scsi_request_fn() does unlock the queue lock later, but not in that
+!scsi_device_online(sdev) error case.
+
+scsi_request_fn()
+{
+	for (;;) {
+		int rtn;
+		/*
+		 * get next queueable request.  We do this early to make sure
+		 * that the request is fully prepared even if we cannot
+		 * accept it.
+		 */
+		req = blk_peek_request(q);
+		if (!req)
+			break;
+
+		if (unlikely(!scsi_device_online(sdev))) {
+			sdev_printk(KERN_ERR, sdev,
+				    "rejecting I/O to offline device\n");
+			scsi_kill_request(req, q);
+			continue;
+			^^^^^^^^^ still under spinlock
+		}
+}
+
+I'd probably just unlock/lock queue lock, rather than ratelimit printk-s,
+before `continue'. Dunno.
+
+James, Martin, what do you think?
+
+	-ss
