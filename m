@@ -1,152 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752309AbeC0IKr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:10:47 -0400
-Received: from mail-ve1eur01on0050.outbound.protection.outlook.com ([104.47.1.50]:5408
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751246AbeC0IKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:10:43 -0400
-From: =?iso-8859-2?Q?Vicen=FEiu_Galanopulo?=
-        <vicentiu.galanopulo@nxp.com>
-To: Rob Herring <robh@kernel.org>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "marcel@holtmann.org" <marcel@holtmann.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Madalin-cristian Bucur <madalin.bucur@nxp.com>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>
-Subject: RE: [RFC PATCH v2] net: phy: Added device tree binding for dev-addr
- and dev-addr code check-up
-Thread-Topic: [RFC PATCH v2] net: phy: Added device tree binding for dev-addr
- and dev-addr code check-up
-Thread-Index: AQHTwrh12sxKj/IcskaqaXmN5d5/daPjHSiAgACcozA=
-Date: Tue, 27 Mar 2018 08:10:35 +0000
-Message-ID: <HE1PR0402MB3578B3D33160EBE59C2FD7D7EEAC0@HE1PR0402MB3578.eurprd04.prod.outlook.com>
-References: <20180323150522.9603-1-vicentiu.galanopulo@nxp.com>
- <20180326222509.ppt5aqzqdarhm44d@rob-hp-laptop>
-In-Reply-To: <20180326222509.ppt5aqzqdarhm44d@rob-hp-laptop>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vicentiu.galanopulo@nxp.com;
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0402MB3322;7:+OQF+aqyZxSIUyM0/vLWBwgM7MM8gRplARhVmGYPpvsfsjsFqK2iUPtlDozKusVSKzpnSXCVQDO0xvoNyl8vZAJ1aZ0XS7ISInJUaXTLrdTd559ueDH8mpF1iCGHMBYVyV40ix5WOgPhoHU7vH1yDCgjX239INEChl8PhYmezIR4kN1s8YpR7hm+3nr8GlMnOl8cf7MXDv5z07Q9pTPG0RG2Sa0R6La+B7z4djWanRvWIuzw7gaK1HpGihZMHjRa
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0b935425-8410-4470-3765-08d593ba38fb
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0402MB3322;
-x-ms-traffictypediagnostic: HE1PR0402MB3322:
-x-microsoft-antispam-prvs: <HE1PR0402MB33224A10F7A3340B170E0CC6EEAC0@HE1PR0402MB3322.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:HE1PR0402MB3322;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0402MB3322;
-x-forefront-prvs: 0624A2429E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(39380400002)(396003)(376002)(346002)(13464003)(189003)(199004)(97736004)(68736007)(59450400001)(76176011)(81156014)(102836004)(81166006)(33656002)(6506007)(6246003)(7696005)(66066001)(2906002)(55016002)(5660300001)(476003)(8676002)(14454004)(53936002)(54906003)(106356001)(105586002)(4326008)(3846002)(2900100001)(6916009)(9686003)(53546011)(478600001)(3660700001)(3280700002)(74316002)(5250100002)(86362001)(25786009)(229853002)(7736002)(26005)(11346002)(186003)(305945005)(316002)(6116002)(6436002)(446003)(99286004)(8936002)(486005)(486005)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0402MB3322;H:HE1PR0402MB3578.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: +J3PBj4T6EIkza0GVw2FsDmVLXiBcLGLXTLXLb8pC7Q+RFio2KNM1v4VLwOFwOkdP0B9r+J1zFFjs+h+JRRuPJMqnOtmHuQ/fgydj0oua5Gj4rZzxq4qtSkxVBW//h2UglOxAyfYhrBwNe+Sm74NvwR7IgUq2jpEwR9+4/Sbjpr8CgwQO2aMEEwVnCeUf24DEZbpiXwsecdXF5H8d/OT8Dqx3F7Hyadtr4INf+w2+Mz9smXhLassjaIdA13gtWP84r11IVvZh+FIeFjRx/NRyXWjAoHD3kEZjCsFVupCZekryV1dhEUCuO68XxP3Hs5vCajn9BwYi+KMHWB1ayMRxw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
+        id S1752190AbeC0ILg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:11:36 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36666 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750970AbeC0ILd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:11:33 -0400
+Date: Tue, 27 Mar 2018 10:11:31 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org, jernej.skrabec@siol.net,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the
+ Allwinner A64 DE2 bus
+Message-ID: <20180327081131.hd652vkhohez2hcc@flea>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+ <20180320184646.dynqv6qubzabroe4@flea>
+ <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
+ <2866474.lRHIcLtROC@jernej-laptop>
+ <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io>
+ <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
+ <9A6A8961-D45C-4033-962E-83CCE8F01651@aosc.io>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b935425-8410-4470-3765-08d593ba38fb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2018 08:10:36.7606
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0402MB3322
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l7cgdzalfbw6gs6o"
+Content-Disposition: inline
+In-Reply-To: <9A6A8961-D45C-4033-962E-83CCE8F01651@aosc.io>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R8AtD0023664
 
 
+--l7cgdzalfbw6gs6o
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: Tuesday, March 27, 2018 1:25 AM
-> To: Vicenþiu Galanopulo <vicentiu.galanopulo@nxp.com>
-> Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> mark.rutland@arm.com; davem@davemloft.net; marcel@holtmann.org;
-> devicetree@vger.kernel.org; Madalin-cristian Bucur <madalin.bucur@nxp.com>;
-> Alexandru Marginean <alexandru.marginean@nxp.com>
-> Subject: Re: [RFC PATCH v2] net: phy: Added device tree binding for dev-addr
-> and dev-addr code check-up
-> 
-> On Fri, Mar 23, 2018 at 10:05:22AM -0500, Vicentiu Galanopulo wrote:
-> > Reason for this patch is that the Inphi PHY has a vendor specific
-> > address space for accessing the
-> > C45 MDIO registers - starting from 0x1e.
+On Tue, Mar 27, 2018 at 07:31:18AM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2018=E5=B9=B43=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
+6:22:58, Rob Herring <robh@kernel.org> =E5=86=99=E5=88=B0:
+> >On Thu, Mar 22, 2018 at 02:08:43PM +0800, Icenowy Zheng wrote:
+> >>=20
+> >>=20
+> >> =E4=BA=8E 2018=E5=B9=B43=E6=9C=8822=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=
+=881:13:42, "Jernej =C5=A0krabec"
+> ><jernej.skrabec@siol.net> =E5=86=99=E5=88=B0:
+> >> >Hi all,
+> >> >
+> >> >Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng
+> >napisal(a):
+> >> >> =E4=BA=8E 2018=E5=B9=B43=E6=9C=8821=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=
+=8D=882:46:46, Maxime Ripard
+> >> ><maxime.ripard@bootlin.com>=20
+> >> >=E5=86=99=E5=88=B0:
+> >> >> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
+> >> >> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
+> >> >SoC
+> >> >> >
+> >> >> >to
+> >> >> >
+> >> >> >> be claimed, otherwise the whole DE2 space is inaccessible.
+> >> >> >>=20
+> >> >> >> Add a device tree binding of the DE2 part as a sub-bus.
+> >> >> >
+> >> >> >Where did you get the info that it was a bus?
+> >> >>=20
+> >> >> There's no direct evidence, just some guess.
+> >> >>=20
+> >> >> The DE2 is a whole part that is just allocated a memory
+> >> >> space at the user manual, and the SRAM controls the
+> >> >> access to all modules in the DE2.
+> >> >>=20
+> >> >> So it might be a bus.
+> >> >>=20
+> >> >> Implement it as a bus is a clear representation on A64.
+> >> >
+> >> >Since there is already syscon for same mmio region, we migh as well
+> >use
+> >> >it=20
+> >> >when loading ccu-sun8i-de2 driver on A64.
+> >> >
+> >> >Other options, like SRAM driver or bus driver, might better
+> >represent
+> >> >HW, but=20
+> >>=20
+> >> I think the device tree should properly represent the HW,
+> >> it's a basic requirment.
+> >>=20
+> >> >then we would have two DT nodes covering same mmio region, which I
+> >> >think is=20
+> >> >not really acceptable.
+> >>=20
+> >> It's acceptable, and DE2 is not the only user of SRAM controller so
+> >far.
 > >
-> > A search of the dev-addr property is done in of_mdiobus_register.
-> > If the property is found in the PHY node,
-> > of_mdiobus_register_static_phy is called. This is a wrapper function
-> > for of_mdiobus_register_phy which finds the device in package based on
-> > dev-addr and fills devices_addrs:
-> > devices_addrs is a new field added to phy_c45_device_ids.
-> > This new field will store the dev-addr property on the same index
-> > where the device in package has been found.
-> > In order to have dev-addr in get_phy_c45_ids(), mdio_c45_ids is passed
-> > from of_mdio.c to phy_device.c as an external variable.
-> > In get_phy_device a copy of the mdio_c45_ids is done over the local
-> > c45_ids (wich are empty). After the copying, the c45_ids will also
-> > contain the static device found from dev-addr.
-> > Having dev-addr stored in devices_addrs, in get_phy_c45_ids(), when
-> > probing the identifiers, dev-addr can be extracted from devices_addrs
-> > and probed if devices_addrs[current_identifier] is not 0.
-> > This way changing the kernel API is avoided completely.
-> >
-> > As a plus to this patch, num_ids in get_phy_c45_ids, has the value 8
-> > (ARRAY_SIZE(c45_ids->device_ids)),
-> > but the u32 *devs can store 32 devices in the bitfield.
-> > If a device is stored in *devs, in bits 32 to 9, it will not be found.
-> > This is the reason for changing in phy.h, the size of device_ids
-> > array.
-> >
-> > Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
-> > ---
-> >  Documentation/devicetree/bindings/net/phy.txt |  6 ++
-> 
-> Please split bindings to separate patch.
+> >No, it's not acceptable. Don't create overlapping mmio regions in DT.
+>=20
+> Then should the SRAM controller driver be configured to take the syscon?
 
- 
-Thanks Rob for your comments. I was considering doing that after I reach a more stable, non-RFC version of the patch. I also added a v3, before
-your comments, I think... so in the next one, v4, I will split the binding to a separate patch.
+We could have a single DT node that would export a syscon yes, just
+like you did for the R40 ethernet case.
 
+I'm not sure the SRAM controller itself needs to take the syscon, it
+just can export its own.
 
-> 
-> >  drivers/net/phy/phy_device.c                  | 22 +++++-
-> >  drivers/of/of_mdio.c                          | 98 ++++++++++++++++++++++++++-
-> >  include/linux/phy.h                           |  5 +-
-> >  4 files changed, 125 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/phy.txt
-> > b/Documentation/devicetree/bindings/net/phy.txt
-> > index d2169a5..82692e2 100644
-> > --- a/Documentation/devicetree/bindings/net/phy.txt
-> > +++ b/Documentation/devicetree/bindings/net/phy.txt
-> > @@ -61,6 +61,11 @@ Optional Properties:
-> >  - reset-deassert-us: Delay after the reset was deasserted in microseconds.
-> >    If this property is missing the delay will be skipped.
-> >
-> > +- dev-addr: If set, it indicates the device address of the PHY to be
-> > +used
-> > +  when accessing the C45 PHY registers over MDIO. It is used for
-> > +vendor specific
-> > +  register space addresses that do no conform to standard address for
-> > +the MDIO
-> > +  registers (e.g. MMD30)
-> 
-> This is a 2nd MDIO address, right? Can't you just append this to reg property?
-> 
-> Rob
+Maxime
 
-Yes, it is a 2nd MDIO address which is coming from the PHY vendor. This address cannot be obtained by querying the MDIO bus, it's specified in the PHY datasheet. The current kernel implementation was relying on the fact that this address is in the decimal 0 to 7 range. That worked for the PHYs which already have a kernel driver, but for the new Inphi PHY, which I'm trying to add, it didn't.  
-If I were to append the dev-addr address to the reg property,  I would have to fit two 32bit variable into a single one... in my opinion the code is clearer having the two addresses as distinct variables.... And so far, the comments from Andrew or Florian didn't go in this direction..  
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Vicentiu
+--l7cgdzalfbw6gs6o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq5/LIACgkQ0rTAlCFN
+r3Rqsg//bcROXUQWqCJ3N0cm6teljACF1FqkqeO/94ZIlcYMMP30HYKZ+jFU8j8n
+/mp/Mm6pE1X5YT0Jkf0WXeFP0ns9xlF0aNTITEVZ45w682EFqUgOIrxB0vsJTndv
+dYmPpIO9Rb9I5sA04umttMTh1undUL8g90Gy3uDBktcI12C81Bge7ebgbdfOM/Zt
+S08zg/Z5JD5OrF7ojggNKnJUg+hSDTAB/zB7URAIj8fuNlP5TMdEkZRV1LdHrZtd
+2Bz2uwprH8CdoeG/5Jm33cwtYximXvGtFPRkz2f2EAWICYPVTJuQA7QpZ8T8j0hB
+Kwkc+MruItlgPk/3CIGLOjYqR1181OU4N1FpwOhfGvXtNv+UhmReUwbhqJGCopBy
+leO8XTUq3G1w/X3xgLSTPCUe47akV2EAkAGMWBoOf4bopVkHE8Th4OV0mpo3ntjl
+KZJvWjGpPv3O61m3Rqw5ZEFxtO7t9xPiR/Ix4iif8lrZaWRMqVbuBQknwS7+oJbf
+ilm2+MJkZfN8rZ6RsjNYgpQVkJ5cScdf7n3iJ1ziGQX592OZfjzQORMMusvrJBhX
+Rusk68z8Ge8ZKrgZ92pB5k/PYFniUlSjBjzHMXUjKnJKDY5BR94c7k7n3G8qJS4p
+Zgl+H4c42Q2TIX4esUklJNcBCkzb1gXsVv5YGGVePlksP6FoiEg=
+=yP6i
+-----END PGP SIGNATURE-----
+
+--l7cgdzalfbw6gs6o--
