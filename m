@@ -1,74 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753164AbeC0NVf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:21:35 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:23735 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752917AbeC0NVc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:21:32 -0400
-Subject: Re: [net-next PATCH 3/5] net: netcp: ethss enhancements to support 2u
- cpsw h/w on K2G SoC
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
-        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
- <1522095312-23249-4-git-send-email-m-karicheri2@ti.com>
- <20180326202842.GB5862@lunn.ch>
-From: Murali Karicheri <m-karicheri2@ti.com>
-Organization: Texas Instruments
-Message-ID: <be58cf50-2148-cbfa-c7a2-8f4fbe6930e5@ti.com>
-Date: Tue, 27 Mar 2018 09:23:36 -0400
+        id S1752899AbeC0NVu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:21:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51300 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752370AbeC0NVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:21:48 -0400
+Subject: Re: [PATCH] locking/rwsem: Add DEBUG_RWSEMS to look for lock/unlock
+ mismatches
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+References: <1522091465-18102-1-git-send-email-longman@redhat.com>
+ <201803271947.1UUNOFXk%fengguang.wu@intel.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <0f7f4e7e-7bdd-3069-8808-944cf34d509c@redhat.com>
+Date: Tue, 27 Mar 2018 09:21:45 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180326202842.GB5862@lunn.ch>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <201803271947.1UUNOFXk%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/26/2018 04:28 PM, Andrew Lunn wrote:
-> On Mon, Mar 26, 2018 at 04:15:10PM -0400, Murali Karicheri wrote:
->> K2G SoC uses 2u cpsw h/w. It uses RGMII instead of SGMII to interface with
->> Phy. This patch enhances the driver to check RGMII status instead of SGMII
->> status for link state determination. Also map all of the vlan priorities
->> to zero as the packet DMA is enabled to receive only flow id 0 which maps
->> to priority zero.
->>
->> Additionally, When a phy with rgmii interface requires internal delay, the
->> same is set in the phy driver. To support such phy devices, add a phy-mode
->> handling code in the driver using of_get_phy_mode() and pass the obtained
->> phy mode to of_phy_connect()
-> 
-> Hi Murali
-> 
-> Please break this patch up. One patch should do one thing. That makes
-> it easy to review. There are too many things going on at once here.
-> 
->    Andrew
-> 
-Hello Andrew,
+On 03/27/2018 07:24 AM, kbuild test robot wrote:
+> Hi Waiman,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on tip/locking/core]
+> [also build test ERROR on v4.16-rc7 next-20180326]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Waiman-Long/locking-rwsem-Add-DEBUG_RWSEMS-to-look-for-lock-unlock-mismatches/20180327-151310
+> config: i386-allmodconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+>
+> All error/warnings (new ones prefixed by >>):
+>
+>    In file included from include/linux/kernel.h:10:0,
+>                     from kernel/locking/rwsem.c:9:
+>    kernel/locking/rwsem.c: In function 'up_read_non_owner':
+>>> kernel/locking/rwsem.c:217:23: error: implicit declaration of function 'RWSEM_WRITER_OWNED'; did you mean 'RWSEM_READER_OWNED'? [-Werror=implicit-function-declaration]
 
-Thanks for the comment. But I am not sure how to break this up as this is 
-an enhancement to the driver to support a newer version of the cspw 
-hardware. Without all these pieces together, the driver can't
-function. Probably I can make the below break up based on different functions
-added. Let me know if this looks good to you. Beware that patch #2 and
-#3 are small patches and majority of code change will be in patch #1
-which has to go together. 
+Yes, I noticed that error right after sending out the patch. That is why
+I sent out a v2 patch immediately to fix this. Thanks for the
+notification anyway.
 
-Patch #1. Add support new link interface, RGMII_LINK_MAC_PHY, for K2G
-          - Most of the code is for this
-Patch #2. Add support for configuring phy_mode 
-          - This just add phy_mode handling code 
-Patch #3. map all vlan priorities to flow id 0
-
--- 
-Murali Karicheri
-Linux Kernel, Keystone
+Cheers,
+Longman
