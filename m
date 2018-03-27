@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/fxaxr43qHm5oiqbXDG7klmwGhTHrMWmsc6aHj9TrNE2KlWNX6fwzO52SFmnV5IdHIBw90
-ARC-Seal: i=1; a=rsa-sha256; t=1522168728; cv=none;
+X-Google-Smtp-Source: AIpwx4+g+KvGXcIWitg0EO7H8/r66xTHqncgS8SXipgI373xXo2Qg4UR6FpFuvIgwFx3qGfLnYqj
+ARC-Seal: i=1; a=rsa-sha256; t=1522168725; cv=none;
         d=google.com; s=arc-20160816;
-        b=fMUuLKR0PxsCoF7RizFXCkJRnp58FDYFFuuIiJNH9JzH+6Q6Uwj+BH5ppoAzOjPdLs
-         zTEQMCZ0/11lTh9s8Gp4YqJBMeb4lSZ6EbIfD9+RI7bpXunflhdlMIJN6pzZH5BG98cx
-         MVlLv55PZ1FFmIiMnErw54U638X9VFZAM/9tzisd+a6q1yut+B5/GTm7/Heu6L2N7c3Y
-         Goihef9k4arCZRvK9GZ2mRHptFPHO3ndKWaD20gJr6j2E66z7fOMHB2cWU/BtLyCwIJY
-         ylBEcI8PP6WZLz0TvOesBumrgPlZcJ4Jj8C6lkKN9o96BIT0Ql0ONqz0hQKgxLop3/db
-         XyzQ==
+        b=llEplTUsj4sG/rLxFWcPS7tEok/v1Bbo6bvRdxkUGyA9rwDgfbeX02v5hQPPJ8Xet0
+         pbGrfGbpiPTo2xzZlBmijO0sM0TlvETv6Rubv5o8mP5bMhuUnPc84HPGwMZ3QUXmBjCa
+         5WTVdPLpM7DeMR8O9xfeg8zIkfGmzTHIC86pekN4ENR5nOKy6EsKOs/5ZzfNcFAYDvlj
+         S7omr2Uj/oIYCJPTeWmeKGqRgDbl791D/3VNaXTBMjnvKKO5k9WIvKY4VjIXcp+UVTA4
+         9HA4A3TJ8k0aVTk15Ba9xMkZza3/xpOO26IN4ocuLSvfmusB/tXUDL+GEn36Wc6V8utv
+         /naA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5Lo36IER1d9Q4qIV1YkojUCwRRfSaVDz91xLDGw/+2U=;
-        b=RyXflyN59BdcqbBMYK6BtwGJ9j7lYZHA/SWsneXv/+AzhA6SA/OJtzomNE8FMGIM0F
-         wsvLP40mImjuKAuSsDVMFeUgIf1Lbv+0YpjiaD92XGS89VNjEgScxogVDJpbfAKuhFEn
-         KUgvdPTPyZEoMT0WI9x5zrcRYHbFBTGX4/PMVV8///T38bJpAE/ttRS9cge2AO/YBFjt
-         pNgAlYcJ/HU7nGehL7pYTe9NFnFVsjx1ut6dC2FwX4z2thnveE/oX/0hZi9PUssEenMn
-         0J1FtuTUIlxICitMM9B/HhPHyOI02L9/JK5ix+qgr33LHAJRstSDtZp+DzhrdoOtY4R+
-         cKYQ==
+        bh=mAaxx8W25p2iwaZKkMfJeTbRIoaKotYPqaKBRuzs5bI=;
+        b=P2ysP8bFQc+uszaxcvWj1TCbcisU+HIdzrTC9c/RaAF7TtSBZCQPTObQDmll1hdL6m
+         aH3QXXQ+8wWvFwTf49YSHMzW1qAkK43lddJ8AlzU0Bkubwf5yYNo6nxyhBwQjWQJMMDI
+         QZaADLUO4hsxoc6BR6vzBR/bct2J0SqvoxgobpxXLjHc0nwSjpgrmiZTj+gbGEK3HRQF
+         +/kPQQVbbOUiRAlCcZZmlYWOVyk4G+cvZDt1R/YrxOCUP/iahwAKhnEN5OxbifYy+8zx
+         VTP9qnCZ/LWtprMw8mEnxV54owz8jA+TA1n0JxO38tSzj3RlKb+GBAybVocosc9DMR2+
+         JGTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,9 +27,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 011/105] ALSA: aloop: Fix access to not-yet-ready substream via cable
-Date: Tue, 27 Mar 2018 18:26:51 +0200
-Message-Id: <20180327162758.316467864@linuxfoundation.org>
+Subject: [PATCH 4.15 010/105] ALSA: aloop: Sync stale timer before release
+Date: Tue, 27 Mar 2018 18:26:50 +0200
+Message-Id: <20180327162758.275427660@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108968683856653?=
-X-GMAIL-MSGID: =?utf-8?q?1596109596701633699?=
+X-GMAIL-THRID: =?utf-8?q?1596108966146987882?=
+X-GMAIL-MSGID: =?utf-8?q?1596109593982571296?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,55 +50,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 8e6b1a72a75bb5067ccb6b56d8ca4aa3a300a64e upstream.
+commit 67a01afaf3d34893cf7d2ea19b34555d6abb7cb0 upstream.
 
-In loopback_open() and loopback_close(), we assign and release the
-substream object to the corresponding cable in a racy way.  It's
-neither locked nor done in the right position.  The open callback
-assigns the substream before its preparation finishes, hence the other
-side of the cable may pick it up, which may lead to the invalid memory
-access.
+The aloop driver tries to stop the pending timer via timer_del() in
+the trigger callback and in the close callback.  The former is
+correct, as it's an atomic operation, while the latter expects that
+the timer gets really removed and proceeds the resource releases after
+that.  But timer_del() doesn't synchronize, hence the running timer
+may still access the released resources.
 
-This patch addresses these: move the assignment to the end of the open
-callback, and wrap with cable->lock for avoiding concurrent accesses.
+A similar situation can be also seen in the prepare callback after
+trigger(STOP) where the prepare tries to re-initialize the things
+while a timer is still running.
+
+The problems like the above are seen indirectly in some syzkaller
+reports (although it's not 100% clear whether this is the only cause,
+as the race condition is quite narrow and not always easy to
+trigger).
+
+For addressing these issues, this patch adds the explicit alls of
+timer_del_sync() in some places, so that the pending timer is properly
+killed / synced.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/drivers/aloop.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ sound/drivers/aloop.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 --- a/sound/drivers/aloop.c
 +++ b/sound/drivers/aloop.c
-@@ -666,7 +666,9 @@ static void free_cable(struct snd_pcm_su
- 		return;
- 	if (cable->streams[!substream->stream]) {
- 		/* other stream is still alive */
-+		spin_lock_irq(&cable->lock);
- 		cable->streams[substream->stream] = NULL;
-+		spin_unlock_irq(&cable->lock);
- 	} else {
- 		/* free the cable */
- 		loopback->cables[substream->number][dev] = NULL;
-@@ -705,7 +707,6 @@ static int loopback_open(struct snd_pcm_
- 		loopback->cables[substream->number][dev] = cable;
- 	}
- 	dpcm->cable = cable;
--	cable->streams[substream->stream] = dpcm;
+@@ -192,6 +192,11 @@ static inline void loopback_timer_stop(s
+ 	dpcm->timer.expires = 0;
+ }
  
- 	snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS);
++static inline void loopback_timer_stop_sync(struct loopback_pcm *dpcm)
++{
++	del_timer_sync(&dpcm->timer);
++}
++
+ #define CABLE_VALID_PLAYBACK	(1 << SNDRV_PCM_STREAM_PLAYBACK)
+ #define CABLE_VALID_CAPTURE	(1 << SNDRV_PCM_STREAM_CAPTURE)
+ #define CABLE_VALID_BOTH	(CABLE_VALID_PLAYBACK|CABLE_VALID_CAPTURE)
+@@ -326,6 +331,8 @@ static int loopback_prepare(struct snd_p
+ 	struct loopback_cable *cable = dpcm->cable;
+ 	int bps, salign;
  
-@@ -737,6 +738,11 @@ static int loopback_open(struct snd_pcm_
- 		runtime->hw = loopback_pcm_hardware;
- 	else
- 		runtime->hw = cable->hw;
++	loopback_timer_stop_sync(dpcm);
 +
-+	spin_lock_irq(&cable->lock);
-+	cable->streams[substream->stream] = dpcm;
-+	spin_unlock_irq(&cable->lock);
-+
-  unlock:
- 	if (err < 0) {
- 		free_cable(substream);
+ 	salign = (snd_pcm_format_width(runtime->format) *
+ 						runtime->channels) / 8;
+ 	bps = salign * runtime->rate;
+@@ -744,7 +751,7 @@ static int loopback_close(struct snd_pcm
+ 	struct loopback *loopback = substream->private_data;
+ 	struct loopback_pcm *dpcm = substream->runtime->private_data;
+ 
+-	loopback_timer_stop(dpcm);
++	loopback_timer_stop_sync(dpcm);
+ 	mutex_lock(&loopback->cable_lock);
+ 	free_cable(substream);
+ 	mutex_unlock(&loopback->cable_lock);
