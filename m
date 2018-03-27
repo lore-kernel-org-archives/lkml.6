@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvUN+4Ux42K7QPMrfHXG1W3bkCeJDiGHhlVbyHBHez05MY8Rq7oA63aELM4xi+Un5cr2ktG
-ARC-Seal: i=1; a=rsa-sha256; t=1522168296; cv=none;
+X-Google-Smtp-Source: AIpwx4+fJLEvJsDrG5LM3HcIrS//rNqZpmyc6rCBm5TlGJTupuzOPRQ9CU7XQJAJTj95GGRC4ZsK
+ARC-Seal: i=1; a=rsa-sha256; t=1522168293; cv=none;
         d=google.com; s=arc-20160816;
-        b=evedOMXz4WqZLmzUIDvgt628vrMX0Y8Kj8EIUeHz1lPBnjiI3VSJumPJbGZIu6c2DD
-         GFggrkPoW8Cst4fCl1Qz8sxdp81XLw5WHxEiEEZk/vPbceniorf2eb4dNNtsGyXwWEon
-         tWLVMJA/iRVIkSt0/GG1lFxa8NYTKlCXz/jkGYF404c/n1/7RBeo24U7SptDB/CU5F0j
-         vQ1rzKogBxpG2Z+nwMSkxMCA8GlW99P6rBOIIrZOLt+D68CC+RmmCZLRNeSMhj5e8Vwr
-         Tmh76wZv56p021OqoFdzR3llJDh1Xw7RjQXiRcP2u8r2f1fs2yGsDg3fzkLxAYlaROyO
-         HEHg==
+        b=H999tjP7YGG02AMidb7Y4D5R4RJG2XdHM0HSLRElu1qV8ovWjohNT5UxMo13mbLtm5
+         i9II8Y9qYilGqH1QGrakMEgStEeo+YZQ2NCJ7hd84bzelPbXTx5xylWcJkZtZimPaxWu
+         qEKKzaaW8mwkIAaY4+1XTwTCtTij40qmLwVEjxcBb3T3ywYyXvbYlqTcNsfEbIISleoE
+         8k7QAiIlrowmV1TOLzA+PT36QQjRhc20zdqB8AILtMR5gc8yO9BYe7l0yK6SZ0xIwumJ
+         jzdkRFjWBLhV9GKXrQCFUjOyyL05r4nkH7bTm1+aQDjjRr5S5p04Gn/dKsUdkPfNjeIS
+         UQug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=k8p/tiuH89iF5/9hmvkfVZ4vvpY6bFMDqYxVnwTQPEg=;
-        b=fy4k2V3BcshZ+je0w2SrI+xvUxZh3A1c4oY3UUZBtPGwcSYCoNBxEf4tklMvxCHtA1
-         DJiSot0Frd5LbxBbLQ4h8fsCyDDe6PB1J1h2uBGAaIPK5Gp0+Ph1Y2GgvLfozaCSl9OV
-         ulsJwWI5z3jlitfal5LcWU3Ey8JvpbJVngi29e/tn+1VnduZToMAHYXcBpCH05cIH+S9
-         a3LsVQsYg/oMgAg34RxLZJOAgk+LlsauLqgjlrGKoLeHMKetUwL2KMaX8f6vAiDwRY9p
-         MGDlkfhbMj5S1MgWhTxmfW0Knj4Vs4mjzPlcv1B9So+x2XvmlX/6w4uzf9qiCqPIMdC3
-         vq2w==
+        bh=SBTb/3970BN14X5HvjXcIoWb+6uTs1A10lre4Hz/Km0=;
+        b=lT+zPXAWGbZmGTY05+ciQM5+8ABILzJl/urLqgBSITFDTnM0b4HRMYTHo/Xi9Fmjq2
+         Naz/gLwJefdaQMdw4v7FNoiJE8YGBl4bQLipkPhmyMuw6nlrxYt/Mpg2Ddo2fuoQTcCU
+         ScNjhNKEfW79B7IdUIbNvxEmYS9U6363PJ7EERI6/fF3DwiTn26ha8AdWK6B9GUQOo9O
+         LMkl9lvNAe4dpJQ5lmsp2pPiQeQdPHZHRRU3TatR9aP43NnJDSOYckAgcxttrcjFrlKQ
+         kEFpjoHTHnw3TJsxOwSxQt45i1yvcdd5tDOcpD4tjaNf3qspQ+Ckd2ufQABPJjTyPV5X
+         hmDA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Hellstrom <thellstrom@vmware.com>,
-	Brian Paul <brianp@vmware.com>,
-	Sinclair Yeh <syeh@vmware.com>
-Subject: [PATCH 4.9 29/67] drm/vmwgfx: Fix a destoy-while-held mutex problem.
-Date: Tue, 27 Mar 2018 18:27:21 +0200
-Message-Id: <20180327162728.594877139@linuxfoundation.org>
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Eric Wheeler <linux-mm@lists.ewheeler.net>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Hugh Dickins <hughd@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 28/67] mm/shmem: do not wait for lock_page() in shmem_unused_huge_shrink()
+Date: Tue, 27 Mar 2018 18:27:20 +0200
+Message-Id: <20180327162728.504337647@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108994397345632?=
-X-GMAIL-MSGID: =?utf-8?q?1596109143133270688?=
+X-GMAIL-THRID: =?utf-8?q?1596109139943461012?=
+X-GMAIL-MSGID: =?utf-8?q?1596109139943461012?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,188 +54,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-commit 73a88250b70954a8f27c2444e1c2411bba3c29d9 upstream.
+commit b3cd54b257ad95d344d121dc563d943ca39b0921 upstream.
 
-When validating legacy surfaces, the backup bo might be destroyed at
-surface validate time. However, the kms resource validation code may have
-the bo reserved, so we will destroy a locked mutex. While there shouldn't
-be any other users of that mutex when it is destroyed, it causes a lock
-leak and thus throws a lockdep error.
+shmem_unused_huge_shrink() gets called from reclaim path.  Waiting for
+page lock may lead to deadlock there.
 
-Fix this by having the kms resource validation code hold a reference to
-the bo while we have it reserved. We do this by introducing a validation
-context which might come in handy when the kms code is extended to validate
-multiple resources or buffers.
+There was a bug report that may be attributed to this:
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Brian Paul <brianp@vmware.com>
-Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+  http://lkml.kernel.org/r/alpine.LRH.2.11.1801242349220.30642@mail.ewheeler.net
+
+Replace lock_page() with trylock_page() and skip the page if we failed
+to lock it.  We will get to the page on the next scan.
+
+We can test for the PageTransHuge() outside the page lock as we only
+need protection against splitting the page under us.  Holding pin oni
+the page is enough for this.
+
+Link: http://lkml.kernel.org/r/20180316210830.43738-1-kirill.shutemov@linux.intel.com
+Fixes: 779750d20b93 ("shmem: split huge pages beyond i_size under memory pressure")
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Eric Wheeler <linux-mm@lists.ewheeler.net>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>	[4.8+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c  |   28 +++++++++++++++++++---------
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.h  |   12 +++++++++---
- drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c |    5 +++--
- drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c |    5 +++--
- 4 files changed, 34 insertions(+), 16 deletions(-)
+ mm/shmem.c |   31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-@@ -27,7 +27,6 @@
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -466,36 +466,45 @@ next:
+ 		info = list_entry(pos, struct shmem_inode_info, shrinklist);
+ 		inode = &info->vfs_inode;
  
- #include "vmwgfx_kms.h"
+-		if (nr_to_split && split >= nr_to_split) {
+-			iput(inode);
+-			continue;
+-		}
++		if (nr_to_split && split >= nr_to_split)
++			goto leave;
  
--
- /* Might need a hrtimer here? */
- #define VMWGFX_PRESENT_RATE ((HZ / 60 > 0) ? HZ / 60 : 1)
+-		page = find_lock_page(inode->i_mapping,
++		page = find_get_page(inode->i_mapping,
+ 				(inode->i_size & HPAGE_PMD_MASK) >> PAGE_SHIFT);
+ 		if (!page)
+ 			goto drop;
  
-@@ -1933,9 +1932,12 @@ void vmw_kms_helper_buffer_finish(struct
-  * Helper to be used if an error forces the caller to undo the actions of
-  * vmw_kms_helper_resource_prepare.
-  */
--void vmw_kms_helper_resource_revert(struct vmw_resource *res)
-+void vmw_kms_helper_resource_revert(struct vmw_validation_ctx *ctx)
- {
--	vmw_kms_helper_buffer_revert(res->backup);
-+	struct vmw_resource *res = ctx->res;
++		/* No huge page at the end of the file: nothing to split */
+ 		if (!PageTransHuge(page)) {
+-			unlock_page(page);
+ 			put_page(page);
+ 			goto drop;
+ 		}
+ 
++		/*
++		 * Leave the inode on the list if we failed to lock
++		 * the page at this time.
++		 *
++		 * Waiting for the lock may lead to deadlock in the
++		 * reclaim path.
++		 */
++		if (!trylock_page(page)) {
++			put_page(page);
++			goto leave;
++		}
 +
-+	vmw_kms_helper_buffer_revert(ctx->buf);
-+	vmw_dmabuf_unreference(&ctx->buf);
- 	vmw_resource_unreserve(res, false, NULL, 0);
- 	mutex_unlock(&res->dev_priv->cmdbuf_mutex);
- }
-@@ -1952,10 +1954,14 @@ void vmw_kms_helper_resource_revert(stru
-  * interrupted by a signal.
-  */
- int vmw_kms_helper_resource_prepare(struct vmw_resource *res,
--				    bool interruptible)
-+				    bool interruptible,
-+				    struct vmw_validation_ctx *ctx)
- {
- 	int ret = 0;
+ 		ret = split_huge_page(page);
+ 		unlock_page(page);
+ 		put_page(page);
  
-+	ctx->buf = NULL;
-+	ctx->res = res;
-+
- 	if (interruptible)
- 		ret = mutex_lock_interruptible(&res->dev_priv->cmdbuf_mutex);
- 	else
-@@ -1974,6 +1980,8 @@ int vmw_kms_helper_resource_prepare(stru
- 						    res->dev_priv->has_mob);
- 		if (ret)
- 			goto out_unreserve;
-+
-+		ctx->buf = vmw_dmabuf_reference(res->backup);
+-		if (ret) {
+-			/* split failed: leave it on the list */
+-			iput(inode);
+-			continue;
+-		}
++		/* If split failed leave the inode on the list */
++		if (ret)
++			goto leave;
+ 
+ 		split++;
+ drop:
+ 		list_del_init(&info->shrinklist);
+ 		removed++;
++leave:
+ 		iput(inode);
  	}
- 	ret = vmw_resource_validate(res);
- 	if (ret)
-@@ -1981,7 +1989,7 @@ int vmw_kms_helper_resource_prepare(stru
- 	return 0;
  
- out_revert:
--	vmw_kms_helper_buffer_revert(res->backup);
-+	vmw_kms_helper_buffer_revert(ctx->buf);
- out_unreserve:
- 	vmw_resource_unreserve(res, false, NULL, 0);
- out_unlock:
-@@ -1997,11 +2005,13 @@ out_unlock:
-  * @out_fence: Optional pointer to a fence pointer. If non-NULL, a
-  * ref-counted fence pointer is returned here.
-  */
--void vmw_kms_helper_resource_finish(struct vmw_resource *res,
--			     struct vmw_fence_obj **out_fence)
-+void vmw_kms_helper_resource_finish(struct vmw_validation_ctx *ctx,
-+				    struct vmw_fence_obj **out_fence)
- {
--	if (res->backup || out_fence)
--		vmw_kms_helper_buffer_finish(res->dev_priv, NULL, res->backup,
-+	struct vmw_resource *res = ctx->res;
-+
-+	if (ctx->buf || out_fence)
-+		vmw_kms_helper_buffer_finish(res->dev_priv, NULL, ctx->buf,
- 					     out_fence, NULL);
- 
- 	vmw_resource_unreserve(res, false, NULL, 0);
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
-@@ -183,6 +183,11 @@ struct vmw_display_unit {
- 	int set_gui_y;
- };
- 
-+struct vmw_validation_ctx {
-+	struct vmw_resource *res;
-+	struct vmw_dma_buffer *buf;
-+};
-+
- #define vmw_crtc_to_du(x) \
- 	container_of(x, struct vmw_display_unit, crtc)
- #define vmw_connector_to_du(x) \
-@@ -233,9 +238,10 @@ void vmw_kms_helper_buffer_finish(struct
- 				  struct drm_vmw_fence_rep __user *
- 				  user_fence_rep);
- int vmw_kms_helper_resource_prepare(struct vmw_resource *res,
--				    bool interruptible);
--void vmw_kms_helper_resource_revert(struct vmw_resource *res);
--void vmw_kms_helper_resource_finish(struct vmw_resource *res,
-+				    bool interruptible,
-+				    struct vmw_validation_ctx *ctx);
-+void vmw_kms_helper_resource_revert(struct vmw_validation_ctx *ctx);
-+void vmw_kms_helper_resource_finish(struct vmw_validation_ctx *ctx,
- 				    struct vmw_fence_obj **out_fence);
- int vmw_kms_readback(struct vmw_private *dev_priv,
- 		     struct drm_file *file_priv,
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c
-@@ -753,12 +753,13 @@ int vmw_kms_sou_do_surface_dirty(struct
- 	struct vmw_framebuffer_surface *vfbs =
- 		container_of(framebuffer, typeof(*vfbs), base);
- 	struct vmw_kms_sou_surface_dirty sdirty;
-+	struct vmw_validation_ctx ctx;
- 	int ret;
- 
- 	if (!srf)
- 		srf = &vfbs->surface->res;
- 
--	ret = vmw_kms_helper_resource_prepare(srf, true);
-+	ret = vmw_kms_helper_resource_prepare(srf, true, &ctx);
- 	if (ret)
- 		return ret;
- 
-@@ -777,7 +778,7 @@ int vmw_kms_sou_do_surface_dirty(struct
- 	ret = vmw_kms_helper_dirty(dev_priv, framebuffer, clips, vclips,
- 				   dest_x, dest_y, num_clips, inc,
- 				   &sdirty.base);
--	vmw_kms_helper_resource_finish(srf, out_fence);
-+	vmw_kms_helper_resource_finish(&ctx, out_fence);
- 
- 	return ret;
- }
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
-@@ -977,12 +977,13 @@ int vmw_kms_stdu_surface_dirty(struct vm
- 	struct vmw_framebuffer_surface *vfbs =
- 		container_of(framebuffer, typeof(*vfbs), base);
- 	struct vmw_stdu_dirty sdirty;
-+	struct vmw_validation_ctx ctx;
- 	int ret;
- 
- 	if (!srf)
- 		srf = &vfbs->surface->res;
- 
--	ret = vmw_kms_helper_resource_prepare(srf, true);
-+	ret = vmw_kms_helper_resource_prepare(srf, true, &ctx);
- 	if (ret)
- 		return ret;
- 
-@@ -1005,7 +1006,7 @@ int vmw_kms_stdu_surface_dirty(struct vm
- 				   dest_x, dest_y, num_clips, inc,
- 				   &sdirty.base);
- out_finish:
--	vmw_kms_helper_resource_finish(srf, out_fence);
-+	vmw_kms_helper_resource_finish(&ctx, out_fence);
- 
- 	return ret;
- }
