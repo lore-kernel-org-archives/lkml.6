@@ -1,167 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752753AbeC0P6X convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 11:58:23 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:46673 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751486AbeC0P6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 11:58:22 -0400
-Date: Tue, 27 Mar 2018 17:58:06 +0200
-Message-ID: <20180327175806.Horde.f26UMak3wqEtNtiMmJy51w2@messagerie.si.c-s.fr>
-From: LEROY Christophe <christophe.leroy@c-s.fr>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        LKML <linux-kernel@vger.kernel.org>, kvm-ppc@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 14/19] powerpc/altivec: Add missing prototypes for
- altivec
-References: <20180322202007.23088-1-malat@debian.org>
- <20180322202007.23088-15-malat@debian.org>
- <97df68d1-d4fe-bf8e-7852-9b418eec042f@c-s.fr>
- <CA+7wUsxVW1a2yvyhYv=YFNV1VEQCcro5JDN1RewghVaHDq5znw@mail.gmail.com>
- <20180324211020.Horde.kEO4b3mHPV88FKM0OiRT0Q1@messagerie.si.c-s.fr>
- <CA+7wUszsJUJJeb+xhzjGr8YxDt-BYruBwda7Dq-nFfyt0sU0ew@mail.gmail.com>
-In-Reply-To: <CA+7wUszsJUJJeb+xhzjGr8YxDt-BYruBwda7Dq-nFfyt0sU0ew@mail.gmail.com>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        id S1752779AbeC0P6r (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 11:58:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50949 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751486AbeC0P6p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 11:58:45 -0400
+Subject: Re: [PATCH] ecryptfs: Restore support for both encrypted and
+ unencrypted file names
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
+From: Tyler Hicks <tyhicks@canonical.com>
+Message-ID: <740f5325-331d-d38c-e9d4-5f81b95a6872@canonical.com>
+Date: Tue, 27 Mar 2018 10:58:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="0JegKyQimqVLbKcaquGF74aKtqi3Bug6b"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mathieu Malaterre <malat@debian.org> a écrit :
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--0JegKyQimqVLbKcaquGF74aKtqi3Bug6b
+Content-Type: multipart/mixed; boundary="J4TwfQrY3h5PXBnaksoblkFkkskmDQ4UC";
+ protected-headers="v1"
+From: Tyler Hicks <tyhicks@canonical.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>
+Message-ID: <740f5325-331d-d38c-e9d4-5f81b95a6872@canonical.com>
+Subject: Re: [PATCH] ecryptfs: Restore support for both encrypted and
+ unencrypted file names
+References: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
+In-Reply-To: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
 
-> Christophe,
->
-> On Sat, Mar 24, 2018 at 9:10 PM, LEROY Christophe
-> <christophe.leroy@c-s.fr> wrote:
->> Mathieu Malaterre <malat@debian.org> a écrit :
->>
->>
->>> On Fri, Mar 23, 2018 at 1:19 PM, christophe leroy
->>> <christophe.leroy@c-s.fr> wrote:
->>>>
->>>>
->>>>
->>>> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
->>>>>
->>>>>
->>>>> Some functions prototypes were missing for the non-altivec code. Add the
->>>>> missing prototypes directly in xor_vmx, fix warnings treated as errors
->>>>> with
->>>>> W=1:
->>>>>
->>>>>    arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype
->>>>> for
->>>>> ‘xor_altivec_2’ [-Werror=missing-prototypes]
->>>>>    arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype
->>>>> for
->>>>> ‘xor_altivec_3’ [-Werror=missing-prototypes]
->>>>>    arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype
->>>>> for
->>>>> ‘xor_altivec_4’ [-Werror=missing-prototypes]
->>>>>    arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype
->>>>> for
->>>>> ‘xor_altivec_5’ [-Werror=missing-prototypes]
->>>>>
->>>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->>>>> ---
->>>>>   arch/powerpc/lib/xor_vmx.h | 14 ++++++++++++++
->>>>>   1 file changed, 14 insertions(+)
->>>>>
->>>>> diff --git a/arch/powerpc/lib/xor_vmx.h b/arch/powerpc/lib/xor_vmx.h
->>>>> index 5c2b0839b179..2173e3c84151 100644
->>>>> --- a/arch/powerpc/lib/xor_vmx.h
->>>>> +++ b/arch/powerpc/lib/xor_vmx.h
->>>>> @@ -19,3 +19,17 @@ void __xor_altivec_4(unsigned long bytes, unsigned
->>>>> long
->>>>> *v1_in,
->>>>>   void __xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
->>>>>                              unsigned long *v2_in, unsigned long *v3_in,
->>>>>                              unsigned long *v4_in, unsigned long
->>>>> *v5_in);
->>>>> +
->>>>> +void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
->>>>> +                            unsigned long *v2_in);
->>>>> +
->>>>
->>>>
->>>>
->>>> Only used in one place, should be static instead of adding it in a .h
->>>>
->>>> Same for the other ones.
->>>
->>>
->>> $ git grep xor_altivec_2
->>> [...]
->>> arch/powerpc/lib/xor_vmx_glue.c:EXPORT_SYMBOL(xor_altivec_2);
->>>
->>> Are you sure I can change this function to static ?
->>
->>
->> Yes you are right.  But in fact those fonctions are already defined in
->> asm/xor. h
->> So you just need to add the missing #include
->
-> I originally tried it, but this leads to:
->
->   CC      arch/powerpc/lib/xor_vmx_glue.o
-> In file included from arch/powerpc/lib/xor_vmx_glue.c:16:0:
-> ./arch/powerpc/include/asm/xor.h:39:15: error: variable
-> ‘xor_block_altivec’ has initializer but incomplete type
->  static struct xor_block_template xor_block_altivec = {
->                ^~~~~~~~~~~~~~~~~~
-> ./arch/powerpc/include/asm/xor.h:40:2: error: unknown field ‘name’
-> specified in initializer
->   .name = "altivec",
->   ^
-> [...]
->
-> The file <asm/xor.h> (powerpc) is pretty much expected to be included
-> after <include/linux/raid/xor.h>.
->
-> I did not want to tweak <asm/xor.h> to test for #ifdef _XOR_H just before
->
-> #ifdef _XOR_H
-> static struct xor_block_template xor_block_altivec = {
-> [...]
->
-> since this seems like a hack to me.
->
-> Is this ok to test for #ifdef _XOR_H in <arch/powerpc/include/asm/xor.h> ?
+--J4TwfQrY3h5PXBnaksoblkFkkskmDQ4UC
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-What about including linux/raid/xor.h in asm/xor.h ?
+Hello Guenter
 
-Christophe
->
->> Christophe
->>
->>
->>>
->>>> Christophe
->>>>
->>>>
->>>>> +void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
->>>>> +                            unsigned long *v2_in, unsigned long
->>>>> *v3_in);
->>>>> +
->>>>> +void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
->>>>> +                            unsigned long *v2_in, unsigned long *v3_in,
->>>>> +                            unsigned long *v4_in);
->>>>> +
->>>>> +void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
->>>>> +                            unsigned long *v2_in, unsigned long *v3_in,
->>>>> +                            unsigned long *v4_in, unsigned long
->>>>> *v5_in);
->>>>>
->>>>
->>>> ---
->>>> L'absence de virus dans ce courrier électronique a été vérifiée par le
->>>> logiciel antivirus Avast.
->>>> https://www.avast.com/antivirus
->>>>
->>
->>
+On 02/13/2018 04:36 PM, Guenter Roeck wrote:
+> Commit 88ae4ab9802e ("ecryptfs_lookup(): try either only encrypted or
+> plaintext name") was supposed to fix a situation where two files with
+> the same name and same inode could be created in ecryptfs. One of those=
+
+> files had an encrypted file name, the other file name was unencrypted.
+
+That's correct. Al was concerned about possible deadlocks with aliased
+dentries and I thought it would be best to only support encrypted and
+unencrypted but not both.
+
+>=20
+> After commit 88ae4ab9802e, having a mix of encrypted and unencrypted fi=
+le
+> names is no longer supposed to be possible. However, that is not the ca=
+se.
+> The only difference is that it is now even easier to create a situation=
+
+> where two files with the same name coexist (one encrypted and the other=
+
+> not encrypted). In practice, this looks like the following (files
+> created with v4.14.12).
+>=20
+> ecryptfs mounted with file name encryption enabled:
+>=20
+> $ ls -li
+> total 48
+> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+> $ grep . *
+> myfile:encrypted
+> myfile:encrypted
+> myfile2:encrypted
+> myfile2:encrypted
+>=20
+> $ ls -li
+> total 48
+> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36
+> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njb=
+cIPoApxk7-E--
+> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02
+> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCt=
+J70cm911yZ---
+> 5252817 -rw-rw-r-- 1 groeck groeck 12 Jan 20 12:52 myfile
+> 5252827 -rw-rw-r-- 1 groeck groeck 12 Jan 20 15:37 myfile2
+>=20
+> $ grep . *
+> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njb=
+cIPoApxk7-E--:encrypted
+> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCt=
+J70cm911yZ---:encrypted
+> myfile:unencrypted
+> myfile2:unencrypted
+>=20
+> Creating a file with file name encryption disabled and remounting with
+> file name encryption enabled results in the following.
+>=20
+> $ ls -li
+> ls: cannot access 'myfile3': No such file or directory
+> total 48
+> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
+> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
+>       ? -????????? ? ?      ?       ?            ? myfile3
+>=20
+> Prior to commit 88ae4ab9802e, the file system had to be mounted with
+> encrypted file names first to create a file, then the same had to be
+> repeated after mounting with unencrypted file names. Now the duplicate
+> files can be created both ways (unencrypted _or_ encrypted first).
+>=20
+> The only real difference is that it is no longer possible to have a
+> _working_ combination of encrypted and unencrypted file names. In other=
+
+> words, commit 88ae4ab9802e results in reduced functionality with no
+> benefit whatsoever.
+>=20
+> Restore ability to have a mix of unencrypted and encrypted files.
+> This effectively reverts commit 88ae4ab9802e, but the code is now
+> better readable since it avoids a number of goto statements.
+
+I'd like for us to correctly fix 88ae4ab9802e rather than try to support
+both filename types under a single mount since that's complex and there
+are unknown corner cases to consider. I think this can be done by not
+copying up the lower filename when an error is encountered in
+ecryptfs_decode_and_decrypt_filename(). If filename encryption is
+enabled, it should only return decrypted filenames or an error if it
+isn't possible to decrypt the lower filename.
+
+Tyler
+
+>=20
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  fs/ecryptfs/inode.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index 847904aa63a9..14a5c096ead6 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -392,11 +392,11 @@ static struct dentry *ecryptfs_lookup(struct inod=
+e *ecryptfs_dir_inode,
+>  	int rc =3D 0;
+> =20
+>  	lower_dir_dentry =3D ecryptfs_dentry_to_lower(ecryptfs_dentry->d_pare=
+nt);
+> -
+> +	lower_dentry =3D lookup_one_len_unlocked(name, lower_dir_dentry, len)=
+;
+>  	mount_crypt_stat =3D &ecryptfs_superblock_to_private(
+>  				ecryptfs_dentry->d_sb)->mount_crypt_stat;
+> -	if (mount_crypt_stat
+> -	    && (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES))=
+ {
+> +	if (IS_ERR(lower_dentry) &&
+> +	    (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
+>  		rc =3D ecryptfs_encrypt_and_encode_filename(
+>  			&encrypted_and_encoded_name, &len,
+>  			mount_crypt_stat, name, len);
+> @@ -405,10 +405,10 @@ static struct dentry *ecryptfs_lookup(struct inod=
+e *ecryptfs_dir_inode,
+>  			       "filename; rc =3D [%d]\n", __func__, rc);
+>  			return ERR_PTR(rc);
+>  		}
+> -		name =3D encrypted_and_encoded_name;
+> +		lower_dentry =3D lookup_one_len_unlocked(
+> +			encrypted_and_encoded_name, lower_dir_dentry, len);
+>  	}
+> =20
+> -	lower_dentry =3D lookup_one_len_unlocked(name, lower_dir_dentry, len)=
+;
+>  	if (IS_ERR(lower_dentry)) {
+>  		ecryptfs_printk(KERN_DEBUG, "%s: lookup_one_len() returned "
+>  				"[%ld] on lower_dentry =3D [%s]\n", __func__,
+>=20
+
+
+
+--J4TwfQrY3h5PXBnaksoblkFkkskmDQ4UC--
+
+--0JegKyQimqVLbKcaquGF74aKtqi3Bug6b
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEPgU+cN5AsTrekT5+1pIAPaoCxwoFAlq6ai8ACgkQ1pIAPaoC
+xwpGmg//b/W9IPF2C8LlpiWM6iNmjyyTzWIHtcBxwOkEXgYd+PAAlSgbHvwDoWQt
+4/OqLPcdg2UME/m+qDzhguv3GNjD2VjXgMIV+TCk6qm5m98kWqBlEymOGd2nDBxQ
+efOu1NUGDkJg8h4fheSLs49raShoqmAp9y4gyfslDIhWeiqxz1Ux5USUmXvJ5mrz
+hyZMM3vQvlldhSuYi4C9JAmobnsKGzmq3JT8SlbnFevzQSnEF1MjvFpTZ51d69mx
+GJLrALQSIRiK6CbQqonae9zSPne2gw2K2vNyn5+dHisGLX9jgbcQdzw0hEq+Jv8C
+5DdnONXaVdpbUHHlfur6oH1nVqim1eNMvJBKo4F0t7ULYpc7CDljN1Xsc/x3O+bs
+B2glnW8iyvMdGTlFUETxI6n2Y1wvb7FLmrnmANOEEEgDfno4o2fdex7vqRz52I00
+CeH/E/DtGCwL+OY4RSlm2joLqiFa48KBFya0Z35Zl/niX2AOEaK6Rf2YIOyBl/hq
+GHqhrkT0My0r/oyQwuvjXeXz7V4hn+qylOmD/RGaflG9EKIHkZihUqi9aU4O6tY4
+wdPy+iXc2o4GZR4NuwZbdXElSk22VkIFiMzj3DqFCbsHSiWim726EIjmA4skAcdv
+WX2+RRP/dF/cFjsc6MzSFJJrD3ZJlMUtnRuE1Kt+8hug6YvqiY8=
+=8T34
+-----END PGP SIGNATURE-----
+
+--0JegKyQimqVLbKcaquGF74aKtqi3Bug6b--
