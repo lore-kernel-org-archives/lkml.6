@@ -1,33 +1,33 @@
 Return-Path: <richard.weiyang@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522229920; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522112542; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZBvA7Pcxe7XsLCGTJqoJxHH0opzawmbzanCRCa+fzCXgXjHYwFAYHSR8El50jgYzRo
-         BDAPbfWqZukqUN6CbJZDKDaI1iVGpKnvD8px4biaQZq9r/7+ExjNDSBOuEz0TUJKi9SN
-         qQJk3bzW9VXwwgdCUJLFfcb0exRemyI4dhRB3Z8HYDr2pYHIyjTB53HSeZAJh55PKlwP
-         Bein87w9GnoQXf9gRuWJYhVBMfi1NaJfWIlPuTEfrCuaSmTF1EWoenRwUzO69s1kIIT2
-         IUcmFy0USwmVCi52BtfxtJ5VFwBAVlOvYGB/vcagy7nrXuKNuRkmJ4WDGgz+8Wzaj2ME
-         +ORQ==
+        b=IEYbkXA+iuWNQzQ1+kvtPG8Xcpm1qk3dF4Cj8Vv7f4f+ZOUHOI3FQmEWCM/RfHKrAR
+         yU6BHRd6D2Ms0F2yNOTZmQekWK6r1xbiT9yzZlD9iqobPIABy8S+wTSAtwhw6jxleJG5
+         OK572uxwdDb6fQP/a+AwcAcKf4rRCy4HyRidm4Ulu86fIzW3MlqGq7VlgFoxHrkgXpZt
+         XoTM7b0YAn2mc+hMs/1izxI4ApExK3kXo/uk8lH73EzSHxVKf3YRmUz/FomeCPGfHcG9
+         Z4v9DCN0CFfqiftbDi6tCgHxzwh+EdIJjN1D4O+jc0WEuEHrLmzeGLIgqgnsShbLtW6n
+         MQRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :reply-to:message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=M2JL+c9OK7o1jHuSKB0PwYzqIny3+aceEa1enEyF1OQ=;
-        b=jxdVVBLnPPqOpg8iIvoFpfAh0J+FIhpT8h407P511YMOj+It/XHqpwFQoi05j29wvu
-         PtfOJcPtmjP8Le0O67Ahbvtd4pb/bvJ2QpCsDXmkJ+0CgTKXrLzB9FFibG1ycA1fmUBA
-         gf5yeK9wkWrVu45Wmi6U2inOW+NARQb2WyxC0EZJeHMWcQ/Fl/KFAcDICTbD4Ye8n9GA
-         9WtxUNm1dCIqaSGhAk60g08DIschyDxLv3Gw9r0Ol0LjKCmx2wez5C7sYHpTxLNT6i35
-         Df2R9lD27hegk4JT5nQuYzNBjUArV9+JfFDLrY9G4vqPIo/OGMpr1bT8gAvRfpARdIaQ
-         dK3g==
+        bh=roB/+tV1DQc6PSMvC+w0eQ6E80gqeu6ufz3YgWA2Xmw=;
+        b=bFSxFf6zmhQ0CdOS+3AD/xCTUSKovHHH6o8t2apBYFnIKInjvfRXX0pARz+w3FuQjU
+         GlgzvrFCMH4jbc+/3QG4Y1S2zNEmQNomtVduSHdhrHB8NXaQpObK9mN/Jc0Y4eUNiMAf
+         J4EaYHnlA87KcoWFxtWBtk78dYHHpMtTRXiDPQwQoG0HdG6SdjCCVvnFqJxSe/WAeN2N
+         VFncf1eBm4jibdVSctlUd5cjhxpSTRujUvR5OS9mJLnyS9+ofE98SntS6SgVe0mQ63st
+         ktkvzTALQolMMzW2Y/taOM0UneDPWK6l86hPvvCmy/clU4V7PSMwzNMnWi2f3PftP6wb
+         GYVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o/ER86bo;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QqMDCm4g;
        spf=pass (google.com: domain of richard.weiyang@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=richard.weiyang@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o/ER86bo;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QqMDCm4g;
        spf=pass (google.com: domain of richard.weiyang@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=richard.weiyang@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx48R+5Pr3UaXweVcejFRiQxpuYCAoznlpMrymNFY0hAB8mSC0+SQGZk7bP9O4A3sS+p1kDTNdQ==
-Date: Wed, 28 Mar 2018 17:38:30 +0800
+X-Google-Smtp-Source: AG47ELu7NARw4bm9Rmx7IgfvW3XriwomgnkM3PJWGdi9gbWlhUVlM5CD+CL18XQ8riuoQ0UNrxApCg==
+Date: Tue, 27 Mar 2018 09:02:13 +0800
 From: Wei Yang <richard.weiyang@gmail.com>
 To: Jia He <hejianet@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -55,102 +55,97 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Kemi Wang <kemi.wang@intel.com>, Petr Tesarik <ptesarik@suse.com>,
 	YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
 	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Nikolay Borisov <nborisov@suse.com>,
-	Jia He <jia.he@hxt-semitech.com>
-Subject: Re: [PATCH v3 4/5] arm64: introduce pfn_valid_region()
-Message-ID: <20180328093830.GB98648@WeideMacBook-Pro.local>
+	Nikolay Borisov <nborisov@suse.com>
+Subject: Re: [PATCH v3 0/5] optimize memblock_next_valid_pfn and
+ early_pfn_valid
+Message-ID: <20180327010213.GA80447@WeideMacBook-Pro.local>
 Reply-To: Wei Yang <richard.weiyang@gmail.com>
 References: <1522033340-6575-1-git-send-email-hejianet@gmail.com>
- <1522033340-6575-5-git-send-email-hejianet@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522033340-6575-5-git-send-email-hejianet@gmail.com>
+In-Reply-To: <1522033340-6575-1-git-send-email-hejianet@gmail.com>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595967713881202535?=
-X-GMAIL-MSGID: =?utf-8?q?1596173761299844529?=
+X-GMAIL-THRID: =?utf-8?q?1595967659920779416?=
+X-GMAIL-MSGID: =?utf-8?q?1596050681420848006?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Mar 25, 2018 at 08:02:18PM -0700, Jia He wrote:
->This is the preparation for further optimizing in early_pfn_valid
->on arm64.
+On Sun, Mar 25, 2018 at 08:02:14PM -0700, Jia He wrote:
+>Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>where possible") tried to optimize the loop in memmap_init_zone(). But
+>there is still some room for improvement.
 >
->Signed-off-by: Jia He <jia.he@hxt-semitech.com>
->---
-> arch/arm64/include/asm/page.h |  3 ++-
-> arch/arm64/mm/init.c          | 25 ++++++++++++++++++++++++-
-> 2 files changed, 26 insertions(+), 2 deletions(-)
+>Patch 1 remain the memblock_next_valid_pfn when CONFIG_HAVE_ARCH_PFN_VALID
+>        is enabled
+>Patch 2 optimizes the memblock_next_valid_pfn()
+>Patch 3~5 optimizes the early_pfn_valid(), I have to split it into parts
+>        because the changes are located across subsystems.
 >
->diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
->index 60d02c8..da2cba3 100644
->--- a/arch/arm64/include/asm/page.h
->+++ b/arch/arm64/include/asm/page.h
->@@ -38,7 +38,8 @@ extern void clear_page(void *to);
-> typedef struct page *pgtable_t;
-> 
-> #ifdef CONFIG_HAVE_ARCH_PFN_VALID
->-extern int pfn_valid(unsigned long);
->+extern int pfn_valid(unsigned long pfn);
->+extern int pfn_valid_region(unsigned long pfn, int *last_idx);
-> #endif
-> 
-> #include <asm/memory.h>
->diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->index 00e7b90..06433d5 100644
->--- a/arch/arm64/mm/init.c
->+++ b/arch/arm64/mm/init.c
->@@ -290,7 +290,30 @@ int pfn_valid(unsigned long pfn)
-> 	return memblock_is_map_memory(pfn << PAGE_SHIFT);
-> }
-> EXPORT_SYMBOL(pfn_valid);
->-#endif
->+
->+int pfn_valid_region(unsigned long pfn, int *last_idx)
->+{
->+	unsigned long start_pfn, end_pfn;
->+	struct memblock_type *type = &memblock.memory;
->+
->+	if (*last_idx != -1) {
->+		start_pfn = PFN_DOWN(type->regions[*last_idx].base);
+>I tested the pfn loop process in memmap_init(), the same as before.
+>As for the performance improvement, after this set, I can see the time
+>overhead of memmap_init() is reduced from 41313 us to 24345 us in my
+>armv8a server(QDF2400 with 96G memory).
+>
+>Attached the memblock region information in my server.
+>[   86.956758] Zone ranges:
+>[   86.959452]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
+>[   86.966041]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
+>[   86.972631] Movable zone start for each node
+>[   86.977179] Early memory node ranges
+>[   86.980985]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
+>[   86.987666]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
+>[   86.994348]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
+>[   87.001029]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
+>[   87.007710]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
+>[   87.014392]   node   0: [mem 0x0000000003410000-0x000000000563ffff]
+>[   87.021073]   node   0: [mem 0x0000000005640000-0x000000000567ffff]
+>[   87.027754]   node   0: [mem 0x0000000005680000-0x00000000056dffff]
+>[   87.034435]   node   0: [mem 0x00000000056e0000-0x00000000086fffff]
+>[   87.041117]   node   0: [mem 0x0000000008700000-0x000000000871ffff]
+>[   87.047798]   node   0: [mem 0x0000000008720000-0x000000000894ffff]
+>[   87.054479]   node   0: [mem 0x0000000008950000-0x0000000008baffff]
+>[   87.061161]   node   0: [mem 0x0000000008bb0000-0x0000000008bcffff]
+>[   87.067842]   node   0: [mem 0x0000000008bd0000-0x0000000008c4ffff]
+>[   87.074524]   node   0: [mem 0x0000000008c50000-0x0000000008e2ffff]
+>[   87.081205]   node   0: [mem 0x0000000008e30000-0x0000000008e4ffff]
+>[   87.087886]   node   0: [mem 0x0000000008e50000-0x0000000008fcffff]
+>[   87.094568]   node   0: [mem 0x0000000008fd0000-0x000000000910ffff]
+>[   87.101249]   node   0: [mem 0x0000000009110000-0x00000000092effff]
+>[   87.107930]   node   0: [mem 0x00000000092f0000-0x000000000930ffff]
+>[   87.114612]   node   0: [mem 0x0000000009310000-0x000000000963ffff]
+>[   87.121293]   node   0: [mem 0x0000000009640000-0x000000000e61ffff]
+>[   87.127975]   node   0: [mem 0x000000000e620000-0x000000000e64ffff]
+>[   87.134657]   node   0: [mem 0x000000000e650000-0x000000000fffffff]
+>[   87.141338]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
+>[   87.148019]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
+>[   87.154701]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
+>[   87.161383]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
+>[   87.168064]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
+>[   87.174746]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
+>[   87.181427]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+>[   87.188108]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
 
-PFN_UP() should be used.
+Hi, Jia
 
->+		end_pfn= PFN_DOWN(type->regions[*last_idx].base +
->+					type->regions[*last_idx].size);
->+
->+		if (pfn >= start_pfn && pfn < end_pfn)
->+			return !memblock_is_nomap(
->+				&memblock.memory.regions[*last_idx]);
+I haven't taken a deep look into your code, just one curious question on your
+memory layout.
 
-Could use type->regions directly.
+The log above is printed out in free_area_init_nodes(), which iterates on
+memblock.memory and prints them. If I am not wrong, memory regions added to
+memblock.memory are ordered and merged if possible.
 
->+	}
->+
->+	*last_idx = memblock_search_pfn_regions(pfn);
->+	if (*last_idx == -1)
->+		return false;
->+
->+	return !memblock_is_nomap(&memblock.memory.regions[*last_idx]);
+While from your log, I see many regions could be merged but are isolated. For
+example, the last two region:
 
-Could use type->regions directly.
+  node   0: [mem 0x000000007eff0000-0x000000007effffff]
+  node   0: [mem 0x000000007f000000-0x00000017ffffffff]
 
-Well, since your check memblock.memory.regions, how about use a variable
-equals memblock.memory.regions directly instead of type->regions?
+So I am curious why they are isolated instead of combined to one.
 
-For example:
-
-struct memblock_region *regions = memblock.memory.regions;
-
->+}
->+EXPORT_SYMBOL(pfn_valid_region);
->+#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
-> 
-> #ifndef CONFIG_SPARSEMEM
-> static void __init arm64_memory_present(void)
->-- 
->2.7.4
+>From the code, the possible reason is the region's flag differs from each
+other. If you have time, would you mind taking a look into this?
 
 -- 
 Wei Yang
