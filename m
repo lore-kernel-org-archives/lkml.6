@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-195729-1522173799-2-5879607021649987501
+X-Cyrus-Session-Id: sloti22d1t05-195729-1522173756-2-4615988005852482695
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522173798; b=SFQQqXwnOejPN8ng598xh1zFVTCtAevwWgljr0sIRgLcUpj
-    m69c7NJHkoGrBkjCJljo2ZX0RnhIerAQjmubH2UMo7wSbIz5XmVdY0s2vPYwg+1K
-    3240OiBXLzYeR3qNYKdjwHpWHPk6mxQ3+wCeFayYypDgSEPurL4YnmTHhQ4RlK8+
-    1SWxF3GCUHDeGtfWv8S1O6g404Rc1RLYc0UDHjeQCivrcvVDRLdv2/U9n9t50qHU
-    oLq41seVYSJH1Nhd4xMk+MAvgBd5P3jpf2U+1+ivWrJJB/jBwNoz/7c+oDvkEzM5
-    ah3Yddhw05n7W1g+M+cbMml9SmRBQjcOtEiwI4w==
+    t=1522173756; b=GvchyL+mr4friA9dn//dNb2UWYS88VcMMhFaFOlrL5oGNb2
+    vPUC76KbQZG4eKZm8df/2+gLbFfnIhp+OpID1HlO921G9OE3QA1Q5WPKiP+Ri/Wi
+    AAm49FFnObuBPT7gHzs5c1F+5bmQh1S5Wl7y+FB2H6iQkV4nQlEZOHmotOTNgst8
+    QzsylfwziTpdKa91XF2O1257q4QK71hE6eQs//6wZ5udThE2HddheNvBRq+WG+6M
+    kY//mZxsb26DMUS1hCGJEtT1p9qNXjRd6djwbc3asixvQqtU4vZp+xXgmombul+z
+    Lh/UQdz3nmFfxQQPgz0sU+hHxLT+tVGdE/YQVxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522173798; bh=f+yKPbIb8bcNPGvYqs23jbg1uw
-    RDc8Vj4TyNkrP3yok=; b=eJbRgKm6Gof+DPwH/qOkrOZixcLyheeAoPcR5SycoF
-    U8UfXKV8uYVhz6eNTDPgAPQ6xQn3WL/iWiUqYyzNsaF58yDhlrInHIHUSDqo6POV
-    +vIBdUMJOgf9VlU9XMHZtfFJEzNK2eI29l6njNqi91e9VLs5NVxgT6al+UFm8ISI
-    dYaKIbt+AsW7B0ef4Txz+dxXeO0d2HU2H5WQAnwp8h4puNWyaYY5ZEwJOcRfUmoh
-    K89UQ0pSCEHwJfQ5E6gD+tF8uvN+mTeNlbDMwKK4VL/8VkhN329T3r5G/kxCNOwX
-    h5WvPz1XBXyXKp9igD28rkdxfVpZxmKOd18MBQaE91JA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1522173756; bh=mgANRZNDVHh844OyEVTFAs5yQn
+    BFO5j8bra+cCoBF0E=; b=Vrwa8JxOnR7W2KWXYaVmHDE732jRpOvCGEg1loiUIA
+    g422I1OC0Gt86vYMFiwI9+68VOZekn8bGwAHRaZqDukCcPGn56oYC6CXXauQE2B8
+    Q85g5AiSaVmV8UYB3gl8vJTIyvCFjgnIJJGV2KJeui160MZ86XTkrZM3OBnTIpDV
+    rZR9xfdzUeO1ckAZzjpIgdUCs2BzsDqLrQ0dEcjvY5CsfjWw8ZkaiQSiIPiqq27F
+    WPWWgJK5me8i6bl1g473H2sKUP3S5GRMZZBP66CkSJOuiUcIsd/N+gcGNLxFMmAI
+    Z7OFqQWpDz9udYHLwy2sacmxtybTYCQ4bR2/X2gtfRmA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN4/62HFme50s1s0SwTRrnKLIBBOzP1LBw+QJwXslGzCY8GLDbJPlaqRvlOO+YQ58BkoX99c9L33UVH6s6GRZx54CkUdMnOwTL3CzS1R7BgW8Z4/GnKI
-    yn3dmrfyzrS57vVEIgrkxoeOoJBi5mc/4+Fdq7jc0KlFJRpGenWPgaUgv3KaVnhBu6IPWykGC8+apsrf/1P0CmwlW+Yk2fykQtv7fnAQc6HikZlZp4lun35V
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNyYP85IMBwCuFCAvB+Vbmrl6uUfXJ8NksPFY8e54MmSLxKkGDQpCpMeqllFWLyEiWXSZoBZ0JBKiQnGBkovY/BnSAp1evGW62ZJWmNtG/Oc/CTqMNqx
+    p7ee0T9tNRgYe7/xsGFWI81srZBBZU3b9+4pTmRZ6Dxp2KKBQDWGrjettW9muWHjP3gNLBuFjSAM9aRPwZ8QSAzOeUx+g1V1sDgxD2cnc46ITce57B3d/nm7
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=ag1SF4gXAAAA:8
-    a=T6KdMzPhkFrUmFEsvBcA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=P-IC7800AAAA:8 a=VwQbUJbxAAAA:8 a=-VAfIpHNAAAA:8 a=ag1SF4gXAAAA:8
+    a=jolQjp5mQmBZKmoSEyMA:9 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=srlwD-8ojaedGGhPAyx8:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753046AbeC0SCm (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 14:02:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41530 "EHLO
+        id S1753016AbeC0SCT (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 14:02:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752876AbeC0Q3x (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:53 -0400
+        with ESMTP id S1752889AbeC0Q34 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Tejun Heo <tj@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.4 09/43] ahci: Add PCI-id for the Highpoint Rocketraid 644L card
-Date: Tue, 27 Mar 2018 18:27:13 +0200
-Message-Id: <20180327162716.883952957@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Eric Anholt <eric@anholt.net>, Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.4 10/43] clk: bcm2835: Protect sections updating shared registers
+Date: Tue, 27 Mar 2018 18:27:14 +0200
+Message-Id: <20180327162716.939196093@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -92,38 +93,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit 28b2182dad43f6f8fcbd167539a26714fd12bd64 upstream.
+commit 7997f3b2df751aab0b8e60149b226a32966c41ac upstream.
 
-Like the Highpoint Rocketraid 642L and cards using a Marvel 88SE9235
-controller in general, this RAID card also supports AHCI mode and short
-of a custom driver, this is the only way to make it work under Linux.
+CM_PLLx and A2W_XOSC_CTRL registers are accessed by different clock
+handlers and must be accessed with ->regs_lock held.
+Update the sections where this protection is missing.
 
-Note that even though the card is called to 644L, it has a product-id
-of 0x0645.
-
-Cc: stable@vger.kernel.org
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1534106
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/ahci.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -538,7 +538,9 @@ static const struct pci_device_id ahci_p
- 	  .driver_data = board_ahci_yes_fbs },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9230),
- 	  .driver_data = board_ahci_yes_fbs },
--	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642),
-+	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642), /* highpoint rocketraid 642L */
-+	  .driver_data = board_ahci_yes_fbs },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0645), /* highpoint rocketraid 644L */
- 	  .driver_data = board_ahci_yes_fbs },
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -912,8 +912,10 @@ static int bcm2835_pll_on(struct clk_hw
+ 		     ~A2W_PLL_CTRL_PWRDN);
  
- 	/* Promise */
+ 	/* Take the PLL out of reset. */
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, data->cm_ctrl_reg,
+ 		     cprman_read(cprman, data->cm_ctrl_reg) & ~CM_PLL_ANARST);
++	spin_unlock(&cprman->regs_lock);
+ 
+ 	/* Wait for the PLL to lock. */
+ 	timeout = ktime_add_ns(ktime_get(), LOCK_TIMEOUT_NS);
+@@ -997,9 +999,11 @@ static int bcm2835_pll_set_rate(struct c
+ 	}
+ 
+ 	/* Unmask the reference clock from the oscillator. */
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, A2W_XOSC_CTRL,
+ 		     cprman_read(cprman, A2W_XOSC_CTRL) |
+ 		     data->reference_enable_mask);
++	spin_unlock(&cprman->regs_lock);
+ 
+ 	if (do_ana_setup_first)
+ 		bcm2835_pll_write_ana(cprman, data->ana_reg_base, ana);
