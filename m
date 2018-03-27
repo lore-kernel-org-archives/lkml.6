@@ -1,52 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeC0VHa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:07:30 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33870 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752367AbeC0VGs (ORCPT
+        id S1752203AbeC0VIH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:08:07 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:38398 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752044AbeC0VIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:06:48 -0400
-X-Google-Smtp-Source: AIpwx4+u2OXL1wWxvbbVdYUEKYh8TuvG01cSGxDx+5+OkiN/488f0VcW146kqzjr0d9uHqW4lhs0mw==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH 1/3] rpmsg: smd: Fix container_of macros
-Date: Tue, 27 Mar 2018 14:06:41 -0700
-Message-Id: <20180327210643.3436-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180327210643.3436-1-bjorn.andersson@linaro.org>
-References: <20180327210643.3436-1-bjorn.andersson@linaro.org>
+        Tue, 27 Mar 2018 17:08:05 -0400
+X-Google-Smtp-Source: AIpwx4/J7Sf7MtH6YWVwYKb/IprQYRtv9ay6bg0a5jMeivP+kM+Uv2FoXx5tlIxLj8tVzzxrwJPPZQ==
+Date: Tue, 27 Mar 2018 15:08:03 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/hns: ensure for-loop actually iterates and free's
+ buffers
+Message-ID: <20180327210803.GA26189@ziepe.ca>
+References: <20180326151018.21066-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326151018.21066-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The container_of macros should not use the same name for the parameter
-as the member to use for lookup, as this will result in a compilation
-error unless the passed parameter has the same name as the member.
+On Mon, Mar 26, 2018 at 04:10:18PM +0100, Colin Ian King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The current for-loop zeros variable i and only loops once, hence
+> not all the buffers are free'd.  Fix this by setting i correctly.
+> 
+> Detected by CoverityScan, CID#1463415 ("Operands don't affect result")
+> 
+> Fixes: a5073d6054f7 ("RDMA/hns: Add eq support of hip08")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Yixian Liu <liuyixian@huawei.com>
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_smd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to for-rc, thanks
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index dabd73bd5577..6bb9d21be6bc 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -167,9 +167,9 @@ struct qcom_smd_endpoint {
- 	struct qcom_smd_channel *qsch;
- };
- 
--#define to_smd_device(_rpdev)	container_of(_rpdev, struct qcom_smd_device, rpdev)
-+#define to_smd_device(r)	container_of(r, struct qcom_smd_device, rpdev)
- #define to_smd_edge(d)		container_of(d, struct qcom_smd_edge, dev)
--#define to_smd_endpoint(ept)	container_of(ept, struct qcom_smd_endpoint, ept)
-+#define to_smd_endpoint(e)	container_of(e, struct qcom_smd_endpoint, ept)
- 
- /**
-  * struct qcom_smd_channel - smd channel struct
--- 
-2.16.2
+Jason
