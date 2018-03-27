@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49TpNK7edpc1jpr7fpNz4p+EKgHxmoqx3BLUj7K2yjLMSJDBeHNLCgTbLMahcGOS2/g/ENM
-ARC-Seal: i=1; a=rsa-sha256; t=1522168252; cv=none;
+X-Google-Smtp-Source: AIpwx48rQE6fsWE7bNT4EBVx84iWXK5n4KeC9oYyZLOUFsKI8KWJ95XyxY/NdEvf2PSqcFlcRN44
+ARC-Seal: i=1; a=rsa-sha256; t=1522168249; cv=none;
         d=google.com; s=arc-20160816;
-        b=WDyb8rdCs+H0mhLj5V3Sr28x1ivu3O0oaShYr7TBaekKmXr4jaN85PBsj4dbWUere2
-         U8RcuSwSXfH1ayedOXSv6yi5oR0QEJpJfp3mzI6+mTaQ33UwE8/QMtE8H29dt+CCrGiS
-         petBOChjn0kooPicwVspEdokLPg+dsvJ1tww9n2cidabMn3y14a30OnoXz48IuhKMQXN
-         qIKPxxrelNVEKRh9UtLB0kdvheZe2qPg6UVWuOqXGY1Rot/gyAkE4hPdcV3v8iIg+Bnv
-         xTGzrsXebYdnVc/hDY9lGEEc/E74Vgd6plCMA8xsNYmlWjN8xbXPdr4UAnwV3lQZ6Yiu
-         f/rA==
+        b=F9HtpeiG79lAVbdFaGe+aeuns+Z2zv2JoSLpyjuagUFyY9b8WnVbdsuzg8e1mB0Ksj
+         vCzW71SMXBi1STuQBlDGhID/qTGDjUUx9R7FHuTMvtHXz9yeOiUqINswWsj6cM9nEHCc
+         HJ/aj9MqAwSOsy4mvwfFHPzEykEnc7Fh1RHxPM9udd48zd06PmJqGf7+gLCdEBKyQkwt
+         vBTFh0SR2wSYAV0Da9jn7zEZvC93JfLzfDFzVHrLgBWdcLdeI1umvlkQKOurPlLU4XSP
+         XCoCFOxcI7pmWD3gxXOF+WyXoXKH1xI2RXA+w2kHNh4FROQAGg29zYI65vIrO2L4To23
+         hq+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=slsUZ8xooCUY0vdmDANDxqSVpXDAainAZeJlC3OWBYI=;
-        b=MzaWK3WsWKOTp+iSpRGYaz1C9ZjgFVp4/64FL2yp0Q1BmoXVEmDvJE0u5tSuUMmB3C
-         O/50yMtqOj2c64/dmTGUGGFOKOAry7dRESKdRIp8V0RXwD2hNpjYXwp4J/BO0JuQOqmv
-         HAooE25mIJ6mKt1YNL5UcLx1NeeHRQlZa5OVZFMOTRY0TIiKuJT26NsSeWNty/lNP9O3
-         4AhZ+bFvArj+FNsZnx/16+VjVQuU5KZ3me6X0R76h4h0LhhFOE8jjDcKo5rXuG1Z5VUF
-         Bf49GzKk5e9EUPEFTJlEZqq1ZbctaoO/+HwDfvAeea24dpUd0lv17ax1H4ZQaK/8aceQ
-         m4Yw==
+        bh=tb8qVtCYSbUELcyse/LeZZrgyR2K8ao4bLrq+/KZumQ=;
+        b=lMcViXndYI3XbR8GBeIckrnXuSowWXD9MkAP09qSv9Sv1vUUPvcFCldLwUMtVBJCiH
+         8fT4lN05EoYgfIWzHievIZAg+XlSzjyBCIO1+THUD/M7+XdcPTBDEbxSZ5FPMoUv5tL2
+         ewOjoHgQYl1t+hvFbAI/j0d9XSPWKjiyUvV+Yj2wwNVHP4BpylMqF3nT9j85q4KSiOCV
+         N24WGZbcEBuwkMLFsRTQqQo8IMzxbo9DLWkI7BzjpWEId2ggDwCdntxxOXT4BPGW9jeW
+         O9oh7HeUleXC88AIQtmzZjpEucAPq9qYjGVQSt2AdD5XDTf8eoRJWc9VA97DtSk401Sc
+         0h6w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kirill Marinushkin <k.marinushkin@gmail.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 03/67] ALSA: usb-audio: Fix parsing descriptor of UAC2 processing unit
-Date: Tue, 27 Mar 2018 18:26:55 +0200
-Message-Id: <20180327162726.875732341@linuxfoundation.org>
+	Michael Nosthoff <committed@heine.so>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.9 02/67] iio: st_pressure: st_accel: pass correct platform data to init
+Date: Tue, 27 Mar 2018 18:26:54 +0200
+Message-Id: <20180327162726.824005009@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108963127558507?=
-X-GMAIL-MSGID: =?utf-8?q?1596109097322905506?=
+X-GMAIL-THRID: =?utf-8?q?1596108960436960316?=
+X-GMAIL-MSGID: =?utf-8?q?1596109094623655821?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +49,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
+From: Michael Nosthoff <committed@heine.so>
 
-commit a6618f4aedb2b60932d766bd82ae7ce866e842aa upstream.
+commit 8b438686a001db64c21782d04ef68111e53c45d9 upstream.
 
-Currently, the offsets in the UAC2 processing unit descriptor are
-calculated incorrectly. It causes an issue when connecting the device which
-provides such a feature:
+Commit 7383d44b added a pointer pdata which get set to the default
+platform_data when non was defined in the device. But it did not
+pass this pointer to the st_sensors_init_sensor call but still
+used the maybe uninitialized platform_data from dev.
 
-~~~~
-[84126.724420] usb 1-1.3.1: invalid Processing Unit descriptor (id 18)
-~~~~
+This breaks initialization when no platform_data is given and
+the optional st,drdy-int-pin devicetree option is not set.
 
-After this patch is applied, the UAC2 processing unit inits w/o this error.
+This commit fixes this.
 
-Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org
+Fixes: 7383d44b ("iio: st_pressure: st_accel: Initialise sensor platform data properly")
+Signed-off-by: Michael Nosthoff <committed@heine.so>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/usb/audio.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/accel/st_accel_core.c       |    2 +-
+ drivers/iio/pressure/st_pressure_core.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/uapi/linux/usb/audio.h
-+++ b/include/uapi/linux/usb/audio.h
-@@ -369,7 +369,7 @@ static inline __u8 uac_processing_unit_b
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		desc->baSourceID[desc->bNrInPins + 4] :
--		desc->baSourceID[desc->bNrInPins + 6];
-+		2; /* in UAC2, this value is constant */
- }
+--- a/drivers/iio/accel/st_accel_core.c
++++ b/drivers/iio/accel/st_accel_core.c
+@@ -858,7 +858,7 @@ int st_accel_common_probe(struct iio_dev
+ 	if (!pdata)
+ 		pdata = (struct st_sensors_platform_data *)&default_accel_pdata;
  
- static inline __u8 *uac_processing_unit_bmControls(struct uac_processing_unit_descriptor *desc,
-@@ -377,7 +377,7 @@ static inline __u8 *uac_processing_unit_
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		&desc->baSourceID[desc->bNrInPins + 5] :
--		&desc->baSourceID[desc->bNrInPins + 7];
-+		&desc->baSourceID[desc->bNrInPins + 6];
- }
+-	err = st_sensors_init_sensor(indio_dev, adata->dev->platform_data);
++	err = st_sensors_init_sensor(indio_dev, pdata);
+ 	if (err < 0)
+ 		goto st_accel_power_off;
  
- static inline __u8 uac_processing_unit_iProcessing(struct uac_processing_unit_descriptor *desc,
+--- a/drivers/iio/pressure/st_pressure_core.c
++++ b/drivers/iio/pressure/st_pressure_core.c
+@@ -678,7 +678,7 @@ int st_press_common_probe(struct iio_dev
+ 	if (!pdata && press_data->sensor_settings->drdy_irq.addr)
+ 		pdata =	(struct st_sensors_platform_data *)&default_press_pdata;
+ 
+-	err = st_sensors_init_sensor(indio_dev, press_data->dev->platform_data);
++	err = st_sensors_init_sensor(indio_dev, pdata);
+ 	if (err < 0)
+ 		goto st_press_power_off;
+ 
