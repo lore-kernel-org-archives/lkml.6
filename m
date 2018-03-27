@@ -1,110 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751182AbeC0GLV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:11:21 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:43965 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750880AbeC0GLS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:11:18 -0400
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC: David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        devicetree <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
- <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
- <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
- <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
- <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <6c55e081-57ba-6c39-8494-cda5022aa927@ti.com>
-Date: Tue, 27 Mar 2018 11:39:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1751231AbeC0GMn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:12:43 -0400
+Received: from mga11.intel.com ([192.55.52.93]:35461 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750880AbeC0GMm (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 02:12:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
+   d="scan'208";a="29154056"
+Subject: Re: [PATCH v1 3/3] perf: Support perf -vv
+To: Ingo Molnar <mingo@kernel.org>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
+ <1522080424-12912-4-git-send-email-yao.jin@linux.intel.com>
+ <20180327060336.gjdy442pkdc7k2rr@gmail.com>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <518dbf6a-4fe7-a662-984e-297c2f2ae63f@linux.intel.com>
+Date: Tue, 27 Mar 2018 14:12:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180327060336.gjdy442pkdc7k2rr@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart,
 
-On Friday 23 March 2018 10:46 PM, Bartosz Golaszewski wrote:
-> 2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
->>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->>>> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
->>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>
->>>>> This series converts the only user of the handcoded, mach-specific reset
->>>>> routines in the davinci platform to using the reset framework.
->>>>>
->>>>> Patch 1 modifies the way lookup entries are registered with the reset
->>>>> framework.
->>>>>
->>>>> Patches 2-4 add necessary lookups/DT-properties.
->>>>>
->>>>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
->>>>>
->>>>> Patch 8 removes now dead code.
->>>>>
->>>>> Philipp: it turned out that it's indeed better to use the reset
->>>>> controller's device name for the entry lookup.
->>>>>
->>>>> Tested both in DT and legacy modes by booting the examples from
->>>>> ti-ipc-rtos recipe in meta-ti.
->>>>>
->>>>> This series applies on top of David Lechner's common-clk-v9 branch[1]
->>>>> with Philipp Zabel's reset/next branch[2] pulled in.
->>>>>
->>>>> It can be found in my github tree as well[3].
->>>>>
->>>>
->>>> What's the merge strategy for the rest of the patches? I should apply
->>>> the clk ones after the next -rc1?
->>>
->>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
->>>
->>> The you could apply the driver patches and let Sekhar take all the
->>> platform code?
->>>
->>
->> Ok that could work too.
+
+On 3/27/2018 2:03 PM, Ingo Molnar wrote:
 > 
-> Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
-> Stephen taking them through the clock tree? Otherwise it would get
-> complicated since they depend on the first clk patch and the last clk
-> patch depends on them.
+> * Jin Yao <yao.jin@linux.intel.com> wrote:
+> 
+>> +++ b/tools/perf/perf.c
+>> @@ -64,6 +64,7 @@ static struct cmd_struct commands[] = {
+>>   	{ "top",	cmd_top,	0 },
+>>   	{ "annotate",	cmd_annotate,	0 },
+>>   	{ "version",	cmd_version,	0 },
+>> +	{ "version2",	cmd_version2,	0 },
+>>   	{ "script",	cmd_script,	0 },
+>>   	{ "sched",	cmd_sched,	0 },
+>>   #ifdef HAVE_LIBELF_SUPPORT
+>> @@ -190,6 +191,11 @@ static int handle_options(const char ***argv, int *argc, int *envchanged)
+>>   			break;
+>>   		}
+>>   
+>> +		if (!strcmp(cmd, "-vv")) {
+>> +			(*argv)[0] = "--version2";
+>> +			break;
+>> +		}
+> 
+> That is just lazy hackery, please use the regular option library to add options
+> and document them!
+> 
+> Also, '--version2' is a sloppy name, the right solution is to do what Git does, it
+> has a --build-options sub-option to 'perf version':
+> 
+>    triton:~/tip> git version -h
+>    usage: git version [<options>]
+> 
+>        --build-options       also print build options
+> 
+> 
+>    triton:~/tip> git version --build-options
+>    git version 2.14.1
+>    sizeof-long: 8
+> 
+> This should be done for perf as well, and _then_ maybe can we add a helper alias
+> that maps '-vv' to 'version --build-options'.
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
 
-I will not be queuing the DTS patches for v4.17. They depend on clock
-framework DTS patches which itself I plan to queue for v4.18. Given
-this, I think the best bet is:
+Something like 'perf version --build-options' and that will be mapped to 
+'-vv'.
 
-Ohad/Bjorn queue remoteproc patches already acked by Suman and having no
-dependencies. That is, 5/8 and 6/8.
+It's a good idea, thanks!
 
-If Philipp can provide an immutable branch with reset changes, it will
-be great and Stephen can queue 4/8. If not, its best to resend that
-patch to Stephen once v4.17-rc1 is out.
-
-The remaining patches need to wait till v4.18 (or even v4.19 if
-dependencies don't pan out well).
-
-Thanks,
-Sekhar
+Thanks
+Jin Yao
