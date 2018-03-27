@@ -1,163 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751121AbeC0GRQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:17:16 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:37411 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750848AbeC0GRO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:17:14 -0400
-X-Google-Smtp-Source: AIpwx49lzaiM0YVqosR0dka3gKCUCiLzyeX2CCakMyX1QY2iGLfdRVQuBSErCcvMYGW1U8Vq9of3kQ==
-Date: Tue, 27 Mar 2018 08:17:09 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
-Message-ID: <20180327061709.GA10639@localhost.localdomain>
-References: <1521649309-26690-1-git-send-email-longman@redhat.com>
- <1521649309-26690-3-git-send-email-longman@redhat.com>
- <20180322084120.GE7231@localhost.localdomain>
- <e754e128-0a93-800e-e71b-2c8dc316ba8a@redhat.com>
- <20180323075952.GA4763@localhost.localdomain>
- <a8860a42-31b5-4620-7b23-b7515ee11d7d@redhat.com>
- <20180326124711.GE5942@localhost.localdomain>
- <bf79b45e-7716-65af-03ca-7112dc367371@redhat.com>
+        id S1751739AbeC0GUo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:20:44 -0400
+Received: from mga17.intel.com ([192.55.52.151]:39466 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750753AbeC0GUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 02:20:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
+   d="scan'208";a="41535099"
+Message-ID: <5AB9E377.30900@intel.com>
+Date: Tue, 27 Mar 2018 14:23:51 +0800
+From: Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf79b45e-7716-65af-03ca-7112dc367371@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
+        pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com
+Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
+References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>     <1522031994-7246-2-git-send-email-wei.w.wang@intel.com> <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
+In-Reply-To: <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/03/18 16:28, Waiman Long wrote:
-> On 03/26/2018 08:47 AM, Juri Lelli wrote:
-> > On 23/03/18 14:44, Waiman Long wrote:
-> >> On 03/23/2018 03:59 AM, Juri Lelli wrote:
-> > [...]
-> >
-> >>> OK, thanks for confirming. Can you tell again however why do you think
-> >>> we need to remove sched_load_balance from root level? Won't we end up
-> >>> having tasks put on isolated sets?
-> >> The root cgroup is special that it owns all the resources in the system.
-> >> We generally don't want restriction be put on the root cgroup. A child
-> >> cgroup has to be created to have constraints put on it. In fact, most of
-> >> the controller files don't show up in the v2 cgroup root at all.
-> >>
-> >> An isolated cgroup has to be put under root, e.g.
-> >>
-> >>       Root
-> >>      /    \
-> >> isolated  balanced
-> >>
-> >>> Also, I guess children groups with more than one CPU will need to be
-> >>> able to load balance across their CPUs, no matter what their parent
-> >>> group does?
-> >> The purpose of an isolated cpuset is to have a dedicated set of CPUs to
-> >> be used by a certain application that makes its own scheduling decision
-> >> by placing tasks explicitly on specific CPUs. It just doesn't make sense
-> >> to have a CPU in an isolated cpuset to participated in load balancing in
-> >> another cpuset. If one want load balancing in a child cpuset, the parent
-> >> cpuset should have load balancing turned on as well.
-> > Isolated with CPUs overlapping some other cpuset makes little sense, I
-> > agree. What I have in mind however is an isolated set of CPUs that don't
-> > overlap with any other cpuset (as your balanced set above). In this case
-> > I think it makes sense to let the sys admin decide if "automatic" load
-> > balancing has to be performed (by the scheduler) or no load balacing at
-> > all has to take place?
-> >
-> > Further extending your example:
-> >
-> >              Root [0-3]
-> > 	     /        \
-> >         group1 [0-1] group2[2-3]
-> >
-> > Why should we prevent load balancing to be disabled at root level (so
-> > that for example tasks still residing in root group are not freely
-> > migrated around, potentially disturbing both sub-groups)?
-> >
-> > Then one can decide that group1 is a "userspace managed" group (no load
-> > balancing takes place) and group2 is balanced by the scheduler.
-> >
-> > And this is not DEADLINE specific, IMHO.
-> >
-> >> As I look into the code, it seems like root domain is probably somewhat
-> >> associated with cpu_exclusive only. Whether sched_load_balance is set
-> >> doesn't really matter.  I will need to look further on the conditions
-> >> where a new root domain is created.
-> > I checked again myself (sched domains code is always a maze :) and I
-> > believe that sched_load_balance flag indeed controls domains (sched and
-> > root) creation and configuration . Changing the flag triggers potential
-> > rebuild and separed sched/root domains are generated if subgroups have
-> > non overlapping cpumasks.  cpu_exclusive only enforces this latter
-> > condition.
-> 
-> Right, I ran some tests and figured out that to have root_domain in the
-> child cgroup level, we do need to disable load balancing at the root
-> cgroup level and enabling it in child cgroups that are mutually disjoint
-> in their cpu lists. The cpu_exclusive flag isn't really needed.
+On 03/27/2018 05:22 AM, Andrew Morton wrote:
+> On Mon, 26 Mar 2018 10:39:51 +0800 Wei Wang <wei.w.wang@intel.com> wrote:
+>
+>> This patch adds support to walk through the free page blocks in the
+>> system and report them via a callback function. Some page blocks may
+>> leave the free list after zone->lock is released, so it is the caller's
+>> responsibility to either detect or prevent the use of such pages.
+>>
+>> One use example of this patch is to accelerate live migration by skipping
+>> the transfer of free pages reported from the guest. A popular method used
+>> by the hypervisor to track which part of memory is written during live
+>> migration is to write-protect all the guest memory. So, those pages that
+>> are reported as free pages but are written after the report function
+>> returns will be captured by the hypervisor, and they will be added to the
+>> next round of memory transfer.
+>>
+>> ...
+>>
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -4912,6 +4912,102 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+>>   	show_swap_cache_info();
+>>   }
+>>   
+>> +/*
+>> + * Walk through a free page list and report the found pfn range via the
+>> + * callback.
+>> + *
+>> + * Return 0 if it completes the reporting. Otherwise, return the non-zero
+>> + * value returned from the callback.
+>> + */
+>> +static int walk_free_page_list(void *opaque,
+>> +			       struct zone *zone,
+>> +			       int order,
+>> +			       enum migratetype mt,
+>> +			       int (*report_pfn_range)(void *,
+>> +						       unsigned long,
+>> +						       unsigned long))
+>> +{
+>> +	struct page *page;
+>> +	struct list_head *list;
+>> +	unsigned long pfn, flags;
+>> +	int ret = 0;
+>> +
+>> +	spin_lock_irqsave(&zone->lock, flags);
+>> +	list = &zone->free_area[order].free_list[mt];
+>> +	list_for_each_entry(page, list, lru) {
+>> +		pfn = page_to_pfn(page);
+>> +		ret = report_pfn_range(opaque, pfn, 1 << order);
+>> +		if (ret)
+>> +			break;
+>> +	}
+>> +	spin_unlock_irqrestore(&zone->lock, flags);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +/**
+>> + * walk_free_mem_block - Walk through the free page blocks in the system
+>> + * @opaque: the context passed from the caller
+>> + * @min_order: the minimum order of free lists to check
+>> + * @report_pfn_range: the callback to report the pfn range of the free pages
+>> + *
+>> + * If the callback returns a non-zero value, stop iterating the list of free
+>> + * page blocks. Otherwise, continue to report.
+>> + *
+>> + * Please note that there are no locking guarantees for the callback and
+>> + * that the reported pfn range might be freed or disappear after the
+>> + * callback returns so the caller has to be very careful how it is used.
+>> + *
+>> + * The callback itself must not sleep or perform any operations which would
+>> + * require any memory allocations directly (not even GFP_NOWAIT/GFP_ATOMIC)
+>> + * or via any lock dependency. It is generally advisable to implement
+>> + * the callback as simple as possible and defer any heavy lifting to a
+>> + * different context.
+>> + *
+>> + * There is no guarantee that each free range will be reported only once
+>> + * during one walk_free_mem_block invocation.
+>> + *
+>> + * pfn_to_page on the given range is strongly discouraged and if there is
+>> + * an absolute need for that make sure to contact MM people to discuss
+>> + * potential problems.
+>> + *
+>> + * The function itself might sleep so it cannot be called from atomic
+>> + * contexts.
+> I don't see how walk_free_mem_block() can sleep.
 
-It seems to make little sense at root level indeed. 
+OK, it would be better to remove this sentence for the current version. 
+But I think we could probably keep it if we decide to add cond_resched() 
+below.
 
-> I am not against doing that at the root cgroup, but it is kind of weird
-> in term of semantics. If we disable load balancing in the root cgroup,
-> but enabling it at child cgroups, what does that mean to the processes
-> that are still in the root cgroup?
+>
+>> + * In general low orders tend to be very volatile and so it makes more
+>> + * sense to query larger ones first for various optimizations which like
+>> + * ballooning etc... This will reduce the overhead as well.
+>> + *
+>> + * Return 0 if it completes the reporting. Otherwise, return the non-zero
+>> + * value returned from the callback.
+>> + */
+>> +int walk_free_mem_block(void *opaque,
+>> +			int min_order,
+>> +			int (*report_pfn_range)(void *opaque,
+>> +			unsigned long pfn,
+>> +			unsigned long num))
+>> +{
+>> +	struct zone *zone;
+>> +	int order;
+>> +	enum migratetype mt;
+>> +	int ret;
+>> +
+>> +	for_each_populated_zone(zone) {
+>> +		for (order = MAX_ORDER - 1; order >= min_order; order--) {
+>> +			for (mt = 0; mt < MIGRATE_TYPES; mt++) {
+>> +				ret = walk_free_page_list(opaque, zone,
+>> +							  order, mt,
+>> +							  report_pfn_range);
+>> +				if (ret)
+>> +					return ret;
+>> +			}
+==>
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(walk_free_mem_block);
+> This looks like it could take a long time.  Will we end up needing to
+> add cond_resched() in there somewhere?
 
-It might be up to the different scheduling classes I guess. See more on
-this below.
+OK. How about adding cond_resched at the above place "==>" (i.e. every 
+order)?
 
-> The sched_load_balance flag isn't something that is passed to the
-> scheduler. It only only affects the CPU topology of the system. So I
-> suspect that a process in the root cgroup will be load balanced among
-> the CPUs in the one of the child cgroups. That doesn't look right unless
-> we enforce that no process can be in the root cgroup in this case.
-> 
-> Real cpu isolation will then require that we disable load balancing at
-> root, and enable load balancing in child cgroups that only contain CPUs
-> outside of the isolated CPU list. Again, it is still possible that some
-> tasks in the root cgroup, if present, may be using some of the isolated
-> CPUs.
-
-So, for DEADLINE this is currently a problem. We know that this is
-broken (and Mathieu proposed already patches to fix it [1]). What we
-want, I think, is to deny setting a task to DEADLINE if its current
-affinity could overlap some exclusive set (root domain as per above), as
-for example in your case if the task is residing in the root group.
-Since DEADLINE bases load balancing on root domains, once those have
-been correctly created, tasks shouldn't be able to escape. And if no
-task can reside on the root level once sched_load_balance has been
-disable, it seems we won't have the problem you fear.
-
-RT looks similar in this sense (load balancing using root domains info),
-but no admission control is performed, so I guess we could fall in your
-problematic situation.
-
-FAIR uses a mix of sched domains and root domains information to perform
-load balancing, so once tasks are divided among configured sets all
-should work OK, but again there might be still some tasks left at root
-group. :/ I'm not sure what happens to those w.r.t. load balancing.
-
-> Maybe we can have a different root level flag, say,
-> sched_partition_domain that is equivalent to !sched_load_balnace.
-> However, I am still not sure if we should enforce that no task should be
-> in the root cgroup when the flag is set.
-> 
-> Tejun and Peter, what are your thoughts on this?
-
-Let's see what they think. :)
-
-Thanks for the discussion!
 
 Best,
-
-- Juri
-
-[1] https://marc.info/?l=linux-kernel&m=151855397701977&w=2
+Wei
