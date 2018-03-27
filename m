@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48AsEPl164KpeJlbBFg4++qtQ6gJjpDIqyS+fNgXM4QVtuKYj3P1bD7KK62GbhSrCwgis5o
-ARC-Seal: i=1; a=rsa-sha256; t=1522168959; cv=none;
+X-Google-Smtp-Source: AIpwx49wtbnm389lOo7IGWr7O+Zw+8DPdjGqILnPCNfGlAX9l4uEQHc6XSYx+Gu8YVjyEuyaBIhS
+ARC-Seal: i=1; a=rsa-sha256; t=1522168957; cv=none;
         d=google.com; s=arc-20160816;
-        b=mdvXjWhw/14xhSKrs2SQ0pC2YmXMAR8vGMku8sIJYXHQkly9pXt643Shs6vghra+EQ
-         qn8sEzGA1KrEdc99awS8D9iDXA5XDi1hPUC+/0ttrs8zLlcUtA2kQXCT8hGLU79ArIqb
-         hrxwPdibrjFYnKC9e/twXk7k1isGvrPZ+EXSQ7SiJRk+xHCcxZ06GTbpoeN6MkNdNk2J
-         EhDaASlctkXEpnqmMQXSOHEsz8vd4I46VWcL0lRYsBE5izLvvz7VapWeY7NXOhlRPi/C
-         NCu4otqitjx6wZ8dR9AWXV8bxzbJzxu9P6V++Ntqf7102hN9tp1BtPQDLRJO4MOXdW0Z
-         NHyg==
+        b=HOBarIKf2x58hRzLQcJfJmqducX7tlZ8zGcXPoyFRYy+fmpm1HABPhA4lFFOZnLf5t
+         CBCRZrVOI4eV04OHQKpUe8Lnq9iO8afBOkuywbWmDKanQslVsZZazXebLNMjr6yA/r6r
+         1PpElPdU7BCFOrUoiMfHoLeqE15jafPOHmg4xvIphUCOaKm2/eLGTyQRO6YIOY9sEZ/L
+         ylNPuNSv4BsWVE70Wx1zKpwqf5YvCMnjen0q1RyyGtal17xfaSX0U07kaLyWDQD6mWoM
+         7XXudvSi1vQ+T/uaZkbg1movL2xZMK90MMisLdPB6wQhEUClj+qDZMMk06z8NEo6dJiA
+         WqsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Ncau9VQK40pah4lFkj+NcP+srnWRLEtEEDTiPWAD/8g=;
-        b=dGAEhxVbjKdK3Ojj79MkPWDD0puf5kQKA8l4g5QBLHmOsigxCnXdo8XAMm3Rl6CJad
-         P4J14ghnQ9YdIN++fAwJ3U5dXapaZGhJDSDCBpbxzQgeZyIp2urc/6wcNgO87oDyIGEE
-         77hkRrYvwbykpVEPhq4Qqewbdd2t42XVEyXxpgPpFlh0t7QlSw5X5BBKJi+U4kYzux9M
-         ompKhjorj2L9sM6yxw3AQVfU5/jqWm9onmi+z3OP/2OkgtITHdIoxKlaEJdm2aANu1Pd
-         /I46MADS/QL+BtJVoDYpo+ZbibFr2mvMm/mQv2/qyikHN8zisR7hL1cy9ds6lu0CH+BJ
-         YXHg==
+        bh=72jCOWIsDYzQE4hqDOEUThbeE80+3Hmt+rO5Bmk7Hjk=;
+        b=AZQjh4I52954tvz1WAe2VRYvC0O278sVz0+pVCI1fckrnFW+F94jEDleKQwWKcKYBw
+         yeWxjY8Lur0K9E/ygtRgxtW/NrzuIhCXE7wLKRDJEnscNwKl8Dsfw2N/XuzRnbrksxE+
+         4uFHO4iECjRhtYRcqZCRqPqgYXcgDdoOgxUbF07Ew0ktp3iavMeZYufK5ipUwk5k5yQS
+         GrlCmG01jL6lmALn68RWPLvK7bHnJHOcDoeR64c9y2lR0MHmrSL68Djc/a5xPECM+ZZF
+         BmF2xucDFDNbXNQJQtwt+31i2vxN1dZIqTsEs3680PVrvA/UHCJkdKgO+1EW4y131MSs
+         XRIA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.15 092/105] hwmon: (k10temp) Add temperature offset for Ryzen 1900X
-Date: Tue, 27 Mar 2018 18:28:12 +0200
-Message-Id: <20180327162803.751729515@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.15 074/105] staging: ncpfs: memory corruption in ncp_read_kernel()
+Date: Tue, 27 Mar 2018 18:27:54 +0200
+Message-Id: <20180327162802.508474143@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109839284439815?=
-X-GMAIL-MSGID: =?utf-8?q?1596109839284439815?=
+X-GMAIL-THRID: =?utf-8?q?1596109021146013259?=
+X-GMAIL-MSGID: =?utf-8?q?1596109836398497990?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,27 +48,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 6509614fdd2d05c6926d50901a45d5dfb852b715 upstream.
+commit 4c41aa24baa4ed338241d05494f2c595c885af8f upstream.
 
-Like the other CPUs from the same series, the 1900X has a
-temperature offset of 27 degrees C.
+If the server is malicious then *bytes_read could be larger than the
+size of the "target" buffer.  It would lead to memory corruption when we
+do the memcpy().
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Reported-by: Dr Silvio Cesare of InfoSect <Silvio Cesare <silvio.cesare@gmail.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/k10temp.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ncpfs/ncplib_kernel.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -86,6 +86,7 @@ static const struct tctl_offset tctl_off
- 	{ 0x17, "AMD Ryzen 7 1800X", 20000 },
- 	{ 0x17, "AMD Ryzen Threadripper 1950X", 27000 },
- 	{ 0x17, "AMD Ryzen Threadripper 1920X", 27000 },
-+	{ 0x17, "AMD Ryzen Threadripper 1900X", 27000 },
- 	{ 0x17, "AMD Ryzen Threadripper 1950", 10000 },
- 	{ 0x17, "AMD Ryzen Threadripper 1920", 10000 },
- 	{ 0x17, "AMD Ryzen Threadripper 1910", 10000 },
+--- a/fs/ncpfs/ncplib_kernel.c
++++ b/fs/ncpfs/ncplib_kernel.c
+@@ -981,6 +981,10 @@ ncp_read_kernel(struct ncp_server *serve
+ 		goto out;
+ 	}
+ 	*bytes_read = ncp_reply_be16(server, 0);
++	if (*bytes_read > to_read) {
++		result = -EINVAL;
++		goto out;
++	}
+ 	source = ncp_reply_data(server, 2 + (offset & 1));
+ 
+ 	memcpy(target, source, *bytes_read);
