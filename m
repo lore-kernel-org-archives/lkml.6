@@ -1,149 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751096AbeC0Ig4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:36:56 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54407 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbeC0Igv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:36:51 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180327083648euoutp02f2ad8f609f73aa96dbddbc79ef7b67f0~fuhdVXSko2490224902euoutp02I
-X-AuditID: cbfec7f2-1dbff70000011644-16-5aba029da44b
-Subject: Re: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder
- driver
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <8115587a-4925-5602-43db-4285a3de7b0e@samsung.com>
-Date: Tue, 27 Mar 2018 10:36:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVWJhmxXS+mvuwjrCOzurArFurqKwQ2PJD-eRCqbLRAng@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHed7bXsXJ40x2SOmyLlakZhd4IRO7fHgJoiI/yMJq5uul6ZTN
-        SxbpUqpp2f2Cy9JIMawwNbecDGtaQ0zNVniBVMLUWSvIZopZOV8iv/2e//mfc/4HHpaU6ZnF
-        bLImQ9BqVCkKxpsyvZruCrlDWJQbbp1eyxV3thFcvsFFc2WtnTT3zv2N4Ub6rQRX0OBGnH3m
-        sYQrvFIh4RyWUoZrcH4luKGHLoar7OkmOPvNizR3xtoq4V5X90u4kecmJgrzj+4+QrzjYjHB
-        D934Q/CNxg8S/rahhOb/9H4k+brqQoa3tRgQb54covnB83aCb3LnI37U8ZPhS6cnKX6ibsk+
-        X6V3RLyQkpwlaMMij3gn9Xw0StKd+LjjZgGtR00+RciLBbwZfs0OoCLkzcrwAwRTthe0+PiB
-        4OWXWtrjkuEJBFdH6X8d1TMOiahXIegpUYvsQmC/k1SEWNYf74VfjYwHF+EQKJ0mPCNJPEXD
-        /ZJC0mNn8FqYre9jPCzFkTA82014mMKr4PF457wegGPg3o1PSPT4QVvJMOVhL7wfpq73zMch
-        8VIwu0pJkeXQP1w2vwzwMxbMFYPzIQDvgjprghjfH8btTyUiB0H7tQuUyCehbyyfEnsNCAZn
-        zjFiYSu02LtpzxxyLnSNJUyUt4HJPUCL432h1+UnRvCFq6ZbpChLwXBWJrqXw2BHAymyHCrf
-        uJnLaIVxwWHGBccYFxxj/L+3HFHVSC5k6lITBV24RsgO1alSdZmaxNCjaal1aO5ftv+2f3+G
-        3G/jbAizSOEjjWIalTJalaXLSbUhYEnFIqm6ck6SxqtyTgjatMPazBRBZ0OBLKWQSw+tyVXK
-        cKIqQ1ALQrqg/VclWK/FenRyZXRcwICt/n3MmrFzCk1xc9iTaKu7/BhvCbbWWLOD17OV+pE9
-        uX6ntsc6V6tzzQd2hUfVmi59rjq/I+Cyunh/Rs1Aolm9LehnwXjegWVbiiIT8jaaYy0H5c5I
-        Z1dzYGvcpu9fOi6dHlIGNOV9jQikQpt2jkf36YPSzOrdjXt3tCkoXZIqfB2p1an+AlMKMVGT
-        AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SXUhTYRzGec/ZOTuKk9PUfPHCbNiHkdM5l+/UzIsuToZYRCWG2NCDmm7T
-        nfkVRH6Q6EJJMsU5NMpdtJRgNU1NkGmOYVm2SBM0MVOsNMg0PzPnCnb343me38Uf/hQubCAC
-        qGyVltWoFLki0pM3/Mc2FarHelLCq6xyVDNix1B51SKBWgdHCPR+5QeJ5ib6MFRhWQHIttnB
-        R9V1bXzk6DGQyLKwhKHpx4skMo6NYsjWUEugW32DfPTKNMFHc/2dZDzNtLe0A8ZRW4Mx0/d2
-        MKZbP8lnmquaCGZnfAZnzKZqkrEOVAGma3WaYD7dtmFM70o5YOYdv0nGsL7KY5bNgee8U8Sx
-        GnWBlg3KUnPak6IrEhQhlsiROCJSLpZIo1KjI2SisLjYDDY3u5DVhMVdFWeNzej5eQt0saOh
-        gigFvV464EFBOhKaNh18HfCkhLQRwM75LZ6r8Ie9rYu4i33g1gcd6Rp9A/DtjrOgKB86ES5M
-        +jvRlw6FhnXMOcHpLQLulJowpyuka3D4YjvQySQdAreffiSdLKDj4Oz26N6GRx+CHV9H9nI/
-        OhlWP2rluTb7oL1pdo896PNwrX6McDJOH4FbLe9wFx+AXYuGf+wPJ2ZbsTtAqHfT9W6K3k3R
-        uyn3Ac8EfNkCTpmp5CLEnELJFagyxelqpRns/kTn0Pqz50C3dMEKaAqIvARrP7tThISikCtR
-        WgGkcJGvIMe4GwkyFCXXWY06TVOQy3JWINs9rg4P8EtX736YSpsmkUmikFwSJY2SnkAif8Gb
-        8JIUIZ2p0LI5LJvHav57GOURUAqMjWUJjZK7U3NfujcOnvG0TP9qj2m8VPp64cbA8PHoCWxZ
-        Jrz2Pd+nsOxh8+GhoPGkgGFYdBa3Z/u+1BkfBEsVjf35iQ1FOWM+NsPFtfiBozmfM4pnBJXe
-        G0pt+E10KrWtvnKpOvlJ8LJMrjptsO9PLrkcm1QTnKDlWcz2EEGMiMdlKSTHcA2n+Av2hjB2
-        KQMAAA==
-X-CMS-MailID: 20180327083644eucas1p1ed53c7e19aaad8c8befebff1a191aed9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180327083644eucas1p1ed53c7e19aaad8c8befebff1a191aed9
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180327062437epcas5p3389cb070d15669febeb6f504cff2cf6f
-X-RootMTR: 20180327062437epcas5p3389cb070d15669febeb6f504cff2cf6f
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
-        <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
-        <CGME20180327062437epcas5p3389cb070d15669febeb6f504cff2cf6f@epcas5p3.samsung.com>
-        <30381869-9bc8-b6aa-a37a-598d9c8f280d@mentor.com>
-        <df124c8f-7c71-7941-9969-977dd19c7d1b@samsung.com>
-        <CAMuHMdVWJhmxXS+mvuwjrCOzurArFurqKwQ2PJD-eRCqbLRAng@mail.gmail.com>
+        id S1751185AbeC0IjH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:39:07 -0400
+Received: from SMTPBG252.QQ.COM ([183.60.52.105]:50866 "EHLO smtpbg252.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750918AbeC0IjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:39:04 -0400
+X-QQ-GoodBg: 0
+X-QQ-SSF: 00100000000000F0
+X-QQ-FEAT: jfJxHuYZxOAHS8jCwHJeEcdSCoGebqi9uHNfsC4/R0SE3VPvNmXI2P27BDusX
+        o/eQx39ntgqlMfdsDQs6LChsN9dMAhZwvbAWzkGKURpEcVEK+RbN7dP8rca4FCSN3goZuSk
+        ptaR8ITqoBow6A1l8qyAqX3trFxZ1wrScUKVGWhWMgy6fHpmlvVJybZ3wGckCJppYAZmOUR
+        is/sCNPuqzOA8+lnYR9+KJkko9pNzhmsfhg1IM31QnfR6Qm308qc9umuNbSasy5othXXA8n
+        sUDx7TjR6uAQSg+dWZm6jjrMtcf5Y6YUYxIg==
+X-QQ-BUSINESS-ORIGIN: 2
+X-Originating-IP: 222.92.124.153
+X-QQ-STYLE: 
+X-QQ-mid: bizmailfree34t1522139353t6714
+From: "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+To: "=?utf-8?B?VG9ueSBMaW5kZ3Jlbg==?=" <tony@atomide.com>
+Cc: "=?utf-8?B?QW5kcmV3IE1vcnRvbg==?=" <akpm@linux-foundation.org>,
+        "=?utf-8?B?RmFiaW8gRXN0ZXZhbQ==?=" <festevam@gmail.com>,
+        "=?utf-8?B?U3RlcGhlbiBSb3Rod2VsbA==?=" <sfr@canb.auug.org.au>,
+        "=?utf-8?B?UmljaCBGZWxrZXI=?=" <dalias@libc.org>,
+        "=?utf-8?B?UnVzc2VsbCBLaW5n?=" <linux@arm.linux.org.uk>,
+        "=?utf-8?B?WW9zaGlub3JpIFNhdG8=?=" <ysato@users.sourceforge.jp>,
+        "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>,
+        "=?utf-8?B?UmFsZiBCYWVjaGxl?=" <ralf@linux-mips.org>,
+        "=?utf-8?B?bGludXgtb21hcA==?=" <linux-omap@vger.kernel.org>,
+        "=?utf-8?B?SmFtZXMgSG9nYW4=?=" <james.hogan@mips.com>,
+        "=?utf-8?B?bW9kZXJhdGVkIGxpc3Q6QVJNL0ZSRUVTQ0FMRSBJTVggLyBNWEMgQVJNIEFSQ0hJVEVDVFVSRQ==?="
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Regression with arm in next with stack protector
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Date: Tue, 27 Mar 2018 16:29:12 +0800
+X-Priority: 3
+Message-ID: <tencent_1DDCF65B56759D1B570EF7DD@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20180323181452.GJ5799@atomide.com>
+        <CAOMZO5Bmpk4cwav-qTnNA6L16DwdDPp5LeKC-jY9=QzfVBuKSQ@mail.gmail.com>
+        <20180323121530.f28dc29939d9395268911a4e@linux-foundation.org>
+        <tencent_79FD53B203715FD7439C6EAB@qq.com>
+        <20180326153714.GG5700@atomide.com>
+In-Reply-To: <20180326153714.GG5700@atomide.com>
+X-QQ-ReplyHash: 1163589376
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizmailfree:lemote.com:qybgweb:qybgweb10
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2R8dE0d023857
 
-On 27.03.2018 09:36, Geert Uytterhoeven wrote:
-> Hi Andrzej,
->
-> On Tue, Mar 27, 2018 at 9:28 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>> --- /dev/null
->>>> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
->>>> +static void thc63_enable(struct drm_bridge *bridge)
->>>> +{
->>>> +    struct thc63_dev *thc63 = to_thc63(bridge);
->>>> +    struct regulator *vcc;
->>>> +    int i;
->>> unsigned int i;
->> Why? You are introducing silly bug this way, see few lines below.
->>
->>>> +
->>>> +    for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
->>>> +            vcc = thc63->vccs[i];
->>>> +            if (!vcc)
->>>> +                    continue;
->>>> +
->>>> +            if (regulator_enable(vcc))
->>>> +                    goto error_vcc_enable;
->>>> +    }
->>>> +
->>>> +    if (thc63->pdwn)
->>>> +            gpiod_set_value(thc63->pdwn, 0);
->>>> +
->>>> +    if (thc63->oe)
->>>> +            gpiod_set_value(thc63->oe, 1);
->>>> +
->>>> +    return;
->>>> +
->>>> +error_vcc_enable:
->>>> +    dev_err(thc63->dev, "Failed to enable regulator %s\n",
->>>> +            thc63_reg_names[i]);
->>>> +
->>>> +    for (i = i - 1; i >= 0; i--) {
->> Here, the loop will not end if you define i unsigned.
-> True.
->
->> I know one can change the loop, to make it working with unsigned. But
->> this clearly shows that using unsigned is more risky.
->> What are advantages of unsigned vs int in this case. Are there some
->> guidelines/discussions about it?
-> Some people consider signed integers harmful, as they may be converted
-> silently by the compiler to the "larger" unsigned type when needed.
+Allwinner devices are OK, Exynos devices (except 4210) are OK.
+ 
+------------------ Original ------------------
+From:  "Tony Lindgren"<tony@atomide.com>;
+Date:  Mon, Mar 26, 2018 11:37 PM
+To:  "陈华才"<chenhc@lemote.com>;
+Cc:  "Andrew Morton"<akpm@linux-foundation.org>; "Fabio Estevam"<festevam@gmail.com>; "Stephen Rothwell"<sfr@canb.auug.org.au>; "Rich Felker"<dalias@libc.org>; "Russell King"<linux@arm.linux.org.uk>; "Yoshinori Sato"<ysato@users.sourceforge.jp>; "linux-kernel"<linux-kernel@vger.kernel.org>; "Ralf Baechle"<ralf@linux-mips.org>; "linux-omap"<linux-omap@vger.kernel.org>; "James Hogan"<james.hogan@mips.com>; "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"<linux-arm-kernel@lists.infradead.org>;
+Subject:  Re: Regression with arm in next with stack protector
+ 
+* 陈华才 <chenhc@lemote.com> [180326 06:59]:
+> Hi, Tony and Fabio,
+> 
+> Could you please upload your kernel binary to somewhere for me? I don't understand why some ARM boards is OK while others are broken.
 
-Wow, it sounds crazy, shall we expect gigantic patchsets, converting all
-occurrences of int to "unsigned int" ? :)
-I know both types have their pros and cons and can behave unexpectedly
-in corner cases, but I do not see why unsigned should be preferred over
-signed in general, or in this particular case.
-I guess there were somewhere discussion about it, could you point me to
-it if possible, to avoid unnecessary noise in this thread.
+Well the kernel I'm testing is just current Linux next cross
+compiled omap2plus_defconfig kernel. I do have few more config
+options enabled like LOCKDEP and DEBUG_ATOMIC_SLEEP, but I
+doubt they matter here :)
 
-Regards
-Andrzej
+Then I'm using gcc-7.3.0 and binutils-2.30 built with the
+buildall.git scripts:
 
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
+git://git.infradead.org/users/segher/buildall.git
+
+If you still need binaries, let me know.
+
+Do you know which arm devices are working with your patch?
+
+Regards,
+
+Tony
