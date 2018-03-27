@@ -1,85 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752112AbeC0JnY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:43:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39358 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750978AbeC0JnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:43:23 -0400
-Subject: Re: [PATCH net] vhost: correctly remove wait queue during poll
- failure
-To: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1522122442-30317-1-git-send-email-jasowang@redhat.com>
- <20180327092811.ikvssyxgb74nucb4@dhcp-10-175-199-170.vpn.oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <b1576bcf-652a-7c1a-9d77-db54931ab979@redhat.com>
-Date: Tue, 27 Mar 2018 17:43:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752180AbeC0Jod (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:44:33 -0400
+Received: from mail7.hitachi.co.jp ([133.145.228.42]:36790 "EHLO
+        mail7.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeC0Joc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 05:44:32 -0400
+Message-ID: <5ABA127E.5080601@hitachi.com>
+Date: Tue, 27 Mar 2018 18:44:30 +0900
+From: KAMEI Hitoshi <hitoshi.kamei.xm@hitachi.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20120614 Thunderbird/13.0.1
 MIME-Version: 1.0
-In-Reply-To: <20180327092811.ikvssyxgb74nucb4@dhcp-10-175-199-170.vpn.oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+To: Ilya Dryomov <idryomov@gmail.com>
+CC: Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        "sage@redhat.com" <sage@redhat.com>,
+        "elder@kernel.org" <elder@kernel.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Re: Re: Re: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags
+ bit
+References: <5AAFA682.2080901@hitachi.com> <5AB0E4F3.8090108@easystack.cn> <C8603108370B1949BF3CC7742DDE5D35B8B39FD9@GSjpTKYDCembx31.service.hitachi.net> <CAOi1vP8eLcc6u-XhpSu33+3eDygy3Mp+_tJXT7ygdwsnUs-RmQ@mail.gmail.com> <CAOi1vP_7La=nCs71wG3=HbYLaxM3uBFytv8pjGJLuR_uuB0GLg@mail.gmail.com> <C8603108370B1949BF3CC7742DDE5D35B8B42988@GSJPTKYDCEMBX32.service.hitachi.net> <CAOi1vP_qFkDK00-_KJpbrnC3PbP371=R4wxBH8gk2s47qwfrhg@mail.gmail.com>
+In-Reply-To: <CAOi1vP_qFkDK00-_KJpbrnC3PbP371=R4wxBH8gk2s47qwfrhg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Ilya,
 
+Thank you for reviewing.
+I merged two patches into one patch and pushed the new patch to GitHub.
+And I opened the PR. Could you check the PR?
 
-On 2018年03月27日 17:28, Darren Kenny wrote:
-> Hi Jason,
->
-> On Tue, Mar 27, 2018 at 11:47:22AM +0800, Jason Wang wrote:
->> We tried to remove vq poll from wait queue, but do not check whether
->> or not it was in a list before. This will lead double free. Fixing
->> this by checking poll->wqh to make sure it was in a list.
->
-> This text seems at odds with the code below, instead of checking
-> poll-whq, you are removing that check...
->
-> Maybe the text needs rewording?
+And I forgot to mention in previous email that I modified your patch to
+apply the latest kernel because I couldn't apply your patch directly
+by using git am command due to a little bit problem, and I tested
+the kernel with the modified patch and rbd map command with notrim option.
 
-Yes, I admit it's bad, thanks for pointing out.
+The code described below is the modified patch by my hand.
 
-How about:
+Regards,
 
-"Fixing this by switching to use vhost_poll_stop() which zeros poll->wqh 
-after removing poll from waitqueue to make sure it won't be freed twice."
+--- From here
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 8e40da093766..c62e3788858c 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -775,6 +775,7 @@ enum {
+  	Opt_read_write,
+  	Opt_lock_on_read,
+  	Opt_exclusive,
++	Opt_notrim,
+  	Opt_err
+  };
 
-Thanks
+@@ -788,6 +789,7 @@ static match_table_t rbd_opts_tokens = {
+  	{Opt_read_write, "rw"},		/* Alternate spelling */
+  	{Opt_lock_on_read, "lock_on_read"},
+  	{Opt_exclusive, "exclusive"},
++	{Opt_notrim, "notrim"},
+  	{Opt_err, NULL}
+  };
 
->
-> Thanks,
->
-> Darren.
->
->>
->> Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
->> Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting 
->> backend")
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->> drivers/vhost/vhost.c | 3 +--
->> 1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->> index 1b3e8d2d..5d5a9d9 100644
->> --- a/drivers/vhost/vhost.c
->> +++ b/drivers/vhost/vhost.c
->> @@ -212,8 +212,7 @@ int vhost_poll_start(struct vhost_poll *poll, 
->> struct file *file)
->>     if (mask)
->>         vhost_poll_wakeup(&poll->wait, 0, 0, poll_to_key(mask));
->>     if (mask & EPOLLERR) {
->> -        if (poll->wqh)
->> -            remove_wait_queue(poll->wqh, &poll->wait);
->> +        vhost_poll_stop(poll);
->>         ret = -EINVAL;
->>     }
->>
->> -- 
->> 2.7.4
->>
+@@ -796,12 +798,14 @@ struct rbd_options {
+  	bool	read_only;
+  	bool	lock_on_read;
+  	bool	exclusive;
++	bool	trim;
+  };
+
+  #define RBD_QUEUE_DEPTH_DEFAULT	BLKDEV_MAX_RQ
+  #define RBD_READ_ONLY_DEFAULT	false
+  #define RBD_LOCK_ON_READ_DEFAULT false
+  #define RBD_EXCLUSIVE_DEFAULT	false
++#define RBD_TRIM_DEFAULT	true
+
+  static int parse_rbd_opts_token(char *c, void *private)
+  {
+@@ -843,6 +847,9 @@ static int parse_rbd_opts_token(char *c, void *private)
+  	case Opt_exclusive:
+  		rbd_opts->exclusive = true;
+  		break;
++	case Opt_notrim:
++		rbd_opts->trim = false;
++		break;
+  	default:
+  		/* libceph prints "bad option" msg */
+  		return -EINVAL;
+@@ -4382,11 +4389,12 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
+  	blk_queue_io_min(q, segment_size);
+  	blk_queue_io_opt(q, segment_size);
+
+-	/* enable the discard support */
+-	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
+-	q->limits.discard_granularity = segment_size;
+-	blk_queue_max_discard_sectors(q, segment_size / SECTOR_SIZE);
+-	blk_queue_max_write_zeroes_sectors(q, segment_size / SECTOR_SIZE);
++	if (rbd_dev->opts->trim) {
++		queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
++		q->limits.discard_granularity = segment_size;
++		blk_queue_max_discard_sectors(q, segment_size / SECTOR_SIZE);
++		blk_queue_max_write_zeroes_sectors(q, segment_size / SECTOR_SIZE);
++	}
+
+  	if (!ceph_test_opt(rbd_dev->rbd_client->client, NOCRC))
+  		q->backing_dev_info->capabilities |= BDI_CAP_STABLE_WRITES;
+@@ -5637,6 +5645,7 @@ static int rbd_add_parse_args(const char *buf,
+  	rbd_opts->queue_depth = RBD_QUEUE_DEPTH_DEFAULT;
+  	rbd_opts->lock_on_read = RBD_LOCK_ON_READ_DEFAULT;
+  	rbd_opts->exclusive = RBD_EXCLUSIVE_DEFAULT;
++	rbd_opts->trim = RBD_TRIM_DEFAULT;
+
+  	copts = ceph_parse_options(options, mon_addrs,
+  					mon_addrs + mon_addrs_size - 1,
+--- To here
+
+--
+Hitoshi Kamei
