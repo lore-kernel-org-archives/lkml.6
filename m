@@ -1,52 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeC0HT0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 03:19:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35962 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751890AbeC0HTZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 03:19:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 182C16030F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cang@codeaurora.org
-From: Can Guo <cang@codeaurora.org>
-To: subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Can Guo <cang@codeaurora.org>
-Subject: [PATCH v3 2/2] dt-bindings: phy-qcom-qmp: Add UFS phy compatible string for sdm845
-Date: Tue, 27 Mar 2018 15:18:38 +0800
-Message-Id: <20180327071838.11168-3-cang@codeaurora.org>
-X-Mailer: git-send-email 2.15.0.windows.1
-In-Reply-To: <20180327071838.11168-1-cang@codeaurora.org>
-References: <20180327071838.11168-1-cang@codeaurora.org>
+        id S1751840AbeC0HZL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 03:25:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750913AbeC0HZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 03:25:09 -0400
+Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate the
+ next instruction"
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Wanpeng Li <kernellwp@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+References: <1522116735-4861-1-git-send-email-wanpengli@tencent.com>
+ <1522116735-4861-3-git-send-email-wanpengli@tencent.com>
+ <20180327044020.GB16974@char.us.oracle.com>
+ <20180327045558.GC16974@char.us.oracle.com>
+ <CANRm+Cw7VVNmA=DvrzbUDoTQZ_O2sTQVJiu-v-fVt+e3jfB_gw@mail.gmail.com>
+ <20180327051840.GF16974@char.us.oracle.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <0ad9fff9-6ebb-2d63-5c9f-b9aba7d619ac@redhat.com>
+Date: Tue, 27 Mar 2018 09:25:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180327051840.GF16974@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the compatible string for UFS QMP PHY on SDM845.
+On 27/03/2018 07:18, Konrad Rzeszutek Wilk wrote:
+>> I think a global module is enough for testing.
+> If so, perhaps have it wrapped with #ifdef DEBUG?
+> 
+> No need to put code gadgets that won't be utilized 99% of time.
 
-Signed-off-by: Can Guo <cang@codeaurora.org>
----
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+It is going to be used a lot in testing, actually.  There are quite a
+few emulate.c bugfixes that are hard to test (see for example the
+syscall eflags.tf bug that can currently be tested only on Intel) and
+having something like this can only improve our coverage.
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index cef8765..6e68a6d 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -11,7 +11,8 @@ Required properties:
- 	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
- 	       "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy,
- 	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
--	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845.
-+	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
-+	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
- 
-  - reg: offset and length of register set for PHY's common serdes block.
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+#ifdef DEBUG is almost always a bad idea, and though I agree that the
+commit messages can be improved, I think the module parameter is the way
+to go.
+
+Wanpeng, can you also add it to svm.c?
+
+Thanks,
+
+Paolo
