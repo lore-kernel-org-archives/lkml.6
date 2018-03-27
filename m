@@ -1,59 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeC0PzH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 11:55:07 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:35902 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752718AbeC0PzF (ORCPT
+        id S1752645AbeC0P4W (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 11:56:22 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:45716 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751486AbeC0P4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 11:55:05 -0400
-X-Google-Smtp-Source: AG47ELtqvjN45VhbLosW3HX2fmxyMVhQ2PIJMZngcVBPgXCmjf6e4LS3o3KuNEYXFlj947w9yG3Cew==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom: smd-rpm: Add msm8998 compatible
-Date: Tue, 27 Mar 2018 08:55:15 -0700
-Message-Id: <20180327155515.32077-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        Tue, 27 Mar 2018 11:56:20 -0400
+Date: Tue, 27 Mar 2018 23:56:10 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] rhashtable: support guaranteed successful insertion.
+Message-ID: <20180327155610.GD14001@gondor.apana.org.au>
+References: <152210688405.11435.13010923693146415942.stgit@noble>
+ <152210718434.11435.6551477417902631683.stgit@noble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152210718434.11435.6551477417902631683.stgit@noble>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the compatible for the RPM in MSM8998, so that rpm resources can be
-made available.
+On Tue, Mar 27, 2018 at 10:33:04AM +1100, NeilBrown wrote:
+> The current rhashtable will fail an insertion if the hashtable
+> it "too full", one of:
+>  - table already has 2^31 elements (-E2BIG)
+>  - a max_size was specified and table already has that
+>    many elements (rounded up to power of 2) (-E2BIG)
+>  - a single chain has more than 16 elements (-EBUSY)
+>  - table has more elements than the current table size,
+>    and allocating a new table fails (-ENOMEM)
+>  - a new page needed to be allocated for a nested table,
+>    and the memory allocation failed (-ENOMEM).
+> 
+> A traditional hash table does not have a concept of "too full", and
+> insertion only fails if the key already exists.  Many users of hash
+> tables have separate means of limiting the total number of entries,
+> and are not susceptible to an attack which could cause unusually large
+> hash chains.  For those users, the need to check for errors when
+> inserting objects to an rhashtable is an unnecessary burden and hence
+> a potential source of bugs (as these failures are likely to be rare).
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt | 1 +
- drivers/soc/qcom/smd-rpm.c                                  | 1 +
- 2 files changed, 2 insertions(+)
+Did you actually encounter an insertion failure? The current code
+should never fail an insertion until you actually run ouf memory.
+That is unless you're using rhashtable when you should be using
+rhlist instead.
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-index a48049ccf6d0..89e1cb9212f6 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-@@ -22,6 +22,7 @@ resources.
- 		    "qcom,rpm-apq8084"
- 		    "qcom,rpm-msm8916"
- 		    "qcom,rpm-msm8974"
-+		    "qcom,rpm-msm8998"
- 
- - qcom,smd-channels:
- 	Usage: required
-diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
-index c2346752b3ea..93517ed83355 100644
---- a/drivers/soc/qcom/smd-rpm.c
-+++ b/drivers/soc/qcom/smd-rpm.c
-@@ -226,6 +226,7 @@ static const struct of_device_id qcom_smd_rpm_of_match[] = {
- 	{ .compatible = "qcom,rpm-msm8916" },
- 	{ .compatible = "qcom,rpm-msm8974" },
- 	{ .compatible = "qcom,rpm-msm8996" },
-+	{ .compatible = "qcom,rpm-msm8998" },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
+Cheers,
 -- 
-2.16.2
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
