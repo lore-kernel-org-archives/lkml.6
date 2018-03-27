@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48/x1e/5v3r3apyGVGt+QHipxxcAiUdS4m9mPgewmflQW/MDl46s2NdKVkw7I1F9WD2YodE
-ARC-Seal: i=1; a=rsa-sha256; t=1522168536; cv=none;
+X-Google-Smtp-Source: AIpwx495ykxCG8ZMS7ntN5AveHLEXbJkt3WD9CCdf59IbEyHSYjKYw5BX03KjJeCN19FKYp+S5kk
+ARC-Seal: i=1; a=rsa-sha256; t=1522168534; cv=none;
         d=google.com; s=arc-20160816;
-        b=J94bi+oqWMS26LXWXSmQobwBCPHTTFPJLKsiZHIfM6tePhuz7tSXm3wertky+HlCVq
-         onmkWiA+Ow4sedxzG4aNQuWcyAh5ryiqv1z87KaZMXdYwR2kMTtuH5JrzLO0Ay+/1K0J
-         DMxolObGGBEGjGDYwamNx6ZoOcjIdTsAelVNM5Gi7tICcJXWyomOADAOWpi4izN2j6gA
-         RHDz2Hdr5LgqV5jCLd6ptShzsfR75eaFA74y4iAH+bo+Ky/3q0hMmeBGlJlasQnHKeCE
-         gGZJ3Uo36KMGwUH5jj4nU1aLG90JkvHO6z8U0p+QSQ/s7fHXVk6HII95HQ5Tf3Nw/2a+
-         d0cg==
+        b=ByDdMXwsFzZP+QFSLvrICTW4gllHUp0mKkwmC1X5kfTePSxqIYUOlNHXtdzRkN2v/j
+         eymJTYUTDE7Y/aG1XbZBkhFaHjwlwtA6RGP4q1DjkExVrb5QrF/L4SiLDIOeEYUXFesA
+         rwCxdZ/Kpbb1VERWrfgnKhNs70e6VuMQWm5XKWxl0wgCIU54VOMXl5E5jcNfjVvlAI9n
+         qjdYzOMaToXqCEWdYqYF/4/fDsbVUU1geR9iEFWR2TTPiGyhag8LG6xzc/EK1pOSqZ11
+         KKnugJc6CoPVDi0YMTvCsYlGaQYhDk6Qckce+TCQ7/30cyckxQ4GClVetx6Jl23aJi9Q
+         kDbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9uslRh0lG6/X8ceyZ7zJWnTHmGCbxtjaP4Qry1IIJyQ=;
-        b=vURdSyxHh9/8DZc7Hne5qScagsli4vfdeJrQHdhOILYtbbC1931LV2lR20VJcFC+qH
-         zgweFjYUDSl7dZWzW+HZM8pEiD0UDDecKbERGSRY8FBKvyD6L0IN2qpLoheu6GfsZwBX
-         0DQ8ctwi19BS4fnsKEd0x9qdT8Z+7DTNSNFc30MMwKxDXkfDhdhApirw5No7nzkw5+U/
-         dq59vHiqQbe8/fexcltlah1PlQQlKTsNZb2wrp/42i6WZHevpclpiL6ozhbsWs/i25oS
-         YOm/M6PI5e/Q0bgWTCfY4bSF1AIQ3t0ginDKWwdlnP7yyLHOoeyZzWssnjoHcglxL7er
-         ZI7g==
+        bh=8h1QetpOnUL3s7bggFN92xLnkH0gs04cEJ/kxYy/0W8=;
+        b=EBv1ccJwbfSQcegnZsxQUB1p8BnNHRjk5+6dw9miA/ZVW3BGnBlkQrZ1CXyHfFpwsO
+         Q43ihg3jUyD+tdO5DZwgmGFTyhTEOVo3A2pLkufLCHIGPTz3JDmuV3nJgHcEZbHzintd
+         zvnRo0GBN3UTjw5hmk84s3aJ1V54hWBn/ym+Wl+CfIgqrzV6QgF1tEImOrG9y0NilCIK
+         HYHOrUTOxE8ynoaRQAZUt3bzBOeQN622RC1PXbAW7pg9KmxqOKus4UGyV+ECaUaHxwUa
+         bAOWiNeoGZ+ic2TSvVSi9NrzM2dlcqvOgFxAu1cge8zh+Py5ufUs3N5ZG/Uj6XD0nkw8
+         /T6Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Nic Losby <blurbdust@gmail.com>,
-	Michal Hocko <mhocko@suse.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Yisheng Xie <xieyisheng1@huawei.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 045/101] hugetlbfs: check for pgoff value overflow
-Date: Tue, 27 Mar 2018 18:27:17 +0200
-Message-Id: <20180327162752.800920336@linuxfoundation.org>
+	Frank Sorenson <fsorenso@redhat.com>,
+	Jeff Layton <jlayton@redhat.com>,
+	"J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.14 044/101] nfsd: remove blocked locks on client teardown
+Date: Tue, 27 Mar 2018 18:27:16 +0200
+Message-Id: <20180327162752.719581649@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109395911378895?=
-X-GMAIL-MSGID: =?utf-8?q?1596109395911378895?=
+X-GMAIL-THRID: =?utf-8?q?1596109125375429370?=
+X-GMAIL-MSGID: =?utf-8?q?1596109392959979733?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,117 +50,140 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Jeff Layton <jlayton@redhat.com>
 
-commit 63489f8e821144000e0bdca7e65a8d1cc23a7ee7 upstream.
+commit 68ef3bc3166468678d5e1fdd216628c35bd1186f upstream.
 
-A vma with vm_pgoff large enough to overflow a loff_t type when
-converted to a byte offset can be passed via the remap_file_pages system
-call.  The hugetlbfs mmap routine uses the byte offset to calculate
-reservations and file size.
+We had some reports of panics in nfsd4_lm_notify, and that showed a
+nfs4_lockowner that had outlived its so_client.
 
-A sequence such as:
+Ensure that we walk any leftover lockowners after tearing down all of
+the stateids, and remove any blocked locks that they hold.
 
-  mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
-  remap_file_pages(0x20a00000, 0x600000, 0, 0x20000000000000, 0);
+With this change, we also don't need to walk the nbl_lru on nfsd_net
+shutdown, as that will happen naturally when we tear down the clients.
 
-will result in the following when task exits/file closed,
-
-  kernel BUG at mm/hugetlb.c:749!
-  Call Trace:
-    hugetlbfs_evict_inode+0x2f/0x40
-    evict+0xcb/0x190
-    __dentry_kill+0xcb/0x150
-    __fput+0x164/0x1e0
-    task_work_run+0x84/0xa0
-    exit_to_usermode_loop+0x7d/0x80
-    do_syscall_64+0x18b/0x190
-    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-The overflowed pgoff value causes hugetlbfs to try to set up a mapping
-with a negative range (end < start) that leaves invalid state which
-causes the BUG.
-
-The previous overflow fix to this code was incomplete and did not take
-the remap_file_pages system call into account.
-
-[mike.kravetz@oracle.com: v3]
-  Link: http://lkml.kernel.org/r/20180309002726.7248-1-mike.kravetz@oracle.com
-[akpm@linux-foundation.org: include mmdebug.h]
-[akpm@linux-foundation.org: fix -ve left shift count on sh]
-Link: http://lkml.kernel.org/r/20180308210502.15952-1-mike.kravetz@oracle.com
-Fixes: 045c7a3f53d9 ("hugetlbfs: fix offset overflow in hugetlbfs mmap")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reported-by: Nic Losby <blurbdust@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 76d348fadff5 (nfsd: have nfsd4_lock use blocking locks for v4.1+ locks)
+Reported-by: Frank Sorenson <fsorenso@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+Cc: stable@vger.kernel.org # 4.9
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/hugetlbfs/inode.c |   17 ++++++++++++++---
- mm/hugetlb.c         |    7 +++++++
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ fs/nfsd/nfs4state.c |   62 ++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
 
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -118,6 +118,16 @@ static void huge_pagevec_release(struct
- 	pagevec_reinit(pvec);
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -263,6 +263,35 @@ free_blocked_lock(struct nfsd4_blocked_l
+ 	kfree(nbl);
  }
  
-+/*
-+ * Mask used when checking the page offset value passed in via system
-+ * calls.  This value will be converted to a loff_t which is signed.
-+ * Therefore, we want to check the upper PAGE_SHIFT + 1 bits of the
-+ * value.  The extra bit (- 1 in the shift value) is to take the sign
-+ * bit into account.
-+ */
-+#define PGOFF_LOFFT_MAX \
-+	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
++static void
++remove_blocked_locks(struct nfs4_lockowner *lo)
++{
++	struct nfs4_client *clp = lo->lo_owner.so_client;
++	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
++	struct nfsd4_blocked_lock *nbl;
++	LIST_HEAD(reaplist);
 +
- static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct inode *inode = file_inode(file);
-@@ -137,12 +147,13 @@ static int hugetlbfs_file_mmap(struct fi
- 	vma->vm_ops = &hugetlb_vm_ops;
- 
- 	/*
--	 * Offset passed to mmap (before page shift) could have been
--	 * negative when represented as a (l)off_t.
-+	 * page based offset in vm_pgoff could be sufficiently large to
-+	 * overflow a (l)off_t when converted to byte offset.
- 	 */
--	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
-+	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
- 		return -EINVAL;
- 
-+	/* must be huge page aligned */
- 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
- 		return -EINVAL;
- 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -18,6 +18,7 @@
- #include <linux/bootmem.h>
- #include <linux/sysfs.h>
- #include <linux/slab.h>
-+#include <linux/mmdebug.h>
- #include <linux/sched/signal.h>
- #include <linux/rmap.h>
- #include <linux/string_helpers.h>
-@@ -4344,6 +4345,12 @@ int hugetlb_reserve_pages(struct inode *
- 	struct resv_map *resv_map;
- 	long gbl_reserve;
- 
-+	/* This should never happen */
-+	if (from > to) {
-+		VM_WARN(1, "%s called with a negative range\n", __func__);
-+		return -EINVAL;
++	/* Dequeue all blocked locks */
++	spin_lock(&nn->blocked_locks_lock);
++	while (!list_empty(&lo->lo_blocked)) {
++		nbl = list_first_entry(&lo->lo_blocked,
++					struct nfsd4_blocked_lock,
++					nbl_list);
++		list_del_init(&nbl->nbl_list);
++		list_move(&nbl->nbl_lru, &reaplist);
 +	}
++	spin_unlock(&nn->blocked_locks_lock);
 +
- 	/*
- 	 * Only apply hugepage reservation if asked. At fault time, an
- 	 * attempt will be made for VM_NORESERVE to allocate a page
++	/* Now free them */
++	while (!list_empty(&reaplist)) {
++		nbl = list_first_entry(&reaplist, struct nfsd4_blocked_lock,
++					nbl_lru);
++		list_del_init(&nbl->nbl_lru);
++		posix_unblock_lock(&nbl->nbl_lock);
++		free_blocked_lock(nbl);
++	}
++}
++
+ static int
+ nfsd4_cb_notify_lock_done(struct nfsd4_callback *cb, struct rpc_task *task)
+ {
+@@ -1854,6 +1883,7 @@ static __be32 mark_client_expired_locked
+ static void
+ __destroy_client(struct nfs4_client *clp)
+ {
++	int i;
+ 	struct nfs4_openowner *oo;
+ 	struct nfs4_delegation *dp;
+ 	struct list_head reaplist;
+@@ -1883,6 +1913,16 @@ __destroy_client(struct nfs4_client *clp
+ 		nfs4_get_stateowner(&oo->oo_owner);
+ 		release_openowner(oo);
+ 	}
++	for (i = 0; i < OWNER_HASH_SIZE; i++) {
++		struct nfs4_stateowner *so, *tmp;
++
++		list_for_each_entry_safe(so, tmp, &clp->cl_ownerstr_hashtbl[i],
++					 so_strhash) {
++			/* Should be no openowners at this point */
++			WARN_ON_ONCE(so->so_is_open_owner);
++			remove_blocked_locks(lockowner(so));
++		}
++	}
+ 	nfsd4_return_all_client_layouts(clp);
+ 	nfsd4_shutdown_callback(clp);
+ 	if (clp->cl_cb_conn.cb_xprt)
+@@ -6275,6 +6315,7 @@ nfsd4_release_lockowner(struct svc_rqst
+ 	}
+ 	spin_unlock(&clp->cl_lock);
+ 	free_ol_stateid_reaplist(&reaplist);
++	remove_blocked_locks(lo);
+ 	nfs4_put_stateowner(&lo->lo_owner);
+ 
+ 	return status;
+@@ -7060,6 +7101,8 @@ nfs4_state_destroy_net(struct net *net)
+ 		}
+ 	}
+ 
++	WARN_ON(!list_empty(&nn->blocked_locks_lru));
++
+ 	for (i = 0; i < CLIENT_HASH_SIZE; i++) {
+ 		while (!list_empty(&nn->unconf_id_hashtbl[i])) {
+ 			clp = list_entry(nn->unconf_id_hashtbl[i].next, struct nfs4_client, cl_idhash);
+@@ -7126,7 +7169,6 @@ nfs4_state_shutdown_net(struct net *net)
+ 	struct nfs4_delegation *dp = NULL;
+ 	struct list_head *pos, *next, reaplist;
+ 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+-	struct nfsd4_blocked_lock *nbl;
+ 
+ 	cancel_delayed_work_sync(&nn->laundromat_work);
+ 	locks_end_grace(&nn->nfsd4_manager);
+@@ -7147,24 +7189,6 @@ nfs4_state_shutdown_net(struct net *net)
+ 		nfs4_put_stid(&dp->dl_stid);
+ 	}
+ 
+-	BUG_ON(!list_empty(&reaplist));
+-	spin_lock(&nn->blocked_locks_lock);
+-	while (!list_empty(&nn->blocked_locks_lru)) {
+-		nbl = list_first_entry(&nn->blocked_locks_lru,
+-					struct nfsd4_blocked_lock, nbl_lru);
+-		list_move(&nbl->nbl_lru, &reaplist);
+-		list_del_init(&nbl->nbl_list);
+-	}
+-	spin_unlock(&nn->blocked_locks_lock);
+-
+-	while (!list_empty(&reaplist)) {
+-		nbl = list_first_entry(&reaplist,
+-					struct nfsd4_blocked_lock, nbl_lru);
+-		list_del_init(&nbl->nbl_lru);
+-		posix_unblock_lock(&nbl->nbl_lock);
+-		free_blocked_lock(nbl);
+-	}
+-
+ 	nfsd4_client_tracking_exit(net);
+ 	nfs4_state_destroy_net(net);
+ }
