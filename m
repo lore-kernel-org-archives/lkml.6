@@ -1,68 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752838AbeC0OEd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 10:04:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35928 "EHLO mx1.redhat.com"
+        id S1752942AbeC0OEh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 10:04:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52520 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750944AbeC0OE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:04:29 -0400
+        id S1752865AbeC0OEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 10:04:33 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
         peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [RFC v2 02/12] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Date: Tue, 27 Mar 2018 16:04:06 +0200
-Message-Id: <1522159456-10419-3-git-send-email-eric.auger@redhat.com>
+Subject: [RFC v2 04/12] KVM: arm/arm64: Helper to locate free rdist index
+Date: Tue, 27 Mar 2018 16:04:08 +0200
+Message-Id: <1522159456-10419-5-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
 References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
-base address and size of a redistributor region
-
-Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-to declare several separate redistributor regions.
-
-So the whole redist space does not need to be contiguous anymore.
+We introduce vgic_v3_rdist_free_slot to help identifying
+where we can place a new 2x64KB redistributor.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 ---
- Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ virt/kvm/arm/vgic/vgic-mmio-v3.c |  3 +--
+ virt/kvm/arm/vgic/vgic-v3.c      | 17 +++++++++++++++++
+ virt/kvm/arm/vgic/vgic.h         | 11 +++++++++++
+ 3 files changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-index 9293b45..0ded904 100644
---- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-+++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-@@ -27,6 +27,24 @@ Groups:
-       VCPU and all of the redistributor pages are contiguous.
-       Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-       This address needs to be 64K aligned.
+diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+index d1aab18..49ca176 100644
+--- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
++++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+@@ -593,8 +593,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
+ 	 * function for all VCPUs when the base address is set.  Just return
+ 	 * without doing any work for now.
+ 	 */
+-	rdreg = list_first_entry(&vgic->rd_regions,
+-				 struct vgic_redist_region, list);
++	rdreg = vgic_v3_rdist_free_slot(&vgic->rd_regions);
+ 	if (!rdreg)
+ 		return 0;
+ 
+diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+index 7e696e6..6a7e4065 100644
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -438,6 +438,23 @@ bool vgic_v3_check_base(struct kvm *kvm)
+ 	return false;
+ }
+ 
++/**
++ * vgic_v3_rdist_free_slot - Look up registered rdist regions and identify one
++ * which has free space to put a new rdist regions
++ *
++ * If any, return this redist region handle, otherwise returns NULL.
++ */
++struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
++{
++	struct vgic_redist_region *rdreg;
 +
-+    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-+      The attr field of kvm_device_attr encodes 3 values:
-+      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-+      values:   |     count      |       base      |  flags   | index
-+      - index encodes the unique redistributor region index
-+      - flags: reserved for future use, currently 0
-+      - base field encodes bits [51:16] of the guest physical base address
-+        of the first redistributor in the region. There are two 64K pages
-+        for each VCPU and all of the redistributor pages are contiguous
-+        within the redistributor region.
-+      - count encodes the number of redistributors in the region.
-+      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
++	list_for_each_entry(rdreg, rd_regions, list) {
++		if (!vgic_v3_redist_region_full(rdreg))
++			return rdreg;
++	}
++	return NULL;
++}
 +
-+  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
-+  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes. When attempted an
-+  -EINVAL error is returned.
+ int vgic_v3_map_resources(struct kvm *kvm)
+ {
+ 	int ret = 0;
+diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+index f5b8519..d5e89b8 100644
+--- a/virt/kvm/arm/vgic/vgic.h
++++ b/virt/kvm/arm/vgic/vgic.h
+@@ -248,6 +248,17 @@ static inline int vgic_v3_max_apr_idx(struct kvm_vcpu *vcpu)
+ 	}
+ }
+ 
++static inline bool
++vgic_v3_redist_region_full(struct vgic_redist_region *region)
++{
++	if (!region->count)
++		return false;
 +
-   Errors:
-     -E2BIG:  Address outside of addressable IPA range
-     -EINVAL: Incorrectly aligned address
++	return (region->free_index >= region->count);
++}
++
++struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
++
+ int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
+ 			 u32 devid, u32 eventid, struct vgic_irq **irq);
+ struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
 -- 
 2.5.5
