@@ -1,60 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeC0Aew (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 20:34:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751776AbeC0Aev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 20:34:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A264217D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AIpwx482/+fpuCtrRD0mQPqU/EC2J1bFmUnGCPgid3vKAzZKZ0l2OaFtXohXnBEOSh/gORAfy3PicoGqjM0WtYrnXxY=
+        id S1752069AbeC0Anz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 20:43:55 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:47010 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751776AbeC0Anw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 20:43:52 -0400
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+From: Suman Anna <s-anna@ti.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC: David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Sekhar Nori <nsekhar@ti.com>, devicetree <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
+ <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+ <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
+ <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
+ <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
+ <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
+Message-ID: <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
+Date: Mon, 26 Mar 2018 19:42:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180326225020.GF5862@lunn.ch>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-5-alexandre.belloni@bootlin.com> <a5db6109-c5d9-f573-893c-f7d66c3168c2@gmail.com>
- <20180326222514.4eciw66aihhcjgtw@rob-hp-laptop> <20180326225020.GF5862@lunn.ch>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 26 Mar 2018 19:34:29 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+T+TpoLixbi+jrrtUSp_wRSwrrP2Oe2igbapoFonx1FA@mail.gmail.com>
-Message-ID: <CAL_Jsq+T+TpoLixbi+jrrtUSp_wRSwrrP2Oe2igbapoFonx1FA@mail.gmail.com>
-Subject: Re: [PATCH net-next 4/8] dt-bindings: net: add DT bindings for
- Microsemi Ocelot Switch
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        Po Liu <po.liu@nxp.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 5:50 PM, Andrew Lunn <andrew@lunn.ch> wrote:
->> ports and port collide with the OF graph binding. It would be good if
->> this moved to ethernet-port(s) or similar.
->
-> Hi Rob
->
-> Well, we have been using port in DSA since March 2013. ports is a bit
-> newer, June 2016.
+Hi Bart,
 
-Yes, understood.
+On 03/23/2018 07:30 PM, Suman Anna wrote:
+> Hi Bart,
+> 
+> On 03/23/2018 12:16 PM, Bartosz Golaszewski wrote:
+>> 2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+>>> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
+>>>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+>>>>> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
+>>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>>
+>>>>>> This series converts the only user of the handcoded, mach-specific reset
+>>>>>> routines in the davinci platform to using the reset framework.
+>>>>>>
+>>>>>> Patch 1 modifies the way lookup entries are registered with the reset
+>>>>>> framework.
+>>>>>>
+>>>>>> Patches 2-4 add necessary lookups/DT-properties.
+>>>>>>
+>>>>>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
+>>>>>>
+>>>>>> Patch 8 removes now dead code.
+>>>>>>
+>>>>>> Philipp: it turned out that it's indeed better to use the reset
+>>>>>> controller's device name for the entry lookup.
+>>>>>>
+>>>>>> Tested both in DT and legacy modes by booting the examples from
+>>>>>> ti-ipc-rtos recipe in meta-ti.
+>>>>>>
+>>>>>> This series applies on top of David Lechner's common-clk-v9 branch[1]
+>>>>>> with Philipp Zabel's reset/next branch[2] pulled in.
+>>>>>>
+>>>>>> It can be found in my github tree as well[3].
+>>>>>>
+>>>>>
+>>>>> What's the merge strategy for the rest of the patches? I should apply
+>>>>> the clk ones after the next -rc1?
+>>>>
+>>>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
+>>>>
+>>>> The you could apply the driver patches and let Sekhar take all the
+>>>> platform code?
+>>>>
+>>>
+>>> Ok that could work too.
+>>
+>> Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
+>> Stephen taking them through the clock tree? Otherwise it would get
+>> complicated since they depend on the first clk patch and the last clk
+>> patch depends on them.
+> 
+> I will take a closer look and test on Mon. A quick glance of the
+> remoteproc changes seem to be fine. I will let Bjorn comment on the
+> patch flow.
+> 
+> The only reason I had to use the clock in the driver was for the reset
+> before, and hopefully this will allow me to actually switch to using
+> pm_runtime API like I do with the rest of the TI remoteproc drivers
+> (Keystone remoteproc driver also uses PSC for clock and reset but then
+> it goes through different set of drivers).
+> 
+> So, I see a mix of driver and dts patches in the series, are all the dts
+> patches coming through Sekhar?
 
->
-> Changing DSA is not going to happen. But new switch bindings could use
-> ethernet-port(s). It just makes them inconsistent with existing switch
-> drivers.
+I tried booting your tree [3] on the OMAPL138-LCDK board. I am using
+NFS, and I am unable to get to the console. I don't have any issues
+booting latest -next branch (next-20180326) which only has the reset and
+clock driver related changes.
 
-I'm not saying to change existing bindings, but evolve to something
-that doesn't collide on new bindings if you don't have dependencies on
-what the node names are. It's mainly so we can have something to key
-off of to validate bindings better.
+Here's the log towards the end of the boot..
+---
+pinctrl-single 1c14120.pinmux: 160 pins, size 80
+Serial: 8250/16550 driver, 3 ports, IRQ sharing disabled
+console [ttyS2] disabled
+1d0d000.serial: ttyS2 at MMIO 0x1d0d000 (irq = 61, base_baud = 8250000)
+is a TI DA8xx/66AK2x
+console [ttyS2] enabled
+brd: module loaded
+libphy: Fixed MDIO Bus: probed
+davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
+davinci_mdio 1e24000.mdio: no live phy, scanning all
+davinci_mdio: probe of 1e24000.mdio failed with error -5
+i2c /dev entries driver
+<nothing after this>
 
-Rob
+regards
+Suman
+
+> 
+> regards
+> Suman
+> 
+>>
+>> Thanks,
+>> Bart
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
