@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/8b0dD+3C0S+XE2oLetULdcGe23AUBx+WJCtT+kdxTlNiNdFXZ5YfW8YlR/4sILc5Q9LvF
-ARC-Seal: i=1; a=rsa-sha256; t=1522168996; cv=none;
+X-Google-Smtp-Source: AIpwx4/TuhQcBmlmwDsgxr7PZv7L42OpqwEQkfRJegG2rUKbi3V1WUtcxYt+MbSL3bCquMPQQF1w
+ARC-Seal: i=1; a=rsa-sha256; t=1522168993; cv=none;
         d=google.com; s=arc-20160816;
-        b=jcd9e3MIk1TMC7CWL2m/UKk3SW83uMRsVBIHNfxLjvi0bmw9bGFxZrQAl1v9kIOpDJ
-         BMffun8vbx2JYOERoVC9w/UFsADEjwGnGrhKLUou6qXV4RNPMXTkIWGA+eZ7f8eGrwAw
-         wFH1aJ4orzpGCV12YTMGZYaqbOdQRVyfV7iuOMM1vbhJM+zyRV0bodWRcEOwtPXi3jBk
-         zLRYM3GREYG1g3OXT3sx4gllKmHGN5uHoWnRu9n9icVyUj3tSZFoO00t34rucod/vzLe
-         edXRVk7BtgfgTHDNSPMGZptSNbnnVLfBK9L48y9sbKkSq5kLj7lSo1aUha+ng+ITvD8T
-         MuAw==
+        b=O+j1AXF49sZkD8gnQCuQVLtVo7aF02Xf1ayIwNEYuKvT7Vp8itXuJanPE/erNlXFJ4
+         DpDjRC4tUgmU7zO4QSyzPF88kwaRyE+ygpReC2RY6aBw0aSkviUFC/mkDIMqkVjQIPyS
+         hH6tjBhlE9gjUBNnz1li7v6qpsvQDr145TqUdU53AFEBzrT6LjNnAuCD6LMZ2aF3U+D4
+         iEAVy0Px832iQwo3/P+NJwNCNr8hc70YtxzfHxZOzxqei1MOzgbaPbylbsZ5IA5FWY3+
+         UPUHHoPzhS7cntK1108BisnKyEXT12T2L6tlsHqc2zMxjPZW16yC8WZ0n1CPvIU/GHxb
+         6Baw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ws/vsbbjo3aNdcZQobQY//o9wITVR0xqxgrZncbI3e8=;
-        b=k67Uc76F0+S/QadewluHEr/0DmHejvUfFeCn/1v0lbJ4Jv8N7pgtZcph7hqSvCxRZY
-         AraQjCnMlK8D2nzckXGzEhXEQOJDVF9g6JrVqNJ0et1hv8kEMK8QGfWigYXEm+vGKE2A
-         b8cMd31B43d5tm3BvE67jRsFOVVbfvSeKudry7v5u76866Dpu44qBLNMl59N2gnm4KKF
-         xB31uJJUYqJw5MnAuja7RATrCNXNWNN2kiLmEC49RhtTU3gapiFVlUZgzCIErfSOEvI8
-         7wbEgvpXwXAr5NQXoynrl/HCEnGf+LGu+NKMcblbqg4JMH2Wm2+tl3Dm06hu3bFP//EZ
-         ykXA==
+        bh=fIG4zn6PHH7AnsbpQJdOOZRXM8L3fVCie0W2lEJMPok=;
+        b=o3Jo5sSUiqRwEtMs1dzio7/Qw/MDC4Ljt2kzOt76RLqP+aepJX2AzEe7BwKvZ4Vb1N
+         14CqNwUVfU6Z1re7pSXsOJAHJZ6cXNl2XqX2MJPRbsguJVVtgG7VBS7g5+YoIuPR84wB
+         A0kQxpX7d+Hg5JxW7p2+nh91ugAozjLT6kwZ57KsLo2Vkj71cDnlFQ6G4LC6SqVayByW
+         P4Jql42naQ93NSzNpXiS2tMxaBRfrgSZsg59TOuOW/9PeLPcjvTadS1iazT8jS30vMyQ
+         3Mmo5/1z5NVvKDcoKlHwTAn/CO2CSLQgHRLBvQx2FwtaWiCW5DGOQ6T5RRIcdGQjAYzf
+         w2Ng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Prasad Sodagudi <psodagud@codeaurora.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Chenbo Feng <fengc@google.com>,
-	Lorenzo Colitti <lorenzo@google.com>,
-	Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH 4.15 104/105] bpf: skip unnecessary capability check
-Date: Tue, 27 Mar 2018 18:28:24 +0200
-Message-Id: <20180327162804.245578673@linuxfoundation.org>
+	Richard Smith <richard-llvm@metafoo.co.uk>,
+	Chandler Carruth <chandlerc@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH 4.15 103/105] kbuild: disable clangs default use of -fmerge-all-constants
+Date: Tue, 27 Mar 2018 18:28:23 +0200
+Message-Id: <20180327162804.207826514@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109077299522415?=
-X-GMAIL-MSGID: =?utf-8?q?1596109878055673735?=
+X-GMAIL-THRID: =?utf-8?q?1596109074327630438?=
+X-GMAIL-MSGID: =?utf-8?q?1596109875071092063?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +54,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chenbo Feng <fengc@google.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 0fa4fe85f4724fff89b09741c437cbee9cf8b008 upstream.
+commit 87e0d4f0f37fb0c8c4aeeac46fff5e957738df79 upstream.
 
-The current check statement in BPF syscall will do a capability check
-for CAP_SYS_ADMIN before checking sysctl_unprivileged_bpf_disabled. This
-code path will trigger unnecessary security hooks on capability checking
-and cause false alarms on unprivileged process trying to get CAP_SYS_ADMIN
-access. This can be resolved by simply switch the order of the statement
-and CAP_SYS_ADMIN is not required anyway if unprivileged bpf syscall is
-allowed.
+Prasad reported that he has seen crashes in BPF subsystem with netd
+on Android with arm64 in the form of (note, the taint is unrelated):
 
-Signed-off-by: Chenbo Feng <fengc@google.com>
-Acked-by: Lorenzo Colitti <lorenzo@google.com>
+  [ 4134.721483] Unable to handle kernel paging request at virtual address 800000001
+  [ 4134.820925] Mem abort info:
+  [ 4134.901283]   Exception class = DABT (current EL), IL = 32 bits
+  [ 4135.016736]   SET = 0, FnV = 0
+  [ 4135.119820]   EA = 0, S1PTW = 0
+  [ 4135.201431] Data abort info:
+  [ 4135.301388]   ISV = 0, ISS = 0x00000021
+  [ 4135.359599]   CM = 0, WnR = 0
+  [ 4135.470873] user pgtable: 4k pages, 39-bit VAs, pgd = ffffffe39b946000
+  [ 4135.499757] [0000000800000001] *pgd=0000000000000000, *pud=0000000000000000
+  [ 4135.660725] Internal error: Oops: 96000021 [#1] PREEMPT SMP
+  [ 4135.674610] Modules linked in:
+  [ 4135.682883] CPU: 5 PID: 1260 Comm: netd Tainted: G S      W       4.14.19+ #1
+  [ 4135.716188] task: ffffffe39f4aa380 task.stack: ffffff801d4e0000
+  [ 4135.731599] PC is at bpf_prog_add+0x20/0x68
+  [ 4135.741746] LR is at bpf_prog_inc+0x20/0x2c
+  [ 4135.751788] pc : [<ffffff94ab7ad584>] lr : [<ffffff94ab7ad638>] pstate: 60400145
+  [ 4135.769062] sp : ffffff801d4e3ce0
+  [...]
+  [ 4136.258315] Process netd (pid: 1260, stack limit = 0xffffff801d4e0000)
+  [ 4136.273746] Call trace:
+  [...]
+  [ 4136.442494] 3ca0: ffffff94ab7ad584 0000000060400145 ffffffe3a01bf8f8 0000000000000006
+  [ 4136.460936] 3cc0: 0000008000000000 ffffff94ab844204 ffffff801d4e3cf0 ffffff94ab7ad584
+  [ 4136.479241] [<ffffff94ab7ad584>] bpf_prog_add+0x20/0x68
+  [ 4136.491767] [<ffffff94ab7ad638>] bpf_prog_inc+0x20/0x2c
+  [ 4136.504536] [<ffffff94ab7b5d08>] bpf_obj_get_user+0x204/0x22c
+  [ 4136.518746] [<ffffff94ab7ade68>] SyS_bpf+0x5a8/0x1a88
+
+Android's netd was basically pinning the uid cookie BPF map in BPF
+fs (/sys/fs/bpf/traffic_cookie_uid_map) and later on retrieving it
+again resulting in above panic. Issue is that the map was wrongly
+identified as a prog! Above kernel was compiled with clang 4.0,
+and it turns out that clang decided to merge the bpf_prog_iops and
+bpf_map_iops into a single memory location, such that the two i_ops
+could then not be distinguished anymore.
+
+Reason for this miscompilation is that clang has the more aggressive
+-fmerge-all-constants enabled by default. In fact, clang source code
+has a comment about it in lib/AST/ExprConstant.cpp on why it is okay
+to do so:
+
+  Pointers with different bases cannot represent the same object.
+  (Note that clang defaults to -fmerge-all-constants, which can
+  lead to inconsistent results for comparisons involving the address
+  of a constant; this generally doesn't matter in practice.)
+
+The issue never appeared with gcc however, since gcc does not enable
+-fmerge-all-constants by default and even *explicitly* states in
+it's option description that using this flag results in non-conforming
+behavior, quote from man gcc:
+
+  Languages like C or C++ require each variable, including multiple
+  instances of the same variable in recursive calls, to have distinct
+  locations, so using this option results in non-conforming behavior.
+
+There are also various clang bug reports open on that matter [1],
+where clang developers acknowledge the non-conforming behavior,
+and refer to disabling it with -fno-merge-all-constants. But even
+if this gets fixed in clang today, there are already users out there
+that triggered this. Thus, fix this issue by explicitly adding
+-fno-merge-all-constants to the kernel's Makefile to generically
+disable this optimization, since potentially other places in the
+kernel could subtly break as well.
+
+Note, there is also a flag called -fmerge-constants (not supported
+by clang), which is more conservative and only applies to strings
+and it's enabled in gcc's -O/-O2/-O3/-Os optimization levels. In
+gcc's code, the two flags -fmerge-{all-,}constants share the same
+variable internally, so when disabling it via -fno-merge-all-constants,
+then we really don't merge any const data (e.g. strings), and text
+size increases with gcc (14,927,214 -> 14,942,646 for vmlinux.o).
+
+  $ gcc -fverbose-asm -O2 foo.c -S -o foo.S
+    -> foo.S lists -fmerge-constants under options enabled
+  $ gcc -fverbose-asm -O2 -fno-merge-all-constants foo.c -S -o foo.S
+    -> foo.S doesn't list -fmerge-constants under options enabled
+  $ gcc -fverbose-asm -O2 -fno-merge-all-constants -fmerge-constants foo.c -S -o foo.S
+    -> foo.S lists -fmerge-constants under options enabled
+
+Thus, as a workaround we need to set both -fno-merge-all-constants
+*and* -fmerge-constants in the Makefile in order for text size to
+stay as is.
+
+  [1] https://bugs.llvm.org/show_bug.cgi?id=18538
+
+Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Chenbo Feng <fengc@google.com>
+Cc: Richard Smith <richard-llvm@metafoo.co.uk>
+Cc: Chandler Carruth <chandlerc@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Tested-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/syscall.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Makefile |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1687,7 +1687,7 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf
- 	union bpf_attr attr = {};
- 	int err;
+--- a/Makefile
++++ b/Makefile
+@@ -798,6 +798,15 @@ KBUILD_CFLAGS += $(call cc-disable-warni
+ # disable invalid "can't wrap" optimizations for signed / pointers
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
  
--	if (!capable(CAP_SYS_ADMIN) && sysctl_unprivileged_bpf_disabled)
-+	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
++# clang sets -fmerge-all-constants by default as optimization, but this
++# is non-conforming behavior for C and in fact breaks the kernel, so we
++# need to disable it here generally.
++KBUILD_CFLAGS	+= $(call cc-option,-fno-merge-all-constants)
++
++# for gcc -fno-merge-all-constants disables everything, but it is fine
++# to have actual conforming behavior enabled.
++KBUILD_CFLAGS	+= $(call cc-option,-fmerge-constants)
++
+ # Make sure -fstack-check isn't enabled (like gentoo apparently did)
+ KBUILD_CFLAGS  += $(call cc-option,-fno-stack-check,)
  
- 	err = check_uarg_tail_zero(uattr, sizeof(attr), size);
