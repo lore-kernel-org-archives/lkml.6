@@ -1,54 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751056AbeC0FDS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 01:03:18 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36577 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbeC0FDR (ORCPT
+        id S1750948AbeC0FHS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 01:07:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38416 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750836AbeC0FHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 01:03:17 -0400
-X-Google-Smtp-Source: AIpwx49bImeVvTOLUvq6KC792oJbBZ64qTnMkM9nNZBVt4dDG1P/+HDN+CoSbSo1WM5m7PCCJyUayr2K9GlLaoTR0dw=
+        Tue, 27 Mar 2018 01:07:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F53860588
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v3 1/6] phy: qcom-qmp: Enable pipe_clk before checking
+ USB3 PHY_STATUS
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Varadarajan Narayanan <varada@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>, anischal@codeaurora.org
+References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org>
+ <1521785487-29866-2-git-send-email-mgautam@codeaurora.org>
+ <CAD=FV=V7xDh6fvG12xOV9=WwTDLiuQxdWFr7Bq6wjPJ5gShrVA@mail.gmail.com>
+From: Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <8724ae37-5d71-4d5f-f750-da0cb8838f47@codeaurora.org>
+Date: Tue, 27 Mar 2018 10:37:08 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180327045558.GC16974@char.us.oracle.com>
-References: <1522116735-4861-1-git-send-email-wanpengli@tencent.com>
- <1522116735-4861-3-git-send-email-wanpengli@tencent.com> <20180327044020.GB16974@char.us.oracle.com>
- <20180327045558.GC16974@char.us.oracle.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Tue, 27 Mar 2018 13:03:15 +0800
-Message-ID: <CANRm+Cw7VVNmA=DvrzbUDoTQZ_O2sTQVJiu-v-fVt+e3jfB_gw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate the
- next instruction"
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAD=FV=V7xDh6fvG12xOV9=WwTDLiuQxdWFr7Bq6wjPJ5gShrVA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-27 12:55 GMT+08:00 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>:
-> On Tue, Mar 27, 2018 at 12:40:20AM -0400, Konrad Rzeszutek Wilk wrote:
->> On Mon, Mar 26, 2018 at 07:12:15PM -0700, Wanpeng Li wrote:
->> > From: Wanpeng Li <wanpengli@tencent.com>
->> >
->> > This patch introduces a Force Emulation Prefix (ud2a; .ascii "kvm") for
->> > "emulate the next instruction", the codes will be executed by emulator
->> > instead of processor, for testing purposes.
->>
->> Can you expand a bit ? Why do you want this in KVM in the first place?
+Hi Doug,
 
-Please refer to the original discussion(Force Emulation Prefix part).
-https://lkml.org/lkml/2018/3/22/220
 
->> Should this be controlled by a boolean parameter?
+On 3/27/2018 9:56 AM, Doug Anderson wrote:
+> Manu
 >
-> .. per guest. That is instead of a global one, have a per guest one?
+> On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
+>> QMP PHY for USB mode requires pipe_clk for calibration and PLL lock
+>> to take place. This clock is output from PHY to GCC clock_ctl and then
+>> fed back to QMP PHY and is available from PHY only after PHY is reset
+>> and initialized, hence it can't be enabled too early in initialization
+>> sequence.
+>>
+>> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+>> ---
+>>  drivers/phy/qualcomm/phy-qcom-qmp.c | 33 ++++++++++++++++++++++++++++++++-
+>>  1 file changed, 32 insertions(+), 1 deletion(-)
+> So it's now new with this patch, but it's more obvious with this
+> patch.  It seems like "UFS/PCIE" is kinda broken w/ respect to how it
+> controls its clock.  Specifically:
+>
+> * If you init the PHY but don't power it on, then you "exit" the PHY:
+> you'll disable/unprepare "pipe_clk" even though you never
+> prepare/enabled it.
+>
+> * If you init the PHY, power it on, power it off, power it on, and
+> exit the PHY: you'll leave the clock prepared one extra time.
+>
+> Specifically I'd expect: for UFS/PCIE the disable/unprepare should be
+> symmetric with the enable/prepare and should be in "power off", not in
+> exit.
+>
+> ...or did I miss something?
+>
+>
+> Interestingly, your patch fixes this problem for USB3 (where init/exit
+> are now symmetric), but leaves the problem there for UFS/PCIE.
+>
 
-As Paolo pointed out offline:
-> Testing without the hacks being done by emulator.flat (TLB mismatch between instructions and data).
-I think a global module is enough for testing.
+Thanks for review.
+One of the reason why pipe_clk is disabled as part of phy_exit is that
+halt_check from clk_disable reports error if called after PHY has been
+powered down or phy_exit.
+I believe that warning should be ignored in qcom gcc-clock driver
+(for applicable platforms) by using BRANCH_HALT_DELAY as halt_check
+for pipe_clk and performing clk_disable from power_off for UFS/PCIE.
 
-Regards,
-Wanpeng Li
+I can implement that as separate patch once dependent gcc driver
+patch(es) gets in. Would that be ok?
+
+-Manu
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
