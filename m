@@ -1,54 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751732AbeC0Q1P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 12:27:15 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41140 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750753AbeC0Q1M (ORCPT
+        id S1752048AbeC0Q2G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:28:06 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35149 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750922AbeC0Q2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:27:12 -0400
-X-Google-Smtp-Source: AG47ELsjlmjUQWUbyC36YK4iY8H3ERXaVHkKZi0xx98wUc1HyCuXu7X/m+dZC6qgX3i4tY3/VK3du5ERIpuuBsPCJ6Y=
+        Tue, 27 Mar 2018 12:28:05 -0400
+X-Google-Smtp-Source: AIpwx4+EmzTUz341LuV0ibIPxvsRWfbI4ReAGRz6GNiJ/cV/b2j4F4K3vZXzwuMgAVuZY+7AyGuoGg==
+Subject: Re: [PATCH] coresight: use put_device() instead of kfree()
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
+ <CANLsYkymOF2oG7TmKbRTakYKw0ECN_DXfkX5b8WjmS0Lz0sfig@mail.gmail.com>
+ <5AB9ACDA.9090207@gmail.com>
+ <CANLsYkw0v-vVpf1M1Ae+y=Hq5cqqp+_Sjq41pDS+=Xv9zesHAw@mail.gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: arvindY <arvind.yadav.cs@gmail.com>
+Message-ID: <5ABA7111.3020908@gmail.com>
+Date: Tue, 27 Mar 2018 21:58:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <5ABA127E.5080601@hitachi.com>
-References: <5AAFA682.2080901@hitachi.com> <5AB0E4F3.8090108@easystack.cn>
- <C8603108370B1949BF3CC7742DDE5D35B8B39FD9@GSjpTKYDCembx31.service.hitachi.net>
- <CAOi1vP8eLcc6u-XhpSu33+3eDygy3Mp+_tJXT7ygdwsnUs-RmQ@mail.gmail.com>
- <CAOi1vP_7La=nCs71wG3=HbYLaxM3uBFytv8pjGJLuR_uuB0GLg@mail.gmail.com>
- <C8603108370B1949BF3CC7742DDE5D35B8B42988@GSJPTKYDCEMBX32.service.hitachi.net>
- <CAOi1vP_qFkDK00-_KJpbrnC3PbP371=R4wxBH8gk2s47qwfrhg@mail.gmail.com> <5ABA127E.5080601@hitachi.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 27 Mar 2018 18:27:10 +0200
-Message-ID: <CAOi1vP_NjxvPOM+y6d1mU6jcsnQENqjBeOnjhHGwwhOaEuscAw@mail.gmail.com>
-Subject: Re: Re: Re: Re: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags bit
-To: KAMEI Hitoshi <hitoshi.kamei.xm@hitachi.com>
-Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        "sage@redhat.com" <sage@redhat.com>,
-        "elder@kernel.org" <elder@kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANLsYkw0v-vVpf1M1Ae+y=Hq5cqqp+_Sjq41pDS+=Xv9zesHAw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 11:44 AM, KAMEI Hitoshi
-<hitoshi.kamei.xm@hitachi.com> wrote:
-> Hi Ilya,
->
-> Thank you for reviewing.
-> I merged two patches into one patch and pushed the new patch to GitHub.
-> And I opened the PR. Could you check the PR?
->
-> And I forgot to mention in previous email that I modified your patch to
-> apply the latest kernel because I couldn't apply your patch directly
-> by using git am command due to a little bit problem, and I tested
-> the kernel with the modified patch and rbd map command with notrim option.
->
-> The code described below is the modified patch by my hand.
 
-Right, my patch is based on ceph/ceph-client.git:testing which has
-some unrelated rbd_init_disk() changes.
 
-Thanks,
+On Tuesday 27 March 2018 09:37 PM, Mathieu Poirier wrote:
+> On 26 March 2018 at 20:30, arvindY <arvind.yadav.cs@gmail.com> wrote:
+>>
+>> On Tuesday 27 March 2018 03:16 AM, Mathieu Poirier wrote:
+>>> drivers/hwtracing/coresight/coresight.c
+>>> On 18 March 2018 at 01:38, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+>>>> Never directly free @dev after calling device_register(), even
+>>>> if it returned an error. Always use put_device() to give up the
+>>>> reference initialized.
+>>>>
+>>>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+>>>> ---
+>>>>    drivers/hwtracing/coresight/coresight.c | 8 ++++----
+>>>>    1 file changed, 4 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/hwtracing/coresight/coresight.c
+>>>> b/drivers/hwtracing/coresight/coresight.c
+>>>> index 389c4ba..132dfbc 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight.c
+>>>> @@ -1026,8 +1026,10 @@ struct coresight_device *coresight_register(struct
+>>>> coresight_desc *desc)
+>>>>           dev_set_name(&csdev->dev, "%s", desc->pdata->name);
+>>>>
+>>>>           ret = device_register(&csdev->dev);
+>>>> -       if (ret)
+>>>> -               goto err_device_register;
+>>>> +       if (ret) {
+>>>> +               put_device(&csdev->dev);
+>>>> +               goto err_kzalloc_csdev;
+>>>> +       }
+>>>>
+>>>>           mutex_lock(&coresight_mutex);
+>>>>
+>>>> @@ -1038,8 +1040,6 @@ struct coresight_device *coresight_register(struct
+>>>> coresight_desc *desc)
+>>>>
+>>>>           return csdev;
+>>>>
+>>>> -err_device_register:
+>>>> -       kfree(conns);
+>>> Apologies for the late reply, I was travelling.
+>>>
+>>> I suggest to simply replace kfree() with put_device() in order to
+>>> concentrate the error handling code in the same area and make sure
+>>> that memory allocated for @conns and @refcnts is freed.
+>>>
+>>> Thanks,
+>>> Mathieu
+>>
+>> If you will see the comment for device_register(drivers/base/core.c)
+>> there is mentioned that 'NOTE: _Never_ directly free @dev
+>> after calling this function, even if it returned an error!
+>> Always use put_device() to give up the reference initialized
+>> in this function instead.
+> I have read the notice and in full agreement with the put_device() part.
+>
+>> Here  put_device() will decrement the last reference and then
+>> free the memory by calling dev->release.  Internally
+>> put_device() -> kobject_put() -> kobject_cleanup() which is
+>> responsible to call 'dev -> release' and also free other kobject
+>> resources.
+> Memory would be automatically freed if it would have been allocated
+> with the devm_XYZ() helpers but it is not the case here.  As such it
+> has to be freed explicitly.  Reading your patch again (and the jetlag
+> somewhat fading) I think you've done the right thing except for the
+> "goto" that should still point to "err_device_register".
+>
 
-                Ilya
+Take rest :)
+'goto' should not point to "err_device_register" because
+put_device() will call 'dev->release' which is coresight_device_release().
+It's release @conns, @refcnt and @csdev . If we will keep same 'goto
+then kfree() will be redundant for all.
+
+
+>> we should always avoid kfree() if device_register()
+>> returned an error. Otherwise it'll not do clean up of other
+>> kobject resources.
+>>
+>> ~arvind
+>>>>    err_kzalloc_conns:
+>>>>           kfree(refcnts);
+>>>>    err_kzalloc_refcnts:
+>>>> --
+>>>> 2.7.4
+>>>>
