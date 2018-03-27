@@ -1,114 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeC0V5e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:57:34 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39504 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751020AbeC0V5d (ORCPT
+        id S1752188AbeC0V6B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:58:01 -0400
+Received: from mail-ua0-f177.google.com ([209.85.217.177]:44363 "EHLO
+        mail-ua0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751167AbeC0V56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:57:33 -0400
-X-Google-Smtp-Source: AIpwx4/j8jaobsE7aAx/Ycci1NGAhsJ44On/EJSun47WEqpO0NIWoL8lxqcpkd/6BisbPzbkFhMQ3A==
-Date: Tue, 27 Mar 2018 14:57:31 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>, kirill@shutemov.name,
-        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 08/24] mm: Protect VMA modifications using VMA sequence
- count
-In-Reply-To: <1520963994-28477-9-git-send-email-ldufour@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1803271454390.41987@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-9-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 27 Mar 2018 17:57:58 -0400
+X-Google-Smtp-Source: AIpwx49CTsU9XD/C+/aEw9zO9DKEqMAHA+CprTIpVyPFnOpU77Oe7yOoPvnFf4iZnRlCOG2G65nKwG2TallVRkzBK7I=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1521785487-29866-6-git-send-email-mgautam@codeaurora.org>
+References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org> <1521785487-29866-6-git-send-email-mgautam@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 27 Mar 2018 14:57:55 -0700
+X-Google-Sender-Auth: 41lKj8kyFwqMyvWtYo0A-hKdUmk
+Message-ID: <CAD=FV=U03Hijg5NPiY5=5JQJpobJnUNAkf361OOdNRLVc5joWQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] dt-bindings: phy-qcom-usb2: Update bindings for sdm845
+To: Manu Gautam <mgautam@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Laurent Dufour wrote:
+Hi,
 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 5898255d0aeb..d6533cb85213 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -847,17 +847,18 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
->  	}
->  
->  	if (start != vma->vm_start) {
-> -		vma->vm_start = start;
-> +		WRITE_ONCE(vma->vm_start, start);
->  		start_changed = true;
->  	}
->  	if (end != vma->vm_end) {
-> -		vma->vm_end = end;
-> +		WRITE_ONCE(vma->vm_end, end);
->  		end_changed = true;
->  	}
-> -	vma->vm_pgoff = pgoff;
-> +	WRITE_ONCE(vma->vm_pgoff, pgoff);
->  	if (adjust_next) {
-> -		next->vm_start += adjust_next << PAGE_SHIFT;
-> -		next->vm_pgoff += adjust_next;
-> +		WRITE_ONCE(next->vm_start,
-> +			   next->vm_start + (adjust_next << PAGE_SHIFT));
-> +		WRITE_ONCE(next->vm_pgoff, next->vm_pgoff + adjust_next);
->  	}
->  
->  	if (root) {
-> @@ -1781,6 +1782,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  out:
->  	perf_event_mmap(vma);
->  
-> +	vm_write_begin(vma);
->  	vm_stat_account(mm, vm_flags, len >> PAGE_SHIFT);
->  	if (vm_flags & VM_LOCKED) {
->  		if (!((vm_flags & VM_SPECIAL) || is_vm_hugetlb_page(vma) ||
-> @@ -1803,6 +1805,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	vma->vm_flags |= VM_SOFTDIRTY;
->  
->  	vma_set_page_prot(vma);
-> +	vm_write_end(vma);
->  
->  	return addr;
->  
+On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
+> Update compatible strings for USB2 PHYs on sdm845.
+> There are two QUSB2 PHYs present on sdm845. Few PHY registers
+> programming is different for these PHYs related to electrical
+> parameters, otherwise both are same.
+>
+> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> index 42c9742..b99a57f 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> @@ -6,7 +6,9 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+>  Required properties:
+>   - compatible: compatible list, contains
+>                "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
+> -              "qcom,qusb2-v2-phy" for QUSB2 V2 PHY.
+> +              "qcom,qusb2-v2-phy" for QUSB2 V2 PHY,
+> +              "qcom,sdm845-qusb2-phy-1" for primary PHY on sdm845,
+> +              "qcom,sdm845-qusb2-phy-2" for secondary PHY on sdm845.
 
-Shouldn't this also protect vma->vm_flags?
+Similar question to the one I posed on
+<https://patchwork.kernel.org/patch/10302761/> for the QMP PHY.  What
+is "qcom,qusb2-v2-phy"?  Is it some ideal abstract version of the PHY?
+ Do we expect that anyone would actually use that compatible string?
 
-diff --git a/mm/mmap.c b/mm/mmap.c
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1796,7 +1796,8 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 					vma == get_gate_vma(current->mm)))
- 			mm->locked_vm += (len >> PAGE_SHIFT);
- 		else
--			vma->vm_flags &= VM_LOCKED_CLEAR_MASK;
-+			WRITE_ONCE(vma->vm_flags,
-+				   vma->vm_flags & VM_LOCKED_CLEAR_MASK);
- 	}
- 
- 	if (file)
-@@ -1809,7 +1810,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	 * then new mapped in-place (which must be aimed as
- 	 * a completely new data area).
- 	 */
--	vma->vm_flags |= VM_SOFTDIRTY;
-+	WRITE_ONCE(vma->vm_flags, vma->vm_flags | VM_SOFTDIRTY);
- 
- 	vma_set_page_prot(vma);
- 	vm_write_end(vma);
+In this case in <https://patchwork.kernel.org/patch/10302755/> it
+looks as if you're using the same settings as
+"qcom,sdm845-qusb2-phy-2", so presumably "qcom,qusb2-v2-phy" should
+just be deleted.
+
+
+-Doug
