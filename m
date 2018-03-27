@@ -1,61 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752169AbeC0M3v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 08:29:51 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45706 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751187AbeC0M3t (ORCPT
+        id S1752125AbeC0McD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 08:32:03 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35641 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeC0McB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 08:29:49 -0400
-X-Google-Smtp-Source: AG47ELtufNDpEc+u4ozAfPHBNxqfx5SrU090s1Tk85IYtasv7q5ct0faTDNO2fEUk/S3lrISvseGWLaatoiyqpsF+JQ=
+        Tue, 27 Mar 2018 08:32:01 -0400
+X-Google-Smtp-Source: AIpwx4+9XpBRDi9A2IUG5bEBDW++s9VyC3SWMkTzYAgBqKaDVNFLSnO2O9sbONDDDlTvfNzfMtX5hQ==
+Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+To: Juri Lelli <juri.lelli@gmail.com>
+Cc: Leo Yan <leo.yan@linaro.org>, edubezval@gmail.com,
+        kevin.wangtao@linaro.org, vincent.guittot@linaro.org,
+        amit.kachhap@gmail.com, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>
+References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
+ <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
+ <20180327020331.GA21693@leoy-ThinkPad-X240s>
+ <8ee2cb0d-9afe-6626-0911-90ff6660bf8a@linaro.org>
+ <20180327122836.GD10639@localhost.localdomain>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <719e1d94-170c-f208-d4a2-f3e882b1e20e@linaro.org>
+Date: Tue, 27 Mar 2018 14:31:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180320013731.olxjil4qfj6ppjsl@vireshk-mac-ubuntu>
-References: <cover.1518166039.git.viresh.kumar@linaro.org> <6c91ebfecf86da98a7682c6d262ff1218a1d7343.1518166039.git.viresh.kumar@linaro.org>
- <20180320013731.olxjil4qfj6ppjsl@vireshk-mac-ubuntu>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 27 Mar 2018 14:29:48 +0200
-X-Google-Sender-Auth: yPTJVcMlOv31XLWaT3H8_NO3yeM
-Message-ID: <CAK8P3a2CvoXxbDAopT7Gt5eHx-0bKabP8dYc8_ObtDrd6Q2Tuw@mail.gmail.com>
-Subject: Re: [PATCH 06/10] ARM64: dts: meson: Remove "cooling-{min|max}-level"
- for CPU nodes
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: arm-soc <arm@kernel.org>, Arnd Bergmann <arnd.bergmann@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "open list:ARM/Amlogic Meson SoC support"
-        <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180327122836.GD10639@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 2:37 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 09-02-18, 14:28, Viresh Kumar wrote:
->> The "cooling-min-level" and "cooling-max-level" properties are not
->> parsed by any part of the kernel currently and the max cooling state of
->> a CPU cooling device is found by referring to the cpufreq table instead.
+On 27/03/2018 14:28, Juri Lelli wrote:
+> Hi Daniel,
+> 
+> On 27/03/18 12:26, Daniel Lezcano wrote:
+>> On 27/03/2018 04:03, Leo Yan wrote:
+>>> Hi Daniel,
+>>>
+>>> On Wed, Feb 21, 2018 at 04:29:27PM +0100, Daniel Lezcano wrote:
+>>>> The cpu idle cooling driver performs synchronized idle injection across all
+>>>> cpus belonging to the same cluster and offers a new method to cool down a SoC.
+>>>>
+>>>> Each cluster has its own idle cooling device, each core has its own idle
+>>>> injection thread, each idle injection thread uses play_idle to enter idle.  In
+>>>> order to reach the deepest idle state, each cooling device has the idle
+>>>> injection threads synchronized together.
+>>>>
+>>>> It has some similarity with the intel power clamp driver but it is actually
+>>>> designed to work on the ARM architecture via the DT with a mathematical proof
+>>>> with the power model which comes with the Documentation.
+>>>>
+>>>> The idle injection cycle is fixed while the running cycle is variable. That
+>>>> allows to have control on the device reactivity for the user experience. At
+>>>> the mitigation point the idle threads are unparked, they play idle the
+>>>> specified amount of time and they schedule themselves. The last thread sets
+>>>> the next idle injection deadline and when the timer expires it wakes up all
+>>>> the threads which in turn play idle again. Meanwhile the running cycle is
+>>>> changed by set_cur_state.  When the mitigation ends, the threads are parked.
+>>>> The algorithm is self adaptive, so there is no need to handle hotplugging.
+>>>
+>>> The idle injection threads are RT threads (FIFO) and I saw in
+>>> play_idle() set/clear flag PF_IDLE for it.  Will these idle injection
+>>> threads utilization be accounted into RT utilization?
+>>>
+>>> If idle injection threads utilization is accounted as RT tasks
+>>> utilization, will this impact CPUFreq governor 'schedutil' for OPP
+>>> selection?
 >>
->> Remove the unused properties from the CPU nodes.
+>> Hi Leo,
 >>
->> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->>  arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 4 ----
->>  1 file changed, 4 deletions(-)
->
-> @Arnd: Can you please pick this and patch 8/10 from this series for 4.17 ? Both
-> are already Acked by Neil. I have just re-bounced both the messages to
-> arm@kernel.org. Thanks.
+>> The idle injection task has a very low utilization when it is not in the
+>> play_idle function, basically it wakes up, sets a timer and play_idle().
+>>
+>> Regarding the use case, the idle injection is the base brick for an
+>> combo cooling device with cpufreq + cpuidle. When the idle injection is
+>> used alone, it is because there is no cpufreq driver for the platform.
+>> If there is a cpufreq driver, then we should endup with the cpu cooling
+>> device where we have control of the OPP (and there is no idle injection
+>> threads) or the combo cooling device.
+>>
+>> Except I'm missing something, the idle injection threads won't impact
+>> the OPP selection.
+> 
+> Mmm, they actually might. schedutil selects max OPP as soon as it sees
+> an RT thread. I fear these guys might generate unwanted spikes. Maybe
+> you can filter them out?
 
-Picked up patches 6, 7 and 8 now. For some reason I didn't see patch 8
-in my arm@kernel.org inbox, but I found it on the mailing list.
+Yes, absolutely. Leo pointed it also.
 
-       Arnd
+We might want to change the check at:
+
+https://elixir.bootlin.com/linux/v4.16-rc7/source/kernel/sched/cpufreq_schedutil.c#L364
+
+in order to ignore PF_IDLE tagged tasks.
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
