@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49HSEVp2ZKWU3hkXFfxy5ZFVoFD3tKHOz0SoHkyyHxf+z2XMFhphW0pCjefbqeOSqj4KB24
-ARC-Seal: i=1; a=rsa-sha256; t=1522168991; cv=none;
+X-Google-Smtp-Source: AIpwx48LO21TzmLUxB3aiEvMIQ0dJqLl3hKd5zzCvXISvxnSJw+V+sX34HImey458Y56S2gRvZ2o
+ARC-Seal: i=1; a=rsa-sha256; t=1522168988; cv=none;
         d=google.com; s=arc-20160816;
-        b=dyBnL2vXv672WlXNeHbhOsSFwGNw7FbqYGY5iCXnTxFnP4bOeKu01BM7gVjhMUUOnt
-         JnnW9a5IkiXyrLHaiKQEL6swXRMGjpWFCej3Oqsx04E2djAc8nY4vVl7oD25At7Pn8pt
-         OVax5Jik3UNnVZB7nBTqDvrrENxQDqT9tO1zUQXZQmHjQNSsxRdGSAPzdJtc2mu1o7hM
-         ixOITHExgPQSdjY8DkyWvfG7c7L5xKyTYb19xHq77q+z7EC3gIeuIGKunCeHmT5AICrz
-         6xstcCTj/Szv5tdl793aqT0fiVcMliMMd7BPgm5r7Y+rLILCk5QgptUFV47JsxkcamBT
-         8KBQ==
+        b=X2ZpSmq7yRtm6vjXVj0SqtVqJmixn7t7nTYKZIhS7K3AeSHI+jV4ZJaNnf2Vixw0li
+         ggvS1B2oi4dKYkAZ8KTdVmzBKMpjfTcu7A6a1NUVLMh/RQgfdprJO/qnii3KBeFm+9rg
+         tGqSRgGB3tOdPJVb4af+6VrTEHEk00N+RwQt+pgvaUpr75IjiABDecq0kYIkTekCX+Tv
+         R+kUfKioAsdNooQuue7tJZEPngNTmvgByYWXX0msY8dQp9JWuIsrd2Q/Zcx2/CiP+SvO
+         eCRJVEA1wVsUPhezAUi/XwqzPq4A7msdHYpnDT9+uIKQo2lhRzHjBjTT5VlLNrj+EOE1
+         iXmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OnalzOTcjhFrAHBR3GL7FdKBH++/4QCHnK6813C1IuY=;
-        b=iZ2PjY1rebiEhccAEDCEVXINSWbp/ZVpbUNwfUpLbK3HKSZO8U2gKo4V+f8fqVl4LC
-         ZwNwmd6n9lOUdGfo7eQ79h5pLMPh8ARSyHCuMzXbYnhvzPunrVdZ/K3BEVDB/1aovrNC
-         p7OtOk5wtw1ONxxdpvo0+a1VdnmlNL2RzMvKGlibh36nIR8diQNi+eH1FlCSZz5paVhj
-         myDAu2/vFk3Fye/faFwfB8CXQIAVildidTwy1dCVYTTOxXXJawfnYyhHn5TeM7rD+r8a
-         C1lah7Orc6pe7qX7lOy0M1EBji4tfFav8eWVcxHA/nYoizSV2xVO4A62HjQkPAEN/nLV
-         3/KA==
+        bh=HMkOJDtxNU5nnMeDskalk77LAPtCLZ1TIPUGZF4MKoA=;
+        b=URpFPUUmO2TG23PHPWBegeMI++zxIEZyZZ9W2zWVFSuqYV2Sb89XSycP63N3nRvCgG
+         n1rMDH3Z5qzmEOUW6NgHn5gasI9wMnyRsRNIJ2OmYbsGPIwobgF74CwP20fMPWTDCtYJ
+         QaBfuTMplNpnW2h8VxASwX8om2G4t4kbJ5rxHxCWI7lKJeaCZn/IZizweWgCY6YKLGvV
+         gikY4lBlekuVS58nE2/+wiOgJB4ZHC/M05FA6VbI5Y0munnGclNpbukb1F72i7NpfoEg
+         lAyHm/0U8AGRgEdoA9GFSA/jCRp8OeIoTz/H+D/wCk4pvdF59wO5bYOb5dXR4raf9DFa
+         eSEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liam Mark <lmark@codeaurora.org>,
-	Laura Abbott <labbott@redhat.com>
-Subject: [PATCH 4.15 102/105] staging: android: ion: Zero CMA allocated memory
-Date: Tue, 27 Mar 2018 18:28:22 +0200
-Message-Id: <20180327162804.167008604@linuxfoundation.org>
+	Diana Burgess <diana@peloton-tech.com>,
+	Stephane Grosjean <s.grosjean@peak-system.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.15 075/105] can: peak/pcie_fd: fix echo_skb is occupied! bug
+Date: Tue, 27 Mar 2018 18:27:55 +0200
+Message-Id: <20180327162802.559928021@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109547992105106?=
-X-GMAIL-MSGID: =?utf-8?q?1596109871769061008?=
+X-GMAIL-THRID: =?utf-8?q?1596109471989770116?=
+X-GMAIL-MSGID: =?utf-8?q?1596109869274487449?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,56 +50,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liam Mark <lmark@codeaurora.org>
+From: Stephane Grosjean <s.grosjean@peak-system.com>
 
-commit 6d79bd5bb6c79a9dba4842040c9adf39e7806330 upstream.
+commit e6048a00cfd0863d32f53b226e0b9a3633fc3332 upstream.
 
-Since commit 204f672255c2 ("staging: android: ion: Use CMA APIs directly")
-the CMA API is now used directly and therefore the allocated memory is no
-longer automatically zeroed.
+This patch makes atomic the handling of the linux-can echo_skb array and
+the network tx queue. This prevents from the "BUG! echo_skb is occupied!"
+message to be printed by the linux-can core, in SMP environments.
 
-Explicitly zero CMA allocated memory to ensure that no data is exposed to
-userspace.
-
-Fixes: 204f672255c2 ("staging: android: ion: Use CMA APIs directly")
-Signed-off-by: Liam Mark <lmark@codeaurora.org>
-Acked-by: Laura Abbott <labbott@redhat.com>
+Reported-by: Diana Burgess <diana@peloton-tech.com>
+Signed-off-by: Stephane Grosjean <s.grosjean@peak-system.com>
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/android/ion/ion_cma_heap.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/net/can/peak_canfd/peak_canfd.c       |   12 ++++++------
+ drivers/net/can/peak_canfd/peak_pciefd_main.c |    8 ++++++--
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
---- a/drivers/staging/android/ion/ion_cma_heap.c
-+++ b/drivers/staging/android/ion/ion_cma_heap.c
-@@ -21,6 +21,7 @@
- #include <linux/err.h>
- #include <linux/cma.h>
- #include <linux/scatterlist.h>
-+#include <linux/highmem.h>
+--- a/drivers/net/can/peak_canfd/peak_canfd.c
++++ b/drivers/net/can/peak_canfd/peak_canfd.c
+@@ -262,7 +262,6 @@ static int pucan_handle_can_rx(struct pe
  
- #include "ion.h"
+ 		spin_lock_irqsave(&priv->echo_lock, flags);
+ 		can_get_echo_skb(priv->ndev, msg->client);
+-		spin_unlock_irqrestore(&priv->echo_lock, flags);
  
-@@ -51,6 +52,22 @@ static int ion_cma_allocate(struct ion_h
- 	if (!pages)
- 		return -ENOMEM;
+ 		/* count bytes of the echo instead of skb */
+ 		stats->tx_bytes += cf_len;
+@@ -271,6 +270,7 @@ static int pucan_handle_can_rx(struct pe
+ 		/* restart tx queue (a slot is free) */
+ 		netif_wake_queue(priv->ndev);
  
-+	if (PageHighMem(pages)) {
-+		unsigned long nr_clear_pages = nr_pages;
-+		struct page *page = pages;
++		spin_unlock_irqrestore(&priv->echo_lock, flags);
+ 		return 0;
+ 	}
+ 
+@@ -726,11 +726,6 @@ static netdev_tx_t peak_canfd_start_xmit
+ 	 */
+ 	should_stop_tx_queue = !!(priv->can.echo_skb[priv->echo_idx]);
+ 
+-	spin_unlock_irqrestore(&priv->echo_lock, flags);
+-
+-	/* write the skb on the interface */
+-	priv->write_tx_msg(priv, msg);
+-
+ 	/* stop network tx queue if not enough room to save one more msg too */
+ 	if (priv->can.ctrlmode & CAN_CTRLMODE_FD)
+ 		should_stop_tx_queue |= (room_left <
+@@ -742,6 +737,11 @@ static netdev_tx_t peak_canfd_start_xmit
+ 	if (should_stop_tx_queue)
+ 		netif_stop_queue(ndev);
+ 
++	spin_unlock_irqrestore(&priv->echo_lock, flags);
 +
-+		while (nr_clear_pages > 0) {
-+			void *vaddr = kmap_atomic(page);
++	/* write the skb on the interface */
++	priv->write_tx_msg(priv, msg);
 +
-+			memset(vaddr, 0, PAGE_SIZE);
-+			kunmap_atomic(vaddr);
-+			page++;
-+			nr_clear_pages--;
-+		}
-+	} else {
-+		memset(page_address(pages), 0, size);
-+	}
+ 	return NETDEV_TX_OK;
+ }
+ 
+--- a/drivers/net/can/peak_canfd/peak_pciefd_main.c
++++ b/drivers/net/can/peak_canfd/peak_pciefd_main.c
+@@ -349,8 +349,12 @@ static irqreturn_t pciefd_irq_handler(in
+ 		priv->tx_pages_free++;
+ 		spin_unlock_irqrestore(&priv->tx_lock, flags);
+ 
+-		/* wake producer up */
+-		netif_wake_queue(priv->ucan.ndev);
++		/* wake producer up (only if enough room in echo_skb array) */
++		spin_lock_irqsave(&priv->ucan.echo_lock, flags);
++		if (!priv->ucan.can.echo_skb[priv->ucan.echo_idx])
++			netif_wake_queue(priv->ucan.ndev);
 +
- 	table = kmalloc(sizeof(*table), GFP_KERNEL);
- 	if (!table)
- 		goto err;
++		spin_unlock_irqrestore(&priv->ucan.echo_lock, flags);
+ 	}
+ 
+ 	/* re-enable Rx DMA transfer for this CAN */
