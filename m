@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/e4gtw6QsChXSeSMXjCLZen9VNT90a2yKa0fMaH6cv9F8oznDcoReEm6VmQ6o2VTH6QoT8
-ARC-Seal: i=1; a=rsa-sha256; t=1522168731; cv=none;
+X-Google-Smtp-Source: AIpwx4/fxaxr43qHm5oiqbXDG7klmwGhTHrMWmsc6aHj9TrNE2KlWNX6fwzO52SFmnV5IdHIBw90
+ARC-Seal: i=1; a=rsa-sha256; t=1522168728; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jv04rvc4aYYdVfjaOaKgi8uGON+osyF8E08XReZqcTmsSDBcTsIkUgyulNWFkPJCE4
-         Y4IuYarJgi9jNz+dWaswUAMfdpvFhdBNVNwaVY3YEv0+OIKMzjJx8H32MS1/jxNr1vUm
-         8A8pX4jWMpREeDfMOVvkujq6aiaYu3EypMNeDz7tLwVuaMbD3Zm/LWEZZKS0/SMijDZq
-         PsiZrjY8ygfph3fZF7hP2f0MaS1VYG7XfrZ4f6HJu1+SgW4JmiIJPwFEa+JbW7v4HepD
-         z6hUheoUJnHeP6ESgC8oFioUMj1X9hX7XgmJahiiNnwbJD/Do4VbTvSiJojYYpJVgHff
-         uwKA==
+        b=fMUuLKR0PxsCoF7RizFXCkJRnp58FDYFFuuIiJNH9JzH+6Q6Uwj+BH5ppoAzOjPdLs
+         zTEQMCZ0/11lTh9s8Gp4YqJBMeb4lSZ6EbIfD9+RI7bpXunflhdlMIJN6pzZH5BG98cx
+         MVlLv55PZ1FFmIiMnErw54U638X9VFZAM/9tzisd+a6q1yut+B5/GTm7/Heu6L2N7c3Y
+         Goihef9k4arCZRvK9GZ2mRHptFPHO3ndKWaD20gJr6j2E66z7fOMHB2cWU/BtLyCwIJY
+         ylBEcI8PP6WZLz0TvOesBumrgPlZcJ4Jj8C6lkKN9o96BIT0Ql0ONqz0hQKgxLop3/db
+         XyzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZI/PrHrkfT07dhHLYXuPOfbRCSYOxAVohVh3pYm3nn0=;
-        b=KtSLXtxn8EaPBh8qTARRPny4nnySF43T22vUh02JmOlYYkF6hv6x3PtTTAWHoSpKHo
-         1hN0Aad3s6/hIZK/yJ6ZYt4axzbmTq8utgl8n4sZmnOiq17Wq6HVCb6J3Qia5ZV6cZx4
-         LzHbOsOZ7Fwsu9mQWem9ZeNFJin7l/LM19n5J4mhSMGBVa9fcQmb4pffKEtXL7kHVlDb
-         A/9JTRfGlOSjzhA0E617oQo2bJa/JtJTK2YAsSzvFU8xuW+GjgQHcPBrBpK0taQSsdFG
-         y+s2ZDe9nFaLNf3WSaqls0WJC9kyAv6LmgVHzPGcc0Ls0KqwgFNc/UAgo0gwLv36ArON
-         dpeQ==
+        bh=5Lo36IER1d9Q4qIV1YkojUCwRRfSaVDz91xLDGw/+2U=;
+        b=RyXflyN59BdcqbBMYK6BtwGJ9j7lYZHA/SWsneXv/+AzhA6SA/OJtzomNE8FMGIM0F
+         wsvLP40mImjuKAuSsDVMFeUgIf1Lbv+0YpjiaD92XGS89VNjEgScxogVDJpbfAKuhFEn
+         KUgvdPTPyZEoMT0WI9x5zrcRYHbFBTGX4/PMVV8///T38bJpAE/ttRS9cge2AO/YBFjt
+         pNgAlYcJ/HU7nGehL7pYTe9NFnFVsjx1ut6dC2FwX4z2thnveE/oX/0hZi9PUssEenMn
+         0J1FtuTUIlxICitMM9B/HhPHyOI02L9/JK5ix+qgr33LHAJRstSDtZp+DzhrdoOtY4R+
+         cKYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,9 +27,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 012/105] ALSA: hda - Force polling mode on CFL for fixing codec communication
-Date: Tue, 27 Mar 2018 18:26:52 +0200
-Message-Id: <20180327162758.364905955@linuxfoundation.org>
+Subject: [PATCH 4.15 011/105] ALSA: aloop: Fix access to not-yet-ready substream via cable
+Date: Tue, 27 Mar 2018 18:26:51 +0200
+Message-Id: <20180327162758.316467864@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109291709874456?=
-X-GMAIL-MSGID: =?utf-8?q?1596109599628791371?=
+X-GMAIL-THRID: =?utf-8?q?1596108968683856653?=
+X-GMAIL-MSGID: =?utf-8?q?1596109596701633699?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +50,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit a8d7bde23e7130686b76624b099f3e22dd38aef7 upstream.
+commit 8e6b1a72a75bb5067ccb6b56d8ca4aa3a300a64e upstream.
 
-We've observed too long probe time with Coffee Lake (CFL) machines,
-and the likely cause is some communication problem between the
-HD-audio controller and the codec chips.  While the controller expects
-an IRQ wakeup for each codec response, it seems sometimes missing, and
-it takes one second for the controller driver to time out and read the
-response in the polling mode.
+In loopback_open() and loopback_close(), we assign and release the
+substream object to the corresponding cable in a racy way.  It's
+neither locked nor done in the right position.  The open callback
+assigns the substream before its preparation finishes, hence the other
+side of the cable may pick it up, which may lead to the invalid memory
+access.
 
-Although we aren't sure about the real culprit yet, in this patch, we
-put a workaround by forcing the polling mode as default for CFL
-machines; the polling mode itself isn't too heavy, and much better
-than other workarounds initially suggested (e.g. disabling
-power-save), at least.
+This patch addresses these: move the assignment to the end of the open
+callback, and wrap with cable->lock for avoiding concurrent accesses.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199007
-Fixes: e79b0006c45c ("ALSA: hda - Add Coffelake PCI ID")
-Reported-and-tested-by: Hui Wang <hui.wang@canonical.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/drivers/aloop.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -375,6 +375,7 @@ enum {
- 					((pci)->device == 0x160c))
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -666,7 +666,9 @@ static void free_cable(struct snd_pcm_su
+ 		return;
+ 	if (cable->streams[!substream->stream]) {
+ 		/* other stream is still alive */
++		spin_lock_irq(&cable->lock);
+ 		cable->streams[substream->stream] = NULL;
++		spin_unlock_irq(&cable->lock);
+ 	} else {
+ 		/* free the cable */
+ 		loopback->cables[substream->number][dev] = NULL;
+@@ -705,7 +707,6 @@ static int loopback_open(struct snd_pcm_
+ 		loopback->cables[substream->number][dev] = cable;
+ 	}
+ 	dpcm->cable = cable;
+-	cable->streams[substream->stream] = dpcm;
  
- #define IS_BXT(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0x5a98)
-+#define IS_CFL(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0xa348)
+ 	snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS);
  
- static char *driver_short_names[] = {
- 	[AZX_DRIVER_ICH] = "HDA Intel",
-@@ -1744,6 +1745,10 @@ static int azx_create(struct snd_card *c
+@@ -737,6 +738,11 @@ static int loopback_open(struct snd_pcm_
+ 		runtime->hw = loopback_pcm_hardware;
  	else
- 		chip->bdl_pos_adj = bdl_pos_adj[dev];
- 
-+	/* Workaround for a communication error on CFL (bko#199007) */
-+	if (IS_CFL(pci))
-+		chip->polling_mode = 1;
+ 		runtime->hw = cable->hw;
 +
- 	err = azx_bus_init(chip, model[dev], &pci_hda_io_ops);
++	spin_lock_irq(&cable->lock);
++	cable->streams[substream->stream] = dpcm;
++	spin_unlock_irq(&cable->lock);
++
+  unlock:
  	if (err < 0) {
- 		kfree(hda);
+ 		free_cable(substream);
