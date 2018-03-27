@@ -1,31 +1,32 @@
-Return-Path: <mhocko@kernel.org>
-X-Google-Smtp-Source: AG47ELuQUHwvzAEU0rFRQFTmpLX2Yxy/TqmydZOQOVDhXXpjOpt7tPvyzo/AEmDR8MBcpKoLVUmW
-ARC-Seal: i=1; a=rsa-sha256; t=1522134400; cv=none;
+Return-Path: <lurodriguez@suse.de>
+X-Google-Smtp-Source: AIpwx4+nSQucCFLibIOK08RSwiq/T8wlgHB6Y2BKjuY7Mrt7cpinBpKbSi4wlJUYy3bUX/m7d77y
+ARC-Seal: i=1; a=rsa-sha256; t=1522180476; cv=none;
         d=google.com; s=arc-20160816;
-        b=zyuFTuijaDuyKanjMcqA6Yo9xo0lV9/p95c7nOZV5gB6gb8AV1pkZJr7xSg3Y6pWjD
-         zY5cKGgB5WvbyC0D/bQ2sKqohWIo6CjSnKK3mDlediwS9ClSGHAGo1s/DuwR2oQXh9qT
-         iyql9QVnum8pz/x14sggMyOAgCUQUgNu3L86Pb2PyW3UtPqJpzDXrLlVJ6AcIEWGcc5x
-         nLrblPJfaOFjc7OrPFDyxwWqMZOLVLrPD+viQ8fti9Ct+Cn0bTY5XdHXAmqYKxUSXWaZ
-         g40NKyC83F8lTdGqbk5/hXoXfX2JX4gLcrW/zYFHbaP4uURiSkpbVHPCbbuiC1z2fDE0
-         K87g==
+        b=GSNwuqurcz3bIXQbPzRCXW3AuKKh1tMIjHNDhz3WPkHZ7ZE12YsVLSo2aVK2HwePgB
+         74ms3D1l74xEws6+6kC7F/XxpePR1DYcXli2fCmsgXPSIZD0fwwSDk5xZVfjmn7o3nOH
+         oqlr+Mighf0+gXUpPJlmvkXTB9tbH2PJMvrUl/BjehpmnKyq8DdvA57QAgJGFZgVpZ9Z
+         j9qZsY5NdmTGBFR2JNJWDjnNRTQNyVYQ89XJYvBv8syznVpsiXs5totZbM81irp+ccsU
+         jk0JgF7XT9Exsr2liJfR0yf3wMY0A/TPLeE1ZqOFUgnibfs7pOw9xB6va1Mtk8x6yGlm
+         6L3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=BYNO4MOnGWcg5XpTsPVHXhHXtTSIaL5TLfXujGqEMTs=;
-        b=XO1guhhH/KQXPWiLej+iLpELhH/yw3EZGj49lfMZKpq73NVqxUYzi7YzceNgxfu+IR
-         P9wVfJVB2DW16XsJpW9tz8ToS/rVyKz7kx+c5ECS7mpYPWBfAL28XfyZufaRIMC4uofQ
-         dCau/5bmIELxD0dixrNVW/iYsiC2CEFro7uGoI4bm7VxY570OHDIMDLNRB+lc1xG1Uh8
-         CHpPWFEIWn+tl0ciozKBcO91WrJY20+N9PNGuHfUZTZQJ5OJCucezU2ngDrJSshsZWjn
-         Gkp6uTMoXrcNzruWFuBjFbYNRKX7xB4B/rGdjhmDSSfW3VM0UvyDAGNtuHxgOVtRCJ/D
-         dPIw==
+        bh=l10X6bEMetER7BAPIKEc4SaMNR4HVXBAge4AUuVZt58=;
+        b=oPM8kbTgxbTA/tnWpMsuOzLov/KAY7EQ2A6fZycuXCKjEvucwA6xmQisWyoy4t0KjD
+         9LnVSeOKrZr8xAj1ftObzPC2x/ofPMLC3yxLlI1VoVfoPZLimBCtcbh/7Mpiaevfae14
+         vkTpFJ+iTPdMpDLTxskOVdJyNFS0HL5WJq04N0oyA6X33gdPy5FVthkMmcRZ0xKyzXfV
+         QKZJlxNpTUblg6KzkIRXMb9pOP9O6aZkBYZwZZz/vOt1dM4CVAMb5zVljyy/8/TwDKzq
+         RLnamVRwD27o8J8xyQbkEuN0Ep2VHZc3vvV4PFcxMcKjemYmhZEYwEHGtHMw+9/UtccM
+         Xqng==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
-Date: Tue, 27 Mar 2018 09:06:37 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Sasha Levin <levinsasha928@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>,
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+Date: Tue, 27 Mar 2018 19:54:35 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Sasha Levin <levinsasha928@gmail.com>,
+	Dave Chinner <david@fromorbit.com>,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>,
 	"Darrick J. Wong" <darrick.wong@oracle.com>,
 	Christoph Hellwig <hch@lst.de>, xfs <linux-xfs@vger.kernel.org>,
@@ -37,7 +38,7 @@ Cc: Dave Chinner <david@fromorbit.com>,
 	Joerg Roedel <joro@8bytes.org>
 Subject: Re: [PATCH] xfs: always free inline data before resetting inode fork
  during ifree
-Message-ID: <20180327070637.GX5652@dhcp22.suse.cz>
+Message-ID: <20180327195435.GE9190@wotan.suse.de>
 References: <20171123060137.GL2135@magnolia>
  <20180323013037.GA9190@wotan.suse.de>
  <20180323034145.GH4818@magnolia>
@@ -46,37 +47,30 @@ References: <20171123060137.GL2135@magnolia>
  <20180323182302.GB9190@wotan.suse.de>
  <20180325223357.GJ18129@dastard>
  <CA+1xoqdWBumgCn9iw7FH_6VtDnEmd5_Hyw=cY4b9zB=Avhx-4g@mail.gmail.com>
+ <20180327070637.GX5652@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+1xoqdWBumgCn9iw7FH_6VtDnEmd5_Hyw=cY4b9zB=Avhx-4g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180327070637.GX5652@dhcp22.suse.cz>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1595753768288631831?=
-X-GMAIL-MSGID: =?utf-8?q?1596073600781521309?=
+X-GMAIL-MSGID: =?utf-8?q?1596121915358590412?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon 26-03-18 19:54:31, Sasha Levin wrote:
-[...]
-> About half a year ago. I'm not sure about the no visibility part -
-> maintainers and authors would receive at least 3 mails for each patch
-> that got in this way, and would have at least a week (usually a lot
-> more) to object to the inclusion. Did you not receive any mails from
-> me?
+On Tue, Mar 27, 2018 at 09:06:37AM +0200, Michal Hocko wrote:
+> So by no means the MM backports were reviewed by me. And considering how hard
+> it is to get any review for MM patches in general I strongly suspect that
+> others didn't review either.
+> 
+> In general I am quite skeptical about the automagic backports
+> selections, to be honest. MM patches should be reasonably good at
+> selecting stable backports and adding more patches on top just risks
+> regressions. 
 
-Well, I was aware of your emails yet my free time didn't really allow me
-to follow those patch bombs. I responded only when some email subject
-hit my eyes as being non-stable candidate. So by no means the MM
-backports were reviewed by me. And considering how hard it is to get any
-review for MM patches in general I strongly suspect that others didn't
-review either.
+BTW other than suggesting we needing *actual review* of the MM patches, are
+there known unit tests which could be run as well? Thinking long term.
 
-In general I am quite skeptical about the automagic backports
-selections, to be honest. MM patches should be reasonably good at
-selecting stable backports and adding more patches on top just risks
-regressions. 
--- 
-Michal Hocko
-SUSE Labs
+  Luis
