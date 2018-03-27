@@ -1,169 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751739AbeC0GUo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:20:44 -0400
-Received: from mga17.intel.com ([192.55.52.151]:39466 "EHLO mga17.intel.com"
+        id S1751321AbeC0GYA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:24:00 -0400
+Received: from mx1.mda.gov.br ([200.198.212.36]:36595 "EHLO mx1.mda.gov.br"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750753AbeC0GUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:20:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
-   d="scan'208";a="41535099"
-Message-ID: <5AB9E377.30900@intel.com>
-Date: Tue, 27 Mar 2018 14:23:51 +0800
-From: Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1750753AbeC0GX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 02:23:58 -0400
+X-Amavis-Modified: Mail body modified (using disclaimer) - pvl036.mda.gov.br
+Date: Tue, 27 Mar 2018 03:11:48 -0300 (BRT)
+From: Funding Trusts Finance <viviane.peixoto@consultor.mda.gov.br>
+Reply-To: "info@fundingtrustsfinance.com" <info@fundingtrustsfinance.com>
+Message-ID: <1526798210.7085000.1522131108456.JavaMail.zimbra@consultor.mda.gov.br>
+Subject: Persoonlijke en beleggingslening.
 MIME-Version: 1.0
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        pbonzini@redhat.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, huangzhichao@huawei.com
-Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
-References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>     <1522031994-7246-2-git-send-email-wei.w.wang@intel.com> <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
-In-Reply-To: <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.0.110]
+X-Mailer: Zimbra 8.7.11_GA_1854 (zclient/8.7.11_GA_1854)
+Thread-Index: 7kYJW8StPvpyRz3a0VWBC6wT4faP+A==
+Thread-Topic: Persoonlijke en beleggingslening.
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 05:22 AM, Andrew Morton wrote:
-> On Mon, 26 Mar 2018 10:39:51 +0800 Wei Wang <wei.w.wang@intel.com> wrote:
->
->> This patch adds support to walk through the free page blocks in the
->> system and report them via a callback function. Some page blocks may
->> leave the free list after zone->lock is released, so it is the caller's
->> responsibility to either detect or prevent the use of such pages.
->>
->> One use example of this patch is to accelerate live migration by skipping
->> the transfer of free pages reported from the guest. A popular method used
->> by the hypervisor to track which part of memory is written during live
->> migration is to write-protect all the guest memory. So, those pages that
->> are reported as free pages but are written after the report function
->> returns will be captured by the hypervisor, and they will be added to the
->> next round of memory transfer.
->>
->> ...
->>
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -4912,6 +4912,102 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
->>   	show_swap_cache_info();
->>   }
->>   
->> +/*
->> + * Walk through a free page list and report the found pfn range via the
->> + * callback.
->> + *
->> + * Return 0 if it completes the reporting. Otherwise, return the non-zero
->> + * value returned from the callback.
->> + */
->> +static int walk_free_page_list(void *opaque,
->> +			       struct zone *zone,
->> +			       int order,
->> +			       enum migratetype mt,
->> +			       int (*report_pfn_range)(void *,
->> +						       unsigned long,
->> +						       unsigned long))
->> +{
->> +	struct page *page;
->> +	struct list_head *list;
->> +	unsigned long pfn, flags;
->> +	int ret = 0;
->> +
->> +	spin_lock_irqsave(&zone->lock, flags);
->> +	list = &zone->free_area[order].free_list[mt];
->> +	list_for_each_entry(page, list, lru) {
->> +		pfn = page_to_pfn(page);
->> +		ret = report_pfn_range(opaque, pfn, 1 << order);
->> +		if (ret)
->> +			break;
->> +	}
->> +	spin_unlock_irqrestore(&zone->lock, flags);
->> +
->> +	return ret;
->> +}
->> +
->> +/**
->> + * walk_free_mem_block - Walk through the free page blocks in the system
->> + * @opaque: the context passed from the caller
->> + * @min_order: the minimum order of free lists to check
->> + * @report_pfn_range: the callback to report the pfn range of the free pages
->> + *
->> + * If the callback returns a non-zero value, stop iterating the list of free
->> + * page blocks. Otherwise, continue to report.
->> + *
->> + * Please note that there are no locking guarantees for the callback and
->> + * that the reported pfn range might be freed or disappear after the
->> + * callback returns so the caller has to be very careful how it is used.
->> + *
->> + * The callback itself must not sleep or perform any operations which would
->> + * require any memory allocations directly (not even GFP_NOWAIT/GFP_ATOMIC)
->> + * or via any lock dependency. It is generally advisable to implement
->> + * the callback as simple as possible and defer any heavy lifting to a
->> + * different context.
->> + *
->> + * There is no guarantee that each free range will be reported only once
->> + * during one walk_free_mem_block invocation.
->> + *
->> + * pfn_to_page on the given range is strongly discouraged and if there is
->> + * an absolute need for that make sure to contact MM people to discuss
->> + * potential problems.
->> + *
->> + * The function itself might sleep so it cannot be called from atomic
->> + * contexts.
-> I don't see how walk_free_mem_block() can sleep.
-
-OK, it would be better to remove this sentence for the current version. 
-But I think we could probably keep it if we decide to add cond_resched() 
-below.
-
->
->> + * In general low orders tend to be very volatile and so it makes more
->> + * sense to query larger ones first for various optimizations which like
->> + * ballooning etc... This will reduce the overhead as well.
->> + *
->> + * Return 0 if it completes the reporting. Otherwise, return the non-zero
->> + * value returned from the callback.
->> + */
->> +int walk_free_mem_block(void *opaque,
->> +			int min_order,
->> +			int (*report_pfn_range)(void *opaque,
->> +			unsigned long pfn,
->> +			unsigned long num))
->> +{
->> +	struct zone *zone;
->> +	int order;
->> +	enum migratetype mt;
->> +	int ret;
->> +
->> +	for_each_populated_zone(zone) {
->> +		for (order = MAX_ORDER - 1; order >= min_order; order--) {
->> +			for (mt = 0; mt < MIGRATE_TYPES; mt++) {
->> +				ret = walk_free_page_list(opaque, zone,
->> +							  order, mt,
->> +							  report_pfn_range);
->> +				if (ret)
->> +					return ret;
->> +			}
-==>
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(walk_free_mem_block);
-> This looks like it could take a long time.  Will we end up needing to
-> add cond_resched() in there somewhere?
-
-OK. How about adding cond_resched at the above place "==>" (i.e. every 
-order)?
 
 
-Best,
-Wei
+-- 
+Goede dag,
+      
+    We zijn Funding Trusts Finance verstrekt leningen per postadvertentie. Wij bieden verschillende soorten leningen of projectleningen (korte en lange termijnleningen, persoonlijke leningen, leningen aan bedrijven enz.) Met een rentetarief van 3%. We verstrekken leningen aan mensen in nood, ongeacht hun locatie, geslacht, burgerlijke staat, opleiding of baan, maar moeten een legale manier van terugbetaling hebben. Onze leningen vari&euml;ren tussen 5.000,00 tot 20.000.000,00 US Dollar of Euro of Pond met een maximale duur van 15 jaar. Als u ge&iuml;nteresseerd bent in meer informatie, hebben we investeerders die ge&iuml;nteresseerd zijn in het financieren van projecten van groot volume. De procedures zijn als volgt: -
+
+1-De klant moet een korte samenvatting van het project verzenden. Dit moet het totale bedrag omvatten dat vereist is voor het project, geschat rendement op investering, terugbetalingsperiode van de lening, dit mag niet meer dan 20 jaar zijn
+
+Neem contact met ons op: info@fundingtrustsfinance.com
+
+INFORMATIE NODIG
+
+Jullie namen:
+Adres: ...........
+Telefoon: ...........
+Benodigde hoeveelheid: .......
+Looptijd: ...............
+Beroep: ...........
+Maandelijks inkomensniveau: ......
+Geslacht: ..............
+Geboortedatum: .......
+Staat: ...............
+Land: .........
+Doel: .........
+
+"Miljoenen mensen in de wereld hebben een kredietprobleem van een of andere vorm. Je bent niet de enige. We hebben een hele reeks leningopties die kunnen helpen. Ontdek nu je opties!"
+
+Met vriendelijke groet,
+Ronny Hens,
+info@fundingtrustsfinance.com
+WEBSITE: www.fundingtrustfinance.com
