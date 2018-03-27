@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+UCrsw7yKbcm8bfdF3QZqG58c09uNI+/ET4ViBaben7efL5gJhRmTusaG7VuNCnU7AQpXS
-ARC-Seal: i=1; a=rsa-sha256; t=1522168897; cv=none;
+X-Google-Smtp-Source: AIpwx49JOJk8uioUK+HRQHaYsr03XSUuEBLBP2YYh00g2THHqEn6Q3bCH/7xygcztb471xJPdrhY
+ARC-Seal: i=1; a=rsa-sha256; t=1522168894; cv=none;
         d=google.com; s=arc-20160816;
-        b=efiWdOv3jZY7oO7O+v3/L0OJhV9jKX6cAnYgYkudZbwdSS2cert2ntvZTUWYi17p1E
-         69EczkQx45DHJTOKbusm1QPZ5a3bRFs8yoJ8gvqsvPbDmSp215kAMKJ1fIMeP9J68hk+
-         UYG2ZJon/k0yq//AnqeJIkRwR7fRe9/6RHJ9N/B35HRfe48ABFL4YgHBnysaeuFOxuV7
-         tt2rGX//5H1/C0M2jaIPZVbBc1uHoiOdEmM77fwgwsiF0O97BpPXKoA86WHF3BcLM2W5
-         8Q6FzyBBGp7d6nodki7fSn2NGe9RyyuKXpakHQsYfgINEeKQVSCFMkCCdvA9iAiNvuy7
-         t5Xw==
+        b=TfTzM+Obf1gCjzmUa6XSbpPIhfnT1qXLLqCsgb+G65j4HLEz6LU9JZlqPmarJh7OoV
+         10uy8cWG2vnhv9+qiyq9WkZ6CkUOqX9nKdt7NtL+CaBZsfagikwpDZCx1gZf1lO8eBFQ
+         3wZ8hVETau6DsdpjZrnFvC2P9mE0Q4p/p4mBvAKR2h7Q8tRtcLiOgEOXvxgseMnuGrmz
+         5HBXer8equBU2AzUq9v2WwuxlEP8HgKsM2jLasYLIIfaWVO3AyiMBNv3LrDNCLy4GENb
+         Ka5sA20jx1dvR0BY1S4iZJTSEjeAaDdcjaIp2Y4xwD7Amm+XQ+weLbRG2qEIUjrbQn9/
+         Y9gQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5bfJzpgMDJemkyco9b8GyBdrzwwhG2SUQNKW2NjFP4Q=;
-        b=FHvc9XsYSRXnDhkZi8EWUdDJMsQ8VKYvEcnIjYah9E9R419BzWlNJUbc6LkKVLs02D
-         1r6lpyoefU/9f+MPRVg5xDL6dO2e1EyDALglKQmRcJi7UXCQAZbq+Eiogx96W/g+4ctb
-         oizuZZKH/xKV3g8ltNS2h4Hajubar+/ji7GLRaAGgY/vD/gj1nBOVRJ2Q9gUThMTqNhs
-         7Zig/+A8WsFEhXxVqOrB2i4tq2d9kC7GAxlLVOo5NKLLlzmd1KQV1Dlb3InLgVtXYD7H
-         REYqhqAjcoHlNuE42d4DlE2Zm0OYvH98d/z3Gp1Z+MRrplHwsh24nI3c6T2PhJ0ATmEZ
-         K7Mw==
+        bh=LqSM9g5SgrWN0iiuxooLpy7XfQ9qMLagU11PFVBp2wU=;
+        b=xjG9FXpL5tiG1+/+AQjRh3CI6CRHdjX3fp/zC5MJKJ3P5TKLXsihJqoGKRdYv3CZK+
+         XefqY/bPm/dGdtE/lhPUE8k4TWLhuVLu+j6hF0gvYJ03YOy7i5CWXlkKHQ5JHtEzTiXU
+         Rc1q3kzkTH1eLrzMVb73gaoWUFSGm/FdxKKrbGTvGqaXpNpxV2Ij90ZSN0bUbBnc54jL
+         dgUo1JBNhF0t6Fap9OmkOgyX6UDFZIXJ3oojcB43lcCTvF/40Gpjg/hQbwzfMT5dNKio
+         tdFlNwHUW2ifo/czgn/NvJQmSiLKAb9q0cp+NYw2mk5+56ZidI1qRdnrY2ifbZ1+Mzsu
+         y9JQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	OuYang ZhiZhong <ouyzz@yealink.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.15 070/105] mtdchar: fix usage of mtd_ooblayout_ecc()
-Date: Tue, 27 Mar 2018 18:27:50 +0200
-Message-Id: <20180327162802.278281258@linuxfoundation.org>
+	Ingo Molnar <mingo@redhat.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.15 069/105] tracing: probeevent: Fix to support minus offset from symbol
+Date: Tue, 27 Mar 2018 18:27:49 +0200
+Message-Id: <20180327162802.204928236@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109173619457635?=
-X-GMAIL-MSGID: =?utf-8?q?1596109773574800638?=
+X-GMAIL-THRID: =?utf-8?q?1596109015176163963?=
+X-GMAIL-MSGID: =?utf-8?q?1596109770706082246?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +54,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: OuYang ZhiZhong <ouyzz@yealink.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 6de564939e14327148e31ddcf769e34105176447 upstream.
+commit c5d343b6b7badd1f5fe0873eff2e8d63a193e732 upstream.
 
-Section was not properly computed. The value of OOB region definition is
-always ECC section 0 information in the OOB area, but we want to get all
-the ECC bytes information, so we should call
-mtd_ooblayout_ecc(mtd, section++, &oobregion) until it returns -ERANGE.
+In Documentation/trace/kprobetrace.txt, it says
 
-Fixes: c2b78452a9db ("mtd: use mtd_ooblayout_xxx() helpers where appropriate")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: OuYang ZhiZhong <ouyzz@yealink.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+ @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+
+However, the parser doesn't parse minus offset correctly, since
+commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
+unsigned") drops minus ("-") offset support for kprobe probe
+address usage.
+
+This fixes the traceprobe_split_symbol_offset() to parse minus
+offset again with checking the offset range, and add a minus
+offset check in kprobe probe address usage.
+
+Link: http://lkml.kernel.org/r/152129028983.31874.13419301530285775521.stgit@devbox
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: stable@vger.kernel.org
+Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/mtdchar.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/trace_kprobe.c |    4 ++--
+ kernel/trace/trace_probe.c  |    8 +++-----
+ kernel/trace/trace_probe.h  |    2 +-
+ 3 files changed, 6 insertions(+), 8 deletions(-)
 
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -479,7 +479,7 @@ static int shrink_ecclayout(struct mtd_i
- 	for (i = 0; i < MTD_MAX_ECCPOS_ENTRIES;) {
- 		u32 eccpos;
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -635,7 +635,7 @@ static int create_trace_kprobe(int argc,
+ 	char *symbol = NULL, *event = NULL, *group = NULL;
+ 	int maxactive = 0;
+ 	char *arg;
+-	unsigned long offset = 0;
++	long offset = 0;
+ 	void *addr = NULL;
+ 	char buf[MAX_EVENT_NAME_LEN];
  
--		ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-+		ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
- 		if (ret < 0) {
- 			if (ret != -ERANGE)
- 				return ret;
-@@ -526,7 +526,7 @@ static int get_oobinfo(struct mtd_info *
- 	for (i = 0; i < ARRAY_SIZE(to->eccpos);) {
- 		u32 eccpos;
+@@ -723,7 +723,7 @@ static int create_trace_kprobe(int argc,
+ 		symbol = argv[1];
+ 		/* TODO: support .init module functions */
+ 		ret = traceprobe_split_symbol_offset(symbol, &offset);
+-		if (ret) {
++		if (ret || offset < 0 || offset > UINT_MAX) {
+ 			pr_info("Failed to parse either an address or a symbol.\n");
+ 			return ret;
+ 		}
+--- a/kernel/trace/trace_probe.c
++++ b/kernel/trace/trace_probe.c
+@@ -320,7 +320,7 @@ static fetch_func_t get_fetch_size_funct
+ }
  
--		ret = mtd_ooblayout_ecc(mtd, section, &oobregion);
-+		ret = mtd_ooblayout_ecc(mtd, section++, &oobregion);
- 		if (ret < 0) {
- 			if (ret != -ERANGE)
- 				return ret;
+ /* Split symbol and offset. */
+-int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
++int traceprobe_split_symbol_offset(char *symbol, long *offset)
+ {
+ 	char *tmp;
+ 	int ret;
+@@ -328,13 +328,11 @@ int traceprobe_split_symbol_offset(char
+ 	if (!offset)
+ 		return -EINVAL;
+ 
+-	tmp = strchr(symbol, '+');
++	tmp = strpbrk(symbol, "+-");
+ 	if (tmp) {
+-		/* skip sign because kstrtoul doesn't accept '+' */
+-		ret = kstrtoul(tmp + 1, 0, offset);
++		ret = kstrtol(tmp, 0, offset);
+ 		if (ret)
+ 			return ret;
+-
+ 		*tmp = '\0';
+ 	} else
+ 		*offset = 0;
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -353,7 +353,7 @@ extern int traceprobe_conflict_field_nam
+ extern void traceprobe_update_arg(struct probe_arg *arg);
+ extern void traceprobe_free_probe_arg(struct probe_arg *arg);
+ 
+-extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
++extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
+ 
+ /* Sum up total data length for dynamic arraies (strings) */
+ static nokprobe_inline int
