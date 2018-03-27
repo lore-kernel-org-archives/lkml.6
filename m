@@ -1,66 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751121AbeC0Hzl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 03:55:41 -0400
-Received: from mail-pl0-f46.google.com ([209.85.160.46]:40213 "EHLO
-        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750948AbeC0Hzj (ORCPT
+        id S1751188AbeC0H7T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 03:59:19 -0400
+Received: from mx56.baidu.com ([61.135.168.56]:27363 "EHLO
+        tc-sys-mailedm01.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750873AbeC0H7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 03:55:39 -0400
-X-Google-Smtp-Source: AG47ELsjPLlzm9jbZnYNWbXB9y4JveZwA53RI3Rg/pHd01vrdWUDtRcc+aT2iaIfjJIF+Z/SdLFUIg==
-Date: Tue, 27 Mar 2018 15:55:22 +0800
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>
-Cc: Olof Johansson <olof@lixom.net>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: linux-next: manual merge of the imx-mxs tree with the arm-soc
- tree
-Message-ID: <20180327075520.GA3245@dragon>
-References: <20180327091026.3facbb9d@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327091026.3facbb9d@canb.auug.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 27 Mar 2018 03:59:18 -0400
+From: Li RongQing <lirongqing@baidu.com>
+To: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>
+Subject: [PATCH] mm/list_lru: replace spinlock with RCU in __list_lru_count_one
+Date: Tue, 27 Mar 2018 15:59:04 +0800
+Message-Id: <1522137544-27496-1-git-send-email-lirongqing@baidu.com>
+X-Mailer: git-send-email 1.7.10.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 09:10:26AM +1100, Stephen Rothwell wrote:
-> Hi Shawn,
-> 
-> Today's linux-next merge of the imx-mxs tree got a conflict in:
-> 
->   arch/arm/configs/mxs_defconfig
-> 
-> between commit:
-> 
->   e3e583e7a293 ("ARM: mxs_defconfig: Re-sync defconfig")
-> 
-> from the arm-soc tree and commit:
-> 
->   8bc2c29b550c ("ARM: mxs_defconfig: Re-sync defconfig")
-> 
-> from the imx-mxs tree.
-> 
-> I fixed it up (I just used the latter version) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+when reclaim memory, shink_slab will take lots of time even if
+no memory is reclaimed, since list_lru_count_one called by it
+needs to take a spinlock
 
-Thanks, Stephen.  We will sort this out on arm-soc tree.
+try to optimize it by replacing spinlock with RCU in
+__list_lru_count_one
 
-Arnd,
+    $dd if=aaa  of=bbb  bs=1k count=3886080
+    $rm -f bbb
+    $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
 
-You pulled "[GIT PULL 6/6] i.MX defconfig updates for 4.17" [1]?
-I thought you did not pull it, and updated it with v2 to address your
-comment.  Let me know which one you want to send upstream.  Thanks.
+Before: 0m0.415s ===> after: 0m0.395s
 
-Shawn
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ include/linux/list_lru.h |  2 ++
+ mm/list_lru.c            | 69 ++++++++++++++++++++++++++++++++++--------------
+ 2 files changed, 51 insertions(+), 20 deletions(-)
 
-[1] https://patchwork.ozlabs.org/patch/886191/
+diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
+index bb8129a3474d..ae472538038e 100644
+--- a/include/linux/list_lru.h
++++ b/include/linux/list_lru.h
+@@ -29,6 +29,7 @@ struct list_lru_one {
+ 	struct list_head	list;
+ 	/* may become negative during memcg reparenting */
+ 	long			nr_items;
++	struct rcu_head		rcu;
+ };
+ 
+ struct list_lru_memcg {
+@@ -46,6 +47,7 @@ struct list_lru_node {
+ 	struct list_lru_memcg	*memcg_lrus;
+ #endif
+ 	long nr_items;
++	struct rcu_head		rcu;
+ } ____cacheline_aligned_in_smp;
+ 
+ struct list_lru {
+diff --git a/mm/list_lru.c b/mm/list_lru.c
+index fd41e969ede5..4c58ed861729 100644
+--- a/mm/list_lru.c
++++ b/mm/list_lru.c
+@@ -52,13 +52,13 @@ static inline bool list_lru_memcg_aware(struct list_lru *lru)
+ static inline struct list_lru_one *
+ list_lru_from_memcg_idx(struct list_lru_node *nlru, int idx)
+ {
+-	/*
+-	 * The lock protects the array of per cgroup lists from relocation
+-	 * (see memcg_update_list_lru_node).
+-	 */
+-	lockdep_assert_held(&nlru->lock);
+-	if (nlru->memcg_lrus && idx >= 0)
+-		return nlru->memcg_lrus->lru[idx];
++	struct list_lru_memcg *tmp;
++
++	WARN_ON_ONCE(!rcu_read_lock_held());
++
++	tmp = rcu_dereference(nlru->memcg_lrus);
++	if (tmp && idx >= 0)
++		return rcu_dereference(tmp->lru[idx]);
+ 
+ 	return &nlru->lru;
+ }
+@@ -113,14 +113,17 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
+ 	struct list_lru_one *l;
+ 
+ 	spin_lock(&nlru->lock);
++	rcu_read_lock();
+ 	if (list_empty(item)) {
+ 		l = list_lru_from_kmem(nlru, item);
+ 		list_add_tail(item, &l->list);
+ 		l->nr_items++;
+ 		nlru->nr_items++;
++		rcu_read_unlock();
+ 		spin_unlock(&nlru->lock);
+ 		return true;
+ 	}
++	rcu_read_unlock();
+ 	spin_unlock(&nlru->lock);
+ 	return false;
+ }
+@@ -133,14 +136,17 @@ bool list_lru_del(struct list_lru *lru, struct list_head *item)
+ 	struct list_lru_one *l;
+ 
+ 	spin_lock(&nlru->lock);
++	rcu_read_lock();
+ 	if (!list_empty(item)) {
+ 		l = list_lru_from_kmem(nlru, item);
+ 		list_del_init(item);
+ 		l->nr_items--;
+ 		nlru->nr_items--;
++		rcu_read_unlock();
+ 		spin_unlock(&nlru->lock);
+ 		return true;
+ 	}
++	rcu_read_unlock();
+ 	spin_unlock(&nlru->lock);
+ 	return false;
+ }
+@@ -166,12 +172,13 @@ static unsigned long __list_lru_count_one(struct list_lru *lru,
+ {
+ 	struct list_lru_node *nlru = &lru->node[nid];
+ 	struct list_lru_one *l;
+-	unsigned long count;
++	unsigned long count = 0;
+ 
+-	spin_lock(&nlru->lock);
++	rcu_read_lock();
+ 	l = list_lru_from_memcg_idx(nlru, memcg_idx);
+-	count = l->nr_items;
+-	spin_unlock(&nlru->lock);
++	if (l)
++		count = l->nr_items;
++	rcu_read_unlock();
+ 
+ 	return count;
+ }
+@@ -204,6 +211,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
+ 	unsigned long isolated = 0;
+ 
+ 	spin_lock(&nlru->lock);
++	rcu_read_lock();
+ 	l = list_lru_from_memcg_idx(nlru, memcg_idx);
+ restart:
+ 	list_for_each_safe(item, n, &l->list) {
+@@ -250,6 +258,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
+ 		}
+ 	}
+ 
++	rcu_read_unlock();
+ 	spin_unlock(&nlru->lock);
+ 	return isolated;
+ }
+@@ -296,9 +305,14 @@ static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
+ 					  int begin, int end)
+ {
+ 	int i;
++	struct list_lru_one *tmp;
+ 
+-	for (i = begin; i < end; i++)
+-		kfree(memcg_lrus->lru[i]);
++	for (i = begin; i < end; i++) {
++		tmp = memcg_lrus->lru[i];
++		rcu_assign_pointer(memcg_lrus->lru[i], NULL);
++		if (tmp)
++			kfree_rcu(tmp, rcu);
++	}
+ }
+ 
+ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+@@ -314,7 +328,7 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+ 			goto fail;
+ 
+ 		init_one_lru(l);
+-		memcg_lrus->lru[i] = l;
++		rcu_assign_pointer(memcg_lrus->lru[i], l);
+ 	}
+ 	return 0;
+ fail:
+@@ -325,25 +339,37 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+ static int memcg_init_list_lru_node(struct list_lru_node *nlru)
+ {
+ 	int size = memcg_nr_cache_ids;
++	struct list_lru_memcg *tmp;
+ 
+-	nlru->memcg_lrus = kvmalloc(size * sizeof(void *), GFP_KERNEL);
+-	if (!nlru->memcg_lrus)
++	tmp = kvmalloc(size * sizeof(void *), GFP_KERNEL);
++	if (!tmp)
+ 		return -ENOMEM;
+ 
+-	if (__memcg_init_list_lru_node(nlru->memcg_lrus, 0, size)) {
+-		kvfree(nlru->memcg_lrus);
++	if (__memcg_init_list_lru_node(tmp, 0, size)) {
++		kvfree(tmp);
+ 		return -ENOMEM;
+ 	}
+ 
++	rcu_assign_pointer(nlru->memcg_lrus, tmp);
++
+ 	return 0;
+ }
+ 
+-static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
++static void memcg_destroy_list_lru_node_rcu(struct rcu_head *rcu)
+ {
++	struct list_lru_node *nlru;
++
++	nlru = container_of(rcu, struct list_lru_node, rcu);
++
+ 	__memcg_destroy_list_lru_node(nlru->memcg_lrus, 0, memcg_nr_cache_ids);
+ 	kvfree(nlru->memcg_lrus);
+ }
+ 
++static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
++{
++	call_rcu(&nlru->rcu, memcg_destroy_list_lru_node_rcu);
++}
++
+ static int memcg_update_list_lru_node(struct list_lru_node *nlru,
+ 				      int old_size, int new_size)
+ {
+@@ -371,9 +397,10 @@ static int memcg_update_list_lru_node(struct list_lru_node *nlru,
+ 	 * we have to use IRQ-safe primitives here to avoid deadlock.
+ 	 */
+ 	spin_lock_irq(&nlru->lock);
+-	nlru->memcg_lrus = new;
++	rcu_assign_pointer(nlru->memcg_lrus, new);
+ 	spin_unlock_irq(&nlru->lock);
+ 
++	synchronize_rcu();
+ 	kvfree(old);
+ 	return 0;
+ }
+@@ -487,6 +514,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
+ 	 * we have to use IRQ-safe primitives here to avoid deadlock.
+ 	 */
+ 	spin_lock_irq(&nlru->lock);
++	rcu_read_lock();
+ 
+ 	src = list_lru_from_memcg_idx(nlru, src_idx);
+ 	dst = list_lru_from_memcg_idx(nlru, dst_idx);
+@@ -495,6 +523,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
+ 	dst->nr_items += src->nr_items;
+ 	src->nr_items = 0;
+ 
++	rcu_read_unlock();
+ 	spin_unlock_irq(&nlru->lock);
+ }
+ 
+-- 
+2.11.0
