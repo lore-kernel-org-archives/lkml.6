@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+LTlyDPcXwUapdcace3u9Zbl5J3rdWIpztULHVl6KSjU0PQ6sFBbRpEKiuTrwQZKU5AmdS
-ARC-Seal: i=1; a=rsa-sha256; t=1522168806; cv=none;
+X-Google-Smtp-Source: AIpwx49MnXOxCkMDxtXoDfvUSxuCtqJGWQsI3nYVyH8UuiDdnjmuyS1+D0CXtaZ1lXmhd4Z0vVXX
+ARC-Seal: i=1; a=rsa-sha256; t=1522168803; cv=none;
         d=google.com; s=arc-20160816;
-        b=Er6FS9mLcKPI1X+2tAvmiI8mu4TxSeUBYbw7A7poFT95dxXyxwbL0CYHcHiygUKpo4
-         F114+8Wzi8gnXSBEWV20oV2Rk9wGJT4j9Vz5VqjcV/wt10iUjA6f3hGQjwgqNqJln3Us
-         qreBKB1ECAuI21NFV0JxO9NXqoyPNLeq12GBrxUO2V7p+BFj1FxAsYRTMo6yKBfhl8fE
-         hhNOPkMD5D5vNcXpcTUUV7ZbdzSMZ7yT7xiHZTv9pbXctw2n+csoRdoX+5JTLbQpxBhZ
-         gnaMRZW8WAwVYGpPSzci3Ga9Ddkyo/8hG/GaYylC+2T10q0ihB87Ru59et39c9W3GSBw
-         Jmdw==
+        b=gL1Sk086kdrnj7/0yMocYHG9ask72Io0woVVEoZjB5nCZqIcy3DeAjqR2cFhqgyxKM
+         pgSFV/3uYeuXIsL7suhAQsEjNfNBRRNhSh2PRxtZHN9REDdKlz+MTlfIl7snUaS2rYcG
+         /UswLOi2niI2zrnallcwpPCoCeOaFpkbX9oJhwaJx21PxlgsvDAEBTJCCSLveBQcUMGC
+         GOAeF4SRZoX2JRa+eSSIe2w95tUwddr9rXKgvnyKyqshBc4YQbV1IodY5CGBEOkYkobn
+         g/6mYToNqp66KG+ODmJ2lQcmNH38e1qffh80AB+EjNtdJdAcOyv5rhwPDLL1Y2NK2lcf
+         rtIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Sj7UUczSFAxUwWBGQCxSyKZasz2h+kgxgAcARkf0y2s=;
-        b=NVn1N3YDjKH2HZelmv/oAHpOGr3Q9CvZxbPx63fdZ8JmAf1CxwXSO6jm8fTpXPBcc7
-         BFUK7kxxCqMcGRX4s2faXMhdEG/QPXQN4UoTX/HGnJefy2V3cTAa9iXwFlD2PxdrZwE6
-         P1C2cD2M7SlXHXu+EZHltxA7/aecANBEGvghWW02wBDY0eXpcPpywD3XrnboP3fNMw84
-         bUOjGg5WnRTZxUD1e7eGpy0egCw5iuSy4PzciLhs2CwLxyNPL9XsTNyNmDEInSckI3Na
-         aI4xr8WC8MHbWQfkQZrL6iEMQ2qJjua1GdK8mh6Mv1Xy2+jCWP2FJufnZ/4xhbh1v6HY
-         OYpA==
+        bh=eMgZ5j2QzaEVU43Ww03S+l6rp+A8ofVkO+RxPyir9v4=;
+        b=HPpud29HzlWIpA/E1b+EjDt7aEvseAHZuqWS7RssCYa7KV/w4jSZpB9x3HFzvbA8QR
+         /MR2PCp0UAotZAGOa7K/qBulA9dfDuZbt1JV8+zr5w37kDeu9j2FyMQTOySBsObzL5va
+         /7QpS8bveGJkTEPuOAnNIpVTIPpCrUimJqWRH5ZmXIPIDYjuacU3kZlBkhe8WGwtiKM0
+         WahjFwYLlbcIfpKeWzB9qxSeT0pEKAJxrhshYfbV4zbWsMKyA43aDl4gz5wHNRvNSM3F
+         nf7XZH8F1hKM/TWZM2WzHamCjL7oyEe9ej3bzzjnGHd6sbCa9FBbhifxsZjwfT0EcypT
+         GHCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Nosthoff <committed@heine.so>,
+	Richard Lai <richard@richardman.com>,
+	Stable@vger.kernel.org,
 	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.15 007/105] iio: st_pressure: st_accel: pass correct platform data to init
-Date: Tue, 27 Mar 2018 18:26:47 +0200
-Message-Id: <20180327162758.159347233@linuxfoundation.org>
+Subject: [PATCH 4.15 006/105] iio: chemical: ccs811: Corrected firmware boot/application mode transition
+Date: Tue, 27 Mar 2018 18:26:46 +0200
+Message-Id: <20180327162758.111015515@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108960436960316?=
-X-GMAIL-MSGID: =?utf-8?q?1596109678834738653?=
+X-GMAIL-THRID: =?utf-8?q?1596109327046964573?=
+X-GMAIL-MSGID: =?utf-8?q?1596109675213923862?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,50 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Nosthoff <committed@heine.so>
+From: Richard Lai <richard@richardman.com>
 
-commit 8b438686a001db64c21782d04ef68111e53c45d9 upstream.
+commit b91e146c38b003c899710ede6d05fc824675e386 upstream.
 
-Commit 7383d44b added a pointer pdata which get set to the default
-platform_data when non was defined in the device. But it did not
-pass this pointer to the st_sensors_init_sensor call but still
-used the maybe uninitialized platform_data from dev.
+CCS811 has different I2C register maps in boot and application mode. When
+CCS811 is in boot mode, register APP_START (0xF4) is used to transit the
+firmware state from boot to application mode. However, APP_START is not a
+valid register location when CCS811 is in application mode (refer to
+"CCS811 Bootloader Register Map" and "CCS811 Application Register Map" in
+CCS811 datasheet). The driver should not attempt to perform a write to
+APP_START while CCS811 is in application mode, as this is not a valid or
+documented register location.
 
-This breaks initialization when no platform_data is given and
-the optional st,drdy-int-pin devicetree option is not set.
+When prob function is being called, the driver assumes the CCS811 sensor
+is in boot mode, and attempts to perform a write to APP_START. Although
+CCS811 powers-up in boot mode, it may have already been transited to
+application mode by previous instances, e.g. unload and reload device
+driver by the system, or explicitly by user. Depending on the system
+design, CCS811 sensor may be permanently connected to system power source
+rather than power controlled by GPIO, hence it is possible that the sensor
+is never power reset, thus the firmware could be in either boot or
+application mode at any given time when driver prob function is being
+called.
 
-This commit fixes this.
+This patch checks the STATUS register before attempting to send a write to
+APP_START. Only if the firmware is not in application mode and has valid
+firmware application loaded, then it will continue to start transiting the
+firmware boot to application mode.
 
-Cc: stable@vger.kernel.org
-Fixes: 7383d44b ("iio: st_pressure: st_accel: Initialise sensor platform data properly")
-Signed-off-by: Michael Nosthoff <committed@heine.so>
+Signed-off-by: Richard Lai <richard@richardman.com>
+Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/accel/st_accel_core.c       |    2 +-
- drivers/iio/pressure/st_pressure_core.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/chemical/ccs811.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/iio/accel/st_accel_core.c
-+++ b/drivers/iio/accel/st_accel_core.c
-@@ -951,7 +951,7 @@ int st_accel_common_probe(struct iio_dev
- 	if (!pdata)
- 		pdata = (struct st_sensors_platform_data *)&default_accel_pdata;
+--- a/drivers/iio/chemical/ccs811.c
++++ b/drivers/iio/chemical/ccs811.c
+@@ -133,6 +133,9 @@ static int ccs811_start_sensor_applicati
+ 	if (ret < 0)
+ 		return ret;
  
--	err = st_sensors_init_sensor(indio_dev, adata->dev->platform_data);
-+	err = st_sensors_init_sensor(indio_dev, pdata);
- 	if (err < 0)
- 		goto st_accel_power_off;
- 
---- a/drivers/iio/pressure/st_pressure_core.c
-+++ b/drivers/iio/pressure/st_pressure_core.c
-@@ -640,7 +640,7 @@ int st_press_common_probe(struct iio_dev
- 		       press_data->sensor_settings->drdy_irq.int2.addr))
- 		pdata =	(struct st_sensors_platform_data *)&default_press_pdata;
- 
--	err = st_sensors_init_sensor(indio_dev, press_data->dev->platform_data);
-+	err = st_sensors_init_sensor(indio_dev, pdata);
- 	if (err < 0)
- 		goto st_press_power_off;
- 
++	if ((ret & CCS811_STATUS_FW_MODE_APPLICATION))
++		return 0;
++
+ 	if ((ret & CCS811_STATUS_APP_VALID_MASK) !=
+ 	    CCS811_STATUS_APP_VALID_LOADED)
+ 		return -EIO;
