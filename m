@@ -1,45 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752479AbeC0Oy4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 10:54:56 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:40982 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751068AbeC0Oyz (ORCPT
+        id S1752514AbeC0PCF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 11:02:05 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:39935 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751045AbeC0PCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:54:55 -0400
-Date: Tue, 27 Mar 2018 10:54:53 -0400 (EDT)
-Message-Id: <20180327.105453.250045484228569543.davem@davemloft.net>
-To: joe@perches.com
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipv6: addrconf: Use normal debugging style
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <40e88b53c25ddb95d36bb7a061806f2f95f5ccf2.1522078288.git.joe@perches.com>
-References: <40e88b53c25ddb95d36bb7a061806f2f95f5ccf2.1522078288.git.joe@perches.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 27 Mar 2018 11:02:02 -0400
+X-Google-Smtp-Source: AIpwx48hsEfC+/MCBEyw4wNhiENzmtwDbrCPbx3GOA3kfTx+AZ+c9ghFGHAzgJ31m0iQID/V5KkC/A==
+Date: Tue, 27 Mar 2018 10:01:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Manu Gautam <mgautam@codeaurora.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v3 5/6] dt-bindings: phy-qcom-usb2: Update bindings for
+ sdm845
+Message-ID: <20180327150156.d3vy5bf7mliso7pt@rob-hp-laptop>
+References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org>
+ <1521785487-29866-6-git-send-email-mgautam@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521785487-29866-6-git-send-email-mgautam@codeaurora.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
-Date: Mon, 26 Mar 2018 08:35:01 -0700
-
-> Remove local ADBG macro and use netdev_dbg/pr_debug
+On Fri, Mar 23, 2018 at 11:41:26AM +0530, Manu Gautam wrote:
+> Update compatible strings for USB2 PHYs on sdm845.
+> There are two QUSB2 PHYs present on sdm845. Few PHY registers
+> programming is different for these PHYs related to electrical
+> parameters, otherwise both are same.
 > 
-> Miscellanea:
-> 
-> o Remove unnecessary debug message after allocation failure as there
->   already is a dump_stack() on the failure paths
-> o Leave the allocation failure message on snmp6_alloc_dev as there
->   is one code path that does not do a dump_stack()
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
 > ---
-> 
-> Remerged resend of http://patchwork.ozlabs.org/patch/826028/
-> back in October 2017
+>  Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied to net-next, thanks Joe.
+Reviewed-by: Rob Herring <robh@kernel.org>
