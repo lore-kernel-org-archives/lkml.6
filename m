@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48S2065AzLfU9WUidq+AnoS6ZezEEmayEac7mabDIw0DxH68FQErsIzMdpHmB3iFY8Sojb8
-ARC-Seal: i=1; a=rsa-sha256; t=1522168780; cv=none;
+X-Google-Smtp-Source: AIpwx49N2ReAhdjWMAHLpVD7mBMh6t4SMS4M81xoat8KTubU/hb0ykt6AAbplka+H5RF0jCzS/iW
+ARC-Seal: i=1; a=rsa-sha256; t=1522168778; cv=none;
         d=google.com; s=arc-20160816;
-        b=FChf6Pw9Pi3O25TQFXNu5FVb2mzxNerRvsowGdRJO0N5rOh8hDsyLnAkX3vCjc1dYQ
-         IPvIvRdV/s1IKNFuQIkx6TRWAnMh6GMiiluwEIO6qB1iru9Tg/5ydTenyzYiPxusAZ69
-         ccfnPrc8Hz/iO9q6eRcTdjFGb3jMV0wU4WilQFNsF3WGfFVIsHOxdQcXJQbl3QwJURe9
-         qEdrZE3CeMtKKUz4cUX5SYyUdUImhObspmoRUf84MLmThqVoVtxhaqTGCzZGqrUcDvZZ
-         NkNKHjfjPlIMML/w2aKZby//Z2n4ORxh0+5+SA4XewjUJE0E7ov4lwlvRF63kDTVQCa0
-         29Iw==
+        b=oX+wojCK2z6e/YiCUefOd+MYYQhllBrg2Nt0Ygv97f/MJBPUcmT+VRTOpkd2Y9bXQB
+         uiEXi4i4tS+jmHrvJZ18vUZxaSP+/XiEJEAjOGTGNFaLGU2Cv6yBB7fGXE0+R4P/TXPE
+         WVzVSWc3v02sEcrwo8AaGr4pzdLhdLASo59qOI/kshRPfVRahSS/xctQrpiBZ4PPQW5N
+         q5GWwb/r+CNTrgDwzwfF5Llv7oy6xv/zs5cPL5PuZAcY/HM1XL/tAjFCmOe0N9Wf3cPW
+         egoDuBqbisch1urj7EEUnl9YIcEC0u8DqQxooJgTj8VAZoUbhYsWC/0vwN433YC7bb3o
+         xPMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VDCEyCWiheo23NCUClZtQ02hZ8Ip/tj4PWsy+2EMrFk=;
-        b=WzjDJJftQvQ4F4tnzpw8u+Yk2kmIaSZ1QNIaJPH9xw8U6+1htNb0peauovsJmeN5+a
-         Npez6tLX8UpBmjfJ3uE0hFfjnUXA7XM7R7KeU2p64isMNJlMwq53dIDF83B0Tj3OzH9K
-         X5qu9rG6/Z83MnYEYQhTMAnlrGGTZy/+lCCsbrZ7LI7vxmzgRGq/YrV2NAH+WD3BVfkS
-         eBKYNopUXWfB0yONMJ2GibXAt5DnKXT3V+dTxEKw+y6YYTrWvFj3zlMgdmTgMNst31BU
-         TaGGvezKO3cboP2TXD3bnS/gbHnKfZhhceuB+kY/RamgCnqcTL6W2b4RSVHZMxySAH7N
-         3ZYA==
+        bh=VHu7aByCtgDa36o6zrDBNW5zEIZ9nyxdrU3xe7TboV0=;
+        b=Dv2TdeBiV/NS7wUt4oSfSCpPv23Mr8s+ShI2aHB0drOPDeaPamde3R75YeGVUA3syu
+         BdofLq04XO0WaRWPtGCSyteRs6CzTZka/CKHy02H0utyGBAO0F7Hv9gBQ3liDcl9rYKs
+         SouBNxUX5Y5IMwkGGURAXSt5EAy8TsXtVHCUM9GupnNMUbImzbbNouWEn6rLXFHqDKMY
+         UC9h9IZripDF9aw6VBe4v8qwJY9x3yH/Sk49w6dvxUuqgdHkNYU0qsDns2pHPxgmqUid
+         2vHUFbEmz13cFNt+cOEdb0KfY+zxilt5shGc3lZHPlsCIH/3O4pAyP0ksAKrBkXHhuGb
+         JXVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Kelley <mhkelley@outlook.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.15 029/105] Drivers: hv: vmbus: Fix ring buffer signaling
-Date: Tue, 27 Mar 2018 18:27:09 +0200
-Message-Id: <20180327162759.139951217@linuxfoundation.org>
+	syzkaller <syzkaller@googlegroups.com>,
+	Noa Osherovich <noaos@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.15 028/105] RDMA/mlx5: Fix crash while accessing garbage pointer and freed memory
+Date: Tue, 27 Mar 2018 18:27:08 +0200
+Message-Id: <20180327162759.093628676@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109457683723677?=
-X-GMAIL-MSGID: =?utf-8?q?1596109651941780566?=
+X-GMAIL-THRID: =?utf-8?q?1596109454128685109?=
+X-GMAIL-MSGID: =?utf-8?q?1596109648660134702?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,118 +51,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Kelley <mhkelley@outlook.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 655296c8bbeffcf020558c4455305d597a73bde1 upstream.
+commit f3f134f5260ae9ee1f5a4d0a8cc625c6c77655b4 upstream.
 
-Fix bugs in signaling the Hyper-V host when freeing space in the
-host->guest ring buffer:
+The failure in rereg_mr flow caused to set garbage value (error value)
+into mr->umem pointer. This pointer is accessed at the release stage
+and it causes to the following crash.
 
-1. The interrupt_mask must not be used to determine whether to signal
-   on the host->guest ring buffer
-2. The ring buffer write_index must be read (via hv_get_bytes_to_write)
-   *after* pending_send_sz is read in order to avoid a race condition
-3. Comparisons with pending_send_sz must treat the "equals" case as
-   not-enough-space
-4. Don't signal if the pending_send_sz feature is not present. Older
-   versions of Hyper-V that don't implement this feature will poll.
+There is not enough to simply change umem to point to NULL, because the
+MR struct is needed to be accessed during MR deregistration phase, so
+delay kfree too.
 
-Fixes: 03bad714a161 ("vmbus: more host signalling avoidance")
+[    6.237617] BUG: unable to handle kernel NULL pointer dereference a 0000000000000228
+[    6.238756] IP: ib_dereg_mr+0xd/0x30
+[    6.239264] PGD 80000000167eb067 P4D 80000000167eb067 PUD 167f9067 PMD 0
+[    6.240320] Oops: 0000 [#1] SMP PTI
+[    6.240782] CPU: 0 PID: 367 Comm: dereg Not tainted 4.16.0-rc1-00029-gc198fafe0453 #183
+[    6.242120] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+[    6.244504] RIP: 0010:ib_dereg_mr+0xd/0x30
+[    6.245253] RSP: 0018:ffffaf5d001d7d68 EFLAGS: 00010246
+[    6.246100] RAX: 0000000000000000 RBX: ffff95d4172daf00 RCX: 0000000000000000
+[    6.247414] RDX: 00000000ffffffff RSI: 0000000000000001 RDI: ffff95d41a317600
+[    6.248591] RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+[    6.249810] R10: ffff95d417033c10 R11: 0000000000000000 R12: ffff95d4172c3a80
+[    6.251121] R13: ffff95d4172c3720 R14: ffff95d4172c3a98 R15: 00000000ffffffff
+[    6.252437] FS:  0000000000000000(0000) GS:ffff95d41fc00000(0000) knlGS:0000000000000000
+[    6.253887] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    6.254814] CR2: 0000000000000228 CR3: 00000000172b4000 CR4: 00000000000006b0
+[    6.255943] Call Trace:
+[    6.256368]  remove_commit_idr_uobject+0x1b/0x80
+[    6.257118]  uverbs_cleanup_ucontext+0xe4/0x190
+[    6.257855]  ib_uverbs_cleanup_ucontext.constprop.14+0x19/0x40
+[    6.258857]  ib_uverbs_close+0x2a/0x100
+[    6.259494]  __fput+0xca/0x1c0
+[    6.259938]  task_work_run+0x84/0xa0
+[    6.260519]  do_exit+0x312/0xb40
+[    6.261023]  ? __do_page_fault+0x24d/0x490
+[    6.261707]  do_group_exit+0x3a/0xa0
+[    6.262267]  SyS_exit_group+0x10/0x10
+[    6.262802]  do_syscall_64+0x75/0x180
+[    6.263391]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[    6.264253] RIP: 0033:0x7f1b39c49488
+[    6.264827] RSP: 002b:00007ffe2de05b68 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+[    6.266049] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1b39c49488
+[    6.267187] RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+[    6.268377] RBP: 00007f1b39f258e0 R08: 00000000000000e7 R09: ffffffffffffff98
+[    6.269640] R10: 00007f1b3a147260 R11: 0000000000000246 R12: 00007f1b39f258e0
+[    6.270783] R13: 00007f1b39f2ac20 R14: 0000000000000000 R15: 0000000000000000
+[    6.271943] Code: 74 07 31 d2 e9 25 d8 6c 00 b8 da ff ff ff c3 0f 1f
+44 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8b 07 53 48 8b
+5f 08 <48> 8b 80 28 02 00 00 e8 f7 d7 6c 00 85 c0 75 04 3e ff 4b 18 5b
+[    6.274927] RIP: ib_dereg_mr+0xd/0x30 RSP: ffffaf5d001d7d68
+[    6.275760] CR2: 0000000000000228
+[    6.276200] ---[ end trace a35641f1c474bd20 ]---
 
-Cc: Stable <stable@vger.kernel.org> # 4.14 and above
-Signed-off-by: Michael Kelley <mhkelley@outlook.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Cc: syzkaller <syzkaller@googlegroups.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Noa Osherovich <noaos@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/ring_buffer.c |   54 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+ drivers/infiniband/hw/mlx5/mr.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/hv/ring_buffer.c
-+++ b/drivers/hv/ring_buffer.c
-@@ -394,13 +394,24 @@ __hv_pkt_iter_next(struct vmbus_channel
- }
- EXPORT_SYMBOL_GPL(__hv_pkt_iter_next);
+--- a/drivers/infiniband/hw/mlx5/mr.c
++++ b/drivers/infiniband/hw/mlx5/mr.c
+@@ -838,7 +838,8 @@ static int mr_umem_get(struct ib_pd *pd,
+ 	*umem = ib_umem_get(pd->uobject->context, start, length,
+ 			    access_flags, 0);
+ 	err = PTR_ERR_OR_ZERO(*umem);
+-	if (err < 0) {
++	if (err) {
++		*umem = NULL;
+ 		mlx5_ib_err(dev, "umem get failed (%d)\n", err);
+ 		return err;
+ 	}
+@@ -1415,6 +1416,7 @@ int mlx5_ib_rereg_user_mr(struct ib_mr *
+ 		if (err) {
+ 			mlx5_ib_warn(dev, "Failed to rereg UMR\n");
+ 			ib_umem_release(mr->umem);
++			mr->umem = NULL;
+ 			clean_mr(dev, mr);
+ 			return err;
+ 		}
+@@ -1498,14 +1500,11 @@ static int clean_mr(struct mlx5_ib_dev *
+ 		u32 key = mr->mmkey.key;
  
-+/* How many bytes were read in this iterator cycle */
-+static u32 hv_pkt_iter_bytes_read(const struct hv_ring_buffer_info *rbi,
-+					u32 start_read_index)
-+{
-+	if (rbi->priv_read_index >= start_read_index)
-+		return rbi->priv_read_index - start_read_index;
+ 		err = destroy_mkey(dev, mr);
+-		kfree(mr);
+ 		if (err) {
+ 			mlx5_ib_warn(dev, "failed to destroy mkey 0x%x (%d)\n",
+ 				     key, err);
+ 			return err;
+ 		}
+-	} else {
+-		mlx5_mr_cache_free(dev, mr);
+ 	}
+ 
+ 	return 0;
+@@ -1548,6 +1547,11 @@ static int dereg_mr(struct mlx5_ib_dev *
+ 		atomic_sub(npages, &dev->mdev->priv.reg_pages);
+ 	}
+ 
++	if (!mr->allocated_from_cache)
++		kfree(mr);
 +	else
-+		return rbi->ring_datasize - start_read_index +
-+			rbi->priv_read_index;
-+}
++		mlx5_mr_cache_free(dev, mr);
 +
- /*
-  * Update host ring buffer after iterating over packets.
-  */
- void hv_pkt_iter_close(struct vmbus_channel *channel)
- {
- 	struct hv_ring_buffer_info *rbi = &channel->inbound;
--	u32 orig_write_sz = hv_get_bytes_to_write(rbi);
-+	u32 curr_write_sz, pending_sz, bytes_read, start_read_index;
- 
- 	/*
- 	 * Make sure all reads are done before we update the read index since
-@@ -408,8 +419,12 @@ void hv_pkt_iter_close(struct vmbus_chan
- 	 * is updated.
- 	 */
- 	virt_rmb();
-+	start_read_index = rbi->ring_buffer->read_index;
- 	rbi->ring_buffer->read_index = rbi->priv_read_index;
- 
-+	if (!rbi->ring_buffer->feature_bits.feat_pending_send_sz)
-+		return;
-+
- 	/*
- 	 * Issue a full memory barrier before making the signaling decision.
- 	 * Here is the reason for having this barrier:
-@@ -423,26 +438,29 @@ void hv_pkt_iter_close(struct vmbus_chan
- 	 */
- 	virt_mb();
- 
--	/* If host has disabled notifications then skip */
--	if (rbi->ring_buffer->interrupt_mask)
-+	pending_sz = READ_ONCE(rbi->ring_buffer->pending_send_sz);
-+	if (!pending_sz)
- 		return;
- 
--	if (rbi->ring_buffer->feature_bits.feat_pending_send_sz) {
--		u32 pending_sz = READ_ONCE(rbi->ring_buffer->pending_send_sz);
-+	/*
-+	 * Ensure the read of write_index in hv_get_bytes_to_write()
-+	 * happens after the read of pending_send_sz.
-+	 */
-+	virt_rmb();
-+	curr_write_sz = hv_get_bytes_to_write(rbi);
-+	bytes_read = hv_pkt_iter_bytes_read(rbi, start_read_index);
-+
-+	/*
-+	 * If there was space before we began iteration,
-+	 * then host was not blocked.
-+	 */
- 
--		/*
--		 * If there was space before we began iteration,
--		 * then host was not blocked. Also handles case where
--		 * pending_sz is zero then host has nothing pending
--		 * and does not need to be signaled.
--		 */
--		if (orig_write_sz > pending_sz)
--			return;
--
--		/* If pending write will not fit, don't give false hope. */
--		if (hv_get_bytes_to_write(rbi) < pending_sz)
--			return;
--	}
-+	if (curr_write_sz - bytes_read > pending_sz)
-+		return;
-+
-+	/* If pending write will not fit, don't give false hope. */
-+	if (curr_write_sz <= pending_sz)
-+		return;
- 
- 	vmbus_setevent(channel);
+ 	return 0;
  }
+ 
