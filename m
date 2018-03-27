@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752721AbeC0NQO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:16:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55018 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752447AbeC0NQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:13 -0400
+        id S1752770AbeC0NQW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:16:22 -0400
+Received: from foss.arm.com ([217.140.101.70]:55048 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752723AbeC0NQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:19 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
@@ -13,11 +13,10 @@ Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
         punit.agrawal@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
         pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
         peter.maydell@linaro.org, kristina.martsenko@arm.com,
-        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Steve Capper <steve.capper@arm.com>
-Subject: [PATCH v2 04/17] arm64: Refactor pud_huge for reusability
-Date: Tue, 27 Mar 2018 14:15:14 +0100
-Message-Id: <1522156531-28348-5-git-send-email-suzuki.poulose@arm.com>
+        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 06/17] kvm: arm/arm64: Fix stage2_flush_memslot for 4 level page table
+Date: Tue, 27 Mar 2018 14:15:16 +0100
+Message-Id: <1522156531-28348-7-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
@@ -25,48 +24,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make pud_huge reusable for stage2 tables, independent
-of the stage1 levels.
+So far we have only supported 3 level page table with fixed IPA of 40bits.
+Fix stage2_flush_memslot() to accommodate for 4 level tables.
 
-Cc: Steve Capper <steve.capper@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Christoffer Dall <cdall@kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Acked-by: Christoffer Dall <cdall@kernel.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/pgtable.h | 5 +++++
- arch/arm64/mm/hugetlbpage.c      | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ virt/kvm/arm/mmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 5e22503..4a16c11 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -479,6 +479,11 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
- #define __raw_pud_bad(pud)	(!(pud_val(pud) & PUD_TABLE_BIT))
- #define __raw_pud_present(pud)	pte_present(pud_pte(pud))
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index ec62d1c..16a19fb 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -375,7 +375,8 @@ static void stage2_flush_memslot(struct kvm *kvm,
+ 	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+ 	do {
+ 		next = stage2_pgd_addr_end(addr, end);
+-		stage2_flush_puds(kvm, pgd, addr, next);
++		if (!stage2_pgd_none(*pgd))
++			stage2_flush_puds(kvm, pgd, addr, next);
+ 	} while (pgd++, addr = next, addr != end);
+ }
  
-+static inline int __raw_pud_huge(pud_t pud)
-+{
-+	return pud_val(pud) && !(pud_val(pud) & PUD_TABLE_BIT);
-+}
-+
- static inline void __raw_set_pud(pud_t *pudp, pud_t pud)
- {
- 	WRITE_ONCE(*pudp, pud);
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index ecc6818..3f4bb43 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -35,7 +35,7 @@ int pmd_huge(pmd_t pmd)
- int pud_huge(pud_t pud)
- {
- #ifndef __PAGETABLE_PMD_FOLDED
--	return pud_val(pud) && !(pud_val(pud) & PUD_TABLE_BIT);
-+	return __raw_pud_huge(pud);
- #else
- 	return 0;
- #endif
 -- 
 2.7.4
