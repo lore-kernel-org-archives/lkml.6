@@ -1,69 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeC0PbN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 11:31:13 -0400
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:40396 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752591AbeC0PbM (ORCPT
+        id S1752552AbeC0PgZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 11:36:25 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:33244 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752470AbeC0PgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 11:31:12 -0400
-X-Google-Smtp-Source: AG47ELvb+J4IYNco1VhZ7Yq+H5WWRKjqU96RLX6UGN05j85e9733P/+K+Vl19QWA5b+2Xe9FMYio2w==
-Date: Tue, 27 Mar 2018 08:31:10 -0700 (PDT)
-X-Google-Original-Date: Tue, 27 Mar 2018 08:30:43 PDT (-0700)
-Subject: Re: [tip:irq/core 12/13] drivers/irqchip/irq-vic.c:295:2: error: implicit declaration of function 'set_handle_irq'; did you mean 'vic_handle_irq'?
-In-Reply-To: <alpine.DEB.2.21.1803270726140.1537@nanos.tec.linutronix.de>
-CC: Arnd Bergmann <arnd@arndb.de>, fengguang.wu@intel.com,
-        kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: tglx@linutronix.de
-Message-ID: <mhng-71f262e9-b9a8-4dd8-9657-955d76aab956@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 27 Mar 2018 11:36:24 -0400
+Date: Tue, 27 Mar 2018 11:35:25 -0400
+From: Rich Felker <dalias@libc.org>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Tony Lindgren <tony@atomide.com>, Huacai Chen <chenhc@lemote.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@mips.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org
+Subject: Re: Regression with arm in next with stack protector
+Message-ID: <20180327153525.GI1436@brightrain.aerifal.cx>
+References: <20180323181452.GJ5799@atomide.com>
+ <20180327090409.GA10990@n2100.armlinux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327090409.GA10990@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018 22:27:36 PDT (-0700), tglx@linutronix.de wrote:
-> On Mon, 26 Mar 2018, Palmer Dabbelt wrote:
->> On Mon, 26 Mar 2018 01:07:54 PDT (-0700), Arnd Bergmann wrote:
->> > On Tue, Mar 20, 2018 at 6:52 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
->> > > On Tue, 20 Mar 2018 00:53:21 PDT (-0700), tglx@linutronix.de wrote:
->> > > >
->> > > > On Tue, 20 Mar 2018, kbuild test robot wrote:
->> > > >
->> > > > > Hi Palmer,
->> > > > >
->> > > > > FYI, the error/warning still remains.
->> > > >
->> > > >
->> > > > Zapped the commit as well...
->> > >
->> > >
->> > > Sorry, I got the flu at ELC and have been offline for a bit.  It looks
->> > > like
->> > > you've kept the IRQ and RISC-V patches, I'll fix up the others are
->> > > re-submit
->> > > them as a separate patch set.
->> >
->> > Not sure which patches are in flight at the moment. To get a clean build
->> > on arm32 and arm64 randconfig kernels, I needed the fixup below
->> > on top of linux-next (not meant to be applied like this, just for
->> > reference).
->>
->> Thanks, I missed these during my original patch submission.  I think the
->> cleanest way to submit this is to spin a whole new patch set, including those
->> that are already in tip.  Would it be possible to just remove my IRQ cleanups
->> from tip so I can try again?
->
-> The commits in tip right now are:
->
->   cc6c98485f8e ("RISC-V: Move to the new GENERIC_IRQ_MULTI_HANDLER handler")
->   caacdbf4aa56 ("genirq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER")
->
-> I surely can revert them, but I don't see how they would break arm or
-> anything else.
+On Tue, Mar 27, 2018 at 10:04:10AM +0100, Russell King - ARM Linux wrote:
+> On Fri, Mar 23, 2018 at 11:14:53AM -0700, Tony Lindgren wrote:
+> > Hi,
+> > 
+> > Looks like commit 5638790dadae ("zboot: fix stack protector in
+> > compressed boot phase") breaks booting on arm.
+> > 
+> > This is all I get from the bootloader on omap3:
+> > 
+> > Starting kernel ...
+> > 
+> > data abort
+> > pc : [<810002d0>]          lr : [<100110a8>]
+> > reloc pc : [<9d6002d0>]    lr : [<2c6110a8>]
+> > sp : 81467c18  ip : 81466bf0     fp : 81466bf0
+> > r10: 80fc2c40  r9 : 81000258     r8 : 86fec000
+> > r7 : ffffffff  r6 : 81466bf8     r5 : 00000000  r4 : 80008000
+> > r3 : 81466c14  r2 : 81466c18     r1 : 000a0dff  r0 : 00466bf8
+> > Flags: nZCv  IRQs off  FIQs off  Mode SVC_32
+> > Resetting CPU ...
+> > 
+> > resetting ...
+> 
+> The reason for this is the following code that was introduced by the
+> referenced patch:
+> 
+> +               ldr     r0, =__stack_chk_guard
+> +               ldr     r1, =0x000a0dff
+> +               str     r1, [r0]
+> 
+> This uses the absolute address of __stack_chk_guard in the decompressor,
+> which is a self-relocatable image.  As with all constructs like the
+> above, this absolute address doesn't get fixed up, and so it ends up
+> pointing at invalid memory (in this case 0x466bf8) vs RAM at 0x80000000,
+> and the decompressor looks to be around 0x81000000.
+> 
+> Such constructs can not be used in the decompressor for exactly this
+> reason - they need to use PC-relative addressing instead just like
+> everything else does in head.S.
 
-If GENERIC_IRQ_MULTI_HANDLER is set via randconfig then set_handle_irq() is 
-pulled in from the generic code, which conflicts with the definitions in arm, 
-arm64, and openrisc.  The RISC-V commit depends on the genirq one.
+Can someone please answer why this is even needed to begin with? I
+don't see any compelling reason __stack_chk_guard needs a particular
+value in the decompressor, which is not dealing with any non-constant
+input. Just putting __stack_chk_guard in its bss should be fine and
+would eliminate all the risks of wrong code to load a value into it.
+Alternatively put it in initialized data with the desired value.
+
+Rich
