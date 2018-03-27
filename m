@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx493psfKuZ1LsURNZ70BRH1XcwugiJR0mZmcillBV69pNx/AA3XMG82zRn5tfxnegSRLE/yN
-ARC-Seal: i=1; a=rsa-sha256; t=1522168208; cv=none;
+X-Google-Smtp-Source: AIpwx48zlb/bSjpa5d58R3DbgJ0OkZpc4pSK44k1dDqocg1VyFSzzafxCz3fMTDVgtQO62t4bwwo
+ARC-Seal: i=1; a=rsa-sha256; t=1522168205; cv=none;
         d=google.com; s=arc-20160816;
-        b=TEYXKnLLZ0cdtcvgnz30swBydtf8qZTJdyCBPIu4l6zRhuYTBjg4oppdkbGzWKozxw
-         IheWCo323BsHSbsVoTp5nV01hbPZ8YusPoGumqRd8Q9wLmQHhBg+oeZKPOddjd4yWh4/
-         d1/jv1RpOCl+R5BDv88e+ZZg8TDtdkXTS/YEXobnqFzEIZjwGObU4PXDY0Bi1z7c0xXa
-         zwuxb0T/rWGvrI2B7bx3XJt0qV3iL7QjtbCO+WBDJ/GDowJOvh2YRN27bY6QRScmdDeW
-         isgQrqAOpL4nKRHYy09UU07sno5f8igiOIUM1vdisMugX0yZiMllrj9HyWA3VG6POoVd
-         nclQ==
+        b=MGDMiJ9cspvIlud1WK+eAECNZXRLTuHNck6qWHUQU5Bqd39GRgWaJgDbquyiOJhojC
+         CNeJXuM+xlbmXhoRHezrGbn6vDOZvDWrssOoJaW+Ek+8cbqLcYtY4q/To1WJHwHB6Hmp
+         vseKcnAV+rOk1pj11spJ5CsE/mfxEjXZFeZANx3cqNDDUFkzMis9yJQTRGdB4w5PRJkx
+         nAvzfhOk8RZNvQCaZ049cYG7LLf8ntcWOf2T/N1GQigtQvIsLBQRBTXCenO7P7XWcnfz
+         gWIx4G5LIc76jXum5M9agMHqmPlQGeA9ZQ0yC4ihPWHeykIOODay9KmRQuy3eYEqMOvH
+         PQ9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DpqoWgXmjoiX9ReLr/6I8Wfec7rattGyiJGaqv/K/wQ=;
-        b=oEbOR9baZzT9B2WkRV9/AN1HOglJvqPAqWuvO9U2vCXA2SoYNtX+E4qqxJxqvZDPNo
-         L3iidaHI/gcWASdYe61DtNX4pqbC+tFaSVXQVWL9PYsqb82nyQwumDZ19mXaO0lRDRhD
-         qBCwtCnSkwR+qqgwe3t8qZOWyn5Y5DnFTOjhH7LaGOORgnQZ4ga6dvEQA7Ll8ZDJJJ+c
-         Ho2kZPixSZ8QOtcuZft8nLPvqPMqpXvuR286Mpg9Rv1rwdxdli4Ok8a7sfa1u/2H2C5G
-         PH1MKBwshNHsA8h0C5gHBn3yXC6eaJMTM/yqc8boiq2ce2T0lv9Cis7VgduaQAjox10M
-         k15w==
+        bh=f3HvRodcle/4p6ugWV8k/x/PWziHxgRobXOz24bPIh4=;
+        b=Mvjq05yS1ImJddXafMo9q8FtyWamGKP6arXoO94+J5ylOCih4ctvI7c9W5x3WqjXdt
+         1YEDwQwuz18v0GoDPqhUcKmUVuAHz6QN0rdFqN9upd2dt+d6iBlEHkZWX0/SfnZOkSHz
+         4rpb0Owf8c3SVDnZLzOBFBe0TRPrwQYiwuN3g/4dxsaD4Q8bGvl47FPeSP6KmVP5NPLg
+         UrFkYBYPMjhqG+rw2ZkGrod95KG6IwPU/jFiLG89BwpFa1rfmti+3gJIvF5qtSN5WgOd
+         ydTsieyPGzmURKg2j0RZb7Yu3sGMzgQfFSwiQo2TBOUTe3tBJ9QBZGySJRK+ZZfyCrpj
+         G1Kg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
+	syzbot+f7b556d1766502a69d85071d2ff08bd87be53d0f@syzkaller.appspotmail.com,
+	Eric Biggers <ebiggers@google.com>,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.4 14/43] libata: Apply NOLPM quirk to Crucial MX100 512GB SSDs
-Date: Tue, 27 Mar 2018 18:27:18 +0200
-Message-Id: <20180327162717.251149251@linuxfoundation.org>
+Subject: [PATCH 4.4 13/43] libata: remove WARN() for DMA or PIO command without data
+Date: Tue, 27 Mar 2018 18:27:17 +0200
+Message-Id: <20180327162717.131571418@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109050829353966?=
-X-GMAIL-MSGID: =?utf-8?q?1596109050829353966?=
+X-GMAIL-THRID: =?utf-8?q?1596109047910699948?=
+X-GMAIL-MSGID: =?utf-8?q?1596109047910699948?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 9c7be59fc519af9081c46c48f06f2b8fadf55ad8 upstream.
+commit 9173e5e80729c8434b8d27531527c5245f4a5594 upstream.
 
-Various people have reported the Crucial MX100 512GB model not working
-with LPM set to min_power. I've now received a report that it also does
-not work with the new med_power_with_dipm level.
+syzkaller hit a WARN() in ata_qc_issue() when writing to /dev/sg0.  This
+happened because it issued a READ_6 command with no data buffer.
 
-It does work with medium_power, but that has no measurable power-savings
-and given the amount of people being bitten by the other levels not
-working, this commit just disables LPM altogether.
+Just remove the WARN(), as it doesn't appear indicate a kernel bug.  The
+expected behavior is to fail the command, which the code does.
 
-Note all reporters of this have either the 512GB model (max capacity), or
-are not specifying their SSD's size. So for now this quirk assumes this is
-a problem with the 512GB model only.
+Here's a reproducer that works in QEMU when /dev/sg0 refers to a disk of
+the default type ("82371SB PIIX3 IDE"):
 
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=89261
-Buglink: https://github.com/linrunner/TLP/issues/84
-Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+    #include <fcntl.h>
+    #include <unistd.h>
+
+    int main()
+    {
+            char buf[42] = { [36] = 0x8 /* READ_6 */ };
+
+            write(open("/dev/sg0", O_RDWR), buf, sizeof(buf));
+    }
+
+Fixes: f92a26365a72 ("libata: change ATA_QCFLAG_DMAMAP semantics")
+Reported-by: syzbot+f7b556d1766502a69d85071d2ff08bd87be53d0f@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org> # v2.6.25+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/ata/libata-core.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 --- a/drivers/ata/libata-core.c
 +++ b/drivers/ata/libata-core.c
-@@ -4224,6 +4224,11 @@ static const struct ata_blacklist_entry
- 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
- 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
+@@ -5077,8 +5077,7 @@ void ata_qc_issue(struct ata_queued_cmd
+ 	 * We guarantee to LLDs that they will have at least one
+ 	 * non-zero sg if the command is a data command.
+ 	 */
+-	if (WARN_ON_ONCE(ata_is_data(prot) &&
+-			 (!qc->sg || !qc->n_elem || !qc->nbytes)))
++	if (ata_is_data(prot) && (!qc->sg || !qc->n_elem || !qc->nbytes))
+ 		goto sys_err;
  
-+	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
-+	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
-+						ATA_HORKAGE_ZERO_AFTER_TRIM |
-+						ATA_HORKAGE_NOLPM, },
-+
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	if (ata_is_dma(prot) || (ata_is_pio(prot) &&
