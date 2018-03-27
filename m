@@ -1,63 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeC0Juf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:50:35 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40767 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750978AbeC0Jue (ORCPT
+        id S1752319AbeC0Jwl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:52:41 -0400
+Received: from atl4mhob12.registeredsite.com ([209.17.115.50]:47530 "EHLO
+        atl4mhob12.registeredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752204AbeC0Jwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:50:34 -0400
-Date: Tue, 27 Mar 2018 11:50:31 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Maurice R Volaski <maurice.volaski@einstein.yu.edu>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Did kernel 3.11 never work?
-Message-ID: <20180327095031.GA3858@amd>
-References: <E513F076-24D5-4F67-A204-D2E6E1135FDE@einstein.yu.edu>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
-Content-Disposition: inline
-In-Reply-To: <E513F076-24D5-4F67-A204-D2E6E1135FDE@einstein.yu.edu>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 27 Mar 2018 05:52:35 -0400
+X-TCPREMOTEIP: 37.74.225.130
+X-Authenticated-UID: mike@milosoftware.com
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        andrew@lunn.ch, f.fainelli@gmail.com, robh+dt@kernel.org,
+        frowand.list@gmail.com, Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH v3 1/2] of_net: Implement of_get_nvmem_mac_address helper
+Date: Tue, 27 Mar 2018 11:52:25 +0200
+Message-Id: <1522144346-32367-2-git-send-email-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
+References: <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It's common practice to store MAC addresses for network interfaces into
+nvmem devices. However the code to actually do this in the kernel lacks,
+so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
+address from an nvmem cell provider.
 
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is particulary useful on devices where the ethernet interface cannot
+be configured by the bootloader, for example because it's in an FPGA.
 
-On Fri 2018-03-23 14:37:17, Maurice R Volaski wrote:
-> I am trying to use kernel 3.11 on VirtualBox or VMWare, but it hangs at b=
-oot right after the message =E2=80=9CBooting the kernel=E2=80=9D. Under VMW=
-are, VMWare gives a message that it received an instruction to halt the CPU.
->=20
-> I have tried different editions of 3.11 and they all are affected the sam=
-e way. Does anyone know why this and a way to fix it?
->
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+---
+ Documentation/devicetree/bindings/net/ethernet.txt |  2 ++
+ drivers/of/of_net.c                                | 40 ++++++++++++++++++++++
+ include/linux/of_net.h                             |  6 ++++
+ 3 files changed, 48 insertions(+)
 
-There were kernels that were dangerous for everyone. But that was
-1.3.X, IIRC. 3.11 should work in most configurations.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---liOOAslEiF7prFVr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlq6E+cACgkQMOfwapXb+vJw4QCgmBvpO9ND7AygAg0GnEYzR4bZ
-ePIAn1vH5iNW33IF5zFJMnFshFVO+F2I
-=sJTJ
------END PGP SIGNATURE-----
-
---liOOAslEiF7prFVr--
+diff --git a/Documentation/devicetree/bindings/net/ethernet.txt b/Documentation/devicetree/bindings/net/ethernet.txt
+index 2974e63..cfc376b 100644
+--- a/Documentation/devicetree/bindings/net/ethernet.txt
++++ b/Documentation/devicetree/bindings/net/ethernet.txt
+@@ -10,6 +10,8 @@ Documentation/devicetree/bindings/phy/phy-bindings.txt.
+   the boot program; should be used in cases where the MAC address assigned to
+   the device by the boot program is different from the "local-mac-address"
+   property;
++- nvmem-cells: phandle, reference to an nvmem node for the MAC address;
++- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used;
+ - max-speed: number, specifies maximum speed in Mbit/s supported by the device;
+ - max-frame-size: number, maximum transfer unit (IEEE defined MTU), rather than
+   the maximum frame size (there's contradiction in the Devicetree
+diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
+index d820f3e..1c5d372 100644
+--- a/drivers/of/of_net.c
++++ b/drivers/of/of_net.c
+@@ -7,6 +7,7 @@
+  */
+ #include <linux/etherdevice.h>
+ #include <linux/kernel.h>
++#include <linux/nvmem-consumer.h>
+ #include <linux/of_net.h>
+ #include <linux/phy.h>
+ #include <linux/export.h>
+@@ -80,3 +81,42 @@ const void *of_get_mac_address(struct device_node *np)
+ 	return of_get_mac_addr(np, "address");
+ }
+ EXPORT_SYMBOL(of_get_mac_address);
++
++/**
++ * Obtain the MAC address from an nvmem provider named 'mac-address' through
++ * device tree.
++ * On success, copies the new address into memory pointed to by addr and
++ * returns 0. Returns a negative error code otherwise.
++ * @np:		Device tree node containing the nvmem-cells phandle
++ * @addr:	Pointer to receive the MAC address using ether_addr_copy()
++ */
++int of_get_nvmem_mac_address(struct device_node *np, void *addr)
++{
++	struct nvmem_cell *cell;
++	const void *mac;
++	size_t len;
++	int ret;
++
++	cell = of_nvmem_cell_get(np, "mac-address");
++	if (IS_ERR(cell))
++		return PTR_ERR(cell);
++
++	mac = nvmem_cell_read(cell, &len);
++
++	nvmem_cell_put(cell);
++
++	if (IS_ERR(mac))
++		return PTR_ERR(mac);
++
++	if (len < 6 || !is_valid_ether_addr(mac)) {
++		ret = -EINVAL;
++	} else {
++		ether_addr_copy(addr, mac);
++		ret = 0;
++	}
++
++	kfree(mac);
++
++	return ret;
++}
++EXPORT_SYMBOL(of_get_nvmem_mac_address);
+diff --git a/include/linux/of_net.h b/include/linux/of_net.h
+index 9cd72aa..90d81ee 100644
+--- a/include/linux/of_net.h
++++ b/include/linux/of_net.h
+@@ -13,6 +13,7 @@
+ struct net_device;
+ extern int of_get_phy_mode(struct device_node *np);
+ extern const void *of_get_mac_address(struct device_node *np);
++extern int of_get_nvmem_mac_address(struct device_node *np, void *addr);
+ extern struct net_device *of_find_net_device_by_node(struct device_node *np);
+ #else
+ static inline int of_get_phy_mode(struct device_node *np)
+@@ -25,6 +26,11 @@ static inline const void *of_get_mac_address(struct device_node *np)
+ 	return NULL;
+ }
+ 
++static inline int of_get_nvmem_mac_address(struct device_node *np, void *addr)
++{
++	return -ENODEV;
++}
++
+ static inline struct net_device *of_find_net_device_by_node(struct device_node *np)
+ {
+ 	return NULL;
+-- 
+1.9.1
