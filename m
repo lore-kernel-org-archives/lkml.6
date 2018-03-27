@@ -1,67 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeC0Brl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:47:41 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44236 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751692AbeC0Brk (ORCPT
+        id S1752128AbeC0Buf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:50:35 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:56266 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751714AbeC0Bue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:47:40 -0400
-X-Google-Smtp-Source: AIpwx49t6vHYU/K5hkk4kMzl8v1/kFIWjsVz0PEq96NofH/5xoXGmT+Em3JtQuoQAuBKlA93Wa9jIA==
-Date: Tue, 27 Mar 2018 10:47:34 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Minchan Kim <minchan@kernel.org>,
-        ndrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH 2/2] zram: idle memory tracking
-Message-ID: <20180327014734.GG467@jagdpanzerIV>
-References: <20180326064951.123940-1-minchan@kernel.org>
- <20180326064951.123940-2-minchan@kernel.org>
- <20180327004911.GA467@jagdpanzerIV>
- <20180327010347.GA41148@rodete-desktop-imager.corp.google.com>
- <20180327011327.GE467@jagdpanzerIV>
+        Mon, 26 Mar 2018 21:50:34 -0400
+X-Google-Smtp-Source: AG47ELuGaZnc+r/+k/Zs4ME65/7Gwqx4mc3+rmxNPgxJOKmC90LBPLsDgd/UJKGLjSAhXEeJjeRmKMCs7eUlemA7wxE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327011327.GE467@jagdpanzerIV>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180323150241.878778199@goodmis.org>
+References: <20180323150241.878778199@goodmis.org>
+From: "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
+Date: Mon, 26 Mar 2018 18:50:32 -0700
+Message-ID: <CAEi0qNnm0uor5T7KWVmA9sUg21FJkvP0HWzCPcRz5QzO4M5Fjw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] [RFC] init, tracing: Add initcall trace events
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>,
+        =?UTF-8?B?QW3Dg8KpcmljbyBXYW5n?= <xiyou.wangcong@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/27/18 10:13), Sergey Senozhatsky wrote:
-> On (03/27/18 10:03), Minchan Kim wrote:
-> > On Tue, Mar 27, 2018 at 09:49:11AM +0900, Sergey Senozhatsky wrote:
-> > > On (03/26/18 15:49), Minchan Kim wrote:
-> > > > zRam as swap is useful for small memory device. However, swap means
-> > > > those pages on zram are mostly cold pages due to VM's LRU algorithm.
-> > > > Especially, once init data for application are touched for launching,
-> > > > they tend to be not accessed any more and finally swapped out.
-> > > > zRAM can store such cold pages as compressed form but it's pointless
-> > > > to keep in memory. Better idea is app developers free them directly
-> > > > rather than remaining them on heap.
-> > > > 
-> > > > This patch tell us last accesss time of each block of zram via
-> > > > "cat /sys/kernel/debug/zram/zram0/access_time".
-> > > > 
-> > > > The output is as follows,
-> > > > 
-> > > > 276 1250
-> > > > 277 1800
-> > > > ..  ..
-> > > > ..  ..
-> > > 
-> > > So can we just use CONFIG_IDLE_PAGE_TRACKING + CONFIG_PAGE_OWNER?
-> > 
-> > The goal is not mapped memory tracking but one swapped out.
-> > Can we do it by above two combination?
-> 
-> Ah, you are right. page_idle tracks only pages which are on LRU lists.
+Hi Steve,
 
-Can a universal (not specific to zram) idle swapped out page tracking
-be of interest to MM people? With the exactly same motivation. Some
-swaps use nfs, for instance, so idle swap pages tracking can be helpful
-not only in embedded domain.
+On Fri, Mar 23, 2018 at 8:02 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> A while ago we had a boot tracer. But it was eventually removed:
+>  commit 30dbb20e68e6f ("tracing: Remove boot tracer").
+>
+> The rational was because there is already a initcall_debug boot option
+> that causes printk()s of all the initcall functions.
+>
+> The problem with the initcall_debug option is that printk() is awfully slow,
+> and makes it difficult to see the real impact of initcalls. Mainly because
+> a single printk() is usually slower than most initcall functions.
+>
+> Instead of bringing back the boot tracer, adding trace events around the
+> initcall functions, and even one to denote which level the initcall
+> functions are being called from, adds the necessary information to
+> analyze the initcalls without the high overhead of printk()s, that
+> can substantially slow down the boot process.
+>
+> Another positive, is that the console initcall functions themselves
+> can also be traced. The timestamps are not operational at that time
+> but you can see which consoles are being registered. I saw this on
+> one of my test boxes:
+>
+> <idle>-0     [000] ...1     0.000000: initcall_level: level=console
+> <idle>-0     [000] ...1     0.000000: initcall_start: func=con_init+0x0/0x224
+> <idle>-0     [000] ...1     0.000000: initcall_finish: func=con_init+0x0/0x224 ret=0
+> <idle>-0     [000] ...1     0.000000: initcall_start: func=hvc_console_init+0x0/0x19
+> <idle>-0     [000] ...1     0.000000: initcall_finish: func=hvc_console_init+0x0/0x19 ret=0
+> <idle>-0     [000] ...1     0.000000: initcall_start: func=xen_cons_init+0x0/0x60
+> <idle>-0     [000] ...1     0.000000: initcall_finish: func=xen_cons_init+0x0/0x60 ret=0
+> <idle>-0     [000] ...1     0.000000: initcall_start: func=univ8250_console_init+0x0/0x2d
+> <idle>-0     [000] ...1     0.000000: initcall_finish: func=univ8250_console_init+0x0/0x2d ret=0
 
-	-ss
+Will this make initcall_debug not work if CONFIG_TRACEPOINTS is turned
+off? Although it builds but I think this initcall_debug feature will
+fail, maybe CONFIG_TRACEPOINTS should be selected somewhere?
+
+I recently ran into some issues like this for my preemptirq
+tracepoints patch (which I will post again soon :D) where lockdep
+needed the tracepoints and I had to select it.
+
+thanks,
+
+- Joel
