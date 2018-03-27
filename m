@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522169877; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522169875; cv=none;
         d=google.com; s=arc-20160816;
-        b=IoZpU2svHUvil6pRXiTc0nPI8jPMahp6VcJlzG/Ykf5/9NrISCXty7Dwf7vqYKM/8O
-         ROBwQdW+g8ZGWWatPc8Sqf0a+ZWpyz3PwDUi2shxzwcPQIw6ckZLJX3PXIs4GSdjlTGe
-         WxLV8oWEVV3U1B34xDAWrtstZ6dkMkJsE0lR/6aYpr2WBjRftVqwSGC7OM7GMLuALT3w
-         Ax9TANBIBCaJnLycEdI489CqE2/MtokU3ywfyptUbG7gSvEHV0jCDzJBrmm+pOBhbxnV
-         EXcMNqqddi5kwDgW0poWWf+K+ELnY6m7e4fZZamtAjBObbVI+mTNq4F4cmmiR7M3+aGj
-         4Kcw==
+        b=ouvuTCJPYyQlqcdnmzME9pRLNFhvnLbcYaLlvxQ+RChsKGvCgXgFPCBN5kTtf0cCU5
+         RxrJoW40m/RdSF7WSfOU3k260ScQQ0mrMcGkl4rR9fPOCsxTDwqZVf5LzNA6rMuwi1rF
+         tq4GaU85ihd3PE5TvlfFmJpA/mYS3g7mH8e1zfHZO1Em265pQR0kbgZgoHHPfoCFTai1
+         RAORcQcEiXCLueNon2fuh33n1Fg7YwhR1aFKd9ctyt25BaMhIn6iovKLpSZdiX0dtULn
+         d9SRo6jNMSFO1UrYXk59k2DFK30rmamkO26FDUOfuaoG1U/ATHov86I8JGMfLGOy4CMG
+         eJwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=TrPsSA82+Wc4vKs2A+va2uJYYyXutDQZXj+lR7R4i7Y=;
-        b=SLnQuJaiOaO0Kb/FOt+Fko9auh+jhgxEH4OuSfyj6gLQHpdO8iWGTSPygXHrq5dBat
-         HsZrvu+uaurqd3ZMi8UyCga5NVcKQa1uDF+PWbUnPDehUWomvHSe1WKxOenQc6NDdGWk
-         +/2EuFOXOnsx8f4tUH6oZWcHaSsY961MqKJqGfbjTjtQPe7IRWHZ87XWk37QXJG/194y
-         2VjbHDCGQa+0JdL6L/+gGWzuQEVYivevlnhMsMbwCdcsh+W2UZVHLz9zp5L0UrcFbLzJ
-         beVp51X0yl/8orwxPAhuvYzIGY9xiaNoxceupPNUCJ5dqT/TF5su3TQgasTELmp2Ho4e
-         El1A==
+        bh=zLiSxNYCnbZDGOudEgmHw5G2g+Qsz+FQUgsgraVMNdU=;
+        b=Q1wXWajroQDe6mU4Mc6+nwKNQtAJl8RBDcDnnSj0ajDuR6qFfZfdFXgnvVKflwMF6j
+         UKV5JsuCTGtQVndSWGSzW9CfsPpz5pCDwgeky0KccD8Pon4FwRKqULRGP4IdvvYztTkb
+         aCUX/0dtJruR4h2nsklpfPmWI5pQ5wA7ewWFEx3ZGU6Ph5XFRN5I0fDwhQ9i32m3adqP
+         oBR4R1VAW3llPtVRNTEJOKSbgYd5u9/2uTjPV9mm0/KzWD9jsTx5L2z5z5ft3Jm3Wajb
+         A+75BdBbm4HKkiwFOOQVNQNXVave9CSEwCuQpd3LeuC+QP6Etq4SPDJ1fhC4fJo5TUAh
+         EGDg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=hGaHk3rT;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=dCo2qWPk;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=hGaHk3rT;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=dCo2qWPk;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx48mmB0IcT064n10LjGGUrdOaAg2hz0T4aQdm7Lr/dGWIh29GAk/0bOK3XWMNVpO7eivSW7BnQ==
+X-Google-Smtp-Source: AIpwx48QI24nLLjNvxbcD2UT2yQZ6pWgReRkH9he5h6cS3juE62VyMrI+6oe5NRpvpUIOW/Duw1EiA==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
@@ -58,43 +58,57 @@ Cc: Dmitry Vyukov <dvyukov@google.com>,
 	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
 	Jacob Bramley <Jacob.Bramley@arm.com>,
 	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Subject: [RFC PATCH v2 6/6] arm64: update Documentation/arm64/tagged-pointers.txt
-Date: Tue, 27 Mar 2018 18:57:42 +0200
-Message-Id: <080040fac18377cb6b9cd418668a10e1113b3c2a.1522169685.git.andreyknvl@google.com>
+Subject: [RFC PATCH v2 5/6] lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
+Date: Tue, 27 Mar 2018 18:57:41 +0200
+Message-Id: <1a761b77620457f3bb57d327343765068cd652eb.1522169685.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 In-Reply-To: <cover.1522169685.git.andreyknvl@google.com>
 References: <cover.1522169685.git.andreyknvl@google.com>
 In-Reply-To: <cover.1522169685.git.andreyknvl@google.com>
 References: <cover.1522169685.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596110800969348216?=
-X-GMAIL-MSGID: =?utf-8?q?1596110800969348216?=
+X-GMAIL-THRID: =?utf-8?q?1596110798857108837?=
+X-GMAIL-MSGID: =?utf-8?q?1596110798857108837?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a note that work on passing tagged user pointers to the kernel via
-syscalls has started, but might not be complete yet.
+strncpy_from_user and strnlen_user accept user addresses as arguments, and
+do not go through the same path as copy_from_user and others, so here we
+need to separately handle the case of tagged user addresses as well.
+
+Untag user pointers passed to these functions.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- Documentation/arm64/tagged-pointers.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ lib/strncpy_from_user.c | 2 ++
+ lib/strnlen_user.c      | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/Documentation/arm64/tagged-pointers.txt b/Documentation/arm64/tagged-pointers.txt
-index a25a99e82bb1..361481283f00 100644
---- a/Documentation/arm64/tagged-pointers.txt
-+++ b/Documentation/arm64/tagged-pointers.txt
-@@ -35,8 +35,9 @@ Using non-zero address tags in any of these locations may result in an
- error code being returned, a (fatal) signal being raised, or other modes
- of failure.
+diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
+index b53e1b5d80f4..97467cd2bc59 100644
+--- a/lib/strncpy_from_user.c
++++ b/lib/strncpy_from_user.c
+@@ -106,6 +106,8 @@ long strncpy_from_user(char *dst, const char __user *src, long count)
+ 	if (unlikely(count <= 0))
+ 		return 0;
  
--For these reasons, passing non-zero address tags to the kernel via
--system calls is forbidden, and using a non-zero address tag for sp is
-+Some initial work for supporting non-zero address tags passed to the
-+kernel via system calls has been done, but the kernel doesn't provide
-+any guarantees at this point. Using a non-zero address tag for sp is
- strongly discouraged.
++	src = untagged_addr(src);
++
+ 	max_addr = user_addr_max();
+ 	src_addr = (unsigned long)src;
+ 	if (likely(src_addr < max_addr)) {
+diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+index 60d0bbda8f5e..8b5f56466e00 100644
+--- a/lib/strnlen_user.c
++++ b/lib/strnlen_user.c
+@@ -108,6 +108,8 @@ long strnlen_user(const char __user *str, long count)
+ 	if (unlikely(count <= 0))
+ 		return 0;
  
- Programs maintaining a frame pointer and frame records that use non-zero
++	str = untagged_addr(str);
++
+ 	max_addr = user_addr_max();
+ 	src_addr = (unsigned long)str;
+ 	if (likely(src_addr < max_addr)) {
 -- 
 2.17.0.rc0.231.g781580f067-goog
