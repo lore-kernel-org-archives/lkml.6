@@ -1,58 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeC0VUm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:20:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:55579 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750965AbeC0VUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:20:40 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,368,1517904000";
-   d="scan'208";a="41784472"
-Date: Wed, 28 Mar 2018 05:15:58 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [RFC PATCH] KVM: X86: force_emulation_prefix can be static
-Message-ID: <20180327211558.GA74075@lkp-sb05>
-References: <1522141616-9825-3-git-send-email-wanpengli@tencent.com>
+        id S1752113AbeC0VWA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:22:00 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44170 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750965AbeC0VV6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:21:58 -0400
+Date: Tue, 27 Mar 2018 23:21:56 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Tony Lindgren <tony@atomide.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
+Subject: Re: 4.16-rc5 on Motorola Droid 4
+Message-ID: <20180327212156.GA10834@amd>
+References: <20180318220418.GA22880@amd>
+ <20180320140322.GU5799@atomide.com>
+ <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
 Content-Disposition: inline
-In-Reply-To: <1522141616-9825-3-git-send-email-wanpengli@tencent.com>
+In-Reply-To: <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
 User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Fixes: 9e028a15a849 ("KVM: X86: Add Force Emulation Prefix for "emulate the next instruction"")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- x86.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 17bb968..44f1e72 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -146,7 +146,7 @@ bool __read_mostly enable_vmware_backdoor = false;
- module_param(enable_vmware_backdoor, bool, S_IRUGO);
- EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
- 
--bool __read_mostly force_emulation_prefix = false;
-+static bool __read_mostly force_emulation_prefix = false;
- module_param(force_emulation_prefix, bool, S_IRUGO);
- 
- #define KVM_NR_SHARED_MSRS 16
+Hi!
+
+> > Yeah display related stuff is half merged in Linux next, backlight
+> > needs some binding changes from what I remember. I think the
+> > minimal set is something like this against v4.16-rc:
+>=20
+> I have an updated lm355x backlight driver almost ready, that uses
+> an updated binding scheme and exposes the keyboard backlight
+> using the LED subsystem.
+
+If I could get a diff, I'd happily test it :-).
+
+Also, if you know how to get information from light sensor, that would
+be nice.
+
+> The keyboard backlight and lcd backlight are controlled by LM3552,
+> that's the driver mentioned above. The other LEDs (status rgb,
+> shift/capslock, and the android button backlight) are working.
+
+Confirmed. They work, and they have reasonable names.
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq6tfQACgkQMOfwapXb+vL6ewCgkCoyVkOIjWSYVORrUWptgX0W
+q1IAoIZE2F+6n5FOE7CinEtHrBUWaiGQ
+=Eb0w
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
