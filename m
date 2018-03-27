@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/R9J7ivvnbUk81fszo0NW1FfGYnfqa2OElU6p5Ky06CkTNNThJgyw0/UlcncWxaDetU8JY
-ARC-Seal: i=1; a=rsa-sha256; t=1522168601; cv=none;
+X-Google-Smtp-Source: AIpwx4/TvhPBkSizJBE8ziW0HTiKhs8taCSz4g0B8rx0VvgdBtBTBSy2wVJ3azItC+KbqEGlG51J
+ARC-Seal: i=1; a=rsa-sha256; t=1522168598; cv=none;
         d=google.com; s=arc-20160816;
-        b=rI8HW3ZhoaY2LUAFddYHsVe+qbs6VsvUSCzU8FY/TwCDKLwrR1sNzATJXWzY8W17Y5
-         6XViqLCwvBtC0RA5UjimHCv56eET0BO1EIM+N2KnPVPM7TWqrFea1/HanCrndYXkdoVL
-         60UL3nVpR6qIWzhdsX4XA9T9Tey89vHnH4BOxBoTsIF/hjfGAIfcxhoJjRP8wbM87YC7
-         T/cKwBQlRnu91vilUZtiTzqWjLkRUIS7f2mPo5Sex0gmIl2ycZT1lyVL1YOoKcm7Fg6s
-         FdmEzfQateUt4keMrFhDlMRIa+IpCqm2XI2WYzThxjCYReirvxP/zHlod8cKsd6OguxA
-         s59w==
+        b=HvL5xekqxIKwwrslejyHsc2jzhTjBTb6rOeHcHjK94aX6Tkz2LJPv2mnAa3ekR0epf
+         8y2cT2Vh3pDV9fdvIQ8UskU+2TTvKJTb1LVYjzxoCLRKYWGBdPdQyIlm8Vv+rfOU4n4P
+         mIJABeWhHCOlBhHsyBHrm5QLERlwaSA5cGxdZLNBXFIKd2KpIbvgbaup3hfdYENbKT9z
+         2wizDOZe4Dy0pmp1dv5hIjIkeJZ1zz9ioXSPoMAFkd0EcaNmtcQVh6JTXF0y8Fjx0C49
+         kkzKb5bF6lEd0Miz988VxmSoCpyD2+UAYtJQESaK+BNVKRksfPb7kImAODHs6Qfk76xV
+         2SRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bKYpPzv6vHl4a5LzKJllNQ58AKGnZ4b3dt0fwjPvaWE=;
-        b=ly1sG4DQLcvhM8xDr0X+ipt8VKMEc0UUo/uP7WgDMSDWjpo1x47etx8wHfOk13PsDe
-         inOSG0hL0Jtx9zWVsC3NotSaDNB6C1lp33Qs8E9KTNzB6+jBzlaWxPggAca49xkrQdO9
-         aA4dnjaHIVlQOZ+I0SeCRfaxzuCrAj7P0x5xSP5mNLyMTIk+my1v5W0zeqZfCndSdiyV
-         ZA3i0h5qFd+QKMWydrYgYDgRE5KFOrRUQCa7ufsJa84lDw8ORfOgS33VCetDdDFfOZHT
-         QQWkU6dk90oFsxhVyxQps/Q8sp460sR3QVspsGFW0us2WKpu3ZJV5TbwSUbiFuX5zfxd
-         WuPQ==
+        bh=hQcciyp1HXLASsADsO/YpffB/Pvc5Ol2QCpVSpdkJp8=;
+        b=FcSLS8O84QCTRJ7X9/HlR6o+dmv/6vq1ivAWpimufU8TUdV3FuecbUmP+G23Cs7UAz
+         OT9cJguaLfr0W77eoui09K/xf9P213JPLMZM20OTSs2gM0U6GRi5VVJkKL+rF10JhZpY
+         KLZl3ayLER1doQ09LXIq5VAyb8ZnlqUa8JD4N/LaTHJPfUT5yVPclgfTgi8LXS3FzZK/
+         U6AkxiltWhtOkZxS5VRY1DqzB3JpKvOqP2zSIE0LVir9F4nyILQLAmApRcBF7RXrNy60
+         g91zjII6oAPmbR6iHr7sbsjhBpY9f+B2Lqql8t5Qhp/N+Ne91xb9fwvLolFEIDbmUChH
+         O3FA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Toshi Kani <toshi.kani@hp.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 059/101] acpi, numa: fix pxm to online numa node associations
-Date: Tue, 27 Mar 2018 18:27:31 +0200
-Message-Id: <20180327162753.623173436@linuxfoundation.org>
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 020/101] mmc: dw_mmc: exynos: fix the suspend/resume issue for exynos5433
+Date: Tue, 27 Mar 2018 18:26:52 +0200
+Message-Id: <20180327162751.216426681@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109003178035543?=
-X-GMAIL-MSGID: =?utf-8?q?1596109463219070848?=
+X-GMAIL-THRID: =?utf-8?q?1596109460522217445?=
+X-GMAIL-MSGID: =?utf-8?q?1596109460522217445?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,66 +50,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
 
-commit dc9e0a9347e932e3fd3cd03e7ff241022ed6ea8a upstream.
+commit e22842dd64bf86753d3f2b6ea474d73fc1e6ca24 upstream.
 
-Commit 99759869faf1 "acpi: Add acpi_map_pxm_to_online_node()" added
-support for mapping a given proximity to its nearest, by SLIT distance,
-online node. However, it sometimes returns unexpected results due to the
-fact that it switches from comparing the PXM node to the last node that
-was closer than the current max.
+Before enabling the clock, dwmmc exynos driver is trying to access the
+register. Then the kernel panic can be occurred.
 
-    for_each_online_node(n) {
-            dist = node_distance(node, n);
-            if (dist < min_dist) {
-                    min_dist = dist;
-                    node = n;	<---- from this point we're using the
-				      wrong node for node_distance()
-
-
-Fixes: 99759869faf1 ("acpi: Add acpi_map_pxm_to_online_node()")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Toshi Kani <toshi.kani@hp.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/numa.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/mmc/host/dw_mmc-exynos.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -103,25 +103,27 @@ int acpi_map_pxm_to_node(int pxm)
-  */
- int acpi_map_pxm_to_online_node(int pxm)
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -165,9 +165,15 @@ static void dw_mci_exynos_set_clksel_tim
+ static int dw_mci_exynos_runtime_resume(struct device *dev)
  {
--	int node, n, dist, min_dist;
-+	int node, min_node;
- 
- 	node = acpi_map_pxm_to_node(pxm);
- 
- 	if (node == NUMA_NO_NODE)
- 		node = 0;
- 
-+	min_node = node;
- 	if (!node_online(node)) {
--		min_dist = INT_MAX;
-+		int min_dist = INT_MAX, dist, n;
+ 	struct dw_mci *host = dev_get_drvdata(dev);
++	int ret;
 +
- 		for_each_online_node(n) {
- 			dist = node_distance(node, n);
- 			if (dist < min_dist) {
- 				min_dist = dist;
--				node = n;
-+				min_node = n;
- 			}
- 		}
- 	}
++	ret = dw_mci_runtime_resume(dev);
++	if (ret)
++		return ret;
  
--	return node;
-+	return min_node;
+ 	dw_mci_exynos_config_smu(host);
+-	return dw_mci_runtime_resume(dev);
++
++	return ret;
  }
- EXPORT_SYMBOL(acpi_map_pxm_to_online_node);
  
+ /**
