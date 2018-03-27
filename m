@@ -1,90 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751885AbeC0IE5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:04:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37866 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750873AbeC0IEy (ORCPT
+        id S1752129AbeC0IFR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:05:17 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40741 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752044AbeC0IFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:04:54 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C382602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 27 Mar 2018 04:05:11 -0400
+X-Google-Smtp-Source: AIpwx497KI/P8gUHAK83BS2KuZ1Ka9rlOR7COaPDS9yOddWjhmOgWwqHi4+FvXKkN+7AwAyVS4I/GA==
+Date: Tue, 27 Mar 2018 09:05:07 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Sean Wang <sean.wang@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>, a.zummo@towertech.it,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        jcsing.lee@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org,
+        javier@osg.samsung.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        matthias.bgg@gmail.com, eddie.huang@mediatek.com,
+        Chen.Zhong@mediatek.com, beomho.seo@samsung.com,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v6 0/6] Add MediaTek PMIC keys support
+Message-ID: <20180327080507.pgil6pw2mn4y2f4d@dell>
+References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
+ <808b2029da224ab687fb0553cbc1c68e@mtkmbs08n1.mediatek.inc>
+ <1521685073.28226.10.camel@mtkswgap22>
+ <20180323185418.GD255819@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [v2] rsi: Remove stack VLA usage
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1521081085-16404-1-git-send-email-me@tobin.cc>
-References: <1521081085-16404-1-git-send-email-me@tobin.cc>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: "Tobin C. Harding" <me@tobin.cc>, kernel-hardening@lists.openwall.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180327080453.A8A7260558@smtp.codeaurora.org>
-Date: Tue, 27 Mar 2018 08:04:53 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180323185418.GD255819@dtor-ws>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Tobin C. Harding" <me@tobin.cc> wrote:
+On Fri, 23 Mar 2018, Dmitry Torokhov wrote:
+> On Thu, Mar 22, 2018 at 10:17:53AM +0800, Sean Wang wrote:
+> > Hi, Dmitry and Lee
+> > 
+> > The series seems not being got merged. Are they good enough to be ready
+> > into the your tree?
+> > 
+> > Recently I've tested the series with focusing on pwrkey event generated
+> > through interrupt when push and release the key on bpi-r2 board and then
+> > finally it's working fine. but for homekey it cannot be found on the
+> > board and thus I cannot have more tests more about it.
+> > 
+> > Tested-by: Sean Wang <sean.wang@mediatek.com>
+> 
+> You have my Ack on the input patch; I expect it go through Lee's tree as
+> there are some dependencies on mfd core piece.
 
-> The use of stack Variable Length Arrays needs to be avoided, as they
-> can be a vector for stack exhaustion, which can be both a runtime bug
-> (kernel Oops) or a security flaw (overwriting memory beyond the
-> stack). Also, in general, as code evolves it is easy to lose track of
-> how big a VLA can get. Thus, we can end up having runtime failures
-> that are hard to debug. As part of the directive[1] to remove all VLAs
-> from the kernel, and build with -Wvla.
-> 
-> Currently rsi code uses a VLA based on a function argument to
-> `rsi_sdio_load_data_master_write()`.  The function call chain is
-> 
-> Both these functions
-> 
-> 	rsi_sdio_reinit_device()
-> 	rsi_probe()
-> 
-> start the call chain:
-> 
-> 	rsi_hal_device_init()
-> 	rsi_load_fw()
-> 	auto_fw_upgrade()
-> 	ping_pong_write()
-> 	rsi_sdio_load_data_master_write()
-> 
-> [Without familiarity with the code] it appears that none of the 4 locks
-> 
-> 	mutex
-> 	rx_mutex
-> 	tx_mutex
-> 	tx_bus_mutex
-> 
-> are held when `rsi_sdio_load_data_master_write()` is called.  It is therefore
-> safe to use kmalloc with GFP_KERNEL.
-> 
-> We can avoid using the VLA by using `kmalloc()` and free'ing the memory on all
-> exit paths.
-> 
-> Change buffer from 'u8 array' to 'u8 *'.  Call `kmalloc()` to allocate memory for
-> the buffer.  Using goto statement to call `kfree()` on all return paths.
-> 
-> It can be expected that this patch will result in a small increase in overhead
-> due to the use of `kmalloc()` however this code is only called on initialization
-> (and re-initialization) so this overhead should not degrade performance.
-> 
-> [1] https://lkml.org/lkml/2018/3/7/621
-> 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
-
-Patch applied to wireless-drivers-next.git, thanks.
-
-44f98a9332e4 rsi: Remove stack VLA usage
+Are you happy for me to merge the Input dt-bindings without your Ack?
 
 -- 
-https://patchwork.kernel.org/patch/10283841/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
