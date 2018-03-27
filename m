@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/apoKWa1F2Py4j1dUiy7A+X4wedcXBCXazppbp/LMe9cA7QWaMPPwVW6YQs7Yklu/CADgS
-ARC-Seal: i=1; a=rsa-sha256; t=1522168809; cv=none;
+X-Google-Smtp-Source: AIpwx4+LTlyDPcXwUapdcace3u9Zbl5J3rdWIpztULHVl6KSjU0PQ6sFBbRpEKiuTrwQZKU5AmdS
+ARC-Seal: i=1; a=rsa-sha256; t=1522168806; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bx9t5OcE0PkP+P8otWiHC4lq3HlUJv1xZ1tkEBrMngwk87MNk3Bfq/H3GbB3HzHjNt
-         APer5I+0OAwRCb1w5Wdl9EH4LSrBFCbWXuDiiDe8isgYK5asnCG4u2T5qEpW55ufefrt
-         KSU+F7O/bRPObcU9hoMuXWtDcm7u/XA8CyDh3DvCSwOCOibOonOSPKxplnDT44McjOwo
-         wrj4HlbmpG9p35LIq3vkgtfcUnJp+U2kdrb3ePyQMYs9ZIbeQVoziL46/6etpYLDrNoP
-         pHR7IzzOXYWNtEpsBogFkX+pt5EvQmjLFWLAvEm6F8vsAl9kfESIHhaJOJeY+Gj3IDgJ
-         5fVQ==
+        b=Er6FS9mLcKPI1X+2tAvmiI8mu4TxSeUBYbw7A7poFT95dxXyxwbL0CYHcHiygUKpo4
+         F114+8Wzi8gnXSBEWV20oV2Rk9wGJT4j9Vz5VqjcV/wt10iUjA6f3hGQjwgqNqJln3Us
+         qreBKB1ECAuI21NFV0JxO9NXqoyPNLeq12GBrxUO2V7p+BFj1FxAsYRTMo6yKBfhl8fE
+         hhNOPkMD5D5vNcXpcTUUV7ZbdzSMZ7yT7xiHZTv9pbXctw2n+csoRdoX+5JTLbQpxBhZ
+         gnaMRZW8WAwVYGpPSzci3Ga9Ddkyo/8hG/GaYylC+2T10q0ihB87Ru59et39c9W3GSBw
+         Jmdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FV1BxhllvJIywl4FYaWziSiOo3iF00QCOdjdjTI5U3A=;
-        b=IRuPtooEjzZEQWO0nk4B0updjfkd6UmpJvB40fInYgN7poMIEFFSzRxlEDhj4KMyhq
-         NLamVpUJWjIxc7aclChR3R2m1bvaPX3j49UM5Qs+qT7N2uRkoJpKGBloISn5qDA8ENY7
-         tspoh12J0fYmLCrLOXXuoUqDHNRaXUjo0POOmvmBPgXgykJcuVSIwoo5htf6Nby02Yxs
-         e6BAJgZAIDwPJbVfxTeS3ECFgnlPCQr7VLAvk4QJW3Q+54HVPzBMynecdP9WLel6ecbr
-         BFnC6oOml71FzHt33zcr2mpuAfbDjWxDFCnb9bYY1pErCMT6+IwXT4eiB38SzOhXjpzF
-         0zSQ==
+        bh=Sj7UUczSFAxUwWBGQCxSyKZasz2h+kgxgAcARkf0y2s=;
+        b=NVn1N3YDjKH2HZelmv/oAHpOGr3Q9CvZxbPx63fdZ8JmAf1CxwXSO6jm8fTpXPBcc7
+         BFUK7kxxCqMcGRX4s2faXMhdEG/QPXQN4UoTX/HGnJefy2V3cTAa9iXwFlD2PxdrZwE6
+         P1C2cD2M7SlXHXu+EZHltxA7/aecANBEGvghWW02wBDY0eXpcPpywD3XrnboP3fNMw84
+         bUOjGg5WnRTZxUD1e7eGpy0egCw5iuSy4PzciLhs2CwLxyNPL9XsTNyNmDEInSckI3Na
+         aI4xr8WC8MHbWQfkQZrL6iEMQ2qJjua1GdK8mh6Mv1Xy2+jCWP2FJufnZ/4xhbh1v6HY
+         OYpA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Stable@vger.kernel.org,
+	Michael Nosthoff <committed@heine.so>,
 	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.15 008/105] iio: adc: meson-saradc: unlock on error in meson_sar_adc_lock()
-Date: Tue, 27 Mar 2018 18:26:48 +0200
-Message-Id: <20180327162758.196506665@linuxfoundation.org>
+Subject: [PATCH 4.15 007/105] iio: st_pressure: st_accel: pass correct platform data to init
+Date: Tue, 27 Mar 2018 18:26:47 +0200
+Message-Id: <20180327162758.159347233@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109334162552316?=
-X-GMAIL-MSGID: =?utf-8?q?1596109681147337202?=
+X-GMAIL-THRID: =?utf-8?q?1596108960436960316?=
+X-GMAIL-MSGID: =?utf-8?q?1596109678834738653?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +49,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Michael Nosthoff <committed@heine.so>
 
-commit 3c3e4b3a708a9d6451052e348981f37d2b3e92b0 upstream.
+commit 8b438686a001db64c21782d04ef68111e53c45d9 upstream.
 
-The meson_sar_adc_lock() function is not supposed to hold the
-"indio_dev->mlock" on the error path.
+Commit 7383d44b added a pointer pdata which get set to the default
+platform_data when non was defined in the device. But it did not
+pass this pointer to the st_sensors_init_sensor call but still
+used the maybe uninitialized platform_data from dev.
 
-Fixes: 3adbf3427330 ("iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <Stable@vger.kernel.org>
+This breaks initialization when no platform_data is given and
+the optional st,drdy-int-pin devicetree option is not set.
+
+This commit fixes this.
+
+Cc: stable@vger.kernel.org
+Fixes: 7383d44b ("iio: st_pressure: st_accel: Initialise sensor platform data properly")
+Signed-off-by: Michael Nosthoff <committed@heine.so>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/meson_saradc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iio/accel/st_accel_core.c       |    2 +-
+ drivers/iio/pressure/st_pressure_core.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/adc/meson_saradc.c
-+++ b/drivers/iio/adc/meson_saradc.c
-@@ -462,8 +462,10 @@ static int meson_sar_adc_lock(struct iio
- 			regmap_read(priv->regmap, MESON_SAR_ADC_DELAY, &val);
- 		} while (val & MESON_SAR_ADC_DELAY_BL30_BUSY && timeout--);
+--- a/drivers/iio/accel/st_accel_core.c
++++ b/drivers/iio/accel/st_accel_core.c
+@@ -951,7 +951,7 @@ int st_accel_common_probe(struct iio_dev
+ 	if (!pdata)
+ 		pdata = (struct st_sensors_platform_data *)&default_accel_pdata;
  
--		if (timeout < 0)
-+		if (timeout < 0) {
-+			mutex_unlock(&indio_dev->mlock);
- 			return -ETIMEDOUT;
-+		}
- 	}
+-	err = st_sensors_init_sensor(indio_dev, adata->dev->platform_data);
++	err = st_sensors_init_sensor(indio_dev, pdata);
+ 	if (err < 0)
+ 		goto st_accel_power_off;
  
- 	return 0;
+--- a/drivers/iio/pressure/st_pressure_core.c
++++ b/drivers/iio/pressure/st_pressure_core.c
+@@ -640,7 +640,7 @@ int st_press_common_probe(struct iio_dev
+ 		       press_data->sensor_settings->drdy_irq.int2.addr))
+ 		pdata =	(struct st_sensors_platform_data *)&default_press_pdata;
+ 
+-	err = st_sensors_init_sensor(indio_dev, press_data->dev->platform_data);
++	err = st_sensors_init_sensor(indio_dev, pdata);
+ 	if (err < 0)
+ 		goto st_press_power_off;
+ 
