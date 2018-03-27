@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+g+KvGXcIWitg0EO7H8/r66xTHqncgS8SXipgI373xXo2Qg4UR6FpFuvIgwFx3qGfLnYqj
-ARC-Seal: i=1; a=rsa-sha256; t=1522168725; cv=none;
+X-Google-Smtp-Source: AIpwx4/GZ0tl8FhQCe+f5fl2yv60zEOIZE30Oq7BhBwM838WShgO/+RiXdb/AcZ0d9io1KBxhVI/
+ARC-Seal: i=1; a=rsa-sha256; t=1522168723; cv=none;
         d=google.com; s=arc-20160816;
-        b=llEplTUsj4sG/rLxFWcPS7tEok/v1Bbo6bvRdxkUGyA9rwDgfbeX02v5hQPPJ8Xet0
-         pbGrfGbpiPTo2xzZlBmijO0sM0TlvETv6Rubv5o8mP5bMhuUnPc84HPGwMZ3QUXmBjCa
-         5WTVdPLpM7DeMR8O9xfeg8zIkfGmzTHIC86pekN4ENR5nOKy6EsKOs/5ZzfNcFAYDvlj
-         S7omr2Uj/oIYCJPTeWmeKGqRgDbl791D/3VNaXTBMjnvKKO5k9WIvKY4VjIXcp+UVTA4
-         9HA4A3TJ8k0aVTk15Ba9xMkZza3/xpOO26IN4ocuLSvfmusB/tXUDL+GEn36Wc6V8utv
-         /naA==
+        b=TFX4oRkjVyE49NkjM8nb3YrQpapZrYlsJpvmtIZgpMKwQPPfmYWwNdhqMVBjJ80wCs
+         6KL3tuMaXdgd+6oaYg0ihDiTgT4VAGhWx/CLMcv7PepO1womUs+KdGT9sCrfo0QbKinO
+         Kg69V4owfsr9BIEny6a0t1rtgTThkvU8heHvHRytsSu3Lh93kYQkSMYazqrgoGg3hWfV
+         wwlP4DWkpd9+23/9lK0/2JQBxRPsozfLCX+f56APeWKwNAqRi2A15+jamhqQaLZUyibT
+         dAczf5w8CLBf8TFR4Hwzygqw0DCEseJRMmn4KJzxBEeKXo1FH93Ju1QBP5SvLGgnjjAY
+         4lZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mAaxx8W25p2iwaZKkMfJeTbRIoaKotYPqaKBRuzs5bI=;
-        b=P2ysP8bFQc+uszaxcvWj1TCbcisU+HIdzrTC9c/RaAF7TtSBZCQPTObQDmll1hdL6m
-         aH3QXXQ+8wWvFwTf49YSHMzW1qAkK43lddJ8AlzU0Bkubwf5yYNo6nxyhBwQjWQJMMDI
-         QZaADLUO4hsxoc6BR6vzBR/bct2J0SqvoxgobpxXLjHc0nwSjpgrmiZTj+gbGEK3HRQF
-         +/kPQQVbbOUiRAlCcZZmlYWOVyk4G+cvZDt1R/YrxOCUP/iahwAKhnEN5OxbifYy+8zx
-         VTP9qnCZ/LWtprMw8mEnxV54owz8jA+TA1n0JxO38tSzj3RlKb+GBAybVocosc9DMR2+
-         JGTQ==
+        bh=Ce1eSWJOqZjBf3AwWYdqF1BZY/CGjCV86AY8jmtZd9A=;
+        b=DxkHGkGnQiRutSRy8F6WjMo0Yxbb8rm0SeDQ7XHFhMKUdxI6m0bLECh/42b3VWaOW3
+         6fLitAAyTn1J91CcdTT8MiksEAY177ZyTVWTmNKXdwK00s39ALzRZCn4bkte7JJLS6Jz
+         P1FaKs0t/BwObGKFMSNuPq5RcSNBPwNuRATq2fXyGI38PdYT3AS/1DmycyeaSRZ6XdRe
+         WVv4x6GJ1Wu05TE526vvnwUUdG8PYu7NOw8zqvEg+YI+ukS47M837NCMN6O8bzy6J+1f
+         igeb4RlBugvdVGlShS9jZFPIfiGYoerwNKQw4r/BrEUCM4sxbZWuJuLCGukhZ44CNNZp
+         gDWg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,24 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.15 010/105] ALSA: aloop: Sync stale timer before release
-Date: Tue, 27 Mar 2018 18:26:50 +0200
-Message-Id: <20180327162758.275427660@linuxfoundation.org>
+	NeilBrown <neil@brown.name>,
+	John Crispin <john@phrozen.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.15 001/105] MIPS: ralink: Remove ralink_halt()
+Date: Tue, 27 Mar 2018 18:26:41 +0200
+Message-Id: <20180327162757.869381918@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108966146987882?=
-X-GMAIL-MSGID: =?utf-8?q?1596109593982571296?=
+X-GMAIL-THRID: =?utf-8?q?1596108957348876087?=
+X-GMAIL-MSGID: =?utf-8?q?1596109590899730680?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,67 +51,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: NeilBrown <neil@brown.name>
 
-commit 67a01afaf3d34893cf7d2ea19b34555d6abb7cb0 upstream.
+commit 891731f6a5dbe508d12443175a7e166a2fba616a upstream.
 
-The aloop driver tries to stop the pending timer via timer_del() in
-the trigger callback and in the close callback.  The former is
-correct, as it's an atomic operation, while the latter expects that
-the timer gets really removed and proceeds the resource releases after
-that.  But timer_del() doesn't synchronize, hence the running timer
-may still access the released resources.
+ralink_halt() does nothing that machine_halt() doesn't already do, so it
+adds no value.
 
-A similar situation can be also seen in the prepare callback after
-trigger(STOP) where the prepare tries to re-initialize the things
-while a timer is still running.
+It actually causes incorrect behaviour due to the "unreachable()" at the
+end. This tells the compiler that the end of the function will never be
+reached, which isn't true. The compiler responds by not adding a
+'return' instruction, so control simply moves on to whatever bytes come
+afterwards in memory. In my tested, that was the ralink_restart()
+function. This means that an attempt to 'halt' the machine would
+actually cause a reboot.
 
-The problems like the above are seen indirectly in some syzkaller
-reports (although it's not 100% clear whether this is the only cause,
-as the race condition is quite narrow and not always easy to
-trigger).
+So remove ralink_halt() so that a 'halt' really does halt.
 
-For addressing these issues, this patch adds the explicit alls of
-timer_del_sync() in some places, so that the pending timer is properly
-killed / synced.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: c06e836ada59 ("MIPS: ralink: adds reset code")
+Signed-off-by: NeilBrown <neil@brown.name>
+Cc: John Crispin <john@phrozen.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.9+
+Patchwork: https://patchwork.linux-mips.org/patch/18851/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/drivers/aloop.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/mips/ralink/reset.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/sound/drivers/aloop.c
-+++ b/sound/drivers/aloop.c
-@@ -192,6 +192,11 @@ static inline void loopback_timer_stop(s
- 	dpcm->timer.expires = 0;
+--- a/arch/mips/ralink/reset.c
++++ b/arch/mips/ralink/reset.c
+@@ -96,16 +96,9 @@ static void ralink_restart(char *command
+ 	unreachable();
  }
  
-+static inline void loopback_timer_stop_sync(struct loopback_pcm *dpcm)
-+{
-+	del_timer_sync(&dpcm->timer);
-+}
-+
- #define CABLE_VALID_PLAYBACK	(1 << SNDRV_PCM_STREAM_PLAYBACK)
- #define CABLE_VALID_CAPTURE	(1 << SNDRV_PCM_STREAM_CAPTURE)
- #define CABLE_VALID_BOTH	(CABLE_VALID_PLAYBACK|CABLE_VALID_CAPTURE)
-@@ -326,6 +331,8 @@ static int loopback_prepare(struct snd_p
- 	struct loopback_cable *cable = dpcm->cable;
- 	int bps, salign;
+-static void ralink_halt(void)
+-{
+-	local_irq_disable();
+-	unreachable();
+-}
+-
+ static int __init mips_reboot_setup(void)
+ {
+ 	_machine_restart = ralink_restart;
+-	_machine_halt = ralink_halt;
  
-+	loopback_timer_stop_sync(dpcm);
-+
- 	salign = (snd_pcm_format_width(runtime->format) *
- 						runtime->channels) / 8;
- 	bps = salign * runtime->rate;
-@@ -744,7 +751,7 @@ static int loopback_close(struct snd_pcm
- 	struct loopback *loopback = substream->private_data;
- 	struct loopback_pcm *dpcm = substream->runtime->private_data;
- 
--	loopback_timer_stop(dpcm);
-+	loopback_timer_stop_sync(dpcm);
- 	mutex_lock(&loopback->cable_lock);
- 	free_cable(substream);
- 	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
