@@ -1,38 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/0SnP7lF5i1VSNL40Oqw01KQUaJz2rzBljfJEQt/mNe7n3Q1gDgCe8SovZdQd/IOg68bPC
-ARC-Seal: i=1; a=rsa-sha256; t=1522168866; cv=none;
-        d=google.com; s=arc-20160816;
-        b=DMOErFthDkeX/Xv46N1oUzRQociki8mm/xNzbKrQCywoKzPYl0zRYDISowmLF9z1pa
-         9SD/yyo1lvB7btKJEjtRjBAx/G7UfbcvVo2zFVgoMszcUjGLJ5vZfAi5B3Vl/tNmHyZQ
-         kPwrbN2sVgxhmPgaYSB8Q+/ILyoVYEyl1OWMpFmywKePTruphX0QeN+Fm9IciQyJBAYB
-         opAORnJfMXPN3U/mr8rD73e4tNEA+2zSpwE732BH9mFtJ7gY9ZCeQeGVKNDeP9dxJ78X
-         e9RHVnWgP8Ioq83EMDN/6ADAaTtbhsHATbV3Prn3teVtgsBW3Hj1ME/NiCCzuSgvH4R4
-         qOCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=TJ15ybpqN6vWDX8f5b1sjuu5j9ffWZGGWJhjLtiGaCM=;
-        b=x5UHgYV5G+paDBK8iH3BT5XwovGa0pI+kEQPIPPIvRgzOSTxGtBPpwKQOqhAvRVx1+
-         Db4lEsZfbND3mAF3h+KT4v4Er1e1rCyFGoJBn/sJz8Okz+P+fTjRNT4tdm1w4SdH8xlq
-         Z57oxjNTEaW+YtWEGSR8Ne65Q/ekPkptCMIwdHeDKYlSRjxdSd3+wy+bxMPuRDEdDgKo
-         TXyvQrKxbkTH6BEJHfQqKr9C34/lUDtUUr86wdlk9flJ9HV92exE9oLvyH2PomEAHdRi
-         N1giJpFYWn0WHUqC4H0v+qcAv8ZRoGE8LcaYSFNNeLS3MVpo1Uc4itYKeSRB8gbeKfSp
-         nHDw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-22565-1522168867-2-4884020168095023434
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522168867; b=DtNwfnJLmgDtiT2aI3vf4NOI4tF32PKMZ3lSU8pTVkTAgxU
+    4LXvGp83EuVh+IvVeVZ7ZRSbexU+7cs8VJem4mPR9F+y4MdRQmuwEjw1yi9kYaC7
+    o1QS3pIXmm0QSIAibjf96ZpILB4LYaRPsJd4m4gc+UWuAHOpbzyxH/F422lkprEE
+    oCUj9CJRPc22xiJVGhbTiZMdReo0Uw/QLu2us9YgPL6dNCHRNcn5GsY6ql+xK351
+    EZ7hbSh18D0vSDa4p7KggKtJW4CWOyJldaxO89T9Xr2nORsZ+1/EiomjbHOsnrbT
+    /zU9Nl31viSWHhirUYRvS35y+DpXD+0tFJIf1IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1522168867; bh=K41au4u/6CAu6LmQHVlHUmp4kK
+    aS/y6NNDT3bQIqDO0=; b=f9LDs1mNIintagFtj+0vDD4O7UGP4f/j6XqsC8LqCW
+    uR3D1nfIyPvS7eL65NcxDEL5yU8k8aTPkNtYJHWatXF6igPdF3avOW3N5w1OJg/Z
+    t4rlhJGblz+qmUVqB13auDDaZMpjjABHoPwo8ELDaA1EBJwYvTTI/dhb2Jf0laJ2
+    Bui1EaOBHi1k9T8idn08pby9/hIwuf717IWT8NJOmsoJuzhwgv3wdQfjBTdf8MzH
+    zmv+PCfJHGfCc2ZesCJIYvi2t/tNj+HpMm5RypANOSNdkfil5rW9/y7TMFcqkuTk
+    0/A4oJJlyI0ljxas5IvdEwjk6SBZKyb5L+yApVrloRZQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPKG+dM4Rm+2nie3Y2dhLiybJ8CGUBaMgQkZ0TrKXPGp9cw5xMIxyDLqcdIRMUpXu3EvdJ7ydyQezV6r4oB/9+/vxNlX4tURROU+gUoM6DUKHN9G60c1
+    7lPDCSjpZDBHVOwRnI9nFv4mUKPieI+q2TA1g8fr+EKOc3CP10JPr2T0LlahTknZomwkSDUqKD2Py02zaeepRqlDtzeTi2ujjVYFD9euntPfM4X+XH38P7Sp
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=DSkIZ9S5f_qbzkZLzQQA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932459AbeC0QlE (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:41:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48558 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932218AbeC0QlB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:41:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Daniel Stone <daniels@collabora.com>,
-	Daniel van Vugt <daniel.van.vugt@canonical.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.15 060/105] drm: Reject getfb for multi-plane framebuffers
-Date: Tue, 27 Mar 2018 18:27:40 +0200
-Message-Id: <20180327162801.223025067@linuxfoundation.org>
+        stable@vger.kernel.org, Harry Wentland <harry.wentland@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.15 058/105] drm/amd/display: We shouldnt set format_default on plane as atomic driver
+Date: Tue, 27 Mar 2018 18:27:38 +0200
+Message-Id: <20180327162801.019334252@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109433637263045?=
-X-GMAIL-MSGID: =?utf-8?q?1596109741732200758?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,47 +92,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Stone <daniels@collabora.com>
+From: Harry Wentland <harry.wentland@amd.com>
 
-commit b24791fe00f8b089d5b10cb7bcc4e1ae88b4831b upstream.
+commit 509648fcf0ce8650184649b43ad039f78dde155f upstream.
 
-getfb can only return a single plane, so reject attempts to use it with
-multi-plane framebuffers.
+This is still a leftover from early atomic brinup days.
 
-Signed-off-by: Daniel Stone <daniels@collabora.com>
-Reported-by: Daniel van Vugt <daniel.van.vugt@canonical.com>
-Reviewed-by: Rob Clark <robdclark@gmail.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Fixes: 308e5bcbdb10 ("drm: add an fb creation ioctl that takes a pixel format v5")
-Cc: stable@vger.kernel.org # v3.3+
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105518
-Link: https://patchwork.freedesktop.org/patch/msgid/20180320225839.30905-1-daniels@collabora.com
+Signed-off-by: Harry Wentland <harry.wentland@amd.com>
+Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Acked-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_framebuffer.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -458,6 +458,12 @@ int drm_mode_getfb(struct drm_device *de
- 	if (!fb)
- 		return -ENOENT;
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -3090,8 +3090,6 @@ static int amdgpu_dm_plane_init(struct a
  
-+	/* Multi-planar framebuffers need getfb2. */
-+	if (fb->format->num_planes > 1) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	r->height = fb->height;
- 	r->width = fb->width;
- 	r->depth = fb->format->depth;
-@@ -481,6 +487,7 @@ int drm_mode_getfb(struct drm_device *de
- 		ret = -ENODEV;
- 	}
- 
-+out:
- 	drm_framebuffer_put(fb);
- 
- 	return ret;
+ 	switch (aplane->base.type) {
+ 	case DRM_PLANE_TYPE_PRIMARY:
+-		aplane->base.format_default = true;
+-
+ 		res = drm_universal_plane_init(
+ 				dm->adev->ddev,
+ 				&aplane->base,
