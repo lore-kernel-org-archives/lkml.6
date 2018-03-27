@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48xdVaUPMnxAPWvqrj7Uazh2/x1Od5x/JfGZ/MpcWptkhoIsImm/D6xNCe7SOyvcJ5zRWui
-ARC-Seal: i=1; a=rsa-sha256; t=1522168301; cv=none;
+X-Google-Smtp-Source: AIpwx49opHejLxLDpjwG1MeD2yHhtARJUbVwEuX85Z7jjuSlZ76CG7kXCSnPoBL9dOv/YIaCs5QR
+ARC-Seal: i=1; a=rsa-sha256; t=1522168299; cv=none;
         d=google.com; s=arc-20160816;
-        b=HzzRQ0JuI4lYJhhVODitMnPX3FG/cv4oiVQpHH8kzue+4JzroB0MJDqqM4bYo/qyxM
-         UxMON2ljOIozH4kBnSICtYT34ZDHQcft+lZcjaQ5r709k7Ns6KxHcraI96mR3yqFb4wH
-         5KRmfYdf/72GKvH40/L9ZxpA8sIdruVjK/aOveZrtKTzlOnDxEcsgocU/QuZrLbde8AF
-         ceATjM7MebDoqCNpjcMNL5g03Derdnm8RPeVhJ6A8uHMo0fq7C6t1o7rm+ISEpsflRIB
-         UjfbPPfAEOvJW3aAWEKDn7+lGWu5pHGoUwKExSlYt0rJJdTu4XaOL3ZukCpt8QqUpzxM
-         ZasQ==
+        b=RMpcNpwby3DeABSzNx8qAp+LBSea8foRTkYQu5YQTObm4dabtEFB1DxWQEOPx9YZqE
+         lMPkEmlGw0Y5zk1Nv5/8EnkMfX/Pqg5uarGNB4xFJ/GQvY9ZDaBcDnV/n5j41sNV2LXA
+         1vKJne6xZIkqjOVlAmL4lmhrkZxw4jAkLkoLLSIBbBIzZGWv8VtbrxhId3CI7yiY6E6h
+         tJB37LWt8AgToTbjHuJUNF3l6w3fqmaQRG1i4FOm461BW6BMraLD0GGmK+hXnPpgR4pV
+         EEQpO7SJol5kF+6fiQPAD1i/JINQ1Dxm8GgTbmEH6ZS8+coe8K8qZEmvvn2PH2ZlbjNL
+         UENw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xu2WbqOtjIaNPkWzajSd/btPcIUGKS2AHW1+gG8xXdc=;
-        b=cB0AmE184xBbkU8s/AtKm2BJivVLlSbewRdijB1jkLEKjRW1w5AXjb1bY6SvfgPXbe
-         +SM7FwOta2+u9Q1n6FPmyHwYEIyMJ3rQUMCLuGxg8tKqA4w5k2EQ+ey8MhXJn2fg4VNC
-         pdz5XegiesXma9ewrrqr4Nerl+ry4ryKz/6C8burKzZmUUFubK0s2k9GE3j7xe2iJpv/
-         ZF329YYA4Pyh6eU/LpUIhtru2QTjhrzCWYm54Nju9jc2j98pfXP3BIn6kE51FRAycw4m
-         1IYpprSBhO3WVA/jIjZvKlLGpimUGVscIHcYeo19dr5QIs/2cPGfRUzypyAUTzRj/mAc
-         xSPQ==
+        bh=CHhvBSVvqdnC1ogPHFic6mUh6+M7JM6JHJC5wrjQg9U=;
+        b=s0be57DjnU07GM/AaDCqQOG9MpM1t6LVe6AUNtv3/XdfV3I36QHjBSXIXLI4KBrBA4
+         p0iK8GPNiK2U2S9lH/ZXAaGh4d8iHm/si9G6b3FY+Ex2em15NEmCCL+D0B0kB6N6Yllq
+         dH8TD1dpNe4EQglbawsPq2V9H0VjNq68Bv0St255GEVSgJJ6d8PUxykzbVSjSVLqo122
+         4yOFTZWU1bBbEH/0H44FE5YtC3Nm2Ha+BPOVQaub0HlU7nVaCbgp9W7xKnJeHnUN88r6
+         v2y3rNTfU4uqabEWXSQZPDQ/HpLG+r85VO1A8bHzPG9l30x9xdoaowOBE1CqAawwxJlU
+         TW5w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eyal Itkin <eyalit@checkpoint.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.9 31/67] drm: udl: Properly check framebuffer mmap offsets
-Date: Tue, 27 Mar 2018 18:27:23 +0200
-Message-Id: <20180327162728.725387463@linuxfoundation.org>
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>
+Subject: [PATCH 4.9 30/67] drm/radeon: Dont turn off DP sink when disconnected
+Date: Tue, 27 Mar 2018 18:27:22 +0200
+Message-Id: <20180327162728.664435754@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109000301718631?=
-X-GMAIL-MSGID: =?utf-8?q?1596109149225681305?=
+X-GMAIL-THRID: =?utf-8?q?1596108997827947853?=
+X-GMAIL-MSGID: =?utf-8?q?1596109146443959968?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,42 +49,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Michel Dänzer <michel.daenzer@amd.com>
 
-commit 3b82a4db8eaccce735dffd50b4d4e1578099b8e8 upstream.
+commit 2681bc79eeb640562c932007bfebbbdc55bf6a7d upstream.
 
-The memmap options sent to the udl framebuffer driver were not being
-checked for all sets of possible crazy values.  Fix this up by properly
-bounding the allowed values.
+Turning off the sink in this case causes various issues, because
+userspace expects it to stay on until it turns it off explicitly.
 
-Reported-by: Eyal Itkin <eyalit@checkpoint.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180321154553.GA18454@kroah.com
+Instead, turn the sink off and back on when a display is connected
+again. This dance seems necessary for link training to work correctly.
+
+Bugzilla: https://bugs.freedesktop.org/105308
+Cc: stable@vger.kernel.org
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/udl/udl_fb.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/radeon/radeon_connectors.c |   29 +++++++++++------------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
 
---- a/drivers/gpu/drm/udl/udl_fb.c
-+++ b/drivers/gpu/drm/udl/udl_fb.c
-@@ -158,10 +158,15 @@ static int udl_fb_mmap(struct fb_info *i
- {
- 	unsigned long start = vma->vm_start;
- 	unsigned long size = vma->vm_end - vma->vm_start;
--	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
-+	unsigned long offset;
- 	unsigned long page, pos;
+--- a/drivers/gpu/drm/radeon/radeon_connectors.c
++++ b/drivers/gpu/drm/radeon/radeon_connectors.c
+@@ -90,25 +90,18 @@ void radeon_connector_hotplug(struct drm
+ 		/* don't do anything if sink is not display port, i.e.,
+ 		 * passive dp->(dvi|hdmi) adaptor
+ 		 */
+-		if (dig_connector->dp_sink_type == CONNECTOR_OBJECT_ID_DISPLAYPORT) {
+-			int saved_dpms = connector->dpms;
+-			/* Only turn off the display if it's physically disconnected */
+-			if (!radeon_hpd_sense(rdev, radeon_connector->hpd.hpd)) {
+-				drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
+-			} else if (radeon_dp_needs_link_train(radeon_connector)) {
+-				/* Don't try to start link training before we
+-				 * have the dpcd */
+-				if (!radeon_dp_getdpcd(radeon_connector))
+-					return;
++		if (dig_connector->dp_sink_type == CONNECTOR_OBJECT_ID_DISPLAYPORT &&
++		    radeon_hpd_sense(rdev, radeon_connector->hpd.hpd) &&
++		    radeon_dp_needs_link_train(radeon_connector)) {
++			/* Don't start link training before we have the DPCD */
++			if (!radeon_dp_getdpcd(radeon_connector))
++				return;
  
--	if (offset + size > info->fix.smem_len)
-+	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
-+		return -EINVAL;
-+
-+	offset = vma->vm_pgoff << PAGE_SHIFT;
-+
-+	if (offset > info->fix.smem_len || size > info->fix.smem_len - offset)
- 		return -EINVAL;
- 
- 	pos = (unsigned long)info->fix.smem_start + offset;
+-				/* set it to OFF so that drm_helper_connector_dpms()
+-				 * won't return immediately since the current state
+-				 * is ON at this point.
+-				 */
+-				connector->dpms = DRM_MODE_DPMS_OFF;
+-				drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
+-			}
+-			connector->dpms = saved_dpms;
++			/* Turn the connector off and back on immediately, which
++			 * will trigger link training
++			 */
++			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
++			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
+ 		}
+ 	}
+ }
