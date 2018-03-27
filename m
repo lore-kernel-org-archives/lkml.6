@@ -1,74 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752090AbeC0ICM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:02:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33264 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbeC0ICG (ORCPT
+        id S1751349AbeC0IDb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:03:31 -0400
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:43988 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbeC0IDZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:02:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A317E601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 27 Mar 2018 04:03:25 -0400
+X-Google-Smtp-Source: AG47ELtqS3cSJhjpT7d270snFhOMZNMCN3eKcnQScKpVp8yXs4xv03MF7yJ51RYi8zSXknCDkzUJJQ==
+Date: Tue, 27 Mar 2018 09:03:22 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 00/17] MFD: Adjustments for several function
+ implementations
+Message-ID: <20180327080322.eofyszx6vxxulcsz@dell>
+References: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [2/4] wireless: Use octal not symbolic permissions
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <a368e1c4878619172f3da4849cb211b4dfad0a58.1521845237.git.joe@perches.com>
-References: <a368e1c4878619172f3da4849cb211b4dfad0a58.1521845237.git.joe@perches.com>
-To: Joe Perches <joe@perches.com>
-Cc: Jiri Slaby <jirislaby@gmail.com>,
-        Nick Kossifidis <mickflemm@gmail.com>,
-        "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Eugene Krasnikov <k.eugene.e@gmail.com>,
-        Stanislav Yakovlev <stas.yakovlev@gmail.com>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Jakub Kicinski <kubakici@wp.pl>,
-        Helmut Schaa <helmut.schaa@googlemail.com>,
-        Solomon Peachy <pizza@shaftnet.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wcn36xx@lists.infradead.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180327080205.CD80760C54@smtp.codeaurora.org>
-Date: Tue, 27 Mar 2018 08:02:05 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c5d9751e-3ae8-0b66-821a-0e7f45bb8e1c@users.sourceforge.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joe Perches <joe@perches.com> wrote:
+On Fri, 09 Mar 2018, SF Markus Elfring wrote:
 
-> Prefer the direct use of octal for permissions.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 9 Mar 2018 10:24:42 +0100
 > 
-> Done with checkpatch -f --types=SYMBOLIC_PERMS --fix-inplace
-> and some typing.
-> 
-> Miscellanea:
-> 
-> o Whitespace neatening around these conversions.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+> Several update suggestions were taken into account
+> from static source code analysis.
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-2ef00c53049b wireless: Use octal not symbolic permissions
+All applied, thanks.
 
 -- 
-https://patchwork.kernel.org/patch/10305719/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
