@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ayMTj08SuE5/ZycdMX3mn1rcl7h+8EQD1k5XPRhP16KQWI5LTOEUqn+uoRSGuiBrYyNT5
-ARC-Seal: i=1; a=rsa-sha256; t=1522168842; cv=none;
+X-Google-Smtp-Source: AIpwx49fIK+iACdEbThW6VngI0rwmWZQAilkG1XzY5OfZ0VLarONDjRzHOu94ywo12o+VVh79P/J
+ARC-Seal: i=1; a=rsa-sha256; t=1522168839; cv=none;
         d=google.com; s=arc-20160816;
-        b=KcwKu/30SMkSr7zrZnwNTBc9Id+K9p2RKnbYVsojMtQpkvJjQvSEjm32E4eoiwtBoM
-         WRzVhlBzFQ/W0ahHJn2gpeirsOSwPH4pBb69hSNox3wNyMllYD/JZ7podKC6aVS4GToD
-         Ee7k+vHaHpvKZHS1Y2MM/DnK6yHLbW/2QbKcwByHGS6wifAKD/RJ0Gqzbb8MgxlE2GeJ
-         FhuJandsBxujD0AZu+ulXCe8nCU2yZmnwt2tl6nnRWT1fEGl97sWK+FID4WOPnSVMSHp
-         Gi+MLrgDwMxQKUYfnKZiroCnFnL0qUwsSiFVFhc3r5gGBIMJgq3X9h6eIUC1r89UO8kn
-         2RXw==
+        b=0bovxsP47o8C36BdslNYwWvayN/PmtuyqI9QlEKl6djxhDmUUFafAR0B+W3BNc6Y/D
+         Y1QtC0W6uUCDoTw0t249DOctpVl1UAwTYSF70Zvj/b1T4vGILtucHNm6peCCSamDeQnc
+         xVFn7uGcYn62VD/zHUQhYED/dlv/lgLqX30HSrnflps2qpBcf1jwJ0ZCikDV+/6aWRiu
+         43HHSwZ0WoUyCYFGbXRwzV3jLC7j3i4Ys8l5p/y7SpLEHWRqnMyOi3U8s6rkX4bu+0xV
+         y9NobyiUwHnahDonBxDtJYXFWHf7Z66spQr5mTA5evAK7fGemDhEPAtK/sELnGd3FtKL
+         EtPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PJEpd8jQ5VBP0dUagOq+xOjbH44RtDV4uYiCXjcS2Os=;
-        b=SroiWzvI/kcypR6pP35F/wIL7zrpRbPIq5FpsFdaElxVhJnU8abq7B5hKNRY0YwyI2
-         FY3BOUU04huWMYwPTE9IXVaPGXsNptG4mB/mcBmJ7NQzQmf4MgW7OW4AJL05rGTZCKcq
-         Z2ZDZaMRplDfssYuF69btLCgThip42NOMoBtiotFnROg72bGNWC2go+eS0/8tvhvgPDu
-         9vWw2o6dU7oDhDuwD1B2ka2uq2mNOX+tO1DThOFZp27TGjFrfT75PeZm5gaBhqGgoqB2
-         qJG2HfhSkvp4TKNXbImIZNvyfbQseZBiEzsHXDffep9EYUycBxvbbTiseXgfI+kaXZTl
-         dGVg==
+        bh=1IyFjCDAjcmMndcyadcnsR26vCg6b/5exbS4EZaB2P4=;
+        b=EUe9JZ8QLSIHf947uztglWbZAiq2nIfCwoNz18HLcvC5ztv4K3zBF6icaUx/fvj7aJ
+         oOKfjerTNEeyNTc2b+8d31EigUhFwSlt5Dio0J7DZFicX2N8ss+UlObXAwn35XGpxkty
+         HNOSzUnSq73ze948+qOh6c49ZCuNn03DqVkl9B+iNdHm7bMlPh7vlHXKQlHcH/h1MzC0
+         NBajXL91aT3equAgjkwbPi5shthjKv6z1ONrEqcPZ5vqlDbcrERRLvka+F8Db+IAuVYC
+         BETM7o9HzehtXKiLzUh6Y7PL6JAa/5FK7kCLYwh+56cRbgKA7Eb0GcQatfntZE5JbUxx
+         Uhqw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,14 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Michal Hocko <mhocko@suse.com>,
+	Laura Abbott <labbott@redhat.com>,
+	Jerome Marchand <jmarchan@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 052/105] mm/thp: do not wait for lock_page() in deferred_split_scan()
-Date: Tue, 27 Mar 2018 18:27:32 +0200
-Message-Id: <20180327162800.587962167@linuxfoundation.org>
+Subject: [PATCH 4.15 051/105] mm/khugepaged.c: convert VM_BUG_ON() to collapse fail
+Date: Tue, 27 Mar 2018 18:27:31 +0200
+Message-Id: <20180327162800.507511457@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109136831019412?=
-X-GMAIL-MSGID: =?utf-8?q?1596109716078627496?=
+X-GMAIL-THRID: =?utf-8?q?1596109134052943557?=
+X-GMAIL-MSGID: =?utf-8?q?1596109713020439601?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,41 +55,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-commit fa41b900c30b45fab03783724932dc30cd46a6be upstream.
+commit fece2029a9e65b9a990831afe2a2b83290cbbe26 upstream.
 
-deferred_split_scan() gets called from reclaim path.  Waiting for page
-lock may lead to deadlock there.
+khugepaged is not yet able to convert PTE-mapped huge pages back to PMD
+mapped.  We do not collapse such pages.  See check
+khugepaged_scan_pmd().
 
-Replace lock_page() with trylock_page() and skip the page if we failed
-to lock it.  We will get to the page on the next scan.
+But if between khugepaged_scan_pmd() and __collapse_huge_page_isolate()
+somebody managed to instantiate THP in the range and then split the PMD
+back to PTEs we would have a problem --
+VM_BUG_ON_PAGE(PageCompound(page)) will get triggered.
 
-Link: http://lkml.kernel.org/r/20180315150747.31945-1-kirill.shutemov@linux.intel.com
-Fixes: 9a982250f773 ("thp: introduce deferred_split_huge_page()")
+It's possible since we drop mmap_sem during collapse to re-take for
+write.
+
+Replace the VM_BUG_ON() with graceful collapse fail.
+
+Link: http://lkml.kernel.org/r/20180315152353.27989-1-kirill.shutemov@linux.intel.com
+Fixes: b1caa957ae6d ("khugepaged: ignore pmd tables with THP mapped with ptes")
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Jerome Marchand <jmarchan@redhat.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/huge_memory.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ mm/khugepaged.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2791,11 +2791,13 @@ static unsigned long deferred_split_scan
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -530,7 +530,12 @@ static int __collapse_huge_page_isolate(
+ 			goto out;
+ 		}
  
- 	list_for_each_safe(pos, next, &list) {
- 		page = list_entry((void *)pos, struct page, mapping);
--		lock_page(page);
-+		if (!trylock_page(page))
-+			goto next;
- 		/* split_huge_page() removes page from list on success */
- 		if (!split_huge_page(page))
- 			split++;
- 		unlock_page(page);
-+next:
- 		put_page(page);
- 	}
+-		VM_BUG_ON_PAGE(PageCompound(page), page);
++		/* TODO: teach khugepaged to collapse THP mapped with pte */
++		if (PageCompound(page)) {
++			result = SCAN_PAGE_COMPOUND;
++			goto out;
++		}
++
+ 		VM_BUG_ON_PAGE(!PageAnon(page), page);
  
+ 		/*
