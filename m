@@ -1,154 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751349AbeC0UJa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 16:09:30 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35329 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeC0UJ2 (ORCPT
+        id S1751752AbeC0UJi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 16:09:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52368 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751375AbeC0UJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 16:09:28 -0400
-X-Google-Smtp-Source: AIpwx4+N9+WW60K7bf30HpJYsSAGsqzD9psJbHLlMUHuh82ySYz1n9ZyPF9t+H6VAuxs6KAbZ01qsrPpCD+55zN5UxU=
-MIME-Version: 1.0
-In-Reply-To: <20180327195957.3878-5-atull@kernel.org>
-References: <20180327195957.3878-1-atull@kernel.org> <20180327195957.3878-5-atull@kernel.org>
-From: Moritz Fischer <moritz.fischer@ettus.com>
-Date: Tue, 27 Mar 2018 13:09:26 -0700
-Message-ID: <CAAtXAHeGoDY66U=t6WF++=kgh5kCyNgi_rmVLOTzCRKum0weXA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 4/4] fpga: region: change fpga_region_register
- to have one param
-To: Alan Tull <atull@kernel.org>
-Cc: Anatolij Gustschin <agust@denx.de>,
-        Matthew Gerlach <matthew.gerlach@linux.intel.com>,
-        Joel Holdsworth <joel@airwebreathe.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Joshua Clayton <stillcompiling@gmail.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 27 Mar 2018 16:09:35 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-watchdog@vger.kernel.org
+Cc: openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        wim@linux-watchdog.org, linux@roeck-us.net, joel@jms.id.au,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v2] aspeed: watchdog: Set bootstatus during probe
+Date: Tue, 27 Mar 2018 15:09:27 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18032720-0024-0000-0000-0000033CBEFB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008754; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000255; SDB=6.01009292; UDB=6.00514137; IPR=6.00788574;
+ MB=3.00020274; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-27 20:09:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032720-0025-0000-0000-00004776CB39
+Message-Id: <1522181367-11231-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803270201
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
+Check the aspeed timeout status register to see if the system has booted
+from the secondary boot source. If so, set the watchdog device
+bootstatus flag for "Card previously reset the CPU."
 
-On Tue, Mar 27, 2018 at 12:59 PM, Alan Tull <atull@kernel.org> wrote:
-> Change fpga_region_register to only take one parameter:
->
->   int fpga_region_register(struct fpga_region *region)
->
-> The parent dev is added to struct fpga_region.
->
-> This make it similar to fpga_bridge_register and fpga_mgr_register
-> which also just take their respective struct.
->
-> The one caller of fpga_region_register is changed to alloc the
-> fpga_region struct, fill it in, and pass it to the register
-> function.
->
-> Signed-off-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
-> ---
-> v2: This patch added in this version of the patchset
-> v3: minor changes to make diffs smaller and more obviously correct
-> ---
->  Documentation/fpga/fpga-region.txt | 3 +--
->  drivers/fpga/fpga-region.c         | 8 +++++++-
->  drivers/fpga/of-fpga-region.c      | 3 ++-
->  include/linux/fpga/fpga-region.h   | 4 +++-
->  4 files changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/fpga/fpga-region.txt b/Documentation/fpga/fpga-region.txt
-> index 139a02ba1ff6..d38fa3b4154a 100644
-> --- a/Documentation/fpga/fpga-region.txt
-> +++ b/Documentation/fpga/fpga-region.txt
-> @@ -42,8 +42,7 @@ The FPGA region API
->  To register or unregister a region:
->  -----------------------------------
->
-> -       int fpga_region_register(struct device *dev,
-> -                                struct fpga_region *region);
-> +       int fpga_region_register(struct fpga_region *region);
->         int fpga_region_unregister(struct fpga_region *region);
->
->  An example of usage can be seen in the probe function of [3]
-> diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-> index ebe1f872810d..660a91b9e246 100644
-> --- a/drivers/fpga/fpga-region.c
-> +++ b/drivers/fpga/fpga-region.c
-> @@ -162,10 +162,16 @@ int fpga_region_program_fpga(struct fpga_region *region)
->  }
->  EXPORT_SYMBOL_GPL(fpga_region_program_fpga);
->
-> -int fpga_region_register(struct device *dev, struct fpga_region *region)
-> +int fpga_region_register(struct fpga_region *region)
->  {
-> +       struct device *dev = region->parent;
->         int id, ret = 0;
->
-> +       if (!dev) {
-> +               pr_err("Attempt to register fpga region without parent\n");
-> +               return -EINVAL;
-> +       }
-> +
->         id = ida_simple_get(&fpga_region_ida, 0, 0, GFP_KERNEL);
->         if (id < 0)
->                 return id;
-> diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
-> index 35e7e8c4a0cb..a7b38aafeaa7 100644
-> --- a/drivers/fpga/of-fpga-region.c
-> +++ b/drivers/fpga/of-fpga-region.c
-> @@ -428,12 +428,13 @@ static int of_fpga_region_probe(struct platform_device *pdev)
->                 goto eprobe_mgr_put;
->         }
->
-> +       region->parent = dev;
->         region->mgr = mgr;
->
->         /* Specify how to get bridges for this type of region. */
->         region->get_bridges = of_fpga_region_get_bridges;
->
-> -       ret = fpga_region_register(dev, region);
-> +       ret = fpga_region_register(region);
->         if (ret)
->                 goto eprobe_mgr_put;
->
-> diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
-> index b6520318ab9c..423c87e3e29a 100644
-> --- a/include/linux/fpga/fpga-region.h
-> +++ b/include/linux/fpga/fpga-region.h
-> @@ -8,6 +8,7 @@
->  /**
->   * struct fpga_region - FPGA Region structure
->   * @dev: FPGA Region device
-> + * @parent: parent device
->   * @mutex: enforces exclusive reference to region
->   * @bridge_list: list of FPGA bridges specified in region
->   * @mgr: FPGA manager
-> @@ -18,6 +19,7 @@
->   */
->  struct fpga_region {
->         struct device dev;
-> +       struct device *parent;
->         struct mutex mutex; /* for exclusive reference to region */
->         struct list_head bridge_list;
->         struct fpga_manager *mgr;
-> @@ -34,7 +36,7 @@ struct fpga_region *fpga_region_class_find(
->         int (*match)(struct device *, const void *));
->
->  int fpga_region_program_fpga(struct fpga_region *region);
-> -int fpga_region_register(struct device *dev, struct fpga_region *region);
-> +int fpga_region_register(struct fpga_region *region);
->  int fpga_region_unregister(struct fpga_region *region);
->
->  #endif /* _FPGA_REGION_H */
-> --
-> 2.14.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+---
+Changes since v1:
+ - use bootstatus instead of status
+ - use WDIOF_CARDRESET instead of raw register contents
 
-Thanks,
-Moritz
+ drivers/watchdog/aspeed_wdt.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+index a5b8eb2..1abe4d0 100644
+--- a/drivers/watchdog/aspeed_wdt.c
++++ b/drivers/watchdog/aspeed_wdt.c
+@@ -55,6 +55,8 @@ struct aspeed_wdt_config {
+ #define   WDT_CTRL_WDT_INTR		BIT(2)
+ #define   WDT_CTRL_RESET_SYSTEM		BIT(1)
+ #define   WDT_CTRL_ENABLE		BIT(0)
++#define WDT_TIMEOUT_STATUS	0x10
++#define   WDT_TIMEOUT_STATUS_BOOT_SECONDARY	BIT(1)
+ 
+ /*
+  * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
+@@ -192,6 +194,7 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+ 	struct device_node *np;
+ 	const char *reset_type;
+ 	u32 duration;
++	u32 status;
+ 	int ret;
+ 
+ 	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+@@ -307,6 +310,10 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+ 		writel(duration - 1, wdt->base + WDT_RESET_WIDTH);
+ 	}
+ 
++	status = readl(wdt->base + WDT_TIMEOUT_STATUS);
++	if (status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY)
++		wdt->wdd.bootstatus = WDIOF_CARDRESET;
++
+ 	ret = devm_watchdog_register_device(&pdev->dev, &wdt->wdd);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register\n");
+-- 
+1.8.3.1
