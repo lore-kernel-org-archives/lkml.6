@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/t4PYXrXqsXXyjIBZCbPOi7ysskHyOjYdyA6RpWANWS0HUJQd5sZWIvXUXqGGJSNDc8/aC
-ARC-Seal: i=1; a=rsa-sha256; t=1522168633; cv=none;
+X-Google-Smtp-Source: AIpwx48+xyisaXiCtOz8jhaenqOcGFQi2RpqZPNL3oEnu36OaTglJPS0Q0kNm0+bjHW2aQzSWW9G
+ARC-Seal: i=1; a=rsa-sha256; t=1522168630; cv=none;
         d=google.com; s=arc-20160816;
-        b=Iw2fy6W9LEmQSJLhuEckxvsHwzPuD++kHtwBU/G448Z/BQqHtVrZrj+U/ERtblc3UC
-         9u+Rt/6q7X9tEhVJcxbXZ0Y1hKUmE7IPT6r/o0GI2xE+n5iBgS8F4o8r9eygKE+LfcRq
-         13iH9v5D2DxQxV9rdr3q/QegkQ4MZajJi2838nmLv4K+uT+QtIgfOXSaNycR/LjRdG8k
-         a6f9pD+vnD1Nw3SB9mY5L2K3CrIMrnH9/cgKQ54WNrytndGSKdDmz5tGUoU6/3e407o8
-         rT+EQVYLAr5VphYc4vuoV1A3dcILjIHHo+ppr1mnHzsZ0NMjl81386F4FiZ4f9QWPfaC
-         vDnQ==
+        b=DWB5QSHyYbp+nBL7SWvRpU2jXouMiEnUPRghThcj3whaBRdkBJP0kDX28Z0XercgV/
+         NHrD1a8IK3VYBx4jV5A225i9AZWJD24KtvlvCTDn86GMXRpdgY/7/94BVcdmJiV2Sjp2
+         XS7eG1WeB45DhlxdP5+T5DEj3I4pO4tZGIIwMFPn04GvS8gx7cmtArVFpaoykxOY+Yve
+         NgDWT8tui0YtcgOK8Oqf354n60omnYJMpAjjvo1C8r7tWNyyRUNbMifLcLiD+GGlyANo
+         +E5735nChMm2ksuxqUlXdiEYzSmRhxGkbiIDALC79USnwbnrPA4sPwrAnylPHRUPYAZD
+         sc5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3SVFXDrX1cX2x4qakPL3TbfpZ8oiRO24KWfpY4gTZ+0=;
-        b=0+n3eJMgbP16hmusgFLCBJ9HHIJjKu5+lgaSnccHE/AR/IgYQub3CimPQuGLotl9wX
-         Pg6I//lYs7GZlE89ADQaFtgBwxODgzn10HDnf+qcUYtyUwBDFaS678ZGJeceEKep2WPO
-         k/bM/E5Vw5WDPnEmc3knaA4y86Txgfc3kaJgpETtoETvB27OlAsp0nXG9Iz399IYd0xL
-         bEOAVNi/37B7PPQah5FtWFrA8qQVG5veluGLsx4c9HnZiR/pecO4NI9mtjm5/tCk53LX
-         8rIGTkK1uoPbuVobUib4ISb80JCld2cF3VcMGEby+8dnunreZ/7Q/qXGWoHFZoKbAsLv
-         Q7lA==
+        bh=KhPsUS08KnmLBtHa+jIs4vLlC8pOjhPA+Sd2WJ1nZ4Y=;
+        b=jKIFdU5/w/nQ95E93zRDhDh1bZ+L/o1r6UoTwhcHIUPLrt/IUMPcT2vAgoPlD40ca1
+         04aaYzW1MN/hNOWsRo1EqFQFh+TtUDYTw0r/WFSH/gZItzZ3COneNtfWmuZ2pXQeYOWe
+         4jU1pZ7kfAFEDV37mb2zY2nbwmO5hUoi/lCiAo2A4zaoP+bT3l2Kk6zok8Hl61MWn/ms
+         aNh8+FZdS9t+dN6YLRtulqSuvJivy00k72cqnHltG5Q9vrMjihZ7CcwnkCM0Mdan/jeF
+         7GwCN+2Dj/uIrcpe4CULVUK0nlQXJbCuIJqQ2I8BfWwpX7F+Q9UJ6Ngc0nN/sMPbd8KJ
+         DV3w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 060/101] ACPI / watchdog: Fix off-by-one error at resource assignment
-Date: Tue, 27 Mar 2018 18:27:32 +0200
-Message-Id: <20180327162753.678058048@linuxfoundation.org>
+	James Holderness <j4_james@hotmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 077/101] tty: vt: fix up tabstops properly
+Date: Tue, 27 Mar 2018 18:27:49 +0200
+Message-Id: <20180327162754.810703237@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109157701548644?=
-X-GMAIL-MSGID: =?utf-8?q?1596109497093837852?=
+X-GMAIL-THRID: =?utf-8?q?1596109032191105201?=
+X-GMAIL-MSGID: =?utf-8?q?1596109493731505518?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +49,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit b1abf6fc49829d89660c961fafe3f90f3d843c55 upstream.
+commit f1869a890cdedb92a3fab969db5d0fd982850273 upstream.
 
-The resource allocation in WDAT watchdog has off-one-by error, it sets
-one byte more than the actual end address.  This may eventually lead
-to unexpected resource conflicts.
+Tabs on a console with long lines do not wrap properly, so correctly
+account for the line length when computing the tab placement location.
 
-Fixes: 058dfc767008 (ACPI / watchdog: Add support for WDAT hardware watchdog)
-Cc: 4.9+ <stable@vger.kernel.org> # 4.9+
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: James Holderness <j4_james@hotmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpi_watchdog.c |    4 ++--
- drivers/watchdog/wdat_wdt.c  |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/vt/vt.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/acpi/acpi_watchdog.c
-+++ b/drivers/acpi/acpi_watchdog.c
-@@ -74,10 +74,10 @@ void __init acpi_watchdog_init(void)
- 		res.start = gas->address;
- 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
- 			res.flags = IORESOURCE_MEM;
--			res.end = res.start + ALIGN(gas->access_width, 4);
-+			res.end = res.start + ALIGN(gas->access_width, 4) - 1;
- 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
- 			res.flags = IORESOURCE_IO;
--			res.end = res.start + gas->access_width;
-+			res.end = res.start + gas->access_width - 1;
- 		} else {
- 			pr_warn("Unsupported address space: %u\n",
- 				gas->space_id);
---- a/drivers/watchdog/wdat_wdt.c
-+++ b/drivers/watchdog/wdat_wdt.c
-@@ -392,7 +392,7 @@ static int wdat_wdt_probe(struct platfor
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1725,7 +1725,7 @@ static void reset_terminal(struct vc_dat
+ 	default_attr(vc);
+ 	update_attr(vc);
  
- 		memset(&r, 0, sizeof(r));
- 		r.start = gas->address;
--		r.end = r.start + gas->access_width;
-+		r.end = r.start + gas->access_width - 1;
- 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
- 			r.flags = IORESOURCE_MEM;
- 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
+-	vc->vc_tab_stop[0]	= 0x01010100;
++	vc->vc_tab_stop[0]	=
+ 	vc->vc_tab_stop[1]	=
+ 	vc->vc_tab_stop[2]	=
+ 	vc->vc_tab_stop[3]	=
+@@ -1769,7 +1769,7 @@ static void do_con_trol(struct tty_struc
+ 		vc->vc_pos -= (vc->vc_x << 1);
+ 		while (vc->vc_x < vc->vc_cols - 1) {
+ 			vc->vc_x++;
+-			if (vc->vc_tab_stop[vc->vc_x >> 5] & (1 << (vc->vc_x & 31)))
++			if (vc->vc_tab_stop[7 & (vc->vc_x >> 5)] & (1 << (vc->vc_x & 31)))
+ 				break;
+ 		}
+ 		vc->vc_pos += (vc->vc_x << 1);
+@@ -1829,7 +1829,7 @@ static void do_con_trol(struct tty_struc
+ 			lf(vc);
+ 			return;
+ 		case 'H':
+-			vc->vc_tab_stop[vc->vc_x >> 5] |= (1 << (vc->vc_x & 31));
++			vc->vc_tab_stop[7 & (vc->vc_x >> 5)] |= (1 << (vc->vc_x & 31));
+ 			return;
+ 		case 'Z':
+ 			respond_ID(tty);
+@@ -2022,7 +2022,7 @@ static void do_con_trol(struct tty_struc
+ 			return;
+ 		case 'g':
+ 			if (!vc->vc_par[0])
+-				vc->vc_tab_stop[vc->vc_x >> 5] &= ~(1 << (vc->vc_x & 31));
++				vc->vc_tab_stop[7 & (vc->vc_x >> 5)] &= ~(1 << (vc->vc_x & 31));
+ 			else if (vc->vc_par[0] == 3) {
+ 				vc->vc_tab_stop[0] =
+ 					vc->vc_tab_stop[1] =
