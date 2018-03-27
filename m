@@ -1,144 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752190AbeC0BFS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:05:18 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:36860 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751805AbeC0BFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:05:17 -0400
-X-Google-Smtp-Source: AG47ELuuKCiHJQTQc4ZX3ToaRsJvkEYTAOdUNBcMq+CUBgonqqm3A9h6kQGDjkORAMEcrKSHxa5dwQ==
-From: Ram Pai <linuxram@us.ibm.com>
-To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        aneesh.kumar@linux.vnet.ibm.com, bsingharora@gmail.com,
-        hbabu@us.ibm.com, mhocko@kernel.org, bauerman@linux.vnet.ibm.com,
-        linuxram@us.ibm.com, fweimer@redhat.com, msuchanek@suse.com,
-        tglx@linutronix.de, shuah@kernel.org
-Subject: [PATCH v2] powerpc, pkey: make protection key 0 less special
-Date: Mon, 26 Mar 2018 18:05:02 -0700
-Message-Id: <1522112702-27853-1-git-send-email-linuxram@us.ibm.com>
-X-Mailer: git-send-email 1.7.1
+        id S1752168AbeC0BGi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:06:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751935AbeC0BGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 21:06:37 -0400
+Date: Mon, 26 Mar 2018 21:06:33 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Yael Chemla <yael.chemla@foss.arm.com>
+Cc: Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, ofir.drang@gmail.com,
+        Yael Chemla <yael.chemla@arm.com>
+Subject: Re: [PATCH 2/2] md: dm-verity: allow parallel processing of bio
+ blocks
+Message-ID: <20180327010633.GB23487@redhat.com>
+References: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com>
+ <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applications need the ability to associate an address-range with some
-key and latter revert to its initial default key. Pkey-0 comes close to
-providing this function but falls short, because the current
-implementation disallows applications to explicitly associate pkey-0 to
-the address range.
+On Sun, Mar 25 2018 at  2:41pm -0400,
+Yael Chemla <yael.chemla@foss.arm.com> wrote:
 
-Lets make pkey-0 less special and treat it almost like any other key.
-Thus it can be explicitly associated with any address range, and can be
-freed. This gives the application more flexibility and power.  The
-ability to free pkey-0 must be used responsibily, since pkey-0 is
-associated with almost all address-range by default.
+>  Allow parallel processing of bio blocks by moving to async. completion
+>  handling. This allows for better resource utilization of both HW and
+>  software based hash tfm and therefore better performance in many cases,
+>  depending on the specific tfm in use.
+>  
+>  Tested on ARM32 (zynq board) and ARM64 (Juno board).
+>  Time of cat command was measured on a filesystem with various file sizes.
+>  12% performance improvement when HW based hash was used (ccree driver).
+>  SW based hash showed less than 1% improvement.
+>  CPU utilization when HW based hash was used presented 10% less context
+>  switch, 4% less cycles and 7% less instructions. No difference in
+>  CPU utilization noticed with SW based hash.
+>  
+> Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
 
-Even with this change pkey-0 continues to be slightly more special
-from the following point of view.
-(a) it is implicitly allocated.
-(b) it is the default key assigned to any address-range.
+This one had various issues.  I've fixed most of what I saw and staged
+in linux-next (purely for build test coverage purposes).  I may drop
+this patch if others disagree with it (or my sg deallocation in the
+error path question isn't answered).
 
-Tested on powerpc.
+I've staged the changes here (and in linux-next via 'for-next'):
+https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/log/?h=dm-4.17
 
-cc: Thomas Gleixner <tglx@linutronix.de>
-cc: Dave Hansen <dave.hansen@intel.com>
-cc: Michael Ellermen <mpe@ellerman.id.au>
-cc: Ingo Molnar <mingo@kernel.org>
-cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
----
-History:
-	v2: mm_pkey_is_allocated() continued to treat pkey-0 special.
-	    fixed it.
+I switched all the new GFP_KERNEL uses to GFP_NOIO.  The fact that
+you're doing allocations at all (per IO) is bad enough.  Using
+GFP_KERNEL is a serious liability (risk of deadlock if dm-verity were to
+be used for something like.. swap.. weird setup but possible).
 
- arch/powerpc/include/asm/pkeys.h | 20 ++++++++++++++++----
- arch/powerpc/mm/pkeys.c          | 20 ++++++++++++--------
- 2 files changed, 28 insertions(+), 12 deletions(-)
+But the gfp flags aside, the need for additional memory and the
+expectation of scalable async parallel IO is potentially at odds with
+changes like this (that I just staged, and had to rebase your 2 patches
+ontop of):
+https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-4.17&id=a89f6a2cfec86fba7a115642ff082cb4e9450ea6
 
-diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
-index 0409c80..b598fa9 100644
---- a/arch/powerpc/include/asm/pkeys.h
-+++ b/arch/powerpc/include/asm/pkeys.h
-@@ -101,10 +101,14 @@ static inline u16 pte_to_pkey_bits(u64 pteflags)
- 
- static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
- {
--	/* A reserved key is never considered as 'explicitly allocated' */
--	return ((pkey < arch_max_pkey()) &&
--		!__mm_pkey_is_reserved(pkey) &&
--		__mm_pkey_is_allocated(mm, pkey));
-+	if (pkey < 0 || pkey >= arch_max_pkey())
-+		return false;
-+
-+	/* Reserved keys are never allocated. */
-+	if (__mm_pkey_is_reserved(pkey))
-+		return false;
-+
-+	return __mm_pkey_is_allocated(mm, pkey);
- }
- 
- extern void __arch_activate_pkey(int pkey);
-@@ -200,6 +204,14 @@ static inline int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
- {
- 	if (static_branch_likely(&pkey_disabled))
- 		return -EINVAL;
-+
-+	/*
-+	 * userspace is discouraged from changing permissions of
-+	 * pkey-0. powerpc hardware does not support it anyway.
-+	 */
-+	if (!pkey)
-+		return init_val ? -EINVAL : 0;
-+
- 	return __arch_set_user_pkey_access(tsk, pkey, init_val);
- }
- 
-diff --git a/arch/powerpc/mm/pkeys.c b/arch/powerpc/mm/pkeys.c
-index ba71c54..e7a9e34 100644
---- a/arch/powerpc/mm/pkeys.c
-+++ b/arch/powerpc/mm/pkeys.c
-@@ -119,19 +119,21 @@ int pkey_initialize(void)
- #else
- 	os_reserved = 0;
- #endif
--	/*
--	 * Bits are in LE format. NOTE: 1, 0 are reserved.
--	 * key 0 is the default key, which allows read/write/execute.
--	 * key 1 is recommended not to be used. PowerISA(3.0) page 1015,
--	 * programming note.
--	 */
-+	/* Bits are in LE format. */
- 	initial_allocation_mask = ~0x0;
- 
- 	/* register mask is in BE format */
- 	pkey_amr_uamor_mask = ~0x0ul;
- 	pkey_iamr_mask = ~0x0ul;
- 
--	for (i = 2; i < (pkeys_total - os_reserved); i++) {
-+	for (i = 0; i < (pkeys_total - os_reserved); i++) {
-+	 	/*
-+		 * key 1 is recommended not to be used.
-+		 * PowerISA(3.0) page 1015,
-+		 */
-+		if (i == 1)
-+			continue;
-+
- 		initial_allocation_mask &= ~(0x1 << i);
- 		pkey_amr_uamor_mask &= ~(0x3ul << pkeyshift(i));
- 		pkey_iamr_mask &= ~(0x1ul << pkeyshift(i));
-@@ -145,7 +147,9 @@ void pkey_mm_init(struct mm_struct *mm)
- {
- 	if (static_branch_likely(&pkey_disabled))
- 		return;
--	mm_pkey_allocation_map(mm) = initial_allocation_mask;
-+
-+	/* allocate key-0 by default */
-+	mm_pkey_allocation_map(mm) = initial_allocation_mask | 0x1;
- 	/* -1 means unallocated or invalid */
- 	mm->context.execute_only_pkey = -1;
- }
--- 
-1.8.3.1
+So I'm particulalry interested to hear from google folks to understand
+if they are OK with your proposed verity async crypto API use.
+
+Mike
