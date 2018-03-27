@@ -1,165 +1,307 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1857324-1522093302-2-10779748207512317311
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES endasv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='fr', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522093301; b=Xc7eTFqd9tmq3H4mQZkEX5tLu54vslt/FJcz3TCwjmSEiRn
-    p0xd/1pnL8Mmadzi3UEeMq4/lIsUBxb30WtODNjUeUWM8cHbozn0E7DhL3rGHtH4
-    yLpOLnXapTIxPHSkr8OITUA0XxRTIcJOlPWOMnMRzKM2MK9X1gdvaxT88bVOCcm9
-    fehdqGMrnRhtlEkYi2nopeJVOkJyaD40oeA3txvsr6zKRFpoEOuYnoJp8c97U3pg
-    14FS4SwkG/Nc2ezxmeHuIZ4eZD4IYM1sy7NTc6oYlbzDCw83N08Wl4oD/RQXjJ9P
-    4L96v+5xcj8L6NH/+c1nYjTg2RzpkDJcEIdXliQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1522093301; bh=A
-    TofWMGds2z+ZH+iHokYRY9DmMwt0ZPHFV3badZZ4I4=; b=CuF9hEL3zZX+UmNm9
-    p3opurrPPMKe+ynjjKdrCtJBKNaq5rKJTVFo1nkgt28tJW0hc5sW8yDg8PMwr2xg
-    jBzxd2KqFOpI1oBXPzwMgODKPCJVAxylHmMMOuRQolaCQANlKXteFYDGQEyHdv7h
-    VryFveqA8hO6dTASLX8SlwKuMlJJcp7jvZne2izznqEnYWtOHhMHufq0Q4YLTdOP
-    B5oEsij5svq4gB2JCwbdlocUJEQDwl/mRsuCA1LOs5fHy4MFfKZYNDXxXSD08d1X
-    UCJmRR6SwXtrDLPT4FQDbELoZeHpvJtrry96oMrdEwoL4fcdQoI9wvYUfemDYoUz
-    zWszw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lip6.fr;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lip6.fr header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lip6.fr;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lip6.fr header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHgDKdM1kdXbbPC4vr5FaxfHICUZ3HQ1v3k45VYEbwH+eAn7b+QOPblshlcPgfDz8ER+5X9AM6lVNTtTvOPN1I10u6h3s6MWRPK/kjqPi9fySTrVeaHY
-    NoQoGhSyoQ4cKCCVYe7dWiPUrUS5OTR19NngsoU6ngGr2kMpvEnEnO7AwbRAFLEQb1PT7InhJLC8wsqC6uv+DXP/cTQUeThcH1PDC0cbdUiGaiMoLurcIIHI
-    9+Nw+y1O8WHESa7OnFSsew==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=DfNHnWVPAAAA:8
-    a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8 a=ll9BbRn1J-IGHmDfoLIA:9 a=CjuIK1q_8ugA:10
-    a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22
-    cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-IronPort-AV: E=Sophos;i="5.48,365,1517871600"; d="scan'208";a="320051576"
-Date: Mon, 26 Mar 2018 21:41:30 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Colin Ian King <colin.king@canonical.com>
-Subject: [PATCH] staging: wilc1000: fix memdup.cocci warnings
-Message-ID: <alpine.DEB.2.20.1803262138530.2423@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ganesh Krishna <ganesh.krishna@microchip.com>, kbuild-all@01.org,
- Aditya Shankar <aditya.shankar@microchip.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <minchan.kim@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522133456; cv=none;
+        d=google.com; s=arc-20160816;
+        b=w3Su/L92ATAJle1P5nWb2z3F0KnRrTyt1PA9KgpKbFxqANUkFsgyUuj2gw4hFZsPSg
+         K4Z+2A+gmKcD0t8U8bM0MoxSJGVw3ku8e86K0SceeBoCB9ctdY2g1PDmm5//Xo9XRIHb
+         LGhwBhxoOGpnoOYMGcHIbT/EFMrzNIgHzyK5PyYHEvnJMbDyx52c0nAEpLXHmyqS5+Xj
+         8aPd3GQ82dw2wLq8eZLYegLacOCYrOudOGNBcRH/loqezHC8ydi7O1RUbA4UyPfXHsIQ
+         eIN5gQ94NeRPcf9+xAhOeBsuUl5B9ZjcJGrEYOi4TxCTK80qCA3dorW+FFz1zCSfO1GY
+         QOug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:sender
+         :dkim-signature:arc-authentication-results;
+        bh=81w9lSvNXS6NfqXbSoYCtuJUL/6G+F03q3Pve1Zfv9s=;
+        b=E3fMeLDNay8LP+38zFYXoY7VyHUYwyxubtVC+Gahz+cMukvzKnZDhcnZeqQIac540J
+         WtncDV+BhH/6DnLuOSx5QdgZ1VjARSyQnb9OuKUQmIx+PYHnWL5FtNacuO1cSYK9gv1m
+         4zcQCD1OrgjkIm5RkNd3qAmILrypqShUVtuLDoZH34vMmZk4WjzSP+js7xqYlJQ4CSDN
+         QERduEvW7l9CiCFUIvcUqhQ9qvidyeTWBImvxO+dQTlPL6Ei31FbA/lDFI75xc4T+C/y
+         fm7UWIeVnSfFkEvTDy821bPvR2yGhqRJl5/gPayKPu+cOR6FZb35xh4Z6S5YXkaCdbsN
+         TYgw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oQsc5SJI;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oQsc5SJI;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
+X-Google-Smtp-Source: AG47ELuTCEwthMlvKkB/lJCZzfENWV6HbrsNaU3hPIBws5zON5Qtm7z66UHKnNFBk2bZ14G7DfTbZQ==
+Sender: Minchan Kim <minchan.kim@gmail.com>
+From: Minchan Kim <minchan@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Greg KH <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 4/4] zram: introduce zram memory tracking
+Date: Tue, 27 Mar 2018 15:50:33 +0900
+Message-Id: <20180327065033.181819-5-minchan@kernel.org>
+X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
+In-Reply-To: <20180327065033.181819-1-minchan@kernel.org>
+References: <20180327065033.181819-1-minchan@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596072611048521150?=
+X-GMAIL-MSGID: =?utf-8?q?1596072611048521150?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Fengguang Wu <fengguang.wu@intel.com>
+zRam as swap is useful for small memory device. However, swap means
+those pages on zram are mostly cold pages due to VM's LRU algorithm.
+Especially, once init data for application are touched for launching,
+they tend to be not accessed any more and finally swapped out.
+zRAM can store such cold pages as compressed form but it's pointless
+to keep in memory. Better idea is app developers free them directly
+rather than remaining them on heap.
 
-drivers/staging/wilc1000/host_interface.c:946:32-39: WARNING opportunity for kmemdup
-drivers/staging/wilc1000/host_interface.c:970:30-37: WARNING opportunity for kmemdup
+This patch tell us last access time of each block of zram via
+"cat /sys/kernel/debug/zram/zram0/block_state".
 
- Use kmemdup rather than duplicating its implementation
+The output is as follows,
 
-Generated by: scripts/coccinelle/api/memdup.cocci
+   25064    .wh       100
+   25065    s..       9
+   25067    ..h       15
 
-Fixes: aaea2164bdff ("staging: wilc1000: check for kmalloc allocation failures")
-CC: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
-Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+First column is zram's block index and second one represents symbol
+(s: same page w: written page to backing store h: huge page) of the
+block state. Last one means number of seconds elapsed since the block
+was last accessed. So above example means the 25065th block is accessed
+100 second ago and it was huge so it was written to the backing store.
+
+Admin can leverage this information to catch cold|incompressible pages
+of process with *pagemap* once part of heaps are swapped out.
+
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
 ---
+ drivers/block/zram/Kconfig    |  10 +++
+ drivers/block/zram/zram_drv.c | 124 +++++++++++++++++++++++++++++++---
+ drivers/block/zram/zram_drv.h |   3 +
+ 3 files changed, 126 insertions(+), 11 deletions(-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
-staging-next
-head:   12a0148711a440f5b7111f95a34dfce88cdb47d6
-commit: aaea2164bdff39697d0f1ec69dcae62632e37974 [400/412] staging:
-wilc1000: check for kmalloc allocation failures
-
-In the first hunk, should 6 be ETH_ALEN?
-
- host_interface.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -943,12 +943,12 @@ static s32 handle_connect(struct wilc_vi
+diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
+index ac3a31d433b2..fb0763133dd1 100644
+--- a/drivers/block/zram/Kconfig
++++ b/drivers/block/zram/Kconfig
+@@ -26,3 +26,13 @@ config ZRAM_WRITEBACK
+ 	 /sys/block/zramX/backing_dev.
+ 
+ 	 See zram.txt for more infomration.
++
++config ZRAM_MEMORY_TRACKING
++       bool "Tracking zram block status"
++       depends on ZRAM
++       select DEBUG_FS
++       default n
++       help
++	 With this feature, admin can track the state of allocated block
++	 of zRAM. Admin could see the information via
++	 /sys/kernel/debug/zram/zramX/block_state.
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index aa48d3e0d4fc..11dcadc40cea 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -31,10 +31,15 @@
+ #include <linux/err.h>
+ #include <linux/idr.h>
+ #include <linux/sysfs.h>
++#include <linux/debugfs.h>
+ #include <linux/cpuhotplug.h>
+ 
+ #include "zram_drv.h"
+ 
++#ifdef CONFIG_ZRAM_MEMORY_TRACKING
++static struct dentry *zram_debugfs_root;
++#endif
++
+ static DEFINE_IDR(zram_index_idr);
+ /* idr index must be protected */
+ static DEFINE_MUTEX(zram_index_mutex);
+@@ -67,6 +72,13 @@ static inline bool init_done(struct zram *zram)
+ 	return zram->disksize;
+ }
+ 
++static inline bool zram_allocated(struct zram *zram, u32 index)
++{
++
++	return (zram->table[index].value >> (ZRAM_FLAG_SHIFT + 1)) ||
++					zram->table[index].handle;
++}
++
+ static inline struct zram *dev_to_zram(struct device *dev)
+ {
+ 	return (struct zram *)dev_to_disk(dev)->private_data;
+@@ -83,7 +95,7 @@ static void zram_set_handle(struct zram *zram, u32 index, unsigned long handle)
+ }
+ 
+ /* flag operations require table entry bit_spin_lock() being held */
+-static int zram_test_flag(struct zram *zram, u32 index,
++static bool zram_test_flag(struct zram *zram, u32 index,
+ 			enum zram_pageflags flag)
+ {
+ 	return zram->table[index].value & BIT(flag);
+@@ -107,16 +119,6 @@ static inline void zram_set_element(struct zram *zram, u32 index,
+ 	zram->table[index].element = element;
+ }
+ 
+-static void zram_accessed(struct zram *zram, u32 index)
+-{
+-	zram->table[index].ac_time = get_seconds();
+-}
+-
+-static void zram_reset_access(struct zram *zram, u32 index)
+-{
+-	zram->table[index].ac_time = 0;
+-}
+-
+ static unsigned long zram_get_element(struct zram *zram, u32 index)
+ {
+ 	return zram->table[index].element;
+@@ -620,6 +622,98 @@ static int read_from_bdev(struct zram *zram, struct bio_vec *bvec,
+ static void zram_wb_clear(struct zram *zram, u32 index) {}
+ #endif
+ 
++#ifdef CONFIG_ZRAM_MEMORY_TRACKING
++static void zram_accessed(struct zram *zram, u32 index)
++{
++	zram->table[index].ac_time = get_seconds();
++}
++
++static void zram_reset_access(struct zram *zram, u32 index)
++{
++	zram->table[index].ac_time = 0;
++}
++
++static ssize_t read_block_state(struct file *file, char __user *buf,
++				size_t count, loff_t *ppos)
++{
++	char *kbuf;
++	ssize_t index, written = 0;
++	struct zram *zram = file->private_data;
++	unsigned long last_access, nr_pages = zram->disksize >> PAGE_SHIFT;
++	char flags[__NR_ZRAM_PAGEFLAGS - ZRAM_FLAG_SHIFT];
++
++	kbuf = kvmalloc(count, GFP_KERNEL);
++	if (!kbuf)
++		return -ENOMEM;
++
++	down_read(&zram->init_lock);
++	if (!init_done(zram)) {
++		up_read(&zram->init_lock);
++		kvfree(kbuf);
++		return -EINVAL;
++	}
++
++	for (index = *ppos; index < nr_pages; index++) {
++		int copied;
++
++		zram_slot_lock(zram, index);
++		if (!zram_allocated(zram, index))
++			goto next;
++
++		snprintf(flags, sizeof(flags), "%c%c%c",
++			zram_test_flag(zram, index, ZRAM_SAME) ? 's' : '.',
++			zram_test_flag(zram, index, ZRAM_WB) ? 'w' : '.',
++			zram_test_flag(zram, index, ZRAM_HUGE) ? 'h' : '.');
++
++		last_access = get_seconds() - zram->table[index].ac_time;
++		copied = snprintf(kbuf + written, count, "%12lu %6s %12lu\n",
++						index, flags, last_access);
++		if (count < copied) {
++			zram_slot_unlock(zram, index);
++			break;
++		}
++		written += copied;
++		count -= copied;
++next:
++		zram_slot_unlock(zram, index);
++		*ppos += 1;
++	}
++
++	up_read(&zram->init_lock);
++	copy_to_user(buf, kbuf, written);
++	kvfree(kbuf);
++
++	return written;
++}
++
++static const struct file_operations proc_zram_block_state_op = {
++	.open = simple_open,
++	.read = read_block_state,
++	.llseek = default_llseek,
++};
++
++static void zram_debugfs_register(struct zram *zram)
++{
++	if (!zram_debugfs_root)
++		return;
++
++	zram->debugfs_dir = debugfs_create_dir(zram->disk->disk_name,
++						zram_debugfs_root);
++	debugfs_create_file("block_state", 0400, zram->debugfs_dir,
++				zram, &proc_zram_block_state_op);
++}
++
++static void zram_debugfs_unregister(struct zram *zram)
++{
++	debugfs_remove_recursive(zram->debugfs_dir);
++}
++#else
++static void zram_accessed(struct zram *zram, u32 index) {};
++static void zram_reset_access(struct zram *zram, u32 index) {};
++static unsigned long zram_access_time(struct zram *zram, u32 index) { return 0 };
++static void zram_debugfs_register(struct zram *zram) {};
++static void zram_debugfs_unregister(struct zram *zram) {};
++#endif
+ 
+ /*
+  * We switched to per-cpu streams and this attr is not needed anymore.
+@@ -1604,6 +1698,7 @@ static int zram_add(void)
  	}
-
- 	if (conn_attr->bssid) {
--		hif_drv->usr_conn_req.bssid = kmalloc(6, GFP_KERNEL);
-+		hif_drv->usr_conn_req.bssid = kmemdup(conn_attr->bssid, 6,
-+						      GFP_KERNEL);
- 		if (!hif_drv->usr_conn_req.bssid) {
- 			result = -ENOMEM;
- 			goto error;
- 		}
--		memcpy(hif_drv->usr_conn_req.bssid, conn_attr->bssid, 6);
+ 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
+ 
++	zram_debugfs_register(zram);
+ 	pr_info("Added device: %s\n", zram->disk->disk_name);
+ 	return device_id;
+ 
+@@ -1637,6 +1732,7 @@ static int zram_remove(struct zram *zram)
+ 	zram->claim = true;
+ 	mutex_unlock(&bdev->bd_mutex);
+ 
++	zram_debugfs_unregister(zram);
+ 	/*
+ 	 * Remove sysfs first, so no one will perform a disksize
+ 	 * store while we destroy the devices. This also helps during
+@@ -1738,6 +1834,9 @@ static int zram_remove_cb(int id, void *ptr, void *data)
+ static void destroy_devices(void)
+ {
+ 	class_unregister(&zram_control_class);
++#ifdef CONFIG_ZRAM_MEMORY_TRACKING
++	debugfs_remove_recursive(zram_debugfs_root);
++#endif
+ 	idr_for_each(&zram_index_idr, &zram_remove_cb, NULL);
+ 	idr_destroy(&zram_index_idr);
+ 	unregister_blkdev(zram_major, "zram");
+@@ -1760,6 +1859,9 @@ static int __init zram_init(void)
+ 		return ret;
  	}
-
- 	hif_drv->usr_conn_req.ssid_len = conn_attr->ssid_len;
-@@ -967,15 +967,13 @@ static s32 handle_connect(struct wilc_vi
-
- 	hif_drv->usr_conn_req.ies_len = conn_attr->ies_len;
- 	if (conn_attr->ies) {
--		hif_drv->usr_conn_req.ies = kmalloc(conn_attr->ies_len,
-+		hif_drv->usr_conn_req.ies = kmemdup(conn_attr->ies,
-+						    conn_attr->ies_len,
- 						    GFP_KERNEL);
- 		if (!hif_drv->usr_conn_req.ies) {
- 			result = -ENOMEM;
- 			goto error;
- 		}
--		memcpy(hif_drv->usr_conn_req.ies,
--		       conn_attr->ies,
--		       conn_attr->ies_len);
- 	}
-
- 	hif_drv->usr_conn_req.security = conn_attr->security;
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ 
++#ifdef CONFIG_ZRAM_MEMORY_TRACKING
++	zram_debugfs_root = debugfs_create_dir("zram", NULL);
++#endif
+ 	zram_major = register_blkdev(0, "zram");
+ 	if (zram_major <= 0) {
+ 		pr_err("Unable to get major number\n");
+diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+index f9943d623934..247d287d5054 100644
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@ -111,5 +111,8 @@ struct zram {
+ 	unsigned long nr_pages;
+ 	spinlock_t bitmap_lock;
+ #endif
++#ifdef CONFIG_ZRAM_MEMORY_TRACKING
++	struct dentry *debugfs_dir;
++#endif
+ };
+ #endif
+-- 
+2.17.0.rc0.231.g781580f067-goog
