@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-12751-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsB3V9zFmJrRguuVxXFBN1wyMS2HJhJeDTjG0zd2Y4rUgcyu0tLQ9SCp8Bh2ryBzqgOucWU
-ARC-Seal: i=1; a=rsa-sha256; t=1522115884; cv=none;
+Return-Path: <kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELsvbnEH+ioTVWt+mwZ91jC0I09FLxsJiW9myFwQpUNCTacqdsWqs4/HCtTxeT03+t7ZGqnV
+ARC-Seal: i=1; a=rsa-sha256; t=1522115866; cv=none;
         d=google.com; s=arc-20160816;
-        b=cQc8cpS/aAUsBkykzSyMxKRRKnIxnob/D/Wn/w6xhxwLLkZMgA1uDBotWB8bLek4X8
-         BgUfTxjVYwIazObKs4CybrZXZv2z3B4wi0PSOOHCTVPZY5Esn7x72ClAytT9Aj98InJc
-         OLx1orEYO7poBscZh3kcJQOmhAJB6mjDZ0fA2JRwPPZMkmu3Wah5TCcKTBaN6xruHs3h
-         gZif+9BQCpyxfO7RJS/PzbYFGgNBiiBh2LuDNojFk0EJtJZSMEpplZ66wobF04CDV/rd
-         oXgN9ra74mtnyLKy1l4FFa1FXuxkXeii+oOvj0ZGV0iDNJVSs2eURtaNlYGn+kDOx5va
-         7RIA==
+        b=AvkAOm0hiPLyb8stI2OzvECVNB91kaAUk7ZHkyiYKPR941tPIwGZTiJsxwKHoWDq+O
+         8pMtAUy4IEgN9q9VX3COTBuV8dUtqOWbNSDVtGkJDdoOffQ1UVRBkLs11SYBIv2/oH7B
+         F03NqA5bxkNLKhp6gYgEjuo93URP+CFmcU1C0NirEnmHmKaELLP6hDb3IOmb2cwdEiYX
+         wWDNIobEF2Y33Yr7IzfkG+B+kIFu404ur+8/mQG6pMW5whxu+7KCVxPrNbScdBZtnuHr
+         keL0Fy3tPUOm+713uK+ehxatoep6KGM1vuVonOyihSgBAJCaeD4/LlMjrdEDE2YDigm8
+         N29A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=Fc5Lm7YUOMh4DCo/jnrI1z+TP9lpihDH3A9h5EqfzBo=;
-        b=DNOmGzc4O5ORYONLvOBFt5aFiVES+egzodCHg2FfG5kEBhnMDAHIztJYsNeHpCZDRo
-         SDI+hWZwJ+H0Sudk/dXwKfW/TEDVAcKhTMSDwhv8ocg/FOCvcZVM3C1GnTLrNXFXlRll
-         +EZmUmTgvHyXP9NpwTU8QbC00hJlkf77mq9Pca/PSJX5MhSC8UB/473Rm0Mi0L4Ekpz+
-         MICrxSKs/zXnxv8aRQDmTNkdbmfOm9CdDJ2rk++PupvlQGAFu2BoCp58xxMEe8xWIFPE
-         kqXWaSxV82ATSj54dWyQyGbY8rk4M96CbJL0GqLjf5WcVjLHPEcVnfV23uW5ql3TxEAQ
-         su7Q==
+        bh=r+/dQbGqp28pibuoRjnpcP730sLxUhZuApp/+iHgoXc=;
+        b=EBvsDdAFIxT0mP/i3kCQnzM9zldeE9tXTY/38ykj4i0D67Dge6tqSKfCD72P/yQ4zV
+         W8845Fu6keW1iponW3SXUtIxQk/390uJUtoMLfnEHRz3XIsiVFbugEiVNzwTnpx3AYgF
+         gJxyAVAQ/zKtYSf2olhmqLeeZTtXYoeXkKi+kJHE3V0iw7JmeFuuY7ZU3BSqPzkk+1OG
+         6M+7eUT4lA5Er9+VnehRIhZLR6cv1orIs1YJUzsoD8ZGBI9tiG4w9XDt1bZFM9szSwLe
+         sklae6IaYG2dZp/jaCvWHpZrj8YpNovZQiRl/9aC+0zfO0bInCi1fohWVHDkXCmC18lX
+         qs+A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12751-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12751-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12751-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12751-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -34,9 +34,9 @@ CC: <david@fromorbit.com>, <rppt@linux.vnet.ibm.com>, <labbott@redhat.com>,
 	<linux-security-module@vger.kernel.org>, <linux-mm@kvack.org>,
 	<linux-kernel@vger.kernel.org>, <kernel-hardening@lists.openwall.com>,
 	<igor.stoppa@gmail.com>, Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [PATCH 6/6] Documentation for Pmalloc
-Date: Tue, 27 Mar 2018 04:55:24 +0300
-Message-ID: <20180327015524.14318-7-igor.stoppa@huawei.com>
+Subject: [PATCH 5/6] lkdtm: crash on overwriting protected pmalloc var
+Date: Tue, 27 Mar 2018 04:55:23 +0300
+Message-ID: <20180327015524.14318-6-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180327015524.14318-1-igor.stoppa@huawei.com>
 References: <20180327015524.14318-1-igor.stoppa@huawei.com>
@@ -45,138 +45,92 @@ Content-Type: text/plain
 X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596054185217940342?=
-X-GMAIL-MSGID: =?utf-8?q?1596054185217940342?=
+X-GMAIL-THRID: =?utf-8?q?1596054166607017634?=
+X-GMAIL-MSGID: =?utf-8?q?1596054166607017634?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Detailed documentation about the protectable memory allocator.
+Verify that pmalloc read-only protection is in place: trying to
+overwrite a protected variable will crash the kernel.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 ---
- Documentation/core-api/index.rst   |   1 +
- Documentation/core-api/pmalloc.rst | 101 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 102 insertions(+)
- create mode 100644 Documentation/core-api/pmalloc.rst
+ drivers/misc/lkdtm.h       |  1 +
+ drivers/misc/lkdtm_core.c  |  3 +++
+ drivers/misc/lkdtm_perms.c | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+)
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index c670a8031786..8f5de42d6571 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -25,6 +25,7 @@ Core utilities
-    genalloc
-    errseq
-    printk-formats
-+   pmalloc
+diff --git a/drivers/misc/lkdtm.h b/drivers/misc/lkdtm.h
+index 9e513dcfd809..dcda3ae76ceb 100644
+--- a/drivers/misc/lkdtm.h
++++ b/drivers/misc/lkdtm.h
+@@ -38,6 +38,7 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void);
+ void __init lkdtm_perms_init(void);
+ void lkdtm_WRITE_RO(void);
+ void lkdtm_WRITE_RO_AFTER_INIT(void);
++void lkdtm_WRITE_RO_PMALLOC(void);
+ void lkdtm_WRITE_KERN(void);
+ void lkdtm_EXEC_DATA(void);
+ void lkdtm_EXEC_STACK(void);
+diff --git a/drivers/misc/lkdtm_core.c b/drivers/misc/lkdtm_core.c
+index 2154d1bfd18b..c9fd42bda6ee 100644
+--- a/drivers/misc/lkdtm_core.c
++++ b/drivers/misc/lkdtm_core.c
+@@ -155,6 +155,9 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(ACCESS_USERSPACE),
+ 	CRASHTYPE(WRITE_RO),
+ 	CRASHTYPE(WRITE_RO_AFTER_INIT),
++#ifdef CONFIG_PROTECTABLE_MEMORY
++	CRASHTYPE(WRITE_RO_PMALLOC),
++#endif
+ 	CRASHTYPE(WRITE_KERN),
+ 	CRASHTYPE(REFCOUNT_INC_OVERFLOW),
+ 	CRASHTYPE(REFCOUNT_ADD_OVERFLOW),
+diff --git a/drivers/misc/lkdtm_perms.c b/drivers/misc/lkdtm_perms.c
+index 53b85c9d16b8..0ac9023fd2b0 100644
+--- a/drivers/misc/lkdtm_perms.c
++++ b/drivers/misc/lkdtm_perms.c
+@@ -9,6 +9,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/mman.h>
+ #include <linux/uaccess.h>
++#include <linux/pmalloc.h>
+ #include <asm/cacheflush.h>
  
- Interfaces for kernel debugging
- ===============================
-diff --git a/Documentation/core-api/pmalloc.rst b/Documentation/core-api/pmalloc.rst
-new file mode 100644
-index 000000000000..3d2c19e5deaf
---- /dev/null
-+++ b/Documentation/core-api/pmalloc.rst
-@@ -0,0 +1,101 @@
-+.. SPDX-License-Identifier: GPL-2.0
+ /* Whether or not to fill the target memory area with do_nothing(). */
+@@ -104,6 +105,33 @@ void lkdtm_WRITE_RO_AFTER_INIT(void)
+ 	*ptr ^= 0xabcd1234;
+ }
+ 
++#ifdef CONFIG_PROTECTABLE_MEMORY
++void lkdtm_WRITE_RO_PMALLOC(void)
++{
++	struct gen_pool *pool;
++	int *i;
 +
-+.. _pmalloc:
++	pool = pmalloc_create_pool("pool", 0);
++	if (unlikely(!pool)) {
++		pr_info("Failed preparing pool for pmalloc test.");
++		return;
++	}
 +
-+Protectable memory allocator
-+============================
++	i = (int *)pmalloc(pool, sizeof(int), GFP_KERNEL);
++	if (unlikely(!i)) {
++		pr_info("Failed allocating memory for pmalloc test.");
++		pmalloc_destroy_pool(pool);
++		return;
++	}
 +
-+Purpose
-+-------
++	*i = INT_MAX;
++	pmalloc_protect_pool(pool);
 +
-+The pmalloc library is meant to provide read-only status to data that,
-+for some reason, could neither be declared as constant, nor could it take
-+advantage of the qualifier __ro_after_init, but is write-once and
-+read-only in spirit.
-+It protects data from both accidental and malicious overwrites.
++	pr_info("attempting bad pmalloc write at %p\n", i);
++	*i = 0;
++}
++#endif
 +
-+Example: A policy that is loaded from userspace.
-+
-+
-+Concept
-+-------
-+
-+The MMU available in the system can be used to write protect memory pages.
-+Unfortunately this feature cannot be used as-it-is, to protect sensitive
-+data, because it is typically interleaved with data that must stay
-+writeable.
-+
-+pmalloc introduces the concept of protectable memory pools.
-+Each pool contains a list of areas of virtually contiguous pages of
-+memory. An area is the minimum amount of memory that pmalloc allows to
-+protect, because the data it contains can be larger than a single page.
-+
-+When an allocation is performed, if there is not enough memory already
-+available in the pool, a new area of suitable size is allocated.
-+The size chosen is the largest between the roundup (to PAGE_SIZE) of
-+the request from pmalloc and friends and the refill parameter specified
-+when creating the pool.
-+
-+When a pool is created, it is possible to specify two parameters:
-+- refill size: the minimum size of the memory area to allocate when needed
-+- align_order: the default alignment to use when returning to pmalloc
-+
-+Caveats
-+-------
-+
-+- To facilitate the conversion of existing code to pmalloc pools, several
-+  helper functions are provided, mirroring their k/vmalloc counterparts.
-+  In particular, pfree(), which is mostly meant for error paths, when one
-+  or more previous allocations must be rolled back.
-+
-+- Whatever memory was still available in the previous area (where
-+  applicable) is relinquished.
-+
-+- Freeing of memory is not supported. Pages will be returned to the
-+  system upon destruction of the memory pool.
-+
-+- Considering that not much data is supposed to be dynamically allocated
-+  and then marked as read-only, it shouldn't be an issue that the address
-+  range for pmalloc is limited, on 32-bit systems.
-+
-+- Regarding SMP systems, the allocations are expected to happen mostly
-+  during an initial transient, after which there should be no more need to
-+  perform cross-processor synchronizations of page tables.
-+
-+
-+Use
-+---
-+
-+The typical sequence, when using pmalloc, is:
-+
-+#. create a pool
-+
-+   :c:func:`pmalloc_create_pool`
-+
-+#. [optional] pre-allocate some memory in the pool
-+
-+   :c:func:`pmalloc_prealloc`
-+
-+#. issue one or more allocation requests to the pool with locking as needed
-+
-+   :c:func:`pmalloc`
-+
-+   :c:func:`pzalloc`
-+
-+#. initialize the memory obtained with desired values
-+
-+#. write-protect the memory so far allocated
-+
-+   :c::func:`pmalloc_protect_pool`
-+
-+#. iterate over the last 3 points as needed
-+
-+#. [optional] destroy the pool
-+
-+   :c:func:`pmalloc_destroy_pool`
-+
-+API
-+---
-+
-+.. kernel-doc:: include/linux/pmalloc.h
-+.. kernel-doc:: mm/pmalloc.c
+ void lkdtm_WRITE_KERN(void)
+ {
+ 	size_t size;
 -- 
 2.14.1
