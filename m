@@ -1,117 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752154AbeC0Dgh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 23:36:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33504 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751714AbeC0Dgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 23:36:35 -0400
-Subject: Re: BUG: corrupted list in remove_wait_queue
-To: syzbot <syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org
-References: <0000000000004822e3056827baf4@google.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <3d6e49f7-2952-75bb-c58e-1ae4f935c404@redhat.com>
-Date: Tue, 27 Mar 2018 11:36:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752060AbeC0DkO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 23:40:14 -0400
+Received: from mail-it0-f52.google.com ([209.85.214.52]:50277 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751824AbeC0DkM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 23:40:12 -0400
+X-Google-Smtp-Source: AIpwx4+rzLY3dniAgFtKVodgoaTFA6ZMpt/wIZFNIU4EnNsSOMzHzNadgdozRpq5aJokfiu/PcJ0eZfkcqs/zuqDp6Q=
 MIME-Version: 1.0
-In-Reply-To: <0000000000004822e3056827baf4@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <8a8ee344-fb19-3ed9-f7dc-db63f703e6d3@physik.fu-berlin.de>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-5-linux@dominikbrodowski.net> <20180318174014.GR30522@ZenIV.linux.org.uk>
+ <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
+ <20180318181848.GU30522@ZenIV.linux.org.uk> <20180319042300.GW30522@ZenIV.linux.org.uk>
+ <20180319092920.tbh2xwkruegshzqe@gmail.com> <20180319232342.GX30522@ZenIV.linux.org.uk>
+ <20180322001532.GA18399@ZenIV.linux.org.uk> <20180326004017.GA2211@ZenIV.linux.org.uk>
+ <20180326034750.GN30522@ZenIV.linux.org.uk> <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
+ <428751c8-6920-096b-8694-a3f1b8990bdf@physik.fu-berlin.de>
+ <CA+55aFwp-T-WFN95j7u5nn2BExxviJCx1-RgD3Mnu1AN_GYD3w@mail.gmail.com> <8a8ee344-fb19-3ed9-f7dc-db63f703e6d3@physik.fu-berlin.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 26 Mar 2018 17:40:10 -1000
+X-Google-Sender-Auth: Kd9FGnI0th4QSB-ymh8QgmQcsdE
+Message-ID: <CA+55aFzHL1L_SEt_xqmJBfRRngTm4qbQGwxFvqSXw-MD2BiAOQ@mail.gmail.com>
+Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年03月24日 20:32, syzbot wrote:
-> syzbot has found reproducer for the following crash on upstream commit
-> 99fec39e7725d091c94d1bb0242e40c8092994f6 (Fri Mar 23 22:34:18 2018 +0000)
-> Merge tag 'trace-v4.16-rc4' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
-> syzbot dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=c0272972b01b872e604a
+On Mon, Mar 26, 2018 at 4:37 PM, John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
 >
-> So far this crash happened 4 times on upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> .config is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
->
-> IMPORTANT: if you fix the bug, please add the following tag to the 
-> commit:
-> Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed.
->
-> list_del corruption, 0000000054a89bb5->next is LIST_POISON1 
-> (00000000a63e4a19)
-> ------------[ cut here ]------------
-> kernel BUG at lib/list_debug.c:47!
-> invalid opcode: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 4851 Comm: syzkaller762396 Not tainted 4.16.0-rc6+ #364
-> Hardware name: Google Google Compute Engine/Google Compute Engine, 
-> BIOS Google 01/01/2011
-> RIP: 0010:__list_del_entry_valid+0xd3/0x150 lib/list_debug.c:45
-> RSP: 0018:ffff8801d3ff71b8 EFLAGS: 00010086
-> RAX: 000000000000004e RBX: dead000000000200 RCX: 0000000000000000
-> RDX: 000000000000004e RSI: 1ffff1003a7fedec RDI: ffffed003a7fee2b
-> RBP: ffff8801d3ff71d0 R08: ffff8801db227fc0 R09: 1ffff1003a7fed93
-> R10: ffff8801d3ff7090 R11: 0000000000000002 R12: dead000000000100
-> R13: ffff8801b6a2d458 R14: ffff8801b6a2d460 R15: ffff8801d27d1780
-> FS:  0000000000000000(0000) GS:ffff8801db200000(0000) 
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000002001d000 CR3: 0000000006e22002 CR4: 00000000001606f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __list_del_entry include/linux/list.h:117 [inline]
->  list_del include/linux/list.h:125 [inline]
->  __remove_wait_queue include/linux/wait.h:184 [inline]
->  remove_wait_queue+0x90/0x350 kernel/sched/wait.c:51
->  vhost_poll_stop+0x46/0x90 drivers/vhost/vhost.c:229
->  vhost_net_disable_vq drivers/vhost/net.c:405 [inline]
->  vhost_net_stop_vq+0x90/0x120 drivers/vhost/net.c:973
->  vhost_net_stop drivers/vhost/net.c:984 [inline]
->  vhost_net_release+0x49/0x190 drivers/vhost/net.c:1017
->  __fput+0x327/0x7e0 fs/file_table.c:209
->  ____fput+0x15/0x20 fs/file_table.c:243
->  task_work_run+0x199/0x270 kernel/task_work.c:113
->  exit_task_work include/linux/task_work.h:22 [inline]
->  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
->  do_group_exit+0x149/0x400 kernel/exit.c:968
->  get_signal+0x73a/0x16d0 kernel/signal.c:2469
->  do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
->  exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x44a8e9
-> RSP: 002b:00007f7ec8480da8 EFLAGS: 00000293 ORIG_RAX: 0000000000000010
-> RAX: 0000000000000000 RBX: 00000000006e29e4 RCX: 000000000044a8e9
-> RDX: 0000000020000340 RSI: 00000000400454ca RDI: 0000000000000005
-> RBP: 00000000006e29e0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000293 R12: 6f68762f7665642f
-> R13: 6475612f7665642f R14: 74656e2f7665642f R15: 0000000000000001
-> Code: 8f 00 00 00 49 8b 54 24 08 48 39 f2 75 3b 48 83 c4 08 b8 01 00 
-> 00 00 5b 41 5c 5d c3 4c 89 e2 48 c7 c7 00 80 40 86 e8 85 df fb fe <0f> 
-> 0b 48 c7 c7 60 80 40 86 e8 77 df fb fe 0f 0b 48 c7 c7 c0 80
-> RIP: __list_del_entry_valid+0xd3/0x150 lib/list_debug.c:45 RSP: 
-> ffff8801d3ff71b8
-> ---[ end trace bdcbea47fcda73ff ]---
->
+> What about a tarball with a minimal Debian x32 chroot? Then you can
+> install interesting packages you would like to test yourself.
 
-This is because we do not clear poll->wqh when poll fails, then a double 
-free may be triggered. Will post a patch. And I suspect we need hold vq 
-mutex in vhost_dev_stop().
+That probably works fine.
 
-Thanks
+          Linus
