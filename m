@@ -1,105 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752019AbeC0Q1Q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 12:27:16 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28551 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751202AbeC0Q1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:27:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,367,1517904000";
-   d="scan'208";a="211734333"
-Subject: Re: [PATCH v1] perf stat: avoid 10ms limit for printing event counts
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <8f27e33e-355a-e6f3-30d9-c0fc3ff46c4d@linux.intel.com>
- <20180327090642.GP13724@tassilo.jf.intel.com>
- <39ed9fc9-d14d-5c0e-defc-60b54df1ae12@linux.intel.com>
- <20180327115937.GR13724@tassilo.jf.intel.com>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <fb969378-3cd1-77dc-bdaf-9b9c972fb084@linux.intel.com>
-Date: Tue, 27 Mar 2018 19:27:09 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751732AbeC0Q1P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:27:15 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:41140 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750753AbeC0Q1M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 12:27:12 -0400
+X-Google-Smtp-Source: AG47ELsjlmjUQWUbyC36YK4iY8H3ERXaVHkKZi0xx98wUc1HyCuXu7X/m+dZC6qgX3i4tY3/VK3du5ERIpuuBsPCJ6Y=
 MIME-Version: 1.0
-In-Reply-To: <20180327115937.GR13724@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <5ABA127E.5080601@hitachi.com>
+References: <5AAFA682.2080901@hitachi.com> <5AB0E4F3.8090108@easystack.cn>
+ <C8603108370B1949BF3CC7742DDE5D35B8B39FD9@GSjpTKYDCembx31.service.hitachi.net>
+ <CAOi1vP8eLcc6u-XhpSu33+3eDygy3Mp+_tJXT7ygdwsnUs-RmQ@mail.gmail.com>
+ <CAOi1vP_7La=nCs71wG3=HbYLaxM3uBFytv8pjGJLuR_uuB0GLg@mail.gmail.com>
+ <C8603108370B1949BF3CC7742DDE5D35B8B42988@GSJPTKYDCEMBX32.service.hitachi.net>
+ <CAOi1vP_qFkDK00-_KJpbrnC3PbP371=R4wxBH8gk2s47qwfrhg@mail.gmail.com> <5ABA127E.5080601@hitachi.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 27 Mar 2018 18:27:10 +0200
+Message-ID: <CAOi1vP_NjxvPOM+y6d1mU6jcsnQENqjBeOnjhHGwwhOaEuscAw@mail.gmail.com>
+Subject: Re: Re: Re: Re: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags bit
+To: KAMEI Hitoshi <hitoshi.kamei.xm@hitachi.com>
+Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        "sage@redhat.com" <sage@redhat.com>,
+        "elder@kernel.org" <elder@kernel.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.03.2018 14:59, Andi Kleen wrote:
-> On Tue, Mar 27, 2018 at 02:40:29PM +0300, Alexey Budankov wrote:
->> On 27.03.2018 12:06, Andi Kleen wrote:
->>>> When running perf stat -I for monitoring e.g. PCIe uncore counters and 
->>>> at the same time profiling some I/O workload by perf record e.g. for 
->>>> cpu-cycles and context switches, it is then possible to build and 
->>>> observe good-enough consolidated CPU/OS/IO(Uncore) performance picture 
->>>> for that workload.
->>>
->>> At some point I still hope we can make uncore measurements in 
->>> perf record work. Kan tried at some point to allow multiple
->>> PMUs in a group, but was not successfull. But perhaps we
->>> can sample them from a software event instead.
->>>
->>>>
->>>> The warning on possible runtime overhead is still preserved, however 
->>>> it is only visible when specifying -v option.
->>>
->>> I would print it unconditionally. Very few people use -v.
+On Tue, Mar 27, 2018 at 11:44 AM, KAMEI Hitoshi
+<hitoshi.kamei.xm@hitachi.com> wrote:
+> Hi Ilya,
+>
+> Thank you for reviewing.
+> I merged two patches into one patch and pushed the new patch to GitHub.
+> And I opened the PR. Could you check the PR?
+>
+> And I forgot to mention in previous email that I modified your patch to
+> apply the latest kernel because I couldn't apply your patch directly
+> by using git am command due to a little bit problem, and I tested
+> the kernel with the modified patch and rbd map command with notrim option.
+>
+> The code described below is the modified patch by my hand.
 
-Thought it thru more. Printing the warning doesn't make sense in case 
-you have output to the console because you quickly get your screen 
-scrolled down. If the interval is small you may even skip it at all 
-regardless of -v option.
-
-It turns out that the right place to say about possible overhead is
-in the help message generated by perf stat -h.
+Right, my patch is based on ceph/ceph-client.git:testing which has
+some unrelated rbd_init_disk() changes.
 
 Thanks,
-Alexey
 
->>>
->>> BTW better of course would be to occasionally measure the perf stat 
->>> cpu time and only print the warning if it's above some percentage
->>> of a CPU. But that would be much more work.
->>
->> Would you please elaborate more on that?
-> 
-> getrusage() can give you the system+user time of the current process.
-> If you compare that to wall time you know the percentage.
-> 
-> Could measure those occasionally (not every interval, but perhaps
-> once per second or so). If the overhead reaches a reasonable percentage (5%
-> perhaps?) print the warning once.
-> 
-> One problem is th the measurement doesn't inlude time in the remote
-> IPIs for reading performance counters on other CPUs.  So if the system
-> is very large it may be less and less accurate. But maybe it's a good
-> enough proxy.
-> 
-> Or in theory could fix the kernel to charge this somehow to the process
-> that triggered the IPIs, but that would be another project.
-> 
-> Another problem is that it doesn't account for burstiness. Maybe
-> the problem is not the smoothed average of CPU time, but bursts
-> competing with the original workload. There's probably no easy
-> solution for that.
-> 
-> Also if the CPU perf stat runs on is idle it of course doesn't matter.
-> Getting that would require reading /proc, which would be much more 
-> expensive so probably not a good idea. As a proxy you could check
-> the involuntary context switches (also reported by getrusage),
-> and if they don't cross some threshold then don't warn)
-> 
-> -Andi
-> 
+                Ilya
