@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeC0NQG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:16:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:54964 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752348AbeC0NQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:03 -0400
+        id S1752721AbeC0NQO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:16:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55018 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752447AbeC0NQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:13 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
@@ -14,12 +14,10 @@ Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
         pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
         peter.maydell@linaro.org, kristina.martsenko@arm.com,
         mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: [PATCH v2 01/17] virtio: mmio-v1: Validate queue PFN
-Date: Tue, 27 Mar 2018 14:15:11 +0100
-Message-Id: <1522156531-28348-2-git-send-email-suzuki.poulose@arm.com>
+        Steve Capper <steve.capper@arm.com>
+Subject: [PATCH v2 04/17] arm64: Refactor pud_huge for reusability
+Date: Tue, 27 Mar 2018 14:15:14 +0100
+Message-Id: <1522156531-28348-5-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
@@ -27,62 +25,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio-mmio with virtio-v1 uses a 32bit PFN for the queue.
-If the queue pfn is too large to fit in 32bits, which
-we could hit on arm64 systems with 52bit physical addresses
-(even with 64K page size), we simply miss out a proper link
-to the other side of the queue.
+Make pud_huge reusable for stage2 tables, independent
+of the stage1 levels.
 
-Add a check to validate the PFN, rather than silently breaking
-the devices.
-
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Steve Capper <steve.capper@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Christoffer Dall <cdall@kernel.org>
-Cc: Peter Maydel <peter.maydell@linaro.org>
-Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/virtio/virtio_mmio.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/pgtable.h | 5 +++++
+ arch/arm64/mm/hugetlbpage.c      | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-index 67763d3..b2f9b5c 100644
---- a/drivers/virtio/virtio_mmio.c
-+++ b/drivers/virtio/virtio_mmio.c
-@@ -397,9 +397,21 @@ static struct virtqueue *vm_setup_vq(struct virtio_device *vdev, unsigned index,
- 	/* Activate the queue */
- 	writel(virtqueue_get_vring_size(vq), vm_dev->base + VIRTIO_MMIO_QUEUE_NUM);
- 	if (vm_dev->version == 1) {
-+		u64 q_pfn = virtqueue_get_desc_addr(vq) >> PAGE_SHIFT;
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 5e22503..4a16c11 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -479,6 +479,11 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+ #define __raw_pud_bad(pud)	(!(pud_val(pud) & PUD_TABLE_BIT))
+ #define __raw_pud_present(pud)	pte_present(pud_pte(pud))
+ 
++static inline int __raw_pud_huge(pud_t pud)
++{
++	return pud_val(pud) && !(pud_val(pud) & PUD_TABLE_BIT);
++}
 +
-+		/*
-+		 * virtio-mmio v1 uses a 32bit QUEUE PFN. If we have something
-+		 * that doesn't fit in 32bit, fail the setup rather than
-+		 * pretending to be successful.
-+		 */
-+		if (q_pfn >> 32) {
-+			dev_err(&vdev->dev, "virtio-mmio: queue address too large\n");
-+			err = -ENOMEM;
-+			goto error_bad_pfn;
-+		}
-+
- 		writel(PAGE_SIZE, vm_dev->base + VIRTIO_MMIO_QUEUE_ALIGN);
--		writel(virtqueue_get_desc_addr(vq) >> PAGE_SHIFT,
--				vm_dev->base + VIRTIO_MMIO_QUEUE_PFN);
-+		writel(q_pfn, vm_dev->base + VIRTIO_MMIO_QUEUE_PFN);
- 	} else {
- 		u64 addr;
- 
-@@ -430,6 +442,8 @@ static struct virtqueue *vm_setup_vq(struct virtio_device *vdev, unsigned index,
- 
- 	return vq;
- 
-+error_bad_pfn:
-+	vring_del_virtqueue(vq);
- error_new_virtqueue:
- 	if (vm_dev->version == 1) {
- 		writel(0, vm_dev->base + VIRTIO_MMIO_QUEUE_PFN);
+ static inline void __raw_set_pud(pud_t *pudp, pud_t pud)
+ {
+ 	WRITE_ONCE(*pudp, pud);
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index ecc6818..3f4bb43 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -35,7 +35,7 @@ int pmd_huge(pmd_t pmd)
+ int pud_huge(pud_t pud)
+ {
+ #ifndef __PAGETABLE_PMD_FOLDED
+-	return pud_val(pud) && !(pud_val(pud) & PUD_TABLE_BIT);
++	return __raw_pud_huge(pud);
+ #else
+ 	return 0;
+ #endif
 -- 
 2.7.4
