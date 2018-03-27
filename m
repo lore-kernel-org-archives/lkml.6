@@ -1,149 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751086AbeC0GPh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:15:37 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:36861 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeC0GPf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:15:35 -0400
-Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
- <1521213399-31947-2-git-send-email-jacopo+renesas@jmondi.org>
- <4060923.7DxT9ae38L@avalon> <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
-CC: Rob Herring <robh@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <architt@codeaurora.org>, <a.hajda@samsung.com>, <airlied@linux.ie>,
-        <horms@verge.net.au>, <magnus.damm@gmail.com>, <geert@linux-m68k.org>,
-        <niklas.soderlund@ragnatech.se>, <sergei.shtylyov@cogentembedded.com>,
-        <mark.rutland@arm.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <a1b0e678-38b8-dd29-b441-e2a09b565105@mentor.com>
-Date: Tue, 27 Mar 2018 09:15:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        id S1751371AbeC0GQp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:16:45 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:5909 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751121AbeC0GQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 02:16:42 -0400
+From: "liwei (CM)" <liwei213@huawei.com>
+To: "liwei (CM)" <liwei213@huawei.com>, Arnd Bergmann <arnd@arndb.de>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "xuwei (O)" <xuwei5@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Riku Voipio <riku.voipio@linaro.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Eric Anholt <eric@anholt.net>,
+        DTML <devicetree@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        zangleigang <zangleigang@hisilicon.com>,
+        Gengjianfeng <gengjianfeng@hisilicon.com>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        "Fengbaopeng (kevin, Kirin Solution Dept)"
+        <fengbaopeng@hisilicon.com>,
+        "Yaniv Gardi" <ygardi@codeaurora.org>
+Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlOWkjTogW1BBVENIIHY4IDIvNV0gZHQtYmlu?=
+ =?utf-8?Q?dings:_scsi:_ufs:_add_document_for_hisi-ufs?=
+Thread-Topic: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSCB2OCAyLzVdIGR0LWJpbmRpbmdzOiBz?=
+ =?utf-8?Q?csi:_ufs:_add_document_for_hisi-ufs?=
+Thread-Index: AQHTpLNt7xq76dhVgkeSgBp0Vy2vQaOrAJgAgDJE6ZCABLCUgIAAkqZA//+FzQCAAJJzQIABEYQA
+Date: Tue, 27 Mar 2018 06:15:15 +0000
+Message-ID: <1699CE87DE933F49876AD744B5DC140FA588AD@DGGEMM506-MBS.china.huawei.com>
+References: <20180213101412.5717-1-liwei213@huawei.com>
+ <20180213101412.5717-3-liwei213@huawei.com>
+ <CAK8P3a2b3rLHyM+vMppCkAR3VYbhw-b0LpuWfLCqjs7z9n+hyw@mail.gmail.com>
+ <1699CE87DE933F49876AD744B5DC140FA584ED@DGGEMM506-MBS.china.huawei.com>
+ <CAK8P3a3NdHLDf2vOMyZ1qcWNW1Jg5T47qR0qWhWEeDn+90S4ug@mail.gmail.com>
+ <1699CE87DE933F49876AD744B5DC140FA58798@DGGEMM506-MBS.china.huawei.com>
+ <CAK8P3a29sDaEj=iTkru-3mc9NpjNvZos3Z+h5UsT1cAeULoGHw@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.189.155.72]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2R6GnhO029603
 
-Hi Jacopo,
+Hi, Arnd
 
-On 03/27/2018 01:22 AM, Rob Herring wrote:
-> On Tue, Mar 20, 2018 at 02:43:33PM +0200, Laurent Pinchart wrote:
->> Hi Jacopo,
->>
->> (CC'ing Rob)
->>
->> Thank you for the patch.
->>
->> On Friday, 16 March 2018 17:16:37 EET Jacopo Mondi wrote:
->>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
->>>
->>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->>> Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
->>> ---
->>>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++++++++++++++++
->>>  1 file changed, 66 insertions(+)
->>>  create mode 100644
->>> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>> new file mode 100644
->>> index 0000000..8225c6a
->>> --- /dev/null
->>> +++
->>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->>> @@ -0,0 +1,66 @@
->>> +Thine Electronics THC63LVD1024 LVDS decoder
->>> +-------------------------------------------
->>> +
->>> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS
->>> streams
->>> +to parallel data outputs. The chip supports single/dual input/output modes,
->>> +handling up to two two input LVDS stream and up to two digital CMOS/TTL
->>> outputs.
->>> +
->>> +Single or dual operation modes, output data mapping and DDR output modes
->>> are
->>> +configured through input signals and the chip does not expose any control
->>> bus.
->>> +
->>> +Required properties:
->>> +- compatible: Shall be "thine,thc63lvd1024"
->>> +
->>> +Optional properties:
->>> +- vcc-supply: Power supply for TTL output and digital circuitry
->>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
->>> +- lvcc-supply: Power supply for LVDS inputs
->>> +- pvcc-supply: Power supply for PLL circuitry
->>
->> As explained in a comment to one of the previous versions of this series, I'm 
->> tempted to make vcc-supply mandatory and drop the three other power supplies 
->> for now, as I believe there's very little chance they will be connected to 
->> separately controllable regulators (all supplies use the same voltage). In the 
->> very unlikely event that this occurs in design we need to support in the 
->> future, the cvcc, lvcc and pvcc supplies can be added later as optional 
->> without breaking backward compatibility.
-> 
-> I'm okay with that.
-> 
->> Apart from that,
->>
->> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>
->>> +- pdwn-gpios: Power down GPIO signal. Active low
-> 
-> powerdown-gpios is the semi-standard name.
-> 
+At present our ufs module mainly has four clocks from the outside:
+hclk_ufs:     main clock of ufs controller ,freq is 207.5MHz 
+cfg_phy_clk:  configuration clock of MPHY, freq is 51.875MHz
+ref_phy_clk:  reference clock of MPHY from PMU, freq is 19.2MHz
+ref_io_clk:    reference clock for the external interface to the device, freq is 19.2MHz
 
-right, I've also noticed it. If possible please avoid shortenings in
-property names.
+We control two clocks "ref_io_clk" and "cfg_phy_clk" in the driver because the other two are controlled by main clock module and pmu. 
+for this patch, cfg_phy_clk corresponds to "phy_clk", ref_io_clk corresponds to "ref_clk".
 
->>> +- oe-gpios: Output enable GPIO signal. Active high
->>> +
+So the clks in the patch you give appear to be unsuitable for describing this .And the following clks of qcom are internal clock? 
+We didn't describe or pay attention to the clock inside the ufs module.
 
-And this one is also a not ever met property name, please consider to
-rename it to 'enable-gpios', for instance display panels define it.
+PHY to controller symbol synchronization clocks:
+        "rx_lane0_sync_clk" - RX Lane 0
+        "rx_lane1_sync_clk" - RX Lane 1
+        "tx_lane0_sync_clk" - TX Lane 0
+        "tx_lane1_sync_clk" - TX Lane 1
 
->>> +The THC63LVD1024 video port connections are modeled according
->>> +to OF graph bindings specified by
->>> Documentation/devicetree/bindings/graph.txt
 
-[snip]
+-----邮件原件-----
+发件人: liwei (CM) 
+发送时间: 2018年3月26日 20:02
+收件人: 'Arnd Bergmann'
+抄送: Rob Herring; Mark Rutland; xuwei (O); Catalin Marinas; Will Deacon; Vinayak Holikatti; James E.J. Bottomley; Martin K. Petersen; Kevin Hilman; Gregory CLEMENT; Thomas Petazzoni; Masahiro Yamada; Riku Voipio; Thierry Reding; Krzysztof Kozlowski; Eric Anholt; DTML; Linux Kernel Mailing List; Linux ARM; linux-scsi; zangleigang; Gengjianfeng; Guodong Xu; Zhangfei Gao; Fengbaopeng (kevin, Kirin Solution Dept); Yaniv Gardi
+主题: 答复: 答复: 答复: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
 
->>> +
->>> +			port@2{
->>> +				reg = <2>;
->>> +
->>> +				lvds_dec_out_2: endpoint {
->>> +					remote-endpoint = <&adv7511_in>;
->>> +				};
->>> +
+Hi, Arnd
 
-Drop a surplus empty line above.
+I'll ask our soc colleagues for help and give a detailed and accurate explanation aosp.
 
->>> +			};
->>> +
+Thanks!
 
-Drop a surplus empty line above.
 
->>> +		};
->>> +	};
+-----邮件原件-----
+发件人: arndbergmann@gmail.com [mailto:arndbergmann@gmail.com] 代表 Arnd Bergmann
+发送时间: 2018年3月26日 18:42
+收件人: liwei (CM)
+抄送: Rob Herring; Mark Rutland; xuwei (O); Catalin Marinas; Will Deacon; Vinayak Holikatti; James E.J. Bottomley; Martin K. Petersen; Kevin Hilman; Gregory CLEMENT; Thomas Petazzoni; Masahiro Yamada; Riku Voipio; Thierry Reding; Krzysztof Kozlowski; Eric Anholt; DTML; Linux Kernel Mailing List; Linux ARM; linux-scsi; zangleigang; Gengjianfeng; Guodong Xu; Zhangfei Gao; Fengbaopeng (kevin, Kirin Solution Dept); Yaniv Gardi
+主题: Re: 答复: 答复: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
 
---
-With best wishes,
-Vladimir
+On Mon, Mar 26, 2018 at 12:26 PM, liwei (CM) <liwei213@huawei.com> wrote:
+> 发件人: arndbergmann@gmail.com [mailto:arndbergmann@gmail.com] 代表 Arnd 
+> Bergmann
+> > 主题: Re: 答复: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for 
+> > hisi-ufs On Fri, Mar 23, 2018 at 3:22 AM, liwei (CM) <liwei213@huawei.com> wrote:
+> >> The clock names sound generic enough, should we have both in the generic binding?
+> >>
+> >> Do you mean that add a "phy_clk" to ufshcd-pltfrm 's bindings?
+> >> At present, it seems that in the implementation of generic code, 
+> >> apart from "ref_clk" may have special processing, other clk will 
+> >> not have special processing and simply parse and enable; Referring 
+> >> to ufs-qcom binding, I think "phy_clk" can be named "iface_clk", 
+> >> this "iface_clk" exists in ufshcd-pltfrm bindings;If so, "ref_clk", "iface_clk" are both in the generic binding,we will remove them here. Is that okay?
+>
+> > I'm looking at the generic binding again, and it seems we never 
+> > quite managed to fix some minor problems with it. See below for a possible way to clarify it.
+>
+> phy_clk is actually given to the phy. But as previously mentioned , we 
+> do not have a separate phy to configure ; The clks in the patch you 
+> give appear to be unsuitable for describing this .
+> Here we can't describe phy_clk in the node "ufsphy1: ufsphy@fc597000" like qcom.
+> So can we put it here in our own binding like this?
+
+I think the concept of having a phy clk is generic enough that it's better to have that in the common part, others will surely have the same thing, and in this case, qcom would be the exception that does not use one.
+
+There are apparently a couple of things related to the phy that may or may not require a clk:
+
+- ref_clk: The reference clock on the mipi bus, this is what qcom have, this would
+  be the 19.2 MHz clock signal.
+- one clock to drive the logic block for the PHY itself, if it is included within
+  the same logical portion of an SoC as the ufshcd, but uses a separate clock.
+- Looking at the Android kernel as distributed by google/qualcomm, they have
+  four separate clocks described as
+
+    PHY to controller symbol synchronization clocks:
+        "rx_lane0_sync_clk" - RX Lane 0
+        "rx_lane1_sync_clk" - RX Lane 1
+        "tx_lane0_sync_clk" - TX Lane 0
+        "tx_lane1_sync_clk" - TX Lane 1
+
+Which of the above would your phy_clk refer to?
+
+       Arnd
+
+[1] https://android.googlesource.com/kernel/msm/+/android-msm-bullhead-3.10-marshmallow-dr/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt?autodive=0%2F%2F%2F%2F%2F
