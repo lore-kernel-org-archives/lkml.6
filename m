@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/xAhKnw75BJhufW6C/eO470Wffh0G6qJd4lKK2dzRuFNHrD5bd5POrIkQEoRjaSa0n85GP
-ARC-Seal: i=1; a=rsa-sha256; t=1522168872; cv=none;
+X-Google-Smtp-Source: AIpwx48vUjv1E09UVlYT4ReSLpQ/cFkkGe93XZRuKF/sJhOz43yhS/mzRcUEK6fpe+gqrxJm9sXO
+ARC-Seal: i=1; a=rsa-sha256; t=1522168869; cv=none;
         d=google.com; s=arc-20160816;
-        b=eGBAQOa/hrdF0Uvs3LPc8cPWe5yC6lezCBVC1W95R17YxAxN75F6i5DahS/Gx2sRGv
-         TOXPORebd9I12aiFfzHRUaab/IKDFrUoXrgDU0j2ldoBaYFy6LiVuVRV5N/Wm8gzbYuJ
-         Xf5XOnDkJnUJgRBRGeEcjToop6gZ/hPWkAg/7Rf6nMW0AyvJR839rnL5mo+gYXA0zwXe
-         3G2USkyIjCV1H4/uh+B824MNSvU6AHvzGlcrUn3pdyyqqIL5uInq+hjQeaqH158OsflG
-         15BZYrFNeNgcjC7swu/kc2f1Jnrblse92IQlX2AYHahQsw/PbRcq9oQJIJLRKX1X6zLn
-         riQA==
+        b=ai9vmch//dkICAathNs5vp5WuQMRKMnVviIFwAc0VdJM9r52CNS3xG+4TWeihnZ7BZ
+         LneCHOL6Xb+aWmJqN0po6BkBLyDu1hcuZSpmhb+apegmrqVevyNlCSw+xbJWZKa5H+fo
+         IEwbsUMfr1ob/wf3cDxdrQne6EVQVlLpEmKbS3K1TWwZgWJNXVH1l2zaIrqAsg0rcQt+
+         5zEl6hizBaqwrHlqciW3G4tHapdCegYSXk2u16/6XvjTyD/ICtLKGdB7KVW79Z1J1IFG
+         xQNfKC33amzOt03/6CS01JVBqwYdA3NvHZPlQo/Qsneh8mNF7SFgWZLjm92beQ8KHh4v
+         +1ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MGwVI+qEbDRS+A3svFrbscDWxFCJSpFCm1VG2NZhBwI=;
-        b=IJaLYpkj2F0BQOQjZ48bilw2GjLbSMjkzA8kuccfdvxLldadWIJleWKUuibb4Ad5gk
-         Y4CHjbLCP0M9aBM7ANX14VO5BlcoehX0vAzVbfbYACAIYbUJXXQk5gmzrbVB0u8JGOIV
-         oVO6/jSoRR3n1IGnP3WHRIuuZh/J0d7Qnz1MkqdSi5eVGcn0weBKdSCl8c+3vfnXUwFG
-         7I2bcQ2+69SAbHxUUYYh1Ebgr98C7J4eW2eMKZ95AioO70r9/Bgsdk5AWlS1NMXfqQjh
-         BPO9CE2vN8glYlXYOyufMtlk42iyT+2QEyHCaSHC3BXQvgFohLpJxR+eADkma/rUTNLy
-         0ODg==
+        bh=pUwsRkExcLckLtpVONmpsYC01McNmWGIyIm61kZfSOY=;
+        b=U1nak2I1HJohV98NWvx2Fv9ywlk22mTrVaISNsIIXlNexaZZQi5PRM3XtZYpnFB0I+
+         I+HfthpE6sqR16Pef0XcHOI7P9eX46XUolPyMPiAQbfxhoRoSSeyiNM8a6r8BSupWcGg
+         012O/aqYJSGeRWz2InkQOQ9krehnP9PXmpEqUFlo8VEHsJ4sWrkH72k4/lQgePBiJrkg
+         jLN6yqWlrTcJc3XyIbCBuoxEcbMKkZOcDQo77fSNRQVHspVlBAH1A0CNmHZTwHpZdIEQ
+         7rvc6lrfjBI4rRHP6FELNFimJ6mwsdRAC1yMslcTSijMb7yUlVMJYit+SAqa1xUjsq2h
+         iFkA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Shakeel Butt <shakeelb@google.com>,
-	Michal Hocko <mhocko@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 062/105] mm/vmscan: wake up flushers for legacy cgroups too
-Date: Tue, 27 Mar 2018 18:27:42 +0200
-Message-Id: <20180327162801.438845896@linuxfoundation.org>
+	Eyal Itkin <eyalit@checkpoint.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.15 061/105] drm: udl: Properly check framebuffer mmap offsets
+Date: Tue, 27 Mar 2018 18:27:41 +0200
+Message-Id: <20180327162801.325325885@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -46,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109568190515678?=
-X-GMAIL-MSGID: =?utf-8?q?1596109747623101741?=
+X-GMAIL-THRID: =?utf-8?q?1596109000301718631?=
+X-GMAIL-MSGID: =?utf-8?q?1596109744548056735?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,114 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 1c610d5f93c709df56787f50b3576704ac271826 upstream.
+commit 3b82a4db8eaccce735dffd50b4d4e1578099b8e8 upstream.
 
-Commit 726d061fbd36 ("mm: vmscan: kick flushers when we encounter dirty
-pages on the LRU") added flusher invocation to shrink_inactive_list()
-when many dirty pages on the LRU are encountered.
+The memmap options sent to the udl framebuffer driver were not being
+checked for all sets of possible crazy values.  Fix this up by properly
+bounding the allowed values.
 
-However, shrink_inactive_list() doesn't wake up flushers for legacy
-cgroup reclaim, so the next commit bbef938429f5 ("mm: vmscan: remove old
-flusher wakeup from direct reclaim path") removed the only source of
-flusher's wake up in legacy mem cgroup reclaim path.
-
-This leads to premature OOM if there is too many dirty pages in cgroup:
-    # mkdir /sys/fs/cgroup/memory/test
-    # echo $$ > /sys/fs/cgroup/memory/test/tasks
-    # echo 50M > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
-    # dd if=/dev/zero of=tmp_file bs=1M count=100
-    Killed
-
-    dd invoked oom-killer: gfp_mask=0x14000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=0
-
-    Call Trace:
-     dump_stack+0x46/0x65
-     dump_header+0x6b/0x2ac
-     oom_kill_process+0x21c/0x4a0
-     out_of_memory+0x2a5/0x4b0
-     mem_cgroup_out_of_memory+0x3b/0x60
-     mem_cgroup_oom_synchronize+0x2ed/0x330
-     pagefault_out_of_memory+0x24/0x54
-     __do_page_fault+0x521/0x540
-     page_fault+0x45/0x50
-
-    Task in /test killed as a result of limit of /test
-    memory: usage 51200kB, limit 51200kB, failcnt 73
-    memory+swap: usage 51200kB, limit 9007199254740988kB, failcnt 0
-    kmem: usage 296kB, limit 9007199254740988kB, failcnt 0
-    Memory cgroup stats for /test: cache:49632KB rss:1056KB rss_huge:0KB shmem:0KB
-            mapped_file:0KB dirty:49500KB writeback:0KB swap:0KB inactive_anon:0KB
-	    active_anon:1168KB inactive_file:24760KB active_file:24960KB unevictable:0KB
-    Memory cgroup out of memory: Kill process 3861 (bash) score 88 or sacrifice child
-    Killed process 3876 (dd) total-vm:8484kB, anon-rss:1052kB, file-rss:1720kB, shmem-rss:0kB
-    oom_reaper: reaped process 3876 (dd), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-
-Wake up flushers in legacy cgroup reclaim too.
-
-Link: http://lkml.kernel.org/r/20180315164553.17856-1-aryabinin@virtuozzo.com
-Fixes: bbef938429f5 ("mm: vmscan: remove old flusher wakeup from direct reclaim path")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Tested-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Michal Hocko <mhocko@suse.cz>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Eyal Itkin <eyalit@checkpoint.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180321154553.GA18454@kroah.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |   31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/udl/udl_fb.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1847,6 +1847,20 @@ shrink_inactive_list(unsigned long nr_to
- 		set_bit(PGDAT_WRITEBACK, &pgdat->flags);
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -159,10 +159,15 @@ static int udl_fb_mmap(struct fb_info *i
+ {
+ 	unsigned long start = vma->vm_start;
+ 	unsigned long size = vma->vm_end - vma->vm_start;
+-	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
++	unsigned long offset;
+ 	unsigned long page, pos;
  
- 	/*
-+	 * If dirty pages are scanned that are not queued for IO, it
-+	 * implies that flushers are not doing their job. This can
-+	 * happen when memory pressure pushes dirty pages to the end of
-+	 * the LRU before the dirty limits are breached and the dirty
-+	 * data has expired. It can also happen when the proportion of
-+	 * dirty pages grows not through writes but through memory
-+	 * pressure reclaiming all the clean cache. And in some cases,
-+	 * the flushers simply cannot keep up with the allocation
-+	 * rate. Nudge the flusher threads in case they are asleep.
-+	 */
-+	if (stat.nr_unqueued_dirty == nr_taken)
-+		wakeup_flusher_threads(WB_REASON_VMSCAN);
+-	if (offset + size > info->fix.smem_len)
++	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
++		return -EINVAL;
 +
-+	/*
- 	 * Legacy memcg will stall in page writeback so avoid forcibly
- 	 * stalling here.
- 	 */
-@@ -1858,22 +1872,9 @@ shrink_inactive_list(unsigned long nr_to
- 		if (stat.nr_dirty && stat.nr_dirty == stat.nr_congested)
- 			set_bit(PGDAT_CONGESTED, &pgdat->flags);
++	offset = vma->vm_pgoff << PAGE_SHIFT;
++
++	if (offset > info->fix.smem_len || size > info->fix.smem_len - offset)
+ 		return -EINVAL;
  
--		/*
--		 * If dirty pages are scanned that are not queued for IO, it
--		 * implies that flushers are not doing their job. This can
--		 * happen when memory pressure pushes dirty pages to the end of
--		 * the LRU before the dirty limits are breached and the dirty
--		 * data has expired. It can also happen when the proportion of
--		 * dirty pages grows not through writes but through memory
--		 * pressure reclaiming all the clean cache. And in some cases,
--		 * the flushers simply cannot keep up with the allocation
--		 * rate. Nudge the flusher threads in case they are asleep, but
--		 * also allow kswapd to start writing pages during reclaim.
--		 */
--		if (stat.nr_unqueued_dirty == nr_taken) {
--			wakeup_flusher_threads(WB_REASON_VMSCAN);
-+		/* Allow kswapd to start writing pages during reclaim. */
-+		if (stat.nr_unqueued_dirty == nr_taken)
- 			set_bit(PGDAT_DIRTY, &pgdat->flags);
--		}
- 
- 		/*
- 		 * If kswapd scans pages marked marked for immediate
+ 	pos = (unsigned long)info->fix.smem_start + offset;
