@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+qY42/++jgLL8kLuOKto1Y/x9L2iEvuEN3KI+bR7/giSWAQGRY4tu70/MxOOmIJ556X+up
-ARC-Seal: i=1; a=rsa-sha256; t=1522168589; cv=none;
+X-Google-Smtp-Source: AIpwx48rHcAqlAgkogf34BGrOmYkKOy9Tk3Hco6gc1qpZe1SGG381IIqFyqLUWNgmBw9dtoc26PP
+ARC-Seal: i=1; a=rsa-sha256; t=1522168586; cv=none;
         d=google.com; s=arc-20160816;
-        b=RNq+K5iZ3fjmE+CjbuVeKe+aB3giURjOvcoOyNHPPVSjdq/Ytc6zbdQwbnfQ7runTd
-         1TEnAwHYnJKHoAtTqga0q1D3m/rVh0iLKGZ3DKuS65EjlY1ABpYtN2G63gHxPN3R+VgJ
-         1N/avrOtDcU9IUb6VmY0ymRS/5PTy1/vBooDf8wQMy1wHhk2dXbZ5HAkqUNxGXAGhB6O
-         co7QFDtWyx7o1Lj/MnmmbKS5XZZ2Wch0T5oJXafEi9BzPOAutErkUTjtCXXhrgepu2l9
-         5MWUupOD8EtQNr39GpQnw0YR6gET0DKNuHfgMRzAoG0UL/unPREvqfzFb8fVyNBW1JIH
-         /3pw==
+        b=uTSNSmDFsoKGOjioqlRm9QEdzCXdP1eeemrmdONVo6Nknsb/i2sg/AgYC+6gwbUVjc
+         ZBmgXd/4afVSbPcvCoANUbyMIAZ8lbD57EDizo32cy1pxnPl0fv35pQDFJDcGyIYHLQ5
+         QAT9sZ6tzhbC3qnaSToJKh69bUDRui7junx1cRzaaV37Tn8KndirLWbKytukLcDwfT1v
+         Dptdd13aZrRYqoSO4ajYaMJHn9a51R89E2KTO1Ye3jeWSBsUJvJKvXaK1xkaRQcxj2aS
+         QvHz6C80V9THkywyaJoFOxFCFG/rFX4mP2/J/DnVrTs9/XTyzsYfzHNn+OrbsP72PeB+
+         fYfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=u7zD8W0zcekjgmCdBvauc5gDm1yNKEwMcTjiDHQS3+k=;
-        b=AlhOGfE1Banav2NZYwdZXdJd9A4nCBFG6oKBQA964baTu89CUmKVY4WqFUQ7PkxQ/W
-         B365xCcp13T5/6w8qefk+DvOiSLgJ83CDZsMvhqRiSA6SyaTUWpGd45g5Y8AGtTQDWYn
-         OrfZVd/dXIRg5PJAoaFKy6qJUk21osZNnsOIiGs/Hc3vIzqWHh/TdxiUAdLwrV9fvMJa
-         QZGdF2HDKRepDTom1Pe4vHD21+MVrpfiZ02IPkqcJyZR3LUSh9DHqhEqAd/QclgTdb9n
-         ih7Pi0MxWf2N2iweWne9L4FOHpMPI30zEzbGHwpKLo20YF6IlYjdoyECTZvFWTSJFh6L
-         1tzQ==
+        bh=67e5QBRxL1rdgJSeBQlD6OJKBuKPQUH9uUN0jSdSGPk=;
+        b=pELvurk+d/Y2k0iG26OMSsubVXrvezwq7Jdy81o23gXQrGn8MShyJAekGPZs1IrTg8
+         L1IutiaEsE2dfj4OInMIK6s68bFxMrSgBrj1ooRyZPgEGrWxP9E8ZQgFxokDajShK9+Z
+         F1Nru2BEUuRNWKOW9rVes2AXohAskPekq3miBQwc6lh/hJDdNMfdWdQzf8ucE0BIclfS
+         4nUuji87dKt/WvDkW3JVdyL3Ow4uYOHulj8s1neNFez1hWM7W32PzxOWP+7ypJEnD9rf
+         MB0kCTm1HIiy0Fzco0kiXIFeM+U1s0sTqWRliR5vt/ANIWmPh8bSBFe7IvnbHyR22q9g
+         Fq+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Philipp Rossak <embed3d@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 4.14 027/101] clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
-Date: Tue, 27 Mar 2018 18:26:59 +0200
-Message-Id: <20180327162751.654694029@linuxfoundation.org>
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.14 026/101] clk: bcm2835: Protect sections updating shared registers
+Date: Tue, 27 Mar 2018 18:26:58 +0200
+Message-Id: <20180327162751.593619068@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109196133514805?=
-X-GMAIL-MSGID: =?utf-8?q?1596109450328730866?=
+X-GMAIL-THRID: =?utf-8?q?1596109038866512632?=
+X-GMAIL-MSGID: =?utf-8?q?1596109447615798536?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,65 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit 5682e268350f9eccdbb04006605c1b7068a7b323 upstream.
+commit 7997f3b2df751aab0b8e60149b226a32966c41ac upstream.
 
-When support for the A31/A31s CCU was first added, the clock ops for
-the CLK_OUT_* clocks was set to the wrong type. The clocks are MP-type,
-but the ops was set for div (M) clocks. This went unnoticed until now.
-This was because while they are different clocks, their data structures
-aligned in a way that ccu_div_ops would access the second ccu_div_internal
-and ccu_mux_internal structures, which were valid, if not incorrect.
+CM_PLLx and A2W_XOSC_CTRL registers are accessed by different clock
+handlers and must be accessed with ->regs_lock held.
+Update the sections where this protection is missing.
 
-Furthermore, the use of these CLK_OUT_* was for feeding a precise 32.768
-kHz clock signal to the WiFi chip. This was achievable by using the parent
-with the same clock rate and no divider. So the incorrect divider setting
-did not affect this usage.
-
-Commit 946797aa3f08 ("clk: sunxi-ng: Support fixed post-dividers on MP
-style clocks") added a new field to the ccu_mp structure, which broke
-the aforementioned alignment. Now the system crashes as div_ops tries
-to look up a nonexistent table.
-
-Reported-by: Philipp Rossak <embed3d@gmail.com>
-Tested-by: Philipp Rossak <embed3d@gmail.com>
-Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -750,7 +750,7 @@ static struct ccu_mp out_a_clk = {
- 		.features	= CCU_FEATURE_FIXED_PREDIV,
- 		.hw.init	= CLK_HW_INIT_PARENTS("out-a",
- 						      clk_out_parents,
--						      &ccu_div_ops,
-+						      &ccu_mp_ops,
- 						      0),
- 	},
- };
-@@ -771,7 +771,7 @@ static struct ccu_mp out_b_clk = {
- 		.features	= CCU_FEATURE_FIXED_PREDIV,
- 		.hw.init	= CLK_HW_INIT_PARENTS("out-b",
- 						      clk_out_parents,
--						      &ccu_div_ops,
-+						      &ccu_mp_ops,
- 						      0),
- 	},
- };
-@@ -792,7 +792,7 @@ static struct ccu_mp out_c_clk = {
- 		.features	= CCU_FEATURE_FIXED_PREDIV,
- 		.hw.init	= CLK_HW_INIT_PARENTS("out-c",
- 						      clk_out_parents,
--						      &ccu_div_ops,
-+						      &ccu_mp_ops,
- 						      0),
- 	},
- };
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -653,8 +653,10 @@ static int bcm2835_pll_on(struct clk_hw
+ 		     ~A2W_PLL_CTRL_PWRDN);
+ 
+ 	/* Take the PLL out of reset. */
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, data->cm_ctrl_reg,
+ 		     cprman_read(cprman, data->cm_ctrl_reg) & ~CM_PLL_ANARST);
++	spin_unlock(&cprman->regs_lock);
+ 
+ 	/* Wait for the PLL to lock. */
+ 	timeout = ktime_add_ns(ktime_get(), LOCK_TIMEOUT_NS);
+@@ -731,9 +733,11 @@ static int bcm2835_pll_set_rate(struct c
+ 	}
+ 
+ 	/* Unmask the reference clock from the oscillator. */
++	spin_lock(&cprman->regs_lock);
+ 	cprman_write(cprman, A2W_XOSC_CTRL,
+ 		     cprman_read(cprman, A2W_XOSC_CTRL) |
+ 		     data->reference_enable_mask);
++	spin_unlock(&cprman->regs_lock);
+ 
+ 	if (do_ana_setup_first)
+ 		bcm2835_pll_write_ana(cprman, data->ana_reg_base, ana);
