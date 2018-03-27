@@ -1,119 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeC0Q2G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 12:28:06 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35149 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbeC0Q2F (ORCPT
+        id S1752914AbeC0Q35 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:29:57 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:33357 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752701AbeC0Q3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:28:05 -0400
-X-Google-Smtp-Source: AIpwx4+EmzTUz341LuV0ibIPxvsRWfbI4ReAGRz6GNiJ/cV/b2j4F4K3vZXzwuMgAVuZY+7AyGuoGg==
-Subject: Re: [PATCH] coresight: use put_device() instead of kfree()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
- <CANLsYkymOF2oG7TmKbRTakYKw0ECN_DXfkX5b8WjmS0Lz0sfig@mail.gmail.com>
- <5AB9ACDA.9090207@gmail.com>
- <CANLsYkw0v-vVpf1M1Ae+y=Hq5cqqp+_Sjq41pDS+=Xv9zesHAw@mail.gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: arvindY <arvind.yadav.cs@gmail.com>
-Message-ID: <5ABA7111.3020908@gmail.com>
-Date: Tue, 27 Mar 2018 21:58:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Tue, 27 Mar 2018 12:29:37 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
+        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>
+Subject: [net-next PATCH v2 09/10] Revert "net: netcp: remove dead code from the driver"
+Date: Tue, 27 Mar 2018 12:31:48 -0400
+Message-ID: <1522168309-12338-10-git-send-email-m-karicheri2@ti.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
+References: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkw0v-vVpf1M1Ae+y=Hq5cqqp+_Sjq41pDS+=Xv9zesHAw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As the probe sequence is not guaranteed contrary to the assumption
+of the commit 2d8e276a9030, same has to be reverted.
 
+commit 2d8e276a9030 ("net: netcp: remove dead code from the driver")
 
-On Tuesday 27 March 2018 09:37 PM, Mathieu Poirier wrote:
-> On 26 March 2018 at 20:30, arvindY <arvind.yadav.cs@gmail.com> wrote:
->>
->> On Tuesday 27 March 2018 03:16 AM, Mathieu Poirier wrote:
->>> drivers/hwtracing/coresight/coresight.c
->>> On 18 March 2018 at 01:38, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
->>>> Never directly free @dev after calling device_register(), even
->>>> if it returned an error. Always use put_device() to give up the
->>>> reference initialized.
->>>>
->>>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->>>> ---
->>>>    drivers/hwtracing/coresight/coresight.c | 8 ++++----
->>>>    1 file changed, 4 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/hwtracing/coresight/coresight.c
->>>> b/drivers/hwtracing/coresight/coresight.c
->>>> index 389c4ba..132dfbc 100644
->>>> --- a/drivers/hwtracing/coresight/coresight.c
->>>> +++ b/drivers/hwtracing/coresight/coresight.c
->>>> @@ -1026,8 +1026,10 @@ struct coresight_device *coresight_register(struct
->>>> coresight_desc *desc)
->>>>           dev_set_name(&csdev->dev, "%s", desc->pdata->name);
->>>>
->>>>           ret = device_register(&csdev->dev);
->>>> -       if (ret)
->>>> -               goto err_device_register;
->>>> +       if (ret) {
->>>> +               put_device(&csdev->dev);
->>>> +               goto err_kzalloc_csdev;
->>>> +       }
->>>>
->>>>           mutex_lock(&coresight_mutex);
->>>>
->>>> @@ -1038,8 +1040,6 @@ struct coresight_device *coresight_register(struct
->>>> coresight_desc *desc)
->>>>
->>>>           return csdev;
->>>>
->>>> -err_device_register:
->>>> -       kfree(conns);
->>> Apologies for the late reply, I was travelling.
->>>
->>> I suggest to simply replace kfree() with put_device() in order to
->>> concentrate the error handling code in the same area and make sure
->>> that memory allocated for @conns and @refcnts is freed.
->>>
->>> Thanks,
->>> Mathieu
->>
->> If you will see the comment for device_register(drivers/base/core.c)
->> there is mentioned that 'NOTE: _Never_ directly free @dev
->> after calling this function, even if it returned an error!
->> Always use put_device() to give up the reference initialized
->> in this function instead.
-> I have read the notice and in full agreement with the put_device() part.
->
->> Here  put_device() will decrement the last reference and then
->> free the memory by calling dev->release.  Internally
->> put_device() -> kobject_put() -> kobject_cleanup() which is
->> responsible to call 'dev -> release' and also free other kobject
->> resources.
-> Memory would be automatically freed if it would have been allocated
-> with the devm_XYZ() helpers but it is not the case here.  As such it
-> has to be freed explicitly.  Reading your patch again (and the jetlag
-> somewhat fading) I think you've done the right thing except for the
-> "goto" that should still point to "err_device_register".
->
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/netcp_core.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Take rest :)
-'goto' should not point to "err_device_register" because
-put_device() will call 'dev->release' which is coresight_device_release().
-It's release @conns, @refcnt and @csdev . If we will keep same 'goto
-then kfree() will be redundant for all.
-
-
->> we should always avoid kfree() if device_register()
->> returned an error. Otherwise it'll not do clean up of other
->> kobject resources.
->>
->> ~arvind
->>>>    err_kzalloc_conns:
->>>>           kfree(refcnts);
->>>>    err_kzalloc_refcnts:
->>>> --
->>>> 2.7.4
->>>>
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index f5a7eb2..9c51b25 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -2155,6 +2155,7 @@ static int netcp_probe(struct platform_device *pdev)
+ 	struct device_node *child, *interfaces;
+ 	struct netcp_device *netcp_device;
+ 	struct device *dev = &pdev->dev;
++	struct netcp_module *module;
+ 	int ret;
+ 
+ 	if (!node) {
+@@ -2203,6 +2204,14 @@ static int netcp_probe(struct platform_device *pdev)
+ 	/* Add the device instance to the list */
+ 	list_add_tail(&netcp_device->device_list, &netcp_devices);
+ 
++	/* Probe & attach any modules already registered */
++	mutex_lock(&netcp_modules_lock);
++	for_each_netcp_module(module) {
++		ret = netcp_module_probe(netcp_device, module);
++		if (ret < 0)
++			dev_err(dev, "module(%s) probe failed\n", module->name);
++	}
++	mutex_unlock(&netcp_modules_lock);
+ 	return 0;
+ 
+ probe_quit_interface:
+-- 
+1.9.1
