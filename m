@@ -1,73 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751056AbeC0FTC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 01:19:02 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:40926 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750869AbeC0FTA (ORCPT
+        id S1751152AbeC0FTJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 01:19:09 -0400
+Received: from smtprelay0014.hostedemail.com ([216.40.44.14]:44504 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751088AbeC0FTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 01:19:00 -0400
-Date: Tue, 27 Mar 2018 01:18:40 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate
- the next instruction"
-Message-ID: <20180327051840.GF16974@char.us.oracle.com>
-References: <1522116735-4861-1-git-send-email-wanpengli@tencent.com>
- <1522116735-4861-3-git-send-email-wanpengli@tencent.com>
- <20180327044020.GB16974@char.us.oracle.com>
- <20180327045558.GC16974@char.us.oracle.com>
- <CANRm+Cw7VVNmA=DvrzbUDoTQZ_O2sTQVJiu-v-fVt+e3jfB_gw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANRm+Cw7VVNmA=DvrzbUDoTQZ_O2sTQVJiu-v-fVt+e3jfB_gw@mail.gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=980
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803270052
+        Tue, 27 Mar 2018 01:19:07 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3870:3874:4321:5007:10004:10400:10848:11026:11658:11914:12043:12438:12555:12663:12760:13069:13161:13229:13311:13357:13439:14181:14394:14659:14721:21080:21221:21324:21627:30054:30070,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: fuel04_89c9a7b1a8e34
+X-Filterd-Recvd-Size: 1568
+Message-ID: <1522127944.12357.49.camel@perches.com>
+Subject: [PATCH] checkpatch: Test SYMBOLIC_PERMS multiple times per line
+From: Joe Perches <joe@perches.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Whitcroft <apw@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Mon, 26 Mar 2018 22:19:04 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 01:03:15PM +0800, Wanpeng Li wrote:
-> 2018-03-27 12:55 GMT+08:00 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>:
-> > On Tue, Mar 27, 2018 at 12:40:20AM -0400, Konrad Rzeszutek Wilk wrote:
-> >> On Mon, Mar 26, 2018 at 07:12:15PM -0700, Wanpeng Li wrote:
-> >> > From: Wanpeng Li <wanpengli@tencent.com>
-> >> >
-> >> > This patch introduces a Force Emulation Prefix (ud2a; .ascii "kvm") for
-> >> > "emulate the next instruction", the codes will be executed by emulator
-> >> > instead of processor, for testing purposes.
-> >>
-> >> Can you expand a bit ? Why do you want this in KVM in the first place?
-> 
-> Please refer to the original discussion(Force Emulation Prefix part).
-> https://lkml.org/lkml/2018/3/22/220
+There are occasions where symbolic perms are used in a ternary like
 
-That really should be part massaged in this patch as part of the description.
-> 
-> >> Should this be controlled by a boolean parameter?
-> >
-> > .. per guest. That is instead of a global one, have a per guest one?
-> 
-> As Paolo pointed out offline:
-> > Testing without the hacks being done by emulator.flat (TLB mismatch between instructions and data).
+		return (channel == 0) ? S_IRUGO | S_IWUSR : S_IRUGO;
 
-And also this above.
+The current test will find the first use "S_IRUGO | S_IWUSR" but not
+the second use "S_IRUGO" on the same line.
 
-> I think a global module is enough for testing.
+Improve the test to look for all instances on a line.
 
-If so, perhaps have it wrapped with #ifdef DEBUG?
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No need to put code gadgets that won't be utilized 99% of time.
-
-> 
-> Regards,
-> Wanpeng Li
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 5fe361e1ed5e..d2464002bb40 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6429,7 +6429,7 @@ sub process {
+ 		}
+ 
+ # check for uses of S_<PERMS> that could be octal for readability
+-		if ($line =~ /\b($multi_mode_perms_string_search)\b/) {
++		while ($line =~ m{\b($multi_mode_perms_string_search)\b}g) {
+ 			my $oval = $1;
+ 			my $octal = perms_to_octal($oval);
+ 			if (WARN("SYMBOLIC_PERMS",
