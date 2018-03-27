@@ -1,59 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754546AbeC0RU1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:20:27 -0400
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:33475 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754044AbeC0RUY (ORCPT
+        id S1754975AbeC0RU6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 13:20:58 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:34388 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754831AbeC0RUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 13:20:24 -0400
-X-Google-Smtp-Source: AIpwx48DSMX/w1UWqS4fVooWrdW8iy6fjNbseIuhJspk70cyM+OGK0KW62IP+Kv0rhI0s/a/JRr/IA==
-Date: Tue, 27 Mar 2018 10:20:34 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com,
-        richardcochran@gmail.com
-Subject: Re: [PATCH v5 08/13] ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common
- data
-Message-ID: <20180327172034.GK1403@tuxbook-pro>
-References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
- <1521800336-19266-9-git-send-email-sricharan@codeaurora.org>
+        Tue, 27 Mar 2018 13:20:54 -0400
+Date: Tue, 27 Mar 2018 18:20:27 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Rich Felker <dalias@libc.org>
+Cc: Tony Lindgren <tony@atomide.com>, Huacai Chen <chenhc@lemote.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@mips.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org
+Subject: Re: Regression with arm in next with stack protector
+Message-ID: <20180327172027.GA14598@n2100.armlinux.org.uk>
+References: <20180323181452.GJ5799@atomide.com>
+ <20180327090409.GA10990@n2100.armlinux.org.uk>
+ <20180327153525.GI1436@brightrain.aerifal.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521800336-19266-9-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180327153525.GI1436@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
-> +#include "qcom-ipq4019.dtsi"
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1";
-> +	compatible = "qcom,ipq4019";
+On Tue, Mar 27, 2018 at 11:35:25AM -0400, Rich Felker wrote:
+> On Tue, Mar 27, 2018 at 10:04:10AM +0100, Russell King - ARM Linux wrote:
+> > On Fri, Mar 23, 2018 at 11:14:53AM -0700, Tony Lindgren wrote:
+> > > Hi,
+> > > 
+> > > Looks like commit 5638790dadae ("zboot: fix stack protector in
+> > > compressed boot phase") breaks booting on arm.
+> > > 
+> > > This is all I get from the bootloader on omap3:
+> > > 
+> > > Starting kernel ...
+> > > 
+> > > data abort
+> > > pc : [<810002d0>]          lr : [<100110a8>]
+> > > reloc pc : [<9d6002d0>]    lr : [<2c6110a8>]
+> > > sp : 81467c18  ip : 81466bf0     fp : 81466bf0
+> > > r10: 80fc2c40  r9 : 81000258     r8 : 86fec000
+> > > r7 : ffffffff  r6 : 81466bf8     r5 : 00000000  r4 : 80008000
+> > > r3 : 81466c14  r2 : 81466c18     r1 : 000a0dff  r0 : 00466bf8
+> > > Flags: nZCv  IRQs off  FIQs off  Mode SVC_32
+> > > Resetting CPU ...
+> > > 
+> > > resetting ...
+> > 
+> > The reason for this is the following code that was introduced by the
+> > referenced patch:
+> > 
+> > +               ldr     r0, =__stack_chk_guard
+> > +               ldr     r1, =0x000a0dff
+> > +               str     r1, [r0]
+> > 
+> > This uses the absolute address of __stack_chk_guard in the decompressor,
+> > which is a self-relocatable image.  As with all constructs like the
+> > above, this absolute address doesn't get fixed up, and so it ends up
+> > pointing at invalid memory (in this case 0x466bf8) vs RAM at 0x80000000,
+> > and the decompressor looks to be around 0x81000000.
+> > 
+> > Such constructs can not be used in the decompressor for exactly this
+> > reason - they need to use PC-relative addressing instead just like
+> > everything else does in head.S.
+> 
+> Can someone please answer why this is even needed to begin with? I
+> don't see any compelling reason __stack_chk_guard needs a particular
+> value in the decompressor, which is not dealing with any non-constant
+> input.
 
-The board should set these, so you shouldn't need to specify them here.
-And you should be able to find a more specific compatible for the board.
+Untrue - it can do some parsing of the DT and updating/appending
+information from ATAGs.  However, all that should be coming from
+a trusted environment, so I don't see much of a "trust" issue here.
+(If the parent environment is not trusted, then the environment we're
+running in is not trusted.)
 
-> +
-[..]
-> +		qpic-nand@79b0000 {
-> +			status = "ok";
+> Just putting __stack_chk_guard in its bss should be fine and
+> would eliminate all the risks of wrong code to load a value into it.
+> Alternatively put it in initialized data with the desired value.
 
-No pinmux for the qpic on these boards?
+I'm no expert with this, so I can't comment.  I build my kernels
+with gcc 4.7.4, which I don't think supports this feature.
 
-> +		};
-> +	};
-> +};
-
-Regards,
-Bjorn
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
