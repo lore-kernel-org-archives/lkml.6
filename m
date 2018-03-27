@@ -1,27 +1,28 @@
 Return-Path: <sebastian.reichel@collabora.co.uk>
-X-Google-Smtp-Source: AIpwx4+z8E6ez1NFFMLxyF0vQZB34vCiObEcgBxdRUjwZdHIGUxxQ0D58DYGTCH/IURurovd3mgp
-ARC-Seal: i=1; a=rsa-sha256; t=1522158783; cv=none;
+X-Google-Smtp-Source: AIpwx49v8kNLTJ9akN5PZzVf7SZlKMUYA/GzkkGYT1XnaSbztc9YNRmDOq3LP7PhpL8FY6u5noe4
+ARC-Seal: i=1; a=rsa-sha256; t=1522158792; cv=none;
         d=google.com; s=arc-20160816;
-        b=jFKPqaGEU6je1TZSp+HFvSUo5jsLlGv//gFRL9U9wNMRg/VZr3fjIJ9YO8h0gue0jp
-         3ZCCSfYUIlrmLgqrwXFns+JTlAoKrSa7JA6KMv4LLqotBPDHo0LLDgxu+L8cSAvZjq+f
-         E8Ge8vjZHnyYYp0PQriqHMxF2MYiJ+z21DvL6RVDHeqtKt1cBt7clcBgfHj+vQx66c/a
-         j+j97N5FktygwV8zGqvtI1vO+nowLRLJ3tZhMcIMcBWGhJrqqBOBX7G/ATNaz2INKC4X
-         J5JCXoO8SW6D5vkFQPZn+FCCFmJhxdz3OFLxPOTdV4pHlafANwETfrPIhMVZ6f1Mk34a
-         sPwQ==
+        b=k79oviyRp4LH0XId2oE8ecwBGMl5BKto9cCHxhoAvjsDV1Ff8JzvVWQqzOUH3rVaWD
+         R7ubSARBUGIBQhJQzFIovi9Ywzs5G6F3VCfI91cR8tuqbKirRFJ838nnhqZmyqCLhi+l
+         yfW1lU7abyERhni2o37oOfz/goLmbJCjfHNAVsotjL6XgP/68Z6GuGPD3C3yodn8BVKJ
+         2tYa7hgIETSMsTa7bEjjHwt4rxfNKGwlj+vqGT63fJ0B+Tm/e2GEnZdQ/Z9TqgSfIX+B
+         E4Aul48MK8A5YXGU/OxNITcG+Nt3f24WwYMSfrQPFlByiDIBuiacdg6mc2wnujnbTPhn
+         yOjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=N/X4Q6tJiDrqU85DQBpmj/bkWQbN2R+9pabCufHUqtw=;
-        b=ihk7Lc9WqmG/qGf1d+YAyo5/+5hMJEp3AcWLTF+Q10dGHCnea1W/yYfmAo36lV/13D
-         OjymafY7f7USEzfGShji55d6Q9iyGvkGQX+nU3IdIuD+7bv2xWsbjPthZ1CTs3ABlCW+
-         KNDZ3zp05VhwFGzQHnCYULXVMv0dacpdVM1oTiwbDptexl/5I4eg+5icSCOAaHvG0e4B
-         7kJTA6nsMZJhEZvFJMWfJM95jQrkJbEj/acR95lspdCIn415FbpGfQogk/mPfIlQrotu
-         VPGixOop+jihXf3yYcbLL5egSW57QeFW8i3QD2Rb+ksRcUeoCVL3/B90zomfqwFoWhaW
-         YjkA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=CSzF0KGJSePexebGXaiq3SJMyPT5cchmK34KFn5cioY=;
+        b=qQdPPV0+XIjTi5GxbN+eEtyPAEvVEWd2gFruNvuKrvFrpzzdDsfPvR6WEdwjgpdI7j
+         udStJ1ocrK4fdbrPjedF82YlGH0uvmQ5O+LcO+F4thMy2Qus1Khq/Nfas5EZwnDA4W7b
+         725DiBoRcfpV89swI/EisuQfO8Z4uyvj/X/H1nfXnjptymWe7h9hoBY5r6eSB0FQ8ccA
+         Hx0TT64Zdp1b9Pj95NK7D4RpMUXK15q//LF3MUE06J4d8vNvrIfBu8MdKJZf+r2Qm0EN
+         l+lQfrHaHYrBTvkey7POnaC+nHZqZSEO2KrkA/qWIlhz2+ISqcso0r6Vr/Hlik+8pvNk
+         A4GA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 46.235.227.227 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
+       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 2a00:1098:0:82:1000:25:2eeb:e3e3 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 46.235.227.227 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
+       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 2a00:1098:0:82:1000:25:2eeb:e3e3 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Arnd Bergmann <arnd@arndb.de>,
@@ -34,52 +35,45 @@ Cc: Sascha Hauer <kernel@pengutronix.de>,
 	Nandor Han <nandor.han@ge.com>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	kernel@collabora.com
-Subject: [PATCHv2 0/3] GE Healthcare PPD firmware upgrade driver for ACHC
-Date: Tue, 27 Mar 2018 15:52:56 +0200
-Message-Id: <20180327135259.30890-1-sebastian.reichel@collabora.co.uk>
+	kernel@collabora.com,
+	Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv2 3/3] ARM: dts: imx53: PPD: Update ACHC programming interface
+Date: Tue, 27 Mar 2018 15:52:59 +0200
+Message-Id: <20180327135259.30890-4-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180327135259.30890-1-sebastian.reichel@collabora.co.uk>
+References: <20180327135259.30890-1-sebastian.reichel@collabora.co.uk>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596099168711275767?=
-X-GMAIL-MSGID: =?utf-8?q?1596099168711275767?=
+X-GMAIL-THRID: =?utf-8?q?1596099177298546157?=
+X-GMAIL-MSGID: =?utf-8?q?1596099177298546157?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+Update ACHC programming interface description following the binding
+document. This makes it possible to use the new EzPort firmware
+update driver.
 
-The PPD has a secondary processor from NXP, which can be programmed
-from the main system. It is connected to the main processor by having
-it's EzPort interface connected to the SPI bus.
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+---
+ arch/arm/boot/dts/imx53-ppd.dts | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-This adds a generic driver to handle firmware flashing via NXP EzPort
-and adds a custom compatible for the instance found in GE's device.
-The reset gpio is only requested during flashing, since it is also
-used for resetting other devices. A better solution for the shared
-reset gpio is required at some point, but this does neither affect
-the userspace interface, nor the DT interface and should not block
-upstreaming this driver.
-
-Changes since PATCHv1:
- * split DT binding update into its own patch
- * add sysfs attribute documentation
- * fix problem reported by kbuild test robot
-
--- Sebastian
-
-Sebastian Reichel (3):
-  dt-bindings: misc: achc: Make ezport distinguishable
-  misc: ezport-firmware: new driver
-  ARM: dts: imx53: PPD: Update ACHC programming interface
-
- Documentation/ABI/testing/sysfs-bus-spi-ezport-fw  |  23 +
- Documentation/devicetree/bindings/misc/ge-achc.txt |  19 +-
- arch/arm/boot/dts/imx53-ppd.dts                    |   5 +-
- drivers/misc/Kconfig                               |   9 +
- drivers/misc/Makefile                              |   1 +
- drivers/misc/ezport-firmware.c                     | 491 +++++++++++++++++++++
- 6 files changed, 543 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-spi-ezport-fw
- create mode 100644 drivers/misc/ezport-firmware.c
-
+diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
+index 3c87e0d73f63..03c353be2fe7 100644
+--- a/arch/arm/boot/dts/imx53-ppd.dts
++++ b/arch/arm/boot/dts/imx53-ppd.dts
+@@ -253,9 +253,10 @@
+ 	status = "okay";
+ 
+ 	spidev0: spi@0 {
+-		compatible = "ge,achc";
++		compatible = "ge,achc-ezport";
+ 		reg = <0>;
+-		spi-max-frequency = <1000000>;
++		spi-max-frequency = <300000>;
++		reset-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
+ 	};
+ 
+ 	spidev1: spi@1 {
 -- 
 2.16.2
