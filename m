@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/JmDFVP08GBKg2GsxWS1zkzUgoRo84dwUsCENwj30GUD57V2tKlJsT9MjlNLYktbWHxpt6
-ARC-Seal: i=1; a=rsa-sha256; t=1522168916; cv=none;
+X-Google-Smtp-Source: AIpwx48/BMSeEyZAKuFsCGs9twoMfdqMZFOdcsNyQnu6t0z7I2WtAAHF3eCpWbdsKvAOn5ICY7Dl
+ARC-Seal: i=1; a=rsa-sha256; t=1522168913; cv=none;
         d=google.com; s=arc-20160816;
-        b=EltpLEGb09esjpsyJfD+RhEm8XD425Hd0xmHi80nq8KmomADiPjgwM4FDCZ/SemRc4
-         zg5MzpcN+/Vf1L0HDckEcpC7nJQ25zoOmkbnhaGDx8wTd5LQlBVrgq7d5/2ntufG02+j
-         1/4aH7meXfBBKCz9F8O/I3zl9TmGrZScqWx5R2SbLZf2qJ3EBEXy9D5FEr5APEcTc93k
-         KO7tqfJ0ZkRQsxDLcwer2DK4+mjPHZeDukP8J+4AxUSJLIthPxdOxyJ6PQe781GWWuzg
-         SQ2mCRoDafe5LIjr/xpYZWoib3FAc/b+h+JDD0ZsIvZgeNvhAvwB6yHX5j7pLET2Q+Fa
-         1V5w==
+        b=N+8nvXkkX7VUkgpwuqTfx/ezSA4u3jUGatqBKmXcIJ17D1mbIjgxvE5tGn/Th69KOG
+         GP5gQZ3Pv0A6Ws7yikV+50By8N7Qbz6FKa1B3HX+QrHjggBbYkqWzRS7UhZBpWMHgpgR
+         yAbOwG7H5FE4rLeaz6nRl3Rx0oY9egihp+MiAil8GZIlqoGCdE2swOK94+vO8msvT822
+         F/t3/Oows2UDSY7dbqvIuk+0ZFUdRsk1KKzzYxGzslH8UXvITXTHcOpKsm5e/iQ99PV7
+         MZcfiEtfqsJV1Lj2yvnBDUzuYJq31wdRerwQsByUbpnRxo763MOu9gIbpbsxb11K9hoy
+         ophA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XUP0Igxd/zufXR1IeJ8uT3OJcJsLePJsznDzH2JkcM4=;
-        b=G2B+XgrbT471WoRg31s/zrngPYQ1KkCLTLHNotfGDh0CsE/wIDTO7wpjwZK2VtBIzb
-         N+2glufH8gwUjc8wd9nveFfZluHw6CqaG2njtk9vQlodEXwaC28bZg8indN1V6MeX2AA
-         LUeCB2iRGp0LcmaJGEbZVDzD/VcPbIG6TCfCwQu+Y3SPrj4xiSWMRPhUkPdmlL0/nvus
-         oCT60h37HC92EPhQtOWgmJvL8yUpxq6TgWUvt2nUdGWPDuzCCmDO6lwxg+Ez8UCVrQje
-         0tgmyeyWOl1FS+GioH/FAhvU8tqrqWOoJWX1SDVG7sByPAfy2CagXVbQCjWVSzBmt+La
-         3PQg==
+        bh=Ff5ANg5JaiiCSeOhBm9s1jCGKMXDO21AGj0T714a7j0=;
+        b=KUEgaf1CcCG+jqlDASwW8EYl4siPJkbTu1ygKpXa8KrXPD8PTTCy5P8y2fhMWRQFkN
+         VM2jhZjpvkQifhagydfNPBrWHWuvKJ5HQeDHwUqSWapYfa0fP+J3zTFG201RYSVbw+xn
+         hxd+0KMXxlah5Sxf64Odyrxbd1IU44QJM0Wk0fQak8YNhQgNBA0uLVfLSuoffOxH6hIG
+         4j1BQObY2IJkqHYLJbfm35h5hv11TiUhAeI6Cr9E00Hhu9tdKDFWIa3VTBLkcpoQBs8t
+         DxO2uT7fR9uVaMWqauVk9HT2hV8ZeOtLsew2Fp++GIyVAVCe6Hv2TQuRXgYRrlfct8Io
+         2MRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 4.15 043/105] sched, cgroup: Dont reject lower cpu.max on ancestors
-Date: Tue, 27 Mar 2018 18:27:23 +0200
-Message-Id: <20180327162759.897978919@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.15 042/105] libata: Modify quirks for MX100 to limit NCQ_TRIM quirk to MU01 version
+Date: Tue, 27 Mar 2018 18:27:22 +0200
+Message-Id: <20180327162759.840931842@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109794296369871?=
-X-GMAIL-MSGID: =?utf-8?q?1596109794296369871?=
+X-GMAIL-THRID: =?utf-8?q?1596108985800843811?=
+X-GMAIL-MSGID: =?utf-8?q?1596109791578792441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,57 +49,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit c53593e5cb693d59d9e8b64fb3a79436bf99c3b3 upstream.
+commit d418ff56b8f2d2b296daafa8da151fe27689b757 upstream.
 
-While adding cgroup2 interface for the cpu controller, 0d5936344f30
-("sched: Implement interface for cgroup unified hierarchy") forgot to
-update input validation and left it to reject cpu.max config if any
-descendant has set a higher value.
+When commit 9c7be59fc519af ("libata: Apply NOLPM quirk to Crucial MX100
+512GB SSDs") was added it inherited the ATA_HORKAGE_NO_NCQ_TRIM quirk
+from the existing "Crucial_CT*MX100*" entry, but that entry sets model_rev
+to "MU01", where as the entry adding the NOLPM quirk sets it to NULL.
 
-cgroup2 officially supports delegation and a descendant must not be
-able to restrict what its ancestors can configure.  For absolute
-limits such as cpu.max and memory.max, this means that the config at
-each level should only act as the upper limit at that level and
-shouldn't interfere with what other cgroups can configure.
+This means that after this commit we no apply the NO_NCQ_TRIM quirk to
+all "Crucial_CT512MX100*" SSDs even if they have the fixed "MU02"
+firmware. This commit splits the "Crucial_CT512MX100*" quirk into 2
+quirks, one for the "MU01" firmware and one for all other firmware
+versions, so that we once again only apply the NO_NCQ_TRIM quirk to the
+"MU01" firmware version.
 
-This patch updates config validation on cgroup2 so that the cpu
-controller follows the same convention.
-
+Fixes: 9c7be59fc519af ("libata: Apply NOLPM quirk to ... MX100 512GB SSDs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Fixes: 0d5936344f30 ("sched: Implement interface for cgroup unified hierarchy")
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: stable@vger.kernel.org # v4.15+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/core.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/ata/libata-core.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6611,13 +6611,18 @@ static int tg_cfs_schedulable_down(struc
- 		parent_quota = parent_b->hierarchical_quota;
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4533,10 +4533,13 @@ static const struct ata_blacklist_entry
+ 	/* Crucial BX100 SSD 500GB has broken LPM support */
+ 	{ "CT500BX100SSD1",		NULL,	ATA_HORKAGE_NOLPM },
  
- 		/*
--		 * Ensure max(child_quota) <= parent_quota, inherit when no
-+		 * Ensure max(child_quota) <= parent_quota.  On cgroup2,
-+		 * always take the min.  On cgroup1, only inherit when no
- 		 * limit is set:
- 		 */
--		if (quota == RUNTIME_INF)
--			quota = parent_quota;
--		else if (parent_quota != RUNTIME_INF && quota > parent_quota)
--			return -EINVAL;
-+		if (cgroup_subsys_on_dfl(cpu_cgrp_subsys)) {
-+			quota = min(quota, parent_quota);
-+		} else {
-+			if (quota == RUNTIME_INF)
-+				quota = parent_quota;
-+			else if (parent_quota != RUNTIME_INF && quota > parent_quota)
-+				return -EINVAL;
-+		}
- 	}
- 	cfs_b->hierarchical_quota = quota;
+-	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
+-	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
++	/* 512GB MX100 with MU01 firmware has both queued TRIM and LPM issues */
++	{ "Crucial_CT512MX100*",	"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
++	/* 512GB MX100 with newer firmware has only LPM issues */
++	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM |
++						ATA_HORKAGE_NOLPM, },
  
+ 	/* 480GB+ M500 SSDs have both queued TRIM and LPM issues */
+ 	{ "Crucial_CT480M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
