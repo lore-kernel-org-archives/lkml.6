@@ -1,124 +1,128 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AG47ELvhD62XhAfOsD9kxO64jc11qhGKSBJhYi2q0G1NhcDus3LJnakdYCU9jsbftfE51vOp0ejO
+X-Google-Smtp-Source: AG47ELvQN4BkC8ZGl8OyTwHaWQk5nJhK64TOHOo9NRajBk3otex2Xd11cSoyrazWwQMZdrVXChs5
 ARC-Seal: i=1; a=rsa-sha256; t=1522140092; cv=none;
         d=google.com; s=arc-20160816;
-        b=n8k3NfKJMZDGWUBbtXHzySb5Hn7U3WyH4AkM69qp5LwCa6W1LBP+IkcOwTuSNLdRdA
-         0Tcy5f8ILhbltm7Lsu5LjApw0Rm8F0ZdUZr2dc7PWoZiRNT3d6nXvGBG18jjLsUzugJu
-         I6p9hXSIXCpoyVtJZNUE6/wjSz2Gd+cptEt3eKaE5h7+PIFtW8wkVnHdDAtIwWz5kkB5
-         Q4ygQkLUTAlSdSMlhE73FJWZImYEPi18pVHhsn7NLuscccEHOTPKggvu5tCo3djKLkBz
-         g6CmTbJtZin0DCktJa6hyu1yr/bAuxaWERfl6iunszPabIH1vWVLz0vXaPV6qxDGM5DO
-         xVGw==
+        b=QqqWWcZdJhbrpG2IbvwKAa7ukK2q87K9KpZ1rTE1YePAhizBs/+ZYmvsots543fUoA
+         ZVZwXGfCnbTrq6FzjrA6pR/dpIfdBXGsh93/iNnLpRZMu2RtqevQ9ttOPMIWtiEjHg45
+         vI34ylmbBAA0jZJ+H5u9N8NeppsPCfZWRN7KSd/gKF9jNvDY8SXZ2B/g4yezOkOJmvYQ
+         SC0HG8vkwsl2N8dQHeTWeT9XjWRTt53H4MgUOhxeZ6Ynnsja2lKWBYj9fZ1oPy977HbF
+         rld/l8n1jr6Paut7xCAhf+JYwFIJdzSQIhnpaPd23WgG8gOcsja5DAc42eqhLRJqBoqG
+         enbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=cHOHNeB1L4NTTQdtlxf2MK5Z391+uHiAzKUkF/jw7CI=;
-        b=WreNlBojn9fL1lLKMRDZHf1fb/vPetnatYPlsZ8zGXUMbHpt9/LPcmg0mKabbzL0cj
-         CI87h65QOcLj8qk6pwzYO3Sup0+gAwbxervU8R8QlO59hnTrdXGoqDIWJl116RkdR1ZS
-         AMzt1EvMSQrCnRo8p9mSTr11R6V+J7jCz+WbiK0SA9VbVgRl4nIJL3IP5UcIEVsTu8ti
-         WU05atGFGcKTaDPUVjYSg8+q5g1xlbxmsQ8Dy7zyovNH5udseAJ64XpgCVduIlOMUNO0
-         Xo4g5snLsySZjYZvfeuJzP7fD/di2GwMmGPgcd1lRMNuLWV+6XiP8vzUlJ8ltYdeNbTP
-         QtOA==
+        bh=yvA0oL9vKzzxe3g3eNMHn1ekvSHv9EHieJ/L6xMMMiQ=;
+        b=h2SG3XgA4Dz5UIsaCfnHkjY2Jn6I41XgIoj4xYy2ssfB8HNcuOLHLZqm1WmeaNKSFo
+         eUw6o+t7Aez58tNo6PfhNYQ5tuRfJ8MTZwep0Do+LIDBVueuDMBTbpuk6gGMbygEZmuc
+         UVVWoEr28ErXAGXOtVb5Tsj4CbwpNnu7K6YJnaT/kvRXiC3lXgJ6nvRsI41I49AWvJDo
+         NK9GKokCvDt+e8ycWsKaCTQAy2tge8DxUR2CkrsQc3UPIlHxFSMNgEr0A8QeG4TwBsVs
+         AGsMhGSgIr/L6144udSLcOiXIIBmBabmQk22rlF+1I/hNzmqiUcIe37KYUIJxtP52PZ2
+         IojQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 10/23] staging: rtl8723bs: Fix IEEE80211 authentication algorithm constants.
-Date: Tue, 27 Mar 2018 01:41:02 -0700
-Message-Id: <20180327084115.16129-10-quytelda@tamalin.org>
+Subject: [PATCH 11/23] staging: rtl8723bs: Remove unnecessary length #define's.
+Date: Tue, 27 Mar 2018 01:41:03 -0700
+Message-Id: <20180327084115.16129-11-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327084115.16129-1-quytelda@tamalin.org>
 References: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
  <20180327084115.16129-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:g1hRnAbZZI5mg2h9vx/It56gQ3gUiCykcT3OuoiVXL8f6140jDw
- KiK4y9u5erFAMf/v2mUA6g0Bm9T3QLeENLksye5Nm7Y1jl4TN9aqbcXipcqzJaAR9ivIuv7
- Bw3HPtKKYZ8nFNPJYFslADBBiishwStY0NHEkR/kDPqaCLk3IlVSrg4S7IrfNGl4Kz8sZ3I
- 6GiEmVyanhvi3ZR21fydA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:gSnjNdmIENs=:e0iiSCVkI7QGAe2pFhWDPN
- 9g8m7C8pkiWHEiW4nHw5mhR5kZrg2/sKc2x/TfC7ZXthiOmew1OOldTETxBPINhdvIgJymbyY
- RjAGcguHGQAk1THiv7hfo8c4wuBNXJeBuGcGJ1txNJI1kYtga7/AGNExQbEWUNwrTjujEj89Q
- ZE9I5FiHuwjnrpaPMrQpL/iN94HEzgHf6hhhPmZliOKY2735onfGudiFV0RWSFUqvBqb7tjSd
- 4Er0pTF+VdNt8Pw4Fq5naWxN6gVzISEgg3CELZm3kSnhHqdi06JST8th7WIraG11eDgsawUOs
- BofawyJkMA18F1tR7D3/oylwhKcVRKLb5/ccv2de4ivIncJOrHvvB493SZM9DK8S+SYDYt0Sd
- +eTRn63yhHkqWIjy9M9Jdw4TML3HfMIobMBL+kd7Sai8ItXixRy9u8UcOiHIRX/nLVLWe8S2/
- Pnme+KQv2Vd+EHZIy+YxraGHNcSIxWzYtrhhvVF4MRzlSeKPyNOyVyXEmMWDRMbflLApzAPcp
- EVnkIgIcTvpp+O/cts8y3qK50nfxt/sbAyMa7URK1d9RhlqC7l2yjCv8XHRGHJt1se2mk8kzV
- b1H8nQIYRyCA7u6SHQY5ouWlz70m3h8j25K18Sr9QkoTo4SoOUp0MD7YMeavxlUWLWcF4SlAC
- xwLJursgvnf2exQwlzDLEqOm7lubvx41ggA+p2qTqP+fmpJNWDT7Eh9CIlfYgz98RZ2zpNysX
- VWVEt6eI1AQOhOwwV5fRTc4WAy8YSq1CAOdVZQ==
+X-Provags-ID: V03:K0:gSLOXKwckDya7zAz4eNtx0SyeKvmsfAQjoeYcHd9nrV8jwOSu0+
+ yCk6ws4erU51K3kGt22o4ggz+LgeWAForgn+osy6dZlZUjPtMSSTq6Tq+r68s+ZwikRvMKa
+ JPLscHv6XRaXTmJ7UZwPotqrXzyWNrrL3VOkUW7w73BOISrkysLn2gcWQlC/D+FCG/QDBo7
+ AJLN4httjlTsyIdIbV+fg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:utYYTfmd3UI=:kEx+2nad27vGTii41OPS+F
+ pmFzWB3mzZazqQuWh8MC6vEDFzt3JGUpad9TpuU7pLuLQr6SLrQMoaiJYwyRmeJ5wI7b8o1q6
+ KtKO4rHFnN7c4U0Lb+6jWi3Pc/hROVxmQbra5683DSAfc8c9xMyjgWhre4Yd8MaMMSohzSh1o
+ uY9QWfoCPfQFT6YcxngyNDAhIi6aNBaL61WtDp5udQA8gwnNWpm7PSF8uulheKMAZK82lz/3p
+ wD3VU0sxqX5cQW3oOXJzwx+HV36yrbKTEFJgWfEuySGnWpSgRe9+pIc03ZvJZCSUEmNRZLrYt
+ 4d0K3aJPkDXfFonxVdoTs2/EwhG4S774F7beyNJJHXu0lPn1l2iAe+lKUn9WEhm2ku6038dZE
+ om+Ebf2QvqkvaeQgaP/XhSXANdWWz0ILsr00Lqo7Wis3BA9wY21JdmHTtAnPsouMIZ/PiWXec
+ EdhUMO+eARoJqQx3CQIE+QajrAIkXBnBSE4H6egzKZ14sKwbct2AWPLboRr/3nNW2clciX2mQ
+ oywvqhAondktFfeXjEJZY9dg8WhBAwawTnPHsCMM05ciyx8Krnvga1q2X9R7wwffCEX4uXjJV
+ 8Zc/m+KzFwGpoBD9R1thYq2t+8ph0zpJVr7Qe42tREk3BAtU/dMTMr00Rxxg5M57NVbPTGbWJ
+ nvSYAZR5qwghOw3EISw0BW0xRaWysvN5cuET/o3jr2lU7wBsHoUIx/xLg0RvEONH9sGhWqXQp
+ Ewxq6QQ25DLG+DCbP41I2FGq6n5Q9jUWvwDcxQ==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596079569139754041?=
-X-GMAIL-MSGID: =?utf-8?q?1596079569139754041?=
+X-GMAIL-THRID: =?utf-8?q?1596079569794595913?=
+X-GMAIL-MSGID: =?utf-8?q?1596079569794595913?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This driver's local ieee80211 include file defines the constants
-AUTH_ALG_* to represent authenication algorithm options.  However,
-these constants are defined in 'linux/ieee80211.h' as WLAN_AUTH_*,
-and have the correct values.
+This driver statically defines constants representing the size of
+certain structs using literal integers as values.  Replace those
+constants with the sizeof() macro.  Other length constants are already
+defined in 'linux/ieee80211.h'; remove those #define's.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/rtl8723bs/include/ieee80211.h  |  4 ----
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 16 ++++++++--------
- 2 files changed, 8 insertions(+), 12 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  6 +++---
+ drivers/staging/rtl8723bs/include/ieee80211.h | 16 ----------------
+ 2 files changed, 3 insertions(+), 19 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index 7d7756e40bcb..2816c68b8254 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -1219,7 +1219,7 @@ unsigned int OnAssocReq(struct adapter *padapter, union recv_frame *precv_frame)
+ 	}
+ 
+ 
+-	if (pkt_len < IEEE80211_3ADDR_LEN + ie_offset) {
++	if (pkt_len < sizeof(struct ieee80211_hdr_3addr) + ie_offset) {
+ 		DBG_871X("handle_assoc(reassoc =%d) - too short payload (len =%lu)"
+ 		       "\n", reassoc, (unsigned long)pkt_len);
+ 		return _FAIL;
+@@ -1236,8 +1236,8 @@ unsigned int OnAssocReq(struct adapter *padapter, union recv_frame *precv_frame)
+ 	/* listen_interval = le16_to_cpu(*(unsigned short *)(pframe + WLAN_HDR_A3_LEN+2)); */
+ 	listen_interval = RTW_GET_LE16(pframe + WLAN_HDR_A3_LEN+2);
+ 
+-	left = pkt_len - (IEEE80211_3ADDR_LEN + ie_offset);
+-	pos = pframe + (IEEE80211_3ADDR_LEN + ie_offset);
++	left = pkt_len - (sizeof(struct ieee80211_hdr_3addr) + ie_offset);
++	pos = pframe + (sizeof(struct ieee80211_hdr_3addr) + ie_offset);
+ 
+ 
+ 	DBG_871X("%s\n", __func__);
 diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
-index 2c7597ad0470..a353dc9b883a 100644
+index a353dc9b883a..c8e5251c2760 100644
 --- a/drivers/staging/rtl8723bs/include/ieee80211.h
 +++ b/drivers/staging/rtl8723bs/include/ieee80211.h
-@@ -84,10 +84,6 @@ enum {
- #define IEEE_PARAM_IEEE_802_1X				6
- #define IEEE_PARAM_WPAX_SELECT				7
+@@ -272,20 +272,6 @@ struct sta_data{
+ 	u64	tx_drops;
+ };
  
--#define AUTH_ALG_OPEN_SYSTEM			0x1
--#define AUTH_ALG_SHARED_KEY			0x2
--#define AUTH_ALG_LEAP				0x00000004
+-#define IEEE80211_DATA_LEN		2304
+-/* Maximum size for the MA-UNITDATA primitive, 802.11 standard section
+-   6.2.1.1.2.
 -
- #define IEEE_MLME_STA_DEAUTH				1
- #define IEEE_MLME_STA_DISASSOC			2
+-   The figure in section 7.1.2 suggests a body size of up to 2312
+-   bytes is allowed, which is a bit confusing, I suspect this
+-   represents the 2304 bytes of real data, plus a possible 8 bytes of
+-   WEP IV and ICV. (this interpretation suggested by Ramiro Barreiro) */
+-
+-
+-#define IEEE80211_HLEN			30
+-#define IEEE80211_FRAME_LEN		(IEEE80211_DATA_LEN + IEEE80211_HLEN)
+-
+-
+ /* this is stolen from ipw2200 driver */
+ #define IEEE_IBSS_MAC_HASH_SIZE 31
  
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 32dcee9a1451..b26533983864 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -476,26 +476,26 @@ static int wpa_set_auth_algs(struct net_device *dev, u32 value)
- 	struct adapter *padapter = (struct adapter *) rtw_netdev_priv(dev);
- 	int ret = 0;
+@@ -313,8 +299,6 @@ enum eap_type {
+ 	EAPOL_ENCAP_ASF_ALERT
+ };
  
--	if ((value & AUTH_ALG_SHARED_KEY) && (value & AUTH_ALG_OPEN_SYSTEM)) {
--		DBG_871X("wpa_set_auth_algs, AUTH_ALG_SHARED_KEY and  AUTH_ALG_OPEN_SYSTEM [value:0x%x]\n", value);
-+	if ((value & WLAN_AUTH_SHARED_KEY) && (value & WLAN_AUTH_OPEN)) {
-+		DBG_871X("wpa_set_auth_algs, WLAN_AUTH_SHARED_KEY and WLAN_AUTH_OPEN [value:0x%x]\n", value);
- 		padapter->securitypriv.ndisencryptstatus = Ndis802_11Encryption1Enabled;
- 		padapter->securitypriv.ndisauthtype = Ndis802_11AuthModeAutoSwitch;
- 		padapter->securitypriv.dot11AuthAlgrthm = dot11AuthAlgrthm_Auto;
--	} else if (value & AUTH_ALG_SHARED_KEY)	{
--		DBG_871X("wpa_set_auth_algs, AUTH_ALG_SHARED_KEY  [value:0x%x]\n", value);
-+	} else if (value & WLAN_AUTH_SHARED_KEY)	{
-+		DBG_871X("wpa_set_auth_algs, WLAN_AUTH_SHARED_KEY  [value:0x%x]\n", value);
- 		padapter->securitypriv.ndisencryptstatus = Ndis802_11Encryption1Enabled;
+-#define IEEE80211_3ADDR_LEN 24
+-#define IEEE80211_4ADDR_LEN 30
+ #define IEEE80211_FCS_LEN    4
  
- 		padapter->securitypriv.ndisauthtype = Ndis802_11AuthModeShared;
- 		padapter->securitypriv.dot11AuthAlgrthm = dot11AuthAlgrthm_Shared;
--	} else if (value & AUTH_ALG_OPEN_SYSTEM) {
--		DBG_871X("wpa_set_auth_algs, AUTH_ALG_OPEN_SYSTEM\n");
-+	} else if (value & WLAN_AUTH_OPEN) {
-+		DBG_871X("wpa_set_auth_algs, WLAN_AUTH_OPEN\n");
- 		/* padapter->securitypriv.ndisencryptstatus = Ndis802_11EncryptionDisabled; */
- 		if (padapter->securitypriv.ndisauthtype < Ndis802_11AuthModeWPAPSK) {
- 			padapter->securitypriv.ndisauthtype = Ndis802_11AuthModeOpen;
- 			padapter->securitypriv.dot11AuthAlgrthm = dot11AuthAlgrthm_Open;
- 		}
--	} else if (value & AUTH_ALG_LEAP) {
--		DBG_871X("wpa_set_auth_algs, AUTH_ALG_LEAP\n");
-+	} else if (value & WLAN_AUTH_LEAP) {
-+		DBG_871X("wpa_set_auth_algs, WLAN_AUTH_LEAP\n");
- 	} else {
- 		DBG_871X("wpa_set_auth_algs, error!\n");
- 		ret = -EINVAL;
+ #define MIN_FRAG_THRESHOLD     256U
 -- 
 2.16.3
