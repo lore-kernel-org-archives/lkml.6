@@ -1,58 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752113AbeC0BDy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:03:54 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33784 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751903AbeC0BDx (ORCPT
+        id S1752161AbeC0BED (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:04:03 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36717 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751903AbeC0BD4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:03:53 -0400
-X-Google-Smtp-Source: AIpwx48MBmHYUbJ8Tm0n5e+Of2Hrdx/iGzVIDeQinVwfvIo3UwovKxwm7hF0l+hooWdSR9cwPLYGwA==
-Date: Tue, 27 Mar 2018 10:03:47 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] zram: idle memory tracking
-Message-ID: <20180327010347.GA41148@rodete-desktop-imager.corp.google.com>
-References: <20180326064951.123940-1-minchan@kernel.org>
- <20180326064951.123940-2-minchan@kernel.org>
- <20180327004911.GA467@jagdpanzerIV>
+        Mon, 26 Mar 2018 21:03:56 -0400
+X-Google-Smtp-Source: AG47ELsagbTDF9x0OfIQPz5KvjwZazSNZ/8tmyP9ZsRgCzZC8Uqu6/ei3EMvOKHM/h+nHMppVQg0lquEGp1gBWwQGOw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327004911.GA467@jagdpanzerIV>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <428751c8-6920-096b-8694-a3f1b8990bdf@physik.fu-berlin.de>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-5-linux@dominikbrodowski.net> <20180318174014.GR30522@ZenIV.linux.org.uk>
+ <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
+ <20180318181848.GU30522@ZenIV.linux.org.uk> <20180319042300.GW30522@ZenIV.linux.org.uk>
+ <20180319092920.tbh2xwkruegshzqe@gmail.com> <20180319232342.GX30522@ZenIV.linux.org.uk>
+ <20180322001532.GA18399@ZenIV.linux.org.uk> <20180326004017.GA2211@ZenIV.linux.org.uk>
+ <20180326034750.GN30522@ZenIV.linux.org.uk> <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
+ <428751c8-6920-096b-8694-a3f1b8990bdf@physik.fu-berlin.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 26 Mar 2018 15:03:54 -1000
+X-Google-Sender-Auth: Jt5T9aKOvYk8cL6-3ToUE3H54aQ
+Message-ID: <CA+55aFwp-T-WFN95j7u5nn2BExxviJCx1-RgD3Mnu1AN_GYD3w@mail.gmail.com>
+Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 09:49:11AM +0900, Sergey Senozhatsky wrote:
-> On (03/26/18 15:49), Minchan Kim wrote:
-> > zRam as swap is useful for small memory device. However, swap means
-> > those pages on zram are mostly cold pages due to VM's LRU algorithm.
-> > Especially, once init data for application are touched for launching,
-> > they tend to be not accessed any more and finally swapped out.
-> > zRAM can store such cold pages as compressed form but it's pointless
-> > to keep in memory. Better idea is app developers free them directly
-> > rather than remaining them on heap.
-> > 
-> > This patch tell us last accesss time of each block of zram via
-> > "cat /sys/kernel/debug/zram/zram0/access_time".
-> > 
-> > The output is as follows,
-> > 
-> > 276 1250
-> > 277 1800
-> > ..  ..
-> > ..  ..
-> 
-> So can we just use CONFIG_IDLE_PAGE_TRACKING + CONFIG_PAGE_OWNER?
+On Sun, Mar 25, 2018 at 8:44 PM, John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
+<
+> FWIW, we are maintaining an x32 port in Debian and there are some people
+> actually using it [1]. There is one build instance running on VMWare that
+> I am hosting [2] and around 10800 out of 12900 source packages build fine
+> on x32 (12900 being the number for x86_64).
 
-The goal is not mapped memory tracking but one swapped out.
-Can we do it by above two combination?
+Hmm. Do you have a few statically built binaries that could be tested
+without installing a whole distribution? Something real and meaningful
+enough that it actually exercised a few real system calls, but not
+something that needs to bring in 50 different shared libraries?
 
-Furthermore, I am planning to provide incompressible pages as well
-as access time so I will change interface at v2.
+Something in /sbin, perhaps, that is still runnable by a regular user
+and doesn't require some distro-specific /etc layout etc, so that it
+would work even if you don't run Debian at all? Maybe some shell
+binary or something?
 
-Thanks.
+      Linus
