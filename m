@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeC0BYX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:24:23 -0400
-Received: from ozlabs.org ([103.22.144.67]:42935 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751489AbeC0BYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:24:21 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 27 Mar 2018 12:23:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: linux-next: build warnings after merge of the thermal-soc tree
-Message-ID: <20180327122333.1647bf10@canb.auug.org.au>
+        id S1752133AbeC0Bcf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:32:35 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:39063 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751489AbeC0Bcd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 21:32:33 -0400
+X-UUID: 9e3b00208360457ebea809f88188ef25-20180327
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <alsa-devel@alsa-project.org>,
+        "Garlic Tseng" <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH] ASoC: mediatek: remove "simple-mfd" in the example
+Date: Tue, 27 Mar 2018 09:32:25 +0800
+Message-ID: <79b79aa29ea14e6f851ad01ed1f5a33543b05040.1522114156.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.AN3DsL_R4KPyrNlfSGS+=j"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23744.000
+X-TM-AS-Result: No-0.891200-8.000000-10
+X-TMASE-MatchedRID: Cd0SClLzsE8INDt+6yf1XG3NvezwBrVmFuNF4lJG6xtcU0dNErOD+ugV
+        4TkxLE0x4vM1YF6AJbbGJQ3BiiLAggtuKBGekqUpm+MB6kaZ2g6qJYCGOgfgK0NqTLiQLGdVotj
+        xVwMB0QkCv/Cfpb0atxTUT+FklfEsdEGrDUQz9jy3MjlpMfzU113TthyZ8eNaTL2vK69m107kA8
+        OrYHdwDGfYlY/yoV/0Up6EHOb2+c7kHZDO53QSwjflzkGcoK72
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.891200-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23744.000
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.AN3DsL_R4KPyrNlfSGS+=j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Remove compatible string "simple-mfd" in the example as we have
+already added devm_of_platform_populate() in the parent driver.
 
-Hi Eduardo,
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ Documentation/devicetree/bindings/sound/mt2701-afe-pcm.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-After merging the thermal-soc tree, today's linux-next build (arm
-multi_v7_defconfig) produced these warnings:
-
-drivers/thermal/samsung/exynos_tmu.c: In function 'exynos_get_temp':
-drivers/thermal/samsung/exynos_tmu.c:931:37: warning: 'temp' may be used un=
-initialized in this function [-Wmaybe-uninitialized]
-   *temp =3D code_to_temp(data, value) * MCELSIUS;
-                                     ^
-drivers/thermal/samsung/exynos_tmu.c: In function 'temp_to_code':
-drivers/thermal/samsung/exynos_tmu.c:304:9: warning: 'temp_code' may be use=
-d uninitialized in this function [-Wmaybe-uninitialized]
-  return temp_code;
-         ^~~~~~~~~
-
-Introduced by commit
-
-  480b5bfc16e1 ("thermal: exynos: remove parsing of samsung, tmu_default_te=
-mp_offset property")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.AN3DsL_R4KPyrNlfSGS+=j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5nRUACgkQAVBC80lX
-0GxWYAf/UH9SPcPyYjQSFxNsEIwHIs5m+gR9RP4YO3P57ecZzSTYgSX3ZYjHTeCp
-+Fd/zzIKQANJHN0MWLcjguTz/SFzd7Uu+UXOq8Na6+Vp3mWpBzeXuYanjYzlV6/Q
-iL9xIhYUPxa7vaJWTu+AwXYNg9idFqgzh2fav+g4Ll48Y5gUETTjT3Llzo0doHSU
-Am/lSby5Dt+nwc66nMLnSW1u3Dh2m5OYJfbjwyMJuGOuarfGJ1dfp60TiKM9R/tk
-PExqW0gV1QZHReaVSSrO0G5n4X4BUcOrmLJnXmDrI0WedvjcsH47MCHV8i2b9ND/
-16vX5afGBrcRX6sPlc+HS/1rQRF6uw==
-=ZH0v
------END PGP SIGNATURE-----
-
---Sig_/.AN3DsL_R4KPyrNlfSGS+=j--
+diff --git a/Documentation/devicetree/bindings/sound/mt2701-afe-pcm.txt b/Documentation/devicetree/bindings/sound/mt2701-afe-pcm.txt
+index 6df87b9..e2f7f49 100644
+--- a/Documentation/devicetree/bindings/sound/mt2701-afe-pcm.txt
++++ b/Documentation/devicetree/bindings/sound/mt2701-afe-pcm.txt
+@@ -53,7 +53,7 @@ See ../arm/mediatek/mediatek,audsys.txt for details about the parent node.
+ Example:
+ 
+ 	audsys: audio-subsystem@11220000 {
+-		compatible = "mediatek,mt2701-audsys", "syscon", "simple-mfd";
++		compatible = "mediatek,mt2701-audsys", "syscon";
+ 		...
+ 
+ 		afe: audio-controller {
+-- 
+1.9.1
