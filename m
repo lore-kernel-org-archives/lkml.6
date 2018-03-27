@@ -1,228 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753899AbeC0RqR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:46:17 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35526 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbeC0RqL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 13:46:11 -0400
-X-Google-Smtp-Source: AIpwx4+UizDBLWBKjcf4PwusUzEtqekA0qw/vWbia4gTRuvHM8839nLV1yeaQ9r+fXa6DDZkEqfruA==
-Date: Tue, 27 Mar 2018 10:46:21 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com,
-        richardcochran@gmail.com
-Subject: Re: [PATCH v5 12/13] ARM: dts: ipq8074: Add pcie nodes
-Message-ID: <20180327174621.GO1403@tuxbook-pro>
-References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
- <1521800336-19266-13-git-send-email-sricharan@codeaurora.org>
+        id S1753698AbeC0Qcf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:32:35 -0400
+Received: from mga14.intel.com ([192.55.52.115]:62350 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753639AbeC0Qc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 12:32:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,367,1517904000";
+   d="scan'208";a="45736048"
+Subject: Re: [PATCH 00/11] Use global pages with PTI
+To: Thomas Gleixner <tglx@linutronix.de>
+References: <20180323174447.55F35636@viggo.jf.intel.com>
+ <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com>
+ <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com>
+ <alpine.DEB.2.21.1803271526260.1964@nanos.tec.linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
+        Hugh Dickins <hughd@google.com>,
+        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        the arch/x86 maintainers <x86@kernel.org>, namit@vmware.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <c0e7ca0b-dcb5-66e2-9df6-f53e4eb22781@linux.intel.com>
+Date: Tue, 27 Mar 2018 09:32:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521800336-19266-13-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1803271526260.1964@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
+On 03/27/2018 06:36 AM, Thomas Gleixner wrote:
+>>                         User Time       Kernel Time     Clock Elapsed
+>> Baseline ( 0 GLB PTEs)  803.79          67.77           237.30
+>> w/series (28 GLB PTEs)  807.70 (+0.7%)  68.07 (+0.7%)   238.07 (+0.3%)
+>>
+>> Without PCIDs, it behaves the way I would expect.
+> What's the performance benefit on !PCID systems? And I mean systems which
+> actually do not have PCID, not a PCID system with 'nopcid' on the command
+> line.
 
-> The driver/phy support for ipq8074 is available now.
-> So enabling the nodes in DT.
-> 
+Do you have something in mind for this?  Basically *all* of the servers
+that I have access to have PCID because they are newer than ~7 years old.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi | 157 +++++++++++++++++++++++++++++++++-
->  1 file changed, 156 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> index a8dbbf0..caf3485 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-> @@ -24,7 +24,7 @@
->  		ranges = <0 0 0 0xffffffff>;
->  		compatible = "simple-bus";
->  
-> -		pinctrl@1000000 {
-> +		tlmm: pinctrl@1000000 {
->  			compatible = "qcom,ipq8074-pinctrl";
->  			reg = <0x1000000 0x300000>;
->  			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> @@ -229,6 +229,161 @@
->  			dma-names = "tx", "rx", "cmd";
->  			status = "disabled";
->  		};
-> +
-> +		pcie_phy0: phy@86000 {
-> +			compatible = "qcom,ipq8074-qmp-pcie-phy";
-> +			reg = <0x86000 0x1000>;
-> +			#phy-cells = <0>;
-> +			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
-> +			clock-names = "pipe_clk";
-> +			clock-output-names = "pcie20_phy0_pipe_clk";
-> +
-> +			resets = <&gcc GCC_PCIE0_PHY_BCR>,
-> +				<&gcc GCC_PCIE0PHY_PHY_BCR>;
-> +			reset-names = "phy",
-> +				      "common";
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie0: pci@20000000 {
-> +			compatible = "qcom,pcie-ipq8074";
-> +			reg =  <0x20000000 0xf1d
-> +				0x20000f20 0xa8
-> +				0x80000 0x2000
-> +				0x20100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <0>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <1>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			phys = <&pcie_phy0>;
-> +			phy-names = "pciephy";
-> +
-> +			ranges = <0x81000000 0 0x20200000 0x20200000
-> +				  0 0x100000   /* downstream I/O */
-> +				  0x82000000 0 0x20300000 0x20300000
-> +				  0 0xd00000>; /* non-prefetchable memory */
-> +
-> +			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi";
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 75
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-> +					<0 0 0 2 &intc 0 78
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-> +					<0 0 0 3 &intc 0 79
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-> +					<0 0 0 4 &intc 0 83
-> +					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-> +
-> +			clocks = <&gcc GCC_SYS_NOC_PCIE0_AXI_CLK>,
-> +				 <&gcc GCC_PCIE0_AXI_M_CLK>,
-> +				 <&gcc GCC_PCIE0_AXI_S_CLK>,
-> +				 <&gcc GCC_PCIE0_AHB_CLK>,
-> +				 <&gcc GCC_PCIE0_AUX_CLK>;
-> +
-> +			clock-names = "iface",
-> +				      "axi_m",
-> +				      "axi_s",
-> +				      "ahb",
-> +				      "aux";
-> +			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
-> +				 <&gcc GCC_PCIE0_SLEEP_ARES>,
-> +				 <&gcc GCC_PCIE0_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE0_AXI_MASTER_ARES>,
-> +				 <&gcc GCC_PCIE0_AXI_SLAVE_ARES>,
-> +				 <&gcc GCC_PCIE0_AHB_ARES>,
-> +				 <&gcc GCC_PCIE0_AXI_MASTER_STICKY_ARES>;
-> +			reset-names = "pipe",
-> +				      "sleep",
-> +				      "sticky",
-> +				      "axi_m",
-> +				      "axi_s",
-> +				      "ahb",
-> +				      "axi_m_sticky";
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie_phy1: phy@8e000 {
-> +			compatible = "qcom,ipq8074-qmp-pcie-phy";
-> +			reg = <0x8e000 0x1000>;
-> +			#phy-cells = <0>;
-> +			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
-> +			clock-names = "pipe_clk";
-> +			clock-output-names = "pcie20_phy1_pipe_clk";
-> +
-> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
-> +				<&gcc GCC_PCIE1PHY_PHY_BCR>;
-> +			reset-names = "phy",
-> +				      "common";
-> +			status = "disabled";
-> +		};
-> +
-> +		pcie1: pci@10000000 {
-> +			compatible = "qcom,pcie-ipq8074";
-> +			reg =  <0x10000000 0xf1d
-> +				0x10000f20 0xa8
-> +				0x88000 0x2000
-> +				0x10100000 0x1000>;
-> +			reg-names = "dbi", "elbi", "parf", "config";
-> +			device_type = "pci";
-> +			linux,pci-domain = <1>;
-> +			bus-range = <0x00 0xff>;
-> +			num-lanes = <1>;
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +
-> +			phys = <&pcie_phy1>;
-> +			phy-names = "pciephy";
-> +
-> +			ranges = <0x81000000 0 0x10200000 0x10200000
-> +				  0 0x100000   /* downstream I/O */
-> +				  0x82000000 0 0x10300000 0x10300000
-> +				  0 0xd00000>; /* non-prefetchable memory */
-> +
-> +			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "msi";
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &intc 0 142
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-> +					<0 0 0 2 &intc 0 143
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-> +					<0 0 0 3 &intc 0 144
-> +					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-> +					<0 0 0 4 &intc 0 145
-> +					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-> +
-> +			clocks = <&gcc GCC_SYS_NOC_PCIE1_AXI_CLK>,
-> +				 <&gcc GCC_PCIE1_AXI_M_CLK>,
-> +				 <&gcc GCC_PCIE1_AXI_S_CLK>,
-> +				 <&gcc GCC_PCIE1_AHB_CLK>,
-> +				 <&gcc GCC_PCIE1_AUX_CLK>;
-> +			clock-names = "iface",
-> +				      "axi_m",
-> +				      "axi_s",
-> +				      "ahb",
-> +				      "aux";
-> +			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
-> +				 <&gcc GCC_PCIE1_SLEEP_ARES>,
-> +				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_MASTER_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_SLAVE_ARES>,
-> +				 <&gcc GCC_PCIE1_AHB_ARES>,
-> +				 <&gcc GCC_PCIE1_AXI_MASTER_STICKY_ARES>;
-> +			reset-names = "pipe",
-> +				      "sleep",
-> +				      "sticky",
-> +				      "axi_m",
-> +				      "axi_s",
-> +				      "ahb",
-> +				      "axi_m_sticky";
-> +			status = "disabled";
-> +		};
->  	};
->  
->  	cpus {
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-> 
+That leaves *some* Ivybridge and earlier desktops, Atoms and AMD
+systems.  Atoms are going to be the easiest thing to get my hands on,
+but I tend to shy away from them for performance work.
