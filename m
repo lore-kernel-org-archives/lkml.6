@@ -1,229 +1,185 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-472497-1522182701-2-5153006082751480678
+X-Cyrus-Session-Id: sloti22d1t05-472497-1522183297-2-4745719768773781505
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522182700; b=o58s0NCCUTLejcijd1MkOI7MSnSfKEj+WVNfGb2hbyRKKbK
-    zxxFk59ULTZpcahh9b5TSGorXv7GZ0FM6GiGA49V7TTXf/VPZ3/VcV/hO1vPbQ8K
-    SJWdpxZlKd/s2Ox5T5e8C5UxEdXbPBxqO06mgvsn7KZHTarB6FQ8fNR8UyJ/coeV
-    KS4zKnrp9UzFzAPftq4pr2qYP0BtB0evEO+InLRgofb0JbGf57qvWfNh904i9YcX
-    qGdPNzLzN57JTAgd6bfgZaOfy07i/vlQw8zMuBessa4HqW3mcXkElVWWnTkhpx/B
-    VVSPmjKGLa49mte46VCk/aRO5YlVo1M/bYjrIKg==
+    t=1522183297; b=Q0BX+zvHK1xkH8qtZ24HCABm4kKXFFVUZuOc/hd3AXC2RRA
+    8f5k1wlY+f6fCCoE7fIwzsqDjYU38NTaHKPhOdC7gmNAtWmVNeDX5msH2UNcXKQP
+    dr05g0bgKII9zkYwCpIC6MnkHTwqk2rU8AZBWwyCdGl5qV6IuCgmH0vnZiUId5jJ
+    XF8U6aPMQadweIIW8OecARqrGFuPXiqTFlichaP2yh8KiSBF4Bip0F6m+wo61FII
+    W5s8DVY8Q6WWzygcMeVljimPG8Z0I3/rObJY+T+OTKSvYsMaF4j6jYsauUnGdCxX
+    Gu9IHICpLLRpomXrlYE8b4XhoTJRmO9FxqKUuhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=arctest; t=1522182700; bh=nylL2xF
-    9GIT4GiE6YwsEffiWBnNMlorDG8wQ1O0wZRw=; b=QESFCA3UlNN32YGJtU7s1u+
-    Xylhnk4ynEnpMNCOsDKuWjKhMIuTmslIx62iRJfA97tgCnyDoroIF7E1RIcKW4lN
-    7crcDdTPXmHscAAAP0n0pKhq6cYQS4C+sSuV6jsUOAsVWcHW2UpGf0MJ5qnp0J+f
-    vG7IZruZxAzgQ2U2qpzcU6SBa59XVW5cHkEfDwT1rmj7jmrt4dw43vGY7/yK41+s
-    B423zt9gXpamsqxQi1sIfp2W77ZXVqtZoglyBIOyCdK+tL3g4jm0RFFv/mvcQQuX
-    wpWQl12j7n9NSE2sCfhm3Gt24BF18WBDHrbVmUc5gz5syu/V3STWqMxjgt4PY2Q=
-    =
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=DcRANoek x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=
+    arctest; t=1522183297; bh=AYZeYcUqOS10yyzPRlZskkbEPf9Lh4iPnaHkCo
+    UNSEw=; b=cbmWdVorVj5yHTxqeK9hUbmISHdNCLXaHNg383LO4oLWbp0Ihcybnj
+    NdiwvCTdleWtPtjmI6pvMKOdYHi8J9yw/RK2ITJed5bSZo4ah03k37Y4LcUvB3Ww
+    lr3xqH36JeQ7J4WAbUKcroedEmZ4t3vYjg8kiAd5bE1vESF3kDgcIWJLsLnseHD2
+    +FHoXWrK37/HVqnbAXJ6VTKN8ob9RjBTZLjmygXyx+0bbgQo0mnJg+TrjBxhg0B6
+    AdvCNbgz7UmNourtNtsHMwTBbPDmuPp40UaiZy24UQ4Vrf0cszhAIGZafEJCog8E
+    46uDa1b8MDeIFiJul0VbpyivWSt6t5eg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=I544erK4;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=DcRANoek x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=I544erK4;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hpe.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDkROtefmPY7PNz89fm0q4eaa5NCEJjv03wcjqC0k1oNYNxO1aO9Msm4Ayg0DPirc7lgPJ0jJ/iz6XsUPZF9ZvF/7wLVi/kbKAkZVqBnc3O5VDsjYucb
-    y4IFSKrScV0F/zb+v/dWxNYaHe9heTHZiDg3UQJntS/+Qo7fYyrHJcOv+BpBEYpjMppMjGltvJ3NIYnVnxNm7dRxqybS1w+ffzKKPpSuZGwrECHXok2Wi3ZR
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=vY_346TuTMEA:10 a=v2DPQv5-lfwA:10 a=MvuuwTCpAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=VwQbUJbxAAAA:8 a=BTeA3XvPAAAA:8 a=7CQSdrXTAAAA:8 a=i0EeH86SAAAA:8
-    a=iox4zFpeAAAA:8 a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=JfrnYn6hAAAA:8
-    a=LpQP-O61AAAA:8 a=ag1SF4gXAAAA:8 a=cat7hbm38FGNYthO63oA:9
-    a=a2W6tOxwmpiBB1nu:21 a=aC-TP2wdD5rAUOXQ:21 a=QEXdDO2ut3YA:10
-    a=dVHiktpip_riXrfdqayU:22 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=tafbbOV3vt1XuEhzTjGK:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=WzC6qhA0u3u7Ye7llzcV:22
-    a=NdAtdrkLVvyUPsUoGJp4:22 a=1CNFftbPRP8L7MoqJWF3:22 a=pioyyrs4ZptJ924tMmac:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-CM-Envelope: MS4wfFjUELeoeJjyTrQNro/r9oA4fOPeGzwgaPiFzjJ3d32wBirF4n3ynRUMBz0u8qB8WsALd/9hc4gjvnnXw8TSPJxmaXAuCYNFay6kKz1szo/1JMadPl06
+    g1X8blhi9fvpMcNNbTGyG7BYj/HbSTacIxLAsWstBjvW7OoiR0DAhpAE/toexT2FsTReqZ+U7P2DkHS+TcAf1VocYiYOuCPePpC0KPFI0KwbEmeThBNfbrSQ
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=-QivDyp7SNMA:10 a=F3kEEn-mzN4A:10
+    a=4ryF5tWLDgoA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=v2DPQv5-lfwA:10
+    a=QDZ4HvhdkI4A:10 a=PAMlk8q3h9qyen7Q6kwA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751020AbeC0Ubi (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 16:31:38 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36124 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750966AbeC0Ubg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 16:31:36 -0400
-X-Google-Smtp-Source: AIpwx4/mKJpfebJRaE3gEHuW4v+nMXiRTealr5aMTbUt16xsWU52CN6LRtpmNHJtolRX2rJo/if9GQ==
-Date: Tue, 27 Mar 2018 13:31:30 -0700
-From: Nathan Chancellor <natechancellor@gmail.com>
-To: Dan Rue <dan.rue@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lei Li <lious.lilei@hisilicon.com>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Wang Xuefeng <wxf.wang@hisilicon.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        id S1751205AbeC0UlF (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 16:41:05 -0400
+Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:28046 "EHLO
+        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751150AbeC0UlE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 16:41:04 -0400
+From: "Kani, Toshi" <toshi.kani@hpe.com>
+To: "dan.rue@linaro.org" <dan.rue@linaro.org>,
+        "natechancellor@gmail.com" <natechancellor@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "lious.lilei@hisilicon.com" <lious.lilei@hisilicon.com>,
+        "guohanjun@huawei.com" <guohanjun@huawei.com>,
+        "wxf.wang@hisilicon.com" <wxf.wang@hisilicon.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Hocko, Michal" <MHocko@suse.com>,
+        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
+        "willy@infradead.org" <willy@infradead.org>
 Subject: Re: [PATCH 4.4 20/43] mm/vmalloc: add interfaces to free unmapped
  page table
-Message-ID: <20180327203130.GA18921@localhost>
+Thread-Topic: [PATCH 4.4 20/43] mm/vmalloc: add interfaces to free unmapped
+ page table
+Thread-Index: AQHTxejJnWYIqchHYkKAUWneqflDN6PkhU4AgAAEDQCAAAKOgA==
+Date: Tue, 27 Mar 2018 20:40:56 +0000
+Message-ID: <1522183239.2693.240.camel@hpe.com>
 References: <20180327162716.407986916@linuxfoundation.org>
- <20180327162717.580646019@linuxfoundation.org>
- <20180327201700.xmgzgqox3sz3z32r@xps>
+         <20180327162717.580646019@linuxfoundation.org>
+         <20180327201700.xmgzgqox3sz3z32r@xps> <20180327203130.GA18921@localhost>
+In-Reply-To: <20180327203130.GA18921@localhost>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=toshi.kani@hpe.com;
+x-originating-ip: [15.203.227.8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DF4PR8401MB0427;7:Dui0ZtrvTmDaD7xLVs/qmjByVwyxifTqQJIQfT75l+vUNy9S786mIwdstqFn6zyrb92n8NwtsMhES7rxs1fY6peJIu5XuVIfQf8VLFG4KQj+3VxOLrTHKssmVAyC/r9u695K5Xj9rHTW4PW0geIoLgFc2gp5DiKCRfuKsEM6WJsNZXK4B2K4Sy8c4tBhYt0mIAH8WyPzJGeOi+Qb4iwn2Hkjc7Y+gidLhuFuh141Rc5Q95UKdgZzanjIHe+pDtxh
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 4aab7830-df61-4cff-810f-08d594230ae6
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989060)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(7153060)(7193020);SRVR:DF4PR8401MB0427;
+x-ms-traffictypediagnostic: DF4PR8401MB0427:
+x-ld-processed: 105b2061-b669-4b31-92ac-24d304d195dc,ExtAddr
+x-microsoft-antispam-prvs: <DF4PR8401MB04276B7F7AD782BFF3E11CE782AC0@DF4PR8401MB0427.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(155532106045638);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501327)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DF4PR8401MB0427;BCL:0;PCL:0;RULEID:;SRVR:DF4PR8401MB0427;
+x-forefront-prvs: 0624A2429E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(39380400002)(346002)(366004)(376002)(199004)(189003)(377424004)(8936002)(478600001)(53936002)(229853002)(86362001)(97736004)(81166006)(6246003)(39060400002)(8676002)(81156014)(36756003)(3280700002)(486005)(486005)(66066001)(6486002)(105586002)(2906002)(25786009)(4326008)(6436002)(68736007)(103116003)(3660700001)(7736002)(14454004)(6512007)(6116002)(3846002)(93886005)(5660300001)(106356001)(7416002)(6506007)(5250100002)(54906003)(186003)(99286004)(305945005)(26005)(2900100001)(476003)(316002)(76176011)(446003)(11346002)(102836004)(110136005)(2616005)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:DF4PR8401MB0427;H:DF4PR8401MB0396.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: /Vx129bcDkUm9Si9WxEAWf7B9s9PbZSHiyfHilzeFX1VdzjfnuXNq0WznOhIyBMcvXhnGIOC5BAkOWVBv+4io9cQuZG7KEaqAbOqSlllQJxgIykf0ED1+2aFCVgNUppqnbt3/WUR9QnMrLUWJDtoAuZ88l7RCj1DUb0gaNVERWDHNp+mOnHozy47y9juAJh/Kpdes7uEaS8m5nqcxNQEoxW0217J6SvEIb/ArhZZq74mczzqBfYMSFtmQo5279WhOaXNljzYZiUuCjFylkfgBdBsR851q8+BDm4TT8zGGnpaKTYv3TIv3lc8hf3XZaBpv1zajCUJc2+vkTv7YJF5Gg==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4B7159EA4D81F34B9E57922E4D8B0ADA@NAMPRD84.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180327201700.xmgzgqox3sz3z32r@xps>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4aab7830-df61-4cff-810f-08d594230ae6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2018 20:40:56.9656
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DF4PR8401MB0427
+X-OriginatorOrg: hpe.com
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 27, 2018 at 03:17:00PM -0500, Dan Rue wrote:
-> On Tue, Mar 27, 2018 at 06:27:24PM +0200, Greg Kroah-Hartman wrote:
-> > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Toshi Kani <toshi.kani@hpe.com>
-> > 
-> > commit b6bdb7517c3d3f41f20e5c2948d6bc3f8897394e upstream.
-> > 
-> > On architectures with CONFIG_HAVE_ARCH_HUGE_VMAP set, ioremap() may
-> > create pud/pmd mappings.  A kernel panic was observed on arm64 systems
-> > with Cortex-A75 in the following steps as described by Hanjun Guo.
-> > 
-> >  1. ioremap a 4K size, valid page table will build,
-> >  2. iounmap it, pte0 will set to 0;
-> >  3. ioremap the same address with 2M size, pgd/pmd is unchanged,
-> >     then set the a new value for pmd;
-> >  4. pte0 is leaked;
-> >  5. CPU may meet exception because the old pmd is still in TLB,
-> >     which will lead to kernel panic.
-> > 
-> > This panic is not reproducible on x86.  INVLPG, called from iounmap,
-> > purges all levels of entries associated with purged address on x86.  x86
-> > still has memory leak.
-> > 
-> > The patch changes the ioremap path to free unmapped page table(s) since
-> > doing so in the unmap path has the following issues:
-> > 
-> >  - The iounmap() path is shared with vunmap(). Since vmap() only
-> >    supports pte mappings, making vunmap() to free a pte page is an
-> >    overhead for regular vmap users as they do not need a pte page freed
-> >    up.
-> > 
-> >  - Checking if all entries in a pte page are cleared in the unmap path
-> >    is racy, and serializing this check is expensive.
-> > 
-> >  - The unmap path calls free_vmap_area_noflush() to do lazy TLB purges.
-> >    Clearing a pud/pmd entry before the lazy TLB purges needs extra TLB
-> >    purge.
-> > 
-> > Add two interfaces, pud_free_pmd_page() and pmd_free_pte_page(), which
-> > clear a given pud/pmd entry and free up a page for the lower level
-> > entries.
-> > 
-> > This patch implements their stub functions on x86 and arm64, which work
-> > as workaround.
-> > 
-> > [akpm@linux-foundation.org: fix typo in pmd_free_pte_page() stub]
-> > Link: http://lkml.kernel.org/r/20180314180155.19492-2-toshi.kani@hpe.com
-> > Fixes: e61ce6ade404e ("mm: change ioremap to set up huge I/O mappings")
-> > Reported-by: Lei Li <lious.lilei@hisilicon.com>
-> > Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Wang Xuefeng <wxf.wang@hisilicon.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Hanjun Guo <guohanjun@huawei.com>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Borislav Petkov <bp@suse.de>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: Chintan Pandya <cpandya@codeaurora.org>
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> > Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> This patch causes the following build error on 4.4 arm64:
-> 
-> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build-arm64 defconfig
-> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build-arm64
-> 
->   CC      arch/arm64/mm/mmu.o
-> ../arch/arm64/mm/mmu.c:701:5: error: redefinition of ‘pud_free_pmd_page’
->  int pud_free_pmd_page(pud_t *pud)
->      ^~~~~~~~~~~~~~~~~
-> In file included from ../arch/arm64/include/asm/pgtable.h:682:0,
->                  from ../include/linux/mm.h:55,
->                  from ../include/linux/mman.h:4,
->                  from ../arch/arm64/mm/mmu.c:25:
-> ../include/asm-generic/pgtable.h:777:19: note: previous definition of ‘pud_free_pmd_page’ was here
->  static inline int pud_free_pmd_page(pud_t *pud)
->                    ^~~~~~~~~~~~~~~~~
-> ../arch/arm64/mm/mmu.c:706:5: error: redefinition of ‘pmd_free_pte_page’
->  int pmd_free_pte_page(pmd_t *pmd)
->      ^~~~~~~~~~~~~~~~~
-> In file included from ../arch/arm64/include/asm/pgtable.h:682:0,
->                  from ../include/linux/mm.h:55,
->                  from ../include/linux/mman.h:4,
->                  from ../arch/arm64/mm/mmu.c:25:
-> ../include/asm-generic/pgtable.h:781:19: note: previous definition of ‘pmd_free_pte_page’ was here
->  static inline int pmd_free_pte_page(pmd_t *pmd)
->                    ^~~~~~~~~~~~~~~~~
-> make[2]: *** [../scripts/Makefile.build:270: arch/arm64/mm/mmu.o] Error 1
-> make[1]: *** [/home/drue/src/linux/4.4-rc/Makefile:969: arch/arm64/mm] Error 2
-> make[1]: Leaving directory '/home/drue/src/linux/4.4-rc/build-arm64'
-> make: *** [Makefile:152: sub-make] Error 2
-> 
-> 
-
-Both of my arm64 devices built fine with this patch... It seems like
-the only way to hit that error is if HAVE_ARCH_HUGE_VMAP isn't set,
-which seems impossible since it is selected by ARM64...
-
-Someone smarter than I might have more insight but this patch is
-unchanged from upstream so I can only assume that this error would
-manifest there as well.
-
-Cheers!
-Nathan
+T24gVHVlLCAyMDE4LTAzLTI3IGF0IDEzOjMxIC0wNzAwLCBOYXRoYW4gQ2hhbmNlbGxvciB3cm90
+ZToNCj4gT24gVHVlLCBNYXIgMjcsIDIwMTggYXQgMDM6MTc6MDBQTSAtMDUwMCwgRGFuIFJ1ZSB3
+cm90ZToNCj4gPiBPbiBUdWUsIE1hciAyNywgMjAxOCBhdCAwNjoyNzoyNFBNICswMjAwLCBHcmVn
+IEtyb2FoLUhhcnRtYW4gd3JvdGU6DQo+ID4gPiA0LjQtc3RhYmxlIHJldmlldyBwYXRjaC4gIElm
+IGFueW9uZSBoYXMgYW55IG9iamVjdGlvbnMsIHBsZWFzZSBsZXQgbWUga25vdy4NCj4gPiA+IA0K
+IDoNCj4gPiANCj4gPiBUaGlzIHBhdGNoIGNhdXNlcyB0aGUgZm9sbG93aW5nIGJ1aWxkIGVycm9y
+IG9uIDQuNCBhcm02NDoNCj4gPiANCj4gPiAkIG1ha2UgQVJDSD1hcm02NCBDUk9TU19DT01QSUxF
+PWFhcmNoNjQtbGludXgtZ251LSBPPWJ1aWxkLWFybTY0IGRlZmNvbmZpZw0KPiA+ICQgbWFrZSBB
+UkNIPWFybTY0IENST1NTX0NPTVBJTEU9YWFyY2g2NC1saW51eC1nbnUtIE89YnVpbGQtYXJtNjQN
+Cj4gPiANCj4gPiAgIENDICAgICAgYXJjaC9hcm02NC9tbS9tbXUubw0KPiA+IC4uL2FyY2gvYXJt
+NjQvbW0vbW11LmM6NzAxOjU6IGVycm9yOiByZWRlZmluaXRpb24gb2Yg4oCYcHVkX2ZyZWVfcG1k
+X3BhZ2XigJkNCj4gPiAgaW50IHB1ZF9mcmVlX3BtZF9wYWdlKHB1ZF90ICpwdWQpDQo+ID4gICAg
+ICBefn5+fn5+fn5+fn5+fn5+fg0KPiA+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSAuLi9hcmNoL2Fy
+bTY0L2luY2x1ZGUvYXNtL3BndGFibGUuaDo2ODI6MCwNCj4gPiAgICAgICAgICAgICAgICAgIGZy
+b20gLi4vaW5jbHVkZS9saW51eC9tbS5oOjU1LA0KPiA+ICAgICAgICAgICAgICAgICAgZnJvbSAu
+Li9pbmNsdWRlL2xpbnV4L21tYW4uaDo0LA0KPiA+ICAgICAgICAgICAgICAgICAgZnJvbSAuLi9h
+cmNoL2FybTY0L21tL21tdS5jOjI1Og0KPiA+IC4uL2luY2x1ZGUvYXNtLWdlbmVyaWMvcGd0YWJs
+ZS5oOjc3NzoxOTogbm90ZTogcHJldmlvdXMgZGVmaW5pdGlvbiBvZiDigJhwdWRfZnJlZV9wbWRf
+cGFnZeKAmSB3YXMgaGVyZQ0KPiA+ICBzdGF0aWMgaW5saW5lIGludCBwdWRfZnJlZV9wbWRfcGFn
+ZShwdWRfdCAqcHVkKQ0KPiA+ICAgICAgICAgICAgICAgICAgICBefn5+fn5+fn5+fn5+fn5+fg0K
+PiA+IC4uL2FyY2gvYXJtNjQvbW0vbW11LmM6NzA2OjU6IGVycm9yOiByZWRlZmluaXRpb24gb2Yg
+4oCYcG1kX2ZyZWVfcHRlX3BhZ2XigJkNCj4gPiAgaW50IHBtZF9mcmVlX3B0ZV9wYWdlKHBtZF90
+ICpwbWQpDQo+ID4gICAgICBefn5+fn5+fn5+fn5+fn5+fg0KPiA+IEluIGZpbGUgaW5jbHVkZWQg
+ZnJvbSAuLi9hcmNoL2FybTY0L2luY2x1ZGUvYXNtL3BndGFibGUuaDo2ODI6MCwNCj4gPiAgICAg
+ICAgICAgICAgICAgIGZyb20gLi4vaW5jbHVkZS9saW51eC9tbS5oOjU1LA0KPiA+ICAgICAgICAg
+ICAgICAgICAgZnJvbSAuLi9pbmNsdWRlL2xpbnV4L21tYW4uaDo0LA0KPiA+ICAgICAgICAgICAg
+ICAgICAgZnJvbSAuLi9hcmNoL2FybTY0L21tL21tdS5jOjI1Og0KPiA+IC4uL2luY2x1ZGUvYXNt
+LWdlbmVyaWMvcGd0YWJsZS5oOjc4MToxOTogbm90ZTogcHJldmlvdXMgZGVmaW5pdGlvbiBvZiDi
+gJhwbWRfZnJlZV9wdGVfcGFnZeKAmSB3YXMgaGVyZQ0KPiA+ICBzdGF0aWMgaW5saW5lIGludCBw
+bWRfZnJlZV9wdGVfcGFnZShwbWRfdCAqcG1kKQ0KPiA+ICAgICAgICAgICAgICAgICAgICBefn5+
+fn5+fn5+fn5+fn5+fg0KPiA+IG1ha2VbMl06ICoqKiBbLi4vc2NyaXB0cy9NYWtlZmlsZS5idWls
+ZDoyNzA6IGFyY2gvYXJtNjQvbW0vbW11Lm9dIEVycm9yIDENCj4gPiBtYWtlWzFdOiAqKiogWy9o
+b21lL2RydWUvc3JjL2xpbnV4LzQuNC1yYy9NYWtlZmlsZTo5Njk6IGFyY2gvYXJtNjQvbW1dIEVy
+cm9yIDINCj4gPiBtYWtlWzFdOiBMZWF2aW5nIGRpcmVjdG9yeSAnL2hvbWUvZHJ1ZS9zcmMvbGlu
+dXgvNC40LXJjL2J1aWxkLWFybTY0Jw0KPiA+IG1ha2U6ICoqKiBbTWFrZWZpbGU6MTUyOiBzdWIt
+bWFrZV0gRXJyb3IgMg0KPiA+IA0KPiA+IA0KPiANCj4gQm90aCBvZiBteSBhcm02NCBkZXZpY2Vz
+IGJ1aWx0IGZpbmUgd2l0aCB0aGlzIHBhdGNoLi4uIEl0IHNlZW1zIGxpa2UNCj4gdGhlIG9ubHkg
+d2F5IHRvIGhpdCB0aGF0IGVycm9yIGlzIGlmIEhBVkVfQVJDSF9IVUdFX1ZNQVAgaXNuJ3Qgc2V0
+LA0KPiB3aGljaCBzZWVtcyBpbXBvc3NpYmxlIHNpbmNlIGl0IGlzIHNlbGVjdGVkIGJ5IEFSTTY0
+Li4uDQo+IA0KPiBTb21lb25lIHNtYXJ0ZXIgdGhhbiBJIG1pZ2h0IGhhdmUgbW9yZSBpbnNpZ2h0
+IGJ1dCB0aGlzIHBhdGNoIGlzDQo+IHVuY2hhbmdlZCBmcm9tIHVwc3RyZWFtIHNvIEkgY2FuIG9u
+bHkgYXNzdW1lIHRoYXQgdGhpcyBlcnJvciB3b3VsZA0KPiBtYW5pZmVzdCB0aGVyZSBhcyB3ZWxs
+Lg0KDQpJdCBhcHBlYXJzIHRoYXQgSEFWRV9BUkNIX0hVR0VfVk1BUCB3YXMgaW50cm9kdWNlZCBp
+biA0LjYgb24gYXJtNjQuIA0KSGVuY2UgdGhlIHByb2JsZW0gaW4gNC40Lg0KDQpUaGFua3MsDQot
+VG9zaGkNCg0K
