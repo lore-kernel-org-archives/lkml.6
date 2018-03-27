@@ -1,136 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeC0VAh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:00:37 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35371 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752046AbeC0VAa (ORCPT
+        id S1752027AbeC0VEK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:04:10 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40411 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeC0VEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:00:30 -0400
-X-Google-Smtp-Source: AIpwx482KsY96eHEMCY7LzmY/61uuZDrTY3L+igdEN8Zok/qv4ABkUJ7xWlpTU3hTRu18/KAze4qQg==
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>
-Cc: Pan Xiuli <xiuli.pan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        Kirill Marinushkin <k.marinushkin@gmail.com>
-Subject: [PATCH, alsa-lib, v3 2/2] ASoC: topology: Add missing clock gating parameter when parsing hw_configs
-Date: Tue, 27 Mar 2018 23:00:50 +0200
-Message-Id: <20180327210050.3728-3-k.marinushkin@gmail.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180327210050.3728-1-k.marinushkin@gmail.com>
-References: <20180327205632.3677-1-k.marinushkin@gmail.com>
- <20180327210050.3728-1-k.marinushkin@gmail.com>
+        Tue, 27 Mar 2018 17:04:09 -0400
+X-Google-Smtp-Source: AIpwx4/h7DL6l7hifmFsdAfKXEF3LL8cY3XyuUy2j9iDc70BMILD3BR/APvdTk8Fhvu5u1t2ZnP8TA==
+Subject: Re: [PATCH v2] aspeed: watchdog: Set bootstatus during probe
+To: Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-watchdog@vger.kernel.org
+Cc: openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        wim@linux-watchdog.org, joel@jms.id.au
+References: <1522181367-11231-1-git-send-email-eajames@linux.vnet.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <09152d5f-5b49-9b8b-5ac3-829a2c9aab2e@roeck-us.net>
+Date: Tue, 27 Mar 2018 14:04:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1522181367-11231-1-git-send-email-eajames@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clock gating parameter is a part of `dai_fmt`. It is supported by
-`alsa-lib` when creating a topology binary file, but ignored by kernel
-when loading this topology file.
+On 03/27/2018 01:09 PM, Eddie James wrote:
+> Check the aspeed timeout status register to see if the system has booted
+> from the secondary boot source. If so, set the watchdog device
+> bootstatus flag for "Card previously reset the CPU."
+> 
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 
-After applying this commit, the clock gating parameter is not ignored any
-more. This solution is backwards compatible. The existing behaviour is
-not broken, because by default the parameter value is 0 and is ignored.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-snd_soc_tplg_hw_config.clock_gated = 0 => no effect
-snd_soc_tplg_hw_config.clock_gated = 1 => SND_SOC_DAIFMT_GATED
-snd_soc_tplg_hw_config.clock_gated = 2 => SND_SOC_DAIFMT_CONT
-
-For example, the following config, based on
-alsa-lib/src/conf/topology/broadwell/broadwell.conf, is now supported:
-
-~~~~
-SectionHWConfig."CodecHWConfig" {
-        id "1"
-        format "I2S"            # physical audio format.
-        pm_gate_clocks "true"   # clock can be gated
-}
-
-SectionLink."Codec" {
-
-        # used for binding to the physical link
-        id "0"
-
-        hw_configs [
-                "CodecHWConfig"
-        ]
-
-        default_hw_conf_id "1"
-}
-~~~~
-
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Pan Xiuli <xiuli.pan@linux.intel.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: alsa-devel@alsa-project.org
----
- include/sound/asoc.h | 7 ++++++-
- include/topology.h   | 2 +-
- src/topology/pcm.c   | 6 +++++-
- 3 files changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/include/sound/asoc.h b/include/sound/asoc.h
-index 89b00703..297e837c 100644
---- a/include/sound/asoc.h
-+++ b/include/sound/asoc.h
-@@ -135,6 +135,11 @@
- #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_CHANNELS      (1 << 1)
- #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
- 
-+/* DAI clock gating */
-+#define SND_SOC_TPLG_DAI_CLK_GATE_UNDEFINED	0
-+#define SND_SOC_TPLG_DAI_CLK_GATE_GATED	1
-+#define SND_SOC_TPLG_DAI_CLK_GATE_CONT		2
-+
- /* DAI physical PCM data formats.
-  * Add new formats to the end of the list.
-  */
-@@ -320,7 +325,7 @@ struct snd_soc_tplg_hw_config {
- 	__le32 size;            /* in bytes of this structure */
- 	__le32 id;		/* unique ID - - used to match */
- 	__le32 fmt;		/* SND_SOC_DAI_FORMAT_ format value */
--	__u8 clock_gated;	/* 1 if clock can be gated to save power */
-+	__u8 clock_gated;	/* SND_SOC_TPLG_DAI_CLK_GATE_ value */
- 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
- 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
- 	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
-diff --git a/include/topology.h b/include/topology.h
-index 5d7b46df..3793115c 100644
---- a/include/topology.h
-+++ b/include/topology.h
-@@ -997,7 +997,7 @@ struct snd_tplg_pcm_template {
- struct snd_tplg_hw_config_template {
- 	int id;                         /* unique ID - - used to match */
- 	unsigned int fmt;               /* SND_SOC_DAI_FORMAT_ format value */
--	unsigned char clock_gated;      /* 1 if clock can be gated to save power */
-+	unsigned char clock_gated;      /* SND_SOC_TPLG_DAI_CLK_GATE_ value */
- 	unsigned char  invert_bclk;     /* 1 for inverted BCLK, 0 for normal */
- 	unsigned char  invert_fsync;    /* 1 for inverted frame clock, 0 for normal */
- 	unsigned char  bclk_master;     /* SND_SOC_TPLG_BCLK_ value */
-diff --git a/src/topology/pcm.c b/src/topology/pcm.c
-index d0395182..b53f6b03 100644
---- a/src/topology/pcm.c
-+++ b/src/topology/pcm.c
-@@ -1233,7 +1233,11 @@ int tplg_parse_hw_config(snd_tplg_t *tplg, snd_config_t *cfg,
- 				return -EINVAL;
- 
- 			if (!strcmp(val, "true"))
--				hw_cfg->clock_gated = true;
-+				hw_cfg->clock_gated =
-+					SND_SOC_TPLG_DAI_CLK_GATE_GATED;
-+			else
-+				hw_cfg->clock_gated =
-+					SND_SOC_TPLG_DAI_CLK_GATE_CONT;
- 			continue;
- 		}
- 
--- 
-2.13.6
+> ---
+> Changes since v1:
+>   - use bootstatus instead of status
+>   - use WDIOF_CARDRESET instead of raw register contents
+> 
+>   drivers/watchdog/aspeed_wdt.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+> index a5b8eb2..1abe4d0 100644
+> --- a/drivers/watchdog/aspeed_wdt.c
+> +++ b/drivers/watchdog/aspeed_wdt.c
+> @@ -55,6 +55,8 @@ struct aspeed_wdt_config {
+>   #define   WDT_CTRL_WDT_INTR		BIT(2)
+>   #define   WDT_CTRL_RESET_SYSTEM		BIT(1)
+>   #define   WDT_CTRL_ENABLE		BIT(0)
+> +#define WDT_TIMEOUT_STATUS	0x10
+> +#define   WDT_TIMEOUT_STATUS_BOOT_SECONDARY	BIT(1)
+>   
+>   /*
+>    * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
+> @@ -192,6 +194,7 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+>   	struct device_node *np;
+>   	const char *reset_type;
+>   	u32 duration;
+> +	u32 status;
+>   	int ret;
+>   
+>   	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+> @@ -307,6 +310,10 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+>   		writel(duration - 1, wdt->base + WDT_RESET_WIDTH);
+>   	}
+>   
+> +	status = readl(wdt->base + WDT_TIMEOUT_STATUS);
+> +	if (status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY)
+> +		wdt->wdd.bootstatus = WDIOF_CARDRESET;
+> +
+>   	ret = devm_watchdog_register_device(&pdev->dev, &wdt->wdd);
+>   	if (ret) {
+>   		dev_err(&pdev->dev, "failed to register\n");
+> 
