@@ -1,81 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751060AbeC0F00 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 01:26:26 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:59350 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750880AbeC0F0X (ORCPT
+        id S1751103AbeC0F1x (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 01:27:53 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46966 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750869AbeC0F1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 01:26:23 -0400
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Suman Anna <s-anna@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC: David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        devicetree <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
- <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
- <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
- <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
- <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
- <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
- <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <44218403-5e7f-dd12-6d01-a52987fc4cc8@ti.com>
-Date: Tue, 27 Mar 2018 10:54:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Mar 2018 01:27:52 -0400
+Date: Tue, 27 Mar 2018 07:27:36 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Palmer Dabbelt <palmer@sifive.com>
+cc: Arnd Bergmann <arnd@arndb.de>, fengguang.wu@intel.com,
+        kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
+Subject: Re: [tip:irq/core 12/13] drivers/irqchip/irq-vic.c:295:2: error:
+ implicit declaration of function 'set_handle_irq'; did you mean
+ 'vic_handle_irq'?
+In-Reply-To: <mhng-ca8cf5ce-3363-405e-ab78-bbbe4f79dbcd@palmer-si-x1c4>
+Message-ID: <alpine.DEB.2.21.1803270726140.1537@nanos.tec.linutronix.de>
+References: <mhng-ca8cf5ce-3363-405e-ab78-bbbe4f79dbcd@palmer-si-x1c4>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suman,
-
-On Tuesday 27 March 2018 06:12 AM, Suman Anna wrote:
-> I tried booting your tree [3] on the OMAPL138-LCDK board. I am using
-> NFS, and I am unable to get to the console. I don't have any issues
-> booting latest -next branch (next-20180326) which only has the reset and
-> clock driver related changes.
+On Mon, 26 Mar 2018, Palmer Dabbelt wrote:
+> On Mon, 26 Mar 2018 01:07:54 PDT (-0700), Arnd Bergmann wrote:
+> > On Tue, Mar 20, 2018 at 6:52 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
+> > > On Tue, 20 Mar 2018 00:53:21 PDT (-0700), tglx@linutronix.de wrote:
+> > > > 
+> > > > On Tue, 20 Mar 2018, kbuild test robot wrote:
+> > > > 
+> > > > > Hi Palmer,
+> > > > > 
+> > > > > FYI, the error/warning still remains.
+> > > > 
+> > > > 
+> > > > Zapped the commit as well...
+> > > 
+> > > 
+> > > Sorry, I got the flu at ELC and have been offline for a bit.  It looks
+> > > like
+> > > you've kept the IRQ and RISC-V patches, I'll fix up the others are
+> > > re-submit
+> > > them as a separate patch set.
+> > 
+> > Not sure which patches are in flight at the moment. To get a clean build
+> > on arm32 and arm64 randconfig kernels, I needed the fixup below
+> > on top of linux-next (not meant to be applied like this, just for
+> > reference).
 > 
-> Here's the log towards the end of the boot..
-> ---
-> pinctrl-single 1c14120.pinmux: 160 pins, size 80
-> Serial: 8250/16550 driver, 3 ports, IRQ sharing disabled
-> console [ttyS2] disabled
-> 1d0d000.serial: ttyS2 at MMIO 0x1d0d000 (irq = 61, base_baud = 8250000)
-> is a TI DA8xx/66AK2x
-> console [ttyS2] enabled
-> brd: module loaded
-> libphy: Fixed MDIO Bus: probed
-> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
-> davinci_mdio 1e24000.mdio: no live phy, scanning all
-> davinci_mdio: probe of 1e24000.mdio failed with error -5
-> i2c /dev entries driver
-> <nothing after this>
+> Thanks, I missed these during my original patch submission.  I think the
+> cleanest way to submit this is to spin a whole new patch set, including those
+> that are already in tip.  Would it be possible to just remove my IRQ cleanups
+> from tip so I can try again?
 
-This is because of a bug in bootloader PLL configuration which got
-uncovered only with CCF conversion. The bootloader that comes
-pre-flashed with the board or the latest U-Boot master should work fine.
+The commits in tip right now are:
 
-Here is the log with latest U-Boot master:
-https://pastebin.ubuntu.com/p/HkwY9g4YDc/
+  cc6c98485f8e ("RISC-V: Move to the new GENERIC_IRQ_MULTI_HANDLER handler")
+  caacdbf4aa56 ("genirq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER")
+
+I surely can revert them, but I don't see how they would break arm or
+anything else.
 
 Thanks,
-Sekhar
+
+	tglx
