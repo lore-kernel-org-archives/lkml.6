@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-195729-1522174029-2-1182258358165595982
+X-Cyrus-Session-Id: sloti22d1t05-195729-1522174005-2-1498309651520789569
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522174028; b=AtoOoXTBWbAYETzWeEGrsQVcZJ/Q6DQU20oM8+1KtMfFR+P
-    3dYwPyAIiPgjXtcnGEkMl6AwdYx1haQgPcVxk1/D9y0/HaJdUtcxVaDFX+Z8rhVL
-    CAq1+EmWhd5nhri+SmL0dZlYd9d+bW8doF+L5fsnAil8MAFM6hHdz1RltqdC/ZvV
-    eSih+q39SADRdLKOYcxilujGOunY0Yh8c/KrOqf3/i/1jQxxgAY+6DY9MiW4O3jG
-    rxQ6hzpX+rVaoRmMqshyJxM+MefyzU3FBOqR8Nu+ZMAsQgJoeWQrKV7AcN0mVM4C
-    rMZzQWJ1mdNhYcyZ6mKwmN2tJUllyYGWvJTEXUg==
+    t=1522174005; b=sRqaj06WCR5eT/9Bk+KK+ZP+Cmrke7wA617o0FX6npkN0va
+    ZvIp1vOxB9CdOmtle+rEOm5wlUR6T6Xc4YI282Nc+p5tRJiERp0ikigFwSuaIZkj
+    b2o5zgZlnNUBfRDSIkWUQQW5kxEGXfng2d4pC5YVKKs9Oxs79QQke0S3vyz+IpP5
+    CG2IGtV0GuCpUmcQq4u1bgH7GAs1RqeBZdoc4j3/Kn/lDtlXp2NS083CtmRADR04
+    jMlVm9v2BbPcZtn3d+r3cY+EUqtcBt55b1PYahS/aBwlF3zjE/jMkUQq0HhNyV9T
+    dGyRwwlwDayEcDcAgxv6X9jfW+phk3LRjuaSRLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522174028; bh=wLSsoiBu+dloPJFCOTGUeLmw4C
-    +QkAtk9+xWdH/IRiA=; b=cvnSTDK31FOziyXDX2DLNqRuaZGohouEkZCTkcAjJM
-    0kxNWBt/5R7kI//tLhr0dpQuZQZRH5vjlVv2CJKNFZE+5RApejUKjYclStHfBPbs
-    vl7Q6DmheKpdWmhZCXl5PejTnO6eo+++c9ZJd0dmXmZlmxUldrUKqU0seQBzO1dm
-    iuL7ESrE5qVW95JkUPszDJEG97w97nVYNNm73zkLzxy3XgwVOqQjHvy+Ue8veJNt
-    sSzSo8NQMI0JeJgrpBqZMD9kzasFEwBkbuOFwM/YNJh6AUuYL7NhYTmbPPZ/E+8L
-    LSEjdw6SUyQDlpOA0u6H/pgKgJZHCAKWexshjSOGnvBw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1522174005; bh=UlEPmGP/T7QnhwO1qO4/EDae3h
+    o5kCFtirDBTMLChNU=; b=DQNE8Jr23GASIXcgWZvsOhrc+JKZ5Eth8GekXnsoUa
+    sKL4lsPPrqi2ycdZefJ+a5NUk1hI47/4WuXdHNQgB38oQPVawkOZARfEzRYpvTb5
+    2BcpPzeOHDIoAG7UoNS0RmgK+qkuNQ6E4Xj1oAEV48eUaT1x/YljguP6i+Uwf6Lz
+    538v18p8oaNyDUjM7qC+CiV7cPj3GPxpZDAPdBsdZ5On2Te399fZfFSy8gBJyZrv
+    bpRypYU639Sk71A1OuowEEvF570nGetyq9sMZqqPhckSO3ZINtyqe2/tZ7IRx3qF
+    Vp5Wvd0IYBJgmtfWD469J2SjUANFkVbD7GcEY3xj+I4Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,36 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHvJp8gw7f0QDGPoOQUlcdFJGJRSEKzfVb9Kt+GiqhS6gCl6g5j5QJT8EHKiQeKhfkavi22OE5NMu9pH1MIkQOeI3zYcD+dWaeeZ0PC+UWf6V3jTR7OH
-    rsQHuaZbvLRkax9Ds2gUSlm7kxcNMui7uYeP36lcRBbyj5iMFPSXvSsLN+FrJ4qObuiL/NpTPWCyS6YfNYxgSOtO/mSzAJn6XqBfPIMYxCqcm71N4ZM/iw0Q
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJBOyi4V4xNGIBj9p9uWUT7vHecWbATGK1m4crGXe1DAIzTMerMezt/eZlXHMfjRPQIx57DdnrC8KJGEInJ8JL7Q5dchkjXU89vx2D+vv0C+OPMOZuDs
+    wJes57dHqYmXZsXX3h7G2QQ6mpTolHj1fqy3IUVpFiiJZQmS+Wi21Gcw53tJPsLuou/o0zLrx9Ccs8/VTEDj944ff5Szt2f6Bq7YTw+VtGWSqU2tTRFji9bM
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VnNF1IyMAAAA:8
-    a=meVymXHHAAAA:8 a=ag1SF4gXAAAA:8 a=BQV-mDjgt7FdTzdlJ3EA:9
-    a=XwGrd_6rT4727E-e:21 a=wWYx5_dX2Ockn3iS:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=2JgSa4NbpEOStq-L5dxp:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8 a=ag1SF4gXAAAA:8
+    a=ucCKOs8ZBpaG-wBlNMIA:9 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=d3PnA9EDa4IxuAV0gXij:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeC0Q3g (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:29:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41392 "EHLO
+        id S1750922AbeC0SFr (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 14:05:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41408 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751349AbeC0Q3e (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:34 -0400
+        with ESMTP id S1752695AbeC0Q3g (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 28/43] tracing: probeevent: Fix to support minus offset from symbol
-Date: Tue, 27 Mar 2018 18:27:32 +0200
-Message-Id: <20180327162718.002283527@linuxfoundation.org>
+        stable@vger.kernel.org, Jagdish Gediya <jagdish.gediya@nxp.com>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.4 29/43] mtd: nand: fsl_ifc: Fix nand waitfunc return value
+Date: Tue, 27 Mar 2018 18:27:33 +0200
+Message-Id: <20180327162718.054406593@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -98,97 +93,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Jagdish Gediya <jagdish.gediya@nxp.com>
 
-commit c5d343b6b7badd1f5fe0873eff2e8d63a193e732 upstream.
+commit fa8e6d58c5bc260f4369c6699683d69695daed0a upstream.
 
-In Documentation/trace/kprobetrace.txt, it says
+As per the IFC hardware manual, Most significant 2 bytes in
+nand_fsr register are the outcome of NAND READ STATUS command.
 
- @SYM[+|-offs] : Fetch memory at SYM +|- offs (SYM should be a data symbol)
+So status value need to be shifted and aligned as per the nand
+framework requirement.
 
-However, the parser doesn't parse minus offset correctly, since
-commit 2fba0c8867af ("tracing/kprobes: Fix probe offset to be
-unsigned") drops minus ("-") offset support for kprobe probe
-address usage.
-
-This fixes the traceprobe_split_symbol_offset() to parse minus
-offset again with checking the offset range, and add a minus
-offset check in kprobe probe address usage.
-
-Link: http://lkml.kernel.org/r/152129028983.31874.13419301530285775521.stgit@devbox
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org
-Fixes: 2fba0c8867af ("tracing/kprobes: Fix probe offset to be unsigned")
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 82771882d960 ("NAND Machine support for Integrated Flash Controller")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
+Reviewed-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_kprobe.c |    4 ++--
- kernel/trace/trace_probe.c  |    8 +++-----
- kernel/trace/trace_probe.h  |    2 +-
- 3 files changed, 6 insertions(+), 8 deletions(-)
+ drivers/mtd/nand/fsl_ifc_nand.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -599,7 +599,7 @@ static int create_trace_kprobe(int argc,
- 	bool is_return = false, is_delete = false;
- 	char *symbol = NULL, *event = NULL, *group = NULL;
- 	char *arg;
--	unsigned long offset = 0;
-+	long offset = 0;
- 	void *addr = NULL;
- 	char buf[MAX_EVENT_NAME_LEN];
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -726,6 +726,7 @@ static int fsl_ifc_wait(struct mtd_info
+ 	struct fsl_ifc_ctrl *ctrl = priv->ctrl;
+ 	struct fsl_ifc_regs __iomem *ifc = ctrl->regs;
+ 	u32 nand_fsr;
++	int status;
  
-@@ -667,7 +667,7 @@ static int create_trace_kprobe(int argc,
- 		symbol = argv[1];
- 		/* TODO: support .init module functions */
- 		ret = traceprobe_split_symbol_offset(symbol, &offset);
--		if (ret) {
-+		if (ret || offset < 0 || offset > UINT_MAX) {
- 			pr_info("Failed to parse either an address or a symbol.\n");
- 			return ret;
- 		}
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -293,7 +293,7 @@ static fetch_func_t get_fetch_size_funct
+ 	/* Use READ_STATUS command, but wait for the device to be ready */
+ 	ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
+@@ -740,12 +741,12 @@ static int fsl_ifc_wait(struct mtd_info
+ 	fsl_ifc_run_command(mtd);
+ 
+ 	nand_fsr = ifc_in32(&ifc->ifc_nand.nand_fsr);
+-
++	status = nand_fsr >> 24;
+ 	/*
+ 	 * The chip always seems to report that it is
+ 	 * write-protected, even when it is not.
+ 	 */
+-	return nand_fsr | NAND_STATUS_WP;
++	return status | NAND_STATUS_WP;
  }
  
- /* Split symbol and offset. */
--int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset)
-+int traceprobe_split_symbol_offset(char *symbol, long *offset)
- {
- 	char *tmp;
- 	int ret;
-@@ -301,13 +301,11 @@ int traceprobe_split_symbol_offset(char
- 	if (!offset)
- 		return -EINVAL;
- 
--	tmp = strchr(symbol, '+');
-+	tmp = strpbrk(symbol, "+-");
- 	if (tmp) {
--		/* skip sign because kstrtoul doesn't accept '+' */
--		ret = kstrtoul(tmp + 1, 0, offset);
-+		ret = kstrtol(tmp, 0, offset);
- 		if (ret)
- 			return ret;
--
- 		*tmp = '\0';
- 	} else
- 		*offset = 0;
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -335,7 +335,7 @@ extern int traceprobe_conflict_field_nam
- extern void traceprobe_update_arg(struct probe_arg *arg);
- extern void traceprobe_free_probe_arg(struct probe_arg *arg);
- 
--extern int traceprobe_split_symbol_offset(char *symbol, unsigned long *offset);
-+extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
- 
- extern ssize_t traceprobe_probes_write(struct file *file,
- 		const char __user *buffer, size_t count, loff_t *ppos,
+ static int fsl_ifc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
