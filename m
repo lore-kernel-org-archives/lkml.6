@@ -1,73 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751088AbeC0GDl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:03:41 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50716 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750848AbeC0GDk (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:03:40 -0400
-X-Google-Smtp-Source: AG47ELsyYOqslONOYxelelhqnG/mDcEorDB801WnbTyNo7WDslXr+O4iSn8StTMXFJXENn3zaV9drA==
-Date: Tue, 27 Mar 2018 08:03:36 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Jin Yao <yao.jin@linux.intel.com>
+        id S1751231AbeC0GE7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:04:59 -0400
+Received: from mga02.intel.com ([134.134.136.20]:11159 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbeC0GE5 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 02:04:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
+   d="scan'208";a="29151307"
+Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
+ libraries
+To: Ingo Molnar <mingo@kernel.org>
 Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
         mingo@redhat.com, alexander.shishkin@linux.intel.com,
         Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
         yao.jin@intel.com
-Subject: Re: [PATCH v1 3/3] perf: Support perf -vv
-Message-ID: <20180327060336.gjdy442pkdc7k2rr@gmail.com>
 References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
- <1522080424-12912-4-git-send-email-yao.jin@linux.intel.com>
+ <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
+ <20180327055859.s2tjsvgdwd7cdkf7@gmail.com>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <46ad7f7c-83bb-340b-1de9-486f5cf5ca95@linux.intel.com>
+Date: Tue, 27 Mar 2018 14:04:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522080424-12912-4-git-send-email-yao.jin@linux.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180327055859.s2tjsvgdwd7cdkf7@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Jin Yao <yao.jin@linux.intel.com> wrote:
 
-> +++ b/tools/perf/perf.c
-> @@ -64,6 +64,7 @@ static struct cmd_struct commands[] = {
->  	{ "top",	cmd_top,	0 },
->  	{ "annotate",	cmd_annotate,	0 },
->  	{ "version",	cmd_version,	0 },
-> +	{ "version2",	cmd_version2,	0 },
->  	{ "script",	cmd_script,	0 },
->  	{ "sched",	cmd_sched,	0 },
->  #ifdef HAVE_LIBELF_SUPPORT
-> @@ -190,6 +191,11 @@ static int handle_options(const char ***argv, int *argc, int *envchanged)
->  			break;
->  		}
->  
-> +		if (!strcmp(cmd, "-vv")) {
-> +			(*argv)[0] = "--version2";
-> +			break;
-> +		}
+On 3/27/2018 1:58 PM, Ingo Molnar wrote:
+> 
+> * Jin Yao <yao.jin@linux.intel.com> wrote:
+> 
+>> +#ifdef HAVE_DWARF_SUPPORT
+>> +#ifdef HAVE_DWARF_GETLOCATIONS
+>> +#ifdef NO_GLIBC
+>> +#ifdef HAVE_GTK2_SUPPORT
+>> +#ifdef HAVE_LIBAUDIT_SUPPORT
+>> +#ifdef HAVE_LIBBFD_SUPPORT
+>> +#ifdef HAVE_LIBELF_SUPPORT
+>> +#ifdef HAVE_LIBNUMA_SUPPORT
+>> +#ifdef NO_LIBPERL
+>> +#ifdef NO_LIBPYTHON
+>> +#ifdef HAVE_SLANG_SUPPORT
+>> +#ifdef HAVE_LIBCRYPTO_SUPPORT
+>> +#ifdef HAVE_LIBUNWIND_SUPPORT
+>> +#ifdef HAVE_DWARF_SUPPORT
+>> +#ifdef HAVE_ZLIB_SUPPORT
+>> +#ifdef HAVE_LZMA_SUPPORT
+>> +#ifdef HAVE_AUXTRACE_SUPPORT
+>> +#ifdef HAVE_LIBBPF_SUPPORT
+> 
+> BTW., it would be nice at this point to fix those 3 outliers that have a negation
+> in their library support status macro:
+> 
+>> +#ifdef NO_GLIBC
+>> +#ifdef NO_LIBPERL
+>> +#ifdef NO_LIBPYTHON
+> 
+> ... and invert them back to the HAVE_* side of the logic:
+> 
+>> +#ifdef HAVE_GLIBC
+>> +#ifdef HAVE_LIBPERL
+>> +#ifdef HAVE_LIBPYTHON
+> 
+> That should make all related code more consistent and more readable.
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
 
-That is just lazy hackery, please use the regular option library to add options 
-and document them!
+Yes, it's better, thanks!
+I will try to convert them to the HAVE_*.
 
-Also, '--version2' is a sloppy name, the right solution is to do what Git does, it 
-has a --build-options sub-option to 'perf version':
-
-  triton:~/tip> git version -h
-  usage: git version [<options>]
-
-      --build-options       also print build options
-
-
-  triton:~/tip> git version --build-options
-  git version 2.14.1
-  sizeof-long: 8
-
-This should be done for perf as well, and _then_ maybe can we add a helper alias 
-that maps '-vv' to 'version --build-options'.
-
-Thanks,
-
-	Ingo
+Thanks
+Jin Yao
