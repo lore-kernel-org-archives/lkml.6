@@ -1,115 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeC0VbB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:31:01 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42800 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750966AbeC0Va7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:30:59 -0400
-X-Google-Smtp-Source: AIpwx4+RdWJ5kFkTm8tWXlVdm+GFm3YCRC8wWc6JO6rkQaywbjQygER9ggjtiY5o68BeuVITAk46Qw==
-Date: Tue, 27 Mar 2018 14:30:57 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 07/24] mm: VMA sequence count
-In-Reply-To: <1520963994-28477-8-git-send-email-ldufour@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1803271429230.36401@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-8-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1752021AbeC0Veb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:34:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54022 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751088AbeC0Ve3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:34:29 -0400
+From: NeilBrown <neilb@suse.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 28 Mar 2018 08:34:19 +1100
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] rhashtable: support guaranteed successful insertion.
+In-Reply-To: <20180327155610.GD14001@gondor.apana.org.au>
+References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718434.11435.6551477417902631683.stgit@noble> <20180327155610.GD14001@gondor.apana.org.au>
+Message-ID: <87y3id42zo.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Laurent Dufour wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index faf85699f1a1..5898255d0aeb 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -558,6 +558,10 @@ void __vma_link_rb(struct mm_struct *mm, struct vm_area_struct *vma,
->  	else
->  		mm->highest_vm_end = vm_end_gap(vma);
->  
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +	seqcount_init(&vma->vm_sequence);
-> +#endif
-> +
->  	/*
->  	 * vma->vm_prev wasn't known when we followed the rbtree to find the
->  	 * correct insertion point for that vma. As a result, we could not
-> @@ -692,6 +696,30 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
->  	long adjust_next = 0;
->  	int remove_next = 0;
->  
-> +	/*
-> +	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
-> +	 *
-> +	 * Locked is complaining about a theoretical lock dependency, involving
-> +	 * 3 locks:
-> +	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
-> +	 *
-> +	 * Here are the major path leading to this dependency :
-> +	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
-> +	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
-> +	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
-> +	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
-> +	 *
-> +	 * So there is no way to solve this easily, especially because in
-> +	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
-> +	 * VMAs are not yet known.
-> +	 * However, the way the vm_seq is used is guarantying that we will
-> +	 * never block on it since we just check for its value and never wait
-> +	 * for it to move, see vma_has_changed() and handle_speculative_fault().
-> +	 */
-> +	vm_raw_write_begin(vma);
-> +	if (next)
-> +		vm_raw_write_begin(next);
-> +
->  	if (next && !insert) {
->  		struct vm_area_struct *exporter = NULL, *importer = NULL;
->  
+On Tue, Mar 27 2018, Herbert Xu wrote:
 
-Eek, what about later on:
+> On Tue, Mar 27, 2018 at 10:33:04AM +1100, NeilBrown wrote:
+>> The current rhashtable will fail an insertion if the hashtable
+>> it "too full", one of:
+>>  - table already has 2^31 elements (-E2BIG)
+>>  - a max_size was specified and table already has that
+>>    many elements (rounded up to power of 2) (-E2BIG)
+>>  - a single chain has more than 16 elements (-EBUSY)
+>>  - table has more elements than the current table size,
+>>    and allocating a new table fails (-ENOMEM)
+>>  - a new page needed to be allocated for a nested table,
+>>    and the memory allocation failed (-ENOMEM).
+>>=20
+>> A traditional hash table does not have a concept of "too full", and
+>> insertion only fails if the key already exists.  Many users of hash
+>> tables have separate means of limiting the total number of entries,
+>> and are not susceptible to an attack which could cause unusually large
+>> hash chains.  For those users, the need to check for errors when
+>> inserting objects to an rhashtable is an unnecessary burden and hence
+>> a potential source of bugs (as these failures are likely to be rare).
+>
+> Did you actually encounter an insertion failure? The current code
+> should never fail an insertion until you actually run ouf memory.
+> That is unless you're using rhashtable when you should be using
+> rhlist instead.
 
-		/*
-		 * Easily overlooked: when mprotect shifts the boundary,
-		 * make sure the expanding vma has anon_vma set if the
-		 * shrinking vma had, to cover any anon pages imported.
-		 */
-		if (exporter && exporter->anon_vma && !importer->anon_vma) {
-			int error;
+It is easy to get an -EBUSY insertion failure when .disable_count is
+enabled, and I did get that.  Blindly propagating that up caused lustre
+to get terribly confused - not too surprising really.
 
-			importer->anon_vma = exporter->anon_vma;
-			error = anon_vma_clone(importer, exporter);
-			if (error)
-				return error;
-		}
+Even if I didn't seem errors in practive, if the interface can return an
+error, then I need to check for the error and really should test that
+handling each error works correctly.  It is much easier to write
+reliable code when errors cannot happen, so I'd rather have that option.
 
-This needs
+Thanks,
+NeilBrown
 
-if (error) {
-	if (next && next != vma)
-		vm_raw_write_end(next);
-	vm_raw_write_end(vma);
-	return error;
-}
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq6uNsACgkQOeye3VZi
+gbkoRA/9FR1eT6z4NUj1YbDVyUfZUKROfMiIk3s5TFS0yrgk6LSxqvpJshjgEw5z
+SwBj4s0u7Rb6cwJzYDLrF6bGN6Plh3gMgeftofjyn7u0DjS70JsgN6gOe6QGEX9R
+f7285QHAH1m3YFJn402Y+J0BdgSPL8ZZLZ1QY4bIfPKBOd3I/JTBCfMUwjy2/Utk
+78/ul8cdFyt0xzNCb4zs0GZTB8VdCk3rLzaYm/IyUGP8BVGw4HAqOhCmnMu0lcNv
+4/8NzMOoc2IJOh+kF8B5fMs8bDknvqoiX3DYWuAQuRJJGDm2YQoS2lhQXk2DFdhc
+PXdqLPtQAdM3nywIKWWXgc3SwuHkCSiSw+irYVmFpuJ7wwS8rToWOH+9bgdk1Htu
+F+8shb/MVq/GqlkSLMsiIm3XbuC1uXsHzJK2kjA/fUufXEAVtKdPVDjS4TQKTRjM
+XaHYiH9DNXoQc4E6MRRhawgen2vMkbtEwdD/SjqBjNo2uln/mRFfhy/ya9uI36Rl
+l/sOYn4ymSkT63VyV46LfT+rMALoqv3IA9KS1Hx1BPpW1PT69Ry8zlbsorK/f50a
+I0AFsurfKxRRBDU72VpTUwgP3tpVgs4xHQcrbqI53uIMyg3s5rDerYw7WSteLnyk
+sf0Vo/edHOMGP0W5eLn5XheVxcUgGkEfgkSF+ENKHGbfkJuVTb0=
+=5Aze
+-----END PGP SIGNATURE-----
+--=-=-=--
