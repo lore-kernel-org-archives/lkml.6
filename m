@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+v4kAxN9N2pGv0t5YFYD8mb+VXhgLTlyyisunzzdcqFDiaWaQLuDbdN/z+dXvHVwGpLg++
-ARC-Seal: i=1; a=rsa-sha256; t=1522168674; cv=none;
+X-Google-Smtp-Source: AIpwx496s3d54cWNNWPN9uMqC9GBcGA34S2MgiXVCY3J5AGPDX+4qmzj6dwxabKpS+3LSa08gPmZ
+ARC-Seal: i=1; a=rsa-sha256; t=1522168671; cv=none;
         d=google.com; s=arc-20160816;
-        b=kpVlmQMVdnH9D0CV1+Q7BdERDr3P+r91hWZeIK16Tas1pMKGcum8wOpu5988u1A+Tt
-         VGCiGv2acRi4DZzqhJzE/eAq7mvRuzQsVPGwRkrTDnEUSWqw2w2DstaW+8H8J/R/ZuPy
-         mWpx1uADeJKO4MuFaLb+adOTgOt9FGgRKkep9yxPkZIZu+VYMXrc0IctLdInkysbNFmC
-         hKvpx3HjfJo5FT3oResqPF9mOP+DTt4g4WUHCKw5GpYXbBLwFMTm56AkhIfgSUOcwveX
-         yQMG7d5hQ63XiXys2903/sQ8MgGeMBmvC9K3Z8M/KAn0LVdgnr3eDhfXY1W5Tp1Tg6vP
-         ArQQ==
+        b=x7cHYTDBRX9M+Um5Abp7UTyZbVma31oFO8YRi1AsDulYki/nKtpWyAH26gn3+kEQdA
+         9FSWO9ht1wVSdNhDMTgiBe1fsPCitpmJ6epbPwtq3HWd7VvufuAXeeulLftjFxymg8uq
+         xpV0b6tDj5uICO4Txq/pU/nahWbEcKm+bmCQ0No2hpA+p5asxegDBdZKIL45+inNMmrI
+         44sU0fuQ2/jWHXRLinr+OugJUpYBQ+sjoWlvUAlg1nnvd6mgk7UhXpHgLw7myUUxHiYp
+         dB8BkADEiBEv0X4m9bzSBzD+JDKOpTgzMXUkWLQycNg7x0J5wOzA8o5HoYKLT/iegDrN
+         PDAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8jJ+Lp6APAakdDyQ4kvaeHoMlysCz07HN1ZD5tGvh9s=;
-        b=Yjipxzp5mqnvLGn4dTi5SdKGmWpSuBIU8MaCIsWRS8YPRSB/vkOQTNeMSUAj/ycoqd
-         Fn3cUqwFkyEdxRwaFGiwxdMgE3Dp20yDmcPMSxdZNwtj5Rm+E50R1Xkw7QZwXZcdTw+c
-         n0v3U5JdnWTDKtkSI8jQUFCT/vc3T4kWsNZNjAU9pFimWaHY8brt10QYi27hvfj6Dnxe
-         68wL4Hg5ZaimwlPpJkIv+Tvuc5zF5UEN61aHM+R/mPju4dGiNZMRRARC1y8LD+muIGk6
-         epKkext/r7A727rIDiQL0rBSqEop85hUF3JlaZiRTC8a2U8eL/jIB4ucZnUnxd98tlaC
-         YKNQ==
+        bh=zQC3DgZTuseOwEM0ptofFcpoLuZRJkiOItxkpiAevgc=;
+        b=rBaXljlQRl2IWWyHkktuTg/5F7A45dtMkNWloLQXxQXZ2PXi/y9wfEG9dKmmbN8vtY
+         XbGbbPVxfC+igHnZYO4DDy5lZ7kPuKl9Oy3Rds/+yDPxne1nlv442zEdphOrltmD/xgY
+         gfR2svpwhlssWegmbTbb4Qq645osqVWMgHGyLtJ7D6e0WM017IJjptxcjpdbAGA+Nvbq
+         O7Au4gx+FZBcr65lyldrRWlx74kKFDrov6acb7jyIU+isdoIpqEGyQPlkE0aoG23ZaY0
+         PpYyjTZ2C9ADBHqEeRRh5cN1TMOqHzCNtSIbKWMIJOeJe+tEkDGOADNiKxQkiL1yWePn
+         K1DA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,26 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Kroening, Gary" <gary.kroening@hpe.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
 	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
 	Jiri Olsa <jolsa@redhat.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Stephane Eranian <eranian@google.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Vince Weaver <vincent.weaver@maine.edu>,
-	abanman@hpe.com,
-	dimitri.sivanich@hpe.com,
-	hpa@zytor.com,
-	mike.travis@hpe.com,
-	russ.anderson@hpe.com,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 091/101] perf/x86/intel/uncore: Fix multi-domain PCI CHA enumeration bug on Skylake servers
-Date: Tue, 27 Mar 2018 18:28:03 +0200
-Message-Id: <20180327162755.615320522@linuxfoundation.org>
+Subject: [PATCH 4.14 090/101] perf/x86/intel: Dont accidentally clear high bits in bdw_limit_period()
+Date: Tue, 27 Mar 2018 18:28:02 +0200
+Message-Id: <20180327162755.564028966@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -55,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109225011553966?=
-X-GMAIL-MSGID: =?utf-8?q?1596109539692895694?=
+X-GMAIL-THRID: =?utf-8?q?1596109068654036273?=
+X-GMAIL-MSGID: =?utf-8?q?1596109537086455980?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -64,98 +60,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 320b0651f32b830add6497fcdcfdcb6ae8c7b8a0 upstream.
+commit e5ea9b54a055619160bbfe527ebb7d7191823d66 upstream.
 
-The number of CHAs is miscalculated on multi-domain PCI Skylake server systems,
-resulting in an uncore driver initialization error.
+We intended to clear the lowest 6 bits but because of a type bug we
+clear the high 32 bits as well.  Andi says that periods are rarely more
+than U32_MAX so this bug probably doesn't have a huge runtime impact.
 
-Gary Kroening explains:
-
- "For systems with a single PCI segment, it is sufficient to look for the
-  bus number to change in order to determine that all of the CHa's have
-  been counted for a single socket.
-
-  However, for multi PCI segment systems, each socket is given a new
-  segment and the bus number does NOT change.  So looking only for the
-  bus number to change ends up counting all of the CHa's on all sockets
-  in the system.  This leads to writing CPU MSRs beyond a valid range and
-  causes an error in ivbep_uncore_msr_init_box()."
-
-To fix this bug, query the number of CHAs from the CAPID6 register:
-it should read bits 27:0 in the CAPID6 register located at
-Device 30, Function 3, Offset 0x9C. These 28 bits form a bit vector
-of available LLC slices and the CHAs that manage those slices.
-
-Reported-by: Kroening, Gary <gary.kroening@hpe.com>
-Tested-by: Kroening, Gary <gary.kroening@hpe.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: abanman@hpe.com
-Cc: dimitri.sivanich@hpe.com
-Cc: hpa@zytor.com
-Cc: mike.travis@hpe.com
-Cc: russ.anderson@hpe.com
-Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
-Link: http://lkml.kernel.org/r/1520967094-13219-1-git-send-email-kan.liang@linux.intel.com
+Fixes: 294fe0f52a44 ("perf/x86/intel: Add INST_RETIRED.ALL workarounds")
+Link: http://lkml.kernel.org/r/20180317115216.GB4035@mwanda
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/uncore_snbep.c |   31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ arch/x86/events/intel/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3554,24 +3554,27 @@ static struct intel_uncore_type *skx_msr
- 	NULL,
- };
- 
-+/*
-+ * To determine the number of CHAs, it should read bits 27:0 in the CAPID6
-+ * register which located at Device 30, Function 3, Offset 0x9C. PCI ID 0x2083.
-+ */
-+#define SKX_CAPID6		0x9c
-+#define SKX_CHA_BIT_MASK	GENMASK(27, 0)
-+
- static int skx_count_chabox(void)
- {
--	struct pci_dev *chabox_dev = NULL;
--	int bus, count = 0;
-+	struct pci_dev *dev = NULL;
-+	u32 val = 0;
- 
--	while (1) {
--		chabox_dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x208d, chabox_dev);
--		if (!chabox_dev)
--			break;
--		if (count == 0)
--			bus = chabox_dev->bus->number;
--		if (bus != chabox_dev->bus->number)
--			break;
--		count++;
--	}
-+	dev = pci_get_device(PCI_VENDOR_ID_INTEL, 0x2083, dev);
-+	if (!dev)
-+		goto out;
- 
--	pci_dev_put(chabox_dev);
--	return count;
-+	pci_read_config_dword(dev, SKX_CAPID6, &val);
-+	val &= SKX_CHA_BIT_MASK;
-+out:
-+	pci_dev_put(dev);
-+	return hweight32(val);
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3194,7 +3194,7 @@ static unsigned bdw_limit_period(struct
+ 			X86_CONFIG(.event=0xc0, .umask=0x01)) {
+ 		if (left < 128)
+ 			left = 128;
+-		left &= ~0x3fu;
++		left &= ~0x3fULL;
+ 	}
+ 	return left;
  }
- 
- void skx_uncore_cpu_init(void)
