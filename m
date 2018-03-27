@@ -1,106 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752477AbeC0KZc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 06:25:32 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38392 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752394AbeC0KZb (ORCPT
+        id S1752492AbeC0K1E (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 06:27:04 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:35352 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeC0K1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 06:25:31 -0400
-X-Google-Smtp-Source: AG47ELuY6a5EYiEdpEt7s5D6AaKqCKwLZpb9SzdJWOzoyFVcZW67QDv18As9AinHFlozOTqw9BWYbg==
-Date: Tue, 27 Mar 2018 12:25:21 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH for-4.17 2/2] powerpc: Remove smp_mb() from
- arch_spin_is_locked()
-Message-ID: <20180327102521.GA7347@andrea>
-References: <1522060667-7034-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1522109216.7364.30.camel@kernel.crashing.org>
+        Tue, 27 Mar 2018 06:27:02 -0400
+X-Google-Smtp-Source: AG47ELt2JmgKrNdE1tRBRHsc1OvKtQMTDieCAbWiLW50lkdyK5kodFvYyYUPBjUYw5vwqkgpFMOcYw==
+Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+To: Leo Yan <leo.yan@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org,
+        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
+        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, daniel.thompson@linaro.org,
+        linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
+References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
+ <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
+ <20180327020331.GA21693@leoy-ThinkPad-X240s>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <8ee2cb0d-9afe-6626-0911-90ff6660bf8a@linaro.org>
+Date: Tue, 27 Mar 2018 12:26:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522109216.7364.30.camel@kernel.crashing.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180327020331.GA21693@leoy-ThinkPad-X240s>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 11:06:56AM +1100, Benjamin Herrenschmidt wrote:
-> On Mon, 2018-03-26 at 12:37 +0200, Andrea Parri wrote:
-> > Commit 51d7d5205d338 ("powerpc: Add smp_mb() to arch_spin_is_locked()")
-> > added an smp_mb() to arch_spin_is_locked(), in order to ensure that
-> > 
-> > 	Thread 0			Thread 1
-> > 
-> > 	spin_lock(A);			spin_lock(B);
-> > 	r0 = spin_is_locked(B)		r1 = spin_is_locked(A);
-> > 
-> > never ends up with r0 = r1 = 0, and reported one example (in ipc/sem.c)
-> > relying on such guarantee.
-> > 
-> > It's however understood (and undocumented) that spin_is_locked() is not
-> > required to ensure such ordering guarantee,
+On 27/03/2018 04:03, Leo Yan wrote:
+> Hi Daniel,
 > 
-> Shouldn't we start by documenting it ?
-
-I do sympathize with your concern about the documentation! ;) The patch in
-[1] was my (re)action to this concern; the sort of the patch is unclear to
-me by this time (and I'm not aware of other proposals in this respect).
-
-
+> On Wed, Feb 21, 2018 at 04:29:27PM +0100, Daniel Lezcano wrote:
+>> The cpu idle cooling driver performs synchronized idle injection across all
+>> cpus belonging to the same cluster and offers a new method to cool down a SoC.
+>>
+>> Each cluster has its own idle cooling device, each core has its own idle
+>> injection thread, each idle injection thread uses play_idle to enter idle.  In
+>> order to reach the deepest idle state, each cooling device has the idle
+>> injection threads synchronized together.
+>>
+>> It has some similarity with the intel power clamp driver but it is actually
+>> designed to work on the ARM architecture via the DT with a mathematical proof
+>> with the power model which comes with the Documentation.
+>>
+>> The idle injection cycle is fixed while the running cycle is variable. That
+>> allows to have control on the device reactivity for the user experience. At
+>> the mitigation point the idle threads are unparked, they play idle the
+>> specified amount of time and they schedule themselves. The last thread sets
+>> the next idle injection deadline and when the timer expires it wakes up all
+>> the threads which in turn play idle again. Meanwhile the running cycle is
+>> changed by set_cur_state.  When the mitigation ends, the threads are parked.
+>> The algorithm is self adaptive, so there is no need to handle hotplugging.
 > 
-> >  guarantee that is currently
-> > _not_ provided by all implementations/arch, and that callers relying on
-> > such ordering should instead use suitable memory barriers before acting
-> > on the result of spin_is_locked().
-> > 
-> > Following a recent auditing[1] of the callers of {,raw_}spin_is_locked()
-> > revealing that none of them are relying on this guarantee anymore, this
-> > commit removes the leading smp_mb() from the primitive thus effectively
-> > reverting 51d7d5205d338.
+> The idle injection threads are RT threads (FIFO) and I saw in
+> play_idle() set/clear flag PF_IDLE for it.  Will these idle injection
+> threads utilization be accounted into RT utilization?
 > 
-> I would rather wait until it is properly documented. Debugging that IPC
-> problem took a *LOT* of time and energy, I wouldn't want these issues
-> to come and bite us again.
+> If idle injection threads utilization is accounted as RT tasks
+> utilization, will this impact CPUFreq governor 'schedutil' for OPP
+> selection?
 
-I understand. And I'm grateful for this debugging as well as for the (IMO)
-excellent account of it you provided in 51d7d5205d338.
+Hi Leo,
 
-Said this ;) I cannot except myself from saying that I would probably have
-resisted that solution (adding an smp_mb() in my arch_spin_is_locked), and
-instead "blamed"/suggested that caller to fix his memory ordering...
+The idle injection task has a very low utilization when it is not in the
+play_idle function, basically it wakes up, sets a timer and play_idle().
 
-  Andrea
+Regarding the use case, the idle injection is the base brick for an
+combo cooling device with cpufreq + cpuidle. When the idle injection is
+used alone, it is because there is no cpufreq driver for the platform.
+If there is a cpufreq driver, then we should endup with the cpu cooling
+device where we have control of the OPP (and there is no idle injection
+threads) or the combo cooling device.
+
+Except I'm missing something, the idle injection threads won't impact
+the OPP selection.
 
 
-> 
-> > [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-> > 
-> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > Cc: Paul Mackerras <paulus@samba.org>
-> > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > ---
-> >  arch/powerpc/include/asm/spinlock.h | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
-> > index b9ebc3085fb79..ecc141e3f1a73 100644
-> > --- a/arch/powerpc/include/asm/spinlock.h
-> > +++ b/arch/powerpc/include/asm/spinlock.h
-> > @@ -67,7 +67,6 @@ static __always_inline int arch_spin_value_unlocked(arch_spinlock_t lock)
-> >  
-> >  static inline int arch_spin_is_locked(arch_spinlock_t *lock)
-> >  {
-> > -	smp_mb();
-> >  	return !arch_spin_value_unlocked(*lock);
-> >  }
-> >  
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
