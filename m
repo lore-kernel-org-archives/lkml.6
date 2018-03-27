@@ -1,129 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751824AbeC0Ekh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 00:40:37 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58936 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751202AbeC0Ekg (ORCPT
+        id S1750948AbeC0EnI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 00:43:08 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:42548 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750742AbeC0EnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 00:40:36 -0400
-Date: Tue, 27 Mar 2018 00:40:20 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate
- the next instruction"
-Message-ID: <20180327044020.GB16974@char.us.oracle.com>
-References: <1522116735-4861-1-git-send-email-wanpengli@tencent.com>
- <1522116735-4861-3-git-send-email-wanpengli@tencent.com>
+        Tue, 27 Mar 2018 00:43:04 -0400
+X-Google-Smtp-Source: AG47ELsvSkZpR8LryflaVe7pfMiabHziAi8B0VY6lsgKDFUxk92e/Q0U7kgwFXyH+X7VoxYzwOk5IrU7GEVB8xxVqNk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1522116735-4861-3-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803270044
+In-Reply-To: <20180326215522.GA409@bombadil.infradead.org>
+References: <1513172572-16724-1-git-send-email-thunder.leizhen@huawei.com>
+ <20171213141112.GA11217@bombadil.infradead.org> <x49y3m6a90r.fsf@segfault.boston.devel.redhat.com>
+ <20171213193100.GA19700@bombadil.infradead.org> <5A31ED86.5000800@huawei.com>
+ <20180102145155.GD8222@bombadil.infradead.org> <x49tvvqdfhu.fsf@segfault.boston.devel.redhat.com>
+ <CAK8P3a3jb1cJEiyHA-G_HgmMFoN4Lb3YVnXzLkX+tUysd_YZgw@mail.gmail.com> <20180326215522.GA409@bombadil.infradead.org>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+Date: Mon, 26 Mar 2018 21:43:03 -0700
+Message-ID: <CABeXuvqk1npq6ROEyF6O-uedkM1OV-zyfeAUcj3yeS-WP6GMQg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] aio: make sure the input "timeout" value is valid
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jeff Moyer <jmoyer@redhat.com>,
+        "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tianhong Ding <dingtianhong@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R4egle027959
 
-On Mon, Mar 26, 2018 at 07:12:15PM -0700, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> This patch introduces a Force Emulation Prefix (ud2a; .ascii "kvm") for 
-> "emulate the next instruction", the codes will be executed by emulator 
-> instead of processor, for testing purposes.
+On Mon, Mar 26, 2018 at 2:55 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Mon, Mar 26, 2018 at 10:01:30PM +0200, Arnd Bergmann wrote:
+>> I had suggested a more complete helper function at some point,
+>> to take care of all combinations of checking/non-checking, 32/64
+>> bit, microsecond/nanosecond, and zeroing/checking the upper 32 bits
+>> of nanoseconds before comparing against 1 billion, but Deepa
+>> thought that was overkill, so I didn't continue that.
+>
+> Yeah, that sounds like a nightmare to use ;-)
+>
+>> For all I can tell, the get_timespec64() helper should almost always
+>> include the check, the one exception I know is utimensat() and related
+>> functions that may encode the special UTIME_NOW and UTIME_OMIT
+>> constants in the nanoseconds.
+>
+> So do you endorse the get_valid_timespec64() patch I posted up-thread?
+> We can't just make get_timespec64 return an errno directly because it'll
+> require changing all the users.
 
-Can you expand a bit ? Why do you want this in KVM in the first place?
-Should this be controlled by a boolean parameter? 
-> 
-> A testcase here:
-> 
-> #include <stdio.h>
-> #include <string.h>
->    
-> #define HYPERVISOR_INFO 0x40000000
->    
-> #define CPUID(idx, eax, ebx, ecx, edx)\
->     asm volatile (\
->     "ud2a; .ascii \"kvm\"; 1: cpuid" \
->     :"=b" (*ebx), "=a" (*eax),"=c" (*ecx), "=d" (*edx)\
->         :"0"(idx) );  
->    
-> void main()  
-> {  
-> 	unsigned int eax,ebx,ecx,edx;  
-> 	char string[13];  
->    
-> 	CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);  
-> 	*(unsigned int *)(string+0) = ebx;  
-> 	*(unsigned int *)(string+4) = ecx;  
-> 	*(unsigned int *)(string+8) = edx;  
->    
-> 	string[12] = 0;  
-> 	if (strncmp(string, "KVMKVMKVM\0\0\0",12) == 0)
-> 		printf("kvm guest\n");  
-> 	else  
-> 		printf("bare hardware\n");  
-> }
-> 
-> Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/vmx.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 0f99833..90abed8 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -108,6 +108,9 @@ module_param_named(enable_shadow_vmcs, enable_shadow_vmcs, bool, S_IRUGO);
->  static bool __read_mostly nested = 0;
->  module_param(nested, bool, S_IRUGO);
->  
-> +static bool __read_mostly fep = 0;
-> +module_param(fep, bool, S_IRUGO);
-> +
->  static u64 __read_mostly host_xss;
->  
->  static bool __read_mostly enable_pml = 1;
-> @@ -6218,8 +6221,21 @@ static int handle_machine_check(struct kvm_vcpu *vcpu)
->  static int handle_ud(struct kvm_vcpu *vcpu)
->  {
->  	enum emulation_result er;
-> +	int emulation_type = EMULTYPE_TRAP_UD;
-> +
-> +	if (fep) {
-> +		char sig[5]; /* ud2; .ascii "kvm" */
-> +		struct x86_exception e;
+I missed this thread earlier.
 
-Don't you want to do = { };
-to memset it?
-> +
-> +		kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
-> +				kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e);
-> +		if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
-> +			emulation_type = 0;
-> +			kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
-> +		}
-> +	}
->  
-> -	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
-> +	er = emulate_instruction(vcpu, emulation_type);
->  	if (er == EMULATE_USER_EXIT)
->  		return 0;
->  	if (er != EMULATE_DONE)
-> -- 
-> 2.7.4
-> 
+I had leaned away from this idea before, because of the special cases
+which don't need it. I was also trying to keep the syntax close to
+copy_from_user(), which is what was there before.
+
+We could probably just change all the
+get_timespec64()/compat_get_timespec64() to do the check using a
+simple coccinelle script.
+I can own this.
+
+But, this would not be needed if Arnd is posting the other helper function.
+Arnd, let me know what you prefer here.
+
+-Deepa
