@@ -1,77 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeC0DoT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 23:44:19 -0400
-Received: from ozlabs.org ([103.22.144.67]:33477 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751489AbeC0DoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 23:44:17 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 27 Mar 2018 14:43:25 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>, Jiri Kosina <jikos@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lihao Liang <lianglihao@huawei.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: linux-next: manual merge of the tip tree with the trivial tree
-Message-ID: <20180327144325.545af4fd@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gEMDPZB2slrjFZBKx/kNh9L"; protocol="application/pgp-signature"
+        id S1752096AbeC0Dra (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 23:47:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40334 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751765AbeC0Dr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 23:47:29 -0400
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com, jasowang@redhat.com
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net] vhost: correctly remove wait queue during poll failure
+Date: Tue, 27 Mar 2018 11:47:22 +0800
+Message-Id: <1522122442-30317-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gEMDPZB2slrjFZBKx/kNh9L
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+We tried to remove vq poll from wait queue, but do not check whether
+or not it was in a list before. This will lead double free. Fixing
+this by checking poll->wqh to make sure it was in a list.
 
-Hi all,
+Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
+Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting backend")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/vhost/vhost.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Today's linux-next merge of the tip tree got a conflict in:
-
-  kernel/cpu.c
-
-between commit:
-
-  ccd8c1c5926a ("CPU: Fix comment in cpuhp_bp_states[]")
-
-from the trivial tree and commit:
-
-  17a2f1ced028 ("cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states")
-
-from the tip tree.
-
-I fixed it up (the latter removed the comment updated by the former, so
-I just did that) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
-Jiri, you could drop (or revert) the commit in your tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gEMDPZB2slrjFZBKx/kNh9L
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5vd0ACgkQAVBC80lX
-0Gy1HQf/fkP9YYpXqNUpBPR4KyRGTH7wakPC+odyOs6Rg/5STR4DE2iOA9fCIMBK
-pktOQdFRFAq2bHWof3PeAqoamFhqXKaCxN0jBgx8minEJG1Us5muM6I/IXeZydht
-K2dL8BLSmWXoC8ybuUZBHgveIP1f4a6Dm+UrWjepSli+IPvMCYbHCGk3BWSyULOd
-Ws5pHhxDsyQX3pqvWW3/zRAWVHtrY3LW/ruiZPfKY924xABRMKkjWMTQzmrnERIs
-XBQv1tb3J9et84HlxWKutAVg43Ye8uuKtjvkMihZtvXbM+FdJdNNqbABop8h3lpq
-MYf9CQJ1tqk9hKUWY+UJW7Z22isVXQ==
-=ozXD
------END PGP SIGNATURE-----
-
---Sig_/gEMDPZB2slrjFZBKx/kNh9L--
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 1b3e8d2d..5d5a9d9 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -212,8 +212,7 @@ int vhost_poll_start(struct vhost_poll *poll, struct file *file)
+ 	if (mask)
+ 		vhost_poll_wakeup(&poll->wait, 0, 0, poll_to_key(mask));
+ 	if (mask & EPOLLERR) {
+-		if (poll->wqh)
+-			remove_wait_queue(poll->wqh, &poll->wait);
++		vhost_poll_stop(poll);
+ 		ret = -EINVAL;
+ 	}
+ 
+-- 
+2.7.4
