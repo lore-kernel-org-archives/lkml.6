@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48e2nD6IQSUo/EK7RD+OP3Be+O0rkH4quX5LQy8vZw9cOzr/nuFpWPcIujL2kQAJCYxXM9C
-ARC-Seal: i=1; a=rsa-sha256; t=1522168213; cv=none;
+X-Google-Smtp-Source: AIpwx482sWbX8mwQjieFpzH0pwLti18fmEQvTmBI+UYQHa68TKeAOLht7yzkCJPxX2zgpZKIIiBL
+ARC-Seal: i=1; a=rsa-sha256; t=1522168210; cv=none;
         d=google.com; s=arc-20160816;
-        b=0vuY0Ptn0gFUzJQ9xWMVmXxDh4LZzvCDuHBhvcGaU0iIfZ3zPxLcFkjarIhNpOXHqB
-         M/v0hQyWkk0ke/PXKLQdxChqhY9Mf3+XbHdai1cRq46fdboOnWPwirIRBgbhje7aZShY
-         uUw0yaD/thhz2TbMhfUHmBg02RyxbuObrlxn1zsMs2TBiAxvpgxcnPNTKQNyythaE5CU
-         zX6FYZ4Y6QCWKjVUDCqWa7wrHyqPkG3KUdW0mD/B3RDFByiyqptNZI0Mvt8UztCoTokY
-         zqL5RdhWnSLZzE/Y2k0gLfcSo7Ob8M5xLs99KvXd8o7D5XHHQaos64n8cpbySRbJ1u33
-         xn2g==
+        b=Zobp1rWTE+T0ROKv8FMPjU95Illx5YUvhtJRX6mINzDCr3FMau357rcvp4J/lPq++b
+         WwVPHiz06iuCA2LUX9dZ3z7oUPc3wgsnVyLFDpx6bPrQ/vkygOT89ZBZQHpcSQ82Mp7Q
+         VdJ6J78bhZN5OGvS+fWJbB/uf/I7hiIWDU4mAxblXDL/2xjw1TWa6uFqeZORqqc/yA8G
+         yEvb5P4dI0zUp93XNTfL07fKneRxHVuj5VCjOeXcBSF9huu2vfKNsO6e27rwSFeRWhdC
+         yCVpt+G55v5BrFluBP/eJqsTmM1Mo5IeSMxoAAE/YukO55fY15/GgIgXIh0RhUfzfwtm
+         tdgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MnIqDu2qF0+1CoBRPsOGH54r4zhZUUS93rN3sNAGfZ0=;
-        b=gpuPJOk6Dstpo8nSlH30elN3Ji92ZXf6enW/RMe4zP2pQTX4kYOb9HlGRhQqjax0cO
-         uF/84hw1TkPRUi+MMbYhPs6og5UQOK59Hi6Q+LVQugvjbdU98geXacH2a4goXgu9TwR3
-         Lk6SAons8SizPZyMx2WsHxKGytv+fde4qvEXCa/h1CiWt34OF3LUtQjJ+I3y6atpT7ex
-         wWXuoRyVDelBI/nWjh8Yms8Bs3hEcodvhD2ZtKPy2GD/oWZ6Itp04Gm4Y3qN01xpYBNB
-         qwgqJ0WwV3y/75IseiXV214a4FiF7INVIOPWLhjmZnwZQWJuhHL+xh0rI3UIlW8Hahwt
-         GKkg==
+        bh=yo0SEJspl2lq77m0OoM73MRgZpJBZ/l/Zj6mvCEYR24=;
+        b=pKGccQGI/PeVax6aTngiD+4ozm2KUb7tmT3F0J4+w68W0OewMXlQiVXhwYqv12bsAZ
+         9gkLPrS3FGRpE4vHjpm5GudH38O78etowZcHu7Wl3Boj7ofE8101jIlABWz7sM+lXUNS
+         cH8e1+mcuaZgOI6IGd3TmMpEC+RD8P04EBkoOsQ0AQ4to8qNFfnG3rQLdUeUtlVENhBN
+         8Pq6JkwhaJmuYCG/gRsQS/wszgmM+6kV6zYStARVfsptAgt5O2W/9mqx6max17YhkRil
+         bOv453hZG0JDUaR//BfpJOvNsyktLaZW26z4aExaJZYHFrabxZR0qBptMatejTMU5VjI
+         c1Tw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 06/43] ALSA: hda/realtek - Always immediately update mute LED with pin VREF
-Date: Tue, 27 Mar 2018 18:27:10 +0200
-Message-Id: <20180327162716.740674905@linuxfoundation.org>
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.4 15/43] libata: disable LPM for Crucial BX100 SSD 500GB drive
+Date: Tue, 27 Mar 2018 18:27:19 +0200
+Message-Id: <20180327162717.308286731@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109056850158323?=
-X-GMAIL-MSGID: =?utf-8?q?1596109056850158323?=
+X-GMAIL-THRID: =?utf-8?q?1596109053741544875?=
+X-GMAIL-MSGID: =?utf-8?q?1596109053741544875?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,48 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit e40bdb03d3cd7da66bd0bc1e40cbcfb49351265c upstream.
+commit b17e5729a630d8326a48ec34ef02e6b4464a6aef upstream.
 
-Some HP laptops have a mute mute LED controlled by a pin VREF.  The
-Realtek codec driver updates the VREF via vmaster hook by calling
-snd_hda_set_pin_ctl_cache().
+After Laptop Mode Tools starts to use min_power for LPM, a user found
+out Crucial BX100 SSD can't get mounted.
 
-This works fine as long as the driver is running in a normal mode.
-However, when the VREF change happens during the codec being in
-runtime PM suspend, the regmap access will skip and postpone the
-actual register change.  This ends up with the unchanged LED status
-until the next runtime PM resume even if you change the Master mute
-switch.  (Interestingly, the machine keeps the LED status even after
-the codec goes into D3 -- but it's another story.)
+Crucial BX100 SSD 500GB drive don't work well with min_power. This also
+happens to med_power_with_dipm.
 
-For improving this usability, let the driver temporarily powering up /
-down only during the pin VREF change.  This can be achieved easily by
-wrapping the call with snd_hda_power_up_pm() / *_down_pm().
+So let's disable LPM for Crucial BX100 SSD 500GB drive.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199073
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+BugLink: https://bugs.launchpad.net/bugs/1726930
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/ata/libata-core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -3261,8 +3261,12 @@ static void alc269_fixup_mic_mute_hook(v
- 	pinval = snd_hda_codec_get_pin_target(codec, spec->mute_led_nid);
- 	pinval &= ~AC_PINCTL_VREFEN;
- 	pinval |= enabled ? AC_PINCTL_VREF_HIZ : AC_PINCTL_VREF_80;
--	if (spec->mute_led_nid)
-+	if (spec->mute_led_nid) {
-+		/* temporarily power up/down for setting VREF */
-+		snd_hda_power_up_pm(codec);
- 		snd_hda_set_pin_ctl_cache(codec, spec->mute_led_nid, pinval);
-+		snd_hda_power_down_pm(codec);
-+	}
- }
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4224,6 +4224,9 @@ static const struct ata_blacklist_entry
+ 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
+ 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
  
- /* Make sure the led works even in runtime suspend */
++	/* Crucial BX100 SSD 500GB has broken LPM support */
++	{ "CT500BX100SSD1",		"MU02",	ATA_HORKAGE_NOLPM },
++
+ 	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
+ 	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
