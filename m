@@ -1,60 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754297AbeC0RFA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:05:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39352 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753523AbeC0RE6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 13:04:58 -0400
-Date: Tue, 27 Mar 2018 19:04:51 +0200 (CEST)
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
-X-X-Sender: sebott@schleppi
-To: Christoph Hellwig <hch@lst.de>
-cc: Jesper Nilsson <jesper.nilsson@axis.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: dma_zalloc_coherent broken with
- 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7
-In-Reply-To: <20180327164505.GA10522@lst.de>
-References: <alpine.LFD.2.21.1803270944490.1726@schleppi> <20180327143341.GA4968@lst.de> <alpine.LFD.2.21.1803271717580.26440@schleppi> <20180327164505.GA10522@lst.de>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
- =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        id S1755165AbeC0RKx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 13:10:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:60126 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753138AbeC0RKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 13:10:50 -0400
+Subject: Re: [RFC v2 01/12] KVM: arm/arm64: Set dist->spis to NULL after kfree
+To: Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
+ <1522159456-10419-2-git-send-email-eric.auger@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <26bb42a7-d946-e52c-68e6-eaeaae325983@arm.com>
+Date: Tue, 27 Mar 2018 18:10:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-x-cbid: 18032717-0008-0000-0000-000004E2E07C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032717-0009-0000-0000-00001E761BF4
-Message-Id: <alpine.LFD.2.21.1803271900390.18934@schleppi>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803270171
+In-Reply-To: <1522159456-10419-2-git-send-email-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018, Christoph Hellwig wrote:
-> On Tue, Mar 27, 2018 at 05:24:10PM +0200, Sebastian Ott wrote:
-> > What do you mean by current implementations? Arch specific code? At least
-> > on s390 we don't do that. dma-mapping.h doesn't do it either.
+On 27/03/18 15:04, Eric Auger wrote:
+> in case kvm_vgic_map_resources() fails, typically if the vgic
+> distributor is not defined, __kvm_vgic_destroy will be called
+> several times. Indeed kvm_vgic_map_resources() is called on
+> first vcpu run. As a result dist->spis is freeed more than once
+> and on the second time it causes a "kernel BUG at mm/slub.c:3912!"
 > 
-> The arch implementations should do it.  Seems like s390 and potentially
-> a few others don't.  I'm a little slow due to a cast on one arm, but I'll
-> do an audit and will fix up anything I'll find.
+> Set dist->spis to NULL to avoid the crash.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-What was wrong with the old behavior (let the caller decide - the same
-as with memory allocations)? We have interfaces like dma_zalloc_coherent,
-which explicitely set __GFP_ZERO. We have callers of dma_alloc followed by
-a manually memset..
+Fixes: ad275b8bb1e6 ("KVM: arm/arm64: vgic-new: vgic_init: implement
+vgic_init")
 
-Sebastian
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
