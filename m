@@ -1,46 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeC0Dra (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 23:47:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40334 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751765AbeC0Dr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 23:47:29 -0400
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, jasowang@redhat.com
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net] vhost: correctly remove wait queue during poll failure
-Date: Tue, 27 Mar 2018 11:47:22 +0800
-Message-Id: <1522122442-30317-1-git-send-email-jasowang@redhat.com>
+        id S1752135AbeC0Ds3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 23:48:29 -0400
+Received: from ozlabs.org ([103.22.144.67]:33499 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751765AbeC0Ds1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 23:48:27 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Ram Pai <linuxram@us.ibm.com>, Balbir Singh <bsingharora@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+        "akpm\@linux-foundation.org" <akpm@linux-foundation.org>,
+        "open list\:LINUX FOR POWERPC \(32-BIT AND 64-BIT\)"
+        <linuxppc-dev@lists.ozlabs.org>,
+        linux-mm <linux-mm@kvack.org>,
+        "maintainer\:X86 ARCHITECTURE \(32-BIT AND 64-BIT\)" <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Aneesh Kumar KV <aneesh.kumar@linux.vnet.ibm.com>,
+        "Haren Myneni\/Beaverton\/IBM" <hbabu@us.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+        fweimer@redhat.com, msuchanek@suse.com,
+        Thomas Gleixner <tglx@linutronix.de>, Ulrich.Weigand@de.ibm.com,
+        Ram Pai <ram.n.pai@gmail.com>
+Subject: Re: [PATCH v4] mm, pkey: treat pkey-0 special
+In-Reply-To: <20180316193152.GG1060@ram.oc3035372033.ibm.com>
+References: <1521196416-18157-1-git-send-email-linuxram@us.ibm.com> <CAKTCnzmSCT+VecdSRpyY2Rb_AW2ngCi3UTZfLE3VOLNSQn6vsA@mail.gmail.com> <20180316193152.GG1060@ram.oc3035372033.ibm.com>
+Date: Tue, 27 Mar 2018 14:48:21 +1100
+Message-ID: <87o9jaji0q.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We tried to remove vq poll from wait queue, but do not check whether
-or not it was in a list before. This will lead double free. Fixing
-this by checking poll->wqh to make sure it was in a list.
+Ram Pai <linuxram@us.ibm.com> writes:
 
-Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
-Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting backend")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/vhost.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> On Fri, Mar 16, 2018 at 10:02:22PM +1100, Balbir Singh wrote:
+>> On Fri, Mar 16, 2018 at 9:33 PM, Ram Pai <linuxram@us.ibm.com> wrote:
+>> > Applications need the ability to associate an address-range with some
+>> > key and latter revert to its initial default key. Pkey-0 comes close to
+>> > providing this function but falls short, because the current
+>> > implementation disallows applications to explicitly associate pkey-0 to
+>> > the address range.
+>> >
+>> > Clarify the semantics of pkey-0 and provide the corresponding
+>> > implementation.
+>> >
+>> > Pkey-0 is special with the following semantics.
+>> > (a) it is implicitly allocated and can never be freed. It always exists.
+>> > (b) it is the default key assigned to any address-range.
+>> > (c) it can be explicitly associated with any address-range.
+>> >
+>> > Tested on powerpc only. Could not test on x86.
+>> 
+>> Ram,
+>> 
+>> I was wondering if we should check the AMOR values on the ppc side to make sure
+>> that pkey0 is indeed available for use as default. I am still of the
+>> opinion that we
+>
+> AMOR cannot be read/written by the OS in priviledge-non-hypervisor-mode.
+> We could try testing if key-0 is available to the OS by temproarily
+> changing the bits key-0 bits of AMR or IAMR register. But will be
+> dangeorous to do, for you might disable read,execute of all the pages,
+> since all pages are asscoiated with key-0 bydefault.
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 1b3e8d2d..5d5a9d9 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -212,8 +212,7 @@ int vhost_poll_start(struct vhost_poll *poll, struct file *file)
- 	if (mask)
- 		vhost_poll_wakeup(&poll->wait, 0, 0, poll_to_key(mask));
- 	if (mask & EPOLLERR) {
--		if (poll->wqh)
--			remove_wait_queue(poll->wqh, &poll->wait);
-+		vhost_poll_stop(poll);
- 		ret = -EINVAL;
- 	}
- 
--- 
-2.7.4
+No we should do what firmware tells us. If it says key 0 is available we
+use it, otherwise we don't.
+
+Now if you notice the way the firmware API (device tree property) is
+defined, it tells us how many keys are available, counting from 0.
+
+So for pkey 0 to be reserved there must be 0 keys available.
+
+End of story.
+
+cheers
