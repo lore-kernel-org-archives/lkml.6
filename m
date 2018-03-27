@@ -1,41 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752116AbeC0V2G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:28:06 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:39809 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751067AbeC0V2E (ORCPT
+        id S1751973AbeC0V3j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:29:39 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:56038 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750966AbeC0V3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:28:04 -0400
-X-Google-Smtp-Source: AIpwx4/9IS7AnSZ0/pe7DxnTwqEp/Gcsu/QleifKq3wZREk9YXVkAmoGw3doykWL/h//pLUc8m76rA==
-Date: Tue, 27 Mar 2018 23:28:01 +0200
+        Tue, 27 Mar 2018 17:29:37 -0400
+X-Google-Smtp-Source: AIpwx4+TRQhJNbGnC0dDZSKCRQ8fDf7IIFIYn7yD6mLfrX8xYVB6dB6TIDa4+wlbvmisoYbowo8+Fw==
+Date: Tue, 27 Mar 2018 23:29:34 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
 To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pwm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm-puv3: Delete an error message for a failed memory
- allocation in pwm_probe()
-Message-ID: <20180327212800.GB28058@mithrandir>
-References: <93e81e95-01e0-1493-5b4a-92f36f998dac@users.sourceforge.net>
+Cc: linux-pwm@vger.kernel.org,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: atmel-tcb: Delete an error message for a failed
+ memory allocation in atmel_tcb_pwm_probe()
+Message-ID: <20180327212933.GC28058@mithrandir>
+References: <8274c498-1d1b-2ece-365c-98ded714a53c@users.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
+        protocol="application/pgp-signature"; boundary="UPT3ojh+0CqEDtpF"
 Content-Disposition: inline
-In-Reply-To: <93e81e95-01e0-1493-5b4a-92f36f998dac@users.sourceforge.net>
+In-Reply-To: <8274c498-1d1b-2ece-365c-98ded714a53c@users.sourceforge.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---8P1HSweYDcXXzwPJ
+--UPT3ojh+0CqEDtpF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 15, 2017 at 06:33:49PM +0100, SF Markus Elfring wrote:
+On Fri, Dec 15, 2017 at 07:00:46PM +0100, SF Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 15 Dec 2017 18:29:49 +0100
+> Date: Fri, 15 Dec 2017 18:55:11 +0100
 >=20
 > Omit an extra message for a memory allocation failure in this function.
 >=20
@@ -43,31 +47,31 @@ On Fri, Dec 15, 2017 at 06:33:49PM +0100, SF Markus Elfring wrote:
 >=20
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/pwm/pwm-puv3.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/pwm/pwm-atmel-tcb.c | 1 -
+>  1 file changed, 1 deletion(-)
 
 Applied, thanks.
 
 Thierry
 
---8P1HSweYDcXXzwPJ
+--UPT3ojh+0CqEDtpF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6t2AACgkQ3SOs138+
-s6HBJA/9EEEWSz0ll4MuRhBseuY0eeF6Y4jEa4hWORg3Cq51w0rpIgwm7ma6f3pD
-PP3/lt285NUloke/CwEsLoSvajFfOGAh/ejDTOAFaC2cJI1HNOYOFuP//ULSymbv
-x054kIVqU8/TDy0tvl/LCJIIh33z4I5AEnibkagRNuyWd3Z4qWz5XpRxlRK85l0r
-iZFG+xram3u71sFaDr2U+FBI620SVSzzPeusW7yn0S3ngJ3AyFbdGEUfjj3dtxYC
-pixvjAAWMxBjy4oNCa9es8+WXCGOVqOkhkBvT1SIVwLQMbP5Mh5NkYIsvb8I9/Xj
-agAYuAhjvgPwYTXp9KFw3MG99jqQgrKPR7igiMtlnoAFGLieQCYUFXx/D9zNOTQX
-Vh8puizdORcRH2I91pFygVsSJ3eEZ0uMROlT9GddWR6T62TNjCOJlyJoFQss3BfT
-z8zti0JtDY10U+acApjCCy/HyT7p0ZpBVwzv3JNL5zA4OH0ZXbZ6JsRL9PDhcXdl
-M+pFVKOgx6KR3mMm1THOhsLk1rjy/eizIaSVoJFQOD0l4TWigOmgwpkNTCsVbg9G
-/r2Rw3Zzo+l+pW/qOw2hRyAAKy6Xw59uwXxuHML8XhY4MBMtq3+Cxif7b6zPYDvp
-26E1Ha9kOtel4T8DQcVpnOzeNurkqnF6hlzFvfaAIxwcGL2Mdrc=
-=GraV
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6t70ACgkQ3SOs138+
+s6EYthAAqpm2v1uDdRs/8YnXECLx3IcjduNSPvg0BXG9jzfNC2tdNZJhlrt0z5Y4
+HpHPnZlf6xJVAtNA3S8bXesKffSViEGGTCxrNNBSYRCdeBy9n/Ud7AOf3omNv8Bm
+Gy/sjIezzrcHcCc1foamaeJt1c0nevpkzn3/Oxe60yhsrffhgpTno4S8tDPpmwEi
+lCZ5QeQmSDvv8/GYLCzIEzS2PczCu5JFuEQcdC6VYUw/V14QltK64m+Hic9M9oaw
+r7AiruTbGxFHq1A82DVxlyC1QIhBTBsu8ulSUBCp3dNHNSIMOF34rRyy1LEH9EtK
+6e8Jx6zrHBZtshtR3GYo8YchYcnZ0NLfDxaUAXO2xWoHgnr2llcU3MN4DdAEO4dB
+3tXfNkl9HzFF92RmYnlSJTAIcVHSRgdNHqYLBDySN+XIAvmdLbTT+6xxc+8B3JsF
+IzednF9QDQg88jDxmFYe9kRMC5azmdxv9tsbEvulw43a6PUZjREprhaKENhLVaaf
+CMpv65VQog5FnfVg0MXhF+gnKfw7T0Y2Ld8lJ1Y9Is3T66CmfzO13dN7zhIOJwZI
+yu4N6Xal7YtngHxH3jjEhCLlxG2d17Xtxj9k83bMz9j7EgjBBKSL5iMPOa7OxIyV
+rX7sCmWSV4AoRw2rFq2ML/FIuWumx0KFS8eaVYZKRl9RIi9ToXA=
+=U3k1
 -----END PGP SIGNATURE-----
 
---8P1HSweYDcXXzwPJ--
+--UPT3ojh+0CqEDtpF--
