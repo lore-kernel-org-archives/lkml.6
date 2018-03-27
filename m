@@ -1,41 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeC0Bqz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:46:55 -0400
-Received: from mail-io0-f181.google.com ([209.85.223.181]:38258 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751132AbeC0Bqy (ORCPT
+        id S1752168AbeC0Brl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:47:41 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44236 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751692AbeC0Brk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:46:54 -0400
-X-Google-Smtp-Source: AIpwx4/RpranXqsZOLLyb0ZKt5JPgl2U7WRGzfD5AFZi0b8HrX3boDboxEvYyCKvIBS0FBp3YhYh98vG+pPKGlFgNK8=
+        Mon, 26 Mar 2018 21:47:40 -0400
+X-Google-Smtp-Source: AIpwx49t6vHYU/K5hkk4kMzl8v1/kFIWjsVz0PEq96NofH/5xoXGmT+Em3JtQuoQAuBKlA93Wa9jIA==
+Date: Tue, 27 Mar 2018 10:47:34 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Minchan Kim <minchan@kernel.org>,
+        ndrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH 2/2] zram: idle memory tracking
+Message-ID: <20180327014734.GG467@jagdpanzerIV>
+References: <20180326064951.123940-1-minchan@kernel.org>
+ <20180326064951.123940-2-minchan@kernel.org>
+ <20180327004911.GA467@jagdpanzerIV>
+ <20180327010347.GA41148@rodete-desktop-imager.corp.google.com>
+ <20180327011327.GE467@jagdpanzerIV>
 MIME-Version: 1.0
-From: =?UTF-8?B?6rCV7LKg7Zi4?= <kbright0912@gmail.com>
-Date: Tue, 27 Mar 2018 10:46:12 +0900
-Message-ID: <CAGUTK8hiRd6GSp-_1yEph4ZM2tt=KGby3U0zzHJ+XvOKh_JN9A@mail.gmail.com>
-Subject: [DM-Delay] How can I reduce the granularity from mili-sec to nano-sec?
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327011327.GE467@jagdpanzerIV>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R1l1o7007260
 
-To whom it may concern,
+On (03/27/18 10:13), Sergey Senozhatsky wrote:
+> On (03/27/18 10:03), Minchan Kim wrote:
+> > On Tue, Mar 27, 2018 at 09:49:11AM +0900, Sergey Senozhatsky wrote:
+> > > On (03/26/18 15:49), Minchan Kim wrote:
+> > > > zRam as swap is useful for small memory device. However, swap means
+> > > > those pages on zram are mostly cold pages due to VM's LRU algorithm.
+> > > > Especially, once init data for application are touched for launching,
+> > > > they tend to be not accessed any more and finally swapped out.
+> > > > zRAM can store such cold pages as compressed form but it's pointless
+> > > > to keep in memory. Better idea is app developers free them directly
+> > > > rather than remaining them on heap.
+> > > > 
+> > > > This patch tell us last accesss time of each block of zram via
+> > > > "cat /sys/kernel/debug/zram/zram0/access_time".
+> > > > 
+> > > > The output is as follows,
+> > > > 
+> > > > 276 1250
+> > > > 277 1800
+> > > > ..  ..
+> > > > ..  ..
+> > > 
+> > > So can we just use CONFIG_IDLE_PAGE_TRACKING + CONFIG_PAGE_OWNER?
+> > 
+> > The goal is not mapped memory tracking but one swapped out.
+> > Can we do it by above two combination?
+> 
+> Ah, you are right. page_idle tracks only pages which are on LRU lists.
 
-Hello, this is Chulho Kang at Seoul National University, the Republic of Korea.
-I have a question regarding dm-delay component.
+Can a universal (not specific to zram) idle swapped out page tracking
+be of interest to MM people? With the exactly same motivation. Some
+swaps use nfs, for instance, so idle swap pages tracking can be helpful
+not only in embedded domain.
 
-I know this implementation has a limited delay granularity (1ms)
-I hope to emulate devices with sub-millisecond delays through the
-high-resolution Linux timers.
-
-Could I ask you for advice?
-I want to try out this component to “storage performance analysis”
-that I’m researching
-My aim is to emulate SSD devices latency of being reduced from
-mili-sec to nano-sec on
-ramdisk using dm-delay.
-
-Best regards,
-- Chulho Kang
+	-ss
