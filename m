@@ -1,93 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeC0W34 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 18:29:56 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46039 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752338AbeC0W3y (ORCPT
+        id S1752590AbeC0Wdj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 18:33:39 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34514 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752230AbeC0Wdi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 18:29:54 -0400
-X-Google-Smtp-Source: AIpwx49ib7YgM2iVTyr/MV72t63kvMBl7vOXG1/OsmQOnZGSdmC3ptsk1I9BMlyq4fCk18ej7B9wtw==
-Date: Tue, 27 Mar 2018 15:29:50 -0700
-From: Eric Biggers <ebiggers@google.com>
-To: Michael Young <m.a.young@durham.ac.uk>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: NFS mounts failing when keytab present on client
-Message-ID: <20180327222950.GB257332@google.com>
-References: <alpine.LFD.2.21.1803272126070.3013@austen3.home>
+        Tue, 27 Mar 2018 18:33:38 -0400
+X-Google-Smtp-Source: AIpwx49hlZwSAzUW0SqIeQbj+TS6n2/wxEC3nP+KMoSKoEI6OchiW5sih4iWZVfCZZ4j6IlwYSrfMw==
+Date: Wed, 28 Mar 2018 00:33:35 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: sean.wang@mediatek.com
+Cc: matthias.bgg@gmail.com, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: mediatek: remove redundant MODULE_ALIAS entries
+Message-ID: <20180327223334.GI28163@mithrandir>
+References: <0fbf589c69bc584c46c683ee7fa38d80e04624f6.1522055092.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Op27XXJsWz80g3oF"
 Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.21.1803272126070.3013@austen3.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <0fbf589c69bc584c46c683ee7fa38d80e04624f6.1522055092.git.sean.wang@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
 
-On Tue, Mar 27, 2018 at 11:06:14PM +0100, Michael Young wrote:
-> NFS mounts stopped working on one of my computers after a kernel update from
-> 4.15.3 to 4.15.4. I traced the problem to the commit
-> [46e8d06e423c4f35eac7a8b677b713b3ec9b0684] crypto: hash - prevent using
-> keyed hashes without setting key
-> and a later kernel with this patch reverted works normally.
-> 
-> The problem seems to be related to kerberos as the mount fails when the
-> keytab is present, but works if I rename the keytab file. This is true even
-> though the mount is with sec=sys . The mount should also work with sec=krb5
-> but that also fails in the same way. When the mount fails there are errors
-> in dmesg like
-> [ 1232.522816] gss_marshal: gss_get_mic FAILED (851968)
-> [ 1232.522819] RPC: couldn't encode RPC header, exit EIO
-> [ 1232.522856] gss_marshal: gss_get_mic FAILED (851968)
-> [ 1232.522857] RPC: couldn't encode RPC header, exit EIO
-> [ 1232.522863] NFS: nfs4_discover_server_trunking unhandled error -5.
-> Exiting with error EIO
-> [ 1232.525039] gss_marshal: gss_get_mic FAILED (851968)
-> [ 1232.525042] RPC: couldn't encode RPC header, exit EIO
-> 
-> 	Michael Young
+--Op27XXJsWz80g3oF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the bug report.  I think the error is coming from
-net/sunrpc/auth_gss/gss_krb5_crypto.c.  There are two potential problems I see.
-The first one, which is definitely a bug, is that make_checksum_hmac_md5()
-allocates an HMAC transform and request, then does these crypto API calls:
+On Mon, Mar 26, 2018 at 06:02:01PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+>=20
+> MODULE_ALIAS exports information to allow the module to be auto-loaded at
+> boot for the drivers registered using legacy platform registration.
+>=20
+> However, currently the driver is always used by DT-only platform,
+> MODULE_ALIAS is redundant and should be removed properly.
+>=20
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  drivers/pwm/pwm-mediatek.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-	crypto_ahash_init()
-	crypto_ahash_setkey()
-	crypto_ahash_digest()
+Applied, thanks.
 
-This is wrong because it makes no sense to init() the HMAC request before the
-key has been set, and doubly so when it's calling digest() which is shorthand
-for init() + update() + final().  So I think it just needs to be removed.  You
-can test the following patch:
+Thierry
 
-diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-index 12649c9fedab..8654494b4d0a 100644
---- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
-+++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-@@ -237,9 +237,6 @@ make_checksum_hmac_md5(struct krb5_ctx *kctx, char *header, int hdrlen,
- 
-        ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
- 
--       err = crypto_ahash_init(req);
--       if (err)
--               goto out;
-        err = crypto_ahash_setkey(hmac_md5, cksumkey, kctx->gk5e->keylength);
-        if (err)
-                goto out;
+--Op27XXJsWz80g3oF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If that's not it, it's also possible that the error is coming from the
-crypto_ahash_init() in make_checksum().  That can only happen if 'cksumkey' is
-NULL and the hash algorithm is keyed, which implies a logical error as it
-doesn't make sense to use a keyed hash algorithm without the key.  The callers
-do check kctx->gk5e->keyed_cksum which I'd hope would prevent this, though
-perhaps kctx->cksum can be NULL.
+-----BEGIN PGP SIGNATURE-----
 
-Eric
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6xr4ACgkQ3SOs138+
+s6HUog//f+3ccuA89P6SIyORWUG74S0LCkEFUo0yAzEpfSqFrFbYOpuQx380RRo0
+iVf/bO2ie2weVIwwJjkQJxL1ShAnln774jL9wlEz6//zBtmhVEaMXm27vvP6dZrJ
+o3K4JGyTrrJaf4CeVCNWXGWNhtlox3Rm5977g3iRudHNYOUmJSX5BMXCwdfBY8Id
+3IQBBSZaz3D7xBCmIH9zDj2WoXdaJKAyCrkqtdIBpht71ykSk7kG11BsKL0D3N5K
+7kg6ox9xXK4/5ZOwbki/LCkxGMY+2O1E7MkYAZvpc7CxXimvJjzHogXsxQAQ5ABt
+/X16xq+GBKptkwonpPAtlucDdc/TGp2VEpR7s2+Rha9PVqli+UvErWMsZ2wLLJm1
+QM5PrXCRdH4tKloFQubMt8vT09QzeKCnsJvEEV2frGmv3LXgV0fkk6Eo/3Irswfc
+9rP+n8brwJREXdrBmhQjSKBjJWWCB8qDPYpA3BKj9TyquAMQiiGhB3Ei3wKDlP/5
+ysjowi8d7dFvOQQC5uKtu4pnt1U+Tvuev7fFQR37Y/ioDuKocOnK1CrQ5jxsBHP7
+UDaUqJ7bEeDgqLQ4u2WLq0OVlqWApaOXeEiCog5L+orLNE6SLVN4hrA9a0WmPsdc
+pYXy4IbcnzPVEebBgvbvUDJi2OeXSwHiXu1x7YLDUGfzhkNse2o=
+=hf8s
+-----END PGP SIGNATURE-----
+
+--Op27XXJsWz80g3oF--
