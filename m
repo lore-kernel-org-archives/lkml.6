@@ -1,71 +1,108 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522208132; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AG47ELsUsMnGBRcZ9Zl8jeOx2b2UPsLrr/7IHNv2PvlA/4DY39w+Tn2zK+tMencUO4J8yIr+rAvj
+ARC-Seal: i=1; a=rsa-sha256; t=1522128618; cv=none;
         d=google.com; s=arc-20160816;
-        b=EGT2R3x5qfIjwZzFHS+3IhI2090DjVkd0ZE5RH1j9bFLeE88reNUFQbKWS+Q6SzrJJ
-         GLlvZX3ik+BZCtYSIgcfQYBvDCyre01058xc77ZQ8UVI1+kRnzMQbC692zJcazY2aYwl
-         rzGcctmEFLSeSmIC6guKXNDO6zaYDHpwUo/CeUotklD+YAtA+PoVHIgW3z0V+1nHMSTL
-         L+OEvSUwuAMHQQqhI1ABCO9vrbAIFsk19iGbAQj5yXW1yJibqLrVLS/ia8z4ZZEgTK9E
-         xkvwvDgpBILf9IFMgAhodCuexY8INl1nuJUxlzVQs+inJ59e7Gj8ALdwL6WIhTIqo2TF
-         DeGQ==
+        b=KQ+6VATaEfNjb5oFxUelFNXMX/6SnCWr1MiGNH19c0+yrlgt6w08Mk5b+qLTTKcNMS
+         XJHROjJVzkHRvZ5Td12aEsbrn67rrht1MG1qmnYjhACP5MCRQf6/qO0lhCdsqHDZkNtQ
+         34uzDhwEqlKEjMivXqi8Yi1LEMZ9oFhqptFSoc8tgfBBVdfmo3zMihMiQprJwuMVcDcT
+         Tb8Ig/oyBBe/okh5a6U4pUI2Nr2YZQN8mtapXuLq9YCxOeOGXHGjcFaIKEG9B0XAUEoQ
+         ysJbH8kOFZKA6yU3s36Caaq3121Q3nt1bixWhDe6idTRdKfxNzKIiWQsm9fPZXVrOmGw
+         QJEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=3iKK5I+9IlUYodw3CwoC2wydn5y1iLId2czIN7CC7Bw=;
-        b=YSLZ7IM/UnAhYbFrdriE8M9XzQu/s6UbFKiQNCLs82gZYyrjd3FEQ65D44hbQfMPjx
-         r/fU5TgRAD+KpId0C2ObpXJj96kUHn3a+6Q83k521Bnhk4g28apHwXxUBZp84Tj1ZMNf
-         nKxoUYF9BvfjCv4902YNkHQ33GQdAxPoHVgUOXipTPY2hH+U605iYGL62oe/2sSYTH3t
-         v9def0giR52ps7Cc3XtCVwAAXzmTJ6jKc3MngHo9K7lMvDlUEKYV+hExHGngrlQxEW7b
-         588uokReYweQQNbDOC7SKvNVsBlmjQdc3dABkM/hork/1NKSNImSpK4lldrDSdueLIFQ
-         YYBA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=3YSzDtX7AAyzV3555aHdl8YmRdjyPFtREyhq2EffcVw=;
+        b=M1FgBFvZ2O97saDXAyoZz2fP7++IbZhxv6UxP4goyhTHfPUlAqarGXod43oMxSWEYN
+         gv3Ic/j/tERkExCNdQzNqymUY+Ajjav0MMh9fGSpfUYAr6kFnfGv+N/znPu8SCf9mK/E
+         +0tpoQQjwMXM9Jvma1wODcH3pf9656B7USHwaWrKTIbnF3c5tTRSOIOITZjxZlbIlcNa
+         rI426bunke+IolA/tZ4USW+CdVKDRMhUp03WQXXKSJCH1BVX+/044qJFG6ZFer0Tsf61
+         cxYCh/qSEu0jU/aonPNkSmAXAAKrQr78F8LggNHQwmBbqibtB0rsNWRzLgThYzIn2i07
+         4bHg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=I3nPE8Gc;
-       dkim=pass header.i=@chromium.org header.s=google header.b=jp6qiX0o;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=WO0pecUg;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=I3nPE8Gc;
-       dkim=pass header.i=@chromium.org header.s=google header.b=jp6qiX0o;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AIpwx495yUtLVT7uQ4tXw/gqHpJ9QSuoLjPcAnNAs3zcm6bjQzsIqEUYI5+42mfcO2DaY9nm0Q+CWQJ8CxETdnPZwgI=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <1522128575-5326-7-git-send-email-yamada.masahiro@socionext.com>
-References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-7-git-send-email-yamada.masahiro@socionext.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Mar 2018 20:35:31 -0700
-X-Google-Sender-Auth: Ku9deh7dTf-NZnXa2r7Xzg8O04w
-Message-ID: <CAGXu5jK-MtuYre2LB7=9ewFDPntv6p03PCmra9cQW57f293rTA@mail.gmail.com>
-Subject: Re: [PATCH v2 06/21] kconfig: remove string expansion for mainmenu
- after yyparse()
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=WO0pecUg;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R5TaLo011947
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/21] kconfig: remove string expansion in file_lookup()
+Date: Tue, 27 Mar 2018 14:29:19 +0900
+Message-Id: <1522128575-5326-6-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067537936435253?=
-X-GMAIL-MSGID: =?utf-8?q?1596150915247961663?=
+X-GMAIL-THRID: =?utf-8?q?1596067538242865703?=
+X-GMAIL-MSGID: =?utf-8?q?1596067538242865703?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Now that environments are expanded in the lexer, conf_parse() does
-> not need to explicitly expand $ARCH and $KERNELVERSION in the mainmenu.
->
-> The hack introduced by commit 0724a7c32a54 ("kconfig: Don't leak
-> main menus during parsing") can go away.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+There are two callers of file_lookup().
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+[1] zconf_initscan()
+    This is used to open the first Kconfig.  However, it cannot
+    contain environments in the file path because zconf_fopen() is
+    called before file_lookup().  By swapping the call order,
+    KBUILD_KCONFIG would be able to contain environments, but I do
+    not see practical benefits to support it.
 
--Kees
+[2] zconf_nextfile()
+    This is used to open the next file from 'source' statement like
+        source "arch/$SRCARCH/Kconfig"
+    but this has already been expanded in the lexer phase.
 
+So, file_lookup() does not need to expand the given path.
+
+By the way, file_lookup() was already buggy; it expanded a given path,
+but it used the path before expansion for look-up:
+        if (!strcmp(name, file->name)) {
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2:
+  - Simplify the patch.  Just remove text expansion.
+
+ scripts/kconfig/util.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/scripts/kconfig/util.c b/scripts/kconfig/util.c
+index 136e497..3d27c49 100644
+--- a/scripts/kconfig/util.c
++++ b/scripts/kconfig/util.c
+@@ -58,18 +58,16 @@ char *expand_string_value(const char *in)
+ struct file *file_lookup(const char *name)
+ {
+ 	struct file *file;
+-	char *file_name = expand_string_value(name);
+ 
+ 	for (file = file_list; file; file = file->next) {
+ 		if (!strcmp(name, file->name)) {
+-			free(file_name);
+ 			return file;
+ 		}
+ 	}
+ 
+ 	file = xmalloc(sizeof(*file));
+ 	memset(file, 0, sizeof(*file));
+-	file->name = file_name;
++	file->name = xstrdup(name);
+ 	file->next = file_list;
+ 	file_list = file;
+ 	return file;
 -- 
-Kees Cook
-Pixel Security
+2.7.4
