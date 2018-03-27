@@ -1,68 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751205AbeC0Tdw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 15:33:52 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.111]:46521 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751046AbeC0Tdu (ORCPT
+        id S1751178AbeC0Thg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 15:37:36 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:39418 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750936AbeC0The (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 15:33:50 -0400
-Date: Tue, 27 Mar 2018 14:33:49 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] watchdog: wafer5823wdt: Mark expected switch fall-through
-Message-ID: <20180327193349.GA2547@embeddedgus>
+        Tue, 27 Mar 2018 15:37:34 -0400
+From: Richard Weinberger <richard@nod.at>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+Cc: dwmw2@infradead.org, Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: Replace typedef with struct
+Date: Tue, 27 Mar 2018 21:32:19 +0200
+Message-ID: <2234121.GJlN6YpY6x@blindfold>
+In-Reply-To: <20180318175122.GA15004@seema-Inspiron-15-3567>
+References: <20180318175122.GA15004@seema-Inspiron-15-3567>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f0uLt-0036WI-PC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.145.54.187]:52262
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Am Sonntag, 18. März 2018, 18:51:23 CEST schrieb Arushi Singhal:
+> Using typedef for a structure type is not suggested in Linux kernel
+> coding style guidelines. Hence, occurrence of typedefs has been
+> removed.
+> 
+> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+> ---
+>  drivers/mtd/ssfdc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mtd/ssfdc.c b/drivers/mtd/ssfdc.c
+> index 95f0bf9..8bae672 100644
+> --- a/drivers/mtd/ssfdc.c
+> +++ b/drivers/mtd/ssfdc.c
+> @@ -54,15 +54,15 @@ SumSector	2,000	4,000	8,000	16,000	32,000	64,000	128,000	256,000
+>  SectorSize	512	512	512	512	512	512	512	512
+>  **/
+>  
+> -typedef struct {
+> +struct chs_entry {
+>  	unsigned long size;
+>  	unsigned short cyl;
+>  	unsigned char head;
+>  	unsigned char sec;
+> -} chs_entry_t;
+> +};
+>  
+>  /* Must be ordered by size */
+> -static const chs_entry_t chs_table[] = {
+> +static const struct chs_entry chs_table[] = {
+>  	{ MiB(  1), 125,  4,  4 },
+>  	{ MiB(  2), 125,  4,  8 },
+>  	{ MiB(  4), 250,  4,  8 },
+> 
 
-Notice that in this particular case I replaced "Fall" with a proper
-"Fall through" comment, which is what GCC is expecting to find.
+Didn't we already talk about coding style fixes on existing code? ;-)
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/watchdog/wafer5823wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/wafer5823wdt.c b/drivers/watchdog/wafer5823wdt.c
-index db0da7e..93c5b61 100644
---- a/drivers/watchdog/wafer5823wdt.c
-+++ b/drivers/watchdog/wafer5823wdt.c
-@@ -178,7 +178,7 @@ static long wafwdt_ioctl(struct file *file, unsigned int cmd,
- 		timeout = new_timeout;
- 		wafwdt_stop();
- 		wafwdt_start();
--		/* Fall */
-+		/* Fall through */
- 	case WDIOC_GETTIMEOUT:
- 		return put_user(timeout, p);
- 
--- 
-2.7.4
+Thanks,
+//richard
