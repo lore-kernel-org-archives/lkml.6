@@ -1,321 +1,215 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AG47ELt1e/s3Mqxr1TYZdisqaGc7HIIc2qnVPffJvaCBaGj1Y7hCRoJTBAUzsCBy9vZPeSyOJHY0
-ARC-Seal: i=1; a=rsa-sha256; t=1522140099; cv=none;
+X-Google-Smtp-Source: AG47ELuy6/ZIh4ilcIFVbSsfBeEzdnyjRJYv5B7FkNFV3XBMBfpczhMlmVP2SrV8/JYPMgniv6ej
+ARC-Seal: i=1; a=rsa-sha256; t=1522140098; cv=none;
         d=google.com; s=arc-20160816;
-        b=jW7Xw9xCcJuYkeatiRO2lm9pBWXQeGExO6P4esWBDFhxNx2Umy7xHa0k0FWXX37Vca
-         Ce9dvtn5ftLgvVkm6YffaZZS+DgfwV74z/00XqDcwx9x66LQ7GXkNLhQjRrPtOSm+OGI
-         AmCksJzAgR6hw7So3fmfPCJTh2iBOcm7MpwjVaqgRh4gEageSGJAbB1xvcU8y+aDU5ma
-         66bIlIGNm1XcncE7eBP7ov0BTLI3JlW5eDAlk6kHkSYvdUZy6QB1g2bR3Sew6yIHObvc
-         0eBI7PeujdkrE4SgkGzodDb5/I91ou1h/RXau29VoHwPSarF0iWifRJtjkAb64QZEVz8
-         q7pg==
+        b=QG9RZwXZ7nE+1q2ocYl7EsPny9bDvslrJyUmAwxYyTqvBBUEauYHmEq4ZFAvkv9rQn
+         a3+ryBjrTx2/OqFEryunkxcL0pg6Gqgny8yxgMjXwbdnsRp7IImmkBjC/B6xqcLLYzpU
+         6OVT8bhC+1oW4F5xnVVr3xTATwB2kxwTNCjicSvURaPb2XD3mA+hPfJAYj9wvWoR6OFg
+         op88hkTRnHzwhF8GBe6yetyN/oFa0UNfrx086L/CyDGuwrl8OC1VI/t7NgODZD43s3uw
+         XMFISfdSf5WqMfnBbj9m57DZtYUJNuhdVOd3pFXsqvlp5K6L4mxKgLnFEdV5jobESZ+m
+         gUOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=upqpKSWwdNJ4gxi/GrVn7V78WpShR0ZDJ4XeuQtJyX8=;
-        b=NiRznqiGCmyxfn9GvajouT9y6r2QjMyWw3V1ydCnAHoIq5cE2QbsvW4buWLDuFvJVI
-         e7K+l8vy74QX81GRk0XByEEPmtH7ALYg9L4Q+zffelTX5rlK7aKu9DK+GSBLHfz8aX4+
-         nI1482PabStOBAWeTjcS4kfEYAZrWnPqPXnaDfVG2ysPigX5udY8/WcXlPOdEXSGb2X7
-         izjV94Gwv21KUAOZyo2m0fhT8waaA0IDOkIYZN0txF7TY8gFtjU4A/bSJpNED/Aq/MZO
-         UotGHRs+ONoiH6g+u8j2C8j4S8E/PMZBUc+v/M3kYSH9fk6HChpJEgQi0pjkq4TuBo2u
-         9waA==
+        bh=rlM3zVU5CJxkvnSHNwQxeqw7KpZl/xwv+PGKMILaAJI=;
+        b=BHoyVLh9afb8FT7NEyX9AcJcRO/Bb0TFNOxbjNJBkt3103ZSc+q8qemmTQbYKbDhdI
+         GzFy0SVuouYErOqEAvYAAVuwRB1nyuPIMR2y5mG5KLV6f55Nw+K3dQjKi8a92KRDdf06
+         VXwcGZEvCZhvqOOxdMtBgoeLju60WnE3No3dV0Z19o0a6qcOV2HEbSM5IEPWbDA7Z14u
+         vI1GDtNUjjD8Z2OYp63xjfdIMwENcM+GdnX10tI4lX4kSb+345fbZ8jnTyXXepK0iihs
+         lGnLNK6ASDNDxYNy5TtEIOxr7R30z9mHeRJ1AGlsAR/SR4MdJ0xFKXXoHWBo21tOFZj+
+         43lw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 21/23] staging: rtl8723bs: Rework 'struct _ODM_Per_Pkt_Info_' coding style.
-Date: Tue, 27 Mar 2018 01:41:13 -0700
-Message-Id: <20180327084115.16129-21-quytelda@tamalin.org>
+Subject: [PATCH 19/23] staging: rtl8723bs: Factor out rtl8723bs_recv_tasklet() sections.
+Date: Tue, 27 Mar 2018 01:41:11 -0700
+Message-Id: <20180327084115.16129-19-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327084115.16129-1-quytelda@tamalin.org>
 References: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
  <20180327084115.16129-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:qnzxCxLCIq0ZpjEGQIERpDGY0aI+fId9t9K+sXr05DkiWwna6UP
- tx0VOYKD1k721c66hSAArzoMYrkvsMSkP2aXfvqp61UyC85en1i5o6wCnbBBLlIF4fO+Ncm
- rwAUoJMKO8gE/zSsUOEZkbBXuPENyr3LfHdAr/QHgixg10wAIGK/4AktlOC4urqrAKDCgzt
- OQstvHetU4XYE2WWGWmOQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:jB0XHHXt+FM=:Em1ybNdJSi6E1I4VPP7EHI
- kzuZRkQgkHaC3nRwzBl/fDgOeJrRWiCMc8hD2icqcib7rnyg4mfFt8/9wW2OLj/Je9YLcgfrW
- eaaWXADs2e0sqqkZh/spI84MDxvTr8kmxDH/DRb/AjQnlACaedvrRdC5hmEzzD6oiingM2047
- 1ip5GWr07X6/TUSUyfYfUFDIf4bRCCLabGmFvjWJ+xN6oKUJ4vXXuQcHqg0UOLNwQCMPO/7Lr
- omfehETFs9BGvu0TY6kqr1Fzzh8qwOHifOAo/QVpMuUPIr3upf7Z58JBrd0rDs/L6CvqsQQUH
- 48sCDsXxSQneYxZ3K6slo8M/3cpoYKrw2XKVsWM1EyCxD2ldZ3gdYDryf2lK4nWLTPVdTi93I
- fTdrjAs4KLKnxKqnDSwWOu9PkYadx77zV73M2r1uG0gV5FzHFXRYfwRhHtbB+gjhiMALBdqqp
- g21S2Bw1UiQgV+1YOIjq5HDPuTLxu05CDxF3iWbAWQu+2lKB7YlHgQ3xjOVKli9AcUtR0OYYW
- T4cw9VJrXchudZqboBdJJw7yXDD9m2+ILIl2A85QGWiVPVj9kaxHvaf1fV8oRyUZn1GAR3oFT
- rORL/uaHmWDfUMUdL3efuIa3Z8Py8tlDUk4/93I+3wR7/RNiU4TzR1jTk4NHN8rlsR/0hAadz
- l+GTvQwcv//L9nA/URxXWL7RHM0dLofv6qyqnwPWstX8emuC/MU+887G8PD84tTOs8/rVIUbZ
- MgCbnnSsVzQVyd8pkRAoNy2/IrDiYh2XL33Xgg==
+X-Provags-ID: V03:K0:fGiBRHDBrjHY4XiIVh32BGAz/nvJURti0OSnCnV3mKmfPNQ8bMq
+ 1uIiykhwFt4gbuuoSn1BW1tmRKRQD2ahFdNIIwc8z2UkYht81jKcbGodPo8hSK2Rk+fyOhi
+ mv6QnTt/dTZP7e01L7YxXGJtJvAa5VdOZe2PZAqGKRBpNHmgE51bmfZziaslIwugNDhN916
+ XoYaWZglkadBEwkev7IRg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:w5zhEFVkbWs=:EVpf1EM8XLLS6oKb+IOMqe
+ VQLDh+qY8T5VMz+4Z+XycuDrR4Bw9jQVLYHN1KvTO8OB3YBGCIvFadEowNp6jdzvYX0iNX/fC
+ 4McPbAEg8pIn8mwKSK9qukJVTV4x3MmJbrxkkqQlWq6yrWBQckDRqEN6opFl83GgSr9O3rlOg
+ ZzAgy8jBIp0c+SA+LinpadH8E7BqEJtiWHdl/VW2pgnZuwsyUvQ5MHJeicgW25XanLfXRcnik
+ QIz6X2XD4FX/Kb3G691Zs5HMchPaUbaI7t80DAp0nzB0U8N893LoDzT2lEnJmKv7UcxbaOmHr
+ C2WzQ99xaDO26UOnhUTCcE/sIFAUnMx/es3eJItKRTibQULipxpm73AqJY7LtchCklqJDwIVV
+ qDKek6PF2S8RKHQKsPiKUo+asCPzfYPbS0O8k6m7ve/raOcC11ePmQolMVzsA/UARiLV1CDRv
+ PDxzcrCzBOdjanDLe45PKl7/61/PH2sP+JKYAMz2B1sjn2JI2RWsQhivUfOOhLZWQ62WKsSn5
+ H2xoQNRqpqDztNrq0GccsGTc6LYsA0o9YMTHRW1crqDetjFBKJ9YkgqSa3v7aXo2hQrYD6XK3
+ 6J0sHrjRcJ9n7jpnwO1IJHZQbnqn7/BjH3fYvgpRA5sJOVjkYY3qiN27mhs8CnXPyVlxKJz/u
+ qabn2u128RJbzjsKnPCRdCFBwQjA9tn7vWlX5n6a+umU1sIBu7+x3x/GCfAGmIisAaLurCd0V
+ u+6Yi57+h+crUJ50tLEkw/R5Mvnc0oSGoKbnNg==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596079577396167118?=
-X-GMAIL-MSGID: =?utf-8?q?1596079577396167118?=
+X-GMAIL-THRID: =?utf-8?q?1596079575554329626?=
+X-GMAIL-MSGID: =?utf-8?q?1596079575554329626?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Change the typedef'd 'struct _ODM_Per_Pkt_Info_' into
-'struct odm_packet_info' and change the members to snake case in
-order to meet the coding style guidelines.
-Members:
-* u8 DataRate            -> data_rate
-* u8 StationID           -> station_id
-* bool bPacketMatchBSSID -> bssid_match
-* bool bPacketToSelf     -> to_self
-* bool bPacketBeacon     -> is_beacon
-* bool bToSelf           -> (removed because it isn't used)
+Factor out code from rtl8723bs_recv_tasklet() into helper methods
+to unindent lines over 80 characters.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/rtl8723bs/hal/odm.h             | 16 +++++------
- drivers/staging/rtl8723bs/hal/odm_CfoTracking.c |  4 +--
- drivers/staging/rtl8723bs/hal/odm_HWConfig.c    | 26 ++++++++---------
- drivers/staging/rtl8723bs/hal/odm_HWConfig.h    |  2 +-
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c  | 37 +++++++++++++------------
- 5 files changed, 43 insertions(+), 42 deletions(-)
+ drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 95 +++++++++++++++++++-------
+ 1 file changed, 69 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/odm.h b/drivers/staging/rtl8723bs/hal/odm.h
-index 87a76bafecb3..7c13a9314a22 100644
---- a/drivers/staging/rtl8723bs/hal/odm.h
-+++ b/drivers/staging/rtl8723bs/hal/odm.h
-@@ -262,15 +262,13 @@ typedef struct _ODM_Phy_Status_Info_ {
- } ODM_PHY_INFO_T, *PODM_PHY_INFO_T;
- 
- 
--typedef struct _ODM_Per_Pkt_Info_ {
--	/* u8 Rate; */
--	u8 DataRate;
--	u8 StationID;
--	bool bPacketMatchBSSID;
--	bool bPacketToSelf;
--	bool bPacketBeacon;
--	bool bToSelf;
--} ODM_PACKET_INFO_T, *PODM_PACKET_INFO_T;
-+struct odm_packet_info {
-+	u8 data_rate;
-+	u8 station_id;
-+	bool bssid_match;
-+	bool to_self;
-+	bool is_beacon;
-+};
- 
- 
- typedef struct _ODM_Phy_Dbg_Info_ {
-diff --git a/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c b/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c
-index 71853e6f7106..178aaab3f76c 100644
---- a/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c
-+++ b/drivers/staging/rtl8723bs/hal/odm_CfoTracking.c
-@@ -316,14 +316,14 @@ void ODM_CfoTracking(void *pDM_VOID)
- void ODM_ParsingCFO(void *pDM_VOID, void *pPktinfo_VOID, s8 *pcfotail)
- {
- 	PDM_ODM_T pDM_Odm = (PDM_ODM_T)pDM_VOID;
--	PODM_PACKET_INFO_T pPktinfo = (PODM_PACKET_INFO_T)pPktinfo_VOID;
-+	struct odm_packet_info *pPktinfo = (struct odm_packet_info *)pPktinfo_VOID;
- 	PCFO_TRACKING pCfoTrack = &pDM_Odm->DM_CfoTrack;
- 	u8 i;
- 
- 	if (!(pDM_Odm->SupportAbility & ODM_BB_CFO_TRACKING))
- 		return;
- 
--	if (pPktinfo->StationID != 0) {
-+	if (pPktinfo->station_id != 0) {
- 		/* 3 Update CFO report for path-A & path-B */
- 		/*  Only paht-A and path-B have CFO tail and short CFO */
- 		for (i = ODM_RF_PATH_A; i <= ODM_RF_PATH_B; i++)
-diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
-index 8dd6da8a4e26..b3f4c237e903 100644
---- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
-+++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
-@@ -93,7 +93,7 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 	PDM_ODM_T pDM_Odm,
- 	PODM_PHY_INFO_T pPhyInfo,
- 	u8 *pPhyStatus,
--	PODM_PACKET_INFO_T pPktinfo
-+	struct odm_packet_info *pPktinfo
- )
- {
- 	u8 i, Max_spatial_stream;
-@@ -106,7 +106,7 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 	u8 LNA_idx, VGA_idx;
- 	PPHY_STATUS_RPT_8192CD_T pPhyStaRpt = (PPHY_STATUS_RPT_8192CD_T)pPhyStatus;
- 
--	isCCKrate = pPktinfo->DataRate <= DESC_RATE11M;
-+	isCCKrate = pPktinfo->data_rate <= DESC_RATE11M;
- 	pPhyInfo->RxMIMOSignalQuality[ODM_RF_PATH_A] = -1;
- 	pPhyInfo->RxMIMOSignalQuality[ODM_RF_PATH_B] = -1;
- 
-@@ -215,7 +215,7 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 			/*  */
- 			/*  (3)EVM of HT rate */
- 			/*  */
--			if (pPktinfo->DataRate >= DESC_RATEMCS8 && pPktinfo->DataRate <= DESC_RATEMCS15)
-+			if (pPktinfo->data_rate >= DESC_RATEMCS8 && pPktinfo->data_rate <= DESC_RATEMCS15)
- 				Max_spatial_stream = 2; /* both spatial stream make sense */
- 			else
- 				Max_spatial_stream = 1; /* only spatial stream 1 makes sense */
-@@ -267,7 +267,7 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- }
- 
- static void odm_Process_RSSIForDM(
--	PDM_ODM_T pDM_Odm, PODM_PHY_INFO_T pPhyInfo, PODM_PACKET_INFO_T pPktinfo
-+	PDM_ODM_T pDM_Odm, PODM_PHY_INFO_T pPhyInfo, struct odm_packet_info *pPktinfo
- )
- {
- 
-@@ -279,22 +279,22 @@ static void odm_Process_RSSIForDM(
- 	PSTA_INFO_T pEntry;
- 
- 
--	if (pPktinfo->StationID == 0xFF)
-+	if (pPktinfo->station_id == 0xFF)
- 		return;
- 
--	pEntry = pDM_Odm->pODM_StaInfo[pPktinfo->StationID];
-+	pEntry = pDM_Odm->pODM_StaInfo[pPktinfo->station_id];
- 
- 	if (!IS_STA_VALID(pEntry))
- 		return;
- 
--	if ((!pPktinfo->bPacketMatchBSSID))
-+	if ((!pPktinfo->bssid_match))
- 		return;
- 
--	if (pPktinfo->bPacketBeacon)
-+	if (pPktinfo->is_beacon)
- 		pDM_Odm->PhyDbgInfo.NumQryBeaconPkt++;
- 
--	isCCKrate = ((pPktinfo->DataRate <= DESC_RATE11M)) ? true : false;
--	pDM_Odm->RxRate = pPktinfo->DataRate;
-+	isCCKrate = ((pPktinfo->data_rate <= DESC_RATE11M)) ? true : false;
-+	pDM_Odm->RxRate = pPktinfo->data_rate;
- 
- 	/* Statistic for antenna/path diversity------------------ */
- 	if (pDM_Odm->SupportAbility & ODM_BB_ANT_DIV) {
-@@ -307,7 +307,7 @@ static void odm_Process_RSSIForDM(
- 	UndecoratedSmoothedOFDM = pEntry->rssi_stat.UndecoratedSmoothedOFDM;
- 	UndecoratedSmoothedPWDB = pEntry->rssi_stat.UndecoratedSmoothedPWDB;
- 
--	if (pPktinfo->bPacketToSelf || pPktinfo->bPacketBeacon) {
-+	if (pPktinfo->to_self || pPktinfo->is_beacon) {
- 
- 		if (!isCCKrate) { /* ofdm rate */
- 			if (pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_B] == 0) {
-@@ -424,7 +424,7 @@ static void ODM_PhyStatusQuery_92CSeries(
- 	PDM_ODM_T pDM_Odm,
- 	PODM_PHY_INFO_T pPhyInfo,
- 	u8 *pPhyStatus,
--	PODM_PACKET_INFO_T pPktinfo
-+	struct odm_packet_info *pPktinfo
- )
- {
- 
-@@ -438,7 +438,7 @@ void ODM_PhyStatusQuery(
- 	PDM_ODM_T pDM_Odm,
- 	PODM_PHY_INFO_T pPhyInfo,
- 	u8 *pPhyStatus,
--	PODM_PACKET_INFO_T pPktinfo
-+	struct odm_packet_info *pPktinfo
- )
- {
- 
-diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.h b/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
-index f029922d12f0..ff0373eba495 100644
---- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
-+++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
-@@ -133,7 +133,7 @@ void ODM_PhyStatusQuery(
- 	PDM_ODM_T pDM_Odm,
- 	PODM_PHY_INFO_T pPhyInfo,
- 	u8 *pPhyStatus,
--	PODM_PACKET_INFO_T pPktinfo
-+	struct odm_packet_info *pPktinfo
- );
- 
- HAL_STATUS ODM_ConfigRFWithTxPwrTrackHeaderFile(PDM_ODM_T pDM_Odm);
 diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-index 7a294102b63b..6280a2e21dc2 100644
+index c4851a825fbb..038481655858 100644
 --- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
 +++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-@@ -97,45 +97,48 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
- 	u8 *rx_bssid;
- 	u8 *rx_ra;
- 	u8 *my_hwaddr;
--
--	ODM_PACKET_INFO_T pkt_info;
- 	u8 *sa = NULL;
+@@ -189,6 +189,55 @@ static void rtl8723bs_c2h_packet_handler(struct adapter *padapter,
+ 	return;
+ }
+ 
++static inline union recv_frame *try_alloc_recvframe(struct recv_priv *precvpriv,
++						    struct recv_buf *precvbuf)
++{
++	union recv_frame *precvframe;
 +
-+	struct odm_packet_info pkt_info = {
-+		.data_rate   = 0x00,
-+		.station_id  = 0x00,
-+		.bssid_match = false,
-+		.to_self     = false,
-+		.is_beacon   = false,
-+	};
++	precvframe = rtw_alloc_recvframe(&precvpriv->free_recv_queue);
++	if (!precvframe) {
++		DBG_8192C("%s: no enough recv frame!\n", __func__);
++		rtw_enqueue_recvbuf_to_head(precvbuf,
++					    &precvpriv->recv_buf_pending_queue);
 +
- 	/* _irqL		irqL; */
- 	struct sta_priv *pstapriv;
- 	struct sta_info *psta;
++		/*  The case of can't allocte recvframe should be temporary, */
++		/*  schedule again and hope recvframe is available next time. */
++		tasklet_schedule(&precvpriv->recv_tasklet);
++	}
++
++	return precvframe;
++}
++
++static inline bool rx_crc_err(struct recv_priv *precvpriv,
++			      struct hal_com_data *p_hal_data,
++			      struct rx_pkt_attrib *pattrib,
++			      union recv_frame *precvframe)
++{
++	/*  fix Hardware RX data error, drop whole recv_buffer */
++	if ((!(p_hal_data->ReceiveConfig & RCR_ACRC32)) && pattrib->crc_err) {
++		DBG_8192C("%s()-%d: RX Warning! rx CRC ERROR !!\n",
++			  __func__, __LINE__);
++		rtw_free_recvframe(precvframe, &precvpriv->free_recv_queue);
++		return true;
++	}
++
++	return false;
++}
++
++static inline bool pkt_exceeds_tail(struct recv_priv *precvpriv,
++				    u8 *end, u8 *tail,
++				    union recv_frame *precvframe)
++{
++	if (end > tail) {
++		DBG_8192C("%s()-%d: : next pkt len(%p,%d) exceed ptail(%p)!\n",
++			  __func__, __LINE__, ptr, pkt_offset, precvbuf->ptail);
++		rtw_free_recvframe(precvframe, &precvpriv->free_recv_queue);
++		return true;
++	}
++
++	return false;
++}
++
+ static void rtl8723bs_recv_tasklet(void *priv)
+ {
+ 	struct adapter *padapter;
+@@ -197,6 +246,7 @@ static void rtl8723bs_recv_tasklet(void *priv)
+ 	struct recv_buf *precvbuf;
+ 	union recv_frame *precvframe;
+ 	struct rx_pkt_attrib *pattrib;
++	struct __queue *recv_buf_queue;
+ 	u8 *ptr;
+ 	u32 pkt_offset, skb_len, alloc_sz;
+ 	_pkt *pkt_copy = NULL;
+@@ -205,52 +255,45 @@ static void rtl8723bs_recv_tasklet(void *priv)
+ 	padapter = priv;
+ 	p_hal_data = GET_HAL_DATA(padapter);
+ 	precvpriv = &padapter->recvpriv;
++	recv_buf_queue = &precvpriv->recv_buf_pending_queue;
  
--	pkt_info.bPacketMatchBSSID = false;
--	pkt_info.bPacketToSelf = false;
--	pkt_info.bPacketBeacon = false;
+ 	do {
+-		precvbuf = rtw_dequeue_recvbuf(&precvpriv->recv_buf_pending_queue);
++		precvbuf = rtw_dequeue_recvbuf(recv_buf_queue);
+ 		if (NULL == precvbuf)
+ 			break;
+ 
+ 		ptr = precvbuf->pdata;
+ 
+ 		while (ptr < precvbuf->ptail) {
+-			precvframe = rtw_alloc_recvframe(&precvpriv->free_recv_queue);
+-			if (precvframe == NULL) {
+-				DBG_8192C("%s: no enough recv frame!\n", __func__);
+-				rtw_enqueue_recvbuf_to_head(precvbuf, &precvpriv->recv_buf_pending_queue);
 -
- 	wlanhdr = get_recvframe_data(precvframe);
- 	my_bssid = get_bssid(&padapter->mlmepriv);
- 	rx_bssid = get_hdr_bssid(wlanhdr);
--	pkt_info.bPacketMatchBSSID = ((!IsFrameTypeCtrl(wlanhdr)) &&
--				      !pattrib->icv_err && !pattrib->crc_err &&
--				      !ether_addr_equal(rx_bssid, my_bssid));
-+	pkt_info.bssid_match = ((!IsFrameTypeCtrl(wlanhdr)) &&
-+				!pattrib->icv_err && !pattrib->crc_err &&
-+				!ether_addr_equal(rx_bssid, my_bssid));
+-				/*  The case of can't allocte recvframe should be temporary, */
+-				/*  schedule again and hope recvframe is available next time. */
+-				tasklet_schedule(&precvpriv->recv_tasklet);
++			precvframe = try_alloc_recvframe(precvpriv, precvbuf);
++			if(!precvframe)
+ 				return;
+-			}
  
- 	rx_ra = get_ra(wlanhdr);
- 	my_hwaddr = myid(&padapter->eeprompriv);
--	pkt_info.bPacketToSelf = pkt_info.bPacketMatchBSSID &&
-+	pkt_info.to_self = pkt_info.bssid_match &&
- 		!ether_addr_equal(rx_ra, my_hwaddr);
+ 			/* rx desc parsing */
+-			update_recvframe_attrib(padapter, precvframe, (struct recv_stat *)ptr);
++			update_recvframe_attrib(padapter, precvframe,
++						(struct recv_stat *)ptr);
  
+ 			pattrib = &precvframe->u.hdr.attrib;
  
--	pkt_info.bPacketBeacon = pkt_info.bPacketMatchBSSID &&
-+	pkt_info.is_beacon = pkt_info.bssid_match &&
- 		(GetFrameSubType(wlanhdr) == WIFI_BEACON);
+-			/*  fix Hardware RX data error, drop whole recv_buffer */
+-			if ((!(p_hal_data->ReceiveConfig & RCR_ACRC32)) && pattrib->crc_err) {
+-				DBG_8192C("%s()-%d: RX Warning! rx CRC ERROR !!\n", __func__, __LINE__);
+-				rtw_free_recvframe(precvframe, &precvpriv->free_recv_queue);
++			if(rx_crc_err(precvpriv, p_hal_data,
++				      pattrib, precvframe))
+ 				break;
+-			}
  
- 	sa = get_ta(wlanhdr);
+ 			rx_report_sz = RXDESC_SIZE + pattrib->drvinfo_sz;
+-			pkt_offset = rx_report_sz + pattrib->shift_sz + pattrib->pkt_len;
++			pkt_offset = rx_report_sz +
++				pattrib->shift_sz +
++				pattrib->pkt_len;
  
--	pkt_info.StationID = 0xFF;
-+	pkt_info.station_id = 0xFF;
+-			if ((ptr + pkt_offset) > precvbuf->ptail) {
+-				DBG_8192C("%s()-%d: : next pkt len(%p,%d) exceed ptail(%p)!\n", __func__, __LINE__, ptr, pkt_offset, precvbuf->ptail);
+-				rtw_free_recvframe(precvframe, &precvpriv->free_recv_queue);
++			if(pkt_exceeds_tail(precvpriv, ptr + pkt_offset,
++					    precvbuf->ptail, precvframe))
+ 				break;
+-			}
  
- 	pstapriv = &padapter->stapriv;
- 	psta = rtw_get_stainfo(pstapriv, sa);
- 	if (psta) {
--		pkt_info.StationID = psta->mac_id;
-+		pkt_info.station_id = psta->mac_id;
- 		/* DBG_8192C("%s ==> StationID(%d)\n",
--		 * 	  __func__, pkt_info.StationID); */
-+		 * 	  __func__, pkt_info.station_id); */
- 	}
--	pkt_info.DataRate = pattrib->data_rate;
-+	pkt_info.data_rate = pattrib->data_rate;
- 
- 	/* rtl8723b_query_rx_phy_status(precvframe, pphy_status); */
- 	/* spin_lock_bh(&p_hal_data->odm_stainfo_lock); */
-@@ -146,14 +149,14 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
- 	/* spin_unlock_bh(&p_hal_data->odm_stainfo_lock); */
- 	precvframe->u.hdr.psta = NULL;
- 	if (
--		pkt_info.bPacketMatchBSSID &&
-+		pkt_info.bssid_match &&
- 		(check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true)
- 	) {
- 		if (psta) {
- 			precvframe->u.hdr.psta = psta;
- 			rtl8723b_process_phy_info(padapter, precvframe);
- 		}
--	} else if (pkt_info.bPacketToSelf || pkt_info.bPacketBeacon) {
-+	} else if (pkt_info.to_self || pkt_info.is_beacon) {
- 		u32 adhoc_state = WIFI_ADHOC_STATE | WIFI_ADHOC_MASTER_STATE;
- 		if (check_fwstate(&padapter->mlmepriv, adhoc_state))
- 			if (psta)
+ 			if ((pattrib->crc_err) || (pattrib->icv_err)) {
+-				{
+-					DBG_8192C("%s: crc_err =%d icv_err =%d, skip!\n", __func__, pattrib->crc_err, pattrib->icv_err);
+-				}
+-				rtw_free_recvframe(precvframe, &precvpriv->free_recv_queue);
++				DBG_8192C("%s: crc_err =%d icv_err =%d, skip!\n",
++					  __func__, pattrib->crc_err,
++					  pattrib->icv_err);
++				rtw_free_recvframe(precvframe,
++						   &precvpriv->free_recv_queue);
+ 			} else {
+ 				/* 	Modified by Albert 20101213 */
+ 				/* 	For 8 bytes IP header alignment. */
+@@ -301,7 +344,7 @@ static void rtl8723bs_recv_tasklet(void *priv)
+ 						skb_reset_tail_pointer(pkt_clone);
+ 						precvframe->u.hdr.rx_head = precvframe->u.hdr.rx_data = precvframe->u.hdr.rx_tail
+ 							= pkt_clone->data;
+-						precvframe->u.hdr.rx_end =	pkt_clone->data + skb_len;
++						precvframe->u.hdr.rx_end = pkt_clone->data + skb_len;
+ 					} else {
+ 						DBG_8192C("%s: rtw_skb_clone fail\n", __func__);
+ 						rtw_free_recvframe(precvframe, &precvpriv->free_recv_queue);
 -- 
 2.16.3
