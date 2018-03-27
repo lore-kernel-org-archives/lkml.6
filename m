@@ -1,58 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752169AbeC0UYI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 16:24:08 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38055 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751840AbeC0UX7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 16:23:59 -0400
-X-Google-Smtp-Source: AIpwx49orK2tQVzX8cQCs7UmUtD3xJPtmqvMQtUT2XcHKSMfTucbqx8RCd6DLEteD0CTmICaIvu0BQ==
-Date: Tue, 27 Mar 2018 13:23:57 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc: peterz@infradead.org, mhocko@suse.com, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, bp@suse.de,
-        tglx@linutronix.de
-Subject: Re: [PATCH v2] lockdep: Show address of "struct lockdep_map" at
- print_lock().
-In-Reply-To: <201803271941.GBE57310.tVSOJLQOFFOHFM@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.DEB.2.20.1803271323130.5082@chino.kir.corp.google.com>
-References: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp> <20180326160549.GL4043@hirez.programming.kicks-ass.net> <201803270558.HCA41032.tVFJOFOMOFLHSQ@I-love.SAKURA.ne.jp> <201803271941.GBE57310.tVSOJLQOFFOHFM@I-love.SAKURA.ne.jp>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1752019AbeC0Uhh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 16:37:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751207AbeC0Uhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 16:37:35 -0400
+Subject: Re: [PATCH v2] locking/rwsem: Add DEBUG_RWSEMS to look for
+ lock/unlock mismatches
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <1522091848-18426-1-git-send-email-longman@redhat.com>
+ <20180327060655.25zjgqlgbfsp6b3p@gmail.com>
+ <72b8a73c-bfc0-5884-199d-349ee3311802@redhat.com>
+ <20180327195639.7pkqb47wcgr6jgoy@gmail.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <529e4373-754e-307c-6dc2-a605a05826de@redhat.com>
+Date: Tue, 27 Mar 2018 16:37:34 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180327195639.7pkqb47wcgr6jgoy@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018, Tetsuo Handa wrote:
+On 03/27/2018 03:56 PM, Ingo Molnar wrote:
+> * Waiman Long <longman@redhat.com> wrote:
+>
+>> On 03/27/2018 02:06 AM, Ingo Molnar wrote:
+>>> * Waiman Long <longman@redhat.com> wrote:
+>>>
+>>>> For a rwsem, locking can either be exclusive or shared. The corresponding
+>>>> exclusive or shared unlock must be used. Otherwise, the protected data
+>>>> structures may get corrupted or the lock may be in an inconsistent state.
+>>>>
+>>>> In order to detect such anomaly, a new configuration option DEBUG_RWSEMS
+>>>> is added which can be enabled to look for such mismatches and print
+>>>> warnings that that happens.
+>>>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>>>> index 64155e3..0958192 100644
+>>>> --- a/lib/Kconfig.debug
+>>>> +++ b/lib/Kconfig.debug
+>>>> @@ -1075,6 +1075,13 @@ config DEBUG_WW_MUTEX_SLOWPATH
+>>>>  	 even a debug kernel.  If you are a driver writer, enable it.  If
+>>>>  	 you are a distro, do not.
+>>>>  
+>>>> +config DEBUG_RWSEMS
+>>>> +	bool "RW Semaphore debugging: basic checks"
+>>>> +	depends on DEBUG_KERNEL && RWSEM_SPIN_ON_OWNER
+>>>> +	help
+>>>> +	  This feature allows mismatched rw semaphore locks and unlocks
+>>>> +	  to be detected and reported.
+>>>> +
+>>> Makes sense - but this should also be integrated into the rest of lock debugging 
+>>> Kconfig hierarchy similar to DEBUG_MUTEXES: i.e. DEBUG_LOCK_ALLOC, PROVE_LOCKING, 
+>>> etc. should select this new lock debugging option as well.
+>>>
+>>> People generally are not supposed to know and configure the finer details, 
+>>> CONFIG_LOCK_DEBUGGING=y is a one-stop-shop in this regard.
+>> I can add a patch to rework lock debugging configuration code. Do you
+>> want to hide the individual config options but still allow them to be
+>> enabled manually? Alternatively we can also just add a master lock
+>> debugging option to select them all.
+> They should work like mutex debugging: it's auto-selected by PROVE_LOCKING, but 
+> can be enabled individually as well if PROVE_LOCKING is disabled.
+Got it.
 
-> Since "struct lockdep_map" is embedded into lock objects, we can know
-> which instance of a lock object is acquired using hlock->instance field.
-> This will help finding which threads are causing a lock contention.
-> 
-> Currently, print_lock() is printing hlock->acquire_ip field in both
-> "[<%px>]" and "%pS" format. But "[<%px>]" is little useful nowadays, for
-> we use scripts/faddr2line which receives "%pS" for finding the location
-> in the source code. And I want to reduce amount of output, for
-> debug_show_all_locks() might print a lot.
-> 
-> Therefore, this patch replaces "[<%px>]" for printing hlock->acquire_ip
-> field with "%p" for printing hlock->instance field.
-> 
-> [  251.305475] 3 locks held by a.out/31106:
-> [  251.308949]  #0: 00000000b0f753ba (&mm->mmap_sem){++++}, at: copy_process.part.41+0x10d5/0x1fe0
-> [  251.314283]  #1: 00000000ef64d539 (&mm->mmap_sem/1){+.+.}, at: copy_process.part.41+0x10fe/0x1fe0
-> [  251.319618]  #2: 00000000b41a282e (&mapping->i_mmap_rwsem){++++}, at: copy_process.part.41+0x12f2/0x1fe0
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@suse.de>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-
-Acked-by: David Rientjes <rientjes@google.com>
+Thanks,
+Longman
