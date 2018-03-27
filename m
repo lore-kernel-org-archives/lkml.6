@@ -1,49 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+MOBzNL7fB42CM2JuZ3a+IMwZMdpqCo7p7DEG1rP0FGzI+SVtEVZN50u/j7xwqLVtOEi51
-ARC-Seal: i=1; a=rsa-sha256; t=1522168834; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JNeWGujRYWSuNRuGHR+0KErMps1Q8ss+Au6bhb/kIO/Xr0wX8i6GRXqisdmFYLJyyI
-         APb3hmxOmDDiNO78XZR9Wrx3a7+b8xbcGSwyzzOy03PrBSQSHzKiY69yjcg7tu8UTJOx
-         AtNbT58eVjFC5FlGlQKzPz9yIuJ7p/lRoZ93oRM7KEgNy8GesAdCWxecChJKwzj2OX5I
-         R0CAG8xBZK1abidqCs4mLI9JA4GcfoDPKi/5eNcKtsTURmdPbxkCsMaww022jQeyZiAE
-         63lUtR3BO+o9i+lrRORkZ6eXCsUzhEZ0sTYGa+I9A80HLYPDjJh6lQbaYHuwKrHNPfX2
-         l0rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=1ZC5Us/ZpcdfKIrb9lucU/nPBX3mf3EHBS6OBatH2Q8=;
-        b=sr4Qx5BAG+Up9vmQWI9eQKjKuU6Hev7OFgho3rlLdCeAZVCAYa3E/U07caicdALBr3
-         Jgq08yVcduJ0PEaUKGd3xsGX0H2tt55gDgyz2006ik403yIQYtlvwMBIyS30eB649MEW
-         Q3cV+JGBlLR/ZVHCVUkYVGD269cGTinRFXkW47LytNUw+CMSdzsiWE7ZLYnQ8ymbqitm
-         m8UJgZS53LLTdsmUB77oNsb01wbd9iy+HCSRuBCqXA1H87MGIQmgIS+9bPDe3mqed0Ze
-         qwcf2uWOotQN59bV/ohyNCZVMGzu9kL0AvYp7MgIMaEBn0siqODt5/EPpICczfmvZFwU
-         DEQQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-22565-1522168833-2-12528088146294445813
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522168833; b=jCD9lZhaqO/0Y/W2B6kEOCpCw+7F93Yb0wkTJDM2nOsllQ3
+    eJ9a6ooeILpBllTajwSCjULa8rHo2lOdkDU/9evVSBZ9/KQgJs7dbDxS6v4CO37E
+    Xm1xYmQa6ApmqjopLIuBflNW73h1wJFHUE3RF+cHtINim1cMtRs7gr7x7EvsS4JK
+    CTvEYgM5OFyGeIRp5dJBQcRbvImnMfZ2Ub6qbyc4SfxD2XI0rCpomnDRazWAFXUF
+    zdgqHST/pOphS+oFcZrcd0RbGodc6r2SBGKgHEaq/Y/nLydz5mFTlFHfa6xGIhTd
+    8LGLPP3uZpojzukVGd9MJUWe5PtEnmyXqtf5vRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1522168833; bh=YgNUOa5QIbr+7aebYdh9iEEEuy
+    Of7vYBJUgrFvFCAVM=; b=TIGYE4tb0JEJtlAar7wpGR4Yhfc1pUk4P3ZA7eGhLf
+    GXeHZjxH0SahJUZunOZuS2C/s+g/qQ4LiELv3fL1cCOQYqOYVbJum1Ssxg5DT9dY
+    tkHOVC+gUxuzgA368vQj66bGLidzd17zawhSKH9z7nB5Bd36YRKD6zNHnccN+x25
+    2OqDiKW6Lszb5OGN22fekDN6Kg5C9nlJRPxTIMvuNYGh/Ss7tyjQuIQ0ZmOH6nKJ
+    JgU8MShBZ8u6cgd+7OLkc6H7KZPpgxR3wcMGSI/ZUtpFs75LQ1jtLN5nPX2syexz
+    KVmTc6iPbavL5m1wY1zpFAYY4aEe6Hzf9yQKV85Eul4Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOulrMhJoQxoBikZ3XIwS1kRyLGxbVI/QSJF9TMf6vJ4fklm4f3DOIl4Fvs6HO1X+QziBdjcYjsY8mGwchufcXeAkz3IvmJzq9a7tBdiEGD+fh7spEaV
+    Y8ulH+7E4hGvBGEMkKRczhu9BXFXuNcXcd4/xv9n/5nAYMvSJtpn8eXL6s9YuHiGDcwlOG4gqk90uYgFFew6T5CNBMSxxIP/Er5l9xc9mnRUkQaVAGvw5vSZ
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=48MP9QBOpEWeHOstcRYA:9
+    a=H-X78mQMgptIupqs:21 a=iqMJXxTxJWG-YWpg:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753119AbeC0Qk0 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:40:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47650 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755413AbeC0QkW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:40:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Lei Li <lious.lilei@hisilicon.com>,
-	Toshi Kani <toshi.kani@hpe.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Wang Xuefeng <wxf.wang@hisilicon.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Borislav Petkov <bp@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chintan Pandya <cpandya@codeaurora.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 049/105] mm/vmalloc: add interfaces to free unmapped page table
-Date: Tue, 27 Mar 2018 18:27:29 +0200
-Message-Id: <20180327162800.347756047@linuxfoundation.org>
+        stable@vger.kernel.org, Frank Sorenson <fsorenso@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.15 045/105] nfsd: remove blocked locks on client teardown
+Date: Tue, 27 Mar 2018 18:27:25 +0200
+Message-Id: <20180327162800.036007854@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -51,10 +83,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108989017657999?=
-X-GMAIL-MSGID: =?utf-8?q?1596109707532702889?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -62,168 +93,140 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Jeff Layton <jlayton@redhat.com>
 
-commit b6bdb7517c3d3f41f20e5c2948d6bc3f8897394e upstream.
+commit 68ef3bc3166468678d5e1fdd216628c35bd1186f upstream.
 
-On architectures with CONFIG_HAVE_ARCH_HUGE_VMAP set, ioremap() may
-create pud/pmd mappings.  A kernel panic was observed on arm64 systems
-with Cortex-A75 in the following steps as described by Hanjun Guo.
+We had some reports of panics in nfsd4_lm_notify, and that showed a
+nfs4_lockowner that had outlived its so_client.
 
- 1. ioremap a 4K size, valid page table will build,
- 2. iounmap it, pte0 will set to 0;
- 3. ioremap the same address with 2M size, pgd/pmd is unchanged,
-    then set the a new value for pmd;
- 4. pte0 is leaked;
- 5. CPU may meet exception because the old pmd is still in TLB,
-    which will lead to kernel panic.
+Ensure that we walk any leftover lockowners after tearing down all of
+the stateids, and remove any blocked locks that they hold.
 
-This panic is not reproducible on x86.  INVLPG, called from iounmap,
-purges all levels of entries associated with purged address on x86.  x86
-still has memory leak.
+With this change, we also don't need to walk the nbl_lru on nfsd_net
+shutdown, as that will happen naturally when we tear down the clients.
 
-The patch changes the ioremap path to free unmapped page table(s) since
-doing so in the unmap path has the following issues:
-
- - The iounmap() path is shared with vunmap(). Since vmap() only
-   supports pte mappings, making vunmap() to free a pte page is an
-   overhead for regular vmap users as they do not need a pte page freed
-   up.
-
- - Checking if all entries in a pte page are cleared in the unmap path
-   is racy, and serializing this check is expensive.
-
- - The unmap path calls free_vmap_area_noflush() to do lazy TLB purges.
-   Clearing a pud/pmd entry before the lazy TLB purges needs extra TLB
-   purge.
-
-Add two interfaces, pud_free_pmd_page() and pmd_free_pte_page(), which
-clear a given pud/pmd entry and free up a page for the lower level
-entries.
-
-This patch implements their stub functions on x86 and arm64, which work
-as workaround.
-
-[akpm@linux-foundation.org: fix typo in pmd_free_pte_page() stub]
-Link: http://lkml.kernel.org/r/20180314180155.19492-2-toshi.kani@hpe.com
-Fixes: e61ce6ade404e ("mm: change ioremap to set up huge I/O mappings")
-Reported-by: Lei Li <lious.lilei@hisilicon.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Wang Xuefeng <wxf.wang@hisilicon.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Chintan Pandya <cpandya@codeaurora.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 76d348fadff5 (nfsd: have nfsd4_lock use blocking locks for v4.1+ locks)
+Reported-by: Frank Sorenson <fsorenso@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+Cc: stable@vger.kernel.org # 4.9
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/mmu.c           |   10 ++++++++++
- arch/x86/mm/pgtable.c         |   24 ++++++++++++++++++++++++
- include/asm-generic/pgtable.h |   10 ++++++++++
- lib/ioremap.c                 |    6 ++++--
- 4 files changed, 48 insertions(+), 2 deletions(-)
+ fs/nfsd/nfs4state.c |   62 ++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
 
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -941,3 +941,13 @@ int pmd_clear_huge(pmd_t *pmd)
- 	pmd_clear(pmd);
- 	return 1;
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -268,6 +268,35 @@ free_blocked_lock(struct nfsd4_blocked_l
+ 	kfree(nbl);
  }
-+
-+int pud_free_pmd_page(pud_t *pud)
-+{
-+	return pud_none(*pud);
-+}
-+
-+int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return pmd_none(*pmd);
-+}
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -702,4 +702,28 @@ int pmd_clear_huge(pmd_t *pmd)
  
- 	return 0;
- }
-+
-+/**
-+ * pud_free_pmd_page - Clear pud entry and free pmd page.
-+ * @pud: Pointer to a PUD.
-+ *
-+ * Context: The pud range has been unmaped and TLB purged.
-+ * Return: 1 if clearing the entry succeeded. 0 otherwise.
-+ */
-+int pud_free_pmd_page(pud_t *pud)
++static void
++remove_blocked_locks(struct nfs4_lockowner *lo)
 +{
-+	return pud_none(*pud);
++	struct nfs4_client *clp = lo->lo_owner.so_client;
++	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
++	struct nfsd4_blocked_lock *nbl;
++	LIST_HEAD(reaplist);
++
++	/* Dequeue all blocked locks */
++	spin_lock(&nn->blocked_locks_lock);
++	while (!list_empty(&lo->lo_blocked)) {
++		nbl = list_first_entry(&lo->lo_blocked,
++					struct nfsd4_blocked_lock,
++					nbl_list);
++		list_del_init(&nbl->nbl_list);
++		list_move(&nbl->nbl_lru, &reaplist);
++	}
++	spin_unlock(&nn->blocked_locks_lock);
++
++	/* Now free them */
++	while (!list_empty(&reaplist)) {
++		nbl = list_first_entry(&reaplist, struct nfsd4_blocked_lock,
++					nbl_lru);
++		list_del_init(&nbl->nbl_lru);
++		posix_unblock_lock(&nbl->nbl_lock);
++		free_blocked_lock(nbl);
++	}
 +}
 +
-+/**
-+ * pmd_free_pte_page - Clear pmd entry and free pte page.
-+ * @pmd: Pointer to a PMD.
-+ *
-+ * Context: The pmd range has been unmaped and TLB purged.
-+ * Return: 1 if clearing the entry succeeded. 0 otherwise.
-+ */
-+int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return pmd_none(*pmd);
-+}
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -976,6 +976,8 @@ int pud_set_huge(pud_t *pud, phys_addr_t
- int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
- int pud_clear_huge(pud_t *pud);
- int pmd_clear_huge(pmd_t *pmd);
-+int pud_free_pmd_page(pud_t *pud);
-+int pmd_free_pte_page(pmd_t *pmd);
- #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
- static inline int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
+ static int
+ nfsd4_cb_notify_lock_done(struct nfsd4_callback *cb, struct rpc_task *task)
  {
-@@ -1001,6 +1003,14 @@ static inline int pmd_clear_huge(pmd_t *
+@@ -1866,6 +1895,7 @@ static __be32 mark_client_expired_locked
+ static void
+ __destroy_client(struct nfs4_client *clp)
  {
- 	return 0;
++	int i;
+ 	struct nfs4_openowner *oo;
+ 	struct nfs4_delegation *dp;
+ 	struct list_head reaplist;
+@@ -1895,6 +1925,16 @@ __destroy_client(struct nfs4_client *clp
+ 		nfs4_get_stateowner(&oo->oo_owner);
+ 		release_openowner(oo);
+ 	}
++	for (i = 0; i < OWNER_HASH_SIZE; i++) {
++		struct nfs4_stateowner *so, *tmp;
++
++		list_for_each_entry_safe(so, tmp, &clp->cl_ownerstr_hashtbl[i],
++					 so_strhash) {
++			/* Should be no openowners at this point */
++			WARN_ON_ONCE(so->so_is_open_owner);
++			remove_blocked_locks(lockowner(so));
++		}
++	}
+ 	nfsd4_return_all_client_layouts(clp);
+ 	nfsd4_shutdown_callback(clp);
+ 	if (clp->cl_cb_conn.cb_xprt)
+@@ -6358,6 +6398,7 @@ nfsd4_release_lockowner(struct svc_rqst
+ 	}
+ 	spin_unlock(&clp->cl_lock);
+ 	free_ol_stateid_reaplist(&reaplist);
++	remove_blocked_locks(lo);
+ 	nfs4_put_stateowner(&lo->lo_owner);
+ 
+ 	return status;
+@@ -7143,6 +7184,8 @@ nfs4_state_destroy_net(struct net *net)
+ 		}
+ 	}
+ 
++	WARN_ON(!list_empty(&nn->blocked_locks_lru));
++
+ 	for (i = 0; i < CLIENT_HASH_SIZE; i++) {
+ 		while (!list_empty(&nn->unconf_id_hashtbl[i])) {
+ 			clp = list_entry(nn->unconf_id_hashtbl[i].next, struct nfs4_client, cl_idhash);
+@@ -7209,7 +7252,6 @@ nfs4_state_shutdown_net(struct net *net)
+ 	struct nfs4_delegation *dp = NULL;
+ 	struct list_head *pos, *next, reaplist;
+ 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+-	struct nfsd4_blocked_lock *nbl;
+ 
+ 	cancel_delayed_work_sync(&nn->laundromat_work);
+ 	locks_end_grace(&nn->nfsd4_manager);
+@@ -7230,24 +7272,6 @@ nfs4_state_shutdown_net(struct net *net)
+ 		nfs4_put_stid(&dp->dl_stid);
+ 	}
+ 
+-	BUG_ON(!list_empty(&reaplist));
+-	spin_lock(&nn->blocked_locks_lock);
+-	while (!list_empty(&nn->blocked_locks_lru)) {
+-		nbl = list_first_entry(&nn->blocked_locks_lru,
+-					struct nfsd4_blocked_lock, nbl_lru);
+-		list_move(&nbl->nbl_lru, &reaplist);
+-		list_del_init(&nbl->nbl_list);
+-	}
+-	spin_unlock(&nn->blocked_locks_lock);
+-
+-	while (!list_empty(&reaplist)) {
+-		nbl = list_first_entry(&reaplist,
+-					struct nfsd4_blocked_lock, nbl_lru);
+-		list_del_init(&nbl->nbl_lru);
+-		posix_unblock_lock(&nbl->nbl_lock);
+-		free_blocked_lock(nbl);
+-	}
+-
+ 	nfsd4_client_tracking_exit(net);
+ 	nfs4_state_destroy_net(net);
  }
-+static inline int pud_free_pmd_page(pud_t *pud)
-+{
-+	return 0;
-+}
-+static inline int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return 0;
-+}
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
- 
- #ifndef __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -91,7 +91,8 @@ static inline int ioremap_pmd_range(pud_
- 
- 		if (ioremap_pmd_enabled() &&
- 		    ((next - addr) == PMD_SIZE) &&
--		    IS_ALIGNED(phys_addr + addr, PMD_SIZE)) {
-+		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
-+		    pmd_free_pte_page(pmd)) {
- 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
- 				continue;
- 		}
-@@ -117,7 +118,8 @@ static inline int ioremap_pud_range(p4d_
- 
- 		if (ioremap_pud_enabled() &&
- 		    ((next - addr) == PUD_SIZE) &&
--		    IS_ALIGNED(phys_addr + addr, PUD_SIZE)) {
-+		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
-+		    pud_free_pmd_page(pud)) {
- 			if (pud_set_huge(pud, phys_addr + addr, prot))
- 				continue;
- 		}
