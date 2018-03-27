@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+vUo10VoEIy++mW7UYovnqgmUuDj+bAOIUIpX8qepV4IGgDd8AMGut8Gc+VPuFaq2Jrgjq
-ARC-Seal: i=1; a=rsa-sha256; t=1522168720; cv=none;
+X-Google-Smtp-Source: AIpwx4+CLLxq+g4lrn8Sq/1/ZX2G8bTnZI22H5WI409/BbCWNKtZ+8ohiOoQuFx3YDMOduL9AzYl
+ARC-Seal: i=1; a=rsa-sha256; t=1522168717; cv=none;
         d=google.com; s=arc-20160816;
-        b=H36K9+6Bw4cuhI8WOMdKO0llWTb9j9vt9m2HuHnWadD9yOkaUwI+bJCXSzSGUrcbVf
-         2oEOXBw8L4JWlWShBkwgmWyU8L2fQARiNVt/C/ZZa2ItJQVs1jEq5Ykb/zwYfUjZeyqK
-         rukOmmJguP7bZZBPEoWJNzNmhvXwlM2yjdpzHrSloq/OkBlImjvIeWu6gpeEVTVrWlN5
-         VpJCBHqccq7ePJU+wM/uDwJwOkkq9MPDebJk4CGMvvGrour2RVZ8mRiH+Q3v3T7X+oR0
-         lBTTAb0qhWncfQ5ma/xj1Mv8k4xrz4Oz8ZUFSRkxdnK5BYa1y5+5iWC0LgMDPrY5y8QU
-         eKyw==
+        b=mif5TevM9ZWpRLe1zW1LcOoib/NMM0jXXYFPdmLwJoVlqRYd+EvknUAUm1zJDP8yOG
+         ifePUVAGrrpiUIS9qdiJvG+PdYeZkMtVu+3Xx0l1lFP4irPxWD62sRfwlCSVnQIpQjh/
+         Re0zUnfsyMSunNZK+gOjV8tIkHr1op0h39W9c4kCJhUoxChLH/EEvN1SD98bvl8Lee+h
+         fQXEf1KlfOFosbGsEHOwrPQbENWHoQs/KcYKeasEHdqSYk0RBv8FjNNdzJ8Lmm9YxJRZ
+         eJfo9tqN3Gvw/37EEjOsAtoB0FIkPWYL5S17hTdDsFRwt4IxPD8HDUO+kidL4WFbZazf
+         Bf0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Fq7ho4mvMrTmcqIoD7rts3hk/mbYXRLUO0LzkNcx9IE=;
-        b=B83f4XJpOY0VeHsagnaUYKTijut+j9nVfGOhqY55uGepUVHBIRU0LhZLRRt2WmUTMf
-         Biom+bnhiVmUQrQIA6HcNlHjmgSNdgA3+lDDTYGKI72uexi8SvVRJBi/N+8/0UQhTzmt
-         pe4oaWUXPiqKMmfom6yI1rP7oCAkgDXyvtGb63QeY9yRhG2JIHyWJN/DIaxKwuBb00Pf
-         a42v/HhtPw16/TGgJQP36ZY3lwF5osZa91+wHToN7FSddraLeMiL1wPWhRQSfQkDvuoH
-         cv7lbZbSHZvDSuko5Ljuuy8ZvyxQRgKI07P97T+7+zW0lUrfKi/UdSAsKYwYKxs7vGaE
-         fZag==
+        bh=KKjiJUj21glv+nARWX5GWQWgfdnE9G7vRIYEYzPJ1so=;
+        b=xRdnoxKCTUFdqyTBQn70d9f31mTA903Z//r7504pZx0zQt3P14kWK7ODYmda/6yy0E
+         FCPrhuaTN0MeZDICDhPFYE7Dt7Nfhd8LGEuqPpICrutSCw46sMvyq8+ilCB1Qfy1FPBZ
+         MW7aHpqcrwDa0J8lpRjAJfPRcb9iu1V5N/GxL3yBdDPPv4X12efIB7YSKjB4p6Zsb2E1
+         Nsk3Z4yPlxRi9wXVLptOpVBWDo2DFDE7VqMfMrQulkKxr0Os0JLd1qzA33+M5ri55wny
+         /YFkkTX+bjKaQTNo8440jcT+3FF8i7WYNksuIgMNA2JJXaw2giET+arr728kVXRpzsAX
+         6Suw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peng Tao <bergwolf@gmail.com>,
-	Oleg Drokin <oleg.drokin@intel.com>,
-	James Simmons <jsimmons@infradead.org>,
-	Nadav Amit <namit@vmware.com>,
-	Andreas Dilger <andreas.dilger@intel.com>
-Subject: [PATCH 4.14 095/101] staging: lustre: ptlrpc: kfree used instead of kvfree
-Date: Tue, 27 Mar 2018 18:28:07 +0200
-Message-Id: <20180327162755.855696211@linuxfoundation.org>
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH 4.14 101/101] bpf, x64: increase number of passes
+Date: Tue, 27 Mar 2018 18:28:13 +0200
+Message-Id: <20180327162756.184401630@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109071523353050?=
-X-GMAIL-MSGID: =?utf-8?q?1596109588553047509?=
+X-GMAIL-THRID: =?utf-8?q?1596109079875177032?=
+X-GMAIL-MSGID: =?utf-8?q?1596109585163804493?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,38 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit c3eec59659cf25916647d2178c541302bb4822ad upstream.
+commit 6007b080d2e2adb7af22bf29165f0594ea12b34c upstream.
 
-rq_reqbuf is allocated using kvmalloc() but released in one occasion
-using kfree() instead of kvfree().
+In Cilium some of the main programs we run today are hitting 9 passes
+on x64's JIT compiler, and we've had cases already where we surpassed
+the limit where the JIT then punts the program to the interpreter
+instead, leading to insertion failures due to CONFIG_BPF_JIT_ALWAYS_ON
+or insertion failures due to the prog array owner being JITed but the
+program to insert not (both must have the same JITed/non-JITed property).
 
-The issue was found using grep based on a similar bug.
+One concrete case the program image shrunk from 12,767 bytes down to
+10,288 bytes where the image converged after 16 steps. I've measured
+that this took 340us in the JIT until it converges on my i7-6600U. Thus,
+increase the original limit we had from day one where the JIT covered
+cBPF only back then before we run into the case (as similar with the
+complexity limit) where we trip over this and hit program rejections.
+Also add a cond_resched() into the compilation loop, the JIT process
+runs without any locks and may sleep anyway.
 
-Fixes: d7e09d0397e8 ("add Lustre file system client support")
-Fixes: ee0ec1946ec2 ("lustre: ptlrpc: Replace uses of OBD_{ALLOC,FREE}_LARGE")
-
-Cc: Peng Tao <bergwolf@gmail.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>
-Cc: James Simmons <jsimmons@infradead.org>
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Andreas Dilger <andreas.dilger@intel.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/lustre/lustre/ptlrpc/sec.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/net/bpf_jit_comp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/lustre/lustre/ptlrpc/sec.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/sec.c
-@@ -847,7 +847,7 @@ void sptlrpc_request_out_callback(struct
- 	if (req->rq_pool || !req->rq_reqbuf)
- 		return;
+--- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -1156,7 +1156,7 @@ struct bpf_prog *bpf_int_jit_compile(str
+ 	 * may converge on the last pass. In such case do one more
+ 	 * pass to emit the final image
+ 	 */
+-	for (pass = 0; pass < 10 || image; pass++) {
++	for (pass = 0; pass < 20 || image; pass++) {
+ 		proglen = do_jit(prog, addrs, image, oldproglen, &ctx);
+ 		if (proglen <= 0) {
+ 			image = NULL;
+@@ -1183,6 +1183,7 @@ struct bpf_prog *bpf_int_jit_compile(str
+ 			}
+ 		}
+ 		oldproglen = proglen;
++		cond_resched();
+ 	}
  
--	kfree(req->rq_reqbuf);
-+	kvfree(req->rq_reqbuf);
- 	req->rq_reqbuf = NULL;
- 	req->rq_reqbuf_len = 0;
- }
+ 	if (bpf_jit_enable > 1)
