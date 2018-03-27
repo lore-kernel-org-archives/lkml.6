@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-196919-1522174116-2-6866460627897470021
+X-Cyrus-Session-Id: sloti22d1t05-195729-1522174101-2-12519211160823437109
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES encafr,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522174115; b=jLAdoIlKqDpl1J+v3XCCmB5qfwYNuIF9kygU23znDTuy41S
-    acE1NXky0g9GiNEKowkFni8RzKHxGMsFVd/Sh1IDVtw8NPIlyfh4awz7PCBmUHce
-    6T3xEaF5s2RGWNAMn2TH6oicN/UdEgFRTXQdb1jsigrRfi/EyyQOtXJVHBQV1X7C
-    RaAsR/WOFOkO4Rs1xIX/wFg2/UoblKdYZFnloczym7eZwTX2o+B/8UTFIXl3uDHm
-    BPLHvCLntrUtTS535USNJJ+aVyQ/zgx9FAHK92jnL10H+GByTLhATY6L0IZeXkst
-    wygpb2mZozBT35EP4GsAFB8Cx3joUHuL+aJRtwg==
+    t=1522174100; b=XF+cPDPNGCBW8/TbQ+/KIiJKnsAQ+Qe68lUoY3Ctl7wM4lF
+    QaZvy41AmKzbBFvs2qMiY5k/7M7PD9PgRunIegpH5IYYVAviwzHmIcUbvJ1PCQtl
+    ywOOlsupNkJ0AFVwKBMO360R7mK0OVOLbMiRj88b2nIUfu+sgWz5WlpqB8476qnV
+    F/JHDOxAMXqahAlC1U0KilWQtCtJ12PqWV5eJ8PHoZEsuyR9Tklduvo8axfxO7KK
+    ZphLDp5SEPZ2oegmCldqR+G6np4amFNh7bqlJo//UcYo895AomsAQY092qFh4baR
+    g5OW2Ga4dnEKxgv/gdR9f5EBDUnZGtGpskKSqTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522174115; bh=OvWmLAc+4ecyE8ReuK/5uO/QOe
-    Y/+IvBuI7eVdkjBLM=; b=ma3bn7yaQteuwgcAsi8+hq6sr9oEtYJQwiQrir7hZS
-    xoNQ3jEqs1XCJw2fSASioTePjh8r1Lffyo7+NyNyV2ZlXbBdyXPObTm5qWITfzYT
-    z3Lg+lE75auze9nE/PNcfxRDAmJD+bJtUZ9JlkLh62w6dsgTXlS6Yf/JR+9HUSxI
-    NVGaUZcfsHc8RiWk10F2rhK1NrwO7Et6DHI28IDdVwqbYwlJdPZcDag/DLrdllFv
-    Hc3nUOxloOSbdNyf5fI/49sNU6PKv4oYjJvesUFCRcmkOU370Jd52nQAZP8UIYZ2
-    EF6uwFAJKVdzxMBQq/UDbf9/v1slXybg4adrN+YsFUOg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1522174100; bh=dA/99OfMNj6iuJC1+wRePwZjxd
+    KW+Oxa+odA7amWgK4=; b=iHQ4I3iydPGs+8lvcQy0lIXOoZZDKKGgH0uWWyjSs/
+    ernsRyB9IQW70PMUIdLt4vvy6Av21l0bM8S60smdbvPnfXUY6IdbvWaQviAHJ9ib
+    CzLKdmemVre3wsTeh0cE/okb1Q5L+116r9hwjtJfk56GE6Jk+jVqIDdJRmc0TqKE
+    DzpqGygR48LFZ7MEM4PFtSau5Ourhru+T7aNNv2ZWKb4OB4ilyKHCCyaFpmGEa49
+    we5BgZXMWhdH42t7MZ/YDoyEFUkXQgsNavWvqmrq8dC6ABr6k5ExxBE8s2n0dkSa
+    DqjeleO9XL1MwOnEaMQ9TxaHVsPFsdVwqQGYOpnB+U9g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,30 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGXRW4oNTWfxB3tOsYFkUR6xBKPDu3RRNrry3CbWt/aMk11lscozG0hrbGiBekS++dVKflv21aSyBY+5oiJ0wlL0q/TBFsvZK7mx3kq7FEoq9tbNcL+X
-    64T5UShkga3aqr2OcFR0eobkzqKsCtxyL7Hs4oYM+QfQbsXIF/quIqIM5ebvdMm4HAcnn+Idy0LHz12JYWl/iRx8UUH58WWCPukdb3VcgBeM0Bs9okhFL2Gt
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGI8IcT6xuyCx0kGT6zvDNSYIv2zVjpZKK4f2wmNe/2DKthtxLy3a9ROQzPkOFxwkje9pCJa7Ro+Ge2e30DLGxxrohItYeYpm7YkXm860EoH4tfmx3tz
+    argnyIzH6AE4v4D/ou2wX1eOJ5YWONI/kJVf05yfDn656LkZrAl3jSBQ4JU1+TU1H7gz1OBvShmaqkaseG5EaXXT3V0jwFXCvj2WL9nBf3lpKEeSEniMFb4M
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=cH6R9-kdAAAA:8 a=ag1SF4gXAAAA:8
-    a=ZqEw8qV9nNlwx4KyCgMA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=ag1SF4gXAAAA:8
+    a=7mOBRU54AAAA:8 a=Mo8WlqgOuBNtBgpS9QUA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=wa9RWnbW_A1YIeRBVszw:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751001AbeC0SIV (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 14:08:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41302 "EHLO
+        id S1752065AbeC0Q31 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:29:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41330 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752600AbeC0Q3W (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:22 -0400
+        with ESMTP id S1751824AbeC0Q3Z (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Toshi Kani <toshi.kani@hp.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.4 25/43] acpi, numa: fix pxm to online numa node associations
-Date: Tue, 27 Mar 2018 18:27:29 +0200
-Message-Id: <20180327162717.824794350@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.4 08/43] PCI: Add function 1 DMA alias quirk for Highpoint RocketRAID 644L
+Date: Tue, 27 Mar 2018 18:27:12 +0200
+Message-Id: <20180327162716.836117609@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -92,66 +92,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit dc9e0a9347e932e3fd3cd03e7ff241022ed6ea8a upstream.
+commit 1903be8222b7c278ca897c129ce477c1dd6403a8 upstream.
 
-Commit 99759869faf1 "acpi: Add acpi_map_pxm_to_online_node()" added
-support for mapping a given proximity to its nearest, by SLIT distance,
-online node. However, it sometimes returns unexpected results due to the
-fact that it switches from comparing the PXM node to the last node that
-was closer than the current max.
+The Highpoint RocketRAID 644L uses a Marvel 88SE9235 controller, as with
+other Marvel controllers this needs a function 1 DMA alias quirk.
 
-    for_each_online_node(n) {
-            dist = node_distance(node, n);
-            if (dist < min_dist) {
-                    min_dist = dist;
-                    node = n;	<---- from this point we're using the
-				      wrong node for node_distance()
+Note the RocketRAID 642L uses the same Marvel 88SE9235 controller and
+already is listed with a function 1 DMA alias quirk.
 
-
-Fixes: 99759869faf1 ("acpi: Add acpi_map_pxm_to_online_node()")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Toshi Kani <toshi.kani@hp.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Cc: stable@vger.kernel.org
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1534106
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/numa.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/pci/quirks.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -103,25 +103,27 @@ int acpi_map_pxm_to_node(int pxm)
-  */
- int acpi_map_pxm_to_online_node(int pxm)
- {
--	int node, n, dist, min_dist;
-+	int node, min_node;
- 
- 	node = acpi_map_pxm_to_node(pxm);
- 
- 	if (node == NUMA_NO_NODE)
- 		node = 0;
- 
-+	min_node = node;
- 	if (!node_online(node)) {
--		min_dist = INT_MAX;
-+		int min_dist = INT_MAX, dist, n;
-+
- 		for_each_online_node(n) {
- 			dist = node_distance(node, n);
- 			if (dist < min_dist) {
- 				min_dist = dist;
--				node = n;
-+				min_node = n;
- 			}
- 		}
- 	}
- 
--	return node;
-+	return min_node;
- }
- EXPORT_SYMBOL(acpi_map_pxm_to_online_node);
- 
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3631,6 +3631,8 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
+ 			 quirk_dma_func1_alias);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_TTI, 0x0642,
+ 			 quirk_dma_func1_alias);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_TTI, 0x0645,
++			 quirk_dma_func1_alias);
+ /* https://bugs.gentoo.org/show_bug.cgi?id=497630 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_JMICRON,
+ 			 PCI_DEVICE_ID_JMICRON_JMB388_ESD,
