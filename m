@@ -1,85 +1,89 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-628284-1522188012-2-11657481254476616854
+X-Cyrus-Session-Id: sloti22d1t05-628284-1522188135-2-8031155923906790616
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES ensvda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+  SPF_PASS -0.001, LANGUAGES endaca, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='comi', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522188011; b=V5DbO0pwLb2tElkV/tmDIr8pNoxHzNF1KedDQjw9xBBtacN
-    Rjpjymo8rhwB7F32/CoKgkwfl3bVi1XCELGNgWa/nQ8rVL4KveY+vAM3UAqf0vUy
-    irMtUqDtkkun1DYNWHtMCcK8hKm1M2OYW+2UhE+FNPLrCTYvg5dFdl7BaeRrlAt/
-    M4PvWvWvmWNjcx1gs642qUapnJ5S4jVp7oUCGjm0flb2hs419B8DVinpiPkSJ1TQ
-    jOETEUbzRuFoPnB1rd7z5RsQ3kK9gwE0Xv5XhJ8WB2M0UZ4khQirzo5ldugvDJ5N
-    Z+7CN2tfzlzMKaqCZAv6kFMeZ/pTJ1T/jKYFZLw==
+    t=1522188134; b=jc5Qu1mPffQ6M/ppumwxu4Sxi3nauBsJwjvBP3dtjwLNCRw
+    eAUVCC6odgw0oYsZBeTwC17ticnBL4OMKPS9/pVutQfnWc10tX4v3rOT3vIGLW0G
+    DLk6gfoZEfx94Sv/r/44cVTm9QZhTASpekZiWz3djwVcDFcRX/Zsts6tY7rXXtyo
+    QGKzjCLkLz2SZtZZnlSL8njLWSgz/GvtoIos1UkWc7cM6Ananx6FdpbkgbyANb0V
+    b3sqVaCLveF3uaGOrCR8nSZV3rUgXFSbKBsJDQAt/saW1L05B2bdpEFi/dn6349u
+    RGok39PbvP4q8mKClSEcYGCBlqR9d6UdIB//H1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:reply-to:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1522188011; bh=K
-    0aLo6Qu1kuJpdD/GsRsYLrIWHw7x3vKc5T6sDUJp10=; b=DnnlP6HAWKsqzey3r
-    k5LU6nO8yRLzcr6JgrW7+vtmoGeekO7vc5xwtHycXUGO9xg3Jknx5VsoA3lXSvcp
-    X+INSC80uWoQrnj0ykL8zkVFT4ODu4QoeDFWRdcupBVXSh/Vrvqx3995DoE8Oxao
-    8mZudi+0jEEHU++j/LF309tlNuth3MbIqmY/mRpoE1jkDiA8luIjtaiVnDlfBIb+
-    Z/+br4CYIEQ135Z11vgZGJdgY4Wfc60XzgcndfswHcwEe5m5NZTH9kbvxJFXrPNH
-    jAlyiSZxjp6OA66e21nKwODEKUMtfh+XhgUKSt8LsB680CdgvpG5tuBsnvp3PT++
-    Su0yw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:reply-to:mime-version
+    :content-type:content-transfer-encoding:sender; s=arctest; t=
+    1522188134; bh=DYjJvNQha2Fyh0b2+s7YPgcNSQMEcjNQmf4NWotz4TY=; b=L
+    3pvvrDUPCr9dQuVrAMg0HreIDqQQpv7KtjgFoomtarDUAVN9T5bRJLt0A8QdS9Ce
+    niNKDTLBiruH8U7pdHXOn3oH9xcmUsLL54CfVe5+srhaexgQZTYsv/bXi00qbcPa
+    AURy1OOz8HBpI/3glOyXRQuAnfuf5CtvoywCyXWEmCw3n0p0wLXi1mM2yl/MSsm9
+    xmHZRE8HBhGeiAA3ztu00LA4ST0rx3DF9v9rY/10WYhRJ3IJWiWPGSa1dJ+gndxF
+    HM+ja9BNuXVlCSkVEaS+WIMZzrSML3dKztVWZW4mj98HttCiQSk6nQ4tl2KA8HWA
+    +P/htx17CjsGqI/pFjt0w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=permerror (from header invalid) header.from=linuxonhyperv.comi;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxonhyperv.comi header.mx.error=NXDOMAIN header.a.error=NXDOMAIN header.aaaa.error=NXDOMAIN header.result=fail header_org.domain=comi header_org.mx.error=NXDOMAIN header_org.a.error=NXDOMAIN header_org.aaaa.error=NXDOMAIN header_org.result=fail header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=permerror (from header invalid) header.from=linuxonhyperv.comi;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxonhyperv.comi header.mx.error=NXDOMAIN header.a.error=NXDOMAIN header.aaaa.error=NXDOMAIN header.result=fail header_org.domain=comi header_org.mx.error=NXDOMAIN header_org.a.error=NXDOMAIN header_org.aaaa.error=NXDOMAIN header_org.result=fail header_is_org_domain=no;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDMukyvWyH6+M2gdY8FcHWdmr22t08KtTMus0ZaSKYRadIuF3mQJlonmdN9FjuDzMcbZ9Swg2PX1/rU4yDF7+wA164sFLufhj8ArX8Ujw78/c+I+rg+m
-    hjc5yZPzT9kGJXsHKvmmXMmRczGucEDLxMyK/FUwzbTbnmZLxMkpjyH8dy6LhRw61cHZEp2EkcwQ5UUnEjVctiIaZfi6kDc7HOnZqqJWSMrDKjAD/D297Cn4
-    LwpJyiEZLxQcXsxqEqPiNA==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=wmH2h71lHiwA:10 a=kj9zAlcOel0A:10
+X-CM-Envelope: MS4wfP/CjioxusxvFiAESp2hgpl1MnAt44bRfXkflQh0TnkRXtqVomhoeQFFeTN6NFDJTIg0CnW370tyGePie1Pk0Clo78+7lHLwhigeMRk8kIaQEmaihcKP
+    UEBJovab5T2Ie8AWKom5XTWQ0GeDjPaZazNZyRPEeATD4T+47rW0w7PcA4tn/euZ/DGxmxa6vuFXlVHnAEatqhy0mCMzRtPiz9ENzJqjupP5Rdh8cA9SdVeM
+    d+pxpcWNfaL9wjJ87umWSQ==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=wmH2h71lHiwA:10 a=kj9zAlcOel0A:10
     a=v2DPQv5-lfwA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8
-    a=DDOyTI_5AAAA:8 a=VOvU0uPMZk_4ZXywoR8A:9 a=CjuIK1q_8ugA:10
+    a=DDOyTI_5AAAA:8 a=xWI6jEoKANEY_SUWOiYA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 x-originating-ip: 107.180.71.197
-From: kys@linuxonhyperv.com
+From: kys@linuxonhyperv.comi
 To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
  devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
  vkuznets@redhat.com, jasowang@redhat.com, leann.ogasawara@canonical.com,
  marcelo.cerri@canonical.com, sthemmin@microsoft.com
-Subject: [PATCH 0/4] Drivers: hv: vmbus: Miscellaneous fixes 
-Date: Tue, 27 Mar 2018 14:58:59 -0700
-Message-Id: <20180327215859.19624-1-kys@linuxonhyperv.com>
+Subject: [PATCH 1/4] Drivers: hv: vmbus: respect what we get from
+ hv_get_synint_state()
+Date: Tue, 27 Mar 2018 15:01:01 -0700
+Message-Id: <20180327220104.19700-1-kys@linuxonhyperv.comi>
 X-Mailer: git-send-email 2.15.1
-X-CMAE-Envelope: MS4wfJeXe0kovy76tL5XvcqxRlBd5NOc9dVLlqBcWyHV8/zsgXmj2/bcrPHwigZFRjSXGuiv7bJxK5rRrQU9T1LCXI4ye3zFcf8HcMsxXHbyMfkYEBgAGq0y
- e8DgcbV7UrqpCklAg7fZxqIMp0jKSgrkwxv8XoqopLcbwPLAopCQYrOASorBzV8wRiNHkYxdUprX5Fhv6Q4bkJWmCbcjfNbUByX/Xo1VlmQvNX9EtSC6AeRv
- lK3/Dnw/0GZtAn9GE75mAv3JpdQvT3nsCphtooxbR61EhvZuk0tPqEFteBbQEmCikhdWm96iVWQtwDvjobfCX/F7Pgy2JO+MpaCNZFoersKiAk/+KzpTE55b
- 4B6kanRRn3sF7mZ7fCVz2xa6J5hL97eVpq6MaQMG0EDOrb74B4BgXRGbUJMA7m/sZtPJdRZBugmy+oJb7B3o52+JDDukET5Ua31N99PXNzzx0wgVPjvYR/Fo
- 87EhBqgFaCvwx8o+Kxow979DkfWtLOwLAICMd5KfbzgHrY3gvooujek66mC0+dVdFYecpDOdSkQoXSMjV7ijMpiEhIfH6iPuSsWXNA==
+In-Reply-To: <20180327215859.19624-1-kys@linuxonhyperv.com>
+References: <20180327215859.19624-1-kys@linuxonhyperv.com>
+X-CMAE-Envelope: MS4wfABmXR7Rk+vCv4NXGkmCKpUssJxtEkQ0Yoc7ijs4GTxJUbbd3qbXoBelXaMZqadpCX3eqgtNIDb6XUqZyPpBe3Q3+q78/oMciN8lUi97ij+42Um8MF22
+ Xe5k5lWBGpNPmf2a3uul7DbcEBhrOuG2rPNHM/v3f3ZhBVDD7qlkeUIpXFZ453h69vcbkEhSNdJs0/suO4bRCGNyDgSBOlDWRmcljU4nQ9urgGyV0BlPtQcq
+ Opfu5mqKC/mEAC6wjHx1hYiW1Cv6y2Okq9H4BuklxR2cGVitlj0Z3OyAtXmdwdsuzX5iEvdqVcE5AicyZa6XCyG/4Xy6b8qoZldJlOOsqtu7/fZ3LiBcEhKq
+ /Op1NRTWgNjkteV48/BLUJCPh3wAecbtwzZJKzeA6wo0x9oXHZCmigc0fvy1pmLkEnC4WU9qkn8BJ2dqG2nimx/dC1i9lAC1XcvkKHst3aIZLmueOuesCuVm
+ HftEF/VueJKc4EreYc0wJiGUM5+XPO/4a1F6sWFZMzt56ICp9S8pj3H43zT5p0QFvUDrwi/NY+vNwzCdXvG74ANSsb6SCYxP8tg7+xBCDokZNItL87sqa0RH
+ tbs7YE0HwaP+hjtuAyPRseSH
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -100,25 +104,30 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "K. Y. Srinivasan" <kys@microsoft.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-Some miscellaneous fixes and adjustments.
+I didn't really hit a bug, but just happened to notice the redundant line.
 
-Dexuan Cui (2):
-  Drivers: hv: vmbus: respect what we get from hv_get_synint_state()
-  Drivers: hv: vmbus: do not mark HV_PCIE as perf_device
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+---
+ drivers/hv/hv.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Stephen Hemminger (2):
-  hv: add SPDX license to trace
-  hv: add SPDX license id to Kconfig
-
- drivers/hv/Kconfig        | 2 ++
- drivers/hv/channel_mgmt.c | 2 +-
- drivers/hv/hv.c           | 1 -
- drivers/hv/hv_trace.c     | 2 ++
- drivers/hv/hv_trace.h     | 2 ++
- 5 files changed, 7 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index b1f6793acf4c..8137b3885b99 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -302,7 +302,6 @@ int hv_synic_init(unsigned int cpu)
+ 	hv_get_synint_state(HV_X64_MSR_SINT0 + VMBUS_MESSAGE_SINT,
+ 			    shared_sint.as_uint64);
+ 
+-	shared_sint.as_uint64 = 0;
+ 	shared_sint.vector = HYPERVISOR_CALLBACK_VECTOR;
+ 	shared_sint.masked = false;
+ 	if (ms_hyperv.hints & HV_X64_DEPRECATING_AEOI_RECOMMENDED)
 -- 
 2.15.1
 
