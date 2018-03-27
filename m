@@ -1,129 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752489AbeC0OxX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 10:53:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44436 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752001AbeC0OxV (ORCPT
+        id S1752479AbeC0Oy4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 10:54:56 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:40982 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751068AbeC0Oyz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:53:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1067603AF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
-Reply-To: shankerd@codeaurora.org
-Subject: Re: [PATCH V2] arm64: tlbflush: avoid writing RES0 bits
-To: Robin Murphy <robin.murphy@arm.com>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Tue, 27 Mar 2018 10:54:55 -0400
+Date: Tue, 27 Mar 2018 10:54:53 -0400 (EDT)
+Message-Id: <20180327.105453.250045484228569543.davem@davemloft.net>
+To: joe@perches.com
+Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc: Thomas Speier <tspeier@codeaurora.org>
-References: <1522120877-9136-1-git-send-email-pelcan@codeaurora.org>
- <985a0edd-e388-dade-8824-30cc58a236f3@arm.com>
-From: Shanker Donthineni <shankerd@codeaurora.org>
-Message-ID: <56b560a5-6e57-8e01-32ca-9d3c95ccd2e5@codeaurora.org>
-Date: Tue, 27 Mar 2018 09:53:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <985a0edd-e388-dade-8824-30cc58a236f3@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ipv6: addrconf: Use normal debugging style
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <40e88b53c25ddb95d36bb7a061806f2f95f5ccf2.1522078288.git.joe@perches.com>
+References: <40e88b53c25ddb95d36bb7a061806f2f95f5ccf2.1522078288.git.joe@perches.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Joe Perches <joe@perches.com>
+Date: Mon, 26 Mar 2018 08:35:01 -0700
 
-On 03/27/2018 06:34 AM, Robin Murphy wrote:
-> On 27/03/18 04:21, Philip Elcan wrote:
->> Several of the bits of the TLBI register operand are RES0 per the ARM
->> ARM, so TLBI operations should avoid writing non-zero values to these
->> bits.
->>
->> This patch adds a macro __TLBI_VADDR(addr, asid) that creates the
->> operand register in the correct format and honors the RES0 bits.
->>
->> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
->> ---
->>   arch/arm64/include/asm/tlbflush.h | 23 ++++++++++++++++-------
->>   1 file changed, 16 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->> index 9e82dd7..b1205e9 100644
->> --- a/arch/arm64/include/asm/tlbflush.h
->> +++ b/arch/arm64/include/asm/tlbflush.h
->> @@ -60,6 +60,15 @@
->>           __tlbi(op, (arg) | USER_ASID_FLAG);                \
->>   } while (0)
->>   +/* This macro creates a properly formatted VA operand for the TLBI */
->> +#define __TLBI_VADDR(addr, asid)                \
->> +    ({                            \
->> +        unsigned long __ta = (addr) >> 12;        \
->> +        __ta &= GENMASK_ULL(43, 0);            \
->> +        __ta |= (unsigned long)(asid) << 48;        \
->> +        __ta;                        \
->> +    })
+> Remove local ADBG macro and use netdev_dbg/pr_debug
 > 
-> I'd be inclined to make this a static inline function rather than a macro, since it doesn't need to do any wacky type-dodging, but either way the overall change now looks appropriate;
+> Miscellanea:
 > 
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
+> o Remove unnecessary debug message after allocation failure as there
+>   already is a dump_stack() on the failure paths
+> o Leave the allocation failure message on snmp6_alloc_dev as there
+>   is one code path that does not do a dump_stack()
 > 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+> 
+> Remerged resend of http://patchwork.ozlabs.org/patch/826028/
+> back in October 2017
 
-Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
-
-> Thanks,
-> Robin.
-> 
->> +
->>   /*
->>    *    TLB Management
->>    *    ==============
->> @@ -117,7 +126,7 @@ static inline void flush_tlb_all(void)
->>     static inline void flush_tlb_mm(struct mm_struct *mm)
->>   {
->> -    unsigned long asid = ASID(mm) << 48;
->> +    unsigned long asid = __TLBI_VADDR(0, ASID(mm));
->>         dsb(ishst);
->>       __tlbi(aside1is, asid);
->> @@ -128,7 +137,7 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
->>   static inline void flush_tlb_page(struct vm_area_struct *vma,
->>                     unsigned long uaddr)
->>   {
->> -    unsigned long addr = uaddr >> 12 | (ASID(vma->vm_mm) << 48);
->> +    unsigned long addr = __TLBI_VADDR(uaddr, ASID(vma->vm_mm));
->>         dsb(ishst);
->>       __tlbi(vale1is, addr);
->> @@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
->>           return;
->>       }
->>   -    start = asid | (start >> 12);
->> -    end = asid | (end >> 12);
->> +    start = __TLBI_VADDR(start, asid);
->> +    end = __TLBI_VADDR(end, asid);
->>         dsb(ishst);
->>       for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
->> @@ -185,8 +194,8 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
->>           return;
->>       }
->>   -    start >>= 12;
->> -    end >>= 12;
->> +    start = __TLBI_VADDR(start, 0);
->> +    end = __TLBI_VADDR(end, 0);
->>         dsb(ishst);
->>       for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12))
->> @@ -202,7 +211,7 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
->>   static inline void __flush_tlb_pgtable(struct mm_struct *mm,
->>                          unsigned long uaddr)
->>   {
->> -    unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
->> +    unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
->>         __tlbi(vae1is, addr);
->>       __tlbi_user(vae1is, addr);
->>
-
--- 
-Shanker Donthineni
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Applied to net-next, thanks Joe.
