@@ -1,127 +1,136 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx49vYwsZAg5bkLbj7iEuETrPx1Fdfv1zF2Hn8qrhiJpvXHovvsTqYJON6BL6HJqgRq7IRnT/
+X-Google-Smtp-Source: AG47ELtl4H4b4r0/PXtR989rfJTuJ6uqY2ZytXpepPMxKUVJxqLpe/3uGPJ8G5pv0IJCqaaN7de0
 ARC-Seal: i=1; a=rsa-sha256; t=1522140096; cv=none;
         d=google.com; s=arc-20160816;
-        b=mFTBmM2l9JaKMDhhOyJ20mO/pBjIOB2dHzLRP4Ssm13YQTebrPDR3sySyLQi5RvIEN
-         Dr8iagzT78/C5lw+xy5Mb4pQACx7V+eSB4Sp4r409ZsN+B+Y8YvmXzs7+/d6O23hncRP
-         OzJTdD3Y+XNYPqKmvO67T/diBHaysI1kLGFLnWSkNFhd0Lmh3BJh4Z9WLQueIohuzmSJ
-         Z37eE4T6h6mP1X9xyt7uB038rD1TQHHvvIcGGaBSu6NOLfC2eDKyiIOyCpqYrK/M+U82
-         mQHx1lOBQJEglE63N9XGsxTv+O/Wj0mZe4Jympb7bL6XKi8dy4ddpXScoV8RVI85+iRd
-         WZQg==
+        b=t2cDDj5yuuaSa+jtYOdjtf8a+9TDS36JXwwdE9e//YLngWSoO/pMZZvX7TeI0VcW31
+         /8jJJ+lbaMUJICCmofg68QyOX0c//1LpMxf4CoIucVfQgDNk3PnVRrOa7Gad2LoGyn4/
+         gBtIpk5Lxs23ijRMsnyVu8oAJWZdEn0Vh8lY+g5o82T3AXz1v1Q4UUFjj9CDCIf4yBz4
+         OKufK/1eUEseWktNFEsuzpgzQQ/YtobbL81uWE1B9nRDLvK9n1SI/ZcVHxGkMYABw9Fc
+         6Ca+rWLcrh844eI9uW5+Bmi0zv2e/VU4SsIrqBs1eXyrBRHaBA9bqCAtUdD6qUy79yeV
+         YoTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=jlPvdVyZSYFSNi8hn/EuBgmTJD68cDJ6PZ9+iO8Lt+E=;
-        b=EyJcmOGwZmobcszEgzaDFz9ldzMJlRX2/oB4kmLARWZdvCzo26S3aggJBPd3RucuJ5
-         XFwj2aoWi2mEqJZGXMk0s3NfDmCTYshs17N4bEc2tt4ltpjoiS8KmzTn5EH4cVm9KRLh
-         2l7CDAlq3f10yx0LREeuIrbaMrxiU6vd4fs7199vRpPH9VzpMS6UxpLkW8FrjJU08elA
-         tUQVPy05Wtt34GzG7qWn8fZGHGRCfV5Rzg2E1PAztYLrqxj6BP5hUYrzz7aIO8e3s9us
-         dUXpBYW+dW8YKeaDRMSXf7TgRA1m4qmscSJVjtLt6FbhYxlBtxPRI08Axpf2eJXbpzm0
-         3xRg==
+        bh=ie96Zx8PHiuCUACqsgI3qdZt2H+FQqB9P9OOy6aAs78=;
+        b=UMNi8ss/aYPdIKFLwgykn+a8d0Z948nuNtL8fSvcNrXb9jJ+qWjXrWQdMmFbtMCAuw
+         Oo/bjhyYoOi2INB1ysKnzt8JjXFTFEoz4G3jN0wb+jqytry33dW4guxOlsh4nVOR4U+x
+         EJKB6ZDB1Cq0UEIZ+BefeloWxEPJDiVIJR4qClYGQ8FMXi4vyRNtxHRLDOh53MtS6M+d
+         n95skLaRShNkXpjjsyJ2MU6b61OKITLeeDHdgxsmRApd+yz9NgTLdvOAjQHTWFXywkfK
+         ejOSSwg3QDnJCh36GLi5Ob9m8BQRxdX/XjOzg7tRdLkcU3P5dz+pkibtJIi7bfzsYpv+
+         dfww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 16/23] staging: rtl8723bs: Remove unnecessary blank lines in 'rtl8723bs_recv.c'.
-Date: Tue, 27 Mar 2018 01:41:08 -0700
-Message-Id: <20180327084115.16129-16-quytelda@tamalin.org>
+Subject: [PATCH 17/23] staging: rtl8723bs: Fix lines too long in update_recvframe_attrib().
+Date: Tue, 27 Mar 2018 01:41:09 -0700
+Message-Id: <20180327084115.16129-17-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327084115.16129-1-quytelda@tamalin.org>
 References: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
  <20180327084115.16129-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:iMckFLBkEGwT+1nlzuXO5lb60Au0v4H7CoFDJkoe+O2RhLgSnWz
- zX8bBuEbo0de+6Vt0WUTWRLq/LqPZ1mYsKQ3w1qUlLX86e01P1D+hZloVHHyy5sMtBwFym6
- VhjH8nx7kgyJFdR5PdFJrugH64j1upaIukydoQvNAKbqX0TnwTirifV7Q9V09CsAgt3J80Y
- ft/gAa8NLe9xPtnh1XITw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:f7pnFGi3dkU=:s9DI+53VRHDfA2LVsr/fES
- 5s+mI1IpDv5U5kxv53vntmxNcWp1LGk5GA3H68cJEvzyd+Y7SQ/G/GDqOpc2BPEK+oExnh5pu
- G35AM0QzYzhrhA6D+zUfjUF8l7hDKPl6NbUiAipjwX2d39IY17cyrHsU7iXkK9QaW5zeX1/nP
- RfTXTCo3LDvncNzpwhxe9u5T836qtf7pidXcIErdiceys3IqwhA8EgmzrNT+wIlpW81FWgKax
- iS+wzeZQglNFcR46f38WmFExWLaXwioPY9xwGfPiEF5nVFDm8S9XPF5txTy6x5W1jZt3QkEMl
- fgCuvIHWuoGRIrtr3j0nIqm1EaQXI8FFcqHxTz9GzzxJ7B4K6UliPR2rOcsSZnowHTPabfFqS
- Jgd7JTc8VP3Bhaj/smtqgv9ZCMJxNW6Ho5Vk1FDTGgp4aQm3co4HVQDfVFsJU9rcBZ+jjRw/g
- 6OEGz0sj3cbnljkshRjcg4sydgDE94TNiAxokFsma0qOQydNSc8S8s4VZTiGCNCzNU2U+TRYX
- /Joly+zmtEg8bpFS2IgUrkiicgygKvTckglhoXKZdAvcHDwtNcLF8UGwZKrZ4MQD/Zg3fP5S5
- j2GN6Te8Hn9KO7VQIJJeouFyB5h84irHl3S3x6feAeflvTFVg6CC2n3SaiWmMncsuT5lt9NTf
- LyVMWuWKVDswFWUMzODJTLZzlDHeDnlKUIiI22vavY8dleFbLcPYkqtTld8DNIY8Qx/8EJlet
- 6y87qdowCUVR33DDU+GU+lCj1D5rfBcC6QLLWg==
+X-Provags-ID: V03:K0:PcFXmo6SLznxFAZnmtLnvL+68UhTlG5WkshUfDrEnXFATcAqrhN
+ 0MQrT4aQtqyFsZUpfHtdAqhhVzn32F6qKyTKScFCB5SFGbZdAkXxukdKlOh1qN1+KQZKz25
+ +K8poQMwGm9zhola2Pc2L0sfi0MyGLSUiMn7dzfdE6x1jtYxsr9KeR+Q3cvcReSziaupdRq
+ IliXCwEm3JoKJJMLO0qqA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7NBo0vUiRVw=:Y+l+saKJunU1NFn1tdnJhm
+ UlVK4PyOVHOTz1syW6OIxOqWVXBjBtjX2HgLbkLr51AJEwDxqBCJNzab6mRww1Od/cWxoIKiY
+ zJ6lFT8UcTqhRCl9G8VHe2gCBVMtvIWxQEcHDGNk3iTUrnZiq/EeRcdnjQROzLSsZQN3RVsGv
+ 9EkKF3cL/DzoxR6q6ZnpNWXFq9A8+VFjZlfDFj4iScd+QkYxWF2clTPD2+haD7DKdgvnqgD/u
+ C1ZZXiUoI/jaZ7BfsMmMmEo9b3s3i+YVFRaJmqsEqf4RFBjoQuhweGzujjSyyKqV3aLQYokOn
+ ZpBmjs1Ii0mCHz6IrgqtQm8qcxmIu1E1MTX50e4V3yWOcLvvy/pL9kL2VH2HnN1Wil4IjKbYT
+ MF5kE4d61AkH2RjkUo7zsqIX4CU3zX2HLBKeY+v99ei+aE6EjGv8e4R0adwoljpVgUuMdfouH
+ ZcpcGF5UmuVV1wCFz+fdXqaJEnNxpUodbKr/6n5TkmQRCotAdDUS/grqdz+Ha3SrCJeX2ziWK
+ 6fwPMzhzMbhnD3xHtpMjA8AYKbFjVuuO42xhxR+u+E1h0lKcSlxfTh5vkEsSOcf1kvM87hl++
+ kylbkk6mLjbst5VhrUCi6rIiq22WpXdv3JyN5RCLrd67AJUm0gfWo4yTk6zEVD0+ZqjBz5n5j
+ w0cmGKvKQn/VUDrAoeLnEZHyF3k6rbE7oY3Dq6YrQNOL+uvtECiAaSRk7jg3rUW+1t6Vycpxq
+ vgREWa7wYWdLiXrFk8n4/cQmAtENC7xniBWUIQ==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596079573498565142?=
-X-GMAIL-MSGID: =?utf-8?q?1596079573498565142?=
+X-GMAIL-THRID: =?utf-8?q?1596079574110801227?=
+X-GMAIL-MSGID: =?utf-8?q?1596079574110801227?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Condense multiple blank lines to one, and remove blank lines before
-braces.
+Fix lines over the 80 character limit in update_recvframe_attrib().
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 30 +++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-index 8afac615a42b..3a2c14f53a1f 100644
+index 3a2c14f53a1f..a00d4e7ed70c 100644
 --- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
 +++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-@@ -18,7 +18,6 @@
- #include <rtw_debug.h>
- #include <rtl8723b_hal.h>
+@@ -93,6 +93,11 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
+ 	PODM_PHY_INFO_T p_phy_info = (PODM_PHY_INFO_T)(&pattrib->phy_info);
  
--
- static s32 initrecvbuf(struct recv_buf *precvbuf, struct adapter *padapter)
- {
- 	INIT_LIST_HEAD(&precvbuf->list);
-@@ -104,7 +103,6 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
- 	pkt_info.bPacketToSelf = false;
+ 	u8 *wlanhdr;
++	u8 *my_bssid;
++	u8 *rx_bssid;
++	u8 *rx_ra;
++	u8 *my_hwaddr;
++
+ 	ODM_PACKET_INFO_T pkt_info;
+ 	u8 *sa = NULL;
+ 	/* _irqL		irqL; */
+@@ -104,14 +109,20 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
  	pkt_info.bPacketBeacon = false;
  
--
  	wlanhdr = get_recvframe_data(precvframe);
- 
+-
++	my_bssid = get_bssid(&padapter->mlmepriv);
++	rx_bssid = get_hdr_bssid(wlanhdr);
  	pkt_info.bPacketMatchBSSID = ((!IsFrameTypeCtrl(wlanhdr)) &&
-@@ -189,7 +187,6 @@ static void rtl8723bs_recv_tasklet(void *priv)
- 	_pkt *pkt_copy = NULL;
- 	u8 shift_sz = 0, rx_report_sz = 0;
+-		!pattrib->icv_err && !pattrib->crc_err &&
+-		!memcmp(get_hdr_bssid(wlanhdr), get_bssid(&padapter->mlmepriv), ETH_ALEN));
++				      !pattrib->icv_err && !pattrib->crc_err &&
++				      !ether_addr_equal(rx_bssid, my_bssid));
++
++	rx_ra = get_ra(wlanhdr);
++	my_hwaddr = myid(&padapter->eeprompriv);
++	pkt_info.bPacketToSelf = pkt_info.bPacketMatchBSSID &&
++		!ether_addr_equal(rx_ra, my_hwaddr);
  
--
- 	padapter = priv;
- 	p_hal_data = GET_HAL_DATA(padapter);
- 	precvpriv = &padapter->recvpriv;
-@@ -337,7 +334,6 @@ static void rtl8723bs_recv_tasklet(void *priv)
- 						rtl8723bs_c2h_packet_handler(padapter, precvframe->u.hdr.rx_data, pattrib->pkt_len);
+-	pkt_info.bPacketToSelf = pkt_info.bPacketMatchBSSID && (!memcmp(get_ra(wlanhdr), myid(&padapter->eeprompriv), ETH_ALEN));
  
- 					rtw_free_recvframe(precvframe, &precvpriv->free_recv_queue);
--
- 				}
- 			}
+-	pkt_info.bPacketBeacon = pkt_info.bPacketMatchBSSID && (GetFrameSubType(wlanhdr) == WIFI_BEACON);
++	pkt_info.bPacketBeacon = pkt_info.bPacketMatchBSSID &&
++		(GetFrameSubType(wlanhdr) == WIFI_BEACON);
  
-@@ -350,7 +346,6 @@ static void rtl8723bs_recv_tasklet(void *priv)
+ 	sa = get_ta(wlanhdr);
  
- 		rtw_enqueue_recvbuf(precvbuf, &precvpriv->free_recv_buf_queue);
- 	} while (1);
--
- }
+@@ -121,13 +132,15 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
+ 	psta = rtw_get_stainfo(pstapriv, sa);
+ 	if (psta) {
+ 		pkt_info.StationID = psta->mac_id;
+-		/* DBG_8192C("%s ==> StationID(%d)\n", __func__, pkt_info.StationID); */
++		/* DBG_8192C("%s ==> StationID(%d)\n",
++		 * 	  __func__, pkt_info.StationID); */
+ 	}
+ 	pkt_info.DataRate = pattrib->data_rate;
  
- /*
-@@ -366,7 +361,6 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
- 	struct recv_priv *precvpriv;
- 	struct recv_buf *precvbuf;
- 
--
- 	res = _SUCCESS;
- 	precvpriv = &padapter->recvpriv;
- 
-@@ -463,7 +457,6 @@ void rtl8723bs_free_recv_priv(struct adapter *padapter)
- 	struct recv_priv *precvpriv;
- 	struct recv_buf *precvbuf;
- 
--
- 	precvpriv = &padapter->recvpriv;
- 
- 	/* 3 1. kill tasklet */
+ 	/* rtl8723b_query_rx_phy_status(precvframe, pphy_status); */
+ 	/* spin_lock_bh(&p_hal_data->odm_stainfo_lock); */
+-	ODM_PhyStatusQuery(&p_hal_data->odmpriv, p_phy_info, (u8 *)pphy_status, &(pkt_info));
++	ODM_PhyStatusQuery(&p_hal_data->odmpriv, p_phy_info,
++			   (u8 *)pphy_status, &(pkt_info));
+ 	if (psta)
+ 		psta->rssi = pattrib->phy_info.RecvSignalPower;
+ 	/* spin_unlock_bh(&p_hal_data->odm_stainfo_lock); */
+@@ -141,7 +154,8 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
+ 			rtl8723b_process_phy_info(padapter, precvframe);
+ 		}
+ 	} else if (pkt_info.bPacketToSelf || pkt_info.bPacketBeacon) {
+-		if (check_fwstate(&padapter->mlmepriv, WIFI_ADHOC_STATE|WIFI_ADHOC_MASTER_STATE) == true)
++		u32 adhoc_state = WIFI_ADHOC_STATE | WIFI_ADHOC_MASTER_STATE;
++		if (check_fwstate(&padapter->mlmepriv, adhoc_state))
+ 			if (psta)
+ 				precvframe->u.hdr.psta = psta;
+ 		rtl8723b_process_phy_info(padapter, precvframe);
 -- 
 2.16.3
