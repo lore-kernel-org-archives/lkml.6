@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeC0SGp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 14:06:45 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:33353 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752679AbeC0Q3g (ORCPT
+        id S1752798AbeC0SHO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 14:07:14 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:13031 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751824AbeC0Q3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:29:36 -0400
+        Tue, 27 Mar 2018 12:29:34 -0400
 From: Murali Karicheri <m-karicheri2@ti.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
         <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH v2 07/10] net: netcp: ethss: re-use stats handling code for 2u hardware
-Date: Tue, 27 Mar 2018 12:31:46 -0400
-Message-ID: <1522168309-12338-8-git-send-email-m-karicheri2@ti.com>
+Subject: [net-next PATCH v2 05/10] net: netcp: ethss: use rgmii link status for 2u cpsw hardware
+Date: Tue, 27 Mar 2018 12:31:44 -0400
+Message-ID: <1522168309-12338-6-git-send-email-m-karicheri2@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
 References: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
@@ -25,27 +25,78 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The stats block in 2u cpsw hardware is similar to the one on nu
-and hence handle it in a similar way by using a macro that includes
-2u hardware as well.
+Introduce rgmii link status to handle link state events for 2u
+cpsw hardware on K2G.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 ---
- drivers/net/ethernet/ti/netcp_ethss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/ti/netcp_ethss.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 828243d..26ccddb 100644
+index ab9d369..078a1b8 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -3394,7 +3394,7 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
- 	gbe_dev->num_stats_mods = gbe_dev->max_num_ports;
- 	gbe_dev->et_stats = gbenu_et_stats;
+@@ -552,6 +552,7 @@ struct gbe_ss_regs {
+ struct gbe_ss_regs_ofs {
+ 	u16	id_ver;
+ 	u16	control;
++	u16	rgmii_status; /* 2U */
+ };
  
--	if (IS_SS_ID_NU(gbe_dev))
-+	if (IS_SS_ID_MU(gbe_dev))
- 		gbe_dev->num_et_stats = GBENU_ET_STATS_HOST_SIZE +
- 			(gbe_dev->max_num_slaves * GBENU_ET_STATS_PORT_SIZE);
- 	else
+ struct gbe_switch_regs {
+@@ -2120,23 +2121,39 @@ static bool gbe_phy_link_status(struct gbe_slave *slave)
+ 	 return !slave->phy || slave->phy->link;
+ }
+ 
++#define RGMII_REG_STATUS_LINK	BIT(0)
++
++static void netcp_2u_rgmii_get_port_link(struct gbe_priv *gbe_dev, bool *status)
++{
++	u32 val = 0;
++
++	val = readl(GBE_REG_ADDR(gbe_dev, ss_regs, rgmii_status));
++	*status = false;
++	if ((val & RGMII_REG_STATUS_LINK) != 0)
++		*status = true;
++}
++
+ static void netcp_ethss_update_link_state(struct gbe_priv *gbe_dev,
+ 					  struct gbe_slave *slave,
+ 					  struct net_device *ndev)
+ {
+-	int sp = slave->slave_num;
+-	int phy_link_state, sgmii_link_state = 1, link_state;
++	bool sw_link_state = true, phy_link_state;
++	int sp = slave->slave_num, link_state;
+ 
+ 	if (!slave->open)
+ 		return;
+ 
+ 	if (!SLAVE_LINK_IS_XGMII(slave)) {
+-		sgmii_link_state =
++		if (SLAVE_LINK_IS_RGMII(slave))
++			netcp_2u_rgmii_get_port_link(gbe_dev,
++						     &sw_link_state);
++		else
++			sw_link_state =
+ 			netcp_sgmii_get_port_link(SGMII_BASE(gbe_dev, sp), sp);
+ 	}
+ 
+ 	phy_link_state = gbe_phy_link_status(slave);
+-	link_state = phy_link_state & sgmii_link_state;
++	link_state = phy_link_state & sw_link_state;
+ 
+ 	if (atomic_xchg(&slave->link_state, link_state) != link_state)
+ 		netcp_ethss_link_state_action(gbe_dev, ndev, slave,
+@@ -3432,6 +3449,8 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
+ 
+ 	/* Subsystem registers */
+ 	GBENU_SET_REG_OFS(gbe_dev, ss_regs, id_ver);
++	/* ok to set for MU, but used by 2U only */
++	GBENU_SET_REG_OFS(gbe_dev, ss_regs, rgmii_status);
+ 
+ 	/* Switch module registers */
+ 	GBENU_SET_REG_OFS(gbe_dev, switch_regs, id_ver);
 -- 
 1.9.1
