@@ -1,262 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752894AbeC0Q34 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 12:29:56 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:11841 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752705AbeC0Q3h (ORCPT
+        id S1755737AbeC0QpN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:45:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44712 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755722AbeC0QpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:29:37 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
-        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH v2 01/10] soc: ti: K2G: enhancement to support QMSS in NSS
-Date: Tue, 27 Mar 2018 12:31:40 -0400
-Message-ID: <1522168309-12338-2-git-send-email-m-karicheri2@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
-References: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
+        Tue, 27 Mar 2018 12:45:09 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 28 Mar 2018 00:45:08 +0800
+From: yuankuiz@codeaurora.org
+To: Tejun Heo <tj@kernel.org>
+Cc: cgroups@vger.kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, pkondeti@codeaurora.org,
+        cgroups-owner@vger.kernel.org
+Subject: Re: [PATCH]cgroup: __cpuset_node_allowed return bool
+In-Reply-To: <20180326141212.GI2149215@devbig577.frc2.facebook.com>
+References: <d2f9fe6096235032f445ab88e562560f@codeaurora.org>
+ <0fee75e4a1b12f5fca30e04306a95788@codeaurora.org>
+ <20180326141212.GI2149215@devbig577.frc2.facebook.com>
+Message-ID: <ac790397826d5ec30102e0b3f1233c65@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Navigator Subsystem (NSS) available on K2G SoC has a cut down
-version of QMSS with less number of queues, internal linking ram
-with lesser number of buffers etc.  It doesn't have status and
-explicit push register space as in QMSS available on other K2 SoCs.
-So define reg indices specific to QMSS on K2G. This patch introduces
-"keystone-navigator-qmss-l" compatibility to identify QMSS on
-K2G NSS (QMSS Lite) and to customize the dts handling code. Per
-Device manual, descriptors with index less than or equal to
-regions0_size is in region 0 in the case of QMSS where as for
-QMSS Lite, descriptors with index less than regions0_size is in
-region 0. So update the size accordingly in the regions0_size bits
-of the linking ram size 0 register.
+On 2018-03-26 10:12 PM, Tejun Heo wrote:
+> Hello, John.
+> 
+> On Sat, Mar 24, 2018 at 01:05:50PM +0800, yuankuiz@codeaurora.org 
+> wrote:
+>> as a bool, __cpuset_node_allowed(...) return should be bool.
+> 
+> So, as a minor cleanup patch, this is fine but can you please soften
+> the commit title / description a bit?  It doesn't have to be bool.
+> int is fine.  bool may be marginally more readable but that's about
+> it, so let's please make the commit match that.
+> 
+[ZJ] On summary, update it as below:
 
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+ From 6fd65547d4c704d86fd98cac1d9b8c74c8bee879 Mon Sep 17 00:00:00 2001
+ From: John Zhao <yuankuiz@codeaurora.org>
+Date: Sat, 24 Mar 2018 13:01:32 +0800
+Subject: [PATCH] cgroup: allowed of __cpuset_node_allowed to be bool
+
+makes variable allowed returned by the __cpuset_node_allowed(...)
+to be bool as it is assigned by the test_bits which always
+return 0 or 1. In addition, it could save the size from
+typical 4 bytes to 1 byte only. In another side, it could
+save the potiential unnecessary instructionis during type conversion.
+
+Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
 ---
- .../bindings/soc/ti/keystone-navigator-qmss.txt    |  7 ++
- drivers/soc/ti/knav_qmss.h                         |  6 ++
- drivers/soc/ti/knav_qmss_queue.c                   | 90 ++++++++++++++++------
- 3 files changed, 81 insertions(+), 22 deletions(-)
+  kernel/cgroup/cpuset.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-index 77cd42c..1b0878a 100644
---- a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-+++ b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-@@ -18,6 +18,7 @@ pool management.
- 
- Required properties:
- - compatible	: Must be "ti,keystone-navigator-qmss";
-+		: Must be "ti,keystone-navigator-qmss-l" for NSS Lite
- - clocks	: phandle to the reference clock for this device.
- - queue-range	: <start number> total range of queue numbers for the device.
- - linkram0	: <address size> for internal link ram, where size is the total
-@@ -39,6 +40,12 @@ Required properties:
- 			  - Descriptor memory setup region.
- 			  - Queue Management/Queue Proxy region for queue Push.
- 			  - Queue Management/Queue Proxy region for queue Pop.
-+
-+For NSS lite, following QMSS reg indexes are used in that order
-+			  - Queue Peek region.
-+			  - Queue configuration region.
-+			  - Queue Management/Queue Proxy region for queue Push/Pop.
-+
- - queue-pools	: child node classifying the queue ranges into pools.
- 		  Queue ranges are grouped into 3 type of pools:
- 		  - qpend	    : pool of qpend(interruptible) queues
-diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
-index 905b974..5fa1ce6 100644
---- a/drivers/soc/ti/knav_qmss.h
-+++ b/drivers/soc/ti/knav_qmss.h
-@@ -292,6 +292,11 @@ struct knav_queue {
- 	struct list_head		list;
- };
- 
-+enum qmss_version {
-+	QMSS,
-+	QMSS_LITE,
-+};
-+
- struct knav_device {
- 	struct device				*dev;
- 	unsigned				base_id;
-@@ -305,6 +310,7 @@ struct knav_device {
- 	struct list_head			pools;
- 	struct list_head			pdsps;
- 	struct list_head			qmgrs;
-+	enum qmss_version			version;
- };
- 
- struct knav_range_ops {
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 77d6b5c..5b2c4e9 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -42,6 +42,15 @@
- #define KNAV_QUEUE_PUSH_REG_INDEX	4
- #define KNAV_QUEUE_POP_REG_INDEX	5
- 
-+/* Queue manager register indices in DTS for QMSS in NSS lite.
-+ * There are no status and vbusm push registers on this version
-+ * QMSS. Push registers are same as pop, So all indices above 1
-+ * are to be re-defined
-+ */
-+#define KNAV_L_QUEUE_CONFIG_REG_INDEX	1
-+#define KNAV_L_QUEUE_REGION_REG_INDEX	2
-+#define KNAV_L_QUEUE_PUSH_REG_INDEX	3
-+
- /* PDSP register indices in DTS */
- #define KNAV_QUEUE_PDSP_IRAM_REG_INDEX	0
- #define KNAV_QUEUE_PDSP_REGS_REG_INDEX	1
-@@ -1169,8 +1178,12 @@ static int knav_queue_setup_link_ram(struct knav_device *kdev)
- 		dev_dbg(kdev->dev, "linkram0: dma:%pad, virt:%p, size:%x\n",
- 			&block->dma, block->virt, block->size);
- 		writel_relaxed((u32)block->dma, &qmgr->reg_config->link_ram_base0);
--		writel_relaxed(block->size, &qmgr->reg_config->link_ram_size0);
--
-+		if (kdev->version == QMSS_LITE)
-+			writel_relaxed(block->size,
-+				       &qmgr->reg_config->link_ram_size0);
-+		else
-+			writel_relaxed(block->size - 1,
-+				       &qmgr->reg_config->link_ram_size0);
- 		block++;
- 		if (!block->size)
- 			continue;
-@@ -1387,42 +1400,64 @@ static int knav_queue_init_qmgrs(struct knav_device *kdev,
- 		qmgr->reg_peek =
- 			knav_queue_map_reg(kdev, child,
- 					   KNAV_QUEUE_PEEK_REG_INDEX);
--		qmgr->reg_status =
--			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_STATUS_REG_INDEX);
-+
-+		if (kdev->version == QMSS) {
-+			qmgr->reg_status =
-+				knav_queue_map_reg(kdev, child,
-+						   KNAV_QUEUE_STATUS_REG_INDEX);
-+		}
-+
- 		qmgr->reg_config =
- 			knav_queue_map_reg(kdev, child,
-+					   (kdev->version == QMSS_LITE) ?
-+					   KNAV_L_QUEUE_CONFIG_REG_INDEX :
- 					   KNAV_QUEUE_CONFIG_REG_INDEX);
- 		qmgr->reg_region =
- 			knav_queue_map_reg(kdev, child,
-+					   (kdev->version == QMSS_LITE) ?
-+					   KNAV_L_QUEUE_REGION_REG_INDEX :
- 					   KNAV_QUEUE_REGION_REG_INDEX);
-+
- 		qmgr->reg_push =
- 			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_PUSH_REG_INDEX);
--		qmgr->reg_pop =
--			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_POP_REG_INDEX);
-+					   (kdev->version == QMSS_LITE) ?
-+					    KNAV_L_QUEUE_PUSH_REG_INDEX :
-+					    KNAV_QUEUE_PUSH_REG_INDEX);
-+
-+		if (kdev->version == QMSS) {
-+			qmgr->reg_pop =
-+				knav_queue_map_reg(kdev, child,
-+						   KNAV_QUEUE_POP_REG_INDEX);
-+		}
- 
--		if (IS_ERR(qmgr->reg_peek) || IS_ERR(qmgr->reg_status) ||
-+		if (IS_ERR(qmgr->reg_peek) ||
-+		    ((kdev->version == QMSS) &&
-+		    (IS_ERR(qmgr->reg_status) || IS_ERR(qmgr->reg_pop))) ||
- 		    IS_ERR(qmgr->reg_config) || IS_ERR(qmgr->reg_region) ||
--		    IS_ERR(qmgr->reg_push) || IS_ERR(qmgr->reg_pop)) {
-+		    IS_ERR(qmgr->reg_push)) {
- 			dev_err(dev, "failed to map qmgr regs\n");
-+			if (kdev->version == QMSS) {
-+				if (!IS_ERR(qmgr->reg_status))
-+					devm_iounmap(dev, qmgr->reg_status);
-+				if (!IS_ERR(qmgr->reg_pop))
-+					devm_iounmap(dev, qmgr->reg_pop);
-+			}
- 			if (!IS_ERR(qmgr->reg_peek))
- 				devm_iounmap(dev, qmgr->reg_peek);
--			if (!IS_ERR(qmgr->reg_status))
--				devm_iounmap(dev, qmgr->reg_status);
- 			if (!IS_ERR(qmgr->reg_config))
- 				devm_iounmap(dev, qmgr->reg_config);
- 			if (!IS_ERR(qmgr->reg_region))
- 				devm_iounmap(dev, qmgr->reg_region);
- 			if (!IS_ERR(qmgr->reg_push))
- 				devm_iounmap(dev, qmgr->reg_push);
--			if (!IS_ERR(qmgr->reg_pop))
--				devm_iounmap(dev, qmgr->reg_pop);
- 			devm_kfree(dev, qmgr);
- 			continue;
- 		}
- 
-+		/* Use same push register for pop as well */
-+		if (kdev->version == QMSS_LITE)
-+			qmgr->reg_pop = qmgr->reg_push;
-+
- 		list_add_tail(&qmgr->list, &kdev->qmgrs);
- 		dev_info(dev, "added qmgr start queue %d, num of queues %d, reg_peek %p, reg_status %p, reg_config %p, reg_region %p, reg_push %p, reg_pop %p\n",
- 			 qmgr->start_queue, qmgr->num_queues,
-@@ -1681,10 +1716,24 @@ static int knav_queue_init_queues(struct knav_device *kdev)
- 	return 0;
- }
- 
-+/* Match table for of_platform binding */
-+static const struct of_device_id keystone_qmss_of_match[] = {
-+	{
-+		.compatible = "ti,keystone-navigator-qmss",
-+	},
-+	{
-+		.compatible = "ti,keystone-navigator-qmss-l",
-+		.data	= (void *)QMSS_LITE,
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
-+
- static int knav_queue_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
- 	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
-+	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	u32 temp[2];
- 	int ret;
-@@ -1700,6 +1749,10 @@ static int knav_queue_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	match = of_match_device(of_match_ptr(keystone_qmss_of_match), dev);
-+	if (match && match->data)
-+		kdev->version = QMSS_LITE;
-+
- 	platform_set_drvdata(pdev, kdev);
- 	kdev->dev = dev;
- 	INIT_LIST_HEAD(&kdev->queue_ranges);
-@@ -1815,13 +1868,6 @@ static int knav_queue_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--/* Match table for of_platform binding */
--static struct of_device_id keystone_qmss_of_match[] = {
--	{ .compatible = "ti,keystone-navigator-qmss", },
--	{},
--};
--MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
--
- static struct platform_driver keystone_qmss_driver = {
- 	.probe		= knav_queue_probe,
- 	.remove		= knav_queue_remove,
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index b42037e..42338b7 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2552,7 +2552,7 @@ static struct cpuset 
+*nearest_hardwall_ancestor(struct cpuset *cs)
+  bool __cpuset_node_allowed(int node, gfp_t gfp_mask)
+  {
+  	struct cpuset *cs;		/* current cpuset ancestors */
+-	int allowed;			/* is allocation in zone z allowed? */
++	bool allowed;			/* is allocation in zone z allowed? */
+  	unsigned long flags;
+
+  	if (in_interrupt())
 -- 
-1.9.1
+2.7.4
