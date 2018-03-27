@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48qhSTmN/Pj9eCCXb0IjI9gcxfW3pKf8sqCcx3Odc0NTwKaGHzaJ9RWyozpMU7V5aIjkq5R
-ARC-Seal: i=1; a=rsa-sha256; t=1522168312; cv=none;
+X-Google-Smtp-Source: AIpwx48STuboVLUqfT4JWaI3Z4m1Av9qs44mcaDEyCsmCajTvuCNKHXs1sW74WeBWrXfWMhLYwy/
+ARC-Seal: i=1; a=rsa-sha256; t=1522168309; cv=none;
         d=google.com; s=arc-20160816;
-        b=mLjMywlK8pzn8+zsBlVkTNKa7/FEQeRBP4JDWHD0ceZwHzDYmiKyOR5I19GU6ua2TL
-         DUk+T5d8ygYb4Q86kJj7lmVu0QmaxrO9AZGBzzw0/P2rsLBcydNO42lfVTXZdJsNX4rD
-         VzWxF9wdZwm2VpaJP6p0bQ0B4LT4UPb+CMBa/nkWBBeIioMSnESA/raWpDOta2dLruE+
-         Wl0QRc4+z+7xVPtLMpAUpdf1gGtnoQQIJN+bkpQ5JNgJvE0Unu3KnzqcAY4nQijcDgdw
-         Ztphyc397TPip/8Xjp+vWNTTYViJy3ScLfq1XI6aXWcCIXpN28vLBrUJrXjfIOeIDOIZ
-         STZA==
+        b=q9U174wlJEV5jeOS2ovN6TQ+KO1jyM2n9SRzl/Uur6howfbaPdfHJMqbu+iJ0HLXx5
+         Ju1RUjuPuwTNOW3YczaFN9cTQap1A7d4Cmqm/i1bRlcq64ICUsyfMTbnKOhiblR6t/Um
+         8E7BWmO0vQK3HBtQ1xH30HD4DUGNTset57p9iiEdDntCFDcFAqns8Oh1EHuh8CzP053P
+         YOYJrpSDY5ExNrHBLmqSLTxk8orK+AzzMOut+e3Iq744Le6qavchsaAUdQIWTVMj+APX
+         6kN4nQ5kdzbxtIiCwHJh/m1vfFE3p6Q1QFVRjaZwLCa77HLrBeoLYgK953Mx8KZ/f90o
+         h3kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EBVsHoIHHpp7BuLzPvMZIWXwDgQIu+TkJq1BjwbAgpc=;
-        b=mUAs8HB2WydO9JPsAHBdkXrLhB6EvHDTlakfZRx/rv71Qk9qJFzPN0Vh+StYONozPL
-         QXWYUjkR2PQCna6VfP/Cs+Q4EOlv6AoKkgnxucheIkZhk/HaAcmgf3pEdo9GHLDCNCU5
-         vcpo0WWf3/WSZlSED9v+MCaKTrlQrG+wrTRmfxH55IkNNNooI5/0j3f8th4S+fyUQpWD
-         Vdgbw5MvuYmdUclQ177ab5Vyc+2d1lfPqdYp7ds4CJPaUa88nt+VejaO5uIXAKA9wnyc
-         os3oL4SQ5oO3+DCEl3Y4z09pkNowtL9U/Ue1BO0QK6DCUGKMW+4Hfu1t1V/rAdst7ny9
-         qJDg==
+        bh=PKANTlOIUy9vDUKzDCN7OvymnNV6h9Onohsm/O/WnTA=;
+        b=Db6pXYesfN+6KbC306bBxITA1lJET89zZqYxxv7EWcY9yB2gXajXlJPluSso1VjesM
+         fyBK8SAAR4Ex5yc8XO0huvlawl6Mpu4jBFRkRMdKsjTcyZ5k4GXUvhW9j1DRkBzHv0R0
+         D0b7/cL7MNy/vrrh+JTWvY/VUgByecI8kh9VujuR8PGWpynmygvaDZ3XrtroKMzCRlpk
+         K6P3FaqPF5UZoVd4fsg1p9nvwDOu/+rWY1IDCuN0aGSDo5Hy1moaKjasooeD8Hxs/DZ3
+         f7gvibZpnZkGENrtpGnOqnZMpwyNYTY+3yRfvxpeJE43m9kqfmM7h0trcNFEO6Z7YkQ8
+         wnlw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dariusz Dokupil <dariusz.dokupil@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.9 34/67] libnvdimm, {btt, blk}: do integrity setup before add_disk()
-Date: Tue, 27 Mar 2018 18:27:26 +0200
-Message-Id: <20180327162728.876868121@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.9 33/67] ACPI / watchdog: Fix off-by-one error at resource assignment
+Date: Tue, 27 Mar 2018 18:27:25 +0200
+Message-Id: <20180327162728.825261393@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109160718224747?=
-X-GMAIL-MSGID: =?utf-8?q?1596109160718224747?=
+X-GMAIL-THRID: =?utf-8?q?1596109157701548644?=
+X-GMAIL-MSGID: =?utf-8?q?1596109157701548644?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,66 +51,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vishal Verma <vishal.l.verma@intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 3ffb0ba9b567a8efb9a04ed3d1ec15ff333ada22 upstream.
+commit b1abf6fc49829d89660c961fafe3f90f3d843c55 upstream.
 
-Prior to 25520d55cdb6 ("block: Inline blk_integrity in struct gendisk")
-we needed to temporarily add a zero-capacity disk before registering for
-blk-integrity. But adding a zero-capacity disk caused the partition
-table scanning to bail early, and this resulted in partitions not coming
-up after a probe of the BTT or blk namespaces.
+The resource allocation in WDAT watchdog has off-one-by error, it sets
+one byte more than the actual end address.  This may eventually lead
+to unexpected resource conflicts.
 
-We can now register for integrity before the disk has been added, and
-this fixes the rescan problems.
-
-Fixes: 25520d55cdb6 ("block: Inline blk_integrity in struct gendisk")
-Reported-by: Dariusz Dokupil <dariusz.dokupil@intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: 058dfc767008 (ACPI / watchdog: Add support for WDAT hardware watchdog)
+Cc: 4.9+ <stable@vger.kernel.org> # 4.9+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/blk.c |    3 +--
- drivers/nvdimm/btt.c |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/acpi/acpi_watchdog.c |    4 ++--
+ drivers/watchdog/wdat_wdt.c  |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/nvdimm/blk.c
-+++ b/drivers/nvdimm/blk.c
-@@ -286,8 +286,6 @@ static int nsblk_attach_disk(struct nd_n
- 	disk->queue		= q;
- 	disk->flags		= GENHD_FL_EXT_DEVT;
- 	nvdimm_namespace_disk_name(&nsblk->common, disk->disk_name);
--	set_capacity(disk, 0);
--	device_add_disk(dev, disk);
+--- a/drivers/acpi/acpi_watchdog.c
++++ b/drivers/acpi/acpi_watchdog.c
+@@ -74,10 +74,10 @@ void __init acpi_watchdog_init(void)
+ 		res.start = gas->address;
+ 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
+ 			res.flags = IORESOURCE_MEM;
+-			res.end = res.start + ALIGN(gas->access_width, 4);
++			res.end = res.start + ALIGN(gas->access_width, 4) - 1;
+ 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
+ 			res.flags = IORESOURCE_IO;
+-			res.end = res.start + gas->access_width;
++			res.end = res.start + gas->access_width - 1;
+ 		} else {
+ 			pr_warn("Unsupported address space: %u\n",
+ 				gas->space_id);
+--- a/drivers/watchdog/wdat_wdt.c
++++ b/drivers/watchdog/wdat_wdt.c
+@@ -392,7 +392,7 @@ static int wdat_wdt_probe(struct platfor
  
- 	if (devm_add_action_or_reset(dev, nd_blk_release_disk, disk))
- 		return -ENOMEM;
-@@ -300,6 +298,7 @@ static int nsblk_attach_disk(struct nd_n
- 	}
- 
- 	set_capacity(disk, available_disk_size >> SECTOR_SHIFT);
-+	device_add_disk(dev, disk);
- 	revalidate_disk(disk);
- 	return 0;
- }
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1392,8 +1392,6 @@ static int btt_blk_init(struct btt *btt)
- 	queue_flag_set_unlocked(QUEUE_FLAG_NONROT, btt->btt_queue);
- 	btt->btt_queue->queuedata = btt;
- 
--	set_capacity(btt->btt_disk, 0);
--	device_add_disk(&btt->nd_btt->dev, btt->btt_disk);
- 	if (btt_meta_size(btt)) {
- 		int rc = nd_integrity_init(btt->btt_disk, btt_meta_size(btt));
- 
-@@ -1405,6 +1403,7 @@ static int btt_blk_init(struct btt *btt)
- 		}
- 	}
- 	set_capacity(btt->btt_disk, btt->nlba * btt->sector_size >> 9);
-+	device_add_disk(&btt->nd_btt->dev, btt->btt_disk);
- 	btt->nd_btt->size = btt->nlba * (u64)btt->sector_size;
- 	revalidate_disk(btt->btt_disk);
- 
+ 		memset(&r, 0, sizeof(r));
+ 		r.start = gas->address;
+-		r.end = r.start + gas->access_width;
++		r.end = r.start + gas->access_width - 1;
+ 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
+ 			r.flags = IORESOURCE_MEM;
+ 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
