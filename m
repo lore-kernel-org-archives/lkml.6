@@ -1,91 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeC0KDX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 06:03:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750978AbeC0KDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 06:03:21 -0400
-Date: Tue, 27 Mar 2018 12:03:18 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.vnet.ibm.com,
-        pmorel@linux.vnet.ibm.com
-Subject: Re: [PATCH 3/4] vfio: ccw: set ccw->cda to NULL defensively
-Message-ID: <20180327120318.3fad36bc.cohuck@redhat.com>
-In-Reply-To: <20180327030809.GJ12194@bjsdjshi@linux.vnet.ibm.com>
-References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
-        <20180321020822.86255-4-bjsdjshi@linux.vnet.ibm.com>
-        <20180326154753.327503ba.cohuck@redhat.com>
-        <20180327030809.GJ12194@bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1752365AbeC0KEf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 06:04:35 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56288 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751056AbeC0KEc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 06:04:32 -0400
+To: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Stefan Haberland <sth@linux.vnet.ibm.com>
+Subject: 4.16-RC7 WARNING: CPU: 2 PID: 0 at block/blk-mq.c:1400
+ __blk_mq_delay_run_hw_queue
+Date: Tue, 27 Mar 2018 12:04:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-TM-AS-GCONF: 00
+x-cbid: 18032710-0012-0000-0000-000005C3B834
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032710-0013-0000-0000-0000193FF20E
+Message-Id: <96392d4b-f890-7b34-8f1e-8d51855327cc@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803270104
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018 11:08:09 +0800
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+Hi,
 
-> * Cornelia Huck <cohuck@redhat.com> [2018-03-26 15:47:53 +0200]:
-> 
-> > On Wed, 21 Mar 2018 03:08:21 +0100
-> > Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
-> >   
-> > > Let's avoid free on ccw->cda that points to a guest address
-> > > or a already freed memory area by setting it to NULL if memory
-> > > allocation didn't happen or failed.  
-> > 
-> > Does not hurt, I guess.
-> >   
-> > > 
-> > > Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> > > ---
-> > >  drivers/s390/cio/vfio_ccw_cp.c | 28 +++++++++++++++++++---------
-> > >  1 file changed, 19 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-> > > index 3abc9770910a..5958c35ab343 100644
-> > > --- a/drivers/s390/cio/vfio_ccw_cp.c
-> > > +++ b/drivers/s390/cio/vfio_ccw_cp.c
-> > > @@ -491,7 +491,7 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
-> > >  	struct ccw1 *ccw;
-> > >  	struct pfn_array_table *pat;
-> > >  	unsigned long *idaws;
-> > > -	int idaw_nr;
-> > > +	int idaw_nr, ret;
-> > >  
-> > >  	ccw = chain->ch_ccw + idx;
-> > >  
-> > > @@ -511,18 +511,20 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
-> > >  	 * needed when translating a direct ccw to a idal ccw.
-> > >  	 */
-> > >  	pat = chain->ch_pat + idx;
-> > > -	if (pfn_array_table_init(pat, 1))
-> > > -		return -ENOMEM;
-> > > -	idaw_nr = pfn_array_alloc_pin(pat->pat_pa, cp->mdev,
-> > > +	ret = pfn_array_table_init(pat, 1);
-> > > +	if (ret)
-> > > +		goto out_init;
-> > > +
-> > > +	idaw_nr = ret = pfn_array_alloc_pin(pat->pat_pa, cp->mdev,  
-> > 
-> > Ugh, I don't like setting both at the same time... only set idaw_nr for
-> > ret > 0? (personal preference)
-> >   
-> Ah, we don't need idaw_nr anymore. I think I should just replace it with
-> ret.
+I get the following warning in __blk_mq_delay_run_hw_queue when the 
+scheduler is set to mq-deadline for DASD devices on s390.
 
-Let's do that.
+What I see is that for whatever reason there is a hctx nr 0 which has no 
+hctx->tags pointer set.
+ From my observation it is always hctx nr 0 which has a tags NULL 
+pointer in it and I see other hctx which have the hctx->tags pointer set 
+correctly.
 
-> 
-> > >  				      ccw->cda, ccw->count);
-> > > -	if (idaw_nr < 0)
-> > > -		return idaw_nr;
-> > > +	if (ret < 0)
-> > > +		goto out_init;  
-> >   
-> 
+
+[    2.169986] WARNING: CPU: 0 PID: 0 at block/blk-mq.c:1402 
+__blk_mq_delay_run_hw_queue+0xe8/0x118
+[    2.170007] Modules linked in:
+[    2.170014] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 
+4.16.0-rc7-04107-g91a05d9e1d6b-dirty #147
+[    2.170019] Hardware name: IBM 2964 N96 702 (z/VM 6.4.0)
+[    2.170024] Krnl PSW : 0000000076fd6c7f 00000000c244c24d 
+(__blk_mq_delay_run_hw_queue+0xe8/0x118)
+[    2.170035]            R:0 T:1 IO:0 EX:0 Key:0 M:1 W:0 P:0 AS:3 CC:0 
+PM:0 RI:0 EA:3
+[    2.170041] Krnl GPRS: 00000000599ec58a 0000000002a94000 
+0000000002a94000 0000000000000001
+[    2.170047]            0000000000000000 000000006e761e98 
+0000000002a96980 0000000002a96800
+[    2.170052]            0000000002d87ce0 00000000737fbda8 
+0000000000000000 0000000000000001
+[    2.170058]            0000000000000001 0000000000aedd10 
+00000000737fbc38 00000000737fbc00
+[    2.170069] Krnl Code: 00000000006ea3c8: ebaff0a00004 lmg     
+%r10,%r15,160(%r15)
+                           00000000006ea3ce: c0f4ffff5e0d brcl    15,6d5fe8
+                          #00000000006ea3d4: a7f40001 brc     15,6ea3d6
+                          >00000000006ea3d8: e340f0c00004        lg      
+%r4,192(%r15)
+                           00000000006ea3de: ebaff0a00004 lmg     
+%r10,%r15,160(%r15)
+                           00000000006ea3e4: 07f4 bcr     15,%r4
+                           00000000006ea3e6: 41b01100 la      %r11,256(%r1)
+                           00000000006ea3ea: 182a lr      %r2,%r10
+[    2.170158] Call Trace:
+[    2.170205] ([<0000000002a96800>] 0x2a96800)
+[    2.170248]  [<00000000006ea4c0>] blk_mq_run_hw_queue+0xa0/0x100
+[    2.170262]  [<00000000006ea59c>] blk_mq_run_hw_queues+0x7c/0x98
+[    2.170295]  [<00000000006e88f6>] __blk_mq_complete_request+0x10e/0x1e0
+[    2.170300]  [<00000000006e9e30>] blk_mq_complete_request+0x80/0xa0
+[    2.170307]  [<000000000087fad0>] dasd_block_tasklet+0x218/0x480
+[    2.170415]  [<000000000017c3f8>] tasklet_hi_action+0xa0/0x138
+[    2.170434]  [<0000000000a91c10>] __do_softirq+0xc8/0x540
+[    2.170471]  [<000000000017bd4e>] irq_exit+0x136/0x140
+[    2.170478]  [<000000000010c912>] do_IRQ+0x8a/0xb8
+[    2.170518]  [<0000000000a90ee0>] io_int_handler+0x138/0x2e0
+[    2.170524]  [<0000000000102cd0>] enabled_wait+0x58/0x128
+[    2.170562] ([<0000000000102cb8>] enabled_wait+0x40/0x128)
+[    2.170577]  [<000000000010319a>] arch_cpu_idle+0x32/0x48
+[    2.170604]  [<0000000000a8f636>] default_idle_call+0x3e/0x58
+[    2.170613]  [<00000000001cd5d2>] do_idle+0xda/0x190
+[    2.170621]  [<00000000001cd93e>] cpu_startup_entry+0x3e/0x48
+[    2.170633]  [<0000000000e5ebf4>] start_kernel+0x47c/0x490
+[    2.170641]  [<0000000000100020>] _stext+0x20/0x80
+[    2.170650] 2 locks held by swapper/0/0:
+[    2.170658]  #0:  (&(&dq->lock)->rlock){..-.}, at: 
+[<00000000b45eaf9e>] dasd_block_tasklet+0x1cc/0x480
+[    2.170676]  #1:  (rcu_read_lock){....}, at: [<00000000bc7fa045>] 
+hctx_lock+0x34/0x110
+[    2.170750] Last Breaking-Event-Address:
+[    2.170758]  [<00000000006ea3d4>] __blk_mq_delay_run_hw_queue+0xe4/0x118
+[    2.170803] ---[ end trace 1073cf0de1fd32d0 ]---
+
+
+
+Regards,
+Stefan
