@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752277AbeC0JUq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:20:46 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41573 "EHLO
+        id S1752359AbeC0JU5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:20:57 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44374 "EHLO
         mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752066AbeC0JUk (ORCPT
+        with ESMTP id S1752236AbeC0JUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:20:40 -0400
-X-Google-Smtp-Source: AIpwx49cIi2B0QZM8cBV4AmTOsWDS49jmmKrfPj5+k5u915pGG4u50QdGZsnPg1fMaE9uY6CwaEepw==
+        Tue, 27 Mar 2018 05:20:46 -0400
+X-Google-Smtp-Source: AG47ELv7GM2o3uz5bOkLAS91C7IDnMPd5OmfFGaTeG4qou4KztXoTlfihegnJH7TLkX/CZSKloSYsQ==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,9 +21,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 3/8] clk: davinci: add a reset lookup table for psc0
-Date: Tue, 27 Mar 2018 11:20:26 +0200
-Message-Id: <20180327092031.11251-4-brgl@bgdev.pl>
+Subject: [PATCH v3 7/8] remoteproc/davinci: use the reset framework
+Date: Tue, 27 Mar 2018 11:20:30 +0200
+Message-Id: <20180327092031.11251-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
 References: <20180327092031.11251-1-brgl@bgdev.pl>
@@ -33,53 +33,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-In order to be able to use the reset framework in legacy boot mode as
-well, add the reset lookup table to the psc driver for da850 variant.
+Switch to using the reset framework instead of handcoded reset routines
+we used so far.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/clk/davinci/psc-da850.c | 7 +++++++
- drivers/clk/davinci/psc.c       | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/remoteproc/da8xx_remoteproc.c | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-index ccc7eb17bf3a..d196dcbed560 100644
---- a/drivers/clk/davinci/psc-da850.c
-+++ b/drivers/clk/davinci/psc-da850.c
-@@ -6,6 +6,7 @@
-  */
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index b668e32996e2..788f59809c02 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -10,6 +10,7 @@
  
- #include <linux/clk-provider.h>
-+#include <linux/reset-controller.h>
+ #include <linux/bitops.h>
  #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -66,8 +67,14 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
- 				"fck",	"ecap.1",
- 				"fck",	"ecap.2");
++#include <linux/reset.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -20,8 +21,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
  
-+static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
-+	RESET_LOOKUP("da850-psc0", 15, "davinci-rproc.0", NULL),
-+};
-+
- static int da850_psc0_init(struct device *dev, void __iomem *base)
- {
-+	reset_controller_add_lookup(da850_psc0_reset_lookup_table,
-+				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
- 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
+-#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+-
+ #include "remoteproc_internal.h"
+ 
+ static char *da8xx_fw_name;
+@@ -72,6 +71,7 @@ struct da8xx_rproc {
+ 	struct da8xx_rproc_mem *mem;
+ 	int num_mems;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void (*ack_fxn)(struct irq_data *data);
+ 	struct irq_data *irq_data;
+ 	void __iomem *chipsig;
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	struct reset_control *dsp_reset = drproc->dsp_reset;
+ 	int ret;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+@@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
+-	davinci_clk_reset_deassert(dsp_clk);
++	ret = reset_control_deassert(dsp_reset);
++	if (ret) {
++		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
++		clk_disable_unprepare(dsp_clk);
++		return ret;
++	}
+ 
+ 	return 0;
  }
+@@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ static int da8xx_rproc_stop(struct rproc *rproc)
+ {
+ 	struct da8xx_rproc *drproc = rproc->priv;
++	struct device *dev = rproc->dev.parent;
++	int ret;
++
++	ret = reset_control_assert(drproc->dsp_reset);
++	if (ret) {
++		dev_err(dev, "reset_control_assert() failed: %d\n", ret);
++		return ret;
++	}
  
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 3b0e59dfbdd7..063df62381ea 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
+-	davinci_clk_reset_assert(drproc->dsp_clk);
+ 	clk_disable_unprepare(drproc->dsp_clk);
  
- 	psc->rcdev.ops = &davinci_psc_reset_ops;
- 	psc->rcdev.owner = THIS_MODULE;
-+	psc->rcdev.dev = dev;
- 	psc->rcdev.of_node = dev->of_node;
- 	psc->rcdev.of_reset_n_cells = 1;
- 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
+ 	return 0;
+@@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	struct resource *bootreg_res;
+ 	struct resource *chipsig_res;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void __iomem *chipsig;
+ 	void __iomem *bootreg;
+ 	int irq;
+@@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsp_clk);
+ 	}
+ 
++	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(dsp_reset)) {
++		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
++			dev_err(dev, "unable to get reset control: %ld\n",
++				PTR_ERR(dsp_reset));
++
++		return PTR_ERR(dsp_reset);
++	}
++
+ 	if (dev->of_node) {
+ 		ret = of_reserved_mem_device_init(dev);
+ 		if (ret) {
+@@ -309,7 +332,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+ 	 * held in reset at the time it is called.
+ 	 */
+-	ret = davinci_clk_reset_assert(drproc->dsp_clk);
++	ret = reset_control_assert(dsp_reset);
+ 	if (ret)
+ 		goto free_rproc;
+ 
 -- 
 2.16.1
