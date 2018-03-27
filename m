@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsvbnEH+ioTVWt+mwZ91jC0I09FLxsJiW9myFwQpUNCTacqdsWqs4/HCtTxeT03+t7ZGqnV
-ARC-Seal: i=1; a=rsa-sha256; t=1522115866; cv=none;
+Return-Path: <kernel-hardening-return-12749-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELv6W4x4Py/xwvsJkaVGbQ8dAtDUCanqH6NBi1SEyOAdHUavCkjcfg6smivM1qL52+67kyaH
+ARC-Seal: i=1; a=rsa-sha256; t=1522115846; cv=none;
         d=google.com; s=arc-20160816;
-        b=AvkAOm0hiPLyb8stI2OzvECVNB91kaAUk7ZHkyiYKPR941tPIwGZTiJsxwKHoWDq+O
-         8pMtAUy4IEgN9q9VX3COTBuV8dUtqOWbNSDVtGkJDdoOffQ1UVRBkLs11SYBIv2/oH7B
-         F03NqA5bxkNLKhp6gYgEjuo93URP+CFmcU1C0NirEnmHmKaELLP6hDb3IOmb2cwdEiYX
-         wWDNIobEF2Y33Yr7IzfkG+B+kIFu404ur+8/mQG6pMW5whxu+7KCVxPrNbScdBZtnuHr
-         keL0Fy3tPUOm+713uK+ehxatoep6KGM1vuVonOyihSgBAJCaeD4/LlMjrdEDE2YDigm8
-         N29A==
+        b=bqQWdG7D8lTrlvT9bQ89fpgwpvr6rNVsPQmAldGs+Hv548TnfOG72bl4E8HxmINNc1
+         0dII1K8Ev0a6uI48c8pMtVa/2YNnVn6Bj5VS4+swYgFuujFMPVxruCDfeArfk8bUd5r/
+         a1d3WL5UHQQy2IWYfn2yAogC5SLSm2WMkXF+9RtyQnutJkYDUUyxNQu9bqRK1p2BbP4m
+         NGpJa11mv8XgAchMOmRESdQwX94fxIU0WoAKKud6ZSOsYZzVbZwsqtUaqxmfziiWekRO
+         Zn+5Bt31H4e66kjcMcxvMLbQ/1+f/iE9/3g7bW1EF8GYZOjDEczmqFwUqfobdVEmDKMQ
+         ENJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=r+/dQbGqp28pibuoRjnpcP730sLxUhZuApp/+iHgoXc=;
-        b=EBvsDdAFIxT0mP/i3kCQnzM9zldeE9tXTY/38ykj4i0D67Dge6tqSKfCD72P/yQ4zV
-         W8845Fu6keW1iponW3SXUtIxQk/390uJUtoMLfnEHRz3XIsiVFbugEiVNzwTnpx3AYgF
-         gJxyAVAQ/zKtYSf2olhmqLeeZTtXYoeXkKi+kJHE3V0iw7JmeFuuY7ZU3BSqPzkk+1OG
-         6M+7eUT4lA5Er9+VnehRIhZLR6cv1orIs1YJUzsoD8ZGBI9tiG4w9XDt1bZFM9szSwLe
-         sklae6IaYG2dZp/jaCvWHpZrj8YpNovZQiRl/9aC+0zfO0bInCi1fohWVHDkXCmC18lX
-         qs+A==
+        bh=eMU69x2SCz1Gw1QD7sYnb4+9XVfKtVThma9365YG9v0=;
+        b=WuB+IC2cq1AwjlsB6YhTcYCYd17n9iD+C2K5szgq1/WvqrD4EqyQ5OUYFPRVrtoP7T
+         n2itqxU6Jfiei2i3clX1D6bOh2K7EO5A8SyjCthuXE2lTiIjdtMxnYxcMmEi02l3wjma
+         qZu5auqiIP6OjWDdu/e0IZW4TnIs5K/RdnLNCFQnV4BG7X1Ma5p/gjbj/sVMkvOPPbrz
+         Jh8f0yT3oP8wbMlEW9wtAk5+v8+4xjrkVkHxev3c9GX8YSpJofQc50y8GPkLiBeY6N3d
+         Lnmi9Z/YsN51zAGc9UxP3c0UxY1C1NMjk+jSseO9qEyQ5DuKf4xpaX6PqYsdVgKPPF62
+         0mfA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12749-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12749-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12750-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-12749-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12749-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -34,9 +34,9 @@ CC: <david@fromorbit.com>, <rppt@linux.vnet.ibm.com>, <labbott@redhat.com>,
 	<linux-security-module@vger.kernel.org>, <linux-mm@kvack.org>,
 	<linux-kernel@vger.kernel.org>, <kernel-hardening@lists.openwall.com>,
 	<igor.stoppa@gmail.com>, Igor Stoppa <igor.stoppa@huawei.com>
-Subject: [PATCH 5/6] lkdtm: crash on overwriting protected pmalloc var
-Date: Tue, 27 Mar 2018 04:55:23 +0300
-Message-ID: <20180327015524.14318-6-igor.stoppa@huawei.com>
+Subject: [PATCH 4/6] Pmalloc selftest
+Date: Tue, 27 Mar 2018 04:55:22 +0300
+Message-ID: <20180327015524.14318-5-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180327015524.14318-1-igor.stoppa@huawei.com>
 References: <20180327015524.14318-1-igor.stoppa@huawei.com>
@@ -45,92 +45,249 @@ Content-Type: text/plain
 X-Originating-IP: [10.122.225.51]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596054166607017634?=
-X-GMAIL-MSGID: =?utf-8?q?1596054166607017634?=
+X-GMAIL-THRID: =?utf-8?q?1596054145657753822?=
+X-GMAIL-MSGID: =?utf-8?q?1596054145657753822?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Verify that pmalloc read-only protection is in place: trying to
-overwrite a protected variable will crash the kernel.
+Add basic self-test functionality for pmalloc.
+
+The testing is introduced as early as possible, right after the main
+dependency, genalloc, has passed successfully, so that it can help
+diagnosing failures in pmalloc users.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 ---
- drivers/misc/lkdtm.h       |  1 +
- drivers/misc/lkdtm_core.c  |  3 +++
- drivers/misc/lkdtm_perms.c | 28 ++++++++++++++++++++++++++++
- 3 files changed, 32 insertions(+)
+ include/linux/test_pmalloc.h |  24 ++++++++
+ init/main.c                  |   2 +
+ mm/Kconfig                   |  10 ++++
+ mm/Makefile                  |   1 +
+ mm/test_pmalloc.c            | 136 +++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 173 insertions(+)
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 mm/test_pmalloc.c
 
-diff --git a/drivers/misc/lkdtm.h b/drivers/misc/lkdtm.h
-index 9e513dcfd809..dcda3ae76ceb 100644
---- a/drivers/misc/lkdtm.h
-+++ b/drivers/misc/lkdtm.h
-@@ -38,6 +38,7 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void);
- void __init lkdtm_perms_init(void);
- void lkdtm_WRITE_RO(void);
- void lkdtm_WRITE_RO_AFTER_INIT(void);
-+void lkdtm_WRITE_RO_PMALLOC(void);
- void lkdtm_WRITE_KERN(void);
- void lkdtm_EXEC_DATA(void);
- void lkdtm_EXEC_STACK(void);
-diff --git a/drivers/misc/lkdtm_core.c b/drivers/misc/lkdtm_core.c
-index 2154d1bfd18b..c9fd42bda6ee 100644
---- a/drivers/misc/lkdtm_core.c
-+++ b/drivers/misc/lkdtm_core.c
-@@ -155,6 +155,9 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(ACCESS_USERSPACE),
- 	CRASHTYPE(WRITE_RO),
- 	CRASHTYPE(WRITE_RO_AFTER_INIT),
-+#ifdef CONFIG_PROTECTABLE_MEMORY
-+	CRASHTYPE(WRITE_RO_PMALLOC),
+diff --git a/include/linux/test_pmalloc.h b/include/linux/test_pmalloc.h
+new file mode 100644
+index 000000000000..c7e2e451c17c
+--- /dev/null
++++ b/include/linux/test_pmalloc.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * test_pmalloc.h
++ *
++ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
++ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ */
++
++
++#ifndef __LINUX_TEST_PMALLOC_H
++#define __LINUX_TEST_PMALLOC_H
++
++
++#ifdef CONFIG_TEST_PROTECTABLE_MEMORY
++
++void test_pmalloc(void);
++
++#else
++
++static inline void test_pmalloc(void){};
++
 +#endif
- 	CRASHTYPE(WRITE_KERN),
- 	CRASHTYPE(REFCOUNT_INC_OVERFLOW),
- 	CRASHTYPE(REFCOUNT_ADD_OVERFLOW),
-diff --git a/drivers/misc/lkdtm_perms.c b/drivers/misc/lkdtm_perms.c
-index 53b85c9d16b8..0ac9023fd2b0 100644
---- a/drivers/misc/lkdtm_perms.c
-+++ b/drivers/misc/lkdtm_perms.c
-@@ -9,6 +9,7 @@
- #include <linux/vmalloc.h>
- #include <linux/mman.h>
- #include <linux/uaccess.h>
++
++#endif
+diff --git a/init/main.c b/init/main.c
+index 21efbf6ace93..c63c41a33c9b 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -90,6 +90,7 @@
+ #include <linux/cache.h>
+ #include <linux/rodata_test.h>
+ #include <linux/jump_label.h>
++#include <linux/test_pmalloc.h>
+ 
+ #include <asm/io.h>
+ #include <asm/bugs.h>
+@@ -661,6 +662,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	 */
+ 	mem_encrypt_init();
+ 
++	test_pmalloc();
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	if (initrd_start && !initrd_below_start_ok &&
+ 	    page_to_pfn(virt_to_page((void *)initrd_start)) < min_low_pfn) {
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 1ac1dfc60c22..246f66c7e694 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -766,3 +766,13 @@ config PROTECTABLE_MEMORY
+     depends on MMU
+     depends on ARCH_HAS_SET_MEMORY
+     default y
++
++config TEST_PROTECTABLE_MEMORY
++	bool "Run self test for pmalloc memory allocator"
++        depends on MMU
++	depends on ARCH_HAS_SET_MEMORY
++	select PROTECTABLE_MEMORY
++	default n
++	help
++	  Tries to verify that pmalloc works correctly and that the memory
++	  is effectively protected.
+diff --git a/mm/Makefile b/mm/Makefile
+index 959fdbdac118..1de4be5fd0bc 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -66,6 +66,7 @@ obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
+ obj-$(CONFIG_SLOB) += slob.o
+ obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
+ obj-$(CONFIG_PROTECTABLE_MEMORY) += pmalloc.o
++obj-$(CONFIG_TEST_PROTECTABLE_MEMORY) += test_pmalloc.o
+ obj-$(CONFIG_KSM) += ksm.o
+ obj-$(CONFIG_PAGE_POISONING) += page_poison.o
+ obj-$(CONFIG_SLAB) += slab.o
+diff --git a/mm/test_pmalloc.c b/mm/test_pmalloc.c
+new file mode 100644
+index 000000000000..08274b0324f9
+--- /dev/null
++++ b/mm/test_pmalloc.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * test_pmalloc.c
++ *
++ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
++ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ */
++
 +#include <linux/pmalloc.h>
- #include <asm/cacheflush.h>
- 
- /* Whether or not to fill the target memory area with do_nothing(). */
-@@ -104,6 +105,33 @@ void lkdtm_WRITE_RO_AFTER_INIT(void)
- 	*ptr ^= 0xabcd1234;
- }
- 
-+#ifdef CONFIG_PROTECTABLE_MEMORY
-+void lkdtm_WRITE_RO_PMALLOC(void)
++#include <linux/mm.h>
++#include <linux/test_pmalloc.h>
++#include <linux/bug.h>
++
++#define SIZE_1 (PAGE_SIZE * 3)
++#define SIZE_2 1000
++
++
++/* wrapper for is_pmalloc_object() with messages */
++static inline bool validate_alloc(bool expected, void *addr,
++				  unsigned long size)
 +{
-+	struct gen_pool *pool;
-+	int *i;
++	bool test;
 +
-+	pool = pmalloc_create_pool("pool", 0);
-+	if (unlikely(!pool)) {
-+		pr_info("Failed preparing pool for pmalloc test.");
-+		return;
-+	}
-+
-+	i = (int *)pmalloc(pool, sizeof(int), GFP_KERNEL);
-+	if (unlikely(!i)) {
-+		pr_info("Failed allocating memory for pmalloc test.");
-+		pmalloc_destroy_pool(pool);
-+		return;
-+	}
-+
-+	*i = INT_MAX;
-+	pmalloc_protect_pool(pool);
-+
-+	pr_info("attempting bad pmalloc write at %p\n", i);
-+	*i = 0;
++	test = is_pmalloc_object(addr, size) > 0;
++	pr_notice("must be %s: %s",
++		  expected ? "ok" : "no", test ? "ok" : "no");
++	return test == expected;
 +}
-+#endif
 +
- void lkdtm_WRITE_KERN(void)
- {
- 	size_t size;
++
++#define is_alloc_ok(variable, size)	\
++	validate_alloc(true, variable, size)
++
++
++#define is_alloc_no(variable, size)	\
++	validate_alloc(false, variable, size)
++
++/* tests the basic life-cycle of a pool */
++static bool create_and_destroy_pool(void)
++{
++	static struct pmalloc_pool *pool;
++
++	pr_notice("Testing pool creation and destruction capability");
++
++	pool = pmalloc_create_pool();
++	if (WARN(!pool, "Cannot allocate memory for pmalloc selftest."))
++		return false;
++	pmalloc_destroy_pool(pool);
++	return true;
++}
++
++
++/*  verifies that it's possible to allocate from the pool */
++static bool test_alloc(void)
++{
++	static struct pmalloc_pool *pool;
++	static void *p;
++
++	pr_notice("Testing allocation capability");
++	pool = pmalloc_create_pool();
++	if (WARN(!pool, "Unable to allocate memory for pmalloc selftest."))
++		return false;
++	p = pmalloc(pool,  SIZE_1 - 1);
++	pmalloc_protect_pool(pool);
++	pmalloc_destroy_pool(pool);
++	if (WARN(!p, "Failed to allocate memory from the pool"))
++		return false;
++	return true;
++}
++
++
++/* tests the identification of pmalloc ranges */
++static bool test_is_pmalloc_object(void)
++{
++	struct pmalloc_pool *pool;
++	void *pmalloc_p;
++	void *vmalloc_p;
++	bool retval = false;
++
++	pr_notice("Test correctness of is_pmalloc_object()");
++
++	vmalloc_p = vmalloc(SIZE_1);
++	if (WARN(!vmalloc_p,
++		 "Unable to allocate memory for pmalloc selftest."))
++		return false;
++	pool = pmalloc_create_pool();
++	if (WARN(!pool, "Unable to allocate memory for pmalloc selftest."))
++		return false;
++	pmalloc_p = pmalloc(pool,  SIZE_1 - 1);
++	if (WARN(!pmalloc_p, "Failed to allocate memory from the pool"))
++		goto error;
++	if (WARN_ON(unlikely(!is_alloc_ok(pmalloc_p, 10))) ||
++	    WARN_ON(unlikely(!is_alloc_ok(pmalloc_p, SIZE_1))) ||
++	    WARN_ON(unlikely(!is_alloc_ok(pmalloc_p, PAGE_SIZE))) ||
++	    WARN_ON(unlikely(!is_alloc_no(pmalloc_p, SIZE_1 + 1))) ||
++	    WARN_ON(unlikely(!is_alloc_no(vmalloc_p, 10))))
++		goto error;
++	retval = true;
++error:
++	pmalloc_protect_pool(pool);
++	pmalloc_destroy_pool(pool);
++	return retval;
++}
++
++/* Test out of virtually contiguous memory */
++static void test_oovm(void)
++{
++	struct pmalloc_pool *pool;
++	int i;
++
++	pr_notice("Exhaust vmalloc memory with doubling allocations.");
++	pool = pmalloc_create_pool();
++	if (WARN(!pool, "Failed to create pool"))
++		return;
++	for (i = 1; i; i *= 2)
++		if (unlikely(!pzalloc(pool, i - 1)))
++			break;
++	pr_notice("vmalloc oom at %d allocation", i - 1);
++	pmalloc_protect_pool(pool);
++	pmalloc_destroy_pool(pool);
++}
++
++/**
++ * test_pmalloc()  -main entry point for running the test cases
++ */
++void test_pmalloc(void)
++{
++
++	pr_notice("pmalloc-selftest");
++
++	if (unlikely(!(create_and_destroy_pool() &&
++		       test_alloc() &&
++		       test_is_pmalloc_object())))
++		return;
++	test_oovm();
++}
 -- 
 2.14.1
