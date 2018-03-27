@@ -1,41 +1,40 @@
-Return-Path: <dalias@aerifal.cx>
-X-Google-Smtp-Source: AIpwx4+w/IInoNzCaRffyM230D+PE2M3/udZ/y/6JyXwCxKNFGO6KPel4/SrEPXXkJ0aR9Bo7SR6
-ARC-Seal: i=1; a=rsa-sha256; t=1522195274; cv=none;
+Return-Path: <mhocko@kernel.org>
+X-Google-Smtp-Source: AG47ELu2qLZwjln+V/DUWc9UWgIFQMMn6hPWVxcujUYFd9goEV/yYYUZa9h6w0fo7785JJe7dz2b
+ARC-Seal: i=1; a=rsa-sha256; t=1522161509; cv=none;
         d=google.com; s=arc-20160816;
-        b=L8qzMq2sfwxtu3HC73jLZmZp9YQLcn6DHoccTcfdz1Z1PmDs2+735WR41HHS850wIg
-         br1IBkzm3hPpLn1KvEmEIIiB8udUVqDmAXXWkq8vQtdYR+tgGia5mdU/p2awIYJ9rn4k
-         r7vG+7j63fcIwlO3Y14Mmpd4nHtXFeFtURAR9n8QZ3AdMwaDtvgS4namKnLxHLWkijYI
-         G4SIFQvtIx52cNK5X0EaTbI/aV+phHCW687hQbzeAQ0yg0zX0iO8QYOYp7GjPJQWr3ws
-         kWJP3H8QapiqqGBaae/ovvX/jn8+MgvrQmfi56bt5tge04tnBXVtIlH0n40GKFSHjnif
-         sTGQ==
+        b=i/gklyZbTrHzC1vscxk5Q4t6TXw9Uu/SjoFQW72ba5eDWwTkRsHwWP6v8qcaN9uwd5
+         ybniJNcQXsCxhmFTs4yJT2xUteHmkZ+NGQRQ2XseiticuUTaBW+ImOYRbVLEWGxG7qbn
+         bQQZJl0LMAiB2R/hyZkA+wlrE6KBHiEhp/isZ/WGH3uZhBJ02oM8/UbkqWDTsKID2/nK
+         XFgPqYPcVgeW4j4xddEEyOjMZ1a9CDOddu7phErcoVwY35YOk1YOxu3y+6pfi45IvSzo
+         G+rX/65gteWNZBpPzrCl+mBoR/ki9oJc9fD6a2RiM78NB4iCk/yzeK6pyjYXhCGYlHOt
+         bVJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=sender:user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:to
-         :from:date:arc-authentication-results;
-        bh=RuXjzbAoJOpFSvaQrOaKCSME79nh/qehfYprtUNcN+0=;
-        b=dWK408vH7PlIia3lhKrmPY41FoobNVTyS2gbOYTbWJFAKTQSFwLNVCQZf5Mh3CS7sM
-         miJamPnFfYDm1XX6Erlf1mz4jCUR1n0dpSQGYGsRGTZ701svWL8u1ZxsXwJVXQ4XFX0z
-         HfqPc7s7zgUI8DXgz2EJG7KZ2/AOUiyCO5lyIyOO1Zj0SM3KFvUJ5ixRvw5ZdSQRuO7Z
-         DdK4r+OVCmi9u4l1WdZnFoy18V3VSE/rx0dObR3W5Ox4vjXiJNao6XZvJdLRZh7irwNr
-         8lAyRAIYAzRkemVcebQTFGEPKeFWeGrVdn5P7gPIy0AF2es4OJm936lLpc2uh8+AC4b0
-         XnSw==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=TGWEYIV++k37gEJaTIJFVupSUPmjcPB58cOkCQIV8uI=;
+        b=NUEnMjMJ1FviFz6s1PNSGi0DkJZHsQgLf6IfybC4vsS8v9DF2jZ4xqU0kaY8xvMIED
+         pS2lSwgx/Lkn/8Af0pNoHkydKVx0//V0A1MPfgfTpT292YAPRBB9Ca8xMc1KSFNGr+IU
+         FrbrNcrEYuRmpk2T69/Lasa81FQsjtiKmCUlnjjzRtFeDmi1WOG0w0UNPvxy2TwvRKlF
+         FU0CG1AgvgsSYOrnbriK6R0y8s7e5AkGAVeAMU06Oc5UVxLQPp8rE8lDzV2ljg3SxsvT
+         LsK8GV0Lag3lic1ZuvTK1De28wEQ9DvC3N7mV8MHeZM1CYFnXR9ijsiHdFvLaaHCXH6X
+         wckg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
+       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
-Date: Tue, 27 Mar 2018 19:58:52 -0400
-From: Rich Felker <dalias@libc.org>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Ilya Smith <blackzert@gmail.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>, rth@twiddle.net,
+       spf=neutral (google.com: 195.135.220.15 is neither permitted nor denied by best guess record for domain of mhocko@kernel.org) smtp.mailfrom=mhocko@kernel.org
+Date: Tue, 27 Mar 2018 16:38:20 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Ilya Smith <blackzert@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, rth@twiddle.net,
 	ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@synopsys.com,
 	linux@armlinux.org.uk, tony.luck@intel.com, fenghua.yu@intel.com,
 	ralf@linux-mips.org, jejb@parisc-linux.org,
 	Helge Deller <deller@gmx.de>, benh@kernel.crashing.org,
 	paulus@samba.org, mpe@ellerman.id.au, schwidefsky@de.ibm.com,
 	heiko.carstens@de.ibm.com, ysato@users.sourceforge.jp,
-	davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
-	hpa@zytor.com, x86@kernel.org, nyc@holomorphy.com,
+	dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
+	mingo@redhat.com, hpa@zytor.com, x86@kernel.org, nyc@holomorphy.com,
 	viro@zeniv.linux.org.uk, arnd@arndb.de, gregkh@linuxfoundation.org,
 	deepa.kernel@gmail.com, Hugh Dickins <hughd@google.com>,
 	kstewart@linuxfoundation.org, pombredanne@nexb.com,
@@ -55,7 +54,7 @@ To: "Theodore Y. Ts'o" <tytso@mit.edu>, Ilya Smith <blackzert@gmail.com>,
 	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
 	sparclinux@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
 Subject: Re: [RFC PATCH v2 0/2] Randomization of address chosen by mmap.
-Message-ID: <20180327235852.GL1436@brightrain.aerifal.cx>
+Message-ID: <20180327143820.GH5652@dhcp22.suse.cz>
 References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
  <20180323124806.GA5624@bombadil.infradead.org>
  <651E0DB6-4507-4DA1-AD46-9C26ED9792A8@gmail.com>
@@ -63,71 +62,76 @@ References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
  <01A133F4-27DF-4AE2-80D6-B0368BF758CD@gmail.com>
  <20180327072432.GY5652@dhcp22.suse.cz>
  <0549F29C-12FC-4401-9E85-A430BC11DA78@gmail.com>
- <20180327221635.GA3790@thunk.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180327221635.GA3790@thunk.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-Sender: Rich Felker <dalias@aerifal.cx>
+In-Reply-To: <0549F29C-12FC-4401-9E85-A430BC11DA78@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595656488556903336?=
-X-GMAIL-MSGID: =?utf-8?q?1596137432087839140?=
+X-GMAIL-MSGID: =?utf-8?q?1596102027261497828?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 27, 2018 at 06:16:35PM -0400, Theodore Y. Ts'o wrote:
-> On Tue, Mar 27, 2018 at 04:51:08PM +0300, Ilya Smith wrote:
-> > > /dev/[u]random is not sufficient?
-> > 
-> > Using /dev/[u]random makes 3 syscalls - open, read, close. This is a performance
-> > issue.
+On Tue 27-03-18 16:51:08, Ilya Smith wrote:
 > 
-> You may want to take a look at the getrandom(2) system call, which is
-> the recommended way getting secure random numbers from the kernel.
-
-Yes, while opening /dev/urandom is not acceptable due to needing an
-fd, getrandom and existing fallbacks for it have this covered if
-needed.
-
-> > > Well, I am pretty sure userspace can implement proper free ranges
-> > > tracking…
+> > On 27 Mar 2018, at 10:24, Michal Hocko <mhocko@kernel.org> wrote:
 > > 
-> > I think we need to know what libc developers will say on implementing ASLR in 
-> > user-mode. I am pretty sure they will say ‘nether’ or ‘some-day’. And problem 
-> > of ASLR will stay forever.
+> > On Mon 26-03-18 22:45:31, Ilya Smith wrote:
+> >> 
+> >>> On 26 Mar 2018, at 11:46, Michal Hocko <mhocko@kernel.org> wrote:
+> >>> 
+> >>> On Fri 23-03-18 20:55:49, Ilya Smith wrote:
+> >>>> 
+> >>>>> On 23 Mar 2018, at 15:48, Matthew Wilcox <willy@infradead.org> wrote:
+> >>>>> 
+> >>>>> On Thu, Mar 22, 2018 at 07:36:36PM +0300, Ilya Smith wrote:
+> >>>>>> Current implementation doesn't randomize address returned by mmap.
+> >>>>>> All the entropy ends with choosing mmap_base_addr at the process
+> >>>>>> creation. After that mmap build very predictable layout of address
+> >>>>>> space. It allows to bypass ASLR in many cases. This patch make
+> >>>>>> randomization of address on any mmap call.
+> >>>>> 
+> >>>>> Why should this be done in the kernel rather than libc?  libc is perfectly
+> >>>>> capable of specifying random numbers in the first argument of mmap.
+> >>>> Well, there is following reasons:
+> >>>> 1. It should be done in any libc implementation, what is not possible IMO;
+> >>> 
+> >>> Is this really so helpful?
+> >> 
+> >> Yes, ASLR is one of very important mitigation techniques which are really used 
+> >> to protect applications. If there is no ASLR, it is very easy to exploit 
+> >> vulnerable application and compromise the system. We can’t just fix all the 
+> >> vulnerabilities right now, thats why we have mitigations - techniques which are 
+> >> makes exploitation more hard or impossible in some cases.
+> >> 
+> >> Thats why it is helpful.
+> > 
+> > I am not questioning ASLR in general. I am asking whether we really need
+> > per mmap ASLR in general. I can imagine that some environments want to
+> > pay the additional price and other side effects, but considering this
+> > can be achieved by libc, why to add more code to the kernel?
 > 
-> Why can't you send patches to the libc developers?
+> I believe this is the only one right place for it. Adding these 200+ lines of 
+> code we give this feature for any user - on desktop, on server, on IoT device, 
+> on SCADA, etc. But if only glibc will implement ‘user-mode-aslr’ IoT and SCADA 
+> devices will never get it.
 
-I can tell you right now that any patch submitted for musl that
-depended on trying to duplicate knowledge of the entire virtual
-address space layout in userspace as part of mmap would be rejected,
-and I would recommend glibc do the same.
+I guess it would really help if you could be more specific about the
+class of security issues this would help to mitigate. My first
+understanding was that we we need some randomization between program
+executable segments to reduce the attack space when a single address
+leaks and you know the segments layout (ordering). But why do we need
+_all_ mmaps to be randomized. Because that complicates the
+implementation consirably for different reasons you have mentioned
+earlier.
 
-Not only does it vastly increase complexity; it also has all sorts of
-failure modes (fd exhastion, etc.) which would either introduce new
-and unwanted ways for mmap to fail, or would force fallback to the
-normal (no extra randomization) strategy under conditions an attacker
-could potentially control, defeating the whole purpose. It would also
-potentially make it easier for an attacker to examine the vm layout
-for attacks, since it would be recorded in userspace.
+Do you have any specific CVE that would be mitigated by this
+randomization approach?
 
-There's also the issue of preserving AS-safety of mmap. POSIX does not
-actually require mmap to be AS-safe, and on musl munmap is not fully
-AS-safe anyway because of some obscure issues it compensates for, but
-we may be able to make it AS-safe (this is a low-priority open issue).
-If mmap were manipulating data structures representing the vm space in
-userspace, though, the only way to make it anywhere near AS-safe would
-be to block all signals and take a lock every time mmap or munmap is
-called. This would significantly increase the cost of each call,
-especially now that meltdown/spectre mitigations have greatly
-increased the overhead of each syscall.
-
-Overall, asking userspace to take a lead role in management of process
-vm space is a radical change in the split of what user and kernel are
-responsible for, and it really does not make sense as part of a
-dubious hardening measure. Something this big would need to be really
-well-motivated.
-
-Rich
+I am sorry, I am not a security expert to see all the cosequences but a
+vague - the more randomization the better - sounds rather weak to me.
+-- 
+Michal Hocko
+SUSE Labs
