@@ -1,69 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeC0NqS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:46:18 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39828 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752457AbeC0NqQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:46:16 -0400
-X-Google-Smtp-Source: AG47ELt4V8CDqmtT6p7omSnpmnZIfvyVdLyXOcbkTSJX5pojpnKlovjiFjMQ6Qedw3N4+DKNpASDAw==
-Date: Tue, 27 Mar 2018 06:46:15 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/10] dt-bindings: thermal: Remove
- "cooling-{min|max}-level" properties
-Message-ID: <20180327134613.GA10890@localhost.localdomain>
-References: <cover.1518166039.git.viresh.kumar@linaro.org>
- <0ec53640f1a09e6e0d7aa1a21d1a3266c3c209c7.1518166039.git.viresh.kumar@linaro.org>
- <20180312043815.GW6842@vireshk-i7>
- <1521550190.2781.3.camel@intel.com>
+        id S1752726AbeC0Nru (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:47:50 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:43599 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752538AbeC0Nrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:47:47 -0400
+Date: Tue, 27 Mar 2018 15:47:36 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Murali Karicheri <m-karicheri2@ti.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, ssantosh@kernel.org,
+        malat@debian.org, w-kwok2@ti.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        davem@davemloft.net, netdev@vger.kernel.org
+Subject: Re: [net-next PATCH 3/5] net: netcp: ethss enhancements to support
+ 2u cpsw h/w on K2G SoC
+Message-ID: <20180327134736.GJ5862@lunn.ch>
+References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
+ <1522095312-23249-4-git-send-email-m-karicheri2@ti.com>
+ <20180326202842.GB5862@lunn.ch>
+ <be58cf50-2148-cbfa-c7a2-8f4fbe6930e5@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521550190.2781.3.camel@intel.com>
+In-Reply-To: <be58cf50-2148-cbfa-c7a2-8f4fbe6930e5@ti.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 08:49:50PM +0800, Zhang Rui wrote:
-> On 一, 2018-03-12 at 10:08 +0530, Viresh Kumar wrote:
-> > On 09-02-18, 14:28, Viresh Kumar wrote:
-> > > 
-> > > The "cooling-min-level" and "cooling-max-level" properties are not
-> > > parsed by any part of kernel currently and the max cooling state of
-> > > a
-> > > CPU cooling device is found by referring to the cpufreq table
-> > > instead.
-> > > 
-> > > Remove the unused bindings.
-> > > 
-> > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/thermal/thermal.txt | 16 +----
-> > > -----------
-> > >  1 file changed, 1 insertion(+), 15 deletions(-)
-> > @Zhang/Eduardo: Can you please pick this patch (10/10) as almost
-> > everything else
-> > is already lined up for 4.17 ?
+> Hello Andrew,
 > 
-> I think Eduardo should have reviewed all the DT thermal patches in the
-> list, but I didn't see his response about this one.
-> 
-> Eduardo,
-> did you miss this one?
+> Thanks for the comment. But I am not sure how to break this up as this is 
+> an enhancement to the driver to support a newer version of the cspw 
+> hardware. Without all these pieces together, the driver can't
+> function.
 
-just applied and sending it in my pull request.
+Hi Murali
 
+A few things to consider.
+
+1) You can introduce new features needed by the new hardware one piece
+at a time. The new hardware will then work when all the pieces have
+been added. This is fine, the new hardware never worked before, so you
+are not breaking anything.
+
+2) Your changes could break the old hardware. By having lots of small
+changes, you can do a git bissect and find which of the small changes
+broke it.
+
+3) It is much easier to review 10 small obviously correct patches than
+one huge complex patch, which is not obvious.
+
+> Probably I can make the below break up based on different functions
+> added. Let me know if this looks good to you. Beware that patch #2 and
+> #3 are small patches and majority of code change will be in patch #1
+> which has to go together. 
 > 
-> thanks,
-> rui
-> > 
+> Patch #1. Add support new link interface, RGMII_LINK_MAC_PHY, for K2G
+>           - Most of the code is for this
+> Patch #2. Add support for configuring phy_mode 
+>           - This just add phy_mode handling code 
+> Patch #3. map all vlan priorities to flow id 0
+
+That sounds better.
+
+Thanks
+	Andrew
