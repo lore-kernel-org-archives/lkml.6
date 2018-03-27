@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+rfR/C0QLeoWFK+ncli8hl+YJ7ivlF6nMYvFdux+LUdZS/QY76GE14/cR8dNcwx8QZl+0V
-ARC-Seal: i=1; a=rsa-sha256; t=1522168355; cv=none;
+X-Google-Smtp-Source: AIpwx48gO8dFAQD16YKtR4bDpFBdmzGqPmfZb5ZQrU+VaePAbFThoKkxg5uEStTyJRT0V18qx+BN
+ARC-Seal: i=1; a=rsa-sha256; t=1522168352; cv=none;
         d=google.com; s=arc-20160816;
-        b=oXzt6JTUjS+GaeZUHx0Un3JaPhygeqhv4lfNKZnwaPwB681zcManbxNsheU9h9pmWw
-         egysDAysXdpMmwwIbrUblo7VbST4e5TGQPcbCdxCRYiAqJ5dCeHjzuhhuZFD4nNVc91X
-         F01hRTcfxuC3Y5HzIhrdUJ42V/lRDxW6b0YCUofP6h/fMgc5KOoCEX+6pk4PHsbNSHMX
-         ZtSg4pGewi5AwGSR6Vc79VudH2BAWYAUfvql/2QwakQxcjQRjqKBOifrezZwmapqoWID
-         5jp9JM2vyk3BPFhsBcg1/uZR6YBCPYkScTQoR4vzOqjVdaeSdQvkwOF38UNHFxeZqI64
-         QmgQ==
+        b=gmZsZY/B/s/YrJrmvonfeh5EqAJGhIap56FQcEV/b8PNktPa0MijayJXeOmsCUaLnD
+         X+1etIz6U8AItecGFZvpIAVTaeuhletWvDRsHkwJQMtj/Q8CLChFaIlCqIrVtAtIce6Z
+         KVxJI4ghK2FRYtKTXSrjiScmLOV4YTbZi20wiAEYzfY3eM+ECe15T4Pgd+2I6pP3hdKy
+         O6bLHlfijSYt9I8t0RrDdhfWEerLxMYsN0RFmljm5ZvTU097Ad4xRlS4mK8W8tbc+kg1
+         8FtTfaUq+S7O1cpHD0ooe37NGlz7G48pQN0WhRsiZ27184UurN02F1XNagRZ1A3/8esW
+         DaEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wPA3F5pvN8LD8dNykTvhFzB9kShjuKJ5UGGuhyXyYEc=;
-        b=clzq5x4Kz3oF09FIzulTJoYyogU5yaGtVePFX16ijyBcS56+A4o00WewagDuJTpj5S
-         zo05pSFNv5AEZ50I6+wIK6fe4qL7NwdW2srHym6lRWchp6DNCpTo2T3c+o7URdu7M+vE
-         B0rtW0Oh8NA7V1dnoGjvRtSoXakQbgcsRf3U6MeoY02OFuU0bnsF+dUAsazT3RcwICgF
-         a12/WMsPEcBuKGSgjdGzZMyeUvwndpJgPsYt2erbpmE9ZgVusIp1lHKUXosUvIJmFnio
-         0vMWRLJ9xNFvikC7i76LeBeU062E2l+F1S+dLVKmHHlVfT5Yra2sEjCVEQyhTsAyD9+q
-         H64w==
+        bh=anDuwdq3x/XAw/ODmKbyRqJ9d74YJRN2ZkgRS3NF11c=;
+        b=L2hemcfm8Uj1fWrEmNOaAQ2UTezH7RIWqUqL6aXlP9Hr6IgNzGQ3lgbyL9r5QdhWo7
+         TIbtU08Sek8/AdMZydsmrd1DCTwmSj8f19pL1AIF89971GH3wvurHZQmp+fun3HdKNe4
+         iKX/ELOavkkVaB+y4tDgjmv8qHjm8oJThs1k2pAhtHR7FCFFm0/LSc50D0CGCBEFj5Ff
+         WbWC1SCuGlt9yPSHc4fJeIXYW6hLuEw2C61PrYJJq8dp/lBa+87vZ/ltlfSvF7/YLyY1
+         sHOOxOmbyLuka0y83L5P3Mh0NAVVKOL/vSnZMdBwHwjYYogxvUFVzHZH1Jdx+uGWl3JC
+         KRow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,15 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Andy Lutomirski <luto@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 50/67] kvm/x86: fix icebp instruction handling
-Date: Tue, 27 Mar 2018 18:27:42 +0200
-Message-Id: <20180327162730.130912033@linuxfoundation.org>
+	Borislav Petkov <bp@alien8.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kselftest@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 49/67] selftests/x86/ptrace_syscall: Fix for yet more glibc interference
+Date: Tue, 27 Mar 2018 18:27:41 +0200
+Message-Id: <20180327162730.053831105@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109082772350684?=
-X-GMAIL-MSGID: =?utf-8?q?1596109205331963690?=
+X-GMAIL-THRID: =?utf-8?q?1596109202615623395?=
+X-GMAIL-MSGID: =?utf-8?q?1596109202615623395?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +54,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 32d43cd391bacb5f0814c2624399a5dad3501d09 upstream.
+commit 4b0b37d4cc54b21a6ecad7271cbc850555869c62 upstream.
 
-The undocumented 'icebp' instruction (aka 'int1') works pretty much like
-'int3' in the absense of in-circuit probing equipment (except,
-obviously, that it raises #DB instead of raising #BP), and is used by
-some validation test-suites as such.
+glibc keeps getting cleverer, and my version now turns raise() into
+more than one syscall.  Since the test relies on ptrace seeing an
+exact set of syscalls, this breaks the test.  Replace raise(SIGSTOP)
+with syscall(SYS_tgkill, ...) to force glibc to get out of our way.
 
-But Andy Lutomirski noticed that his test suite acted differently in kvm
-than on bare hardware.
-
-The reason is that kvm used an inexact test for the icebp instruction:
-it just assumed that an all-zero VM exit qualification value meant that
-the VM exit was due to icebp.
-
-That is not unlike the guess that do_debug() does for the actual
-exception handling case, but it's purely a heuristic, not an absolute
-rule.  do_debug() does it because it wants to ascribe _some_ reasons to
-the #DB that happened, and an empty %dr6 value means that 'icebp' is the
-most likely casue and we have no better information.
-
-But kvm can just do it right, because unlike the do_debug() case, kvm
-actually sees the real reason for the #DB in the VM-exit interruption
-information field.
-
-So instead of relying on an inexact heuristic, just use the actual VM
-exit information that says "it was 'icebp'".
-
-Right now the 'icebp' instruction isn't technically documented by Intel,
-but that will hopefully change.  The special "privileged software
-exception" information _is_ actually mentioned in the Intel SDM, even
-though the cause of it isn't enumerated.
-
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Tested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kselftest@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/bc80338b453afa187bc5f895bd8e2c8d6e264da2.1521300271.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/vmx.h |    1 +
- arch/x86/kvm/vmx.c         |    9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/ptrace_syscall.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -309,6 +309,7 @@ enum vmcs_field {
- #define INTR_TYPE_NMI_INTR		(2 << 8) /* NMI */
- #define INTR_TYPE_HARD_EXCEPTION	(3 << 8) /* processor exception */
- #define INTR_TYPE_SOFT_INTR             (4 << 8) /* software interrupt */
-+#define INTR_TYPE_PRIV_SW_EXCEPTION	(5 << 8) /* ICE breakpoint - undocumented */
- #define INTR_TYPE_SOFT_EXCEPTION	(6 << 8) /* software exception */
+--- a/tools/testing/selftests/x86/ptrace_syscall.c
++++ b/tools/testing/selftests/x86/ptrace_syscall.c
+@@ -182,8 +182,10 @@ static void test_ptrace_syscall_restart(
+ 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
+ 			err(1, "PTRACE_TRACEME");
  
- /* GUEST_INTERRUPTIBILITY_INFO flags. */
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1053,6 +1053,13 @@ static inline bool is_machine_check(u32
- 		(INTR_TYPE_HARD_EXCEPTION | MC_VECTOR | INTR_INFO_VALID_MASK);
- }
- 
-+/* Undocumented: icebp/int1 */
-+static inline bool is_icebp(u32 intr_info)
-+{
-+	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VALID_MASK))
-+		== (INTR_TYPE_PRIV_SW_EXCEPTION | INTR_INFO_VALID_MASK);
-+}
++		pid_t pid = getpid(), tid = syscall(SYS_gettid);
 +
- static inline bool cpu_has_vmx_msr_bitmap(void)
- {
- 	return vmcs_config.cpu_based_exec_ctrl & CPU_BASED_USE_MSR_BITMAPS;
-@@ -5733,7 +5740,7 @@ static int handle_exception(struct kvm_v
- 		      (KVM_GUESTDBG_SINGLESTEP | KVM_GUESTDBG_USE_HW_BP))) {
- 			vcpu->arch.dr6 &= ~15;
- 			vcpu->arch.dr6 |= dr6 | DR6_RTM;
--			if (!(dr6 & ~DR6_RESERVED)) /* icebp */
-+			if (is_icebp(intr_info))
- 				skip_emulated_instruction(vcpu);
+ 		printf("\tChild will make one syscall\n");
+-		raise(SIGSTOP);
++		syscall(SYS_tgkill, pid, tid, SIGSTOP);
  
- 			kvm_queue_exception(vcpu, DB_VECTOR);
+ 		syscall(SYS_gettid, 10, 11, 12, 13, 14, 15);
+ 		_exit(0);
+@@ -300,9 +302,11 @@ static void test_restart_under_ptrace(vo
+ 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
+ 			err(1, "PTRACE_TRACEME");
+ 
++		pid_t pid = getpid(), tid = syscall(SYS_gettid);
++
+ 		printf("\tChild will take a nap until signaled\n");
+ 		setsigign(SIGUSR1, SA_RESTART);
+-		raise(SIGSTOP);
++		syscall(SYS_tgkill, pid, tid, SIGSTOP);
+ 
+ 		syscall(SYS_pause, 0, 0, 0, 0, 0, 0);
+ 		_exit(0);
