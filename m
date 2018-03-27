@@ -1,144 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752282AbeC0Wuk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 18:50:40 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:37599 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751874AbeC0Wuh (ORCPT
+        id S1752481AbeC0WvH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 18:51:07 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36560 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752069AbeC0WvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 18:50:37 -0400
-X-Google-Smtp-Source: AIpwx49fKvgywpP37RA/CiIz/oT1HfMcBa1O/u+41Fe8XEgCfIINAbBF4tMdIxNLctHcs5ZVcFucSg==
-Subject: Re: [PATCH v3 1/2] of_net: Implement of_get_nvmem_mac_address helper
-To: Mike Looijmans <mike.looijmans@topic.nl>, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        andrew@lunn.ch, robh+dt@kernel.org, frowand.list@gmail.com
-References: <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
- <1522144346-32367-2-git-send-email-mike.looijmans@topic.nl>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <8623d20b-5a01-b2bd-39f2-900177f96595@gmail.com>
-Date: Tue, 27 Mar 2018 15:50:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Mar 2018 18:51:05 -0400
+X-Google-Smtp-Source: AIpwx4/xEQtN8sGIbCnFw4eTyBvZRPph8k8jQQ6Mz1/hhLrZpbWiCDVyK00CrWpoFfCSwDm0OYHz/g==
+Date: Wed, 28 Mar 2018 00:51:02 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc: alexandre.torgue@st.com, benjamin.gaignard@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        mcoquelin.stm32@gmail.com, benjamin.gaignard@st.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 0/8] Add support for PWM input capture on STM32
+Message-ID: <20180327225101.GJ28163@mithrandir>
+References: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1522144346-32367-2-git-send-email-mike.looijmans@topic.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ofZMSlrAVk9bLeVm"
+Content-Disposition: inline
+In-Reply-To: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 02:52 AM, Mike Looijmans wrote:
-> It's common practice to store MAC addresses for network interfaces into
-> nvmem devices. However the code to actually do this in the kernel lacks,
-> so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
-> address from an nvmem cell provider.
-> 
-> This is particulary useful on devices where the ethernet interface cannot
-> be configured by the bootloader, for example because it's in an FPGA.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+
+--ofZMSlrAVk9bLeVm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Feb 14, 2018 at 11:04:31AM +0100, Fabrice Gasnier wrote:
+> This series adds support for capture to stm32-pwm driver.
+> Capture is based on DMAs.
+> - First two patches are precursor patches
+> - Subsequent two patches add support for requesting DMAs to MFD core
+> - Next three patches add support for capture to stm32-pwm driver
+> - This has been tested on stm32429i-eval board.
+>=20
 > ---
->  Documentation/devicetree/bindings/net/ethernet.txt |  2 ++
->  drivers/of/of_net.c                                | 40 ++++++++++++++++++++++
->  include/linux/of_net.h                             |  6 ++++
->  3 files changed, 48 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/ethernet.txt b/Documentation/devicetree/bindings/net/ethernet.txt
-> index 2974e63..cfc376b 100644
-> --- a/Documentation/devicetree/bindings/net/ethernet.txt
-> +++ b/Documentation/devicetree/bindings/net/ethernet.txt
-> @@ -10,6 +10,8 @@ Documentation/devicetree/bindings/phy/phy-bindings.txt.
->    the boot program; should be used in cases where the MAC address assigned to
->    the device by the boot program is different from the "local-mac-address"
->    property;
-> +- nvmem-cells: phandle, reference to an nvmem node for the MAC address;
-> +- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used;
->  - max-speed: number, specifies maximum speed in Mbit/s supported by the device;
->  - max-frame-size: number, maximum transfer unit (IEEE defined MTU), rather than
->    the maximum frame size (there's contradiction in the Devicetree
-> diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
-> index d820f3e..1c5d372 100644
-> --- a/drivers/of/of_net.c
-> +++ b/drivers/of/of_net.c
-> @@ -7,6 +7,7 @@
->   */
->  #include <linux/etherdevice.h>
->  #include <linux/kernel.h>
-> +#include <linux/nvmem-consumer.h>
->  #include <linux/of_net.h>
->  #include <linux/phy.h>
->  #include <linux/export.h>
-> @@ -80,3 +81,42 @@ const void *of_get_mac_address(struct device_node *np)
->  	return of_get_mac_addr(np, "address");
->  }
->  EXPORT_SYMBOL(of_get_mac_address);
-> +
-> +/**
-> + * Obtain the MAC address from an nvmem provider named 'mac-address' through
-> + * device tree.
-> + * On success, copies the new address into memory pointed to by addr and
-> + * returns 0. Returns a negative error code otherwise.
-> + * @np:		Device tree node containing the nvmem-cells phandle
-> + * @addr:	Pointer to receive the MAC address using ether_addr_copy()
-> + */
-> +int of_get_nvmem_mac_address(struct device_node *np, void *addr)
-> +{
-> +	struct nvmem_cell *cell;
-> +	const void *mac;
-> +	size_t len;
-> +	int ret;
-> +
-> +	cell = of_nvmem_cell_get(np, "mac-address");
-> +	if (IS_ERR(cell))
-> +		return PTR_ERR(cell);
-> +
-> +	mac = nvmem_cell_read(cell, &len);
-> +
-> +	nvmem_cell_put(cell);
-> +
-> +	if (IS_ERR(mac))
-> +		return PTR_ERR(mac);
-> +
-> +	if (len < 6 || !is_valid_ether_addr(mac)) {
-> +		ret = -EINVAL;
+> Resend v2:
+> - Add collected Acks
+>=20
+> Changes in v2:
+> - Abstract DMA handling from child driver: move it to MFD core
+> - Rework pwm capture routines to adopt this change
+> - Comment on optional dma support, beautify DMAs probe
+>=20
+> Fabrice Gasnier (8):
+>   pwm: stm32: fix, remove unused struct device
+>   pwm: stm32: protect common prescaler for all channels
+>   dt-bindings: mfd: stm32-timers: add support for dmas
+>   mfd: stm32-timers: add support for dmas
+>   pwm: stm32: add capture support
+>   pwm: stm32: improve capture by tuning counter prescaler
+>   pwm: stm32: use input prescaler to improve period capture
+>   ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
+>=20
+>  .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
+>  arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
+>  drivers/mfd/stm32-timers.c                         | 215 +++++++++++++++-
+>  drivers/pwm/pwm-stm32.c                            | 276 +++++++++++++++=
++++++-
+>  include/linux/mfd/stm32-timers.h                   |  39 +++
+>  5 files changed, 547 insertions(+), 6 deletions(-)
 
-Just one nit here, can you use ETH_ALEN instead of 6? With that fixed:
+I can't apply patches 1-2 and 5-6 since they depend on patches 3-4 for
+which I'd need an Acked-by: from Lee if I'm to pick them up. Same goes
+for patch 7.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+By the looks of it there are minor conflicts with the MFD tree, but no
+major ones. Perhaps it'd be better for Lee to pick up 3-4 for v4.17-rc1
+and ack patch 7, then I can take the rest after v4.17-rc1?
+
+Thierry
+
+--ofZMSlrAVk9bLeVm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6ytIACgkQ3SOs138+
+s6Fr9g/+KQ2WA9ip9DbgL8elChIvKtWOVCS3lcsNMKOS6GpIQkwMoIFKZyImNd1x
+sONlawlZ1mtgMX6MCbtUY/FUR2KZlRcPRWAyNp+c/Ya+XcrYIrVpM8OHvIeENcsB
+iImDC5Kroio77hku6KeYtl+oyKDgcQYOgDYGWCDyfvia33/zd66FkvTL8tDzAVQj
+8xOn6f6sqKs8qm/YCIXZvD1kJZS32xLN8Cxi33B4IbqOA8lUs0i07ZR9ugHuMdAP
+gElgw9The25eEFoM58J3oZTe55aE6RfI/6Ur2v8KVUOVLKU6XPVIupiV/j2C9iWX
+icWhZoissyVw9uexTnFYAA91U+w7Yp3B9ZmRY0jK0CXMY6Zf4vpjTDyBlWRFF3ja
+d++ud0V+pBHelAipOvEX5myzmR5mUs/nTLmRjWGwSe0poR/VYeLcASm59BZ45zzd
+AcXBtlEze8JAGP8e8NLKW30XkxvS6AoynCLDTuJeghq8frH11Ltq7SjF42PAj1wt
+rleLcsW2S6TXMxubS7zrG85AOM6RwZglpk5+4rTLKJv1Vaf2u+eElefPj8fMMuBT
+GMyjgDPA0zmxxt4ywnmJoHP7RFeJXuGAq4co6ZGTlZYSvpOWs+iCq0E4nHN5euW8
+LBRM0ucagBCbA9AizX41eYJZfkhnsz/kYhcKi2oDqM9SCgFhN0E=
+=MQsM
+-----END PGP SIGNATURE-----
+
+--ofZMSlrAVk9bLeVm--
