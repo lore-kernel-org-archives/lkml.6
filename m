@@ -1,73 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751398AbeC0H7q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 03:59:46 -0400
-Received: from mail-qt0-f179.google.com ([209.85.216.179]:36629 "EHLO
-        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeC0H7o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 03:59:44 -0400
-X-Google-Smtp-Source: AIpwx48WJHUEmXWc6cTZBaf/n49l7H1IWOqbZNZK1X8u/qku4QtJQ9JtI8Nkx3YO4Zr8wnxX8CO8mOGzKcKjznC0ZSI=
-MIME-Version: 1.0
-In-Reply-To: <20180327075520.GA3245@dragon>
-References: <20180327091026.3facbb9d@canb.auug.org.au> <20180327075520.GA3245@dragon>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 27 Mar 2018 09:59:43 +0200
-X-Google-Sender-Auth: DPyIIy_Kah80yaVRHVmWfawSlqY
-Message-ID: <CAK8P3a3QBmRBgaJg2n=DcwY7wJaB902Rk7h5kGd_WxqTVSTGog@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Olof Johansson <olof@lixom.net>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751805AbeC0IBv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:01:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36111 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751115AbeC0IBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:01:49 -0400
+Message-ID: <1522137643.1110.4.camel@bootlin.com>
+Subject: Re: [PATCH 02/10] drm/sun4i: Disable YUV channel when using the
+ frontend and set interlace
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+Date: Tue, 27 Mar 2018 10:00:43 +0200
+In-Reply-To: <20180323095529.5nptn5achjt3esog@flea>
+References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+         <20180321152904.22411-3-paul.kocialkowski@bootlin.com>
+         <20180323095529.5nptn5achjt3esog@flea>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-VXrm6PjPabLMelrs/Uhr"
+X-Mailer: Evolution 3.26.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 9:55 AM, Shawn Guo <shawn.guo@linaro.org> wrote:
-> On Tue, Mar 27, 2018 at 09:10:26AM +1100, Stephen Rothwell wrote:
->> Hi Shawn,
->>
->> Today's linux-next merge of the imx-mxs tree got a conflict in:
->>
->>   arch/arm/configs/mxs_defconfig
->>
->> between commit:
->>
->>   e3e583e7a293 ("ARM: mxs_defconfig: Re-sync defconfig")
->>
->> from the arm-soc tree and commit:
->>
->>   8bc2c29b550c ("ARM: mxs_defconfig: Re-sync defconfig")
->>
->> from the imx-mxs tree.
->>
->> I fixed it up (I just used the latter version) and can carry the fix as
->> necessary. This is now fixed as far as linux-next is concerned, but any
->> non trivial conflicts should be mentioned to your upstream maintainer
->> when your tree is submitted for merging.  You may also want to consider
->> cooperating with the maintainer of the conflicting tree to minimise any
->> particularly complex conflicts.
->
-> Thanks, Stephen.  We will sort this out on arm-soc tree.
->
-> Arnd,
->
-> You pulled "[GIT PULL 6/6] i.MX defconfig updates for 4.17" [1]?
-> I thought you did not pull it, and updated it with v2 to address your
-> comment.  Let me know which one you want to send upstream.  Thanks.
 
-I also thought I had not pulled it, but it seems that I did: I definitely
-pulled it in at first and then sent the email about it, planning to undo
-the merge before pushing the branch to git.kernel.org.
+--=-VXrm6PjPabLMelrs/Uhr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The merge is currently at the top of the next/soc branch, so I'll undo
-that and pull your new one instead.
+Hi,
 
-Sorry about messing it up.
+On Fri, 2018-03-23 at 10:55 +0100, Maxime Ripard wrote:
+> On Wed, Mar 21, 2018 at 04:28:56PM +0100, Paul Kocialkowski wrote:
+> > The YUV channel was only disabled in
+> > sun4i_backend_update_layer_formats,
+> > which is not called when the frontend is selected.
+> >=20
+> > Thus, creating a layer with a YUV format handled by the backend and
+> > then
+> > switching to a format that requires the frontend would keep the YUV
+> > channel enabled for the layer.
+> >=20
+> > This explicitly disables the YUV channel for the layer when using
+> > the
+> > frontend as well. It also sets the relevant interlace bit, which was
+> > missing in the frontend path as well.
+>=20
+> This should be part of a separate patch. Usually, if you write "it
+> also does..." at the end of your commit log, it's a pretty good
+> indication that it should be another patch :)
 
-        Arnd
+I must say, I figured that this part was missing in the frontend path by
+chance and couldn't really test the feature, so I'm also tempted to drop
+it altogether. What do you think?
+
+Also, is interlacing actually used on any of the video outputs we
+support? Perhaps RGB?
+
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_backend.c | 17 ++++++++++++++++-
+> >  drivers/gpu/drm/sun4i/sun4i_backend.h |  3 ++-
+> >  drivers/gpu/drm/sun4i/sun4i_layer.c   |  2 +-
+> >  3 files changed, 19 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > index e07a33adc51d..b98dafda52f8 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > @@ -294,8 +294,10 @@ int sun4i_backend_update_layer_formats(struct
+> > sun4i_backend *backend,
+> >  }
+> > =20
+> >  int sun4i_backend_update_layer_frontend(struct sun4i_backend
+> > *backend,
+> > -					int layer, uint32_t fmt)
+> > +					int layer, struct drm_plane
+> > *plane,
+> > +					uint32_t fmt)
+> >  {
+> > +	bool interlaced =3D false;
+>=20
+> There's no need to pass the full drm_plane pointer, you can just pass
+> a boolean to tell if it is interlaced or not.
+
+Yes that'll do just as well.
+
+Thanks,
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-VXrm6PjPabLMelrs/Uhr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlq5+isACgkQ3cLmz3+f
+v9ELFgf/btbgiV1vhsojEtIvmKNfqTXxExc4odqFDQipFFE4D28DbdPgsjsXZLjG
+T65rJNfHwXuIiATZdd5Bjc0KZpxOzfYxrPrb/W91V1/3rtLkWE2U11JDmz9eGPIF
+vDml0b+ZhAKbc0t9KwAVgAfa6JzhAb2ciKJ7HEPzAGvyq3oLgREs7hp8QtqwC3Mt
+lgUG3Wz8KOZQ6gm4GoSa6kxReWq3L2Vr0uX/lYeh1Ho1cuwsBhp5M7xh14vCOfoz
+lSy/zb8hEiXDG8m7UMkObdx4G3cP6YVonfYLGeNzAP6NmPsQ01TCq2hroSNlS1Q/
+vJk5QtG/pXqw+Z3oFb1pF/OKzbqdnA==
+=nJpH
+-----END PGP SIGNATURE-----
+
+--=-VXrm6PjPabLMelrs/Uhr--
