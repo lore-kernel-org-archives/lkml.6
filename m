@@ -1,57 +1,57 @@
-Return-Path: <Claudiu.Beznea@microchip.com>
-X-Google-Smtp-Source: AG47ELtjY+wYB8At+M9E+XmFOAQIyku571mI8hgYo+OTQF6C7SL7KRBrBqc8T7Pt1QVT/ahnpdrA
-ARC-Seal: i=1; a=rsa-sha256; t=1522140262; cv=none;
+Return-Path: <Ajay.Kathat@microchip.com>
+X-Google-Smtp-Source: AG47ELsYe8kVjduQDvVKqdWO4qlde0IxWaQ/rW1SEXfWkyguHndzH0bokui1FkrNl7L0JwEgCJAj
+ARC-Seal: i=1; a=rsa-sha256; t=1522127462; cv=none;
         d=google.com; s=arc-20160816;
-        b=bsrn9+DsAQxMSUzJKPqMiOotw3wqkOvP2obye1nqTnfukR2v2Vm1I+M6XKH4E/qmrb
-         Ykj0vAmnjCPHWTV5OeP6VEqaEFqzCGX6//Gv+2Jt1z06M/fwc6tyEKpgdu1wH+mdoSFC
-         r3f+T2+BXUi0JflBjVpX6VWixR0bYDkqCiVyebFrvtt8JolKzJNNLFs2hXPvup26BwsS
-         EtRwB+rFXa97+kWSADwoxJnwH397a9ZboerZY7XLgPGKa4t8QKAxE9qXEFWjOv/uQQc5
-         Uh7SNhkPVyu0Ul1jJi28CQ/4F1rfJK0yvyQq1LSA88DJcEPsfAKTkoDJBc+4FI4lArnH
-         RHXQ==
+        b=FBPayClyzMJqmVNEteE1M4K1ZPfqrCNlwzc1Qs7QNq67QR8X+qUcMwU6YP+ZPFu3Y7
+         DMxESubS3ezZEF3YqpFmVukSw6f9kARpAQfeqzseUa3gd6AKN1yQIaXk7C4T7SN+PZgl
+         tw6z3iFKo8sHO9m6WJXCtfRHwhtYFxFF2lYLnzeeXBQPz+9AZKqvlYmL+C440vwKSjg+
+         Xi6pOAs/ZYgf0Ehl2m574Eo1NfhZqSNBR1U5G4JEnDsRQAr1jp/lrSoG5C2iZNjWunP6
+         w8u5Ke4ItilvRAK0yI3U/W7u15to9KE676h0u0Uvt1WCsNyhq6yRMb7vIVKjCujdoG7E
+         WAbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=9VQsJ8FC6jbPF9rPOahYJZKJ6oEI7th9OWjqN0X/URA=;
-        b=NpxEI8KZ+muIjqcyDWdWX3R+sxs6GGPRcqY2SsUM8oCzN7E65duFOKBPgA59CWLYmd
-         KkXDQSYU+vmgo6+l/IlPgJBLbV3Z9rzxv8zZtfpGIlLydOos897s9ilTIuHd5EyiXZaj
-         l7iioBwtpmx13oWFot5RyuE4UzKW+FEcBXF1StSP2A22G5+LCEAla1E47GZy3rMHeazs
-         06jSZ+YMzVdoqwuZR6Aik/Q8ZPObq80OsNCot6OaorXBcWUUuCzQpbU6sMydHdTMR8E9
-         fq8DUER3AnrNFCWd8FTK54vGicOrApCRkCJc7I1ls4pARBebjHwWqR82VlF44/d/XXS7
-         m2dA==
+        bh=KgR4alzYrirIFZ8OV69ZxEMBkN8PWVP0lUkNeD7SGBU=;
+        b=eR81bqCYNkAr5pFJp6UR7YShRNCMITFdLGlN5HfmcEAD1PUSlnlwKW5Ccy0JUiQkMa
+         wHJUIyz0owlou02b6Mq/plDaq/6Zt7U1Vdmt6mRhxMAwTz2nfgskC29RCdftmhysLIwX
+         h3v9HCmE1gJSTqv7/cZQOhH954oJwq2v/Ujs2cL+LubfmGaUJLwinh7z51Hf/VDCKfM2
+         sOsjZ8Gu7QQoRZP+CRkQrnnSHB4o/++6dgkHWJ0SnYTPJbagKPK+4kswPL8OMx7RkeKD
+         sao6F8HxL6oOaUEyusOTRAV+E0cgAjIXnYlAZxb6uBui4CiEFySgIRZqmmXY2IX4Z7Ln
+         rCOw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of claudiu.beznea@microchip.com designates 68.232.154.123 as permitted sender) smtp.mailfrom=Claudiu.Beznea@microchip.com
+       spf=pass (google.com: domain of ajay.kathat@microchip.com designates 68.232.154.123 as permitted sender) smtp.mailfrom=Ajay.Kathat@microchip.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of claudiu.beznea@microchip.com designates 68.232.154.123 as permitted sender) smtp.mailfrom=Claudiu.Beznea@microchip.com
+       spf=pass (google.com: domain of ajay.kathat@microchip.com designates 68.232.154.123 as permitted sender) smtp.mailfrom=Ajay.Kathat@microchip.com
 X-IronPort-AV: E=Sophos;i="5.48,366,1517900400";
-   d="scan'208";a="12430580"
-Subject: Re: [PATCH] staging: wilc1000: replace kmalloc + memcpy with kmemdup
-To: Colin King <colin.king@canonical.com>, Aditya Shankar
-	<aditya.shankar@microchip.com>, Ganesh Krishna
+   d="scan'208";a="12426291"
+Date: Tue, 27 Mar 2018 10:40:54 +0530
+From: Ajay Singh <ajay.kathat@microchip.com>
+To: Colin King <colin.king@canonical.com>
+CC: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna
 	<ganesh.krishna@microchip.com>, Greg Kroah-Hartman
 	<gregkh@linuxfoundation.org>, <linux-wireless@vger.kernel.org>,
-	<devel@driverdev.osuosl.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180326171629.28700-1-colin.king@canonical.com>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <f674c9e0-e67f-885f-cdd8-ce5da1fcc262@microchip.com>
-Date: Tue, 27 Mar 2018 11:44:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
+	<devel@driverdev.osuosl.org>, <kernel-janitors@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] staging: wilc1000: replace kmalloc + memcpy with
+ kmemdup
+Message-ID: <20180327104054.69479b47@ajaysk-VirtualBox>
 In-Reply-To: <20180326171629.28700-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+References: <20180326171629.28700-1-colin.king@canonical.com>
+Organization: Microchip Techonology
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596021371817996393?=
-X-GMAIL-MSGID: =?utf-8?q?1596079747772562130?=
+X-GMAIL-MSGID: =?utf-8?q?1596066326386756550?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Mon, 26 Mar 2018 18:16:29 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-
-On 26.03.2018 20:16, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Replace several allocation and memcpys with kmemdup and add in some
@@ -75,6 +75,12 @@ On 26.03.2018 20:16, Colin King wrote:
 > +		result = -ENOMEM;
 > +		goto error;
 > +	}
+
+Please do not apply this changes. It will change the code
+flow differently. Check for NULl value in '(wid_list[index].val)' is 
+already presented.  It has to proceed with the below flow instead of
+returning from there.
+
 >  	wid_list[index].val = hdn_ntwk_wid_val;
 >  	if (wid_list[index].val) {
 >  		buffer = wid_list[index].val;
@@ -82,8 +88,6 @@ On 26.03.2018 20:16, Colin King wrote:
 >  	}
 >  
 >  	if (conn_attr->bssid) {
-
-These:
 > -		hif_drv->usr_conn_req.bssid = kmalloc(6, GFP_KERNEL);
 > +		hif_drv->usr_conn_req.bssid = kmemdup(conn_attr->bssid, 6,
 > +						      GFP_KERNEL);
@@ -100,6 +104,14 @@ These:
 > +		hif_drv->usr_conn_req.ssid = kmemdup(conn_attr->ssid,
 > +						     conn_attr->ssid_len + 1,
 >  						     GFP_KERNEL);
+
+Sorry, I too missed to see that scenario. As suggested, kmemdup can not be
+used directly to replace kmalloc & memcpy in this case. The size used for
+kmalloc is not equal to size of data copy in memcpy i.e kmalloc is done
+for 1 byte extra to keep the NULL character. The direct replacement of
+kmalloc with kmemdup is not applicable here.
+
+
 >  		if (!hif_drv->usr_conn_req.ssid) {
 >  			result = -ENOMEM;
 >  			goto error;
@@ -112,17 +124,10 @@ These:
 >  
 >  	hif_drv->usr_conn_req.ies_len = conn_attr->ies_len;
 >  	if (conn_attr->ies) {
-
-and these:
 > -		hif_drv->usr_conn_req.ies = kmalloc(conn_attr->ies_len,
 > +		hif_drv->usr_conn_req.ies = kmemdup(conn_attr->ies,
 > +						    conn_attr->ies_len,
 >  						    GFP_KERNEL);
-
-were already done in [1]. I don't know which was the first...
-
-[1] https://patchwork.kernel.org/patch/10308575/
-
 >  		if (!hif_drv->usr_conn_req.ies) {
 >  			result = -ENOMEM;
 >  			goto error;
@@ -147,104 +152,13 @@ were already done in [1]. I don't know which was the first...
 > +			goto error;
 > +		}
 >  	}
->  	wid_list[wid_cnt].id = (u16)WID_11I_MODE;
->  	wid_list[wid_cnt].type = WID_CHAR;
-> @@ -1039,9 +1042,13 @@ static s32 handle_connect(struct wilc_vif *vif,
->  	if (memcmp("DIRECT-", conn_attr->ssid, 7)) {
->  		join_req_size = wid_list[wid_cnt].size;
->  		join_req = kmalloc(join_req_size, GFP_KERNEL);
-> +		if (!join_req) {
-> +			result = -ENOMEM;
-> +			goto error;
-> +		}
->  	}
->  	if (!wid_list[wid_cnt].val) {
-> -		result = -EFAULT;
-> +		result = -ENOMEM;
->  		goto error;
->  	}
->  
-> @@ -1166,11 +1173,13 @@ static s32 handle_connect(struct wilc_vif *vif,
->  
->  			if (conn_attr->ies) {
->  				conn_info.req_ies_len = conn_attr->ies_len;
-> -				conn_info.req_ies = kmalloc(conn_attr->ies_len,
-> +				conn_info.req_ies = kmemdup(conn_attr->ies,
-> +							    conn_attr->ies_len,
->  							    GFP_KERNEL);
-> -				memcpy(conn_info.req_ies,
-> -				       conn_attr->ies,
-> -				       conn_attr->ies_len);
-> +				if (!conn_info.req_ies) {
-> +					result = -ENOMEM;
-> +					goto error_free;
-> +				}
->  			}
->  
->  			conn_attr->result(CONN_DISCONN_EVENT_CONN_RESP,
-> @@ -1187,6 +1196,7 @@ static s32 handle_connect(struct wilc_vif *vif,
->  		}
->  	}
->  
-> +error_free:
->  	kfree(conn_attr->bssid);
->  	conn_attr->bssid = NULL;
->  
-> @@ -1227,10 +1237,9 @@ static s32 handle_connect_timeout(struct wilc_vif *vif)
->  
->  		if (hif_drv->usr_conn_req.ies) {
->  			info.req_ies_len = hif_drv->usr_conn_req.ies_len;
-> -			info.req_ies = kmalloc(hif_drv->usr_conn_req.ies_len, GFP_KERNEL);
-> -			memcpy(info.req_ies,
-> -			       hif_drv->usr_conn_req.ies,
-> -			       hif_drv->usr_conn_req.ies_len);
-> +			info.req_ies = kmemdup(hif_drv->usr_conn_req.ies,
-> +					       hif_drv->usr_conn_req.ies_len,
-> +					       GFP_KERNEL);
->  		}
->  
->  		hif_drv->usr_conn_req.conn_result(CONN_DISCONN_EVENT_CONN_RESP,
-> @@ -1421,9 +1430,11 @@ static s32 handle_rcvd_gnrl_async_info(struct wilc_vif *vif,
->  
->  						if (conn_info.status == SUCCESSFUL_STATUSCODE && connect_resp_info->ies) {
->  							conn_info.resp_ies_len = connect_resp_info->ies_len;
-> -							conn_info.resp_ies = kmalloc(connect_resp_info->ies_len, GFP_KERNEL);
-> -							memcpy(conn_info.resp_ies, connect_resp_info->ies,
-> -							       connect_resp_info->ies_len);
-> +							conn_info.resp_ies = kmemdup(connect_resp_info->ies,
-> +										     connect_resp_info->ies_len,
-> +										     GFP_KERNEL);
-> +							if (!conn_info.resp_ies)
-> +								return -ENOMEM;
->  						}
->  
->  						if (connect_resp_info) {
-> @@ -3524,8 +3535,11 @@ void wilc_network_info_received(struct wilc *wilc, u8 *buffer, u32 length)
->  	msg.vif = vif;
->  
->  	msg.body.net_info.len = length;
-> -	msg.body.net_info.buffer = kmalloc(length, GFP_KERNEL);
-> -	memcpy(msg.body.net_info.buffer, buffer, length);
-> +	msg.body.net_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
-> +	if (!msg.body.net_info.buffer) {
-> +		netdev_err(vif->ndev, "message buffer allocation failed\n");
-> +		return;
-> +	}
->  
->  	result = wilc_enqueue_cmd(&msg);
->  	if (result)
-> @@ -3571,8 +3585,11 @@ void wilc_gnrl_async_info_received(struct wilc *wilc, u8 *buffer, u32 length)
->  	msg.vif = vif;
->  
->  	msg.body.async_info.len = length;
-> -	msg.body.async_info.buffer = kmalloc(length, GFP_KERNEL);
-> -	memcpy(msg.body.async_info.buffer, buffer, length);
-> +	msg.body.async_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
-> +	if (!msg.body.async_info.buffer) {
-> +		netdev_err(vif->ndev, "message buffer allocation failed\n");
-> +		return;
-> +	}
->  
->  	result = wilc_enqueue_cmd(&msg);
->  	if (result)
-> 
+
+"info_element" variable was removed in my previous submitted patchset.
+Those changes are still not included in Greg's staging repo. Few changes
+in this patch are already included in previous patchset,which might give
+conflict. But few changes are not present which can be applied like
+returning -ENOMEM in case of allocation failure.
+
+
+Regards,
+Ajay
