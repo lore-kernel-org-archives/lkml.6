@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49GP3aVSYzUd+TGhO1pHVSNjax+DXR9z6itJOMnwrDd5xU9am1kIlMkXfrnlkWTOPNbEOaz
-ARC-Seal: i=1; a=rsa-sha256; t=1522168572; cv=none;
+X-Google-Smtp-Source: AIpwx4+Uoogr92mL5qkrZ+CO+yd9jrijzVumFeZ96bauoxhbIky+uS/lbLrve1xpsFPpG4xDSuNY
+ARC-Seal: i=1; a=rsa-sha256; t=1522168569; cv=none;
         d=google.com; s=arc-20160816;
-        b=zZo0okDe9cleVFQITE+ZnBjMX/1aXKy3fmJGDBu7Lj2A3qhmLVxKfD5Mnwj2Dvj+Q0
-         UWyy2CmBiFm35wLLHEDqNd45gt7APdBtWGLg81ezkMOQmS37/AvhiYpNYp/Kmi/OUjw4
-         GZ1fnUPWU6YiXEHYu5BiR7mldkpz9SxMtGosxqy5C705YvTqlwitk7KvS+WmiNFJy4eM
-         b2HYOWzlO/3ZMXOXCEXtc7sPY97tadZn35jDMiE/kdX/g7s2WtOExzVeoWVzf4Dip7xt
-         ZDRep3P9mBpvWjIj69EmLVHUtVcWaAybKicEI8emoYfT1zKKziz5dR/gC66OwKwaETPj
-         W7cw==
+        b=kB4SfwIM6dz0fyieePvIg4JUj3gUkHAtsy5egYuVlxKal1rGVmg9UEs9Xenu2AwAt2
+         icEvM+o5jZp/C+0mLFr9U3rNRpEcVyd2StW3CV1hVV6VATwHLtrSiy5Axqd/zNDBNLQA
+         Wd7Lmxheq/Z904Fn1d9H1uQsd82dSkR5X4TPdgM3c+HY5Vxvqm1TqRbt/bjommaeiqTy
+         mlfkP1ak8YTJ13NSGDSxyZOZ2zbWHpe2wQFliH3M13mdqMWv5m1FnZ0H6az9aiFV70J1
+         RupnURME29UnqQ4eYH2jCNvDsEn81GEj7m6JzVWQSUYwVrDFmCT2rvhoCanOWrwl0RPw
+         ++JQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZCsyUMXV6yvUBP5m00WCRPteo0JfCBbh420Zz4kVYmM=;
-        b=CkvON+GirQ1XnP2+xDkCRmbLjgwhBLXtK5qJ50npQyDixF/QmNPhRbchh3Ct0ngkro
-         FG10ZmpfxwPFl/eWtdOFuNrujDmcuSI6LW8Fk/UEQ2v3l3CDaY7Cc85UMcCzEgbaGJ6n
-         36+zoa40dShWK/uAU9Ocndiei40T+zm0LGmX5jsosmgGbc23KQLE0F2bpXeZ29uBv/7Y
-         oAwk/8m8E7q3vquE/WOQaJatwLNn+eMGFIqjGzI2pBUznkrUe09yOFS5ADotpoK0mP+p
-         tZsluqIla+OtgHfKHjYPswco8MJqT4ZJjJYecCdKvqWbIW3mn5cF+kcXaulYl2oEw+R+
-         Thsw==
+        bh=UH2mzza7yuhwk/J9PpTMTPqLfJ1/70N5Y2Xs2av7yv4=;
+        b=Nflc1hMuHhBRyDgpUY77obf48/m6gwAvy/32zKizmYfSpP/Q6UIcsq5yvGSFu73Bh4
+         XwUsL4CQEW5AmeTIyhaKNXSPrJu1l468UkUGYQT4tYSlrk/x+P7aLrRZxv+ZmmIIXkBD
+         VKYcMizt3gsEaf08bdZTrtaVibM75KJ2TKUaDqHDdxUKLNmyU1FD1liWDBuATO9WHSwJ
+         7dQSwZ+CjCXAID7JbNntLHs92XPuoE17ZY3DoKWLW8Z5Fl8FVVjuD1TltQmPZTE9QBrS
+         awshE9bji2f3MMSXRBpZK7zfmeLASm/9r+mRtH2hacl0fdecMZ1AysrhwPwtoEIH2hBT
+         /XZw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Stone <daniels@collabora.com>,
-	Daniel van Vugt <daniel.van.vugt@canonical.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.14 056/101] drm: Reject getfb for multi-plane framebuffers
-Date: Tue, 27 Mar 2018 18:27:28 +0200
-Message-Id: <20180327162753.435586616@linuxfoundation.org>
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>
+Subject: [PATCH 4.14 055/101] drm/radeon: Dont turn off DP sink when disconnected
+Date: Tue, 27 Mar 2018 18:27:27 +0200
+Message-Id: <20180327162753.378215973@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109433637263045?=
-X-GMAIL-MSGID: =?utf-8?q?1596109433637263045?=
+X-GMAIL-THRID: =?utf-8?q?1596108997827947853?=
+X-GMAIL-MSGID: =?utf-8?q?1596109429914299382?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,47 +49,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Stone <daniels@collabora.com>
+From: Michel Dänzer <michel.daenzer@amd.com>
 
-commit b24791fe00f8b089d5b10cb7bcc4e1ae88b4831b upstream.
+commit 2681bc79eeb640562c932007bfebbbdc55bf6a7d upstream.
 
-getfb can only return a single plane, so reject attempts to use it with
-multi-plane framebuffers.
+Turning off the sink in this case causes various issues, because
+userspace expects it to stay on until it turns it off explicitly.
 
-Signed-off-by: Daniel Stone <daniels@collabora.com>
-Reported-by: Daniel van Vugt <daniel.van.vugt@canonical.com>
-Reviewed-by: Rob Clark <robdclark@gmail.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Fixes: 308e5bcbdb10 ("drm: add an fb creation ioctl that takes a pixel format v5")
-Cc: stable@vger.kernel.org # v3.3+
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105518
-Link: https://patchwork.freedesktop.org/patch/msgid/20180320225839.30905-1-daniels@collabora.com
+Instead, turn the sink off and back on when a display is connected
+again. This dance seems necessary for link training to work correctly.
+
+Bugzilla: https://bugs.freedesktop.org/105308
+Cc: stable@vger.kernel.org
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_framebuffer.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/radeon/radeon_connectors.c |   29 +++++++++++------------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
 
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -458,6 +458,12 @@ int drm_mode_getfb(struct drm_device *de
- 	if (!fb)
- 		return -ENOENT;
+--- a/drivers/gpu/drm/radeon/radeon_connectors.c
++++ b/drivers/gpu/drm/radeon/radeon_connectors.c
+@@ -90,25 +90,18 @@ void radeon_connector_hotplug(struct drm
+ 		/* don't do anything if sink is not display port, i.e.,
+ 		 * passive dp->(dvi|hdmi) adaptor
+ 		 */
+-		if (dig_connector->dp_sink_type == CONNECTOR_OBJECT_ID_DISPLAYPORT) {
+-			int saved_dpms = connector->dpms;
+-			/* Only turn off the display if it's physically disconnected */
+-			if (!radeon_hpd_sense(rdev, radeon_connector->hpd.hpd)) {
+-				drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
+-			} else if (radeon_dp_needs_link_train(radeon_connector)) {
+-				/* Don't try to start link training before we
+-				 * have the dpcd */
+-				if (!radeon_dp_getdpcd(radeon_connector))
+-					return;
++		if (dig_connector->dp_sink_type == CONNECTOR_OBJECT_ID_DISPLAYPORT &&
++		    radeon_hpd_sense(rdev, radeon_connector->hpd.hpd) &&
++		    radeon_dp_needs_link_train(radeon_connector)) {
++			/* Don't start link training before we have the DPCD */
++			if (!radeon_dp_getdpcd(radeon_connector))
++				return;
  
-+	/* Multi-planar framebuffers need getfb2. */
-+	if (fb->format->num_planes > 1) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	r->height = fb->height;
- 	r->width = fb->width;
- 	r->depth = fb->format->depth;
-@@ -481,6 +487,7 @@ int drm_mode_getfb(struct drm_device *de
- 		ret = -ENODEV;
+-				/* set it to OFF so that drm_helper_connector_dpms()
+-				 * won't return immediately since the current state
+-				 * is ON at this point.
+-				 */
+-				connector->dpms = DRM_MODE_DPMS_OFF;
+-				drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
+-			}
+-			connector->dpms = saved_dpms;
++			/* Turn the connector off and back on immediately, which
++			 * will trigger link training
++			 */
++			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
++			drm_helper_connector_dpms(connector, DRM_MODE_DPMS_ON);
+ 		}
  	}
- 
-+out:
- 	drm_framebuffer_put(fb);
- 
- 	return ret;
+ }
