@@ -1,140 +1,255 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeC0Vp3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:45:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55831 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751067AbeC0Vp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:45:27 -0400
-X-Amavis-Alert: BAD HEADER SECTION, Header field occurs more than once: "Cc"
-        occurs 3 times
-From: NeilBrown <neilb@suse.com>
-To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 28 Mar 2018 08:45:18 +1100
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Tom Herbert <tom@quantonium.net>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH 1/6 v2] rhashtable: improve documentation for rhashtable_walk_peek()
-In-Reply-To: <152210718418.11435.11573013181393548255.stgit@noble>
-References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718418.11435.11573013181393548255.stgit@noble>
-Message-ID: <87vadh42hd.fsf@notabene.neil.brown.name>
+        id S1752096AbeC0Vpi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:45:38 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35368 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751067AbeC0Vpg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:45:36 -0400
+X-Google-Smtp-Source: AIpwx4962atfgO9u6puY4PvY1ySMR/Cj3uAovlunpF//qc34OVeIuE0p+3Nh6d6LXIIwF4eC9a8SHg==
+Date: Tue, 27 Mar 2018 14:45:33 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 08/24] mm: Protect VMA modifications using VMA sequence
+ count
+In-Reply-To: <1520963994-28477-9-git-send-email-ldufour@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803271441290.38095@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-9-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 65ae54659833..a2d9c87b7b0b 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1136,8 +1136,11 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
+>  					goto out_mm;
+>  				}
+>  				for (vma = mm->mmap; vma; vma = vma->vm_next) {
+> -					vma->vm_flags &= ~VM_SOFTDIRTY;
+> +					vm_write_begin(vma);
+> +					WRITE_ONCE(vma->vm_flags,
+> +						   vma->vm_flags & ~VM_SOFTDIRTY);
+>  					vma_set_page_prot(vma);
+> +					vm_write_end(vma);
+>  				}
+>  				downgrade_write(&mm->mmap_sem);
+>  				break;
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index cec550c8468f..b8212ba17695 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -659,8 +659,11 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
+>  
+>  	octx = vma->vm_userfaultfd_ctx.ctx;
+>  	if (!octx || !(octx->features & UFFD_FEATURE_EVENT_FORK)) {
+> +		vm_write_begin(vma);
+>  		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+> -		vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
+> +		WRITE_ONCE(vma->vm_flags,
+> +			   vma->vm_flags & ~(VM_UFFD_WP | VM_UFFD_MISSING));
+> +		vm_write_end(vma);
+>  		return 0;
+>  	}
+>  
 
-In this version I:
- - fixed brace-after-else coding style, thanks Sergei Shtylyov,
- - explained where the one user is, thanks David Miller
- - added CC for author of rhashtable_walk_peek (Tom Herbert) and
-   of the one usage (Andreas Gruenbacher) - thanks Herbert Xu
+In several locations in this patch vm_write_begin(vma) -> 
+vm_write_end(vma) is nesting things other than vma->vm_flags, 
+vma->vm_policy, etc.  I think it's better to do vm_write_end(vma) as soon 
+as the members that the seqcount protects are modified.  In other words, 
+this isn't offering protection for vma->vm_userfaultfd_ctx.  There are 
+several examples of this in the patch.
 
-NeilBrown
+> @@ -885,8 +888,10 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
+>  			vma = prev;
+>  		else
+>  			prev = vma;
+> -		vma->vm_flags = new_flags;
+> +		vm_write_begin(vma);
+> +		WRITE_ONCE(vma->vm_flags, new_flags);
+>  		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+> +		vm_write_end(vma);
+>  	}
+>  	up_write(&mm->mmap_sem);
+>  	mmput(mm);
+> @@ -1434,8 +1439,10 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+>  		 * the next vma was merged into the current one and
+>  		 * the current one has not been updated yet.
+>  		 */
+> -		vma->vm_flags = new_flags;
+> +		vm_write_begin(vma);
+> +		WRITE_ONCE(vma->vm_flags, new_flags);
+>  		vma->vm_userfaultfd_ctx.ctx = ctx;
+> +		vm_write_end(vma);
+>  
+>  	skip:
+>  		prev = vma;
+> @@ -1592,8 +1599,10 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+>  		 * the next vma was merged into the current one and
+>  		 * the current one has not been updated yet.
+>  		 */
+> -		vma->vm_flags = new_flags;
+> +		vm_write_begin(vma);
+> +		WRITE_ONCE(vma->vm_flags, new_flags);
+>  		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
+> +		vm_write_end(vma);
+>  
+>  	skip:
+>  		prev = vma;
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index b7e2268dfc9a..32314e9e48dd 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1006,6 +1006,7 @@ static void collapse_huge_page(struct mm_struct *mm,
+>  	if (mm_find_pmd(mm, address) != pmd)
+>  		goto out;
+>  
+> +	vm_write_begin(vma);
+>  	anon_vma_lock_write(vma->anon_vma);
+>  
+>  	pte = pte_offset_map(pmd, address);
+> @@ -1041,6 +1042,7 @@ static void collapse_huge_page(struct mm_struct *mm,
+>  		pmd_populate(mm, pmd, pmd_pgtable(_pmd));
+>  		spin_unlock(pmd_ptl);
+>  		anon_vma_unlock_write(vma->anon_vma);
+> +		vm_write_end(vma);
+>  		result = SCAN_FAIL;
+>  		goto out;
+>  	}
+> @@ -1075,6 +1077,7 @@ static void collapse_huge_page(struct mm_struct *mm,
+>  	set_pmd_at(mm, address, pmd, _pmd);
+>  	update_mmu_cache_pmd(vma, address, pmd);
+>  	spin_unlock(pmd_ptl);
+> +	vm_write_end(vma);
+>  
+>  	*hpage = NULL;
+>  
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 4d3c922ea1a1..e328f7ab5942 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -184,7 +184,9 @@ static long madvise_behavior(struct vm_area_struct *vma,
+>  	/*
+>  	 * vm_flags is protected by the mmap_sem held in write mode.
+>  	 */
+> -	vma->vm_flags = new_flags;
+> +	vm_write_begin(vma);
+> +	WRITE_ONCE(vma->vm_flags, new_flags);
+> +	vm_write_end(vma);
+>  out:
+>  	return error;
+>  }
+> @@ -450,9 +452,11 @@ static void madvise_free_page_range(struct mmu_gather *tlb,
+>  		.private = tlb,
+>  	};
+>  
+> +	vm_write_begin(vma);
+>  	tlb_start_vma(tlb, vma);
+>  	walk_page_range(addr, end, &free_walk);
+>  	tlb_end_vma(tlb, vma);
+> +	vm_write_end(vma);
+>  }
+>  
+>  static int madvise_free_single_vma(struct vm_area_struct *vma,
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index e0e706f0b34e..2632c6f93b63 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -380,8 +380,11 @@ void mpol_rebind_mm(struct mm_struct *mm, nodemask_t *new)
+>  	struct vm_area_struct *vma;
+>  
+>  	down_write(&mm->mmap_sem);
+> -	for (vma = mm->mmap; vma; vma = vma->vm_next)
+> +	for (vma = mm->mmap; vma; vma = vma->vm_next) {
+> +		vm_write_begin(vma);
+>  		mpol_rebind_policy(vma->vm_policy, new);
+> +		vm_write_end(vma);
+> +	}
+>  	up_write(&mm->mmap_sem);
+>  }
+>  
+> @@ -554,9 +557,11 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
+>  {
+>  	int nr_updated;
+>  
+> +	vm_write_begin(vma);
+>  	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1);
+>  	if (nr_updated)
+>  		count_vm_numa_events(NUMA_PTE_UPDATES, nr_updated);
+> +	vm_write_end(vma);
+>  
+>  	return nr_updated;
+>  }
+> @@ -657,6 +662,7 @@ static int vma_replace_policy(struct vm_area_struct *vma,
+>  	if (IS_ERR(new))
+>  		return PTR_ERR(new);
+>  
+> +	vm_write_begin(vma);
+>  	if (vma->vm_ops && vma->vm_ops->set_policy) {
+>  		err = vma->vm_ops->set_policy(vma, new);
+>  		if (err)
+> @@ -664,11 +670,17 @@ static int vma_replace_policy(struct vm_area_struct *vma,
+>  	}
+>  
+>  	old = vma->vm_policy;
+> -	vma->vm_policy = new; /* protected by mmap_sem */
+> +	/*
+> +	 * The speculative page fault handler access this field without
+> +	 * hodling the mmap_sem.
+> +	 */
 
-=2D----------------8<-------------------------
-Subject: [PATCH] rhashtable: improve documentation for rhashtable_walk_peek=
-()
+"The speculative page fault handler accesses this field without holding 
+vma->vm_mm->mmap_sem"
 
-The documentation for rhashtable_walk_peek() wrong.  It claims to
-return the *next* entry, whereas it in fact returns the *previous*
-entry.
-However if no entries have yet been returned - or if the iterator
-was reset due to a resize event, then rhashtable_walk_peek()
-*does* return the next entry, but also advances the iterator.
+> +	WRITE_ONCE(vma->vm_policy,  new);
+> +	vm_write_end(vma);
+>  	mpol_put(old);
+>  
+>  	return 0;
+>   err_out:
+> +	vm_write_end(vma);
+>  	mpol_put(new);
+>  	return err;
+>  }
 
-I suspect that this interface should be discarded and the one user
-should be changed to not require it.  The only current user is
-gfs2_glock_iter_next in fs/gfs2/glock.c, which is part of the
-implementation of a seq_file which reports all the content of the
-hash table.
-Possibly this patch should be seen as a first step in that
-conversation.
+Wait, doesn't vma_dup_policy() also need to protect dst->vm_policy?
 
-This patch mostly corrects the documentation, but does make a
-small code change so that the documentation can be correct without
-listing too many special cases.  I don't think gfs2_glock_iter_next
-will be affected by the code change.
-
-Cc: Tom Herbert <tom@quantonium.net>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- lib/rhashtable.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 3825c30aaa36..9367816820ea 100644
-=2D-- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -853,13 +853,17 @@ void *rhashtable_walk_next(struct rhashtable_iter *it=
-er)
- EXPORT_SYMBOL_GPL(rhashtable_walk_next);
-=20
- /**
-=2D * rhashtable_walk_peek - Return the next object but don't advance the i=
-terator
-+ * rhashtable_walk_peek - Return the previously returned object without ad=
-vancing the iterator
-  * @iter:	Hash table iterator
-  *
-=2D * Returns the next object or NULL when the end of the table is reached.
-+ * Returns the last object returned, or NULL if no object has yet been ret=
-urned.
-+ * If the previously returned object has since been removed, then some oth=
-er arbitrary
-+ * object maybe returned, or possibly NULL will be returned.  In that case=
-, the
-+ * iterator might be advanced.
-  *
-  * Returns -EAGAIN if resize event occurred.  Note that the iterator
-=2D * will rewind back to the beginning and you may continue to use it.
-+ * will rewind back to the beginning and rhashtable_walk_next() should be
-+ * used to get the next object.
-  */
- void *rhashtable_walk_peek(struct rhashtable_iter *iter)
- {
-@@ -880,6 +884,12 @@ void *rhashtable_walk_peek(struct rhashtable_iter *ite=
-r)
- 		 * the table hasn't changed.
- 		 */
- 		iter->skip--;
-+	} else {
-+		/* ->skip is only zero after rhashtable_walk_start()
-+		 * or when the iterator is reset.  In this case there
-+		 * is no previous object to return.
-+		 */
-+		return NULL;
- 	}
-=20
- 	return __rhashtable_walk_find_next(iter);
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq6u24ACgkQOeye3VZi
-gbmL+Q//dO+Fld6gE/k1GL/LV6d+h9iOoJXSEVy1CXt/GQPdM/p5q2PQK8RHXmUn
-9Rcudzn8muc71mydai+UTb2jSJtb5Gfhz1LxXKVp1APQxn4q/ggyaK8ENlJgOKuy
-k3JhNVS6uGlHs6l2/O8i1TY40Tykvv3F80wCjvI2gND51wEMASGwsMTwh/doF5mo
-VuRc5ZCYf+momLFogsyRPBSUBXNCTgr3H2FaxFwIIN6tfMbzur5k2x7c/eCAfgey
-jQHVrjjamjV8vzowP+/bJOXudPVzOIckwo+oZSyhvLRj+JWXtR7z3WNg/3h4fa6z
-XL6E/eslbbKpQzVJzu8v+tdpnFBq+UX6KnGuL8vHGZmIPZq30zss07h9wTqx85lt
-PziOeMLR7h100Rwf5uIV97VMGMFXbSxzWrlp7KTwQXWItBgrCla/xDpJBbcXbBTo
-l5ir4orz4PrMQWakSs8qJITKnKMU6QXZlwuTSl4Ny57Xp847lfzbMDP6NhgKQAWH
-OWugpew3MHd0JAEhogpjIhN/brL2d0br07y3q6JtDPWE7gbyDL8JD4VQ5gM1fL7+
-RXSF0ZuPXKhI5icZz7EHvoQ3BUPIzU2sn7/ZCV8BAOCmaThzNG5zc0Z+eerOoSVC
-k5zXgZstImPqeIaBTKqK/SlNeAkqHHPhKsPMSFI/1+OLoycOyGk=
-=a0sn
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2121,7 +2121,9 @@ int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
+ 
+ 	if (IS_ERR(pol))
+ 		return PTR_ERR(pol);
+-	dst->vm_policy = pol;
++	vm_write_begin(dst);
++	WRITE_ONCE(dst->vm_policy, pol);
++	vm_write_end(dst);
+ 	return 0;
+ }
+ 
