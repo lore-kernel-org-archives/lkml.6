@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752860AbeC0NQn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:16:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55142 "EHLO
+        id S1753086AbeC0NUR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:20:17 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55156 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752120AbeC0NQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:39 -0400
+        id S1752843AbeC0NQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:42 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
@@ -14,127 +14,134 @@ Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
         pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
         peter.maydell@linaro.org, kristina.martsenko@arm.com,
         mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 13/17] kvm: arm/arm64: Allow tuning the physical address size for VM
-Date: Tue, 27 Mar 2018 14:15:23 +0100
-Message-Id: <1522156531-28348-14-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 14/17] kvm: arm64: Switch to per VM IPA limit
+Date: Tue, 27 Mar 2018 14:15:24 +0100
+Message-Id: <1522156531-28348-15-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow specifying the physical address size for a new VM via
-the kvm_type argument for KVM_CREATE_VM ioctl. This allows
-us to finalise the stage2 page table format as early as possible
-and hence perform the right checks on the memory slots without
-complication. The size is encoded as Log2(PA_Siz) in the bits[7:0]
-of the type field and can encode more information in the future if
-required.
+Now that we can manage the stage2 page table per VM, switch the
+configuration details to per VM instance. We keep track of the
+IPA bits, number of page table levels and the VTCR bits (which
+depends on the IPA and the number of levels). While at it, remove
+unused pgd_lock field from kvm_arch for arm64.
 
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Christoffer Dall <cdall@kernel.org>
-Cc: Peter Maydel <peter.maydell@linaro.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm/include/asm/kvm_mmu.h   |  2 ++
- arch/arm64/include/asm/kvm_mmu.h |  2 ++
- include/uapi/linux/kvm.h         | 10 ++++++++++
- virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
- 4 files changed, 36 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/kvm_host.h       | 14 ++++++++++++--
+ arch/arm64/include/asm/kvm_mmu.h        | 11 +++++++++--
+ arch/arm64/include/asm/stage2_pgtable.h |  1 -
+ arch/arm64/kvm/hyp/switch.c             |  3 +--
+ virt/kvm/arm/mmu.c                      |  4 ++++
+ 5 files changed, 26 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 50896da..3f13827 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -323,6 +323,8 @@ static inline u32 kvm_get_ipa_limit(void)
- 	return KVM_PHYS_SHIFT;
- }
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 9f3c8b8..7b0af32 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -60,13 +60,23 @@ struct kvm_arch {
+ 	u64    vmid_gen;
+ 	u32    vmid;
  
-+static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift) {}
+-	/* 1-level 2nd stage table and lock */
+-	spinlock_t pgd_lock;
++	/* stage-2 page table */
+ 	pgd_t *pgd;
+ 
+ 	/* VTTBR value associated with above pgd and vmid */
+ 	u64    vttbr;
+ 
++	/* Private bits of VTCR_EL2 for this VM */
++	u64    vtcr_private;
++	/* Size of the PA size for this guest */
++	u8     phys_shift;
++	/*
++	 * Number of levels in page table. We could always calculate
++	 * it from phys_shift above. We cache it for faster switches
++	 * in stage2 page table helpers.
++	 */
++	u8     s2_levels;
 +
- #endif	/* !__ASSEMBLY__ */
+ 	/* The last vcpu id that ran on each physical CPU */
+ 	int __percpu *last_vcpu_ran;
  
- #endif /* __ARM_KVM_MMU_H__ */
 diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index a4c8c00..bb458bf 100644
+index bb458bf..e86d7f4 100644
 --- a/arch/arm64/include/asm/kvm_mmu.h
 +++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -416,5 +416,7 @@ static inline u32 kvm_get_ipa_limit(void)
+@@ -136,9 +136,10 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
+  */
+ #define KVM_PHYS_SHIFT	(40)
+ 
+-#define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
++#define kvm_phys_shift(kvm)		(kvm->arch.phys_shift)
+ #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
+ #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
++#define kvm_stage2_levels(kvm)		(kvm->arch.s2_levels)
+ 
+ static inline bool kvm_page_empty(void *ptr)
+ {
+@@ -416,7 +417,13 @@ static inline u32 kvm_get_ipa_limit(void)
  	return KVM_PHYS_SHIFT;
  }
  
-+static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift) {}
-+
+-static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift) {}
++static inline void kvm_config_stage2(struct kvm *kvm, u8 ipa_shift)
++{
++	kvm->arch.phys_shift = ipa_shift;
++	kvm->arch.s2_levels = stage2_pt_levels(ipa_shift);
++	kvm->arch.vtcr_private = VTCR_EL2_SL0(kvm->arch.s2_levels) |
++				 TCR_T0SZ(ipa_shift);
++}
+ 
  #endif /* __ASSEMBLY__ */
  #endif /* __ARM64_KVM_MMU_H__ */
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index b737ee1..67b09b0 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -740,6 +740,16 @@ struct kvm_ppc_resize_hpt {
- #define KVM_S390_SIE_PAGE_OFFSET 1
- 
- /*
-+ * On arm/arm64, machine type can be used to request the physical
-+ * address size for the VM. Bits [7-0] have been reserved for the
-+ * PA size shift (i.e, log2(PA-Size)). For backward compatibility,
-+ * value 0 implies the default IPA size, which is 40bits.
-+ */
-+#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK	0xff
-+#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)		\
-+	((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
-+
-+/*
-  * ioctls for /dev/kvm fds:
+diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
+index 33e8ebb..9b75b83 100644
+--- a/arch/arm64/include/asm/stage2_pgtable.h
++++ b/arch/arm64/include/asm/stage2_pgtable.h
+@@ -44,7 +44,6 @@
   */
- #define KVM_GET_API_VERSION       _IO(KVMIO,   0x00)
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 53bb05c..13eb66f 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -110,6 +110,25 @@ void kvm_arch_check_processor_compat(void *rtn)
+ #define __s2_pgd_ptrs(pa, lvls)	(1 << ((pa) - pt_levels_pgdir_shift((lvls))))
+ 
+-#define kvm_stage2_levels(kvm)		stage2_pt_levels(kvm_phys_shift(kvm))
+ #define stage2_pgdir_shift(kvm)	\
+ 		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
+ #define stage2_pgdir_size(kvm)		(_AC(1, UL) << stage2_pgdir_shift((kvm)))
+diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+index 5ccd3ae..794da55 100644
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -167,8 +167,7 @@ static void __hyp_text __activate_vm(struct kvm_vcpu *vcpu)
+ 	u64 vtcr = read_sysreg(vtcr_el2);
+ 
+ 	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
+-	vtcr |= VTCR_EL2_SL0(kvm_stage2_levels(kvm)) |
+-		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
++	vtcr |= kvm->arch.vtcr_private;
+ 	write_sysreg(vtcr, vtcr_el2);
+ 	write_sysreg(kvm->arch.vttbr, vttbr_el2);
  }
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 7a264c6..746f38e 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -753,6 +753,10 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
+ 		return -EINVAL;
+ 	}
  
- 
-+static int kvm_arch_config_vm(struct kvm *kvm, unsigned long type)
-+{
-+	u32 ipa_shift = (u32)type & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK;
++	/* Make sure we have the stage2 configured for this VM */
++	if (WARN_ON(!kvm_stage2_levels(kvm)))
++		return -EINVAL;
 +
-+	/*
-+	 * Make sure the size, if specified, is within the range of
-+	 * default size and supported maximum limit.
-+	 */
-+	if (ipa_shift) {
-+		if (ipa_shift < KVM_PHYS_SHIFT || ipa_shift > kvm_ipa_limit)
-+			return -EINVAL;
-+	} else {
-+		ipa_shift = KVM_PHYS_SHIFT;
-+	}
-+
-+	kvm_config_stage2(kvm, ipa_shift);
-+	return 0;
-+}
-+
- /**
-  * kvm_arch_init_vm - initializes a VM data structure
-  * @kvm:	pointer to the KVM struct
-@@ -118,8 +137,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- {
- 	int ret, cpu;
- 
--	if (type)
--		return -EINVAL;
-+	ret = kvm_arch_config_vm(kvm, type);
-+	if (ret)
-+		return ret;
- 
- 	kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
- 	if (!kvm->arch.last_vcpu_ran)
+ 	/* Allocate the HW PGD, making sure that each page gets its own refcount */
+ 	pgd = alloc_pages_exact(stage2_pgd_size(kvm), GFP_KERNEL | __GFP_ZERO);
+ 	if (!pgd)
 -- 
 2.7.4
