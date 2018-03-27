@@ -1,110 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeC0IRA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:17:00 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:58900 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751192AbeC0IQ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:16:57 -0400
-Date: Tue, 27 Mar 2018 10:16:52 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
-Message-ID: <20180327081652.5v6wqwfjyb2kvimc@verge.net.au>
-References: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
- <20180323085140.g3golwdtpezo7fhi@verge.net.au>
- <a771042b-f63a-d00f-73a1-91a7e6089fe4@ideasonboard.com>
- <20180326083143.r6jz6csckd4ljnpu@verge.net.au>
- <d2c5d935-da1f-038b-a0e6-ce390273e21a@ideasonboard.com>
+        id S1752128AbeC0IRe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:17:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36836 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750937AbeC0IRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:17:33 -0400
+Date: Tue, 27 Mar 2018 10:17:31 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH 02/10] drm/sun4i: Disable YUV channel when using the
+ frontend and set interlace
+Message-ID: <20180327081731.he3lhnvqffuimsi5@flea>
+References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+ <20180321152904.22411-3-paul.kocialkowski@bootlin.com>
+ <20180323095529.5nptn5achjt3esog@flea>
+ <1522137643.1110.4.camel@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cgmzifoncvtg7qrv"
 Content-Disposition: inline
-In-Reply-To: <d2c5d935-da1f-038b-a0e6-ce390273e21a@ideasonboard.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1522137643.1110.4.camel@bootlin.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 10:04:24AM +0100, Kieran Bingham wrote:
-> Hi Simon,
-> 
-> On 26/03/18 09:31, Simon Horman wrote:
-> > On Fri, Mar 23, 2018 at 09:16:13PM +0000, Kieran Bingham wrote:
-> >> Hi Simon,
-> >>
-> >> On 23/03/18 08:51, Simon Horman wrote:
-> >>> On Thu, Mar 22, 2018 at 09:30:40PM +0000, Kieran Bingham wrote:
-> >>>> The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
-> >>>> bus, however in low power mode the ADV7513 will reset it's slave maps to
-> >>>> use the hardware defined default addresses.
-> >>>>
-> >>>> The ADV7511 driver was adapted to allow the two devices to be registered
-> >>>> correctly - but it did not take into account the fault whereby the
-> >>>> devices reset the addresses.
-> >>>>
-> >>>> This results in an address conflict between the device using the default
-> >>>> addresses, and the other device if it is in low-power-mode.
-> >>>>
-> >>>> Repair this issue by moving both devices away from the default address
-> >>>> definitions.
-> >>>
-> >>> Hi Kierean,
-> >>>
-> >>> as this is a fix
-> >>> a) Does it warrant a fixes tag?
-> >>>    Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
-> >>> b) Does it warrant being posted as a fix for v4.16;
-> >>> c) or v4.17?
-> >>
-> >> Tricky one, yes it could but this DTS fix, will only actually 'fix' the issue if
-> >> the corresponding driver updates to allow secondary addresses to be parsed are
-> >> also backported.
-> >>
-> >> It should be safe to back port the dts fix without the driver updates, but the
-> >> addresses specified by this patch will simply be ignored.
-> > 
-> > In that case I think its safe to add the fixes tag and take the DTS patch
-> > via the renesas tree. Perhaps applying it for v4.18 and allowing automatic
-> > backporting to take its course is the cleanest option.
-> > 
-> >> Thus if this is marked with the fixes tag the corresponding patch "drm: adv7511:
-> >> Add support for i2c_new_secondary_device" should also be marked.
-> >>
-> >> It looks like that patch has yet to be picked up by the DRM subsystem, so how
-> >> about I bundle both of these two patches together in a repost along with the
-> >> fixes tag.
-> >>
-> >> In fact, I don't think the ADV7511 dt-bindings update has made any progress
-> >> either. (dt-bindings: adv7511: Extend bindings to allow specifying slave map
-> >> addresses). The media tree variants for the adv7604 have already been picked up
-> >> by Mauro I believe though.
-> >>
-> >> I presume it would be acceptable for this dts patch (or rather all three patches
-> >> mentioned) to get integrated through the DRM tree ?
-> > 
-> > Unless there is a strong reason I would prefer the dts patch to go via
-> > my tree. The reason is to avoid merge conflicts bubbling up to Linus,
-> > which really is something best avoided.
-> 
-> That's perfectly fine with me.
-> 
-> Feel free to add:
-> 
-> Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
-> 
-> as you suggested when you apply, or alternatively let me know if you need a repost.
 
-Thanks, applied for v4.18 with the fixes tag.
+--cgmzifoncvtg7qrv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Mar 27, 2018 at 10:00:43AM +0200, Paul Kocialkowski wrote:
+> Hi,
+>=20
+> On Fri, 2018-03-23 at 10:55 +0100, Maxime Ripard wrote:
+> > On Wed, Mar 21, 2018 at 04:28:56PM +0100, Paul Kocialkowski wrote:
+> > > The YUV channel was only disabled in
+> > > sun4i_backend_update_layer_formats,
+> > > which is not called when the frontend is selected.
+> > >=20
+> > > Thus, creating a layer with a YUV format handled by the backend and
+> > > then
+> > > switching to a format that requires the frontend would keep the YUV
+> > > channel enabled for the layer.
+> > >=20
+> > > This explicitly disables the YUV channel for the layer when using
+> > > the
+> > > frontend as well. It also sets the relevant interlace bit, which was
+> > > missing in the frontend path as well.
+> >=20
+> > This should be part of a separate patch. Usually, if you write "it
+> > also does..." at the end of your commit log, it's a pretty good
+> > indication that it should be another patch :)
+>=20
+> I must say, I figured that this part was missing in the frontend path by
+> chance and couldn't really test the feature, so I'm also tempted to drop
+> it altogether. What do you think?
+
+If you haven't been able to test it, then yeah, don't submit it.
+
+> Also, is interlacing actually used on any of the video outputs we
+> support? Perhaps RGB?
+
+Composite would be a better guess :)
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--cgmzifoncvtg7qrv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq5/hoACgkQ0rTAlCFN
+r3Q5SQ//VZ4bUUFhHz41dByBblMcM+4wj7Po4beEvD1jjl65PRe3A1LTHoNTuhvw
+d3p2NKHeuRnzHx/wd1tohQxyZFUmho3iK2w/4ZSLS7ntUr/Y/gPtp+psiHTocIeE
+QaqY8e6NfPs3hB3MkAQy5EDXtQmsh7Z2U7YrNCP5eMidG4ZIRGqNcE0IAek+aWjh
+Bs/A08N/TdFHH8vjprRCakQofI3+zwLGUXNdaopQxLMdy0aw++NtEl4MEQEYalzX
+5L3v2mKEB2Zm0UN4b+Y0NmpsH3FHhTWwCV34hdkHUsjzK/y3LSEAg+cjdi+0qVbx
+DxjcAHVyVRvVEA3FtgQValYriBM9bDMawWA6u0p0ur/4Ow5huXuoxhHgXFvsc9Sg
+9LtXrlLGfYEPBwADsjhyDppxNekwdKFiKQ2RCG6I+JL9wsw/eBMVqN7h/6TciLRR
+RFbnMlB8CJIXYorWZz9QEEmUvvTaNQ0Xe+8ldRdc+VOfcTnWv1DieU0lJoc4HbG+
+I2lkkDa/wv9ooK8Ir2b0uPuVOkMOS7fJCfIxpsDiFmUnaL2mybPJbNJMSNrERTf5
+O3rhHw2kNU1YxYJon5kET5cYmZ6Qf5QT5lgaRluM/5zGR/t3ePkSCi/M7eED/X4j
+S7AyDNwakDAAAF2fe4rkxH8pNpDJm1pg3ZEgwaETXpdDxaKJwE0=
+=+3Fg
+-----END PGP SIGNATURE-----
+
+--cgmzifoncvtg7qrv--
