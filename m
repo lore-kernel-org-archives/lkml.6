@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+MAJUH6qBrBZJAqPZ5zw8nYbM7gfRqYd+8YV5+m6QPI29ku8bayekBwlcDQZQj0V2jEw/t
-ARC-Seal: i=1; a=rsa-sha256; t=1522168628; cv=none;
+X-Google-Smtp-Source: AIpwx4+VzFUavSyt9l5hbXATkaO1dVBjgokR9ylaVj2n4NC0TAUZQz4Q3e8VIlgHNtl3dvnUWysD
+ARC-Seal: i=1; a=rsa-sha256; t=1522168620; cv=none;
         d=google.com; s=arc-20160816;
-        b=XILhfg9jotzZgIO1VsAtbXkzkJWZ9wOt1D8f3mgGHivvL8QE254Y+EygFhHx/1Hs1R
-         S6lEoKSy68trxw0LuvfnLIkwfCR/qy63GUItyHYgkW1aFXA6cFQyu6K2LqqsMM9/mH7f
-         99HZUM/ZuDPqHGME2AcGN8VlGU7RqSiyXc8Ow4WOE6MUQoGI0+i3MKeGRmZAxtXMSzpc
-         mdzhsk1RPCG5/chGuIelQ5ZEMD4QrajCKaiZikITMVuHqGJgIJASxoEQ3z+Yd1CODhuy
-         I++8hP/fvBTBXAU6OhgV4eI8t7hn8Xrvhn/qtPkQoQt11j66GjBX3nFILp1ypn0LxlpN
-         guiA==
+        b=Q2D3X63xVhCa5aTeGv5JyhAHUPCRrvuBAiABvM8tojAK4it3G3Xdh/bBsr6N9Bb3gR
+         ByuYpaZUyL0eF9HId3Vx5Vzx/5eJ0DS0tOSoaLpA38SEE2ry2p7XZodyAjWdEeI3T27b
+         l9QLDjIWwCu14r2llfh/aXxYHq214AKCpW0gE54cBJZkRoOou4sbiWKQR0FaVB49y9dS
+         BwZJYfA25v4PNbRPGfTbt6qvbquTcGacEckJexeKgo2L0nrkp0S+huOH4foryPFtrtgj
+         aHJ72/E2gBn22Jq64yrKYealrENMy16mu9AAi7I7OQu3E36dVjBBM+bJ6zyK7JJ9lbaw
+         l+AA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+asYKzsXBQ0+eD84EQgYhahPo0CnHv0y+0HodJABELo=;
-        b=NavH6qy9qHbuKB7W7TBGMTh5VB25NK/UJndJHh9062ZCw1u1aZrKiTrcdgy+N3h61t
-         N1FIHwuwKx3SFGB8U6FiL/tSaIta8Ashv23/pjoTy9Ua7Fi8snck41XcdHNmDhZKwAs/
-         OcqIP9sRJamoR2nsir9pCA12NAIT7hNomhi4H7f4KbZY3sfUiQpVkwL0IucoIzgRS6SE
-         tqXvmKCQuLLKchOpLkI/cRRHIw+e0suUTinAeyoVd1pOIXypzvV0yQiiJ0KJgapZRs9x
-         ySTqd6exLIaBHsJB9fjh4h/Z1KgfwxqQdIM96EoMwi6Jebsm1ilamczQIN4mXrCNeq6D
-         UySg==
+        bh=EDp9sC1dHZu+EXISum7C2of9PaUtY/Q0ceT3tIEadXE=;
+        b=tzEZ5znnUDtUxwa1+u2EhgPlB1Iuy+MKmpHjfu9rkQ2E+XLyncA32ei/7Y/NHa1sK8
+         ijO/IsnD36SAecbtLZgDw8hK/O+vs2JzYPUGPwEr6rj1tG4TY2jJHuRrYx3Fl3co0eSJ
+         tjWMtRsPM6tPnTVdBCUHuq2f4004ZVvvAyHPxeWt5G/VggJl0hM2laUUfl9WH064YsdZ
+         05Pxve+MUUKR6UEUDzu3+fkQgjfVqe6d7N5Rm23MUZm5ONx2dL/e3fyjaEg0H/tdSxjr
+         2rws7S4GaXTHhFAmjLFmVu1xFzkeNjfiNgs419MHvfmaqIT3cIhD65y7z5nJTOY5GEq+
+         DWpw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Richard Weinberger <richard@nod.at>,
 	Andri Yngvason <andri.yngvason@marel.com>,
 	Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 076/101] can: cc770: Fix use after free in cc770_tx_interrupt()
-Date: Tue, 27 Mar 2018 18:27:48 +0200
-Message-Id: <20180327162754.749117466@linuxfoundation.org>
+Subject: [PATCH 4.14 074/101] can: cc770: Fix stalls on rt-linux, remove redundant IRQ ack
+Date: Tue, 27 Mar 2018 18:27:46 +0200
+Message-Id: <20180327162754.639057000@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109029474104153?=
-X-GMAIL-MSGID: =?utf-8?q?1596109491149594972?=
+X-GMAIL-THRID: =?utf-8?q?1596109023717652626?=
+X-GMAIL-MSGID: =?utf-8?q?1596109483196717750?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +52,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andri Yngvason <andri.yngvason@marel.com>
 
-commit 9ffd7503944ec7c0ef41c3245d1306c221aef2be upstream.
+commit f4353daf4905c0099fd25fa742e2ffd4a4bab26a upstream.
 
-This fixes use after free introduced by the last cc770 patch.
+This has been reported to cause stalls on rt-linux.
 
+Suggested-by: Richard Weinberger <richard@nod.at>
+Tested-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Andri Yngvason <andri.yngvason@marel.com>
-Fixes: 746201235b3f ("can: cc770: Fix queue stall & dropped RTR reply")
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/cc770/cc770.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/can/cc770/cc770.c |   15 ---------------
+ 1 file changed, 15 deletions(-)
 
 --- a/drivers/net/can/cc770/cc770.c
 +++ b/drivers/net/can/cc770/cc770.c
-@@ -706,13 +706,12 @@ static void cc770_tx_interrupt(struct ne
- 		return;
- 	}
+@@ -447,15 +447,6 @@ static netdev_tx_t cc770_start_xmit(stru
  
--	can_put_echo_skb(priv->tx_skb, dev, 0);
--	can_get_echo_skb(dev, 0);
+ 	stats->tx_bytes += dlc;
+ 
 -
- 	cf = (struct can_frame *)priv->tx_skb->data;
- 	stats->tx_bytes += cf->can_dlc;
+-	/*
+-	 * HM: We had some cases of repeated IRQs so make sure the
+-	 * INT is acknowledged I know it's already further up, but
+-	 * doing again fixed the issue
+-	 */
+-	cc770_write_reg(priv, msgobj[mo].ctrl0,
+-			MSGVAL_UNC | TXIE_UNC | RXIE_UNC | INTPND_RES);
+-
+ 	return NETDEV_TX_OK;
+ }
+ 
+@@ -684,12 +675,6 @@ static void cc770_tx_interrupt(struct ne
+ 	/* Nothing more to send, switch off interrupts */
+ 	cc770_write_reg(priv, msgobj[mo].ctrl0,
+ 			MSGVAL_RES | TXIE_RES | RXIE_RES | INTPND_RES);
+-	/*
+-	 * We had some cases of repeated IRQ so make sure the
+-	 * INT is acknowledged
+-	 */
+-	cc770_write_reg(priv, msgobj[mo].ctrl0,
+-			MSGVAL_UNC | TXIE_UNC | RXIE_UNC | INTPND_RES);
+ 
  	stats->tx_packets++;
- 
-+	can_put_echo_skb(priv->tx_skb, dev, 0);
-+	can_get_echo_skb(dev, 0);
- 	priv->tx_skb = NULL;
- 
- 	netif_wake_queue(dev);
+ 	can_get_echo_skb(dev, 0);
