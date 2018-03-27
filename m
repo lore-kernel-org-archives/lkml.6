@@ -1,116 +1,190 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522236660; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AIpwx4/14H4akDGPHe/5YHB6pIcimystjAIT5NiSjk0KLlfqfhujXbmnLGZjrhk8PbTdjrLW+VqK
+ARC-Seal: i=1; a=rsa-sha256; t=1522128625; cv=none;
         d=google.com; s=arc-20160816;
-        b=zkiycbxZlfqPsh0kaEbFZtaGttHbPpuz/kbyzc5MtLD4STLsQSj57Cox5pHLeowUxO
-         oLzvyGAH9DexwQ2MznTSJgiY5p2En2WG1Orm8zAyUPGu2KCTCH6cT96kS6A/S5TxISdc
-         IB+GaDIJQPxnkLp4uTwVf49Utw23WdNxdgffRhzsw2GkBj8FaduRB1EBD8bBDlGNPmXh
-         zQXF87Toztpj1+2ZMu/+o5sSbKI/UFAtyajIcnTr+0vRliWew13n7IXQbunZyCb9WJyQ
-         hP63KJj/AaJ2Zp0Y7T/rmX2ydzZx+rKYqLgCo8flXCKvNKCZOvBHPxRB5wyc5psHk3IX
-         Vs9Q==
+        b=HIcJJI6vXCL7mGWcesjGSjmFlMkzBLyNILZFxcfV9Hg5n9+DJ/5VXtSx7ikmbQlFtN
+         rC4pwcruGypIUEdsJu+BaVjLjUEbp/pZIcgTGanPyjhAKIEc7N58KGYgFM5gWrCkThAQ
+         nNTOqkWq0N6xF4GwhvWuZHrg3dR0FSMpSdwerKwKQFZrz6lY68RqA0liSdHM1zoSvUOI
+         dvNUhA0RjKlwoHzNAlx4UzulbLtDwG0Y4K9AGwMreNwiEHmNjv7J2eHs8UfirTFeRQRv
+         6s/kSmRh/O1d1NUdRGKg1QP+mGwnuFu484v1tMAV30jf6tDLDWgGDj//alhuOCCIoCRE
+         u/Pg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=Qy+9YcLlsKmURIYVduJrOTcaOq8ClTGwNMLz7CTX/ZY=;
-        b=STXBRuki7I7FWPGmcl+w/T3B4y+aoqBORWNsB5rC6epoHktTMXY+anmFRTWpjYX9i+
-         N08xfH9WJCI4SqSndHXeFYzKMfnPSy5Kd/JklPmR53dBpc20nptSp/5T+WqRMX0cb3vg
-         cxkqTV2Y3qV2m36OxV7B5DI5+9keIgPq6Eh2lDjJM5qnZUvmrK6pS+ad3nSHbsoXORyL
-         9PWsJleMRB1+z3sGE8cmv9zJGNVlEfdVAGXBme6WPWE4DRzUThEcpUuLfN8Apx2Ww0h9
-         9C3JISwKOOKbWPnnLHAcmFzKXaBRFVijebyo0MBAVeVb1fckKoOuY57TaFKB5PQ8xRrP
-         ObzA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=SmnoR5uX+QdJc5jR+e3JIIYITKB70ECICvL3cl8cDVA=;
+        b=EtbkmVkG1Irgu5B+HcKy3QQSu7PdW4g7yu5w7vykUYHINLz9NMbYJII+OSv1fMh3CA
+         9q1Ygty9tJzeJf/TwHposhXuNwl0LousMm0AcKShMs+o4hSofd+koSN05IRxBdlFwLU7
+         W41VrCFp+bKo0MIQWPrnERgoRZn0KuSxUAYjHM3Kb/6o8fMqJJQ2/3vECkdTW7octY3U
+         e5EMnQw3lrs7ED/t2sKJxsy5EKljJIh2myqAMdoHgw/tsxSPmwAL373ryTIP2VR9X8I0
+         UrkKCl7KcKrS9MY++p12U+ZKGH1lmEeAsb1TXlNoibGAA9zSBtZCPFj1HANq2Z4AKGsl
+         CKdw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=RkjbxsZW;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Ppx4NfQ3;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=teTvD2yn;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=RkjbxsZW;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Ppx4NfQ3;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AIpwx497swgZCRQEnemtTNak9XF4cBmUFLab/3wn+D1rs3s8+mEP7+G1YSFdcqhhYWKHvo+zcajljmyGKvO9BoI8x+k=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <1522128575-5326-19-git-send-email-yamada.masahiro@socionext.com>
-References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-19-git-send-email-yamada.masahiro@socionext.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 28 Mar 2018 04:30:59 -0700
-X-Google-Sender-Auth: vTK08mkU7Ie4CO1ncu1gZkjHj58
-Message-ID: <CAGXu5jJrd2w5ys6tfwH6zd6dpep65XuV3wCZs=hUi=p5nbjDHw@mail.gmail.com>
-Subject: Re: [PATCH v2 18/21] gcc-plugins: move GCC version check for PowerPC
- to Kconfig
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, Emese Revfy <re.emese@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=teTvD2yn;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R5TaM2011947
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Emese Revfy <re.emese@gmail.com>
+Subject: [PATCH v2 17/21] gcc-plugins: always build plugins with C++
+Date: Tue, 27 Mar 2018 14:29:31 +0900
+Message-Id: <1522128575-5326-18-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067545737829576?=
-X-GMAIL-MSGID: =?utf-8?q?1596180829236776023?=
+X-GMAIL-THRID: =?utf-8?q?1596067545463713502?=
+X-GMAIL-MSGID: =?utf-8?q?1596067545463713502?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> For PowerPC, GCC 5.2 is the requirement for GCC plugins.  Move the
-> version check to Kconfig so that the GCC plugin menus will be hidden
-> if an older compiler is in use.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> ---
->
-> Changes in v2: None
->
->  arch/powerpc/Kconfig         | 2 +-
->  scripts/Makefile.gcc-plugins | 8 --------
->  2 files changed, 1 insertion(+), 9 deletions(-)
->
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 73ce5dd..b8474c2 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -195,7 +195,7 @@ config PPC
->         select HAVE_FTRACE_MCOUNT_RECORD
->         select HAVE_FUNCTION_GRAPH_TRACER
->         select HAVE_FUNCTION_TRACER
-> -       select HAVE_GCC_PLUGINS
-> +       select HAVE_GCC_PLUGINS                 if GCC_VERSION >= 50200
->         select HAVE_GENERIC_GUP
->         select HAVE_HW_BREAKPOINT               if PERF_EVENTS && (PPC_BOOK3S || PPC_8xx)
->         select HAVE_IDE
-> diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
-> index b0f9108..25da4c0 100644
-> --- a/scripts/Makefile.gcc-plugins
-> +++ b/scripts/Makefile.gcc-plugins
-> @@ -56,14 +56,6 @@ gcc-plugins-check: FORCE
->  ifdef CONFIG_GCC_PLUGINS
->    ifeq ($(PLUGINCC),)
->      ifneq ($(GCC_PLUGINS_CFLAGS),)
-> -      # Various gccs between 4.5 and 5.1 have bugs on powerpc due to missing
-> -      # header files. gcc <= 4.6 doesn't work at all, gccs from 4.8 to 5.1 have
-> -      # issues with 64-bit targets.
-> -      ifeq ($(ARCH),powerpc)
-> -        ifeq ($(call cc-ifversion, -le, 0501, y), y)
-> -         @echo "Cannot use CONFIG_GCC_PLUGINS: plugin support on gcc <= 5.1 is buggy on powerpc, please upgrade to gcc 5.2 or newer" >&2 && exit 1
+If the target compiler is GCC 4.8 or newer, plugins are compiled with
+HOSTCXX.  Otherwise, gcc-plugin.sh will select HOSTCC or HOSTCXX.
 
-I think we should retain the "buggy" note as a comment in Kconfig
-since that knowledge isn't obvious just from the GCC_VERSION test.
+To simplify things, drop the HOSTCC support for plugins.  If you use
+GCC plugins, the requirement for the target compiler is GCC 4.8 (or
+older compiler with necessary features backported).  This is a feature
+for advanced users, so this requirement would not be a big deal.
+Currently, building plugins requires GCC 4.5, so this is not a big jump.
 
-> -        endif
-> -      endif
->        $(Q)$(srctree)/scripts/gcc-plugin.sh --show-error $(HOSTCXX) $(CC) || true
->        @echo "Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?" >&2 && exit 1
->      endif
-> --
-> 2.7.4
->
+Remove the code that was needed to build plugins with HOSTCC as a
+preparation for Kconfig migration.
 
--Kees
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+Changes in v2: None
+
+ scripts/Makefile.gcc-plugins | 11 +++--------
+ scripts/gcc-plugin.sh        | 38 +++-----------------------------------
+ scripts/gcc-plugins/Makefile | 15 ++++-----------
+ 3 files changed, 10 insertions(+), 54 deletions(-)
+
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index b2a95af..b0f9108 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ ifdef CONFIG_GCC_PLUGINS
+-  __PLUGINCC := $(call cc-ifversion, -ge, 0408, $(HOSTCXX), $(HOSTCC))
+-  PLUGINCC := $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-plugin.sh "$(__PLUGINCC)" "$(HOSTCXX)" "$(CC)")
++  PLUGINCC := $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-plugin.sh $(HOSTCXX) $(CC))
+ 
+   SANCOV_PLUGIN := -fplugin=$(objtree)/scripts/gcc-plugins/sancov_plugin.so
+ 
+@@ -65,12 +64,8 @@ ifdef CONFIG_GCC_PLUGINS
+ 	  @echo "Cannot use CONFIG_GCC_PLUGINS: plugin support on gcc <= 5.1 is buggy on powerpc, please upgrade to gcc 5.2 or newer" >&2 && exit 1
+         endif
+       endif
+-      ifeq ($(call cc-ifversion, -ge, 0405, y), y)
+-	$(Q)$(srctree)/scripts/gcc-plugin.sh --show-error "$(__PLUGINCC)" "$(HOSTCXX)" "$(CC)" || true
+-	@echo "Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?" >&2 && exit 1
+-      else
+-	@echo "Cannot use CONFIG_GCC_PLUGINS: your gcc version does not support plugins, you should upgrade it to at least gcc 4.5" >&2 && exit 1
+-      endif
++      $(Q)$(srctree)/scripts/gcc-plugin.sh --show-error $(HOSTCXX) $(CC) || true
++      @echo "Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?" >&2 && exit 1
+     endif
+   endif
+ endif
+diff --git a/scripts/gcc-plugin.sh b/scripts/gcc-plugin.sh
+index d3caefe..0edbdae 100755
+--- a/scripts/gcc-plugin.sh
++++ b/scripts/gcc-plugin.sh
+@@ -8,42 +8,10 @@ if [ "$1" = "--show-error" ] ; then
+ 	shift || true
+ fi
+ 
+-gccplugins_dir=$($3 -print-file-name=plugin)
+-plugincc=$($1 -E -x c++ - -o /dev/null -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
+-#include "gcc-common.h"
+-#if BUILDING_GCC_VERSION >= 4008 || defined(ENABLE_BUILD_WITH_CXX)
+-#warning $2 CXX
+-#else
+-#warning $1 CC
+-#endif
+-EOF
+-)
+-
+-if [ $? -ne 0 ]
+-then
+-	if [ -n "$SHOW_ERROR" ] ; then
+-		echo "${plugincc}" >&2
+-	fi
+-	exit 1
+-fi
+-
+-case "$plugincc" in
+-	*"$1 CC"*)
+-		echo "$1"
+-		exit 0
+-		;;
+-
+-	*"$2 CXX"*)
+-		# the c++ compiler needs another test, see below
+-		;;
+-
+-	*)
+-		exit 1
+-		;;
+-esac
++gccplugins_dir=$($2 -print-file-name=plugin)
+ 
+ # we need a c++ compiler that supports the designated initializer GNU extension
+-plugincc=$($2 -c -x c++ -std=gnu++98 - -fsyntax-only -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
++plugincc=$($1 -c -x c++ -std=gnu++98 - -fsyntax-only -I"${srctree}"/gcc-plugins -I"${gccplugins_dir}"/include 2>&1 <<EOF
+ #include "gcc-common.h"
+ class test {
+ public:
+@@ -56,7 +24,7 @@ EOF
+ 
+ if [ $? -eq 0 ]
+ then
+-	echo "$2"
++	echo "$1"
+ 	exit 0
+ fi
+ 
+diff --git a/scripts/gcc-plugins/Makefile b/scripts/gcc-plugins/Makefile
+index e2ff425..47d5f69 100644
+--- a/scripts/gcc-plugins/Makefile
++++ b/scripts/gcc-plugins/Makefile
+@@ -1,17 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
+ GCC_PLUGINS_DIR := $(shell $(CC) -print-file-name=plugin)
+ 
+-ifeq ($(PLUGINCC),$(HOSTCC))
+-  HOSTLIBS := hostlibs
+-  HOST_EXTRACFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu99 -ggdb
+-  export HOST_EXTRACFLAGS
+-else
+-  HOSTLIBS := hostcxxlibs
+-  HOST_EXTRACXXFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu++98 -fno-rtti
+-  HOST_EXTRACXXFLAGS += -fno-exceptions -fasynchronous-unwind-tables -ggdb
+-  HOST_EXTRACXXFLAGS += -Wno-narrowing -Wno-unused-variable
+-  export HOST_EXTRACXXFLAGS
+-endif
++HOSTLIBS := hostcxxlibs
++HOST_EXTRACXXFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu++98 -fno-rtti
++HOST_EXTRACXXFLAGS += -fno-exceptions -fasynchronous-unwind-tables -ggdb
++HOST_EXTRACXXFLAGS += -Wno-narrowing -Wno-unused-variable
+ 
+ ifneq ($(CFLAGS_KCOV), $(SANCOV_PLUGIN))
+   GCC_PLUGIN := $(filter-out $(SANCOV_PLUGIN), $(GCC_PLUGIN))
 -- 
-Kees Cook
-Pixel Security
+2.7.4
