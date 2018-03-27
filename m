@@ -1,112 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeC0DWG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 23:22:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39258 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752218AbeC0DV6 (ORCPT
+        id S1752213AbeC0DV5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 23:21:57 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:11119 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752169AbeC0DVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 23:21:58 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1D53602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pelcan@codeaurora.org
-From: Philip Elcan <pelcan@codeaurora.org>
-To: linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org
-Cc: Thomas Speier <tspeier@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: [PATCH V2] arm64: tlbflush: avoid writing RES0 bits
-Date: Mon, 26 Mar 2018 23:21:17 -0400
-Message-Id: <1522120877-9136-1-git-send-email-pelcan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 26 Mar 2018 23:21:54 -0400
+X-UUID: e2f2f7a2a34348b8a30b36bd25f29215-20180327
+Message-ID: <1522120906.18424.21.camel@mtkswgap22>
+Subject: Re: [PATCH v1 01/16] dt-bindings: power: reset: mediatek: add
+ bindings for power device
+From: Sean Wang <sean.wang@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: <mark.rutland@arm.com>, <sre@kernel.org>, <lee.jones@linaro.org>,
+        <a.zummo@towertech.it>, <alexandre.belloni@free-electrons.com>,
+        <eddie.huang@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Tue, 27 Mar 2018 11:21:46 +0800
+In-Reply-To: <20180326222455.6kou2rdn76k6p6ct@rob-hp-laptop>
+References: <cover.1521794176.git.sean.wang@mediatek.com>
+         <c5527464207b02d40f1c2682feb97ebf5dd443be.1521794176.git.sean.wang@mediatek.com>
+         <20180326222455.6kou2rdn76k6p6ct@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23744.000
+X-TM-AS-Result: No-14.246300-8.000000-10
+X-TMASE-MatchedRID: zGP2F0O7j/v4OiVTWoD8RCa1MaKuob8PC/ExpXrHizyrmaMm8BwMJKSx
+        VUPqsOdUDsWHoENn2KjDhTh6GtC1/l3MeDPg67Be7spMO3HwKCAW40XiUkbrG2ecrqZc3vabfhQ
+        4FB19kmoqdv4KbYr7ea/MULUxW2VhgGgbIWz4XUxgP1dNF1ow7TFcf92WG8u/+Cckfm+bb6DfqL
+        J6KzMx0CF7r1KLtjtCfnyL6QX6YMKR9GF2J2xqMzl/1fD/GopdcmfM3DjaQLHEQdG7H66TyH4gK
+        q42LRYkGaKWfSYSA4bbcJyFK13PnNbJoXa/SBL6s0QWx2bcZhl+3BndfXUhXQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--14.246300-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23744.000
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several of the bits of the TLBI register operand are RES0 per the ARM
-ARM, so TLBI operations should avoid writing non-zero values to these
-bits.
+On Mon, 2018-03-26 at 17:24 -0500, Rob Herring wrote:
+> On Fri, Mar 23, 2018 at 05:14:58PM +0800, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > Add device-tree binding for the power device responsible for shutdown a
+> > remote SoC, which is a tiny circuit block present on MediaTek PMIC based
+> > RTC.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  .../bindings/power/reset/mt6397-rtc-poweroff.txt   | 24 ++++++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/power/reset/mt6397-rtc-poweroff.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/power/reset/mt6397-rtc-poweroff.txt b/Documentation/devicetree/bindings/power/reset/mt6397-rtc-poweroff.txt
+> > new file mode 100644
+> > index 0000000..75a9d7d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/power/reset/mt6397-rtc-poweroff.txt
+> > @@ -0,0 +1,24 @@
+> > +Device-Tree bindings for Power Device on MediaTek PMIC RTC
+> > +
+> > +The power device is responsible for externally power off or on the remote
+> > +MediaTek SoC through the a tiny circuit block BBPU inside PMIC RTC.
+> > +
+> > +Required parent node:
+> > +- rtc
+> > +	For MediaTek PMIC RTC bindings, see:
+> > +	Documentation/devicetree/bindings/mfd/mt6397.txt
+> > +
+> > +Required properties:
+> > +- compatible: Should be one of follows
+> > +	"mediatek,mt6323-rtc-poweroff": for MT6323 PMIC
+> > +	"mediatek,mt6397-rtc-poweroff": for MT6397 PMIC
+> > +
+> > +Example:
+> > +
+> > +	rtc {
+> > +		compatible = "mediatek,mt6323-rtc";
+> > +
+> > +		power-off {
+> > +			compatible = "mediatek,mt6323-rtc-poweroff";
+> > +		};
+> 
+> There's no need for this node. The OS can register a device in the rtc 
+> driver.
+> 
 
-This patch adds a macro __TLBI_VADDR(addr, asid) that creates the
-operand register in the correct format and honors the RES0 bits.
+It seems a good way.
 
-Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
----
- arch/arm64/include/asm/tlbflush.h | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+I will remove the really simple dt-binding and use a
+platform_device_register_simple api embedded in rtc driver to
+register the power-off device.
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 9e82dd7..b1205e9 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -60,6 +60,15 @@
- 		__tlbi(op, (arg) | USER_ASID_FLAG);				\
- } while (0)
- 
-+/* This macro creates a properly formatted VA operand for the TLBI */
-+#define __TLBI_VADDR(addr, asid)				\
-+	({							\
-+		unsigned long __ta = (addr) >> 12;		\
-+		__ta &= GENMASK_ULL(43, 0);			\
-+		__ta |= (unsigned long)(asid) << 48;		\
-+		__ta;						\
-+	})
-+
- /*
-  *	TLB Management
-  *	==============
-@@ -117,7 +126,7 @@ static inline void flush_tlb_all(void)
- 
- static inline void flush_tlb_mm(struct mm_struct *mm)
- {
--	unsigned long asid = ASID(mm) << 48;
-+	unsigned long asid = __TLBI_VADDR(0, ASID(mm));
- 
- 	dsb(ishst);
- 	__tlbi(aside1is, asid);
-@@ -128,7 +137,7 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
- static inline void flush_tlb_page(struct vm_area_struct *vma,
- 				  unsigned long uaddr)
- {
--	unsigned long addr = uaddr >> 12 | (ASID(vma->vm_mm) << 48);
-+	unsigned long addr = __TLBI_VADDR(uaddr, ASID(vma->vm_mm));
- 
- 	dsb(ishst);
- 	__tlbi(vale1is, addr);
-@@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
- 		return;
- 	}
- 
--	start = asid | (start >> 12);
--	end = asid | (end >> 12);
-+	start = __TLBI_VADDR(start, asid);
-+	end = __TLBI_VADDR(end, asid);
- 
- 	dsb(ishst);
- 	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
-@@ -185,8 +194,8 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
- 		return;
- 	}
- 
--	start >>= 12;
--	end >>= 12;
-+	start = __TLBI_VADDR(start, 0);
-+	end = __TLBI_VADDR(end, 0);
- 
- 	dsb(ishst);
- 	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12))
-@@ -202,7 +211,7 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
- static inline void __flush_tlb_pgtable(struct mm_struct *mm,
- 				       unsigned long uaddr)
- {
--	unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
-+	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
- 
- 	__tlbi(vae1is, addr);
- 	__tlbi_user(vae1is, addr);
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Hope I do not misconception your points addressed here.
+
+> > +	};
+> > -- 
+> > 2.7.4
+> > 
