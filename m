@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48gyzt3fxmTmc6cM7DVMpCYmQ89tDOXgXNgjy1FnMznedeRKti4h7/7mQduYTMsEjqNTyxk
-ARC-Seal: i=1; a=rsa-sha256; t=1522168941; cv=none;
+X-Google-Smtp-Source: AIpwx48uKhaXsyhwNTwN7oQ3/8MncMX21fOyPOiPGWaWgL3edgdS8bKmtp+E0gl/lq/QVZjM8MiA
+ARC-Seal: i=1; a=rsa-sha256; t=1522168938; cv=none;
         d=google.com; s=arc-20160816;
-        b=v3OBeCvAw6UvfN5t+hHdw1YpBuHsA094Dc+M8Y3szHRCAUvHqUcWr1vA9PKajzxWuf
-         Cbf1WGfNFYi49BAH66XcmmcpItwHZhtz7bSF17QXra3G4PDaEK1nvIEXpNQVUgjpQJCz
-         UydxymqoRHWI6qC8PtlVNqdtzggFDPfhKUarueSN1Pf1bfAUFxnHJys2+rVIvGsAWePq
-         s/XkkaXBC2YGgQSWBdIFN+f/UdP8ku3bAs2yn7uNLYA4wDWpIijsLYQkCq6bhGP3ur7x
-         iNmM37yxmcWB+o62r3WfHSmbxYAvNthHkucULbsWaPey5clcFBjopa16yRNKthOEhH+5
-         Uaug==
+        b=sQOCDkTlgfGKc2L6IBMSIXbMk01GqS8pY+tjGFpKHyG/7B0kiFsCka/WjTEkUWhQdU
+         YnI2KjLXaYkKM4RC3fgY0WBS/SacQaXywul9UyErS0R9Lc5ciKKZG/xf8a0I75ZJbWOp
+         Jh/aPBLlmZbF9Tg6IfElB2FV0VO/SLU92ML0xdLl6f+1VWF6EHFQgtroaKeeHe39lXgx
+         16/7NwGNuAPJB9RE2VJRpgcJMrarw1YRfjUUoK7CuIPC3qSngJ8Mj3PPuy+f9jPK21cb
+         OoR7UteqC8cNNCSWLlhbHhqbstD95IM/P+4tTl8QLgnAMFkk0j0PiLhZC2oEWlC8QFYK
+         bd3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=57gBCyflZR5udfwQscPVvdhSue56uBWXZPVpFWnsuyU=;
-        b=1H+wGVUdsbIlERq7bi2CPrZFSqGsKYDvuCqLkKU697lESPnGE2csrEaWx9GQpCvkVc
-         sJosciweenBTL66xCfGG1iXQiITR9iOLD4CPYfBZ5F8QrWjMjidwnIcoR6BdAyso2BtQ
-         6hyrE6+bwyeiUMWXREIdbUA1EuzGAFFxKJSwB3KYX/JWNx73lzejg4i5nT8Dc6sCEg4i
-         PpjYKzmbQRVk3e7A2Cm6aSpcANSOMsyMhJj0PQ5PLhzh8ctdcw+T98mfKbMSGZpC63Pk
-         MZ+1igKZf+/HeztdKECfeSvHb78N8CjTuvHu8zXzgv6QW5CLLRc0n9sqnzMvg95fZ+eL
-         9fow==
+        bh=Z1uNSY1FvUaBWYLTnQVIobn1cLoiDl1NjU7ihRMhXhk=;
+        b=op43D3+KzkQRSVID+1f7hSnGSDYRxQW75LKknsXb4ZrbRc0f+7nnBPOF2A88L17nTL
+         RYoAH+xiPmpOqtiIFDJA20fGx0V+OMsQ04E2mmaEWujaFGFtgwUGU3X/UMtrcO1Qhlrk
+         k79mzzHpc3AtvBgLvNoj0vP9YCxkLXkIHIKf8QYHFu+ng/PlYSAwlieS3HhH+B1E4WeV
+         s8OWF5QW5VarlidFK5iNuq27zA6z6a9EJoqvIqiyijEpmblMnjwieiycy4KHQVxVu2NU
+         7GFauvv56gB/kanZMpEi6N7sFA6Dr6trLys//c8eA0g349HXL3H7oM4qFtAOryikWADn
+         2YRA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Waiman Long <longman@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH 4.15 087/105] posix-timers: Protect posix clock array access against speculation
-Date: Tue, 27 Mar 2018 18:28:07 +0200
-Message-Id: <20180327162803.562069125@linuxfoundation.org>
+	linux-efi@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.15 086/105] x86/efi: Free efi_pgd with free_pages()
+Date: Tue, 27 Mar 2018 18:28:06 +0200
+Message-Id: <20180327162803.520307492@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109511321861911?=
-X-GMAIL-MSGID: =?utf-8?q?1596109820104170228?=
+X-GMAIL-THRID: =?utf-8?q?1596109508223875583?=
+X-GMAIL-MSGID: =?utf-8?q?1596109816858138021?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,59 +52,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Waiman Long <longman@redhat.com>
 
-commit 19b558db12f9f4e45a22012bae7b4783e62224da upstream.
+commit 06ace26f4e6fcf747e890a39193be811777a048a upstream.
 
-The clockid argument of clockid_to_kclock() comes straight from user space
-via various syscalls and is used as index into the posix_clocks array.
+The efi_pgd is allocated as PGD_ALLOCATION_ORDER pages and therefore must
+also be freed as PGD_ALLOCATION_ORDER pages with free_pages().
 
-Protect it against spectre v1 array out of bounds speculation. Remove the
-redundant check for !posix_clock[id] as this is another source for
-speculation and does not provide any advantage over the return
-posix_clock[id] path which returns NULL in that case anyway.
-
+Fixes: d9e9a6418065 ("x86/mm/pti: Allocate a separate user PGD")
+Signed-off-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-efi@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: stable@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1802151718320.1296@nanos.tec.linutronix.de
+Link: https://lkml.kernel.org/r/1521746333-19593-1-git-send-email-longman@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/posix-timers.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/x86/platform/efi/efi_64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -50,6 +50,7 @@
- #include <linux/export.h>
- #include <linux/hashtable.h>
- #include <linux/compat.h>
-+#include <linux/nospec.h>
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -228,7 +228,7 @@ int __init efi_alloc_page_tables(void)
+ 	if (!pud) {
+ 		if (CONFIG_PGTABLE_LEVELS > 4)
+ 			free_page((unsigned long) pgd_page_vaddr(*pgd));
+-		free_page((unsigned long)efi_pgd);
++		free_pages((unsigned long)efi_pgd, PGD_ALLOCATION_ORDER);
+ 		return -ENOMEM;
+ 	}
  
- #include "timekeeping.h"
- #include "posix-timers.h"
-@@ -1346,11 +1347,15 @@ static const struct k_clock * const posi
- 
- static const struct k_clock *clockid_to_kclock(const clockid_t id)
- {
--	if (id < 0)
-+	clockid_t idx = id;
-+
-+	if (id < 0) {
- 		return (id & CLOCKFD_MASK) == CLOCKFD ?
- 			&clock_posix_dynamic : &clock_posix_cpu;
-+	}
- 
--	if (id >= ARRAY_SIZE(posix_clocks) || !posix_clocks[id])
-+	if (id >= ARRAY_SIZE(posix_clocks))
- 		return NULL;
--	return posix_clocks[id];
-+
-+	return posix_clocks[array_index_nospec(idx, ARRAY_SIZE(posix_clocks))];
- }
