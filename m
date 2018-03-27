@@ -1,150 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751371AbeC0GQp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:16:45 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:5909 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751121AbeC0GQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:16:42 -0400
-From: "liwei (CM)" <liwei213@huawei.com>
-To: "liwei (CM)" <liwei213@huawei.com>, Arnd Bergmann <arnd@arndb.de>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "xuwei (O)" <xuwei5@huawei.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Riku Voipio <riku.voipio@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, Eric Anholt <eric@anholt.net>,
-        DTML <devicetree@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        zangleigang <zangleigang@hisilicon.com>,
-        Gengjianfeng <gengjianfeng@hisilicon.com>,
-        Guodong Xu <guodong.xu@linaro.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        "Fengbaopeng (kevin, Kirin Solution Dept)"
-        <fengbaopeng@hisilicon.com>,
-        "Yaniv Gardi" <ygardi@codeaurora.org>
-Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlOWkjTogW1BBVENIIHY4IDIvNV0gZHQtYmlu?=
- =?utf-8?Q?dings:_scsi:_ufs:_add_document_for_hisi-ufs?=
-Thread-Topic: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSCB2OCAyLzVdIGR0LWJpbmRpbmdzOiBz?=
- =?utf-8?Q?csi:_ufs:_add_document_for_hisi-ufs?=
-Thread-Index: AQHTpLNt7xq76dhVgkeSgBp0Vy2vQaOrAJgAgDJE6ZCABLCUgIAAkqZA//+FzQCAAJJzQIABEYQA
-Date: Tue, 27 Mar 2018 06:15:15 +0000
-Message-ID: <1699CE87DE933F49876AD744B5DC140FA588AD@DGGEMM506-MBS.china.huawei.com>
-References: <20180213101412.5717-1-liwei213@huawei.com>
- <20180213101412.5717-3-liwei213@huawei.com>
- <CAK8P3a2b3rLHyM+vMppCkAR3VYbhw-b0LpuWfLCqjs7z9n+hyw@mail.gmail.com>
- <1699CE87DE933F49876AD744B5DC140FA584ED@DGGEMM506-MBS.china.huawei.com>
- <CAK8P3a3NdHLDf2vOMyZ1qcWNW1Jg5T47qR0qWhWEeDn+90S4ug@mail.gmail.com>
- <1699CE87DE933F49876AD744B5DC140FA58798@DGGEMM506-MBS.china.huawei.com>
- <CAK8P3a29sDaEj=iTkru-3mc9NpjNvZos3Z+h5UsT1cAeULoGHw@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.189.155.72]
-Content-Type: text/plain; charset="utf-8"
+        id S1751121AbeC0GRQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:17:16 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:37411 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750848AbeC0GRO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 02:17:14 -0400
+X-Google-Smtp-Source: AIpwx49lzaiM0YVqosR0dka3gKCUCiLzyeX2CCakMyX1QY2iGLfdRVQuBSErCcvMYGW1U8Vq9of3kQ==
+Date: Tue, 27 Mar 2018 08:17:09 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
+Message-ID: <20180327061709.GA10639@localhost.localdomain>
+References: <1521649309-26690-1-git-send-email-longman@redhat.com>
+ <1521649309-26690-3-git-send-email-longman@redhat.com>
+ <20180322084120.GE7231@localhost.localdomain>
+ <e754e128-0a93-800e-e71b-2c8dc316ba8a@redhat.com>
+ <20180323075952.GA4763@localhost.localdomain>
+ <a8860a42-31b5-4620-7b23-b7515ee11d7d@redhat.com>
+ <20180326124711.GE5942@localhost.localdomain>
+ <bf79b45e-7716-65af-03ca-7112dc367371@redhat.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bf79b45e-7716-65af-03ca-7112dc367371@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2R6GnhO029603
 
-Hi, Arnd
-
-At present our ufs module mainly has four clocks from the outside:
-hclk_ufs:     main clock of ufs controller ,freq is 207.5MHz 
-cfg_phy_clk:  configuration clock of MPHY, freq is 51.875MHz
-ref_phy_clk:  reference clock of MPHY from PMU, freq is 19.2MHz
-ref_io_clk:    reference clock for the external interface to the device, freq is 19.2MHz
-
-We control two clocks "ref_io_clk" and "cfg_phy_clk" in the driver because the other two are controlled by main clock module and pmu. 
-for this patch, cfg_phy_clk corresponds to "phy_clk", ref_io_clk corresponds to "ref_clk".
-
-So the clks in the patch you give appear to be unsuitable for describing this .And the following clks of qcom are internal clock? 
-We didn't describe or pay attention to the clock inside the ufs module.
-
-PHY to controller symbol synchronization clocks:
-        "rx_lane0_sync_clk" - RX Lane 0
-        "rx_lane1_sync_clk" - RX Lane 1
-        "tx_lane0_sync_clk" - TX Lane 0
-        "tx_lane1_sync_clk" - TX Lane 1
-
-
------邮件原件-----
-发件人: liwei (CM) 
-发送时间: 2018年3月26日 20:02
-收件人: 'Arnd Bergmann'
-抄送: Rob Herring; Mark Rutland; xuwei (O); Catalin Marinas; Will Deacon; Vinayak Holikatti; James E.J. Bottomley; Martin K. Petersen; Kevin Hilman; Gregory CLEMENT; Thomas Petazzoni; Masahiro Yamada; Riku Voipio; Thierry Reding; Krzysztof Kozlowski; Eric Anholt; DTML; Linux Kernel Mailing List; Linux ARM; linux-scsi; zangleigang; Gengjianfeng; Guodong Xu; Zhangfei Gao; Fengbaopeng (kevin, Kirin Solution Dept); Yaniv Gardi
-主题: 答复: 答复: 答复: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
-
-Hi, Arnd
-
-I'll ask our soc colleagues for help and give a detailed and accurate explanation aosp.
-
-Thanks!
-
-
------邮件原件-----
-发件人: arndbergmann@gmail.com [mailto:arndbergmann@gmail.com] 代表 Arnd Bergmann
-发送时间: 2018年3月26日 18:42
-收件人: liwei (CM)
-抄送: Rob Herring; Mark Rutland; xuwei (O); Catalin Marinas; Will Deacon; Vinayak Holikatti; James E.J. Bottomley; Martin K. Petersen; Kevin Hilman; Gregory CLEMENT; Thomas Petazzoni; Masahiro Yamada; Riku Voipio; Thierry Reding; Krzysztof Kozlowski; Eric Anholt; DTML; Linux Kernel Mailing List; Linux ARM; linux-scsi; zangleigang; Gengjianfeng; Guodong Xu; Zhangfei Gao; Fengbaopeng (kevin, Kirin Solution Dept); Yaniv Gardi
-主题: Re: 答复: 答复: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
-
-On Mon, Mar 26, 2018 at 12:26 PM, liwei (CM) <liwei213@huawei.com> wrote:
-> 发件人: arndbergmann@gmail.com [mailto:arndbergmann@gmail.com] 代表 Arnd 
-> Bergmann
-> > 主题: Re: 答复: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for 
-> > hisi-ufs On Fri, Mar 23, 2018 at 3:22 AM, liwei (CM) <liwei213@huawei.com> wrote:
-> >> The clock names sound generic enough, should we have both in the generic binding?
+On 26/03/18 16:28, Waiman Long wrote:
+> On 03/26/2018 08:47 AM, Juri Lelli wrote:
+> > On 23/03/18 14:44, Waiman Long wrote:
+> >> On 03/23/2018 03:59 AM, Juri Lelli wrote:
+> > [...]
+> >
+> >>> OK, thanks for confirming. Can you tell again however why do you think
+> >>> we need to remove sched_load_balance from root level? Won't we end up
+> >>> having tasks put on isolated sets?
+> >> The root cgroup is special that it owns all the resources in the system.
+> >> We generally don't want restriction be put on the root cgroup. A child
+> >> cgroup has to be created to have constraints put on it. In fact, most of
+> >> the controller files don't show up in the v2 cgroup root at all.
 > >>
-> >> Do you mean that add a "phy_clk" to ufshcd-pltfrm 's bindings?
-> >> At present, it seems that in the implementation of generic code, 
-> >> apart from "ref_clk" may have special processing, other clk will 
-> >> not have special processing and simply parse and enable; Referring 
-> >> to ufs-qcom binding, I think "phy_clk" can be named "iface_clk", 
-> >> this "iface_clk" exists in ufshcd-pltfrm bindings;If so, "ref_clk", "iface_clk" are both in the generic binding,we will remove them here. Is that okay?
->
-> > I'm looking at the generic binding again, and it seems we never 
-> > quite managed to fix some minor problems with it. See below for a possible way to clarify it.
->
-> phy_clk is actually given to the phy. But as previously mentioned , we 
-> do not have a separate phy to configure ; The clks in the patch you 
-> give appear to be unsuitable for describing this .
-> Here we can't describe phy_clk in the node "ufsphy1: ufsphy@fc597000" like qcom.
-> So can we put it here in our own binding like this?
+> >> An isolated cgroup has to be put under root, e.g.
+> >>
+> >>       Root
+> >>      /    \
+> >> isolated  balanced
+> >>
+> >>> Also, I guess children groups with more than one CPU will need to be
+> >>> able to load balance across their CPUs, no matter what their parent
+> >>> group does?
+> >> The purpose of an isolated cpuset is to have a dedicated set of CPUs to
+> >> be used by a certain application that makes its own scheduling decision
+> >> by placing tasks explicitly on specific CPUs. It just doesn't make sense
+> >> to have a CPU in an isolated cpuset to participated in load balancing in
+> >> another cpuset. If one want load balancing in a child cpuset, the parent
+> >> cpuset should have load balancing turned on as well.
+> > Isolated with CPUs overlapping some other cpuset makes little sense, I
+> > agree. What I have in mind however is an isolated set of CPUs that don't
+> > overlap with any other cpuset (as your balanced set above). In this case
+> > I think it makes sense to let the sys admin decide if "automatic" load
+> > balancing has to be performed (by the scheduler) or no load balacing at
+> > all has to take place?
+> >
+> > Further extending your example:
+> >
+> >              Root [0-3]
+> > 	     /        \
+> >         group1 [0-1] group2[2-3]
+> >
+> > Why should we prevent load balancing to be disabled at root level (so
+> > that for example tasks still residing in root group are not freely
+> > migrated around, potentially disturbing both sub-groups)?
+> >
+> > Then one can decide that group1 is a "userspace managed" group (no load
+> > balancing takes place) and group2 is balanced by the scheduler.
+> >
+> > And this is not DEADLINE specific, IMHO.
+> >
+> >> As I look into the code, it seems like root domain is probably somewhat
+> >> associated with cpu_exclusive only. Whether sched_load_balance is set
+> >> doesn't really matter.  I will need to look further on the conditions
+> >> where a new root domain is created.
+> > I checked again myself (sched domains code is always a maze :) and I
+> > believe that sched_load_balance flag indeed controls domains (sched and
+> > root) creation and configuration . Changing the flag triggers potential
+> > rebuild and separed sched/root domains are generated if subgroups have
+> > non overlapping cpumasks.  cpu_exclusive only enforces this latter
+> > condition.
+> 
+> Right, I ran some tests and figured out that to have root_domain in the
+> child cgroup level, we do need to disable load balancing at the root
+> cgroup level and enabling it in child cgroups that are mutually disjoint
+> in their cpu lists. The cpu_exclusive flag isn't really needed.
 
-I think the concept of having a phy clk is generic enough that it's better to have that in the common part, others will surely have the same thing, and in this case, qcom would be the exception that does not use one.
+It seems to make little sense at root level indeed. 
 
-There are apparently a couple of things related to the phy that may or may not require a clk:
+> I am not against doing that at the root cgroup, but it is kind of weird
+> in term of semantics. If we disable load balancing in the root cgroup,
+> but enabling it at child cgroups, what does that mean to the processes
+> that are still in the root cgroup?
 
-- ref_clk: The reference clock on the mipi bus, this is what qcom have, this would
-  be the 19.2 MHz clock signal.
-- one clock to drive the logic block for the PHY itself, if it is included within
-  the same logical portion of an SoC as the ufshcd, but uses a separate clock.
-- Looking at the Android kernel as distributed by google/qualcomm, they have
-  four separate clocks described as
+It might be up to the different scheduling classes I guess. See more on
+this below.
 
-    PHY to controller symbol synchronization clocks:
-        "rx_lane0_sync_clk" - RX Lane 0
-        "rx_lane1_sync_clk" - RX Lane 1
-        "tx_lane0_sync_clk" - TX Lane 0
-        "tx_lane1_sync_clk" - TX Lane 1
+> The sched_load_balance flag isn't something that is passed to the
+> scheduler. It only only affects the CPU topology of the system. So I
+> suspect that a process in the root cgroup will be load balanced among
+> the CPUs in the one of the child cgroups. That doesn't look right unless
+> we enforce that no process can be in the root cgroup in this case.
+> 
+> Real cpu isolation will then require that we disable load balancing at
+> root, and enable load balancing in child cgroups that only contain CPUs
+> outside of the isolated CPU list. Again, it is still possible that some
+> tasks in the root cgroup, if present, may be using some of the isolated
+> CPUs.
 
-Which of the above would your phy_clk refer to?
+So, for DEADLINE this is currently a problem. We know that this is
+broken (and Mathieu proposed already patches to fix it [1]). What we
+want, I think, is to deny setting a task to DEADLINE if its current
+affinity could overlap some exclusive set (root domain as per above), as
+for example in your case if the task is residing in the root group.
+Since DEADLINE bases load balancing on root domains, once those have
+been correctly created, tasks shouldn't be able to escape. And if no
+task can reside on the root level once sched_load_balance has been
+disable, it seems we won't have the problem you fear.
 
-       Arnd
+RT looks similar in this sense (load balancing using root domains info),
+but no admission control is performed, so I guess we could fall in your
+problematic situation.
 
-[1] https://android.googlesource.com/kernel/msm/+/android-msm-bullhead-3.10-marshmallow-dr/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt?autodive=0%2F%2F%2F%2F%2F
+FAIR uses a mix of sched domains and root domains information to perform
+load balancing, so once tasks are divided among configured sets all
+should work OK, but again there might be still some tasks left at root
+group. :/ I'm not sure what happens to those w.r.t. load balancing.
+
+> Maybe we can have a different root level flag, say,
+> sched_partition_domain that is equivalent to !sched_load_balnace.
+> However, I am still not sure if we should enforce that no task should be
+> in the root cgroup when the flag is set.
+> 
+> Tejun and Peter, what are your thoughts on this?
+
+Let's see what they think. :)
+
+Thanks for the discussion!
+
+Best,
+
+- Juri
+
+[1] https://marc.info/?l=linux-kernel&m=151855397701977&w=2
