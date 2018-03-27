@@ -1,46 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755154AbeC0RWL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:22:11 -0400
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:38794 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755122AbeC0RWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 13:22:08 -0400
-X-Google-Smtp-Source: AIpwx4+S46s0w4goAg30E6nstl90KCmtR8ZcjVJwyXYcP9wM+ttOG1ffWSE702cdjuM8Z5Yh9h9erw==
-Date: Tue, 27 Mar 2018 10:22:19 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com,
-        richardcochran@gmail.com
-Subject: Re: [PATCH v5 09/13] ARM: dts: ipq4019: Add
- qcom-ipq4019-ap.dk07.1-c1 board file
-Message-ID: <20180327172219.GL1403@tuxbook-pro>
-References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
- <1521800336-19266-10-git-send-email-sricharan@codeaurora.org>
+        id S932072AbeC0RYI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 13:24:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60778 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752008AbeC0RYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 13:24:06 -0400
+Date: Tue, 27 Mar 2018 19:23:59 +0200
+From: Stefano Brivio <sbrivio@redhat.com>
+To: Petr Machata <petrm@mellanox.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the ipsec tree with the net tree
+Message-ID: <20180327192359.4b1bb7d6@epycfail>
+In-Reply-To: <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
+References: <20180326091610.148fc62d@canb.auug.org.au>
+        <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521800336-19266-10-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
-> +#include "qcom-ipq4019-ap.dk07.1.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1-C1";
+On Tue, 27 Mar 2018 17:33:43 +0300
+Petr Machata <petrm@mellanox.com> wrote:
 
-Add compatible for the board.
+> Hi, this conflict needs to be resolved differently. Below I'm adding a
+> patch on top of linux-next. Squash or apply as you see fit.
 
-> +
+Petr, thanks for spotting this. Stephen, you can carry these tags for
+Petr's patch:
 
-Regards,
-Bjorn
+Fixes: adab890d00dc ("Merge remote-tracking branch 'ipsec/master'")
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Tested-by: Stefano Brivio <sbrivio@redhat.com>
+
+> What's the right way to proceed from here? It looks to me like Stefano
+> or Steffen should take this into the ipsec tree (possibly just squash to
+> the clamping fix), as they'll hit this conflict the next time they
+> rebase on top of net...? Let me know what to do, please.
+
+Steffen, please let me know if you want me to submit anything for the
+ipsec tree on top of my previous patches.
+
+I guess another alternative would be that David fixes the conflict the
+way Petr solved it, when merging to net?
+
+-- 
+Stefano
