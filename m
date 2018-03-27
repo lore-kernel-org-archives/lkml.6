@@ -1,85 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeC0Vyu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:54:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57334 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751008AbeC0Vyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:54:49 -0400
-From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 28 Mar 2018 08:54:41 +1100
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] rhashtable: allow a walk of the hash table without missing objects.
-In-Reply-To: <20180327155118.GB14001@gondor.apana.org.au>
-References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718430.11435.5761213978298714527.stgit@noble> <20180327155118.GB14001@gondor.apana.org.au>
-Message-ID: <87po3p421q.fsf@notabene.neil.brown.name>
+        id S1752044AbeC0V5e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:57:34 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39504 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751020AbeC0V5d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:57:33 -0400
+X-Google-Smtp-Source: AIpwx4/j8jaobsE7aAx/Ycci1NGAhsJ44On/EJSun47WEqpO0NIWoL8lxqcpkd/6BisbPzbkFhMQ3A==
+Date: Tue, 27 Mar 2018 14:57:31 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 08/24] mm: Protect VMA modifications using VMA sequence
+ count
+In-Reply-To: <1520963994-28477-9-git-send-email-ldufour@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803271454390.41987@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-9-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
-On Tue, Mar 27 2018, Herbert Xu wrote:
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 5898255d0aeb..d6533cb85213 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -847,17 +847,18 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>  	}
+>  
+>  	if (start != vma->vm_start) {
+> -		vma->vm_start = start;
+> +		WRITE_ONCE(vma->vm_start, start);
+>  		start_changed = true;
+>  	}
+>  	if (end != vma->vm_end) {
+> -		vma->vm_end = end;
+> +		WRITE_ONCE(vma->vm_end, end);
+>  		end_changed = true;
+>  	}
+> -	vma->vm_pgoff = pgoff;
+> +	WRITE_ONCE(vma->vm_pgoff, pgoff);
+>  	if (adjust_next) {
+> -		next->vm_start += adjust_next << PAGE_SHIFT;
+> -		next->vm_pgoff += adjust_next;
+> +		WRITE_ONCE(next->vm_start,
+> +			   next->vm_start + (adjust_next << PAGE_SHIFT));
+> +		WRITE_ONCE(next->vm_pgoff, next->vm_pgoff + adjust_next);
+>  	}
+>  
+>  	if (root) {
+> @@ -1781,6 +1782,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  out:
+>  	perf_event_mmap(vma);
+>  
+> +	vm_write_begin(vma);
+>  	vm_stat_account(mm, vm_flags, len >> PAGE_SHIFT);
+>  	if (vm_flags & VM_LOCKED) {
+>  		if (!((vm_flags & VM_SPECIAL) || is_vm_hugetlb_page(vma) ||
+> @@ -1803,6 +1805,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	vma->vm_flags |= VM_SOFTDIRTY;
+>  
+>  	vma_set_page_prot(vma);
+> +	vm_write_end(vma);
+>  
+>  	return addr;
+>  
 
-> On Tue, Mar 27, 2018 at 10:33:04AM +1100, NeilBrown wrote:
->>
->> -int rhashtable_walk_start_check(struct rhashtable_iter *iter)
->> +int rhashtable_walk_start_continue(struct rhashtable_iter *iter, struct=
- rhash_head *obj)
->>  	__acquires(RCU)
->>  {
->>  	struct rhashtable *ht =3D iter->ht;
->>=20=20
->>  	rcu_read_lock();
->>=20=20
->> +	if (!obj || iter->p !=3D obj)
->> +		iter->p =3D NULL;
->
-> Why bother with this check at all? Couldn't we make it so that
-> if you call continue then you continue with the cursor otherwise
-> you set it to NULL as we currently do.
+Shouldn't this also protect vma->vm_flags?
 
-Possibly.
-I particularly want the interface to require that you pass the
-previously returned object to _continue. That makes it easy to see that
-the object is still being used.  If someone changes to code to delete
-the object before the _continue, there should be a strong hint that it
-won't work.
-
-Maybe it would be better to make it a WARN_ON()
-
-  if (!obj || WARN_ON(iter->p !=3D obj))
-         iter->p =3D NULL;
-
-??
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq6vaEACgkQOeye3VZi
-gblolQ/+MmIv8vbAOUCHJl9b4pfAEaw4gHRzkiGyxxFRmlGc3nNzbDBDIe+bWOdf
-sQv0D/S/trAQYVjRXzJPMX+6P/9XnZ2Ec3XwaQBLvYBa60rcNBibJViE3nTm45/9
-FnODiKj3Xu84SoSEu6ioOshPOJ7lWyMVmWefYtbTqkW1Goh907XSq1/+z6xJaEFo
-vZV0Y+F9jS8V4vqiV4lEs+6JC7PvgwjsuizdCnVQWWWrMlVouFedlfgDP/yaA3jF
-mz+k+cbvJ18wlgfIDHiS0FC6G/voDAJAThYv4S30zjDafud0r1f1ZN2LE7xM6/z5
-40BHgy9YlU6GL75MH+8Oj6lQaBx6C7sKBV+luoNnBA1XasviJ9LfjMlwEFTqpljI
-M1JLafNMNbKQ4A7J9ghYlPO/djCBnSVl6sBl03+gVtIp1i/ZSZl6IhjYTX6WnOVw
-x5JnhEoCVVtqKeqtJzYI1jIR/zV3n+tpmsSbhsf3BqgjS9r0NRqO8L8xpFrcXnPx
-CjQemlkr3B3ZAJ/OlB43aQ9fHhEZdrRTmeKcTmC+4H7M7PQwUZPUnnDnAQ4JcLsl
-n7mZGiD/ys+8ApDFkWRyhdwdPC7XvbNyo/JZ7KuGPdoINvbWofLnUtag6USQ6fLy
-y0AlpqRbky5cZK/ALJ0YtFWoqGwX7VeyTEkiJ1LxsOKbQ9740iw=
-=eE1d
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/mm/mmap.c b/mm/mmap.c
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1796,7 +1796,8 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 					vma == get_gate_vma(current->mm)))
+ 			mm->locked_vm += (len >> PAGE_SHIFT);
+ 		else
+-			vma->vm_flags &= VM_LOCKED_CLEAR_MASK;
++			WRITE_ONCE(vma->vm_flags,
++				   vma->vm_flags & VM_LOCKED_CLEAR_MASK);
+ 	}
+ 
+ 	if (file)
+@@ -1809,7 +1810,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	 * then new mapped in-place (which must be aimed as
+ 	 * a completely new data area).
+ 	 */
+-	vma->vm_flags |= VM_SOFTDIRTY;
++	WRITE_ONCE(vma->vm_flags, vma->vm_flags | VM_SOFTDIRTY);
+ 
+ 	vma_set_page_prot(vma);
+ 	vm_write_end(vma);
