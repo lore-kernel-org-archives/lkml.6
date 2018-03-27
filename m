@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-196919-1522174247-2-1467636588803325595
+X-Cyrus-Session-Id: sloti22d1t05-195729-1522174237-2-12517028090632057941
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522174245; b=I07I1qOfM5dgnvlDV8XGFy2rOsGA1Q8Z3AhWxWhnYTfcC+V
-    BuU4j5PHe0zkxI9aUoD9X6zWHwEY22xGutiOwp8adS9SEzIQHpMAnnyZ47J1MPwR
-    pMQ8WPLiCKTzJ2Wj5FWkaXBtQObrfBebDJMleIflQN/Ne23GZpJYgelT4Zjy+fNH
-    CsUUhQFHn97+W/IL9cIHpLVA0rGAmBStX1KUu5EPPydHrOOfsqV4tAxJhf2lZp7G
-    ByJfkPOQz2QMeVB5yLSqKUjVZQzeyPxhgKl2JJ3Bf9JpXnDOMMmZ+zkxk2U+EWBe
-    NOSuraD03shtWlY6hPAV/lCl+vMGFNGjFd8SWhA==
+    t=1522174236; b=LgisYF2vcBq2YgOGgNX6VJQKELDW18NRecp1eP7lJjPAF7A
+    iaU/QXOJfYDcEPUvh7Hj7Fv9MrNTJRnBb8Yb/267MiTlwrjS+Ztkn/NpdSEns4VS
+    9q3SYRFAigFxICZeoxbpXj6PtiC7RsuANROw9m2C4W2X8yMRS5mlas/9L9+uP50d
+    gR0XdiOBxwboOm0L2mUgXrHRWxibQsCdNf2Et54jspUxL5M3um7iUgZ3pk2XkyOQ
+    Ql8SpKghnl6v24xOh6pqMjIv1zCCRLjnyb8GhMgfqVEVuKMGhhZzvFvxRGTouU9s
+    gmBkCQtnMUH8nt/FSJarCj94Zl5WuV9um/Vq9ZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522174245; bh=ohxNuN9eWibl22URVdCOZUeTQX
-    tG8kwobBINL46jlwc=; b=cOYmdEsrdts5AEVqO4/PIm+K/+X3YWfWJ/UMSZt5w/
-    x564k05N6+NY6NvgXqHpxsny8LPWzCEE2Hm7Ra46IxwpoFpMoNJS8q9kjwqXI/6T
-    DitXE4jQtiLKnB/MFdJTcYq1VQTvpqikqmUGQ4NWFVpQ/erJ1Xfnr3N0HiugBB72
-    Z8InDtWyNuyv5iHq8+iMY08CNap2aZKqj1EaVIsncLJ8Tt+yh7bfupRzOZrHWktK
-    S3CZv/wPkILcnryib61HCWYXn/7+fqfVO2ioWN63V1lizF1gTXjJb2FTp2cMwUPI
-    k0a8pPedxUDsplfZrpm9ko1bZJ6GGGORBzYe5GQT3HOg==
+    :list-id; s=arctest; t=1522174236; bh=We67RUxvKeYtVwUyhXJEXtVWV4
+    ZwTTcbNV23oQU0Q6A=; b=Mqnpd/HBWss+W1SStZWslEVChDy+BBJez/BhxqgByK
+    A+kGbHQXQJKki1XJ+xSE33jVSqsJlCyKWmZaxd+HT8y+sf1U/AO+uXKyHFiBFcul
+    RpkTa3HmMOhpDNMserBMwrG+EX8tctYQoIf8jfUqhK7QAbN4jau22LwFArK2FeJc
+    epM0o2L2o0tot6Z9Ognxv1J4XNAzkgFPFnRTCgvtpsmPRe2XKpbFZ3CJfVyYAV3G
+    M5icJCdPvgVHnyNG3ZWz+NsIwDN57cFZk4l5TmYLrlYCgfcVSWeGv1f/dl4ATa9Y
+    J68KdABHvCh+5oUgRr4ZkN9H35oXI5QLr/Wwsc0gU+4A==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,28 +51,29 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJYYZ5TNIIhGx5nJOiBbj9Tp23ar6+nD4vqK2TMO24hDzqJJRj4nTxp3KYUS0sABwBsyEEr0LY660Uf+mrjE8okv7Qz7VT06+5q64FTrZjC8kXQkfPUc
-    iut/yF8Ir+fPi5aivR3xflDlsF0AeVB/Ly/tjTziLnueCNKNhorgWBOj8CG0t4w1S7f34d3m6K5YKbcEYlil+EUreXmyNpZozZhmcUnsJaGzmPxc2pQIIoCl
+X-CM-Envelope: MS4wfNhJ0qkXsGRfUFvXsre8CF6AyKIMK7Bd7dwIOPHCpwplfIi4xUuQwvu5WxBNfatOobsKixCLRylHoqBNwB0L7GYZsna1ZUPuC/nzmoAt3p5QIzdmGOfG
+    MBy7v0Hu/6Px5je9A7CL4W2uaahXzgAfjAnpkbCR4XFC4qI0RXAdvm2mqEjUycnkj6P32lg1XHrMMbkkEgsn3CVa4lWPpBw35B+WupTRTNuT8LALj52zDsv8
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=mkCXhCCKOUKQdph7VtgA:9 a=QEXdDO2ut3YA:10
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=n4yHPK1a9YeVPVKjqp4A:9
+    a=RQLjyOjque52okan:21 a=9-BFIvEqx44UeleB:21 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeC0Q2s (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:28:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40958 "EHLO
+        id S1752269AbeC0Q2v (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:28:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40978 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751241AbeC0Q2r (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:28:47 -0400
+        with ESMTP id S1752252AbeC0Q2t (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:28:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 04/43] ALSA: aloop: Sync stale timer before release
-Date: Tue, 27 Mar 2018 18:27:08 +0200
-Message-Id: <20180327162716.638981112@linuxfoundation.org>
+Subject: [PATCH 4.4 05/43] ALSA: aloop: Fix access to not-yet-ready substream via cable
+Date: Tue, 27 Mar 2018 18:27:09 +0200
+Message-Id: <20180327162716.690254924@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -92,65 +93,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 67a01afaf3d34893cf7d2ea19b34555d6abb7cb0 upstream.
+commit 8e6b1a72a75bb5067ccb6b56d8ca4aa3a300a64e upstream.
 
-The aloop driver tries to stop the pending timer via timer_del() in
-the trigger callback and in the close callback.  The former is
-correct, as it's an atomic operation, while the latter expects that
-the timer gets really removed and proceeds the resource releases after
-that.  But timer_del() doesn't synchronize, hence the running timer
-may still access the released resources.
+In loopback_open() and loopback_close(), we assign and release the
+substream object to the corresponding cable in a racy way.  It's
+neither locked nor done in the right position.  The open callback
+assigns the substream before its preparation finishes, hence the other
+side of the cable may pick it up, which may lead to the invalid memory
+access.
 
-A similar situation can be also seen in the prepare callback after
-trigger(STOP) where the prepare tries to re-initialize the things
-while a timer is still running.
-
-The problems like the above are seen indirectly in some syzkaller
-reports (although it's not 100% clear whether this is the only cause,
-as the race condition is quite narrow and not always easy to
-trigger).
-
-For addressing these issues, this patch adds the explicit alls of
-timer_del_sync() in some places, so that the pending timer is properly
-killed / synced.
+This patch addresses these: move the assignment to the end of the open
+callback, and wrap with cable->lock for avoiding concurrent accesses.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/drivers/aloop.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ sound/drivers/aloop.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 --- a/sound/drivers/aloop.c
 +++ b/sound/drivers/aloop.c
-@@ -192,6 +192,11 @@ static inline void loopback_timer_stop(s
- 	dpcm->timer.expires = 0;
- }
+@@ -666,7 +666,9 @@ static void free_cable(struct snd_pcm_su
+ 		return;
+ 	if (cable->streams[!substream->stream]) {
+ 		/* other stream is still alive */
++		spin_lock_irq(&cable->lock);
+ 		cable->streams[substream->stream] = NULL;
++		spin_unlock_irq(&cable->lock);
+ 	} else {
+ 		/* free the cable */
+ 		loopback->cables[substream->number][dev] = NULL;
+@@ -706,7 +708,6 @@ static int loopback_open(struct snd_pcm_
+ 		loopback->cables[substream->number][dev] = cable;
+ 	}
+ 	dpcm->cable = cable;
+-	cable->streams[substream->stream] = dpcm;
  
-+static inline void loopback_timer_stop_sync(struct loopback_pcm *dpcm)
-+{
-+	del_timer_sync(&dpcm->timer);
-+}
+ 	snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS);
+ 
+@@ -738,6 +739,11 @@ static int loopback_open(struct snd_pcm_
+ 		runtime->hw = loopback_pcm_hardware;
+ 	else
+ 		runtime->hw = cable->hw;
 +
- #define CABLE_VALID_PLAYBACK	(1 << SNDRV_PCM_STREAM_PLAYBACK)
- #define CABLE_VALID_CAPTURE	(1 << SNDRV_PCM_STREAM_CAPTURE)
- #define CABLE_VALID_BOTH	(CABLE_VALID_PLAYBACK|CABLE_VALID_CAPTURE)
-@@ -326,6 +331,8 @@ static int loopback_prepare(struct snd_p
- 	struct loopback_cable *cable = dpcm->cable;
- 	int bps, salign;
- 
-+	loopback_timer_stop_sync(dpcm);
++	spin_lock_irq(&cable->lock);
++	cable->streams[substream->stream] = dpcm;
++	spin_unlock_irq(&cable->lock);
 +
- 	salign = (snd_pcm_format_width(runtime->format) *
- 						runtime->channels) / 8;
- 	bps = salign * runtime->rate;
-@@ -745,7 +752,7 @@ static int loopback_close(struct snd_pcm
- 	struct loopback *loopback = substream->private_data;
- 	struct loopback_pcm *dpcm = substream->runtime->private_data;
- 
--	loopback_timer_stop(dpcm);
-+	loopback_timer_stop_sync(dpcm);
- 	mutex_lock(&loopback->cable_lock);
- 	free_cable(substream);
- 	mutex_unlock(&loopback->cable_lock);
+  unlock:
+ 	if (err < 0) {
+ 		free_cable(substream);
