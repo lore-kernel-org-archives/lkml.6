@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752748AbeC0NQV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:16:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55038 "EHLO
+        id S1752699AbeC0NQM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:16:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54986 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752447AbeC0NQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:16 -0400
+        id S1752447AbeC0NQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:07 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
@@ -13,10 +13,13 @@ Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
         punit.agrawal@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
         pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
         peter.maydell@linaro.org, kristina.martsenko@arm.com,
-        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 05/17] arm64: Helper for parange to PASize
-Date: Tue, 27 Mar 2018 14:15:15 +0100
-Message-Id: <1522156531-28348-6-git-send-email-suzuki.poulose@arm.com>
+        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Subject: [PATCH v2 02/17] virtio: pci-legacy: Validate queue pfn
+Date: Tue, 27 Mar 2018 14:15:12 +0100
+Message-Id: <1522156531-28348-3-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
@@ -24,111 +27,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
-size shift. Limit the size to the maximum supported by the kernel.
-We are about to move the user of this code and this helps to
-keep the changes cleaner.
+Legacy PCI over virtio uses a 32bit PFN for the queue. If the
+queue pfn is too large to fit in 32bits, which we could hit on
+arm64 systems with 52bit physical addresses (even with 64K page
+size), we simply miss out a proper link to the other side of
+the queue.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Add a check to validate the PFN, rather than silently breaking
+the devices.
+
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Christoffer Dall <cdall@kernel.org>
+Cc: Peter Maydel <peter.maydell@linaro.org>
+Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h | 16 ++++++++++++++++
- arch/arm64/kvm/hyp/s2-setup.c       | 28 +++++-----------------------
- 2 files changed, 21 insertions(+), 23 deletions(-)
+ drivers/virtio/virtio_pci_legacy.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index fbf0aab..1f2a5dd 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -311,6 +311,22 @@ static inline u64 read_zcr_features(void)
- 	return zcr;
- }
+diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
+index 2780886..4b84a75 100644
+--- a/drivers/virtio/virtio_pci_legacy.c
++++ b/drivers/virtio/virtio_pci_legacy.c
+@@ -122,6 +122,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
+ 	struct virtqueue *vq;
+ 	u16 num;
+ 	int err;
++	u64 q_pfn;
  
-+static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
-+{
-+	switch (parange) {
-+	case 0: return 32;
-+	case 1: return 36;
-+	case 2: return 40;
-+	case 3: return 42;
-+	case 4: return 44;
-+	/* Report 48 bit if the kernel doesn't support 52bit */
-+	default:
-+	case 5: return 48;
-+#ifdef CONFIG_ARM64_PA_BITS_52
-+	case 6: return 52;
-+#endif
+ 	/* Select the queue we're interested in */
+ 	iowrite16(index, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_SEL);
+@@ -141,9 +142,15 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
+ 	if (!vq)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
++	if (q_pfn >> 32) {
++		dev_err(&vp_dev->pci_dev->dev, "virtio-pci queue PFN too large\n");
++		err = -ENOMEM;
++		goto out_del_vq;
 +	}
-+}
- #endif /* __ASSEMBLY__ */
++
+ 	/* activate the queue */
+-	iowrite32(virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT,
+-		  vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
++	iowrite32((u32)q_pfn, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
  
- #endif
-diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
-index 603e1ee..b1129c8 100644
---- a/arch/arm64/kvm/hyp/s2-setup.c
-+++ b/arch/arm64/kvm/hyp/s2-setup.c
-@@ -19,11 +19,13 @@
- #include <asm/kvm_arm.h>
- #include <asm/kvm_asm.h>
- #include <asm/kvm_hyp.h>
-+#include <asm/cpufeature.h>
+ 	vq->priv = (void __force *)vp_dev->ioaddr + VIRTIO_PCI_QUEUE_NOTIFY;
  
- u32 __hyp_text __init_stage2_translation(void)
- {
- 	u64 val = VTCR_EL2_FLAGS;
- 	u64 parange;
-+	u32 phys_shift;
- 	u64 tmp;
+@@ -160,6 +167,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
  
- 	/*
-@@ -37,27 +39,7 @@ u32 __hyp_text __init_stage2_translation(void)
- 	val |= parange << 16;
- 
- 	/* Compute the actual PARange... */
--	switch (parange) {
--	case 0:
--		parange = 32;
--		break;
--	case 1:
--		parange = 36;
--		break;
--	case 2:
--		parange = 40;
--		break;
--	case 3:
--		parange = 42;
--		break;
--	case 4:
--		parange = 44;
--		break;
--	case 5:
--	default:
--		parange = 48;
--		break;
--	}
-+	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
- 
- 	/*
- 	 * ... and clamp it to 40 bits, unless we have some braindead
-@@ -65,7 +47,7 @@ u32 __hyp_text __init_stage2_translation(void)
- 	 * return that value for the rest of the kernel to decide what
- 	 * to do.
- 	 */
--	val |= 64 - (parange > 40 ? 40 : parange);
-+	val |= 64 - (phys_shift > 40 ? 40 : phys_shift);
- 
- 	/*
- 	 * Check the availability of Hardware Access Flag / Dirty Bit
-@@ -86,5 +68,5 @@ u32 __hyp_text __init_stage2_translation(void)
- 
- 	write_sysreg(val, vtcr_el2);
- 
--	return parange;
-+	return phys_shift;
+ out_deactivate:
+ 	iowrite32(0, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
++out_del_vq:
+ 	vring_del_virtqueue(vq);
+ 	return ERR_PTR(err);
  }
 -- 
 2.7.4
