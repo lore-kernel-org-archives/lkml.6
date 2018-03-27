@@ -1,76 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752259AbeC0CVc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 22:21:32 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38950 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752019AbeC0CVb (ORCPT
+        id S1752490AbeC0CVm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 22:21:42 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:49206 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752360AbeC0CVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 22:21:31 -0400
-X-Google-Smtp-Source: AG47ELtQ9r+8HfmJnyDDtD8B95JGBSgFkOYCca1GBqzsLTHuMLSnROYrqWULtLmD18Jo274Or2NgVw==
-Date: Tue, 27 Mar 2018 11:21:26 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] zram: idle memory tracking
-Message-ID: <20180327022126.GH467@jagdpanzerIV>
-References: <20180326064951.123940-1-minchan@kernel.org>
- <20180326064951.123940-2-minchan@kernel.org>
+        Mon, 26 Mar 2018 22:21:41 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08018777|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03295;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BSX3y5h_1522117292;
+Date: Tue, 27 Mar 2018 10:21:31 +0800
+From: Guo Ren <ren_guo@c-sky.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Subject: Re: [PATCH 17/19] csky: defconfig
+Message-ID: <20180327022128.GB10185@guoren>
+References: <cover.1521399976.git.ren_guo@c-sky.com>
+ <8a9c9b588cdfdf8b25ca9d449bf5c862d329c1d8.1521399976.git.ren_guo@c-sky.com>
+ <CAK8P3a3L-zO3K5qcmBPChhSqh+E6WtNRFV1cJRbksGZ74uaEAQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180326064951.123940-2-minchan@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAK8P3a3L-zO3K5qcmBPChhSqh+E6WtNRFV1cJRbksGZ74uaEAQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/26/18 15:49), Minchan Kim wrote:
-[..]
-> +static ssize_t read_access_time(struct file *file, char __user *buf,
-> +				size_t count, loff_t *ppos)
-> +{
-[..]
-> +
-> +	for (index = *ppos; index < nr_pages; index++) {
-> +		zram_slot_lock(zram, index);
-> +		if (zram_test_flag(zram, index, ZRAM_WB))
-> +			goto next;
+On Mon, Mar 26, 2018 at 03:16:31PM +0200, Arnd Bergmann wrote:
+> >  arch/csky/configs/gx66xx_defconfig     | 549 +++++++++++++++++++++++++++++++++
+> >  arch/csky/configs/qemu_ck807_defconfig | 541 ++++++++++++++++++++++++++++++++
+> >  2 files changed, 1090 insertions(+)
+> >  create mode 100644 arch/csky/configs/gx66xx_defconfig
+> >  create mode 100644 arch/csky/configs/qemu_ck807_defconfig
+> 
+> These look a lot longer than they should be, they contain many symbols
+> that I suspenc
+> are not needed or useful for you.
+I'll cleanup the defconfig again.
 
-I think it'll be better to show ZRAM_WB pages as well. Those pages
-are swapped out pages after all, consuming swap space - a physical
-page. Freeing those should also be beneficial. So tracking "bad"
-incompressible pages is quite handful.
+> 
+> > diff --git a/arch/csky/configs/gx66xx_defconfig b/arch/csky/configs/gx66xx_defconfig
+> > new file mode 100644
+> > index 0000000..7f2a987
+> > --- /dev/null
+> > +++ b/arch/csky/configs/gx66xx_defconfig
+> > @@ -0,0 +1,549 @@
+> > +# CONFIG_LOCALVERSION_AUTO is not set
+> > +CONFIG_DEFAULT_HOSTNAME="github.com/c-sky"
+> 
+> This is not a well-formed hostname
+I'll remove it.
 
-> +		if (zram_test_flag(zram, index, ZRAM_SAME))
-> +			goto next;
-> +		if (!zram_get_handle(zram, index))
-> +			goto next;
-> +
-> +		ret = snprintf(kbuf + written, remained, "%lu %lu\n", index,
-> +				get_seconds() - zram->table[index].ac_time);
+> 
+> > +# CONFIG_SWAP is not set
+> > +CONFIG_SYSVIPC=y
+> > +CONFIG_POSIX_MQUEUE=y
+> > +# CONFIG_FHANDLE is not set
+> > +CONFIG_USELIB=y
+> > +CONFIG_AUDIT=y
+> > +CONFIG_IRQ_DOMAIN_DEBUG=y
+> > +CONFIG_NO_HZ_IDLE=y
+> > +CONFIG_HIGH_RES_TIMERS=y
+> > +CONFIG_BSD_PROCESS_ACCT=y
+> > +CONFIG_BSD_PROCESS_ACCT_V3=y
+> > +CONFIG_RELAY=y
+> > +CONFIG_SYSCTL_SYSCALL=y
+> > +CONFIG_KALLSYMS_ALL=y
+> > +# CONFIG_AIO is not set
+> 
+> Disabling swap, fhandle or AIO seems odd, those are commonly
+> used symbols.
+I'll try to enable them.
 
-So here you can add a flag after index and age which will tell if the page
-is in zsmalloc pool or on backing swap device.
+> > +CONFIG_USERFAULTFD=y
+> > +CONFIG_EMBEDDED=y
+> 
+> CONFIG_EMBEDDED should generally not be selected, it's only for
+> very unusual configurations that need to disable symbols that are
+> normally required.
+I'll try to enable EMBEDDED.
 
-> +		if (remained < ret) {
-> +			zram_slot_unlock(zram, index);
-> +			break;
-> +		}
-> +		written += ret;
-> +		remained -= ret;
-> +next:
-> +		zram_slot_unlock(zram, index);
-> +		*ppos += 1;
-> +	}
-> +
-> +	up_read(&zram->init_lock);
-> +	copy_to_user(buf, kbuf, written);
-> +	kvfree(kbuf);
-> +
-> +	return written;
-> +}
+> 
+> > +# CONFIG_PERF_EVENTS is not set
+> > +# CONFIG_SLUB_DEBUG is not set
+> > +# CONFIG_COMPAT_BRK is not set
+> > +CONFIG_PROFILING=y
+> > +CONFIG_OPROFILE=y
+> 
+> oprofile can go now, since you said you'd remove the code.
+Yes, remove it.
 
-	-ss
+> > +CONFIG_BLK_DEV_BSGLIB=y
+> > +CONFIG_BLK_DEV_INTEGRITY=y
+> > +CONFIG_PARTITION_ADVANCED=y
+> > +CONFIG_ACORN_PARTITION=y
+> > +CONFIG_ACORN_PARTITION_ICS=y
+> > +CONFIG_ACORN_PARTITION_RISCIX=y
+> > +CONFIG_AIX_PARTITION=y
+> > +CONFIG_OSF_PARTITION=y
+> > +CONFIG_AMIGA_PARTITION=y
+> > +CONFIG_ATARI_PARTITION=y
+> > +CONFIG_MAC_PARTITION=y
+> > +CONFIG_BSD_DISKLABEL=y
+> > +CONFIG_MINIX_SUBPARTITION=y
+> > +CONFIG_SOLARIS_X86_PARTITION=y
+> > +CONFIG_UNIXWARE_DISKLABEL=y
+> > +CONFIG_LDM_PARTITION=y
+> > +CONFIG_SGI_PARTITION=y
+> > +CONFIG_ULTRIX_PARTITION=y
+> > +CONFIG_SUN_PARTITION=y
+> > +CONFIG_KARMA_PARTITION=y
+> > +CONFIG_SYSV68_PARTITION=y
+> 
+> These block device configuration options all seem misplaced
+> here, it's extremely unlikely that you need them.
+I'll try to remove it.
+
+> > +# CONFIG_IPV6 is not set
+I'll enable IPV6.
+
+> > +CONFIG_CFG80211=y
+> > +CONFIG_CFG80211_DEBUGFS=y
+> > +CONFIG_CFG80211_WEXT=y
+> 
+> I would guess you want IPV6 but not WEXT here.
+Gx6605s devlepment board support usb-wifi.
+Perhaps WEXT is needed by iwconfig or iwlist? So I just enable it.
+However, I'll consider to remove it.
+
+> > +# CONFIG_STANDALONE is not set
+> 
+> No need to turn this off, it might just get in the way of build
+> testing.
+Ok, I'll try to enable it.
+
+> > +CONFIG_KEYBOARD_ADP5588=m
+> > +CONFIG_KEYBOARD_ADP5589=m
+> > +CONFIG_KEYBOARD_QT1070=m
+> > +CONFIG_KEYBOARD_QT2160=m
+> > +CONFIG_KEYBOARD_LKKBD=m
+> 
+> There are many input devices listed here, most of which you almost
+> certainly won't need.
+Yes, remove them.
+
+> > +CONFIG_IPMI_HANDLER=y
+> > +CONFIG_IPMI_DEVICE_INTERFACE=m
+> > +CONFIG_IPMI_SI=m
+> > +CONFIG_IPMI_WATCHDOG=m
+> > +CONFIG_IPMI_POWEROFF=m
+> 
+> Are you sure you have IPMI hardware?
+No IPMI hardware, remove them.
+
+> > +CONFIG_FB=y
+> > +CONFIG_FB_TILEBLITTING=y
+> > +CONFIG_FB_SIMPLE=y
+> > +CONFIG_BACKLIGHT_LCD_SUPPORT=y
+> > +# CONFIG_LCD_CLASS_DEVICE is not set
+> > +# CONFIG_BACKLIGHT_CLASS_DEVICE is not set
+> > +# CONFIG_VGA_CONSOLE is not set
+> > +CONFIG_FRAMEBUFFER_CONSOLE=y
+> > +CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+> > +CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+> > +CONFIG_LOGO=y
+> > +# CONFIG_LOGO_LINUX_MONO is not set
+> > +# CONFIG_LOGO_LINUX_VGA16 is not set
+> 
+> For new platforms, using the DRM subsystem is the recommend
+> way to do graphics, it mostly replaces the framebuffer subsystem
+> here.
+These used by:
+https://github.com/c-sky/addons-linux/tree/master/addons/drivers/video/fbdev/nationalchip
+
+I'll consider the DRM subsystem.
+
+> > +CONFIG_STE_MODEM_RPROC=m
+> 
+> I think this is no longer there.
+Yes, remove it.
+
+> > +CONFIG_EXT2_FS=y
+> > +CONFIG_EXT2_FS_XATTR=y
+> > +CONFIG_EXT2_FS_POSIX_ACL=y
+> > +CONFIG_EXT2_FS_SECURITY=y
+> > +CONFIG_EXT3_FS=y
+> > +CONFIG_EXT3_FS_POSIX_ACL=y
+> > +CONFIG_EXT3_FS_SECURITY=y
+> 
+> Better use EXT4 for the defconfig instead.
+OK.
+
+Best Regards
+ Guo Ren
