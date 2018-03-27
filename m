@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48gO8dFAQD16YKtR4bDpFBdmzGqPmfZb5ZQrU+VaePAbFThoKkxg5uEStTyJRT0V18qx+BN
-ARC-Seal: i=1; a=rsa-sha256; t=1522168352; cv=none;
+X-Google-Smtp-Source: AIpwx4+h4yNPOLBRIGCpdCz7+IYuJB775VXHoiWgM8VPX2ExEWTG7kDQNnvru0L/pW56OYSCC41J
+ARC-Seal: i=1; a=rsa-sha256; t=1522168349; cv=none;
         d=google.com; s=arc-20160816;
-        b=gmZsZY/B/s/YrJrmvonfeh5EqAJGhIap56FQcEV/b8PNktPa0MijayJXeOmsCUaLnD
-         X+1etIz6U8AItecGFZvpIAVTaeuhletWvDRsHkwJQMtj/Q8CLChFaIlCqIrVtAtIce6Z
-         KVxJI4ghK2FRYtKTXSrjiScmLOV4YTbZi20wiAEYzfY3eM+ECe15T4Pgd+2I6pP3hdKy
-         O6bLHlfijSYt9I8t0RrDdhfWEerLxMYsN0RFmljm5ZvTU097Ad4xRlS4mK8W8tbc+kg1
-         8FtTfaUq+S7O1cpHD0ooe37NGlz7G48pQN0WhRsiZ27184UurN02F1XNagRZ1A3/8esW
-         DaEw==
+        b=rQIYJ4jGFrHz998A+MiRYg20yOZ74euovivTIgnEX0iSrLvRQncmCyrc3AMJW3YbjZ
+         vn02ep6QEXjxzEMmMcCoipjuptUcXLL8+zn6f7HmXROLFn+/0i9hQ0IBk/e56Pf0poyi
+         buNjyPcPt6nXI8bwml/qmX2uS7v3SCzjswwwPDC+SLRqlMIA7EbruupVzZrvUdxsiXxt
+         VVf6ReXW3ayApfL8qKrQEQJ24mgx2fdPYl2LtriUEIgiht9tkc5FX8IuoWBhqyg31McI
+         NS8beDGJjOyQuek1dH2/oq0qmSc+mAOrXpvFsqcEVvjrOtE+UwuGm7wVhHO5Hps9Hnjc
+         6IWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=anDuwdq3x/XAw/ODmKbyRqJ9d74YJRN2ZkgRS3NF11c=;
-        b=L2hemcfm8Uj1fWrEmNOaAQ2UTezH7RIWqUqL6aXlP9Hr6IgNzGQ3lgbyL9r5QdhWo7
-         TIbtU08Sek8/AdMZydsmrd1DCTwmSj8f19pL1AIF89971GH3wvurHZQmp+fun3HdKNe4
-         iKX/ELOavkkVaB+y4tDgjmv8qHjm8oJThs1k2pAhtHR7FCFFm0/LSc50D0CGCBEFj5Ff
-         WbWC1SCuGlt9yPSHc4fJeIXYW6hLuEw2C61PrYJJq8dp/lBa+87vZ/ltlfSvF7/YLyY1
-         sHOOxOmbyLuka0y83L5P3Mh0NAVVKOL/vSnZMdBwHwjYYogxvUFVzHZH1Jdx+uGWl3JC
-         KRow==
+        bh=41qtkUHovDPKLh/wZvBW0ClTa4vVhk9Fa9KK7zkrTts=;
+        b=n5cVeAnWDPOASbSQzsQvO7FzMFhHYXEIrrIHERdOAoNTTiTVFW2WG14fxMaKgIdg0Q
+         FzVEQhNcFsrHVT8YtddqmYF9Ayb4MjjJLKsdAgZQa9RQ8dOat66H5mFzeqmLAoOnqJXN
+         IchSe8UKz86y6beqd0h4s5w4w9pBDlVPWN+ZdkzH1nV5Ia5VzQq8d5O1eHhQgJ5AZ9Ss
+         UkesuRwtmSY/uVfPUy9m4HgPDTDJnvyLsTjlZmTkYmNy0mdoOy2CFwFWZ8bR5s+2mvvc
+         ctL6t63k1W8cmblodNiLOu2lnf4NErHkRIUkDMtaBt7qvlIQN8h9JnHPlDI9kzww0Nhu
+         5pQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kselftest@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 49/67] selftests/x86/ptrace_syscall: Fix for yet more glibc interference
-Date: Tue, 27 Mar 2018 18:27:41 +0200
-Message-Id: <20180327162730.053831105@linuxfoundation.org>
+	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+	Jagdish Gediya <jagdish.gediya@nxp.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.9 40/67] mtd: nand: fsl_ifc: Fix eccstat array overflow for IFC ver >= 2.0.0
+Date: Tue, 27 Mar 2018 18:27:32 +0200
+Message-Id: <20180327162729.208870444@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109202615623395?=
-X-GMAIL-MSGID: =?utf-8?q?1596109202615623395?=
+X-GMAIL-THRID: =?utf-8?q?1596109199046549260?=
+X-GMAIL-MSGID: =?utf-8?q?1596109199046549260?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,54 +50,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Jagdish Gediya <jagdish.gediya@nxp.com>
 
-commit 4b0b37d4cc54b21a6ecad7271cbc850555869c62 upstream.
+commit 843c3a59997f18060848b8632607dd04781b52d1 upstream.
 
-glibc keeps getting cleverer, and my version now turns raise() into
-more than one syscall.  Since the test relies on ptrace seeing an
-exact set of syscalls, this breaks the test.  Replace raise(SIGSTOP)
-with syscall(SYS_tgkill, ...) to force glibc to get out of our way.
+Number of ECC status registers i.e. (ECCSTATx) has been increased in IFC
+version 2.0.0 due to increase in SRAM size. This is causing eccstat
+array to over flow.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/bc80338b453afa187bc5f895bd8e2c8d6e264da2.1521300271.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+So, replace eccstat array with u32 variable to make it fail-safe and
+independent of number of ECC status registers or SRAM size.
+
+Fixes: bccb06c353af ("mtd: nand: ifc: update bufnum mask for ver >= 2.0.0")
+Cc: stable@vger.kernel.org # 3.18+
+Signed-off-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
+Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/ptrace_syscall.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/fsl_ifc_nand.c |   23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
---- a/tools/testing/selftests/x86/ptrace_syscall.c
-+++ b/tools/testing/selftests/x86/ptrace_syscall.c
-@@ -182,8 +182,10 @@ static void test_ptrace_syscall_restart(
- 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
- 			err(1, "PTRACE_TRACEME");
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -201,14 +201,9 @@ static int is_blank(struct mtd_info *mtd
  
-+		pid_t pid = getpid(), tid = syscall(SYS_gettid);
+ /* returns nonzero if entire page is blank */
+ static int check_read_ecc(struct mtd_info *mtd, struct fsl_ifc_ctrl *ctrl,
+-			  u32 *eccstat, unsigned int bufnum)
++			  u32 eccstat, unsigned int bufnum)
+ {
+-	u32 reg = eccstat[bufnum / 4];
+-	int errors;
+-
+-	errors = (reg >> ((3 - bufnum % 4) * 8)) & 15;
+-
+-	return errors;
++	return  (eccstat >> ((3 - bufnum % 4) * 8)) & 15;
+ }
+ 
+ /*
+@@ -221,7 +216,7 @@ static void fsl_ifc_run_command(struct m
+ 	struct fsl_ifc_ctrl *ctrl = priv->ctrl;
+ 	struct fsl_ifc_nand_ctrl *nctrl = ifc_nand_ctrl;
+ 	struct fsl_ifc_runtime __iomem *ifc = ctrl->rregs;
+-	u32 eccstat[4];
++	u32 eccstat;
+ 	int i;
+ 
+ 	/* set the chip select for NAND Transaction */
+@@ -256,8 +251,8 @@ static void fsl_ifc_run_command(struct m
+ 	if (nctrl->eccread) {
+ 		int errors;
+ 		int bufnum = nctrl->page & priv->bufnum_mask;
+-		int sector = bufnum * chip->ecc.steps;
+-		int sector_end = sector + chip->ecc.steps - 1;
++		int sector_start = bufnum * chip->ecc.steps;
++		int sector_end = sector_start + chip->ecc.steps - 1;
+ 		__be32 *eccstat_regs;
+ 
+ 		if (ctrl->version >= FSL_IFC_VERSION_2_0_0)
+@@ -265,10 +260,12 @@ static void fsl_ifc_run_command(struct m
+ 		else
+ 			eccstat_regs = ifc->ifc_nand.v1_nand_eccstat;
+ 
+-		for (i = sector / 4; i <= sector_end / 4; i++)
+-			eccstat[i] = ifc_in32(&eccstat_regs[i]);
++		eccstat = ifc_in32(&eccstat_regs[sector_start / 4]);
 +
- 		printf("\tChild will make one syscall\n");
--		raise(SIGSTOP);
-+		syscall(SYS_tgkill, pid, tid, SIGSTOP);
++		for (i = sector_start; i <= sector_end; i++) {
++			if (i != sector_start && !(i % 4))
++				eccstat = ifc_in32(&eccstat_regs[i / 4]);
  
- 		syscall(SYS_gettid, 10, 11, 12, 13, 14, 15);
- 		_exit(0);
-@@ -300,9 +302,11 @@ static void test_restart_under_ptrace(vo
- 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
- 			err(1, "PTRACE_TRACEME");
+-		for (i = sector; i <= sector_end; i++) {
+ 			errors = check_read_ecc(mtd, ctrl, eccstat, i);
  
-+		pid_t pid = getpid(), tid = syscall(SYS_gettid);
-+
- 		printf("\tChild will take a nap until signaled\n");
- 		setsigign(SIGUSR1, SA_RESTART);
--		raise(SIGSTOP);
-+		syscall(SYS_tgkill, pid, tid, SIGSTOP);
- 
- 		syscall(SYS_pause, 0, 0, 0, 0, 0, 0);
- 		_exit(0);
+ 			if (errors == 15) {
