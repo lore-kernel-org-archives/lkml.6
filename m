@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+iHioURBciUtLuu77lrJLS9JQMTjClEfrX9t1iWIf+ERxq2HNzpYoNRMF6XNsdJs+YEiCZ
-ARC-Seal: i=1; a=rsa-sha256; t=1522168687; cv=none;
+X-Google-Smtp-Source: AIpwx4+AZFVpsV5Ec3p5yQZidaGs8klgmRtQKgIdvQ0wOiHfFyQ6CY+nKpiGdzTBBgI+4y81GHNr
+ARC-Seal: i=1; a=rsa-sha256; t=1522168685; cv=none;
         d=google.com; s=arc-20160816;
-        b=T9aRRQRQvD97cnm4irFRuNEeHp5A8s5mqPqiy6CM9XJpnjC97AbZb0yAjaBT0HtMTS
-         i9EMPqghWEMu/LgYYtKXWTae7Jj5sgeAmNmFh0bVrkMbFYyGXlbCI5GNVwVJDXJhGeIi
-         +yHbNFav6mQr6w4v11mIq2RdtN9yNmnfO33ZVCKJl2eFYeh1q8B06uQDJSzflLBbPJRz
-         WQ39YOgaobi/phnUtWRabw2xvf2Of2EcGQZ1JdePDBbCO9GsfE282KQOAwg3GbLYQRRg
-         sw1DTUQc2t94BykbBbFguUksYyDdK5a4+4iRa5HwpIqOJ505rtGqsAr1w140rpDlez54
-         5/zQ==
+        b=ErCEFAclKGMmCIv1zwR6PIjFQFewoYPDq81ytcIwvOOrsJb4YWPR5xncnHjvffUF54
+         s8A1BbdzMRo44jaXRwE59IbFI3xq5tzLDi3UsGIMfyYSizkMVCfYbPV4Xt4bzC7EMwGv
+         NRjPFFCkURCyAWjg+B+StCA6I6Zk1iUMLQDRD5cCQvD2+c59HyzmkNdYf1BjU0w12eYu
+         4vDMcYd2E+x14hq+H+E/zKuE1a6ctxmZxUBonlyJaNAWVgMaxzUgpfuMWC3cSy3lmUwW
+         pTCEPBTR8MqbLu6ke8KJTjvz9MCm3NHtPrRZr6Ok/mvQAI6h1BrAPnhvPw6b0YKGeNTs
+         zFNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/I3D52+rd/DOVYVkkKIMbPDW5RlbWPV+TePchm6H0gM=;
-        b=e1PwHK+jzO6J4jGUyWvqUlbYykW82H4cIqfYu4S0HthrDojGDev4UTBUG3GAkdMsdv
-         RFkT8px427dvqqzpppIYEeURsx1Rm98a3QKW6RGagOaMXJ9skJ16Ti+XI0v1w4KJwxbp
-         vPQvTpv8O2v2AjacsRWl32Rw/rAdjltRnqzwMUEx5DvhJrqDA29UZHPWoVqFq9oGPPYt
-         VBFwV9dOksuV2seL/oj2TOyp8nIKo2YWlF5F+2HJ+idHVqjtjfyNEDEG8hXK1jJFe8PB
-         a5AyJfBYKKXv0sk6n/7lEaRI0rqva+VJeyAuUI+cCLxCwrjunQSaMUK4nZIpzjgZbbo8
-         NoRA==
+        bh=hTuYEBmcIQiL5d1sdARMCcpew6bTAbZHvS0HT9zcibM=;
+        b=Vyobnbqqo1BzLv5Dzk2+Y3LMzqYQvLkGPjkHwnF/AK6hAMB/uhnOPmU9/Ko1OcprIQ
+         wPgSWMxw/sVfIm9FLchk0HVQMYFEPUZTV/hsml7iy43WPUq6yCXFUxkhb9XFXwkeyZTJ
+         bGjT6uN5t6QqT/blqtnTlnWLarinlHR7KlrL3f2Y4LfjyCtmJWpOqSYQX21Na9ArOlSd
+         RfS+So+qU667B4wq/rNQWYglw5o7QAJzpxDArIyDxIY0eH77YwzE7uleDAWltw+Hsmeb
+         LJLE/EAIcmuNyjHyUKgPA+EzBa4YN/SbHbgI7nu+r8/qs5X+Ue2KOHPEtftr5ZsHR9Yl
+         ahKA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	James Cameron <quozl@laptop.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Hante Meuleman <hante.meuleman@broadcom.com>,
+	Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+	Franky Lin <franky.lin@broadcom.com>,
+	Arend van Spriel <arend.vanspriel@broadcom.com>,
 	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 063/101] rtlwifi: rtl8723be: Fix loss of signal
-Date: Tue, 27 Mar 2018 18:27:35 +0200
-Message-Id: <20180327162753.863418192@linuxfoundation.org>
+Subject: [PATCH 4.14 062/101] brcmfmac: fix P2P_DEVICE ethernet address generation
+Date: Tue, 27 Mar 2018 18:27:34 +0200
+Message-Id: <20180327162753.808256290@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109011873420590?=
-X-GMAIL-MSGID: =?utf-8?q?1596109554209692351?=
+X-GMAIL-THRID: =?utf-8?q?1596109009231297608?=
+X-GMAIL-MSGID: =?utf-8?q?1596109551255959220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +53,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
 
-commit 78dc897b7ee67205423dbbc6b56be49fb18d15b5 upstream.
+commit 455f3e76cfc0d893585a5f358b9ddbe9c1e1e53b upstream.
 
-In commit c713fb071edc ("rtlwifi: rtl8821ae: Fix connection lost problem
-correctly") a problem in rtl8821ae that caused loss of signal was fixed.
-That same problem has now been reported for rtl8723be. Accordingly,
-the ASPM L1 latency has been increased from 0 to 7 to fix the instability.
+The firmware has a requirement that the P2P_DEVICE address should
+be different from the address of the primary interface. When not
+specified by user-space, the driver generates the MAC address for
+the P2P_DEVICE interface using the MAC address of the primary
+interface and setting the locally administered bit. However, the MAC
+address of the primary interface may already have that bit set causing
+the creation of the P2P_DEVICE interface to fail with -EBUSY. Fix this
+by using a random address instead to determine the P2P_DEVICE address.
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Stable <stable@vger.kernel.org>
-Tested-by: James Cameron <quozl@laptop.org>
+Cc: stable@vger.kernel.org # 3.10.y
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c |   24 +++++++----------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-@@ -1123,7 +1123,8 @@ static void _rtl8723be_enable_aspm_back_
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
+@@ -462,25 +462,23 @@ static int brcmf_p2p_set_firmware(struct
+  * @dev_addr: optional device address.
+  *
+  * P2P needs mac addresses for P2P device and interface. If no device
+- * address it specified, these are derived from the primary net device, ie.
+- * the permanent ethernet address of the device.
++ * address it specified, these are derived from a random ethernet
++ * address.
+  */
+ static void brcmf_p2p_generate_bss_mac(struct brcmf_p2p_info *p2p, u8 *dev_addr)
+ {
+-	struct brcmf_if *pri_ifp = p2p->bss_idx[P2PAPI_BSSCFG_PRIMARY].vif->ifp;
+-	bool local_admin = false;
++	bool random_addr = false;
  
- 	/* Configuration Space offset 0x70f BIT7 is used to control L0S */
- 	tmp8 = _rtl8723be_dbi_read(rtlpriv, 0x70f);
--	_rtl8723be_dbi_write(rtlpriv, 0x70f, tmp8 | BIT(7));
-+	_rtl8723be_dbi_write(rtlpriv, 0x70f, tmp8 | BIT(7) |
-+			     ASPM_L1_LATENCY << 3);
+-	if (!dev_addr || is_zero_ether_addr(dev_addr)) {
+-		dev_addr = pri_ifp->mac_addr;
+-		local_admin = true;
+-	}
++	if (!dev_addr || is_zero_ether_addr(dev_addr))
++		random_addr = true;
  
- 	/* Configuration Space offset 0x719 Bit3 is for L1
- 	 * BIT4 is for clock request
+-	/* Generate the P2P Device Address.  This consists of the device's
+-	 * primary MAC address with the locally administered bit set.
++	/* Generate the P2P Device Address obtaining a random ethernet
++	 * address with the locally administered bit set.
+ 	 */
+-	memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
+-	if (local_admin)
+-		p2p->dev_addr[0] |= 0x02;
++	if (random_addr)
++		eth_random_addr(p2p->dev_addr);
++	else
++		memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
+ 
+ 	/* Generate the P2P Interface Address.  If the discovery and connection
+ 	 * BSSCFGs need to simultaneously co-exist, then this address must be
