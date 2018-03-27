@@ -1,41 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/GI7o0StXVETuqwCxrjFiF5UdlACp9J4FR65xW+o3U5UlOafxTTtkN8nyRtXyKSR1pfPD0
-ARC-Seal: i=1; a=rsa-sha256; t=1522168230; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VyYqbMgRHYKYun5SQAHAZ8QaSPGog1Ip1YdlDMlci9VtTRM3gZdbfrIapL8QV8ZtW9
-         yVMyBPONH0p1aKXYPbEDONiqr72Mns/D7jlpjG9xLMMVXS2nH/F6dMOnKS+OJleNxhRo
-         6g+o1twasAL7z0tHPMUaPecrcP1tqpmwn/oVY04zsifFCfF1qgFOrvQaBzQmeHB/TvZo
-         xC+SH6EqBP/yJPDabA2aQeeT4WBQxFcltUGumz1neBPioxeIzA5mSGWbHY9XcJhsQB1m
-         HPdBegDwvinXugGq8BdP/ATg7S9IbUSyv+iOFPrHSBvaWt0o7EErmXJ1Z21a7GzFAwbC
-         pjhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=I+2WO+fBIOefDUhUd29kMfKLBQuJanDU6NOgHFci2ws=;
-        b=JvXjeoqX+TubM6b/2k5UDceLCoOqJ2QL/3JUXIiZSC32JilCgfGUELaLPBrnRAmFaw
-         5RNRnhy2xCxJd/DvJxPQ8BK63FDq3WSYLmNqU4mQZkJZZacvLDlnGkvWFQ51vdIHk8eI
-         S8LxnYQ9aVgOK9V6J5pjCAd2PcuzQT7u+5rJ9IU54ajOTSyEdyQaT4qLfHSHt+aqd8BF
-         n14LqWHCQlQYBadVTwQpE6BqSdhGMtQpZO36CNWjy58ez1meq/AyA3PDoMyLDujsPK8e
-         9xxs4lcvVvLZtuOeZfE/xpGGinrRVU+xB6X6qV1HRsblRvmV2THEJBXk0X4LwPtLPgxI
-         aGJQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4170472-1522168229-2-8122310989641174359
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522168228; b=hGyyikiq7C3KUjY/CRPiX2hJnbYulWCQ93BCZ2RHkG69Xpx
+    kiNzE+lYEwuT0kOxh9/2WDswmuOcYM/5iSKaSfbQnf2GxytSF4AWnbCdOQwSPYPr
+    yQrjIkhFSc/kd1TgS9Vih8h6zWhlaaBQJq5O/j48C4cu+be4FWTXyHZn1GhFgXuB
+    w85XRxAQvC5shWR3MZy/qRVfmkW77a48B3HCz28B3IKNZlfIIZafq8ioRaxw40zT
+    qMYY6lM1O6W65OsLozfi8RYjrk58Q9VI+ba6Pw7pyMowoYikFaMcB8+ZR6ZcXcPb
+    C+DuCmkLDRm8nqQoKz+rcabhsMA+6WqbTeBv3AA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1522168228; bh=DCcUSbnHqNT6GV8Dob0Xr6NWI8
+    OODuYgtt7t4t1EyNc=; b=coxHu1khiVv6JTL6x8c1jl6dpC2lOjIT8V7Y0WDkCf
+    Z3QvKrFk0dT+AvG1Cx5TLJo8uVCo7lv17A0gj5wk/vk907hMRjCux+j+D1u67OO/
+    TeBs1kiHn8a25jsd51vy9AhoUIJJxgBZyMpD3hNkIATB8ahcSPcuW/ZAR9FYrpgK
+    c2YZZ3/ePY2niBLTauqbZRqhb5ctdJYBZWNlwAsSz0zx86CArnc04SZynIazMz9N
+    /hqQjCs/qBE/XpF4xR2JgOHASM5y3hZNP7S//z4LnsXkdZyVrzkVcRvfKJSuy3kq
+    jZgIUHDDA1v1a9HvaEJ/jlgb2rFtJzNQp/xBxozM0+ug==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBinMcikTPBRcmLPFiHIr4xApMVg0GuG3ZOldhnZ+HuevmUFEfMY1NxC+sA7N0jMYQvLwwSrfDV4P/iJpf0WBc/YmrLBRT/GhQMrHRfRjzi+caHQTBxC
+    0KImgoQpn1VZDlO0HeygzRwvFuPuTshYU3+JQ4731oclX+DUy40H5Y6Ypk98RnlkOJsEniXeXg+VvJxQpBakKQBhTJvqitHGyQT0auEKUiJ4MTw+LbDjAzQX
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8 a=ag1SF4gXAAAA:8 a=lvJv-Mtu9OHMF5X8DM0A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753053AbeC0QaY (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:30:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41820 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753001AbeC0QaW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:30:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Prasad Sodagudi <psodagud@codeaurora.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Chenbo Feng <fengc@google.com>,
-	Richard Smith <richard-llvm@metafoo.co.uk>,
-	Chandler Carruth <chandlerc@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.4 41/43] kbuild: disable clangs default use of -fmerge-all-constants
-Date: Tue, 27 Mar 2018 18:27:45 +0200
-Message-Id: <20180327162718.700399520@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.4 38/43] x86/entry/64: Dont use IST entry for #BP stack
+Date: Tue, 27 Mar 2018 18:27:42 +0200
+Message-Id: <20180327162718.547354643@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -43,10 +83,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109074327630438?=
-X-GMAIL-MSGID: =?utf-8?q?1596109074327630438?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,130 +93,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 87e0d4f0f37fb0c8c4aeeac46fff5e957738df79 upstream.
+commit d8ba61ba58c88d5207c1ba2f7d9a2280e7d03be9 upstream.
 
-Prasad reported that he has seen crashes in BPF subsystem with netd
-on Android with arm64 in the form of (note, the taint is unrelated):
+There's nothing IST-worthy about #BP/int3.  We don't allow kprobes
+in the small handful of places in the kernel that run at CPL0 with
+an invalid stack, and 32-bit kernels have used normal interrupt
+gates for #BP forever.
 
-  [ 4134.721483] Unable to handle kernel paging request at virtual address 800000001
-  [ 4134.820925] Mem abort info:
-  [ 4134.901283]   Exception class = DABT (current EL), IL = 32 bits
-  [ 4135.016736]   SET = 0, FnV = 0
-  [ 4135.119820]   EA = 0, S1PTW = 0
-  [ 4135.201431] Data abort info:
-  [ 4135.301388]   ISV = 0, ISS = 0x00000021
-  [ 4135.359599]   CM = 0, WnR = 0
-  [ 4135.470873] user pgtable: 4k pages, 39-bit VAs, pgd = ffffffe39b946000
-  [ 4135.499757] [0000000800000001] *pgd=0000000000000000, *pud=0000000000000000
-  [ 4135.660725] Internal error: Oops: 96000021 [#1] PREEMPT SMP
-  [ 4135.674610] Modules linked in:
-  [ 4135.682883] CPU: 5 PID: 1260 Comm: netd Tainted: G S      W       4.14.19+ #1
-  [ 4135.716188] task: ffffffe39f4aa380 task.stack: ffffff801d4e0000
-  [ 4135.731599] PC is at bpf_prog_add+0x20/0x68
-  [ 4135.741746] LR is at bpf_prog_inc+0x20/0x2c
-  [ 4135.751788] pc : [<ffffff94ab7ad584>] lr : [<ffffff94ab7ad638>] pstate: 60400145
-  [ 4135.769062] sp : ffffff801d4e3ce0
-  [...]
-  [ 4136.258315] Process netd (pid: 1260, stack limit = 0xffffff801d4e0000)
-  [ 4136.273746] Call trace:
-  [...]
-  [ 4136.442494] 3ca0: ffffff94ab7ad584 0000000060400145 ffffffe3a01bf8f8 0000000000000006
-  [ 4136.460936] 3cc0: 0000008000000000 ffffff94ab844204 ffffff801d4e3cf0 ffffff94ab7ad584
-  [ 4136.479241] [<ffffff94ab7ad584>] bpf_prog_add+0x20/0x68
-  [ 4136.491767] [<ffffff94ab7ad638>] bpf_prog_inc+0x20/0x2c
-  [ 4136.504536] [<ffffff94ab7b5d08>] bpf_obj_get_user+0x204/0x22c
-  [ 4136.518746] [<ffffff94ab7ade68>] SyS_bpf+0x5a8/0x1a88
+Furthermore, we don't allow kprobes in places that have usergs while
+in kernel mode, so "paranoid" is also unnecessary.
 
-Android's netd was basically pinning the uid cookie BPF map in BPF
-fs (/sys/fs/bpf/traffic_cookie_uid_map) and later on retrieving it
-again resulting in above panic. Issue is that the map was wrongly
-identified as a prog! Above kernel was compiled with clang 4.0,
-and it turns out that clang decided to merge the bpf_prog_iops and
-bpf_map_iops into a single memory location, such that the two i_ops
-could then not be distinguished anymore.
-
-Reason for this miscompilation is that clang has the more aggressive
--fmerge-all-constants enabled by default. In fact, clang source code
-has a comment about it in lib/AST/ExprConstant.cpp on why it is okay
-to do so:
-
-  Pointers with different bases cannot represent the same object.
-  (Note that clang defaults to -fmerge-all-constants, which can
-  lead to inconsistent results for comparisons involving the address
-  of a constant; this generally doesn't matter in practice.)
-
-The issue never appeared with gcc however, since gcc does not enable
--fmerge-all-constants by default and even *explicitly* states in
-it's option description that using this flag results in non-conforming
-behavior, quote from man gcc:
-
-  Languages like C or C++ require each variable, including multiple
-  instances of the same variable in recursive calls, to have distinct
-  locations, so using this option results in non-conforming behavior.
-
-There are also various clang bug reports open on that matter [1],
-where clang developers acknowledge the non-conforming behavior,
-and refer to disabling it with -fno-merge-all-constants. But even
-if this gets fixed in clang today, there are already users out there
-that triggered this. Thus, fix this issue by explicitly adding
--fno-merge-all-constants to the kernel's Makefile to generically
-disable this optimization, since potentially other places in the
-kernel could subtly break as well.
-
-Note, there is also a flag called -fmerge-constants (not supported
-by clang), which is more conservative and only applies to strings
-and it's enabled in gcc's -O/-O2/-O3/-Os optimization levels. In
-gcc's code, the two flags -fmerge-{all-,}constants share the same
-variable internally, so when disabling it via -fno-merge-all-constants,
-then we really don't merge any const data (e.g. strings), and text
-size increases with gcc (14,927,214 -> 14,942,646 for vmlinux.o).
-
-  $ gcc -fverbose-asm -O2 foo.c -S -o foo.S
-    -> foo.S lists -fmerge-constants under options enabled
-  $ gcc -fverbose-asm -O2 -fno-merge-all-constants foo.c -S -o foo.S
-    -> foo.S doesn't list -fmerge-constants under options enabled
-  $ gcc -fverbose-asm -O2 -fno-merge-all-constants -fmerge-constants foo.c -S -o foo.S
-    -> foo.S lists -fmerge-constants under options enabled
-
-Thus, as a workaround we need to set both -fno-merge-all-constants
-*and* -fmerge-constants in the Makefile in order for text size to
-stay as is.
-
-  [1] https://bugs.llvm.org/show_bug.cgi?id=18538
-
-Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Chenbo Feng <fengc@google.com>
-Cc: Richard Smith <richard-llvm@metafoo.co.uk>
-Cc: Chandler Carruth <chandlerc@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Tested-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/entry/entry_64.S |    2 +-
+ arch/x86/kernel/traps.c   |   24 +++++++++++-------------
+ 2 files changed, 12 insertions(+), 14 deletions(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -784,6 +784,15 @@ KBUILD_CFLAGS += $(call cc-disable-warni
- # disable invalid "can't wrap" optimizations for signed / pointers
- KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1018,7 +1018,7 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTO
+ #endif /* CONFIG_HYPERV */
  
-+# clang sets -fmerge-all-constants by default as optimization, but this
-+# is non-conforming behavior for C and in fact breaks the kernel, so we
-+# need to disable it here generally.
-+KBUILD_CFLAGS	+= $(call cc-option,-fno-merge-all-constants)
-+
-+# for gcc -fno-merge-all-constants disables everything, but it is fine
-+# to have actual conforming behavior enabled.
-+KBUILD_CFLAGS	+= $(call cc-option,-fmerge-constants)
-+
- # Make sure -fstack-check isn't enabled (like gentoo apparently did)
- KBUILD_CFLAGS  += $(call cc-option,-fno-stack-check,)
+ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+-idtentry int3			do_int3			has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
++idtentry int3			do_int3			has_error_code=0
+ idtentry stack_segment		do_stack_segment	has_error_code=1
  
+ #ifdef CONFIG_XEN
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -480,7 +480,6 @@ do_general_protection(struct pt_regs *re
+ }
+ NOKPROBE_SYMBOL(do_general_protection);
+ 
+-/* May run on IST stack. */
+ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+ {
+ #ifdef CONFIG_DYNAMIC_FTRACE
+@@ -495,7 +494,15 @@ dotraplinkage void notrace do_int3(struc
+ 	if (poke_int3_handler(regs))
+ 		return;
+ 
++	/*
++	 * Use ist_enter despite the fact that we don't use an IST stack.
++	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
++	 * mode or even during context tracking state changes.
++	 *
++	 * This means that we can't schedule.  That's okay.
++	 */
+ 	ist_enter(regs);
++
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+ #ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
+ 	if (kgdb_ll_trap(DIE_INT3, "int3", regs, error_code, X86_TRAP_BP,
+@@ -512,15 +519,9 @@ dotraplinkage void notrace do_int3(struc
+ 			SIGTRAP) == NOTIFY_STOP)
+ 		goto exit;
+ 
+-	/*
+-	 * Let others (NMI) know that the debug stack is in use
+-	 * as we may switch to the interrupt stack.
+-	 */
+-	debug_stack_usage_inc();
+ 	preempt_conditional_sti(regs);
+ 	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, NULL);
+ 	preempt_conditional_cli(regs);
+-	debug_stack_usage_dec();
+ exit:
+ 	ist_exit(regs);
+ }
+@@ -886,19 +887,16 @@ void __init trap_init(void)
+ 	cpu_init();
+ 
+ 	/*
+-	 * X86_TRAP_DB and X86_TRAP_BP have been set
+-	 * in early_trap_init(). However, ITS works only after
+-	 * cpu_init() loads TSS. See comments in early_trap_init().
++	 * X86_TRAP_DB was installed in early_trap_init(). However,
++	 * IST works only after cpu_init() loads TSS. See comments
++	 * in early_trap_init().
+ 	 */
+ 	set_intr_gate_ist(X86_TRAP_DB, &debug, DEBUG_STACK);
+-	/* int3 can be called from all */
+-	set_system_intr_gate_ist(X86_TRAP_BP, &int3, DEBUG_STACK);
+ 
+ 	x86_init.irqs.trap_init();
+ 
+ #ifdef CONFIG_X86_64
+ 	memcpy(&debug_idt_table, &idt_table, IDT_ENTRIES * 16);
+ 	set_nmi_gate(X86_TRAP_DB, &debug);
+-	set_nmi_gate(X86_TRAP_BP, &int3);
+ #endif
+ }
