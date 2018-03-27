@@ -1,146 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeC0XGM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 19:06:12 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41245 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752123AbeC0XGK (ORCPT
+        id S1752739AbeC0XJW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 19:09:22 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34874 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752367AbeC0XJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 19:06:10 -0400
-X-Google-Smtp-Source: AIpwx4/3eMi3Dum89gYPQcS1ue2M2Dz0wKcdmt63vlQK191vbyGwuoZ/H8uMt6aBET8e9+7V/oP/8Q==
-From: Shakeel Butt <shakeelb@google.com>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Greg Thelen <gthelen@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH] slab, slub: skip unnecessary kasan_cache_shutdown()
-Date: Tue, 27 Mar 2018 16:06:03 -0700
-Message-Id: <20180327230603.54721-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.17.0.rc1.321.gba9d0f2565-goog
+        Tue, 27 Mar 2018 19:09:18 -0400
+X-Google-Smtp-Source: AIpwx4+US9mE2HGgg/djtjenh2e0Iwc1xTcoT3TCTM88RMuQM4QlxXiRgSIDSDnPia35l+5va6IqYw==
+Date: Wed, 28 Mar 2018 01:09:15 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: sun4i: properly check current state
+Message-ID: <20180327230914.GA4097@mithrandir>
+References: <20180225015558.4843-1-alexandre.belloni@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Disposition: inline
+In-Reply-To: <20180225015558.4843-1-alexandre.belloni@bootlin.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kasan quarantine is designed to delay freeing slab objects to catch
-use-after-free. The quarantine can be large (several percent of machine
-memory size). When kmem_caches are deleted related objects are flushed
-from the quarantine but this requires scanning the entire quarantine
-which can be very slow. We have seen the kernel busily working on this
-while holding slab_mutex and badly affecting cache_reaper, slabinfo
-readers and memcg kmem cache creations.
 
-It can easily reproduced by following script:
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	yes . | head -1000000 | xargs stat > /dev/null
-	for i in `seq 1 10`; do
-		seq 500 | (cd /cg/memory && xargs mkdir)
-		seq 500 | xargs -I{} sh -c 'echo $BASHPID > \
-			/cg/memory/{}/tasks && exec stat .' > /dev/null
-		seq 500 | (cd /cg/memory && xargs rmdir)
-	done
+On Sun, Feb 25, 2018 at 02:55:58AM +0100, Alexandre Belloni wrote:
+> Correctly extract the prescaler value from CTRL_REG before comparing it to
+> PWM_PRESCAL_MASK.
+>=20
+> Also, check that both PWM_CLK_GATING and PWM_EN to ensure the PWM is
+> enabled instead of relying on only one of those.
+>=20
+> Fixes: 93e0dfb2c52f ("pwm: sun4i: Improve hardware read out")
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  drivers/pwm/pwm-sun4i.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-The busy stack:
-    kasan_cache_shutdown
-    shutdown_cache
-    memcg_destroy_kmem_caches
-    mem_cgroup_css_free
-    css_free_rwork_fn
-    process_one_work
-    worker_thread
-    kthread
-    ret_from_fork
+Applied, thanks.
 
-This patch is based on the observation that if the kmem_cache to be
-destroyed is empty then there should not be any objects of this cache in
-the quarantine.
+Thierry
 
-Without the patch the script got stuck for couple of hours. With the
-patch the script completed within a second.
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
- mm/kasan/kasan.c |  3 ++-
- mm/slab.c        | 12 ++++++++++++
- mm/slab.h        |  1 +
- mm/slub.c        | 11 +++++++++++
- 4 files changed, 26 insertions(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
-index 49fffb0ca83b..135ce2838c89 100644
---- a/mm/kasan/kasan.c
-+++ b/mm/kasan/kasan.c
-@@ -382,7 +382,8 @@ void kasan_cache_shrink(struct kmem_cache *cache)
- 
- void kasan_cache_shutdown(struct kmem_cache *cache)
- {
--	quarantine_remove_cache(cache);
-+	if (!__kmem_cache_empty(cache))
-+		quarantine_remove_cache(cache);
- }
- 
- size_t kasan_metadata_size(struct kmem_cache *cache)
-diff --git a/mm/slab.c b/mm/slab.c
-index 9212c64bb705..b59f2cdf28d1 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2291,6 +2291,18 @@ static int drain_freelist(struct kmem_cache *cache,
- 	return nr_freed;
- }
- 
-+bool __kmem_cache_empty(struct kmem_cache *s)
-+{
-+	int node;
-+	struct kmem_cache_node *n;
-+
-+	for_each_kmem_cache_node(s, node, n)
-+		if (!list_empty(&n->slabs_full) ||
-+		    !list_empty(&n->slabs_partial))
-+			return false;
-+	return true;
-+}
-+
- int __kmem_cache_shrink(struct kmem_cache *cachep)
- {
- 	int ret = 0;
-diff --git a/mm/slab.h b/mm/slab.h
-index e8981e811c45..68bdf498da3b 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -166,6 +166,7 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
- 			      SLAB_TEMPORARY | \
- 			      SLAB_ACCOUNT)
- 
-+bool __kmem_cache_empty(struct kmem_cache *);
- int __kmem_cache_shutdown(struct kmem_cache *);
- void __kmem_cache_release(struct kmem_cache *);
- int __kmem_cache_shrink(struct kmem_cache *);
-diff --git a/mm/slub.c b/mm/slub.c
-index 1edc8d97c862..44aa7847324a 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3707,6 +3707,17 @@ static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
- 		discard_slab(s, page);
- }
- 
-+bool __kmem_cache_empty(struct kmem_cache *s)
-+{
-+	int node;
-+	struct kmem_cache_node *n;
-+
-+	for_each_kmem_cache_node(s, node, n)
-+		if (n->nr_partial || slabs_node(s, node))
-+			return false;
-+	return true;
-+}
-+
- /*
-  * Release all resources used by a slab cache.
-  */
--- 
-2.17.0.rc1.321.gba9d0f2565-goog
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6zxcACgkQ3SOs138+
+s6H5Vg/+LCxDBAhnjfKyTfgW1mu3GJguzK0YULyX3OsT1+ufKKLjKiaC8E7NRwnU
+qlrNN8gZM1ci+6QPIJFZkyA/AwpkIife0F7jP1oKxoYofsRryVbErsaGywbsUVJT
+9A2IHRYw8sEw+JPAImocxrRF6vSUDGO7RPB8e4vxAFFP5+UJh5Yed74Ed2Uh6EJ2
+CS01eS/M6J7MDdHs0LjHRebVS8AslwR34ym46y05yqmHE7xGgUoY/9bbVnDKu/Ds
+ghURCZv1N8t62E4Rc2Usi+np9wRizS2GuMSxTHbToA5w471yga4YOW1f7fa6yrGT
+jJTMqqZo3uP7AFypRws0tQLOtoSKvt4Q/thiYnb9c/kmED7ce37BPw62TaTjpYPm
+hOyW373KEY+EE+n7bG6MUTAj7V8ZjDl0Gbj8LIseZQBQAQ9eFUJ6kRTH8YhPjxRR
+bUwEOkA5sC2DcrSWOsOARXRFdEVtAG7x9IUOm0gxFrYV3BVPoyR1Z4Osv2aTviF2
+OrI91/1fFecgrq/nZ+ojzpQSxNKcSF66tuu9qbT/6/IdH0BHN7C1mVEz6+RRtbWM
+Tu9gQvtY9gD+Ogap0PxrMg0msxHPhX1g/SDducZv/8TdF5kEfx8TXWoYo39mejJC
+zQ4uYOzm2VYaPjkUijpyPUhzj8rB3D8R61ocoGFjNJEX8CLmQ4k=
+=/xhI
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
