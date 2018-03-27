@@ -1,49 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752508AbeC0MFr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 08:05:47 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:32843 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752310AbeC0MFS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 08:05:18 -0400
-From: michaelsh@mellanox.com
-To: wsa@the-dreams.de
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Shych <michaelsh@mellanox.com>
-Subject: [PATCH v1 - resent 4/5] i2c: busses: Allow configurable adapter id for mlxcpld
-Date: Tue, 27 Mar 2018 14:01:25 +0000
-Message-Id: <1522159286-41779-5-git-send-email-michaelsh@mellanox.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1522159286-41779-1-git-send-email-michaelsh@mellanox.com>
-References: <1522159286-41779-1-git-send-email-michaelsh@mellanox.com>
+        id S1752557AbeC0MGF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 08:06:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39949 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752511AbeC0MGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 08:06:02 -0400
+Date: Tue, 27 Mar 2018 14:05:59 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+cc: masaki.ota@jp.alps.com, benjamin.tissoires@redhat.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/4] HID: alps: Fix some bugs and improve code around
+ 't4_read_write_register()'
+In-Reply-To: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <nycvar.YFH.7.76.1803271405420.15778@cbobk.fhfr.pm>
+References: <cover.1521492069.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Shych <michaelsh@mellanox.com>
+On Mon, 19 Mar 2018, Christophe JAILLET wrote:
 
-It allows mlxcpld driver to be connected to pre-defined adapter number
-equal or greater than one, in order to avoid current limitation, assuming
-usage of id number one only.
+> All is said in the subject and below.
+> 
+> These patches are untested. Especially, patch 1 slightly changes the behavior
+> of 't4_read_write_register()'.
+> This looks logical to me, but please, review it carefully.
+> 
+> Christophe JAILLET (4):
+>   HID: alps: Report an error if we receive invalid data in
+>     't4_read_write_register()'
+>   HID: alps: Save a memory allocation in 't4_read_write_register()' when
+>     writing data
+>   HID: alps: Check errors returned by 't4_read_write_register()'
+>   HID: alps: Fix some style in 't4_read_write_register()'
+> 
+>  drivers/hid/hid-alps.c | 27 ++++++++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 5 deletions(-)
 
-Signed-off-by: Michael Shych <michaelsh@mellanox.com>
----
- drivers/i2c/busses/i2c-mlxcpld.c | 2 ++
- 1 file changed, 2 insertions(+)
+Masaki-san,
 
-diff --git a/drivers/i2c/busses/i2c-mlxcpld.c b/drivers/i2c/busses/i2c-mlxcpld.c
-index 7341cee9..745ed43 100644
---- a/drivers/i2c/busses/i2c-mlxcpld.c
-+++ b/drivers/i2c/busses/i2c-mlxcpld.c
-@@ -514,6 +514,8 @@ static int mlxcpld_i2c_probe(struct platform_device *pdev)
- 	/* Check support for smbus block transaction */
- 	if (val & MLXCPLD_I2C_SMBUS_BLK_BIT)
- 		priv->smbus_block = true;
-+	if (pdev->id >= -1)
-+		mlxcpld_i2c_adapter.nr = pdev->id;
- 	priv->adap = mlxcpld_i2c_adapter;
- 	priv->adap.dev.parent = &pdev->dev;
- 	priv->base_addr = MLXPLAT_CPLD_LPC_I2C_BASE_ADDR;
+do you have any comments to Christophe's patchset please?
+
+Thanks,
+
 -- 
-2.1.4
+Jiri Kosina
+SUSE Labs
