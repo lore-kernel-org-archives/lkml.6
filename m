@@ -1,87 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751231AbeC0GE7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:04:59 -0400
-Received: from mga02.intel.com ([134.134.136.20]:11159 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeC0GE5 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:04:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
-   d="scan'208";a="29151307"
-Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
- libraries
-To: Ingo Molnar <mingo@kernel.org>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
- <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
- <20180327055859.s2tjsvgdwd7cdkf7@gmail.com>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <46ad7f7c-83bb-340b-1de9-486f5cf5ca95@linux.intel.com>
-Date: Tue, 27 Mar 2018 14:04:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751590AbeC0GFP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:05:15 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:48337 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbeC0GFN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 02:05:13 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w2R64rna004809
+X-Nifty-SrcIP: [209.85.217.169]
+X-Google-Smtp-Source: AG47ELvTwtMFqqiH9gwjy/BRnPqJEahva81bBPuiZAdh17jPTGyxIu9mx9WtlT6u491nkaAmW3KARXBAPK481+UEVKI=
 MIME-Version: 1.0
-In-Reply-To: <20180327055859.s2tjsvgdwd7cdkf7@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1521810279-6282-6-git-send-email-yamada.masahiro@socionext.com>
+References: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com> <1521810279-6282-6-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 27 Mar 2018 15:04:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATyCZ_NA0PdcA6NH3qLSUfS8088m20=1Z7pGexG=ATV=w@mail.gmail.com>
+Message-ID: <CAK7LNATyCZ_NA0PdcA6NH3qLSUfS8088m20=1Z7pGexG=ATV=w@mail.gmail.com>
+Subject: Re: [PATCH 06/10] .gitignore: move *-asn1.[ch] patterns to the
+ top-level .gitignore
+To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++CC linux-crypto@vger.kernel.org
+
+No functional change, though.
 
 
-On 3/27/2018 1:58 PM, Ingo Molnar wrote:
-> 
-> * Jin Yao <yao.jin@linux.intel.com> wrote:
-> 
->> +#ifdef HAVE_DWARF_SUPPORT
->> +#ifdef HAVE_DWARF_GETLOCATIONS
->> +#ifdef NO_GLIBC
->> +#ifdef HAVE_GTK2_SUPPORT
->> +#ifdef HAVE_LIBAUDIT_SUPPORT
->> +#ifdef HAVE_LIBBFD_SUPPORT
->> +#ifdef HAVE_LIBELF_SUPPORT
->> +#ifdef HAVE_LIBNUMA_SUPPORT
->> +#ifdef NO_LIBPERL
->> +#ifdef NO_LIBPYTHON
->> +#ifdef HAVE_SLANG_SUPPORT
->> +#ifdef HAVE_LIBCRYPTO_SUPPORT
->> +#ifdef HAVE_LIBUNWIND_SUPPORT
->> +#ifdef HAVE_DWARF_SUPPORT
->> +#ifdef HAVE_ZLIB_SUPPORT
->> +#ifdef HAVE_LZMA_SUPPORT
->> +#ifdef HAVE_AUXTRACE_SUPPORT
->> +#ifdef HAVE_LIBBPF_SUPPORT
-> 
-> BTW., it would be nice at this point to fix those 3 outliers that have a negation
-> in their library support status macro:
-> 
->> +#ifdef NO_GLIBC
->> +#ifdef NO_LIBPERL
->> +#ifdef NO_LIBPYTHON
-> 
-> ... and invert them back to the HAVE_* side of the logic:
-> 
->> +#ifdef HAVE_GLIBC
->> +#ifdef HAVE_LIBPERL
->> +#ifdef HAVE_LIBPYTHON
-> 
-> That should make all related code more consistent and more readable.
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
+2018-03-23 22:04 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> These are common patterns where source files are parsed by the
+> asn1_compiler.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  .gitignore                               | 5 +----
+>  crypto/.gitignore                        | 1 -
+>  crypto/asymmetric_keys/.gitignore        | 1 -
+>  drivers/crypto/qat/qat_common/.gitignore | 1 -
+>  4 files changed, 1 insertion(+), 7 deletions(-)
+>  delete mode 100644 crypto/.gitignore
+>  delete mode 100644 crypto/asymmetric_keys/.gitignore
+>  delete mode 100644 drivers/crypto/qat/qat_common/.gitignore
+>
+> diff --git a/.gitignore b/.gitignore
+> index 1e82be1..a7fef34 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -11,6 +11,7 @@
+>  #
+>  .*
+>  *.a
+> +*-asn1.[ch]
+>  *.bin
+>  *.bz2
+>  *.c.[012]*.*
+> @@ -130,7 +131,3 @@ all.config
+>
+>  # Kdevelop4
+>  *.kdev4
+> -
+> -#Automatically generated by ASN.1 compiler
+> -net/ipv4/netfilter/nf_nat_snmp_basic-asn1.c
+> -net/ipv4/netfilter/nf_nat_snmp_basic-asn1.h
+> diff --git a/crypto/.gitignore b/crypto/.gitignore
+> deleted file mode 100644
+> index ee328374..0000000
+> --- a/crypto/.gitignore
+> +++ /dev/null
+> @@ -1 +0,0 @@
+> -*-asn1.[ch]
+> diff --git a/crypto/asymmetric_keys/.gitignore b/crypto/asymmetric_keys/.gitignore
+> deleted file mode 100644
+> index ee328374..0000000
+> --- a/crypto/asymmetric_keys/.gitignore
+> +++ /dev/null
+> @@ -1 +0,0 @@
+> -*-asn1.[ch]
+> diff --git a/drivers/crypto/qat/qat_common/.gitignore b/drivers/crypto/qat/qat_common/.gitignore
+> deleted file mode 100644
+> index ee328374..0000000
+> --- a/drivers/crypto/qat/qat_common/.gitignore
+> +++ /dev/null
+> @@ -1 +0,0 @@
+> -*-asn1.[ch]
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Yes, it's better, thanks!
-I will try to convert them to the HAVE_*.
 
-Thanks
-Jin Yao
+
+-- 
+Best Regards
+Masahiro Yamada
