@@ -1,99 +1,77 @@
-Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522169868; cv=none;
+Return-Path: <Rene.Hickersberger@gmx.at>
+X-Google-Smtp-Source: AIpwx48F+N9MTwhZsnSvvw2INPoQHkBNMgVvCdm+iPA7mBnqt+Vbqj3Cj7C2LrwK+qRTKV+qpNbP
+ARC-Seal: i=1; a=rsa-sha256; t=1522167306; cv=none;
         d=google.com; s=arc-20160816;
-        b=H1AH3M5j22Q6MJ7SsrC4NW6Qu2XOcGX9CJ0KQAvzAWZwS55sTjVHkFg8LJtgcORKlv
-         uhji9X6B6kObkDgSAWl9aXpVenrQfBUd6YvlqGOAnvQ6TyBIOCsrTD3OgZdR9pMyhtA/
-         eYGSOLAGaBfb6deQ0PyfV43iHmHWFhJfCjCLFewVtfRftPjBpOhXjV9W7PQQ2TPA04B8
-         B910KMWrNoj6JLK6vq25m42QQHChGZnXnV3XlSdT9zUuQE8A4loS6T6xWVBXHQFpVDWH
-         rZ1a2BInW0r17trdPPfakKPRlmkN2iDIlyqWN3E4ekf37BR9/feGoHxznDK6Gwc/penK
-         cmyQ==
+        b=x0OVC5ahpMiSPC7Mchpz5wEtfzrWYOymEzolCx+EzJs+oF4kaBTrM04iQvPJnCCUoZ
+         N7jlR+k7frW3rXSkJPWf4IL8fE8GNvn1mVohtOZJMGRuhZVMXyNrD9KmeLwkYgrPkqOd
+         fnPe7tRBI/AjHKiIVXp3GEMOMmQg8HTsxixj654K6Y5NzIpMJ1dO7efTDYVgKUWUpbTd
+         zL8PzmiQXVv8WhC915VKxYSDGKfoQDllum8CXhg45eDUuPA7+UMbUfkcTA6HGPX3pWSM
+         pyowhhtNSz0OikJXa2Br85tITo4qhmY2UQuFFXQA+DN88szS0agtR3E2LjUqS0O3V4aI
+         4ybQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=16zO1fZlfRozQmZA0XwO/F+8TDPyjWmWtXbmZBvVg9M=;
-        b=lwu0T2qUIppArVPhTI8Q00RZ/Va7vJEpCXo8hsYnyECLp0BzJF01xyRXEL/3QC/v46
-         qiRC6ySyuLws7fIDFUFTE03dVy7MtOQt81P8Y6IzTcVrlvT164x6TykcVal22cm/upAl
-         iWI7gSOWqUuUroPwQdIbjpkXXM2irGOuybj7GQaqMkq4G0rCVoMs6kgSIi9omzNRc9Dv
-         xPkER7i8WlU4SeMI//drsZyXSl5dt/b6UGSpKmxj3OVlczLRMiaKoeOHVkA4MjimKNmV
-         Xy2D33G/+rdZm5wZQAQbRQJBbDT5622tUipL1ow26Hzkc2Eshz9uXLsd6qFNPq3t6wCB
-         wGPQ==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=7xlZX9o/+82lrzuZ7I3r0OpOIIuTZ+m9pR81eaTcPM4=;
+        b=CxDxJSb4csDjNEmYbx4X679C/PfMV6tFkkJOTQl7uLE2xU1APJsJU3kcaIt5iYCfKx
+         XJc9SbssWe+qAv9d7z/6fKoGynjhhPwitBkjw5wZfIZ5IL2AfGpuTT9hSYu5n/AG7e1w
+         YMBL37oTXdbzWuEHFBAzOmRkIC0BuYQiXNnLCUx5Rp1ncs5OYqNJqPiaYJKhF+mzO239
+         WS7FSFsNNpgFQFyuaoolDm2KW9++gkanjbyMDrcb95ZBSCIOccvrZU2NxW6UXbj0AQCM
+         kN2E2yCkzX8EQiddVKFpktARgdMCSy4ZmTVyTE/+ZKLcRxbAe1M22Rcyzi9Ib8s29KcJ
+         20lg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=TC0a80Yr;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=pass (google.com: domain of rene.hickersberger@gmx.at designates 212.227.15.18 as permitted sender) smtp.mailfrom=Rene.Hickersberger@gmx.at
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=TC0a80Yr;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx4/+PlMoTXyL3X99J/NO1BvfdIk8E5OZI/edo9QrrTbdJ9nLf1NSk4SSfQkVN/3eIvmvXQf2lg==
-From: Andrey Konovalov <andreyknvl@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Andrey Konovalov <andreyknvl@google.com>,
-	James Morse <james.morse@arm.com>,
-	Kees Cook <keescook@chromium.org>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-	Zi Yan <zi.yan@cs.rutgers.edu>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
+       spf=pass (google.com: domain of rene.hickersberger@gmx.at designates 212.227.15.18 as permitted sender) smtp.mailfrom=Rene.Hickersberger@gmx.at
+From: Rene Hickersberger <Rene.Hickersberger@gmx.at>
+To: gregkh@linuxfoundation.org
+Cc: devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-	Kostya Serebryany <kcc@google.com>,
-	Evgeniy Stepanov <eugenis@google.com>,
-	Lee Smith <Lee.Smith@arm.com>,
-	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-	Jacob Bramley <Jacob.Bramley@arm.com>,
-	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Subject: [RFC PATCH v2 1/6] arm64: add type casts to untagged_addr macro
-Date: Tue, 27 Mar 2018 18:57:37 +0200
-Message-Id: <64234f64bde32a3f58466a74445848bb7f8cda83.1522169685.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
-In-Reply-To: <cover.1522169685.git.andreyknvl@google.com>
-References: <cover.1522169685.git.andreyknvl@google.com>
-In-Reply-To: <cover.1522169685.git.andreyknvl@google.com>
-References: <cover.1522169685.git.andreyknvl@google.com>
+	Rene Hickersberger <Rene.Hickersberger@gmx.at>
+Subject: [PATCH] drivers: staging: rtl8192e: fixed a space coding style issue
+Date: Tue, 27 Mar 2018 18:14:37 +0200
+Message-Id: <1522167277-3697-1-git-send-email-Rene.Hickersberger@gmx.at>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K0:BYMwGI40NMIU4Ln8J/CfRstNVbdX04kTY8HjSsnz4ZlxabmxXj+
+ zkRiJXjv1VtKtjx/CtQ3jjSZBejg/LBNuDQSjEO2uAZVeab/9s7uietp4vaPcjp2uJLKw5R
+ uwdyNppyAt+wwFWTq97GVkft/uIOvGaOuXvEXhKcfvfeCmg4QI+q56JMaqclgTn3dwgSo+y
+ h1iJkGLo8MoadJmSmOaPQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nbtvQkkK544=:DUceaZ2CKFCyxsOUydc/LN
+ g7Jwb2ttJI9tsXRpt8vByuL3UQnQiy4+mTYe3V/dA9pm2GQBjfgh9jkk4kVsDAUskZxxeYjZp
+ 3ERCUeJ/H00SnUNrc9JXDo+nvYlTro2ojlBsim5cb9BSs0UNxak+TjQUuP4pnx2kIfsgQJ65l
+ kYfQyr9eMnhCHgnMOTX4Uf09lS9w1anMarDJGs+KUe+Aki83YOvOBz/rbLpxo3poUKiY2bQS9
+ e++MEi5DolPDm0rZKgfVGPL5SegndxerrlEkoccxp5gXk72SvQ8dOnvfBsDur3n+XvlkyfKD8
+ k5Y0uiiT6/3cJtRp+ENbISmqdc9ST7Fn9545Z77QK2gk2KqffYgsVf8Unqp2cnIsYMgXigjIx
+ 4G/1q2nyy4D+zfGICY+JHxGuWqN1LmFC7cARdLDOtYcZg0GbRVO8oq4+b2lVbHzHhKOx0Sv+G
+ UtvyCVDZmywdP1YvmKkY6ZUk2Tpdb4azVjgOjBpxdl4yNCOhfKHylD1mHP6ed/rpEim/xUtFS
+ HgHXO+7ZOTHuaCaZuuhL7C9aSIisCs08kt2Npv/zb9PT6FezHmhzHQtCLCU54r/naT4yAxSph
+ oq5wBwoaN50qpJkUolRtCMum5CattVuljMrSkIEB10cZEcpQL7zQgS62jjRnMqRx+4UETzltC
+ RT012rSKfLs7z+A9OMGQb1Ec/slvBZHbSib36A8bhTjM5YtwZkgKeiJQ+QN8I48Q2jq+JM4vQ
+ Pbp817R80jIv9YdYZGLMpaMjxPojAz0BOB30ryyXd6zW86sSGGeBT/LChCKDdv/2fxbWn8dnw
+ MMDS7fVi9+DcuQgVnno149NnYIz6w==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596110792172731978?=
-X-GMAIL-MSGID: =?utf-8?q?1596110792172731978?=
+X-GMAIL-THRID: =?utf-8?q?1596108106120612758?=
+X-GMAIL-MSGID: =?utf-8?q?1596108106120612758?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch makes the untagged_addr macro accept all kinds of address types
-(void *, unsigned long, etc.) and allows not to specify type casts in each
-place where it is used. This is done by using __typeof__.
+There was a weird space before the struct which is now removed.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Rene Hickersberger <Rene.Hickersberger@gmx.at>
 ---
- arch/arm64/include/asm/uaccess.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8192e/rtl819x_BAProc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index e66b0fca99c2..2d6451cbaa86 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -102,7 +102,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
-  * up with a tagged userland pointer. Clear the tag to get a sane pointer to
-  * pass on to access_ok(), for instance.
-  */
--#define untagged_addr(addr)		sign_extend64(addr, 55)
-+#define untagged_addr(addr)		\
-+	((__typeof__(addr))sign_extend64((__u64)(addr), 55))
+diff --git a/drivers/staging/rtl8192e/rtl819x_BAProc.c b/drivers/staging/rtl8192e/rtl819x_BAProc.c
+index eb6d841..c466a5e7 100644
+--- a/drivers/staging/rtl8192e/rtl819x_BAProc.c
++++ b/drivers/staging/rtl8192e/rtl819x_BAProc.c
+@@ -76,7 +76,7 @@ static struct sk_buff *rtllib_ADDBA(struct rtllib_device *ieee, u8 *Dst,
+ 				    u16 StatusCode, u8 type)
+ {
+ 	struct sk_buff *skb = NULL;
+-	 struct rtllib_hdr_3addr *BAReq = NULL;
++	struct rtllib_hdr_3addr *BAReq = NULL;
+ 	u8 *tag = NULL;
+ 	u16 len = ieee->tx_headroom + 9;
  
- #define access_ok(type, addr, size)	__range_ok(addr, size)
- #define user_addr_max			get_fs
 -- 
-2.17.0.rc0.231.g781580f067-goog
+2.7.4
