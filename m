@@ -1,112 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752935AbeC0QHN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 12:07:13 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52077 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752559AbeC0QHG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:07:06 -0400
-X-Google-Smtp-Source: AIpwx4+MgZ7DbO/hkbSF/18/j8fE00y2nBHtZypiZ4XwQbXQhKimsdwM0A4MS2ce9CYF4ZHNHx5Iv3IGuZLcxLEfPsM=
+        id S1752972AbeC0QH0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:07:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752947AbeC0QHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 12:07:24 -0400
+Date: Tue, 27 Mar 2018 19:07:22 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Wei Wang <wei.w.wang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com
+Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
+Message-ID: <20180327190635-mutt-send-email-mst@kernel.org>
+References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
+ <1522031994-7246-2-git-send-email-wei.w.wang@intel.com>
+ <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
+ <5AB9E377.30900@intel.com>
+ <20180327063322.GW5652@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <5AB9ACDA.9090207@gmail.com>
-References: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
- <CANLsYkymOF2oG7TmKbRTakYKw0ECN_DXfkX5b8WjmS0Lz0sfig@mail.gmail.com> <5AB9ACDA.9090207@gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 27 Mar 2018 10:07:04 -0600
-Message-ID: <CANLsYkw0v-vVpf1M1Ae+y=Hq5cqqp+_Sjq41pDS+=Xv9zesHAw@mail.gmail.com>
-Subject: Re: [PATCH] coresight: use put_device() instead of kfree()
-To: arvindY <arvind.yadav.cs@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327063322.GW5652@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 March 2018 at 20:30, arvindY <arvind.yadav.cs@gmail.com> wrote:
->
->
-> On Tuesday 27 March 2018 03:16 AM, Mathieu Poirier wrote:
->>
->> drivers/hwtracing/coresight/coresight.c
->> On 18 March 2018 at 01:38, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
->>>
->>> Never directly free @dev after calling device_register(), even
->>> if it returned an error. Always use put_device() to give up the
->>> reference initialized.
->>>
->>> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->>> ---
->>>   drivers/hwtracing/coresight/coresight.c | 8 ++++----
->>>   1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/hwtracing/coresight/coresight.c
->>> b/drivers/hwtracing/coresight/coresight.c
->>> index 389c4ba..132dfbc 100644
->>> --- a/drivers/hwtracing/coresight/coresight.c
->>> +++ b/drivers/hwtracing/coresight/coresight.c
->>> @@ -1026,8 +1026,10 @@ struct coresight_device *coresight_register(struct
->>> coresight_desc *desc)
->>>          dev_set_name(&csdev->dev, "%s", desc->pdata->name);
->>>
->>>          ret = device_register(&csdev->dev);
->>> -       if (ret)
->>> -               goto err_device_register;
->>> +       if (ret) {
->>> +               put_device(&csdev->dev);
->>> +               goto err_kzalloc_csdev;
->>> +       }
->>>
->>>          mutex_lock(&coresight_mutex);
->>>
->>> @@ -1038,8 +1040,6 @@ struct coresight_device *coresight_register(struct
->>> coresight_desc *desc)
->>>
->>>          return csdev;
->>>
->>> -err_device_register:
->>> -       kfree(conns);
->>
->> Apologies for the late reply, I was travelling.
->>
->> I suggest to simply replace kfree() with put_device() in order to
->> concentrate the error handling code in the same area and make sure
->> that memory allocated for @conns and @refcnts is freed.
->>
->> Thanks,
->> Mathieu
->
->
-> If you will see the comment for device_register(drivers/base/core.c)
-> there is mentioned that 'NOTE: _Never_ directly free @dev
-> after calling this function, even if it returned an error!
-> Always use put_device() to give up the reference initialized
-> in this function instead.
+On Tue, Mar 27, 2018 at 08:33:22AM +0200, Michal Hocko wrote:
+> > > > + * The function itself might sleep so it cannot be called from atomic
+> > > > + * contexts.
+> > > I don't see how walk_free_mem_block() can sleep.
+> > 
+> > OK, it would be better to remove this sentence for the current version. But
+> > I think we could probably keep it if we decide to add cond_resched() below.
+> 
+> The point of this sentence was to make any user aware that the function
+> might sleep from the very begining rather than chase existing callers
+> when we need to add cond_resched or sleep for any other reason. So I
+> would rather keep it.
 
-I have read the notice and in full agreement with the put_device() part.
+Let's say what it is then - "will be changed to sleep in the future".
 
-> Here  put_device() will decrement the last reference and then
-> free the memory by calling dev->release.  Internally
-> put_device() -> kobject_put() -> kobject_cleanup() which is
-> responsible to call 'dev -> release' and also free other kobject
-> resources.
-
-Memory would be automatically freed if it would have been allocated
-with the devm_XYZ() helpers but it is not the case here.  As such it
-has to be freed explicitly.  Reading your patch again (and the jetlag
-somewhat fading) I think you've done the right thing except for the
-"goto" that should still point to "err_device_register".
-
->we should always avoid kfree() if device_register()
-> returned an error. Otherwise it'll not do clean up of other
-> kobject resources.
->
-> ~arvind
->>>
->>>   err_kzalloc_conns:
->>>          kfree(refcnts);
->>>   err_kzalloc_refcnts:
->>> --
->>> 2.7.4
->>>
->
+> -- 
+> Michal Hocko
+> SUSE Labs
