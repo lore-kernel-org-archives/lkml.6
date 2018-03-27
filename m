@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AIpwx49GRY/P8LzVABBRCFDhMGNotdbU8zLXxBWWkRaqqs5WtErVumXPCWE8bixwNFSEWlpElSAR
-ARC-Seal: i=1; a=rsa-sha256; t=1522192135; cv=none;
+X-Google-Smtp-Source: AIpwx4/wf/U81pvhtiZtcKhGv2qZwEVOeFQsBx392CQJVlUsXsPYIbrYKMkI87qvDW16zdqff0tk
+ARC-Seal: i=1; a=rsa-sha256; t=1522192133; cv=none;
         d=google.com; s=arc-20160816;
-        b=yOTFaIdvZ5v85XtXl+mCbt2QcBct+/VgesrV6oO3rmYwnoBbkQk3FTZHqTQ1cG8GIf
-         bixadG/yHg8Au6OOEUcJV0XEJCnsZyKBz95N4VtAg7AA2/L4KDxr6ynKyXSu9Fw9JSRF
-         r/A4TBDo9rgttEZC4A0oCXmOZkZFtTIP6ZvIm31RLvrRcG3+5tKryJpEeKRXCriROCZW
-         xuls7ySzQAq54AsnweOonloMqmVP1YrsZrLflugmu9650SbTcPCA29HNNEpagMwQkaH1
-         CeUkc7BJuGE4a51Pl3H0UaCRzDh7By/KDmf3LBQzw/gwRfS0gUebOC2dDDmJh1O45w42
-         aPCg==
+        b=IpMB/G5tY3EHrwyTS43aQ4E4kQVNi6xcxce6YQ27MgrnocMIE26ZXzaJbLfBs1kxWn
+         SfsHkGMTVYX5PwvJTKa39XHJ4VPo4PKHVITQQsMkOmQDXjAxdF6f1IIEImubNj+y+AnX
+         /vqbywkc7utnqwDDWd7igYABkud/jpXpzoEKyxhCLFZv0cRV+IHMGpHnzXk2ukzUoJu+
+         rdTCDLsNexQF30k116cYWEAD1iglqCAlIAO3ee6zEYnjUxM8XQL9bflapwf8eIdQHuCA
+         UTFe58Ob8n13lbI+zyHcREEdv7YDmH2kWaZk8Agl/NpXGk3XBhT899+sYocohxXVDcgv
+         N/ZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:content-transfer-encoding:mime-version:references
-         :in-reply-to:message-id:date:cc:to:from:arc-authentication-results;
-        bh=qH8voW2c7rrhKbx9PsUVeSzjaNuuBsNoOv2KBZPBxfs=;
-        b=Cbvyz2clwFhNlO3R4cHDEb1kWGm5Z+lu2iHdUig/7bKmtkpaLXOi+D93ig4I7CoCyA
-         mkYmk462fe2ob8AT0qL4bs5lcZuHwTIAZlE2aM21wgZ56PLR3gTiB0dWTj4/6QZHOqLe
-         ughSi+GJJsze0wnxUdfXIl+toBI9yNXkFr8AjxSCWyGNS+8CM/8lZJs9jOm9uxxr9DHI
-         3nC0XSFjfGZlThEfUIfGlB52iw64F4YoU/hwasHGhOU1Il42UW13UIIbtx4Z1LMCSlM+
-         vY4tkBZBzPDBtTfCdrzrib+b1atD9gBAaXrmQtxfrP6u2alwI+IzTpKcbTw/xMJGvoxh
-         RHzA==
+        h=subject:references:in-reply-to:message-id:date:cc:to:from
+         :arc-authentication-results;
+        bh=r4xFvsp25kihSKxm+o5gUbmzYmubrPrnlgdU/blK/oQ=;
+        b=YGfdUb6kn3mjZWsj6VyBzj/v3ahTSvmtnK7XHylrRSEns+E9POf0F+QiHWW5GL7RMJ
+         trSiZcvxdt9aJJqXvX7bxCkNZxlSjp0gUJ5qW5sKoS0CmN2DH2NUUXR3KmuFofbAmY9k
+         TB2KqYuOAaoSfKo+fhbDliu7hT0O1QnD1VwfRFNA0oYRBxZC9D5pezMILmwHDq8K+9nQ
+         linIOu+kGhdtONxzDaIxzBzfsIcgnJWonPc02eQ1Ap9d9qw5MBpNJyY5HL+DZVvUX9c/
+         3DJVjL3DiU5j4cY9Sb1Ov203mzJ5LYbePCB+BzkWxwpdixarq1viMXCeyIgKc+f5npPI
+         nE6A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -34,112 +34,271 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Logan Gunthorpe <logang@deltatee.com>,
 	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 	Paul Mackerras <paulus@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Date: Tue, 27 Mar 2018 17:08:29 -0600
-Message-Id: <20180327230834.5931-5-logang@deltatee.com>
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Suresh Warrier <warrier@linux.vnet.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>
+Date: Tue, 27 Mar 2018 17:08:30 -0600
+Message-Id: <20180327230834.5931-6-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180327230834.5931-1-logang@deltatee.com>
 References: <20180327230834.5931-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, horia.geanta@nxp.com, logang@deltatee.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, warrier@linux.vnet.ibm.com, andy.shevchenko@gmail.com, npiggin@gmail.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v15 4/9] powerpc: iomap.c: introduce io{read|write}64_{lo_hi|hi_lo}
+Subject: [PATCH v15 5/9] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596134140285324978?=
-X-GMAIL-MSGID: =?utf-8?q?1596134140285324978?=
+X-GMAIL-THRID: =?utf-8?q?1596134138383974283?=
+X-GMAIL-MSGID: =?utf-8?q?1596134138383974283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These functions will be introduced into the generic iomap.c so
-they can deal with PIO accesses in hi-lo/lo-hi variants. Thus,
-the powerpc version of iomap.c will need to provide the same
-functions even though, in this arch, they are identical to the
-regular io{read|write}64 functions.
+In order to provide non-atomic functions for io{read|write}64 that will
+use readq and writeq when appropriate. We define a number of variants
+of these functions in the generic iomap that will do non-atomic
+operations on pio but atomic operations on mmio.
+
+These functions are only defined if readq and writeq are defined. If
+they are not, then the wrappers that always use non-atomic operations
+from include/linux/io-64-nonatomic*.h will be used.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Tested-by: Horia Geantă <horia.geanta@nxp.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: Paul Mackerras <paulus@samba.org>
 Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Suresh Warrier <warrier@linux.vnet.ibm.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
 ---
- arch/powerpc/kernel/iomap.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/powerpc/include/asm/io.h |   2 +
+ include/asm-generic/iomap.h   |  26 +++++++--
+ lib/iomap.c                   | 132 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 154 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/kernel/iomap.c b/arch/powerpc/kernel/iomap.c
-index aab456ed2a00..5ac84efc6ede 100644
---- a/arch/powerpc/kernel/iomap.c
-+++ b/arch/powerpc/kernel/iomap.c
-@@ -45,12 +45,32 @@ u64 ioread64(void __iomem *addr)
- {
- 	return readq(addr);
- }
-+u64 ioread64_lo_hi(void __iomem *addr)
-+{
-+	return readq(addr);
-+}
-+u64 ioread64_hi_lo(void __iomem *addr)
-+{
-+	return readq(addr);
-+}
- u64 ioread64be(void __iomem *addr)
- {
- 	return readq_be(addr);
- }
-+u64 ioread64be_lo_hi(void __iomem *addr)
-+{
-+	return readq_be(addr);
-+}
-+u64 ioread64be_hi_lo(void __iomem *addr)
-+{
-+	return readq_be(addr);
-+}
- EXPORT_SYMBOL(ioread64);
-+EXPORT_SYMBOL(ioread64_lo_hi);
-+EXPORT_SYMBOL(ioread64_hi_lo);
- EXPORT_SYMBOL(ioread64be);
-+EXPORT_SYMBOL(ioread64be_lo_hi);
-+EXPORT_SYMBOL(ioread64be_hi_lo);
- #endif /* __powerpc64__ */
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index af074923d598..4cc420cfaa78 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -788,8 +788,10 @@ extern void __iounmap_at(void *ea, unsigned long size);
  
- void iowrite8(u8 val, void __iomem *addr)
-@@ -83,12 +103,32 @@ void iowrite64(u64 val, void __iomem *addr)
- {
- 	writeq(val, addr);
- }
-+void iowrite64_lo_hi(u64 val, void __iomem *addr)
-+{
-+	writeq(val, addr);
-+}
-+void iowrite64_hi_lo(u64 val, void __iomem *addr)
-+{
-+	writeq(val, addr);
-+}
- void iowrite64be(u64 val, void __iomem *addr)
- {
- 	writeq_be(val, addr);
- }
-+void iowrite64be_lo_hi(u64 val, void __iomem *addr)
-+{
-+	writeq_be(val, addr);
-+}
-+void iowrite64be_hi_lo(u64 val, void __iomem *addr)
-+{
-+	writeq_be(val, addr);
-+}
- EXPORT_SYMBOL(iowrite64);
-+EXPORT_SYMBOL(iowrite64_lo_hi);
-+EXPORT_SYMBOL(iowrite64_hi_lo);
- EXPORT_SYMBOL(iowrite64be);
-+EXPORT_SYMBOL(iowrite64be_lo_hi);
-+EXPORT_SYMBOL(iowrite64be_hi_lo);
- #endif /* __powerpc64__ */
+ #define mmio_read16be(addr)		readw_be(addr)
+ #define mmio_read32be(addr)		readl_be(addr)
++#define mmio_read64be(addr)		readq_be(addr)
+ #define mmio_write16be(val, addr)	writew_be(val, addr)
+ #define mmio_write32be(val, addr)	writel_be(val, addr)
++#define mmio_write64be(val, addr)	writeq_be(val, addr)
+ #define mmio_insb(addr, dst, count)	readsb(addr, dst, count)
+ #define mmio_insw(addr, dst, count)	readsw(addr, dst, count)
+ #define mmio_insl(addr, dst, count)	readsl(addr, dst, count)
+diff --git a/include/asm-generic/iomap.h b/include/asm-generic/iomap.h
+index 5b63b94ef6b5..5a4af0199b32 100644
+--- a/include/asm-generic/iomap.h
++++ b/include/asm-generic/iomap.h
+@@ -31,9 +31,16 @@ extern unsigned int ioread16(void __iomem *);
+ extern unsigned int ioread16be(void __iomem *);
+ extern unsigned int ioread32(void __iomem *);
+ extern unsigned int ioread32be(void __iomem *);
+-#ifdef CONFIG_64BIT
+-extern u64 ioread64(void __iomem *);
+-extern u64 ioread64be(void __iomem *);
++
++#ifdef readq
++#define ioread64_lo_hi ioread64_lo_hi
++#define ioread64_hi_lo ioread64_hi_lo
++#define ioread64be_lo_hi ioread64be_lo_hi
++#define ioread64be_hi_lo ioread64be_hi_lo
++extern u64 ioread64_lo_hi(void __iomem *addr);
++extern u64 ioread64_hi_lo(void __iomem *addr);
++extern u64 ioread64be_lo_hi(void __iomem *addr);
++extern u64 ioread64be_hi_lo(void __iomem *addr);
+ #endif
+ 
+ extern void iowrite8(u8, void __iomem *);
+@@ -41,9 +48,16 @@ extern void iowrite16(u16, void __iomem *);
+ extern void iowrite16be(u16, void __iomem *);
+ extern void iowrite32(u32, void __iomem *);
+ extern void iowrite32be(u32, void __iomem *);
+-#ifdef CONFIG_64BIT
+-extern void iowrite64(u64, void __iomem *);
+-extern void iowrite64be(u64, void __iomem *);
++
++#ifdef writeq
++#define iowrite64_lo_hi iowrite64_lo_hi
++#define iowrite64_hi_lo iowrite64_hi_lo
++#define iowrite64be_lo_hi iowrite64be_lo_hi
++#define iowrite64be_hi_lo iowrite64be_hi_lo
++extern void iowrite64_lo_hi(u64 val, void __iomem *addr);
++extern void iowrite64_hi_lo(u64 val, void __iomem *addr);
++extern void iowrite64be_lo_hi(u64 val, void __iomem *addr);
++extern void iowrite64be_hi_lo(u64 val, void __iomem *addr);
+ #endif
  
  /*
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 2c293b22569f..e909ab71e995 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -67,6 +67,7 @@ static void bad_io_access(unsigned long port, const char *access)
+ #ifndef mmio_read16be
+ #define mmio_read16be(addr) swab16(readw(addr))
+ #define mmio_read32be(addr) swab32(readl(addr))
++#define mmio_read64be(addr) swab64(readq(addr))
+ #endif
+ 
+ unsigned int ioread8(void __iomem *addr)
+@@ -100,6 +101,80 @@ EXPORT_SYMBOL(ioread16be);
+ EXPORT_SYMBOL(ioread32);
+ EXPORT_SYMBOL(ioread32be);
+ 
++#ifdef readq
++static u64 pio_read64_lo_hi(unsigned long port)
++{
++	u64 lo, hi;
++
++	lo = inl(port);
++	hi = inl(port + sizeof(u32));
++
++	return lo | (hi << 32);
++}
++
++static u64 pio_read64_hi_lo(unsigned long port)
++{
++	u64 lo, hi;
++
++	hi = inl(port + sizeof(u32));
++	lo = inl(port);
++
++	return lo | (hi << 32);
++}
++
++static u64 pio_read64be_lo_hi(unsigned long port)
++{
++	u64 lo, hi;
++
++	lo = pio_read32be(port + sizeof(u32));
++	hi = pio_read32be(port);
++
++	return lo | (hi << 32);
++}
++
++static u64 pio_read64be_hi_lo(unsigned long port)
++{
++	u64 lo, hi;
++
++	hi = pio_read32be(port);
++	lo = pio_read32be(port + sizeof(u32));
++
++	return lo | (hi << 32);
++}
++
++u64 ioread64_lo_hi(void __iomem *addr)
++{
++	IO_COND(addr, return pio_read64_lo_hi(port), return readq(addr));
++	return 0xffffffffffffffffULL;
++}
++
++u64 ioread64_hi_lo(void __iomem *addr)
++{
++	IO_COND(addr, return pio_read64_hi_lo(port), return readq(addr));
++	return 0xffffffffffffffffULL;
++}
++
++u64 ioread64be_lo_hi(void __iomem *addr)
++{
++	IO_COND(addr, return pio_read64be_lo_hi(port),
++		return mmio_read64be(addr));
++	return 0xffffffffffffffffULL;
++}
++
++u64 ioread64be_hi_lo(void __iomem *addr)
++{
++	IO_COND(addr, return pio_read64be_hi_lo(port),
++		return mmio_read64be(addr));
++	return 0xffffffffffffffffULL;
++}
++
++EXPORT_SYMBOL(ioread64_lo_hi);
++EXPORT_SYMBOL(ioread64_hi_lo);
++EXPORT_SYMBOL(ioread64be_lo_hi);
++EXPORT_SYMBOL(ioread64be_hi_lo);
++
++#endif /* readq */
++
+ #ifndef pio_write16be
+ #define pio_write16be(val,port) outw(swab16(val),port)
+ #define pio_write32be(val,port) outl(swab32(val),port)
+@@ -108,6 +183,7 @@ EXPORT_SYMBOL(ioread32be);
+ #ifndef mmio_write16be
+ #define mmio_write16be(val,port) writew(swab16(val),port)
+ #define mmio_write32be(val,port) writel(swab32(val),port)
++#define mmio_write64be(val,port) writeq(swab64(val),port)
+ #endif
+ 
+ void iowrite8(u8 val, void __iomem *addr)
+@@ -136,6 +212,62 @@ EXPORT_SYMBOL(iowrite16be);
+ EXPORT_SYMBOL(iowrite32);
+ EXPORT_SYMBOL(iowrite32be);
+ 
++#ifdef writeq
++static void pio_write64_lo_hi(u64 val, unsigned long port)
++{
++	outl(val, port);
++	outl(val >> 32, port + sizeof(u32));
++}
++
++static void pio_write64_hi_lo(u64 val, unsigned long port)
++{
++	outl(val >> 32, port + sizeof(u32));
++	outl(val, port);
++}
++
++static void pio_write64be_lo_hi(u64 val, unsigned long port)
++{
++	pio_write32be(val, port + sizeof(u32));
++	pio_write32be(val >> 32, port);
++}
++
++static void pio_write64be_hi_lo(u64 val, unsigned long port)
++{
++	pio_write32be(val >> 32, port);
++	pio_write32be(val, port + sizeof(u32));
++}
++
++void iowrite64_lo_hi(u64 val, void __iomem *addr)
++{
++	IO_COND(addr, pio_write64_lo_hi(val, port),
++		writeq(val, addr));
++}
++
++void iowrite64_hi_lo(u64 val, void __iomem *addr)
++{
++	IO_COND(addr, pio_write64_hi_lo(val, port),
++		writeq(val, addr));
++}
++
++void iowrite64be_lo_hi(u64 val, void __iomem *addr)
++{
++	IO_COND(addr, pio_write64be_lo_hi(val, port),
++		mmio_write64be(val, addr));
++}
++
++void iowrite64be_hi_lo(u64 val, void __iomem *addr)
++{
++	IO_COND(addr, pio_write64be_hi_lo(val, port),
++		mmio_write64be(val, addr));
++}
++
++EXPORT_SYMBOL(iowrite64_lo_hi);
++EXPORT_SYMBOL(iowrite64_hi_lo);
++EXPORT_SYMBOL(iowrite64be_lo_hi);
++EXPORT_SYMBOL(iowrite64be_hi_lo);
++
++#endif /* readq */
++
+ /*
+  * These are the "repeat MMIO read/write" functions.
+  * Note the "__raw" accesses, since we don't want to
 -- 
 2.11.0
