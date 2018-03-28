@@ -1,214 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752951AbeC1QYW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 12:24:22 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37414 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752572AbeC1QYT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 12:24:19 -0400
-X-Google-Smtp-Source: AIpwx4+Pqif9T9LjQ38ph2gfa2sXY8PlMhdN+r4+J/2UfkMmazOYtjtZx58wZkw8k4pzsNJoDbLdbg==
-Date: Wed, 28 Mar 2018 09:24:16 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: Add Gateworks System Controller
- bindings
-Message-ID: <20180328162416.GB25325@roeck-us.net>
-References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
- <1522250043-8065-2-git-send-email-tharvey@gateworks.com>
+        id S1753190AbeC1QZr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 12:25:47 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:39600 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752907AbeC1QZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 12:25:45 -0400
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-2-christian.koenig@amd.com>
+ <20180328123830.GB25060@infradead.org>
+ <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
+ <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
+ <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
+Date: Wed, 28 Mar 2018 10:25:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522250043-8065-2-git-send-email-tharvey@gateworks.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 08:14:00AM -0700, Tim Harvey wrote:
-> This patch adds documentation of device-tree bindings for the
-> Gateworks System Controller (GSC).
-> 
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> ---
-> v3:
->  - replaced _ with -
->  - remove input bindings
->  - added full description of hwmon
->  - fix unit address of hwmon child nodes
-> 
-> ---
->  .../devicetree/bindings/mfd/gateworks-gsc.txt      | 135 +++++++++++++++++++++
->  1 file changed, 135 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
-> new file mode 100644
-> index 0000000..8f530ed
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
-> @@ -0,0 +1,135 @@
-> +Gateworks System Controller multi-function device
-> +
-> +The GSC is a Multifunction I2C slave device with the following submodules:
-> +- WDT
-> +- GPIO
-> +- Pushbutton controller
-> +- HWMON
-> +
-> +Required properties:
-> +- compatible : Must be "gw,gsc"
-> +- reg: I2C address of the device
-> +- interrupts: interrupt triggered by GSC_IRQ# signal
-> +- interrupt-parent: Interrupt controller GSC is connected to
-> +- #interrupt-cells: should be <1>, index of the interrupt within the
-> +  controller, in accordance with the "one cell" variant of
-> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
-> +
-> +Optional nodes:
-> +* watchdog:
-> +The GSC provides a Watchdog monitor which can power cycle the board's
-> +primary power supply on most board models when tripped.
-> +
-> +Required watchdog properties:
-> +- compatible: must be "gw,gsc-watchdog"
-> +
-> +* hwmon:
-> +The GSC provides a set of Analog to Digitcal Converter (ADC) pins used for
-> +temperature and/or voltage monitoring.
-> +
-> +Required hwmon properties:
-> +- compatible: must be "gw,gsc-hwmon"
-> +
 
-"hwmon" is a very Linux specific term. It might make sense to find a more
-generic term.
 
-> +Optional hwmon properties:
-> +- gw,reference-voltage: ADC reference voltage (mV) used in scaling raw ADCs
+On 28/03/18 10:02 AM, Christian König wrote:
+> Yeah, that looks very similar to what I picked up from the older 
+> patches, going to read up on that after my vacation.
 
-AFAIK devicetree likes to specify voltages in uV.
+Yeah, I was just reading through your patchset and there are a lot of
+similarities. Though, I'm not sure what you're trying to accomplish as I
+could not find a cover letter and it seems to only enable one driver. Is
+it meant to enable DMA transactions only between two AMD GPUs?
 
-> +- gw,resolution: ADC resolution (ie 4096) used in scaling raw ADCs
-> +
+I also don't see where you've taken into account the PCI bus address. On
+some architectures this is not the same as the CPU physical address.
 
-4096 what ?
+> Just in general why are you interested in the "distance" of the devices?
 
-> +Each hwmon child node defines an ADC input on the chip which the GSC may
-> +report cooked values (ie temperature sensor based on thermister), raw values,
-> +(ie voltage rail with a pre-scaling resistor divider), or a fan controller
-> +setpoint.
-> +
-> +Required hwmon child properties:
-> +- type: one of the following ADC types:
-> +  "gw,hwmon-temperature" - reports temperature in C*10
-> +  "gw,hwmon-voltage" - reports a pre-scaled voltage value
-> +  "gw,hwmon-voltage-raw" - reports a raw ADC that is scaled with
-> +       vreference, resolution, and optional resistor divider
-> +  "gw,hwmon-fan" - a fan temperature setpoint in C*10
+We've taken a general approach where some drivers may provide p2p memory
+(ie. an NVMe card or an RDMA NIC) and other drivers make use of it (ie.
+the NVMe-of driver). The orchestrator driver needs to find the most
+applicable provider device for a transaction in a situation that may
+have multiple providers and multiple clients. So the most applicable
+provider is the one that's closest ("distance"-wise) to all the clients
+for the P2P transaction.
 
-What is a "fan temperature setpoint" ?
+> And BTW: At least for writes that Peer 2 Peer transactions between 
+> different root complexes work is actually more common than the other way 
+> around.
 
-> +- reg: offset of the ADC register
-> +- label: name of the ADC input or FAN setpoint
-> +
-> +Optional hwmon child properties:
-> +- gw,voltage-divider: An array of two integers containing the resistor
-> +  values R1 and R2 of the optinal resistor divider on a raw ADC
-> +- gw,voltage-offset: a mV voltage offset to apply to a raw ADC (ie to
-> +  compensate for a diode drop)
-> +
-> +Example:
-> +
-> +	gsc: gsc@20 {
-> +		compatible = "gw,gsc";
-> +		reg = <0x20>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <4 GPIO_ACTIVE_LOW>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <1>;
-> +
-> +		watchdog {
-> +			compatible = "gw,gsc-watchdog";
-> +		};
-> +
-> +		hwmon {
-> +			compatible = "gw,gsc-hwmon";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			gw,reference-voltage = <2500>;
-> +			gw,resolution = <4096>;
-> +
-> +			hwmon@0 { /* A0: Board Temperature */
-> +				type = "gw,hwmon-temperature";
-> +				reg = <0x00>;
-> +				label = "temp";
-> +			};
-> +
-> +			hwmon@2 { /* A1: Input Voltage (raw ADC) */
-> +				type = "gw,hwmon-voltage-raw";
-> +				reg = <0x02>;
-> +				label = "vdd_vin";
-> +				gw,voltage-divider = <22100 1000>;
-> +				gw,voltage-offset = <800>;
-> +			};
-> +
-> +			hwmon@b { /* A2: Battery voltage */
-> +				type = "gw,hwmon-voltage";
-> +				reg = <0x0b>;
-> +				label = "vdd_bat";
-> +			};
-> +
-> +			hwmon@2c { /* fan temperature setpoint for 50% duty */
-> +				type = "gw,hwmon-fan";
-> +				reg = <0x2c>;
-> +				label = "fan_50p";
-> +			};
-> +
-> +			hwmon@2e { /* fan1 */
-> +				type = "gw,hwmon-fan";
-> +				reg = <0x2e>;
-> +				label = "fan_60p";
-> +			};
-> +
-> +			hwmon@30 { /* fan2 */
-> +				type = "gw,hwmon-fan";
-> +				reg = <0x30>;
-> +				label = "fan_70p";
-> +			};
-> +
-> +			hwmon@32 { /* fan3 */
-> +				type = "gw,hwmon-fan";
-> +				reg = <0x32>;
-> +				label = "fan_80p";
-> +			};
-> +
-> +			hwmon@34 { /* fan4 */
-> +				type = "gw,hwmon-fan";
-> +				reg = <0x34>;
-> +				label = "fan_90p";
-> +			};
-> +
-> +			hwmon@36 { /* fan5 */
-> +				type = "gw,hwmon-fan";
-> +				reg = <0x36>;
-> +				label = "fan_100p";
-> +			};
+Maybe on x86 with hardware made in the last few years. But on PowerPC,
+ARM64, and likely a lot more the chance of support is *much* less. Also,
+hardware that only supports P2P stores is hardly full support and is
+insufficient for our needs.
 
-No idea what this is supposed to be doing, but whatever it is,
-it appears to be wrong. I'll comment more on it in the hwmon driver.
+> So I'm a bit torn between using a blacklist or a whitelist. A whitelist 
+> is certainly more conservative approach, but that could get a bit long.
 
-Guenter
+I think a whitelist approach is correct. Given old hardware and other
+architectures, a black list is going to be too long and too difficult to
+comprehensively populate.
 
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+Logan
