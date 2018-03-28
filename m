@@ -1,45 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754129AbeC1Pq2 (ORCPT <rfc822;w@1wt.eu>);
+        id S1754185AbeC1Pqc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:46:32 -0400
+Received: from fieldses.org ([173.255.197.46]:59234 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753816AbeC1Pq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Mar 2018 11:46:28 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42460 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753816AbeC1Pq1 (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:46:27 -0400
-X-Google-Smtp-Source: AIpwx49/jmt8ZdHWA6PHg996mpsAnII9S/Zyx/c6s+YPH09OkXH9TESNTkyPQFM+SMQtw68aRHTqxg==
-Date: Wed, 28 Mar 2018 17:46:22 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Jin Yao <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-Subject: Re: [PATCH v2 4/4] perf: Support perf -vv
-Message-ID: <20180328154622.65ate24g7be2xg3a@gmail.com>
-References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
- <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
+Date: Wed, 28 Mar 2018 11:46:28 -0400
+From: "J. Bruce Fields" <bfields@fieldses.org>
+To: Eric Biggers <ebiggers@google.com>
+Cc: Michael Young <m.a.young@durham.ac.uk>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: NFS mounts failing when keytab present on client
+Message-ID: <20180328154628.GA3038@fieldses.org>
+References: <alpine.LFD.2.21.1803272126070.3013@austen3.home>
+ <20180327222950.GB257332@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180327222950.GB257332@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Mar 27, 2018 at 03:29:50PM -0700, Eric Biggers wrote:
+> Hi Michael,
+> 
+> On Tue, Mar 27, 2018 at 11:06:14PM +0100, Michael Young wrote:
+> > NFS mounts stopped working on one of my computers after a kernel update from
+> > 4.15.3 to 4.15.4. I traced the problem to the commit
+> > [46e8d06e423c4f35eac7a8b677b713b3ec9b0684] crypto: hash - prevent using
+> > keyed hashes without setting key
+> > and a later kernel with this patch reverted works normally.
+> > 
+> > The problem seems to be related to kerberos as the mount fails when the
+> > keytab is present, but works if I rename the keytab file. This is true even
+> > though the mount is with sec=sys . The mount should also work with sec=krb5
+> > but that also fails in the same way. When the mount fails there are errors
+> > in dmesg like
+> > [ 1232.522816] gss_marshal: gss_get_mic FAILED (851968)
+> > [ 1232.522819] RPC: couldn't encode RPC header, exit EIO
+> > [ 1232.522856] gss_marshal: gss_get_mic FAILED (851968)
+> > [ 1232.522857] RPC: couldn't encode RPC header, exit EIO
+> > [ 1232.522863] NFS: nfs4_discover_server_trunking unhandled error -5.
+> > Exiting with error EIO
+> > [ 1232.525039] gss_marshal: gss_get_mic FAILED (851968)
+> > [ 1232.525042] RPC: couldn't encode RPC header, exit EIO
+> > 
+> > 	Michael Young
+> 
+> Thanks for the bug report.  I think the error is coming from
+> net/sunrpc/auth_gss/gss_krb5_crypto.c.  There are two potential problems I see.
+> The first one, which is definitely a bug, is that make_checksum_hmac_md5()
+> allocates an HMAC transform and request, then does these crypto API calls:
+> 
+> 	crypto_ahash_init()
+> 	crypto_ahash_setkey()
+> 	crypto_ahash_digest()
+> 
+> This is wrong because it makes no sense to init() the HMAC request before the
+> key has been set, and doubly so when it's calling digest() which is shorthand
+> for init() + update() + final().  So I think it just needs to be removed.  You
+> can test the following patch:
 
-* Jin Yao <yao.jin@linux.intel.com> wrote:
+When was this introduced? 
 
-> $ ./perf -vv or ./perf -version --build-options
-> perf version 4.13.rc5.gcb1183
+3b5cf20cf439 "sunrpc: Use skcipher and ahash/shash"
+	- probably not, assuming the above was still just as wrong with
+	  crypto_hash_{init,setkey,digest} as it is with
+	  crypto_ahash_{init,setkey,digest}
 
-My suggestion was to add the 'version' subcommand like Git has, not a "-version" 
-option:
+So I'm guessing it was wrong from the start when it was added by
+fffdaef2eb4a "gss_krb5: Add support for rc4-hmac encryption" 8 years
+ago.  Wonder why it took this long to notice?  Did something else
+change?
 
-  $ git version
-  git version 2.14.1
+--b.
 
-Thanks,
 
-	Ingo
+> 
+> diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> index 12649c9fedab..8654494b4d0a 100644
+> --- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> @@ -237,9 +237,6 @@ make_checksum_hmac_md5(struct krb5_ctx *kctx, char *header, int hdrlen,
+>  
+>         ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
+>  
+> -       err = crypto_ahash_init(req);
+> -       if (err)
+> -               goto out;
+>         err = crypto_ahash_setkey(hmac_md5, cksumkey, kctx->gk5e->keylength);
+>         if (err)
+>                 goto out;
+> 
+> If that's not it, it's also possible that the error is coming from the
+> crypto_ahash_init() in make_checksum().  That can only happen if 'cksumkey' is
+> NULL and the hash algorithm is keyed, which implies a logical error as it
+> doesn't make sense to use a keyed hash algorithm without the key.  The callers
+> do check kctx->gk5e->keyed_cksum which I'd hope would prevent this, though
+> perhaps kctx->cksum can be NULL.
+> 
+> Eric
