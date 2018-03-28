@@ -1,64 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeC1KQW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 06:16:22 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50226 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752231AbeC1KQU (ORCPT
+        id S1752067AbeC1KRB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 06:17:01 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39589 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeC1KQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 06:16:20 -0400
-Date: Wed, 28 Mar 2018 12:15:54 +0200
-From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "daniel@bristot.me" <daniel@bristot.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "williams@redhat.com" <williams@redhat.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "lclaudio@redhat.com" <lclaudio@redhat.com>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
-Subject: Re: [PATCH 1/2] target: drop spin_lock_assert() + irqs_disabled()
- combo checks
-Message-ID: <20180328101553.uduqsdbxwnxrhl7a@linutronix.de>
-References: <20180321153854.GB24312@kernel.org>
- <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
- <20180322093745.GC4229@kernel.org>
- <20180323155513.dwbgvblenlji33as@linutronix.de>
- <1521822325.2535.5.camel@wdc.com>
- <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
- <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
- <20180326111359.180f1604@gandalf.local.home>
+        Wed, 28 Mar 2018 06:16:59 -0400
+X-Google-Smtp-Source: AIpwx4+8ccOhjmq5zSCSAS8jZwDu3ZelTlrvksIwdzKaiFzpe7Y37AawRqAcNPK6gtEvm8lRuj33Hg==
+Date: Wed, 28 Mar 2018 03:16:55 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
+        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 01/24] mm: Introduce CONFIG_SPECULATIVE_PAGE_FAULT
+In-Reply-To: <32c80b6a-28c6-bf63-ed7b-6a042ae18e8f@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803280310380.68839@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-2-git-send-email-ldufour@linux.vnet.ibm.com> <alpine.DEB.2.20.1803251442090.80485@chino.kir.corp.google.com>
+ <32c80b6a-28c6-bf63-ed7b-6a042ae18e8f@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180326111359.180f1604@gandalf.local.home>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-26 11:13:59 [-0400], Steven Rostedt wrote:
-> > diff --git a/drivers/target/target_core_tmr.c b/drivers/target/target_core_tmr.c
-> > index 9c7bc1ca341a..3d35dad1de2c 100644
-> > --- a/drivers/target/target_core_tmr.c
-> > +++ b/drivers/target/target_core_tmr.c
-> 
-> Can you add a comment above the functions though?
-> 
-> /* Expects to have se_cmd->se_sess->sess_cmd_lock held */
+On Wed, 28 Mar 2018, Laurent Dufour wrote:
 
-I could. I haven't heard from Bart / Nicholas about their opinion. I
-know, we do this other places but Bart was against this kind of
-annotation in 2/2 of this thread.
-So I am waiting to hear from them :)
-
+> >> This configuration variable will be used to build the code needed to
+> >> handle speculative page fault.
+> >>
+> >> By default it is turned off, and activated depending on architecture
+> >> support.
+> >>
+> >> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> >> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> >> ---
+> >>  mm/Kconfig | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/mm/Kconfig b/mm/Kconfig
+> >> index abefa573bcd8..07c566c88faf 100644
+> >> --- a/mm/Kconfig
+> >> +++ b/mm/Kconfig
+> >> @@ -759,3 +759,6 @@ config GUP_BENCHMARK
+> >>  	  performance of get_user_pages_fast().
+> >>  
+> >>  	  See tools/testing/selftests/vm/gup_benchmark.c
+> >> +
+> >> +config SPECULATIVE_PAGE_FAULT
+> >> +       bool
+> > 
+> > Should this be configurable even if the arch supports it?
 > 
-> -- Steve
+> Actually, this is not configurable unless by manually editing the .config file.
+> 
+> I made it this way on the Thomas's request :
+> https://lkml.org/lkml/2018/1/15/969
+> 
+> That sounds to be the smarter way to achieve that, isn't it ?
+> 
 
-Sebastian
+Putting this in mm/Kconfig is definitely the right way to go about it 
+instead of any generic option in arch/*.
+
+My question, though, was making this configurable by the user:
+
+config SPECULATIVE_PAGE_FAULT
+	bool "Speculative page faults"
+	depends on X86_64 || PPC
+	default y
+	help
+	  ..
+
+It's a question about whether we want this always enabled on x86_64 and 
+power or whether the user should be able to disable it (right now they 
+can't).  With a large feature like this, you may want to offer something 
+simple (disable CONFIG_SPECULATIVE_PAGE_FAULT) if someone runs into 
+regressions.
