@@ -1,100 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754074AbeC1Pld (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:41:33 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:55235 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753816AbeC1Plc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:41:32 -0400
+        id S1754123AbeC1Poi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:44:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754044AbeC1Poh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 11:44:37 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BA82172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 28 Mar 2018 11:44:34 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Wang Yu <yuwang@linux.alibaba.com>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ftrace: fix task's invalid comm of <...> when big pid
+Message-ID: <20180328114434.3a05d3bc@gandalf.local.home>
+In-Reply-To: <20180328113522.21b4298b@gandalf.local.home>
+References: <1522240347-24465-1-git-send-email-yuwang@linux.alibaba.com>
+        <20180328113522.21b4298b@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date: Wed, 28 Mar 2018 17:41:30 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, clabbe.montjoie@gmail.com,
-        Scott Branden <scott.branden@broadcom.com>,
-        Steven Lin <steven.lin1@broadcom.com>, garsilva@embeddedor.com,
-        pravin.shedge4linux@gmail.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] crypto: brcm - explicitly cast cipher to hash type
-In-Reply-To: <CAAFb_vrFF6D8DEvnZMDda-qd-jTh3mKt0BgGBJ5eWxydY1LEXA@mail.gmail.com>
-References: <20180324110242.9474-1-stefan@agner.ch>
- <CAAFb_vrFF6D8DEvnZMDda-qd-jTh3mKt0BgGBJ5eWxydY1LEXA@mail.gmail.com>
-Message-ID: <a25ba0afb4cdf8f43b64421995196dee@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.03.2018 08:38, Raveendra Padasalagi wrote:
-> Hi Stefan,
+On Wed, 28 Mar 2018 11:35:22 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Wed, 28 Mar 2018 20:32:27 +0800
+> Wang Yu <yuwang@linux.alibaba.com> wrote:
 > 
-> The change looks to be fine.  From the IP point of view its using the
-> same values in case of AES cipher and hash types so explicit casting
-> should be ok.
+> > when pid is bigger than PID_MAX_DEFAULT, the comm of task
+> > is <...>, it is better use pid_max to compare
+> > 
+> > Signed-off-by: Wang Yu <yuwang@linux.alibaba.com>
+> > ---
+> >  kernel/trace/trace.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  mode change 100644 => 100755 kernel/trace/trace.c
+> > 
+> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> > old mode 100644
+> > new mode 100755
+> > index 20a2300..0d4bc7a
+> > --- a/kernel/trace/trace.c
+> > +++ b/kernel/trace/trace.c
+> > @@ -1976,7 +1976,7 @@ static void __trace_find_cmdline(int pid, char comm[])
+> >  		return;
+> >  	}
+> >  
+> > -	if (pid > PID_MAX_DEFAULT) {
+> > +	if (pid > pid_max) {  
+> 
+> Thanks! this probably should go to stable.
 
-Can I take that as an Ack?
+I take that back. This patch can cause a buffer overflow access.
 
-Herbert, given that Raveendra agrees to the change, do you want me to
-send a non-RFC version or can you merge the patch as is?
+If you looked at the line after this check, you would see:
 
---
-Stefan
+	if (pid > PID_MAX_DEFAULT) {
+		strcpy(comm, "<...>");
+		return;
+	}
+
+	map = savedcmd->map_pid_to_cmdline[pid];
+
+And if you looked to see what map_pid_to_cmdline is:
+
+struct saved_cmdlines_buffer {
+	unsigned map_pid_to_cmdline[PID_MAX_DEFAULT+1];
+
+Your patch will access memory past the end of that array, and cause a
+bug.
+
+If you want to support more than PID_MAX_DEFAULT, a lot more needs to
+change than this. And a change like this isn't going to go to stable.
+
+What you can do is make that map_pid_to_cmdline array bigger.
+
+-- Steve
 
 
 > 
-> -Raveendra
+> -- Steve
 > 
-> On Sat, Mar 24, 2018 at 4:32 PM, Stefan Agner <stefan@agner.ch> wrote:
->> In the AES cases enum spu_cipher_type and enum hash_type have
->> the same values, so the assignment is fine. Explicitly cast
->> the enum type conversion.
->>
->> This fixes two warnings when building with clang:
->>   drivers/crypto/bcm/cipher.c:821:34: warning: implicit conversion from
->>       enumeration type 'enum spu_cipher_type' to different enumeration
->>       type 'enum hash_type' [-Wenum-conversion]
->>                 hash_parms.type = cipher_parms.type;
->>                                 ~ ~~~~~~~~~~~~~^~~~
->>   drivers/crypto/bcm/cipher.c:1412:26: warning: implicit conversion from
->>       enumeration type 'enum spu_cipher_type' to different enumeration
->>       type 'enum hash_type' [-Wenum-conversion]
->>                 hash_parms.type = ctx->cipher_type;
->>                                 ~ ~~~~~^~~~~~~~~~~
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->> I am not familar with the IP... I would be glad if somebody with
->> better insight could have a look whether that patch makes sense.
->>
->>  drivers/crypto/bcm/cipher.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
->> index 2b75f95bbe1b..309c67c7012f 100644
->> --- a/drivers/crypto/bcm/cipher.c
->> +++ b/drivers/crypto/bcm/cipher.c
->> @@ -818,7 +818,7 @@ static int handle_ahash_req(struct iproc_reqctx_s *rctx)
->>
->>         /* AES hashing keeps key size in type field, so need to copy it here */
->>         if (hash_parms.alg == HASH_ALG_AES)
->> -               hash_parms.type = cipher_parms.type;
->> +               hash_parms.type = (enum hash_type)cipher_parms.type;
->>         else
->>                 hash_parms.type = spu->spu_hash_type(rctx->total_sent);
->>
->> @@ -1409,7 +1409,7 @@ static int handle_aead_req(struct iproc_reqctx_s *rctx)
->>                                                 rctx->iv_ctr_len);
->>
->>         if (ctx->auth.alg == HASH_ALG_AES)
->> -               hash_parms.type = ctx->cipher_type;
->> +               hash_parms.type = (enum hash_type)ctx->cipher_type;
->>
->>         /* General case AAD padding (CCM and RFC4543 special cases below) */
->>         aead_parms.aad_pad_len = spu->spu_gcm_ccm_pad_len(ctx->cipher.mode,
->> --
->> 2.16.2
->>
+> >  		strcpy(comm, "<...>");
+> >  		return;
+> >  	}  
+> 
