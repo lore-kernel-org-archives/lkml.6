@@ -1,77 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeC1Meg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 08:34:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48605 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751903AbeC1Mef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 08:34:35 -0400
-Date: Wed, 28 Mar 2018 14:32:06 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: Linux 4.16: Reported regressions as of Tuesday, 2018-03-27 (Was:
- Linux 4.16-rc7)
-Message-ID: <20180328123205.GF30422@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
-References: <CA+55aFxpxHnWBeTXN+DKqwCMW_=T2cR8UxSBVk_6c8LL7Et5JQ@mail.gmail.com>
- <d1f5b976-f293-5767-9faf-c4f569f8ba55@leemhuis.info>
+        id S1752611AbeC1Mg6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 08:36:58 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36001 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752065AbeC1Mgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 08:36:55 -0400
+X-Google-Smtp-Source: AIpwx49+m0c7wK0qBr73nxnlimvtD49CEC+EJtFJphaHBPmyT7nMNR12mVeI8YipEBsDt6/SFokHow==
+Subject: Re: [PATCH 4/4] nvme: lightnvm: add late setup of block size and
+ metadata
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Keith Busch <keith.busch@intel.com>, linux-block@vger.kernel.org,
+        javier@cnexlabs.com, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+References: <20180205121505.27563-1-mb@lightnvm.io>
+ <20180205121505.27563-5-mb@lightnvm.io>
+ <343f19d9-0428-f255-6ed0-519035eef46d@lightnvm.io>
+ <20180328082825.GB31409@infradead.org>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <742b1250-3c1d-2436-7aa8-85c3f0347419@lightnvm.io>
+Date: Wed, 28 Mar 2018 14:36:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20180328082825.GB31409@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d1f5b976-f293-5767-9faf-c4f569f8ba55@leemhuis.info>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 09:13:32PM +0200, Thorsten Leemhuis wrote:
-> On 26.03.2018 01:37, Linus Torvalds wrote:
-> > […] Anyway. Go out and test. And let's hope next week is nice and calm and
-> > I can release the final 4.16 next Sunday without any extra  rc's.
-> > 
-> >                Linus
+On 28/03/2018 10.28, Christoph Hellwig wrote:
+> I really don't want more lightnvm cruft in the core.  We'll need
+> a proper abstraction.c
 > 
-> Hi! Find below my sixth regression report for Linux 4.16. It lists 7
-> regressions I'm currently aware of. 2 were fixed since last weeks
-> report; 2 are new.
-> 
-> Are you aware of any other regressions that got introduced this
-> development cycle? Then please let me know by mail (a simple bounce or
-> forward to the sender of this email address is enough!). And please tell
-> me if there is anything in the report that shouldn't be there.
-> 
-> Ciao, Thorsten
-> 
-> == Current regressions ==
-> 
-> Dell R640 does not boot due to SCSI/SATA failure
-> - Status: Afaics still unfixed; lost track, ask reporter for an update
-> on Monday morning, no reply yet
-> - Cause:  https://git.kernel.org/torvalds/c/84676c1f21e8
-> - Reported: 2018-02-22
-> https://marc.info/?l=linux-kernel&m=151931128006031
-> - Note: Issue understood and even (kind of accidentally) fixed by a
-> patch series that was proposed for 4.17 (see links)
-> - Last known developer activity: 2018-03-14
-> https://marc.info/?l=linux-block&m=152102086831636&w=2
-> - Other relevant links:
-> https://marc.info/?l=linux-block&m=152051511802229&w=2
-> https://marc.info/?l=linux-kernel&m=152026091325037
 
-I'm not the original reporter but I can confirm this regression has been
-fixed by git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git
-scsi-fixes (tag 0c30612d535460af7fe16e7e6ed8b97defe4adbe)
+I agree, we should get that moving, and make a proper abstraction for 
+it. Also with respect to how an SMR interface in general is integrated 
+into NVMe.
 
-The machine has a HP array and stopped booting some time around rc1. I
-tried to bisect it and in the end it was the commit 84676c1f21e8 that I
-reverted for testing builds, so I'm sure it's the same issue as you've
-been tracking.
+The patch is necessary due to the revalidate event for retrieving the 
+lba format from the nvme drive. It might not be available the first time 
+around, and we have to hook in when the drive is revalidated the second 
+time.
+
+> On Fri, Mar 23, 2018 at 12:00:08PM +0100, Matias Bjørling wrote:
+>> On 02/05/2018 01:15 PM, Matias Bjørling wrote:
+>>> The nvme driver sets up the size of the nvme namespace in two steps.
+>>> First it initializes the device with standard logical block and
+>>> metadata sizes, and then sets the correct logical block and metadata
+>>> size. Due to the OCSSD 2.0 specification relies on the namespace to
+>>> expose these sizes for correct initialization, let it be updated
+>>> appropriately on the LightNVM side as well.
+>>>
+>>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+>>> ---
+>>>    drivers/nvme/host/core.c     | 2 ++
+>>>    drivers/nvme/host/lightnvm.c | 8 ++++++++
+>>>    drivers/nvme/host/nvme.h     | 2 ++
+>>>    3 files changed, 12 insertions(+)
+>>>
+>>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+>>> index f837d666cbd4..740ceb28067c 100644
+>>> --- a/drivers/nvme/host/core.c
+>>> +++ b/drivers/nvme/host/core.c
+>>> @@ -1379,6 +1379,8 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
+>>>    	if (ns->noiob)
+>>>    		nvme_set_chunk_size(ns);
+>>>    	nvme_update_disk_info(disk, ns, id);
+>>> +	if (ns->ndev)
+>>> +		nvme_nvm_update_nvm_info(ns);
+>>>    #ifdef CONFIG_NVME_MULTIPATH
+>>>    	if (ns->head->disk)
+>>>    		nvme_update_disk_info(ns->head->disk, ns, id);
+>>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+>>> index a9c010655ccc..8d4301854811 100644
+>>> --- a/drivers/nvme/host/lightnvm.c
+>>> +++ b/drivers/nvme/host/lightnvm.c
+>>> @@ -814,6 +814,14 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
+>>>    	}
+>>>    }
+>>> +void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
+>>> +{
+>>> +	struct nvm_dev *ndev = ns->ndev;
+>>> +
+>>> +	ndev->identity.csecs = ndev->geo.sec_size = 1 << ns->lba_shift;
+>>> +	ndev->identity.sos = ndev->geo.oob_size = ns->ms;
+>>> +}
+>>> +
+>>>    int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
+>>>    {
+>>>    	struct request_queue *q = ns->queue;
+>>> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+>>> index ea1aa5283e8e..1ca08f4993ba 100644
+>>> --- a/drivers/nvme/host/nvme.h
+>>> +++ b/drivers/nvme/host/nvme.h
+>>> @@ -451,12 +451,14 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+>>>    #endif /* CONFIG_NVME_MULTIPATH */
+>>>    #ifdef CONFIG_NVM
+>>> +void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
+>>>    int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
+>>>    void nvme_nvm_unregister(struct nvme_ns *ns);
+>>>    int nvme_nvm_register_sysfs(struct nvme_ns *ns);
+>>>    void nvme_nvm_unregister_sysfs(struct nvme_ns *ns);
+>>>    int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
+>>>    #else
+>>> +static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
+>>>    static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
+>>>    				    int node)
+>>>    {
+>>>
+>>
+>> Hi Keith,
+>>
+>> When going through the patches for 4.17, I forgot to run this patch by you.
+>> It is part of adding OCSSD2.0 support to the kernel, and slides in between a
+>> large refactoring, and the 2.0 part. May I add your reviewed by and let Jens
+>> pick it up after the nvme patches for 4.17 has gone up?
+>>
+>> Thanks!
+>>
+>> -Matias
+>>
+>> _______________________________________________
+>> Linux-nvme mailing list
+>> Linux-nvme@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-nvme
+> ---end quoted text---
+> 
