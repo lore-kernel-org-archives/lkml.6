@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753640AbeC1UL0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 16:11:26 -0400
-Received: from mga18.intel.com ([134.134.136.126]:51848 "EHLO mga18.intel.com"
+        id S1753679AbeC1ULu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 16:11:50 -0400
+Received: from mga14.intel.com ([192.55.52.115]:46820 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753554AbeC1ULO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 16:11:14 -0400
+        id S1753397AbeC1ULJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 16:11:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,373,1517904000";
-   d="scan'208";a="46106760"
+   d="scan'208";a="37650443"
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 To: rostedt@goodmis.org
 Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -20,9 +20,9 @@ Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 4/4] tracing: Make sure variable string fields are NULL-terminated
-Date: Wed, 28 Mar 2018 15:10:56 -0500
-Message-Id: <fb97c1e518fb358c12a4057d7445ba2c46956cd7.1522256721.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH 2/4] tracing: Don't add flag strings when displaying variable references
+Date: Wed, 28 Mar 2018 15:10:54 -0500
+Message-Id: <913318a5610ef6b24af2522575f671fa6ee19b6b.1522256721.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 1.9.3
 In-Reply-To: <cover.1522256721.git.tom.zanussi@linux.intel.com>
 References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
@@ -32,37 +32,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The strncpy() currently being used for variable string fields can
-result in a lack of termination if the string length is equal to the
-field size.  Use the safer strscpy() instead, which will guarantee
-termination.
+Variable references should never have flags appended when displayed -
+prevent that from happening.
+
+Before:
+
+  # cat /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
+  hist:keys=next_pid:vals=hitcount:wakeup_lat=common_timestamp.usecs-$ts0.usecs:...
+
+After:
+
+  hist:keys=next_pid:vals=hitcount:wakeup_lat=common_timestamp.usecs-$ts0:...
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- kernel/trace/trace_events_hist.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/trace_events_hist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index ae84470..2751a0f 100644
+index fb81447..468e43f 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -669,7 +669,7 @@ static notrace void trace_event_raw_event_synth(void *__data,
- 			char *str_val = (char *)(long)var_ref_vals[var_ref_idx + i];
- 			char *str_field = (char *)&entry->fields[n_u64];
+@@ -2052,7 +2052,7 @@ static void expr_field_str(struct hist_field *field, char *expr)
  
--			strncpy(str_field, str_val, STR_VAR_LEN_MAX);
-+			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
- 			entry->fields[n_u64] = var_ref_vals[var_ref_idx + i];
-@@ -3090,7 +3090,7 @@ static inline void __update_field_vars(struct tracing_map_elt *elt,
- 			char *str = elt_data->field_var_str[j++];
- 			char *val_str = (char *)(uintptr_t)var_val;
+ 	strcat(expr, hist_field_name(field, 0));
  
--			strncpy(str, val_str, STR_VAR_LEN_MAX);
-+			strscpy(str, val_str, STR_VAR_LEN_MAX);
- 			var_val = (u64)(uintptr_t)str;
- 		}
- 		tracing_map_set_var(elt, var_idx, var_val);
+-	if (field->flags) {
++	if (field->flags && !(field->flags & HIST_FIELD_FL_VAR_REF)) {
+ 		const char *flags_str = get_hist_field_flags(field);
+ 
+ 		if (flags_str) {
 -- 
 1.9.3
