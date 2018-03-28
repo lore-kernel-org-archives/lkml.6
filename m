@@ -1,131 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeC1I2H (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 04:28:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35852 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752570AbeC1I2F (ORCPT
+        id S1752670AbeC1I2c (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 04:28:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54998 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeC1I2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 04:28:05 -0400
-Subject: Re: [PATCH v9 06/24] mm: make pte_unmap_same compatible with SPF
-To: David Rientjes <rientjes@google.com>
-Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1803271417510.31115@chino.kir.corp.google.com>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Wed, 28 Mar 2018 10:27:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 28 Mar 2018 04:28:30 -0400
+Date: Wed, 28 Mar 2018 01:28:25 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>
+Cc: Keith Busch <keith.busch@intel.com>, linux-block@vger.kernel.org,
+        javier@cnexlabs.com, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+Subject: Re: [PATCH 4/4] nvme: lightnvm: add late setup of block size and
+ metadata
+Message-ID: <20180328082825.GB31409@infradead.org>
+References: <20180205121505.27563-1-mb@lightnvm.io>
+ <20180205121505.27563-5-mb@lightnvm.io>
+ <343f19d9-0428-f255-6ed0-519035eef46d@lightnvm.io>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803271417510.31115@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032808-0008-0000-0000-000004E311F7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032808-0009-0000-0000-00001E764F75
-Message-Id: <fd9eedf4-b885-d8f5-2daa-4cc450e72427@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-28_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803280093
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <343f19d9-0428-f255-6ed0-519035eef46d@lightnvm.io>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I really don't want more lightnvm cruft in the core.  We'll need
+a proper abstraction.c
 
-
-On 27/03/2018 23:18, David Rientjes wrote:
-> On Tue, 13 Mar 2018, Laurent Dufour wrote:
+On Fri, Mar 23, 2018 at 12:00:08PM +0100, Matias Bjørling wrote:
+> On 02/05/2018 01:15 PM, Matias Bjørling wrote:
+> > The nvme driver sets up the size of the nvme namespace in two steps.
+> > First it initializes the device with standard logical block and
+> > metadata sizes, and then sets the correct logical block and metadata
+> > size. Due to the OCSSD 2.0 specification relies on the namespace to
+> > expose these sizes for correct initialization, let it be updated
+> > appropriately on the LightNVM side as well.
+> > 
+> > Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+> > ---
+> >   drivers/nvme/host/core.c     | 2 ++
+> >   drivers/nvme/host/lightnvm.c | 8 ++++++++
+> >   drivers/nvme/host/nvme.h     | 2 ++
+> >   3 files changed, 12 insertions(+)
+> > 
+> > diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> > index f837d666cbd4..740ceb28067c 100644
+> > --- a/drivers/nvme/host/core.c
+> > +++ b/drivers/nvme/host/core.c
+> > @@ -1379,6 +1379,8 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
+> >   	if (ns->noiob)
+> >   		nvme_set_chunk_size(ns);
+> >   	nvme_update_disk_info(disk, ns, id);
+> > +	if (ns->ndev)
+> > +		nvme_nvm_update_nvm_info(ns);
+> >   #ifdef CONFIG_NVME_MULTIPATH
+> >   	if (ns->head->disk)
+> >   		nvme_update_disk_info(ns->head->disk, ns, id);
+> > diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> > index a9c010655ccc..8d4301854811 100644
+> > --- a/drivers/nvme/host/lightnvm.c
+> > +++ b/drivers/nvme/host/lightnvm.c
+> > @@ -814,6 +814,14 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
+> >   	}
+> >   }
+> > +void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
+> > +{
+> > +	struct nvm_dev *ndev = ns->ndev;
+> > +
+> > +	ndev->identity.csecs = ndev->geo.sec_size = 1 << ns->lba_shift;
+> > +	ndev->identity.sos = ndev->geo.oob_size = ns->ms;
+> > +}
+> > +
+> >   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
+> >   {
+> >   	struct request_queue *q = ns->queue;
+> > diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> > index ea1aa5283e8e..1ca08f4993ba 100644
+> > --- a/drivers/nvme/host/nvme.h
+> > +++ b/drivers/nvme/host/nvme.h
+> > @@ -451,12 +451,14 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+> >   #endif /* CONFIG_NVME_MULTIPATH */
+> >   #ifdef CONFIG_NVM
+> > +void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
+> >   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
+> >   void nvme_nvm_unregister(struct nvme_ns *ns);
+> >   int nvme_nvm_register_sysfs(struct nvme_ns *ns);
+> >   void nvme_nvm_unregister_sysfs(struct nvme_ns *ns);
+> >   int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
+> >   #else
+> > +static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
+> >   static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
+> >   				    int node)
+> >   {
+> > 
 > 
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 2f3e98edc94a..b6432a261e63 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -1199,6 +1199,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
->>  #define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
->>  					 * and needs fsync() to complete (for
->>  					 * synchronous page faults in DAX) */
->> +#define VM_FAULT_PTNOTSAME 0x4000	/* Page table entries have changed */
->>  
->>  #define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
->>  			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 21b1212a0892..4bc7b0bdcb40 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -2309,21 +2309,29 @@ static bool pte_map_lock(struct vm_fault *vmf)
->>   * parts, do_swap_page must check under lock before unmapping the pte and
->>   * proceeding (but do_wp_page is only called after already making such a check;
->>   * and do_anonymous_page can safely check later on).
->> + *
->> + * pte_unmap_same() returns:
->> + *	0			if the PTE are the same
->> + *	VM_FAULT_PTNOTSAME	if the PTE are different
->> + *	VM_FAULT_RETRY		if the VMA has changed in our back during
->> + *				a speculative page fault handling.
->>   */
->> -static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
->> -				pte_t *page_table, pte_t orig_pte)
->> +static inline int pte_unmap_same(struct vm_fault *vmf)
->>  {
->> -	int same = 1;
->> +	int ret = 0;
->> +
->>  #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
->>  	if (sizeof(pte_t) > sizeof(unsigned long)) {
->> -		spinlock_t *ptl = pte_lockptr(mm, pmd);
->> -		spin_lock(ptl);
->> -		same = pte_same(*page_table, orig_pte);
->> -		spin_unlock(ptl);
->> +		if (pte_spinlock(vmf)) {
->> +			if (!pte_same(*vmf->pte, vmf->orig_pte))
->> +				ret = VM_FAULT_PTNOTSAME;
->> +			spin_unlock(vmf->ptl);
->> +		} else
->> +			ret = VM_FAULT_RETRY;
->>  	}
->>  #endif
->> -	pte_unmap(page_table);
->> -	return same;
->> +	pte_unmap(vmf->pte);
->> +	return ret;
->>  }
->>  
->>  static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
->> @@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
->>  	int exclusive = 0;
->>  	int ret = 0;
+> Hi Keith,
 > 
-> Initialization is now unneeded.
-
-I'm sorry, what "initialization" are you talking about here ?
-
+> When going through the patches for 4.17, I forgot to run this patch by you.
+> It is part of adding OCSSD2.0 support to the kernel, and slides in between a
+> large refactoring, and the 2.0 part. May I add your reviewed by and let Jens
+> pick it up after the nvme patches for 4.17 has gone up?
 > 
-> Otherwise:
+> Thanks!
 > 
-> Acked-by: David Rientjes <rientjes@google.com>
-
-Thanks,
-Laurent.
+> -Matias
+> 
+> _______________________________________________
+> Linux-nvme mailing list
+> Linux-nvme@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-nvme
+---end quoted text---
