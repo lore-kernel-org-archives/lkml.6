@@ -1,145 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753299AbeC1Szr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 14:55:47 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35079 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752377AbeC1Szp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 14:55:45 -0400
-X-Google-Smtp-Source: AIpwx48Uc9CofeEbE2o/b38dO7rosuI1CmdrKxbxdRCJFGpRAEkzae3zHOArR/74l5a7d9TgxXTg2Qwe41NwFNLSE0w=
+        id S1753343AbeC1S6E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 14:58:04 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40616 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753117AbeC1S6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 14:58:02 -0400
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc: linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-2-christian.koenig@amd.com>
+ <20180328123830.GB25060@infradead.org>
+ <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
+ <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
+ <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
+ <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
+ <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+Date: Wed, 28 Mar 2018 12:57:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1522159456-10419-12-git-send-email-eric.auger@redhat.com>
-References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com> <1522159456-10419-12-git-send-email-eric.auger@redhat.com>
-From: Peter Maydell <peter.maydell@linaro.org>
-Date: Wed, 28 Mar 2018 19:55:24 +0100
-Message-ID: <CAFEAcA_zXwS6EygjwPO9e-Ouy=seDdZt5i62itGP-W7VHugYTQ@mail.gmail.com>
-Subject: Re: [RFC v2 11/12] KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-To: Eric Auger <eric.auger@redhat.com>
-Cc: Eric Auger <eric.auger.pro@gmail.com>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kvm-devel <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <cdall@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Andrew Jones <drjones@redhat.com>, Wei Huang <wei@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 March 2018 at 15:04, Eric Auger <eric.auger@redhat.com> wrote:
-> Now all the internals are ready to handle multiple redistributor
-> regions, let's allow the userspace to register them.
->
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> ---
->  virt/kvm/arm/vgic/vgic-kvm-device.c | 40 +++++++++++++++++++++++++++++++++++--
->  virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
->  virt/kvm/arm/vgic/vgic.h            |  9 ++++++++-
->  3 files changed, 48 insertions(+), 5 deletions(-)
->
-> diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
-> index e7b5a86..a2b99e4 100644
-> --- a/virt/kvm/arm/vgic/vgic-kvm-device.c
-> +++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
-> @@ -65,7 +65,8 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->  {
->         int r = 0;
->         struct vgic_dist *vgic = &kvm->arch.vgic;
-> -       phys_addr_t *addr_ptr, alignment;
-> +       phys_addr_t *addr_ptr = NULL;
-> +       phys_addr_t alignment;
->         uint64_t undef_value = VGIC_ADDR_UNDEF;
->
->         mutex_lock(&kvm->lock);
-> @@ -92,7 +93,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->                 if (r)
->                         break;
->                 if (write) {
-> -                       r = vgic_v3_set_redist_base(kvm, *addr);
-> +                       r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
->                         goto out;
->                 }
->                 rdreg = list_first_entry(&vgic->rd_regions,
-> @@ -103,6 +104,40 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->                         addr_ptr = &rdreg->base;
->                 break;
->         }
-> +       case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
-> +       {
-> +               struct vgic_redist_region *rdreg;
-> +               uint8_t index;
-> +
-> +               r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
-> +               if (r)
-> +                       break;
-> +
-> +               index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
-> +
-> +               if (write) {
-> +                       gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
-> +                       uint32_t count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
-> +                                       >> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-> +                       uint8_t flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
-> +                                       >> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
-> +
-> +                       if (!count || flags)
-> +                               r = -EINVAL;
-> +                       else
-> +                               r = vgic_v3_set_redist_base(kvm, index,
-> +                                                           base, count);
-> +                       goto out;
-> +               }
-> +
-> +               rdreg = vgic_v3_rdist_region_from_index(kvm, index);
-> +               if (!rdreg)
-> +                       r = -ENODEV;
 
-Here you check whether rdreg is NULL...
 
-> +
-> +               *addr_ptr = rdreg->base & index &
+On 28/03/18 12:28 PM, Christian König wrote:
+> I'm just using amdgpu as blueprint because I'm the co-maintainer of it 
+> and know it mostly inside out.
 
-...but here you dereference it anyway. Missing "goto out"/break/other
-control flow?
+Ah, I see.
 
-> +                       (uint64_t)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-> +               break;
-> +       }
+> The resource addresses are translated using dma_map_resource(). As far 
+> as I know that should be sufficient to offload all the architecture 
+> specific stuff to the DMA subsystem.
 
-I was looking for the code which checked "EINVAL if you
-already used KVM_VGIC_V3_ADDR_TYPE_REDIST", but couldn't
-see it. Is that handled by one of the helper functions?
+It's not. The dma_map infrastructure currently has no concept of
+peer-to-peer mappings and is designed for system memory only. No
+architecture I'm aware of will translate PCI CPU addresses into PCI Bus
+addresses which is necessary for any transfer that doesn't go through
+the root complex (though on arches like x86 the CPU and Bus address
+happen to be the same). There's a lot of people that would like to see
+this change but it's likely going to be a long road before it does.
 
->         default:
->                 r = -ENODEV;
->         }
-> @@ -674,6 +709,7 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
->                 switch (attr->attr) {
->                 case KVM_VGIC_V3_ADDR_TYPE_DIST:
->                 case KVM_VGIC_V3_ADDR_TYPE_REDIST:
-> +               case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
->                         return 0;
->                 }
->                 break;
-> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> index 89faadc..45287a0 100644
-> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> @@ -766,11 +766,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
->         return ret;
->  }
->
-> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
-> +int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count)
->  {
->         int ret;
->
-> -       ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
-> +       ret = vgic_v3_insert_redist_region(kvm, index, addr, count);
->         if (ret)
->                 return ret;
+Furthermore, one of the reasons our patch-set avoids going through the
+root complex at all is that IOMMU drivers will need to be made aware
+that it is operating on P2P memory and do arch-specific things
+accordingly. There will also need to be flags that indicate whether a
+given IOMMU driver supports this. None of this work is done or easy.
 
-thanks
--- PMM
+> Yeah, but not for ours. See if you want to do real peer 2 peer you need 
+> to keep both the operation as well as the direction into account.
+
+Not sure what you are saying here... I'm pretty sure we are doing "real"
+peer 2 peer...
+
+> For example when you can do writes between A and B that doesn't mean 
+> that writes between B and A work. And reads are generally less likely to 
+> work than writes. etc...
+
+If both devices are behind a switch then the PCI spec guarantees that A
+can both read and write B and vice versa. Only once you involve root
+complexes do you have this problem. Ie. you have unknown support which
+may be no support, or partial support (stores but not loads); or
+sometimes bad performance; or a combination of both... and you need some
+way to figure out all this mess and that is hard. Whoever tries to
+implement a white list will have to sort all this out.
+
+Logan
