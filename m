@@ -1,54 +1,58 @@
-Return-Path: <ulfalizer@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522291363; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522208479; cv=none;
         d=google.com; s=arc-20160816;
-        b=AWe294Ij1MmrmiD7fLf1lSi++6QZajgeBEHBnTcEI8msZPw2+gch51atTQ5+H/lASf
-         RP+BF4dLy2FWX5ha8Oj5+sdZ55jxQaqIHCI3184lg8NQx3Zyu+VEUByJ1r6Z6arX928s
-         5BWGK9GldewPxky/ucsmWodCTxuchIWTnKJnYvt/+XvkPtobH7uXKWlJ/eXNnVmsm+iT
-         b9f4F2zzcEbFRlur/lxXf1UOrjHtbl9mb4oD9uZLjH/dV7hvTWxeND5JLwanJpiDst92
-         2oM3xHDpaXx7eLoN2azM/bAl0O4FBegJqsMp117BKXvn5qRdSniO02hYUdPBQ4yy52tr
-         k99w==
+        b=WQXtaPc3ZsswoBb3HHVnSpM6S2UGdBdxskbq44rXcXIFtv8c1+EKyktEvtdi/FOJ8f
+         H7eFL4U6HxxuaTTe2TlMxIDWzrVIZotS0Dfv7pH3HpPYLwNS4S8kXb2JiUZ/oLweZxWZ
+         tRpH5Z6Gmj/0qyny7E2FBk38ms7Mug0mPTizU6ip9C4JMgHtbXPYqCzYMkbMw8KM5Yj4
+         XzeAwpumqviv7U1j+HwEaqWLt1V+5xMHdMg9j3jRBYJe0ifp+SyS9Bukpjf3O+1LqZ2H
+         H6DxxDu6TousvnbZsPh0CzVqCJotdglV3QH922SqJ+MqGiw6Bp0lS3/LNeYEi+eA53KL
+         JOVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=1qtvs/spKjdZyIHnqRMR0TbQlPPIlx4KyxUwXwcqHP0=;
-        b=NtS8m5VBygJCMpys6OBVAu8g2OZo+jieoai38ctFaxC0fpog5o7l0FO6Vd1o55i9jJ
-         lCrIWUaiDPId9iXDqp3wqbULq6UJkl6mJciJsvHkEna9Fb+XsDAqbvCdJ+pVTfUlEmwx
-         7qdTQeOnmDOzIG+mqzoFrOUGPoPMu5BnXfcVw/2FKDRZywcwJL7CYw7W4ePDel7F5zWa
-         hxUXkmpo3wBz/BOxtz3gDCZ8OpT1SRFWqbjMtUHuqOJrPv+/G5AeN6CtUl2y+v5nDRC2
-         LbZMweF5kT1tj3Kuzee2q0Z8DcElnVtubgJBzPEK0HeH3Zno1ZT2iS/JQT+hMSwFgYxd
-         jBwA==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=/IJKYrUhR5ieU9b/mUouTnAYyuyTb3PLEXpEDNy3dS8=;
+        b=m1Xf09xeinrBwEjASWNno7y6C4IS3zOQE8iKX1n9KmwFK9G/S9h8YbOb2rhWZhlNOs
+         AfSWzKVlvOUcUqtfFMACRqy/XkXGDjxvZTSTW3hJ2oFVaIlNyXOeYZFjkLVZ50s6yEb9
+         JmH5WDLpxT0Y01Nygjnm9XKQknPYdEmgPaX0+gOGfDeCckJWC8/Wn/7dOfUhq73i9qx9
+         +HGOAlgT9Hg4EzuT+UJSUrDjLB9CQBB1tmUDR2zyEd+MsZQuNmlafpLVbvXZ5ZQ2t9Ly
+         e8DsyVjEjD93o8XfUi5468EmmZA0IAOOFeQU28WVH82Mt753S7xZSLPqRFq4yzkrdiAK
+         kOjg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IOFgozOf;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=mA4vd0Br;
+       dkim=pass header.i=@chromium.org header.s=google header.b=EJNV75DS;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IOFgozOf;
-       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx48bDh7+8KXqmEo6unpAXfEn+xZe95hXzfw97WmXb4es/dwHDsRe+jRnSMxSoTOWsnBRWH5BrOqfYomGq+p3AZ8=
+       dkim=pass header.i=@google.com header.s=20161025 header.b=mA4vd0Br;
+       dkim=pass header.i=@chromium.org header.s=google header.b=EJNV75DS;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AIpwx4+rQuZk4izIXY5hfEWALfNed+joKtPVmDK+1p+OEdO5x4o72YYaYqXwD6POh0F+Zw6CtzBByulVzZlr4nSEvDU=
 MIME-Version: 1.0
+Sender: keescook@google.com
 In-Reply-To: <1522128575-5326-8-git-send-email-yamada.masahiro@socionext.com>
 References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-8-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Thu, 29 Mar 2018 04:42:42 +0200
-Message-ID: <CAFkk2KQjBO=ck6i-L2h2XWehQrJotbzPv66JH+stZ7Q6M5YXTw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 27 Mar 2018 20:41:18 -0700
+X-Google-Sender-Auth: me81P8u1bJj0BB1Z15TtSsMFuOQ
+Message-ID: <CAGXu5jKmnO3o4dwWXrizKCeVpj3RCzw_zsHPseZrLXAgGb0YdQ@mail.gmail.com>
 Subject: Re: [PATCH v2 07/21] kconfig: add function support and implement
  'shell' function
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-	Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596067538101341662?=
-X-GMAIL-MSGID: =?utf-8?q?1596238188867927004?=
+X-GMAIL-MSGID: =?utf-8?q?1596151279134059135?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 27, 2018 at 7:29 AM, Masahiro Yamada
+On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 > This commit adds a new concept 'function' to do more text processing
 > in Kconfig.
@@ -95,47 +99,29 @@ On Tue, Mar 27, 2018 at 7:29 AM, Masahiro Yamada
 >
 > Reminder for myself:
 > Update Documentation/kbuild/kconfig-language.txt
->
->
-> Changes in v2:
->   - Use 'shell' for getting stdout from the comment.
->     It was 'shell-stdout' in the previous version.
->   - Symplify the implementation since the expansion has been moved to
->     lexer.
->
->  scripts/kconfig/function.c  | 170 ++++++++++++++++++++++++++++++++++++++++++++
->  scripts/kconfig/lkc_proto.h |   5 ++
->  scripts/kconfig/util.c      |  46 +++++++++---
->  scripts/kconfig/zconf.y     |   9 +++
->  4 files changed, 222 insertions(+), 8 deletions(-)
->  create mode 100644 scripts/kconfig/function.c
->
 
-The gotcha from 04/21 ("kconfig: reference environments directly and
-remove 'option env=' syntax") applies here too. For example, the
-following will work:
+Yeah, this needs to be included here, especially given the "cannot
+pass symbols" aspect which might surprise people.
 
-    config A
-        bool "A"
-        default $(shell echo "B && C")
+> [...]
+> +/* built-in functions */
+> +static char *do_shell(struct function *f, int argc, char *argv[])
+> +{
+> +       static const char *pre = "(";
+> +       static const char *post = ") 2>/dev/null";
 
-Some people might argue that that's a feature (I sense a mess down the
-road if people start depending on it), but just in case you hadn't
-thought of it.
+Right now the search and help screens in menuconfig just show the line
+a config is defined and nothing more. I think it would be extremely
+handy to include shell output here in some way. Especially when trying
+to answer questions like "why aren't GCC plugins available?" it's got
+quite a bit harder to debug.
 
-Similarly, the following will only work as expected if 'cmd' outputs
-the name of an undefined Kconfig symbol:
+Could we capture the output (especially stderr) for these kinds of hints?
 
-    config A
-        string
-        default $(shell cmd)
+Beyond that, looks good!
 
-You could argue that people should add quotes there though (though
-that's broken at the moment if the output from 'cmd' includes a
-quote).
+-Kees
 
-Quotes in Kconfig speak just mean "constant value". Problem is it's
-undocumented, and no one would intuitively expect it.
-
-Cheers,
-Ulf
+-- 
+Kees Cook
+Pixel Security
