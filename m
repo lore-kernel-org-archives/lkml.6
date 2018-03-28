@@ -1,98 +1,323 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/2BuK9dGzNu66rnt2sc698pRY/xMKSPAp1LTzW8V8YnTf8n1xRdpnw/hMOGA5hHpiddbu2
-ARC-Seal: i=1; a=rsa-sha256; t=1522346772; cv=none;
+Return-Path: <kernel-hardening-return-12799-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+4eGhjDCdWJMiNl1Yru1flQGHeFID7oI04SgoeNjMXzUMpxxoUKX71RE2k3WRdyWPGXyq8
+ARC-Seal: i=1; a=rsa-sha256; t=1522261117; cv=none;
         d=google.com; s=arc-20160816;
-        b=mCRtBUrJ2E1ttgZPFVGOJexBHsWwAYU+03W/wBostMeU8qR8pMXUM07e4b76ude9Qj
-         fyEssqou4peQZpjT/xZKhRNg6icUOYOVKBmXWqIpnApw+3CxCvb197SoOSSo4QptY24h
-         p4Ug4cJJv6KUmt8w07Fiscsire1EK8olG66D4URYt8+9BcnL3yyIs5/yVpyvHtBlyWuh
-         Knxsheojx88XSj3VPCtbujlJVeIHoQfkNQRAl2P1ryBT4kC+z5chczmi/yT/d4YvgOYO
-         pOhfr+boD/3c8kTXCaoQDC22kITyp6nYD4DZGXtGjXtWzSZrH+xkybxiRX40qkM5um/r
-         X4kQ==
+        b=AA0ez6LbBDJnZmSTUr86zOKpISgWiJ51CTkAQtojJyfKI+dEQCyyw3xAaTwLJ/TK3m
+         ivokH7AoY1JVFPKYGZp1k3Mbo9w72j5RM8LuhdIW+olSUxYFjxr4wubH/QEQu4vZFBr/
+         lSQLK5bv6V0pY/LXta7KLAdcxlKrohdqpuADYpAQXs+S1VOKX8hp3RQTFQq0RnzXH7kt
+         lvax/ZMNFE9GrQhEquxoHCwwewaY69YfyRkdgjkZAlJpxe47FIpqn8LQenEjf7u6jsB1
+         R4DYpZTg8IijgFXz4aZ7v3rXpi6dXT1f077mdsBrorFVx/ufFbFY9nTXGK9EPEr/pyUx
+         AHgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=RNcAw6OJBoX7k/o/vAmPgBuBFrVvRpX+MESD/3aJskU=;
-        b=0rGxS0OEWu6q7rQiyCBgM4gtIGE7Y1qKu+qzdB9lLWil5gf+Dis/BysqqZE2oBLH2M
-         lY9d96623VK/0g2lGIh5L2E6HxfJIEPfc3/wkBYp/4IMooBojfSmR7nr0GetxQmyqTFF
-         D9TQjq2EsAJszVrHzKQcOuBU8xeN9a5yu/kLonvSu+vlM09xN2u9mtMzHGX3x4LJGiEc
-         /9XK3OHnBDwPO7YFNPTxyDGzJPy9+/1g1qEFHnqAoOItlzmVyKQl5aNQiJXmWmKK3Ix+
-         ID9//sq8SShIgdibfh5dinTlI1NFOSe8CKrKSoLewTrSlBPZcPaiv6SKDn2PLO0DedWv
-         iKDg==
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=6uJwPaQT9xT6415oTG27LL6DX19tw//vBGc76jwmPjw=;
+        b=QfDbFM6d2Juy08lBn1maLc3Ki++73nNH2Sd0qGUsedMZMx65UbH2Do4yktJURx6Hci
+         C1cH9p6v7S1kBw9qyqmylRiH2Ub4UlKQHVN4eeCz80390g+hj2DEXY8SKqaoB4kRAbWS
+         cS1v52m9tHbdEqDBpUBasuuhXLLDjLh7Q/06/h8SAVtcQ7/lUS2HQjc1KcP3MlyqRwci
+         ONGAkrw0kFV26mKXNY95QGSWc/cUyMzJt/VgqBsZooVt2aiNJVxcBzpvIHQ09DHD7Sgg
+         0nOfpRFQ/kzKF3nz+xknpDM07MKtdVnMKkv3D2l2yQAN4C9MDCJpO3csMKPweO8iwaR1
+         5WaA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of kernel-hardening-return-12799-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12799-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Christoph Hellwig <hch@lst.de>,
-	Doug Gilbert <dgilbert@interlog.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Tony Battersby <tonyb@cybernetics.com>
-Subject: [PATCH 4.9 01/28] scsi: sg: dont return bogus Sg_requests
-Date: Thu, 29 Mar 2018 20:00:20 +0200
-Message-Id: <20180329175733.628549584@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
-References: <20180329175733.447823703@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+       spf=pass (google.com: domain of kernel-hardening-return-12799-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12799-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Kees Cook <keescook@chromium.org>,
+	Lukas Wunner <lukas@wunner.de>
+Cc: Laura Abbott <labbott@redhat.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCHv3] gpio: Remove VLA from gpiolib
+Date: Wed, 28 Mar 2018 11:18:09 -0700
+Message-Id: <20180328181809.24505-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296289036439826?=
-X-GMAIL-MSGID: =?utf-8?q?1596296289036439826?=
+X-GMAIL-THRID: =?utf-8?q?1596206473991489239?=
+X-GMAIL-MSGID: =?utf-8?q?1596206473991489239?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+The new challenge is to remove VLAs from the kernel
+(see https://lkml.org/lkml/2018/3/7/621) to eventually
+turn on -Wvla.
 
-------------------
+Using a kmalloc array is the easy way to fix this but kmalloc is still
+more expensive than stack allocation. Introduce a fast path with a
+fixed size stack array to cover most chip with gpios below some fixed
+amount. The slow path dynamically allocates an array to cover those
+chips with a large number of gpios.
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
-
-commit 48ae8484e9fc324b4968d33c585e54bc98e44d61 upstream.
-
-If the list search in sg_get_rq_mark() fails to find a valid request, we
-return a bogus element. This then can later lead to a GPF in
-sg_remove_scat().
-
-So don't return bogus Sg_requests in sg_get_rq_mark() but NULL in case
-the list search doesn't find a valid request.
-
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Doug Gilbert <dgilbert@interlog.com>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Acked-by: Doug Gilbert <dgilbert@interlog.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Tony Battersby <tonyb@cybernetics.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
- drivers/scsi/sg.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+v3: Split out from the series since patches have been picked up
+independently. Fold in patch from Lukas Wunner to introduce slow/fast
+paths. I took his suggestions to go with 384 as the maximum number of
+gpios. Also fixed one 0-day bot issue where I forgot to change the
+return type.
+---
+ drivers/gpio/gpiolib.c        | 74 +++++++++++++++++++++++++++++++++----------
+ drivers/gpio/gpiolib.h        |  2 +-
+ include/linux/gpio/consumer.h | 10 +++---
+ 3 files changed, 65 insertions(+), 21 deletions(-)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -2064,11 +2064,12 @@ sg_get_rq_mark(Sg_fd * sfp, int pack_id)
- 		if ((1 == resp->done) && (!resp->sg_io_owned) &&
- 		    ((-1 == pack_id) || (resp->header.pack_id == pack_id))) {
- 			resp->done = 2;	/* guard against other readers */
--			break;
-+			write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
-+			return resp;
- 		}
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d66de67ef307..e3ca9e31bcbc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -390,6 +390,7 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
+ 
+ 		return 0;
+ 	} else if (cmd == GPIOHANDLE_SET_LINE_VALUES_IOCTL) {
++		int ret;
+ 		/* TODO: check if descriptors are really output */
+ 		if (copy_from_user(&ghd, ip, sizeof(ghd)))
+ 			return -EFAULT;
+@@ -399,11 +400,14 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
+ 			vals[i] = !!ghd.values[i];
+ 
+ 		/* Reuse the array setting function */
+-		gpiod_set_array_value_complex(false,
++		ret = gpiod_set_array_value_complex(false,
+ 					      true,
+ 					      lh->numdescs,
+ 					      lh->descs,
+ 					      vals);
++		if (ret)
++			return ret;
++
+ 		return 0;
  	}
- 	write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
--	return resp;
-+	return NULL;
+ 	return -EINVAL;
+@@ -2653,6 +2657,8 @@ static int gpio_chip_get_multiple(struct gpio_chip *chip,
+ 	return -EIO;
  }
  
- /* always adds to end of list */
++#define FASTPATH_NGPIO 384
++
+ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 				  unsigned int array_size,
+ 				  struct gpio_desc **desc_array,
+@@ -2662,16 +2668,29 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *slowpath = NULL, *mask, *bits;
+ 		int first, j, ret;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*slowpath),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!slowpath)
++				return -ENOMEM;
++			mask = slowpath;
++			bits = slowpath + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+ 		/* collect all inputs belonging to the same chip */
+ 		first = i;
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			const struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2682,8 +2701,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			 (desc_array[i]->gdev->chip == chip));
+ 
+ 		ret = gpio_chip_get_multiple(chip, mask, bits);
+-		if (ret)
++		if (ret) {
++			if (slowpath)
++				kfree(slowpath);
+ 			return ret;
++		}
+ 
+ 		for (j = first; j < i; j++) {
+ 			const struct gpio_desc *desc = desc_array[j];
+@@ -2695,6 +2717,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			value_array[j] = value;
+ 			trace_gpio_value(desc_to_gpio(desc), 1, value);
+ 		}
++
++		if (slowpath)
++			kfree(slowpath);
+ 	}
+ 	return 0;
+ }
+@@ -2878,7 +2903,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+ 	}
+ }
+ 
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array)
+@@ -2887,14 +2912,27 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *slowpath = NULL, *mask, *bits;
+ 		int count = 0;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			slowpath = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*slowpath),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!slowpath)
++				return -ENOMEM;
++			mask = slowpath;
++			bits = slowpath + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2925,7 +2963,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 		/* push collected bits to outputs */
+ 		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
++
++		if (slowpath)
++			kfree(slowpath);
+ 	}
++	return 0;
+ }
+ 
+ /**
+@@ -3000,13 +3042,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
+  * This function should be called from contexts where we cannot sleep, and will
+  * complain if the GPIO chip functions potentially sleep.
+  */
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			 struct gpio_desc **desc_array, int *value_array)
+ {
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, false, array_size, desc_array,
+-				      value_array);
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, false, array_size,
++					desc_array, value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
+ 
+@@ -3326,14 +3368,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+  *
+  * This function is to be called from contexts that can sleep.
+  */
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array)
+ {
+ 	might_sleep_if(extra_checks);
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, true, array_size, desc_array,
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, true, array_size, desc_array,
+ 				      value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index b17ec6795c81..b64813e3876e 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 				  unsigned int array_size,
+ 				  struct gpio_desc **desc_array,
+ 				  int *value_array);
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array);
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index dbd065963296..243112c7fa7d 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
+ 			      struct gpio_desc **desc_array,
+ 			      int *value_array);
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			       struct gpio_desc **desc_array,
+ 			       int *value_array);
+ 
+@@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
+ 				       struct gpio_desc **desc_array,
+ 				       int *value_array);
+ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array);
+ 
+@@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value(unsigned int array_size,
++static inline int gpiod_set_raw_array_value(unsigned int array_size,
+ 					     struct gpio_desc **desc_array,
+ 					     int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+@@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 						struct gpio_desc **desc_array,
+ 						int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
+-- 
+2.14.3
