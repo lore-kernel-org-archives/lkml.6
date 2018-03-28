@@ -1,93 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753879AbeC1TNK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 15:13:10 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:35436 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753330AbeC1TNI (ORCPT
+        id S1753726AbeC1TOB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 15:14:01 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:42737 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753391AbeC1TOA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:13:08 -0400
-X-Google-Smtp-Source: AIpwx4+JA3UiFlrAz85mWC2w0SFiRgWb38Znrsu9gRnJp/+1Z2QnMtZqOv2tu/UbHCUwpPiPE5UWFg==
-Subject: Re: [PATCH net-next 2/2] sfp/phylink: move module EEPROM ethtool
- access into netdev core ethtool
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Yan Markman <ymarkman@marvell.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Miquel Raynal <miquel.raynal@free-electrons.com>,
-        Marcin Wojtas <mw@semihalf.com>
-References: <20180328190339.31433-1-f.fainelli@gmail.com>
- <20180328190339.31433-3-f.fainelli@gmail.com>
- <20180328191151.GS10980@n2100.armlinux.org.uk>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <e2266957-0a9e-dcc6-078d-7faa78379032@gmail.com>
-Date: Wed, 28 Mar 2018 12:12:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 28 Mar 2018 15:14:00 -0400
+X-Google-Smtp-Source: AIpwx48NNjxh7xJkcQc9nahVavsjWcmr27sVzlD7ofNAWMDPTh6gby7/VPUlCHMdbVjnZfrV99v873mrxObWfxPd7DQ=
 MIME-Version: 1.0
-In-Reply-To: <20180328191151.GS10980@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <bd4be06c-b5f5-2516-1c1d-d2b6d7861090@c-s.fr>
+References: <20180322202007.23088-1-malat@debian.org> <20180322202007.23088-16-malat@debian.org>
+ <bd4be06c-b5f5-2516-1c1d-d2b6d7861090@c-s.fr>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed, 28 Mar 2018 21:13:39 +0200
+X-Google-Sender-Auth: RgUpYIYew_iIEDQcVV6H4b4RnRc
+Message-ID: <CA+7wUsyRSSkwgpBodKkPjhUxiHy-t1q2Q7nsorfRoL=wfxgyFQ@mail.gmail.com>
+Subject: Re: [PATCH 15/19] powerpc: Add missing prototype
+To: christophe leroy <christophe.leroy@c-s.fr>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2SJE6Br005471
 
-On 03/28/2018 12:11 PM, Russell King - ARM Linux wrote:
-> On Wed, Mar 28, 2018 at 12:03:39PM -0700, Florian Fainelli wrote:
->> From: Russell King <rmk+kernel@armlinux.org.uk>
+On Fri, Mar 23, 2018 at 1:20 PM, christophe leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+>
+> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
 >>
->> Provide a pointer to the SFP bus in struct net_device, so that the
->> ethtool module EEPROM methods can access the SFP directly, rather
->> than needing every user to provide a hook for it.
+>> Add one missing prototype for function rh_dump_blk. Fix warning treated as
+>> error in W=1:
 >>
->> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> 
-> This probably ought to have your sign-off too as you're passing the
-> patch along rather than me submitting it directly.  DCO v1.1 (c)
-> seems to apply to this situation.
+>>    arch/powerpc/lib/rheap.c:740:6: error: no previous prototype for
+>> ‘rh_dump_blk’ [-Werror=missing-prototypes]
+>>
+>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>> ---
+>>   arch/powerpc/include/asm/rheap.h | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/powerpc/include/asm/rheap.h
+>> b/arch/powerpc/include/asm/rheap.h
+>> index 172381769cfc..e75d96de19a0 100644
+>> --- a/arch/powerpc/include/asm/rheap.h
+>> +++ b/arch/powerpc/include/asm/rheap.h
+>> @@ -83,6 +83,9 @@ extern int rh_get_stats(rh_info_t * info, int what, int
+>> max_stats,
+>>   /* Simple dump of remote heap info */
+>>   extern void rh_dump(rh_info_t * info);
+>>   +/* Simple dump of remote info block */
+>> +extern void rh_dump_blk(rh_info_t *info, rh_block_t *blk);
+>> +
+>
+>
+> Only used in one place, should be static
 
-Indeed:
+Well here is what I see over here:
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+$ git grep rh_dump_blk
+...
+arch/powerpc/lib/rheap.c:EXPORT_SYMBOL_GPL(rh_dump_blk);
+
+
+
+> Christophe
+>
+>>   /* Set owner of taken block */
+>>   extern int rh_set_owner(rh_info_t * info, unsigned long start, const
+>> char *owner);
+>>
+>
+>
+> ---
+> L'absence de virus dans ce courrier électronique a été vérifiée par le
+> logiciel antivirus Avast.
+> https://www.avast.com/antivirus
+>
