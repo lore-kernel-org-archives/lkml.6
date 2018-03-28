@@ -1,79 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753273AbeC1Nmv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:42:51 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:59666 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751207AbeC1Nmt (ORCPT
+        id S1753055AbeC1NqA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:46:00 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:37335 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeC1Np5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:42:49 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180328134247epoutp04e80c0cf13fefab196bcc203a54b49b36~gGV56yciK1053710537epoutp04Y
-X-AuditID: b6c32a46-b85ff70000000fe8-ae-5abb9bd764af
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Bernie Thompson <bernie@plugable.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] video: udlfb: Return an error code only as a
- constant in dlfb_realloc_framebuffer()
-Date: Wed, 28 Mar 2018 15:42:44 +0200
-Message-id: <60893411.8iluP6siGW@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7bCmqe712bujDJ4v4rK4eP8bi8WVr+/Z
-        LM53Lme22HpL2uJE3wdWi8u75rA5sHnc7z7O5PF0ahebR9OpdlaPz5vkAliiuGxSUnMyy1KL
-        9O0SuDIO7j7CXrCepWLTvWOMDYzHmLsYOTgkBEwkTvbUdjFycQgJ7GCUuL5iGguE851R4sGf
-        y4xdjJxgRYcWL2eGSGxglNg+YQMjhPOVUWLH2mZ2kCo2ASuJie2rGEHGigiYSvw5EQJSwyyw
-        kVGi++deJpAaYYFCiR27trOA2CwCqhInz29hA7F5BbQk+m6/A5sjKuAlsWVfOxPIHE4BT4nt
-        c30hSgQlfky+B9bKLCAvsW//VFYIW0fi7LF1YPdICGxgk9h5pY8V4moXiesN/6A+EJZ4dXwL
-        O4QtLfFs1UaohmZGiW879jBDJCYwSuxZLwRhW0scPn4RagOfRMfhv+yQ8OKV6GiDKvGQeLJv
-        MRuE7Sjx+2w/NOhuM0psu/2BaQKj7Cwkh89CcvgsJIcvYGRexSiWWlCcm55abFRgpFecmFtc
-        mpeul5yfu4kRnA603HYwLjnnc4hRgINRiYe3IGZXlBBrYllxZe4hRgkOZiUR3vcau6OEeFMS
-        K6tSi/Lji0pzUosPMUpzsCiJ87YGuEQJCaQnlqRmp6YWpBbBZJk4OKUaGMUvGDBmNVya6v2M
-        ff20793JC76t05da8bQv/PLPG65F+apyy/VCkop3nRANOpobUWh2wHfh1W+nmKtbzs+w/WcS
-        tK560f/Jtj8iIt1uK3Z8+RShyuI9e4v0kZ9lC5buV1kwYcbZFlHlytfP+4LLWLa2zLgWEbly
-        /uS/ogu373XozY/wTXrC1aDEUpyRaKjFXFScCADiU9VNAwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t9jQd1rs3dHGZy4Z2Jx8f43FosrX9+z
-        WZzvXM5ssfWWtMWJvg+sFpd3zWFzYPO4332cyePp1C42j6ZT7awenzfJBbBEcdmkpOZklqUW
-        6dslcGUc3H2EvWA9S8Wme8cYGxiPMXcxcnJICJhIHFq8HMjm4hASWMcocW7HAjYI5yujxJF7
-        T9lAqtgErCQmtq9i7GLk4BARMJX4cyIEpIZZYCOjxNOr81hAaoQFCiV27NoOZrMIqEqcPL8F
-        rJdXQEui7/Y7dhBbVMBLYsu+diaQOZwCnhLb5/pC7LrLKDFr7WRWiHpBiR+T74HNYRaQl9i3
-        fyorhK0lsX7ncaYJjPyzkJTNQlI2C0nZAkbmVYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5
-        uZsYgQG87bBW/w7Gx0viDzEKcDAq8fAWxOyKEmJNLCuuzD3EKMHBrCTC+15jd5QQb0piZVVq
-        UX58UWlOavEhRmkOFiVxXv78Y5FCAumJJanZqakFqUUwWSYOTqkGxsObv7ytdE+9fa5OUCnx
-        6gflWew/Vmdu9DA9+KlyVtm0eTK3W/2WFKYslHP5sbXRZyb3lZcta6J37Lrfnb5ILsH0/U0p
-        tWBOBrF7wiIsR7qPK08OEo2tudt5+mKpx+bpU3qua9vlLWHeJm+lGmu8R/lW+wHJA/OSNLUn
-        /fFUcXLeFXnidTGvsRJLcUaioRZzUXEiAJ78EGxcAgAA
-X-CMS-MailID: 20180328134246epcas2p38c1479c4a191cad283c2b9f9334e1f82
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1
-X-RootMTR: 20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1
-References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
-        <25aee051-12fb-de5f-c806-f419fa4c0ef1@users.sourceforge.net>
-        <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
+        Wed, 28 Mar 2018 09:45:57 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Maciej Purski <m.purski@samsung.com>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] thermal: exynos_tmu: avoid uninitialized variables
+Date: Wed, 28 Mar 2018 15:44:44 +0200
+Message-Id: <20180328134520.1970967-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:tnqi/xk05bSjeWxw7K4Em0TJIso4HcTnOmlTAhaP89T3TMI/zoK
+ f/dlI81QADNtu6QhaymoFFuf+k+taO6Da/31Mb09FnW27I+y4XrqeR7ceX/qEXJiC2lOQPl
+ sy47TF14pI8nzwC3wszZtRDi+wVf6Dzcnqw2+MLTnQl6kFB46jizPzdZb2lg9cMJGOseEaG
+ AkteiTl+1Ra3E0J9PBRjg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Ly3cRcJtkr4=:UHgcC0Yu2sSyqQFH5Rkl3G
+ vvCTpSQBe1Ixbg2XX59ADkHvew5udTh3a2PTyyRmJPQy1/YnHSQLrMBOW0cHGFc5JwjzKBqWS
+ YTqX2asumWWSiBUbswHLNodU67WtIkl8rajVqc0vjLN+TvfS2/GOBbYrhkAeb+upjRiG0ba8o
+ U9HkDYcXLY7x+9tcsVGrKI2lA72NajPVjKMrfFz8JCI7DB1+yH33NSxXiCBiIN+xjhuxa9tD/
+ iS10i6PzeGQahgh+w4A64hGOZuHKODGQNf8su1ogk8EXyvU3qCr7yfxl4GYSqHwYTyXWZo4Do
+ F6vLCGCG8Yz8m+ol8ikH/Ep/ncUpDeCygQsdzL9KIr9rwNqNZtC72LqUhGXVKwVt7gPARh3rN
+ WfWrMPld44wzUR29Mli1VfJmTKNaS9dsvJHPlvpRQgX1HRjdeh3hdrpYSM8CIMMATMJVemJ8g
+ wj7P08r25yosZn3JgU7CPU/EbbGg5h6tbCnmE8dIClPHf+XI3cv0tp/korOnQRiSLjcS+jMeD
+ 8h1swkTyUcxA/twSpqppL6bWDDarrD/8eFi6D5D4tmH+IaXypRVWUyq0Sh1z4+c4RYUxbewND
+ 3OuLJrboWPDK3aBA5F0V5Ou1hYlU6D+KkLLTz72qDY+ujUES9+bkldgspuc2aq7kr5N3zjsei
+ hd6frsCeVgwTBEbPZZ77Q7n8nr3qcry+knYmQQwlmYbFIEwWBexjVIZAU9JBsJaF9lws83x2r
+ rHSB9wkafLX0rIrocsATXB+zruPEWo6L6i7xYQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, January 07, 2018 02:34:51 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 7 Jan 2018 14:02:36 +0100
-> 
-> * Return an error code without storing it in an intermediate variable.
-> 
-> * Delete the label "error" and local variable "retval"
->   which became unnecessary with this refactoring.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Removing the initialization in the error case introduced
+a compile-time warning:
 
-Patch queued for 4.17, thanks.
+drivers/thermal/samsung/exynos_tmu.c: In function 'temp_to_code':
+drivers/thermal/samsung/exynos_tmu.c:304:9: error: 'temp_code' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  return temp_code;
+         ^~~~~~~~~
+drivers/thermal/samsung/exynos_tmu.c: In function 'exynos_get_temp':
+drivers/thermal/samsung/exynos_tmu.c:931:37: error: 'temp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+   *temp = code_to_temp(data, value) * MCELSIUS;
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Let's assume the runtime warning is sufficient, and make it
+return a well-defined number instead of unintialized data.
+
+Fixes: 480b5bfc16e1 ("thermal: exynos: remove parsing of samsung, tmu_default_temp_offset property")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/thermal/samsung/exynos_tmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 2ec854851da1..7e351fffdaee 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -298,6 +298,7 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+ 		break;
+ 	default:
+ 		WARN_ON(1);
++		temp_code = 0;
+ 		break;
+ 	}
+ 
+@@ -324,6 +325,7 @@ static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+ 		break;
+ 	default:
+ 		WARN_ON(1);
++		temp = 0;
+ 		break;
+ 	}
+ 
+-- 
+2.9.0
