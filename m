@@ -1,213 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeC1HId (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:08:33 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38950 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750774AbeC1HIa (ORCPT
+        id S1752497AbeC1HNE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:13:04 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:40046 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751209AbeC1HNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:08:30 -0400
-X-Google-Smtp-Source: AIpwx481ItZm2IzjSrpfh75h6oh97ta8JU7zVlzVQLvjBgCpoK+B8ZqvwCDfF0yd/Gh7j/qmx/60WA==
-Date: Wed, 28 Mar 2018 09:08:26 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/5] allow override of bus format in bridges
-Message-ID: <20180328070826.GY14155@phenom.ffwll.local>
-Mail-Followup-To: Peter Rosin <peda@axentia.se>,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180326212447.7380-1-peda@axentia.se>
+        Wed, 28 Mar 2018 03:13:02 -0400
+X-Google-Smtp-Source: AIpwx4/BHGWDGP/ITq2+lRBA9rzvKWfxESslW/+QFjsIVDJgPscHvBMaCqOFU+twZxbgSTbebdlZoLvX3VDyJVBDg0ozO9Ucel8e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326212447.7380-1-peda@axentia.se>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Date: Wed, 28 Mar 2018 00:13:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d05a78056873bc47@google.com>
+Subject: WARNING in kvm_arch_vcpu_ioctl_run (3)
+From: syzbot <syzbot+760a73552f47a8cd0fd9@syzkaller.appspotmail.com>
+To: hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 11:24:42PM +0200, Peter Rosin wrote:
-> Hi!
-> 
-> [I got to v2 sooner than expected]
-> 
-> I have an Atmel sama5d31 hooked up to an lvds encoder and then
-> on to an lvds panel. Which seems like something that has been
-> done one or two times before...
-> 
-> The problem is that the bus_format of the SoC and the panel do
-> not agree. The SoC driver (atmel-hlcdc) can handle the
-> rgb444, rgb565, rgb666 and rgb888 bus formats. The hardware is
-> wired for the rgb565 case. The lvds encoder supports rgb888 on
-> its input side with the LSB wires for each color simply pulled
-> down internally in the encoder in my case which means that the
-> rgb565 bus_format is the format that works best. And the panel
-> is expecting lvds (vesa-24), which is what the encoder outputs.
-> 
-> The reason I "blame" the bus_format of the drm_connector is that
-> with the below DT snippet, things do not work *exactly* due to
-> that. At least, it starts to work if I hack the panel-lvds driver
-> to report the rgb565 bus_format instead of vesa-24.
-> 
-> 	panel: panel {
-> 		compatible = "panel-lvds";
-> 
-> 		width-mm = <304>;
-> 		height-mm = <228;
-> 
-> 		data-mapping = "vesa-24";
-> 
-> 		panel-timing {
-> 			// 1024x768 @ 60Hz (typical)
-> 			clock-frequency = <52140000 65000000 71100000>;
-> 			hactive = <1024>;
-> 			vactive = <768>;
-> 			hfront-porch = <48 88 88>;
-> 			hback-porch = <96 168 168>;
-> 			hsync-len = <32 64 64>;
-> 			vfront-porch = <8 13 14>;
-> 			vback-porch = <8 13 14>;
-> 			vsync-len = <8 12 14>;
-> 		};
-> 
-> 		port {
-> 			panel_input: endpoint {
-> 				remote-endpoint = <&lvds_encoder_output>;
-> 			};
-> 		};
-> 	};
-> 
-> 	lvds-encoder {
-> 		compatible = "ti,ds90c185", "lvds-encoder";
-> 
-> 		ports {
-> 			#address-cells = <1>;
-> 			#size-cells = <0>;
-> 
-> 			port@0 {
-> 				reg = <0>;
-> 
-> 				lvds_encoder_input: endpoint {
-> 					remote-endpoint = <&hlcdc_output>;
-> 				};
-> 			};
-> 
-> 			port@1 {
-> 				reg = <1>;
-> 
-> 				lvds_encoder_output: endpoint {
-> 					remote-endpoint = <&panel_input>;
-> 				};
-> 			};
-> 		};
-> 	};
-> 
-> But, instead of perverting the panel-lvds driver with support
-> for a totally fake non-lvds bus_format, I intruduce an API that allows
-> display controller drivers to query the required bus_format of any
-> intermediate bridges, and match up with that instead of the formats
-> given by the drm_connector. I trigger this with this addition to the
-> lvds-encoder DT node:
-> 
-> 		interface-pix-fmt = "rgb565";
-> 
-> Naming is hard though, so I'm not sure if that's good?
-> 
-> I threw in the first patch, since that is the actual lvds encoder
-> I have in this case.
-> 
-> Suggestions welcome.
+Hello,
 
-Took a quick look, feels rather un-atomic. And there's beend discussing
-for other bridge related state that we might want to track (like the full
-adjusted_mode that might need to be adjusted at each stage in the chain).
-So here's my suggestions:
+syzbot hit the following crash on upstream commit
+99fec39e7725d091c94d1bb0242e40c8092994f6 (Fri Mar 23 22:34:18 2018 +0000)
+Merge tag 'trace-v4.16-rc4' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=760a73552f47a8cd0fd9
 
-- Add an optional per-bridge internal state struct using the support in
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6275011434250240
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
+compiler: gcc (GCC) 7.1.1 20170620
+user-space arch: i386
 
-https://dri.freedesktop.org/docs/drm/gpu/drm-kms.html#handling-driver-private-state
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+760a73552f47a8cd0fd9@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-  Yes it says "driver private", but since bridge is just helper stuff
-  that's all included. "driver private" == "not exposed as uapi" here.
-  Include all the usual convenience wrappers to get at the state for a
-  bridge.
+WARNING: CPU: 1 PID: 9515 at arch/x86/kvm/x86.c:7544  
+kvm_arch_vcpu_ioctl_run+0x1c7/0x5c80 arch/x86/kvm/x86.c:7544
+Kernel panic - not syncing: panic_on_warn set ...
 
-- Then stuff your bus_format into that new drm_bridge_state struct.
-
-- Add a new bridge callback atomic_check, which gets that bridge state as
-  parameter (similar to all the other atomic_check functions).
-
-This way we can even handle the bus_format dynamically, through the atomic
-framework your bridge's atomic_check callback can look at the entire
-atomic state (both up and down the chain if needed), it all neatly fits
-into atomic overall and it's much easier to extend.
-
-Please also cc Laurent Pinchart on this.
-
-Cheers, Daniel
+CPU: 1 PID: 9515 Comm: syz-executor4 Not tainted 4.16.0-rc6+ #274
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:kvm_arch_vcpu_ioctl_run+0x1c7/0x5c80 arch/x86/kvm/x86.c:7544
+RSP: 0018:ffff8801a2d17580 EFLAGS: 00010212
+RAX: 0000000000010000 RBX: ffff8801cdfd8000 RCX: ffffffff810dfea7
+RDX: 0000000000000062 RSI: ffffc90003c1b000 RDI: ffff8801ac1a8498
+RBP: ffff8801a2d17910 R08: 1ffff10035835b2d R09: 0000000000000001
+R10: ffff8801a2d17560 R11: 0000000000000005 R12: 0000000000000000
+R13: ffff8801ab083100 R14: ffff8801ac1a8280 R15: ffff8801ac1a8280
+  kvm_vcpu_ioctl+0x6f1/0xff0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2560
+  kvm_vcpu_compat_ioctl+0x364/0x450  
+arch/x86/kvm/../../../virt/kvm/kvm_main.c:2755
+  C_SYSC_ioctl fs/compat_ioctl.c:1461 [inline]
+  compat_SyS_ioctl+0x151/0x2a30 fs/compat_ioctl.c:1407
+  do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
+  do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f41c99
+RSP: 002b:00000000f773d09c EFLAGS: 00000286 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000019 RCX: 000000000000ae80
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-> 
-> Cheers,
-> Peter
-> 
-> Changes since v1 https://lkml.org/lkml/2018/3/17/221
-> - Add a proper bridge API to query the bus_format instead of abusing
->   the ->get_modes part of the code. This is cleaner but requires
->   changes to all display controller drivers wishing to participate.
-> - Add patch to adjust the atmel-hlcdc driver according to the above.
-> - Hook the new info into the bridge local to the lvds-encoder instead
->   of messing about with new interfaces for the panel-bridge driver.
-> - Add patch with a DT parsing function of bus_formats in a central place.
-> - Rephrase the addition of ti,ds90c185 to the lvds-transmitter binding.
-> 
-> Peter Rosin (5):
->   dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
->   drm: bridge: add API to query the expected input formats of bridges
->   drm: of: add display bus-format parser
->   drm: bridge: lvds-encoder: allow specifying the input bus format
->   drm/atmel-hlcdc: take bridges into account when selecting output
->     format
-> 
->  .../bindings/display/bridge/lvds-transmitter.txt   | 14 ++++-
->  .../devicetree/bindings/display/bus-format.txt     | 35 +++++++++++++
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     | 49 ++++++++++++++++--
->  drivers/gpu/drm/bridge/lvds-encoder.c              | 25 +++++++++
->  drivers/gpu/drm/drm_bridge.c                       | 32 ++++++++++++
->  drivers/gpu/drm/drm_of.c                           | 59 ++++++++++++++++++++++
->  include/drm/drm_bridge.h                           | 18 +++++++
->  include/drm/drm_of.h                               |  9 ++++
->  8 files changed, 237 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/bus-format.txt
-> 
-> -- 
-> 2.11.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
