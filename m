@@ -1,428 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754060AbeC1PQC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:16:02 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:43736 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754038AbeC1PQA (ORCPT
+        id S1754072AbeC1PQU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:16:20 -0400
+Received: from mailout6.zih.tu-dresden.de ([141.30.67.75]:41542 "EHLO
+        mailout6.zih.tu-dresden.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753164AbeC1PQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:16:00 -0400
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
+        Wed, 28 Mar 2018 11:16:18 -0400
+Subject: Re: [RFT][PATCH v7 6/8] sched: idle: Select idle state before
+ stopping the tick
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        "Aubrey Li" <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan>
+ <2249320.0Z4q8AXauv@aspire.rjw.lan>
+ <6462e44a-e207-6b97-22bf-ad4aed69afc2@tu-dresden.de>
+ <4198010.6ArFqS34NK@aspire.rjw.lan>
+ <CAJZ5v0j5mEaQSAiW4ynitM1ee=sqkpc8G_tZ40RYUgyavXXhqQ@mail.gmail.com>
+ <b904266b-b5bb-587d-334a-844a70341f8d@tu-dresden.de>
+ <CAJZ5v0iRjj5DEKU1m2_y96WRBNu6U1w=GSADRxWXfVDN9K+edQ@mail.gmail.com>
+ <CAJZ5v0h40DDZ5da7CS4702Z=D3bY7SsOhbUqPR44qVKU0E4D4A@mail.gmail.com>
+From: Thomas Ilsche <thomas.ilsche@tu-dresden.de>
+Message-ID: <ceb8f46f-6bcd-a07e-beb4-b34a9810ad8d@tu-dresden.de>
+Date: Wed, 28 Mar 2018 17:15:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Wed, 28 Mar 2018 17:15:56 +0200
-From: Paul Cercueil <paul@crapouillou.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
-Subject: 
-In-Reply-To: <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
- <20180317232901.14129-8-paul@crapouillou.net>
- <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
-Message-ID: <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
+In-Reply-To: <CAJZ5v0h40DDZ5da7CS4702Z=D3bY7SsOhbUqPR44qVKU0E4D4A@mail.gmail.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature";
+        micalg=sha-256; boundary="------------ms070709070308000805090704"
+X-ClientProxiedBy: MSX-L106.msx.ad.zih.tu-dresden.de (172.26.34.106) To
+ MSX-L104.msx.ad.zih.tu-dresden.de (172.26.34.104)
+X-PMWin-Version: 4.0.3, Antivirus-Engine: 3.70.2, Antivirus-Data: 5.49
+X-TUD-Virus-Scanned: mailout6.zih.tu-dresden.de
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 2018-03-24 07:26, Daniel Lezcano a écrit :
-> On 18/03/2018 00:29, Paul Cercueil wrote:
->> This driver will use the TCU (Timer Counter Unit) present on the 
->> Ingenic
->> JZ47xx SoCs to provide the kernel with a clocksource and timers.
-> 
-> Please provide a more detailed description about the timer.
+--------------ms070709070308000805090704
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-There's a doc file for that :)
+On 2018-03-28 12:56, Rafael J. Wysocki wrote:
+> On Wed, Mar 28, 2018 at 12:37 PM, Rafael J. Wysocki <rafael@kernel.org>=
+ wrote:
+>> On Wed, Mar 28, 2018 at 10:38 AM, Thomas Ilsche
+>> <thomas.ilsche@tu-dresden.de> wrote:
+>>> On 2018-03-28 10:13, Rafael J. Wysocki wrote:
+>>>>
+>=20
+> [cut]
+>=20
+>>
+>> So I do
+>>
+>> $ for cpu in 0 1 2 3; do taskset -c $cpu sh -c 'while true; do usleep
+>> 500; done' & done
+>>
+>> which is a shell kind of imitation of the above and I cannot see this
+>> issue at all.
+>>
+>> I count the number of times data->next_timer_us in menu_select() is
+>> greater than TICK_USEC and while this "workload" is running, that
+>> number is exactly 0.
+>>
+>> I'll try with a C program still.
+>=20
+> And with a C program I see data->next_timer_us greater than TICK_USEC
+> while it is running, so let me dig deeper.
+>=20
 
-> Where is the clocksource ?
+I can confirm that a shell-loop behaves differently like you describe.
+Even if it's just a shell-loop calling "main{usleep(500);}" binary.
 
-Right, there is no clocksource, just timers.
 
-> I don't see the point of using channel idx and pwm checking here.
-> 
-> There is one clockevent, why create multiple channels ? Can't you stick
-> to the usual init routine for a timer.
+--------------ms070709070308000805090704
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-So the idea is that we use all the TCU channels that won't be used for 
-PWM
-as timers. Hence the PWM checking. Why is this bad?
-
->> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->> ---
->>  drivers/clocksource/Kconfig         |   8 ++
->>  drivers/clocksource/Makefile        |   1 +
->>  drivers/clocksource/timer-ingenic.c | 278 
->> ++++++++++++++++++++++++++++++++++++
->>  3 files changed, 287 insertions(+)
->>  create mode 100644 drivers/clocksource/timer-ingenic.c
->> 
->>  v2: Use SPDX identifier for the license
->>  v3: - Move documentation to its own patch
->>      - Search the devicetree for PWM clients, and use all the TCU
->> 	   channels that won't be used for PWM
->>  v4: - Add documentation about why we search for PWM clients
->>      - Verify that the PWM clients are for the TCU PWM driver
->> 
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index d2e5382821a4..481422145fb4 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -592,4 +592,12 @@ config CLKSRC_ST_LPC
->>  	  Enable this option to use the Low Power controller timer
->>  	  as clocksource.
->> 
->> +config INGENIC_TIMER
->> +	bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
->> +	depends on MACH_INGENIC || COMPILE_TEST
-> 
-> bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if 
-> COMPILE_TEST
-> 
-> Remove the depends MACH_INGENIC.
-
-This driver is not useful on anything else than Ingenic SoCs, why should 
-I
-remove MACH_INGENIC then?
-
->> +	select CLKSRC_OF
->> +	default y
-> 
-> No default, Kconfig platform selects the timer.
-
-Alright.
-
->> +	help
->> +	  Support for the timer/counter unit of the Ingenic JZ SoCs.
->> +
->>  endmenu
->> diff --git a/drivers/clocksource/Makefile 
->> b/drivers/clocksource/Makefile
->> index d6dec4489d66..98691e8999fe 100644
->> --- a/drivers/clocksource/Makefile
->> +++ b/drivers/clocksource/Makefile
->> @@ -74,5 +74,6 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
->>  obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
->>  obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
->>  obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
->> +obj-$(CONFIG_INGENIC_TIMER)		+= timer-ingenic.o
->>  obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
->>  obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
->> diff --git a/drivers/clocksource/timer-ingenic.c 
->> b/drivers/clocksource/timer-ingenic.c
->> new file mode 100644
->> index 000000000000..8c777c0c0023
->> --- /dev/null
->> +++ b/drivers/clocksource/timer-ingenic.c
->> @@ -0,0 +1,278 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Ingenic JZ47xx SoC TCU clocksource driver
->> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
->> + */
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/clk.h>
->> +#include <linux/clockchips.h>
->> +#include <linux/err.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/mfd/syscon/ingenic-tcu.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/regmap.h>
->> +#include <linux/slab.h>
->> +
->> +#define NUM_CHANNELS	8
->> +
->> +struct ingenic_tcu;
->> +
->> +struct ingenic_tcu_channel {
->> +	unsigned int idx;
->> +	struct clk *clk;
->> +};
->> +
->> +struct ingenic_tcu {
->> +	struct ingenic_tcu_channel channels[NUM_CHANNELS];
->> +	unsigned long requested;
->> +	struct regmap *map;
->> +};
->> +
->> +struct ingenic_clock_event_device {
->> +	struct clock_event_device cevt;
->> +	struct ingenic_tcu_channel *channel;
->> +	char name[32];
->> +};
->> +
->> +#define ingenic_cevt(_evt) \
->> +	container_of(_evt, struct ingenic_clock_event_device, cevt)
->> +
->> +static inline struct ingenic_tcu *to_ingenic_tcu(struct 
->> ingenic_tcu_channel *ch)
->> +{
->> +	return container_of(ch, struct ingenic_tcu, channels[ch->idx]);
->> +}
->> +
->> +static int ingenic_tcu_cevt_set_state_shutdown(struct 
->> clock_event_device *evt)
->> +{
->> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
->> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
->> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
->> +	unsigned int idx = channel->idx;
->> +
->> +	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
->> +	return 0;
->> +}
->> +
->> +static int ingenic_tcu_cevt_set_next(unsigned long next,
->> +		struct clock_event_device *evt)
->> +{
->> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
->> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
->> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
->> +	unsigned int idx = channel->idx;
->> +
->> +	if (next > 0xffff)
->> +		return -EINVAL;
->> +
->> +	regmap_write(tcu->map, TCU_REG_TDFRc(idx), (unsigned int) next);
->> +	regmap_write(tcu->map, TCU_REG_TCNTc(idx), 0);
->> +	regmap_write(tcu->map, TCU_REG_TESR, BIT(idx));
->> +
->> +	return 0;
->> +}
->> +
->> +static irqreturn_t ingenic_tcu_cevt_cb(int irq, void *dev_id)
->> +{
->> +	struct clock_event_device *cevt = dev_id;
->> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(cevt);
->> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
->> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
->> +	unsigned int idx = channel->idx;
->> +
->> +	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
->> +
->> +	if (cevt->event_handler)
->> +		cevt->event_handler(cevt);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int __init ingenic_tcu_req_channel(struct ingenic_tcu_channel 
->> *channel)
->> +{
->> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
->> +	char buf[16];
->> +	int err;
->> +
->> +	if (test_and_set_bit(channel->idx, &tcu->requested))
->> +		return -EBUSY;
->> +
->> +	snprintf(buf, sizeof(buf), "timer%u", channel->idx);
->> +	channel->clk = clk_get(NULL, buf);
->> +	if (IS_ERR(channel->clk)) {
->> +		err = PTR_ERR(channel->clk);
->> +		goto out_release;
->> +	}
->> +
->> +	err = clk_prepare_enable(channel->clk);
->> +	if (err)
->> +		goto out_clk_put;
->> +
->> +	return 0;
->> +
->> +out_clk_put:
->> +	clk_put(channel->clk);
->> +out_release:
->> +	clear_bit(channel->idx, &tcu->requested);
->> +	return err;
->> +}
->> +
->> +static int __init ingenic_tcu_reset_channel(struct device_node *np,
->> +		struct ingenic_tcu_channel *channel)
->> +{
->> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
->> +
->> +	return regmap_update_bits(tcu->map, TCU_REG_TCSRc(channel->idx),
->> +				0xffff & ~TCU_TCSR_RESERVED_BITS, 0);
->> +}
->> +
->> +static void __init ingenic_tcu_free_channel(struct 
->> ingenic_tcu_channel *channel)
->> +{
->> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
->> +
->> +	clk_disable_unprepare(channel->clk);
->> +	clk_put(channel->clk);
->> +	clear_bit(channel->idx, &tcu->requested);
->> +}
->> +
->> +static const char * const ingenic_tcu_timer_names[] = {
->> +	"TCU0", "TCU1", "TCU2", "TCU3", "TCU4", "TCU5", "TCU6", "TCU7",
->> +};
->> +
->> +static int __init ingenic_tcu_setup_cevt(struct device_node *np,
->> +		struct ingenic_tcu *tcu, unsigned int idx)
->> +{
->> +	struct ingenic_tcu_channel *channel = &tcu->channels[idx];
->> +	struct ingenic_clock_event_device *jzcevt;
->> +	unsigned long rate;
->> +	int err, virq;
->> +
->> +	err = ingenic_tcu_req_channel(channel);
->> +	if (err)
->> +		return err;
->> +
->> +	err = ingenic_tcu_reset_channel(np, channel);
->> +	if (err)
->> +		goto err_out_free_channel;
->> +
->> +	rate = clk_get_rate(channel->clk);
->> +	if (!rate) {
->> +		err = -EINVAL;
->> +		goto err_out_free_channel;
->> +	}
->> +
->> +	jzcevt = kzalloc(sizeof(*jzcevt), GFP_KERNEL);
->> +	if (!jzcevt) {
->> +		err = -ENOMEM;
->> +		goto err_out_free_channel;
->> +	}
->> +
->> +	virq = irq_of_parse_and_map(np, idx);
->> +	if (!virq) {
->> +		err = -EINVAL;
->> +		goto err_out_kfree_jzcevt;
->> +	}
->> +
->> +	err = request_irq(virq, ingenic_tcu_cevt_cb, IRQF_TIMER,
->> +			ingenic_tcu_timer_names[idx], &jzcevt->cevt);
->> +	if (err)
->> +		goto err_out_irq_dispose_mapping;
->> +
->> +	jzcevt->channel = channel;
->> +	snprintf(jzcevt->name, sizeof(jzcevt->name), "ingenic-tcu-chan%u",
->> +		 channel->idx);
->> +
->> +	jzcevt->cevt.cpumask = cpumask_of(smp_processor_id());
->> +	jzcevt->cevt.features = CLOCK_EVT_FEAT_ONESHOT;
->> +	jzcevt->cevt.name = jzcevt->name;
->> +	jzcevt->cevt.rating = 200;
->> +	jzcevt->cevt.set_state_shutdown = 
->> ingenic_tcu_cevt_set_state_shutdown;
->> +	jzcevt->cevt.set_next_event = ingenic_tcu_cevt_set_next;
->> +
->> +	clockevents_config_and_register(&jzcevt->cevt, rate, 10, (1 << 16) - 
->> 1);
->> +
->> +	return 0;
->> +
->> +err_out_irq_dispose_mapping:
->> +	irq_dispose_mapping(virq);
->> +err_out_kfree_jzcevt:
->> +	kfree(jzcevt);
->> +err_out_free_channel:
->> +	ingenic_tcu_free_channel(channel);
->> +	return err;
->> +}
->> +
->> +static int __init ingenic_tcu_init(struct device_node *np)
->> +{
->> +	unsigned long available_channels = GENMASK(NUM_CHANNELS - 1, 0);
->> +	struct device_node *node, *pwm_driver_node;
->> +	struct ingenic_tcu *tcu;
->> +	unsigned int i, channel;
->> +	int err;
->> +	u32 val;
->> +
->> +	/* Parse the devicetree for clients of the TCU PWM driver;
->> +	 * every TCU channel not requested for PWM will be used as
->> +	 * a timer.
->> +	 */
-> 
-> 
-> 
->> +	for_each_node_with_property(node, "pwms") {
->> +		/* Get the PWM channel ID (field 1 of the "pwms" node) */
->> +		err = of_property_read_u32_index(node, "pwms", 1, &val);
->> +		if (!err && val >= NUM_CHANNELS)
->> +			err = -EINVAL;
->> +		if (err) {
->> +			pr_err("timer-ingenic: Unable to parse PWM nodes!");
->> +			break;
->> +		}
->> +
->> +		/* Get the PWM driver node (field 0 of the "pwms" node) */
->> +		pwm_driver_node = of_parse_phandle(node, "pwms", 0);
->> +		if (!pwm_driver_node) {
->> +			pr_err("timer-ingenic: Unable to find PWM driver node");
->> +			break;
->> +		}
->> +
->> +		/* Verify that the node we found is for the TCU PWM driver,
->> +		 * by checking that this driver and the PWM driver passed
->> +		 * as phandle share the same parent (the "ingenic,tcu"
->> +		 * compatible MFD/syscon node).
->> +		 */
->> +		if (pwm_driver_node->parent != np->parent)
->> +			continue;
->> +
->> +		pr_info("timer-ingenic: Reserving channel %u for PWM", val);
->> +		available_channels &= ~BIT(val);
->> +	}
->> +
->> +	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
->> +	if (!tcu)
->> +		return -ENOMEM;
->> +
->> +	tcu->map = syscon_node_to_regmap(np->parent);
->> +	if (IS_ERR(tcu->map)) {
->> +		err = PTR_ERR(tcu->map);
->> +		kfree(tcu);
->> +		return err;
->> +	}
->> +
->> +	for (i = 0; i < NUM_CHANNELS; i++)
->> +		tcu->channels[i].idx = i;
-> 
-> I'm pretty sure you can do better thaningenic_tcu_setup that :)
-
-I didn't think this would be a problem. I guess I can try.
-
->> +	for_each_set_bit(channel, &available_channels, NUM_CHANNELS) {
->> +		err = _cevt(np, tcu, channel);
->> +		if (err) {
->> +			pr_warn("timer-ingenic: Unable to init TCU channel %u: %i",
->> +					channel, err);
->> +			continue;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +/* We only probe via devicetree, no need for a platform driver */
->> +CLOCKSOURCE_OF_DECLARE(jz4740_tcu, "ingenic,jz4740-tcu", 
->> ingenic_tcu_init);
->> +CLOCKSOURCE_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu", 
->> ingenic_tcu_init);
->> +CLOCKSOURCE_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu", 
->> ingenic_tcu_init);
-> 
-> s/CLOCKSOURCE_OF_DECLARE/TIMER_OF_DECLARE/
-
-Sure, OK.
-
-Thanks!
--Paul
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EGIwggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWWMIIEfqADAgECAgwcbjQkPzrYLBvMkTUwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjEyMTIxNDM5
+MTZaFw0zMTAyMjIyMzU5NTlaMHMxCzAJBgNVBAYTAkRFMRAwDgYDVQQIDAdTYWNoc2VuMRAw
+DgYDVQQHDAdEcmVzZGVuMSgwJgYDVQQKDB9UZWNobmlzY2hlIFVuaXZlcnNpdGFldCBEcmVz
+ZGVuMRYwFAYDVQQDDA1UVSBEcmVzZGVuIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+CgKCAQEA5+CCc42Y1+0J5tpASWPSYx/0Pxqj97P1DdzCbTh3XwppRsAMtqNwS8sTxgHMmbNA
+ol18t3EqIkTH/iSXEhd5cf6OSyHumVbgvZTvjMh/c7R3VGZiwqimlhk4/UJV8nVPvrL24Guk
+D17Rsv+iLe5Mse7HIMJ7e9ciArdCBV5W6kk/5O24/ZhttIEs/2I3i8MTlGoBaesNgkUy/cRa
+A0hw1BBTrDbfK1vhbxV/CWb+czy0F0M5W31LToGrXuwoFrhggn5X/LrFXvCb8/9w+jSk8WzG
+vJw6MlPGXHwuTfjf7oei/S0j7iHq5fyIH3lEs58M4kwxlLViv2rc3KJkTX5xmQIDAQABo4IC
+BTCCAgEwEgYDVR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDAN
+BgsrBgEEAYGtIYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBRS/r63JMIbCh1GUo5E
+JCr0SEA9ATAfBgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGE
+MECgPqA8hjpodHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9j
+cmwvY2FjcmwuY3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290
+LWcyLWNhL3B1Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcw
+AYYnaHR0cDovL29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAC
+hj5odHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQv
+Y2FjZXJ0LmNydDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwt
+cm9vdC1nMi1jYS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBAEzY
+RPywOGl/wZ/Mdz2gLDMbO39f7+iQcrVPRy/lbjjLt+0bouai8xTj1I9N+W4ZOhGww55gXMNO
+nBiKouODdNcazTxW6+glA4+5K9bxkAKu9kl9J2ezpcMw1PNTFFcS1yG+thGQTtuy+3S3fI6V
+Ifxi+RawFri9sC7010qS3RwOShmhsLk3iEjlDQ180zkBzsdevWHt1svALpqsc+7DcHuP+MgY
+vkow/1uyHp3vyeTE9K7hdxcfXwRQ9IkeCo9xLJUeykuosqrTOQNe4Yw4hPhrJfRtoyH92SFq
+deZenVeU6+rkquev61X3fPi+/ySpUOGyWPdggN65bQ81E8nLFYUwggWuMIIElqADAgECAgwc
+vTmIr0re9lfFR20wDQYJKoZIhvcNAQELBQAwczELMAkGA1UEBhMCREUxEDAOBgNVBAgMB1Nh
+Y2hzZW4xEDAOBgNVBAcMB0RyZXNkZW4xKDAmBgNVBAoMH1RlY2huaXNjaGUgVW5pdmVyc2l0
+YWV0IERyZXNkZW4xFjAUBgNVBAMMDVRVIERyZXNkZW4gQ0EwHhcNMTcwMjEwMTMxMTIwWhcN
+MjAwMjEwMTMxMTIwWjBdMQswCQYDVQQGEwJERTEoMCYGA1UECgwfVGVjaG5pc2NoZSBVbml2
+ZXJzaXRhZXQgRHJlc2RlbjEMMAoGA1UECwwDWklIMRYwFAYDVQQDDA1UaG9tYXMgSWxzY2hl
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw5dKRIicycpBdQWviYlPQxn61uc0
+dMnov1GqB3JoJpRyWICwOBn0EWcbKatI1VS6PbAbmCaXjujAZnhIppGj8NQdU15E4HaC0TDp
+ucodW2vxb75srHBQ5WBwo3SDHF1gT1l6mAzr1fVddmLi2yV0kK6gaervW4gAh46l5Es6jjnp
+ugT1eatFuUy2M/H/MXEeW/lWgOG3POatGOmOR/OC3c321z4OynPk2/LIEnPfrSvpCQZDrKsF
+9miwvoXbkYWUAN/qhDEkyYPh/YPQ9YMg5Bgs4xz+EqEECOi8v0DWfxwgQ5zyfRW5aBj5bw0b
+PLOydh4m2ufwM+Q7KQfgF04eZwIDAQABo4ICVjCCAlIwCQYDVR0TBAIwADAOBgNVHQ8BAf8E
+BAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBQ5omhFY59I
+NNeLxf+a6i2MFhszdjAfBgNVHSMEGDAWgBRS/r63JMIbCh1GUo5EJCr0SEA9ATAmBgNVHREE
+HzAdgRt0aG9tYXMuaWxzY2hlQHR1LWRyZXNkZW4uZGUwgY0GA1UdHwSBhTCBgjA/oD2gO4Y5
+aHR0cDovL2NkcDEucGNhLmRmbi5kZS90dS1kcmVzZGVuLWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMD+gPaA7hjlodHRwOi8vY2RwMi5wY2EuZGZuLmRlL3R1LWRyZXNkZW4tZzItY2EvcHVi
+L2NybC9jYWNybC5jcmwwgdsGCCsGAQUFBwEBBIHOMIHLMDMGCCsGAQUFBzABhidodHRwOi8v
+b2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwSQYIKwYBBQUHMAKGPWh0dHA6Ly9j
+ZHAxLnBjYS5kZm4uZGUvdHUtZHJlc2Rlbi1nMi1jYS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQw
+SQYIKwYBBQUHMAKGPWh0dHA6Ly9jZHAyLnBjYS5kZm4uZGUvdHUtZHJlc2Rlbi1nMi1jYS9w
+dWIvY2FjZXJ0L2NhY2VydC5jcnQwQAYDVR0gBDkwNzARBg8rBgEEAYGtIYIsAQEEAwUwEQYP
+KwYBBAGBrSGCLAIBBAMBMA8GDSsGAQQBga0hgiwBAQQwDQYJKoZIhvcNAQELBQADggEBACfM
+PajpRlVEBvEeDqkek2aRlU1xLCR1ulK4Z8WlMN+cPnjONaEfYp3oBwqiUNKjNa4VpniQLvXM
+xDWgncPOavlajnIH5urkss7iDV9ImaZEyW6sU9ZemBXGN3PP5xI1xX4dKA32N/8J57D+0Im5
+I2aa6wLpeFa24qr2b5tXke77ZQwAOxp0CryiVkVP/5rp4C8D43I7x/uRhWbmxzaj+/bMwyZ0
+gTsJ/k9KQaR+8oqdDn/X/PI1e7GWNykhhjG+QP1hwj2HqRRAYlTN4S3OAedvNPxtBK+28TGu
+bAfD2IQZdvYAqSQT6qt2W1KkUMN38bRKdcICdqm8+fUMe7yKuvQxggO6MIIDtgIBATCBgzBz
+MQswCQYDVQQGEwJERTEQMA4GA1UECAwHU2FjaHNlbjEQMA4GA1UEBwwHRHJlc2RlbjEoMCYG
+A1UECgwfVGVjaG5pc2NoZSBVbml2ZXJzaXRhZXQgRHJlc2RlbjEWMBQGA1UEAwwNVFUgRHJl
+c2RlbiBDQQIMHL05iK9K3vZXxUdtMA0GCWCGSAFlAwQCAQUAoIICBzAYBgkqhkiG9w0BCQMx
+CwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODAzMjgxNTE1MTFaMC8GCSqGSIb3DQEJ
+BDEiBCAZwU963UEpOdkkEuyZB5xo0SAuOfhdGzXbp53vF3KauzBsBgkqhkiG9w0BCQ8xXzBd
+MAsGCWCGSAFlAwQBKjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCA
+MA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGUBgkrBgEEAYI3EAQx
+gYYwgYMwczELMAkGA1UEBhMCREUxEDAOBgNVBAgMB1NhY2hzZW4xEDAOBgNVBAcMB0RyZXNk
+ZW4xKDAmBgNVBAoMH1RlY2huaXNjaGUgVW5pdmVyc2l0YWV0IERyZXNkZW4xFjAUBgNVBAMM
+DVRVIERyZXNkZW4gQ0ECDBy9OYivSt72V8VHbTCBlgYLKoZIhvcNAQkQAgsxgYaggYMwczEL
+MAkGA1UEBhMCREUxEDAOBgNVBAgMB1NhY2hzZW4xEDAOBgNVBAcMB0RyZXNkZW4xKDAmBgNV
+BAoMH1RlY2huaXNjaGUgVW5pdmVyc2l0YWV0IERyZXNkZW4xFjAUBgNVBAMMDVRVIERyZXNk
+ZW4gQ0ECDBy9OYivSt72V8VHbTANBgkqhkiG9w0BAQEFAASCAQBJhFeO+WMT70SAj70sQrXE
+3Ita5o5kFo75l6hmfodIVIi3LhYe/fcSHFfIUJZj3GrTJI/VUatzWtR+k5Ncn9S+zq1uK4U3
+ijN5XbqF3yIYpZVXGlC98/1owhIX73GVdXtB8o1XQBxxe0NranLvORrkJrT0qBETVvmGEZm4
+h1HH52PX2elR7gaDMicksrJ6uUoogNWiU8GT3HM2Itmv0ugr69Gh4pl7hKY/xCzcy3hDEnZq
+BDniG8Wu/uBfOayW/c7GxaQe91025bADpgQAlp91k3nG9XXqq0i2+9sbgnOSkIn4mjSDjVX7
+IRyWXLQ/sfWu2sOGG6pP69GgYaKcalJmAAAAAAAA
+--------------ms070709070308000805090704--
