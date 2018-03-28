@@ -1,63 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeC1GHq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 02:07:46 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:46536 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750732AbeC1GHp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 02:07:45 -0400
-Date: Wed, 28 Mar 2018 14:07:34 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: NeilBrown <neilb@suse.com>
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] rhashtable: allow a walk of the hash table without
- missing objects.
-Message-ID: <20180328060734.GB16291@gondor.apana.org.au>
-References: <152210688405.11435.13010923693146415942.stgit@noble>
- <152210718430.11435.5761213978298714527.stgit@noble>
- <20180327155118.GB14001@gondor.apana.org.au>
- <87po3p421q.fsf@notabene.neil.brown.name>
+        id S1752166AbeC1GME (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 02:12:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6697 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751908AbeC1GMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 02:12:02 -0400
+Subject: Re: [PATCH v9 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2
+ variant
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+ <20180313085534.11650-6-vivek.gautam@codeaurora.org>
+ <61d30fff-1bf8-d2c1-bbe9-f93de836ae77@huawei.com>
+ <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org>
+CC: <joro@8bytes.org>, <robin.murphy@arm.com>,
+        <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mark.rutland@arm.com>,
+        <linux-arm-msm@vger.kernel.org>, Will Deacon <will.deacon@arm.com>,
+        Gaojianbo <gaojianbo@hisilicon.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <d97872fe-5e8e-cc27-e385-64cea8ea2458@huawei.com>
+Date: Wed, 28 Mar 2018 14:11:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87po3p421q.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 08:54:41AM +1100, NeilBrown wrote:
->
-> Possibly.
-> I particularly want the interface to require that you pass the
-> previously returned object to _continue. That makes it easy to see that
-> the object is still being used.  If someone changes to code to delete
-> the object before the _continue, there should be a strong hint that it
-> won't work.
+Hi Vivek,
+
+On 2018/3/28 12:37, Vivek Gautam wrote:
+> Hi Yisheng
 > 
-> Maybe it would be better to make it a WARN_ON()
 > 
->   if (!obj || WARN_ON(iter->p != obj))
->          iter->p = NULL;
+> On 3/28/2018 6:54 AM, Yisheng Xie wrote:
+>> Hi Vivek,
+>>
+>> On 2018/3/13 16:55, Vivek Gautam wrote:
+>>> +- power-domains:  Specifiers for power domains required to be powered on for
+>>> +                  the SMMU to operate, as per generic power domain bindings.
+>>> +
+>> In this patchset, power-domains is not used right? And you just do the clock gating,
+>> but not power gating, right?
+> 
+> We are handling the power-domains too. Please see the example in this binding doc.
 
-This doesn't really protect against the case where obj is removed.
-All it proves is that the user saved a copy of obj which we already
-did anyway.
+I see, but I do not find the point in code of these patchset, do you mean PMIC(e.g mmcc)
+will gate the power domain of SMMU(e.g. MDSS_GDSC of mmcc) when PMIC suspend?
 
-To detect an actual removal you'd need to traverse the list.
+> 
+>>
+>> Another question is if smmu do power gating, it will reset some of its registers, so
+>> it need save at suspend and restore at resume, right?
+> 
+> Qualcomm implementation of the arm-smmu has the retenetion enabled. So the smmu doesn't
+> loose state when power is pulled out of it.
+> And now we are just selectively enabling the runtime pm. So only the platforms that can really
+> support runtime pm can enable it.
 
-I have another idea: we could save insert the walkers into the
-hash table chain at the end, essentially as a hidden list.  We
-can mark it with a flag like rht_marker so that normal traversal
-doesn't see it.
+Get it, thanks for your explain.
 
-That way the removal code can simply traverse that list and inform
-them that the iterator is invalid.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks
+Yisheng
+> 
+> Thanks
+> Vivek
+>>
+>> Thanks
+>> Yisheng
+>>
+> 
+> 
+> 
