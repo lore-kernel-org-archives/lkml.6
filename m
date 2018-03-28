@@ -1,402 +1,281 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-133548-1522173368-2-13491558683180540633
+X-Cyrus-Session-Id: sloti22d1t05-999723-1522200908-2-13706302580680515903
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, URIBL_BLACK 1.7,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES enfr, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522173367; b=kloRDBLQwIulA9CfdCcLdLKqxwLoPSdokOFyDnvFcGk1l0f
-    BrAtFIqvoBzySXq/ifbx7js3z+ivpQC9Q/iuaZTNoy92CLf/9iMf+ibOoUtm4sS8
-    4jcXAuXqzFpJD8T7fUGV9Wd9TCCFH051rhmKR25Vf7HsKzg9qZcwh8ATMWPgcgXh
-    Pk8NAuiSzG+5JLxTjbNP05V9iomj7Cva5saae4XQL6yqMkhXJzPjKpnSbz898wci
-    P9LkKCW5Yxihv/Y+HLVkTzvrki7HrYlbqHI1Fi7THEOxC8a6epKR4uwTCUt3+Txy
-    kuzua5Gi5wcizrUNlG2FEQ8ssej74e9dJTwGZVQ==
+    t=1522200907; b=JuVWtgWcHHx16KUhwIauuzfhxXc2c4ZS6ZBuabqSBEu5nQr
+    qFKW83w30tqtToAcqOfUoRXIOozZdKaESKxOfMdQwtjddNO6JLmIxPO2Zydos2Bz
+    jKJFzWH8j45NO7tMJqPM+0bF54KzB3EkEusEpuOuUADAJerFbvu0rZwAo9Np6WMA
+    TM2O7DwIGb4prZD3IGDfSp8PgVhg7GFd0/AIRercXmLqL/oZjyPF5ml+zKg2uOkl
+    xBbeI/2iTrZ9IFKZbPMY6bmcG0joYo66QgGh3Te/aEF/W1NIFqhbLiQaVJqScZpr
+    oJS2zVdtUbUvQmTjeAYHp12ufFN4m29APliWAxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=arctest; t=1522173367; bh=t9tHseXJ5USOYDcEH1BGDVoeBV
-    CcW8WxT+8SC4iNOsU=; b=W4yYwA8JwHxZLNEcvud/3sM2EfTupvWK3NfGbMmoam
-    UO5pUJ+tijxNB9WDMZ2keMNI5L45eZBaa9CH4cksur7r6TpzbNbu7JS4ICdElC/S
-    H9MgJrcIQu7G+51YUeC5Bm4bSQQzSaHn5ekp4mhcJgKAHMoDuSpEbZUxtd4chAeP
-    KlZGv+ekQkjWvaNoD4JTVOeMF9YilSWSwNR79taX2/3SSY46rsnYjt1PDrcqTtO/
-    n49M3iL48X3DrHE7eE8+fx1NpPO00IwIN7e2a+7S8Q36rrgFO7ohyQ70m5GYacu7
-    Z4hpx4KE9UuuEHB1Tso4tDG/YEiBTzMLMMOf+i+H5ZBw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=arctest; t=1522200907; bh=xc7jQY3
+    gF4sx14nXcfBeB9ykvqKDxj8Qn3J9VyDINpw=; b=K/VqujBuUjj7Ozqz+ge/GR4
+    yPgQ87pq6T+l9r4tH3RxJiN9xFVIr0CU/4yUPjiSzp5u7HcybHlv2ruc1A/lxGSg
+    hTaJjWldCoL2MDPk23ZDu4waLuRFl68dkpjRL2Cz9EpIYcYp25d4fpNlBodMsZ0z
+    sYhQN2hpAOIdXmBarRNIvhbo0U25ZUHKZNzLFLzc3kJubSB6NtlkFJX5Mwo2s91M
+    xsVUVolq1U0usc0UvhtiIDp2apWwnZTc39BgpMl5B+v5qDG7Wp1F11OC3vV7a106
+    O0pYy0Btd88quwbHpSnfPUB06WZXP+OsLkOQ6DsxuKLaDgewEAL/OYvo294ncfA=
+    =
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=kC4jOK1T x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BGc9oIaN;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=kC4jOK1T x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BGc9oIaN;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFMy9QgvqSIXfG25g4iuC4nV4c7ENoPInC0WifSmlSUfN1AmiDzo3ZtdknRdgcfgFxakR3sMCWkNyiDzAEnKDSl52sfZ67WaELGaldF5PZzFSozieoWx
-    axa3g1dFoQKTZKsiI5g6jzTzKItmZEbNoF3CLVQR0a/KImcgz3/cLo7kN7uRc0WQ2bYrYWXKtb8m2x+2wKN0ft1orzBbJ+3ZuCMJ6w6fdhhBTjx0JwiXRZ5T
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAbrYCY1YMyQsFmdbEuoFQkxRLS7Li6j7DZqpdQdsB/wsBNTVGq3prLz9tUCNHj7PrfvsUJfY6CeX3VHS8FSY3+rlDOj7PLCdnvGLsuWSN9F1jpB0z8Q
+    xNhgYeHqmUckQ0YkJeGYvFSuB141gf8QIHlvsWaxM8dZ5FnPj2l//d4/iHYSdRoLWrRcUGDc7581f7ZTN79RsDpMIiwCo1JS64S5w8RBI+K8lLj+ekAiekrN
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=ONKqiAgnDjwA:10
-    a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=hWMQpYRtAAAA:8
-    a=1XWaLZrsAAAA:8 a=QyXUC8HyAAAA:8 a=PtDNVHqPAAAA:8 a=eh1Yez-EAAAA:8
-    a=KKAkSRfTAAAA:8 a=yPCof4ZbAAAA:8 a=JqEG_dyiAAAA:8 a=pGLkceISAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=nTPwkA1SAAAA:8 a=8AirrxEcAAAA:8 a=06TC-2EVAAAA:8
-    a=yQdBAQUQAAAA:8 a=Q-fNiiVtAAAA:8 a=zd2uoN0lAAAA:8 a=MvuuwTCpAAAA:8
-    a=20KFwNOVAAAA:8 a=DfNHnWVPAAAA:8 a=zu6OG0ZhAAAA:8 a=P-IC7800AAAA:8
-    a=jIQo8A4GAAAA:8 a=yl7zrpXIfGMSnYcznlkA:9 a=iOdq4fvdqVP9bOxT:21
-    a=uwAmA68NwyLld3fv:21 a=QEXdDO2ut3YA:10 a=2t5KsnBapy4A:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=KCsI-UfzjElwHeZNREa_:22
-    a=BpimnaHY1jUKGyF_4-AF:22 a=cvBusfyB2V15izCimMoJ:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=Her_73y7XSQQkpQYGz2D:22 a=ST-jHhOKWsTCqRlWije3:22 a=bPPcmhrZmmaHPY_0WkiZ:22
-    a=SzazLyfi1tnkUD6oumHU:22 a=Fp8MccfUoT0GBdDC_Lng:22 a=dVHiktpip_riXrfdqayU:22
-    a=rjTVMONInIDnV1a_A2c_:22
+    a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=ZMNVQGS9hNmxPA5nPNIA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752613AbeC0QbN (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:31:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42830 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752027AbeC0QbL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:31:11 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
+        id S1752842AbeC1BfF (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 21:35:05 -0400
+Received: from mail-it0-f47.google.com ([209.85.214.47]:40690 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752836AbeC1BfD (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 21:35:03 -0400
+X-Google-Smtp-Source: AIpwx48jnWqwyImMk3Q5vKLBkkX1old37fEFr3AJrZcGAfHs4SePWSmkW15hbvl9IA8hKa5nEns7ZA==
+Date: Tue, 27 Mar 2018 20:35:01 -0500
+From: Dan Rue <dan.rue@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: [PATCH 4.9 00/67] 4.9.91-stable review
-Date: Tue, 27 Mar 2018 18:26:52 +0200
-Message-Id: <20180327162726.702411083@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.3
+Subject: Re: [PATCH 4.9 00/67] 4.9.91-stable review
+Message-ID: <20180328013501.vdeqlxn525m4cex6@xps>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180327162726.702411083@linuxfoundation.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.91-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.91-rc1
-X-KernelTest-Deadline: 2018-03-29T16:27+00:00
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
+User-Agent: NeoMutt/20180223
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.9.91 release.
-There are 67 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu Mar 29 16:27:08 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.91-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.91-rc1
-
-Daniel Borkmann <daniel@iogearbox.net>
-    bpf, x64: increase number of passes
-
-Chenbo Feng <fengc@google.com>
-    bpf: skip unnecessary capability check
-
-Daniel Borkmann <daniel@iogearbox.net>
-    kbuild: disable clang's default use of -fmerge-all-constants
-
-Shuah Khan <shuah@kernel.org>
-    selftests: x86: sysret_ss_attrs doesn't build on a PIE build
-
-Dave Hansen <dave.hansen@linux.intel.com>
-    x86/pkeys/selftests: Rename 'si_pkey' to 'siginfo_pkey'
-
-Eric W. Biederman <ebiederm@xmission.com>
-    signal/testing: Don't look for __SI_FAULT in userspace
-
-Andy Lutomirski <luto@kernel.org>
-    selftests/x86/protection_keys: Fix syscall NR redefinition warnings
-
-Dave Hansen <dave.hansen@linux.intel.com>
-    selftests, x86, protection_keys: fix wrong offset in siginfo
-
-Nadav Amit <namit@vmware.com>
-    staging: lustre: ptlrpc: kfree used instead of kvfree
-
-Linus Walleij <linus.walleij@linaro.org>
-    iio: ABI: Fix name of timestamp sysfs file
-
-Kan Liang <kan.liang@linux.intel.com>
-    perf/x86/intel/uncore: Fix multi-domain PCI CHA enumeration bug on Skylake servers
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    perf/x86/intel: Don't accidentally clear high bits in bdw_limit_period()
-
-Ilya Pronin <ipronin@twitter.com>
-    perf stat: Fix CVS output format for non-supported counters
-
-Kan Liang <kan.liang@linux.intel.com>
-    perf/x86/intel/uncore: Fix Skylake UPI event format
-
-Andy Lutomirski <luto@kernel.org>
-    x86/entry/64: Don't use IST entry for #BP stack
-
-H.J. Lu <hjl.tools@gmail.com>
-    x86/boot/64: Verify alignment of the LOAD segment
-
-H.J. Lu <hjl.tools@gmail.com>
-    x86/build/64: Force the linker to use 2MB page size
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    kvm/x86: fix icebp instruction handling
-
-Andy Lutomirski <luto@kernel.org>
-    selftests/x86/ptrace_syscall: Fix for yet more glibc interference
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    tty: vt: fix up tabstops properly
-
-Andri Yngvason <andri.yngvason@marel.com>
-    can: cc770: Fix use after free in cc770_tx_interrupt()
-
-Andri Yngvason <andri.yngvason@marel.com>
-    can: cc770: Fix queue stall & dropped RTR reply
-
-Andri Yngvason <andri.yngvason@marel.com>
-    can: cc770: Fix stalls on rt-linux, remove redundant IRQ ack
-
-Marek Vasut <marex@denx.de>
-    can: ifi: Check core revision upon probe
-
-Marek Vasut <marex@denx.de>
-    can: ifi: Repair the error handling
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    staging: ncpfs: memory corruption in ncp_read_kernel()
-
-Jagdish Gediya <jagdish.gediya@nxp.com>
-    mtd: nand: fsl_ifc: Read ECCSTAT0 and ECCSTAT1 registers for IFC 2.0
-
-Jagdish Gediya <jagdish.gediya@nxp.com>
-    mtd: nand: fsl_ifc: Fix eccstat array overflow for IFC ver >= 2.0.0
-
-Jagdish Gediya <jagdish.gediya@nxp.com>
-    mtd: nand: fsl_ifc: Fix nand waitfunc return value
-
-OuYang ZhiZhong <ouyzz@yealink.com>
-    mtdchar: fix usage of mtd_ooblayout_ecc()
-
-Masami Hiramatsu <mhiramat@kernel.org>
-    tracing: probeevent: Fix to support minus offset from symbol
-
-Larry Finger <Larry.Finger@lwfinger.net>
-    rtlwifi: rtl8723be: Fix loss of signal
-
-Arend Van Spriel <arend.vanspriel@broadcom.com>
-    brcmfmac: fix P2P_DEVICE ethernet address generation
-
-Vishal Verma <vishal.l.verma@intel.com>
-    libnvdimm, {btt, blk}: do integrity setup before add_disk()
-
-Takashi Iwai <tiwai@suse.de>
-    ACPI / watchdog: Fix off-by-one error at resource assignment
-
-Dan Williams <dan.j.williams@intel.com>
-    acpi, numa: fix pxm to online numa node associations
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    drm: udl: Properly check framebuffer mmap offsets
-
-Michel Dänzer <michel.daenzer@amd.com>
-    drm/radeon: Don't turn off DP sink when disconnected
-
-Thomas Hellstrom <thellstrom@vmware.com>
-    drm/vmwgfx: Fix a destoy-while-held mutex problem.
-
-Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-    mm/shmem: do not wait for lock_page() in shmem_unused_huge_shrink()
-
-Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-    mm/thp: do not wait for lock_page() in deferred_split_scan()
-
-Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-    mm/khugepaged.c: convert VM_BUG_ON() to collapse fail
-
-Toshi Kani <toshi.kani@hpe.com>
-    x86/mm: implement free pmd/pte page interfaces
-
-Toshi Kani <toshi.kani@hpe.com>
-    mm/vmalloc: add interfaces to free unmapped page table
-
-Jeff Layton <jlayton@redhat.com>
-    nfsd: remove blocked locks on client teardown
-
-Hans de Goede <hdegoede@redhat.com>
-    libata: Modify quirks for MX100 to limit NCQ_TRIM quirk to MU01 version
-
-Hans de Goede <hdegoede@redhat.com>
-    libata: Make Crucial BX100 500GB LPM quirk apply to all firmware versions
-
-Hans de Goede <hdegoede@redhat.com>
-    libata: Apply NOLPM quirk to Crucial M500 480 and 960GB SSDs
-
-Ju Hyung Park <qkrwngud825@gmail.com>
-    libata: Enable queued TRIM for Samsung SSD 860
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    libata: disable LPM for Crucial BX100 SSD 500GB drive
-
-Hans de Goede <hdegoede@redhat.com>
-    libata: Apply NOLPM quirk to Crucial MX100 512GB SSDs
-
-Eric Biggers <ebiggers@google.com>
-    libata: don't try to pass through NCQ commands to non-NCQ devices
-
-Eric Biggers <ebiggers@google.com>
-    libata: remove WARN() for DMA or PIO command without data
-
-Eric Biggers <ebiggers@google.com>
-    libata: fix length validation of ATAPI-relayed SCSI commands
-
-Takashi Iwai <tiwai@suse.de>
-    Bluetooth: btusb: Fix quirk for Atheros 1525/QCA6174
-
-Chen-Yu Tsai <wens@csie.org>
-    clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
-
-Boris Brezillon <boris.brezillon@bootlin.com>
-    clk: bcm2835: Protect sections updating shared registers
-
-Boris Brezillon <boris.brezillon@bootlin.com>
-    clk: bcm2835: Fix ana->maskX definitions
-
-Hans de Goede <hdegoede@redhat.com>
-    ahci: Add PCI-id for the Highpoint Rocketraid 644L card
-
-Hans de Goede <hdegoede@redhat.com>
-    PCI: Add function 1 DMA alias quirk for Highpoint RocketRAID 644L
-
-Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-    mmc: dw_mmc: fix falling from idmac to PIO mode when dw_mci_reset occurs
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: hda/realtek - Always immediately update mute LED with pin VREF
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: aloop: Fix access to not-yet-ready substream via cable
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: aloop: Sync stale timer before release
-
-Kirill Marinushkin <k.marinushkin@gmail.com>
-    ALSA: usb-audio: Fix parsing descriptor of UAC2 processing unit
-
-Michael Nosthoff <committed@heine.so>
-    iio: st_pressure: st_accel: pass correct platform data to init
-
-NeilBrown <neil@brown.name>
-    MIPS: ralink: Remove ralink_halt()
-
-
--------------
-
-Diffstat:
-
- Documentation/ABI/testing/sysfs-bus-iio            |   2 +-
- Makefile                                           |  13 ++-
- arch/arm64/mm/mmu.c                                |  10 +++
- arch/mips/ralink/reset.c                           |   7 --
- arch/x86/Makefile                                  |   9 ++
- arch/x86/boot/compressed/misc.c                    |   4 +
- arch/x86/entry/entry_64.S                          |   2 +-
- arch/x86/events/intel/core.c                       |   2 +-
- arch/x86/events/intel/uncore_snbep.c               |  33 +++----
- arch/x86/include/asm/vmx.h                         |   1 +
- arch/x86/kernel/traps.c                            |  24 +++--
- arch/x86/kvm/vmx.c                                 |   9 +-
- arch/x86/mm/pgtable.c                              |  48 ++++++++++
- arch/x86/net/bpf_jit_comp.c                        |   3 +-
- drivers/acpi/acpi_watchdog.c                       |   4 +-
- drivers/acpi/numa.c                                |  10 ++-
- drivers/ata/ahci.c                                 |   4 +-
- drivers/ata/libata-core.c                          |  26 +++++-
- drivers/ata/libata-scsi.c                          |  10 ++-
- drivers/bluetooth/btusb.c                          |   2 +-
- drivers/clk/bcm/clk-bcm2835.c                      |  12 ++-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c               |   6 +-
- drivers/gpu/drm/radeon/radeon_connectors.c         |  31 +++----
- drivers/gpu/drm/udl/udl_fb.c                       |   9 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                |  28 ++++--
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                |  12 ++-
- drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |   5 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               |   5 +-
- drivers/iio/accel/st_accel_core.c                  |   2 +-
- drivers/iio/pressure/st_pressure_core.c            |   2 +-
- drivers/mmc/host/dw_mmc.c                          |   6 +-
- drivers/mtd/mtdchar.c                              |   4 +-
- drivers/mtd/nand/fsl_ifc_nand.c                    |  32 +++----
- drivers/net/can/cc770/cc770.c                      | 100 +++++++++++++--------
- drivers/net/can/cc770/cc770.h                      |   2 +
- drivers/net/can/ifi_canfd/ifi_canfd.c              |  75 ++++++++++------
- .../net/wireless/broadcom/brcm80211/brcmfmac/p2p.c |  24 +++--
- .../net/wireless/realtek/rtlwifi/rtl8723be/hw.c    |   3 +-
- drivers/nvdimm/blk.c                               |   3 +-
- drivers/nvdimm/btt.c                               |   3 +-
- drivers/pci/quirks.c                               |   2 +
- drivers/staging/lustre/lustre/ptlrpc/sec.c         |   2 +-
- drivers/tty/vt/vt.c                                |   8 +-
- drivers/watchdog/wdat_wdt.c                        |   2 +-
- fs/ncpfs/ncplib_kernel.c                           |   4 +
- fs/nfsd/nfs4state.c                                |  62 +++++++++----
- include/asm-generic/pgtable.h                      |  10 +++
- include/linux/fsl_ifc.h                            |   6 +-
- include/uapi/linux/usb/audio.h                     |   4 +-
- kernel/bpf/syscall.c                               |   2 +-
- kernel/trace/trace_kprobe.c                        |   4 +-
- kernel/trace/trace_probe.c                         |   8 +-
- kernel/trace/trace_probe.h                         |   2 +-
- lib/ioremap.c                                      |   6 +-
- mm/huge_memory.c                                   |   4 +-
- mm/khugepaged.c                                    |   7 +-
- mm/shmem.c                                         |  31 ++++---
- sound/drivers/aloop.c                              |  17 +++-
- sound/pci/hda/patch_realtek.c                      |   6 +-
- tools/perf/builtin-stat.c                          |   2 +-
- tools/testing/selftests/x86/Makefile               |   2 +-
- tools/testing/selftests/x86/mpx-mini-test.c        |   3 +-
- tools/testing/selftests/x86/protection_keys.c      |  49 ++++++----
- tools/testing/selftests/x86/ptrace_syscall.c       |   8 +-
- 64 files changed, 546 insertions(+), 292 deletions(-)
+On Tue, Mar 27, 2018 at 06:26:52PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.91 release.
+> There are 67 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Mar 29 16:27:08 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.91-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+
+Results from Linaro’s test farm.
+No regressions on arm64, arm and x86_64.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.91-rc1
+git repo:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.9.y
+git commit: f6c4b8eea9f0ff250efcd95723cd73b8f2ecfef6
+git describe: v4.9.90-68-gf6c4b8eea9f0
+Test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.90-68-gf6c4b8eea9f0
+
+
+No regressions (compared to build v4.9.90)
+
+Boards, architectures and test suites:
+-------------------------------------
+
+dragonboard-410c
+* boot - pass: 20
+* kselftest - skip: 27, pass: 36
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 1, pass: 21
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - pass: 14
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 148, pass: 1002
+* ltp-timers-tests - skip: 1, pass: 12
+
+hi6220-hikey - arm64
+* boot - pass: 20
+* kselftest - skip: 24, pass: 39
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 1, pass: 21
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 151, pass: 999
+* ltp-timers-tests - skip: 1, pass: 12
+
+juno-r2 - arm64
+* boot - pass: 20
+* kselftest - skip: 23, pass: 40
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 149, pass: 1001
+* ltp-timers-tests - skip: 1, pass: 12
+
+qemu_x86_64
+* boot - pass: 21
+* kselftest - skip: 28, pass: 52
+* kselftest-vsyscall-mode-native - skip: 28, pass: 52
+* kselftest-vsyscall-mode-none - skip: 28, pass: 52
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 149, pass: 1001
+* ltp-timers-tests - skip: 1, pass: 12
+
+x15 - arm
+* boot - pass: 20
+* kselftest - skip: 24, pass: 38
+* libhugetlbfs - skip: 1, pass: 87
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 2, pass: 20
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 97, pass: 1053
+* ltp-timers-tests - skip: 1, pass: 12
+
+x86_64
+* boot - pass: 22
+* kselftest - skip: 24, fail: 1, pass: 54
+* kselftest-vsyscall-mode-native - skip: 24, fail: 1, pass: 54
+* kselftest-vsyscall-mode-none - skip: 25, fail: 2, pass: 53
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 1, pass: 62
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 5, pass: 9
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 119, pass: 1031
+* ltp-timers-tests - skip: 1, pass: 12
+
+
+--
+Linaro QA (beta)
+https://qa-reports.linaro.org
