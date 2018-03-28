@@ -1,106 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752871AbeC1KMr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 06:12:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:38988 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752159AbeC1KMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 06:12:46 -0400
-Date: Wed, 28 Mar 2018 11:12:41 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "Ji.Zhang" <ji.zhang@mediatek.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Michael Weiser <michael.weiser@gmx.de>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Xie XiuQi <xiexiuqi@huawei.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        wsd_upstream@mediatek.com, shadanji@163.com
-Subject: Re: [PATCH] arm64: avoid race condition issue in dump_backtrace
-Message-ID: <20180328101240.moo44g5qd3qjuxgn@lakrids.cambridge.arm.com>
-References: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
- <20180322055929.z25brvwlmdighz66@salmiak>
- <1521711329.26617.31.camel@mtksdccf07>
- <20180326113932.2i6qp3776jtmcqk4@lakrids.cambridge.arm.com>
- <1522229612.26617.47.camel@mtksdccf07>
+        id S1752866AbeC1KQW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 06:16:22 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50226 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752231AbeC1KQU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 06:16:20 -0400
+Date: Wed, 28 Mar 2018 12:15:54 +0200
+From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "daniel@bristot.me" <daniel@bristot.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "williams@redhat.com" <williams@redhat.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "lclaudio@redhat.com" <lclaudio@redhat.com>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
+Subject: Re: [PATCH 1/2] target: drop spin_lock_assert() + irqs_disabled()
+ combo checks
+Message-ID: <20180328101553.uduqsdbxwnxrhl7a@linutronix.de>
+References: <20180321153854.GB24312@kernel.org>
+ <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+ <20180322093745.GC4229@kernel.org>
+ <20180323155513.dwbgvblenlji33as@linutronix.de>
+ <1521822325.2535.5.camel@wdc.com>
+ <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
+ <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
+ <20180326111359.180f1604@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1522229612.26617.47.camel@mtksdccf07>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180326111359.180f1604@gandalf.local.home>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 05:33:32PM +0800, Ji.Zhang wrote:
-> On Mon, 2018-03-26 at 12:39 +0100, Mark Rutland wrote:
-> > I think that it would be preferable to try to avoid the inifinite loop
-> > case. We could hit that by accident if we're tracing a live task.
-> > 
-> > It's a little tricky to ensure that we don't loop, since we can have
-> > traces that span several stacks, e.g. overflow -> irq -> task, so we
-> > need to know where the last frame was, and we need to defnie a strict
-> > order for stack nesting.
-> Can we consider this through an easier way? According to AArch64 PCS,
-> stack should be full-descending, which means we can add validation on fp
-> by comparing the fp and previous fp, if they are equal means there is an
-> exactly loop, while if current fp is smaller than previous means the
-> uwnind is rollback, which is also unexpected. The only concern is how to
-> handle the unwind from one stack span to another (eg. overflow->irq, or
-> irq->task, etc)
-> Below diff is a proposal that we check if stack spans, and if yes, a
-> tricky is used to bypass the fp check.
+On 2018-03-26 11:13:59 [-0400], Steven Rostedt wrote:
+> > diff --git a/drivers/target/target_core_tmr.c b/drivers/target/target_core_tmr.c
+> > index 9c7bc1ca341a..3d35dad1de2c 100644
+> > --- a/drivers/target/target_core_tmr.c
+> > +++ b/drivers/target/target_core_tmr.c
 > 
-> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> index eb2d151..760ea59 100644
-> --- a/arch/arm64/kernel/traps.c
-> +++ b/arch/arm64/kernel/traps.c
-> @@ -101,6 +101,7 @@ void dump_backtrace(struct pt_regs *regs, struct
-> task_struct *tsk)
->  {
->         struct stackframe frame;
->         int skip;
-> +       unsigned long fp = 0x0;
+> Can you add a comment above the functions though?
 > 
->         pr_debug("%s(regs = %p tsk = %p)\n", __func__, regs, tsk);
+> /* Expects to have se_cmd->se_sess->sess_cmd_lock held */
+
+I could. I haven't heard from Bart / Nicholas about their opinion. I
+know, we do this other places but Bart was against this kind of
+annotation in 2/2 of this thread.
+So I am waiting to hear from them :)
+
 > 
-> @@ -127,6 +128,20 @@ void dump_backtrace(struct pt_regs *regs, struct
-> task_struct *tsk)
->         skip = !!regs;
->         printk("Call trace:\n");
->         do {
-> +               unsigned long stack;
-> +               if (fp) {
-> +                       if (in_entry_text(frame.pc)) {
-> +                               stack = frame.fp - offsetof(struct
-> pt_regs, stackframe);
-> +
-> +                               if (on_accessible_stack(tsk, stack))
-> +                                       fp = frame.fp + 0x8; //tricky to
-> bypass the fp check
-> +                       }
-> +                       if (fp <= frame->fp) {
-> +                               pr_notice("fp invalid, stop unwind\n");
-> +                               break;
-> +                       }
-> +               }
-> +               fp = frame.fp;
+> -- Steve
 
-I'm very much not keen on this.
-
-I think that if we're going to do this, the only sane way to do it is to
-have unwind_frame() verify the current fp against the previous one, and
-verify that we have some strict nesting of stacks. Generally, that means
-we can go:
-
-  overflow -> irq -> task
-
-... though I'm not sure what to do about the SDEI stack vs the overflow
-stack.
-
-Thanks,
-Mark.
+Sebastian
