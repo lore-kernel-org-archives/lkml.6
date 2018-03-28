@@ -1,66 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753620AbeC1SvZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 14:51:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753381AbeC1Stf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 14:49:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBA02217D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 2/8] perf mmap: Fix accessing unmapped mmap in perf_mmap__read_done()
-Date: Wed, 28 Mar 2018 15:49:13 -0300
-Message-Id: <20180328184919.32287-3-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180328184919.32287-1-acme@kernel.org>
-References: <20180328184919.32287-1-acme@kernel.org>
+        id S1753195AbeC1Szh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 14:55:37 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:45420 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbeC1Szg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 14:55:36 -0400
+X-Google-Smtp-Source: AIpwx4+wJFtZP77aU+6Gsps9rsRrzR1tQPGpRVOaIqo+mBUg0ZTvjOt95UtaZqOoKjDZtcifpoBFSA==
+From: Mathieu Malaterre <malat@debian.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: LEROY Christophe <christophe.leroy@c-s.fr>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Matt Brown <matthew.brown.dev@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] powerpc/altivec: Add missing prototypes for altivec
+Date: Wed, 28 Mar 2018 20:55:25 +0200
+Message-Id: <20180328185531.10945-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180322202007.23088-15-malat@debian.org>
+References: <20180322202007.23088-15-malat@debian.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Some functions prototypes were missing for the non-altivec code. Add the
+missing prototypes in a new header file, fix warnings treated as errors
+with W=1:
 
-There is a segmentation fault when running 'perf trace'. For example:
+  arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype for ‘xor_altivec_2’ [-Werror=missing-prototypes]
+  arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype for ‘xor_altivec_3’ [-Werror=missing-prototypes]
+  arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype for ‘xor_altivec_4’ [-Werror=missing-prototypes]
+  arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype for ‘xor_altivec_5’ [-Werror=missing-prototypes]
 
-  [root@jouet e]# perf trace -e *chdir -o /tmp/bla perf report --ignore-vmlinux -i ../perf.data
+The prototypes were already present in <asm/xor.h> but this header file is
+meant to be included after <include/linux/raid/xor.h>. Trying to re-use
+<asm/xor.h> directly would lead to warnings such as:
 
-The perf_mmap__consume() could unmap the mmap. It needs to check the
-refcnt in perf_mmap__read_done().
+  arch/powerpc/include/asm/xor.h:39:15: error: variable ‘xor_block_altivec’ has initializer but incomplete type
 
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: ee023de05f35 ("perf mmap: Introduce perf_mmap__read_done()")
-Link: http://lkml.kernel.org/r/1522071729-16776-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Trying to re-use <asm/xor.h> after <include/linux/raid/xor.h> in
+xor_vmx_glue.c would in turn trigger the following warnings:
+
+  include/asm-generic/xor.h:688:34: error: ‘xor_block_32regs’ defined but not used [-Werror=unused-variable]
+
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- tools/perf/util/mmap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+v3: missing changelog, no other change
+v2: new version where a separate header was introduced. Also update commit message explaining history.
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 38ca3ffb9d61..f6cfc52ff1fe 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -317,5 +317,11 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
-  */
- void perf_mmap__read_done(struct perf_mmap *map)
- {
-+	/*
-+	 * Check if event was unmapped due to a POLLHUP/POLLERR.
-+	 */
-+	if (!refcount_read(&map->refcnt))
-+		return;
+ arch/powerpc/include/asm/xor.h         | 12 +-----------
+ arch/powerpc/include/asm/xor_altivec.h | 19 +++++++++++++++++++
+ arch/powerpc/lib/xor_vmx_glue.c        |  1 +
+ 3 files changed, 21 insertions(+), 11 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/xor_altivec.h
+
+diff --git a/arch/powerpc/include/asm/xor.h b/arch/powerpc/include/asm/xor.h
+index a36c2069d8ed..7d6dc503349d 100644
+--- a/arch/powerpc/include/asm/xor.h
++++ b/arch/powerpc/include/asm/xor.h
+@@ -24,17 +24,7 @@
+ 
+ #include <asm/cputable.h>
+ #include <asm/cpu_has_feature.h>
+-
+-void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
+-		   unsigned long *v2_in);
+-void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
+-		   unsigned long *v2_in, unsigned long *v3_in);
+-void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
+-		   unsigned long *v2_in, unsigned long *v3_in,
+-		   unsigned long *v4_in);
+-void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
+-		   unsigned long *v2_in, unsigned long *v3_in,
+-		   unsigned long *v4_in, unsigned long *v5_in);
++#include <asm/xor_altivec.h>
+ 
+ static struct xor_block_template xor_block_altivec = {
+ 	.name = "altivec",
+diff --git a/arch/powerpc/include/asm/xor_altivec.h b/arch/powerpc/include/asm/xor_altivec.h
+new file mode 100644
+index 000000000000..6ca923510b59
+--- /dev/null
++++ b/arch/powerpc/include/asm/xor_altivec.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_POWERPC_XOR_ALTIVEC_H
++#define _ASM_POWERPC_XOR_ALTIVEC_H
 +
- 	map->prev = perf_mmap__read_head(map);
- }
++#ifdef CONFIG_ALTIVEC
++
++void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
++		   unsigned long *v2_in);
++void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
++		   unsigned long *v2_in, unsigned long *v3_in);
++void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
++		   unsigned long *v2_in, unsigned long *v3_in,
++		   unsigned long *v4_in);
++void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
++		   unsigned long *v2_in, unsigned long *v3_in,
++		   unsigned long *v4_in, unsigned long *v5_in);
++
++#endif
++#endif /* _ASM_POWERPC_XOR_ALTIVEC_H */
+diff --git a/arch/powerpc/lib/xor_vmx_glue.c b/arch/powerpc/lib/xor_vmx_glue.c
+index 6521fe5e8cef..dab2b6bfcf36 100644
+--- a/arch/powerpc/lib/xor_vmx_glue.c
++++ b/arch/powerpc/lib/xor_vmx_glue.c
+@@ -13,6 +13,7 @@
+ #include <linux/export.h>
+ #include <linux/sched.h>
+ #include <asm/switch_to.h>
++#include <asm/xor_altivec.h>
+ #include "xor_vmx.h"
+ 
+ void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
 -- 
-2.14.3
+2.11.0
