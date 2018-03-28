@@ -1,128 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753107AbeC1Nlu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:41:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47348 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752974AbeC1Nlr (ORCPT
+        id S1753273AbeC1Nmv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:42:51 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:59666 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751207AbeC1Nmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:41:47 -0400
-Date: Wed, 28 Mar 2018 06:42:32 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: schwidefsky@de.ibm.com, borntraeger@de.ibm.com
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        akiyks@gmail.com
-Subject: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
-Reply-To: paulmck@linux.vnet.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18032813-0036-0000-0000-000002D8149A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008758; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01009642; UDB=6.00514347; IPR=6.00788924;
- MB=3.00020289; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-28 13:41:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032813-0037-0000-0000-000043CA7393
-Message-Id: <20180328134232.GA29274@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-28_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803280147
+        Wed, 28 Mar 2018 09:42:49 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180328134247epoutp04e80c0cf13fefab196bcc203a54b49b36~gGV56yciK1053710537epoutp04Y
+X-AuditID: b6c32a46-b85ff70000000fe8-ae-5abb9bd764af
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Bernie Thompson <bernie@plugable.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] video: udlfb: Return an error code only as a
+ constant in dlfb_realloc_framebuffer()
+Date: Wed, 28 Mar 2018 15:42:44 +0200
+Message-id: <60893411.8iluP6siGW@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7bCmqe712bujDJ4v4rK4eP8bi8WVr+/Z
+        LM53Lme22HpL2uJE3wdWi8u75rA5sHnc7z7O5PF0ahebR9OpdlaPz5vkAliiuGxSUnMyy1KL
+        9O0SuDIO7j7CXrCepWLTvWOMDYzHmLsYOTgkBEwkTvbUdjFycQgJ7GCUuL5iGguE851R4sGf
+        y4xdjJxgRYcWL2eGSGxglNg+YQMjhPOVUWLH2mZ2kCo2ASuJie2rGEHGigiYSvw5EQJSwyyw
+        kVGi++deJpAaYYFCiR27trOA2CwCqhInz29hA7F5BbQk+m6/A5sjKuAlsWVfOxPIHE4BT4nt
+        c30hSgQlfky+B9bKLCAvsW//VFYIW0fi7LF1YPdICGxgk9h5pY8V4moXiesN/6A+EJZ4dXwL
+        O4QtLfFs1UaohmZGiW879jBDJCYwSuxZLwRhW0scPn4RagOfRMfhv+yQ8OKV6GiDKvGQeLJv
+        MRuE7Sjx+2w/NOhuM0psu/2BaQKj7Cwkh89CcvgsJIcvYGRexSiWWlCcm55abFRgpFecmFtc
+        mpeul5yfu4kRnA603HYwLjnnc4hRgINRiYe3IGZXlBBrYllxZe4hRgkOZiUR3vcau6OEeFMS
+        K6tSi/Lji0pzUosPMUpzsCiJ87YGuEQJCaQnlqRmp6YWpBbBZJk4OKUaGMUvGDBmNVya6v2M
+        ff20793JC76t05da8bQv/PLPG65F+apyy/VCkop3nRANOpobUWh2wHfh1W+nmKtbzs+w/WcS
+        tK560f/Jtj8iIt1uK3Z8+RShyuI9e4v0kZ9lC5buV1kwYcbZFlHlytfP+4LLWLa2zLgWEbly
+        /uS/ogu373XozY/wTXrC1aDEUpyRaKjFXFScCADiU9VNAwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t9jQd1rs3dHGZy4Z2Jx8f43FosrX9+z
+        WZzvXM5ssfWWtMWJvg+sFpd3zWFzYPO4332cyePp1C42j6ZT7awenzfJBbBEcdmkpOZklqUW
+        6dslcGUc3H2EvWA9S8Wme8cYGxiPMXcxcnJICJhIHFq8HMjm4hASWMcocW7HAjYI5yujxJF7
+        T9lAqtgErCQmtq9i7GLk4BARMJX4cyIEpIZZYCOjxNOr81hAaoQFCiV27NoOZrMIqEqcPL8F
+        rJdXQEui7/Y7dhBbVMBLYsu+diaQOZwCnhLb5/pC7LrLKDFr7WRWiHpBiR+T74HNYRaQl9i3
+        fyorhK0lsX7ncaYJjPyzkJTNQlI2C0nZAkbmVYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5
+        uZsYgQG87bBW/w7Gx0viDzEKcDAq8fAWxOyKEmJNLCuuzD3EKMHBrCTC+15jd5QQb0piZVVq
+        UX58UWlOavEhRmkOFiVxXv78Y5FCAumJJanZqakFqUUwWSYOTqkGxsObv7ytdE+9fa5OUCnx
+        6gflWew/Vmdu9DA9+KlyVtm0eTK3W/2WFKYslHP5sbXRZyb3lZcta6J37Lrfnb5ILsH0/U0p
+        tWBOBrF7wiIsR7qPK08OEo2tudt5+mKpx+bpU3qua9vlLWHeJm+lGmu8R/lW+wHJA/OSNLUn
+        /fFUcXLeFXnidTGvsRJLcUaioRZzUXEiAJ78EGxcAgAA
+X-CMS-MailID: 20180328134246epcas2p38c1479c4a191cad283c2b9f9334e1f82
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1
+X-RootMTR: 20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1
+References: <CGME20171124204825epcas1p41626d598b6e437dfb4c6b648e3730cc1@epcas1p4.samsung.com>
+        <25aee051-12fb-de5f-c806-f419fa4c0ef1@users.sourceforge.net>
+        <632abf1e-8c40-cbd2-4bbe-5dfdf89cb95f@users.sourceforge.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Sunday, January 07, 2018 02:34:51 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 7 Jan 2018 14:02:36 +0100
+> 
+> * Return an error code without storing it in an intermediate variable.
+> 
+> * Delete the label "error" and local variable "retval"
+>   which became unnecessary with this refactoring.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-The prototype patch shown below provides files required to allow herd7 to
-evaluate C-language litmus tests for the multicopy-atomic TSO ordering
-provided by s390.  This patch should be viewed with great suspicion.
-It does what I expect it to do on SB (with and without barriers),
-IRIW without barriers, and Alan's SB with read-of-write added, but my
-expectations are quite likely faulty, and my test cases are very few
-in number.
+Patch queued for 4.17, thanks.
 
-Either way, this is the easy part.  The hard part (which I am happy
-to leave to others) is making litmus7 and klitmus7 able to do tests
-on actual hardware, as well as enabling herd to handle litmus tests
-containing BAL.  ;-)
-
-Note that CPU architectures already supported by herd might well need
-only a .cfg file that refers to herd's pre-existing support.
-
-Thoughts?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 2fff0ff161b71215e7f7292b9eff4bc77ba64f29
-Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Wed Mar 28 06:30:39 2018 -0700
-
-    tools/memory-model: Add .cfg and .cat files for s390
-    
-    This commit adds s390.cat and s390.cfg files to allow users to check
-    litmus tests for s390-specific code.  Note that this change only enables
-    herd7 checking of C-language litmus tests.  Larger changes are required
-    to enable the litmus7 and klitmus7 tools to check litmus tests on real
-    hardare.
-    
-    Suggested-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-    Suggested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-diff --git a/tools/memory-model/s390.cat b/tools/memory-model/s390.cat
-new file mode 100644
-index 000000000000..618e88f50d9a
---- /dev/null
-+++ b/tools/memory-model/s390.cat
-@@ -0,0 +1,12 @@
-+s390
-+
-+include "fences.cat"
-+include "cos.cat"
-+
-+(* Atomic *)
-+empty rmw & (fre;coe) as atom
-+
-+(* TSO with multicopy atomicity *)
-+acyclic (po \ (W * R)) | po-loc | fr | rf | co as sc
-+
-+(* Fences are somehow handled implicitly, at least for SB+mb... *)
-diff --git a/tools/memory-model/s390.cfg b/tools/memory-model/s390.cfg
-new file mode 100644
-index 000000000000..d77e05d2395c
---- /dev/null
-+++ b/tools/memory-model/s390.cfg
-@@ -0,0 +1,21 @@
-+macros linux-kernel.def
-+bell linux-kernel.bell
-+model s390.cat
-+graph columns
-+squished true
-+showevents noregs
-+movelabel true
-+fontsize 8
-+xscale 2.0
-+yscale 1.5
-+arrowsize 0.8
-+showinitrf false
-+showfinalrf false
-+showinitwrites false
-+splines spline
-+pad 0.1
-+edgeattr hb,color,indigo
-+edgeattr co,color,blue
-+edgeattr mb,color,darkgreen
-+edgeattr wmb,color,darkgreen
-+edgeattr rmb,color,darkgreen
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
