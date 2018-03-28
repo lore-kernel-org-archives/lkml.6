@@ -1,235 +1,119 @@
-Return-Path: <colin.king@canonical.com>
-X-Google-Smtp-Source: AIpwx4/LJ3dHpottMlRCNPTkCazzcPYl9gLM6BJjp6i5L7/Up6KOL9YypCaZOMuCsyUdvBxXyDhl
-ARC-Seal: i=1; a=rsa-sha256; t=1522084590; cv=none;
-        d=google.com; s=arc-20160816;
-        b=mQ/mhUQcUMYALlY3ZS8jhwirTOYhbB+AWXLJfE7iQt1tr2Pz/+uTqTKNeFQJfnTvFW
-         Lzm3obppeEkoLHsWohlK4APVXp+xTkAHsyfxNrekJ2+Qv9/Img8FBtyjYV+qnSbdRJwK
-         6aLgYRBw0Af/pwkM05zkB/fuBQzAvh9evlUctbJEI098dL3Gw+i+ZfByPTBhMgvOYUf4
-         z3BudEJlTTKMSsyqRl50cXco/QkdKquSGVfHJGYZN+Z3U30vHUit4pi0VZEy+Ook4hfC
-         6xVtMqwcsIv+7Ynan4DnhxLgbmaitPPbz7nWqIaosKdV3BdgT9IQw1H0xNsGaEyTTEuT
-         ktlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=2cQmFKqhaLp2q5pBFAELrDsmN9GyY/PDFeTp7JsGYN0=;
-        b=W8/q7UR0rnjNPdEkqtm4waHh4KjXfXZT7VT604wiSc/JBvfFHI5iOZJpzncRWApTn9
-         ZuMDJ9WJvxVksk4fWL3UZoVMSuD4UEXtamusvEWOeAdssoHMA5I++WMjKWVNp37uR7wK
-         t48VVyBQEht4tlL9GLrmPYRE7ntG8CvUrT0pc0iE/WTLljWzYa5V3tNjS6NeZ3XYv9xK
-         WxzhaGzgLf879OlsqBMSEAjxNZRqKM46mZ2VqfywO2iEvqXCXxvBgeSYDiKxVAeHfX38
-         IyTPyYbI3UE8nKseBC7E+/RpvPN5lVK9hH6g+8kegLQ/+Q3R+MVc4kr/ENl7Qx/st1Of
-         TTEg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-From: Colin King <colin.king@canonical.com>
-To: Aditya Shankar <aditya.shankar@microchip.com>,
-	Ganesh Krishna <ganesh.krishna@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-wireless@vger.kernel.org,
-	devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: wilc1000: replace kmalloc + memcpy with kmemdup
-Date: Mon, 26 Mar 2018 18:16:29 +0100
-Message-Id: <20180326171629.28700-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2097833-1522237201-2-2727166433589709291
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522237201; b=TET/DLYllJCIpWtOk3sMz6/3pXEbDUUm8MkwWHcElWQD48m
+    3Ii73BhanzrYbXjgGgTlLHAEsiB0/FtiNV7+vNVJUoQdJ3qcBGlfXoRKSIBa9GEi
+    k2jW5VqDaPjuhCNDKj1XFFCPz9fLPknXiTQOU4WqPfmN5f7v+WDlnyAyoY29zuhT
+    p408uYeoaCGVAkw/Q16OOueiGWaoxfJmZ+fHvUUOWf2bpdJMnJRjvZWZGmRen4Gx
+    uTUvdb0/Lck892nmn/D7yKzvRu75TUR8YMhSrpKoBhC4RzkCxCFQKwxiR5FZhmmg
+    T5uSBcJ0EStlT4WydYHOw+TTh3Ll9cSHP00MlxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1522237201; bh=t
+    M/uPXWSYnUYGNRzbZbzvF5CrXQucda9q6bycw9Zf2U=; b=gIEbRVtfMcyh1XxsA
+    s8o9c0Gd6eh+pAwxdT4Iv8w1S3y3H7CUjdfovpziPTVGLxD5xBBk3UKEdAJRUXFK
+    lnxKuN202GE22oqthD3VCw2rvMsDYO4urRiC6PI7VJLel++HNbIpyYiMJotkJEqV
+    wVaRlBq56+TUYFGM1CdF4ubZpImwM4WJ1uuhyB+MbBHDJ1d7XgBF1TUf13+geR+Q
+    4faTt90Bmx8TbEyRX139CMM15pHr/RC+s3ABsYwvKgv763hg/A/FV583rpyLAgZI
+    8OpJb9XacCYgy5/FEvXbCYI1FS+rY483BLfP65swzzh9iBEOHKUK71P4vCSCvbZ1
+    S06oQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBDCji88nDDzBkmJ1n0U5g2XyntPei7QWH/jBTIX4Vmtr5XESPNzH3PQLIlLu8lmOZX/wwvbCjTO60aephIEy9YlY6omEJjQWiKQiAFMqNagNLhW4xu5
+    Cs61b3bw1Lb6iBvZ/sR0zNadkjFzK3mg6Eoh4sj+rGkKl1bQQxso6qhD8VfG+pCVjOWa7B9AruMn92PG+BMrApfgFORTugTR32393dNEDI+j508c6ydc/k8d
+    hqc/vnpOFOAQNaWN5y4Qog==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DfNHnWVPAAAA:8 a=DDOyTI_5AAAA:8
+    a=P4xzMIlCggcGCuQcRGYA:9 a=CjuIK1q_8ugA:10 a=rjTVMONInIDnV1a_A2c_:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Wed, 28 Mar 2018 13:39:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Colin King <colin.king@canonical.com>
+Subject: Re: [PATCH] staging: wilc1000: replace kmalloc + memcpy with kmemdup
+Message-ID: <20180328113951.GA11213@kroah.com>
+References: <20180326171629.28700-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <20180326171629.28700-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ganesh Krishna <ganesh.krishna@microchip.com>,
+ Aditya Shankar <aditya.shankar@microchip.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596021371817996393?=
-X-GMAIL-MSGID: =?utf-8?q?1596021371817996393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Mar 26, 2018 at 06:16:29PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Replace several allocation and memcpys with kmemdup and add in some
+> missing memory allocation failure checks.  Also fix an incorrect 
+> -EFAULT return with -ENOMEM.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/wilc1000/host_interface.c | 75 +++++++++++++++++++------------
+>  1 file changed, 46 insertions(+), 29 deletions(-)
 
-Replace several allocation and memcpys with kmemdup and add in some
-missing memory allocation failure checks.  Also fix an incorrect 
--EFAULT return with -ENOMEM.
+Doesn't apply to my tree anymore, due to patches submitted before yours
+:(
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/wilc1000/host_interface.c | 75 +++++++++++++++++++------------
- 1 file changed, 46 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
-index 9b9b86654958..8fd367f87fa5 100644
---- a/drivers/staging/wilc1000/host_interface.c
-+++ b/drivers/staging/wilc1000/host_interface.c
-@@ -797,6 +797,10 @@ static s32 handle_scan(struct wilc_vif *vif, struct scan_attr *scan_info)
- 	for (i = 0; i < hidden_net->n_ssids; i++)
- 		valuesize += ((hidden_net->net_info[i].ssid_len) + 1);
- 	hdn_ntwk_wid_val = kmalloc(valuesize + 1, GFP_KERNEL);
-+	if (!hdn_ntwk_wid_val) {
-+		result = -ENOMEM;
-+		goto error;
-+	}
- 	wid_list[index].val = hdn_ntwk_wid_val;
- 	if (wid_list[index].val) {
- 		buffer = wid_list[index].val;
-@@ -943,39 +947,35 @@ static s32 handle_connect(struct wilc_vif *vif,
- 	}
- 
- 	if (conn_attr->bssid) {
--		hif_drv->usr_conn_req.bssid = kmalloc(6, GFP_KERNEL);
-+		hif_drv->usr_conn_req.bssid = kmemdup(conn_attr->bssid, 6,
-+						      GFP_KERNEL);
- 		if (!hif_drv->usr_conn_req.bssid) {
- 			result = -ENOMEM;
- 			goto error;
- 		}
--		memcpy(hif_drv->usr_conn_req.bssid, conn_attr->bssid, 6);
- 	}
- 
- 	hif_drv->usr_conn_req.ssid_len = conn_attr->ssid_len;
- 	if (conn_attr->ssid) {
--		hif_drv->usr_conn_req.ssid = kmalloc(conn_attr->ssid_len + 1,
-+		hif_drv->usr_conn_req.ssid = kmemdup(conn_attr->ssid,
-+						     conn_attr->ssid_len + 1,
- 						     GFP_KERNEL);
- 		if (!hif_drv->usr_conn_req.ssid) {
- 			result = -ENOMEM;
- 			goto error;
- 		}
--		memcpy(hif_drv->usr_conn_req.ssid,
--		       conn_attr->ssid,
--		       conn_attr->ssid_len);
- 		hif_drv->usr_conn_req.ssid[conn_attr->ssid_len] = '\0';
- 	}
- 
- 	hif_drv->usr_conn_req.ies_len = conn_attr->ies_len;
- 	if (conn_attr->ies) {
--		hif_drv->usr_conn_req.ies = kmalloc(conn_attr->ies_len,
-+		hif_drv->usr_conn_req.ies = kmemdup(conn_attr->ies,
-+						    conn_attr->ies_len,
- 						    GFP_KERNEL);
- 		if (!hif_drv->usr_conn_req.ies) {
- 			result = -ENOMEM;
- 			goto error;
- 		}
--		memcpy(hif_drv->usr_conn_req.ies,
--		       conn_attr->ies,
--		       conn_attr->ies_len);
- 	}
- 
- 	hif_drv->usr_conn_req.security = conn_attr->security;
-@@ -1009,9 +1009,12 @@ static s32 handle_connect(struct wilc_vif *vif,
- 
- 	if (memcmp("DIRECT-", conn_attr->ssid, 7)) {
- 		info_element_size = hif_drv->usr_conn_req.ies_len;
--		info_element = kmalloc(info_element_size, GFP_KERNEL);
--		memcpy(info_element, hif_drv->usr_conn_req.ies,
--		       info_element_size);
-+		info_element = kmemdup(hif_drv->usr_conn_req.ies,
-+				       info_element_size, GFP_KERNEL);
-+		if (!info_element) {
-+			result = -ENOMEM;
-+			goto error;
-+		}
- 	}
- 	wid_list[wid_cnt].id = (u16)WID_11I_MODE;
- 	wid_list[wid_cnt].type = WID_CHAR;
-@@ -1039,9 +1042,13 @@ static s32 handle_connect(struct wilc_vif *vif,
- 	if (memcmp("DIRECT-", conn_attr->ssid, 7)) {
- 		join_req_size = wid_list[wid_cnt].size;
- 		join_req = kmalloc(join_req_size, GFP_KERNEL);
-+		if (!join_req) {
-+			result = -ENOMEM;
-+			goto error;
-+		}
- 	}
- 	if (!wid_list[wid_cnt].val) {
--		result = -EFAULT;
-+		result = -ENOMEM;
- 		goto error;
- 	}
- 
-@@ -1166,11 +1173,13 @@ static s32 handle_connect(struct wilc_vif *vif,
- 
- 			if (conn_attr->ies) {
- 				conn_info.req_ies_len = conn_attr->ies_len;
--				conn_info.req_ies = kmalloc(conn_attr->ies_len,
-+				conn_info.req_ies = kmemdup(conn_attr->ies,
-+							    conn_attr->ies_len,
- 							    GFP_KERNEL);
--				memcpy(conn_info.req_ies,
--				       conn_attr->ies,
--				       conn_attr->ies_len);
-+				if (!conn_info.req_ies) {
-+					result = -ENOMEM;
-+					goto error_free;
-+				}
- 			}
- 
- 			conn_attr->result(CONN_DISCONN_EVENT_CONN_RESP,
-@@ -1187,6 +1196,7 @@ static s32 handle_connect(struct wilc_vif *vif,
- 		}
- 	}
- 
-+error_free:
- 	kfree(conn_attr->bssid);
- 	conn_attr->bssid = NULL;
- 
-@@ -1227,10 +1237,9 @@ static s32 handle_connect_timeout(struct wilc_vif *vif)
- 
- 		if (hif_drv->usr_conn_req.ies) {
- 			info.req_ies_len = hif_drv->usr_conn_req.ies_len;
--			info.req_ies = kmalloc(hif_drv->usr_conn_req.ies_len, GFP_KERNEL);
--			memcpy(info.req_ies,
--			       hif_drv->usr_conn_req.ies,
--			       hif_drv->usr_conn_req.ies_len);
-+			info.req_ies = kmemdup(hif_drv->usr_conn_req.ies,
-+					       hif_drv->usr_conn_req.ies_len,
-+					       GFP_KERNEL);
- 		}
- 
- 		hif_drv->usr_conn_req.conn_result(CONN_DISCONN_EVENT_CONN_RESP,
-@@ -1421,9 +1430,11 @@ static s32 handle_rcvd_gnrl_async_info(struct wilc_vif *vif,
- 
- 						if (conn_info.status == SUCCESSFUL_STATUSCODE && connect_resp_info->ies) {
- 							conn_info.resp_ies_len = connect_resp_info->ies_len;
--							conn_info.resp_ies = kmalloc(connect_resp_info->ies_len, GFP_KERNEL);
--							memcpy(conn_info.resp_ies, connect_resp_info->ies,
--							       connect_resp_info->ies_len);
-+							conn_info.resp_ies = kmemdup(connect_resp_info->ies,
-+										     connect_resp_info->ies_len,
-+										     GFP_KERNEL);
-+							if (!conn_info.resp_ies)
-+								return -ENOMEM;
- 						}
- 
- 						if (connect_resp_info) {
-@@ -3524,8 +3535,11 @@ void wilc_network_info_received(struct wilc *wilc, u8 *buffer, u32 length)
- 	msg.vif = vif;
- 
- 	msg.body.net_info.len = length;
--	msg.body.net_info.buffer = kmalloc(length, GFP_KERNEL);
--	memcpy(msg.body.net_info.buffer, buffer, length);
-+	msg.body.net_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
-+	if (!msg.body.net_info.buffer) {
-+		netdev_err(vif->ndev, "message buffer allocation failed\n");
-+		return;
-+	}
- 
- 	result = wilc_enqueue_cmd(&msg);
- 	if (result)
-@@ -3571,8 +3585,11 @@ void wilc_gnrl_async_info_received(struct wilc *wilc, u8 *buffer, u32 length)
- 	msg.vif = vif;
- 
- 	msg.body.async_info.len = length;
--	msg.body.async_info.buffer = kmalloc(length, GFP_KERNEL);
--	memcpy(msg.body.async_info.buffer, buffer, length);
-+	msg.body.async_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
-+	if (!msg.body.async_info.buffer) {
-+		netdev_err(vif->ndev, "message buffer allocation failed\n");
-+		return;
-+	}
- 
- 	result = wilc_enqueue_cmd(&msg);
- 	if (result)
--- 
-2.15.1
+greg k-h
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
