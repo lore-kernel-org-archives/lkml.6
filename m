@@ -1,93 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753901AbeC1PMx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:12:53 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:54741 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753512AbeC1PMv (ORCPT
+        id S1753937AbeC1POP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:14:15 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39625 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753763AbeC1POK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:12:51 -0400
-From: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-To: "hch@lst.de" <hch@lst.de>, "x86@kernel.org" <x86@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sebott@linux.vnet.ibm.com" <sebott@linux.vnet.ibm.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "Evgeniy.Didin@synopsys.com" <Evgeniy.Didin@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH] dma-mapping: don't clear GFP_ZERO in dma_alloc_attrs
-Thread-Topic: [PATCH] dma-mapping: don't clear GFP_ZERO in dma_alloc_attrs
-Thread-Index: AQHTxpm0Ohq39fhgq0eJ/kMWcZgH36Pln7kA
-Date: Wed, 28 Mar 2018 15:12:47 +0000
-Message-ID: <1522249966.2593.14.camel@synopsys.com>
-References: <20180328133535.17302-1-hch@lst.de>
-         <20180328133535.17302-2-hch@lst.de>
-In-Reply-To: <20180328133535.17302-2-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.44]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <39D21B2E5947E541869FC01EB34E3DE5@internal.synopsys.com>
-MIME-Version: 1.0
+        Wed, 28 Mar 2018 11:14:10 -0400
+X-Google-Smtp-Source: AIpwx49J8+h1SyanS/vAUYDGakSKWzLFP0MSO1fojXx3b8MyShoky00B8F8Mc66g9JwALd7xv69c2A==
+From: Tim Harvey <tharvey@gateworks.com>
+To: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH v3 0/4] Add support for the Gateworks System Controller
+Date: Wed, 28 Mar 2018 08:13:59 -0700
+Message-Id: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2SFCw3c025381
 
-Adding linux-snps and linux-arch mailing lists.
+This series adds support for the Gateworks System Controller used on Gateworks
+Laguna, Ventana, and Newport product families.
 
-> Revert the clearing of __GFP_ZERO in dma_alloc_attrs and move it to
-> dma_direct_alloc for now.  While most common architectures always zero dma
-> cohereny allocations (and x86 did so since day one) this is not documented
-> and at least arc and s390 do not zero without the explicit __GFP_ZERO
-> argument.
-This patch fixed Ethernet issues on ARC HSDK.
-https://www.spinics.net/lists/kernel/msg2762054.html
+The GSC is an MSP430 I2C slave controller whose firmware embeds the following
+features:
+ - I/O expander (16 GPIO's emulating a PCA955x)
+ - EEPROM (enumating AT24)
+ - RTC (enumating DS1672)
+ - HWMON
+ - Interrupt controller with tamper detect, user pushbotton
+ - Watchdog controller capable of full board power-cycle
+ - Power Control capable of full board power-cycle
 
-Tested-by: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-> Fixes: 57bf5a8963f8 ("dma-mapping: clear harmful GFP_* flags in common code")
-> Reported-by: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
-> Reported-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/dma-mapping.h | 8 ++------
->  lib/dma-direct.c            | 3 +++
->  2 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> index eb9eab4ecd6d..12fedcba9a9a 100644
-> --- a/include/linux/dma-mapping.h
-> +++ b/include/linux/dma-mapping.h
-> @@ -518,12 +518,8 @@ static inline void *dma_alloc_attrs(struct device *dev, size_t size,
->  	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
->  		return cpu_addr;
->  
-> -	/*
-> -	 * Let the implementation decide on the zone to allocate from, and
-> -	 * decide on the way of zeroing the memory given that the memory
-> -	 * returned should always be zeroed.
-> -	 */
-> -	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM | __GFP_ZERO);
-> +	/* let the implementation decide on the zone to allocate from: */
-> +	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
-> 
->  	if (!arch_dma_alloc_attrs(&dev, &flag))
->  		return NULL;
-> diff --git a/lib/dma-direct.c b/lib/dma-direct.c
-> index 1277d293d4da..c0bba30fef0a 100644
-> --- a/lib/dma-direct.c
-> +++ b/lib/dma-direct.c
-> @@ -59,6 +59,9 @@ void *dma_direct_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
->  	struct page *page = NULL;
->  	void *ret;
->  
-> +	/* we always manually zero the memory once we are done: */
-> +	gfp &= ~__GFP_ZERO;
-> +
->  	/* GFP_DMA32 and GFP_DMA are no ops without the corresponding zones: */
->  	if (dev->coherent_dma_mask <= DMA_BIT_MASK(ARCH_ZONE_DMA_BITS))
->  		gfp |= GFP_DMA;
+see http://trac.gateworks.com/wiki/gsc for more details
+---
+v3:
+ - removed unnecessary input driver
+ - added wdt driver
+ - bindings: encorporated feedback from mailng list
+ - hwmon:
+ - encoroprated feedback from mailng list
+ - added support for raw ADC voltage input used in newer GSC firmware
+
+v2:
+ - change license comment block style
+ - remove COMPILE_TEST
+ - fixed whitespace issues
+ - replaced a printk with dev_err
+ - remove DEBUG
+ - simplify regmap_bulk_read err check
+ - remove break after returns in switch statement
+ - fix fan setpoint buffer address
+ - remove unnecessary parens
+ - consistently use struct device *dev pointer
+ - add validation for hwmon child node props
+ - move parsing of of to own function
+ - use strlcpy to ensure null termination
+ - fix static array sizes and removed unnecessary initializers
+ - dynamically allocate channels
+ - fix fan input label
+ - support platform data
+
+Tim Harvey (4):
+  dt-bindings: mfd: Add Gateworks System Controller bindings
+  mfd: add Gateworks System Controller core driver
+  hwmon: add Gateworks System Controller support
+  watchdog: add Gateworks System Controller support
+
+ .../devicetree/bindings/mfd/gateworks-gsc.txt      | 135 ++++++++
+ drivers/hwmon/Kconfig                              |   9 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/gsc-hwmon.c                          | 368 +++++++++++++++++++++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/gateworks-gsc.c                        | 285 ++++++++++++++++
+ drivers/watchdog/Kconfig                           |  10 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/gsc_wdt.c                         | 146 ++++++++
+ include/linux/mfd/gsc.h                            |  75 +++++
+ include/linux/platform_data/gsc_hwmon.h            |  43 +++
+ 12 files changed, 1087 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
+ create mode 100644 drivers/hwmon/gsc-hwmon.c
+ create mode 100644 drivers/mfd/gateworks-gsc.c
+ create mode 100644 drivers/watchdog/gsc_wdt.c
+ create mode 100644 include/linux/mfd/gsc.h
+ create mode 100644 include/linux/platform_data/gsc_hwmon.h
+
+-- 
+2.7.4
