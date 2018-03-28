@@ -1,118 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeC1IpB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 04:45:01 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:46344 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751191AbeC1Io5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 04:44:57 -0400
-From: Wen Yang <wen.yang99@zte.com.cn>
-To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bart.VanAssche@wdc.com, pmladek@suse.com,
-        sergey.senozhatsky.work@gmail.com, tj@kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn,
-        wen.yang99@zte.com.cn, Tan Hu <tan.hu@zte.com.cn>
-Subject: [PATCH] scsi: Introduce sdev_printk_ratelimited to throttle frequent printk
-Date: Wed, 28 Mar 2018 16:43:04 +0800
-Message-Id: <1522226584-137056-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-03-28 16:44:48,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-03-28 16:44:34,
-        Serialize complete at 2018-03-28 16:44:34
-X-MAIL: mse01.zte.com.cn w2S8igcb058246
+        id S1752748AbeC1IqS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 04:46:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43109 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752594AbeC1IqO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 04:46:14 -0400
+Date: Wed, 28 Mar 2018 01:45:59 -0700
+From: tip-bot for Andrew Banman <tipbot@zytor.com>
+Message-ID: <tip-151ad17fbe5e56afa59709f41980508672c777ce@git.kernel.org>
+Cc: hpa@zytor.com, rja@hpe.com, mingo@kernel.org, mike.travis@hpe.com,
+        abanman@hpe.com, linux-kernel@vger.kernel.org, sivanich@hpe.com,
+        tglx@linutronix.de
+Reply-To: tglx@linutronix.de, sivanich@hpe.com, abanman@hpe.com,
+        mike.travis@hpe.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        rja@hpe.com, hpa@zytor.com
+In-Reply-To: <1522188546-196177-1-git-send-email-abanman@hpe.com>
+References: <1522188546-196177-1-git-send-email-abanman@hpe.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/platform/uv/BAU: Add APIC idt entry
+Git-Commit-ID: 151ad17fbe5e56afa59709f41980508672c777ce
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There would be so many same lines printed by frequent prink if one 
-disk went wrong, like,
-[  546.185242] sd 0:1:0:0: rejecting I/O to offline device
-[  546.185258] sd 0:1:0:0: rejecting I/O to offline device
-[  546.185280] sd 0:1:0:0: rejecting I/O to offline device
-[  546.185307] sd 0:1:0:0: rejecting I/O to offline device
-[  546.185334] sd 0:1:0:0: rejecting I/O to offline device
-[  546.185364] sd 0:1:0:0: rejecting I/O to offline device
-[  546.185390] sd 0:1:0:0: rejecting I/O to offline device
-[  546.185410] sd 0:1:0:0: rejecting I/O to offline device
-For slow serial console, the frequent prink may block the printk, and 
-if spin_lock was acquired before the printk like in scsi_request_fn,
-that could trigger the watchdog.
+Commit-ID:  151ad17fbe5e56afa59709f41980508672c777ce
+Gitweb:     https://git.kernel.org/tip/151ad17fbe5e56afa59709f41980508672c777ce
+Author:     Andrew Banman <abanman@hpe.com>
+AuthorDate: Tue, 27 Mar 2018 17:09:06 -0500
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 28 Mar 2018 10:40:55 +0200
 
-Relative disscussion can be found here,
-https://bugzilla.kernel.org/show_bug.cgi?id=199003
-And Petr brought the idea to throttle the frequent printk here, it's 
-useless to print the same lines frequently after all.
- 
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
-Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
-CC: BartVanAssche <Bart.VanAssche@wdc.com>
-CC: Petr Mladek <pmladek@suse.com>
-CC: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-CC: Martin K. Petersen <martin.petersen@oracle.com>
-CC: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
-CC: Tejun Heo <tj@kernel.org>
+x86/platform/uv/BAU: Add APIC idt entry
+
+BAU uses the old alloc_initr_gate90 method to setup its interrupt. This
+fails silently as the BAU vector is in the range of APIC vectors that are
+registered to the spurious interrupt handler. As a consequence BAU
+broadcasts are not handled, and the broadcast source CPU hangs.
+
+Update BAU to use new idt structure.
+
+Fixes: dc20b2d52653 ("x86/idt: Move interrupt gate initialization to IDT code")
+Signed-off-by: Andrew Banman <abanman@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Mike Travis <mike.travis@hpe.com>
+Cc: Dimitri Sivanich <sivanich@hpe.com>
+Cc: Russ Anderson <rja@hpe.com>
+Cc: stable@vger.kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/1522188546-196177-1-git-send-email-abanman@hpe.com
+
 ---
- drivers/scsi/scsi_lib.c    |  6 +++---
- include/scsi/scsi_device.h | 10 ++++++++++
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/hw_irq.h | 1 +
+ arch/x86/kernel/idt.c         | 3 +++
+ arch/x86/platform/uv/tlb_uv.c | 2 --
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index c84f931..f77e801 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1301,7 +1301,7 @@ static int scsi_setup_cmnd(struct scsi_device *sdev, struct request *req)
- 			 * commands.  The device must be brought online
- 			 * before trying any recovery commands.
- 			 */
--			sdev_printk(KERN_ERR, sdev,
-+			sdev_printk_ratelimited(KERN_ERR, sdev,
- 				    "rejecting I/O to offline device\n");
- 			ret = BLKPREP_KILL;
- 			break;
-@@ -1310,7 +1310,7 @@ static int scsi_setup_cmnd(struct scsi_device *sdev, struct request *req)
- 			 * If the device is fully deleted, we refuse to
- 			 * process any commands as well.
- 			 */
--			sdev_printk(KERN_ERR, sdev,
-+			sdev_printk_ratelimited(KERN_ERR, sdev,
- 				    "rejecting I/O to dead device\n");
- 			ret = BLKPREP_KILL;
- 			break;
-@@ -1802,7 +1802,7 @@ static void scsi_request_fn(struct request_queue *q)
- 			break;
+diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
+index 2851077b6051..32e666e1231e 100644
+--- a/arch/x86/include/asm/hw_irq.h
++++ b/arch/x86/include/asm/hw_irq.h
+@@ -36,6 +36,7 @@ extern asmlinkage void kvm_posted_intr_wakeup_ipi(void);
+ extern asmlinkage void kvm_posted_intr_nested_ipi(void);
+ extern asmlinkage void error_interrupt(void);
+ extern asmlinkage void irq_work_interrupt(void);
++extern asmlinkage void uv_bau_message_intr1(void);
  
- 		if (unlikely(!scsi_device_online(sdev))) {
--			sdev_printk(KERN_ERR, sdev,
-+			sdev_printk_ratelimited(KERN_ERR, sdev,
- 				    "rejecting I/O to offline device\n");
- 			scsi_kill_request(req, q);
- 			continue;
-diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-index 7ae177c..378d3f2 100644
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@ -249,6 +249,16 @@ struct scsi_device {
- #define sdev_printk(l, sdev, fmt, a...)				\
- 	sdev_prefix_printk(l, sdev, NULL, fmt, ##a)
+ extern asmlinkage void spurious_interrupt(void);
+ extern asmlinkage void thermal_interrupt(void);
+diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
+index 56d99be3706a..5d039c848bd9 100644
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -140,6 +140,9 @@ static const __initconst struct idt_data apic_idts[] = {
+ # ifdef CONFIG_IRQ_WORK
+ 	INTG(IRQ_WORK_VECTOR,		irq_work_interrupt),
+ # endif
++#ifdef CONFIG_X86_UV
++	INTG(UV_BAU_MESSAGE,		uv_bau_message_intr1),
++#endif
+ 	INTG(SPURIOUS_APIC_VECTOR,	spurious_interrupt),
+ 	INTG(ERROR_APIC_VECTOR,		error_interrupt),
+ #endif
+diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+index db77e087adaf..b36caae0fb2f 100644
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -2255,8 +2255,6 @@ static int __init uv_bau_init(void)
+ 			init_uvhub(uvhub, vector, uv_base_pnode);
+ 	}
  
-+#define sdev_printk_ratelimited(l, sdev, fmt, a...)			\
-+({									\
-+	static DEFINE_RATELIMIT_STATE(_rs,				\
-+				      DEFAULT_RATELIMIT_INTERVAL,	\
-+				      DEFAULT_RATELIMIT_BURST);		\
-+									\
-+	if (__ratelimit(&_rs))						\
-+		sdev_prefix_printk(l, sdev, NULL, fmt, ##a);		\
-+})
-+
- __printf(3, 4) void
- scmd_printk(const char *, const struct scsi_cmnd *, const char *, ...);
- 
--- 
-1.8.3.1
+-	alloc_intr_gate(vector, uv_bau_message_intr1);
+-
+ 	for_each_possible_blade(uvhub) {
+ 		if (uv_blade_nr_possible_cpus(uvhub)) {
+ 			unsigned long val;
