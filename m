@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753864AbeC1TIh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 15:08:37 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:43616 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753555AbeC1TIf (ORCPT
+        id S1753891AbeC1TIu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 15:08:50 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:34574 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753668AbeC1TIs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:08:35 -0400
-X-Google-Smtp-Source: AIpwx4//8SYurgHmRY00Z4chTlrdkrtQh3EjzNWXnDB2ZjZy8de7klTXk3BwXn49s0gwxf5N5lMWuQ==
+        Wed, 28 Mar 2018 15:08:48 -0400
+X-Google-Smtp-Source: AIpwx4+NLh01AWCsC3pPWIRl4QDFjd0e/qq950g0alLWJpUGeXyixz+AhkF1F5gJbysMEg5Acz+L6w==
 From: Sean Paul <seanpaul@chromium.org>
 To: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org
 Cc: robdclark@gmail.com, hoegsberg@chromium.org, jsanka@codeaurora.org,
         abhinavk@codeaurora.org, architt@codeaurora.org,
         Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] drm/msm: Mark the crtc->state->event consumed
-Date: Wed, 28 Mar 2018 15:06:49 -0400
-Message-Id: <20180328190657.218661-4-seanpaul@chromium.org>
+Subject: [PATCH v2 4/6] drm/msm: Issue queued events when disabling crtc
+Date: Wed, 28 Mar 2018 15:06:50 -0400
+Message-Id: <20180328190657.218661-5-seanpaul@chromium.org>
 X-Mailer: git-send-email 2.17.0.rc1.321.gba9d0f2565-goog
 In-Reply-To: <20180328190657.218661-1-seanpaul@chromium.org>
 References: <20180328190657.218661-1-seanpaul@chromium.org>
@@ -24,42 +24,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't leave the event != NULL once it's consumed, this is used a signal
-to the atomic helpers that the event will be handled by the driver.
+Ensure that any queued events are issued when disabling the crtc. This
+avoids timeouts when we come back and wait for dependencies (like the
+previous frame's flip_done).
 
 Changes in v2:
 - None
 
-Cc: Jeykumar Sankaran <jsanka@codeaurora.org>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 ---
- drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c | 1 +
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
-index 6e5e1aa54ce1..b001699297c4 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
-@@ -351,6 +351,7 @@ static void mdp4_crtc_atomic_flush(struct drm_crtc *crtc,
- 
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	mdp4_crtc->event = crtc->state->event;
-+	crtc->state->event = NULL;
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
- 
- 	blend_setup(crtc);
 diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-index 9893e43ba6c5..76b96081916f 100644
+index 76b96081916f..10271359789e 100644
 --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
 +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-@@ -708,6 +708,7 @@ static void mdp5_crtc_atomic_flush(struct drm_crtc *crtc,
+@@ -430,6 +430,7 @@ static void mdp5_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	struct mdp5_crtc_state *mdp5_cstate = to_mdp5_crtc_state(crtc->state);
+ 	struct mdp5_kms *mdp5_kms = get_kms(crtc);
+ 	struct device *dev = &mdp5_kms->pdev->dev;
++	unsigned long flags;
  
- 	spin_lock_irqsave(&dev->event_lock, flags);
- 	mdp5_crtc->event = crtc->state->event;
-+	crtc->state->event = NULL;
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
+ 	DBG("%s", crtc->name);
  
- 	/*
+@@ -445,6 +446,14 @@ static void mdp5_crtc_atomic_disable(struct drm_crtc *crtc,
+ 	mdp_irq_unregister(&mdp5_kms->base, &mdp5_crtc->err);
+ 	pm_runtime_put_sync(dev);
+ 
++	if (crtc->state->event && !crtc->state->active) {
++		WARN_ON(mdp5_crtc->event);
++		spin_lock_irqsave(&mdp5_kms->dev->event_lock, flags);
++		drm_crtc_send_vblank_event(crtc, crtc->state->event);
++		crtc->state->event = NULL;
++		spin_unlock_irqrestore(&mdp5_kms->dev->event_lock, flags);
++	}
++
+ 	mdp5_crtc->enabled = false;
+ }
+ 
 -- 
 Sean Paul, Software Engineer, Google / Chromium OS
