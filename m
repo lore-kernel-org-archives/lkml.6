@@ -1,73 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753468AbeC1N3a (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:29:30 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:53721 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbeC1N32 (ORCPT
+        id S1752562AbeC1NbC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:31:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60686 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750820AbeC1NbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:29:28 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180328132926epoutp03b1194904112806ced4652819b352b94a~gGKPs5y7e0096000960epoutp03g
-X-AuditID: b6c32a38-d73ff70000001082-12-5abb98b6be45
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Paul Mackerras <paulus@samba.org>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] video: fbdev: aty128fb: use true and false for boolean
- values
-Date: Wed, 28 Mar 2018 15:29:23 +0200
-Message-id: <3978155.69BmuUMc09@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <20180322201332.GA28960@embeddedgus>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7bCmvu62GbujDM7M4La48vU9m8XWPaoW
-        J/o+sFpc3jWHzWLNkcXsDqwe6w6qetzvPs7kMXdXH6PH501yASxRXDYpqTmZZalF+nYJXBmd
-        G7YyF0xhrni/Zz1TA+MRpi5GDg4JAROJldsVuxi5OIQEdjBKHN+3jRnC+c4oceHybcYuRk6w
-        ogVblrFCJDYwSvSueM0I4XxllOif3wVWxSZgJTGxfRWYLSJgJDF7RjdYB7NAM6PEzFOT2UES
-        wgIhEkt2f2EFsVkEVCVu7G1jArF5BTQlXixZywZiiwp4SWzZ1w4W5xQwlNj39B4jRI2gxI/J
-        91hAbGYBeYl9+6eyQtg6EmePrQO7SEJgBZvEliun2SDudpHYMWs7lC0s8er4FnaIp6UlLh21
-        hagHOu7bjj3MEDUTGCX2rBeCsK0lDh+/CLWAT+Ld1x5WiF5eiY42qBIPiU+be1kgbEeJr2fa
-        2SGh0sIoMbX3HOsERtlZSO6eheTuWUjuXsDIvIpRLLWgODc9tdiwwESvODG3uDQvXS85P3cT
-        IzgJaFnsYNxzzucQowAHoxIPb0HMrigh1sSy4srcQ4wSHMxKIrzvNXZHCfGmJFZWpRblxxeV
-        5qQWH2KU5mBREucNCHCJEhJITyxJzU5NLUgtgskycXBKNTAeErnn+1dtwS8TQb1vp97Lqq0+
-        JqF/lnc+2yH9jsIDql3nN0bWScmtK9NTUFhnx3BI3l9q1s7rKluKOApMU27e8Kn88qjk1qRV
-        dWHPGH/kBRxbsK1zzvzZCn/26TRKJnefeZnIeGNF8Lp9Setbv/23D5a6uGxu2QOB0NlO6fOP
-        bEtSFEm9qcivxFKckWioxVxUnAgA8SWgcf4CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t9jQd2tM3ZHGaz8LWhx5et7Noute1Qt
-        TvR9YLW4vGsOm8WaI4vZHVg91h1U9bjffZzJY+6uPkaPz5vkAliiuGxSUnMyy1KL9O0SuDI6
-        N2xlLpjCXPF+z3qmBsYjTF2MnBwSAiYSC7YsY+1i5OIQEljHKHG++SUThPOVUWLe6YnsIFVs
-        AlYSE9tXMYLYIgJGErNndIN1MAs0M0rc2XuIGSQhLBAisWT3F1YQm0VAVeLG3jawFbwCmhIv
-        lqxlA7FFBbwktuxrB4tzChhK7Ht6jxFiWxujxLGdN6EaBCV+TL7HAmIzC8hL7Ns/lRXC1pJY
-        v/M40wRG/llIymYhKZuFpGwBI/MqRsnUguLc9NxiowLDvNRyveLE3OLSvHS95PzcTYzAwN12
-        WKtvB+P9JfGHGAU4GJV4eAtidkUJsSaWFVfmHmKU4GBWEuF9r7E7Sog3JbGyKrUoP76oNCe1
-        +BCjNAeLkjjv7bxjkUIC6YklqdmpqQWpRTBZJg5OqQbGSQeTFhlo9GW5zmfZaPr7/n+V0vB9
-        X/QaF3Ec3N/nIFX7tX2a0fQ0tmabtukOx8W+5lbMNroostHd0ni/TURsDvP5vcbrlxz164q1
-        OHXSXTTLpEHj/vJ6nwsS2zYu2W/kdeRWyLKm+YVHmZ7c/X++/dujpdw/26Z0XM3q64/yjZI/
-        LrLtzpJ7SizFGYmGWsxFxYkAo4ZRP1gCAAA=
-X-CMS-MailID: 20180328132925epcas1p4a3978d60ac29da642a8f8e863b779419
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180322201504epcas5p329c931766457a81d6dbf4ed70127cf9f
-X-RootMTR: 20180322201504epcas5p329c931766457a81d6dbf4ed70127cf9f
-References: <CGME20180322201504epcas5p329c931766457a81d6dbf4ed70127cf9f@epcas5p3.samsung.com>
-        <20180322201332.GA28960@embeddedgus>
+        Wed, 28 Mar 2018 09:31:00 -0400
+Subject: Re: [mm] b1f0502d04: INFO:trying_to_register_non-static_key
+To: David Rientjes <rientjes@google.com>
+Cc: kernel test robot <fengguang.wu@intel.com>, paulmck@linux.vnet.ibm.com,
+        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, lkp@01.org
+References: <20180317075119.u6yuem2bhxvggbz3@inn>
+ <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Wed, 28 Mar 2018 15:30:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18032813-0040-0000-0000-00000427D602
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032813-0041-0000-0000-0000262AF2E1
+Message-Id: <aa6f2ff1-ff67-106a-e0e4-522ac82a7bf0@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-28_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803280145
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, March 22, 2018 03:13:32 PM Gustavo A. R. Silva wrote:
-> Assign true or false to boolean variables instead of an integer value.
+On 26/03/2018 00:10, David Rientjes wrote:
+> On Wed, 21 Mar 2018, Laurent Dufour wrote:
 > 
-> This issue was detected with the help of Coccinelle.
+>> I found the root cause of this lockdep warning.
+>>
+>> In mmap_region(), unmap_region() may be called while vma_link() has not been
+>> called. This happens during the error path if call_mmap() failed.
+>>
+>> The only to fix that particular case is to call
+>> seqcount_init(&vma->vm_sequence) when initializing the vma in mmap_region().
+>>
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Ack, although that would require a fixup to dup_mmap() as well.
 
-Patch queued for 4.17, thanks.
+You're right, I'll fix that too.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Thanks a lot.
+Laurent.
