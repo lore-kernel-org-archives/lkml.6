@@ -1,203 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752811AbeC1Jwz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 05:52:55 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38931 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752670AbeC1Jv6 (ORCPT
+        id S1752701AbeC1J4E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 05:56:04 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:42823 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752297AbeC1J4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 05:51:58 -0400
-X-Google-Smtp-Source: AIpwx4/Pfcp6jVav6lD3OUPeSFVijq8jcBhBEn6bdC7wL7Xswt20pNzgohw6zTPH1UgpBqOaOglwAA==
-From: Thierry Escande <thierry.escande@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 1/3] arm64: dts: apq8096-db820c: enable bluetooth node
-Date: Wed, 28 Mar 2018 11:51:31 +0200
-Message-Id: <20180328095133.14343-2-thierry.escande@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180328095133.14343-1-thierry.escande@linaro.org>
-References: <20180328095133.14343-1-thierry.escande@linaro.org>
+        Wed, 28 Mar 2018 05:56:01 -0400
+X-Google-Smtp-Source: AG47ELuipAlNr1KgJSDh4sDzqp9FRE7ujleYKoDhJiHPILLZUMpfb9a2/mTyACw/253YVtw2J4VFDgEV08oF+T+9Wdf0uX5be4qV
 MIME-Version: 1.0
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
+Date: Wed, 28 Mar 2018 02:56:01 -0700
+In-Reply-To: <001a113f2be0b4b0ad0567464413@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b4f5de0568760341@google.com>
+Subject: Re: INFO: task hung in ucma_destroy_id
+From: syzbot <syzbot+449737930e1faf08523e@syzkaller.appspotmail.com>
+To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
+        ira.weiny@intel.com, jgg@ziepe.ca, leonro@mellanox.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        parav@mellanox.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new serial node for the Qualcomm BT controller QCA6174. This
-allows automatic probing and hci registration through the serdev
-framework instead of relying on the userspace helpers.
+syzbot has found reproducer for the following crash on upstream commit
+3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
+Linux 4.16-rc7
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=449737930e1faf08523e
 
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
----
+So far this crash happened 38 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6522989826801664
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=4513717152645120
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6625862883475456
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
+compiler: gcc (GCC) 7.1.1 20170620
 
-v6
-- Move gpio properties into pinconf subnode
-- move pinmux properties into mux and config subnodes
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+449737930e1faf08523e@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed.
 
-v5:
-- Rename 'bt-disable-n' gpio as 'enable'
+INFO: task syzkaller681645:4295 blocked for more than 120 seconds.
+       Not tainted 4.16.0-rc7+ #3
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syzkaller681645 D20744  4295   4293 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:2862 [inline]
+  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
+  schedule+0xf5/0x430 kernel/sched/core.c:3499
+  schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
+  do_wait_for_common kernel/sched/completion.c:86 [inline]
+  __wait_for_common kernel/sched/completion.c:107 [inline]
+  wait_for_common kernel/sched/completion.c:118 [inline]
+  wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
+  ucma_destroy_id+0x2f0/0x500 drivers/infiniband/core/ucma.c:611
+  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
+  __vfs_write+0xef/0x970 fs/read_write.c:480
+  vfs_write+0x189/0x510 fs/read_write.c:544
+  SYSC_write fs/read_write.c:589 [inline]
+  SyS_write+0xef/0x220 fs/read_write.c:581
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x440719
+RSP: 002b:00007ffc7e451f28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007ffc7e451f50 RCX: 0000000000440719
+RDX: 0000000000000018 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffc7e451fa0 R09: 00007ffc7e451fa0
+R10: 00007ffc7e451fa0 R11: 0000000000000246 R12: 0000000000402040
+R13: 00000000004020d0 R14: 0000000000000000 R15: 0000000000000000
 
-v4: no change
-v3: no change
+Showing all locks held in the system:
+2 locks held by khungtaskd/868:
+  #0:  (rcu_read_lock){....}, at: [<00000000dbcbeec6>]  
+check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+  #0:  (rcu_read_lock){....}, at: [<00000000dbcbeec6>] watchdog+0x1c5/0xd60  
+kernel/hung_task.c:249
+  #1:  (tasklist_lock){.+.+}, at: [<000000003f35a062>]  
+debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
+1 lock held by rsyslogd/4176:
+  #0:  (&f->f_pos_lock){+.+.}, at: [<00000000337d089e>]  
+__fdget_pos+0x12b/0x190 fs/file.c:765
+2 locks held by getty/4266:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4267:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4268:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4269:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4270:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4271:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4272:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
 
-v2:
-- Fix author email
+=============================================
 
- arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  | 26 +++++++++++++++++
- .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    | 21 ++++++++++++++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       | 33 ++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 10 +++++++
- 4 files changed, 90 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
-index 24552f19b3fa..6a573875d45a 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi
-@@ -36,4 +36,30 @@
- 			drive-strength = <2>;	/* 2 MA */
- 		};
- 	};
-+
-+	blsp1_uart1_default: blsp1_uart1_default {
-+		mux {
-+			pins = "gpio41", "gpio42", "gpio43", "gpio44";
-+			function = "blsp_uart2";
-+		};
-+
-+		config {
-+			pins = "gpio41", "gpio42", "gpio43", "gpio44";
-+			drive-strength = <16>;
-+			bias-disable;
-+		};
-+	};
-+
-+	blsp1_uart1_sleep: blsp1_uart1_sleep {
-+		mux {
-+			pins = "gpio41", "gpio42", "gpio43", "gpio44";
-+			function = "gpio";
-+		};
-+
-+		config {
-+			pins = "gpio41", "gpio42", "gpio43", "gpio44";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+	};
- };
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-index 59b29ddfb6e9..0a8cf7e5974f 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-@@ -26,6 +26,27 @@
- 		};
- 	};
- 
-+	divclk4_pin_a: divclk4 {
-+		pinconf {
-+			pins = "gpio18";
-+			function = PMIC_GPIO_FUNC_FUNC2;
-+
-+			bias-disable;
-+			power-source = <PM8994_GPIO_S4>;
-+		};
-+	};
-+
-+	bt_en_pin_a: bt-en-active {
-+		pinconf {
-+			pins = "gpio19";
-+			function = PMIC_GPIO_FUNC_NORMAL;
-+
-+			output-low;
-+			power-source = <PM8994_GPIO_S4>; // 1.8V
-+			qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
-+		};
-+	};
-+
- 	usb3_vbus_det_gpio: pm8996_gpio22 {
- 		pinconf {
- 			pins = "gpio22";
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index 1c8f1b86472d..8b3bcdf0d718 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -23,6 +23,7 @@
- 	aliases {
- 		serial0 = &blsp2_uart1;
- 		serial1 = &blsp2_uart2;
-+		serial2 = &blsp1_uart1;
- 		i2c0	= &blsp1_i2c2;
- 		i2c1	= &blsp2_i2c1;
- 		i2c2	= &blsp2_i2c0;
-@@ -34,7 +35,39 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	clocks {
-+		divclk4: divclk4 {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+			clock-output-names = "divclk4";
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&divclk4_pin_a>;
-+		};
-+	};
-+
- 	soc {
-+		serial@7570000 {
-+			label = "BT-UART";
-+			status = "okay";
-+			pinctrl-names = "default", "sleep";
-+			pinctrl-0 = <&blsp1_uart1_default>;
-+			pinctrl-1 = <&blsp1_uart1_sleep>;
-+
-+			bluetooth {
-+				compatible = "qcom,qca6174-bt";
-+
-+				/* bt_disable_n gpio */
-+				enable-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
-+
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&bt_en_pin_a>;
-+
-+				clocks = <&divclk4>;
-+			};
-+		};
-+
- 		serial@75b0000 {
- 			label = "LS-UART1";
- 			status = "okay";
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 0a6f7952bbb1..2d54a86a027f 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -408,6 +408,16 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		blsp1_uart1: serial@7570000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x07570000 0x1000>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+
- 		blsp1_spi0: spi@7575000 {
- 			compatible = "qcom,spi-qup-v2.2.1";
- 			reg = <0x07575000 0x600>;
--- 
-2.14.1
+NMI backtrace for cpu 0
+CPU: 0 PID: 868 Comm: khungtaskd Not tainted 4.16.0-rc7+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+  check_hung_task kernel/hung_task.c:132 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
+  watchdog+0x90c/0xd60 kernel/hung_task.c:249
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x6/0x10  
+arch/x86/include/asm/irqflags.h:54
