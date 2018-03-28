@@ -1,57 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752715AbeC1H1I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:27:08 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42435 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752682AbeC1H1E (ORCPT
+        id S1752758AbeC1H1V (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:27:21 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45192 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752716AbeC1H1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:27:04 -0400
-X-Google-Smtp-Source: AIpwx49MooDktwvGAuUwNUYljOX1nVkZr008xuNqjWyX0fwYWbXSr00GqF7AXUlKRioX/ZdT8Znlsg==
-Date: Wed, 28 Mar 2018 10:26:57 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: register filesystem last
-Message-ID: <20180328072657.GA2063@avx2>
-References: <20180309222709.GA3843@avx2>
- <20180309144938.d308e0bf98fb6b5bbcb82189@linux-foundation.org>
- <20180310000634.GA12443@avx2>
- <20180328044823.GT30522@ZenIV.linux.org.uk>
+        Wed, 28 Mar 2018 03:27:18 -0400
+X-Google-Smtp-Source: AIpwx4/GL/mchH9OSJ6qaRAGsJ4mguW+VivceCoI/tWgrDV1UZD16A4QzIYmymO1tGZ0MkLDmUtH7d3HhIIPAXNrOwg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180328044823.GT30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180327193323.Horde.S-Hqc40p7JjEsZPPEa3YNg1@messagerie.si.c-s.fr>
+References: <20180322202007.23088-1-malat@debian.org> <20180322202007.23088-15-malat@debian.org>
+ <97df68d1-d4fe-bf8e-7852-9b418eec042f@c-s.fr> <CA+7wUsxVW1a2yvyhYv=YFNV1VEQCcro5JDN1RewghVaHDq5znw@mail.gmail.com>
+ <20180324211020.Horde.kEO4b3mHPV88FKM0OiRT0Q1@messagerie.si.c-s.fr>
+ <CA+7wUszsJUJJeb+xhzjGr8YxDt-BYruBwda7Dq-nFfyt0sU0ew@mail.gmail.com>
+ <20180327175806.Horde.f26UMak3wqEtNtiMmJy51w2@messagerie.si.c-s.fr> <20180327193323.Horde.S-Hqc40p7JjEsZPPEa3YNg1@messagerie.si.c-s.fr>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed, 28 Mar 2018 09:26:56 +0200
+X-Google-Sender-Auth: vysk5OJB65xog8lOtYAX7jkTjHI
+Message-ID: <CA+7wUsz-ihu7aoE4UfVhojDjH0pcR8QbVGLCzMyA3RocLJz5-A@mail.gmail.com>
+Subject: Re: [PATCH 14/19] powerpc/altivec: Add missing prototypes for altivec
+To: LEROY Christophe <christophe.leroy@c-s.fr>
+Cc: kvm-ppc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2S7RP9q026788
 
-On Wed, Mar 28, 2018 at 05:48:23AM +0100, Al Viro wrote:
-> On Sat, Mar 10, 2018 at 03:06:34AM +0300, Alexey Dobriyan wrote:
-> > On Fri, Mar 09, 2018 at 02:49:38PM -0800, Andrew Morton wrote:
-> > > On Sat, 10 Mar 2018 01:27:09 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > > 
-> > > > As soon as register_filesystem() exits, filesystem can be mounted.
-> > > > It is better to present fully operational /proc.
-> > > > 
-> > > > Of course it doesn't matter because /proc is not modular
-> > > > but do it anyway.
-> > > > 
-> > > > Drop error check, it should be handled by panicking.
-> > > 
-> > > So... shouldn't we add a call to panic()?
-> > 
-> > via FS_PANIC flag, yes. I have a patch somewhere.
-> > There are 104 filesystems ATM, some internal, some not.
-> > Some modular, some not.
-> 
-> You do realize that the only case when register_filesystem() fails is
-> "another driver has already registered filesystem type with the same
-> name"?  Is there *ever* a case when
-> 	* you could expect that to happen and
-> 	* panic would be a sane response?
+On Tue, Mar 27, 2018 at 7:33 PM, LEROY Christophe
+<christophe.leroy@c-s.fr> wrote:
+> LEROY Christophe <christophe.leroy@c-s.fr> a écrit :
+>
+>
+>> Mathieu Malaterre <malat@debian.org> a écrit :
+>>
+>>> Christophe,
+>>>
+>>> On Sat, Mar 24, 2018 at 9:10 PM, LEROY Christophe
+>>> <christophe.leroy@c-s.fr> wrote:
+>>>>
+>>>> Mathieu Malaterre <malat@debian.org> a écrit :
+>>>>
+>>>>
+>>>>> On Fri, Mar 23, 2018 at 1:19 PM, christophe leroy
+>>>>> <christophe.leroy@c-s.fr> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> Some functions prototypes were missing for the non-altivec code. Add
+>>>>>>> the
+>>>>>>> missing prototypes directly in xor_vmx, fix warnings treated as
+>>>>>>> errors
+>>>>>>> with
+>>>>>>> W=1:
+>>>>>>>
+>>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype
+>>>>>>> for
+>>>>>>> ‘xor_altivec_2’ [-Werror=missing-prototypes]
+>>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype
+>>>>>>> for
+>>>>>>> ‘xor_altivec_3’ [-Werror=missing-prototypes]
+>>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype
+>>>>>>> for
+>>>>>>> ‘xor_altivec_4’ [-Werror=missing-prototypes]
+>>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype
+>>>>>>> for
+>>>>>>> ‘xor_altivec_5’ [-Werror=missing-prototypes]
+>>>>>>>
+>>>>>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>>>>>>> ---
+>>>>>>>  arch/powerpc/lib/xor_vmx.h | 14 ++++++++++++++
+>>>>>>>  1 file changed, 14 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/arch/powerpc/lib/xor_vmx.h b/arch/powerpc/lib/xor_vmx.h
+>>>>>>> index 5c2b0839b179..2173e3c84151 100644
+>>>>>>> --- a/arch/powerpc/lib/xor_vmx.h
+>>>>>>> +++ b/arch/powerpc/lib/xor_vmx.h
+>>>>>>> @@ -19,3 +19,17 @@ void __xor_altivec_4(unsigned long bytes, unsigned
+>>>>>>> long
+>>>>>>> *v1_in,
+>>>>>>>  void __xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
+>>>>>>>                             unsigned long *v2_in, unsigned long
+>>>>>>> *v3_in,
+>>>>>>>                             unsigned long *v4_in, unsigned long
+>>>>>>> *v5_in);
+>>>>>>> +
+>>>>>>> +void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
+>>>>>>> +                            unsigned long *v2_in);
+>>>>>>> +
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Only used in one place, should be static instead of adding it in a .h
+>>>>>>
+>>>>>> Same for the other ones.
+>>>>>
+>>>>>
+>>>>>
+>>>>> $ git grep xor_altivec_2
+>>>>> [...]
+>>>>> arch/powerpc/lib/xor_vmx_glue.c:EXPORT_SYMBOL(xor_altivec_2);
+>>>>>
+>>>>> Are you sure I can change this function to static ?
+>>>>
+>>>>
+>>>>
+>>>> Yes you are right.  But in fact those fonctions are already defined in
+>>>> asm/xor. h
+>>>> So you just need to add the missing #include
+>>>
+>>>
+>>> I originally tried it, but this leads to:
+>>>
+>>>  CC      arch/powerpc/lib/xor_vmx_glue.o
+>>> In file included from arch/powerpc/lib/xor_vmx_glue.c:16:0:
+>>> ./arch/powerpc/include/asm/xor.h:39:15: error: variable
+>>> ‘xor_block_altivec’ has initializer but incomplete type
+>>> static struct xor_block_template xor_block_altivec = {
+>>>               ^~~~~~~~~~~~~~~~~~
+>>> ./arch/powerpc/include/asm/xor.h:40:2: error: unknown field ‘name’
+>>> specified in initializer
+>>>  .name = "altivec",
+>>>  ^
+>>> [...]
+>>>
+>>> The file <asm/xor.h> (powerpc) is pretty much expected to be included
+>>> after <include/linux/raid/xor.h>.
+>>>
+>>> I did not want to tweak <asm/xor.h> to test for #ifdef _XOR_H just before
+>>>
+>>> #ifdef _XOR_H
+>>> static struct xor_block_template xor_block_altivec = {
+>>> [...]
+>>>
+>>> since this seems like a hack to me.
+>>>
+>>> Is this ok to test for #ifdef _XOR_H in <arch/powerpc/include/asm/xor.h>
+>>> ?
+>>
+>>
+>> What about including linux/raid/xor.h in asm/xor.h ?
 
-It is for standartizing all those error checks in init sequence by
-removing them. Modules won't have FS_PANIC.
+This leads to:
+
+  CALL    ../arch/powerpc/kernel/systbl_chk.sh
+In file included from ../arch/powerpc/include/asm/xor.h:57:0,
+                 from ../arch/powerpc/lib/xor_vmx_glue.c:17:
+../include/asm-generic/xor.h:688:34: error: ‘xor_block_32regs’ defined
+but not used [-Werror=unused-variable]
+ static struct xor_block_template xor_block_32regs = {
+                                  ^~~~~~~~~~~~~~~~
+../include/asm-generic/xor.h:680:34: error: ‘xor_block_8regs’ defined
+but not used [-Werror=unused-variable]
+ static struct xor_block_template xor_block_8regs = {
+                                  ^~~~~~~~~~~~~~~
+In file included from ../arch/powerpc/lib/xor_vmx_glue.c:17:0:
+../arch/powerpc/include/asm/xor.h:39:34: error: ‘xor_block_altivec’
+defined but not used [-Werror=unused-variable]
+ static struct xor_block_template xor_block_altivec = {
+                                  ^~~~~~~~~~~~~~~~~
+  CALL    ../arch/powerpc/kernel/prom_init_check.sh
+
+
+>
+> Or better: including linux/raid/xor.h then asm/xor.h in xor_vmx_glue.c ?
+>
+> Christophe
+>
+>>
+>> Christophe
+>>>
+>>>
+>>>> Christophe
+>>>>
+>>>>
+>>>>>
+>>>>>> Christophe
+>>>>>>
+>>>>>>
+>>>>>>> +void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
+>>>>>>> +                            unsigned long *v2_in, unsigned long
+>>>>>>> *v3_in);
+>>>>>>> +
+>>>>>>> +void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
+>>>>>>> +                            unsigned long *v2_in, unsigned long
+>>>>>>> *v3_in,
+>>>>>>> +                            unsigned long *v4_in);
+>>>>>>> +
+>>>>>>> +void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
+>>>>>>> +                            unsigned long *v2_in, unsigned long
+>>>>>>> *v3_in,
+>>>>>>> +                            unsigned long *v4_in, unsigned long
+>>>>>>> *v5_in);
+>>>>>>>
+>>>>>>
+>>>>>> ---
+>>>>>> L'absence de virus dans ce courrier électronique a été vérifiée par le
+>>>>>> logiciel antivirus Avast.
+>>>>>> https://www.avast.com/antivirus
+>>>>>>
+>>>>
+>>>>
+>
+>
