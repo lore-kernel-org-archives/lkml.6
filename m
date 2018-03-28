@@ -1,87 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752839AbeC1CHe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 22:07:34 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44620 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752618AbeC1CHD (ORCPT
+        id S1752842AbeC1CJF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 22:09:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57466 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752492AbeC1CJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 22:07:03 -0400
-X-Google-Smtp-Source: AIpwx48GGNANmPe5lEZ8ROsdYnmVsUFv+Uaw0XUE4vzQ6ol/03kX3rp0Og1k76m7WHiYWBh6Z0CgsA==
-From: Rob Herring <robh@kernel.org>
-To: Michal Simek <monstr@monstr.eu>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] microblaze: remove unnecessary prom.h includes
-Date: Tue, 27 Mar 2018 21:06:58 -0500
-Message-Id: <20180328020700.17050-2-robh@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180328020700.17050-1-robh@kernel.org>
-References: <20180328020700.17050-1-robh@kernel.org>
+        Tue, 27 Mar 2018 22:09:03 -0400
+Date: Wed, 28 Mar 2018 10:08:45 +0800
+From: Mark Brown <broonie@kernel.org>
+To: David Collins <collinsd@codeaurora.org>
+Cc: Doug Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>, sboyd@kernel.org,
+        ilina@codeaurora.org
+Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180328020845.GB29099@sirena.org.uk>
+References: <cover.1521246069.git.collinsd@codeaurora.org>
+ <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
+ <CAD=FV=Xz01ra=WS--vtA+dkb1H8wcw3UnFzXPS=zYWAQCPP5eg@mail.gmail.com>
+ <184378e4-caf8-6ce3-e089-3690588fcb28@codeaurora.org>
+ <CAD=FV=WsVDDaV-mMUvQWUomyBFCJZunKiyDt_K81_syoNhGRZQ@mail.gmail.com>
+ <20180327115606.GC29239@sirena.org.uk>
+ <172d1da4-bde0-1f0c-b907-5582c31c8156@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
+Content-Disposition: inline
+In-Reply-To: <172d1da4-bde0-1f0c-b907-5582c31c8156@codeaurora.org>
+X-Cookie: Turn the other cheek.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to remove prom.h, remove unnecessary prom.h includes.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Michal Simek <monstr@monstr.eu>
----
-v2: no change
+--dTy3Mrz/UPE2dbVg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- arch/microblaze/include/asm/cpuinfo.h | 2 +-
- arch/microblaze/include/asm/pci.h     | 1 -
- arch/microblaze/kernel/platform.c     | 1 -
- arch/microblaze/pci/indirect_pci.c    | 1 -
- 4 files changed, 1 insertion(+), 4 deletions(-)
+On Tue, Mar 27, 2018 at 04:38:07PM -0700, David Collins wrote:
+> On 03/27/2018 04:56 AM, Mark Brown wrote:
 
-diff --git a/arch/microblaze/include/asm/cpuinfo.h b/arch/microblaze/include/asm/cpuinfo.h
-index 3337417fcdca..8f4996730552 100644
---- a/arch/microblaze/include/asm/cpuinfo.h
-+++ b/arch/microblaze/include/asm/cpuinfo.h
-@@ -13,7 +13,7 @@
- #ifndef _ASM_MICROBLAZE_CPUINFO_H
- #define _ASM_MICROBLAZE_CPUINFO_H
- 
--#include <asm/prom.h>
-+#include <linux/of.h>
- 
- /* CPU Version and FPGA Family code conversion table type */
- struct cpu_ver_key {
-diff --git a/arch/microblaze/include/asm/pci.h b/arch/microblaze/include/asm/pci.h
-index 114b93488193..c1ee76d30aed 100644
---- a/arch/microblaze/include/asm/pci.h
-+++ b/arch/microblaze/include/asm/pci.h
-@@ -19,7 +19,6 @@
- #include <linux/scatterlist.h>
- 
- #include <asm/io.h>
--#include <asm/prom.h>
- #include <asm/pci-bridge.h>
- 
- #define PCIBIOS_MIN_IO		0x1000
-diff --git a/arch/microblaze/kernel/platform.c b/arch/microblaze/kernel/platform.c
-index b9529caa507a..2540d60610d9 100644
---- a/arch/microblaze/kernel/platform.c
-+++ b/arch/microblaze/kernel/platform.c
-@@ -12,7 +12,6 @@
- 
- #include <linux/init.h>
- #include <linux/of_platform.h>
--#include <asm/prom.h>
- #include <asm/setup.h>
- 
- static struct of_device_id xilinx_of_bus_ids[] __initdata = {
-diff --git a/arch/microblaze/pci/indirect_pci.c b/arch/microblaze/pci/indirect_pci.c
-index ae4fca46c9f6..24030837a425 100644
---- a/arch/microblaze/pci/indirect_pci.c
-+++ b/arch/microblaze/pci/indirect_pci.c
-@@ -16,7 +16,6 @@
- #include <linux/init.h>
- 
- #include <linux/io.h>
--#include <asm/prom.h>
- #include <asm/pci-bridge.h>
- 
- static int
--- 
-2.14.1
+> > I didn't spot this in the code but something called "device tree mode"
+> > sounds like it's going to be awfully confusing...
+
+> As I explained in the earlier email, it makes the device tree
+> configurations much simpler and less confusing/error prone.  I'd like to
+> keep this concept around unless their are strong objections.
+
+Like I say I didn't spot this in the code, I did give it a brief once
+over but as Doug had spotted such extensive problems I was expecting a
+resend.  It *is* setting off big alarm bells though, in general if your
+individual driver is doing something weird to make life easier that's a
+sign that it's doing things at the wrong level.
+
+--dTy3Mrz/UPE2dbVg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlq6+SwACgkQJNaLcl1U
+h9C+SAf/Xk5fE40iWdnaUAqxbdfK4umBb0ItVeFUEAEC5DU7mZmPPr9R+Ziqog80
+V7Kjb7qmjamPSeATF/ShzlEusjGwihXp1V8/M3Tov5Tc9pTAgFWU/2FrasWGAmXs
+upINCPMZDk7qmBfqb46sFYZd5FL8HSjr0cI4m7xWZKBQMIjRkWrt7S32USdKikiI
+6m8fXobyddNS4D9d0OfySaE7/IeOE6KqkcNvWARGrPUdnB5SjbxK5hSLIIauXE2D
+kNwPWhvGCwLABbmn97g58d2il3JtKCqS9Casek28B568yp+VWYkWRzrhdlQVjv3y
+z1S5aAniKXr6/AZdi2ti3eBV+V5Qpg==
+=rd+x
+-----END PGP SIGNATURE-----
+
+--dTy3Mrz/UPE2dbVg--
