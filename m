@@ -1,143 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753020AbeC1Tfo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 15:35:44 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41487 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752377AbeC1Tfn (ORCPT
+        id S1753290AbeC1Tf7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 15:35:59 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41918 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753032AbeC1Tf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:35:43 -0400
-X-Google-Smtp-Source: AIpwx4/PhsBzyqrFs1Mv6OnL2EthtkhE53ECdje58MEIqq1nT+4j/q8bWMIMfzvPzNTnCYNSJWRm14k5v+01+RePziA=
+        Wed, 28 Mar 2018 15:35:57 -0400
+X-Google-Smtp-Source: AIpwx48KyB6TsSxjEOPbBLewoq+pbgMHU/W1D3bOcTk3U9TKkoiS25Q+JYsE2bNfTkNwBdKutTY4Cw==
+From: Mathieu Malaterre <malat@debian.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: LEROY Christophe <christophe.leroy@c-s.fr>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/19] powerpc/chrp/setup: Add attribute unused and make some functions static
+Date: Wed, 28 Mar 2018 21:35:53 +0200
+Message-Id: <20180328193553.1122-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180322202007.23088-6-malat@debian.org>
+References: <20180322202007.23088-6-malat@debian.org>
 MIME-Version: 1.0
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 28 Mar 2018 21:35:41 +0200
-X-Google-Sender-Auth: 5pfkWqy1dwlq6Y_ZANV2bU2bjQM
-Message-ID: <CAK8P3a1+PXOUYS_yEiSLMxEJPiGPbiJ7ngvvWEiD9YLaji2jtg@mail.gmail.com>
-Subject: [GIT PULL] ARM: SoC fixes for 4.16
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        arm-soc <arm@kernel.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>, Tony Lindgren <tony@atomide.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
+Remove variable declaration idu_size and associated code since not used.
 
-  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
+These functions can all be static, make it so. Fix warnings treated as
+errors with W=1:
 
-are available in the git repository at:
+  arch/powerpc/platforms/chrp/setup.c:97:6: error: no previous prototype for ‘chrp_show_cpuinfo’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/setup.c:302:13: error: no previous prototype for ‘chrp_setup_arch’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/setup.c:385:16: error: variable ‘idu_size’ set but not used [-Werror=unused-but-set-variable]
+  arch/powerpc/platforms/chrp/setup.c:526:13: error: no previous prototype for ‘chrp_init_IRQ’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/setup.c:559:1: error: no previous prototype for ‘chrp_init2’ [-Werror=missing-prototypes]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
-tags/armsoc-fixes
+Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+v2: Remove totally variable idu_size
+ arch/powerpc/platforms/chrp/setup.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-for you to fetch changes up to bbad2093dfa76f4c3dcc8ab6b89249affe72f851:
-
-  Merge tag 'sunxi-fixes-for-4.16' of
-ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into
-fixes (2018-03-27 13:12:10 +0200)
-
-----------------------------------------------------------------
-ARM: SoC fixes for 4.16
-
-Here are are a couple of last-minute fixes for 4.16, mostly for
-regressions. As usual, the majority are device tree changes:
-
-- USB 3 support on rk3399 didn't work and is being reverted for now
-
-- One fix for an old suspend/resume bug on rk3399
-
-- A few regulator related fixes on Banana Pi M2, and on imx7d-sdb
-
-- A boot regression fix for all Aspeed SoCs failing to find
-  their memory
-
-- One more dtc warning fix
-
-The other changes are:
-
-- A few updates to the MAINTAINERS file
-
-- A revert for an incorrect orion5x cleanup
-
-- Two power management fixes for OMAP
-
-----------------------------------------------------------------
-Arnd Bergmann (8):
-      Merge tag 'imx-fixes-4.16-2' of
-ssh://gitolite.kernel.org/.../shawnguo/linux into fixes
-      Merge tag 'davinci-fixes-for-v4.16' of
-ssh://gitolite.kernel.org/.../nsekhar/linux-davinci into fixes
-      Merge tag 'mvebu-fixes-4.16-2' of
-git://git.infradead.org/linux-mvebu into fixes
-      Merge tag 'v4.16-rockchip-dts32fixes-2' of
-ssh://gitolite.kernel.org/.../mmind/linux-rockchip into fixes
-      Merge tag 'v4.16-rockchip-dts64fixes-2' of
-ssh://gitolite.kernel.org/.../mmind/linux-rockchip into fixes
-      Merge tag 'tegra-for-4.17-misc' of
-ssh://gitolite.kernel.org/.../tegra/linux into fixes
-      Merge tag 'omap-for-v4.16/sram-fix-signed' of
-ssh://gitolite.kernel.org/.../tmlind/linux-omap into fixes
-      Merge tag 'sunxi-fixes-for-4.16' of
-ssh://gitolite.kernel.org/.../sunxi/linux into fixes
-
-Bartosz Golaszewski (1):
-      ARM: davinci: fix the GPIO lookup for omapl138-hawk
-
-Douglas Anderson (1):
-      arm64: dts: rockchip: Fix rk3399-gru-* s2r (pinctrl hogs, wifi reset)
-
-Gregory CLEMENT (1):
-      mailmap: Update email address for Gregory CLEMENT
-
-Heiko Stuebner (1):
-      Revert "arm64: dts: rockchip: add usb3-phy otg-port support for rk3399"
-
-Joel Stanley (1):
-      ARM: dts: aspeed: Add default memory node
-
-Jon Hunter (1):
-      MAINTAINERS: Update Tegra IOMMU maintainer
-
-Leonard Crestez (1):
-      ARM: dts: imx7d-sdb: Fix regulator-usb-otg2-vbus node name
-
-Linus Walleij (1):
-      ARM: ux500: Fix PMU IRQ regression
-
-Maxime Ripard (1):
-      MAINTAINERS: update email address for Maxime Ripard
-
-Philipp Rossak (2):
-      ARM: dts: sun6i: a31s: bpi-m2: improve pmic properties
-      ARM: dts: sun6i: a31s: bpi-m2: add missing regulators
-
-Rob Herring (1):
-      ARM: dts: rockchip: Add missing #sound-dai-cells on rk3288
-
-Tony Lindgren (2):
-      ARM: OMAP: Fix dmtimer init for omap1
-      ARM: OMAP: Fix SRAM W+X mapping
-
- .mailmap                                         |  1 +
- MAINTAINERS                                      |  7 ++++---
- arch/arm/boot/dts/aspeed-g4.dtsi                 |  5 +++++
- arch/arm/boot/dts/aspeed-g5.dtsi                 |  5 +++++
- arch/arm/boot/dts/imx7d-sdb.dts                  |  2 +-
- arch/arm/boot/dts/rk3288.dtsi                    |  2 ++
- arch/arm/boot/dts/sun6i-a31s-sinovoip-bpi-m2.dts | 63
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
- arch/arm/mach-davinci/board-omapl138-hawk.c      |  4 ++--
- arch/arm/mach-ux500/cpu-db8500.c                 |  3 +++
- arch/arm/plat-omap/dmtimer.c                     |  7 ++-----
- arch/arm/plat-omap/include/plat/sram.h           | 11 +----------
- arch/arm/plat-omap/sram.c                        | 36
-+++++++++++++++++++++++++++++++++++-
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi     | 16 +++-------------
- arch/arm64/boot/dts/rockchip/rk3399.dtsi         |  8 ++++----
- 14 files changed, 128 insertions(+), 42 deletions(-)
+diff --git a/arch/powerpc/platforms/chrp/setup.c b/arch/powerpc/platforms/chrp/setup.c
+index 481ed133e04b..d6d8ffc0271e 100644
+--- a/arch/powerpc/platforms/chrp/setup.c
++++ b/arch/powerpc/platforms/chrp/setup.c
+@@ -94,7 +94,7 @@ static const char *chrp_names[] = {
+ 	"Total Impact Briq"
+ };
+ 
+-void chrp_show_cpuinfo(struct seq_file *m)
++static void chrp_show_cpuinfo(struct seq_file *m)
+ {
+ 	int i, sdramen;
+ 	unsigned int t;
+@@ -299,7 +299,7 @@ static __init void chrp_init(void)
+ 	of_node_put(node);
+ }
+ 
+-void __init chrp_setup_arch(void)
++static void __init chrp_setup_arch(void)
+ {
+ 	struct device_node *root = of_find_node_by_path("/");
+ 	const char *machine = NULL;
+@@ -382,7 +382,7 @@ static void __init chrp_find_openpic(void)
+ {
+ 	struct device_node *np, *root;
+ 	int len, i, j;
+-	int isu_size, idu_size;
++	int isu_size;
+ 	const unsigned int *iranges, *opprop = NULL;
+ 	int oplen = 0;
+ 	unsigned long opaddr;
+@@ -427,11 +427,9 @@ static void __init chrp_find_openpic(void)
+ 	}
+ 
+ 	isu_size = 0;
+-	idu_size = 0;
+ 	if (len > 0 && iranges[1] != 0) {
+ 		printk(KERN_INFO "OpenPIC irqs %d..%d in IDU\n",
+ 		       iranges[0], iranges[0] + iranges[1] - 1);
+-		idu_size = iranges[1];
+ 	}
+ 	if (len > 1)
+ 		isu_size = iranges[3];
+@@ -523,7 +521,7 @@ static void __init chrp_find_8259(void)
+ 	}
+ }
+ 
+-void __init chrp_init_IRQ(void)
++static void __init chrp_init_IRQ(void)
+ {
+ #if defined(CONFIG_VT) && defined(CONFIG_INPUT_ADBHID) && defined(CONFIG_XMON)
+ 	struct device_node *kbd;
+@@ -555,7 +553,7 @@ void __init chrp_init_IRQ(void)
+ #endif
+ }
+ 
+-void __init
++static void __init
+ chrp_init2(void)
+ {
+ #ifdef CONFIG_NVRAM
+-- 
+2.11.0
