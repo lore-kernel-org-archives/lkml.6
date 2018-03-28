@@ -1,104 +1,536 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753443AbeC1UBz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 16:01:55 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:36910 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeC1UBy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 16:01:54 -0400
-Subject: Re: [PATCH] ipc/shm: Fix pid freeing.
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Cc: LKP <lkp@01.org>, wfg@linux.intel.com,
-        kernel test robot <fengguang.wu@intel.com>
-References: <5abb446e.XtEK088UbWSHCPaF%fengguang.wu@intel.com>
- <877epwavh4.fsf@xmission.com>
-From: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-Message-ID: <01161396-25cb-2da4-344b-4ea4ca27b373@oracle.com>
-Date: Wed, 28 Mar 2018 12:57:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1753501AbeC1UE2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 16:04:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753012AbeC1UEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 16:04:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0FD9217D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AIpwx4+pEdx8ZEumePBl4S8cD9RcUzn04jCJvoAKlITmGUMmnF4Xxd2cqL4dOpNzwGngQdL6kpCt/8bTZodfZsFjJRw=
 MIME-Version: 1.0
-In-Reply-To: <877epwavh4.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8846 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803280196
+In-Reply-To: <CANk1AXRAXQ8cURb+ObS5SpaBKQLdoFFB6nmLTnmA1gQowmoVbw@mail.gmail.com>
+References: <1521808032-29645-1-git-send-email-p.pisati@gmail.com>
+ <1521808032-29645-3-git-send-email-p.pisati@gmail.com> <CANk1AXRAXQ8cURb+ObS5SpaBKQLdoFFB6nmLTnmA1gQowmoVbw@mail.gmail.com>
+From: Alan Tull <atull@kernel.org>
+Date: Wed, 28 Mar 2018 15:03:42 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQyZdoxXnLTtwR0fkYjgdB36XABQSwdxk6eQoQJtLC80w@mail.gmail.com>
+Message-ID: <CANk1AXQyZdoxXnLTtwR0fkYjgdB36XABQSwdxk6eQoQJtLC80w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
+To: Paolo Pisati <p.pisati@gmail.com>
+Cc: Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 03/28/2018 11:47 AM, ebiederm@xmission.com wrote:
-> The 0day kernel test build report reported an oops:
->>   IP: put_pid+0x22/0x5c
->>   PGD 19efa067 P4D 19efa067 PUD 0
->>   Oops: 0000 [#1]
->>   CPU: 0 PID: 727 Comm: trinity Not tainted 4.16.0-rc2-00010-g98f929b #1
->>   RIP: 0010:put_pid+0x22/0x5c
->>   RSP: 0018:ffff986719f73e48 EFLAGS: 00010202
->>   RAX: 00000006d765f710 RBX: ffff98671a4fa4d0 RCX: ffff986719f73d40
->>   RDX: 000000006f6e6125 RSI: 0000000000000000 RDI: ffffffffa01e6d21
->>   RBP: ffffffffa0955fe0 R08: 0000000000000020 R09: 0000000000000000
->>   R10: 0000000000000078 R11: ffff986719f73e76 R12: 0000000000001000
->>   R13: 00000000ffffffea R14: 0000000054000fb0 R15: 0000000000000000
->>   FS:  00000000028c2880(0000) GS:ffffffffa06ad000(0000) knlGS:0000000000000000
->>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>   CR2: 0000000677846439 CR3: 0000000019fc1005 CR4: 00000000000606b0
->>   Call Trace:
->>    ? ipc_update_pid+0x36/0x3e
->>    ? newseg+0x34c/0x3a6
->>    ? ipcget+0x5d/0x528
->>    ? entry_SYSCALL_64_after_hwframe+0x52/0xb7
->>    ? SyS_shmget+0x5a/0x84
->>    ? do_syscall_64+0x194/0x1b3
->>    ? entry_SYSCALL_64_after_hwframe+0x42/0xb7
->>   Code: ff 05 e7 20 9b 03 58 c9 c3 48 ff 05 85 21 9b 03 48 85 ff 74 4f 8b 47 04 8b 17 48 ff 05 7c 21 9b 03 48 83 c0 03 48 c1 e0 04 ff ca <48> 8b 44 07 08 74 1f 48 ff 05 6c 21 9b 03 ff 0f 0f 94 c2 48 ff
->>   RIP: put_pid+0x22/0x5c RSP: ffff986719f73e48
->>   CR2: 0000000677846439
->>   ---[ end trace ab8c5cb4389d37c5 ]---
->>   Kernel panic - not syncing: Fatal exception
-> In newseg when changing shm_cprid and shm_lprid from pid_t to struct
-> pid* I misread the kvmalloc as kvzalloc and thought shp was
-> initialized to 0.  As that is not the case it is not safe to for the
-> error handling to address shm_cprid and shm_lprid before they are
-> initialized.
+On Wed, Mar 28, 2018 at 11:26 AM, Alan Tull <atull@kernel.org> wrote:
+> On Fri, Mar 23, 2018 at 7:27 AM, Paolo Pisati <p.pisati@gmail.com> wrote:
 >
-> Therefore move the cleanup of shm_cprid and shm_lprid from the no_file
-> error cleanup path to the no_id error cleanup path.  Ensuring that an
-> early error exit won't cause the oops above.
->
-> Reported-by:  kernel test robot <fengguang.wu@intel.com>
-> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-Thanks!
+> Hi Paolo,
 
-Reviewed-by: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-> ---
->   ipc/shm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+One more thing.  The api for registering a FPGA manager is changing.
+It won't be hard to adapt.  I've pushed a branch that includes the
+patches that add this change.  Please rebase on top of that branch so
+your patch can go in on top of that.
+
+My git repo is at:
+git://git.kernel.org/pub/scm/linux/kernel/git/atull/linux-fpga.git
+
+The branch name is
+for-review-next-20180327-drvdata-v3
+
+Alan
+
 >
-> diff --git a/ipc/shm.c b/ipc/shm.c
-> index 018db3d0e70e..35bdfe76d11b 100644
-> --- a/ipc/shm.c
-> +++ b/ipc/shm.c
-> @@ -646,12 +646,12 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
->   	return error;
->   
->   no_id:
-> +	ipc_update_pid(&shp->shm_cprid, NULL);
-> +	ipc_update_pid(&shp->shm_lprid, NULL);
->   	if (is_file_hugepages(file) && shp->mlock_user)
->   		user_shm_unlock(size, shp->mlock_user);
->   	fput(file);
->   no_file:
-> -	ipc_update_pid(&shp->shm_cprid, NULL);
-> -	ipc_update_pid(&shp->shm_lprid, NULL);
->   	call_rcu(&shp->shm_perm.rcu, shm_rcu_free);
->   	return error;
->   }
+> Looking good.  A few things below.  Also, when you post, please use
+> the '-v' parameter of 'git format-patch' to add the version to the
+> subject line such as [PATCH v9].
+>
+>> This patch adds support to the FPGA manager for programming
+>> MachXO2 device’s internal flash memory, via slave SPI.
+>>
+>> Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
+>> ---
+>>  drivers/fpga/Kconfig       |   8 +
+>>  drivers/fpga/Makefile      |   1 +
+>>  drivers/fpga/machxo2-spi.c | 388 +++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 397 insertions(+)
+>>  create mode 100644 drivers/fpga/machxo2-spi.c
+>>
+>> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+>> index ad5448f..65ccbc5 100644
+>> --- a/drivers/fpga/Kconfig
+>> +++ b/drivers/fpga/Kconfig
+>> @@ -38,6 +38,14 @@ config FPGA_MGR_ALTERA_PS_SPI
+>>           FPGA manager driver support for Altera Arria/Cyclone/Stratix
+>>           using the passive serial interface over SPI.
+>>
+>> +config FPGA_MGR_MACHXO2_SPI
+>> +       tristate "Lattice MachXO2 SPI"
+>> +       depends on SPI
+>> +       help
+>> +         FPGA manager driver support for Lattice MachXO2 configuration
+>> +         over slave SPI interface.
+>> +
+>> +
+>
+> Please move this section after FPGA_MGR_ICE40_SPI.  That keeps the two
+> lattice drivers together in the Kconfig.  You may need to rebase your
+> driver to go onto linux-next.
+>
+> Also, please delete the extra line feed above.
+>
+>>  config FPGA_MGR_SOCFPGA
+>>         tristate "Altera SOCFPGA FPGA Manager"
+>>         depends on ARCH_SOCFPGA || COMPILE_TEST
+>> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+>> index f98dcf1..38abb08 100644
+>> --- a/drivers/fpga/Makefile
+>> +++ b/drivers/fpga/Makefile
+>> @@ -10,6 +10,7 @@ obj-$(CONFIG_FPGA)                    += fpga-mgr.o
+>>  obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)      += altera-cvp.o
+>>  obj-$(CONFIG_FPGA_MGR_ALTERA_PS_SPI)   += altera-ps-spi.o
+>>  obj-$(CONFIG_FPGA_MGR_ICE40_SPI)       += ice40-spi.o
+>> +obj-$(CONFIG_FPGA_MGR_MACHXO2_SPI)     += machxo2-spi.o
+>>  obj-$(CONFIG_FPGA_MGR_SOCFPGA)         += socfpga.o
+>>  obj-$(CONFIG_FPGA_MGR_SOCFPGA_A10)     += socfpga-a10.o
+>>  obj-$(CONFIG_FPGA_MGR_TS73XX)          += ts73xx-fpga.o
+>> diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
+>> new file mode 100644
+>> index 0000000..6a5c5c7
+>> --- /dev/null
+>> +++ b/drivers/fpga/machxo2-spi.c
+>> @@ -0,0 +1,388 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>
+> The above line is good but...
+>
+>> +// Lattice MachXO2 Slave SPI Driver
+>> +//
+>> +// Manage Lattice FPGA firmware that is loaded over SPI using
+>> +// the slave serial configuration interface.
+>> +//
+>> +// Copyright (C) 2018 Paolo Pisati <p.pisati@gmail.com>
+>
+> This stuff should be as:
+> /*
+>  * some stuff
+>  * more stuff
+>  */
+>
+>> +
+>> +//#define DEBUG
+>
+> Please remove the //#define DEBUG
+>
+>> +
+>> +#include <linux/delay.h>
+>> +#include <linux/fpga/fpga-mgr.h>
+>> +#include <linux/gpio/consumer.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/spi/spi.h>
+>> +
+>> +/* MachXO2 Programming Guide - sysCONFIG Programming Commands */
+>> +#define IDCODE_PUB                     {0xe0, 0x00, 0x00, 0x00}
+>> +#define ISC_ENABLE                     {0xc6, 0x08, 0x00, 0x00}
+>> +#define ISC_ERASE                      {0x0e, 0x04, 0x00, 0x00}
+>> +#define ISC_PROGRAMDONE                {0x5e, 0x00, 0x00, 0x00}
+>> +#define LSC_INITADDRESS                {0x46, 0x00, 0x00, 0x00}
+>> +#define LSC_PROGINCRNV         {0x70, 0x00, 0x00, 0x01}
+>> +#define LSC_READ_STATUS                {0x3c, 0x00, 0x00, 0x00}
+>> +#define LSC_REFRESH                    {0x79, 0x00, 0x00, 0x00}
+>> +
+>> +/*
+>> + * Max CCLK in Slave SPI mode according to 'MachXO2 Family Data
+>> + * Sheet' sysCONFIG Port Timing Specifications (3-36)
+>> + */
+>> +#define MACHXO2_MAX_SPEED                      66000000
+>> +
+>> +#define MACHXO2_LOW_DELAY                      5               /* us */
+>
+> I'd prefer MACHXO2_LOW_DELAY_USEC so that you don't need the comment
+> here and it's clear in the rest of the driver.  Same for the next two.
+>
+>> +#define MACHXO2_HIGH_DELAY                     200             /* us */
+>> +#define MACHXO2_REFRESH                                4800    /* us */
+>> +#define MACHXO2_MAX_BUSY_LOOP          128
+>> +#define MACHXO2_MAX_REFRESH_LOOP       16
+>> +
+>> +#define MACHXO2_PAGE_SIZE                      16
+>> +#define MACHXO2_BUF_SIZE                       (MACHXO2_PAGE_SIZE + 4)
+>> +
+>> +/* Status register bits, errors and error mask */
+>> +#define BUSY   12
+>> +#define DONE   8
+>> +#define DVER   27
+>> +#define ENAB   9
+>> +#define ERRBITS        23
+>> +#define ERRMASK        7
+>> +#define FAIL   13
+>> +
+>> +#define ENOERR 0 /* no error */
+>> +#define EID            1
+>> +#define ECMD   2
+>> +#define        ECRC    3
+>> +#define EPREAM 4 /* preamble error */
+>> +#define EABRT  5 /* abort error */
+>> +#define EOVERFL 6 /* overflow error */
+>> +#define ESDMEOF 7 /* SDM EOF */
+>> +
+>> +static inline u8 get_err(unsigned long *status)
+>> +{
+>> +       return (*status >> ERRBITS) & ERRMASK;
+>> +}
+>> +
+>> +static int get_status(struct spi_device *spi, unsigned long *status)
+>> +{
+>> +       struct spi_message msg;
+>> +       struct spi_transfer rx, tx;
+>> +       static const u8 cmd[] = LSC_READ_STATUS;
+>> +       int ret;
+>> +
+>> +       memset(&rx, 0, sizeof(rx));
+>> +       memset(&tx, 0, sizeof(tx));
+>> +       tx.tx_buf = cmd;
+>> +       tx.len = sizeof(cmd);
+>> +       rx.rx_buf = status;
+>> +       rx.len = 4;
+>> +       spi_message_init(&msg);
+>> +       spi_message_add_tail(&tx, &msg);
+>> +       spi_message_add_tail(&rx, &msg);
+>> +       ret = spi_sync(spi, &msg);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       *status = be32_to_cpu(*status);
+>
+> Add a line feed before returning.
+>
+>> +       return 0;
+>> +}
+>> +
+>> +#ifdef DEBUG
+>> +static const char *get_err_string(u8 err)
+>> +{
+>> +       switch (err) {
+>> +       case ENOERR:    return "No Error";
+>> +       case EID:               return "ID ERR";
+>> +       case ECMD:              return "CMD ERR";
+>> +       case ECRC:              return "CRC ERR";
+>> +       case EPREAM:    return "Preamble ERR";
+>> +       case EABRT:             return "Abort ERR";
+>> +       case EOVERFL:   return "Overflow ERR";
+>> +       case ESDMEOF:   return "SDM EOF";
+>> +       }
+>
+> Line feed before returning
+>
+>> +       return "Default switch case";
+>> +}
+>> +#endif
+>> +
+>> +static void dump_status_reg(unsigned long *status)
+>> +{
+>> +#ifdef DEBUG
+>> +       pr_debug("machxo2 status: 0x%08lX - done=%d, cfgena=%d, busy=%d, fail=%d, devver=%d, err=%s\n",
+>> +               *status, test_bit(DONE, status), test_bit(ENAB, status),
+>> +               test_bit(BUSY, status), test_bit(FAIL, status),
+>> +               test_bit(DVER, status), get_err_string(get_err(status)));
+>
+> Please align the the 3 lines after the pr_debug to match the above parentheses.
+>
+>> +#endif
+>> +}
+>> +
+>> +static int wait_until_not_busy(struct spi_device *spi)
+>> +{
+>> +       unsigned long status;
+>> +       int ret, loop = 0;
+>> +
+>> +       do {
+>> +               ret = get_status(spi, &status);
+>> +               if (ret)
+>> +                       return ret;
+>> +               if (++loop >= MACHXO2_MAX_BUSY_LOOP)
+>> +                       return -EBUSY;
+>> +       } while (test_bit(BUSY, &status));
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int machxo2_cleanup(struct fpga_manager *mgr)
+>> +{
+>> +       struct spi_device *spi = mgr->priv;
+>> +       struct spi_message msg;
+>> +       struct spi_transfer tx[2];
+>> +       static const u8 erase[] = ISC_ERASE;
+>> +       static const u8 refresh[] = LSC_REFRESH;
+>> +       int ret;
+>> +
+>> +       memset(tx, 0, sizeof(tx));
+>> +       spi_message_init(&msg);
+>> +       tx[0].tx_buf = &erase;
+>> +       tx[0].len = sizeof(erase);
+>> +       spi_message_add_tail(&tx[0], &msg);
+>> +       ret = spi_sync(spi, &msg);
+>> +       if (ret)
+>> +               goto fail;
+>> +
+>> +       ret = wait_until_not_busy(spi);
+>> +       if (ret)
+>> +               goto fail;
+>> +
+>> +       spi_message_init(&msg);
+>> +       tx[1].tx_buf = &refresh;
+>> +       tx[1].len = sizeof(refresh);
+>> +       tx[1].delay_usecs = MACHXO2_REFRESH;
+>> +       spi_message_add_tail(&tx[1], &msg);
+>> +       ret = spi_sync(spi, &msg);
+>> +       if (ret)
+>> +               goto fail;
+>> +
+>> +       return 0;
+>> +fail:
+>> +       dev_err(&mgr->dev, "Cleanup failed\n");
+>> +       return ret;
+>> +}
+>> +
+>> +static enum fpga_mgr_states machxo2_spi_state(struct fpga_manager *mgr)
+>> +{
+>> +       return FPGA_MGR_STATE_UNKNOWN;
+>
+> If you have a way of reporting whether the FPGA is in operating state
+> or some error state, etc here, that would be nice.
+>
+>> +}
+>> +
+>> +static int machxo2_write_init(struct fpga_manager *mgr,
+>> +                             struct fpga_image_info *info,
+>> +                             const char *buf, size_t count)
+>> +{
+>> +       struct spi_device *spi = mgr->priv;
+>> +       struct spi_message msg;
+>> +       struct spi_transfer tx[3];
+>> +       static const u8 enable[] = ISC_ENABLE;
+>> +       static const u8 erase[] = ISC_ERASE;
+>> +       static const u8 initaddr[] = LSC_INITADDRESS;
+>> +       unsigned long status;
+>> +       int ret;
+>> +
+>> +       if ((info->flags & FPGA_MGR_PARTIAL_RECONFIG)) {
+>> +               dev_err(&mgr->dev,
+>> +                       "Partial reconfiguration is not supported\n");
+>> +               return -ENOTSUPP;
+>> +       }
+>> +
+>> +       get_status(spi, &status);
+>> +       dump_status_reg(&status);
+>> +       memset(tx, 0, sizeof(tx));
+>> +       spi_message_init(&msg);
+>> +       tx[0].tx_buf = &enable;
+>> +       tx[0].len = sizeof(enable);
+>> +       tx[0].delay_usecs = MACHXO2_LOW_DELAY;
+>> +       spi_message_add_tail(&tx[0], &msg);
+>> +
+>> +       tx[1].tx_buf = &erase;
+>> +       tx[1].len = sizeof(erase);
+>> +       spi_message_add_tail(&tx[1], &msg);
+>> +       ret = spi_sync(spi, &msg);
+>> +       if (ret)
+>> +               goto fail;
+>> +
+>> +       ret = wait_until_not_busy(spi);
+>> +       if (ret)
+>> +               goto fail;
+>> +
+>> +       get_status(spi, &status);
+>> +       if (test_bit(FAIL, &status))
+>> +               goto fail;
+>> +       dump_status_reg(&status);
+>> +
+>> +       spi_message_init(&msg);
+>> +       tx[2].tx_buf = &initaddr;
+>> +       tx[2].len = sizeof(initaddr);
+>> +       spi_message_add_tail(&tx[2], &msg);
+>> +       ret = spi_sync(spi, &msg);
+>> +       if (ret)
+>> +               goto fail;
+>> +
+>> +       get_status(spi, &status);
+>> +       dump_status_reg(&status);
+>> +       return 0;
+>> +fail:
+>> +       dev_err(&mgr->dev, "Error during FPGA init.\n");
+>> +       return ret;
+>> +}
+>> +
+>> +static int machxo2_write(struct fpga_manager *mgr, const char *buf,
+>> +                        size_t count)
+>> +{
+>> +       struct spi_device *spi = mgr->priv;
+>> +       struct spi_message msg;
+>> +       struct spi_transfer tx;
+>> +       static const u8 progincr[] = LSC_PROGINCRNV;
+>> +       u8 payload[MACHXO2_BUF_SIZE];
+>> +       unsigned long status;
+>> +       int i, ret;
+>> +
+>> +       if (count % MACHXO2_PAGE_SIZE != 0) {
+>> +               dev_err(&mgr->dev, "Malformed payload.\n");
+>> +               return -EINVAL;
+>> +       }
+>> +       get_status(spi, &status);
+>> +       dump_status_reg(&status);
+>> +       memcpy(payload, &progincr, sizeof(progincr));
+>> +       for (i = 0; i < count; i += MACHXO2_PAGE_SIZE) {
+>> +               memcpy(&payload[sizeof(progincr)], &buf[i], MACHXO2_PAGE_SIZE);
+>> +               memset(&tx, 0, sizeof(tx));
+>> +               spi_message_init(&msg);
+>> +               tx.tx_buf = payload;
+>> +               tx.len = MACHXO2_BUF_SIZE;
+>> +               tx.delay_usecs = MACHXO2_HIGH_DELAY;
+>> +               spi_message_add_tail(&tx, &msg);
+>> +               ret = spi_sync(spi, &msg);
+>> +               if (ret) {
+>> +                       dev_err(&mgr->dev, "Error loading the bitstream.\n");
+>> +                       return ret;
+>> +               }
+>> +       }
+>> +       get_status(spi, &status);
+>> +       dump_status_reg(&status);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int machxo2_write_complete(struct fpga_manager *mgr,
+>> +                                 struct fpga_image_info *info)
+>> +{
+>> +       struct spi_device *spi = mgr->priv;
+>> +       struct spi_message msg;
+>> +       struct spi_transfer tx[2];
+>> +       static const u8 progdone[] = ISC_PROGRAMDONE;
+>> +       static const u8 refresh[] = LSC_REFRESH;
+>> +       unsigned long status;
+>> +       int ret, refreshloop = 0;
+>> +
+>> +       memset(tx, 0, sizeof(tx));
+>> +       spi_message_init(&msg);
+>> +       tx[0].tx_buf = &progdone;
+>> +       tx[0].len = sizeof(progdone);
+>> +       spi_message_add_tail(&tx[0], &msg);
+>> +       ret = spi_sync(spi, &msg);
+>> +       if (ret)
+>> +               goto fail;
+>> +       ret = wait_until_not_busy(spi);
+>> +       if (ret)
+>> +               goto fail;
+>> +
+>> +       get_status(spi, &status);
+>> +       dump_status_reg(&status);
+>> +       if (!test_bit(DONE, &status)) {
+>> +               machxo2_cleanup(mgr);
+>> +               goto fail;
+>> +       }
+>> +
+>> +       do {
+>> +               spi_message_init(&msg);
+>> +               tx[1].tx_buf = &refresh;
+>> +               tx[1].len = sizeof(refresh);
+>> +               tx[1].delay_usecs = MACHXO2_REFRESH;
+>> +               spi_message_add_tail(&tx[1], &msg);
+>> +               ret = spi_sync(spi, &msg);
+>> +               if (ret)
+>> +                       goto fail;
+>> +
+>> +               /* check refresh status */
+>> +               get_status(spi, &status);
+>> +               dump_status_reg(&status);
+>> +               if (!test_bit(BUSY, &status) && test_bit(DONE, &status) &&
+>> +                       get_err(&status) == ENOERR)
+>> +                               break;
+>
+> The get_err should be aligned with the above parentheses.  Then you
+> can adjust the indentation of the break.
+>
+>> +               if (++refreshloop == MACHXO2_MAX_REFRESH_LOOP) {
+>> +                       machxo2_cleanup(mgr);
+>> +                       goto fail;
+>> +               }
+>> +       } while (1);
+>> +
+>> +       get_status(spi, &status);
+>> +       dump_status_reg(&status);
+>> +       return 0;
+>> +fail:
+>> +       dev_err(&mgr->dev, "Refresh failed.\n");
+>> +       return ret;
+>> +}
+>> +
+>> +static const struct fpga_manager_ops machxo2_ops = {
+>> +       .state = machxo2_spi_state,
+>> +       .write_init = machxo2_write_init,
+>> +       .write = machxo2_write,
+>> +       .write_complete = machxo2_write_complete,
+>> +};
+>> +
+>> +static int machxo2_spi_probe(struct spi_device *spi)
+>> +{
+>> +       struct device *dev = &spi->dev;
+>> +
+>> +       if (spi->max_speed_hz > MACHXO2_MAX_SPEED) {
+>> +               dev_err(dev, "Speed is too high\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       return fpga_mgr_register(dev, "Lattice MachXO2 SPI FPGA Manager",
+>> +                                &machxo2_ops, spi);
+>> +}
+>> +
+>> +static int machxo2_spi_remove(struct spi_device *spi)
+>> +{
+>> +       struct device *dev = &spi->dev;
+>> +
+>> +       fpga_mgr_unregister(dev);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct of_device_id of_match[] = {
+>> +       { .compatible = "lattice,machxo2-slave-spi", },
+>> +       {}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, of_match);
+>> +
+>> +static const struct spi_device_id lattice_ids[] = {
+>> +       { "machxo2-slave-spi", 0 },
+>> +       { },
+>> +};
+>> +MODULE_DEVICE_TABLE(spi, lattice_ids);
+>> +
+>> +static struct spi_driver machxo2_spi_driver = {
+>> +       .driver = {
+>> +               .name = "machxo2-slave-spi",
+>> +               .of_match_table = of_match_ptr(of_match),
+>> +       },
+>> +       .probe = machxo2_spi_probe,
+>> +       .remove = machxo2_spi_remove,
+>> +       .id_table = lattice_ids,
+>> +};
+>> +
+>> +module_spi_driver(machxo2_spi_driver)
+>> +
+>> +MODULE_AUTHOR("Paolo Pisati <p.pisati@gmail.com>");
+>> +MODULE_DESCRIPTION("Load Lattice FPGA firmware over SPI");
+>> +MODULE_LICENSE("GPL v2");
+>> --
+>> 2.7.4
+>>
