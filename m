@@ -1,79 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753050AbeC1ThV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 15:37:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752416AbeC1ThT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:37:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4034F21773
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 28 Mar 2018 14:37:17 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Alan Douglas <adouglas@cadence.com>
-Cc: Niklas Cassel <niklas.cassel@axis.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "cyrille.pitchen@free-electrons.com"
-        <cyrille.pitchen@free-electrons.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v5 07/12] PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64
- if a 64-bit BAR was set-up
-Message-ID: <20180328193717.GA97213@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180328115018.31921-1-niklas.cassel@axis.com>
- <20180328115018.31921-8-niklas.cassel@axis.com>
- <CO2PR07MB97221CD6D90F81C2D81D65BD8A30@CO2PR07MB972.namprd07.prod.outlook.com>
+        id S1753276AbeC1Tjn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 15:39:43 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40171 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbeC1Tjj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 15:39:39 -0400
+X-Google-Smtp-Source: AIpwx484YmJWU/y1wdaTVKw57WFjY1P6WrZtPSj9e9nECTv/lmXMCw43usWgnL9TSsLGeUuC4ATQHA==
+From: Mathieu Malaterre <malat@debian.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: LEROY Christophe <christophe.leroy@c-s.fr>,
+        Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 07/19] powerpc/powermac: Make some functions static
+Date: Wed, 28 Mar 2018 21:39:35 +0200
+Message-Id: <20180328193935.1338-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180322202007.23088-8-malat@debian.org>
+References: <20180322202007.23088-8-malat@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CO2PR07MB97221CD6D90F81C2D81D65BD8A30@CO2PR07MB972.namprd07.prod.outlook.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Lorenzo]
+These functions can all be static, make it so. Fix warnings treated as
+errors with W=1:
 
-On Wed, Mar 28, 2018 at 01:24:10PM +0000, Alan Douglas wrote:
-> > On 28/03/2018 12:51, Niklas Cassel wrote:
-> > cdns_pcie_ep_set_bar() does some round-up of the BAR size, which means that a 64-bit BAR can be set-up, even when the flag
-> > PCI_BASE_ADDRESS_MEM_TYPE_64 isn't set.
-> 
-> > If a 64-bit BAR was set-up, set the flag PCI_BASE_ADDRESS_MEM_TYPE_64, so that the calling function can know what BAR width that was actually set-up.
-> 
-> > I'm not sure why cdns_pcie_ep_set_bar() doesn't obey the flag PCI_BASE_ADDRESS_MEM_TYPE_64, but I leave this for the MAINTAINER to fix, since there might be a reason why > this flag is ignored.
-> Will investigate and fix this in future patch
-> 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > ---
-> >  drivers/pci/cadence/pcie-cadence-ep.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
-> > index cef36cd6b710..2905e098678c 100644
-> > --- a/drivers/pci/cadence/pcie-cadence-ep.c
-> > +++ b/drivers/pci/cadence/pcie-cadence-ep.c
-> > @@ -106,6 +106,9 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
-> >  		if (is_64bits && (bar & 1))
-> >  			return -EINVAL;
-> >  
-> > +		if (is_64bits && !(flags & PCI_BASE_ADDRESS_MEM_TYPE_64))
-> > +			epf_bar->flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
-> > +
-> >  		if (is_64bits && is_prefetch)
-> >  			ctrl = CDNS_PCIE_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS;
-> >  		else if (is_prefetch)
-> > --
-> > 2.14.2
-> Change looks good to me.
+  arch/powerpc/platforms/powermac/pci.c:1022:6: error: no previous prototype for ‘pmac_pci_fixup_ohci’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/powermac/pci.c:1057:6: error: no previous prototype for ‘pmac_pci_fixup_cardbus’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/powermac/pci.c:1094:6: error: no previous prototype for ‘pmac_pci_fixup_pciata’ [-Werror=missing-prototypes]
 
-It will be helpful to Lorenzo if you spell this out, e.g.,
+Remove has_address declaration and assignment since not used. Also add gcc
+attribute unused to fix a warning treated as error with W=1:
 
-  Acked-by: Alan Douglas <adouglas@cadence.com>
+  arch/powerpc/platforms/powermac/pci.c:784:19: error: variable ‘has_address’ set but not used [-Werror=unused-but-set-variable]
+  arch/powerpc/platforms/powermac/pci.c:907:22: error: variable ‘ht’ set but not used [-Werror=unused-but-set-variable]
 
-Also, it looks like we need a MAINTAINERS update to add
-drivers/pci/cadence/ to the "PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
-filename patterns.
+Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+v2: remove has_address variable since not used
+ arch/powerpc/platforms/powermac/pci.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
+index 0b8174a79993..67c497093e0a 100644
+--- a/arch/powerpc/platforms/powermac/pci.c
++++ b/arch/powerpc/platforms/powermac/pci.c
+@@ -781,12 +781,12 @@ static int __init pmac_add_bridge(struct device_node *dev)
+ 	struct resource rsrc;
+ 	char *disp_name;
+ 	const int *bus_range;
+-	int primary = 1, has_address = 0;
++	int primary = 1;
+ 
+ 	DBG("Adding PCI host bridge %pOF\n", dev);
+ 
+ 	/* Fetch host bridge registers address */
+-	has_address = (of_address_to_resource(dev, 0, &rsrc) == 0);
++	of_address_to_resource(dev, 0, &rsrc);
+ 
+ 	/* Get bus range if any */
+ 	bus_range = of_get_property(dev, "bus-range", &len);
+@@ -904,7 +904,7 @@ static int pmac_pci_root_bridge_prepare(struct pci_host_bridge *bridge)
+ void __init pmac_pci_init(void)
+ {
+ 	struct device_node *np, *root;
+-	struct device_node *ht = NULL;
++	struct device_node *ht __maybe_unused = NULL;
+ 
+ 	pci_set_flags(PCI_CAN_SKIP_ISA_ALIGN);
+ 
+@@ -1019,7 +1019,7 @@ static bool pmac_pci_enable_device_hook(struct pci_dev *dev)
+ 	return true;
+ }
+ 
+-void pmac_pci_fixup_ohci(struct pci_dev *dev)
++static void pmac_pci_fixup_ohci(struct pci_dev *dev)
+ {
+ 	struct device_node *node = pci_device_to_OF_node(dev);
+ 
+@@ -1054,7 +1054,7 @@ void __init pmac_pcibios_after_init(void)
+ 	}
+ }
+ 
+-void pmac_pci_fixup_cardbus(struct pci_dev* dev)
++static void pmac_pci_fixup_cardbus(struct pci_dev *dev)
+ {
+ 	if (!machine_is(powermac))
+ 		return;
+@@ -1091,7 +1091,7 @@ void pmac_pci_fixup_cardbus(struct pci_dev* dev)
+ 
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_TI, PCI_ANY_ID, pmac_pci_fixup_cardbus);
+ 
+-void pmac_pci_fixup_pciata(struct pci_dev* dev)
++static void pmac_pci_fixup_pciata(struct pci_dev *dev)
+ {
+        u8 progif = 0;
+ 
+-- 
+2.11.0
