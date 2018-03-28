@@ -1,64 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753714AbeC1SRc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 14:17:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51515 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753622AbeC1SR3 (ORCPT
+        id S1753804AbeC1SRj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 14:17:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50456 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753720AbeC1SRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 14:17:29 -0400
-Date: Wed, 28 Mar 2018 20:17:17 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: mike.travis@hpe.com
-cc: Ingo Molnar <mingo@redhat.com>, Russ Anderson <russ.anderson@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Andrew Banman <andrew.banman@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] x86/platform/UV: Fix critical UV MMR address error
-In-Reply-To: <20180328174011.041801248@stormcage.americas.sgi.com>
-Message-ID: <alpine.DEB.2.21.1803282007380.1496@nanos.tec.linutronix.de>
-References: <20180328174010.882366342@stormcage.americas.sgi.com> <20180328174011.041801248@stormcage.americas.sgi.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 28 Mar 2018 14:17:35 -0400
+From: Colin King <colin.king@canonical.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: topology: fix memory leak on se when kstrdup fails
+Date: Wed, 28 Mar 2018 19:17:25 +0100
+Message-Id: <20180328181725.17226-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018, mike.travis@hpe.com wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> A critical error was found testing the fixed UV4 HUB in that an MMR
-> address was found to be incorrect.  This causes the virtual address
-> space for accessing the MMIOH1 region to be allocated with the
-> incorrect size.
+In the case when kstrdup fails to allocation memory for kc[i].name
+the error exit path does not free up 'se' leading to a small leak.
+Fix this by kfree'ing 'se' before jumping to err_se and since
+kc[i].private_value is zero we end up avoiding kfree'ing the
+rest of the unallocated objects in se.
 
-Even if this is not intended for stable, despite the diff 
+Detected by CoverityScan, CID#1466991 ("Reseource leak")
 
-> --- linux-4.4.orig/arch/x86/include/asm/uv/uv_mmrs.h
-> +++ linux-4.4/arch/x86/include/asm/uv/uv_mmrs.h
+Fixes: 267e2c6fd7ca ("ASoC: topology: Fix kcontrol name string handling")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/soc-topology.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-suggesting that this is against a kernel, which receives respiration
-treatment, it would be appreciated if you could add a Fixes tag next time.
-
-That spares me the time to figure out which commit introduced the wreckage
-and therefore the scope of the fix. Added it myself.
-
-Thanks,
-
-	tglx
-
-> @@ -3833,7 +3833,7 @@ union uvh_rh_gam_mmioh_overlay_config0_m
->  #define UV1H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR uv_undefined("UV1H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR")
->  #define UV2H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR uv_undefined("UV2H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR")
->  #define UV3H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR 0x1603000UL
-> -#define UV4H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR 0x483000UL
-> +#define UV4H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR 0x484000UL
->  #define UVH_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR (				\
->  	is_uv1_hub() ? UV1H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR :		\
->  	is_uv2_hub() ? UV2H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR :		\
-> 
-> -- 
-> 
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index fa27d0fca6dc..71b20d795b51 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -1325,8 +1325,10 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
+ 			ec->hdr.name);
+ 
+ 		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
+-		if (kc[i].name == NULL)
++		if (kc[i].name == NULL) {
++			kfree(se);
+ 			goto err_se;
++		}
+ 		kc[i].private_value = (long)se;
+ 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 		kc[i].access = ec->hdr.access;
+-- 
+2.15.1
