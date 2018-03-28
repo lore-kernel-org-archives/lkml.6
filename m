@@ -1,70 +1,63 @@
-Return-Path: <kishon@ti.com>
-X-Google-Smtp-Source: AIpwx4/1xBmg3IyQWT9r2vQwT96MhE1Us/fBvsKiQBuDz0Zxx+A6LcqC4FGq960Rg8b1ia2o5FnS
-ARC-Seal: i=1; a=rsa-sha256; t=1522316221; cv=none;
+Return-Path: <gustavo.pimentel@synopsys.com>
+X-Google-Smtp-Source: AIpwx49jgvMIvSr3Hb4TO7HIZpxq+NEyDDKL9BcVM7CFhYwdxH91w9iRLRdgSufnyrYokF6eKeDH
+ARC-Seal: i=1; a=rsa-sha256; t=1522242782; cv=none;
         d=google.com; s=arc-20160816;
-        b=BAzmyzkJamzsUkMyhXE2xuAe0iTYaiqQEsQirVWmjZFUMex9gnnLz4j3GfwGHSwZ6t
-         dbpqdpg14y3jqFsBOMR2/gNIUfsO9tM254LwF6jXGHphsYrZXzEk3ThC3hwcrn/CdkLF
-         H0pL/nx7OQG8esDm7iz/01glYsh4Ygg0ywbSg0OzM9xbGd8hz/BhAoXS6v4MblmPlxCj
-         t/3PS29SpUiHD4y8TO98Q0s5DOgOyRJmqsajtmWyNhdDFn8TM9K/hi114eYx1Du5Zo2Z
-         AryLmXFNiGRBqVst4O1huP/F5twk+W7xBZf2zy8SkBnvQqQIWPW9O2CtqttNkXr/b8F1
-         hK5A==
+        b=drEevv0ObbJM4demSGqa7Wy5RSbAvm4b3B56LV60O9IpMvmgSrdVHyxBSPNJwf9v7t
+         4sMR4zZA93tfbfKxWT7iA5GIX2xgtSvCQV2W6rrt9N1JTGWl8tZkvCVjbxwm3Kz1Hhpz
+         O4zWxalSIC1KzcOosTERRNIKgz6R0UsJm+8ZCPGA+smY4xhfuQFbvPGNGOYUtB9+0ozp
+         VUfUDiy2fOqN+dJSJJG32Sj8aerVPJSZEAMnY+RNPDEbcWxeNEhMTmHFI3r0u+ZR+Gm/
+         1fdkmSx52QuHN5QbXBGTVUEHvn2xppAEI0hiCM/uI03j9bnGXxWzpXvyeE6XJ4mAKlY0
+         d10A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=oFPTzP7qMoL0wEZA+EMz9iKobdRiKSf4/VGnWxG3YlQ=;
-        b=OwJ26ArAvvmA0LGoXfRPc3EpHCotof3tWEySwecQrc0EB3EiIUVVEbN4jqL4YWDma5
-         QD0hIJ4YGhLY55xNWvlJgeON72Sa2yWgRBE88TKIC4CESegyifi2Ph+kXyN0/ZJoWHJj
-         srUgQ1RDRBkXoD+tV5Lp5Pm7hd03iocxVImlBDWb+iRHFo4UkGwdcpWHxqG/DCyZgUbm
-         fA2A6od9SNZ5x7Kzg9vS75MGzzT4hc2xsos3gYYEgxtBqDOg/xi49nytOZlfro8nP+Yp
-         kVflPRtrxVnfcnnY+VOk9dyG1Sicoq3QGeILKC4rZcXPfCgEUKGgXwCQn8A9Kw505A9P
-         pstQ==
+        bh=LnL00bF0sjts0wnhxk7h2LAZhTb4gVNfS8Tzx6scFtA=;
+        b=HDC5rWePUcPfZvDlztkXI/UbESVBq7jKTsFLoWMS2gYiAo7KcZxFkp/yqsPs+qG0eZ
+         63Y3GQqVdMD3TqnNrFVp01rQyPDJDjF/rBssyHmala+7sbGECCVxdKdICVbmcgo+SbPN
+         w0ZMNcp/BxkmM+N6NqptgKsP7xC5fjTgEp2/CZy5EQPEDs7b8kMLV7k7CeA9AsQukvep
+         QLIqKR+Kk1HM8xDpTAxuq0QZgBbUPuveXsfiIx3/FbY8YvTY603aXQykgxcPocykQRVQ
+         1SP4oBnvLzP7E2E3sbDfELzO/Q9IHNndb4VOeBIsdh5tFt6/S046oaVGTjdm2+rdoikK
+         dsPg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=GYPBn/4c;
-       spf=pass (google.com: domain of kishon@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=kishon@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+       spf=pass (google.com: best guess record for domain of gustavo.pimentel@synopsys.com designates 198.182.47.9 as permitted sender) smtp.mailfrom=gustavo.pimentel@synopsys.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=GYPBn/4c;
-       spf=pass (google.com: domain of kishon@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=kishon@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+       spf=pass (google.com: best guess record for domain of gustavo.pimentel@synopsys.com designates 198.182.47.9 as permitted sender) smtp.mailfrom=gustavo.pimentel@synopsys.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
 Subject: Re: [PATCH v5 02/12] PCI: endpoint: Simplify
  epc->ops->set_bar()/pci_epc_set_bar()
-To: Niklas Cassel <niklas.cassel@axis.com>,
-        <cyrille.pitchen@free-electrons.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Joao
- Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi
-	<lorenzo.pieralisi@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Niklas
- Cassel <niklass@axis.com>, John Keeping <john@metanate.com>
+To: Niklas Cassel <niklas.cassel@axis.com>, "kishon@ti.com" <kishon@ti.com>,
+ "cyrille.pitchen@free-electrons.com" <cyrille.pitchen@free-electrons.com>,
+ Alan Douglas <adouglas@cadence.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shawn Lin <shawn.lin@rock-chips.com>, Niklas Cassel <niklass@axis.com>,
+ John Keeping <john@metanate.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20180328115018.31921-1-niklas.cassel@axis.com>
  <20180328115018.31921-3-niklas.cassel@axis.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <3b8cd898-14c7-676d-61ab-d931047a5d2e@ti.com>
-Date: Thu, 29 Mar 2018 15:06:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <2ae2b787-f5f2-c5d8-d200-469c61cb82e0@synopsys.com>
+Date: Wed, 28 Mar 2018 14:12:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
 In-Reply-To: <20180328115018.31921-3-niklas.cassel@axis.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596182058457643005?=
-X-GMAIL-MSGID: =?utf-8?q?1596264254272632241?=
+X-GMAIL-MSGID: =?utf-8?q?1596187248134910857?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi Niklas,
 
-
-On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
+On 28/03/2018 12:50, Niklas Cassel wrote:
 > Add barno and flags to struct epf_bar.
 > That way we can simplify epc->ops->set_bar()/pci_epc_set_bar()
 > by passing a struct *epf_bar instead of a whole lot of arguments.
@@ -73,8 +66,6 @@ On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
 > modify BAR flags. Will be utilized in a succeeding patch.
 > 
 > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
 > It is not trivial to convert the bar_size + bar_flags +
 > struct pci_epf->bar member array to an array of struct resources,
@@ -269,3 +260,7 @@ Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 >  
 >  /**
 > 
+
+Seems good to me. :)
+
+Reviewed-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
