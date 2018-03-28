@@ -1,52 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753496AbeC1R5R (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 13:57:17 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:44712 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753220AbeC1R5M (ORCPT
+        id S1753357AbeC1R6B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 13:58:01 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42639 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753252AbeC1R57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 13:57:12 -0400
-X-Google-Smtp-Source: AIpwx4+bfUmqx9z5g6yv/CMkVukOMIdRqd29ndsnQGrft8RnO9X8F6Y2fxLHw/US6aTpPRGhJiNa5pIVnx9rsMxDCKE=
-MIME-Version: 1.0
-In-Reply-To: <c93ed5db-8cfd-1258-3396-62ca2076c44d@codeaurora.org>
-References: <1522156287-15169-1-git-send-email-will.deacon@arm.com>
- <20180327150252.GN3675@linux.vnet.ibm.com> <c93ed5db-8cfd-1258-3396-62ca2076c44d@codeaurora.org>
-From: Tony Luck <tony.luck@intel.com>
-Date: Wed, 28 Mar 2018 10:57:11 -0700
-X-Google-Sender-Auth: CJ7SUjkr2_1K7Y7WLhcjBOQ8O94
-Message-ID: <CA+8MBb+61AhMkbo8xtd3Y0fY8xRUPD+kUsEvWgOz94KGEuovOw@mail.gmail.com>
-Subject: Re: [PATCH] docs/memory-barriers.txt: Fix broken DMA vs MMIO ordering example
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Mar 2018 13:57:59 -0400
+X-Google-Smtp-Source: AIpwx49M8IC1XUsa/qLN3ivL9JyebL5Gc7uXXTfrtQDWUbXi9yJXOLG+GUVqrEk4st5MZbvw0o64FQ==
+From: Varsha Rao <rvarsha016@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Varsha Rao <rvarsha016@gmail.com>
+Subject: [PATCH] crypto: cavium: zip: Remove unnecessary parentheses
+Date: Wed, 28 Mar 2018 23:27:36 +0530
+Message-Id: <20180328175736.17360-1-rvarsha016@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 6:02 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
-> +linux-ia64
-> Does IA64 follow this requirement? If not, is implementation planned?
->
-> "no wmb() before writel()"
->
-> Linus asked us to get rid of wmb() in front of writel() for UC memory.
-> Just checking that we are not breaking anything for IA64.
+This patch fixes the clang warning of extraneous parentheses, with the
+following coccinelle script.
 
-We should be OK on ia64, writel() uses a cast to:
+@@
+identifier i;
+constant c;
+@@
+(
+-((i == c))
++i == c
+|
+-((i <= c))
++i <= c
+)
 
- *(volatile unsigned int __force *)
+Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+---
+ drivers/crypto/cavium/zip/zip_regs.h | 42 ++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-which the compiler takes as a request to use a "st4.rel" instruction
-(meaning "store with release semantics"). So the value stored will
-be visible to anything that follows.
-
--Tony
+diff --git a/drivers/crypto/cavium/zip/zip_regs.h b/drivers/crypto/cavium/zip/zip_regs.h
+index d0be682305c1..874e0236c87e 100644
+--- a/drivers/crypto/cavium/zip/zip_regs.h
++++ b/drivers/crypto/cavium/zip/zip_regs.h
+@@ -443,7 +443,7 @@ union zip_corex_bist_status {
+ 
+ static inline u64 ZIP_COREX_BIST_STATUS(u64 param1)
+ {
+-	if (((param1 <= 1)))
++	if (param1 <= 1)
+ 		return 0x0520ull + (param1 & 1) * 0x8ull;
+ 	pr_err("ZIP_COREX_BIST_STATUS: %llu\n", param1);
+ 	return 0;
+@@ -537,7 +537,7 @@ union zip_dbg_corex_inst {
+ 
+ static inline u64 ZIP_DBG_COREX_INST(u64 param1)
+ {
+-	if (((param1 <= 1)))
++	if (param1 <= 1)
+ 		return 0x0640ull + (param1 & 1) * 0x8ull;
+ 	pr_err("ZIP_DBG_COREX_INST: %llu\n", param1);
+ 	return 0;
+@@ -568,7 +568,7 @@ union zip_dbg_corex_sta {
+ 
+ static inline u64 ZIP_DBG_COREX_STA(u64 param1)
+ {
+-	if (((param1 <= 1)))
++	if (param1 <= 1)
+ 		return 0x0680ull + (param1 & 1) * 0x8ull;
+ 	pr_err("ZIP_DBG_COREX_STA: %llu\n", param1);
+ 	return 0;
+@@ -599,7 +599,7 @@ union zip_dbg_quex_sta {
+ 
+ static inline u64 ZIP_DBG_QUEX_STA(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1800ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_DBG_QUEX_STA: %llu\n", param1);
+ 	return 0;
+@@ -817,7 +817,7 @@ union zip_msix_pbax {
+ 
+ static inline u64 ZIP_MSIX_PBAX(u64 param1)
+ {
+-	if (((param1 == 0)))
++	if (param1 == 0)
+ 		return 0x0000838000FF0000ull;
+ 	pr_err("ZIP_MSIX_PBAX: %llu\n", param1);
+ 	return 0;
+@@ -846,7 +846,7 @@ union zip_msix_vecx_addr {
+ 
+ static inline u64 ZIP_MSIX_VECX_ADDR(u64 param1)
+ {
+-	if (((param1 <= 17)))
++	if (param1 <= 17)
+ 		return 0x0000838000F00000ull + (param1 & 31) * 0x10ull;
+ 	pr_err("ZIP_MSIX_VECX_ADDR: %llu\n", param1);
+ 	return 0;
+@@ -875,7 +875,7 @@ union zip_msix_vecx_ctl {
+ 
+ static inline u64 ZIP_MSIX_VECX_CTL(u64 param1)
+ {
+-	if (((param1 <= 17)))
++	if (param1 <= 17)
+ 		return 0x0000838000F00008ull + (param1 & 31) * 0x10ull;
+ 	pr_err("ZIP_MSIX_VECX_CTL: %llu\n", param1);
+ 	return 0;
+@@ -900,7 +900,7 @@ union zip_quex_done {
+ 
+ static inline u64 ZIP_QUEX_DONE(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE: %llu\n", param1);
+ 	return 0;
+@@ -925,7 +925,7 @@ union zip_quex_done_ack {
+ 
+ static inline u64 ZIP_QUEX_DONE_ACK(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2200ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_ACK: %llu\n", param1);
+ 	return 0;
+@@ -950,7 +950,7 @@ union zip_quex_done_ena_w1c {
+ 
+ static inline u64 ZIP_QUEX_DONE_ENA_W1C(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2600ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_ENA_W1C: %llu\n", param1);
+ 	return 0;
+@@ -975,7 +975,7 @@ union zip_quex_done_ena_w1s {
+ 
+ static inline u64 ZIP_QUEX_DONE_ENA_W1S(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2400ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_ENA_W1S: %llu\n", param1);
+ 	return 0;
+@@ -1004,7 +1004,7 @@ union zip_quex_done_wait {
+ 
+ static inline u64 ZIP_QUEX_DONE_WAIT(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2800ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_WAIT: %llu\n", param1);
+ 	return 0;
+@@ -1029,7 +1029,7 @@ union zip_quex_doorbell {
+ 
+ static inline u64 ZIP_QUEX_DOORBELL(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x4000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DOORBELL: %llu\n", param1);
+ 	return 0;
+@@ -1058,7 +1058,7 @@ union zip_quex_err_ena_w1c {
+ 
+ static inline u64 ZIP_QUEX_ERR_ENA_W1C(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3600ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_ENA_W1C: %llu\n", param1);
+ 	return 0;
+@@ -1087,7 +1087,7 @@ union zip_quex_err_ena_w1s {
+ 
+ static inline u64 ZIP_QUEX_ERR_ENA_W1S(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3400ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_ENA_W1S: %llu\n", param1);
+ 	return 0;
+@@ -1120,7 +1120,7 @@ union zip_quex_err_int {
+ 
+ static inline u64 ZIP_QUEX_ERR_INT(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_INT: %llu\n", param1);
+ 	return 0;
+@@ -1150,7 +1150,7 @@ union zip_quex_err_int_w1s {
+ 
+ static inline u64 ZIP_QUEX_ERR_INT_W1S(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3200ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_INT_W1S: %llu\n", param1);
+ 	return 0;
+@@ -1179,7 +1179,7 @@ union zip_quex_gcfg {
+ 
+ static inline u64 ZIP_QUEX_GCFG(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1A00ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_GCFG: %llu\n", param1);
+ 	return 0;
+@@ -1204,7 +1204,7 @@ union zip_quex_map {
+ 
+ static inline u64 ZIP_QUEX_MAP(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1400ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_MAP: %llu\n", param1);
+ 	return 0;
+@@ -1236,7 +1236,7 @@ union zip_quex_sbuf_addr {
+ 
+ static inline u64 ZIP_QUEX_SBUF_ADDR(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_SBUF_ADDR: %llu\n", param1);
+ 	return 0;
+@@ -1276,7 +1276,7 @@ union zip_quex_sbuf_ctl {
+ 
+ static inline u64 ZIP_QUEX_SBUF_CTL(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1200ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_SBUF_CTL: %llu\n", param1);
+ 	return 0;
+-- 
+2.14.3
