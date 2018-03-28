@@ -1,78 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753539AbeC1ON6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:13:58 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:62515 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753406AbeC1ON4 (ORCPT
+        id S1753308AbeC1OQW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:16:22 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:47845 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeC1OQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:13:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180328141354epoutp031783e0499cfea92b4931e0a5fd030db7~gGxEVgGsV2462624626epoutp03W
-X-AuditID: b6c32a39-579ff70000000ff4-09-5abba32133b1
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Russell King <linux@armlinux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] video: ARM CLCD: Delete an error message for a
- failed memory allocation in clcdfb_probe()
-Date: Wed, 28 Mar 2018 16:13:50 +0200
-Message-id: <3142281.EDeMi996z3@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <0ad85d10-a18f-ff02-f1f4-95452e54d32d@users.sourceforge.net>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsWy7bCmga7S4t1RBjf6mSyufH3PZnG+czmz
-        xdZb0hYn+j6wWlzeNYfN4tDUvYwObB6Xr11k9rjffZzJo+lUO6vH501yASxRXDYpqTmZZalF
-        +nYJXBn/rjxjKmhgqVh83KmBcSFzFyMnh4SAicTNncvZQGwhgR2MEgceJnUxcgHZ3xkltk5Z
-        ywJXdOY9M0RiN6PEgyM9bBDOVyDn3zVGkCo2ASuJie2rgGwODhEBU4k/J0JAapgFNjBKHL35
-        lR2kRligRGLKrstg9SwCqhJdk16AxXkFNCU+bzsHtk1UwEtiy752JpA5nAKeEudW8kCUCEr8
-        mHwPrIRZQF5i3/6prBC2jsTZY+sYQXZJCKxhk/h3bxHUay4Sr5ccgrKFJV4d38IOMlNCQFri
-        0lFbiPpmRolvO/ZA1UxglNizXgjCtpY4fPwi1AI+iXdfe1ghenklOtqgSjwkfl+/xgRhO0p8
-        7GpnhYTJbUaJzXfPME9glJ2F5O5ZSO6eheTuBYzMqxjFUguKc9NTiw0LTPWKE3OLS/PS9ZLz
-        czcxglOBluUOxmPnfA4xCnAwKvHwWizaHSXEmlhWXJl7iFGCg1lJhPe9BlCINyWxsiq1KD++
-        qDQntfgQozQHi5I4b0CAS5SQQHpiSWp2ampBahFMlomDU6qBcUuQiOj/t9v+3u492XYlwDJi
-        zrwvVk92yi8+1780fF3nE1G1inPTF+tvt00QCp+lcU9+28utkXdYFpn9EL6etVs+4rhas1WJ
-        UJvVxrJP3S9sith5veXdn7hZnoyOcZD+vF7uc9nvv62d39tXyLHH/ead/n5FzUvGvr9BgRu3
-        feS58I2TpT5YTYmlOCPRUIu5qDgRAIqHESoBAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOLMWRmVeSWpSXmKPExsVy+t9jAV3FxbujDK6dFrG48vU9m8X5zuXM
-        FltvSVuc6PvAanF51xw2i0NT9zI6sHlcvnaR2eN+93Emj6ZT7awenzfJBbBEcdmkpOZklqUW
-        6dslcGX8u/KMqaCBpWLxcacGxoXMXYycHBICJhI3z7wHsrk4hAR2Mkocf/iQFcL5yiix5she
-        sCo2ASuJie2rGLsYOThEBEwl/pwIAalhFtjAKPF7+VxWkLiwQInEi+OcIOUsAqoSXZNesIPY
-        vAKaEp+3nWMBsUUFvCS27GtnAinnFPCUOLeSB2LVbUaJXx1vWSDqBSV+TL4HZjMLyEvs2z+V
-        FcLWkli/8zjTBEb+WUjKZiEpm4WkbAEj8ypGydSC4tz03GKjAsO81HK94sTc4tK8dL3k/NxN
-        jMDg3XZYq28H4/0l8YcYBTgYlXh4LRbtjhJiTSwrrsw9xCjBwawkwvteAyjEm5JYWZValB9f
-        VJqTWnyIUZqDRUmc93besUghgfTEktTs1NSC1CKYLBMHp1QDo6CE7owG09pDeR+2W7LEPI0u
-        9PxSebzLUjbT+NvZgHjGtLUVVrzKR1Y+7dh160D8dm1nxy8tXHeX2Dbz9WkueVB8ZXq6rq8I
-        6+kpBmsdREwWcBzyuOD8YMWTxJ85963DjFJs6zQuvORNes3IEPE//P61uwqsT//feKQcUZQy
-        rUVYZU7v87qNSizFGYmGWsxFxYkAd5tzjloCAAA=
-X-CMS-MailID: 20180328141353epcas1p243ffc0a7f0686c03dad486c0803015f1
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20171205171236epcas4p33d714ae79a5b69676eec15c84985576a
-X-RootMTR: 20171205171236epcas4p33d714ae79a5b69676eec15c84985576a
-References: <107ed35f-1775-14e0-a7b5-20e7ee02ac16@users.sourceforge.net>
-        <CGME20171205171236epcas4p33d714ae79a5b69676eec15c84985576a@epcas4p3.samsung.com>
-        <0ad85d10-a18f-ff02-f1f4-95452e54d32d@users.sourceforge.net>
+        Wed, 28 Mar 2018 10:16:20 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [net-next] sctp: fix unused lable warning
+Date: Wed, 28 Mar 2018 16:14:56 +0200
+Message-Id: <20180328141512.3083992-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:qo4Ek2FBOEURCfLYnGAe3yJkfdBfLKN3POgROGsftD1hTqYdLtA
+ Kp5GzU3uC0Zez807SbLvbO76oQ5+Y61/7S6GsjgHpqN5H54Z/sys3yyvFbJI0vahx2LRz4k
+ 4jDjR9fnDIBh7HJXuCpY/UNJU+ojJqnSjsIAEwzWjP9xP3PG+dNvF95JFseKcZFFNiyUG2W
+ 8Jaj0GXYVw49UJeQufrBw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:FOzLZwsgrRs=:IhSQpmbETOHkiymkpj17tJ
+ mercD+ekhcdUiq1tlTpUYCB3V4m5cutIRLTEos2Zd7WZgenlF+dmBfElvvyhYj2l4E4w2t3hI
+ UoMitvbCWy5neBoJDu0+s0eYSDuyYVW9wwGR/wzIAu5MG+IaK5r9oK14/Vl0MUKxn+kzOFO+g
+ 8Ie5j7wVG7Vb7hr8/PsHWx3TnnlmVl+GbryQHr73ZiFUzpwPS9Ymnni9908hhCZBzB89k6fqN
+ WsYDr/GPZWWsAE7BcbH6ktIqsWFawKeYYzbfE8p1MZPUJ0LjkOq5fxhJu3KFTc4Quia9exTCS
+ dT7c0Qvz0pFfhnLE98sStx2KFby3U09KviIvlz50Cby7vnMyfbii5ZQZ8uok4Oee3guJFtyLk
+ AGfX62DZp3zRZVloEqGL1oipfVvx7UytfQ/NKC/uSIigPs+1pwUGqT6Q9yhB5T6boGID6QIj4
+ o8CW2X4yvTZ8Qj+utMAoHOywtI9K6GhpGcG0hsYnIiIMta9zCtEco0KSn//vbyY650t3I1sls
+ tD+HxvFu0n5WeVmEE/GSOVR/qO+NRFNDMFXXRjMXatYUueE+DrET4gtjtlMNgndpSZZmEVC4r
+ 0dwyvpnJb7hLFd4hlEGjo2DD0bITh2tn6WL1nbztu1UAyqhYCOGtifYpnEWCW0Shf7opAdZJ9
+ URzAhj3SKzfzzC9v9amvFoW5Cq76sZgXQXTvk4E6kB+JCOmtiCD4JQbYFIcY/oUHM0L44uf+N
+ Lx5pGZ0xrGg7vUxqhWLJCaA85wuMOc+9s+bJvg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, December 05, 2017 06:12:30 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Dec 2017 17:50:11 +0100
-> 
-> Omit an extra message for a memory allocation failure in this function.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The proc file cleanup left a label possibly unused:
 
-Patch queued for 4.17, thanks.
+net/sctp/protocol.c: In function 'sctp_defaults_init':
+net/sctp/protocol.c:1304:1: error: label 'err_init_proc' defined but not used [-Werror=unused-label]
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+This adds an #ifdef around it to match the respective 'goto'.
+
+Fixes: d47d08c8ca05 ("sctp: use proc_remove_subtree()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ net/sctp/protocol.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index c1c64b78c39d..d685f8456762 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1301,8 +1301,10 @@ static int __net_init sctp_defaults_init(struct net *net)
+ 
+ 	return 0;
+ 
++#ifdef CONFIG_PROC_FS
+ err_init_proc:
+ 	cleanup_sctp_mibs(net);
++#endif
+ err_init_mibs:
+ 	sctp_sysctl_net_unregister(net);
+ err_sysctl_register:
+-- 
+2.9.0
