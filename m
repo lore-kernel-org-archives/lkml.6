@@ -1,78 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753630AbeC1OD0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:03:26 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:54205 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753098AbeC1ODZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:03:25 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Jon Maloy <jon.maloy@ericsson.com>, Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Parthasarathy Bhuvaragan <parthasarathy.bhuvaragan@ericsson.com>,
-        netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] tipc: avoid possible string overflow
-Date: Wed, 28 Mar 2018 16:02:04 +0200
-Message-Id: <20180328140302.2594031-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:5RhZM5SbmawoVgP1LJGeBeNkOKj7yHdtvOneWGsGT6dQ+mXciGV
- 9EArn0BsSTFl0KgS2TNvN+px6coiNgBZ6/f6N4aEfftAS5jBCJ2IYS569i5/1Y7W16i0h4V
- pO7A7uZ3aqMJDkARxD10Y5JiL/NhZRzdIrNBtFk9Sp7yC8E2PY17qh8A035vXWNPdGb/eCU
- SXUUmF1Wjh/oE9rcmblOg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ARZNESDlisA=:PijNZ9FbgEocPXILR+4oGP
- BN4PNY3JdGJ/Mgx8+I1ITxAxc0mC5P5iIVYglWJrKeBOPBq6mT1hv52mPhcaI0qLu+DjTIW4m
- O4JH0P64eRuCJnMeCyvZRsVdqVLAZmIiPIeV1Ut4W8eNX7DCHR1wLZ3EZxYJ2q3fEV0zmY2a+
- 6piYSXEXQ0mDpfeoOsnglZ3JXJBFhZ61n6EtqHkZ+5cgUcHoo1s41YOAQKIQ+eK06fmHhATUE
- rRwv2eE0ql7yjCfIhmM5YFLhA0voiiXfV5WssC6gUxf+kO+ThnfXjIjbkxW9vSYijx/FtN1vc
- vPieSnpntacC9mctTFbsVr+0+UOCKWx5mkuos9Qvc+P0e8+Ev5nILMqkVfwMsNgQStEd/jcnO
- m+VFPHDll/xUG/CXy2Znq2YyfQwDrnb+ZYFeKZhsTcM4cJt1xnZD28rzkcLCsuhlKCDPShSH9
- Dx8eCnjf8zfPBF9RCeAOLtNPbRg6pBEm7RiCYPLNtAJ8e/UR5B67en41BcCKD4CD4JupKDN0W
- 9QCDSHTxs/vwlzG9vtDmAlgCgF0WGen6j6ujRgDrDNgUGNt/lVjMopLR/Y0tO6uY/MODAv11B
- uTVBaE1D23ZD6tls/dZfEur35AmGm0rhI3UoEME30F42KwrLcLWbHSxe9C44JrOgAuYKX1ZDm
- f/EnueM2UAz/abmk1Yc1C0F1JJ+Vs0Yv1R8efhesgabvd9gnUqw6lsrqqeQuZOdallSOXykcq
- RJNRgfFDZdkKU0R0ibw1nNJjqqdFmsKaKZG+aw==
+        id S1753459AbeC1OFB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:05:01 -0400
+Received: from mga11.intel.com ([192.55.52.93]:36624 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752572AbeC1OFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 10:05:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,371,1517904000";
+   d="scan'208";a="29166235"
+Message-ID: <1522245880.520.1.camel@tzanussi-mobl.amr.corp.intel.com>
+Subject: Re: [PATCH] tracing: Uninitialized variable in
+ create_tracing_map_fields()
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date: Wed, 28 Mar 2018 09:04:40 -0500
+In-Reply-To: <20180328114815.GC29050@mwanda>
+References: <20180328114815.GC29050@mwanda>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc points out that the combined length of the fixed-length inputs to
-l->name is larger than the destination buffer size:
+Hi Dan,
 
-net/tipc/link.c: In function 'tipc_link_create':
-net/tipc/link.c:465:26: error: '%s' directive writing up to 32 bytes into a region of size between 26 and 58 [-Werror=format-overflow=]
-  sprintf(l->name, "%s:%s-%s:unknown", self_str, if_name, peer_str);
-                          ^~                              ~~~~~~~~
-net/tipc/link.c:465:2: note: 'sprintf' output 11 or more bytes (assuming 75) into a destination of size 60
-  sprintf(l->name, "%s:%s-%s:unknown", self_str, if_name, peer_str);
+On Wed, 2018-03-28 at 14:48 +0300, Dan Carpenter wrote:
+> Smatch complains that idx can be used uninitialized when we check if
+> (idx < 0).  It has to be the first iteration through the loop and the
+> HIST_FIELD_FL_STACKTRACE bit has to be clear and the HIST_FIELD_FL_VAR
+> bit has to be set to reach the bug.
+> 
+> Fixes: 30350d65ac56 ("tracing: Add variable support to hist triggers")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index 4f027642ceef..6aceee287d07 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -4411,7 +4411,7 @@ static int create_tracing_map_fields(struct hist_trigger_data *hist_data)
+>  	struct tracing_map *map = hist_data->map;
+>  	struct ftrace_event_field *field;
+>  	struct hist_field *hist_field;
+> -	int i, idx;
+> +	int i, idx = 0;
+>  
+>  	for_each_hist_field(i, hist_data) {
+>  		hist_field = hist_data->fields[i];
 
-Using snprintf() ensures that the destination is still a nul-terminated
-string in all cases. It's still theoretically possible that the string
-gets trunctated though, so this patch should be carefully reviewed to
-ensure that either truncation is impossible in practice, or that we're
-ok with the truncation.
+Yes, this should definitely be initialized to 0, thanks for the patch!
 
-Fixes: 25b0b9c4e835 ("tipc: handle collisions of 32-bit node address hash values")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- net/tipc/link.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/tipc/link.c b/net/tipc/link.c
-index 1289b4ba404f..c195ba036035 100644
---- a/net/tipc/link.c
-+++ b/net/tipc/link.c
-@@ -462,7 +462,8 @@ bool tipc_link_create(struct net *net, char *if_name, int bearer_id,
- 			sprintf(peer_str, "%x", peer);
- 	}
- 	/* Peer i/f name will be completed by reset/activate message */
--	sprintf(l->name, "%s:%s-%s:unknown", self_str, if_name, peer_str);
-+	snprintf(l->name, sizeof(l->name), "%s:%s-%s:unknown",
-+		 self_str, if_name, peer_str);
- 
- 	strcpy(l->if_name, if_name);
- 	l->addr = peer;
--- 
-2.9.0
+Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
