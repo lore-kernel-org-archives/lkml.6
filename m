@@ -1,126 +1,82 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AG47ELsHGBsqvX1Q0mzsjcQ9C2avNhVmUiWDEhym9KX/CvEnP/udqgItgSqHqA8dhrskMi9gADp5
-ARC-Seal: i=1; a=rsa-sha256; t=1522128625; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522236255; cv=none;
         d=google.com; s=arc-20160816;
-        b=iWySTA34lAKy6ltsp+FKMKmKDowrtQldjRpFjDvdrtFN2Og4QPDT2P1YCVVKD0hghV
-         uK8WBBOeJc7dhfFOXnW6oL/CgyjB6TSl6R0mSY4dICemOAxGlxf3zqKVBjvYvmnPZc/b
-         ofzBMxhiavY7wMNmF5RN/0btyibDA0zgZrL6waM09KurLGyv2WwQLMvJIw+W2KOBcYaM
-         gdmnRyLMTxWlG2kuue5srov5bxyHz23GHWyvthn3srBVYiHVLSmZeYQQNp4O4/FUNF1k
-         g4wjfb3i9koKvuT+Hp7eXeDEZpWPDCVH5Icze1gL4NrCPqLvW5CH8OmocswVt2TBPsI+
-         suIg==
+        b=XnXRTpTUjNdFvGW3diJtk1rlNUBrHldnHBDVzVMefDMFe9ZkigSEj7NuqgqyWKG/Ok
+         0UMbbyUfZLpa4slO/svjWwwAOazoRLwr2qVX0+S0OiMoyOBRlsPpCel4cceRcy8FlFhD
+         EuohKH5JXP4qp7sbNRLLzCXDVuRPiNzkazQWCE/hvgohj4G4LwOPdLvQtQonZCxBT0Dx
+         CPSm+lkG6v4smcvwvf711i8t2XJChHiRUYs+luHb4e8HJDvCMDZ1hv2dnL8wROyUbhHx
+         idHr2mb01/8lY0Au24IfTFEsuQwlWteliZqLEMkgVyaLme2jy4cQ1P9hQAoaYm+8J3wM
+         GuIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=+KtcYTB0i2G/+6IMyIjcZZUASKlIoX6zrXACCTEjvdQ=;
-        b=lOAD6pIYo1jOK2hrBt5Zm9zvIYAOPFleoPeAFHo05mL8+S/HK200QUPC6aajD4ZmK5
-         bFedEDT5y3t0+buawVxldAxImbUNo+w/uxsvj+Z2SD1338UkokJVZ0Z6GO5g12LXkMZZ
-         hTb885VuJffIDfjJSxpYavq13TiwjplDvMWmeNREQc+GFgIcb1EiYsCXIwDr2NkpYvfS
-         VM2vcVT8G+cXx3uYSvwfeKi8121A/JIBJI8IGLmJgxfgV+fjLGMAo91IWRPjNw0tfwwm
-         i1nMzXNccEpwYn5qPWyS42/Ewmcj/QxH7gH6SY9w3SxG/3R74wZ2Txrm6++YxQ4Fv/hq
-         +LEw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=o/Z4dCPT3qmNSrQ9M1UUFQkKNGvlSpqUVYB3mMXJrik=;
+        b=eBaKJEpuZsiaujVVH6+TZnmfH2rPObRXViCqLBBLLCInjmAzUzxcTDpK5POhkeLRYz
+         27TlwUK35DCL/1n1UdJDcy7nTaWEGedoo+CJa5lQVBEKV9P7iV1kgtndOQgBxH3iTfS/
+         nDOS88tKGbrYg7rmBIyB4Dn37JVpuR5LcjGqALCWwQfnDXWLoIU28PJe/c2VkYaEkDcu
+         +yyCBGw1Qz9QJLkpdcnkSforCNV0ucoamctu2zae1z/vewjcS54SgGsyqfnApsgPhYbI
+         KR16mRRWcmF93smoxVHMVLZfL87IZQaft0HrMNsXpkEncBmLEuRT+2avZquqi1/em8Wn
+         yGzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=qdNilvxk;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=BgfhQAyH;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ARxs5lpB;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=qdNilvxk;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R5TaM0011947
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-kbuild@vger.kernel.org
-Cc: Sam Ravnborg <sam@ravnborg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Peter Oberparleiter <oberpar@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/21] gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
-Date: Tue, 27 Mar 2018 14:29:29 +0900
-Message-Id: <1522128575-5326-16-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
+       dkim=pass header.i=@google.com header.s=20161025 header.b=BgfhQAyH;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ARxs5lpB;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AIpwx4+C8ufaJgLCEDMvpNJb4HyIUaojrmcqUO+6L17629O89Dj9oheIG+6yVN3CeG3ZC5BvK1v4CVuKkQVGF8Cfywk=
+MIME-Version: 1.0
+Sender: keescook@google.com
+In-Reply-To: <1522128575-5326-16-git-send-email-yamada.masahiro@socionext.com>
+References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-16-git-send-email-yamada.masahiro@socionext.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 28 Mar 2018 04:24:14 -0700
+X-Google-Sender-Auth: G6nIXhw3f5TQlLXE2upj6jZWERg
+Message-ID: <CAGXu5jLmyp4Q9VeP-F3N2SJuUxPpo3=2WTUC4vRLX348FwrtUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 15/21] gcov: remove CONFIG_GCOV_FORMAT_AUTODETECT
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>,
+	Peter Oberparleiter <oberpar@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596067545713412850?=
-X-GMAIL-MSGID: =?utf-8?q?1596067545713412850?=
+X-GMAIL-MSGID: =?utf-8?q?1596180404143320042?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-CONFIG_GCOV_FORMAT_AUTODETECT compiles either gcc_3_4.c or gcc_4_7.c
-according to your GCC version.
+On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> CONFIG_GCOV_FORMAT_AUTODETECT compiles either gcc_3_4.c or gcc_4_7.c
+> according to your GCC version.
+>
+> We can achieve the equivalent behavior by setting reasonable dependency
+> with the knowledge of the compiler version.
+>
+> If GCC older than 4.7 is used, GCOV_FORMAT_3_4 is the default, but users
+> are still allowed to select GCOV_FORMAT_4_7 in case the newer format is
+> back-ported.
+>
+> On the other hand, If GCC 4.7 or newer is used, there is no reason to
+> use GCOV_FORMAT_3_4, so it should be hidden.
+>
+> If you down-grade your compiler GCC 4.7 or older, oldconfig/syncconfig
+> will display a prompt for the choice because GCOV_FORMAT_3_4 becomes
+> visible as a new symbol.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-We can achieve the equivalent behavior by setting reasonable dependency
-with the knowledge of the compiler version.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-If GCC older than 4.7 is used, GCOV_FORMAT_3_4 is the default, but users
-are still allowed to select GCOV_FORMAT_4_7 in case the newer format is
-back-ported.
+-Kees
 
-On the other hand, If GCC 4.7 or newer is used, there is no reason to
-use GCOV_FORMAT_3_4, so it should be hidden.
-
-If you down-grade your compiler GCC 4.7 or older, oldconfig/syncconfig
-will display a prompt for the choice because GCOV_FORMAT_3_4 becomes
-visible as a new symbol.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2:
-  - Move the 'depends on' to the choice value.
-
- kernel/gcov/Kconfig  | 17 +++++------------
- kernel/gcov/Makefile |  2 --
- 2 files changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/kernel/gcov/Kconfig b/kernel/gcov/Kconfig
-index 1276aab..1e3823f 100644
---- a/kernel/gcov/Kconfig
-+++ b/kernel/gcov/Kconfig
-@@ -53,23 +53,16 @@ config GCOV_PROFILE_ALL
- choice
- 	prompt "Specify GCOV format"
- 	depends on GCOV_KERNEL
--	default GCOV_FORMAT_AUTODETECT
- 	---help---
--	The gcov format is usually determined by the GCC version, but there are
-+	The gcov format is usually determined by the GCC version, and the
-+	default is chosen according to your GCC version. However, there are
- 	exceptions where format changes are integrated in lower-version GCCs.
--	In such a case use this option to adjust the format used in the kernel
--	accordingly.
--
--	If unsure, choose "Autodetect".
--
--config GCOV_FORMAT_AUTODETECT
--	bool "Autodetect"
--	---help---
--	Select this option to use the format that corresponds to your GCC
--	version.
-+	In such a case, change this option to adjust the format used in the
-+	kernel accordingly.
- 
- config GCOV_FORMAT_3_4
- 	bool "GCC 3.4 format"
-+	depends on CC_IS_GCC && GCC_VERSION < 40700
- 	---help---
- 	Select this option to use the format defined by GCC 3.4.
- 
-diff --git a/kernel/gcov/Makefile b/kernel/gcov/Makefile
-index c6c50e5..ff06d64 100644
---- a/kernel/gcov/Makefile
-+++ b/kernel/gcov/Makefile
-@@ -4,5 +4,3 @@ ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
- obj-y := base.o fs.o
- obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
- obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
--obj-$(CONFIG_GCOV_FORMAT_AUTODETECT) += $(call cc-ifversion, -lt, 0407, \
--							gcc_3_4.o, gcc_4_7.o)
 -- 
-2.7.4
+Kees Cook
+Pixel Security
