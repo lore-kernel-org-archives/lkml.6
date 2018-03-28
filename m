@@ -1,122 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeC1GvJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 02:51:09 -0400
-Received: from mail-ve1eur01on0062.outbound.protection.outlook.com ([104.47.1.62]:33752
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750753AbeC1GvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 02:51:07 -0400
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, Anson Huang <anson.huang@nxp.com>,
-        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
-        Abel Vesa <abelvesa@linux.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-        "b29396@freescale.com" <b29396@freescale.com>
-Subject: Re: [PATCH] clk: imx7d: Move clks_init_on before any clock operations
-Thread-Topic: [PATCH] clk: imx7d: Move clks_init_on before any clock
- operations
-Thread-Index: AQHTxmCVn8njgFK+hEGH9XDIbstiQqPlNYEA
-Date: Wed, 28 Mar 2018 06:51:02 +0000
-Message-ID: <20180328065100.z5nxntyax7qk7jwb@fsr-ub1664-175>
-References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
- <1522219599-10831-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1522219599-10831-3-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com;
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1454;7:24cb+lGUYyZPPs6R9alL+if8eXvfwIt7D5zgD9ZYxQgHtN+SO6dyBfWvuJlSoEMT8ewqzl3RRiHm1gDTydeYaS6NcLriqPirDjwu4JJ/XaRD0e74ZGR1IIWZnNVx3ThOPoVmEB0El313JDOwAZnmbsM5P3hPZEJbBaqc2InzoC2Em7BkVRJoUH7eS4wesX1ieaNgb4f+/8bT3jvDxyF/JWfb5O+0dSH5Ims3kvy9my00cH9PU24e3aDClt933emP
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4d11a9c3-2dfc-42f8-7c35-08d59478454a
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1454;
-x-ms-traffictypediagnostic: VI1PR04MB1454:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-antispam-prvs: <VI1PR04MB14546C7B76ACF09719A807C3F6A30@VI1PR04MB1454.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197)(101931422205132);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:VI1PR04MB1454;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1454;
-x-forefront-prvs: 06259BA5A2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(366004)(346002)(39380400002)(396003)(376002)(39860400002)(189003)(199004)(3660700001)(2900100001)(7736002)(8676002)(6506007)(5660300001)(5250100002)(3280700002)(305945005)(76176011)(105586002)(54906003)(66066001)(33896004)(486005)(486005)(186003)(68736007)(102836004)(14454004)(86362001)(476003)(26005)(1411001)(4326008)(316002)(53936002)(6916009)(97736004)(11346002)(106356001)(446003)(6512007)(9686003)(99286004)(6246003)(81166006)(81156014)(107886003)(39060400002)(33716001)(229853002)(6436002)(8936002)(2906002)(6116002)(3846002)(1076002)(6486002)(478600001)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1454;H:VI1PR04MB2144.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: MI1PfRfbBH6k24O1H+2EwwGi1tHbr7GU8/KccQTwn0WVDC7r95WOz1tXu7/5tnebbnfvOPJG544wro8KBZHY7B1VLFnZJL/zGQJgfO7BsMBFFM4kXBgVkk1/24OxYnlvotbeAEmQgKsu1STR+gCe0dC9q1jMK0P80+gknyFshJjDRYCS/qrFGZtoixsCSTIM3KNSe9wQwhqeu01IaPOQmopJwwdBqGKECrjmOas7lyPIAoA58yAfMUvtRCJEOLa7UatGjqGVLevhH2BIfOfwt8dYiGKGo3fL+EerLbGsAdQUdbfyYa7ph0g1kP9ED2frGefHVxSXyLzQ5d2Oa+zb/Q==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4D09A0F6940C4A4CAFBCBDE87DF6D478@eurprd04.prod.outlook.com>
+        id S1751913AbeC1Gzo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 02:55:44 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53576 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751065AbeC1Gzk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 02:55:40 -0400
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d11a9c3-2dfc-42f8-7c35-08d59478454a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Mar 2018 06:51:02.0726
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1454
+Message-ID: <490b19a2-3a40-4abb-b993-743c22ef43a5@default>
+Date: Tue, 27 Mar 2018 23:55:32 -0700 (PDT)
+From: Liran Alon <liran.alon@oracle.com>
+To: <kernellwp@gmail.com>
+Cc: <konrad.wilk@oracle.com>, <rkrcmar@redhat.com>, <pbonzini@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <andrew.cooper3@citrix.com>,
+        <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] KVM: X86: Add Force Emulation Prefix for "emulate
+ the next instruction"
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8845 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803280066
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2S6pDuY018421
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2S6tpJZ019496
 
-On Wed, Mar 28, 2018 at 09:46:36AM +0300, Abel Vesa wrote:
-> From: Dong Aisheng <b29396@freescale.com>
+
+----- kernellwp@gmail.com wrote:
+
+> From: Wanpeng Li <wanpengli@tencent.com>
 > 
-> For init on clocks we should move it at the first place in imx7d_clocks_init()
-> before any clock operations, else the clock operation may fail in case the clock
-> is still not on.
+> There is no easy way to force KVM to run an instruction through the
+> emulator 
+> (by design as that will expose the x86 emulator as a significant
+> attack-surface).
+> However, we do wish to expose the x86 emulator in case we are testing
+> it
+> (e.g. via kvm-unit-tests). Therefore, this patch adds a "force
+> emulation prefix"
+> that is designed to raise #UD which KVM will trap and it's #UD
+> exit-handler will
+> match "force emulation prefix" to run instruction after prefix by the
+> x86 emulator.
+> To not expose the x86 emulator by default, we add a module parameter
+> that should 
+> be off by default.
 > 
-> Acked-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@freescale.com>
-> Signed-off-by: Dong Aisheng <b29396@freescale.com>
-> Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> A simple testcase here:
+> 
+> #include <stdio.h>
+> #include <string.h>
+>    
+> #define HYPERVISOR_INFO 0x40000000
+>    
+> #define CPUID(idx, eax, ebx, ecx, edx) \
+>     asm volatile (\
+>     "ud2a; .ascii \"kvm\"; cpuid" \
+>     :"=b" (*ebx), "=a" (*eax), "=c" (*ecx), "=d" (*edx) \
+>         :"0"(idx) );  
+>    
+> void main()  
+> {  
+> 	unsigned int eax, ebx, ecx, edx;  
+> 	char string[13];  
+>    
+> 	CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);  
+> 	*(unsigned int *)(string + 0) = ebx;  
+> 	*(unsigned int *)(string + 4) = ecx;  
+> 	*(unsigned int *)(string + 8) = edx;  
+>    
+> 	string[12] = 0;  
+> 	if (strncmp(string, "KVMKVMKVM\0\0\0", 12) == 0)
+> 		printf("kvm guest\n");  
+> 	else  
+> 		printf("bare hardware\n");  
+> }
+> 
+> Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Cc: Liran Alon <liran.alon@oracle.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 > ---
->  drivers/clk/imx/clk-imx7d.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  arch/x86/kvm/x86.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 89bfa75..9b17805 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -433,13 +433,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
->  	clks[IMX7D_PLL_AUDIO_MAIN_BYPASS] = imx_clk_mux_flags("pll_audio_main_bypass", base + 0xf0, 16, 1, pll_audio_bypass_sel, ARRAY_SIZE(pll_audio_bypass_sel), CLK_SET_RATE_PARENT);
->  	clks[IMX7D_PLL_VIDEO_MAIN_BYPASS] = imx_clk_mux_flags("pll_video_main_bypass", base + 0x130, 16, 1, pll_video_bypass_sel, ARRAY_SIZE(pll_video_bypass_sel), CLK_SET_RATE_PARENT);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index e3a60ab..40e2f78 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -146,6 +146,9 @@ bool __read_mostly enable_vmware_backdoor =
+> false;
+>  module_param(enable_vmware_backdoor, bool, S_IRUGO);
+>  EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
 >  
-> -	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
-> -	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
-> -	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
-> -	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
-> -	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
-> -	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
-> -
->  	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
->  	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
->  	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
-> @@ -886,6 +879,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
->  	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
->  		clk_prepare_enable(clks[clks_init_on[i]]);
->  
-> +	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
-> +	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
-> +	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
-> +	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
-> +	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
-> +	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
+> +static bool __read_mostly force_emulation_prefix = false;
+> +module_param(force_emulation_prefix, bool, S_IRUGO);
 > +
->  	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
->  	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+>  #define KVM_NR_SHARED_MSRS 16
 >  
+>  struct kvm_shared_msrs_global {
+> @@ -4843,8 +4846,21 @@
+> EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
+>  int handle_ud(struct kvm_vcpu *vcpu)
+>  {
+>  	enum emulation_result er;
+> +	int emulation_type = EMULTYPE_TRAP_UD;
+> +
+> +	if (force_emulation_prefix) {
+> +		char sig[5]; /* ud2; .ascii "kvm" */
+> +		struct x86_exception e;
+> +
+> +		kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
+> +				kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e);
+> +		if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
+> +			emulation_type = 0;
+> +			kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
+> +		}
+> +	}
+>  
+> -	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+> +	er = emulate_instruction(vcpu, emulation_type);
+>  	if (er == EMULATE_USER_EXIT)
+>  		return 0;
+>  	if (er != EMULATE_DONE)
 > -- 
 > 2.7.4
-> 
 
-Ignore this one please, mistakenly sent because of sending all the patches from the current folder.
-The patchset applies on linux-next/master just fine without this one.
-
--- 
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
