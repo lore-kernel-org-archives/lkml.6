@@ -1,62 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753258AbeC1NE7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:04:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753039AbeC1NE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:04:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1521217A8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AIpwx48vwS8kUjX4e937YL058KTkFOR2Cp7Ya5KzY5oHezQA0dX0gfQWtg6I4LfqFZFZuIKYLbYl0rs1ET916UeU9N4=
+        id S1753285AbeC1NFp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:05:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40188 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753187AbeC1NFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:05:43 -0400
+Subject: Re: [PATCH v3 2/2] locking/debug: Add a master lock debugging switch
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+References: <1522186690-10526-1-git-send-email-longman@redhat.com>
+ <1522186690-10526-3-git-send-email-longman@redhat.com>
+ <20180327231321.4on2kczby5ejqglt@linux-n805>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <45ebe079-e585-634d-2f40-f7ff781faa0c@redhat.com>
+Date: Wed, 28 Mar 2018 09:05:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180328083213.by4sjrk3nx5s4rbk@fm.suse.cz>
-References: <20180328083213.by4sjrk3nx5s4rbk@fm.suse.cz>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 28 Mar 2018 08:04:34 -0500
-X-Gmail-Original-Message-ID: <CABGGiswL9Mw_viewE9v0OFrnvxOZyaYRyMW5GNEP_R0JEiWDhQ@mail.gmail.com>
-Message-ID: <CABGGiswL9Mw_viewE9v0OFrnvxOZyaYRyMW5GNEP_R0JEiWDhQ@mail.gmail.com>
-Subject: Re: [PATCH] devicetree: Remove dangling symlinks
-To: Libor Pechacek <lpechacek@suse.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Olof Johansson <olof@lixom.net>, Heiko Stuebner <heiko@sntech.de>,
-        trivial@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180327231321.4on2kczby5ejqglt@linux-n805>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Arnd
-
-On Wed, Mar 28, 2018 at 3:32 AM, Libor Pechacek <lpechacek@suse.com> wrote:
-> Support for CRIS and Meta was dropped.
+On 03/27/2018 07:13 PM, Davidlohr Bueso wrote:
+> On Tue, 27 Mar 2018, Waiman Long wrote:
 >
-> Signed-off-by: Libor Pechacek <lpechacek@suse.com>
-> Fixes: bb6fb6dfcc17 ("metag: Remove arch/metag/")
-> Fixes: c690eddc2f3b ("CRIS: Drop support for the CRIS port")
-> Cc: James Hogan <jhogan@kernel.org>
-> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: devicetree@vger.kernel.org
-> Cc: trivial@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  scripts/dtc/include-prefixes/cris  | 1 -
->  scripts/dtc/include-prefixes/metag | 1 -
->  2 files changed, 2 deletions(-)
->  delete mode 120000 scripts/dtc/include-prefixes/cris
->  delete mode 120000 scripts/dtc/include-prefixes/metag
+>> Add a new master LOCK_DEBUGGING Kconfig option to turn on all the lock
+>> debugging options except the selftests and the torture tests.
+>
+> For what purpose?
+>
+> I'm not sure we want yet another config debug option. These are all
+> expert
+> level configuration and honestly I would rather such users _think_ about
+> what options they are enabling instead of giving them a large hammer.
+>
+> If enough load, this can also make boxes completely locked up for any
+> sort of
+> testing/debugging. I vote no.
+>
+> Also, CI efforts such 0-day already have the necessary scripting to
+> cover the
+> debug options that make sense.
+>
+> Thanks,
+> Davidlohr
 
-I'm assuming Arnd will take this.
+I think I misunderstood what the expectation is. I will send out an
+updated patch to correct that.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Thanks,
+Longman
