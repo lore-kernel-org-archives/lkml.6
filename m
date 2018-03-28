@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752871AbeC1Cv5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 22:51:57 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:49677 "EHLO
+        id S1752926AbeC1Cw1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 22:52:27 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:51111 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751088AbeC1CvT (ORCPT
+        with ESMTP id S1751099AbeC1Cw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 22:51:19 -0400
+        Tue, 27 Mar 2018 22:52:26 -0400
 From: Yixun Lan <yixun.lan@amlogic.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
@@ -17,11 +17,10 @@ CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Qiufang Dai <qiufang.dai@amlogic.com>,
         <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v3 2/6] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-Date: Wed, 28 Mar 2018 10:50:46 +0800
-Message-ID: <20180328025050.221585-3-yixun.lan@amlogic.com>
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 5/6] clk: meson: drop CLK_SET_RATE_PARENT flag
+Date: Wed, 28 Mar 2018 10:50:49 +0800
+Message-ID: <20180328025050.221585-6-yixun.lan@amlogic.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180328025050.221585-1-yixun.lan@amlogic.com>
 References: <20180328025050.221585-1-yixun.lan@amlogic.com>
@@ -32,26 +31,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the dt-binding documentation to support new compatible string
-for the Amlogic's Meson-AXG SoC.
+The clk81 is not expected to be changed, so drop this flag.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/meson/gxbb-aoclk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index 786dc39ca904..3a880528030e 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
- 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
- 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
-+	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
- 	followed by the common "amlogic,meson-gx-aoclkc"
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 5a922639a264..89b048aad239 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -70,7 +70,7 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
++		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
  
- - #clock-cells: should be 1.
 -- 
 2.15.1
