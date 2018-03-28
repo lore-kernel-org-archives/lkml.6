@@ -1,166 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752824AbeC1NdG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:33:06 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42105 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeC1NdE (ORCPT
+        id S1752899AbeC1NeR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:34:17 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:57985 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752416AbeC1NeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:33:04 -0400
-X-Google-Smtp-Source: AIpwx488jUjwnLzgSnH/FdkM1ANC92Aw/s+J67oKJJyp7NxHw3ucnSYjC9aLLQRG2Se92WWtX3S2tA==
-Subject: Re: [PATCH] ecryptfs: Restore support for both encrypted and
- unencrypted file names
-To: Tyler Hicks <tyhicks@canonical.com>
-Cc: ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
- <740f5325-331d-d38c-e9d4-5f81b95a6872@canonical.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <6f35b462-8c36-5ba3-4712-a0782961e548@roeck-us.net>
-Date: Wed, 28 Mar 2018 06:33:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <740f5325-331d-d38c-e9d4-5f81b95a6872@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Mar 2018 09:34:14 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180328133412epoutp045b2d31c6e835731bfc9ce86968ce131c~gGOaZDqwy0517505175epoutp04M
+X-AuditID: b6c32a46-b6dff70000000fe8-4f-5abb99d42807
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Helge Deller <deller@gmx.de>,
+        "James E. J. Bottomley" <jejb@parisc-linux.org>,
+        Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] video/fbdev/stifb: Return -ENOMEM after a failed
+ kzalloc() in stifb_init_fb()
+Date: Wed, 28 Mar 2018 15:34:08 +0200
+Message-id: <2557729.Jl5E8iEh4q@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <6341951e-df28-0b40-974e-dedd890b5228@users.sourceforge.net>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZdljTVPfKzN1RBkdmK1nc/3Sb0eLK1/ds
+        FmterGK3ON+5nNni/rpVrBZbb0lbnOj7wGpxedccNotHpy4wOXB6fPgY53G/+ziTx4VFv1k9
+        jvy19mg61c7q8XmTXABbFJdNSmpOZllqkb5dAlfG6Z16Be9ZKs7d2MLSwNjJ0sXIySEhYCIx
+        89w7xi5GLg4hgR2MEsc2PGWFcL4zSix93s8IU3Xx/GxmiMRuRolVs5awQThfGSWudt5kA6li
+        E7CSmNi+CqiDg0NEwFTiz4kQkBpmgYVMEk0b25lAaoQFsiUuv3kFZrMIqEqsXLeEFcTmFdCU
+        uDu3ix3EFhXwktiyD6Seg4NTwFPi54NqiBJBiR+T74GdzSwgL7Fv/1RWCFtH4uyxdWAvSAjc
+        ZpN4+LGBFeJqF4n+Z91QHwhLvDq+hR3ClpZ4tmojVEMzo8S3HXuYIRITGCX2rBeCsK0lDh+/
+        CLWBT6Lj8F92kIMkBHglOtqgSjwkjhy+zARhO0o8fXOFHRIos5gkHk/qZZzAKDsLyeGzkBw+
+        C8nhCxiZVzGKpRYU56anFhsVGOkVJ+YWl+al6yXn525iBCcPLbcdjEvO+RxiFOBgVOLhLYjZ
+        FSXEmlhWXJl7iFGCg1lJhPe9xu4oId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rytAS5RQgLpiSWp
+        2ampBalFMFkmDk6pBsbm3iadX6emHuSzYGmIOKY56/y92Wud377Zz1Z2QUZsbsHk99+2ZD4/
+        VHFc9+auqPKOhG3HY26nNuybK/KEU/9z9LGpTjOmu6zsmLKGYWvFBtXANuX47wx3S1fsiT4i
+        4vusdfohPkXhR7obSixdf798wbU8L8os1eDCsitX+2KtqkucE9VigxuUWIozEg21mIuKEwGl
+        1d3IGgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsVy+t9jAd3LM3dHGbx5qmRx/9NtRosrX9+z
+        Wax5sYrd4nzncmaL++tWsVpsvSVtcaLvA6vF5V1z2CwenbrA5MDp8eFjnMf97uNMHhcW/Wb1
+        OPLX2qPpVDurx+dNcgFsUVw2Kak5mWWpRfp2CVwZp3fqFbxnqTh3YwtLA2MnSxcjJ4eEgInE
+        xfOzmbsYuTiEBHYySky/dYkdwvnKKHF54Sw2kCo2ASuJie2rGLsYOThEBEwl/pwIAalhFljM
+        JDHj119GkBphgWyJy29eMYHYLAKqEivXLWEFsXkFNCXuzu1iB7FFBbwktuxrZwKZwyngKfHz
+        QTXErmOMEi8fHGaHqBeU+DH5Hth1zALyEvv2T2WFsLUk1u88zjSBkX8WkrJZSMpmISlbwMi8
+        ilEytaA4Nz232KjAKC+1XK84Mbe4NC9dLzk/dxMjMNi3Hdbq38H4eEn8IUYBDkYlHt6CmF1R
+        QqyJZcWVuYcYJTiYlUR432vsjhLiTUmsrEotyo8vKs1JLT7EKM3BoiTOy59/LFJIID2xJDU7
+        NbUgtQgmy8TBKdXAeEji8au9h0KOVK+7JZm96U7s9oAJzle/yLR+mTjzcmtJ0YzPJ/JzDq0J
+        mjOhU+Ph61QHj2mPPW/McV0obTRL/+WP+DNlsaGntTsb5AuePLf5evfsiZCG//XZQvOXOTq6
+        XStcbKE6+9CHDU+L2d6pzfptNXsRf0ZvasY9D7WdbWW6DQdOdKaf/qrEUpyRaKjFXFScCACR
+        X4hXcgIAAA==
+X-CMS-MailID: 20180328133411epcas2p442e8f8a85d6c6e72ec5a5122519fe5eb
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180328133411epcas2p442e8f8a85d6c6e72ec5a5122519fe5eb
+X-RootMTR: 20180328133411epcas2p442e8f8a85d6c6e72ec5a5122519fe5eb
+References: <7dcd32b6-9691-14a1-29cf-3a746ef5adfc@users.sourceforge.net>
+        <889131fe-199c-3bef-0781-00761b807426@users.sourceforge.net>
+        <6341951e-df28-0b40-974e-dedd890b5228@users.sourceforge.net>
+        <CGME20180328133411epcas2p442e8f8a85d6c6e72ec5a5122519fe5eb@epcas2p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 08:58 AM, Tyler Hicks wrote:
-> Hello Guenter
+On Sunday, January 07, 2018 12:56:45 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 7 Jan 2018 11:33:59 +0100
 > 
-> On 02/13/2018 04:36 PM, Guenter Roeck wrote:
->> Commit 88ae4ab9802e ("ecryptfs_lookup(): try either only encrypted or
->> plaintext name") was supposed to fix a situation where two files with
->> the same name and same inode could be created in ecryptfs. One of those
->> files had an encrypted file name, the other file name was unencrypted.
+> Replace an error code for the indication of a memory allocation failure
+> in this function.
 > 
-> That's correct. Al was concerned about possible deadlocks with aliased
-> dentries and I thought it would be best to only support encrypted and
-> unencrypted but not both.
-> 
->>
->> After commit 88ae4ab9802e, having a mix of encrypted and unencrypted file
->> names is no longer supposed to be possible. However, that is not the case.
->> The only difference is that it is now even easier to create a situation
->> where two files with the same name coexist (one encrypted and the other
->> not encrypted). In practice, this looks like the following (files
->> created with v4.14.12).
->>
->> ecryptfs mounted with file name encryption enabled:
->>
->> $ ls -li
->> total 48
->> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
->> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
->> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
->> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
->> $ grep . *
->> myfile:encrypted
->> myfile:encrypted
->> myfile2:encrypted
->> myfile2:encrypted
->>
->> $ ls -li
->> total 48
->> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36
->> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njbcIPoApxk7-E--
->> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02
->> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCtJ70cm911yZ---
->> 5252817 -rw-rw-r-- 1 groeck groeck 12 Jan 20 12:52 myfile
->> 5252827 -rw-rw-r-- 1 groeck groeck 12 Jan 20 15:37 myfile2
->>
->> $ grep . *
->> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njbcIPoApxk7-E--:encrypted
->> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCtJ70cm911yZ---:encrypted
->> myfile:unencrypted
->> myfile2:unencrypted
->>
->> Creating a file with file name encryption disabled and remounting with
->> file name encryption enabled results in the following.
->>
->> $ ls -li
->> ls: cannot access 'myfile3': No such file or directory
->> total 48
->> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
->> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
->> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
->> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
->>        ? -????????? ? ?      ?       ?            ? myfile3
->>
->> Prior to commit 88ae4ab9802e, the file system had to be mounted with
->> encrypted file names first to create a file, then the same had to be
->> repeated after mounting with unencrypted file names. Now the duplicate
->> files can be created both ways (unencrypted _or_ encrypted first).
->>
->> The only real difference is that it is no longer possible to have a
->> _working_ combination of encrypted and unencrypted file names. In other
->> words, commit 88ae4ab9802e results in reduced functionality with no
->> benefit whatsoever.
->>
->> Restore ability to have a mix of unencrypted and encrypted files.
->> This effectively reverts commit 88ae4ab9802e, but the code is now
->> better readable since it avoids a number of goto statements.
-> 
-> I'd like for us to correctly fix 88ae4ab9802e rather than try to support
-> both filename types under a single mount since that's complex and there
-> are unknown corner cases to consider. I think this can be done by not
-> copying up the lower filename when an error is encountered in
-> ecryptfs_decode_and_decrypt_filename(). If filename encryption is
-> enabled, it should only return decrypted filenames or an error if it
-> isn't possible to decrypt the lower filename.
-> 
+> Fixes: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac ("Linux-2.6.12-rc2: Initial git repository build")
+> Suggested-by: Rolf Eike Beer <eike-kernel@sf-tec.de>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-NP. I'll leave it alone, then. Since our use case requires both encrypted
-and unencrypted file names, our "fix" will be to carry this patch along
-locally as long as needed and stop using ecryptfs otherwise.
+Patch queued for 4.17, thanks.
 
-Guenter
-
-> Tyler
-> 
->>
->> Cc: Al Viro <viro@zeniv.linux.org.uk>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->>   fs/ecryptfs/inode.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
->> index 847904aa63a9..14a5c096ead6 100644
->> --- a/fs/ecryptfs/inode.c
->> +++ b/fs/ecryptfs/inode.c
->> @@ -392,11 +392,11 @@ static struct dentry *ecryptfs_lookup(struct inode *ecryptfs_dir_inode,
->>   	int rc = 0;
->>   
->>   	lower_dir_dentry = ecryptfs_dentry_to_lower(ecryptfs_dentry->d_parent);
->> -
->> +	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len);
->>   	mount_crypt_stat = &ecryptfs_superblock_to_private(
->>   				ecryptfs_dentry->d_sb)->mount_crypt_stat;
->> -	if (mount_crypt_stat
->> -	    && (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
->> +	if (IS_ERR(lower_dentry) &&
->> +	    (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
->>   		rc = ecryptfs_encrypt_and_encode_filename(
->>   			&encrypted_and_encoded_name, &len,
->>   			mount_crypt_stat, name, len);
->> @@ -405,10 +405,10 @@ static struct dentry *ecryptfs_lookup(struct inode *ecryptfs_dir_inode,
->>   			       "filename; rc = [%d]\n", __func__, rc);
->>   			return ERR_PTR(rc);
->>   		}
->> -		name = encrypted_and_encoded_name;
->> +		lower_dentry = lookup_one_len_unlocked(
->> +			encrypted_and_encoded_name, lower_dir_dentry, len);
->>   	}
->>   
->> -	lower_dentry = lookup_one_len_unlocked(name, lower_dir_dentry, len);
->>   	if (IS_ERR(lower_dentry)) {
->>   		ecryptfs_printk(KERN_DEBUG, "%s: lookup_one_len() returned "
->>   				"[%ld] on lower_dentry = [%s]\n", __func__,
->>
-> 
-> 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
