@@ -1,58 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753752AbeC1PB2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:01:28 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:52118 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1752876AbeC1PB0 (ORCPT
+        id S1753879AbeC1PBw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:01:52 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:40262 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753164AbeC1PBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:01:26 -0400
-Date: Wed, 28 Mar 2018 11:01:25 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: schwidefsky@de.ibm.com, <borntraeger@de.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <parri.andrea@gmail.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
-        <akiyks@gmail.com>
-Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
-In-Reply-To: <20180328134232.GA29274@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1803281057280.1375-100000@iolanthe.rowland.org>
+        Wed, 28 Mar 2018 11:01:49 -0400
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v4 0/8] Ingenic JZ47xx Timer/Counter Unit drivers
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Wed, 28 Mar 2018 17:01:47 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
+Subject: 
+In-Reply-To: <aeb57b92-6932-9774-dc50-7563d30846bf@linaro.org>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <aeb57b92-6932-9774-dc50-7563d30846bf@linaro.org>
+Message-ID: <2fb3344b4034385ed89bcdf7da2347d4@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018, Paul E. McKenney wrote:
-
-> Hello!
+Le 2018-03-18 23:13, Daniel Lezcano a écrit :
+> On 18/03/2018 00:28, Paul Cercueil wrote:
+>> Hi,
+>> 
+>> This is the 4th version of my TCU patchset.
+>> 
+>> The major change is a greatly improved documentation, both in-code
+>> and as separate text files, to describe how the hardware works and
+>> how the devicetree bindings should be used.
+>> 
+>> There are also cosmetic changes in the irqchip driver, and the
+>> clocksource driver will now use as timers all TCU channels not
+>> requested by the TCU PWM driver.
 > 
-> The prototype patch shown below provides files required to allow herd7 to
-> evaluate C-language litmus tests for the multicopy-atomic TSO ordering
-> provided by s390.  This patch should be viewed with great suspicion.
-> It does what I expect it to do on SB (with and without barriers),
-> IRIW without barriers, and Alan's SB with read-of-write added, but my
-> expectations are quite likely faulty, and my test cases are very few
-> in number.
+> Hi Paul,
 > 
-> Either way, this is the easy part.  The hard part (which I am happy
-> to leave to others) is making litmus7 and klitmus7 able to do tests
-> on actual hardware, as well as enabling herd to handle litmus tests
-> containing BAL.  ;-)
+> I don't know why but you series appears in reply to [PATCH v3 2/9]. Not
+> sure if it is my mailer or how you are sending the patches but if it is
+> the latter can you in the future, when resending a new version, not use
+> the in-reply-to option. It will be easier to follow the versions.
 > 
-> Note that CPU architectures already supported by herd might well need
-> only a .cfg file that refers to herd's pre-existing support.
+> Thanks.
 > 
-> Thoughts?
+>  -- Daniel
 
-I don't quite see the point of this.  You're not suggesting that we
-have one Linux Kernel Memory Consistency Model for s390 and another
-one for all the other architectures, are you?
+Hi Daniel,
 
-If the idea is merely to provide a herd model for s390 then it should 
-go into the DIY repository, not into the LKMM repository.
+I guess I did a mistake. I always reply to the first patch of the 
+previous
+version of the patchset (is that correct?).
 
-Alan
+Thanks,
+-Paul
