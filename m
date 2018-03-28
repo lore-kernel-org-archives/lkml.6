@@ -1,224 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753745AbeC1OVw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:21:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43062 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753539AbeC1OVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:21:34 -0400
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 2/2] locking/debug: Restructure the lock debugging menu
-Date: Wed, 28 Mar 2018 10:20:52 -0400
-Message-Id: <1522246852-17501-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1522246852-17501-1-git-send-email-longman@redhat.com>
-References: <1522246852-17501-1-git-send-email-longman@redhat.com>
+        id S1753385AbeC1OWm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:22:42 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:15086 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752894AbeC1OWj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 10:22:39 -0400
+X-IronPort-AV: E=Sophos;i="5.48,371,1517842800";
+   d="scan'208";a="275123103"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH] gpio: dwapb: Add support for 32 interrupts
+Date: Wed, 28 Mar 2018 15:22:30 +0100
+Message-Id: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two config options in the lock debugging menu that are probably the most
-frequently used, as far as I am concerned, is the PROVE_LOCKING and
-LOCK_STAT. From a UI perspective, they should be front and center. So
-these two options are now moved to the top of the lock debugging menu.
+The DesignWare GPIO IP can be configured for either 1 or 32 interrupts,
+but the driver currently only supports 1 interrupt. See the DesignWare
+DW_apb_gpio Databook description of the 'GPIO_INTR_IO' parameter.
 
-The DEBUG_WW_MUTEX_SLOWPATH option is also added to the PROVE_LOCKING
-umbrella.
+This change allows the driver to work with up to 32 interrupts, it will
+get as many interrupts as specified in the DT 'interrupts' property.
+It doesn't do anything clever with the different interrupts, it just calls
+the same handler used for single interrupt hardware.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- lib/Kconfig.debug | 146 ++++++++++++++++++++++++++++--------------------------
- 1 file changed, 76 insertions(+), 70 deletions(-)
+Note: There are a few lines over 80 chars, but this is just guidance, right?
+      Especially as there are already some lines over 80 chars.
+---
+ .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   | 10 ++++-
+ drivers/gpio/gpio-dwapb.c                          | 44 +++++++++++++++++-----
+ include/linux/platform_data/gpio-dwapb.h           |  3 +-
+ 3 files changed, 45 insertions(+), 12 deletions(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 6aad28c..dc9ffe2 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1034,6 +1034,79 @@ config DEBUG_PREEMPT
+diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+index 4a75da7..e343581 100644
+--- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+@@ -26,8 +26,14 @@ controller.
+   the second encodes the triger flags encoded as described in
+   Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+ - interrupt-parent : The parent interrupt controller.
+-- interrupts : The interrupt to the parent controller raised when GPIOs
+-  generate the interrupts.
++- interrupts : The interrupts to the parent controller raised when GPIOs
++  generate the interrupts. If the controller provides one combined interrupt
++  for all GPIOs, specify a single interrupt. If the controller provides one
++  interrupt for each GPIO, provide a list of interrupts that correspond to each
++  of the GPIO pins. When specifying multiple interrupts, if any of the GPIOs are
++  not connected to an interrupt, use the interrupt-mask property.
++- interrupt-mask : a 32-bit bit mask that specifies which interrupts in the list
++  of interrupts is valid, bit is 1 for a valid irq.
+ - snps,nr-gpios : The number of pins in the port, a single cell.
+ - resets : Reset line for the controller.
  
- menu "Lock Debugging (spinlocks, mutexes, etc...)"
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 226977f..47d82f9 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	irq_gc->chip_types[1].handler = handle_edge_irq;
  
-+config LOCK_DEBUGGING_SUPPORT
-+	bool
-+	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	default y
+ 	if (!pp->irq_shared) {
+-		irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
+-						 gpio);
++		int i;
 +
-+config PROVE_LOCKING
-+	bool "Lock debugging: prove locking correctness"
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
-+	select LOCKDEP
-+	select DEBUG_SPINLOCK
-+	select DEBUG_MUTEXES
-+	select DEBUG_RT_MUTEXES if RT_MUTEXES
-+	select DEBUG_RWSEMS if RWSEM_SPIN_ON_OWNER
-+	select DEBUG_WW_MUTEX_SLOWPATH
-+	select DEBUG_LOCK_ALLOC
-+	select TRACE_IRQFLAGS
-+	default n
-+	help
-+	 This feature enables the kernel to prove that all locking
-+	 that occurs in the kernel runtime is mathematically
-+	 correct: that under no circumstance could an arbitrary (and
-+	 not yet triggered) combination of observed locking
-+	 sequences (on an arbitrary number of CPUs, running an
-+	 arbitrary number of tasks and interrupt contexts) cause a
-+	 deadlock.
-+
-+	 In short, this feature enables the kernel to report locking
-+	 related deadlocks before they actually occur.
-+
-+	 The proof does not depend on how hard and complex a
-+	 deadlock scenario would be to trigger: how many
-+	 participant CPUs, tasks and irq-contexts would be needed
-+	 for it to trigger. The proof also does not depend on
-+	 timing: if a race and a resulting deadlock is possible
-+	 theoretically (no matter how unlikely the race scenario
-+	 is), it will be proven so and will immediately be
-+	 reported by the kernel (once the event is observed that
-+	 makes the deadlock theoretically possible).
-+
-+	 If a deadlock is impossible (i.e. the locking rules, as
-+	 observed by the kernel, are mathematically correct), the
-+	 kernel reports nothing.
-+
-+	 NOTE: this feature can also be enabled for rwlocks, mutexes
-+	 and rwsems - in which case all dependencies between these
-+	 different locking variants are observed and mapped too, and
-+	 the proof of observed correctness is also maintained for an
-+	 arbitrary combination of these separate locking variants.
-+
-+	 For more details, see Documentation/locking/lockdep-design.txt.
-+
-+config LOCK_STAT
-+	bool "Lock usage statistics"
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
-+	select LOCKDEP
-+	select DEBUG_SPINLOCK
-+	select DEBUG_MUTEXES
-+	select DEBUG_RT_MUTEXES if RT_MUTEXES
-+	select DEBUG_LOCK_ALLOC
-+	default n
-+	help
-+	 This feature enables tracking lock contention points
-+
-+	 For more details, see Documentation/locking/lockstat.txt
-+
-+	 This also enables lock events required by "perf lock",
-+	 subcommand of perf.
-+	 If you want to use "perf lock", you also need to turn on
-+	 CONFIG_EVENT_TRACING.
-+
-+	 CONFIG_LOCK_STAT defines "contended" and "acquired" lock events.
-+	 (CONFIG_LOCKDEP defines "acquire" and "release" events.)
-+
- config DEBUG_RT_MUTEXES
- 	bool "RT Mutex debugging, deadlock detection"
- 	depends on DEBUG_KERNEL && RT_MUTEXES
-@@ -1060,7 +1133,7 @@ config DEBUG_MUTEXES
++		for (i = 0; i < pp->ngpio; i++) {
++			if (pp->irq[i])
++				irq_set_chained_handler_and_data(pp->irq[i],
++						dwapb_irq_handler, gpio);
++		}
+ 	} else {
+ 		/*
+ 		 * Request a shared IRQ since where MFD would have devices
+ 		 * using the same irq pin
+ 		 */
+-		err = devm_request_irq(gpio->dev, pp->irq,
++		err = devm_request_irq(gpio->dev, pp->irq[0],
+ 				       dwapb_irq_handler_mfd,
+ 				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
+ 		if (err) {
+@@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 	if (pp->idx == 0)
+ 		port->gc.set_config = dwapb_gpio_set_config;
  
- config DEBUG_WW_MUTEX_SLOWPATH
- 	bool "Wait/wound mutex debugging: Slowpath testing"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select DEBUG_LOCK_ALLOC
- 	select DEBUG_SPINLOCK
- 	select DEBUG_MUTEXES
-@@ -1084,7 +1157,7 @@ config DEBUG_RWSEMS
+-	if (pp->irq)
++	if (pp->has_irq)
+ 		dwapb_configure_irqs(gpio, port, pp);
  
- config DEBUG_LOCK_ALLOC
- 	bool "Lock debugging: detect incorrect freeing of live locks"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select DEBUG_SPINLOCK
- 	select DEBUG_MUTEXES
- 	select DEBUG_RT_MUTEXES if RT_MUTEXES
-@@ -1097,54 +1170,9 @@ config DEBUG_LOCK_ALLOC
- 	 spin_lock_init()/mutex_init()/etc., or whether there is any lock
- 	 held during task exit.
+ 	err = gpiochip_add_data(&port->gc, port);
+@@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+ 		port->is_registered = true;
  
--config PROVE_LOCKING
--	bool "Lock debugging: prove locking correctness"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
--	select LOCKDEP
--	select DEBUG_SPINLOCK
--	select DEBUG_MUTEXES
--	select DEBUG_RT_MUTEXES if RT_MUTEXES
--	select DEBUG_RWSEMS if RWSEM_SPIN_ON_OWNER
--	select DEBUG_LOCK_ALLOC
--	select TRACE_IRQFLAGS
--	default n
--	help
--	 This feature enables the kernel to prove that all locking
--	 that occurs in the kernel runtime is mathematically
--	 correct: that under no circumstance could an arbitrary (and
--	 not yet triggered) combination of observed locking
--	 sequences (on an arbitrary number of CPUs, running an
--	 arbitrary number of tasks and interrupt contexts) cause a
--	 deadlock.
--
--	 In short, this feature enables the kernel to report locking
--	 related deadlocks before they actually occur.
--
--	 The proof does not depend on how hard and complex a
--	 deadlock scenario would be to trigger: how many
--	 participant CPUs, tasks and irq-contexts would be needed
--	 for it to trigger. The proof also does not depend on
--	 timing: if a race and a resulting deadlock is possible
--	 theoretically (no matter how unlikely the race scenario
--	 is), it will be proven so and will immediately be
--	 reported by the kernel (once the event is observed that
--	 makes the deadlock theoretically possible).
--
--	 If a deadlock is impossible (i.e. the locking rules, as
--	 observed by the kernel, are mathematically correct), the
--	 kernel reports nothing.
--
--	 NOTE: this feature can also be enabled for rwlocks, mutexes
--	 and rwsems - in which case all dependencies between these
--	 different locking variants are observed and mapped too, and
--	 the proof of observed correctness is also maintained for an
--	 arbitrary combination of these separate locking variants.
--
--	 For more details, see Documentation/locking/lockdep-design.txt.
--
- config LOCKDEP
- 	bool
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select STACKTRACE
- 	select FRAME_POINTER if !MIPS && !PPC && !ARM_UNWIND && !S390 && !MICROBLAZE && !ARC && !SCORE && !X86
- 	select KALLSYMS
-@@ -1153,28 +1181,6 @@ config LOCKDEP
- config LOCKDEP_SMALL
- 	bool
+ 	/* Add GPIO-signaled ACPI event support */
+-	if (pp->irq)
++	if (pp->has_irq)
+ 		acpi_gpiochip_request_interrupts(&port->gc);
  
--config LOCK_STAT
--	bool "Lock usage statistics"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
--	select LOCKDEP
--	select DEBUG_SPINLOCK
--	select DEBUG_MUTEXES
--	select DEBUG_RT_MUTEXES if RT_MUTEXES
--	select DEBUG_LOCK_ALLOC
--	default n
--	help
--	 This feature enables tracking lock contention points
--
--	 For more details, see Documentation/locking/lockstat.txt
--
--	 This also enables lock events required by "perf lock",
--	 subcommand of perf.
--	 If you want to use "perf lock", you also need to turn on
--	 CONFIG_EVENT_TRACING.
--
--	 CONFIG_LOCK_STAT defines "contended" and "acquired" lock events.
--	 (CONFIG_LOCKDEP defines "acquire" and "release" events.)
--
- config DEBUG_LOCKDEP
- 	bool "Lock dependency engine debugging"
- 	depends on DEBUG_KERNEL && LOCKDEP
+ 	return err;
+@@ -601,13 +606,34 @@ dwapb_gpio_get_pdata(struct device *dev)
+ 		if (dev->of_node && pp->idx == 0 &&
+ 			fwnode_property_read_bool(fwnode,
+ 						  "interrupt-controller")) {
+-			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+-			if (!pp->irq)
++			struct device_node *np = to_of_node(fwnode);
++			u32 irq_mask = 0xFFFFFFFF;
++			int j;
++
++			/* Optional irq mask */
++			fwnode_property_read_u32(fwnode, "interrupt-mask", &irq_mask);
++
++			/*
++			 * The IP has configuration options to allow a single
++			 * combined interrupt or one per gpio. If one per gpio,
++			 * some might not be used.
++			 */
++			for (j = 0; j < pp->ngpio; j++) {
++				if (irq_mask & BIT(j)) {
++					pp->irq[j] = irq_of_parse_and_map(np, j);
++					if (pp->irq[j])
++						pp->has_irq = true;
++				}
++			}
++			if (!pp->has_irq)
+ 				dev_warn(dev, "no irq for port%d\n", pp->idx);
+ 		}
+ 
+-		if (has_acpi_companion(dev) && pp->idx == 0)
+-			pp->irq = platform_get_irq(to_platform_device(dev), 0);
++		if (has_acpi_companion(dev) && pp->idx == 0) {
++			pp->irq[0] = platform_get_irq(to_platform_device(dev), 0);
++			if (pp->irq[0])
++				pp->has_irq = true;
++		}
+ 
+ 		pp->irq_shared	= false;
+ 		pp->gpio_base	= -1;
+diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
+index 2dc7f4a..5a52d69 100644
+--- a/include/linux/platform_data/gpio-dwapb.h
++++ b/include/linux/platform_data/gpio-dwapb.h
+@@ -19,7 +19,8 @@ struct dwapb_port_property {
+ 	unsigned int	idx;
+ 	unsigned int	ngpio;
+ 	unsigned int	gpio_base;
+-	unsigned int	irq;
++	unsigned int	irq[32];
++	bool		has_irq;
+ 	bool		irq_shared;
+ };
+ 
 -- 
-1.8.3.1
+2.7.4
