@@ -1,85 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752447AbeC1HDa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:03:30 -0400
-Received: from mga17.intel.com ([192.55.52.151]:31659 "EHLO mga17.intel.com"
+        id S1752318AbeC1HEv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:04:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59915 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750881AbeC1HCx (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:02:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,370,1517904000";
-   d="scan'208";a="32013316"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-Subject: [PATCH v2 1/4] tools include: Add config.h header file
-Date: Wed, 28 Mar 2018 22:57:05 +0800
-Message-Id: <1522249028-15099-2-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
-References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+        id S1750774AbeC1HEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 03:04:49 -0400
+From: NeilBrown <neilb@suse.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 28 Mar 2018 18:04:40 +1100
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] rhashtable: support guaranteed successful insertion.
+In-Reply-To: <20180328060432.GA16291@gondor.apana.org.au>
+References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718434.11435.6551477417902631683.stgit@noble> <20180327155610.GD14001@gondor.apana.org.au> <87y3id42zo.fsf@notabene.neil.brown.name> <20180328060432.GA16291@gondor.apana.org.au>
+Message-ID: <87d0zo4r5j.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+--=-=-=
+Content-Type: text/plain
 
-Adding IS_BUILTIN macro and its dependencies into
-tools world.
+On Wed, Mar 28 2018, Herbert Xu wrote:
 
-It's taken from kernel's include/linux/kconfig.h,
-which can't be taken completely due to its kconfig
-dependencies.
+> On Wed, Mar 28, 2018 at 08:34:19AM +1100, NeilBrown wrote:
+>>
+>> It is easy to get an -EBUSY insertion failure when .disable_count is
+>> enabled, and I did get that.  Blindly propagating that up caused lustre
+>> to get terribly confused - not too surprising really.
+>
+> Right, so this failure mode is specific to your patch 6.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/include/tools/config.h | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 tools/include/tools/config.h
+I disagree.  My patch 6 only makes it common instead of exceedingly
+rare.  If any table in the list other than the first has a chain with 16
+elements, then trying to insert an element with a hash which matches
+that chain will fail with -EBUSY.  This is theoretically possible
+already, though astronomically unlikely.  So that case will never be
+tested for.
 
-diff --git a/tools/include/tools/config.h b/tools/include/tools/config.h
-new file mode 100644
-index 0000000..08ade7d
---- /dev/null
-+++ b/tools/include/tools/config.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _TOOLS_CONFIG_H
-+#define _TOOLS_CONFIG_H
-+
-+/* Subset of include/linux/kconfig.h */
-+
-+#define __ARG_PLACEHOLDER_1 0,
-+#define __take_second_arg(__ignored, val, ...) val
-+
-+/*
-+ * Helper macros to use CONFIG_ options in C/CPP expressions. Note that
-+ * these only work with boolean and tristate options.
-+ */
-+
-+/*
-+ * Getting something that works in C and CPP for an arg that may or may
-+ * not be defined is tricky.  Here, if we have "#define CONFIG_BOOGER 1"
-+ * we match on the placeholder define, insert the "0," for arg1 and generate
-+ * the triplet (0, 1, 0).  Then the last step cherry picks the 2nd arg (a one).
-+ * When CONFIG_BOOGER is not defined, we generate a (... 1, 0) pair, and when
-+ * the last step cherry picks the 2nd arg, we get a zero.
-+ */
-+#define __is_defined(x)			___is_defined(x)
-+#define ___is_defined(val)		____is_defined(__ARG_PLACEHOLDER_##val)
-+#define ____is_defined(arg1_or_junk)	__take_second_arg(arg1_or_junk 1, 0)
-+
-+/*
-+ * IS_BUILTIN(CONFIG_FOO) evaluates to 1 if CONFIG_FOO is set to 'y', 0
-+ * otherwise. For boolean options, this is equivalent to
-+ * IS_ENABLED(CONFIG_FOO).
-+ */
-+#define IS_BUILTIN(option) __is_defined(option)
-+
-+#endif /* _TOOLS_CONFIG_H */
--- 
-2.7.4
+>
+> I think I see the problem.  As it currently stands, we never
+> need growing when we hit the bucket length limit.  We only do
+> rehashes.
+>
+> With your patch, you must change it so that we actually try to
+> grow the table if necessary when we hit the bucket length limit.
+
+It is hard to know if it is necessary.  And making the new table larger
+will make the error less likely, but still won't make it impossible.  So
+callers will have to handle it - just like they currently have to handle
+-ENOMEM even though it is highly unlikely (and not strictly necessary).
+
+Are these errors ever actually useful?  I thought I had convinced myself
+before that they were (to throttle attacks on the hash function), but
+they happen even less often than I thought.
+
+>
+> Otherwise it will result in the EBUSY that you're seeing.
+>
+> I laso think that we shouldn't make this a toggle.  If we're going
+> to do disable_count then it should be unconditionally done for
+> everyone.
+>
+> However, I personally would prefer a percpu elem count instead of
+> disabling it completely.  Would that be acceptable to your use-case?
+
+Maybe. Reading a percpu counter isn't cheap.  Reading it whenever a hash
+chain reaches 16 is reasonable, but I think we would want to read it a
+lot more often than that.  So probably store the last-sampled time (with
+no locking) and only sample the counter if last-sampled is more than
+ jiffies - 10*HZ (???)
+
+In the case in lustre we also shard the LRU list so that adding to the
+LRU causes minimal contention. Keeping a shared counter together with
+the lru is trivial and summing them periodically is little burden.
+Maybe it makes sense to include that functionality if rhashtables so
+that it is there for everyone.
+
+A percpu counter uses a lot more memory than atomic_t.  Given that some
+callers set nelem_hint to 2 or 3, it seem likely that those callers
+don't want to waste memory.  Should we force them to?
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq7PogACgkQOeye3VZi
+gbmbRA/7B9ziYXYwefYsl4AT9GRSpQdWGtUl1fHHhOUKt97V328epMqQu4xcVwJE
+Crl6D+gHEOHCa4ukJM/eVSJ1o7ESwHllO6C4IKxpDWl2/k9kCJ3hODDDDhWWa+zT
+KLnpvBD1CQSuet3dXuvc0VjruzpPWB8nKaxkAclC1NfwerqlgOu9ekZywTlOYuOu
+z/yif8Dcx8ys3ufBuoPMXFEKzoUX53f5eyTyQr5vx58sJGq8q0w6jDNN1fHkvtQx
+Lji3xZENUovC1MERyh118ZqN0UCjaMs1ZtATJwobhNLUDHXLKfJPrCPtjhCIHVzQ
+TIXWyS//hwT76W5yz1QxSHkF6yRFZHCzqBecBPOXg6i2VVI4KjrGtjRrYZO7LXii
+yj4SenGVK3GLJddrWQDjefUs39HIYmHM7j3vCprZl+dSliKsKUCuciMpVUg1xONn
+Vz6bwIzGbgL+Cjr8HUP+yo/XiiNMJXzMowgCPKpvodT6Lw/1A2jpeg6kIMmkr/PP
+9rpLktmjrpI7jAguEEt0w/HGrMmHCZ8kVfLt5bDGBHNdCmf7+imNif2BDeDsjkfu
+STHH2TXizlhh1RBw8As7l5GvZYbwZHgGaExBZnGlASUjCFdLxeGHPzAxrjmL956g
+MCK9onE/UI4wuEFHga2NWSkt2Q+E8DyqLTzo3nAb6hJSOpnEaT4=
+=bWLC
+-----END PGP SIGNATURE-----
+--=-=-=--
