@@ -1,598 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753369AbeC1RAY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 13:00:24 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42121 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753167AbeC1RAU (ORCPT
+        id S1753322AbeC1RBe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 13:01:34 -0400
+Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:27321 "EHLO
+        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752853AbeC1RBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 13:00:20 -0400
-X-Google-Smtp-Source: AIpwx4+KeJNgOGEC2VBNgsuU0PC45BYgd/1w081Lv1R9pm6bg1TBJu1ixaRYPmRkxeTiUiOILmOP5Q==
-Date: Wed, 28 Mar 2018 10:00:18 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] hwmon: add Gateworks System Controller support
-Message-ID: <20180328170018.GC25325@roeck-us.net>
-References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
- <1522250043-8065-4-git-send-email-tharvey@gateworks.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522250043-8065-4-git-send-email-tharvey@gateworks.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 28 Mar 2018 13:01:31 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2G4AAC1ybtamMmZ6ERdHAEBAQQBAQoBA?=
+ =?us-ascii?q?YURKItcjQGDA5JKgXoLhQSEDyE0GAECAQEBAQEBAgECEAEBAQEBCAsLBigvgjg?=
+ =?us-ascii?q?ig0wvIG8ThQ6uDohGgimHXoFUP4NihGYbhXACjFCKYwiBX4xJAowvj3eBJRyCC?=
+ =?us-ascii?q?3CDEoIujj1RjSoqghwBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2G4AAC1ybtamMmZ6ERdHAEBAQQBAQoBAYURKItcjQGDA5J?=
+ =?us-ascii?q?KgXoLhQSEDyE0GAECAQEBAQEBAgECEAEBAQEBCAsLBigvgjgig0wvIG8ThQ6uD?=
+ =?us-ascii?q?ohGgimHXoFUP4NihGYbhXACjFCKYwiBX4xJAowvj3eBJRyCC3CDEoIujj1RjSo?=
+ =?us-ascii?q?qghwBAQ?=
+X-LoopCount0: from 10.208.86.39
+X-IronPort-AV: E=Sophos;i="5.48,372,1517896800";
+   d="scan'208";a="637271539"
+X-DLP: DLP_GlobalPCIDSS
+From: Mario Limonciello <mario.limonciello@dell.com>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc: linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH v3 1/2] power/hibernate: Make passing hibernate offsets more friendly
+Date: Wed, 28 Mar 2018 12:01:09 -0500
+Message-Id: <1522256470-2825-1-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 08:14:02AM -0700, Tim Harvey wrote:
-> The Gateworks System Controller has a hwmon sub-component that exposes
-> up to 16 ADC's, some of which are temperature sensors, others which are
-> voltage inputs. The ADC configuration (register mapping and name) is
-> configured via device-tree and varies board to board.
-> 
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> ---
-> v3:
-> - add voltage_raw input type and supporting fields
-> - add channel validation to is_visible function
-> - remove unnecessary channel validation from read/write functions
-> 
-> v2:
-> - change license comment style
-> - remove DEBUG
-> - simplify regmap_bulk_read err check
-> - remove break after returns in switch statement
-> - fix fan setpoint buffer address
-> - remove unnecessary parens
-> - consistently use struct device *dev pointer
-> - change license/comment block
-> - add validation for hwmon child node props
-> - move parsing of of to own function
-> - use strlcpy to ensure null termination
-> - fix static array sizes and removed unnecessary initializers
-> - dynamically allocate channels
-> - fix fan input label
-> - support platform data
-> - fixed whitespace issues
-> 
->  drivers/hwmon/Kconfig                   |   9 +
->  drivers/hwmon/Makefile                  |   1 +
->  drivers/hwmon/gsc-hwmon.c               | 368 ++++++++++++++++++++++++++++++++
+Currently the only way to specify a hibernate offset for a
+swap file is on the kernel command line.
 
-This will require a matching Documentation/hwmon/gsc-hwmon to explain supported
-attributes.
+Add a new /sys/power/resume_offset that lets userspace
+specify the offset and disk to use when initiating a hibernate
+cycle.
 
->  include/linux/platform_data/gsc_hwmon.h |  43 ++++
->  4 files changed, 421 insertions(+)
->  create mode 100644 drivers/hwmon/gsc-hwmon.c
->  create mode 100644 include/linux/platform_data/gsc_hwmon.h
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 7ad0176..85d9aa3 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -475,6 +475,15 @@ config SENSORS_F75375S
->  	  This driver can also be built as a module.  If so, the module
->  	  will be called f75375s.
->  
-> +config SENSORS_GSC
-> +        tristate "Gateworks System Controller ADC"
-> +        depends on MFD_GATEWORKS_GSC
-> +        help
-> +          Support for the Gateworks System Controller A/D converters.
-> +
-> +	  To compile this driver as a module, choose M here:
-> +	  the module will be called gsc-hwmon.
-> +
->  config SENSORS_MC13783_ADC
->          tristate "Freescale MC13783/MC13892 ADC"
->          depends on MFD_MC13XXX
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index 0fe489f..835a536 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -69,6 +69,7 @@ obj-$(CONFIG_SENSORS_G760A)	+= g760a.o
->  obj-$(CONFIG_SENSORS_G762)	+= g762.o
->  obj-$(CONFIG_SENSORS_GL518SM)	+= gl518sm.o
->  obj-$(CONFIG_SENSORS_GL520SM)	+= gl520sm.o
-> +obj-$(CONFIG_SENSORS_GSC)	+= gsc-hwmon.o
->  obj-$(CONFIG_SENSORS_GPIO_FAN)	+= gpio-fan.o
->  obj-$(CONFIG_SENSORS_HIH6130)	+= hih6130.o
->  obj-$(CONFIG_SENSORS_ULTRA45)	+= ultra45_env.o
-> diff --git a/drivers/hwmon/gsc-hwmon.c b/drivers/hwmon/gsc-hwmon.c
-> new file mode 100644
-> index 0000000..10da46f
-> --- /dev/null
-> +++ b/drivers/hwmon/gsc-hwmon.c
-> @@ -0,0 +1,368 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * Copyright (C) 2018 Gateworks Corporation
-> + *
-> + * This driver registers Linux HWMON attributes for GSC ADC's
-> + */
-> +#include <linux/hwmon.h>
-> +#include <linux/hwmon-sysfs.h>
-> +#include <linux/mfd/gsc.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +#include <linux/platform_data/gsc_hwmon.h>
-> +
-> +#define GSC_HWMON_MAX_TEMP_CH	16
-> +#define GSC_HWMON_MAX_IN_CH	16
-> +#define GSC_HWMON_MAX_FAN_CH	6
-> +
-> +struct gsc_hwmon_data {
-> +	struct gsc_dev *gsc;
-> +	struct device *dev;
-> +	struct gsc_hwmon_platform_data *pdata;
-> +	const struct gsc_hwmon_channel *temp_ch[GSC_HWMON_MAX_TEMP_CH];
-> +	const struct gsc_hwmon_channel *in_ch[GSC_HWMON_MAX_IN_CH];
-> +	const struct gsc_hwmon_channel *fan_ch[GSC_HWMON_MAX_FAN_CH];
-> +	u32 temp_config[GSC_HWMON_MAX_TEMP_CH + 1];
-> +	u32 in_config[GSC_HWMON_MAX_IN_CH + 1];
-> +	u32 fan_config[GSC_HWMON_MAX_FAN_CH + 1];
-> +	struct hwmon_channel_info temp_info;
-> +	struct hwmon_channel_info in_info;
-> +	struct hwmon_channel_info fan_info;
-> +	const struct hwmon_channel_info *info[4];
-> +	struct hwmon_chip_info chip;
-> +	int vreference;
-> +	int resolution;
-> +};
-> +
-> +static int
-> +gsc_hwmon_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
-> +	       int channel, long *val)
-> +{
-> +	struct gsc_hwmon_data *hwmon = dev_get_drvdata(dev);
-> +	struct gsc_hwmon_platform_data *pdata = hwmon->pdata;
-> +	const struct gsc_hwmon_channel *ch;
-> +	int sz, ret;
-> +	u8 buf[3];
-> +
-> +	dev_dbg(dev, "%s type=%d attr=%d channel=%d\n", __func__, type, attr,
-> +		channel);
-> +	switch (type) {
-> +	case hwmon_in:
-> +		ch = hwmon->in_ch[channel];
-> +		break;
-> +	case hwmon_temp:
-> +		ch = hwmon->temp_ch[channel];
-> +		break;
-> +	case hwmon_fan:
-> +		ch = hwmon->fan_ch[channel];
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	sz = (ch->type == type_voltage) ? 3 : 2;
-> +	ret = regmap_bulk_read(hwmon->gsc->regmap_hwmon, ch->reg, buf, sz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*val = 0;
-> +	while (sz-- > 0)
-> +		*val |= (buf[sz] << (8*sz));
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+---
+Changes from v2:
+ * Cast the output for sector_t when printing
+ * Fix a compilation problem with i386 due to different size of sector_t
 
-Please use spaces before and after operators.
+ Documentation/ABI/testing/sysfs-power | 14 ++++++++++++++
+ Documentation/power/swsusp.txt        | 10 +++++++++-
+ kernel/power/hibernate.c              | 24 ++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+), 1 deletion(-)
 
-> +
-> +	switch (ch->type) {
-> +	case type_temperature:
-> +		if ((type == hwmon_temp) && *val > 0x8000)
-
-Please no unnecessary ( ).
-
-Is there ever a situation where ch->type == type_temperature and type !=
-hwmon_temp ? Wouldn't that be a bug ?
-
-> +			*val -= 0xffff;
-> +		break;
-> +	case type_voltage_raw:
-> +		/* scale based on ref voltage and resolution */
-> +		if (pdata->vreference && pdata->resolution) {
-> +			*val *= pdata->vreference;
-> +			*val /= pdata->resolution;
-> +		}
-> +		/* scale based on optional voltage divider */
-> +		if (ch->vdiv[0] && ch->vdiv[1]) {
-> +			*val *= (ch->vdiv[0] + ch->vdiv[1]);
-> +			*val /= ch->vdiv[1];
-> +		}
-
-This accepts both types of scaling. Is that intentional ?
-
-I don't see any protection against overflows. What if pdata->vreference is
-larger than 256 on a system with sizeof(long) == 4 and the raw voltage
-as reported by the chip is 0xffffff ?
-
-> +		/* adjust by offset */
-> +		*val += ch->voffset;
-
-Similar to the above, this can result in an overflow on systems with
-sizeof(long) == 4.
-
-> +		break;
-
-There should be a default case as well as 'case type_voltage:'
-with a break; statement and a comment indicating that no adjustment
-is needed.
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +gsc_hwmon_read_string(struct device *dev, enum hwmon_sensor_types type,
-> +		      u32 attr, int channel, const char **buf)
-> +{
-> +	struct gsc_hwmon_data *hwmon = dev_get_drvdata(dev);
-> +
-> +	dev_dbg(dev, "%s type=%d attr=%d channel=%d\n", __func__, type, attr,
-> +		channel);
-
-I seriously wonder if all those dev_dbg() statements add value.
-
-> +	switch (type) {
-> +	case hwmon_in:
-> +		*buf = hwmon->in_ch[channel]->name;
-> +		break;
-> +	case hwmon_temp:
-> +		*buf = hwmon->temp_ch[channel]->name;
-> +		break;
-> +	case hwmon_fan:
-> +		*buf = hwmon->fan_ch[channel]->name;
-> +		break;
-> +	default:
-> +		return -ENOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +gsc_hwmon_write(struct device *dev, enum hwmon_sensor_types type, u32 attr,
-> +		int channel, long val)
-> +{
-> +	struct gsc_hwmon_data *hwmon = dev_get_drvdata(dev);
-> +	u8 buf[2];
-> +
-> +	dev_dbg(dev, "%s type=%d attr=%d channel=%d\n", __func__, type, attr,
-> +		channel);
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		buf[0] = val & 0xff;
-> +		buf[1] = (val >> 8) & 0xff;
-> +		return regmap_bulk_write(hwmon->gsc->regmap_hwmon,
-> +					 hwmon->fan_ch[channel]->reg, buf, 2);
-
-fanX_input reports the fan speed. By its nature, a fan speed is not writeable.
-I have no idea what this is supposed to achieve, but whatever it is, it is wrong.
-
-Please stick with the ABI.
-
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static umode_t
-> +gsc_hwmon_is_visible(const void *_data, enum hwmon_sensor_types type, u32 attr,
-> +		     int ch)
-> +{
-> +	const struct gsc_hwmon_data *hwmon = _data;
-> +	struct device *dev = hwmon->gsc->dev;
-> +	umode_t mode = 0;
-> +
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		if (ch >= GSC_HWMON_MAX_FAN_CH)
-> +			return -EOPNOTSUPP;
-
-Can that ever happen ?
-
-> +		mode = S_IRUGO;
-> +		if (attr == hwmon_fan_input)
-> +			mode |= S_IWUSR;
-
-fanX_input is a read-only attribute per ABI.
-
-> +		break;
-> +	case hwmon_temp:
-> +		if (ch >= GSC_HWMON_MAX_TEMP_CH)
-> +			return -EOPNOTSUPP;
-
-Can that ever happen ?
-
-> +		mode = S_IRUGO;
-> +		break;
-> +	case hwmon_in:
-> +		if (ch >= GSC_HWMON_MAX_IN_CH)
-> +			return -EOPNOTSUPP;
-
-Can that ever happen ?
-
-> +		mode = S_IRUGO;
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +	dev_dbg(dev, "%s type=%d attr=%d ch=%d mode=0x%x\n", __func__, type,
-> +		attr, ch, mode);
-> +
-> +	return mode;
-> +}
-> +
-> +static const struct hwmon_ops gsc_hwmon_ops = {
-> +	.is_visible = gsc_hwmon_is_visible,
-> +	.read = gsc_hwmon_read,
-> +	.read_string = gsc_hwmon_read_string,
-> +	.write = gsc_hwmon_write,
-> +};
-> +
-> +static struct gsc_hwmon_platform_data *
-> +gsc_hwmon_get_devtree_pdata(struct device *dev)
-> +{
-> +	struct gsc_hwmon_platform_data *pdata;
-> +	struct gsc_hwmon_channel *ch;
-> +	struct fwnode_handle *child;
-> +	const char *type;
-> +	int nchannels;
-> +
-> +	nchannels = device_get_child_node_count(dev);
-> +	dev_dbg(dev, "channels=%d\n", nchannels);
-> +	if (nchannels == 0)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	pdata = devm_kzalloc(dev,
-> +			     sizeof(*pdata) + nchannels * sizeof(*ch),
-> +			     GFP_KERNEL);
-> +	if (!pdata)
-> +		return ERR_PTR(-ENOMEM);
-> +	ch = (struct gsc_hwmon_channel *)(pdata + 1);
-> +	pdata->channels = ch;
-> +	pdata->nchannels = nchannels;
-> +
-> +	device_property_read_u32(dev, "gw,reference-voltage",
-> +				 &pdata->vreference);
-> +	device_property_read_u32(dev, "gw,resolution", &pdata->resolution);
-> +
-> +	/* allocate structures for channels and count instances of each type */
-> +	device_for_each_child_node(dev, child) {
-> +		if (fwnode_property_read_string(child, "label", &ch->name)) {
-> +			dev_err(dev, "channel without label\n");
-> +			fwnode_handle_put(child);
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +		if (fwnode_property_read_u32(child, "reg", &ch->reg)) {
-> +			dev_err(dev, "channel without reg\n");
-> +			fwnode_handle_put(child);
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +		if (fwnode_property_read_string(child, "type", &type)) {
-> +			dev_err(dev, "channel without type\n");
-> +			fwnode_handle_put(child);
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +		if (!strcasecmp(type, "gw,hwmon-temperature"))
-> +			ch->type = type_temperature;
-> +		else if (!strcasecmp(type, "gw,hwmon-voltage"))
-> +			ch->type = type_voltage;
-> +		else if (!strcasecmp(type, "gw,hwmon-voltage-raw"))
-> +			ch->type = type_voltage_raw;
-> +		else if (!strcasecmp(type, "gw,hwmon-fan"))
-> +			ch->type = type_fan;
-> +		else {
-> +			dev_err(dev, "channel without type\n");
-> +			fwnode_handle_put(child);
-> +			return ERR_PTR(-EINVAL);
-> +		}
-> +
-> +		fwnode_property_read_u32(child, "gw,voltage-offset",
-> +			&ch->voffset);
-
-Note that while it is technically ok to keep voltages internally in mV,
-devicetree will likely require specificayion in uV. For accuracy, it might be
-better to perform any calculations on that base and convert to mV for display
-purposes.
-
-> +		fwnode_property_read_u32_array(child, "gw,voltage-divider",
-> +			ch->vdiv, ARRAY_SIZE(ch->vdiv));
-> +		dev_dbg(dev, "of: reg=0x%02x type=%d %s\n", ch->reg, ch->type,
-> +			ch->name);
-> +		ch++;
-> +	}
-> +
-> +	return pdata;
-> +}
-> +
-> +static int gsc_hwmon_probe(struct platform_device *pdev)
-> +{
-> +	struct gsc_dev *gsc = dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev = &pdev->dev;
-> +	struct gsc_hwmon_platform_data *pdata = dev_get_platdata(dev);
-> +	struct gsc_hwmon_data *hwmon;
-> +	int i, i_in, i_temp, i_fan;
-> +
-> +	if (!pdata) {
-> +		pdata = gsc_hwmon_get_devtree_pdata(dev);
-> +		if (IS_ERR(pdata))
-> +			return PTR_ERR(pdata);
-> +	}
-> +
-> +	hwmon = devm_kzalloc(dev, sizeof(*hwmon), GFP_KERNEL);
-> +	if (!hwmon)
-> +		return -ENOMEM;
-> +	hwmon->gsc = gsc;
-> +	hwmon->pdata = pdata;
-> +
-> +	for (i = 0, i_in = 0, i_temp = 0, i_fan = 0;
-> +	     i < hwmon->pdata->nchannels; i++) {
-> +		const struct gsc_hwmon_channel *ch = &pdata->channels[i];
-> +
-> +		if (ch->reg > GSC_HWMON_MAX_REG) {
-> +			dev_err(dev, "invalid reg: 0x%02x\n", ch->reg);
-> +			return -EINVAL;
-> +		}
-> +		switch (ch->type) {
-> +		case type_temperature:
-> +			if (i_temp == GSC_HWMON_MAX_TEMP_CH) {
-> +				dev_err(dev, "too many temp channels\n");
-> +				return -EINVAL;
-> +			}
-> +			hwmon->temp_ch[i_temp] = ch;
-> +			hwmon->temp_config[i_temp] = HWMON_T_INPUT |
-> +						     HWMON_T_LABEL;
-> +			i_temp++;
-> +			break;
-> +		case type_voltage:
-> +		case type_voltage_raw:
-> +			if (i_in == GSC_HWMON_MAX_IN_CH) {
-> +				dev_err(dev, "too many voltage channels\n");
-> +				return -EINVAL;
-> +			}
-> +			hwmon->in_ch[i_in] = ch;
-> +			hwmon->in_config[i_in] =
-> +				HWMON_I_INPUT | HWMON_I_LABEL;
-> +			i_in++;
-> +			break;
-> +		case type_fan:
-> +			if (i_fan == GSC_HWMON_MAX_FAN_CH) {
-> +				dev_err(dev, "too many voltage channels\n");
-> +				return -EINVAL;
-> +			}
-> +			hwmon->fan_ch[i_fan] = ch;
-> +			hwmon->fan_config[i_fan] =
-> +				HWMON_F_INPUT | HWMON_F_LABEL;
-> +			i_fan++;
-> +			break;
-> +		default:
-> +			dev_err(dev, "invalid type: %d\n", ch->type);
-> +			return -EINVAL;
-> +		}
-> +		dev_dbg(dev, "pdata: reg=0x%02x type=%d %s\n", ch->reg,
-> +			ch->type, ch->name);
-> +	}
-> +
-> +	/* terminate channel config lists */
-> +	hwmon->temp_config[i_temp] = 0;
-> +	hwmon->in_config[i_in] = 0;
-> +	hwmon->fan_config[i_fan] = 0;
-
-'hwmon' was alocated with devm_kzalloc(). Initializing any of its members with 0
-is unnecessary.
-
-> +
-> +	/* setup config structures */
-> +	hwmon->chip.ops = &gsc_hwmon_ops;
-> +	hwmon->chip.info = hwmon->info;
-> +	hwmon->info[0] = &hwmon->temp_info;
-> +	hwmon->info[1] = &hwmon->in_info;
-> +	hwmon->info[2] = &hwmon->fan_info;
-> +	hwmon->temp_info.type = hwmon_temp;
-> +	hwmon->temp_info.config = hwmon->temp_config;
-> +	hwmon->in_info.type = hwmon_in;
-> +	hwmon->in_info.config = hwmon->in_config;
-> +	hwmon->fan_info.type = hwmon_fan;
-> +	hwmon->fan_info.config = hwmon->fan_config;
-> +
-> +	hwmon->dev = devm_hwmon_device_register_with_info(dev,
-> +							  KBUILD_MODNAME, hwmon,
-> +							  &hwmon->chip, NULL);
-> +	return PTR_ERR_OR_ZERO(hwmon->dev);
-> +}
-> +
-> +static const struct of_device_id gsc_hwmon_of_match[] = {
-> +	{ .compatible = "gw,gsc-hwmon", },
-> +	{}
-> +};
-> +
-> +static struct platform_driver gsc_hwmon_driver = {
-> +	.driver = {
-> +		.name = KBUILD_MODNAME,
-> +		.of_match_table = gsc_hwmon_of_match,
-> +	},
-> +	.probe = gsc_hwmon_probe,
-> +};
-> +
-> +module_platform_driver(gsc_hwmon_driver);
-> +
-> +MODULE_AUTHOR("Tim Harvey <tharvey@gateworks.com>");
-> +MODULE_DESCRIPTION("GSC hardware monitor driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/platform_data/gsc_hwmon.h b/include/linux/platform_data/gsc_hwmon.h
-> new file mode 100644
-> index 0000000..5e59846
-> --- /dev/null
-> +++ b/include/linux/platform_data/gsc_hwmon.h
-> @@ -0,0 +1,43 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _GSC_HWMON_H
-> +#define _GSC_HWMON_H
-> +
-> +enum gsc_hwmon_type {
-> +	type_temperature,
-> +	type_voltage,
-> +	type_voltage_raw,
-> +	type_fan,
-> +};
-> +
-> +/**
-> + * struct gsc_hwmon_channel - configuration parameters
-> + * @reg:  I2C register offset
-> + * @type: channel type
-> + * @name: channel name
-> + * @voffset: voltage offset (mV)
-> + * @vdiv: voltage divider array (2 resistor values in ohms)
-> + */
-> +struct gsc_hwmon_channel {
-> +	unsigned int reg;
-> +	unsigned int type;
-> +	const char *name;
-> +	unsigned int voffset;
-
-It is interesting that only positive offset values are supported.
-Is that intentional ?
-
-> +	unsigned int vdiv[2];
-> +};
-> +
-> +/**
-> + * struct gsc_hwmon_platform_data - platform data for gsc_hwmon driver
-> + * @channels:	pointer to array of gsc_hwmon_channel structures
-> + *		describing channels
-> + * @nchannels:	number of elements in @channels array
-> + * @vreference: voltage reference (mV)
-> + * @resolution: ADC resolution
-
-Resolution in what ?
-
-> + */
-> +struct gsc_hwmon_platform_data {
-> +	const struct gsc_hwmon_channel *channels;
-> +	int nchannels;
-> +	unsigned int resolution;
-> +	unsigned int vreference;
-> +};
-> +
-> +#endif
-> -- 
-> 2.7.4
-> 
+diff --git a/Documentation/ABI/testing/sysfs-power b/Documentation/ABI/testing/sysfs-power
+index 1e0d1da..2f813d6 100644
+--- a/Documentation/ABI/testing/sysfs-power
++++ b/Documentation/ABI/testing/sysfs-power
+@@ -287,3 +287,17 @@ Description:
+ 		Writing a "1" to this file enables the debug messages and
+ 		writing a "0" (default) to it disables them.  Reads from
+ 		this file return the current value.
++
++What:		/sys/power/resume_offset
++Date:		April 2018
++Contact:	Mario Limonciello <mario.limonciello@dell.com>
++Description:
++		This file is used for telling the kernel an offset into a disk
++		to use when hibernating the system such as with a swap file.
++
++		Reads from this file will display the current offset
++		the kernel will be using on the next hibernation
++		attempt.
++
++		Using this sysfs file will override any values that were
++		set using the kernel command line for disk offset.
+\ No newline at end of file
+diff --git a/Documentation/power/swsusp.txt b/Documentation/power/swsusp.txt
+index 9f2f942..cc87adf 100644
+--- a/Documentation/power/swsusp.txt
++++ b/Documentation/power/swsusp.txt
+@@ -24,8 +24,16 @@ Some warnings, first.
+  * see the FAQ below for details.  (This is not true for more traditional
+  * power states like "standby", which normally don't turn USB off.)
+ 
++Swap partition:
+ You need to append resume=/dev/your_swap_partition to kernel command
+-line. Then you suspend by
++line or specify it using /sys/power/resume.
++
++Swap file:
++If using a swapfile you can also specify a resume offset using
++resume_offset=<number> on the kernel command line or specify it
++in /sys/power/resume_offset.
++
++After preparing then you suspend by
+ 
+ echo shutdown > /sys/power/disk; echo disk > /sys/power/state
+ 
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index a5c36e9..d58fad3d 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -1061,6 +1061,29 @@ static ssize_t resume_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 
+ power_attr(resume);
+ 
++static ssize_t resume_offset_show(struct kobject *kobj,
++				  struct kobj_attribute *attr, char *buf)
++{
++	return sprintf(buf, "%llu\n", (unsigned long long)swsusp_resume_block);
++}
++
++static ssize_t resume_offset_store(struct kobject *kobj,
++				   struct kobj_attribute *attr, const char *buf,
++				   size_t n)
++{
++	unsigned long long offset;
++	int rc;
++
++	rc = kstrtoull(buf, 0, &offset);
++	if (rc)
++		return rc;
++	swsusp_resume_block = offset;
++
++	return n;
++}
++
++power_attr(resume_offset);
++
+ static ssize_t image_size_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 			       char *buf)
+ {
+@@ -1106,6 +1129,7 @@ power_attr(reserved_size);
+ 
+ static struct attribute * g[] = {
+ 	&disk_attr.attr,
++	&resume_offset_attr.attr,
+ 	&resume_attr.attr,
+ 	&image_size_attr.attr,
+ 	&reserved_size_attr.attr,
+-- 
+2.7.4
