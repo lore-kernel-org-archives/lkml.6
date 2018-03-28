@@ -1,54 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeC1NKr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:10:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54364 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753148AbeC1NKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:10:45 -0400
-Date: Wed, 28 Mar 2018 15:10:42 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>, adobriyan@gmail.com,
-        willy@infradead.org, mguzik@redhat.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-ID: <20180328131042.GL9275@dhcp22.suse.cz>
-References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180327062939.GV5652@dhcp22.suse.cz>
- <95a107ac-5e5b-92d7-dbde-2e961d85de28@linux.alibaba.com>
- <20180327185217.GK2236@uranus>
+        id S1753403AbeC1NK5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:10:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40000 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753340AbeC1NKz (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:10:55 -0400
+Date: Wed, 28 Mar 2018 15:10:53 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+Subject: Re: [PATCH v2 3/4] perf version: Print the compiled-in status of
+ libraries
+Message-ID: <20180328131053.GL3102@krava>
+References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+ <1522249028-15099-4-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180327185217.GK2236@uranus>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1522249028-15099-4-git-send-email-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-03-18 21:52:17, Cyrill Gorcunov wrote:
-> On Tue, Mar 27, 2018 at 02:38:11PM -0400, Yang Shi wrote:
-> > > Why do we need to hold mmap_sem here and call find_vma, when only
-> > > PR_SET_MM_ENV_END: is consuming it? I guess we can replace it wit the
-> > > new lock and take the mmap_sem only for PR_SET_MM_ENV_END.
-> > 
-> > Actually, I didn't think of why. It looks prctl_set_mm() checks if vma does
-> > exist when it tries to set stack_start, argv_* and env_*, btw not only
-> > env_end.
-> > 
-> > Cyrill may be able to give us some hint since C/R is the main user of this
-> > API.
-> 
-> First and most important it makes code smaller. This prctl call is really
-> rarely used. Of course we can optimize it, but as I said I would prefer
-> to simply deprecate this old interface (and I gonne to do so once time
-> permit).
+On Wed, Mar 28, 2018 at 10:57:07PM +0800, Jin Yao wrote:
 
-Ohh, it would be really great if we can remove this thingy altogether. I
-cannot say it has a wee bit of my sympathy.
+SNIP
 
--- 
-Michal Hocko
-SUSE Labs
+> +
+> +static void library_status(void)
+> +{
+> +	STATUS(HAVE_DWARF_SUPPORT, dwarf);
+> +	STATUS(HAVE_DWARF_GETLOCATIONS, dwarf_getlocations);
+> +	STATUS(HAVE_GLIBC_SUPPORT, glibc);
+> +	STATUS(HAVE_GTK2_SUPPORT, gtk2);
+> +	STATUS(HAVE_LIBAUDIT_SUPPORT, libaudit);
+> +	STATUS(HAVE_LIBBFD_SUPPORT, libbfd);
+> +	STATUS(HAVE_LIBELF_SUPPORT, libelf);
+> +	STATUS(HAVE_LIBNUMA_SUPPORT, libnuma);
+> +	STATUS(HAVE_LIBNUMA_SUPPORT, numa_num_possible_cpus);
+> +	STATUS(HAVE_LIBPERL_SUPPORT, libperl);
+> +	STATUS(HAVE_LIBPYTHON_SUPPORT, libpython);
+> +	STATUS(HAVE_SLANG_SUPPORT, libslang);
+> +	STATUS(HAVE_LIBCRYPTO_SUPPORT, libcrypto);
+> +	STATUS(HAVE_LIBUNWIND_SUPPORT, libunwind);
+> +	STATUS(HAVE_DWARF_SUPPORT, libdw-dwarf-unwind);
+> +	STATUS(HAVE_ZLIB_SUPPORT, zlib);
+> +	STATUS(HAVE_LZMA_SUPPORT, lzma);
+> +	STATUS(HAVE_AUXTRACE_SUPPORT, get_cpuid);
+> +	STATUS(HAVE_LIBBPF_SUPPORT, bpf);
+> +
+> +	on_off_print("on");
+> +	printf(": library is compiled-in\n");
+> +
+> +	on_off_print("OFF");
+> +	printf(": library is disabled in make configuration\n");
+> +	printf("         OR library is not installed in build environment\n");
+
+[jolsa@krava perf]$ ./perf -vv
+perf version 4.16.rc6.gcc183d
+                 dwarf: [ on  ]
+    dwarf_getlocations: [ on  ]
+                 glibc: [ on  ]
+                  gtk2: [ on  ]
+              libaudit: [ OFF ]
+                libbfd: [ on  ]
+                libelf: [ on  ]
+               libnuma: [ on  ]
+numa_num_possible_cpus: [ on  ]
+               libperl: [ on  ]
+             libpython: [ on  ]
+              libslang: [ on  ]
+             libcrypto: [ on  ]
+             libunwind: [ on  ]
+    libdw-dwarf-unwind: [ on  ]
+                  zlib: [ on  ]
+                  lzma: [ on  ]
+             get_cpuid: [ on  ]
+                   bpf: [ on  ]
+[ on  ]: library is compiled-in
+[ OFF ]: library is disabled in make configuration
+         OR library is not installed in build environment
+
+did anyone asked for this ^^^ help messages? I don't think they are necessary
+
+jirka
