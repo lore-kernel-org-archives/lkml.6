@@ -1,37 +1,30 @@
-Return-Path: <kernel-hardening-return-12808-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49RJfyFHJyntJk/hD3BgfB35/2DxCZ1u5DY+gQ/qhmXtebrxDbeJghDg0kQfHVkGr/v6xn8
-ARC-Seal: i=1; a=rsa-sha256; t=1522270670; cv=none;
+Return-Path: <tglx@linutronix.de>
+X-Google-Smtp-Source: AIpwx4+ELt30oUT3J7FaczcM6cFEhuBeniA08nCDo7yGJ0+7ppx19oYiFu/Ur07mLxvXR5xs+Mtf
+ARC-Seal: i=1; a=rsa-sha256; t=1522270630; cv=none;
         d=google.com; s=arc-20160816;
-        b=M/u1imv/J1UA7OaY1FZz/6CKmz0RzSZo4MNKlXjl/6oG6n1dSWcw/D8gWmCbLT/6g8
-         SS5VuB5EhdxrtKFSy9pZJQbBe+T1WNV7ql6uuRF2kVjOrWWh/Z920qMcYHJ/tQF7M3Xb
-         C7MIlWFdreTI1saLD95w3kX1CxLRmj5Yd9MWILDtvwGfJAics2+ed3hJqVxQEgJ99a0J
-         zWTkc6aZ5dc9TKeOmqL/pBiSLrQwSHIwjuioJMLv058OPVqAh1n2f3iIdlNbn4+HEIk/
-         O9uTI3RVGbocg06FUaegUHsiUv0NGvBtoM2SY7R2XZ9Hes/pQMI8IpcYfdIriEEVgwic
-         iGgA==
+        b=PFkEKe6gmMTMk0u73CibYWUWRmMfwJtnH5s6x3AFL6ZJ4sOoNNHRiNBdQ2hQnou8pS
+         tSifDCE8Wjnaj5qVcdO33pXUkZ7vO3DxxW1d0uFJO2/556/kE+PV34O09GYsDIXSsQMf
+         RXjBfnBNYqCRg8yO3iAWvxog9dxJqZfrn9cccuNCencmfGpxaj/bcj4mf2XLJqZqHVet
+         lYJNWnVLkRdCa8bFMFxBPaM9+RSXhYpZGJos8pAK0YTHOAfQYhQnw14NJNRnQJBXXkoV
+         fx0NnFjl8QVauXBkcy2cynUY8r2oLasyHo1U4T7oNWCw5Zqr5ta8mxO7+hQ+YzZMA7j0
+         9TYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-disposition:mime-version:references:subject:cc:to:from:date
-         :user-agent:message-id:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=jTakeIk2RVCKPr0Fnit0gxmPxcjvzLqs49PwjY3BIgk=;
-        b=zwIzUr/1ImmW/lovu/iL59HlNe7CTAZ+BbXzhXPEz9+o1+iNI1VAOb08q+HBDo74M/
-         cJFTRHeFPeVfAlk73pPnHlk+ko1Vl/QuOc4keB8rq9zVMinLSoskUkC6ziTI+lNZAOf/
-         z4Yw2SLI3fNm2mjPTE+RTgxQ5XkpxMs7B4AbRI661Da8KGw6lYFeARNGzeygaL9+MT6A
-         DRz4KyKQ4HVdCorPbCHTyiVgPyT2Cv6PWfTvvkeEd6CVfE8/X3fPQCEl+AWTI/e5s5r3
-         AEQ4LbITNHHYXxz2Zw2LvMDirQpeCUhNi4RG2mniwE+4xbq7rV2nAjAONMGpruSzDCmH
-         6d4A==
+         :user-agent:message-id:arc-authentication-results;
+        bh=dJr0o4pw8/sRG8Z2WAalWngNM45ey5fcIXn6nuxqU14=;
+        b=ynjlr2HzWnGmZwrD7zBeWDXtYwWRYL0R/7h6tT5nsEY53i3sG+DWrX2F5/teZvTwVn
+         sxLN89B09mJUIqpWWotgf/EzUMCjY76VS7xKlq3hf3AY100g8M/a6W/I5+mLSgsAoRLs
+         378JIzsCmBlQTXYbJ/rYqE73h0Sf1YkRNDz/DCHH+gCw/AE9+FtLzrWZtOd/PMsxSx8m
+         c29bQVIikAEt22ls7d5l4jR2VjLyIUWhyqccRr1OkUR+4mHU/oYhWfjyC64QKxgRaKFM
+         aRpQJJlS3FbkVf51MQ7wm/ctVQS6CWOtNBDEfYsdfKm9IkhEP0xGMylLL/GF6zPiXmsg
+         FjdA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12808-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12808-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12808-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12808-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Message-Id: <20180328205554.417084780@linutronix.de>
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Message-Id: <20180328205554.579463196@linutronix.de>
 User-Agent: quilt/0.63-1
-Date: Wed, 28 Mar 2018 22:51:40 +0200
+Date: Wed, 28 Mar 2018 22:51:42 +0200
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Kees Cook <keescook@chromium.org>,
@@ -42,126 +35,58 @@ Cc: Kees Cook <keescook@chromium.org>,
  Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
  Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
  Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
- Tony Luck <tony.luck@intel.com>
-Subject: [patch 2/8] rslib: Cleanup top level comments
+ Tony Luck <tony.luck@intel.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [patch 4/8] rslib: Remove GPL boilerplate
 References: <20180328205138.301218351@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=rslib--Cleanup-top-level-comments.patch
+Content-Disposition: inline; filename=rslib--Remove-GPL-boilerplate.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596216490067288272?=
-X-GMAIL-MSGID: =?utf-8?q?1596216490067288272?=
+X-GMAIL-THRID: =?utf-8?q?1596216448740269065?=
+X-GMAIL-MSGID: =?utf-8?q?1596216448740269065?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-File references and stale CVS ids are really not useful.
+Now that SPDX identifiers are in place, remove the GPL boiler plate
+text. Leave the notices which document that Phil Karn granted permission in
+place (encode/decode source code). The modified files are code written for
+the kernel by me.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/rslib.h           |    7 +------
- lib/reed_solomon/decode_rs.c    |   12 ++----------
- lib/reed_solomon/encode_rs.c    |   13 ++-----------
- lib/reed_solomon/reed_solomon.c |    9 +--------
- 4 files changed, 6 insertions(+), 35 deletions(-)
+ include/linux/rslib.h           |    5 -----
+ lib/reed_solomon/reed_solomon.c |    4 ----
+ 2 files changed, 9 deletions(-)
 
 --- a/include/linux/rslib.h
 +++ b/include/linux/rslib.h
-@@ -1,16 +1,11 @@
- /*
-- * include/linux/rslib.h
-- *
-- * Overview:
-- *   Generic Reed Solomon encoder / decoder library
-+ * Generic Reed Solomon encoder / decoder library
-  *
-  * Copyright (C) 2004 Thomas Gleixner (tglx@linutronix.de)
+@@ -6,12 +6,7 @@
   *
   * RS code lifted from reed solomon library written by Phil Karn
   * Copyright 2002 Phil Karn, KA9Q
-  *
-- * $Id: rslib.h,v 1.4 2005/11/07 11:14:52 gleixner Exp $
 - *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
---- a/lib/reed_solomon/decode_rs.c
-+++ b/lib/reed_solomon/decode_rs.c
-@@ -1,20 +1,12 @@
- /*
-- * lib/reed_solomon/decode_rs.c
-- *
-- * Overview:
-- *   Generic Reed Solomon encoder / decoder library
-+ * Generic Reed Solomon encoder / decoder library
-  *
-  * Copyright 2002, Phil Karn, KA9Q
-  * May be used under the terms of the GNU General Public License (GPL)
-  *
-  * Adaption to the kernel by Thomas Gleixner (tglx@linutronix.de)
-  *
-- * $Id: decode_rs.c,v 1.7 2005/11/07 11:14:59 gleixner Exp $
-- *
-- */
--
--/* Generic data width independent code which is included by the
-- * wrappers.
-+ * Generic data width independent code which is included by the wrappers.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
   */
- {
- 	int deg_lambda, el, deg_omega;
---- a/lib/reed_solomon/encode_rs.c
-+++ b/lib/reed_solomon/encode_rs.c
-@@ -1,21 +1,12 @@
- /*
-- * lib/reed_solomon/encode_rs.c
-- *
-- * Overview:
-- *   Generic Reed Solomon encoder / decoder library
-+ * Generic Reed Solomon encoder / decoder library
-  *
-  * Copyright 2002, Phil Karn, KA9Q
-  * May be used under the terms of the GNU General Public License (GPL)
-  *
-  * Adaption to the kernel by Thomas Gleixner (tglx@linutronix.de)
-  *
-- * $Id: encode_rs.c,v 1.5 2005/11/07 11:14:59 gleixner Exp $
-- *
-- */
 -
--/* Generic data width independent code which is included by the
-- * wrappers.
-- * int encode_rsX (struct rs_control *rs, uintX_t *data, int len, uintY_t *par)
-+ * Generic data width independent code which is included by the wrappers.
-  */
- {
- 	int i, j, pad;
+ #ifndef _RSLIB_H_
+ #define _RSLIB_H_
+ 
 --- a/lib/reed_solomon/reed_solomon.c
 +++ b/lib/reed_solomon/reed_solomon.c
-@@ -1,16 +1,11 @@
- /*
-- * lib/reed_solomon/reed_solomon.c
-- *
-- * Overview:
-- *   Generic Reed Solomon encoder / decoder library
-+ * Generic Reed Solomon encoder / decoder library
-  *
-  * Copyright (C) 2004 Thomas Gleixner (tglx@linutronix.de)
-  *
+@@ -7,10 +7,6 @@
   * Reed Solomon code lifted from reed solomon library written by Phil Karn
   * Copyright 2002 Phil Karn, KA9Q
   *
-- * $Id: rslib.c,v 1.7 2005/11/07 11:14:59 gleixner Exp $
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
 - *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-@@ -35,9 +30,7 @@
-  * second stage, which does the decoding / error correction itself.
-  * Many hw encoders provide a syndrome calculation over the received
-  * data + syndrome and can call the second stage directly.
-- *
-  */
--
- #include <linux/errno.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
+  * Description:
+  *
+  * The generic Reed Solomon library provides runtime configurable
