@@ -1,283 +1,346 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753230AbeC1Q5j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 12:57:39 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751219AbeC1Q5f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 12:57:35 -0400
-Subject: Re: [PATCH v9 08/24] mm: Protect VMA modifications using VMA sequence
- count
-To: David Rientjes <rientjes@google.com>
-Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1520963994-28477-9-git-send-email-ldufour@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1803271441290.38095@chino.kir.corp.google.com>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Wed, 28 Mar 2018 18:57:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803271441290.38095@chino.kir.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032816-0020-0000-0000-0000040AC830
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032816-0021-0000-0000-0000429ED067
-Message-Id: <8bb04603-f55e-3c46-8f29-a183ba6ef47b@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-28_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803280176
+        id S1753144AbeC1Q5K (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 12:57:10 -0400
+Received: from mga02.intel.com ([134.134.136.20]:53115 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752580AbeC1Qzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 12:55:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,372,1517904000";
+   d="scan'208";a="46056187"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 07/14] mm/page_alloc: Add hook in page allocation path for encrypted pages
+Date: Wed, 28 Mar 2018 19:55:33 +0300
+Message-Id: <20180328165540.648-8-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
+References: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/03/2018 23:45, David Rientjes wrote:
-> On Tue, 13 Mar 2018, Laurent Dufour wrote:
-> 
->> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->> index 65ae54659833..a2d9c87b7b0b 100644
->> --- a/fs/proc/task_mmu.c
->> +++ b/fs/proc/task_mmu.c
->> @@ -1136,8 +1136,11 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
->>  					goto out_mm;
->>  				}
->>  				for (vma = mm->mmap; vma; vma = vma->vm_next) {
->> -					vma->vm_flags &= ~VM_SOFTDIRTY;
->> +					vm_write_begin(vma);
->> +					WRITE_ONCE(vma->vm_flags,
->> +						   vma->vm_flags & ~VM_SOFTDIRTY);
->>  					vma_set_page_prot(vma);
->> +					vm_write_end(vma);
->>  				}
->>  				downgrade_write(&mm->mmap_sem);
->>  				break;
->> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
->> index cec550c8468f..b8212ba17695 100644
->> --- a/fs/userfaultfd.c
->> +++ b/fs/userfaultfd.c
->> @@ -659,8 +659,11 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
->>  
->>  	octx = vma->vm_userfaultfd_ctx.ctx;
->>  	if (!octx || !(octx->features & UFFD_FEATURE_EVENT_FORK)) {
->> +		vm_write_begin(vma);
->>  		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
->> -		vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
->> +		WRITE_ONCE(vma->vm_flags,
->> +			   vma->vm_flags & ~(VM_UFFD_WP | VM_UFFD_MISSING));
->> +		vm_write_end(vma);
->>  		return 0;
->>  	}
->>  
-> 
-> In several locations in this patch vm_write_begin(vma) -> 
-> vm_write_end(vma) is nesting things other than vma->vm_flags, 
-> vma->vm_policy, etc.  I think it's better to do vm_write_end(vma) as soon 
-> as the members that the seqcount protects are modified.  In other words, 
-> this isn't offering protection for vma->vm_userfaultfd_ctx.  There are 
-> several examples of this in the patch.
+Intel MKTME requires cache flushing when changing encryption KeyID for
+a page.
 
-That's true in this particular case, and I could change that to not include the
-change to vm_userfaultfd_ctx.
-This being said, I don't think this will have a major impact, but I'll make a
-close review on this patch to be sure there is too large protected part of code.
+Add prep_encrypted_page() hook for this. We need to pass down KeyID to
+it through page allocation path.
 
->> @@ -885,8 +888,10 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
->>  			vma = prev;
->>  		else
->>  			prev = vma;
->> -		vma->vm_flags = new_flags;
->> +		vm_write_begin(vma);
->> +		WRITE_ONCE(vma->vm_flags, new_flags);
->>  		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
->> +		vm_write_end(vma);
->>  	}
->>  	up_write(&mm->mmap_sem);
->>  	mmput(mm);
->> @@ -1434,8 +1439,10 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
->>  		 * the next vma was merged into the current one and
->>  		 * the current one has not been updated yet.
->>  		 */
->> -		vma->vm_flags = new_flags;
->> +		vm_write_begin(vma);
->> +		WRITE_ONCE(vma->vm_flags, new_flags);
->>  		vma->vm_userfaultfd_ctx.ctx = ctx;
->> +		vm_write_end(vma);
->>  
->>  	skip:
->>  		prev = vma;
->> @@ -1592,8 +1599,10 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->>  		 * the next vma was merged into the current one and
->>  		 * the current one has not been updated yet.
->>  		 */
->> -		vma->vm_flags = new_flags;
->> +		vm_write_begin(vma);
->> +		WRITE_ONCE(vma->vm_flags, new_flags);
->>  		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
->> +		vm_write_end(vma);
->>  
->>  	skip:
->>  		prev = vma;
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index b7e2268dfc9a..32314e9e48dd 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -1006,6 +1006,7 @@ static void collapse_huge_page(struct mm_struct *mm,
->>  	if (mm_find_pmd(mm, address) != pmd)
->>  		goto out;
->>  
->> +	vm_write_begin(vma);
->>  	anon_vma_lock_write(vma->anon_vma);
->>  
->>  	pte = pte_offset_map(pmd, address);
->> @@ -1041,6 +1042,7 @@ static void collapse_huge_page(struct mm_struct *mm,
->>  		pmd_populate(mm, pmd, pmd_pgtable(_pmd));
->>  		spin_unlock(pmd_ptl);
->>  		anon_vma_unlock_write(vma->anon_vma);
->> +		vm_write_end(vma);
->>  		result = SCAN_FAIL;
->>  		goto out;
->>  	}
->> @@ -1075,6 +1077,7 @@ static void collapse_huge_page(struct mm_struct *mm,
->>  	set_pmd_at(mm, address, pmd, _pmd);
->>  	update_mmu_cache_pmd(vma, address, pmd);
->>  	spin_unlock(pmd_ptl);
->> +	vm_write_end(vma);
->>  
->>  	*hpage = NULL;
->>  
->> diff --git a/mm/madvise.c b/mm/madvise.c
->> index 4d3c922ea1a1..e328f7ab5942 100644
->> --- a/mm/madvise.c
->> +++ b/mm/madvise.c
->> @@ -184,7 +184,9 @@ static long madvise_behavior(struct vm_area_struct *vma,
->>  	/*
->>  	 * vm_flags is protected by the mmap_sem held in write mode.
->>  	 */
->> -	vma->vm_flags = new_flags;
->> +	vm_write_begin(vma);
->> +	WRITE_ONCE(vma->vm_flags, new_flags);
->> +	vm_write_end(vma);
->>  out:
->>  	return error;
->>  }
->> @@ -450,9 +452,11 @@ static void madvise_free_page_range(struct mmu_gather *tlb,
->>  		.private = tlb,
->>  	};
->>  
->> +	vm_write_begin(vma);
->>  	tlb_start_vma(tlb, vma);
->>  	walk_page_range(addr, end, &free_walk);
->>  	tlb_end_vma(tlb, vma);
->> +	vm_write_end(vma);
->>  }
->>  
->>  static int madvise_free_single_vma(struct vm_area_struct *vma,
->> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
->> index e0e706f0b34e..2632c6f93b63 100644
->> --- a/mm/mempolicy.c
->> +++ b/mm/mempolicy.c
->> @@ -380,8 +380,11 @@ void mpol_rebind_mm(struct mm_struct *mm, nodemask_t *new)
->>  	struct vm_area_struct *vma;
->>  
->>  	down_write(&mm->mmap_sem);
->> -	for (vma = mm->mmap; vma; vma = vma->vm_next)
->> +	for (vma = mm->mmap; vma; vma = vma->vm_next) {
->> +		vm_write_begin(vma);
->>  		mpol_rebind_policy(vma->vm_policy, new);
->> +		vm_write_end(vma);
->> +	}
->>  	up_write(&mm->mmap_sem);
->>  }
->>  
->> @@ -554,9 +557,11 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
->>  {
->>  	int nr_updated;
->>  
->> +	vm_write_begin(vma);
->>  	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1);
->>  	if (nr_updated)
->>  		count_vm_numa_events(NUMA_PTE_UPDATES, nr_updated);
->> +	vm_write_end(vma);
->>  
->>  	return nr_updated;
->>  }
->> @@ -657,6 +662,7 @@ static int vma_replace_policy(struct vm_area_struct *vma,
->>  	if (IS_ERR(new))
->>  		return PTR_ERR(new);
->>  
->> +	vm_write_begin(vma);
->>  	if (vma->vm_ops && vma->vm_ops->set_policy) {
->>  		err = vma->vm_ops->set_policy(vma, new);
->>  		if (err)
->> @@ -664,11 +670,17 @@ static int vma_replace_policy(struct vm_area_struct *vma,
->>  	}
->>  
->>  	old = vma->vm_policy;
->> -	vma->vm_policy = new; /* protected by mmap_sem */
->> +	/*
->> +	 * The speculative page fault handler access this field without
->> +	 * hodling the mmap_sem.
->> +	 */
-> 
-> "The speculative page fault handler accesses this field without holding 
-> vma->vm_mm->mmap_sem"
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ include/linux/gfp.h |  6 +++++
+ mm/compaction.c     |  2 +-
+ mm/internal.h       |  2 +-
+ mm/page_alloc.c     | 65 ++++++++++++++++++++++++++++-------------------------
+ mm/page_isolation.c |  2 +-
+ 5 files changed, 44 insertions(+), 33 deletions(-)
 
-Oops :/
-
-> 
->> +	WRITE_ONCE(vma->vm_policy,  new);
->> +	vm_write_end(vma);
->>  	mpol_put(old);
->>  
->>  	return 0;
->>   err_out:
->> +	vm_write_end(vma);
->>  	mpol_put(new);
->>  	return err;
->>  }
-> 
-> Wait, doesn't vma_dup_policy() also need to protect dst->vm_policy?
-
-Indeed this is not necessary because vma_dup_policy() is called when dst is not
-yet linked in the RB tree, so it can't be found by the speculative page fault
-handler. This is not the case of vma_replace_policy, and this is why the
-protection are needed here.
-
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -2121,7 +2121,9 @@ int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
-> 
->  	if (IS_ERR(pol))
->  		return PTR_ERR(pol);
-> -	dst->vm_policy = pol;
-> +	vm_write_begin(dst);
-> +	WRITE_ONCE(dst->vm_policy, pol);
-> +	vm_write_end(dst);
->  	return 0;
->  }
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index d9d45f47447d..aff798de9c97 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -446,6 +446,12 @@ static inline void arch_free_page(struct page *page, int order) { }
+ static inline void arch_alloc_page(struct page *page, int order) { }
+ #endif
+ 
++#ifndef prep_encrypted_page
++static inline void prep_encrypted_page(struct page *page, int order, int keyid)
++{
++}
++#endif
++
+ struct page *
+ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int keyid,
+ 		int preferred_nid, nodemask_t *nodemask);
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 2c8999d027ab..cb69620fdf34 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -77,7 +77,7 @@ static void map_pages(struct list_head *list)
+ 		order = page_private(page);
+ 		nr_pages = 1 << order;
+ 
+-		post_alloc_hook(page, order, __GFP_MOVABLE);
++		post_alloc_hook(page, order, page_keyid(page), __GFP_MOVABLE);
+ 		if (order)
+ 			split_page(page, order);
+ 
+diff --git a/mm/internal.h b/mm/internal.h
+index e6bd35182dae..d896c8e67669 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -164,7 +164,7 @@ extern int __isolate_free_page(struct page *page, unsigned int order);
+ extern void __free_pages_bootmem(struct page *page, unsigned long pfn,
+ 					unsigned int order);
+ extern void prep_compound_page(struct page *page, unsigned int order);
+-extern void post_alloc_hook(struct page *page, unsigned int order,
++extern void post_alloc_hook(struct page *page, unsigned int order, int keyid,
+ 					gfp_t gfp_flags);
+ extern int user_min_free_kbytes;
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 229cdab065ca..a5097d9c2a51 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1792,7 +1792,7 @@ static bool check_new_pages(struct page *page, unsigned int order)
+ 	return false;
+ }
+ 
+-inline void post_alloc_hook(struct page *page, unsigned int order,
++inline void post_alloc_hook(struct page *page, unsigned int order, int keyid,
+ 				gfp_t gfp_flags)
+ {
+ 	set_page_private(page, 0);
+@@ -1803,14 +1803,15 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
+ 	kernel_poison_pages(page, 1 << order, 1);
+ 	kasan_alloc_pages(page, order);
+ 	set_page_owner(page, order, gfp_flags);
++	prep_encrypted_page(page, order, keyid);
+ }
+ 
+-static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
+-							unsigned int alloc_flags)
++static void prep_new_page(struct page *page, unsigned int order, int keyid,
++		gfp_t gfp_flags, unsigned int alloc_flags)
+ {
+ 	int i;
+ 
+-	post_alloc_hook(page, order, gfp_flags);
++	post_alloc_hook(page, order, keyid, gfp_flags);
+ 
+ 	if (!free_pages_prezeroed() && (gfp_flags & __GFP_ZERO))
+ 		for (i = 0; i < (1 << order); i++)
+@@ -3151,8 +3152,8 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
+  * a page.
+  */
+ static struct page *
+-get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+-						const struct alloc_context *ac)
++get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int keyid,
++		int alloc_flags, const struct alloc_context *ac)
+ {
+ 	struct zoneref *z = ac->preferred_zoneref;
+ 	struct zone *zone;
+@@ -3236,7 +3237,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 		page = rmqueue(ac->preferred_zoneref->zone, zone, order,
+ 				gfp_mask, alloc_flags, ac->migratetype);
+ 		if (page) {
+-			prep_new_page(page, order, gfp_mask, alloc_flags);
++			prep_new_page(page, order, keyid, gfp_mask,
++					alloc_flags);
+ 
+ 			/*
+ 			 * If this is a high-order atomic allocation then check
+@@ -3314,27 +3316,27 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
+ }
+ 
+ static inline struct page *
+-__alloc_pages_cpuset_fallback(gfp_t gfp_mask, unsigned int order,
++__alloc_pages_cpuset_fallback(gfp_t gfp_mask, unsigned int order, int keyid,
+ 			      unsigned int alloc_flags,
+ 			      const struct alloc_context *ac)
+ {
+ 	struct page *page;
+ 
+-	page = get_page_from_freelist(gfp_mask, order,
++	page = get_page_from_freelist(gfp_mask, order, keyid,
+ 			alloc_flags|ALLOC_CPUSET, ac);
+ 	/*
+ 	 * fallback to ignore cpuset restriction if our nodes
+ 	 * are depleted
+ 	 */
+ 	if (!page)
+-		page = get_page_from_freelist(gfp_mask, order,
++		page = get_page_from_freelist(gfp_mask, order, keyid,
+ 				alloc_flags, ac);
+ 
+ 	return page;
+ }
+ 
+ static inline struct page *
+-__alloc_pages_may_oom(gfp_t gfp_mask, unsigned int order,
++__alloc_pages_may_oom(gfp_t gfp_mask, unsigned int order, int keyid,
+ 	const struct alloc_context *ac, unsigned long *did_some_progress)
+ {
+ 	struct oom_control oc = {
+@@ -3366,7 +3368,7 @@ __alloc_pages_may_oom(gfp_t gfp_mask, unsigned int order,
+ 	 * allocation which will never fail due to oom_lock already held.
+ 	 */
+ 	page = get_page_from_freelist((gfp_mask | __GFP_HARDWALL) &
+-				      ~__GFP_DIRECT_RECLAIM, order,
++				      ~__GFP_DIRECT_RECLAIM, order, keyid,
+ 				      ALLOC_WMARK_HIGH|ALLOC_CPUSET, ac);
+ 	if (page)
+ 		goto out;
+@@ -3414,7 +3416,7 @@ __alloc_pages_may_oom(gfp_t gfp_mask, unsigned int order,
+ 		 */
+ 		if (gfp_mask & __GFP_NOFAIL)
+ 			page = __alloc_pages_cpuset_fallback(gfp_mask, order,
+-					ALLOC_NO_WATERMARKS, ac);
++					keyid, ALLOC_NO_WATERMARKS, ac);
+ 	}
+ out:
+ 	mutex_unlock(&oom_lock);
+@@ -3430,7 +3432,7 @@ __alloc_pages_may_oom(gfp_t gfp_mask, unsigned int order,
+ #ifdef CONFIG_COMPACTION
+ /* Try memory compaction for high-order allocations before reclaim */
+ static struct page *
+-__alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
++__alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order, int keyid,
+ 		unsigned int alloc_flags, const struct alloc_context *ac,
+ 		enum compact_priority prio, enum compact_result *compact_result)
+ {
+@@ -3454,7 +3456,7 @@ __alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
+ 	 */
+ 	count_vm_event(COMPACTSTALL);
+ 
+-	page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
++	page = get_page_from_freelist(gfp_mask, order, keyid, alloc_flags, ac);
+ 
+ 	if (page) {
+ 		struct zone *zone = page_zone(page);
+@@ -3547,7 +3549,7 @@ should_compact_retry(struct alloc_context *ac, int order, int alloc_flags,
+ }
+ #else
+ static inline struct page *
+-__alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
++__alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order, int keyid,
+ 		unsigned int alloc_flags, const struct alloc_context *ac,
+ 		enum compact_priority prio, enum compact_result *compact_result)
+ {
+@@ -3656,7 +3658,7 @@ __perform_reclaim(gfp_t gfp_mask, unsigned int order,
+ 
+ /* The really slow allocator path where we enter direct reclaim */
+ static inline struct page *
+-__alloc_pages_direct_reclaim(gfp_t gfp_mask, unsigned int order,
++__alloc_pages_direct_reclaim(gfp_t gfp_mask, unsigned int order, int keyid,
+ 		unsigned int alloc_flags, const struct alloc_context *ac,
+ 		unsigned long *did_some_progress)
+ {
+@@ -3668,7 +3670,7 @@ __alloc_pages_direct_reclaim(gfp_t gfp_mask, unsigned int order,
+ 		return NULL;
+ 
+ retry:
+-	page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
++	page = get_page_from_freelist(gfp_mask, order, keyid, alloc_flags, ac);
+ 
+ 	/*
+ 	 * If an allocation failed after direct reclaim, it could be because
+@@ -3914,7 +3916,7 @@ check_retry_cpuset(int cpuset_mems_cookie, struct alloc_context *ac)
+ }
+ 
+ static inline struct page *
+-__alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
++__alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order, int keyid,
+ 						struct alloc_context *ac)
+ {
+ 	bool can_direct_reclaim = gfp_mask & __GFP_DIRECT_RECLAIM;
+@@ -3979,7 +3981,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 	 * The adjusted alloc_flags might result in immediate success, so try
+ 	 * that first
+ 	 */
+-	page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
++	page = get_page_from_freelist(gfp_mask, order, keyid, alloc_flags, ac);
+ 	if (page)
+ 		goto got_pg;
+ 
+@@ -3996,7 +3998,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 			(costly_order ||
+ 			   (order > 0 && ac->migratetype != MIGRATE_MOVABLE))
+ 			&& !gfp_pfmemalloc_allowed(gfp_mask)) {
+-		page = __alloc_pages_direct_compact(gfp_mask, order,
++		page = __alloc_pages_direct_compact(gfp_mask, order, keyid,
+ 						alloc_flags, ac,
+ 						INIT_COMPACT_PRIORITY,
+ 						&compact_result);
+@@ -4049,7 +4051,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 	}
+ 
+ 	/* Attempt with potentially adjusted zonelist and alloc_flags */
+-	page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
++	page = get_page_from_freelist(gfp_mask, order, keyid, alloc_flags, ac);
+ 	if (page)
+ 		goto got_pg;
+ 
+@@ -4062,14 +4064,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 		goto nopage;
+ 
+ 	/* Try direct reclaim and then allocating */
+-	page = __alloc_pages_direct_reclaim(gfp_mask, order, alloc_flags, ac,
+-							&did_some_progress);
++	page = __alloc_pages_direct_reclaim(gfp_mask, order, keyid, alloc_flags,
++			ac, &did_some_progress);
+ 	if (page)
+ 		goto got_pg;
+ 
+ 	/* Try direct compaction and then allocating */
+-	page = __alloc_pages_direct_compact(gfp_mask, order, alloc_flags, ac,
+-					compact_priority, &compact_result);
++	page = __alloc_pages_direct_compact(gfp_mask, order, keyid, alloc_flags,
++			ac, compact_priority, &compact_result);
+ 	if (page)
+ 		goto got_pg;
+ 
+@@ -4106,7 +4108,8 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 		goto retry_cpuset;
+ 
+ 	/* Reclaim has failed us, start killing things */
+-	page = __alloc_pages_may_oom(gfp_mask, order, ac, &did_some_progress);
++	page = __alloc_pages_may_oom(gfp_mask, order, keyid,
++			ac, &did_some_progress);
+ 	if (page)
+ 		goto got_pg;
+ 
+@@ -4160,7 +4163,8 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 		 * could deplete whole memory reserves which would just make
+ 		 * the situation worse
+ 		 */
+-		page = __alloc_pages_cpuset_fallback(gfp_mask, order, ALLOC_HARDER, ac);
++		page = __alloc_pages_cpuset_fallback(gfp_mask, order, keyid,
++				ALLOC_HARDER, ac);
+ 		if (page)
+ 			goto got_pg;
+ 
+@@ -4242,7 +4246,8 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int keyid,
+ 	finalise_ac(gfp_mask, order, &ac);
+ 
+ 	/* First allocation attempt */
+-	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
++	page = get_page_from_freelist(alloc_mask, order, keyid,
++			alloc_flags, &ac);
+ 	if (likely(page))
+ 		goto out;
+ 
+@@ -4262,7 +4267,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int keyid,
+ 	if (unlikely(ac.nodemask != nodemask))
+ 		ac.nodemask = nodemask;
+ 
+-	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
++	page = __alloc_pages_slowpath(alloc_mask, order, keyid, &ac);
+ 
+ out:
+ 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 165ed8117bd1..8bf0f9677093 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -131,7 +131,7 @@ static void unset_migratetype_isolate(struct page *page, unsigned migratetype)
+ out:
+ 	spin_unlock_irqrestore(&zone->lock, flags);
+ 	if (isolated_page) {
+-		post_alloc_hook(page, order, __GFP_MOVABLE);
++		post_alloc_hook(page, order, page_keyid(page), __GFP_MOVABLE);
+ 		__free_pages(page, order);
+ 	}
+ }
+-- 
+2.16.2
