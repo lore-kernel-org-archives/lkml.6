@@ -1,105 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753802AbeC1WdK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 18:33:10 -0400
-Received: from mail-bl2nam02on0090.outbound.protection.outlook.com ([104.47.38.90]:61216
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753223AbeC1WdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 18:33:08 -0400
-From: Long Li <longli@microsoft.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        KY Srinivasan <kys@microsoft.com>
-CC: Ross Lagerwall <ross.lagerwall@citrix.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: devinfo: Add Microsoft iSCSI target to 1024 sector
- blacklist
-Thread-Topic: [PATCH] scsi: devinfo: Add Microsoft iSCSI target to 1024 sector
- blacklist
-Thread-Index: AQHTxQu1h8SEKWk9fUyQHsWpjrY0l6PmM2DggAAKPSA=
-Date: Wed, 28 Mar 2018 22:33:05 +0000
-Message-ID: <MWHPR2101MB0729E7680EDB0EE4886AAED1CEA30@MWHPR2101MB0729.namprd21.prod.outlook.com>
-References: <20180326135651.8193-1-ross.lagerwall@citrix.com>
- <yq17epvj2f1.fsf@oracle.com>
-In-Reply-To: <yq17epvj2f1.fsf@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2001:4898:80e8::2e0]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2101MB0875;7:kH03E2Em0JbwS23TMb8o5sPWr8WEqw54G1hxERT2f9LEb1bY/HtVGjdXDpn3cloFD8vdGUsoVdSlwnmRsgfaeCqIMWZR+MrjjBonggBqR8adD2Bbq2tEGxxcCe8LQ/SxqvvzsGn4502PdgysoPazslRguUOJ6NVYkOHy7ZPY3QV5sOWDQoLs5rJF+bfg6yVpMjJmzzoaJcrfGGZXJbztkfLYBzuNnFZ89EmCy5ohZgKhrU3NFIiotsCtMB2ljHMS;20:Chy2zgN5HL12/dZHHlfZyWYZEpy89mn9L0qblFGsEvx6aHmDBLQDsSNPqeUyCMqWh4ItnIOyVjf5FMqILdcM+BoQy+f9c1hncMlDWbgZiI3aIfbG9PfZtWjYEditxgmYo+UUgi2f0tAGMFqa3Bqr4pgZL6yBHkVGRBsiMvhGcGk=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: aa9f9f0b-ecbe-4ef8-9b3c-08d594fbdfaa
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:MWHPR2101MB0875;
-x-ms-traffictypediagnostic: MWHPR2101MB0875:
-x-microsoft-antispam-prvs: <MWHPR2101MB08751CEA8E53390ABD215964CEA30@MWHPR2101MB0875.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(158342451672863)(70601490899591);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR2101MB0875;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2101MB0875;
-x-forefront-prvs: 06259BA5A2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(396003)(366004)(346002)(376002)(47530400004)(199004)(189003)(7736002)(22452003)(6636002)(5250100002)(46003)(10090500001)(305945005)(33656002)(9686003)(74316002)(14454004)(10290500003)(53936002)(3280700002)(76176011)(478600001)(446003)(68736007)(3660700001)(2906002)(476003)(8936002)(81166006)(81156014)(11346002)(6436002)(486005)(486005)(106356001)(8676002)(55016002)(5660300001)(8990500004)(8666007)(4326008)(316002)(6246003)(97736004)(6116002)(99286004)(102836004)(86362001)(2900100001)(6346003)(25786009)(86612001)(229853002)(6506007)(7696005)(110136005)(105586002)(186003)(59450400001)(54906003)(1511001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2101MB0875;H:MWHPR2101MB0729.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=longli@microsoft.com;
-x-microsoft-antispam-message-info: MOJ3YczLy89JcsOE+MJkixtNprAv5Xlll+2UczEV5OTvYANjxqhVw8eOJKi6dMJ5k7F0LKkWy7M6E+cPwhi/WKmHvxilmtatn/bSh2E+IbX2eCUxOS67fuiWjUR9oPodXiDgV1nMNltvcKZME1hvfpm7OtZH7pcu8v8d1iwykdZ3K8CBVdY62CYCWchGAiTzm9ZpySZzxEczWGCcjeGimB8kfbj1gS3RBOd5YwdG9OahRLQ94yHLLuDoVSeRvyigyrvv1+pMB3gB3LnHl0hl/s/UzMUHLI9Y6F+XuO+NsGc9Mlk8cQle8Mo0c0DNhMRLfxBhykimR6jCFvxq/aFQTw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1753904AbeC1Wii (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 18:38:38 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55369 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753431AbeC1Wig (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 18:38:36 -0400
+X-Google-Smtp-Source: AIpwx4/j9WHdq6Oin/blTRmJS7vQdx4dkkmWTmN/C1I6t/1zlztqwLGCFeMUVmOnrNRinVtTwvMWKg==
+Date: Thu, 29 Mar 2018 01:38:32 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: register filesystem last
+Message-ID: <20180328223832.GA4557@avx2>
+References: <20180309222709.GA3843@avx2>
+ <20180309144938.d308e0bf98fb6b5bbcb82189@linux-foundation.org>
+ <20180310000634.GA12443@avx2>
+ <20180328044823.GT30522@ZenIV.linux.org.uk>
+ <20180328072657.GA2063@avx2>
+ <20180328144748.GU30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa9f9f0b-ecbe-4ef8-9b3c-08d594fbdfaa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Mar 2018 22:33:05.1934
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2101MB0875
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328144748.GU30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2SMXGoD013476
 
-> Subject: Re: [PATCH] scsi: devinfo: Add Microsoft iSCSI target to 1024 sector
-> blacklist
+On Wed, Mar 28, 2018 at 03:47:49PM +0100, Al Viro wrote:
+> On Wed, Mar 28, 2018 at 10:26:57AM +0300, Alexey Dobriyan wrote:
+> > On Wed, Mar 28, 2018 at 05:48:23AM +0100, Al Viro wrote:
+> > > On Sat, Mar 10, 2018 at 03:06:34AM +0300, Alexey Dobriyan wrote:
+> > > > On Fri, Mar 09, 2018 at 02:49:38PM -0800, Andrew Morton wrote:
+> > > > > On Sat, 10 Mar 2018 01:27:09 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> > > > > 
+> > > > > > As soon as register_filesystem() exits, filesystem can be mounted.
+> > > > > > It is better to present fully operational /proc.
+> > > > > > 
+> > > > > > Of course it doesn't matter because /proc is not modular
+> > > > > > but do it anyway.
+> > > > > > 
+> > > > > > Drop error check, it should be handled by panicking.
+> > > > > 
+> > > > > So... shouldn't we add a call to panic()?
+> > > > 
+> > > > via FS_PANIC flag, yes. I have a patch somewhere.
+> > > > There are 104 filesystems ATM, some internal, some not.
+> > > > Some modular, some not.
+> > > 
+> > > You do realize that the only case when register_filesystem() fails is
+> > > "another driver has already registered filesystem type with the same
+> > > name"?  Is there *ever* a case when
+> > > 	* you could expect that to happen and
+> > > 	* panic would be a sane response?
+> > 
+> > It is for standartizing all those error checks in init sequence by
+> > removing them. Modules won't have FS_PANIC.
 > 
+> Huh?  Again, _when_ is that thing appropriate?  To register_filesystem()
+> failure in non-modular case you need several builtin fs drivers to
+> try and register fs types with the same name.  In this particular
+> case, you need another in-kernel filesystem called "proc" registered
+> first.
 > 
-> Long, KY: Please confirm.
-> 
-> > The Windows Server 2016 iSCSI target doesn't work with the Linux
-> > kernel initiator since the kernel started sending larger requests by
-> > default, nor does it implement the block limits VPD page. Apply the
-> > sector limit workaround for these targets.
-> >
-> > Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-> > ---
-> >  drivers/scsi/scsi_devinfo.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
-> > index f3b1172..5cb748a 100644
-> > --- a/drivers/scsi/scsi_devinfo.c
-> > +++ b/drivers/scsi/scsi_devinfo.c
-> > @@ -213,7 +213,7 @@ static struct {
-> >  	{"Medion", "Flash XL  MMC/SD", "2.6D", BLIST_FORCELUN},
-> >  	{"MegaRAID", "LD", NULL, BLIST_FORCELUN},
-> >  	{"MICROP", "4110", NULL, BLIST_NOTQ},
-> > -	{"MSFT", "Virtual HD", NULL, BLIST_NO_RSOC},
-> > +	{"MSFT", "Virtual HD", NULL, BLIST_MAX_1024 | BLIST_NO_RSOC},
+> It's not about extreme oom early in the boot or anything like that -
+> plain and simple badly modified and misconfigured kernel.
 
-Ross,
+At this point I'm not sure if we agree or disagree.
 
-What about storage_channel_properties.max_transfer_bytes returned from VSTOR_OPERATION_QUERY_PROPERTIES (in storvsc_channel_init())
-
-Does it return correctly the maximum transfer size for iSCSI?
-
-Long 
-
-> >  	{"MYLEX", "DACARMRB", "*", BLIST_REPORTLUN2},
-> >  	{"nCipher", "Fastness Crypto", NULL, BLIST_FORCELUN},
-> >  	{"NAKAMICH", "MJ-4.8S", NULL, BLIST_FORCELUN |
-> BLIST_SINGLELUN},
-> 
-> --
-> Martin K. Petersen	Oracle Linux Engineering
+If register fails at init time it can mean that strncmp() is buggy,
+or memory corruption already happened (file_system_type instances aren't
+const after all). In all cases it is appropriate to panic exactly
+because "regular" name collision will never happen.
