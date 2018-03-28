@@ -1,83 +1,189 @@
-Return-Path: <segher@gate.crashing.org>
-X-Google-Smtp-Source: AIpwx492/tCwATdMFx+h6bQaPz0W7Wa7nuv7aPggXzzf6sFtatvJjud8mSgu7vPc4Vb0f8XcIf8t
-ARC-Seal: i=1; a=rsa-sha256; t=1522274452; cv=none;
+Return-Path: <kernel-hardening-return-12816-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49IeQwUlR8RBOVq/bCG31EZDufEzcy3ogSCQTBqHb8ymZG/1dM+nhOMafXtyY+Qinqn2v1o
+ARC-Seal: i=1; a=rsa-sha256; t=1522270740; cv=none;
         d=google.com; s=arc-20160816;
-        b=lmqHO0CmvpIoMLg/a1lRB8IeGZDTelSYfz0aklGDyYMAt/EboCi0OyONqbKZfjB1ni
-         JmAUHeOb9AuENriFFUsossXvLo6NpbB9tXnfEFKot3nCFnrLI+HxMeTkcahIlsDoSXYZ
-         rNUTtOKS1z+bv4vHtlpVHuA+EYjhCO34t0J+g9ImOsldb0ZmzfP0yok2X7Ok7bqf6zbu
-         mBpw+w2Y/tYw5rnX92GRnNVCoFk1UAHH0mpJ50HGQe7czdeLONcqnvYTmrFkPsOz2DWN
-         jQAkkcu0//BzpVIh2SnxWiT4Oi4KXpWGTb//YbVfJZ10feRqKsqiYuPkJBbdB607ez12
-         2g1A==
+        b=DLXd1tXIsZj77T8neku08A9B0rrPyRhezimf9IIcCNyZxYRdir1offUWQzGKiQuaPh
+         X2nnosDiNmm/kRkVMbOJd3+2ggu2+TjMlpirrdym4RENpvt5RwmSw5ypiu1G8kw8+Ue7
+         Yd6534noO2mq7Fb84vleTvd9eqNjtTQIprlf5X/ui3oq5timGDQa80iUqU53sf9UUD44
+         UkDAuzW9ThGEp3VWV0SFm6XY/lAduValkV7gb6HzOXvLODuvE64UyFms9H/GJU7VCe8B
+         /lLb54sI5FCReVV+7x7dWGmkL+fZOyNx9iV7F4Vq7PzyMEIhaVXBW5dVxPfY/4Mvhidc
+         hrtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=s7Bk5yfSMDChcBY/3QClGubFoF4RLsfuqaXisOkwtXg=;
-        b=qQyFlokGwumSUkg5KvI4+eK6zd05MrhAXOgfnDTPPLyZcXcK/wOK1lYLpm0/Uq+VS/
-         5aH6JPdFOPHpJJRck5IPwD/q4xqeHV1eFbMf74Ki/7GETm8wXLZ8BvtFp9OsEyv3WlQU
-         8OMmtRnyQaTOYIEEItDaUVHcwdxbN0ech/Bv+Tumo1dmbaZLnMsw2YIP1d67FwWBoDtf
-         uEqgeDZ7L7Odzzf9oB8HqgRMv/scsz56COiAL/8+xQghx3vWKA156Asu0+Wsi1MLSrXc
-         yj06Wgh0xEnWZ3nFGBpq6DDtc2CEcYPbwD1Z2BAK02PYyJrkjmD4Vcr7p8JSrQydG2vA
-         akmA==
+        h=content-disposition:mime-version:references:subject:cc:to:from:date
+         :user-agent:message-id:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=0/1eJc55YUce4qSkFlvsK6an1v7KEwZaf25qMT6Btuk=;
+        b=QuCAYT4upqQifT4ChoabvPvZpAo3AGwyk56RRXintbPnIYFd4/AkfpLd5KN6bdU1cn
+         54yb3swdwSS+qzQJ+o+QJ9yoLxasZrq6TasUgsjb923MEd6TyrOzf1d4iaYhMKGjAjxh
+         a5zS+QqaDkDgpXoEqpS9LnaPObTsU14X6eWN5BadwZ1jY6DQjwN1wYDh9kF5AUXa0hOF
+         URyIwnLgLRRKkfQNh5kYaia4zYxDzv7ydVFV2ZKczjKmXdLvJ9NqKKMl3SaxYt8/UG55
+         Afv9tXmJvMll+ngJ69FYxOIUxj6xdQe+gnExLzpTtsGygkzaJd9Fh+OM/uvtPYJI+F8r
+         GkuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of segher@gate.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=segher@gate.crashing.org
+       spf=pass (google.com: domain of kernel-hardening-return-12816-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12816-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of segher@gate.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=segher@gate.crashing.org
-Date: Wed, 28 Mar 2018 16:59:31 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [patch 3/8] rslib: Add SPDX identifiers
-Message-ID: <20180328215931.GW23207@gate.crashing.org>
-References: <20180328205138.301218351@linutronix.de> <20180328205554.496966175@linutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180328205554.496966175@linutronix.de>
-User-Agent: Mutt/1.4.2.3i
+       spf=pass (google.com: domain of kernel-hardening-return-12816-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12816-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Message-Id: <20180328205554.929111847@linutronix.de>
+User-Agent: quilt/0.63-1
+Date: Wed, 28 Mar 2018 22:51:46 +0200
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+ Segher Boessenkool <segher@kernel.crashing.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Andrew Morton <akpm@linuxfoundation.org>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+ Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+ Tony Luck <tony.luck@intel.com>
+Subject: [patch 8/8] rslib: Allocate decoder buffers to avoid VLAs
+References: <20180328205138.301218351@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline;
+ filename=rslib--Allocate-decoder-buffers-in-the-control-struct.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596216464368610748?=
-X-GMAIL-MSGID: =?utf-8?q?1596220455921605657?=
+X-GMAIL-THRID: =?utf-8?q?1596216563507994008?=
+X-GMAIL-MSGID: =?utf-8?q?1596216563507994008?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 10:51:41PM +0200, Thomas Gleixner wrote:
-> The Reed-Solomon library is based on code from Phil Karn who granted
-> permission to import it into the kernel under the GPL V2.
-> 
-> See commit 15b5423757a7 ("Shared Reed-Solomon ECC library") in the history
-> git tree at: git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
-> 
->   ...
->   The encoder/decoder code is lifted from the GPL'd userspace RS-library
->   written by Phil Karn. I modified/wrapped it to provide the different
->   functions which we need in the MTD/NAND code.
->   ...    
->   Signed-Off-By: Thomas Gleixner <tglx@linutronix.de>
->   Signed-Off-By: David Woodhouse <dwmw2@infradead.org>
->   "No objections at all. Just keep the authorship notices." -- Phil Karn
-> 
-> Add the proper SPDX identifiers according to
-> Documentation/process/license-rules.rst.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Kate Stewart <kstewart@linuxfoundation.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To get rid of the variable length arrays on stack in the RS decoder it's
+necessary to allocate the decoder buffers per control structure instance.
 
-Signed-off-by: Segher Boessenkool <segher@kernel.crashing.org>
+All usage sites have been checked for potential parallel decoder usage and
+fixed where necessary. Kees confirmed that the pstore decoding is strictly
+single threaded so there should be no surprises.
 
-if you want that for the changes I did in d7e5a5462f68 .
+Allocate them in the rs control structure sized depending on the number of
+roots for the chosen codec and adapt the decoder code to make use of them.
 
-Cheers,
+Document the fact that decode operations based on a particular rs control
+instance cannot run in parallel and the caller has to ensure that as it's
+not possible to provide a proper locking construct which fits all use
+cases.
 
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ include/linux/rslib.h           |    1 +
+ lib/reed_solomon/decode_rs.c    |   20 +++++++++++++-------
+ lib/reed_solomon/reed_solomon.c |   31 ++++++++++++++++++++++++++++++-
+ 3 files changed, 44 insertions(+), 8 deletions(-)
 
-Segher
+--- a/include/linux/rslib.h
++++ b/include/linux/rslib.h
+@@ -51,6 +51,7 @@ struct rs_codec {
+  */
+ struct rs_control {
+ 	struct rs_codec	*codec;
++	uint16_t	buffers[0];
+ };
+ 
+ /* General purpose RS codec, 8-bit data width, symbol width 1-15 bit  */
+--- a/lib/reed_solomon/decode_rs.c
++++ b/lib/reed_solomon/decode_rs.c
+@@ -21,16 +21,22 @@
+ 	uint16_t *alpha_to = rs->alpha_to;
+ 	uint16_t *index_of = rs->index_of;
+ 	uint16_t u, q, tmp, num1, num2, den, discr_r, syn_error;
+-	/* Err+Eras Locator poly and syndrome poly The maximum value
+-	 * of nroots is 8. So the necessary stack size will be about
+-	 * 220 bytes max.
+-	 */
+-	uint16_t lambda[nroots + 1], syn[nroots];
+-	uint16_t b[nroots + 1], t[nroots + 1], omega[nroots + 1];
+-	uint16_t root[nroots], reg[nroots + 1], loc[nroots];
+ 	int count = 0;
+ 	uint16_t msk = (uint16_t) rs->nn;
+ 
++	/*
++	 * The decoder buffers are in the rs control struct. They are
++	 * arrays sized [nroots + 1]
++	 */
++	uint16_t *lambda = rsc->buffers + RS_DECODE_LAMBDA * (nroots + 1);
++	uint16_t *syn = rsc->buffers + RS_DECODE_SYN * (nroots + 1);
++	uint16_t *b = rsc->buffers + RS_DECODE_B * (nroots + 1);
++	uint16_t *t = rsc->buffers + RS_DECODE_T * (nroots + 1);
++	uint16_t *omega = rsc->buffers + RS_DECODE_OMEGA * (nroots + 1);
++	uint16_t *root = rsc->buffers + RS_DECODE_ROOT * (nroots + 1);
++	uint16_t *reg = rsc->buffers + RS_DECODE_REG * (nroots + 1);
++	uint16_t *loc = rsc->buffers + RS_DECODE_LOC * (nroots + 1);
++
+ 	/* Check length parameter for validity */
+ 	pad = nn - nroots - len;
+ 	BUG_ON(pad < 0 || pad >= nn);
+--- a/lib/reed_solomon/reed_solomon.c
++++ b/lib/reed_solomon/reed_solomon.c
+@@ -37,6 +37,18 @@
+ #include <linux/slab.h>
+ #include <linux/mutex.h>
+ 
++enum {
++	RS_DECODE_LAMBDA,
++	RS_DECODE_SYN,
++	RS_DECODE_B,
++	RS_DECODE_T,
++	RS_DECODE_OMEGA,
++	RS_DECODE_ROOT,
++	RS_DECODE_REG,
++	RS_DECODE_LOC,
++	RS_DECODE_NUM_BUFFERS
++};
++
+ /* This list holds all currently allocated rs codec structures */
+ static LIST_HEAD(codec_list);
+ /* Protection for the list */
+@@ -205,6 +217,7 @@ static struct rs_control *init_rs_intern
+ {
+ 	struct list_head *tmp;
+ 	struct rs_control *rs;
++	unsigned int bsize;
+ 
+ 	/* Sanity checks */
+ 	if (symsize < 1)
+@@ -216,7 +229,13 @@ static struct rs_control *init_rs_intern
+ 	if (nroots < 0 || nroots >= (1<<symsize))
+ 		return NULL;
+ 
+-	rs = kzalloc(sizeof(*rs), GFP_KERNEL);
++	/*
++	 * The decoder needs buffers in each control struct instance to
++	 * avoid variable size or large fixed size allocations on
++	 * stack. Size the buffers to arrays of [nroots + 1].
++	 */
++	bsize = sizeof(uint16_t) * RS_DECODE_NUM_BUFFERS * (nroots + 1);
++	rs = kzalloc(sizeof(*rs) + bsize, GFP_KERNEL);
+ 	if (!rs)
+ 		return NULL;
+ 
+@@ -327,6 +346,11 @@ EXPORT_SYMBOL_GPL(encode_rs8);
+  *  The syndrome and parity uses a uint16_t data type to enable
+  *  symbol size > 8. The calling code must take care of decoding of the
+  *  syndrome result and the received parity before calling this code.
++ *
++ *  Note: The rs_control struct @rsc contains buffers which are used for
++ *  decoding, so the caller has to ensure that decoder invocations are
++ *  serialized.
++ *
+  *  Returns the number of corrected bits or -EBADMSG for uncorrectable errors.
+  */
+ int decode_rs8(struct rs_control *rsc, uint8_t *data, uint16_t *par, int len,
+@@ -371,6 +395,11 @@ EXPORT_SYMBOL_GPL(encode_rs16);
+  *  @corr:	buffer to store correction bitmask on eras_pos
+  *
+  *  Each field in the data array contains up to symbol size bits of valid data.
++ *
++ *  Note: The rc_control struct @rsc contains buffers which are used for
++ *  decoding, so the caller has to ensure that decoder invocations are
++ *  serialized.
++ *
+  *  Returns the number of corrected bits or -EBADMSG for uncorrectable errors.
+  */
+ int decode_rs16(struct rs_control *rsc, uint16_t *data, uint16_t *par, int len,
