@@ -1,78 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeC1Js6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 05:48:58 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53614 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752065AbeC1Js5 (ORCPT
+        id S1752712AbeC1JwB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 05:52:01 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38321 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752654AbeC1Jv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 05:48:57 -0400
-X-Google-Smtp-Source: AIpwx48Ewnx1JyJVTy39gjCemm5nqqCRfndS6Z79mXRV0MkiEJsVGP3uvcwLtoPZo8qttoKjJ3NyQA==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 for-4.17 3/3] locking: Clean-up comment and #ifndef for {,queued_}spin_is_locked()
-Date: Wed, 28 Mar 2018 11:48:38 +0200
-Message-Id: <1522230518-12398-1-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 28 Mar 2018 05:51:56 -0400
+X-Google-Smtp-Source: AIpwx4/+weXfJWoPPQ91Lzew+yXCFqNTcmX+nLiCaNHuB0WCdSqhNTTsZtxHyIeeIwpyRfh/7gqpkw==
+From: Thierry Escande <thierry.escande@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/3] Bluetooth: hci_qca: Add serdev support
+Date: Wed, 28 Mar 2018 11:51:30 +0200
+Message-Id: <20180328095133.14343-1-thierry.escande@linaro.org>
+X-Mailer: git-send-email 2.14.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset = "utf-8"
+Content-Transfert-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removes "#ifndef queued_spin_is_locked" from the generic code: this is
-not used _and_ it is reasonable to conclude that it'll never be.
+Hi,
 
-Also removes the comment about spin_is_locked() from mutex_is_locked():
-it remains valid, but not particularly useful.
+This patchset enables the Qualcomm BT controller QCA6174 node in the
+device tree of the db820c board. This allows the bluetooth chipset to
+be probed and registered against the hci layer by using the serdev
+framework.
 
-Suggested-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
----
- include/asm-generic/qspinlock.h | 2 --
- include/linux/mutex.h           | 3 ---
- 2 files changed, 5 deletions(-)
+This patchset also contains the documentation for the compatible
+string "qcom,qca6174-bt" related to this chipset.
 
-diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
-index b37b4ad7eb946..dc4e4ac4937ea 100644
---- a/include/asm-generic/qspinlock.h
-+++ b/include/asm-generic/qspinlock.h
-@@ -26,7 +26,6 @@
-  * @lock: Pointer to queued spinlock structure
-  * Return: 1 if it is locked, 0 otherwise
-  */
--#ifndef queued_spin_is_locked
- static __always_inline int queued_spin_is_locked(struct qspinlock *lock)
- {
- 	/*
-@@ -35,7 +34,6 @@ static __always_inline int queued_spin_is_locked(struct qspinlock *lock)
- 	 */
- 	return atomic_read(&lock->val);
- }
--#endif
- 
- /**
-  * queued_spin_value_unlocked - is the spinlock structure unlocked?
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index cb3bbed4e6339..9921822c51585 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -147,9 +147,6 @@ extern void __mutex_init(struct mutex *lock, const char *name,
-  */
- static inline bool mutex_is_locked(struct mutex *lock)
- {
--	/*
--	 * XXX think about spin_is_locked
--	 */
- 	return __mutex_owner(lock) != NULL;
- }
- 
+v6:
+- Move pinctrl properties into subnodes
+- fix binding documentation
+
+v5:
+- Rename 'bt-disable-n' gpio as 'enable'
+
+v4:
+- Fix dt binding documentation
+- Address some other issues in patch #3
+
+v3:
+- Address comments for patch #3 (details in patch)
+
+v2:
+- Fix author email
+
+Thierry Escande (3):
+  arm64: dts: apq8096-db820c: enable bluetooth node
+  dt-bindings: net: bluetooth: Add qualcomm-bluetooth
+  Bluetooth: hci_qca: Add serdev support
+
+ .../devicetree/bindings/net/qualcomm-bluetooth.txt |  34 +++++++
+ arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  |  26 +++++
+ .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    |  21 ++++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |  33 +++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |  10 ++
+ drivers/bluetooth/Kconfig                          |   1 +
+ drivers/bluetooth/hci_qca.c                        | 109 ++++++++++++++++++++-
+ 7 files changed, 232 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+
 -- 
-2.7.4
+2.14.1
