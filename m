@@ -1,49 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753341AbeC1WAu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 18:00:50 -0400
-Received: from resqmta-ch2-11v.sys.comcast.net ([69.252.207.43]:53560 "EHLO
-        resqmta-ch2-11v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752738AbeC1WAt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 18:00:49 -0400
-Date: Wed, 28 Mar 2018 17:00:46 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Shakeel Butt <shakeelb@google.com>
-cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Greg Thelen <gthelen@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab, slub: skip unnecessary kasan_cache_shutdown()
-In-Reply-To: <20180327230603.54721-1-shakeelb@google.com>
-Message-ID: <alpine.DEB.2.20.1803281700230.23247@nuc-kabylake>
-References: <20180327230603.54721-1-shakeelb@google.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1753504AbeC1WCv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 18:02:51 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:45753 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751976AbeC1WCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 18:02:50 -0400
+Date: Thu, 29 Mar 2018 00:02:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: netdev@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Yan Markman <ymarkman@marvell.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Miquel Raynal <miquel.raynal@free-electrons.com>,
+        Marcin Wojtas <mw@semihalf.com>
+Subject: Re: [PATCH net-next 2/2] sfp/phylink: move module EEPROM ethtool
+ access into netdev core ethtool
+Message-ID: <20180328220244.GA23595@lunn.ch>
+References: <20180328190339.31433-1-f.fainelli@gmail.com>
+ <20180328190339.31433-3-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfIm8wOy0fVHbrEK7c4LQ6CLQMvQH6VB76EdtC50D+iRjSImjqcsfmh2dTW/HkCf368F4LYraN43YZ5vtAQy+oqdC5u6lhL72o5TZ+BP9nIX/xKB9WgWP
- kkDjW08V9ncjq/WoE/C8wjLmI3siQL0/A0QcbcnOIacnmQ4nz94q08lRlb1qh1hX7tqGceS0601iDr9bSzkSbwxpYWkPeyiDL5pp8vlzSIhi7bp9jzxtpZTG
- q/2DBpkqwIdNhAhtmRjQf7AHuZtiWppICr5d5gCqtxpOZYcKo0UjKZqe0BQkZL6BXu9uUCRThtqZiRUdt2T4+oxmht6WT955d/IuMVgVQWFbsmrf0o6q5W+h
- IgoFOLm1KjAQYjAuwZq8LF3iaRb4bLAiP2ihPoxh1Ok4cejVJC1b6W9aFKAmC9TQoJmUjnj1M5iOdQdc0h04WWn/2z9MZdVyEzXug9D+cUMPGinnk5zb9mVU
- XoE3nYb/dQUtMIcQBGFs5RUQynguafj607GcF2dOaqVVRwBQ8YrrL6e5gxE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328190339.31433-3-f.fainelli@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018, Shakeel Butt wrote:
+On Wed, Mar 28, 2018 at 12:03:39PM -0700, Florian Fainelli wrote:
+> From: Russell King <rmk+kernel@armlinux.org.uk>
+> 
+> Provide a pointer to the SFP bus in struct net_device, so that the
+> ethtool module EEPROM methods can access the SFP directly, rather
+> than needing every user to provide a hook for it.
+> 
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> ---
+>  drivers/net/ethernet/marvell/mvneta.c | 18 ------------------
+>  drivers/net/phy/phylink.c             | 28 ----------------------------
+>  drivers/net/phy/sfp-bus.c             |  6 ++----
+>  include/linux/netdevice.h             |  3 +++
+>  include/linux/phylink.h               |  3 ---
+>  net/core/ethtool.c                    |  7 +++++++
+>  6 files changed, 12 insertions(+), 53 deletions(-)
 
-> The kasan quarantine is designed to delay freeing slab objects to catch
-> use-after-free. The quarantine can be large (several percent of machine
-> memory size). When kmem_caches are deleted related objects are flushed
-> from the quarantine but this requires scanning the entire quarantine
-> which can be very slow. We have seen the kernel busily working on this
-> while holding slab_mutex and badly affecting cache_reaper, slabinfo
-> readers and memcg kmem cache creations.
+The diffstats look good, DSA and all other uses of phylink will make a
+similar saving in code. The new member in the netdev structure is well
+away from members which are commented as being cache line sensitive.
 
-Acked-by: Christoph Lameter <cl@linux.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
