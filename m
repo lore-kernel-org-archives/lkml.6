@@ -1,157 +1,102 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-768647-1522326274-2-8677978614611245267
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522326273; b=dbzuOxY7UUeowFvBw7BcdPBX9YLkiT+1q+MNwW9OZZyp+x86e8
-    258RAxssYenGVz32pWSJvr+ytxBZ/xNk4m3awLMgn82X6NAJRh8WUcTEfTxwqx+W
-    wjyixhmZaFu/JW+vJRKRJU7gm0ljm2E9b+7L+UxIzHjnFBMIIwkc4neePyGdsRcU
-    z1tWbxugljeTeBF+kOOenfULbtYCTi+9mKIrP10bmqljHJIbMWg/Ww4LGb/iDs0u
-    GBmo5eU1r+fvGsZjrhiR0hyQvETDDcLtNtS3gd/RIAwF02EX8ygCWA6cZukndybY
-    34MVMsVP6m0me5Lm5XQlKa4wIbDBly426o+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1522326273; bh=3mcftkEeFO/3DNUPqGwS6ahdSwGFhN
-    iqdhLs3jH3THg=; b=dF7ZczUmucMBlNQMKZABnd5SKNEF9RCw4O4eJu4wWiSb8X
-    iCVyCcPWhSkJ5SZBBMDEbPepzjcCxvZVdQ6bXFTKkbDZNXjwXluotXYw3qqumTUV
-    l1isFiVs0BoN8O/mZR80HDGW3v08Y/0GWEnTsfBF1SpzI+ni17bRMFN/aTdlYQTR
-    c6ldwDFBi8pwiIaYYchLtng8Vg3Uj9UP1qJVBTUmYpuEMWORoJECbpCXQO8VrPHC
-    zHFIt4zPfhp5eNrKcUkC/lj9VLjYMdaP2JX89qf5zeRrq0j4yJvC0DILuJ/Ml1+J
-    XFQBWYaNA9AEV43sN4K6Z1ZuXc0BMUyTPGc/Xzmg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBUXcGp7spkshNgCVZIsHggVOy3MtRdHgyKhbufesa/TBcz96myozanfnup5DmM10g/74prutbcL1s5J45p9UqsVsvpvbQhbpzHaDZTrLRmx4140CTJb
-    2bMXH7uu7td36KATYJ3xlmOSmTl8mb9bdKeIRyoMgVflvpYeyecMSZI+9haPtVFYF2MPBYlUIA3KajwYwIOB5gexoQYDt+tEZ9ohhbjFBq8BUUuCcUrM++5O
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IhDdiLrqHVMA:10 a=v2DPQv5-lfwA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=gPJu0pBYAAAA:8 a=_O2MNi-qLip3vB9L1CsA:9
-    a=BvLA_4xjQAIxby50:21 a=FIHrhAtSOSvqbvUZ:21 a=AjGcO6oz07-iQ99wixmX:22
-    a=AlIIF0cMT2hfDT4axODj:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752672AbeC2MYB (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 08:24:01 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:59516 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752256AbeC2MX7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 08:23:59 -0400
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/2] MIPS: memset.S: EVA & fault support for small_memset
-Date: Thu, 29 Mar 2018 10:28:23 +0100
-Message-ID: <1522315704-31641-2-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522315704-31641-1-git-send-email-matt.redfearn@mips.com>
-References: <1522315704-31641-1-git-send-email-matt.redfearn@mips.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1522326229-298554-12353-54470-2
-X-BESS-VER: 2018.3-r1803262126
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191512
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <mchehab@smtp.s-opensource.com>
+X-Google-Smtp-Source: AIpwx492YeZsVtoGb1WTJ/M1cvGEVaEOr9nSMHxZrIxT+XWAVAps7moWEqINXECJ93ag5YlvclV9
+ARC-Seal: i=1; a=rsa-sha256; t=1522260777; cv=none;
+        d=google.com; s=arc-20160816;
+        b=tLZ1yQsUg3pXY+Fh1lvR9ycHzjJ55us/4wH/zAkKvLFrAvqn1lC2LlQdIHFDzTlN3N
+         XNR6BdV5SICM+wJ6aqtWjpJ5wTXBxZ4kxFcz6SC/e+nmI3dgGIa+9Ot8tdqMkJ4qoK6+
+         f2W8rK/TCfzrRFnYRsUByKYKkDDtaLIXpowJ1xpounMabO7j8RlShJAmkplRwYPCatgt
+         uvcdp7E26XfPK86B6rgnknabVQHhEUXEKkiu65uA6yWAF4PmQ8flx5Jc337zRK3y2+En
+         n7Cjk//bHESVw/YN5JHi9DORjjH4qLJwyL36Xke010Cz387trdari3RNARpRn4dleu6C
+         R0lQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=sender:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=f7ohqIMNjlxCzYvP5+I449Jhhuk78Qa0YSfPGOGgBdg=;
+        b=ZciVcnL7z41yOuX8w1sOeT6ka7PkH4k78er2Erafit6d5D4hznjpwhfPmZAXpvL4Y3
+         RImnDZVt5q1cKfjD/WzDZtUaA+vm9GZ/LPl5YuxilnIio/mjXRShDOCpQZCmT/P8inZK
+         dN61CHcyKiYuxGbx5DGxcVXbkGOkHiNZ5m7pVjqWIb2OtPvZPnbCL0F2Fh/hj0P1jwhF
+         GTyITxivI7zBHUDFvqAlZkQV7vp//mNcSBiYjXzdUoUTtUR2xkIgB70awKQUEKFu5/oE
+         yosI7E06M/R0VaurztDJMLGdaGHYV5BimDESIDuW77/c8VcpxXGNqmFH22Kp9jkfOhao
+         BlCg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Linux Media Mailing List <linux-media@vger.kernel.org>,
+	stable@vger.kernel.org,
+	Greg KH <gregkh@linuxfoundation.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Mauro Carvalho Chehab <mchehab@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Brian Warner <brian.warner@samsung.com>
+Subject: [PATCH for v3.18 00/18] Backport CVE-2017-13166 fixes to Kernel 3.18
+Date: Wed, 28 Mar 2018 15:12:19 -0300
+Message-Id: <cover.1522260310.git.mchehab@s-opensource.com>
+X-Mailer: git-send-email 2.14.3
+Sender: Mauro Carvalho Chehab <mchehab@smtp.s-opensource.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596206117324180738?=
+X-GMAIL-MSGID: =?utf-8?q?1596206117324180738?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The MIPS kernel memset / bzero implementation includes a small_memset
-branch which is used when the region to be set is smaller than a long (4
-bytes on 32bit, 8 bytes on 64bit). The current small_memset
-implementation uses a simple store byte loop to write the destination.
-There are 2 issues with this implementation:
+Hi Greg,
 
-1. When EVA mode is active, user and kernel address spaces may overlap.
-Currently the use of the sb instruction means kernel mode addressing is
-always used and an intended write to userspace may actually overwrite
-some critical kernel data.
+Those are the backports meant to solve CVE-2017-13166 on Kernel 3.18.
 
-2. If the write triggers a page fault, for example by calling
-__clear_user(NULL, 2), instead of gracefully handling the fault, an OOPS
-is triggered.
+It contains two v4l2-ctrls fixes that are required to avoid crashes
+at the test application.
 
-Fix these issues by replacing the sb instruction with the EX() macro,
-which will emit EVA compatible instuctions as required. Additionally
-implement a fault fixup for small_memset which sets a2 to the number of
-bytes that could not be cleared (as defined by __clear_user).
+I wrote two patches myself for Kernel 3.18 in order to solve some
+issues specific for Kernel 3.18 with aren't needed upstream.
+one is actually a one-line change backport. The other one makes
+sure that both 32-bits and 64-bits version of some ioctl calls
+will return the same value for a reserved field.
 
-Reported-by: Chuanhua Lei <chuanhua.lei@intel.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+I noticed an extra bug while testing it, but the bug also hits upstream,
+and should be backported all the way down all stable/LTS versions.
+So, I'll send it the usual way, after merging upsream.
 
----
+Regards,
+Mauro
 
- arch/mips/lib/memset.S | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
-index a1456664d6c2..90bcdf1224ee 100644
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -219,7 +219,7 @@
- 1:	PTR_ADDIU	a0, 1			/* fill bytewise */
- 	R10KCBARRIER(0(ra))
- 	bne		t1, a0, 1b
--	sb		a1, -1(a0)
-+	 EX(sb, a1, -1(a0), .Lsmall_fixup\@)
- 
- 2:	jr		ra			/* done */
- 	move		a2, zero
-@@ -260,6 +260,11 @@
- 	jr		ra
- 	andi		v1, a2, STORMASK
- 
-+.Lsmall_fixup\@:
-+	PTR_SUBU	a2, t1, a0
-+	jr		ra
-+	 PTR_ADDIU	a2, 1
-+
- 	.endm
- 
- /*
+Daniel Mentz (2):
+  media: v4l2-compat-ioctl32: Copy v4l2_window->global_alpha
+  media: v4l2-compat-ioctl32.c: refactor compat ioctl32 logic
+
+Hans Verkuil (12):
+  media: v4l2-ioctl.c: don't copy back the result for -ENOTTY
+  media: v4l2-compat-ioctl32.c: add missing VIDIOC_PREPARE_BUF
+  media: v4l2-compat-ioctl32.c: fix the indentation
+  media: v4l2-compat-ioctl32.c: move 'helper' functions to
+    __get/put_v4l2_format32
+  media: v4l2-compat-ioctl32.c: avoid sizeof(type)
+  media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
+  media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer
+  media: v4l2-compat-ioctl32.c: make ctrl_is_pointer work for subdevs
+  media: v4l2-compat-ioctl32.c: copy clip list in put_v4l2_window32
+  media: v4l2-compat-ioctl32.c: drop pr_info for unknown buffer type
+  media: v4l2-compat-ioctl32.c: don't copy back the result for certain
+    errors
+  media: v4l2-ctrls: fix sparse warning
+
+Mauro Carvalho Chehab (2):
+  media: v4l2-compat-ioctl32: use compat_u64 for video standard
+  media: v4l2-compat-ioctl32: initialize a reserved field
+
+Ricardo Ribalda (2):
+  vb2: V4L2_BUF_FLAG_DONE is set after DQBUF
+  media: media/v4l2-ctrls: volatiles should not generate CH_VALUE
+
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 1020 +++++++++++++++----------
+ drivers/media/v4l2-core/v4l2-ctrls.c          |   96 ++-
+ drivers/media/v4l2-core/v4l2-ioctl.c          |    5 +-
+ drivers/media/v4l2-core/videobuf2-core.c      |    5 +
+ 4 files changed, 691 insertions(+), 435 deletions(-)
+
 -- 
-2.7.4
+2.14.3
