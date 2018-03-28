@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752983AbeC1LvF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:51:05 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:53974 "EHLO
+        id S1753011AbeC1LvJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:51:09 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:53987 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752932AbeC1LvD (ORCPT
+        with ESMTP id S1752969AbeC1LvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 07:51:03 -0400
+        Wed, 28 Mar 2018 07:51:06 -0400
 From: Niklas Cassel <niklas.cassel@axis.com>
 To: kishon@ti.com, cyrille.pitchen@free-electrons.com,
-        Alan Douglas <adouglas@cadence.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Sekhar Nori <nsekhar@ti.com>,
+        John Keeping <john@metanate.com>, Niklas Cassel <niklass@axis.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>
 Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 07/12] PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64 if a 64-bit BAR was set-up
-Date: Wed, 28 Mar 2018 13:50:12 +0200
-Message-Id: <20180328115018.31921-8-niklas.cassel@axis.com>
+Subject: [PATCH v5 08/12] PCI: endpoint: Handle 64-bit BARs properly
+Date: Wed, 28 Mar 2018 13:50:13 +0200
+Message-Id: <20180328115018.31921-9-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180328115018.31921-1-niklas.cassel@axis.com>
 References: <20180328115018.31921-1-niklas.cassel@axis.com>
@@ -24,36 +26,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cdns_pcie_ep_set_bar() does some round-up of the BAR size, which means
-that a 64-bit BAR can be set-up, even when the flag
-PCI_BASE_ADDRESS_MEM_TYPE_64 isn't set.
+If a 64-bit BAR was set-up, we need to skip a BAR,
+since a 64-bit BAR consists of a BAR pair.
 
-If a 64-bit BAR was set-up, set the flag PCI_BASE_ADDRESS_MEM_TYPE_64,
-so that the calling function can know what BAR width that was actually
-set-up.
-
-I'm not sure why cdns_pcie_ep_set_bar() doesn't obey the flag
-PCI_BASE_ADDRESS_MEM_TYPE_64, but I leave this for the MAINTAINER to
-fix, since there might be a reason why this flag is ignored.
+We need to check what BAR width the epc->ops->set_bar() specific
+implementation actually did set-up, since some drivers, like the
+Cadence EP controller, sometimes sets up a 64-bit BAR, even though
+a 32-bit BAR was requested.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- drivers/pci/cadence/pcie-cadence-ep.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pci/endpoint/functions/pci-epf-test.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
-index cef36cd6b710..2905e098678c 100644
---- a/drivers/pci/cadence/pcie-cadence-ep.c
-+++ b/drivers/pci/cadence/pcie-cadence-ep.c
-@@ -106,6 +106,9 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
- 		if (is_64bits && (bar & 1))
- 			return -EINVAL;
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 91274779e59f..d46e3ebabb8e 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -380,6 +380,13 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+ 			if (bar == test_reg_bar)
+ 				return ret;
+ 		}
++		/*
++		 * pci_epc_set_bar() sets PCI_BASE_ADDRESS_MEM_TYPE_64
++		 * if the specific implementation required a 64-bit BAR,
++		 * even if we only requested a 32-bit BAR.
++		 */
++		if (epf_bar->flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
++			bar++;
+ 	}
  
-+		if (is_64bits && !(flags & PCI_BASE_ADDRESS_MEM_TYPE_64))
-+			epf_bar->flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
-+
- 		if (is_64bits && is_prefetch)
- 			ctrl = CDNS_PCIE_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS;
- 		else if (is_prefetch)
+ 	return 0;
 -- 
 2.14.2
