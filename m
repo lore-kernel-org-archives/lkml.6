@@ -1,126 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753220AbeC1Q2C (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 12:28:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48604 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeC1Q2B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 12:28:01 -0400
-Date: Wed, 28 Mar 2018 13:27:54 -0300
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
-        Inki Dae <inki.dae@samsung.com>,
-        Brian Warner <brian.warner@samsung.com>,
-        Mauro Carvalho Chehab <m.chehab@samsung.com>
-Subject: CVE-2017-13166 fixes for Kernel 3.18 - was: Re: Linux 3.18.102
-Message-ID: <20180328132754.7fbda70c@vento.lan>
-In-Reply-To: <20180327083054.1d9b7796@vento.lan>
-References: <CGME20180325090010epcas1p2864bb6fe3cbc420bc71eb0e7f1c847f1@epcas1p2.samsung.com>
-        <20180325085952.GA31575@kroah.com>
-        <5AB9A111.1080105@samsung.com>
-        <20180327070528.GB31193@kroah.com>
-        <5AB9F365.2030309@samsung.com>
-        <20180327083054.1d9b7796@vento.lan>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1753205AbeC1Q3I convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 12:29:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753054AbeC1Q3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 12:29:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B27332184A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AIpwx4+kI9gNJgrInC85Z1zvn31uilY5yxb6BsWvhXOKJ8xGHYQHcNMn2iILlYKfW1D8hliMvxOnSBnIeQob6E0HYfc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <3765e5a86b80b2a1888cabee623e5d0c@crapouillou.net>
+References: <20180110224838.16711-2-paul@crapouillou.net> <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-5-paul@crapouillou.net> <20180327144631.j2bugsjxulkv57ws@rob-hp-laptop>
+ <3765e5a86b80b2a1888cabee623e5d0c@crapouillou.net>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 28 Mar 2018 11:28:44 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLA8WbYZ49_oVb-uVgwUixVqDw2wtLy2tkyQwBM3ow5ew@mail.gmail.com>
+Message-ID: <CAL_JsqLA8WbYZ49_oVb-uVgwUixVqDw2wtLy2tkyQwBM3ow5ew@mail.gmail.com>
+Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>, James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2SGS5q9029256
 
-Em Tue, 27 Mar 2018 08:30:54 -0300
-Mauro Carvalho Chehab <mchehab@kernel.org> escreveu:
+On Wed, Mar 28, 2018 at 10:33 AM, Paul Cercueil <paul@crapouillou.net> wrote:
+> Le 2018-03-27 16:46, Rob Herring a écrit :
+>>
+>> On Sun, Mar 18, 2018 at 12:28:57AM +0100, Paul Cercueil wrote:
+>>>
+>>> Add documentation about how to properly use the Ingenic TCU
+>>> (Timer/Counter Unit) drivers from devicetree.
+>>>
+>>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>> ---
+>>>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 ++++++++++++++++
+>>>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 +++++++++++++++
+>>>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56
+>>> ++++++++++++++++++++++
+>>>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 ++++++++++++++++
+>>>  4 files changed, 178 insertions(+)
+>>>  create mode 100644
+>>> Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>>>  create mode 100644
+>>> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>>>  create mode 100644 Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>>>  create mode 100644
+>>> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>>>
+>>>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>>>  added content.
+>>> +/ {
+>>> +       tcu: mfd@10002000 {
+>>> +               compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>>> +               reg = <0x10002000 0x1000>;
+>>> +               #address-cells = <1>;
+>>> +               #size-cells = <1>;
+>>> +               ranges = <0x0 0x10002000 0x1000>;
+>>> +
+>>> +               tcu_timer: timer@10 {
+>>> +                       compatible = "ingenic,jz4740-tcu";
+>>> +                       reg = <0x10 0xff0>;
+>>> +
+>>> +                       clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk
+>>> 2>, <&tcu_clk 3>,
+>>> +                                        <&tcu_clk 4>, <&tcu_clk 5>,
+>>> <&tcu_clk 6>, <&tcu_clk 7>;
+>>> +                       clock-names = "timer0", "timer1", "timer2",
+>>> "timer3",
+>>> +                                                 "timer4", "timer5",
+>>> "timer6", "timer7";
+>>> +
+>>> +                       interrupt-parent = <&tcu_irq>;
+>>> +                       interrupts = <0 1 2 3 4 5 6 7>;
+>>
+>>
+>> Thinking about this some more... You simply have 8 timers (and no other
+>> functions?) with some internal clock and irq controls for each timer. I
+>> don't think it really makes sense to create separate clock and irq
+>> drivers in that case. That would be like creating clock drivers for
+>> every clock divider in timers, pwms, uarts, etc. Unless the clocks get
+>> exposed to other parts of the system, then there is no point.
+>
+>
+> I have 8 timers with some internal clock and IRQ controls, that can be used
+> as PWM.
 
-> Em Tue, 27 Mar 2018 16:31:49 +0900
-> Seung-Woo Kim <sw0312.kim@samsung.com> escreveu:
-> 
-> > On 2018년 03월 27일 16:05, Greg KH wrote:
-> > > On Tue, Mar 27, 2018 at 10:40:33AM +0900, Seung-Woo Kim wrote:  
-> > >> Hello,
-> > >>
-> > >> Until 3.18.102, it looks like following patch series for v4l2 seems missed.
-> > >>
-> > >> 273caa2 media: v4l2-compat-ioctl32.c: make ctrl_is_pointer work for subdevs
-> > >> a1dfb4c media: v4l2-compat-ioctl32.c: refactor compat ioctl32 logic
-> > >> d83a824 media: v4l2-compat-ioctl32.c: don't copy back the result for
-> > >> certain errors
-> > >> 169f24c media: v4l2-compat-ioctl32.c: drop pr_info for unknown buffer type
-> > >> a751be5 media: v4l2-compat-ioctl32.c: copy clip list in put_v4l2_window32
-> > >> b8c601e media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer
-> > >> 8ed5a59 media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
-> > >> 333b1e9 media: v4l2-compat-ioctl32.c: avoid sizeof(type)
-> > >> 486c521 media: v4l2-compat-ioctl32.c: move 'helper' functions to
-> > >> __get/put_v4l2_format32
-> > >> b7b957d media: v4l2-compat-ioctl32.c: fix the indentation
-> > >> 3ee6d04 media: v4l2-compat-ioctl32.c: add missing VIDIOC_PREPARE_BUF
-> > >> 181a4a2 media: v4l2-ioctl.c: don't copy back the result for -ENOTTY  
-> > > 
-> > > That is correct.
-> > >   
-> > >> Any plan to apply the series?  
-> > > 
-> > > Do you have a backported version of this series that will apply to that
-> > > kernel tree?  If so, I'll be glad to apply it but I'm pretty sure the
-> > > reason I did not apply them was because they did not apply correctly.  
-> > 
-> > I dit not do it myself. I just checked the series is applied on other
-> > stable trees.
-> 
-> Backporting it from Kernel 4.1 is quite simple. Just two patches
-> have trivial conflicts.
-> 
-> I did a quick backport at:
-> 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=v3.18.102%2bCVE
-> 
-> Please notice that I didn't test it yet.
-> 
-> Will build such Kernel and see how it behaves with compat32.
-> 
-> If it works fine, I'll submit for stable.
+Please include how you plan to do the PWM support too. I need a
+complete picture of the h/w, not piecemeal, evolving bindings.
 
-Hi Seung-Woo,
+> But the TCU also controls the IRQ of the OS Timer (which is
+> separate),
+> as well as masking of the clocks for the OS timer and the watchdog.
 
-I did some tests here with the vivid driver and v4l2-compliance tool.
+The OS timer and watchdog are different blocks outside the TCU? This
+doesn't seem to be the case based on the register definitions.
 
-I had to apply a few fixes on the top of the 4.1 patchset.
-With those fixes, compat32 is working fine with Kernel 3.18.102 on my
-test environment.
+> I thought having clean drivers for different frameworks working on the same
+> regmap was cleaner than having one big-ass driver handling everything.
 
-Feel free to use it on your tree. The patches are under the
-top of 3.18.102, on my development tree:
+DT is not the only way to instantiate drivers and how one OS splits
+drivers should not define your DT binding. An MFD driver can create
+child devices and a single DT node can be a provider of multiple
+things. It is appropriate for an MFD to have child nodes primarily
+when the sub devices need their own resources defined as properties in
+DT or when the sub device is an IP block reused in multiple devices.
+Just to have a node per driver/provider is not what should drive the
+decision.
 
-	https://git.linuxtv.org/mchehab/experimental.git/log/?h=v3.18.102%2bCVE
-
-It should be noticed that 5 other patches are required for it to
-work at Kernel 3.18 and to make v4l2-compliance to produce the same
-results on both 32 bits and 64 bits version.
-
-Those two are backports from upstream and contains some control fixes
-applied at Kernel 4.1:
-
-	1663cf48e2eb media: media/v4l2-ctrls: volatiles should not generate CH_VALUE
-	d53d22eb0ea4 media: v4l2-ctrls: fix sparse warning
-
-This patch fix an extra issue with compat32 code that is specific to
-Kernel 3.18, and backports a change that also happened upstream:
-
-	2ba950543618 media: v4l2-compat-ioctl32: use compat_u64 for video standard
-
-Those 2 patches are required to fix some issues that I suspect that also
-affect upstream patches:
-
-	acf19bbe76c5 media: v4l2-compat-ioctl32: initialize a reserved field
-	ccaf872a9873 media: v4l2-compat-ioctl32: don't oops on overlay
-
-However, I didn't test with other Kernel versions yet. Such patches should 
-go through the usual review at media ML.
-
-After having them reviewed and applied upstream (if needed),  I'll submit 
-the entire series for Greg to pick for Kernel 3.18.
-
-Regards,
-Mauro
+Rob
