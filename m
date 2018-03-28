@@ -1,159 +1,193 @@
-Return-Path: <hejianet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522134936; cv=none;
+Return-Path: <richard.weiyang@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522197021; cv=none;
         d=google.com; s=arc-20160816;
-        b=LKYv+WZ6OPM6C1p3sf0r1hY4iAPcjorhPOvqz2IcA+ewXqsZ33ClUirN35FjXZGAh0
-         0zyGFBKoaIEMcOykpT7c+SiuvtXcLFNhxSbmjdglyXiAEZexui8ObzY1RGZ+gFh4v9Tf
-         slzapHOil1GZRmF0LYSofcsluFPpPc/23Kv8RkhJpZRvYoTbxaB18SxeKOXc8g1ZXaPL
-         gixxNiFTjPY8wS1vis9+nGgVEquua3QbVEodP36ph2Na/yi42P9iptTsgpPVLWlBUDTM
-         hBCK4CVBVrvvel1Xrt+2VCsVxAkVqPXbp7xkVhGgCdPrAhOtuoC/iitdrGVyJcOJmjNP
-         otCA==
+        b=0LG3SMQEp3mX79W5ENKtk9Bi0UKU9/oSffsRP1dVRJwWKWc1G957KRD3xKsW0mJw7Z
+         sSTJEdsg9LFrs7sW0rdp01R/7bCPW6hfOrhQFAn0EE64eXM1qV8PsAVHSlFZs5mWTqyX
+         hdd2I6IjQI5Uz3DeJCzb5aeFMNd4uejPk9fLCbNSvcqM6Ghp/KBjKtr30gYOGhiWKD1P
+         h01cIXHiJtd4HjMl1TaCKw6UwwqGAV+NhfjdeqE/+heZ8gr8Oguvx6Ts/EbMKrGUjkF+
+         4Cjz1sbArY6Qz4TeV7pDxxZIt4+jw+/eXNokbiLAwq7KlyygrG3etp0WeG5JUwEc5g4S
+         Dk2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:dkim-signature
-         :arc-authentication-results;
-        bh=H/q+9no0wGRLhn6S7BjvVfu9GzWSF+gvNsNL2eOEIH0=;
-        b=hiW46wTY6MwQ89ToqMVc/5dka+1sfTotDn+BWvoDzdUPWj9IAnKsu0b5DbtkaJ7sai
-         AvyjmEKhV9N3ZObIWEyRuf0uDMg4nb186WDZEE5K74RQdHQjNevRIkGypbuioUkx7NNO
-         DImKqx3LjoB3f9X7hfJott7RLl+1FuUEDsqRkdX3f8w3tiFFNkmOwxV+nK3WZ8AH/DHG
-         e9jr6nNhzE0LD3oVnJTCB/yLdbBnVDQbnGXtmfEMwhm6pskVwzEIBJuMEHR1Cb2h7EmD
-         zYeLkeJppBdPOtTWXwHkTNB1OrFMKqlHgXe83wQ83g0Pu3D/22zSDizvg81Br+RnJI8H
-         2Enw==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:reply-to:message-id
+         :subject:cc:to:from:date:dkim-signature:arc-authentication-results;
+        bh=fwZlk6NSX96YKk7s6bi4BGGfYP3kpm8eTXrtk0jv9YY=;
+        b=0HS/E2CBqEVREzYwS1ZdBHc28BHA+d9a1KG9EbaAICYnZCzHWAI1GoA/WbethhQbD6
+         4v14p3ZU7w7Spd4mhNrQTPY/gPzT3u/pJOXG6QZyaKnn5er1NUPfe/tAkkyl1jSrx/p2
+         FuhBvV1SL9xP68DGWfKVSrpHoftuEAqZgzxUmJyBDEu65PHC2reMRffk9MzgCExvxdO4
+         FQjYz4s0p6kXdri/pcAOs/HSnUhX0T0/fkJIjMQJeFN0tXH65TavJcuXntqV832DoSvl
+         aRdxXacIF/SNBZl2H5LG3lMOLCNgKXm+8+t0NhCEVa01i/4FHK4FkTod1B+LOnN4qny1
+         t+Zw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hJgxq6Sl;
-       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FtBl1XhK;
+       spf=pass (google.com: domain of richard.weiyang@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=richard.weiyang@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hJgxq6Sl;
-       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FtBl1XhK;
+       spf=pass (google.com: domain of richard.weiyang@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=richard.weiyang@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx495VqjvteooDXRzocgE6UrFSsfxPHr4vO0BsblMFb3dSUqPyNZ1sH8RIg3N8QNqx78pJg8GDQ==
+X-Google-Smtp-Source: AIpwx4/g6AklH7xunkRXsmTCfn4rSWp4iecEO83dzjcOQkG2VKT/eCDbze9YFlnKwJwQSCyswmvItQ==
+Date: Wed, 28 Mar 2018 08:30:12 +0800
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Jia He <hejianet@gmail.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mel Gorman <mgorman@suse.de>, Will Deacon <will.deacon@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Gioh Kim <gi-oh.kim@profitbricks.com>,
+	Steven Sistare <steven.sistare@oracle.com>,
+	Daniel Vacek <neelx@redhat.com>,
+	Eugeniu Rosca <erosca@de.adit-jv.com>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, James Morse <james.morse@arm.com>,
+	Steve Capper <steve.capper@arm.com>, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Kemi Wang <kemi.wang@intel.com>, Petr Tesarik <ptesarik@suse.com>,
+	YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Nikolay Borisov <nborisov@suse.com>
 Subject: Re: [PATCH v3 0/5] optimize memblock_next_valid_pfn and
  early_pfn_valid
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko
- <mhocko@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Mel Gorman <mgorman@suse.de>, Will Deacon <will.deacon@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Pavel Tatashin
- <pasha.tatashin@oracle.com>, Daniel Jordan <daniel.m.jordan@oracle.com>,
- AKASHI Takahiro <takahiro.akashi@linaro.org>,
- Gioh Kim <gi-oh.kim@profitbricks.com>,
- Steven Sistare <steven.sistare@oracle.com>, Daniel Vacek <neelx@redhat.com>,
- Eugeniu Rosca <erosca@de.adit-jv.com>, Vlastimil Babka <vbabka@suse.cz>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
- x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
- Petr Tesarik <ptesarik@suse.com>, YASUAKI ISHIMATSU
- <yasu.isimatu@gmail.com>, Andrey Ryabinin <aryabinin@virtuozzo.com>,
- Nikolay Borisov <nborisov@suse.com>
+Message-ID: <20180328003012.GA91956@WeideMacBook-Pro.local>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
 References: <1522033340-6575-1-git-send-email-hejianet@gmail.com>
  <20180327010213.GA80447@WeideMacBook-Pro.local>
-From: Jia He <hejianet@gmail.com>
-Message-ID: <c105edb3-be0b-4107-ab14-59c1e62efe2f@gmail.com>
-Date: Tue, 27 Mar 2018 15:15:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <c105edb3-be0b-4107-ab14-59c1e62efe2f@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180327010213.GA80447@WeideMacBook-Pro.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c105edb3-be0b-4107-ab14-59c1e62efe2f@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595967659920779416?=
-X-GMAIL-MSGID: =?utf-8?q?1596074163540052240?=
+X-GMAIL-MSGID: =?utf-8?q?1596139263479688197?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Tue, Mar 27, 2018 at 03:15:08PM +0800, Jia He wrote:
+>
+>
+>On 3/27/2018 9:02 AM, Wei Yang Wrote:
+>> On Sun, Mar 25, 2018 at 08:02:14PM -0700, Jia He wrote:
+>> > Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>> > where possible") tried to optimize the loop in memmap_init_zone(). But
+>> > there is still some room for improvement.
+>> > 
+>> > Patch 1 remain the memblock_next_valid_pfn when CONFIG_HAVE_ARCH_PFN_VALID
+>> >         is enabled
+>> > Patch 2 optimizes the memblock_next_valid_pfn()
+>> > Patch 3~5 optimizes the early_pfn_valid(), I have to split it into parts
+>> >         because the changes are located across subsystems.
+>> > 
+>> > I tested the pfn loop process in memmap_init(), the same as before.
+>> > As for the performance improvement, after this set, I can see the time
+>> > overhead of memmap_init() is reduced from 41313 us to 24345 us in my
+>> > armv8a server(QDF2400 with 96G memory).
+>> > 
+>> > Attached the memblock region information in my server.
+>> > [   86.956758] Zone ranges:
+>> > [   86.959452]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
+>> > [   86.966041]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
+>> > [   86.972631] Movable zone start for each node
+>> > [   86.977179] Early memory node ranges
+>> > [   86.980985]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
+>> > [   86.987666]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
+>> > [   86.994348]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
+>> > [   87.001029]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
+>> > [   87.007710]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
+>> > [   87.014392]   node   0: [mem 0x0000000003410000-0x000000000563ffff]
+>> > [   87.021073]   node   0: [mem 0x0000000005640000-0x000000000567ffff]
+>> > [   87.027754]   node   0: [mem 0x0000000005680000-0x00000000056dffff]
+>> > [   87.034435]   node   0: [mem 0x00000000056e0000-0x00000000086fffff]
+>> > [   87.041117]   node   0: [mem 0x0000000008700000-0x000000000871ffff]
+>> > [   87.047798]   node   0: [mem 0x0000000008720000-0x000000000894ffff]
+>> > [   87.054479]   node   0: [mem 0x0000000008950000-0x0000000008baffff]
+>> > [   87.061161]   node   0: [mem 0x0000000008bb0000-0x0000000008bcffff]
+>> > [   87.067842]   node   0: [mem 0x0000000008bd0000-0x0000000008c4ffff]
+>> > [   87.074524]   node   0: [mem 0x0000000008c50000-0x0000000008e2ffff]
+>> > [   87.081205]   node   0: [mem 0x0000000008e30000-0x0000000008e4ffff]
+>> > [   87.087886]   node   0: [mem 0x0000000008e50000-0x0000000008fcffff]
+>> > [   87.094568]   node   0: [mem 0x0000000008fd0000-0x000000000910ffff]
+>> > [   87.101249]   node   0: [mem 0x0000000009110000-0x00000000092effff]
+>> > [   87.107930]   node   0: [mem 0x00000000092f0000-0x000000000930ffff]
+>> > [   87.114612]   node   0: [mem 0x0000000009310000-0x000000000963ffff]
+>> > [   87.121293]   node   0: [mem 0x0000000009640000-0x000000000e61ffff]
+>> > [   87.127975]   node   0: [mem 0x000000000e620000-0x000000000e64ffff]
+>> > [   87.134657]   node   0: [mem 0x000000000e650000-0x000000000fffffff]
+>> > [   87.141338]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
+>> > [   87.148019]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
+>> > [   87.154701]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
+>> > [   87.161383]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
+>> > [   87.168064]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
+>> > [   87.174746]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
+>> > [   87.181427]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+>> > [   87.188108]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
+>> Hi, Jia
+>> 
+>> I haven't taken a deep look into your code, just one curious question on your
+>> memory layout.
+>> 
+>> The log above is printed out in free_area_init_nodes(), which iterates on
+>> memblock.memory and prints them. If I am not wrong, memory regions added to
+>> memblock.memory are ordered and merged if possible.
+>> 
+>> While from your log, I see many regions could be merged but are isolated. For
+>> example, the last two region:
+>> 
+>>    node   0: [mem 0x000000007eff0000-0x000000007effffff]
+>>    node   0: [mem 0x000000007f000000-0x00000017ffffffff]
+>> 
+>> So I am curious why they are isolated instead of combined to one.
+>> 
+>> >From the code, the possible reason is the region's flag differs from each
+>> other. If you have time, would you mind taking a look into this?
+>> 
+>Hi Wei
+>I thought these 2 have different flags
+>[    0.000000] idx=30,region [7eff0000:10000]flag=4     <--- aka
+>MEMBLOCK_NOMAP
+>[    0.000000]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+>[    0.000000] idx=31,region [7f000000:81000000]flag=0 <--- aka MEMBLOCK_NONE
+>[    0.000000]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
 
+Thanks.
 
-On 3/27/2018 9:02 AM, Wei Yang Wrote:
-> On Sun, Mar 25, 2018 at 08:02:14PM -0700, Jia He wrote:
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") tried to optimize the loop in memmap_init_zone(). But
->> there is still some room for improvement.
->>
->> Patch 1 remain the memblock_next_valid_pfn when CONFIG_HAVE_ARCH_PFN_VALID
->>         is enabled
->> Patch 2 optimizes the memblock_next_valid_pfn()
->> Patch 3~5 optimizes the early_pfn_valid(), I have to split it into parts
->>         because the changes are located across subsystems.
->>
->> I tested the pfn loop process in memmap_init(), the same as before.
->> As for the performance improvement, after this set, I can see the time
->> overhead of memmap_init() is reduced from 41313 us to 24345 us in my
->> armv8a server(QDF2400 with 96G memory).
->>
->> Attached the memblock region information in my server.
->> [   86.956758] Zone ranges:
->> [   86.959452]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
->> [   86.966041]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
->> [   86.972631] Movable zone start for each node
->> [   86.977179] Early memory node ranges
->> [   86.980985]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
->> [   86.987666]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
->> [   86.994348]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
->> [   87.001029]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
->> [   87.007710]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
->> [   87.014392]   node   0: [mem 0x0000000003410000-0x000000000563ffff]
->> [   87.021073]   node   0: [mem 0x0000000005640000-0x000000000567ffff]
->> [   87.027754]   node   0: [mem 0x0000000005680000-0x00000000056dffff]
->> [   87.034435]   node   0: [mem 0x00000000056e0000-0x00000000086fffff]
->> [   87.041117]   node   0: [mem 0x0000000008700000-0x000000000871ffff]
->> [   87.047798]   node   0: [mem 0x0000000008720000-0x000000000894ffff]
->> [   87.054479]   node   0: [mem 0x0000000008950000-0x0000000008baffff]
->> [   87.061161]   node   0: [mem 0x0000000008bb0000-0x0000000008bcffff]
->> [   87.067842]   node   0: [mem 0x0000000008bd0000-0x0000000008c4ffff]
->> [   87.074524]   node   0: [mem 0x0000000008c50000-0x0000000008e2ffff]
->> [   87.081205]   node   0: [mem 0x0000000008e30000-0x0000000008e4ffff]
->> [   87.087886]   node   0: [mem 0x0000000008e50000-0x0000000008fcffff]
->> [   87.094568]   node   0: [mem 0x0000000008fd0000-0x000000000910ffff]
->> [   87.101249]   node   0: [mem 0x0000000009110000-0x00000000092effff]
->> [   87.107930]   node   0: [mem 0x00000000092f0000-0x000000000930ffff]
->> [   87.114612]   node   0: [mem 0x0000000009310000-0x000000000963ffff]
->> [   87.121293]   node   0: [mem 0x0000000009640000-0x000000000e61ffff]
->> [   87.127975]   node   0: [mem 0x000000000e620000-0x000000000e64ffff]
->> [   87.134657]   node   0: [mem 0x000000000e650000-0x000000000fffffff]
->> [   87.141338]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
->> [   87.148019]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
->> [   87.154701]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
->> [   87.161383]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
->> [   87.168064]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
->> [   87.174746]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
->> [   87.181427]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
->> [   87.188108]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
-> Hi, Jia
+Hmm, I am not that familiar with those flags, while they look like to indicate
+the physical capability of this range.
+
+	MEMBLOCK_NONE		no special
+	MEMBLOCK_HOTPLUG	hotplug-able
+	MEMBLOCK_MIRROR		high reliable
+	MEMBLOCK_NOMAP		no direct map
+
+While these flags are not there when they are first added into the memory
+region. When you look at the memblock_add_range(), the last parameter passed
+is always 0. This means current several separated ranges reflect the physical
+memory capability layout.
+
+Then, why this layout is so scattered? As you can see several ranges are less
+than 1M.
+
+If, just my assumption, we could merge some of them, we could have a better
+performance. Less ranges, less searching time.
+
 >
-> I haven't taken a deep look into your code, just one curious question on your
-> memory layout.
->
-> The log above is printed out in free_area_init_nodes(), which iterates on
-> memblock.memory and prints them. If I am not wrong, memory regions added to
-> memblock.memory are ordered and merged if possible.
->
-> While from your log, I see many regions could be merged but are isolated. For
-> example, the last two region:
->
->    node   0: [mem 0x000000007eff0000-0x000000007effffff]
->    node   0: [mem 0x000000007f000000-0x00000017ffffffff]
->
-> So I am curious why they are isolated instead of combined to one.
->
-> >From the code, the possible reason is the region's flag differs from each
-> other. If you have time, would you mind taking a look into this?
->
-Hi Wei
-I thought these 2 have different flags
-[Â Â Â  0.000000] idx=30,region [7eff0000:10000]flag=4Â Â Â Â  <--- aka 
-MEMBLOCK_NOMAP
-[Â Â Â  0.000000]Â Â  nodeÂ Â  0: [mem 0x000000007eff0000-0x000000007effffff]
-[Â Â Â  0.000000] idx=31,region [7f000000:81000000]flag=0 <--- aka 
-MEMBLOCK_NONE
-[Â Â Â  0.000000]Â Â  nodeÂ Â  0: [mem 0x000000007f000000-0x00000017ffffffff]
+>-- 
+>Cheers,
+>Jia
 
 -- 
-Cheers,
-Jia
+Wei Yang
+Help you, Help me
