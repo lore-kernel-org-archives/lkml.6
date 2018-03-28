@@ -1,48 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753430AbeC1NP3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:15:29 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57876 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753278AbeC1NP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:15:28 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: <oded.gabbay@gmail.com>, <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <David1.Zhou@amd.com>, <airlied@linux.ie>,
-        "Felix Kuehling" <Felix.Kuehling@amd.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/amdgpu: fix error return code in amdgpu_amdkfd_gpuvm_create_process_vm()
-Date: Wed, 28 Mar 2018 13:20:56 +0000
-Message-ID: <1522243256-94061-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1753473AbeC1NPj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:15:39 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:59853 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753278AbeC1NPh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:15:37 -0400
+Subject: Re: [PATCH v5 11/12] PCI: designware-ep: Make dw_pcie_ep_reset_bar()
+ handle 64-bit BARs properly
+To: Niklas Cassel <niklas.cassel@axis.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "cyrille.pitchen@free-electrons.com"
+        <cyrille.pitchen@free-electrons.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc: Niklas Cassel <niklass@axis.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180328115018.31921-1-niklas.cassel@axis.com>
+ <20180328115018.31921-12-niklas.cassel@axis.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <71fe27b4-60ca-898e-e41c-5e93f9b44af2@synopsys.com>
+Date: Wed, 28 Mar 2018 14:14:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180328115018.31921-12-niklas.cassel@axis.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix to return error code -ENOMEM from the eviction fence create fail
-error handling case instead of 0, as done elsewhere in this function.
+Hi Niklas,
 
-Fixes: a46a2cd103a8 ("drm/amdgpu: Add GPUVM memory management functions for KFD")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 1 +
- 1 file changed, 1 insertion(+)
+On 28/03/2018 12:50, Niklas Cassel wrote:
+> Since a 64-bit BAR consists of a BAR pair, we need to write to both
+> BARs in the BAR pair to clear the BAR properly.
+> 
+> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> ---
+>  drivers/pci/dwc/pcie-designware-ep.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+> index cc4d8381c1dc..4d304e3ccf24 100644
+> --- a/drivers/pci/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/dwc/pcie-designware-ep.c
+> @@ -28,6 +28,10 @@ static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar,
+>  	dw_pcie_dbi_ro_wr_en(pci);
+>  	dw_pcie_writel_dbi2(pci, reg, 0x0);
+>  	dw_pcie_writel_dbi(pci, reg, 0x0);
+> +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+> +		dw_pcie_writel_dbi2(pci, reg + 4, 0x0);
+> +		dw_pcie_writel_dbi(pci, reg + 4, 0x0);
+> +	}
+>  	dw_pcie_dbi_ro_wr_dis(pci);
+>  }
+>  
+> 
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-index a12a165..c5c9c6f 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
-@@ -846,6 +846,7 @@ int amdgpu_amdkfd_gpuvm_create_process_vm(struct kgd_dev *kgd, void **vm,
- 						   current->mm);
- 		if (!info->eviction_fence) {
- 			pr_err("Failed to create eviction fence\n");
-+			ret = -ENOMEM;
- 			goto create_evict_fence_fail;
- 		}
+Seems good to me. :)
+
+Reviewed-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
