@@ -1,58 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753327AbeC1NsE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:48:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:44366 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753284AbeC1Nrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:47:53 -0400
-Subject: Re: [PATCH 2/6] drivers/irqchip: Update supports_deactivate static
- key to modern api
-To: Davidlohr Bueso <dave@stgolabs.net>, peterz@infradead.org,
-        mingo@kernel.org, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, Davidlohr Bueso <dbueso@suse.de>
-References: <20180326210929.5244-1-dave@stgolabs.net>
- <20180326210929.5244-3-dave@stgolabs.net>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <39333f71-699c-b3b4-ec9d-eb6e83585b3d@arm.com>
-Date: Wed, 28 Mar 2018 14:47:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753357AbeC1Nsf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:48:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55474 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753257AbeC1Nsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:48:31 -0400
+Date: Wed, 28 Mar 2018 15:48:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: schwidefsky@de.ibm.com, borntraeger@de.ibm.com,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
+Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
+Message-ID: <20180328134813.GF4082@hirez.programming.kicks-ass.net>
+References: <20180328134232.GA29274@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180326210929.5244-3-dave@stgolabs.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328134232.GA29274@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/03/18 22:09, Davidlohr Bueso wrote:
-> No changes in semantics -- key init is true; replace
+On Wed, Mar 28, 2018 at 06:42:32AM -0700, Paul E. McKenney wrote:
+> Hello!
 > 
-> static_key_slow_dec       with   static_branch_disable
-> static_key_true           with   static_branch_likely
-> 
-> The first is because we never actually do any couterpart incs,
-> thus there is really no reference counting semantics going on.
-> Use the more proper static_branch_disable() construct.
-> 
-> Also added a '_key' suffix to supports_deactivate, for better
-> self documentation.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> The prototype patch shown below provides files required to allow herd7 to
+> evaluate C-language litmus tests for the multicopy-atomic TSO ordering
+> provided by s390.  
 
-Looks good to me. How do you want to get this patch merged? Either you
-deal with it as part of this series, (and in which case please add my
-Ack on it), or I can take it via the irqchip tree.
+There really isn't anything s390 specific here is there? That is, would
+this not equally work for x86 and sparc, both of which are similarly TSO
+?
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Given that, should this not be called TSO instead of s390 ?
