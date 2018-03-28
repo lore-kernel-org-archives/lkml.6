@@ -1,49 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752161AbeC1JqW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 05:46:22 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36253 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeC1JqV (ORCPT
+        id S1752275AbeC1JrS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 05:47:18 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55957 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751224AbeC1JrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 05:46:21 -0400
-X-Google-Smtp-Source: AIpwx4979TtHrEbf8a/QNc48mcgT1W3A/L7RW1+Nw74aCVqlqIt6sokEyGLFZXwEfQJxTy5J5GKjHg==
+        Wed, 28 Mar 2018 05:47:16 -0400
+X-Google-Smtp-Source: AIpwx4/rWnXkyKL/0RimAbfuJWzRyMhVmp74bMaLyOMsiuuYturycyEBxZ9UOIf8skUWlBdym5IsuA==
 From: Andrea Parri <andrea.parri@amarulasolutions.com>
 To: Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
         Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
         Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [PATCH v2 for-4.17 0/3] Changes and clean-ups for spin_is_locked()
-Date: Wed, 28 Mar 2018 11:45:53 +0200
-Message-Id: <1522230353-12213-1-git-send-email-andrea.parri@amarulasolutions.com>
+Subject: [PATCH v2 for-4.17 1/3] arm64: Remove smp_mb() from arch_spin_is_locked()
+Date: Wed, 28 Mar 2018 11:46:59 +0200
+Message-Id: <1522230419-12275-1-git-send-email-andrea.parri@amarulasolutions.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A resend of the "arch_spin_is_locked() patches" discussed in the last
-days,  together with a third patch/clean-up suggested by Will during
-the review procees.  The first two patches are unmodified, except for
-the inclusion of Acked-by:'s.
+Commit 38b850a73034f ("arm64: spinlock: order spin_{is_locked,unlock_wait}
+against local locks") added an smp_mb() to arch_spin_is_locked(), in order
+"to ensure that the lock value is always loaded after any other locks have
+been taken by the current CPU", and reported one example (the "insane case"
+in ipc/sem.c) relying on such guarantee.
 
-Cheers,
-  Andrea
+It is however understood (and not documented) that spin_is_locked() is not
+required to ensure such an ordering guarantee, guarantee that is currently
+_not_ provided by all implementations/architectures, and that callers rely-
+ing on such ordering should instead insert suitable memory barriers before
+acting on the result of spin_is_locked().
 
-Andrea Parri (3):
-  arm64: Remove smp_mb() from arch_spin_is_locked()
-  powerpc: Remove smp_mb() from arch_spin_is_locked()
-  locking: Clean-up comment and #ifndef for {,queued_}spin_is_locked()
+Following a recent auditing[1] of the callsites of {,raw_}spin_is_locked()
+revealing that none of these callers are relying on the ordering guarantee
+anymore, this commit removes the leading smp_mb() from this primitive thus
+effectively reverting 38b850a73034f.
 
- arch/arm64/include/asm/spinlock.h   | 5 -----
- arch/powerpc/include/asm/spinlock.h | 1 -
- include/asm-generic/qspinlock.h     | 2 --
- include/linux/mutex.h               | 3 ---
- 4 files changed, 11 deletions(-)
+[1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
 
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ arch/arm64/include/asm/spinlock.h | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/arch/arm64/include/asm/spinlock.h b/arch/arm64/include/asm/spinlock.h
+index ebdae15d665de..26c5bd7d88d8d 100644
+--- a/arch/arm64/include/asm/spinlock.h
++++ b/arch/arm64/include/asm/spinlock.h
+@@ -122,11 +122,6 @@ static inline int arch_spin_value_unlocked(arch_spinlock_t lock)
+ 
+ static inline int arch_spin_is_locked(arch_spinlock_t *lock)
+ {
+-	/*
+-	 * Ensure prior spin_lock operations to other locks have completed
+-	 * on this CPU before we test whether "lock" is locked.
+-	 */
+-	smp_mb(); /* ^^^ */
+ 	return !arch_spin_value_unlocked(READ_ONCE(*lock));
+ }
+ 
 -- 
 2.7.4
