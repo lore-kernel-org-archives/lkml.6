@@ -1,215 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752758AbeC1H1V (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:27:21 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45192 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752716AbeC1H1S (ORCPT
+        id S1752824AbeC1H1m (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:27:42 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:46584 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeC1H1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:27:18 -0400
-X-Google-Smtp-Source: AIpwx4/GL/mchH9OSJ6qaRAGsJ4mguW+VivceCoI/tWgrDV1UZD16A4QzIYmymO1tGZ0MkLDmUtH7d3HhIIPAXNrOwg=
+        Wed, 28 Mar 2018 03:27:39 -0400
+Date: Wed, 28 Mar 2018 15:27:27 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] rhashtable: support guaranteed successful insertion.
+Message-ID: <20180328072727.GA17306@gondor.apana.org.au>
+References: <152210688405.11435.13010923693146415942.stgit@noble>
+ <152210718434.11435.6551477417902631683.stgit@noble>
+ <20180327155610.GD14001@gondor.apana.org.au>
+ <87y3id42zo.fsf@notabene.neil.brown.name>
+ <20180328060432.GA16291@gondor.apana.org.au>
+ <87d0zo4r5j.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <20180327193323.Horde.S-Hqc40p7JjEsZPPEa3YNg1@messagerie.si.c-s.fr>
-References: <20180322202007.23088-1-malat@debian.org> <20180322202007.23088-15-malat@debian.org>
- <97df68d1-d4fe-bf8e-7852-9b418eec042f@c-s.fr> <CA+7wUsxVW1a2yvyhYv=YFNV1VEQCcro5JDN1RewghVaHDq5znw@mail.gmail.com>
- <20180324211020.Horde.kEO4b3mHPV88FKM0OiRT0Q1@messagerie.si.c-s.fr>
- <CA+7wUszsJUJJeb+xhzjGr8YxDt-BYruBwda7Dq-nFfyt0sU0ew@mail.gmail.com>
- <20180327175806.Horde.f26UMak3wqEtNtiMmJy51w2@messagerie.si.c-s.fr> <20180327193323.Horde.S-Hqc40p7JjEsZPPEa3YNg1@messagerie.si.c-s.fr>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Wed, 28 Mar 2018 09:26:56 +0200
-X-Google-Sender-Auth: vysk5OJB65xog8lOtYAX7jkTjHI
-Message-ID: <CA+7wUsz-ihu7aoE4UfVhojDjH0pcR8QbVGLCzMyA3RocLJz5-A@mail.gmail.com>
-Subject: Re: [PATCH 14/19] powerpc/altivec: Add missing prototypes for altivec
-To: LEROY Christophe <christophe.leroy@c-s.fr>
-Cc: kvm-ppc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d0zo4r5j.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2S7RP9q026788
 
-On Tue, Mar 27, 2018 at 7:33 PM, LEROY Christophe
-<christophe.leroy@c-s.fr> wrote:
-> LEROY Christophe <christophe.leroy@c-s.fr> a écrit :
+On Wed, Mar 28, 2018 at 06:04:40PM +1100, NeilBrown wrote:
 >
->
->> Mathieu Malaterre <malat@debian.org> a écrit :
->>
->>> Christophe,
->>>
->>> On Sat, Mar 24, 2018 at 9:10 PM, LEROY Christophe
->>> <christophe.leroy@c-s.fr> wrote:
->>>>
->>>> Mathieu Malaterre <malat@debian.org> a écrit :
->>>>
->>>>
->>>>> On Fri, Mar 23, 2018 at 1:19 PM, christophe leroy
->>>>> <christophe.leroy@c-s.fr> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Some functions prototypes were missing for the non-altivec code. Add
->>>>>>> the
->>>>>>> missing prototypes directly in xor_vmx, fix warnings treated as
->>>>>>> errors
->>>>>>> with
->>>>>>> W=1:
->>>>>>>
->>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype
->>>>>>> for
->>>>>>> ‘xor_altivec_2’ [-Werror=missing-prototypes]
->>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype
->>>>>>> for
->>>>>>> ‘xor_altivec_3’ [-Werror=missing-prototypes]
->>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype
->>>>>>> for
->>>>>>> ‘xor_altivec_4’ [-Werror=missing-prototypes]
->>>>>>>   arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype
->>>>>>> for
->>>>>>> ‘xor_altivec_5’ [-Werror=missing-prototypes]
->>>>>>>
->>>>>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->>>>>>> ---
->>>>>>>  arch/powerpc/lib/xor_vmx.h | 14 ++++++++++++++
->>>>>>>  1 file changed, 14 insertions(+)
->>>>>>>
->>>>>>> diff --git a/arch/powerpc/lib/xor_vmx.h b/arch/powerpc/lib/xor_vmx.h
->>>>>>> index 5c2b0839b179..2173e3c84151 100644
->>>>>>> --- a/arch/powerpc/lib/xor_vmx.h
->>>>>>> +++ b/arch/powerpc/lib/xor_vmx.h
->>>>>>> @@ -19,3 +19,17 @@ void __xor_altivec_4(unsigned long bytes, unsigned
->>>>>>> long
->>>>>>> *v1_in,
->>>>>>>  void __xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
->>>>>>>                             unsigned long *v2_in, unsigned long
->>>>>>> *v3_in,
->>>>>>>                             unsigned long *v4_in, unsigned long
->>>>>>> *v5_in);
->>>>>>> +
->>>>>>> +void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
->>>>>>> +                            unsigned long *v2_in);
->>>>>>> +
->>>>>>
->>>>>>
->>>>>>
->>>>>>
->>>>>> Only used in one place, should be static instead of adding it in a .h
->>>>>>
->>>>>> Same for the other ones.
->>>>>
->>>>>
->>>>>
->>>>> $ git grep xor_altivec_2
->>>>> [...]
->>>>> arch/powerpc/lib/xor_vmx_glue.c:EXPORT_SYMBOL(xor_altivec_2);
->>>>>
->>>>> Are you sure I can change this function to static ?
->>>>
->>>>
->>>>
->>>> Yes you are right.  But in fact those fonctions are already defined in
->>>> asm/xor. h
->>>> So you just need to add the missing #include
->>>
->>>
->>> I originally tried it, but this leads to:
->>>
->>>  CC      arch/powerpc/lib/xor_vmx_glue.o
->>> In file included from arch/powerpc/lib/xor_vmx_glue.c:16:0:
->>> ./arch/powerpc/include/asm/xor.h:39:15: error: variable
->>> ‘xor_block_altivec’ has initializer but incomplete type
->>> static struct xor_block_template xor_block_altivec = {
->>>               ^~~~~~~~~~~~~~~~~~
->>> ./arch/powerpc/include/asm/xor.h:40:2: error: unknown field ‘name’
->>> specified in initializer
->>>  .name = "altivec",
->>>  ^
->>> [...]
->>>
->>> The file <asm/xor.h> (powerpc) is pretty much expected to be included
->>> after <include/linux/raid/xor.h>.
->>>
->>> I did not want to tweak <asm/xor.h> to test for #ifdef _XOR_H just before
->>>
->>> #ifdef _XOR_H
->>> static struct xor_block_template xor_block_altivec = {
->>> [...]
->>>
->>> since this seems like a hack to me.
->>>
->>> Is this ok to test for #ifdef _XOR_H in <arch/powerpc/include/asm/xor.h>
->>> ?
->>
->>
->> What about including linux/raid/xor.h in asm/xor.h ?
+> I disagree.  My patch 6 only makes it common instead of exceedingly
+> rare.  If any table in the list other than the first has a chain with 16
+> elements, then trying to insert an element with a hash which matches
+> that chain will fail with -EBUSY.  This is theoretically possible
+> already, though astronomically unlikely.  So that case will never be
+> tested for.
 
-This leads to:
+No that's not true.  If the table is correctly sized then the
+probability of having a chain with 16 elements is extremely low.
 
-  CALL    ../arch/powerpc/kernel/systbl_chk.sh
-In file included from ../arch/powerpc/include/asm/xor.h:57:0,
-                 from ../arch/powerpc/lib/xor_vmx_glue.c:17:
-../include/asm-generic/xor.h:688:34: error: ‘xor_block_32regs’ defined
-but not used [-Werror=unused-variable]
- static struct xor_block_template xor_block_32regs = {
-                                  ^~~~~~~~~~~~~~~~
-../include/asm-generic/xor.h:680:34: error: ‘xor_block_8regs’ defined
-but not used [-Werror=unused-variable]
- static struct xor_block_template xor_block_8regs = {
-                                  ^~~~~~~~~~~~~~~
-In file included from ../arch/powerpc/lib/xor_vmx_glue.c:17:0:
-../arch/powerpc/include/asm/xor.h:39:34: error: ‘xor_block_altivec’
-defined but not used [-Werror=unused-variable]
- static struct xor_block_template xor_block_altivec = {
-                                  ^~~~~~~~~~~~~~~~~
-  CALL    ../arch/powerpc/kernel/prom_init_check.sh
+Even if it does happen we won't fail because we will perform
+an immediate rehash.  We only fail if it happens right away
+after the rehash (that is, at least another 16 elements have
+been inserted and you're trying to insert a 17th element, all
+while the new hash table has not been completely populated),
+which means that somebody has figured out our hash secret and
+failing in that case makes sense.
 
+> It is hard to know if it is necessary.  And making the new table larger
+> will make the error less likely, but still won't make it impossible.  So
+> callers will have to handle it - just like they currently have to handle
+> -ENOMEM even though it is highly unlikely (and not strictly necessary).
 
->
-> Or better: including linux/raid/xor.h then asm/xor.h in xor_vmx_glue.c ?
->
-> Christophe
->
->>
->> Christophe
->>>
->>>
->>>> Christophe
->>>>
->>>>
->>>>>
->>>>>> Christophe
->>>>>>
->>>>>>
->>>>>>> +void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
->>>>>>> +                            unsigned long *v2_in, unsigned long
->>>>>>> *v3_in);
->>>>>>> +
->>>>>>> +void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
->>>>>>> +                            unsigned long *v2_in, unsigned long
->>>>>>> *v3_in,
->>>>>>> +                            unsigned long *v4_in);
->>>>>>> +
->>>>>>> +void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
->>>>>>> +                            unsigned long *v2_in, unsigned long
->>>>>>> *v3_in,
->>>>>>> +                            unsigned long *v4_in, unsigned long
->>>>>>> *v5_in);
->>>>>>>
->>>>>>
->>>>>> ---
->>>>>> L'absence de virus dans ce courrier électronique a été vérifiée par le
->>>>>> logiciel antivirus Avast.
->>>>>> https://www.avast.com/antivirus
->>>>>>
->>>>
->>>>
->
->
+Callers should not handle an ENOMEM error by retrying.  Nor should
+they retry an EBUSY return value.
+
+> Are these errors ever actually useful?  I thought I had convinced myself
+> before that they were (to throttle attacks on the hash function), but
+> they happen even less often than I thought.
+
+The EBUSY error indicates that the hash table has essentially
+degenereated into a linked list because somebody has worked out
+our hash secret.
+
+> Maybe. Reading a percpu counter isn't cheap.  Reading it whenever a hash
+> chain reaches 16 is reasonable, but I think we would want to read it a
+> lot more often than that.  So probably store the last-sampled time (with
+> no locking) and only sample the counter if last-sampled is more than
+>  jiffies - 10*HZ (???)
+
+We could also take the spinlock table approach and have a counter
+per bucket spinlock.  This should be sufficient as you'll contend
+on the bucket spinlock table anyway.
+
+This also allows us to estimate the total table size and not have
+to always do a last-ditch growth when it's too late.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
