@@ -1,87 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752306AbeC1Gi1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 02:38:27 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54187 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeC1GiZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 02:38:25 -0400
-X-Google-Smtp-Source: AIpwx49WwVbfjZysVD0KoqMNa2BKRWS63X5aeEcDSUEcgrNac7lgU+kTfH8CYba5EO49+gWvI+xGTsVF8jnaDZCSTWw=
+        id S1752370AbeC1Gle (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 02:41:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750703AbeC1Glc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 02:41:32 -0400
+Subject: Re: [RFC v2 01/12] KVM: arm/arm64: Set dist->spis to NULL after kfree
+To: Marc Zyngier <marc.zyngier@arm.com>, eric.auger.pro@gmail.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
+        peter.maydell@linaro.org
+References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
+ <1522159456-10419-2-git-send-email-eric.auger@redhat.com>
+ <26bb42a7-d946-e52c-68e6-eaeaae325983@arm.com>
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <969f4dcb-5f77-ddbe-7e72-322793065ccd@redhat.com>
+Date: Wed, 28 Mar 2018 08:41:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <20180324110242.9474-1-stefan@agner.ch>
-References: <20180324110242.9474-1-stefan@agner.ch>
-From: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>
-Date: Wed, 28 Mar 2018 12:08:24 +0530
-Message-ID: <CAAFb_vrFF6D8DEvnZMDda-qd-jTh3mKt0BgGBJ5eWxydY1LEXA@mail.gmail.com>
-Subject: Re: [RFC PATCH] crypto: brcm - explicitly cast cipher to hash type
-To: Stefan Agner <stefan@agner.ch>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, clabbe.montjoie@gmail.com,
-        Scott Branden <scott.branden@broadcom.com>,
-        Steven Lin <steven.lin1@broadcom.com>, garsilva@embeddedor.com,
-        pravin.shedge4linux@gmail.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <26bb42a7-d946-e52c-68e6-eaeaae325983@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+Hi Marc,
+On 27/03/18 19:10, Marc Zyngier wrote:
+> On 27/03/18 15:04, Eric Auger wrote:
+>> in case kvm_vgic_map_resources() fails, typically if the vgic
+>> distributor is not defined, __kvm_vgic_destroy will be called
+>> several times. Indeed kvm_vgic_map_resources() is called on
+>> first vcpu run. As a result dist->spis is freeed more than once
+>> and on the second time it causes a "kernel BUG at mm/slub.c:3912!"
+>>
+>> Set dist->spis to NULL to avoid the crash.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> Fixes: ad275b8bb1e6 ("KVM: arm/arm64: vgic-new: vgic_init: implement
+> vgic_init")
+Sorry for the oversight :-(
+> 
+> Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Thanks
 
-The change looks to be fine.  From the IP point of view its using the
-same values in case of AES cipher and hash types so explicit casting
-should be ok.
-
--Raveendra
-
-On Sat, Mar 24, 2018 at 4:32 PM, Stefan Agner <stefan@agner.ch> wrote:
-> In the AES cases enum spu_cipher_type and enum hash_type have
-> the same values, so the assignment is fine. Explicitly cast
-> the enum type conversion.
->
-> This fixes two warnings when building with clang:
->   drivers/crypto/bcm/cipher.c:821:34: warning: implicit conversion from
->       enumeration type 'enum spu_cipher_type' to different enumeration
->       type 'enum hash_type' [-Wenum-conversion]
->                 hash_parms.type = cipher_parms.type;
->                                 ~ ~~~~~~~~~~~~~^~~~
->   drivers/crypto/bcm/cipher.c:1412:26: warning: implicit conversion from
->       enumeration type 'enum spu_cipher_type' to different enumeration
->       type 'enum hash_type' [-Wenum-conversion]
->                 hash_parms.type = ctx->cipher_type;
->                                 ~ ~~~~~^~~~~~~~~~~
->
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
-> I am not familar with the IP... I would be glad if somebody with
-> better insight could have a look whether that patch makes sense.
->
->  drivers/crypto/bcm/cipher.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
-> index 2b75f95bbe1b..309c67c7012f 100644
-> --- a/drivers/crypto/bcm/cipher.c
-> +++ b/drivers/crypto/bcm/cipher.c
-> @@ -818,7 +818,7 @@ static int handle_ahash_req(struct iproc_reqctx_s *rctx)
->
->         /* AES hashing keeps key size in type field, so need to copy it here */
->         if (hash_parms.alg == HASH_ALG_AES)
-> -               hash_parms.type = cipher_parms.type;
-> +               hash_parms.type = (enum hash_type)cipher_parms.type;
->         else
->                 hash_parms.type = spu->spu_hash_type(rctx->total_sent);
->
-> @@ -1409,7 +1409,7 @@ static int handle_aead_req(struct iproc_reqctx_s *rctx)
->                                                 rctx->iv_ctr_len);
->
->         if (ctx->auth.alg == HASH_ALG_AES)
-> -               hash_parms.type = ctx->cipher_type;
-> +               hash_parms.type = (enum hash_type)ctx->cipher_type;
->
->         /* General case AAD padding (CCM and RFC4543 special cases below) */
->         aead_parms.aad_pad_len = spu->spu_gcm_ccm_pad_len(ctx->cipher.mode,
-> --
-> 2.16.2
->
+Eric
+> 
+> 	M.
+> 
