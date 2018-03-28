@@ -1,239 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752923AbeC1Nln convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:41:43 -0400
-Received: from lhrrgout.huawei.com ([194.213.3.17]:31074 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750820AbeC1Nll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:41:41 -0400
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-        "Robin Murphy" <robin.murphy@arm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "xuwei (O)" <xuwei5@huawei.com>
-Subject: RE: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
-        back into dma specific path.
-Thread-Topic: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
-        back into dma specific path.
-Thread-Index: AQHTwoUNPGd2AOzLq0ic+Ya9enM6VaPlrhgA
-Date: Wed, 28 Mar 2018 13:41:30 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA83867CA99@FRAEML521-MBX.china.huawei.com>
-References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
-        <20180315163509.17740-8-shameerali.kolothum.thodi@huawei.com>
-        <20180322102148.29afce09@w520.home>
-        <3b481ba6-ffdd-fef1-12dc-f5eac8b589d5@arm.com>
- <5FC3163CFD30C246ABAA99954A238FA838679A60@FRAEML521-MBX.china.huawei.com>
-In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA838679A60@FRAEML521-MBX.china.huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1753107AbeC1Nlu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:41:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47348 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752974AbeC1Nlr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:41:47 -0400
+Date: Wed, 28 Mar 2018 06:42:32 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: schwidefsky@de.ibm.com, borntraeger@de.ibm.com
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com
+Subject: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18032813-0036-0000-0000-000002D8149A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008758; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000255; SDB=6.01009642; UDB=6.00514347; IPR=6.00788924;
+ MB=3.00020289; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-28 13:41:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032813-0037-0000-0000-000043CA7393
+Message-Id: <20180328134232.GA29274@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-28_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803280147
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
+Hello!
 
-> -----Original Message-----
-> From: Linuxarm [mailto:linuxarm-bounces@huawei.com] On Behalf Of
-> Shameerali Kolothum Thodi
-> Sent: Friday, March 23, 2018 8:57 AM
-> To: Robin Murphy <robin.murphy@arm.com>; Alex Williamson
-> <alex.williamson@redhat.com>
-> Cc: kvm@vger.kernel.org; Joerg Roedel <joro@8bytes.org>;
-> pmorel@linux.vnet.ibm.com; linux-kernel@vger.kernel.org; Linuxarm
-> <linuxarm@huawei.com>; eric.auger@redhat.com; iommu@lists.linux-
-> foundation.org; xuwei (O) <xuwei5@huawei.com>
-> Subject: RE: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
-> back into dma specific path.
-> 
-> 
-> 
-> > -----Original Message-----
-> > From: Robin Murphy [mailto:robin.murphy@arm.com]
-> > Sent: Thursday, March 22, 2018 5:22 PM
-> > To: Alex Williamson <alex.williamson@redhat.com>; Shameerali Kolothum
-> > Thodi <shameerali.kolothum.thodi@huawei.com>
-> > Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
-> > kvm@vger.kernel.org; linux-kernel@vger.kernel.org; iommu@lists.linux-
-> > foundation.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> > <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Joerg Roedel
-> > <joro@8bytes.org>
-> > Subject: Re: [PATCH v5 7/7] iommu/dma: Move PCI window region
-> > reservation back into dma specific path.
-> >
-> > On 22/03/18 16:21, Alex Williamson wrote:
-> > > On Thu, 15 Mar 2018 16:35:09 +0000
-> > > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
-> > >
-> > >> This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
-> > >> window reservation generic")  by moving the PCI window region
-> > >> reservation back into the dma specific path so that these regions
-> > >> doesn't get exposed via the IOMMU API interface. With this change,
-> > >> the vfio interface will report only iommu specific reserved regions
-> > >> to the user space.
-> > >>
-> > >> Cc: Robin Murphy <robin.murphy@arm.com>
-> > >> Cc: Joerg Roedel <joro@8bytes.org>
-> > >> Signed-off-by: Shameer Kolothum
-> > <shameerali.kolothum.thodi@huawei.com>
-> > >> ---
-> > >
-> > > As currently ordered, we expose the iova list to the user in 5/7
-> > > with the PCI window reservations still intact.  Isn't that a
-> > > bisection problem?  This patch should come before the iova list is
-> > > expose to the user.  This is otherwise independent, so I can pop it
-> > > up in the stack on commit, but I'd need an ack from Joerg and Robin
-> > > to take it via my tree.  Thanks,
-> >
-> > If it counts, the changes look right, so:
-> >
-> > Acked-by: Robin Murphy <robin.murphy@arm.com>
-> 
-> Thanks Robin.
-> 
-> > but it does look like there's a hard dependency on Joerg's core branch
-> > where Shameer's ITS workaround patches are currently queued.
-> > Otherwise, though, I don't think there's anything else due to be
-> > touching iommu-dma just yet.
-> 
-> True, I have mentioned this dependency[1] in the cover letter.
+The prototype patch shown below provides files required to allow herd7 to
+evaluate C-language litmus tests for the multicopy-atomic TSO ordering
+provided by s390.  This patch should be viewed with great suspicion.
+It does what I expect it to do on SB (with and without barriers),
+IRIW without barriers, and Alan's SB with read-of-write added, but my
+expectations are quite likely faulty, and my test cases are very few
+in number.
 
-Just a gentle ping on this. 
+Either way, this is the easy part.  The hard part (which I am happy
+to leave to others) is making litmus7 and klitmus7 able to do tests
+on actual hardware, as well as enabling herd to handle litmus tests
+containing BAL.  ;-)
 
-If you are Ok with this one, as mentioned by Alex above, he might be able to
-take this via his tree or please advise the best option to pull this considering the
-dependency with the ITS workaround patches.
+Note that CPU architectures already supported by herd might well need
+only a .cfg file that refers to herd's pre-existing support.
 
-Thanks,
-Shameer
+Thoughts?
 
-> 1.
-> https://kernel.googlesource.com/pub/scm/linux/kernel/git/joro/iommu/+log/c
-> ore
-> 
-> 
-> > Robin.
-> >
-> > >
-> > > Alex
-> > >
-> > >>   drivers/iommu/dma-iommu.c | 54
-> > >> ++++++++++++++++++++++-----------------
-> > --------
-> > >>   1 file changed, 25 insertions(+), 29 deletions(-)
-> > >>
-> > >> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > >> index f05f3cf..ddcbbdb 100644
-> > >> --- a/drivers/iommu/dma-iommu.c
-> > >> +++ b/drivers/iommu/dma-iommu.c
-> > >> @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
-> > >>    * @list: Reserved region list from iommu_get_resv_regions()
-> > >>    *
-> > >>    * IOMMU drivers can use this to implement their
-> > >> .get_resv_regions
-> > callback
-> > >> - * for general non-IOMMU-specific reservations. Currently, this
-> > >> covers host
-> > >> - * bridge windows for PCI devices and GICv3 ITS region reservation
-> > >> on ACPI
-> > >> - * based ARM platforms that may require HW MSI reservation.
-> > >> + * for general non-IOMMU-specific reservations. Currently, this
-> > >> + covers
-> > GICv3
-> > >> + * ITS region reservation on ACPI based ARM platforms that may
-> > >> + require
-> > HW MSI
-> > >> + * reservation.
-> > >>    */
-> > >>   void iommu_dma_get_resv_regions(struct device *dev, struct
-> > >> list_head
-> > *list)
-> > >>   {
-> > >> -	struct pci_host_bridge *bridge;
-> > >> -	struct resource_entry *window;
-> > >> -
-> > >> -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
-> > >> -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
-> > >> -		return;
-> > >> -
-> > >> -	if (!dev_is_pci(dev))
-> > >> -		return;
-> > >> -
-> > >> -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
-> > >> -	resource_list_for_each_entry(window, &bridge->windows) {
-> > >> -		struct iommu_resv_region *region;
-> > >> -		phys_addr_t start;
-> > >> -		size_t length;
-> > >> -
-> > >> -		if (resource_type(window->res) != IORESOURCE_MEM)
-> > >> -			continue;
-> > >>
-> > >> -		start = window->res->start - window->offset;
-> > >> -		length = window->res->end - window->res->start + 1;
-> > >> -		region = iommu_alloc_resv_region(start, length, 0,
-> > >> -				IOMMU_RESV_RESERVED);
-> > >> -		if (!region)
-> > >> -			return;
-> > >> +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
-> > >> +		iort_iommu_msi_get_resv_regions(dev, list);
-> > >>
-> > >> -		list_add_tail(&region->list, list);
-> > >> -	}
-> > >>   }
-> > >>   EXPORT_SYMBOL(iommu_dma_get_resv_regions);
-> > >>
-> > >> @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct
-> > iommu_dma_cookie *cookie,
-> > >>   	return 0;
-> > >>   }
-> > >>
-> > >> +static void iova_reserve_pci_windows(struct pci_dev *dev,
-> > >> +		struct iova_domain *iovad)
-> > >> +{
-> > >> +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
-> > >> +	struct resource_entry *window;
-> > >> +	unsigned long lo, hi;
-> > >> +
-> > >> +	resource_list_for_each_entry(window, &bridge->windows) {
-> > >> +		if (resource_type(window->res) != IORESOURCE_MEM)
-> > >> +			continue;
-> > >> +
-> > >> +		lo = iova_pfn(iovad, window->res->start - window->offset);
-> > >> +		hi = iova_pfn(iovad, window->res->end - window->offset);
-> > >> +		reserve_iova(iovad, lo, hi);
-> > >> +	}
-> > >> +}
-> > >> +
-> > >>   static int iova_reserve_iommu_regions(struct device *dev,
-> > >>   		struct iommu_domain *domain)
-> > >>   {
-> > >> @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct
-> > >> device
-> > *dev,
-> > >>   	LIST_HEAD(resv_regions);
-> > >>   	int ret = 0;
-> > >>
-> > >> +	if (dev_is_pci(dev))
-> > >> +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
-> > >> +
-> > >>   	iommu_get_resv_regions(dev, &resv_regions);
-> > >>   	list_for_each_entry(region, &resv_regions, list) {
-> > >>   		unsigned long lo, hi;
-> > >
-> _______________________________________________
-> Linuxarm mailing list
-> Linuxarm@huawei.com
-> http://hulk.huawei.com/mailman/listinfo/linuxarm
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 2fff0ff161b71215e7f7292b9eff4bc77ba64f29
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Wed Mar 28 06:30:39 2018 -0700
+
+    tools/memory-model: Add .cfg and .cat files for s390
+    
+    This commit adds s390.cat and s390.cfg files to allow users to check
+    litmus tests for s390-specific code.  Note that this change only enables
+    herd7 checking of C-language litmus tests.  Larger changes are required
+    to enable the litmus7 and klitmus7 tools to check litmus tests on real
+    hardare.
+    
+    Suggested-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+    Suggested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/tools/memory-model/s390.cat b/tools/memory-model/s390.cat
+new file mode 100644
+index 000000000000..618e88f50d9a
+--- /dev/null
++++ b/tools/memory-model/s390.cat
+@@ -0,0 +1,12 @@
++s390
++
++include "fences.cat"
++include "cos.cat"
++
++(* Atomic *)
++empty rmw & (fre;coe) as atom
++
++(* TSO with multicopy atomicity *)
++acyclic (po \ (W * R)) | po-loc | fr | rf | co as sc
++
++(* Fences are somehow handled implicitly, at least for SB+mb... *)
+diff --git a/tools/memory-model/s390.cfg b/tools/memory-model/s390.cfg
+new file mode 100644
+index 000000000000..d77e05d2395c
+--- /dev/null
++++ b/tools/memory-model/s390.cfg
+@@ -0,0 +1,21 @@
++macros linux-kernel.def
++bell linux-kernel.bell
++model s390.cat
++graph columns
++squished true
++showevents noregs
++movelabel true
++fontsize 8
++xscale 2.0
++yscale 1.5
++arrowsize 0.8
++showinitrf false
++showfinalrf false
++showinitwrites false
++splines spline
++pad 0.1
++edgeattr hb,color,indigo
++edgeattr co,color,blue
++edgeattr mb,color,darkgreen
++edgeattr wmb,color,darkgreen
++edgeattr rmb,color,darkgreen
