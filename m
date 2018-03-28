@@ -1,47 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753850AbeC1Wsz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 18:48:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54759 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753429AbeC1Wsy (ORCPT
+        id S1753392AbeC1Ww5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 18:52:57 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:39776 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbeC1Wwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 18:48:54 -0400
-From: Colin King <colin.king@canonical.com>
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] power: supply: ab8500_fg: fix spelling mistake: "Disharge" -> "Discharge"
-Date: Wed, 28 Mar 2018 23:48:50 +0100
-Message-Id: <20180328224850.27833-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 28 Mar 2018 18:52:55 -0400
+X-Google-Smtp-Source: AIpwx4+UPXEwlFqR9A018bw7taciijzJY+PYf4ebBcn/BFbPEEQiyJ5Ld1qgY1myqswJQa60FPFO0brTL99nv6By390=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1522242500-10556-2-git-send-email-vviswana@codeaurora.org>
+References: <1522242500-10556-1-git-send-email-vviswana@codeaurora.org> <1522242500-10556-2-git-send-email-vviswana@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 28 Mar 2018 15:52:52 -0700
+X-Google-Sender-Auth: uFED4nXeU6suH0egp7-4AUPYSqo
+Message-ID: <CAD=FV=VuSVPYVRKoc0hhSHpqNuUuuFRMfD_aCDYw5RA703pt=w@mail.gmail.com>
+Subject: Re: [PATCH V4 1/2] mmc: sdhci-msm: Add support to store supported
+ vdd-io voltages
+To: Vijay Viswanath <vviswana@codeaurora.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
+        stummala@codeaurora.org, venkatg@codeaurora.org,
+        pramod.gurav@linaro.org, jeremymc@redhat.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>, riteshh@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi,
 
-Trivial fix to spelling mistake in dev_dbg message text
+On Wed, Mar 28, 2018 at 6:08 AM, Vijay Viswanath
+<vviswana@codeaurora.org> wrote:
+> During probe check whether the vdd-io regulator of sdhc platform device
+> can support 1.8V and 3V and store this information as a capability of
+> platform device.
+>
+> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 35 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 34 insertions(+), 1 deletion(-)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/power/supply/ab8500_fg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since I commented on v2, please copy me for this series going forward.  Thanks.
 
-diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab8500_fg.c
-index c569f82a0071..993898d1712f 100644
---- a/drivers/power/supply/ab8500_fg.c
-+++ b/drivers/power/supply/ab8500_fg.c
-@@ -1408,7 +1408,7 @@ static void ab8500_fg_charge_state_to(struct ab8500_fg *di,
- static void ab8500_fg_discharge_state_to(struct ab8500_fg *di,
- 	enum ab8500_fg_discharge_state new_state)
- {
--	dev_dbg(di->dev, "Disharge state from %d [%s] to %d [%s]\n",
-+	dev_dbg(di->dev, "Discharge state from %d [%s] to %d [%s]\n",
- 		di->discharge_state,
- 		discharge_state[di->discharge_state],
- 		new_state,
--- 
-2.15.1
+
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index c283291..2fcd9010 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/regulator/consumer.h>
+>
+>  #include "sdhci-pltfm.h"
+>
+> @@ -81,6 +82,9 @@
+>  #define CORE_HC_SELECT_IN_HS400        (6 << 19)
+>  #define CORE_HC_SELECT_IN_MASK (7 << 19)
+>
+> +#define CORE_3_0V_SUPPORT      (1 << 25)
+> +#define CORE_1_8V_SUPPORT      (1 << 26)
+> +
+>  #define CORE_CSR_CDC_CTLR_CFG0         0x130
+>  #define CORE_SW_TRIG_FULL_CALIB                BIT(16)
+>  #define CORE_HW_AUTOCAL_ENA            BIT(17)
+> @@ -148,6 +152,7 @@ struct sdhci_msm_host {
+>         u32 curr_io_level;
+>         wait_queue_head_t pwr_irq_wait;
+>         bool pwr_irq_flag;
+> +       u32 caps_0;
+>  };
+>
+>  static unsigned int msm_get_clock_rate_for_bus_mode(struct sdhci_host *host,
+> @@ -1103,7 +1108,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
+>         struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>         u32 irq_status, irq_ack = 0;
+>         int retry = 10;
+> -       int pwr_state = 0, io_level = 0;
+> +       u32 pwr_state = 0, io_level = 0;
+>
+>
+>         irq_status = readl_relaxed(msm_host->core_mem + CORE_PWRCTL_STATUS);
+> @@ -1313,6 +1318,30 @@ static void sdhci_msm_writeb(struct sdhci_host *host, u8 val, int reg)
+>                 sdhci_msm_check_power_status(host, req_type);
+>  }
+>
+> +static int sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
+
+This function always returns 0.  Make it void.
+
+
+> +{
+> +       struct mmc_host *mmc = msm_host->mmc;
+> +       struct regulator *supply = mmc->supply.vqmmc;
+> +       u32 caps = 0;
+> +
+> +       if (!IS_ERR(mmc->supply.vqmmc)) {
+> +               if (regulator_is_supported_voltage(supply, 1700000, 1950000))
+> +                       caps |= CORE_1_8V_SUPPORT;
+> +               if (regulator_is_supported_voltage(supply, 2700000, 3600000))
+> +                       caps |= CORE_3_0V_SUPPORT;
+> +
+> +               if (!caps)
+> +                       pr_warn("%s: %s: 1.8/3V not supported for vqmmc\n",
+> +                                       mmc_hostname(mmc), __func__);
+
+Please remove __func__.  You already have the unique thing to find the
+right driver (AKA mmc_hostname(mmc)) and the string itself should be
+enough from there.
+
+
+> +       }
+> +
+> +       msm_host->caps_0 |= caps;
+> +       pr_debug("%s: %s: supported caps: 0x%08x\n", mmc_hostname(mmc),
+> +                       __func__, caps);
+
+Same, no need for __func__.
+
+
+> +
+> +       return 0;
+> +}
+> +
+>  static const struct of_device_id sdhci_msm_dt_match[] = {
+>         { .compatible = "qcom,sdhci-msm-v4" },
+>         {},
+> @@ -1530,6 +1559,10 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>         ret = sdhci_add_host(host);
+>         if (ret)
+>                 goto pm_runtime_disable;
+> +       ret = sdhci_msm_set_regulator_caps(msm_host);
+> +       if (ret)
+> +               dev_err(&pdev->dev, "Failed to set regulator caps: %d\n",
+> +                               ret);
+
+If you find some reason _not_ to make sdhci_msm_set_regulator_caps()
+return "void" as per above, you should actually do something about
+this error.  You've used "dev_err" which makes me feel like you
+consider this a serious error.  Presumably it should cause the probe
+to fail?
+
+
+-Doug
