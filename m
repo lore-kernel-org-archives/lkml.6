@@ -1,68 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753879AbeC1WWO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 18:22:14 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:31405 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753837AbeC1WWL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753850AbeC1WWL (ORCPT <rfc822;w@1wt.eu>);
         Wed, 28 Mar 2018 18:22:11 -0400
-Subject: Re: [PATCH v3 6/8] remoteproc/davinci: use octal permissions for
- module_param()
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
- <20180327092031.11251-7-brgl@bgdev.pl>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <13fa1d05-a3e3-64b5-9be1-5d08d1a708e3@ti.com>
-Date: Wed, 28 Mar 2018 17:20:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180327092031.11251-7-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Received: from smtprelay0071.hostedemail.com ([216.40.44.71]:56936 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753816AbeC1WWK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 18:22:10 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3874:4321:4823:5007:7903:10004:10400:10848:11658:11914:12043:12049:12438:12555:12760:12986:13069:13311:13357:13439:14181:14394:14659:14721:21080:21221:21627:30054:30070,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: robin41_6a012f4d67f4e
+X-Filterd-Recvd-Size: 1734
+Message-ID: <1522275726.2210.12.camel@perches.com>
+Subject: [PATCH] checkpatch: Add test for assignment at start of line
+From: Joe Perches <joe@perches.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Whitcroft <apw@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Wed, 28 Mar 2018 15:22:06 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Checkpatch recommends to use octal perms instead of S_IRUGO.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Kernel style seems to prefer line wrapping an assignment
+with the assignment operator on the previous line like:
 
-Acked-by: Suman Anna <s-anna@ti.com>
+	<leading tabs>	identifier =
+				expression;
+over
+	<leading tabs>	identifier
+				= expression;
 
-> ---
->  drivers/remoteproc/da8xx_remoteproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index f134192922e0..b668e32996e2 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -25,7 +25,7 @@
->  #include "remoteproc_internal.h"
->  
->  static char *da8xx_fw_name;
-> -module_param(da8xx_fw_name, charp, S_IRUGO);
-> +module_param(da8xx_fw_name, charp, 0444);
->  MODULE_PARM_DESC(da8xx_fw_name,
->  		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
->  
-> 
+somewhere around a 50:1 ratio
+
+$ git grep -P "[^=]=\s*$" -- "*.[ch]" | wc -l
+52008
+$ git grep -P "^\s+[\*\/\+\|\%\-]?=[^=>]" | wc -l
+1161
+
+So add a --strict test for that condition.
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ scripts/checkpatch.pl | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 5fe361e1ed5e..af2b73f19605 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3062,6 +3062,12 @@ sub process {
+ 			}
+ 		}
+ 
++# check for assignments on the start of a line
++		if ($sline =~ /^\+\s+($Assignment)[^=]/) {
++			CHK("ASSIGNMENT_CONTINUATIONS",
++			    "Assignment operator '$1' should be on the previous line\n" . $hereprev);
++		}
++
+ # check for && or || at the start of a line
+ 		if ($rawline =~ /^\+\s*(&&|\|\|)/) {
+ 			CHK("LOGICAL_CONTINUATIONS",
