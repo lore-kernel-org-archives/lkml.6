@@ -1,98 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753447AbeC1Ulp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 16:41:45 -0400
-Received: from cmta17.telus.net ([209.171.16.90]:49280 "EHLO cmta17.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753098AbeC1Uln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 16:41:43 -0400
-X-Authority-Analysis: v=2.2 cv=StJ/0LG0 c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8
- a=KkEDkbTihyXXKOALizMA:9 a=hSVDg7MSulAM0z_m:21 a=74SgL-Vdwuyptwju:21
- a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
-        "'Rafael J. Wysocki'" <rafael@kernel.org>
-Cc: "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
-        "'Rik van Riel'" <riel@surriel.com>,
-        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
-        "'Mike Galbraith'" <mgalbraith@suse.de>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <2249320.0Z4q8AXauv@aspire.rjw.lan> <6462e44a-e207-6b97-22bf-ad4aed69afc2@tu-dresden.de> <4198010.6ArFqS34NK@aspire.rjw.lan> <CAJZ5v0j5mEaQSAiW4ynitM1ee=sqkpc8G_tZ40RYUgyavXXhqQ@mail.gmail.com> <b904266b-b5bb-587d-334a-844a70341f8d@tu-dresden.de> <CAJZ5v0iRjj5DEKU1m2_y96WRBNu6U1w=GSADRxWXfVDN9K+edQ@mail.gmail.com> <CAJZ5v0h40DDZ5da7CS4702Z=D3bY7SsOhbUqPR44qVKU0E4D4A@mail.gmail.com> 1CoHfInOKlebY1CoMfMNTB
-In-Reply-To: 1CoHfInOKlebY1CoMfMNTB
-Subject: RE: [RFT][PATCH v7 6/8] sched: idle: Select idle state before stopping the tick
-Date: Wed, 28 Mar 2018 13:41:35 -0700
-Message-ID: <006501d3c6d5$2d03e500$870baf00$@net>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
+        id S1752936AbeC1UoS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 16:44:18 -0400
+Received: from smtprelay0015.hostedemail.com ([216.40.44.15]:38263 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752090AbeC1UoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 16:44:17 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:965:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1538:1568:1593:1594:1711:1714:1730:1747:1777:1792:1978:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3872:3873:3874:4321:4390:5007:10004:10400:10848:11232:11658:11914:12296:12679:12740:12760:12895:13069:13095:13161:13229:13311:13357:13439:14181:14659:14721:21080:21433:21627:21740:30054:30070:30083:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: dirt27_7c694a1a4842e
+X-Filterd-Recvd-Size: 1704
+Message-ID: <1522269853.12357.135.camel@perches.com>
+Subject: Re: [PATCH v4 14/16] powerpc: Use generic free_initrd_mem.
+From: Joe Perches <joe@perches.com>
+To: Shea Levy <shea@shealevy.com>, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "Oliver O'Halloran" <oohall@gmail.com>, linuxppc-dev@lists.ozlabs.org
+Date: Wed, 28 Mar 2018 13:44:13 -0700
+In-Reply-To: <20180328203659.18692-15-shea@shealevy.com>
+References: <20180328152714.6103-1-shea@shealevy.com>
+         <20180328203659.18692-1-shea@shealevy.com>
+         <20180328203659.18692-15-shea@shealevy.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdPGp8AuCNNN9oq0S1KJzh3LS5ugtAAKzJ1Q
-X-CMAE-Envelope: MS4wfGEbGNuPaMaUmgUeNtThBuAiMCeO/ILnWcQjN6n5eGCps5UcJ8lUjqHfpmP+7q23erVs31zPkUVhsBEFT03e7AffUXKTlhRQDk5gh7XEWXQEOb7+0G8H
- Ru+lF+J6xr6jiura2uwf3DDC3xQLWJhb7FLTq10RvdHDYcn6V6dgqpHcw4qPdZqgucqrg6+0NZQ/mspmRvIcsOxHuaFxCXYtjGZITHjDdg7TMTabA8IVHm1g
- s3WgyTf85lPjNLhQIzs940uHUr8SppNMcG9PQ18sxVFzRQmJJpGUjXdZfnA9b8Kmq3oYxMNw1Ny7nBtlANUdgB77bJdCmj/Xgqa33NIuMRaXvT+vZjrW5i30
- PPLil2+2aTuRkR1f8CAOcgNHF0fgJ4puBKaqWa/87Z4dE8qmhgK6GuMkJ4q/qJIkbHhY304b5Pp/ecbYVwQdIBHt08dBEFyRNDaQ3C6ZGj0BOYHlLUJOI0hh
- HC5MVA9NDxAz/C/1W56ay8pKTLJcomJJ69mnJChrVzNrbLXH2h6TPesZW1Q=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.03.28 08:15 Thomas Ilsche wrote:
-> On 2018-03-28 12:56, Rafael J. Wysocki wrote:
->> On Wed, Mar 28, 2018 at 12:37 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->>> On Wed, Mar 28, 2018 at 10:38 AM, Thomas Ilsche
->>> <thomas.ilsche@tu-dresden.de> wrote:
->>>> On 2018-03-28 10:13, Rafael J. Wysocki wrote:
->>>>>
->> 
->> [cut]
->> 
->>>
->>> So I do
->>>
->>> $ for cpu in 0 1 2 3; do taskset -c $cpu sh -c 'while true; do usleep
->>> 500; done' & done
->>>
->>> which is a shell kind of imitation of the above and I cannot see this
->>> issue at all.
->>>
->>> I count the number of times data->next_timer_us in menu_select() is
->>> greater than TICK_USEC and while this "workload" is running, that
->>> number is exactly 0.
->>>
->>> I'll try with a C program still.
->> 
->> And with a C program I see data->next_timer_us greater than TICK_USEC
->> while it is running, so let me dig deeper.
->> 
->
-> I can confirm that a shell-loop behaves differently like you describe.
-> Even if it's just a shell-loop calling "main{usleep(500);}" binary.
+On Wed, 2018-03-28 at 16:36 -0400, Shea Levy wrote:
+> Signed-off-by: Shea Levy <shea@shealevy.com>
 
-I normally use the C program method.
-The timer there returns with the need_sched() flag set.
+Most people seem to want some form of commit message
+and not just your sign-off.
 
-I do not seem to have usleep on my system, but when using sleep in a
-shell loop, the timer returns without the need_resched() flag set.
+And btw:
 
-Most of my test results involving varying the value of
-POLL_IDLE_COUNT are total garbage, because I was using the
-C program method, and thus exiting the poll_idle loop based
-on the need_resched() flag and not the POLL_IDLE_COUNT
-setting. 
+It seems you used get_maintainer to determine who to
+send these patches to.
 
-I don't know if I can re-do the work, because I
-do not have a good way to get my system to use Idle
-State 0 with any real workflow, and I seem to get into
-side effect issues when I disable other idle states to 
-force more use of idle state 0.
-
-... Doug
+I suggest you add --nogit and --nogit-fallback to the
+get_maintainer command line you use to avoid sending
+these patches to people like me that have done drive-by
+cleanup work on these files.
