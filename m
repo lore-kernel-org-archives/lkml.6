@@ -1,64 +1,71 @@
-Return-Path: <keith.busch@intel.com>
-X-Google-Smtp-Source: AG47ELs1lr79VryDh2x36FtsgXGv50svOr4x07JbcsZ4vXkcud5scMWBTjeBSi/30ZLM2BbRuoYH
-ARC-Seal: i=1; a=rsa-sha256; t=1521060856; cv=none;
+Return-Path: <poza@codeaurora.org>
+X-Google-Smtp-Source: AIpwx49LUacMq0sJ9wymRgXcVfi3pubgu3A9aGswyon9s5vhq49Bv0u3JeiSMdYdeK/MF1eAiww+
+ARC-Seal: i=1; a=rsa-sha256; t=1522249945; cv=none;
         d=google.com; s=arc-20160816;
-        b=lLYOK6yf38IExxPPbezMQCiMwbR44n7OCFCwArN+aEgQtJ0WXQtxtGp4Y2G3dNsKIZ
-         envxXEpe/wgDHaVVoaYQ7XUG/i6Fxz7uwJ8wOYzVzIaJ8piMWnbLGHFP+Ec3xIWS+ovT
-         chZ7T/YGIwEEKdPfL4gkw7cC939szAOph74QkHme5fLfeTTqMpYGrcUEP7e/Y22zZOiV
-         seSVJg9JXQ2XTEgWh6wdwDg7AStK0bAQqJ27VKG68FB9QWR42RXJCjXYeGDzUYbRu8qk
-         aa80+7fY6b1D6W1XN5bZmdZZd6qNi0ezeLok9/pgLr2zGPTStrIY/yoYrvnicRiNJw0l
-         Yx8w==
+        b=pT4I1jsfigeJj7yLIlkVM19OcgqO8IcCmNnXknFWWfeqwvP/r6n25UWJ29SO7AosO/
+         YoF5yOJePb5FMDfvQkDAt5AfuPrxoS5tFqCcIMJVIo02JUeu7++r4+Dl4bDpdiBU1A9r
+         xboCzVzMf8wHkbyjUKOrabti7iQ4tU90e24oF2pyY19Q4FEMzYAZNzfyucZGoVdwPmS9
+         O6oFwz1dMrlyatwaxZ4QXqyKC4oh8bGKiuNkIqyNzN+Fs3Czp8dUIJn7eKsdgiYsTHMm
+         u8iWtySodB1OxWSKRTu8SgmAH2NL2lol7f2d8dBqfG3ib1fc5qWyrKVOJqJcIe5aC+7L
+         AMsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=StqXd5xps3nwpy/M0jdTRbnRtJIFaroAIAcPfhQ86aQ=;
-        b=cQHW/1dfBYCtqIt6xkSo0YKx7eJeGwmgyrOyM3gGnP0ohoCSGXDcDW3l5aMllmSitl
-         Hz0Mdr7PgMmitKj/Bu3cUUdBnTZJHyuHLVnLLk+cf4N495DhM2gLYyK+0A+/XGoq5VvZ
-         sw9Va4igGhew4phMyyv8K0geRFo4yLku4LCOxVSgC43/0/DWsZWbE4gysA+SYwDXBPeP
-         PS8hZ8lsEKv8xJLa/kW4WXMQyzFardutNh+UQDDbDfPBQZOXgU2Mh4k3yTaNnYx6025G
-         Iah6uRazqCW1PdBAxdD0TE9y4u/u9OnSmOagXj9sw6MEwSrgye4oVauzB/Rfk7rcdedX
-         MkmQ==
+        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
+         :date:content-transfer-encoding:mime-version:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=YA89KBxaT/doEONaGViAEXpXyVaacq+nGPBJ36iKxcM=;
+        b=EGAXpopmMTg8iuNG75zTTW+QMzjoCX3BOzMah+U4EkpHOqgE03pIn8XXD0dpkwWcbW
+         pj8FSO8SSk/umhrtbfZeGfAPnDqN6JWsxLYRys+BgD5V3qmcU+lS9QHOPdNycFN6V9tX
+         Uug4/cse2i43OgzZtytht0wEvpiaAZs2rKJ3I3kn1LfeET51hEnrXuV8xMn05/DJ3U/k
+         rEv3izC1Nyep7/j3ycvVAuWiDuBux+oUALBCpgMb30uiBM3q1FC2Uq/Twx3+JO64CkSg
+         PPC5oS3Sbm/tbXDJcJjkhjqc5eaVALmANbEHGsnYt5xNrnSxtbcLhPXC8cqfvk/YYcA6
+         lyiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of keith.busch@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=keith.busch@intel.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MV3klA7I;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MbboNGjk;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of keith.busch@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=keith.busch@intel.com
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,307,1517904000";
-   d="scan'208";a="25741833"
-Date: Wed, 14 Mar 2018 14:56:15 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Oza Pawandeep <poza@codeaurora.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>, Wei Zhang <wzhang@fb.com>,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Timur Tabi <timur@codeaurora.org>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MV3klA7I;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=MbboNGjk;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 28 Mar 2018 20:42:24 +0530
+From: poza@codeaurora.org
+To: "Bjorn Helgaas <bhelgaas@google.com> Keith Busch"
+ <keith.busch@intel.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kate
+ Stewart <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Wei
+ Zhang <wzhang@fb.com>, Sinan Kaya <okaya@codeaurora.org>, Timur Tabi
+ <timur@codeaurora.org>
 Subject: Re: [PATCH v2] PCI/DPC: Fix PCI legacy interrupt acknowledgement
-Message-ID: <20180314205614.GA30695@localhost.localdomain>
+In-Reply-To: <20180314205614.GA30695@localhost.localdomain>
 References: <1521042648-20522-1-git-send-email-poza@codeaurora.org>
  <20180314205230.GF29867@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180314205230.GF29867@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+ <20180314205614.GA30695@localhost.localdomain>
+Message-ID: <2c8f07a740aa82aba575574dad3d4566@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594928862601446730?=
-X-GMAIL-MSGID: =?utf-8?q?1594947908936630674?=
+X-GMAIL-MSGID: =?utf-8?q?1596194758685616180?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 14, 2018 at 02:52:30PM -0600, Keith Busch wrote:
+On 2018-03-15 02:26, Keith Busch wrote:
+> On Wed, Mar 14, 2018 at 02:52:30PM -0600, Keith Busch wrote:
+>> 
+>> Reviewed-by: Keith Busch <keith
 > 
-> Reviewed-by: Keith Busch <keith
+> Whoops, I accidentally truncated my message. My correct tag:
+> 
+> Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-Whoops, I accidentally truncated my message. My correct tag:
+Hi Bjorn,
 
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+Can this be merged ?
+
+Regards,
+Oza.
