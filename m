@@ -1,97 +1,115 @@
-Return-Path: <vigneshr@ti.com>
-X-Google-Smtp-Source: AG47ELtXvAGg3bCIRInGlB0t21m1ulIl8OWU9DXwaPoJxopHFJ0dqKd65ury/YIEYGgNyLEPaQks
-ARC-Seal: i=1; a=rsa-sha256; t=1522152120; cv=none;
-        d=google.com; s=arc-20160816;
-        b=X6JpcvZtI2OgGvM0zSNnd6aujN5BPVqI5ay+2CjM6q1yzAiBCy4NCAnyDW0ylvogGL
-         4L+2TAy9IztZ49jbpskTLLCFS9eRHxtgBu+VCuTeEZJZjobOBV5k+PqPwPHIQOVKB1UC
-         08uIKxEeGQfmXy3M4MQ4CUOsbULGEWNr8WZl1lu3kTeZbydVeyvwoeFOvXlvcljU9Wcz
-         PCNTXLIA6fzXf94HPvvLLOb8C+E2S/LChao1jnqF10/7tGJ/DsMo82KKmNygwUaLMiSK
-         XOq+uSc5YziyGXcBiNwuf6hDfwq7oYIz/G7sQgfTzLbChrSa03jPd7Elj45fzt2OPkmF
-         nICw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=UR4HEoRX34Owe68V/vFHVNFW826e17/Um9OHNzkPjJ4=;
-        b=0NfL3eEfD+8riJ42/VH0O3MgIwZqWcnNqsC0WFLY1+S9RN45HpSpD9/pwZ/QALbQ75
-         ZPsoWu75uT2vi8T9OnMg5ICvx7wQsvKco1WJue+6nLsUxHHfhq+w4mh0Ft6RcqVif1X5
-         dZAt5BcK/i3Noe/dsQ/yALWLYYbweOKFzLi6rOU8sgKLc43G3JRxJyqC6yRgWuNWp/rr
-         9IDvgHqD2MocAdHyUD9fNHw60C4l0a/GfPQfRp58YaNbU7dx6NetCftKP9DuvERiIs9k
-         Y6pQxPam5V3/XClEGS0Z6r2ybKmhyUYEKNAAII2jeGmXIfcO23MjVw1YpD7cJhw4VvgP
-         ngfA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=xeoxAHHr;
-       spf=pass (google.com: domain of vigneshr@ti.com designates 198.47.19.17 as permitted sender) smtp.mailfrom=vigneshr@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=xeoxAHHr;
-       spf=pass (google.com: domain of vigneshr@ti.com designates 198.47.19.17 as permitted sender) smtp.mailfrom=vigneshr@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-From: Vignesh R <vigneshr@ti.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Jiri Slaby <jslaby@suse.com>, Tony Lindgren <tony@atomide.com>,
-        Vignesh R
-	<vigneshr@ti.com>, <linux-serial@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
-Subject: [PATCH] serial: 8250: omap: Provide ability to enable/disable UART as wakeup source
-Date: Tue, 27 Mar 2018 17:32:17 +0530
-Message-ID: <20180327120217.4749-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.16.2
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3402981-1522276227-2-2243660482079778371
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522276226; b=oLNs1mSZvawEVJnTx2xje1PdGLAsvLdULEGRO9nPRTYy/4k
+    vUihZoK41GfXSTW9TOpcl7vCELmT1UEkDAV3VfwVCGykJuiH1f7tIZMqClsjk6Jw
+    h3M2T5n2UBeAgMTagwGzQkP0RTD8/xPbXXdV7X2s+EUbr/gGy+VlORP8WoWlcZE7
+    NozyTOWmP1E6eYjbwwALPLoZgyPUf1S5GzkV4pKcKSzAEFPmX/W5CMcbUkl/caKJ
+    LJkQ+Ndt80FGjaReNs3etKC0m6vCVa2/Opl6QJjQY5HEEnzdYm+OqtAiW4PfUiEG
+    R2NARxqm/s02z6M1oE+3SKpbsyD+Kjl50e8ryPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1522276226; bh=Ttv6/0l/J7NvvxiSdqiFEXx8o/
+    A1RlyCKvG4pUlJ9Sc=; b=l3XHaAO4sE0N/Eus3UYFB1jz5VzVO+SLX8xE0q33cQ
+    S4Wmb18RLOpgV+9mslsZQgHQtnAJehvB6BYkRslw1WjP7TXHPWRe37Z0ElGelKDH
+    CkfQ1sK0Hbr57MOQD7xUKNEbNVJXmwy72t8r3Q+ZuCxDFXwsFnp4ZRJP+lHhn/4p
+    mESwI1hzGZtUV/kkUjz+/ljZAidphTSE0jxmm8EQmMRb7EaELrROVJnliSgloeRX
+    53NAbE7Rqyvwk/TMAvdk4BPMhHcF3Ii9RNuzyow6QbhpOybzoRoersP4c/dTGyfG
+    C+REdy0p3h8xE5grAz2q2FHx9ysAs0DGzcdJYX5KQ+Wg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGTt8UXDkzBQzFIf1CVc3W2Ky24FA5kt78Mrvu9OPIDqBKN+3y2uOzSZUiEqtKt0Ztx8cHFrjtG3g1LlpWwwerPm+p4/LzCzLC6D1EulczMDqSnlJK+n
+    hNQBcR3RekOaEPc3zRQFqB0J0VStGgxx0aryX9qj00txiiGi0F541YFmF680As07vC5es0o0ZX5S7Chzuhqgq+fKcQa5FEb+IjhSIDCtU8wezUn5RIKaMK1k
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=sozttTNsAAAA:8 a=2KMo9-giAAAA:8 a=VwQbUJbxAAAA:8 a=xIo0oIc6g0y2Z2yfdOgA:9
+    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=aeg5Gbbo78KNqacMgKqU:22
+    a=UeCTMeHK7YUBiLmz_SX7:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752090AbeC1WaZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Mar 2018 18:30:25 -0400
+Received: from muru.com ([72.249.23.125]:34246 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752447AbeC1WaY (ORCPT <rfc822;linux-serial@vger.kernel.org>);
+        Wed, 28 Mar 2018 18:30:24 -0400
+Date: Wed, 28 Mar 2018 15:30:21 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Vignesh R <vigneshr@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] serial: 8250: omap: Provide ability to enable/disable
+ UART as wakeup source
+Message-ID: <20180328223020.GL5700@atomide.com>
+References: <20180327120217.4749-1-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327120217.4749-1-vigneshr@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596092181415045913?=
-X-GMAIL-MSGID: =?utf-8?q?1596092181415045913?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Enable/Clear module level UART wakeup in UART_OMAP_WER register based on
-return value of device_may_wakeup() in .suspend(). This allows
-userspace to use sysfs to control the ability of UART to wakeup the
-system from deep sleep state. Register is restored back in .startup()
-call that happens as part of resume sequence.
+* Vignesh R <vigneshr@ti.com> [180327 12:03]:
+> Enable/Clear module level UART wakeup in UART_OMAP_WER register based on
+> return value of device_may_wakeup() in .suspend(). This allows
+> userspace to use sysfs to control the ability of UART to wakeup the
+> system from deep sleep state. Register is restored back in .startup()
+> call that happens as part of resume sequence.
+> 
+> With this patch, userspace can control UART wakeup capability via sysfs:
+> To enable wakeup capability:
+> echo enabled >  /sys/class/tty/ttyXX/device/power/wakeup
+> For disabling wakeup capability:
+> echo disabled > /sys/class/tty/ttyXX/device/power/wakeup
 
-With this patch, userspace can control UART wakeup capability via sysfs:
-To enable wakeup capability:
-echo enabled >  /sys/class/tty/ttyXX/device/power/wakeup
-For disabling wakeup capability:
-echo disabled > /sys/class/tty/ttyXX/device/power/wakeup
+To avoid confusion, can you please add this to the description:
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- drivers/tty/serial/8250/8250_omap.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Note that the UART wakeup events configured in the 8250 hardware only
+work for idle modes that do not cut off power for the UART. For deeper
+idle states, dedicated padconf wakeirqs must be used. Or in some cases
+the UART RX pin can be remuxed to GPIO input if the GPIO block stays
+powered.
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index 624b501fd253..6aaa84355fd1 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1310,8 +1310,17 @@ static void omap8250_complete(struct device *dev)
- static int omap8250_suspend(struct device *dev)
- {
- 	struct omap8250_priv *priv = dev_get_drvdata(dev);
-+	struct uart_8250_port *up = serial8250_get_port(priv->line);
- 
- 	serial8250_suspend_port(priv->line);
-+
-+	pm_runtime_get_sync(dev);
-+	if (!device_may_wakeup(dev))
-+		priv->wer = 0;
-+	serial_out(up, UART_OMAP_WER, priv->wer);
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+
- 	flush_work(&priv->qos_work);
- 	return 0;
- }
-@@ -1403,6 +1412,8 @@ static int omap8250_runtime_suspend(struct device *dev)
- 
- 		/* Restore to UART mode after reset (for wakeup) */
- 		omap8250_update_mdr1(up, priv);
-+		/* Restore wakeup enable register */
-+		serial_out(up, UART_OMAP_WER, priv->wer);
- 	}
- 
- 	if (up->dma && up->dma->rxchan)
--- 
-2.16.2
+I tested this briefly and the dedicated wakeirqs still work for me,
+so from that point of view:
+
+Tested-by: Tony Lindgren <tony@atomide.com>
