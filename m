@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753298AbeC1Q6u (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 12:58:50 -0400
-Received: from mga04.intel.com ([192.55.52.120]:25299 "EHLO mga04.intel.com"
+        id S1753341AbeC1Q7M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 12:59:12 -0400
+Received: from mga02.intel.com ([134.134.136.20]:53107 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752318AbeC1Qzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 12:55:50 -0400
+        id S1752161AbeC1Qzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 12:55:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,372,1517904000";
-   d="scan'208";a="41487324"
+   d="scan'208";a="38891232"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
@@ -19,9 +19,9 @@ Cc: Dave Hansen <dave.hansen@intel.com>,
         Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 11/14] x86/mm: Implement vma_is_encrypted() and vma_keyid()
-Date: Wed, 28 Mar 2018 19:55:37 +0300
-Message-Id: <20180328165540.648-12-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 03/14] mm/shmem: Zero out unused vma fields in shmem_pseudo_vma_init()
+Date: Wed, 28 Mar 2018 19:55:29 +0300
+Message-Id: <20180328165540.648-4-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
 References: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
@@ -29,67 +29,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We store KeyID in upper bits for vm_page_prot that match position of
-KeyID in PTE. vma_keyid() extracts KeyID from vm_page_prot.
+shmem/tmpfs uses pseudo vma to allocate page with correct NUMA policy.
 
-VMA is encrypted if KeyID is non-zero. vma_is_encrypted() checks that.
+The pseudo vma doesn't have vm_page_prot set. We are going to encode
+encryption KeyID in vm_page_prot. Having garbage there causes problems.
+
+Zero out all unused fields in the pseudo vma.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/include/asm/mktme.h |  9 +++++++++
- arch/x86/mm/mktme.c          | 17 +++++++++++++++++
- 2 files changed, 26 insertions(+)
+ mm/shmem.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-index df31876ec48c..08f613953207 100644
---- a/arch/x86/include/asm/mktme.h
-+++ b/arch/x86/include/asm/mktme.h
-@@ -3,10 +3,19 @@
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b85919243399..387b89d9e17a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1404,10 +1404,9 @@ static void shmem_pseudo_vma_init(struct vm_area_struct *vma,
+ 		struct shmem_inode_info *info, pgoff_t index)
+ {
+ 	/* Create a pseudo vma that just contains the policy */
+-	vma->vm_start = 0;
++	memset(vma, 0, sizeof(*vma));
+ 	/* Bias interleave by inode number to distribute better across nodes */
+ 	vma->vm_pgoff = index + info->vfs_inode.i_ino;
+-	vma->vm_ops = NULL;
+ 	vma->vm_policy = mpol_shared_policy_lookup(&info->policy, index);
+ }
  
- #include <linux/types.h>
- 
-+struct vm_area_struct;
-+
- #ifdef CONFIG_X86_INTEL_MKTME
- extern phys_addr_t mktme_keyid_mask;
- extern int mktme_nr_keyids;
- extern int mktme_keyid_shift;
-+
-+#define vma_is_encrypted vma_is_encrypted
-+bool vma_is_encrypted(struct vm_area_struct *vma);
-+
-+#define vma_keyid vma_keyid
-+int vma_keyid(struct vm_area_struct *vma);
-+
- #else
- #define mktme_keyid_mask	((phys_addr_t)0)
- #define mktme_nr_keyids		0
-diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-index 467f1b26c737..3b2f28a21d99 100644
---- a/arch/x86/mm/mktme.c
-+++ b/arch/x86/mm/mktme.c
-@@ -1,5 +1,22 @@
-+#include <linux/mm.h>
- #include <asm/mktme.h>
- 
- phys_addr_t mktme_keyid_mask;
- int mktme_nr_keyids;
- int mktme_keyid_shift;
-+
-+bool vma_is_encrypted(struct vm_area_struct *vma)
-+{
-+	return pgprot_val(vma->vm_page_prot) & mktme_keyid_mask;
-+}
-+
-+int vma_keyid(struct vm_area_struct *vma)
-+{
-+	pgprotval_t prot;
-+
-+	if (!vma_is_anonymous(vma))
-+		return 0;
-+
-+	prot = pgprot_val(vma->vm_page_prot);
-+	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
-+}
 -- 
 2.16.2
