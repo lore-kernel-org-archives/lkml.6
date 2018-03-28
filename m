@@ -1,69 +1,345 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754078AbeC1Pbn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:31:43 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:10969 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753119AbeC1Pbj (ORCPT
+        id S1753967AbeC1Pdf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:33:35 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:47446 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753529AbeC1Pdd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:31:39 -0400
-X-IronPort-AV: E=Sophos;i="5.48,372,1517846400";
-   d="scan'208";a="171267713"
-Subject: Re: [PATCH 1/2] target: drop spin_lock_assert() + irqs_disabled()
- combo checks
-To: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-Cc: "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "daniel@bristot.me" <daniel@bristot.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
-        "williams@redhat.com" <williams@redhat.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "lclaudio@redhat.com" <lclaudio@redhat.com>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
-References: <20180321153854.GB24312@kernel.org>
- <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
- <20180322093745.GC4229@kernel.org>
- <20180323155513.dwbgvblenlji33as@linutronix.de>
- <1521822325.2535.5.camel@wdc.com>
- <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
- <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
- <20180326111359.180f1604@gandalf.local.home>
- <20180328101553.uduqsdbxwnxrhl7a@linutronix.de>
- <c9f5df1e54bb2bd8f3f0aef86a55deb11888a6a4.camel@wdc.com>
- <20180328151433.elhw6kgxdxq6fn6b@linutronix.de>
-From: Bart Van Assche <bart.vanassche@wdc.com>
-Message-ID: <86c1243e-8733-c94d-d8ff-5c299b8266a6@wdc.com>
-Date: Wed, 28 Mar 2018 08:31:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 28 Mar 2018 11:33:33 -0400
+To: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
 MIME-Version: 1.0
-In-Reply-To: <20180328151433.elhw6kgxdxq6fn6b@linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Wed, 28 Mar 2018 17:33:30 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>, James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
+Subject: 
+In-Reply-To: <20180327144631.j2bugsjxulkv57ws@rob-hp-laptop>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-5-paul@crapouillou.net>
+ <20180327144631.j2bugsjxulkv57ws@rob-hp-laptop>
+Message-ID: <3765e5a86b80b2a1888cabee623e5d0c@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/28/18 08:14, bigeasy@linutronix.de wrote:
-> On 2018-03-28 15:05:41 [+0000], Bart Van Assche wrote:
->> The names of the two functions touched by patch 1/2 start with a double
->> underscore. That by itself is already a hint that these should be called with
->> a lock held (I know that this is not a universal convention in the Linux
->> kernel). I'm fine either way - either with patch 1/2 as posted or patch 1/2
->> with the above comment added.
+Le 2018-03-27 16:46, Rob Herring a écrit :
+> On Sun, Mar 18, 2018 at 12:28:57AM +0100, Paul Cercueil wrote:
+>> Add documentation about how to properly use the Ingenic TCU
+>> (Timer/Counter Unit) drivers from devicetree.
+>> 
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> ---
+>>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 
+>> ++++++++++++++++
+>>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 
+>> +++++++++++++++
+>>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 
+>> ++++++++++++++++++++++
+>>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 
+>> ++++++++++++++++
+>>  4 files changed, 178 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> 
+>>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>>  added content.
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt 
+>> b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> new file mode 100644
+>> index 000000000000..471d27078599
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> @@ -0,0 +1,42 @@
+>> +Ingenic SoC TCU binding
+>> +
+>> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It 
+>> features 8
+>> +channels, each one having its own clock, that can be started and 
+>> stopped,
+>> +reparented, and reclocked.
+>> +
+>> +Required properties:
+>> +- compatible : One of:
+>> +  * ingenic,jz4740-tcu-clocks,
+>> +  * ingenic,jz4770-tcu-clocks,
+>> +  * ingenic,jz4780-tcu-clocks.
+>> +- clocks : List of phandle & clock specifiers for clocks external to 
+>> the TCU.
+>> +  The "pclk", "rtc" and "ext" clocks should be provided.
+>> +- clock-names : List of name strings for the external clocks.
+>> +- #clock-cells: Should be 1.
+>> +  Clock consumers specify this argument to identify a clock. The 
+>> valid values
+>> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+>> +
+>> +Example:
 > 
-> Okay. In that case let me update 1/2.
-> But 2/2 with the comment as Steven suggested is still a no no for you?
+> Let's just put one complete example in instead of all these duplicated
+> and incomplete examples.
 
-Although I'm not enthusiast about patch 2/2, if others agree with that 
-patch I'm fine with that patch being sent upstream.
+Alright.
 
-Thanks,
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_clk: clocks@10 {
+>> +			compatible = "ingenic,jz4740-tcu-clocks";
+>> +			reg = <0x10 0xff0>;
+>> +
+>> +			clocks = <&ext>, <&rtc>, <&pclk>;
+>> +			clock-names = "ext", "rtc", "pclk";
+>> +
+>> +			#clock-cells = <1>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> diff --git 
+>> a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..7f3af2da77cd
+>> --- /dev/null
+>> +++ 
+>> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> @@ -0,0 +1,39 @@
+>> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings 
+>> are:
+>> +  * ingenic,jz4740-tcu-intc
+>> +  * ingenic,jz4770-tcu-intc
+>> +  * ingenic,jz4780-tcu-intc
+>> +- interrupt-controller : Identifies the node as an interrupt 
+>> controller
+>> +- #interrupt-cells : Specifies the number of cells needed to encode 
+>> an
+>> +  interrupt source. The value shall be 1.
+>> +- interrupt-parent : phandle of the interrupt controller.
+>> +- interrupts : Specifies the interrupt the controller is connected 
+>> to.
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_irq: interrupt-controller@20 {
+>> +			compatible = "ingenic,jz4740-tcu-intc";
+>> +			reg = <0x20 0x20>;
+>> +
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <1>;
+>> +
+>> +			interrupt-parent = <&intc>;
+>> +			interrupts = <15>;
+> 
+> The interrupt controller doesn't require any clocks?
 
-Bart.
+It doesn't. The TCU registers not related to TCU channels are always 
+active.
+
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..5742c3f21550
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>> @@ -0,0 +1,56 @@
+>> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+>> +----------------------------------------------------------
+>> +
+>> +For a description of the TCU hardware and drivers, have a look at
+>> +Documentation/mips/ingenic-tcu.txt.
+>> +
+>> +The TCU is implemented as a parent node, whose role is to create the
+>> +regmap, and child nodes for the various drivers listed in the 
+>> aforementioned
+>> +document.
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
+>> +- reg: Should be the offset/length value corresponding to the TCU 
+>> registers
+>> +- #address-cells: Should be <1>;
+>> +- #size-cells: Should be <1>;
+>> +- ranges: Should be one range for the full TCU registers area
+>> +
+>> +Accepted children nodes:
+>> +- 
+>> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> +
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_irq: interrupt-controller@20 {
+>> +			compatible = "ingenic,jz4740-tcu-intc";
+>> +			reg = <0x20 0x20>;
+> 
+> I think you should drop this node and make the parent node the 
+> interrupt
+> controller. That is the normal pattern where the parent node handles
+> all the common functions. Otherwise, there is no need to have the 
+> parent
+> node. You should then also drop simple-mfd as then you can control
+> initialization order by initializing interrupt controller before
+> its clients.
+
+Alright, good idea.
+
+>> +			...
+>> +		};
+>> +
+>> +		tcu_clk: clocks@10 {
+>> +			compatible = "ingenic,jz4740-tcu-clocks";
+>> +			reg = <0x10 0xff0>;
+>> +			...
+>> +		};
+>> +
+>> +		tcu_timer: timer@10 {
+>> +			compatible = "ingenic,jz4740-tcu";
+>> +			reg = <0x10 0xff0>;
+> 
+> Is this copy-n-paste or you really have 2 nodes at the same address? 
+> The
+> latter is not valid.
+
+I do have 2 nodes at the same address...
+
+>> +			...
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For more information about the children node, refer to the documents 
+>> listed
+>> +above in the "Accepted children nodes" section.
+>> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..f910b7e96783
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> @@ -0,0 +1,41 @@
+>> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+>> +---------------------------------------------
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+>> +  * ingenic,jz4740-tcu
+>> +  * ingenic,jz4770-tcu
+>> +  * ingenic,jz4780-tcu
+>> +- interrupt-parent : phandle of the TCU interrupt controller.
+>> +- interrupts : Specifies the interrupts the controller is connected 
+>> to.
+>> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+>> +- clock-names : List of name strings for the TCU clocks.
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_timer: timer@10 {
+>> +			compatible = "ingenic,jz4740-tcu";
+>> +			reg = <0x10 0xff0>;
+>> +
+>> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
+>> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
+>> +			clock-names = "timer0", "timer1", "timer2", "timer3",
+>> +						  "timer4", "timer5", "timer6", "timer7";
+>> +
+>> +			interrupt-parent = <&tcu_irq>;
+>> +			interrupts = <0 1 2 3 4 5 6 7>;
+> 
+> Thinking about this some more... You simply have 8 timers (and no other
+> functions?) with some internal clock and irq controls for each timer. I
+> don't think it really makes sense to create separate clock and irq
+> drivers in that case. That would be like creating clock drivers for
+> every clock divider in timers, pwms, uarts, etc. Unless the clocks get
+> exposed to other parts of the system, then there is no point.
+
+I have 8 timers with some internal clock and IRQ controls, that can be 
+used
+as PWM. But the TCU also controls the IRQ of the OS Timer (which is 
+separate),
+as well as masking of the clocks for the OS timer and the watchdog.
+
+I thought having clean drivers for different frameworks working on the 
+same
+regmap was cleaner than having one big-ass driver handling everything.
+
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> --
+>> 2.11.0
+>> 
