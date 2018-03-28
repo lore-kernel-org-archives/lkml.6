@@ -1,96 +1,216 @@
-Return-Path: <kernel-hardening-return-12817-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/KU2mDJkb68D9oFCgZq6UHZw2BgQIhLuN4VxUv0hq95qVdCkzh1CAkVzjnOuiZrDQFsWRG
-ARC-Seal: i=1; a=rsa-sha256; t=1522271685; cv=none;
+Return-Path: <kernel-hardening-return-12815-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+oANccxASPWHrXM+5evk1tmsy5MgoaEa802kqe+x+h32vCRIwCUEdhTlbxDRMviN7X9mWJ
+ARC-Seal: i=1; a=rsa-sha256; t=1522270729; cv=none;
         d=google.com; s=arc-20160816;
-        b=Lpwt/jkT9PJCUTSgxkN7qFkH91md550zcBMWakD6ZFLcCHBPUAAZwRdZvtfOCRBURy
-         v6uyqunqa2b752FmGmKYmTvEgpKVpDWt7shVLupCt4M8I8/6KAl4IvPckgYXNUhJ/Fab
-         X2IQsaYzBgSYx8H7daIFuEYERyPnuDz0UoiIYMbqG+jzKgdrsBmNrq82f8rNW2sRUCuO
-         JC5nbXJicKsIkFc2HRk8Pe1ZpvhxQztJzVmcbo75Kgz1Nu5xRE4glg18NW+c2G50ipDr
-         W9VP0UbB73gkFnx01XV8mH/v5f7a0CdOH4O9bUzZx+JX0rSWXjlRCE+af6MGvRZ4gI3n
-         9WMQ==
+        b=quc5c+JSYdpKFiKAN0gGGRk3CFDmq5rrTUW9WWzCZvVxuwgyTse8oAtQ8ehdlT0dNz
+         dq4nmyLyGJ8PBzH8SFUPrF8762Gl3AndVuOZ9WagVuXP6gzhxrDD0Ume9A6OISJDFKT7
+         I4XznJaRaLTcYC8rHMXNWvy2FJO1G3tftAMUalFJzkS2DRuogNsXKa5Dg8MRGuFXbTlb
+         cSImyk4JOI9FzxR7VafhLbSpVoFM22oR/XfhZy0wWii3URxsXiE+Z2XAwvKv3CsZlVA/
+         jJdwAjlBP7rbrItrzFGumsbw625Qq+KfwWYMEu9xtmM7F/vpuAiOSFq1tEwzCPCBo/zO
+         N2Lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=DPsJmnii3dIm5fsEzi398w2cWAR+a5v43vitaLy8y2g=;
-        b=dkPls7O3/mBILJiPr7NVJf7powBddabXu0N5sfCJwkZuoY8IIf+CBftlQv8Di9/lME
-         C+OMyHQdXv7JshJythLLQLJy1Ujd+iHIFB8QLCdVTO8vA60/B//WfEWeFKno/WyVnQ9Y
-         o6dESV3xpoVf+oTcray+krtLrWlJR3nDAp6xp7eLBzLSzdT71bvSCBZ2++9awO5OaEJY
-         LakBGfQ9ChW7Oxdfi1vYjR4T44CbCdMmiJrvDoaL7XNCY90L3ZDLV+g3yY2TiLpAOa/t
-         wSQb8iO3Uc8ui2YnqMZuD1Nm85mTHTJ/bADJjFC5ygL9S4bsC9l8WmWq+gPaDHanhCaV
-         BFKA==
+        h=content-disposition:mime-version:references:subject:cc:to:from:date
+         :user-agent:message-id:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=s18vnsfIh05FRqBq06haHMM+zRTQWc4U2BOC62vfKos=;
+        b=wkXtqE4XwyikYcvT+KpFyXFFDiAh4eoDx6F+96D0UE9bjxeTivUZmjE5EmSTojI1g3
+         EobOXo4q1j2gzzGJX/7gnUzrDb1FthbK+XK4YP+tvcWHXY6nIZl4/aHSJvFHj7bbETJO
+         oYkj592KU8jrS7LZzWHwNcA/1OISERqWN7Fn2GGZs//5DW+kG4KeBemeQJE3tM+dW+zu
+         HO0FQX+ZR8UGIBLc4Q5JGcuNYmJVfi9q4cEZiNIkG1b+CIni/4MJ8qhj4vKT5cIXp+6Y
+         Ai6m63xTHVVbi655d321LeHh5kY/8V5rKM8fMFICBXa4viHgy4c+e/jXwSAFb9jbRcfz
+         a7aA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=crGnrqez;
-       dkim=pass header.i=@chromium.org header.s=google header.b=bWkxLwyf;
-       spf=pass (google.com: domain of kernel-hardening-return-12817-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12817-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-12815-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12815-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=crGnrqez;
-       dkim=pass header.i=@chromium.org header.s=google header.b=bWkxLwyf;
-       spf=pass (google.com: domain of kernel-hardening-return-12817-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12817-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-12815-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12815-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Message-Id: <20180328205554.748930560@linutronix.de>
+User-Agent: quilt/0.63-1
+Date: Wed, 28 Mar 2018 22:51:44 +0200
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+ Segher Boessenkool <segher@kernel.crashing.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Andrew Morton <akpm@linuxfoundation.org>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+ Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+ Tony Luck <tony.luck@intel.com>
+Subject: [patch 6/8] mtd: diskonchip: Allocate rs control per instance
+References: <20180328205138.301218351@linutronix.de>
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <20180328205554.929111847@linutronix.de>
-References: <20180328205138.301218351@linutronix.de> <20180328205554.929111847@linutronix.de>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 28 Mar 2018 14:14:25 -0700
-X-Google-Sender-Auth: WR5fgBGBnYX9twzDls7knWAuemE
-Message-ID: <CAGXu5j+UUsR8=G93UHktjUSX3N8LsRvARNDRmNTiQGLzAAm=yw@mail.gmail.com>
-Subject: Re: [patch 8/8] rslib: Allocate decoder buffers to avoid VLAs
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Segher Boessenkool <segher@kernel.crashing.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	Andrew Morton <akpm@linuxfoundation.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-	Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline;
+ filename=mtd--diskonchip--Allocate-rs-control-per-instance.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596216563507994008?=
-X-GMAIL-MSGID: =?utf-8?q?1596217554305360129?=
+X-GMAIL-THRID: =?utf-8?q?1596216551681930065?=
+X-GMAIL-MSGID: =?utf-8?q?1596216551681930065?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 1:51 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> To get rid of the variable length arrays on stack in the RS decoder it's
-> necessary to allocate the decoder buffers per control structure instance.
->
-> All usage sites have been checked for potential parallel decoder usage and
-> fixed where necessary. Kees confirmed that the pstore decoding is strictly
-> single threaded so there should be no surprises.
+The reed solomon library is moving the on stack decoder buffers into the rs
+control structure. That would break the DoC driver because multiple
+instances share the same control structure and can operate in parallel. At
+least in theory....
 
-For posterity: pstore ecc decode happens during probe and during read.
-The read (pstore_get_backend_records()) has an explicit read_mutex.
+Instantiate a rs control instance per DoC device to avoid that. The per
+instance buffer is fine as the operation on a single DoC instance is
+serialized by the MTD/NAND core.
 
-I was pondering, though, since we have a common control structure now,
-maybe we should just add a spinlock too to avoid future surprises?
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ drivers/mtd/nand/diskonchip.c |   65 ++++++++++++++++++++----------------------
+ 1 file changed, 31 insertions(+), 34 deletions(-)
 
-> Allocate them in the rs control structure sized depending on the number of
-> roots for the chosen codec and adapt the decoder code to make use of them.
->
-> Document the fact that decode operations based on a particular rs control
-> instance cannot run in parallel and the caller has to ensure that as it's
-> not possible to provide a proper locking construct which fits all use
-> cases.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-Regardless:
-
-Acked-by: Kees Cook <keescook@chromium.org>
-
-Thanks for doing this!
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+--- a/drivers/mtd/nand/diskonchip.c
++++ b/drivers/mtd/nand/diskonchip.c
+@@ -68,6 +68,7 @@ struct doc_priv {
+ 	int curchip;
+ 	int mh0_page;
+ 	int mh1_page;
++	struct rs_control *rs_decoder;
+ 	struct mtd_info *nextdoc;
+ 
+ 	/* Handle the last stage of initialization (BBT scan, partitioning) */
+@@ -125,9 +126,6 @@ MODULE_PARM_DESC(doc_config_location, "P
+ /* Number of symbols */
+ #define NN 1023
+ 
+-/* the Reed Solomon control structure */
+-static struct rs_control *rs_decoder;
+-
+ /*
+  * The HW decoder in the DoC ASIC's provides us a error syndrome,
+  * which we must convert to a standard syndrome usable by the generic
+@@ -933,7 +931,7 @@ static int doc200x_correct_data(struct m
+ 				calc_ecc[i] = ReadDOC_(docptr, DoC_ECCSyndrome0 + i);
+ 		}
+ 
+-		ret = doc_ecc_decode(rs_decoder, dat, calc_ecc);
++		ret = doc_ecc_decode(doc->rs_decoder, dat, calc_ecc);
+ 		if (ret > 0)
+ 			printk(KERN_ERR "doc200x_correct_data corrected %d errors\n", ret);
+ 	}
+@@ -1561,8 +1559,25 @@ static int __init doc_probe(unsigned lon
+ 		goto fail;
+ 	}
+ 
++
++	/*
++	 * Allocate a RS codec instance
++	 *
++	 * Symbolsize is 10 (bits)
++	 * Primitve polynomial is x^10+x^3+1
++	 * First consecutive root is 510
++	 * Primitve element to generate roots = 1
++	 * Generator polinomial degree = 4
++	 */
++	doc = (struct doc_priv *) (nand + 1);
++	doc->rs_decoder = init_rs(10, 0x409, FCR, 1, NROOTS);
++	if (!doc->rs_decoder) {
++		pr_err("DiskOnChip: Could not create a RS codec\n");
++		ret = -ENOMEM;
++		goto fail_nand;
++	}
++
+ 	mtd			= nand_to_mtd(nand);
+-	doc			= (struct doc_priv *) (nand + 1);
+ 	nand->bbt_td		= (struct nand_bbt_descr *) (doc + 1);
+ 	nand->bbt_md		= nand->bbt_td + 1;
+ 
+@@ -1612,19 +1627,24 @@ static int __init doc_probe(unsigned lon
+ 		   haven't yet added it.  This is handled without incident by
+ 		   mtd_device_unregister, as far as I can tell. */
+ 		nand_release(mtd);
+-		kfree(nand);
+-		goto fail;
++		goto fail_rs;
+ 	}
+ 
+ 	/* Success! */
+ 	doclist = mtd;
+ 	return 0;
+ 
+- notfound:
++fail_rs:
++	free_rs(doc->rs_decoder);
++fail_nand:
++	kfree(nand);
++	goto fail;
++
++notfound:
+ 	/* Put back the contents of the DOCControl register, in case it's not
+ 	   actually a DiskOnChip.  */
+ 	WriteDOC(save_control, virtadr, DOCControl);
+- fail:
++fail:
+ 	iounmap(virtadr);
+ 
+ error_ioremap:
+@@ -1647,6 +1667,7 @@ static void release_nanddoc(void)
+ 		nand_release(mtd);
+ 		iounmap(doc->virtadr);
+ 		release_mem_region(doc->physadr, DOC_IOREMAP_LEN);
++		kfree(doc->rs_decoder);
+ 		kfree(nand);
+ 	}
+ }
+@@ -1655,26 +1676,11 @@ static int __init init_nanddoc(void)
+ {
+ 	int i, ret = 0;
+ 
+-	/* We could create the decoder on demand, if memory is a concern.
+-	 * This way we have it handy, if an error happens
+-	 *
+-	 * Symbolsize is 10 (bits)
+-	 * Primitve polynomial is x^10+x^3+1
+-	 * first consecutive root is 510
+-	 * primitve element to generate roots = 1
+-	 * generator polinomial degree = 4
+-	 */
+-	rs_decoder = init_rs(10, 0x409, FCR, 1, NROOTS);
+-	if (!rs_decoder) {
+-		printk(KERN_ERR "DiskOnChip: Could not create a RS decoder\n");
+-		return -ENOMEM;
+-	}
+-
+ 	if (doc_config_location) {
+ 		printk(KERN_INFO "Using configured DiskOnChip probe address 0x%lx\n", doc_config_location);
+ 		ret = doc_probe(doc_config_location);
+ 		if (ret < 0)
+-			goto outerr;
++			return ret;
+ 	} else {
+ 		for (i = 0; (doc_locations[i] != 0xffffffff); i++) {
+ 			doc_probe(doc_locations[i]);
+@@ -1685,23 +1691,14 @@ static int __init init_nanddoc(void)
+ 	if (!doclist) {
+ 		printk(KERN_INFO "No valid DiskOnChip devices found\n");
+ 		ret = -ENODEV;
+-		goto outerr;
+ 	}
+ 	return 0;
+- outerr:
+-	free_rs(rs_decoder);
+-	return ret;
+ }
+ 
+ static void __exit cleanup_nanddoc(void)
+ {
+ 	/* Cleanup the nand/DoC resources */
+ 	release_nanddoc();
+-
+-	/* Free the reed solomon resources */
+-	if (rs_decoder) {
+-		free_rs(rs_decoder);
+-	}
+ }
+ 
+ module_init(init_nanddoc);
