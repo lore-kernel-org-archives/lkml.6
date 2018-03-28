@@ -1,85 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752938AbeC1QTL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 12:19:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39282 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751219AbeC1QTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 12:19:07 -0400
-Date: Wed, 28 Mar 2018 18:18:55 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org,
-        Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>
-Subject: Re: [PATCH net-next 1/8] net: phy: Add initial support for Microsemi
- Ocelot internal PHYs.
-Message-ID: <20180328161855.GJ13942@piout.net>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-2-alexandre.belloni@bootlin.com>
- <1caa7359-9ca3-be22-fae0-475daf8b220f@gmail.com>
+        id S1752951AbeC1QYW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 12:24:22 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37414 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752572AbeC1QYT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 12:24:19 -0400
+X-Google-Smtp-Source: AIpwx4+Pqif9T9LjQ38ph2gfa2sXY8PlMhdN+r4+J/2UfkMmazOYtjtZx58wZkw8k4pzsNJoDbLdbg==
+Date: Wed, 28 Mar 2018 09:24:16 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Wim Van Sebroeck <wim@iguana.be>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: Add Gateworks System Controller
+ bindings
+Message-ID: <20180328162416.GB25325@roeck-us.net>
+References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
+ <1522250043-8065-2-git-send-email-tharvey@gateworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1caa7359-9ca3-be22-fae0-475daf8b220f@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1522250043-8065-2-git-send-email-tharvey@gateworks.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/03/2018 at 14:08:10 -0700, Florian Fainelli wrote:
-> On 03/23/2018 01:11 PM, Alexandre Belloni wrote:
-> > Add Microsemi Ocelot internal PHY ids. For now, simply use the genphy
-> > functions but more features are available.
-> > 
-> > Cc: Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > ---
-> >  drivers/net/phy/mscc.c | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-> > index 650c2667d523..e1ab3acd1cdb 100644
-> > --- a/drivers/net/phy/mscc.c
-> > +++ b/drivers/net/phy/mscc.c
-> > @@ -91,6 +91,7 @@ enum rgmii_rx_clock_delay {
-> >  #define SECURE_ON_PASSWD_LEN_4		  0x4000
-> >  
-> >  /* Microsemi PHY ID's */
-> > +#define PHY_ID_OCELOT			  0x00070540
-> >  #define PHY_ID_VSC8530			  0x00070560
-> >  #define PHY_ID_VSC8531			  0x00070570
-> >  #define PHY_ID_VSC8540			  0x00070760
-> > @@ -658,6 +659,19 @@ static int vsc85xx_probe(struct phy_device *phydev)
-> >  
-> >  /* Microsemi VSC85xx PHYs */
-> >  static struct phy_driver vsc85xx_driver[] = {
-> > +{
-> > +	.phy_id		= PHY_ID_OCELOT,
-> > +	.name		= "Microsemi OCELOT",
-> > +	.phy_id_mask    = 0xfffffff0,
-> > +	.features	= PHY_GBIT_FEATURES,
-> > +	.soft_reset	= &genphy_soft_reset,
-> > +	.config_init	= &genphy_config_init,
-> > +	.config_aneg	= &genphy_config_aneg,
-> > +	.aneg_done	= &genphy_aneg_done,
-> > +	.read_status	= &genphy_read_status,
-> > +	.suspend	= &genphy_suspend,
-> > +	.resume		= &genphy_resume,
+On Wed, Mar 28, 2018 at 08:14:00AM -0700, Tim Harvey wrote:
+> This patch adds documentation of device-tree bindings for the
+> Gateworks System Controller (GSC).
 > 
-> With the exception of config_init(), suspend and resume, everything else
-> is already the default when you don't provide a callback. To echo to
-> what Andrew wrote already, if the purpose is just to show a nice name,
-> and do nothing else, consider using the Generic PHY driver (default).
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> ---
+> v3:
+>  - replaced _ with -
+>  - remove input bindings
+>  - added full description of hwmon
+>  - fix unit address of hwmon child nodes
+> 
+> ---
+>  .../devicetree/bindings/mfd/gateworks-gsc.txt      | 135 +++++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
+> new file mode 100644
+> index 0000000..8f530ed
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
+> @@ -0,0 +1,135 @@
+> +Gateworks System Controller multi-function device
+> +
+> +The GSC is a Multifunction I2C slave device with the following submodules:
+> +- WDT
+> +- GPIO
+> +- Pushbutton controller
+> +- HWMON
+> +
+> +Required properties:
+> +- compatible : Must be "gw,gsc"
+> +- reg: I2C address of the device
+> +- interrupts: interrupt triggered by GSC_IRQ# signal
+> +- interrupt-parent: Interrupt controller GSC is connected to
+> +- #interrupt-cells: should be <1>, index of the interrupt within the
+> +  controller, in accordance with the "one cell" variant of
+> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
+> +
+> +Optional nodes:
+> +* watchdog:
+> +The GSC provides a Watchdog monitor which can power cycle the board's
+> +primary power supply on most board models when tripped.
+> +
+> +Required watchdog properties:
+> +- compatible: must be "gw,gsc-watchdog"
+> +
+> +* hwmon:
+> +The GSC provides a set of Analog to Digitcal Converter (ADC) pins used for
+> +temperature and/or voltage monitoring.
+> +
+> +Required hwmon properties:
+> +- compatible: must be "gw,gsc-hwmon"
+> +
 
-Ok, I'll drop this patch for now, until we handle more features for that
-PHY.
+"hwmon" is a very Linux specific term. It might make sense to find a more
+generic term.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +Optional hwmon properties:
+> +- gw,reference-voltage: ADC reference voltage (mV) used in scaling raw ADCs
+
+AFAIK devicetree likes to specify voltages in uV.
+
+> +- gw,resolution: ADC resolution (ie 4096) used in scaling raw ADCs
+> +
+
+4096 what ?
+
+> +Each hwmon child node defines an ADC input on the chip which the GSC may
+> +report cooked values (ie temperature sensor based on thermister), raw values,
+> +(ie voltage rail with a pre-scaling resistor divider), or a fan controller
+> +setpoint.
+> +
+> +Required hwmon child properties:
+> +- type: one of the following ADC types:
+> +  "gw,hwmon-temperature" - reports temperature in C*10
+> +  "gw,hwmon-voltage" - reports a pre-scaled voltage value
+> +  "gw,hwmon-voltage-raw" - reports a raw ADC that is scaled with
+> +       vreference, resolution, and optional resistor divider
+> +  "gw,hwmon-fan" - a fan temperature setpoint in C*10
+
+What is a "fan temperature setpoint" ?
+
+> +- reg: offset of the ADC register
+> +- label: name of the ADC input or FAN setpoint
+> +
+> +Optional hwmon child properties:
+> +- gw,voltage-divider: An array of two integers containing the resistor
+> +  values R1 and R2 of the optinal resistor divider on a raw ADC
+> +- gw,voltage-offset: a mV voltage offset to apply to a raw ADC (ie to
+> +  compensate for a diode drop)
+> +
+> +Example:
+> +
+> +	gsc: gsc@20 {
+> +		compatible = "gw,gsc";
+> +		reg = <0x20>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <4 GPIO_ACTIVE_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +
+> +		watchdog {
+> +			compatible = "gw,gsc-watchdog";
+> +		};
+> +
+> +		hwmon {
+> +			compatible = "gw,gsc-hwmon";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			gw,reference-voltage = <2500>;
+> +			gw,resolution = <4096>;
+> +
+> +			hwmon@0 { /* A0: Board Temperature */
+> +				type = "gw,hwmon-temperature";
+> +				reg = <0x00>;
+> +				label = "temp";
+> +			};
+> +
+> +			hwmon@2 { /* A1: Input Voltage (raw ADC) */
+> +				type = "gw,hwmon-voltage-raw";
+> +				reg = <0x02>;
+> +				label = "vdd_vin";
+> +				gw,voltage-divider = <22100 1000>;
+> +				gw,voltage-offset = <800>;
+> +			};
+> +
+> +			hwmon@b { /* A2: Battery voltage */
+> +				type = "gw,hwmon-voltage";
+> +				reg = <0x0b>;
+> +				label = "vdd_bat";
+> +			};
+> +
+> +			hwmon@2c { /* fan temperature setpoint for 50% duty */
+> +				type = "gw,hwmon-fan";
+> +				reg = <0x2c>;
+> +				label = "fan_50p";
+> +			};
+> +
+> +			hwmon@2e { /* fan1 */
+> +				type = "gw,hwmon-fan";
+> +				reg = <0x2e>;
+> +				label = "fan_60p";
+> +			};
+> +
+> +			hwmon@30 { /* fan2 */
+> +				type = "gw,hwmon-fan";
+> +				reg = <0x30>;
+> +				label = "fan_70p";
+> +			};
+> +
+> +			hwmon@32 { /* fan3 */
+> +				type = "gw,hwmon-fan";
+> +				reg = <0x32>;
+> +				label = "fan_80p";
+> +			};
+> +
+> +			hwmon@34 { /* fan4 */
+> +				type = "gw,hwmon-fan";
+> +				reg = <0x34>;
+> +				label = "fan_90p";
+> +			};
+> +
+> +			hwmon@36 { /* fan5 */
+> +				type = "gw,hwmon-fan";
+> +				reg = <0x36>;
+> +				label = "fan_100p";
+> +			};
+
+No idea what this is supposed to be doing, but whatever it is,
+it appears to be wrong. I'll comment more on it in the hwmon driver.
+
+Guenter
+
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
