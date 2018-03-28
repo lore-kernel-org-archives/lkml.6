@@ -1,123 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeC1HrG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:47:06 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41489 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbeC1HrF (ORCPT
+        id S1752481AbeC1Htq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:49:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45900 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751938AbeC1Hto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:47:05 -0400
-X-Google-Smtp-Source: AIpwx4+1xxUhCHWDmHtbEU6mh096polU2MiutzVy/adtFLiQDgurhJFqS83y1xKyS35TvZp5tb7PIg==
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        chris.redpath@arm.com, Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] sched: support dynamiQ cluster
-Date: Wed, 28 Mar 2018 09:46:55 +0200
-Message-Id: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 28 Mar 2018 03:49:44 -0400
+Subject: Re: [PATCH v9 01/24] mm: Introduce CONFIG_SPECULATIVE_PAGE_FAULT
+To: David Rientjes <rientjes@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1520963994-28477-2-git-send-email-ldufour@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1803251442090.80485@chino.kir.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Wed, 28 Mar 2018 09:49:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.20.1803251442090.80485@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18032807-0008-0000-0000-000004E30EDE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032807-0009-0000-0000-00001E764C34
+Message-Id: <32c80b6a-28c6-bf63-ed7b-6a042ae18e8f@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-28_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803280084
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arm DynamiQ system can integrate cores with different micro architecture
-or max OPP under the same DSU so we can have cores with different compute
-capacity at the LLC (which was not the case with legacy big/LITTLE
-architecture). Such configuration is similar in some way to ITMT on intel
-platform which allows some cores to be boosted to higher turbo frequency
-than others and which uses SD_ASYM_PACKING feature to ensures that CPUs with
-highest capacity, will always be used in priortiy in order to provide
-maximum throughput.
+Hi David,
 
-Add arch_asym_cpu_priority() for arm64 as this function is used to
-differentiate CPUs in the scheduler. The CPU's capacity is used to order
-CPUs in the same DSU.
+Thanks a lot for your deep review on this series.
 
-Create sched domain topolgy level for arm64 so we can set SD_ASYM_PACKING
-at MC level.
+On 25/03/2018 23:50, David Rientjes wrote:
+> On Tue, 13 Mar 2018, Laurent Dufour wrote:
+> 
+>> This configuration variable will be used to build the code needed to
+>> handle speculative page fault.
+>>
+>> By default it is turned off, and activated depending on architecture
+>> support.
+>>
+>> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>> ---
+>>  mm/Kconfig | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index abefa573bcd8..07c566c88faf 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -759,3 +759,6 @@ config GUP_BENCHMARK
+>>  	  performance of get_user_pages_fast().
+>>  
+>>  	  See tools/testing/selftests/vm/gup_benchmark.c
+>> +
+>> +config SPECULATIVE_PAGE_FAULT
+>> +       bool
+> 
+> Should this be configurable even if the arch supports it?
 
-Some tests have been done on a hikey960 platform (quad cortex-A53,
-quad cortex-A73). For the test purpose, the CPUs topology of the hikey960
-has been modified so the 8 heterogeneous cores are described as being part
-of the same cluster and sharing resources (MC level) like with a DynamiQ DSU.
+Actually, this is not configurable unless by manually editing the .config file.
 
-Results below show the time in seconds to run sysbench --test=cpu with an
-increasing number of threads. The sysbench test run 32 times
+I made it this way on the Thomas's request :
+https://lkml.org/lkml/2018/1/15/969
 
-             without patch     with patch    diff
-1 threads    11.04(+/- 30%)    8.86(+/- 0%)  -19%
-2 threads     5.59(+/- 14%)    4.43(+/- 0%)  -20%
-3 threads     3.80(+/- 13%)    2.95(+/- 0%)  -22%
-4 threads     3.10(+/- 12%)    2.22(+/- 0%)  -28%
-5 threads     2.47(+/-  5%)    1.95(+/- 0%)  -21%
-6 threads     2.09(+/-  0%)    1.73(+/- 0%)  -17%
-7 threads     1.64(+/-  0%)    1.56(+/- 0%)  - 7%
-8 threads     1.42(+/-  0%)    1.42(+/- 0%)    0%
+That sounds to be the smarter way to achieve that, isn't it ?
 
-Results show a better and stable results across iteration with the patch
-compared to mainline because we are always using big cores in priority whereas
-with mainline, the scheduler randomly choose a big or a little cores when
-there are more cores than number of threads.
-With 1 thread, the test duration varies in the range [8.85 .. 15.86] for
-mainline whereas it stays in the range [8.85..8.87] with the patch
-
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-
----
-
-The SD_ASYM_PACKING flag is disabled by default and I'm preparing another patch
-to enable this dynamically at boot time by detecting the system topology.
-
- arch/arm64/kernel/topology.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 2186853..cb6705e5 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -296,6 +296,33 @@ static void __init reset_cpu_topology(void)
- 	}
- }
- 
-+#ifdef CONFIG_SCHED_MC
-+unsigned int __read_mostly arm64_sched_asym_enabled;
-+
-+int arch_asym_cpu_priority(int cpu)
-+{
-+	return topology_get_cpu_scale(NULL, cpu);
-+}
-+
-+static inline int arm64_sched_dynamiq(void)
-+{
-+	return arm64_sched_asym_enabled ? SD_ASYM_PACKING : 0;
-+}
-+
-+static int arm64_core_flags(void)
-+{
-+	return cpu_core_flags() | arm64_sched_dynamiq();
-+}
-+#endif
-+
-+static struct sched_domain_topology_level arm64_topology[] = {
-+#ifdef CONFIG_SCHED_MC
-+	{ cpu_coregroup_mask, arm64_core_flags, SD_INIT_NAME(MC) },
-+#endif
-+	{ cpu_cpu_mask, SD_INIT_NAME(DIE) },
-+	{ NULL, },
-+};
-+
- void __init init_cpu_topology(void)
- {
- 	reset_cpu_topology();
-@@ -306,4 +333,7 @@ void __init init_cpu_topology(void)
- 	 */
- 	if (of_have_populated_dt() && parse_dt_topology())
- 		reset_cpu_topology();
-+
-+	/* Set scheduler topology descriptor */
-+	set_sched_topology(arm64_topology);
- }
--- 
-2.7.4
+Laurent.
