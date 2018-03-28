@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752924AbeC1Lu4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:50:56 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:53906 "EHLO
+        id S1752983AbeC1LvF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:51:05 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:53974 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750774AbeC1Lur (ORCPT
+        with ESMTP id S1752932AbeC1LvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 07:50:47 -0400
+        Wed, 28 Mar 2018 07:51:03 -0400
 From: Niklas Cassel <niklas.cassel@axis.com>
 To: kishon@ti.com, cyrille.pitchen@free-electrons.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Alan Douglas <adouglas@cadence.com>,
         Bjorn Helgaas <bhelgaas@google.com>
 Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 03/12] PCI: endpoint: Setting BAR_5 to 64-bits wide is invalid
-Date: Wed, 28 Mar 2018 13:50:08 +0200
-Message-Id: <20180328115018.31921-4-niklas.cassel@axis.com>
+Subject: [PATCH v5 07/12] PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64 if a 64-bit BAR was set-up
+Date: Wed, 28 Mar 2018 13:50:12 +0200
+Message-Id: <20180328115018.31921-8-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180328115018.31921-1-niklas.cassel@axis.com>
 References: <20180328115018.31921-1-niklas.cassel@axis.com>
@@ -24,31 +24,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since a 64-bit BAR consists of a BAR pair, and since there is no
-BAR after BAR_5, BAR_5 cannot be 64-bits wide.
+cdns_pcie_ep_set_bar() does some round-up of the BAR size, which means
+that a 64-bit BAR can be set-up, even when the flag
+PCI_BASE_ADDRESS_MEM_TYPE_64 isn't set.
 
-This sanity check is done in pci_epc_set_bar(), so that we don't need
-to do this sanity check in all epc->ops->set_bar() implementations.
+If a 64-bit BAR was set-up, set the flag PCI_BASE_ADDRESS_MEM_TYPE_64,
+so that the calling function can know what BAR width that was actually
+set-up.
+
+I'm not sure why cdns_pcie_ep_set_bar() doesn't obey the flag
+PCI_BASE_ADDRESS_MEM_TYPE_64, but I leave this for the MAINTAINER to
+fix, since there might be a reason why this flag is ignored.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- drivers/pci/endpoint/pci-epc-core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pci/cadence/pcie-cadence-ep.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index 784e33d6f229..109d75f0b7d2 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -310,7 +310,9 @@ int pci_epc_set_bar(struct pci_epc *epc, u8 func_no,
- 	int ret;
- 	unsigned long irq_flags;
+diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+index cef36cd6b710..2905e098678c 100644
+--- a/drivers/pci/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/cadence/pcie-cadence-ep.c
+@@ -106,6 +106,9 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
+ 		if (is_64bits && (bar & 1))
+ 			return -EINVAL;
  
--	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
-+	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
-+	    (epf_bar->barno == BAR_5 &&
-+	     epf_bar->flags & PCI_BASE_ADDRESS_MEM_TYPE_64))
- 		return -EINVAL;
- 
- 	if (!epc->ops->set_bar)
++		if (is_64bits && !(flags & PCI_BASE_ADDRESS_MEM_TYPE_64))
++			epf_bar->flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
++
+ 		if (is_64bits && is_prefetch)
+ 			ctrl = CDNS_PCIE_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS;
+ 		else if (is_prefetch)
 -- 
 2.14.2
