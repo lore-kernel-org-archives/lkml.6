@@ -1,63 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752175AbeC1HBu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:01:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59226 "EHLO mx2.suse.de"
+        id S1752197AbeC1HCy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:02:54 -0400
+Received: from mga17.intel.com ([192.55.52.151]:31659 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750774AbeC1HBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:01:48 -0400
-Date: Wed, 28 Mar 2018 09:01:45 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Wei Wang <wei.w.wang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, pbonzini@redhat.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, huangzhichao@huawei.com
-Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
-Message-ID: <20180328070145.GB9275@dhcp22.suse.cz>
-References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
- <1522031994-7246-2-git-send-email-wei.w.wang@intel.com>
- <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
- <5AB9E377.30900@intel.com>
- <20180327063322.GW5652@dhcp22.suse.cz>
- <20180327190635-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327190635-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1750703AbeC1HCw (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 03:02:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,370,1517904000";
+   d="scan'208";a="32013313"
+From: Jin Yao <yao.jin@linux.intel.com>
+To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v2 0/4] Support perf -vv
+Date: Wed, 28 Mar 2018 22:57:04 +0800
+Message-Id: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-03-18 19:07:22, Michael S. Tsirkin wrote:
-> On Tue, Mar 27, 2018 at 08:33:22AM +0200, Michal Hocko wrote:
-> > > > > + * The function itself might sleep so it cannot be called from atomic
-> > > > > + * contexts.
-> > > > I don't see how walk_free_mem_block() can sleep.
-> > > 
-> > > OK, it would be better to remove this sentence for the current version. But
-> > > I think we could probably keep it if we decide to add cond_resched() below.
-> > 
-> > The point of this sentence was to make any user aware that the function
-> > might sleep from the very begining rather than chase existing callers
-> > when we need to add cond_resched or sleep for any other reason. So I
-> > would rather keep it.
-> 
-> Let's say what it is then - "will be changed to sleep in the future".
+We keep having bug reports that when users build perf on their own,
+but they don't install some needed libraries such as libelf,
+libbfd/libibery.
 
-Do we really want to describe the precise implementation in the
-documentation? I thought the main purpose of the documentation is to
-describe the _contract_. If I am curious about the implementation I can
-look at the code. As I've said earlier in this patchset lifetime. This
-interface is rather dangerous because we are exposing guts of our
-internal data structures. So we better set expectations of what can and
-cannot be done right from the beginning. I definitely do not want
-somebody to simply look at the code and see that the interface is
-sleepable and abuse that fact.
+The perf can build, but it is missing important functionality. And
+users may complain that perf has issue or bug.
+
+This patch-set support 'perf -vv' and 'perf -version --build-options'
+which will print the compiled-in status of libraries.
+
+Once users think perf missing some functionality, it should be very
+easy for them to check the libraries status.
+
+For example:
+
+    $ ./perf -vv or ./perf -version --build-options
+    perf version 4.13.rc5.gcb1183
+                     dwarf: [ on  ]
+        dwarf_getlocations: [ on  ]
+                     glibc: [ on  ]
+                      gtk2: [ on  ]
+                  libaudit: [ OFF ]
+                    libbfd: [ on  ]
+                    libelf: [ on  ]
+                   libnuma: [ on  ]
+    numa_num_possible_cpus: [ on  ]
+                   libperl: [ on  ]
+                 libpython: [ on  ]
+                  libslang: [ on  ]
+                 libcrypto: [ on  ]
+                 libunwind: [ on  ]
+        libdw-dwarf-unwind: [ on  ]
+                      zlib: [ on  ]
+                      lzma: [ on  ]
+                 get_cpuid: [ on  ]
+                       bpf: [ on  ]
+    [ on  ]: library is compiled-in
+    [ OFF ]: library is disabled in make configuration
+             OR library is not installed in build environment
+
+Jin Yao (3):
+  perf config: Add some new -DHAVE_XXX to CFLAGS
+  perf version: Print the compiled-in status of libraries
+  perf: Support perf -vv
+
+Jiri Olsa (1):
+  tools include: Add config.h header file
+
+ tools/include/tools/config.h | 34 ++++++++++++++++++++++
+ tools/perf/Makefile.config   | 16 +++++++++++
+ tools/perf/builtin-version.c | 68 ++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/perf.c            | 22 +++++++++++---
+ tools/perf/perf.h            |  1 +
+ 5 files changed, 137 insertions(+), 4 deletions(-)
+ create mode 100644 tools/include/tools/config.h
+
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
