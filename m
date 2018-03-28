@@ -1,49 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753385AbeC1Voo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 17:44:44 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:39911 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753031AbeC1Von (ORCPT
+        id S1753426AbeC1VuH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 17:50:07 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:32782 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752881AbeC1VuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 17:44:43 -0400
-X-Google-Smtp-Source: AIpwx49y75FFW/LTDwnmk6ikJ6PiTlR4zYC3HzA9/xlw/GdHij+kXadv1udfucVYc/+IGjRU0caBEg==
-Date: Wed, 28 Mar 2018 23:44:38 +0200
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>, Cameron Gutman <aicommander@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v7 0/2] hid-steam driver with user mode client dection
-Message-ID: <20180328214438.GA5740@casa>
-References: <20180325160703.15997-1-rodrigorivascosta@gmail.com>
- <CAO-hwJ+XxB9QnZSAALPZTWmAMDsrzq-dhjtMDOvdXHWtDv=H7g@mail.gmail.com>
- <20180328181448.GA1674@casa>
+        Wed, 28 Mar 2018 17:50:05 -0400
+To: Long Li <longli@microsoft.com>, KY Srinivasan <kys@microsoft.com>
+Cc: Ross Lagerwall <ross.lagerwall@citrix.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scsi: devinfo: Add Microsoft iSCSI target to 1024 sector blacklist
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180326135651.8193-1-ross.lagerwall@citrix.com>
+Date: Wed, 28 Mar 2018 17:49:54 -0400
+In-Reply-To: <20180326135651.8193-1-ross.lagerwall@citrix.com> (Ross
+        Lagerwall's message of "Mon, 26 Mar 2018 14:56:51 +0100")
+Message-ID: <yq17epvj2f1.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180328181448.GA1674@casa>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8846 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803280216
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 08:14:48PM +0200, Rodrigo Rivas Costa wrote:
-> On Mon, Mar 26, 2018 at 10:12:19AM +0200, Benjamin Tissoires wrote:
-> > Also, I think there will be races if a user changes the value of the
-> > parameter while running the system. You might want to add an
-> > additional patch that would trigger the mode change on module
-> > parameter change.
-> 
-> True, but the races should be easy to remove, with a simple local
-> variable.  About the trigger, I've never seen a trigger on module
-> parameter change. Can you give me a hint or example of how to do that?
 
-Never mind, I've found it: module_param_cb().
-Moreover, I'll have to keep a global list of steam_devices, just in case
-the parameter is changed...
+Long, KY: Please confirm.
 
-Regards.
-Rodrigo
+> The Windows Server 2016 iSCSI target doesn't work with the Linux kernel
+> initiator since the kernel started sending larger requests by default,
+> nor does it implement the block limits VPD page. Apply the sector limit
+> workaround for these targets.
+>
+> Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+> ---
+>  drivers/scsi/scsi_devinfo.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
+> index f3b1172..5cb748a 100644
+> --- a/drivers/scsi/scsi_devinfo.c
+> +++ b/drivers/scsi/scsi_devinfo.c
+> @@ -213,7 +213,7 @@ static struct {
+>  	{"Medion", "Flash XL  MMC/SD", "2.6D", BLIST_FORCELUN},
+>  	{"MegaRAID", "LD", NULL, BLIST_FORCELUN},
+>  	{"MICROP", "4110", NULL, BLIST_NOTQ},
+> -	{"MSFT", "Virtual HD", NULL, BLIST_NO_RSOC},
+> +	{"MSFT", "Virtual HD", NULL, BLIST_MAX_1024 | BLIST_NO_RSOC},
+>  	{"MYLEX", "DACARMRB", "*", BLIST_REPORTLUN2},
+>  	{"nCipher", "Fastness Crypto", NULL, BLIST_FORCELUN},
+>  	{"NAKAMICH", "MJ-4.8S", NULL, BLIST_FORCELUN | BLIST_SINGLELUN},
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
