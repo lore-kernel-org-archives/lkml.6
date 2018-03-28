@@ -1,72 +1,81 @@
-Return-Path: <martin.petersen@oracle.com>
-X-Google-Smtp-Source: AIpwx4/vhR75n8Prll3p3r72mB+HwEeF7Q5iIlvPKV8z5z1ERleCZvdqbZaE1UB9Pb7ZpfmTAk0u
-ARC-Seal: i=1; a=rsa-sha256; t=1522274639; cv=none;
+Return-Path: <kernel-hardening-return-12809-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/ofhPsaCLolpn4yHm1XFZRNCV85AfNSd61McZzDZDxrGwLnqMXiMUQV7MFt8+SG7n9wCb+
+ARC-Seal: i=1; a=rsa-sha256; t=1522270664; cv=none;
         d=google.com; s=arc-20160816;
-        b=Mw8F2shQIRzELZZY/fejI2FqH4h6kzR1pk3Im6amYd5O8/sVl1GTrxAd9ViZuwsB8e
-         5DowkQjwCRmZFLgCU+NSsMOHX0QT5X7Cekctprc+6nWMfPaGovaPh6gi+LRY0OVgd2qt
-         3Z004IrdawgOAdJ8tgfhYDQqIGYcFr1zSMDoi75i2yBy3a0tIJzZ5MXpvYuAl+n0ECEa
-         Y/LnrjbgZCnhfyWerNtmkG8ejXF8pzG3LhyfrxhzNRQYzDqjeYALHLjT4PgqLjgRWjMe
-         YuYj9DedkXWZA5RpymIDeR1Xg7TU8qP1MSy3kMc+5mjwzlCcBpabaUmmmJA/gM16FAZu
-         WS/g==
+        b=ZBf21zQ9QGr5gM9kCGWs9VNu4dGzmsS99y38uttnMENr/zf45ODAMZTK6XwzesdL9F
+         zjBAXMS7YQJ6NFzhtGIjPB3lmWgCsfEvr+aB5bdeu1/vZ6u8M/yyv7c/cDT91rB7/3G1
+         DxY5/LfffZbt/HdR8l95OkO2StJwVuQCxp5WbOFGTFlx8fwkVpkfd+98rzLUZOMGGnI0
+         +FAd4uuzIB0B7ICJWTs/Rz/PPudY4hD3d1vrMMtKHu0FPyBj2wm2lEhS0hIyr9iOQzWx
+         nNKocPc0cNuI9EheuLekBBjP0iaFd+51PqZar/sx4eEHqAl74q6ckn9IlbCiwrwD4RV6
+         0aJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:message-id:in-reply-to:date:references
-         :organization:from:subject:cc:to:dkim-signature
-         :arc-authentication-results;
-        bh=R/JOQ+jzq/8RyFuOPs5AxgR4w/H1dyqRIpNRjhCia5s=;
-        b=QVhUrnxJL9hJi9YGo1k05N907sCe1uJOQbcwP/tLE12zULUGvo1dHTFj6lOO6Wzw+8
-         Db0alqU+KSu894ITx+g5nXmp7/8n0s7ZJ3gj58Kkpk6fJJOsqC6FhDUT285ZtwGUhY74
-         bKR3K+tNoifGL4rBB3HKobT3WsS9pmMfx8fq9B/HXoQaGAk8JX+YauR7EQuzftqy5wAw
-         +WjUwxQWaiKcUDtnKFlQXIOIXmAgjcIS7Gof7Grnwq2BJTB0BTEMSEIvXx4/nAgvKdEq
-         BtvvzAwM2EqVtZyWR5j8G8EPubaqKt+Y5Mp7HMYPvg8akjvUjitGOIS+purLB/BUIx9P
-         B0ig==
+        h=subject:cc:to:from:date:user-agent:message-id:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=91OTFOqFufCTotqonWnUQCg8nkkDYe/Zvs5ROPnsIi8=;
+        b=m6yKKIMa4RwuQ59bhwCJJMNiNCqLN5HzoB2HJQbnsSVL+d9TJ1Nwn860+Z0fZafuWw
+         V1EZl36owIpqV5+40NpLTzBtU7tdJwZNHOd77LpI6TCjg9SQVq/vFkt4p0gzA7AnfSEd
+         oJn36dzQGDYnqz/mBo2XLJBtWMuowt3ZY4ytLxOgI0T/eyv7RdjVI54FLKaa4d+w/Q0I
+         3/fWGa0wpXwEpfznteM6wrDVnL85D2TADCuAHqU+RRNYywfOaMzQtLeLplAcmTk8vjOD
+         PpnqnEIpptOzZTAYPk232/tUeLT+f4BfFgmUd57JJMUpScbwkB1lpSGFNEZIvJ3JUYl1
+         0HeA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=qiopzlGT;
-       spf=pass (google.com: domain of martin.petersen@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=martin.petersen@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: domain of kernel-hardening-return-12809-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12809-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=qiopzlGT;
-       spf=pass (google.com: domain of martin.petersen@oracle.com designates 156.151.31.86 as permitted sender) smtp.mailfrom=martin.petersen@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-To: Ohad Sharabi <ohad.sharabi@sandisk.com>
-Cc: stanislav.nijnikov@wdc.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, gregkh@linuxfoundation.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alex.lemberg@wdc.com
-Subject: Re: [PATCH v3] scsi: ufs: add trace event for ufs upiu
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1522230138-27674-1-git-send-email-ohad.sharabi@sandisk.com>
-Date: Wed, 28 Mar 2018 18:03:28 -0400
-In-Reply-To: <1522230138-27674-1-git-send-email-ohad.sharabi@sandisk.com>
-	(Ohad Sharabi's message of "Wed, 28 Mar 2018 12:42:18 +0300")
-Message-ID: <yq1tvszhn7z.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8846 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=383
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803280216
+       spf=pass (google.com: domain of kernel-hardening-return-12809-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12809-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Message-Id: <20180328205138.301218351@linutronix.de>
+User-Agent: quilt/0.63-1
+Date: Wed, 28 Mar 2018 22:51:38 +0200
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+ Segher Boessenkool <segher@kernel.crashing.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Andrew Morton <akpm@linuxfoundation.org>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+ Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+ Tony Luck <tony.luck@intel.com>
+Subject: [patch 0/8] rslib: Cleanup and VLA removal
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596174003792567298?=
-X-GMAIL-MSGID: =?utf-8?q?1596220651761832910?=
+X-GMAIL-THRID: =?utf-8?q?1596216484886397732?=
+X-GMAIL-MSGID: =?utf-8?q?1596216484886397732?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Kees tried to get rid of the Variable Length Arrays in the Reed-Solomon
+library by replacing them with fixed length arrays on stack. Though they
+are rather large and Andrew did not fall in love with that solution.
 
-Ohad,
+This series addresses that in a different way by splitting the rs control
+structure up, so that each invocation of rs_init() returns a new instance
+in which the decoder buffers are allocated. The polynom tables which build
+the base for the RS codecs are still shareable between the instances to
+avoid large allocations and initializations of the same data over and over.
 
-> Add UFS Protocol Information Units(upiu) trace events for ufs driver,
-> used to trace various ufs transaction types- command, task-management
-> and device management.  The trace-point format is generic and can be
-> easily adapted to trace other upius if needed.  Currently tracing ufs
-> transaction of type 'device management', which this patch introduce,
-> cannot be obtained from any other trace.  Device management
-> transactions are used for communication with the device such as
-> reading and writing descriptor or attributes etc.
+The usage sites have been audited and fixed up where necessary to
+accomodate the decoder change which forbids parallel decoder invocation for
+a particular rs control instance to prevent buffer corruption.
 
-Applied to 4.17/scsi-queue. Thank you!
+While at it the patch set tidies up the code and converts the related files
+over to use SPDX license identifiers.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Thanks,
+
+	tglx
+
+8<---------------
+ drivers/md/dm-verity-fec.c      |    7 +
+ drivers/mtd/nand/cafe_nand.c    |    7 -
+ drivers/mtd/nand/diskonchip.c   |   72 ++++++--------
+ include/linux/rslib.h           |   46 ++++-----
+ lib/reed_solomon/decode_rs.c    |   34 +++---
+ lib/reed_solomon/encode_rs.c    |   15 --
+ lib/reed_solomon/reed_solomon.c |  203 +++++++++++++++++++++++-----------------
+ 7 files changed, 209 insertions(+), 175 deletions(-)
