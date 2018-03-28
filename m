@@ -1,78 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753677AbeC1OTq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:19:46 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:43085 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753620AbeC1OTh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:19:37 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180328141935epoutp01718a56db3389b60eb0231f84b1ce183b~gG2CaLnCG0497504975epoutp01h
-X-AuditID: b6c32a35-139ff70000000fee-25-5abba476ab43
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, linux-parisc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Helge Deller <deller@gmx.de>,
-        "James E. J. Bottomley" <jejb@parisc-linux.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] video/console/sticore: Delete an error message for a
- failed memory allocation in sti_try_rom_generic()
-Date: Wed, 28 Mar 2018 16:19:31 +0200
-Message-id: <1899328.6kM0nNg5W5@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <6b8dde60-0550-5fb3-c7a5-5f6282259186@users.sourceforge.net>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7bCmnm7Zkt1RBsv3ilrc/3Sb0eLK1/ds
-        Fuc7lzNb3F+3itVi6y1pixN9H1gtLu+aw2bx6NQFJgcOjw8f4zzudx9n8riw6DerR9OpdlaP
-        z5vkAlijuGxSUnMyy1KL9O0SuDLe90xhK2hgqZi5ZwF7A+NC5i5GTg4JAROJ/WcaWLsYuTiE
-        BHYwShx+tpQZwvnOKPHl+zl2mKpHkz6xQyQ2MErcWD4VquUro8SUUwfZQKrYBKwkJravYuxi
-        5OAQETCV+HMiBKSGWeAno8TN+zdYQWqEBWol7m1bAGazCKhKHDu2FayXV0BT4t7il4wgtqiA
-        l8SWfe1MIDangKfEi+55TBA1ghI/Jt9jAbGZBeQl9u2fygph60icPbaOEWSZhMAJNomGD7tZ
-        QY6QEHCRmPkvBeIDYYlXx7ewQ4SlJS4dtYUob2aU+LZjDzQsJjBK7FkvBGFbSxw+fhFqPp/E
-        u689UCN5JTraoEo8JM5vvAnV6ihx+9ZXNkiYzGGUWNSzln0Co+wsJGfPQnL2LCRnL2BkXsUo
-        llpQnJueWmxYYKhXnJhbXJqXrpecn7uJEZwqtEx3ME4553OIUYCDUYmH12LR7igh1sSy4src
-        Q4wSHMxKIrzvNYBCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeQMCXKKEBNITS1KzU1MLUotgskwc
-        nFINjL1X/G+5FFzf18364YmHZeejvTL/pZ4o+/Nu1BPavUo1Zelkg8VKHMVF0o92TEg87HDT
-        RtH6xJ434Rxt31umb4srO/hk6WSj+x37JqlLRYrGOssw3XG265b5+nu+xBNZz+MsP5iKeK+u
-        v6ZS7HY3TcVlrWisyuer833UNv07y6r0O/rMCl8+HSWW4oxEQy3mouJEAApPcbcRAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsVy+t9jQd2yJbujDJpuMVnc/3Sb0eLK1/ds
-        Fuc7lzNb3F+3itVi6y1pixN9H1gtLu+aw2bx6NQFJgcOjw8f4zzudx9n8riw6DerR9OpdlaP
-        z5vkAlijuGxSUnMyy1KL9O0SuDLe90xhK2hgqZi5ZwF7A+NC5i5GTg4JAROJR5M+sXcxcnEI
-        CaxjlOh9fZYVwvnKKLGg6TojSBWbgJXExPZVQDYHh4iAqcSfEyEgNcwCPxkldt7qYwGpERao
-        lbi3bQEriM0ioCpx7NhWNhCbV0BT4t7il2BzRAW8JLbsa2cCsTkFPCVedM9jglg2j1Fi0r/J
-        zBANghI/Jt8DG8osIC+xb/9UVghbS2L9zuNMExj5ZyEpm4WkbBaSsgWMzKsYJVMLinPTc4uN
-        CgzzUsv1ihNzi0vz0vWS83M3MQLDe9thrb4djPeXxB9iFOBgVOLhtVi0O0qINbGsuDL3EKME
-        B7OSCO97DaAQb0piZVVqUX58UWlOavEhRmkOFiVx3tt5xyKFBNITS1KzU1MLUotgskwcnFIN
-        jNujlwfz8PoWnXkVf39mRuXrPRrMLl8eurYsv/bhpe7K7/s/OVX315xfO0dcpzRuuoZwc0HS
-        aYmEF+efr1O4fm7P48oPqWtUlP9bzZ64gumDquqjKc31Rn573vz2CuCsOtim9Vzjs6NPu/0u
-        1W8XJA0rZt7xMX2wVG+74e5dbqn5xZfsLY9o/FViKc5INNRiLipOBAByHax/awIAAA==
-X-CMS-MailID: 20180328141934epcas1p35287a5e36e4c79370c50e5800990e3db
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20171205180033epcas4p3cb5142e079695c72736e1f27489466d3
-X-RootMTR: 20171205180033epcas4p3cb5142e079695c72736e1f27489466d3
-References: <CGME20171205180033epcas4p3cb5142e079695c72736e1f27489466d3@epcas4p3.samsung.com>
-        <6b8dde60-0550-5fb3-c7a5-5f6282259186@users.sourceforge.net>
+        id S1753711AbeC1OUA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:20:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38358 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753650AbeC1OTm (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 10:19:42 -0400
+Date: Wed, 28 Mar 2018 16:19:40 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: "Jin, Yao" <yao.jin@linux.intel.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+Subject: Re: [PATCH v2 4/4] perf: Support perf -vv
+Message-ID: <20180328141940.GA32321@krava>
+References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+ <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
+ <20180328132252.GM3102@krava>
+ <c984a7d9-1e59-93f6-36b5-6ce878039f53@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c984a7d9-1e59-93f6-36b5-6ce878039f53@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, December 05, 2017 07:00:22 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 5 Dec 2017 18:45:42 +0100
+On Wed, Mar 28, 2018 at 10:00:32PM +0800, Jin, Yao wrote:
 > 
-> Omit an extra message for a memory allocation failure in this function.
 > 
-> This issue was detected by using the Coccinelle software.
+> On 3/28/2018 9:22 PM, Jiri Olsa wrote:
+> > On Wed, Mar 28, 2018 at 10:57:08PM +0800, Jin Yao wrote:
+> > > We keep having bug reports that when users build perf on their own,
+> > > but they don't install some needed libraries such as libelf,
+> > > libbfd/libibery.
+> > > 
+> > > The perf can build, but it is missing important functionality.
+> > > 
+> > > This patch provides a new option '-vv' which will print the
+> > > compiled-in status of libraries.
+> > > 
+> > > The 'perf -vv' is equal to 'perf -version --build-options'.
+> > > 
+> > > For example:
+> > > 
+> > > $ ./perf -vv or ./perf -version --build-options
+> > > perf version 4.13.rc5.gcb1183
+> > >                   dwarf: [ on  ]
+> > >      dwarf_getlocations: [ on  ]
+> > >                   glibc: [ on  ]
+> > >                    gtk2: [ on  ]
+> > >                libaudit: [ OFF ]
+> > >                  libbfd: [ on  ]
+> > >                  libelf: [ on  ]
+> > >                 libnuma: [ on  ]
+> > > numa_num_possible_cpus: [ on  ]
+> > >                 libperl: [ on  ]
+> > >               libpython: [ on  ]
+> > >                libslang: [ on  ]
+> > >               libcrypto: [ on  ]
+> > >               libunwind: [ on  ]
+> > >      libdw-dwarf-unwind: [ on  ]
+> > >                    zlib: [ on  ]
+> > >                    lzma: [ on  ]
+> > >               get_cpuid: [ on  ]
+> > >                     bpf: [ on  ]
+> > > [ on  ]: library is compiled-in
+> > > [ OFF ]: library is disabled in make configuration
+> > >           OR library is not installed in build environment
+> > > 
+> > > v2:
+> > > ---
+> > > Use a global variable version_verbose to count the number of 'v'.
+> > > 
+> > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> > > ---
+> > >   tools/perf/perf.c | 22 ++++++++++++++++++----
+> > >   tools/perf/perf.h |  1 +
+> > >   2 files changed, 19 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+> > > index 1b3fc8e..355219e 100644
+> > > --- a/tools/perf/perf.c
+> > > +++ b/tools/perf/perf.c
+> > > @@ -32,7 +32,7 @@
+> > >   #include <linux/kernel.h>
+> > >   const char perf_usage_string[] =
+> > > -	"perf [--version] [--help] [OPTIONS] COMMAND [ARGS]";
+> > > +	"perf [--version [--build-options]] [--help] [OPTIONS] COMMAND [ARGS]";
+> > 
+> > --build-options is 'perf version' option no?
+> > 
+> > jirka
+> > 
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Yes. Command-line something like:
+> 
+> perf --version --build-options or perf -v --build-options.
+> 
+> Is this usage string not correct? If so, I'd like to fix that.
+> 
+> "perf [--version [--build-options]] [--help] [OPTIONS] COMMAND [ARGS]";
 
-Patch queued for 4.17, thanks.
+ah I forgot that --version is in fact 'perf version'
+now I see --build-options depends on --version.. ok ;-)
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+could you please also create Documentation/perf-version.txt,
+now when it has option, we should document it
+
+also please use the standard option parsing API we use in commands:
+
+        argc = parse_options(argc, argv, record_options, record_usage,
+                            PARSE_OPT_STOP_AT_NON_OPTION);
+
+so we get standard error when the option is mangled,
+unlinke now, when it's silent:
+
+	[jolsa@krava perf]$ ./perf --version --buil
+	perf version 4.16.rc6.gcc183d
+
+thanks,
+jirka
