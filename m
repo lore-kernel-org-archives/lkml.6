@@ -1,144 +1,390 @@
-Return-Path: <3rj27WgkbAPElrsdTeeXkTiibW.ZhhZeXnlXkVhgmXgm.Vhf@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522220462; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jH3Rmt/gjv8QwEegxwvp3CcBbgoIYlZEwX4zMJzAUmH5q4VF7J8gPcVvlQhicLHRqb
-         64PcLfIgvRztE+NYefWoyE+Hu26HC/XztBFkGdKUsiHDdqn+7YyMx7cxR8nF9w0FbgTn
-         ZETv+7pLaGypmkKGQj7mgrpW/ToH+RxGkoie6juJV8oc5nJkw1k8DMi502MnRYa6NzNB
-         DWIGI903XD4BgCfJ0Hs9kq5p6ae/IpB2BkCqQdylAUkHHo9HIf2781Y0NgHZ6MN7KS30
-         wou5v6d3afdlEJtliSirBlpEsnNZdO2CZ8ljmZFdcQ6i/L4L4KF5sy0FPNpLP7fcO0WG
-         JC+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:from:subject:message-id:date:mime-version
-         :arc-authentication-results;
-        bh=JnUvmEExLz0H8hZ0JQLotNhL3Ez5h4wuzX9NeHBPCEs=;
-        b=byqD68MEUL50QL1txv4U1H9ZlAzHz8simo9OHueSCkgKVd5ac+YGAkt17MaVx/qWi2
-         CxxdwKk6gML66mfKEaZ1+uPKOevxChZykiiGqeSDtO/t3dMvPWJXPyHCcV3VdBAtjthr
-         ckv/aoG/bSDvLfUgYHJWyh69HtZCOBtNiTK6VOPiS86rw+D28+CG6WeqDbQkF16J47y4
-         0Y3MSpMenhbMS/326JO+7icC+Ir5xxilFx1fI85OechLKnTeSFf2NweVAEGVkoGir9zd
-         xQPeUAfnW0jj8IPHOtn3/kzLz1Zo/Xtj9NgR/leAOIuYsV5OBX48XjTBaAlBEfAvQZUz
-         n66Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 3rj27wgkbapelrsdteexktiibw.zhhzexnlxkvhgmxgm.vhf@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3rj27WgkbAPElrsdTeeXkTiibW.ZhhZeXnlXkVhgmXgm.Vhf@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 3rj27wgkbapelrsdteexktiibw.zhhzexnlxkvhgmxgm.vhf@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3rj27WgkbAPElrsdTeeXkTiibW.ZhhZeXnlXkVhgmXgm.Vhf@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AIpwx4/R8GDNsdR7IfEVqhqiRVOGPvYNuTsxS9E4x0EBGjaLPUEeWGQwctODAF3iEthr2LMWf6XKq3QUDfUlQFRz9fLacAd3Fp8N
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1645646-1522219639-2-16670633631336973466
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522219638; b=V5UH3tDNCqfeo3tlgNuA5mny6uwr3StCmWdg6VaCviqhqRw
+    C1XWK8NzthxVPu1SUq7wSouej9P4pjXZrSrp6nCQCbXgM6O40KuREqilY/KzqyyP
+    nAniZTp3spGuVPUI49ae5zhIgIeVTX+gCxFIRLLy+oRkj2e1tWKqyntCqpbL4f1C
+    GBgzff9x550FCXv4TUwWS5b2mjkn6nmNz/pMYkZaCER6BCdYmUUQHLM4K16GiRM5
+    h0r5I3bGUPxMGGEL+Wo5j3wqRxXSq0NYTwjFg95R6iGRAyMR7JVKAcY0ujopYykI
+    X4smOrBKEsYRNCGe9wrUp78sqLA7S7Tm0cbkktA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1522219638; bh=2
+    E2JmynxvqcG6OVSeVy2T3239hKVfdUCSSHa8V8oeSU=; b=Bk3ithn0rsqXb6sww
+    +L4+uYeLrqt876Q32eSKDV880mejVXnhaBZtL00R+tYFCCijnuAd+RJhVZXQFrOb
+    27JiO64Zhjn5zQs++VBdp6kGz4mLAZPGtq2jN/mfyheBHbgmSS0JqXDYqbGVkef6
+    jqMjGX+V6mnqdT5PtYsXOgjXw1IzZZ4CX55UbazTVrPKuYGLAdNIhs4arUeU36qn
+    QxHlBwcfK5T97RjF8XYhoxYsDhvPavW+ddTMaLjNBAm9fOBtDN7/vVgU/XJoqijQ
+    fiu4ncHs4nYf/8ydSjMvR6O/BYa+yhwEax3bmqsb6SXxgRAFuiOwR6z1uW3qZFCF
+    o8E7A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=U+MHBnZo x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=U+MHBnZo x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGEjrifv1+6M6c+MjxE4rJJGJ7zoQMRLESfjuwUjsT3k+Qs0zVfwNwEQ/WTD1lSjUhF+qoaeM8ZAUEa7+4nnqvuMCoOya8LAox934o10yD+v8cvTSHwB
+    VWJwiIyAl7G38e94kI5yCISuG+cdBeZqa72JLj3YKu1kON0XupblL6gTKE0oWwVc8QxHvltnJ741riA0IUsabJ9ejLjk59m+RfyL2l0qJ//Z2ZBseE46bHkX
+    7pd/4KaKlL806SOFd+yVVA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=osDrW2AON7y1HyiAeOL6jdcP5bE=:19
+    a=HDWVoQlkhfgA:10 a=MgAmFuzLjqAA:10 a=stMw5y7y3skA:10 a=kj9zAlcOel0A:10
+    a=v2DPQv5-lfwA:10 a=dw2S5ISiLjYA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=8AirrxEcAAAA:8 a=DDOyTI_5AAAA:8 a=ozcGWWFLlwVRqNTzM5wA:9 a=CjuIK1q_8ugA:10
+    a=ST-jHhOKWsTCqRlWije3:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=razvan.stefanescu@nxp.com;
+From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH v2] staging: fsl-dpaa2/ethsw: Fix tag control information
+ value overwrite
+Date: Wed, 28 Mar 2018 01:46:51 -0500
+Message-Id: <20180328064651.16052-1-razvan.stefanescu@nxp.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Date: Wed, 28 Mar 2018 00:01:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a1140e920eb829905687391d6@google.com>
-Subject: INFO: rcu detected stall in __process_echoes
-From: syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, aryabinin@virtuozzo.com, dvyukov@google.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tchibo@google.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Originating-IP: [192.88.168.49]
+X-ClientProxiedBy: DM5PR2001CA0020.namprd20.prod.outlook.com
+ (2603:10b6:4:16::30) To AM3PR04MB0744.eurprd04.prod.outlook.com
+ (2a01:111:e400:8839::24)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 2cf4719a-b120-46e1-21d1-08d59477b7a9
+X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
+ RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);
+ SRVR:AM3PR04MB0744;
+X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0744;
+ 3:Vbc673k0mlq5YqUjBowVeJRs3w9nUUFJ2QdCZ3dWYPye3CYFhLFh7S8nYyfNZ6mtnfJMHQfBonWpS9CeETxTyApf+rI1mZbMNwFgRYm0cAE9VRmru79taMJzJ1s5ifpokXKjMxdeYe6GIQuiZnyEayTX7b9KNX2rQqvw6zlYTkpD2DLg1mnQvTfCLz1AtU09rL90tZhCcDLLy9UxqSOyEA8FU7OhWj4x2SL84wjdXPsmeiu4HT/QXWrrV1KgnIqy;
+ 25:tk2Aw7sbUeADtIQvBG/RzqBfEFGHoChWiY9aCOcay1efq4VW1tBNuin+k7RVHkNsEpdtkxZmy0emSMW19YGOn5pjtnvYYpYEwST8bRa53/hQqubs355rrujz9QxDYG28MxUy4Mf+6jtzkHLD6jAsbXVnvIiL0N6M2g+24EJEytDLMfpmhqOXv5km3AvXWuqXrPJd3J1rVG//lTQLv7y3KK4HZQrZMJ4c5vNv/ke1YL/CCOOEhcwpm26hi4ZQR3w01yzaVEda9PJuxiaLvVKOTR8YnshZigOK8QtyO5pKf5CM6X5JqjRw5/I38mqpA6o5a3t2K04myg9SOBSDECkO6Q==;
+ 31:13lRHBQmjWXpVsbZlqxV/9+t2oh3g09Lw8M032GRIHao/yDAtFS8h0eYrtWz2BIE1qwF4M8Zb8B6ITRF2GQ7t5L7YfwEKyM+DH6UMTcFfQak5OhkjXpAIC/Zg4zkxECIQjnTQUgBZndquYxzTDPIHrET+JSjIzS95T+4IBBGRiGZ/jMC5gexLWMSfmdu+UUNF2EIFnEp5H1Z/IxkwJECJNf0Z5Ea4QgC17k87R334w0=
+X-MS-TrafficTypeDiagnostic: AM3PR04MB0744:
+X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0744;
+ 20:orMoTixqtqZCCknY4yueCz6WVoUHiq2V8Tbz+IYvN6ZgzksLJ2v0HCDeiqZtNwprg7Jbp5kck7hJtRh7q7olr4lbjgJWt24VjKnA0iVEynNJBVVDOJBWIr3BcNK8KHaXLLOX2zpruBufSbHCnw5PYICIrRU5JxOfcOcDdRX6QRp32OkHEeFDfjdLMNXkM7h07TGWMIPfHGeqoUt5PJbS+4nJhGEIn1FfIp7xCeskebX1BVkIof2My3HT2zg+juiwyd9nDmNmKQYDghclxbhyafYoAkZN27U1PaCcOXPv/hzWPxsYUtv+/31FIRsCleU+XEFxhTbX6laoEU18dNPMzL0ql2HUCBpntFY5vraIyxgTYGF4bLuVPmdhzlRPdhJZWuvQSKc2EiSj0lBI2UFGpm4LQ5JxF7TqqUFgRIZUt6daflJdjuCC76JKLDm6eni1K7sv75gBbDnvFQEYwmhbPK7wykrigMRoyQhogD1kGMW3zwricE1Gwl8ujsStgxyu;
+ 4:tDRCr+IbqhQPp8iHbyxfeRfWrwYp83Jp3ufvQfVf0K8woDz1CQfFUtb1MBmFNbyfHxbiAB7aDk6M6dwv8KP00lz9NlJCnjBI5H16KR75nTHqHpGku1kwV7zpbaSymd36TogsZoQuQ6c28e1vEUw7AO+n1aUatj8iKyBv7imG/J88zyuQs9WmuZfPjes2LGt4QDTXaF4R7LlcuWBX+RiVtuqRjV/Tqe3WjXIpwr/eU2GOr/fs7kpKvq2JHU6tlpQktMLYxNpaC6QNhHtkNVvzcgu4H/Y0mze/2BB2TOGUAcMAusqFSR+InU5/3CSt6QUCVp5ymzu4JW2Rp53f+Df7/uvQaPFG8ckoP7JEgeebnmA=
+X-Microsoft-Antispam-PRVS: <AM3PR04MB0744BF15FC560EED1F39446EE6A30@AM3PR04MB0744.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(275809806118684);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
+ RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);
+ SRVR:AM3PR04MB0744; BCL:0; PCL:0; RULEID:; SRVR:AM3PR04MB0744;
+X-Forefront-PRVS: 06259BA5A2
+X-Forefront-Antispam-Report: SFV:NSPM;
+ SFS:(10009020)(39380400002)(346002)(376002)(366004)(39860400002)(396003)(189003)(199004)(54534003)(50466002)(5660300001)(81156014)(1076002)(39060400002)(59450400001)(6666003)(86362001)(51416003)(6916009)(66066001)(16526019)(316002)(186003)(48376002)(386003)(6506007)(6486002)(2616005)(52116002)(36756003)(2906002)(8936002)(4326008)(47776003)(81166006)(476003)(956004)(106356001)(68736007)(16586007)(50226002)(26005)(6116002)(7736002)(478600001)(8676002)(3846002)(305945005)(2361001)(25786009)(97736004)(53936002)(2351001)(105586002)(486005)(6512007)(486005);
+ DIR:OUT; SFP:1101; SCL:1; SRVR:AM3PR04MB0744; H:rhuath.am.freescale.net; FPR:;
+ SPF:None; PTR:InfoNoRecords; MX:1; A:1; LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; AM3PR04MB0744;
+ 23:E6LQ1uI7Iq48Sg+TxXwHcmBN51aJ83q9497+77N+j?=
+ =?us-ascii?Q?s+u6GlIa6RpzInfmN7h4PTxm+Dr8oxDvgmOcQ13rJPTr4rwROTK5TCB5ZdNT?=
+ =?us-ascii?Q?tOB2xTCnwnpFfTkffbWsokbQGtBnS86fyNMYFNhY7jFXhk7OywU6JcDdEwqO?=
+ =?us-ascii?Q?uFGuP+uOf2MDKwTH87JVCshHoMh5QAyCHHtf6o6tB1Xs0s2c81QtLBZ8f/Bg?=
+ =?us-ascii?Q?Bv5uzbfjai6eXiGPqlY0ZaDoDB1Iv2HH6uHOyFFxq8nLg5IDylTt8JfYsUNS?=
+ =?us-ascii?Q?/85eH86+XxQknr5RhgaLbwsHXTgfsqCb45PfQ+LYvk2XWqCN9I2PTIhtNoii?=
+ =?us-ascii?Q?IOAEigqKUsKJMz0ezDZJZNJXD+qy5GshoiUhupuBYgB2y2BjHWhs45E92MG1?=
+ =?us-ascii?Q?eTRh97i6vag8Y/nyjhHW5LEo1U4ikMbZGydVbw/zefDSbI3xoiPeW+qDIu8i?=
+ =?us-ascii?Q?/Ffnv+H7vhRXegwqDVIpomXfeNN2yNQVG4EFK3LR5x0M/zgBpOwFo6cHU6V/?=
+ =?us-ascii?Q?VbeBE4F0dBeMbTfDFLTBrmMJ54LcEA/5DpdIEtlBgIeTSCqkVXb+p2U5jEto?=
+ =?us-ascii?Q?3vmhLN0+1lKf0GnA2sSfENGnroi00YXJrcgY1IXW9tyIOlYPVenXWItra3KR?=
+ =?us-ascii?Q?us9qhaU0lr1wWynQHv03jBtPEHA+H87h9vAoJuFgOV0EoxjfJq64ud8LWUwA?=
+ =?us-ascii?Q?hXwIB9NrdjiLGdbkntTdlBTJdklfF43fE2W8W4Jo8ZNqUsp02GA5ZScCBXqF?=
+ =?us-ascii?Q?RcDNX1+Z3oPXFRkygqWpUMurgo4YC+GMf+1KIVcRr0OrqyKF/nJzywLGENrL?=
+ =?us-ascii?Q?/jVZcKBP2/JLHOMzKKPo9qpXiluMaZlkLG07DkLw90Ch473PIlCkrvLmYPEd?=
+ =?us-ascii?Q?QjVv5sRqZgDNGM+0t0tVFK4Y+ZCPfiHwpi8DuzB9bhdkZy2xdxeMutxJ+m9k?=
+ =?us-ascii?Q?9WshEz/Hl5jLZ7qi1yWZfd+punqOP8928n4s8a1jDeUI/lB3wKFjJzpQw935?=
+ =?us-ascii?Q?YlzX/jsloX6nZ59dGlfT3YBheWeQx6wEchCsXcrk83AZh36syADwXLelDGeB?=
+ =?us-ascii?Q?E/Tp1gWfOQUYroYWmJ7DgLeUkKEFjV/Tcp/KhCQB7XovFjwyFGWo14+unhQ8?=
+ =?us-ascii?Q?HHGz65dV5B9skeY3I0+gOMzzac/xhvFIPuOb41unrY5TlCtqxmUcPdJlsAQx?=
+ =?us-ascii?Q?fL/44UaFwYfxbI9HLOIYdHDYNg5GGdnc6iYTJstwYlxoPMkrWFseSW9GvAON?=
+ =?us-ascii?Q?UrIR9K5x66Hfgb2BrNtIZPqhmozUr6jOSzryKMg?=
+X-Microsoft-Antispam-Message-Info: oqmGc1kLxBG2tOT2v1h9hCFqxwZMRxvM7EF7tXlZVj61Y5hFaklCxF5Qn6zekbti7PlsF9IiUFxTp4QqlLMN52dqS92uYM2sle/VB39dJ+REY5koJQawPaBZ2AdsYhc1B4rOSCyBq2c7dg1x2eC5OsmSWHynuvZgeYRCw51CcXtP9zuDfxmiFfqRpdvcFjkn
+X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0744;
+ 6:TWDSDvGkEVCkD4P6zNh9k2AT/q4If3nBd4v//gqf5LeCvYEv7lYE/W1gucuR88ZiJtRPR/JXNZgSxHHmRMF5FZSdjVcWQ30WpZyYuZvUJ3QfLsNQsypLML95afGB3shAuZxnR6F1BvCQUPktLGm9DprMUIOKbnSsarOYcyLA4z1Uf5aDv183p9GklKvwUMBHmXj5FmyXekYJtx/LUPl4GmyT5Mpqx2eHxH+Gub/Bg/pFGMZTeExIZTBbXecuTLxY64fb3p+iL9//umLTPu5Drz+Xc9hhlXujto0ds9ZafmyBtGzWr31H9tU8eaKDBMtZ2AydnaOg35YEzu/i93fl92BAhh9WnDUUElOvnHX0HBh+0Cxsgb6FmY04UyIuXZNSjeDCkkgH1o3RzvY9Ys0LtLPUZbb1Zc+e+xVmCP+La6DiJFJjnEsdPWt7t0acjeZgdOLQ4wvgR0lGU1e4inmxJQ==;
+ 5:3O3BqZtJbNonJvJLLWD3rrxHLC+LQI7KIzLC7xCg1adFpb+SPH2aRs+B/eidqh4S4hPgWw5crK4bDM8hpwxChEaoelh4WMAyS64MyghNRczxuIxy3yGfV0mp/4MnQFqA9G7AIZT1Ddt5otoK9CWkaE6wAHlevwxviPINe3v4Mds=;
+ 24:2r0M0UwM63yBi04TtVdksdbTJkjBvt1B+SROvt3H9AVW0RmztHCaIF2Gvqq2/x1SgB7URVN8tVvM+1Ag3mw/aNucfi6ke7cHmHNck3VNO0g=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1; AM3PR04MB0744;
+ 7:9vmTlUTMzpPbyn7CcmBF8I8affZBiuxvXNKei4ngVzKtFczsicK9f2NXQJPLbhqxNbXzWRaOr684wXk5eM/S9E2Mny2azWU2Vy7yB3p9qJapQm45DSGiSpZuron9QD7IwQQkUxZI4gUR94js+1ei78uvR1I7j5eT4I50C25EiQ4iPQE7EkCjPGxXYN6yusi3yNrwaCWZq0zAr/x2Ee/HiExqvO+11m2Suzl10h16whsT02UWxIBvetCKvMb5CFwk
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2018 06:47:02.5814 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cf4719a-b120-46e1-21d1-08d59477b7a9
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0744
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, andrew@lunn.ch, netdev@vger.kernel.org,
+ alexandru.marginean@nxp.com, linux-kernel@vger.kernel.org,
+ ioana.ciornei@nxp.com, laurentiu.tudor@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596163843273194959?=
-X-GMAIL-MSGID: =?utf-8?q?1596163843273194959?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+The tag control information (TCI) part of the VLAN header contains several
+fields, including PCP (priority code point) and PVID (port VLAN id).
 
-syzbot hit the following crash on upstream commit
-3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
-Linux 4.16-rc7
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=108696293d7a21ab688f
+Current implementation uses function ethsw_port_set_tci() to set the PVID
+value and mistakenly overwrites the rest of the TCI fields with 0,
+including PCP which by default has a value of 7.
 
-So far this crash happened 10 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4941573204738048
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5314352743710720
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5561943247028224
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
-compiler: gcc (GCC) 7.1.1 20170620
+Fix this by adding support to retrieve TCI set in hardware. Read existing
+value and only updated the PVID fields, leaving others unchanged.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-INFO: rcu_sched self-detected stall on CPU
-	0-....: (124999 ticks this GP) idle=6aa/1/4611686018427387906  
-softirq=9528/9528 fqs=31245
-	 (t=125000 jiffies g=4714 c=4713 q=8)
-NMI backtrace for cpu 0
-CPU: 0 PID: 51 Comm: kworker/u4:2 Not tainted 4.16.0-rc7+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events_unbound flush_to_ldisc
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
-  rcu_dump_cpu_stacks+0x186/0x1de kernel/rcu/tree.c:1375
-  print_cpu_stall kernel/rcu/tree.c:1524 [inline]
-  check_cpu_stall.isra.61+0xbb8/0x15b0 kernel/rcu/tree.c:1592
-  __rcu_pending kernel/rcu/tree.c:3361 [inline]
-  rcu_pending kernel/rcu/tree.c:3423 [inline]
-  rcu_check_callbacks+0x238/0xd20 kernel/rcu/tree.c:2763
-  update_process_times+0x30/0x60 kernel/time/timer.c:1636
-  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
-  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1194
-  __run_hrtimer kernel/time/hrtimer.c:1349 [inline]
-  __hrtimer_run_queues+0x39c/0xec0 kernel/time/hrtimer.c:1411
-  hrtimer_interrupt+0x2a5/0x6f0 kernel/time/hrtimer.c:1469
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
-  </IRQ>
-RIP: 0010:__write_once_size include/linux/compiler.h:215 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x4b/0x50 kernel/kcov.c:109
-RSP: 0018:ffff8801d96170a8 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff12
-RAX: ffff8801d960a5c0 RBX: ffffc90001fb8000 RCX: ffffffff82f38349
-RDX: 0000000000000000 RSI: 1ffff1003b2c15e4 RDI: ffffc90001fb9963
-RBP: ffff8801d96170a8 R08: 1ffff1003b2c2dbd R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 000000057efa5704
-R13: dffffc0000000000 R14: 000000057efa5704 R15: 0000000000003321
-  echo_buf drivers/tty/n_tty.c:144 [inline]
-  __process_echoes+0x5c9/0x770 drivers/tty/n_tty.c:732
-  flush_echoes drivers/tty/n_tty.c:799 [inline]
-  __receive_buf drivers/tty/n_tty.c:1615 [inline]
-  n_tty_receive_buf_common+0x1380/0x2520 drivers/tty/n_tty.c:1709
-  n_tty_receive_buf2+0x33/0x40 drivers/tty/n_tty.c:1744
-  tty_ldisc_receive_buf+0xa7/0x180 drivers/tty/tty_buffer.c:456
-  tty_port_default_receive_buf+0x106/0x160 drivers/tty/tty_port.c:38
-  receive_buf drivers/tty/tty_buffer.c:475 [inline]
-  flush_to_ldisc+0x3c4/0x590 drivers/tty/tty_buffer.c:524
-  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
-  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-
-
+Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 ---
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+Changelog
+ v2: improve patch description
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+ drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h | 13 +++++++++
+ drivers/staging/fsl-dpaa2/ethsw/dpsw.c     | 42 ++++++++++++++++++++++++++++++
+ drivers/staging/fsl-dpaa2/ethsw/dpsw.h     |  6 +++++
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c    | 37 +++++++++++++-------------
+ 4 files changed, 79 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h b/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
+index 1c203e6..da744f2 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
++++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw-cmd.h
+@@ -49,6 +49,8 @@
+ #define DPSW_CMDID_IF_SET_FLOODING          DPSW_CMD_ID(0x047)
+ #define DPSW_CMDID_IF_SET_BROADCAST         DPSW_CMD_ID(0x048)
+ 
++#define DPSW_CMDID_IF_GET_TCI               DPSW_CMD_ID(0x04A)
++
+ #define DPSW_CMDID_IF_SET_LINK_CFG          DPSW_CMD_ID(0x04C)
+ 
+ #define DPSW_CMDID_VLAN_ADD                 DPSW_CMD_ID(0x060)
+@@ -206,6 +208,17 @@ struct dpsw_cmd_if_set_tci {
+ 	__le16 conf;
+ };
+ 
++struct dpsw_cmd_if_get_tci {
++	__le16 if_id;
++};
++
++struct dpsw_rsp_if_get_tci {
++	__le16 pad;
++	__le16 vlan_id;
++	u8 dei;
++	u8 pcp;
++};
++
+ #define DPSW_STATE_SHIFT	0
+ #define DPSW_STATE_SIZE		4
+ 
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw.c b/drivers/staging/fsl-dpaa2/ethsw/dpsw.c
+index 9b9bc60..3ea957c 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/dpsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw.c
+@@ -529,6 +529,48 @@ int dpsw_if_set_tci(struct fsl_mc_io *mc_io,
+ }
+ 
+ /**
++ * dpsw_if_get_tci() - Get default VLAN Tag Control Information (TCI)
++ * @mc_io:	Pointer to MC portal's I/O object
++ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
++ * @token:	Token of DPSW object
++ * @if_id:	Interface Identifier
++ * @cfg:	Tag Control Information Configuration
++ *
++ * Return:	Completion status. '0' on Success; Error code otherwise.
++ */
++int dpsw_if_get_tci(struct fsl_mc_io *mc_io,
++		    u32 cmd_flags,
++		    u16 token,
++		    u16 if_id,
++		    struct dpsw_tci_cfg *cfg)
++{
++	struct mc_command cmd = { 0 };
++	struct dpsw_cmd_if_get_tci *cmd_params;
++	struct dpsw_rsp_if_get_tci *rsp_params;
++	int err;
++
++	/* prepare command */
++	cmd.header = mc_encode_cmd_header(DPSW_CMDID_IF_GET_TCI,
++					  cmd_flags,
++					  token);
++	cmd_params = (struct dpsw_cmd_if_get_tci *)cmd.params;
++	cmd_params->if_id = cpu_to_le16(if_id);
++
++	/* send command to mc*/
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	/* retrieve response parameters */
++	rsp_params = (struct dpsw_rsp_if_get_tci *)cmd.params;
++	cfg->pcp = rsp_params->pcp;
++	cfg->dei = rsp_params->dei;
++	cfg->vlan_id = le16_to_cpu(rsp_params->vlan_id);
++
++	return 0;
++}
++
++/**
+  * dpsw_if_set_stp() - Function sets Spanning Tree Protocol (STP) state.
+  * @mc_io:	Pointer to MC portal's I/O object
+  * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/dpsw.h b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+index 3335add..82f80c40 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
++++ b/drivers/staging/fsl-dpaa2/ethsw/dpsw.h
+@@ -306,6 +306,12 @@ int dpsw_if_set_tci(struct fsl_mc_io *mc_io,
+ 		    u16 if_id,
+ 		    const struct dpsw_tci_cfg *cfg);
+ 
++int dpsw_if_get_tci(struct fsl_mc_io *mc_io,
++		    u32 cmd_flags,
++		    u16 token,
++		    u16 if_id,
++		    struct dpsw_tci_cfg *cfg);
++
+ /**
+  * enum dpsw_stp_state - Spanning Tree Protocol (STP) states
+  * @DPSW_STP_STATE_BLOCKING: Blocking state
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index c723a04..ab81a6c 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -50,14 +50,23 @@ static int ethsw_add_vlan(struct ethsw_core *ethsw, u16 vid)
+ 	return 0;
+ }
+ 
+-static int ethsw_port_set_tci(struct ethsw_port_priv *port_priv,
+-			      struct dpsw_tci_cfg *tci_cfg)
++static int ethsw_port_set_pvid(struct ethsw_port_priv *port_priv, u16 pvid)
+ {
+ 	struct ethsw_core *ethsw = port_priv->ethsw_data;
+ 	struct net_device *netdev = port_priv->netdev;
++	struct dpsw_tci_cfg tci_cfg = { 0 };
+ 	bool is_oper;
+ 	int err, ret;
+ 
++	err = dpsw_if_get_tci(ethsw->mc_io, 0, ethsw->dpsw_handle,
++			      port_priv->idx, &tci_cfg);
++	if (err) {
++		netdev_err(netdev, "dpsw_if_get_tci err %d\n", err);
++		return err;
++	}
++
++	tci_cfg.vlan_id = pvid;
++
+ 	/* Interface needs to be down to change PVID */
+ 	is_oper = netif_oper_up(netdev);
+ 	if (is_oper) {
+@@ -71,17 +80,16 @@ static int ethsw_port_set_tci(struct ethsw_port_priv *port_priv,
+ 	}
+ 
+ 	err = dpsw_if_set_tci(ethsw->mc_io, 0, ethsw->dpsw_handle,
+-			      port_priv->idx, tci_cfg);
++			      port_priv->idx, &tci_cfg);
+ 	if (err) {
+ 		netdev_err(netdev, "dpsw_if_set_tci err %d\n", err);
+ 		goto set_tci_error;
+ 	}
+ 
+ 	/* Delete previous PVID info and mark the new one */
+-	if (port_priv->pvid)
+-		port_priv->vlans[port_priv->pvid] &= ~ETHSW_VLAN_PVID;
+-	port_priv->vlans[tci_cfg->vlan_id] |= ETHSW_VLAN_PVID;
+-	port_priv->pvid = tci_cfg->vlan_id;
++	port_priv->vlans[port_priv->pvid] &= ~ETHSW_VLAN_PVID;
++	port_priv->vlans[pvid] |= ETHSW_VLAN_PVID;
++	port_priv->pvid = pvid;
+ 
+ set_tci_error:
+ 	if (is_oper) {
+@@ -133,13 +141,7 @@ static int ethsw_port_add_vlan(struct ethsw_port_priv *port_priv,
+ 	}
+ 
+ 	if (flags & BRIDGE_VLAN_INFO_PVID) {
+-		struct dpsw_tci_cfg tci_cfg = {
+-			.pcp = 0,
+-			.dei = 0,
+-			.vlan_id = vid,
+-		};
+-
+-		err = ethsw_port_set_tci(port_priv, &tci_cfg);
++		err = ethsw_port_set_pvid(port_priv, vid);
+ 		if (err)
+ 			return err;
+ 	}
+@@ -819,9 +821,7 @@ static int ethsw_port_del_vlan(struct ethsw_port_priv *port_priv, u16 vid)
+ 		return -ENOENT;
+ 
+ 	if (port_priv->vlans[vid] & ETHSW_VLAN_PVID) {
+-		struct dpsw_tci_cfg tci_cfg = { 0 };
+-
+-		err = ethsw_port_set_tci(port_priv, &tci_cfg);
++		err = ethsw_port_set_pvid(port_priv, 0);
+ 		if (err)
+ 			return err;
+ 	}
+@@ -1254,7 +1254,6 @@ static int ethsw_port_init(struct ethsw_port_priv *port_priv, u16 port)
+ 	const char def_mcast[ETH_ALEN] = {0x01, 0x00, 0x5e, 0x00, 0x00, 0x01};
+ 	struct net_device *netdev = port_priv->netdev;
+ 	struct ethsw_core *ethsw = port_priv->ethsw_data;
+-	struct dpsw_tci_cfg tci_cfg = {0};
+ 	struct dpsw_vlan_if_cfg vcfg;
+ 	int err;
+ 
+@@ -1272,7 +1271,7 @@ static int ethsw_port_init(struct ethsw_port_priv *port_priv, u16 port)
+ 		return err;
+ 	}
+ 
+-	err = ethsw_port_set_tci(port_priv, &tci_cfg);
++	err = ethsw_port_set_pvid(port_priv, 0);
+ 	if (err)
+ 		return err;
+ 
+-- 
+1.9.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
