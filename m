@@ -1,296 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752105AbeC1HBI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:01:08 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:35193 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751933AbeC1HBE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:01:04 -0400
-X-Google-Smtp-Source: AG47ELupA8jG3/wCUhpA/EN5II4Ty+8IyDDkTia//xwtP8g1Z60zHHHBn+IVUQzwKuKunzpq3ZNzQpUlzvEEq9d8PtbKE2kTR3EA
+        id S1752175AbeC1HBu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:01:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59226 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750774AbeC1HBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 03:01:48 -0400
+Date: Wed, 28 Mar 2018 09:01:45 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Wei Wang <wei.w.wang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, pbonzini@redhat.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, huangzhichao@huawei.com
+Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
+Message-ID: <20180328070145.GB9275@dhcp22.suse.cz>
+References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
+ <1522031994-7246-2-git-send-email-wei.w.wang@intel.com>
+ <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
+ <5AB9E377.30900@intel.com>
+ <20180327063322.GW5652@dhcp22.suse.cz>
+ <20180327190635-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Date: Wed, 28 Mar 2018 00:01:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a1140ccc4eee83c05687391f9@google.com>
-Subject: general protection fault in account_system_index_time
-From: syzbot <syzbot+bab86ea70f6f74bd9199@syzkaller.appspotmail.com>
-To: fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327190635-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2S71DJp020886
 
-Hello,
+On Tue 27-03-18 19:07:22, Michael S. Tsirkin wrote:
+> On Tue, Mar 27, 2018 at 08:33:22AM +0200, Michal Hocko wrote:
+> > > > > + * The function itself might sleep so it cannot be called from atomic
+> > > > > + * contexts.
+> > > > I don't see how walk_free_mem_block() can sleep.
+> > > 
+> > > OK, it would be better to remove this sentence for the current version. But
+> > > I think we could probably keep it if we decide to add cond_resched() below.
+> > 
+> > The point of this sentence was to make any user aware that the function
+> > might sleep from the very begining rather than chase existing callers
+> > when we need to add cond_resched or sleep for any other reason. So I
+> > would rather keep it.
+> 
+> Let's say what it is then - "will be changed to sleep in the future".
 
-syzbot hit the following crash on upstream commit
-3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
-Linux 4.16-rc7
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=bab86ea70f6f74bd9199
-
-So far this crash happened 2 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4644092092874752
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4728333984071680
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6080200710291456
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
-compiler: gcc (GCC) 7.1.1 20170620
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bab86ea70f6f74bd9199@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-IPVS: ftp: loaded support on port[0] = 21
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 164097 Comm: � Not tainted 4.16.0-rc7+ #368
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
-RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149  
-[inline]
-RIP: 0010:account_system_index_time+0xdd/0x5e0 kernel/sched/cputime.c:172
-RSP: 0018:ffff8801db207930 EFLAGS: 00010006
-RAX: 0002810100028101 RBX: ffff8801b22d0300 RCX: 0000502020005047
-RDX: dffffc0000000000 RSI: 00000000000f4240 RDI: 0002810100028239
-RBP: ffff8801db207a10 R08: 0000000000028101 R09: fffffbfff0f6a2bb
-R10: ffff8801db2079e8 R11: fffffbfff0f6a2ba R12: 1ffff1003b640f29
-R13: 000000000002c5c0 R14: 00000000000f4240 R15: 0000000000000002
-FS:  00000000019fd880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000421d60 CR3: 00000001b1963003 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  account_system_time+0x7f/0xb0 kernel/sched/cputime.c:203
-  account_process_tick+0xd4/0x3e0 kernel/sched/cputime.c:502
-  update_process_times+0x23/0x60 kernel/time/timer.c:1634
-  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
-  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1194
-  __run_hrtimer kernel/time/hrtimer.c:1349 [inline]
-  __hrtimer_run_queues+0x39c/0xec0 kernel/time/hrtimer.c:1411
-  hrtimer_interrupt+0x2a5/0x6f0 kernel/time/hrtimer.c:1469
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
-  </IRQ>
-Code: ea 03 80 3c 02 00 0f 85 8b 04 00 00 48 8b 83 f8 06 00 00 48 ba 00 00  
-00 00 00 fc ff df 48 8d b8 38 01 00 00 48 89 f9 48 c1 e9 03 <0f> b6 14 11  
-48 89 f9 83 e1 07 38 ca 7f 08 84 d2 0f 85 90 03 00
-RIP: __read_once_size include/linux/compiler.h:188 [inline] RSP:  
-ffff8801db207930
-RIP: get_running_cputimer include/linux/sched/cputime.h:85 [inline] RSP:  
-ffff8801db207930
-RIP: account_group_system_time include/linux/sched/cputime.h:149 [inline]  
-RSP: ffff8801db207930
-RIP: account_system_index_time+0xdd/0x5e0 kernel/sched/cputime.c:172 RSP:  
-ffff8801db207930
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.16.0-rc7+ #368 Not tainted
-------------------------------------------------------
-rcu_sched/8 is trying to acquire lock:
-  ((console_sem).lock){..-.}, at: [<0000000011a525fb>]  
-down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-
-but task is already holding lock:
-  (&rq->lock){-.-.}, at: [<000000004637b5ed>] rq_lock_irqsave  
-kernel/sched/sched.h:1744 [inline]
-  (&rq->lock){-.-.}, at: [<000000004637b5ed>] load_balance+0xb10/0x34c0  
-kernel/sched/fair.c:8548
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1760 [inline]
-        task_fork_fair+0x7a/0x690 kernel/sched/fair.c:9471
-        sched_fork+0x450/0xc10 kernel/sched/core.c:2405
-        copy_process.part.38+0x17c9/0x4bd0 kernel/fork.c:1763
-        copy_process kernel/fork.c:1606 [inline]
-        _do_fork+0x1f7/0xf70 kernel/fork.c:2087
-        kernel_thread+0x34/0x40 kernel/fork.c:2146
-        rest_init+0x22/0xf0 init/main.c:403
-        start_kernel+0x7f1/0x819 init/main.c:717
-        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
-        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
-        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
-
--> #1 (&p->pi_lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xbc/0x15f0 kernel/sched/core.c:1989
-        wake_up_process+0x10/0x20 kernel/sched/core.c:2152
-        __up.isra.0+0x1cc/0x2c0 kernel/locking/semaphore.c:262
-        up+0x13b/0x1d0 kernel/locking/semaphore.c:187
-        __up_console_sem+0xb2/0x1a0 kernel/printk/printk.c:242
-        console_unlock+0x5af/0xfb0 kernel/printk/printk.c:2417
-        do_con_write+0x106e/0x1f70 drivers/tty/vt/vt.c:2433
-        con_write+0x25/0xb0 drivers/tty/vt/vt.c:2782
-        process_output_block drivers/tty/n_tty.c:579 [inline]
-        n_tty_write+0x5ef/0xec0 drivers/tty/n_tty.c:2308
-        do_tty_write drivers/tty/tty_io.c:958 [inline]
-        tty_write+0x3fa/0x840 drivers/tty/tty_io.c:1042
-        __vfs_write+0xef/0x970 fs/read_write.c:480
-        vfs_write+0x189/0x510 fs/read_write.c:544
-        SYSC_write fs/read_write.c:589 [inline]
-        SyS_write+0xef/0x220 fs/read_write.c:581
-        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
--> #0 ((console_sem).lock){..-.}:
-        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-        __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
-        console_trylock+0x15/0x70 kernel/printk/printk.c:2229
-        console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-        vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
-        vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
-        printk+0xaa/0xca kernel/printk/printk.c:1980
-        kasan_die_handler+0x31/0x3f arch/x86/mm/kasan_init_64.c:247
-        notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
-        __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
-        atomic_notifier_call_chain+0x77/0x140 kernel/notifier.c:193
-        notify_die+0x18c/0x280 kernel/notifier.c:549
-        do_general_protection+0x331/0x3e0 arch/x86/kernel/traps.c:558
-        general_protection+0x25/0x50 arch/x86/entry/entry_64.S:1150
-        task_group kernel/sched/sched.h:1203 [inline]
-        can_migrate_task+0xe2/0x1c20 kernel/sched/fair.c:7102
-        detach_tasks kernel/sched/fair.c:7251 [inline]
-        load_balance+0xdab/0x34c0 kernel/sched/fair.c:8555
-        idle_balance kernel/sched/fair.c:8837 [inline]
-        pick_next_task_fair+0xe03/0x1630 kernel/sched/fair.c:6757
-        pick_next_task kernel/sched/core.c:3286 [inline]
-        __schedule+0x4fc/0x1ec0 kernel/sched/core.c:3414
-        schedule+0xf5/0x430 kernel/sched/core.c:3499
-        schedule_timeout+0x118/0x230 kernel/time/timer.c:1801
-        rcu_gp_kthread+0x9dd/0x18e0 kernel/rcu/tree.c:2230
-        kthread+0x33c/0x400 kernel/kthread.c:238
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-
-other info that might help us debug this:
-
-Chain exists of:
-   (console_sem).lock --> &p->pi_lock --> &rq->lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&rq->lock);
-                                lock(&p->pi_lock);
-                                lock(&rq->lock);
-   lock((console_sem).lock);
-
-  *** DEADLOCK ***
-
-3 locks held by rcu_sched/8:
-  #0:  (rcu_read_lock){....}, at: [<0000000024de6645>]  
-rcu_read_lock+0x0/0x70 include/linux/compiler.h:188
-  #1:  (&rq->lock){-.-.}, at: [<000000004637b5ed>] rq_lock_irqsave  
-kernel/sched/sched.h:1744 [inline]
-  #1:  (&rq->lock){-.-.}, at: [<000000004637b5ed>] load_balance+0xb10/0x34c0  
-kernel/sched/fair.c:8548
-  #2:  (rcu_read_lock){....}, at: [<00000000c60bf25c>] rcu_read_unlock  
-include/linux/rcupdate.h:682 [inline]
-  #2:  (rcu_read_lock){....}, at: [<00000000c60bf25c>]  
-atomic_notifier_call_chain+0x0/0x140 kernel/notifier.c:184
-
-stack backtrace:
-CPU: 1 PID: 8 Comm: rcu_sched Not tainted 4.16.0-rc7+ #368
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2417 [inline]
-  __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-  __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
-  console_trylock+0x15/0x70 kernel/printk/printk.c:2229
-  console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-  vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
-  vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
-  printk+0xaa/0xca kernel/printk/printk.c:1980
-  kasan_die_handler+0x31/0x3f arch/x86/mm/kasan_init_64.c:247
-  notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
-  __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
-  atomic_notifier_call_chain+0x77/0x140 kernel/notifier.c:193
-  notify_die+0x18c/0x280 kernel/notifier.c:549
-  do_general_protection+0x331/0x3e0 arch/x86/kernel/traps.c:558
-  general_protection+0x25/0x50 arch/x86/entry/entry_64.S:1150
-RIP: 0010:task_group kernel/sched/sched.h:1203 [inline]
-RIP: 0010:can_migrate_task+0xe2/0x1c20 kernel/sched/fair.c:7102
-RSP: 0018:ffff8801d9af6c88 EFLAGS: 00010006
-RAX: dffffc0000000000 RBX: 0002810100028101 RCX: ffff8801d9af7098
-RDX: ffff8801d9af6d30 RSI: 000050202000503c RDI: 00028101000281e1
-RBP: ffff8801d9af6d58 R08: 1ffff1003b35ed9a R09: ffff88021fff8048
-R10: 0000000000000001 R11: ffff88021fff805d R12: ffff8801b22d0300
-R13: ffffffff87d5df20 R14: ffff8801b22d0300 R15: ffff8801b22d03f0
-  detach_tasks kernel/sched/fair.c:7251 [inline]
-  load_balance+0xdab/0x34c0 kernel/sched/fair.c:8555
-  idle_balance kernel/sched/fair.c:8837 [inline]
-  pick_next_task_fair+0xe03/0x1630 kernel/sched/fair.c:6757
-  pick_next_task kernel/sched/core.c:3286 [inline]
-  __schedule+0x4fc/0x1ec0 kernel/sched/core.c:3414
-  schedule+0xf5/0x430 kernel/sched/core.c:3499
-  schedule_timeout+0x118/0x230 kernel/time/timer.c:1801
-  rcu_gp_kthread+0x9dd/0x18e0 kernel/rcu/tree.c:2230
-  ? __schedule+0x1
-Lost 10 message(s)!
----[ end trace 948581b189460493 ]---
-general protection fault: 0000 [#2] SMP KASAN
-Dumping ftrace buffer:
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Do we really want to describe the precise implementation in the
+documentation? I thought the main purpose of the documentation is to
+describe the _contract_. If I am curious about the implementation I can
+look at the code. As I've said earlier in this patchset lifetime. This
+interface is rather dangerous because we are exposing guts of our
+internal data structures. So we better set expectations of what can and
+cannot be done right from the beginning. I definitely do not want
+somebody to simply look at the code and see that the interface is
+sleepable and abuse that fact.
+-- 
+Michal Hocko
+SUSE Labs
