@@ -1,59 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeC1P2f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:28:35 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37410 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753511AbeC1P2e (ORCPT
+        id S1753901AbeC1P37 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:29:59 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44683 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753511AbeC1P36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:28:34 -0400
-X-Google-Smtp-Source: AIpwx48fKAXQ+dxYyWX9jaxErIASJ4KETBYkQJ9V1CTUpr0uZ1CSeQgYPT9F89xRKspphxdrpRhAHQ==
-Date: Wed, 28 Mar 2018 16:28:30 +0100
+        Wed, 28 Mar 2018 11:29:58 -0400
+X-Google-Smtp-Source: AIpwx4+53CJ0X5QI1Qy4GiapQ0zwl6wlESHyf9rFcsYZ6nPVaglUN4/zi0OIESs8wPx3J3PdEnGcfA==
+Date: Wed, 28 Mar 2018 16:29:55 +0100
 From: Lee Jones <lee.jones@linaro.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Andrey Gusakov <andrey.gusakov@cogentembedded.com>, jdelvare@suse.com,
-        cphealy@gmail.com, andrew.smirnov@gmail.com,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] hwmon: MC13783: add uid and die temperature sensor
- inputs
-Message-ID: <20180328152830.nx6dsce4bm43e5wl@dell>
-References: <1522160389-18822-1-git-send-email-andrey.gusakov@cogentembedded.com>
- <ecb9f724-de98-5435-135c-2ca2661f5ee6@roeck-us.net>
- <20180328100606.huvblelpdsbzx3w7@dell>
- <66c664db-c4d8-f2bc-e34c-2480509d0d95@roeck-us.net>
+To: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: LINUX-KERNEL <linux-kernel@vger.kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>
+Subject: Re: [PATCH V1] mfd: da9062: use core helper regmap_reg_range macros
+Message-ID: <20180328152955.qrbga5fgo3ls6eje@dell>
+References: <20180328110612.1FCAD3FACC@swsrvapps-01.diasemi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <66c664db-c4d8-f2bc-e34c-2480509d0d95@roeck-us.net>
+In-Reply-To: <20180328110612.1FCAD3FACC@swsrvapps-01.diasemi.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018, Guenter Roeck wrote:
+On Wed, 28 Mar 2018, Steve Twiss wrote:
 
-> On 03/28/2018 03:06 AM, Lee Jones wrote:
-> > On Tue, 27 Mar 2018, Guenter Roeck wrote:
-> > 
-> > > On 03/27/2018 07:19 AM, Andrey Gusakov wrote:
-> > > > The uid and die temperature can be read out on the ADIN7 using
-> > > > input mux. Map uid and die temperature sensor to channels 16
-> > > > and 17.
-> > > > 
-> > > > Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-> > > 
-> > > Applied to hwmon-next.
-> > 
-> > You've applied changes to a subsystem without an appropriate
-> > Maintainer Ack?
-> > 
+> From: Steve Twiss <stwiss.opensource@diasemi.com>
 > 
-> Me blind. I didn't realize that part of it was in mfd. Now dropped, and sorry.
+> Replace multi-line entries in the regmap_range arrays with single
+> line macros: regmap_reg_range(). This will leave the static structure
+> array entries for regmap_range unaltered. It will significantly reduce
+> the line count in the DA9062/61 core file.
+> 
+> Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+> 
+> ---
+> This patch applies against linux-next and v4.16-rc7
+> 
+> Hi,
+> 
+> This is a cosmetic tidy up operation. It reduces the line-count in the
+> file by over 200.
+> 
+> It will replace regmap_range[] array entries, such as this: 
+> {
+>   .range_min = DA9062AA_DEVICE_ID,
+>   .range_max = DA9062AA_CONFIG_ID,
+> },
+> 
+> with a single line,
+>  regmap_reg_range(DA9062AA_DEVICE_ID, DA9062AA_CONFIG_ID),
+> 
+> Regards,
+> Steve Twiss, Dialog Semiconductor
+> 
+> 
+>  drivers/mfd/da9062-core.c | 462 ++++++++++++----------------------------------
+>  1 file changed, 114 insertions(+), 348 deletions(-)
 
-Patch looks okay.
+Nice!
 
-Do you want me to apply it and send you a PR or vise versa?
+Applied, thanks.
 
 -- 
 Lee Jones [李琼斯]
