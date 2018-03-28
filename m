@@ -1,141 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeC1BJF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 21:09:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47396 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752704AbeC1BJD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 21:09:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A52F601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pelcan@codeaurora.org
-Subject: Re: [PATCH V2] arm64: tlbflush: avoid writing RES0 bits
-To: shankerd@codeaurora.org, Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, Thomas Speier <tspeier@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1522120877-9136-1-git-send-email-pelcan@codeaurora.org>
- <985a0edd-e388-dade-8824-30cc58a236f3@arm.com>
- <56b560a5-6e57-8e01-32ca-9d3c95ccd2e5@codeaurora.org>
- <20180327173613.GI18435@arm.com>
- <96f894bb-4855-a77f-3fd1-c8a2878faabb@codeaurora.org>
-From: Philip Elcan <pelcan@codeaurora.org>
-Message-ID: <d141573d-aa93-20a5-3982-abc70db088b6@codeaurora.org>
-Date: Tue, 27 Mar 2018 21:08:58 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752811AbeC1BO0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 21:14:26 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6706 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752594AbeC1BOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 21:14:25 -0400
+Subject: Re: [V9fs-developer] [PATCH] fs/9p: don't set SB_NOATIME by default
+To: Andrew Morton <akpm@linux-foundation.org>
+References: <5AB9A377.6080906@huawei.com>
+ <20180327161529.f7d22a36ffc92dc1a3e15d92@linux-foundation.org>
+CC: Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
+        <linux-kernel@vger.kernel.org>, <v9fs-developer@lists.sourceforge.net>,
+        Greg Kurz <groug@kaod.org>
+From: jiangyiwen <jiangyiwen@huawei.com>
+Message-ID: <5ABAEC64.1060003@huawei.com>
+Date: Wed, 28 Mar 2018 09:14:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <96f894bb-4855-a77f-3fd1-c8a2878faabb@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180327161529.f7d22a36ffc92dc1a3e15d92@linux-foundation.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.16.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/27/2018 9:03 PM, Shanker Donthineni wrote:
-> Hi Will,
+On 2018/3/28 7:15, Andrew Morton wrote:
+> On Tue, 27 Mar 2018 09:50:47 +0800 jiangyiwen <jiangyiwen@huawei.com> wrote:
 > 
-> On 03/27/2018 12:36 PM, Will Deacon wrote:
->> Hi Shanker,
+>> User use some syscall, for example mmap(v9fs_file_mmap), it will not
+>> update atime even if user's mnt_flags without MNT_NOATIME, because
+>> v9fs default set SB_NOATIME in v9fs_set_super.
 >>
->> On Tue, Mar 27, 2018 at 09:53:16AM -0500, Shanker Donthineni wrote:
->>> On 03/27/2018 06:34 AM, Robin Murphy wrote:
->>>> On 27/03/18 04:21, Philip Elcan wrote:
->>>>> Several of the bits of the TLBI register operand are RES0 per the ARM
->>>>> ARM, so TLBI operations should avoid writing non-zero values to these
->>>>> bits.
->>>>>
->>>>> This patch adds a macro __TLBI_VADDR(addr, asid) that creates the
->>>>> operand register in the correct format and honors the RES0 bits.
->>>>>
->>>>> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
->>>>> ---
->>>>>   arch/arm64/include/asm/tlbflush.h | 23 ++++++++++++++++-------
->>>>>   1 file changed, 16 insertions(+), 7 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->>>>> index 9e82dd7..b1205e9 100644
->>>>> --- a/arch/arm64/include/asm/tlbflush.h
->>>>> +++ b/arch/arm64/include/asm/tlbflush.h
->>>>> @@ -60,6 +60,15 @@
->>>>>           __tlbi(op, (arg) | USER_ASID_FLAG);                \
->>>>>   } while (0)
->>>>>   +/* This macro creates a properly formatted VA operand for the TLBI */
->>>>> +#define __TLBI_VADDR(addr, asid)                \
->>>>> +    ({                            \
->>>>> +        unsigned long __ta = (addr) >> 12;        \
->>>>> +        __ta &= GENMASK_ULL(43, 0);            \
->>>>> +        __ta |= (unsigned long)(asid) << 48;        \
->>>>> +        __ta;                        \
->>>>> +    })
->>>>
->>>> I'd be inclined to make this a static inline function rather than a
->>>> macro, since it doesn't need to do any wacky type-dodging, but either
->>>> way the overall change now looks appropriate;
->>>>
->>>> Acked-by: Robin Murphy <robin.murphy@arm.com>
->>>>
->>>
->>> Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
+>> For supporting access time is updated when user mount with relatime,
+>> we should not set SB_NOATIME by default.
 >>
->> [...]
+>> ...
 >>
->>>>> @@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
->>>>>           return;
->>>>>       }
->>>>>   -    start = asid | (start >> 12);
->>>>> -    end = asid | (end >> 12);
->>>>> +    start = __TLBI_VADDR(start, asid);
->>>>> +    end = __TLBI_VADDR(end, asid);
+>> --- a/fs/9p/vfs_super.c
+>> +++ b/fs/9p/vfs_super.c
+>> @@ -94,7 +94,7 @@ static int v9fs_set_super(struct super_block *s, void *data)
+>>  	if (v9ses->cache)
+>>  		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
 >>
->> Can you test this bit too, please? ;)
+>> -	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC | SB_NOATIME;
+>> +	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
+>>  	if (!v9ses->cache)
+>>  		sb->s_flags |= SB_SYNCHRONOUS;
 >>
 > 
-> I've verified the basic boot functionality on QDF2400 platform. But I can see now
-> after your comments, it leads to TLB conflicts because of ASID is truncated to zero
-> due to two times 48bit shift.     
+> So strictly speaking, this is a non-backward-compatible change, yes?
 > 
-> Thanks for catching this one.
-> 
-> @@ -146,7 +155,7 @@ static inline void __flush_tlb_range(structvm_area_struct *
->                                      unsigned long start, unsigned long end,
->                                      bool last_level)
-> {
-> -       unsigned long asid = ASID(vma->vm_mm) << 48;
-> +       unsigned long asid = ASID(vma->vm_mm);
->         unsigned long addr;
->  
->         if ((end - start) > MAX_TLB_RANGE) {
-> @@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct
-> vm_area_struct *
->                 return;
->         }
-> 
-> -       start = asid | (start >> 12);
-> -       end = asid | (end >> 12);
-> +       start = __TLBI_VADDR(start, asid);
-> +       end = __TLBI_VADDR(end, asid);
-> 
-> 
->> Will
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
+> Please describe the circumstances under which an existing user might be
+> harmed by this.  I *think* such harm will occur if the user was already
+> using 'mount -o relatime', yes?  They previously weren't getting
+> relatime treatment, but now they will, and things will be a little slower.
 > 
 
-Thanks for catching that.  I'll address with a v3 patch.
+Yes, after using this change, if user was already using 'mount -o relatime',
+their atime will be changed, and some operations will result in slower
+performance, but I think user should use 'noatime' option if they hope
+their file's atime is not updated and user should not depend on the
+internal implement.
 
-Philip
-
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> If correct, that sounds acceptable.
+> 
+> .
+> 
