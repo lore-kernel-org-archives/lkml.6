@@ -1,225 +1,1109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753314AbeC1Ux7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 16:53:59 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42527 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753228AbeC1Ux4 (ORCPT
+        id S1753343AbeC1VAx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 17:00:53 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:34267 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753136AbeC1VAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 16:53:56 -0400
-X-Google-Smtp-Source: AIpwx4/rrA2l9jDm3Oc7fTCtXT41pqhIA95guGKJRP3SVSgagqyTQziBaQuHu3g3Wte8ct1czQ9O9g18jwFc3VkW9pk=
+        Wed, 28 Mar 2018 17:00:51 -0400
+X-Google-Smtp-Source: AIpwx48ccvc8gRSxb1a3loY9jfRLHUUAVbeQBPR11DdsgnTKOrp/CaPhOGMgp23TanV2dCvEjOwFIQ==
+Date: Wed, 28 Mar 2018 23:00:45 +0200
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, Cameron Gutman <aicommander@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v7 1/2] HID: add driver for Valve Steam Controller
+Message-ID: <20180328210045.GA1683@casa>
+References: <20180325160703.15997-1-rodrigorivascosta@gmail.com>
+ <20180325160703.15997-2-rodrigorivascosta@gmail.com>
+ <CAO-hwJKRuQhSh+_X=R_H32a_VxYm079cu1oUEsjO8iK4mC0goA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180328202321.GA21664@roeck-us.net>
-References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
- <1522250043-8065-2-git-send-email-tharvey@gateworks.com> <20180328162416.GB25325@roeck-us.net>
- <CAJ+vNU2aUN4ME3+RA3DNPO75O6vPBcQpuRSfQJ4_Ns_zQAtCCQ@mail.gmail.com> <20180328202321.GA21664@roeck-us.net>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Wed, 28 Mar 2018 13:53:53 -0700
-Message-ID: <CAJ+vNU1cJFYTv3N6TZQ3k-VQw=0jxHEntpMxeSAOhWAb_ap81g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: Add Gateworks System Controller bindings
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO-hwJKRuQhSh+_X=R_H32a_VxYm079cu1oUEsjO8iK4mC0goA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 1:23 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Wed, Mar 28, 2018 at 12:17:34PM -0700, Tim Harvey wrote:
->> On Wed, Mar 28, 2018 at 9:24 AM, Guenter Roeck <linux@roeck-us.net> wrote:
->> > On Wed, Mar 28, 2018 at 08:14:00AM -0700, Tim Harvey wrote:
->> >> This patch adds documentation of device-tree bindings for the
->> >> Gateworks System Controller (GSC).
->> >>
->> >> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
->> >> ---
->> >> v3:
->> >>  - replaced _ with -
->> >>  - remove input bindings
->> >>  - added full description of hwmon
->> >>  - fix unit address of hwmon child nodes
->> >>
->> >> ---
->> >>  .../devicetree/bindings/mfd/gateworks-gsc.txt      | 135 +++++++++++++++++++++
->> >>  1 file changed, 135 insertions(+)
->> >>  create mode 100644 Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
->> >>
->> >> diff --git a/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
->> >> new file mode 100644
->> >> index 0000000..8f530ed
->> >> --- /dev/null
->> >> +++ b/Documentation/devicetree/bindings/mfd/gateworks-gsc.txt
->> >> @@ -0,0 +1,135 @@
->> >> +Gateworks System Controller multi-function device
->> >> +
->> >> +The GSC is a Multifunction I2C slave device with the following submodules:
->> >> +- WDT
->> >> +- GPIO
->> >> +- Pushbutton controller
->> >> +- HWMON
->> >> +
->> >> +Required properties:
->> >> +- compatible : Must be "gw,gsc"
->> >> +- reg: I2C address of the device
->> >> +- interrupts: interrupt triggered by GSC_IRQ# signal
->> >> +- interrupt-parent: Interrupt controller GSC is connected to
->> >> +- #interrupt-cells: should be <1>, index of the interrupt within the
->> >> +  controller, in accordance with the "one cell" variant of
->> >> +  <devicetree/bindings/interrupt-controller/interrupt.txt>
->> >> +
->> >> +Optional nodes:
->> >> +* watchdog:
->> >> +The GSC provides a Watchdog monitor which can power cycle the board's
->> >> +primary power supply on most board models when tripped.
->> >> +
->> >> +Required watchdog properties:
->> >> +- compatible: must be "gw,gsc-watchdog"
->> >> +
->> >> +* hwmon:
->> >> +The GSC provides a set of Analog to Digitcal Converter (ADC) pins used for
->> >> +temperature and/or voltage monitoring.
->> >> +
->> >> +Required hwmon properties:
->> >> +- compatible: must be "gw,gsc-hwmon"
->> >> +
->> >
->> > "hwmon" is a very Linux specific term. It might make sense to find a more
->> > generic term.
->>
->> The 'hwmon' driver supports child nodes that fall into the following category:
->>  - temperature sensor (GSC internal temperature sensor - i2c registers
->> returns value in C*10)
->>  - voltage rails (two types here; cooked: i2c registers return
->> pre-scaled value in mV), raw: i2c registers return a raw ADC value
->> that must be scaled based on ADC internal ref voltage and resolution
->> and adjusted for a voltage divider to convert to mV
->>  - fan setpoints (I'll explain these below)
->>
->> I called the node 'gw,gsc-hwmon' because the driver fits into the
->> 'hwmon' API. Isn't that appropriate here for the driver compatible
->> string?
->>
->
-> Devicetree properties are supposed to be OS independent.
->
->> >
->> >> +Optional hwmon properties:
->> >> +- gw,reference-voltage: ADC reference voltage (mV) used in scaling raw ADCs
->> >
->> > AFAIK devicetree likes to specify voltages in uV.
->>
->> There are currently plenty of dt props specified in mV (grep -r mV
->> Documentation/devicetree/bindings/).
->>
->
-> "But so many others are speeding, why do I get a ticket ?"
->
-> Please discuss with Rob.
+On Mon, Mar 26, 2018 at 11:20:30AM +0200, Benjamin Tissoires wrote:
+> Hi Rodrigo,
+> 
+> few comments inlined.
+> 
+> On Sun, Mar 25, 2018 at 6:07 PM, Rodrigo Rivas Costa
+> <rodrigorivascosta@gmail.com> wrote:
+> > There are two ways to connect the Steam Controller: directly to the USB
+> > or with the USB wireless adapter.  Both methods are similar, but the
+> > wireless adapter can connect up to 4 devices at the same time.
+> >
+> > The wired device will appear as 3 interfaces: a virtual mouse, a virtual
+> > keyboard and a custom HID device.
+> >
+> > The wireless device will appear as 5 interfaces: a virtual keyboard and
+> > 4 custom HID devices, that will remain silent until a device is actually
+> > connected.
+> >
+> > The custom HID device has a report descriptor with all vendor specific
+> > usages, so the hid-generic is not very useful. In a PC/SteamBox Valve
+> > Steam Client provices a software translation by using hidraw and a
+> > creates a uinput virtual gamepad and XTest keyboard/mouse.
+> >
+> > This driver intercepts the hidraw usage, so it can get out of the way
+> > when the Steam Client is in use.
+> >
+> > Signed-off-by: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+> > ---
+> >  drivers/hid/Kconfig     |   8 +
+> >  drivers/hid/Makefile    |   1 +
+> >  drivers/hid/hid-ids.h   |   4 +
+> >  drivers/hid/hid-steam.c | 840 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/hid.h     |   1 +
+> >  5 files changed, 854 insertions(+)
+> >  create mode 100644 drivers/hid/hid-steam.c
+> >
+> > diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> > index 779c5ae47f36..de5f4849bfe4 100644
+> > --- a/drivers/hid/Kconfig
+> > +++ b/drivers/hid/Kconfig
+> > @@ -811,6 +811,14 @@ config HID_SPEEDLINK
+> >         ---help---
+> >         Support for Speedlink Vicious and Divine Cezanne mouse.
+> >
+> > +config HID_STEAM
+> > +       tristate "Steam Controller support"
+> > +       depends on HID
+> > +       ---help---
+> > +       Say Y here if you have a Steam Controller if you want to use it
+> > +       without running the Steam Client. It supports both the wired and
+> > +       the wireless adaptor.
+> > +
+> >  config HID_STEELSERIES
+> >         tristate "Steelseries SRW-S1 steering wheel support"
+> >         depends on HID
+> > diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> > index 235bd2a7b333..e146c257285a 100644
+> > --- a/drivers/hid/Makefile
+> > +++ b/drivers/hid/Makefile
+> > @@ -94,6 +94,7 @@ obj-$(CONFIG_HID_SAMSUNG)     += hid-samsung.o
+> >  obj-$(CONFIG_HID_SMARTJOYPLUS) += hid-sjoy.o
+> >  obj-$(CONFIG_HID_SONY)         += hid-sony.o
+> >  obj-$(CONFIG_HID_SPEEDLINK)    += hid-speedlink.o
+> > +obj-$(CONFIG_HID_STEAM)                += hid-steam.o
+> >  obj-$(CONFIG_HID_STEELSERIES)  += hid-steelseries.o
+> >  obj-$(CONFIG_HID_SUNPLUS)      += hid-sunplus.o
+> >  obj-$(CONFIG_HID_GREENASIA)    += hid-gaff.o
+> > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> > index a0baa5ba5b84..3014991e5d4b 100644
+> > --- a/drivers/hid/hid-ids.h
+> > +++ b/drivers/hid/hid-ids.h
+> > @@ -987,6 +987,10 @@
+> >  #define USB_VENDOR_ID_STANTUM_SITRONIX         0x1403
+> >  #define USB_DEVICE_ID_MTP_SITRONIX             0x5001
+> >
+> > +#define USB_VENDOR_ID_VALVE                    0x28de
+> > +#define USB_DEVICE_ID_STEAM_CONTROLLER         0x1102
+> > +#define USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS        0x1142
+> > +
+> >  #define USB_VENDOR_ID_STEELSERIES      0x1038
+> >  #define USB_DEVICE_ID_STEELSERIES_SRWS1        0x1410
+> >
+> > diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
+> > new file mode 100644
+> > index 000000000000..3504d2e2d0e5
+> > --- /dev/null
+> > +++ b/drivers/hid/hid-steam.c
+> > @@ -0,0 +1,840 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * HID driver for Valve Steam Controller
+> > + *
+> > + * Copyright (c) 2018 Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+> > + *
+> > + * Supports both the wired and wireless interfaces.
+> > + *
+> > + * This controller has a builtin emulation of mouse and keyboard: the right pad
+> > + * can be used as a mouse, the shoulder buttons are mouse buttons, A and B
+> > + * buttons are ENTER and ESCAPE, and so on. This is implemented as additional
+> > + * HID interfaces.
+> > + *
+> > + * This is known as the "lizard mode", because apparently lizards like to use
+> > + * the computer from the coach, without a proper mouse and keyboard.
+> > + *
+> > + * This driver will disable the lizard mode when the input device is opened
+> > + * and re-enable it when the input device is closed, so as not to break user
+> > + * mode behaviour. The lizard_mode parameter can be used to change that.
+> > + *
+> > + * There are a few user space applications (notably Steam Client) that use
+> > + * the hidraw interface directly to create input devices (XTest, uinput...).
+> > + * In order to avoid breaking them this driver creates a layered hidraw device,
+> > + * so it can detect when the client is running and then:
+> > + *  - it will not send any command to the controller.
+> > + *  - this input device will be disabled, to avoid double input of the same
+> > + *    user action.
+> > + *
+> > + * For additional functions, such as changing the right-pad margin or switching
+> > + * the led, you can use the user-space tool at:
+> > + *
+> > + *   https://github.com/rodrigorc/steamctrl
+> > + */
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/input.h>
+> > +#include <linux/hid.h>
+> > +#include <linux/module.h>
+> > +#include <linux/workqueue.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/rcupdate.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/power_supply.h>
+> > +#include "hid-ids.h"
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_AUTHOR("Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>");
+> > +
+> > +static int lizard_mode = 1;
+> > +module_param(lizard_mode, int, 0644);
+> > +MODULE_PARM_DESC(lizard_mode,
+> > +       "Mouse and keyboard emulation (0 = always disabled; "
+> > +       "1 (default): enabled when gamepad is not in use; "
+> > +       "2: let userspace decide)");
+> 
+> As mentioned in 0/2, I think a boolean might be better. Probably
+> rename the parameter to something else more explicit too (like
+> 'control_lizard_mode').
+> Also you might want to hook up to changes to this values so users can
+> control it better. But this can be added in a later patch.
 
-Yes - hoping for feedback on mV vs uV as well as naming of hwmon mfd child node.
+As I replied to your previous comment, I really like the options 
+enable_lizard_mode=true/false. If you add to the mix the no_magic,
+then you have the current situation.
+I admit that it can be confusing to the user, and that the no_magic may
+not have a practical use case. So I'd stick to the enable/disable for
+now, if you agree.
 
->
->> >
->> >> +- gw,resolution: ADC resolution (ie 4096) used in scaling raw ADCs
->> >> +
->> >
->> > 4096 what ?
->>
->> reference-voltage and resolution are used to scale the values from the
->> nodes that report a raw ADC value:
->>
->> V = Vadc * (reference-voltage / resolution)
->>
->> I can provide that in bits if it makes more sense? I can also hard
->
-> Yes, I think that would make more sense, and please describe what it means.
->
->> code both the resolution and the vref in the hwmon driver and remove
->> it from dt as currently the only GSC that uses raw ADC values is 12bit
->> with 2.5V ref.
->>
->
-> That would be even better.
->
->> >
->> >> +Each hwmon child node defines an ADC input on the chip which the GSC may
->> >> +report cooked values (ie temperature sensor based on thermister), raw values,
->> >> +(ie voltage rail with a pre-scaling resistor divider), or a fan controller
->> >> +setpoint.
->> >> +
->> >> +Required hwmon child properties:
->> >> +- type: one of the following ADC types:
->> >> +  "gw,hwmon-temperature" - reports temperature in C*10
->> >> +  "gw,hwmon-voltage" - reports a pre-scaled voltage value
->> >> +  "gw,hwmon-voltage-raw" - reports a raw ADC that is scaled with
->> >> +       vreference, resolution, and optional resistor divider
->> >> +  "gw,hwmon-fan" - a fan temperature setpoint in C*10
->> >
->> > What is a "fan temperature setpoint" ?
->> >
->>
->> The GSC supports a fan controller which drives a PWM signal to vary
->> the speed of a fan based on the GSC internal temperature sensor. The
->> FAN controller has 6 setpoints each having a fixed PWM duty-cycle but
->> the temperature at which those setpoints kick in can be varies via
->> registers at the 0x29 slave address (same slave address as the
->> temperature sensor and voltage inputs which is why I have it in the
->> hwmon driver):
->>
->> fan0_point - 50% PWM (default 300)
->> fan1_point - 60% PWM (default 330)
->> fan2_point - 70% PWM (default 360)
->> fan3_point - 80% PWM (default 390)
->> fan4_point - 90% PWM (default 420)
->> fan5_point - 100% PWM (default 450)
->>
->> The values are C/10 thus if the internal GSC temp sensor is below 30C
->> the fan output will be 0% duty cycle and if it hits 30C it will go to
->> 50% until it hits 60% at 33C etc.
->>
-> Please do not define your own scaling factors. pwm values are 0..255,
-> and temperatures are in milli-degrees C.
->
->> That is the hardware implementation that I'm trying to abstract and
->> define here. You pointed out the fact that the fan*_input ABI is
->> read-only fan PWM and I see that now. What do you suggest I use for
->
-> No, it isn't. It is the fan speed in RPM.
->
->> this feature I'm trying to implement driver support for?
->>
->
-> pwm[1-*]_auto_point[1-*]_pwm
-> pwm[1-*]_auto_point[1-*]_temp
-> pwm[1-*]_auto_point[1-*]_temp_hyst
->
-> may be relevant. From the context, something like
->
-> pwm1_auto_point1_pwm    read-only, set to 128
-> pwm1_auto_point1_temp   30000
-> pwm1_auto_point2_pwm    read-only, set to 153
-> pwm1_auto_point2_temp   33000
-> pwm1_auto_point3_pwm    read-only, set to 179
-> pwm1_auto_point3_temp   36000
-> pwm1_auto_point4_pwm    read-only, set to 204
-> pwm1_auto_point4_temp   39000
-> pwm1_auto_point5_pwm    read-only, set to 230
-> pwm1_auto_point5_temp   42000
-> pwm1_auto_point6_pwm    read-only, set to 255
-> pwm1_auto_point6_temp   45000
->
-> might make sense.
+> > +
+> > +#define STEAM_QUIRK_WIRELESS           BIT(0)
+> > +
+> > +#define STEAM_SERIAL_LEN 10
+> > +/* Touch pads are 40 mm in diameter and 65535 units */
+> > +#define STEAM_PAD_RESOLUTION 1638
+> > +/* Trigger runs are about 5 mm and 256 units */
+> > +#define STEAM_TRIGGER_RESOLUTION 51
+> > +/* Joystick runs are about 5 mm and 256 units */
+> > +#define STEAM_JOYSTICK_RESOLUTION 51
+> > +
+> > +#define STEAM_PAD_FUZZ 256
+> > +
+> > +struct steam_device {
+> > +       spinlock_t lock;
+> > +       struct hid_device *hdev, *client_hdev;
+> > +       struct mutex mutex;
+> > +       bool client_opened, input_opened;
+> > +       struct input_dev __rcu *input;
+> > +       unsigned long quirks;
+> > +       struct work_struct work_connect;
+> > +       bool connected;
+> > +       char serial_no[STEAM_SERIAL_LEN + 1];
+> > +};
+> > +
+> > +static int steam_recv_report(struct steam_device *steam,
+> > +               u8 *data, int size)
+> > +{
+> > +       struct hid_report *r;
+> > +       u8 *buf;
+> > +       int ret;
+> > +
+> > +       r = steam->hdev->report_enum[HID_FEATURE_REPORT].report_id_hash[0];
+> > +       if (hid_report_len(r) < 64)
+> > +               return -EINVAL;
+> > +
+> > +       buf = hid_alloc_report_buf(r, GFP_KERNEL);
+> > +       if (!buf)
+> > +               return -ENOMEM;
+> > +
+> > +       /*
+> > +        * The report ID is always 0, so strip the first byte from the output.
+> > +        * hid_report_len() is not counting the report ID, so +1 to the length
+> > +        * or else we get a EOVERFLOW. We are safe from a buffer overflow
+> > +        * because hid_alloc_report_buf() allocates +7 bytes.
+> > +        */
+> > +       ret = hid_hw_raw_request(steam->hdev, 0x00,
+> > +                       buf, hid_report_len(r) + 1,
+> > +                       HID_FEATURE_REPORT, HID_REQ_GET_REPORT);
+> > +       if (ret > 0)
+> > +               memcpy(data, buf + 1, min(size, ret - 1));
+> > +       kfree(buf);
+> > +       return ret;
+> > +}
+> > +
+> > +static int steam_send_report(struct steam_device *steam,
+> > +               u8 *cmd, int size)
+> > +{
+> > +       struct hid_report *r;
+> > +       u8 *buf;
+> > +       unsigned int retries = 10;
+> > +       int ret;
+> > +
+> > +       r = steam->hdev->report_enum[HID_FEATURE_REPORT].report_id_hash[0];
+> > +       if (hid_report_len(r) < 64)
+> > +               return -EINVAL;
+> > +
+> > +       buf = hid_alloc_report_buf(r, GFP_KERNEL);
+> > +       if (!buf)
+> > +               return -ENOMEM;
+> > +
+> > +       /* The report ID is always 0 */
+> > +       memcpy(buf + 1, cmd, size);
+> > +
+> > +       /*
+> > +        * Sometimes the wireless controller fails with EPIPE
+> > +        * when sending a feature report.
+> > +        * Doing a HID_REQ_GET_REPORT and waiting for a while
+> > +        * seems to fix that.
+> > +        */
+> > +       do {
+> > +               ret = hid_hw_raw_request(steam->hdev, 0,
+> > +                               buf, size + 1,
+> > +                               HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
+> > +               if (ret != -EPIPE)
+> > +                       break;
+> > +               steam_recv_report(steam, NULL, 0);
+> > +               msleep(50);
+> > +       } while (--retries);
+> > +
+> > +       kfree(buf);
+> > +       if (ret < 0)
+> > +               hid_err(steam->hdev, "%s: error %d (%*ph)\n", __func__,
+> > +                               ret, size, cmd);
+> > +       return ret;
+> > +}
+> > +
+> > +static inline int steam_send_report_byte(struct steam_device *steam, u8 cmd)
+> > +{
+> > +       return steam_send_report(steam, &cmd, 1);
+> > +}
+> > +
+> > +static inline int steam_write_register(struct steam_device *steam,
+> > +               u8 reg, u16 value)
+> > +{
+> > +       u8 cmd[] = {0x87, 0x03, reg, value & 0xFF, value >> 8};
+> > +
+> > +       return steam_send_report(steam, cmd, sizeof(cmd));
+> > +}
+> > +
+> > +static int steam_get_serial(struct steam_device *steam)
+> > +{
+> > +       /*
+> > +        * Send: 0xae 0x15 0x01
+> > +        * Recv: 0xae 0x15 0x01 serialnumber (10 chars)
+> > +        */
+> > +       int ret;
+> > +       u8 cmd[] = {0xae, 0x15, 0x01};
+> > +       u8 reply[3 + STEAM_SERIAL_LEN + 1];
+> > +
+> > +       ret = steam_send_report(steam, cmd, sizeof(cmd));
+> > +       if (ret < 0)
+> > +               return ret;
+> > +       ret = steam_recv_report(steam, reply, sizeof(reply));
+> > +       if (ret < 0)
+> > +               return ret;
+> > +       reply[3 + STEAM_SERIAL_LEN] = 0;
+> > +       strlcpy(steam->serial_no, reply + 3, sizeof(steam->serial_no));
+> > +       return 0;
+> > +}
+> > +
+> > +/*
+> > + * This command requests the wireless adaptor to post an event
+> > + * with the connection status. Useful if this driver is loaded when
+> > + * the controller is already connected.
+> > + */
+> > +static inline int steam_request_conn_status(struct steam_device *steam)
+> > +{
+> > +       return steam_send_report_byte(steam, 0xb4);
+> > +}
+> > +
+> > +static void steam_set_lizard_mode(struct steam_device *steam, bool enable)
+> > +{
+> > +       if (enable) {
+> > +               /* enable esc, enter, cursors */
+> > +               steam_send_report_byte(steam, 0x85);
+> > +               /* enable mouse */
+> > +               steam_send_report_byte(steam, 0x8e);
+> > +       } else {
+> > +               /* disable esc, enter, cursor */
+> > +               steam_send_report_byte(steam, 0x81);
+> > +               /* disable mouse */
+> > +               steam_write_register(steam, 0x08, 0x07);
+> > +       }
+> > +}
+> > +
+> > +static int steam_input_open(struct input_dev *dev)
+> > +{
+> > +       struct steam_device *steam = input_get_drvdata(dev);
+> > +       int ret;
+> > +
+> > +       ret = hid_hw_open(steam->hdev);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       mutex_lock(&steam->mutex);
+> > +       steam->input_opened = true;
+> > +       if (!steam->client_opened && lizard_mode == 1)
+> > +               steam_set_lizard_mode(steam, false);
+> > +       mutex_unlock(&steam->mutex);
+> > +       return 0;
+> > +}
+> > +
+> > +static void steam_input_close(struct input_dev *dev)
+> > +{
+> > +       struct steam_device *steam = input_get_drvdata(dev);
+> > +
+> > +       hid_hw_close(steam->hdev);
+> > +
+> > +       mutex_lock(&steam->mutex);
+> > +       steam->input_opened = false;
+> > +       if (!steam->client_opened && lizard_mode == 1)
+> > +               steam_set_lizard_mode(steam, true);
+> > +       mutex_unlock(&steam->mutex);
+> 
+> hid_hw_close() should be called after setting the lizard mode.
 
-I like that idea! The details of the setpoints do not need to be in
-the dts at all. I will need to add a single property to signify that
-the board has a fan controller as some don't.
+Done.
 
-Thanks,
+> > +}
+> > +
+> > +static int steam_register(struct steam_device *steam)
+> > +{
+> > +       struct hid_device *hdev = steam->hdev;
+> > +       struct input_dev *input;
+> > +       int ret;
+> > +
+> > +       rcu_read_lock();
+> > +       input = rcu_dereference(steam->input);
+> > +       rcu_read_unlock();
+> > +       if (input) {
+> > +               dbg_hid("%s: already connected\n", __func__);
+> > +               return 0;
+> > +       }
+> > +
+> > +       ret = steam_get_serial(steam);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       hid_info(hdev, "Steam Controller '%s' connected",
+> > +                       steam->serial_no);
+> > +
+> > +       input = input_allocate_device();
+> > +       if (!input)
+> > +               return -ENOMEM;
+> > +
+> > +       input_set_drvdata(input, steam);
+> > +       input->dev.parent = &hdev->dev;
+> > +       input->open = steam_input_open;
+> > +       input->close = steam_input_close;
+> > +
+> > +       input->name = (steam->quirks & STEAM_QUIRK_WIRELESS) ?
+> > +               "Wireless Steam Controller" :
+> > +               "Steam Controller";
+> > +       input->phys = hdev->phys;
+> > +       input->uniq = steam->serial_no;
+> > +       input->id.bustype = hdev->bus;
+> > +       input->id.vendor = hdev->vendor;
+> > +       input->id.product = hdev->product;
+> > +       input->id.version = hdev->version;
+> > +
+> > +       input_set_capability(input, EV_KEY, BTN_TR2);
+> > +       input_set_capability(input, EV_KEY, BTN_TL2);
+> > +       input_set_capability(input, EV_KEY, BTN_TR);
+> > +       input_set_capability(input, EV_KEY, BTN_TL);
+> > +       input_set_capability(input, EV_KEY, BTN_Y);
+> > +       input_set_capability(input, EV_KEY, BTN_B);
+> > +       input_set_capability(input, EV_KEY, BTN_X);
+> > +       input_set_capability(input, EV_KEY, BTN_A);
+> > +       input_set_capability(input, EV_KEY, BTN_DPAD_UP);
+> > +       input_set_capability(input, EV_KEY, BTN_DPAD_RIGHT);
+> > +       input_set_capability(input, EV_KEY, BTN_DPAD_LEFT);
+> > +       input_set_capability(input, EV_KEY, BTN_DPAD_DOWN);
+> > +       input_set_capability(input, EV_KEY, BTN_SELECT);
+> > +       input_set_capability(input, EV_KEY, BTN_MODE);
+> > +       input_set_capability(input, EV_KEY, BTN_START);
+> > +       input_set_capability(input, EV_KEY, BTN_GEAR_DOWN);
+> > +       input_set_capability(input, EV_KEY, BTN_GEAR_UP);
+> > +       input_set_capability(input, EV_KEY, BTN_THUMBR);
+> > +       input_set_capability(input, EV_KEY, BTN_THUMBL);
+> > +       input_set_capability(input, EV_KEY, BTN_THUMB);
+> > +       input_set_capability(input, EV_KEY, BTN_THUMB2);
+> > +
+> > +       input_set_abs_params(input, ABS_HAT2Y, 0, 255, 0, 0);
+> > +       input_set_abs_params(input, ABS_HAT2X, 0, 255, 0, 0);
+> > +       input_set_abs_params(input, ABS_X, -32767, 32767, 0, 0);
+> > +       input_set_abs_params(input, ABS_Y, -32767, 32767, 0, 0);
+> > +       input_set_abs_params(input, ABS_RX, -32767, 32767,
+> > +                       STEAM_PAD_FUZZ, 0);
+> > +       input_set_abs_params(input, ABS_RY, -32767, 32767,
+> > +                       STEAM_PAD_FUZZ, 0);
+> > +       input_set_abs_params(input, ABS_HAT0X, -32767, 32767,
+> > +                       STEAM_PAD_FUZZ, 0);
+> > +       input_set_abs_params(input, ABS_HAT0Y, -32767, 32767,
+> > +                       STEAM_PAD_FUZZ, 0);
+> > +       input_abs_set_res(input, ABS_X, STEAM_JOYSTICK_RESOLUTION);
+> > +       input_abs_set_res(input, ABS_Y, STEAM_JOYSTICK_RESOLUTION);
+> > +       input_abs_set_res(input, ABS_RX, STEAM_PAD_RESOLUTION);
+> > +       input_abs_set_res(input, ABS_RY, STEAM_PAD_RESOLUTION);
+> > +       input_abs_set_res(input, ABS_HAT0X, STEAM_PAD_RESOLUTION);
+> > +       input_abs_set_res(input, ABS_HAT0Y, STEAM_PAD_RESOLUTION);
+> > +       input_abs_set_res(input, ABS_HAT2Y, STEAM_TRIGGER_RESOLUTION);
+> > +       input_abs_set_res(input, ABS_HAT2X, STEAM_TRIGGER_RESOLUTION);
+> > +
+> > +       ret = input_register_device(input);
+> > +       if (ret)
+> > +               goto input_register_fail;
+> > +
+> > +       rcu_assign_pointer(steam->input, input);
+> > +
+> > +       return 0;
+> > +
+> > +input_register_fail:
+> > +       input_free_device(input);
+> > +       return ret;
+> > +}
+> > +
+> > +static void steam_unregister(struct steam_device *steam)
+> > +{
+> > +       struct input_dev *input;
+> > +
+> > +       rcu_read_lock();
+> > +       input = rcu_dereference(steam->input);
+> > +       rcu_read_unlock();
+> > +
+> > +       if (input) {
+> > +               RCU_INIT_POINTER(steam->input, NULL);
+> > +               synchronize_rcu();
+> > +               hid_info(steam->hdev, "Steam Controller '%s' disconnected",
+> > +                               steam->serial_no);
+> > +               input_unregister_device(input);
+> > +       }
+> > +}
+> > +
+> > +static void steam_work_connect_cb(struct work_struct *work)
+> > +{
+> > +       struct steam_device *steam = container_of(work, struct steam_device,
+> > +                                                       work_connect);
+> > +       unsigned long flags;
+> > +       bool connected;
+> > +       int ret;
+> > +
+> > +       spin_lock_irqsave(&steam->lock, flags);
+> > +       connected = steam->connected;
+> > +       spin_unlock_irqrestore(&steam->lock, flags);
+> > +
+> > +       if (connected) {
+> > +               ret = steam_register(steam);
+> > +               if (ret) {
+> > +                       hid_err(steam->hdev,
+> > +                               "%s:steam_register failed with error %d\n",
+> > +                               __func__, ret);
+> > +               }
+> > +       } else {
+> > +               steam_unregister(steam);
+> > +       }
+> > +}
+> > +
+> > +static bool steam_is_valve_interface(struct hid_device *hdev)
+> > +{
+> > +       struct hid_report_enum *rep_enum;
+> > +
+> > +       /*
+> > +        * The wired device creates 3 interfaces:
+> > +        *  0: emulated mouse.
+> > +        *  1: emulated keyboard.
+> > +        *  2: the real game pad.
+> > +        * The wireless device creates 5 interfaces:
+> > +        *  0: emulated keyboard.
+> > +        *  1-4: slots where up to 4 real game pads will be connected to.
+> > +        * We know which one is the real gamepad interface because they are the
+> > +        * only ones with a feature report.
+> > +        */
+> > +       rep_enum = &hdev->report_enum[HID_FEATURE_REPORT];
+> > +       return !list_empty(&rep_enum->report_list);
+> > +}
+> > +
+> > +static int steam_client_ll_parse(struct hid_device *hdev)
+> > +{
+> > +       return 0;
+> 
+> Instead of returning 0 here, you should probably call
+> hid_parse_report() on the report descriptors from the parent node.
+> Some clients might want to have a look at them or might even rely on
+> them.
 
-Tim
+Ah, but hid_parse_report() just copies the descriptor from the parent,
+and I am already doing that from steam_probe(). I'll move the code to
+here and change to call hid_parse_report().
+
+> > +}
+> > +
+> > +static int steam_client_ll_start(struct hid_device *hdev)
+> > +{
+> > +       return 0;
+> > +}
+> > +
+> > +static void steam_client_ll_stop(struct hid_device *hdev)
+> > +{
+> > +}
+> > +
+> > +static int steam_client_ll_open(struct hid_device *hdev)
+> > +{
+> > +       struct steam_device *steam = hid_get_drvdata(hdev);
+> 
+> You probably want to check if steam is not null here. Given the
+> ordering of the initialization, you might have someone attempting to
+> open the hidraw node before steam is created.
+
+Tricky. Particularly since I've moved hid_parse_report() to
+steam_client_ll_parse(), if steam is null there it all will break
+apart. And parse is called from hid_add_device(), so I have to reorder
+things a bit. Maybe calling hid_add_device() later.
+
+> > +       int ret;
+> > +
+> > +       ret = hid_hw_open(steam->hdev);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       mutex_lock(&steam->mutex);
+> > +       steam->client_opened = true;
+> > +       mutex_unlock(&steam->mutex);
+> > +       return ret;
+> > +}
+> > +
+> > +static void steam_client_ll_close(struct hid_device *hdev)
+> > +{
+> > +       struct steam_device *steam = hid_get_drvdata(hdev);
+> 
+> Same here, you might want to check on the validity of steam.
+
+Now that I've reordered the probe, steam cannot be NULL.
+
+> > +
+> > +       hid_hw_close(steam->hdev);
+> > +
+> > +       mutex_lock(&steam->mutex);
+> > +       steam->client_opened = false;
+> > +       if (lizard_mode != 2) {
+> > +               if (steam->input_opened)
+> > +                       steam_set_lizard_mode(steam, false);
+> > +               else
+> > +                       steam_set_lizard_mode(steam, lizard_mode);
+> > +       }
+> > +       mutex_unlock(&steam->mutex);
+> 
+> You should call hid_hw_close(steam->hdev); after sending the commands
+> and not before.
+
+Done.
+
+> > +}
+> > +
+> > +static int steam_client_ll_raw_request(struct hid_device *hdev,
+> > +                               unsigned char reportnum, u8 *buf,
+> > +                               size_t count, unsigned char report_type,
+> > +                               int reqtype)
+> > +{
+> > +       struct steam_device *steam = hid_get_drvdata(hdev);
+> > +
+> > +       return hid_hw_raw_request(steam->hdev, reportnum, buf, count,
+> > +                       report_type, reqtype);
+> > +}
+> 
+> I wish we could reuse directly the pointer in
+> hdev->ll_driver->raw_request to avoid adding an indirection.
+> OTOH, the raw_requests are not happening that often, so we should be good.
+
+hid_hw_raw_request() is an inline function that does exactly that, so I
+would not worry about that.
+
+However the call to hid_input_report() from steam_raw_event()... I wanted
+to call client_hid->driver->raw_event() directly, but I didn't dare.
+
+> > +static struct hid_ll_driver steam_client_ll_driver = {
+> > +       .parse = steam_client_ll_parse,
+> > +       .start = steam_client_ll_start,
+> > +       .stop = steam_client_ll_stop,
+> > +       .open = steam_client_ll_open,
+> > +       .close = steam_client_ll_close,
+> > +       .raw_request = steam_client_ll_raw_request,
+> > +};
+> > +
+> > +static int steam_probe(struct hid_device *hdev,
+> > +                               const struct hid_device_id *id)
+> > +{
+> > +       struct steam_device *steam;
+> > +       struct hid_device *client_hdev;
+> > +       int ret;
+> > +
+> > +       ret = hid_parse(hdev);
+> > +       if (ret) {
+> > +               hid_err(hdev,
+> > +                       "%s:parse of hid interface failed\n", __func__);
+> > +               return ret;
+> > +       }
+> > +
+> > +       /*
+> > +        * The non-valve interfaces (mouse and keyboard emulation) and
+> > +        * the client_hid are connected without changes.
+> > +        */
+> > +       if (hdev->group == HID_GROUP_STEAM ||
+> > +                       !steam_is_valve_interface(hdev)) {
+> > +               return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+> > +       }
+> 
+> To make thinks clearer, I would split these calls in 2:
+> - if (!steam_is_valve_interface(hdev)) return hid_hw_start(hdev,
+> HID_CONNECT_DEFAULT);
+> and
+> - if (hdev->group == HID_GROUP_STEAM) return hid_hw_start(hdev,
+> HID_CONNECT_HIDRAW);
+> 
+> Explicitly having HID_CONNECT_HIDRAW would also make it clearer you
+> are just exporting the hidraw interface here. It'll prevent any other
+> interface to mess your detection of the hidraw usage.
+
+Ok, done.
+
+> > +       /*
+> > +        * With the real steam controller interface, do not connect hidraw.
+> > +        * Instead, create the client_hid and connect that.
+> > +        */
+> > +       ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT & ~HID_CONNECT_HIDRAW);
+> > +       if (ret)
+> > +               return ret;
+> 
+> this should likely be at the end of the probe, when you are done
+> allocating your data.
+
+Changed.
+
+> > +       client_hdev = hid_allocate_device();
+> > +       if (IS_ERR(client_hdev)) {
+> > +               ret = PTR_ERR(client_hdev);
+> > +               goto client_hdev_fail;
+> > +       }
+> > +
+> > +       client_hdev->ll_driver = &steam_client_ll_driver;
+> > +       client_hdev->dev.parent = hdev->dev.parent;
+> > +       client_hdev->bus = hdev->bus;
+> > +       client_hdev->vendor = hdev->vendor;
+> > +       client_hdev->product = hdev->product;
+> > +       strlcpy(client_hdev->name, hdev->name,
+> > +                       sizeof(client_hdev->name));
+> > +       strlcpy(client_hdev->phys, hdev->phys,
+> > +                       sizeof(client_hdev->phys));
+> > +       client_hdev->dev_rdesc = kmemdup(hdev->dev_rdesc,
+> > +                       hdev->dev_rsize, GFP_KERNEL);
+> > +       client_hdev->dev_rsize = hdev->dev_rsize;
+> > +       /*
+> > +        * Since we use the same device info than the real interface to
+> > +        * trick userspace, we will be calling steam_probe recursively.
+> > +        * We need to recognize the client interface somehow.
+> > +        */
+> > +       client_hdev->group = HID_GROUP_STEAM;
+> 
+> I'd extract out the client_hdev initialization in its own function to
+> keep .probe() clean.
+
+Yeah, better. Done.
+
+> > +       ret = hid_add_device(client_hdev);
+> > +       if (ret)
+> > +               goto client_hdev_add_fail;
+> 
+> This should likely be called after initializing steam. It'll keep the
+> cleanup path cleaner and make sure all fields are properly initialized
+> before they are used.
+
+I've rewritten the probe so much that this does not apply anymore.
+> 
+> > +
+> > +       steam = devm_kzalloc(&hdev->dev, sizeof(*steam), GFP_KERNEL);
+> > +       if (!steam) {
+> > +               ret = -ENOMEM;
+> > +               goto steam_alloc_fail;
+> > +       }
+> > +
+> > +       steam->client_hdev = client_hdev;
+> > +       hid_set_drvdata(client_hdev, steam);
+> > +
+> > +       spin_lock_init(&steam->lock);
+> > +       mutex_init(&steam->mutex);
+> > +       steam->hdev = hdev;
+> > +       hid_set_drvdata(hdev, steam);
+> > +       steam->quirks = id->driver_data;
+> > +       INIT_WORK(&steam->work_connect, steam_work_connect_cb);
+> 
+> I'd call hid_hw_start(hdev, ...) here, and then hid_add_device(client_hdev);
+
+Ok.
+
+> To have a better cleanup path, you porbably should allocate
+> client_hdev here too (before hid_add_device, of course)
+
+> > +
+> > +       if (steam->quirks & STEAM_QUIRK_WIRELESS) {
+> > +               ret = hid_hw_open(hdev);
+> > +               if (ret) {
+> > +                       hid_err(hdev,
+> > +                               "%s:hid_hw_open for wireless\n",
+> > +                               __func__);
+> > +                       goto hid_hw_open_fail;
+> > +               }
+> > +               hid_info(hdev, "Steam wireless receiver connected");
+> > +               steam_request_conn_status(steam);
+> > +       } else {
+> > +               ret = steam_register(steam);
+> > +               if (ret) {
+> > +                       hid_err(hdev,
+> > +                               "%s:steam_register failed with error %d\n",
+> > +                               __func__, ret);
+> > +                       goto input_register_fail;
+> > +               }
+> > +       }
+> > +       if (lizard_mode != 2)
+> > +               steam_set_lizard_mode(steam, lizard_mode);
+> > +
+> > +       return 0;
+> > +
+> > +input_register_fail:
+> > +hid_hw_open_fail:
+> > +       cancel_work_sync(&steam->work_connect);
+> > +       hid_set_drvdata(hdev, NULL);
+> > +steam_alloc_fail:
+> > +       hid_hw_stop(client_hdev);
+> > +client_hdev_add_fail:
+> > +       hid_destroy_device(client_hdev);
+> > +client_hdev_fail:
+> > +       hid_err(hdev, "%s: failed with error %d\n",
+> > +                       __func__, ret);
+> > +       return 0;
+> > +}
+> > +
+> > +static void steam_remove(struct hid_device *hdev)
+> > +{
+> > +       struct steam_device *steam = hid_get_drvdata(hdev);
+> > +
+> > +       if (hdev->group == HID_GROUP_STEAM)
+> 
+> Why don't you call hid_hw_stop() here instead of calling it later in
+> the parent device?
+
+I tried to keep together these two lines:
+
+	hid_hw_stop(steam->client_hdev);
+	hid_destroy_device(steam->client_hdev);
+
+but I guess that it is better to the first one here and the last one
+there.
+
+> > +               return;
+> > +
+> > +       if (!steam) {
+> > +               hid_hw_stop(hdev);
+> > +               return;
+> > +       }
+> > +
+> 
+> You should reorder these cleanup calls:
+> - you first call hid_destroy_device(), this will clean up properly
+> everything related to the hidraw node and should set client_opened to
+> false (just to be on the safe side, you might want to overwrite it
+> after to be sure not to forward events to the destoryed hid node).
+> - then you take care of the rest of the hid device:
+> - cancel_work_sync should happen before calling hid_hw_close() and
+> hid_hw_stop() on the hdev.
+> - steam_unregister(steam);
+> - if needed call hid_hw_close()
+> - hid_hw_stop()
+
+That was a bit messy. Fixed.
+
+That's all for now... I'll wait a couple of days more, in case I get any
+more feedback and reroll.
+
+Best regards.
+Rodrigo
+
+> > +       if (steam->quirks & STEAM_QUIRK_WIRELESS) {
+> > +               hid_info(hdev, "Steam wireless receiver disconnected");
+> > +               hid_hw_close(hdev);
+> > +       }
+> > +       hid_hw_stop(hdev);
+> > +       cancel_work_sync(&steam->work_connect);
+> > +       hid_hw_stop(steam->client_hdev);
+> > +       hid_destroy_device(steam->client_hdev);
+> > +
+> > +}
+> > +
+> > +static void steam_do_connect_event(struct steam_device *steam, bool connected)
+> > +{
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&steam->lock, flags);
+> > +       steam->connected = connected;
+> > +       spin_unlock_irqrestore(&steam->lock, flags);
+> > +
+> > +       if (schedule_work(&steam->work_connect) == 0)
+> > +               dbg_hid("%s: connected=%d event already queued\n",
+> > +                               __func__, connected);
+> > +}
+> > +
+> > +/*
+> > + * The size for this message payload is 60.
+> > + * The known values are:
+> > + *  (* values are not sent through wireless)
+> > + *  (* accelerator/gyro is disabled by default)
+> > + *  Offset| Type  | Mapped to |Meaning
+> > + * -------+-------+-----------+--------------------------
+> > + *  4-7   | u32   | --        | sequence number
+> > + *  8-10  | 24bit | see below | buttons
+> > + *  11    | u8    | ABS_HAT2Y | left trigger
+> > + *  12    | u8    | ABS_HAT2X | right trigger
+> > + *  13-15 | --    | --        | always 0
+> > + *  16-17 | s16   | ABS_X/ABS_HAT0X     | X value
+> > + *  18-19 | s16   | ABS_Y/ABS_HAT0Y     | Y value
+> > + *  20-21 | s16   | ABS_RX    | right-pad X value
+> > + *  22-23 | s16   | ABS_RY    | right-pad Y value
+> > + *  24-25 | s16   | --        | * left trigger
+> > + *  26-27 | s16   | --        | * right trigger
+> > + *  28-29 | s16   | --        | * accelerometer X value
+> > + *  30-31 | s16   | --        | * accelerometer Y value
+> > + *  32-33 | s16   | --        | * accelerometer Z value
+> > + *  34-35 | s16   | --        | gyro X value
+> > + *  36-36 | s16   | --        | gyro Y value
+> > + *  38-39 | s16   | --        | gyro Z value
+> > + *  40-41 | s16   | --        | quaternion W value
+> > + *  42-43 | s16   | --        | quaternion X value
+> > + *  44-45 | s16   | --        | quaternion Y value
+> > + *  46-47 | s16   | --        | quaternion Z value
+> > + *  48-49 | --    | --        | always 0
+> > + *  50-51 | s16   | --        | * left trigger (uncalibrated)
+> > + *  52-53 | s16   | --        | * right trigger (uncalibrated)
+> > + *  54-55 | s16   | --        | * joystick X value (uncalibrated)
+> > + *  56-57 | s16   | --        | * joystick Y value (uncalibrated)
+> > + *  58-59 | s16   | --        | * left-pad X value
+> > + *  60-61 | s16   | --        | * left-pad Y value
+> > + *  62-63 | u16   | --        | * battery voltage
+> > + *
+> > + * The buttons are:
+> > + *  Bit  | Mapped to  | Description
+> > + * ------+------------+--------------------------------
+> > + *  8.0  | BTN_TR2    | right trigger fully pressed
+> > + *  8.1  | BTN_TL2    | left trigger fully pressed
+> > + *  8.2  | BTN_TR     | right shoulder
+> > + *  8.3  | BTN_TL     | left shoulder
+> > + *  8.4  | BTN_Y      | button Y
+> > + *  8.5  | BTN_B      | button B
+> > + *  8.6  | BTN_X      | button X
+> > + *  8.7  | BTN_A      | button A
+> > + *  9.0  | BTN_DPAD_UP    | lef-pad up
+> > + *  9.1  | BTN_DPAD_RIGHT | lef-pad right
+> > + *  9.2  | BTN_DPAD_LEFT  | lef-pad left
+> > + *  9.3  | BTN_DPAD_DOWN  | lef-pad down
+> > + *  9.4  | BTN_SELECT | menu left
+> > + *  9.5  | BTN_MODE   | steam logo
+> > + *  9.6  | BTN_START  | menu right
+> > + *  9.7  | BTN_GEAR_DOWN | left back lever
+> > + * 10.0  | BTN_GEAR_UP   | right back lever
+> > + * 10.1  | --         | left-pad clicked
+> > + * 10.2  | BTN_THUMBR | right-pad clicked
+> > + * 10.3  | BTN_THUMB  | left-pad touched (but see explanation below)
+> > + * 10.4  | BTN_THUMB2 | right-pad touched
+> > + * 10.5  | --         | unknown
+> > + * 10.6  | BTN_THUMBL | joystick clicked
+> > + * 10.7  | --         | lpad_and_joy
+> > + */
+> > +
+> > +static void steam_do_input_event(struct steam_device *steam,
+> > +               struct input_dev *input, u8 *data)
+> > +{
+> > +       /* 24 bits of buttons */
+> > +       u8 b8, b9, b10;
+> > +       bool lpad_touched, lpad_and_joy;
+> > +
+> > +       b8 = data[8];
+> > +       b9 = data[9];
+> > +       b10 = data[10];
+> > +
+> > +       input_report_abs(input, ABS_HAT2Y, data[11]);
+> > +       input_report_abs(input, ABS_HAT2X, data[12]);
+> > +
+> > +       /*
+> > +        * These two bits tells how to interpret the values X and Y.
+> > +        * lpad_and_joy tells that the joystick and the lpad are used at the
+> > +        * same time.
+> > +        * lpad_touched tells whether X/Y are to be read as lpad coord or
+> > +        * joystick values.
+> > +        * (lpad_touched || lpad_and_joy) tells if the lpad is really touched.
+> > +        */
+> > +       lpad_touched = b10 & BIT(3);
+> > +       lpad_and_joy = b10 & BIT(7);
+> > +       input_report_abs(input, lpad_touched ? ABS_HAT0X : ABS_X,
+> > +                       (s16) le16_to_cpup((__le16 *)(data + 16)));
+> > +       input_report_abs(input, lpad_touched ? ABS_HAT0Y : ABS_Y,
+> > +                       -(s16) le16_to_cpup((__le16 *)(data + 18)));
+> > +       /* Check if joystick is centered */
+> > +       if (lpad_touched && !lpad_and_joy) {
+> > +               input_report_abs(input, ABS_X, 0);
+> > +               input_report_abs(input, ABS_Y, 0);
+> > +       }
+> > +       /* Check if lpad is untouched */
+> > +       if (!(lpad_touched || lpad_and_joy)) {
+> > +               input_report_abs(input, ABS_HAT0X, 0);
+> > +               input_report_abs(input, ABS_HAT0Y, 0);
+> > +       }
+> > +
+> > +       input_report_abs(input, ABS_RX,
+> > +                       (s16) le16_to_cpup((__le16 *)(data + 20)));
+> > +       input_report_abs(input, ABS_RY,
+> > +                       -(s16) le16_to_cpup((__le16 *)(data + 22)));
+> > +
+> > +       input_event(input, EV_KEY, BTN_TR2, !!(b8 & BIT(0)));
+> > +       input_event(input, EV_KEY, BTN_TL2, !!(b8 & BIT(1)));
+> > +       input_event(input, EV_KEY, BTN_TR, !!(b8 & BIT(2)));
+> > +       input_event(input, EV_KEY, BTN_TL, !!(b8 & BIT(3)));
+> > +       input_event(input, EV_KEY, BTN_Y, !!(b8 & BIT(4)));
+> > +       input_event(input, EV_KEY, BTN_B, !!(b8 & BIT(5)));
+> > +       input_event(input, EV_KEY, BTN_X, !!(b8 & BIT(6)));
+> > +       input_event(input, EV_KEY, BTN_A, !!(b8 & BIT(7)));
+> > +       input_event(input, EV_KEY, BTN_DPAD_UP, !!(b9 & BIT(0)));
+> > +       input_event(input, EV_KEY, BTN_DPAD_RIGHT, !!(b9 & BIT(1)));
+> > +       input_event(input, EV_KEY, BTN_DPAD_LEFT, !!(b9 & BIT(2)));
+> > +       input_event(input, EV_KEY, BTN_DPAD_DOWN, !!(b9 & BIT(3)));
+> > +       input_event(input, EV_KEY, BTN_SELECT, !!(b9 & BIT(4)));
+> > +       input_event(input, EV_KEY, BTN_MODE, !!(b9 & BIT(5)));
+> > +       input_event(input, EV_KEY, BTN_START, !!(b9 & BIT(6)));
+> > +       input_event(input, EV_KEY, BTN_GEAR_DOWN, !!(b9 & BIT(7)));
+> > +       input_event(input, EV_KEY, BTN_GEAR_UP, !!(b10 & BIT(0)));
+> > +       input_event(input, EV_KEY, BTN_THUMBR, !!(b10 & BIT(2)));
+> > +       input_event(input, EV_KEY, BTN_THUMBL, !!(b10 & BIT(6)));
+> > +       input_event(input, EV_KEY, BTN_THUMB, lpad_touched || lpad_and_joy);
+> > +       input_event(input, EV_KEY, BTN_THUMB2, !!(b10 & BIT(4)));
+> > +
+> > +       input_sync(input);
+> > +}
+> > +
+> > +static int steam_raw_event(struct hid_device *hdev,
+> > +                       struct hid_report *report, u8 *data,
+> > +                       int size)
+> > +{
+> > +       struct steam_device *steam = hid_get_drvdata(hdev);
+> > +       struct input_dev *input;
+> > +
+> > +       if (!steam)
+> > +               return 0;
+> > +
+> > +       if (steam->client_opened)
+> > +               hid_input_report(steam->client_hdev, HID_FEATURE_REPORT,
+> > +                               data, size, 0);
+> > +       /*
+> > +        * All messages are size=64, all values little-endian.
+> > +        * The format is:
+> > +        *  Offset| Meaning
+> > +        * -------+--------------------------------------------
+> > +        *  0-1   | always 0x01, 0x00, maybe protocol version?
+> > +        *  2     | type of message
+> > +        *  3     | length of the real payload (not checked)
+> > +        *  4-n   | payload data, depends on the type
+> > +        *
+> > +        * There are these known types of message:
+> > +        *  0x01: input data (60 bytes)
+> > +        *  0x03: wireless connect/disconnect (1 byte)
+> > +        *  0x04: battery status (11 bytes)
+> > +        */
+> > +
+> > +       if (size != 64 || data[0] != 1 || data[1] != 0)
+> > +               return 0;
+> > +
+> > +       switch (data[2]) {
+> > +       case 0x01:
+> > +               if (steam->client_opened)
+> > +                       return 0;
+> > +               rcu_read_lock();
+> > +               input = rcu_dereference(steam->input);
+> > +               if (likely(input)) {
+> > +                       steam_do_input_event(steam, input, data);
+> > +               } else {
+> > +                       dbg_hid("%s: input data without connect event\n",
+> > +                                       __func__);
+> > +                       steam_do_connect_event(steam, true);
+> > +               }
+> > +               rcu_read_unlock();
+> > +               break;
+> > +       case 0x03:
+> > +               /*
+> > +                * The payload of this event is a single byte:
+> > +                *  0x01: disconnected.
+> > +                *  0x02: connected.
+> > +                */
+> > +               switch (data[4]) {
+> > +               case 0x01:
+> > +                       steam_do_connect_event(steam, false);
+> > +                       break;
+> > +               case 0x02:
+> > +                       steam_do_connect_event(steam, true);
+> > +                       break;
+> > +               }
+> > +               break;
+> > +       case 0x04:
+> > +               /* TODO: battery status */
+> > +               break;
+> > +       }
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct hid_device_id steam_controllers[] = {
+> > +       { /* Wired Steam Controller */
+> > +         HID_USB_DEVICE(USB_VENDOR_ID_VALVE,
+> > +               USB_DEVICE_ID_STEAM_CONTROLLER)
+> > +       },
+> > +       { /* Wireless Steam Controller */
+> > +         HID_USB_DEVICE(USB_VENDOR_ID_VALVE,
+> > +               USB_DEVICE_ID_STEAM_CONTROLLER_WIRELESS),
+> > +         .driver_data = STEAM_QUIRK_WIRELESS
+> > +       },
+> > +       {}
+> > +};
+> > +
+> > +MODULE_DEVICE_TABLE(hid, steam_controllers);
+> > +
+> > +static struct hid_driver steam_controller_driver = {
+> > +       .name = "hid-steam",
+> > +       .id_table = steam_controllers,
+> > +       .probe = steam_probe,
+> > +       .remove = steam_remove,
+> > +       .raw_event = steam_raw_event,
+> > +};
+> > +
+> > +module_hid_driver(steam_controller_driver);
+> > diff --git a/include/linux/hid.h b/include/linux/hid.h
+> > index d491027a7c22..5e5d76589954 100644
+> > --- a/include/linux/hid.h
+> > +++ b/include/linux/hid.h
+> > @@ -364,6 +364,7 @@ struct hid_item {
+> >  #define HID_GROUP_RMI                          0x0100
+> >  #define HID_GROUP_WACOM                                0x0101
+> >  #define HID_GROUP_LOGITECH_DJ_DEVICE           0x0102
+> > +#define HID_GROUP_STEAM                                0x0103
+> >
+> >  /*
+> >   * HID protocol status
+> > --
+> > 2.16.2
+> >
+> 
+> Cheers,
+> Benjamin
