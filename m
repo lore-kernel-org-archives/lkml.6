@@ -1,127 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeC1D0K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 23:26:10 -0400
-Received: from mail-cys01nam02on0061.outbound.protection.outlook.com ([104.47.37.61]:7520
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1752689AbeC1D1I (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 23:27:08 -0400
+Received: from mail-by2nam01on0048.outbound.protection.outlook.com ([104.47.34.48]:19376
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751179AbeC1D0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 23:26:04 -0400
-Authentication-Results: spf=fail (sender IP is 192.88.168.50)
- smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
+        id S1752004AbeC1D0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 23:26:00 -0400
 From: Anson Huang <Anson.Huang@nxp.com>
 To: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC: <Linux-imx@nxp.com>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH V2 3/4] clocksource/drivers/imx-tpm: correct some registers operation flow
-Date: Wed, 28 Mar 2018 11:22:37 +0800
-Message-ID: <1522207358-8388-3-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V2 2/4] clocksource/drivers/imx-tpm: fix typo of clock name
+Date: Wed, 28 Mar 2018 11:22:36 +0800
+Message-ID: <1522207358-8388-2-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522207358-8388-1-git-send-email-Anson.Huang@nxp.com>
 References: <1522207358-8388-1-git-send-email-Anson.Huang@nxp.com>
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131666811622706398;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
-X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(7966004)(396003)(376002)(346002)(39860400002)(39380400002)(2980300002)(1109001)(1110001)(339900001)(199004)(189003)(2906002)(5660300001)(450100002)(356003)(72206003)(4326008)(305945005)(16586007)(59450400001)(36756003)(26826003)(508600001)(53936002)(105606002)(126002)(486005)(486005)(77096007)(26005)(106466001)(86362001)(54906003)(68736007)(6666003)(81166006)(8676002)(50226002)(110136005)(2616005)(11346002)(336012)(575784001)(104016004)(48376002)(47776003)(50466002)(51416003)(316002)(476003)(446003)(76176011)(81156014)(85426001)(97736004)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB389;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD012;1:lmT4gN2hmivEQOcrRJuUCN6N9mL+ywaskkEyJZE5ZfdhiiO0B4KaeyNrTImU+4UxZ+MYMr/WhgSKF9ZEY0YzOicA6s+wc6jb7yIHVL/4rOjLGBcmzx+2ybl1yp0ww00N
+X-Matching-Connectors: 131666811596419754;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(7966004)(39860400002)(346002)(39380400002)(376002)(396003)(2980300002)(1109001)(1110001)(339900001)(189003)(199004)(16586007)(68736007)(8936002)(450100002)(106466001)(486005)(126002)(50226002)(8676002)(81156014)(77096007)(105606002)(81166006)(104016004)(50466002)(26005)(6346003)(486005)(4326008)(6666003)(11346002)(446003)(47776003)(5660300001)(36756003)(508600001)(26826003)(2906002)(2616005)(336012)(54906003)(51416003)(48376002)(97736004)(316002)(72206003)(110136005)(86362001)(476003)(356003)(59450400001)(76176011)(53936002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB3109;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD008;1:ySdOsRjs0Boz12x3KZ+jxGwAkacEbtAlgkLsUIpvIXqyXf7ngnGIdKfxwCXXCeAe1QZa5GqiSJQKqMnfE/aqv/FEhhUPocxTb7oZIhqOsop5l5PGbbkwimOVO1SjFapn
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 18399ff2-1c6c-4900-c1d6-08d5945ba1de
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:BLUPR03MB389;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;3:rdP11E5QU74YNM88oqW3+ZsSngIAlh8I02yloa1XsoYkd6jbomiM4eMf7Xy0ow0kbBuhq49OjR3vlGmcilrmOcwcdeg9tQ3DS2htFq7mODwm3Tz+ggcuYx+SkBgElf+2n+9oiaMEaAWDRfxnni6jNndrOQ+u1Yomf3eiAqeR4IS4ZniPIVq5PpzsQ6g2bAQlDjZBknXRSgi1qnnBzgfVKgcTDyf/r1LXNdlzlNSUUOsx1UlzwOSL71apMyGD9F8Kyf1koOVVg8bbKvyvgSE6TmOYY2II9W6SaoodCubA5INu5i55TwoDnLFQhh8MZWAEal6C0hsuULAtQVmvhI+BM2DnLt3bVwJb9189sRwhctA=;25:Ogxs4Wyei4/z1gPaOULS0XFWKr8AFOT3f6Jw1IYDLmOz0JwoY7fRdHHp3LI/CcqspjZuIupeGOWMYXvAQ69MW3UaGV5w4hmXdWVNSfbhl5pCmF16xYAWTEKst8DyTz4VEsjA0b1FROaNXG0nsOp3v+dn/OVjUDLbPBRJTWuRlpehm8U7zRUomHBKXi3e/MzsvZqeDuorBlBAKhCWC234/XXgrQikqodGG9VeJqsjGrWh5EUIbDJW5v2aY9UrSI0Rx3M+/fkdcoXblQJFDcFBzvixAMJMipJRpJEQv1yGWfl3q9+qTV1z2TZHrw+mxDspfT3ZmLj6k7DAU75d5UE04w==
-X-MS-TrafficTypeDiagnostic: BLUPR03MB389:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;31:ZuLE6uQu7dpoUVkspj0+YZMxSBxyF3C+sJl2/OInbqTiUvsp9zVVOw3Y6k74UBYbPYQ+AHBZegKQTd0Txzze0CqtItFRRw/4DFj9TRYQukRpOkCmgIylrsIS6DMV3mFEZZstuErnU31vJ95T2dEyRBaft+WFpAYKRTEQ9xt3LPV75GF3L51MtIVW8UEdMqGP6nwOVIXIwILDf00Bs2HnLH27FldIUm3J6nHPu6r9lxA=;4:08MrLSCLhNpqMesBqmX9bYl0ysSv/OE4+jZntPC46upGHys+2WULF/D6S2oC5p560oE2ZhLwWIoQdG+3l7sbiUH4n0MS0fJ9/AvIETTcpmpooGaK96b4/1pnOGqqDasKzbbYu/jNmeduZrx3FmXo5s3fRF6rOKIqWasABRd5lOV58agWmbe2HNSxBLiRCriuOUD699UFjqlTrPxDWJpA747T8mMgr0Ah6K/Z0PDIJHECS5Ots4qJ3xeHzehQv/NskuGm2udm84Qdf0kyGO/ifEh08K8ToLoJP1AZ41MhBXUQBR0adveWY/4LTnRyPdmG
-X-Microsoft-Antispam-PRVS: <BLUPR03MB38909052D2C67E30C4F30F4F5A30@BLUPR03MB389.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 763b8f31-c567-4298-514a-08d5945ba05e
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:CY4PR03MB3109;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3109;3:xxFsb71JgJ3fi+0CqJCgcqqQZya2nifZFHximMZdkmIJxhanDar9m/I0s8xG6V7Db9TW4BqAWhNoUxz+9pg+dd4S9zvIeVplmRyC3CHAXr555YnMRaz1nwOjmEguYh05nvzZLlghiylyvPk52htogZGGSTGBNBtrd/zlxDfC37LWtqqnKClkKer9xU7l4FgfrQsrEmeATOWcMCuW6QVR4filPvkwf5yb0Mx2pr6V8Eg0gFhE7x3j69kZHRJEXFK+cH7O15/h9emmQV1s7iA1LgWKI29eld53xhViPJpCXG8eIrlQ9j4UsWWk9GXrz5+Lfas+atBGu8vyno0ZqY5Dh6jAXg9pe0nmR/R8cmkDAuw=;25:J/rCfVZIauJl89N6N7exYlMnO2AzwXJppbUsseMkr8UBlYIPDhiA2CgEQfkEm4e641N5x4QB1Sm07aXfDFIn4gPphFxmZyZ6YnAjm6TS2LxaN0D/aWx/xPgfxjCt0tomx5U6YVXZFr8Be2yjF5F4CmPsYJCJABzruupiVAvPfkZ0KosYa07t5ipCriSLaiv1dxvS/KPzZPyLPDVDI6rG6Ee+rWzjWATz3JhpVgw0GCM9VuAWE8B2p9RNWVA75gQFpLOXMEIA+3If1YHR3gSQ0yarTcXUlRX2rj85iie4Cufu6K2YS+2HbYl7pm6s5omAjSKQR06giwJF5F+q4UsdXA==
+X-MS-TrafficTypeDiagnostic: CY4PR03MB3109:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3109;31:z1jhCYbGNvR5zyX4XgHK8pucY/hJaBcwOEb1uGcmF5zOle2m/X1Q9O3roGgZTNWKCCOKHpndLte9lEbMTc4/7R8a3IvCFOBeGiO7qdl2Pj9RRnK2CK+Kgkx8Ls2mPGtt7PWa5/FyGhqwL4DBibYpb5WWnLcEPsz70ntSnNkhPFCetIeaoaT23w7DXtxWe1z+qJPhHdVNERIGFGw3tkeJWfDE8iJ4Qvhq40A9amgk5PQ=;4:VU8MW78IVGQOcrkeift1uzgEG+kncVfUWdQY0ntbesiCLB5g0Ie5/SbPKz8ZKUMfIASgVCsEJqdXI76R8jLah2MowzGQbwVaT/Q0qKX4FJEcCGoF9aKA6i7BsrWJzoWb+f6M9734di4BBMvky5hIiCQUAhnoHajDpH1ngYPhVa/gGRdvu7JA46As+6OIKXz+prlfJBap4i6hbokGvUDnNAQaN4kt1F3YQFfC5hosWfAY8i9cvqrPEmzRXw3it+/gcfLxiJ3DDQx7Mrrl2G8JkXjOUWnfEeQjCC1gWt25EsEikrUov/zx2kbit9/s01KU
+X-Microsoft-Antispam-PRVS: <CY4PR03MB3109D8E6A090DEFE74C962D7F5A30@CY4PR03MB3109.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(10201501046)(3002001)(6055026)(6096035)(20161123565025)(20161123556025)(20161123563025)(20161123559100)(20161123561025)(201703131430075)(201703131441075)(201703131448075)(201703131433075)(201708071742011);SRVR:BLUPR03MB389;BCL:0;PCL:0;RULEID:(400006);SRVR:BLUPR03MB389;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(6096035)(20161123563025)(20161123565025)(20161123556025)(201703131430075)(201703131441075)(201703131448075)(201703131433075)(20161123559100)(20161123561025)(201708071742011);SRVR:CY4PR03MB3109;BCL:0;PCL:0;RULEID:(400006);SRVR:CY4PR03MB3109;
 X-Forefront-PRVS: 06259BA5A2
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB389;23:n9sPQykCJ5e4Q/dy4pvxxcpDEUvAPNdtbP4td1fZZB?=
- =?us-ascii?Q?jEnF8GW7ajaBYIoTZSQkAoAXAvLculZxP0K/LpsjJ7rVoNCRS7LuRW0WG2tS?=
- =?us-ascii?Q?aSbY6HLBgsTEmLwwxIT2tKm4KvHm2A2CZTTX3p5cLmyvAb3xjgHuIyATuQ3Z?=
- =?us-ascii?Q?7a3tnuHBGbqpb/14MVjr7hJGeb6RQMMfm3PCDMTkx+EXwd7seiPO+/qwAhJ3?=
- =?us-ascii?Q?PfMu0ZeWUm4vjjKlUoYirLDjhr8TnAP03SLFsq6oSC/W5taM7kyVd/lc5+91?=
- =?us-ascii?Q?ajOqbHOSLx1YPWwS6Yh3OBCFId6tpEaKDiulAyMtu9/yJ6C/GmKgeKAsIXjj?=
- =?us-ascii?Q?hJkA9FR6Ib8ztnhUc9dRiBJ9jLEVGnppoWs0mveBIT46Suo0LHjjR2eyHOkT?=
- =?us-ascii?Q?1fx80k0Iel7wMador3ZJFo4SxX240F0FZCQAbBHhC7V4QZo84VMrgiZC1LTA?=
- =?us-ascii?Q?ZNN7YChUSxsmHQzYgkMahdDYmh4zgsGw8RSOgQuiLIDekACUav4XMGOplNm5?=
- =?us-ascii?Q?AinY9L5bL76ugnawIfKQb5qVBDGtBGZQl8Mg5rQtdvevmDMJfTwBAHH10XxQ?=
- =?us-ascii?Q?owrbfp2Q7HFL9vdwOtWlBKdTzUIidpgzMIV/7K+uoOKkFL9cVDnqNWuY9sfC?=
- =?us-ascii?Q?8smsfX2EIjHN+cl/oRiCzdKx0fFoVr4LjBSDGe0VOIEL4Kcz/8LlANgTAeCl?=
- =?us-ascii?Q?PSNqGXcHEID4NcNN/wEOghKz/FFAE5MU7k6rsoDmHT8fXuEd5rjjCzVkzGuX?=
- =?us-ascii?Q?ZXGgTTA2/BbqjLd+CbehtVTWbD32jA1vRWdUb/vHqecAby5Gd01TrOfevFJl?=
- =?us-ascii?Q?rTlOJi2MCosXJnPIi3Fhgdb18k1lQqNLh9LKpjI76wbGLCitxZhNtSmxl81a?=
- =?us-ascii?Q?2hAA/WuWNJOTB16TxVanovNFUpirbHi3wc4FlUqclAQ7YU6oA5Nf9OFj0M/I?=
- =?us-ascii?Q?nSYSWNSFjfYk9VCTJ/jBg+nSGCaXU8hnBskia9XekEYar86ZW/PbgsbHO2ST?=
- =?us-ascii?Q?O7a6C/wn4a5Q9arW/fhjZAcIn84Yu/dOX4DZF0rQGpcz2C6mAXzt+ufdnTqY?=
- =?us-ascii?Q?nX0iTo+/s83LmCwkfO1S8bNctcqKdaFV6Jz+iv1dKcRZYJOxywQ10s6Dghsz?=
- =?us-ascii?Q?WYWkr+cukDeg0HGZUExxvQynKFRQaV8tklvjeGX20VhpdFtnVUi1Qu7YxgrU?=
- =?us-ascii?Q?Xl3A2QV6CBpWq8MsXw8xTZwK9OQmhef60PVafSksf5Vmc6i2CDp2t19wtRL0?=
- =?us-ascii?Q?P1ggQI3JJA6kCc8EHZHDrUyN9Q8gh4NykXdiuSVXH0mBQ0MlrBqdTaPSCDhA?=
- =?us-ascii?Q?=3D=3D?=
-X-Microsoft-Antispam-Message-Info: 3aBdyMCyYXNgXnBJpw9rJadQOO5v+gkaUJG+MS/3EDXs23T/tHswqHhCtlAoN0MmG0d+3+oxWv5zm1XtWAS8lu8w9nl8d95AojS8otZa64smwZpa14DNMWRZDVSWEzrySD0Lt8mjsJDUfSP7KC4kN6XBfGZAqwDxljwZ5zjrDBYNpg4P9REQbOjfGuRSx2Fq
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;6:rSAKqSvM56TGTM5YJ3+mp6CkGF45EqAzT6YKeMCzLQjFmodJrXHk3JyJbX2jpan4JqJO85fxVV3SdLQRu2VelIQPfqbs4KcjQlp6X957bzFdyIl4QYOXPk/jAroFcmhWJGRa6QZQSIKlttySHLIaGgOPuH6NGALIOWuaZLTfUDmLbn4Tz11aEGQpwO73mywjb9WJWx7aj9BCRy7nfuq6tZUiAPyBVXaK6QC/634JycEpmmjslzEnl6fZtub6utgxjINkp3V2CwN/INC/P4UnWPGnzBgymJZTPz0Fq5wAM1VLuWtP8LLvUib3i+Fmxl+rL3i/Bs9D78Rzb+NG6IvOaNMVQdfHE/JRiYyGAE4a9hiQW3+bynDB/cjsvbZ59tvFBx8brTULNnZNEtLLNrNdd/yBQdjtURFGCzLNfeKKznW0rsbg1ZwI/FKrGATuEuaiJwkp2IApT4FAUla9a6PwgA==;5:5vxWrh0H1Mb2jHRSN8VmKxeMKFQTc5kmnY82mh40OFhExUvFWvBHaHvpDyrUnsnOLGoI5rrzxwLfZxoy2AGNqXQK6agMLTHvrCQEL/BOR5vmdvsmoGTyRroldW/icojTPhIhSE5oMgiRehR8e8tEXXAxccvJiORG7sRG07XCZnY=;24:eQDwpJ3A4G6QNubP+b6bOKRcy8/RTcTf8RG8LFh6YuPpEgC3fI4TiiiJiWfks7xUsZUhL5KsYdbl/5lzvcwmtDDS+er5AsGaSGrZVJJUe2s=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR03MB3109;23:R5fYDzjnbsgCfG+xRLXQ5t4j142CE77ENMuGmwrur?=
+ =?us-ascii?Q?Hd2XiJ5Nl+a/pVKBe9FMh6f6WKmpYbnHFyM0Z5e5yyc1xI2xVNapSPZx2E1Y?=
+ =?us-ascii?Q?WtVsiGY3TwB7FAZOXl4se+8rWB3hGJr+sRjD2IQ9Ve69F2pMnNVGo+YI30tS?=
+ =?us-ascii?Q?DujJ1rNg0pJEHzyDQ76hwCBrpAVXBrn5+KT58IkWZstm03vw5AzWdwpqcUjv?=
+ =?us-ascii?Q?9rFSA5nuV5/ZCUkXO6qTO/0pIY5p7mFXbHYo7VOGZQlpuq8OhNRh/w2n+kQ6?=
+ =?us-ascii?Q?H8nlZ6oFZpBdRP/rAT52cZ0aUi/7NPubmmqUi5tHFAN5swC6REoSlkVwye9d?=
+ =?us-ascii?Q?oYDrJDrJNkYWUR3RQe++lKznNNBvoXHHDxtkZnyEQ9HflOEFI3fq9KM2j6wS?=
+ =?us-ascii?Q?GMmmVyabQPAMBxBdVEOcT8IwC5xJkChKs+miXla7dVH7XFe7Gj182ngiLCB9?=
+ =?us-ascii?Q?3cE46pyTfWXi5FSP4+1hknKK7lINSapJflMPuL0pAGEUZY0pXGmQcjzBs01h?=
+ =?us-ascii?Q?b3z4YDBC/0vZUQUqb2RdWzDspGc32qvSrrWI8y9eVlaz+hiOMmJDgF9pzdbo?=
+ =?us-ascii?Q?SkRSDdOK4faeC7OJA3Lv92RfG/58A6+aMklkEDHkFn1x88h3OnDaDC83GyzO?=
+ =?us-ascii?Q?Is3DQNi2NEdtcpjzYbgev2Pxhc+fp7LYo4i8O+vtoaThNdLRiY2dVI4Wn1dt?=
+ =?us-ascii?Q?GwGW0BT9hz4N1rGz134sHAtGpmR0mpW3Guur318j9dRYy0ciARYVu9gktHbr?=
+ =?us-ascii?Q?UsqMGkQaonTcKZoY/wuD9aVS8T5IeHH79P2rmqMaJAdBMKXf4z2KRqcDBmu0?=
+ =?us-ascii?Q?8K6+0+E9FHyBTQHZ21g9GHYFWhJcIvooPIIvrBncuktLq+pwobxMQyX91uIW?=
+ =?us-ascii?Q?OiFHJ6YIACZR4kjJBrnFxiO9iGbrJ26+xkAblOezA/zCVYUe4rwil5Z7S1D5?=
+ =?us-ascii?Q?mpDSqNInhnMjkyJmt+0Vq+lx8LWcgmTGcujCziplLkDkJFgBZw6nzszOE8B1?=
+ =?us-ascii?Q?28Zd5AH0OpSqwFoPR7YoCXu+NNLhOEkT/YcRs9jDtKCUgRO2t3dLk6MYMet1?=
+ =?us-ascii?Q?gpcq1NRPJk+sTeP5twl8EKrpqEyxQJU2VgHS8fB6WvGtKZBN8W+2QStPTKYw?=
+ =?us-ascii?Q?ubZiRnsYpuwVZb8l+tC7hG1N87FcNtsvQ74UkMQaWqfTuNeAqSCMGkOysJp3?=
+ =?us-ascii?Q?JO+N8x492sCa69uGn/HERFfDmrq02yih8hqSzdry04y3LYXI5yLMGAXAqbWe?=
+ =?us-ascii?Q?bYMuz6qUNwht1AfStZkB46XWIpp9fVzdfyz684O?=
+X-Microsoft-Antispam-Message-Info: Lg75bksWiujbi+Ys1Fzxi8ZpCCvhQacJskA8oFOJQOIuyj9HrT/dzNn5xiMfzGZielUYlnckjFug8x6RpT9z2lLufTYGmLOJ0zIPTYbg2sDzUAZzkwulJGIPVSQMlmKbxCvXSnoboXH82LLjhZtfmRF21zIJBxyWcgxm1KmHhExdzwotfQNmTSRJm2RTPSg1
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3109;6:zdNdhPyYcg4TlCPc/FUnGwxwngqfsuw8n9Ti1F086aAP4LjUssSWJyBWzed2Wojx58YdHw+jqoNzURMQ2Chj+E+SVeJ2kx2bAfNovir3pqfYUlGAKjuAdMwjIHn4sGrYKRYTEzfFiHsP0kY3uiPFjYhrBryEilBaZm/cxDjWFnymRM7t327VHJilyX0euOKIfHOL42TejzGPkVZekYqFU0/UI4D+iYR5wPRFrwLdKOxrMniYdUTmTZk8VMxNPUjtrryh4zxaVdhInSznDyULjZ8ZACq2LUYWoUZoXoi4KFGekKkbQiQuBvkFEcK6Dh271TGmTi0PucT9mm3bhzI/0KdsCfPTy5H0BLWp2uK066xVBqkxrvHNRyvTKS67BvlwDJeylSkqA9zCq+Gv6FngNIGpG8qYP682kAykUJ/9L28FIs9cdH1tDbGJHWkHnqUVlDh/FDqYq4+iQBJW4Zw/Og==;5:v6ipzTq3lZHeYImYuDVnBUMv2nWI4imKAGsg+HE1RlFqHj3lrjAACWt/TvA+e9Y3sGFMnno5ARq141hi4yyjIhtkeeIGo4jsbEY/OLd9Xoi4YDAQ+d9ciOpNaNuE7CRUMuwbr/ObqqP1shLSEnWr9vNDdrCRRKu+JfafH6E5600=;24:4cwoID0Ufi65pYsITW5aj8Yc3g+017uP4aiezLgjZDgUgv9GypD92+Z7NebTW+c32zJTfC7caDgfIPKD1x+naTWrSsKzmMJKR02JTl40AzQ=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;7:LgPLkxCGQeblVuE8v1oDUCi2OXyiyGsfNLsP2J5+hsLMxEx5BQyTxcsZle2W0BjQfjftV5ql+KjL+nRpevJ1NtzQ1FO+2Z3ggvzFUt0coyNgF4yMiktuIzFxEM2adehkvGRvPmWh605WrilRiJ+STw1cHXUJf1rwAMqF7syoMF6V7CN+2VZTSVsEfoJ7pJK7AshOAOGwqrAnWVjtMD3+nDck13WNjSPHTbQYrUDRQMoxo0KU9CBX8+uyoswfXSUQ
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2018 03:26:01.9586
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB3109;7:8GWLe8nXtTRYNn0j1LWa5YAME/RZT/Y5LFrF+O2ybTsgGWqHkjB0CPvilq6sr3cgpJle75XJAG1sxis7p7D2V+2cwMZ+kLfjo9QA9atPBnSyf9wAUnirqzksNEA5yyId6OOaROFCVqKr2ORCK0vDEWU+pcmI9I4UXiSSrTNYrOss3XBquJ5O/ig0OJEvXN7Bu1RFL/hPkEXUnjtBeZnMI0FxZYw82VWFXwBE5GCfmNyyHAMHzbc9MhzznbLFmjPw
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2018 03:25:59.4547
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18399ff2-1c6c-4900-c1d6-08d5945ba1de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 763b8f31-c567-4298-514a-08d5945ba05e
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB389
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB3109
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to i.MX7ULP reference manual, TPM_SC_CPWMS can ONLY be
-written when counter is disabled, TPM_SC_TOF is write-1-clear,
-TPM_C0SC_CHF is also write-1-clear, correct these registers
-initialization flow;
+The clock name should be ipg instead of igp.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-changes since V1:
-	use separate patch to fix the clock name typo.
- drivers/clocksource/timer-imx-tpm.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-imx-tpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-index 3f97d49..7403e49 100644
+index 21bffdc..3f97d49 100644
 --- a/drivers/clocksource/timer-imx-tpm.c
 +++ b/drivers/clocksource/timer-imx-tpm.c
-@@ -20,6 +20,7 @@
- #define TPM_SC				0x10
- #define TPM_SC_CMOD_INC_PER_CNT		(0x1 << 3)
- #define TPM_SC_CMOD_DIV_DEFAULT		0x3
-+#define TPM_SC_TOF_MASK			(0x1 << 7)
- #define TPM_CNT				0x14
- #define TPM_MOD				0x18
- #define TPM_STATUS			0x1c
-@@ -29,6 +30,7 @@
- #define TPM_C0SC_MODE_SHIFT		2
- #define TPM_C0SC_MODE_MASK		0x3c
- #define TPM_C0SC_MODE_SW_COMPARE	0x4
-+#define TPM_C0SC_CHF_MASK		(0x1 << 7)
- #define TPM_C0V				0x24
- 
- static void __iomem *timer_base;
-@@ -205,9 +207,13 @@ static int __init tpm_timer_init(struct device_node *np)
- 	 * 4) Channel0 disabled
- 	 * 5) DMA transfers disabled
- 	 */
-+	/* make sure counter is disabled */
- 	writel(0, timer_base + TPM_SC);
-+	/* TOF is W1C */
-+	writel(TPM_SC_TOF_MASK, timer_base + TPM_SC);
- 	writel(0, timer_base + TPM_CNT);
--	writel(0, timer_base + TPM_C0SC);
-+	/* CHF is W1C */
-+	writel(TPM_C0SC_CHF_MASK, timer_base + TPM_C0SC);
- 
- 	/* increase per cnt, div 8 by default */
- 	writel(TPM_SC_CMOD_INC_PER_CNT | TPM_SC_CMOD_DIV_DEFAULT,
+@@ -179,7 +179,7 @@ static int __init tpm_timer_init(struct device_node *np)
+ 	ipg = of_clk_get_by_name(np, "ipg");
+ 	per = of_clk_get_by_name(np, "per");
+ 	if (IS_ERR(ipg) || IS_ERR(per)) {
+-		pr_err("tpm: failed to get igp or per clk\n");
++		pr_err("tpm: failed to get ipg or per clk\n");
+ 		ret = -ENODEV;
+ 		goto err_clk_get;
+ 	}
 -- 
 2.7.4
