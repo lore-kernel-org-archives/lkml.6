@@ -1,117 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeC1FlT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 01:41:19 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40716 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbeC1FlS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 01:41:18 -0400
-X-Google-Smtp-Source: AIpwx48UTSOeneETMAcjfAOr9LcSUEAJQi1qvm7lK3cHhfYQ4TmBLFU+MRd9P3jo+YmDH23lMJuo6GobMRiZKMagGJ4=
+        id S1752067AbeC1F73 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 01:59:29 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:43532 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750703AbeC1F72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 01:59:28 -0400
+Date: Wed, 28 Mar 2018 07:59:25 +0200
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Kevin Easton <kevin@guarana.org>
+CC: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] af_key: Use DIV_ROUND_UP() instead of open-coded
+ equivalent
+Message-ID: <20180328055925.skrjbax24he3vcpk@gauss3.secunet.de>
+References: <cover.1522063171.git.kevin@guarana.org>
+ <930c4e2a88e93c6863ddb97df9ebd0fa1b32149e.1522063171.git.kevin@guarana.org>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803271715310.8944@chino.kir.corp.google.com>
-References: <20180327230603.54721-1-shakeelb@google.com> <alpine.DEB.2.20.1803271715310.8944@chino.kir.corp.google.com>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Tue, 27 Mar 2018 22:41:15 -0700
-Message-ID: <CALvZod5x+mYBaa_x_a00WVGGDGX55AwTcuFdeVQStUo2Db6f3w@mail.gmail.com>
-Subject: Re: [PATCH] slab, slub: skip unnecessary kasan_cache_shutdown()
-To: David Rientjes <rientjes@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Greg Thelen <gthelen@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <930c4e2a88e93c6863ddb97df9ebd0fa1b32149e.1522063171.git.kevin@guarana.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 14466D38-76BB-42C7-9978-D51C37D71149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 5:16 PM, David Rientjes <rientjes@google.com> wrote:
-> On Tue, 27 Mar 2018, Shakeel Butt wrote:
->
->> diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
->> index 49fffb0ca83b..135ce2838c89 100644
->> --- a/mm/kasan/kasan.c
->> +++ b/mm/kasan/kasan.c
->> @@ -382,7 +382,8 @@ void kasan_cache_shrink(struct kmem_cache *cache)
->>
->>  void kasan_cache_shutdown(struct kmem_cache *cache)
->>  {
->> -     quarantine_remove_cache(cache);
->> +     if (!__kmem_cache_empty(cache))
->> +             quarantine_remove_cache(cache);
->>  }
->>
->>  size_t kasan_metadata_size(struct kmem_cache *cache)
->> diff --git a/mm/slab.c b/mm/slab.c
->> index 9212c64bb705..b59f2cdf28d1 100644
->> --- a/mm/slab.c
->> +++ b/mm/slab.c
->> @@ -2291,6 +2291,18 @@ static int drain_freelist(struct kmem_cache *cache,
->>       return nr_freed;
->>  }
->>
->> +bool __kmem_cache_empty(struct kmem_cache *s)
->> +{
->> +     int node;
->> +     struct kmem_cache_node *n;
->> +
->> +     for_each_kmem_cache_node(s, node, n)
->> +             if (!list_empty(&n->slabs_full) ||
->> +                 !list_empty(&n->slabs_partial))
->> +                     return false;
->> +     return true;
->> +}
->> +
->>  int __kmem_cache_shrink(struct kmem_cache *cachep)
->>  {
->>       int ret = 0;
->> diff --git a/mm/slab.h b/mm/slab.h
->> index e8981e811c45..68bdf498da3b 100644
->> --- a/mm/slab.h
->> +++ b/mm/slab.h
->> @@ -166,6 +166,7 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
->>                             SLAB_TEMPORARY | \
->>                             SLAB_ACCOUNT)
->>
->> +bool __kmem_cache_empty(struct kmem_cache *);
->>  int __kmem_cache_shutdown(struct kmem_cache *);
->>  void __kmem_cache_release(struct kmem_cache *);
->>  int __kmem_cache_shrink(struct kmem_cache *);
->> diff --git a/mm/slub.c b/mm/slub.c
->> index 1edc8d97c862..44aa7847324a 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -3707,6 +3707,17 @@ static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
->>               discard_slab(s, page);
->>  }
->>
->> +bool __kmem_cache_empty(struct kmem_cache *s)
->> +{
->> +     int node;
->> +     struct kmem_cache_node *n;
->> +
->> +     for_each_kmem_cache_node(s, node, n)
->> +             if (n->nr_partial || slabs_node(s, node))
->> +                     return false;
->> +     return true;
->> +}
->> +
->>  /*
->>   * Release all resources used by a slab cache.
->>   */
->
-> Any reason not to just make quarantine_remove_cache() part of
-> __kmem_cache_shutdown() instead of duplicating its logic?
+On Mon, Mar 26, 2018 at 07:39:16AM -0400, Kevin Easton wrote:
+> Several places use (x + 7) / 8 to convert from a number of bits to a number
+> of bytes.  Replace those with DIV_ROUND_UP(x, 8) instead, for consistency
+> with other parts of the same file.
+> 
+> Signed-off-by: Kevin Easton <kevin@guarana.org>
 
-Can you please explain what you mean by making
-quarantine_remove_cache() part of __kmem_cache_shutdown()? Do you mean
-calling quarantine_remove_cache() inside __kmem_cache_shutdown()? The
-__kmem_cache_shutdown() of both SLAB & SLUB does per-cpu
-draining/flushing and we want the free the quarantined objects before
-that. So, I am not sure how to incorporate  quarantine_remove_cache()
-into __kmem_cache_shutdown() without duplicating the for-loop &
-if-condition.
+Is this a fix or just a cleanup?
+If it is just a cleanup, please resent it based on ipsec-next.
