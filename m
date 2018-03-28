@@ -1,67 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753490AbeC1Orw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:47:52 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33234 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752237AbeC1Orv (ORCPT
+        id S1753440AbeC1Oyl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:54:41 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:53681 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752743AbeC1Oyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:47:51 -0400
-Date: Wed, 28 Mar 2018 15:47:49 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Wed, 28 Mar 2018 10:54:40 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: register filesystem last
-Message-ID: <20180328144748.GU30522@ZenIV.linux.org.uk>
-References: <20180309222709.GA3843@avx2>
- <20180309144938.d308e0bf98fb6b5bbcb82189@linux-foundation.org>
- <20180310000634.GA12443@avx2>
- <20180328044823.GT30522@ZenIV.linux.org.uk>
- <20180328072657.GA2063@avx2>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180328072657.GA2063@avx2>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Subject: [PATCH] ASoC: rsnd: mark PM functions __maybe_unused
+Date: Wed, 28 Mar 2018 16:53:10 +0200
+Message-Id: <20180328145318.10136-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K0:P9BT+t04wRIJOMK3z+6ASPKc9g/SgEYEahrvMBhQTqD+2wvxFFd
+ c5N0SrJyl14qtwKJraZ4KLABwsjpdqpWE+k/GosHlnS5uLnunY1Ghe9bkQOPAVa9pwuzr2M
+ EzItVgQ9soYr9Ox6D3k8zo9jKWn7c4HShalE+JUyElyM8nBn26uph+5iBQIzFkEuNlmSEAC
+ sPLRV/G39hTh6AAQrPZpg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:1WlKLa/IMZU=:64Pst7i0Vn7jXwADyzlfu6
+ TiAmAskOCHv8EiDJtAnuoh+wk/ytaYDVbS2PD9ghv6V3P99/lPN0I4EIJDo46LU017cF/OeTy
+ F5EXuJ1E5DUbLAH2SPpmp9jkzeeUYWBV8b5eY9IsKQdu3ZxI6ZRXalw+rVzywYTd/xkKiT/w+
+ EnUDKCJKGlq17pKw7oQIs6nbbxPwArQ1OoyJG7yrTMUxafrPy31tkoYUP7miUoiwGk0atxbyF
+ FFB9ZuBXTiZO4F4rw7kbUt9NWd4s8qQ0NGXUo9ajJPkqOq9JMA8iO0zSSHqq2/GdOhb81O7lL
+ DTvgwDg0f4vW+M//XBQhj/9Aor6BVxL3bvsZYqLnel6T5QFGGlYri9DN1X2ZSgJd/n78q0Osu
+ tnNCSj0XJ3lzIFjBij4iPAcf0THOOvywldAgiPHIRBxZUUy8BUpqZiQoHxemkBfM83LBcMKXT
+ fwXeHX4t5QTe4GZ8NL2sEaDDfOGEj6oMIuOoBAxwRgWRNxlpgSVFMISf4rkYhRarjpgJdcudt
+ 853UlbvJyzsXnO0sk6gYX7viIbLjiXDvQhViXgxcrIiH5R2BXRuJFffkK1YyPe4DRAKncc6Mq
+ 1AsrBTfCfX8enqo1/TRSbNJ5fGaTKudyY0X6GXcoOQ77imkOX5GWrhsNUQNhCFvunCZuo3lTr
+ 70P07/15SONBQdqFG/2QCSbmq1l8Cc/Q6lKKzyy3jUckyRY7JXlKPYKq7SIXGkb45W1K10mwP
+ 3z6au9qgeQxZKOKROnkmb6AF4hnvN/T69OdK3w==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 10:26:57AM +0300, Alexey Dobriyan wrote:
-> On Wed, Mar 28, 2018 at 05:48:23AM +0100, Al Viro wrote:
-> > On Sat, Mar 10, 2018 at 03:06:34AM +0300, Alexey Dobriyan wrote:
-> > > On Fri, Mar 09, 2018 at 02:49:38PM -0800, Andrew Morton wrote:
-> > > > On Sat, 10 Mar 2018 01:27:09 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > > > 
-> > > > > As soon as register_filesystem() exits, filesystem can be mounted.
-> > > > > It is better to present fully operational /proc.
-> > > > > 
-> > > > > Of course it doesn't matter because /proc is not modular
-> > > > > but do it anyway.
-> > > > > 
-> > > > > Drop error check, it should be handled by panicking.
-> > > > 
-> > > > So... shouldn't we add a call to panic()?
-> > > 
-> > > via FS_PANIC flag, yes. I have a patch somewhere.
-> > > There are 104 filesystems ATM, some internal, some not.
-> > > Some modular, some not.
-> > 
-> > You do realize that the only case when register_filesystem() fails is
-> > "another driver has already registered filesystem type with the same
-> > name"?  Is there *ever* a case when
-> > 	* you could expect that to happen and
-> > 	* panic would be a sane response?
-> 
-> It is for standartizing all those error checks in init sequence by
-> removing them. Modules won't have FS_PANIC.
+The suspend/resume callbacks are now optional, leading to a warning
+when they are unused:
 
-Huh?  Again, _when_ is that thing appropriate?  To register_filesystem()
-failure in non-modular case you need several builtin fs drivers to
-try and register fs types with the same name.  In this particular
-case, you need another in-kernel filesystem called "proc" registered
-first.
+sound/soc/sh/rcar/core.c:1548:12: error: 'rsnd_resume' defined but not used [-Werror=unused-function]
+ static int rsnd_resume(struct device *dev)
+            ^~~~~~~~~~~
+sound/soc/sh/rcar/core.c:1539:12: error: 'rsnd_suspend' defined but not used [-Werror=unused-function]
+ static int rsnd_suspend(struct device *dev)
 
-It's not about extreme oom early in the boot or anything like that -
-plain and simple badly modified and misconfigured kernel.
+This marks the as __maybe_unused to avoid the warning.
+
+Fixes: f8a9a29c4fe9 ("ASoC: rsnd: set pm_ops in hibernate-compatible way")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/sh/rcar/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 6a76688a8ba9..94f081b93258 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1536,7 +1536,7 @@ static int rsnd_remove(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int rsnd_suspend(struct device *dev)
++static int __maybe_unused rsnd_suspend(struct device *dev)
+ {
+ 	struct rsnd_priv *priv = dev_get_drvdata(dev);
+ 
+@@ -1545,7 +1545,7 @@ static int rsnd_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int rsnd_resume(struct device *dev)
++static int __maybe_unused rsnd_resume(struct device *dev)
+ {
+ 	struct rsnd_priv *priv = dev_get_drvdata(dev);
+ 
+-- 
+2.9.0
