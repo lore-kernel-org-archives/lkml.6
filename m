@@ -1,128 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753436AbeC1HoO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:44:14 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:63647 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752848AbeC1HoK (ORCPT
+        id S1752572AbeC1HrG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:47:06 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41489 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeC1HrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:44:10 -0400
-X-IronPort-AV: E=Sophos;i="5.48,370,1517842800";
-   d="scan'208";a="276484717"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Subject: RE: [PATCH v2 3/8] DT: arm: renesas,r9a06g032: add the RZ/N1 bindings
-Thread-Topic: [PATCH v2 3/8] DT: arm: renesas,r9a06g032: add the RZ/N1
- bindings
-Thread-Index: AQHTwdPuTX4YR6F4f0q+f7Er2m2uwKPcMVKAgAkbFvA=
-Date: Wed, 28 Mar 2018 07:44:03 +0000
-Message-ID: <OSBPR01MB2054832DF4C7ACB15F49C129D2A30@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com>
- <1521719091-25157-4-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXaRarxors3E-Jv7TLjka-p9XGYCTKyF7jM3p+UemgO+w@mail.gmail.com>
-In-Reply-To: <CAMuHMdXaRarxors3E-Jv7TLjka-p9XGYCTKyF7jM3p+UemgO+w@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=michel.pollet@bp.renesas.com;
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB2134;7:VU1cULhaHucVDQtxwzdVTcM158QXzWB8NwHjaBR7RgfyD/ww4VHcSSQiH46KzBRo0i5Ob+lIu2pBzGcJULZHIXyCvD5SlpK22muIXN/2/QrzWegqM6M1exuEACaJC3WIr6hu4G2btwrl90pA8NbIZwWberRNUIXSOy0qupbRboiN2ju58C6dVMhinwQXeSvKeCoop1jfocsgyyflF4Mc9iuBtzHROgQXz8fIJ/pai3oZR4NxYEz/9t/DpqVNIJoT;20:OWKZyoEeFWwtwnt2ca022GR7bwSTzCE71jbTFYYulhzIGp0aBbVMDhR46ccyp1uwrRO/Yp6TWumIYwryY4Jy62nNfCerYoRGkDxTzm1uG6ph1vwa1/snxshydCMcbnmmXWb2GVXa6/DSg1dciUOc8xS9w3n3PqC1DaA+5r7H1ms=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 04ec0bc6-9d5e-45ba-9239-08d5947fadb5
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2134;
-x-ms-traffictypediagnostic: OSBPR01MB2134:
-x-microsoft-antispam-prvs: <OSBPR01MB213410219D5AF42FA452D7A1D2A30@OSBPR01MB2134.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:OSBPR01MB2134;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2134;
-x-forefront-prvs: 06259BA5A2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(376002)(39380400002)(346002)(366004)(189003)(199004)(76176011)(229853002)(486005)(316002)(99286004)(54906003)(26005)(86362001)(575784001)(7696005)(102836004)(53936002)(3660700001)(6436002)(186003)(6246003)(2906002)(53546011)(6506007)(3280700002)(81166006)(66066001)(486005)(3846002)(6116002)(106356001)(8676002)(11346002)(81156014)(446003)(476003)(39060400002)(4326008)(6916009)(105586002)(7736002)(25786009)(97736004)(14454004)(5660300001)(2900100001)(74316002)(8936002)(305945005)(7416002)(478600001)(68736007)(33656002)(5250100002)(9686003)(55016002)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2134;H:OSBPR01MB2054.jpnprd01.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:0;LANG:en;
-x-microsoft-antispam-message-info: 1c2BvybgyfX8xHsgQqp5LFKwj2XrgJd8IcPCM/8QjlCvXgN3wZJrxRtJWqof8Am5zxCJyn/0drM5Qxw5qdlpq0t5dKzPFBxowxZu/BUau/IqsEquuM8sFQl7KUsA6SOIdR8GqOMoiM/knqVAVz2hXrXF/UOFWfWsFNcg9rZB8dDZ8VG+MTZdGKP6d8IwGF8ASf4XS4O+0n2XLQtOZBubTXnO0FvdQVcUfr4dfUUB8BHmq2dOxenLNyjIRQRiQ+gzYUUaTc5CTNgAOoaj08u0U5q3zOsmiiGXZdpeuTMZuOV8zbcvi6PZpDGuIr2A7tJ5vlgKztw36yLmKaGpf+ENBA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04ec0bc6-9d5e-45ba-9239-08d5947fadb5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Mar 2018 07:44:03.6877
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2134
+        Wed, 28 Mar 2018 03:47:05 -0400
+X-Google-Smtp-Source: AIpwx4+1xxUhCHWDmHtbEU6mh096polU2MiutzVy/adtFLiQDgurhJFqS83y1xKyS35TvZp5tb7PIg==
+From: Vincent Guittot <vincent.guittot@linaro.org>
+To: catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        chris.redpath@arm.com, Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] sched: support dynamiQ cluster
+Date: Wed, 28 Mar 2018 09:46:55 +0200
+Message-Id: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2S7iLCO027897
 
-Hi Geert,
+Arm DynamiQ system can integrate cores with different micro architecture
+or max OPP under the same DSU so we can have cores with different compute
+capacity at the LLC (which was not the case with legacy big/LITTLE
+architecture). Such configuration is similar in some way to ITMT on intel
+platform which allows some cores to be boosted to higher turbo frequency
+than others and which uses SD_ASYM_PACKING feature to ensures that CPUs with
+highest capacity, will always be used in priortiy in order to provide
+maximum throughput.
 
-Thanks for your review!
+Add arch_asym_cpu_priority() for arm64 as this function is used to
+differentiate CPUs in the scheduler. The CPU's capacity is used to order
+CPUs in the same DSU.
 
-On  22 March 2018 12:37, Geert said:
-> Hi Michel,
->
-> On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
-> > This documents the RZ/N1 bindings for both the RZ/N1 and the
-> > RZN1D400-DB board.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> > +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> > @@ -47,7 +47,8 @@ SoCs:
-> >      compatible = "renesas,r8a77980"
-> >    - R-Car D3 (R8A77995)
-> >      compatible = "renesas,r8a77995"
-> > -
-> > +  - RZ/N1D (R9A06G032)
-> > +    compatible = "renesas,r9a06g032"
-> >
-> >  Boards:
-> >
-> > @@ -104,6 +105,8 @@ Boards:
-> >      compatible = "renesas,porter", "renesas,r8a7791"
-> >    - RSKRZA1 (YR0K77210C000BE)
-> >      compatible = "renesas,rskrza1", "renesas,r7s72100"
-> > +  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
->
-> The official board part number (between parentheses) should be
-> YCONNECT-IT-RZN1D?
+Create sched domain topolgy level for arm64 so we can set SD_ASYM_PACKING
+at MC level.
 
-I've checked this, and the YCONNECT is the /base board/ for this 'module', the module
-is called RZN1D-DB.
+Some tests have been done on a hikey960 platform (quad cortex-A53,
+quad cortex-A73). For the test purpose, the CPUs topology of the hikey960
+has been modified so the 8 heterogeneous cores are described as being part
+of the same cluster and sharing resources (MC level) like with a DynamiQ DSU.
 
->
-> > +    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
-> >    - Salvator-X (RTP0RC7795SIPB0010S)
-> >      compatible = "renesas,salvator-x", "renesas,r8a7795"
-> >    - Salvator-X (RTP0RC7796SIPB0011S)
->
-> Gr{oetje,eeting}s,
->
->                         Geert
+Results below show the time in seconds to run sysbench --test=cpu with an
+increasing number of threads. The sysbench test run 32 times
 
-Michel
+             without patch     with patch    diff
+1 threads    11.04(+/- 30%)    8.86(+/- 0%)  -19%
+2 threads     5.59(+/- 14%)    4.43(+/- 0%)  -20%
+3 threads     3.80(+/- 13%)    2.95(+/- 0%)  -22%
+4 threads     3.10(+/- 12%)    2.22(+/- 0%)  -28%
+5 threads     2.47(+/-  5%)    1.95(+/- 0%)  -21%
+6 threads     2.09(+/-  0%)    1.73(+/- 0%)  -17%
+7 threads     1.64(+/-  0%)    1.56(+/- 0%)  - 7%
+8 threads     1.42(+/-  0%)    1.42(+/- 0%)    0%
 
+Results show a better and stable results across iteration with the patch
+compared to mainline because we are always using big cores in priority whereas
+with mainline, the scheduler randomly choose a big or a little cores when
+there are more cores than number of threads.
+With 1 thread, the test duration varies in the range [8.85 .. 15.86] for
+mainline whereas it stays in the range [8.85..8.87] with the patch
 
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
+---
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+The SD_ASYM_PACKING flag is disabled by default and I'm preparing another patch
+to enable this dynamically at boot time by detecting the system topology.
+
+ arch/arm64/kernel/topology.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 2186853..cb6705e5 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -296,6 +296,33 @@ static void __init reset_cpu_topology(void)
+ 	}
+ }
+ 
++#ifdef CONFIG_SCHED_MC
++unsigned int __read_mostly arm64_sched_asym_enabled;
++
++int arch_asym_cpu_priority(int cpu)
++{
++	return topology_get_cpu_scale(NULL, cpu);
++}
++
++static inline int arm64_sched_dynamiq(void)
++{
++	return arm64_sched_asym_enabled ? SD_ASYM_PACKING : 0;
++}
++
++static int arm64_core_flags(void)
++{
++	return cpu_core_flags() | arm64_sched_dynamiq();
++}
++#endif
++
++static struct sched_domain_topology_level arm64_topology[] = {
++#ifdef CONFIG_SCHED_MC
++	{ cpu_coregroup_mask, arm64_core_flags, SD_INIT_NAME(MC) },
++#endif
++	{ cpu_cpu_mask, SD_INIT_NAME(DIE) },
++	{ NULL, },
++};
++
+ void __init init_cpu_topology(void)
+ {
+ 	reset_cpu_topology();
+@@ -306,4 +333,7 @@ void __init init_cpu_topology(void)
+ 	 */
+ 	if (of_have_populated_dt() && parse_dt_topology())
+ 		reset_cpu_topology();
++
++	/* Set scheduler topology descriptor */
++	set_sched_topology(arm64_topology);
+ }
+-- 
+2.7.4
