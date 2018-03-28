@@ -1,111 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753290AbeC1Tf7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 15:35:59 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41918 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753032AbeC1Tf5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 15:35:57 -0400
-X-Google-Smtp-Source: AIpwx48KyB6TsSxjEOPbBLewoq+pbgMHU/W1D3bOcTk3U9TKkoiS25Q+JYsE2bNfTkNwBdKutTY4Cw==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: LEROY Christophe <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/19] powerpc/chrp/setup: Add attribute unused and make some functions static
-Date: Wed, 28 Mar 2018 21:35:53 +0200
-Message-Id: <20180328193553.1122-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180322202007.23088-6-malat@debian.org>
-References: <20180322202007.23088-6-malat@debian.org>
+        id S1753050AbeC1ThV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 15:37:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752416AbeC1ThT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 15:37:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4034F21773
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 28 Mar 2018 14:37:17 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alan Douglas <adouglas@cadence.com>
+Cc: Niklas Cassel <niklas.cassel@axis.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "cyrille.pitchen@free-electrons.com"
+        <cyrille.pitchen@free-electrons.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v5 07/12] PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64
+ if a 64-bit BAR was set-up
+Message-ID: <20180328193717.GA97213@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180328115018.31921-1-niklas.cassel@axis.com>
+ <20180328115018.31921-8-niklas.cassel@axis.com>
+ <CO2PR07MB97221CD6D90F81C2D81D65BD8A30@CO2PR07MB972.namprd07.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CO2PR07MB97221CD6D90F81C2D81D65BD8A30@CO2PR07MB972.namprd07.prod.outlook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove variable declaration idu_size and associated code since not used.
+[+cc Lorenzo]
 
-These functions can all be static, make it so. Fix warnings treated as
-errors with W=1:
+On Wed, Mar 28, 2018 at 01:24:10PM +0000, Alan Douglas wrote:
+> > On 28/03/2018 12:51, Niklas Cassel wrote:
+> > cdns_pcie_ep_set_bar() does some round-up of the BAR size, which means that a 64-bit BAR can be set-up, even when the flag
+> > PCI_BASE_ADDRESS_MEM_TYPE_64 isn't set.
+> 
+> > If a 64-bit BAR was set-up, set the flag PCI_BASE_ADDRESS_MEM_TYPE_64, so that the calling function can know what BAR width that was actually set-up.
+> 
+> > I'm not sure why cdns_pcie_ep_set_bar() doesn't obey the flag PCI_BASE_ADDRESS_MEM_TYPE_64, but I leave this for the MAINTAINER to fix, since there might be a reason why > this flag is ignored.
+> Will investigate and fix this in future patch
+> 
+> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> > ---
+> >  drivers/pci/cadence/pcie-cadence-ep.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+> > index cef36cd6b710..2905e098678c 100644
+> > --- a/drivers/pci/cadence/pcie-cadence-ep.c
+> > +++ b/drivers/pci/cadence/pcie-cadence-ep.c
+> > @@ -106,6 +106,9 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
+> >  		if (is_64bits && (bar & 1))
+> >  			return -EINVAL;
+> >  
+> > +		if (is_64bits && !(flags & PCI_BASE_ADDRESS_MEM_TYPE_64))
+> > +			epf_bar->flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
+> > +
+> >  		if (is_64bits && is_prefetch)
+> >  			ctrl = CDNS_PCIE_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS;
+> >  		else if (is_prefetch)
+> > --
+> > 2.14.2
+> Change looks good to me.
 
-  arch/powerpc/platforms/chrp/setup.c:97:6: error: no previous prototype for ‘chrp_show_cpuinfo’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/chrp/setup.c:302:13: error: no previous prototype for ‘chrp_setup_arch’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/chrp/setup.c:385:16: error: variable ‘idu_size’ set but not used [-Werror=unused-but-set-variable]
-  arch/powerpc/platforms/chrp/setup.c:526:13: error: no previous prototype for ‘chrp_init_IRQ’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/chrp/setup.c:559:1: error: no previous prototype for ‘chrp_init2’ [-Werror=missing-prototypes]
+It will be helpful to Lorenzo if you spell this out, e.g.,
 
-Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
-v2: Remove totally variable idu_size
- arch/powerpc/platforms/chrp/setup.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+  Acked-by: Alan Douglas <adouglas@cadence.com>
 
-diff --git a/arch/powerpc/platforms/chrp/setup.c b/arch/powerpc/platforms/chrp/setup.c
-index 481ed133e04b..d6d8ffc0271e 100644
---- a/arch/powerpc/platforms/chrp/setup.c
-+++ b/arch/powerpc/platforms/chrp/setup.c
-@@ -94,7 +94,7 @@ static const char *chrp_names[] = {
- 	"Total Impact Briq"
- };
- 
--void chrp_show_cpuinfo(struct seq_file *m)
-+static void chrp_show_cpuinfo(struct seq_file *m)
- {
- 	int i, sdramen;
- 	unsigned int t;
-@@ -299,7 +299,7 @@ static __init void chrp_init(void)
- 	of_node_put(node);
- }
- 
--void __init chrp_setup_arch(void)
-+static void __init chrp_setup_arch(void)
- {
- 	struct device_node *root = of_find_node_by_path("/");
- 	const char *machine = NULL;
-@@ -382,7 +382,7 @@ static void __init chrp_find_openpic(void)
- {
- 	struct device_node *np, *root;
- 	int len, i, j;
--	int isu_size, idu_size;
-+	int isu_size;
- 	const unsigned int *iranges, *opprop = NULL;
- 	int oplen = 0;
- 	unsigned long opaddr;
-@@ -427,11 +427,9 @@ static void __init chrp_find_openpic(void)
- 	}
- 
- 	isu_size = 0;
--	idu_size = 0;
- 	if (len > 0 && iranges[1] != 0) {
- 		printk(KERN_INFO "OpenPIC irqs %d..%d in IDU\n",
- 		       iranges[0], iranges[0] + iranges[1] - 1);
--		idu_size = iranges[1];
- 	}
- 	if (len > 1)
- 		isu_size = iranges[3];
-@@ -523,7 +521,7 @@ static void __init chrp_find_8259(void)
- 	}
- }
- 
--void __init chrp_init_IRQ(void)
-+static void __init chrp_init_IRQ(void)
- {
- #if defined(CONFIG_VT) && defined(CONFIG_INPUT_ADBHID) && defined(CONFIG_XMON)
- 	struct device_node *kbd;
-@@ -555,7 +553,7 @@ void __init chrp_init_IRQ(void)
- #endif
- }
- 
--void __init
-+static void __init
- chrp_init2(void)
- {
- #ifdef CONFIG_NVRAM
--- 
-2.11.0
+Also, it looks like we need a MAINTAINERS update to add
+drivers/pci/cadence/ to the "PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+filename patterns.
