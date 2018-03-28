@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752580AbeC1Lis (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:38:48 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:50986 "EHLO
+        id S1752447AbeC1Liq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:38:46 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:50977 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751207AbeC1Lin (ORCPT
+        with ESMTP id S1750753AbeC1Lin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Mar 2018 07:38:43 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -13,48 +13,64 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH 0/8] Designware EP support and code clenan up
-Date: Wed, 28 Mar 2018 12:38:30 +0100
-Message-Id: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH 1/8] bindings: PCI: designware: Example update
+Date: Wed, 28 Mar 2018 12:38:31 +0100
+Message-Id: <33aa86ee667e8b435db080b8c683cb5df1bd6544.1522235224.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch set was made against the Bjorn's next branch.
+Changes the IP registers size to accommodate the ATU unroll space.
 
-Adds support Designware EP support.
+Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers.
 
-Increases the maximum number of interrupts allowed for Designware IP
-controller.
+Replaces the pcie base address example by a real pcie base address in use.
 
-Does a code cleanup on Designware driver:
- - Replaces magic numbers without a easy meaning by a well known define
-   that helps the human compreension.
- - Replaces a division by 2 by a simple right shift rotation of 1 bit.
- - Fixes all first letter characters on comments and debug messages to
-   upper case to maintain coherency.
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+---
+ Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Gustavo Pimentel (8):
-  bindings: PCI: designware: Example update
-  PCI: dwc: designware: Add support for endpoint mode
-  bindings: PCI: designware: Add support for the EP in designware driver
-  misc: pci_endpoint_test: Add designware EP entry
-  PCI: dwc: designware: Define maximum number of vectors
-  PCI: dwc: Replace lower into upper case characters
-  PCI: dwc: Small computation improvement
-  PCI: dwc: Replace magic number by defines
-
- .../devicetree/bindings/pci/designware-pcie.txt    |  25 +++-
- drivers/misc/pci_endpoint_test.c                   |   1 +
- drivers/pci/dwc/Kconfig                            |  45 ++++--
- drivers/pci/dwc/pcie-designware-ep.c               |  16 +-
- drivers/pci/dwc/pcie-designware-host.c             |  77 +++++-----
- drivers/pci/dwc/pcie-designware-plat.c             | 163 +++++++++++++++++++--
- drivers/pci/dwc/pcie-designware.c                  |  22 +--
- drivers/pci/dwc/pcie-designware.h                  |   1 +
- drivers/pci/endpoint/functions/pci-epf-test.c      |   5 +
- 9 files changed, 276 insertions(+), 79 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+index 1da7ade..6300762 100644
+--- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+@@ -1,7 +1,8 @@
+ * Synopsys DesignWare PCIe interface
+ 
+ Required properties:
+-- compatible: should contain "snps,dw-pcie" to identify the core.
++- compatible:
++	"snps,dw-pcie" for RC mode;
+ - reg: Should contain the configuration address space.
+ - reg-names: Must be "config" for the PCIe configuration space.
+     (The old way of getting the configuration address space from "ranges"
+@@ -41,11 +42,11 @@ EP mode:
+ 
+ Example configuration:
+ 
+-	pcie: pcie@dffff000 {
++	pcie: pcie@dfc00000 {
+ 		compatible = "snps,dw-pcie";
+-		reg = <0xdffff000 0x1000>, /* Controller registers */
+-		      <0xd0000000 0x2000>; /* PCI config space */
+-		reg-names = "ctrlreg", "config";
++		reg = <0xdfc00000 0x302000>, /* IP registers */
++		      <0xd0000000 0x002000>; /* Configuration space */
++		reg-names = "dbi", "config";
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		device_type = "pci";
+@@ -54,5 +55,4 @@ Example configuration:
+ 		interrupts = <25>, <24>;
+ 		#interrupt-cells = <1>;
+ 		num-lanes = <1>;
+-		num-viewport = <3>;
+ 	};
 -- 
 2.7.4
