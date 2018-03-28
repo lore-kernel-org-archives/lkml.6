@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1769925-1522222910-2-16550276509951742196
+X-Cyrus-Session-Id: sloti22d1t05-1769925-1522222847-2-15674022882640940839
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522222909; b=NUlB1AC2q97Oh/IZN6i6ozRcxQqj/4JFmlW8VQQTMZweBaG
-    rlnJH2cF7flDXZ3wThnaf5ZR3LA4DlsSzWw/ZakbTD/QCUWYYR0zxHnb/+SiO/Hk
-    8yQzgn8pwIeGu/iVPWlY3/9KUwx7av44s5crMxt/3+L8iTg7kMfPBi0C/Cg9bl/S
-    +x4Kfy1YQXLPUqHdg7JTuI8akTcA6Zk6jPGfIuBplBBizV8GXkCAklFUlH83roqR
-    jievK12H4MJvNOQmji7iZIEp6k222KwpDIUgwSemLFrskBoyDedxt4L+OTQdO7b+
-    FRuPngx3mPJ6N0mOwtlSvHU/C0mwku0kohexdSw==
+    t=1522222846; b=gX4K4aq5hzpAnNl+HM9va6ucReHu4jt0cDdEsLJRClBXKCc
+    XgHPeiPZO5aI22oyY/a03V6VZQKrEG/4yS1ZuPCnr5itwfgF+eS1gh8tsk3R06U0
+    7TsIoTXnb+g5gnTGQNGG3yE3oaquhuX+oPm13ifG1cDVy0fuNvvCYos8Miz5VChN
+    hzANIrOMXVQDcv0KqTSDyXpi1ymDwQ1dQvdPhllPYAUQkJQnptep1x7KA4dvzPnK
+    RLdIhNO5Mb0MtrdchjF6USaUps0t05ERuf6mg954pJWudkRfRvPph9oje+vyls7d
+    Sbnc1PGwJYvjA5xtbNfdq21tssVR5rmMWw/evJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1522222909;
-    bh=1si15/k92O64BjEg9GI66p/P/bvbDGCIkXVUaQBDLRo=; b=ZLvaauuK6+KI
-    l8tZOwME9pEks+nykzLpvsyCCXUhmCYzX8Z3U7mIjY+553FIKZgGLr/TNi8Qe1TD
-    BlRz7iSUG7pz0pseLiYFijEbdnY1Vn+/xbqzs02IMRuWl8ZNHZYxbguclaR1G/uQ
-    d0DY6Tp9ZpLPFE8lDRfQw3It4PPaQgu9doWJS0zNpBeBHEqwSLRl1VFkowxKU6PJ
-    ng401xZeEdBcYe8tyxKGfxJY1lHqQPzZFn+1HM3MVwUrg/NB7ceEwzlg4o7no20+
-    Lg/r5PUnaV+ribiNWkw86oh7OUjUwY+dH3v6gYeX62o78IN/ATEtVGsohx7esa7x
-    vIuUotWecg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=SrrfZwVw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1522222846;
+    bh=zWNuG4l/AYcoR+y3DxNA3MNdEAA+641SN9JwOWdDneo=; b=W0RIHgTkaQs4
+    FcO//dn12peevorvH7JmHDeMiWqwhMraVDp/Su/M7CGJ+QGw0zpFCemE7blaqRDD
+    3HW0uT6spVzcxpvZBahYIZBaFfU+LS25kd4af9jTXen6BzRCmayFqid2roB4tgfw
+    Jg9LlNKrCmE5UFLzEc8vvgpbB9XJtaBxfSXIydqY2TWLNpKvqSyx0S4SNw4R+A/j
+    FrhIl0la6+/IkdRTCIp0MMTisN3D1lUBjKe3hCT6OqSH5EIn2yAFlkPIlOw4pj6L
+    PeAnaib1tqzaJirkCxeTDcukJ8CQhMeeinprlVAw6zbG1QgDLEGvQ+Rxq720v/Q3
+    bUi3pxPnzQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Cc53VR0I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=SrrfZwVw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Cc53VR0I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,29 +51,29 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBJV9+8MUL9Ee25KC/D3UWUCQ4ngysvLRJSaAdRD8ZQFdR0r5eZxSB18zQITZIK3WmAazgS8qBY5iTA+j3+2Nce2sqlX3XQOHe9bo991AEJ/QvZZIG0b
-    5Y1XA1ndTQbjTMpo8XUQBL9en0bRP7DRnF73wBUDDiwjqOYa3brBl5Cfff/rzRLqIhLXr8bBxTjc3H3VBIqU/b2Cri8iPhTE6kQE+dLnplowgbxY7e8yXIk0
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=ag1SF4gXAAAA:8
-    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=qqTsrR_GCXNHh_hb46oA:9 a=x8gzFH9gYPwA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfDmT9ifczDCMZ4OPYP0EtHzsJo986T3xuDuXHcZdfHdo4e2vU1s3MJW5+u2vtl9dQF/yrHuhGaryQlH5V0nnRaGkpWAf0JNmXS5cqJU+yZcg/ra9fXGI
+    IbBluW3l740XEJ5EuNFmfNRPbv7T0uIsgcY5dcfIGldnSZxgk4tfGdZgzfHh0V+RI9bJBOow8CHZM7Xu5F0VBg+tLUQlTj7FkAd8oRzm9qweZOBMorJSziap
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=20KFwNOVAAAA:8
+    a=ag1SF4gXAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=sBy_PAm624FdtEvdJhYA:9
+    a=x8gzFH9gYPwA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753486AbeC1Hlq (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Mar 2018 03:41:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46574 "EHLO
+        id S1752844AbeC1HaC (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Mar 2018 03:30:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46618 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752999AbeC1H3w (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 28 Mar 2018 03:29:52 -0400
+        with ESMTP id S1753016AbeC1HaA (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 28 Mar 2018 03:30:00 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/30] fs: introduce new ->get_poll_head and ->poll_mask methods
-Date: Wed, 28 Mar 2018 09:29:01 +0200
-Message-Id: <20180328072926.17131-6-hch@lst.de>
+Subject: [PATCH 08/30] aio: implement IOCB_CMD_POLL
+Date: Wed, 28 Mar 2018 09:29:04 +0200
+Message-Id: <20180328072926.17131-9-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180328072926.17131-1-hch@lst.de>
 References: <20180328072926.17131-1-hch@lst.de>
@@ -84,186 +84,182 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-->get_poll_head returns the waitqueue that the poll operation is going
-to sleep on.  Note that this means we can only use a single waitqueue
-for the poll, unlike some current drivers that use two waitqueues for
-different events.  But now that we have keyed wakeups and heavily use
-those for poll there aren't that many good reason left to keep the
-multiple waitqueues, and if there are any ->poll is still around, the
-driver just won't support aio poll.
+Simple one-shot poll through the io_submit() interface.  To poll for
+a file descriptor the application should submit an iocb of type
+IOCB_CMD_POLL.  It will poll the fd for the events specified in the
+the first 32 bits of the aio_buf field of the iocb.
+
+Unlike poll or epoll without EPOLLONESHOT this interface always works
+in one shot mode, that is once the iocb is completed, it will have to be
+resubmitted.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Jeff Moyer <jmoyer@redhat.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- Documentation/filesystems/Locking |  7 ++++++-
- Documentation/filesystems/vfs.txt | 13 +++++++++++++
- fs/select.c                       | 28 ++++++++++++++++++++++++++++
- include/linux/fs.h                |  2 ++
- include/linux/poll.h              | 27 +++++++++++++++++++++++----
- 5 files changed, 72 insertions(+), 5 deletions(-)
+ fs/aio.c                     | 98 +++++++++++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/aio_abi.h |  6 +--
+ 2 files changed, 99 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
-index 220bba28f72b..6d227f9d7bd9 100644
---- a/Documentation/filesystems/Locking
-+++ b/Documentation/filesystems/Locking
-@@ -440,6 +440,8 @@ prototypes:
- 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
- 	int (*iterate) (struct file *, struct dir_context *);
- 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
-+	struct wait_queue_head * (*get_poll_head)(struct file *, __poll_t);
-+	__poll_t (*poll_mask) (struct file *, __poll_t);
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
-@@ -470,7 +472,7 @@ prototypes:
+diff --git a/fs/aio.c b/fs/aio.c
+index 232dd84fc897..f4ff749d9889 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -5,6 +5,7 @@
+  *	Implements an efficient asynchronous io interface.
+  *
+  *	Copyright 2000, 2001, 2002 Red Hat, Inc.  All Rights Reserved.
++ *	Copyright 2018 Christoph Hellwig.
+  *
+  *	See ../COPYING for licensing terms.
+  */
+@@ -162,10 +163,18 @@ struct fsync_iocb {
+ 	bool			datasync;
  };
  
- locking rules:
--	All may block.
-+	All except for ->poll_mask may block.
- 
- ->llseek() locking has moved from llseek to the individual llseek
- implementations.  If your fs is not using generic_file_llseek, you
-@@ -498,6 +500,9 @@ in sys_read() and friends.
- the lease within the individual filesystem to record the result of the
- operation
- 
-+->poll_mask can be called with or without the waitqueue lock for the waitqueue
-+returned from ->get_poll_head.
++struct poll_iocb {
++	struct file		*file;
++	__poll_t		events;
++	struct wait_queue_head	*head;
++	struct wait_queue_entry	wait;
++};
 +
- --------------------------- dquot_operations -------------------------------
- prototypes:
- 	int (*write_dquot) (struct dquot *);
-diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
-index f608180ad59d..50ee13563271 100644
---- a/Documentation/filesystems/vfs.txt
-+++ b/Documentation/filesystems/vfs.txt
-@@ -857,6 +857,8 @@ struct file_operations {
- 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
- 	int (*iterate) (struct file *, struct dir_context *);
- 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
-+	struct wait_queue_head * (*get_poll_head)(struct file *, __poll_t);
-+	__poll_t (*poll_mask) (struct file *, __poll_t);
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
-@@ -901,6 +903,17 @@ otherwise noted.
- 	activity on this file and (optionally) go to sleep until there
- 	is activity. Called by the select(2) and poll(2) system calls
+ struct aio_kiocb {
+ 	union {
+ 		struct kiocb		rw;
+ 		struct fsync_iocb	fsync;
++		struct poll_iocb	poll;
+ 	};
  
-+  get_poll_head: Returns the struct wait_queue_head that poll, select,
-+  epoll or aio poll should wait on in case this instance only has single
-+  waitqueue.  Can return NULL to indicate polling is not supported,
-+  or a POLL* value using the POLL_TO_PTR helper in case a grave error
-+  occured and ->poll_mask shall not be called.
-+
-+  poll_mask: return the mask of POLL* values describing the file descriptor
-+  state.  Called either before going to sleep on the waitqueue returned by
-+  get_poll_head, or after it has been woken.  If ->get_poll_head and
-+  ->poll_mask are implemented ->poll does not need to be implement.
-+
-   unlocked_ioctl: called by the ioctl(2) system call.
+ 	struct kioctx		*ki_ctx;
+@@ -1589,7 +1598,6 @@ static int aio_fsync(struct fsync_iocb *req, struct iocb *iocb, bool datasync)
+ 		return -EINVAL;
+ 	if (iocb->aio_offset || iocb->aio_nbytes || iocb->aio_rw_flags)
+ 		return -EINVAL;
+-
+ 	req->file = fget(iocb->aio_fildes);
+ 	if (unlikely(!req->file))
+ 		return -EBADF;
+@@ -1608,6 +1616,92 @@ static int aio_fsync(struct fsync_iocb *req, struct iocb *iocb, bool datasync)
+ 	return ret;
+ }
  
-   compat_ioctl: called by the ioctl(2) system call when 32 bit system calls
-diff --git a/fs/select.c b/fs/select.c
-index ba91103707ea..cc270d7f6192 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -34,6 +34,34 @@
- 
- #include <linux/uaccess.h>
- 
-+__poll_t vfs_poll(struct file *file, struct poll_table_struct *pt)
++static void aio_complete_poll(struct poll_iocb *req, __poll_t mask)
 +{
-+	unsigned int events = poll_requested_events(pt);
-+	struct wait_queue_head *head;
++	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
++	struct file *file = req->file;
 +
-+	if (unlikely(!file_can_poll(file)))
-+		return DEFAULT_POLLMASK;
++	if (aio_complete(iocb, mangle_poll(mask), 0, 0))
++		fput(file);
++}
 +
-+	if (file->f_op->poll)
-+		return file->f_op->poll(file, pt);
++static int aio_poll_cancel(struct kiocb *rw)
++{
++	struct aio_kiocb *iocb = container_of(rw, struct aio_kiocb, rw);
++	struct file *file = iocb->poll.file;
 +
-+	/*
-+	 * Only get the poll head and do the first mask check if we are actually
-+	 * going to sleep on this file:
-+	 */
-+	if (pt && pt->_qproc) {
-+		head = vfs_get_poll_head(file, events);
-+		if (!head)
-+			return DEFAULT_POLLMASK;
-+		if (IS_ERR(head))
-+			return PTR_TO_POLL(head);
++	remove_wait_queue(iocb->poll.head, &iocb->poll.wait);
++	if (aio_complete(iocb, 0, 0, AIO_COMPLETE_CANCEL))
++		fput(file);
++	return 0;
++}
 +
-+		pt->_qproc(file, head, pt);
++static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
++		void *key)
++{
++	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
++	struct file *file = req->file;
++	__poll_t mask = key_to_poll(key);
++
++	assert_spin_locked(&req->head->lock);
++
++	/* for instances that support it check for an event match first: */
++	if (mask && !(mask & req->events))
++		return 0;
++
++	mask = vfs_poll_mask(file, req->events);
++	if (!mask)
++		return 0;
++
++	__remove_wait_queue(req->head, &req->wait);
++	aio_complete_poll(req, mask);
++	return 1;
++}
++
++static ssize_t aio_poll(struct aio_kiocb *aiocb, struct iocb *iocb)
++{
++	struct poll_iocb *req = &aiocb->poll;
++	unsigned long flags;
++	__poll_t mask;
++
++	/* reject any unknown events outside the normal event mask. */
++	if ((u16)iocb->aio_buf != iocb->aio_buf)
++		return -EINVAL;
++	/* reject fields that are not defined for poll */
++	if (iocb->aio_offset || iocb->aio_nbytes || iocb->aio_rw_flags)
++		return -EINVAL;
++
++	req->events = demangle_poll(iocb->aio_buf) | POLLERR | POLLHUP;
++	req->file = fget(iocb->aio_fildes);
++	if (unlikely(!req->file))
++		return -EBADF;
++
++	req->head = vfs_get_poll_head(req->file, req->events);
++	if (!req->head) {
++		fput(req->file);
++		return -EINVAL; /* same as no support for IOCB_CMD_POLL */
++	}
++	if (IS_ERR(req->head)) {
++		mask = PTR_TO_POLL(req->head);
++		goto done;
 +	}
 +
-+	return file->f_op->poll_mask(file, events);
-+}
-+EXPORT_SYMBOL_GPL(vfs_poll);
- 
- /*
-  * Estimate expected accuracy in ns from a timeval.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 79c413985305..6ea2c0843bb1 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1708,6 +1708,8 @@ struct file_operations {
- 	int (*iterate) (struct file *, struct dir_context *);
- 	int (*iterate_shared) (struct file *, struct dir_context *);
- 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
-+	struct wait_queue_head * (*get_poll_head)(struct file *, __poll_t);
-+	__poll_t (*poll_mask) (struct file *, __poll_t);
- 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
- 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
- 	int (*mmap) (struct file *, struct vm_area_struct *);
-diff --git a/include/linux/poll.h b/include/linux/poll.h
-index 7e0fdcf905d2..42e8e8665fb0 100644
---- a/include/linux/poll.h
-+++ b/include/linux/poll.h
-@@ -74,18 +74,37 @@ static inline void init_poll_funcptr(poll_table *pt, poll_queue_proc qproc)
- 	pt->_key   = ~(__poll_t)0; /* all events enabled */
- }
- 
-+/*
-+ * ->get_poll_head can return a __poll_t in the PTR_ERR, use these macros
-+ * to return the value and recover it.  It takes care of the negation as
-+ * well as off the annotations.
-+ */
-+#define POLL_TO_PTR(mask)	(ERR_PTR(-(__force int)(mask)))
-+#define PTR_TO_POLL(ptr)	((__force __poll_t)-PTR_ERR((ptr)))
++	init_waitqueue_func_entry(&req->wait, aio_poll_wake);
 +
- static inline bool file_can_poll(struct file *file)
- {
--	return file->f_op->poll;
-+	return file->f_op->poll ||
-+		(file->f_op->get_poll_head && file->f_op->poll_mask);
- }
- 
--static inline __poll_t vfs_poll(struct file *file, struct poll_table_struct *pt)
-+static inline struct wait_queue_head *vfs_get_poll_head(struct file *file,
-+		__poll_t events)
- {
--	if (unlikely(!file->f_op->poll))
-+	if (unlikely(!file->f_op->get_poll_head || !file->f_op->poll_mask))
-+		return NULL;
-+	return file->f_op->get_poll_head(file, events);
++	spin_lock_irqsave(&req->head->lock, flags);
++	mask = vfs_poll_mask(req->file, req->events);
++	if (!mask) {
++		__kiocb_set_cancel_fn(aiocb, aio_poll_cancel,
++				AIO_IOCB_DELAYED_CANCEL);
++		__add_wait_queue(req->head, &req->wait);
++	}
++	spin_unlock_irqrestore(&req->head->lock, flags);
++done:
++	if (mask)
++		aio_complete_poll(req, mask);
++	return -EIOCBQUEUED;
 +}
 +
-+static inline __poll_t vfs_poll_mask(struct file *file, __poll_t events)
-+{
-+	if (unlikely(!file->f_op->poll_mask))
- 		return DEFAULT_POLLMASK;
--	return file->f_op->poll(file, pt);
-+	return file->f_op->poll_mask(file, events) & events;
- }
- 
-+__poll_t vfs_poll(struct file *file, struct poll_table_struct *pt);
-+
- struct poll_table_entry {
- 	struct file *filp;
- 	__poll_t key;
+ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+ 			 struct iocb *iocb, bool compat)
+ {
+@@ -1676,6 +1770,8 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+ 		break;
+ 	case IOCB_CMD_FDSYNC:
+ 		ret = aio_fsync(&req->fsync, iocb, true);
++	case IOCB_CMD_POLL:
++		ret = aio_poll(req, iocb);
+ 		break;
+ 	default:
+ 		pr_debug("invalid aio operation %d\n", iocb->aio_lio_opcode);
+diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
+index 2c0a3415beee..ed0185945bb2 100644
+--- a/include/uapi/linux/aio_abi.h
++++ b/include/uapi/linux/aio_abi.h
+@@ -39,10 +39,8 @@ enum {
+ 	IOCB_CMD_PWRITE = 1,
+ 	IOCB_CMD_FSYNC = 2,
+ 	IOCB_CMD_FDSYNC = 3,
+-	/* These two are experimental.
+-	 * IOCB_CMD_PREADX = 4,
+-	 * IOCB_CMD_POLL = 5,
+-	 */
++	/* 4 was the experimental IOCB_CMD_PREADX */
++	IOCB_CMD_POLL = 5,
+ 	IOCB_CMD_NOOP = 6,
+ 	IOCB_CMD_PREADV = 7,
+ 	IOCB_CMD_PWRITEV = 8,
 -- 
 2.14.2
 
