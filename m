@@ -1,119 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeC1I2c (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 04:28:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54998 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeC1I2a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 04:28:30 -0400
-Date: Wed, 28 Mar 2018 01:28:25 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>
-Cc: Keith Busch <keith.busch@intel.com>, linux-block@vger.kernel.org,
-        javier@cnexlabs.com, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-Subject: Re: [PATCH 4/4] nvme: lightnvm: add late setup of block size and
- metadata
-Message-ID: <20180328082825.GB31409@infradead.org>
-References: <20180205121505.27563-1-mb@lightnvm.io>
- <20180205121505.27563-5-mb@lightnvm.io>
- <343f19d9-0428-f255-6ed0-519035eef46d@lightnvm.io>
+        id S1752545AbeC1IcT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 04:32:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43921 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751166AbeC1IcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 04:32:17 -0400
+Date: Wed, 28 Mar 2018 10:32:14 +0200
+From: Libor Pechacek <lpechacek@suse.com>
+To: devicetree@vger.kernel.org
+Cc: James Hogan <jhogan@kernel.org>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Olof Johansson <olof@lixom.net>, Heiko Stuebner <heiko@sntech.de>,
+        devicetree@vger.kernel.org, trivial@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] devicetree: Remove dangling symlinks
+Message-ID: <20180328083213.by4sjrk3nx5s4rbk@fm.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <343f19d9-0428-f255-6ed0-519035eef46d@lightnvm.io>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I really don't want more lightnvm cruft in the core.  We'll need
-a proper abstraction.c
+Support for CRIS and Meta was dropped.
 
-On Fri, Mar 23, 2018 at 12:00:08PM +0100, Matias Bjørling wrote:
-> On 02/05/2018 01:15 PM, Matias Bjørling wrote:
-> > The nvme driver sets up the size of the nvme namespace in two steps.
-> > First it initializes the device with standard logical block and
-> > metadata sizes, and then sets the correct logical block and metadata
-> > size. Due to the OCSSD 2.0 specification relies on the namespace to
-> > expose these sizes for correct initialization, let it be updated
-> > appropriately on the LightNVM side as well.
-> > 
-> > Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-> > ---
-> >   drivers/nvme/host/core.c     | 2 ++
-> >   drivers/nvme/host/lightnvm.c | 8 ++++++++
-> >   drivers/nvme/host/nvme.h     | 2 ++
-> >   3 files changed, 12 insertions(+)
-> > 
-> > diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> > index f837d666cbd4..740ceb28067c 100644
-> > --- a/drivers/nvme/host/core.c
-> > +++ b/drivers/nvme/host/core.c
-> > @@ -1379,6 +1379,8 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
-> >   	if (ns->noiob)
-> >   		nvme_set_chunk_size(ns);
-> >   	nvme_update_disk_info(disk, ns, id);
-> > +	if (ns->ndev)
-> > +		nvme_nvm_update_nvm_info(ns);
-> >   #ifdef CONFIG_NVME_MULTIPATH
-> >   	if (ns->head->disk)
-> >   		nvme_update_disk_info(ns->head->disk, ns, id);
-> > diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-> > index a9c010655ccc..8d4301854811 100644
-> > --- a/drivers/nvme/host/lightnvm.c
-> > +++ b/drivers/nvme/host/lightnvm.c
-> > @@ -814,6 +814,14 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
-> >   	}
-> >   }
-> > +void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
-> > +{
-> > +	struct nvm_dev *ndev = ns->ndev;
-> > +
-> > +	ndev->identity.csecs = ndev->geo.sec_size = 1 << ns->lba_shift;
-> > +	ndev->identity.sos = ndev->geo.oob_size = ns->ms;
-> > +}
-> > +
-> >   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
-> >   {
-> >   	struct request_queue *q = ns->queue;
-> > diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> > index ea1aa5283e8e..1ca08f4993ba 100644
-> > --- a/drivers/nvme/host/nvme.h
-> > +++ b/drivers/nvme/host/nvme.h
-> > @@ -451,12 +451,14 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
-> >   #endif /* CONFIG_NVME_MULTIPATH */
-> >   #ifdef CONFIG_NVM
-> > +void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
-> >   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
-> >   void nvme_nvm_unregister(struct nvme_ns *ns);
-> >   int nvme_nvm_register_sysfs(struct nvme_ns *ns);
-> >   void nvme_nvm_unregister_sysfs(struct nvme_ns *ns);
-> >   int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
-> >   #else
-> > +static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
-> >   static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
-> >   				    int node)
-> >   {
-> > 
-> 
-> Hi Keith,
-> 
-> When going through the patches for 4.17, I forgot to run this patch by you.
-> It is part of adding OCSSD2.0 support to the kernel, and slides in between a
-> large refactoring, and the 2.0 part. May I add your reviewed by and let Jens
-> pick it up after the nvme patches for 4.17 has gone up?
-> 
-> Thanks!
-> 
-> -Matias
-> 
-> _______________________________________________
-> Linux-nvme mailing list
-> Linux-nvme@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-nvme
----end quoted text---
+Signed-off-by: Libor Pechacek <lpechacek@suse.com>
+Fixes: bb6fb6dfcc17 ("metag: Remove arch/metag/")
+Fixes: c690eddc2f3b ("CRIS: Drop support for the CRIS port")
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Olof Johansson <olof@lixom.net>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org
+Cc: trivial@kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ scripts/dtc/include-prefixes/cris  | 1 -
+ scripts/dtc/include-prefixes/metag | 1 -
+ 2 files changed, 2 deletions(-)
+ delete mode 120000 scripts/dtc/include-prefixes/cris
+ delete mode 120000 scripts/dtc/include-prefixes/metag
+
+diff --git a/scripts/dtc/include-prefixes/cris b/scripts/dtc/include-prefixes/cris
+deleted file mode 120000
+index 736d998ba506..000000000000
+--- a/scripts/dtc/include-prefixes/cris
++++ /dev/null
+@@ -1 +0,0 @@
+-../../../arch/cris/boot/dts
+\ No newline at end of file
+diff --git a/scripts/dtc/include-prefixes/metag b/scripts/dtc/include-prefixes/metag
+deleted file mode 120000
+index 87a3c847db8f..000000000000
+--- a/scripts/dtc/include-prefixes/metag
++++ /dev/null
+@@ -1 +0,0 @@
+-../../../arch/metag/boot/dts
+\ No newline at end of file
+-- 
+2.13.6
