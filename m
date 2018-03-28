@@ -1,88 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750799AbeC1EAD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 00:00:03 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:57021 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751072AbeC1D76 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 23:59:58 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1197137|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03272;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BTTiKBR_1522209582;
-Date: Wed, 28 Mar 2018 11:59:42 +0800
-From: Guo Ren <ren_guo@c-sky.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 17/19] csky: defconfig
-Message-ID: <20180328035942.GA23588@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <8a9c9b588cdfdf8b25ca9d449bf5c862d329c1d8.1521399976.git.ren_guo@c-sky.com>
- <CAK8P3a3L-zO3K5qcmBPChhSqh+E6WtNRFV1cJRbksGZ74uaEAQ@mail.gmail.com>
- <20180327022128.GB10185@guoren>
- <CAK8P3a2CD4nEDzMZxtn1QQJA3oQeX=-4v17AxhpTuUqk8boVhg@mail.gmail.com>
+        id S1751058AbeC1EBE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 00:01:04 -0400
+Received: from mail.crc.id.au ([203.56.246.92]:60598 "EHLO mail.crc.id.au"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750753AbeC1EBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 00:01:03 -0400
+From: Steven Haigh <netwiz@crc.id.au>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Regression: 4.14.x x86/mm: Encrypt the initrd earlier for BSP microcode update
+Date: Wed, 28 Mar 2018 14:54:08 +1100
+Message-ID: <13354833.vZGJLXuz6d@wopr.lan.crc.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2CD4nEDzMZxtn1QQJA3oQeX=-4v17AxhpTuUqk8boVhg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; boundary="nextPart8142277.D7R0nplBXb"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 09:48:23AM +0200, Arnd Bergmann wrote:
-> On Tue, Mar 27, 2018 at 4:21 AM, Guo Ren <ren_guo@c-sky.com> wrote:
-> > On Mon, Mar 26, 2018 at 03:16:31PM +0200, Arnd Bergmann wrote:
-> 
-> >> > +CONFIG_CFG80211=y
-> >> > +CONFIG_CFG80211_DEBUGFS=y
-> >> > +CONFIG_CFG80211_WEXT=y
-> >>
-> >> I would guess you want IPV6 but not WEXT here.
-> > Gx6605s devlepment board support usb-wifi.
-> > Perhaps WEXT is needed by iwconfig or iwlist? So I just enable it.
-> > However, I'll consider to remove it.
-> 
-> I think it's only for backwards compatibility with old versions of
-> those tools. There are some older drivers that use WEXT as the
-> native interface, but CFG80211 based drivers have a netlink
-> interface.
-Thx for remind. I'll check.
+--nextPart8142277.D7R0nplBXb
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-> 
-> >> > +CONFIG_FB=y
-> >> > +CONFIG_FB_TILEBLITTING=y
-> >> > +CONFIG_FB_SIMPLE=y
-> >> > +CONFIG_BACKLIGHT_LCD_SUPPORT=y
-> >> > +# CONFIG_LCD_CLASS_DEVICE is not set
-> >> > +# CONFIG_BACKLIGHT_CLASS_DEVICE is not set
-> >> > +# CONFIG_VGA_CONSOLE is not set
-> >> > +CONFIG_FRAMEBUFFER_CONSOLE=y
-> >> > +CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
-> >> > +CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
-> >> > +CONFIG_LOGO=y
-> >> > +# CONFIG_LOGO_LINUX_MONO is not set
-> >> > +# CONFIG_LOGO_LINUX_VGA16 is not set
-> >>
-> >> For new platforms, using the DRM subsystem is the recommend
-> >> way to do graphics, it mostly replaces the framebuffer subsystem
-> >> here.
-> > These used by:
-> > https://github.com/c-sky/addons-linux/tree/master/addons/drivers/video/fbdev/nationalchip
-> >
-> > I'll consider the DRM subsystem.
-> 
-> It used to be rather hard to write a new DRM driver, but that has
-> improved a lot recently. You might be able to fit your driver into
-> drivers/gpu/drm/tinydrm/, or maybe do something a bit more complex
-> like drivers/gpu/drm/pl111/ or drivers/gpu/drm/stm/.
-For this patchset, I won't upstream the fbdev driver. I'll remove the
-CONFIG_FB in defconfig first.
+Hi all,
 
-Thx for remind about the develop-tips, and it's very helpful.
+After the following patch, we are unable to build the 4.14 tree with EL6 -=
+=20
+which uses gcc 4.4.7
 
-Best Regards
- Guo Ren
+The failure logs are as follows:
+BUILDSTDERR: arch/x86/kernel/head64.c: In function 'copy_bootdata':
+BUILDSTDERR: ./arch/x86/include/asm/mem_encrypt.h:59: sorry, unimplemented:=
+=20
+inlining failed in call to 'sme_map_bootdata': function not inlinable
+BUILDSTDERR: arch/x86/kernel/head64.c:294: sorry, unimplemented: called fro=
+m=20
+here
+BUILDSTDERR: ./arch/x86/include/asm/mem_encrypt.h:60: sorry, unimplemented:=
+=20
+inlining failed in call to 'sme_unmap_bootdata': function not inlinable
+BUILDSTDERR: arch/x86/kernel/head64.c:310: sorry, unimplemented: called fro=
+m=20
+here
+
+Patch in question:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/
+commit/arch/x86/include/asm/mem_encrypt.h?
+h=3Dlinux-4.14.y&id=3De0f82cbde41353ddf63935175583ceb5580cce87
+
+I can confirm that this builds fine with EL7.
+
+=2D-=20
+Steven Haigh
+
+=F0=9F=93=A7 netwiz@crc.id.au       =F0=9F=92=BB https://www.crc.id.au
+=F0=9F=93=9E +61 (3) 9001 6090    =F0=9F=93=B1 0412 935 897
+--nextPart8142277.D7R0nplBXb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEFHf0gfgNrH6ofcYGQa811Xp9MdwFAlq7EeAACgkQQa811Xp9
+MdxlFA//dvFSZTHNxO5DMrnyXYVdFPxjlupiM6q0zZL00QFgi6KVWOU4rh3WfTJl
+qOPYRJ0xDqS9n8GJ8ahSkZqCoA3NZfAPzICay5rrPFSp6f5i/XDuJYx12gys3EBh
+gnrqLkH2vqB4iWJih2aF/duJxaOZjrywc62cCsCTXSFJ3dtAzqSRG/bTbAH7uw3D
+H0t9TFqGU6afHwI6WtoxFVbtrrHbAdYYES2Ov1JsVDEY/ffJ/oU0SFUzPZxCxZDi
+R2ktaBppuemwhanggeleVv8nYYoOozUgkOcsWPrdPjOxH+IaY3cskmeQzJbJo1HX
+Qa/Ize9yqpBh0mqoHpckOxz6pFkLU9+gQ4cE5RBbh8VnCBE34t+UTtGdvfq8ntKj
+u15VbSuIZ++Xw/RWhRgBGGOPMU+g2KZ6xeD01iumHYBn3AFJ4+DwpU/VKyJoUWka
+rJ/k8r+4aS23sS6m9/JQgH4ExrKPCpP0Z5d5VRK/7Oh/WBoX0AtsF9sRjkPn7vAk
+fTqyZqlqecuNq7Hhx4xRE91u7Jg+9vJ8HAKtZV1I7rKAGOAq9GaMOhBRqzMcsruX
+3taMw2woFvHIyi6aywnruHbVxYvbN7rk6uc0R4ZVU2YeSVpZ5+9ZYeOVnK07Q6fT
+BEvcRGhjVSxjr32YVaK88dectgfaJXEjekgZNl8aUsafd4/TNCg=
+=oDVo
+-----END PGP SIGNATURE-----
+
+--nextPart8142277.D7R0nplBXb--
