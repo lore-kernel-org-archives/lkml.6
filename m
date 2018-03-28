@@ -1,74 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752334AbeC1Jr4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 05:47:56 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:47068 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeC1Jrz (ORCPT
+        id S1752502AbeC1Js6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 05:48:58 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53614 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752065AbeC1Js5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 05:47:55 -0400
-X-Google-Smtp-Source: AIpwx48/xTAEJ5HjwYS1EC/TxZppbKabXjkD7cxf8TZubC4SinUyxahrymPFS+J4P6Vt+zocWJC/tw==
+        Wed, 28 Mar 2018 05:48:57 -0400
+X-Google-Smtp-Source: AIpwx48Ewnx1JyJVTy39gjCemm5nqqCRfndS6Z79mXRV0MkiEJsVGP3uvcwLtoPZo8qttoKjJ3NyQA==
 From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [PATCH v2 for-4.17 2/3] powerpc: Remove smp_mb() from arch_spin_is_locked()
-Date: Wed, 28 Mar 2018 11:47:37 +0200
-Message-Id: <1522230457-12337-1-git-send-email-andrea.parri@amarulasolutions.com>
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v2 for-4.17 3/3] locking: Clean-up comment and #ifndef for {,queued_}spin_is_locked()
+Date: Wed, 28 Mar 2018 11:48:38 +0200
+Message-Id: <1522230518-12398-1-git-send-email-andrea.parri@amarulasolutions.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 51d7d5205d338 ("powerpc: Add smp_mb() to arch_spin_is_locked()")
-added an smp_mb() to arch_spin_is_locked(), in order to ensure that
+Removes "#ifndef queued_spin_is_locked" from the generic code: this is
+not used _and_ it is reasonable to conclude that it'll never be.
 
-	Thread 0			Thread 1
+Also removes the comment about spin_is_locked() from mutex_is_locked():
+it remains valid, but not particularly useful.
 
-	spin_lock(A);			spin_lock(B);
-	r0 = spin_is_locked(B)		r1 = spin_is_locked(A);
-
-never ends up with r0 = r1 = 0, and reported one example (in ipc/sem.c)
-relying on such guarantee.
-
-It's however understood (and undocumented) that spin_is_locked() is not
-required to ensure such ordering guarantee, guarantee that is currently
-_not_ provided by all implementations/arch, and that callers relying on
-such ordering should instead use suitable memory barriers before acting
-on the result of spin_is_locked().
-
-Following a recent auditing[1] of the callers of {,raw_}spin_is_locked()
-revealing that none of them are relying on this guarantee anymore, this
-commit removes the leading smp_mb() from the primitive thus effectively
-reverting 51d7d5205d338.
-
-[1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-
+Suggested-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
+Acked-by: Will Deacon <will.deacon@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/powerpc/include/asm/spinlock.h | 1 -
- 1 file changed, 1 deletion(-)
+ include/asm-generic/qspinlock.h | 2 --
+ include/linux/mutex.h           | 3 ---
+ 2 files changed, 5 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
-index b9ebc3085fb79..ecc141e3f1a73 100644
---- a/arch/powerpc/include/asm/spinlock.h
-+++ b/arch/powerpc/include/asm/spinlock.h
-@@ -67,7 +67,6 @@ static __always_inline int arch_spin_value_unlocked(arch_spinlock_t lock)
- 
- static inline int arch_spin_is_locked(arch_spinlock_t *lock)
+diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
+index b37b4ad7eb946..dc4e4ac4937ea 100644
+--- a/include/asm-generic/qspinlock.h
++++ b/include/asm-generic/qspinlock.h
+@@ -26,7 +26,6 @@
+  * @lock: Pointer to queued spinlock structure
+  * Return: 1 if it is locked, 0 otherwise
+  */
+-#ifndef queued_spin_is_locked
+ static __always_inline int queued_spin_is_locked(struct qspinlock *lock)
  {
--	smp_mb();
- 	return !arch_spin_value_unlocked(*lock);
+ 	/*
+@@ -35,7 +34,6 @@ static __always_inline int queued_spin_is_locked(struct qspinlock *lock)
+ 	 */
+ 	return atomic_read(&lock->val);
+ }
+-#endif
+ 
+ /**
+  * queued_spin_value_unlocked - is the spinlock structure unlocked?
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index cb3bbed4e6339..9921822c51585 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -147,9 +147,6 @@ extern void __mutex_init(struct mutex *lock, const char *name,
+  */
+ static inline bool mutex_is_locked(struct mutex *lock)
+ {
+-	/*
+-	 * XXX think about spin_is_locked
+-	 */
+ 	return __mutex_owner(lock) != NULL;
  }
  
 -- 
