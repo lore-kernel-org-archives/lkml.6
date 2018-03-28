@@ -1,87 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754059AbeC1Pbi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:31:38 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38425 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753691AbeC1Pbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:31:37 -0400
-Date: Wed, 28 Mar 2018 17:31:35 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Alexander Dahl <ada@thorsis.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Message-ID: <20180328153135.GG13942@piout.net>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
- <9761072.pX2B0LJlSJ@ada>
- <989df8a3-462a-c645-87f1-9f956e1b22c9@linaro.org>
- <4073350.0MmxRoANOi@ada>
- <6d43177a-bbea-6a01-5fa5-1c7891e18412@linaro.org>
- <20180328141645.GF13942@piout.net>
- <75e5917b-a9ba-c67e-e964-3f002681f9bb@linaro.org>
+        id S1754078AbeC1Pbn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:31:43 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:10969 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753119AbeC1Pbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 11:31:39 -0400
+X-IronPort-AV: E=Sophos;i="5.48,372,1517846400";
+   d="scan'208";a="171267713"
+Subject: Re: [PATCH 1/2] target: drop spin_lock_assert() + irqs_disabled()
+ combo checks
+To: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+Cc: "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "daniel@bristot.me" <daniel@bristot.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
+        "williams@redhat.com" <williams@redhat.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "lclaudio@redhat.com" <lclaudio@redhat.com>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
+References: <20180321153854.GB24312@kernel.org>
+ <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+ <20180322093745.GC4229@kernel.org>
+ <20180323155513.dwbgvblenlji33as@linutronix.de>
+ <1521822325.2535.5.camel@wdc.com>
+ <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
+ <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
+ <20180326111359.180f1604@gandalf.local.home>
+ <20180328101553.uduqsdbxwnxrhl7a@linutronix.de>
+ <c9f5df1e54bb2bd8f3f0aef86a55deb11888a6a4.camel@wdc.com>
+ <20180328151433.elhw6kgxdxq6fn6b@linutronix.de>
+From: Bart Van Assche <bart.vanassche@wdc.com>
+Message-ID: <86c1243e-8733-c94d-d8ff-5c299b8266a6@wdc.com>
+Date: Wed, 28 Mar 2018 08:31:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <75e5917b-a9ba-c67e-e964-3f002681f9bb@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180328151433.elhw6kgxdxq6fn6b@linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/03/2018 at 16:36:34 +0200, Daniel Lezcano wrote:
-> On 28/03/2018 16:16, Alexandre Belloni wrote:
-> > On 28/03/2018 at 15:03:11 +0200, Daniel Lezcano wrote:
-> >> On 28/03/2018 12:29, Alexander Dahl wrote:
-> >>> Hello Daniel,
-> >>>
-> >>> Am Dienstag, 27. März 2018, 13:30:22 CEST schrieb Daniel Lezcano:
-> >>>> Can you can give a rough amount for the irq rate on the timer ?
-> >>>
-> >>> I used itop [1] now to get a rough estimate. First with kernel v4.14.29-rt25 
-> >>> (fully preempt RT):
-> >>>
-> >>> INT                NAME          RATE             MAX
-> >>>  19 [ vel     tc_clkevt]   397 Ints/s     (max:   432)
-> >>>  26 [      vel     eth0]     4 Ints/s     (max:    38)
-> >>>
-> >>> Next test with kernel v4.15.13 gives (slightly slower, but non-RT):
-> >>>
-> >>> INT                NAME          RATE             MAX
-> >>>  19 [ vel     tc_clkevt]   248 Ints/s     (max:   273)
-> >>>  26 [      vel     eth0]     4 Ints/s     (max:    11)
-> >>>
-> >>> With kernel v4.16-rc7 plus this patch series and tcb as clocksource:
-> >>>
-> >>> INT                NAME          RATE             MAX
-> >>>  17 [vel     timer@fffa]  2164 Ints/s     (max:  2183)
-> >>>  26 [      vel     eth0]     5 Ints/s     (max:    10)
-> >>>
-> >>> Is this the information you wanted? If not, could you point me on how to get 
-> >>> the requested irq rate?
-> >>
-> >> It is perfect. Thanks!
-> >>
-> >> It confirms what I was worried about: the clocksource wraps up too
-> >> quickly thus raising an interrupt every 400us. That is why I asked
-> >> Alexande about a prescalar register.
-> >>
-> > 
-> > The code should behave exactly the same between the previous and the new
-> > driver. The interrupt is not coming from the clocksource but from the
-> > clockevent and it is already on the slowest clock, the 32kHz one.
+On 03/28/18 08:14, bigeasy@linutronix.de wrote:
+> On 2018-03-28 15:05:41 [+0000], Bart Van Assche wrote:
+>> The names of the two functions touched by patch 1/2 start with a double
+>> underscore. That by itself is already a hint that these should be called with
+>> a lock held (I know that this is not a universal convention in the Linux
+>> kernel). I'm fine either way - either with patch 1/2 as posted or patch 1/2
+>> with the above comment added.
 > 
-> Do you have an explanation of why the rate is much higher ?
-> 
+> Okay. In that case let me update 1/2.
+> But 2/2 with the comment as Steven suggested is still a no no for you?
 
-The core is giving deltas of 31 clocks instead of much more than that, I
-guess I messed up the initialization somewhere.
+Although I'm not enthusiast about patch 2/2, if others agree with that 
+patch I'm fine with that patch being sent upstream.
 
+Thanks,
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Bart.
