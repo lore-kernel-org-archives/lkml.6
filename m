@@ -1,80 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752306AbeC1JRt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 05:17:49 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35834 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751070AbeC1JRr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 05:17:47 -0400
-X-Google-Smtp-Source: AIpwx4/t7Oamea6Fh+tI89SAQ933rLKzjRH9PiEq714mf1LSibC2lhricPx1CPhqkpsDLwM0XyYIXg==
-Date: Wed, 28 Mar 2018 11:17:36 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH for-4.17 2/2] powerpc: Remove smp_mb() from
- arch_spin_is_locked()
-Message-ID: <20180328091736.GA30906@andrea>
-References: <1522060667-7034-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1522109216.7364.30.camel@kernel.crashing.org>
- <20180327102521.GA7347@andrea>
- <1522150386.7364.53.camel@kernel.crashing.org>
- <20180327131339.GA4278@andrea>
- <1522187495.7364.70.camel@kernel.crashing.org>
+        id S1752572AbeC1JTr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 05:19:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51563 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751840AbeC1JTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 05:19:44 -0400
+Date: Wed, 28 Mar 2018 11:19:41 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, sre@kernel.org,
+        lee.jones@linaro.org, a.zummo@towertech.it, eddie.huang@mediatek.com,
+        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 02/16] dt-bindings: rtc: mediatek: add bindings for
+ PMIC RTC
+Message-ID: <20180328091941.GB13942@piout.net>
+References: <cover.1521794176.git.sean.wang@mediatek.com>
+ <5846e8be319c4836808c8127d5bb51b7e999e896.1521794177.git.sean.wang@mediatek.com>
+ <20180323094118.GC3417@piout.net>
+ <20180323101505.GF3417@piout.net>
+ <1521920188.31197.13.camel@mtkswgap22>
+ <20180327151848.GD22441@piout.net>
+ <1522209197.18424.26.camel@mtkswgap22>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522187495.7364.70.camel@kernel.crashing.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1522209197.18424.26.camel@mtkswgap22>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 08:51:35AM +1100, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-03-27 at 15:13 +0200, Andrea Parri wrote:
+On 28/03/2018 at 11:53:17 +0800, Sean Wang wrote:
+> On Tue, 2018-03-27 at 17:18 +0200, Alexandre Belloni wrote:
+> > On 25/03/2018 at 03:36:28 +0800, Sean Wang wrote:
+> > > just reply both replies in the same mail
 > > > 
-> > > So unless it's very performance sensitive, I'd rather have things like
-> > > spin_is_locked be conservative by default and provide simpler ordering
-> > > semantics.
+> > > 1.) the power-off device is a part of rtc, use the same registers rtc
+> > > has and thus it is put as child nodes under the node rtc to reflect the
+> > > reality of characteristics the rtc has.
+> > > 
+> > > Or am I wrong for a certain aspect in these opinions?
+> > > 
 > > 
-> > Well, it might not be "very performance sensitive" but allow me to say
-> > that "40+ SYNCs in stuff like BUG_ON or such" is sadness to my eyes ;),
+> > My point is that it is also part of the PMIC so it may as well be
+> > registers from the mfd driver which already registers a bunch of devices
+> > instead of doing unusual stuff from the rtc driver.
+> > 
+> > mt6397_rtc->regmap is mt6397_chip->regmap anyway. You have the added
+> > benefit that if the RTC driver probe fails for some reason, you may
+> > still be able to probe the reset driver.
+> > 
+> > I don't tink there is any benefit having it as a child of the rtc
+> > device.
+> > 
 > 
-> In the fast path or the trap case ? Because the latter doesn't matter
-> at all...
-
-Both: you must execute the sync "before" issuing the load of lock.slock.
-
-
 > 
-> > especially when considered that our "high level API" provides means to
-> > avoid this situation (e.g., smp_mb__after_spinlock(); BTW, if you look
-> > at architectures for which this macro is "non-trivial", you can get an
-> > idea of the architectures which "wouldn't work"; of course, x86 is not
-> > among these).  Yes, we do appear to have different views on what is to
-> > be considered the "simpler ordering semantics".  I'm willing to change
-> > mine _as soon as_ this gets documented: would you be willing to send a
-> > patch (on the lines of my [1]) to describe/document such semantics?
+> really thanks! it's an optional solution I thought it 's fine and worth
+> doing
 > 
-> Not really :-) Just expressing an opinion. I don't fully object to your
-> approach, just saying it's open for debate.
-
-Always (open for debate).
-
-I'm sending a v2 of this series shortly, integrating some feedback;
-I prefer to keep this patch in the series (feel free to ignore).
-
-  Andrea
-
-
+> but so far I cannot fully make sure of whether mfd can accept two
+> devices holding overlay IORESOURCE_MEM.
 > 
-> At this point, I have too many other things to chase to follow up too
-> much on this.
-> 
-> Cheers,
-> Ben.
-> 
+
+There is no overlay because you are using a regmap which handles
+concurrency for you.
+
+What your patch is doing is:
+
+struct mt6397_rtc *rtc = dev_get_drvdata(pdev->dev.parent);
+
+then you use rtc->regmap
+
+But in the rtc driver, you have:
+
+struct mt6397_chip *mt6397_chip = dev_get_drvdata(pdev->dev.parent);
+struct mt6397_rtc *rtc;
+
+rtc->regmap = mt6397_chip->regmap;
+
+So there is no benefit from being the child of the rtc, you could just
+do the following in your reset driver:
+
+struct mt6397_chip *mt6397_chip = dev_get_drvdata(pdev->dev.parent);
+
+and then use mt6397_chip->regmap.
+
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
