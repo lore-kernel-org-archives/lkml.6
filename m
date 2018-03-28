@@ -1,67 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752824AbeC1LGe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:06:34 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33397 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752611AbeC1LGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 07:06:33 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        yaeceh01 <yael.chemla@foss.arm.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <dm-devel@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] dm verity: make some functions static
-Date: Wed, 28 Mar 2018 11:11:58 +0000
-Message-ID: <1522235518-20209-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1752694AbeC1LH6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:07:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54986 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752259AbeC1LH4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 07:07:56 -0400
+X-Google-Smtp-Source: AIpwx4/c6PvwlqovEioyF6N3EtlvpP8ZllMmWoaN91UypFfT7outbLVb7aHjWEm6I0/TlvogW29cFw==
+Date: Wed, 28 Mar 2018 12:07:53 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH v5 1/2] mfd: arizona: Update reset pin to use GPIOD
+Message-ID: <20180328110753.vqhngsus5gpl6qld@dell>
+References: <20180312155201.30108-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180312155201.30108-1-ckeepax@opensource.cirrus.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warnings:
+On Mon, 12 Mar 2018, Charles Keepax wrote:
 
-drivers/md/dm-verity-target.c:375:6: warning:
- symbol 'verity_for_io_block' was not declared. Should it be static?
-drivers/md/dm-verity-target.c:403:14: warning:
- symbol 'verity_calc_buffs_for_bv' was not declared. Should it be static?
+> Now GPIOD has support for both pdata systems and for non-standard DT
+> bindings the Arizona reset GPIO can be converted to use it. Worth
+> noting gpiod_set_raw_value_cansleep is used to match the behaviour
+> of the old GPIOs. This is because the part is fairly widely used and
+> it is unknown how many DTs are correctly setting active low through
+> device tree, so to avoid breaking any existing users it is best to
+> match the previous behaviour.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
+> 
+> Changes since v4:
+>  - Don't use a switch statement for handling return values
+>  - Add some comments to the handling for the older binding
+>  - Use gpiod_set_raw_value_cansleep to avoid potential breakage
+> 
+> I have also removed Linus's reviewed-by was a bit border line but
+> I felt there have probably been enough code changes since he gave
+> it that it was probably safer to remove it.
+> 
+> Thanks,
+> Charles
+> 
+>  drivers/mfd/arizona-core.c        | 53 ++++++++++++++++++++++++++-------------
+>  include/linux/mfd/arizona/pdata.h |  3 ++-
+>  2 files changed, 37 insertions(+), 19 deletions(-)
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/md/dm-verity-target.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Applied with Linus' Ack, thanks
 
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index da35f0e..e70d4d2 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -372,9 +372,9 @@ int verity_hash_for_block(struct dm_verity *v, struct dm_verity_io *io,
- /*
-  * Calculates the digest for the given bio
-  */
--void verity_for_io_block(struct dm_verity *v, struct dm_verity_io *io,
--			 struct bvec_iter *iter, struct scatterlist *sg,
--			 unsigned int *nents, unsigned int *total_len)
-+static void verity_for_io_block(struct dm_verity *v, struct dm_verity_io *io,
-+				struct bvec_iter *iter, struct scatterlist *sg,
-+				unsigned int *nents, unsigned int *total_len)
- {
- 	unsigned int todo = 1 << v->data_dev_block_bits;
- 	struct bio *bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
-@@ -400,8 +400,9 @@ void verity_for_io_block(struct dm_verity *v, struct dm_verity_io *io,
-  * Calculate how many buffers are required to accommodate
-  * bio_vec starting from iter.
-  */
--unsigned int verity_calc_buffs_for_bv(struct dm_verity *v, struct dm_verity_io *io,
--				      struct bvec_iter *iter)
-+static unsigned int verity_calc_buffs_for_bv(struct dm_verity *v,
-+					     struct dm_verity_io *io,
-+					     struct bvec_iter *iter)
- {
- 	unsigned int todo = 1 << v->data_dev_block_bits;
- 	struct bio *bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
