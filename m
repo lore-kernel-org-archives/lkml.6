@@ -1,133 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeC1IjV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 04:39:21 -0400
-Received: from mailout5.zih.tu-dresden.de ([141.30.67.74]:46598 "EHLO
-        mailout5.zih.tu-dresden.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751513AbeC1IjS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 04:39:18 -0400
-Subject: Re: [RFT][PATCH v7 6/8] sched: idle: Select idle state before
- stopping the tick
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        "Aubrey Li" <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <2390019.oHdSGtR3EE@aspire.rjw.lan>
- <2249320.0Z4q8AXauv@aspire.rjw.lan>
- <6462e44a-e207-6b97-22bf-ad4aed69afc2@tu-dresden.de>
- <4198010.6ArFqS34NK@aspire.rjw.lan>
- <CAJZ5v0j5mEaQSAiW4ynitM1ee=sqkpc8G_tZ40RYUgyavXXhqQ@mail.gmail.com>
-From: Thomas Ilsche <thomas.ilsche@tu-dresden.de>
-Message-ID: <b904266b-b5bb-587d-334a-844a70341f8d@tu-dresden.de>
-Date: Wed, 28 Mar 2018 10:38:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0j5mEaQSAiW4ynitM1ee=sqkpc8G_tZ40RYUgyavXXhqQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MSX-L106.msx.ad.zih.tu-dresden.de (172.26.34.106) To
- MSX-L104.msx.ad.zih.tu-dresden.de (172.26.34.104)
-X-PMWin-Version: 4.0.3, Antivirus-Engine: 3.70.2, Antivirus-Data: 5.49
-X-TUD-Virus-Scanned: mailout5.zih.tu-dresden.de
+        id S1752723AbeC1IpB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 04:45:01 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:46344 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751191AbeC1Io5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 04:44:57 -0400
+From: Wen Yang <wen.yang99@zte.com.cn>
+To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart.VanAssche@wdc.com, pmladek@suse.com,
+        sergey.senozhatsky.work@gmail.com, tj@kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn,
+        wen.yang99@zte.com.cn, Tan Hu <tan.hu@zte.com.cn>
+Subject: [PATCH] scsi: Introduce sdev_printk_ratelimited to throttle frequent printk
+Date: Wed, 28 Mar 2018 16:43:04 +0800
+Message-Id: <1522226584-137056-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-03-28 16:44:48,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-03-28 16:44:34,
+        Serialize complete at 2018-03-28 16:44:34
+X-MAIL: mse01.zte.com.cn w2S8igcb058246
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-28 10:13, Rafael J. Wysocki wrote:
-> On Wed, Mar 28, 2018 at 12:10 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> On Tuesday, March 27, 2018 11:50:02 PM CEST Thomas Ilsche wrote:
->>> On 2018-03-20 16:45, Rafael J. Wysocki wrote:
->>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>
->>>> In order to address the issue with short idle duration predictions
->>>> by the idle governor after the tick has been stopped, reorder the
->>>> code in cpuidle_idle_call() so that the governor idle state selection
->>>> runs before tick_nohz_idle_go_idle() and use the "nohz" hint returned
->>>> by cpuidle_select() to decide whether or not to stop the tick.
->>>>
->>>> This isn't straightforward, because menu_select() invokes
->>>> tick_nohz_get_sleep_length() to get the time to the next timer
->>>> event and the number returned by the latter comes from
->>>> __tick_nohz_idle_enter().  Fortunately, however, it is possible
->>>> to compute that number without actually stopping the tick and with
->>>> the help of the existing code.
->>>
->>> I think something is wrong with the new tick_nohz_get_sleep_length.
->>> It seems to return a value that is too large, ignoring immanent
->>> non-sched timer.
->>
->> That's a very useful hint, let me have a look.
->>
->>> I tested idle-loop-v7.3. It looks very similar to my previous results
->>> on the first idle-loop-git-version [1]. Idle and traditional synthetic
->>> powernightmares are mostly good.
->>
->> OK
->>
->>> But it selects too deep C-states for short idle periods, which is bad
->>> for power consumption [2].
->>
->> That still needs to be improved, then.
->>
->>> I tracked this down with additional tests using
->>> __attribute__((optimize("O0"))) menu_select
->>> and perf probe. With this the behavior seems slightly different, but it
->>> shows that data->next_timer_us is:
->>> v4.16-rc6: the expected ~500 us [3]
->>> idle-loop-v7.3: many milliseconds to minutes [4].
->>> This leads to the governor to wrongly selecting C6.
->>>
->>> Checking with 372be9e and 6ea0577, I can confirm that the change is
->>> introduced by this patch.
->>
->> Yes, that's where the most intrusive reordering happens.
-> 
-> Overall, this is an interesting conundrum, because the case in
-> question is when the tick should never be stopped at all during the
-> workload and the code's behavior in that case should not change, so
-> the change was not intentional.
-> 
-> Now, from walking through the code, as long as can_stop_idle_tick()
-> returns 'true' all should be fine or at least I don't see why there is
-> any difference in behavior in that case.
-> 
-> However, if can_stop_idle_tick() returns 'false' (for example, because
-> need_resched() returns 'true' when it is evaluated), the behavior *is*
-> different in a couple of ways.  I sort of know how that can be
-> addressed, but I'd like to reproduce your results here.
-> 
-> Are you still using the same workload as before to trigger this behavior?
-> 
+There would be so many same lines printed by frequent prink if one 
+disk went wrong, like,
+[  546.185242] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185258] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185280] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185307] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185334] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185364] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185390] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185410] sd 0:1:0:0: rejecting I/O to offline device
+For slow serial console, the frequent prink may block the printk, and 
+if spin_lock was acquired before the printk like in scsi_request_fn,
+that could trigger the watchdog.
 
-Yes, the exact code I use is as follows
+Relative disscussion can be found here,
+https://bugzilla.kernel.org/show_bug.cgi?id=199003
+And Petr brought the idea to throttle the frequent printk here, it's 
+useless to print the same lines frequently after all.
+ 
+Suggested-by: Petr Mladek <pmladek@suse.com>
+Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+CC: BartVanAssche <Bart.VanAssche@wdc.com>
+CC: Petr Mladek <pmladek@suse.com>
+CC: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC: Martin K. Petersen <martin.petersen@oracle.com>
+CC: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+CC: Tejun Heo <tj@kernel.org>
+---
+ drivers/scsi/scsi_lib.c    |  6 +++---
+ include/scsi/scsi_device.h | 10 ++++++++++
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-$ gcc poller.c -O3 -fopenmp -o poller_omp
-$ GOMP_CPU_AFFINITY=0-35 ./poller_omp 500
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-
-int main(int argc, char *argv[])
-{
-     int sleep_us = 10000;
-     if (argc == 2) {
-         sleep_us = atoi(argv[1]);
-     }
-
-     #pragma omp parallel
-     {
-         while (1) {
-             usleep(sleep_us);
-         }
-     }
-}
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index c84f931..f77e801 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1301,7 +1301,7 @@ static int scsi_setup_cmnd(struct scsi_device *sdev, struct request *req)
+ 			 * commands.  The device must be brought online
+ 			 * before trying any recovery commands.
+ 			 */
+-			sdev_printk(KERN_ERR, sdev,
++			sdev_printk_ratelimited(KERN_ERR, sdev,
+ 				    "rejecting I/O to offline device\n");
+ 			ret = BLKPREP_KILL;
+ 			break;
+@@ -1310,7 +1310,7 @@ static int scsi_setup_cmnd(struct scsi_device *sdev, struct request *req)
+ 			 * If the device is fully deleted, we refuse to
+ 			 * process any commands as well.
+ 			 */
+-			sdev_printk(KERN_ERR, sdev,
++			sdev_printk_ratelimited(KERN_ERR, sdev,
+ 				    "rejecting I/O to dead device\n");
+ 			ret = BLKPREP_KILL;
+ 			break;
+@@ -1802,7 +1802,7 @@ static void scsi_request_fn(struct request_queue *q)
+ 			break;
+ 
+ 		if (unlikely(!scsi_device_online(sdev))) {
+-			sdev_printk(KERN_ERR, sdev,
++			sdev_printk_ratelimited(KERN_ERR, sdev,
+ 				    "rejecting I/O to offline device\n");
+ 			scsi_kill_request(req, q);
+ 			continue;
+diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+index 7ae177c..378d3f2 100644
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -249,6 +249,16 @@ struct scsi_device {
+ #define sdev_printk(l, sdev, fmt, a...)				\
+ 	sdev_prefix_printk(l, sdev, NULL, fmt, ##a)
+ 
++#define sdev_printk_ratelimited(l, sdev, fmt, a...)			\
++({									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++									\
++	if (__ratelimit(&_rs))						\
++		sdev_prefix_printk(l, sdev, NULL, fmt, ##a);		\
++})
++
+ __printf(3, 4) void
+ scmd_printk(const char *, const struct scsi_cmnd *, const char *, ...);
+ 
+-- 
+1.8.3.1
