@@ -1,93 +1,191 @@
-Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AG47ELuv33hZy2Tg7Su95h8TlIk9GZ90OVN0mMuk2ATg7vHpBG6gRzjB+97PyrW9Js0NgyLzyRjb
-ARC-Seal: i=1; a=rsa-sha256; t=1522157132; cv=none;
-        d=google.com; s=arc-20160816;
-        b=piJKWJMuHvViciGeEmTkwDV212lmCDv154/lkRXpRvaUAOEVt0EA76kDu/qJKkN8W/
-         QjoQB2T7BHtUBN2dj+mZT3b+WSA6L3yPtgzoGZBYSPjasGwdCnTvC8EHwIRVmrtgQ+Hi
-         keRGPqYIbkAlmQI82v6ZzOVAT4+rne/xvs4A8w+ZwkYpbGniJ17wMVclPoKoOnI1qZAf
-         W+P/PFx9ttjLZCoQM4QxZ8j0I+KuC5fQgejXG8l4aUvEoh2s5M2e/9RXLFsBJ+VOHcmE
-         U+fHPT7FFTjxuqBbY8bmeQp4wMwA3er9prkar6edwVYBVN1SD31OKBCTY1LkkwFe183P
-         KEZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=mIa32RXN+F3MI5pIaLSTOUhv5DvJwSXg8k8c43XFULk=;
-        b=wtIJBNB9Fp52Xc4P+rV2fhjINHrs8ZsJ3ocgA19FD8uP02I7bR1JkckaqWV5BegpJW
-         wa9WrAiQjncnxkStgOVpB6HfxWZ/SINwqr0jco9C4VxpECsDVZmDhgCSKSRCFV9k6rgx
-         zgNZKYojOcIBNmgOwCIsLaEZBWz3XA/93aoD6R83mAb0aR2T+s8xwS+treCEIiCA0sdN
-         9ia5HIbxW8yc0M/OnBPkLi1IxRYxMP+8285LbuNFzEUv21SkEbkKqFnoHrBX1gxKfTzV
-         WvY31J9vLcbI0kSh9KMXx5yy8lIvgL36gE+n3rdeUGZAz2TTRgUPyBHJRqSyRRiIOo2P
-         Gvbw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=CtjRilCh;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eOkWZUlM;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=CtjRilCh;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=eOkWZUlM;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F1F0E60251
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-From: Chintan Pandya <cpandya@codeaurora.org>
-To: catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mark.rutland@arm.com,
-	toshi.kani@hpe.com
-Cc: arnd@arndb.de,
-	ard.biesheuvel@linaro.org,
-	marc.zyngier@arm.com,
-	james.morse@arm.com,
-	kristina.martsenko@arm.com,
-	takahiro.akashi@linaro.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v5 2/4] arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable
-Date: Tue, 27 Mar 2018 18:54:58 +0530
-Message-Id: <1522157100-16879-3-git-send-email-cpandya@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522157100-16879-1-git-send-email-cpandya@codeaurora.org>
-References: <1522157100-16879-1-git-send-email-cpandya@codeaurora.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2270871-1522242425-2-16858309766440037199
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522242425; b=JpgvJrSSczkPcog8IkQJjrb8JT7zMeL0dJtPHmPe6IWiNDf
+    6iGPMR24Vd4ZV5/XLNQJwqRdoGQnFSH8JAf7UNiA/3UoInXIV1VdNREOMEP62rx5
+    v1WEQtH3UorfmY85lD9RwLPbe7dfBfL7WBlAqlTxfLelHq0YpuWwVeyDCrbOatLZ
+    JvZgVCXtjRKpSyfn5wPoel/wJfmYkaq38A8ecRsNjiij8C9g1QIhWEAMihN3qeC3
+    QEshOMapUsgk7hvo9oA2CviZjVnGN9ib87VEaM2tTkfHA2/ZgzMPUUzFINdvKMWO
+    G/0p1fxG+ZiQ4N2txERWSbdWKstySN93GydvrhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1522242425; bh=zZi1P5wlQWwSdHcPhsiUlxsFrh
+    +WechaWkc7BzUwW3s=; b=obNJfImSGvi519Jk7GWa+2CznVHNXQy8x0inVnpwol
+    0P0dtrCA0wePf0zPQ54APzAXOM0uS6Wxqmq49DUwIlaBMP1youWvFNrhvhSJjgfX
+    l0BSOGQUv6MuPWwAFrbpXPCL87s/j8EYxJYPyWmdIxe5WBgb49WNHv1ryPhM2cXh
+    RpoRQxEql/J+FOs9vo4VR7Umy1iy+T4XszecmvxhZdwuM4uNBzoGgQY4d8O2hmGI
+    /GvYkx7JuMKP5cmQgUB2F1+XLqDZzU8wsO+g7s45ikzebLI2WXosHFLDgXY6zXQe
+    roeeObf4aBktFzTWYR5RrB0o+3NZhX5UWYSCh8uY+e4w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cavium.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Dxgeipm1;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=cavium.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=cavium.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Dxgeipm1;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=cavium.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFM+EPTEadXeN/JDYj1DIhOo1YfhRs1Vvi9OJRG6Fgt4MkG9tu02sg2ksym+aPzy1Er/lxG5gCrzDcE6qgd3vyjatWxuf8uEZ6SxgG5cqXDxudROc/Ot
+    eZm4pBg+h/j4ylqd5IELDvQ17/ayTVVC5J2Ce8ASymins/x7b5gc73P0nYIo6MCifx7QxzuQrl5PczLq9yUvosGBCcj1ssIeyIMuFpDOr7YeZQf4KfIYpglO
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=zAyngx5bAAAA:8
+    a=VwQbUJbxAAAA:8 a=pivBIqmD17lqHx8roB8A:9 a=U7sfXVdiR0QEhD2M:21
+    a=Hq7CQNCm8Fqj4nxR:21 a=4LA4qAFo6bo561LpWNDU:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753313AbeC1NGi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Mar 2018 09:06:38 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38554 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752978AbeC1NGe (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 28 Mar 2018 09:06:34 -0400
+X-Google-Smtp-Source: AIpwx4/tWjCTgvOPVM2fp9N/kEMKlFpuOzWypkHwbITqFDat04tKE8+i0fwKngzJ+8gQIfGSkpftnQ==
+From: Jan Glauber <jglauber@cavium.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mahipal Challa <Mahipal.Challa@cavium.com>,
+        Robert Richter <rrichter@cavium.com>,
+        Jan Glauber <jglauber@cavium.com>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH 1/2] crypto: thunderx_zip: Fix fallout from CONFIG_VMAP_STACK
+Date: Wed, 28 Mar 2018 15:05:56 +0200
+Message-Id: <20180328130557.10560-1-jglauber@cavium.com>
+X-Mailer: git-send-email 2.16.2
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596097437519818610?=
-X-GMAIL-MSGID: =?utf-8?q?1596097437519818610?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add an interface to invalidate intermediate page tables
-from TLB for kernel.
+Enabling virtual mapped kernel stacks breaks the thunderx_zip
+driver. On compression or decompression the executing CPU hangs
+in an endless loop. The reason for this is the usage of __pa
+by the driver which does no longer work for an address that is
+not part of the 1:1 mapping.
 
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+The zip driver allocates a result struct on the stack and needs
+to tell the hardware the physical address within this struct
+that is used to signal the completion of the request.
+
+As the hardware gets the wrong address after the broken __pa
+conversion it writes to an arbitrary address. The zip driver then
+waits forever for the completion byte to contain a non-zero value.
+
+Allocating the result struct from 1:1 mapped memory resolves this
+bug.
+
+Signed-off-by: Jan Glauber <jglauber@cavium.com>
+Reviewed-by: Robert Richter <rrichter@cavium.com>
+Cc: stable <stable@vger.kernel.org> # 4.14
 ---
-Introduced in v5
+ drivers/crypto/cavium/zip/zip_crypto.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
- arch/arm64/include/asm/tlbflush.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 9e82dd7..6a4816d 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -209,6 +209,12 @@ static inline void __flush_tlb_pgtable(struct mm_struct *mm,
- 	dsb(ish);
+diff --git a/drivers/crypto/cavium/zip/zip_crypto.c b/drivers/crypto/cavium/zip/zip_crypto.c
+index 8df4d26..2fc9b03 100644
+--- a/drivers/crypto/cavium/zip/zip_crypto.c
++++ b/drivers/crypto/cavium/zip/zip_crypto.c
+@@ -124,7 +124,7 @@ int zip_compress(const u8 *src, unsigned int slen,
+ 		 struct zip_kernel_ctx *zip_ctx)
+ {
+ 	struct zip_operation  *zip_ops   = NULL;
+-	struct zip_state      zip_state;
++	struct zip_state      *zip_state;
+ 	struct zip_device     *zip = NULL;
+ 	int ret;
+ 
+@@ -135,20 +135,23 @@ int zip_compress(const u8 *src, unsigned int slen,
+ 	if (!zip)
+ 		return -ENODEV;
+ 
+-	memset(&zip_state, 0, sizeof(struct zip_state));
++	zip_state = kzalloc(sizeof(*zip_state), GFP_KERNEL);
++	if (!zip_state)
++		return -ENOMEM;
++
+ 	zip_ops = &zip_ctx->zip_comp;
+ 
+ 	zip_ops->input_len  = slen;
+ 	zip_ops->output_len = *dlen;
+ 	memcpy(zip_ops->input, src, slen);
+ 
+-	ret = zip_deflate(zip_ops, &zip_state, zip);
++	ret = zip_deflate(zip_ops, zip_state, zip);
+ 
+ 	if (!ret) {
+ 		*dlen = zip_ops->output_len;
+ 		memcpy(dst, zip_ops->output, *dlen);
+ 	}
+-
++	kfree(zip_state);
+ 	return ret;
  }
  
-+static inline void __flush_tlb_kernel_pgtable(unsigned long addr)
-+{
-+	addr >>= 12;
-+	__tlbi(vaae1is, addr);
-+	dsb(ish);
-+}
- #endif
+@@ -157,7 +160,7 @@ int zip_decompress(const u8 *src, unsigned int slen,
+ 		   struct zip_kernel_ctx *zip_ctx)
+ {
+ 	struct zip_operation  *zip_ops   = NULL;
+-	struct zip_state      zip_state;
++	struct zip_state      *zip_state;
+ 	struct zip_device     *zip = NULL;
+ 	int ret;
  
- #endif
+@@ -168,7 +171,10 @@ int zip_decompress(const u8 *src, unsigned int slen,
+ 	if (!zip)
+ 		return -ENODEV;
+ 
+-	memset(&zip_state, 0, sizeof(struct zip_state));
++	zip_state = kzalloc(sizeof(*zip_state), GFP_KERNEL);
++	if (!zip_state)
++		return -ENOMEM;
++
+ 	zip_ops = &zip_ctx->zip_decomp;
+ 	memcpy(zip_ops->input, src, slen);
+ 
+@@ -179,13 +185,13 @@ int zip_decompress(const u8 *src, unsigned int slen,
+ 	zip_ops->input_len  = slen;
+ 	zip_ops->output_len = *dlen;
+ 
+-	ret = zip_inflate(zip_ops, &zip_state, zip);
++	ret = zip_inflate(zip_ops, zip_state, zip);
+ 
+ 	if (!ret) {
+ 		*dlen = zip_ops->output_len;
+ 		memcpy(dst, zip_ops->output, *dlen);
+ 	}
+-
++	kfree(zip_state);
+ 	return ret;
+ }
+ 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+2.7.4
