@@ -1,32 +1,36 @@
-Return-Path: <a13xp0p0v88@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522359264; cv=none;
+Return-Path: <dave.hansen@linux.intel.com>
+X-Google-Smtp-Source: AIpwx4+FQ/vnRcAJ4tupHHjGtUA8xuLHPB6C40XM/pVIRGGE/T4hkBi7RsqflJMWkUg8o7aNwpym
+ARC-Seal: i=1; a=rsa-sha256; t=1522277727; cv=none;
         d=google.com; s=arc-20160816;
-        b=yLwjxfqftNVvMQlqWu1xrr4iYDs89lbPsL/nc+l6j0KC7JdDN+tz17NNtGC0+Mpqh+
-         dVIFU0uU9Bx6bbZI3p3mM/JXSFOiILJJ/aVs+3J6N6ateMHChFbBQWHhKDypeTpNQwoj
-         Dwl9SFsmYek4U4bdQeP6M6F3kHkmMdssQQTTAsIrB5+/oeaSGpDRCF57EQNkE/ML02Qz
-         GUUZ/q/pp/91e8JElpMLJNt7lADCTBai4R7Q9LU3U1zgFYA0c6E+ncecPW/DvVEg96Vp
-         hzakVWMIc80rCBJqoOA8C15ugaoWjAMVbgh0nUcyoYOaTfqHAzv7cEsjqpiBST3uyPtb
-         7oOw==
+        b=n9wcVIBoK9skcS8lL/SESw3fKSvnjMkfCu7AFIzZASq85UmRx1rKLYQcA/dIZspllX
+         MbBNq/Jt1wCCdUns+2MIDKtqNTw6iMHbCisysh8RZytDei9SfyU6MxZJW+2KOoslIzpr
+         sw8MgCTQzP+rcaf2ufZAfeWLEF/LebF1TclpuDm1fV7Ltavzw7WnGcbAFqScSKts2k5N
+         29jfyOQwgQhsc91Ta5Ga0VWWDX3yQTDPIOgEWUP65qzpzZ3DbMdvdlYfLmhJIVXOlkbL
+         UcXadeJ+pE/kHoKtPClvv2VKQnJ9vrmIhhhc9EFqZgzqgG6ovJKZcP4GySdYaBXUuW+r
+         D2pA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject:reply-to
+         :user-agent:date:message-id:from:references:to:subject
          :arc-authentication-results;
-        bh=slOjf+sciuO1UvxeyIMgyqlKvVrHPiRr2bLdR8x3jDY=;
-        b=reRdFh06OCQcSEROBcX8TPxy5aX6Vhx1dkyyn/PNFWq3GPuZSNjZCkS/Pg6QC/OTCy
-         wTY+pb/Xw7Akibmnnc6Xlxnzo0NnSPSyuUEXIiIIYnMKIu6BytFPuTdli0WMujXwX8Tt
-         ze4qlfp4zk3sAbDdAEfmbnz+pBvgOE3TY2FQk1263Rw2ZMEzByxUCqRy3sxdfX1UxdJv
-         EOY8eO5quPcAbQmplo5cj4CNxAlhrmVggoQcJGTnSESRurxuczWArKR9iEM8HaKNwIRd
-         0vfPdQjLhsEsEVF03uxMYWN3q6asnr0ilvgw+z7B1S9K7AZkPI8p4yppPZxfWotDLkh/
-         2H6g==
+        bh=leNGlvJMGF6EBGwcR1T3dwNfr9nZyO/0bmW90hobtwQ=;
+        b=k+oABv2bYN2BcEo35HRTa8rDYZZ3bffVpdgR7N2GypBX0cAET2MjC+NXBEIbnSxuzX
+         +yq3usqHonJIE4lUcjvk3Bw1rAu2qijZXt4B7Wlidk85KFfY2ZMXCaD8Hrmxulw0U2ON
+         G990U9pPNVFgRgsT9WaD5idCDRBBC4Tgxos2AxM8y7sTNFtpi4T13y74MMyH6x5NWHcl
+         LHHZDzHLZBcsTotveaBXpgAYH3lApNNyLDIrxWH5Kh1NNWett6K/WLZLjrku8Dr6wxAJ
+         AiN5brtSKvWfBLImgl7PfUpNurKqv3AdnNd3lAZlCYhWKHZ8GybZ9V+mUMHaevAIBz9Z
+         Ramg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
-X-Google-Smtp-Source: AIpwx4/N3BQlPa6dzCRmys7wf2Gnnnh4cykRjUfCrcjU5qOSYrwWi5ZKkeULoowUBr/4ZvRwe2yAuw==
-Reply-To: alex.popov@linux.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,373,1517904000";
+   d="scan'208";a="43041667"
 Subject: Re: [PATCH RFC v10 2/6] x86/entry: Add STACKLEAK erasing the kernel
  stack at the end of syscalls
-To: Shivappa Vikas <vikas.shivappa@linux.intel.com>,
+To: Alexander Popov <alex.popov@linux.com>,
  kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>,
  PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
  Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
@@ -51,7 +55,6 @@ To: Shivappa Vikas <vikas.shivappa@linux.intel.com>,
  Juergen Gross <jgross@suse.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Dan Williams <dan.j.williams@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
  Mathias Krause <minipli@googlemail.com>,
  Vikas Shivappa <vikas.shivappa@linux.intel.com>, Kyle Huey
  <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
@@ -61,87 +64,31 @@ To: Shivappa Vikas <vikas.shivappa@linux.intel.com>,
  linux-kernel@vger.kernel.org
 References: <1522267032-6603-1-git-send-email-alex.popov@linux.com>
  <1522267032-6603-3-git-send-email-alex.popov@linux.com>
- <alpine.DEB.2.10.1803291137150.27913@vshiva-Udesk>
-From: Alexander Popov <alex.popov@linux.com>
-Message-ID: <bd2c220b-f449-afbb-0b00-a868c8b33afe@linux.com>
-Date: Fri, 30 Mar 2018 00:34:21 +0300
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <77fab6ea-0bbf-d68b-a38e-3e22d1ae6093@linux.intel.com>
+Date: Wed, 28 Mar 2018 15:55:24 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.10.1803291137150.27913@vshiva-Udesk>
+In-Reply-To: <1522267032-6603-3-git-send-email-alex.popov@linux.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596212693741401562?=
-X-GMAIL-MSGID: =?utf-8?q?1596309388665955019?=
+X-GMAIL-MSGID: =?utf-8?q?1596223889779284234?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 29.03.2018 21:38, Shivappa Vikas wrote:
-> On Wed, 28 Mar 2018, Alexander Popov wrote:
-> 
->> +	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
->> +							sizeof(unsigned long);
->> +
->> +	/*
->> +	 * Let's search for the poison value in the stack.
->> +	 * Start from the lowest_stack and go to the bottom.
->> +	 */
->> +	while (p > boundary && poison <= check_depth) {
->> +		if (*(unsigned long *)p == STACKLEAK_POISON)
->> +			poison++;
->> +		else
->> +			poison = 0;
->> +
->> +		p -= sizeof(unsigned long);
->> +	}
->> +
->> +	/*
->> +	 * One long int at the bottom of the thread stack is reserved and
->> +	 * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
->> +	 */
->> +	if (p == boundary)
->> +		p += sizeof(unsigned long);
->> +
->> +	/*
->> +	 * So let's write the poison value to the kernel stack.
->> +	 * Start from the address in p and move up till the new boundary.
->> +	 */
->> +	if (on_thread_stack())
->> +		boundary = current_stack_pointer;
->> +	else
->> +		boundary = current_top_of_stack();
->> +
->> +	BUG_ON(boundary - p >= THREAD_SIZE);
->> +
->> +	while (p < boundary) {
->> +		*(unsigned long *)p = STACKLEAK_POISON;
->> +		p += sizeof(unsigned long);
->> +	}
-> 
-> Sorry catching up late on this. 
+On 03/28/2018 12:57 PM, Alexander Popov wrote:
+> +.macro ERASE_KSTACK
+> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> +	PUSH_AND_CLEAR_REGS
+> +	call erase_kstack
+> +	POP_REGS
+> +#endif
+> +.endm
 
-Hello Vikas,
-
-You are just in time! Thank you for looking at the code.
-
-> can we use a stosq or something here ? wondering 
-> if that helps get more performance. since you seem to copy the whole stack with 
-> the poison value. If that was already discussed sorry for the spam :)
-
-Yes, the previous version of the patch series had this function written in
-assembly. It used scasq for the poison searching and then stosq for writing:
-http://www.openwall.com/lists/kernel-hardening/2018/03/03/9
-
-That amount of assembly was blamed by the maintainers. So I've done my best to
-rework it in C bypassing the pitfalls:
-http://www.openwall.com/lists/kernel-hardening/2018/03/21/4
-
-In fact, this implementation is not much slower than the assembly one, since we
-erase only the used part of the thread stack. This is achieved by the
-lowest_stack variable, which is updated during the syscall (please see the next
-patch of the series).
-
-Best regards,
-Alexander
+Thanks again for the hard work to trim down the complexity of the
+assembly.  I noticed the 64-bit version saves/restores registers while
+the 32-bit version doesn't.  What's the reasoning there?
