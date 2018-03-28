@@ -1,78 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753028AbeC1Rqr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 13:46:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:32940 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752580AbeC1Rqp (ORCPT
+        id S1753099AbeC1RsD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 13:48:03 -0400
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:41336 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752457AbeC1RsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 13:46:45 -0400
+        Wed, 28 Mar 2018 13:48:01 -0400
+X-Google-Smtp-Source: AIpwx4+I5wi5ybHp4W5HIBVOYo1pzsw980JYQjeZlSoFO7k7FmPnVjHYhX3L79OfcGRLKEySqR/OZg==
+Date: Wed, 28 Mar 2018 10:47:57 -0700
+From: Eric Biggers <ebiggers@google.com>
+To: M A Young <m.a.young@durham.ac.uk>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: NFS mounts failing when keytab present on client
+Message-ID: <20180328174757.GA185597@google.com>
+References: <alpine.LFD.2.21.1803272126070.3013@austen3.home>
+ <20180327222950.GB257332@google.com>
+ <alpine.LFD.2.21.1803280857200.2500@algedi.dur.ac.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 28 Mar 2018 20:46:44 +0300
-From: merez@codeaurora.org
-To: Colin King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        wil6210@qti.qualcomm.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-wireless-owner@vger.kernel.org
-Subject: Re: [PATCH][next] wil6210: fix potential null dereference of ndev
- before null check
-In-Reply-To: <20180328174027.31551-1-colin.king@canonical.com>
-References: <20180328174027.31551-1-colin.king@canonical.com>
-Message-ID: <49ef31bc36217349a4801dc2eba4735c@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.21.1803280857200.2500@algedi.dur.ac.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-28 20:40, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Mar 28, 2018 at 09:00:14AM +0100, M A Young wrote:
+> On Tue, 27 Mar 2018, Eric Biggers wrote:
 > 
-> The pointer ndev is being dereferenced before it is being null checked,
-> hence there is a potential null pointer deference. Fix this by only
-> dereferencing ndev after it has been null checked
+> > Hi Michael,
+> > 
+> > On Tue, Mar 27, 2018 at 11:06:14PM +0100, Michael Young wrote:
+> > > NFS mounts stopped working on one of my computers after a kernel update from
+> > > 4.15.3 to 4.15.4. I traced the problem to the commit
+> > > [46e8d06e423c4f35eac7a8b677b713b3ec9b0684] crypto: hash - prevent using
+> > > keyed hashes without setting key
+> > > and a later kernel with this patch reverted works normally.
+> > > 
+> > > The problem seems to be related to kerberos as the mount fails when the
+> > > keytab is present, but works if I rename the keytab file. This is true even
+> > > though the mount is with sec=sys . The mount should also work with sec=krb5
+> > > but that also fails in the same way. When the mount fails there are errors
+> > > in dmesg like
+> > > [ 1232.522816] gss_marshal: gss_get_mic FAILED (851968)
+> > > [ 1232.522819] RPC: couldn't encode RPC header, exit EIO
+> > > [ 1232.522856] gss_marshal: gss_get_mic FAILED (851968)
+> > > [ 1232.522857] RPC: couldn't encode RPC header, exit EIO
+> > > [ 1232.522863] NFS: nfs4_discover_server_trunking unhandled error -5.
+> > > Exiting with error EIO
+> > > [ 1232.525039] gss_marshal: gss_get_mic FAILED (851968)
+> > > [ 1232.525042] RPC: couldn't encode RPC header, exit EIO
+> > > 
+> > > 	Michael Young
+> > 
+> > Thanks for the bug report.  I think the error is coming from
+> > net/sunrpc/auth_gss/gss_krb5_crypto.c.  There are two potential problems I see.
+> > The first one, which is definitely a bug, is that make_checksum_hmac_md5()
+> > allocates an HMAC transform and request, then does these crypto API calls:
+> > 
+> > 	crypto_ahash_init()
+> > 	crypto_ahash_setkey()
+> > 	crypto_ahash_digest()
+> > 
+> > This is wrong because it makes no sense to init() the HMAC request before the
+> > key has been set, and doubly so when it's calling digest() which is shorthand
+> > for init() + update() + final().  So I think it just needs to be removed.  You
+> > can test the following patch:
+> > 
+> > diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> > index 12649c9fedab..8654494b4d0a 100644
+> > --- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> > +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+> > @@ -237,9 +237,6 @@ make_checksum_hmac_md5(struct krb5_ctx *kctx, char *header, int hdrlen,
+> >  
+> >         ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
+> >  
+> > -       err = crypto_ahash_init(req);
+> > -       if (err)
+> > -               goto out;
+> >         err = crypto_ahash_setkey(hmac_md5, cksumkey, kctx->gk5e->keylength);
+> >         if (err)
+> >                 goto out;
+> > 
+> > If that's not it, it's also possible that the error is coming from the
+> > crypto_ahash_init() in make_checksum().  That can only happen if 'cksumkey' is
+> > NULL and the hash algorithm is keyed, which implies a logical error as it
+> > doesn't make sense to use a keyed hash algorithm without the key.  The callers
+> > do check kctx->gk5e->keyed_cksum which I'd hope would prevent this, though
+> > perhaps kctx->cksum can be NULL.
+> > 
+> > Eric
 > 
-> Detected by CoverityScan, CID#1467010 ("Dereference before null check")
+> The patch fixes the problem.
 > 
-> Fixes: e00243fab84b ("wil6210: infrastructure for multiple virtual 
-> interfaces")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/ath/wil6210/main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/wil6210/main.c
-> b/drivers/net/wireless/ath/wil6210/main.c
-> index a4b413e8d55a..82aec6b06d09 100644
-> --- a/drivers/net/wireless/ath/wil6210/main.c
-> +++ b/drivers/net/wireless/ath/wil6210/main.c
-> @@ -391,7 +391,7 @@ static void wil_fw_error_worker(struct work_struct 
-> *work)
->  	struct wil6210_priv *wil = container_of(work, struct wil6210_priv,
->  						fw_error_worker);
->  	struct net_device *ndev = wil->main_ndev;
-> -	struct wireless_dev *wdev = ndev->ieee80211_ptr;
-> +	struct wireless_dev *wdev;
-> 
->  	wil_dbg_misc(wil, "fw error worker\n");
-> 
-> @@ -399,6 +399,7 @@ static void wil_fw_error_worker(struct work_struct 
-> *work)
->  		wil_info(wil, "No recovery - interface is down\n");
->  		return;
->  	}
-> +	wdev = ndev->ieee80211_ptr;
-> 
->  	/* increment @recovery_count if less then WIL6210_FW_RECOVERY_TO
->  	 * passed since last recovery attempt
+> 	Michael Young
 
-Reviewed-by: Maya Erez <merez@codeaurora.org>
+Okay, thanks for testing!  I'll send a formal patch.
 
--- 
-Maya Erez
-Qualcomm Israel, Inc. on behalf of Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+Eric
