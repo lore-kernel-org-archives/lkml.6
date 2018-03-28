@@ -1,242 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753334AbeC1Ryf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 13:54:35 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:44964 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753298AbeC1Ryb (ORCPT
+        id S1753099AbeC1Ry4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 13:54:56 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:45075 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753426AbeC1Ryu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 13:54:31 -0400
-X-Google-Smtp-Source: AIpwx49t2MSlvvhmbbHm9cWe7v2i8eidQyfAqCXjjK2XuYddRS5b8/LMDbMm0xHCNVd7I9di47s6OA==
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 6/9] arm64: dts: actions: Add gpio line names to Bubblegum-96 board
-Date: Wed, 28 Mar 2018 23:17:00 +0530
-Message-Id: <20180328174703.19778-7-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180328174703.19778-1-manivannan.sadhasivam@linaro.org>
-References: <20180328174703.19778-1-manivannan.sadhasivam@linaro.org>
+        Wed, 28 Mar 2018 13:54:50 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+Cc: kernel test robot <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+        linux-kernel@vger.kernel.org, wfg@linux.intel.com
+References: <5abb446e.XtEK088UbWSHCPaF%fengguang.wu@intel.com>
+        <f249d351-240a-8c0e-ef50-f9155b696e86@oracle.com>
+Date: Wed, 28 Mar 2018 12:53:31 -0500
+In-Reply-To: <f249d351-240a-8c0e-ef50-f9155b696e86@oracle.com> (Nagarathnam
+        Muthusamy's message of "Wed, 28 Mar 2018 10:22:16 -0700")
+Message-ID: <87o9j8axyc.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1f1FHM-0007kI-Hr;;;mid=<87o9j8axyc.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/iJFowUQietkLQi1XIs4CIBN3mqGydUak=
+X-SA-Exim-Connect-IP: 67.3.145.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4997]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_05 8+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_04 7+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 15026 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.9 (0.0%), b_tie_ro: 1.95 (0.0%), parse: 1.05 (0.0%),
+        extract_message_metadata: 12 (0.1%), get_uri_detail_list: 1.25 (0.0%),
+        tests_pri_-1000: 2.8 (0.0%), tests_pri_-950: 1.21 (0.0%), tests_pri_-900:
+        0.95 (0.0%), tests_pri_-400: 17 (0.1%), check_bayes: 16 (0.1%), b_tokenize:
+        4.7 (0.0%), b_tok_get_all: 5 (0.0%), b_comp_prob: 1.61 (0.0%),
+        b_tok_touch_all: 3.0 (0.0%), b_finish: 0.62 (0.0%), tests_pri_0: 96 (0.6%),
+        check_dkim_signature: 0.53 (0.0%), check_dkim_adsp: 2.8 (0.0%),
+        tests_pri_500: 14888 (99.1%), poll_dns_idle: 14878 (99.0%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: 98f929b1bd ("ipc/shm: Fix shmctl(..., IPC_STAT, ...) between .."): Oops: 0000 [#1]
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add gpio line names to Actions Semi S900 based Bubblegum-96 board.
+Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> writes:
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 195 ++++++++++++++++++++++
- 1 file changed, 195 insertions(+)
+> Hi Eric,
+>
+>     From
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git/tree/ipc/shm.c?h=for-next
+>
+> It looks like if the following condition in Line 616 succeeds
+>
+> error = PTR_ERR(file);
+> if (IS_ERR(file))
+>     goto no_file;
+>
+> we get to no_file with garbage value in shm_cprid. An attempt to
+> put_pid on this garbage value might be causing panic.
+>
+> We could initialize shm_cprid to NULL as soon as it was created.
 
-diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-index ff043c961d75..02dbb4291d68 100644
---- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-+++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-@@ -34,3 +34,198 @@
- 	status = "okay";
- 	clocks = <&cmu CLK_UART5>;
- };
-+
-+/*
-+ * GPIO name legend: proper name = the GPIO line is used as GPIO
-+ *         NC = not connected (pin out but not routed from the chip to
-+ *              anything the board)
-+ *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
-+ *         LSEC = Low Speed External Connector
-+ *         HSEC = High Speed External Connector
-+ *
-+ * Line names are taken from the schematic "Schematics Bubblegum96"
-+ * version v1.0
-+ *
-+ * For the lines routed to the external connectors the
-+ * lines are named after the 96Boards CE Specification 1.0,
-+ * Appendix "Expansion Connector Signal Description".
-+ *
-+ * When the 96Boards naming of a line and the schematic name of
-+ * the same line are in conflict, the 96Boards specification
-+ * takes precedence, which means that the external UART on the
-+ * LSEC is named UART0 while the schematic and SoC names this
-+ * UART2. Only exception is the I2C lines for which the schematic
-+ * naming has been preferred. This is only for the informational
-+ * lines i.e. "[FOO]", the GPIO named lines "GPIO-A" thru "GPIO-L"
-+ * are the only ones actually used for GPIO.
-+ */
-+
-+&gpioa {
-+	gpio-line-names =
-+		"GPIO-A", /* GPIO_0, LSEC pin 23 */
-+		"GPIO-B", /* GPIO_1, LSEC pin 24 */
-+		"GPIO-C", /* GPIO_2, LSEC pin 25 */
-+		"GPIO-D", /* GPIO_3, LSEC pin 26 */
-+		"GPIO-E", /* GPIO_4, LSEC pin 27 */
-+		"GPIO-F", /* GPIO_5, LSEC pin 28 */
-+		"GPIO-G", /* GPIO_6, LSEC pin 29 */
-+		"GPIO-H", /* GPIO_7, LSEC pin 30 */
-+		"GPIO-I", /* GPIO_8, LSEC pin 31 */
-+		"GPIO-J", /* GPIO_9, LSEC pin 32 */
-+		"NC", /* GPIO_10 */
-+		"NC", /* GPIO_11 */
-+		"SIRQ2_1V8", /* GPIO_12 */
-+		"PCM0_OUT", /* GPIO_13 */
-+		"WIFI_LED", /* GPIO_14 */
-+		"PCM0_SYNC", /* GPIO_15 */
-+		"PCM0_CLK", /* GPIO_16 */
-+		"PCM0_IN", /* GPIO_17 */
-+		"BT_LED", /* GPIO_18 */
-+		"LED0", /* GPIO_19 */
-+		"LED1", /* GPIO_20 */
-+		"JTAG_TCK", /* GPIO_21 */
-+		"JTAG_TMS", /* GPIO_22 */
-+		"JTAG_TDI", /* GPIO_23 */
-+		"JTAG_TDO", /* GPIO_24 */
-+		"[UART1_RxD]", /* GPIO_25, LSEC pin 13 */
-+		"NC", /* GPIO_26 */
-+		"[UART1_TxD]", /* GPIO_27, LSEC pin 11 */
-+		"SD0_D0", /* GPIO_28 */
-+		"SD0_D1", /* GPIO_29 */
-+		"SD0_D2", /* GPIO_30 */
-+		"SD0_D3"; /* GPIO_31 */
-+};
-+
-+&gpiob {
-+	gpio-line-names =
-+		"SD1_D0", /* GPIO_32 */
-+		"SD1_D1", /* GPIO_33 */
-+		"SD1_D2", /* GPIO_34 */
-+		"SD1_D3", /* GPIO_35 */
-+		"SD0_CMD", /* GPIO_36 */
-+		"SD0_CLK", /* GPIO_37 */
-+		"SD1_CMD", /* GPIO_38 */
-+		"SD1_CLK", /* GPIO_39 */
-+		"SPI0_SCLK", /* GPIO_40, LSEC pin 8 */
-+		"SPI0_CS", /* GPIO_41, LSEC pin 12 */
-+		"SPI0_DIN", /* GPIO_42, LSEC pin 10 */
-+		"SPI0_DOUT", /* GPIO_43, LSEC pin 14 */
-+		"I2C5_SDATA", /* GPIO_44, HSEC pin 36 */
-+		"I2C5_SCLK", /* GPIO_45, HSEC pin 38 */
-+		"UART0_RX", /* GPIO_46, LSEC pin 7 */
-+		"UART0_TX", /* GPIO_47, LSEC pin 5 */
-+		"UART0_RTSB", /* GPIO_48, LSEC pin 9 */
-+		"UART0_CTSB", /* GPIO_49, LSEC pin 3 */
-+		"I2C4_SCLK", /* GPIO_50, HSEC pin 32 */
-+		"I2C4_SDATA", /* GPIO_51, HSEC pin 34 */
-+		"I2C0_SCLK", /* GPIO_52 */
-+		"I2C0_SDATA", /* GPIO_53 */
-+		"I2C1_SCLK", /* GPIO_54, LSEC pin 15 */
-+		"I2C1_SDATA", /* GPIO_55, LSEC pin 17 */
-+		"I2C2_SCLK", /* GPIO_56, LSEC pin 19 */
-+		"I2C2_SDATA", /* GPIO_57, LSEC pin 21 */
-+		"CSI0_DN0", /* GPIO_58, HSEC pin 10 */
-+		"CSI0_DP0", /* GPIO_59, HSEC pin 8 */
-+		"CSI0_DN1", /* GPIO_60, HSEC pin 16 */
-+		"CSI0_DP1", /* GPIO_61, HSEC pin 14 */
-+		"CSI0_CN", /* GPIO_62, HSEC pin 4 */
-+		"CSI0_CP"; /* GPIO_63, HSEC pin 2 */
-+};
-+
-+&gpioc {
-+	gpio-line-names =
-+		"CSI0_DN2", /* GPIO_64, HSEC pin 22 */
-+		"CSI0_DP2", /* GPIO_65, HSEC pin 20 */
-+		"CSI0_DN3", /* GPIO_66, HSEC pin 28 */
-+		"CSI0_DP3", /* GPIO_67, HSEC pin 26 */
-+		"[CLK0]", /* GPIO_68, HSEC pin 15 */
-+		"CSI1_DN0", /* GPIO_69, HSEC pin 44 */
-+		"CSI1_DP0", /* GPIO_70, HSEC pin 42 */
-+		"CSI1_DN1", /* GPIO_71, HSEC pin 50 */
-+		"CSI1_DP1", /* GPIO_72, HSEC pin 48 */
-+		"CSI1_CN", /* GPIO_73, HSEC pin 56 */
-+		"CSI1_CP", /* GPIO_74, HSEC pin 54 */
-+		"[CLK1]"; /* GPIO_75, HSEC pin 17 */
-+};
-+
-+&gpiod {
-+	gpio-line-names =
-+		"[GPIOD0]", /* GPIO_76 */
-+		"[GPIOD1]", /* GPIO_77 */
-+		"BT_RST_N", /* GPIO_78 */
-+		"EXT_DC_EN", /* GPIO_79 */
-+		"[PCM_DI]", /* GPIO_80, LSEC pin 22 */
-+		"[PCM_DO]", /* GPIO_81, LSEC pin 20 */
-+		"[PCM_CLK]", /* GPIO_82, LSEC pin 18 */
-+		"[PCM_FS]", /* GPIO_83, LSEC pin 16 */
-+		"WAKE_BT", /* GPIO_84 */
-+		"WL_REG_ON", /* GPIO_85 */
-+		"NC", /* GPIO_86 */
-+		"NC", /* GPIO_87 */
-+		"NC", /* GPIO_88 */
-+		"NC", /* GPIO_89 */
-+		"NC", /* GPIO_90 */
-+		"WIFI_WAKE", /* GPIO_91 */
-+		"BT_WAKE", /* GPIO_92 */
-+		"NC", /* GPIO_93 */
-+		"OTG_EN2", /* GPIO_94 */
-+		"OTG_EN", /* GPIO_95 */
-+		"DSI_DP3", /* GPIO_96, HSEC pin 45 */
-+		"DSI_DN3", /* GPIO_97, HSEC pin 47 */
-+		"DSI_DP1", /* GPIO_98, HSEC pin 33 */
-+		"DSI_DN1", /* GPIO_99, HSEC pin 35 */
-+		"DSI_CP", /* GPIO_100, HSEC pin 21 */
-+		"DSI_CN", /* GPIO_101, HSEC pin 23 */
-+		"DSI_DP0", /* GPIO_102, HSEC pin 27 */
-+		"DSI_DN0", /* GPIO_103, HSEC pin 29 */
-+		"DSI_DP2", /* GPIO_104, HSEC pin 39 */
-+		"DSI_DN2"; /* GPIO_105, HSEC pin 41 */
-+};
-+
-+&gpioe {
-+	gpio-line-names =
-+		"N0_D0", /* GPIO_106 */
-+		"N0_D1", /* GPIO_107 */
-+		"N0_D2", /* GPIO_108 */
-+		"N0_D3", /* GPIO_109 */
-+		"N0_D4", /* GPIO_110 */
-+		"N0_D5", /* GPIO_111 */
-+		"N0_D6", /* GPIO_112 */
-+		"N0_D7", /* GPIO_113 */
-+		"N0_DQS", /* GPIO_114 */
-+		"N0_DQSN", /* GPIO_115 */
-+		"NC", /* GPIO_116 */
-+		"NC", /* GPIO_117 */
-+		"NC", /* GPIO_118 */
-+		"N0_CEB1", /* GPIO_119 */
-+		"CARD_DT", /* GPIO_120 */
-+		"N0_CEB3", /* GPIO_121 */
-+		"SD_DAT0", /* GPIO_122, HSEC pin 1 */
-+		"SD_DAT1", /* GPIO_123, HSEC pin 3 */
-+		"SD_DAT2", /* GPIO_124, HSEC pin 5 */
-+		"SD_DAT3", /* GPIO_125, HSEC pin 7 */
-+		"NC", /* GPIO_126 */
-+		"NC", /* GPIO_127 */
-+		"[PWR_BTN_N]", /* GPIO_128, LSEC pin 4 */
-+		"[RST_BTN_N]", /* GPIO_129, LSEC pin 6 */
-+		"NC", /* GPIO_130 */
-+		"SD_CMD", /* GPIO_131 */
-+		"GPIO-L", /* GPIO_132, LSEC pin 34 */
-+		"GPIO-K", /* GPIO_133, LSEC pin 33 */
-+		"NC", /* GPIO_134 */
-+		"SD_SCLK", /* GPIO_135 */
-+		"NC", /* GPIO_136 */
-+		"JTAG_TRST"; /* GPIO_137 */
-+};
-+
-+&gpiof {
-+	gpio-line-names =
-+		"I2C3_SCLK", /* GPIO_138 */
-+		"LED2", /* GPIO_139 */
-+		"LED3", /* GPIO_140 */
-+		"I2C3_SDATA", /* GPIO_141 */
-+		"UART3_RX", /* GPIO_142 */
-+		"UART3_TX", /* GPIO_143 */
-+		"UART3_RTSB", /* GPIO_144 */
-+		"UART3_CTSB"; /* GPIO_145 */
-+};
--- 
-2.14.1
+Yes.  I misread the kvmalloc as a kvzalloc.
+I am planning on placing the pid freeing under the no_id label
+instead of the no_file label.  Which should also avoid the issue.
+
+It is a rare enough issue an incremental patch should be fine.
+
+Eric
