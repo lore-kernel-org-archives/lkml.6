@@ -1,80 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753440AbeC1Oyl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:54:41 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:53681 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752743AbeC1Oyk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:54:40 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: rsnd: mark PM functions __maybe_unused
-Date: Wed, 28 Mar 2018 16:53:10 +0200
-Message-Id: <20180328145318.10136-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:P9BT+t04wRIJOMK3z+6ASPKc9g/SgEYEahrvMBhQTqD+2wvxFFd
- c5N0SrJyl14qtwKJraZ4KLABwsjpdqpWE+k/GosHlnS5uLnunY1Ghe9bkQOPAVa9pwuzr2M
- EzItVgQ9soYr9Ox6D3k8zo9jKWn7c4HShalE+JUyElyM8nBn26uph+5iBQIzFkEuNlmSEAC
- sPLRV/G39hTh6AAQrPZpg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:1WlKLa/IMZU=:64Pst7i0Vn7jXwADyzlfu6
- TiAmAskOCHv8EiDJtAnuoh+wk/ytaYDVbS2PD9ghv6V3P99/lPN0I4EIJDo46LU017cF/OeTy
- F5EXuJ1E5DUbLAH2SPpmp9jkzeeUYWBV8b5eY9IsKQdu3ZxI6ZRXalw+rVzywYTd/xkKiT/w+
- EnUDKCJKGlq17pKw7oQIs6nbbxPwArQ1OoyJG7yrTMUxafrPy31tkoYUP7miUoiwGk0atxbyF
- FFB9ZuBXTiZO4F4rw7kbUt9NWd4s8qQ0NGXUo9ajJPkqOq9JMA8iO0zSSHqq2/GdOhb81O7lL
- DTvgwDg0f4vW+M//XBQhj/9Aor6BVxL3bvsZYqLnel6T5QFGGlYri9DN1X2ZSgJd/n78q0Osu
- tnNCSj0XJ3lzIFjBij4iPAcf0THOOvywldAgiPHIRBxZUUy8BUpqZiQoHxemkBfM83LBcMKXT
- fwXeHX4t5QTe4GZ8NL2sEaDDfOGEj6oMIuOoBAxwRgWRNxlpgSVFMISf4rkYhRarjpgJdcudt
- 853UlbvJyzsXnO0sk6gYX7viIbLjiXDvQhViXgxcrIiH5R2BXRuJFffkK1YyPe4DRAKncc6Mq
- 1AsrBTfCfX8enqo1/TRSbNJ5fGaTKudyY0X6GXcoOQ77imkOX5GWrhsNUQNhCFvunCZuo3lTr
- 70P07/15SONBQdqFG/2QCSbmq1l8Cc/Q6lKKzyy3jUckyRY7JXlKPYKq7SIXGkb45W1K10mwP
- 3z6au9qgeQxZKOKROnkmb6AF4hnvN/T69OdK3w==
+        id S1753533AbeC1O43 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:56:29 -0400
+Received: from mga04.intel.com ([192.55.52.120]:18174 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753101AbeC1O42 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 10:56:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,372,1517904000";
+   d="scan'208";a="215647501"
+Subject: Re: [PATCH v2 4/4] perf: Support perf -vv
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+ <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
+ <20180328132252.GM3102@krava>
+ <c984a7d9-1e59-93f6-36b5-6ce878039f53@linux.intel.com>
+ <20180328141940.GA32321@krava>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <f943f62c-0af2-7052-88a4-df9c7a978fa1@linux.intel.com>
+Date: Wed, 28 Mar 2018 22:56:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180328141940.GA32321@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The suspend/resume callbacks are now optional, leading to a warning
-when they are unused:
 
-sound/soc/sh/rcar/core.c:1548:12: error: 'rsnd_resume' defined but not used [-Werror=unused-function]
- static int rsnd_resume(struct device *dev)
-            ^~~~~~~~~~~
-sound/soc/sh/rcar/core.c:1539:12: error: 'rsnd_suspend' defined but not used [-Werror=unused-function]
- static int rsnd_suspend(struct device *dev)
 
-This marks the as __maybe_unused to avoid the warning.
+On 3/28/2018 10:19 PM, Jiri Olsa wrote:
+> On Wed, Mar 28, 2018 at 10:00:32PM +0800, Jin, Yao wrote:
+>>
+>>
+>> On 3/28/2018 9:22 PM, Jiri Olsa wrote:
+>>> On Wed, Mar 28, 2018 at 10:57:08PM +0800, Jin Yao wrote:
+>>>> We keep having bug reports that when users build perf on their own,
+>>>> but they don't install some needed libraries such as libelf,
+>>>> libbfd/libibery.
+>>>>
+>>>> The perf can build, but it is missing important functionality.
+>>>>
+>>>> This patch provides a new option '-vv' which will print the
+>>>> compiled-in status of libraries.
+>>>>
+>>>> The 'perf -vv' is equal to 'perf -version --build-options'.
+>>>>
+>>>> For example:
+>>>>
+>>>> $ ./perf -vv or ./perf -version --build-options
+>>>> perf version 4.13.rc5.gcb1183
+>>>>                    dwarf: [ on  ]
+>>>>       dwarf_getlocations: [ on  ]
+>>>>                    glibc: [ on  ]
+>>>>                     gtk2: [ on  ]
+>>>>                 libaudit: [ OFF ]
+>>>>                   libbfd: [ on  ]
+>>>>                   libelf: [ on  ]
+>>>>                  libnuma: [ on  ]
+>>>> numa_num_possible_cpus: [ on  ]
+>>>>                  libperl: [ on  ]
+>>>>                libpython: [ on  ]
+>>>>                 libslang: [ on  ]
+>>>>                libcrypto: [ on  ]
+>>>>                libunwind: [ on  ]
+>>>>       libdw-dwarf-unwind: [ on  ]
+>>>>                     zlib: [ on  ]
+>>>>                     lzma: [ on  ]
+>>>>                get_cpuid: [ on  ]
+>>>>                      bpf: [ on  ]
+>>>> [ on  ]: library is compiled-in
+>>>> [ OFF ]: library is disabled in make configuration
+>>>>            OR library is not installed in build environment
+>>>>
+>>>> v2:
+>>>> ---
+>>>> Use a global variable version_verbose to count the number of 'v'.
+>>>>
+>>>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>>>> ---
+>>>>    tools/perf/perf.c | 22 ++++++++++++++++++----
+>>>>    tools/perf/perf.h |  1 +
+>>>>    2 files changed, 19 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+>>>> index 1b3fc8e..355219e 100644
+>>>> --- a/tools/perf/perf.c
+>>>> +++ b/tools/perf/perf.c
+>>>> @@ -32,7 +32,7 @@
+>>>>    #include <linux/kernel.h>
+>>>>    const char perf_usage_string[] =
+>>>> -	"perf [--version] [--help] [OPTIONS] COMMAND [ARGS]";
+>>>> +	"perf [--version [--build-options]] [--help] [OPTIONS] COMMAND [ARGS]";
+>>>
+>>> --build-options is 'perf version' option no?
+>>>
+>>> jirka
+>>>
+>>
+>> Yes. Command-line something like:
+>>
+>> perf --version --build-options or perf -v --build-options.
+>>
+>> Is this usage string not correct? If so, I'd like to fix that.
+>>
+>> "perf [--version [--build-options]] [--help] [OPTIONS] COMMAND [ARGS]";
+> 
+> ah I forgot that --version is in fact 'perf version'
+> now I see --build-options depends on --version.. ok ;-)
+> 
+> could you please also create Documentation/perf-version.txt,
+> now when it has option, we should document it
+> 
 
-Fixes: f8a9a29c4fe9 ("ASoC: rsnd: set pm_ops in hibernate-compatible way")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/sh/rcar/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+That's fine. I will create the perf-version.txt.
 
-diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
-index 6a76688a8ba9..94f081b93258 100644
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -1536,7 +1536,7 @@ static int rsnd_remove(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int rsnd_suspend(struct device *dev)
-+static int __maybe_unused rsnd_suspend(struct device *dev)
- {
- 	struct rsnd_priv *priv = dev_get_drvdata(dev);
- 
-@@ -1545,7 +1545,7 @@ static int rsnd_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int rsnd_resume(struct device *dev)
-+static int __maybe_unused rsnd_resume(struct device *dev)
- {
- 	struct rsnd_priv *priv = dev_get_drvdata(dev);
- 
--- 
-2.9.0
+> also please use the standard option parsing API we use in commands:
+> 
+>          argc = parse_options(argc, argv, record_options, record_usage,
+>                              PARSE_OPT_STOP_AT_NON_OPTION);
+> 
+> so we get standard error when the option is mangled,
+> unlinke now, when it's silent:
+> 
+> 	[jolsa@krava perf]$ ./perf --version --buil
+> 	perf version 4.16.rc6.gcc183d
+> 
+> thanks,
+> jirka
+> 
+
+Oh, yes. Let me check and update the code. Thanks so much for reminding 
+this.
+
+Thanks
+Jin Yao
