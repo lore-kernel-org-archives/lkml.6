@@ -1,128 +1,204 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3402981-1522275992-2-8685807867739466745
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES endasv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522275991; b=c5RrA34RCgwQOa4VDtCEdZFGMTR56DKYxjfFhk0pshGRxLo
-    WAKsCYrQfT/QZmGomarfn7sjHPs5U0JGFsJBU/W2H4bOQDNXe9oDDdx4DjPK8DK3
-    BWf4hrSDkqPXfYe7Dxf2yfX28/WwV1NmTF4dBeNdEBboM0Ry3OgoHLx9RqsBuxQs
-    ZE1nfvnezsOfV6WHnVyvgacYIr839+IDURrxOBIFcdN//WbInBHAptI+75xEiHtp
-    yEACCMrxwggcbGshjJOht/p549vnTJXZ6ecwFTtMXzwMvglSRfb+7IxVq203CsSf
-    F9y5Unuvcr5GVDIf7AKG40ibuk83VgAlnGuQOdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1522275991; bh=1
-    RIjJt4Sut7PW077akdaxrWX9Bml4Nl0XHGStVem4Jk=; b=Oj/8rdv6kAFuXgOxN
-    f8iTU4LinJ0gw8ewJarHNhYcL38p/DxN72XzpsWwDkZ1ffQ7OvO0QPUWV17fTqSv
-    1yePJKkaGjdyQdFMrydHQvimXy5+ibe1WzITWketKMYrYuJF5afAG9w4HMOe3JbG
-    T4EiOikYi1t7Naw6weX8vBN5XXCes/LGhrRPkXU75pJJPkT+hnoYFVQ3UrIpifm/
-    TxH1y5exLAAyMt1B4GocCCaZdKC6Jmas73jt8j/WWaCIpxud0y6xtFvTAbNTll9Y
-    AmlSzYNpAGVkxFuqUrsrg3+YeQNxscmLctcUDbyGeYTteT4tMO0WGLCNEQwoUpvk
-    uo2AQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UrpVbpej x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IdjgS9Ly;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UrpVbpej x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IdjgS9Ly;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPRVmQW3ZFRYqfc6+CQWQ5jtGU5tHtbYJj1heguOzd9I40HkF88hXHub6fphm22dke5UFkkF724GidpLQw3lzihTGbdSk2boEwWXDLsHFhCeavI/icvr
-    vkoVpFKLhOTAJRm2uzxy0R6Ozla5QiQPqz2NZoz8NvMppxBPCvtfLdN6Z1ZqNIEx+9XxTKtheet9CND2Qnmhb+1DWbPO5j6xv/kppyn6hUgVoz5+12PZkQ3A
-    S0YVunmJJZ3cwy6eUYMF4Q==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=_n5q_SG4vf0A:10 a=v2DPQv5-lfwA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=kIuu8CC8UfMr2G1DqIsA:9 a=CjuIK1q_8ugA:10
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AIpwx4/kvk/kYgV9Lr5biQT/n/Neb6lJ5fmG3gwW+OPayxO7g2fhm0r0+biXCo7i73YoJg8t7wyHew==
-Date: Wed, 28 Mar 2018 18:26:22 -0400
-From: Thomas Avery <tavery321@gmail.com>
-To: gregkh@linuxfoundation.org
-Subject: [PATCH 1/2] staging: rtl8723bs: Replace yield() call with
- cond_resched()
-Message-ID: <20180328222622.nure7tvmc6bp3w3u@debian>
-MIME-Version: 1.0
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <prvs=61814189d=ohad.sharabi@sandisk.com>
+X-Google-Smtp-Source: AIpwx48KMcY/2v+3LTJLv8Vplv4C/6K2VoQu0InliNdtqz6tuIDymmo/01hNM5n6rHaqiHjNThlp
+ARC-Seal: i=1; a=rsa-sha256; t=1522230151; cv=none;
+        d=google.com; s=arc-20160816;
+        b=l9tRClwsCFiF63BYRitzesZZ8C9KMZQjKOmFleWAg216MLTCSIg7cr3veRhK+2L6Xh
+         squFd3wTedQAhhS7hp19Pby1j8tMJnBMc2MtYAMgQlto78gTxpId3tJ+XYnFIprksJdu
+         BoLB44aAM/8TQDCwGXNZKnrOhDDypq8XZSqoXZh1RPtFqV0sPhOzchNqzZh1YU02MMNx
+         UyIkKLdR5Ohyxx2sgCibp+0Skk0+ut5cqjHrbLKgHPp8ZI3DGm+eebKtYifcn6Sz30fU
+         JG7mY2fd7uP+Dxu7WpoTxOp4uTdwCLxYq8PUQNiYMfFAaV3CUU8XjHm6Zza6wXzcjq3z
+         AWxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=kkc6S80IQgKjv+VOT32QXVCcJXoPxpogLjwmuCjCK3Q=;
+        b=FFYEAw8Cd6EnbGIWLfKU1PrROmFPvgzof/VDi9enpCmxb9xb7/lJ9XRy7FCdt8gy7u
+         6gOlDXDuR4DarNsonANFyZX6NIxExyiFJCww2M1atsBlPGVbL2HW54sfaQYmlOl0MrNS
+         53wPXqaLLnlWVSuNB9BzDoVpl4lIU4mYLmLf856gsfqppdjj9wyqQp5yVo7BVdgfB+XU
+         mCaXOry5yo8RnFajoQ8WKz2mqwTuehgLYa6aSGll7UhUon+nuq+ESIdNfLtWt+h0EERL
+         5SyIbFvL5k/i9LpZWXzgxK9KsgItg59utFiJfwatYn3IP98MUnNorys3mOTWGbhbdS4e
+         RIqQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@sandisk.com header.s=dkim.sandisk.com header.b=p/u/FjE5;
+       spf=pass (google.com: domain of prvs=61814189d=ohad.sharabi@sandisk.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=61814189d=ohad.sharabi@sandisk.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@sandisk.com header.s=dkim.sandisk.com header.b=p/u/FjE5;
+       spf=pass (google.com: domain of prvs=61814189d=ohad.sharabi@sandisk.com designates 68.232.141.245 as permitted sender) smtp.mailfrom=prvs=61814189d=ohad.sharabi@sandisk.com
+X-IronPort-AV: E=Sophos;i="5.48,370,1517846400";
+   d="scan'208";a="177741648"
+From: Ohad Sharabi <ohad.sharabi@sandisk.com>
+To: stanislav.nijnikov@wdc.com,
+	jejb@linux.vnet.ibm.com,
+	martin.petersen@oracle.com,
+	gregkh@linuxfoundation.org
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alex.lemberg@wdc.com,
+	Ohad Sharabi <ohad.sharabi@sandisk.com>
+Subject: [PATCH v3] scsi: ufs: add trace event for ufs upiu
+Date: Wed, 28 Mar 2018 12:42:18 +0300
+Message-Id: <1522230138-27674-1-git-send-email-ohad.sharabi@sandisk.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596174003792567298?=
+X-GMAIL-MSGID: =?utf-8?q?1596174003792567298?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Remove yield call(). yield does not guarantee progress, and should not
-be used. cond_resched() is a safe alternative.
+Add UFS Protocol Information Units(upiu) trace events for ufs driver,
+used to trace various ufs transaction types- command, task-management
+and device management.
+The trace-point format is generic and can be easily adapted to trace
+other upius if needed.
+Currently tracing ufs transaction of type 'device management', which
+this patch introduce, cannot be obtained from any other trace.
+Device management transactions are used for communication with the
+device such as reading and writing descriptor or attributes etc.
 
-Signed-off-by: Thomas Avery <tavery321@gmail.com>
+Signed-off-by: Ohad Sharabi <ohad.sharabi@sandisk.com>
+Reviewed-by: Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2->v3:
+    - modify args 3,4 of trace_ufshcd_upiu to be void *
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index 7d7756e40bcb..fdcc5b28af22 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -4263,7 +4263,7 @@ unsigned int send_beacon(struct adapter *padapter)
- 		issue_beacon(padapter, 100);
- 		issue++;
- 		do {
--			yield();
-+			cond_resched();
- 			rtw_hal_get_hwreg(padapter, HW_VAR_BCN_VALID, (u8 *)(&bxmitok));
- 			poll++;
- 		} while ((poll%10) != 0 && false == bxmitok && !padapter->bSurpriseRemoved && !padapter->bDriverStopped);
+v1->v2:
+    - split to transaction specific functions (fix warnings and simplifies
+      code)
+    - adding traces when sending query command
+
+ drivers/scsi/ufs/ufshcd.c  | 40 ++++++++++++++++++++++++++++++++++++++++
+ include/trace/events/ufs.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 67 insertions(+)
+
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c7da2c1..23ffaed 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -274,6 +274,35 @@ static inline void ufshcd_remove_non_printable(char *val)
+ 		*val = ' ';
+ }
+ 
++static void ufshcd_add_cmd_upiu_trace(struct ufs_hba *hba, unsigned int tag,
++		const char *str)
++{
++	struct utp_upiu_req *rq = hba->lrb[tag].ucd_req_ptr;
++
++	trace_ufshcd_upiu(dev_name(hba->dev), str, &rq->header, &rq->sc.cdb);
++}
++
++static void ufshcd_add_query_upiu_trace(struct ufs_hba *hba, unsigned int tag,
++		const char *str)
++{
++	struct utp_upiu_req *rq = hba->lrb[tag].ucd_req_ptr;
++
++	trace_ufshcd_upiu(dev_name(hba->dev), str, &rq->header, &rq->qr);
++}
++
++static void ufshcd_add_tm_upiu_trace(struct ufs_hba *hba, unsigned int tag,
++		const char *str)
++{
++	struct utp_task_req_desc *descp;
++	struct utp_upiu_task_req *task_req;
++	int off = (int)tag - hba->nutrs;
++
++	descp = &hba->utmrdl_base_addr[off];
++	task_req = (struct utp_upiu_task_req *)descp->task_req_upiu;
++	trace_ufshcd_upiu(dev_name(hba->dev), str, &task_req->header,
++			&task_req->input_param1);
++}
++
+ static void ufshcd_add_command_trace(struct ufs_hba *hba,
+ 		unsigned int tag, const char *str)
+ {
+@@ -283,6 +312,9 @@ static void ufshcd_add_command_trace(struct ufs_hba *hba,
+ 	struct ufshcd_lrb *lrbp;
+ 	int transfer_len = -1;
+ 
++	/* trace UPIU also */
++	ufshcd_add_cmd_upiu_trace(hba, tag, str);
++
+ 	if (!trace_ufshcd_command_enabled())
+ 		return;
+ 
+@@ -2584,6 +2616,7 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
+ 
+ 	hba->dev_cmd.complete = &wait;
+ 
++	ufshcd_add_query_upiu_trace(hba, tag, "query_send");
+ 	/* Make sure descriptors are ready before ringing the doorbell */
+ 	wmb();
+ 	spin_lock_irqsave(hba->host->host_lock, flags);
+@@ -2593,6 +2626,9 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
+ 
+ 	err = ufshcd_wait_for_dev_cmd(hba, lrbp, timeout);
+ 
++	ufshcd_add_query_upiu_trace(hba, tag,
++			err ? "query_complete_err" : "query_complete");
++
+ out_put_tag:
+ 	ufshcd_put_dev_cmd_tag(hba, tag);
+ 	wake_up(&hba->dev_cmd.tag_wq);
+@@ -5464,11 +5500,14 @@ static int ufshcd_issue_tm_cmd(struct ufs_hba *hba, int lun_id, int task_id,
+ 
+ 	spin_unlock_irqrestore(host->host_lock, flags);
+ 
++	ufshcd_add_tm_upiu_trace(hba, task_tag, "tm_send");
++
+ 	/* wait until the task management command is completed */
+ 	err = wait_event_timeout(hba->tm_wq,
+ 			test_bit(free_slot, &hba->tm_condition),
+ 			msecs_to_jiffies(TM_CMD_TIMEOUT));
+ 	if (!err) {
++		ufshcd_add_tm_upiu_trace(hba, task_tag, "tm_complete_err");
+ 		dev_err(hba->dev, "%s: task management cmd 0x%.2x timed-out\n",
+ 				__func__, tm_function);
+ 		if (ufshcd_clear_tm_cmd(hba, free_slot))
+@@ -5477,6 +5516,7 @@ static int ufshcd_issue_tm_cmd(struct ufs_hba *hba, int lun_id, int task_id,
+ 		err = -ETIMEDOUT;
+ 	} else {
+ 		err = ufshcd_task_req_compl(hba, free_slot, tm_response);
++		ufshcd_add_tm_upiu_trace(hba, task_tag, "tm_complete");
+ 	}
+ 
+ 	clear_bit(free_slot, &hba->tm_condition);
+diff --git a/include/trace/events/ufs.h b/include/trace/events/ufs.h
+index bf6f826..f8260e5 100644
+--- a/include/trace/events/ufs.h
++++ b/include/trace/events/ufs.h
+@@ -257,6 +257,33 @@
+ 	)
+ );
+ 
++TRACE_EVENT(ufshcd_upiu,
++	TP_PROTO(const char *dev_name, const char *str, void *hdr, void *tsf),
++
++	TP_ARGS(dev_name, str, hdr, tsf),
++
++	TP_STRUCT__entry(
++		__string(dev_name, dev_name)
++		__string(str, str)
++		__array(unsigned char, hdr, 12)
++		__array(unsigned char, tsf, 16)
++	),
++
++	TP_fast_assign(
++		__assign_str(dev_name, dev_name);
++		__assign_str(str, str);
++		memcpy(__entry->hdr, hdr, sizeof(__entry->hdr));
++		memcpy(__entry->tsf, tsf, sizeof(__entry->tsf));
++	),
++
++	TP_printk(
++		"%s: %s: HDR:%s, CDB:%s",
++		__get_str(str), __get_str(dev_name),
++		__print_hex(__entry->hdr, sizeof(__entry->hdr)),
++		__print_hex(__entry->tsf, sizeof(__entry->tsf))
++	)
++);
++
+ #endif /* if !defined(_TRACE_UFS_H) || defined(TRACE_HEADER_MULTI_READ) */
+ 
+ /* This part must be outside protection */
 -- 
-2.11.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+1.9.1
