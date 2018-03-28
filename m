@@ -1,81 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeC1OAR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:00:17 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:24616 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752844AbeC1OAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:00:14 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180328140012epoutp0285abd79cf1bbb89c0bd389f1f486ce0f~gGlHOZhcE1711717117epoutp025
-X-AuditID: b6c32a46-b85ff70000000fe8-12-5abb9feb16fc
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Timur Tabi <timur@tabi.org>,
-        SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] video: fsl-diu-fb: Delete an error message for a failed
- memory allocation in fsl_diu_init()
-Date: Wed, 28 Mar 2018 16:00:08 +0200
-Message-id: <4073804.qevdOuysOu@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <f1760f28-84f4-24d9-9cf4-ca94b0537338@tabi.org>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsWy7bCmqe7r+bujDPa+MLO48vU9m8X5zuXM
-        FltvSVuc6PvAanF51xw2i6Yn6xkd2Dzudx9n8ti+YDabR9OpdlaPz5vkAliiuGxSUnMyy1KL
-        9O0SuDLmPlYoeMpSMW/XFvYGxnfMXYycHBICJhJPXuxg6mLk4hAS2MEoMWdLGyOE851R4tmU
-        n6wwVd3NjVBVGxglXu9azQrhfGWUmHT+MDtIFZuAlcTE9lWMILaIQIjE5/kr2UGKmAU6GCU2
-        Hp/CApIQFiiS2H/lMZjNIqAqMePxL7BDeAU0JXbcuAS2TlTAS2LLvnYmEJtTwEZi2pTL7BA1
-        ghI/Jt8D62UWkJfYt38qK4StI3H22DqwuyUENrBJ3O66xQZxt4vEjf//oT4Vlnh1fAs7hC0t
-        8WzVRqiGZkaJbzv2QBVNYJTYs14IwraWOHz8ItQGPomOw3+BmjmA4rwSHW1QJR4SV5pvM0GE
-        HSW2bjODhMo5RomVa46yT2CUnYXk7llI7p6F5O4FjMyrGMVSC4pz01OLjQqM9IoTc4tL89L1
-        kvNzNzGCE4KW2w7GJed8DjEKcDAq8fAWxOyKEmJNLCuuzD3EKMHBrCTC+15jd5QQb0piZVVq
-        UX58UWlOavEhRmkOFiVx3tYAlyghgfTEktTs1NSC1CKYLBMHp1QD47zHazrdepg+uvlWfWDp
-        v6n/+GyRVLi5Uu+t14eV+q7ba63yK9PknKq6eo/rx8zeRPstCx3maRid3Lq3PEDS49G5/amP
-        S/7dk7R9sufUlZBUq5V/7n1fvf3P3A0r3uqschV6ZsX50E9n/m2upF9bpof9/9vq6G8s3i7J
-        e8/19DShdQ8VcipkhZRYijMSDbWYi4oTAbgL55EEAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t9jQd1X83dHGZy+ZmNx5et7NovzncuZ
-        LbbekrY40feB1eLyrjlsFk1P1jM6sHnc7z7O5LF9wWw2j6ZT7awenzfJBbBEcdmkpOZklqUW
-        6dslcGXMfaxQ8JSlYt6uLewNjO+Yuxg5OSQETCS6mxuZuhi5OIQE1jFK7D+6Esr5yihxcNFx
-        dpAqNgEriYntqxhBbBGBEIkZyx+zghQxC3QwSkz8twRslLBAkcT+K49ZQGwWAVWJGY9/gcV5
-        BTQldty4xApiiwp4SWzZ184EYnMK2EhMm3KZHWLbOUaJ/q0LWSEaBCV+TL4HNohZQF5i3/6p
-        rBC2lsT6nceZJjDyz0JSNgtJ2SwkZQsYmVcxSqYWFOem5xYbFRjlpZbrFSfmFpfmpesl5+du
-        YgSG8LbDWv07GB8viT/EKMDBqMTDWxCzK0qINbGsuDL3EKMEB7OSCO97jd1RQrwpiZVVqUX5
-        8UWlOanFhxilOViUxHn5849FCgmkJ5akZqemFqQWwWSZODilGhi5hB/5fc6VstHqUD9Y4J57
-        ZsebZUKtX3+eyp6ne3LiW4c1Xy2qNdLy3G5ZLFramXhAzfmS3xnt7Phz8/IeZZ2a53rpbehf
-        +fnnq1Y0f9W8Ja0j5MfUc1ynOSDn+IGGaXG+etrRge2CAb9UmRjf9Wpw7Z53/Ws5D8vhA12X
-        vd90+P743224h1WJpTgj0VCLuag4EQBmWa0sXQIAAA==
-X-CMS-MailID: 20180328140011epcas2p3c7799af303d73e54edee173f420f3570
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20171127173815epcas4p35a349f9b327e25953d5eb67563f288eb
-X-RootMTR: 20171127173815epcas4p35a349f9b327e25953d5eb67563f288eb
-References: <39d05a48-e649-fb88-0e86-4f7528fd67f8@users.sourceforge.net>
-        <CGME20171127173815epcas4p35a349f9b327e25953d5eb67563f288eb@epcas4p3.samsung.com>
-        <f1760f28-84f4-24d9-9cf4-ca94b0537338@tabi.org>
+        id S1753470AbeC1OAh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:00:37 -0400
+Received: from mga06.intel.com ([134.134.136.31]:15783 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753308AbeC1OAg (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 10:00:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,371,1517904000";
+   d="scan'208";a="28299678"
+Subject: Re: [PATCH v2 4/4] perf: Support perf -vv
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+ <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
+ <20180328132252.GM3102@krava>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <c984a7d9-1e59-93f6-36b5-6ce878039f53@linux.intel.com>
+Date: Wed, 28 Mar 2018 22:00:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180328132252.GM3102@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, November 27, 2017 11:31:10 AM Timur Tabi wrote:
-> On 11/27/17 3:00 AM, SF Markus Elfring wrote:
-> > From: Markus Elfring<elfring@users.sourceforge.net>
-> > Date: Mon, 27 Nov 2017 09:56:09 +0100
-> > 
-> > Omit an extra message for a memory allocation failure in this function.
-> > 
-> > This issue was detected by using the Coccinelle software.
-> > 
-> > Signed-off-by: Markus Elfring<elfring@users.sourceforge.net>
+
+
+On 3/28/2018 9:22 PM, Jiri Olsa wrote:
+> On Wed, Mar 28, 2018 at 10:57:08PM +0800, Jin Yao wrote:
+>> We keep having bug reports that when users build perf on their own,
+>> but they don't install some needed libraries such as libelf,
+>> libbfd/libibery.
+>>
+>> The perf can build, but it is missing important functionality.
+>>
+>> This patch provides a new option '-vv' which will print the
+>> compiled-in status of libraries.
+>>
+>> The 'perf -vv' is equal to 'perf -version --build-options'.
+>>
+>> For example:
+>>
+>> $ ./perf -vv or ./perf -version --build-options
+>> perf version 4.13.rc5.gcb1183
+>>                   dwarf: [ on  ]
+>>      dwarf_getlocations: [ on  ]
+>>                   glibc: [ on  ]
+>>                    gtk2: [ on  ]
+>>                libaudit: [ OFF ]
+>>                  libbfd: [ on  ]
+>>                  libelf: [ on  ]
+>>                 libnuma: [ on  ]
+>> numa_num_possible_cpus: [ on  ]
+>>                 libperl: [ on  ]
+>>               libpython: [ on  ]
+>>                libslang: [ on  ]
+>>               libcrypto: [ on  ]
+>>               libunwind: [ on  ]
+>>      libdw-dwarf-unwind: [ on  ]
+>>                    zlib: [ on  ]
+>>                    lzma: [ on  ]
+>>               get_cpuid: [ on  ]
+>>                     bpf: [ on  ]
+>> [ on  ]: library is compiled-in
+>> [ OFF ]: library is disabled in make configuration
+>>           OR library is not installed in build environment
+>>
+>> v2:
+>> ---
+>> Use a global variable version_verbose to count the number of 'v'.
+>>
+>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>> ---
+>>   tools/perf/perf.c | 22 ++++++++++++++++++----
+>>   tools/perf/perf.h |  1 +
+>>   2 files changed, 19 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+>> index 1b3fc8e..355219e 100644
+>> --- a/tools/perf/perf.c
+>> +++ b/tools/perf/perf.c
+>> @@ -32,7 +32,7 @@
+>>   #include <linux/kernel.h>
+>>   
+>>   const char perf_usage_string[] =
+>> -	"perf [--version] [--help] [OPTIONS] COMMAND [ARGS]";
+>> +	"perf [--version [--build-options]] [--help] [OPTIONS] COMMAND [ARGS]";
 > 
-> Acked-by: Timur Tabi <timur@tabi.org>
+> --build-options is 'perf version' option no?
+> 
+> jirka
+> 
 
-Patch queued for 4.17, thanks.
+Yes. Command-line something like:
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+perf --version --build-options or perf -v --build-options.
+
+Is this usage string not correct? If so, I'd like to fix that.
+
+"perf [--version [--build-options]] [--help] [OPTIONS] COMMAND [ARGS]";
+
+Thanks
+Jin Yao
