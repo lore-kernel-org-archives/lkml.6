@@ -1,50 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753047AbeC1UTK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 16:19:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48502 "EHLO mx1.redhat.com"
+        id S1753339AbeC1UT4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 16:19:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54310 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752447AbeC1UTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 16:19:08 -0400
-Date: Wed, 28 Mar 2018 22:19:05 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/2] KVM: X86: Fix setup the virt_spin_lock_key before
- static key get initialized
-Message-ID: <20180328201905.GF26753@flask>
-References: <1521951444-5087-1-git-send-email-wanpengli@tencent.com>
+        id S1752090AbeC1UTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 16:19:54 -0400
+Subject: Re: [RFC v2 11/12] KVM: arm/arm64: Implement
+ KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+To: Peter Maydell <peter.maydell@linaro.org>
+References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
+ <1522159456-10419-12-git-send-email-eric.auger@redhat.com>
+ <CAFEAcA_zXwS6EygjwPO9e-Ouy=seDdZt5i62itGP-W7VHugYTQ@mail.gmail.com>
+Cc: Eric Auger <eric.auger.pro@gmail.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kvm-devel <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Andrew Jones <drjones@redhat.com>, Wei Huang <wei@redhat.com>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <2121af1c-a752-99d8-d51e-d500430c910e@redhat.com>
+Date: Wed, 28 Mar 2018 22:19:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
+In-Reply-To: <CAFEAcA_zXwS6EygjwPO9e-Ouy=seDdZt5i62itGP-W7VHugYTQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521951444-5087-1-git-send-email-wanpengli@tencent.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-24 21:17-0700, Wanpeng Li:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
->  static_key_disable_cpuslocked(): static key 'virt_spin_lock_key+0x0/0x20' used before call to jump_label_init()
->  WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:161 static_key_disable_cpuslocked+0x61/0x80
->  RIP: 0010:static_key_disable_cpuslocked+0x61/0x80
->  Call Trace:
->   static_key_disable+0x16/0x20
->   start_kernel+0x192/0x4b3
->   secondary_startup_64+0xa5/0xb0
-> 
-> Qspinlock will be choosed when dedicated pCPUs are available, however, the 
-> static virt_spin_lock_key is set in kvm_spinlock_init() before jump_label_init() 
-> has been called, which will result in a WARN(). This patch fixes it by delaying
-> the virt_spin_lock_key setup to .smp_prepare_cpus().
-> 
-> Reported-by: Davidlohr Bueso <dbueso@suse.de>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Davidlohr Bueso <dbueso@suse.de>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
+Hi Peter,
 
-Queued, thanks.
+On 28/03/18 20:55, Peter Maydell wrote:
+> On 27 March 2018 at 15:04, Eric Auger <eric.auger@redhat.com> wrote:
+>> Now all the internals are ready to handle multiple redistributor
+>> regions, let's allow the userspace to register them.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>  virt/kvm/arm/vgic/vgic-kvm-device.c | 40 +++++++++++++++++++++++++++++++++++--
+>>  virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
+>>  virt/kvm/arm/vgic/vgic.h            |  9 ++++++++-
+>>  3 files changed, 48 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
+>> index e7b5a86..a2b99e4 100644
+>> --- a/virt/kvm/arm/vgic/vgic-kvm-device.c
+>> +++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
+>> @@ -65,7 +65,8 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>>  {
+>>         int r = 0;
+>>         struct vgic_dist *vgic = &kvm->arch.vgic;
+>> -       phys_addr_t *addr_ptr, alignment;
+>> +       phys_addr_t *addr_ptr = NULL;
+>> +       phys_addr_t alignment;
+>>         uint64_t undef_value = VGIC_ADDR_UNDEF;
+>>
+>>         mutex_lock(&kvm->lock);
+>> @@ -92,7 +93,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>>                 if (r)
+>>                         break;
+>>                 if (write) {
+>> -                       r = vgic_v3_set_redist_base(kvm, *addr);
+>> +                       r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
+>>                         goto out;
+>>                 }
+>>                 rdreg = list_first_entry(&vgic->rd_regions,
+>> @@ -103,6 +104,40 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>>                         addr_ptr = &rdreg->base;
+>>                 break;
+>>         }
+>> +       case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
+>> +       {
+>> +               struct vgic_redist_region *rdreg;
+>> +               uint8_t index;
+>> +
+>> +               r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
+>> +               if (r)
+>> +                       break;
+>> +
+>> +               index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
+>> +
+>> +               if (write) {
+>> +                       gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
+>> +                       uint32_t count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
+>> +                                       >> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
+>> +                       uint8_t flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
+>> +                                       >> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
+>> +
+>> +                       if (!count || flags)
+>> +                               r = -EINVAL;
+>> +                       else
+>> +                               r = vgic_v3_set_redist_base(kvm, index,
+>> +                                                           base, count);
+>> +                       goto out;
+>> +               }
+>> +
+>> +               rdreg = vgic_v3_rdist_region_from_index(kvm, index);
+>> +               if (!rdreg)
+>> +                       r = -ENODEV;
+> 
+> Here you check whether rdreg is NULL...
+> 
+>> +
+>> +               *addr_ptr = rdreg->base & index &
+> 
+> ...but here you dereference it anyway. Missing "goto out"/break/other
+> control flow?
+definitively, goto default.
+> 
+>> +                       (uint64_t)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
+>> +               break;
+>> +       }
+> 
+> I was looking for the code which checked "EINVAL if you
+> already used KVM_VGIC_V3_ADDR_TYPE_REDIST", but couldn't
+> see it. Is that handled by one of the helper functions?
+
+No you're right. At the moment I only check the legacy API is not called
+after a first redist region has been registered (with legacy or new
+API). I will add this check in next version in
+vgic_v3_insert_redist_region().
+
+Also something I forgot to document is the userspace must register the
+REDIST_REGIONS (so using the new API) starting with index 0 and
+continuously incrementing the index by 1.
+
+Thanks
+
+Eric
+> 
+>>         default:
+>>                 r = -ENODEV;
+>>         }
+>> @@ -674,6 +709,7 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
+>>                 switch (attr->attr) {
+>>                 case KVM_VGIC_V3_ADDR_TYPE_DIST:
+>>                 case KVM_VGIC_V3_ADDR_TYPE_REDIST:
+>> +               case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
+>>                         return 0;
+>>                 }
+>>                 break;
+>> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> index 89faadc..45287a0 100644
+>> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> @@ -766,11 +766,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
+>>         return ret;
+>>  }
+>>
+>> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+>> +int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count)
+>>  {
+>>         int ret;
+>>
+>> -       ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
+>> +       ret = vgic_v3_insert_redist_region(kvm, index, addr, count);
+>>         if (ret)
+>>                 return ret;
+> 
+> thanks
+> -- PMM
+> 
