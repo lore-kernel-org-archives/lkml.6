@@ -1,80 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeC1GME (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 02:12:04 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6697 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751908AbeC1GMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 02:12:02 -0400
-Subject: Re: [PATCH v9 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2
- variant
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
- <20180313085534.11650-6-vivek.gautam@codeaurora.org>
- <61d30fff-1bf8-d2c1-bbe9-f93de836ae77@huawei.com>
- <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>,
-        <iommu@lists.linux-foundation.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mark.rutland@arm.com>,
-        <linux-arm-msm@vger.kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Gaojianbo <gaojianbo@hisilicon.com>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <d97872fe-5e8e-cc27-e385-64cea8ea2458@huawei.com>
-Date: Wed, 28 Mar 2018 14:11:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
-MIME-Version: 1.0
-In-Reply-To: <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+        id S1752203AbeC1GP4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 02:15:56 -0400
+Received: from mga01.intel.com ([192.55.52.88]:58265 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751750AbeC1GPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 02:15:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,369,1517904000";
+   d="scan'208";a="41887304"
+Message-ID: <1522217751.9730.80.camel@gmail.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Reply-To: dedekind1@gmail.com
+To: Thorsten Leemhuis <regressions@leemhuis.info>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Date: Wed, 28 Mar 2018 09:15:51 +0300
+In-Reply-To: <ff7c4fd9-1685-05b9-8082-676aa4ae921d@leemhuis.info>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+         <1520515113.20980.31.camel@gmail.com>
+         <ff7c4fd9-1685-05b9-8082-676aa4ae921d@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
+On Mon, 2018-03-26 at 10:39 +0200, Thorsten Leemhuis wrote:
+> Lo! Your friendly Linux regression tracker here ;-)
+> 
+> On 08.03.2018 14:18, Artem Bityutskiy wrote:
+> > On Thu, 2018-03-08 at 18:53 +0800, Ming Lei wrote:
+> > > This patchset tries to spread among online CPUs as far as possible, so
+> > > that we can avoid to allocate too less irq vectors with online CPUs
+> > > mapped.
+> > 
+> > […] 
+> > Tested-by: Artem Bityutskiy <artem.bityutskiy@intel.com>
+> > Link: https://lkml.kernel.org/r/1519311270.2535.53.camel@intel.com
+> > 
+> > this patchset fixes the v4.16-rcX regression that I reported few weeks
+> > ago. I applied it and verified that Dell R640 server that I mentioned
+> > in the bug report boots up and the disk works.
+> 
+> Artem (or anyone else), what's the status here? I have this on my list
+> of regressions, but it looks like there wasn't any progress in the past
+> week. Or was it discussed somewhere else or even fixed in the meantime
+> and I missed it? Ciao, Thorsten
 
-On 2018/3/28 12:37, Vivek Gautam wrote:
-> Hi Yisheng
-> 
-> 
-> On 3/28/2018 6:54 AM, Yisheng Xie wrote:
->> Hi Vivek,
->>
->> On 2018/3/13 16:55, Vivek Gautam wrote:
->>> +- power-domains:  Specifiers for power domains required to be powered on for
->>> +                  the SMMU to operate, as per generic power domain bindings.
->>> +
->> In this patchset, power-domains is not used right? And you just do the clock gating,
->> but not power gating, right?
-> 
-> We are handling the power-domains too. Please see the example in this binding doc.
+Hi, it is not fixed in upstream.
 
-I see, but I do not find the point in code of these patchset, do you mean PMIC(e.g mmcc)
-will gate the power domain of SMMU(e.g. MDSS_GDSC of mmcc) when PMIC suspend?
-
-> 
->>
->> Another question is if smmu do power gating, it will reset some of its registers, so
->> it need save at suspend and restore at resume, right?
-> 
-> Qualcomm implementation of the arm-smmu has the retenetion enabled. So the smmu doesn't
-> loose state when power is pulled out of it.
-> And now we are just selectively enabling the runtime pm. So only the platforms that can really
-> support runtime pm can enable it.
-
-Get it, thanks for your explain.
-
-Thanks
-Yisheng
-> 
-> Thanks
-> Vivek
->>
->> Thanks
->> Yisheng
->>
-> 
-> 
-> 
+I got an e-mail from James that the fixes are in his tree in the
+"fixes" branch. There is no word about when it will be merged. There is
+also no stable tag.
