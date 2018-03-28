@@ -1,68 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753850AbeC1WWL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 18:22:11 -0400
-Received: from smtprelay0071.hostedemail.com ([216.40.44.71]:56936 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753816AbeC1WWK (ORCPT
+        id S1753429AbeC1WYF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 18:24:05 -0400
+Received: from p3plsmtpa12-05.prod.phx3.secureserver.net ([68.178.252.234]:42161
+        "EHLO p3plsmtpa12-05.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752447AbeC1WYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 18:22:10 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3874:4321:4823:5007:7903:10004:10400:10848:11658:11914:12043:12049:12438:12555:12760:12986:13069:13311:13357:13439:14181:14394:14659:14721:21080:21221:21627:30054:30070,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: robin41_6a012f4d67f4e
-X-Filterd-Recvd-Size: 1734
-Message-ID: <1522275726.2210.12.camel@perches.com>
-Subject: [PATCH] checkpatch: Add test for assignment at start of line
-From: Joe Perches <joe@perches.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Whitcroft <apw@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Wed, 28 Mar 2018 15:22:06 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Mar 2018 18:24:04 -0400
+From: Kyle Spiers <kyle@spiers.me>
+To: perex@perex.cz
+Cc: tiwai@suse.com, o-takashi@sakamocchi.jp, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org,
+        Kyle Spiers <kyle@spiers.me>
+Subject: [PATCH v2] pcm_native: Remove VLA usage
+Date: Wed, 28 Mar 2018 15:24:00 -0700
+Message-Id: <1522275840-14092-1-git-send-email-kyle@spiers.me>
+X-Mailer: git-send-email 2.7.4
+X-CMAE-Envelope: MS4wfOxlpo33EfCkmGtMdLTobtKxHOHW5QK4DVb5lTLxyD/cKbdIDnHFUIVS2AaLWt8yZNYuXHItRiypgvqZnl/6JIpyonpzEdvYEMlWe6Dogr1uX3vyfaur
+ If2w8XeBRGgmmW5qkWsdbKoKHpHN23qVTodpaoPXkNuk7BANYv8K+XXz+6VmmdTb60dgexBn8FjHhYC0OStCzv30ohv2VGT1s1emQlC4p/HDWD6YNDCwDyiD
+ 81lRsdfLxhc0hSGrnqlob2K3qSC7Vft1a7xU7xAyOkW6yrhGHhf0/PbmY8vNB5XMtML4WmiMdE7dHE/ttv0KtjhrlYoOWe1yIBJr6p+2rUhWfTz7VCPlnlP3
+ AOCXhrw4YeeUoW2kHWNlxyOxodKL3w==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel style seems to prefer line wrapping an assignment
-with the assignment operator on the previous line like:
+As part of the effort to remove VLAs from the kernel[1], this changes
+the allocation of the rstamps array from being on the stack to being
+kcalloc()ed. This also allows for the removal of the explicit zeroing
+loop.
 
-	<leading tabs>	identifier =
-				expression;
-over
-	<leading tabs>	identifier
-				= expression;
-
-somewhere around a 50:1 ratio
-
-$ git grep -P "[^=]=\s*$" -- "*.[ch]" | wc -l
-52008
-$ git grep -P "^\s+[\*\/\+\|\%\-]?=[^=>]" | wc -l
-1161
-
-So add a --strict test for that condition.
-
-Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: Kyle Spiers <kyle@spiers.me>
 ---
- scripts/checkpatch.pl | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/core/pcm_native.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 5fe361e1ed5e..af2b73f19605 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3062,6 +3062,12 @@ sub process {
- 			}
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 77ba50d..db5e3c5 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -323,7 +323,7 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_constraints *constrs =
+ 					&substream->runtime->hw_constraints;
+ 	unsigned int k;
+-	unsigned int rstamps[constrs->rules_num];
++	unsigned int *rstamps;
+ 	unsigned int vstamps[SNDRV_PCM_HW_PARAM_LAST_INTERVAL + 1];
+ 	unsigned int stamp;
+ 	struct snd_pcm_hw_rule *r;
+@@ -339,8 +339,8 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
+ 	 * Each member of 'rstamps' array represents the sequence number of
+ 	 * recent application of corresponding rule.
+ 	 */
+-	for (k = 0; k < constrs->rules_num; k++)
+-		rstamps[k] = 0;
++
++	rstamps = kcalloc(constrs->rules_num, sizeof(*rstamps), GFP_KERNEL);
+ 
+ 	/*
+ 	 * Each member of 'vstamps' array represents the sequence number of
+@@ -398,8 +398,10 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
  		}
  
-+# check for assignments on the start of a line
-+		if ($sline =~ /^\+\s+($Assignment)[^=]/) {
-+			CHK("ASSIGNMENT_CONTINUATIONS",
-+			    "Assignment operator '$1' should be on the previous line\n" . $hereprev);
+ 		changed = r->func(params, r);
+-		if (changed < 0)
++		if (changed < 0) {
++			kfree(rstamps);
+ 			return changed;
 +		}
-+
- # check for && or || at the start of a line
- 		if ($rawline =~ /^\+\s*(&&|\|\|)/) {
- 			CHK("LOGICAL_CONTINUATIONS",
+ 
+ 		/*
+ 		 * When the parameter is changed, notify it to the caller
+@@ -430,6 +432,7 @@ static int constrain_params_by_rules(struct snd_pcm_substream *substream,
+ 	if (again)
+ 		goto retry;
+ 
++	kfree(rstamps);
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
