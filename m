@@ -1,227 +1,322 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753938AbeC1PJb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:09:31 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51956 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753897AbeC1PJa (ORCPT
+        id S1753954AbeC1PJf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:09:35 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:42134 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753898AbeC1PJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:09:30 -0400
-X-Google-Smtp-Source: AIpwx48571j+e4ONtIquNHkksHtHoL8cXV9InhVmEcPJjheEsztwh9/vYG7wv8LumjFphTgLxGf0sw==
-Date: Wed, 28 Mar 2018 17:09:26 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, daniel.vetter@intel.com, seanpaul@chromium.org,
-        gustavo@padovan.org, intel-gfx@lists.freedesktop.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: Re: [PATCH] drm: Use srcu to protect drm_device.unplugged
-Message-ID: <20180328150926.GC3881@phenom.ffwll.local>
-Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, daniel.vetter@intel.com, seanpaul@chromium.org,
-        gustavo@padovan.org, intel-gfx@lists.freedesktop.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <1522222715-11814-1-git-send-email-andr2000@gmail.com>
+        Wed, 28 Mar 2018 11:09:32 -0400
+To: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1522222715-11814-1-git-send-email-andr2000@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Date: Wed, 28 Mar 2018 17:09:30 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
+Subject: 
+In-Reply-To: <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-5-paul@crapouillou.net>
+ <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
+Message-ID: <7475d34b1083ed052dec2b53b505ad6b@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 10:38:35AM +0300, Oleksandr Andrushchenko wrote:
-> From: Noralf Trønnes <noralf@tronnes.org>
+Le 2018-03-20 09:52, Marc Zyngier a Ã©critÂ :
+> On 17/03/18 23:28, Paul Cercueil wrote:
+>> Add documentation about how to properly use the Ingenic TCU
+>> (Timer/Counter Unit) drivers from devicetree.
+>> 
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> ---
+>>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 
+>> ++++++++++++++++
+>>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 
+>> +++++++++++++++
+>>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 
+>> ++++++++++++++++++++++
+>>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 
+>> ++++++++++++++++
+>>  4 files changed, 178 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> 
+>>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>>  added content.
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt 
+>> b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> new file mode 100644
+>> index 000000000000..471d27078599
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> @@ -0,0 +1,42 @@
+>> +Ingenic SoC TCU binding
+>> +
+>> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It 
+>> features 8
+>> +channels, each one having its own clock, that can be started and 
+>> stopped,
+>> +reparented, and reclocked.
+>> +
+>> +Required properties:
+>> +- compatible : One of:
+>> +  * ingenic,jz4740-tcu-clocks,
+>> +  * ingenic,jz4770-tcu-clocks,
+>> +  * ingenic,jz4780-tcu-clocks.
+>> +- clocks : List of phandle & clock specifiers for clocks external to 
+>> the TCU.
+>> +  The "pclk", "rtc" and "ext" clocks should be provided.
+>> +- clock-names : List of name strings for the external clocks.
+>> +- #clock-cells: Should be 1.
+>> +  Clock consumers specify this argument to identify a clock. The 
+>> valid values
+>> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_clk: clocks@10 {
+>> +			compatible = "ingenic,jz4740-tcu-clocks";
+>> +			reg = <0x10 0xff0>;
+>> +
+>> +			clocks = <&ext>, <&rtc>, <&pclk>;
+>> +			clock-names = "ext", "rtc", "pclk";
+>> +
+>> +			#clock-cells = <1>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> diff --git 
+>> a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..7f3af2da77cd
+>> --- /dev/null
+>> +++ 
+>> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> @@ -0,0 +1,39 @@
+>> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings 
+>> are:
+>> +  * ingenic,jz4740-tcu-intc
+>> +  * ingenic,jz4770-tcu-intc
+>> +  * ingenic,jz4780-tcu-intc
+>> +- interrupt-controller : Identifies the node as an interrupt 
+>> controller
+>> +- #interrupt-cells : Specifies the number of cells needed to encode 
+>> an
+>> +  interrupt source. The value shall be 1.
+>> +- interrupt-parent : phandle of the interrupt controller.
+>> +- interrupts : Specifies the interrupt the controller is connected 
+>> to.
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_irq: interrupt-controller@20 {
+>> +			compatible = "ingenic,jz4740-tcu-intc";
+>> +			reg = <0x20 0x20>;
+>> +
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <1>;
+>> +
+>> +			interrupt-parent = <&intc>;
+>> +			interrupts = <15>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..5742c3f21550
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>> @@ -0,0 +1,56 @@
+>> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+>> +----------------------------------------------------------
+>> +
+>> +For a description of the TCU hardware and drivers, have a look at
+>> +Documentation/mips/ingenic-tcu.txt.
+>> +
+>> +The TCU is implemented as a parent node, whose role is to create the
+>> +regmap, and child nodes for the various drivers listed in the 
+>> aforementioned
+>> +document.
 > 
-> Use srcu to protect drm_device.unplugged in a race free manner.
-> Drivers can use drm_dev_enter()/drm_dev_exit() to protect and mark
-> sections preventing access to device resources that are not available
-> after the device is gone.
+> You're describing the Linux driver here. Please stick to a description
+> of the HW.
+
+There's already a whole file that describes the hardware. I just wanted 
+to mention
+that there should be child nodes, but I can rephrase that.
+
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
 > 
-> Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Tested-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Cc: intel-gfx@lists.freedesktop.org
+> Without any provision for an SoC version? Seems bold...
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Well, we don't use the "ingenic,tcu" compatible string, the parent node 
+is just
+here to create the regmap (in this version of the patchset, it will 
+probably change
+later).
 
-Oleksandr, please push to drm-misc-next once you have dim tools setup up
-and everything.
-
-Thanks, Daniel
-
-> ---
->  drivers/gpu/drm/drm_drv.c | 54 ++++++++++++++++++++++++++++++++++++++++++-----
->  include/drm/drm_device.h  |  9 +++++++-
->  include/drm/drm_drv.h     | 15 +++++++++----
->  3 files changed, 68 insertions(+), 10 deletions(-)
+>> +- reg: Should be the offset/length value corresponding to the TCU 
+>> registers
+>> +- #address-cells: Should be <1>;
+>> +- #size-cells: Should be <1>;
+>> +- ranges: Should be one range for the full TCU registers area
+>> +
+>> +Accepted children nodes:
+>> +- 
+>> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
 > 
-> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> index a1b9338736e3..32a83b41ab61 100644
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -32,6 +32,7 @@
->  #include <linux/moduleparam.h>
->  #include <linux/mount.h>
->  #include <linux/slab.h>
-> +#include <linux/srcu.h>
->  
->  #include <drm/drm_drv.h>
->  #include <drm/drmP.h>
-> @@ -75,6 +76,8 @@ static bool drm_core_init_complete = false;
->  
->  static struct dentry *drm_debugfs_root;
->  
-> +DEFINE_STATIC_SRCU(drm_unplug_srcu);
-> +
->  /*
->   * DRM Minors
->   * A DRM device can provide several char-dev interfaces on the DRM-Major. Each
-> @@ -318,18 +321,51 @@ void drm_put_dev(struct drm_device *dev)
->  }
->  EXPORT_SYMBOL(drm_put_dev);
->  
-> -static void drm_device_set_unplugged(struct drm_device *dev)
-> +/**
-> + * drm_dev_enter - Enter device critical section
-> + * @dev: DRM device
-> + * @idx: Pointer to index that will be passed to the matching drm_dev_exit()
-> + *
-> + * This function marks and protects the beginning of a section that should not
-> + * be entered after the device has been unplugged. The section end is marked
-> + * with drm_dev_exit(). Calls to this function can be nested.
-> + *
-> + * Returns:
-> + * True if it is OK to enter the section, false otherwise.
-> + */
-> +bool drm_dev_enter(struct drm_device *dev, int *idx)
-> +{
-> +	*idx = srcu_read_lock(&drm_unplug_srcu);
-> +
-> +	if (dev->unplugged) {
-> +		srcu_read_unlock(&drm_unplug_srcu, *idx);
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +EXPORT_SYMBOL(drm_dev_enter);
-> +
-> +/**
-> + * drm_dev_exit - Exit device critical section
-> + * @idx: index returned from drm_dev_enter()
-> + *
-> + * This function marks the end of a section that should not be entered after
-> + * the device has been unplugged.
-> + */
-> +void drm_dev_exit(int idx)
->  {
-> -	smp_wmb();
-> -	atomic_set(&dev->unplugged, 1);
-> +	srcu_read_unlock(&drm_unplug_srcu, idx);
->  }
-> +EXPORT_SYMBOL(drm_dev_exit);
->  
->  /**
->   * drm_dev_unplug - unplug a DRM device
->   * @dev: DRM device
->   *
->   * This unplugs a hotpluggable DRM device, which makes it inaccessible to
-> - * userspace operations. Entry-points can use drm_dev_is_unplugged(). This
-> + * userspace operations. Entry-points can use drm_dev_enter() and
-> + * drm_dev_exit() to protect device resources in a race free manner. This
->   * essentially unregisters the device like drm_dev_unregister(), but can be
->   * called while there are still open users of @dev.
->   */
-> @@ -338,10 +374,18 @@ void drm_dev_unplug(struct drm_device *dev)
->  	drm_dev_unregister(dev);
->  
->  	mutex_lock(&drm_global_mutex);
-> -	drm_device_set_unplugged(dev);
->  	if (dev->open_count == 0)
->  		drm_dev_put(dev);
->  	mutex_unlock(&drm_global_mutex);
-> +
-> +	/*
-> +	 * After synchronizing any critical read section is guaranteed to see
-> +	 * the new value of ->unplugged, and any critical section which might
-> +	 * still have seen the old value of ->unplugged is guaranteed to have
-> +	 * finished.
-> +	 */
-> +	dev->unplugged = true;
-> +	synchronize_srcu(&drm_unplug_srcu);
->  }
->  EXPORT_SYMBOL(drm_dev_unplug);
->  
-> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-> index 7c4fa32f3fc6..3a0eac2885b7 100644
-> --- a/include/drm/drm_device.h
-> +++ b/include/drm/drm_device.h
-> @@ -46,7 +46,14 @@ struct drm_device {
->  	/* currently active master for this device. Protected by master_mutex */
->  	struct drm_master *master;
->  
-> -	atomic_t unplugged;			/**< Flag whether dev is dead */
-> +	/**
-> +	 * @unplugged:
-> +	 *
-> +	 * Flag to tell if the device has been unplugged.
-> +	 * See drm_dev_enter() and drm_dev_is_unplugged().
-> +	 */
-> +	bool unplugged;
-> +
->  	struct inode *anon_inode;		/**< inode for private address-space */
->  	char *unique;				/**< unique name of the device */
->  	/*@} */
-> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
-> index d23dcdd1bd95..7e545f5f94d3 100644
-> --- a/include/drm/drm_drv.h
-> +++ b/include/drm/drm_drv.h
-> @@ -624,6 +624,8 @@ void drm_dev_get(struct drm_device *dev);
->  void drm_dev_put(struct drm_device *dev);
->  void drm_dev_unref(struct drm_device *dev);
->  void drm_put_dev(struct drm_device *dev);
-> +bool drm_dev_enter(struct drm_device *dev, int *idx);
-> +void drm_dev_exit(int idx);
->  void drm_dev_unplug(struct drm_device *dev);
->  
->  /**
-> @@ -635,11 +637,16 @@ void drm_dev_unplug(struct drm_device *dev);
->   * unplugged, these two functions guarantee that any store before calling
->   * drm_dev_unplug() is visible to callers of this function after it completes
->   */
-> -static inline int drm_dev_is_unplugged(struct drm_device *dev)
-> +static inline bool drm_dev_is_unplugged(struct drm_device *dev)
->  {
-> -	int ret = atomic_read(&dev->unplugged);
-> -	smp_rmb();
-> -	return ret;
-> +	int idx;
-> +
-> +	if (drm_dev_enter(dev, &idx)) {
-> +		drm_dev_exit(idx);
-> +		return false;
-> +	}
-> +
-> +	return true;
->  }
->  
->  
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> It is slightly confusing that you have 3 files named ingenic,tcu.txt.
+> How about ingenic,tcu-intc.txt and ingenic,tcu-timer.txt (amending the
+> binding for the timer)?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Right. I'll change that.
+
+>> +
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_irq: interrupt-controller@20 {
+>> +			compatible = "ingenic,jz4740-tcu-intc";
+>> +			reg = <0x20 0x20>;
+>> +			...
+>> +		};
+>> +
+>> +		tcu_clk: clocks@10 {
+>> +			compatible = "ingenic,jz4740-tcu-clocks";
+>> +			reg = <0x10 0xff0>;
+>> +			...
+>> +		};
+>> +
+>> +		tcu_timer: timer@10 {
+>> +			compatible = "ingenic,jz4740-tcu";
+>> +			reg = <0x10 0xff0>;
+>> +			...
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For more information about the children node, refer to the documents 
+>> listed
+>> +above in the "Accepted children nodes" section.
+>> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..f910b7e96783
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> @@ -0,0 +1,41 @@
+>> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+>> +---------------------------------------------
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+>> +  * ingenic,jz4740-tcu
+>> +  * ingenic,jz4770-tcu
+>> +  * ingenic,jz4780-tcu
+>> +- interrupt-parent : phandle of the TCU interrupt controller.
+>> +- interrupts : Specifies the interrupts the controller is connected 
+>> to.
+>> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+>> +- clock-names : List of name strings for the TCU clocks.
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_timer: timer@10 {
+>> +			compatible = "ingenic,jz4740-tcu";
+>> +			reg = <0x10 0xff0>;
+>> +
+>> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
+>> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
+>> +			clock-names = "timer0", "timer1", "timer2", "timer3",
+>> +						  "timer4", "timer5", "timer6", "timer7";
+>> +
+>> +			interrupt-parent = <&tcu_irq>;
+>> +			interrupts = <0 1 2 3 4 5 6 7>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> 
+> 
+> Thanks,
+> 
+> 	M.
