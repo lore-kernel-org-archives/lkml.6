@@ -1,167 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753385AbeC1OWm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:22:42 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:15086 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752894AbeC1OWj (ORCPT
+        id S1753527AbeC1OZX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:25:23 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:44050 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752932AbeC1OZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:22:39 -0400
-X-IronPort-AV: E=Sophos;i="5.48,371,1517842800";
-   d="scan'208";a="275123103"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] gpio: dwapb: Add support for 32 interrupts
-Date: Wed, 28 Mar 2018 15:22:30 +0100
-Message-Id: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 28 Mar 2018 10:25:21 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180328142519epoutp01b090e4538f46f9edea7b1e458a091c5d~gG7CXeguL0993209932epoutp01Q
+X-AuditID: b6c32a45-6ebff70000000fe4-33-5abba5cef8c8
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/3] video: au1100fb: Delete an error message for a
+ failed memory allocation in au1100fb_drv_probe()
+Date: Wed, 28 Mar 2018 16:25:15 +0200
+Message-id: <3174977.dCR0SWXXyp@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <f2ad18dd-2525-d8d9-10a8-c12b345cb509@users.sourceforge.net>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7bCmhe65pbujDNY+FLS48vU9m8X5zuXM
+        FltvSVuc6PvAanF51xw2B1aP+93HmTyaTrWzenzeJBfAHMVlk5Kak1mWWqRvl8CVMX2jekED
+        S8WbzgmsDYwLmbsYOTgkBEwkds4M72Lk4hAS2MEocWTNPyYI5zujxNJDC9m6GDnBij6tvcQC
+        kdjNKLHwxWVGCOcro8Sm8weZQKrYBKwkJravYgQZKyJgKvHnRAhIDbNAB6PExuNTWEBqhAWq
+        JD4unckMYrMIqEq8fHWetYuRnYNXQFNiCyNIVFTAS2LLvnawiZwCnhJ3ulrBqnkFBCV+TL4H
+        NoVZQF5i3/6prBC2jsTZY+vAzpEQWMAm8bnhORPE0S4Sa6feZoawhSVeHd/CDmFLSzxbtRGq
+        oZlR4tuOPVBFExgl9qwXgrCtJQ4fvwi1gU+i4/Bfdkhw8Up0tEGVeEjsn9AE1eooseDkE3ZI
+        mNxmlDi5fibLBEbZWUgOn4Xk8FlIDl/AyLyKUSy1oDg3PbXYqMBQrzgxt7g0L10vOT93EyM4
+        7rVcdzDOOOdziFGAg1GJh9di0e4oIdbEsuLK3EOMEhzMSiK87zWAQrwpiZVVqUX58UWlOanF
+        hxilOViUxHnbAlyihATSE0tSs1NTC1KLYLJMHJxSDYxCawS+b+D6Yur8KGwfj/6GvSeN3gZm
+        /pZZFXVHfY9oZc+0nkm+Tye0Jz/w2Pfp7ZzSF3v/PO27EWPhorB9RtOzNKY88cPhHxcZC+7q
+        kNzXcO73h+kPsi51v/3/Yc/CNslnk3i+3o0+wK7cds8qVP3EGo8E382s3dt+VHU8rzhz88Vy
+        EbHjy/IFlViKMxINtZiLihMBqBWdPPcCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsVy+t9jAd2zS3dHGdx7oG5x5et7NovzncuZ
+        LbbekrY40feB1eLyrjlsDqwe97uPM3k0nWpn9fi8SS6AOYrLJiU1J7MstUjfLoErY/pG9YIG
+        loo3nRNYGxgXMncxcnJICJhIfFp7iQXEFhLYySjxZ55/FyMXkP2VUeL83p+MIAk2ASuJie2r
+        gGwODhEBU4k/J0JAapgFOhglJv5bAjZIWKBK4sv76WD1LAKqEi9fnWftYmTn4BXQlNgCFhUV
+        8JLYsq+dCcTmFPCUuNPVygyx6jajxN3ZF8ASvAKCEj8m3wO7h1lAXmLf/qmsELaWxPqdx5km
+        MPLPQlI2C0nZLCRlCxiZVzFKphYU56bnFhsVGOWllusVJ+YWl+al6yXn525iBIbptsNa/TsY
+        Hy+JP8QowMGoxMNrsWh3lBBrYllxZe4hRgkOZiUR3vcaQCHelMTKqtSi/Pii0pzU4kOM0hws
+        SuK8/PnHIoUE0hNLUrNTUwtSi2CyTBycUg2MKtnuKrkqIefiTK6UqzoaPOT+/XvbrBuOc4Ty
+        RJ2Y/u8NPum8YhXDnvV1jtu2LDhgcu+OyU5//YQtrD9nz4n1UL3w55622FZxKwnHbv25ubOe
+        bJoiV1WdtGWZ+qnMuHxWLle/xUKHH6mn8Gyrtq7kNGaqXfTXxymzcN37nKvnlqlU9S+5pLtb
+        iaU4I9FQi7moOBEAG9jQi08CAAA=
+X-CMS-MailID: 20180328142517epcas2p28aaeae6a51bcb51469110f6b49c2b764
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20171127214358epcas1p35be7cd2052b40ab61f798701b67d25cd
+X-RootMTR: 20171127214358epcas1p35be7cd2052b40ab61f798701b67d25cd
+References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
+        <CGME20171127214358epcas1p35be7cd2052b40ab61f798701b67d25cd@epcas1p3.samsung.com>
+        <f2ad18dd-2525-d8d9-10a8-c12b345cb509@users.sourceforge.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DesignWare GPIO IP can be configured for either 1 or 32 interrupts,
-but the driver currently only supports 1 interrupt. See the DesignWare
-DW_apb_gpio Databook description of the 'GPIO_INTR_IO' parameter.
+On Monday, November 27, 2017 06:58:22 PM SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Mon, 27 Nov 2017 18:14:41 +0100
+> 
+> Omit an extra message for a memory allocation failure in this function.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-This change allows the driver to work with up to 32 interrupts, it will
-get as many interrupts as specified in the DT 'interrupts' property.
-It doesn't do anything clever with the different interrupts, it just calls
-the same handler used for single interrupt hardware.
+Patch queued for 4.17, thanks.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-Note: There are a few lines over 80 chars, but this is just guidance, right?
-      Especially as there are already some lines over 80 chars.
----
- .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   | 10 ++++-
- drivers/gpio/gpio-dwapb.c                          | 44 +++++++++++++++++-----
- include/linux/platform_data/gpio-dwapb.h           |  3 +-
- 3 files changed, 45 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-index 4a75da7..e343581 100644
---- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-@@ -26,8 +26,14 @@ controller.
-   the second encodes the triger flags encoded as described in
-   Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
- - interrupt-parent : The parent interrupt controller.
--- interrupts : The interrupt to the parent controller raised when GPIOs
--  generate the interrupts.
-+- interrupts : The interrupts to the parent controller raised when GPIOs
-+  generate the interrupts. If the controller provides one combined interrupt
-+  for all GPIOs, specify a single interrupt. If the controller provides one
-+  interrupt for each GPIO, provide a list of interrupts that correspond to each
-+  of the GPIO pins. When specifying multiple interrupts, if any of the GPIOs are
-+  not connected to an interrupt, use the interrupt-mask property.
-+- interrupt-mask : a 32-bit bit mask that specifies which interrupts in the list
-+  of interrupts is valid, bit is 1 for a valid irq.
- - snps,nr-gpios : The number of pins in the port, a single cell.
- - resets : Reset line for the controller.
- 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 226977f..47d82f9 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 	irq_gc->chip_types[1].handler = handle_edge_irq;
- 
- 	if (!pp->irq_shared) {
--		irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
--						 gpio);
-+		int i;
-+
-+		for (i = 0; i < pp->ngpio; i++) {
-+			if (pp->irq[i])
-+				irq_set_chained_handler_and_data(pp->irq[i],
-+						dwapb_irq_handler, gpio);
-+		}
- 	} else {
- 		/*
- 		 * Request a shared IRQ since where MFD would have devices
- 		 * using the same irq pin
- 		 */
--		err = devm_request_irq(gpio->dev, pp->irq,
-+		err = devm_request_irq(gpio->dev, pp->irq[0],
- 				       dwapb_irq_handler_mfd,
- 				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
- 		if (err) {
-@@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	if (pp->idx == 0)
- 		port->gc.set_config = dwapb_gpio_set_config;
- 
--	if (pp->irq)
-+	if (pp->has_irq)
- 		dwapb_configure_irqs(gpio, port, pp);
- 
- 	err = gpiochip_add_data(&port->gc, port);
-@@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 		port->is_registered = true;
- 
- 	/* Add GPIO-signaled ACPI event support */
--	if (pp->irq)
-+	if (pp->has_irq)
- 		acpi_gpiochip_request_interrupts(&port->gc);
- 
- 	return err;
-@@ -601,13 +606,34 @@ dwapb_gpio_get_pdata(struct device *dev)
- 		if (dev->of_node && pp->idx == 0 &&
- 			fwnode_property_read_bool(fwnode,
- 						  "interrupt-controller")) {
--			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
--			if (!pp->irq)
-+			struct device_node *np = to_of_node(fwnode);
-+			u32 irq_mask = 0xFFFFFFFF;
-+			int j;
-+
-+			/* Optional irq mask */
-+			fwnode_property_read_u32(fwnode, "interrupt-mask", &irq_mask);
-+
-+			/*
-+			 * The IP has configuration options to allow a single
-+			 * combined interrupt or one per gpio. If one per gpio,
-+			 * some might not be used.
-+			 */
-+			for (j = 0; j < pp->ngpio; j++) {
-+				if (irq_mask & BIT(j)) {
-+					pp->irq[j] = irq_of_parse_and_map(np, j);
-+					if (pp->irq[j])
-+						pp->has_irq = true;
-+				}
-+			}
-+			if (!pp->has_irq)
- 				dev_warn(dev, "no irq for port%d\n", pp->idx);
- 		}
- 
--		if (has_acpi_companion(dev) && pp->idx == 0)
--			pp->irq = platform_get_irq(to_platform_device(dev), 0);
-+		if (has_acpi_companion(dev) && pp->idx == 0) {
-+			pp->irq[0] = platform_get_irq(to_platform_device(dev), 0);
-+			if (pp->irq[0])
-+				pp->has_irq = true;
-+		}
- 
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 2dc7f4a..5a52d69 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -19,7 +19,8 @@ struct dwapb_port_property {
- 	unsigned int	idx;
- 	unsigned int	ngpio;
- 	unsigned int	gpio_base;
--	unsigned int	irq;
-+	unsigned int	irq[32];
-+	bool		has_irq;
- 	bool		irq_shared;
- };
- 
--- 
-2.7.4
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
