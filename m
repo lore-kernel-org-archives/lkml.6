@@ -1,87 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753355AbeC1Vey (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 17:34:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49445 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752447AbeC1Vew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 17:34:52 -0400
-From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 29 Mar 2018 08:34:45 +1100
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] rhashtable: allow a walk of the hash table without missing objects.
-In-Reply-To: <20180328073023.GB17306@gondor.apana.org.au>
-References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718430.11435.5761213978298714527.stgit@noble> <20180327155118.GB14001@gondor.apana.org.au> <87po3p421q.fsf@notabene.neil.brown.name> <20180328060734.GB16291@gondor.apana.org.au> <87a7us4qje.fsf@notabene.neil.brown.name> <20180328073023.GB17306@gondor.apana.org.au>
-Message-ID: <87zi2r3mve.fsf@notabene.neil.brown.name>
+        id S1753385AbeC1Voo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 17:44:44 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:39911 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753031AbeC1Von (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 17:44:43 -0400
+X-Google-Smtp-Source: AIpwx49y75FFW/LTDwnmk6ikJ6PiTlR4zYC3HzA9/xlw/GdHij+kXadv1udfucVYc/+IGjRU0caBEg==
+Date: Wed, 28 Mar 2018 23:44:38 +0200
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, Cameron Gutman <aicommander@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v7 0/2] hid-steam driver with user mode client dection
+Message-ID: <20180328214438.GA5740@casa>
+References: <20180325160703.15997-1-rodrigorivascosta@gmail.com>
+ <CAO-hwJ+XxB9QnZSAALPZTWmAMDsrzq-dhjtMDOvdXHWtDv=H7g@mail.gmail.com>
+ <20180328181448.GA1674@casa>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328181448.GA1674@casa>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Wed, Mar 28, 2018 at 08:14:48PM +0200, Rodrigo Rivas Costa wrote:
+> On Mon, Mar 26, 2018 at 10:12:19AM +0200, Benjamin Tissoires wrote:
+> > Also, I think there will be races if a user changes the value of the
+> > parameter while running the system. You might want to add an
+> > additional patch that would trigger the mode change on module
+> > parameter change.
+> 
+> True, but the races should be easy to remove, with a simple local
+> variable.  About the trigger, I've never seen a trigger on module
+> parameter change. Can you give me a hint or example of how to do that?
 
-On Wed, Mar 28 2018, Herbert Xu wrote:
+Never mind, I've found it: module_param_cb().
+Moreover, I'll have to keep a global list of steam_devices, just in case
+the parameter is changed...
 
-> On Wed, Mar 28, 2018 at 06:17:57PM +1100, NeilBrown wrote:
->>
->> Sounds like over-kill to me.
->> It might be reasonable to have a CONFIG_DEBUG_RHASHTABLE which enables
->> extra to code to catch misuse, but I don't see the justification for
->> always performing these checks.
->> The DEBUG code could just scan the chain (usually quite short) to see if
->> the given element is present.  Of course it might have already been
->> rehashed to the next table, so you would to allow for that possibility -
->> probably check tbl->rehash.
->
-> No this is not meant to debug users incorrectly using the cursor.
-> This is a replacement of your continue interface by automatically
-> validating the cursor.
->
-> In fact we can make it even more reliable.  We can insert the walker
-> right into the bucket chain, that way the walking will always be
-> consistent.
->
-> The only problem is that we need be able to differentiate between
-> a walker, a normal object, and the end of the list.  I think it
-> should be doable.
-
-Yes, I think that could work.  The code to stop over a walker object
-during an unlocked search wouldn't be straight forward and would need
-careful analysis.
-
-However about storing the hash chains in order by object address?
-Then rhashtable_walk_start() can easily find it's place regardless of
-whether the old object was still present or not, using <= on the
-address.
-"Insert" would need to record an insert location and insert there rather
-than at the head of the chain.
-I might try coding that.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq8CnUACgkQOeye3VZi
-gbkCBA//Q2Ye65bKdqqdUVf0DSLWf/xWwBu8nzwhAG2UdW9VPuOCqrAn64bYk93J
-mOKh6h6XOvOgrgARYZWRepWpzsTw6Yhrx7elc8D/bSMNo9qxb4huxs+8l0NCThS4
-l4EBkslUZbF6Vmk0xPRzQTAqWWemAvQVY16qJRZUfBkL2tjnhQ+alNyM4xfZbmYy
-6lQjulTtaMyXohNmAGMvYOmF2k05CLGhNCMFv1P+yX+ncGSvGMkgZQGhMuRzNlF+
-nqGAGqJPE3Mf6io49h/WHaM0087fGnZUn0QS2wKDp/Pdly1+eKYqwLRbadn2X0t3
-j3wrY08nOP2FlCOu0ZBCdoBGJztobx6u1xx6m+e+m+ov3HHsgxeg6YAxmz3F4YFq
-fhFovrEDHF720D/5BYqzIov6eS4RRJl+5wq+hdzKMG7TZXZGJJXd77h9j5CXg5/f
-Hy7yL2a/blMjUmwUAy0J5GFE0znxvSf5ME0K+5ZWPDCXzCxKMWbpV7lp2TR4RdOn
-R3MUg4atvHnCx21xfRoNTGorIfgS+gcd8VzXtPO7Ap3VEfAu2Mt2DiO/w2sr2/tR
-MK+t1YZs0D6fnlQ2Xq2E/MzI/eOqXbEqFqMqIb7kn8znfEsDaLxLPvP9QRIl5qvf
-XypQ+GDzG78Ia+ejfzE+Nv2bSrJAHVaDvjTTJjfOd79vHzNR2cQ=
-=Uq4N
------END PGP SIGNATURE-----
---=-=-=--
+Regards.
+Rodrigo
