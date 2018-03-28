@@ -1,134 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeC1KTg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 06:19:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39078 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750799AbeC1KTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 06:19:35 -0400
-Date: Wed, 28 Mar 2018 11:19:30 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Philip Elcan <pelcan@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org, Thomas Speier <tspeier@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>
-Subject: Re: [PATCH V3] arm64: tlbflush: avoid writing RES0 bits
-Message-ID: <20180328101928.tidudm6p4rtqie44@lakrids.cambridge.arm.com>
-References: <1522202132-16998-1-git-send-email-pelcan@codeaurora.org>
+        id S1752308AbeC1KU2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 06:20:28 -0400
+Received: from mail-io0-f182.google.com ([209.85.223.182]:40081 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeC1KU0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 06:20:26 -0400
+X-Google-Smtp-Source: AIpwx48hxA8azLS3l0rU/mMiIATOEP2St04nnuJPlma4I3kiObY27Xt/DjZ5QPOT9Q34JnlwAfNtOg==
+Date: Wed, 28 Mar 2018 03:20:23 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 06/24] mm: make pte_unmap_same compatible with SPF
+In-Reply-To: <fd9eedf4-b885-d8f5-2daa-4cc450e72427@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803280318440.69353@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com> <alpine.DEB.2.20.1803271417510.31115@chino.kir.corp.google.com>
+ <fd9eedf4-b885-d8f5-2daa-4cc450e72427@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522202132-16998-1-git-send-email-pelcan@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 09:55:32PM -0400, Philip Elcan wrote:
-> Several of the bits of the TLBI register operand are RES0 per the ARM
-> ARM, so TLBI operations should avoid writing non-zero values to these
-> bits.
-> 
-> This patch adds a macro __TLBI_VADDR(addr, asid) that creates the
-> operand register in the correct format and honors the RES0 bits.
-> 
-> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
-> ---
->  arch/arm64/include/asm/tlbflush.h | 25 +++++++++++++++++--------
->  1 file changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 9e82dd7..dfc61d7 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -60,6 +60,15 @@
->  		__tlbi(op, (arg) | USER_ASID_FLAG);				\
->  } while (0)
->  
-> +/* This macro creates a properly formatted VA operand for the TLBI */
-> +#define __TLBI_VADDR(addr, asid)				\
-> +	({							\
-> +		unsigned long __ta = (addr) >> 12;		\
-> +		__ta &= GENMASK_ULL(43, 0);			\
-> +		__ta |= (unsigned long)(asid) << 48;		\
-> +		__ta;						\
-> +	})
+On Wed, 28 Mar 2018, Laurent Dufour wrote:
 
-As a minor nit, we typically don't indent the start of the macro
-function body, and we could drop the leading tab on each line, but
-either way:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks,
-Mark.
-
-> +
->  /*
->   *	TLB Management
->   *	==============
-> @@ -117,7 +126,7 @@ static inline void flush_tlb_all(void)
->  
->  static inline void flush_tlb_mm(struct mm_struct *mm)
->  {
-> -	unsigned long asid = ASID(mm) << 48;
-> +	unsigned long asid = __TLBI_VADDR(0, ASID(mm));
->  
->  	dsb(ishst);
->  	__tlbi(aside1is, asid);
-> @@ -128,7 +137,7 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
->  static inline void flush_tlb_page(struct vm_area_struct *vma,
->  				  unsigned long uaddr)
->  {
-> -	unsigned long addr = uaddr >> 12 | (ASID(vma->vm_mm) << 48);
-> +	unsigned long addr = __TLBI_VADDR(uaddr, ASID(vma->vm_mm));
->  
->  	dsb(ishst);
->  	__tlbi(vale1is, addr);
-> @@ -146,7 +155,7 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
->  				     unsigned long start, unsigned long end,
->  				     bool last_level)
->  {
-> -	unsigned long asid = ASID(vma->vm_mm) << 48;
-> +	unsigned long asid = ASID(vma->vm_mm);
->  	unsigned long addr;
->  
->  	if ((end - start) > MAX_TLB_RANGE) {
-> @@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
->  		return;
->  	}
->  
-> -	start = asid | (start >> 12);
-> -	end = asid | (end >> 12);
-> +	start = __TLBI_VADDR(start, asid);
-> +	end = __TLBI_VADDR(end, asid);
->  
->  	dsb(ishst);
->  	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
-> @@ -185,8 +194,8 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
->  		return;
->  	}
->  
-> -	start >>= 12;
-> -	end >>= 12;
-> +	start = __TLBI_VADDR(start, 0);
-> +	end = __TLBI_VADDR(end, 0);
->  
->  	dsb(ishst);
->  	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12))
-> @@ -202,7 +211,7 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
->  static inline void __flush_tlb_pgtable(struct mm_struct *mm,
->  				       unsigned long uaddr)
->  {
-> -	unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
-> +	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
->  
->  	__tlbi(vae1is, addr);
->  	__tlbi_user(vae1is, addr);
-> -- 
-> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-> Qualcomm Technologies, Inc. is a member of the
-> Code Aurora Forum, a Linux Foundation Collaborative Project.
+> >> @@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
+> >>  	int exclusive = 0;
+> >>  	int ret = 0;
+> > 
+> > Initialization is now unneeded.
 > 
+> I'm sorry, what "initialization" are you talking about here ?
+> 
+
+The initialization of the ret variable.
+
+@@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
+ 	int exclusive = 0;
+ 	int ret = 0;
+ 
+-	if (!pte_unmap_same(vma->vm_mm, vmf->pmd, vmf->pte, vmf->orig_pte))
++	ret = pte_unmap_same(vmf);
++	if (ret)
+ 		goto out;
+ 
+ 	entry = pte_to_swp_entry(vmf->orig_pte);
+
+"ret" is immediately set to the return value of pte_unmap_same(), so there 
+is no need to initialize it to 0.
