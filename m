@@ -1,88 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeC1IAs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 04:00:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:34798 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752305AbeC1IAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 04:00:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,370,1517904000";
-   d="scan'208";a="28697909"
-Date: Wed, 28 Mar 2018 15:59:48 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Li RongQing <lirongqing@baidu.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm/list_lru: replace spinlock with RCU in
- __list_lru_count_one
-Message-ID: <201803281454.4QSlrPKy%fengguang.wu@intel.com>
-References: <1522137544-27496-1-git-send-email-lirongqing@baidu.com>
+        id S1752568AbeC1IBN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 04:01:13 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:17338 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752463AbeC1IBL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 04:01:11 -0400
+X-IronPort-AV: E=Sophos;i="5.48,370,1517900400";
+   d="scan'208";a="10088959"
+Subject: Re: [PATCH v3 2/2] net: macb: Try to retrieve MAC addess from nvmem
+ provider
+To: Mike Looijmans <mike.looijmans@topic.nl>, <netdev@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <andrew@lunn.ch>, <f.fainelli@gmail.com>, <robh+dt@kernel.org>,
+        <frowand.list@gmail.com>
+References: <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
+ <1522144346-32367-3-git-send-email-mike.looijmans@topic.nl>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <d7187b2b-a6df-dfba-64ac-f1770c540159@microchip.com>
+Date: Wed, 28 Mar 2018 10:00:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522137544-27496-1-git-send-email-lirongqing@baidu.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <1522144346-32367-3-git-send-email-mike.looijmans@topic.nl>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Li,
+On 27/03/2018 at 11:52, Mike Looijmans wrote:
+> Call of_get_nvmem_mac_address() to fetch the MAC address from an nvmem
+> cell, if one is provided in the device tree. This allows the address to
+> be stored in an I2C EEPROM device for example.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 
-Thank you for the patch! Perhaps something to improve:
+For this part:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.16-rc7]
-[cannot apply to next-20180327]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> ---
+>   drivers/net/ethernet/cadence/macb_main.c | 12 +++++++++---
+>   1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index e84afcf..eabe14f 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -3950,10 +3950,16 @@ static int macb_probe(struct platform_device *pdev)
+>   		dev->max_mtu = ETH_DATA_LEN;
+>   
+>   	mac = of_get_mac_address(np);
+> -	if (mac)
+> +	if (mac) {
+>   		ether_addr_copy(bp->dev->dev_addr, mac);
+> -	else
+> -		macb_get_hwaddr(bp);
+> +	} else {
+> +		err = of_get_nvmem_mac_address(np, bp->dev->dev_addr);
+> +		if (err) {
+> +			if (err == -EPROBE_DEFER)
+> +				goto err_out_free_netdev;
+> +			macb_get_hwaddr(bp);
+> +		}
+> +	}
+>   
+>   	err = of_get_phy_mode(np);
+>   	if (err < 0) {
+> 
 
-url:    https://github.com/0day-ci/linux/commits/Li-RongQing/mm-list_lru-replace-spinlock-with-RCU-in-__list_lru_count_one/20180328-042620
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
 
-
-sparse warnings: (new ones prefixed by >>)
-
->> mm/list_lru.c:59:15: sparse: incompatible types in comparison expression (different address spaces)
-   mm/list_lru.c:61:24: sparse: incompatible types in comparison expression (different address spaces)
->> mm/list_lru.c:59:15: sparse: incompatible types in comparison expression (different address spaces)
-   mm/list_lru.c:61:24: sparse: incompatible types in comparison expression (different address spaces)
->> mm/list_lru.c:59:15: sparse: incompatible types in comparison expression (different address spaces)
-   mm/list_lru.c:61:24: sparse: incompatible types in comparison expression (different address spaces)
->> mm/list_lru.c:59:15: sparse: incompatible types in comparison expression (different address spaces)
-   mm/list_lru.c:61:24: sparse: incompatible types in comparison expression (different address spaces)
->> mm/list_lru.c:59:15: sparse: incompatible types in comparison expression (different address spaces)
-   mm/list_lru.c:61:24: sparse: incompatible types in comparison expression (different address spaces)
->> mm/list_lru.c:59:15: sparse: incompatible types in comparison expression (different address spaces)
-   mm/list_lru.c:61:24: sparse: incompatible types in comparison expression (different address spaces)
-
-vim +59 mm/list_lru.c
-
-    51	
-    52	static inline struct list_lru_one *
-    53	list_lru_from_memcg_idx(struct list_lru_node *nlru, int idx)
-    54	{
-    55		struct list_lru_memcg *tmp;
-    56	
-    57		WARN_ON_ONCE(!rcu_read_lock_held());
-    58	
-  > 59		tmp = rcu_dereference(nlru->memcg_lrus);
-    60		if (tmp && idx >= 0)
-    61			return rcu_dereference(tmp->lru[idx]);
-    62	
-    63		return &nlru->lru;
-    64	}
-    65	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Nicolas Ferre
