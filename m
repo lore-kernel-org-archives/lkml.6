@@ -1,134 +1,120 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AIpwx48GS/QGKvDszy28jBaCjFCNnyPKIKBSI3fnI5Xziua6LgdxuFVy+d5JBqNnlH9/DNQveHLd
-ARC-Seal: i=1; a=rsa-sha256; t=1522207296; cv=none;
+Return-Path: <kuninori.morimoto.gx@renesas.com>
+X-Google-Smtp-Source: AIpwx4814T6cREk7DqesU5XUx6PEri3Nxr2gv2R4zy2LknL7mZHkVSYKqGWbchzVP1D/lWwdbtJM
+ARC-Seal: i=1; a=rsa-sha256; t=1522203502; cv=none;
         d=google.com; s=arc-20160816;
-        b=DaziT/pHcL3lPDhUFWUWVKxhByOIR4vdsRRJRAf5rqMKZcaQ4a2zRku+Jw+rnwso2G
-         uBAHZrR/hd9+QQcwfGkN6oIP3/GXhDl5o4wwFFF3lAKUtzjpF7LT/StyRejGLuyCrrFz
-         e82rZF254Fsmeu5ODCD9+OGJs/r392MXl5Mmyj6rgb85NEH+rhxh6tUK7DG8tvqcsMja
-         cK1UtEQcxbCiTQbOeZuUmGlLysia/cKgU6ev70kJeMjzr8IRqDhXDw+DC8K6JPB4qgm3
-         Z0PNUFs7I2PQNJGvabIkPw2qX2H78RhWJiWxf/jaVjCA4tQ85MCrxLehhDlgO7oNYPEr
-         tFtw==
+        b=GN6SyfQz0Q8wA+2O2o2dOP/+/tkMMq3Z2c+xZYeQZeWr5s7frV/1n80yycNUDE+66F
+         TI2cRCUpHEltRj+1wxNxmLolNPpfRXI4ZNMYzOCDnKSEFuaZLluhJO8+SFS8BlL49VY7
+         w627sYlKNkV3Q8Mn8paLCKceFSmjCE67XuptWw6yEpQSjKLAKmC0/ljrlUTVPnbbxUR9
+         GRRAU374Pa0C5FXFBQOKF1eymuzO3BAGEUAFRW5MGV/qvUcQLbVdnAWNyzEYJMR0Hy9F
+         ExPuvYySKyejpS7uTcUXA+/5F08quA4QeHda8gbQdQW0CEq2n3w2Lyfw4h1HtMFhAjuk
+         Mw8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=ZAy76ZDgMpFyv4iDm97KiRcdcWibykMvlk2bUyZBNa0=;
-        b=0hykhrUzgWms9YuPBnCvAmkfJFsvIGkTFnQBA+HHG3lWrxLcN3If2KLVkpBzzAxXK0
-         wB+1F6vnx/ZU3aynvlvvkR7njBnzajZPIcmyVBKYD+mwQ3DB3r/DVJJZf07s2+ACQwhH
-         6y5ion4aFCWQ7E+WgdSyE81bg/EvaNHYpWBK2N2GTKVw8r8R8kiDJWVneczSumpjT9+S
-         g7f6c+10BCuzp5Kd29SvoNDIVQKSifcbt6JZk1N7IlsFCuoylLMl3NtV32igOZQplzNX
-         L4RNmmLQPmF6c9STZGNTc8vV/q0MqVdWnk8N53EchFjX4fRXklRchp8lta4FKcmAUKBc
-         PXwQ==
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:date:mime-version:cc:to
+         :user-agent:subject:from:message-id:dkim-signature
+         :arc-authentication-results;
+        bh=VtbJ1AjCxozMPvWfCnVtKgRD6U6Hf7SUOHdrCyy4X9I=;
+        b=i7utBp4K1luSW7A39XSOxCDDPrGMd/9ZTkGOcWnd6sxZl5itUL6FsRxhRMjyFgQzAH
+         g4utnjBM+TD/anhjwPk+i7qlouzLdajjfNYb0Bf5FsJoRXAM/t3WcZwDBSxUuhd+9WIw
+         1k1+OuT+uOXN4cD4nuO6BMu5VxDAgT494YufXlcPWjiOJUAnzSaBYz2SGOp1w9iEviHj
+         5mgdS3ykZg86tbI1u51BFxleQRGj3K/il0Jv0nIBVF22EX8l/GDTKua9mjig5IJRrLIw
+         XoLMPilO79FsJhMI1WYm+Tr5rKrgKtAXHddqlH0Unkp6dbwXQr9vj3+eWp0FHkXm7jfu
+         teCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=KWANbInd;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.80 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@renesasgroup.onmicrosoft.com header.s=selector1-renesas-com header.b=XyVdxYw0;
+       spf=pass (google.com: domain of kuninori.morimoto.gx@renesas.com designates 210.160.252.172 as permitted sender) smtp.mailfrom=kuninori.morimoto.gx@renesas.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=KWANbInd;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.80 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w2S3LEp0004697
-X-Nifty-SrcIP: [209.85.217.176]
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJMEG6WZo8qEjGpFBkU7FkjyFbjf5diZqa8sz+XqCxHuQ@mail.gmail.com>
-References: <1522204848-11803-1-git-send-email-yamada.masahiro@socionext.com> <CAGXu5jJMEG6WZo8qEjGpFBkU7FkjyFbjf5diZqa8sz+XqCxHuQ@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 28 Mar 2018 12:20:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ69JWJU_RJzr39b4gtF1ss-qm_b_AzLBFf2+m2-bx+Xg@mail.gmail.com>
-Message-ID: <CAK7LNAQ69JWJU_RJzr39b4gtF1ss-qm_b_AzLBFf2+m2-bx+Xg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: move <linux/compiler_types.h> out of <linux/kconfig.h>
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@renesasgroup.onmicrosoft.com header.s=selector1-renesas-com header.b=XyVdxYw0;
+       spf=pass (google.com: domain of kuninori.morimoto.gx@renesas.com designates 210.160.252.172 as permitted sender) smtp.mailfrom=kuninori.morimoto.gx@renesas.com
+X-IronPort-AV: E=Sophos;i="5.48,369,1517842800";
+   d="scan'208";a="275059475"
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com;
+Message-ID: <87vadh3pz1.wl%kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH] ASoC: trace: remove snd_soc_codec
+User-Agent: Wanderlust/2.15.9 Emacs/24.3 Mule/6.0
+To: Mark Brown <broonie@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>, Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>, linux-kernel@vger.kernel.org (open list)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 28 Mar 2018 02:18:13 +0000
+X-Originating-IP: [211.11.155.138]
+X-ClientProxiedBy: HK2PR02CA0178.apcprd02.prod.outlook.com
+ (2603:1096:201:21::14) To TYAPR01MB2079.jpnprd01.prod.outlook.com
+ (2603:1096:404:8::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: e68634ae-0420-4052-a870-08d5945229b7
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2079;
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;3:ElpSGkoItbtv+G9Tetky9YpBlKwV7NJAo4HCbPU3uL4vg08PlPw5tYIf8XD//Ry99LqcXR30+RD8frROSuWXyhW31u3J9rdDv/aR4sMNqfs6ZSHXJo6jpxtGKO6ehnTtIgx1zzu3mGaGaoq3orT/Xgp7IvoiUhELCGbgNoIbl/NUlzOcGS+pyGAYhLpW53GAL9MjZ5mcpS4CAG4eD36WKPYeMlZfrOS/+ISKfVuOH5jak4csWjzSDaQfB6ePvkzz;25:8d0jJX8I2bdurhzWEadHhBGCIkfufas3y6kGpjSfJqj+lrzBIbYzl9hv00IVFH5XjOByDkiAqD6fAYI4B8wfqG83/WbwCe5Bhhy1t4ee/+TyctBdwJp1ua2I5Wf4OmpaKOZVBlrQZPTPXrjuxH/7RnzWFkg/NGcMv+gzDelqVmKhAcOn0/b+6kNBr4MFViGW8sqE+eqMTj4R6hVN167OBKYfH7ArMTczHv1uyyPOq/j56moLVWmQbFKwLRLItn6cezfEwn5t3FTqacUS5SNK9yCMQiN9YXfo8tjYGAlEIki3ki/X27zIgxyRet39KyXY3DU9F+iefD859tKNmLtF7w==;31:xtSwjH+9Hjz6icS2VIr2RGCgllIv+CB9kzAeImebda87MM74jnsynAehVx6D+SNduWixJSBlPbgHER0gz9PQUlD+gzmvE5hRSeyQi9e/5tWZBH5HclzXqXWce+tJE0xrDhMov6lDltNqTdQV8BqJfAZPYfzuZKTw2GkzhrheNhIo+E11s2spRm6CHE1M5WU0m/8qkbtpwL5Lm+IMjD9WZlBLq/t2WTUZ4O58zuMbVuA=
+X-MS-TrafficTypeDiagnostic: TYAPR01MB2079:
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;20:a46t5Vy8u3LW/uAeToiknUbQ5/a3PO8DTH6kr6h3HFYNgkW87bAXYtQUX14FzjIquAJNSP63KsTFBLU9XRqUsf+NXXAPTO/5TL7n2CasdsLkHceUNT8HHczJTCk8eWZ990US3T4W4eXhyrA3yITxBPJwH47tjG89IWpjARalEYca+yWBgSiZEvdCRxhfPLmWJjQLO93x6dVk8t9FOTVA0XRQVQwwKVa0B1z2rS9KeP4xOnnv887oYlHtrCXcQEBm8uVSkDH+xF490bfPumlGThTuxUOI1YTyDc8Os4w+hvLcKoGeUj1LqivYRqVRuvcjCOaGEFHqZ8WBEkzBM/uQj3Gq87o04MhdP0K6BmH321xJuwZ2CNX7A86NfMlPi3Bwp1yqJj8j4H4ov7XUf79FnHjeEuzp3bOnU3bxPi5MfPyXr44LenERv2PkHP4KmksHtS7i6F1fO2WMtuu9kTHJVLRcTpBooJ3fKFJGpapm0xi8JAD40XgBH/bXleoYof+S;4:b+kIUuhLb2qrLfjxpw+xQNIvg4EYQv2DxkUK+Fjqkzgba0ZjedckGLU7ESrOUpwcc9yD05NrWu/k/pvKWhpEJA9Qdj0cXVDl5XNKA+lYsSPh5al5diQWAP4Ec6CsVVGrl/kw9ztNdN2raMYBPhCMhZ0gP1fJ8+QOZ78ptN6R5B/eH8Xl0iiyyLsc339STnexCaGVKb9MmYeVI4UDC8s4jkUI2r9YXsOWWTS2MGmg0Wy67gcVezwBGXKhgKf8tlMiF1jQZ9/JkqUlb9TatHXi5g==
+X-Microsoft-Antispam-PRVS: <TYAPR01MB2079C2021A67AE979FF9F2B5D4A30@TYAPR01MB2079.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:TYAPR01MB2079;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2079;
+X-Forefront-PRVS: 06259BA5A2
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(39380400002)(396003)(376002)(346002)(199004)(189003)(81156014)(81166006)(58126008)(316002)(97736004)(8676002)(106356001)(8936002)(69596002)(50466002)(3846002)(6116002)(16586007)(2906002)(110136005)(23726003)(36756003)(68736007)(386003)(53936002)(7736002)(105586002)(16526019)(186003)(26005)(25786009)(53416004)(86362001)(478600001)(5660300001)(4326008)(305945005)(59450400001)(47776003)(66066001)(6486002)(52116002)(1857600001)(486005)(7696005)(486005)(956004)(2616005)(476003)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2079;H:morimoto-PC.renesas.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYAPR01MB2079;23:f12ZettxIG3TrlhMbBkorTG1mdzTKW+nNEp1IpDcb?=
+ =?us-ascii?Q?SvNjnusfgEtE3HO3hAjz049bYaj2DLQGXO3ylFUOW3ng3UYt0Va8ifZmptsW?=
+ =?us-ascii?Q?GC5m+YjWY4MfMGWjbjJ8tlDFfDNwcTcYL1NnMAaJmI8rVxhvtokm+Xd7S1Hg?=
+ =?us-ascii?Q?zatQgPxrP66SlBqTWpeXqEYGYCCUDXGqHcHlLmkYE9LKQ4CP3j0F9v2YHf/m?=
+ =?us-ascii?Q?SHMWeGFWMBIWv2Wz+1luIVP3bUphqb43n2YbkDsMqalrCK2ULI9+a2h4+kFe?=
+ =?us-ascii?Q?P+ADKazbmRAm+TsBSY+HAVRBZnZ6wzoot35Nuv27wLe2Hgo0SZNEUwgAyQP6?=
+ =?us-ascii?Q?dWsngdqd+FOWKNKUHU+VVvnhm/dn8KA2VrnpEdHPnIpEL57wyB78ygmQLlE2?=
+ =?us-ascii?Q?PbvBdaAUDIUtxCvFvxBmF0cuULnyik77Tw5YY4Suy1fN54K0DtkO1s97pFF5?=
+ =?us-ascii?Q?PsdMFg76bXl6BgLtrkKvds0/BuWgrbC1Ws8YHqOIBdHBgHuQ4Ajvn1XUmh57?=
+ =?us-ascii?Q?T0uqrzi/QWDq8cOQC7senHkBbSd7w5nkHsPHc8VAvJjn49BQYBmstZv0slhM?=
+ =?us-ascii?Q?WjRFjhAocvOyvlwOJZVf57O+JioIwe4dqY44aE5s4IWy27eWiEyTmyuZgLHO?=
+ =?us-ascii?Q?ZHn/bvIyOXU2K2D6Q9kGh/85VFtNMLHbWcQX1quoIfN7k4maGAXqG4LGKMhz?=
+ =?us-ascii?Q?fg6LD+sUuWLp9jWlwwlH3MmsghIGfAstKRLqYt3XvxnXN+v7hSlunBC93VO7?=
+ =?us-ascii?Q?3PI3KITSjKgUwc/H9i4dffWTNanIf2+QStWpPEFBQTHTUbpGWQMCx8dYLWXz?=
+ =?us-ascii?Q?loxxsg1eHRhwEiG0mmPtdnXWhiWHkoKc3hCzX+9xQ7deY2F9KdOsZD1IWl/u?=
+ =?us-ascii?Q?QQXqguC7YrG6m9v6gu5RwwNDwCUJPx9JHR+69QHlhKTKSTvICs6q1RL6b0JO?=
+ =?us-ascii?Q?YZMVFCyynGwhoBvr7X5wWxXlg6sIAmZtCkZyIBks8MT95NuOf5jK/1SYK82U?=
+ =?us-ascii?Q?xzKWRO/DMuv74gDNy3o0TPwd0/7oAk4fj8svk0yVX32OXRJbl1WuMtMmOc3P?=
+ =?us-ascii?Q?DBDfZN47JKpKeytVwLG6r+KQvgyyBFBmFiP+68tGNO+09e923UEx1TLQVK1Q?=
+ =?us-ascii?Q?VxOdlE7qUyLPTKXDRVXm4sLDDKKdSGWe9Z6g26WP3h9zV8onoobm9jpRpMC4?=
+ =?us-ascii?Q?tVmF3HddDaTbcOZpllos1w4OrxABKbatR7U?=
+X-Microsoft-Antispam-Message-Info: s5Yt3+fxdE4bno8pnV/S27emt2oKkKX2uVXm3Uia9yQh/+1DFjteVfKUVjwTrLb+SJXJbYJUjYqI2IL154hT228zkEYC2nnS0RkeMDtLOZXnKMsS3SI7iZoF0Ammr9fxqQh9z85axJd2NI+52uh4iGC7yUCYTrQKhHS/Cz7WDpRNUtYh9/6zsakkqsTDcgn0
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;6:DawXYhw/UQwLrNb0TkjZLPmbtcwuSHOSDV+kuX6NGzyUVMSZJLTU3Ooz/NbTYOxUwU8HYVeCFrtlGgYeWwKsf7pr7dChwS1l1zko03BcwfZurvQeUdBF2ckJjSESarJ3vsvBLp5vAL6VZvMNLAC9PoeO5QZNE+xr/vU+xdWj7Al4uz/dovlCJ6RfBUJ3TnOO0zq4ADqQ7jSZMVQ4/wW5/KF96ALlpcsH4F/9z+YKbbyetvkQRkr6x/yu0vXaWSghZ/C50Fxr+Qdz/zZujFauj3Bw3B3FKdXM6f9zRrQBIgfX4r1L8MX/10EP8pu43DSchD99aQhRpP+uoPvgfsd3HhFWkfBMXn3rYoVtpttHJEla1vxYv8TYxYuDDQS/CzbBGU5VmJ3OIcpwWxAHd+SuT0BT5nzlv86NmKiURaEsRFMFISUy7reMfr+o11UYX3JHBy2whYeQg2u2Cm11RSNTrQ==;5:CGyw1kvFZKyE6fXlWhGMjt6sObcknGghqrNqjoNhzQKgceBaMTY7Fs39/cWtcGNlMj6X8cHxfqtqb0ztkaPtq3ncG7IOqnoRkOod6sk1piPtMEtJhIPOtGMEBK3Y7y9Uq0Xu5NfM7dm30cKNITE7aarB20qd48uN8sQ3kIh+TWo=;24:dnf2McTXZ9xT9WvX/Bpo2eXCU5/136DvcYondzc+6CDIx3U/uomy4QQLggSI5nyvkIan3JO0TQJf/mraJkdfmSudibqKQNFj7A3piwuSGXA=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;7:w2o7QVz6Gs8N5qkAAjVIwQlRZngPUSyQEI9F92CY+YTWxmhrPmySDlfw2Wa59QeI00vxpY/EO1aqNu9AXjoMUWxU78wVXYq0a8u7df5xOKa0euOTFh761JadkDwUM+cq+W74cvGFDjR04lForKgURAR/9rVhk037P8R9Iu6BIw0FZXsRZTYbpG7lJVNxeunTNfAChHanq9qvfu7/RzHgNaP9IOhGhLpwjCWXoLIaEX33SPkmVrZpQb6sOhafZTY+;20:doZSXrMlNyYWpkCgDMgbOA/8tvzZ4nTfMO+XcIJ0q8ONfwHc4PoaZ4BTkCTBr64sE/o1PK6Ki2ZGZvjOlLZ3iPZbxhrmdYn25/7rwDma69uUT36L6tDJ+baZBnbfEwFa5K6Pde4gohvQ8ZOYoNG0sbf1WUlMihNrHDOvx6BM/ng=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2018 02:18:13.7955 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e68634ae-0420-4052-a870-08d5945229b7
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2079
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596147516031704256?=
-X-GMAIL-MSGID: =?utf-8?q?1596150038553899835?=
+X-GMAIL-THRID: =?utf-8?q?1596146059904031792?=
+X-GMAIL-MSGID: =?utf-8?q?1596146059904031792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-03-28 12:10 GMT+09:00 Kees Cook <keescook@chromium.org>:
-> On Tue, Mar 27, 2018 at 7:40 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> Since commit 28128c61e08e ("kconfig.h: Include compiler types to avoid
->> missed struct attributes"), <linux/kconfig.h> pulls in kernel-space
->> headers to unrelated file.
->>
->> Commit 0f9da844d877 ("MIPS: boot: Define __ASSEMBLY__ for its.S build")
->> suppressed the build error by defining __ASSEMBLY__, but ITS (i.e. DTS)
->> is not assembly, and should not include <linux/compiler_types.h> in the
->> first place.
->>
->> Looking at arch/s390/tools/Makefile, host programs gen_facilities and
->> gen_opcode_table now pull in <linux/compiler_types.h> as well.
->>
->> The motivation for that commit was to define necessary attributes
->> before any struct is defined.  Obviously, this happens only in C.
->>
->> It is enough to include <linux/compiler_types.h> only when compiling
->> C files, and only when compiling kernel space.
->>
->> Move the <linux/compiler_types.h> inclusion to c_flags.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->> I will also send a correct fix-up for MIPS Makefile later.
->
-> As long as the result is the same: it's impossible to define a
-> structure without defined attributes, I'm fine with it. :)
->
-> Question below...
->
->>
->>
->>
->>  include/linux/kconfig.h | 3 ---
->>  scripts/Makefile.lib    | 1 +
->>  2 files changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/include/linux/kconfig.h b/include/linux/kconfig.h
->> index dcde947..cc8fa10 100644
->> --- a/include/linux/kconfig.h
->> +++ b/include/linux/kconfig.h
->> @@ -70,7 +70,4 @@
->>   */
->>  #define IS_ENABLED(option) __or(IS_BUILTIN(option), IS_MODULE(option))
->>
->> -/* Make sure we always have all types and struct attributes defined. */
->> -#include <linux/compiler_types.h>
->> -
->>  #endif /* __LINUX_KCONFIG_H */
->> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
->> index c114ce5..07d0740 100644
->> --- a/scripts/Makefile.lib
->> +++ b/scripts/Makefile.lib
->> @@ -152,6 +152,7 @@ __cpp_flags     = $(call flags,_cpp_flags)
->>  endif
->>
->>  c_flags        = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
->> +                -include $(srctree)/include/linux/compiler_types.h       \
->
-> Why here instead of adding it to LINUXINCLUDE ?
->
 
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-LINUXINCLUDE contains '-include $(srctree)/include/linux/kconfig.h'
+snd_soc_codec is replaced to snd_soc_component,
+and it is not used in this file.
+Let's remove it
 
-If you add compier_types.h there, nothing would change.
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ include/trace/events/asoc.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-My intention is to include <linux/compiler_types.h> only for C.
-Not assembly, linker scripts, or anything else.
-
-
-
-
-
-
+diff --git a/include/trace/events/asoc.h b/include/trace/events/asoc.h
+index ccd1a3b..40c300f 100644
+--- a/include/trace/events/asoc.h
++++ b/include/trace/events/asoc.h
+@@ -12,7 +12,6 @@
+ #define DAPM_ARROW(dir) (((dir) == SND_SOC_DAPM_DIR_OUT) ? "->" : "<-")
+ 
+ struct snd_soc_jack;
+-struct snd_soc_codec;
+ struct snd_soc_card;
+ struct snd_soc_dapm_widget;
+ struct snd_soc_dapm_path;
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
