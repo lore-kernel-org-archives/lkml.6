@@ -1,93 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752547AbeC1H02 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:26:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39310 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752227AbeC1H01 (ORCPT
+        id S1752715AbeC1H1I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:27:08 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42435 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752682AbeC1H1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:26:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DFFB60591
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-Subject: Re: [PATCH v3 3/6] dt-bindings: phy-qcom-qmp: Update bindings for
- sdm845
-To: Doug Anderson <dianders@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Varadarajan Narayanan <varada@codeaurora.org>
-References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org>
- <1521785487-29866-4-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=Vwx2nW=pwEzJJSVXLctxOU5uGormBn=t_P6_xyfrrLAw@mail.gmail.com>
-From: Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <773161d7-0819-9054-b168-008b4558e174@codeaurora.org>
-Date: Wed, 28 Mar 2018 12:56:21 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 28 Mar 2018 03:27:04 -0400
+X-Google-Smtp-Source: AIpwx49MooDktwvGAuUwNUYljOX1nVkZr008xuNqjWyX0fwYWbXSr00GqF7AXUlKRioX/ZdT8Znlsg==
+Date: Wed, 28 Mar 2018 10:26:57 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: register filesystem last
+Message-ID: <20180328072657.GA2063@avx2>
+References: <20180309222709.GA3843@avx2>
+ <20180309144938.d308e0bf98fb6b5bbcb82189@linux-foundation.org>
+ <20180310000634.GA12443@avx2>
+ <20180328044823.GT30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Vwx2nW=pwEzJJSVXLctxOU5uGormBn=t_P6_xyfrrLAw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328044823.GT30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Mar 28, 2018 at 05:48:23AM +0100, Al Viro wrote:
+> On Sat, Mar 10, 2018 at 03:06:34AM +0300, Alexey Dobriyan wrote:
+> > On Fri, Mar 09, 2018 at 02:49:38PM -0800, Andrew Morton wrote:
+> > > On Sat, 10 Mar 2018 01:27:09 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> > > 
+> > > > As soon as register_filesystem() exits, filesystem can be mounted.
+> > > > It is better to present fully operational /proc.
+> > > > 
+> > > > Of course it doesn't matter because /proc is not modular
+> > > > but do it anyway.
+> > > > 
+> > > > Drop error check, it should be handled by panicking.
+> > > 
+> > > So... shouldn't we add a call to panic()?
+> > 
+> > via FS_PANIC flag, yes. I have a patch somewhere.
+> > There are 104 filesystems ATM, some internal, some not.
+> > Some modular, some not.
+> 
+> You do realize that the only case when register_filesystem() fails is
+> "another driver has already registered filesystem type with the same
+> name"?  Is there *ever* a case when
+> 	* you could expect that to happen and
+> 	* panic would be a sane response?
 
-
-On 3/28/2018 3:07 AM, Doug Anderson wrote:
-> Hi,
->
-> On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
->> Update compatible strings for USB3 PHYs on SDM845.
->> One is QMPv3 DisplayPort-USB combo PHY and other one
->> is USB UNI PHY which is single lane USB3 PHY without
->> DP capability.
->>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> index dcf1b8f..cef8765 100644
->> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> @@ -9,7 +9,9 @@ Required properties:
->>                "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
->>                "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
->>                "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
->> -              "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy.
->> +              "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy,
->> +              "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
->> +              "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845.
-> I'm confused.  What value does "qcom,qmp-v3-usb3-phy" have as a
-> separate entry from "qcom,sdm845-qmp-usb3-phy"?  Is
-> "qcom,qmp-v3-usb3-phy" expected to work on some non-SDM845 based
-> device?
->
-> Personally I think you should remove "qcom,qmp-v3-usb3-phy" from the
-> bindings as part of this patch (replacing it with the new string
-> qcom,sdm845-qmp-usb3-phy)".  Yeah, yeah bindings are forever.  ...but
-> that particular string was added about a month ago and (I believe) it
-> was intended for SDM845 anyway.  As per
-> <https://patchwork.kernel.org/patch/10302759/> match to the exact same
-> PHY data which leads extra credence to my belief.
->
-> If later on you find that some future chip can use the exact same
-> driver / settings as the SDM845 you can always list the
-> "qcom,sdm845-qmp-usb3-phy" string as a secondary compatible anyway.
->
-
-I agree. Will just remove "qcom,sdm845-qmp-usb3-phy"
-
-> -Doug
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+It is for standartizing all those error checks in init sequence by
+removing them. Modules won't have FS_PANIC.
