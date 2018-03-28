@@ -1,145 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeC1J4E (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 05:56:04 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:42823 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752297AbeC1J4B (ORCPT
+        id S1752852AbeC1KBo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 06:01:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38540 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbeC1KBm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 05:56:01 -0400
-X-Google-Smtp-Source: AG47ELuipAlNr1KgJSDh4sDzqp9FRE7ujleYKoDhJiHPILLZUMpfb9a2/mTyACw/253YVtw2J4VFDgEV08oF+T+9Wdf0uX5be4qV
+        Wed, 28 Mar 2018 06:01:42 -0400
+From: Colin King <colin.king@canonical.com>
+To: Satish Kharat <satishkh@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: fnic: fix spelling mistake: "abord" -> "abort"
+Date: Wed, 28 Mar 2018 11:01:37 +0100
+Message-Id: <20180328100137.13009-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Date: Wed, 28 Mar 2018 02:56:01 -0700
-In-Reply-To: <001a113f2be0b4b0ad0567464413@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b4f5de0568760341@google.com>
-Subject: Re: INFO: task hung in ucma_destroy_id
-From: syzbot <syzbot+449737930e1faf08523e@syzkaller.appspotmail.com>
-To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
-        ira.weiny@intel.com, jgg@ziepe.ca, leonro@mellanox.com,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        parav@mellanox.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found reproducer for the following crash on upstream commit
-3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
-Linux 4.16-rc7
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=449737930e1faf08523e
+From: Colin Ian King <colin.king@canonical.com>
 
-So far this crash happened 38 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6522989826801664
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4513717152645120
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6625862883475456
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
-compiler: gcc (GCC) 7.1.1 20170620
+Trivial fix to spelling mistake in message text
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+449737930e1faf08523e@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/fnic/fnic_trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-INFO: task syzkaller681645:4295 blocked for more than 120 seconds.
-       Not tainted 4.16.0-rc7+ #3
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syzkaller681645 D20744  4295   4293 0x00000000
-Call Trace:
-  context_switch kernel/sched/core.c:2862 [inline]
-  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
-  schedule+0xf5/0x430 kernel/sched/core.c:3499
-  schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
-  do_wait_for_common kernel/sched/completion.c:86 [inline]
-  __wait_for_common kernel/sched/completion.c:107 [inline]
-  wait_for_common kernel/sched/completion.c:118 [inline]
-  wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
-  ucma_destroy_id+0x2f0/0x500 drivers/infiniband/core/ucma.c:611
-  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
-  __vfs_write+0xef/0x970 fs/read_write.c:480
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x440719
-RSP: 002b:00007ffc7e451f28 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007ffc7e451f50 RCX: 0000000000440719
-RDX: 0000000000000018 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffc7e451fa0 R09: 00007ffc7e451fa0
-R10: 00007ffc7e451fa0 R11: 0000000000000246 R12: 0000000000402040
-R13: 00000000004020d0 R14: 0000000000000000 R15: 0000000000000000
-
-Showing all locks held in the system:
-2 locks held by khungtaskd/868:
-  #0:  (rcu_read_lock){....}, at: [<00000000dbcbeec6>]  
-check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
-  #0:  (rcu_read_lock){....}, at: [<00000000dbcbeec6>] watchdog+0x1c5/0xd60  
-kernel/hung_task.c:249
-  #1:  (tasklist_lock){.+.+}, at: [<000000003f35a062>]  
-debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
-1 lock held by rsyslogd/4176:
-  #0:  (&f->f_pos_lock){+.+.}, at: [<00000000337d089e>]  
-__fdget_pos+0x12b/0x190 fs/file.c:765
-2 locks held by getty/4266:
-  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4267:
-  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4268:
-  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4269:
-  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4270:
-  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4271:
-  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4272:
-  #0:  (&tty->ldisc_sem){++++}, at: [<0000000091eb7f81>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c6c6bab6>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 868 Comm: khungtaskd Not tainted 4.16.0-rc7+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
-  check_hung_task kernel/hung_task.c:132 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
-  watchdog+0x90c/0xd60 kernel/hung_task.c:249
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x6/0x10  
-arch/x86/include/asm/irqflags.h:54
+diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+index abddde11982b..98597b59c12a 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -296,7 +296,7 @@ int fnic_get_stats_data(struct stats_debug_info *debug,
+ 		  "Number of Abort FW Timeouts: %lld\n"
+ 		  "Number of Abort IO NOT Found: %lld\n"
+ 
+-		  "Abord issued times: \n"
++		  "Abort issued times: \n"
+ 		  "            < 6 sec : %lld\n"
+ 		  "     6 sec - 20 sec : %lld\n"
+ 		  "    20 sec - 30 sec : %lld\n"
+-- 
+2.15.1
