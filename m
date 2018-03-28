@@ -1,59 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754050AbeC1Pf0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:35:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753941AbeC1PfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:35:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C90AE2172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 28 Mar 2018 11:35:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Wang Yu <yuwang@linux.alibaba.com>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ftrace: fix task's invalid comm of <...> when big pid
-Message-ID: <20180328113522.21b4298b@gandalf.local.home>
-In-Reply-To: <1522240347-24465-1-git-send-email-yuwang@linux.alibaba.com>
-References: <1522240347-24465-1-git-send-email-yuwang@linux.alibaba.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753998AbeC1PiY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:38:24 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:48634 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753408AbeC1PiX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 11:38:23 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2] MIPS: Fix build with DEBUG_ZBOOT and MACH_JZ4770
+Date: Wed, 28 Mar 2018 17:38:12 +0200
+Message-Id: <20180328153812.2592-1-paul@crapouillou.net>
+In-Reply-To: <20180305170704.17073-1-paul@crapouillou.net>
+References: <20180305170704.17073-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018 20:32:27 +0800
-Wang Yu <yuwang@linux.alibaba.com> wrote:
+The debug definitions were missing for MACH_JZ4770, resulting in a build
+failure when DEBUG_ZBOOT was set.
 
-> when pid is bigger than PID_MAX_DEFAULT, the comm of task
-> is <...>, it is better use pid_max to compare
-> 
-> Signed-off-by: Wang Yu <yuwang@linux.alibaba.com>
-> ---
->  kernel/trace/trace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->  mode change 100644 => 100755 kernel/trace/trace.c
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> old mode 100644
-> new mode 100755
-> index 20a2300..0d4bc7a
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -1976,7 +1976,7 @@ static void __trace_find_cmdline(int pid, char comm[])
->  		return;
->  	}
->  
-> -	if (pid > PID_MAX_DEFAULT) {
-> +	if (pid > pid_max) {
+Since the UART addresses are the same across all Ingenic SoCs, we just
+use a #ifdef CONFIG_MACH_INGENIC instead of checking for individual
+Ingenic SoCs.
 
-Thanks! this probably should go to stable.
+Additionally, I added a #define for the UART0 address in-code and dropped
+the <asm/mach-jz4740/base.h> include, for the reason that this include
+file is slowly being phased out as the whole platform is being moved to
+devicetree.
 
--- Steve
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/boot/compressed/uart-16550.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->  		strcpy(comm, "<...>");
->  		return;
->  	}
+diff --git a/arch/mips/boot/compressed/uart-16550.c b/arch/mips/boot/compressed/uart-16550.c
+index b3043c08f769..aee8d7b8f091 100644
+--- a/arch/mips/boot/compressed/uart-16550.c
++++ b/arch/mips/boot/compressed/uart-16550.c
+@@ -18,9 +18,9 @@
+ #define PORT(offset) (CKSEG1ADDR(AR7_REGS_UART0) + (4 * offset))
+ #endif
+ 
+-#if defined(CONFIG_MACH_JZ4740) || defined(CONFIG_MACH_JZ4780)
+-#include <asm/mach-jz4740/base.h>
+-#define PORT(offset) (CKSEG1ADDR(JZ4740_UART0_BASE_ADDR) + (4 * offset))
++#ifdef CONFIG_MACH_INGENIC
++#define INGENIC_UART0_BASE_ADDR	0x10030000
++#define PORT(offset) (CKSEG1ADDR(INGENIC_UART0_BASE_ADDR) + (4 * offset))
+ #endif
+ 
+ #ifdef CONFIG_CPU_XLR
+-- 
+2.11.0
