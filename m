@@ -1,121 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752976AbeC1SsJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 14:48:09 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36227 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeC1SsI (ORCPT
+        id S1753148AbeC1SsU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 14:48:20 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:53841 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeC1SsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 14:48:08 -0400
-X-Google-Smtp-Source: AIpwx4+aei8mrQVg9nAav0FwYiicEACd0tFE6v1fVl4PklfxjaJzjL+H011EI5qif9oCxZpYKocpPA==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: LEROY Christophe <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Matt Brown <matthew.brown.dev@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] powerpc/altivec: Add missing prototypes for altivec
-Date: Wed, 28 Mar 2018 20:47:33 +0200
-Message-Id: <20180328184744.10650-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180322202007.23088-15-malat@debian.org>
-References: <20180322202007.23088-15-malat@debian.org>
+        Wed, 28 Mar 2018 14:48:09 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: linux-kernel@vger.kernel.org
+Cc: LKP <lkp@01.org>,
+        Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
+        wfg@linux.intel.com, kernel test robot <fengguang.wu@intel.com>
+References: <5abb446e.XtEK088UbWSHCPaF%fengguang.wu@intel.com>
+Date: Wed, 28 Mar 2018 13:47:03 -0500
+In-Reply-To: <5abb446e.XtEK088UbWSHCPaF%fengguang.wu@intel.com> (kernel test
+        robot's message of "Wed, 28 Mar 2018 15:29:50 +0800")
+Message-ID: <877epwavh4.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1f1G7A-0005oB-3v;;;mid=<877epwavh4.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/dLsrYZ35VLiS4igX5jGt7MRTERcLUxz0=
+X-SA-Exim-Connect-IP: 67.3.145.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        *  1.0 XM_Doc_Oz_Body BODY: Dr. Oz body dropper
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;linux-kernel@vger.kernel.org
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 2054 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 2.9 (0.1%), b_tie_ro: 2.0 (0.1%), parse: 0.79 (0.0%),
+        extract_message_metadata: 12 (0.6%), get_uri_detail_list: 1.65 (0.1%),
+        tests_pri_-1000: 6 (0.3%), tests_pri_-950: 1.11 (0.1%), tests_pri_-900: 0.91
+        (0.0%), tests_pri_-400: 23 (1.1%), check_bayes: 23 (1.1%), b_tokenize: 7
+        (0.3%), b_tok_get_all: 7 (0.4%), b_comp_prob: 2.3 (0.1%), b_tok_touch_all:
+        4.2 (0.2%), b_finish: 0.54 (0.0%), tests_pri_0: 174 (8.5%),
+        check_dkim_signature: 0.50 (0.0%), check_dkim_adsp: 2.6 (0.1%),
+        tests_pri_500: 1829 (89.0%), poll_dns_idle: 1818 (88.5%), rewrite_mail: 0.00
+        (0.0%)
+Subject: [PATCH] ipc/shm: Fix pid freeing.
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some functions prototypes were missing for the non-altivec code. Add the
-missing prototypes in a new header file, fix warnings treated as errors
-with W=1:
 
-  arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype for ‘xor_altivec_2’ [-Werror=missing-prototypes]
-  arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype for ‘xor_altivec_3’ [-Werror=missing-prototypes]
-  arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype for ‘xor_altivec_4’ [-Werror=missing-prototypes]
-  arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype for ‘xor_altivec_5’ [-Werror=missing-prototypes]
+The 0day kernel test build report reported an oops:
+>
+>  IP: put_pid+0x22/0x5c
+>  PGD 19efa067 P4D 19efa067 PUD 0
+>  Oops: 0000 [#1]
+>  CPU: 0 PID: 727 Comm: trinity Not tainted 4.16.0-rc2-00010-g98f929b #1
+>  RIP: 0010:put_pid+0x22/0x5c
+>  RSP: 0018:ffff986719f73e48 EFLAGS: 00010202
+>  RAX: 00000006d765f710 RBX: ffff98671a4fa4d0 RCX: ffff986719f73d40
+>  RDX: 000000006f6e6125 RSI: 0000000000000000 RDI: ffffffffa01e6d21
+>  RBP: ffffffffa0955fe0 R08: 0000000000000020 R09: 0000000000000000
+>  R10: 0000000000000078 R11: ffff986719f73e76 R12: 0000000000001000
+>  R13: 00000000ffffffea R14: 0000000054000fb0 R15: 0000000000000000
+>  FS:  00000000028c2880(0000) GS:ffffffffa06ad000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 0000000677846439 CR3: 0000000019fc1005 CR4: 00000000000606b0
+>  Call Trace:
+>   ? ipc_update_pid+0x36/0x3e
+>   ? newseg+0x34c/0x3a6
+>   ? ipcget+0x5d/0x528
+>   ? entry_SYSCALL_64_after_hwframe+0x52/0xb7
+>   ? SyS_shmget+0x5a/0x84
+>   ? do_syscall_64+0x194/0x1b3
+>   ? entry_SYSCALL_64_after_hwframe+0x42/0xb7
+>  Code: ff 05 e7 20 9b 03 58 c9 c3 48 ff 05 85 21 9b 03 48 85 ff 74 4f 8b 47 04 8b 17 48 ff 05 7c 21 9b 03 48 83 c0 03 48 c1 e0 04 ff ca <48> 8b 44 07 08 74 1f 48 ff 05 6c 21 9b 03 ff 0f 0f 94 c2 48 ff
+>  RIP: put_pid+0x22/0x5c RSP: ffff986719f73e48
+>  CR2: 0000000677846439
+>  ---[ end trace ab8c5cb4389d37c5 ]---
+>  Kernel panic - not syncing: Fatal exception
 
-The prototypes were already present in <asm/xor.h> but this header file is
-meant to be included after <include/linux/raid/xor.h>. Trying to re-use
-<asm/xor.h> directly would lead to warnings such as:
+In newseg when changing shm_cprid and shm_lprid from pid_t to struct
+pid* I misread the kvmalloc as kvzalloc and thought shp was
+initialized to 0.  As that is not the case it is not safe to for the
+error handling to address shm_cprid and shm_lprid before they are
+initialized.
 
-  arch/powerpc/include/asm/xor.h:39:15: error: variable ‘xor_block_altivec’ has initializer but incomplete type
+Therefore move the cleanup of shm_cprid and shm_lprid from the no_file
+error cleanup path to the no_id error cleanup path.  Ensuring that an
+early error exit won't cause the oops above.
 
-Trying to re-use <asm/xor.h> after <include/linux/raid/xor.h> in
-xor_vmx_glue.c would in turn trigger the following warnings:
-
-  include/asm-generic/xor.h:688:34: error: ‘xor_block_32regs’ defined but not used [-Werror=unused-variable]
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Reported-by:  kernel test robot <fengguang.wu@intel.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 ---
- arch/powerpc/include/asm/xor.h         | 12 +-----------
- arch/powerpc/include/asm/xor_altivec.h | 19 +++++++++++++++++++
- arch/powerpc/lib/xor_vmx_glue.c        |  1 +
- 3 files changed, 21 insertions(+), 11 deletions(-)
- create mode 100644 arch/powerpc/include/asm/xor_altivec.h
+ ipc/shm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/xor.h b/arch/powerpc/include/asm/xor.h
-index a36c2069d8ed..7d6dc503349d 100644
---- a/arch/powerpc/include/asm/xor.h
-+++ b/arch/powerpc/include/asm/xor.h
-@@ -24,17 +24,7 @@
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 018db3d0e70e..35bdfe76d11b 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -646,12 +646,12 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
+ 	return error;
  
- #include <asm/cputable.h>
- #include <asm/cpu_has_feature.h>
--
--void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in);
--void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in, unsigned long *v3_in);
--void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in, unsigned long *v3_in,
--		   unsigned long *v4_in);
--void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in, unsigned long *v3_in,
--		   unsigned long *v4_in, unsigned long *v5_in);
-+#include <asm/xor_altivec.h>
- 
- static struct xor_block_template xor_block_altivec = {
- 	.name = "altivec",
-diff --git a/arch/powerpc/include/asm/xor_altivec.h b/arch/powerpc/include/asm/xor_altivec.h
-new file mode 100644
-index 000000000000..6ca923510b59
---- /dev/null
-+++ b/arch/powerpc/include/asm/xor_altivec.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_POWERPC_XOR_ALTIVEC_H
-+#define _ASM_POWERPC_XOR_ALTIVEC_H
-+
-+#ifdef CONFIG_ALTIVEC
-+
-+void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in);
-+void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in, unsigned long *v3_in);
-+void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in, unsigned long *v3_in,
-+		   unsigned long *v4_in);
-+void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in, unsigned long *v3_in,
-+		   unsigned long *v4_in, unsigned long *v5_in);
-+
-+#endif
-+#endif /* _ASM_POWERPC_XOR_ALTIVEC_H */
-diff --git a/arch/powerpc/lib/xor_vmx_glue.c b/arch/powerpc/lib/xor_vmx_glue.c
-index 6521fe5e8cef..dab2b6bfcf36 100644
---- a/arch/powerpc/lib/xor_vmx_glue.c
-+++ b/arch/powerpc/lib/xor_vmx_glue.c
-@@ -13,6 +13,7 @@
- #include <linux/export.h>
- #include <linux/sched.h>
- #include <asm/switch_to.h>
-+#include <asm/xor_altivec.h>
- #include "xor_vmx.h"
- 
- void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
+ no_id:
++	ipc_update_pid(&shp->shm_cprid, NULL);
++	ipc_update_pid(&shp->shm_lprid, NULL);
+ 	if (is_file_hugepages(file) && shp->mlock_user)
+ 		user_shm_unlock(size, shp->mlock_user);
+ 	fput(file);
+ no_file:
+-	ipc_update_pid(&shp->shm_cprid, NULL);
+-	ipc_update_pid(&shp->shm_lprid, NULL);
+ 	call_rcu(&shp->shm_perm.rcu, shm_rcu_free);
+ 	return error;
+ }
 -- 
-2.11.0
+2.14.1
