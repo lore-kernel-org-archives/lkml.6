@@ -1,53 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752633AbeC1Luf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:50:35 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:45080 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752364AbeC1Lua (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 07:50:30 -0400
-Date: Wed, 28 Mar 2018 14:48:15 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] tracing: Uninitialized variable in
- create_tracing_map_fields()
-Message-ID: <20180328114815.GC29050@mwanda>
+        id S1752654AbeC1L5G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:57:06 -0400
+Received: from verein.lst.de ([213.95.11.211]:45378 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750774AbeC1L5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 07:57:04 -0400
+Date: Wed, 28 Mar 2018 13:57:03 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: dma_zalloc_coherent broken with
+        57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7
+Message-ID: <20180328115703.GA31426@lst.de>
+References: <alpine.LFD.2.21.1803270944490.1726@schleppi> <20180327143341.GA4968@lst.de> <alpine.LFD.2.21.1803271717580.26440@schleppi> <20180327164505.GA10522@lst.de> <alpine.LFD.2.21.1803271900390.18934@schleppi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8845 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=840
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803280121
+In-Reply-To: <alpine.LFD.2.21.1803271900390.18934@schleppi>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Smatch complains that idx can be used uninitialized when we check if
-(idx < 0).  It has to be the first iteration through the loop and the
-HIST_FIELD_FL_STACKTRACE bit has to be clear and the HIST_FIELD_FL_VAR
-bit has to be set to reach the bug.
+On Tue, Mar 27, 2018 at 07:04:51PM +0200, Sebastian Ott wrote:
+> What was wrong with the old behavior (let the caller decide - the same
+> as with memory allocations)?
 
-Fixes: 30350d65ac56 ("tracing: Add variable support to hist triggers")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 4f027642ceef..6aceee287d07 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -4411,7 +4411,7 @@ static int create_tracing_map_fields(struct hist_trigger_data *hist_data)
- 	struct tracing_map *map = hist_data->map;
- 	struct ftrace_event_field *field;
- 	struct hist_field *hist_field;
--	int i, idx;
-+	int i, idx = 0;
- 
- 	for_each_hist_field(i, hist_data) {
- 		hist_field = hist_data->fields[i];
+The old behavior on most (all?) mainstream architectures is that we
+always zero the return value.  On x86/i386 this goes back to at least
+Linux 2.4.  So common drivers simply expect this to happen.
