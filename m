@@ -1,109 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754185AbeC1Pqc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:46:32 -0400
-Received: from fieldses.org ([173.255.197.46]:59234 "EHLO fieldses.org"
+        id S1754191AbeC1Prz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:47:55 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:39382 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753816AbeC1Pq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:46:28 -0400
-Date: Wed, 28 Mar 2018 11:46:28 -0400
-From: "J. Bruce Fields" <bfields@fieldses.org>
-To: Eric Biggers <ebiggers@google.com>
-Cc: Michael Young <m.a.young@durham.ac.uk>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: NFS mounts failing when keytab present on client
-Message-ID: <20180328154628.GA3038@fieldses.org>
-References: <alpine.LFD.2.21.1803272126070.3013@austen3.home>
- <20180327222950.GB257332@google.com>
+        id S1753816AbeC1Prx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 11:47:53 -0400
+To: christian.koenig@amd.com, Christoph Hellwig <hch@infradead.org>
+Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-2-christian.koenig@amd.com>
+ <20180328123830.GB25060@infradead.org>
+ <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
+Date: Wed, 28 Mar 2018 09:47:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327222950.GB257332@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 03:29:50PM -0700, Eric Biggers wrote:
-> Hi Michael,
-> 
-> On Tue, Mar 27, 2018 at 11:06:14PM +0100, Michael Young wrote:
-> > NFS mounts stopped working on one of my computers after a kernel update from
-> > 4.15.3 to 4.15.4. I traced the problem to the commit
-> > [46e8d06e423c4f35eac7a8b677b713b3ec9b0684] crypto: hash - prevent using
-> > keyed hashes without setting key
-> > and a later kernel with this patch reverted works normally.
-> > 
-> > The problem seems to be related to kerberos as the mount fails when the
-> > keytab is present, but works if I rename the keytab file. This is true even
-> > though the mount is with sec=sys . The mount should also work with sec=krb5
-> > but that also fails in the same way. When the mount fails there are errors
-> > in dmesg like
-> > [ 1232.522816] gss_marshal: gss_get_mic FAILED (851968)
-> > [ 1232.522819] RPC: couldn't encode RPC header, exit EIO
-> > [ 1232.522856] gss_marshal: gss_get_mic FAILED (851968)
-> > [ 1232.522857] RPC: couldn't encode RPC header, exit EIO
-> > [ 1232.522863] NFS: nfs4_discover_server_trunking unhandled error -5.
-> > Exiting with error EIO
-> > [ 1232.525039] gss_marshal: gss_get_mic FAILED (851968)
-> > [ 1232.525042] RPC: couldn't encode RPC header, exit EIO
-> > 
-> > 	Michael Young
-> 
-> Thanks for the bug report.  I think the error is coming from
-> net/sunrpc/auth_gss/gss_krb5_crypto.c.  There are two potential problems I see.
-> The first one, which is definitely a bug, is that make_checksum_hmac_md5()
-> allocates an HMAC transform and request, then does these crypto API calls:
-> 
-> 	crypto_ahash_init()
-> 	crypto_ahash_setkey()
-> 	crypto_ahash_digest()
-> 
-> This is wrong because it makes no sense to init() the HMAC request before the
-> key has been set, and doubly so when it's calling digest() which is shorthand
-> for init() + update() + final().  So I think it just needs to be removed.  You
-> can test the following patch:
-
-When was this introduced? 
-
-3b5cf20cf439 "sunrpc: Use skcipher and ahash/shash"
-	- probably not, assuming the above was still just as wrong with
-	  crypto_hash_{init,setkey,digest} as it is with
-	  crypto_ahash_{init,setkey,digest}
-
-So I'm guessing it was wrong from the start when it was added by
-fffdaef2eb4a "gss_krb5: Add support for rc4-hmac encryption" 8 years
-ago.  Wonder why it took this long to notice?  Did something else
-change?
-
---b.
 
 
+On 28/03/18 09:07 AM, Christian König wrote:
+> Am 28.03.2018 um 14:38 schrieb Christoph Hellwig:
+>> On Sun, Mar 25, 2018 at 12:59:54PM +0200, Christian König wrote:
+>>> From: "wdavis@nvidia.com" <wdavis@nvidia.com>
+>>>
+>>> Add an interface to find the first device which is upstream of both
+>>> devices.
+>> Please work with Logan and base this on top of the outstanding peer
+>> to peer patchset.
 > 
-> diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-> index 12649c9fedab..8654494b4d0a 100644
-> --- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
-> +++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
-> @@ -237,9 +237,6 @@ make_checksum_hmac_md5(struct krb5_ctx *kctx, char *header, int hdrlen,
->  
->         ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
->  
-> -       err = crypto_ahash_init(req);
-> -       if (err)
-> -               goto out;
->         err = crypto_ahash_setkey(hmac_md5, cksumkey, kctx->gk5e->keylength);
->         if (err)
->                 goto out;
-> 
-> If that's not it, it's also possible that the error is coming from the
-> crypto_ahash_init() in make_checksum().  That can only happen if 'cksumkey' is
-> NULL and the hash algorithm is keyed, which implies a logical error as it
-> doesn't make sense to use a keyed hash algorithm without the key.  The callers
-> do check kctx->gk5e->keyed_cksum which I'd hope would prevent this, though
-> perhaps kctx->cksum can be NULL.
-> 
-> Eric
+> Can you point me to that? The last code I could find about that was from 
+> 2015.
+
+The latest posted series is here:
+
+https://lkml.org/lkml/2018/3/12/830
+
+However, we've made some significant changes to the area that's similar
+to what you are doing. You can find lasted un-posted here:
+
+https://github.com/sbates130272/linux-p2pmem/tree/pci-p2p-v4-pre2
+
+Specifically this function would be of interest to you:
+
+https://github.com/sbates130272/linux-p2pmem/blob/0e9468ae2a5a5198513dd12990151e09105f0351/drivers/pci/p2pdma.c#L239
+
+However, the difference between what we are doing is that we are
+interested in the distance through the common upstream device and you
+appear to be finding the actual common device.
+
+Thanks,
+
+Logan
