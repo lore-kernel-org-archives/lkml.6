@@ -1,99 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751204AbeC1X2K (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 19:28:10 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:51138 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751058AbeC1X2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 19:28:08 -0400
-Date: Thu, 29 Mar 2018 00:28:05 +0100
-From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To: Timothy Normand Miller <theosib@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: HELP PLEASE: Without ugly hacks, no interrupt delivery at all
- to our driver; 3.10.0 kernel (RHEL7.4) on Intel 82X38/X48 chipset, Shuttle
- (SX38/FX38, Core 2 Duo)
-Message-ID: <20180329002805.2824f7af@alans-desktop>
-In-Reply-To: <CAK7bmU-P0siz3pD9cHeuKMzK0PHZd4R8XqFDKswVkr4hwZ=-2g@mail.gmail.com>
-References: <CAK7bmU-P0siz3pD9cHeuKMzK0PHZd4R8XqFDKswVkr4hwZ=-2g@mail.gmail.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        id S1751191AbeC1XnD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 19:43:03 -0400
+Received: from smtp-proxy001.phy.lolipop.jp ([157.7.104.42]:37374 "EHLO
+        smtp-proxy001.phy.lolipop.jp" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751052AbeC1XnC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 19:43:02 -0400
+Subject: Re: [PATCH v2] pcm_native: Remove VLA usage
+To: Kyle Spiers <kyle@spiers.me>, perex@perex.cz
+Cc: tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, keescook@chromium.org
+References: <1522275840-14092-1-git-send-email-kyle@spiers.me>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Message-ID: <f9720994-b65b-bbf8-334c-a6643b98c131@sakamocchi.jp>
+Date: Thu, 29 Mar 2018 08:42:57 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1522275840-14092-1-git-send-email-kyle@spiers.me>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I suspect a large part of the problem is that our device isn't really
-> a PCIe device.  It's a PCI device retrofitted with a TI
-> XIO2000(A)/XIO2200A PCI Express-to-PCI Bridge.  Large numbers of this
+Hi,
 
-That really shouldn't be an issue. Just about every PC up to a few years
-ago has something that at least looks like a PCIe to PCI bridge on it
-somewhere (or buried in the chipset) to handle the PCI slots. There are
-also a vast number of older PCIe cards that are in fact PCI devices glued
-to PCIe x1 this way (or by worse things) in the market.
-
-..
-
-> The next thing I notice is that all of a sudden, the interrupt line
-> for our chip has changed:
+On Mar 29 2018 07:24, Kyle Spiers wrote:
+> As part of the effort to remove VLAs from the kernel[1], this changes
+> the allocation of the rstamps array from being on the stack to being
+> kcalloc()ed. This also allows for the removal of the explicit zeroing
+> loop.
 > 
-> 02:00.0 Display controller: Tech-Source Device 0043
->         Subsystem: Tech-Source Device 0043
->         Control: I/O- Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop-
-> ParErr- Stepping- SERR- FastB2B+ DisINTx-
->         Status: Cap- 66MHz+ UDF- FastB2B+ ParErr- DEVSEL=medium
-> >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-  
->         Interrupt: pin A routed to IRQ 16
-> 
-> Some more debug messages later, and I find out that it was
-> pci_enable_device that changed the IRQ line:
+> Signed-off-by: Kyle Spiers <kyle@spiers.me>
+> ---
+>   sound/core/pcm_native.c | 11 +++++++----
+>   1 file changed, 7 insertions(+), 4 deletions(-)
 
-Yes it can do that.
+This bug was already fixed at a commit 5730f9f744cf ('
+ALSA: pcm: Remove VLA usage')[1][2].
 
-> So, the pci_dev struct has had irq updated to 16, and lspci reports
-> that the IRQ line has been updated to 16 in the hardware.  So why is
-> it that when I read PCI config space directly, I get the old value?
-> In fact, lspci is apparently LYING about this!  Here's what I get from
-> a raw dump of PCI config space:
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/sound/core/pcm_native.c?h=for-next&id=5730f9f744cfe20b771adc33f3b476b95d3eebba
+[2] 
+http://mailman.alsa-project.org/pipermail/alsa-devel/2018-March/133268.html
 
-The hardware generates INTA-INTD, your bridge should turn those into the
-in band PCIe messages for INTA-INTD. The IRQ 'number' is just a
-configuration construct, and in fact it's very much a *PC* BIOS one.
 
-However pci_assign_irq does always update the INTERRUPT_LINE register
-because it has to do so for certain 'fake PCI' environments (like some
-old VIA chipsets) where the INTERRUPT_LINE is used for IRQ routing magic
-internally.
+Thanks
 
-Anyway it shouldn't matter!
-
-> long after booting.  There seems to be a global function pointer
-> pcibios_enable_irq that is called from pcibios_enable_device.  And
-> this brings me to the question as to what is the difference between
-> pci_ calls and pcibios_ calls.  One thing I can see is that
-
-Armwavingly 'generic' vs 'platform specific'. If you look at a modern
-kernel you'll find pci_assign_irq deals with all of this and does update
-the LINE register. 3.10 is five years old (I actually had hair when it
-came out) so this is really the wrong place to worry about ancient
-computing history.
-
-> In the Documention on PCI, it mentions using pci_enable_msi and
-> pci_enable_msix calls.  That and other text makes it pretty clear that
-> INTx interrupts are the *default*, and MSI has to be enabled
-
-Yes.
-
-> explicitly.  Looking at do_pci_enable_device, if msi and msix are
-> disabled, then it will clear PCI_COMMAND_INTX_DISABLE on the device,
-> but it doesn't ascend the bridge hierarchy fixing those too.
-
-Do you see the same problem with a current 4.x kernel ? If you then it's
-definitely worth further discussion (and I've added linux-pci to the cc),
-if it works fine in 4.14, then I'd stick your hack in the Red Hat driver,
-and remember its not something anyone is too likely to fix there.
-
-Alan
+Takashi Sakamoto
