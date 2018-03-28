@@ -1,41 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753401AbeC1NWP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:22:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751072AbeC1NWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:22:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1507B217D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AIpwx49LIwavn1GxDIVq7ldVXfXskOkhQa9R8HFRp3k01/yhgWKywhryJ6/XmhxWFN6pNQ5H8hWcxcGyvVwzJ7SQsRI=
+        id S1753478AbeC1NW4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:22:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40600 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751166AbeC1NWz (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:22:55 -0400
+Date: Wed, 28 Mar 2018 15:22:52 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+Subject: Re: [PATCH v2 4/4] perf: Support perf -vv
+Message-ID: <20180328132252.GM3102@krava>
+References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+ <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1522207358-8388-1-git-send-email-Anson.Huang@nxp.com>
-References: <1522207358-8388-1-git-send-email-Anson.Huang@nxp.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 28 Mar 2018 08:21:51 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK4pmAzvJAFg5EfCdBiEywnaCy_gJ0-J7FwkPk9i8shBQ@mail.gmail.com>
-Message-ID: <CAL_JsqK4pmAzvJAFg5EfCdBiEywnaCy_gJ0-J7FwkPk9i8shBQ@mail.gmail.com>
-Subject: Re: [PATCH V2 1/4] dt-bindings: timer: tpm: fix typo of clock name
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <Linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 10:22 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> The clock name should be ipg instead of igp.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Wed, Mar 28, 2018 at 10:57:08PM +0800, Jin Yao wrote:
+> We keep having bug reports that when users build perf on their own,
+> but they don't install some needed libraries such as libelf,
+> libbfd/libibery.
+> 
+> The perf can build, but it is missing important functionality.
+> 
+> This patch provides a new option '-vv' which will print the
+> compiled-in status of libraries.
+> 
+> The 'perf -vv' is equal to 'perf -version --build-options'.
+> 
+> For example:
+> 
+> $ ./perf -vv or ./perf -version --build-options
+> perf version 4.13.rc5.gcb1183
+>                  dwarf: [ on  ]
+>     dwarf_getlocations: [ on  ]
+>                  glibc: [ on  ]
+>                   gtk2: [ on  ]
+>               libaudit: [ OFF ]
+>                 libbfd: [ on  ]
+>                 libelf: [ on  ]
+>                libnuma: [ on  ]
+> numa_num_possible_cpus: [ on  ]
+>                libperl: [ on  ]
+>              libpython: [ on  ]
+>               libslang: [ on  ]
+>              libcrypto: [ on  ]
+>              libunwind: [ on  ]
+>     libdw-dwarf-unwind: [ on  ]
+>                   zlib: [ on  ]
+>                   lzma: [ on  ]
+>              get_cpuid: [ on  ]
+>                    bpf: [ on  ]
+> [ on  ]: library is compiled-in
+> [ OFF ]: library is disabled in make configuration
+>          OR library is not installed in build environment
+> 
+> v2:
 > ---
->  Documentation/devicetree/bindings/timer/nxp,tpm-timer.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Use a global variable version_verbose to count the number of 'v'.
+> 
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/perf.c | 22 ++++++++++++++++++----
+>  tools/perf/perf.h |  1 +
+>  2 files changed, 19 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+> index 1b3fc8e..355219e 100644
+> --- a/tools/perf/perf.c
+> +++ b/tools/perf/perf.c
+> @@ -32,7 +32,7 @@
+>  #include <linux/kernel.h>
+>  
+>  const char perf_usage_string[] =
+> -	"perf [--version] [--help] [OPTIONS] COMMAND [ARGS]";
+> +	"perf [--version [--build-options]] [--help] [OPTIONS] COMMAND [ARGS]";
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--build-options is 'perf version' option no?
+
+jirka
