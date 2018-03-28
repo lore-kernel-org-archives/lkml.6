@@ -1,167 +1,117 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2371949-1522244545-2-3272732948263381168
+X-Cyrus-Session-Id: sloti22d1t05-2466908-1522247823-2-12456662363310398447
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522244544; b=NzOcgTZfXAjvWryG4Y1P8VXIvFQXWOqoqCUxzKG0Bfzt4ND
-    OxKn5RoFlocnl7sexshZXdZJRHK3//wWpfJVpDyF2kfcelFphT0EuHTe7asFf1ux
-    j3XsYLfgJ5pqiklIKv9+NBa525xCYvwXs+NjUEmXTo0aMZy05aXKT9BU7jZjgW6M
-    9K/7eKady76SFbT5BCrvGlBayQc0AHVVSICxKz1obIPCVSGMuqlt851G65Xvi6jj
-    KKnjc1LQdj0KdoTtYg/LnmgLdgmJbs8Vpmo5vvXAgflkGVoJVefckl7asZm8Fler
-    qR8g3FpP5FCTyQ5IfKivNzYTBSmd5ngnsp/xbEA==
+    t=1522247821; b=rYTvLwFzJLke6JJnwluVgRr59yFdiim5HhFwerMmW5NCOYE
+    p9XAiado2eAzdyS42CBIWbf8uPnHZGnMNk6V3/v3H48fjoX9LXtB/adFB1zd0aPe
+    MpK/XA1sXnBUTO2FDu2ieZ054es7hR7dGdjWnc2Zw8H3ejycpWan0w4tGIAyGuoN
+    be4KZMK751H8tDiZ0nl5iaPbU3KSPBN1x6lvjKmnJwOAd7SOJgqjJsOjT3+uleHq
+    FggngJVeAtGYMKN8Q9+6QvHWs8mJ6p4cwH8jJp9v23s1yneJn37+8lJdZNT7Mu8J
+    1UTyUFxabElhLp+WBN5vwKqygY5rTt+PXFb+BWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1522244544; bh=lm70r1FMKC5DS32Db5lljDBLJL
-    B0IqIjIIerTZFecZo=; b=jO2oVqDy/LWNQvRlBef514YYVINV1vFG4O6oSowlZr
-    VbE/UUbg9RkQi0gFIFBXCt/LX6yw8R8yn+w+jLVHJ+y+loW4bLtoS/T0UNZ9Zas8
-    fkmDG2QYafQa679Nvhp2dRdfeZWcsNsq6svLgonPBZMdbm8LWR/i33QMlPI6U5S4
-    e+CdlilKJpGhJgvI6FadXoDvS3KH5haL+m9Wp36fV6Z3Cjq6/g56GcH3gx+ODfyE
-    BrKf23lfI4FZo6edpcgpjJVtScfSjzm0MJxowpD87Wcwjtt7+Qti/K955ZIKnmtw
-    3idZi/W3RRCOsRSV+KKDNTdKBs3/R1MJAY8+vXUIPMOw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=CAO8T/0J x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=date:message-id:from:to:cc:subject
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1522247821; bh=Xf7r5KGb4JaHUAXGXgrdRCWEWE
+    /e9KHHs8EoCR9obUQ=; b=mE8xFmCpNr7ul5Ujg+/73Ng2xIIwNXwQjXbQW78iXs
+    C8ZgzP1eK7Hm6xiVhhUZCZqdivAOwwNMyLzHv2ubsIyRXakEYfI9HL3MQlBN6l9c
+    qzPX5YURmv3G8qd+2AVUsSSnQ8ehgK/Q8vOCTpVdh1JQF+nASxhcvsCjjOe5eS7U
+    Q2Pok7Hq2xfcpFrHvLWuzwrmzJ3aThOvroXSLgupkmeetgZdVjrjtWV/TfkoRGC5
+    lmzz+33A23FE9eKr03s3LHqtQ1ODaW+P1b2OSgk4j61GpMoVsWTtca9Iv7rd23tt
+    F46SzcPZPRFDi4RA1yd0D75p/YrvYMNxrxCSAL2OM0tg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dMxaOf0V;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=CAO8T/0J x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=dMxaOf0V;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBiTUFk0VDsxx+RPKcVhbLK5zSsAiVt7sg+aSt/O/V0KA1zzirD0i5Q3Sz470B2YUbH4DcVgiKn9AH4eiD29f5U5tuAGJhQfiWmJddg7e8pYQmOBcvbH
-    eD8rZ3vRXeSveR+wIkx5VjmQ4Ob4Ontu9EbnM2ubzL5y4opiSdbD81k76KBAAuTr8IVycHggNYiSZZh5Tst6rbUtNxr6l1kRCWznR5l5wWqeK0GZA8UvC/GV
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=1_nJWWfMPkEA:10
-    a=v2DPQv5-lfwA:10 a=Ikd4Dj_1AAAA:8 a=VwQbUJbxAAAA:8 a=26cpz8QqEJyKJuvEvpMA:9
+X-CM-Envelope: MS4wfFOQEWH1+TU5/KuT6BNoJlRPa09IIisUnXK7bXwQd74h5Seql0l4RhHzExfQJ8x5obPxBXs1ZALOgfw8Of/X8v1tvywjOKHJ0bA6Bp4NyF487zacEwGB
+    wwctmQGd4iOvCQsj7Y3s+7J2Xo0R9sf+Sw0k1eyrZ1xt87sBW9vMsEeQeUQ1LChaR9bQKgPVWK0inSHUNtlBjQdBsNdZQAhE6e+nhygb5lpgrhVFpIZ1zNnV
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=Ikd4Dj_1AAAA:8 a=VwQbUJbxAAAA:8 a=ZT99ZMyLIs6YAo3Tj4AA:9 a=CjuIK1q_8ugA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753124AbeC1NmX (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Mar 2018 09:42:23 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38627 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751207AbeC1NmW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Mar 2018 09:42:22 -0400
-X-Google-Smtp-Source: AIpwx49NFdN0zE1c1KkjMygZUPRvcfsOMRYIWIlUdOfyKbnU+Bjt4vqO6AAeQl926UUMac6fE//iqQ==
-From: Aniruddha Banerjee <aniruddha.nitd@gmail.com>
-To: marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc: aniruddhab@nvidia.com, stable@vger.kernel.org, vipink@nvidia.com,
+        id S1753663AbeC1OhA (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Mar 2018 10:37:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45060 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753403AbeC1Og7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 28 Mar 2018 10:36:59 -0400
+Date: Wed, 28 Mar 2018 15:36:53 +0100
+Message-ID: <86370ks1ve.wl-marc.zyngier@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Aniruddha Banerjee <aniruddha.nitd@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        aniruddhab@nvidia.com, stable@vger.kernel.org, vipink@nvidia.com,
         strasi@nvidia.com, swarren@nvidia.com, jonathanh@nvidia.com,
         talho@nvidia.com, treding@nvidia.com
-Subject: [PATCHv4] irqchip: arm-gic: take gic_lock when updating irq type
-Date: Wed, 28 Mar 2018 19:12:00 +0530
-Message-Id: <20180328134200.7435-1-aniruddha.nitd@gmail.com>
-X-Mailer: git-send-email 2.16.2
+Subject: Re: [PATCHv4] irqchip: arm-gic: take gic_lock when updating irq type
+In-Reply-To: <20180328134200.7435-1-aniruddha.nitd@gmail.com>
+References: <20180328134200.7435-1-aniruddha.nitd@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Aniruddha Banerjee <aniruddhab@nvidia.com>
+On Wed, 28 Mar 2018 14:42:00 +0100,
+Aniruddha Banerjee wrote:
+> 
+> From: Aniruddha Banerjee <aniruddhab@nvidia.com>
+> 
+> The kernel documentation states that the locking of the irq-chip
+> registers should be handled by the irq-chip driver. In the irq-gic,
+> the accesses to the irqchip are seemingly not protected and multiple
+> writes to SPIs from different irq descriptors do RMW requests without
+> taking the irq-chip lock. When multiple irqs call the request_irq at
+> the same time, there can be a simultaneous write at the gic
+> distributor, leading to a race. Acquire the gic_lock when the
+> irq_type is updated.
+> 
+> Cc: stable@vger.kernel.org
+> 
+> Signed-off-by: Aniruddha Banerjee <aniruddhab@nvidia.com>
 
-The kernel documentation states that the locking of the irq-chip
-registers should be handled by the irq-chip driver. In the irq-gic,
-the accesses to the irqchip are seemingly not protected and multiple
-writes to SPIs from different irq descriptors do RMW requests without
-taking the irq-chip lock. When multiple irqs call the request_irq at
-the same time, there can be a simultaneous write at the gic
-distributor, leading to a race. Acquire the gic_lock when the
-irq_type is updated.
+I've applied this after having reworked the commit log a bit.
 
-Cc: stable@vger.kernel.org
+Thanks,
 
-Signed-off-by: Aniruddha Banerjee <aniruddhab@nvidia.com>
----
+	M.
 
-Change from V1:
-* Moved the spinlock from irq-gic to irq-gic common, so that the fix
-is valid for GIC v1/v2/v3.
-
-Change from V2:
-* Fixup the Signed-off-by line.
-
-Change from V3:
-* Change raw_spin_lock to raw_spin_lock_irqsave and spin_unlock to
-raw_spin_unlock_irqrestore to protect against a potential deadlock
-when an interrupt handler changes the trigger type of any interrupt.
-
- drivers/irqchip/irq-gic-common.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-index 9ae71804b5dd..1c2ca8d51a70 100644
---- a/drivers/irqchip/irq-gic-common.c
-+++ b/drivers/irqchip/irq-gic-common.c
-@@ -21,6 +21,8 @@
- 
- #include "irq-gic-common.h"
- 
-+static DEFINE_RAW_SPINLOCK(irq_controller_lock);
-+
- static const struct gic_kvm_info *gic_kvm_info;
- 
- const struct gic_kvm_info *gic_get_kvm_info(void)
-@@ -52,11 +54,13 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
- 	u32 confoff = (irq / 16) * 4;
- 	u32 val, oldval;
- 	int ret = 0;
-+	unsigned long flags;
- 
- 	/*
- 	 * Read current configuration register, and insert the config
- 	 * for "irq", depending on "type".
- 	 */
-+	raw_spin_lock_irqsave(&irq_controller_lock, flags);
- 	val = oldval = readl_relaxed(base + GIC_DIST_CONFIG + confoff);
- 	if (type & IRQ_TYPE_LEVEL_MASK)
- 		val &= ~confmask;
-@@ -64,8 +68,10 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
- 		val |= confmask;
- 
- 	/* If the current configuration is the same, then we are done */
--	if (val == oldval)
-+	if (val == oldval) {
-+		raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
- 		return 0;
-+	}
- 
- 	/*
- 	 * Write back the new configuration, and possibly re-enable
-@@ -83,6 +89,7 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
- 			pr_warn("GIC: PPI%d is secure or misconfigured\n",
- 				irq - 16);
- 	}
-+	raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
- 
- 	if (sync_access)
- 		sync_access();
 -- 
-2.16.2
+Jazz is not dead, it just smell funny.
