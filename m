@@ -1,201 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753473AbeC1HjB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:39:01 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43514 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753437AbeC1Hi6 (ORCPT
+        id S1753458AbeC1Hi7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:38:59 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33674 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753340AbeC1Hiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:38:58 -0400
-X-Google-Smtp-Source: AIpwx4+n2FGZOUQHe5x6XoqDTUvS3rHsB4lT5TX+9mFWRYn5vz7oQCmpl+yG5Te3Q/xfwOflb7JLNw==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, daniel.vetter@intel.com, seanpaul@chromium.org,
-        gustavo@padovan.org
-Cc: andr2000@gmail.com,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        intel-gfx@lists.freedesktop.org
-Subject: [PATCH] drm: Use srcu to protect drm_device.unplugged
-Date: Wed, 28 Mar 2018 10:38:35 +0300
-Message-Id: <1522222715-11814-1-git-send-email-andr2000@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 28 Mar 2018 03:38:55 -0400
+X-Google-Smtp-Source: AIpwx48Qhyr5IBnq2x1c0hKouKTNesbnzbxrdkrFI3s1zNbqYdnDfvYZIAV0xc1wKkmRN+P9dszxCA==
+Date: Wed, 28 Mar 2018 09:38:51 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Masaki Ota <masaki.ota@jp.alps.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aaron Ma <aaron.ma@canonical.com>
+Subject: Re: [PATCH] Input: ALPS - fix DualPoint flag for 74 03 28 devices
+Message-ID: <20180328073851.o5lkw24hhr4sxxhz@pali>
+References: <20171115063404.10066-1-aaron.ma@canonical.com>
+ <20171115083529.jmlpcj4td4evj3xl@pali>
+ <TYXPR01MB07195A0116F835764DE99882C72E0@TYXPR01MB0719.jpnprd01.prod.outlook.com>
+ <20180129225138.voujq54itw7yblbi@dtor-ws>
+ <CAKdAkRRjMrpdjuaivh-5bKCCgYpcySqDCKzbuvso1_x_+Qkp1w@mail.gmail.com>
+ <20180325212541.5wzpvlkcbayfktrz@pali>
+ <TYXPR01MB0719F95C7B4E9FD0FF313BEFC7AC0@TYXPR01MB0719.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <TYXPR01MB0719F95C7B4E9FD0FF313BEFC7AC0@TYXPR01MB0719.jpnprd01.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Noralf Trønnes <noralf@tronnes.org>
+Ideally this information should be put as a comment into the code. It is
+really not obvious.
 
-Use srcu to protect drm_device.unplugged in a race free manner.
-Drivers can use drm_dev_enter()/drm_dev_exit() to protect and mark
-sections preventing access to device resources that are not available
-after the device is gone.
+On Tuesday 27 March 2018 04:37:19 Masaki Ota wrote:
+> Hi, 
+> 
+> We can get OTP page 0 value by EA EA E9 commands, but we cannot get it by EA EA EA E9.
+> As far as I remember, Device initialization finish at EA command, then sends EA EA E9 commands.
+> In this case we cannot get correct OTP page 0 value.
+> So I changed this order. (We can get OTP page 1 value by both of EA F0 F0 E9 and F0 F0 E9.)
+> 
+> Best Regards,
+> Masaki Ota
+> -----Original Message-----
+> From: Pali Rohár [mailto:pali.rohar@gmail.com] 
+> Sent: Monday, March 26, 2018 6:26 AM
+> To: 太田 真喜 Masaki Ota <masaki.ota@jp.alps.com>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Aaron Ma <aaron.ma@canonical.com>
+> Subject: Re: [PATCH] Input: ALPS - fix DualPoint flag for 74 03 28 devices
+> 
+> On Tuesday 20 March 2018 11:47:26 Dmitry Torokhov wrote:
+> > On Mon, Jan 29, 2018 at 2:51 PM, dmitry.torokhov@gmail.com 
+> > <dmitry.torokhov@gmail.com> wrote:
+> > > Hi,
+> > >
+> > > On Thu, Nov 16, 2017 at 07:27:02AM +0000, Masaki Ota wrote:
+> > >> Hi, Pali, Aaron,
+> > >>
+> > >> Current code is correct device setting, previous code is wrong.
+> > >> If the trackstick does not work(DUALPOINT flag disable), Device Firmware setting is wrong.
+> > >>
+> > >> But recently I received the same report from Thinkpad L570 user, and I checked this device and found this device Firmware setting is wrong. Sorry for our mistake.
+> > >> Is your laptop L570 ?
+> > >>
+> > >> I will add code that supports the trackstick for this device.
+> > >
+> > > Sorry for resurrecting this old thread, I am just trying to 
+> > > understand what went wrong here. Is the sequence of "f0 f0 e9" and 
+> > > "ea ea e9" is important in getting the correct OTP data and we 
+> > > originally got this order wrong? It is not clear from the original 
+> > > patch and discussion that this change was intentional.
+> > 
+> > Could I please get an answer to my question?
+> > 
+> > Thanks!
+> 
+> Masaki, this question is for you ↑↑↑
+> 
+> > >
+> > > Thanks.
+> > >
+> > >>
+> > >> Best Regards,
+> > >> Masaki Ota
+> > >> -----Original Message-----
+> > >> From: Pali Rohár [mailto:pali.rohar@gmail.com]
+> > >> Sent: Wednesday, November 15, 2017 5:35 PM
+> > >> To: 太田 真喜 Masaki Ota <masaki.ota@jp.alps.com>
+> > >> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; 
+> > >> dmitry.torokhov@gmail.com; Aaron Ma <aaron.ma@canonical.com>
+> > >> Subject: Re: [PATCH] Input: ALPS - fix DualPoint flag for 74 03 28 
+> > >> devices
+> > >>
+> > >> On Wednesday 15 November 2017 14:34:04 Aaron Ma wrote:
+> > >> > There is a regression of commit 4a646580f793 ("Input: ALPS - fix 
+> > >> > two-finger scroll breakage"), ALPS device fails with log:
+> > >> >
+> > >> > psmouse serio1: alps: Rejected trackstick packet from non 
+> > >> > DualPoint device
+> > >> >
+> > >> > ALPS device with id "74 03 28" report OTP[0] data 0xCE after 
+> > >> > commit 4a646580f793, after restore the OTP reading order, it 
+> > >> > becomes to 0x10 as before and reports the right flag.
+> > >> >
+> > >> > Fixes: 4a646580f793 ("Input: ALPS - fix two-finger scroll 
+> > >> > breakage")
+> > >> > Cc: <stable@vger.kernel.org>
+> > >> > Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+> > >> > ---
+> > >> >  drivers/input/mouse/alps.c | 4 ++--
+> > >> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >> >
+> > >> > diff --git a/drivers/input/mouse/alps.c 
+> > >> > b/drivers/input/mouse/alps.c index 579b899add26..c59b8f7ca2fc 
+> > >> > 100644
+> > >> > --- a/drivers/input/mouse/alps.c
+> > >> > +++ b/drivers/input/mouse/alps.c
+> > >> > @@ -2562,8 +2562,8 @@ static int alps_set_defaults_ss4_v2(struct 
+> > >> > psmouse *psmouse,
+> > >> >
+> > >> >     memset(otp, 0, sizeof(otp));
+> > >> >
+> > >> > -   if (alps_get_otp_values_ss4_v2(psmouse, 1, &otp[1][0]) ||
+> > >> > -       alps_get_otp_values_ss4_v2(psmouse, 0, &otp[0][0]))
+> > >> > +   if (alps_get_otp_values_ss4_v2(psmouse, 0, &otp[0][0]) ||
+> > >> > +       alps_get_otp_values_ss4_v2(psmouse, 1, &otp[1][0]))
+> > >> >             return -1;
+> > >> >
+> > >> >     alps_update_device_area_ss4_v2(otp, priv);
+> > >>
+> > >> Masaki Ota, please look at this patch as it partially revert your 
+> > >> commit
+> > >> 4a646580f793 ("Input: ALPS - fix two-finger scroll breakage"). Something smells here.
+> > >>
+> > >> --
+> > >> Pali Rohár
+> > >> pali.rohar@gmail.com
+> > >
+> > > --
+> > > Dmitry
+> > 
+> > 
+> > 
+> 
+> --
+> Pali Rohár
+> pali.rohar@gmail.com
 
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Tested-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Cc: intel-gfx@lists.freedesktop.org
----
- drivers/gpu/drm/drm_drv.c | 54 ++++++++++++++++++++++++++++++++++++++++++-----
- include/drm/drm_device.h  |  9 +++++++-
- include/drm/drm_drv.h     | 15 +++++++++----
- 3 files changed, 68 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index a1b9338736e3..32a83b41ab61 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -32,6 +32,7 @@
- #include <linux/moduleparam.h>
- #include <linux/mount.h>
- #include <linux/slab.h>
-+#include <linux/srcu.h>
- 
- #include <drm/drm_drv.h>
- #include <drm/drmP.h>
-@@ -75,6 +76,8 @@ static bool drm_core_init_complete = false;
- 
- static struct dentry *drm_debugfs_root;
- 
-+DEFINE_STATIC_SRCU(drm_unplug_srcu);
-+
- /*
-  * DRM Minors
-  * A DRM device can provide several char-dev interfaces on the DRM-Major. Each
-@@ -318,18 +321,51 @@ void drm_put_dev(struct drm_device *dev)
- }
- EXPORT_SYMBOL(drm_put_dev);
- 
--static void drm_device_set_unplugged(struct drm_device *dev)
-+/**
-+ * drm_dev_enter - Enter device critical section
-+ * @dev: DRM device
-+ * @idx: Pointer to index that will be passed to the matching drm_dev_exit()
-+ *
-+ * This function marks and protects the beginning of a section that should not
-+ * be entered after the device has been unplugged. The section end is marked
-+ * with drm_dev_exit(). Calls to this function can be nested.
-+ *
-+ * Returns:
-+ * True if it is OK to enter the section, false otherwise.
-+ */
-+bool drm_dev_enter(struct drm_device *dev, int *idx)
-+{
-+	*idx = srcu_read_lock(&drm_unplug_srcu);
-+
-+	if (dev->unplugged) {
-+		srcu_read_unlock(&drm_unplug_srcu, *idx);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+EXPORT_SYMBOL(drm_dev_enter);
-+
-+/**
-+ * drm_dev_exit - Exit device critical section
-+ * @idx: index returned from drm_dev_enter()
-+ *
-+ * This function marks the end of a section that should not be entered after
-+ * the device has been unplugged.
-+ */
-+void drm_dev_exit(int idx)
- {
--	smp_wmb();
--	atomic_set(&dev->unplugged, 1);
-+	srcu_read_unlock(&drm_unplug_srcu, idx);
- }
-+EXPORT_SYMBOL(drm_dev_exit);
- 
- /**
-  * drm_dev_unplug - unplug a DRM device
-  * @dev: DRM device
-  *
-  * This unplugs a hotpluggable DRM device, which makes it inaccessible to
-- * userspace operations. Entry-points can use drm_dev_is_unplugged(). This
-+ * userspace operations. Entry-points can use drm_dev_enter() and
-+ * drm_dev_exit() to protect device resources in a race free manner. This
-  * essentially unregisters the device like drm_dev_unregister(), but can be
-  * called while there are still open users of @dev.
-  */
-@@ -338,10 +374,18 @@ void drm_dev_unplug(struct drm_device *dev)
- 	drm_dev_unregister(dev);
- 
- 	mutex_lock(&drm_global_mutex);
--	drm_device_set_unplugged(dev);
- 	if (dev->open_count == 0)
- 		drm_dev_put(dev);
- 	mutex_unlock(&drm_global_mutex);
-+
-+	/*
-+	 * After synchronizing any critical read section is guaranteed to see
-+	 * the new value of ->unplugged, and any critical section which might
-+	 * still have seen the old value of ->unplugged is guaranteed to have
-+	 * finished.
-+	 */
-+	dev->unplugged = true;
-+	synchronize_srcu(&drm_unplug_srcu);
- }
- EXPORT_SYMBOL(drm_dev_unplug);
- 
-diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-index 7c4fa32f3fc6..3a0eac2885b7 100644
---- a/include/drm/drm_device.h
-+++ b/include/drm/drm_device.h
-@@ -46,7 +46,14 @@ struct drm_device {
- 	/* currently active master for this device. Protected by master_mutex */
- 	struct drm_master *master;
- 
--	atomic_t unplugged;			/**< Flag whether dev is dead */
-+	/**
-+	 * @unplugged:
-+	 *
-+	 * Flag to tell if the device has been unplugged.
-+	 * See drm_dev_enter() and drm_dev_is_unplugged().
-+	 */
-+	bool unplugged;
-+
- 	struct inode *anon_inode;		/**< inode for private address-space */
- 	char *unique;				/**< unique name of the device */
- 	/*@} */
-diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
-index d23dcdd1bd95..7e545f5f94d3 100644
---- a/include/drm/drm_drv.h
-+++ b/include/drm/drm_drv.h
-@@ -624,6 +624,8 @@ void drm_dev_get(struct drm_device *dev);
- void drm_dev_put(struct drm_device *dev);
- void drm_dev_unref(struct drm_device *dev);
- void drm_put_dev(struct drm_device *dev);
-+bool drm_dev_enter(struct drm_device *dev, int *idx);
-+void drm_dev_exit(int idx);
- void drm_dev_unplug(struct drm_device *dev);
- 
- /**
-@@ -635,11 +637,16 @@ void drm_dev_unplug(struct drm_device *dev);
-  * unplugged, these two functions guarantee that any store before calling
-  * drm_dev_unplug() is visible to callers of this function after it completes
-  */
--static inline int drm_dev_is_unplugged(struct drm_device *dev)
-+static inline bool drm_dev_is_unplugged(struct drm_device *dev)
- {
--	int ret = atomic_read(&dev->unplugged);
--	smp_rmb();
--	return ret;
-+	int idx;
-+
-+	if (drm_dev_enter(dev, &idx)) {
-+		drm_dev_exit(idx);
-+		return false;
-+	}
-+
-+	return true;
- }
- 
- 
 -- 
-2.7.4
+Pali Rohár
+pali.rohar@gmail.com
