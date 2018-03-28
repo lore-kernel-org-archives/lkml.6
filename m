@@ -1,31 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753797AbeC1Uim (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 16:38:42 -0400
-Received: from smtprelay0152.hostedemail.com ([216.40.44.152]:51987 "EHLO
+        id S1753831AbeC1UjL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 16:39:11 -0400
+Received: from smtprelay0074.hostedemail.com ([216.40.44.74]:42414 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753601AbeC1UiD (ORCPT
+        by vger.kernel.org with ESMTP id S1753459AbeC1Uhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 16:38:03 -0400
+        Wed, 28 Mar 2018 16:37:50 -0400
 X-Session-Marker: 7368656140736865616C6576792E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:965:966:973:988:989:1260:1345:1359:1437:1534:1539:1711:1714:1730:1747:1777:1792:1978:2196:2199:2393:2559:2562:3138:3139:3140:3141:3142:3350:3865:3871:3872:4321:4385:4390:4395:5007:6261:6742:7903:9592:10004:10848:11026:11473:11658:11914:12043:12438:12555:12895:12986:13069:13311:13357:14181:14384:14394:14721:21080:21627:30054,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: mouth38_4625baf728f44
-X-Filterd-Recvd-Size: 1869
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::,RULES_HIT:41:355:379:541:800:960:965:966:973:988:989:1260:1345:1359:1534:1539:1566:1711:1714:1730:1747:1777:1792:1978:2196:2199:2393:2559:2562:3138:3139:3140:3141:3142:3876:3877:4321:4385:4390:4395:5007:6114:6261:6642:9592:10004:10848:11026:11473:11658:11914:12438:12555:12895:12986:13069:13311:13357:14181:14384:14394:14721:21080:21627,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: gun70_4457d0fc6523d
+X-Filterd-Recvd-Size: 1409
 From: Shea Levy <shea@shealevy.com>
 To: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Shea Levy <shea@shealevy.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        "Oliver O'Halloran" <oohall@gmail.com>, Joe Perches <joe@perches.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v4 14/16] powerpc: Use generic free_initrd_mem.
-Date: Wed, 28 Mar 2018 16:36:57 -0400
-Message-Id: <20180328203659.18692-15-shea@shealevy.com>
+Cc: Shea Levy <shea@shealevy.com>, Michal Simek <monstr@monstr.eu>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 10/16] microblaze: Use generic free_initrd_mem.
+Date: Wed, 28 Mar 2018 16:36:53 -0400
+Message-Id: <20180328203659.18692-11-shea@shealevy.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180328203659.18692-1-shea@shealevy.com>
 References: <20180328152714.6103-1-shea@shealevy.com>
@@ -36,26 +28,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Shea Levy <shea@shealevy.com>
 ---
- arch/powerpc/mm/mem.c | 7 -------
+ arch/microblaze/mm/init.c | 7 -------
  1 file changed, 7 deletions(-)
 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index fe8c61149fb8..e85b2a3cd264 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -404,13 +404,6 @@ void free_initmem(void)
- 	free_initmem_default(POISON_FREE_INITMEM);
+diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+index df6de7ccdc2e..ea058dfda222 100644
+--- a/arch/microblaze/mm/init.c
++++ b/arch/microblaze/mm/init.c
+@@ -187,13 +187,6 @@ void __init setup_memory(void)
+ 	paging_init();
  }
  
 -#ifdef CONFIG_BLK_DEV_INITRD
--void __init free_initrd_mem(unsigned long start, unsigned long end)
+-void free_initrd_mem(unsigned long start, unsigned long end)
 -{
 -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
 -}
 -#endif
 -
- /*
-  * This is called when a page has been modified by the kernel.
-  * It just marks the page as not i-cache clean.  We do the i-cache
+ void free_initmem(void)
+ {
+ 	free_initmem_default(-1);
 -- 
 2.16.2
