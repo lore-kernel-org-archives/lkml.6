@@ -1,68 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753483AbeC1OJm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:09:42 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:46307 "EHLO
+        id S1753500AbeC1OMa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:12:30 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:46763 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752725AbeC1OJk (ORCPT
+        with ESMTP id S1752572AbeC1OM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:09:40 -0400
+        Wed, 28 Mar 2018 10:12:29 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rajvi Jingar <rajvi.jingar@intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] tracing: avoid string overflow
-Date: Wed, 28 Mar 2018 16:09:10 +0200
-Message-Id: <20180328140920.2842153-1-arnd@arndb.de>
+To: John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org
+Subject: [PATCH] time: export nsec_to_clock_t
+Date: Wed, 28 Mar 2018 16:11:54 +0200
+Message-Id: <20180328141205.2954245-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:q6WMWnbtXTvRuKklsylCCybv53yK04Nv170eUp4JJqZR066zstl
- 6wAkHd8Fm//XqlEZBgHJAfaaK3orKoiHGpm/loziCQaVrKI2U1algS5VdTzeoo2CaiFtvv0
- s6gUyVkWRrp01i9G282cO+PEVqmDpYjpW/nMWwkLvs4SeJVwDb0zbK0B2aFq2LBRZsMB48v
- A9zwlv4v2YYjrD/51oyHg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:gPP4Bn5ChHw=:RLnRScZYxECAleqv7wDUAb
- tQJMKdRsVb0NEfP7BYAoflSJWTxvNtakZjAxiMhLgEWoZ8tM3fWkd3HikzQvn5xmc0rXD/NE1
- l0RmDm3WvXJyc7qs5z+eBhTGsvJ3H61EpZ1sPWpFtKzw2UGwgOVB0ghWkafCd5dCBJgliJ6zO
- hNi0P9I3hFmHpDHlviWtHASX73fftQ5MXFGfqe4f6PboGK+5nG2PJlD+f1jNUshypwbdZC1aT
- 6QRlilr0SbRrHiwU8VT0nYxn8RCr/uAJyZvpgOdRrpO85TRJ4l2k+4VQo76lpnx7wrAwvt9hB
- S2PofzD19GxqjW34Ar6SCwyAzJyyKTfHDd0fVHkJFOmphfSCnszNFm08F8JnE6B7/Fe/LIMZx
- RGvq3L35gVGgdkKmbMbcS0OCtCWRqHK42F5fY6/SrwOBBd63UDWeJhn2LsVgdvJfHOGMsRZe7
- cbqVNQUxX9DjD4QPHO3eBKkSTRed/dE6zRCjLLpyOjyKYhULpcyTicDOPJvrgJvE9Akym3S+4
- BkfbJG0ZtyYXQlLdOkANLU0uop/Yy72OJMcEblKmRPYLDzD80evS1SwTAm66Pzi0NvrICeleO
- ms5BM+PE+K0rFr8SXdb4S5od3Mv5sAI96aMX99yFtM6mT0+yS1H/arWksg4tU+vk5Jg9G+7Ap
- wfjYr2yT2f/Vq4Xhz3s7HRYfzvYWwo29fSaOmsVGh8+1oWwMgx3CMbNVK7OTo19HUmHlZ0fvj
- AI+FWCfCbezx9MNoDbUcf7jMWuyu2yf9bf3Nlw==
+X-Provags-ID: V03:K0:cEUItJOQ3WUSklK5+mc7ospzT8KZJ1Oj+3WcQbsUpIO+Dbbavog
+ 7r4VS7lAM7GJxc3JGZSR/DauqfiMskHPhxV12+MLNArtEufAWZHjZsi+Vb3zUbKJN+wXoPa
+ hMMPb/1NJ9LxtKgQEAXsB04r7nTW4PTKRNbYZvkIJYKRjExMgBD5o19Wm3IqMfKVB3S2BVM
+ NnHy+bsT7NkTlGWMTzS8g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:I6q46ZyDjr8=:w6iCHHKPwmgToMFrusqbMZ
+ whzyRS8Uhkhrzbe5+dJkyQ9B5tRem/DkeRo+5EazsEJDfDGWGSaOzeBIRYgmuNTo5f6MKVJmP
+ Gs2Q8iKM/vCqDJJashX5F5ocs/P8zKC9Zl45NpgPonnWC3z+BtwRleFf+WGLZL9T/ddvAWNOO
+ ELNs1rYLISnQEhGGIYiKdpOK+7JuDzTmT5XHMYgzzpdcVQunH6BPftkzJ0ElvTWhor6hBsv6C
+ Rk9Mq5myzu2wIfuJ+/Faeeg/hSVxoRnk3rticBfS2DF09qjVFDFTQ39aEZBMuJmvt2Y0LBete
+ jT3JTe8h280hjRlF5kAPuyVZrGmLvZSkGd5TNDbwlX56zY0v91xkvuQ9gXuMYwK5ol6TmvZA7
+ dtHCwhuqsFBAicd5oeuoFXxBBCzTVnLfKZLRc58ssjNYq/nxSPant6J1Nl//woxbjivw6qVnn
+ 4NAn0GYwRodaW/SGeTRNLa9EjQBZ33Ir/w5Qf5/PpVzSxJBe4Pid0B6bV3YFTjlvVLN6ZCBLC
+ s9FrRS4rZrqJcHr8uFB1WP/wbveNG7Ejf2ooNUD1qMD7QiodhHgVPRDVHWzf+SBEerOZT/Oqd
+ OwlFm4WfKoFSzrOpgCQLgsEq3LuJ2KDNSz4wfcJWLEA7l6fFa6qDAVtxyCEjiXbFX0wkrUoEr
+ J/+9WS2Ktf3IAW8WhlNHBs13nN9zxECQ3tDPrtMuRVahxdCAKyNnm5DGX6U6byC7OEZxvfgs6
+ EEgizNeubF2dweumgNXwGN005U3cTuviITpO2Q==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'err' is used as a NUL-terminated string, but using strncpy() with the length
-equal to the buffer size may result in lack of the termination:
+nsec_to_clock_t was traditionally used only in the core kernel, now we
+have a sysfs file that needs it from a loadable module, causing a
+link-time error:
 
-kernel/trace/trace_events_hist.c: In function 'hist_err_event':
-kernel/trace/trace_events_hist.c:396:3: error: 'strncpy' specified bound 256 equals destination size [-Werror=stringop-truncation]
-   strncpy(err, var, MAX_FILTER_STR_VAL);
+ERROR: "nsec_to_clock_t" [drivers/thermal/thermal_sys.ko] undefined!
 
-This changes it to use the safer strscpy() instead.
+This exports the function the same way that we do for related interfaces.
 
-Fixes: f404da6e1d46 ("tracing: Add 'last error' error facility for hist triggers")
+Fixes: 96cea33badc5 ("thermal: Add cooling device's statistics in sysfs")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/trace/trace_events_hist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/time.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 4f027642ceef..8357f36d7a1e 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -393,7 +393,7 @@ static void hist_err_event(char *str, char *system, char *event, char *var)
- 	else if (system)
- 		snprintf(err, MAX_FILTER_STR_VAL, "%s.%s", system, event);
- 	else
--		strncpy(err, var, MAX_FILTER_STR_VAL);
-+		strscpy(err, var, MAX_FILTER_STR_VAL);
- 
- 	hist_err(str, err);
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 6fa99213fc72..97a262531f68 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -768,6 +768,7 @@ u64 nsec_to_clock_t(u64 x)
+ 	return div_u64(x * 9, (9ull * NSEC_PER_SEC + (USER_HZ / 2)) / USER_HZ);
+ #endif
  }
++EXPORT_SYMBOL(nsec_to_clock_t);
+ 
+ u64 jiffies64_to_nsecs(u64 j)
+ {
 -- 
 2.9.0
