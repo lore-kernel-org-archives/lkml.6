@@ -1,161 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753405AbeC1NIs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:08:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59634 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753384AbeC1NIo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:08:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B08960F6D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-From: Vijay Viswanath <vviswana@codeaurora.org>
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org,
-        pramod.gurav@linaro.org, jeremymc@redhat.com, vviswana@codeaurora.org,
-        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        Krishna Konda <kkonda@codeaurora.org>
-Subject: [PATCH V4 2/2] mmc: sdhci-msm: support voltage pad switching
-Date: Wed, 28 Mar 2018 18:38:20 +0530
-Message-Id: <1522242500-10556-3-git-send-email-vviswana@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522242500-10556-1-git-send-email-vviswana@codeaurora.org>
-References: <1522242500-10556-1-git-send-email-vviswana@codeaurora.org>
+        id S1753328AbeC1NKr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:10:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54364 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753148AbeC1NKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:10:45 -0400
+Date: Wed, 28 Mar 2018 15:10:42 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>, adobriyan@gmail.com,
+        willy@infradead.org, mguzik@redhat.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+Message-ID: <20180328131042.GL9275@dhcp22.suse.cz>
+References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180327062939.GV5652@dhcp22.suse.cz>
+ <95a107ac-5e5b-92d7-dbde-2e961d85de28@linux.alibaba.com>
+ <20180327185217.GK2236@uranus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327185217.GK2236@uranus>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krishna Konda <kkonda@codeaurora.org>
+On Tue 27-03-18 21:52:17, Cyrill Gorcunov wrote:
+> On Tue, Mar 27, 2018 at 02:38:11PM -0400, Yang Shi wrote:
+> > > Why do we need to hold mmap_sem here and call find_vma, when only
+> > > PR_SET_MM_ENV_END: is consuming it? I guess we can replace it wit the
+> > > new lock and take the mmap_sem only for PR_SET_MM_ENV_END.
+> > 
+> > Actually, I didn't think of why. It looks prctl_set_mm() checks if vma does
+> > exist when it tries to set stack_start, argv_* and env_*, btw not only
+> > env_end.
+> > 
+> > Cyrill may be able to give us some hint since C/R is the main user of this
+> > API.
+> 
+> First and most important it makes code smaller. This prctl call is really
+> rarely used. Of course we can optimize it, but as I said I would prefer
+> to simply deprecate this old interface (and I gonne to do so once time
+> permit).
 
-The PADs for SD card are dual-voltage that support 3v/1.8v. Those PADs
-have a control signal  (io_pad_pwr_switch/mode18 ) that indicates
-whether the PAD works in 3v or 1.8v.
+Ohh, it would be really great if we can remove this thingy altogether. I
+cannot say it has a wee bit of my sympathy.
 
-SDHC core on msm platforms should have IO_PAD_PWR_SWITCH bit set/unset
-based on actual voltage used for IO lines. So when power irq is
-triggered for io high or io low, the driver should check the voltages
-supported and set the pad accordingly.
-
-Signed-off-by: Krishna Konda <kkonda@codeaurora.org>
-Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
----
- drivers/mmc/host/sdhci-msm.c | 64 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 62 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 2fcd9010..bbf9626 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -78,12 +78,15 @@
- #define CORE_HC_MCLK_SEL_DFLT	(2 << 8)
- #define CORE_HC_MCLK_SEL_HS400	(3 << 8)
- #define CORE_HC_MCLK_SEL_MASK	(3 << 8)
-+#define CORE_IO_PAD_PWR_SWITCH_EN	(1 << 15)
-+#define CORE_IO_PAD_PWR_SWITCH  (1 << 16)
- #define CORE_HC_SELECT_IN_EN	BIT(18)
- #define CORE_HC_SELECT_IN_HS400	(6 << 19)
- #define CORE_HC_SELECT_IN_MASK	(7 << 19)
- 
- #define CORE_3_0V_SUPPORT	(1 << 25)
- #define CORE_1_8V_SUPPORT	(1 << 26)
-+#define CORE_VOLT_SUPPORT	(CORE_3_0V_SUPPORT | CORE_1_8V_SUPPORT)
- 
- #define CORE_CSR_CDC_CTLR_CFG0		0x130
- #define CORE_SW_TRIG_FULL_CALIB		BIT(16)
-@@ -1109,7 +1112,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 	u32 irq_status, irq_ack = 0;
- 	int retry = 10;
- 	u32 pwr_state = 0, io_level = 0;
--
-+	u32 config;
- 
- 	irq_status = readl_relaxed(msm_host->core_mem + CORE_PWRCTL_STATUS);
- 	irq_status &= INT_MASK;
-@@ -1166,6 +1169,45 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 	 */
- 	writel_relaxed(irq_ack, msm_host->core_mem + CORE_PWRCTL_CTL);
- 
-+	/*
-+	 * If we don't have info regarding the voltage levels supported by
-+	 * regulators, don't change the IO PAD PWR SWITCH.
-+	 */
-+	if (msm_host->caps_0 & CORE_VOLT_SUPPORT) {
-+		/* Ensure order between core_mem and hc_mem */
-+		mb();
-+		/*
-+		 * We should unset IO PAD PWR switch only if the register write
-+		 * can set IO lines high and the regulator also switches to 3 V.
-+		 * Else, we should keep the IO PAD PWR switch set.
-+		 * This is applicable to certain targets where eMMC vccq supply
-+		 * is only 1.8V. In such targets, even during REQ_IO_HIGH, the
-+		 * IO PAD PWR switch must be kept set to reflect actual
-+		 * regulator voltage. This way, during initialization of
-+		 * controllers with only 1.8V, we will set the IO PAD bit
-+		 * without waiting for a REQ_IO_LOW.
-+		 */
-+		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+
-+		if (((io_level & REQ_IO_HIGH) && (msm_host->caps_0 &
-+				CORE_3_0V_SUPPORT)) &&
-+				(config & CORE_IO_PAD_PWR_SWITCH)) {
-+			config &= ~CORE_IO_PAD_PWR_SWITCH;
-+			writel_relaxed(config,
-+					host->ioaddr + CORE_VENDOR_SPEC);
-+			/* IO PAD register is in different memory space */
-+			mb();
-+		} else if (((io_level & REQ_IO_LOW) ||
-+				(msm_host->caps_0 & CORE_1_8V_SUPPORT)) &&
-+				!(config & CORE_IO_PAD_PWR_SWITCH)) {
-+			config |= CORE_IO_PAD_PWR_SWITCH;
-+			writel_relaxed(config,
-+					host->ioaddr + CORE_VENDOR_SPEC);
-+			/* IO PAD bit is in different memory space */
-+			mb();
-+		}
-+	}
-+
- 	if (pwr_state)
- 		msm_host->curr_pwr_state = pwr_state;
- 	if (io_level)
-@@ -1322,7 +1364,8 @@ static int sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
- {
- 	struct mmc_host *mmc = msm_host->mmc;
- 	struct regulator *supply = mmc->supply.vqmmc;
--	u32 caps = 0;
-+	u32 caps = 0, config;
-+	struct sdhci_host *host = mmc_priv(mmc);
- 
- 	if (!IS_ERR(mmc->supply.vqmmc)) {
- 		if (regulator_is_supported_voltage(supply, 1700000, 1950000))
-@@ -1335,6 +1378,23 @@ static int sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
- 					mmc_hostname(mmc), __func__);
- 	}
- 
-+	if (caps) {
-+		/*
-+		 * Set the PAD_PWR_SWITCH_EN bit so that the PAD_PWR_SWITCH
-+		 * bit can be used as required later on.
-+		 */
-+		u32 io_level = msm_host->curr_io_level;
-+
-+		config = readl_relaxed(host->ioaddr + CORE_VENDOR_SPEC);
-+		config |= CORE_IO_PAD_PWR_SWITCH_EN;
-+
-+		if ((io_level & REQ_IO_HIGH) && (caps &	CORE_3_0V_SUPPORT))
-+			config &= ~CORE_IO_PAD_PWR_SWITCH;
-+		else if ((io_level & REQ_IO_LOW) || (caps & CORE_1_8V_SUPPORT))
-+			config |= CORE_IO_PAD_PWR_SWITCH;
-+
-+		writel_relaxed(config, host->ioaddr + CORE_VENDOR_SPEC);
-+	}
- 	msm_host->caps_0 |= caps;
- 	pr_debug("%s: %s: supported caps: 0x%08x\n", mmc_hostname(mmc),
- 			__func__, caps);
 -- 
- Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Michal Hocko
+SUSE Labs
