@@ -1,80 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753190AbeC1QZr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 12:25:47 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:39600 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752907AbeC1QZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 12:25:45 -0400
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-2-christian.koenig@amd.com>
- <20180328123830.GB25060@infradead.org>
- <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
- <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
- <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
-Date: Wed, 28 Mar 2018 10:25:43 -0600
+        id S1753222AbeC1QZz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 12:25:55 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36519 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753196AbeC1QZv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 12:25:51 -0400
+X-Google-Smtp-Source: AIpwx48VNu4+BWNyeezFgHKTTr3sNGMJ2dFhw03oSKkfdoc75R8eqZxgHf6m+FKrnt4WpiHF+Gajuw==
+Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-8-paul@crapouillou.net>
+ <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
+ <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <af33e522-7f87-d62a-0a35-d56a403387b7@linaro.org>
+Date: Wed, 28 Mar 2018 18:25:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
+In-Reply-To: <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 28/03/2018 17:15, Paul Cercueil wrote:
+> Le 2018-03-24 07:26, Daniel Lezcano a écrit :
+>> On 18/03/2018 00:29, Paul Cercueil wrote:
+>>> This driver will use the TCU (Timer Counter Unit) present on the Ingenic
+>>> JZ47xx SoCs to provide the kernel with a clocksource and timers.
+>>
+>> Please provide a more detailed description about the timer.
+> 
+> There's a doc file for that :)
 
+Usually, when there is a new driver I ask for a description in the
+changelog for reference.
 
-On 28/03/18 10:02 AM, Christian König wrote:
-> Yeah, that looks very similar to what I picked up from the older 
-> patches, going to read up on that after my vacation.
+>> Where is the clocksource ?
+> 
+> Right, there is no clocksource, just timers.
+> 
+>> I don't see the point of using channel idx and pwm checking here.
+>>
+>> There is one clockevent, why create multiple channels ? Can't you stick
+>> to the usual init routine for a timer.
+> 
+> So the idea is that we use all the TCU channels that won't be used for PWM
+> as timers. Hence the PWM checking. Why is this bad?
 
-Yeah, I was just reading through your patchset and there are a lot of
-similarities. Though, I'm not sure what you're trying to accomplish as I
-could not find a cover letter and it seems to only enable one driver. Is
-it meant to enable DMA transactions only between two AMD GPUs?
+It is not bad but arguable. By checking the channels used by the pwm in
+the code, you introduce an adherence between two subsystems even if it
+is just related to the DT parsing part.
 
-I also don't see where you've taken into account the PCI bus address. On
-some architectures this is not the same as the CPU physical address.
+As it is not needed to have more than one timer in the time framework
+(at least with the same characteristics), the pwm channels check is
+pointless. We can assume the author of the DT file is smart enough to
+prevent conflicts and define a pwm and a timer properly instead of
+adding more code complexity.
 
-> Just in general why are you interested in the "distance" of the devices?
+In addition, simplifying the code will allow you to use the timer-of
+code and reduce very significantly the init function.
 
-We've taken a general approach where some drivers may provide p2p memory
-(ie. an NVMe card or an RDMA NIC) and other drivers make use of it (ie.
-the NVMe-of driver). The orchestrator driver needs to find the most
-applicable provider device for a transaction in a situation that may
-have multiple providers and multiple clients. So the most applicable
-provider is the one that's closest ("distance"-wise) to all the clients
-for the P2P transaction.
+>>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>> ---
+>>>  drivers/clocksource/Kconfig         |   8 ++
+>>>  drivers/clocksource/Makefile        |   1 +
+>>>  drivers/clocksource/timer-ingenic.c | 278
+>>> ++++++++++++++++++++++++++++++++++++
+>>>  3 files changed, 287 insertions(+)
+>>>  create mode 100644 drivers/clocksource/timer-ingenic.c
+>>>
+>>>  v2: Use SPDX identifier for the license
+>>>  v3: - Move documentation to its own patch
+>>>      - Search the devicetree for PWM clients, and use all the TCU
+>>>        channels that won't be used for PWM
+>>>  v4: - Add documentation about why we search for PWM clients
+>>>      - Verify that the PWM clients are for the TCU PWM driver
+>>>
+>>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>>> index d2e5382821a4..481422145fb4 100644
+>>> --- a/drivers/clocksource/Kconfig
+>>> +++ b/drivers/clocksource/Kconfig
+>>> @@ -592,4 +592,12 @@ config CLKSRC_ST_LPC
+>>>        Enable this option to use the Low Power controller timer
+>>>        as clocksource.
+>>>
+>>> +config INGENIC_TIMER
+>>> +    bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
+>>> +    depends on MACH_INGENIC || COMPILE_TEST
+>>
+>> bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if COMPILE_TEST
+>>
+>> Remove the depends MACH_INGENIC.
+> 
+> This driver is not useful on anything else than Ingenic SoCs, why should I
+> remove MACH_INGENIC then?
 
-> And BTW: At least for writes that Peer 2 Peer transactions between 
-> different root complexes work is actually more common than the other way 
-> around.
+For COMPILE_TEST on x86.
 
-Maybe on x86 with hardware made in the last few years. But on PowerPC,
-ARM64, and likely a lot more the chance of support is *much* less. Also,
-hardware that only supports P2P stores is hardly full support and is
-insufficient for our needs.
+>>> +    select CLKSRC_OF
+>>> +    default y
+>>
+>> No default, Kconfig platform selects the timer.
+> 
+> Alright.
+[ ... ]
 
-> So I'm a bit torn between using a blacklist or a whitelist. A whitelist 
-> is certainly more conservative approach, but that could get a bit long.
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-I think a whitelist approach is correct. Given old hardware and other
-architectures, a black list is going to be too long and too difficult to
-comprehensively populate.
-
-Logan
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
