@@ -1,92 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752687AbeC1A0V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 20:26:21 -0400
-Received: from mout.gmx.net ([212.227.17.21]:32889 "EHLO mout.gmx.net"
+        id S1752716AbeC1A0e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 20:26:34 -0400
+Received: from mout.gmx.net ([212.227.17.22]:34753 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752654AbeC1A0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 20:26:18 -0400
+        id S1752654AbeC1A0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 20:26:32 -0400
 From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Christophe Leroy <christophe.leroy@c-s.fr>,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: [PATCH v2 4/5] powerpc: wii: Don't rely on the reserved memory hack
-Date: Wed, 28 Mar 2018 02:25:43 +0200
-Message-Id: <20180328002544.18526-5-j.neuschaefer@gmx.net>
+        Paul Mackerras <paulus@samba.org>, Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>, Joe Perches <joe@perches.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>
+Subject: [PATCH v2 2/5] powerpc: mm: Use memblock API for PPC32 page_is_ram
+Date: Wed, 28 Mar 2018 02:25:41 +0200
+Message-Id: <20180328002544.18526-3-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180328002544.18526-1-j.neuschaefer@gmx.net>
 References: <20180328002544.18526-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K0:fRiZ4coo3t3knmAUPIIEoC6xqtYK4B8lJ1kT7i0c4yv1Qg5xw2T
- 2EcDVMNRqOVKXDk8q6DGcuGCoAY6G/uxNP2mcNFofDX2zaL2fCsuEevXUoZEiQ7gTJRmt1/
- Khik0A1V86SPxUb0Bz8jCPN3bwCjFUiz9IsRzL14dPk2mMkJJDr+1RWN0PVWh3j49n/f0CQ
- s6TbJo+vT2VF7eWAIB4cQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:62Kr/n6tZoI=:KAiF5X8Z65mGmDqV6J2Noe
- 5ImF8Kp0JjDbosLu9Wyn+i7Vavmy7gZCg59T60eyw55GvWfmEabnf9+tz1v9l7EPtKcuVme8f
- PsAJOIxTM8BF9TCZbE2EGebeBbsjB0kIeLjGYTV/Ly2ybYjcjEYK1dz/Qr7DahbufXo++tIeA
- jnWGWte205/985NiyRb9mHb9QxPob4P8hd5gzpYSPOw6doS6W2hyW4UJ2GM87C8SJy5iDNI8g
- f+ivDBS5c5AxuLqTOi3nrSYuxQai19pmHPhgf2c+x2fPTzW+2051vabWMCIwLhZS9zrf5n/sv
- g9+AbzaVMfytrp95w8p0DsY9iYpUS/Rdz71b1IJVVdY4Lxwwh4OmuqihYVuowPjzEHxxmIoaK
- KhPG/kuBRYkzt40xZmY2Hz9/c4UmiawXxY7uTZpcs6iBZLFCjy9YX/Jlj6TfJC+V7r0mu++rm
- LxPTckMJXd1oH/Eylp0XQq2374trrWSZV5Qe0QatUkjlAXWgA7szXbZrDsRiQDY0wuJSVNA1t
- dfCjM0IurMv30/p6Kg7UE9+536J7qsvqM0YBh5KqycLjhSjtzcJAGNrdod3JbDDb8nfhSLTpV
- X87behclKof44mxBbUSdtFaR2s0KrieoztwAsD97/qRLiLbSiBw6tK7/6g6wVArh9GmvX+Itw
- APDw8YHFEDJejMBev3oO8LigajpGow9DSAD71EYMMJYmAnk+3DKImKy4nIsG4K+sZDBF56Ap5
- MoD0jG3B7P8KbVuUfnONl+IQjxYOm7jv7zsnG5F9bgsYLN/VhzGAozSZEWyEdA3fKn9B8l9hg
- nB4YBgcffe2Nk5ldUbFTn/5OxhORAFV+bjifkI6kYLGfv1UwOk=
+X-Provags-ID: V03:K0:5r1JfX1lnLXponBj9lN4MLyDWS9GKfj4FAaMc6dBC0PqiKZlVuP
+ mPLxdUdhCSl6z9+L0D1fwWHo70bbToUqq+IP9C+G5xdZaJjbgAczBo/KHGmpd43SKFl/H1M
+ ObuamyKaaT7YQVwn/qUQGnjno0JWf0KKVFIadpVMSpijp00DvIdYISpqAtMj3NuZXscJaVR
+ 78eE3YT7Sr8SY5WCztilw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:6fj34sPQXmo=:NILmFApDZYju49MHRwn/sz
+ kzfXmUknzGd4i8vQ+ozHUWEun4jcRJ4cqpXZyLHePheN5aMFUx8MZ8D57dql6KT6rr23pYNHt
+ btpXDzlQq/UUYiP0D8PSGua7vsBwPZZhl2fec28EpdKHjf1YIV8PEQhAIGtOuveTkSFM4Bmr3
+ SL2gnqUrmiCzfO9x8ENW9yAD/mG3UAxTuL1G5uW1mua3+s4gRVDHOrB1fl0Q9DPWAyN/I47vg
+ qiHfGZHM7HS/wDbyBKcnVVB2EsbDkKjqFjhVHce0ZWPP7laZ4hs8ITBGMP62HcKUIDNA9JwTY
+ UynG8dxueLQetKpQK2hm+quQ+QQmX2BfBvghyiXUfv2YkvoOljqXREeM23fhZNQn9aaERWSQS
+ QlXoBchTc+3X8PRIdCUWThEV/WDjg9IhSmVHZ27459sl1a53PakzCO1J31T9KnWgiTC60k+F/
+ CD4ZinPYQAoJX2c2i28oq27A11yYwRBZVrhLKLU+JRNpWSKOxm5wKFjrlN1LFWzBX3sj5JqHF
+ kcz3eNys2BeSv5eo54C0Zc2TeObURhlYKnN8PsYQF4XWkpSUwhxYepwIpaR5vfKxQ8mJrj+TY
+ 2hr3w4meQuFOZP0imwKsYfIXUTm6FAlol3um4cKDYp9wtVzH5yyAHYKNNOlel+cotzMeo7T5o
+ jLfl5+j702/toCI2GsTv27CS8jDKkTLZnf+zD1W/m3lgiGsWjJwOKwMItblosAg+rPkOxcRUy
+ IycOB1yJQIreA4JweIwhecmiYB8ljPPTYTxbzEVLjzqB9Gzj8QYapmPWTSlcVYnADt3K8nqSK
+ 1m1gJ2XRTToM9KwUjGEcqnJF940pO1epKSPHM3u0WRC6bG++YE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because the two memory blocks (usually called MEM1 and MEM2) are not
-merged anymore, __request_region in kernel/resource.c will correctly
-allow reserving regions in the physical address space between MEM1 and
-MEM2, where many important peripherals are (GPIO, MMC, USB, ...).
-
-A previous change to __ioremap_caller in arch/powerpc/mm/pgtable_32.c
-ensures that multiple memblocks are properly considered in ioremap; this
-makes it unnecessary to set __allow_ioremap_reserved.
+To support accurate checking for different blocks of memory on PPC32,
+use the same memblock-based approach that's already used on PPC64 also
+on PPC32.
 
 Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
 
-v2:
-Add some text to the commit message.
+v2: no changes
 ---
- arch/powerpc/platforms/embedded6xx/wii.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ arch/powerpc/mm/mem.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/powerpc/platforms/embedded6xx/wii.c b/arch/powerpc/platforms/embedded6xx/wii.c
-index 4682327f76a9..fc00d82691e1 100644
---- a/arch/powerpc/platforms/embedded6xx/wii.c
-+++ b/arch/powerpc/platforms/embedded6xx/wii.c
-@@ -81,21 +81,9 @@ void __init wii_memory_fixups(void)
- 	BUG_ON(memblock.memory.cnt != 2);
- 	BUG_ON(!page_aligned(p[0].base) || !page_aligned(p[1].base));
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index da4e1555d61d..a42b86e2a34c 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -82,11 +82,7 @@ static inline pte_t *virt_to_kpte(unsigned long vaddr)
  
--	/* trim unaligned tail */
--	memblock_remove(ALIGN(p[1].base + p[1].size, PAGE_SIZE),
--			(phys_addr_t)ULLONG_MAX);
--
--	/* determine hole, add & reserve them */
-+	/* determine hole */
- 	wii_hole_start = ALIGN(p[0].base + p[0].size, PAGE_SIZE);
- 	wii_hole_size = p[1].base - wii_hole_start;
--	memblock_add(wii_hole_start, wii_hole_size);
--	memblock_reserve(wii_hole_start, wii_hole_size);
--
--	BUG_ON(memblock.memory.cnt != 1);
--	__memblock_dump_all();
--
--	/* allow ioremapping the address space in the hole */
--	__allow_ioremap_reserved = 1;
+ int page_is_ram(unsigned long pfn)
+ {
+-#ifndef CONFIG_PPC64	/* XXX for now */
+-	return pfn < max_pfn;
+-#else
+ 	return memblock_is_memory(__pfn_to_phys(pfn));
+-#endif
  }
  
- unsigned long __init wii_mmu_mapin_mem2(unsigned long top)
+ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
 -- 
 2.16.2
