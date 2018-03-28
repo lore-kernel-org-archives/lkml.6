@@ -1,98 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752105AbeC1JcS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 05:32:18 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:53472
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751224AbeC1JcO (ORCPT
+        id S1752082AbeC1Jgq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 05:36:46 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58784 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbeC1Jgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 05:32:14 -0400
-X-ASG-Debug-ID: 1522229525-093b7e08d8031b0001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To: <rjw@rjwysocki.net>
-CC: <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH] cpufreq: cppc_cpufreq: Initialize shared cpu's perf capabilities
-Date: Wed, 28 Mar 2018 17:31:54 +0800
-X-ASG-Orig-Subj: [PATCH] cpufreq: cppc_cpufreq: Initialize shared cpu's perf capabilities
-Message-ID: <1522229514-14377-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 28 Mar 2018 05:36:44 -0400
+Date: Wed, 28 Mar 2018 11:36:41 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180328093641.GA17774@amd>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+ <20180322204804.GA26871@amd>
+ <20180322234832.o24ut5ahon46mdu4@earth.universe>
+ <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180328090031.GA17300@amd>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1522229526
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.6814 1.0000 1.2321
-X-Barracuda-Spam-Score: 1.23
-X-Barracuda-Spam-Status: No, SCORE=1.23 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49375
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
+Content-Disposition: inline
+In-Reply-To: <20180328090031.GA17300@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When multiple cpus are related in one cpufreq policy, the first online
-cpu will be chosen by default to handle cpufreq operations. Let's take
-cpu0 and cpu1 as an example.
 
-When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's should
-be initialized. Otherwise, perf capabilities are 0s and speed change can
-not take effect.
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch copies perf capabilities of the first online cpu to other
-shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
+Hi!
 
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
----
+> > > I can talk to the modem and start a call.
+> >=20
+> > Doing an AT query is the easy part :)
+> >=20
+> > > Then something like this (untested!) is certainly needed.
+> > > Probably more...
+> >=20
+> > I intentionally left this part out. The CPCAP codec has two DAIs
+> > and not 3+. The code you just added is a hack from Motorola. Their
+> > driver is full of hacks and it's obvious its author(s) did not
+> > fully understand the ASoC APIs.
+> >=20
+> > My understanding is, that we only need to replace the audio-graph-card
+> > driver to something more complex. The VOICE DAI needs to be configured
+> > differently based on the use case:
+>=20
+> Does the voice part work for you? I configured all the mixers to
+> voice, and then am using
 
-The original RFC link,
-  https://patchwork.kernel.org/patch/10299055/.
+I tried with 8kHz, 8-bit, too:
 
-This patch solves same issue as RFC above.
+user@devuan:/my/tui/rweb$ arecord -D plughw:CARD=3DAudio,DEV=3D1 -t wav
+--max-file-time 30 mon.wav
+Recording WAVE 'mon.wav' : Unsigned 8 bit, Rate 8000 Hz, Mono
+^CAborted by signal Interrupt...
+arecord: pcm_read:2103: read error: Interrupted system call
+user@devuan:/my/tui/rweb$ aplay -D plughw:CARD=3DAudio,DEV=3D1 -t wav
+mon.wav
+Playing WAVE 'mon.wav' : Unsigned 8 bit, Rate 8000 Hz, Mono
+^CAborted by signal Interrupt...
 
-Patch name is changed as code is too much different with RFC above.
+Recording works okay, but playback produces ugly noise (not white this
+time). If I copy mon.wav to PC, it playes back in pretty acceptable
+quality.
 
-Remove extra init() per Viresh Kumar's comments and only handle
-CPPC CPUFREQ_SHARED_TYPE_ANY case.
+So summary
 
----
- drivers/cpufreq/cppc_cpufreq.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+HIFI DAI works
+VOICE DAI recording is ok
+VOICE DAI playbacks plays noise.
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 8f7b21a4d537..dc625a93a58e 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -164,8 +164,18 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
- 	policy->shared_type = cpu->shared_type;
- 
--	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-+	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
-+		int i;
-+
- 		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
-+
-+		for_each_cpu(i, policy->cpus) {
-+			if (i != policy->cpu)
-+				memcpy(&all_cpu_data[i]->perf_caps,
-+				       &cpu->perf_caps,
-+				       sizeof(cpu->perf_caps));
-+		}
-+	}
- 	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
- 		/* Support only SW_ANY for now. */
- 		pr_debug("Unsupported CPU co-ord type\n");
--- 
-1.8.3.1
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--9jxsPFA5p3P2qPhR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq7YikACgkQMOfwapXb+vLxNwCdE/Fragqrz7l3vrPSiD4kZkYU
+mkgAnjYnKZqJYm5pviMW9kjZfIIfJ++H
+=xgf1
+-----END PGP SIGNATURE-----
+
+--9jxsPFA5p3P2qPhR--
