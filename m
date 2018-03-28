@@ -1,82 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752600AbeC1Atr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 20:49:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48255 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752008AbeC1Atp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 20:49:45 -0400
-From: NeilBrown <neilb@suse.com>
-To: Andreas =?utf-8?Q?Gr=C3=BCnbacher?=
-        <andreas.gruenbacher@gmail.com>
-Date: Wed, 28 Mar 2018 11:49:28 +1100
-Cc: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: Re: [PATCH 1/6] rhashtable: improve documentation for rhashtable_walk_peek()
-In-Reply-To: <CAHpGcMJgys_gMOw-VEpbO6w+NFaww-P6OvL=jwZfie9TxD9ZYA@mail.gmail.com>
-References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718418.11435.11573013181393548255.stgit@noble> <CAHpGcMJgys_gMOw-VEpbO6w+NFaww-P6OvL=jwZfie9TxD9ZYA@mail.gmail.com>
-Message-ID: <87h8p13tyf.fsf@notabene.neil.brown.name>
+        id S1752694AbeC1Atz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 20:49:55 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40307 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752008AbeC1Att (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 20:49:49 -0400
+X-Google-Smtp-Source: AIpwx4/o+wZ2RMcW+dFU6rQ1oXzu0c3wQy3I2Wpck8kyRrlc2PLjNu35xy2NSkB0+J277aY151A7CQ==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v3 1/2] KVM: X86: Introduce handle_ud()
+Date: Tue, 27 Mar 2018 17:48:53 -0700
+Message-Id: <1522198134-2709-2-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522198134-2709-1-git-send-email-wanpengli@tencent.com>
+References: <1522198134-2709-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Wanpeng Li <wanpengli@tencent.com>
 
-On Wed, Mar 28 2018, Andreas Gr=C3=BCnbacher wrote:
+Introduce handle_ud() to handle invalid opcode, this function will be
+used by later patches.
 
-> Neil,
->
-> 2018-03-27 1:33 GMT+02:00 NeilBrown <neilb@suse.com>:
->> The documentation for rhashtable_walk_peek() wrong.  It claims to
->> return the *next* entry, whereas it in fact returns the *previous*
->> entry.
->> However if no entries have yet been returned - or if the iterator
->> was reset due to a resize event, then rhashtable_walk_peek()
->> *does* return the next entry, but also advances the iterator.
->>
->> I suspect that this interface should be discarded and the one user
->> should be changed to not require it.  Possibly this patch should be
->> seen as a first step in that conversation.
->>
->> This patch mostly corrects the documentation, but does make a
->> small code change so that the documentation can be correct without
->> listing too many special cases.  I don't think the one user will
->> be affected by the code change.
->
-> how about I come up with a replacement so that we can remove
-> rhashtable_walk_peek straight away without making it differently
-> broken in the meantime?
->
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kvm/svm.c |  9 +--------
+ arch/x86/kvm/vmx.c | 10 ++--------
+ arch/x86/kvm/x86.c | 13 +++++++++++++
+ arch/x86/kvm/x86.h |  2 ++
+ 4 files changed, 18 insertions(+), 16 deletions(-)
 
-Hi Andreas,
- I'd be very happy with that outcome - thanks for the offer!
-
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq65psACgkQOeye3VZi
-gbkwQRAAwbCY1Rwltcli5kVgU5Zj/ArXur9n6fsd+TJ3sW1uH39F3OGC2yL6Fa92
-qaWJndvvTEo+QNsxlm0h6xeFg/vKYyw6KZCKSYQc8HLGVgsCkbgS/uSw0+hjxRUh
-9JoRQt/NAwe51wTQl+JlJDQv+oKlPofEVSrKbOk1YvH33vueKMGDMgwoVB4GNH7a
-Z4/3SRRNfL1nFvjk9Il/91TT4N5PLIDGMKjtu52gk9y4kHiJ2oTfRIdNGkE74cz3
-+q4GJchoHc0T+Rl8bK2a1AegACHfkt/XkmVbBjioeURJKX1MgTTeXcTNgtdpwnMj
-U9UeoRlsDodS/T9xg47yGyfBreJqlzNpSpW2JSQigAD3bP+nyJ8kVIHIc6Q+2jmv
-swW829PmWeXgrTLW0IKSudaeqBfyyChCDG47aZNx5reU2Tjz1Y2jf+B9tx4MwVgq
-5OAft+wBEw7F2+YXLxu6k/TJb5nvLJseG62Lz79G+OBpi+8AAcOCtxqDjTNP28Cg
-ARgRpWdFJuJgLPgwzK4+BAYTP/7xn+Q8clHD3qH9sLN+0gZ9TGPXWxt2BeUN6dB5
-AJHqPkFQD9tox++g+dYTGA95bWkqrKUdHAJAlffbFH5sGW22x6tdRCIHkhCEXGNX
-IXltrEl2E0m88LpUQvHEEKS4askZqaNSFTTgBO7MctKbwnGfiUY=
-=nr7B
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index cb46e98..65eb3b9 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -2581,14 +2581,7 @@ static int bp_interception(struct vcpu_svm *svm)
+ 
+ static int ud_interception(struct vcpu_svm *svm)
+ {
+-	int er;
+-
+-	er = emulate_instruction(&svm->vcpu, EMULTYPE_TRAP_UD);
+-	if (er == EMULATE_USER_EXIT)
+-		return 0;
+-	if (er != EMULATE_DONE)
+-		kvm_queue_exception(&svm->vcpu, UD_VECTOR);
+-	return 1;
++	return handle_ud(&svm->vcpu);
+ }
+ 
+ static int ac_interception(struct vcpu_svm *svm)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 9bc05f5..63b46db 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6233,14 +6233,8 @@ static int handle_exception(struct kvm_vcpu *vcpu)
+ 	if (is_nmi(intr_info))
+ 		return 1;  /* already handled by vmx_vcpu_run() */
+ 
+-	if (is_invalid_opcode(intr_info)) {
+-		er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+-		if (er == EMULATE_USER_EXIT)
+-			return 0;
+-		if (er != EMULATE_DONE)
+-			kvm_queue_exception(vcpu, UD_VECTOR);
+-		return 1;
+-	}
++	if (is_invalid_opcode(intr_info))
++		return handle_ud(vcpu);
+ 
+ 	error_code = 0;
+ 	if (intr_info & INTR_INFO_DELIVER_CODE_MASK)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 1583bdc..e3a60ab 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4840,6 +4840,19 @@ int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
+ }
+ EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
+ 
++int handle_ud(struct kvm_vcpu *vcpu)
++{
++	enum emulation_result er;
++
++	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
++	if (er == EMULATE_USER_EXIT)
++		return 0;
++	if (er != EMULATE_DONE)
++		kvm_queue_exception(vcpu, UD_VECTOR);
++	return 1;
++}
++EXPORT_SYMBOL_GPL(handle_ud);
++
+ static int vcpu_is_mmio_gpa(struct kvm_vcpu *vcpu, unsigned long gva,
+ 			    gpa_t gpa, bool write)
+ {
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index b620cfa..b2f6191 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -219,6 +219,8 @@ int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
+ 	gva_t addr, void *val, unsigned int bytes,
+ 	struct x86_exception *exception);
+ 
++int handle_ud(struct kvm_vcpu *vcpu);
++
+ void kvm_vcpu_mtrr_init(struct kvm_vcpu *vcpu);
+ u8 kvm_mtrr_get_guest_memory_type(struct kvm_vcpu *vcpu, gfn_t gfn);
+ bool kvm_mtrr_valid(struct kvm_vcpu *vcpu, u32 msr, u64 data);
+-- 
+2.7.4
