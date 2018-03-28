@@ -1,111 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754050AbeC1PbJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:31:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40758 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753408AbeC1PbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:31:07 -0400
-Date: Wed, 28 Mar 2018 18:31:06 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: =?utf-8?B?aGFpYmluemhhbmco5byg5rW35paMKQ==?=
-        <haibinzhang@tencent.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?bGlkb25nY2hlbijpmYjnq4vkuJwp?= <lidongchen@tencent.com>,
-        =?utf-8?B?eXVuZmFuZ3RhaSjlj7Dov5Dmlrkp?= <yunfangtai@tencent.com>
-Subject: Re: [PATCH] vhost-net: add time limitation for tx polling(Internet
- mail)
-Message-ID: <20180328182813-mutt-send-email-mst@kernel.org>
-References: <88D661ADF6AFBF42B2AB88D8E7682B0901FC412A@EXMBX-SZMAIL011.tencent.com>
- <0b1846d3-dfcf-df0c-f94c-65d414331d88@redhat.com>
+        id S1754059AbeC1Pbi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:31:38 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38425 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753691AbeC1Pbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 11:31:37 -0400
+Date: Wed, 28 Mar 2018 17:31:35 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Alexander Dahl <ada@thorsis.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180328153135.GG13942@piout.net>
+References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+ <9761072.pX2B0LJlSJ@ada>
+ <989df8a3-462a-c645-87f1-9f956e1b22c9@linaro.org>
+ <4073350.0MmxRoANOi@ada>
+ <6d43177a-bbea-6a01-5fa5-1c7891e18412@linaro.org>
+ <20180328141645.GF13942@piout.net>
+ <75e5917b-a9ba-c67e-e964-3f002681f9bb@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0b1846d3-dfcf-df0c-f94c-65d414331d88@redhat.com>
+In-Reply-To: <75e5917b-a9ba-c67e-e964-3f002681f9bb@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 02:37:04PM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年03月28日 12:01, haibinzhang(张海斌) wrote:
-> > On 2018年03月27日 19:26, Jason wrote
-> > On 2018年03月27日 17:12, haibinzhang wrote:
-> > > > handle_tx() will delay rx for a long time when busy tx polling udp packets
-> > > > with short length(ie: 1byte udp payload), because setting VHOST_NET_WEIGHT
-> > > > takes into account only sent-bytes but no time.
-> > > Interesting.
-> > > 
-> > > Looking at vhost_can_busy_poll() it tries to poke pending vhost work and
-> > > exit the busy loop if it found one. So I believe something block the
-> > > work queuing. E.g did reverting 8241a1e466cd56e6c10472cac9c1ad4e54bc65db
-> > > fix the issue?
-> > "busy tx polling" means using netperf send udp packets with 1 bytes payload(total 47bytes frame lenght),
-> > and handle_tx() will be busy sending packets continuously.
+On 28/03/2018 at 16:36:34 +0200, Daniel Lezcano wrote:
+> On 28/03/2018 16:16, Alexandre Belloni wrote:
+> > On 28/03/2018 at 15:03:11 +0200, Daniel Lezcano wrote:
+> >> On 28/03/2018 12:29, Alexander Dahl wrote:
+> >>> Hello Daniel,
+> >>>
+> >>> Am Dienstag, 27. M�rz 2018, 13:30:22 CEST schrieb Daniel Lezcano:
+> >>>> Can you can give a rough amount for the irq rate on the timer ?
+> >>>
+> >>> I used itop [1] now to get a rough estimate. First with kernel v4.14.29-rt25 
+> >>> (fully preempt RT):
+> >>>
+> >>> INT                NAME          RATE             MAX
+> >>>  19 [ vel     tc_clkevt]   397 Ints/s     (max:   432)
+> >>>  26 [      vel     eth0]     4 Ints/s     (max:    38)
+> >>>
+> >>> Next test with kernel v4.15.13 gives (slightly slower, but non-RT):
+> >>>
+> >>> INT                NAME          RATE             MAX
+> >>>  19 [ vel     tc_clkevt]   248 Ints/s     (max:   273)
+> >>>  26 [      vel     eth0]     4 Ints/s     (max:    11)
+> >>>
+> >>> With kernel v4.16-rc7 plus this patch series and tcb as clocksource:
+> >>>
+> >>> INT                NAME          RATE             MAX
+> >>>  17 [vel     timer@fffa]  2164 Ints/s     (max:  2183)
+> >>>  26 [      vel     eth0]     5 Ints/s     (max:    10)
+> >>>
+> >>> Is this the information you wanted? If not, could you point me on how to get 
+> >>> the requested irq rate?
+> >>
+> >> It is perfect. Thanks!
+> >>
+> >> It confirms what I was worried about: the clocksource wraps up too
+> >> quickly thus raising an interrupt every 400us. That is why I asked
+> >> Alexande about a prescalar register.
+> >>
 > > 
-> > > >    It's not fair for handle_rx(),
-> > > > so needs to limit max time of tx polling.
-> > > > 
-> > > > ---
-> > > >    drivers/vhost/net.c | 3 ++-
-> > > >    1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> > > > index 8139bc70ad7d..dc9218a3a75b 100644
-> > > > --- a/drivers/vhost/net.c
-> > > > +++ b/drivers/vhost/net.c
-> > > > @@ -473,6 +473,7 @@ static void handle_tx(struct vhost_net *net)
-> > > >    	struct socket *sock;
-> > > >    	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
-> > > >    	bool zcopy, zcopy_used;
-> > > > +	unsigned long start = jiffies;
-> > > Checking jiffies is tricky, need to convert it to ms or whatever others.
-> > > 
-> > > >    	mutex_lock(&vq->mutex);
-> > > >    	sock = vq->private_data;
-> > > > @@ -580,7 +581,7 @@ static void handle_tx(struct vhost_net *net)
-> > > >    		else
-> > > >    			vhost_zerocopy_signal_used(net, vq);
-> > > >    		vhost_net_tx_packet(net);
-> > > > -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
-> > > > +		if (unlikely(total_len >= VHOST_NET_WEIGHT) || unlikely(jiffies - start >= 1)) {
-> > > How value 1 is determined here? And we need a complete test to make sure
-> > > this won't affect other use cases.
-> > We just want <1ms ping latency, but actually we are not sure what value is reasonable.
-> > We have some test results using netperf before this patch as follow,
-> > 
-> >      Udp payload    1byte    100bytes    1000bytes    1400bytes
-> >    Ping avg latency    25ms     10ms       2ms         1.5ms
-> > 
-> > What is other testcases?
+> > The code should behave exactly the same between the previous and the new
+> > driver. The interrupt is not coming from the clocksource but from the
+> > clockevent and it is already on the slowest clock, the 32kHz one.
 > 
-> Something like https://patchwork.kernel.org/patch/10151645/.
+> Do you have an explanation of why the rate is much higher ?
 > 
-> Btw, you need use time_before() to properly handle jiffies overflow and I
-> would also suggest you to try something like #packets limit (e.g 64).
 
-Maybe a ring size?
+The core is giving deltas of 31 clocks instead of much more than that, I
+guess I messed up the initialization somewhere.
 
-> For long term, we definitely need more worker threads.
-> 
-> Thanks
 
-Only helps when you have spare CPUs.
-
-> > 
-> > > Another thought is introduce another limit of #packets, but this need
-> > > benchmark too.
-> > > 
-> > > Thanks
-> > > 
-> > > >    			vhost_poll_queue(&vq->poll);
-> > > >    			break;
-> > > >    		}
-> > > 
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
