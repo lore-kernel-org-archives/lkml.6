@@ -1,43 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeC1F73 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 01:59:29 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:43532 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750703AbeC1F72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 01:59:28 -0400
-Date: Wed, 28 Mar 2018 07:59:25 +0200
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Kevin Easton <kevin@guarana.org>
-CC: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] af_key: Use DIV_ROUND_UP() instead of open-coded
- equivalent
-Message-ID: <20180328055925.skrjbax24he3vcpk@gauss3.secunet.de>
-References: <cover.1522063171.git.kevin@guarana.org>
- <930c4e2a88e93c6863ddb97df9ebd0fa1b32149e.1522063171.git.kevin@guarana.org>
+        id S1752082AbeC1GBD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 02:01:03 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:44878 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbeC1GBC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 02:01:02 -0400
+X-Google-Smtp-Source: AIpwx49mwlpEt6Ibv10v0vG7Dh9cVyvoIW591KObH2BfbEjfYO80oPFoA7UK+5G7/N8j/AYqDPicJdOdJlX1D0wIQtwjyIq4eLqT
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <930c4e2a88e93c6863ddb97df9ebd0fa1b32149e.1522063171.git.kevin@guarana.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 14466D38-76BB-42C7-9978-D51C37D71149
+Date: Tue, 27 Mar 2018 23:01:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <f403043cbe844e4c44056872bb7e@google.com>
+Subject: kernel BUG at lib/string.c:LINE! (3)
+From: syzbot <syzbot+6800425d54ed3ed8135d@syzkaller.appspotmail.com>
+To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
+        ira.weiny@intel.com, jgg@ziepe.ca, leonro@mellanox.com,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        parav@mellanox.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 07:39:16AM -0400, Kevin Easton wrote:
-> Several places use (x + 7) / 8 to convert from a number of bits to a number
-> of bytes.  Replace those with DIV_ROUND_UP(x, 8) instead, for consistency
-> with other parts of the same file.
-> 
-> Signed-off-by: Kevin Easton <kevin@guarana.org>
+Hello,
 
-Is this a fix or just a cleanup?
-If it is just a cleanup, please resent it based on ipsec-next.
+syzbot hit the following crash on upstream commit
+3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
+Linux 4.16-rc7
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=6800425d54ed3ed8135d
+
+So far this crash happened 2 times on upstream.
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=4538383284043776
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=4665917640278016
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2340295454854568752
+compiler: gcc (GCC) 7.1.1 20170620
+user-space arch: i386
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6800425d54ed3ed8135d@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+IPVS: ftp: loaded support on port[0] = 21
+detected buffer overflow in memcpy
+------------[ cut here ]------------
+kernel BUG at lib/string.c:1052!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4211 Comm: syz-executor0 Not tainted 4.16.0-rc7+ #277
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:fortify_panic+0x13/0x20 lib/string.c:1051
+RSP: 0018:ffff8801bccaf8f0 EFLAGS: 00010286
+RAX: 0000000000000022 RBX: 1ffff10037995f23 RCX: 0000000000000000
+RDX: 0000000000000022 RSI: 1ffff10037995ed3 RDI: ffffed0037995f12
+RBP: ffff8801bccaf8f0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000006 R11: 0000000000000000 R12: ffff8801bccaf998
+R13: ffff8801bccaf938 R14: ffff8801bccafa58 R15: 000000000000fa00
+FS:  0000000000000000(0000) GS:ffff8801db200000(0063) knlGS:0000000009f8f900
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000008138024 CR3: 00000001ccb50005 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  memcpy include/linux/string.h:344 [inline]
+  ucma_join_ip_multicast+0x37a/0x3c0 drivers/infiniband/core/ucma.c:1434
+  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
+  __vfs_write+0xef/0x970 fs/read_write.c:480
+  vfs_write+0x189/0x510 fs/read_write.c:544
+  SYSC_write fs/read_write.c:589 [inline]
+  SyS_write+0xef/0x220 fs/read_write.c:581
+  do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
+  do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f3ec99
+RSP: 002b:00000000ffe9b98c EFLAGS: 00000286 ORIG_RAX: 0000000000000004
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020000040
+RDX: 0000000000000038 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Code: 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b 48 89 df e8 b2 e8 e2 fb eb  
+de 55 48 89 fe 48 c7 c7 00 7b 98 86 48 89 e5 e8 55 48 94 fb <0f> 0b 90 90  
+90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41 56
+RIP: fortify_panic+0x13/0x20 lib/string.c:1051 RSP: ffff8801bccaf8f0
+---[ end trace c61655b171bd6d64 ]---
+Kernel panic - not syncing: Fatal exception
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
