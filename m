@@ -1,73 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753609AbeC1O3G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:29:06 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:29911 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752743AbeC1O3D (ORCPT
+        id S1753714AbeC1Obk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:31:40 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:45197 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753116AbeC1Obi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:29:03 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180328142902epoutp02dc93e80a16e9e486e433b25f89440e8a~gG_SEzln73274932749epoutp02D
-X-AuditID: b6c32a35-139ff70000000fee-b3-5abba6ad495e
+        Wed, 28 Mar 2018 10:31:38 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180328143136epoutp01da596ac4f47eefddc795185f6a96da67~gHAhZYn4H1175811758epoutp01K
+X-AuditID: b6c32a37-575ff70000000fe6-eb-5abba747e4f7
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
+To: Jingoo Han <jingoohan1@gmail.com>
 Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/3] video: au1100fb: Delete an unnecessary variable
- initialisation in au1100fb_drv_probe()
-Date: Wed, 28 Mar 2018 16:28:59 +0200
-Message-id: <2275639.QNQijrIxQE@amdc3058>
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] video: fbdev: s3c-fb: remove dead platform code for
+ Exynos and S5PV210 platforms
+Date: Wed, 28 Mar 2018 16:31:33 +0200
+Message-id: <1635191.86fAONqsAU@amdc3058>
 User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <37b97970-6cd7-5c85-a613-8c558b8d4fa0@users.sourceforge.net>
+In-reply-to: <000001d3a5de$b9d2d080$2d787180$@gmail.com>
 MIME-version: 1.0
 Content-transfer-encoding: 7Bit
 Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsWy7bCmvu7aZbujDI6dkrS48vU9m8X5zuXM
-        FltvSVuc6PvAanF51xw2B1aP+93HmTyaTrWzenzeJBfAHMVlk5Kak1mWWqRvl8CV0bBoM0vB
-        L+aK99M2szQwLmDuYuTkkBAwkdh24w5jFyMXh5DADkaJU5eOsUA43xklXh+ZzwJT1XXuGitE
-        YgOjRFfPVjaQhJDAV0aJK03JIDabgJXExPZVQKM4OEQETCX+nAgBqWcW6GCU2Hh8CtggYYFC
-        iamtXWA2i4CqxKyTz8Dm8ApoSvxeM5sVxBYV8JLYsq+dCcTmFPCUOPT8CFSNoMSPyffAepkF
-        5CX27Z/KCmHrSJw9tg7sBQmBJWwSe179ZoO42kVi3cp9rBC2sMSr41vYQY6TEJCWuHTUFqK+
-        mVHi24490LCYwCixZ70QhG0tcfj4RagFfBLvvvawQvTySnS0QZV4SBx+fZARwnaUuHniHDMk
-        gG4zSmy9fINlAqPsLCR3z0Jy9ywkdy9gZF7FKJZaUJybnlpsWGCoV5yYW1yal66XnJ+7iREc
-        +1qmOxinnPM5xCjAwajEw2uxaHeUEGtiWXFl7iFGCQ5mJRHe9xpAId6UxMqq1KL8+KLSnNTi
-        Q4zSHCxK4rwBAS5RQgLpiSWp2ampBalFMFkmDk6pBkaxyy5TnstbtSsb8V0Tlru8a93Cuw/1
-        IptOzY+6vLr33yOhH2KvZz9+0lIduGZfwYe9RpnHKkuOxXMcELW+5Xu5bm3C5VszCxcv/mwx
-        786fk5vcc/ufJ2VF5EzsOTw1Ztbv5IOHzZN4hPsXW7vmfYtiX7z36YxvITqHJh+0yxfKT1r8
-        T+iDUc0NJZbijERDLeai4kQA8HsorfkCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsVy+t9jQd01y3ZHGUxabmpx5et7NovzncuZ
-        LbbekrY40feB1eLyrjlsDqwe97uPM3k0nWpn9fi8SS6AOYrLJiU1J7MstUjfLoEro2HRZpaC
-        X8wV76dtZmlgXMDcxcjJISFgItF17hprFyMXh5DAOkaJt03n2UASQgJfGSWajtaD2GwCVhIT
-        21cxdjFycIgImEr8ORECUs8s0MEoMfHfErBBwgKFElNbu1hAbBYBVYlZJ5+BzeEV0JT4vWY2
-        K4gtKuAlsWVfOxOIzSngKXHo+RE2iMW3GSUuHV3JAtEgKPFj8j0wm1lAXmLf/qmsELaWxPqd
-        x5kmMPLPQlI2C0nZLCRlCxiZVzFKphYU56bnFhsVGOallusVJ+YWl+al6yXn525iBAbrtsNa
-        fTsY7y+JP8QowMGoxMNrsWh3lBBrYllxZe4hRgkOZiUR3vcaQCHelMTKqtSi/Pii0pzU4kOM
-        0hwsSuK8t/OORQoJpCeWpGanphakFsFkmTg4pRoYrfTm67lHc/P057C+fNOqUV6U9nnnp9vX
-        rR3uSM6V3bg2s7+q5/JShrT5J1W3zTx0SVzDJefSvBtV/30sS0+nJYRLqa74Yv3qHPuPKRe6
-        I81uxG80kXw+tc57pa56x7Twwx+rl9hts9vhGfzg70YO9sPlCkufC/ZNvbV5uYDjnX9Wrz2t
-        Ptw/ocRSnJFoqMVcVJwIAOZyKlFSAgAA
-X-CMS-MailID: 20180328142900epcas1p3aa7711987df0fecf982a2d8f1044fe81
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsWy7bCmga778t1RBic+61lc+fqezWLFl5ns
+        Fif6PrBaXN41h81ixvl9TA6sHjtn3WX3uN99nMnj8ya5AOYoLpuU1JzMstQifbsErozpS6ax
+        FZxgqdh64hJzA+N55i5GTg4JAROJxtn7mboYuTiEBHYwSuxp6mEBSQgJfGeUONUnBlO06MsN
+        Noii3YwS887sg3K+MkpcOnsDrINNwEpiYvsqRhBbREBVouH8SVaQImaBZkaJzinnwRLCAukS
+        d5+vBbNZgIpWf/sIZvMKaEpsufKJDcQWFfCS2LKvnQnE5hSwkLjTMxmqRlDix+R7YMuYBeQl
+        9u2fygph60icPbaOEWSZhMACNomGE0fYIO52kei7OokdwhaWeHV8C5DNAWRLS1w6agtRD3Tc
+        tx17oIExARgA64UgbGuJw8cvQi3gk3j3tYcVopdXoqMNqsRD4uCVvYwQtqPEmUl9jJBQWcko
+        sXj7CuYJjLKzkNw9C8nds5DcvYCReRWjWGpBcW56arFhgbFecWJucWleul5yfu4mRnD8a5nv
+        YNxwzucQowAHoxIPr8Wi3VFCrIllxZW5hxglOJiVRHjfawCFeFMSK6tSi/Lji0pzUosPMUpz
+        sCiJ8wYEuEQJCaQnlqRmp6YWpBbBZJk4OKUaGPUM7t7s3O5rLLl0p6h53o/rJp2/uuod3/Wd
+        aNz89q2eVtDPOX1HNnZXfFGcvo2v6Pa/RG0nHfZH4TtNlSzrfm4IqZLaK1YpVRiXaCmfGbG9
+        pkRE2LNItv1p05wKyR9eV/pvBvmuYyw9WSO67sLeo2tOhNS+9zgWv+hddEOdHbe296tOg2xH
+        JZbijERDLeai4kQATlaXf/sCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsVy+t9jAV335bujDG7f4LO48vU9m8WKLzPZ
+        LU70fWC1uLxrDpvFjPP7mBxYPXbOusvucb/7OJPH501yAcxRXDYpqTmZZalF+nYJXBnTl0xj
+        KzjBUrH1xCXmBsbzzF2MnBwSAiYSi77cYAOxhQR2MkpMuxTexcgFZH9llJh9YzMTSIJNwEpi
+        YvsqRhBbREBVouH8SVYQm1mgmVFi4a+4LkYODmGBdInjO91AwixAJau/fQQr5xXQlNhy5RPY
+        fFEBL4kt+9rBRnIKWEjc6ZnMCLFrNaNE+9vHzBANghI/Jt9jgZgvL7Fv/1SoXVoS63ceZ5rA
+        yD8LSdksJGWzkJQtYGRexSiZWlCcm55bbFRgmJdarlecmFtcmpeul5yfu4kRGKzbDmv17WC8
+        vyT+EKMAB6MSD6/Fot1RQqyJZcWVuYcYJTiYlUR432sAhXhTEiurUovy44tKc1KLDzFKc7Ao
+        ifPezjsWKSSQnliSmp2aWpBaBJNl4uCUamCMXcMqW7bT8t3/C1YuG1uPWiU9+bzi4/2uMhef
+        DJ+5E+212tKjAxxNThY5hz4LSted157pcE7Sjv1Dr9JHZXb9SS7eCcU+jxX32sg0V0V9uP9z
+        +jWdLw8dXs46kSn2kieip2vteuucqvMTE/ZV7530gcGb9y63QsAGmQfRxrGCvtXxrwr3GSix
+        FGckGmoxFxUnAgBtoJj/UgIAAA==
+X-CMS-MailID: 20180328143135epcas1p27ec0d23e6bf9caf82fbd05e09fc29b2c
 X-Msg-Generator: CA
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20171127180150epcas2p28b2fc98c549029837356af0fc6b1244c
-X-RootMTR: 20171127180150epcas2p28b2fc98c549029837356af0fc6b1244c
-References: <980dc009-429b-ad88-966b-0e75808cbacc@users.sourceforge.net>
-        <CGME20171127180150epcas2p28b2fc98c549029837356af0fc6b1244c@epcas2p2.samsung.com>
-        <37b97970-6cd7-5c85-a613-8c558b8d4fa0@users.sourceforge.net>
+X-CMS-RootMailID: 20180214120041epcas2p37afd51e693a9cad842e59128a77d45ac
+X-RootMTR: 20180214120041epcas2p37afd51e693a9cad842e59128a77d45ac
+References: <CGME20180214120041epcas2p37afd51e693a9cad842e59128a77d45ac@epcas2p3.samsung.com>
+        <2621881.tniV7NOQqn@amdc3058> <000001d3a5de$b9d2d080$2d787180$@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, November 27, 2017 07:01:14 PM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Mon, 27 Nov 2017 18:40:23 +0100
+On Wednesday, February 14, 2018 04:56:53 PM Jingoo Han wrote:
+> On Wednesday, February 14, 2018 7:01 AM wrote:
+> > 
+> > Exynos5, Exynos4 and S5PV210 platforms have been converted to
+> > use Device Tree and Exynos DRM driver long time ago.  Remove
+> > dead platform code for these platforms and update Kconfig
+> > s3c-fb entry accordingly.
+> > 
+> > Cc: Jingoo Han <jingoohan1@gmail.com>
 > 
-> The local variable "fbdev" will be reassigned by a following statement.
-> Thus omit the explicit initialisation at the beginning.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-Patch queued for 4.17, thanks.
+Thanks.
+
+Patch queued for 4.17.
 
 Best regards,
 --
