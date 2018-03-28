@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeC1LwF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:52:05 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:54043 "EHLO
+        id S1752964AbeC1LvE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:51:04 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:53963 "EHLO
         bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753033AbeC1Lv0 (ORCPT
+        with ESMTP id S1752225AbeC1LvC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 07:51:26 -0400
+        Wed, 28 Mar 2018 07:51:02 -0400
 From: Niklas Cassel <niklas.cassel@axis.com>
 To: kishon@ti.com, cyrille.pitchen@free-electrons.com,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>
 Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 10/12] PCI: endpoint: Make sure that BAR_5 does not have 64-bit flag set when clearing
-Date: Wed, 28 Mar 2018 13:50:15 +0200
-Message-Id: <20180328115018.31921-11-niklas.cassel@axis.com>
+Subject: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar() handle 64-bit BARs properly
+Date: Wed, 28 Mar 2018 13:50:11 +0200
+Message-Id: <20180328115018.31921-7-niklas.cassel@axis.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180328115018.31921-1-niklas.cassel@axis.com>
 References: <20180328115018.31921-1-niklas.cassel@axis.com>
@@ -24,41 +26,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since a 64-bit BAR consists of a BAR pair, and since there is no
-BAR after BAR_5, BAR_5 cannot be 64-bits wide.
-
-This sanity check is done in pci_epc_clear_bar(), so that we don't need
-to do this sanity check in all epc->ops->clear_bar() implementations.
+Since a 64-bit BAR consists of a BAR pair, we need to write to both
+BARs in the BAR pair to setup the BAR properly.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
-Kishon made a review comment that he wanted this:
-https://marc.info/?l=linux-kernel&m=152161168226203
+ drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Personally, I don't think that this check is needed,
-since pci_epc_set_bar() already does this check,
-and no one should modify the flags after pci_epc_set_bar()
-has been called.
-
-If everyone agrees, then this patch could be dropped.
-
- drivers/pci/endpoint/pci-epc-core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index eccc942043cb..b0ee42739c3c 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -285,7 +285,9 @@ void pci_epc_clear_bar(struct pci_epc *epc, u8 func_no,
- {
- 	unsigned long flags;
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index 5a0bb53c795c..571b90f88d84 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+ 		return ret;
  
--	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
-+	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
-+	    (epf_bar->barno == BAR_5 &&
-+	     epf_bar->flags & PCI_BASE_ADDRESS_MEM_TYPE_64))
- 		return;
+ 	dw_pcie_dbi_ro_wr_en(pci);
+-	dw_pcie_writel_dbi2(pci, reg, size - 1);
+-	dw_pcie_writel_dbi(pci, reg, flags);
++	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
++		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
++		dw_pcie_writel_dbi(pci, reg, flags);
++		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
++		dw_pcie_writel_dbi(pci, reg + 4, 0);
++	} else {
++		dw_pcie_writel_dbi2(pci, reg, size - 1);
++		dw_pcie_writel_dbi(pci, reg, flags);
++	}
+ 	dw_pcie_dbi_ro_wr_dis(pci);
  
- 	if (!epc->ops->clear_bar)
+ 	return 0;
 -- 
 2.14.2
