@@ -1,73 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752603AbeC1Co3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 22:44:29 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:43086 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750753AbeC1Co1 (ORCPT
+        id S1752560AbeC1CvR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 22:51:17 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:49677 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751088AbeC1CvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 22:44:27 -0400
-X-Google-Smtp-Source: AIpwx48/EYatAcIm4gbdZUKKsxK7eojXC8AH/t0E4xIr5BZUQtinutrI6T2RAWQHp7pNRGHo8xisqQ==
-Date: Wed, 28 Mar 2018 11:44:22 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: wen.yang99@zte.com.cn
-Cc: Bart.VanAssche@wdc.com, sergey.senozhatsky.work@gmail.com,
-        pmladek@suse.com, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn, tan.hu@zte.com.cn
-Subject: Re: =?utf-8?B?562U5aSNOiBSZTogW1BBVENI?= =?utf-8?Q?=5D?= scsi:
- Replace sdev_printk with printk_deferred to avoid
-Message-ID: <20180328024422.GA1352@jagdpanzerIV>
-References: <199ab05df000f2e8b5497a7aaecd0951321aadae.camel@wdc.com>
- <201803281029555635678@zte.com.cn>
+        Tue, 27 Mar 2018 22:51:15 -0400
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v3 0/6] clk: meson-axg: Add AO Cloclk and Reset driver
+Date: Wed, 28 Mar 2018 10:50:44 +0800
+Message-ID: <20180328025050.221585-1-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201803281029555635678@zte.com.cn>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.235]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/28/18 10:29), wen.yang99@zte.com.cn wrote:
->    Hello Bart,
->
->    We have a detailed discussion of the problem.
->    Sergey Senozhatsky, Petr and many people have made a lot of efforts about
->    it.
->    Please see this link:
->    https://bugzilla.kernel.org/show_bug.cgi?id=199003
->
->    1, Petr suggests that it should be modified in this way:
->    IMHO, printing the same message so many times is useless. Therefore
->    some throttling would make sense. If we want to keep sdev_printk(),
+  This patch try to add AO clock and Reset driver for Amlogic's
+Meson-AXG SoC.
+  Please note that patch 6 need to wait for the DTS changes[3] merged
+into mainline first, otherwise it will break the serial console.
 
-The thing with retelimiting is that - yes, we do less printks but we still
-do them under queue spin_lock.
+ patch 1: factor the common code into a dedicated file
+ patch 2-4: add the aoclk driver for AXG SoC
+ patch 5-6: drop unnecessary clock flags
 
-So I was thinking about something like below [a quick-n-dirty workaround]
-
----
-
- drivers/scsi/scsi_lib.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 0dfec0dedd5e..6c930fbdd24c 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1825,9 +1825,13 @@ static void scsi_request_fn(struct request_queue *q)
- 			break;
+changes since v2 at [2]: 
+ - rework meson_aoclkc_probe() which leverage the of_match_data
+ - merge patch 5-6 into this series
+ - seperate DTS patch, will send to Kevin Hilman independently
  
- 		if (unlikely(!scsi_device_online(sdev))) {
-+			scsi_kill_request(req, q);
-+			spin_unlock_irq(q->queue_lock);
-+
- 			sdev_printk(KERN_ERR, sdev,
- 				    "rejecting I/O to offline device\n");
--			scsi_kill_request(req, q);
-+
-+			spin_lock_irq(q->queue_lock);
- 			continue;
- 		}
- 
+changes since v1 at [0]: 
+ - rebase to clk-meson's branch 'next/drivers' [1]
+ - fix license, update to BSD-3-Clause
+ - drop un-used include header file
+
+[0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+[1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+[2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+
+Qiufang Dai (1):
+  clk: meson-axg: Add AO Clock and Reset controller driver
+
+Yixun Lan (5):
+  clk: meson: aoclk: refactor common code into dedicated file
+  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+  clk: meson: drop CLK_SET_RATE_PARENT flag
+  clk: meson: drop CLK_IGNORE_UNUSED flag
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
+ drivers/clk/meson/Makefile                         |   4 +-
+ drivers/clk/meson/axg-aoclk.c                      | 163 +++++++++++++++++++++
+ drivers/clk/meson/axg-aoclk.h                      |  31 ++++
+ drivers/clk/meson/gxbb-aoclk.c                     |  88 ++++-------
+ drivers/clk/meson/gxbb-aoclk.h                     |   7 +
+ drivers/clk/meson/meson-aoclk.c                    |  79 ++++++++++
+ drivers/clk/meson/meson-aoclk.h                    |  35 +++++
+ include/dt-bindings/clock/axg-aoclkc.h             |  26 ++++
+ include/dt-bindings/reset/axg-aoclkc.h             |  20 +++
+ 10 files changed, 393 insertions(+), 61 deletions(-)
+ create mode 100644 drivers/clk/meson/axg-aoclk.c
+ create mode 100644 drivers/clk/meson/axg-aoclk.h
+ create mode 100644 drivers/clk/meson/meson-aoclk.c
+ create mode 100644 drivers/clk/meson/meson-aoclk.h
+ create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+
+-- 
+2.15.1
