@@ -1,58 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753010AbeC1SDl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 14:03:41 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57458 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751166AbeC1SDh (ORCPT
+        id S1752831AbeC1SEL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 14:04:11 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:52952 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1753071AbeC1SEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 14:03:37 -0400
-Date: Wed, 28 Mar 2018 20:03:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Sinan Kaya <okaya@codeaurora.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>
-Subject: Re: [PATCH] docs/memory-barriers.txt: Fix broken DMA vs MMIO
- ordering example
-Message-ID: <20180328180316.GN4082@hirez.programming.kicks-ass.net>
-References: <1522156287-15169-1-git-send-email-will.deacon@arm.com>
- <20180327150252.GN3675@linux.vnet.ibm.com>
- <c93ed5db-8cfd-1258-3396-62ca2076c44d@codeaurora.org>
- <CA+8MBb+61AhMkbo8xtd3Y0fY8xRUPD+kUsEvWgOz94KGEuovOw@mail.gmail.com>
+        Wed, 28 Mar 2018 14:04:08 -0400
+Date: Wed, 28 Mar 2018 14:04:07 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: schwidefsky@de.ibm.com, <borntraeger@de.ibm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <parri.andrea@gmail.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        <akiyks@gmail.com>
+Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
+In-Reply-To: <20180328163344.GT3675@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1803281350370.1375-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+8MBb+61AhMkbo8xtd3Y0fY8xRUPD+kUsEvWgOz94KGEuovOw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 10:57:11AM -0700, Tony Luck wrote:
-> On Wed, Mar 28, 2018 at 6:02 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
-> > +linux-ia64
-> > Does IA64 follow this requirement? If not, is implementation planned?
-> >
-> > "no wmb() before writel()"
-> >
-> > Linus asked us to get rid of wmb() in front of writel() for UC memory.
-> > Just checking that we are not breaking anything for IA64.
-> 
-> We should be OK on ia64, writel() uses a cast to:
-> 
->  *(volatile unsigned int __force *)
-> 
-> which the compiler takes as a request to use a "st4.rel" instruction
-> (meaning "store with release semantics"). So the value stored will
-> be visible to anything that follows.
+On Wed, 28 Mar 2018, Paul E. McKenney wrote:
 
-Just to nitpick, regular release semantics don't guarantee anything like
-that, but ia64 never actually got around to implementing proper release
-and it's a full barrier and thus what you say is true.
+> On Wed, Mar 28, 2018 at 11:01:25AM -0400, Alan Stern wrote:
+> > On Wed, 28 Mar 2018, Paul E. McKenney wrote:
+> > 
+> > > Hello!
+> > > 
+> > > The prototype patch shown below provides files required to allow herd7 to
+> > > evaluate C-language litmus tests for the multicopy-atomic TSO ordering
+> > > provided by s390.  This patch should be viewed with great suspicion.
+> > > It does what I expect it to do on SB (with and without barriers),
+> > > IRIW without barriers, and Alan's SB with read-of-write added, but my
+> > > expectations are quite likely faulty, and my test cases are very few
+> > > in number.
+> > > 
+> > > Either way, this is the easy part.  The hard part (which I am happy
+> > > to leave to others) is making litmus7 and klitmus7 able to do tests
+> > > on actual hardware, as well as enabling herd to handle litmus tests
+> > > containing BAL.  ;-)
+> > > 
+> > > Note that CPU architectures already supported by herd might well need
+> > > only a .cfg file that refers to herd's pre-existing support.
+> > > 
+> > > Thoughts?
+> > 
+> > I don't quite see the point of this.  You're not suggesting that we
+> > have one Linux Kernel Memory Consistency Model for s390 and another
+> > one for all the other architectures, are you?
+> 
+> Certainly not for common code!
+> 
+> > If the idea is merely to provide a herd model for s390 then it should 
+> > go into the DIY repository, not into the LKMM repository.
+> 
+> Makes sense.
+> 
+> In the meantime, does the cat file look to you like it correctly
+> models the combination of TSO and multicopy atomicity?  Do the
+> fences really work, or did I just get lucky with my choice of
+> litmus tests?
+
+You got lucky.  Try creating an SB litmus test where, instead of an
+smp_mb() fence between the write and the read, each thread executes
+some other kind of fence.
+
+The acyclicity condition should have been written more like this:
+
+let po_ghb = ([R] ; po ; [M]) | ([M] ; po ; [W])
+
+acyclic mfence | po_ghb | rf | fr | co as tso-mca
+
+I don't know what the fence instruction is on s390; change the "mfence"
+above accordingly.  The main difference between this and the
+corresponding expression in x86tso.cat is that I replaced rfe with rf.
+
+This doesn't account for atomic operations properly; see the "implied" 
+term in x86tso.cat.
+
+Alan
