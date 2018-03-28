@@ -1,72 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753901AbeC1P37 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:29:59 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:44683 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753511AbeC1P36 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:29:58 -0400
-X-Google-Smtp-Source: AIpwx4+53CJ0X5QI1Qy4GiapQ0zwl6wlESHyf9rFcsYZ6nPVaglUN4/zi0OIESs8wPx3J3PdEnGcfA==
-Date: Wed, 28 Mar 2018 16:29:55 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: LINUX-KERNEL <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Re: [PATCH V1] mfd: da9062: use core helper regmap_reg_range macros
-Message-ID: <20180328152955.qrbga5fgo3ls6eje@dell>
-References: <20180328110612.1FCAD3FACC@swsrvapps-01.diasemi.com>
+        id S1754050AbeC1PbJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:31:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40758 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753408AbeC1PbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 11:31:07 -0400
+Date: Wed, 28 Mar 2018 18:31:06 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: =?utf-8?B?aGFpYmluemhhbmco5byg5rW35paMKQ==?=
+        <haibinzhang@tencent.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?bGlkb25nY2hlbijpmYjnq4vkuJwp?= <lidongchen@tencent.com>,
+        =?utf-8?B?eXVuZmFuZ3RhaSjlj7Dov5Dmlrkp?= <yunfangtai@tencent.com>
+Subject: Re: [PATCH] vhost-net: add time limitation for tx polling(Internet
+ mail)
+Message-ID: <20180328182813-mutt-send-email-mst@kernel.org>
+References: <88D661ADF6AFBF42B2AB88D8E7682B0901FC412A@EXMBX-SZMAIL011.tencent.com>
+ <0b1846d3-dfcf-df0c-f94c-65d414331d88@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180328110612.1FCAD3FACC@swsrvapps-01.diasemi.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <0b1846d3-dfcf-df0c-f94c-65d414331d88@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018, Steve Twiss wrote:
+On Wed, Mar 28, 2018 at 02:37:04PM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年03月28日 12:01, haibinzhang(张海斌) wrote:
+> > On 2018年03月27日 19:26, Jason wrote
+> > On 2018年03月27日 17:12, haibinzhang wrote:
+> > > > handle_tx() will delay rx for a long time when busy tx polling udp packets
+> > > > with short length(ie: 1byte udp payload), because setting VHOST_NET_WEIGHT
+> > > > takes into account only sent-bytes but no time.
+> > > Interesting.
+> > > 
+> > > Looking at vhost_can_busy_poll() it tries to poke pending vhost work and
+> > > exit the busy loop if it found one. So I believe something block the
+> > > work queuing. E.g did reverting 8241a1e466cd56e6c10472cac9c1ad4e54bc65db
+> > > fix the issue?
+> > "busy tx polling" means using netperf send udp packets with 1 bytes payload(total 47bytes frame lenght),
+> > and handle_tx() will be busy sending packets continuously.
+> > 
+> > > >    It's not fair for handle_rx(),
+> > > > so needs to limit max time of tx polling.
+> > > > 
+> > > > ---
+> > > >    drivers/vhost/net.c | 3 ++-
+> > > >    1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> > > > index 8139bc70ad7d..dc9218a3a75b 100644
+> > > > --- a/drivers/vhost/net.c
+> > > > +++ b/drivers/vhost/net.c
+> > > > @@ -473,6 +473,7 @@ static void handle_tx(struct vhost_net *net)
+> > > >    	struct socket *sock;
+> > > >    	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+> > > >    	bool zcopy, zcopy_used;
+> > > > +	unsigned long start = jiffies;
+> > > Checking jiffies is tricky, need to convert it to ms or whatever others.
+> > > 
+> > > >    	mutex_lock(&vq->mutex);
+> > > >    	sock = vq->private_data;
+> > > > @@ -580,7 +581,7 @@ static void handle_tx(struct vhost_net *net)
+> > > >    		else
+> > > >    			vhost_zerocopy_signal_used(net, vq);
+> > > >    		vhost_net_tx_packet(net);
+> > > > -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+> > > > +		if (unlikely(total_len >= VHOST_NET_WEIGHT) || unlikely(jiffies - start >= 1)) {
+> > > How value 1 is determined here? And we need a complete test to make sure
+> > > this won't affect other use cases.
+> > We just want <1ms ping latency, but actually we are not sure what value is reasonable.
+> > We have some test results using netperf before this patch as follow,
+> > 
+> >      Udp payload    1byte    100bytes    1000bytes    1400bytes
+> >    Ping avg latency    25ms     10ms       2ms         1.5ms
+> > 
+> > What is other testcases?
+> 
+> Something like https://patchwork.kernel.org/patch/10151645/.
+> 
+> Btw, you need use time_before() to properly handle jiffies overflow and I
+> would also suggest you to try something like #packets limit (e.g 64).
 
-> From: Steve Twiss <stwiss.opensource@diasemi.com>
-> 
-> Replace multi-line entries in the regmap_range arrays with single
-> line macros: regmap_reg_range(). This will leave the static structure
-> array entries for regmap_range unaltered. It will significantly reduce
-> the line count in the DA9062/61 core file.
-> 
-> Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
-> 
-> ---
-> This patch applies against linux-next and v4.16-rc7
-> 
-> Hi,
-> 
-> This is a cosmetic tidy up operation. It reduces the line-count in the
-> file by over 200.
-> 
-> It will replace regmap_range[] array entries, such as this: 
-> {
->   .range_min = DA9062AA_DEVICE_ID,
->   .range_max = DA9062AA_CONFIG_ID,
-> },
-> 
-> with a single line,
->  regmap_reg_range(DA9062AA_DEVICE_ID, DA9062AA_CONFIG_ID),
-> 
-> Regards,
-> Steve Twiss, Dialog Semiconductor
-> 
-> 
->  drivers/mfd/da9062-core.c | 462 ++++++++++++----------------------------------
->  1 file changed, 114 insertions(+), 348 deletions(-)
+Maybe a ring size?
 
-Nice!
+> For long term, we definitely need more worker threads.
+> 
+> Thanks
 
-Applied, thanks.
+Only helps when you have spare CPUs.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> > 
+> > > Another thought is introduce another limit of #packets, but this need
+> > > benchmark too.
+> > > 
+> > > Thanks
+> > > 
+> > > >    			vhost_poll_queue(&vq->poll);
+> > > >    			break;
+> > > >    		}
+> > > 
