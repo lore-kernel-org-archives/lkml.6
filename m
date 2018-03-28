@@ -1,102 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752173AbeC1KyU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 06:54:20 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37886 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751223AbeC1KyT (ORCPT
+        id S1752326AbeC1K4p (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 06:56:45 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33298 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751072AbeC1K4n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 06:54:19 -0400
-X-Google-Smtp-Source: AIpwx48q48SYJ53AC0T/aVG2VCAGV3TrTQ4E7IvYx2nteOJeFsW3ZHSTJhUMm4N2i9ebftMghGHGUQ==
-Date: Wed, 28 Mar 2018 11:54:15 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/8] mfd: cros_ec_dev: Register cros-ec-rtc driver as
- a subdevice.
-Message-ID: <20180328105415.gwe2yaddhmauvzqr@dell>
-References: <20180320122751.14019-1-enric.balletbo@collabora.com>
- <20180320122751.14019-5-enric.balletbo@collabora.com>
+        Wed, 28 Mar 2018 06:56:43 -0400
+X-Google-Smtp-Source: AIpwx49m8hjQZahSUUVE5wij0Mrx8mbfZPncPKjbII9VZtuoyR5F1g4RTBNGbUJQrX2DrVvK5eiOfZM1OSjZrOhVm4A=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180320122751.14019-5-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAJZ5v0iRjj5DEKU1m2_y96WRBNu6U1w=GSADRxWXfVDN9K+edQ@mail.gmail.com>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <2249320.0Z4q8AXauv@aspire.rjw.lan>
+ <6462e44a-e207-6b97-22bf-ad4aed69afc2@tu-dresden.de> <4198010.6ArFqS34NK@aspire.rjw.lan>
+ <CAJZ5v0j5mEaQSAiW4ynitM1ee=sqkpc8G_tZ40RYUgyavXXhqQ@mail.gmail.com>
+ <b904266b-b5bb-587d-334a-844a70341f8d@tu-dresden.de> <CAJZ5v0iRjj5DEKU1m2_y96WRBNu6U1w=GSADRxWXfVDN9K+edQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 28 Mar 2018 12:56:42 +0200
+X-Google-Sender-Auth: E4dtRLTrDWr1jlLEFyWtHz_v7tw
+Message-ID: <CAJZ5v0h40DDZ5da7CS4702Z=D3bY7SsOhbUqPR44qVKU0E4D4A@mail.gmail.com>
+Subject: Re: [RFT][PATCH v7 6/8] sched: idle: Select idle state before
+ stopping the tick
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Mar 2018, Enric Balletbo i Serra wrote:
+On Wed, Mar 28, 2018 at 12:37 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Wed, Mar 28, 2018 at 10:38 AM, Thomas Ilsche
+> <thomas.ilsche@tu-dresden.de> wrote:
+>> On 2018-03-28 10:13, Rafael J. Wysocki wrote:
+>>>
 
-> Check whether this EC instance has RTC host command support and instatiate
-> the RTC driver as a subdevice in such case.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
-> 
-> Changes in v4:
-> - [4/8] Nit: check -> Check (Lee Jones)
-> - [4/8] Use ARRAY_SIZE() instead of hardcoded number (Lee Jones)
-> 
-> Changes in v3:
-> - [4/8] Add the Reviewed-by Andy Shevchenko.
-> 
-> Changes in v2:
-> - [4/8] Add the Reviewed-by Gwendal.
-> 
->  drivers/mfd/cros_ec_dev.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index f98e5beffca6..f60a53f11942 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -389,6 +389,12 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
->  	kfree(msg);
->  }
->  
-> +static const struct mfd_cell cros_ec_rtc_cells[] = {
-> +	{
-> +		.name = "cros-ec-rtc",
-> +	}
+[cut]
 
-You're going to hate me, but ...
+>
+> So I do
+>
+> $ for cpu in 0 1 2 3; do taskset -c $cpu sh -c 'while true; do usleep
+> 500; done' & done
+>
+> which is a shell kind of imitation of the above and I cannot see this
+> issue at all.
+>
+> I count the number of times data->next_timer_us in menu_select() is
+> greater than TICK_USEC and while this "workload" is running, that
+> number is exactly 0.
+>
+> I'll try with a C program still.
 
-One line and no need for the comma.
-
-	{ .name = "cros-ec-rtc" }
-
-> +};
-> +
->  static int ec_device_probe(struct platform_device *pdev)
->  {
->  	int retval = -ENOMEM;
-> @@ -437,6 +443,18 @@ static int ec_device_probe(struct platform_device *pdev)
->  	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
->  		cros_ec_sensors_register(ec);
->  
-> +	/* Check whether this EC instance has RTC host command support */
-> +	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
-> +		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-> +					 cros_ec_rtc_cells,
-> +					 ARRAY_SIZE(cros_ec_rtc_cells),
-> +					 NULL, 0, NULL);
-> +		if (retval)
-> +			dev_err(ec->dev,
-> +				"failed to add cros-ec-rtc device: %d\n",
-> +				retval);
-> +	}
-> +
->  	/* Take control of the lightbar from the EC. */
->  	lb_manual_suspend_ctrl(ec, 1);
->  
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+And with a C program I see data->next_timer_us greater than TICK_USEC
+while it is running, so let me dig deeper.
