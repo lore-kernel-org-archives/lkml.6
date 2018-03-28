@@ -1,67 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753297AbeC1V7L (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 17:59:11 -0400
-Received: from ozlabs.org ([103.22.144.67]:60803 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752318AbeC1V7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 17:59:10 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 29 Mar 2018 08:58:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the kbuild tree
-Message-ID: <20180329085809.78af08ff@canb.auug.org.au>
+        id S1753341AbeC1WAu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 18:00:50 -0400
+Received: from resqmta-ch2-11v.sys.comcast.net ([69.252.207.43]:53560 "EHLO
+        resqmta-ch2-11v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752738AbeC1WAt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 18:00:49 -0400
+Date: Wed, 28 Mar 2018 17:00:46 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Shakeel Butt <shakeelb@google.com>
+cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Greg Thelen <gthelen@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slab, slub: skip unnecessary kasan_cache_shutdown()
+In-Reply-To: <20180327230603.54721-1-shakeelb@google.com>
+Message-ID: <alpine.DEB.2.20.1803281700230.23247@nuc-kabylake>
+References: <20180327230603.54721-1-shakeelb@google.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yYMVloRgW.c8.CUA3IdrAEv"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfIm8wOy0fVHbrEK7c4LQ6CLQMvQH6VB76EdtC50D+iRjSImjqcsfmh2dTW/HkCf368F4LYraN43YZ5vtAQy+oqdC5u6lhL72o5TZ+BP9nIX/xKB9WgWP
+ kkDjW08V9ncjq/WoE/C8wjLmI3siQL0/A0QcbcnOIacnmQ4nz94q08lRlb1qh1hX7tqGceS0601iDr9bSzkSbwxpYWkPeyiDL5pp8vlzSIhi7bp9jzxtpZTG
+ q/2DBpkqwIdNhAhtmRjQf7AHuZtiWppICr5d5gCqtxpOZYcKo0UjKZqe0BQkZL6BXu9uUCRThtqZiRUdt2T4+oxmht6WT955d/IuMVgVQWFbsmrf0o6q5W+h
+ IgoFOLm1KjAQYjAuwZq8LF3iaRb4bLAiP2ihPoxh1Ok4cejVJC1b6W9aFKAmC9TQoJmUjnj1M5iOdQdc0h04WWn/2z9MZdVyEzXug9D+cUMPGinnk5zb9mVU
+ XoE3nYb/dQUtMIcQBGFs5RUQynguafj607GcF2dOaqVVRwBQ8YrrL6e5gxE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/yYMVloRgW.c8.CUA3IdrAEv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 27 Mar 2018, Shakeel Butt wrote:
 
-Hi Masahiro,
+> The kasan quarantine is designed to delay freeing slab objects to catch
+> use-after-free. The quarantine can be large (several percent of machine
+> memory size). When kmem_caches are deleted related objects are flushed
+> from the quarantine but this requires scanning the entire quarantine
+> which can be very slow. We have seen the kernel busily working on this
+> while holding slab_mutex and badly affecting cache_reaper, slabinfo
+> readers and memcg kmem cache creations.
 
-After merging the kbuild tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-net/ipv4/netfilter/nf_nat_snmp_basic_main.c:57:10: fatal err
-or: nf_nat_snmp_basic.asn1.h: No such file or directory
- #include "nf_nat_snmp_basic.asn1.h"
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Presuambly caused by commit
-
-  9ee1b1bb8743 ("kbuild: rename *-asn1.[ch] to *.asn1.[ch]")
-
-though I am not sure why it didn't fail yesterday.
-
-I reverted that commit (and the following one because of a conflict)
-for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yYMVloRgW.c8.CUA3IdrAEv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq8D/EACgkQAVBC80lX
-0GxC0Af/USeKpvx3Nz9eaWH+MaWoUqRW1vs2C9UUIN5KrJcTiwtfnT9aUdcI7FJv
-WzhoheM99d1ldjB+SfoZ3hUq5bA48BuqA2qeAihqcCJxjIpGciFBLLlNO0os68hT
-f+0EaqHh3lEhSQ9HrAkhrAnGw6DvYQh5ksb2c7x5JIbnZu2kmDYrvrgBsT0cysLE
-E2EDvkhSBK1Dgd2ktMeb0iUUZHuBmFtStQIYJxeKnTUoqVxG1/YihwBSOvXSbyyx
-yxt61T25xNdDp5sev2ZHOqe7H/0OZlGa4ccGPfEoCk8hZYwpUyf0FrjSh+ORLh0G
-EnbPqRwO2veQm2GoHfGhvzPpmRDEXw==
-=cKJV
------END PGP SIGNATURE-----
-
---Sig_/yYMVloRgW.c8.CUA3IdrAEv--
+Acked-by: Christoph Lameter <cl@linux.com>
