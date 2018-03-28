@@ -1,66 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753679AbeC1ULu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 16:11:50 -0400
-Received: from mga14.intel.com ([192.55.52.115]:46820 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753397AbeC1ULJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 16:11:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,373,1517904000";
-   d="scan'208";a="37650443"
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: rostedt@goodmis.org
-Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 2/4] tracing: Don't add flag strings when displaying variable references
-Date: Wed, 28 Mar 2018 15:10:54 -0500
-Message-Id: <913318a5610ef6b24af2522575f671fa6ee19b6b.1522256721.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 1.9.3
-In-Reply-To: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
+        id S1752978AbeC1UO2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 16:14:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49866 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751976AbeC1UO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 16:14:27 -0400
+Date: Wed, 28 Mar 2018 22:14:24 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 2/2] KVM: X86: Fix disable pv tlb flush when steal time
+ is enabled
+Message-ID: <20180328201424.GE26753@flask>
+References: <1521951515-5139-1-git-send-email-wanpengli@tencent.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521951515-5139-1-git-send-email-wanpengli@tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variable references should never have flags appended when displayed -
-prevent that from happening.
+2018-03-24 21:18-0700, Wanpeng Li:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> PV TLB FLUSH can be turned on when steal time is enabled. The condition 
+> reverse when the patch is sent out for several rounds review by mistake. 
 
-Before:
+It was just one round and the m/l patch actually looks correct,
 
-  # cat /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  hist:keys=next_pid:vals=hitcount:wakeup_lat=common_timestamp.usecs-$ts0.usecs:...
+> This patch fixes it.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
 
-After:
-
-  hist:keys=next_pid:vals=hitcount:wakeup_lat=common_timestamp.usecs-$ts0:...
-
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- kernel/trace/trace_events_hist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index fb81447..468e43f 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -2052,7 +2052,7 @@ static void expr_field_str(struct hist_field *field, char *expr)
- 
- 	strcat(expr, hist_field_name(field, 0));
- 
--	if (field->flags) {
-+	if (field->flags && !(field->flags & HIST_FIELD_FL_VAR_REF)) {
- 		const char *flags_str = get_hist_field_flags(field);
- 
- 		if (flags_str) {
--- 
-1.9.3
+I've modified the commit message and rebased it for kvm/master, thanks.
