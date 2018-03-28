@@ -1,26 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752929AbeC1RqP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 13:46:15 -0400
-Received: from relay1.sgi.com ([192.48.180.66]:60377 "EHLO relay.sgi.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752457AbeC1RqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 13:46:02 -0400
-Message-Id: <20180328174010.882366342@stormcage.americas.sgi.com>
-User-Agent: quilt/0.46-1
-Date: Wed, 28 Mar 2018 12:40:10 -0500
-From: <mike.travis@hpe.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
-Cc: Russ Anderson <russ.anderson@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Andrew Banman <andrew.banman@hpe.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/1] x86/platform/UV: UV Fix patches for Intel processors
+        id S1753028AbeC1Rqr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 13:46:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:32940 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752580AbeC1Rqp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 13:46:45 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 28 Mar 2018 20:46:44 +0300
+From: merez@codeaurora.org
+To: Colin King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        wil6210@qti.qualcomm.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-wireless-owner@vger.kernel.org
+Subject: Re: [PATCH][next] wil6210: fix potential null dereference of ndev
+ before null check
+In-Reply-To: <20180328174027.31551-1-colin.king@canonical.com>
+References: <20180328174027.31551-1-colin.king@canonical.com>
+Message-ID: <49ef31bc36217349a4801dc2eba4735c@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-03-28 20:40, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The pointer ndev is being dereferenced before it is being null checked,
+> hence there is a potential null pointer deference. Fix this by only
+> dereferencing ndev after it has been null checked
+> 
+> Detected by CoverityScan, CID#1467010 ("Dereference before null check")
+> 
+> Fixes: e00243fab84b ("wil6210: infrastructure for multiple virtual 
+> interfaces")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/net/wireless/ath/wil6210/main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/wil6210/main.c
+> b/drivers/net/wireless/ath/wil6210/main.c
+> index a4b413e8d55a..82aec6b06d09 100644
+> --- a/drivers/net/wireless/ath/wil6210/main.c
+> +++ b/drivers/net/wireless/ath/wil6210/main.c
+> @@ -391,7 +391,7 @@ static void wil_fw_error_worker(struct work_struct 
+> *work)
+>  	struct wil6210_priv *wil = container_of(work, struct wil6210_priv,
+>  						fw_error_worker);
+>  	struct net_device *ndev = wil->main_ndev;
+> -	struct wireless_dev *wdev = ndev->ieee80211_ptr;
+> +	struct wireless_dev *wdev;
+> 
+>  	wil_dbg_misc(wil, "fw error worker\n");
+> 
+> @@ -399,6 +399,7 @@ static void wil_fw_error_worker(struct work_struct 
+> *work)
+>  		wil_info(wil, "No recovery - interface is down\n");
+>  		return;
+>  	}
+> +	wdev = ndev->ieee80211_ptr;
+> 
+>  	/* increment @recovery_count if less then WIL6210_FW_RECOVERY_TO
+>  	 * passed since last recovery attempt
 
-Updates to UV4 fix patches.
+Reviewed-by: Maya Erez <merez@codeaurora.org>
 
 -- 
+Maya Erez
+Qualcomm Israel, Inc. on behalf of Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
