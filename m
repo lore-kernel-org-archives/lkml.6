@@ -1,137 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753339AbeC1VaC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 17:30:02 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:32955 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752945AbeC1VaA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 17:30:00 -0400
-X-Google-Smtp-Source: AIpwx49CMCl/+uztm3bRSS8AdYwoOef/uF8usMgj1Q0kEwcxEqnaCa0nFgBDpa9a/odDHgTOm3aO2A==
-Date: Wed, 28 Mar 2018 14:29:58 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Shakeel Butt <shakeelb@google.com>
-cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Greg Thelen <gthelen@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] slab, slub: skip unnecessary kasan_cache_shutdown()
-In-Reply-To: <CALvZod5x+mYBaa_x_a00WVGGDGX55AwTcuFdeVQStUo2Db6f3w@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1803281424000.167685@chino.kir.corp.google.com>
-References: <20180327230603.54721-1-shakeelb@google.com> <alpine.DEB.2.20.1803271715310.8944@chino.kir.corp.google.com> <CALvZod5x+mYBaa_x_a00WVGGDGX55AwTcuFdeVQStUo2Db6f3w@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1753444AbeC1Vad (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 17:30:33 -0400
+Received: from mga03.intel.com ([134.134.136.65]:4527 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753343AbeC1Vab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 17:30:31 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,373,1517904000";
+   d="asc'?scan'208";a="215744699"
+From: "Rustad, Mark D" <mark.d.rustad@intel.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        "netanel@amazon.com" <netanel@amazon.com>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "mheyne@amazon.de" <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>, "hch@lst.de" <hch@lst.de>,
+        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
+Subject: Re: [virtio-dev] [pci PATCH v7 1/5] pci: Add
+ pci_sriov_configure_simple for PFs that don't manage VF resources
+Thread-Topic: [virtio-dev] [pci PATCH v7 1/5] pci: Add
+ pci_sriov_configure_simple for PFs that don't manage VF resources
+Thread-Index: AQHTvI08Vp52Z4tFxUi8VACDa+E/qaPmtDkA
+Date: Wed, 28 Mar 2018 21:30:29 +0000
+Message-ID: <C573B44F-097F-45D2-AB4C-B8BCCBCC2C4F@intel.com>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184055.3102.2435.stgit@localhost.localdomain>
+In-Reply-To: <20180315184055.3102.2435.stgit@localhost.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.233.80.200]
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_BBED0712-6906-4470-94B1-31A72AA8A265";
+        protocol="application/pgp-signature"; micalg=pgp-sha256
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018, Shakeel Butt wrote:
+--Apple-Mail=_BBED0712-6906-4470-94B1-31A72AA8A265
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
-> On Tue, Mar 27, 2018 at 5:16 PM, David Rientjes <rientjes@google.com> wrote:
-> > On Tue, 27 Mar 2018, Shakeel Butt wrote:
-> >
-> >> diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
-> >> index 49fffb0ca83b..135ce2838c89 100644
-> >> --- a/mm/kasan/kasan.c
-> >> +++ b/mm/kasan/kasan.c
-> >> @@ -382,7 +382,8 @@ void kasan_cache_shrink(struct kmem_cache *cache)
-> >>
-> >>  void kasan_cache_shutdown(struct kmem_cache *cache)
-> >>  {
-> >> -     quarantine_remove_cache(cache);
-> >> +     if (!__kmem_cache_empty(cache))
-> >> +             quarantine_remove_cache(cache);
-> >>  }
-> >>
-> >>  size_t kasan_metadata_size(struct kmem_cache *cache)
-> >> diff --git a/mm/slab.c b/mm/slab.c
-> >> index 9212c64bb705..b59f2cdf28d1 100644
-> >> --- a/mm/slab.c
-> >> +++ b/mm/slab.c
-> >> @@ -2291,6 +2291,18 @@ static int drain_freelist(struct kmem_cache *cache,
-> >>       return nr_freed;
-> >>  }
-> >>
-> >> +bool __kmem_cache_empty(struct kmem_cache *s)
-> >> +{
-> >> +     int node;
-> >> +     struct kmem_cache_node *n;
-> >> +
-> >> +     for_each_kmem_cache_node(s, node, n)
-> >> +             if (!list_empty(&n->slabs_full) ||
-> >> +                 !list_empty(&n->slabs_partial))
-> >> +                     return false;
-> >> +     return true;
-> >> +}
-> >> +
-> >>  int __kmem_cache_shrink(struct kmem_cache *cachep)
-> >>  {
-> >>       int ret = 0;
-> >> diff --git a/mm/slab.h b/mm/slab.h
-> >> index e8981e811c45..68bdf498da3b 100644
-> >> --- a/mm/slab.h
-> >> +++ b/mm/slab.h
-> >> @@ -166,6 +166,7 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
-> >>                             SLAB_TEMPORARY | \
-> >>                             SLAB_ACCOUNT)
-> >>
-> >> +bool __kmem_cache_empty(struct kmem_cache *);
-> >>  int __kmem_cache_shutdown(struct kmem_cache *);
-> >>  void __kmem_cache_release(struct kmem_cache *);
-> >>  int __kmem_cache_shrink(struct kmem_cache *);
-> >> diff --git a/mm/slub.c b/mm/slub.c
-> >> index 1edc8d97c862..44aa7847324a 100644
-> >> --- a/mm/slub.c
-> >> +++ b/mm/slub.c
-> >> @@ -3707,6 +3707,17 @@ static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
-> >>               discard_slab(s, page);
-> >>  }
-> >>
-> >> +bool __kmem_cache_empty(struct kmem_cache *s)
-> >> +{
-> >> +     int node;
-> >> +     struct kmem_cache_node *n;
-> >> +
-> >> +     for_each_kmem_cache_node(s, node, n)
-> >> +             if (n->nr_partial || slabs_node(s, node))
-> >> +                     return false;
-> >> +     return true;
-> >> +}
-> >> +
-> >>  /*
-> >>   * Release all resources used by a slab cache.
-> >>   */
-> >
-> > Any reason not to just make quarantine_remove_cache() part of
-> > __kmem_cache_shutdown() instead of duplicating its logic?
+On Mar 15, 2018, at 11:41 AM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
+
+> From: Alexander Duyck <alexander.h.duyck@intel.com>
 > 
-> Can you please explain what you mean by making
-> quarantine_remove_cache() part of __kmem_cache_shutdown()? Do you mean
-> calling quarantine_remove_cache() inside __kmem_cache_shutdown()? The
-> __kmem_cache_shutdown() of both SLAB & SLUB does per-cpu
-> draining/flushing and we want the free the quarantined objects before
-> that. So, I am not sure how to incorporate  quarantine_remove_cache()
-> into __kmem_cache_shutdown() without duplicating the for-loop &
-> if-condition.
+> This patch adds a common configuration function called
+> pci_sriov_configure_simple that will allow for managing VFs on devices
+> where the PF is not capable of managing VF resources.
 > 
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> ---
+> 
+> v5: New patch replacing pci_sriov_configure_unmanaged with
+>       pci_sriov_configure_simple
+>     Dropped bits related to autoprobe changes
+> v6: Defined pci_sriov_configure_simple as NULL if IOV is disabled
+> v7: Updated pci_sriov_configure_simple to drop need for err value
+>     Fixed comment explaining why pci_sriov_configure_simple is NULL
+> 
+>  drivers/pci/iov.c   |   31 +++++++++++++++++++++++++++++++
+>  include/linux/pci.h |    3 +++
+>  2 files changed, 34 insertions(+)
 
-__kmem_cache_empty() is largely a copy and paste of 
-__kmem_cache_shutdown() logic, is there no way to simplify this?  I was 
-thinking of generalizing the iteration (for_each_kmem_cach_node_nonempty?) 
-that eliminates the need for __kmem_cache_empty().
+Tested with the device identified in patch #2.
 
-kasan_cache_shutdown() would do
+Tested-by: Mark Rustad <mark.d.rustad@intel.com>
 
-	for_each_kmem_cache_node_nonempty(cache, node, n) {
-		quarantine_remove_cache(cache);
-		break;
-	}
+--
+Mark Rustad, Networking Division, Intel Corporation
 
-and __kmem_cache_shutdown() would use it for the iteration over 
-kmem_cache_node's to drain.
+--Apple-Mail=_BBED0712-6906-4470-94B1-31A72AA8A265
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEE6ug8b0Wg+ULmnksNPA7/547j7m4FAlq8CXQACgkQPA7/547j
+7m6pew/8CP45+0ywjt3/o6XIMCG2lY8I4kEyzMy+qDRd6Enk2kQkcORMhSxNOrwF
+MXK7CSa01s3Y0AwjHuy+0d+/jDvxyUGuhw0Tb98DkL3T9OQDhgCuTPTC8/wu9XYS
+AoACL8alz4pouJM/P9VT24pGIkwbEWl0bE/LZ0fZvhOkVjLBp6f3E5aqgcMZlI4V
+uAEDdP/AHdessoOktzRWxmlEFJdBN/TDkobLM0I+ipI2VIJh+Wu8n2Cb9nT9ZrFz
+bgOVdwJMloky6CF23XHu/R+vrfmtQJf7/OKpI63it2ryX9g0c2ZKTw3RhqrBCR+c
+470ZslFbxfQTMNZnI/+6pU5/mriHtEuN+X/Pyr0UVgjDezjtiId9bwNxbRUsZrvF
+MvzfHBixgYmtRa+cBguiV48qfkWrfXdmhteqYta786+Tr0zvKX833WAydO+/V6bx
+ZiBaZEa3LoSuOhGbzRjPxyMIy6nrkVYKvulm/N1G4iTzgs1Lj5heWiH6onW1y32o
+sLyEYpLVLHAEGVtHEUTxJU4xIbyW5hvY/dUqjOiXnvcIdP7yc+bo9s3kLiuEVn81
+r8/VkR1W6+q1r5J/ED9iWEt7D7BkOBdH9THRIQIDq3O1vSzX6m+Pvhw2mjLcsY9U
+A5ABZsKAF+7gYtNlM4X5bl8tXhzNOJo4pP7zAHTOqffxeOIYD0A=
+=39ai
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_BBED0712-6906-4470-94B1-31A72AA8A265--
