@@ -1,48 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753354AbeC1Q70 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 12:59:26 -0400
-Received: from mga02.intel.com ([134.134.136.20]:53437 "EHLO mga02.intel.com"
+        id S1753315AbeC1Q7L (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 12:59:11 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20183 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752175AbeC1Q7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 12:59:24 -0400
+        id S1751434AbeC1Qzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 12:55:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,372,1517904000";
-   d="scan'208";a="38892007"
-Subject: Re: [PATCHv2 12/14] x86/mm: Implement page_keyid() using page_ext
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+   d="scan'208";a="37608758"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
         Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 05/14] mm/khugepaged: Do not collapse pages in encrypted VMAs
+Date: Wed, 28 Mar 2018 19:55:31 +0300
+Message-Id: <20180328165540.648-6-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
 References: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
- <20180328165540.648-13-kirill.shutemov@linux.intel.com>
-Cc: Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <b4498b2b-5092-b347-e92d-6ebd375fd947@intel.com>
-Date: Wed, 28 Mar 2018 09:59:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180328165540.648-13-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/28/2018 09:55 AM, Kirill A. Shutemov wrote:
-> +static inline int page_keyid(struct page *page)
-> +{
-> +	if (!mktme_nr_keyids)
-> +		return 0;
-> +
-> +	return lookup_page_ext(page)->keyid;
-> +}
+Pages for encrypted VMAs have to be allocated in a special way:
+we would need to propagate down not only desired NUMA node but also
+whether the page is encrypted.
 
-This doesn't look very optimized.  Don't we normally try to use
-X86_FEATURE_* for these checks so that we get the runtime patching *and*
-compile-time optimizations?
+It complicates not-so-trivial routine of huge page allocation in
+khugepaged even more. It also puts more pressure on page allocator:
+we cannot re-use pages allocated for encrypted VMA to collapse
+page in unencrypted one or vice versa.
+
+I think for now it worth skipping encrypted VMAs. We can return
+to this topic later.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ include/linux/mm.h | 7 +++++++
+ mm/khugepaged.c    | 2 ++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6c50f77c75d5..b6a72eb82f4b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1479,6 +1479,13 @@ static inline bool vma_is_anonymous(struct vm_area_struct *vma)
+ 	return !vma->vm_ops;
+ }
+ 
++#ifndef vma_is_encrypted
++static inline bool vma_is_encrypted(struct vm_area_struct *vma)
++{
++	return false;
++}
++#endif
++
+ #ifndef vma_keyid
+ static inline int vma_keyid(struct vm_area_struct *vma)
+ {
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index e42568284e06..42f33fd526a0 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -835,6 +835,8 @@ static bool hugepage_vma_check(struct vm_area_struct *vma)
+ 		return false;
+ 	if (is_vma_temporary_stack(vma))
+ 		return false;
++	if (vma_is_encrypted(vma))
++		return false;
+ 	return !(vma->vm_flags & VM_NO_KHUGEPAGED);
+ }
+ 
+-- 
+2.16.2
