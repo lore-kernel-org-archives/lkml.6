@@ -1,65 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752694AbeC1LH6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:07:58 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54986 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752259AbeC1LH4 (ORCPT
+        id S1752843AbeC1LIX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:08:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54374 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752259AbeC1LIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 07:07:56 -0400
-X-Google-Smtp-Source: AIpwx4/c6PvwlqovEioyF6N3EtlvpP8ZllMmWoaN91UypFfT7outbLVb7aHjWEm6I0/TlvogW29cFw==
-Date: Wed, 28 Mar 2018 12:07:53 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH v5 1/2] mfd: arizona: Update reset pin to use GPIOD
-Message-ID: <20180328110753.vqhngsus5gpl6qld@dell>
-References: <20180312155201.30108-1-ckeepax@opensource.cirrus.com>
+        Wed, 28 Mar 2018 07:08:22 -0400
+Date: Wed, 28 Mar 2018 13:08:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH for-4.17 2/2] powerpc: Remove smp_mb() from
+ arch_spin_is_locked()
+Message-ID: <20180328110809.GE4129@hirez.programming.kicks-ass.net>
+References: <1522060667-7034-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <1522109216.7364.30.camel@kernel.crashing.org>
+ <20180327102521.GA7347@andrea>
+ <87a7us3h66.fsf@concordia.ellerman.id.au>
+ <20180328110436.GR4043@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180312155201.30108-1-ckeepax@opensource.cirrus.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180328110436.GR4043@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018, Charles Keepax wrote:
+On Wed, Mar 28, 2018 at 01:04:36PM +0200, Peter Zijlstra wrote:
+> On Wed, Mar 28, 2018 at 04:25:37PM +1100, Michael Ellerman wrote:
+> > Documenting it would definitely be good, but even then I'd be inclined
+> > to leave the barrier in our implementation. Matching the documented
+> > behaviour is one thing, but the actual real-world behaviour on well
+> > tested platforms (ie. x86) is more important.
+> 
+> By that argument you should switch your spinlock implementation to RCpc
+> and include that SYNC in either lock or unlock already ;-)
 
-> Now GPIOD has support for both pdata systems and for non-standard DT
-> bindings the Arizona reset GPIO can be converted to use it. Worth
-> noting gpiod_set_raw_value_cansleep is used to match the behaviour
-> of the old GPIOs. This is because the part is fairly widely used and
-> it is unknown how many DTs are correctly setting active low through
-> device tree, so to avoid breaking any existing users it is best to
-> match the previous behaviour.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
-> 
-> Changes since v4:
->  - Don't use a switch statement for handling return values
->  - Add some comments to the handling for the older binding
->  - Use gpiod_set_raw_value_cansleep to avoid potential breakage
-> 
-> I have also removed Linus's reviewed-by was a bit border line but
-> I felt there have probably been enough code changes since he gave
-> it that it was probably safer to remove it.
-> 
-> Thanks,
-> Charles
-> 
->  drivers/mfd/arizona-core.c        | 53 ++++++++++++++++++++++++++-------------
->  include/linux/mfd/arizona/pdata.h |  3 ++-
->  2 files changed, 37 insertions(+), 19 deletions(-)
+*RCsc* obviously... clearly I need to wake up moar.
 
-Applied with Linus' Ack, thanks
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> Ideally we'd completely eradicate the *_is_locked() crud from the
+> kernel, not sure how feasable that really is, but it's a good goal. At
+> that point the whole issue of the barrier becomes moot of course.
