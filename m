@@ -1,108 +1,205 @@
-Return-Path: <gustavo.pimentel@synopsys.com>
-X-Google-Smtp-Source: AIpwx4/OuzAcQ3Uv/wt0O4xQLpO/asIqIY10nohgOobXg8BVb4lTGzBFje4WBWSJrq03xH+QilOY
-ARC-Seal: i=1; a=rsa-sha256; t=1522331624; cv=none;
+Return-Path: <niklas.cassel@axis.com>
+X-Google-Smtp-Source: AIpwx4+EFqeK0u28NmqitotF+ZG3aGJbx1lTFJRLkatLuKDzfVWO25fvBwRkbDjq/QnP9HXWzN7U
+ARC-Seal: i=1; a=rsa-sha256; t=1522237883; cv=none;
         d=google.com; s=arc-20160816;
-        b=MCBca5M/nU2hZZl24JHf85saGiiBK8qw+JPQUhxwbm+0VKYHIj69gUOlUZCRXW6PGs
-         qQxaNQCzJEGApV3N0fpyyzVmOYJTQ/IofE98dW4GUzUTZ+Mr+z80YKYt0cZNmb184igN
-         5+U4aRSDWSS1YVZ7BVYD8kPIiYkfSZIGAHRXP5oU75R+s+zvbWDqIkYA6MF9vfEC+g4C
-         k25cyLFxGaOYPWfPUVoShjM/kkXeUD33tWY1ICwgsGTYCH/jbs/I6g/d1TfJ/GrT80D6
-         Lq7fNjAxK2pW4C/oXDh3yv+ZYwDYm7HYcI1+BDWGBIi+8htM/RrRpOsLzuQbYAAJKSdJ
-         3u8w==
+        b=br0xzlblTOYNDhCpm4w6dN/PbBIjXjWTGnprOcWU44vSuP+5iMI/bjp20PASs3gZbC
+         emMXkTGAflHsfj99dSI6eE6EFULO3+aY21ffL79hEXY9JpBF9i+tvDUtBH0B+Mckf088
+         5Cy/0XSXeHi9gE8GnUzxzA+NGUSbDu7GT3RyEgMtGrmdNgIPHuzTpTOELnjw5MPyB9Rc
+         R1UJIrlb2hcuiykJg75oDzWTln3+LVViNtRkisz5PuDQhFAw7sOoYYvCNGuzcexITRQn
+         LCWMe9KpDYUWnYjFNvb+kBZBnwKan2RcVDDd5K1CZgZHzQeh3BGJOFpAzK41epnpYWB2
+         Qwiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=yUZTJ0IozgzYHx77ZRcEJltoAQtMO87+N0/4UJ2HFTY=;
-        b=aeMVolYGtV5+JgPVigpwciAEy9ayxjzXlfbLl47q8RxOEE5rIRsRU/ZFncb2wmDdfS
-         SA0jN4//RP7ArsQq1rzxjGlMIm7CqyS6gwapDJdjYTI9QGWEEP9fc0x9Ww0bE5Kll67K
-         XpAD7RBOn3j/uQzg/nDED8ym4kmCCVvFLUfTAcNPEYJpZY1GlJMgQTMpKoshptQUHJRi
-         5+5FBfBu3WdhWDPGvVEiuIpJB3xMT5R0F4HgcKlCFZ/5QpR6WF2sqe3oXwGNQPRFq6wt
-         +QK1IADelfFw68WvsbSyepq4JQPdTiBh9FvOPHB9wGnp9/s8CPx6qEuCfs5/cNu2/+3C
-         pjSQ==
+        bh=kSfx65259NCgW+U7IZmKrU1T6OT3z1I0LREDCww7Fws=;
+        b=pvwCvjNDedK4Wcr1B0FVmleG/4WZgt/kNnUg+0K8V2QQ4UQb7rqbQVfvexAmur+cpD
+         zjIGWoAMXBaaJIjqcN0O0R0uQdwK+MYY8ioeUzsu8ozzw8P/nMgmegkc0XZZjCQPckq6
+         T+HFyaX9pu7Q5DSOStra6oFYC5LD9BOpdZQXahXO6r9fmKSSpn5UgAfvurDfhceS+5Pe
+         ajvFHg72lZGu2lhohhbu2G34icJ/UQK6Zz1c4uDDc8wYjwAnS7LWqvkAqjY7itRjxpci
+         2KbRqES6y1ReJ+iZuDDf5yREUMEPunZCCTuRCMoXwCSp3z8/WJB1m1fRbxSHc0qLIPz/
+         6Q6A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of gustavo.pimentel@synopsys.com designates 198.182.60.111 as permitted sender) smtp.mailfrom=gustavo.pimentel@synopsys.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
+       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of gustavo.pimentel@synopsys.com designates 198.182.60.111 as permitted sender) smtp.mailfrom=gustavo.pimentel@synopsys.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=synopsys.com
-Subject: Re: [PATCH v5 00/12] PCI endpoint 64-bit BAR fixes
-To: Niklas Cassel <niklas.cassel@axis.com>, "kishon@ti.com" <kishon@ti.com>,
- "cyrille.pitchen@free-electrons.com" <cyrille.pitchen@free-electrons.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Arnd Bergmann
- <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alan Douglas <adouglas@cadence.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Jingoo Han <jingoohan1@gmail.com>, Joao Pinto <Joao.Pinto@synopsys.com>
-Cc: Niklas Cassel <niklass@axis.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180328115018.31921-1-niklas.cassel@axis.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <e2fb68a0-c860-71cc-1983-2ecf30d5a2aa@synopsys.com>
-Date: Thu, 29 Mar 2018 14:52:56 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
+       spf=pass (google.com: domain of niklas.cassel@axis.com designates 195.60.68.11 as permitted sender) smtp.mailfrom=niklas.cassel@axis.com
+From: Niklas Cassel <niklas.cassel@axis.com>
+To: kishon@ti.com,
+	cyrille.pitchen@free-electrons.com,
+	Alan Douglas <adouglas@cadence.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Joao Pinto <Joao.Pinto@synopsys.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Niklas Cassel <niklass@axis.com>,
+	John Keeping <john@metanate.com>
+Cc: Niklas Cassel <niklass@axis.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 09/12] PCI: endpoint: Make epc->ops->clear_bar()/pci_epc_clear_bar() take struct *epf_bar
+Date: Wed, 28 Mar 2018 13:50:14 +0200
+Message-Id: <20180328115018.31921-10-niklas.cassel@axis.com>
+X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180328115018.31921-1-niklas.cassel@axis.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180328115018.31921-1-niklas.cassel@axis.com>
+X-TM-AS-GCONF: 00
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596182050655819288?=
-X-GMAIL-MSGID: =?utf-8?q?1596280405002833815?=
+X-GMAIL-THRID: =?utf-8?q?1596182110870306641?=
+X-GMAIL-MSGID: =?utf-8?q?1596182110870306641?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Niklas,
+Make epc->ops->clear_bar()/pci_epc_clear_bar() take struct *epf_bar.
 
-On 28/03/2018 12:50, Niklas Cassel wrote:
-> PCI endpoint fixes to improve the way 64-bit BARs are handled.
-> 
-> 
-> There are still future improvements that could be made:
-> 
-> pci-epf-test.c always allocates space for
-> 6 BARs, even when using 64-bit BARs (which
-> really only requires us to allocate 3 BARs).
-> 
-> pcitest.sh will print "NOT OKAY" for BAR1,
-> BAR3, and BAR5 when using 64-bit BARs.
-> This could probably be improved to say
-> something like "N/A (64-bit BAR)".
-> 
-> Niklas Cassel (12):
->   PCI: endpoint: BAR width should not depend on sizeof dma_addr_t
->   PCI: endpoint: Simplify epc->ops->set_bar()/pci_epc_set_bar()
->   PCI: endpoint: Setting BAR_5 to 64-bits wide is invalid
->   PCI: endpoint: Setting 64-bit/prefetch bit is invalid when IO is set
->   PCI: endpoint: Setting a BAR size > 4 GB is invalid if 64-bit flag is
->     not set
->   PCI: designware-ep: Make dw_pcie_ep_set_bar() handle 64-bit BARs
->     properly
->   PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64 if a 64-bit BAR was
->     set-up
->   PCI: endpoint: Handle 64-bit BARs properly
->   PCI: endpoint: Make epc->ops->clear_bar()/pci_epc_clear_bar() take
->     struct *epf_bar
->   PCI: endpoint: Make sure that BAR_5 does not have 64-bit flag set when
->     clearing
->   PCI: designware-ep: Make dw_pcie_ep_reset_bar() handle 64-bit BARs
->     properly
->   misc: pci_endpoint_test: Handle 64-bit BARs properly
-> 
->  drivers/misc/pci_endpoint_test.c              | 12 +++++----
->  drivers/pci/cadence/pcie-cadence-ep.c         | 15 ++++++++---
->  drivers/pci/dwc/pcie-designware-ep.c          | 36 +++++++++++++++++++++------
->  drivers/pci/endpoint/functions/pci-epf-test.c | 28 +++++++++++++--------
->  drivers/pci/endpoint/pci-epc-core.c           | 32 +++++++++++++++---------
->  drivers/pci/endpoint/pci-epf-core.c           |  4 +++
->  include/linux/pci-epc.h                       | 11 ++++----
->  include/linux/pci-epf.h                       |  2 ++
->  8 files changed, 95 insertions(+), 45 deletions(-)
-> 
+This is needed so that epc->ops->clear_bar() can clear the BAR pair,
+if the BAR is 64-bits wide.
 
-For the whole series:
+This also makes it possible for pci_epc_clear_bar() to sanity check
+the flags.
 
-Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+---
+ drivers/pci/cadence/pcie-cadence-ep.c         |  3 ++-
+ drivers/pci/dwc/pcie-designware-ep.c          | 13 ++++++++++---
+ drivers/pci/endpoint/functions/pci-epf-test.c |  5 ++++-
+ drivers/pci/endpoint/pci-epc-core.c           |  7 ++++---
+ include/linux/pci-epc.h                       |  5 +++--
+ 5 files changed, 23 insertions(+), 10 deletions(-)
 
-Regards,
-Gustavo
+diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+index 2905e098678c..3d8283e450a9 100644
+--- a/drivers/pci/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/cadence/pcie-cadence-ep.c
+@@ -145,10 +145,11 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
+ }
+ 
+ static void cdns_pcie_ep_clear_bar(struct pci_epc *epc, u8 fn,
+-				   enum pci_barno bar)
++				   struct pci_epf_bar *epf_bar)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct cdns_pcie *pcie = &ep->pcie;
++	enum pci_barno bar = epf_bar->barno;
+ 	u32 reg, cfg, b, ctrl;
+ 
+ 	if (bar < BAR_4) {
+diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+index 571b90f88d84..cc4d8381c1dc 100644
+--- a/drivers/pci/dwc/pcie-designware-ep.c
++++ b/drivers/pci/dwc/pcie-designware-ep.c
+@@ -19,7 +19,8 @@ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+ 	pci_epc_linkup(epc);
+ }
+ 
+-void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
++static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar,
++				   int flags)
+ {
+ 	u32 reg;
+ 
+@@ -30,6 +31,11 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+ 	dw_pcie_dbi_ro_wr_dis(pci);
+ }
+ 
++void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
++{
++	__dw_pcie_ep_reset_bar(pci, bar, 0);
++}
++
+ static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
+ 				   struct pci_epf_header *hdr)
+ {
+@@ -104,13 +110,14 @@ static int dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, phys_addr_t phys_addr,
+ }
+ 
+ static void dw_pcie_ep_clear_bar(struct pci_epc *epc, u8 func_no,
+-				 enum pci_barno bar)
++				 struct pci_epf_bar *epf_bar)
+ {
+ 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	enum pci_barno bar = epf_bar->barno;
+ 	u32 atu_index = ep->bar_to_atu[bar];
+ 
+-	dw_pcie_ep_reset_bar(pci, bar);
++	__dw_pcie_ep_reset_bar(pci, bar, epf_bar->flags);
+ 
+ 	dw_pcie_disable_atu(pci, atu_index, DW_PCIE_REGION_INBOUND);
+ 	clear_bit(atu_index, ep->ib_window_map);
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index d46e3ebabb8e..7cef85124325 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -344,14 +344,17 @@ static void pci_epf_test_unbind(struct pci_epf *epf)
+ {
+ 	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+ 	struct pci_epc *epc = epf->epc;
++	struct pci_epf_bar *epf_bar;
+ 	int bar;
+ 
+ 	cancel_delayed_work(&epf_test->cmd_handler);
+ 	pci_epc_stop(epc);
+ 	for (bar = BAR_0; bar <= BAR_5; bar++) {
++		epf_bar = &epf->bar[bar];
++
+ 		if (epf_test->reg[bar]) {
+ 			pci_epf_free_space(epf, epf_test->reg[bar], bar);
+-			pci_epc_clear_bar(epc, epf->func_no, bar);
++			pci_epc_clear_bar(epc, epf->func_no, epf_bar);
+ 		}
+ 	}
+ }
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 8637822605ff..eccc942043cb 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -276,11 +276,12 @@ EXPORT_SYMBOL_GPL(pci_epc_map_addr);
+  * pci_epc_clear_bar() - reset the BAR
+  * @epc: the EPC device for which the BAR has to be cleared
+  * @func_no: the endpoint function number in the EPC device
+- * @bar: the BAR number that has to be reset
++ * @epf_bar: the struct epf_bar that contains the BAR information
+  *
+  * Invoke to reset the BAR of the endpoint device.
+  */
+-void pci_epc_clear_bar(struct pci_epc *epc, u8 func_no, int bar)
++void pci_epc_clear_bar(struct pci_epc *epc, u8 func_no,
++		       struct pci_epf_bar *epf_bar)
+ {
+ 	unsigned long flags;
+ 
+@@ -291,7 +292,7 @@ void pci_epc_clear_bar(struct pci_epc *epc, u8 func_no, int bar)
+ 		return;
+ 
+ 	spin_lock_irqsave(&epc->lock, flags);
+-	epc->ops->clear_bar(epc, func_no, bar);
++	epc->ops->clear_bar(epc, func_no, epf_bar);
+ 	spin_unlock_irqrestore(&epc->lock, flags);
+ }
+ EXPORT_SYMBOL_GPL(pci_epc_clear_bar);
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index 75bae8aabbf9..af657ca58b70 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -41,7 +41,7 @@ struct pci_epc_ops {
+ 	int	(*set_bar)(struct pci_epc *epc, u8 func_no,
+ 			   struct pci_epf_bar *epf_bar);
+ 	void	(*clear_bar)(struct pci_epc *epc, u8 func_no,
+-			     enum pci_barno bar);
++			     struct pci_epf_bar *epf_bar);
+ 	int	(*map_addr)(struct pci_epc *epc, u8 func_no,
+ 			    phys_addr_t addr, u64 pci_addr, size_t size);
+ 	void	(*unmap_addr)(struct pci_epc *epc, u8 func_no,
+@@ -127,7 +127,8 @@ int pci_epc_write_header(struct pci_epc *epc, u8 func_no,
+ 			 struct pci_epf_header *hdr);
+ int pci_epc_set_bar(struct pci_epc *epc, u8 func_no,
+ 		    struct pci_epf_bar *epf_bar);
+-void pci_epc_clear_bar(struct pci_epc *epc, u8 func_no, int bar);
++void pci_epc_clear_bar(struct pci_epc *epc, u8 func_no,
++		       struct pci_epf_bar *epf_bar);
+ int pci_epc_map_addr(struct pci_epc *epc, u8 func_no,
+ 		     phys_addr_t phys_addr,
+ 		     u64 pci_addr, size_t size);
+-- 
+2.14.2
