@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752397AbeC1D0O (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 23:26:14 -0400
-Received: from mail-dm3nam03on0055.outbound.protection.outlook.com ([104.47.41.55]:55476
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        id S1752279AbeC1D0K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 23:26:10 -0400
+Received: from mail-cys01nam02on0061.outbound.protection.outlook.com ([104.47.37.61]:7520
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752199AbeC1D0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 23:26:07 -0400
+        id S1751179AbeC1D0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 23:26:04 -0400
 Authentication-Results: spf=fail (sender IP is 192.88.168.50)
  smtp.mailfrom=nxp.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none header.from=nxp.com;
@@ -15,177 +15,113 @@ To: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC: <Linux-imx@nxp.com>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH V2 4/4] clocksource/drivers/imx-tpm: add different counter width support
-Date: Wed, 28 Mar 2018 11:22:38 +0800
-Message-ID: <1522207358-8388-4-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V2 3/4] clocksource/drivers/imx-tpm: correct some registers operation flow
+Date: Wed, 28 Mar 2018 11:22:37 +0800
+Message-ID: <1522207358-8388-3-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522207358-8388-1-git-send-email-Anson.Huang@nxp.com>
 References: <1522207358-8388-1-git-send-email-Anson.Huang@nxp.com>
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131666811645766454;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
-X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(7966004)(396003)(376002)(39380400002)(346002)(39860400002)(2980300002)(1109001)(1110001)(339900001)(199004)(189003)(6666003)(54906003)(110136005)(575784001)(47776003)(97736004)(68736007)(316002)(16586007)(2616005)(446003)(8676002)(11346002)(486005)(81166006)(486005)(8936002)(476003)(81156014)(105606002)(50226002)(86362001)(50466002)(4326008)(36756003)(48376002)(106466001)(76176011)(26826003)(508600001)(2906002)(51416003)(336012)(450100002)(356003)(53936002)(85426001)(305945005)(26005)(59450400001)(104016004)(72206003)(5660300001)(126002)(77096007);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR03MB386;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD018;1:cRNFttkb6O8tbN7nmVzcBPBpzbTecIXlPORlpdNJNuF2C0SkgC8M9iumm6mLl5B4dWG/cW5Qi3Fy5NZxEyXLpHJgdpFWbMLPMwPenp2SMF/syegVRImY4CdWhBUeMyaN
+X-Matching-Connectors: 131666811622706398;(91ab9b29-cfa4-454e-5278-08d120cd25b8);()
+X-Forefront-Antispam-Report: CIP:192.88.168.50;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(7966004)(396003)(376002)(346002)(39860400002)(39380400002)(2980300002)(1109001)(1110001)(339900001)(199004)(189003)(2906002)(5660300001)(450100002)(356003)(72206003)(4326008)(305945005)(16586007)(59450400001)(36756003)(26826003)(508600001)(53936002)(105606002)(126002)(486005)(486005)(77096007)(26005)(106466001)(86362001)(54906003)(68736007)(6666003)(81166006)(8676002)(50226002)(110136005)(2616005)(11346002)(336012)(575784001)(104016004)(48376002)(47776003)(50466002)(51416003)(316002)(476003)(446003)(76176011)(81156014)(85426001)(97736004)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB389;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;PTR:InfoDomainNonexistent;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD012;1:lmT4gN2hmivEQOcrRJuUCN6N9mL+ywaskkEyJZE5ZfdhiiO0B4KaeyNrTImU+4UxZ+MYMr/WhgSKF9ZEY0YzOicA6s+wc6jb7yIHVL/4rOjLGBcmzx+2ybl1yp0ww00N
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9273ee94-e6f3-4148-ab36-08d5945ba351
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:BL2PR03MB386;
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB386;3:LXqi6eT5xJb4L+78I+FKeLwuVWVEflFZqz5TfSmI193NsdUjx3e5CIpLJcvzUUUK8wD8qvHvtlBFuGV7/eY32WQau35o7p7Rx0J+k3xt3pkyaVoEM0Lqf3P6SSzasDkgDCL/QlHpCQqXZPYdxx4TU23Blh7f99N1bK7tY4tmwYC53B70mddeCOXE8OV7+jvtVYnzFtlWYwT+NH0A6bWwAa6tewaECDK1o8PXtTvH67U6yGp3fIW1IBDc/T/D/n+uI7n2v2M+Jos7ev7gDVzVEF6xokWY/j3E0wT0v/YHSEnfIUjMddda61rhtE0WFDAaR9PchYjeXmyZLf6x4k0XSWC3QFLm1y80OtS/3HLY0Bo=;25:jkyAQtU2ucM6wuJD1R8ef5NT55cJteLsnfASrMQhQgePAjFpSw9A6Jzw+BLnYfj2GOsCbila5Rkd1S6kcD4ulDgfcWkkB7875lMeYA1KIgyYUW79n55HaDgoP4tzB72y75Lyu4YM3A5XuOEtViZr2AFLvwuzbp41WSKR2FajQuYB3hULUYzXJFghO+W7vhuMQrznfdOctr3eDkb2ey6jgmlGLKOr33JjZBGKwUPiisKG577cYV/Lyk2X1g8eBqJzRaan7hciF5N5hY5pcQoZoHB9yKIbvBUE/5RXLEbC0NB22hTh3V1HuT0/Y/tPqUE7586cG5gHKCPsRORb5QaB8g==
-X-MS-TrafficTypeDiagnostic: BL2PR03MB386:
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB386;31:0pTArXSHskXHV1kN344sYpnC4Yuip9BKqCIUt4w9/DRTSa3fJEqX2vwIDOehSSEkAJ9C+z0ol3AzvMwkojVj0t4JTnWqCBToSoreu+Rlk0ekU22VjxjGq7kDVXThUUOCr3Z6jc8GlM177DYfKt3hWURW4Px+FVJHhSbOeskVpZWPxoSbz4qukZxYqPj2vNW0wC/QK9NE5ylQPTsFKviqTmgKCi4lNzCMMJ+UvOM1Hsk=;4:rXNXhzd3BryECyDFI6jacaHoDVzHVt1HcDs4sIxdRzLtMRbnZHN3dCHORT5k9guv4yyZt6asBU/r5Ge1M0rAYEKwZC8h2Fbmsp45xN23y2kfd8b09dIcWHczmqQVg5vl7hUdO1m8I8eQZm9zfCg5MdIxyBJRowg/9c315h4i1HoY13u/Qxl1UEspfmc/2Rll2+iYvtG+I0+iZhJokrzHC+Uccxv7IwJ20hNjOOPcDZ8UJsGg25VSXpdSCma08MlQsW1KK4EcOovx0lwKwRx6OcbbBw6JFYyqx8ImdJ9eNC6TXtfgBgSBwEAfWMoe5Q2V
-X-Microsoft-Antispam-PRVS: <BL2PR03MB3865448F30E7444B7156CD6F5A30@BL2PR03MB386.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 18399ff2-1c6c-4900-c1d6-08d5945ba1de
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(5600026)(4604075)(2017052603328);SRVR:BLUPR03MB389;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;3:rdP11E5QU74YNM88oqW3+ZsSngIAlh8I02yloa1XsoYkd6jbomiM4eMf7Xy0ow0kbBuhq49OjR3vlGmcilrmOcwcdeg9tQ3DS2htFq7mODwm3Tz+ggcuYx+SkBgElf+2n+9oiaMEaAWDRfxnni6jNndrOQ+u1Yomf3eiAqeR4IS4ZniPIVq5PpzsQ6g2bAQlDjZBknXRSgi1qnnBzgfVKgcTDyf/r1LXNdlzlNSUUOsx1UlzwOSL71apMyGD9F8Kyf1koOVVg8bbKvyvgSE6TmOYY2II9W6SaoodCubA5INu5i55TwoDnLFQhh8MZWAEal6C0hsuULAtQVmvhI+BM2DnLt3bVwJb9189sRwhctA=;25:Ogxs4Wyei4/z1gPaOULS0XFWKr8AFOT3f6Jw1IYDLmOz0JwoY7fRdHHp3LI/CcqspjZuIupeGOWMYXvAQ69MW3UaGV5w4hmXdWVNSfbhl5pCmF16xYAWTEKst8DyTz4VEsjA0b1FROaNXG0nsOp3v+dn/OVjUDLbPBRJTWuRlpehm8U7zRUomHBKXi3e/MzsvZqeDuorBlBAKhCWC234/XXgrQikqodGG9VeJqsjGrWh5EUIbDJW5v2aY9UrSI0Rx3M+/fkdcoXblQJFDcFBzvixAMJMipJRpJEQv1yGWfl3q9+qTV1z2TZHrw+mxDspfT3ZmLj6k7DAU75d5UE04w==
+X-MS-TrafficTypeDiagnostic: BLUPR03MB389:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;31:ZuLE6uQu7dpoUVkspj0+YZMxSBxyF3C+sJl2/OInbqTiUvsp9zVVOw3Y6k74UBYbPYQ+AHBZegKQTd0Txzze0CqtItFRRw/4DFj9TRYQukRpOkCmgIylrsIS6DMV3mFEZZstuErnU31vJ95T2dEyRBaft+WFpAYKRTEQ9xt3LPV75GF3L51MtIVW8UEdMqGP6nwOVIXIwILDf00Bs2HnLH27FldIUm3J6nHPu6r9lxA=;4:08MrLSCLhNpqMesBqmX9bYl0ysSv/OE4+jZntPC46upGHys+2WULF/D6S2oC5p560oE2ZhLwWIoQdG+3l7sbiUH4n0MS0fJ9/AvIETTcpmpooGaK96b4/1pnOGqqDasKzbbYu/jNmeduZrx3FmXo5s3fRF6rOKIqWasABRd5lOV58agWmbe2HNSxBLiRCriuOUD699UFjqlTrPxDWJpA747T8mMgr0Ah6K/Z0PDIJHECS5Ots4qJ3xeHzehQv/NskuGm2udm84Qdf0kyGO/ifEh08K8ToLoJP1AZ41MhBXUQBR0adveWY/4LTnRyPdmG
+X-Microsoft-Antispam-PRVS: <BLUPR03MB38909052D2C67E30C4F30F4F5A30@BLUPR03MB389.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231221)(944501327)(52105095)(6055026)(6096035)(20161123561025)(201703131430075)(201703131441075)(201703131448075)(201703131433075)(20161123559100)(20161123556025)(20161123565025)(20161123563025)(201708071742011);SRVR:BL2PR03MB386;BCL:0;PCL:0;RULEID:(400006);SRVR:BL2PR03MB386;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(10201501046)(3002001)(6055026)(6096035)(20161123565025)(20161123556025)(20161123563025)(20161123559100)(20161123561025)(201703131430075)(201703131441075)(201703131448075)(201703131433075)(201708071742011);SRVR:BLUPR03MB389;BCL:0;PCL:0;RULEID:(400006);SRVR:BLUPR03MB389;
 X-Forefront-PRVS: 06259BA5A2
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR03MB386;23:y6TQ4Wf6cw9m/IF/pVIJju2jwJlbW96YFLOH/2ziYO?=
- =?us-ascii?Q?PoWLGq3p4bRYmsVv+/1w+2CymYgfC3PIzHuDoXztr9iBmDhteTw0IriS+wJV?=
- =?us-ascii?Q?24mOhCyaGaKGNvq3KaRABoNNGfIYiZVBO1eXZplo07SV1rTU0+HEtp9BwwKw?=
- =?us-ascii?Q?dVxClhyPEJezCh/ZxbfRaIMhcSSrUIYjiPJqB3jVmdgLPKrAlUUEO13+yBaD?=
- =?us-ascii?Q?Om3wRvy1kLVMoJdA+qrLoFE+YvawVCV7/ySx001Ddp60BGhZhQbUb7/4Yhhk?=
- =?us-ascii?Q?GoV332VrEEqiENnhEOndy7HLsGde2D9EOzh9wDKysPSQ6X/fBW0xCU9xbJcL?=
- =?us-ascii?Q?FAFpTz1MzSeCWnazoicJtXp5xx13+lNDS18MgBr6VBGOKgnDGHb/SXxPeE1m?=
- =?us-ascii?Q?nOcpoc+mRA8c4jysVfyfY8iHodzYAEYWXs1NQ6N49JmTsW0PMV7O4laeo8VM?=
- =?us-ascii?Q?fS+YQwZg9kZpfWVVWToRGAptrETUKLnoAF2H3kuKOiPZtmver5k0EgIoMXCQ?=
- =?us-ascii?Q?PCsXwBQKfcZGVFDP274wN9wrP3YqPKPJxBTA4cG3DbTYouEVyps9ri8AXH/t?=
- =?us-ascii?Q?c1x0+eBhTeYB+WAG/AtfCAwkgPxH6uMXYzzL/ZwLM1Aj93x2blPHMj1DZyfT?=
- =?us-ascii?Q?i3kSG+gFdYrYIJ3YACPXAoudZ/QXQHo2t/X30JcEqmzJpBNmu0xcvFzQhBsl?=
- =?us-ascii?Q?TOhXDVIp+k1KdtAr1qt4E87Qfb+QtwRjPLr8GSx5jzmL0kgKoHu5kGlLoyCG?=
- =?us-ascii?Q?3lwgp+ydblUcjdzsaqP80fPNIT+S1+jD7LgYt8tPitIElSV0/SUKxoojZwui?=
- =?us-ascii?Q?fcE0MrD6ZS6AftsJPx94VfxXGEpqs0ilhx1UNpC0v81HLkf8W0n9wSukn5Oq?=
- =?us-ascii?Q?3sY1t0p0D9ve40Engh5bUZNtcXiyUNSARynIA/NCr6KP68v70LIbZ+wPu6ZO?=
- =?us-ascii?Q?7EodA3VGQO78MJjRGBUA3DYkiIupU9hP74LiN8nEdc7JJBLjQQ6W5t5gJSv+?=
- =?us-ascii?Q?I6NUFap8L1GnSCuJA8J3h8h0zlxPV3F73QIOjVxo426Zao2W8bW+g6CKePOP?=
- =?us-ascii?Q?ktvbeYTapKAoGucJQFgU8Ju5DLbDsRS39BPvD7O/hv8Nz/N9liSn/+CTaKES?=
- =?us-ascii?Q?wfhxAO4vT5btAoK25xZ/0TD3YuoRZKNfuTvOORgVk1zmFpID8CKLsMdb+Oci?=
- =?us-ascii?Q?qblEklEiweHck+rKfovHQ0AIFMWqOOziVWzNlVzoQxyMh2+qnGYuZF6v3EF5?=
- =?us-ascii?Q?SvJTQhgWu8cjz9GD2anBHpe6Vyi6U3inubVw8IvtJo4/M2Y9sTo4MimR2TMA?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB389;23:n9sPQykCJ5e4Q/dy4pvxxcpDEUvAPNdtbP4td1fZZB?=
+ =?us-ascii?Q?jEnF8GW7ajaBYIoTZSQkAoAXAvLculZxP0K/LpsjJ7rVoNCRS7LuRW0WG2tS?=
+ =?us-ascii?Q?aSbY6HLBgsTEmLwwxIT2tKm4KvHm2A2CZTTX3p5cLmyvAb3xjgHuIyATuQ3Z?=
+ =?us-ascii?Q?7a3tnuHBGbqpb/14MVjr7hJGeb6RQMMfm3PCDMTkx+EXwd7seiPO+/qwAhJ3?=
+ =?us-ascii?Q?PfMu0ZeWUm4vjjKlUoYirLDjhr8TnAP03SLFsq6oSC/W5taM7kyVd/lc5+91?=
+ =?us-ascii?Q?ajOqbHOSLx1YPWwS6Yh3OBCFId6tpEaKDiulAyMtu9/yJ6C/GmKgeKAsIXjj?=
+ =?us-ascii?Q?hJkA9FR6Ib8ztnhUc9dRiBJ9jLEVGnppoWs0mveBIT46Suo0LHjjR2eyHOkT?=
+ =?us-ascii?Q?1fx80k0Iel7wMador3ZJFo4SxX240F0FZCQAbBHhC7V4QZo84VMrgiZC1LTA?=
+ =?us-ascii?Q?ZNN7YChUSxsmHQzYgkMahdDYmh4zgsGw8RSOgQuiLIDekACUav4XMGOplNm5?=
+ =?us-ascii?Q?AinY9L5bL76ugnawIfKQb5qVBDGtBGZQl8Mg5rQtdvevmDMJfTwBAHH10XxQ?=
+ =?us-ascii?Q?owrbfp2Q7HFL9vdwOtWlBKdTzUIidpgzMIV/7K+uoOKkFL9cVDnqNWuY9sfC?=
+ =?us-ascii?Q?8smsfX2EIjHN+cl/oRiCzdKx0fFoVr4LjBSDGe0VOIEL4Kcz/8LlANgTAeCl?=
+ =?us-ascii?Q?PSNqGXcHEID4NcNN/wEOghKz/FFAE5MU7k6rsoDmHT8fXuEd5rjjCzVkzGuX?=
+ =?us-ascii?Q?ZXGgTTA2/BbqjLd+CbehtVTWbD32jA1vRWdUb/vHqecAby5Gd01TrOfevFJl?=
+ =?us-ascii?Q?rTlOJi2MCosXJnPIi3Fhgdb18k1lQqNLh9LKpjI76wbGLCitxZhNtSmxl81a?=
+ =?us-ascii?Q?2hAA/WuWNJOTB16TxVanovNFUpirbHi3wc4FlUqclAQ7YU6oA5Nf9OFj0M/I?=
+ =?us-ascii?Q?nSYSWNSFjfYk9VCTJ/jBg+nSGCaXU8hnBskia9XekEYar86ZW/PbgsbHO2ST?=
+ =?us-ascii?Q?O7a6C/wn4a5Q9arW/fhjZAcIn84Yu/dOX4DZF0rQGpcz2C6mAXzt+ufdnTqY?=
+ =?us-ascii?Q?nX0iTo+/s83LmCwkfO1S8bNctcqKdaFV6Jz+iv1dKcRZYJOxywQ10s6Dghsz?=
+ =?us-ascii?Q?WYWkr+cukDeg0HGZUExxvQynKFRQaV8tklvjeGX20VhpdFtnVUi1Qu7YxgrU?=
+ =?us-ascii?Q?Xl3A2QV6CBpWq8MsXw8xTZwK9OQmhef60PVafSksf5Vmc6i2CDp2t19wtRL0?=
+ =?us-ascii?Q?P1ggQI3JJA6kCc8EHZHDrUyN9Q8gh4NykXdiuSVXH0mBQ0MlrBqdTaPSCDhA?=
  =?us-ascii?Q?=3D=3D?=
-X-Microsoft-Antispam-Message-Info: kFs2VPRAlNge3VcwogPOrkT2dOv0aCSNqR9yf+cBQ/lcKeLxlPMUW2zwh7tMkh7F4iT2bfAupeiRZ+rN60iYZer+QErZf5T//2sygvNSKVhaFqjQR3IbT9EV11Pq4yqkVdoDzTX3MalGQoWO3a1EYftbnA0YepitGnv90T7DhMn3mbaZn3QbYAi1Qf5kuLuu
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB386;6:B7KRs+/sQ+yyClGwzeZLVJ6VfPhxORr4y+JymjI/9i3dxegU9qEOYnguIJkkSXq5T9NPDgXqSvuOlvTz/P041TZKyFmDTKOUhr1gCXQhYwPuns9mEMq+uIS6qKzXPbZLHeij3BNEGG5nfABUxS9Gso5eqFI8YDWrVps4NkKadx2X3SE0LZR/CgrgxVJwaKTjPZ07kpiCVqrZ/x3fjvzOwsAoPe9lKTFj0bkaY5a0P8vqOSskCSgmucQNBi1Ovz9+N8GY+4F9pYNq0P0GVfaVXn3ucCb1PyXIu7gsEF8rE3P7tYTqYq6GE81nsrPMsyMOCh4RPHrmTEB7N6HfEf9idEFZ08GzoVUu0nzlN7L/DtfCV4et64f1QjWFeLK42rRonA8+DtVuSYtqVZ0hrt8zXfn4gID+U4wYtpEfjuhDoXe+OBLJMCEwq2Ux1F5PX71m+Z3NdOmXy/ZydAQJEct41A==;5:RKx+N4spRyiu0YFowlS59XTgJzLOzTmeR5egmscmfWHmwUKNEmG3SrXzWi9ph4Kib4tu1KKoRPEqNKFSbOasTlQRqoO3Jwxx+EN2q7c0TI2/XWsY9QJzwTL0TsmeGS9PyhjSJewD2dVHHUuYtREaLU91C9O+gX9A4X7zm9iOh9w=;24:nGj2ZM/02ieNr1diO69hdclLxp87r3k4dN/QqBe+U0BStMYA6Vf1PPD2rB4tb/A0gXpPGj3dSMnFWCMPmdUIselAJ1MumDeUH30+tXvbXU4=
+X-Microsoft-Antispam-Message-Info: 3aBdyMCyYXNgXnBJpw9rJadQOO5v+gkaUJG+MS/3EDXs23T/tHswqHhCtlAoN0MmG0d+3+oxWv5zm1XtWAS8lu8w9nl8d95AojS8otZa64smwZpa14DNMWRZDVSWEzrySD0Lt8mjsJDUfSP7KC4kN6XBfGZAqwDxljwZ5zjrDBYNpg4P9REQbOjfGuRSx2Fq
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;6:rSAKqSvM56TGTM5YJ3+mp6CkGF45EqAzT6YKeMCzLQjFmodJrXHk3JyJbX2jpan4JqJO85fxVV3SdLQRu2VelIQPfqbs4KcjQlp6X957bzFdyIl4QYOXPk/jAroFcmhWJGRa6QZQSIKlttySHLIaGgOPuH6NGALIOWuaZLTfUDmLbn4Tz11aEGQpwO73mywjb9WJWx7aj9BCRy7nfuq6tZUiAPyBVXaK6QC/634JycEpmmjslzEnl6fZtub6utgxjINkp3V2CwN/INC/P4UnWPGnzBgymJZTPz0Fq5wAM1VLuWtP8LLvUib3i+Fmxl+rL3i/Bs9D78Rzb+NG6IvOaNMVQdfHE/JRiYyGAE4a9hiQW3+bynDB/cjsvbZ59tvFBx8brTULNnZNEtLLNrNdd/yBQdjtURFGCzLNfeKKznW0rsbg1ZwI/FKrGATuEuaiJwkp2IApT4FAUla9a6PwgA==;5:5vxWrh0H1Mb2jHRSN8VmKxeMKFQTc5kmnY82mh40OFhExUvFWvBHaHvpDyrUnsnOLGoI5rrzxwLfZxoy2AGNqXQK6agMLTHvrCQEL/BOR5vmdvsmoGTyRroldW/icojTPhIhSE5oMgiRehR8e8tEXXAxccvJiORG7sRG07XCZnY=;24:eQDwpJ3A4G6QNubP+b6bOKRcy8/RTcTf8RG8LFh6YuPpEgC3fI4TiiiJiWfks7xUsZUhL5KsYdbl/5lzvcwmtDDS+er5AsGaSGrZVJJUe2s=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB386;7:gw+fFvyQTAURyAJIzyPoTJzjotJu+fbX+hemAQ9KgARPYr1jGxmGHQbwbPm6fF3l9Q9SReLtgtZKKXK8GWRK/C8acVvB+oVfflUuFskktU7bA/ETpvjfv8ZVFEoDtI4mBgWu0v3qUcMz24GCM/rD53JvhHlC1VAQzFYtlB1ypo4FWnI/IaibHneeOWQj1UFQ53JJlTe634/SlRZajFxKNDEQ8KBNv+juZoAuXWHKglA0bXRgdEb9q9p/yAKQu4Lm
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2018 03:26:04.4050
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;7:LgPLkxCGQeblVuE8v1oDUCi2OXyiyGsfNLsP2J5+hsLMxEx5BQyTxcsZle2W0BjQfjftV5ql+KjL+nRpevJ1NtzQ1FO+2Z3ggvzFUt0coyNgF4yMiktuIzFxEM2adehkvGRvPmWh605WrilRiJ+STw1cHXUJf1rwAMqF7syoMF6V7CN+2VZTSVsEfoJ7pJK7AshOAOGwqrAnWVjtMD3+nDck13WNjSPHTbQYrUDRQMoxo0KU9CBX8+uyoswfXSUQ
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2018 03:26:01.9586
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9273ee94-e6f3-4148-ab36-08d5945ba351
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18399ff2-1c6c-4900-c1d6-08d5945ba1de
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[192.88.168.50];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR03MB386
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB389
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Different TPM modules have different width counters which
-is 16-bit or 32-bit, the counter width can be read from
-TPM_PARAM register bit[23:16], this patch adds dynamic
-check for counter width to support both 16-bit and 32-bit
-TPM modules.
+According to i.MX7ULP reference manual, TPM_SC_CPWMS can ONLY be
+written when counter is disabled, TPM_SC_TOF is write-1-clear,
+TPM_C0SC_CHF is also write-1-clear, correct these registers
+initialization flow;
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
 changes since V1:
-	use largest prescaler for 16-bit counter;
-	use lower rating for 16-bit counter than 32-bit;
-	remove the computing in counter read function.
- drivers/clocksource/timer-imx-tpm.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
+	use separate patch to fix the clock name typo.
+ drivers/clocksource/timer-imx-tpm.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-index 7403e49..05d97a6 100644
+index 3f97d49..7403e49 100644
 --- a/drivers/clocksource/timer-imx-tpm.c
 +++ b/drivers/clocksource/timer-imx-tpm.c
-@@ -17,9 +17,13 @@
- #include <linux/of_irq.h>
- #include <linux/sched_clock.h>
- 
-+#define TPM_PARAM			0x4
-+#define TPM_PARAM_WIDTH_SHIFT		16
-+#define TPM_PARAM_WIDTH_MASK		(0xff << 16)
+@@ -20,6 +20,7 @@
  #define TPM_SC				0x10
  #define TPM_SC_CMOD_INC_PER_CNT		(0x1 << 3)
  #define TPM_SC_CMOD_DIV_DEFAULT		0x3
-+#define TPM_SC_CMOD_DIV_MAX		0x7
- #define TPM_SC_TOF_MASK			(0x1 << 7)
++#define TPM_SC_TOF_MASK			(0x1 << 7)
  #define TPM_CNT				0x14
  #define TPM_MOD				0x18
-@@ -33,6 +37,8 @@
- #define TPM_C0SC_CHF_MASK		(0x1 << 7)
+ #define TPM_STATUS			0x1c
+@@ -29,6 +30,7 @@
+ #define TPM_C0SC_MODE_SHIFT		2
+ #define TPM_C0SC_MODE_MASK		0x3c
+ #define TPM_C0SC_MODE_SW_COMPARE	0x4
++#define TPM_C0SC_CHF_MASK		(0x1 << 7)
  #define TPM_C0V				0x24
  
-+static int counter_width;
-+static int rating;
  static void __iomem *timer_base;
- static struct clock_event_device clockevent_tpm;
+@@ -205,9 +207,13 @@ static int __init tpm_timer_init(struct device_node *np)
+ 	 * 4) Channel0 disabled
+ 	 * 5) DMA transfers disabled
+ 	 */
++	/* make sure counter is disabled */
+ 	writel(0, timer_base + TPM_SC);
++	/* TOF is W1C */
++	writel(TPM_SC_TOF_MASK, timer_base + TPM_SC);
+ 	writel(0, timer_base + TPM_CNT);
+-	writel(0, timer_base + TPM_C0SC);
++	/* CHF is W1C */
++	writel(TPM_C0SC_CHF_MASK, timer_base + TPM_C0SC);
  
-@@ -85,10 +91,11 @@ static int __init tpm_clocksource_init(unsigned long rate)
- 	tpm_delay_timer.freq = rate;
- 	register_current_timer_delay(&tpm_delay_timer);
- 
--	sched_clock_register(tpm_read_sched_clock, 32, rate);
-+	sched_clock_register(tpm_read_sched_clock, counter_width, rate);
- 
- 	return clocksource_mmio_init(timer_base + TPM_CNT, "imx-tpm",
--				     rate, 200, 32, clocksource_mmio_readl_up);
-+				     rate, rating, counter_width,
-+				     clocksource_mmio_readl_up);
- }
- 
- static int tpm_set_next_event(unsigned long delta,
-@@ -141,7 +148,6 @@ static struct clock_event_device clockevent_tpm = {
- 	.set_state_oneshot	= tpm_set_state_oneshot,
- 	.set_next_event		= tpm_set_next_event,
- 	.set_state_shutdown	= tpm_set_state_shutdown,
--	.rating			= 200,
- };
- 
- static int __init tpm_clockevent_init(unsigned long rate, int irq)
-@@ -151,10 +157,11 @@ static int __init tpm_clockevent_init(unsigned long rate, int irq)
- 	ret = request_irq(irq, tpm_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
- 			  "i.MX7ULP TPM Timer", &clockevent_tpm);
- 
-+	clockevent_tpm.rating = rating;
- 	clockevent_tpm.cpumask = cpumask_of(0);
- 	clockevent_tpm.irq = irq;
--	clockevents_config_and_register(&clockevent_tpm,
--					rate, 300, 0xfffffffe);
-+	clockevents_config_and_register(&clockevent_tpm, rate, 300,
-+					GENMASK(counter_width - 1, 1));
- 
- 	return ret;
- }
-@@ -199,6 +206,11 @@ static int __init tpm_timer_init(struct device_node *np)
- 		goto err_per_clk_enable;
- 	}
- 
-+	counter_width = (readl(timer_base + TPM_PARAM) & TPM_PARAM_WIDTH_MASK)
-+		>> TPM_PARAM_WIDTH_SHIFT;
-+	/* use rating 200 for 32-bit counter and 150 for 16-bit counter */
-+	rating = counter_width == 0x20 ? 200 : 150;
-+
- 	/*
- 	 * Initialize tpm module to a known state
- 	 * 1) Counter disabled
-@@ -215,12 +227,17 @@ static int __init tpm_timer_init(struct device_node *np)
- 	/* CHF is W1C */
- 	writel(TPM_C0SC_CHF_MASK, timer_base + TPM_C0SC);
- 
--	/* increase per cnt, div 8 by default */
--	writel(TPM_SC_CMOD_INC_PER_CNT | TPM_SC_CMOD_DIV_DEFAULT,
-+	/*
-+	 * increase per cnt,
-+	 * div 8 for 32-bit counter and div 128 for 16-bit counter
-+	 */
-+	writel(TPM_SC_CMOD_INC_PER_CNT |
-+		(counter_width == 0x20 ?
-+		TPM_SC_CMOD_DIV_DEFAULT : TPM_SC_CMOD_DIV_MAX),
- 		     timer_base + TPM_SC);
- 
- 	/* set MOD register to maximum for free running mode */
--	writel(0xffffffff, timer_base + TPM_MOD);
-+	writel(GENMASK(counter_width - 1, 0), timer_base + TPM_MOD);
- 
- 	rate = clk_get_rate(per) >> 3;
- 	ret = tpm_clocksource_init(rate);
+ 	/* increase per cnt, div 8 by default */
+ 	writel(TPM_SC_CMOD_INC_PER_CNT | TPM_SC_CMOD_DIV_DEFAULT,
 -- 
 2.7.4
