@@ -1,77 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753904AbeC1Wii (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 18:38:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55369 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753431AbeC1Wig (ORCPT
+        id S1753885AbeC1Wmh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 18:42:37 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:20385 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753423AbeC1Wmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 18:38:36 -0400
-X-Google-Smtp-Source: AIpwx4/j9WHdq6Oin/blTRmJS7vQdx4dkkmWTmN/C1I6t/1zlztqwLGCFeMUVmOnrNRinVtTwvMWKg==
-Date: Thu, 29 Mar 2018 01:38:32 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: register filesystem last
-Message-ID: <20180328223832.GA4557@avx2>
-References: <20180309222709.GA3843@avx2>
- <20180309144938.d308e0bf98fb6b5bbcb82189@linux-foundation.org>
- <20180310000634.GA12443@avx2>
- <20180328044823.GT30522@ZenIV.linux.org.uk>
- <20180328072657.GA2063@avx2>
- <20180328144748.GU30522@ZenIV.linux.org.uk>
+        Wed, 28 Mar 2018 18:42:35 -0400
+Subject: Re: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <c57f0342-3690-1d07-35c1-6e12beae9462@ti.com>
+Date: Wed, 28 Mar 2018 17:41:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180328144748.GU30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 03:47:49PM +0100, Al Viro wrote:
-> On Wed, Mar 28, 2018 at 10:26:57AM +0300, Alexey Dobriyan wrote:
-> > On Wed, Mar 28, 2018 at 05:48:23AM +0100, Al Viro wrote:
-> > > On Sat, Mar 10, 2018 at 03:06:34AM +0300, Alexey Dobriyan wrote:
-> > > > On Fri, Mar 09, 2018 at 02:49:38PM -0800, Andrew Morton wrote:
-> > > > > On Sat, 10 Mar 2018 01:27:09 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > > > > 
-> > > > > > As soon as register_filesystem() exits, filesystem can be mounted.
-> > > > > > It is better to present fully operational /proc.
-> > > > > > 
-> > > > > > Of course it doesn't matter because /proc is not modular
-> > > > > > but do it anyway.
-> > > > > > 
-> > > > > > Drop error check, it should be handled by panicking.
-> > > > > 
-> > > > > So... shouldn't we add a call to panic()?
-> > > > 
-> > > > via FS_PANIC flag, yes. I have a patch somewhere.
-> > > > There are 104 filesystems ATM, some internal, some not.
-> > > > Some modular, some not.
-> > > 
-> > > You do realize that the only case when register_filesystem() fails is
-> > > "another driver has already registered filesystem type with the same
-> > > name"?  Is there *ever* a case when
-> > > 	* you could expect that to happen and
-> > > 	* panic would be a sane response?
-> > 
-> > It is for standartizing all those error checks in init sequence by
-> > removing them. Modules won't have FS_PANIC.
-> 
-> Huh?  Again, _when_ is that thing appropriate?  To register_filesystem()
-> failure in non-modular case you need several builtin fs drivers to
-> try and register fs types with the same name.  In this particular
-> case, you need another in-kernel filesystem called "proc" registered
-> first.
-> 
-> It's not about extreme oom early in the boot or anything like that -
-> plain and simple badly modified and misconfigured kernel.
+Hi Bjorn,
 
-At this point I'm not sure if we agree or disagree.
+On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This series converts the only user of the handcoded, mach-specific reset
+> routines in the davinci platform to using the reset framework.
+> 
+> Patches 1-3 add necessary lookups/DT-properties.
+> 
+> Patches 4-6 fix issues found in the remoteproc davinci driver.
 
-If register fails at init time it can mean that strncmp() is buggy,
-or memory corruption already happened (file_system_type instances aren't
-const after all). In all cases it is appropriate to panic exactly
-because "regular" name collision will never happen.
+Can you pick up patches 4 through 6 for 4.17 itself through the
+remoteproc tree? They can be picked up independent of the CCF
+conversion. Anyway, the actual CCF conversion and the reset framework
+adaptation patch would need the dts patches to be picked up first to
+maintain functionality, and I do not think Sekhar is picking up the dts
+changes for 4.17 this late.
+
+regards
+Suman
+
+> 
+> Patch 7 converts the davinci-rproc driver to the reset framework.
+> 
+> Patch 8 removes now dead code.
+> 
+> Philipp: it turned out that it's indeed better to use the reset
+> controller's device name for the entry lookup.
+> 
+> Tested both in DT and legacy modes by booting the examples from
+> ti-ipc-rtos recipe in meta-ti.
+> 
+> This series applies on top of David Lechner's common-clk-v9 branch[1]
+> with Philipp Zabel's reset/next branch[2] pulled in.
+> 
+> It can be found in my github tree as well[3].
+> 
+> [1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
+> [2] git://git.pengutronix.de/git/pza/linux reset/next
+> [3] git@github.com:brgl/linux.git topic/davinci-reset
+> 
+> v1 -> v2:
+> - fixed the device tree patches the descriptions of which were mixed up
+> - return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
+>   reset provider, since it's possible that the lookup table was not yet
+>   registered
+> - made the local variable naming consistent in the davinci-rproc driver
+> - fixed a typo in PATCH 5/8
+> 
+> v2 -> v3:
+> - reworded the commit messages (s/remoteproc: da8xx/remoteproc\/davinci/)
+> - call clk_disable_unprepare() if reset_control_deassert() fails in
+>   da8xx_rproc_start()
+> - added a patch fixing the S_IRUGO checkpatch warning, since we're
+>   already modifying this driver anyway
+> - added a temp variable for code brevity in da8xx_rproc_stop()
+> - removed patch 1/8 (already applied to reset/next)
+> 
+> Bartosz Golaszewski (8):
+>   ARM: davinci: dts: make psc0 a reset provider
+>   ARM: davinci: dts: add a reset control to the dsp node
+>   clk: davinci: add a reset lookup table for psc0
+>   remoteproc/davinci: add the missing retval check for clk_enable()
+>   remoteproc/davinci: prepare and unprepare the clock where needed
+>   remoteproc/davinci: use octal permissions for module_param()
+>   remoteproc/davinci: use the reset framework
+>   clk: davinci: kill davinci_clk_reset_assert/deassert()
+> 
+>  arch/arm/boot/dts/da850.dtsi               |  2 ++
+>  arch/arm/mach-davinci/include/mach/clock.h | 21 --------------
+>  drivers/clk/davinci/psc-da850.c            |  7 +++++
+>  drivers/clk/davinci/psc.c                  | 19 +------------
+>  drivers/remoteproc/da8xx_remoteproc.c      | 45 ++++++++++++++++++++++++------
+>  5 files changed, 47 insertions(+), 47 deletions(-)
+>  delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+> 
