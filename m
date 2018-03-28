@@ -1,69 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeC1KU2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 06:20:28 -0400
-Received: from mail-io0-f182.google.com ([209.85.223.182]:40081 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeC1KU0 (ORCPT
+        id S1752283AbeC1K0s (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 06:26:48 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38596 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751166AbeC1K0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 06:20:26 -0400
-X-Google-Smtp-Source: AIpwx48hxA8azLS3l0rU/mMiIATOEP2St04nnuJPlma4I3kiObY27Xt/DjZ5QPOT9Q34JnlwAfNtOg==
-Date: Wed, 28 Mar 2018 03:20:23 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>, kirill@shutemov.name,
-        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 06/24] mm: make pte_unmap_same compatible with SPF
-In-Reply-To: <fd9eedf4-b885-d8f5-2daa-4cc450e72427@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1803280318440.69353@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com> <alpine.DEB.2.20.1803271417510.31115@chino.kir.corp.google.com>
- <fd9eedf4-b885-d8f5-2daa-4cc450e72427@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 28 Mar 2018 06:26:44 -0400
+X-Google-Smtp-Source: AIpwx49grmBFOR2BnU3Ujo45LLyl7l+ZOddP3Aw3IZbevyiShy6kCyUzV3OBrOn7WwTm5BSoze+GZw==
+Date: Wed, 28 Mar 2018 11:26:40 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>, a.zummo@towertech.it,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        jcsing.lee@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org,
+        javier@osg.samsung.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        eddie.huang@mediatek.com, Chen.Zhong@mediatek.com,
+        beomho.seo@samsung.com, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v6 0/6] Add MediaTek PMIC keys support
+Message-ID: <20180328102640.yx6nv5abfexmouuf@dell>
+References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
+ <808b2029da224ab687fb0553cbc1c68e@mtkmbs08n1.mediatek.inc>
+ <1521685073.28226.10.camel@mtkswgap22>
+ <20180323185418.GD255819@dtor-ws>
+ <20180327080507.pgil6pw2mn4y2f4d@dell>
+ <3ece050c-7573-ef4e-2c89-61645a243a33@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3ece050c-7573-ef4e-2c89-61645a243a33@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018, Laurent Dufour wrote:
+On Tue, 27 Mar 2018, Matthias Brugger wrote:
 
-> >> @@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
-> >>  	int exclusive = 0;
-> >>  	int ret = 0;
+> 
+> 
+> On 03/27/2018 10:05 AM, Lee Jones wrote:
+> > On Fri, 23 Mar 2018, Dmitry Torokhov wrote:
+> >> On Thu, Mar 22, 2018 at 10:17:53AM +0800, Sean Wang wrote:
+> >>> Hi, Dmitry and Lee
+> >>>
+> >>> The series seems not being got merged. Are they good enough to be ready
+> >>> into the your tree?
+> >>>
+> >>> Recently I've tested the series with focusing on pwrkey event generated
+> >>> through interrupt when push and release the key on bpi-r2 board and then
+> >>> finally it's working fine. but for homekey it cannot be found on the
+> >>> board and thus I cannot have more tests more about it.
+> >>>
+> >>> Tested-by: Sean Wang <sean.wang@mediatek.com>
+> >>
+> >> You have my Ack on the input patch; I expect it go through Lee's tree as
+> >> there are some dependencies on mfd core piece.
 > > 
-> > Initialization is now unneeded.
+> > Are you happy for me to merge the Input dt-bindings without your Ack?
+> > 
 > 
-> I'm sorry, what "initialization" are you talking about here ?
-> 
+> They got both Acked in v5, but the commit message was not updated:
+> https://patchwork.kernel.org/patch/9973721/
+> https://patchwork.kernel.org/patch/9973723/
 
-The initialization of the ret variable.
+Thanks Matthias.
 
-@@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
- 	int exclusive = 0;
- 	int ret = 0;
- 
--	if (!pte_unmap_same(vma->vm_mm, vmf->pmd, vmf->pte, vmf->orig_pte))
-+	ret = pte_unmap_same(vmf);
-+	if (ret)
- 		goto out;
- 
- 	entry = pte_to_swp_entry(vmf->orig_pte);
+Chen, can you collect all the Acks and repost as a RESEND please?
 
-"ret" is immediately set to the return value of pte_unmap_same(), so there 
-is no need to initialize it to 0.
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
