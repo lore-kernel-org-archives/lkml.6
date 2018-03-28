@@ -1,41 +1,41 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELvsqmsSrOo7aba0LE+JHiYX2ZoJRm9VyU3BZjY+Dr+JyJk0H2+r+Vz5Ag5pUyr60T0myYws
-ARC-Seal: i=1; a=rsa-sha256; t=1522085317; cv=none;
+X-Google-Smtp-Source: AIpwx4/Kr6jCKi7p6xbcw5KfChxd1oDNBUclRKWPN9CwEZD2pBotZBegC81njSbzS/DQDRIAaR9A
+ARC-Seal: i=1; a=rsa-sha256; t=1522210891; cv=none;
         d=google.com; s=arc-20160816;
-        b=QjQ8yAJL2rtO4OdWYwvZtnsR3EPGEk7bOMBghj7g4I/yHc19LeFjR6yajDgv+df0A/
-         KkEQRWNa5cehVI7Heea/A+8eoXPs8vESoOcat/iY1ZVZAm6WjRQkz7PIt9ZJsA/EsJL1
-         6dZtFbWkVzfpD5Vt2M1Lv6lD0u+KhZE9NyHWzZBUKTU/+2qM9lt5mJYA//+9+HAUu8Ih
-         J5PXIQ1J3pEqOhQ45+UYjb3bBxttWoVudFjGf/q5fjxoqQGv6EzeKu9BIcdcPK2mT2Ps
-         As/DmXK0mkshd3MZqBxw1Fk+1k712F8FvkPk4bb0c1JWjdgTO68zivC5j9QFs077jyl/
-         IVzA==
+        b=AaFCYWPZBUG08mEU0kOW72mDXajSHjL+MZT0OFqDS+F5mNrU/QxhsNqDpKnoKnc/9n
+         ZT6haWqK6Otgxgm1N2dh8LK/B/R3hLTUcd9yGBgnuwUeE+dh+ZdeD80xZmQb75NqfPbo
+         aY0JE0qmpuTmK2UtrhA051UpiOCuWSYaOHcZPTdNRFHSu39nbcB4oCaVzjRkm/rW0Jb1
+         aZWpoVbbwrNcpmW2vEBxdzNzYxGumBSerKhrGnT2w+PH4rOJ+J+z6TY2Z5yN8Y7/focL
+         lhy3Kioc5DTYtlezHj/tdh6u8Z0PSnsFmyztms1uuLHxG8kMOGopvpQx5ZnfjaaxL2U3
+         rYWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-id:precedence:sender:content-transfer-encoding:mime-version
          :references:in-reply-to:message-id:subject:cc:to:from:date
          :dmarc-filter:arc-authentication-results;
-        bh=21K6zx3rFEcabZmVTy5muXd9ZNA0sgCtrS/PSO+2+Nw=;
-        b=an53P3tUtTC1X4quRk5lTJ1FAgJ8swoWn8x4ivoFX0Y7AtwbzKzhpbyiks5CjhBlKk
-         XvENEYRkIj3r0S/VkLWyP0nT6DcyTfh1P8QaWnoxQSxRXfUiPacJEBJyF8DHibqn1NJK
-         7sqtV22XKQN2IZHbLAIaCCjdSSmeosIzgLRTp7gdJizmJhqqSvM5ysf4gGLa1NteRA36
-         EVCc2DwFiT3qxwtdwHvGWXrXRtEkAt9187cH+moQ0FBWq9RME3uvFlxtwoACfQaKwmCC
-         q/QbiKNRSM2HploL6UQlczAFRzp0s7PQMRZb69WZQC2ImVY35eAWbLS0G6nTvYtnSUuo
-         5JZA==
+        bh=G0ilZL9wAw95kVzTXgtfXFaTu7htu+a7rssYXaCPdO0=;
+        b=it3//4lAXo2C9Zj6/5jtiau9B/hT0boWvIfJvqPKzp81j7etQ855maqsxMOJBX45P3
+         WvlmXXrCkaTRBSqJ5UxyEJN50MWPMsfI2LYEETuCGpzGcrNMyNvkePreViKlcpPMS754
+         ncLGE4iuH1tyBspZB0K3jTC9lxqhOpAOlfQSPwOHjABFFs95lLNHvw2HFfFw9CLeyZkb
+         ckcAJWytBxX5XjNH/5eU2fDTOl3mETaTbfifl8nSrYoOduC95raMBRdoeUjvjqxqHFEz
+         AA8ndG0ygu1E2PaZyCxrekyusHc3i6g3Hjd1sJ9O8hetDvsIBDqkuz8LNLqfOQ+ndwMH
+         TpyA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751684AbeCZR2g (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 26 Mar 2018 13:28:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36502 "EHLO mail.kernel.org"
+        id S1750866AbeC1EVS (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Wed, 28 Mar 2018 00:21:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751249AbeCZR2f (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 26 Mar 2018 13:28:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147D22177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 26 Mar 2018 13:28:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
+        id S1750703AbeC1EVR (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Wed, 28 Mar 2018 00:21:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9DD217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Wed, 28 Mar 2018 13:21:12 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
 Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
@@ -44,45 +44,58 @@ Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
         shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Subject: Re: [PATCH v6 05/21] tracing: probeevent: Cleanup print argument
  functions
-Message-ID: <20180326132832.70e1797e@gandalf.local.home>
-In-Reply-To: <20180326131733.ac156981d82c4a38dae307f4@kernel.org>
+Message-Id: <20180328132112.c2d6662837e0e193796e83cd@kernel.org>
+In-Reply-To: <20180326132832.70e1797e@gandalf.local.home>
 References: <152129024033.31874.15800253385376959274.stgit@devbox>
         <152129047203.31874.3188700720826213215.stgit@devbox>
         <20180323123647.4398ae48@gandalf.local.home>
         <20180326131733.ac156981d82c4a38dae307f4@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+        <20180326132832.70e1797e@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595188722013958666?=
-X-GMAIL-MSGID: =?utf-8?q?1596022132987948821?=
+X-GMAIL-MSGID: =?utf-8?q?1596153807380114671?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 26 Mar 2018 13:17:33 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Mon, 26 Mar 2018 13:28:32 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >   
-> > > Current print argument functions prints the argument
-> > > name too. It is not good for printing out multiple
-> > > values for one argument. This change it to just print
-> > > out the value.  
+> On Mon, 26 Mar 2018 13:17:33 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > >   
+> > > > Current print argument functions prints the argument
+> > > > name too. It is not good for printing out multiple
+> > > > values for one argument. This change it to just print
+> > > > out the value.  
+> > > 
+> 
+> 
 > > 
+> > Cleanup argument-printing functions to decouple it into name-printing and
+> > value-printing, so that it can support more flexible argument expression,
+> > like array type.
+> 
+> Ah, so this is a change to make it possible in the next patches to do
+> something more? I'll update the change log to your above.
 
+Yes, I'll update the patch description :)
+
+Thanks!
 
 > 
-> Cleanup argument-printing functions to decouple it into name-printing and
-> value-printing, so that it can support more flexible argument expression,
-> like array type.
+> That makes more sense. Thanks.
+> 
+> -- Steve
+> 
 
-Ah, so this is a change to make it possible in the next patches to do
-something more? I'll update the change log to your above.
 
-That makes more sense. Thanks.
-
--- Steve
-
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
