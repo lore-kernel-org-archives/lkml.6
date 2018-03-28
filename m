@@ -1,85 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752824AbeC1H1m (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:27:42 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:46584 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbeC1H1j (ORCPT
+        id S1752850AbeC1H17 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:27:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40366 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeC1H14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:27:39 -0400
-Date: Wed, 28 Mar 2018 15:27:27 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: NeilBrown <neilb@suse.com>
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] rhashtable: support guaranteed successful insertion.
-Message-ID: <20180328072727.GA17306@gondor.apana.org.au>
-References: <152210688405.11435.13010923693146415942.stgit@noble>
- <152210718434.11435.6551477417902631683.stgit@noble>
- <20180327155610.GD14001@gondor.apana.org.au>
- <87y3id42zo.fsf@notabene.neil.brown.name>
- <20180328060432.GA16291@gondor.apana.org.au>
- <87d0zo4r5j.fsf@notabene.neil.brown.name>
+        Wed, 28 Mar 2018 03:27:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E50B8607DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v3 5/6] dt-bindings: phy-qcom-usb2: Update bindings for
+ sdm845
+To: Doug Anderson <dianders@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org>
+ <1521785487-29866-6-git-send-email-mgautam@codeaurora.org>
+ <CAD=FV=U03Hijg5NPiY5=5JQJpobJnUNAkf361OOdNRLVc5joWQ@mail.gmail.com>
+From: Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <bd13a81d-9f8a-fa3d-11cc-561105d39257@codeaurora.org>
+Date: Wed, 28 Mar 2018 12:57:51 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87d0zo4r5j.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAD=FV=U03Hijg5NPiY5=5JQJpobJnUNAkf361OOdNRLVc5joWQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 06:04:40PM +1100, NeilBrown wrote:
+Hi,
+
+
+On 3/28/2018 3:27 AM, Doug Anderson wrote:
+> Hi,
 >
-> I disagree.  My patch 6 only makes it common instead of exceedingly
-> rare.  If any table in the list other than the first has a chain with 16
-> elements, then trying to insert an element with a hash which matches
-> that chain will fail with -EBUSY.  This is theoretically possible
-> already, though astronomically unlikely.  So that case will never be
-> tested for.
+> On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
+>> Update compatible strings for USB2 PHYs on sdm845.
+>> There are two QUSB2 PHYs present on sdm845. Few PHY registers
+>> programming is different for these PHYs related to electrical
+>> parameters, otherwise both are same.
+>>
+>> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+>> ---
+>>  Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+>> index 42c9742..b99a57f 100644
+>> --- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+>> +++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+>> @@ -6,7 +6,9 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+>>  Required properties:
+>>   - compatible: compatible list, contains
+>>                "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
+>> -              "qcom,qusb2-v2-phy" for QUSB2 V2 PHY.
+>> +              "qcom,qusb2-v2-phy" for QUSB2 V2 PHY,
+>> +              "qcom,sdm845-qusb2-phy-1" for primary PHY on sdm845,
+>> +              "qcom,sdm845-qusb2-phy-2" for secondary PHY on sdm845.
+> Similar question to the one I posed on
+> <https://patchwork.kernel.org/patch/10302761/> for the QMP PHY.  What
+> is "qcom,qusb2-v2-phy"?  Is it some ideal abstract version of the PHY?
+>  Do we expect that anyone would actually use that compatible string?
+>
+> In this case in <https://patchwork.kernel.org/patch/10302755/> it
+> looks as if you're using the same settings as
+> "qcom,sdm845-qusb2-phy-2", so presumably "qcom,qusb2-v2-phy" should
+> just be deleted.
+>
 
-No that's not true.  If the table is correctly sized then the
-probability of having a chain with 16 elements is extremely low.
+I will remove "qcom,qusb2-v2-phy".
 
-Even if it does happen we won't fail because we will perform
-an immediate rehash.  We only fail if it happens right away
-after the rehash (that is, at least another 16 elements have
-been inserted and you're trying to insert a 17th element, all
-while the new hash table has not been completely populated),
-which means that somebody has figured out our hash secret and
-failing in that case makes sense.
 
-> It is hard to know if it is necessary.  And making the new table larger
-> will make the error less likely, but still won't make it impossible.  So
-> callers will have to handle it - just like they currently have to handle
-> -ENOMEM even though it is highly unlikely (and not strictly necessary).
+> -Doug
 
-Callers should not handle an ENOMEM error by retrying.  Nor should
-they retry an EBUSY return value.
-
-> Are these errors ever actually useful?  I thought I had convinced myself
-> before that they were (to throttle attacks on the hash function), but
-> they happen even less often than I thought.
-
-The EBUSY error indicates that the hash table has essentially
-degenereated into a linked list because somebody has worked out
-our hash secret.
-
-> Maybe. Reading a percpu counter isn't cheap.  Reading it whenever a hash
-> chain reaches 16 is reasonable, but I think we would want to read it a
-> lot more often than that.  So probably store the last-sampled time (with
-> no locking) and only sample the counter if last-sampled is more than
->  jiffies - 10*HZ (???)
-
-We could also take the spinlock table approach and have a counter
-per bucket spinlock.  This should be sufficient as you'll contend
-on the bucket spinlock table anyway.
-
-This also allows us to estimate the total table size and not have
-to always do a last-ditch growth when it's too late.
-
-Cheers,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
