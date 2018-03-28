@@ -1,101 +1,136 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522268030; cv=none;
+Return-Path: <a13xp0p0v88@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522267056; cv=none;
         d=google.com; s=arc-20160816;
-        b=PUJcHvN0SWCF6LjXMaSnOmja/WHVAGl5GfDVj7GBP70vKsYZ3Z4e40RqOTSZIqmxwX
-         ZYtLxZRKZR/s0XDQ4NLnYsumNNQ9qkZy6bx5zSOaxfeXbl0NZo1RTF8Mdz06slBiBdOB
-         gC5A2W6zl6dpv5xmzPFIFqGpG08xv3h+A/dGwI4FcjLAF0xwrW/oR2b5+AQsxeTPJDV8
-         EhpETrKPFoYt6B5e/5chbs/sgCl9oVsE23Yp8L+6XSlwGD/jDVi6DcJjY/XzF9l+LpMp
-         h0xckcwxomuriCNz+ffWrqAH3HbULMp/rF1vuRqwQNpSd3RICCfNFP7JwR1V6CMJBw0I
-         VdNg==
+        b=KToXwzggAW5KwXppPGhu2CoegISusnQWyQzYDEuO95k0kaTNfSysbhK+ZyLJjL3qXZ
+         mq0hT428akxH4SLP9HGQbXNI8iTVU7ATr/AIIwaabClqOkXb9DNgC0aTne5HbVTD9ZGG
+         iI8LS11nNyIca3ibgLLrYqvAJUveK3441VgYuW8V4h/cP+gmGmLKa8eQw3A52EY4fyXh
+         NsathCIoSdqEeDmlGj4DJSk4HnFg+a9KqTG6/DGEah3UmyWHHMB2738CaB1hp75kCxa5
+         IBNmTzqAUJyHbVGgNXtI/RbR1B0MLUvlrSgvrGk8rmzEm9RcSed4BL7chpNE2Ju18b8Q
+         9JlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
+        h=references:in-reply-to:message-id:date:subject:to:from
          :arc-authentication-results;
-        bh=sjn6lh+CCVHo+STbd0e/0SJwWu5HDPjBhEGHlUXO27I=;
-        b=Dd9df3YMcCrUAceVpvz2wCJ5bGN9UNOJauPpVdo1r3Cuuot6PfWOja3UaScpUTKX1x
-         QhzdACOXBqYgK6SHol0Vn5N6rBAyevvgxILCpDpnXb5nnR9TT/pKv7rHxZA0JY7A2si2
-         bWFpF2Oj8HruWGwZTeWMRE/qJkm79etPSEofWzi4lrtuh0adLdB2kuAsDkJvRcznd0Ra
-         fnoSqkB56kWqbjJOCCBdt1fiRqGfo3vtEqRNPGF2Ksz3B2cSAwG0ZVXQLvl06CZvLbZ6
-         beJ4jp29XfWGDl/3dnzMNT1FDpXNnzMw2EPybXj9gUfLamQUk6VdvOQFK7OuLAEGTXZa
-         qdpg==
+        bh=yG8WI64gesDH1VxIEInLOPqtrbP0jMf2nhukF0giWlE=;
+        b=ImvVXVXMWYyE5Y9JmklGfJrSQsD0kLQTolld3YoMeu8bFg80K0rwwvfqltWsb4ffHa
+         zK2QcMnFK6Y0KClA0bs/2etEEhYOnkt4XnPpchqMhvo5+scxILFhQz1mdI+SDxGnoiAr
+         GlqSxhaxEnfOMFDzNMCEihS7tJqicAiZ+qMgbkNjeXW/VAgGAJOxTpWcOWDFS8WzdqoM
+         rASCz1QGB4u3gGAPbt0hX+sZUqvY6vtOJCMu9Lzg+R0TwqO+mcXfZ21XoYB4x19l7H5X
+         W4UXtIou1Fr4CYv6sTYCStNskD35YPZ8M0cwplrDGv8/8HiFtl6AXeOAjYngyABpf1+V
+         qaWg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=POTEujau;
-       dkim=pass header.i=@chromium.org header.s=google header.b=fhKR546a;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=POTEujau;
-       dkim=pass header.i=@chromium.org header.s=google header.b=fhKR546a;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AIpwx4+jXarZdB/ieS3XHhqzxkiIZ3wAco3nSxY2/AA3kxITL1lwS2UbbVevVEwu47NcTvFMogtK+w5RBnKEXj7Dx6Q=
-MIME-Version: 1.0
-Sender: keescook@google.com
+       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
+X-Google-Smtp-Source: AIpwx4+TM5REWsPPokQvJYysJ1DvIivEkI6Vqv2zN1mq2GyNj64AyfPqFaqIHXhHh3X4rZpYdRNuSQ==
+From: Alexander Popov <alex.popov@linux.com>
+To: kernel-hardening@lists.openwall.com,
+	Kees Cook <keescook@chromium.org>,
+	PaX Team <pageexec@freemail.hu>,
+	Brad Spengler <spender@grsecurity.net>,
+	Ingo Molnar <mingo@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Tycho Andersen <tycho@tycho.ws>,
+	Laura Abbott <labbott@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Richard Sandiford <richard.sandiford@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	"Dmitry V . Levin" <ldv@altlinux.org>,
+	Emese Revfy <re.emese@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Thomas Garnier <thgarnie@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Josef Bacik <jbacik@fb.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Ding Tianhong <dingtianhong@huawei.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Juergen Gross <jgross@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Mathias Krause <minipli@googlemail.com>,
+	Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+	Kyle Huey <me@kylehuey.com>,
+	Dmitry Safonov <dsafonov@virtuozzo.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Florian Weimer <fweimer@redhat.com>,
+	Boris Lukashev <blukashev@sempervictus.com>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	alex.popov@linux.com
+Subject: [PATCH RFC v10 6/6] doc: self-protection: Add information about STACKLEAK feature
+Date: Wed, 28 Mar 2018 22:57:12 +0300
+Message-Id: <1522267032-6603-7-git-send-email-alex.popov@linux.com>
+X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522267032-6603-1-git-send-email-alex.popov@linux.com>
 References: <1522267032-6603-1-git-send-email-alex.popov@linux.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 28 Mar 2018 13:13:48 -0700
-X-Google-Sender-Auth: 6EuzW5-EXugopD8tgcsClYzrB9s
-Message-ID: <CAGXu5jKRs6Zi7+hDEsH3hW2zsAAQ0aiJoXaOpmxNjHC64ZABTw@mail.gmail.com>
-Subject: Re: [PATCH RFC v10 0/6] Introduce the STACKLEAK feature and a test
- for it
-To: Alexander Popov <alex.popov@linux.com>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
-	Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Borislav Petkov <bp@alien8.de>, Richard Sandiford <richard.sandiford@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>, "Dmitry V . Levin" <ldv@altlinux.org>,
-	Emese Revfy <re.emese@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Thomas Garnier <thgarnie@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, "David S . Miller" <davem@davemloft.net>,
-	Ding Tianhong <dingtianhong@huawei.com>, David Woodhouse <dwmw@amazon.co.uk>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Dominik Brodowski <linux@dominikbrodowski.net>, Juergen Gross <jgross@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, Mathias Krause <minipli@googlemail.com>,
-	Vikas Shivappa <vikas.shivappa@linux.intel.com>, Kyle Huey <me@kylehuey.com>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>, Will Deacon <will.deacon@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Florian Weimer <fweimer@redhat.com>,
-	Boris Lukashev <blukashev@sempervictus.com>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596212689180490954?=
-X-GMAIL-MSGID: =?utf-8?q?1596213722012756229?=
+X-GMAIL-THRID: =?utf-8?q?1596212701270464598?=
+X-GMAIL-MSGID: =?utf-8?q?1596212701270464598?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 12:57 PM, Alexander Popov <alex.popov@linux.com> wrote:
-> This is the 10th version of the patch series introducing STACKLEAK to the
-> mainline kernel. The previous version raised a fervent discussion[0].
-> The assembly code introduced by v9 irritated the reviewers.
+Add information about STACKLEAK feature to "Stack depth overflow" and
+"Memory poisoning" sections of self-protection.rst.
 
-Thanks for persisting!
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
+---
+ Documentation/security/self-protection.rst | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-> I've found the way to bypass the obstacles[1] of the C implementation.
-> So I dare come once again. Let me ask you to look at this code without
-> preconception.
-
-The assembly changes are now very minimal; thanks for reworking this.
-I hope this addresses both Dave Hansen and Linus's (similar)
-objections.
-
->  1. reduces the information that can be revealed through kernel stack leak bugs.
->     The idea of erasing the thread stack at the end of syscalls is similar to
->     CONFIG_PAGE_POISONING and memzero_explicit() in kernel crypto, which all
->     comply with FDP_RIP.2 (Full Residual Information Protection) of the
->     Common Criteria standard.
-
-Agreed: I continue to believe this is meaningful even if just for
-reducing the lifetime of sensitive data on the stack.
-
--Kees
-
+diff --git a/Documentation/security/self-protection.rst b/Documentation/security/self-protection.rst
+index 0f53826..b685f18 100644
+--- a/Documentation/security/self-protection.rst
++++ b/Documentation/security/self-protection.rst
+@@ -165,10 +165,15 @@ Stack depth overflow
+ A less well understood attack is using a bug that triggers the
+ kernel to consume stack memory with deep function calls or large stack
+ allocations. With this attack it is possible to write beyond the end of
+-the kernel's preallocated stack space and into sensitive structures. Two
+-important changes need to be made for better protections: moving the
+-sensitive thread_info structure elsewhere, and adding a faulting memory
+-hole at the bottom of the stack to catch these overflows.
++the kernel's preallocated stack space and into sensitive structures.
++The combination of the following measures gives better protection:
++
++* moving the sensitive thread_info structure off the stack
++  (``CONFIG_THREAD_INFO_IN_TASK``);
++* adding a faulting memory hole at the bottom of the stack to catch
++  these overflows (``CONFIG_VMAP_STACK``);
++* runtime checking that alloca() calls don't overstep the stack boundary
++  (``CONFIG_GCC_PLUGIN_STACKLEAK``).
+ 
+ Heap memory integrity
+ ---------------------
+@@ -302,11 +307,11 @@ sure structure holes are cleared.
+ Memory poisoning
+ ----------------
+ 
+-When releasing memory, it is best to poison the contents (clear stack on
+-syscall return, wipe heap memory on a free), to avoid reuse attacks that
+-rely on the old contents of memory. This frustrates many uninitialized
+-variable attacks, stack content exposures, heap content exposures, and
+-use-after-free attacks.
++When releasing memory, it is best to poison the contents, to avoid reuse
++attacks that rely on the old contents of memory. E.g., clear stack on a
++syscall return (``CONFIG_GCC_PLUGIN_STACKLEAK``), wipe heap memory on a
++free. This frustrates many uninitialized variable attacks, stack content
++exposures, heap content exposures, and use-after-free attacks.
+ 
+ Destination tracking
+ --------------------
 -- 
-Kees Cook
-Pixel Security
+2.7.4
