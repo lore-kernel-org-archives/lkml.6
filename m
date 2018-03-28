@@ -1,44 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753711AbeC1PSh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:18:37 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:55704 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753360AbeC1PSg (ORCPT
+        id S1753929AbeC1PTp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:19:45 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:39779 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753529AbeC1PTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:18:36 -0400
-X-Google-Smtp-Source: AIpwx4/Eyg+ZErYISzsAoYJdLY+GmD/I2bT6RRbhgzL4RCskfULunlWnkE5lXYW9BrW+uOvhN7kZ0mCHgpYBu8Gvg9U=
+        Wed, 28 Mar 2018 11:19:43 -0400
+Date: Wed, 28 Mar 2018 11:19:25 -0400
+From: Neil Horman <nhorman@tuxdriver.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Vlad Yasevich <vyasevich@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Al Viro <viro@ZenIV.linux.org.uk>, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [net-next] sctp: fix unused lable warning
+Message-ID: <20180328151925.GA21759@neilslaptop.think-freely.org>
+References: <20180328141512.3083992-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQWikF9K41uzkQjixUEO=_s14txEhvd=rmLY69JShezKg@mail.gmail.com>
-References: <CAK7LNAQWikF9K41uzkQjixUEO=_s14txEhvd=rmLY69JShezKg@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 28 Mar 2018 17:18:34 +0200
-X-Google-Sender-Auth: Hhno22Y1ertagJbQtHjq6PC90Xg
-Message-ID: <CAK8P3a2db8WqWVQQtnFW+FtqLUSiEZqtUB79bNMw23g88iHixQ@mail.gmail.com>
-Subject: Re: [GIT PULL] ARM: dts: uniphier: UniPhier DT updates for 4.17 (2nd)
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328141512.3083992-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Spam-Score: -2.9 (--)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 6:31 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Hi Arnd, Olof,
->
-> Sorry for this very late pull request.
-> If possible, could you pull a little more for v4.17-rc1 ?
-
-> ----------------------------------------------------------------
-> UniPhier ARM SoC DT updates for v4.17 (2nd)
->
-> - add syscon property to sound nodes
-> - add more ethernet pin groups
-> - add ethernet support for PXs3 SoC
-
-It all looks harmless, so no problem at all. Pulled into next/dt, thanks!
-
-       Arnd
+On Wed, Mar 28, 2018 at 04:14:56PM +0200, Arnd Bergmann wrote:
+> The proc file cleanup left a label possibly unused:
+> 
+> net/sctp/protocol.c: In function 'sctp_defaults_init':
+> net/sctp/protocol.c:1304:1: error: label 'err_init_proc' defined but not used [-Werror=unused-label]
+> 
+> This adds an #ifdef around it to match the respective 'goto'.
+> 
+> Fixes: d47d08c8ca05 ("sctp: use proc_remove_subtree()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  net/sctp/protocol.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+> index c1c64b78c39d..d685f8456762 100644
+> --- a/net/sctp/protocol.c
+> +++ b/net/sctp/protocol.c
+> @@ -1301,8 +1301,10 @@ static int __net_init sctp_defaults_init(struct net *net)
+>  
+>  	return 0;
+>  
+> +#ifdef CONFIG_PROC_FS
+>  err_init_proc:
+>  	cleanup_sctp_mibs(net);
+> +#endif
+>  err_init_mibs:
+>  	sctp_sysctl_net_unregister(net);
+>  err_sysctl_register:
+> -- 
+> 2.9.0
+> 
+> 
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
