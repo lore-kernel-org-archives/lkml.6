@@ -1,130 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753446AbeC1Vbp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 17:31:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:51194 "EHLO mga14.intel.com"
+        id S1753355AbeC1Vey (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 17:34:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49445 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752447AbeC1Vbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 17:31:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,373,1517904000";
-   d="asc'?scan'208";a="29725099"
-From: "Rustad, Mark D" <mark.d.rustad@intel.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        "netanel@amazon.com" <netanel@amazon.com>,
-        "ddutile@redhat.com" <ddutile@redhat.com>,
-        "mheyne@amazon.de" <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>, "hch@lst.de" <hch@lst.de>,
-        "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
-Subject: Re: [pci PATCH v7 2/5] virtio_pci: Add support for unmanaged SR-IOV
- on virtio_pci devices
-Thread-Topic: [pci PATCH v7 2/5] virtio_pci: Add support for unmanaged
- SR-IOV on virtio_pci devices
-Thread-Index: AQHTvI1siq32SjdMxU+NwObgk2U5/6PmtI2A
-Date: Wed, 28 Mar 2018 21:31:40 +0000
-Message-ID: <52734805-4A20-41C0-A46A-A8AFF8D79A72@intel.com>
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
- <20180315184132.3102.90947.stgit@localhost.localdomain>
-In-Reply-To: <20180315184132.3102.90947.stgit@localhost.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.233.80.200]
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_67787A4F-EC56-438D-B41A-B2FB4E4FBB45";
-        protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1752447AbeC1Vew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 17:34:52 -0400
+From: NeilBrown <neilb@suse.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Thu, 29 Mar 2018 08:34:45 +1100
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] rhashtable: allow a walk of the hash table without missing objects.
+In-Reply-To: <20180328073023.GB17306@gondor.apana.org.au>
+References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718430.11435.5761213978298714527.stgit@noble> <20180327155118.GB14001@gondor.apana.org.au> <87po3p421q.fsf@notabene.neil.brown.name> <20180328060734.GB16291@gondor.apana.org.au> <87a7us4qje.fsf@notabene.neil.brown.name> <20180328073023.GB17306@gondor.apana.org.au>
+Message-ID: <87zi2r3mve.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_67787A4F-EC56-438D-B41A-B2FB4E4FBB45
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+--=-=-=
+Content-Type: text/plain
 
-On Mar 15, 2018, at 11:42 AM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
+On Wed, Mar 28 2018, Herbert Xu wrote:
 
-> From: Alexander Duyck <alexander.h.duyck@intel.com>
-> 
-> Hardware-realized virtio_pci devices can implement SR-IOV, so this
-> patch enables its use. The device in question is an upcoming Intel
-> NIC that implements both a virtio_net PF and virtio_net VFs. These
-> are hardware realizations of what has been up to now been a software
-> interface.
-> 
-> The device in question has the following 4-part PCI IDs:
-> 
-> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
-> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
-> 
-> The patch currently needs no check for device ID, because the callback
-> will never be made for devices that do not assert the capability or
-> when run on a platform incapable of SR-IOV.
-> 
-> One reason for this patch is because the hardware requires the
-> vendor ID of a VF to be the same as the vendor ID of the PF that
-> created it. So it seemed logical to simply have a fully-functioning
-> virtio_net PF create the VFs. This patch makes that possible.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
-> ---
-> 
-> v4: Dropped call to pci_disable_sriov in virtio_pci_remove function
-> v5: Replaced call to pci_sriov_configure_unmanaged with
->         pci_sriov_configure_simple
-> v6: Dropped "#ifdef" checks for IOV wrapping sriov_configure definition
-> v7: No code change, added Reviewed-by
-> 
->  drivers/virtio/virtio_pci_common.c |    1 +
->  1 file changed, 1 insertion(+)
+> On Wed, Mar 28, 2018 at 06:17:57PM +1100, NeilBrown wrote:
+>>
+>> Sounds like over-kill to me.
+>> It might be reasonable to have a CONFIG_DEBUG_RHASHTABLE which enables
+>> extra to code to catch misuse, but I don't see the justification for
+>> always performing these checks.
+>> The DEBUG code could just scan the chain (usually quite short) to see if
+>> the given element is present.  Of course it might have already been
+>> rehashed to the next table, so you would to allow for that possibility -
+>> probably check tbl->rehash.
+>
+> No this is not meant to debug users incorrectly using the cursor.
+> This is a replacement of your continue interface by automatically
+> validating the cursor.
+>
+> In fact we can make it even more reliable.  We can insert the walker
+> right into the bucket chain, that way the walking will always be
+> consistent.
+>
+> The only problem is that we need be able to differentiate between
+> a walker, a normal object, and the end of the list.  I think it
+> should be doable.
 
-Tested with the identified device.
+Yes, I think that could work.  The code to stop over a walker object
+during an unlocked search wouldn't be straight forward and would need
+careful analysis.
 
-Tested-by: Mark Rustad <mark.d.rustad@intel.com>
+However about storing the hash chains in order by object address?
+Then rhashtable_walk_start() can easily find it's place regardless of
+whether the old object was still present or not, using <= on the
+address.
+"Insert" would need to record an insert location and insert there rather
+than at the head of the chain.
+I might try coding that.
 
---
-Mark Rustad, Networking Division, Intel Corporation
+Thanks,
+NeilBrown
 
---Apple-Mail=_67787A4F-EC56-438D-B41A-B2FB4E4FBB45
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
 
 -----BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
 
-iQIzBAEBCAAdFiEE6ug8b0Wg+ULmnksNPA7/547j7m4FAlq8CbsACgkQPA7/547j
-7m7IXg/+IlfLEdVeKE9r7YPA/yg+kKRNuPXfNTEGfo9fobGLIys3pZpqNrkH6XO8
-duZJE/XM481LgYhwwllX+WEUrfCnvwP/Kgaf5J3TA7HVOk8+0jCiuz3YcuPy+D1B
-gMS5QsG/HyLjJpd8Qs72nS7uuGTgghVSMfwxvhk6kqbVt0MVumCrXffWsvEyKdpK
-KHChBqKpbMix6Jt66bVg2vJpRWJEVg3dgdO34VdYAn0+N7WMygOLtsyPATqLvgl7
-IWq3O2p2j91lyCn4u2QF4lc+Juye94PWHTgggXej670nNuJ+wwjCy0VZMvlZ+zCP
-BKdBSnOuJU81Bp1Hrc6T5R6PVvoMgwJnqwm+JvsdCLM0dqw8MqubkmUZ4ZjKSnwY
-qxGFHgMf+iuue2Se7Dcg5nv+z6rVf4xO7GuK8b874sI681tKGW5ETGQ+/Ws2pgIR
-/n/HMcdWaaOsJ2fj9drCRlKxQIrMNFRgdDqyJeVaMpN5KrkwdMGY48QSgD7wV36E
-7ZuKiQKFN58D9BmcECfrHN4WiP33aTmDPITD9leSGBdpw/YGZTm68T/+mxYcEbq1
-GJNpQxuQ2eZaXdsBVchh1KQHkxEYhmhSgnrupvzi0uf3KM9CcliOg6IzAACYfkJv
-+Q9+otsqaRp3ABczrGY26h7Riqrd3G4hSCqur/jNmQydxgMXFPo=
-=KFIy
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq8CnUACgkQOeye3VZi
+gbkCBA//Q2Ye65bKdqqdUVf0DSLWf/xWwBu8nzwhAG2UdW9VPuOCqrAn64bYk93J
+mOKh6h6XOvOgrgARYZWRepWpzsTw6Yhrx7elc8D/bSMNo9qxb4huxs+8l0NCThS4
+l4EBkslUZbF6Vmk0xPRzQTAqWWemAvQVY16qJRZUfBkL2tjnhQ+alNyM4xfZbmYy
+6lQjulTtaMyXohNmAGMvYOmF2k05CLGhNCMFv1P+yX+ncGSvGMkgZQGhMuRzNlF+
+nqGAGqJPE3Mf6io49h/WHaM0087fGnZUn0QS2wKDp/Pdly1+eKYqwLRbadn2X0t3
+j3wrY08nOP2FlCOu0ZBCdoBGJztobx6u1xx6m+e+m+ov3HHsgxeg6YAxmz3F4YFq
+fhFovrEDHF720D/5BYqzIov6eS4RRJl+5wq+hdzKMG7TZXZGJJXd77h9j5CXg5/f
+Hy7yL2a/blMjUmwUAy0J5GFE0znxvSf5ME0K+5ZWPDCXzCxKMWbpV7lp2TR4RdOn
+R3MUg4atvHnCx21xfRoNTGorIfgS+gcd8VzXtPO7Ap3VEfAu2Mt2DiO/w2sr2/tR
+MK+t1YZs0D6fnlQ2Xq2E/MzI/eOqXbEqFqMqIb7kn8znfEsDaLxLPvP9QRIl5qvf
+XypQ+GDzG78Ia+ejfzE+Nv2bSrJAHVaDvjTTJjfOd79vHzNR2cQ=
+=Uq4N
 -----END PGP SIGNATURE-----
-
---Apple-Mail=_67787A4F-EC56-438D-B41A-B2FB4E4FBB45--
+--=-=-=--
