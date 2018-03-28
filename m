@@ -1,76 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753232AbeC1NDR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 09:03:17 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52747 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751903AbeC1NDQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 09:03:16 -0400
-X-Google-Smtp-Source: AIpwx4+EASZRTA2k3xrgzYQmRVADH1Jg0viFnHQkZUIyXz/y3eC9YotzQ76BHVp4/yKpOUY6cMv0MA==
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-To: Alexander Dahl <ada@thorsis.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
- <9761072.pX2B0LJlSJ@ada> <989df8a3-462a-c645-87f1-9f956e1b22c9@linaro.org>
- <4073350.0MmxRoANOi@ada>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <6d43177a-bbea-6a01-5fa5-1c7891e18412@linaro.org>
-Date: Wed, 28 Mar 2018 15:03:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753258AbeC1NE7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 09:04:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753039AbeC1NE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 09:04:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1521217A8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AIpwx48vwS8kUjX4e937YL058KTkFOR2Cp7Ya5KzY5oHezQA0dX0gfQWtg6I4LfqFZFZuIKYLbYl0rs1ET916UeU9N4=
 MIME-Version: 1.0
-In-Reply-To: <4073350.0MmxRoANOi@ada>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180328083213.by4sjrk3nx5s4rbk@fm.suse.cz>
+References: <20180328083213.by4sjrk3nx5s4rbk@fm.suse.cz>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 28 Mar 2018 08:04:34 -0500
+X-Gmail-Original-Message-ID: <CABGGiswL9Mw_viewE9v0OFrnvxOZyaYRyMW5GNEP_R0JEiWDhQ@mail.gmail.com>
+Message-ID: <CABGGiswL9Mw_viewE9v0OFrnvxOZyaYRyMW5GNEP_R0JEiWDhQ@mail.gmail.com>
+Subject: Re: [PATCH] devicetree: Remove dangling symlinks
+To: Libor Pechacek <lpechacek@suse.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Olof Johansson <olof@lixom.net>, Heiko Stuebner <heiko@sntech.de>,
+        trivial@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/03/2018 12:29, Alexander Dahl wrote:
-> Hello Daniel,
-> 
-> Am Dienstag, 27. März 2018, 13:30:22 CEST schrieb Daniel Lezcano:
->> Can you can give a rough amount for the irq rate on the timer ?
-> 
-> I used itop [1] now to get a rough estimate. First with kernel v4.14.29-rt25 
-> (fully preempt RT):
-> 
-> INT                NAME          RATE             MAX
->  19 [ vel     tc_clkevt]   397 Ints/s     (max:   432)
->  26 [      vel     eth0]     4 Ints/s     (max:    38)
-> 
-> Next test with kernel v4.15.13 gives (slightly slower, but non-RT):
-> 
-> INT                NAME          RATE             MAX
->  19 [ vel     tc_clkevt]   248 Ints/s     (max:   273)
->  26 [      vel     eth0]     4 Ints/s     (max:    11)
-> 
-> With kernel v4.16-rc7 plus this patch series and tcb as clocksource:
-> 
-> INT                NAME          RATE             MAX
->  17 [vel     timer@fffa]  2164 Ints/s     (max:  2183)
->  26 [      vel     eth0]     5 Ints/s     (max:    10)
-> 
-> Is this the information you wanted? If not, could you point me on how to get 
-> the requested irq rate?
++Arnd
 
-It is perfect. Thanks!
+On Wed, Mar 28, 2018 at 3:32 AM, Libor Pechacek <lpechacek@suse.com> wrote:
+> Support for CRIS and Meta was dropped.
+>
+> Signed-off-by: Libor Pechacek <lpechacek@suse.com>
+> Fixes: bb6fb6dfcc17 ("metag: Remove arch/metag/")
+> Fixes: c690eddc2f3b ("CRIS: Drop support for the CRIS port")
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: devicetree@vger.kernel.org
+> Cc: trivial@kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  scripts/dtc/include-prefixes/cris  | 1 -
+>  scripts/dtc/include-prefixes/metag | 1 -
+>  2 files changed, 2 deletions(-)
+>  delete mode 120000 scripts/dtc/include-prefixes/cris
+>  delete mode 120000 scripts/dtc/include-prefixes/metag
 
-It confirms what I was worried about: the clocksource wraps up too
-quickly thus raising an interrupt every 400us. That is why I asked
-Alexande about a prescalar register.
+I'm assuming Arnd will take this.
 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Acked-by: Rob Herring <robh@kernel.org>
