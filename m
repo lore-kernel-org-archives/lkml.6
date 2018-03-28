@@ -1,97 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752267AbeC1HQ0 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 03:16:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48822 "EHLO mail.bootlin.com"
+        id S1752489AbeC1HSI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 03:18:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33723 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751038AbeC1HQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 03:16:25 -0400
-Date: Wed, 28 Mar 2018 09:16:13 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>, dwmw2@infradead.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: Replace typedef with struct
-Message-ID: <20180328091613.7a867a0f@bbrezillon>
-In-Reply-To: <2234121.GJlN6YpY6x@blindfold>
-References: <20180318175122.GA15004@seema-Inspiron-15-3567>
-        <2234121.GJlN6YpY6x@blindfold>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751070AbeC1HSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 03:18:06 -0400
+From: NeilBrown <neilb@suse.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 28 Mar 2018 18:17:57 +1100
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] rhashtable: allow a walk of the hash table without missing objects.
+In-Reply-To: <20180328060734.GB16291@gondor.apana.org.au>
+References: <152210688405.11435.13010923693146415942.stgit@noble> <152210718430.11435.5761213978298714527.stgit@noble> <20180327155118.GB14001@gondor.apana.org.au> <87po3p421q.fsf@notabene.neil.brown.name> <20180328060734.GB16291@gondor.apana.org.au>
+Message-ID: <87a7us4qje.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018 21:32:19 +0200
-Richard Weinberger <richard@nod.at> wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> Am Sonntag, 18. März 2018, 18:51:23 CEST schrieb Arushi Singhal:
-> > Using typedef for a structure type is not suggested in Linux kernel
-> > coding style guidelines. Hence, occurrence of typedefs has been
-> > removed.
-> > 
-> > Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
-> > ---
-> >  drivers/mtd/ssfdc.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/mtd/ssfdc.c b/drivers/mtd/ssfdc.c
-> > index 95f0bf9..8bae672 100644
-> > --- a/drivers/mtd/ssfdc.c
-> > +++ b/drivers/mtd/ssfdc.c
-> > @@ -54,15 +54,15 @@ SumSector	2,000	4,000	8,000	16,000	32,000	64,000	128,000	256,000
-> >  SectorSize	512	512	512	512	512	512	512	512
-> >  **/
-> >  
-> > -typedef struct {
-> > +struct chs_entry {
-> >  	unsigned long size;
-> >  	unsigned short cyl;
-> >  	unsigned char head;
-> >  	unsigned char sec;
-> > -} chs_entry_t;
-> > +};
-> >  
-> >  /* Must be ordered by size */
-> > -static const chs_entry_t chs_table[] = {
-> > +static const struct chs_entry chs_table[] = {
-> >  	{ MiB(  1), 125,  4,  4 },
-> >  	{ MiB(  2), 125,  4,  8 },
-> >  	{ MiB(  4), 250,  4,  8 },
-> >   
-> 
-> Didn't we already talk about coding style fixes on existing code? ;-)
+On Wed, Mar 28 2018, Herbert Xu wrote:
 
-I'll add one thing to Richard's complaint: please stop sending new
-coding style or cosmetic changes until the previous ones have been
-accepted.
+> On Wed, Mar 28, 2018 at 08:54:41AM +1100, NeilBrown wrote:
+>>
+>> Possibly.
+>> I particularly want the interface to require that you pass the
+>> previously returned object to _continue. That makes it easy to see that
+>> the object is still being used.  If someone changes to code to delete
+>> the object before the _continue, there should be a strong hint that it
+>> won't work.
+>>=20
+>> Maybe it would be better to make it a WARN_ON()
+>>=20
+>>   if (!obj || WARN_ON(iter->p !=3D obj))
+>>          iter->p =3D NULL;
+>
+> This doesn't really protect against the case where obj is removed.
+> All it proves is that the user saved a copy of obj which we already
+> did anyway.
 
-There's a reason I don't apply those patches right away even though
-they are simple. Those patches have a low priority in my review list
-and improvements or fixes usually get reviewed before them. The reason
-I do that is:
+True.  We ultimately need to trust the user not to do something silly.
+We can do little things to help catch obvious errors though.  That was
+my intent with the WARN_ON.
 
-1/ I want to reward contributors who submit things that actually matter
-   to the subsystem
-2/ It tends to discourage drive-by contributors whose only interest is
-   to get a lot of trivial patches in the kernel
+>
+> To detect an actual removal you'd need to traverse the list.
 
-Note that I'm not saying never, but you have to accept to wait longer
-for this kind of patches, and more importantly, if you keep sending
-only coding style patches, we might decide to ignore your contributions
-at some point.
+Yes.  You could reset ->skip to zero and search for the given object.
+That feels a bit like excess hand-holding to me, but probably wouldn't
+be too expensive.  It only happens when you need to drop out of RCU, and
+in that case you are probably already doing something expensive.
 
-Regards,
+>
+> I have another idea: we could save insert the walkers into the
+> hash table chain at the end, essentially as a hidden list.  We
+> can mark it with a flag like rht_marker so that normal traversal
+> doesn't see it.
+>
+> That way the removal code can simply traverse that list and inform
+> them that the iterator is invalid.
 
-Boris
+Sounds like over-kill to me.
+It might be reasonable to have a CONFIG_DEBUG_RHASHTABLE which enables
+extra to code to catch misuse, but I don't see the justification for
+always performing these checks.
+The DEBUG code could just scan the chain (usually quite short) to see if
+the given element is present.  Of course it might have already been
+rehashed to the next table, so you would to allow for that possibility -
+probably check tbl->rehash.
 
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+NeilBrown
+
+>
+> Cheers,
+> --=20
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlq7QaUACgkQOeye3VZi
+gblURA//ULaa2os6nqoB6tj8fHS41EFPAVIgyiPd+AssADhEdhITSHPN71oUPver
+2nvABm2dRHrFsBPoLXQoqayFD/rehOIUCDPTL1u3lWuwSXjeYxBf1og7d2z57ry1
+nluVjj1ZX26eaaJKtwsetoRTt084lASHq9RmDn4toG4vsfaTaW7GCrdIQET+hcNk
+ijqAMdXk3TGCedq2qyeoYhUxGctOOm+Rm3ed6BJMjjIm+Ol63BobB6CSthDDZHW2
+Id9gC5e+Ecp8qrOrEh4v12c5erW6pumRKc5tppJ7+ZPHCg5w6vQclUxuly0w9UXp
+2Nxu/dYGa6f4oqh/YmRLPAQ5YlcMG9d67jK9xNMKAZQJYmtElgm1DvaYSHbhv+IU
+RmAzWUNUsuaxxQ8TZTh0qRYk/OnJfWzXCjFUXi7uuNAvlqRRVPnvMoadNp4Ot4+6
+edTTO05f3BHCLPgP3m0DvhzuT+3gnKvhgzKg701fTQbWc8sy5BV7ZfypvKcQ4FXU
+6IPwC/t9ey2VaG+CHx9laPCPA/o3z3vtSsTLKMZIN+F+bsWqXNfGtGNobLWy+nhw
+67DgZpGHOSBABbM76dp4OskUSOi+R3pHFz0PdkYQ060Lq0/12ISLw9liSXy5ewk5
+6dcMaXtr9UsiVbyJDg82UAXwJv1oOPvsHnMm6TGQDRAAFxuV8Jc=
+=wylA
+-----END PGP SIGNATURE-----
+--=-=-=--
