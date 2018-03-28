@@ -1,49 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752843AbeC1LIX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 07:08:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54374 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752259AbeC1LIW (ORCPT
+        id S1752853AbeC1LI4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 07:08:56 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53639 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751209AbeC1LIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 07:08:22 -0400
-Date: Wed, 28 Mar 2018 13:08:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH for-4.17 2/2] powerpc: Remove smp_mb() from
- arch_spin_is_locked()
-Message-ID: <20180328110809.GE4129@hirez.programming.kicks-ass.net>
-References: <1522060667-7034-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1522109216.7364.30.camel@kernel.crashing.org>
- <20180327102521.GA7347@andrea>
- <87a7us3h66.fsf@concordia.ellerman.id.au>
- <20180328110436.GR4043@hirez.programming.kicks-ass.net>
+        Wed, 28 Mar 2018 07:08:55 -0400
+X-Google-Smtp-Source: AIpwx4+nm3HBIIOUb9GEYOBnU+0VVTlAOrpRY1opnhqmRGAJizk1JjyzyBtgxYN1W9SSBGBWj1E/SA==
+Date: Wed, 28 Mar 2018 12:08:51 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: bleung@chromium.org, groeck@chromium.org, andy.shevchenko@gmail.com,
+        kernel@collabora.com, gwendal@chromium.org,
+        linux-kernel@vger.kernel.org, Shawn Nematbakhsh <shawnn@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 5/6] platform/chrome: cros_ec_debugfs: Add PD port
+ info to debugfs
+Message-ID: <20180328110851.5pe6sqiovowvxmjj@dell>
+References: <20180323174247.6680-1-enric.balletbo@collabora.com>
+ <20180323174247.6680-6-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180328110436.GR4043@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180323174247.6680-6-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 01:04:36PM +0200, Peter Zijlstra wrote:
-> On Wed, Mar 28, 2018 at 04:25:37PM +1100, Michael Ellerman wrote:
-> > Documenting it would definitely be good, but even then I'd be inclined
-> > to leave the barrier in our implementation. Matching the documented
-> > behaviour is one thing, but the actual real-world behaviour on well
-> > tested platforms (ie. x86) is more important.
+On Fri, 23 Mar 2018, Enric Balletbo i Serra wrote:
+
+> From: Shawn Nematbakhsh <shawnn@chromium.org>
 > 
-> By that argument you should switch your spinlock implementation to RCpc
-> and include that SYNC in either lock or unlock already ;-)
+> Add info useful for debugging USB-PD port state.
+> 
+> Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> ---
+> 
+> Changes in v4: None
+> Changes in v3:
+> - [5/6] Add EC_USB_PD_MAX_PORTS define to avoid interdependencies.
+> - [5/6] Add Reviewed-by Andy Shevchenko
+> 
+> Changes in v2:
+> - [5/6] Drop unrelated changes.
+> 
+>  drivers/platform/chrome/cros_ec_debugfs.c | 72 +++++++++++++++++++++++++++++++
 
-*RCsc* obviously... clearly I need to wake up moar.
+>  include/linux/mfd/cros_ec_commands.h      |  3 ++
 
-> Ideally we'd completely eradicate the *_is_locked() crud from the
-> kernel, not sure how feasable that really is, but it's a good goal. At
-> that point the whole issue of the barrier becomes moot of course.
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+>  2 files changed, 75 insertions(+)
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
