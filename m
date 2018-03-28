@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752899AbeC1DCD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 23:02:03 -0400
+        id S1752619AbeC1DB4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 23:01:56 -0400
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:62686 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752817AbeC1DCA (ORCPT
+        with ESMTP id S1751231AbeC1DBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 23:02:00 -0400
+        Tue, 27 Mar 2018 23:01:55 -0400
 From: Yixun Lan <yixun.lan@amlogic.com>
 To: Kevin Hilman <khilman@baylibre.com>
 CC: Yixun Lan <yixun.lan@amlogic.com>, Carlo Caione <carlo@caione.org>,
@@ -14,12 +14,10 @@ CC: Yixun Lan <yixun.lan@amlogic.com>, Carlo Caione <carlo@caione.org>,
         <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH v3 3/3] ARM64: dts: meson: fix clock source of the pclk for UART_AO
-Date: Wed, 28 Mar 2018 11:01:30 +0800
-Message-ID: <20180328030130.240336-4-yixun.lan@amlogic.com>
+Subject: [PATCH v3 0/3] ARM64: dts: meson-axg: add AO clock driver
+Date: Wed, 28 Mar 2018 11:01:27 +0800
+Message-ID: <20180328030130.240336-1-yixun.lan@amlogic.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180328030130.240336-1-yixun.lan@amlogic.com>
-References: <20180328030130.240336-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.18.20.235]
@@ -27,80 +25,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From the hardware perspective, the actual pclk of the AO uarts
-is the corresponding clkc_ao uart gate, not the main clock controller clk81.
-This was not problem so far, because the uart_gate had
-the CLK_IGNORE_UNUSED flag, which kept the gate open.
+  These patches try to add AO clock driver for the Amlogic's
+AXG SoC, while adding this driver, we found the pclk for uart AO
+controller was wrong, so fix it here.
+  Note, this patch actually depend on AO clock driver[2]
+Please take these patches untill AO clock driver is merged.
 
-We plan to remove the CLK_IGNORE_UNUSED flag in another patch,
-but before doing that, we need to fix the clock in the DTS file.
+changes since v2 at [1]: 
+ - previous the DTS patches sit in two seperate series, merge them
+   into one patch set.
+ 
+changes since v1 at [0]: 
+ -
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+[0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+[1] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+  https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+[2] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 40ca49fb94a6..dc6ca0895f11 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -798,7 +798,7 @@
- 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
- 				reg = <0x0 0x3000 0x0 0x18>;
- 				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
--				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
-+				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
- 				clock-names = "xtal", "pclk", "baud";
- 				status = "disabled";
- 			};
-@@ -807,7 +807,7 @@
- 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
- 				reg = <0x0 0x4000 0x0 0x18>;
- 				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
--				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
-+				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
- 				clock-names = "xtal", "pclk", "baud";
- 				status = "disabled";
- 			};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 562c26a0ba33..ea6898f62044 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -749,12 +749,12 @@
- };
- 
- &uart_AO {
--	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
-+	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
- 	clock-names = "xtal", "pclk", "baud";
- };
- 
- &uart_AO_B {
--	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
-+	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
- 	clock-names = "xtal", "pclk", "baud";
- };
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index e1a39cbed8c9..472106ce9a75 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -697,12 +697,12 @@
- };
- 
- &uart_AO {
--	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
-+	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
- 	clock-names = "xtal", "pclk", "baud";
- };
- 
- &uart_AO_B {
--	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
-+	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
- 	clock-names = "xtal", "pclk", "baud";
- };
- 
+
+Qiufang Dai (1):
+  arm64: dts: meson-axg: add AO clock driver DT info
+
+Yixun Lan (2):
+  ARM64: dts: meson-axg: add an 32K alt aoclk
+  ARM64: dts: meson: fix clock source of the pclk for UART_AO
+
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 23 +++++++++++++++++++++--
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi |  4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  |  4 ++--
+ 3 files changed, 25 insertions(+), 6 deletions(-)
+
 -- 
 2.15.1
