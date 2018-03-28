@@ -1,71 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754191AbeC1Prz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 11:47:55 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:39382 "EHLO ale.deltatee.com"
+        id S1754112AbeC1Pur (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 11:50:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38806 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753816AbeC1Prx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 11:47:53 -0400
-To: christian.koenig@amd.com, Christoph Hellwig <hch@infradead.org>
-Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-2-christian.koenig@amd.com>
- <20180328123830.GB25060@infradead.org>
- <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
-Date: Wed, 28 Mar 2018 09:47:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753838AbeC1Pup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 11:50:45 -0400
+Date: Wed, 28 Mar 2018 17:50:33 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Alexander Dahl <ada@thorsis.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180328155033.GH13942@piout.net>
+References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+ <9761072.pX2B0LJlSJ@ada>
+ <989df8a3-462a-c645-87f1-9f956e1b22c9@linaro.org>
+ <4073350.0MmxRoANOi@ada>
+ <6d43177a-bbea-6a01-5fa5-1c7891e18412@linaro.org>
+ <20180328141645.GF13942@piout.net>
+ <75e5917b-a9ba-c67e-e964-3f002681f9bb@linaro.org>
+ <20180328153135.GG13942@piout.net>
 MIME-Version: 1.0
-In-Reply-To: <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328153135.GG13942@piout.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 28/03/18 09:07 AM, Christian König wrote:
-> Am 28.03.2018 um 14:38 schrieb Christoph Hellwig:
->> On Sun, Mar 25, 2018 at 12:59:54PM +0200, Christian König wrote:
->>> From: "wdavis@nvidia.com" <wdavis@nvidia.com>
->>>
->>> Add an interface to find the first device which is upstream of both
->>> devices.
->> Please work with Logan and base this on top of the outstanding peer
->> to peer patchset.
+On 28/03/2018 at 17:31:35 +0200, Alexandre Belloni wrote:
+> > Do you have an explanation of why the rate is much higher ?
+> > 
 > 
-> Can you point me to that? The last code I could find about that was from 
-> 2015.
+> The core is giving deltas of 31 clocks instead of much more than that, I
+> guess I messed up the initialization somewhere.
+> 
 
-The latest posted series is here:
+I did mess up.
 
-https://lkml.org/lkml/2018/3/12/830
+Alexander, can you test that:
 
-However, we've made some significant changes to the area that's similar
-to what you are doing. You can find lasted un-posted here:
+diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
+index 7fde9cfbf203..bbbacf8c46b0 100644
+--- a/drivers/clocksource/timer-atmel-tcb.c
++++ b/drivers/clocksource/timer-atmel-tcb.c
+@@ -222,7 +222,7 @@ static int __init tc_clkevt_register(struct device_node *node,
+ 		goto err_slow;
+ 	clk_disable(tce.clk);
+ 
+-	clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
++	clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
+ 
+ 	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
+ 			  tce.clkevt.name, &tce);
 
-https://github.com/sbates130272/linux-p2pmem/tree/pci-p2p-v4-pre2
+This will behave exactly the same as before on 16bits TCB and will have
+much less interrupts on 32 bits platforms.
 
-Specifically this function would be of interest to you:
-
-https://github.com/sbates130272/linux-p2pmem/blob/0e9468ae2a5a5198513dd12990151e09105f0351/drivers/pci/p2pdma.c#L239
-
-However, the difference between what we are doing is that we are
-interested in the distance through the common upstream device and you
-appear to be finding the actual common device.
-
-Thanks,
-
-Logan
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
