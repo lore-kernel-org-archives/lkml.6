@@ -1,76 +1,110 @@
-Return-Path: <kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsFw2MlqjY0UHPIJ67cv106PPZrQavrx03wl73iqPlOYwGjBx0kxA0hwbZf6ffBKLK2V1V7
-ARC-Seal: i=1; a=rsa-sha256; t=1520949029; cv=none;
-        d=google.com; s=arc-20160816;
-        b=rM0+SSEz964Sak3bYzimy54qP3PqDgcgcfmn60KH2NhlqZjHvvAQTMpfJn0DMtgVGG
-         DcCv9sCOivnlK5N8ssEu77t4A/+2W+toCF8/l7UoQEOQVq/+xE4KhL0AtTUuoYvrv/md
-         eyrYKRh+cQonW80YV8M6EUwR/gg1WuX0TTwO0fhYDALiuu9oacJ5ChfYRJWFP1B3xt+g
-         5IXweZhXMnBN0aMzqbfEDsq0knQMoCqjZSYQV9nLrPLqYdxiqjy8ghqu2DA/OzFPRcW+
-         BHNxnmPSwxnTP3ouYC3fm7f+qQYLCcoAdYfDocgcNcXouaz1kGl/dtRJpmko2yLa9UVt
-         sQeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=leJH7YYSo9Nh08QRb1M9U6e440VoCPQbtSdqZtm95c8=;
-        b=QV8w4LAr7r5Ewq2npVPeKJFm9s9iwlOGpKCj72oOKShszzW9k4AzPFp1/BgnWlFaze
-         4HumdrFdIjRLL14d3qQQeNsQNTyvaikGuzb/Y6wXW5gzhGszTPYpD22xlTPEfo8Npv0T
-         VD5vQHyOREqegR3IKe6SFKYuKjYd4OG5I/6xqhX5tyPGCoT6hKxcj01aQRgYDjMZxzyh
-         mVHtZS7dse0/OzVR/qU1Xvb3yA0xjT8k2NOfK3O2xtODb/HHko1YRlNVSjUn3otx7CZC
-         B55AREQNHieDNyiiehOjyWeQjYCGapbrWDW/aHVamy74ObTcD1ZhVs02DiwOhG4THoix
-         odFQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ftE1qf5W;
-       spf=pass (google.com: domain of kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ftE1qf5W;
-       spf=pass (google.com: domain of kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12506-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-In-Reply-To: <20180310001021.6437-1-labbott@redhat.com>
-References: <20180310001021.6437-1-labbott@redhat.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 13 Mar 2018 10:42:51 +0100
-Message-ID: <CACRpkdaJz-GL_XdkEv-6FpUkjhNKdp27P8p2KFtriVY8GMkrCQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] VLA removal from the GPIO subsystem
-To: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-	Nandor Han <nandor.han@ge.com>, Semi Malinen <semi.malinen@ge.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com,
-	Mathias Duckeck <m.duckeck@kunbus.de>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1645646-1522222016-2-15388276383172797160
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522222016; b=OB9DoA+cTtnm+e6NbAxdNDpED/S3Qqq2LFBzfkohHYAsR4j
+    Oj3oksCyQ7YS3LOJRPqBXa/1YG90SsefWP6hPM+Qsy/vsHhRbaMsutZ71j3hYTCl
+    yIDxlBZHNv8RhWcQpzLM0hyn+9moN2lNGDW9psaucmR0xPguQClgsbZZyTFWENRO
+    ePDbjT67v1XZPqrFNJfbht9k4B1L9yUB/gSNFokFAvII5We08V1QMrxyEqzrFJQV
+    lRlFKQ7MHjYKOHgqwiNgYcI5mdoUFYCvyyHv/Cp5O9HWnvsGVh4XJ+pNNPgf+wiU
+    xVpmV7v1tVXHJ2ktiRo+LFzfjhY7L2HpySjGK/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1522222016; bh=lAaz2spc3urlPjpVVWJBOAIDzw
+    sI3GpiOfS7VUFraUk=; b=pqzOgbkzNv+fST62UPz2V6u0JJeuV733WQ4Y83xsdh
+    m2pQMn1Jkc2N2nyG0TwQ20idbtyEvOLkrRLDXHHlb3BtXVa4AKWwNhPqhHsw2AHw
+    H2sNvc6fiIX0MJDHR0UQbEthqxvNyyO5HjAJv/3fv+dccNjaXFmlbOh+LaVNrEy/
+    H8wz02St2UoXjJAFdBp+riyLBnWGHyOKvQsZKIlOpt01ZcMyXIm5BPbJ3ZlXg4Jp
+    jhm7wTbkYqdMQC0cBpHQeMha6ZvUzgjrxST4yi7kGu5BKDQ/rKHLkPCZVWDJ0rYu
+    yF3fkevYLQVuujsTS70EOmvsqHbsmEmBfldRsqdNwp9Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=jj7CJXAj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=jj7CJXAj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNrYnPNAVgDEa2V3Ow0lKwpU/n2lD6qijod6BmnnzXy0qmKnoynx8CPQxSNQQ/w2n4OofOxip3ix4HisgORY5VnDS4uHkvSc3tmRbgBqZ0k5l34pAQh3
+    4FEm95PPqk2l2xhfcBolwayC97K1u22TP5y9wVVESLnPgqNTmVW157o2OzXQSE0KCG+4cc5C/5RCd8/fOwY2oBbtjP6yPJ7dCoYAYZdLzmafVKg2n2LRhQJ0
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=JfrnYn6hAAAA:8
+    a=VwQbUJbxAAAA:8 a=Q_ZgEdtvpROYoHcL15IA:9 a=x8gzFH9gYPwA:10
+    a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752570AbeC1H0w (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 28 Mar 2018 03:26:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44430 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752561AbeC1H0v (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 28 Mar 2018 03:26:51 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: viro@zeniv.linux.org.uk
+Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: io_pgetevents & aio fsync V2
+Date: Wed, 28 Mar 2018 09:26:33 +0200
+Message-Id: <20180328072639.16885-1-hch@lst.de>
+X-Mailer: git-send-email 2.14.2
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594507290189676556?=
-X-GMAIL-MSGID: =?utf-8?q?1594830649956541485?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
+Hi all,
 
-> For those who haven't seen it, there's an effort to remove VLAs from the
-> kernel so we can turn on -Wvla in the name of security. See
-> https://lkml.org/lkml/2018/3/7/621 for more details and discussion.
+this patch adds workqueue based fsync offload.  Version of this
+patch have been floating around for a couple years, but we now
+have a user with seastar used by ScyllaDB (who sponsored this
+work) that really wants this in addition to the aio poll support.
+More details are in the patch itself.
 
-OK I read up on it, I'm on board! Less is more.
+Because the iocb types have been defined sine day one (and probably
+were supported by RHEL3) libaio already supports these calls as-is.
 
-> This is a series to remove a few VLAs from the gpio subsystem. These are
-> compile tested only so I'd appreciate reviews and tests from
-> maintainers. When these get Acked, I expect these to just go through the
-> GPIO tree like usual.
+This also pulls in the aio cleanups and io_pgetevents support previously
+submitted and review as part of the aio poll series.  The aio poll
+series will be resubmitted on top of this series
 
-Sure I will just queue it up with ACKs, or if I just think it looks nice
-and reliable.
+A git tree is available here:
 
-Thank you for doing this!
+    git://git.infradead.org/users/hch/vfs.git aio-fsync.3
 
-Yours,
-Linus Walleij
+Gitweb:
+
+    http://git.infradead.org/users/hch/vfs.git/shortlog/refs/heads/aio-fsync.3
+
+Changes since V1:
+ - remove a BUG_ON_ONE(is_sync_kiocb(kiocb));
+ - moved cancellation patches to the poll series
+ - improve a list_empty check
