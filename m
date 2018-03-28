@@ -1,43 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753140AbeC1Rvu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 13:51:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41838 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752831AbeC1Rvr (ORCPT
+        id S1753048AbeC1Rxp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 13:53:45 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37076 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752843AbeC1Rxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 13:51:47 -0400
-Date: Wed, 28 Mar 2018 19:51:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        schwidefsky@de.ibm.com, borntraeger@de.ibm.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        parri.andrea@gmail.com, will.deacon@arm.com, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
-Message-ID: <20180328175136.GL4082@hirez.programming.kicks-ass.net>
-References: <20180328134232.GA29274@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1803281057280.1375-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1803281057280.1375-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Wed, 28 Mar 2018 13:53:42 -0400
+X-Google-Smtp-Source: AIpwx4/DdwWjMJUwwjO//9n2nseKNZiqOpyRUJPetSnhRx6qyk/DBsbez+zRbzC85WBgPsB9RDPDsQ==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: linus.walleij@linaro.org, robh+dt@kernel.org, afaerber@suse.de
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 0/9] Add Actions Semi S900 pinctrl and gpio support
+Date: Wed, 28 Mar 2018 23:16:54 +0530
+Message-Id: <20180328174703.19778-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 11:01:25AM -0400, Alan Stern wrote:
-> I don't quite see the point of this.  You're not suggesting that we
-> have one Linux Kernel Memory Consistency Model for s390 and another
-> one for all the other architectures, are you?
-> 
-> If the idea is merely to provide a herd model for s390 then it should 
-> go into the DIY repository, not into the LKMM repository.
+This patchset adds pinctrl and gpio support for Actions Semi S900 SoC.
+Pinctrl and gpio subsystems share the common set of register range but
+implemented as individual drivers for making it less complex.
 
-I suspect the use-case was validating s390 arch code which might not
-have followed all the regular linux rules because they know its TSO. But
-yes, I'm tempted to agree that even arch specific code ought to follow
-the regular rules, just to avoid completely messing up the reader.
+Pinmux functions are only accessible for pin groups while pinconf
+parameters are available for both pin groups and individual pins.
+
+gpio-line-names has been added for the Bubblegum-96 board matching the
+96Boards CE specification v1.0.
+
+Both pinctrl and gpio drivers are verified using the Bubblegum-96 board.
+
+This patchset depends on the clock driver which is still under review:
+https://lkml.org/lkml/2018/2/9/831
+
+There is also S500 pinctrl and gpio driver developed by Andreas Farber
+independently to this patchset.
+https://github.com/afaerber/linux/commits/bg96-next
+
+If this patchseries seems to be good enough to add base OWL pinctrl and
+gpio support. Then, we may decide on adding S500 support on top of this later
+by reusing the pinctrl definitions from Andreas.
+
+Thanks,
+Mani
+
+Changes in v6:
+
+* Changed owl_gpio_set_reg to owl_gpio_update_reg in gpio driver
+* Reused owl_gpio_update_reg in owl_gpio_set in gpio driver
+* Removed ngpio property from DT for nodes with 32 gpios
+* Fixed size values in DT for gpio nodes
+* Added Reviewed-by tags from Linus for adding gpio-line-names in DT
+
+Changes in v5:
+
+* Removed alias for gpio nodes
+* Removed duplicate address from gpio nodes and modified the driver accordingly
+* Used ngpios property for specifying number of gpios per bank
+* Used generic gpio node name in DT and binding
+* Modified pinctrl driver to save space
+* Dropped pinctrl bindings patch since it got applied
+* Added Reviewed-by tags from Linus for DT and platform Kconfig changes
+
+Changes in v4:
+
+* Incorporated Andy's review for pinctrl driver
+* Used _relaxed functions for pinctrl driver
+* Added Andy's Reviewed-by tag for gpio driver
+* Added (back) Rob's Reviewed-by tag for pinctrl bindings
+
+Changes in v3:
+
+* Simplified owl_gpio_set_reg() with _relaxed functions
+* Added interrupt controller properties to gpio node bindings as suggested
+  by Rob
+* Minor code cleanups
+
+Changes in v2:
+
+* Implemented each GPIO bank as its own gpio-controller
+* Added gpio-ranges property
+* Modified pin group to follow pad names instead of register names
+* Incorporated review comments from Andy
+* Incorporated review comments from Andreas
+* Fixed the MODULE_LICENSE with respect to SPDX tag
+* Added Reviewed by tag from Rob for pinctrl binding
+
+Manivannan Sadhasivam (9):
+  arm64: dts: actions: Add pinctrl node for S900
+  arm64: actions: Enable PINCTRL in platforms Kconfig
+  pinctrl: actions: Add Actions S900 pinctrl driver
+  dt-bindings: gpio: Add gpio nodes for Actions S900 SoC
+  arm64: dts: actions: Add S900 gpio nodes
+  arm64: dts: actions: Add gpio line names to Bubblegum-96 board
+  gpio: Add gpio driver for Actions OWL S900 SoC
+  MAINTAINERS: Add reviewer for ACTIONS platforms
+  MAINTAINERS: Add Actions Semi S900 pinctrl and gpio entries
+
+ .../devicetree/bindings/gpio/actions,owl-gpio.txt  |   87 +
+ MAINTAINERS                                        |    5 +
+ arch/arm64/Kconfig.platforms                       |    1 +
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |  195 ++
+ arch/arm64/boot/dts/actions/s900.dtsi              |   57 +
+ drivers/gpio/Kconfig                               |    8 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-owl.c                            |  168 ++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/actions/Kconfig                    |   12 +
+ drivers/pinctrl/actions/Makefile                   |    2 +
+ drivers/pinctrl/actions/pinctrl-owl.c              |  579 ++++++
+ drivers/pinctrl/actions/pinctrl-owl.h              |  142 ++
+ drivers/pinctrl/actions/pinctrl-s900.c             | 1861 ++++++++++++++++++++
+ 15 files changed, 3120 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+ create mode 100644 drivers/gpio/gpio-owl.c
+ create mode 100644 drivers/pinctrl/actions/Kconfig
+ create mode 100644 drivers/pinctrl/actions/Makefile
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.c
+ create mode 100644 drivers/pinctrl/actions/pinctrl-owl.h
+ create mode 100644 drivers/pinctrl/actions/pinctrl-s900.c
+
+-- 
+2.14.1
