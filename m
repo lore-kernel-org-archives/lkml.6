@@ -1,25 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752754AbeC1BCe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 21:02:34 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:51529 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752689AbeC1BCd (ORCPT
+        id S1752787AbeC1BDN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 21:03:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45032 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752213AbeC1BDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 21:02:33 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04421;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T-Cm1IG_1522198949;
-Subject: Re: [PATCH v3 0/3][RESEND] modsign enhancement
-To: Jessica Yu <jeyu@kernel.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-kernel@vger.kernel.org
-References: <1521860389-19262-1-git-send-email-zhang.jia@linux.alibaba.com>
- <20180327221137.d7fhboicw2wi3a52@redbean>
-From: Jia Zhang <zhang.jia@linux.alibaba.com>
-Message-ID: <9a950016-0ea6-adec-5d9b-a1f1760d51a0@linux.alibaba.com>
-Date: Wed, 28 Mar 2018 09:02:29 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Tue, 27 Mar 2018 21:03:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 672F4602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=shankerd@codeaurora.org
+Reply-To: shankerd@codeaurora.org
+Subject: Re: [PATCH V2] arm64: tlbflush: avoid writing RES0 bits
+To: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Philip Elcan <pelcan@codeaurora.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, Thomas Speier <tspeier@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1522120877-9136-1-git-send-email-pelcan@codeaurora.org>
+ <985a0edd-e388-dade-8824-30cc58a236f3@arm.com>
+ <56b560a5-6e57-8e01-32ca-9d3c95ccd2e5@codeaurora.org>
+ <20180327173613.GI18435@arm.com>
+From: Shanker Donthineni <shankerd@codeaurora.org>
+Message-ID: <96f894bb-4855-a77f-3fd1-c8a2878faabb@codeaurora.org>
+Date: Tue, 27 Mar 2018 20:03:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180327221137.d7fhboicw2wi3a52@redbean>
+In-Reply-To: <20180327173613.GI18435@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -27,51 +37,99 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Will,
 
-
-On 2018/3/28 上午6:11, Jessica Yu wrote:
-> +++ Jia Zhang [24/03/18 10:59 +0800]:
->> This patch series allows to disable module validity enforcement
->> in runtime through the control switch located in securityfs.
+On 03/27/2018 12:36 PM, Will Deacon wrote:
+> Hi Shanker,
+> 
+> On Tue, Mar 27, 2018 at 09:53:16AM -0500, Shanker Donthineni wrote:
+>> On 03/27/2018 06:34 AM, Robin Murphy wrote:
+>>> On 27/03/18 04:21, Philip Elcan wrote:
+>>>> Several of the bits of the TLBI register operand are RES0 per the ARM
+>>>> ARM, so TLBI operations should avoid writing non-zero values to these
+>>>> bits.
+>>>>
+>>>> This patch adds a macro __TLBI_VADDR(addr, asid) that creates the
+>>>> operand register in the correct format and honors the RES0 bits.
+>>>>
+>>>> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
+>>>> ---
+>>>>   arch/arm64/include/asm/tlbflush.h | 23 ++++++++++++++++-------
+>>>>   1 file changed, 16 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+>>>> index 9e82dd7..b1205e9 100644
+>>>> --- a/arch/arm64/include/asm/tlbflush.h
+>>>> +++ b/arch/arm64/include/asm/tlbflush.h
+>>>> @@ -60,6 +60,15 @@
+>>>>           __tlbi(op, (arg) | USER_ASID_FLAG);                \
+>>>>   } while (0)
+>>>>   +/* This macro creates a properly formatted VA operand for the TLBI */
+>>>> +#define __TLBI_VADDR(addr, asid)                \
+>>>> +    ({                            \
+>>>> +        unsigned long __ta = (addr) >> 12;        \
+>>>> +        __ta &= GENMASK_ULL(43, 0);            \
+>>>> +        __ta |= (unsigned long)(asid) << 48;        \
+>>>> +        __ta;                        \
+>>>> +    })
+>>>
+>>> I'd be inclined to make this a static inline function rather than a
+>>> macro, since it doesn't need to do any wacky type-dodging, but either
+>>> way the overall change now looks appropriate;
+>>>
+>>> Acked-by: Robin Murphy <robin.murphy@arm.com>
+>>>
 >>
->> In order to keep /sys/module/module/parameters/sig_enforce simple,
->> the disablement switch is located at
->> /sys/kernel/security/modsign/disable_enforce.
->>
->> Assuming CONFIG_MODULE_SIG_FORCE=n, here are the instructions to
->> test this control switch.
->>
->> # cat /sys/module/module/parameters/sig_enforce
->> N
->> # echo 1 > /sys/module/module/parameters/sig_enforce
->> # cat /sys/module/module/parameters/sig_enforce
->> Y
->> # echo -n 0 > no_sig_enforce
->> # openssl smime -sign -nocerts -noattr -binary -in no_sig_enforce \
->>    -inkey <system_trusted_key> -signer <cert> -outform der \
->>    -out /sys/kernel/security/modsign/disable_enforce
->> # cat /sys/module/module/parameters/sig_enforce
->> N
+>> Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
 > 
-> I'm not convinced we need this. And neither the use case nor the
-> motivation is explained in the cover letter :-(
+> [...]
 > 
-> The way I see it - the only time you'd actually use this is in the
-> situation where you have *already* enabled sig_enforce, and then later
-> you change your mind - meaning you wanted to load unsigned modules
-> after all. And if you ever plan on loading unsigned modules, why would
-> you have enabled sig_enforce in the first place? If you want to keep
+>>>> @@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
+>>>>           return;
+>>>>       }
+>>>>   -    start = asid | (start >> 12);
+>>>> -    end = asid | (end >> 12);
+>>>> +    start = __TLBI_VADDR(start, asid);
+>>>> +    end = __TLBI_VADDR(end, asid);
+> 
+> Can you test this bit too, please? ;)
+> 
 
-Similar SELinux, this is just providing a runtime switch to disable
-modsign temporarily in a safer way. At least it is cannot be simply
-disabled.
+I've verified the basic boot functionality on QDF2400 platform. But I can see now
+after your comments, it leads to TLB conflicts because of ASID is truncated to zero
+due to two times 48bit shift.     
 
-Thanks,
-Jia
+Thanks for catching this one.
 
-> the option of loading unsigned modules, don't have sig_enforce or
-> CONFIG_MODULE_SIG_FORCE enabled.
+@@ -146,7 +155,7 @@ static inline void __flush_tlb_range(structvm_area_struct *
+                                     unsigned long start, unsigned long end,
+                                     bool last_level)
+{
+-       unsigned long asid = ASID(vma->vm_mm) << 48;
++       unsigned long asid = ASID(vma->vm_mm);
+        unsigned long addr;
+ 
+        if ((end - start) > MAX_TLB_RANGE) {
+@@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct
+vm_area_struct *
+                return;
+        }
+
+-       start = asid | (start >> 12);
+-       end = asid | (end >> 12);
++       start = __TLBI_VADDR(start, asid);
++       end = __TLBI_VADDR(end, asid);
+
+
+> Will
 > 
-> [ CC'd Rusty in case he has some thoughts on this ]
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 > 
-> Jessica
+
+-- 
+Shanker Donthineni
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
