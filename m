@@ -1,124 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753195AbeC1Szh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 14:55:37 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45420 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752377AbeC1Szg (ORCPT
+        id S1753299AbeC1Szr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 14:55:47 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35079 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752377AbeC1Szp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 14:55:36 -0400
-X-Google-Smtp-Source: AIpwx4+wJFtZP77aU+6Gsps9rsRrzR1tQPGpRVOaIqo+mBUg0ZTvjOt95UtaZqOoKjDZtcifpoBFSA==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: LEROY Christophe <christophe.leroy@c-s.fr>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Matt Brown <matthew.brown.dev@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] powerpc/altivec: Add missing prototypes for altivec
-Date: Wed, 28 Mar 2018 20:55:25 +0200
-Message-Id: <20180328185531.10945-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180322202007.23088-15-malat@debian.org>
-References: <20180322202007.23088-15-malat@debian.org>
+        Wed, 28 Mar 2018 14:55:45 -0400
+X-Google-Smtp-Source: AIpwx48Uc9CofeEbE2o/b38dO7rosuI1CmdrKxbxdRCJFGpRAEkzae3zHOArR/74l5a7d9TgxXTg2Qwe41NwFNLSE0w=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1522159456-10419-12-git-send-email-eric.auger@redhat.com>
+References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com> <1522159456-10419-12-git-send-email-eric.auger@redhat.com>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Wed, 28 Mar 2018 19:55:24 +0100
+Message-ID: <CAFEAcA_zXwS6EygjwPO9e-Ouy=seDdZt5i62itGP-W7VHugYTQ@mail.gmail.com>
+Subject: Re: [RFC v2 11/12] KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+To: Eric Auger <eric.auger@redhat.com>
+Cc: Eric Auger <eric.auger.pro@gmail.com>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kvm-devel <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Andrew Jones <drjones@redhat.com>, Wei Huang <wei@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some functions prototypes were missing for the non-altivec code. Add the
-missing prototypes in a new header file, fix warnings treated as errors
-with W=1:
+On 27 March 2018 at 15:04, Eric Auger <eric.auger@redhat.com> wrote:
+> Now all the internals are ready to handle multiple redistributor
+> regions, let's allow the userspace to register them.
+>
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> ---
+>  virt/kvm/arm/vgic/vgic-kvm-device.c | 40 +++++++++++++++++++++++++++++++++++--
+>  virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
+>  virt/kvm/arm/vgic/vgic.h            |  9 ++++++++-
+>  3 files changed, 48 insertions(+), 5 deletions(-)
+>
+> diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
+> index e7b5a86..a2b99e4 100644
+> --- a/virt/kvm/arm/vgic/vgic-kvm-device.c
+> +++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
+> @@ -65,7 +65,8 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>  {
+>         int r = 0;
+>         struct vgic_dist *vgic = &kvm->arch.vgic;
+> -       phys_addr_t *addr_ptr, alignment;
+> +       phys_addr_t *addr_ptr = NULL;
+> +       phys_addr_t alignment;
+>         uint64_t undef_value = VGIC_ADDR_UNDEF;
+>
+>         mutex_lock(&kvm->lock);
+> @@ -92,7 +93,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>                 if (r)
+>                         break;
+>                 if (write) {
+> -                       r = vgic_v3_set_redist_base(kvm, *addr);
+> +                       r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
+>                         goto out;
+>                 }
+>                 rdreg = list_first_entry(&vgic->rd_regions,
+> @@ -103,6 +104,40 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>                         addr_ptr = &rdreg->base;
+>                 break;
+>         }
+> +       case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
+> +       {
+> +               struct vgic_redist_region *rdreg;
+> +               uint8_t index;
+> +
+> +               r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
+> +               if (r)
+> +                       break;
+> +
+> +               index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
+> +
+> +               if (write) {
+> +                       gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
+> +                       uint32_t count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
+> +                                       >> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
+> +                       uint8_t flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
+> +                                       >> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
+> +
+> +                       if (!count || flags)
+> +                               r = -EINVAL;
+> +                       else
+> +                               r = vgic_v3_set_redist_base(kvm, index,
+> +                                                           base, count);
+> +                       goto out;
+> +               }
+> +
+> +               rdreg = vgic_v3_rdist_region_from_index(kvm, index);
+> +               if (!rdreg)
+> +                       r = -ENODEV;
 
-  arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype for ‘xor_altivec_2’ [-Werror=missing-prototypes]
-  arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype for ‘xor_altivec_3’ [-Werror=missing-prototypes]
-  arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype for ‘xor_altivec_4’ [-Werror=missing-prototypes]
-  arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype for ‘xor_altivec_5’ [-Werror=missing-prototypes]
+Here you check whether rdreg is NULL...
 
-The prototypes were already present in <asm/xor.h> but this header file is
-meant to be included after <include/linux/raid/xor.h>. Trying to re-use
-<asm/xor.h> directly would lead to warnings such as:
+> +
+> +               *addr_ptr = rdreg->base & index &
 
-  arch/powerpc/include/asm/xor.h:39:15: error: variable ‘xor_block_altivec’ has initializer but incomplete type
+...but here you dereference it anyway. Missing "goto out"/break/other
+control flow?
 
-Trying to re-use <asm/xor.h> after <include/linux/raid/xor.h> in
-xor_vmx_glue.c would in turn trigger the following warnings:
+> +                       (uint64_t)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
+> +               break;
+> +       }
 
-  include/asm-generic/xor.h:688:34: error: ‘xor_block_32regs’ defined but not used [-Werror=unused-variable]
+I was looking for the code which checked "EINVAL if you
+already used KVM_VGIC_V3_ADDR_TYPE_REDIST", but couldn't
+see it. Is that handled by one of the helper functions?
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
-v3: missing changelog, no other change
-v2: new version where a separate header was introduced. Also update commit message explaining history.
+>         default:
+>                 r = -ENODEV;
+>         }
+> @@ -674,6 +709,7 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
+>                 switch (attr->attr) {
+>                 case KVM_VGIC_V3_ADDR_TYPE_DIST:
+>                 case KVM_VGIC_V3_ADDR_TYPE_REDIST:
+> +               case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
+>                         return 0;
+>                 }
+>                 break;
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> index 89faadc..45287a0 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> @@ -766,11 +766,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
+>         return ret;
+>  }
+>
+> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+> +int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count)
+>  {
+>         int ret;
+>
+> -       ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
+> +       ret = vgic_v3_insert_redist_region(kvm, index, addr, count);
+>         if (ret)
+>                 return ret;
 
- arch/powerpc/include/asm/xor.h         | 12 +-----------
- arch/powerpc/include/asm/xor_altivec.h | 19 +++++++++++++++++++
- arch/powerpc/lib/xor_vmx_glue.c        |  1 +
- 3 files changed, 21 insertions(+), 11 deletions(-)
- create mode 100644 arch/powerpc/include/asm/xor_altivec.h
-
-diff --git a/arch/powerpc/include/asm/xor.h b/arch/powerpc/include/asm/xor.h
-index a36c2069d8ed..7d6dc503349d 100644
---- a/arch/powerpc/include/asm/xor.h
-+++ b/arch/powerpc/include/asm/xor.h
-@@ -24,17 +24,7 @@
- 
- #include <asm/cputable.h>
- #include <asm/cpu_has_feature.h>
--
--void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in);
--void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in, unsigned long *v3_in);
--void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in, unsigned long *v3_in,
--		   unsigned long *v4_in);
--void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
--		   unsigned long *v2_in, unsigned long *v3_in,
--		   unsigned long *v4_in, unsigned long *v5_in);
-+#include <asm/xor_altivec.h>
- 
- static struct xor_block_template xor_block_altivec = {
- 	.name = "altivec",
-diff --git a/arch/powerpc/include/asm/xor_altivec.h b/arch/powerpc/include/asm/xor_altivec.h
-new file mode 100644
-index 000000000000..6ca923510b59
---- /dev/null
-+++ b/arch/powerpc/include/asm/xor_altivec.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_POWERPC_XOR_ALTIVEC_H
-+#define _ASM_POWERPC_XOR_ALTIVEC_H
-+
-+#ifdef CONFIG_ALTIVEC
-+
-+void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in);
-+void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in, unsigned long *v3_in);
-+void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in, unsigned long *v3_in,
-+		   unsigned long *v4_in);
-+void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
-+		   unsigned long *v2_in, unsigned long *v3_in,
-+		   unsigned long *v4_in, unsigned long *v5_in);
-+
-+#endif
-+#endif /* _ASM_POWERPC_XOR_ALTIVEC_H */
-diff --git a/arch/powerpc/lib/xor_vmx_glue.c b/arch/powerpc/lib/xor_vmx_glue.c
-index 6521fe5e8cef..dab2b6bfcf36 100644
---- a/arch/powerpc/lib/xor_vmx_glue.c
-+++ b/arch/powerpc/lib/xor_vmx_glue.c
-@@ -13,6 +13,7 @@
- #include <linux/export.h>
- #include <linux/sched.h>
- #include <asm/switch_to.h>
-+#include <asm/xor_altivec.h>
- #include "xor_vmx.h"
- 
- void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
--- 
-2.11.0
+thanks
+-- PMM
