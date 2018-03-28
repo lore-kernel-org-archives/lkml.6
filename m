@@ -1,82 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeC1KJj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 06:09:39 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:39082 "EHLO mail.skyhub.de"
+        id S1752871AbeC1KMr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 06:12:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:38988 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752273AbeC1KJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 06:09:38 -0400
-Date: Wed, 28 Mar 2018 12:08:44 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Eric Dumazet <edumazet@google.com>
-Cc: x86 <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] x86, msr: fix rdmsrl_safe_on_cpu()
-Message-ID: <20180328100844.GA20533@pd.tnic>
-References: <20180328032233.153055-1-edumazet@google.com>
+        id S1752159AbeC1KMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 06:12:46 -0400
+Date: Wed, 28 Mar 2018 11:12:41 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Ji.Zhang" <ji.zhang@mediatek.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        wsd_upstream@mediatek.com, shadanji@163.com
+Subject: Re: [PATCH] arm64: avoid race condition issue in dump_backtrace
+Message-ID: <20180328101240.moo44g5qd3qjuxgn@lakrids.cambridge.arm.com>
+References: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
+ <20180322055929.z25brvwlmdighz66@salmiak>
+ <1521711329.26617.31.camel@mtksdccf07>
+ <20180326113932.2i6qp3776jtmcqk4@lakrids.cambridge.arm.com>
+ <1522229612.26617.47.camel@mtksdccf07>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180328032233.153055-1-edumazet@google.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1522229612.26617.47.camel@mtksdccf07>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 08:22:33PM -0700, Eric Dumazet wrote:
-> When changing rdmsr_safe_on_cpu() to schedule, I missed that
-> __rdmsr_safe_on_cpu() was also used by rdmsrl_safe_on_cpu()
+On Wed, Mar 28, 2018 at 05:33:32PM +0800, Ji.Zhang wrote:
+> On Mon, 2018-03-26 at 12:39 +0100, Mark Rutland wrote:
+> > I think that it would be preferable to try to avoid the inifinite loop
+> > case. We could hit that by accident if we're tracing a live task.
+> > 
+> > It's a little tricky to ensure that we don't loop, since we can have
+> > traces that span several stacks, e.g. overflow -> irq -> task, so we
+> > need to know where the last frame was, and we need to defnie a strict
+> > order for stack nesting.
+> Can we consider this through an easier way? According to AArch64 PCS,
+> stack should be full-descending, which means we can add validation on fp
+> by comparing the fp and previous fp, if they are equal means there is an
+> exactly loop, while if current fp is smaller than previous means the
+> uwnind is rollback, which is also unexpected. The only concern is how to
+> handle the unwind from one stack span to another (eg. overflow->irq, or
+> irq->task, etc)
+> Below diff is a proposal that we check if stack spans, and if yes, a
+> tricky is used to bypass the fp check.
 > 
-> Lets make rdmsrl_safe_on_cpu() a wrapper instead of copy/pasting
-> the code I added for the completion handling.
-> 
-> Fixes: 07cde313b2d2 ("x86/msr: Allow rdmsr_safe_on_cpu() to schedule")
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> ---
->  arch/x86/lib/msr-smp.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/lib/msr-smp.c b/arch/x86/lib/msr-smp.c
-> index 761ba062afdaf7f7d0603ed94ed6cc3e46b37f76..fee8b9c0520c9954e3cf9093332e1a9b53009b8b 100644
-> --- a/arch/x86/lib/msr-smp.c
-> +++ b/arch/x86/lib/msr-smp.c
-> @@ -225,16 +225,13 @@ EXPORT_SYMBOL(wrmsrl_safe_on_cpu);
->  
->  int rdmsrl_safe_on_cpu(unsigned int cpu, u32 msr_no, u64 *q)
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index eb2d151..760ea59 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -101,6 +101,7 @@ void dump_backtrace(struct pt_regs *regs, struct
+> task_struct *tsk)
 >  {
-> +	u32 low, high;
->  	int err;
-> -	struct msr_info rv;
->  
-> -	memset(&rv, 0, sizeof(rv));
-> +	err = rdmsr_safe_on_cpu(cpu, msr_no, &low, &high);
-> +	*q = (u64)high << 32 | low;
->  
-> -	rv.msr_no = msr_no;
-> -	err = smp_call_function_single(cpu, __rdmsr_safe_on_cpu, &rv, 1);
-> -	*q = rv.reg.q;
-> -
-> -	return err ? err : rv.err;
-> +	return err;
->  }
->  EXPORT_SYMBOL(rdmsrl_safe_on_cpu);
->  
-> -- 
+>         struct stackframe frame;
+>         int skip;
+> +       unsigned long fp = 0x0;
+> 
+>         pr_debug("%s(regs = %p tsk = %p)\n", __func__, regs, tsk);
+> 
+> @@ -127,6 +128,20 @@ void dump_backtrace(struct pt_regs *regs, struct
+> task_struct *tsk)
+>         skip = !!regs;
+>         printk("Call trace:\n");
+>         do {
+> +               unsigned long stack;
+> +               if (fp) {
+> +                       if (in_entry_text(frame.pc)) {
+> +                               stack = frame.fp - offsetof(struct
+> pt_regs, stackframe);
+> +
+> +                               if (on_accessible_stack(tsk, stack))
+> +                                       fp = frame.fp + 0x8; //tricky to
+> bypass the fp check
+> +                       }
+> +                       if (fp <= frame->fp) {
+> +                               pr_notice("fp invalid, stop unwind\n");
+> +                               break;
+> +                       }
+> +               }
+> +               fp = frame.fp;
 
-I guess now that the rdmsr* side does this, you probably should convert
-the wrmsr* side as well.
+I'm very much not keen on this.
 
-Thx.
+I think that if we're going to do this, the only sane way to do it is to
+have unwind_frame() verify the current fp against the previous one, and
+verify that we have some strict nesting of stacks. Generally, that means
+we can go:
 
--- 
-Regards/Gruss,
-    Boris.
+  overflow -> irq -> task
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+... though I'm not sure what to do about the SDEI stack vs the overflow
+stack.
+
+Thanks,
+Mark.
