@@ -1,79 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751058AbeC1EBE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 00:01:04 -0400
-Received: from mail.crc.id.au ([203.56.246.92]:60598 "EHLO mail.crc.id.au"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750753AbeC1EBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 00:01:03 -0400
-From: Steven Haigh <netwiz@crc.id.au>
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Regression: 4.14.x x86/mm: Encrypt the initrd earlier for BSP microcode update
-Date: Wed, 28 Mar 2018 14:54:08 +1100
-Message-ID: <13354833.vZGJLXuz6d@wopr.lan.crc.id.au>
+        id S1751256AbeC1EBl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 00:01:41 -0400
+Received: from mail2.tencent.com ([163.177.67.195]:43723 "EHLO
+        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeC1EBk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 00:01:40 -0400
+From: =?gb2312?B?aGFpYmluemhhbmco1cW6o7HzKQ==?= <haibinzhang@tencent.com>
+To: Jason Wang <jasowang@redhat.com>, "mst@redhat.com" <mst@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: =?gb2312?B?bGlkb25nY2hlbiizwsGitqsp?= <lidongchen@tencent.com>,
+        =?gb2312?B?eXVuZmFuZ3RhaSjMqNTLt70p?= <yunfangtai@tencent.com>
+Subject: Re: [PATCH] vhost-net: add time limitation for tx polling(Internet
+ mail)
+Thread-Topic: [PATCH] vhost-net: add time limitation for tx polling(Internet
+ mail)
+Thread-Index: AdPGRajMc+aKWRhwQLO7GaudbjJWJA==
+Date: Wed, 28 Mar 2018 04:01:34 +0000
+Message-ID: <88D661ADF6AFBF42B2AB88D8E7682B0901FC412A@EXMBX-SZMAIL011.tencent.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.90.75]
+Content-Type: text/plain; charset="gb2312"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart8142277.D7R0nplBXb"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2S43I0d002703
 
---nextPart8142277.D7R0nplBXb
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+On 2018年03月27日 19:26, Jason wrote
+On 2018年03月27日 17:12, haibinzhang wrote:
+>> handle_tx() will delay rx for a long time when busy tx polling udp packets
+>> with short length(ie: 1byte udp payload), because setting VHOST_NET_WEIGHT
+>> takes into account only sent-bytes but no time.
+>
+>Interesting.
+>
+>Looking at vhost_can_busy_poll() it tries to poke pending vhost work and 
+>exit the busy loop if it found one. So I believe something block the 
+>work queuing. E.g did reverting 8241a1e466cd56e6c10472cac9c1ad4e54bc65db 
+>fix the issue?
 
-Hi all,
+"busy tx polling" means using netperf send udp packets with 1 bytes payload(total 47bytes frame lenght), 
+and handle_tx() will be busy sending packets continuously.
 
-After the following patch, we are unable to build the 4.14 tree with EL6 -=
-=20
-which uses gcc 4.4.7
+>
+>>   It's not fair for handle_rx(),
+>> so needs to limit max time of tx polling.
+>>
+>> ---
+>>   drivers/vhost/net.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>> index 8139bc70ad7d..dc9218a3a75b 100644
+>> --- a/drivers/vhost/net.c
+>> +++ b/drivers/vhost/net.c
+>> @@ -473,6 +473,7 @@ static void handle_tx(struct vhost_net *net)
+>>   	struct socket *sock;
+>>   	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+>>   	bool zcopy, zcopy_used;
+>> +	unsigned long start = jiffies;
+>
+>Checking jiffies is tricky, need to convert it to ms or whatever others.
+>
+>>   
+>>   	mutex_lock(&vq->mutex);
+>>   	sock = vq->private_data;
+>> @@ -580,7 +581,7 @@ static void handle_tx(struct vhost_net *net)
+>>   		else
+>>   			vhost_zerocopy_signal_used(net, vq);
+>>   		vhost_net_tx_packet(net);
+>> -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+>> +		if (unlikely(total_len >= VHOST_NET_WEIGHT) || unlikely(jiffies - start >= 1)) {
+>
+>How value 1 is determined here? And we need a complete test to make sure 
+>this won't affect other use cases.
 
-The failure logs are as follows:
-BUILDSTDERR: arch/x86/kernel/head64.c: In function 'copy_bootdata':
-BUILDSTDERR: ./arch/x86/include/asm/mem_encrypt.h:59: sorry, unimplemented:=
-=20
-inlining failed in call to 'sme_map_bootdata': function not inlinable
-BUILDSTDERR: arch/x86/kernel/head64.c:294: sorry, unimplemented: called fro=
-m=20
-here
-BUILDSTDERR: ./arch/x86/include/asm/mem_encrypt.h:60: sorry, unimplemented:=
-=20
-inlining failed in call to 'sme_unmap_bootdata': function not inlinable
-BUILDSTDERR: arch/x86/kernel/head64.c:310: sorry, unimplemented: called fro=
-m=20
-here
+We just want <1ms ping latency, but actually we are not sure what value is reasonable.
+We have some test results using netperf before this patch as follow,
 
-Patch in question:
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/
-commit/arch/x86/include/asm/mem_encrypt.h?
-h=3Dlinux-4.14.y&id=3De0f82cbde41353ddf63935175583ceb5580cce87
+    Udp payload    1byte    100bytes    1000bytes    1400bytes
+  Ping avg latency    25ms     10ms       2ms         1.5ms
 
-I can confirm that this builds fine with EL7.
+What is other testcases?
 
-=2D-=20
-Steven Haigh
-
-=F0=9F=93=A7 netwiz@crc.id.au       =F0=9F=92=BB https://www.crc.id.au
-=F0=9F=93=9E +61 (3) 9001 6090    =F0=9F=93=B1 0412 935 897
---nextPart8142277.D7R0nplBXb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEFHf0gfgNrH6ofcYGQa811Xp9MdwFAlq7EeAACgkQQa811Xp9
-MdxlFA//dvFSZTHNxO5DMrnyXYVdFPxjlupiM6q0zZL00QFgi6KVWOU4rh3WfTJl
-qOPYRJ0xDqS9n8GJ8ahSkZqCoA3NZfAPzICay5rrPFSp6f5i/XDuJYx12gys3EBh
-gnrqLkH2vqB4iWJih2aF/duJxaOZjrywc62cCsCTXSFJ3dtAzqSRG/bTbAH7uw3D
-H0t9TFqGU6afHwI6WtoxFVbtrrHbAdYYES2Ov1JsVDEY/ffJ/oU0SFUzPZxCxZDi
-R2ktaBppuemwhanggeleVv8nYYoOozUgkOcsWPrdPjOxH+IaY3cskmeQzJbJo1HX
-Qa/Ize9yqpBh0mqoHpckOxz6pFkLU9+gQ4cE5RBbh8VnCBE34t+UTtGdvfq8ntKj
-u15VbSuIZ++Xw/RWhRgBGGOPMU+g2KZ6xeD01iumHYBn3AFJ4+DwpU/VKyJoUWka
-rJ/k8r+4aS23sS6m9/JQgH4ExrKPCpP0Z5d5VRK/7Oh/WBoX0AtsF9sRjkPn7vAk
-fTqyZqlqecuNq7Hhx4xRE91u7Jg+9vJ8HAKtZV1I7rKAGOAq9GaMOhBRqzMcsruX
-3taMw2woFvHIyi6aywnruHbVxYvbN7rk6uc0R4ZVU2YeSVpZ5+9ZYeOVnK07Q6fT
-BEvcRGhjVSxjr32YVaK88dectgfaJXEjekgZNl8aUsafd4/TNCg=
-=oDVo
------END PGP SIGNATURE-----
-
---nextPart8142277.D7R0nplBXb--
+>
+>Another thought is introduce another limit of #packets, but this need 
+>benchmark too.
+>
+>Thanks
+>
+>>   			vhost_poll_queue(&vq->poll);
+>>   			break;
+>>   		}
+>
+>
