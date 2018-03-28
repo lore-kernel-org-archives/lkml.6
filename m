@@ -1,70 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753308AbeC1OQW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 10:16:22 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:47845 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbeC1OQU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 10:16:20 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@ZenIV.linux.org.uk>,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [net-next] sctp: fix unused lable warning
-Date: Wed, 28 Mar 2018 16:14:56 +0200
-Message-Id: <20180328141512.3083992-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K0:qo4Ek2FBOEURCfLYnGAe3yJkfdBfLKN3POgROGsftD1hTqYdLtA
- Kp5GzU3uC0Zez807SbLvbO76oQ5+Y61/7S6GsjgHpqN5H54Z/sys3yyvFbJI0vahx2LRz4k
- 4jDjR9fnDIBh7HJXuCpY/UNJU+ojJqnSjsIAEwzWjP9xP3PG+dNvF95JFseKcZFFNiyUG2W
- 8Jaj0GXYVw49UJeQufrBw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FOzLZwsgrRs=:IhSQpmbETOHkiymkpj17tJ
- mercD+ekhcdUiq1tlTpUYCB3V4m5cutIRLTEos2Zd7WZgenlF+dmBfElvvyhYj2l4E4w2t3hI
- UoMitvbCWy5neBoJDu0+s0eYSDuyYVW9wwGR/wzIAu5MG+IaK5r9oK14/Vl0MUKxn+kzOFO+g
- 8Ie5j7wVG7Vb7hr8/PsHWx3TnnlmVl+GbryQHr73ZiFUzpwPS9Ymnni9908hhCZBzB89k6fqN
- WsYDr/GPZWWsAE7BcbH6ktIqsWFawKeYYzbfE8p1MZPUJ0LjkOq5fxhJu3KFTc4Quia9exTCS
- dT7c0Qvz0pFfhnLE98sStx2KFby3U09KviIvlz50Cby7vnMyfbii5ZQZ8uok4Oee3guJFtyLk
- AGfX62DZp3zRZVloEqGL1oipfVvx7UytfQ/NKC/uSIigPs+1pwUGqT6Q9yhB5T6boGID6QIj4
- o8CW2X4yvTZ8Qj+utMAoHOywtI9K6GhpGcG0hsYnIiIMta9zCtEco0KSn//vbyY650t3I1sls
- tD+HxvFu0n5WeVmEE/GSOVR/qO+NRFNDMFXXRjMXatYUueE+DrET4gtjtlMNgndpSZZmEVC4r
- 0dwyvpnJb7hLFd4hlEGjo2DD0bITh2tn6WL1nbztu1UAyqhYCOGtifYpnEWCW0Shf7opAdZJ9
- URzAhj3SKzfzzC9v9amvFoW5Cq76sZgXQXTvk4E6kB+JCOmtiCD4JQbYFIcY/oUHM0L44uf+N
- Lx5pGZ0xrGg7vUxqhWLJCaA85wuMOc+9s+bJvg==
+        id S1753488AbeC1OQr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 10:16:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35325 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753406AbeC1OQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 10:16:46 -0400
+Date: Wed, 28 Mar 2018 16:16:45 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Alexander Dahl <ada@thorsis.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180328141645.GF13942@piout.net>
+References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+ <9761072.pX2B0LJlSJ@ada>
+ <989df8a3-462a-c645-87f1-9f956e1b22c9@linaro.org>
+ <4073350.0MmxRoANOi@ada>
+ <6d43177a-bbea-6a01-5fa5-1c7891e18412@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6d43177a-bbea-6a01-5fa5-1c7891e18412@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The proc file cleanup left a label possibly unused:
+On 28/03/2018 at 15:03:11 +0200, Daniel Lezcano wrote:
+> On 28/03/2018 12:29, Alexander Dahl wrote:
+> > Hello Daniel,
+> > 
+> > Am Dienstag, 27. März 2018, 13:30:22 CEST schrieb Daniel Lezcano:
+> >> Can you can give a rough amount for the irq rate on the timer ?
+> > 
+> > I used itop [1] now to get a rough estimate. First with kernel v4.14.29-rt25 
+> > (fully preempt RT):
+> > 
+> > INT                NAME          RATE             MAX
+> >  19 [ vel     tc_clkevt]   397 Ints/s     (max:   432)
+> >  26 [      vel     eth0]     4 Ints/s     (max:    38)
+> > 
+> > Next test with kernel v4.15.13 gives (slightly slower, but non-RT):
+> > 
+> > INT                NAME          RATE             MAX
+> >  19 [ vel     tc_clkevt]   248 Ints/s     (max:   273)
+> >  26 [      vel     eth0]     4 Ints/s     (max:    11)
+> > 
+> > With kernel v4.16-rc7 plus this patch series and tcb as clocksource:
+> > 
+> > INT                NAME          RATE             MAX
+> >  17 [vel     timer@fffa]  2164 Ints/s     (max:  2183)
+> >  26 [      vel     eth0]     5 Ints/s     (max:    10)
+> > 
+> > Is this the information you wanted? If not, could you point me on how to get 
+> > the requested irq rate?
+> 
+> It is perfect. Thanks!
+> 
+> It confirms what I was worried about: the clocksource wraps up too
+> quickly thus raising an interrupt every 400us. That is why I asked
+> Alexande about a prescalar register.
+> 
 
-net/sctp/protocol.c: In function 'sctp_defaults_init':
-net/sctp/protocol.c:1304:1: error: label 'err_init_proc' defined but not used [-Werror=unused-label]
+The code should behave exactly the same between the previous and the new
+driver. The interrupt is not coming from the clocksource but from the
+clockevent and it is already on the slowest clock, the 32kHz one.
 
-This adds an #ifdef around it to match the respective 'goto'.
 
-Fixes: d47d08c8ca05 ("sctp: use proc_remove_subtree()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- net/sctp/protocol.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index c1c64b78c39d..d685f8456762 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -1301,8 +1301,10 @@ static int __net_init sctp_defaults_init(struct net *net)
- 
- 	return 0;
- 
-+#ifdef CONFIG_PROC_FS
- err_init_proc:
- 	cleanup_sctp_mibs(net);
-+#endif
- err_init_mibs:
- 	sctp_sysctl_net_unregister(net);
- err_sysctl_register:
 -- 
-2.9.0
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
