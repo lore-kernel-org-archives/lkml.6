@@ -1,69 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeC2UZV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 16:25:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50575 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750971AbeC2UZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 16:25:19 -0400
-Date: Thu, 29 Mar 2018 22:25:17 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Cc: dwmw2@infradead.org,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH] mtd: Use DIV_ROUND_UP()
-Message-ID: <20180329222517.44e560d9@bbrezillon>
-In-Reply-To: <20180325153743.GA16063@seema-Inspiron-15-3567>
-References: <20180325153743.GA16063@seema-Inspiron-15-3567>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753238AbeC2Uhf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 16:37:35 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:46493 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753223AbeC2Uhc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 16:37:32 -0400
+X-Google-Smtp-Source: AIpwx4+Z4f8CFeXO25KMW02TqAG4m3Zz994vydx4mkd18PFZ5Pz870VuqGcV6iDedUpZO1L50YVUWZUWmjVq896T/Rw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1522059113-20418-1-git-send-email-tmaimon77@gmail.com>
+References: <1522059113-20418-1-git-send-email-tmaimon77@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 29 Mar 2018 22:37:31 +0200
+X-Google-Sender-Auth: vP3pTOx9YKIlKdbDreq76IEt-Bk
+Message-ID: <CAK8P3a2MhXOPKob++DzWrMdmDwSkUketpdv-_VAEsEQSMkkNCQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/1] arm: dts: modify Nuvoton NPCM750 device tree
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Patrick Venture <venture@google.com>, Joel Stanley <joel@jms.id.au>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 25 Mar 2018 21:07:43 +0530
-Arushi Singhal <arushisinghal19971997@gmail.com> wrote:
+On Mon, Mar 26, 2018 at 12:11 PM, Tomer Maimon <tmaimon77@gmail.com> wrote:
+> The NPCM7xx are a family of BMC's that include several chips as:
+> NPCM750, NPCM730 etc.
+>
+> All of the NPCM7xx BMC's have the common modules like Cortex-A9,
+> WDT, timers, etc, and there are a optional modules that can be added.
+>
+> NPCM750 device tree already pushed to arm-soc.git:
+> https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/commit/?h=for-next&id=d6bdd009c21db3f677dd1d1bbb8c20bc819074bc
+>
+> After discussion with Rob Herring we have modified the structure
+> of the NPCM7xx device tree as follow:
+>
+> nuvoton-common-npcm7xx device tree include all common modules
+> nuvoton-npcm750 device tree include specific npcm750 modules,
+> the nuvoton-npcm750 device tree include nuvoton-common-npcm7xx device tree
+>
+> In addition, the NPCM7xx device tree include the following changes:
+>         - watchdog module added
+>         - clock module modification
+>         - serial module modification
+>         - Modify Makefile NPCM7XX configuration name
+>
+> Sorry if it cause more work after pushing NPCM750 device tree.
 
-> The kernel.h macro DIV_ROUND_UP performs the computation
-> (((n) + (d) - 1) / (d)) but is perhaps more readable.
-> 
-> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+I only see one patch here, which fails to describe the changes and
+combines all of the above changes into one commit.
 
-Applied.
+Please follow the usual style for sending patches and do one thing
+at a time. In particular, never move large parts of a file code around
+in a patch that also contains other changes, those need to be split
+up. Each patch should also have a description that explains what
+it's for.
 
-Thanks,
-
-Boris
-
-> ---
->  drivers/mtd/ftl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
-> index a048429..61d5cf8 100644
-> --- a/drivers/mtd/ftl.c
-> +++ b/drivers/mtd/ftl.c
-> @@ -425,8 +425,8 @@ static int prepare_xfer(partition_t *part, int i)
->      }
->  
->      /* Write the BAM stub */
-> -    nbam = (part->BlocksPerUnit * sizeof(uint32_t) +
-> -	    le32_to_cpu(part->header.BAMOffset) + SECTOR_SIZE - 1) / SECTOR_SIZE;
-> +    nbam = DIV_ROUND_UP(part->BlocksPerUnit * sizeof(uint32_t) +
-> +			le32_to_cpu(part->header.BAMOffset), SECTOR_SIZE);
->  
->      offset = xfer->Offset + le32_to_cpu(part->header.BAMOffset);
->      ctl = cpu_to_le32(BLOCK_CONTROL);
-
-
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+       Arnd
