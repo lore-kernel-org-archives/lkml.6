@@ -1,127 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752695AbeC2LLj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:11:39 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:42882 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752642AbeC2LL3 (ORCPT
+        id S1752720AbeC2LLq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:11:46 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:35363 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752642AbeC2LLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:11:29 -0400
-X-IronPort-AV: E=Sophos;i="5.48,376,1517900400";
-   d="scan'208";a="13376170"
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <corbet@lwn.net>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v4 9/9] pwm: atmel: add push-pull mode support
-Date: Thu, 29 Mar 2018 14:10:35 +0300
-Message-ID: <1522321835-6460-10-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522321835-6460-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1522321835-6460-1-git-send-email-claudiu.beznea@microchip.com>
+        Thu, 29 Mar 2018 07:11:43 -0400
+X-Originating-IP: 2.224.242.101
+Date: Thu, 29 Mar 2018 13:11:38 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Todor Tomov <todor.tomov@linaro.org>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2,2/2] media: Add a driver for the ov7251 camera sensor
+Message-ID: <20180329111138.GB24193@w540>
+References: <1521778460-8717-3-git-send-email-todor.tomov@linaro.org>
+ <20180323134003.GB11499@w540>
+ <419f6976-ee6a-f2c1-1097-a51776469ee4@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+Content-Disposition: inline
+In-Reply-To: <419f6976-ee6a-f2c1-1097-a51776469ee4@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for PWM push-pull mode. This is only supported by SAMA5D2 SoCs.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/pwm/pwm-atmel.c | 40 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 36 insertions(+), 4 deletions(-)
+--0eh6TmSyL6TZE2Uz
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index 87ef54bd492c..aaafc4dd30f2 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -33,8 +33,11 @@
- 
- #define PWM_CMR			0x0
- /* Bit field in CMR */
--#define PWM_CMR_CPOL		(1 << 9)
--#define PWM_CMR_UPD_CDTY	(1 << 10)
-+#define PWM_CMR_CPOL		BIT(9)
-+#define PWM_CMR_UPD_CDTY	BIT(10)
-+#define PWM_CMR_DTHI		BIT(17)
-+#define PWM_CMR_DTLI		BIT(18)
-+#define PWM_CMR_PPM		BIT(19)
- #define PWM_CMR_CPRE_MSK	0xF
- 
- /* The following registers for PWM v1 */
-@@ -219,16 +222,19 @@ static int atmel_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- {
- 	struct atmel_pwm_chip *atmel_pwm = to_atmel_pwm_chip(chip);
- 	struct pwm_state cstate;
-+	struct pwm_caps caps;
- 	unsigned long cprd, cdty;
- 	u32 pres, val;
- 	int ret;
- 
- 	pwm_get_state(pwm, &cstate);
-+	pwm_get_caps(chip, pwm, &caps);
- 
- 	if (state->enabled) {
- 		if (cstate.enabled &&
- 		    cstate.polarity == state->polarity &&
--		    cstate.period == state->period) {
-+		    cstate.period == state->period &&
-+		    cstate.mode == state->mode) {
- 			cprd = atmel_pwm_ch_readl(atmel_pwm, pwm->hwpwm,
- 						  atmel_pwm->data->regs.period);
- 			atmel_pwm_calculate_cdty(state, cprd, &cdty);
-@@ -263,6 +269,18 @@ static int atmel_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 			val &= ~PWM_CMR_CPOL;
- 		else
- 			val |= PWM_CMR_CPOL;
-+
-+		/* PWM mode. */
-+		if (caps.modes & PWMC_MODE(PUSH_PULL)) {
-+			if (state->mode == PWMC_MODE(PUSH_PULL)) {
-+				val |= PWM_CMR_PPM | PWM_CMR_DTLI;
-+				val &= ~PWM_CMR_DTHI;
-+			} else {
-+				val &= ~(PWM_CMR_PPM | PWM_CMR_DTLI |
-+					 PWM_CMR_DTHI);
-+			}
-+		}
-+
- 		atmel_pwm_ch_writel(atmel_pwm, pwm->hwpwm, PWM_CMR, val);
- 		atmel_pwm_set_cprd_cdty(chip, pwm, cprd, cdty);
- 		mutex_lock(&atmel_pwm->isr_lock);
-@@ -315,6 +333,20 @@ static const struct atmel_pwm_data atmel_pwm_data_v2 = {
- 	},
- };
- 
-+static const struct atmel_pwm_data atmel_pwm_data_v3 = {
-+	.regs = {
-+		.period		= PWMV2_CPRD,
-+		.period_upd	= PWMV2_CPRDUPD,
-+		.duty		= PWMV2_CDTY,
-+		.duty_upd	= PWMV2_CDTYUPD,
-+	},
-+	.caps = {
-+		.modes = PWMC_MODE(NORMAL) |
-+			 PWMC_MODE(COMPLEMENTARY) |
-+			 PWMC_MODE(PUSH_PULL),
-+	},
-+};
-+
- static const struct platform_device_id atmel_pwm_devtypes[] = {
- 	{
- 		.name = "at91sam9rl-pwm",
-@@ -337,7 +369,7 @@ static const struct of_device_id atmel_pwm_dt_ids[] = {
- 		.data = &atmel_pwm_data_v2,
- 	}, {
- 		.compatible = "atmel,sama5d2-pwm",
--		.data = &atmel_pwm_data_v2,
-+		.data = &atmel_pwm_data_v3,
- 	}, {
- 		/* sentinel */
- 	},
--- 
-2.7.4
+Hi Todor,
+
+On Thu, Mar 29, 2018 at 10:50:10AM +0300, Todor Tomov wrote:
+> Hi Jacopo,
+>
+>
+> >
+> > With the above nits clarified, and as you addressed my v1 comments:
+> >
+> > Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+>
+> Would you like to see the corrections or I can add the tag before sending them?
+>
+
+I don't have any more comment, feel free to add it :)
+
+Thanks
+   j
+
+--0eh6TmSyL6TZE2Uz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJavMnqAAoJEHI0Bo8WoVY8H+EP/Rd65M3JS4FdN/h6qPOthFVv
+VXtFv634hjkz/Y+fyI2RHAH4xAAbqvsh/Zxd0WVcRFewtdYtwrSyRH78odOn2e/w
+eXQJIzMSu+QGzA8GbH+C0e1Bwo6pKBplP4ahVwTYuH0A9TR0iWr/i/chQSyemi7l
+gl7OiA/yLt/f1fdLq/ZKKnpiMgtaXxwAkPmpkErmpO1E2W3YdIWF+L81RXOQqxIg
+VvqgJRfxIJGXBahnhd7coz+rpBxysEhg1YeevSAosmfwlIsvyTBy4Ixelzg5JoM0
+xjrf27qga0m/8CDZJEt95ik/y51foLzgkLcafVmttUG5RrVegb3c/BgavNrozclX
+n7Recg+HDZH7VasodsDVf/B4f5/mMf7P4wPP7NiwyYE3OOVWf5XXEWbPqIylhbYa
+d0eFpBg6brGSPr5KouXoeESO7LwIGF7MSTShAOK64KPAa9KzP/nEkYMtVQYa0+8a
+8dwuKcJDXNikRHQkwSnnyt5DG6DYKNuLNYE5h2tGOMcERja/HC5UD00w+mpGVnDQ
+tZi7qq9yHLVQeXNox6jATMEYViV1k2QYL8HAf5ACC7wbezu4lHkPaAVawYdUP78X
+SmAj9Ppn4xScJvK4C4fTfd72FS3IRRdxBlXdRc85zs+lg6jqVXInMVseczREPy9F
+5b8exApS8XcBnMfutueJ
+=OnHE
+-----END PGP SIGNATURE-----
+
+--0eh6TmSyL6TZE2Uz--
