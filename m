@@ -1,96 +1,98 @@
-Return-Path: <richard.gong@linux.intel.com>
-X-Google-Smtp-Source: AIpwx4+3W7Mw0HCKiZ9201il0DFFwXizHhn21yXzQgftH4toHq+YTFcV4N8bATRyauYY7Cynh2ub
-ARC-Seal: i=1; a=rsa-sha256; t=1522182232; cv=none;
+Return-Path: <atull@kernel.org>
+X-Google-Smtp-Source: AIpwx4/Qo76DOEQdY1QJEtsPke7eVLXUnxpkJOgXotKIcBWbQYeCPW7L4n5GQpDOcVGWxgU/axgG
+ARC-Seal: i=1; a=rsa-sha256; t=1522357992; cv=none;
         d=google.com; s=arc-20160816;
-        b=oJAmAUqpWvHwL2jU5IvboFmWZWuNK+gabC6Bd0ueoNarU1ivmEwUzEk7jRAx5Yo6lM
-         BQK1578Tn6A/y1UIAysqXd1iAOvJqHXlnEk39NsarzZDQ6h8MQQ0kkfXI02j+NrYD7Qg
-         kRxpN0U4PHrgHwnPD5CVPBDcpovQvMsfQCGc9eCVZG7S3XeQYbhhNegKF+RvqaXvENvg
-         VW3XALtY65MQG79Fb3uy6vOG6zAYJEXYJipyefkiMYv1pKpmoEe3NLFjBIqHS/hd8oeV
-         ye9f3UeaHbplwJLOE0axDm3lAsWJ/ekkerq1p56khZ7rM2J7k2b9K9CZYAxGpvPVhG0J
-         QwtQ==
+        b=pDD3McIEXYLTawsr/zmZQ66kofunQ8WXSXnlgEfFJpnNNny/CCNYSeVU7oE7rdyXzi
+         Mle4CNUTcyz0mTACQuIYBvvNUdt3JO1NAAXEikljZDTk1WkD/Q4qCTPhZsJJVt0zSa2m
+         x0T7FfYtOqXFRcbrpRSwqgU/Lc/gDb292ZP7QFYLomyM6KF5OqpnxWA1XNjgnLTDD52g
+         zUjnEvhCAcT1DYxOOG9N3MlBWI5bILoejfzuf1XtcbG7qkeqY3VHbdIZ8bafctJ8vtb8
+         RDHnhtk//4/yzJUUDIqCxQogoWPN3WmstLiOBlb/CVr/ohDEAZ/ga3BNoYX6/FszDVZ4
+         lWFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=xkwPahwxMojRpiFEYWw4/tASSbdt3mrjUcsjzNGSOsI=;
-        b=WnvozTYRBkh5IwdFRCxadYxhzNfplr1TaHh53K2inUvCXTw/9FMMcNrMi8k/OKZouX
-         a/iyd5T5W8lhZZFWcfjqVdhdx2NRkQAumplrix5J6dRDdlixHLrC8Qo/u8Rf2nUaITr2
-         Q8Fef2s2Iep5cKVdocpjBM+BUUCaM852NWq2fu7+Lt0HnXhWNsaV7+m58Mtuw0/mlDgj
-         57eND+1g71Zbnh2KqO9pjQmFhlpDRT9e0YLCWZN9k4Wy0CJRofu2FHBnd0I3ICNJhAd2
-         mzwiPPUOJKOU3LGOKAJIUtLNprtUEZnb87mXuRezMjbRm/6hkoYlRtcS0Rx56D+MTA1w
-         3udw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dmarc-filter:arc-authentication-results;
+        bh=qw7uARoKzzQuf8IcR1fcunb8ax5iWRsLBnw/ht0WuUs=;
+        b=Qld+pmHFzoRugKfJGNJFoDgvYsu/AxK1TNNwkG6Vgm60tCqiD3yELqn9rSlMr1/yMP
+         qt5PAcWoJ6mw/GmFDlpmzSWjVbfOd1kvUYD7mAOMv5AvTIplEETMTpUOmK05+n+1By2T
+         0LyL79A3PRk1euzULmIDGDGTFWtFsJwl7RlN0gkUNjfhnOFg+7Ya3DNkH35jfU1ICTOY
+         QNg2GMO+Sl6BdO3hCirnQIvC0PZ/yiT/Eo6D7nlzLFbCncHmkP0VR0yFabgXPwe7jHp6
+         9nh9tNpfAowBtKB/AhUqf8DtYosob/b3xXDdwnT+w0q1TPLOInezQOvJ9raSmlrwLd7T
+         ZZVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
+       spf=pass (google.com: best guess record for domain of atull@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=atull@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,368,1517904000";
-   d="scan'208";a="215401656"
-From: richard.gong@linux.intel.com
-To: catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	dinguyen@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	atull@kernel.org,
-	mdf@kernel.org,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	yves.vandervennet@linux.intel.com,
-	richard.gong@linux.intel.com,
-	richard.gong@intel.com
-Subject: [PATCHv3 4/7] dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
-Date: Tue, 27 Mar 2018 15:20:11 -0500
-Message-Id: <1522182014-7338-5-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522182014-7338-1-git-send-email-richard.gong@linux.intel.com>
-References: <1522182014-7338-1-git-send-email-richard.gong@linux.intel.com>
+       spf=pass (google.com: best guess record for domain of atull@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=atull@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26ACF217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+MIME-Version: 1.0
+In-Reply-To: <1522182014-7338-5-git-send-email-richard.gong@linux.intel.com>
+References: <1522182014-7338-1-git-send-email-richard.gong@linux.intel.com> <1522182014-7338-5-git-send-email-richard.gong@linux.intel.com>
+From: Alan Tull <atull@kernel.org>
+Date: Thu, 29 Mar 2018 16:12:30 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTYZTdMHMPkz1+0zZ2f2FJ-rjJVUbtjjKW06ac1J5VAVQ@mail.gmail.com>
+Message-ID: <CANk1AXTYZTdMHMPkz1+0zZ2f2FJ-rjJVUbtjjKW06ac1J5VAVQ@mail.gmail.com>
+Subject: Re: [PATCHv3 4/7] dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
+To: Richard Gong <richard.gong@linux.intel.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Moritz Fischer <mdf@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org,
+	Yves Vandervennet <yves.vandervennet@linux.intel.com>, Richard Gong <richard.gong@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596123756230915390?=
-X-GMAIL-MSGID: =?utf-8?q?1596123756230915390?=
+X-GMAIL-MSGID: =?utf-8?q?1596308054674987716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Alan Tull <atull@kernel.org>
+On Tue, Mar 27, 2018 at 3:20 PM,  <richard.gong@linux.intel.com> wrote:
+> From: Alan Tull <atull@kernel.org>
+>
+> Add a Device Tree binding for the Intel Stratix10 SoC FPGA manager.
+>
+> Signed-off-by: Alan Tull <atull@kernel.org>
+> ---
+> v2: this patch is added in patch set version 2
+> v3: change to put fpga_mgr node under firmware/svc node
+> ---
+>  .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt      | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+>
+> diff --git a/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+> new file mode 100644
+> index 0000000..be7cd96
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+> @@ -0,0 +1,17 @@
+> +Intel Stratix10 SoC FPGA Manager
+> +
+> +Required properties:
+> +The fpga_mgr node has the following mandatory property, must be located under
+> +firmware/svc node.
+> +
+> +- compatible : should contain "intel,stratix10-soc-fpga-mgr"
+> +
+> +Example:
+> +
+> +       firmware {
+> +               svc {
+> +                       fpga_mgr: fpga-mgr@0 {
 
-Add a Device Tree binding for the Intel Stratix10 SoC FPGA manager.
+Shouldn't have the index.  Should be:
 
-Signed-off-by: Alan Tull <atull@kernel.org>
----
-v2: this patch is added in patch set version 2
-v3: change to put fpga_mgr node under firmware/svc node
----
- .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt      | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+                            fpga_mgr: fpga-mgr {
 
-diff --git a/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
-new file mode 100644
-index 0000000..be7cd96
---- /dev/null
-+++ b/Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
-@@ -0,0 +1,17 @@
-+Intel Stratix10 SoC FPGA Manager
-+
-+Required properties:
-+The fpga_mgr node has the following mandatory property, must be located under
-+firmware/svc node.
-+
-+- compatible : should contain "intel,stratix10-soc-fpga-mgr"
-+
-+Example:
-+
-+	firmware {
-+		svc {
-+			fpga_mgr: fpga-mgr@0 {
-+				compatible = "intel,stratix10-soc-fpga-mgr";
-+			};
-+		};
-+	};
--- 
-2.7.4
+Alan
+
+> +                               compatible = "intel,stratix10-soc-fpga-mgr";
+> +                       };
+> +               };
+> +       };
+> --
+> 2.7.4
+>
