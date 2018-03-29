@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753147AbeC2LjT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:39:19 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59322 "EHLO
+        id S1753079AbeC2Ljq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:39:46 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59862 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752344AbeC2L0V (ORCPT
+        with ESMTP id S1752446AbeC2L0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 07:26:21 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 031/109] ipc: add semget syscall wrapper
-Date: Thu, 29 Mar 2018 13:23:08 +0200
-Message-Id: <20180329112426.23043-32-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Alexander Viro <viro@ZenIV.linux.org.uk>
+Subject: [PATCH 069/109] fs: add ksys_chroot() helper; remove-in kernel calls to sys_chroot()
+Date: Thu, 29 Mar 2018 13:23:46 +0200
+Message-Id: <20180329112426.23043-70-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,82 +21,112 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide ksys_semget() wrapper to avoid in-kernel calls to this syscall.
-The ksys_ prefix denotes that this function is meant as a drop-in
-replacement for the syscall. In particular, it uses the same calling
-convention as sys_semget().
+Using this helper allows us to avoid the in-kernel calls to the
+sys_chroot() syscall. The ksys_ prefix denotes that this function is
+meant as a drop-in replacement for the syscall. In particular, it uses the
+same calling convention as sys_chroot().
+
+In the near future, the fs-external callers of ksys_chroot() should be
+converted to use kern_path()/set_fs_root() directly. Then ksys_chroot()
+can be moved within sys_chroot() again.
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- ipc/sem.c     | 7 ++++++-
- ipc/syscall.c | 4 ++--
- ipc/util.h    | 1 +
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/base/devtmpfs.c  | 2 +-
+ fs/open.c                | 7 ++++++-
+ include/linux/syscalls.h | 1 +
+ init/do_mounts.c         | 2 +-
+ init/do_mounts_initrd.c  | 4 ++--
+ 5 files changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/ipc/sem.c b/ipc/sem.c
-index e21ceb8b4af1..2e5f7ec7a7db 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -556,7 +556,7 @@ static inline int sem_more_checks(struct kern_ipc_perm *ipcp,
- 	return 0;
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index 4afb04686c8e..5743f04014ca 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -387,7 +387,7 @@ static int devtmpfsd(void *p)
+ 	if (*err)
+ 		goto out;
+ 	sys_chdir("/.."); /* will traverse into overmounted root */
+-	sys_chroot(".");
++	ksys_chroot(".");
+ 	complete(&setup_done);
+ 	while (1) {
+ 		spin_lock(&req_lock);
+diff --git a/fs/open.c b/fs/open.c
+index 7ea118471dce..7a475e8a2e41 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -479,7 +479,7 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+ 	return error;
  }
  
--SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
-+long ksys_semget(key_t key, int nsems, int semflg)
+-SYSCALL_DEFINE1(chroot, const char __user *, filename)
++int ksys_chroot(const char __user *filename)
  {
- 	struct ipc_namespace *ns;
- 	static const struct ipc_ops sem_ops = {
-@@ -578,6 +578,11 @@ SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
- 	return ipcget(ns, &sem_ids(ns), &sem_ops, &sem_params);
+ 	struct path path;
+ 	int error;
+@@ -512,6 +512,11 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
+ 	return error;
  }
  
-+SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
++SYSCALL_DEFINE1(chroot, const char __user *, filename)
 +{
-+	return ksys_semget(key, nsems, semflg);
++	return ksys_chroot(filename);
 +}
 +
- /**
-  * perform_atomic_semop[_slow] - Attempt to perform semaphore
-  *                               operations on a given array.
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index 84d6a7691baa..21fcdf0b4836 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -35,7 +35,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 				       (const struct timespec __user *)fifth);
+ static int chmod_common(const struct path *path, umode_t mode)
+ {
+ 	struct inode *inode = path->dentry->d_inode;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 50876ae1d17b..920a0db1871d 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -950,5 +950,6 @@ int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
+ 	       unsigned long flags, void __user *data);
+ int ksys_umount(char __user *name, int flags);
+ int ksys_dup(unsigned int fildes);
++int ksys_chroot(const char __user *filename);
  
- 	case SEMGET:
--		return sys_semget(first, second, third);
-+		return ksys_semget(first, second, third);
- 	case SEMCTL: {
- 		unsigned long arg;
- 		if (!ptr)
-@@ -132,7 +132,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 		return compat_ksys_semtimedop(first, compat_ptr(ptr), second,
- 						compat_ptr(fifth));
- 	case SEMGET:
--		return sys_semget(first, second, third);
-+		return ksys_semget(first, second, third);
- 	case SEMCTL:
- 		if (!ptr)
- 			return -EINVAL;
-diff --git a/ipc/util.h b/ipc/util.h
-index 6deadf77547e..0f07056e5a73 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -240,6 +240,7 @@ static inline int compat_ipc_parse_version(int *cmd)
- long ksys_semtimedop(int semid, struct sembuf __user *tsops,
- 		     unsigned int nsops,
- 		     const struct timespec __user *timeout);
-+long ksys_semget(key_t key, int nsems, int semflg);
+ #endif
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index eb768de43d84..2f06f7827b0c 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -600,7 +600,7 @@ void __init prepare_namespace(void)
+ out:
+ 	devtmpfs_mount("dev");
+ 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+-	sys_chroot(".");
++	ksys_chroot(".");
+ }
  
- /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
- #ifdef CONFIG_COMPAT
+ static bool is_tmpfs;
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index e8573e1776f6..71293265ac4b 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -44,7 +44,7 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
+ 	/* move initrd over / and chdir/chroot in initrd root */
+ 	sys_chdir("/root");
+ 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+-	sys_chroot(".");
++	ksys_chroot(".");
+ 	sys_setsid();
+ 	return 0;
+ }
+@@ -83,7 +83,7 @@ static void __init handle_initrd(void)
+ 	/* move initrd to rootfs' /old */
+ 	ksys_mount("..", ".", NULL, MS_MOVE, NULL);
+ 	/* switch root and cwd back to / of rootfs */
+-	sys_chroot("..");
++	ksys_chroot("..");
+ 
+ 	if (new_decode_dev(real_root_dev) == Root_RAM0) {
+ 		sys_chdir("/old");
 -- 
 2.16.3
