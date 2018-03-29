@@ -1,82 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752823AbeC2MX5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:23:57 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:36470 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752256AbeC2MXz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:23:55 -0400
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/2] MIPS: memset.S: Fix 2 issues with __clear_user
-Date: Thu, 29 Mar 2018 10:28:22 +0100
-Message-ID: <1522315704-31641-1-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752879AbeC2MYP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:24:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752256AbeC2MYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 08:24:13 -0400
+Subject: Re: [Cluster-devel] [PATCH v2 0/2] gfs2: Stop using
+ rhashtable_walk_peek
+To: Andreas Gruenbacher <agruenba@redhat.com>, cluster-devel@redhat.com
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>
+References: <20180329120612.6104-1-agruenba@redhat.com>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <b15f44f6-d052-17f2-b099-ea2d601c9a6e@redhat.com>
+Date: Thu, 29 Mar 2018 13:24:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1522326228-452059-22111-54593-5
-X-BESS-VER: 2018.4.1-r1803282120
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191512
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+In-Reply-To: <20180329120612.6104-1-agruenba@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series addresses 2 issues that have been present in memset.S since
-the initial git import(!).
-The first patch addresses an issue when memset is called with a size
-less than the size of a long (4 bytes on 32bit, 8 bytes on 64bit). There
-is no fixup handler provided for the byte store loop, meaning that if
-the access triggers a page fault, rather than being fixup up, the kernel
-OOPS'. A secondary issue is also addressed here, that when EVA support
-was added by commit fd9720e96e85 ("MIPS: lib: memset: Add EVA support
-for the __bzero function."), this small memset was not changed. Hence
-kernel mode addressing is always used and if the userspace address being
-stored to overlaps kernel, then some potentially critical kernel data is
-overwritten.
+Hi,
 
-The second patch addresses an issue found while debugging the first.
-clear_user() is specified to return the number of bytes that could not be
-cleared. After the first patch, this is now done for sizes 0-3, but
-sizes 4-63 would return garbage. This was tracked down to an error in
-reusing the t1 register meaning it no longer contained the expected
-value in the fault handler, and the fault handler erroneously masking
-off the lower bits of the result.
+Can we solve the problem another way, by not taking refs on the glocks 
+when we are iterating over them for the debugfs files? I assume that is 
+the main issue here.
 
-The following test code was used to verify the behavior.
+We didn't used to take refs since the rcu locking was enough during the 
+walk itself. We used to only keep track of the hash bucket and offset 
+within the bucket when we dropped the rcu lock between calls to the 
+iterator. I may have lost track of why that approach did not work?
 
-  int j, k;
-  for (j = 0; j < 512; j++) {
-    if ((k = clear_user(NULL, j)) != j) {
-       pr_err("clear_user (NULL %d) returned %d\n", j, k);
-    }
-  }
-
-Without patch 1, an OOPS is triggered by the first iteration. Without
-the second patch, j = 4..63 returns garbage.
-
-Applies on v4.16-rc7
-Tested on MIPS creator ci40 (MIPS32) and Cavium Octeon II (MIPS64).
+Steve.
 
 
-
-Matt Redfearn (2):
-  MIPS: memset.S: EVA & fault support for small_memset
-  MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
-
- arch/mips/lib/memset.S | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
--- 
-2.7.4
+On 29/03/18 13:06, Andreas Gruenbacher wrote:
+> Here's a second version of the patch (now a patch set) to eliminate
+> rhashtable_walk_peek in gfs2.
+>
+> The first patch introduces lockref_put_not_zero, the inverse of
+> lockref_get_not_zero.
+>
+> The second patch eliminates rhashtable_walk_peek in gfs2.  In
+> gfs2_glock_iter_next, the new lockref function from patch one is used to
+> drop a lockref count as long as the count doesn't drop to zero.  This is
+> almost always the case; if there is a risk of dropping the last
+> reference, we must defer that to a work queue because dropping the last
+> reference may sleep.
+>
+> Thanks,
+> Andreas
+>
+> Andreas Gruenbacher (2):
+>    lockref: Add lockref_put_not_zero
+>    gfs2: Stop using rhashtable_walk_peek
+>
+>   fs/gfs2/glock.c         | 47 ++++++++++++++++++++++++++++-------------------
+>   include/linux/lockref.h |  1 +
+>   lib/lockref.c           | 28 ++++++++++++++++++++++++++++
+>   3 files changed, 57 insertions(+), 19 deletions(-)
+>
