@@ -1,58 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752310AbeC2MoR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:44:17 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35968 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeC2MoP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:44:15 -0400
-X-Google-Smtp-Source: AIpwx4+fjt9WWDRA3N/RGpk4MaoQs3mSBl7OZA3Mxc+KEM3bEsP6X6n+5DE7J079mOfILQOc7TvqDA==
-Date: Thu, 29 Mar 2018 15:43:38 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCHv2 12/14] x86/mm: Implement page_keyid() using page_ext
-Message-ID: <20180329124338.vxzjpkz3ecyor5uc@node.shutemov.name>
-References: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
- <20180328165540.648-13-kirill.shutemov@linux.intel.com>
- <b4498b2b-5092-b347-e92d-6ebd375fd947@intel.com>
+        id S1752511AbeC2Mpr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:45:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:30334 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751008AbeC2Mpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 08:45:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="37863215"
+Subject: Re: [PATCH V4 3/3] mmc: sdhci: Add MSI interrupt support for O2 SD
+ host
+To: "ernest.zhang" <ernest.zhang@bayhubtech.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: xiaoguang.yu@bayhubtech.com, shirley.her@bayhubtech.com,
+        yuxiang.wan@bayhubtech.com
+References: <1520604265-4430-1-git-send-email-ernest.zhang@bayhubtech.com>
+ <1520604265-4430-3-git-send-email-ernest.zhang@bayhubtech.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <ac6505aa-603f-f10e-70fa-7c51af77f7fa@intel.com>
+Date: Thu, 29 Mar 2018 15:44:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4498b2b-5092-b347-e92d-6ebd375fd947@intel.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1520604265-4430-3-git-send-email-ernest.zhang@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 09:59:23AM -0700, Dave Hansen wrote:
-> On 03/28/2018 09:55 AM, Kirill A. Shutemov wrote:
-> > +static inline int page_keyid(struct page *page)
-> > +{
-> > +	if (!mktme_nr_keyids)
-> > +		return 0;
-> > +
-> > +	return lookup_page_ext(page)->keyid;
-> > +}
+On 09/03/18 16:04, ernest.zhang wrote:
+> Add MSI interrupt support if the SD host device can support MSI interrupt.
 > 
-> This doesn't look very optimized.  Don't we normally try to use
-> X86_FEATURE_* for these checks so that we get the runtime patching *and*
-> compile-time optimizations?
+> Changes: Enable MSI interrupt if the MSI capability bit is set in 
+> capability register.
+> 
+> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
+> ---
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index a918984..7d04f4b 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -391,6 +391,23 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  		if (reg & 0x1)
+>  			host->quirks |= SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12;
+>  
+> +#if defined(CONFIG_PCI_MSI)
 
-I didn't go to micro optimization just yet. I would like to see whole
-stack functioning first.
+Do you really need to check CONFIG_PCI_MSI ?
 
-It doesn't make sense to use cpu_feature_enabledX86_FEATURE_TME) as it
-would produce false-positives: MKTME enumeration requires MSR read.
-
-We may change mktme_nr_keyids check to a static key here. But this is not
-urgent.
-
--- 
- Kirill A. Shutemov
+> +		if (pci_find_capability(chip->pdev, PCI_CAP_ID_MSI)) {
+> +			ret = pci_enable_msi(chip->pdev);
+> +			if (!ret) {
+> +				host->irq = chip->pdev->irq;
+> +				pr_info("%s: use MSI irq, irq=%d\n",
+> +					mmc_hostname(host->mmc), host->irq);
+> +			} else {
+> +				pr_err("%s: enable PCI MSI failed, err=%d\n",
+> +					mmc_hostname(host->mmc), ret);
+> +			}
+> +		} else {
+> +			pr_info("%s: unsupport msi, use INTx irq\n",
+> +				mmc_hostname(host->mmc));
+> +		}
+> +#endif
+> +
+>  		if (chip->pdev->device == PCI_DEVICE_ID_O2_SEABIRD0) {
+>  			ret = pci_read_config_dword(chip->pdev,
+>  						    O2_SD_MISC_SETTING, &reg);
+> 
