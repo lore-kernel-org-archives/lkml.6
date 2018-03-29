@@ -1,48 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752497AbeC2Mfz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:35:55 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:49850 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbeC2Mfy (ORCPT
+        id S1752492AbeC2Mhu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:37:50 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:39264 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbeC2Mht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:35:54 -0400
-Date: Thu, 29 Mar 2018 20:35:44 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: cluster-devel@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>
-Subject: Re: [PATCH v2 0/2] gfs2: Stop using rhashtable_walk_peek
-Message-ID: <20180329123544.GA22551@gondor.apana.org.au>
-References: <20180329120612.6104-1-agruenba@redhat.com>
+        Thu, 29 Mar 2018 08:37:49 -0400
+X-Google-Smtp-Source: AIpwx48jUqp1KNVhphfIGsp47thIs72giHupSRy79L/sKxmjmOgxa4dXnSWhY3oGQiHyjErc4m2Tcw==
+Date: Thu, 29 Mar 2018 15:37:12 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCHv2 06/14] mm/page_alloc: Propagate encryption KeyID
+ through page allocator
+Message-ID: <20180329123712.zlo6qmstj3zm5v27@node.shutemov.name>
+References: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
+ <20180328165540.648-7-kirill.shutemov@linux.intel.com>
+ <20180329112034.GE31039@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180329120612.6104-1-agruenba@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180329112034.GE31039@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 02:06:10PM +0200, Andreas Gruenbacher wrote:
-> Here's a second version of the patch (now a patch set) to eliminate
-> rhashtable_walk_peek in gfs2.
+On Thu, Mar 29, 2018 at 01:20:34PM +0200, Michal Hocko wrote:
+> On Wed 28-03-18 19:55:32, Kirill A. Shutemov wrote:
+> > Modify several page allocation routines to pass down encryption KeyID to
+> > be used for the allocated page.
+> > 
+> > There are two basic use cases:
+> > 
+> >  - alloc_page_vma() use VMA's KeyID to allocate the page.
+> > 
+> >  - Page migration and NUMA balancing path use KeyID of original page as
+> >    KeyID for newly allocated page.
 > 
-> The first patch introduces lockref_put_not_zero, the inverse of
-> lockref_get_not_zero.
-> 
-> The second patch eliminates rhashtable_walk_peek in gfs2.  In
-> gfs2_glock_iter_next, the new lockref function from patch one is used to
-> drop a lockref count as long as the count doesn't drop to zero.  This is
-> almost always the case; if there is a risk of dropping the last
-> reference, we must defer that to a work queue because dropping the last
-> reference may sleep.
+> I am sorry but I am out of time to look closer but this just raised my
+> eyebrows. This looks like a no-go. The basic allocator has no business
+> in fancy stuff like a encryption key. If you need something like that
+> then just build a special allocator API on top. This looks like a no-go
+> to me.
 
-In light of Neil's latest patch, do we still need this?
+The goal is to make memory encryption first class citizen in memory
+management and not to invent parallel subsysustem (as we did with hugetlb).
 
-Thanks,
+Making memory encryption integral part of Linux VM would involve handing
+encrypted page everywhere we expect anonymous page to appear.
+
+We can deal with encrypted page allocation with wrappers but it doesn't
+make sense if we going to use them instead of original API everywhere.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+ Kirill A. Shutemov
