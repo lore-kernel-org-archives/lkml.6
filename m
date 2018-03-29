@@ -1,86 +1,118 @@
-Return-Path: <jsimmons@infradead.org>
-X-Google-Smtp-Source: AIpwx4+qU9+y7WfXDEVH9iR8CKldOoaXPxxBGInomK7Kj/gYFPN/YQ/BM3kwJ68YNblDALUkT1DI
-ARC-Seal: i=1; a=rsa-sha256; t=1522436948; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AIpwx49KrPO6q/6SsfIz/qG+skThT7ozVRbihtkRnpMoyckF5BGrMBihft/C2E9rvV+I8Z2PRWQn
+ARC-Seal: i=1; a=rsa-sha256; t=1522297751; cv=none;
         d=google.com; s=arc-20160816;
-        b=0RJTk7VGhZNCWoo4545nh3XTywNGRSeomw0IzXXqAFRmwCNSJb5k0TFCWc6Hj6bi1w
-         UctotNhmkSSf35iGO4EuQCsoiEqqE+25stCfJ3bGeyid5vacH2oW12HXMW0/yVFnNiUc
-         pr3tx2TKoJW0gMIY0MVr9EGpVmoUaH+h7BabiH8sJ/V3OsAV0jo1cYUOAN8z8KgCrR58
-         EDeqtGPw7TqF3LOYlZrlSgj7yghIkgcVEMmLPjXy5cvn9kHymsHANFY2bYGtjpmWaej2
-         nE08Hd739SzUigN6HOifNd/oIEfVEgoBdq3sRMleIvc3M1ESxLYPcx9te6tTsAzEjHpN
-         ls+A==
+        b=esU09kQZpwPURS5zHoJcosEZA1Rcgm/SSRBUfGt1+YDtBWTikNChcWehEjb9qhfZ1P
+         TIkeKOrtDtTzg+C8ExmsnLSr39CsZegqU78pgjwsZwmHHepQhSi4PN4NHWDoMm5Wnmgk
+         DUjZMDMjxTKUcHvvp9KnSwYyvEO0xXPB1pdiiceXzVZjofFZaVgAHcH16jVQcGGeyx8s
+         JTbm8b/Ryo2Jk34xM/PpN5J/QkBqapPOzO9gTv4r84I4vhg0iGA9pm4wSOSmqORg3oBx
+         RcX646ge07SRNXabGnFFtM0ZnQXMItcmenh/jresPyJ769M5hC3ln3uJ1n2KoMDAC6Ju
+         JGUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=2hmay/6as3MCbfnIuSeHvpnnoesM5F8DcOk5IZYjBB8=;
-        b=i+1al6LnaoeklLh0RIKA8bqlQvhBfrHoJBG4RlR+HGUv8rWIUHGs17XU8ZE8k/MW73
-         TtURte/NjIzo3UURSYzG0IEVDja8sIEv9ooCBo1aKA98ByYEYJolVUeCGLBVr2/SanLO
-         hiCWSyjYxlHkq6dU4qvnPGg8ys6sQll67wz6DzoXXyx1DPzhYPgbEAUFgWkv3+ZJbMQU
-         iEYLOFQTaRyVOO+GZJG2aB21eVe68Jbol4R+H4eulryupsf0m/AfwzOQmGKObb7szz3K
-         gwvgx1BgtqzU53XsErwNWD4LaP9wUjPPzj4rEuoKaPX5ltlEAy16VguCKFJpBcROVoYH
-         cjUg==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=a5fRLWdZFacPtUcuqI4gC+ocNxqIYZrM28njP5+kaRs=;
+        b=tshMvvTaz+ne6+rv2E/sxguKLyfUp5L7B6lu2XjULsnJxwO451Y3HQ6I0TgFpukPsL
+         MqoNt4IpiF4zuHIDtJ0HsxMYaYyuonqHGjUbmUygWHSWPA9rNxPIfCwU8yt9BqiroHGm
+         HtRDX2nMn/z5X7PQSHx1txIe1rflXZ9Gwsf3fHzv6qog84gXFmT1GXHZ48TMJnk6sU2k
+         RBTeWrjbfDmy2QAfj/zu/zz+NC+xKin9kLwg3MTB3jIExc0YE/liMPZa8oy8hDlNAr9q
+         AJlPd/we80AVhv7774o8qMryKvbGkpE+4vFtawiXjrgS4r0GGsBsiru7GoNKe65df4SL
+         N/cQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=kFbxsdrA;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=kFbxsdrA;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
-Date: Fri, 30 Mar 2018 20:09:04 +0100 (BST)
-From: James Simmons <jsimmons@infradead.org>
-To: NeilBrown <neilb@suse.com>
-cc: Oleg Drokin <oleg.drokin@intel.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Andreas Dilger <andreas.dilger@intel.com>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 03/17] staging: lustre: LNET excludes USERIO
-In-Reply-To: <152229760832.27689.17304570282712555631.stgit@noble>
-Message-ID: <alpine.LFD.2.21.1803302008260.9681@casper.infradead.org>
-References: <152229732768.27689.4800156943561963977.stgit@noble> <152229760832.27689.17304570282712555631.stgit@noble>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Thu, 29 Mar 2018 15:26:48 +1100
+Subject: [PATCH 17/17] staging: lustre: remove cruft from
+ libcfs/linux/libcfs.h
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152229760887.27689.4035189219478811109.stgit@noble>
+In-Reply-To: <152229732768.27689.4800156943561963977.stgit@noble>
+References: <152229732768.27689.4800156943561963977.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180330_200904_550850_B80A4885 
-X-CRM114-Status: GOOD (  16.04  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: SpamAssassin version 3.4.1 on casper.infradead.org summary:
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596244781744369072?=
-X-GMAIL-MSGID: =?utf-8?q?1596390845958955441?=
+X-GMAIL-THRID: =?utf-8?q?1596244887656932993?=
+X-GMAIL-MSGID: =?utf-8?q?1596244887656932993?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+These defines are unused or nearly unused, and do not
+help at all.
 
-> LNET_MINOR and USERIO_MINOR are the same value, so
-> they cannot both be used in the same kernel.
-> Until this is resolved, don't allow them to be built
-> together.  This saves automatic testing from noticing this
-> known problem.
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: James Simmons <jsimmons@infradead.org>
+---
+ .../staging/lustre/include/linux/libcfs/curproc.h  |    2 --
+ .../lustre/include/linux/libcfs/linux/libcfs.h     |   17 -----------------
+ drivers/staging/lustre/lnet/libcfs/tracefile.c     |    2 +-
+ 3 files changed, 1 insertion(+), 20 deletions(-)
 
-Nak. I have the proper fix for this. Will push right away.
+diff --git a/drivers/staging/lustre/include/linux/libcfs/curproc.h b/drivers/staging/lustre/include/linux/libcfs/curproc.h
+index 4702956805a6..d6e4f47b5daf 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/curproc.h
++++ b/drivers/staging/lustre/include/linux/libcfs/curproc.h
+@@ -43,8 +43,6 @@
+ /*
+  * Plus, platform-specific constant
+  *
+- * CFS_CURPROC_COMM_MAX,
+- *
+  * and opaque scalar type
+  *
+  * kernel_cap_t
+diff --git a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+index c39c34d74382..0dbd01617865 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+@@ -81,8 +81,6 @@
+ #include <stdarg.h>
+ #include "linux-cpu.h"
  
-> Reported-by: kernel test robot <fengguang.wu@intel.com>
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  drivers/staging/lustre/lnet/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/lustre/lnet/Kconfig b/drivers/staging/lustre/lnet/Kconfig
-> index ad049e6f24e4..fe4b24acf075 100644
-> --- a/drivers/staging/lustre/lnet/Kconfig
-> +++ b/drivers/staging/lustre/lnet/Kconfig
-> @@ -1,6 +1,6 @@
->  config LNET
->  	tristate "Lustre networking subsystem (LNet)"
-> -	depends on INET
-> +	depends on INET && !USERIO
->  	help
->  	  The Lustre network layer, also known as LNet, is a networking abstaction
->  	  level API that was initially created to allow Lustre Filesystem to utilize
-> 
-> 
-> 
+-#define LUSTRE_TRACE_SIZE (THREAD_SIZE >> 5)
+-
+ #if !defined(__x86_64__)
+ # ifdef __ia64__
+ #  define CDEBUG_STACK() (THREAD_SIZE -				 \
+@@ -114,19 +112,4 @@ do {								    \
+ #define CDEBUG_STACK() (0L)
+ #endif /* __x86_64__ */
+ 
+-#define __current_nesting_level() (0)
+-
+-/**
+- * Platform specific declarations for cfs_curproc API (libcfs/curproc.h)
+- *
+- * Implementation is in linux-curproc.c
+- */
+-#define CFS_CURPROC_COMM_MAX (sizeof((struct task_struct *)0)->comm)
+-
+-#include <linux/capability.h>
+-
+-#ifndef WITH_WATCHDOG
+-#define WITH_WATCHDOG
+-#endif
+-
+ #endif /* _LINUX_LIBCFS_H */
+diff --git a/drivers/staging/lustre/lnet/libcfs/tracefile.c b/drivers/staging/lustre/lnet/libcfs/tracefile.c
+index 129430e74d00..514e1845740e 100644
+--- a/drivers/staging/lustre/lnet/libcfs/tracefile.c
++++ b/drivers/staging/lustre/lnet/libcfs/tracefile.c
+@@ -328,7 +328,7 @@ int libcfs_debug_vmsg2(struct libcfs_debug_msg_data *msgdata,
+ 		goto console;
+ 	}
+ 
+-	depth = __current_nesting_level();
++	depth = 0;
+ 	known_size = strlen(file) + 1 + depth;
+ 	if (msgdata->msg_fn)
+ 		known_size += strlen(msgdata->msg_fn) + 1;
