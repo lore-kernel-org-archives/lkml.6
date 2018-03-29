@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752446AbeC2WHI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:07:08 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42605 "EHLO
+        id S1752743AbeC2WOc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:14:32 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38998 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752156AbeC2WHA (ORCPT
+        with ESMTP id S1752232AbeC2WHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:07:00 -0400
-X-Google-Smtp-Source: AIpwx4/vfeVIMcElEtoHLlk9UEtDNaqWPjQW70MgyjSu1pO7O5TtgVL1U7/2MKUjYzLxRqYXn+j6tw==
+        Thu, 29 Mar 2018 18:07:08 -0400
+X-Google-Smtp-Source: AIpwx4/I6ZVL3+OboOdnBvwCET99c5n6oyik+f1epyqu9jvC0e3ntd904v9+yvLa24ZbH465Qd2WNw==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         keith.busch@intel.com, javier@cnexlabs.com,
         Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 04/37] lightnvm: pblk: check data lines version on recovery
-Date: Fri, 30 Mar 2018 00:04:51 +0200
-Message-Id: <20180329220524.30363-5-mb@lightnvm.io>
+Subject: [GIT PULL 10/37] lightnvm: pblk: allow allocation of new lines during shutdown
+Date: Fri, 30 Mar 2018 00:04:57 +0200
+Message-Id: <20180329220524.30363-11-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
 References: <20180329220524.30363-1-mb@lightnvm.io>
@@ -29,152 +29,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-As a preparation for future bumps of data line persistent storage
-versions, we need to start checking the emeta line version during
-recovery. Also slit up the current emeta/smeta version into two
-bytes (major,minor).
-
-Recovering lines with the same major number as the current pblk data
-line version must succeed. This means that any changes in the
-persistent format must be:
-
- (1) Backward compatible: if we switch back to and older
-     kernel, recovery of lines stored with major == current_major
-     and minor > current_minor must succeed.
-
- (2) Forward compatible: switching to a newer kernel,
-     recovery of lines stored with major=current_major and
-     minor < minor must handle the data format differences
-     gracefully(i.e. initialize new data structures to default values).
-
-If we detect lines that have a different major number than
-the current we must abort recovery. The user must manually
-migrate the data in this case.
-
-Previously the version stored in the emeta header was copied
-from smeta, which has version 1, so we need to set the minor
-version to 1.
+When shutting down pblk the write buffer is flushed and if the
+current line can't fit the data in the write buffer we need
+to allocate a new line, so remove the check that prevents this.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-Signed-off-by: Javier González <javier@cnexlabs.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-core.c     |  9 ++++++++-
- drivers/lightnvm/pblk-recovery.c | 26 ++++++++++++++++++++++++--
- drivers/lightnvm/pblk.h          | 16 ++++++++++++++--
- 3 files changed, 46 insertions(+), 5 deletions(-)
+ drivers/lightnvm/pblk-core.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
 diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 9027cf2ed1d8..155e42a26293 100644
+index 22e61cd4f801..8848443a0721 100644
 --- a/drivers/lightnvm/pblk-core.c
 +++ b/drivers/lightnvm/pblk-core.c
-@@ -975,7 +975,8 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 	memcpy(smeta_buf->header.uuid, pblk->instance_uuid, 16);
- 	smeta_buf->header.id = cpu_to_le32(line->id);
- 	smeta_buf->header.type = cpu_to_le16(line->type);
--	smeta_buf->header.version = SMETA_VERSION;
-+	smeta_buf->header.version_major = SMETA_VERSION_MAJOR;
-+	smeta_buf->header.version_minor = SMETA_VERSION_MINOR;
+@@ -1407,13 +1407,6 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
+ 	l_mg->data_line = new;
  
- 	/* Start metadata */
- 	smeta_buf->seq_nr = cpu_to_le64(line->seq_nr);
-@@ -998,6 +999,12 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 	/* End metadata */
- 	memcpy(&emeta_buf->header, &smeta_buf->header,
- 						sizeof(struct line_header));
-+
-+	emeta_buf->header.version_major = EMETA_VERSION_MAJOR;
-+	emeta_buf->header.version_minor = EMETA_VERSION_MINOR;
-+	emeta_buf->header.crc = cpu_to_le32(
-+			pblk_calc_meta_header_crc(pblk, &emeta_buf->header));
-+
- 	emeta_buf->seq_nr = cpu_to_le64(line->seq_nr);
- 	emeta_buf->nr_lbas = cpu_to_le64(line->sec_in_line);
- 	emeta_buf->nr_valid_lbas = cpu_to_le64(0);
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 1d5e961bf5e0..a30fe203d454 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -826,6 +826,25 @@ static u64 pblk_line_emeta_start(struct pblk *pblk, struct pblk_line *line)
- 	return emeta_start;
- }
- 
-+static int pblk_recov_check_line_version(struct pblk *pblk,
-+					 struct line_emeta *emeta)
-+{
-+	struct line_header *header = &emeta->header;
-+
-+	if (header->version_major != EMETA_VERSION_MAJOR) {
-+		pr_err("pblk: line major version mismatch: %d, expected: %d\n",
-+		       header->version_major, EMETA_VERSION_MAJOR);
-+		return 1;
-+	}
-+
-+#ifdef NVM_DEBUG
-+	if (header->version_minor > EMETA_VERSION_MINOR)
-+		pr_info("pblk: newer line minor version found: %d\n", line_v);
-+#endif
-+
-+	return 0;
-+}
-+
- struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- {
- 	struct pblk_line_meta *lm = &pblk->lm;
-@@ -873,9 +892,9 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 		if (le32_to_cpu(smeta_buf->header.identifier) != PBLK_MAGIC)
- 			continue;
- 
--		if (smeta_buf->header.version != SMETA_VERSION) {
-+		if (smeta_buf->header.version_major != SMETA_VERSION_MAJOR) {
- 			pr_err("pblk: found incompatible line version %u\n",
--					le16_to_cpu(smeta_buf->header.version));
-+					smeta_buf->header.version_major);
- 			return ERR_PTR(-EINVAL);
- 		}
- 
-@@ -943,6 +962,9 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 			goto next;
- 		}
- 
-+		if (pblk_recov_check_line_version(pblk, line->emeta->buf))
-+			return ERR_PTR(-EINVAL);
-+
- 		if (pblk_recov_l2p_from_emeta(pblk, line))
- 			pblk_recov_l2p_from_oob(pblk, line);
- 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 8c357fb6538e..fae2526f80b2 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -320,14 +320,26 @@ enum {
- };
- 
- #define PBLK_MAGIC 0x70626c6b /*pblk*/
--#define SMETA_VERSION cpu_to_le16(1)
-+
-+/* emeta/smeta persistent storage format versions:
-+ * Changes in major version requires offline migration.
-+ * Changes in minor version are handled automatically during
-+ * recovery.
-+ */
-+
-+#define SMETA_VERSION_MAJOR (0)
-+#define SMETA_VERSION_MINOR (1)
-+
-+#define EMETA_VERSION_MAJOR (0)
-+#define EMETA_VERSION_MINOR (1)
- 
- struct line_header {
- 	__le32 crc;
- 	__le32 identifier;	/* pblk identifier */
- 	__u8 uuid[16];		/* instance uuid */
- 	__le16 type;		/* line type */
--	__le16 version;		/* type version */
-+	__u8 version_major;	/* version major */
-+	__u8 version_minor;	/* version minor */
- 	__le32 id;		/* line id for current line */
- };
+ 	spin_lock(&l_mg->free_lock);
+-	if (pblk->state != PBLK_STATE_RUNNING) {
+-		l_mg->data_line = NULL;
+-		l_mg->data_next = NULL;
+-		spin_unlock(&l_mg->free_lock);
+-		goto out;
+-	}
+-
+ 	pblk_line_setup_metadata(new, l_mg, &pblk->lm);
+ 	spin_unlock(&l_mg->free_lock);
  
 -- 
 2.11.0
