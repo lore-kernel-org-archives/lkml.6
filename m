@@ -1,98 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751341AbeC2HEB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:04:01 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42087 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750735AbeC2HEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:04:00 -0400
-Subject: Re: [PATCH 2/2] perf: add arm64 smmuv3 pmu driver
-To: Neil Leeder <nleeder@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
-References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
- <1501876754-1064-3-git-send-email-nleeder@codeaurora.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Mark Langsdorf <mlangsdo@redhat.com>, Mark Salter <msalter@redhat.com>,
-        "Jon Masters" <jcm@redhat.com>, Timur Tabi <timur@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <883d32ce-6581-ecf6-5088-ecb238322ebe@huawei.com>
-Date: Thu, 29 Mar 2018 15:03:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1751068AbeC2HKb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:10:31 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55798 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeC2HKa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 03:10:30 -0400
+X-Google-Smtp-Source: AIpwx48FmUpaNgM/2c2vSEjSVI6BU7NwdIWx6a5QQM89fiJ+gtkh1iAfIRYZGIj05uSGePck+LzbEQ==
+Date: Thu, 29 Mar 2018 09:10:25 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Peter Rosin <peda@axentia.se>,
+        Egbert Eich <eich@suse.de>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Takashi Iwai <tiwai@suse.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drm/atmel-hlcdc: add command line option to specify
+ preferred depth
+Message-ID: <20180329071025.GE3881@phenom.ffwll.local>
+Mail-Followup-To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Peter Rosin <peda@axentia.se>, Egbert Eich <eich@suse.de>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Takashi Iwai <tiwai@suse.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180326073502.19259-1-peda@axentia.se>
+ <20180328093454.4149fa3b@bbrezillon>
+ <20180328122236.GF14155@phenom.ffwll.local>
+ <20180328142512.14f8c502@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <1501876754-1064-3-git-send-email-nleeder@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180328142512.14f8c502@bbrezillon>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+On Wed, Mar 28, 2018 at 02:25:12PM +0200, Boris Brezillon wrote:
+> On Wed, 28 Mar 2018 14:22:36 +0200
+> Daniel Vetter <daniel@ffwll.ch> wrote:
+> 
+> > On Wed, Mar 28, 2018 at 09:34:54AM +0200, Boris Brezillon wrote:
+> > > Hi Peter,
+> > > 
+> > > On Mon, 26 Mar 2018 09:35:02 +0200
+> > > Peter Rosin <peda@axentia.se> wrote:
+> > >   
+> > > > I have an sama5d31-based system with 64MB of memory and a 1920x1080
+> > > > LVDS display wired for 16-bpp. When I enable legacy fbdev support,
+> > > > the contiguous memory allocator invariably fails with the order-11
+> > > > allocation for a 1920x1080@24-bpp buffer (~6MB). But this HW can never
+> > > > make any good use of RGB888, so that is a wasted attempt anyway that
+> > > > would also waste precious memory should it succeed.
+> > > > 
+> > > > Sure, I could rewrite user-space to go directly to KMS etc, and that
+> > > > makes the (attempted) order-11 allocation go away, replacing it with
+> > > > one order-10 allocation per application restart for a 1920x1080@16-bpp
+> > > > buffer (<4MB). But after a few restarts, order-10 allocations start to
+> > > > fail as well, which is only to be expected AFAIU.
+> > > > 
+> > > > So, I'd rather not change user-space (which was originally written
+> > > > to target a smaller display) so that I at the same time get the
+> > > > benefit of an early pre-allocated fbdev frame-buffer that can be
+> > > > reused over and over. But to do that I need to tell the driver that
+> > > > 16-bpp is the preferred depth. Add a module parameter to do just that.
+> > > > 
+> > > > Signed-off-by: Peter Rosin <peda@axentia.se>
+> > > > ---
+> > > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 18 +++++++++++++++++-
+> > > >  1 file changed, 17 insertions(+), 1 deletion(-)
+> > > > 
+> > > > I found some inspiration regarding naming and implementation here:
+> > > > https://patchwork.kernel.org/patch/9848631/
+> > > > 
+> > > > I have found no feedback on that patch though, which makes me wonder if
+> > > > I'm perhaps barking up the wronig tree?  
+> > > 
+> > > Hm, isn't that something you can already overload with the video=
+> > > parameter?
+> > > 
+> > > 	video=<output>:<resolution>[-<bpp>]
+> > > 
+> > > AFAIR, <bpp> encodes the color depth, so what is the benefit of adding
+> > > this new property to overload the default depth?
+> > > 
+> > > Maybe I'm wrong and the default depth param is actually useful, but in
+> > > this case we should probably make it generic since other drivers seems
+> > > to need it too, and we might want to attach it to a specific display
+> > > engine instance.  
+> > 
+> > I think for the drm's fbdev emulation we ignore the bpp ...
+> 
+> Nope, it's already parsed [1].
+> 
+> [1]https://elixir.bootlin.com/linux/v4.16-rc3/source/drivers/gpu/drm/drm_fb_helper.c#L1812
 
-On 2017/8/5 3:59, Neil Leeder wrote:
-> +	mem_resource_0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	mem_map_0 = devm_ioremap_resource(&pdev->dev, mem_resource_0);
-> +
-Can we use devm_ioremap instead? for the reg_base of smmu_pmu is
-IMPLEMENTATION DEFINED. If the reg of smmu_pmu is inside smmu,
-devm_ioremap_resource will failed and return -EBUSY, eg.:
-
- smmu reg ranges:		0x180000000 ~ 0x1801fffff
- its smmu_pmu reg ranges:	0x180001000 ~ 0x180001fff
-
-> +	if (IS_ERR(mem_map_0)) {
-> +		dev_err(&pdev->dev, "Can't map SMMU PMU @%pa\n",
-> +			&mem_resource_0->start);
-> +		return PTR_ERR(mem_map_0);
-> +	}
-> +
-> +	smmu_pmu->reg_base = mem_map_0;
-> +	smmu_pmu->pmu.name =
-> +		devm_kasprintf(&pdev->dev, GFP_KERNEL, "smmu_0_%llx",
-> +			       (mem_resource_0->start) >> SMMU_PA_SHIFT);
-> +
-> +	if (!smmu_pmu->pmu.name) {
-> +		dev_err(&pdev->dev, "Failed to create PMU name");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ceid_64 = readq(smmu_pmu->reg_base + SMMU_PMCG_CEID0);
-> +	ceid[0] = ceid_64 & GENMASK(31, 0);
-> +	ceid[1] = ceid_64 >> 32;
-> +	ceid_64 = readq(smmu_pmu->reg_base + SMMU_PMCG_CEID1);
-> +	ceid[2] = ceid_64 & GENMASK(31, 0);
-> +	ceid[3] = ceid_64 >> 32;
-> +	bitmap_from_u32array(smmu_pmu->supported_events, SMMU_MAX_EVENT_ID,
-> +			     ceid, SMMU_NUM_EVENTS_U32);
-> +
-> +	/* Determine if page 1 is present */
-> +	if (readl(smmu_pmu->reg_base + SMMU_PMCG_CFGR) &
-> +	    SMMU_PMCG_CFGR_RELOC_CTRS) {
-> +		mem_resource_1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +		mem_map_1 = devm_ioremap_resource(&pdev->dev, mem_resource_1);
-> +
-The same as above.
-
-Thanks
-Yisheng
-
-> +		if (IS_ERR(mem_map_1)) {
-> +			dev_err(&pdev->dev, "Can't map SMMU PMU @%pa\n",
-> +				&mem_resource_1->start);
-> +			return PTR_ERR(mem_map_1);
-> +		}
-> +		smmu_pmu->reloc_base = mem_map_1;
-> +	} else {
-> +		smmu_pmu->reloc_base = smmu_pmu->reg_base;
-> +	}
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to get valid irq for smmu @%pa\n",
-> +			&mem_resource_0->start);
-> +		return irq;
-> +	}
+Oh, totally missed this. I honestly wonder why we then have all the
+various bpp module options in different drivers ...
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
