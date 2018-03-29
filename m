@@ -1,91 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeC2NCX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:02:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39766 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752278AbeC2NCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:02:22 -0400
-Date: Thu, 29 Mar 2018 15:02:20 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Alexander Dahl <ada@thorsis.com>, linux-arm-kernel@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Message-ID: <20180329130220.GM13942@piout.net>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
- <3478710.yJBBt3uoRT@ada>
- <20180329104542.GK13942@piout.net>
- <3103570.fW0XyqvKVi@ada>
- <20180329114255.GL13942@piout.net>
- <e3235587-8362-e1fc-a813-39f790a1c8b4@linaro.org>
+        id S1752725AbeC2NEJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:04:09 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:45556 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbeC2NEG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 09:04:06 -0400
+X-Google-Smtp-Source: AIpwx4/qNVF0lykf5/LDBgHIcaw0WxW5qSqP9UFY+PvIXcXx3tYes/03Ts7LYtOwlfE4OsUPGG5lQg==
+Date: Thu, 29 Mar 2018 14:04:02 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Chen Zhong <chen.zhong@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>, a.zummo@towertech.it,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        jcsing.lee@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org,
+        javier@osg.samsung.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        eddie.huang@mediatek.com, beomho.seo@samsung.com,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v6 0/6] Add MediaTek PMIC keys support
+Message-ID: <20180329130402.6fp7nofyp6iesmbv@dell>
+References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
+ <808b2029da224ab687fb0553cbc1c68e@mtkmbs08n1.mediatek.inc>
+ <1521685073.28226.10.camel@mtkswgap22>
+ <20180323185418.GD255819@dtor-ws>
+ <20180327080507.pgil6pw2mn4y2f4d@dell>
+ <3ece050c-7573-ef4e-2c89-61645a243a33@gmail.com>
+ <20180328102640.yx6nv5abfexmouuf@dell>
+ <1522290675.17084.8.camel@mhfsdcap03>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e3235587-8362-e1fc-a813-39f790a1c8b4@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1522290675.17084.8.camel@mhfsdcap03>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/03/2018 at 14:07:34 +0200, Daniel Lezcano wrote:
-> On 29/03/2018 13:42, Alexandre Belloni wrote:
-> > On 29/03/2018 at 13:31:18 +0200, Alexander Dahl wrote:
-> >> Pretty sure. I rebuilt the whole BSP and added another line to the kernel 
-> >> source to see if the tree I applied the patches to, was actually built:
-> >>
-> >>
-> >> diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
-> >> index 7fde9cfbf203..f85affc74a86 100644
-> >> --- a/drivers/clocksource/timer-atmel-tcb.c
-> >> +++ b/drivers/clocksource/timer-atmel-tcb.c
-> >> @@ -222,7 +222,8 @@ static int __init tc_clkevt_register(struct device_node *node,
-> >>                 goto err_slow;
-> >>         clk_disable(tce.clk);
-> >>  
-> >> -       clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
-> >> +       pr_info( "*** bits: 0x%x, BIT(bits): 0x%lx\n", bits, BIT(bits) );
-> >> +       clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
-> >>  
-> >>         ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
-> >>                           tce.clkevt.name, &tce);
-> >>
-> >>
+On Thu, 29 Mar 2018, Chen Zhong wrote:
+
+> On Wed, 2018-03-28 at 11:26 +0100, Lee Jones wrote:
+> > On Tue, 27 Mar 2018, Matthias Brugger wrote:
 > > 
-> > I've just tested on a g20, old driver:
-> > INT                NAME          RATE             MAX
-> >  16 [vel     at91_tick,]   175 Ints/s     (max:   231)
-> >  19 [ vel     tc_clkevt]   129 Ints/s     (max:   129)
+> > > 
+> > > 
+> > > On 03/27/2018 10:05 AM, Lee Jones wrote:
+> > > > On Fri, 23 Mar 2018, Dmitry Torokhov wrote:
+> > > >> On Thu, Mar 22, 2018 at 10:17:53AM +0800, Sean Wang wrote:
+> > > >>> Hi, Dmitry and Lee
+> > > >>>
+> > > >>> The series seems not being got merged. Are they good enough to be ready
+> > > >>> into the your tree?
+> > > >>>
+> > > >>> Recently I've tested the series with focusing on pwrkey event generated
+> > > >>> through interrupt when push and release the key on bpi-r2 board and then
+> > > >>> finally it's working fine. but for homekey it cannot be found on the
+> > > >>> board and thus I cannot have more tests more about it.
+> > > >>>
+> > > >>> Tested-by: Sean Wang <sean.wang@mediatek.com>
+> > > >>
+> > > >> You have my Ack on the input patch; I expect it go through Lee's tree as
+> > > >> there are some dependencies on mfd core piece.
+> > > > 
+> > > > Are you happy for me to merge the Input dt-bindings without your Ack?
+> > > > 
+> > > 
+> > > They got both Acked in v5, but the commit message was not updated:
+> > > https://patchwork.kernel.org/patch/9973721/
+> > > https://patchwork.kernel.org/patch/9973723/
 > > 
+> > Thanks Matthias.
 > > 
-> > new driver:
-> > INT                NAME          RATE             MAX
-> >  17 [vel     timer@fffa]   129 Ints/s     (max:   129)
-> >  18 [     vel     ttyS0]   175 Ints/s     (max:   231)
+> > Chen, can you collect all the Acks and repost as a RESEND please?
+> > 
 > 
-> Can you give in both platforms how fast the clocksource wraps up ?
+> Thanks Matthias, Lee, Dmitry and Sean for your comments.
 > 
+> Hi Lee,
+> 
+> I have collected the Acks by Rob and sent the v6:
+> https://patchwork.kernel.org/patch/10026705
+> https://patchwork.kernel.org/patch/10026707
+> 
+> Are they enough to be merged?
 
-sam9g20, old:
-clocksource: pit: mask: 0xfffffff max_cycles: 0xfffffff, max_idle_ns: 14370379250 ns
-sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every 21474836475000000ns
-clocksource: tcb_clksrc: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 114963034405 ns
+Oh, I see.
 
-sam9g20, new:
-clocksource: timer@fffa0000:0,1: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 114963034405 ns
-sched_clock: 32 bits at 16MHz, resolution 60ns, wraps every 129171948513ns
-
-sama5d4, old:
-clocksource: pit: mask: 0x7ffffff max_cycles: 0x7ffffff, max_idle_ns: 10859434279 ns
-sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every 21474836475000000ns
-clocksource: tcb_clksrc: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 173750949719 ns
-
-sama5d4, new:
-clocksource: timer@fc024000:0: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 173750949719 ns
-sched_clock: 32 bits at 11MHz, resolution 90ns, wraps every 195225786322ns
+I was asking about Dmitry's Ack.
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
