@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+qQ+FeKBMJ7ZQ2r/0H3nz6mcllKMi2d0sIuW9Zff9JAQXvEM0AVLDrr8uaNelJWLd1nlKn
-ARC-Seal: i=1; a=rsa-sha256; t=1522346528; cv=none;
+X-Google-Smtp-Source: AIpwx4/uDit56nZ+q7/G6NhSgrHIxr+nekFY8QwbxDTdpNHljf3ypiXot7hk/2VB2r8WDI3HXONh
+ARC-Seal: i=1; a=rsa-sha256; t=1522346525; cv=none;
         d=google.com; s=arc-20160816;
-        b=feLLN2nfybE0yIoKgTEx0Y1tyVIvRAyUmJjsgwyC4dkIoe4C5MJGId5fVRkYowY0Am
-         E/+Lg3EX6v4oDeIi2BtCdJspmcxSH0y+M6UZMJNSFgNChtZuoSjJoywEU4JgWTAkaiGP
-         F8RMSkq3C04mq6Xla8SyRwykOcLv4CTgCrIDNC6nNsFXBfHtnZciPQkzwoXzUd3CTGRr
-         WIehilLmXh8e8jmy3qsjcve2W1W1uSnRUnvtQrCuOP6T/AeEcteDPkQtt5skn0ZNi8Co
-         zUXXiw7RuasW7W1jZWMdmqq3Gzz7yoI0Frux0H5JIA3f1IjWRfmO+R3EEq9H7LGUCJ+n
-         xp7A==
+        b=gub87SEQw97QWw/rWZVUqqEmcgBoakzPEHQiDxSmiRAYgOPz6UaDd0pYpXXdtth7hI
+         cD01mW/QYByfR8e4Eh4TW43mJmuSjKpTZM3radT0Nm74LkfrLkKJToF3NkXG7NbfJU7S
+         tHOeRSPMq9k3ZWMxu73bMR6a8x7zihNJ4l6TQWfDuLc6Ud540JENRRjSp1CihZbxD2Mc
+         4+zD98OMAngz0LTm1dTpK9CcsSNm4tkjMebwsYP0bLcuPWoHqew0zoG75YSjJgWeRHwt
+         LkBa1cO+ZiYBvTNvq/teWUwoy34velrrYudzUfc37CRF5kGuJnWbXi+7Knv2lnYpNPra
+         D+Gg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QaJrjz0ybGc/dvgsdV9/dpTv5iE/JvuQrV/iABvZE3s=;
-        b=A2FSc1bZH0RLeA+Onv1mqiDbyiPQLV9J7IMSbEclByBIlHTNPIDKkC/4c9CKxrbGvn
-         7oL05xH7dgh1ke1zB4vreo0e8pHDvWmSTDOCCtwytCIUoIYzmCR4uwYNfSKB/sfR03Tl
-         GtdW7OwsbjsyDEOXBd1NlldiOlT8SeEw0nmy6yVvmJDs23m5BEo4PQijhv19kqnWRHeh
-         ap942cXKCmXc8i4pUhD1wGz9NMhdh2aXyC2Bd5RF6L+yV+rAxdfU/hvg9WrMXWVIYCSO
-         Cnq02+kx4WgzdUoQ9y+S9T0yU9xhR9O8HgbwLw4BwWOekK4Fyj+bHaY+/PgPRTVCoag8
-         BspA==
+        bh=gu8nIKo1SR78OdYOk9jbi/ZVYlLrYIep7NpCUpPwTe8=;
+        b=HZuuSoe4bmp/tL46jd75D27UMgC0ICs+qeAKmIfqFa1BI0Mh61XYj60DGQ6v3ueXvc
+         9gaVDJMAXN530ZgPpGKwG0vTqgQmGFLHt00jVYB7DtzCBkguJXdGIoCdMRcna1u8kcNN
+         Mq9F5CnlYhn9n5g3aar6Ka8oK5DQWhxbUR8tHpKSpSfrGmIWUCIHJBHqK9MSyZV+xBAr
+         dJHolLSO3cwH7eZmj/6pyIdl1BGvZz5Op+DG+qRAFyBE5irviPaURHkx8TV+RpwxP/2l
+         sID4MMeC4Mc+Cj+EMk7tOHwm19R/wUkp5x8NdUO5dHukviHFZ86WMLfu6Cjb8ghccERM
+         rd+w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roman Mashak <mrv@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
+	Xiumei Mu <xmu@redhat.com>,
+	Stefano Brivio <sbrivio@redhat.com>,
+	David Ahern <dsahern@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 17/47] net sched actions: return explicit error when tunnel_key mode is not specified
-Date: Thu, 29 Mar 2018 19:59:58 +0200
-Message-Id: <20180329175730.359995361@linuxfoundation.org>
+Subject: [PATCH 4.15 16/47] ipv6: Reflect MTU changes on PMTU of exceptions for MTU-less routes
+Date: Thu, 29 Mar 2018 19:59:57 +0200
+Message-Id: <20180329175730.282656709@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296033440716481?=
-X-GMAIL-MSGID: =?utf-8?q?1596296033440716481?=
+X-GMAIL-THRID: =?utf-8?q?1596296030104659502?=
+X-GMAIL-MSGID: =?utf-8?q?1596296030104659502?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,84 +51,162 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roman Mashak <mrv@mojatatu.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
 
-[ Upstream commit 51d4740f88affd85d49c04e3c9cd129c0e33bcb9 ]
+[ Upstream commit e9fa1495d738e34fcec88a3d2ec9101a9ee5b310 ]
 
-If set/unset mode of the tunnel_key action is not provided, ->init() still
-returns 0, and the caller proceeds with bogus 'struct tc_action *' object,
-this results in crash:
+Currently, administrative MTU changes on a given netdevice are
+not reflected on route exceptions for MTU-less routes, with a
+set PMTU value, for that device:
 
-% tc actions add action tunnel_key src_ip 1.1.1.1 dst_ip 2.2.2.1 id 7 index 1
+ # ip -6 route get 2001:db8::b
+ 2001:db8::b from :: dev vti_a proto kernel src 2001:db8::a metric 256 pref medium
+ # ping6 -c 1 -q -s10000 2001:db8::b > /dev/null
+ # ip netns exec a ip -6 route get 2001:db8::b
+ 2001:db8::b from :: dev vti_a src 2001:db8::a metric 0
+     cache expires 571sec mtu 4926 pref medium
+ # ip link set dev vti_a mtu 3000
+ # ip -6 route get 2001:db8::b
+ 2001:db8::b from :: dev vti_a src 2001:db8::a metric 0
+     cache expires 571sec mtu 4926 pref medium
+ # ip link set dev vti_a mtu 9000
+ # ip -6 route get 2001:db8::b
+ 2001:db8::b from :: dev vti_a src 2001:db8::a metric 0
+     cache expires 571sec mtu 4926 pref medium
 
-[   35.805515] general protection fault: 0000 [#1] SMP PTI
-[   35.806161] Modules linked in: act_tunnel_key kvm_intel kvm irqbypass
-crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64
-crypto_simd glue_helper cryptd serio_raw
-[   35.808233] CPU: 1 PID: 428 Comm: tc Not tainted 4.16.0-rc4+ #286
-[   35.808929] RIP: 0010:tcf_action_init+0x90/0x190
-[   35.809457] RSP: 0018:ffffb8edc068b9a0 EFLAGS: 00010206
-[   35.810053] RAX: 1320c000000a0003 RBX: 0000000000000001 RCX: 0000000000000000
-[   35.810866] RDX: 0000000000000070 RSI: 0000000000007965 RDI: ffffb8edc068b910
-[   35.811660] RBP: ffffb8edc068b9d0 R08: 0000000000000000 R09: ffffb8edc068b808
-[   35.812463] R10: ffffffffc02bf040 R11: 0000000000000040 R12: ffffb8edc068bb38
-[   35.813235] R13: 0000000000000000 R14: 0000000000000000 R15: ffffb8edc068b910
-[   35.814006] FS:  00007f3d0d8556c0(0000) GS:ffff91d1dbc40000(0000)
-knlGS:0000000000000000
-[   35.814881] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   35.815540] CR2: 000000000043f720 CR3: 0000000019248001 CR4: 00000000001606a0
-[   35.816457] Call Trace:
-[   35.817158]  tc_ctl_action+0x11a/0x220
-[   35.817795]  rtnetlink_rcv_msg+0x23d/0x2e0
-[   35.818457]  ? __slab_alloc+0x1c/0x30
-[   35.819079]  ? __kmalloc_node_track_caller+0xb1/0x2b0
-[   35.819544]  ? rtnl_calcit.isra.30+0xe0/0xe0
-[   35.820231]  netlink_rcv_skb+0xce/0x100
-[   35.820744]  netlink_unicast+0x164/0x220
-[   35.821500]  netlink_sendmsg+0x293/0x370
-[   35.822040]  sock_sendmsg+0x30/0x40
-[   35.822508]  ___sys_sendmsg+0x2c5/0x2e0
-[   35.823149]  ? pagecache_get_page+0x27/0x220
-[   35.823714]  ? filemap_fault+0xa2/0x640
-[   35.824423]  ? page_add_file_rmap+0x108/0x200
-[   35.825065]  ? alloc_set_pte+0x2aa/0x530
-[   35.825585]  ? finish_fault+0x4e/0x70
-[   35.826140]  ? __handle_mm_fault+0xbc1/0x10d0
-[   35.826723]  ? __sys_sendmsg+0x41/0x70
-[   35.827230]  __sys_sendmsg+0x41/0x70
-[   35.827710]  do_syscall_64+0x68/0x120
-[   35.828195]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-[   35.828859] RIP: 0033:0x7f3d0ca4da67
-[   35.829331] RSP: 002b:00007ffc9f284338 EFLAGS: 00000246 ORIG_RAX:
-000000000000002e
-[   35.830304] RAX: ffffffffffffffda RBX: 00007ffc9f284460 RCX: 00007f3d0ca4da67
-[   35.831247] RDX: 0000000000000000 RSI: 00007ffc9f2843b0 RDI: 0000000000000003
-[   35.832167] RBP: 000000005aa6a7a9 R08: 0000000000000001 R09: 0000000000000000
-[   35.833075] R10: 00000000000005f1 R11: 0000000000000246 R12: 0000000000000000
-[   35.833997] R13: 00007ffc9f2884c0 R14: 0000000000000001 R15: 0000000000674640
-[   35.834923] Code: 24 30 bb 01 00 00 00 45 31 f6 eb 5e 8b 50 08 83 c2 07 83 e2
-fc 83 c2 70 49 8b 07 48 8b 40 70 48 85 c0 74 10 48 89 14 24 4c 89 ff <ff> d0 48
-8b 14 24 48 01 c2 49 01 d6 45 85 ed 74 05 41 83 47 2c
-[   35.837442] RIP: tcf_action_init+0x90/0x190 RSP: ffffb8edc068b9a0
-[   35.838291] ---[ end trace a095c06ee4b97a26 ]---
+The first issue is that since commit fb56be83e43d ("net-ipv6: on
+device mtu change do not add mtu to mtu-less routes") we don't
+call rt6_exceptions_update_pmtu() from rt6_mtu_change_route(),
+which handles administrative MTU changes, if the regular route
+is MTU-less.
 
-Fixes: d0f6dd8a914f ("net/sched: Introduce act_tunnel_key")
-Signed-off-by: Roman Mashak <mrv@mojatatu.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+However, PMTU exceptions should be always updated, as long as
+RTAX_MTU is not locked. Keep the check for MTU-less main route,
+as introduced by that commit, but, for exceptions,
+call rt6_exceptions_update_pmtu() regardless of that check.
+
+Once that is fixed, one problem remains: MTU changes are not
+reflected if the new MTU is higher than the previous one,
+because rt6_exceptions_update_pmtu() doesn't allow that. We
+should instead allow PMTU increase if the old PMTU matches the
+local MTU, as that implies that the old MTU was the lowest in the
+path, and PMTU discovery might lead to different results.
+
+The existing check in rt6_mtu_change_route() correctly took that
+case into account (for regular routes only), so factor it out
+and re-use it also in rt6_exceptions_update_pmtu().
+
+While at it, fix comments style and grammar, and try to be a bit
+more descriptive.
+
+Reported-by: Xiumei Mu <xmu@redhat.com>
+Fixes: fb56be83e43d ("net-ipv6: on device mtu change do not add mtu to mtu-less routes")
+Fixes: f5bbe7ee79c2 ("ipv6: prepare rt6_mtu_change() for exception table")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Acked-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_tunnel_key.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv6/route.c |   71 ++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 42 insertions(+), 29 deletions(-)
 
---- a/net/sched/act_tunnel_key.c
-+++ b/net/sched/act_tunnel_key.c
-@@ -153,6 +153,7 @@ static int tunnel_key_init(struct net *n
- 		metadata->u.tun_info.mode |= IP_TUNNEL_INFO_TX;
- 		break;
- 	default:
-+		ret = -EINVAL;
- 		goto err_out;
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -1510,7 +1510,30 @@ static void rt6_exceptions_remove_prefsr
  	}
+ }
  
+-static void rt6_exceptions_update_pmtu(struct rt6_info *rt, int mtu)
++static bool rt6_mtu_change_route_allowed(struct inet6_dev *idev,
++					 struct rt6_info *rt, int mtu)
++{
++	/* If the new MTU is lower than the route PMTU, this new MTU will be the
++	 * lowest MTU in the path: always allow updating the route PMTU to
++	 * reflect PMTU decreases.
++	 *
++	 * If the new MTU is higher, and the route PMTU is equal to the local
++	 * MTU, this means the old MTU is the lowest in the path, so allow
++	 * updating it: if other nodes now have lower MTUs, PMTU discovery will
++	 * handle this.
++	 */
++
++	if (dst_mtu(&rt->dst) >= mtu)
++		return true;
++
++	if (dst_mtu(&rt->dst) == idev->cnf.mtu6)
++		return true;
++
++	return false;
++}
++
++static void rt6_exceptions_update_pmtu(struct inet6_dev *idev,
++				       struct rt6_info *rt, int mtu)
+ {
+ 	struct rt6_exception_bucket *bucket;
+ 	struct rt6_exception *rt6_ex;
+@@ -1519,20 +1542,22 @@ static void rt6_exceptions_update_pmtu(s
+ 	bucket = rcu_dereference_protected(rt->rt6i_exception_bucket,
+ 					lockdep_is_held(&rt6_exception_lock));
+ 
+-	if (bucket) {
+-		for (i = 0; i < FIB6_EXCEPTION_BUCKET_SIZE; i++) {
+-			hlist_for_each_entry(rt6_ex, &bucket->chain, hlist) {
+-				struct rt6_info *entry = rt6_ex->rt6i;
+-				/* For RTF_CACHE with rt6i_pmtu == 0
+-				 * (i.e. a redirected route),
+-				 * the metrics of its rt->dst.from has already
+-				 * been updated.
+-				 */
+-				if (entry->rt6i_pmtu && entry->rt6i_pmtu > mtu)
+-					entry->rt6i_pmtu = mtu;
+-			}
+-			bucket++;
++	if (!bucket)
++		return;
++
++	for (i = 0; i < FIB6_EXCEPTION_BUCKET_SIZE; i++) {
++		hlist_for_each_entry(rt6_ex, &bucket->chain, hlist) {
++			struct rt6_info *entry = rt6_ex->rt6i;
++
++			/* For RTF_CACHE with rt6i_pmtu == 0 (i.e. a redirected
++			 * route), the metrics of its rt->dst.from have already
++			 * been updated.
++			 */
++			if (entry->rt6i_pmtu &&
++			    rt6_mtu_change_route_allowed(idev, entry, mtu))
++				entry->rt6i_pmtu = mtu;
+ 		}
++		bucket++;
+ 	}
+ }
+ 
+@@ -3521,25 +3546,13 @@ static int rt6_mtu_change_route(struct r
+ 	   Since RFC 1981 doesn't include administrative MTU increase
+ 	   update PMTU increase is a MUST. (i.e. jumbo frame)
+ 	 */
+-	/*
+-	   If new MTU is less than route PMTU, this new MTU will be the
+-	   lowest MTU in the path, update the route PMTU to reflect PMTU
+-	   decreases; if new MTU is greater than route PMTU, and the
+-	   old MTU is the lowest MTU in the path, update the route PMTU
+-	   to reflect the increase. In this case if the other nodes' MTU
+-	   also have the lowest MTU, TOO BIG MESSAGE will be lead to
+-	   PMTU discovery.
+-	 */
+ 	if (rt->dst.dev == arg->dev &&
+-	    dst_metric_raw(&rt->dst, RTAX_MTU) &&
+ 	    !dst_metric_locked(&rt->dst, RTAX_MTU)) {
+ 		spin_lock_bh(&rt6_exception_lock);
+-		if (dst_mtu(&rt->dst) >= arg->mtu ||
+-		    (dst_mtu(&rt->dst) < arg->mtu &&
+-		     dst_mtu(&rt->dst) == idev->cnf.mtu6)) {
++		if (dst_metric_raw(&rt->dst, RTAX_MTU) &&
++		    rt6_mtu_change_route_allowed(idev, rt, arg->mtu))
+ 			dst_metric_set(&rt->dst, RTAX_MTU, arg->mtu);
+-		}
+-		rt6_exceptions_update_pmtu(rt, arg->mtu);
++		rt6_exceptions_update_pmtu(idev, rt, arg->mtu);
+ 		spin_unlock_bh(&rt6_exception_lock);
+ 	}
+ 	return 0;
