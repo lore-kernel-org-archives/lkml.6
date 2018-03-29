@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752911AbeC2L0Y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:26:24 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59628 "EHLO
+        id S1753231AbeC2LhI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:37:08 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59218 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752855AbeC2L0T (ORCPT
+        with ESMTP id S1752892AbeC2L0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:26:19 -0400
+        Thu, 29 Mar 2018 07:26:23 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
         linux-arch@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
         netdev@vger.kernel.org
-Subject: [PATCH 011/109] net: socket: add __sys_socket() helper; remove in-kernel call to syscall
-Date: Thu, 29 Mar 2018 13:22:48 +0200
-Message-Id: <20180329112426.23043-12-linux@dominikbrodowski.net>
+Subject: [PATCH 009/109] net: socket: add __sys_sendto() helper; remove in-kernel call to syscall
+Date: Thu, 29 Mar 2018 13:22:46 +0200
+Message-Id: <20180329112426.23043-10-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,8 +22,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_socket() allows us to avoid the
-internal calls to the sys_socket() syscall.
+Using the net-internal helper __sys_sendto() allows us to avoid the
+internal calls to the sys_sendto() syscall.
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
@@ -33,68 +33,88 @@ Cc: David S. Miller <davem@davemloft.net>
 Cc: netdev@vger.kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- include/linux/socket.h | 1 +
- net/compat.c           | 2 +-
- net/socket.c           | 9 +++++++--
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ include/linux/socket.h |  3 +++
+ net/compat.c           |  3 ++-
+ net/socket.c           | 19 ++++++++++++-------
+ 3 files changed, 17 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 6a9840271676..f8d040434a13 100644
+index 40cc93b91628..54b85abc7265 100644
 --- a/include/linux/socket.h
 +++ b/include/linux/socket.h
-@@ -363,5 +363,6 @@ extern int __sys_sendto(int fd, void __user *buff, size_t len,
- 			int addr_len);
- extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
- 			 int __user *upeer_addrlen, int flags);
-+extern int __sys_socket(int family, int type, int protocol);
+@@ -358,5 +358,8 @@ extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
+ extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
+ 			  unsigned int flags, struct sockaddr __user *addr,
+ 			  int __user *addr_len);
++extern int __sys_sendto(int fd, void __user *buff, size_t len,
++			unsigned int flags, struct sockaddr __user *addr,
++			int addr_len);
  
  #endif /* _LINUX_SOCKET_H */
 diff --git a/net/compat.c b/net/compat.c
-index 0ff9f7451b6f..5b3b74c5812e 100644
+index 2d8186c277b2..fc82982d9b84 100644
 --- a/net/compat.c
 +++ b/net/compat.c
-@@ -811,7 +811,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 
- 	switch (call) {
- 	case SYS_SOCKET:
--		ret = sys_socket(a0, a1, a[2]);
-+		ret = __sys_socket(a0, a1, a[2]);
+@@ -838,7 +838,8 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 		ret = sys_send(a0, compat_ptr(a1), a[2], a[3]);
  		break;
- 	case SYS_BIND:
- 		ret = sys_bind(a0, compat_ptr(a1), a[2]);
+ 	case SYS_SENDTO:
+-		ret = sys_sendto(a0, compat_ptr(a1), a[2], a[3], compat_ptr(a[4]), a[5]);
++		ret = __sys_sendto(a0, compat_ptr(a1), a[2], a[3],
++				   compat_ptr(a[4]), a[5]);
+ 		break;
+ 	case SYS_RECV:
+ 		ret = compat_sys_recv(a0, compat_ptr(a1), a[2], a[3]);
 diff --git a/net/socket.c b/net/socket.c
-index 45f6ea0d57a5..07f379e50def 100644
+index 712d99d8680f..3f037a21ba5e 100644
 --- a/net/socket.c
 +++ b/net/socket.c
-@@ -1332,7 +1332,7 @@ int sock_create_kern(struct net *net, int family, int type, int protocol, struct
- }
- EXPORT_SYMBOL(sock_create_kern);
- 
--SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol)
-+int __sys_socket(int family, int type, int protocol)
+@@ -1711,10 +1711,8 @@ SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
+  *	space and check the user space data area is readable before invoking
+  *	the protocol.
+  */
+-
+-SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
+-		unsigned int, flags, struct sockaddr __user *, addr,
+-		int, addr_len)
++int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
++		 struct sockaddr __user *addr,  int addr_len)
  {
- 	int retval;
  	struct socket *sock;
-@@ -1359,6 +1359,11 @@ SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol)
- 	return sock_map_fd(sock, flags & (O_CLOEXEC | O_NONBLOCK));
+ 	struct sockaddr_storage address;
+@@ -1752,6 +1750,13 @@ SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
+ 	return err;
  }
  
-+SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol)
++SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
++		unsigned int, flags, struct sockaddr __user *, addr,
++		int, addr_len)
 +{
-+	return __sys_socket(family, type, protocol);
++	return __sys_sendto(fd, buff, len, flags, addr, addr_len);
 +}
 +
  /*
-  *	Create a pair of connected sockets.
+  *	Send a datagram down a socket.
   */
-@@ -2463,7 +2468,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+@@ -1759,7 +1764,7 @@ SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
+ SYSCALL_DEFINE4(send, int, fd, void __user *, buff, size_t, len,
+ 		unsigned int, flags)
+ {
+-	return sys_sendto(fd, buff, len, flags, NULL, 0);
++	return __sys_sendto(fd, buff, len, flags, NULL, 0);
+ }
  
- 	switch (call) {
- 	case SYS_SOCKET:
--		err = sys_socket(a0, a1, a[2]);
-+		err = __sys_socket(a0, a1, a[2]);
+ /*
+@@ -2484,8 +2489,8 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 		err = sys_send(a0, (void __user *)a1, a[2], a[3]);
  		break;
- 	case SYS_BIND:
- 		err = sys_bind(a0, (struct sockaddr __user *)a1, a[2]);
+ 	case SYS_SENDTO:
+-		err = sys_sendto(a0, (void __user *)a1, a[2], a[3],
+-				 (struct sockaddr __user *)a[4], a[5]);
++		err = __sys_sendto(a0, (void __user *)a1, a[2], a[3],
++				   (struct sockaddr __user *)a[4], a[5]);
+ 		break;
+ 	case SYS_RECV:
+ 		err = sys_recv(a0, (void __user *)a1, a[2], a[3]);
 -- 
 2.16.3
