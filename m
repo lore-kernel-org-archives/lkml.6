@@ -1,219 +1,146 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2888441-1522260769-2-1047871371567645808
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522260768; b=LYEDJCnuQrW7Kp1D3M4V8S0B9OV9PLNdsJI8WhREQaXakUh
-    HNDL12V+HU8W4MR7iHiQfAmJu/xBk87CAycRgGVSgeAWd3JtSklzU36Kvf9I4+jY
-    gFYzU3KIby0uYJBaDuYdGnIE2M+ULO/H1xF8vVwzViqLSduUMnsYPYBO3kLlGqdZ
-    7XgFJmHP5CMgO4HI6N4a+woDgVDFI3XFefWVuaAd8Ow18TEAY6OkCZYIouQ/jfWi
-    DKxSYRiwzbYoq0ryabei3Zfn8AJ358EYita7iriDG5bRxyhFeiS2zullZX28ngq1
-    +9YQEXcUTjbkMcp7NhZoRDBdNTxYqGDUKKJNPlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:in-reply-to:references:sender:list-id;
-    s=arctest; t=1522260768; bh=nBqJ3uYJd/XArunoPy5x2+aC5xNRvVMJz8W
-    3ubjGz+8=; b=cGNSTyAimc8HB4m2yUFzrQPPl9uaPLRyhKXPdoBa/3bMthqjUy9
-    0YVOvTMAor3KtFNmSdq/hdgwcXn+hAIgnP0xZkkobv10heDc9Veu3nPZodcuLX5k
-    lnm94QOTuFoFFn7pCFLJGksAHl/Z+hWpy3ihp7P5KHQaot7h0OeR2NryMfdRXTLe
-    4vvRP7wGW3HpNOFCq+oQ9Apg29gdZe+qZHlqaGQtVuFKuejTIwZyY/q/AhodDO51
-    ragzwk9yvaUyMFp5qPE3hANRRDfcysshhjN3vtELHODVxCUE++oOmj8Pm1/JSbHQ
-    HVI5rGMRow3rEuAAnKHad8RmhxvYLcnOeXA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=s-opensource.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=s-opensource.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-75 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=s-opensource.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=s-opensource.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-75 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNKLrDrcMjFKlMgWUiArDI71nxjc264yEpCbREtn0EPAo+n52ggYxfzawN3FUm6Pn5IF4MPuPRXu4XmWfNZFeM/sJaWkDRDezioXuFI8Fg1KR6keO4ps
-    c8WjqQp3u37twJMSC4rxx4ckYIhmKVoTDYClUCqHLHjOzRW/c8jMgljVnAXc2/nXeDAsAShrKrUZ2kvZazOwUXcKzLSoCiZ8mNlV2NuGnSQNJe9pE6bhenlC
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=AUd_NHdVAAAA:8
-    a=QyXUC8HyAAAA:8 a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8 a=nyPMeuHwuaWql16yYm4A:9
-    a=NGXS0kB0m_rannUenejW:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752606AbeC1SMr (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Mar 2018 14:12:47 -0400
-Received: from osg.samsung.com ([64.30.133.232]:42241 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752318AbeC1SMq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 28 Mar 2018 14:12:46 -0400
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Linux Media Mailing List <linux-media@vger.kernel.org>,
-        stable@vger.kernel.org
-Cc: Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH for v3.18 07/18] media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
-Date: Wed, 28 Mar 2018 15:12:26 -0300
-Message-Id: <6e6f38fc8542cf41fffcd3067026c4f015564544.1522260310.git.mchehab@s-opensource.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <cover.1522260310.git.mchehab@s-opensource.com>
-References: <cover.1522260310.git.mchehab@s-opensource.com>
-In-Reply-To: <cover.1522260310.git.mchehab@s-opensource.com>
-References: <cover.1522260310.git.mchehab@s-opensource.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <3nfG8WgkbAFAAGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522332062; cv=none;
+        d=google.com; s=arc-20160816;
+        b=C+dZqB6+JgcxEjNWRnQjtF85L7HpDwjGxf7mUCdNDFVXezbRWv30ALPegeauWL9c/N
+         8U9Tb/UmIBuV0FC6BAtTCSmuigTXbMepv5A3BsXvemtWIB7J7l40qZpeBPeZvJlw9Lsa
+         8mjOdruOXdeEKzznscwTL2lT9QdsTP6v/e7zK/NBvW630htvBGl9bpHuIqT7AQWneupF
+         nHXK4AboqqqqRRuqFp3vjRhqcMP2jNWWeeXMJaSsuDpVXWP5mhHfvseXCIHPgd9Lg9dP
+         WkTS15e69EiJjP7FZwm/U7cnNGEUdA6vH67asD/TMsXhoYUp1vY4+rD0ZN7Gp3vbYNhl
+         K0GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:from:subject:message-id:date:mime-version
+         :arc-authentication-results;
+        bh=8ITM0kha/Z/7JRdsNcKo+YCjt7MCX9+nmiZ4xrEk+Ws=;
+        b=ndlkAA0fH+oI0JNjjY+L9DCJYtWuikNqTlW4Mga5WC8zM1NmQ43ryAVihwc97uWW2r
+         IsFJWZdV3pcXfJUYWCE4RhJRj6vvkoUiuZ1BO/YhMmW1vtgouS0Br8xEYHnpVNZsTHmt
+         87g3y59iYcSC3KkmeMOMpPxyxqIDCd4j8lADJnaSoA1PsaDLtspTge7s2/cnw/Y30px0
+         4a6rZL7s3miOk7JZWj9hkgm4/s13UthGHUDhV4i3WVYZwh/GibvV5v7jmqVorw8s8RoR
+         BdTWYW9Wcez5fjJGPUIrb2BcOSQQOXgZ+PsdL6khorFrK7l7X/5SrDR7z4r3rQYTwdzI
+         lC0A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of 3nfg8wgkbafaagh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3nfG8WgkbAFAAGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of 3nfg8wgkbafaagh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3nfG8WgkbAFAAGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+X-Google-Smtp-Source: AG47ELtpz/ihyR7wckTqY+pcqTUbWUvTCwgyp0X9cq7fx6Bj7OomN0hmwlnY5BTYam9wJWyFWA7UIA0tKjbtDqJxtUpYOH29WXGo
+MIME-Version: 1.0
+Date: Thu, 29 Mar 2018 07:01:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <089e0825cec8bfc60b05688d8de3@google.com>
+Subject: WARNING: kobject bug in device_add
+From: syzbot <syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596280865474192982?=
+X-GMAIL-MSGID: =?utf-8?q?1596280865474192982?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+Hello,
 
-commit 8ed5a59dcb47a6f76034ee760b36e089f3e82529 upstream.
+syzbot hit the following crash on upstream commit
+bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
+Merge tag 'pinctrl-v4.16-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=2e63711063e2d8f9ea27
 
-The struct v4l2_plane32 should set m.userptr as well. The same
-happens in v4l2_buffer32 and v4l2-compliance tests for this.
+So far this crash happened 19 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6431266371010560
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5933290817060864
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5328478354276352
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
+compiler: gcc (GCC) 7.1.1 20170620
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+WARNING: CPU: 1 PID: 4192 at lib/kobject.c:238  
+kobject_add_internal+0x8d4/0xbc0 lib/kobject.c:235
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 4192 Comm: syzkaller870399 Not tainted 4.16.0-rc6+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:kobject_add_internal+0x8d4/0xbc0 lib/kobject.c:235
+RSP: 0018:ffff8801b8127270 EFLAGS: 00010282
+RAX: dffffc0000000008 RBX: ffff8801b8a81150 RCX: ffffffff815ad0de
+RDX: 0000000000000000 RSI: 1ffff10037024dfe RDI: 1ffff10037024dd3
+RBP: ffff8801b8127368 R08: 1ffff10037024d95 R09: 0000000000000000
+R10: ffff8801b8127030 R11: 0000000000000000 R12: 1ffff10037024e54
+R13: 00000000ffffffef R14: ffff8801d5886680 R15: 1ffff10037024e58
+  kobject_add_varg lib/kobject.c:364 [inline]
+  kobject_add+0x132/0x1f0 lib/kobject.c:409
+  device_add+0x35d/0x1650 drivers/base/core.c:1787
+  device_create_groups_vargs+0x1f3/0x250 drivers/base/core.c:2430
+  device_create_vargs+0x46/0x60 drivers/base/core.c:2470
+  bdi_register_va.part.10+0xbb/0x8c0 mm/backing-dev.c:881
+  bdi_register_va+0x68/0x80 mm/backing-dev.c:897
+  super_setup_bdi_name+0x136/0x230 fs/super.c:1274
+  fuse_bdi_init fs/fuse/inode.c:987 [inline]
+  fuse_fill_super+0xe75/0x1d60 fs/fuse/inode.c:1107
+  mount_bdev+0x2b7/0x370 fs/super.c:1119
+  fuse_mount_blk+0x34/0x40 fs/fuse/inode.c:1219
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2509 [inline]
+  do_new_mount fs/namespace.c:2512 [inline]
+  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
+  SYSC_mount fs/namespace.c:3058 [inline]
+  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4407b9
+RSP: 002b:00007ffd93439858 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000004407b9
+RDX: 00000000004a27ce RSI: 0000000020000080 RDI: 00000000200000c0
+RBP: 0030656c69662f2e R08: 00007ffd93439870 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 0031656c69662f2e
+R13: 0000000000401be0 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 47 ++++++++++++++++-----------
- 1 file changed, 28 insertions(+), 19 deletions(-)
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-index b7dd98168a68..a27fd9105948 100644
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -287,19 +287,24 @@ static int get_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __
- 			 sizeof(up->data_offset)))
- 		return -EFAULT;
- 
--	if (memory == V4L2_MEMORY_USERPTR) {
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
-+		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
-+				 sizeof(up32->m.mem_offset)))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_USERPTR:
- 		if (get_user(p, &up32->m.userptr))
- 			return -EFAULT;
- 		up_pln = compat_ptr(p);
- 		if (put_user((unsigned long)up_pln, &up->m.userptr))
- 			return -EFAULT;
--	} else if (memory == V4L2_MEMORY_DMABUF) {
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up->m.fd, &up32->m.fd, sizeof(up32->m.fd)))
- 			return -EFAULT;
--	} else {
--		if (copy_in_user(&up->m.mem_offset, &up32->m.mem_offset,
--				 sizeof(up32->m.mem_offset)))
--			return -EFAULT;
-+		break;
- 	}
- 
- 	return 0;
-@@ -308,22 +313,32 @@ static int get_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __
- static int put_v4l2_plane32(struct v4l2_plane __user *up, struct v4l2_plane32 __user *up32,
- 			    enum v4l2_memory memory)
- {
-+	unsigned long p;
-+
- 	if (copy_in_user(up32, up, 2 * sizeof(__u32)) ||
- 	    copy_in_user(&up32->data_offset, &up->data_offset,
- 			 sizeof(up->data_offset)))
- 		return -EFAULT;
- 
--	/* For MMAP, driver might've set up the offset, so copy it back.
--	 * USERPTR stays the same (was userspace-provided), so no copying. */
--	if (memory == V4L2_MEMORY_MMAP)
-+	switch (memory) {
-+	case V4L2_MEMORY_MMAP:
-+	case V4L2_MEMORY_OVERLAY:
- 		if (copy_in_user(&up32->m.mem_offset, &up->m.mem_offset,
- 				 sizeof(up->m.mem_offset)))
- 			return -EFAULT;
--	/* For DMABUF, driver might've set up the fd, so copy it back. */
--	if (memory == V4L2_MEMORY_DMABUF)
-+		break;
-+	case V4L2_MEMORY_USERPTR:
-+		if (get_user(p, &up->m.userptr) ||
-+		    put_user((compat_ulong_t)ptr_to_compat((__force void *)p),
-+			     &up32->m.userptr))
-+			return -EFAULT;
-+		break;
-+	case V4L2_MEMORY_DMABUF:
- 		if (copy_in_user(&up32->m.fd, &up->m.fd,
- 				 sizeof(up->m.fd)))
- 			return -EFAULT;
-+		break;
-+	}
- 
- 	return 0;
- }
-@@ -383,6 +398,7 @@ static int get_v4l2_buffer32(struct v4l2_buffer *kp, struct v4l2_buffer32 __user
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (get_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -396,10 +412,6 @@ static int get_v4l2_buffer32(struct v4l2_buffer *kp, struct v4l2_buffer32 __user
- 				kp->m.userptr = (unsigned long)compat_ptr(tmp);
- 			}
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (get_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (get_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
-@@ -456,6 +468,7 @@ static int put_v4l2_buffer32(struct v4l2_buffer *kp, struct v4l2_buffer32 __user
- 	} else {
- 		switch (kp->memory) {
- 		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
- 			if (put_user(kp->m.offset, &up->m.offset))
- 				return -EFAULT;
- 			break;
-@@ -463,10 +476,6 @@ static int put_v4l2_buffer32(struct v4l2_buffer *kp, struct v4l2_buffer32 __user
- 			if (put_user(kp->m.userptr, &up->m.userptr))
- 				return -EFAULT;
- 			break;
--		case V4L2_MEMORY_OVERLAY:
--			if (put_user(kp->m.offset, &up->m.offset))
--				return -EFAULT;
--			break;
- 		case V4L2_MEMORY_DMABUF:
- 			if (put_user(kp->m.fd, &up->m.fd))
- 				return -EFAULT;
--- 
-2.14.3
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
