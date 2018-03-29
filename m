@@ -1,39 +1,79 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/4hyLCrAyrEgmG/y5fDrVcS3YD9uRca9mNHqq1Bn6NWy6Yy/P4fajFJCQ+2jhBtpkAk0VK
-ARC-Seal: i=1; a=rsa-sha256; t=1522346752; cv=none;
-        d=google.com; s=arc-20160816;
-        b=X/9Bm7N+3HHcxPpLe1CkOg+XRdyt4sa9XUnPGapaiT8bButIxJYkIcRHLfuzbIlXrg
-         8lO+xteadbMXQzgHtCrZBP0rFm88MxvC+D/06Wpk9UoiXCn/jqgTi8Nt6NOrX6KrlqI1
-         1zUXfRYSTzVgN4n29Z6MLBxbD+sO7niFsnlpe6BHQ9bHm7cBlQ6HkcwO3NzaRKXaPqDq
-         L6yLP0jhlw7ku40TrP7ZaWfCMGlYGWfaMzq+41qd92pU4E+VEXrf3ijBJ3nDsuDxyj6d
-         dTx23UNInubf2naux4Ml9qDaUnG3BSFg1qb6iBpmp/jpztpiab/q6ueyjN3TyYfLTgcq
-         dEeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=AqZH9N0/gAdPAz7yj56PNwxYie0uKT183UtqxSwjlE8=;
-        b=XSbnEB0aYZIfnkoGO1MJbIFvXO5x9V2BlUIbygStYF/ncIK3hvXnSSWXbzEZ1SXGeo
-         7slo+geE8Tuz6YtnnkKj/pI0giq+rdZjHrPw/TXOcpGdfkPu8kYUpHgFGj+9nnzBJ+wD
-         TaaFQmQl3sdRzv42zbkueeh9vNeY17mBXBF4jd6znguY0y4RA+WXMI2efJx7pZmXDoQN
-         SYBnfgs2sDzrXnqtnC+rtOn1Iwqip7tt9cD0+754LQaPkfeL7voGfIt0epOEq5yAhbGx
-         3TeZPDQ/1wY7VnvMgxehyW2lEWvmEcpcfAvcPVqOpRJXh3m62Cb6sD0BWVgwTIkLP1rd
-         vAHw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346749-2-445187364140143805
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522346749; b=bQVkNJUQ6VCIFG2yyacdBiW1MQmhghmKIY4ewmv2ySuTXo+ZE1
+    35NQ2i7PiLqxPNjKhFR/W/ajqqjdBontWCpwBF+okDYwDFdNuSWQYarfRMaGQ0n/
+    fcVUTJ0GkQWi83cooZZr9aouOBEphXBlCQEUrCCClQzZN0ctLDwt5k/PwFOLN+KV
+    dqS1HCi0qxU3d3HQV5ILRYGzOIC/4Jj9oUBpradzEJdKyE7lWG4x+sJ85278kOm/
+    cHLbgeJTyZni4nQomFOSeB36LxspP16/tkEPAnsU+udiJm2y/EY85chwaRJHhirt
+    YmV9XingT3ZIRdlCbi5LQFktamHF8XOf5VEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1522346749; bh=WO3K/4yn6+pVKbHqnVtBTK5zK90Ep/
+    FJjh+lkFe39W4=; b=dq7qC1dbdbmeAMRJBHSvwihOdlo05QhJfSQZwUo5V7ITnK
+    kR2BNhLBoSjPVJzc1f1wkyUGb0B/hgpb5Hs4lfSmD5Cy1/0JYK9LbeknqME+8+QZ
+    8Zn+LaWPFhGjIvC6DptX4V1jG7PmsU/G7iXrfquGRpG3MuT3hllD9FXJxUMQ7pvg
+    Kz5PvaOEr1cLrzrdmvgGiOYAN4dj2dTXMW0AKFE3KirVrQpc+dqQMyRL8ihmtlWE
+    vToOSXNIDgLQs5egplu6E8gRvL2DrTXWfM/uYYXZ4ofdfHcGAlCgBVxIdLrwcm3J
+    AnE0/cWmkzbieXjI/orBxwx8fOK8XyoMnmyFoeHQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJORdSmyP4Y7Ovxfq31boWVhkAkgwTdwQgfbAasUgH6lXZh6SAmismSCCTdvpxgT92pKbTIt9obue9JTL0/N4SlQ/J3K0CFfZM13EApdMYBcM0Dij449
+    WznJpHLIq/D5Mu0Dn2WgP33l7LiTQcWrga9DgsrAWmf9ZXz1ZlW4uB+06epMbkMObdvyiH1wHpIdeSjMYu0XCfAUO2SekdgPU+VAkJ4iMmNqFI76llLsxYDF
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=VnNF1IyMAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=r20Ri-rQZPU9uJhM6l4A:9
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753476AbeC2SFo (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 14:05:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59420 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752219AbeC2SFo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:05:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Guillaume Nault <g.nault@alphalink.fr>,
-	James Chapman <jchapman@katalix.com>,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 24/43] l2tp: do not accept arbitrary sockets
-Date: Thu, 29 Mar 2018 20:00:19 +0200
-Message-Id: <20180329175732.680051702@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 42/43] s390/qeth: lock read device while queueing next buffer
+Date: Thu, 29 Mar 2018 20:00:37 +0200
+Message-Id: <20180329175734.782126433@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -41,10 +81,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296098194339740?=
-X-GMAIL-MSGID: =?utf-8?q?1596296268241252355?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,75 +91,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit 17cfe79a65f98abe535261856c5aef14f306dff7 ]
+[ Upstream commit 17bf8c9b3d499d5168537c98b61eb7a1fcbca6c2 ]
 
-syzkaller found an issue caused by lack of sufficient checks
-in l2tp_tunnel_create()
+For calling ccw_device_start(), issue_next_read() needs to hold the
+device's ccwlock.
+This is satisfied for the IRQ handler path (where qeth_irq() gets called
+under the ccwlock), but we need explicit locking for the initial call by
+the MPC initialization.
 
-RAW sockets can not be considered as UDP ones for instance.
-
-In another patch, we shall replace all pr_err() by less intrusive
-pr_debug() so that syzkaller can find other bugs faster.
-Acked-by: Guillaume Nault <g.nault@alphalink.fr>
-Acked-by: James Chapman <jchapman@katalix.com>
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
-dst_release: dst:00000000d53d0d0f refcnt:-1
-Write of size 1 at addr ffff8801d013b798 by task syz-executor3/6242
-
-CPU: 1 PID: 6242 Comm: syz-executor3 Not tainted 4.16.0-rc2+ #253
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x24d lib/dump_stack.c:53
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23b/0x360 mm/kasan/report.c:412
- __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
- setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
- l2tp_tunnel_create+0x1354/0x17f0 net/l2tp/l2tp_core.c:1596
- pppol2tp_connect+0x14b1/0x1dd0 net/l2tp/l2tp_ppp.c:707
- SYSC_connect+0x213/0x4a0 net/socket.c:1640
- SyS_connect+0x24/0x30 net/socket.c:1621
- do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/l2tp/l2tp_core.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/s390/net/qeth_core_main.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1562,9 +1562,14 @@ int l2tp_tunnel_create(struct net *net,
- 		encap = cfg->encap;
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -526,8 +526,7 @@ static inline int qeth_is_cq(struct qeth
+ 	    queue == card->qdio.no_in_queues - 1;
+ }
  
- 	/* Quick sanity checks */
-+	err = -EPROTONOSUPPORT;
-+	if (sk->sk_type != SOCK_DGRAM) {
-+		pr_debug("tunl %hu: fd %d wrong socket type\n",
-+			 tunnel_id, fd);
-+		goto err;
-+	}
- 	switch (encap) {
- 	case L2TP_ENCAPTYPE_UDP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_UDP) {
- 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
-@@ -1572,7 +1577,6 @@ int l2tp_tunnel_create(struct net *net,
- 		}
- 		break;
- 	case L2TP_ENCAPTYPE_IP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_L2TP) {
- 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
+-
+-static int qeth_issue_next_read(struct qeth_card *card)
++static int __qeth_issue_next_read(struct qeth_card *card)
+ {
+ 	int rc;
+ 	struct qeth_cmd_buffer *iob;
+@@ -558,6 +557,17 @@ static int qeth_issue_next_read(struct q
+ 	return rc;
+ }
+ 
++static int qeth_issue_next_read(struct qeth_card *card)
++{
++	int ret;
++
++	spin_lock_irq(get_ccwdev_lock(CARD_RDEV(card)));
++	ret = __qeth_issue_next_read(card);
++	spin_unlock_irq(get_ccwdev_lock(CARD_RDEV(card)));
++
++	return ret;
++}
++
+ static struct qeth_reply *qeth_alloc_reply(struct qeth_card *card)
+ {
+ 	struct qeth_reply *reply;
+@@ -1183,7 +1193,7 @@ static void qeth_irq(struct ccw_device *
+ 		return;
+ 	if (channel == &card->read &&
+ 	    channel->state == CH_STATE_UP)
+-		qeth_issue_next_read(card);
++		__qeth_issue_next_read(card);
+ 
+ 	iob = channel->iob;
+ 	index = channel->buf_no;
