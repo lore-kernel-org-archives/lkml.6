@@ -1,125 +1,169 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1522360881; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+5m/CpQDPfVcWfnDtA8IzCBYbIdZ53vaz2Zlhk3v9bdMR3E+39sfRwE0WDyjDu59AKggX1
+ARC-Seal: i=1; a=rsa-sha256; t=1522346643; cv=none;
         d=google.com; s=arc-20160816;
-        b=K5Qlju3hvRTbiuejah5BqXHPYLmoZjOLJaX5usJYLRThcQbd0TE9Dl1zckDZdu8GBE
-         1G1rGyIGxccPqlbirinTNm1cAMwT1ZY35O3UEYWX1a0lA9lfx4O/txVUrZbJewHMQQIS
-         nsKwpXrC+6hw3WQEebF7HjEbABTpVKSAOeMpQ4zdlphCAoYluXWCoD0xGlJMWdqZQlVN
-         9M83viMy9Qn5/WKQF5Tag2mXelcdOLFvshvmZY8S+y2duc2CnScXI8mt3YvcUXoKEcBD
-         Twn2B0rrSzReLWkdUzjGlmt0NZRQ9S3HY2NabAUkTZILMC/+fgU/vj3yBs44fCn9Wra+
-         LqFw==
+        b=BLlAlJrCQHWtgAnbpPW2PXIYOB3vk/iQCdKTsWQ/I8j1wdDKWICkcXROULBVl92Yo9
+         xIAxNI0ulaIIAzFRcfr9qbvJeiSHdobqjsd0dSY0BIuZF1V0Ihg5gSbMkWP7pFvpnBTS
+         1gqjlRSBg1/Te/wZyCTuIAO4t9RGolhTwqGW0lYUpkC0M5QMJxIyos+C9H9Valu5T8wg
+         8PDO2EEowU4ya4ULdLmIwkByuWkBfglJ0tgpdXgIGKRRFTS20am7ssUNnGoOD6jgft03
+         TcaCyjF0xCCovGhqZYE0q9Q1M8rEMUHHIH60HyFymLb4VsT20CetmjWlRVcp/pKb2mXD
+         BmIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=FZjt9w+mdGeDvnhW0ZH9/Ril+GeROgeoJl3eLWH2HjM=;
-        b=XW75Gao2XLcp4IOrAUl4r5K4dFYCa+TdqbM2qUYM8XMUwtjgh6o6Atst19d5Z5lhJo
-         6yB/n+boY4upWzxIUhaeg3+h9y3x9mo2epvyxambkfEujgcv0E0JZHgeygJeoUSXrsNB
-         /1j+ydJBcs8j10H+jeU9xeMt2KL8ZEUKnhdhabOIkNI0DaMRX1sY3OvUlKlFrJwJGiXB
-         JFyKrFJOLiEu/PjWqjtPcq8QEe1drBjsrWKESpF1tGcsF1BF1wsDhUtvtscpl0lWFCpb
-         6uU12SYbOO6FJ38ibfqDe+A0xh7sA+9wgc2FM8eFjFm3hoNI66LGW9JwUBEV1pabAJJX
-         DMwQ==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=/TFtExxiiPUrDq08JKg+R3cTqOupoQzOOlbnZlTF0Kk=;
+        b=KZGMbUEE/EtE3oCbuWz3bmPwNjhjtK4UgeMWr6xOQPJu9SZQJmZgnZKVb7kuCoQ4gi
+         7u7Sccy57Sx+jY/OwU2A73iud50wJVLmGMIWk8ZO7cDH5kOkqoD2aJ7GP39SPpf/mmyT
+         5BRxWIt7T6a0d0P36FzUj73jtApn8LYIATsv6SJzVIIFjwg8UFlqPWMYuAS86D6PEfwy
+         0ixXPsxzDeZ6aXp0ZVHCEzUEfCVYl3kq3avZODDCFdkQs0Z/A/y+pacXFLdDxA1HhCB8
+         MVdlIOZxaVToP0nEbGCHWdOYKhdRVl5lAdBIHUV58Nn+yazmBEDYZNF/hEi5FBDhN383
+         4K+A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx48dyNv/Inpv6QoX47Q3E7ILqS25uedLYXjLINHQytZNPrCs/uRFjOdsaeYYqfivGvDXcwPLlg==
-Message-ID: <5abd622f.82151c0a.319b3.2d31@mx.google.com>
-Date: Thu, 29 Mar 2018 15:01:19 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.15.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.15.14-48-g98a6610fb36e
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 44/47] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
+Date: Thu, 29 Mar 2018 20:00:25 +0200
+Message-Id: <20180329175733.195996483@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
-Subject: Re: [PATCH 4.15 00/47] 4.15.15-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596296024525248460?=
-X-GMAIL-MSGID: =?utf-8?q?1596311082935171499?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1596296154266944554?=
+X-GMAIL-MSGID: =?utf-8?q?1596296154266944554?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.15.y boot: 130 boots: 1 failed, 114 passed with 12 offlin=
-e, 2 untried/unknown, 1 conflict (v4.15.14-48-g98a6610fb36e)
+4.15-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.15.y/kernel/v4.15.14-48-g98a6610fb36e/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.15.=
-y/kernel/v4.15.14-48-g98a6610fb36e/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.15.y
-Git Describe: v4.15.14-48-g98a6610fb36e
-Git Commit: 98a6610fb36ed6f07135fc9acf55d74ef9a1a769
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 70 unique boards, 23 SoC families, 17 builds out of 185
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-Boot Regressions Detected:
 
-arm:
+[ Upstream commit 484d802d0f2f29c335563fcac2a8facf174a1bbc ]
 
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-baylibre-seattle: failing since 1 day (last pass: v4.15.13 =
-- first fail: v4.15.13-106-g720c68fc1406)
+There is no need for complex checking between the last consumed index
+and current consumed index, a simple subtraction will do.
 
-    sunxi_defconfig:
-        sun8i-a33-sinlinx-sina33:
-            lab-free-electrons: new failure (last pass: v4.15.14)
+This also eliminates the possibility of a permanent transmit queue stall
+under the following conditions:
 
-Boot Failure Detected:
+- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
+  point where we run out of free descriptors, so we stop the transmit
+  queue at the end of bcm_sysport_xmit()
 
-arm:
+- because of our locking, we have the transmit process disable
+  interrupts which means we can be blocking the TX reclamation process
 
-    sunxi_defconfig
-        sun8i-a33-sinlinx-sina33: 1 failed lab
+- when TX reclamation finally runs, we will be computing the difference
+  between ring->c_index (last consumed index by SW) and what the HW
+  reports through its register
 
-Offline Platforms:
+- this register is masked with (ring->size - 1) = 0xff, which will lead
+  to stripping the upper bits of the index (register is 16-bits wide)
 
-arm:
+- we will be computing last_tx_cn as 0, which means there is no work to
+  be done, and we never wake-up the transmit queue, leaving it
+  permanently disabled
 
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
+A practical example is e.g: ring->c_index aka last_c_index = 12, we
+pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
+so last_tx_cn == 0, nothing happens.
 
-    multi_v7_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-        sun5i-r8-chip: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
-    tegra_defconfig:
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-
-arm64:
-
-    defconfig:
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxl-s905d-p230: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-collabora: PASS
-            lab-baylibre-seattle: FAIL
-
+Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/net/ethernet/broadcom/bcmsysport.c |   33 +++++++++++++----------------
+ drivers/net/ethernet/broadcom/bcmsysport.h |    2 -
+ 2 files changed, 16 insertions(+), 19 deletions(-)
+
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -855,10 +855,12 @@ static void bcm_sysport_tx_reclaim_one(s
+ static unsigned int __bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
+ 					     struct bcm_sysport_tx_ring *ring)
+ {
+-	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
+ 	unsigned int pkts_compl = 0, bytes_compl = 0;
+ 	struct net_device *ndev = priv->netdev;
++	unsigned int txbds_processed = 0;
+ 	struct bcm_sysport_cb *cb;
++	unsigned int txbds_ready;
++	unsigned int c_index;
+ 	u32 hw_ind;
+ 
+ 	/* Clear status before servicing to reduce spurious interrupts */
+@@ -871,29 +873,23 @@ static unsigned int __bcm_sysport_tx_rec
+ 	/* Compute how many descriptors have been processed since last call */
+ 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
+ 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
+-	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
+-
+-	last_c_index = ring->c_index;
+-	num_tx_cbs = ring->size;
+-
+-	c_index &= (num_tx_cbs - 1);
+-
+-	if (c_index >= last_c_index)
+-		last_tx_cn = c_index - last_c_index;
+-	else
+-		last_tx_cn = num_tx_cbs - last_c_index + c_index;
++	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
+ 
+ 	netif_dbg(priv, tx_done, ndev,
+-		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
+-		  ring->index, c_index, last_tx_cn, last_c_index);
++		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
++		  ring->index, ring->c_index, c_index, txbds_ready);
+ 
+-	while (last_tx_cn-- > 0) {
+-		cb = ring->cbs + last_c_index;
++	while (txbds_processed < txbds_ready) {
++		cb = &ring->cbs[ring->clean_index];
+ 		bcm_sysport_tx_reclaim_one(ring, cb, &bytes_compl, &pkts_compl);
+ 
+ 		ring->desc_count++;
+-		last_c_index++;
+-		last_c_index &= (num_tx_cbs - 1);
++		txbds_processed++;
++
++		if (likely(ring->clean_index < ring->size - 1))
++			ring->clean_index++;
++		else
++			ring->clean_index = 0;
+ 	}
+ 
+ 	u64_stats_update_begin(&priv->syncp);
+@@ -1406,6 +1402,7 @@ static int bcm_sysport_init_tx_ring(stru
+ 	netif_tx_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
+ 	ring->index = index;
+ 	ring->size = size;
++	ring->clean_index = 0;
+ 	ring->alloc_size = ring->size;
+ 	ring->desc_cpu = p;
+ 	ring->desc_count = ring->size;
+--- a/drivers/net/ethernet/broadcom/bcmsysport.h
++++ b/drivers/net/ethernet/broadcom/bcmsysport.h
+@@ -706,7 +706,7 @@ struct bcm_sysport_tx_ring {
+ 	unsigned int	desc_count;	/* Number of descriptors */
+ 	unsigned int	curr_desc;	/* Current descriptor */
+ 	unsigned int	c_index;	/* Last consumer index */
+-	unsigned int	p_index;	/* Current producer index */
++	unsigned int	clean_index;	/* Current clean index */
+ 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
+ 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
+ 	struct bcm_sysport_priv *priv;	/* private context backpointer */
