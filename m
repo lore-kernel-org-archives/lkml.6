@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx494xuBuoFWYGOvBSgUjypn/RmDMq7kk/l9zi3W9CEMaYsUsBvVLaAdoJyfSN3seV0//SMz9
-ARC-Seal: i=1; a=rsa-sha256; t=1522346870; cv=none;
+X-Google-Smtp-Source: AIpwx4/yYJDG9naTdPHI8JRHoilPBItQr7X5JCaflRUkKWw1n6Vl4r234j+Hclk380gztTrW+D4/
+ARC-Seal: i=1; a=rsa-sha256; t=1522346867; cv=none;
         d=google.com; s=arc-20160816;
-        b=i7nYO+W/hIpU3crx0fMeNEWKC2J2JslfRzXew7AUfr891a9ttzmvGWBDgknVx/ToGC
-         8LiQsrTDFYYCa9+uZUnmYunsDqf0R8JPwR3ttF5mnODsQq7qjfOLSDa7iXhqBNyxJkXa
-         Eo8yXKtfXxEd5eKpU9orp495cj1iWf/BAyPDJkiBXFSmePasMS6lJKJFjQ+Sr7EW9gGC
-         FgEDPOB6D6ICTDEjIea1hGvUzM3O0bEmcEFoHHuXy/AxfsOCN2By9sirNS1JhLMITvwc
-         F7tR2G1dwgsSLOVUS0UJcnvw0MPiLJMcC3BY/1ac/jupHJihNymC5taW40Xz1E16NQ25
-         nZWA==
+        b=XDyTTG3fMK93rRHmdJ682GMNORzmb2IKWpBzeKsNJp9rnGs9tvgIs5kLhDEVVHAdKU
+         Zn4nGH/ny67gpla21fDjYnt/ATsBBsqqaUrRM/TmJD7FHtPz30QPUtypgJ+vAOggoib8
+         pSsyknWhImF4Bk/Nd9Hmtyt3uznFooNw7UGQyFjlahn/iO6BGUsBHYQgfhRv7D2NqMNP
+         BUsilgGbmZ1uIBBBDkeUgCvIT0Xyn5W2kIytZ1cR6YkfugSm8dmuYM5IFaUIN9uEYHC8
+         7dTh4aa1cRA9eJnPG1fh1P4SpJ/+G/Y4U7/9lCBoppO0oE+kwIQy1+5+ODYERzGz3r0Y
+         rh5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kjOpv0O0B9EzIXyv3Ugr2fnykhoOMnIhVqnMPC/xISc=;
-        b=ZWHS1z4HWRikvRcrOJPtzvpqg2+lBp/e/G9PGhT2oFJCGQuJX8LV20iZbNcNDmhDsn
-         rgUYbmxJs5h8bODwGP1Bt+yAkX5waoN1/wL3zg6qisDQYu7qffR5y/EcgxZDhWjBN6Rn
-         ELlkFi5gNZQ/8Z3x0aWLn66/cwcqet1QSiB1f+H5AJMRBMpw0VNlEh5N4jh9e6Dd98RM
-         2ltKYV7WjMTahvdbENyuNvPJzyTMSJyqeiaSDyAnNvrycuqqeHdi7+2NSy6WPvASY7Gp
-         qTuQNegkZhPa+ON29LupSmZZr6dObEMmwKv6YfGLHZwtooqFnu3ajiZR/riU6Cy92Pdj
-         wobA==
+        bh=QQZL4XUHNWLslAJaj+3yY9Ag1+0aTG0d4A+48gZnPoA=;
+        b=cL4zHttzsG7OAVnstnTJyfUXFwojDZJbQbABshlprcn4mGdRgJmjx5ekPLfnpFmFeT
+         anNbG8CwaEYWPIs1YCjA3kujq0eBFy3JQNA7GWNlorhx/yXDIlpxcXWIx98ZdYhVWrcE
+         np1CYa9t9tXnFOxfn6NlycskuM9yFI+w0ocXPzrUkxTMd5SeuQlBcpELfOMUmRrnu0FY
+         4SSmJvHCtvfusOtfz4fH3NIPB3BIoBnMg/pRV7tP09MHXBUWD9JhkPtM+qBpRbiYSbYF
+         OF8lJpmGLJ//vdy9nd480294KlBW2ZURlNJd/PdMz95jGaJQ10gfqExiQGWghiRk+TA0
+         OdOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com,
-	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Kirill Tkhai <ktkhai@virtuozzo.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 04/20] dccp: check sk for closed state in dccp_sendmsg()
-Date: Thu, 29 Mar 2018 20:00:40 +0200
-Message-Id: <20180329175742.066392990@linuxfoundation.org>
+Subject: [PATCH 4.4 03/20] net: Fix hlist corruptions in inet_evict_bucket()
+Date: Thu, 29 Mar 2018 20:00:39 +0200
+Message-Id: <20180329175742.027507747@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296089395383323?=
-X-GMAIL-MSGID: =?utf-8?q?1596296392155362805?=
+X-GMAIL-THRID: =?utf-8?q?1596296057389749858?=
+X-GMAIL-MSGID: =?utf-8?q?1596296389401239331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
 
-[ Upstream commit 67f93df79aeefc3add4e4b31a752600f834236e2 ]
+[ Upstream commit a560002437d3646dafccecb1bf32d1685112ddda ]
 
-dccp_disconnect() sets 'dp->dccps_hc_tx_ccid' tx handler to NULL,
-therefore if DCCP socket is disconnected and dccp_sendmsg() is
-called after it, it will cause a NULL pointer dereference in
-dccp_write_xmit().
+inet_evict_bucket() iterates global list, and
+several tasks may call it in parallel. All of
+them hash the same fq->list_evictor to different
+lists, which leads to list corruption.
 
-This crash and the reproducer was reported by syzbot. Looks like
-it is reproduced if commit 69c64866ce07 ("dccp: CVE-2017-8824:
-use-after-free in DCCP code") is applied.
+This patch makes fq be hashed to expired list
+only if this has not been made yet by another
+task. Since inet_frag_alloc() allocates fq
+using kmem_cache_zalloc(), we may rely on
+list_evictor is initially unhashed.
 
-Reported-by: syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+The problem seems to exist before async
+pernet_operations, as there was possible to have
+exit method to be executed in parallel with
+inet_frags::frags_work, so I add two Fixes tags.
+This also may go to stable.
+
+Fixes: d1fe19444d82 "inet: frag: don't re-use chainlist for evictor"
+Fixes: f84c6821aa54 "net: Convert pernet_subsys, registered from inet_init()"
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/proto.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/ipv4/inet_fragment.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -789,6 +789,11 @@ int dccp_sendmsg(struct sock *sk, struct
- 	if (skb == NULL)
- 		goto out_release;
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -119,6 +119,9 @@ out:
  
-+	if (sk->sk_state == DCCP_CLOSED) {
-+		rc = -ENOTCONN;
-+		goto out_discard;
-+	}
+ static bool inet_fragq_should_evict(const struct inet_frag_queue *q)
+ {
++	if (!hlist_unhashed(&q->list_evictor))
++		return false;
 +
- 	skb_reserve(skb, sk->sk_prot->max_header);
- 	rc = memcpy_from_msg(skb_put(skb, len), msg, len);
- 	if (rc != 0)
+ 	return q->net->low_thresh == 0 ||
+ 	       frag_mem_limit(q->net) >= q->net->low_thresh;
+ }
