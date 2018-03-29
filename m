@@ -1,100 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751193AbeC2Awg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 20:52:36 -0400
-Received: from mga06.intel.com ([134.134.136.31]:49235 "EHLO mga06.intel.com"
+        id S1751187AbeC2A7M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 20:59:12 -0400
+Received: from ozlabs.org ([103.22.144.67]:36213 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751070AbeC2Awf (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 20:52:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,374,1517904000";
-   d="scan'208";a="215651601"
-Subject: Re: [PATCH v2 4/4] perf: Support perf -vv
-To: Ingo Molnar <mingo@kernel.org>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
- <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
- <20180328154622.65ate24g7be2xg3a@gmail.com>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <e0682929-5cc1-386e-fb53-e8971469e61c@linux.intel.com>
-Date: Thu, 29 Mar 2018 08:52:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1750971AbeC2A7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 20:59:10 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 29 Mar 2018 11:58:15 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: linux-next: manual merge of the vfs tree with the syscall tree
+Message-ID: <20180329115815.6eaa5261@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180328154622.65ate24g7be2xg3a@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cywNPsVnJUnYQVLoXv1XqLy"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/cywNPsVnJUnYQVLoXv1XqLy
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Al,
 
-On 3/28/2018 11:46 PM, Ingo Molnar wrote:
-> 
-> * Jin Yao <yao.jin@linux.intel.com> wrote:
-> 
->> $ ./perf -vv or ./perf -version --build-options
->> perf version 4.13.rc5.gcb1183
-> 
-> My suggestion was to add the 'version' subcommand like Git has, not a "-version"
-> option:
-> 
->    $ git version
->    git version 2.14.1
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
+Today's linux-next merge of the vfs tree got a conflict in:
 
-Hi Ingo,
+  fs/internal.h
+  fs/open.c
 
-Sorry about that. Actually I find it's a bug in my patch. The 'perf 
--vxyz' is mapped to 'perf --version' mistakenly. So 'perf -version' will 
-be mapped to 'perf --version' and 'perf -vabc' will be mapped too.
+between various commits from the syscall tree and commit:
 
-I will fix this bug.
+  cab64df19466 ("fs: fold open_check_o_direct into do_dentry_open")
 
-Currently, 'perf -v', 'perf version' and 'perf --version' have the same 
-behavior.
+from the vfs tree.
 
-So I will let:
-'perf -v --build-options',
-'perf version --build-options',
-'perf --version --build-options',
-'perf -vv'
-have same output.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-For example,
+--=20
+Cheers,
+Stephen Rothwell
 
-$ ./perf version --build-options
-perf version 4.13.rc5.gcb1183
-                  dwarf: [ on  ]
-     dwarf_getlocations: [ on  ]
-                  glibc: [ on  ]
-                   gtk2: [ on  ]
-               libaudit: [ OFF ]
-                 libbfd: [ on  ]
-                 libelf: [ on  ]
-                libnuma: [ on  ]
-numa_num_possible_cpus: [ on  ]
-                libperl: [ on  ]
-              libpython: [ on  ]
-               libslang: [ on  ]
-              libcrypto: [ on  ]
-              libunwind: [ on  ]
-     libdw-dwarf-unwind: [ on  ]
-                   zlib: [ on  ]
-                   lzma: [ on  ]
-              get_cpuid: [ on  ]
-                    bpf: [ on  ]
+diff --cc fs/internal.h
+index 980d005b21b4,5e797281d941..000000000000
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@@ -119,13 -111,6 +119,12 @@@ extern struct file *do_filp_open(int df
+  extern struct file *do_file_open_root(struct dentry *, struct vfsmount *,
+  		const char *, const struct open_flags *);
+ =20
+ +long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
+ +long do_faccessat(int dfd, const char __user *filename, int mode);
+ +int do_fchmodat(int dfd, const char __user *filename, umode_t mode);
+ +int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t g=
+roup,
+ +		int flag);
+ +
+- extern int open_check_o_direct(struct file *f);
+  extern int vfs_open(const struct path *, struct file *, const struct cred=
+ *);
+  extern struct file *filp_clone_open(struct file *);
+ =20
+diff --cc fs/open.c
+index d0e955b558ad,f587f3dbfc7f..000000000000
+--- a/fs/open.c
++++ b/fs/open.c
+@@@ -719,21 -682,6 +719,11 @@@ out
+  	return error;
+  }
+ =20
+ +SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
+ +{
+ +	return ksys_fchown(fd, user, group);
+ +}
+ +
+- int open_check_o_direct(struct file *f)
+- {
+- 	/* NB: we're sure to have correct a_ops only after f_op->open */
+- 	if (f->f_flags & O_DIRECT) {
+- 		if (!f->f_mapping->a_ops || !f->f_mapping->a_ops->direct_IO)
+- 			return -EINVAL;
+- 	}
+- 	return 0;
+- }
+-=20
+  static int do_dentry_open(struct file *f,
+  			  struct inode *inode,
+  			  int (*open)(struct inode *, struct file *),
 
-Thanks
-Jin Yao
+--Sig_/cywNPsVnJUnYQVLoXv1XqLy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq8OicACgkQAVBC80lX
+0GyV1QgAjarE6XGyrS02lbGmEcDkgq//kdH//4dyJbn6npSLXWtLQjxiQgRA69mm
+aNmUewF84OYJRIWzDGA3Tl+j/34Ou6Wlm4By052VbKcgxrV0cAOhpeGF0xEaj5Iy
+6cSh0gSB4h8KJlnqxZr1uG7GFn5bQokR/m2/+b7wI8YOYyENgz5cRhxD9MntYJon
+PgfP3tcUQS1NprZ1N/YY/I2Uy9H5qq1PiJYklXw78R76eAkECrqvPdQ9Wkz8Fd3x
+ZmOVXmJy3tEBw6UM91JDsx0BZyQpGo72UAPQD8OglHS7xT8kumfM2lmomeidgl8T
+Vul0WZ3Bs/XF23ld2FVa/tEIuNpGDA==
+=eyzU
+-----END PGP SIGNATURE-----
+
+--Sig_/cywNPsVnJUnYQVLoXv1XqLy--
