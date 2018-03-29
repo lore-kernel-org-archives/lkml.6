@@ -1,49 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751167AbeC2AqW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 20:46:22 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:41249 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbeC2AqV (ORCPT
+        id S1751200AbeC2AsP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 20:48:15 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44361 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeC2AsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 20:46:21 -0400
-X-Google-Smtp-Source: AIpwx4+KlC7yp7N51w4nJ6jw/JfXB5OSkzGEMbb/btv3FH0YQi6uBigJ5yjfKf83kItcxfxcY0dPYNKamN4CkZQVzig=
-MIME-Version: 1.0
-In-Reply-To: <20180328201424.GE26753@flask>
-References: <1521951515-5139-1-git-send-email-wanpengli@tencent.com> <20180328201424.GE26753@flask>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Thu, 29 Mar 2018 08:46:19 +0800
-Message-ID: <CANRm+CzTY6R4QoOHWSWz-6wUp+1krSMf3B0-RNpoUmu22uD8cg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] KVM: X86: Fix disable pv tlb flush when steal time is enabled
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Mar 2018 20:48:13 -0400
+X-Google-Smtp-Source: AIpwx49MawCXokT0CWa1ZDCIq8GEoJuqvvgBlsLREP25ZM2w1lQIp9rfywOCRnjPW7DrGfTrxHATXg==
+From: Laura Abbott <labbott@redhat.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc: Laura Abbott <labbott@redhat.com>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH 0/3] HOSTCFLAGS and HOSTLDFLAGS from the environment
+Date: Wed, 28 Mar 2018 17:48:02 -0700
+Message-Id: <20180329004805.7278-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T0kQ6s020554
 
-2018-03-29 4:14 GMT+08:00 Radim Krčmář <rkrcmar@redhat.com>:
-> 2018-03-24 21:18-0700, Wanpeng Li:
->> From: Wanpeng Li <wanpengli@tencent.com>
->>
->> PV TLB FLUSH can be turned on when steal time is enabled. The condition
->> reverse when the patch is sent out for several rounds review by mistake.
->
-> It was just one round and the m/l patch actually looks correct,
->
->> This patch fixes it.
->>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->> ---
->
-> I've modified the commit message and rebased it for kvm/master, thanks.
+Hi,
 
-Thanks Radim. :)
+Someone noted that scripts/tools userspace binaries packaged as part of
+the Fedora kernel were not picking up the recommended compiler flags
+(https://src.fedoraproject.org/rpms/redhat-rpm-config/blob/master/f/buildflags.md)
+This series lets the host ld and C flags be set on the command line
+similar to the kernel flags:
 
-Regards,
-Wanpeng Li
+make AFLAGS_HOSTCFLAGS="%{build_cflags}" AFLAGS_HOSTLDFLAGS="%{build_ldflags}"
+
+There's one more annoying case I didn't quite figure out with
+tools/objtool/fixdep since that's linked with ld directly but this
+covers the initial set of reports.
+
+Thanks,
+Laura
+
+Laura Abbott (3):
+  kbuild: Support HOSTLDFLAGS
+  objtool: Support HOSTCFLAGS and HOSTLDFLAGS
+  kbuild: Allow passing additional HOSTCFLAGS and HOSTLDFLAGS
+
+ Documentation/kbuild/kbuild.txt | 9 +++++++++
+ Makefile                        | 3 +++
+ scripts/Makefile.host           | 6 +++---
+ tools/build/Makefile.build      | 2 +-
+ tools/objtool/Makefile          | 5 +++--
+ 5 files changed, 19 insertions(+), 6 deletions(-)
+
+-- 
+2.16.2
