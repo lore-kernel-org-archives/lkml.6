@@ -1,147 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeC2QHd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:07:33 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46324 "EHLO ale.deltatee.com"
+        id S1752667AbeC2QIf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:08:35 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:46334 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750820AbeC2QHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:07:32 -0400
+        id S1751714AbeC2QHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:07:33 -0400
 From: Logan Gunthorpe <logang@deltatee.com>
 To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
 Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
         James Smart <james.smart@broadcom.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date: Thu, 29 Mar 2018 10:07:21 -0600
-Message-Id: <20180329160721.4691-5-logang@deltatee.com>
+Date: Thu, 29 Mar 2018 10:07:18 -0600
+Message-Id: <20180329160721.4691-2-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329160721.4691-1-logang@deltatee.com>
 References: <20180329160721.4691-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
 X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, hch@lst.de, sagi@grimberg.me, james.smart@broadcom.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 4/4] nvmet-fc: Use new SGL alloc/free helper for requests
+Subject: [PATCH 1/4] nvmet: Introduce helper functions to allocate and free request SGLs
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new helpers introduced earlier to allocate the SGLs for
-the request.
+Add helpers to allocate and free the SGL in a struct nvmet_req:
 
-To do this, we drop the appearantly redundant data_sg and data_sg_cnt
-members as they are identical to the existing req.sg and req.sg_cnt.
+int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
+void nvmet_req_free_sgl(struct nvmet_req *req)
+
+This will be expanded in a future patch to implement peer-to-peer
+memory and should be common with all target drivers. The presently
+unused sq argument in the alloc function will be necessary to
+decide whether to use peer-to-peer memory and obtain the correct
+provider to allocate the memory.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: James Smart <james.smart@broadcom.com>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Sagi Grimberg <sagi@grimberg.me>
 ---
- drivers/nvme/target/fc.c | 38 +++++++++++---------------------------
- 1 file changed, 11 insertions(+), 27 deletions(-)
+ drivers/nvme/target/core.c  | 16 ++++++++++++++++
+ drivers/nvme/target/nvmet.h |  2 ++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index 9f2f8ab83158..00135ff7d1c2 100644
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -74,8 +74,6 @@ struct nvmet_fc_fcp_iod {
- 	struct nvme_fc_cmd_iu		cmdiubuf;
- 	struct nvme_fc_ersp_iu		rspiubuf;
- 	dma_addr_t			rspdma;
--	struct scatterlist		*data_sg;
--	int				data_sg_cnt;
- 	u32				offset;
- 	enum nvmet_fcp_datadir		io_dir;
- 	bool				active;
-@@ -1696,43 +1694,34 @@ EXPORT_SYMBOL_GPL(nvmet_fc_rcv_ls_req);
- static int
- nvmet_fc_alloc_tgt_pgs(struct nvmet_fc_fcp_iod *fod)
- {
--	struct scatterlist *sg;
--	unsigned int nent;
- 	int ret;
- 
--	sg = sgl_alloc(fod->req.transfer_len, GFP_KERNEL, &nent);
--	if (!sg)
--		goto out;
-+	ret = nvmet_req_alloc_sgl(&fod->req, &fod->queue->nvme_sq);
-+	if (ret < 0)
-+		return NVME_SC_INTERNAL;
- 
--	fod->data_sg = sg;
--	fod->data_sg_cnt = nent;
--	ret = fc_dma_map_sg(fod->tgtport->dev, sg, nent,
-+	ret = fc_dma_map_sg(fod->tgtport->dev, fod->req.sg, fod->req.sg_cnt,
- 			    ((fod->io_dir == NVMET_FCP_WRITE) ?
- 				    DMA_FROM_DEVICE : DMA_TO_DEVICE));
- 			    /* note: write from initiator perspective */
- 	if (!ret)
--		goto out;
-+		return NVME_SC_INTERNAL;
- 
- 	return 0;
--
--out:
--	return NVME_SC_INTERNAL;
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index a78029e4e5f4..3770fb812657 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -575,6 +575,22 @@ void nvmet_req_execute(struct nvmet_req *req)
  }
+ EXPORT_SYMBOL_GPL(nvmet_req_execute);
  
- static void
- nvmet_fc_free_tgt_pgs(struct nvmet_fc_fcp_iod *fod)
- {
--	if (!fod->data_sg || !fod->data_sg_cnt)
-+	if (!fod->req.sg || !fod->req.sg_cnt)
- 		return;
- 
--	fc_dma_unmap_sg(fod->tgtport->dev, fod->data_sg, fod->data_sg_cnt,
-+	fc_dma_unmap_sg(fod->tgtport->dev, fod->req.sg, fod->req.sg_cnt,
- 				((fod->io_dir == NVMET_FCP_WRITE) ?
- 					DMA_FROM_DEVICE : DMA_TO_DEVICE));
--	sgl_free(fod->data_sg);
--	fod->data_sg = NULL;
--	fod->data_sg_cnt = 0;
--}
- 
-+	nvmet_req_free_sgl(&fod->req);
++int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq)
++{
++	req->sg = sgl_alloc(req->transfer_len, GFP_KERNEL, &req->sg_cnt);
++	if (!req->sg)
++		return -ENOMEM;
++
++	return 0;
 +}
++EXPORT_SYMBOL_GPL(nvmet_req_alloc_sgl);
++
++void nvmet_req_free_sgl(struct nvmet_req *req)
++{
++	sgl_free(req->sg);
++}
++EXPORT_SYMBOL_GPL(nvmet_req_free_sgl);
++
+ static inline bool nvmet_cc_en(u32 cc)
+ {
+ 	return (cc >> NVME_CC_EN_SHIFT) & 0x1;
+diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+index 417f6c0331cc..6f74cb2b7e37 100644
+--- a/drivers/nvme/target/nvmet.h
++++ b/drivers/nvme/target/nvmet.h
+@@ -271,6 +271,8 @@ bool nvmet_req_init(struct nvmet_req *req, struct nvmet_cq *cq,
+ void nvmet_req_uninit(struct nvmet_req *req);
+ void nvmet_req_execute(struct nvmet_req *req);
+ void nvmet_req_complete(struct nvmet_req *req, u16 status);
++int nvmet_req_alloc_sgl(struct nvmet_req *req, struct nvmet_sq *sq);
++void nvmet_req_free_sgl(struct nvmet_req *req);
  
- static bool
- queue_90percent_full(struct nvmet_fc_tgt_queue *q, u32 sqhd)
-@@ -1871,7 +1860,7 @@ nvmet_fc_transfer_fcp_data(struct nvmet_fc_tgtport *tgtport,
- 	fcpreq->fcp_error = 0;
- 	fcpreq->rsplen = 0;
- 
--	fcpreq->sg = &fod->data_sg[fod->offset / PAGE_SIZE];
-+	fcpreq->sg = &fod->req.sg[fod->offset / PAGE_SIZE];
- 	fcpreq->sg_cnt = DIV_ROUND_UP(tlen, PAGE_SIZE);
- 
- 	/*
-@@ -2083,7 +2072,7 @@ __nvmet_fc_fcp_nvme_cmd_done(struct nvmet_fc_tgtport *tgtport,
- 		 * There may be a status where data still was intended to
- 		 * be moved
- 		 */
--		if ((fod->io_dir == NVMET_FCP_READ) && (fod->data_sg_cnt)) {
-+		if ((fod->io_dir == NVMET_FCP_READ) && (fod->req.sg_cnt)) {
- 			/* push the data over before sending rsp */
- 			nvmet_fc_transfer_fcp_data(tgtport, fod,
- 						NVMET_FCOP_READDATA);
-@@ -2153,9 +2142,6 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport *tgtport,
- 	/* clear any response payload */
- 	memset(&fod->rspiubuf, 0, sizeof(fod->rspiubuf));
- 
--	fod->data_sg = NULL;
--	fod->data_sg_cnt = 0;
--
- 	ret = nvmet_req_init(&fod->req,
- 				&fod->queue->nvme_cq,
- 				&fod->queue->nvme_sq,
-@@ -2178,8 +2164,6 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport *tgtport,
- 			return;
- 		}
- 	}
--	fod->req.sg = fod->data_sg;
--	fod->req.sg_cnt = fod->data_sg_cnt;
- 	fod->offset = 0;
- 
- 	if (fod->io_dir == NVMET_FCP_WRITE) {
+ void nvmet_cq_setup(struct nvmet_ctrl *ctrl, struct nvmet_cq *cq, u16 qid,
+ 		u16 size);
 -- 
 2.11.0
