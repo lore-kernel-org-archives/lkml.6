@@ -1,77 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752278AbeC2Ppc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:45:32 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46182 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751161AbeC2Ppa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:45:30 -0400
-To: christian.koenig@amd.com, Christoph Hellwig <hch@infradead.org>
-Cc: linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-2-christian.koenig@amd.com>
- <20180328123830.GB25060@infradead.org>
- <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
- <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
- <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
- <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
- <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
- <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
- <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
- <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
- <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
-Date: Thu, 29 Mar 2018 09:45:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752492AbeC2PqJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:46:09 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:53678 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752290AbeC2PqF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:46:05 -0400
+Date: Thu, 29 Mar 2018 17:46:00 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180329154600.qhels5fqzzg364gj@earth.universe>
+References: <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180327121441.GH29239@sirena.org.uk>
+ <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180329133613.khldv72w3zj63vsk@earth.universe>
+ <20180329135904.GN5700@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hmjo6ahyvmg6zlgq"
+Content-Disposition: inline
+In-Reply-To: <20180329135904.GN5700@atomide.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--hmjo6ahyvmg6zlgq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 29/03/18 05:44 AM, Christian König wrote:
-> Am 28.03.2018 um 21:53 schrieb Logan Gunthorpe:
->>
->> On 28/03/18 01:44 PM, Christian König wrote:
->>> Well, isn't that exactly what dma_map_resource() is good for? As far as
->>> I can see it makes sure IOMMU is aware of the access route and
->>> translates a CPU address into a PCI Bus address.
->>> I'm using that with the AMD IOMMU driver and at least there it works
->>> perfectly fine.
->> Yes, it would be nice, but no arch has implemented this yet. We are just
->> lucky in the x86 case because that arch is simple and doesn't need to do
->> anything for P2P (partially due to the Bus and CPU addresses being the
->> same). But in the general case, you can't rely on it.
-> 
-> Well, that an arch hasn't implemented it doesn't mean that we don't have 
-> the right interface to do it.
+Hi,
 
-Yes, but right now we don't have a performant way to check if we are
-doing P2P or not in the dma_map_X() wrappers. And this is necessary to
-check if the DMA ops in use support it or not. We can't have the
-dma_map_X() functions do the wrong thing because they don't support it yet.
+On Thu, Mar 29, 2018 at 06:59:04AM -0700, Tony Lindgren wrote:
+> > I think cpcap is always the clock and frame master, but I think
+> > mdm6600 is the remote side and OMAP is not involved at all.
+>=20
+> OK. So could it be just an alsamixer on/off toggle then for
+> "Modem" or something similar?
 
-> Devices integrated in the CPU usually only "claim" to be PCIe devices. 
-> In reality their memory request path go directly through the integrated 
-> north bridge. The reason for this is simple better throughput/latency.
+I think so. We might want to have an "Mode" enum instead, though.
+That can be extended, once we unlock the other modes (bluetooth,
+bluetooth call).
 
-These are just more reasons why our patchset restricts to devices behind
-a switch. And more mess for someone to deal with if they need to relax
-that restriction.
+> > > Then using the n_gsm ts 27.010 uart mux, I dial:
+> > >=20
+> > > ./ngsm-rw 1 "AT+CFUN=3D1"		# connect to network
+> > > U0001+CFUN:OK
+> > > ./ngsm-rw 2 "AT+CMUT=3D0"		# unmute speaker over ch2, do this over qm=
+i?
+> > > U0001+CMUT:OK
+> > > ./ngsm-rw 1 "ATD#123"		# dial number
+> > > U0001D:OK
+>=20
+> There's a typo above, it should be just ATD123 where 123 is the
+> number.
+>=20
+> I was just doing few test calls to robots. Payback time for all
+> the robocalls, you know! :)
+>
+> > > And I do hear a voice talking over the speakerphone :) Sorry have not=
+ tested the
+> > > mic yet..
+>=20
+> And calling a person I can hear the other end but the mic is
+> not working. So maybe I need to tweak the alsamixer settings
+> too for mic?
 
-Logan
+Your override kills most settings from alsamixer. You can try to
+just override CPCAP_REG_VAUDIOC, CPCAP_REG_CC and CPCAP_REG_CDI
+and setup everything else with alsamixer.
+
+-- Sebastian
+
+--hmjo6ahyvmg6zlgq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlq9CjUACgkQ2O7X88g7
++przkQ//X/5hsQChHBeVIjqlDhdUuMlOScdWIVtCkqvjvmIJ6BOuOwH1/eTaZo3S
+vPetWimm69AYWiGZVe2RH6eIQol1SaGGTT0kUrOa3drtybAyp2Ck2YCukumgk8NX
+ZNaPcg8X7eCTpHwd92bTocoThtnS7hBbLCQkpZWMYtmVRn8OibVaB7C+6wSr+tlu
+bkrtLNDa5Zy7y8lKv98Kb9+7UrDPzRXN2q8JGb3NiH2S0by6+nB6uAQvApO7XuD+
+VnhlsvnVR6BFakVdqiaM1En9omPSGdpxGhluqoroWaftgHMc2jjopahk6Yjj6UtQ
+iLkkZ5yWRVcogTNYTFKCYhfOyQiJVycYL7yf7TIiLwxBgJJi/2nuGtUWcsMQ/GAW
+lhGKcqTuoK7SBW+mM0ghzpa8QzP50KVBlwQBAkKkVzEXmL/6MP3ipUCXHnssPlt/
+57n7vgcJTG+cxM03rQsIO1ut6+Jo3ytTFuRkhBLnEOXSSwPwalxLQYDudSqaty6h
+S5XnJUfbLt4DC9e9n38lOpuLFmI5U7XtXn8nghteUxJNytKDfyavJeA0qUb0UqNN
+R3Hdy71YL2NYUWh5KfjIRosTCn66KuOnhMFbyRdTL7tMlRiix0GreDDkJQ4CIr1l
+J0XAghjRrSqzcHccvOGeQiKlBtpw6XONEX/Ka0CWrB6RqeHQ37g=
+=2Fvm
+-----END PGP SIGNATURE-----
+
+--hmjo6ahyvmg6zlgq--
