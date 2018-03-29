@@ -1,231 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752216AbeC2V1J (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 17:27:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60492 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbeC2V1F (ORCPT
+        id S1752043AbeC2VhU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 17:37:20 -0400
+Received: from sonic307-9.consmr.mail.bf2.yahoo.com ([74.6.134.48]:42399 "EHLO
+        sonic307-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751189AbeC2VhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 17:27:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9466660C67
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v4 01/14] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Fri, 30 Mar 2018 00:26:34 +0300
-Message-Id: <1522358807-10413-2-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+        Thu, 29 Mar 2018 17:37:18 -0400
+X-YMail-OSG: 0_dq0cEVM1mQXHW8Q0umOHPEmR08_0ZUXKrbj6ZQSsYerwkVK9v_Srr1P9CfXIi
+ j6oZ4v2igo.EYMZQTtWdqKyiBVzNTqSQkBXcdzI2K28CBmXVsNeBk7qNBt1TvcqQKPp7YbF_G4kz
+ erbM3tFqxrieX_cmQXT3I4r4E7vzT96D.Q2O3isTm6ussvUq5FGHVcG5GRUmm1thjGzwHmj22cOl
+ S4kZR4qX.3nQu9H6BljmV8a0136gMxtD9LxQz2jsU94LEnm8DwVsBmLtRNqS5E20W1rIwZ4pr8Z7
+ ZMya97GKyk54su_QeiD1zNbe7TM7FWfXXZZTLe6qLUSSAg5dWgTmVNRdhHsMBJyFuHiWD2QfxvoV
+ xE1RQ1D4Ke.xLcOfMXC9.yolofjBclFNGBklqy.Cr9F2EnhpD_3Y6ii3vfFIXBlIwCWxCns8bKCX
+ Rvj3hKAKyQmwb3j2c63Say_Ls7hEO9oACozttR452uvmxkcgacxsamKtct5S2AHiFg3VtZjrhxXZ
+ 4.UNHh1d7JLbW7z3VxTv0bI08Sf95yfINGHS3tUQIWcyXfLECu0R5pbSnsg5ftig-
+Subject: Re: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
+ after boot time
+To: Sargun Dhillon <sargun@sargun.me>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
+        igor.stoppa@huawei.com, jmorris@namei.org, sds@tycho.nsa.gov,
+        paul@paul-moore.com, plautrba@redhat.com
+References: <cover.1522357211.git.sargun@sargun.me>
+ <5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
+Date: Thu, 29 Mar 2018 14:37:10 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver provides kernel level API for other drivers
-to access the MSM8996 L2 cache registers.
-Separating the L2 access code from the PMU driver and
-making it public to allow other drivers use it.
-The accesses must be separated with a single spinlock,
-maintained in this driver.
+On 3/29/2018 2:14 PM, Sargun Dhillon wrote:
+> This patch introduces a mechanism to add mutable hooks and immutable
+> hooks to the callback chain. It adds an intermediary item to the
+> chain which separates mutable and immutable hooks. Immutable hooks
+> are then marked as read-only, as well as the hook heads. This does
+> not preclude some hooks being able to be mutated (removed).
+>
+> It also wraps the hook unloading, and execution with an SRCU. One
+> SRCU is used across all hooks, as the SRCU struct can be memory
+> intensive, and hook execution time in general should be relatively
+> short.
+>
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> ---
+>  include/linux/lsm_hooks.h  |  23 ++---
+>  security/Kconfig           |   2 +-
+>  security/apparmor/lsm.c    |   2 +-
+>  security/commoncap.c       |   2 +-
+>  security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
+>  security/selinux/hooks.c   |   5 +-
+>  security/smack/smack_lsm.c |   3 +-
+>  security/tomoyo/tomoyo.c   |   3 +-
+>  security/yama/yama_lsm.c   |   2 +-
+>  9 files changed, 196 insertions(+), 56 deletions(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 09bc60fb35f1..689e5e72fb38 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
+>  extern char *lsm_names;
+>  
+>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+> -				char *lsm);
+> +				char *lsm, bool is_mutable);
+>  
+> -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
+> +#define __lsm_ro_after_init	__ro_after_init
+> +/* Currently required to handle SELinux runtime hook disable. */
+> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+> +#define __lsm_mutable_after_init
+>  /*
+>   * Assuring the safety of deleting a security module is up to
+>   * the security module involved. This may entail ordering the
+> @@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>   * disabling their module is a good idea needs to be at least as
+>   * careful as the SELinux team.
+>   */
+> -static inline void security_delete_hooks(struct security_hook_list *hooks,
+> -						int count)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < count; i++)
+> -		hlist_del_rcu(&hooks[i].list);
+> -}
+> -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+> -
+> -/* Currently required to handle SELinux runtime hook disable. */
+> -#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+> -#define __lsm_ro_after_init
+> +extern void security_delete_hooks(struct security_hook_list *hooks, int count);
+>  #else
+> -#define __lsm_ro_after_init	__ro_after_init
+> +#define __lsm_mutable_after_init __ro_after_init
+>  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+>  
+>  extern int __init security_module_enable(const char *module);
+> diff --git a/security/Kconfig b/security/Kconfig
+> index c4302067a3ad..a3b8b1142e6f 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -32,7 +32,7 @@ config SECURITY
+>  	  If you are unsure how to answer this question, answer N.
+>  
+>  config SECURITY_WRITABLE_HOOKS
+> -	depends on SECURITY
+> +	depends on SECURITY && SRCU
+>  	bool
+>  	default n
+>  
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 9a65eeaf7dfa..d6cca8169df0 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
+>  		goto buffers_out;
+>  	}
+>  	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
+> -				"apparmor");
+> +				"apparmor", false);
+>  
+>  	/* Report that AppArmor successfully initialized */
+>  	apparmor_initialized = 1;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 48620c93d697..fe4b0d9d44ce 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+>  void __init capability_add_hooks(void)
+>  {
+>  	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+> -				"capability");
+> +				"capability", false);
+>  }
+>  
+>  #endif /* CONFIG_SECURITY */
+> diff --git a/security/security.c b/security/security.c
+> index 3cafff61b049..2ddb64864e3e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -29,6 +29,11 @@
+>  #include <linux/backing-dev.h>
+>  #include <linux/string.h>
+>  #include <net/flow.h>
+> +#include <linux/srcu.h>
+> +#include <linux/mutex.h>
+> +
+> +#define SECURITY_HOOK_COUNT \
+> +	(sizeof(security_hook_heads) / sizeof(struct hlist_head))
+>  
+>  #define MAX_LSM_EVM_XATTR	2
+>  
+> @@ -36,7 +41,10 @@
+>  #define SECURITY_NAME_MAX	10
+>  
+>  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+> +EXPORT_SYMBOL_GPL(security_hook_heads);
+> +
+>  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+> +static DEFINE_MUTEX(security_hook_mutex);
+>  
+>  char *lsm_names;
+>  /* Boot-time LSM user choice */
+> @@ -53,6 +61,103 @@ static void __init do_security_initcalls(void)
+>  	}
+>  }
+>  
+> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+> +DEFINE_STATIC_SRCU(security_hook_srcu);
+> +static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
+> +#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/perf/qcom_l2_pmu.c           | 44 +-----------------------
- drivers/soc/qcom/Makefile            |  2 ++
- drivers/soc/qcom/kryo-l2-accessors.c | 66 ++++++++++++++++++++++++++++++++++++
- include/soc/qcom/kryo-l2-accessors.h | 20 +++++++++++
- 4 files changed, 89 insertions(+), 43 deletions(-)
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
-
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 842135c..2a8363e 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -31,6 +31,7 @@
- #include <asm/barrier.h>
- #include <asm/local64.h>
- #include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
- 
- #define MAX_L2_CTRS             9
- 
-@@ -87,8 +88,6 @@
- #define L2_COUNTER_RELOAD       BIT_ULL(31)
- #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
- 
--#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
--#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
- 
- #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
- 
-@@ -107,48 +106,7 @@
- #define L2_EVENT_STREX                     0x421
- #define L2_EVENT_CLREX                     0x422
- 
--static DEFINE_RAW_SPINLOCK(l2_access_lock);
- 
--/**
-- * set_l2_indirect_reg: write value to an L2 register
-- * @reg: Address of L2 register.
-- * @value: Value to be written to register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static void set_l2_indirect_reg(u64 reg, u64 val)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	write_sysreg_s(val, L2CPUSRDR_EL1);
--	isb();
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--}
--
--/**
-- * get_l2_indirect_reg: read an L2 register value
-- * @reg: Address of L2 register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static u64 get_l2_indirect_reg(u64 reg)
--{
--	u64 val;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	val = read_sysreg_s(L2CPUSRDR_EL1);
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--
--	return val;
--}
- 
- struct cluster_pmu;
- 
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index dcebf28..7e50fb5 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -12,3 +12,5 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-+obj-$(CONFIG_QCOM_APR) += apr.o
-+obj-y +=	kryo-l2-accessors.o
-diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-new file mode 100644
-index 0000000..b0356c2
---- /dev/null
-+++ b/drivers/soc/qcom/kryo-l2-accessors.c
-@@ -0,0 +1,66 @@
-+/*
-+ * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/spinlock.h>
-+#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
-+
-+#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-+#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
-+
-+static DEFINE_RAW_SPINLOCK(l2_access_lock);
-+
-+/**
-+ * set_l2_indirect_reg: write value to an L2 register
-+ * @reg: Address of L2 register.
-+ * @value: Value to be written to register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+void set_l2_indirect_reg(u64 reg, u64 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	write_sysreg_s(val, L2CPUSRDR_EL1);
-+	isb();
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+}
-+EXPORT_SYMBOL(set_l2_indirect_reg);
-+
-+/**
-+ * get_l2_indirect_reg: read an L2 register value
-+ * @reg: Address of L2 register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+u64 get_l2_indirect_reg(u64 reg)
-+{
-+	u64 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	val = read_sysreg_s(L2CPUSRDR_EL1);
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(get_l2_indirect_reg);
-diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-new file mode 100644
-index 0000000..3c796cf
---- /dev/null
-+++ b/include/soc/qcom/kryo-l2-accessors.h
-@@ -0,0 +1,20 @@
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-+#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-+
-+void set_l2_indirect_reg(u64 reg_addr, u64 val);
-+u64 get_l2_indirect_reg(u64 reg_addr);
-+
-+#endif
--- 
-1.9.1
+The HAS_FUNC() macro will work, but it's awkward outside of the
+call_..._hook() macros. I think you should document how to use it
+properly somewhere in here. There are enough cases where the
+call_..._hook() macros aren't used that someone could have trouble
+figuring out how to use it.
