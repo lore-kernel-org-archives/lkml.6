@@ -1,76 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeC2GTG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 02:19:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37200 "EHLO
+        id S1751211AbeC2GVG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 02:21:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37754 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751189AbeC2GTC (ORCPT
+        with ESMTP id S1750716AbeC2GVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 02:19:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4AD5E60AE0
+        Thu, 29 Mar 2018 02:21:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A42DA60591
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 2/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
-Date: Thu, 29 Mar 2018 11:47:53 +0530
-Message-Id: <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
-References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rfried@codeaurora.org
+From: Ramon Fried <rfried@codeaurora.org>
+To: kvalo@codeaurora.org, loic.poulain@linaro.org
+Cc: wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ramon Fried <rfried@codeaurora.org>
+Subject: [PATCH] wcn36xx: Disable 5GHz for wcn3610
+Date: Thu, 29 Mar 2018 09:20:58 +0300
+Message-Id: <20180329062058.31340-1-rfried@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amit Nischal <anischal@codeaurora.org>
+wcn3610 can only operate on 2.4GHz band due to RF limitation.
+If wcn36xx digital block is associated with an external IRIS
+RF module, retrieve the id and disable 5GHz band in case of
+wcn3610 id.
 
-Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
-devices would be used for communicating resource state requests to control
-the clocks managed by RPMh.
-
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Ramon Fried <rfried@codeaurora.org>
 ---
- .../devicetree/bindings/clock/qcom,rpmh.txt        | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh.txt
+ drivers/net/wireless/ath/wcn36xx/main.c    | 4 +++-
+ drivers/net/wireless/ath/wcn36xx/wcn36xx.h | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
-new file mode 100644
-index 0000000..8222c88
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
-@@ -0,0 +1,22 @@
-+Qualcomm Technologies, Inc. RPMh Clocks
-+-------------------------------------------------------
-+
-+Resource Power Manager Hardened (RPMh) manages shared resources on
-+some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-+other hardware subsystems via RSC to control clocks.
-+
-+Required properties :
-+- compatible : shall contain "qcom,rpmh-clk-sdm845"
-+
-+- #clock-cells : must contain 1
-+
-+Example :
-+
-+#include <dt-bindings/clock/qcom,rpmh.h>
-+
-+	&apps_rsc {
-+		clock_rpmh: qcom,rpmhclk {
-+		compatible = "qcom,rpmh-clk-sdm845";
-+		#clock-cells = <1>;
-+		};
-+	};
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
+index ab5be6d2c691..833531a68c95 100644
+--- a/drivers/net/wireless/ath/wcn36xx/main.c
++++ b/drivers/net/wireless/ath/wcn36xx/main.c
+@@ -1146,7 +1146,7 @@ static int wcn36xx_init_ieee80211(struct wcn36xx *wcn)
+ 		BIT(NL80211_IFTYPE_MESH_POINT);
+ 
+ 	wcn->hw->wiphy->bands[NL80211_BAND_2GHZ] = &wcn_band_2ghz;
+-	if (wcn->rf_id != RF_IRIS_WCN3620)
++	if (wcn->rf_id != RF_IRIS_WCN3610 && wcn->rf_id != RF_IRIS_WCN3620)
+ 		wcn->hw->wiphy->bands[NL80211_BAND_5GHZ] = &wcn_band_5ghz;
+ 
+ 	wcn->hw->wiphy->max_scan_ssids = WCN36XX_MAX_SCAN_SSIDS;
+@@ -1248,6 +1248,8 @@ static int wcn36xx_platform_get_resources(struct wcn36xx *wcn,
+ 	if (iris_node) {
+ 		if (of_device_is_compatible(iris_node, "qcom,wcn3620"))
+ 			wcn->rf_id = RF_IRIS_WCN3620;
++		else if (of_device_is_compatible(iris_node, "qcom,wcn3610"))
++			wcn->rf_id = RF_IRIS_WCN3620;
+ 		of_node_put(iris_node);
+ 	}
+ 
+diff --git a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+index 81017e6703b4..bc4d1a10d90e 100644
+--- a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
++++ b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+@@ -95,6 +95,7 @@ enum wcn36xx_ampdu_state {
+ #define WCN36XX_MAX_POWER(__wcn) (__wcn->hw->conf.chandef.chan->max_power)
+ 
+ #define RF_UNKNOWN	0x0000
++#define RF_IRIS_WCN3610	0x3610
+ #define RF_IRIS_WCN3620	0x3620
+ 
+ static inline void buff_to_be(u32 *buf, size_t len)
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
