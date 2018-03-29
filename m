@@ -1,132 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752605AbeC2Jra (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 05:47:30 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60648 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752334AbeC2Jr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 05:47:28 -0400
-Date: Thu, 29 Mar 2018 11:46:13 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, x86@kernel.org, tony.luck@intel.com
-Subject: Re: [PATCH v3 2/8] efi: Decode IA32/X64 Processor Error Section
-Message-ID: <20180329094613.GA29198@pd.tnic>
-References: <20180324184940.19762-1-Yazen.Ghannam@amd.com>
- <20180324184940.19762-3-Yazen.Ghannam@amd.com>
+        id S1752578AbeC2Jr3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 05:47:29 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:53663 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeC2Jr1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 05:47:27 -0400
+Subject: Re: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar()
+ handle 64-bit BARs properly
+To: Niklas Cassel <niklas.cassel@axis.com>,
+        <cyrille.pitchen@free-electrons.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+References: <20180328115018.31921-1-niklas.cassel@axis.com>
+ <20180328115018.31921-7-niklas.cassel@axis.com>
+CC: Niklas Cassel <niklass@axis.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <45971780-3a46-061d-bb76-2f450401c797@ti.com>
+Date: Thu, 29 Mar 2018 15:17:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180324184940.19762-3-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180328115018.31921-7-niklas.cassel@axis.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 24, 2018 at 01:49:34PM -0500, Yazen Ghannam wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
+Hi,
+
+On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
+> Since a 64-bit BAR consists of a BAR pair, we need to write to both
+> BARs in the BAR pair to setup the BAR properly.
 > 
-> Recognize the IA32/X64 Processor Error Section.
-> 
-> Do the section decoding in a new "cper-x86.c" file and add this to the
-> Makefile depending on a new "UEFI_CPER_X86" config option.
-> 
-> Print the Local APIC ID and CPUID info from the Processor Error Record.
-> 
-> The "Processor Error Info" and "Processor Context" fields will be
-> decoded in following patches.
-> 
-> Based on UEFI 2.7 Table 252. Processor Error Record.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 > ---
-> Link:
-> https://lkml.kernel.org/r/20180226193904.20532-3-Yazen.Ghannam@amd.com
+>  drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 > 
-> v2->v3:
-> * Fix table number in commit message.
-> * Don't print raw validation bits.
-> 
-> v1->v2:
-> * Change config option depends to "X86" instead of "X86_32 || X64_64".
-> * Remove extra newline in Makefile changes.
-> * Drop author copyright line.
-> 
->  drivers/firmware/efi/Kconfig    |  5 +++++
->  drivers/firmware/efi/Makefile   |  1 +
->  drivers/firmware/efi/cper-x86.c | 23 +++++++++++++++++++++++
-
-I'd prefer if that were:
-
-drivers/firmware/efi/cper/x86.c
-drivers/firmware/efi/cper/arm.c
-
-but that's Ard's call.
-
->  drivers/firmware/efi/cper.c     | 10 ++++++++++
->  include/linux/cper.h            |  2 ++
->  5 files changed, 41 insertions(+)
->  create mode 100644 drivers/firmware/efi/cper-x86.c
-> 
-> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
-> index 3098410abad8..781a4a337557 100644
-> --- a/drivers/firmware/efi/Kconfig
-> +++ b/drivers/firmware/efi/Kconfig
-> @@ -174,6 +174,11 @@ config UEFI_CPER_ARM
->  	depends on UEFI_CPER && ( ARM || ARM64 )
->  	default y
+> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+> index 5a0bb53c795c..571b90f88d84 100644
+> --- a/drivers/pci/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/dwc/pcie-designware-ep.c
+> @@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+>  		return ret;
 >  
-> +config UEFI_CPER_X86
-> +	bool
-> +	depends on UEFI_CPER && X86
-> +	default y
-> +
->  config EFI_DEV_PATH_PARSER
->  	bool
->  	depends on ACPI
-> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-> index cb805374f4bc..5f9f5039de50 100644
-> --- a/drivers/firmware/efi/Makefile
-> +++ b/drivers/firmware/efi/Makefile
-> @@ -31,3 +31,4 @@ obj-$(CONFIG_ARM)			+= $(arm-obj-y)
->  obj-$(CONFIG_ARM64)			+= $(arm-obj-y)
->  obj-$(CONFIG_EFI_CAPSULE_LOADER)	+= capsule-loader.o
->  obj-$(CONFIG_UEFI_CPER_ARM)		+= cper-arm.o
-> +obj-$(CONFIG_UEFI_CPER_X86)		+= cper-x86.o
-> diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
-> new file mode 100644
-> index 000000000000..863f0cd2a0ff
-> --- /dev/null
-> +++ b/drivers/firmware/efi/cper-x86.c
-> @@ -0,0 +1,23 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018, Advanced Micro Devices, Inc.
-> +
-> +#include <linux/cper.h>
-> +
-> +/*
-> + * We don't need a "CPER_IA" prefix since these are all locally defined.
-> + * This will save us a lot of line space.
-> + */
-> +#define VALID_LAPIC_ID			BIT_ULL(0)
-> +#define VALID_CPUID_INFO		BIT_ULL(1)
-> +
-> +void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
-> +{
-> +	if (proc->validation_bits & VALID_LAPIC_ID)
-> +		printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
-> +
-> +	if (proc->validation_bits & VALID_CPUID_INFO) {
-> +		printk("%sCPUID Info:\n", pfx);
-> +		print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
-> +			       sizeof(proc->cpuid), 0);
+>  	dw_pcie_dbi_ro_wr_en(pci);
+> -	dw_pcie_writel_dbi2(pci, reg, size - 1);
+> -	dw_pcie_writel_dbi(pci, reg, flags);
+> +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+> +		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
+> +		dw_pcie_writel_dbi(pci, reg, flags);
+> +		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
+> +		dw_pcie_writel_dbi(pci, reg + 4, 0);
+> +	} else {
+> +		dw_pcie_writel_dbi2(pci, reg, size - 1);
+> +		dw_pcie_writel_dbi(pci, reg, flags);
+> +	}
 
-That's dumping 48 bytes of static information for every error!
-Information which can be dumped only once when collecting system info.
 
--- 
-Regards/Gruss,
-    Boris.
+I think this should work too?
+	dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
+	dw_pcie_writel_dbi(pci, reg, flags);
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
+		dw_pcie_writel_dbi(pci, reg + 4, 0);
+	}
+
+Thanks
+Kishon
