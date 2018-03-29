@@ -1,311 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751124AbeC2O75 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:59:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51537 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbeC2O7z (ORCPT
+        id S1752051AbeC2PCt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:02:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45818 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbeC2PCr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:59:55 -0400
-Date: Thu, 29 Mar 2018 07:58:10 -0700
-From: tip-bot for Alexander Shishkin <tipbot@zytor.com>
-Message-ID: <tip-6ed70cf342de03c7b11cd4eb032705faeb29d284@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, eranian@google.com, acme@redhat.com,
-        jolsa@redhat.com, peterz@infradead.org, tglx@linutronix.de,
-        vincent.weaver@maine.edu, hpa@zytor.com, mathieu.poirier@linaro.org,
-        mingo@kernel.org, will.deacon@arm.com, torvalds@linux-foundation.org,
-        alexander.shishkin@linux.intel.com
-Reply-To: alexander.shishkin@linux.intel.com, will.deacon@arm.com,
-        torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org,
-        mathieu.poirier@linaro.org, tglx@linutronix.de, peterz@infradead.org,
-        jolsa@redhat.com, acme@redhat.com, vincent.weaver@maine.edu,
-        linux-kernel@vger.kernel.org, eranian@google.com
-In-Reply-To: <20180329120648.11902-1-alexander.shishkin@linux.intel.com>
-References: <20180329120648.11902-1-alexander.shishkin@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/pt, coresight: Clean up address filter
- structure
-Git-Commit-ID: 6ed70cf342de03c7b11cd4eb032705faeb29d284
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 29 Mar 2018 11:02:47 -0400
+Date: Thu, 29 Mar 2018 12:02:40 -0300
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Nasser <afshin.nasser@gmail.com>
+Cc: p.zabel@pengutronix.de, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, bparrot@ti.com, garsilva@embeddedor.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: tvp5150: fix color burst lock instability
+ on some hardware
+Message-ID: <20180329120240.169a5f33@vento.lan>
+In-Reply-To: <20180329143435.GA4392@smart-ThinkPad-T410>
+References: <20180325225633.5899-1-Afshin.Nasser@gmail.com>
+        <20180326064353.187f752c@vento.lan>
+        <20180326222921.GA5373@smart-ThinkPad-T410>
+        <20180329143435.GA4392@smart-ThinkPad-T410>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6ed70cf342de03c7b11cd4eb032705faeb29d284
-Gitweb:     https://git.kernel.org/tip/6ed70cf342de03c7b11cd4eb032705faeb29d284
-Author:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-AuthorDate: Thu, 29 Mar 2018 15:06:48 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 29 Mar 2018 16:07:22 +0200
+Em Thu, 29 Mar 2018 19:04:35 +0430
+Nasser <afshin.nasser@gmail.com> escreveu:
 
-perf/x86/pt, coresight: Clean up address filter structure
+> On Tue, Mar 27, 2018 at 02:59:21AM +0430, Nasser wrote:
+> Hi Mauro,
+> 
+> Thank you for taking time to review my patch.
+> 
+> May be I should rephrase the commit message to something like:
+> 	Use the default register values as suggested in TVP5150AM1 datasheet
+> 
+> As this is not a hardware-dependent issue. Am I missing something?
 
-This is a cosmetic patch that deals with the address filter structure's
-ambiguous fields 'filter' and 'range'. The former stands to mean that the
-filter's *action* should be to filter the traces to its address range if
-it's set or stop tracing if it's unset. This is confusing and hard on the
-eyes, so this patch replaces it with 'action' enum. The 'range' field is
-completely redundant (meaning that the filter is an address range as
-opposed to a single address trigger), as we can use zero size to mean the
-same thing.
+It is not a matter of rephasing, but, instead, to be sure that it won't
+cause regressions on existing hardware.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: http://lkml.kernel.org/r/20180329120648.11902-1-alexander.shishkin@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/intel/pt.c                       | 13 ++++--
- drivers/hwtracing/coresight/coresight-etm-perf.c | 59 +++++++++++-------------
- include/linux/perf_event.h                       | 14 ++++--
- kernel/events/core.c                             | 26 +++++++----
- 4 files changed, 63 insertions(+), 49 deletions(-)
+Yet, it would worth if you could describe at the patch what hardware
+did you test it, and if VBI was tested too.
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 81fd41d5a0d9..3b993942a0e4 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -1186,8 +1186,12 @@ static int pt_event_addr_filters_validate(struct list_head *filters)
- 	int range = 0;
- 
- 	list_for_each_entry(filter, filters, entry) {
--		/* PT doesn't support single address triggers */
--		if (!filter->range || !filter->size)
-+		/*
-+		 * PT doesn't support single address triggers and
-+		 * 'start' filters.
-+		 */
-+		if (!filter->size ||
-+		    filter->action == PERF_ADDR_FILTER_ACTION_START)
- 			return -EOPNOTSUPP;
- 
- 		if (!filter->inode) {
-@@ -1227,7 +1231,10 @@ static void pt_event_addr_filters_sync(struct perf_event *event)
- 
- 		filters->filter[range].msr_a  = msr_a;
- 		filters->filter[range].msr_b  = msr_b;
--		filters->filter[range].config = filter->filter ? 1 : 2;
-+		if (filter->action == PERF_ADDR_FILTER_ACTION_FILTER)
-+			filters->filter[range].config = 1;
-+		else
-+			filters->filter[range].config = 2;
- 		range++;
- 	}
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 8a0ad77574e7..4e5ed6597f2f 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -393,35 +393,26 @@ static int etm_addr_filters_validate(struct list_head *filters)
- 		if (++index > ETM_ADDR_CMP_MAX)
- 			return -EOPNOTSUPP;
- 
-+		/* filter::size==0 means single address trigger */
-+		if (filter->size) {
-+			/*
-+			 * The existing code relies on START/STOP filters
-+			 * being address filters.
-+			 */
-+			if (filter->action == PERF_ADDR_FILTER_ACTION_START ||
-+			    filter->action == PERF_ADDR_FILTER_ACTION_STOP)
-+				return -EOPNOTSUPP;
-+
-+			range = true;
-+		} else
-+			address = true;
-+
- 		/*
--		 * As taken from the struct perf_addr_filter documentation:
--		 *	@range:	1: range, 0: address
--		 *
- 		 * At this time we don't allow range and start/stop filtering
- 		 * to cohabitate, they have to be mutually exclusive.
- 		 */
--		if ((filter->range == 1) && address)
-+		if (range && address)
- 			return -EOPNOTSUPP;
--
--		if ((filter->range == 0) && range)
--			return -EOPNOTSUPP;
--
--		/*
--		 * For range filtering, the second address in the address
--		 * range comparator needs to be higher than the first.
--		 * Invalid otherwise.
--		 */
--		if (filter->range && filter->size == 0)
--			return -EINVAL;
--
--		/*
--		 * Everything checks out with this filter, record what we've
--		 * received before moving on to the next one.
--		 */
--		if (filter->range)
--			range = true;
--		else
--			address = true;
- 	}
- 
- 	return 0;
-@@ -441,18 +432,20 @@ static void etm_addr_filters_sync(struct perf_event *event)
- 		stop = start + filter->size;
- 		etm_filter = &filters->etm_filter[i];
- 
--		if (filter->range == 1) {
-+		switch (filter->action) {
-+		case PERF_ADDR_FILTER_ACTION_FILTER:
- 			etm_filter->start_addr = start;
- 			etm_filter->stop_addr = stop;
- 			etm_filter->type = ETM_ADDR_TYPE_RANGE;
--		} else {
--			if (filter->filter == 1) {
--				etm_filter->start_addr = start;
--				etm_filter->type = ETM_ADDR_TYPE_START;
--			} else {
--				etm_filter->stop_addr = stop;
--				etm_filter->type = ETM_ADDR_TYPE_STOP;
--			}
-+			break;
-+		case PERF_ADDR_FILTER_ACTION_START:
-+			etm_filter->start_addr = start;
-+			etm_filter->type = ETM_ADDR_TYPE_START;
-+			break;
-+		case PERF_ADDR_FILTER_ACTION_STOP:
-+			etm_filter->stop_addr = stop;
-+			etm_filter->type = ETM_ADDR_TYPE_STOP;
-+			break;
- 		}
- 		i++;
- 	}
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index ff39ab011376..e71e99eb9a4e 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -449,14 +449,19 @@ struct pmu {
- 	int (*filter_match)		(struct perf_event *event); /* optional */
- };
- 
-+enum perf_addr_filter_action_t {
-+	PERF_ADDR_FILTER_ACTION_STOP = 0,
-+	PERF_ADDR_FILTER_ACTION_START,
-+	PERF_ADDR_FILTER_ACTION_FILTER,
-+};
-+
- /**
-  * struct perf_addr_filter - address range filter definition
-  * @entry:	event's filter list linkage
-  * @inode:	object file's inode for file-based filters
-  * @offset:	filter range offset
-- * @size:	filter range size
-- * @range:	1: range, 0: address
-- * @filter:	1: filter/start, 0: stop
-+ * @size:	filter range size (size==0 means single address trigger)
-+ * @action:	filter/start/stop
-  *
-  * This is a hardware-agnostic filter configuration as specified by the user.
-  */
-@@ -465,8 +470,7 @@ struct perf_addr_filter {
- 	struct inode		*inode;
- 	unsigned long		offset;
- 	unsigned long		size;
--	unsigned int		range	: 1,
--				filter	: 1;
-+	enum perf_addr_filter_action_t	action;
- };
- 
- /**
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7517b4fb3ef4..fc1c330c6bd6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8803,7 +8803,8 @@ restart:
-  *  * for kernel addresses: <start address>[/<size>]
-  *  * for object files:     <start address>[/<size>]@</path/to/object/file>
-  *
-- * if <size> is not specified, the range is treated as a single address.
-+ * if <size> is not specified or is zero, the range is treated as a single
-+ * address; not valid for ACTION=="filter".
-  */
- enum {
- 	IF_ACT_NONE = -1,
-@@ -8853,6 +8854,11 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 		return -ENOMEM;
- 
- 	while ((start = strsep(&fstr, " ,\n")) != NULL) {
-+		static const enum perf_addr_filter_action_t actions[] = {
-+			[IF_ACT_FILTER]	= PERF_ADDR_FILTER_ACTION_FILTER,
-+			[IF_ACT_START]	= PERF_ADDR_FILTER_ACTION_START,
-+			[IF_ACT_STOP]	= PERF_ADDR_FILTER_ACTION_STOP,
-+		};
- 		ret = -EINVAL;
- 
- 		if (!*start)
-@@ -8869,12 +8875,11 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 		switch (token) {
- 		case IF_ACT_FILTER:
- 		case IF_ACT_START:
--			filter->filter = 1;
--
- 		case IF_ACT_STOP:
- 			if (state != IF_STATE_ACTION)
- 				goto fail;
- 
-+			filter->action = actions[token];
- 			state = IF_STATE_SOURCE;
- 			break;
- 
-@@ -8887,15 +8892,12 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 			if (state != IF_STATE_SOURCE)
- 				goto fail;
- 
--			if (token == IF_SRC_FILE || token == IF_SRC_KERNEL)
--				filter->range = 1;
--
- 			*args[0].to = 0;
- 			ret = kstrtoul(args[0].from, 0, &filter->offset);
- 			if (ret)
- 				goto fail;
- 
--			if (filter->range) {
-+			if (token == IF_SRC_KERNEL || token == IF_SRC_FILE) {
- 				*args[1].to = 0;
- 				ret = kstrtoul(args[1].from, 0, &filter->size);
- 				if (ret)
-@@ -8903,7 +8905,7 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 			}
- 
- 			if (token == IF_SRC_FILE || token == IF_SRC_FILEADDR) {
--				int fpos = filter->range ? 2 : 1;
-+				int fpos = token == IF_SRC_FILE ? 2 : 1;
- 
- 				filename = match_strdup(&args[fpos]);
- 				if (!filename) {
-@@ -8929,6 +8931,14 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 			if (kernel && event->attr.exclude_kernel)
- 				goto fail;
- 
-+			/*
-+			 * ACTION "filter" must have a non-zero length region
-+			 * specified.
-+			 */
-+			if (filter->action == PERF_ADDR_FILTER_ACTION_FILTER &&
-+			    !filter->size)
-+				goto fail;
-+
- 			if (!kernel) {
- 				if (!filename)
- 					goto fail;
+Anyway, I'll try to find some time to run some tests on the hardware
+I have with tvp5150 too.
+
+Regards,
+Mauro
+
+> 
+> > On Mon, Mar 26, 2018 at 06:43:53AM -0300, Mauro Carvalho Chehab wrote:  
+> > > Hi Nasser,
+> > > 
+> > > Em Mon, 26 Mar 2018 03:26:33 +0430
+> > > Nasser Afshin <afshin.nasser@gmail.com> escreveu:
+> > >   
+> > > > According to the datasheet, INTREQ/GPCL/VBLK should have a pull-up/down
+> > > > resistor if it's been disabled. On hardware that does not have such
+> > > > resistor, we should use the default output enable value.
+> > > > This prevents the color burst lock instability problem.  
+> > >  
+> > 
+> > Color burst lock instability is just a side effect of not using the
+> > recommended value for this bit. If we use the recommended setting, we
+> > will support more hardware while not breaking anything.
+> >   
+> > > If this is hardware-dependent, you should instead store it at
+> > > OF (for SoC) or pass via platform_data (for PCI/USB devices).
+> > >  
+> > 
+> > We have used the recommended value for this bit (as the datasheet
+> > suggests) while we are in tvp5150_init_enable but in tvp5150_s_stream
+> > we are using the wrong value.
+> > 
+> > Also we have this comment at line 319:
+> >     /* Default values as sugested at TVP5150AM1 datasheet */
+> > But as you see, TVP5150_MISC_CTL is not set to its suggested default
+> > value.
+> >    
+> > > > 
+> > > > Signed-off-by: Nasser Afshin <Afshin.Nasser@gmail.com>
+> > > > ---
+> > > >  drivers/media/i2c/tvp5150.c | 5 +++--
+> > > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+> > > > index 2476d812f669..0e9713814816 100644
+> > > > --- a/drivers/media/i2c/tvp5150.c
+> > > > +++ b/drivers/media/i2c/tvp5150.c
+> > > > @@ -328,7 +328,7 @@ static const struct i2c_reg_value tvp5150_init_default[] = {
+> > > >  		TVP5150_OP_MODE_CTL,0x00
+> > > >  	},
+> > > >  	{ /* 0x03 */
+> > > > -		TVP5150_MISC_CTL,0x01
+> > > > +		TVP5150_MISC_CTL,0x21
+> > > >  	},
+> > > >  	{ /* 0x06 */
+> > > >  		TVP5150_COLOR_KIL_THSH_CTL,0x10
+> > > > @@ -1072,7 +1072,8 @@ static int tvp5150_s_stream(struct v4l2_subdev *sd, int enable)
+> > > >  		 * Enable the YCbCr and clock outputs. In discrete sync mode
+> > > >  		 * (non-BT.656) additionally enable the the sync outputs.
+> > > >  		 */
+> > > > -		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE;
+> > > > +		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE |
+> > > > +			TVP5150_MISC_CTL_INTREQ_OE;
+> > > >  		if (decoder->mbus_type == V4L2_MBUS_PARALLEL)
+> > > >  			val |= TVP5150_MISC_CTL_SYNC_OE;
+> > > >  	}  
+> > > 
+> > > 
+> > > 
+> > > Thanks,
+> > > Mauro  
+> 
+> Thanks,
+> Nasser
+
+
+
+Thanks,
+Mauro
