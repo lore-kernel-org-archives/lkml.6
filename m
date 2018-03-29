@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49y4B7bZNZ9d7is5hcJ+jr8LzYHod5XDPK5zTspGftAY677KhUCS8GGSj25xA8fqHx1Cmmz
-ARC-Seal: i=1; a=rsa-sha256; t=1522346666; cv=none;
+X-Google-Smtp-Source: AIpwx4/hUEAIb2fRgJiFC6i2eQ4v8glxHhXVN8uTymcGIEOm0kp6TORJMVU21rPTH2M9HiB4/ti0
+ARC-Seal: i=1; a=rsa-sha256; t=1522346661; cv=none;
         d=google.com; s=arc-20160816;
-        b=amHwkhwBxKksBo4JX+ik3tyFldn/weqswFOSCx2o4ZJiPePFSTMSXLLnvxbbXGGq/u
-         M7FVGvwj1fI3N1M0w9CQTK3TXhn9sGZ0Jw71YD+evCoZ0FhZSc5gcPdC8/Afn6MvZKPt
-         Rglvp1TiPhol/u7hd9g6/k9zNNYGhXiJJZZ4+rGi+el3gS3URuQpNaHj4JUb/YX5U8km
-         MSJNWsOz2Njj3YaWv/LZlq/MAyydDNhiJoh/4DZgL33eYgOL7TrKqq9838X9FnP3QUNg
-         fB6LxfhoZZKUr9S0I2gLgfsFD2kiXH0aZ/CFsOQfZf0vZFD5XST7op2qWTh9dXkh8rfN
-         FOYg==
+        b=vKPRK5hjBSaj30SYreAtN+Alb3Dp8rivzIVHLQ/DpVfb6J4HkWFdnUjP085y0nm6Fr
+         /rqgHQ+E3iPW+ki0KN4fg7M5EHHHQfYGLqi7MO5zhS34WkxxzogAlZhquweSs7uK+1Bq
+         blSSiSiFq1UqoU9DOff9EJLfny3D2fB8EW7Pl5CaI7Pbh9bVMdNHOnmzNzcda3HH1kL9
+         ZfWvVcXBQ4ErAHnCUqszh2xwG4OXqY3xWngPNrhZK5ls1g1GjMB622Xvb4EIm9riRND6
+         FzRJQqptpKVYdrnqi0kTPTQ2IlIUKnuMc6raNJoNnwKUVifr6joIaHqF9uehqq8+TBtZ
+         uQFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=U4N98ONfecZpLNqhW9OGyBkPf5kZ5yFUxzNjUylybbM=;
-        b=uowUdmUIj01lilGIKK2OKIpEZD+SoC0sD2U/T1vNrHHhBfr5KdhmXfTKsmq1b66qUL
-         cqTAsQFyXfh5TfBN7qKLcB/e6pznbZatAobibP14KQoSGQgpLLp8Jx5EGQN5CRpFHKMk
-         2dLMa8YNp2kAnxpR1XZE0OMjegXGrdt1sN1tYqidbStefOunMwjbLgc/QN+fyHFo+jMj
-         pJs/9b6qoSek2QzSh2PyNi94pK8V/veSHqI9AlU2kXvz030B4l+Ibw4RBNqpx1hUvC6F
-         Uvb3H5uiGaWLusz1d7KCEtTt6PIlUhxZun8esIzmi+FWB7FuLklBVqiFK7nBoEAp0WIq
-         oqbQ==
+        bh=rr1WBrhAJ6676lPdoE50mPaeVLtycjr0i9o7YK2OEjI=;
+        b=FurLZxfD7oLlccYLDXnjnpd3mBscODq29Fh/D9b0+NUugt1AVQBzWYjR5/JHNcSmNE
+         RdH4GpAOM0hp5xvetlQSlPcdq7tZA1wB3YVUXJDucYuPJf1o3VfpmzYtth6o+EE4Cg0o
+         g+8FS6zvTqhHZD8CJ9K+wuP1Ytz9VBrWVP1DhdcZGp+wsnNK4/B9k4Qy2Sl2Tce+TYn2
+         MH20+GSiibGUPMJWRux2yxOU8qFyDqi5xMa1cQNKZO3XFD+XZknh/XADTEGdqcp5QY1s
+         wWBeXQSIHVFGsI3zXig7nmliPIyFfNILWFvy/LxHmFKjsOoIdIEMcb6I4f1fa3YXaKqN
+         sAQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paul Blakey <paulb@mellanox.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	Roman Mashak <mrv@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 16/43] rhashtable: Fix rhlist duplicates insertion
-Date: Thu, 29 Mar 2018 20:00:11 +0200
-Message-Id: <20180329175731.778320923@linuxfoundation.org>
+Subject: [PATCH 4.14 14/43] net sched actions: return explicit error when tunnel_key mode is not specified
+Date: Thu, 29 Mar 2018 20:00:09 +0200
+Message-Id: <20180329175731.555105215@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296039463531522?=
-X-GMAIL-MSGID: =?utf-8?q?1596296178278933961?=
+X-GMAIL-THRID: =?utf-8?q?1596296033440716481?=
+X-GMAIL-MSGID: =?utf-8?q?1596296172626892310?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,57 +50,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Blakey <paulb@mellanox.com>
+From: Roman Mashak <mrv@mojatatu.com>
 
 
-[ Upstream commit d3dcf8eb615537526bd42ff27a081d46d337816e ]
+[ Upstream commit 51d4740f88affd85d49c04e3c9cd129c0e33bcb9 ]
 
-When inserting duplicate objects (those with the same key),
-current rhlist implementation messes up the chain pointers by
-updating the bucket pointer instead of prev next pointer to the
-newly inserted node. This causes missing elements on removal and
-travesal.
+If set/unset mode of the tunnel_key action is not provided, ->init() still
+returns 0, and the caller proceeds with bogus 'struct tc_action *' object,
+this results in crash:
 
-Fix that by properly updating pprev pointer to point to
-the correct rhash_head next pointer.
+% tc actions add action tunnel_key src_ip 1.1.1.1 dst_ip 2.2.2.1 id 7 index 1
 
-Issue: 1241076
-Change-Id: I86b2c140bcb4aeb10b70a72a267ff590bb2b17e7
-Fixes: ca26893f05e8 ('rhashtable: Add rhlist interface')
-Signed-off-by: Paul Blakey <paulb@mellanox.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+[   35.805515] general protection fault: 0000 [#1] SMP PTI
+[   35.806161] Modules linked in: act_tunnel_key kvm_intel kvm irqbypass
+crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64
+crypto_simd glue_helper cryptd serio_raw
+[   35.808233] CPU: 1 PID: 428 Comm: tc Not tainted 4.16.0-rc4+ #286
+[   35.808929] RIP: 0010:tcf_action_init+0x90/0x190
+[   35.809457] RSP: 0018:ffffb8edc068b9a0 EFLAGS: 00010206
+[   35.810053] RAX: 1320c000000a0003 RBX: 0000000000000001 RCX: 0000000000000000
+[   35.810866] RDX: 0000000000000070 RSI: 0000000000007965 RDI: ffffb8edc068b910
+[   35.811660] RBP: ffffb8edc068b9d0 R08: 0000000000000000 R09: ffffb8edc068b808
+[   35.812463] R10: ffffffffc02bf040 R11: 0000000000000040 R12: ffffb8edc068bb38
+[   35.813235] R13: 0000000000000000 R14: 0000000000000000 R15: ffffb8edc068b910
+[   35.814006] FS:  00007f3d0d8556c0(0000) GS:ffff91d1dbc40000(0000)
+knlGS:0000000000000000
+[   35.814881] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   35.815540] CR2: 000000000043f720 CR3: 0000000019248001 CR4: 00000000001606a0
+[   35.816457] Call Trace:
+[   35.817158]  tc_ctl_action+0x11a/0x220
+[   35.817795]  rtnetlink_rcv_msg+0x23d/0x2e0
+[   35.818457]  ? __slab_alloc+0x1c/0x30
+[   35.819079]  ? __kmalloc_node_track_caller+0xb1/0x2b0
+[   35.819544]  ? rtnl_calcit.isra.30+0xe0/0xe0
+[   35.820231]  netlink_rcv_skb+0xce/0x100
+[   35.820744]  netlink_unicast+0x164/0x220
+[   35.821500]  netlink_sendmsg+0x293/0x370
+[   35.822040]  sock_sendmsg+0x30/0x40
+[   35.822508]  ___sys_sendmsg+0x2c5/0x2e0
+[   35.823149]  ? pagecache_get_page+0x27/0x220
+[   35.823714]  ? filemap_fault+0xa2/0x640
+[   35.824423]  ? page_add_file_rmap+0x108/0x200
+[   35.825065]  ? alloc_set_pte+0x2aa/0x530
+[   35.825585]  ? finish_fault+0x4e/0x70
+[   35.826140]  ? __handle_mm_fault+0xbc1/0x10d0
+[   35.826723]  ? __sys_sendmsg+0x41/0x70
+[   35.827230]  __sys_sendmsg+0x41/0x70
+[   35.827710]  do_syscall_64+0x68/0x120
+[   35.828195]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[   35.828859] RIP: 0033:0x7f3d0ca4da67
+[   35.829331] RSP: 002b:00007ffc9f284338 EFLAGS: 00000246 ORIG_RAX:
+000000000000002e
+[   35.830304] RAX: ffffffffffffffda RBX: 00007ffc9f284460 RCX: 00007f3d0ca4da67
+[   35.831247] RDX: 0000000000000000 RSI: 00007ffc9f2843b0 RDI: 0000000000000003
+[   35.832167] RBP: 000000005aa6a7a9 R08: 0000000000000001 R09: 0000000000000000
+[   35.833075] R10: 00000000000005f1 R11: 0000000000000246 R12: 0000000000000000
+[   35.833997] R13: 00007ffc9f2884c0 R14: 0000000000000001 R15: 0000000000674640
+[   35.834923] Code: 24 30 bb 01 00 00 00 45 31 f6 eb 5e 8b 50 08 83 c2 07 83 e2
+fc 83 c2 70 49 8b 07 48 8b 40 70 48 85 c0 74 10 48 89 14 24 4c 89 ff <ff> d0 48
+8b 14 24 48 01 c2 49 01 d6 45 85 ed 74 05 41 83 47 2c
+[   35.837442] RIP: tcf_action_init+0x90/0x190 RSP: ffffb8edc068b9a0
+[   35.838291] ---[ end trace a095c06ee4b97a26 ]---
+
+Fixes: d0f6dd8a914f ("net/sched: Introduce act_tunnel_key")
+Signed-off-by: Roman Mashak <mrv@mojatatu.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/rhashtable.h |    4 +++-
- lib/rhashtable.c           |    4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ net/sched/act_tunnel_key.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -750,8 +750,10 @@ slow_path:
- 		if (!key ||
- 		    (params.obj_cmpfn ?
- 		     params.obj_cmpfn(&arg, rht_obj(ht, head)) :
--		     rhashtable_compare(&arg, rht_obj(ht, head))))
-+		     rhashtable_compare(&arg, rht_obj(ht, head)))) {
-+			pprev = &head->next;
- 			continue;
-+		}
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -153,6 +153,7 @@ static int tunnel_key_init(struct net *n
+ 		metadata->u.tun_info.mode |= IP_TUNNEL_INFO_TX;
+ 		break;
+ 	default:
++		ret = -EINVAL;
+ 		goto err_out;
+ 	}
  
- 		data = rht_obj(ht, head);
- 
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -537,8 +537,10 @@ static void *rhashtable_lookup_one(struc
- 		if (!key ||
- 		    (ht->p.obj_cmpfn ?
- 		     ht->p.obj_cmpfn(&arg, rht_obj(ht, head)) :
--		     rhashtable_compare(&arg, rht_obj(ht, head))))
-+		     rhashtable_compare(&arg, rht_obj(ht, head)))) {
-+			pprev = &head->next;
- 			continue;
-+		}
- 
- 		if (!ht->rhlist)
- 			return rht_obj(ht, head);
