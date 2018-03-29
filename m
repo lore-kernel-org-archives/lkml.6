@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeC2WHK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:07:10 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44420 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752230AbeC2WHC (ORCPT
+        id S1752546AbeC2WHP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:07:15 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37864 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752230AbeC2WHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:07:02 -0400
-X-Google-Smtp-Source: AIpwx4+437RhvYZGI8M3nAsMhckVlfC4OeBfzyodaa3n6GMwAttwUAgxMJOGnU2B+uRuS9IAmotujQ==
+        Thu, 29 Mar 2018 18:07:11 -0400
+X-Google-Smtp-Source: AIpwx4/LeuIKv+LrrU3jPFuPJHyckVJBwsYyhywjOGQBYEm2hF96q5nPIkPQLIoGe05uccamr6QLXA==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         keith.busch@intel.com, javier@cnexlabs.com,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <jg@lightnvm.io>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 05/37] lightnvm: pblk: export write amplification counters to sysfs
-Date: Fri, 30 Mar 2018 00:04:52 +0200
-Message-Id: <20180329220524.30363-6-mb@lightnvm.io>
+Subject: [GIT PULL 12/37] lightnvm: pblk: refactor bad block identification
+Date: Fri, 30 Mar 2018 00:04:59 +0200
+Message-Id: <20180329220524.30363-13-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
 References: <20180329220524.30363-1-mb@lightnvm.io>
@@ -27,426 +27,406 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+From: Javier González <jg@lightnvm.io>
 
-In a SSD, write amplification, WA, is defined as the average
-number of page writes per user page write. Write amplification
-negatively affects write performance and decreases the lifetime
-of the disk, so it's a useful metric to add to sysfs.
+In preparation for the OCSSD 2.0 spec. bad block identification,
+refactor the current code to generalize bad block get/set functions and
+structures.
 
-In plkb's case, the number of writes per user sector is the sum of:
-
-    (1) number of user writes
-    (2) number of sectors written by the garbage collector
-    (3) number of sectors padded (i.e. due to syncs)
-
-This patch adds persistent counters for 1-3 and two sysfs attributes
-to export these along with WA calculated with five decimals:
-
-    write_amp_mileage: the accumulated write amplification stats
-                      for the lifetime of the pblk instance
-
-    write_amp_trip: resetable stats to facilitate delta measurements,
-                    values reset at creation and if 0 is written
-                    to the attribute.
-
-64-bit counters are used as a 32 bit counter would wrap around
-already after about 17 TB worth of user data. It will take a
-long long time before the 64 bit sector counters wrap around.
-
-The counters are stored after the bad block bitmap in the first
-emeta sector of each written line. There is plenty of space in the
-first emeta sector, so we don't need to bump the major version of
-the line data format.
-
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-cache.c    |  4 ++
- drivers/lightnvm/pblk-core.c     |  6 +++
- drivers/lightnvm/pblk-init.c     | 11 +++++-
- drivers/lightnvm/pblk-map.c      |  2 +
- drivers/lightnvm/pblk-rb.c       |  3 ++
- drivers/lightnvm/pblk-recovery.c | 25 ++++++++++++
- drivers/lightnvm/pblk-sysfs.c    | 85 +++++++++++++++++++++++++++++++++++++++-
- drivers/lightnvm/pblk.h          | 42 ++++++++++++++++----
- 8 files changed, 168 insertions(+), 10 deletions(-)
+ drivers/lightnvm/pblk-core.c |   3 -
+ drivers/lightnvm/pblk-init.c | 211 ++++++++++++++++++++++---------------------
+ drivers/lightnvm/pblk.h      |   6 --
+ 3 files changed, 110 insertions(+), 110 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-cache.c b/drivers/lightnvm/pblk-cache.c
-index 000fcad38136..29a23111b31c 100644
---- a/drivers/lightnvm/pblk-cache.c
-+++ b/drivers/lightnvm/pblk-cache.c
-@@ -63,6 +63,8 @@ int pblk_write_to_cache(struct pblk *pblk, struct bio *bio, unsigned long flags)
- 		bio_advance(bio, PBLK_EXPOSED_PAGE_SIZE);
- 	}
- 
-+	atomic64_add(nr_entries, &pblk->user_wa);
-+
- #ifdef CONFIG_NVM_DEBUG
- 	atomic_long_add(nr_entries, &pblk->inflight_writes);
- 	atomic_long_add(nr_entries, &pblk->req_writes);
-@@ -117,6 +119,8 @@ int pblk_write_gc_to_cache(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
- 	WARN_ONCE(gc_rq->secs_to_gc != valid_entries,
- 					"pblk: inconsistent GC write\n");
- 
-+	atomic64_add(valid_entries, &pblk->gc_wa);
-+
- #ifdef CONFIG_NVM_DEBUG
- 	atomic_long_add(valid_entries, &pblk->inflight_writes);
- 	atomic_long_add(valid_entries, &pblk->recov_gc_writes);
 diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 155e42a26293..22e61cd4f801 100644
+index 8848443a0721..5c363ccde0e3 100644
 --- a/drivers/lightnvm/pblk-core.c
 +++ b/drivers/lightnvm/pblk-core.c
-@@ -1630,11 +1630,16 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
+@@ -1025,7 +1025,6 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
+ 	struct nvm_geo *geo = &dev->geo;
  	struct pblk_line_meta *lm = &pblk->lm;
- 	struct pblk_emeta *emeta = line->emeta;
- 	struct line_emeta *emeta_buf = emeta->buf;
-+	struct wa_counters *wa = emeta_to_wa(lm, emeta_buf);
- 
- 	/* No need for exact vsc value; avoid a big line lock and take aprox. */
- 	memcpy(emeta_to_vsc(pblk, emeta_buf), l_mg->vsc_list, lm->vsc_list_len);
- 	memcpy(emeta_to_bb(emeta_buf), line->blk_bitmap, lm->blk_bitmap_len);
- 
-+	wa->user = cpu_to_le64(atomic64_read(&pblk->user_wa));
-+	wa->pad = cpu_to_le64(atomic64_read(&pblk->pad_wa));
-+	wa->gc = cpu_to_le64(atomic64_read(&pblk->gc_wa));
-+
- 	emeta_buf->nr_valid_lbas = cpu_to_le64(line->nr_valid_lbas);
- 	emeta_buf->crc = cpu_to_le32(pblk_calc_emeta_crc(pblk, emeta_buf));
- 
-@@ -1837,6 +1842,7 @@ void pblk_update_map_dev(struct pblk *pblk, sector_t lba,
- #endif
- 	/* Invalidate and discard padded entries */
- 	if (lba == ADDR_EMPTY) {
-+		atomic64_inc(&pblk->pad_wa);
- #ifdef CONFIG_NVM_DEBUG
- 		atomic_long_inc(&pblk->padded_wb);
- #endif
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 5b46924ac66c..0ffc17ccf1cc 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -559,8 +559,8 @@ static unsigned int calc_emeta_len(struct pblk *pblk)
- 
- 	/* Round to sector size so that lba_list starts on its own sector */
- 	lm->emeta_sec[1] = DIV_ROUND_UP(
--			sizeof(struct line_emeta) + lm->blk_bitmap_len,
--			geo->sec_size);
-+			sizeof(struct line_emeta) + lm->blk_bitmap_len +
-+			sizeof(struct wa_counters), geo->sec_size);
- 	lm->emeta_len[1] = lm->emeta_sec[1] * geo->sec_size;
- 
- 	/* Round to sector size so that vsc_list starts on its own sector */
-@@ -991,6 +991,13 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	if (flags & NVM_TARGET_FACTORY)
- 		pblk_setup_uuid(pblk);
- 
-+	atomic64_set(&pblk->user_wa, 0);
-+	atomic64_set(&pblk->pad_wa, 0);
-+	atomic64_set(&pblk->gc_wa, 0);
-+	pblk->user_rst_wa = 0;
-+	pblk->pad_rst_wa = 0;
-+	pblk->gc_rst_wa = 0;
-+
- #ifdef CONFIG_NVM_DEBUG
- 	atomic_long_set(&pblk->inflight_writes, 0);
- 	atomic_long_set(&pblk->padded_writes, 0);
-diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
-index 7445e6430c52..04e08d76ea5f 100644
---- a/drivers/lightnvm/pblk-map.c
-+++ b/drivers/lightnvm/pblk-map.c
-@@ -65,6 +65,8 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
- 			lba_list[paddr] = cpu_to_le64(w_ctx->lba);
- 			if (lba_list[paddr] != addr_empty)
- 				line->nr_valid_lbas++;
-+			else
-+				atomic64_inc(&pblk->pad_wa);
- 		} else {
- 			lba_list[paddr] = meta_list[i].lba = addr_empty;
- 			__pblk_map_invalidate(pblk, line, paddr);
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index ec8fc314646b..7044b5599cc4 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -622,6 +622,9 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb, struct nvm_rq *rqd,
- 		}
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+-	int nr_bb = 0;
+ 	u64 off;
+ 	int bit = -1;
+ 	int emeta_secs;
+@@ -1041,8 +1040,6 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
+ 		bitmap_or(line->map_bitmap, line->map_bitmap, l_mg->bb_aux,
+ 							lm->sec_per_line);
+ 		line->sec_in_line -= geo->sec_per_chk;
+-		if (bit >= lm->emeta_bb)
+-			nr_bb++;
  	}
  
-+	atomic64_add(pad, &((struct pblk *)
-+			(container_of(rb, struct pblk, rwb)))->pad_wa);
-+
- #ifdef CONFIG_NVM_DEBUG
- 	atomic_long_add(pad, &((struct pblk *)
- 			(container_of(rb, struct pblk, rwb)))->padded_writes);
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index a30fe203d454..e75a1af2eebe 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -845,6 +845,29 @@ static int pblk_recov_check_line_version(struct pblk *pblk,
- 	return 0;
+ 	/* Mark smeta metadata sectors as bad sectors */
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 49c65f1dd48b..141036bd6afa 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -365,7 +365,25 @@ static void pblk_luns_free(struct pblk *pblk)
+ 	kfree(pblk->luns);
  }
  
-+static void pblk_recov_wa_counters(struct pblk *pblk,
-+				   struct line_emeta *emeta)
+-static void pblk_free_line_bitmaps(struct pblk_line *line)
++static void pblk_line_mg_free(struct pblk *pblk)
++{
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++	int i;
++
++	kfree(l_mg->bb_template);
++	kfree(l_mg->bb_aux);
++	kfree(l_mg->vsc_list);
++
++	for (i = 0; i < PBLK_DATA_LINES; i++) {
++		kfree(l_mg->sline_meta[i]);
++		pblk_mfree(l_mg->eline_meta[i]->buf, l_mg->emeta_alloc_type);
++		kfree(l_mg->eline_meta[i]);
++	}
++
++	kfree(pblk->lines);
++}
++
++static void pblk_line_meta_free(struct pblk_line *line)
+ {
+ 	kfree(line->blk_bitmap);
+ 	kfree(line->erase_bitmap);
+@@ -382,40 +400,16 @@ static void pblk_lines_free(struct pblk *pblk)
+ 		line = &pblk->lines[i];
+ 
+ 		pblk_line_free(pblk, line);
+-		pblk_free_line_bitmaps(line);
++		pblk_line_meta_free(line);
+ 	}
+ 	spin_unlock(&l_mg->free_lock);
+ }
+ 
+-static void pblk_line_meta_free(struct pblk *pblk)
++static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct pblk_lun *rlun,
++			   u8 *blks, int nr_blks)
+ {
+-	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+-	int i;
+-
+-	kfree(l_mg->bb_template);
+-	kfree(l_mg->bb_aux);
+-	kfree(l_mg->vsc_list);
+-
+-	for (i = 0; i < PBLK_DATA_LINES; i++) {
+-		kfree(l_mg->sline_meta[i]);
+-		pblk_mfree(l_mg->eline_meta[i]->buf, l_mg->emeta_alloc_type);
+-		kfree(l_mg->eline_meta[i]);
+-	}
+-
+-	kfree(pblk->lines);
+-}
+-
+-static int pblk_bb_discovery(struct nvm_tgt_dev *dev, struct pblk_lun *rlun)
+-{
+-	struct nvm_geo *geo = &dev->geo;
+ 	struct ppa_addr ppa;
+-	u8 *blks;
+-	int nr_blks, ret;
+-
+-	nr_blks = geo->nr_chks * geo->plane_mode;
+-	blks = kmalloc(nr_blks, GFP_KERNEL);
+-	if (!blks)
+-		return -ENOMEM;
++	int ret;
+ 
+ 	ppa.ppa = 0;
+ 	ppa.g.ch = rlun->bppa.g.ch;
+@@ -423,34 +417,56 @@ static int pblk_bb_discovery(struct nvm_tgt_dev *dev, struct pblk_lun *rlun)
+ 
+ 	ret = nvm_get_tgt_bb_tbl(dev, ppa, blks);
+ 	if (ret)
+-		goto out;
++		return ret;
+ 
+ 	nr_blks = nvm_bb_tbl_fold(dev->parent, blks, nr_blks);
+-	if (nr_blks < 0) {
+-		ret = nr_blks;
+-		goto out;
+-	}
+-
+-	rlun->bb_list = blks;
++	if (nr_blks < 0)
++		return -EIO;
+ 
+ 	return 0;
+-out:
+-	kfree(blks);
+-	return ret;
++}
++
++static void *pblk_bb_get_log(struct pblk *pblk)
++{
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	u8 *log;
++	int i, nr_blks, blk_per_lun;
++	int ret;
++
++	blk_per_lun = geo->nr_chks * geo->plane_mode;
++	nr_blks = blk_per_lun * geo->all_luns;
++
++	log = kmalloc(nr_blks, GFP_KERNEL);
++	if (!log)
++		return ERR_PTR(-ENOMEM);
++
++	for (i = 0; i < geo->all_luns; i++) {
++		struct pblk_lun *rlun = &pblk->luns[i];
++		u8 *log_pos = log + i * blk_per_lun;
++
++		ret = pblk_bb_get_tbl(dev, rlun, log_pos, blk_per_lun);
++		if (ret) {
++			kfree(log);
++			return ERR_PTR(-EIO);
++		}
++	}
++
++	return log;
+ }
+ 
+ static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
+-			int blk_per_line)
++			u8 *bb_log, int blk_per_line)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+-	struct pblk_lun *rlun;
+-	int bb_cnt = 0;
+-	int i;
++	int i, bb_cnt = 0;
+ 
+ 	for (i = 0; i < blk_per_line; i++) {
+-		rlun = &pblk->luns[i];
+-		if (rlun->bb_list[line->id] == NVM_BLK_T_FREE)
++		struct pblk_lun *rlun = &pblk->luns[i];
++		u8 *lun_bb_log = bb_log + i * blk_per_line;
++
++		if (lun_bb_log[line->id] == NVM_BLK_T_FREE)
+ 			continue;
+ 
+ 		set_bit(pblk_ppa_to_pos(geo, rlun->bppa), line->blk_bitmap);
+@@ -460,29 +476,12 @@ static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
+ 	return bb_cnt;
+ }
+ 
+-static int pblk_alloc_line_bitmaps(struct pblk *pblk, struct pblk_line *line)
+-{
+-	struct pblk_line_meta *lm = &pblk->lm;
+-
+-	line->blk_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+-	if (!line->blk_bitmap)
+-		return -ENOMEM;
+-
+-	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
+-	if (!line->erase_bitmap) {
+-		kfree(line->blk_bitmap);
+-		return -ENOMEM;
+-	}
+-
+-	return 0;
+-}
+-
+ static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+ 	struct pblk_lun *rlun;
+-	int i, ret;
++	int i;
+ 
+ 	/* TODO: Implement unbalanced LUN support */
+ 	if (geo->nr_luns < 0) {
+@@ -505,13 +504,6 @@ static int pblk_luns_init(struct pblk *pblk, struct ppa_addr *luns)
+ 		rlun->bppa = luns[lunid];
+ 
+ 		sema_init(&rlun->wr_sem, 1);
+-
+-		ret = pblk_bb_discovery(dev, rlun);
+-		if (ret) {
+-			while (--i >= 0)
+-				kfree(pblk->luns[i].bb_list);
+-			return ret;
+-		}
+ 	}
+ 
+ 	return 0;
+@@ -689,6 +681,26 @@ static int pblk_lines_alloc_metadata(struct pblk *pblk)
+ 	return -ENOMEM;
+ }
+ 
++static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
++				void *chunk_log, long *nr_bad_blks)
 +{
 +	struct pblk_line_meta *lm = &pblk->lm;
-+	struct line_header *header = &emeta->header;
-+	struct wa_counters *wa = emeta_to_wa(lm, emeta);
 +
-+	/* WA counters were introduced in emeta version 0.2 */
-+	if (header->version_major > 0 || header->version_minor >= 2) {
-+		u64 user = le64_to_cpu(wa->user);
-+		u64 pad = le64_to_cpu(wa->pad);
-+		u64 gc = le64_to_cpu(wa->gc);
++	line->blk_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
++	if (!line->blk_bitmap)
++		return -ENOMEM;
 +
-+		atomic64_set(&pblk->user_wa, user);
-+		atomic64_set(&pblk->pad_wa, pad);
-+		atomic64_set(&pblk->gc_wa, gc);
-+
-+		pblk->user_rst_wa = user;
-+		pblk->pad_rst_wa = pad;
-+		pblk->gc_rst_wa = gc;
++	line->erase_bitmap = kzalloc(lm->blk_bitmap_len, GFP_KERNEL);
++	if (!line->erase_bitmap) {
++		kfree(line->blk_bitmap);
++		return -ENOMEM;
 +	}
++
++	*nr_bad_blks = pblk_bb_line(pblk, line, chunk_log, lm->blk_per_line);
++
++	return 0;
 +}
 +
- struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ static int pblk_lines_init(struct pblk *pblk)
  {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+@@ -696,8 +708,9 @@ static int pblk_lines_init(struct pblk *pblk)
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
  	struct pblk_line_meta *lm = &pblk->lm;
-@@ -965,6 +988,8 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 		if (pblk_recov_check_line_version(pblk, line->emeta->buf))
- 			return ERR_PTR(-EINVAL);
+ 	struct pblk_line *line;
++	void *chunk_log;
+ 	unsigned int smeta_len, emeta_len;
+-	long nr_bad_blks, nr_free_blks;
++	long nr_bad_blks = 0, nr_free_blks = 0;
+ 	int bb_distance, max_write_ppas, mod;
+ 	int i, ret;
  
-+		pblk_recov_wa_counters(pblk, line->emeta->buf);
-+
- 		if (pblk_recov_l2p_from_emeta(pblk, line))
- 			pblk_recov_l2p_from_oob(pblk, line);
+@@ -771,13 +784,12 @@ static int pblk_lines_init(struct pblk *pblk)
+ 	if (lm->min_blk_line > lm->blk_per_line) {
+ 		pr_err("pblk: config. not supported. Min. LUN in line:%d\n",
+ 							lm->blk_per_line);
+-		ret = -EINVAL;
+-		goto fail;
++		return -EINVAL;
+ 	}
  
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 620bab853579..beed99936c89 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -298,6 +298,48 @@ static ssize_t pblk_sysfs_get_sec_per_write(struct pblk *pblk, char *page)
- 	return snprintf(page, PAGE_SIZE, "%d\n", pblk->sec_per_write);
- }
+ 	ret = pblk_lines_alloc_metadata(pblk);
+ 	if (ret)
+-		goto fail;
++		return ret;
  
-+static ssize_t pblk_get_write_amp(u64 user, u64 gc, u64 pad,
-+				  char *page)
-+{
-+	int sz;
-+
-+
-+	sz = snprintf(page, PAGE_SIZE,
-+			"user:%lld gc:%lld pad:%lld WA:",
-+			user, gc, pad);
-+
-+	if (!user) {
-+		sz += snprintf(page + sz, PAGE_SIZE - sz, "NaN\n");
-+	} else {
-+		u64 wa_int;
-+		u32 wa_frac;
-+
-+		wa_int = (user + gc + pad) * 100000;
-+		wa_int = div_u64(wa_int, user);
-+		wa_int = div_u64_rem(wa_int, 100000, &wa_frac);
-+
-+		sz += snprintf(page + sz, PAGE_SIZE - sz, "%llu.%05u\n",
-+							wa_int, wa_frac);
+ 	l_mg->bb_template = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
+ 	if (!l_mg->bb_template) {
+@@ -821,9 +833,16 @@ static int pblk_lines_init(struct pblk *pblk)
+ 		goto fail_free_bb_aux;
+ 	}
+ 
+-	nr_free_blks = 0;
++	chunk_log = pblk_bb_get_log(pblk);
++	if (IS_ERR(chunk_log)) {
++		pr_err("pblk: could not get bad block log (%lu)\n",
++							PTR_ERR(chunk_log));
++		ret = PTR_ERR(chunk_log);
++		goto fail_free_bb_aux;
 +	}
 +
-+	return sz;
-+}
-+
-+static ssize_t pblk_sysfs_get_write_amp_mileage(struct pblk *pblk, char *page)
-+{
-+	return pblk_get_write_amp(atomic64_read(&pblk->user_wa),
-+		atomic64_read(&pblk->gc_wa), atomic64_read(&pblk->pad_wa),
-+		page);
-+}
-+
-+static ssize_t pblk_sysfs_get_write_amp_trip(struct pblk *pblk, char *page)
-+{
-+	return pblk_get_write_amp(
-+		atomic64_read(&pblk->user_wa) - pblk->user_rst_wa,
-+		atomic64_read(&pblk->gc_wa) - pblk->gc_rst_wa,
-+		atomic64_read(&pblk->pad_wa) - pblk->pad_rst_wa, page);
-+}
-+
- #ifdef CONFIG_NVM_DEBUG
- static ssize_t pblk_sysfs_stats_debug(struct pblk *pblk, char *page)
- {
-@@ -360,6 +402,30 @@ static ssize_t pblk_sysfs_set_sec_per_write(struct pblk *pblk,
- 	return len;
- }
+ 	for (i = 0; i < l_mg->nr_lines; i++) {
+-		int blk_in_line;
++		int chk_in_line;
  
-+static ssize_t pblk_sysfs_set_write_amp_trip(struct pblk *pblk,
-+			const char *page, size_t len)
-+{
-+	size_t c_len;
-+	int reset_value;
-+
-+	c_len = strcspn(page, "\n");
-+	if (c_len >= len)
-+		return -EINVAL;
-+
-+	if (kstrtouint(page, 0, &reset_value))
-+		return -EINVAL;
-+
-+	if (reset_value !=  0)
-+		return -EINVAL;
-+
-+	pblk->user_rst_wa = atomic64_read(&pblk->user_wa);
-+	pblk->pad_rst_wa = atomic64_read(&pblk->pad_wa);
-+	pblk->gc_rst_wa = atomic64_read(&pblk->gc_wa);
-+
-+	return len;
-+}
-+
-+
- static struct attribute sys_write_luns = {
- 	.name = "write_luns",
- 	.mode = 0444,
-@@ -410,6 +476,16 @@ static struct attribute sys_max_sec_per_write = {
- 	.mode = 0644,
- };
+ 		line = &pblk->lines[i];
  
-+static struct attribute sys_write_amp_mileage = {
-+	.name = "write_amp_mileage",
-+	.mode = 0444,
-+};
-+
-+static struct attribute sys_write_amp_trip = {
-+	.name = "write_amp_trip",
-+	.mode = 0644,
-+};
-+
- #ifdef CONFIG_NVM_DEBUG
- static struct attribute sys_stats_debug_attr = {
- 	.name = "stats",
-@@ -428,6 +504,8 @@ static struct attribute *pblk_attrs[] = {
- 	&sys_stats_ppaf_attr,
- 	&sys_lines_attr,
- 	&sys_lines_info_attr,
-+	&sys_write_amp_mileage,
-+	&sys_write_amp_trip,
- #ifdef CONFIG_NVM_DEBUG
- 	&sys_stats_debug_attr,
- #endif
-@@ -457,6 +535,10 @@ static ssize_t pblk_sysfs_show(struct kobject *kobj, struct attribute *attr,
- 		return pblk_sysfs_lines_info(pblk, buf);
- 	else if (strcmp(attr->name, "max_sec_per_write") == 0)
- 		return pblk_sysfs_get_sec_per_write(pblk, buf);
-+	else if (strcmp(attr->name, "write_amp_mileage") == 0)
-+		return pblk_sysfs_get_write_amp_mileage(pblk, buf);
-+	else if (strcmp(attr->name, "write_amp_trip") == 0)
-+		return pblk_sysfs_get_write_amp_trip(pblk, buf);
- #ifdef CONFIG_NVM_DEBUG
- 	else if (strcmp(attr->name, "stats") == 0)
- 		return pblk_sysfs_stats_debug(pblk, buf);
-@@ -473,7 +555,8 @@ static ssize_t pblk_sysfs_store(struct kobject *kobj, struct attribute *attr,
- 		return pblk_sysfs_gc_force(pblk, buf, len);
- 	else if (strcmp(attr->name, "max_sec_per_write") == 0)
- 		return pblk_sysfs_set_sec_per_write(pblk, buf, len);
+@@ -835,26 +854,20 @@ static int pblk_lines_init(struct pblk *pblk)
+ 		line->vsc = &l_mg->vsc_list[i];
+ 		spin_lock_init(&line->lock);
+ 
+-		ret = pblk_alloc_line_bitmaps(pblk, line);
++		ret = pblk_setup_line_meta(pblk, line, chunk_log, &nr_bad_blks);
+ 		if (ret)
+-			goto fail_free_lines;
++			goto fail_free_chunk_log;
+ 
+-		nr_bad_blks = pblk_bb_line(pblk, line, lm->blk_per_line);
+-		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line) {
+-			pblk_free_line_bitmaps(line);
+-			ret = -EINVAL;
+-			goto fail_free_lines;
+-		}
 -
-+	else if (strcmp(attr->name, "write_amp_trip") == 0)
-+		return pblk_sysfs_set_write_amp_trip(pblk, buf, len);
- 	return 0;
- }
+-		blk_in_line = lm->blk_per_line - nr_bad_blks;
+-		if (blk_in_line < lm->min_blk_line) {
++		chk_in_line = lm->blk_per_line - nr_bad_blks;
++		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line ||
++					chk_in_line < lm->min_blk_line) {
+ 			line->state = PBLK_LINESTATE_BAD;
+ 			list_add_tail(&line->list, &l_mg->bad_list);
+ 			continue;
+ 		}
  
+-		nr_free_blks += blk_in_line;
+-		atomic_set(&line->blk_in_line, blk_in_line);
++		nr_free_blks += chk_in_line;
++		atomic_set(&line->blk_in_line, chk_in_line);
+ 
+ 		l_mg->nr_free_lines++;
+ 		list_add_tail(&line->list, &l_mg->free_list);
+@@ -862,23 +875,19 @@ static int pblk_lines_init(struct pblk *pblk)
+ 
+ 	pblk_set_provision(pblk, nr_free_blks);
+ 
+-	/* Cleanup per-LUN bad block lists - managed within lines on run-time */
+-	for (i = 0; i < geo->all_luns; i++)
+-		kfree(pblk->luns[i].bb_list);
+-
++	kfree(chunk_log);
+ 	return 0;
+-fail_free_lines:
++
++fail_free_chunk_log:
++	kfree(chunk_log);
+ 	while (--i >= 0)
+-		pblk_free_line_bitmaps(&pblk->lines[i]);
++		pblk_line_meta_free(&pblk->lines[i]);
+ fail_free_bb_aux:
+ 	kfree(l_mg->bb_aux);
+ fail_free_bb_template:
+ 	kfree(l_mg->bb_template);
+ fail_free_meta:
+-	pblk_line_meta_free(pblk);
+-fail:
+-	for (i = 0; i < geo->all_luns; i++)
+-		kfree(pblk->luns[i].bb_list);
++	pblk_line_mg_free(pblk);
+ 
+ 	return ret;
+ }
+@@ -922,7 +931,7 @@ static void pblk_free(struct pblk *pblk)
+ 	pblk_luns_free(pblk);
+ 	pblk_lines_free(pblk);
+ 	kfree(pblk->pad_dist);
+-	pblk_line_meta_free(pblk);
++	pblk_line_mg_free(pblk);
+ 	pblk_core_free(pblk);
+ 	pblk_l2p_free(pblk);
+ 
+@@ -1110,7 +1119,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+ fail_free_pad_dist:
+ 	kfree(pblk->pad_dist);
+ fail_free_line_meta:
+-	pblk_line_meta_free(pblk);
++	pblk_line_mg_free(pblk);
+ fail_free_luns:
+ 	pblk_luns_free(pblk);
+ fail:
 diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index fae2526f80b2..4b7d8618631f 100644
+index 17e2f242f7da..f0309d8172c0 100644
 --- a/drivers/lightnvm/pblk.h
 +++ b/drivers/lightnvm/pblk.h
-@@ -331,7 +331,7 @@ enum {
- #define SMETA_VERSION_MINOR (1)
+@@ -201,12 +201,6 @@ struct pblk_rb {
  
- #define EMETA_VERSION_MAJOR (0)
--#define EMETA_VERSION_MINOR (1)
-+#define EMETA_VERSION_MINOR (2)
- 
- struct line_header {
- 	__le32 crc;
-@@ -361,11 +361,13 @@ struct line_smeta {
- 	__le64 lun_bitmap[];
+ struct pblk_lun {
+ 	struct ppa_addr bppa;
+-
+-	u8 *bb_list;			/* Bad block list for LUN. Only used on
+-					 * bring up. Bad blocks are managed
+-					 * within lines on run-time.
+-					 */
+-
+ 	struct semaphore wr_sem;
  };
  
-+
- /*
-  * Metadata layout in media:
-  *	First sector:
-  *		1. struct line_emeta
-  *		2. bad block bitmap (u64 * window_wr_lun)
-+ *		3. write amplification counters
-  *	Mid sectors (start at lbas_sector):
-  *		3. nr_lbas (u64) forming lba list
-  *	Last sectors (start at vsc_sector):
-@@ -389,7 +391,15 @@ struct line_emeta {
- 	__le32 next_id;		/* Line id for next line */
- 	__le64 nr_lbas;		/* Number of lbas mapped in line */
- 	__le64 nr_valid_lbas;	/* Number of valid lbas mapped in line */
--	__le64 bb_bitmap[];	/* Updated bad block bitmap for line */
-+	__le64 bb_bitmap[];     /* Updated bad block bitmap for line */
-+};
-+
-+
-+/* Write amplification counters stored on media */
-+struct wa_counters {
-+	__le64 user;		/* Number of user written sectors */
-+	__le64 gc;		/* Number of sectors written by GC*/
-+	__le64 pad;		/* Number of padded sectors */
- };
- 
- struct pblk_emeta {
-@@ -519,10 +529,11 @@ struct pblk_line_meta {
- 	unsigned int smeta_sec;		/* Sectors needed for smeta */
- 
- 	unsigned int emeta_len[4];	/* Lengths for emeta:
--					 *  [0]: Total length
--					 *  [1]: struct line_emeta length
--					 *  [2]: L2P portion length
--					 *  [3]: vsc list length
-+					 *  [0]: Total
-+					 *  [1]: struct line_emeta +
-+					 *       bb_bitmap + struct wa_counters
-+					 *  [2]: L2P portion
-+					 *  [3]: vsc
- 					 */
- 	unsigned int emeta_sec[4];	/* Sectors needed for emeta. Same layout
- 					 * as emeta_len
-@@ -604,8 +615,19 @@ struct pblk {
- 	int sec_per_write;
- 
- 	unsigned char instance_uuid[16];
-+
-+	/* Persistent write amplification counters, 4kb sector I/Os */
-+	atomic64_t user_wa;		/* Sectors written by user */
-+	atomic64_t gc_wa;		/* Sectors written by GC */
-+	atomic64_t pad_wa;		/* Padded sectors written */
-+
-+	/* Reset values for delta write amplification measurements */
-+	u64 user_rst_wa;
-+	u64 gc_rst_wa;
-+	u64 pad_rst_wa;
-+
- #ifdef CONFIG_NVM_DEBUG
--	/* All debug counters apply to 4kb sector I/Os */
-+	/* Non-persistent debug counters, 4kb sector I/Os */
- 	atomic_long_t inflight_writes;	/* Inflight writes (user and gc) */
- 	atomic_long_t padded_writes;	/* Sectors padded due to flush/fua */
- 	atomic_long_t padded_wb;	/* Sectors padded in write buffer */
-@@ -900,6 +922,12 @@ static inline void *emeta_to_bb(struct line_emeta *emeta)
- 	return emeta->bb_bitmap;
- }
- 
-+static inline void *emeta_to_wa(struct pblk_line_meta *lm,
-+				struct line_emeta *emeta)
-+{
-+	return emeta->bb_bitmap + lm->blk_bitmap_len;
-+}
-+
- static inline void *emeta_to_lbas(struct pblk *pblk, struct line_emeta *emeta)
- {
- 	return ((void *)emeta + pblk->lm.emeta_len[1]);
 -- 
 2.11.0
