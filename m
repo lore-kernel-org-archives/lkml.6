@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48LqaS1R8IpQmIs6DRvOkbzGOTS6OT2L89+RMLWtmUgLYVRmkakJNH19OiPJpGY1d7crEVF
-ARC-Seal: i=1; a=rsa-sha256; t=1522346822; cv=none;
+X-Google-Smtp-Source: AIpwx48wo+XdV1w+1Il/tukbEB4VhYSRRkrxUddrv6SlntBdF7EcG/cn3uB6lmy31azWFg8vJuUi
+ARC-Seal: i=1; a=rsa-sha256; t=1522346819; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bx34x1xCIfkkpCYpGe76F5dFc1pV59Vwmi0RK4Oc8E8yfLQEsNZGRwkFHZb6PrR2mu
-         PUKeDB5sPxk66k7eBFu0TvJeyJvuNKyQzbaNyij66Pf6A1/0C8+spexC2xG7wnu/9RG4
-         nqFO46Ux3rHWWvIzxFRE1QFtYnwH5C87MKlPn3PNoGegERKwZkMRaRdxKpAMkbX8d3VU
-         tTP+1PDCDgLQf5v9+N0HfrUg3sgm9rlhkZJlxaDCr0xkNEAHA+I1AikvNCkLOoj8lHqs
-         Co9Uv1/G6Lxq7XOJv8mg5dLTJtPVbUxI9TJXEPn/N2b7OLJbdAV2x0r8ZvYl59qFaP3Q
-         enIw==
+        b=tsX8U1L5+QzfetKFcerNlhegVDb2Y8UYp5McsFn+qo0C27j9lQkeyZjk8MhU3RIPp6
+         xf0uK3kBB4W58OZmbJpACDh46ovmmg4/wlYm6YpS7vaViU5dmeZM93F9OxilhgLfRCCW
+         UxCcXMRnDwnhdjULPl/OIV4+5Hdbgd5spSWHyE0nInCOBVjH27ME0+P4ps7xNpkPeFmN
+         JoW/8UADmcI5oTEPZ/w76BKGVdSNUQBeQzPyAADyl5k81Ze3S625C5OrzG++bfw5n55G
+         9QaVazieIo3loY6zAmBoFZ+cISRG+LHfhE4xUfIIoIYGiiXwzynL3XBqN3OFwW9jISP0
+         Ge0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/NFH2srUFQ4Uc1y7i1PPVxZUt56L3hkDzaeyoXXaEz0=;
-        b=xF+V+rAYM6uGFl1O94+OUmjiu+hpkKhNEZvKK5w4SE7TQZPIdeSPaKTIXFVeEhWpFq
-         yEOckJxU0QDeijZGRNOMqied3zjQkZNVm2wUme0Zna8s2JYXJ64vQ+IyQ7wpHtgP1m48
-         fzVxb6kIZeLtiG8/ajMhNaJdI3yj0r0EPM+zjXhUE1Atnr9VWHwENUMTqOct8J2KUDTs
-         6wFmEPwZ34XV0LFi0rUy0qVhsnc76paicVO3n5p75oQGbZuooALMwZPd1nGtJCYZlMZG
-         TL7rSCzL6Gnpj+uAFGjCCnox4tET2q9r+91fRpLkI6b+CHHbTZ1oqmRB0tMz18WrbD+R
-         WU/A==
+        bh=ke26jk+YKOcS0petkgQKrKoIzlAx+a4W6NDIFhJyq7E=;
+        b=dYzZH5fwJ2p1Ha+snttVLURG2ENr/7pI7GAmXTvICbnjZZd3xvJuf6O3Da075LCM8Q
+         V5giPcEdW7cdphCBOllVUdCwcHCCy11gl0C/Ic7hij9VHDkouFL5nGJJCL4l9agFsf2a
+         mF9hEpm/PGvyc06dDGGyp31kM7SpsHEm2P5n9hi2E/N18AKOeSoyeuqd27/SNKLjeLaQ
+         xxl3c508yLloRTU64H+sLV+s5cXJxNspjA8IL3L/9htgYlC+bTcWDnW6fAQApkz4ooaW
+         PdH/LOxZXHRNZlCbOoqjbgOCmLn1ESrKKFJQtRLBrCj4l1/WCYpa+5tTBiuL9kezzCFI
+         rJAw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
+	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 26/28] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
-Date: Thu, 29 Mar 2018 20:00:45 +0200
-Message-Id: <20180329175736.551698073@linuxfoundation.org>
+Subject: [PATCH 4.9 25/28] s390/qeth: on channel error, reject further cmd requests
+Date: Thu, 29 Mar 2018 20:00:44 +0200
+Message-Id: <20180329175736.359377015@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296154266944554?=
-X-GMAIL-MSGID: =?utf-8?q?1596296342134747564?=
+X-GMAIL-THRID: =?utf-8?q?1596296072058867998?=
+X-GMAIL-MSGID: =?utf-8?q?1596296338857627189?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,118 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit 484d802d0f2f29c335563fcac2a8facf174a1bbc ]
+[ Upstream commit a6c3d93963e4b333c764fde69802c3ea9eaa9d5c ]
 
-There is no need for complex checking between the last consumed index
-and current consumed index, a simple subtraction will do.
+When the IRQ handler determines that one of the cmd IO channels has
+failed and schedules recovery, block any further cmd requests from
+being submitted. The request would inevitably stall, and prevent the
+recovery from making progress until the request times out.
 
-This also eliminates the possibility of a permanent transmit queue stall
-under the following conditions:
+This sort of error was observed after Live Guest Relocation, where
+the pending IO on the READ channel intentionally gets terminated to
+kick-start recovery. Simultaneously the guest executed SIOCETHTOOL,
+triggering qeth to issue a QUERY CARD INFO command. The command
+then stalled in the inoperabel WRITE channel.
 
-- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
-  point where we run out of free descriptors, so we stop the transmit
-  queue at the end of bcm_sysport_xmit()
-
-- because of our locking, we have the transmit process disable
-  interrupts which means we can be blocking the TX reclamation process
-
-- when TX reclamation finally runs, we will be computing the difference
-  between ring->c_index (last consumed index by SW) and what the HW
-  reports through its register
-
-- this register is masked with (ring->size - 1) = 0xff, which will lead
-  to stripping the upper bits of the index (register is 16-bits wide)
-
-- we will be computing last_tx_cn as 0, which means there is no work to
-  be done, and we never wake-up the transmit queue, leaving it
-  permanently disabled
-
-A practical example is e.g: ring->c_index aka last_c_index = 12, we
-pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
-so last_tx_cn == 0, nothing happens.
-
-Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c |   33 +++++++++++++----------------
- drivers/net/ethernet/broadcom/bcmsysport.h |    2 -
- 2 files changed, 16 insertions(+), 19 deletions(-)
+ drivers/s390/net/qeth_core_main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -707,37 +707,33 @@ static unsigned int __bcm_sysport_tx_rec
- 					     struct bcm_sysport_tx_ring *ring)
- {
- 	struct net_device *ndev = priv->netdev;
--	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
- 	unsigned int pkts_compl = 0, bytes_compl = 0;
-+	unsigned int txbds_processed = 0;
- 	struct bcm_sysport_cb *cb;
-+	unsigned int txbds_ready;
-+	unsigned int c_index;
- 	u32 hw_ind;
- 
- 	/* Compute how many descriptors have been processed since last call */
- 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
- 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
--	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
--
--	last_c_index = ring->c_index;
--	num_tx_cbs = ring->size;
--
--	c_index &= (num_tx_cbs - 1);
--
--	if (c_index >= last_c_index)
--		last_tx_cn = c_index - last_c_index;
--	else
--		last_tx_cn = num_tx_cbs - last_c_index + c_index;
-+	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
- 
- 	netif_dbg(priv, tx_done, ndev,
--		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
--		  ring->index, c_index, last_tx_cn, last_c_index);
-+		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
-+		  ring->index, ring->c_index, c_index, txbds_ready);
- 
--	while (last_tx_cn-- > 0) {
--		cb = ring->cbs + last_c_index;
-+	while (txbds_processed < txbds_ready) {
-+		cb = &ring->cbs[ring->clean_index];
- 		bcm_sysport_tx_reclaim_one(priv, cb, &bytes_compl, &pkts_compl);
- 
- 		ring->desc_count++;
--		last_c_index++;
--		last_c_index &= (num_tx_cbs - 1);
-+		txbds_processed++;
-+
-+		if (likely(ring->clean_index < ring->size - 1))
-+			ring->clean_index++;
-+		else
-+			ring->clean_index = 0;
- 	}
- 
- 	ring->c_index = c_index;
-@@ -1207,6 +1203,7 @@ static int bcm_sysport_init_tx_ring(stru
- 	netif_tx_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
- 	ring->index = index;
- 	ring->size = size;
-+	ring->clean_index = 0;
- 	ring->alloc_size = ring->size;
- 	ring->desc_cpu = p;
- 	ring->desc_count = ring->size;
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -638,7 +638,7 @@ struct bcm_sysport_tx_ring {
- 	unsigned int	desc_count;	/* Number of descriptors */
- 	unsigned int	curr_desc;	/* Current descriptor */
- 	unsigned int	c_index;	/* Last consumer index */
--	unsigned int	p_index;	/* Current producer index */
-+	unsigned int	clean_index;	/* Current clean index */
- 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
- 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
- 	struct bcm_sysport_priv *priv;	/* private context backpointer */
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -1171,6 +1171,7 @@ static void qeth_irq(struct ccw_device *
+ 		}
+ 		rc = qeth_get_problem(cdev, irb);
+ 		if (rc) {
++			card->read_or_write_problem = 1;
+ 			qeth_clear_ipacmd_list(card);
+ 			qeth_schedule_recovery(card);
+ 			goto out;
