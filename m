@@ -1,65 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752188AbeC2V7X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 17:59:23 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39447 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751124AbeC2V7W (ORCPT
+        id S1752259AbeC2WBG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:01:06 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:42324 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeC2WBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 17:59:22 -0400
-X-Google-Smtp-Source: AIpwx4+1q+wcZnngGTVUNIoH2TPPWxEBKmzFJWfnVc3Zcagj3akNfaXoQvJUiGThPTqQ8WXnYF4ZCQ==
-Date: Thu, 29 Mar 2018 14:59:20 -0700 (PDT)
-X-Google-Original-Date: Thu, 29 Mar 2018 14:47:34 PDT (-0700)
-Subject: Re: [PATCH v4 1/3] Add notrace to lib/ucmpdi2.c
-In-Reply-To: <1522320083-27818-1-git-send-email-matt.redfearn@mips.com>
-CC: antonynpavlov@gmail.com, jhogan@kernel.org, ralf@linux-mips.org,
-        linux-mips@linux-mips.org, matt.redfearn@mips.com,
-        geert@linux-m68k.org, linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: matt.redfearn@mips.com
-Message-ID: <mhng-e7e3dffe-bc80-4bea-8cf5-4d8afb76565a@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 29 Mar 2018 18:01:03 -0400
+X-Google-Smtp-Source: AG47ELvs/Nxra4wNMllZ89lMuuf54nEzsAHYaS2PlUHDyanHzHtYRG7Vjnre7MyMgIZb2g/XBEkwEvrKuFEjZuiL0PytaZSdrW1q
+MIME-Version: 1.0
+Date: Thu, 29 Mar 2018 15:01:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <94eb2c0b8e086ce11505689442f9@google.com>
+Subject: KASAN: stack-out-of-bounds Read in rdma_bind_addr (2)
+From: syzbot <syzbot+4b6afe4bdd99cb99e664@syzkaller.appspotmail.com>
+To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
+        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
+        parav@mellanox.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018 03:41:21 PDT (-0700), matt.redfearn@mips.com wrote:
-> From: Palmer Dabbelt <palmer@sifive.com>
->
-> As part of the MIPS conversion to use the generic GCC library routines,
-> Matt Redfearn discovered that I'd missed a notrace on __ucmpdi2().  This
-> patch rectifies the problem.
->
-> CC: Matt Redfearn <matt.redfearn@mips.com>
-> CC: Antony Pavlov <antonynpavlov@gmail.com>
-> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-> Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
-> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-> ---
->
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2:
->   add notrace to lib/ucmpdi2.c
->
->  lib/ucmpdi2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/ucmpdi2.c b/lib/ucmpdi2.c
-> index 25ca2d4c1e19..597998169a96 100644
-> --- a/lib/ucmpdi2.c
-> +++ b/lib/ucmpdi2.c
-> @@ -17,7 +17,7 @@
->  #include <linux/module.h>
->  #include <linux/libgcc.h>
->
-> -word_type __ucmpdi2(unsigned long long a, unsigned long long b)
-> +word_type notrace __ucmpdi2(unsigned long long a, unsigned long long b)
->  {
->  	const DWunion au = {.ll = a};
->  	const DWunion bu = {.ll = b};
+Hello,
 
-Ah, thanks, I think I must have forgotten about this.  I assume these three are 
-going through your tree?
+syzbot hit the following crash on upstream commit
+0b412605ef5f5c64b31f19e2910b1d5eba9929c3 (Thu Mar 29 01:07:23 2018 +0000)
+Merge tag 'drm-fixes-for-v4.16-rc8' of  
+git://people.freedesktop.org/~airlied/linux
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=4b6afe4bdd99cb99e664
+
+So far this crash happened 4 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6021023174492160
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6269942299099136
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6347752745205760
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
+compiler: gcc (GCC) 7.1.1 20170620
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4b6afe4bdd99cb99e664@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+==================================================================
+BUG: KASAN: stack-out-of-bounds in memcpy include/linux/string.h:345  
+[inline]
+BUG: KASAN: stack-out-of-bounds in rdma_bind_addr+0x13b/0x1d60  
+drivers/infiniband/core/cma.c:3361
+Read of size 48 at addr ffff8801af717a50 by task syzkaller366236/4421
+
+CPU: 0 PID: 4421 Comm: syzkaller366236 Not tainted 4.16.0-rc7+ #5
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
+  memcpy+0x23/0x50 mm/kasan/kasan.c:302
+  memcpy include/linux/string.h:345 [inline]
+  rdma_bind_addr+0x13b/0x1d60 drivers/infiniband/core/cma.c:3361
+  ucma_bind_ip+0x10a/0x190 drivers/infiniband/core/ucma.c:639
+  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
+  __vfs_write+0xef/0x970 fs/read_write.c:480
+  vfs_write+0x189/0x510 fs/read_write.c:544
+  SYSC_write fs/read_write.c:589 [inline]
+  SyS_write+0xef/0x220 fs/read_write.c:581
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x43fdd9
+RSP: 002b:00007ffc69ab4bb8 EFLAGS: 00000217 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fdd9
+RDX: 0000000000000090 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401700
+R13: 0000000000401790 R14: 0000000000000000 R15: 0000000000000000
+
+The buggy address belongs to the page:
+page:ffffea0006bdc5c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: 0000000000000000 ffffea0006bd0101 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801af717900: 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1 04 f2
+  ffff8801af717980: f2 f2 f2 f2 f2 f2 04 f2 f2 f2 f3 f3 f3 f3 00 00
+> ffff8801af717a00: 00 00 00 00 00 f1 f1 f1 f1 00 00 00 00 00 f2 f2
+                                                              ^
+  ffff8801af717a80: f2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1
+  ffff8801af717b00: f1 f1 f1 00 f2 f2 f2 f3 f3 f3 f3 00 00 00 00 00
+==================================================================
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
