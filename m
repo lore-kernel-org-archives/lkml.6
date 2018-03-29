@@ -1,90 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751434AbeC2OUu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:20:50 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:26756 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751210AbeC2OUt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:20:49 -0400
-X-IronPort-AV: E=Sophos;i="5.48,376,1517900400";
-   d="scan'208";a="12507687"
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-To: Peter Rosin <peda@axentia.se>, <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-CC: "wenyouya@gmail.com" <wenyouya@gmail.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180329131054.22506-1-peda@axentia.se>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <30d8bd45-4e5d-3703-5f41-07f5fc70f09d@microchip.com>
-Date: Thu, 29 Mar 2018 16:20:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751935AbeC2OVn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:21:43 -0400
+Received: from muru.com ([72.249.23.125]:34338 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750884AbeC2OVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:21:41 -0400
+Date: Thu, 29 Mar 2018 07:21:37 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180329142137.GO5700@atomide.com>
+References: <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180327121441.GH29239@sirena.org.uk>
+ <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180329140948.GA27473@amd>
 MIME-Version: 1.0
-In-Reply-To: <20180329131054.22506-1-peda@axentia.se>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180329140948.GA27473@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/03/2018 at 15:10, Peter Rosin wrote:
-> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
-> flash accesses have a tendency to cause display disturbances. Add a
-> module param to disable DMA from the NAND controller, since that fixes
-> the display problem for me.
+* Pavel Machek <pavel@ucw.cz> [180329 14:11]:
+> Hi!
 > 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->   drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
+> > Meanwhile, I can try to make voice calls more reproducable with
+> > qmi or MM for example instead of just n_gsm.. And then I'll try
+> > to fix my n_gsm pile of hacks for posting..
 > 
-> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> index b2f00b398490..2ff7a77c7b8e 100644
-> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> @@ -129,6 +129,11 @@
->   #define DEFAULT_TIMEOUT_MS			1000
->   #define MIN_DMA_LEN				128
->   
-> +static bool atmel_nand_avoid_dma __read_mostly;
-> +
-> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
-> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);
+> If you get something to work, that will be great.
 
-We had the DT parameter "atmel,nand-has-dma" for this purpose and it was 
-associated with a module parameter as well (use_dma,).
+Yeah I need to at least fix a n_gsm message handling issue that
+currently causes retries and the retries have to be set artificially
+high right now to avoid timeouts.. Right now each at command takes
+about 30 seconds.. So I can't do any short calls :)
 
-Is it only managed by old DT binding?
+> If you get ofonod to work, that would be even better :-). [That's what
+> Jolla uses, and that's what I have graphical clients for].
 
-Best regards,
-   Nicoals
+OK, I'll stick to picocom, qmicli and mmcli for now :)
 
->   enum atmel_nand_rb_type {
->   	ATMEL_NAND_NO_RB,
->   	ATMEL_NAND_NATIVE_RB,
-> @@ -1977,7 +1982,7 @@ static int atmel_nand_controller_init(struct atmel_nand_controller *nc,
->   		return ret;
->   	}
->   
-> -	if (nc->caps->has_dma) {
-> +	if (nc->caps->has_dma && !atmel_nand_avoid_dma) {
->   		dma_cap_mask_t mask;
->   
->   		dma_cap_zero(mask);
-> 
+> Oh and.. if you have reasonable windowing system, let me know.
 
+I've been just using xorg and i3.
 
--- 
-Nicolas Ferre
+Regards,
+
+Tony
