@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751167AbeC2F35 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 01:29:57 -0400
-Received: from atl4mhob10.registeredsite.com ([209.17.115.48]:33730 "EHLO
-        atl4mhob10.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750709AbeC2F3z (ORCPT
+        id S1751976AbeC2FaD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 01:30:03 -0400
+Received: from atl4mhob11.registeredsite.com ([209.17.115.49]:51780 "EHLO
+        atl4mhob11.registeredsite.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751183AbeC2F35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 01:29:55 -0400
+        Thu, 29 Mar 2018 01:29:57 -0400
 X-TCPREMOTEIP: 37.74.225.130
 X-Authenticated-UID: mike@milosoftware.com
 From: Mike Looijmans <mike.looijmans@topic.nl>
@@ -14,39 +14,124 @@ To: netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         andrew@lunn.ch, f.fainelli@gmail.com, robh+dt@kernel.org,
         frowand.list@gmail.com, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v4 0/2] of_net: Implement of_get_nvmem_mac_address helper
-Date: Thu, 29 Mar 2018 07:29:47 +0200
-Message-Id: <1522301389-11034-1-git-send-email-mike.looijmans@topic.nl>
+Subject: [PATCH v4 1/2] of_net: Implement of_get_nvmem_mac_address helper
+Date: Thu, 29 Mar 2018 07:29:48 +0200
+Message-Id: <1522301389-11034-2-git-send-email-mike.looijmans@topic.nl>
 X-Mailer: git-send-email 1.9.1
-References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl> <20180323151101.GB24361@lunn.ch> <1522046489-19652-1-git-send-email-mike.looijmans@topic.nl> <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
-In-Reply-To: <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
+In-Reply-To: <1522301389-11034-1-git-send-email-mike.looijmans@topic.nl>
+References: <1522301389-11034-1-git-send-email-mike.looijmans@topic.nl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Posted this as a small set now, with an (optional) second patch that shows
-how the changes work and what I've used to test the code on a Topic Miami board.
-I've taken the liberty to add appropriate "Acked" and "Review" tags.
+It's common practice to store MAC addresses for network interfaces into
+nvmem devices. However the code to actually do this in the kernel lacks,
+so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
+address from an nvmem cell provider.
 
-v4: Replaced "6" with ETH_ALEN
+This is particulary useful on devices where the ethernet interface cannot
+be configured by the bootloader, for example because it's in an FPGA.
 
-v3: Add patch that implements mac in nvmem for the Cadence MACB controller
-    Remove the integrated of_get_mac_address call
-
-v2: Use of_nvmem_cell_get to avoid needing the assiciated device
-    Use void* instead of char*
-    Add devicetree binding doc
-
-
-Mike Looijmans (2):
-  of_net: Implement of_get_nvmem_mac_address helper
-  net: macb: Try to retrieve MAC addess from nvmem provider
-
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
  Documentation/devicetree/bindings/net/ethernet.txt |  2 ++
- drivers/net/ethernet/cadence/macb_main.c           | 12 +++++--
  drivers/of/of_net.c                                | 40 ++++++++++++++++++++++
  include/linux/of_net.h                             |  6 ++++
- 4 files changed, 57 insertions(+), 3 deletions(-)
+ 3 files changed, 48 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/net/ethernet.txt b/Documentation/devicetree/bindings/net/ethernet.txt
+index 2974e63..cfc376b 100644
+--- a/Documentation/devicetree/bindings/net/ethernet.txt
++++ b/Documentation/devicetree/bindings/net/ethernet.txt
+@@ -10,6 +10,8 @@ Documentation/devicetree/bindings/phy/phy-bindings.txt.
+   the boot program; should be used in cases where the MAC address assigned to
+   the device by the boot program is different from the "local-mac-address"
+   property;
++- nvmem-cells: phandle, reference to an nvmem node for the MAC address;
++- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used;
+ - max-speed: number, specifies maximum speed in Mbit/s supported by the device;
+ - max-frame-size: number, maximum transfer unit (IEEE defined MTU), rather than
+   the maximum frame size (there's contradiction in the Devicetree
+diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
+index d820f3e..53189d4 100644
+--- a/drivers/of/of_net.c
++++ b/drivers/of/of_net.c
+@@ -7,6 +7,7 @@
+  */
+ #include <linux/etherdevice.h>
+ #include <linux/kernel.h>
++#include <linux/nvmem-consumer.h>
+ #include <linux/of_net.h>
+ #include <linux/phy.h>
+ #include <linux/export.h>
+@@ -80,3 +81,42 @@ const void *of_get_mac_address(struct device_node *np)
+ 	return of_get_mac_addr(np, "address");
+ }
+ EXPORT_SYMBOL(of_get_mac_address);
++
++/**
++ * Obtain the MAC address from an nvmem provider named 'mac-address' through
++ * device tree.
++ * On success, copies the new address into memory pointed to by addr and
++ * returns 0. Returns a negative error code otherwise.
++ * @np:		Device tree node containing the nvmem-cells phandle
++ * @addr:	Pointer to receive the MAC address using ether_addr_copy()
++ */
++int of_get_nvmem_mac_address(struct device_node *np, void *addr)
++{
++	struct nvmem_cell *cell;
++	const void *mac;
++	size_t len;
++	int ret;
++
++	cell = of_nvmem_cell_get(np, "mac-address");
++	if (IS_ERR(cell))
++		return PTR_ERR(cell);
++
++	mac = nvmem_cell_read(cell, &len);
++
++	nvmem_cell_put(cell);
++
++	if (IS_ERR(mac))
++		return PTR_ERR(mac);
++
++	if (len < ETH_ALEN || !is_valid_ether_addr(mac)) {
++		ret = -EINVAL;
++	} else {
++		ether_addr_copy(addr, mac);
++		ret = 0;
++	}
++
++	kfree(mac);
++
++	return ret;
++}
++EXPORT_SYMBOL(of_get_nvmem_mac_address);
+diff --git a/include/linux/of_net.h b/include/linux/of_net.h
+index 9cd72aa..90d81ee 100644
+--- a/include/linux/of_net.h
++++ b/include/linux/of_net.h
+@@ -13,6 +13,7 @@
+ struct net_device;
+ extern int of_get_phy_mode(struct device_node *np);
+ extern const void *of_get_mac_address(struct device_node *np);
++extern int of_get_nvmem_mac_address(struct device_node *np, void *addr);
+ extern struct net_device *of_find_net_device_by_node(struct device_node *np);
+ #else
+ static inline int of_get_phy_mode(struct device_node *np)
+@@ -25,6 +26,11 @@ static inline const void *of_get_mac_address(struct device_node *np)
+ 	return NULL;
+ }
+ 
++static inline int of_get_nvmem_mac_address(struct device_node *np, void *addr)
++{
++	return -ENODEV;
++}
++
+ static inline struct net_device *of_find_net_device_by_node(struct device_node *np)
+ {
+ 	return NULL;
 -- 
 1.9.1
