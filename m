@@ -1,168 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753008AbeC2UlW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 16:41:22 -0400
-Received: from fallback13.m.smailru.net ([94.100.179.30]:38490 "EHLO
-        fallback.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752623AbeC2UeY (ORCPT
+        id S1752252AbeC2Um1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 16:42:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44982 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750971AbeC2UmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 16:34:24 -0400
-From: Sergey Suloev <ssuloev@orpaltech.com>
-To: Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Sergey Suloev <ssuloev@orpaltech.com>
-Subject: [PATCH 4/6] spi: sun4i: use completion provided by SPI core driver
-Date: Thu, 29 Mar 2018 21:59:05 +0300
-Message-Id: <20180329185907.27281-5-ssuloev@orpaltech.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180329185907.27281-1-ssuloev@orpaltech.com>
-References: <20180329185907.27281-1-ssuloev@orpaltech.com>
-X-7FA49CB5: 0D63561A33F958A5BCFC2B28FCD39CD6A67B693F76D0AEE7FAA6AC1F98F6358A725E5C173C3A84C3ADE50F0DA4A4E48CBF269F2BE9530C73157381330E1A1978C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917A0EC09878A2918AC3D100BC6526AF6D5069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
-X-7FA49CB5: 0D63561A33F958A557E1F21B1BEB3E48D32B66E9EA47512900E3179B64D66D5E462275124DF8B9C9A939490BDF5DFC32E5BFE6E7EFDEDCD789D4C264860C145E
-X-Mailru-Sender: A5480F10D64C9005631A4012884FA16352B0F6778DC341104E928854CB013B9F0ED2FDEC15CED1695FC78D3D9DFD682EC77752E0C033A69E3DF03E4AFE169B847187F6D0DA2124709F6F601AB1435FA63CDA0F3B3F5B9367
-X-Mras: OK
+        Thu, 29 Mar 2018 16:42:23 -0400
+Subject: Re: [PATCH 0/1] fix regression in hugetlbfs overflow checking
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Michal Hocko <mhocko@kernel.org>, Yisheng Xie <xieyisheng1@huawei.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nic Losby <blurbdust@gmail.com>, Dan Rue <dan.rue@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180329041656.19691-1-mike.kravetz@oracle.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <91db8046-0504-4851-4bdb-28bfe7d4c24f@oracle.com>
+Date: Thu, 29 Mar 2018 13:42:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180329041656.19691-1-mike.kravetz@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8847 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803290208
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As long as the completion already provided by the SPI core
-then there is no need to waste extra-memory on this.
-Also a waiting function was added to avoid code duplication.
+On 03/28/2018 09:16 PM, Mike Kravetz wrote:
+> Commit 63489f8e8211 ("hugetlbfs: check for pgoff value overflow")
+> introduced a regression in 32 bit kernels.  When creating the mask
+> to check vm_pgoff, it incorrectly specified that the size of a loff_t
+> was the size of a long.  This prevents mapping hugetlbfs files at
+> offsets greater than 4GB on 32 bit kernels.
 
-Signed-off-by: Sergey Suloev <ssuloev@orpaltech.com>
+Well, the kbuild test robot found issues with that as well. :(
 
----
- drivers/spi/spi-sun4i.c | 62 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 35 insertions(+), 27 deletions(-)
+I stepped back and did some analysis on what really needs to be
+checked WRT arguments causing overflow in the hugetlbfs mmap routine.
+For my reference more than anything, here are type sizes to be
+concerned with on 32 and 64 bit systems:
 
-diff --git a/drivers/spi/spi-sun4i.c b/drivers/spi/spi-sun4i.c
-index 2d716f1..4f24e12 100644
---- a/drivers/spi/spi-sun4i.c
-+++ b/drivers/spi/spi-sun4i.c
-@@ -92,8 +92,6 @@ struct sun4i_spi {
- 	struct clk		*hclk;
- 	struct clk		*mclk;
- 
--	struct completion	done;
--
- 	const u8		*tx_buf;
- 	u8			*rx_buf;
- 	int			len;
-@@ -213,13 +211,36 @@ static size_t sun4i_spi_max_transfer_size(struct spi_device *spi)
- 	return SUN4I_FIFO_DEPTH;
- }
- 
-+static int sun4i_spi_wait_for_transfer(struct spi_device *spi,
-+				       struct spi_transfer *tfr)
-+{
-+	struct spi_master *master = spi->master;
-+	unsigned int start, end, tx_time;
-+	unsigned int timeout;
-+
-+	/* calc required timeout from given speed & len values */
-+	tx_time = max(tfr->len * 8 * 2 / (tfr->speed_hz / 1000), 100U);
-+	start = jiffies;
-+	timeout = wait_for_completion_timeout(&master->xfer_completion,
-+					      msecs_to_jiffies(tx_time));
-+	end = jiffies;
-+	if (!timeout) {
-+		dev_warn(&master->dev,
-+			 "%s: timeout transferring %u bytes@%iHz for %i(%i)ms",
-+			 dev_name(&spi->dev), tfr->len, tfr->speed_hz,
-+			 jiffies_to_msecs(end - start), tx_time);
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
- static int sun4i_spi_transfer_one(struct spi_master *master,
- 				  struct spi_device *spi,
- 				  struct spi_transfer *tfr)
- {
- 	struct sun4i_spi *sspi = spi_master_get_devdata(master);
--	unsigned int mclk_rate, div, timeout;
--	unsigned int start, end, tx_time;
-+	unsigned int mclk_rate, div;
- 	unsigned int tx_len = 0;
- 	int ret = 0;
- 	u32 reg;
-@@ -228,7 +249,6 @@ static int sun4i_spi_transfer_one(struct spi_master *master,
- 	if (tfr->len > SUN4I_FIFO_DEPTH)
- 		return -EMSGSIZE;
- 
--	reinit_completion(&sspi->done);
- 	sspi->tx_buf = tfr->tx_buf;
- 	sspi->rx_buf = tfr->rx_buf;
- 	sspi->len = tfr->len;
-@@ -328,22 +348,8 @@ static int sun4i_spi_transfer_one(struct spi_master *master,
- 	reg = sun4i_spi_read(sspi, SUN4I_CTL_REG);
- 	sun4i_spi_write(sspi, SUN4I_CTL_REG, reg | SUN4I_CTL_XCH);
- 
--	tx_time = max(tfr->len * 8 * 2 / (tfr->speed_hz / 1000), 100U);
--	start = jiffies;
--	timeout = wait_for_completion_timeout(&sspi->done,
--					      msecs_to_jiffies(tx_time));
--	end = jiffies;
--	if (!timeout) {
--		dev_warn(&master->dev,
--			 "%s: timeout transferring %u bytes@%iHz for %i(%i)ms",
--			 dev_name(&spi->dev), tfr->len, tfr->speed_hz,
--			 jiffies_to_msecs(end - start), tx_time);
--		ret = -ETIMEDOUT;
--		goto out;
--	}
--
-+	ret = sun4i_spi_wait_for_transfer(spi, tfr);
- 
--out:
- 	sun4i_spi_write(sspi, SUN4I_INT_CTL_REG, 0);
- 
- 	return ret;
-@@ -351,14 +357,18 @@ out:
- 
- static irqreturn_t sun4i_spi_handler(int irq, void *dev_id)
- {
--	struct sun4i_spi *sspi = dev_id;
--	u32 status = sun4i_spi_read(sspi, SUN4I_INT_STA_REG);
-+	struct spi_master *master = dev_id;
-+	struct sun4i_spi *sspi = spi_master_get_devdata(master);
-+	u32 status;
-+
-+	status = sun4i_spi_read(sspi, SUN4I_INT_STA_REG);
- 
- 	/* Transfer complete */
- 	if (status & SUN4I_INT_CTL_TC) {
--		sun4i_spi_write(sspi, SUN4I_INT_STA_REG, SUN4I_INT_CTL_TC);
-+		sun4i_spi_write(sspi, SUN4I_INT_STA_REG,
-+				SUN4I_INT_CTL_TC);
- 		sun4i_spi_drain_fifo(sspi, SUN4I_FIFO_DEPTH);
--		complete(&sspi->done);
-+		spi_finalize_current_transfer(master);
- 		return IRQ_HANDLED;
- 	}
- 
-@@ -447,7 +457,7 @@ static int sun4i_spi_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, irq, sun4i_spi_handler,
--			       0, dev_name(&pdev->dev), sspi);
-+			       0, dev_name(&pdev->dev), master);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Cannot request IRQ\n");
- 		goto err_free_master;
-@@ -467,8 +477,6 @@ static int sun4i_spi_probe(struct platform_device *pdev)
- 		goto err_free_master;
- 	}
- 
--	init_completion(&sspi->done);
--
- 	/*
- 	 * This wake-up/shutdown pattern is to be able to have the
- 	 * device woken up, even if runtime_pm is disabled
+Data or type		32 bit system	64 bit system
+------------		-------------	-------------
+vm_pgoff		32		64
+size_t			32		64
+loff_t			64		64
+huge_page_index		32		64
+
+There are three areas of concern:
+
+1) Will the page offset value passed in vm_pgoff overflow a loff_t?
+
+   On 64 bit systems, vm_off is 64 bits and loff_t is 64 bits.  When
+   hugetlbfs mmap is entered via the normal mmap path, the file offset
+   is PAGE_SHIFT'ed right and put into vm_pgoff.  However, the
+   remap_file_pages system call allows a user to specify a page offset
+   which is put directly into vm_pgoff.  Converting from a page offset
+   to byte offset is required to get offsets within the underlying
+   hugetlbfs file.  In both cases, the value in vm_pgoff when converted
+   to a byte offset could overflow a loff_t.
+
+   On 32 bit systems, vm_pgoff is 32 bits and loff_t is 64 bits.  Therefore,
+   when converting to a byte address we will never overflow a loff_t.  In
+   addition, on 32 bit systems it is perfectly valid for vm_pgoff to be
+   as big as ULONG_MAX.  This allows for hugetlbfs files greater than 4GB
+   in size.
+
+2) Does vm_pgoff when converted to bytes plus the length of the mapping
+   overflow a loff_t?
+
+   On 64 bit systems, we have validated that vm_pgoff will not overflow a
+   loff_t when converted to bytes.  But, it is still possible for this
+   value plus length to overflow a loff_t.
+
+   On 32 bit systems, vm_pgoff is a 32 bits and can be at most ULONG_MAX.
+   Converting this value to bytes is a PAGE_SHIFT left into a 64 bit loff_t.
+   length is a 32 bits and can be at most LONG_MAX.  Adding these two
+   values can not overflow a 64 bit loff_t.
+
+3) Can vm_pgoff and (vm_pgoff + length) be represented as huge page
+   offsets with a signed long?  The hugetlbfs reservation management
+   code uses longs for huge page offsets into the underlying file.
+
+   On 64 bit systems, the checks in 1) and 2) have ensured that both values
+   can be represented by a loff_t which is a signed 64 bit value.  These
+   values will be shifted right by 'huge page shift'  Therefore, they can
+   certainly be represented by a signed long.
+
+  On 32 bit systems pg_off can be at most ULONG_MAX.  This value will be
+  right shifted 'huge_page_shift - PAGE_SHIFT' bits.  So, as long as
+  huge_page_shift is one or more greater than PAGE_SHIFT this value can
+  be represented with a signed long.  Adding the maximum length value
+  (LONG_MAX) the maximum pg_off byte converted value, would result in
+  one more significant bit being set.  For example assuming
+  PAGE_SHIFT = 12: 0x0ffffffff000 + 0x00ffffffff = 0x1000ffffefff.
+  To represent this as a huge page index, we right shift 'huge_page_shift
+  - PAGE_SHIFT' bits.  As long as huge_page_shift is 2 or more greater
+  than PAGE_SHIFT, this value can be represented with a signed long.
+
+If we make the following assumptions:
+- PAGE_SHIFT will be 2 or more less than BITS_PER_LONG
+- huge_page_shift will be 2 or more greater than PAGE_SHIFT
+then we need to make to make following checks in the code.
+
+1) Check the upper PAGE_SHIFT+1 bits of vm_pgoff on 64 bit systems.
+   Explicitly disable on 32 bit systems.
+
+/*
+ * Mask used when checking the page offset value passed in via system
+ * calls.  This value will be converted to a loff_t which is signed.
+ * Therefore, we want to check the upper PAGE_SHIFT + 1 bits of the
+ * value.  The extra bit (- 1 in the shift value) is to take the sign
+ * bit into account.
+ */
+#define PGOFF_LOFFT_MAX \
+	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
+...
+	/*
+	 * page based offset in vm_pgoff could be sufficiently large to
+	 * overflow a loff_t when converted to byte offset.  This can
+	 * only happen on architectures where sizeof(loff_t) ==
+	 * sizeof(unsigned long).  So, only check in those instances.
+	 */
+	if (sizeof(unsigned long) == sizeof(loff_t)) {
+		if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
+			return -EINVAL;
+	}
+
+2) Convert vm_pgoff and length to loff_t byte offset.  Add together and
+   check for overflow.  This is unnecessary on 32 bit systems as described
+   above, but likely not worth the conditional code.
+
+	vma_len = (loff_t)(vma->vm_end - vma->vm_start);
+	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
+	/* check for overflow */
+	if (len < vma_len)
+		return -EINVAL;
+
+3) After making the above two checks, pg_off and (pg_off + length) can
+   be represented as huge page offsets with a signed long.  So, no checks
+   needed.
+
+I know this is long and a bore to read.  However, I wanted to get some
+feedback before sending another patch.  I have attempted to fix this several
+times and seem to always over look some detail.  Hopefully, this will
+help others to think of additional concerns.
+
 -- 
-2.16.2
+Mike Kravetz
