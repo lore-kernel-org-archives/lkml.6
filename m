@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752259AbeC2WBG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:01:06 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:42324 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeC2WBD (ORCPT
+        id S1752177AbeC2WBF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:01:05 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:36397 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750881AbeC2WBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 18:01:03 -0400
-X-Google-Smtp-Source: AG47ELvs/Nxra4wNMllZ89lMuuf54nEzsAHYaS2PlUHDyanHzHtYRG7Vjnre7MyMgIZb2g/XBEkwEvrKuFEjZuiL0PytaZSdrW1q
+X-Google-Smtp-Source: AG47ELvJHysPQlQIlkiODYiuRKum4ASAMroL6ytowFciNKFB6g27Y3LcOQg60gDpIzzhnebdjiPJfNz8jkuE1BvuqtEKQj3MzVCo
 MIME-Version: 1.0
 Date: Thu, 29 Mar 2018 15:01:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <94eb2c0b8e086ce11505689442f9@google.com>
-Subject: KASAN: stack-out-of-bounds Read in rdma_bind_addr (2)
-From: syzbot <syzbot+4b6afe4bdd99cb99e664@syzkaller.appspotmail.com>
-To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
-        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
-        parav@mellanox.com, syzkaller-bugs@googlegroups.com
+Message-ID: <001a113ed5546fb3c00568944220@google.com>
+Subject: WARNING in refcount_sub_and_test (2)
+From: syzbot <syzbot+c7b0dde061c523bc4b0f@syzkaller.appspotmail.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -26,81 +25,157 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on upstream commit
-0b412605ef5f5c64b31f19e2910b1d5eba9929c3 (Thu Mar 29 01:07:23 2018 +0000)
-Merge tag 'drm-fixes-for-v4.16-rc8' of  
-git://people.freedesktop.org/~airlied/linux
+syzbot hit the following crash on bpf-next commit
+22527437e0a0c96ee3153e9d0382942b0fd4f9dd (Thu Mar 29 02:36:15 2018 +0000)
+Merge branch 'nfp-bpf-updates'
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=4b6afe4bdd99cb99e664
+https://syzkaller.appspot.com/bug?extid=c7b0dde061c523bc4b0f
 
-So far this crash happened 4 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6021023174492160
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5996614741131264
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6269942299099136
+https://syzkaller.appspot.com/x/repro.syz?id=5947747274326016
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6347752745205760
+https://syzkaller.appspot.com/x/log.txt?id=6215237837520896
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
+https://syzkaller.appspot.com/x/.config?id=-1280663959502969741
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4b6afe4bdd99cb99e664@syzkaller.appspotmail.com
+Reported-by: syzbot+c7b0dde061c523bc4b0f@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-==================================================================
-BUG: KASAN: stack-out-of-bounds in memcpy include/linux/string.h:345  
-[inline]
-BUG: KASAN: stack-out-of-bounds in rdma_bind_addr+0x13b/0x1d60  
-drivers/infiniband/core/cma.c:3361
-Read of size 48 at addr ffff8801af717a50 by task syzkaller366236/4421
+R13: 0030656c69662f2e R14: 0000000000000005 R15: 2f30656c69662f2e
+------------[ cut here ]------------
+------------[ cut here ]------------
+refcount_t: increment on 0; use-after-free.
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 4450 at lib/refcount.c:187  
+refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
+WARNING: CPU: 1 PID: 4460 at lib/refcount.c:153 refcount_inc+0x47/0x50  
+lib/refcount.c:153
+Kernel panic - not syncing: panic_on_warn set ...
 
-CPU: 0 PID: 4421 Comm: syzkaller366236 Not tainted 4.16.0-rc7+ #5
+Modules linked in:
+CPU: 0 PID: 4450 Comm: syzkaller428798 Not tainted 4.16.0-rc6+ #40
+CPU: 1 PID: 4460 Comm: syzkaller428798 Not tainted 4.16.0-rc6+ #40
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+RIP: 0010:refcount_inc+0x47/0x50 lib/refcount.c:153
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
-  memcpy+0x23/0x50 mm/kasan/kasan.c:302
-  memcpy include/linux/string.h:345 [inline]
-  rdma_bind_addr+0x13b/0x1d60 drivers/infiniband/core/cma.c:3361
-  ucma_bind_ip+0x10a/0x190 drivers/infiniband/core/ucma.c:639
-  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
-  __vfs_write+0xef/0x970 fs/read_write.c:480
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
+RSP: 0018:ffff8801b534f860 EFLAGS: 00010286
+RAX: dffffc0000000008 RBX: ffff8801b1b8c184 RCX: ffffffff815ba4be
+  panic+0x1e4/0x41c kernel/panic.c:183
+RDX: 0000000000000000 RSI: 1ffff10036a69ebc RDI: 1ffff10036a69e91
+RBP: ffff8801b534f868 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b534faf8
+R13: ffff8801b04db513 R14: ffff8801b1b8c180 R15: ffff8801b04db501
+FS:  00000000008e6880(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  __warn+0x1dc/0x200 kernel/panic.c:547
+CR2: 00000000006ea510 CR3: 00000001b106f005 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+Call Trace:
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  get_net include/net/net_namespace.h:204 [inline]
+  sk_alloc+0x3f9/0x1440 net/core/sock.c:1540
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
+RSP: 0018:ffff8801b0e87728 EFLAGS: 00010286
+RAX: dffffc0000000008 RBX: 0000000000000000 RCX: ffffffff815ba4be
+RDX: 0000000000000000 RSI: 1ffff100361d0e95 RDI: 0000000000000293
+RBP: ffff8801b0e877b8 R08: 0000000000000000 R09: 0000000000000000
+R10: ffff8801b0e87850 R11: 0000000000000000 R12: 1ffff100361d0ee6
+  inet_create+0x47c/0xf50 net/ipv4/af_inet.c:320
+R13: 00000000ffffffff R14: 0000000000000001 R15: ffff8801b0816204
+  __sock_create+0x4d4/0x850 net/socket.c:1285
+  sock_create net/socket.c:1325 [inline]
+  SYSC_socket net/socket.c:1355 [inline]
+  SyS_socket+0xeb/0x1d0 net/socket.c:1335
+  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
+  put_net include/net/net_namespace.h:222 [inline]
+  __sk_destruct+0x560/0x920 net/core/sock.c:1592
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  sk_destruct+0x47/0x80 net/core/sock.c:1601
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x43fdd9
-RSP: 002b:00007ffc69ab4bb8 EFLAGS: 00000217 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fdd9
-RDX: 0000000000000090 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401700
-R13: 0000000000401790 R14: 0000000000000000 R15: 0000000000000000
-
-The buggy address belongs to the page:
-page:ffffea0006bdc5c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: 0000000000000000 ffffea0006bd0101 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801af717900: 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1 04 f2
-  ffff8801af717980: f2 f2 f2 f2 f2 f2 04 f2 f2 f2 f3 f3 f3 f3 00 00
-> ffff8801af717a00: 00 00 00 00 00 f1 f1 f1 f1 00 00 00 00 00 f2 f2
-                                                              ^
-  ffff8801af717a80: f2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1
-  ffff8801af717b00: f1 f1 f1 00 f2 f2 f2 f3 f3 f3 f3 00 00 00 00 00
-==================================================================
+  __sk_free+0xf1/0x2b0 net/core/sock.c:1612
+RIP: 0033:0x44ac67
+  sk_free+0x2a/0x40 net/core/sock.c:1623
+RSP: 002b:00007ffcd4f45588 EFLAGS: 00000202
+  sock_put include/net/sock.h:1660 [inline]
+  tcp_close+0x967/0x1190 net/ipv4/tcp.c:2321
+  ORIG_RAX: 0000000000000029
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000044ac67
+RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 00007ffcd4f456b0 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000006 R11: 0000000000000202 R12: 0000000000000002
+  inet_release+0xed/0x1c0 net/ipv4/af_inet.c:427
+R13: 0000000000000002 R14: 000000000000b38f R15: 00007ffcd4f456d8
+  sock_release+0x8d/0x1e0 net/socket.c:594
+Code:
+be
+  sock_close+0x16/0x20 net/socket.c:1149
+fe
+  __fput+0x327/0x7e0 fs/file_table.c:209
+5b
+5d
+c3
+  ____fput+0x15/0x20 fs/file_table.c:243
+e8
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+5a
+3c
+be
+fe
+  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
+80
+3d
+91
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
+f5
+84
+05
+00 75 ea e8 4c 3c be
+fe
+48
+c7
+c7
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+80
+RIP: 0033:0x406fe0
+78
+RSP: 002b:00007ffcd4f45588 EFLAGS: 00000246
+e5
+  ORIG_RAX: 0000000000000003
+86
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000406fe0
+c6
+RDX: 00000000000000e0 RSI: 00007ffcd4f45e70 RDI: 0000000000000003
+05
+RBP: 00007ffcd4f456b0 R08: 00007ffcd4f455b0 R09: 0000000000000001
+7c
+R10: 00007ffcd4f456b0 R11: 0000000000000246 R12: 00000000006de4c0
+R13: 00000000006dde40 R14: 0000000000001380 R15: 00007ffcd4f456d8
+f5 84 05 01 e8 f9 47 8e fe <0f> 0b eb ce 0f 1f 44 00 00 55 48 89 e5 41 57  
+41 56 41 55 41 54
+---[ end trace 04af8119701e2164 ]---
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
