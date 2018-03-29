@@ -1,142 +1,164 @@
-Return-Path: <jsimmons@infradead.org>
-X-Google-Smtp-Source: AIpwx49fcYvctxPf4RStancFi0WydEXik8+SXFRQJVsXiG9fL38Z8DgI3SoBJAhaVQhdEtIWf8EE
-ARC-Seal: i=1; a=rsa-sha256; t=1522436607; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AIpwx4/fZWBuzefx3OteqSVsvaEoi8cjOVQgfSd2sIBG9JnYa+J7BoyxutVuXHkTftJhdF/r/nlZ
+ARC-Seal: i=1; a=rsa-sha256; t=1522297723; cv=none;
         d=google.com; s=arc-20160816;
-        b=fpuEnjb4T6f84qkTKS0MznWqgRxd+WrDs4FRS8ouaszWb9XY7IpW7P6DJA++zWksJQ
-         PhepKIHGnEgqTv3Y72Jycoh1gX3DUEdqJ3qI0IOg91eqogtVNuHkdh7IKYUiuIysRXBT
-         1PJvCN4AIlaIcXsEg4+7waulHmploF5Ru5gXLwZYVho2CyqL+bQ0+iwGrpsFeIohzjWv
-         4FdcSXgsRrwjq8j3EJC4WL+q5MEjP5kSMQlMWV9JYZDM0KpGRAdjDnZWv/6G9CNPEj5O
-         lby/UVxpLukPqS+o0Lg9vdPUt5MrL0ZmSX2b8IrX3cBwYwe3cVGTHvQtjpG7FvIO/vQe
-         loJA==
+        b=DOn+t/ids68l80vAc23SZ/LaGkjFps/5TFTnthvYbc9NQm55CB+1yoSeeI1vvIAbpB
+         4l+H6ywyNOkWP3MBQgak6axgycYtGt2GtEz7s+gLULQvfdVPRJLKiVKwOeSobzJOtJgK
+         d+RMyJNqzBAihZ4PqEBuA7UxqhYcM0WGh58TsHGNxwMaLZr42OhjNGlXULOIVHCOi+19
+         48VT4CPWjlcL4erIFzGD4WoBW9MkmwcGeAIcNoNQEvbgV2SmGfJDwdxbpn0sAChfT79l
+         BRboXs5lVmh3fQpmXRuCGyDon6u6AkMjRe+uiYGXN+OFXB3xe8OunW82Wgwz4CYstyt5
+         x9Yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=7YaHpksuPi9AJc3gbdRYrFP1Mn7IklLKSP4zsr/VV0M=;
-        b=cD5QIBErTPNvOkCX1EOf5Wza5hXW9MnZyh35QebQqOdHt22HhZCc3mmWgb4iTlTviU
-         1E+NkrX0vE2MjXMkbVyxLbDnT+8tDHOaMIiTPNgAcT+MHaZpZE26AA6icGXPmdmRMJQA
-         Z+ZnIzYAI3xx1BdaNGgWHi/c3BHj+37zA/JTe4lAoAtNJNFsjcD0d8NP5k2RV13E4goi
-         nibWHhM4F6IC6rIAahU5Wch4N1wO+wnPLvI4fkhpMIVnzxzSo1WJWWH7C/N3C42PPi/w
-         O9BMQNh2xqFaE0XTAu3jA1EaGwzQr+o9xxi2VfgcIERC5To9kBqnzwrFpjT8HENa+7NC
-         r1sw==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=B18q4yj/P8PE7DPhw6uZlRavk0GiMWc+76XaWht/kec=;
+        b=JpBUaIH9iERv+2V9R5HohYjapUEtEzor/qqNzWdlS7pgJ9tmENG8pEjuYYx86ToQt1
+         tWKx+fDNbfc8LsWitJKEZDVOv9FdJAKvu5DmJITXUL61TARr1U48Oy0uhxvTlawr5ZdV
+         sliZY8Wsfjmh0YAdiL+g4xCfAKYrtLjc6aJwz/XgK40F1yrOrNb6XGeKorJF/+b3FvxO
+         TJ/SyuNx/MEgArtxesgOxwTwa9OCHTfQ/Zubz9J2UjjRLQdk8UOpqHwl2bSthNU+SX7r
+         mDF+rr7odvuwbxzFgSMFgiG8bLLk8mQ2UoRlaPd8iaiGYgsu7wWHZr+lb+Hi1ii5YlE/
+         GQfA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=opvHmR6b;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=opvHmR6b;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
-Date: Fri, 30 Mar 2018 20:03:23 +0100 (BST)
-From: James Simmons <jsimmons@infradead.org>
-To: NeilBrown <neilb@suse.com>
-cc: Oleg Drokin <oleg.drokin@intel.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Andreas Dilger <andreas.dilger@intel.com>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 15/17] staging: lustre: discard cfs_time_before_64()
-In-Reply-To: <152229760881.27689.10658125792259115083.stgit@noble>
-Message-ID: <alpine.LFD.2.21.1803302003160.9681@casper.infradead.org>
-References: <152229732768.27689.4800156943561963977.stgit@noble> <152229760881.27689.10658125792259115083.stgit@noble>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Thu, 29 Mar 2018 15:26:48 +1100
+Subject: [PATCH 13/17] staging: lustre: libcfs: remove cfs_timeout_cap()
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152229760874.27689.12453214678546053828.stgit@noble>
+In-Reply-To: <152229732768.27689.4800156943561963977.stgit@noble>
+References: <152229732768.27689.4800156943561963977.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180330_200323_708031_7DDC02E1 
-X-CRM114-Status: GOOD (  16.43  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: SpamAssassin version 3.4.1 on casper.infradead.org summary:
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596244872321523554?=
-X-GMAIL-MSGID: =?utf-8?q?1596390488200800322?=
+X-GMAIL-THRID: =?utf-8?q?1596244858213208850?=
+X-GMAIL-MSGID: =?utf-8?q?1596244858213208850?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This wrapper is only used once, so open-code it as max().
 
-> cfs_time_before_64 is the same as time_before64()
-> similarly cfs_time_beforeq_64() matsches time_before_eq64()
-> So just use the standard interfaces.
+This allows us to remove the libcfs_time.h include file.
 
+Signed-off-by: NeilBrown <neilb@suse.com>
 Reviewed-by: James Simmons <jsimmons@infradead.org>
+---
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |    1 
+ .../lustre/include/linux/libcfs/libcfs_time.h      |   50 --------------------
+ .../lustre/include/linux/libcfs/linux/linux-time.h |    2 -
+ drivers/staging/lustre/lustre/ptlrpc/import.c      |    4 +-
+ 4 files changed, 3 insertions(+), 54 deletions(-)
+ delete mode 100644 drivers/staging/lustre/include/linux/libcfs/libcfs_time.h
+
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+index 3b751c436b3d..3d3fa52858e5 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+@@ -43,7 +43,6 @@
+ #include <linux/libcfs/libcfs_private.h>
+ #include <linux/libcfs/libcfs_cpu.h>
+ #include <linux/libcfs/libcfs_prim.h>
+-#include <linux/libcfs/libcfs_time.h>
+ #include <linux/libcfs/libcfs_string.h>
+ #include <linux/libcfs/libcfs_hash.h>
+ #include <linux/libcfs/libcfs_fail.h>
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_time.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_time.h
+deleted file mode 100644
+index 172a8872e3f3..000000000000
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_time.h
++++ /dev/null
+@@ -1,50 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * GPL HEADER START
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- * GPL HEADER END
+- */
+-/*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+- * Use is subject to license terms.
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Sun Microsystems, Inc.
+- *
+- * libcfs/include/libcfs/libcfs_time.h
+- *
+- * Time functions.
+- *
+- */
+-
+-#ifndef __LIBCFS_TIME_H__
+-#define __LIBCFS_TIME_H__
+-/*
+- * return valid time-out based on user supplied one. Currently we only check
+- * that time-out is not shorted than allowed.
+- */
+-static inline long cfs_timeout_cap(long timeout)
+-{
+-	if (timeout < CFS_TICK)
+-		timeout = CFS_TICK;
+-	return timeout;
+-}
+-
+-#endif
+diff --git a/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h b/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
+index ff3aae2f1231..ecb2126a9e6f 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
++++ b/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
+@@ -78,7 +78,7 @@ static inline int cfs_time_beforeq_64(u64 t1, u64 t2)
+ /*
+  * One jiffy
+  */
+-#define CFS_TICK		(1)
++#define CFS_TICK		(1UL)
  
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  .../lustre/include/linux/libcfs/linux/linux-time.h |   14 --------------
->  drivers/staging/lustre/lustre/include/obd_class.h  |    4 ++--
->  drivers/staging/lustre/lustre/ptlrpc/import.c      |    4 ++--
->  3 files changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h b/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
-> index 9a353c6cb85a..ecdebccf2b44 100644
-> --- a/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
-> +++ b/drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
-> @@ -56,20 +56,6 @@
->  
->  #include <linux/jiffies.h>
->  
-> -/*
-> - * Generic kernel stuff
-> - */
-> -
-> -static inline int cfs_time_before_64(u64 t1, u64 t2)
-> -{
-> -	return (__s64)t2 - (__s64)t1 > 0;
-> -}
-> -
-> -static inline int cfs_time_beforeq_64(u64 t1, u64 t2)
-> -{
-> -	return (__s64)t2 - (__s64)t1 >= 0;
-> -}
-> -
->  /*
->   * One jiffy
->   */
-> diff --git a/drivers/staging/lustre/lustre/include/obd_class.h b/drivers/staging/lustre/lustre/include/obd_class.h
-> index 7cfc3c8d100c..176b63e2c9a7 100644
-> --- a/drivers/staging/lustre/lustre/include/obd_class.h
-> +++ b/drivers/staging/lustre/lustre/include/obd_class.h
-> @@ -932,7 +932,7 @@ static inline int obd_statfs_async(struct obd_export *exp,
->  
->  	CDEBUG(D_SUPER, "%s: osfs %p age %llu, max_age %llu\n",
->  	       obd->obd_name, &obd->obd_osfs, obd->obd_osfs_age, max_age);
-> -	if (cfs_time_before_64(obd->obd_osfs_age, max_age)) {
-> +	if (time_before64(obd->obd_osfs_age, max_age)) {
->  		rc = OBP(obd, statfs_async)(exp, oinfo, max_age, rqset);
->  	} else {
->  		CDEBUG(D_SUPER,
-> @@ -992,7 +992,7 @@ static inline int obd_statfs(const struct lu_env *env, struct obd_export *exp,
->  
->  	CDEBUG(D_SUPER, "osfs %llu, max_age %llu\n",
->  	       obd->obd_osfs_age, max_age);
-> -	if (cfs_time_before_64(obd->obd_osfs_age, max_age)) {
-> +	if (time_before64(obd->obd_osfs_age, max_age)) {
->  		rc = OBP(obd, statfs)(env, exp, osfs, max_age, flags);
->  		if (rc == 0) {
->  			spin_lock(&obd->obd_osfs_lock);
-> diff --git a/drivers/staging/lustre/lustre/ptlrpc/import.c b/drivers/staging/lustre/lustre/ptlrpc/import.c
-> index dd4fd54128dd..537a9e2ed467 100644
-> --- a/drivers/staging/lustre/lustre/ptlrpc/import.c
-> +++ b/drivers/staging/lustre/lustre/ptlrpc/import.c
-> @@ -463,7 +463,7 @@ static int import_select_connection(struct obd_import *imp)
->  		 * the last successful attempt, go with this one
->  		 */
->  		if ((conn->oic_last_attempt == 0) ||
-> -		    cfs_time_beforeq_64(conn->oic_last_attempt,
-> +		    time_before_eq64(conn->oic_last_attempt,
->  					imp->imp_last_success_conn)) {
->  			imp_conn = conn;
->  			tried_all = 0;
-> @@ -476,7 +476,7 @@ static int import_select_connection(struct obd_import *imp)
->  		 */
->  		if (!imp_conn)
->  			imp_conn = conn;
-> -		else if (cfs_time_before_64(conn->oic_last_attempt,
-> +		else if (time_before64(conn->oic_last_attempt,
->  					    imp_conn->oic_last_attempt))
->  			imp_conn = conn;
->  	}
-> 
-> 
-> 
+ #define CFS_DURATION_T	  "%ld"
+ 
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/import.c b/drivers/staging/lustre/lustre/ptlrpc/import.c
+index 4a9d1f189d01..dd4fd54128dd 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/import.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/import.c
+@@ -1486,7 +1486,7 @@ int ptlrpc_disconnect_import(struct obd_import *imp, int noclose)
+ 	}
+ 
+ 	if (ptlrpc_import_in_recovery(imp)) {
+-		long timeout;
++		unsigned long timeout;
+ 
+ 		if (AT_OFF) {
+ 			if (imp->imp_server_timeout)
+@@ -1501,7 +1501,7 @@ int ptlrpc_disconnect_import(struct obd_import *imp, int noclose)
+ 
+ 		if (wait_event_idle_timeout(imp->imp_recovery_waitq,
+ 					    !ptlrpc_import_in_recovery(imp),
+-					    cfs_timeout_cap(timeout)) == 0)
++					    max(timeout, CFS_TICK)) == 0)
+ 			l_wait_event_abortable(
+ 				imp->imp_recovery_waitq,
+ 				!ptlrpc_import_in_recovery(imp));
