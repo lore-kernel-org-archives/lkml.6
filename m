@@ -1,92 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752568AbeC2QDJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:03:09 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:63669 "EHLO pegase1.c-s.fr"
+        id S1752592AbeC2QDS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:03:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:34038 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751981AbeC2QDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:03:08 -0400
-Date: Thu, 29 Mar 2018 18:02:46 +0200
-Message-ID: <20180329180246.Horde.AZE7BIRE2MuhcbAJb5Gg0A3@messagerie.si.c-s.fr>
-From: LEROY Christophe <christophe.leroy@c-s.fr>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Paul Mackerras <paulus@samba.org>, LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 15/19] powerpc: Add missing prototype
-References: <20180322202007.23088-1-malat@debian.org>
- <20180322202007.23088-16-malat@debian.org>
- <bd4be06c-b5f5-2516-1c1d-d2b6d7861090@c-s.fr>
- <CA+7wUsyRSSkwgpBodKkPjhUxiHy-t1q2Q7nsorfRoL=wfxgyFQ@mail.gmail.com>
-In-Reply-To: <CA+7wUsyRSSkwgpBodKkPjhUxiHy-t1q2Q7nsorfRoL=wfxgyFQ@mail.gmail.com>
-User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
-Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+        id S1751981AbeC2QDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:03:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="39197622"
+Date: Thu, 29 Mar 2018 09:05:35 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Gary R Hook <gary.hook@amd.com>, "Raj, Ashok" <ashok.raj@intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v7 0/5] Add Intel IOMMU debugfs support
+Message-ID: <20180329090535.65c41cc1@jacob-builder>
+In-Reply-To: <20180329084824.fvy7cg2wban4by4n@8bytes.org>
+References: <1517619001-148586-1-git-send-email-sohil.mehta@intel.com>
+        <20180213140303.42mbzfxpypljy37l@8bytes.org>
+        <20180213214002.GA27066@otc-nc-03>
+        <20180213145332.35c73eda@jacob-builder>
+        <20180215095337.fccoozdclfnbepi4@8bytes.org>
+        <20180215083811.3ec86e49@jacob-builder>
+        <20180315131854.s6xmltsvsysublcw@8bytes.org>
+        <20180319093714.3afe698b@jacob-builder>
+        <20180329084824.fvy7cg2wban4by4n@8bytes.org>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mathieu Malaterre <malat@debian.org> a écrit :
+On Thu, 29 Mar 2018 10:48:24 +0200
+Joerg Roedel <joro@8bytes.org> wrote:
 
-> On Fri, Mar 23, 2018 at 1:20 PM, christophe leroy
-> <christophe.leroy@c-s.fr> wrote:
->>
->>
->> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
->>>
->>> Add one missing prototype for function rh_dump_blk. Fix warning treated as
->>> error in W=1:
->>>
->>>    arch/powerpc/lib/rheap.c:740:6: error: no previous prototype for
->>> ‘rh_dump_blk’ [-Werror=missing-prototypes]
->>>
->>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->>> ---
->>>   arch/powerpc/include/asm/rheap.h | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/arch/powerpc/include/asm/rheap.h
->>> b/arch/powerpc/include/asm/rheap.h
->>> index 172381769cfc..e75d96de19a0 100644
->>> --- a/arch/powerpc/include/asm/rheap.h
->>> +++ b/arch/powerpc/include/asm/rheap.h
->>> @@ -83,6 +83,9 @@ extern int rh_get_stats(rh_info_t * info, int what, int
->>> max_stats,
->>>   /* Simple dump of remote heap info */
->>>   extern void rh_dump(rh_info_t * info);
->>>   +/* Simple dump of remote info block */
->>> +extern void rh_dump_blk(rh_info_t *info, rh_block_t *blk);
->>> +
->>
->>
->> Only used in one place, should be static
->
-> Well here is what I see over here:
->
-> $ git grep rh_dump_blk
-> ...
-> arch/powerpc/lib/rheap.c:EXPORT_SYMBOL_GPL(rh_dump_blk);
+> [ Adding Gary from AMD to Cc ]
+> 
+> On Mon, Mar 19, 2018 at 09:37:14AM -0700, Jacob Pan wrote:
+> > On Thu, 15 Mar 2018 14:18:54 +0100
+> > Joerg Roedel <joro@8bytes.org> wrote:
+> >   
+> > > On Thu, Feb 15, 2018 at 08:38:11AM -0800, Jacob Pan wrote:  
+> > > > Just wondering if your concern is on the implementation or the
+> > > > debugfs idea in general. Perhaps have some common IOMMU
+> > > > debugfs?    
+> > > 
+> > > My concern mainly is that we add interfaces which reveal
+> > > potentially security relevant information  
+> > I don;t think security is any worse than existing kernel page table
+> > in debugfs. i.e. /sys/kernel/debug/page_tables
+> > This is a debug feature.  
+> 
+> Okay, so here is the way to go: Please introduce a basic debugfs
+> facility to the core iommu code. It should basically only create a
+> 'iommu/' directory in debugfs where drivers can create their own
+> sub-directories. This must be enabled by a new kconfig option
+> (CONFIG_IOMMU_DEBUGFS) and the kernel should print a big fat warning
+> at boot when it is enabled. This hopefully prevents anyone from
+> enabling it for production kernels.
+> 
+> Then in the next cycle I will review again more closely what
+> information about VT-d and AMD-Vi is revealed there and will probably
+> apply what I can live with.
+> 
+sounds great. we will provide vt-d info for both current and
+potential extensions so that you can consider if there can be any
+abstractions.
 
-If it was really used by anybody in a module, it would already be in a  
-.h so I think we should simply delete the function
+> Thanks,
+> 
+> 	Joerg
+> 
 
-Christophe
-
->
->
->
->> Christophe
->>
->>>   /* Set owner of taken block */
->>>   extern int rh_set_owner(rh_info_t * info, unsigned long start, const
->>> char *owner);
->>>
->>
->>
->> ---
->> L'absence de virus dans ce courrier électronique a été vérifiée par le
->> logiciel antivirus Avast.
->> https://www.avast.com/antivirus
->>
+[Jacob Pan]
