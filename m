@@ -1,82 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeC2K05 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 06:26:57 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:20219 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeC2K04 (ORCPT
+        id S1751325AbeC2Klz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 06:41:55 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44899 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeC2Kly (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 06:26:56 -0400
-To: akpm@linux-foundation.org
-Cc: peterz@infradead.org, mhocko@suse.com, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, bp@suse.de,
-        rientjes@google.com, tglx@linutronix.de
-Subject: Re: [PATCH v2] lockdep: Show address of "struct lockdep_map" at print_lock().
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-        <20180326160549.GL4043@hirez.programming.kicks-ass.net>
-        <201803270558.HCA41032.tVFJOFOMOFLHSQ@I-love.SAKURA.ne.jp>
-        <201803271941.GBE57310.tVSOJLQOFFOHFM@I-love.SAKURA.ne.jp>
-In-Reply-To: <201803271941.GBE57310.tVSOJLQOFFOHFM@I-love.SAKURA.ne.jp>
-Message-Id: <201803291926.FEH43221.VSOQHOtFJFLMOF@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Thu, 29 Mar 2018 19:26:52 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 29 Mar 2018 06:41:54 -0400
+X-Google-Smtp-Source: AIpwx4/QBeBG71ZYFSbLP74/GG2Db98FaTg8mTIrM2k9wfXgeuXVmkDFDDJKXiHSLSkWhnpuzavYsw==
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+X-Google-Original-From: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
+Subject: [PATCH v1] kernel/trace:check the val against the available mem
+Date: Thu, 29 Mar 2018 18:41:44 +0800
+Message-Id: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 91c081c4c5f6a99402542951e7de661c38f928ab Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Tue, 27 Mar 2018 19:38:33 +0900
-Subject: [PATCH v2] lockdep: Show address of "struct lockdep_map" at print_lock().
+It is reported that some user app would like to echo a huge
+number to "/sys/kernel/debug/tracing/buffer_size_kb" regardless
+ of the available memory, which will cause the coinstantaneous
+page allocation failed and introduce OOM. The commit checking the
+val against the available mem first to avoid the consequence allocation.
 
-Since "struct lockdep_map" is embedded into lock objects, we can know
-which instance of a lock object is acquired using hlock->instance field.
-This will help finding which threads are causing a lock contention.
-
-Currently, print_lock() is printing hlock->acquire_ip field in both
-"[<%px>]" and "%pS" format. But "[<%px>]" is little useful nowadays, for
-we use scripts/faddr2line which receives "%pS" for finding the location
-in the source code. And I want to reduce amount of output, for
-debug_show_all_locks() might print a lot.
-
-Therefore, this patch replaces "[<%px>]" for printing hlock->acquire_ip
-field with "%p" for printing hlock->instance field.
-
-[  251.305475] 3 locks held by a.out/31106:
-[  251.308949]  #0: 00000000b0f753ba (&mm->mmap_sem){++++}, at: copy_process.part.41+0x10d5/0x1fe0
-[  251.314283]  #1: 00000000ef64d539 (&mm->mmap_sem/1){+.+.}, at: copy_process.part.41+0x10fe/0x1fe0
-[  251.319618]  #2: 00000000b41a282e (&mapping->i_mmap_rwsem){++++}, at: copy_process.part.41+0x12f2/0x1fe0
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
 ---
- kernel/locking/lockdep.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/trace.c | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 12a2805..0233863 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -556,9 +556,9 @@ static void print_lock(struct held_lock *hlock)
- 		return;
- 	}
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 2d0ffcc..a4a4237 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -43,6 +43,8 @@
+ #include <linux/trace.h>
+ #include <linux/sched/rt.h>
  
-+	printk(KERN_CONT "%p", hlock->instance);
- 	print_lock_name(lock_classes + class_idx - 1);
--	printk(KERN_CONT ", at: [<%px>] %pS\n",
--		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
-+	printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
++#include <linux/mm.h>
++#include <linux/swap.h>
+ #include "trace.h"
+ #include "trace_output.h"
+ 
+@@ -5967,6 +5969,39 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
+ 	return ret;
  }
  
- static void lockdep_print_held_locks(struct task_struct *curr)
++static long get_available_mem(void)
++{
++	struct sysinfo i;
++	long available;
++	unsigned long pagecache;
++	unsigned long wmark_low = 0;
++	unsigned long pages[NR_LRU_LISTS];
++	struct zone *zone;
++	int lru;
++
++	si_meminfo(&i);
++	si_swapinfo(&i);
++
++	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
++		pages[lru] = global_page_state(NR_LRU_BASE + lru);
++
++	for_each_zone(zone)
++		wmark_low += zone->watermark[WMARK_LOW];
++
++	available = i.freeram - wmark_low;
++
++	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
++	pagecache -= min(pagecache / 2, wmark_low);
++	available += pagecache;
++
++	available += global_page_state(NR_SLAB_RECLAIMABLE) -
++		min(global_page_state(NR_SLAB_RECLAIMABLE) / 2, wmark_low);
++
++	if (available < 0)
++		available = 0;
++	return available;
++}
++
+ static ssize_t
+ tracing_entries_write(struct file *filp, const char __user *ubuf,
+ 		      size_t cnt, loff_t *ppos)
+@@ -5975,13 +6010,15 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
+ 	struct trace_array *tr = inode->i_private;
+ 	unsigned long val;
+ 	int ret;
++	long available;
+ 
++	available = get_available_mem();
+ 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* must have at least 1 entry */
+-	if (!val)
++	if (!val || (val > available))
+ 		return -EINVAL;
+ 
+ 	/* value is in KB */
 -- 
-1.8.3.1
+1.9.1
