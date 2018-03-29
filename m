@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+VIeoji8tQ5D7lFFa88QcDhyh4X0muOP3JOqrs4xQK6JTLaXrfEXo85D59vDBMha8EkgL0
-ARC-Seal: i=1; a=rsa-sha256; t=1522346733; cv=none;
+X-Google-Smtp-Source: AIpwx4/9MVHHtHjF71HlIK4Q/Wo7ee039HKfFYyNmaEt+2z5L+1i73FRT6XMlJn+5EPqTWDpLBPA
+ARC-Seal: i=1; a=rsa-sha256; t=1522346730; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y5Z19Tcr/DS0TZkaTsrj/TDNwmqrciwnU1xlLx29XCsC4YjihUYaZXicb71cBjGH0r
-         xM0RVhHca/5c5egs5kaZpDDeSqFQhPvhj66ym8XrunTVDTZbFulSd5qh1h49sVP/oP/P
-         rTrTgSxDRjrmJ0SLoiyFHB1lGnO9zJI622Bn+y8yC5PQ/ky8+Dm4Trv9DpRcth30zx+g
-         osAjgXTnbpvhmH7fjZVEKLNoZVHZbcgGBR6IV429Ie71TAnBs0oT7ExLjEWP+DVFj9i3
-         XeojCXrI3181Q4z18Hg8R1FWEayUCNxzDQ+kFfm4fVsqeS9SCVCLmLUe3CPsoVCyu7g/
-         6rEQ==
+        b=A/8BdQFa79mDGg+OG+ibhBcrDtsio/DH9CENv7KQ2NQZr5YiN4xXhdJu90eCMaPbkw
+         gbMJwy8iqh/qfUB4k/VbNXZkVvabzNYJqlIsdFpbC/+i1w3dXokz0l4xpecA2I4/d6V4
+         JOBHlOCJ0l1tmej7ymzf0WNl76fCp9a4N6OKskMpvezs6M+sSAz39U6UieLRlJni86w5
+         v+WEgsHZCaS2vYsFyyzvFTv2Byw9mwasAzHpBLpdjK433j2JFbIEYyHYNXNkVSOepxz1
+         xp4IYKRRm9/reodpRELfLrfeHVrKAzRIgzREX5XYbtEdlLiLtULOwiGcW80gxPa4nz9g
+         6Kaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yxIxImd/T+W3CXs5jhHtuykv6NDYkqRiEpNWkG5hjm4=;
-        b=CGTX0nFNwa0ndvzirqzV9bkeyHljl/HUTFwzCdqkvNlrCueiVpv2hV61kS22XHq5rh
-         SkH1JfWmeyjh/5WmRwDwrihlENtOa7b7azoyb2O31WBa8g6bKC/MukBp87OyvzTADniN
-         C+Bhn5WDGlXzMDU4t8bHPWUFB8yHV77/pEolvVU6zmHxDvqFmGRkAgAPP91iHXnVX7jf
-         cFtvG4YDLN56ArSbr5pcDlAW1WCjk1+jypbfbv4tjoWGMdgc+2cW5DMtcIra2YdVXNgn
-         vPJaDtqL2iF/ftFypQ2rE2xy/rsKgsu4GLRadgPLZWouIS9Mw6xXKJfQ7/Lkw3PcBCd/
-         JweA==
+        bh=IRJF/GVwIWH+TtQAM+twk8W0/8gLLVYECTlnl2L+lZg=;
+        b=SGwvMuNjKYf9f8ry9dRr8w/PNUT8+VDP1bnx1BNOMyCJTVeXuyD0Q0FJrIHjJW7gpN
+         HKZn/Hl9zaHMD6mNGjQaw54kaTNCwjVTy4KtjBWe748/dnDWsDtIi5tiW6YwUmfg6JY4
+         rckC4WlfreCBkpqa6JXij7RGR1G1bCDrYEVwH0839Z6XeT8XNpYU5ofSHixTM9HH3mau
+         LvZ0zj3c5K+QiCFFAlGTA90ASOBnh0UAk485j9D7GZBnuxXcTzWv4HsStcIHT1CX4KPO
+         D4ZHVbP4aP386UZFR6fNswbcfCQyGHOdc485Uf2GMoChRW0LJSRFsp0xmd7Yfou5r+qH
+         MhaA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Camelia Groza <camelia.groza@nxp.com>,
-	Madalin Bucur <madalin.bucur@nxp.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 39/43] dpaa_eth: remove duplicate increment of the tx_errors counter
-Date: Thu, 29 Mar 2018 20:00:34 +0200
-Message-Id: <20180329175734.411351952@linuxfoundation.org>
+Subject: [PATCH 4.14 38/43] dpaa_eth: increment the RX dropped counter when needed
+Date: Thu, 29 Mar 2018 20:00:33 +0200
+Message-Id: <20180329175734.297716299@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296086478689845?=
-X-GMAIL-MSGID: =?utf-8?q?1596296248030825220?=
+X-GMAIL-THRID: =?utf-8?q?1596296083643005828?=
+X-GMAIL-MSGID: =?utf-8?q?1596296245328966730?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,25 +52,26 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Camelia Groza <camelia.groza@nxp.com>
 
 
-[ Upstream commit 82d141cd19d088ee41feafde4a6f86eeb40d93c5 ]
-
-The tx_errors counter is incremented by the dpaa_xmit caller.
+[ Upstream commit e4d1b37c17d000a3da9368a3e260fb9ea4927c25 ]
 
 Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
 +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2022,7 +2022,6 @@ static inline int dpaa_xmit(struct dpaa_
- 	}
+@@ -2324,8 +2324,10 @@ static enum qman_cb_dqrr_result rx_defau
  
- 	if (unlikely(err < 0)) {
--		percpu_stats->tx_errors++;
- 		percpu_stats->tx_fifo_errors++;
- 		return err;
- 	}
+ 	skb_len = skb->len;
+ 
+-	if (unlikely(netif_receive_skb(skb) == NET_RX_DROP))
++	if (unlikely(netif_receive_skb(skb) == NET_RX_DROP)) {
++		percpu_stats->rx_dropped++;
+ 		return qman_cb_dqrr_consume;
++	}
+ 
+ 	percpu_stats->rx_packets++;
+ 	percpu_stats->rx_bytes += skb_len;
