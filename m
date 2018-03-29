@@ -1,91 +1,93 @@
-Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AIpwx4+BclQwp4kLQ3HN32kijyVquloGv7jj22Tgp2JjPG1qCvdQhWdKb86GdPHYkupvHZPaA7gs
-ARC-Seal: i=1; a=rsa-sha256; t=1522240312; cv=none;
+Return-Path: <dongsheng.wang@hxt-semitech.com>
+X-Google-Smtp-Source: AIpwx4/S8qzViFTaT11OG6+AKrtsnO3ZJYWpXkTcNjjvvbI2G5qI5+lKH0oRpPpNliR7jfWqUzm8
+ARC-Seal: i=1; a=rsa-sha256; t=1522317684; cv=none;
         d=google.com; s=arc-20160816;
-        b=zfcK1i0KTPTzeo00yOJd059tpexI3U53VbTKFR1gUo0MMnXtuO+23ZnenOkyAaRQ+Q
-         GCDVe5Y6BZnauYUpEAQ+KgveAvKB1v970Zf1Wyu/47d0T/hbR6Cdc7pmbtfM5nKNlHG0
-         ey/pLZ9G9Db5XL1M42cfYw10RqkOv9GDhV8x0EAFSdGuq4CfG7B2HAXSY0F30hx73lpf
-         guwg4I62d+5Q/7dj70ei6bgdSxvdQmgPuGbcPEOKYA6zO9ITOQnq1YU1SeH/ptBAcypF
-         MbMIi0qMMkIjH2NQAy/69kpLQxkEITaZ7Fqed0fd4xVUeNgUKviYDwgopszXcE+8OgOk
-         Yj9g==
+        b=VUrq6gKvkGtgO5Me4D92TYBp7nLZKjTCWywGCzi3axSE91jzzPwKnq4Atosm/1T9tn
+         f/rfwmZ2mMbZbcv41jBReMnBAg5GwONengnWTjaev5w+PDKdCmuTMk74uC/JD9jbB5ts
+         Pn/bCIweXgCrU5zGiOTRIS7si6qVgJFgR0j3WeClHpOE0B/juMqVOB+d6rDoj6N2b/rl
+         pj3lRVqwU0CMHEDvuXEM1WxB5GJ/sAKJ0mxxMpU8Y+jMxL/Ls3g3nxiX0/hjVivOHbk0
+         pchst75jdRtt/uE4lOuy1jm/dI9A4dLSdhL1Fd6Wkpra2slnXOVHCN2SftGST7lXOufd
+         Xikg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
+        h=mime-version:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=OfihvFKJolWQ85Vtx8K3RKJkyi6SwxowHuvy5Ccuazg=;
-        b=dXkQYvBpE1NZrtVnHVGkRXiBhJON3mGZ1eWY7gFnRDBGE8XfUNvevcu/jsztq2WC10
-         Y8Mc8ODC9gkmgbgeNniF/B45up1+KqcuSj3Egh01th9n8bAB6BeEJZe9tclk93xjWXG/
-         0nCJ+IHoB9RjyOcqcjr2CDTQCLIEOMt3WFe30sYDP1d4nTc2QAmOfpJAmoCS6dM5zyXH
-         38hwA6vQbYsUzhdQZN9u9z3gmf7k08nr0p8BQe3YZqgIt7REZxFRI/5DTMTbMpSI/hPr
-         qhwhkdMFgF5KdNy+sz8rjvh6mHtyOvrU5f12CdwVa5yaAXtj/e1gn9oeY7z6pXcIDO0M
-         QQbg==
+        bh=zmcSORLdyNNLhe4HRR0kezCxrrS5UlWiUZsWM5W1uWA=;
+        b=mohFLwAUG06FaR6gXeO4bng5JlosEIu5jIVphJ8lzAeoKvqbq0o3iCjjDQcglZrVU8
+         XU94C75cI9yETPBa9b9qIMMfmQt/TGr2szQJnvuhY+ifqs78zMdidwL5fHEtKjKE6qYz
+         2oPCIVYuXC/OTGCkuXCSQ+jS0l5JujGP8UJK7aphLXMOUuS7ttha7lHLBEGCKFH85LSH
+         eUrmlR9KvtyprrhmXnlLtvALUle+Bdxo0B34HJ+L4w3qnNoQf8BpbJqkqhjtTH+pOLme
+         XvwcFLlIfVlse0Nf0GGwPNBMsAN1/5wWty2B3HsmVjaalbZimB8dQCQqe5H+EjcdcQMt
+         bCaQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=LM9FjIPJ;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=LM9FjIPJ;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=LM9FjIPJ;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=LM9FjIPJ;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A382260C67
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-From: Chintan Pandya <cpandya@codeaurora.org>
-To: catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mark.rutland@arm.com,
-	toshi.kani@hpe.com
-Cc: arnd@arndb.de,
-	ard.biesheuvel@linaro.org,
-	marc.zyngier@arm.com,
-	james.morse@arm.com,
-	kristina.martsenko@arm.com,
-	takahiro.akashi@linaro.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v7 2/4] arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable
-Date: Wed, 28 Mar 2018 18:01:20 +0530
-Message-Id: <1522240282-12104-3-git-send-email-cpandya@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522240282-12104-1-git-send-email-cpandya@codeaurora.org>
-References: <1522240282-12104-1-git-send-email-cpandya@codeaurora.org>
+       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
+X-ASG-Debug-ID: 1522317680-093b7e77020c050001-y9GDlS
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+To: <rjw@rjwysocki.net>, <lorenzo.pieralisi@arm.com>
+CC: <gregkh@linuxfoundation.org>, <hanjun.guo@linaro.org>,
+	<sudeep.holla@arm.com>, <yu.zheng@hxt-semitech.com>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Wang Dongsheng
+	<dongsheng.wang@hxt-semitech.com>
+Subject: [RFC PATCH 0/2] driver core: add new dl device status DL_DEV_PROBE_FAILED
+Date: Thu, 29 Mar 2018 03:00:58 -0700
+X-ASG-Orig-Subj: [RFC PATCH 0/2] driver core: add new dl device status DL_DEV_PROBE_FAILED
+Message-ID: <1522317660-11080-1-git-send-email-dongsheng.wang@hxt-semitech.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.103]
+X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1522317680
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.6305 1.0000 0.9049
+X-Barracuda-Spam-Score: 0.90
+X-Barracuda-Spam-Status: No, SCORE=0.90 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49406
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596178835954343774?=
-X-GMAIL-MSGID: =?utf-8?q?1596184658260289758?=
+X-GMAIL-THRID: =?utf-8?q?1596265787893408502?=
+X-GMAIL-MSGID: =?utf-8?q?1596265787893408502?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add an interface to invalidate intermediate page tables
-from TLB for kernel.
+Recently we found the master of SMMU retries to probe endlessly.
 
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
----
- arch/arm64/include/asm/tlbflush.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+[    3.658956] pci 0000:00:00.0: Retrying from deferred list
+[    3.658969] pci 0000:00:00.0: Added to deferred list
+[    3.658987] pci 0004:00:00.0: Retrying from deferred list
+[    3.658994] pci 0004:00:00.0: Added to deferred list
+[    3.659003] pci 0005:00:00.0: Retrying from deferred list
+[    3.659010] pci 0005:00:00.0: Added to deferred list
+[    3.659019] pci 0004:01:00.0: Retrying from deferred list
+[    3.659029] pci 0004:01:00.0: Added to deferred list
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 9e82dd7..6a4816d 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -209,6 +209,12 @@ static inline void __flush_tlb_pgtable(struct mm_struct *mm,
- 	dsb(ish);
- }
- 
-+static inline void __flush_tlb_kernel_pgtable(unsigned long addr)
-+{
-+	addr >>= 12;
-+	__tlbi(vaae1is, addr);
-+	dsb(ish);
-+}
- #endif
- 
- #endif
+The retrying should only happen when the IOMMU instance hasn't been
+probed yet.
+However, dma_configure() simply return -EPROBE_DEFER when failed to get
+an IOMMU instance even if the IOMMU instance is failed to probe.
+
+This patchset tries to fix the issue by distinguishing probe failures and
+haven't-been-probed-yet state.
+
+Wang Dongsheng (2):
+  driver core: add new dl device status DL_DEV_PROBE_FAILED
+  ACPI/IORT: use swiotlb_dma_ops when smmu probe failed
+
+ Documentation/driver-api/device_link.rst |  2 +-
+ drivers/acpi/arm64/iort.c                | 39 +++++++++++++++++++++++++++-----
+ drivers/base/base.h                      |  2 +-
+ drivers/base/core.c                      | 22 ++++++++++++++++--
+ drivers/base/dd.c                        |  2 +-
+ include/linux/device.h                   |  1 +
+ 6 files changed, 57 insertions(+), 11 deletions(-)
+
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+2.7.4
