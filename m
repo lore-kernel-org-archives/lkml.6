@@ -1,161 +1,105 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1902058-1522365138-2-2710511850642302536
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522365138; b=I6HXrXx8DVypi76bSc1LaGpGQ2KWKxW20EjWFzUFGAcEjc5Yqo
-    ZcVqQ+3eit+oNdA9LdDUuW/pCbezgRw9Px2F2xvCNgkBQ3z9xbVsnH84DbDGu9s9
-    ATGdUdirAxc+IFVPfpX78GJUS/NTCQJxmXdFnYklv9eAvhbA9PGQoBc1SAXvTMdS
-    bJ+ZZcRc8h+BkydcXBnuMS+toEXYgMOGS4eGUyKfxUbRV0oVkZt7/xA9kfp9Auxs
-    ceZK4+OYEN0AQyqgBhxbL520O9Yf37IsUvvGAwvRmEKcqncdHXQ027DtwVig2kU2
-    brgN3aWQIzn8osWAY79V6HL5hUmnOJ2zN7tw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522365138;
-    bh=oDP9sBWTe9R52PE2OivnN+Po5XR9WFaIQsTlCrCGMj0=; b=mNut2tr4THaP
-    ZkIKUNP8o0kqkb/eRtrWMhfmREv51E7+yIVYwtIFVHCfk8taPEBkpolvfwme+xYo
-    NVwdPeTX7oaUz5hp1u0OBjtjqt3HhMQVt/c1wvAac2J+yXqJkQD6O1GA8WLD4TPl
-    8zE4oZ4hOADhVx9zmvpzmE5or34hNuCe4Btf1JrC4FLVhf3I47xiqITqxG7GkGWB
-    Ll1VndmtF0bi0LPuv89qB9vJ+j8Q0QtXd+Kf3G4aZUj8Z/Mx2W/bed/PBEzxi+mn
-    +wWGxsUav2SJWU6EXb0Dyds0YMq/gW9psqIZ1lvv3fabB7fZW9izW79tAuIJsyq2
-    1nhhoevwMw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHeitmUCgAPmzv6KDjAU8L6TSD9feKxfciR7SUi0sfvURI7C6bIZ596Ssy5ECLFx4aFgGbePWAxxJv2/2Io7ecG3y2WoaVzjqwLR0AKnq0fgwZkDGeUz
-    YRz/QmFdtpYklr9/SZJApWLPRcPCOu9yWzqWENrdvZo9xJQuK+4t6Ii0rmhZ67gddEeiksPMZwojxS1lzuxwbfCuAbxl8LG+gaR/uGJ4MY8YrIdsb+EAEJwb
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=J1gerpJq6k4A:10
-    a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751215AbeC2XML (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 19:12:11 -0400
-Received: from osg.samsung.com ([64.30.133.232]:54274 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751191AbeC2XMK (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 29 Mar 2018 19:12:10 -0400
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1522360880; cv=none;
+        d=google.com; s=arc-20160816;
+        b=cpAVNFWmnPFxYTA4Z9VK0WI6CXuVtrNfpPNUOfnHCaTwvyYsJ5aObktfutwVIRe2OU
+         Zw+JlQyYjG+mpUPjAakwpJblAApLw6kuMHlguinKuyCLcYpRxM3OPlC69wpddu/AoL/J
+         Xnutx7zy/mhDcL3+DSCRd+yWHqVRSPTJUv/tzlWTQfzAHMF9JMjPUVJmgPqXT+wYZMia
+         CXTsdpzpAEfUImZ7UhIRJQJVs92Bg5RrGoU7L9dyYhXWN7i0d9dIcIrbcPnyaENdnioY
+         BSxb4u3wraSubh5u0D4GBglG8jCjNqI0lou6tCPEMeQe27YZjMZ+xTsNDWT8xJsdExT3
+         9m8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=u2oT/Cmb87eJrMV1pjcNWcWFj7X6qUtQKYKAoWDW8Z8=;
+        b=dCDefssVCKReEwryXOO2zYfdhc7i4OIIZHpvJa5Z60yLVbJejwn9CoIxRifS7q1V6X
+         Og1e0gMJus7nMQRcEo/km3nGP4p53gIj1Y9fC57K675DfitCM1NNU/bRjp5xP6cB1CcD
+         GuFd0QaS6dy8YNf7a+TxhxYxbNHVRnbvbZEWp9qW8XLwfgprI4EpSVe0yXbS4e/2ZVAl
+         4x+zBH27K5fwzC1oaR+o6CT9aH5pXv5gTFaPaNiA68uJsDw/7FvIkBwba8HO2gO29irR
+         MQgWpLJQMH5jEpQKFeBpcZP5rdduhjleANnMrJaiq6jrOuWyH0KhLGZTfwLB/GEiGcOS
+         bapA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AIpwx489DohCldhYf/bvfh00M73F58l/KxC6jsBgloT20/afoksq3yijzrQFWwcAbdVgF+g/KbX3MA==
+Message-ID: <5abd622f.cb98df0a.3c8b9.f18b@mx.google.com>
+Date: Thu, 29 Mar 2018 15:01:19 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.4.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.4.125-21-g290572f02954
+In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
+References: <20180329175741.886181131@linuxfoundation.org>
 Subject: Re: [PATCH 4.4 00/20] 4.4.126-stable review
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180329175741.886181131@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuahkh@osg.samsung.com; keydata=
- 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
-Message-ID: <8ce7fa54-3529-0a31-e8d9-003b2e2bd2e0@osg.samsung.com>
-Date: Thu, 29 Mar 2018 17:12:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596296410346468938?=
+X-GMAIL-MSGID: =?utf-8?q?1596311083052470048?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/29/2018 12:00 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.126 release.
-> There are 20 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Mar 31 17:57:30 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.126-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+stable-rc/linux-4.4.y boot: 105 boots: 1 failed, 92 passed with 10 offline,=
+ 2 untried/unknown (v4.4.125-21-g290572f02954)
 
-Compiled and booted on my test system. No dmesg regressions.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.4.y/kernel/v4.4.125-21-g290572f02954/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
+/kernel/v4.4.125-21-g290572f02954/
 
-thanks,
--- Shuah
+Tree: stable-rc
+Branch: linux-4.4.y
+Git Describe: v4.4.125-21-g290572f02954
+Git Commit: 290572f02954767c84991efa816fbfb56c7da9df
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 53 unique boards, 20 SoC families, 16 builds out of 177
+
+Boot Regressions Detected:
+
+arm:
+
+    at91_dt_defconfig:
+        at91sam9261ek:
+            lab-free-electrons: failing since 6 days (last pass: v4.4.123 -=
+ first fail: v4.4.123-97-g3054df73e9af)
+
+Boot Failure Detected:
+
+arm:
+
+    at91_dt_defconfig
+        at91sam9261ek: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    sunxi_defconfig:
+        sun5i-r8-chip: 1 offline lab
+        sun7i-a20-cubietruck: 1 offline lab
+
+    multi_v7_defconfig:
+        exynos5410-odroidxu: 1 offline lab
+        sun5i-r8-chip: 1 offline lab
+        sun7i-a20-cubietruck: 1 offline lab
+        tegra20-iris-512: 1 offline lab
+        tegra30-beaver: 1 offline lab
+
+    exynos_defconfig:
+        exynos5410-odroidxu: 1 offline lab
+
+    tegra_defconfig:
+        tegra20-iris-512: 1 offline lab
+        tegra30-beaver: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
