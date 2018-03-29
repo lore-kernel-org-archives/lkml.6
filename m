@@ -1,54 +1,45 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AIpwx4+FAOQTxp4S58X2jgyzzH27qsjcSe2iTtRw5+QKyrb0AmOgSX75VSuWjTZjj+b/0CAdpaIc
-ARC-Seal: i=1; a=rsa-sha256; t=1522448875; cv=none;
+Return-Path: <rjw@rjwysocki.net>
+X-Google-Smtp-Source: AIpwx4+g/fA8wUrV4KMSWyU0PPcIyQ0MvlA6oBPzAgv2GhlDKBLYw6DlMa5u046GJpZKA2a5yKUv
+ARC-Seal: i=1; a=rsa-sha256; t=1522321284; cv=none;
         d=google.com; s=arc-20160816;
-        b=TvnGrGw7lt/xO9bFkqUfSyP2+YlLFmMu7Sb+MJDMvQZskizmyhMRStT22tIgIsVChz
-         qAmd8BoJVAraeJkHw6y8HrmLuhnHqyHZoHM/OYi3iYpFBcufqGq0zcj+5rVZPgy8mUCc
-         6g0EpX32VWrQEca86MrLYIJceRk2TQHivxm3afszN8bm05+PiEOyOrEKBCOD1mPX4TCR
-         Sok+j1lYyNG8Jt4hq+2snp6PA2Fg5FSW+N8FfdjIfdOpYm7qeFpkQ3wZcGU9Ewp9pggp
-         kUG0UKZaAYJM2BnQ8l4kaKCTQtLxLSadZMs2bBcHJtzJcBDLLcmxyBsl/BQo75zu69Ov
-         N5XQ==
+        b=Oes0thLNQSVNBcPkGdmvotTAdXbarfm84XYygtjt/ruhbHGU4J5HSphGNqI58w5D7B
+         a0XcVtJovdS+ezphBKRqL/Ip8BsfPD2vxTBaqQ8z/RnS6BBAxyN29VDPZKYr/hTb8P2I
+         VIwHtsj+1GMuYqwdDOrDlvJuGLsP1mDMDN+Az1/dSYA19IgPnpftZSlxyd92a6rMwcsG
+         IzSJPzOq/1jo3+bsrO5Gk+Iwbvm/Dun2EulqVcDQ1AUDEjo1xnsRszUb3K3Ccu0VoTvb
+         1HeVy7OvHAr2uTxHZ3F82J2FAyhDMa4fthgO+ElNWO/zBrrhYBXQQHafNRUJ1VPAB3sA
+         KzeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=47+RIDav2gswQ53ndpMMb5xzOfniU8bcq2pBw9dch3g=;
-        b=nrB05QAHY0caO9inJUsEYN90iAHLwnacxr4o8HHXEbmG3EcDmCZlMqoDjE8GVv2Wfs
-         4rqz51qRw4Zr5RkCdKjPfgE1GRQIoX/z2ktIJDABl0+T8MjL63yahIR7mQJCV3R9Iral
-         m5PIa6F5V6w/mUjXhTs84qew960APYDWDXzUONxVXIe1EW+3cGgh+L62cV7Ypgyh+G8O
-         avRtj1aSJGv6XmF0QbBBVgpy68JZnJty0c8/patqLcPAQHAyhZ0T7YLSkay5vdvV+6E4
-         F1F7diEywkTv2xTD7UtzePD7JudfWqnYy95jU70/46orTxjYjSMdTU+HdNGD+nLnSLK2
-         h0Lg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=Fjl6aA7eAHGIwZ2xFyGppK7SVoxGlwmdRGPkBcs0lZY=;
+        b=u+Pju7RRfHWNe+Ck1QKa/oN6yfc34f7HCPZ3WELfzn+Cv/q7eiXNSBnydC4IjAGvWl
+         RKVgKFofzNweP0r2WXhSTlLxpx3ya5EhaO4OLyfSGuD5KD/cpL/q7nRz6eH9lZjfWK9B
+         1euPhwPlK6dLieLRA4IWyo/f+CbiqPdzDN1Fa8PnrnYImcUg4qvZ3WFnTPTC0Q154Eey
+         CxwOqiljYDDijdmy6pOEEqql0GBHzsd5pYtU+3msKBXUf/3DnwFKeFFmY5Xy4v4+P7Ik
+         7bXPO5vzbyw1xONw241+O/6T4dOj9ULbwhVio4luiknLaXDiKa2Vd6jdkdeE4tn2dn5n
+         yC0A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E11217A8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 30 Mar 2018 17:27:53 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pci: move pcie_pme_root_status_cleanup into SUSPEND
- section
-Message-ID: <20180330222752.GD9322@bhelgaas-glaptop.roam.corp.google.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pci: move pcie_pme_root_status_cleanup into SUSPEND section
+Date: Thu, 29 Mar 2018 13:01:42 +0200
+Message-ID: <8350395.vIT3VM8fAC@aspire.rjw.lan>
+In-Reply-To: <20180328134747.2062348-1-arnd@arndb.de>
 References: <20180328134747.2062348-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180328134747.2062348-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596189436680749086?=
-X-GMAIL-MSGID: =?utf-8?q?1596403351585383969?=
+X-GMAIL-MSGID: =?utf-8?q?1596269563266034421?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 03:47:18PM +0200, Arnd Bergmann wrote:
+On Wednesday, March 28, 2018 3:47:18 PM CEST Arnd Bergmann wrote:
 > The power management code in pci-driver.c is a maze of #ifdefs, and
 > the newly added pcie_pme_root_status_cleanup function ended up in the
 > wrong one of them, causing a harmless warning in some configurations:
@@ -61,9 +52,6 @@ On Wed, Mar 28, 2018 at 03:47:18PM +0200, Arnd Bergmann wrote:
 > 
 > Fixes: 6c4dfc1389e1 ("PCI/PM: Clear PCIe PME Status bit in core, not PCIe port driver")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Thanks, I folded this into 6c4dfc1389e1.
-
 > ---
 >  drivers/pci/pci-driver.c | 25 ++++++++++++-------------
 >  1 file changed, 12 insertions(+), 13 deletions(-)
@@ -111,6 +99,6 @@ Thanks, I folded this into 6c4dfc1389e1.
 >  
 >  static int pci_pm_suspend(struct device *dev)
 >  {
-> -- 
-> 2.9.0
 > 
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
