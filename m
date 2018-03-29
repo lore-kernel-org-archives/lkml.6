@@ -1,162 +1,181 @@
-Return-Path: <rjwysocki@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522320682; cv=none;
+Return-Path: <dongsheng.wang@hxt-semitech.com>
+X-Google-Smtp-Source: AIpwx4/UHOrJkfg0yoY4rjiYjYlAeciw9Cxr22VFzeM7vDQ/CKKFssaS/BQQI1iB/K8az0gb9T8a
+ARC-Seal: i=1; a=rsa-sha256; t=1522322689; cv=none;
         d=google.com; s=arc-20160816;
-        b=eAEEU4W1IGRLLG9skD9b4PABvj/mVFoQ7gvijt/qidjeIq1BxWVc9RAe3Wlc4T8Dyd
-         Oh/B8vKjeNBki8lq9ZgwJL+kK0YZbw9WvphjPfmuxM2eDzbZ8nrTjppXGDn57LpkVI8K
-         VBGCO+1trbC0GhUDQvv9IcGkUNuu/6pPPze31Yeueu2DyxmYRRyGTFJhG3FwVgJNtoF9
-         D2bXI58nse43hHf9Xg4wFUuw48eLF5wuLCVZ9gxLL/Ow9WjUZjBVf/N8EfUWokZyuy19
-         +8Pf7mKB6pBOO62h8grDGa8DixEWH4UCDtNwPzAWaW0uM24gI+lgfi7vh04qTrXHOVJD
-         bg2g==
+        b=WGZXSRT5j39CcRY03W11WMUxFGq5WsEgFayOjqw7/+Thz1dfAQUZTcGVhLDfj32jTg
+         T1KxQmLvgue89hxn1tUmVQXgHBW7k2rcQjjt2ldjjj+XMYhGu3BISAS02D5kXr1BQAnt
+         XWGWpXeqE4c/IOd/7ksdBhsMCqqpNQcCOA0V/H61Dn1n+373ogRVGQivEyOb9MhH4PJO
+         SM092fddBBD+skc/Uk+3tibgbYpb0AMGci41XNM7uTj2zT0OoTDvBNcKaZYITqAf4vz7
+         zM+PzbiuZqiiJ4tfT4NqYtR4S+8TqVQlkHaJf4IzdqkoZUaQCp15IUfOklc6iBurfVSv
+         7TNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=8ktPXAmyxzECf1Kd6X4azAUwyZAx0I32nGYgXYq6/pc=;
-        b=qig9SPApRM3zauy9PbzQ5ebn0uozOlnPVijBlQc/5fSuBs96PwQULPT1S2gIqBZk8n
-         IJ3KzVWDUwDrZsD2G6sP7IWtQdzWWYHUdDSvW0Rn8rLtn3+jwEe4Mm2NtqQKxnQ1sXo5
-         TTFFqM0SW7KbR50UvfsOuuz6Y6sDfFLf0nKa4Ltubzu7rbufVihUKwfNWlDpQqRsQBtO
-         rfCEsUvccS7mz+/bq4+8qqh3Snbz4sy9RhNjErXj7vHwzbkMx9sFLO2odLrDy7GHpMQF
-         Ufq6cq5y8Kmddw+BKwvsfWC2xmgdCDcQd9ZKfj1ZRzigeF9DgugYwdJutiJlY5Sh4xJG
-         CXNg==
+        h=mime-version:content-transfer-encoding:content-id:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:arc-authentication-results;
+        bh=93MDDc5cDvHbQVv9cwqpb5wbxpQStBO8l5YeIJvUMuM=;
+        b=Kzd8ua9q/bdI5BpiCYo3bjfUcckC2+lg2BKN8XlOsQdyCw5jAOofHykP6rA4O9ER1C
+         3dNZta8Lq3iT+pTylegEQT1jBRa/pbA8OU5cOJ3gscJ5hnj34cT8Ryfj0W7N3LtjZkVS
+         N5/rdfdV5Rca1Yfr4V0sPrOjOg3rtCZi8nvGMFxV0W7FKYAsZIZb6ak3gBN07l/+2Xl6
+         J+j+njqh69uOH4Ji5AUEKkCB6t76ctj7BG9qTIReOV+iFVfaD3rGd7lvEasaz54d4Vdq
+         6PE/vs22suRFLikCCYgMtehSQr0O7D143cM1ezGPVNEgOPC97awYo2o1/zPnQQtT6R2E
+         VjzA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Bh4FAapt;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
+       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Bh4FAapt;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
-X-Google-Smtp-Source: AIpwx4+EfAgkFgnLeJakjdfru1RYEqUOVLE8BxqSJacbiVXgAuDGOPiP63m26zQsj+/LBsp5oTHqAngsGUtkdsL7TYU=
-MIME-Version: 1.0
-Sender: rjwysocki@gmail.com
-In-Reply-To: <1522317660-11080-2-git-send-email-dongsheng.wang@hxt-semitech.com>
+       spf=pass (google.com: domain of dongsheng.wang@hxt-semitech.com designates 223.203.96.7 as permitted sender) smtp.mailfrom=dongsheng.wang@hxt-semitech.com
+X-ASG-Debug-ID: 1522322680-093b7e77020cfe0001-y9GDlS
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+From: "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To: "rafael@kernel.org" <rafael@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>, "Zheng, Joey"
+	<yu.zheng@hxt-semitech.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "hanjun.guo@linaro.org" <hanjun.guo@linaro.org>
+Subject: Re: [RFC PATCH 1/2] driver core: add new dl device status
+ DL_DEV_PROBE_FAILED
+Thread-Topic: [RFC PATCH 1/2] driver core: add new dl device status
+ DL_DEV_PROBE_FAILED
+X-ASG-Orig-Subj: Re: [RFC PATCH 1/2] driver core: add new dl device status
+ DL_DEV_PROBE_FAILED
+Thread-Index: AQHTx0TptsL8TIRTj0u+jCclWQkB0aPmgxiAgAAJO4A=
+Date: Thu, 29 Mar 2018 11:24:22 +0000
+Message-ID: <6c37c0c4ce13456ea2945f4900785a0617d05fa1.camel@hxt-semitech.com>
 References: <1522317660-11080-1-git-send-email-dongsheng.wang@hxt-semitech.com>
- <1522317660-11080-2-git-send-email-dongsheng.wang@hxt-semitech.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 29 Mar 2018 12:51:21 +0200
-X-Google-Sender-Auth: XW7H5SsMY-41y5Zx1KyIH0VQuVw
-Message-ID: <CAJZ5v0g+hQaU5RqsdzZ0XanXis-LqwKc+PxsmFEqo2eziXnkCQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] driver core: add new dl device status DL_DEV_PROBE_FAILED
-To: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hanjun Guo <hanjun.guo@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>, yu.zheng@hxt-semitech.com,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+	 <1522317660-11080-2-git-send-email-dongsheng.wang@hxt-semitech.com>
+	 <CAJZ5v0g+hQaU5RqsdzZ0XanXis-LqwKc+PxsmFEqo2eziXnkCQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0g+hQaU5RqsdzZ0XanXis-LqwKc+PxsmFEqo2eziXnkCQ@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.6.45]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F21840E5D721574C96EBC908E8BCC538@hxt-semitech.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1522322680
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4240 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49407
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596265787893408502?=
-X-GMAIL-MSGID: =?utf-8?q?1596268931925754276?=
+X-GMAIL-MSGID: =?utf-8?q?1596271036168470256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 12:00 PM, Wang Dongsheng
-<dongsheng.wang@hxt-semitech.com> wrote:
-> Currently the initialization state of device is DL_DEV_NO_DRIVER.
-> The problem is, after probe failure the state will also be set to
-> DL_DEV_NO_DRIVER as well. And the device is not linked, it has no
-> supplier or consumer. Thus adding a new state to distinguish
-> probe failure and not-probed-yet.
->
-> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-
-I guess what you want is a cleanup after a failing probe, but after
-that the state really is "no driver" again, isn't it?
-
-> ---
->  Documentation/driver-api/device_link.rst |  2 +-
->  drivers/base/base.h                      |  2 +-
->  drivers/base/core.c                      | 22 ++++++++++++++++++++--
->  drivers/base/dd.c                        |  2 +-
->  include/linux/device.h                   |  1 +
->  5 files changed, 24 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/driver-api/device_link.rst b/Documentation/driver-api/device_link.rst
-> index 70e328e..9054403 100644
-> --- a/Documentation/driver-api/device_link.rst
-> +++ b/Documentation/driver-api/device_link.rst
-> @@ -247,7 +247,7 @@ State machine
->    :c:func:`device_links_unbind_consumers()`.)
->
->  * If the probe fails, links to suppliers revert back to ``DL_STATE_AVAILABLE``.
-> -  (Call to :c:func:`device_links_no_driver()` from :c:func:`really_probe()`.)
-> +  (Call to :c:func:`device_links_probe_failed()` from :c:func:`really_probe()`.)
->
->  * If the probe succeeds, links to suppliers progress to ``DL_STATE_ACTIVE``.
->    (Call to :c:func:`device_links_driver_bound()` from :c:func:`driver_bound()`.)
-> diff --git a/drivers/base/base.h b/drivers/base/base.h
-> index d800de6..f9931d9 100644
-> --- a/drivers/base/base.h
-> +++ b/drivers/base/base.h
-> @@ -158,6 +158,6 @@ extern void device_links_read_unlock(int idx);
->  extern int device_links_check_suppliers(struct device *dev);
->  extern void device_links_driver_bound(struct device *dev);
->  extern void device_links_driver_cleanup(struct device *dev);
-> -extern void device_links_no_driver(struct device *dev);
-> +extern void device_links_probe_failed(struct device *dev);
->  extern bool device_links_busy(struct device *dev);
->  extern void device_links_unbind_consumers(struct device *dev);
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 5847364..31d4f68 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -452,10 +452,28 @@ static void __device_links_no_driver(struct device *dev)
->         dev->links.status = DL_DEV_NO_DRIVER;
->  }
->
-> -void device_links_no_driver(struct device *dev)
-> +static void __device_links_probe_failed(struct device *dev)
-> +{
-> +       struct device_link *link, *ln;
-> +
-> +       list_for_each_entry_safe_reverse(link, ln, &dev->links.suppliers,
-> +                                        c_node) {
-> +               if (link->flags & DL_FLAG_STATELESS)
-> +                       continue;
-> +
-> +               if (link->flags & DL_FLAG_AUTOREMOVE)
-> +                       __device_link_del(link);
-> +               else if (link->status != DL_STATE_SUPPLIER_UNBIND)
-> +                       WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
-> +       }
-> +
-> +       dev->links.status = DL_DEV_PROBE_FAILED;
-> +}
-> +
-> +void device_links_probe_failed(struct device *dev)
->  {
->         device_links_write_lock();
-> -       __device_links_no_driver(dev);
-> +       __device_links_probe_failed(dev);
->         device_links_write_unlock();
->  }
->
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index de6fd09..90d57e0 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -492,7 +492,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->                 blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->                                              BUS_NOTIFY_DRIVER_NOT_BOUND, dev);
->  pinctrl_bind_failed:
-> -       device_links_no_driver(dev);
-> +       device_links_probe_failed(dev);
->         devres_release_all(dev);
->         driver_sysfs_remove(dev);
->         dev->driver = NULL;
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index b093405..bf9630a 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -794,6 +794,7 @@ struct device_link {
->  enum dl_dev_state {
->         DL_DEV_NO_DRIVER = 0,
->         DL_DEV_PROBING,
-> +       DL_DEV_PROBE_FAILED,
->         DL_DEV_DRIVER_BOUND,
->         DL_DEV_UNBINDING,
->  };
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gVGh1LCAyMDE4LTAzLTI5IGF0IDEyOjUxICswMjAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
+ZToNCj4gT24gVGh1LCBNYXIgMjksIDIwMTggYXQgMTI6MDAgUE0sIFdhbmcgRG9uZ3NoZW5nDQo+
+IDxkb25nc2hlbmcud2FuZ0BoeHQtc2VtaXRlY2guY29tPiB3cm90ZToNCj4gPiBDdXJyZW50bHkg
+dGhlIGluaXRpYWxpemF0aW9uIHN0YXRlIG9mIGRldmljZSBpcyBETF9ERVZfTk9fRFJJVkVSLg0K
+PiA+IFRoZSBwcm9ibGVtIGlzLCBhZnRlciBwcm9iZSBmYWlsdXJlIHRoZSBzdGF0ZSB3aWxsIGFs
+c28gYmUgc2V0IHRvDQo+ID4gRExfREVWX05PX0RSSVZFUiBhcyB3ZWxsLiBBbmQgdGhlIGRldmlj
+ZSBpcyBub3QgbGlua2VkLCBpdCBoYXMgbm8NCj4gPiBzdXBwbGllciBvciBjb25zdW1lci4gVGh1
+cyBhZGRpbmcgYSBuZXcgc3RhdGUgdG8gZGlzdGluZ3Vpc2gNCj4gPiBwcm9iZSBmYWlsdXJlIGFu
+ZCBub3QtcHJvYmVkLXlldC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBXYW5nIERvbmdzaGVu
+ZyA8ZG9uZ3NoZW5nLndhbmdAaHh0LXNlbWl0ZWNoLmNvbT4NCj4gDQo+IEkgZ3Vlc3Mgd2hhdCB5
+b3Ugd2FudCBpcyBhIGNsZWFudXAgYWZ0ZXIgYSBmYWlsaW5nIHByb2JlLCBidXQgYWZ0ZXINCj4g
+dGhhdCB0aGUgc3RhdGUgcmVhbGx5IGlzICJubyBkcml2ZXIiIGFnYWluLCBpc24ndCBpdD8NClll
+cywgYWdyZWUgIm5vIGRyaXZlciIsIGRldmljZSBpcyBuZXZlciBnZXQgYSBkcml2ZXIgYWdhaW4u
+DQoNCkJ1dCBBIGRlcGVuZCBvbiBCIHN1Y2Nlc3NmdWwgcHJvYmUuIGlmIEIgZmFpbGVkLCBBIHdp
+bGwgbmV2ZXIga25vdzoNCjEuIEIgY2FuJ3Qgd29yay4NCjIuIEIgaGFzbid0IGdvdCBhIHByb2Jl
+IHlldC4NCg0KTGlrZSBJT01NVS4gQWZ0ZXIgU01NVSBzdWNjZXNzZnVsIHByb2JlZCwgdGhlIGRy
+aXZlciBhZGQgYSByZXNvdXJjZQ0KaW50byAiaW9tbXVfZGV2aWNlX2xpc3QiLiBNYXN0ZXIgbG9v
+a3VwIHRoZSBjb3JyZXNwb25kaW5nIFNNTVUgZndub2RlDQpmcm9tICJpb21tdV9kZXZpY2VfbGlz
+dCIsIGFmdGVyIG1hdGNoZWQgbWFzdGVyIHdpbGwgZG8gcHJvYmUuIGJ1dCBpZg0KdGhlIGxpc3Qg
+aXMgTlVMTCBtYXN0ZXIgd2lsbCBnZXQgLUVQUk9CRV9ERUZFUiwgbWVhbnMgU01NVSBkZXZpY2Ug
+bWF5DQpub3QgcHJvYmUgeWV0LCBpbiBmYWN0IFNNTVUgbWF5IHByb2JlIGZhaWxlZC4NCg0KSSB0
+cnkgdG8gdXNlIERMX0RFViBzdGF0ZSB0byBmaXggdGhpcyBpc3N1ZSwgYnV0IE5PX0RSSVZFUiBk
+b2VzIG5vdA0KZGlzdGluZ3Vpc2ggYmV0d2VlbiB0aGUgdHdvIGNhc2VzLg0KDQpDaGVlcnMsDQot
+RG9uZ3NoZW5nDQoNCj4gDQo+ID4gLS0tDQo+ID4gIERvY3VtZW50YXRpb24vZHJpdmVyLWFwaS9k
+ZXZpY2VfbGluay5yc3QgfCAgMiArLQ0KPiA+ICBkcml2ZXJzL2Jhc2UvYmFzZS5oICAgICAgICAg
+ICAgICAgICAgICAgIHwgIDIgKy0NCj4gPiAgZHJpdmVycy9iYXNlL2NvcmUuYyAgICAgICAgICAg
+ICAgICAgICAgICB8IDIyDQo+ID4gKysrKysrKysrKysrKysrKysrKystLQ0KPiA+ICBkcml2ZXJz
+L2Jhc2UvZGQuYyAgICAgICAgICAgICAgICAgICAgICAgIHwgIDIgKy0NCj4gPiAgaW5jbHVkZS9s
+aW51eC9kZXZpY2UuaCAgICAgICAgICAgICAgICAgICB8ICAxICsNCj4gPiAgNSBmaWxlcyBjaGFu
+Z2VkLCAyNCBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1n
+aXQgYS9Eb2N1bWVudGF0aW9uL2RyaXZlci1hcGkvZGV2aWNlX2xpbmsucnN0DQo+ID4gYi9Eb2N1
+bWVudGF0aW9uL2RyaXZlci1hcGkvZGV2aWNlX2xpbmsucnN0DQo+ID4gaW5kZXggNzBlMzI4ZS4u
+OTA1NDQwMyAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RyaXZlci1hcGkvZGV2aWNl
+X2xpbmsucnN0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kcml2ZXItYXBpL2RldmljZV9saW5r
+LnJzdA0KPiA+IEBAIC0yNDcsNyArMjQ3LDcgQEAgU3RhdGUgbWFjaGluZQ0KPiA+ICAgIDpjOmZ1
+bmM6YGRldmljZV9saW5rc191bmJpbmRfY29uc3VtZXJzKClgLikNCj4gPiANCj4gPiAgKiBJZiB0
+aGUgcHJvYmUgZmFpbHMsIGxpbmtzIHRvIHN1cHBsaWVycyByZXZlcnQgYmFjayB0bw0KPiA+IGBg
+RExfU1RBVEVfQVZBSUxBQkxFYGAuDQo+ID4gLSAgKENhbGwgdG8gOmM6ZnVuYzpgZGV2aWNlX2xp
+bmtzX25vX2RyaXZlcigpYCBmcm9tDQo+ID4gOmM6ZnVuYzpgcmVhbGx5X3Byb2JlKClgLikNCj4g
+PiArICAoQ2FsbCB0byA6YzpmdW5jOmBkZXZpY2VfbGlua3NfcHJvYmVfZmFpbGVkKClgIGZyb20N
+Cj4gPiA6YzpmdW5jOmByZWFsbHlfcHJvYmUoKWAuKQ0KPiA+IA0KPiA+ICAqIElmIHRoZSBwcm9i
+ZSBzdWNjZWVkcywgbGlua3MgdG8gc3VwcGxpZXJzIHByb2dyZXNzIHRvDQo+ID4gYGBETF9TVEFU
+RV9BQ1RJVkVgYC4NCj4gPiAgICAoQ2FsbCB0byA6YzpmdW5jOmBkZXZpY2VfbGlua3NfZHJpdmVy
+X2JvdW5kKClgIGZyb20NCj4gPiA6YzpmdW5jOmBkcml2ZXJfYm91bmQoKWAuKQ0KPiA+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2Jhc2UvYmFzZS5oIGIvZHJpdmVycy9iYXNlL2Jhc2UuaA0KPiA+IGlu
+ZGV4IGQ4MDBkZTYuLmY5OTMxZDkgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9iYXNlL2Jhc2Uu
+aA0KPiA+ICsrKyBiL2RyaXZlcnMvYmFzZS9iYXNlLmgNCj4gPiBAQCAtMTU4LDYgKzE1OCw2IEBA
+IGV4dGVybiB2b2lkIGRldmljZV9saW5rc19yZWFkX3VubG9jayhpbnQgaWR4KTsNCj4gPiAgZXh0
+ZXJuIGludCBkZXZpY2VfbGlua3NfY2hlY2tfc3VwcGxpZXJzKHN0cnVjdCBkZXZpY2UgKmRldik7
+DQo+ID4gIGV4dGVybiB2b2lkIGRldmljZV9saW5rc19kcml2ZXJfYm91bmQoc3RydWN0IGRldmlj
+ZSAqZGV2KTsNCj4gPiAgZXh0ZXJuIHZvaWQgZGV2aWNlX2xpbmtzX2RyaXZlcl9jbGVhbnVwKHN0
+cnVjdCBkZXZpY2UgKmRldik7DQo+ID4gLWV4dGVybiB2b2lkIGRldmljZV9saW5rc19ub19kcml2
+ZXIoc3RydWN0IGRldmljZSAqZGV2KTsNCj4gPiArZXh0ZXJuIHZvaWQgZGV2aWNlX2xpbmtzX3By
+b2JlX2ZhaWxlZChzdHJ1Y3QgZGV2aWNlICpkZXYpOw0KPiA+ICBleHRlcm4gYm9vbCBkZXZpY2Vf
+bGlua3NfYnVzeShzdHJ1Y3QgZGV2aWNlICpkZXYpOw0KPiA+ICBleHRlcm4gdm9pZCBkZXZpY2Vf
+bGlua3NfdW5iaW5kX2NvbnN1bWVycyhzdHJ1Y3QgZGV2aWNlICpkZXYpOw0KPiA+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2Jhc2UvY29yZS5jIGIvZHJpdmVycy9iYXNlL2NvcmUuYw0KPiA+IGluZGV4
+IDU4NDczNjQuLjMxZDRmNjggMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9iYXNlL2NvcmUuYw0K
+PiA+ICsrKyBiL2RyaXZlcnMvYmFzZS9jb3JlLmMNCj4gPiBAQCAtNDUyLDEwICs0NTIsMjggQEAg
+c3RhdGljIHZvaWQgX19kZXZpY2VfbGlua3Nfbm9fZHJpdmVyKHN0cnVjdA0KPiA+IGRldmljZSAq
+ZGV2KQ0KPiA+ICAgICAgICAgZGV2LT5saW5rcy5zdGF0dXMgPSBETF9ERVZfTk9fRFJJVkVSOw0K
+PiA+ICB9DQo+ID4gDQo+ID4gLXZvaWQgZGV2aWNlX2xpbmtzX25vX2RyaXZlcihzdHJ1Y3QgZGV2
+aWNlICpkZXYpDQo+ID4gK3N0YXRpYyB2b2lkIF9fZGV2aWNlX2xpbmtzX3Byb2JlX2ZhaWxlZChz
+dHJ1Y3QgZGV2aWNlICpkZXYpDQo+ID4gK3sNCj4gPiArICAgICAgIHN0cnVjdCBkZXZpY2VfbGlu
+ayAqbGluaywgKmxuOw0KPiA+ICsNCj4gPiArICAgICAgIGxpc3RfZm9yX2VhY2hfZW50cnlfc2Fm
+ZV9yZXZlcnNlKGxpbmssIGxuLCAmZGV2LQ0KPiA+ID5saW5rcy5zdXBwbGllcnMsDQo+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjX25vZGUpIHsNCj4gPiArICAg
+ICAgICAgICAgICAgaWYgKGxpbmstPmZsYWdzICYgRExfRkxBR19TVEFURUxFU1MpDQo+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAg
+ICBpZiAobGluay0+ZmxhZ3MgJiBETF9GTEFHX0FVVE9SRU1PVkUpDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgX19kZXZpY2VfbGlua19kZWwobGluayk7DQo+ID4gKyAgICAgICAgICAgICAg
+IGVsc2UgaWYgKGxpbmstPnN0YXR1cyAhPSBETF9TVEFURV9TVVBQTElFUl9VTkJJTkQpDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgV1JJVEVfT05DRShsaW5rLT5zdGF0dXMsDQo+ID4gRExf
+U1RBVEVfQVZBSUxBQkxFKTsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICBkZXYt
+PmxpbmtzLnN0YXR1cyA9IERMX0RFVl9QUk9CRV9GQUlMRUQ7DQo+ID4gK30NCj4gPiArDQo+ID4g
+K3ZvaWQgZGV2aWNlX2xpbmtzX3Byb2JlX2ZhaWxlZChzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ID4g
+IHsNCj4gPiAgICAgICAgIGRldmljZV9saW5rc193cml0ZV9sb2NrKCk7DQo+ID4gLSAgICAgICBf
+X2RldmljZV9saW5rc19ub19kcml2ZXIoZGV2KTsNCj4gPiArICAgICAgIF9fZGV2aWNlX2xpbmtz
+X3Byb2JlX2ZhaWxlZChkZXYpOw0KPiA+ICAgICAgICAgZGV2aWNlX2xpbmtzX3dyaXRlX3VubG9j
+aygpOw0KPiA+ICB9DQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvYmFzZS9kZC5jIGIv
+ZHJpdmVycy9iYXNlL2RkLmMNCj4gPiBpbmRleCBkZTZmZDA5Li45MGQ1N2UwIDEwMDY0NA0KPiA+
+IC0tLSBhL2RyaXZlcnMvYmFzZS9kZC5jDQo+ID4gKysrIGIvZHJpdmVycy9iYXNlL2RkLmMNCj4g
+PiBAQCAtNDkyLDcgKzQ5Miw3IEBAIHN0YXRpYyBpbnQgcmVhbGx5X3Byb2JlKHN0cnVjdCBkZXZp
+Y2UgKmRldiwNCj4gPiBzdHJ1Y3QgZGV2aWNlX2RyaXZlciAqZHJ2KQ0KPiA+ICAgICAgICAgICAg
+ICAgICBibG9ja2luZ19ub3RpZmllcl9jYWxsX2NoYWluKCZkZXYtPmJ1cy0+cC0NCj4gPiA+YnVz
+X25vdGlmaWVyLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIEJVU19OT1RJRllfRFJJVkVSX05PVF8NCj4gPiBCT1VORCwgZGV2KTsNCj4gPiAgcGluY3Ry
+bF9iaW5kX2ZhaWxlZDoNCj4gPiAtICAgICAgIGRldmljZV9saW5rc19ub19kcml2ZXIoZGV2KTsN
+Cj4gPiArICAgICAgIGRldmljZV9saW5rc19wcm9iZV9mYWlsZWQoZGV2KTsNCj4gPiAgICAgICAg
+IGRldnJlc19yZWxlYXNlX2FsbChkZXYpOw0KPiA+ICAgICAgICAgZHJpdmVyX3N5c2ZzX3JlbW92
+ZShkZXYpOw0KPiA+ICAgICAgICAgZGV2LT5kcml2ZXIgPSBOVUxMOw0KPiA+IGRpZmYgLS1naXQg
+YS9pbmNsdWRlL2xpbnV4L2RldmljZS5oIGIvaW5jbHVkZS9saW51eC9kZXZpY2UuaA0KPiA+IGlu
+ZGV4IGIwOTM0MDUuLmJmOTYzMGEgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9saW51eC9kZXZp
+Y2UuaA0KPiA+ICsrKyBiL2luY2x1ZGUvbGludXgvZGV2aWNlLmgNCj4gPiBAQCAtNzk0LDYgKzc5
+NCw3IEBAIHN0cnVjdCBkZXZpY2VfbGluayB7DQo+ID4gIGVudW0gZGxfZGV2X3N0YXRlIHsNCj4g
+PiAgICAgICAgIERMX0RFVl9OT19EUklWRVIgPSAwLA0KPiA+ICAgICAgICAgRExfREVWX1BST0JJ
+TkcsDQo+ID4gKyAgICAgICBETF9ERVZfUFJPQkVfRkFJTEVELA0KPiA+ICAgICAgICAgRExfREVW
+X0RSSVZFUl9CT1VORCwNCj4gPiAgICAgICAgIERMX0RFVl9VTkJJTkRJTkcsDQo+ID4gIH07DQo+
+ID4gLS0NCj4gPiAyLjcuNA0KPiA+IA0KPiA+IC0tDQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0
+aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LQ0KPiA+IGFjcGkiIGlu
+DQo+ID4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcN
+Cj4gPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
+ZG9tby1pbmZvLmh0bWwNCj4gDQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1hY3BpIiANCj4gaW4NCj4gdGhlIGJv
+ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpv
+cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
