@@ -1,23 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AIpwx49ToUCK7FICMY00r00lP0K9erVf3qw7FW6zQke1nH4/dpwoTF342+iXj4jeuLNxhGmCvPTG
-ARC-Seal: i=1; a=rsa-sha256; t=1522297632; cv=none;
+X-Google-Smtp-Source: AIpwx4/OZjTg0pwEBufC6R1EjWYskWvz0YBcVsS2ByCfvXLOO+Ni51WL04b27yL71tbxUpeKEzWo
+ARC-Seal: i=1; a=rsa-sha256; t=1522297650; cv=none;
         d=google.com; s=arc-20160816;
-        b=JdeoYa2qlIE1UdBON5U7BtcXlaD6rPHFdxn4P9wSBqWr33vVfe6LmQV93aDx2ZEobK
-         arERWLVLTFCfa1f99TdbqL+t75+iiZu6nDV9aXmDlN91u1rhKXz3XiiCpN832/IB3uZf
-         t7MYRz4nIfUxUSUsj6vXZXbGlEz4MQ+T7EmMeDgVvGEKcIiotFIpTcaL0ar7D7j36Xy3
-         oyQHwj63+U/a/JJzVkpHnuyqN7ERbIWYDFp4Ek5cxsmdyJVugR0mL6mlXx7wmaxIJsst
-         vd6enS6n0bNvYy2RvnwaqoPZ+ETZnJoRcCv9ZOJ9nk8mZFX7zwwEqgSeUZciO7UtU+Xv
-         h0BA==
+        b=pt/OPVgjiB6G51AnZvBgujq8m5h4E6RcVabUBflJGK9w/EJqBeBXhEGrqzjpPtI1QM
+         nOjfIN7MJOru+Vnp3oZPCaPJNutO3776fOzBG+DwAwxuEc4q+QBG8YpxOuuNfyp0UHMN
+         y53vIHPJoKlMz6L2SkbxRYtvHOCKiitbfsjOciuSkOUZe0+ViJ+85ZJyQ6ts4EzwiQzm
+         Nf9Hv0qczuJgh2VekZwmDxCICbiWv8QMPGLAgQV1u44oA25/qr9/dylC4pQj5GLHQ8bR
+         eas9yX4Uo3KCSaUCKWBlqJSEz/Y7I9ATjbYDNLrz+CX8/ampUG8J1hZzemLhZkyzExqM
+         wyGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:message-id:cc
-         :subject:date:to:from:arc-authentication-results;
-        bh=2rZg28dJxL0112fr2Awxg72EnM2l+bNY8uTsWR8VVyU=;
-        b=HjBC15/+nP+8HJfBLYKd0ggOnNq0jNSwjEKY36M6ZErwk+LrmsDpJzd6rG6oHIg29O
-         dUYplSi8LsbJw560lrzgFiKcp8Fsned/BhFAdwqskVisKXcT2rEpUpKBNun/g/YFv/Dr
-         hJrftdsysJ2uncfMgnPZeY7K+iXWo7FPUmYenVPndvvtL0VXYHvcR05s7jvCYabVyv7g
-         VTl30MmGYv6oQBpr4qi4/1Ffjk+rdwIPXyZ00X+YPSxDMapu0Cfpo9atCLdioOOmzXx1
-         X+bMx+ugSQm/ID9E+Lvckt3EpQQWhin9jgvkeDpSCKOWJRg0ydoaELlmyTOYn514INCW
-         UgBA==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=gyykOkFYC3vzFvd1T2vnG8jX9DiRk0sBi/6CLKoGe1w=;
+        b=ZOpoSy2YCLzgcxmzJ0LsR/nZNwn+MxHFYQw8vgIegs2OEoW1qofH5UR8grrPOY7x05
+         KFf9vlTsx7za4Jv7P9irjezHR7J63Tby3is0NpdWHR8F0n4uEXrunvNt/LIaZWUuoXH/
+         mCzkT7sWsJZdNvkqaR4w6mAFCgrLS6l3G4QsQVnkpjYDxWQZCY0R6RS2xPOURoUb9f4k
+         +6eWOVZZEaAv4RjBlCRKS4RhKovx8arbTe/BlRJ6b4w08DyBlAH5kdQCjU1VQ72UjlPy
+         qH4qlP7V25eFyHVdYdIPW77PD8kUuIB9qv709bJ1eGfnh0kr2M2SswwhVZKTPIWSHTdS
+         qreg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -28,130 +29,43 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Thu, 29 Mar 2018 15:26:48 +1100
-Subject: [PATCH 00/17] staging: Assorted lustre cleanup
+Subject: [PATCH 03/17] staging: lustre: LNET excludes USERIO
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152229732768.27689.4800156943561963977.stgit@noble>
+Message-ID: <152229760832.27689.17304570282712555631.stgit@noble>
+In-Reply-To: <152229732768.27689.4800156943561963977.stgit@noble>
+References: <152229732768.27689.4800156943561963977.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596244761675363046?=
-X-GMAIL-MSGID: =?utf-8?q?1596244761675363046?=
+X-GMAIL-THRID: =?utf-8?q?1596244781744369072?=
+X-GMAIL-MSGID: =?utf-8?q?1596244781744369072?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I'm currently working on converting lustre to use
-rhashtables instead of its own resizeable hash tables.
-That is progressing well, but I need some changes to
-rhashtable first, and that will take a little while.
-So here are some other patches.
-Some are cleanups related to hashtables,
-some are related to measuring time in jiffies
-and some are random other things I found as I was looking
-at stuff.
+LNET_MINOR and USERIO_MINOR are the same value, so
+they cannot both be used in the same kernel.
+Until this is resolved, don't allow them to be built
+together.  This saves automatic testing from noticing this
+known problem.
 
-James, if this jiffie stuff conflicts with your time-keeping stuff, we
-can just drop it.  Last time I cleaned up jiffie-related code you
-said it didn't conflict significantly, so I'm hoping this won't
-either.
-
-Thanks,
-NeilBrown
-
-
+Reported-by: kernel test robot <fengguang.wu@intel.com>
+Signed-off-by: NeilBrown <neilb@suse.com>
 ---
+ drivers/staging/lustre/lnet/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-NeilBrown (17):
-      staging: lustre: remove invariant in cl_io_read_ahead()
-      staging: lustre: remove unused ldlm_completion_ast_async()
-      staging: lustre: LNET excludes USERIO
-      staging: lustre: remove unused hash tables.
-      staging: lustre: remove unneeded include.
-      staging: lustre: tidy up ldlm_resource_putref()
-      staging: lustre: ldlm: free resource when ldlm_lock_create() fails.
-      staging: lustre: add container_of_safe()
-      staging: lustre: cfs_time_current() -> jiffies.
-      staging: lustre: libcfs: discard cfs_time_add/sub
-      staging: lustre: libcfs: discard cfs_time_shift().
-      staging: lustre: libcfs: discard cfs_time_after()
-      staging: lustre: libcfs: remove cfs_timeout_cap()
-      staging: lustre: discard cfs_duration_sec()
-      staging: lustre: discard cfs_time_before_64()
-      staging: lustre: discard linux-time.h
-      staging: lustre: remove cruft from libcfs/linux/libcfs.h
-
-
- .../staging/lustre/include/linux/libcfs/curproc.h  |    2 
- .../staging/lustre/include/linux/libcfs/libcfs.h   |   17 +--
- .../lustre/include/linux/libcfs/libcfs_time.h      |   79 ---------------
- .../lustre/include/linux/libcfs/linux/libcfs.h     |   18 ---
- .../lustre/include/linux/libcfs/linux/linux-time.h |  103 --------------------
- drivers/staging/lustre/lnet/Kconfig                |    2 
- .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c    |   32 +++---
- .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    |    6 +
- .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   17 ++-
- .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |   15 +--
- .../staging/lustre/lnet/klnds/socklnd/socklnd_cb.c |   87 ++++++++---------
- drivers/staging/lustre/lnet/libcfs/debug.c         |    2 
- drivers/staging/lustre/lnet/libcfs/tracefile.c     |   12 +-
- drivers/staging/lustre/lnet/lnet/lib-move.c        |   14 +--
- drivers/staging/lustre/lnet/lnet/net_fault.c       |   40 ++++----
- drivers/staging/lustre/lnet/lnet/peer.c            |    2 
- drivers/staging/lustre/lnet/lnet/router.c          |   17 ++-
- drivers/staging/lustre/lnet/lnet/router_proc.c     |   13 +--
- drivers/staging/lustre/lnet/selftest/conrpc.c      |   14 +--
- drivers/staging/lustre/lnet/selftest/console.c     |    4 -
- drivers/staging/lustre/lnet/selftest/framework.c   |    2 
- drivers/staging/lustre/lnet/selftest/timer.c       |    4 -
- drivers/staging/lustre/lustre/include/cl_object.h  |   10 +-
- drivers/staging/lustre/lustre/include/lu_object.h  |    6 +
- drivers/staging/lustre/lustre/include/lustre_dlm.h |   13 ---
- .../staging/lustre/lustre/include/lustre_export.h  |    7 -
- drivers/staging/lustre/lustre/include/lustre_net.h |    7 +
- drivers/staging/lustre/lustre/include/obd_class.h  |   10 +-
- .../staging/lustre/lustre/include/obd_support.h    |   18 ---
- drivers/staging/lustre/lustre/ldlm/ldlm_flock.c    |   11 --
- drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     |   22 +---
- drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c    |    5 -
- drivers/staging/lustre/lustre/ldlm/ldlm_request.c  |   66 ++-----------
- drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |   25 ++---
- .../staging/lustre/lustre/llite/llite_internal.h   |    2 
- drivers/staging/lustre/lustre/llite/llite_lib.c    |    4 -
- drivers/staging/lustre/lustre/llite/llite_nfs.c    |    2 
- drivers/staging/lustre/lustre/llite/lproc_llite.c  |   12 +-
- drivers/staging/lustre/lustre/llite/statahead.c    |    4 -
- drivers/staging/lustre/lustre/llite/vvp_internal.h |    8 +-
- drivers/staging/lustre/lustre/lmv/lmv_internal.h   |    2 
- drivers/staging/lustre/lustre/lmv/lmv_obd.c        |    2 
- .../staging/lustre/lustre/lov/lov_cl_internal.h    |   18 ++-
- drivers/staging/lustre/lustre/lov/lov_internal.h   |    2 
- drivers/staging/lustre/lustre/lov/lov_obd.c        |    2 
- drivers/staging/lustre/lustre/lov/lov_request.c    |    4 -
- drivers/staging/lustre/lustre/mdc/mdc_request.c    |    2 
- drivers/staging/lustre/lustre/obdclass/cl_io.c     |    1 
- drivers/staging/lustre/lustre/obdclass/cl_object.c |    1 
- drivers/staging/lustre/lustre/obdclass/genops.c    |    2 
- .../lustre/lustre/obdclass/lprocfs_status.c        |   12 +-
- drivers/staging/lustre/lustre/obdclass/lu_object.c |    8 +-
- .../staging/lustre/lustre/obdclass/obd_config.c    |    2 
- .../staging/lustre/lustre/obdecho/echo_client.c    |    2 
- drivers/staging/lustre/lustre/osc/osc_cache.c      |    2 
- .../staging/lustre/lustre/osc/osc_cl_internal.h    |   10 +-
- drivers/staging/lustre/lustre/osc/osc_internal.h   |    2 
- drivers/staging/lustre/lustre/osc/osc_io.c         |    2 
- drivers/staging/lustre/lustre/osc/osc_object.c     |   11 +-
- drivers/staging/lustre/lustre/osc/osc_page.c       |    4 -
- drivers/staging/lustre/lustre/osc/osc_request.c    |    6 +
- drivers/staging/lustre/lustre/ptlrpc/client.c      |    4 -
- drivers/staging/lustre/lustre/ptlrpc/import.c      |   10 +-
- drivers/staging/lustre/lustre/ptlrpc/pinger.c      |   23 ++--
- drivers/staging/lustre/lustre/ptlrpc/service.c     |    6 +
- include/linux/kernel.h                             |   16 +++
- 66 files changed, 284 insertions(+), 606 deletions(-)
- delete mode 100644 drivers/staging/lustre/include/linux/libcfs/libcfs_time.h
- delete mode 100644 drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
-
---
-Signature
+diff --git a/drivers/staging/lustre/lnet/Kconfig b/drivers/staging/lustre/lnet/Kconfig
+index ad049e6f24e4..fe4b24acf075 100644
+--- a/drivers/staging/lustre/lnet/Kconfig
++++ b/drivers/staging/lustre/lnet/Kconfig
+@@ -1,6 +1,6 @@
+ config LNET
+ 	tristate "Lustre networking subsystem (LNet)"
+-	depends on INET
++	depends on INET && !USERIO
+ 	help
+ 	  The Lustre network layer, also known as LNet, is a networking abstaction
+ 	  level API that was initially created to allow Lustre Filesystem to utilize
