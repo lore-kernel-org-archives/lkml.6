@@ -1,59 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeC2TjQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 15:39:16 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:37450 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeC2TjN (ORCPT
+        id S1751896AbeC2ToF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 15:44:05 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:39357
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751082AbeC2ToE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 15:39:13 -0400
-X-Google-Smtp-Source: AIpwx48f+vkSrU790KY9xQ4Z1XMJjZfU2hGL1L2crkhkX5t94Rty/58/4/TZqJBg5+SlsQ4g+jOnvTvpcBcJkE82QIg=
+        Thu, 29 Mar 2018 15:44:04 -0400
+X-IronPort-AV: E=Sophos;i="5.48,378,1517871600";
+   d="scan'208";a="260327958"
+Date: Thu, 29 Mar 2018 21:44:02 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Fabio Estevam <festevam@gmail.com>
+cc: Francisco Jerez <currojerez@riseup.net>, linux-pm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kbuild-all@01.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        0day robot <fengguang.wu@intel.com>, Len Brown <lenb@kernel.org>,
+        Nicolai Stange <nstange@suse.de>
+Subject: Re: [kbuild-all] [PATCH] OPTIONAL: cpufreq/intel_pstate: fix
+ debugfs_simple_attr.cocci warnings
+In-Reply-To: <CAOMZO5CLpW+2yCYRwAJTPWtXgXkaPGyPQrB3cbBGYvV1fryUQw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1803292140340.2750@hadrien>
+References: <alpine.DEB.2.20.1803292109180.2750@hadrien> <CAOMZO5CLpW+2yCYRwAJTPWtXgXkaPGyPQrB3cbBGYvV1fryUQw@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <1522321466-21755-5-git-send-email-mgautam@codeaurora.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org> <1522321466-21755-5-git-send-email-mgautam@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 29 Mar 2018 12:39:11 -0700
-X-Google-Sender-Auth: nzTgNyWe0R66vEr8e3C5DxNDH9A
-Message-ID: <CAD=FV=W-OfjagiDxchV-aBNzhfV-2=MN+CJtoLAMe2jGYUc4uA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] dt-bindings: phy-qcom-qmp: Update bindings for sdm845
-To: Manu Gautam <mgautam@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Varadarajan Narayanan <varada@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
-> Update compatible strings for USB3 PHYs on SDM845.
-> One is QMPv3 DisplayPort-USB combo PHY and other one
-> is USB UNI PHY which is single lane USB3 PHY without
-> DP capability. While at it also remove "qcom,qmp-v3-usb3-phy"
-> compatible string which was earlier added for sdm845
-> only as there wouldn't be any user of same.
+
+On Thu, 29 Mar 2018, Fabio Estevam wrote:
+
+> Hi Julia,
 >
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> On Thu, Mar 29, 2018 at 4:12 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> >  Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+> >  for debugfs files.
+> >
+> > Semantic patch information:
+> >  Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+> >  imposes some significant overhead as compared to
+> >  DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+>
+> Just curious: could you please expand on what "imposes some
+> significant overhead" means?
 
-IMHO you should remove Rob's Review until he re-reviews.  I want to
-make sure he's OK with the removal of the "qcom,qmp-v3-usb3-phy".
-Rob: that compatible string was _just_ added and was intended for
-SDM845.  It's not expected that there are any users yet.  IMHO that
-means it's OK to remove, but it would be good to get your confirmation
-that you agree.  See the discussion at
-<https://patchwork.kernel.org/patch/10302761/>.
+I don't know.  I didn't write this rule.  Nicolai, can you explain?
 
-
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+thanks,
+julia
