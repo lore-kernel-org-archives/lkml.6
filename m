@@ -1,97 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeC2Kp4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 06:45:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36137 "EHLO mail.bootlin.com"
+        id S1752082AbeC2KuJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 06:50:09 -0400
+Received: from smtp2.it.da.ut.ee ([193.40.5.67]:51280 "EHLO smtp2.it.da.ut.ee"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeC2Kpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 06:45:55 -0400
-Date: Thu, 29 Mar 2018 12:45:42 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Message-ID: <20180329104542.GK13942@piout.net>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
- <20180328153135.GG13942@piout.net>
- <20180328155033.GH13942@piout.net>
- <3478710.yJBBt3uoRT@ada>
+        id S1750735AbeC2KuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 06:50:07 -0400
+Date: Thu, 29 Mar 2018 13:50:02 +0300 (EEST)
+From: Meelis Roos <mroos@linux.ee>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+cc: Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-ide@vger.kernel.org
+Subject: Re: 4.16-rc2+git: pata_serverworks: hanging ata detection thread on
+ HP DL380G3
+In-Reply-To: <1597679.yzYZqmDdA5@amdc3058>
+Message-ID: <alpine.LRH.2.21.1803291349480.12825@math.ut.ee>
+References: <alpine.LRH.2.21.1802261049140.4893@math.ut.ee> <alpine.LRH.2.21.1803291153070.12825@math.ut.ee> <CGME20180329101255epcas2p22aeb95d869cdd2954bb9183037dace5f@epcas2p2.samsung.com> <1597679.yzYZqmDdA5@amdc3058>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3478710.yJBBt3uoRT@ada>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/03/2018 at 10:01:26 +0200, Alexander Dahl wrote:
-> Hei hei,
-> 
-> Am Mittwoch, 28. März 2018, 17:50:33 CEST schrieb Alexandre Belloni:
-> > On 28/03/2018 at 17:31:35 +0200, Alexandre Belloni wrote:
-> > > > Do you have an explanation of why the rate is much higher ?
+> On Thursday, March 29, 2018 11:54:09 AM Meelis Roos wrote:
+> > > 4.16 git bootup on HP Proliant DL380 G3 pauses for a a minute or two and 
+> > > then continues with "blocked for more than 120 seconds" message with 
+> > > libata detection functions in ther stack - 
+> > > async_synchronize_cookie_domain() as the last. It seems to happen during 
+> > > IDE CD-ROM detection (detected before but registered as sr0 after the 
+> > > warning). After detection, the eject button on the drive did not work.
 > > > 
-> > > The core is giving deltas of 31 clocks instead of much more than that, I
-> > > guess I messed up the initialization somewhere.
-> > 
-> > I did mess up.
-> > 
-> > Alexander, can you test that:
+> > > 
+> > > pata_serverworks is the libata driver in use.
 > 
-> Well, I just did.
+> There were no changes to pata_serverworks since 2014 and libata changes
+> in v4.16 look obviously correct..
 > 
-> > 
-> > diff --git a/drivers/clocksource/timer-atmel-tcb.c
-> > b/drivers/clocksource/timer-atmel-tcb.c index 7fde9cfbf203..bbbacf8c46b0
-> > 100644
-> > --- a/drivers/clocksource/timer-atmel-tcb.c
-> > +++ b/drivers/clocksource/timer-atmel-tcb.c
-> > @@ -222,7 +222,7 @@ static int __init tc_clkevt_register(struct device_node
-> > *node, goto err_slow;
-> >  	clk_disable(tce.clk);
-> > 
-> > -	clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
-> > +	clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
-> > 
-> >  	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
-> >  			  tce.clkevt.name, &tce);
-> > 
-> > This will behave exactly the same as before on 16bits TCB and will have
-> > much less interrupts on 32 bits platforms.
+> > This is still the same in 4.16.0-rc7-00062-g0b412605ef5f.
 > 
-> This is the result:
-> 
-> INT                NAME          RATE             MAX
->  17 [vel     timer@fffa]  1837 Ints/s     (max:  1912)
->  26 [      vel     eth0]     3 Ints/s     (max:    11)
-> 
-> This is not much lower than the ~2150 I reported yesterday?
-> 
-> I'm sorry I can just test this on at91sam9g20 currently, I have no 
-> understanding of the subsystem, I can't do a decent review.
+> Any chance that you could bisect this issue?
 
-Hum, are you sure, I went from:
-
-INT                NAME          RATE             MAX
- 16 [evel     timer@fc0]  1027 Ints/s     (max:  1028)
- 21 [ evel     at_xdmac]     3 Ints/s     (max:     3)
- 30 [    evel     ttyS0]     2 Ints/s     (max:     2)
-
-to:
-
-INT                NAME          RATE             MAX
- 16 [evel     timer@fc0]     6 Ints/s     (max:     9)
- 21 [ evel     at_xdmac]     2 Ints/s     (max:     2)
- 30 [    evel     ttyS0]     2 Ints/s     (max:     2)
-
-
+Yes, will do.
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Meelis Roos (mroos@linux.ee)
