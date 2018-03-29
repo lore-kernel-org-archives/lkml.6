@@ -1,76 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752116AbeC2OyG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:54:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43453 "EHLO mail.bootlin.com"
+        id S1752168AbeC2OyX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:54:23 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40893 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeC2OyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:54:04 -0400
-Date: Thu, 29 Mar 2018 16:53:52 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH net-next 3/8] net: mscc: Add MDIO driver
-Message-ID: <20180329145352.GD12066@piout.net>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-4-alexandre.belloni@bootlin.com>
- <20180323204939.GS24361@lunn.ch>
- <20180329140544.GB12066@piout.net>
- <20180329144041.GA25752@lunn.ch>
+        id S1751096AbeC2OyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:54:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="212361512"
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Subject: [PATCH v4 0/3] perf/core: expose thread context switch out event type
+ to user space
+Message-ID: <6f4a5d0d-9e1f-d5a1-7719-7547bb688453@linux.intel.com>
+Date: Thu, 29 Mar 2018 17:54:17 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329144041.GA25752@lunn.ch>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/03/2018 at 16:40:41 +0200, Andrew Lunn wrote:
-> > > > +	for (i = 0; i < PHY_MAX_ADDR; i++) {
-> > > > +		if (mscc_miim_read(bus, i, MII_PHYSID1) < 0)
-> > > > +			bus->phy_mask |= BIT(i);
-> > > > +	}
-> > > 
-> > > Why do this? Especially so for the external bus, where the PHYs might
-> > > have a GPIO reset line, and won't respond until the gpio is
-> > > released. The core code does that just before it scans the bus, or
-> > > just before it scans the particular address on the bus, depending on
-> > > the scope of the GPIO.
-> > > 
-> > 
-> > IIRC, this was needed when probing the bus without DT, in that case, the
-> > mdiobus_scan loop of __mdiobus_register() will fail when doing the
-> > get_phy_id for phys 0 to 31 because get_phy_id() transforms any error in
-> > -EIO and so it is impossible to register the bus. Other drivers have a
-> > similar code to handle that case.
-> 
-> Hi Alexandre
-> 
-> Do you mean mscc_miim_read() will return -EIO if there is no device on
-> the bus at the address trying to be read? Most devices just return
-> 0xffff because there is a pull up on the data line, nothing is driving
-> it, so all 1's are read.
-> 
 
-It will return -EIO but I tried to be clever and return -ENODEV but this
-gets changed to -EIO by get_phy_id.
+Implement preempting context switch out event as a part of 
+PERF_RECORD_SWITCH[_CPU_WIDE] record. The event is treated as preemption 
+one when task->state value of the thread being switched out is TASK_RUNNING;
 
-> It sounds like the correct fix is for get_phy_id() to look at the
-> error code for mdiobus_read(bus, addr, MII_PHYSID1). If it is EIO and
-> maybe ENODEV, set *phy_id to 0xffffffff and return. The scan code
-> should then do the correct thing.
-> 
+Percentage of preempting and non-preempting context switches help 
+understanding the nature of workloads (CPU or IO bound) that are running 
+on the machine;
 
-That could work indeed. Do you want me to test and send a patch?
+Event type encoding is implemented using a new
+PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit in misc field of event record header;
 
+Perf tool report and script commands have been extended to decode 
+new PREEMPT bit and the updated output looks like this:
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+tools/perf/perf report -D -i perf.data | grep _SWITCH
+
+0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
+4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
+0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
+0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+
+perf script --show-switch-events -F +misc -I -i perf.data:
+
+          hdparm  4073 [004] U       762.198265:     380194 cycles:ppp:      7faf727f5a23 strchr (/usr/lib64/ld-2.26.so)
+          hdparm  4073 [004] K       762.198366:     441572 cycles:ppp:  ffffffffb9218435 alloc_set_pte (/lib/modules/4.16.0-rc6+/build/vmlinux)
+          hdparm  4073 [004] S       762.198391: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+         swapper     0 [004]         762.198392: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
+         swapper     0 [004] Sp      762.198477: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  4073/4073 
+          hdparm  4073 [004]         762.198478: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+         swapper     0 [007] K       762.198514:    2303073 cycles:ppp:  ffffffffb98b0c66 intel_idle (/lib/modules/4.16.0-rc6+/build/vmlinux)
+         swapper     0 [007] Sp      762.198561: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  1134/1134 
+  kworker/u16:18  1134 [007]         762.198562: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+  kworker/u16:18  1134 [007] S       762.198567: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+
+The documentation has been updated to mention PREEMPT switch out events 
+and its decoding symbols in perf script output.
+
+The changes have been manually tested on Fedora 27 with the patched kernel:
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+
+---
+ Alexey Budankov (3):
+	perf/core: store context switch out type into Perf trace
+	perf report: extend raw dump (-D) out with switch out event type
+	perf script: extend misc field decoding with switch out event type
+
+ include/uapi/linux/perf_event.h          |  4 ++++
+ kernel/events/core.c                     |  4 ++++
+ tools/include/uapi/linux/perf_event.h    |  4 ++++
+ tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+ tools/perf/builtin-script.c              |  5 ++++-
+ tools/perf/util/event.c                  |  4 +++-
+ 6 files changed, 28 insertions(+), 10 deletions(-)
