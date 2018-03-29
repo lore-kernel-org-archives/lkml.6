@@ -1,130 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752105AbeC2JSa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 05:18:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34320 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750799AbeC2JS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 05:18:29 -0400
-Date: Thu, 29 Mar 2018 11:18:27 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Maksims Matjakubovs <maksims.matjakubovs@gmail.com>
-Cc: broonie@kernel.org, wens@csie.org, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] Allwinner SPI sun6i : add dual mode support.
-Message-ID: <20180329091827.jfvrikkslavqms2n@flea>
-References: <1522167062-4079-1-git-send-email-maksims.matjakubovs@gmail.com>
+        id S1752040AbeC2JW6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 05:22:58 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42010 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeC2JW5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 05:22:57 -0400
+X-Google-Smtp-Source: AIpwx4+RsMlalsSnRaS1ZMaTYPUfE9LGqwePnzrWL08FyFQz/5bTArFG+uG/DFOQ0t1L6cHNc7nEag==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v5 0/1] drm/xen-front: Add support for Xen PV display frontend
+Date: Thu, 29 Mar 2018 12:22:46 +0300
+Message-Id: <20180329092247.23905-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="47eo6otboxu2q4hh"
-Content-Disposition: inline
-In-Reply-To: <1522167062-4079-1-git-send-email-maksims.matjakubovs@gmail.com>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
---47eo6otboxu2q4hh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello!
 
-Hi Maksims,
+Boris/Daniel, I put your R-b tags, so please do let me know if this is not
+acceptable, so I remove the tags.
 
-Thanks for your patch.
+This patch series adds support for Xen [1] para-virtualized
+frontend display driver. It implements the protocol from
+include/xen/interface/io/displif.h [2].
+Accompanying backend [3] is implemented as a user-space application
+and its helper library [4], capable of running as a Weston client
+or DRM master.
+Configuration of both backend and frontend is done via 
+Xen guest domain configuration options [5].
 
-It looks pretty good, but there's a few things that you'll need to
-adjust.
+*******************************************************************************
+* Driver limitations
+*******************************************************************************
+ 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
+    allocated buffers) below are not supported at the same time.
 
-The prefix in your commit title should start with "spi: sun6i:
-<title>", in this case "spi: sun6i: Add Dual Mode Support" would be
-great.
+ 2. Only primary plane without additional properties is supported.
 
-On Tue, Mar 27, 2018 at 07:11:02PM +0300, Maksims Matjakubovs wrote:
-> Added Dual mode half duplex Rx and Tx support to Allwinner sun6i/sun8i SP=
-I driver.
-> Main changes is related to SUN6I_BURST_CTL_CNT_REG register.
-> SPI transmit is in Dual mode if STC (Master Single Mode Transmit Counter)=
- is 0 and DRM (Master Dual Mode RX Enable) is not set.
-> SPI receive is in Dual mode if DRM (Master Dual Mode RX Enable) is set.
-> Tested on Allwinner V3s (sun8i) CPU.
->=20
-> Signed-off-by: Maksims Matjakubovs <maksims.matjakubovs@gmail.com>
+ 3. Only one video mode supported which resolution is configured via XenStore.
 
-This is mostly fine as well, but the commit log should be wrapped to
-75 chars.
+ 4. All CRTCs operate at fixed frequency of 60Hz.
 
-You'll find a tool to check for this kind of formatting and coding
-style issues (and more) using scripts/checkpatch.pl (ideally with
---strict).
+*******************************************************************************
+* Driver modes of operation in terms of display buffers used
+*******************************************************************************
+ Depending on the requirements for the para-virtualized environment, namely
+ requirements dictated by the accompanying DRM/(v)GPU drivers running in both
+ host and guest environments, number of operating modes of para-virtualized
+ display driver are supported:
+  - display buffers can be allocated by either frontend driver or backend
+  - display buffers can be allocated to be contiguous in memory or not
 
-> ---
->  drivers/spi/spi-sun6i.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
-> index 8533f4e..2da52ed 100644
-> --- a/drivers/spi/spi-sun6i.c
-> +++ b/drivers/spi/spi-sun6i.c
-> @@ -84,6 +84,7 @@
-> =20
->  #define SUN6I_BURST_CTL_CNT_REG		0x38
->  #define SUN6I_BURST_CTL_CNT_STC(cnt)		((cnt) & SUN6I_MAX_XFER_SIZE)
-> +#define SUN6I_BURST_CTL_CNT_DRM		BIT(28)
-> =20
->  #define SUN6I_TXDATA_REG		0x200
->  #define SUN6I_RXDATA_REG		0x300
-> @@ -312,6 +313,8 @@ static int sun6i_spi_transfer_one(struct spi_master *=
-master,
->  	sun6i_spi_write(sspi, SUN6I_BURST_CNT_REG, SUN6I_BURST_CNT(tfr->len));
->  	sun6i_spi_write(sspi, SUN6I_XMIT_CNT_REG, SUN6I_XMIT_CNT(tx_len));
->  	sun6i_spi_write(sspi, SUN6I_BURST_CTL_CNT_REG,
-> +			(tfr->tx_nbits =3D=3D SPI_NBITS_DUAL) ? 0 :
-> +			(tfr->rx_nbits =3D=3D SPI_NBITS_DUAL) ? SUN6I_BURST_CTL_CNT_DRM :
->  			SUN6I_BURST_CTL_CNT_STC(tx_len));
-> =20
->  	/* Fill the TX FIFO */
-> @@ -480,7 +483,8 @@ static int sun6i_spi_probe(struct platform_device *pd=
-ev)
->  	master->set_cs =3D sun6i_spi_set_cs;
->  	master->transfer_one =3D sun6i_spi_transfer_one;
->  	master->num_chipselect =3D 4;
-> -	master->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST;
-> +	master->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST=
- |
-> +				SPI_RX_DUAL | SPI_TX_DUAL;
+ Note! Frontend driver itself has no dependency on contiguous memory for
+       its operation.
 
-This feature was introduced with the A80, but the older designs (A31,
-A23, A33) don't seem to support it, so we should set these flags
-conditionally, using the compatible for example.
+*******************************************************************************
+* 1. Buffers allocated by the frontend driver.
+*******************************************************************************
 
-Maxime
+ The below modes of operation are configured at compile-time via
+ frontend driver's kernel configuration.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ 1.1. Front driver configured to use GEM CMA helpers
+      This use-case is useful when used with accompanying DRM/vGPU driver in
+      guest domain which was designed to only work with contiguous buffers,
+      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
+      contiguous PRIME buffers, thus requiring frontend driver to provide
+      such. In order to implement this mode of operation para-virtualized
+      frontend driver can be configured to use GEM CMA helpers.
 
---47eo6otboxu2q4hh
-Content-Type: application/pgp-signature; name="signature.asc"
+ 1.2. Front driver doesn't use GEM CMA
+      If accompanying drivers can cope with non-contiguous memory then, to
+      lower pressure on CMA subsystem of the kernel, driver can allocate
+      buffers from system memory.
 
------BEGIN PGP SIGNATURE-----
+ Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
+   may require IOMMU support on the platform, so accompanying DRM/vGPU
+   hardware can still reach display buffer memory while importing PRIME
+   buffers from the frontend driver.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq8r2IACgkQ0rTAlCFN
-r3SHZQ/9GGtaIe60dV3Emr8G/IF1vjJoCAow43lyt5M0VM7JUAnry3ixoyKXFW9W
-7HCvLZA8LRTA6gxdMAML9LpR2f6iLykQ51hCxqDEOql9DptJqbLyo4fIa9zNs16S
-qWEdeLyRIFl/2hSerhLlNzoXjXq7E5vLJO7SEHPkEydsv5HdO2nxy93j3MipZRZU
-1peqgAEchQK4PfVWnb4Nh19lo8jv+KwPa5R2CiQdruLZCa4vTT//9S3ggE9gFQfm
-KjiRfkIRQIQoCcO4K38xjg2BC9YlCHwsVSYr/Dl81JX6zHRfFde2RXumXHZRJanm
-gdVO1ZmFzYjmT5jjaoPinWVWMJdMfL3odxGuVKrw6lmzoGf23PjRkW8Xx1r4Ny8R
-ShX9Q/qfB7FEg71IQRlVoHDbffAS9M8dXCxzPBzmdN1PVJU/rWtdiBTqSVs9DuA5
-g31zuJ3Sp5aAG6+BtorJQib51MhZpSyLxYBOE9g3tZ29WCVunb7bQW6aNcc0EFhh
-R0lU2fiR4gAJR87NfHBirVezFgvGCVqmjh5YqiPce5gETtSUVpA3DpFRYASlyn+Y
-PwzPtzWFLIvmbitUHwc4IYowEUwkxEU72qCEc809TT1vat2ObNYxkYQbsNmMF0Cl
-3E6QdfcOXMXtSbFtG8nyfy2VSBXZsS0q/eSP62bHMfuZaBqxT0w=
-=eulY
------END PGP SIGNATURE-----
+*******************************************************************************
+* 2. Buffers allocated by the backend
+*******************************************************************************
 
---47eo6otboxu2q4hh--
+ This mode of operation is run-time configured via guest domain configuration
+ through XenStore entries.
+
+ For systems which do not provide IOMMU support, but having specific
+ requirements for display buffers it is possible to allocate such buffers
+ at backend side and share those with the frontend.
+ For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
+ physically contiguous memory, this allows implementing zero-copying
+ use-cases.
+
+
+I would like to thank at least, but not at last the following
+people/communities who helped this driver to happen ;)
+
+1. My team at EPAM for continuous support
+2. Xen community for answering tons of questions on different
+modes of operation of the driver with respect to virtualized
+environment.
+3. Rob Clark for "GEM allocation for para-virtualized DRM driver" [6]
+4. Maarten Lankhorst for "Atomic driver and old remove FB behavior" [7]
+5. Ville Syrjälä for "Questions on page flips and atomic modeset" [8]
+
+Changes since v4:
+*******************************************************************************
+- updated the driver after "drm/simple-kms-helper: Plumb plane state
+  to the enable hook" [14]
+- made display_mode_valid static
+- fixed page leak on event channel error path
+- changed title of the documentation to match the rest of the drivers
+- removed from the series the patch from Noralf Trønnes [12] as it was sent out
+  as a standalone one
+
+Changes since v3:
+*******************************************************************************
+- no changes to Xen related code (shared buffer handling, event channels etc.),
+  but minor changes to xenbus_driver state machine due to re-worked unplug
+  implementation: additional state checks added
+- re-worked dumb creation code to fix race condition (drm_gem_handle_create)
+- use drm_dev_{enter|exit} to protect code which must not run when unplugged
+- re-work unplug code to fully support "zombie" DRM devices on backend
+  disconnect
+- implement a dedicated page flip time-out worker, remove logic from connector
+  detect callback
+- move mode_valid from drm_connector_helper_funcs to drm_simple_display_pipe_funcs
+- use drm_gem_object_put_unlocked instead of obsolete drm_gem_object_unreference_unlocked
+- minor cleanups
+
+Changes since v2:
+*******************************************************************************
+- no changes to Xen related code (shared buffer handling, event channels etc.)
+- rework DRM driver release with hotplug (Daniel)
+- squash xen_drm_front and xen_drm_front_drv as they depend on each
+  other too heavily now
+- remove platform driver and instantiate DRM device
+  from xenbus driver directly
+- have serializing mutex per connector, not a single one,
+  so we don't introduce a bottle neck for multiple connectors
+- minor comments addressed (Daniel)
+
+Changes since v1:
+*******************************************************************************
+- use SPDX license identifier, set license to GPLv2 OR MIT
+- changed midlayers to direct function calls, removed:
+  - front_ops
+  - gem_ops
+- renamed xenbus_driver callbacks to align with exisitng PV drivers
+- re-worked backend error handling with connector hotplug uevents
+- removed vblank handling so user-space doesn't have an impression
+  we really support that
+- directly use front's mode_set in display enable/disable
+- removed BUG_ON, error handling implemented
+- moved driver documentation into Documentation/gpu
+- other comments from Xen community addressed (Boris and Juergen)
+- squashed Xen and DRM patches for better interrconnection visibility
+- for your convenience driver is available at [11]
+
+Thank you,
+Oleksandr Andrushchenko
+
+[1] https://wiki.xen.org/wiki/Paravirtualization_(PV)#PV_IO_Drivers
+[2] https://elixir.bootlin.com/linux/v4.16-rc2/source/include/xen/interface/io/displif.h
+[3] https://github.com/xen-troops/displ_be
+[4] https://github.com/xen-troops/libxenbe
+[5] https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=docs/man/xl.cfg.pod.5.in;h=a699367779e2ae1212ff8f638eff0206ec1a1cc9;hb=refs/heads/master#l1257
+[6] https://lists.freedesktop.org/archives/dri-devel/2017-March/136038.html
+[7] https://www.spinics.net/lists/dri-devel/msg164102.html
+[8] https://www.spinics.net/lists/dri-devel/msg164463.html
+[9] https://patchwork.freedesktop.org/series/38073/
+[10] https://patchwork.freedesktop.org/series/38139/
+[11] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v2
+[12] https://patchwork.freedesktop.org/patch/175779/
+[13] https://www.spinics.net/lists/dri-devel/msg170453.html
+[14] https://patchwork.freedesktop.org/patch/212321/
+
+Oleksandr Andrushchenko (1):
+  drm/xen-front: Add support for Xen PV display frontend
+
+ Documentation/gpu/drivers.rst               |   1 +
+ Documentation/gpu/xen-front.rst             |  43 ++
+ drivers/gpu/drm/Kconfig                     |   2 +
+ drivers/gpu/drm/Makefile                    |   1 +
+ drivers/gpu/drm/xen/Kconfig                 |  30 +
+ drivers/gpu/drm/xen/Makefile                |  16 +
+ drivers/gpu/drm/xen/xen_drm_front.c         | 880 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front.h         | 189 ++++++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.c     |  77 +++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.h     |  37 ++
+ drivers/gpu/drm/xen/xen_drm_front_conn.c    | 115 ++++
+ drivers/gpu/drm/xen/xen_drm_front_conn.h    |  27 +
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 386 ++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  81 +++
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     | 309 ++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_gem.h     |  41 ++
+ drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  78 +++
+ drivers/gpu/drm/xen/xen_drm_front_kms.c     | 372 ++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_kms.h     |  27 +
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 432 ++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  72 +++
+ 21 files changed, 3216 insertions(+)
+ create mode 100644 Documentation/gpu/xen-front.rst
+ create mode 100644 drivers/gpu/drm/xen/Kconfig
+ create mode 100644 drivers/gpu/drm/xen/Makefile
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+
+-- 
+2.16.2
