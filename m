@@ -1,144 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753132AbeC2LbX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:31:23 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:42543 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752983AbeC2LbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:31:21 -0400
-From: Alexander Dahl <ada@thorsis.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Date: Thu, 29 Mar 2018 13:31:18 +0200
-Message-ID: <3103570.fW0XyqvKVi@ada>
-In-Reply-To: <20180329104542.GK13942@piout.net>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com> <3478710.yJBBt3uoRT@ada> <20180329104542.GK13942@piout.net>
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1753065AbeC2LaW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:30:22 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59320 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752931AbeC2L01 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 07:26:27 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org
+Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Alexander Viro <viro@ZenIV.linux.org.uk>
+Subject: [PATCH 068/109] fs: add ksys_dup{,3}() helper; remove in-kernel calls to sys_dup{,3}()
+Date: Thu, 29 Mar 2018 13:23:45 +0200
+Message-Id: <20180329112426.23043-69-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
+References: <20180329112426.23043-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2TBVTAA005456
 
-Hello Alexandre,
+Using ksys_dup() and ksys_dup3() as helper functions allows us to
+avoid the in-kernel calls to the sys_dup() and sys_dup3() syscalls.
+The ksys_ prefix denotes that these functions are meant as a drop-in
+replacement for the syscalls. In particular, they use the same
+calling convention as sys_dup{,3}().
 
-Am Donnerstag, 29. März 2018, 12:45:42 CEST schrieb Alexandre Belloni:
-> > This is the result:
-> > 
-> > INT                NAME          RATE             MAX
-> > 
-> >  17 [vel     timer@fffa]  1837 Ints/s     (max:  1912)
-> >  26 [      vel     eth0]     3 Ints/s     (max:    11)
-> > 
-> > This is not much lower than the ~2150 I reported yesterday?
-> > 
-> > I'm sorry I can just test this on at91sam9g20 currently, I have no
-> > understanding of the subsystem, I can't do a decent review.
-> 
-> Hum, are you sure, I went from:
-> 
-> INT                NAME          RATE             MAX
->  16 [evel     timer@fc0]  1027 Ints/s     (max:  1028)
->  21 [ evel     at_xdmac]     3 Ints/s     (max:     3)
->  30 [    evel     ttyS0]     2 Ints/s     (max:     2)
-> 
-> to:
-> 
-> INT                NAME          RATE             MAX
->  16 [evel     timer@fc0]     6 Ints/s     (max:     9)
->  21 [ evel     at_xdmac]     2 Ints/s     (max:     2)
->  30 [    evel     ttyS0]     2 Ints/s     (max:     2)
+In the near future, the fs-external callers of ksys_dup{,3}() should be
+converted to call do_dup2() directly. Then, ksys_dup{,3}() can be moved
+within sys_dup{,3}() again.
 
-Pretty sure. I rebuilt the whole BSP and added another line to the kernel 
-source to see if the tree I applied the patches to, was actually built:
+This patch is part of a series which removes in-kernel calls to syscalls.
+On this basis, the syscall entry path can be streamlined. For details, see
+http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ fs/file.c                | 16 +++++++++++++---
+ include/linux/syscalls.h |  1 +
+ init/do_mounts_initrd.c  |  4 ++--
+ init/main.c              |  4 ++--
+ 4 files changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
-index 7fde9cfbf203..f85affc74a86 100644
---- a/drivers/clocksource/timer-atmel-tcb.c
-+++ b/drivers/clocksource/timer-atmel-tcb.c
-@@ -222,7 +222,8 @@ static int __init tc_clkevt_register(struct device_node *node,
-                goto err_slow;
-        clk_disable(tce.clk);
+diff --git a/fs/file.c b/fs/file.c
+index 42f0db4bd0fb..d304004f0b65 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -870,7 +870,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+ 	return err;
+ }
  
--       clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
-+       pr_info( "*** bits: 0x%x, BIT(bits): 0x%lx\n", bits, BIT(bits) );
-+       clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
+-SYSCALL_DEFINE3(dup3, unsigned int, oldfd, unsigned int, newfd, int, flags)
++static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
+ {
+ 	int err = -EBADF;
+ 	struct file *file;
+@@ -904,6 +904,11 @@ SYSCALL_DEFINE3(dup3, unsigned int, oldfd, unsigned int, newfd, int, flags)
+ 	return err;
+ }
  
-        ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
-                          tce.clkevt.name, &tce);
-
-
-See the more complete serial console output (including the additional 
-message):
-
-
-Starting kernel ...
-
-** 15 printk messages dropped **
-Dentry cache hash table entries: 4096 (order: 2, 16384 bytes)
-Inode-cache hash table entries: 2048 (order: 1, 8192 bytes)
-Memory: 28624K/32768K available (2934K kernel code, 113K rwdata, 436K rodata, 144K init, 73K bss, 4144K reserved, 0K cma-reserved)
-Virtual kernel memory layout:
-    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-    fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
-    vmalloc : 0xc2800000 - 0xff800000   ( 976 MB)
-    lowmem  : 0xc0000000 - 0xc2000000   (  32 MB)
-    modules : 0xbf000000 - 0xc0000000   (  16 MB)
-      .text : 0x(ptrval) - 0x(ptrval)   (2936 kB)
-      .init : 0x(ptrval) - 0x(ptrval)   ( 144 kB)
-      .data : 0x(ptrval) - 0x(ptrval)   ( 114 kB)
-       .bss : 0x(ptrval) - 0x(ptrval)   (  74 kB)
-SLUB: HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
-Preemptible hierarchical RCU implementation.
-        Tasks RCU enabled.
-NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
-clocksource: timer@fffa0000:0,1: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 115749784805 ns
-sched_clock: 32 bits at 16MHz, resolution 60ns, wraps every 130055938017ns
-*** bits: 0x10, BIT(bits): 0x10000
-Console: colour dummy device 80x30
-Calibrating delay loop... 197.01 BogoMIPS (lpj=985088)
-pid_max: default: 32768 minimum: 301
-Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
-Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
-CPU: Testing write buffer coherency: ok
-Setting up static identity map for 0x20008400 - 0x2000843c
-Hierarchical SRCU implementation.
-devtmpfs: initialized
-clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-futex hash table entries: 256 (order: -1, 3072 bytes)
-pinctrl core: initialized pinctrl subsystem
-NET: Registered protocol family 16
-DMA: preallocated 256 KiB pool for atomic coherent allocations
-gpio-at91 fffff400.gpio: at address 82332323
-gpio-at91 fffff600.gpio: at address a4bf53d9
-gpio-at91 fffff800.gpio: at address 31e4ab7c
-pinctrl-at91 ahb:apb:pinctrl@fffff400: initialized AT91 pinctrl driver
-AT91: Detected SoC: at91sam9g20, revision 1
-clocksource: Switched to clocksource timer@fffa0000:0,1
-NET: Registered protocol family 2
-tcp_listen_portaddr_hash hash table entries: 512 (order: 0, 4096 bytes)
-TCP established hash table entries: 1024 (order: 0, 4096 bytes)
-TCP bind hash table entries: 1024 (order: 0, 4096 bytes)
-TCP: Hash tables configured (established 1024 bind 1024)
-UDP hash table entries: 256 (order: 0, 4096 bytes)
-UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
-NET: Registered protocol family 1
-workingset: timestamp_bits=30 max_order=13 bucket_order=0
-io scheduler noop registered (default)
-fffff200.serial: ttyS0 at MMIO 0xfffff200 (irq = 18, base_baud = 8256000) is a ATMEL_SERIAL
-console [ttyS0] enabled
-rtc rtc0: invalid alarm value: 1900-1-29 0:0:0
-rtc-at91sam9 fffffd20.rtc: rtc core: registered fffffd20.rtc as rtc0
-nand: device found, Manufacturer ID: 0x01, Chip ID: 0xda
-nand: AMD/Spansion S34ML02G1
-nand: 256 MiB, SLC, erase size: 128 KiB, page size: 2048, OOB size: 64
-
-
-Greets
-Alex
++SYSCALL_DEFINE3(dup3, unsigned int, oldfd, unsigned int, newfd, int, flags)
++{
++	return ksys_dup3(oldfd, newfd, flags);
++}
++
+ SYSCALL_DEFINE2(dup2, unsigned int, oldfd, unsigned int, newfd)
+ {
+ 	if (unlikely(newfd == oldfd)) { /* corner case */
+@@ -916,10 +921,10 @@ SYSCALL_DEFINE2(dup2, unsigned int, oldfd, unsigned int, newfd)
+ 		rcu_read_unlock();
+ 		return retval;
+ 	}
+-	return sys_dup3(oldfd, newfd, 0);
++	return ksys_dup3(oldfd, newfd, 0);
+ }
+ 
+-SYSCALL_DEFINE1(dup, unsigned int, fildes)
++int ksys_dup(unsigned int fildes)
+ {
+ 	int ret = -EBADF;
+ 	struct file *file = fget_raw(fildes);
+@@ -934,6 +939,11 @@ SYSCALL_DEFINE1(dup, unsigned int, fildes)
+ 	return ret;
+ }
+ 
++SYSCALL_DEFINE1(dup, unsigned int, fildes)
++{
++	return ksys_dup(fildes);
++}
++
+ int f_dupfd(unsigned int from, struct file *file, unsigned flags)
+ {
+ 	int err;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 48964c408c7b..50876ae1d17b 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -949,5 +949,6 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+ int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
+ 	       unsigned long flags, void __user *data);
+ int ksys_umount(char __user *name, int flags);
++int ksys_dup(unsigned int fildes);
+ 
+ #endif
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 1c4da8353332..e8573e1776f6 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -39,8 +39,8 @@ static int init_linuxrc(struct subprocess_info *info, struct cred *new)
+ 	sys_unshare(CLONE_FS | CLONE_FILES);
+ 	/* stdin/stdout/stderr for /linuxrc */
+ 	sys_open("/dev/console", O_RDWR, 0);
+-	sys_dup(0);
+-	sys_dup(0);
++	ksys_dup(0);
++	ksys_dup(0);
+ 	/* move initrd over / and chdir/chroot in initrd root */
+ 	sys_chdir("/root");
+ 	ksys_mount(".", "/", NULL, MS_MOVE, NULL);
+diff --git a/init/main.c b/init/main.c
+index 969eaf140ef0..b8649d1466e1 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1077,8 +1077,8 @@ static noinline void __init kernel_init_freeable(void)
+ 	if (sys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
+ 		pr_err("Warning: unable to open an initial console.\n");
+ 
+-	(void) sys_dup(0);
+-	(void) sys_dup(0);
++	(void) ksys_dup(0);
++	(void) ksys_dup(0);
+ 	/*
+ 	 * check if there is an early userspace init.  If yes, let it do all
+ 	 * the work
+-- 
+2.16.3
