@@ -1,52 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753133AbeC2LgD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:36:03 -0400
-Received: from smtprelay0252.hostedemail.com ([216.40.44.252]:54028 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752575AbeC2Lcx (ORCPT
+        id S1753403AbeC2Lgd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:36:33 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59716 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752907AbeC2L0Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:32:53 -0400
-X-Session-Marker: 7368656140736865616C6576792E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::,RULES_HIT:41:355:379:541:800:960:965:966:973:988:989:1260:1345:1359:1437:1534:1539:1567:1711:1714:1730:1747:1777:1792:1978:1981:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3865:3871:4321:4385:4390:4395:5007:6261:9592:10004:10848:11026:11473:11658:11914:12438:12555:12895:12986:13069:13161:13229:13311:13357:14181:14384:14394:14721:21080:21627:30054,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: dime15_18ec1435bff05
-X-Filterd-Recvd-Size: 1397
-From: Shea Levy <shea@shealevy.com>
-To: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Shea Levy <shea@shealevy.com>, Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH v5 04/16] arc: Switch to generic free_initrd_mem.
-Date: Thu, 29 Mar 2018 07:31:55 -0400
-Message-Id: <20180329113207.30674-4-shea@shealevy.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180329113207.30674-1-shea@shealevy.com>
-References: <20180328203659.18692-1-shea@shealevy.com>
- <20180329113207.30674-1-shea@shealevy.com>
+        Thu, 29 Mar 2018 07:26:24 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org
+Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 035/109] ipc: add shmdt syscall wrapper
+Date: Thu, 29 Mar 2018 13:23:12 +0200
+Message-Id: <20180329112426.23043-36-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
+References: <20180329112426.23043-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic implementation is functionally identical.
+Provide ksys_shmdt() wrapper to avoid in-kernel calls to this syscall.
+The ksys_ prefix denotes that this function is meant as a drop-in
+replacement for the syscall. In particular, it uses the same calling
+convention as sys_shmdt().
 
-Signed-off-by: Shea Levy <shea@shealevy.com>
+This patch is part of a series which removes in-kernel calls to syscalls.
+On this basis, the syscall entry path can be streamlined. For details, see
+http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/arc/mm/init.c | 7 -------
- 1 file changed, 7 deletions(-)
+ ipc/shm.c     | 7 ++++++-
+ ipc/syscall.c | 4 ++--
+ ipc/util.h    | 1 +
+ 3 files changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
-index ba145065c579..7bcf23ab1756 100644
---- a/arch/arc/mm/init.c
-+++ b/arch/arc/mm/init.c
-@@ -229,10 +229,3 @@ void __ref free_initmem(void)
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 9f3cdb259a51..e5838e3328dc 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -1481,7 +1481,7 @@ COMPAT_SYSCALL_DEFINE3(shmat, int, shmid, compat_uptr_t, shmaddr, int, shmflg)
+  * detach and kill segment if marked destroyed.
+  * The work is done in shm_close.
+  */
+-SYSCALL_DEFINE1(shmdt, char __user *, shmaddr)
++long ksys_shmdt(char __user *shmaddr)
  {
- 	free_initmem_default(-1);
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+@@ -1588,6 +1588,11 @@ SYSCALL_DEFINE1(shmdt, char __user *, shmaddr)
+ 	return retval;
  }
--
--#ifdef CONFIG_BLK_DEV_INITRD
--void __init free_initrd_mem(unsigned long start, unsigned long end)
--{
--	free_reserved_area((void *)start, (void *)end, -1, "initrd");
--}
--#endif
+ 
++SYSCALL_DEFINE1(shmdt, char __user *, shmaddr)
++{
++	return ksys_shmdt(shmaddr);
++}
++
+ #ifdef CONFIG_PROC_FS
+ static int sysvipc_shm_proc_show(struct seq_file *s, void *it)
+ {
+diff --git a/ipc/syscall.c b/ipc/syscall.c
+index 60bceb19b6f0..b3aa71564815 100644
+--- a/ipc/syscall.c
++++ b/ipc/syscall.c
+@@ -90,7 +90,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
+ 			return -EINVAL;
+ 		}
+ 	case SHMDT:
+-		return sys_shmdt((char __user *)ptr);
++		return ksys_shmdt((char __user *)ptr);
+ 	case SHMGET:
+ 		return ksys_shmget(first, second, third);
+ 	case SHMCTL:
+@@ -178,7 +178,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
+ 		return put_user(raddr, (compat_ulong_t __user *)compat_ptr(third));
+ 	}
+ 	case SHMDT:
+-		return sys_shmdt(compat_ptr(ptr));
++		return ksys_shmdt(compat_ptr(ptr));
+ 	case SHMGET:
+ 		return ksys_shmget(first, (unsigned int)second, third);
+ 	case SHMCTL:
+diff --git a/ipc/util.h b/ipc/util.h
+index 51002c0b2a21..7770bcad1168 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -244,6 +244,7 @@ long ksys_semget(key_t key, int nsems, int semflg);
+ long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
+ long ksys_msgget(key_t key, int msgflg);
+ long ksys_shmget(key_t key, size_t size, int shmflg);
++long ksys_shmdt(char __user *shmaddr);
+ 
+ /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
+ #ifdef CONFIG_COMPAT
 -- 
-2.16.2
+2.16.3
