@@ -1,75 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeC2FBt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 01:01:49 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:38086 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751167AbeC2FBr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 01:01:47 -0400
-X-Google-Smtp-Source: AIpwx4+aI2BSb9BPpXK9Y3TvZlhxG8BRV9C5jZ//TbOBZUQ6RhduExuculs7elKjD3e8kcIYwvwGKA==
-Date: Thu, 29 Mar 2018 14:01:44 +0900
-From: Stafford Horne <shorne@gmail.com>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: linux@armlinux.org.uk, catalin.marinas@arm.com,
-        Will Deacon <will.deacon@arm.com>, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        openrisc@lists.librecores.org, linux-riscv@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 2/8] openrisc: Set CONFIG_MULTI_IRQ_HANDLER
-Message-ID: <20180329050144.GD2836@lianli.shorne-pla.net>
-References: <20180327161911.14086-1-palmer@sifive.com>
- <20180327161911.14086-3-palmer@sifive.com>
+        id S1752086AbeC2FDv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 01:03:51 -0400
+Received: from ozlabs.org ([103.22.144.67]:51277 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751167AbeC2FDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 01:03:49 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 29 Mar 2018 16:02:54 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wanpeng Li <wanpengli@tencent.com>
+Subject: linux-next: manual merge of the kvm tree with the kvm-fixes tree
+Message-ID: <20180329160254.01e82ff7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327161911.14086-3-palmer@sifive.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5VyX6VOKtJD5nMZrO2KM_bK"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 09:19:05AM -0700, Palmer Dabbelt wrote:
-> arm has an optional MULTI_IRQ_HANDLER, which openrisc copied but didn't
-> make optional.  I'm converting this to generic code, but in order to
-> ensure everything stays bisectable I want this defined on openrisc for
-> now.  This will go away by the end of the patch set.
-> 
-> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+--Sig_/5VyX6VOKtJD5nMZrO2KM_bK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Palmer,
-Thanks for doing this work, its always nice to see generic code pulled out of
-architecture ports.
+Hi all,
 
-Acked-by: Stafford Horne <shorne@gmail.com>
+Today's linux-next merge of the kvm tree got conflicts in:
 
-> ---
->  arch/openrisc/Kconfig | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-> index 339df7324e9c..9ecad05bfc73 100644
-> --- a/arch/openrisc/Kconfig
-> +++ b/arch/openrisc/Kconfig
-> @@ -27,6 +27,7 @@ config OPENRISC
->  	select GENERIC_STRNLEN_USER
->  	select GENERIC_SMP_IDLE_THREAD
->  	select MODULES_USE_ELF_RELA
-> +	select MULTI_IRQ_HANDLER
->  	select HAVE_DEBUG_STACKOVERFLOW
->  	select OR1K_PIC
->  	select CPU_NO_EFFICIENT_FFS if !OPENRISC_HAVE_INST_FF1
-> @@ -68,6 +69,9 @@ config STACKTRACE_SUPPORT
->  config LOCKDEP_SUPPORT
->  	def_bool  y
->  
-> +config MULTI_IRQ_HANDLER
-> +	def_bool y
-> +
->  source "init/Kconfig"
->  
->  source "kernel/Kconfig.freezer"
-> -- 
-> 2.16.1
-> 
+  arch/x86/kernel/kvm.c
+
+between commit:
+
+  17a1079d9c63 ("KVM: x86: Fix pv tlb flush dependencies")
+
+from the kvm-fixes tree and commit:
+
+  6beacf74c257 ("KVM: X86: Don't use PV TLB flush with dedicated physical C=
+PUs")
+
+from the kvm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kernel/kvm.c
+index fae86e36e399,4ccbff63cb86..000000000000
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@@ -546,7 -546,8 +546,8 @@@ static void __init kvm_guest_init(void
+  	}
+ =20
+  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
++ 	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
+ -	    !kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
+ +	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
+  		pv_mmu_ops.flush_tlb_others =3D kvm_flush_tlb_others;
+ =20
+  	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
+@@@ -635,7 -641,8 +641,8 @@@ static __init int kvm_setup_pv_tlb_flus
+  	int cpu;
+ =20
+  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
++ 	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
+ -	    !kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+ +	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+  		for_each_possible_cpu(cpu) {
+  			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
+  				GFP_KERNEL, cpu_to_node(cpu));
+
+--Sig_/5VyX6VOKtJD5nMZrO2KM_bK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq8c34ACgkQAVBC80lX
+0GzdwAf/RVJ60DLqr/+aluZdJwYHrOEiXYsDVAm9cN7z0m40rcwPu2xxRYTekbTB
+2y9N136MLxSP44jfeN0opgTRl8eq7gQsAy81QFXk/HHTEpiRtHkfaj2rlqouVeOj
+rBNzCcdw7zDYxZEvdzq+jFQ+SotmCfdLethMfVFGudGDZeSjIJuEVTNOLhq1f/oY
+Xd9DqhoISXMdgXezaTBo4STiZpJTjjp9iuDXqVw/VBOTegx5315i8NAosEDyZjX6
++eggepGlUaYUTIKb9gkJ3grAueSdXHzgWYacqtRzoEE8cvxHzTS1dZwcQ4Z8iqY5
+bJQjzNii/9TQdzRQLHxV6X8XvuOFBg==
+=NrYb
+-----END PGP SIGNATURE-----
+
+--Sig_/5VyX6VOKtJD5nMZrO2KM_bK--
