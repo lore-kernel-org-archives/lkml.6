@@ -1,83 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeC2JRr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 05:17:47 -0400
-Received: from mail-bl2nam02on0042.outbound.protection.outlook.com ([104.47.38.42]:3325
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750716AbeC2JRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 05:17:45 -0400
-From: "Elior, Ariel" <Ariel.Elior@cavium.com>
-To: Sinan Kaya <okaya@codeaurora.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "timur@codeaurora.org" <timur@codeaurora.org>,
-        "sulrich@codeaurora.org" <sulrich@codeaurora.org>
-CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v7 3/7] bnx2x: Replace doorbell barrier() with wmb()
-Thread-Topic: [PATCH v7 3/7] bnx2x: Replace doorbell barrier() with wmb()
-Thread-Index: AQHTxEcZZxtoEOu+xkGnixx3V0bVgaPm8sKA
-Date: Thu, 29 Mar 2018 09:17:43 +0000
-Message-ID: <CY1PR0701MB133742146E2848330CA89FB290A20@CY1PR0701MB1337.namprd07.prod.outlook.com>
-References: <1521988761-30344-1-git-send-email-okaya@codeaurora.org>
- <1521988761-30344-4-git-send-email-okaya@codeaurora.org>
-In-Reply-To: <1521988761-30344-4-git-send-email-okaya@codeaurora.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ariel.Elior@cavium.com;
-x-originating-ip: [31.168.140.228]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY1PR0701MB1744;7:pDSza6keV7wt4gZH/MQgw6w2GFwWbtBXVJ4Ydn6rEeATGRzXOAhAManM25AyMbqegpzBVZSAGKaEYOwBivPS+e9Ea4Gy60DJf7OpsMaK4tgGhsGW7EuZGrgmCdou+mqxv6FThYTNKaj4eSUNfUUqrFhYLlqysXmeS6fG59pqZunHO3k6TQSozKdRGxi+GhzIC+oKRwOcwJuJTwKrm3Ttmp39JOf0k1/vKYcybxe3F/OvJz3BD1MuObruHl0rD2oX
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d067abba-bb2b-4fc8-1e61-08d59555ed75
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY1PR0701MB1744;
-x-ms-traffictypediagnostic: CY1PR0701MB1744:
-x-microsoft-antispam-prvs: <CY1PR0701MB17446C37CAB3996F0CA17D9D90A20@CY1PR0701MB1744.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(190756311086443)(788757137089);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CY1PR0701MB1744;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0701MB1744;
-x-forefront-prvs: 0626C21B10
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(376002)(396003)(346002)(39860400002)(366004)(189003)(199004)(316002)(229853002)(446003)(81156014)(305945005)(2501003)(5660300001)(8676002)(74316002)(33656002)(66066001)(26005)(54906003)(105586002)(106356001)(81166006)(110136005)(68736007)(486005)(11346002)(186003)(486005)(2900100001)(97736004)(7736002)(102836004)(6116002)(9686003)(6436002)(5250100002)(4326008)(3280700002)(6246003)(2906002)(53936002)(72206003)(99286004)(14454004)(76176011)(59450400001)(25786009)(3660700001)(6506007)(476003)(478600001)(7696005)(8936002)(86362001)(3846002)(2201001)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0701MB1744;H:CY1PR0701MB1337.namprd07.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: wB1y68OnmobmOnfyLn4BtE3H0r0oI2Glp7lAX9g87avTj9gAdPNVFukwDZ6/37hLikliLxBNPRoN5YzvyCJrC9016g8+RQhAFt5oja4oeipP32/sYZaptIjItI69Nv60nXmh/tcrZyQZqh7yQi2gnTDIOckhHLQAG2WqWKfFWMY/D5/NcxLc15itlOFpJbqaS2limVytx07+kmhNOqLAOQq+jvAsIsZmv8k1/tzvtPvytZLnVT7HJfzWLXO5SkPmgMLufNioVoe6ugFSvEc3bTmwA8g24qqhYlveNNZHQxthwzviwC3+WlrzA0HZstTvVIJn8uUQRW/gwO/KHpFuHg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1752105AbeC2JSa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 05:18:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34320 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750799AbeC2JS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 05:18:29 -0400
+Date: Thu, 29 Mar 2018 11:18:27 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Maksims Matjakubovs <maksims.matjakubovs@gmail.com>
+Cc: broonie@kernel.org, wens@csie.org, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] Allwinner SPI sun6i : add dual mode support.
+Message-ID: <20180329091827.jfvrikkslavqms2n@flea>
+References: <1522167062-4079-1-git-send-email-maksims.matjakubovs@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d067abba-bb2b-4fc8-1e61-08d59555ed75
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2018 09:17:43.0490
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0701MB1744
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="47eo6otboxu2q4hh"
+Content-Disposition: inline
+In-Reply-To: <1522167062-4079-1-git-send-email-maksims.matjakubovs@gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T9Hr10030274
 
-> Subject: [PATCH v7 3/7] bnx2x: Replace doorbell barrier() with wmb()
-> 
-> barrier() doesn't guarantee memory writes to be observed by the hardware on
-> all architectures. barrier() only tells compiler not to move this code
-> with respect to other read/writes.
-> 
-> If memory write needs to be observed by the HW, wmb() is the right choice.
 
-The wmb() is there (a couple of lines above). Your modification adds an
-unnecessary fence which would hurt high pps scenarios. The memory
-writes which the HW needs to observe are the buffer descriptors, not the
-producer update message. The producer is written to the HW, and exists
-on the stack. The barrier() is there to prevent the compiler from mixing the
-order of the prod update message preparation and writing it to the host.
-A possible alternative would be to move the existing wmb() to where
-the barrier() is, achieving both goals, although in the existing design each
-barrier has a distinct purpose. The comment location is misleading, though.
+--47eo6otboxu2q4hh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Ariel
+Hi Maksims,
+
+Thanks for your patch.
+
+It looks pretty good, but there's a few things that you'll need to
+adjust.
+
+The prefix in your commit title should start with "spi: sun6i:
+<title>", in this case "spi: sun6i: Add Dual Mode Support" would be
+great.
+
+On Tue, Mar 27, 2018 at 07:11:02PM +0300, Maksims Matjakubovs wrote:
+> Added Dual mode half duplex Rx and Tx support to Allwinner sun6i/sun8i SP=
+I driver.
+> Main changes is related to SUN6I_BURST_CTL_CNT_REG register.
+> SPI transmit is in Dual mode if STC (Master Single Mode Transmit Counter)=
+ is 0 and DRM (Master Dual Mode RX Enable) is not set.
+> SPI receive is in Dual mode if DRM (Master Dual Mode RX Enable) is set.
+> Tested on Allwinner V3s (sun8i) CPU.
+>=20
+> Signed-off-by: Maksims Matjakubovs <maksims.matjakubovs@gmail.com>
+
+This is mostly fine as well, but the commit log should be wrapped to
+75 chars.
+
+You'll find a tool to check for this kind of formatting and coding
+style issues (and more) using scripts/checkpatch.pl (ideally with
+--strict).
+
+> ---
+>  drivers/spi/spi-sun6i.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
+> index 8533f4e..2da52ed 100644
+> --- a/drivers/spi/spi-sun6i.c
+> +++ b/drivers/spi/spi-sun6i.c
+> @@ -84,6 +84,7 @@
+> =20
+>  #define SUN6I_BURST_CTL_CNT_REG		0x38
+>  #define SUN6I_BURST_CTL_CNT_STC(cnt)		((cnt) & SUN6I_MAX_XFER_SIZE)
+> +#define SUN6I_BURST_CTL_CNT_DRM		BIT(28)
+> =20
+>  #define SUN6I_TXDATA_REG		0x200
+>  #define SUN6I_RXDATA_REG		0x300
+> @@ -312,6 +313,8 @@ static int sun6i_spi_transfer_one(struct spi_master *=
+master,
+>  	sun6i_spi_write(sspi, SUN6I_BURST_CNT_REG, SUN6I_BURST_CNT(tfr->len));
+>  	sun6i_spi_write(sspi, SUN6I_XMIT_CNT_REG, SUN6I_XMIT_CNT(tx_len));
+>  	sun6i_spi_write(sspi, SUN6I_BURST_CTL_CNT_REG,
+> +			(tfr->tx_nbits =3D=3D SPI_NBITS_DUAL) ? 0 :
+> +			(tfr->rx_nbits =3D=3D SPI_NBITS_DUAL) ? SUN6I_BURST_CTL_CNT_DRM :
+>  			SUN6I_BURST_CTL_CNT_STC(tx_len));
+> =20
+>  	/* Fill the TX FIFO */
+> @@ -480,7 +483,8 @@ static int sun6i_spi_probe(struct platform_device *pd=
+ev)
+>  	master->set_cs =3D sun6i_spi_set_cs;
+>  	master->transfer_one =3D sun6i_spi_transfer_one;
+>  	master->num_chipselect =3D 4;
+> -	master->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST;
+> +	master->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST=
+ |
+> +				SPI_RX_DUAL | SPI_TX_DUAL;
+
+This feature was introduced with the A80, but the older designs (A31,
+A23, A33) don't seem to support it, so we should set these flags
+conditionally, using the compatible for example.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--47eo6otboxu2q4hh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq8r2IACgkQ0rTAlCFN
+r3SHZQ/9GGtaIe60dV3Emr8G/IF1vjJoCAow43lyt5M0VM7JUAnry3ixoyKXFW9W
+7HCvLZA8LRTA6gxdMAML9LpR2f6iLykQ51hCxqDEOql9DptJqbLyo4fIa9zNs16S
+qWEdeLyRIFl/2hSerhLlNzoXjXq7E5vLJO7SEHPkEydsv5HdO2nxy93j3MipZRZU
+1peqgAEchQK4PfVWnb4Nh19lo8jv+KwPa5R2CiQdruLZCa4vTT//9S3ggE9gFQfm
+KjiRfkIRQIQoCcO4K38xjg2BC9YlCHwsVSYr/Dl81JX6zHRfFde2RXumXHZRJanm
+gdVO1ZmFzYjmT5jjaoPinWVWMJdMfL3odxGuVKrw6lmzoGf23PjRkW8Xx1r4Ny8R
+ShX9Q/qfB7FEg71IQRlVoHDbffAS9M8dXCxzPBzmdN1PVJU/rWtdiBTqSVs9DuA5
+g31zuJ3Sp5aAG6+BtorJQib51MhZpSyLxYBOE9g3tZ29WCVunb7bQW6aNcc0EFhh
+R0lU2fiR4gAJR87NfHBirVezFgvGCVqmjh5YqiPce5gETtSUVpA3DpFRYASlyn+Y
+PwzPtzWFLIvmbitUHwc4IYowEUwkxEU72qCEc809TT1vat2ObNYxkYQbsNmMF0Cl
+3E6QdfcOXMXtSbFtG8nyfy2VSBXZsS0q/eSP62bHMfuZaBqxT0w=
+=eulY
+-----END PGP SIGNATURE-----
+
+--47eo6otboxu2q4hh--
