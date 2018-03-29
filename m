@@ -1,58 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeC2IAN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 04:00:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47610 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750707AbeC2IAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 04:00:12 -0400
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, jasowang@redhat.com
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net] vhost: validate log when IOTLB is enabled
-Date: Thu, 29 Mar 2018 16:00:04 +0800
-Message-Id: <1522310404-8486-1-git-send-email-jasowang@redhat.com>
+        id S1752125AbeC2IBb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 04:01:31 -0400
+Received: from mail.thorsis.com ([92.198.35.195]:41247 "EHLO mail.thorsis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750716AbeC2IBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 04:01:30 -0400
+From: Alexander Dahl <ada@thorsis.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+Date: Thu, 29 Mar 2018 10:01:26 +0200
+Message-ID: <3478710.yJBBt3uoRT@ada>
+In-Reply-To: <20180328155033.GH13942@piout.net>
+References: <20180223171558.7037-1-alexandre.belloni@bootlin.com> <20180328153135.GG13942@piout.net> <20180328155033.GH13942@piout.net>
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T81aiK026562
 
-Vq log_base is the userspace address of bitmap which has nothing to do
-with IOTLB. So it needs to be validated unconditionally otherwise we
-may try use 0 as log_base which may lead to pin pages that will lead
-unexpected result (e.g trigger BUG_ON() in set_bit_to_user()).
+Hei hei,
 
-Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-Reported-by: syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/vhost.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Am Mittwoch, 28. März 2018, 17:50:33 CEST schrieb Alexandre Belloni:
+> On 28/03/2018 at 17:31:35 +0200, Alexandre Belloni wrote:
+> > > Do you have an explanation of why the rate is much higher ?
+> > 
+> > The core is giving deltas of 31 clocks instead of much more than that, I
+> > guess I messed up the initialization somewhere.
+> 
+> I did mess up.
+> 
+> Alexander, can you test that:
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 5d5a9d9..5320039 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1244,14 +1244,12 @@ static int vq_log_access_ok(struct vhost_virtqueue *vq,
- /* Caller should have vq mutex and device mutex */
- int vhost_vq_access_ok(struct vhost_virtqueue *vq)
- {
--	if (vq->iotlb) {
--		/* When device IOTLB was used, the access validation
--		 * will be validated during prefetching.
--		 */
--		return 1;
--	}
--	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used) &&
--		vq_log_access_ok(vq, vq->log_base);
-+	int ret = vq_log_access_ok(vq, vq->log_base);
-+
-+	if (ret || vq->iotlb)
-+		return ret;
-+
-+	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
- }
- EXPORT_SYMBOL_GPL(vhost_vq_access_ok);
- 
--- 
-2.7.4
+Well, I just did.
+
+> 
+> diff --git a/drivers/clocksource/timer-atmel-tcb.c
+> b/drivers/clocksource/timer-atmel-tcb.c index 7fde9cfbf203..bbbacf8c46b0
+> 100644
+> --- a/drivers/clocksource/timer-atmel-tcb.c
+> +++ b/drivers/clocksource/timer-atmel-tcb.c
+> @@ -222,7 +222,7 @@ static int __init tc_clkevt_register(struct device_node
+> *node, goto err_slow;
+>  	clk_disable(tce.clk);
+> 
+> -	clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
+> +	clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
+> 
+>  	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
+>  			  tce.clkevt.name, &tce);
+> 
+> This will behave exactly the same as before on 16bits TCB and will have
+> much less interrupts on 32 bits platforms.
+
+This is the result:
+
+INT                NAME          RATE             MAX
+ 17 [vel     timer@fffa]  1837 Ints/s     (max:  1912)
+ 26 [      vel     eth0]     3 Ints/s     (max:    11)
+
+This is not much lower than the ~2150 I reported yesterday?
+
+I'm sorry I can just test this on at91sam9g20 currently, I have no 
+understanding of the subsystem, I can't do a decent review.
+
+Greets
+Alex
