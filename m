@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48DU5x2+FMLN2kUUnJ3aMzd6k2h46KMleqnIE5ZdOw6k82d6R7faNnBbBq2TXEi2tFOJHOh
-ARC-Seal: i=1; a=rsa-sha256; t=1522346628; cv=none;
+X-Google-Smtp-Source: AIpwx4/fPthVSF5IcT2aBhs58ybt4M1R+1heA8bAvTrqcCa0pNWeTeX2BBpMCy6KoI7vl2Wy+NUa
+ARC-Seal: i=1; a=rsa-sha256; t=1522346625; cv=none;
         d=google.com; s=arc-20160816;
-        b=uWNKgefZ3C8PvDZcHVKW1XI18L7GLH5m4tag5vBkAqWGRwmrXP/9O/hCos8Kt74Ygg
-         E7w9vlnfTFt/lg7XJb+9JhZQ35U1RNhQWqSdRikOvEpTzQBRqHajfnuzIJZwD+kKrT/z
-         /12dHKk5BtzRL6u3dqLgLPMFjccwZrOjzO4udgaOAdhFxi2/O70LZ1/R2/ZydjSa/vNS
-         AWWnoNTxu3s79MQif48EAPRcTDOKVCAvXKg4VLpAg/2W2Iy/yGSFI22YZ8G2s90P6iqr
-         6CT3fW3ndCRUexhtU3H1d9NsNIz9gareNDLDIOtDzAHWIMLK7YlpCk0AaP6WeDDnk+2X
-         jZLw==
+        b=vy9oQu9dVrDD+oYq/5NXNnQ44eJ9UvtrGsSq3D7DIJOLPPqwDcoljsd+JbRfSEkShw
+         /IpUw8px2c+qAsPo4VVGfPaXuaM7+fK0Q+rTvMjoALhI1o7GWySXIfOi2oIM+9PmCXBf
+         ZMxHrShmC2a0LH4SpdpvbRTdaV+qQRYfuU4FFceKib2GMTVUjoSOOHEbR/94fvXl8T8n
+         q3m4WwhFrMkd3TKa6mfgZOSV9VM9lMEq2chaYVKhTXHJPbQMSnhtml9aNOjJF33qMggg
+         +uzIxBMn4v6HUX32WjgQMEMF81P+ruBIKDX4nJweOHJk1KXWT+rDl0lC6+8TKV+SMfyk
+         zQow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nzVF3WgmBkqiwWifHfSEhulQvU9XH5LksZMjdFe9WiA=;
-        b=iKdDy2PpCKvW1s5gbiqLGNXjISKD3MRRHY1l2qlz5zxYV9CuEvsM94wA28N7ppYiWn
-         uP7xEHCmQs6gHTkOLqyMwmrRd/fSaDl+sv+Wpo2lH5ONc1iRlmIYG2/d+efs/sXiOwPR
-         svCyOyUnBqyvflmO6sL7NJ74RqKFfnpgQ4eH0n9f4r0kzmOjCk6nLr4Jv/QZudTzEekS
-         u/o7C4G6lTWLOmVAg1DOX0W/8dg9QwaeN+EAprbUo3V/rwVECmKdcyrCcrXDolkk/n7q
-         ciEy86B0dpBV/JFnKHZLqwNs1GyI7CXofptgYTmIFLvv3IEs4PLYNNhPflgj+oul3ZiF
-         bzEg==
+        bh=3Ej32bYxHtTqfz/cJ1PCoBl4lLchdjYAx+PIvZBOS8s=;
+        b=IlMMHLlyT/r9wDwW1IQlH2VwLlWcbaZzjqzHdGAl7OQmrLfDMkIwuGzaBZq62v+hfd
+         67uXb1csUnl/rjTvONaIt4W6xxWFgvxhpmdp9FHX6CMQqBfz/Jndc2qed5H6X9m/QGVL
+         FJBeiYjbfBGmsv+i7/LKL9JvPIdLRl/8j9jPegrTevIcnv2HbQhEVG7OrYJrKLspNwfn
+         S4ZtM50mtcg2OO49iwUK3K5JkyKBbyp4R4Go9fCeRDzBi/tBFtw0w9rP/mz7z7/GMDMv
+         DmBMRCLc9viybxYzpvHkbtZU53O/nappuNbYQzuUmQEbtLEkk/jq8qF9K3Qskwx6PYbw
+         83+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Brad Mouring <brad.mouring@ni.com>,
+	Ido Schimmel <idosch@mellanox.com>,
+	Eddie Shklaer <eddies@mellanox.com>,
+	Jiri Pirko <jiri@mellanox.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 15/47] net: phy: Tell caller result of phy_change()
-Date: Thu, 29 Mar 2018 19:59:56 +0200
-Message-Id: <20180329175730.206175888@linuxfoundation.org>
+Subject: [PATCH 4.15 14/47] mlxsw: spectrum_buffers: Set a minimum quota for CPU port traffic
+Date: Thu, 29 Mar 2018 19:59:55 +0200
+Message-Id: <20180329175730.154527187@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296138907684725?=
-X-GMAIL-MSGID: =?utf-8?q?1596296138907684725?=
+X-GMAIL-THRID: =?utf-8?q?1596296135615626830?=
+X-GMAIL-MSGID: =?utf-8?q?1596296135615626830?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,241 +51,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brad Mouring <brad.mouring@ni.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
 
-[ Upstream commit a2c054a896b8ac794ddcfc7c92e2dc7ec4ed4ed5 ]
+[ Upstream commit bcdd5de80a2275f7879dc278bfc747f1caf94442 ]
 
-In 664fcf123a30e (net: phy: Threaded interrupts allow some simplification)
-the phy_interrupt system was changed to use a traditional threaded
-interrupt scheme instead of a workqueue approach.
+In commit 9ffcc3725f09 ("mlxsw: spectrum: Allow packets to be trapped
+from any PG") I fixed a problem where packets could not be trapped to
+the CPU due to exceeded shared buffer quotas. The mentioned commit
+explains the problem in detail.
 
-With this change, the phy status check moved into phy_change, which
-did not report back to the caller whether or not the interrupt was
-handled. This means that, in the case of a shared phy interrupt,
-only the first phydev's interrupt registers are checked (since
-phy_interrupt() would always return IRQ_HANDLED). This leads to
-interrupt storms when it is a secondary device that's actually the
-interrupt source.
+The problem was fixed by assigning a minimum quota for the CPU port and
+the traffic class used for scheduling traffic to the CPU.
 
-Signed-off-by: Brad Mouring <brad.mouring@ni.com>
+However, commit 117b0dad2d54 ("mlxsw: Create a different trap group list
+for each device") assigned different traffic classes to different
+packet types and rendered the fix useless.
+
+Fix the problem by assigning a minimum quota for the CPU port and all
+the traffic classes that are currently in use.
+
+Fixes: 117b0dad2d54 ("mlxsw: Create a different trap group list for each device")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Eddie Shklaer <eddies@mellanox.com>
+Tested-by: Eddie Shklaer <eddies@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy.c |  173 ++++++++++++++++++++++++--------------------------
- include/linux/phy.h   |    1 
- 2 files changed, 86 insertions(+), 88 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -615,6 +615,91 @@ static void phy_error(struct phy_device
- }
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c
+@@ -385,13 +385,13 @@ static const struct mlxsw_sp_sb_cm mlxsw
  
- /**
-+ * phy_disable_interrupts - Disable the PHY interrupts from the PHY side
-+ * @phydev: target phy_device struct
-+ */
-+static int phy_disable_interrupts(struct phy_device *phydev)
-+{
-+	int err;
-+
-+	/* Disable PHY interrupts */
-+	err = phy_config_interrupt(phydev, PHY_INTERRUPT_DISABLED);
-+	if (err)
-+		goto phy_err;
-+
-+	/* Clear the interrupt */
-+	err = phy_clear_interrupt(phydev);
-+	if (err)
-+		goto phy_err;
-+
-+	return 0;
-+
-+phy_err:
-+	phy_error(phydev);
-+
-+	return err;
-+}
-+
-+/**
-+ * phy_change - Called by the phy_interrupt to handle PHY changes
-+ * @phydev: phy_device struct that interrupted
-+ */
-+static irqreturn_t phy_change(struct phy_device *phydev)
-+{
-+	if (phy_interrupt_is_valid(phydev)) {
-+		if (phydev->drv->did_interrupt &&
-+		    !phydev->drv->did_interrupt(phydev))
-+			goto ignore;
-+
-+		if (phy_disable_interrupts(phydev))
-+			goto phy_err;
-+	}
-+
-+	mutex_lock(&phydev->lock);
-+	if ((PHY_RUNNING == phydev->state) || (PHY_NOLINK == phydev->state))
-+		phydev->state = PHY_CHANGELINK;
-+	mutex_unlock(&phydev->lock);
-+
-+	if (phy_interrupt_is_valid(phydev)) {
-+		atomic_dec(&phydev->irq_disable);
-+		enable_irq(phydev->irq);
-+
-+		/* Reenable interrupts */
-+		if (PHY_HALTED != phydev->state &&
-+		    phy_config_interrupt(phydev, PHY_INTERRUPT_ENABLED))
-+			goto irq_enable_err;
-+	}
-+
-+	/* reschedule state queue work to run as soon as possible */
-+	phy_trigger_machine(phydev, true);
-+	return IRQ_HANDLED;
-+
-+ignore:
-+	atomic_dec(&phydev->irq_disable);
-+	enable_irq(phydev->irq);
-+	return IRQ_NONE;
-+
-+irq_enable_err:
-+	disable_irq(phydev->irq);
-+	atomic_inc(&phydev->irq_disable);
-+phy_err:
-+	phy_error(phydev);
-+	return IRQ_NONE;
-+}
-+
-+/**
-+ * phy_change_work - Scheduled by the phy_mac_interrupt to handle PHY changes
-+ * @work: work_struct that describes the work to be done
-+ */
-+void phy_change_work(struct work_struct *work)
-+{
-+	struct phy_device *phydev =
-+		container_of(work, struct phy_device, phy_queue);
-+
-+	phy_change(phydev);
-+}
-+
-+/**
-  * phy_interrupt - PHY interrupt handler
-  * @irq: interrupt line
-  * @phy_dat: phy_device pointer
-@@ -632,9 +717,7 @@ static irqreturn_t phy_interrupt(int irq
- 	disable_irq_nosync(irq);
- 	atomic_inc(&phydev->irq_disable);
- 
--	phy_change(phydev);
--
--	return IRQ_HANDLED;
-+	return phy_change(phydev);
- }
- 
- /**
-@@ -652,32 +735,6 @@ static int phy_enable_interrupts(struct
- }
- 
- /**
-- * phy_disable_interrupts - Disable the PHY interrupts from the PHY side
-- * @phydev: target phy_device struct
-- */
--static int phy_disable_interrupts(struct phy_device *phydev)
--{
--	int err;
--
--	/* Disable PHY interrupts */
--	err = phy_config_interrupt(phydev, PHY_INTERRUPT_DISABLED);
--	if (err)
--		goto phy_err;
--
--	/* Clear the interrupt */
--	err = phy_clear_interrupt(phydev);
--	if (err)
--		goto phy_err;
--
--	return 0;
--
--phy_err:
--	phy_error(phydev);
--
--	return err;
--}
--
--/**
-  * phy_start_interrupts - request and enable interrupts for a PHY device
-  * @phydev: target phy_device struct
-  *
-@@ -728,64 +785,6 @@ int phy_stop_interrupts(struct phy_devic
- EXPORT_SYMBOL(phy_stop_interrupts);
- 
- /**
-- * phy_change - Called by the phy_interrupt to handle PHY changes
-- * @phydev: phy_device struct that interrupted
-- */
--void phy_change(struct phy_device *phydev)
--{
--	if (phy_interrupt_is_valid(phydev)) {
--		if (phydev->drv->did_interrupt &&
--		    !phydev->drv->did_interrupt(phydev))
--			goto ignore;
--
--		if (phy_disable_interrupts(phydev))
--			goto phy_err;
--	}
--
--	mutex_lock(&phydev->lock);
--	if ((PHY_RUNNING == phydev->state) || (PHY_NOLINK == phydev->state))
--		phydev->state = PHY_CHANGELINK;
--	mutex_unlock(&phydev->lock);
--
--	if (phy_interrupt_is_valid(phydev)) {
--		atomic_dec(&phydev->irq_disable);
--		enable_irq(phydev->irq);
--
--		/* Reenable interrupts */
--		if (PHY_HALTED != phydev->state &&
--		    phy_config_interrupt(phydev, PHY_INTERRUPT_ENABLED))
--			goto irq_enable_err;
--	}
--
--	/* reschedule state queue work to run as soon as possible */
--	phy_trigger_machine(phydev, true);
--	return;
--
--ignore:
--	atomic_dec(&phydev->irq_disable);
--	enable_irq(phydev->irq);
--	return;
--
--irq_enable_err:
--	disable_irq(phydev->irq);
--	atomic_inc(&phydev->irq_disable);
--phy_err:
--	phy_error(phydev);
--}
--
--/**
-- * phy_change_work - Scheduled by the phy_mac_interrupt to handle PHY changes
-- * @work: work_struct that describes the work to be done
-- */
--void phy_change_work(struct work_struct *work)
--{
--	struct phy_device *phydev =
--		container_of(work, struct phy_device, phy_queue);
--
--	phy_change(phydev);
--}
--
--/**
-  * phy_stop - Bring down the PHY link, and stop checking the status
-  * @phydev: target phy_device struct
-  */
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -897,7 +897,6 @@ int phy_driver_register(struct phy_drive
- int phy_drivers_register(struct phy_driver *new_driver, int n,
- 			 struct module *owner);
- void phy_state_machine(struct work_struct *work);
--void phy_change(struct phy_device *phydev);
- void phy_change_work(struct work_struct *work);
- void phy_mac_interrupt(struct phy_device *phydev, int new_link);
- void phy_start_machine(struct phy_device *phydev);
+ static const struct mlxsw_sp_sb_cm mlxsw_sp_cpu_port_sb_cms[] = {
+ 	MLXSW_SP_CPU_PORT_SB_CM,
++	MLXSW_SP_SB_CM(MLXSW_PORT_MAX_MTU, 0, 0),
++	MLXSW_SP_SB_CM(MLXSW_PORT_MAX_MTU, 0, 0),
++	MLXSW_SP_SB_CM(MLXSW_PORT_MAX_MTU, 0, 0),
++	MLXSW_SP_SB_CM(MLXSW_PORT_MAX_MTU, 0, 0),
++	MLXSW_SP_SB_CM(MLXSW_PORT_MAX_MTU, 0, 0),
+ 	MLXSW_SP_CPU_PORT_SB_CM,
+-	MLXSW_SP_CPU_PORT_SB_CM,
+-	MLXSW_SP_CPU_PORT_SB_CM,
+-	MLXSW_SP_CPU_PORT_SB_CM,
+-	MLXSW_SP_CPU_PORT_SB_CM,
+-	MLXSW_SP_CPU_PORT_SB_CM,
+-	MLXSW_SP_SB_CM(10000, 0, 0),
++	MLXSW_SP_SB_CM(MLXSW_PORT_MAX_MTU, 0, 0),
+ 	MLXSW_SP_CPU_PORT_SB_CM,
+ 	MLXSW_SP_CPU_PORT_SB_CM,
+ 	MLXSW_SP_CPU_PORT_SB_CM,
