@@ -1,105 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeC2Klz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 06:41:55 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44899 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeC2Kly (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 06:41:54 -0400
-X-Google-Smtp-Source: AIpwx4/QBeBG71ZYFSbLP74/GG2Db98FaTg8mTIrM2k9wfXgeuXVmkDFDDJKXiHSLSkWhnpuzavYsw==
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-X-Google-Original-From: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
-Subject: [PATCH v1] kernel/trace:check the val against the available mem
-Date: Thu, 29 Mar 2018 18:41:44 +0800
-Message-Id: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-X-Mailer: git-send-email 1.7.9.5
+        id S1752067AbeC2Kp4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 06:45:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36137 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750735AbeC2Kpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 06:45:55 -0400
+Date: Thu, 29 Mar 2018 12:45:42 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Alexander Dahl <ada@thorsis.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180329104542.GK13942@piout.net>
+References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+ <20180328153135.GG13942@piout.net>
+ <20180328155033.GH13942@piout.net>
+ <3478710.yJBBt3uoRT@ada>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3478710.yJBBt3uoRT@ada>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is reported that some user app would like to echo a huge
-number to "/sys/kernel/debug/tracing/buffer_size_kb" regardless
- of the available memory, which will cause the coinstantaneous
-page allocation failed and introduce OOM. The commit checking the
-val against the available mem first to avoid the consequence allocation.
+On 29/03/2018 at 10:01:26 +0200, Alexander Dahl wrote:
+> Hei hei,
+> 
+> Am Mittwoch, 28. März 2018, 17:50:33 CEST schrieb Alexandre Belloni:
+> > On 28/03/2018 at 17:31:35 +0200, Alexandre Belloni wrote:
+> > > > Do you have an explanation of why the rate is much higher ?
+> > > 
+> > > The core is giving deltas of 31 clocks instead of much more than that, I
+> > > guess I messed up the initialization somewhere.
+> > 
+> > I did mess up.
+> > 
+> > Alexander, can you test that:
+> 
+> Well, I just did.
+> 
+> > 
+> > diff --git a/drivers/clocksource/timer-atmel-tcb.c
+> > b/drivers/clocksource/timer-atmel-tcb.c index 7fde9cfbf203..bbbacf8c46b0
+> > 100644
+> > --- a/drivers/clocksource/timer-atmel-tcb.c
+> > +++ b/drivers/clocksource/timer-atmel-tcb.c
+> > @@ -222,7 +222,7 @@ static int __init tc_clkevt_register(struct device_node
+> > *node, goto err_slow;
+> >  	clk_disable(tce.clk);
+> > 
+> > -	clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
+> > +	clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
+> > 
+> >  	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
+> >  			  tce.clkevt.name, &tce);
+> > 
+> > This will behave exactly the same as before on 16bits TCB and will have
+> > much less interrupts on 32 bits platforms.
+> 
+> This is the result:
+> 
+> INT                NAME          RATE             MAX
+>  17 [vel     timer@fffa]  1837 Ints/s     (max:  1912)
+>  26 [      vel     eth0]     3 Ints/s     (max:    11)
+> 
+> This is not much lower than the ~2150 I reported yesterday?
+> 
+> I'm sorry I can just test this on at91sam9g20 currently, I have no 
+> understanding of the subsystem, I can't do a decent review.
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
----
- kernel/trace/trace.c | 39 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+Hum, are you sure, I went from:
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 2d0ffcc..a4a4237 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -43,6 +43,8 @@
- #include <linux/trace.h>
- #include <linux/sched/rt.h>
- 
-+#include <linux/mm.h>
-+#include <linux/swap.h>
- #include "trace.h"
- #include "trace_output.h"
- 
-@@ -5967,6 +5969,39 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
- 	return ret;
- }
- 
-+static long get_available_mem(void)
-+{
-+	struct sysinfo i;
-+	long available;
-+	unsigned long pagecache;
-+	unsigned long wmark_low = 0;
-+	unsigned long pages[NR_LRU_LISTS];
-+	struct zone *zone;
-+	int lru;
-+
-+	si_meminfo(&i);
-+	si_swapinfo(&i);
-+
-+	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
-+		pages[lru] = global_page_state(NR_LRU_BASE + lru);
-+
-+	for_each_zone(zone)
-+		wmark_low += zone->watermark[WMARK_LOW];
-+
-+	available = i.freeram - wmark_low;
-+
-+	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
-+	pagecache -= min(pagecache / 2, wmark_low);
-+	available += pagecache;
-+
-+	available += global_page_state(NR_SLAB_RECLAIMABLE) -
-+		min(global_page_state(NR_SLAB_RECLAIMABLE) / 2, wmark_low);
-+
-+	if (available < 0)
-+		available = 0;
-+	return available;
-+}
-+
- static ssize_t
- tracing_entries_write(struct file *filp, const char __user *ubuf,
- 		      size_t cnt, loff_t *ppos)
-@@ -5975,13 +6010,15 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
- 	struct trace_array *tr = inode->i_private;
- 	unsigned long val;
- 	int ret;
-+	long available;
- 
-+	available = get_available_mem();
- 	ret = kstrtoul_from_user(ubuf, cnt, 10, &val);
- 	if (ret)
- 		return ret;
- 
- 	/* must have at least 1 entry */
--	if (!val)
-+	if (!val || (val > available))
- 		return -EINVAL;
- 
- 	/* value is in KB */
+INT                NAME          RATE             MAX
+ 16 [evel     timer@fc0]  1027 Ints/s     (max:  1028)
+ 21 [ evel     at_xdmac]     3 Ints/s     (max:     3)
+ 30 [    evel     ttyS0]     2 Ints/s     (max:     2)
+
+to:
+
+INT                NAME          RATE             MAX
+ 16 [evel     timer@fc0]     6 Ints/s     (max:     9)
+ 21 [ evel     at_xdmac]     2 Ints/s     (max:     2)
+ 30 [    evel     ttyS0]     2 Ints/s     (max:     2)
+
+
+
 -- 
-1.9.1
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
