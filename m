@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeC2LsM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:48:12 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59720 "EHLO
+        id S1753282AbeC2Lsl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:48:41 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59098 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752769AbeC2L0N (ORCPT
+        with ESMTP id S1752759AbeC2L0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 07:26:13 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Alexander Viro <viro@ZenIV.linux.org.uk>
-Subject: [PATCH 067/109] fs: add ksys_umount() helper; remove in-kernel call to sys_umount()
-Date: Thu, 29 Mar 2018 13:23:44 +0200
-Message-Id: <20180329112426.23043-68-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 062/109] inotify: add do_inotify_init() helper; remove in-kernel call to syscall
+Date: Thu, 29 Mar 2018 13:23:39 +0200
+Message-Id: <20180329112426.23043-63-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -21,84 +22,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this helper allows us to avoid the in-kernel call to the sys_umount()
-syscall. The ksys_ prefix denotes that this function is meant as a drop-in
-replacement for the syscall. In particular, it uses the same calling
-convention as ksys_umount().
-
-In the near future, the only fs-external caller of ksys_umount() should be
-converted to call do_umount() directly. Then, ksys_umount() can be moved
-within sys_umount() again.
+Using the inotify-internal do_inotify_init() helper allows us to get rid
+of the in-kernel call to sys_inotify_init1() syscall.
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Acked-by: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/namespace.c           | 9 +++++++--
- include/linux/syscalls.h | 1 +
- init/do_mounts_initrd.c  | 2 +-
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ fs/notify/inotify/inotify_user.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 642b8b229944..e398f32d7541 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1680,7 +1680,7 @@ static inline bool may_mandlock(void)
-  * unixes. Our API is identical to OSF/1 to avoid making a mess of AMD
-  */
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 2c908b31d6c9..43c23653ce2e 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -635,7 +635,7 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
  
--SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
-+int ksys_umount(char __user *name, int flags)
+ 
+ /* inotify syscalls */
+-SYSCALL_DEFINE1(inotify_init1, int, flags)
++static int do_inotify_init(int flags)
  {
- 	struct path path;
- 	struct mount *mnt;
-@@ -1720,6 +1720,11 @@ SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
- 	return retval;
+ 	struct fsnotify_group *group;
+ 	int ret;
+@@ -660,9 +660,14 @@ SYSCALL_DEFINE1(inotify_init1, int, flags)
+ 	return ret;
  }
  
-+SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
++SYSCALL_DEFINE1(inotify_init1, int, flags)
 +{
-+	return ksys_umount(name, flags);
++	return do_inotify_init(flags);
 +}
 +
- #ifdef __ARCH_WANT_SYS_OLDUMOUNT
- 
- /*
-@@ -1727,7 +1732,7 @@ SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
-  */
- SYSCALL_DEFINE1(oldumount, char __user *, name)
+ SYSCALL_DEFINE0(inotify_init)
  {
--	return sys_umount(name, 0);
-+	return ksys_umount(name, 0);
+-	return sys_inotify_init1(0);
++	return do_inotify_init(0);
  }
  
- #endif
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 3a9f9c534624..48964c408c7b 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -948,5 +948,6 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- 
- int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
- 	       unsigned long flags, void __user *data);
-+int ksys_umount(char __user *name, int flags);
- 
- #endif
-diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
-index 7868a6039fb4..1c4da8353332 100644
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -105,7 +105,7 @@ static void __init handle_initrd(void)
- 		else
- 			printk("failed\n");
- 		printk(KERN_NOTICE "Unmounting old root\n");
--		sys_umount("/old", MNT_DETACH);
-+		ksys_umount("/old", MNT_DETACH);
- 		printk(KERN_NOTICE "Trying to free ramdisk memory ... ");
- 		if (fd < 0) {
- 			error = fd;
+ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
 -- 
 2.16.3
