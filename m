@@ -1,57 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeC2N5U (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:57:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34972 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752299AbeC2N5T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:57:19 -0400
-Date: Thu, 29 Mar 2018 15:57:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
-        David Rientjes <rientjes@google.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
- LLC
-Message-ID: <20180329135702.GB4043@hirez.programming.kicks-ass.net>
-References: <20180329000024.GA16648@alison-desk.jf.intel.com>
- <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
- <aa369ee2-6557-8e3f-e2b4-d347b27825a6@linux.intel.com>
+        id S1752873AbeC2N5a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:57:30 -0400
+Received: from mga09.intel.com ([134.134.136.24]:50539 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752299AbeC2N52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 09:57:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="215975433"
+Subject: Re: [PATCH v3 1/3] perf/core: store context switch out type into Perf
+ trace
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
+ <2f5b6bf3-0321-ec79-8d24-ba1eb536758f@linux.intel.com>
+ <20180329133138.b3qe2zvje2ak7qe5@um.fi.intel.com>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <a680713a-1db2-be0b-eaf2-afaf341b0990@linux.intel.com>
+Date: Thu, 29 Mar 2018 16:57:21 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa369ee2-6557-8e3f-e2b4-d347b27825a6@linux.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180329133138.b3qe2zvje2ak7qe5@um.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 06:45:12AM -0700, Dave Hansen wrote:
-> On 03/29/2018 06:16 AM, Thomas Gleixner wrote:
-> >> This is OK at least on the hardware we are immediately concerned about
-> >> because the LLC sharing happens at both the slice and at the package
-> >> level, which are also NUMA boundaries.
-> > So that addresses the scheduler interaction, but it still leaves the
-> > information in the sysfs files unchanged. See cpu/intel_cacheinfo.c.  There
-> > are applications which use that information so it should be correct.
+On 29.03.2018 16:31, Alexander Shishkin wrote:
+> On Mon, Mar 26, 2018 at 12:20:32PM +0300, Alexey Budankov wrote:
+>>
+>> Store thread context-switch-out event type into Perf trace as a part of 
+>> PERF_RECORD_SWITCH[_CPU_WIDE] records.
+>>
+>> Introduced types of switch-out events assumed to be 
+>> a) preempt: task->state == TASK_RUNNING and b) !preempt;
+>>
+>> New !preempt event type is encoded using new 
+>> PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit extending 
+>> existing PERF_RECORD_MISC_SWITCH_OUT bit of switch out event:
+>>
+>>     misc &= PERF_RECORD_MISC_SWITCH_OUT | PERF_RECORD_MISC_SWITCH_OUT_PREEMPT
 > 
-> Were you thinking of shared_cpu_list/map? 
+> I'd like to offer some suggestions as to how to make the commit message
+> friendlier for reviewing.
+> 
+> Generally, for every patch, we want to explain the following: what we want,
+> why we want it and how we want to go about getting it. We also would prefer
+> to do it in english rather than in C, because for the latter we can just
+> look at the code.
 
-Yes, the fact that those are changed and the Changelog doesn't mention
-them is a giant fail all by itself.
+It makes sense. Thanks for sharing your opinion and valuable guidance.
 
-> The information in there is
-> correct for core->off-package access.  It is not correct for
-> core->on-package access, unless that access is perfectly interleaved
-> across both package "slices".
+> 
+> So, my understanding of this patch translates into something like this.
+> 
+> What: we want to tell apart preemting and non-preempting context switches.
+> Why: I'm guessing it tells us something about the kind of workloads that
+> are running on the machine. This doesn't seem to be mentioned anywhere.
 
-The fact that 'simple' measures like cache/cpu are now completely broken
-is a problem.
+My bad. That is missing from the description but you got the rationale just right.
+
+> How: we add a new bit to the event header to indicate that the corresponding
+> sched-out is preempting.
+> 
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>>  include/uapi/linux/perf_event.h       | 4 ++++
+>>  kernel/events/core.c                  | 4 +++-
+>>  tools/include/uapi/linux/perf_event.h | 4 ++++
+> 
+> The last one probably wants to be a separate patch.
+
+Yes. It could be. Tried to minimize amount of patches in the series, 
+at the same time remembering about successful git bisect integration.
+
+> 
+>>  3 files changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+>> index 912b85b52344..cd6ad7e13824 100644
+>> --- a/include/uapi/linux/perf_event.h
+>> +++ b/include/uapi/linux/perf_event.h
+>> @@ -655,6 +655,10 @@ struct perf_event_mmap_page {
+>>   * perf_event_attr::precise_ip.
+>>   */
+>>  #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
+>> +/*
+>> + * Indicates that thread was preempted in TASK_RUNNING state
+>> + */
+>> +#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
+>>  /*
+>>   * Reserve the last bit to indicate some extended misc field
+>>   */
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 74a6e8f12a3c..0d39192215bc 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -7556,6 +7556,8 @@ static void perf_event_switch(struct task_struct *task,
+>>  			      struct task_struct *next_prev, bool sched_in)
+>>  {
+>>  	struct perf_switch_event switch_event;
+>> +	__u16 switch_type = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT |
+>> +		(task->state == TASK_RUNNING ? PERF_RECORD_MISC_SWITCH_OUT_PREEMPT : 0);
+> 
+> This is also hard on the eyes. Can't we just
+> 
+> if (!sched_in) {
+> 	misc = SWITCH_OUT;
+> 	if (task->state == TASK_RUNNING)
+> 		misc |= SWITCH_OUT_PREEMPT;
+> }
+> 
+> ?
+
+Sure. Let me take care of all your comments.
+
+Thanks,
+Alexey
+
+> 
+> Thanks,
+> --
+> Alex
+> 
+> 
