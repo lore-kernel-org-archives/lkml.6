@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753290AbeC2LaV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:30:21 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59216 "EHLO
+        id S1753027AbeC2LaT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:30:19 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59534 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752938AbeC2L01 (ORCPT
+        with ESMTP id S1752951AbeC2L02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:26:27 -0400
+        Thu, 29 Mar 2018 07:26:28 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
-Subject: [PATCH 040/109] kernel: add do_getpgid() helper; remove internal call to sys_getpgid()
-Date: Thu, 29 Mar 2018 13:23:17 +0200
-Message-Id: <20180329112426.23043-41-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 030/109] ipc: add semtimedop syscall/compat_syscall wrappers
+Date: Thu, 29 Mar 2018 13:23:07 +0200
+Message-Id: <20180329112426.23043-31-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -21,49 +22,139 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the do_getpgid() helper removes an in-kernel call to the
-sys_getpgid() syscall.
+Provide ksys_semtimedop() and compat_ksys_semtimedop() wrappers to avoid
+in-kernel calls to these syscalls. The ksys_ prefix denotes that these
+functions are meant as a drop-in replacement for the syscalls. In
+particular, they use the same calling convention as sys_semtimedop() and
+compat_sys_semtimedop().
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
 Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- kernel/sys.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ ipc/sem.c     | 23 ++++++++++++++++++-----
+ ipc/syscall.c | 17 ++++++++++-------
+ ipc/util.h    | 13 +++++++++++++
+ 3 files changed, 41 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index f2289de20e19..ebb138b841c8 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1027,7 +1027,7 @@ SYSCALL_DEFINE2(setpgid, pid_t, pid, pid_t, pgid)
- 	return err;
+diff --git a/ipc/sem.c b/ipc/sem.c
+index a4af04979fd2..e21ceb8b4af1 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -2120,8 +2120,8 @@ static long do_semtimedop(int semid, struct sembuf __user *tsops,
+ 	return error;
  }
  
--SYSCALL_DEFINE1(getpgid, pid_t, pid)
-+static int do_getpgid(pid_t pid)
+-SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
+-		unsigned, nsops, const struct timespec __user *, timeout)
++long ksys_semtimedop(int semid, struct sembuf __user *tsops,
++		     unsigned int nsops, const struct timespec __user *timeout)
  {
- 	struct task_struct *p;
- 	struct pid *grp;
-@@ -1055,11 +1055,16 @@ SYSCALL_DEFINE1(getpgid, pid_t, pid)
- 	return retval;
+ 	if (timeout) {
+ 		struct timespec64 ts;
+@@ -2132,10 +2132,16 @@ SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
+ 	return do_semtimedop(semid, tsops, nsops, NULL);
  }
  
-+SYSCALL_DEFINE1(getpgid, pid_t, pid)
++SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
++		unsigned int, nsops, const struct timespec __user *, timeout)
 +{
-+	return do_getpgid(pid);
++	return ksys_semtimedop(semid, tsops, nsops, timeout);
 +}
 +
- #ifdef __ARCH_WANT_SYS_GETPGRP
- 
- SYSCALL_DEFINE0(getpgrp)
+ #ifdef CONFIG_COMPAT
+-COMPAT_SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsems,
+-		       unsigned, nsops,
+-		       const struct compat_timespec __user *, timeout)
++long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
++			    unsigned int nsops,
++			    const struct compat_timespec __user *timeout)
  {
--	return sys_getpgid(0);
-+	return do_getpgid(0);
+ 	if (timeout) {
+ 		struct timespec64 ts;
+@@ -2145,6 +2151,13 @@ COMPAT_SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsems,
+ 	}
+ 	return do_semtimedop(semid, tsems, nsops, NULL);
  }
++
++COMPAT_SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsems,
++		       unsigned int, nsops,
++		       const struct compat_timespec __user *, timeout)
++{
++	return compat_ksys_semtimedop(semid, tsems, nsops, timeout);
++}
+ #endif
  
+ SYSCALL_DEFINE3(semop, int, semid, struct sembuf __user *, tsops,
+diff --git a/ipc/syscall.c b/ipc/syscall.c
+index 3763b4293b74..84d6a7691baa 100644
+--- a/ipc/syscall.c
++++ b/ipc/syscall.c
+@@ -7,6 +7,9 @@
+  */
+ #include <linux/unistd.h>
+ #include <linux/syscalls.h>
++#include <linux/security.h>
++#include <linux/ipc_namespace.h>
++#include "util.h"
+ 
+ #ifdef __ARCH_WANT_SYS_IPC
+ #include <linux/errno.h>
+@@ -24,12 +27,12 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
+ 
+ 	switch (call) {
+ 	case SEMOP:
+-		return sys_semtimedop(first, (struct sembuf __user *)ptr,
+-				      second, NULL);
++		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
++				       second, NULL);
+ 	case SEMTIMEDOP:
+-		return sys_semtimedop(first, (struct sembuf __user *)ptr,
+-				      second,
+-				      (const struct timespec __user *)fifth);
++		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
++				       second,
++				       (const struct timespec __user *)fifth);
+ 
+ 	case SEMGET:
+ 		return sys_semget(first, second, third);
+@@ -124,9 +127,9 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
+ 	switch (call) {
+ 	case SEMOP:
+ 		/* struct sembuf is the same on 32 and 64bit :)) */
+-		return sys_semtimedop(first, compat_ptr(ptr), second, NULL);
++		return ksys_semtimedop(first, compat_ptr(ptr), second, NULL);
+ 	case SEMTIMEDOP:
+-		return compat_sys_semtimedop(first, compat_ptr(ptr), second,
++		return compat_ksys_semtimedop(first, compat_ptr(ptr), second,
+ 						compat_ptr(fifth));
+ 	case SEMGET:
+ 		return sys_semget(first, second, third);
+diff --git a/ipc/util.h b/ipc/util.h
+index 89b8ec176fc4..6deadf77547e 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -235,4 +235,17 @@ static inline int compat_ipc_parse_version(int *cmd)
+ #endif
+ }
+ #endif
++
++/* for __ARCH_WANT_SYS_IPC */
++long ksys_semtimedop(int semid, struct sembuf __user *tsops,
++		     unsigned int nsops,
++		     const struct timespec __user *timeout);
++
++/* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
++#ifdef CONFIG_COMPAT
++long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
++			    unsigned int nsops,
++			    const struct compat_timespec __user *timeout);
++#endif /* CONFIG_COMPAT */
++
  #endif
 -- 
 2.16.3
