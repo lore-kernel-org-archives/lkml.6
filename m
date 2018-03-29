@@ -1,137 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752873AbeC2N5a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:57:30 -0400
-Received: from mga09.intel.com ([134.134.136.24]:50539 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752299AbeC2N52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:57:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
-   d="scan'208";a="215975433"
-Subject: Re: [PATCH v3 1/3] perf/core: store context switch out type into Perf
- trace
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
- <2f5b6bf3-0321-ec79-8d24-ba1eb536758f@linux.intel.com>
- <20180329133138.b3qe2zvje2ak7qe5@um.fi.intel.com>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <a680713a-1db2-be0b-eaf2-afaf341b0990@linux.intel.com>
-Date: Thu, 29 Mar 2018 16:57:21 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752892AbeC2N6W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:58:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44757 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752774AbeC2N6V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 09:58:21 -0400
+Date: Thu, 29 Mar 2018 06:57:56 -0700
+From: tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-b4c786e5aa69c5a75ac3932f81fdf8e8c120c03b@git.kernel.org>
+Cc: peterz@infradead.org, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, dsahern@gmail.com, acme@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        tglx@linutronix.de, mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org, namhyung@kernel.org,
+        acme@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        dsahern@gmail.com, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <20180321140515.2252-1-jolsa@kernel.org>
+References: <20180321140515.2252-1-jolsa@kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf build: Fix check-headers.sh opts assignment
+Git-Commit-ID: b4c786e5aa69c5a75ac3932f81fdf8e8c120c03b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180329133138.b3qe2zvje2ak7qe5@um.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.03.2018 16:31, Alexander Shishkin wrote:
-> On Mon, Mar 26, 2018 at 12:20:32PM +0300, Alexey Budankov wrote:
->>
->> Store thread context-switch-out event type into Perf trace as a part of 
->> PERF_RECORD_SWITCH[_CPU_WIDE] records.
->>
->> Introduced types of switch-out events assumed to be 
->> a) preempt: task->state == TASK_RUNNING and b) !preempt;
->>
->> New !preempt event type is encoded using new 
->> PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit extending 
->> existing PERF_RECORD_MISC_SWITCH_OUT bit of switch out event:
->>
->>     misc &= PERF_RECORD_MISC_SWITCH_OUT | PERF_RECORD_MISC_SWITCH_OUT_PREEMPT
-> 
-> I'd like to offer some suggestions as to how to make the commit message
-> friendlier for reviewing.
-> 
-> Generally, for every patch, we want to explain the following: what we want,
-> why we want it and how we want to go about getting it. We also would prefer
-> to do it in english rather than in C, because for the latter we can just
-> look at the code.
+Commit-ID:  b4c786e5aa69c5a75ac3932f81fdf8e8c120c03b
+Gitweb:     https://git.kernel.org/tip/b4c786e5aa69c5a75ac3932f81fdf8e8c120c03b
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Wed, 21 Mar 2018 15:05:15 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 27 Mar 2018 13:13:38 -0300
 
-It makes sense. Thanks for sharing your opinion and valuable guidance.
+perf build: Fix check-headers.sh opts assignment
 
-> 
-> So, my understanding of this patch translates into something like this.
-> 
-> What: we want to tell apart preemting and non-preempting context switches.
-> Why: I'm guessing it tells us something about the kind of workloads that
-> are running on the machine. This doesn't seem to be mentioned anywhere.
+Currently the "opts" variable is not zero-ed and we keep on adding to
+it, ending up with:
 
-My bad. That is missing from the description but you got the rationale just right.
+  $ check-headers.sh 2>&1
+  + opts=' "-B"'
+  + opts=' "-B" "-B"'
+  + opts=' "-B" "-B" "-B"'
+  + opts=' "-B" "-B" "-B" "-B"'
+  + opts=' "-B" "-B" "-B" "-B" "-B"'
+  + opts=' "-B" "-B" "-B" "-B" "-B" "-B"'
 
-> How: we add a new bit to the event header to indicate that the corresponding
-> sched-out is preempting.
-> 
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  include/uapi/linux/perf_event.h       | 4 ++++
->>  kernel/events/core.c                  | 4 +++-
->>  tools/include/uapi/linux/perf_event.h | 4 ++++
-> 
-> The last one probably wants to be a separate patch.
+Fix this by initializing it in the check() function, right before
+starting the loop.
 
-Yes. It could be. Tried to minimize amount of patches in the series, 
-at the same time remembering about successful git bisect integration.
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180321140515.2252-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/check-headers.sh | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->>  3 files changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
->> index 912b85b52344..cd6ad7e13824 100644
->> --- a/include/uapi/linux/perf_event.h
->> +++ b/include/uapi/linux/perf_event.h
->> @@ -655,6 +655,10 @@ struct perf_event_mmap_page {
->>   * perf_event_attr::precise_ip.
->>   */
->>  #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
->> +/*
->> + * Indicates that thread was preempted in TASK_RUNNING state
->> + */
->> +#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
->>  /*
->>   * Reserve the last bit to indicate some extended misc field
->>   */
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index 74a6e8f12a3c..0d39192215bc 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -7556,6 +7556,8 @@ static void perf_event_switch(struct task_struct *task,
->>  			      struct task_struct *next_prev, bool sched_in)
->>  {
->>  	struct perf_switch_event switch_event;
->> +	__u16 switch_type = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT |
->> +		(task->state == TASK_RUNNING ? PERF_RECORD_MISC_SWITCH_OUT_PREEMPT : 0);
-> 
-> This is also hard on the eyes. Can't we just
-> 
-> if (!sched_in) {
-> 	misc = SWITCH_OUT;
-> 	if (task->state == TASK_RUNNING)
-> 		misc |= SWITCH_OUT_PREEMPT;
-> }
-> 
-> ?
-
-Sure. Let me take care of all your comments.
-
-Thanks,
-Alexey
-
-> 
-> Thanks,
-> --
-> Alex
-> 
-> 
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index bf206ffe5c45..9aff89bc7535 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -59,6 +59,7 @@ check () {
+   file=$1
+ 
+   shift
++  opts=
+   while [ -n "$*" ]; do
+     opts="$opts \"$1\""
+     shift
