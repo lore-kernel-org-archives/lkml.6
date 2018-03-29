@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49/6NFxh/jvpLdBHbQ/gt8n95ce7cQpD9CZClMHglurmK8Tuitd5YaTFSCY6J38duAzd4ME
-ARC-Seal: i=1; a=rsa-sha256; t=1522346727; cv=none;
+X-Google-Smtp-Source: AIpwx4+fZOC4eKeXHdsd7rBx+qhwtJ0dIh/MovNFlDldGffWna6Mc33K5L8X/q4e/+UFaomgQUYb
+ARC-Seal: i=1; a=rsa-sha256; t=1522346724; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qw1TUMNDK4Wbs6I9o8XF1feE6yg50q2KKH06puSCKRLwZOCqFS/RXhPmrnvCcMfvNT
-         SVmH3tv/0NqwaUGtXUoIogRr6dMFIUhfEfjLplmhgxUwA1HZoFPVkfT1Io+8i+u0SDjc
-         9gnA4iVphSisvXP1VnTC+Agmqk8fh4i8dAn5/aQxtRb8o4cM12tMQYhTDIikUF/T5JQw
-         yJF78o1Zk9Zs7ik696CfYvfK3M4BOAl3mZe98B70bAaLc6mL+oQhevnNWOsYiRmImMo+
-         njHC3S5LocpF6OlFi6INp27otSUbom8FR9MB81hHE0HTpfcQxVyCadRRLxg4kXIWjUj7
-         l5hw==
+        b=V3npS4iEDWHiUsIQfY/AzzBfuY7pkyXN4niDAxK9w4uOGh5DeptwYrk3wa0mMyS8II
+         KwUfHBDH6z3FgvDOBm7go/lhHkTvz/7Y/OBFd43o/e/cfIZaySquHVAnw1RX1pK17jpN
+         694/nHu0o3xKMkVeuOedu4fWIt4EScK3/9xkPYOCTDBK45lT9hzNzwlmJQjcqnyHFBUt
+         eDkOK9i5tfK4kp0rsh3D6bZsb9GQDFlH1rxw36AY0MRTZ0wTu/uko3MwAxCRjPrdOSkR
+         i8eKDdKfSRh6ts8KGGIdFvXsU+J9fiQKvRo2JYU3DcJ7bgdRCYl5sUvyB4KxZjRaAio8
+         fY4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=S0U8WfFmaApU1+y/MnNRCn8DjmVkR0HYLXqLtOlIIoQ=;
-        b=Z9zovjQ+YbzmAqQlaB4nhMCgL0O2Bmy7CitrtV547GVODoZF/erXBYsxpsplT6u8oy
-         QifdIPgvi8meux7oBHf/hp484J0nENKaZzFCHhVCWA91n4+w+9dYxePy83vqfS0DAaiZ
-         8EewOt9ZVbCc1K8ZuBw/q94+PiHPGa7P1btZ3bu16bLqkrmdKEzHS/ewVWB4qzFdxyQn
-         1seqwSm4ZXFgMZ8MTQgWtY6p6EP6w7kdAmJ713Z0MIHm1QVF22uRJo8EGow/TxtBSlsg
-         DTd2a6QPDqGD4mvJzNmw9KgyWadh/GWwT7tIGHPnul83KA8jQmUpIh6vd8EWdpLTguyx
-         lX6w==
+        bh=3tG2ZcZIdJvHIwThMF8z/7flrW5i4tCHwhscY8IQbFI=;
+        b=ZJF225jTrqU1/6xOCtnnjSFRaSaQ77YXtsMzZrKv26NVKAiMSkvaxWlSxdaNMj2z8U
+         Fzh4AN6qXxSd1TrG9Y7O1XrQOm3f0E0qWS7533EKpZN2ZLvO+WyLCI2ltqGJutRkVysH
+         yiIO8BznPzT/80wB3Zc7NV4KnJCXgBM/hstC9wNulVY3D9quMwBE2XrAmVIUc855QWrv
+         tFyrlRgXoxxuWDdLn9Lw/DFsaPy04SFA+aYHD3nSa/JVdv1C3Bdj7tcuRu8CetweYzvN
+         su7YToUyHT39twu234ziFNbKeWT9k5mvQPcjRSkXZVm4JXJRbok57m4U3qflq9rXsA9O
+         WdTw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Camelia Groza <camelia.groza@nxp.com>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 37/43] dpaa_eth: remove duplicate initialization
-Date: Thu, 29 Mar 2018 20:00:32 +0200
-Message-Id: <20180329175734.191238528@linuxfoundation.org>
+Subject: [PATCH 4.14 36/43] dpaa_eth: fix error in dpaa_remove()
+Date: Thu, 29 Mar 2018 20:00:31 +0200
+Message-Id: <20180329175734.073816441@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296080196572960?=
-X-GMAIL-MSGID: =?utf-8?q?1596296242543621319?=
+X-GMAIL-THRID: =?utf-8?q?1596296077654525127?=
+X-GMAIL-MSGID: =?utf-8?q?1596296239599464404?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,27 +49,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Camelia Groza <camelia.groza@nxp.com>
+From: Madalin Bucur <madalin.bucur@nxp.com>
 
 
-[ Upstream commit 565186362b73226a288830abe595f05f0cec0bbc ]
+[ Upstream commit 88075256ee817041d68c2387f29065b5cb2b342a ]
 
-The fd_format has already been initialized at this point.
+The recent changes that make the driver probing compatible with DSA
+were not propagated in the dpa_remove() function, breaking the
+module unload function. Using the proper device to address the issue.
 
-Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
+Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
 +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2292,7 +2292,6 @@ static enum qman_cb_dqrr_result rx_defau
- 	vaddr = phys_to_virt(addr);
- 	prefetch(vaddr + qm_fd_get_offset(fd));
+@@ -2860,7 +2860,7 @@ static int dpaa_remove(struct platform_d
+ 	struct device *dev;
+ 	int err;
  
--	fd_format = qm_fd_get_format(fd);
- 	/* The only FD types that we may receive are contig and S/G */
- 	WARN_ON((fd_format != qm_fd_contig) && (fd_format != qm_fd_sg));
+-	dev = &pdev->dev;
++	dev = pdev->dev.parent;
+ 	net_dev = dev_get_drvdata(dev);
  
+ 	priv = netdev_priv(net_dev);
