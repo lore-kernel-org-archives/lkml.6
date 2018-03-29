@@ -1,177 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752319AbeC2JM4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 05:12:56 -0400
-Received: from eahe.aehallh.com ([50.116.20.20]:33460 "EHLO eahe.aehallh.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750708AbeC2JMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 05:12:54 -0400
-Subject: Re: General protection fault with use_blk_mq=1.
-To: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
-Cc: "Zephaniah E. Loss-Cutler-Hull" <warp-spam_kernel@aehallh.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, linux-scsi@vger.kernel.org
-References: <7d8a9c62-7d3e-879c-5b5b-30707f04553e@aehallh.com>
- <ae71cc99-02f1-2b42-bb76-d6e28d61ca21@kernel.dk>
- <b347896e-f770-8987-ad90-a595a5fa926a@aehallh.com>
- <735c5d75-eacf-8ed2-ba9b-9ff4b0b5290d@kernel.dk>
- <882A26D2-BEB8-4CE3-B132-0DE31BFD5D28@linaro.org>
-From: "Zephaniah E. Loss-Cutler-Hull" <warp@aehallh.com>
-Message-ID: <0a96375b-5a2e-e828-fa1f-a14af192be4c@aehallh.com>
-Date: Thu, 29 Mar 2018 02:12:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751325AbeC2JRr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 05:17:47 -0400
+Received: from mail-bl2nam02on0042.outbound.protection.outlook.com ([104.47.38.42]:3325
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750716AbeC2JRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 05:17:45 -0400
+From: "Elior, Ariel" <Ariel.Elior@cavium.com>
+To: Sinan Kaya <okaya@codeaurora.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "timur@codeaurora.org" <timur@codeaurora.org>,
+        "sulrich@codeaurora.org" <sulrich@codeaurora.org>
+CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v7 3/7] bnx2x: Replace doorbell barrier() with wmb()
+Thread-Topic: [PATCH v7 3/7] bnx2x: Replace doorbell barrier() with wmb()
+Thread-Index: AQHTxEcZZxtoEOu+xkGnixx3V0bVgaPm8sKA
+Date: Thu, 29 Mar 2018 09:17:43 +0000
+Message-ID: <CY1PR0701MB133742146E2848330CA89FB290A20@CY1PR0701MB1337.namprd07.prod.outlook.com>
+References: <1521988761-30344-1-git-send-email-okaya@codeaurora.org>
+ <1521988761-30344-4-git-send-email-okaya@codeaurora.org>
+In-Reply-To: <1521988761-30344-4-git-send-email-okaya@codeaurora.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Ariel.Elior@cavium.com;
+x-originating-ip: [31.168.140.228]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR0701MB1744;7:pDSza6keV7wt4gZH/MQgw6w2GFwWbtBXVJ4Ydn6rEeATGRzXOAhAManM25AyMbqegpzBVZSAGKaEYOwBivPS+e9Ea4Gy60DJf7OpsMaK4tgGhsGW7EuZGrgmCdou+mqxv6FThYTNKaj4eSUNfUUqrFhYLlqysXmeS6fG59pqZunHO3k6TQSozKdRGxi+GhzIC+oKRwOcwJuJTwKrm3Ttmp39JOf0k1/vKYcybxe3F/OvJz3BD1MuObruHl0rD2oX
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d067abba-bb2b-4fc8-1e61-08d59555ed75
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY1PR0701MB1744;
+x-ms-traffictypediagnostic: CY1PR0701MB1744:
+x-microsoft-antispam-prvs: <CY1PR0701MB17446C37CAB3996F0CA17D9D90A20@CY1PR0701MB1744.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(190756311086443)(788757137089);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CY1PR0701MB1744;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0701MB1744;
+x-forefront-prvs: 0626C21B10
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(376002)(396003)(346002)(39860400002)(366004)(189003)(199004)(316002)(229853002)(446003)(81156014)(305945005)(2501003)(5660300001)(8676002)(74316002)(33656002)(66066001)(26005)(54906003)(105586002)(106356001)(81166006)(110136005)(68736007)(486005)(11346002)(186003)(486005)(2900100001)(97736004)(7736002)(102836004)(6116002)(9686003)(6436002)(5250100002)(4326008)(3280700002)(6246003)(2906002)(53936002)(72206003)(99286004)(14454004)(76176011)(59450400001)(25786009)(3660700001)(6506007)(476003)(478600001)(7696005)(8936002)(86362001)(3846002)(2201001)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0701MB1744;H:CY1PR0701MB1337.namprd07.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: wB1y68OnmobmOnfyLn4BtE3H0r0oI2Glp7lAX9g87avTj9gAdPNVFukwDZ6/37hLikliLxBNPRoN5YzvyCJrC9016g8+RQhAFt5oja4oeipP32/sYZaptIjItI69Nv60nXmh/tcrZyQZqh7yQi2gnTDIOckhHLQAG2WqWKfFWMY/D5/NcxLc15itlOFpJbqaS2limVytx07+kmhNOqLAOQq+jvAsIsZmv8k1/tzvtPvytZLnVT7HJfzWLXO5SkPmgMLufNioVoe6ugFSvEc3bTmwA8g24qqhYlveNNZHQxthwzviwC3+WlrzA0HZstTvVIJn8uUQRW/gwO/KHpFuHg==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <882A26D2-BEB8-4CE3-B132-0DE31BFD5D28@linaro.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="lB5lpsYNudRQbnvCa5GSZAeI4OY55eDRs"
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d067abba-bb2b-4fc8-1e61-08d59555ed75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2018 09:17:43.0490
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0701MB1744
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T9Hr10030274
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---lB5lpsYNudRQbnvCa5GSZAeI4OY55eDRs
-Content-Type: multipart/mixed; boundary="HA3ciq3VPsgDAdrkx1KE2ahbDdy3Q9ZhF";
- protected-headers="v1"
-From: "Zephaniah E. Loss-Cutler-Hull" <warp@aehallh.com>
-To: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
-Cc: "Zephaniah E. Loss-Cutler-Hull" <warp-spam_kernel@aehallh.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-block <linux-block@vger.kernel.org>, linux-scsi@vger.kernel.org
-Message-ID: <0a96375b-5a2e-e828-fa1f-a14af192be4c@aehallh.com>
-Subject: Re: General protection fault with use_blk_mq=1.
-References: <7d8a9c62-7d3e-879c-5b5b-30707f04553e@aehallh.com>
- <ae71cc99-02f1-2b42-bb76-d6e28d61ca21@kernel.dk>
- <b347896e-f770-8987-ad90-a595a5fa926a@aehallh.com>
- <735c5d75-eacf-8ed2-ba9b-9ff4b0b5290d@kernel.dk>
- <882A26D2-BEB8-4CE3-B132-0DE31BFD5D28@linaro.org>
-In-Reply-To: <882A26D2-BEB8-4CE3-B132-0DE31BFD5D28@linaro.org>
+> Subject: [PATCH v7 3/7] bnx2x: Replace doorbell barrier() with wmb()
+> 
+> barrier() doesn't guarantee memory writes to be observed by the hardware on
+> all architectures. barrier() only tells compiler not to move this code
+> with respect to other read/writes.
+> 
+> If memory write needs to be observed by the HW, wmb() is the right choice.
 
---HA3ciq3VPsgDAdrkx1KE2ahbDdy3Q9ZhF
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+The wmb() is there (a couple of lines above). Your modification adds an
+unnecessary fence which would hurt high pps scenarios. The memory
+writes which the HW needs to observe are the buffer descriptors, not the
+producer update message. The producer is written to the HW, and exists
+on the stack. The barrier() is there to prevent the compiler from mixing the
+order of the prod update message preparation and writing it to the host.
+A possible alternative would be to move the existing wmb() to where
+the barrier() is, achieving both goals, although in the existing design each
+barrier has a distinct purpose. The comment location is misleading, though.
 
-On 03/28/2018 10:13 PM, Paolo Valente wrote:
->=20
->=20
->> Il giorno 29 mar 2018, alle ore 05:22, Jens Axboe <axboe@kernel.dk> ha=
- scritto:
->>
->> On 3/28/18 9:13 PM, Zephaniah E. Loss-Cutler-Hull wrote:
->>> On 03/28/2018 06:02 PM, Jens Axboe wrote:
->>>> On 3/28/18 5:03 PM, Zephaniah E. Loss-Cutler-Hull wrote:
->>>>> I am not subscribed to any of the lists on the To list here, please=
- CC
->>>>> me on any replies.
->>>>>
->>>>> I am encountering a fairly consistent crash anywhere from 15 minute=
-s to
->>>>> 12 hours after boot with scsi_mod.use_blk_mq=3D1 dm_mod.use_blk_mq=3D=
-1>=20
->>>>> The crash looks like:
->>>>>
->>>
->>>>>
->>>>> Looking through the code, I'd guess that this is dying inside
->>>>> blkg_rwstat_add, which calls percpu_counter_add_batch, which is wha=
-t RIP
->>>>> is pointing at.
->>>>
->>>> Leaving the whole thing here for Paolo - it's crashing off insertion=
- of
->>>> a request coming out of SG_IO. Don't think we've seen this BFQ failu=
-re
->>>> case before.
->>>>
->>>> You can mitigate this by switching the scsi-mq devices to mq-deadlin=
-e
->>>> instead.
->>>>
->>>
->>> I'm thinking that I should also be able to mitigate it by disabling
->>> CONFIG_DEBUG_BLK_CGROUP.
->>>
->>> That should remove that entire chunk of code.
->>>
->>> Of course, that won't help if this is actually a symptom of a bigger
->>> problem.
->>
->> Yes, it's not a given that it will fully mask the issue at hand. But
->> turning off BFQ has a much higher chance of working for you.
->>
->> This time actually CC'ing Paolo.
->>
->=20
-> Hi Zephaniah,
-> if you are actually interested in the benefits of BFQ (low latency,
-> high responsiveness, fairness, ...) then it may be worth to try what
-> you yourself suggest: disabling CONFIG_DEBUG_BLK_CGROUP.  Also because
-> this option activates the heavy computation of debug cgroup statistics,=
-
-> which probably you don't use.
-
-I definitely am.
->=20
-> In addition, the outcome of your attempt without
-> CONFIG_DEBUG_BLK_CGROUP would give us useful bisection information:
-> - if no failure occurs, then the issue is likely to be confined in
-> that debugging code (which, on the bright side, is likely to be of
-> occasional interest, for only a handful of developers)
-> - if the issue still shows up, then we may have new hints on this odd
-> failure
->=20
-> Finally, consider that this issue has been reported to disappear from
-> 4.16 [1], and, as a plus, that the service quality of BFQ had a
-> further boost exactly from 4.16.
-
-I look forward to that either way then.
->=20
-> Looking forward to your feedback, in case you try BFQ without
-> CONFIG_DEBUG_BLK_CGROUP,
-
-I'm running that now, judging from the past if it survives until
-tomorrow evening then we're good, so I should hopefully know in the next
-day.
-
-Thank you,
-Zephaniah E. Loss-Cutler-Hull.
-
-> Paolo
->=20
-> [1] https://www.spinics.net/lists/linux-block/msg21422.html
->=20
->>
->> --=20
->> Jens Axboe
->=20
-
-
-
---HA3ciq3VPsgDAdrkx1KE2ahbDdy3Q9ZhF--
-
---lB5lpsYNudRQbnvCa5GSZAeI4OY55eDRs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJavK4SAAoJEJMemkxvB+Y8XqoP/2CkP3w/B6pSYhDSDd8lrwUy
-Ago4fVmi5VGwfIsT+1nuHUJL/vYc8L9jbSfr2g2v36nd94mPLQac8Xuawbp26XOh
-eIZtWlBrUcCXuZqRqsA1OfVBFa9zBL6AjvKMdAqDhuF6ONfmRKFzS5OUQKHkMeYS
-Ujyt7rUquQzpVw3+64Ki5cc80Jpw337ahFMQ/H1red36NVjw/d5Fe97waDPD+oM9
-CF6/cyLHudcMcLhIbyHnomPaMGtSIpBAfV1IjkiDmnV9HgNtaSo1Mkd0RfFdKn4+
-9hjT8hRxKz2Q3BF02ncKPOPctKTN12QObcF38vg+3ggMfFSU+GYA+oU8LzjsdXuk
-sUi1BZMVVJhZ+8RF56+MlMEoZ61nUiV/XHiN88qD0kbdH0i1zrH4DskrpzWIioup
-V/lIaGpOb2a+AJogc5RboWqhPekQRZYcWBHlNrh1b11doM8t+BcNN20r343YFMWg
-GVSKABvom69f+nqbTpqYncI7pz+ocdu5qDVysgx3NUPRAWXW0+kz8vn5YAakr5TB
-z7qJRqv1EUVg/e6z0tng3VcEQD/Uf5YFyB4PKhKlXJxENZpJrvrVWkZGEePQ+v2+
-P9pVD54vBW7wSUAnYaQ/6cuXrWbxUsOzPVGafC3a7Nka1OD8zjBMwnsVtStJ5poE
-6I0JqAtBnHP0EbOPj8pk
-=hGyE
------END PGP SIGNATURE-----
-
---lB5lpsYNudRQbnvCa5GSZAeI4OY55eDRs--
+Thanks,
+Ariel
