@@ -1,63 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeC2OzR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:55:17 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:41569 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751187AbeC2OzO (ORCPT
+        id S1752314AbeC2Ozb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:55:31 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:45014 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752258AbeC2Oz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:55:14 -0400
-X-Google-Smtp-Source: AIpwx4/cg7RkfHW7XtI0XRVVp0G6TQ09lQ6Z0hwWwtECBHAWxsDWRqug+UH2NIsJKsudKvpxss/gXA==
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: slongerbeam@gmail.com, mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: todor.tomov@linaro.org, nicolas.dechesne@linaro.org,
-        dragonboard@lists.96boards.org, loic.poulain@linaro.org,
-        daniel.thompson@linaro.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [RESEND PATCH] media: i2c: ov5640: Add pixel clock support
-Date: Thu, 29 Mar 2018 20:25:00 +0530
-Message-Id: <1522335300-13467-2-git-send-email-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
-References: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
+        Thu, 29 Mar 2018 10:55:28 -0400
+Date: Thu, 29 Mar 2018 16:55:26 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@ZenIV.linux.org.uk" <viro@ZenIV.linux.org.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "hmclauchlan@fb.com" <hmclauchlan@fb.com>,
+        "tautschn@amazon.co.uk" <tautschn@amazon.co.uk>,
+        Amir Goldstein <amir73il@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Jaswinder Singh <jaswinder@infradead.org>,
+        Jeff Dike <jdike@addtoit.com>, Jiri Slaby <jslaby@suse.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "user-mode-linux-devel@lists.sourceforge.net"
+        <user-mode-linux-devel@lists.sourceforge.net>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 000/109] remove in-kernel calls to syscalls
+Message-ID: <20180329145526.GA1414@isilmar-4.linta.de>
+References: <20180329112426.23043-1-linux@dominikbrodowski.net>
+ <20180329142027.GA24860@bombadil.infradead.org>
+ <20180329144209.GA25559@isilmar-4.linta.de>
+ <07438b1e94ff42a184adb7134a680069@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07438b1e94ff42a184adb7134a680069@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the camera subsystems like camss in Qualcommm MSM chipsets
-require pixel clock support in camera sensor drivers. So, this commit
-adds a default pixel clock rate of 96MHz to OV5640 camera sensor driver.
+On Thu, Mar 29, 2018 at 02:46:44PM +0000, David Laight wrote:
+> From: Dominik Brodowski
+> > Sent: 29 March 2018 15:42
+> > On Thu, Mar 29, 2018 at 07:20:27AM -0700, Matthew Wilcox wrote:
+> > > On Thu, Mar 29, 2018 at 01:22:37PM +0200, Dominik Brodowski wrote:
+> > > > At least on 64-bit x86, it will likely be a hard requirement from v4.17
+> > > > onwards to not call system call functions in the kernel: It is better to
+> > > > use use a different calling convention for system calls there, where
+> > > > struct pt_regs is decoded on-the-fly in a syscall wrapper which then hands
+> > > > processing over to the actual syscall function. This means that only those
+> > > > parameters which are actually needed for a specific syscall are passed on
+> > > > during syscall entry, instead of filling in six CPU registers with random
+> > > > user space content all the time (which may cause serious trouble down the
+> > > > call chain).[*]
+> > >
+> > > How do we stop new ones from springing up?  Some kind of linker trick
+> > > like was used to, er, "dissuade" people from using gets()?
+> > 
+> > Once the patches which modify the syscall calling convention are merged,
+> > it won't compile on 64-bit x86, but bark loudly. That should frighten anyone.
+> > Meow.
+> 
+> Should be pretty easy to ensure the prototypes aren't in any normal header.
 
-According to the datasheet, 96MHz can be used as a pixel clock rate for
-most of the modes.
+That's exactly why the compile will fail.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/media/i2c/ov5640.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> Renaming the global symbols (to not match the function name) will make it
+> much harder to call them as well.
 
-diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-index 39a2269..7152c84 100644
---- a/drivers/media/i2c/ov5640.c
-+++ b/drivers/media/i2c/ov5640.c
-@@ -162,6 +162,7 @@ struct ov5640_ctrls {
- 		struct v4l2_ctrl *auto_gain;
- 		struct v4l2_ctrl *gain;
- 	};
-+	struct v4l2_ctrl *pixel_clock;
- 	struct v4l2_ctrl *brightness;
- 	struct v4l2_ctrl *saturation;
- 	struct v4l2_ctrl *contrast;
-@@ -2009,6 +2010,9 @@ static int ov5640_init_controls(struct ov5640_dev *sensor)
- 	ctrls->gain = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_GAIN,
- 					0, 1023, 1, 0);
- 
-+	/* Pixel clock (default of 96MHz) */
-+	ctrls->pixel_clock = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_PIXEL_RATE,
-+					1, INT_MAX, 1, 96000000);
- 	ctrls->saturation = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_SATURATION,
- 					      0, 255, 1, 64);
- 	ctrls->hue = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HUE,
--- 
-2.7.4
+That still depends on the exact design of the patchset, which is still under
+review.
+
+Thanks,
+	Dominik
