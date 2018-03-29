@@ -1,152 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752591AbeC2Jwa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 05:52:30 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:34653 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752525AbeC2Jw2 (ORCPT
+        id S1752597AbeC2Jwx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 05:52:53 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38448 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752286AbeC2Jwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 05:52:28 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <ebffc080588886ac3aa9228407ccfccc>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        adrian.hunter@intel.com, shawn.lin@rock-chips.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [mmc_block] Prevent bus reference leak in mmc_blk_init
-To: Alexander Kappner <agk@godking.net>
-References: <1522275511-7693-1-git-send-email-agk@godking.net>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <a8548725-f245-b9ea-a309-56c030f81a16@rock-chips.com>
-Date: Thu, 29 Mar 2018 17:52:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thu, 29 Mar 2018 05:52:51 -0400
+X-Google-Smtp-Source: AIpwx48724I2JQD48+K8EdIE/FLmC6b/kSrXei2al+jsPegUvHuSUwX26O8vgFClGLwxy6nvY3gWgg==
+Subject: Re: [PATCH v4 02/16] riscv: Use generic free_initrd_mem.
+To: Shea Levy <shea@shealevy.com>, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>
+References: <20180328152714.6103-1-shea@shealevy.com>
+ <20180328203659.18692-1-shea@shealevy.com>
+ <20180328203659.18692-3-shea@shealevy.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Message-ID: <7fa4f27c-d421-38cd-aa16-445b364ed9eb@linaro.org>
+Date: Thu, 29 Mar 2018 10:52:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1522275511-7693-1-git-send-email-agk@godking.net>
-Content-Type: text/plain; charset=gbk; format=flowed
+In-Reply-To: <20180328203659.18692-3-shea@shealevy.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/3/29 6:18, Alexander Kappner wrote:
-> Upon module load, mmc_block allocates a bus with bus_register in
-> mmc_blk_init. This reference never gets freed during module unload.
-> Subsequent re-insertions of the module fail and BUG() is triggered:
-
-WARN() is triggered.
-
-> 
-> [   84.583342] sysfs: cannot create duplicate filename '/bus/mmc_rpmb'
-> [   84.583373] CPU: 6 PID: 1825 Comm: modprobe Tainted: P           O     4.16.0-rc6-00384-gf36b753 #30
-> [   84.583381] Hardware name: LENOVO 20ENCTO1WW/20ENCTO1WW, BIOS N1EET62W (1.35 ) 11/10/2016
-> [   84.583385] Call Trace:
-> [   84.583401]  dump_stack+0x5a/0x75
-> [   84.583411]  sysfs_warn_dup+0x58/0x70
-> [   84.583419]  sysfs_create_dir_ns+0x70/0x80
-> [   84.583437]  kobject_add_internal+0xa5/0x2c0
-> [   84.583453]  kset_register+0x44/0x60
-> [   84.583470]  bus_register+0xc6/0x270
-> [   84.583479]  ? 0xffffffffa000d000
-> [   84.583492]  mmc_blk_init+0x12/0x1000 [mmc_block]
-> [   84.583501]  do_one_initcall+0x4e/0x194
-> [   84.583510]  ? ___cache_free+0x21/0x2b0
-> [   84.583524]  do_init_module+0x5a/0x20f
-> [   84.583533]  load_module+0x235c/0x2510
-> [   84.583550]  ? SYSC_finit_module+0x80/0xb0
-> [   84.583558]  SYSC_finit_module+0x80/0xb0
-> [   84.583570]  do_syscall_64+0x77/0x290
-> [   84.583580]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> [   84.583587] RIP: 0033:0x7f452a3ad5b9
-> [   84.583593] RSP: 002b:00007fff4562ba18 EFLAGS: 00000206 ORIG_RAX: 0000000000000139
-> [   84.583602] RAX: ffffffffffffffda RBX: 000056092895c520 RCX: 00007f452a3ad5b9
-> [   84.583607] RDX: 0000000000000000 RSI: 000056092697b3d9 RDI: 0000000000000003
-> [   84.583612] RBP: 000056092697b3d9 R08: 0000000000000000 R09: 000056092895d310
-> [   84.583617] R10: 0000000000000003 R11: 0000000000000206 R12: 0000000000000000
-> [   84.583623] R13: 000056092895c430 R14: 0000000000040000 R15: 0000000000040000
-> [   84.583647] ------------[ cut here ]------------
-> [   84.583656] kobject_add_internal failed for mmc_rpmb with -EEXIST, don't try to register things with the same name in the same directory.
-> [   84.583694] WARNING: CPU: 6 PID: 1825 at lib/kobject.c:238 kobject_add_internal+0x296/0x2c0
-> [   84.583705] Modules linked in: mmc_block(+) rtsx_pci_sdmmc rtsx_pci iwlmvm mac80211 nvidia_drm(PO) nvidia_modeset(PO) iwlwifi nvidia(PO) cfg80211 qmi_wwan thinkpad_acpi rfkill sdhci_pci cqhci sdhci mfd_core [last unloaded: mmc_block]
-> [   84.583770] CPU: 6 PID: 1825 Comm: modprobe Tainted: P           O     4.16.0-rc6-00384-gf36b753 #30
-> [   84.583774] Hardware name: LENOVO 20ENCTO1WW/20ENCTO1WW, BIOS N1EET62W (1.35 ) 11/10/2016
-> [   84.583782] RIP: 0010:kobject_add_internal+0x296/0x2c0
-> [   84.583786] RSP: 0018:ffffc9000769bc58 EFLAGS: 00010296
-> [   84.583791] RAX: 000000000000007d RBX: ffff880fcf588618 RCX: 0000000000000000
-> [   84.583796] RDX: 0000000000040400 RSI: 00000000000000f6 RDI: 00000000ffffffff
-> [   84.583801] RBP: 00000000ffffffef R08: 0000000000000000 R09: 0000000000000354
-> [   84.583806] R10: ffffffff8251fc74 R11: 0000000000000353 R12: ffff88100d3cf698
-> [   84.583811] R13: ffff880fcf588618 R14: ffffffffa0028590 R15: ffffffffa0028540
-> [   84.583818] FS:  00007f452a853700(0000) GS:ffff881053d80000(0000) knlGS:0000000000000000
-> [   84.583823] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   84.583837] CR2: 00007f452a3faea0 CR3: 0000000fc89e4004 CR4: 00000000003606e0
-> [   84.583850] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   84.583863] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   84.583875] Call Trace:
-> [   84.583893]  kset_register+0x44/0x60
-> [   84.583902]  bus_register+0xc6/0x270
-> [   84.583910]  ? 0xffffffffa000d000
-> [   84.583926]  mmc_blk_init+0x12/0x1000 [mmc_block]
-> [   84.583940]  do_one_initcall+0x4e/0x194
-> [   84.583948]  ? ___cache_free+0x21/0x2b0
-> [   84.583966]  do_init_module+0x5a/0x20f
-> [   84.583979]  load_module+0x235c/0x2510
-> [   84.583995]  ? SYSC_finit_module+0x80/0xb0
-> [   84.584001]  SYSC_finit_module+0x80/0xb0
-> [   84.584010]  do_syscall_64+0x77/0x290
-> [   84.584016]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> [   84.584021] RIP: 0033:0x7f452a3ad5b9
-> [   84.584025] RSP: 002b:00007fff4562ba18 EFLAGS: 00000206 ORIG_RAX: 0000000000000139
-> [   84.584030] RAX: ffffffffffffffda RBX: 000056092895c520 RCX: 00007f452a3ad5b9
-> [   84.584034] RDX: 0000000000000000 RSI: 000056092697b3d9 RDI: 0000000000000003
-> [   84.584038] RBP: 000056092697b3d9 R08: 0000000000000000 R09: 000056092895d310
-> [   84.584043] R10: 0000000000000003 R11: 0000000000000206 R12: 0000000000000000
-> [   84.584047] R13: 000056092895c430 R14: 0000000000040000 R15: 0000000000040000
-> [   84.584053] Code: 7b 20 49 89 c4 48 85 ff 0f 84 10 fe ff ff e9 cd fd ff ff 48 8b 13 48 c7 c6 00 80 f4 81 48 c7 c7 e0 ad 0f 82 31 c0 e8 ca 9a 7b ff <0f> 0b e9 5f fe ff ff 0f 0b 0f 0b 0f 0b 0f 0b e9 71 ff ff ff 0f
-> [   84.584147] ---[ end trace d27b36e0e2c0e7e5 ]---
-> [   84.584162] mmcblk: could not register RPMB bus type
-> 
-> Steps to reproduce:
-> 
-> Build with CONFIG_MMC_BLOCK=m
-> 
-> modprobe mmc_block
-> rmmod mmc_block
-> modprobe mmc_block
-> 
-> The proposed patch deallocates the reference in mmc_blk_exit.
-> 
-
-Fixes: 97548575bef3 ("mmc: block: Convert RPMB to a character device")
-Cc: Stable <stable@vger.kernel.org>
-
-> Signed-off-by: Alexander Kappner <agk@godking.net>
+On 28/03/18 21:36, Shea Levy wrote:
+> Signed-off-by: Shea Levy <shea@shealevy.com>
 > ---
->   drivers/mmc/core/block.c | 1 +
->   1 file changed, 1 insertion(+)
+>   arch/riscv/mm/init.c | 6 ------
+>   1 file changed, 6 deletions(-)
 > 
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index 2cfb963..9c6f639 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -3087,6 +3087,7 @@ static void __exit mmc_blk_exit(void)
->   	mmc_unregister_driver(&mmc_driver);
->   	unregister_blkdev(MMC_BLOCK_MAJOR, "mmc");
->   	unregister_chrdev_region(mmc_rpmb_devt, MAX_DEVICES);
-> +	bus_unregister(&mmc_rpmb_bus_type);
-
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
-
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index c77df8142be2..36f83fe8a726 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -62,9 +62,3 @@ void free_initmem(void)
+>   {
+>   	free_initmem_default(0);
 >   }
->   
->   module_init(mmc_blk_init);
-> 
+> -
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -void free_initrd_mem(unsigned long start, unsigned long end)
+> -{
+> -}
+> -#endif /* CONFIG_BLK_DEV_INITRD */
+
+This looks like a change of behavior since the weakly defined code does 
+not implement a nop.
+
+I'm not saying the change is wrong, but if this is a deliberate bug fix 
+then we need more than an empty commit message to explain what is 
+happening here.
+
+
+Daniel.
