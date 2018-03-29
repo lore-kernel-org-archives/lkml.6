@@ -1,73 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeC2IBb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 04:01:31 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:41247 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750716AbeC2IBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 04:01:30 -0400
-From: Alexander Dahl <ada@thorsis.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Date: Thu, 29 Mar 2018 10:01:26 +0200
-Message-ID: <3478710.yJBBt3uoRT@ada>
-In-Reply-To: <20180328155033.GH13942@piout.net>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com> <20180328153135.GG13942@piout.net> <20180328155033.GH13942@piout.net>
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1752201AbeC2IB4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 04:01:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750716AbeC2IBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 04:01:54 -0400
+Subject: Re: [PATCH net V2] vhost: correctly remove wait queue during poll
+ failure
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Darren Kenny <darren.kenny@oracle.com>
+References: <1522155052-13347-1-git-send-email-jasowang@redhat.com>
+ <20180329071801-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <66bebbe2-25f3-5098-c6ac-f61fe160c940@redhat.com>
+Date: Thu, 29 Mar 2018 16:01:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180329071801-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T81aiK026562
 
-Hei hei,
 
-Am Mittwoch, 28. M�rz 2018, 17:50:33 CEST schrieb Alexandre Belloni:
-> On 28/03/2018 at 17:31:35 +0200, Alexandre Belloni wrote:
-> > > Do you have an explanation of why the rate is much higher ?
-> > 
-> > The core is giving deltas of 31 clocks instead of much more than that, I
-> > guess I messed up the initialization somewhere.
-> 
-> I did mess up.
-> 
-> Alexander, can you test that:
 
-Well, I just did.
+On 2018年03月29日 12:20, Michael S. Tsirkin wrote:
+> On Tue, Mar 27, 2018 at 08:50:52PM +0800, Jason Wang wrote:
+>> We tried to remove vq poll from wait queue, but do not check whether
+>> or not it was in a list before. This will lead double free. Fixing
+>> this by switching to use vhost_poll_stop() which zeros poll->wqh after
+>> removing poll from waitqueue to make sure it won't be freed twice.
+>>
+>> Cc: Darren Kenny<darren.kenny@oracle.com>
+>> Reported-by:syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
+>> Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting backend")
+>> Signed-off-by: Jason Wang<jasowang@redhat.com>
+> OK with this the only bug we have is where get user pages returns 0
+> (Reported-by:syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com)
+>
+>
+>
 
-> 
-> diff --git a/drivers/clocksource/timer-atmel-tcb.c
-> b/drivers/clocksource/timer-atmel-tcb.c index 7fde9cfbf203..bbbacf8c46b0
-> 100644
-> --- a/drivers/clocksource/timer-atmel-tcb.c
-> +++ b/drivers/clocksource/timer-atmel-tcb.c
-> @@ -222,7 +222,7 @@ static int __init tc_clkevt_register(struct device_node
-> *node, goto err_slow;
->  	clk_disable(tce.clk);
-> 
-> -	clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
-> +	clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
-> 
->  	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
->  			  tce.clkevt.name, &tce);
-> 
-> This will behave exactly the same as before on 16bits TCB and will have
-> much less interrupts on 32 bits platforms.
+Thanks for the reminder.
 
-This is the result:
-
-INT                NAME          RATE             MAX
- 17 [vel     timer@fffa]  1837 Ints/s     (max:  1912)
- 26 [      vel     eth0]     3 Ints/s     (max:    11)
-
-This is not much lower than the ~2150 I reported yesterday?
-
-I'm sorry I can just test this on at91sam9g20 currently, I have no 
-understanding of the subsystem, I can't do a decent review.
-
-Greets
-Alex
+I post a patch to avoid this.
