@@ -1,71 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751114AbeC2Gg5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 02:36:57 -0400
-Received: from zxshcas1.zhaoxin.com ([180.169.121.91]:22306 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750716AbeC2Gg4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 02:36:56 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: <jdelvare@suse.com>, <linux@roeck-us.net>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <rjw@rjwysocki.net>, <linux-hwmon@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
-        <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
-        David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH v1] hwmon, via-cputem: support new centaur CPUs
-Date: Thu, 29 Mar 2018 14:36:43 +0800
-Message-ID: <1522305403-21009-1-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751195AbeC2Gva (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 02:51:30 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:52676 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750732AbeC2Gv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 02:51:29 -0400
+Date: Thu, 29 Mar 2018 08:51:27 +0200
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Derek Robson <robsonde@gmail.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>, <ben@decadent.org.uk>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+Subject: Re: Regression in 4.16-rc7 - ipsec vpn broken
+Message-ID: <20180329065127.yn6sm3xvs2givubo@gauss3.secunet.de>
+References: <CAMfSVWDZn28cYpseJCc=gO1uD1Cr_P5vKRW8FjaqczooyecHwg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.54]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAMfSVWDZn28cYpseJCc=gO1uD1Cr_P5vKRW8FjaqczooyecHwg@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 8BACC077-052A-431B-9F83-CCCF15358D76
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Newer centaur CPUs(Family == 7) also support this cpu temperature sensor.
+Please always make sure to Cc netdev@vger.kernel.org
+on networking problems.
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
+On Wed, Mar 28, 2018 at 10:21:32PM +0000, Derek Robson wrote:
+> The ipsec VPN is broken in 4.16-rc7 and seem to have been broken in all of
+> 4.15
+> 
+> connecting from an iphone seems to give a timeout.
+> 
+> 
+> A bisect brings me to this commit as the one that is the issue.
+> 
+> commit: acf568ee859f098279eadf551612f103afdacb4e  (xfrm: Reinject
+> transport-mode packets through tasklet)
+
+I have a fix queued for this commit in the ipsec tree.
+
+Can you please try if the patch below fixes your problems?
+
+Thanks!
+
+Subject: [PATCH] xfrm: Fix transport mode skb control buffer usage.
+
+A recent commit introduced a new struct xfrm_trans_cb
+that is used with the sk_buff control buffer. Unfortunately
+it placed the structure in front of the control buffer and
+overlooked that the IPv4/IPv6 control buffer is still needed
+for some layer 4 protocols. As a result the IPv4/IPv6 control
+buffer is overwritten with this structure. Fix this by setting
+a apropriate header in front of the structure.
+
+Fixes acf568ee859f ("xfrm: Reinject transport-mode packets ...")
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 ---
- drivers/hwmon/via-cputemp.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ net/xfrm/xfrm_input.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/hwmon/via-cputemp.c b/drivers/hwmon/via-cputemp.c
-index 07a0cb0..2f5bd50 100644
---- a/drivers/hwmon/via-cputemp.c
-+++ b/drivers/hwmon/via-cputemp.c
-@@ -136,6 +136,11 @@ static int via_cputemp_probe(struct platform_device *pdev)
- 	data->id = pdev->id;
- 	data->name = "via_cputemp";
- 
-+	if (c->x86 == 7) {
-+		data->msr_temp = 0x1423;
-+		goto test_access;
-+	}
-+
- 	switch (c->x86_model) {
- 	case 0xA:
- 		/* C7 A */
-@@ -152,6 +157,7 @@ static int via_cputemp_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+test_access:
- 	/* test if we can access the TEMPERATURE MSR */
- 	err = rdmsr_safe_on_cpu(data->id, data->msr_temp, &eax, &edx);
- 	if (err) {
-@@ -283,6 +289,7 @@ static int via_cputemp_down_prep(unsigned int cpu)
- 	{ X86_VENDOR_CENTAUR, 6, 0xa, }, /* C7 A */
- 	{ X86_VENDOR_CENTAUR, 6, 0xd, }, /* C7 D */
- 	{ X86_VENDOR_CENTAUR, 6, 0xf, }, /* Nano */
-+	{ X86_VENDOR_CENTAUR, 7, X86_MODEL_ANY, },
- 	{}
+diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
+index 1472c0857975..81788105c164 100644
+--- a/net/xfrm/xfrm_input.c
++++ b/net/xfrm/xfrm_input.c
+@@ -26,6 +26,12 @@ struct xfrm_trans_tasklet {
  };
- MODULE_DEVICE_TABLE(x86cpu, cputemp_ids);
+ 
+ struct xfrm_trans_cb {
++	union {
++		struct inet_skb_parm	h4;
++#if IS_ENABLED(CONFIG_IPV6)
++		struct inet6_skb_parm	h6;
++#endif
++	} header;
+ 	int (*finish)(struct net *net, struct sock *sk, struct sk_buff *skb);
+ };
+ 
 -- 
-1.9.1
+2.14.1
