@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49otHbwD166d0l4R8uyWPJVfYq3pDLWW0pBi8UUxOjERUugFu/5R+59msLMx73anjyM3m94
-ARC-Seal: i=1; a=rsa-sha256; t=1522346777; cv=none;
+X-Google-Smtp-Source: AIpwx4+zDLTp2yqJt9N2RU+lUTTz1MMMiLAxcauUGOtBB+LrjcoMVG71MnOfCTzTNIIyDaiHs9ID
+ARC-Seal: i=1; a=rsa-sha256; t=1522346774; cv=none;
         d=google.com; s=arc-20160816;
-        b=f3sL4ODlPiGzFraXcMwwVvYUQFHx13hGviBhzTDD0g31/xKD6SxPo4hM1vegSJbbBa
-         T7aZd2a3Nr0e5l6BKO1i1paq2zPfPmDOxQ4O6iyrnjVENXK4qDmx0GG1IcPLbKLDwxyG
-         JHUPIAn3leuKiaqejYXDpU35rDrtbSh1Rc/y1Uae56y3n5yl1d4T9XNFZ7xIR6k3Jk2h
-         QimtSfiK7Tt/0f7x63uiVDHE0xSpmzmpBQc40w0npkllXAvwrjP7wrEbZPTQ8Mu/c9Q6
-         XcRtjQYUcaagxeGjU0iLOKHeBqwSMQbChjCckkzYnPNPjP/2NLiuREaNd8D05DA43KJz
-         SYiw==
+        b=IamBw4PEBsJ4rgpsQgxcnlY9J86TfZua0AqS0PZh3RQ2Yx676gdjhv/MuQG96X4IYv
+         hN4lC4WOW1r0YN7VaTSrU8u/05rHtYsWm8O3nBS3H3cD/YSBB23O1yLqC6GBbix4oLgC
+         EevQy7ehNrxSYpKLzOsG4T6qxquF7QvBYXnp8Jn5WmOgqLiaVRc6m5xs3nzNNC3O0HIx
+         M+RoY+h5fkUjga5+JK0TrJSeKqYM94oHLNSgHXonwT3R2UFGXww8oBJcY+jGG1BCYLEf
+         cIBjkX6ZseOtFfMzRRIQ6hb3Ta4eIwWgMGUMsiYDoUWDWw2ztrqapAO94T/wql915PDo
+         xFJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uUgyPbSRyTL7hV84WGRKuATMsKFmGsNdnP1cPZUdrcQ=;
-        b=rbhKcmMgCmhi5OtZEoBS72TAYDFbzDZpveAWeIhF6i3j66NJMpQDY4J7kmdkQ5zKNv
-         c4xut27rVJOXrLr0+8q4gIhxLkcAt7W8ywkrjmZSR1OhIbM/baFkyBrwAEhmTI4Zb7Z4
-         J/V4ENpNH/V0fb+s08c7Ygivu+0dwZpbqHn+/BxV960UZFVYOXVd/wZRIpNcOf4dm55Y
-         isMfqnp6RfaZwhzYF1/z7/RvbvZD186vPd21EudekintJrXCuz1mgnIlsaSkf3GicE6z
-         1yZIQU6BeHmjPbEeMHCdR9Te+qf5qxiNGNIgl8dl/I1E/aBrVrFHZd+IOrT1EGYC2vII
-         XZ/Q==
+        bh=PbeWISCcBe2Apc2BxkOxShwWY3ZFI1WibFGUGdH0w1E=;
+        b=KIjMc7kjsbjwko7BFcdPmuAtDr1TmHe4uOioYPLdvw/xdCTCmlEgl9Xe2f9uQV4+t6
+         fpo2isU2IdssELjoIGGLhDS4hOmkBrmmXo3BevFX0vbRAQYa7+O1I2ja1I8n3WuPv3LD
+         2zecJN0NlXDdTNlWmw63YmWT0GFZirG8bAfpW47MkSF6W3bhLJCG50wZm1jy+1RNFQOZ
+         cvIJpWJCWr5Er5Frk0RqoPOg1RvSFipPYyibodbFoh+FivrnshSYvmypsO+VHDVniAIc
+         ae09HVx7o4YmLt5fr0hEW4Mg/xlBAZRm2T2KA0nGAGAVZ23t+W498ov+xrQMheFwCUEJ
+         E1NA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianlin Shi <jishi@redhat.com>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+	syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 11/28] ipv6: fix access to non-linear packet in ndisc_fill_redirect_hdr_option()
-Date: Thu, 29 Mar 2018 20:00:30 +0200
-Message-Id: <20180329175734.880774392@linuxfoundation.org>
+Subject: [PATCH 4.9 10/28] dccp: check sk for closed state in dccp_sendmsg()
+Date: Thu, 29 Mar 2018 20:00:29 +0200
+Message-Id: <20180329175734.735620625@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296095626214234?=
-X-GMAIL-MSGID: =?utf-8?q?1596296294622259061?=
+X-GMAIL-THRID: =?utf-8?q?1596296089395383323?=
+X-GMAIL-MSGID: =?utf-8?q?1596296291728824176?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,119 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit 9f62c15f28b0d1d746734666d88a79f08ba1e43e ]
+[ Upstream commit 67f93df79aeefc3add4e4b31a752600f834236e2 ]
 
-Fix the following slab-out-of-bounds kasan report in
-ndisc_fill_redirect_hdr_option when the incoming ipv6 packet is not
-linear and the accessed data are not in the linear data region of orig_skb.
+dccp_disconnect() sets 'dp->dccps_hc_tx_ccid' tx handler to NULL,
+therefore if DCCP socket is disconnected and dccp_sendmsg() is
+called after it, it will cause a NULL pointer dereference in
+dccp_write_xmit().
 
-[ 1503.122508] ==================================================================
-[ 1503.122832] BUG: KASAN: slab-out-of-bounds in ndisc_send_redirect+0x94e/0x990
-[ 1503.123036] Read of size 1184 at addr ffff8800298ab6b0 by task netperf/1932
+This crash and the reproducer was reported by syzbot. Looks like
+it is reproduced if commit 69c64866ce07 ("dccp: CVE-2017-8824:
+use-after-free in DCCP code") is applied.
 
-[ 1503.123220] CPU: 0 PID: 1932 Comm: netperf Not tainted 4.16.0-rc2+ #124
-[ 1503.123347] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-2.fc27 04/01/2014
-[ 1503.123527] Call Trace:
-[ 1503.123579]  <IRQ>
-[ 1503.123638]  print_address_description+0x6e/0x280
-[ 1503.123849]  kasan_report+0x233/0x350
-[ 1503.123946]  memcpy+0x1f/0x50
-[ 1503.124037]  ndisc_send_redirect+0x94e/0x990
-[ 1503.125150]  ip6_forward+0x1242/0x13b0
-[...]
-[ 1503.153890] Allocated by task 1932:
-[ 1503.153982]  kasan_kmalloc+0x9f/0xd0
-[ 1503.154074]  __kmalloc_track_caller+0xb5/0x160
-[ 1503.154198]  __kmalloc_reserve.isra.41+0x24/0x70
-[ 1503.154324]  __alloc_skb+0x130/0x3e0
-[ 1503.154415]  sctp_packet_transmit+0x21a/0x1810
-[ 1503.154533]  sctp_outq_flush+0xc14/0x1db0
-[ 1503.154624]  sctp_do_sm+0x34e/0x2740
-[ 1503.154715]  sctp_primitive_SEND+0x57/0x70
-[ 1503.154807]  sctp_sendmsg+0xaa6/0x1b10
-[ 1503.154897]  sock_sendmsg+0x68/0x80
-[ 1503.154987]  ___sys_sendmsg+0x431/0x4b0
-[ 1503.155078]  __sys_sendmsg+0xa4/0x130
-[ 1503.155168]  do_syscall_64+0x171/0x3f0
-[ 1503.155259]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[ 1503.155436] Freed by task 1932:
-[ 1503.155527]  __kasan_slab_free+0x134/0x180
-[ 1503.155618]  kfree+0xbc/0x180
-[ 1503.155709]  skb_release_data+0x27f/0x2c0
-[ 1503.155800]  consume_skb+0x94/0xe0
-[ 1503.155889]  sctp_chunk_put+0x1aa/0x1f0
-[ 1503.155979]  sctp_inq_pop+0x2f8/0x6e0
-[ 1503.156070]  sctp_assoc_bh_rcv+0x6a/0x230
-[ 1503.156164]  sctp_inq_push+0x117/0x150
-[ 1503.156255]  sctp_backlog_rcv+0xdf/0x4a0
-[ 1503.156346]  __release_sock+0x142/0x250
-[ 1503.156436]  release_sock+0x80/0x180
-[ 1503.156526]  sctp_sendmsg+0xbb0/0x1b10
-[ 1503.156617]  sock_sendmsg+0x68/0x80
-[ 1503.156708]  ___sys_sendmsg+0x431/0x4b0
-[ 1503.156799]  __sys_sendmsg+0xa4/0x130
-[ 1503.156889]  do_syscall_64+0x171/0x3f0
-[ 1503.156980]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[ 1503.157158] The buggy address belongs to the object at ffff8800298ab600
-                which belongs to the cache kmalloc-1024 of size 1024
-[ 1503.157444] The buggy address is located 176 bytes inside of
-                1024-byte region [ffff8800298ab600, ffff8800298aba00)
-[ 1503.157702] The buggy address belongs to the page:
-[ 1503.157820] page:ffffea0000a62a00 count:1 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
-[ 1503.158053] flags: 0x4000000000008100(slab|head)
-[ 1503.158171] raw: 4000000000008100 0000000000000000 0000000000000000 00000001800e000e
-[ 1503.158350] raw: dead000000000100 dead000000000200 ffff880036002600 0000000000000000
-[ 1503.158523] page dumped because: kasan: bad access detected
-
-[ 1503.158698] Memory state around the buggy address:
-[ 1503.158816]  ffff8800298ab900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[ 1503.158988]  ffff8800298ab980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[ 1503.159165] >ffff8800298aba00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 1503.159338]                    ^
-[ 1503.159436]  ffff8800298aba80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[ 1503.159610]  ffff8800298abb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[ 1503.159785] ==================================================================
-[ 1503.159964] Disabling lock debugging due to kernel taint
-
-The test scenario to trigger the issue consists of 4 devices:
-- H0: data sender, connected to LAN0
-- H1: data receiver, connected to LAN1
-- GW0 and GW1: routers between LAN0 and LAN1. Both of them have an
-  ethernet connection on LAN0 and LAN1
-On H{0,1} set GW0 as default gateway while on GW0 set GW1 as next hop for
-data from LAN0 to LAN1.
-Moreover create an ip6ip6 tunnel between H0 and H1 and send 3 concurrent
-data streams (TCP/UDP/SCTP) from H0 to H1 through ip6ip6 tunnel (send
-buffer size is set to 16K). While data streams are active flush the route
-cache on HA multiple times.
-I have not been able to identify a given commit that introduced the issue
-since, using the reproducer described above, the kasan report has been
-triggered from 4.14 and I have not gone back further.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Reported-by: syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ndisc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/dccp/proto.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1516,7 +1516,8 @@ static void ndisc_fill_redirect_hdr_opti
- 	*(opt++) = (rd_len >> 3);
- 	opt += 6;
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -789,6 +789,11 @@ int dccp_sendmsg(struct sock *sk, struct
+ 	if (skb == NULL)
+ 		goto out_release;
  
--	memcpy(opt, ipv6_hdr(orig_skb), rd_len - 8);
-+	skb_copy_bits(orig_skb, skb_network_offset(orig_skb), opt,
-+		      rd_len - 8);
- }
- 
- void ndisc_send_redirect(struct sk_buff *skb, const struct in6_addr *target)
++	if (sk->sk_state == DCCP_CLOSED) {
++		rc = -ENOTCONN;
++		goto out_discard;
++	}
++
+ 	skb_reserve(skb, sk->sk_prot->max_header);
+ 	rc = memcpy_from_msg(skb_put(skb, len), msg, len);
+ 	if (rc != 0)
