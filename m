@@ -1,108 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751994AbeC2PV0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:21:26 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40724 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751124AbeC2PVY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:21:24 -0400
-X-Google-Smtp-Source: AG47ELu66oBZuWhEzkk7DEpwX1f3tVF/a6Qo+MuvtHHPWZ8REHxjnsNdHcod+LUA/FN9L6Rtyi3NMEHfUhC1TaIIfN4=
+        id S1751868AbeC2P2u (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:28:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34070 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750979AbeC2P2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:28:48 -0400
+Date: Thu, 29 Mar 2018 17:28:45 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jeff Moyer <jmoyer@redhat.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 02/14] fs, dax: prepare for dax-specific
+ address_space_operations
+Message-ID: <20180329152845.wvskcbhremndtuzg@quack2.suse.cz>
+References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152167304153.5268.5998667213622821211.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180329141420.13042-1-bp@alien8.de>
-References: <20180329141420.13042-1-bp@alien8.de>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 29 Mar 2018 17:21:22 +0200
-Message-ID: <CAKv+Gu8ZqpmM9XFjU4LBrm3sdP5rH8TBxvtU4_a0VbT+qo856w@mail.gmail.com>
-Subject: Re: [PATCH] efi/cper: Remove the INDENT_SP silliness
-To: Borislav Petkov <bp@alien8.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152167304153.5268.5998667213622821211.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 March 2018 at 16:14, Borislav Petkov <bp@alien8.de> wrote:
-> From: Borislav Petkov <bp@suse.de>
->
-> A separate define just to print a space character is silly and
-> completely unneeded. Remove it.
->
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: linux-efi@vger.kernel.org
+On Wed 21-03-18 15:57:21, Dan Williams wrote:
+> In preparation for the dax implementation to start associating dax pages
+> to inodes via page->mapping, we need to provide a 'struct
+> address_space_operations' instance for dax. Define some generic VFS aops
+> helpers for dax. These noop implementations are there in the dax case to
+> prevent the VFS from falling back to operations with page-cache
+> assumptions, dax_writeback_mapping_range() may not be referenced in the
+> FS_DAX=n case.
+> 
+> Cc: Jeff Moyer <jmoyer@redhat.com>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Suggested-by: Matthew Wilcox <mawilcox@microsoft.com>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Suggested-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Looks good to me. I'm just wondering whether we should not add also some
+stubs calling WARN_ON() and bailing out for stuff like ->migratepage(),
+->releasepage(). But probably it is very unlikely we'll introduce bugs that
+would trigger those paths so feel free to add:
 
-I'll pick this up after the merge window
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
 
 > ---
->  drivers/firmware/efi/cper-arm.c | 6 ++----
->  drivers/firmware/efi/cper.c     | 6 ++----
->  2 files changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
-> index 698e5c8e0c8d..502811344e81 100644
-> --- a/drivers/firmware/efi/cper-arm.c
-> +++ b/drivers/firmware/efi/cper-arm.c
-> @@ -30,8 +30,6 @@
->  #include <acpi/ghes.h>
->  #include <ras/ras_event.h>
->
-> -#define INDENT_SP      " "
-> -
->  static const char * const arm_reg_ctx_strs[] = {
->         "AArch32 general purpose registers",
->         "AArch32 EL1 context registers",
-> @@ -283,7 +281,7 @@ void cper_print_proc_arm(const char *pfx,
->                         pfx, proc->psci_state);
->         }
->
-> -       snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-> +       snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
->
->         err_info = (struct cper_arm_err_info *)(proc + 1);
->         for (i = 0; i < proc->err_info_num; i++) {
-> @@ -310,7 +308,7 @@ void cper_print_proc_arm(const char *pfx,
->                 if (err_info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO) {
->                         printk("%serror_info: 0x%016llx\n", newpfx,
->                                err_info->error_info);
-> -                       snprintf(infopfx, sizeof(infopfx), "%s%s", newpfx, INDENT_SP);
-> +                       snprintf(infopfx, sizeof(infopfx), "%s ", newpfx);
->                         cper_print_arm_err_info(infopfx, err_info->type,
->                                                 err_info->error_info);
->                 }
-> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-> index 5a59b582c9aa..3bf0dca378a6 100644
-> --- a/drivers/firmware/efi/cper.c
-> +++ b/drivers/firmware/efi/cper.c
-> @@ -37,8 +37,6 @@
->  #include <acpi/ghes.h>
->  #include <ras/ras_event.h>
->
-> -#define INDENT_SP      " "
-> -
->  static char rcd_decode_str[CPER_REC_LEN];
->
->  /*
-> @@ -433,7 +431,7 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
->         if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
->                 printk("%s""fru_text: %.20s\n", pfx, gdata->fru_text);
->
-> -       snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-> +       snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
->         if (guid_equal(sec_type, &CPER_SEC_PROC_GENERIC)) {
->                 struct cper_sec_proc_generic *proc_err = acpi_hest_get_payload(gdata);
->
-> @@ -510,7 +508,7 @@ void cper_estatus_print(const char *pfx,
->                        "It has been corrected by h/w "
->                        "and requires no further action");
->         printk("%s""event severity: %s\n", pfx, cper_severity_str(severity));
-> -       snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-> +       snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
->
->         apei_estatus_for_each_section(estatus, gdata) {
->                 cper_estatus_print_section(newpfx, gdata, sec_no);
-> --
-> 2.13.0
->
+>  fs/libfs.c          |   27 +++++++++++++++++++++++++++
+>  include/linux/dax.h |   12 +++++++++---
+>  include/linux/fs.h  |    3 +++
+>  3 files changed, 39 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 7ff3cb904acd..e49d0ac6f800 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1060,6 +1060,33 @@ int noop_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>  }
+>  EXPORT_SYMBOL(noop_fsync);
+>  
+> +int noop_set_page_dirty(struct page *page)
+> +{
+> +	/*
+> +	 * Unlike __set_page_dirty_no_writeback that handles dirty page
+> +	 * tracking in the page object, dax does all dirty tracking in
+> +	 * the inode address_space in response to mkwrite faults. In the
+> +	 * dax case we only need to worry about potentially dirty CPU
+> +	 * caches, not dirty page cache pages to write back.
+> +	 *
+> +	 * This callback is defined to prevent fallback to
+> +	 * __set_page_dirty_buffers() in set_page_dirty().
+> +	 */
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(noop_set_page_dirty);
+> +
+> +void noop_invalidatepage(struct page *page, unsigned int offset,
+> +		unsigned int length)
+> +{
+> +	/*
+> +	 * There is no page cache to invalidate in the dax case, however
+> +	 * we need this callback defined to prevent falling back to
+> +	 * block_invalidatepage() in do_invalidatepage().
+> +	 */
+> +}
+> +EXPORT_SYMBOL_GPL(noop_invalidatepage);
+> +
+>  /* Because kfree isn't assignment-compatible with void(void*) ;-/ */
+>  void kfree_link(void *p)
+>  {
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 0185ecdae135..ae27a7efe7ab 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -38,6 +38,7 @@ static inline void put_dax(struct dax_device *dax_dev)
+>  }
+>  #endif
+>  
+> +struct writeback_control;
+>  int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
+>  #if IS_ENABLED(CONFIG_FS_DAX)
+>  int __bdev_dax_supported(struct super_block *sb, int blocksize);
+> @@ -57,6 +58,8 @@ static inline void fs_put_dax(struct dax_device *dax_dev)
+>  }
+>  
+>  struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+> +int dax_writeback_mapping_range(struct address_space *mapping,
+> +		struct block_device *bdev, struct writeback_control *wbc);
+>  #else
+>  static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
+>  {
+> @@ -76,6 +79,12 @@ static inline struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+>  {
+>  	return NULL;
+>  }
+> +
+> +static inline int dax_writeback_mapping_range(struct address_space *mapping,
+> +		struct block_device *bdev, struct writeback_control *wbc)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+>  #endif
+>  
+>  int dax_read_lock(void);
+> @@ -121,7 +130,4 @@ static inline bool dax_mapping(struct address_space *mapping)
+>  	return mapping->host && IS_DAX(mapping->host);
+>  }
+>  
+> -struct writeback_control;
+> -int dax_writeback_mapping_range(struct address_space *mapping,
+> -		struct block_device *bdev, struct writeback_control *wbc);
+>  #endif
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 79c413985305..b57db31d294d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3129,6 +3129,9 @@ extern int simple_rmdir(struct inode *, struct dentry *);
+>  extern int simple_rename(struct inode *, struct dentry *,
+>  			 struct inode *, struct dentry *, unsigned int);
+>  extern int noop_fsync(struct file *, loff_t, loff_t, int);
+> +extern int noop_set_page_dirty(struct page *page);
+> +extern void noop_invalidatepage(struct page *page, unsigned int offset,
+> +		unsigned int length);
+>  extern int simple_empty(struct dentry *);
+>  extern int simple_readpage(struct file *file, struct page *page);
+>  extern int simple_write_begin(struct file *file, struct address_space *mapping,
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
