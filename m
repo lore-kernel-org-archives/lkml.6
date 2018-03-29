@@ -1,44 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeC2N4t (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:56:49 -0400
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:46544 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751213AbeC2N4r (ORCPT
+        id S1752852AbeC2N5U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:57:20 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34972 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752299AbeC2N5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:56:47 -0400
-X-Google-Smtp-Source: AIpwx48G85eR0+z2Z0euqk6suXvDrGq2EKFswYXHTXZDSOXf0sP998qx2kK/nH4+ROuzeJ4TCcJy4D7cDlcso525N6U=
+        Thu, 29 Mar 2018 09:57:19 -0400
+Date: Thu, 29 Mar 2018 15:57:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+Message-ID: <20180329135702.GB4043@hirez.programming.kicks-ass.net>
+References: <20180329000024.GA16648@alison-desk.jf.intel.com>
+ <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
+ <aa369ee2-6557-8e3f-e2b4-d347b27825a6@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <f3b1d6f1-708e-b467-91a6-304a204a3655@synopsys.com>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <e3c679c8bd516602d1f7cf5182cf718414e74089.1522235224.git.gustavo.pimentel@synopsys.com>
- <CAOMZO5AyzTqpVofx6wf4oHsWjwaC=94o8dgbJSs0rhnc8OwPkA@mail.gmail.com> <f3b1d6f1-708e-b467-91a6-304a204a3655@synopsys.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 29 Mar 2018 10:56:46 -0300
-Message-ID: <CAOMZO5CKQou2GdRehn-GuB1hwx+8sQQR31mBgy+EVNd7OVv2Cg@mail.gmail.com>
-Subject: Re: [PATCH 6/8] PCI: dwc: Replace lower into upper case characters
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa369ee2-6557-8e3f-e2b4-d347b27825a6@linux.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 10:00 AM, Gustavo Pimentel
-<gustavo.pimentel@synopsys.com> wrote:
+On Thu, Mar 29, 2018 at 06:45:12AM -0700, Dave Hansen wrote:
+> On 03/29/2018 06:16 AM, Thomas Gleixner wrote:
+> >> This is OK at least on the hardware we are immediately concerned about
+> >> because the LLC sharing happens at both the slice and at the package
+> >> level, which are also NUMA boundaries.
+> > So that addresses the scheduler interaction, but it still leaves the
+> > information in the sysfs files unchanged. See cpu/intel_cacheinfo.c.  There
+> > are applications which use that information so it should be correct.
+> 
+> Were you thinking of shared_cpu_list/map? 
 
-> Yes, it's not a replace character from lower to upper case. It's just a code
-> formatting style to be coherent with the rest of the driver code. I guess I can
-> added on the patch description a note about it.
-> It works for you?
+Yes, the fact that those are changed and the Changelog doesn't mention
+them is a giant fail all by itself.
 
-Yes, that would be better, thanks.
+> The information in there is
+> correct for core->off-package access.  It is not correct for
+> core->on-package access, unless that access is perfectly interleaved
+> across both package "slices".
+
+The fact that 'simple' measures like cache/cpu are now completely broken
+is a problem.
