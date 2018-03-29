@@ -1,90 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751906AbeC2EX6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 00:23:58 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40964 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeC2EX5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 00:23:57 -0400
-Subject: Re: [Xen-devel] [PATCH v2 1/1] xen-netback: process malformed sk_buff
- correctly to avoid BUG_ON()
-To: Eric Dumazet <eric.dumazet@gmail.com>
-References: <1522295463-469-1-git-send-email-dongli.zhang@oracle.com>
- <2c741a81-23b3-fa26-89b2-6c3d94b20b96@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, paul.durrant@citrix.com, wei.liu2@citrix.com
-From: Dongli Zhang <dongli.zhang@oracle.com>
-Message-ID: <1abfb88c-050a-8054-c237-fe66b0a59eab@oracle.com>
-Date: Thu, 29 Mar 2018 12:24:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <2c741a81-23b3-fa26-89b2-6c3d94b20b96@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8846 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803290046
+        id S1752701AbeC2Eb3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 00:31:29 -0400
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:32908 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751865AbeC2EbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 00:31:24 -0400
+From: Chen-Yu Tsai <wens@csie.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/3] mfd: axp20x: Const-ify struct mfd_cell and struct resource
+Date: Thu, 29 Mar 2018 12:31:13 +0800
+Message-Id: <20180329043115.7132-2-wens@csie.org>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180329043115.7132-1-wens@csie.org>
+References: <20180329043115.7132-1-wens@csie.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+The axp20x driver has lots of mfd_cell and resource structs.
+These can all be const-ified.
 
-On 03/29/2018 12:03 PM, Eric Dumazet wrote:
-> 
-> 
-> On 03/28/2018 08:51 PM, Dongli Zhang wrote:
->> The "BUG_ON(!frag_iter)" in function xenvif_rx_next_chunk() is triggered if
->> the received sk_buff is malformed, that is, when the sk_buff has pattern
->> (skb->data_len && !skb_shinfo(skb)->nr_frags). Below is a sample call
->> stack:
->>
->> ...
-> 
-> 
->>
->> The issue is hit by xen-netback when there is bug with other networking
->> interface (e.g., dom0 physical NIC), who has generated and forwarded
->> malformed sk_buff to dom0 vifX.Y. It is possible to reproduce the issue on
->> purpose with below sample code in a kernel module:
->>
->> skb->dev = dev; // dev of vifX.Y
->> skb->len = 386;
->> skb->data_len = 352;
->> skb->tail = 98;
->> skb->end = 384;
->> skb_shinfo(skb)->nr_frags = 0;
->> dev->netdev_ops->ndo_start_xmit(skb, dev);
->>
-> 
-> This would be a serious bug in the provider of such skb.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/mfd/axp20x.c       | 44 ++++++++++++++++++++++----------------------
+ include/linux/mfd/axp20x.h |  2 +-
+ 2 files changed, 23 insertions(+), 23 deletions(-)
 
-/nods
-
-> 
-> Are you sure you do not have instead an skb with a chain of skbs ?
-> 
-> (skb_shinfo(skb)->frag_list would be not NULL)
-
-I am sure the skb_shinfo(skb)->frag_list is NULL.
-
-> 
-> Maybe your driver is wrongly advertising NETIF_F_FRAGLIST
-> 
-> commit 2167ca029c244901831 would be the bug origin then...
-
-Unlike the new linux version (whose BUG_ON() does not panic the server), the
-BUG_ON() in prior old kernel version would panic xen dom0 server and then people
-would always blame xen paravirtual driver.
-
-Indeed, xen-netback did not process the malformed sk_buff appropriately on rx
-path. The issue is not hit with old dom0 kernel, when I am running the debug
-module (as shown in below link) to generate a malformed sk_buff on purpose.
-
-https://lists.xenproject.org/archives/html/xen-devel/2018-03/msg03176.html
-
-Dongli Zhang
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index aaf2acbef701..14be0f658d74 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -169,18 +169,18 @@ static const struct regmap_access_table axp806_volatile_table = {
+ 	.n_yes_ranges	= ARRAY_SIZE(axp806_volatile_ranges),
+ };
+ 
+-static struct resource axp152_pek_resources[] = {
++static const struct resource axp152_pek_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(AXP152_IRQ_PEK_RIS_EDGE, "PEK_DBR"),
+ 	DEFINE_RES_IRQ_NAMED(AXP152_IRQ_PEK_FAL_EDGE, "PEK_DBF"),
+ };
+ 
+-static struct resource axp20x_ac_power_supply_resources[] = {
++static const struct resource axp20x_ac_power_supply_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_ACIN_PLUGIN, "ACIN_PLUGIN"),
+ 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_ACIN_REMOVAL, "ACIN_REMOVAL"),
+ 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_ACIN_OVER_V, "ACIN_OVER_V"),
+ };
+ 
+-static struct resource axp20x_pek_resources[] = {
++static const struct resource axp20x_pek_resources[] = {
+ 	{
+ 		.name	= "PEK_DBR",
+ 		.start	= AXP20X_IRQ_PEK_RIS_EDGE,
+@@ -194,19 +194,19 @@ static struct resource axp20x_pek_resources[] = {
+ 	},
+ };
+ 
+-static struct resource axp20x_usb_power_supply_resources[] = {
++static const struct resource axp20x_usb_power_supply_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_PLUGIN, "VBUS_PLUGIN"),
+ 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
+ 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_VALID, "VBUS_VALID"),
+ 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_NOT_VALID, "VBUS_NOT_VALID"),
+ };
+ 
+-static struct resource axp22x_usb_power_supply_resources[] = {
++static const struct resource axp22x_usb_power_supply_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_VBUS_PLUGIN, "VBUS_PLUGIN"),
+ 	DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
+ };
+ 
+-static struct resource axp22x_pek_resources[] = {
++static const struct resource axp22x_pek_resources[] = {
+ 	{
+ 		.name   = "PEK_DBR",
+ 		.start  = AXP22X_IRQ_PEK_RIS_EDGE,
+@@ -220,7 +220,7 @@ static struct resource axp22x_pek_resources[] = {
+ 	},
+ };
+ 
+-static struct resource axp288_power_button_resources[] = {
++static const struct resource axp288_power_button_resources[] = {
+ 	{
+ 		.name	= "PEK_DBR",
+ 		.start	= AXP288_IRQ_POKP,
+@@ -235,7 +235,7 @@ static struct resource axp288_power_button_resources[] = {
+ 	},
+ };
+ 
+-static struct resource axp288_fuel_gauge_resources[] = {
++static const struct resource axp288_fuel_gauge_resources[] = {
+ 	{
+ 		.start = AXP288_IRQ_QWBTU,
+ 		.end   = AXP288_IRQ_QWBTU,
+@@ -268,7 +268,7 @@ static struct resource axp288_fuel_gauge_resources[] = {
+ 	},
+ };
+ 
+-static struct resource axp803_pek_resources[] = {
++static const struct resource axp803_pek_resources[] = {
+ 	{
+ 		.name   = "PEK_DBR",
+ 		.start  = AXP803_IRQ_PEK_RIS_EDGE,
+@@ -282,7 +282,7 @@ static struct resource axp803_pek_resources[] = {
+ 	},
+ };
+ 
+-static struct resource axp809_pek_resources[] = {
++static const struct resource axp809_pek_resources[] = {
+ 	{
+ 		.name   = "PEK_DBR",
+ 		.start  = AXP809_IRQ_PEK_RIS_EDGE,
+@@ -648,7 +648,7 @@ static const struct regmap_irq_chip axp809_regmap_irq_chip = {
+ 	.num_regs		= 5,
+ };
+ 
+-static struct mfd_cell axp20x_cells[] = {
++static const struct mfd_cell axp20x_cells[] = {
+ 	{
+ 		.name		= "axp20x-gpio",
+ 		.of_compatible	= "x-powers,axp209-gpio",
+@@ -677,7 +677,7 @@ static struct mfd_cell axp20x_cells[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell axp221_cells[] = {
++static const struct mfd_cell axp221_cells[] = {
+ 	{
+ 		.name		= "axp221-pek",
+ 		.num_resources	= ARRAY_SIZE(axp22x_pek_resources),
+@@ -703,7 +703,7 @@ static struct mfd_cell axp221_cells[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell axp223_cells[] = {
++static const struct mfd_cell axp223_cells[] = {
+ 	{
+ 		.name			= "axp221-pek",
+ 		.num_resources		= ARRAY_SIZE(axp22x_pek_resources),
+@@ -729,7 +729,7 @@ static struct mfd_cell axp223_cells[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell axp152_cells[] = {
++static const struct mfd_cell axp152_cells[] = {
+ 	{
+ 		.name			= "axp20x-pek",
+ 		.num_resources		= ARRAY_SIZE(axp152_pek_resources),
+@@ -737,7 +737,7 @@ static struct mfd_cell axp152_cells[] = {
+ 	},
+ };
+ 
+-static struct resource axp288_adc_resources[] = {
++static const struct resource axp288_adc_resources[] = {
+ 	{
+ 		.name  = "GPADC",
+ 		.start = AXP288_IRQ_GPADC,
+@@ -746,7 +746,7 @@ static struct resource axp288_adc_resources[] = {
+ 	},
+ };
+ 
+-static struct resource axp288_extcon_resources[] = {
++static const struct resource axp288_extcon_resources[] = {
+ 	{
+ 		.start = AXP288_IRQ_VBUS_FALL,
+ 		.end   = AXP288_IRQ_VBUS_FALL,
+@@ -769,7 +769,7 @@ static struct resource axp288_extcon_resources[] = {
+ 	},
+ };
+ 
+-static struct resource axp288_charger_resources[] = {
++static const struct resource axp288_charger_resources[] = {
+ 	{
+ 		.start = AXP288_IRQ_OV,
+ 		.end   = AXP288_IRQ_OV,
+@@ -817,7 +817,7 @@ static struct resource axp288_charger_resources[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell axp288_cells[] = {
++static const struct mfd_cell axp288_cells[] = {
+ 	{
+ 		.name = "axp288_adc",
+ 		.num_resources = ARRAY_SIZE(axp288_adc_resources),
+@@ -848,7 +848,7 @@ static struct mfd_cell axp288_cells[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell axp803_cells[] = {
++static const struct mfd_cell axp803_cells[] = {
+ 	{
+ 		.name			= "axp221-pek",
+ 		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
+@@ -857,14 +857,14 @@ static struct mfd_cell axp803_cells[] = {
+ 	{	.name			= "axp20x-regulator" },
+ };
+ 
+-static struct mfd_cell axp806_cells[] = {
++static const struct mfd_cell axp806_cells[] = {
+ 	{
+ 		.id			= 2,
+ 		.name			= "axp20x-regulator",
+ 	},
+ };
+ 
+-static struct mfd_cell axp809_cells[] = {
++static const struct mfd_cell axp809_cells[] = {
+ 	{
+ 		.name			= "axp221-pek",
+ 		.num_resources		= ARRAY_SIZE(axp809_pek_resources),
+@@ -875,7 +875,7 @@ static struct mfd_cell axp809_cells[] = {
+ 	},
+ };
+ 
+-static struct mfd_cell axp813_cells[] = {
++static const struct mfd_cell axp813_cells[] = {
+ 	{
+ 		.name			= "axp221-pek",
+ 		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
+diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
+index 82bf7747b312..a2489363a998 100644
+--- a/include/linux/mfd/axp20x.h
++++ b/include/linux/mfd/axp20x.h
+@@ -642,7 +642,7 @@ struct axp20x_dev {
+ 	struct regmap_irq_chip_data	*regmap_irqc;
+ 	long				variant;
+ 	int                             nr_cells;
+-	struct mfd_cell                 *cells;
++	const struct mfd_cell           *cells;
+ 	const struct regmap_config	*regmap_cfg;
+ 	const struct regmap_irq_chip	*regmap_irq_chip;
+ };
+-- 
+2.16.3
