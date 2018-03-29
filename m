@@ -1,52 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752479AbeC2EbZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 00:31:25 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:32904 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751215AbeC2EbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 00:31:24 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] mfd: axp20x: driver cleanup
-Date: Thu, 29 Mar 2018 12:31:12 +0800
-Message-Id: <20180329043115.7132-1-wens@csie.org>
-X-Mailer: git-send-email 2.16.3
+        id S1752021AbeC2Exd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 00:53:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36774 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751146AbeC2Exb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 00:53:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EC3E460558
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: merez@codeaurora.org
+Cc: Colin King <colin.king@canonical.com>, linux-wireless@vger.kernel.org,
+        wil6210@qti.qualcomm.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] wil6210: fix potential null dereference of ndev before null check
+References: <20180328174027.31551-1-colin.king@canonical.com>
+        <49ef31bc36217349a4801dc2eba4735c@codeaurora.org>
+Date: Thu, 29 Mar 2018 07:53:25 +0300
+In-Reply-To: <49ef31bc36217349a4801dc2eba4735c@codeaurora.org>
+        (merez@codeaurora.org's message of "Wed, 28 Mar 2018 20:46:44 +0300")
+Message-ID: <87bmf7mqii.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+merez@codeaurora.org writes:
 
-Here are some cleanup patches for the axp20x mfd driver.
+> On 2018-03-28 20:40, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The pointer ndev is being dereferenced before it is being null checked,
+>> hence there is a potential null pointer deference. Fix this by only
+>> dereferencing ndev after it has been null checked
+>>
+>> Detected by CoverityScan, CID#1467010 ("Dereference before null check")
+>>
+>> Fixes: e00243fab84b ("wil6210: infrastructure for multiple virtual
+>> interfaces")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Patch 1 const-ifies all the struct mfd_cell and struct resource
-instances found throughout the driver. Not sure why they weren't
-set to const before.
+[...]
 
-Patch 2 replaces all the openly declared interrupt resources with
-nice to read one-line DEFINE_RES_IRQ macros.
+> Reviewed-by: Maya Erez <merez@codeaurora.org>
 
-Patch 3 corrects the prefix for four of the AXP806 interrupt enums.
-"POK" was incorrectly expanded to "PWROK".
-
-These are all simple cleanups. No functionality is changed.
-
-Regards
-ChenYu
-
-Chen-Yu Tsai (3):
-  mfd: axp20x: Const-ify struct mfd_cell and struct resource
-  mfd: axp20x: Use DEFINE_RES_IRQ to declare resources for mfd_cells
-  mfd: axp20x: Correct AXP806 POK interrupt prefix
-
- drivers/mfd/axp20x.c       | 239 +++++++++++----------------------------------
- include/linux/mfd/axp20x.h |  10 +-
- 2 files changed, 61 insertions(+), 188 deletions(-)
+Maya, as you are the wil6210 maintainer you can actually use Acked-by
+instead of Reviewed-by. Not that it really matters which one you use,
+both of them indicate me that you have checked and agree the patch, but
+wanted to point out this anyway :)
 
 -- 
-2.16.3
+Kalle Valo
