@@ -1,81 +1,83 @@
-Return-Path: <SRS0=0/dQ=GT=redhat.com=oleg@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1224189-1522342171-2-14204598968832979443
+Return-Path: <SRS0=Ism+=GT=gmail.com=htejun@kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1351814-1522345291-2-1085995711830125585
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+X-Spam-hits: BAYES_00 -1.9, RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='com',
+X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
   MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: SRS0=0/dQ=GT=redhat.com=oleg@kernel.org
+X-Mail-from: SRS0=Ism+=GT=gmail.com=htejun@kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522342171; b=Rgh95YS7SdJsiHyvx90CcAoTF8hkS0aZYSMGGLTmTd8YzLSO3R
-    946tqZqOJj6ZSJanABD0g9Ndyc+nYeTZKNC+Uttq3VeeicFzkmD0A/dThFKQXASH
-    i+B5rizTG9g/Hg5bJfn7sM0dxyDxGmxnBSHv+2lPZtXYKPfk0o2AtHc8yKenu/FY
-    HGtvLqqllBJSVR524c1k8v7jmFMISYNCSwNmvbTVtVsfd/C6PBzQzrxr1PCpWPt6
-    1AbkpyAGqHyfH/HazpLFbC5ZwPfV+gY2QykWwSV4stVxFvfbNAHGs2BWs7vTb40Q
-    XG9gPT019bbWOKwL8Wv49PXZAKAs6YdoY/uA==
+    1522345291; b=dIh1UsbXu7LjGZxuxsiRAVTBJSrogbpy+F/j19XerhTW7goRvd
+    2/qjYHxM+zQQHQHvdDuo/0OideFMiN+cGu4eCumn6/wS+qolK3/YgQCBPPeFyYsf
+    7ZN8khXxmpRdlLRwkqJWjx40+EViBVQcqPBBlqs0zrvBR9KPRGX0ae6yxWy6uncf
+    dmB91hwSGALBVHJ6bv4T01OrbEI1Q6yv2BJNHWdnADn4TrCwGjgWkiiJhXEwe/6x
+    xjmUbSSxKD23UfZOlO3V5qSW4h7sT0d+t/tTBxyokyegJv0IZIb8I/mckruc28kf
+    QQk+qFKdocVSuwtc6ILuXn436PTeLtRCnlHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
+    messagingengine.com; h=sender:date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to; s=fm2; t=
-    1522342171; bh=O2lOLzxpQTjquT1/PmYd8wQnPlIa9q68t/J67KYTWuU=; b=b
-    MfVnHMZm1kp/wrZeqvSlJsnqU6gia89z3Al8mRYzg58647dJPMQjeGqWw19K9rbZ
-    QH80bg8PAaPcsVq2/l6rySoA7l73WM59jflpKSXlPDixSXyq4HdLTOId6jxPh/6i
-    NkiXaGjxRyMq3tMkdaO2mvwlWRBd5l//4Sp6FPM822v54VxRSWaM+3If66eisGWZ
-    QX/H4Tw24GBkJBGvXc0SyUFmVms9CrVynpC2gU3D1qSQmzAtPvUnZBK2ZjfFB+Hi
-    lQnDFZyxitKbkDE11Z72I0znXLgiNgxbygbVf45mN9ohuUZ9xw3CJSXRMLxdhd8F
-    uEmhWtk4/rU+oS9NOQE+w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,d=none) header.from=redhat.com;
+    1522345291; bh=doXk9FxlvNLipTO53uNrRVTP8e4ov/L+nskSnu+aqK8=; b=W
+    XippLTKWZ/JO9LuiqEW1QQ7W9S7NILmAUYQDeWzL+72E5aCbZPQTmouuphx7kCyB
+    gX9sdNTMcXgfWkRmpncbjN3D5pkONTSwxcwujv71l65Qa4YqG8oO/smerMXIffOg
+    VfcDJjTWUjzEqw8zEJEH4Qy+5oX0pvrEGQWIlkNu5iRdFsWAfKelsu4yuBIO7EUQ
+    bpHFmosauBA5xWf5gGb2Xc9fnVZH33sP+KFnHo1ojO7hd/rz171t+FoDodjB4rQe
+    yoO8yqKHI2hwUOvIex/oXsMhQhusEEEDO8c09MJeEuDGC+c0T7Yo7mXhJSkzlJAD
+    0+GpwEXFaGFq0oOV79x/g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=gohdoz/g x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=none smtp.mailfrom="SRS0=0/dQ=GT=redhat.com=oleg@kernel.org" smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom="SRS0=Ism+=GT=gmail.com=htejun@kernel.org" smtp.helo=mail.kernel.org;
+    x-aligned-from=domain_pass (Domain match);
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TC0RW4iY;
     x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,d=none) header.from=redhat.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=gohdoz/g x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=none smtp.mailfrom="SRS0=0/dQ=GT=redhat.com=oleg@kernel.org" smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom="SRS0=Ism+=GT=gmail.com=htejun@kernel.org" smtp.helo=mail.kernel.org;
+    x-aligned-from=domain_pass (Domain match);
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TC0RW4iY;
     x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAcaDFgH+2FeZq3g/HJiEH9F/XaTa4eVsF9T9h/0k7X5UtEoZzbRoPzj4dfH14q65tGIpkA0orHhCBVZAAip+YepSB1VOQhsOKqFhS8Ot3fG3IyXDO2R
-    vBa09oLgEiyvjyE4G1jSdy1Uo+rH+Wmtn4/Hrd2SnIW2+kDHucupxCNGri1hvmGY/e6lI8YuECkozH/ZpiGvEN8Cm8O9EiqA8yc=
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
-    a=czNdAM+YcK12vDHDihaDnQ==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=BCcCOY-bhosC6VzhywgA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfJublMy+gGRX7fIv5iJ9SV0s0dD/mKp5S+FYdQSN4177HjbjNjBRNamy2ERY925Ga744lI68D/aw/JIKm38q4TDlCMFBzDnRsIQYkxCsTXFWQuRRPqGC
+    liOv1Ir3kCqH16tjPoovsuq8cDO8WU5cUUmiHkTOdHW+YrzWhLWi0UH/gvDmq3iERvf23HlpuFMC3Os/UoibJg4Q6VTBmV4WdXE=
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
+    a=czNdAM+YcK12vDHDihaDnQ==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
+    a=v2DPQv5-lfwA:10 a=VrbSLzi7VSr5zFmVrHEA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 X-Remote-Delivered-To: security@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4172175B
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=oleg@redhat.com
-Date: Thu, 29 Mar 2018 18:49:25 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Tejun Heo <tj@kernel.org>
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A0521777
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=htejun@gmail.com
+X-Google-Smtp-Source: AIpwx4+Kix5P0Qkz1zx2NLI6jThj7Mk+i1afyK26JM4rc8J7Tm97zOWkLdZd12fq+HQFZz9rGjBSFw==
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 29 Mar 2018 10:41:22 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
 Cc: torvalds@linux-foundation.org, jannh@google.com,
 	paulmck@linux.vnet.ibm.com, bcrl@kvack.org, viro@zeniv.linux.org.uk,
 	kent.overstreet@gmail.com, security@kernel.org,
 	linux-kernel@vger.kernel.org, kernel-team@fb.com
 Subject: Re: [PATCH 8/8] fs/aio: Use rcu_work instead of explicit rcu and
  work item
-Message-ID: <20180329164925.GA7175@redhat.com>
-References: <20180314194515.1661824-1-tj@kernel.org>
- <20180314194515.1661824-8-tj@kernel.org>
+Message-ID: <20180329174122.GA388343@devbig577.frc2.facebook.com>
+References: <20180314194515.1661824-8-tj@kernel.org>
  <20180321155812.GA9382@redhat.com>
  <20180321164000.GC2149215@devbig577.frc2.facebook.com>
  <20180321171743.GA12834@redhat.com>
@@ -84,34 +86,31 @@ References: <20180314194515.1661824-1-tj@kernel.org>
  <20180326150459.GE1840639@devbig577.frc2.facebook.com>
  <20180327142848.GA19341@redhat.com>
  <20180327155506.GA2779604@devbig577.frc2.facebook.com>
+ <20180329164925.GA7175@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180327155506.GA2779604@devbig577.frc2.facebook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180329164925.GA7175@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/27, Tejun Heo wrote:
->
-> On Tue, Mar 27, 2018 at 04:28:48PM +0200, Oleg Nesterov wrote:
-> > > flush_*work() guarantees to wait for the completion of the latest
-> > > instance of the work item which was visible to the caller.  We can't
-> > > guarantee that w/o rcu_barrier().
-> >
-> > And this is what I can't understand.
-> >
-> > So let me repeat. Could you please describe a use-case which needs flush_rcuwork()
-> > with rcu_barrier() ?
->
-> So, if you skip that, flush_work() in itself won't wait for PENDING
-> bit at all.  It'll return right away if the work item is waiting for
-> rcu grace period.
+Hello,
 
-Still no use-case... But yes, I forgot this is needed for correctness.
+On Thu, Mar 29, 2018 at 06:49:25PM +0200, Oleg Nesterov wrote:
+> Still no use-case... But yes, I forgot this is needed for correctness.
+> 
+> OK, thanks for your patience. But fyi now I hate this interface even more,
+> exactly because I was technically wrong in this discussion ;)
 
-OK, thanks for your patience. But fyi now I hate this interface even more,
-exactly because I was technically wrong in this discussion ;)
+Yeah, we might as well omit it for now and add it later when it's
+actually needed.  It's just that given that queue and flush are the
+two core interfaces, I didn't want to leave it out, and the current
+implementation is the lowest-effort one.  I'd be happy to make it
+better if you have good suggestions.
 
-Oleg.
+Thanks.
+
+-- 
+tejun
