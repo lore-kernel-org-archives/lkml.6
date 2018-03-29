@@ -1,122 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751150AbeC2G57 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 02:57:59 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50578 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeC2G56 (ORCPT
+        id S1751403AbeC2G6a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 02:58:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44660 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750709AbeC2G62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 02:57:58 -0400
-X-Google-Smtp-Source: AIpwx4/WmcrmJmeeIH2xDh908U7atGVQExjCjw5G20g4vIcWAy8xNYhKeKX68sN3nIlmtP1S5iLNAA==
-Date: Thu, 29 Mar 2018 08:57:53 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Christian =?iso-8859-1?Q?K=F6nig?=
-        <ckoenig.leichtzumerken@gmail.com>
-Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180329065753.GD3881@phenom.ffwll.local>
-Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-4-christian.koenig@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180325110000.2238-4-christian.koenig@amd.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 29 Mar 2018 02:58:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4FABC6028D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rfried@codeaurora.org
+From: Ramon Fried <rfried@codeaurora.org>
+To: kvalo@codeaurora.org, loic.poulain@linaro.org
+Cc: wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ramon Fried <rfried@codeaurora.org>
+Subject: [PATCH v2] wcn36xx: Disable 5GHz for wcn3610
+Date: Thu, 29 Mar 2018 09:58:18 +0300
+Message-Id: <20180329065818.9338-1-rfried@codeaurora.org>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 25, 2018 at 12:59:56PM +0200, Christian König wrote:
-> Add a peer2peer flag noting that the importer can deal with device
-> resources which are not backed by pages.
-> 
-> Signed-off-by: Christian König <christian.koenig@amd.com>
+wcn3610 can only operate on 2.4GHz band due to RF limitation.
+If wcn36xx digital block is associated with an external IRIS
+RF module, retrieve the id and disable 5GHz band in case of
+wcn3610 id.
 
-Um strictly speaking they all should, but ttm never bothered to use the
-real interfaces but just hacked around the provided sg list, grabbing the
-underlying struct pages, then rebuilding&remapping the sg list again.
+Signed-off-by: Ramon Fried <rfried@codeaurora.org>
+---
+v2: fixed wrong assignment, which is logically introduces the 
+	same behaviour, but for correctness.
 
-The entire point of using sg lists was exactly to allow this use case of
-peer2peer dma (or well in general have special exporters which managed
-memory/IO ranges not backed by struct page). So essentially you're having
-a "I'm totally not broken flag" here.
+ drivers/net/wireless/ath/wcn36xx/main.c    | 4 +++-
+ drivers/net/wireless/ath/wcn36xx/wcn36xx.h | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-I think a better approach would be if we add a requires_struct_page or so,
-and annotate the current importers accordingly. Or we just fix them up (it
-is all in shared ttm code after all, I think everyone else got this
-right).
--Daniel
-
-> ---
->  drivers/dma-buf/dma-buf.c | 1 +
->  include/linux/dma-buf.h   | 4 ++++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> index ffaa2f9a9c2c..f420225f93c6 100644
-> --- a/drivers/dma-buf/dma-buf.c
-> +++ b/drivers/dma-buf/dma-buf.c
-> @@ -565,6 +565,7 @@ struct dma_buf_attachment *dma_buf_attach(const struct dma_buf_attach_info *info
->  
->  	attach->dev = info->dev;
->  	attach->dmabuf = dmabuf;
-> +	attach->peer2peer = info->peer2peer;
->  	attach->priv = info->priv;
->  	attach->invalidate = info->invalidate;
->  
-> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-> index 15dd8598bff1..1ef50bd9bc5b 100644
-> --- a/include/linux/dma-buf.h
-> +++ b/include/linux/dma-buf.h
-> @@ -313,6 +313,7 @@ struct dma_buf {
->   * @dmabuf: buffer for this attachment.
->   * @dev: device attached to the buffer.
->   * @node: list of dma_buf_attachment.
-> + * @peer2peer: true if the importer can handle peer resources without pages.
->   * @priv: exporter specific attachment data.
->   *
->   * This structure holds the attachment information between the dma_buf buffer
-> @@ -328,6 +329,7 @@ struct dma_buf_attachment {
->  	struct dma_buf *dmabuf;
->  	struct device *dev;
->  	struct list_head node;
-> +	bool peer2peer;
->  	void *priv;
->  
->  	/**
-> @@ -392,6 +394,7 @@ struct dma_buf_export_info {
->   * @dmabuf:	the exported dma_buf
->   * @dev:	the device which wants to import the attachment
->   * @priv:	private data of importer to this attachment
-> + * @peer2peer:	true if the importer can handle peer resources without pages
->   * @invalidate:	callback to use for invalidating mappings
->   *
->   * This structure holds the information required to attach to a buffer. Used
-> @@ -401,6 +404,7 @@ struct dma_buf_attach_info {
->  	struct dma_buf *dmabuf;
->  	struct device *dev;
->  	void *priv;
-> +	bool peer2peer;
->  	void (*invalidate)(struct dma_buf_attachment *attach);
->  };
->  
-> -- 
-> 2.14.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
+index ab5be6d2c691..833531a68c95 100644
+--- a/drivers/net/wireless/ath/wcn36xx/main.c
++++ b/drivers/net/wireless/ath/wcn36xx/main.c
+@@ -1146,7 +1146,7 @@ static int wcn36xx_init_ieee80211(struct wcn36xx *wcn)
+ 		BIT(NL80211_IFTYPE_MESH_POINT);
+ 
+ 	wcn->hw->wiphy->bands[NL80211_BAND_2GHZ] = &wcn_band_2ghz;
+-	if (wcn->rf_id != RF_IRIS_WCN3620)
++	if (wcn->rf_id != RF_IRIS_WCN3610 && wcn->rf_id != RF_IRIS_WCN3620)
+ 		wcn->hw->wiphy->bands[NL80211_BAND_5GHZ] = &wcn_band_5ghz;
+ 
+ 	wcn->hw->wiphy->max_scan_ssids = WCN36XX_MAX_SCAN_SSIDS;
+@@ -1248,6 +1248,8 @@ static int wcn36xx_platform_get_resources(struct wcn36xx *wcn,
+ 	if (iris_node) {
+ 		if (of_device_is_compatible(iris_node, "qcom,wcn3620"))
+ 			wcn->rf_id = RF_IRIS_WCN3620;
++		else if (of_device_is_compatible(iris_node, "qcom,wcn3610"))
++			wcn->rf_id = RF_IRIS_WCN3610;
+ 		of_node_put(iris_node);
+ 	}
+ 
+diff --git a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+index 81017e6703b4..bc4d1a10d90e 100644
+--- a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
++++ b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+@@ -95,6 +95,7 @@ enum wcn36xx_ampdu_state {
+ #define WCN36XX_MAX_POWER(__wcn) (__wcn->hw->conf.chandef.chan->max_power)
+ 
+ #define RF_UNKNOWN	0x0000
++#define RF_IRIS_WCN3610	0x3610
+ #define RF_IRIS_WCN3620	0x3620
+ 
+ static inline void buff_to_be(u32 *buf, size_t len)
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
