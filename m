@@ -1,36 +1,79 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+w8As35jt7aNx3MSgGPrMJMv8Cm9/RiV/fBUUy4WdD+oCeL2yXVPoMuP6NZ9maM3rdJ9bx
-ARC-Seal: i=1; a=rsa-sha256; t=1522346802; cv=none;
-        d=google.com; s=arc-20160816;
-        b=vBupoa+6J59czMynvOHamnLNrMY4xTgxYjZ1MvSnG0uJJTTUj7Zj8j2QrpQFFpH0um
-         9ivI1pZ21GcFFpP08oYfrLPJ1+tUX31GYbEZ+JIOBNFnBUyZb6kxSAJuOP3tacfZNFnh
-         Pl+FjtiHzX0KHxM1jFl17+5PDqaQG5yHTda+DfqDXvFl+40X699hNJ15ttIzdq3t2yqx
-         uOIbSqJ/bCUyNpcQ9/Wkk5mvVpz+toN3eDPWfg+vvpP4PBzoiz/x11nz0k2ZyTp3Bvde
-         35m/b63mOHmzHgIX2dwU5F1WRiqkkTZpol1gXN8BG0FHYp7W/NygR6epyk9ND6ENm+/o
-         0acA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=3I+yHrf+CPCpqQ4y6behOmiRZal4KpLvAy3mURHlHyc=;
-        b=Gqn5byd379tjfO3JNp3BtTu7gadju2ehthTZcvcdo2oTFs9cxUzn5OsOXNtJTwaOeM
-         OIAIm/p/6iYkM2oXFjeDzjqlDEFILA3fLpHlokpu8eRvpK0UFK5kYkE2wBthsFUNNe3m
-         c+QmigoKUPjxkqlyuajmgsnSSVaTTiYStVeVzr3wCOCjhNeDDHJrsMCTrXYFIZdFBwFm
-         Tj5Qw6xcY/TfvjxCYKALUNigGi3UizKNiIYs5PZZfOxi4diVzsYu17Z0XdYOFxYiIagy
-         EBqqcGv5UaqEEd47zQ7uYFVFcablwtZgzhTgwNI0GmgA9228TdpZ4eQHR0tWYPPpvvKN
-         Ze6A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346801-4-16881895091297167085
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522346801; b=FAsVfv4Up7OVQaGZKVlHtwGm0Eek5vJySkg5sEwGs+N8Zti8tM
+    uLXI0fI6AYSOSN81aZIpmqI7PI/g+2oTKH43Cm8u1RLYshYkkt/5E3havM2HhZ3J
+    bQLeTr9UNRyiU04Jz2C4uuznYjfxZBQvDftkNG7RVMb5MNMdlDcKczic9/r2JDK4
+    Ayyn8CcpeKybr9JkC0gOj1kYeFgewK9451d09sJMY2z/M8jaEclnp9wIxOiuRean
+    HOaajxfQCun3sSt/opV5oV4i+3kLtGQlogVVCGqptrnmhzpTlcEGRFS0VF0JA16l
+    wa9M7hgcTE/hi/nKT8kCItOzg+xS0B4mKbrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1522346801; bh=zImd4USYshDwspOOVSgJavQBGxj5WN
+    vfiltbeUgvRx8=; b=cGm9+rOtZDnkiMQ1xrx18BA87WJnk3TK4NlOAE7JBRexXd
+    OemgtHaEY8Ck5bAl+DS75c301fzvSn0uJANBPc/mPQnagRqCA3ZBuvYgN82E8s//
+    l739oIh6dEB9idrZ60t56BfLnXP9KebZBepuHnWSRtqO+Hlo83T98fO1w5Z14d3j
+    0jgdIsi5SNA951IKIjCzZvh9n5kjvq4tgAyH2uZsLz8H2M5oWF0GuHUuDsb7da+C
+    z4qrmkBvEOiPz9+r0z58QAu5ohJkNcC6GSNLg7OQKdKDnjZT7+hLkocAAX1IXkzm
+    bIUSkPzsr1fikYg+3dyHjmxziZAEEStpe5kG0IHg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGdtH3dW3lDv+J6ZY2B1GnntCI39o/qXEpno+MPKeDGWGWY1prx4mdCy+tH227jyWQSSncUhLxNC8kP2COzUdhCwWgoD47Qqv9mN6FxoWlWohxy467sP
+    2sb0F+CshY/xz4Uleo65m9K1VCjzghhMzu4gv3V9aRTN+MN62IBRttaXuG2iFl/kb8WDNpcZS6glZ3CrFHuB8AQaxhTqutnEB0h8nFbBDAOzRSz7gCPzUG3g
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=uso7iP-VdyED5FDit04A:9
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753748AbeC2SGi (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 14:06:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59704 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753376AbeC2SGh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:06:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 02/28] genirq: Track whether the trigger type has been set
-Date: Thu, 29 Mar 2018 20:00:21 +0200
-Message-Id: <20180329175733.738322674@linuxfoundation.org>
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 18/28] net: Only honor ifindex in IP_PKTINFO if non-0
+Date: Thu, 29 Mar 2018 20:00:37 +0200
+Message-Id: <20180329175735.469845568@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -38,10 +81,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296321269609847?=
-X-GMAIL-MSGID: =?utf-8?q?1596296321269609847?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,103 +91,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: David Ahern <dsahern@gmail.com>
 
-commit 4f8413a3a799c958f7a10a6310a451e6b8aef5ad upstream.
 
-When requesting a shared interrupt, we assume that the firmware
-support code (DT or ACPI) has called irqd_set_trigger_type
-already, so that we can retrieve it and check that the requester
-is being reasonnable.
+[ Upstream commit 2cbb4ea7de167b02ffa63e9cdfdb07a7e7094615 ]
 
-Unfortunately, we still have non-DT, non-ACPI systems around,
-and these guys won't call irqd_set_trigger_type before requesting
-the interrupt. The consequence is that we fail the request that
-would have worked before.
+Only allow ifindex from IP_PKTINFO to override SO_BINDTODEVICE settings
+if the index is actually set in the message.
 
-We can either chase all these use cases (boring), or address it
-in core code (easier). Let's have a per-irq_desc flag that
-indicates whether irqd_set_trigger_type has been called, and
-let's just check it when checking for a shared interrupt.
-If it hasn't been set, just take whatever the interrupt
-requester asks.
-
-Fixes: 382bd4de6182 ("genirq: Use irqd_get_trigger_type to compare the trigger type for shared IRQs")
-Cc: stable@vger.kernel.org
-Reported-and-tested-by: Petr Cvek <petrcvekcz@gmail.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/irq.h |   11 ++++++++++-
- kernel/irq/manage.c |   13 ++++++++++++-
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ net/ipv4/ip_sockglue.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -199,6 +199,7 @@ struct irq_data {
-  * IRQD_WAKEUP_ARMED		- Wakeup mode armed
-  * IRQD_FORWARDED_TO_VCPU	- The interrupt is forwarded to a VCPU
-  * IRQD_AFFINITY_MANAGED	- Affinity is auto-managed by the kernel
-+ * IRQD_DEFAULT_TRIGGER_SET	- Expected trigger already been set
-  */
- enum {
- 	IRQD_TRIGGER_MASK		= 0xf,
-@@ -216,6 +217,7 @@ enum {
- 	IRQD_WAKEUP_ARMED		= (1 << 19),
- 	IRQD_FORWARDED_TO_VCPU		= (1 << 20),
- 	IRQD_AFFINITY_MANAGED		= (1 << 21),
-+	IRQD_DEFAULT_TRIGGER_SET	= (1 << 25),
- };
- 
- #define __irqd_to_state(d) ACCESS_PRIVATE((d)->common, state_use_accessors)
-@@ -245,18 +247,25 @@ static inline void irqd_mark_affinity_wa
- 	__irqd_to_state(d) |= IRQD_AFFINITY_SET;
- }
- 
-+static inline bool irqd_trigger_type_was_set(struct irq_data *d)
-+{
-+	return __irqd_to_state(d) & IRQD_DEFAULT_TRIGGER_SET;
-+}
-+
- static inline u32 irqd_get_trigger_type(struct irq_data *d)
- {
- 	return __irqd_to_state(d) & IRQD_TRIGGER_MASK;
- }
- 
- /*
-- * Must only be called inside irq_chip.irq_set_type() functions.
-+ * Must only be called inside irq_chip.irq_set_type() functions or
-+ * from the DT/ACPI setup code.
-  */
- static inline void irqd_set_trigger_type(struct irq_data *d, u32 type)
- {
- 	__irqd_to_state(d) &= ~IRQD_TRIGGER_MASK;
- 	__irqd_to_state(d) |= type & IRQD_TRIGGER_MASK;
-+	__irqd_to_state(d) |= IRQD_DEFAULT_TRIGGER_SET;
- }
- 
- static inline bool irqd_is_level_type(struct irq_data *d)
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1210,7 +1210,18 @@ __setup_irq(unsigned int irq, struct irq
- 		 * set the trigger type must match. Also all must
- 		 * agree on ONESHOT.
- 		 */
--		unsigned int oldtype = irqd_get_trigger_type(&desc->irq_data);
-+		unsigned int oldtype;
-+
-+		/*
-+		 * If nobody did set the configuration before, inherit
-+		 * the one provided by the requester.
-+		 */
-+		if (irqd_trigger_type_was_set(&desc->irq_data)) {
-+			oldtype = irqd_get_trigger_type(&desc->irq_data);
-+		} else {
-+			oldtype = new->flags & IRQF_TRIGGER_MASK;
-+			irqd_set_trigger_type(&desc->irq_data, oldtype);
-+		}
- 
- 		if (!((old->flags & new->flags) & IRQF_SHARED) ||
- 		    (oldtype != (new->flags & IRQF_TRIGGER_MASK)) ||
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -242,7 +242,8 @@ int ip_cmsg_send(struct sock *sk, struct
+ 			src_info = (struct in6_pktinfo *)CMSG_DATA(cmsg);
+ 			if (!ipv6_addr_v4mapped(&src_info->ipi6_addr))
+ 				return -EINVAL;
+-			ipc->oif = src_info->ipi6_ifindex;
++			if (src_info->ipi6_ifindex)
++				ipc->oif = src_info->ipi6_ifindex;
+ 			ipc->addr = src_info->ipi6_addr.s6_addr32[3];
+ 			continue;
+ 		}
+@@ -272,7 +273,8 @@ int ip_cmsg_send(struct sock *sk, struct
+ 			if (cmsg->cmsg_len != CMSG_LEN(sizeof(struct in_pktinfo)))
+ 				return -EINVAL;
+ 			info = (struct in_pktinfo *)CMSG_DATA(cmsg);
+-			ipc->oif = info->ipi_ifindex;
++			if (info->ipi_ifindex)
++				ipc->oif = info->ipi_ifindex;
+ 			ipc->addr = info->ipi_spec_dst.s_addr;
+ 			break;
+ 		}
