@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684034-1522355843-2-16941468236867258729
+X-Cyrus-Session-Id: sloti22d1t05-1684034-1522355835-2-2658012893786397909
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522355843; b=r9jqWH3NvIdm6rU7wdNGgYZCK/pWcjJ6mIuU2u3GTMFdKOmU5I
-    XuqXbjZGVaoY+HZrXzPufW0E77ElPLFIFT9fhI0cONTNY7R/l8wfUu20ft3j2uQq
-    5oCFSRNFyHKrhicRYUpLxVmiyhhdv+TkuumrA2mmCg+ZlkXgJ0Zc1Deew0CRnF99
-    5yzhPVG0zTeU1UtYmrFhOhiRAFJQQXrVi8PErORFoabByi6SWfQzvCMVsGEODQXP
-    K+CaOZpfjXRYDWgT+OlvkIYnwBX+DSpTkETf20GG2tF6xiATYGNjdD9TiJfTVo5b
-    rKuJN2IX8I1b9Vhtu138axXY3JZzovwBccHw==
+    1522355834; b=ZgPbRVfUYPpbGRcWx22LZnTL9oZVSyTIDkAUvqlDX5hdYo8CMk
+    zSVuG3VPbUrRcAasO9HePwoupDBQHeo7JEFcBniYAYgd7+6a5dSEHD3CwIfajb4i
+    zIqmJpepxy6LCjXJk1fRy3y6PshBcaxQBQxtjQ/qGFDvrnd8oLeu0sgOmXaVQ5+x
+    9V0zDhwFwkN3Dy9gVMQUoPK+Se3ijg1y0OXZuJN0DlWIeFp2qJXGMM35Z4Xa063G
+    vQvc4Aij9n7nIR/detcLpluvqVlmRO3UnOiG6QnvLPMY9YemQOaoNQJ5kY9owoTi
+    4fn+4clHfQp1S80GS7g9PWXV1RBVTl1Y03XA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1522355843; bh=
-    OHZ4aktvZgwBFU9y32htmcYpxVzm3/zUzCsSiAFBoU4=; b=YP1SZxpxo1banHdq
-    wWwYG3ner05tNLJYTvwZo2cKGJ2AnNtjopEoLpLqQpnDVPVxvI2rtyKi8APvY+gM
-    uTehGxrYRS7FrUHfEq7cwvizPr2YDoxkDwnGfMoTzjChh0mZ9cw9fvKiNXxyl8HK
-    tQwtNmDO6XNaGqJbEwjRLrn5MlYjNnS6i/GIFj59jhPTVqewad8Za65u2BtU+V+T
-    tG+FTBfEUBCAMvE/duNnVizwTu73Wj0poJIeHhKF/7T7tD8uz0HDP0xiUxOKVduK
-    VDWeVHUMKjRlWASqkHN4YbEU4rdRkjwCnazcKZ6VDlLYTDVjPvYpqxz2Y3oG3vi4
-    KhwSjQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=dYR3bS8M x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=fm2; t=1522355834; bh=
+    8s3l2WEdAfY3Zli7acWKC0c1lZwgW0FRQMiQDnOq7Qw=; b=gCrKIWX8CnqyX1sG
+    Ow5FNNA4INnmpgducLxlryTl1DEulAv9Wjb8iTeU3PtBjLumYPzGAipZ34heZkuO
+    ybzIiOjtw9zTVSgNyBKO2k6J6i9N1NmqqBr68sXnuv8+5OG/QDQmICpXxwNaLVYF
+    TC6GIbOVSsAO0Cl9/1qmJnVjQw8Zwd+3pwtRbKQLEikZQNLreYCRiDD/iXuIUwcS
+    L/B4Ay7iL1VYR/ExNPkHsCHqimEhCo10FgXFY8VUxiC7hX9ltHYwQTdZM8OFgOCK
+    lhA0jzIIcW/yz39ARyxglOJnENM0GkO95vaiC/gnFeS26L3zeInJPyA72rHJ0BRo
+    Sg91Dw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=ATfCACg4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=dYR3bS8M x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=ATfCACg4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,28 +51,28 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLx7uB6FyvCKZsu6K2o0MKbapZFnAA4w+N/GspHmr7f7G+TAG6zsltkakfq0yl16mD3IgvIuiqpIgt3nBuCf/zzQgEZEkde5tW/+vCmXiz1UfvY4nBZk
-    DbSDEBddPhsBAQJFIEpEmPPPBDeezIowrSkY0D0L4VUHXX8S3blakk0li/BlM3xZvFlnrftjQ0jCErHrJFwfiFofvBmzuKacZIlIrjYW2FsQlLPndHWbZ+Sz
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEeyEZfXIzHGZJqW1dsW+uYrEkCOYz8FeTBh8a6135e+X1awsVYY8Mkx9O8PmqxeoeCC236MOP4vAJ50vs8X5Yv3Ky6Orb/uTxMTEmhpsUceGl8BmVEl
+    qlKkebddqHp5W+3oWDURUdoJOrRsCg27ZewSUGGOXIC4Mk/oiI7IH3T6B15orVbuRPGyYScLehcxqiQl/fJ/jdiKwFdJINVLLh/7kvTAE+Jr8frIUuX9vxw5
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
-    a=CdJLp5WRwxpRCsuKMh0A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=F55Z69aUwsZ0p8WbI6QA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752986AbeC2UfE (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 16:35:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53954 "EHLO
+        id S1752740AbeC2Ugv (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 16:36:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53976 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbeC2UfB (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 29 Mar 2018 16:35:01 -0400
+        with ESMTP id S1753010AbeC2UfF (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 29 Mar 2018 16:35:05 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 24/30] net/iucv: convert to ->poll_mask
-Date: Thu, 29 Mar 2018 22:33:22 +0200
-Message-Id: <20180329203328.3248-25-hch@lst.de>
+Subject: [PATCH 25/30] net/rxrpc: convert to ->poll_mask
+Date: Thu, 29 Mar 2018 22:33:23 +0200
+Message-Id: <20180329203328.3248-26-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180329203328.3248-1-hch@lst.de>
 References: <20180329203328.3248-1-hch@lst.de>
@@ -85,52 +85,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/iucv/af_iucv.h | 2 --
- net/iucv/af_iucv.c         | 7 ++-----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ net/rxrpc/af_rxrpc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/include/net/iucv/af_iucv.h b/include/net/iucv/af_iucv.h
-index f4c21b5a1242..b0eaeb02d46d 100644
---- a/include/net/iucv/af_iucv.h
-+++ b/include/net/iucv/af_iucv.h
-@@ -153,8 +153,6 @@ struct iucv_sock_list {
- 	atomic_t	  autobind_name;
- };
- 
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait);
- void iucv_sock_link(struct iucv_sock_list *l, struct sock *s);
- void iucv_sock_unlink(struct iucv_sock_list *l, struct sock *s);
- void iucv_accept_enqueue(struct sock *parent, struct sock *sk);
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index 1e8cc7bcbca3..539a312dc481 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -1489,14 +1489,11 @@ static inline __poll_t iucv_accept_poll(struct sock *parent)
- 	return 0;
- }
- 
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait)
-+static __poll_t iucv_sock_poll_mask(struct socket *sock, __poll_t events)
+diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
+index 0c9c18aa7c77..d2440d5c3ce8 100644
+--- a/net/rxrpc/af_rxrpc.c
++++ b/net/rxrpc/af_rxrpc.c
+@@ -729,15 +729,11 @@ static int rxrpc_getsockopt(struct socket *sock, int level, int optname,
+ /*
+  * permit an RxRPC socket to be polled
+  */
+-static __poll_t rxrpc_poll(struct file *file, struct socket *sock,
+-			       poll_table *wait)
++static __poll_t rxrpc_poll_mask(struct socket *sock, __poll_t events)
  {
  	struct sock *sk = sock->sk;
- 	__poll_t mask = 0;
- 
--	sock_poll_wait(file, sk_sleep(sk), wait);
+ 	struct rxrpc_sock *rx = rxrpc_sk(sk);
+-	__poll_t mask;
 -
- 	if (sk->sk_state == IUCV_LISTEN)
- 		return iucv_accept_poll(sk);
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+-	mask = 0;
++	__poll_t mask = 0;
  
-@@ -2389,7 +2386,7 @@ static const struct proto_ops iucv_sock_ops = {
- 	.getname	= iucv_sock_getname,
- 	.sendmsg	= iucv_sock_sendmsg,
- 	.recvmsg	= iucv_sock_recvmsg,
--	.poll		= iucv_sock_poll,
-+	.poll_mask	= iucv_sock_poll_mask,
- 	.ioctl		= sock_no_ioctl,
- 	.mmap		= sock_no_mmap,
+ 	/* the socket is readable if there are any messages waiting on the Rx
+ 	 * queue */
+@@ -940,7 +936,7 @@ static const struct proto_ops rxrpc_rpc_ops = {
  	.socketpair	= sock_no_socketpair,
+ 	.accept		= sock_no_accept,
+ 	.getname	= sock_no_getname,
+-	.poll		= rxrpc_poll,
++	.poll_mask	= rxrpc_poll_mask,
+ 	.ioctl		= sock_no_ioctl,
+ 	.listen		= rxrpc_listen,
+ 	.shutdown	= rxrpc_shutdown,
 -- 
 2.14.2
 
