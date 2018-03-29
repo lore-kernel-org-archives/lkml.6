@@ -1,64 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752878AbeC2WIt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:08:49 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35974 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752748AbeC2WHj (ORCPT
+        id S1752903AbeC2WIy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:08:54 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37936 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752880AbeC2WIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:07:39 -0400
-X-Google-Smtp-Source: AIpwx48s6VrYWHLSDrQ1sY5mLcFsIq+i46lezsPdWTjrJZkT+lurgXD59Lt/krui2bq0Lv3Pb1qayg==
-From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To: axboe@fb.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keith.busch@intel.com, javier@cnexlabs.com,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 31/37] lightnvm: pblk: check for supported version
-Date: Fri, 30 Mar 2018 00:05:18 +0200
-Message-Id: <20180329220524.30363-32-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
-References: <20180329220524.30363-1-mb@lightnvm.io>
+        Thu, 29 Mar 2018 18:08:51 -0400
+X-Google-Smtp-Source: AIpwx49564Opt+k3ByLfHhmwcac/Q7QDUjFW4we8lC29f9Y/j2vtccSOVoDfqGTi/lpt8bmuaBmL7g==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFqH_51czaGUzaWpAo1+E0JeNh3o-vA4CucXQT1DKnwhZLML5A@mail.gmail.com>
+References: <20170927213527.31416-1-shawnn@chromium.org> <20171129121123.7zg63mjy7pufokg5@dell>
+ <CAFqH_51zqxXZeEXDSry9aBwwj4Z7SRzxfKw5Ffzh-2A1UQG2Pw@mail.gmail.com>
+ <CAHNYxRyDDJRuoU67bjJ+Osvx9GauSPkwCsRZbknwVOY=rb6SEA@mail.gmail.com> <CAFqH_51czaGUzaWpAo1+E0JeNh3o-vA4CucXQT1DKnwhZLML5A@mail.gmail.com>
+From: Alexandru M Stan <amstan@chromium.org>
+Date: Thu, 29 Mar 2018 15:08:27 -0700
+X-Gmail-Original-Message-ID: <CAHNYxRz9tBv_AEQ6DiyxuN2hR_2ACiNr0Afx_tj-uepwBYXp+w@mail.gmail.com>
+Message-ID: <CAHNYxRz9tBv_AEQ6DiyxuN2hR_2ACiNr0Afx_tj-uepwBYXp+w@mail.gmail.com>
+Subject: Re: [PATCH] mfd: cros ec: spi: Fix "in progress" error signaling
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Shawn Nematbakhsh <shawnn@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, jonathanh@nvidia.com,
+        Brian Norris <briannorris@chromium.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@cnexlabs.com>
+On Tue, Mar 27, 2018 at 3:49 AM, Enric Balletbo Serra
+<eballetbo@gmail.com> wrote:
+> I think that accessing to the ec console should give the same result, right?
 
-At this point, only 1.2 spec is supported, thus check for it. Also,
-since device-side L2P is only supported in the 1.2 spec, make sure to
-only check its value under 1.2.
+Yep, even better.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/lightnvm/pblk-init.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> In such case here is:
+>
+> Veyron Minnie ( ASUS Chromebook Flip C100PA )
+> -------------------------------------------------------------------
+> Chip:    stm stm32f07x
+> Board:   0
+> RO:      minnie_v1.1.2697-faafaa5
+> RW:      minnie_v1.1.2712-242f6bd
+> Build: minnie_v1.1.2712-242f6bd 2016-11-03 00:34:41 @build196-m2
+>
+> Veyron Jaq (  Haier Mighty MP )
+> --------------------------------------------------------------------
+> Chip:    stm stm32f07x
+> Board:   0
+> RO:      mighty_v1.1.2680-6727e1d
+> RW:      mighty_v1.1.2712-242f6bd
+> Build: mighty_v1.1.2680-6727e1d 2015-03-24 01:12:48 @build290-m2
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 4656d1ff81a6..34ff47705293 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -1016,9 +1016,15 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	struct pblk *pblk;
- 	int ret;
- 
--	if (dev->geo.dom & NVM_RSP_L2P) {
-+	if (geo->version != NVM_OCSSD_SPEC_12) {
-+		pr_err("pblk: OCSSD version not supported (%u)\n",
-+							geo->version);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (geo->version == NVM_OCSSD_SPEC_12 && geo->dom & NVM_RSP_L2P) {
- 		pr_err("pblk: host-side L2P table not supported. (%x)\n",
--							dev->geo.dom);
-+							geo->dom);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--- 
-2.11.0
+Looks like your mighty is running the RO firmware, whereas your minnie
+runs RW. Is it possible you have the 0x200 bit in the gbb flags set on
+mighty? That would prevent the RO->RW transition, and give you an
+older firmware.
+
+6727e1d..242f6bd is quite the change. I see some spi changes too,
+though i believe it's mostly at power state transitions
+(suspend/resume). Other changes include battery settings (yeah.. you
+should really avoid running that RO if you can avoid it) and a ton of
+accelerometer stuff for minnie.
+
+If it's not the gbb flags, and we can't figure it out why you're stuck
+in RO, you can also use "sysjump RW" to force the RW copy on mighty.
+See if there's any behavior changes in what you care about.
+
+>
+> We're running the RW firmware and I just discovered that our jaq is a
+> mighty (but I guess it's the same?)
+
+They're essentially the same, but they're running slightly different
+firmware. In practice the only difference is that mighty's firmware
+reads an extra gpio for the battery presence.
+
+Feel free to diff the board/{jaq,mighty} ec folders for yourself for
+more details/assurances.
+
+>
+> Thanks,
+>   Enric
+
+All in all I'm not sure that the version differences are enough to
+explain the spi errors you see in the kernel.
+
+My bet is back to the accelerometer stuff:
+Are you running chromeos ui on this device (is there a chromeos-chrome
+process constantly polling the accelerometer, so asking the cros-ec
+driver for transfers)?
+Another thing to make sure accelerometer is disabled is to run
+"accelrate 0 0" on the minnie EC.
+If none of that accelerometer stuff is enabled, minnie should
+essentially act like a mighty/jaq.
