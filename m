@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/zE8EcstHwnG5rWJaNM6rGHIsoPpZUMsgefVkGHXyIp2LsT0C4hQYyEiaRmPJsz8eg5yLO
-ARC-Seal: i=1; a=rsa-sha256; t=1522346878; cv=none;
+X-Google-Smtp-Source: AIpwx49bH/2mWKiGOAkyOLSdE8XLJBPzIIQHHBJ6p+zwJbIDxv0N+VZY05NFSgVTXwa12rb5XwLu
+ARC-Seal: i=1; a=rsa-sha256; t=1522346876; cv=none;
         d=google.com; s=arc-20160816;
-        b=a8P20AMFdtH03MjWEsFt799aVWKe7cPzaVYBYuE1k3zYUadmRSuVfzQvjJuUSGiAZz
-         k74mGg/ZgcFTIFFcbdEg3iP++nxkjC/8D7Ud5dMG8UWI7FRe//EP2p83T7GPZG6aIgxG
-         1kOOuA9pywlLq+EU+fFWMcaFSnHsKq4TLkXsZ/7By5rGjJV6rA1G60Lgp+lzfyFk3/V6
-         s5xNamK9Le7VwGPoEMtRdYxf4OuYFHrkK0iDB2i42ACijSq+PhkfpDnFCN4192TaKW3f
-         ZOzk3YFFUnn5vexLaj4uskQ+w94wr94qDQkp+lT5wvgjmGxxi7HwRtfUxleB7ume5ch0
-         z4vA==
+        b=hwyjOw8gEoy/3hcvBdqDxLtjcLPP/sUGIEGOpobq8ljJ9nccV2neA8lHlm2n6uperB
+         l/maH+QcOwIH9FD+/Rj/vLNcSjqiZHjPAY4uiWQx1lVCM2NnnatpHMRKh+XWntZiIPCs
+         Yfe/Dxu++QTN7KGdiW3zeOBBB4hQ4dPr6fmyP+Z/28ky+RIMzDADJ5fmpYITeeea5qj2
+         z3e7YOY4oqpQtVWxyEvxeHINZuhc/z0ilq7Umn6ZvAtWRSQUqQS53XexAp3APfRWytFj
+         e0+nhqQrZwP/Qdj/PRxKwuLz459xT7F9rd0p0kbHtrPbpo9BjfOd+dR6FXiV3mHbAN+x
+         RFbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/pjYIfgTv+95VcBhOCLkfnIa77vY/CtV7o6cjne58V8=;
-        b=fUq2tQ2D4uNFXL7mfdpPhStMvrSyvrK+B94KlxVZG7l6Ta/+Zc1IDLDcAZOdCaWh0H
-         aYD084atqq7BMJbdSk6F9uJLFwh+eM5QipnLta+lzvq9mh1JZ47/EnUu/WeM5YTw5pwJ
-         YtfqRI0QX6PtLeXTBl2EkHAi1/EIgGlpMUH/xcd4YHpfQIp1bMtjS6qvfYsfW03yvsDh
-         3uLp68HRqiGFo3jL0tUn6R829GELw5QYW7HKtx5NxyQsVsrWAPkYW98/tVSgKi/YsN4T
-         0r7spYQEtHaCamNK4QWMydKgaQvoYlHnHzCYLqlm187ra34qbpIf/iNR6J9cai7WNMNu
-         wlcQ==
+        bh=8E9HWXFSCs6I99c4at4UySf2uX8gvGrhEF9rHHGiaXY=;
+        b=vcjaL4NTvkRTmzGP89ID2/7m2JtyKZejjbf/iDmV23HJuMqo14eLKImRB4l6DgXbv4
+         7lQXRlQuyP0Rn2AIXcuz9GPslGGlkxKJvMlyOMAWjBn4tOh0y7msqyp2ZdvjGDnFLlrs
+         0biO3fzXqAbqBCCBDac1i0qESpVzx2Xppjrs8cH6XoQlYViS38mwRXHfZAfMvMN33j1g
+         R3PDMpi3EjwgLepmz3PPR01+4oglW+oUK2kywWBOKRUy9Ku9+hkWM7lYAINFVwPA9IO8
+         JXzJIU7SlfUS6x8orUVcY5Xy99O4u53wNNaEEBfTXeZJLnTOXeZgPxG51hOjQLlr9hSa
+         gXVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Guillaume Nault <g.nault@alphalink.fr>,
+	James Chapman <jchapman@katalix.com>,
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 07/20] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
-Date: Thu, 29 Mar 2018 20:00:43 +0200
-Message-Id: <20180329175742.191382809@linuxfoundation.org>
+Subject: [PATCH 4.4 06/20] l2tp: do not accept arbitrary sockets
+Date: Thu, 29 Mar 2018 20:00:42 +0200
+Message-Id: <20180329175742.147256854@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296100956392169?=
-X-GMAIL-MSGID: =?utf-8?q?1596296400484597561?=
+X-GMAIL-THRID: =?utf-8?q?1596296098194339740?=
+X-GMAIL-MSGID: =?utf-8?q?1596296397748899297?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,34 +52,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 00777fac28ba3e126b9e63e789a613e8bd2cab25 ]
+[ Upstream commit 17cfe79a65f98abe535261856c5aef14f306dff7 ]
 
-If the optional regulator is deferred, we must release some resources.
-They will be re-allocated when the probe function will be called again.
+syzkaller found an issue caused by lack of sufficient checks
+in l2tp_tunnel_create()
 
-Fixes: 6eacf31139bf ("ethernet: arc: Add support for Rockchip SoC layer device tree bindings")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+RAW sockets can not be considered as UDP ones for instance.
+
+In another patch, we shall replace all pr_err() by less intrusive
+pr_debug() so that syzkaller can find other bugs faster.
+Acked-by: Guillaume Nault <g.nault@alphalink.fr>
+Acked-by: James Chapman <jchapman@katalix.com>
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
+dst_release: dst:00000000d53d0d0f refcnt:-1
+Write of size 1 at addr ffff8801d013b798 by task syz-executor3/6242
+
+CPU: 1 PID: 6242 Comm: syz-executor3 Not tainted 4.16.0-rc2+ #253
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x194/0x24d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23b/0x360 mm/kasan/report.c:412
+ __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
+ setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
+ l2tp_tunnel_create+0x1354/0x17f0 net/l2tp/l2tp_core.c:1596
+ pppol2tp_connect+0x14b1/0x1dd0 net/l2tp/l2tp_ppp.c:707
+ SYSC_connect+0x213/0x4a0 net/socket.c:1640
+ SyS_connect+0x24/0x30 net/socket.c:1621
+ do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/arc/emac_rockchip.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/l2tp/l2tp_core.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/arc/emac_rockchip.c
-+++ b/drivers/net/ethernet/arc/emac_rockchip.c
-@@ -150,8 +150,10 @@ static int emac_rockchip_probe(struct pl
- 	/* Optional regulator for PHY */
- 	priv->regulator = devm_regulator_get_optional(dev, "phy");
- 	if (IS_ERR(priv->regulator)) {
--		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER) {
-+			err = -EPROBE_DEFER;
-+			goto out_clk_disable;
-+		}
- 		dev_err(dev, "no regulator found\n");
- 		priv->regulator = NULL;
- 	}
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1518,9 +1518,14 @@ int l2tp_tunnel_create(struct net *net,
+ 		encap = cfg->encap;
+ 
+ 	/* Quick sanity checks */
++	err = -EPROTONOSUPPORT;
++	if (sk->sk_type != SOCK_DGRAM) {
++		pr_debug("tunl %hu: fd %d wrong socket type\n",
++			 tunnel_id, fd);
++		goto err;
++	}
+ 	switch (encap) {
+ 	case L2TP_ENCAPTYPE_UDP:
+-		err = -EPROTONOSUPPORT;
+ 		if (sk->sk_protocol != IPPROTO_UDP) {
+ 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
+ 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
+@@ -1528,7 +1533,6 @@ int l2tp_tunnel_create(struct net *net,
+ 		}
+ 		break;
+ 	case L2TP_ENCAPTYPE_IP:
+-		err = -EPROTONOSUPPORT;
+ 		if (sk->sk_protocol != IPPROTO_L2TP) {
+ 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
+ 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
