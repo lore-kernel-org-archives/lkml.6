@@ -1,67 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeC2OVn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:21:43 -0400
-Received: from muru.com ([72.249.23.125]:34338 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750884AbeC2OVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:21:41 -0400
-Date: Thu, 29 Mar 2018 07:21:37 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
-Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
- omap4-droid4: add soundcard
-Message-ID: <20180329142137.GO5700@atomide.com>
-References: <20180323100930.GA21644@amd>
- <20180323103006.alymgb3ywftb4gek@earth.universe>
- <20180326141638.GB1450@amd>
- <20180326155828.ttnduivadob4iqmd@earth.universe>
- <20180327121441.GH29239@sirena.org.uk>
- <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
- <20180328022910.GM29239@sirena.org.uk>
- <20180328140219.f6667up5evrrafkv@earth.universe>
- <20180329014507.GM5700@atomide.com>
- <20180329140948.GA27473@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180329140948.GA27473@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751219AbeC2OX2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:23:28 -0400
+Received: from aer-iport-3.cisco.com ([173.38.203.53]:42839 "EHLO
+        aer-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750971AbeC2OX1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:23:27 -0400
+X-IronPort-AV: E=Sophos;i="5.48,376,1517875200";
+   d="scan'208";a="2848594"
+From: Stefan Strogin <sstrogin@cisco.com>
+To: Evgeniy Polyakov <zbr@ioremap.net>, netdev@vger.kernel.org
+Cc: Stefan Strogin <sstrogin@cisco.com>, linux-kernel@vger.kernel.org,
+        xe-linux-external@cisco.com, Jesper Derehag <jderehag@hotmail.com>,
+        Matt Helsley <matt.helsley@gmail.com>,
+        Mathias Krause <minipli@googlemail.com>
+Subject: [PATCH] connector: add parent pid and tgid to coredump and exit events
+Date: Thu, 29 Mar 2018 17:12:47 +0300
+Message-Id: <20180329141247.20943-1-sstrogin@cisco.com>
+X-Mailer: git-send-email 2.11.0
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Authenticated-User: sstrogin
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180329 14:11]:
-> Hi!
-> 
-> > Meanwhile, I can try to make voice calls more reproducable with
-> > qmi or MM for example instead of just n_gsm.. And then I'll try
-> > to fix my n_gsm pile of hacks for posting..
-> 
-> If you get something to work, that will be great.
+The intention is to get notified of process failures as soon
+as possible, before a possible core dumping (which could be very long)
+(e.g. in some process-manager). Coredump and exit process events
+are perfect for such use cases (see 2b5faa4c553f "connector: Added
+coredumping event to the process connector").
 
-Yeah I need to at least fix a n_gsm message handling issue that
-currently causes retries and the retries have to be set artificially
-high right now to avoid timeouts.. Right now each at command takes
-about 30 seconds.. So I can't do any short calls :)
+The problem is that for now the process-manager cannot know the parent
+of a dying process using connectors. This could be useful if the
+process-manager should monitor for failures only children of certain
+parents, so we could filter the coredump and exit events by parent
+process and/or thread ID.
 
-> If you get ofonod to work, that would be even better :-). [That's what
-> Jolla uses, and that's what I have graphical clients for].
+Add parent pid and tgid to coredump and exit process connectors event
+data.
 
-OK, I'll stick to picocom, qmicli and mmcli for now :)
+Signed-off-by: Stefan Strogin <sstrogin@cisco.com>
+---
+ drivers/connector/cn_proc.c  | 4 ++++
+ include/uapi/linux/cn_proc.h | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-> Oh and.. if you have reasonable windowing system, let me know.
-
-I've been just using xorg and i3.
-
-Regards,
-
-Tony
+diff --git a/drivers/connector/cn_proc.c b/drivers/connector/cn_proc.c
+index a782ce87715c..ed5e42461094 100644
+--- a/drivers/connector/cn_proc.c
++++ b/drivers/connector/cn_proc.c
+@@ -262,6 +262,8 @@ void proc_coredump_connector(struct task_struct *task)
+ 	ev->what = PROC_EVENT_COREDUMP;
+ 	ev->event_data.coredump.process_pid = task->pid;
+ 	ev->event_data.coredump.process_tgid = task->tgid;
++	ev->event_data.coredump.parent_pid = task->real_parent->pid;
++	ev->event_data.coredump.parent_tgid = task->real_parent->tgid;
+ 
+ 	memcpy(&msg->id, &cn_proc_event_id, sizeof(msg->id));
+ 	msg->ack = 0; /* not used */
+@@ -288,6 +290,8 @@ void proc_exit_connector(struct task_struct *task)
+ 	ev->event_data.exit.process_tgid = task->tgid;
+ 	ev->event_data.exit.exit_code = task->exit_code;
+ 	ev->event_data.exit.exit_signal = task->exit_signal;
++	ev->event_data.exit.parent_pid = task->real_parent->pid;
++	ev->event_data.exit.parent_tgid = task->real_parent->tgid;
+ 
+ 	memcpy(&msg->id, &cn_proc_event_id, sizeof(msg->id));
+ 	msg->ack = 0; /* not used */
+diff --git a/include/uapi/linux/cn_proc.h b/include/uapi/linux/cn_proc.h
+index 68ff25414700..db210625cee8 100644
+--- a/include/uapi/linux/cn_proc.h
++++ b/include/uapi/linux/cn_proc.h
+@@ -116,12 +116,16 @@ struct proc_event {
+ 		struct coredump_proc_event {
+ 			__kernel_pid_t process_pid;
+ 			__kernel_pid_t process_tgid;
++			__kernel_pid_t parent_pid;
++			__kernel_pid_t parent_tgid;
+ 		} coredump;
+ 
+ 		struct exit_proc_event {
+ 			__kernel_pid_t process_pid;
+ 			__kernel_pid_t process_tgid;
+ 			__u32 exit_code, exit_signal;
++			__kernel_pid_t parent_pid;
++			__kernel_pid_t parent_tgid;
+ 		} exit;
+ 
+ 	} event_data;
+-- 
+2.11.0
