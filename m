@@ -1,49 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeC2NMN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:12:13 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:40714 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbeC2NML (ORCPT
+        id S1752704AbeC2NNa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:13:30 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39296 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeC2NN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:12:11 -0400
-X-Google-Smtp-Source: AIpwx4+gifwFT5OetXs1F8PLo038anLJXnPpfqAuCHJcUP+09Yd9FZZBV4gb5hPeBKXUfHmulw+ZHWQ5smK0smo6i/0=
+        Thu, 29 Mar 2018 09:13:28 -0400
+Subject: Re: [PATCH] qed: fix a bunch of spelling mistakes/typos
+To: Joe Perches <joe@perches.com>, Ariel Elior <Ariel.Elior@cavium.com>,
+        everest-linux-l2@cavium.com
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180329124144.27841-1-colin.king@canonical.com>
+ <1522328485.2210.30.camel@perches.com>
+From: Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; keydata=
+ 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
+Message-ID: <96d001c9-9e14-9b5a-b0ca-a2e402840351@canonical.com>
+Date: Thu, 29 Mar 2018 14:13:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <b15f44f6-d052-17f2-b099-ea2d601c9a6e@redhat.com>
-References: <20180329120612.6104-1-agruenba@redhat.com> <b15f44f6-d052-17f2-b099-ea2d601c9a6e@redhat.com>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Thu, 29 Mar 2018 15:12:09 +0200
-Message-ID: <CAHc6FU4p7NLEyA88O5tHcQ_58PO0iHrVEDot=XKLWTQp2otagA@mail.gmail.com>
-Subject: Re: [Cluster-devel] [PATCH v2 0/2] gfs2: Stop using rhashtable_walk_peek
-To: Steven Whitehouse <swhiteho@redhat.com>
-Cc: cluster-devel <cluster-devel@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>,
-        Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1522328485.2210.30.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 March 2018 at 14:24, Steven Whitehouse <swhiteho@redhat.com> wrote:
-> Hi,
->
-> Can we solve the problem another way, by not taking refs on the glocks when
-> we are iterating over them for the debugfs files? I assume that is the main
-> issue here.
->
-> We didn't used to take refs since the rcu locking was enough during the walk
-> itself. We used to only keep track of the hash bucket and offset within the
-> bucket when we dropped the rcu lock between calls to the iterator. I may
-> have lost track of why that approach did not work?
+On 29/03/18 14:01, Joe Perches wrote:
+> On Thu, 2018-03-29 at 13:41 +0100, Colin King wrote:
+>> Trivial fix to spelling mistakes/typos in various DP_* messages.
+> []
+>> diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+> []
+>> @@ -231,7 +231,7 @@ static void qed_vf_pf_acquire_reduce_resc(struct qed_hwfn *p_hwfn,
+>>  {
+>>  	DP_VERBOSE(p_hwfn,
+>>  		   QED_MSG_IOV,
+>> -		   "PF unwilling to fullill resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
+>> +		   "PF unwilling to fulfil resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
+> 
+> Substituting one typo for another
+> 
+> fulfil->fulfill
+> 
+Ah, US english vs non-US english issue. I can resend if required.
 
-That doesn't work because when a glock doesn't fit into one read, we
-need to make sure that the next read will continue with the same glock
-or else we'll end up with a corrupted dump. And rhashtable_walk_peek
-cannot guarantee that.
-
-I've done some minimal performance testing and the additional ref
-taking only impacted the performance in the 10% range or less, so it
-doesn't really matter.
-
-Andreas
+Colin
