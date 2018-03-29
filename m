@@ -1,39 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/X8sZrylgtG1HjkKGcoRkc/bIkFwuKUMmInMNQ8FKfw2YsJtDzhegGUlAv7xIPnKaIiu7S
-ARC-Seal: i=1; a=rsa-sha256; t=1522346758; cv=none;
-        d=google.com; s=arc-20160816;
-        b=avyfkNS74S5MAlvhOQecV2hv7LR66/H2+R76jdweaNr/giWzcJzLjvslrCcNFlbqEY
-         2NyLnZj8hiEHc3Nrvj66NbLWcbjO/jXAG4atsqKiQFj9U4iG0Xf/emTdIRB9ww5OZoc4
-         lh9qfLpHG189xnPx/oI2JFYMjaAxymtSgIal+54PlhmQWe5m+fqoIZy5SM5TgjB9CNvF
-         O5smLj8mi1K3Gxql9bSzu7l5xUFz5d6ESczIAEvk/qwLb5GPbarvElysYhUEzTDpFjEr
-         A01U3m6EpPbyFkYtF/52lqfIFlUoz6L2dvidYstSTnO+oTpkrA4FE1dKUafiRwasmEO4
-         Yhrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=7wkI7kNWtUen1jIyyC7Xl37uMTWpnjkBt+bBCe/AqLY=;
-        b=AIxOGq+cx8FpvP+cuw0k2V94Nr1HyPkm8sZVIs/djYS/KtoozXGueTWhyAygJPYmml
-         4InrGisK9vBPDIs7r5XHUG30oagc0q1fCfK666+X8djVOxZxCaN1HXRQy0aKG4K+W2/J
-         jjbrqkwe9Dq/7yzgq3d61CiogiTkgDdV5QXW4UTkvj3weLUqJI/YeyX2KS/Y+vy9RjD1
-         TOAPmnzbfUJxaUmtkFjBdTRPcQ50KqKTDdq44yiqLUeh/LTIh1X/oygj0YddUxnAKi5M
-         WgRa6XvLBLksc3SJ/Qdnkgwxb1++TIZ+EIZxtpdXAxwsEsnqVIy+bacm4bv9tvT5Ktq6
-         wZJQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346756-2-11769447665073973019
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522346755; b=Nbnr18lFot8kRTGZfZ110ZfGnBYY28rGdYGlrg4ovHyE1xYIBx
+    vTx7BHhWd9uldnfw6m5X5zm3Ws+RhiUtFDM6eA4/owbbMj/pHrkkD5lf33UmZ76w
+    alyH39SjcqcqjtJwotp0vK3JQmySPkv65Ebt3A9Qot/vMQXyix74+QBwMzMo9aIW
+    s7MiKdMCdDwEyZEYIG0VFcdiAUdSg0ZIViigw4pDHBA3fc0KbVUMU9yjhzQ1f0zP
+    /3qRtGlCGjMEpiRmNCXuvf5MMaEe/3gaoBDXz7xsVqLoiUrKpa6/DahOlQPwCAhp
+    jqFBbxVj717oC9T4XpclzbJ2/DJ7YQdyfUdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1522346755; bh=VeS1bP24pcJeOS0kKbPR6NYyKNJlXb
+    H9lNdQDlOUIMU=; b=tt0WFOey+cGHR2SFscLkb1wLKzPs6Y6GQKHWKU2w1h8pV3
+    6dSbC/7Nmz+1cpL3Ys0UmU5cusigEcZWu3Ai4vwPzRgWk1uMfLjRxTOG50sQ7tCq
+    RfMwjVLan8KbM5UutdlWZD6+V8itNWz5gNkZnhPNCx+KO3iPrK4QBd8O65JsUEgz
+    W68OCMJ7WDH2r6Oa+f49RIZ4KkbWKz2lGUlatIbB1cYssRs1Ye6LFKFa5wf0LIBg
+    YvmEfrgWd1ZeYN4keJ6Qf4BmhwRHAWym7MeslSFTbHQOpLIFr2jGBPtMC06dX6ra
+    Ixq6bOdpq/3sK60/h5BlFiX1NvlcZD39fO3TZy9g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCMSzpeDwQOqUztzT75FJpcfTc/qL47YRcRerabTUBlJqGlwehUUUDHZMRCJ6XXdHQOrEKc93mzO2uMDbN4vbp2p2lTaSjqvJF2Wrr9w4gijLOEy94f+
+    F6LRlmXXFw2b45kCJhjed+E7nmsPpUha8DIPShbKfvgi9Hr7hBXJJmfVV2Fju2iFRwWb+HKVhongjXIssoFFHzwOfygHiUqDGPai1NvjkDp5ZgUEAet12qU0
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=Q69f-633ooQ3naWqEAsA:9 a=JSIAA7diVEC8PF5P:21 a=ENTuEwsGzZSbeU8Z:21
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753509AbeC2SFv (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 14:05:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59438 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752869AbeC2SFt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:05:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Holsety=20Chen=20 ?= <Holsety.Chen@moxa.com>,
-	=?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>,
-	Schuyler Patton <spatton@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 26/43] net: ethernet: ti: cpsw: add check for in-band mode setting with RGMII PHY interface
-Date: Thu, 29 Mar 2018 20:00:21 +0200
-Message-Id: <20180329175732.902609187@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 23/43] ipv6: fix access to non-linear packet in ndisc_fill_redirect_hdr_option()
+Date: Thu, 29 Mar 2018 20:00:18 +0200
+Message-Id: <20180329175732.572111485@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -41,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296104396396575?=
-X-GMAIL-MSGID: =?utf-8?q?1596296274468199835?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,45 +95,119 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "SZ Lin (林上智)" <sz.lin@moxa.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
 
-[ Upstream commit f9db50691db4a7d860fce985f080bb3fc23a7ede ]
+[ Upstream commit 9f62c15f28b0d1d746734666d88a79f08ba1e43e ]
 
-According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
-DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register is only
-available when PHY is configured in RGMII mode with 10Mbps speed. It will
-cause some networking issues without RGMII mode, such as carrier sense
-errors and low throughput. TI also mentioned this issue in their forum[4].
+Fix the following slab-out-of-bounds kasan report in
+ndisc_fill_redirect_hdr_option when the incoming ipv6 packet is not
+linear and the accessed data are not in the linear data region of orig_skb.
 
-This patch adds the check mechanism for PHY interface with RGMII interface
-type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
+[ 1503.122508] ==================================================================
+[ 1503.122832] BUG: KASAN: slab-out-of-bounds in ndisc_send_redirect+0x94e/0x990
+[ 1503.123036] Read of size 1184 at addr ffff8800298ab6b0 by task netperf/1932
 
-References:
-[1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
-[2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
-[3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
-[4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
+[ 1503.123220] CPU: 0 PID: 1932 Comm: netperf Not tainted 4.16.0-rc2+ #124
+[ 1503.123347] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-2.fc27 04/01/2014
+[ 1503.123527] Call Trace:
+[ 1503.123579]  <IRQ>
+[ 1503.123638]  print_address_description+0x6e/0x280
+[ 1503.123849]  kasan_report+0x233/0x350
+[ 1503.123946]  memcpy+0x1f/0x50
+[ 1503.124037]  ndisc_send_redirect+0x94e/0x990
+[ 1503.125150]  ip6_forward+0x1242/0x13b0
+[...]
+[ 1503.153890] Allocated by task 1932:
+[ 1503.153982]  kasan_kmalloc+0x9f/0xd0
+[ 1503.154074]  __kmalloc_track_caller+0xb5/0x160
+[ 1503.154198]  __kmalloc_reserve.isra.41+0x24/0x70
+[ 1503.154324]  __alloc_skb+0x130/0x3e0
+[ 1503.154415]  sctp_packet_transmit+0x21a/0x1810
+[ 1503.154533]  sctp_outq_flush+0xc14/0x1db0
+[ 1503.154624]  sctp_do_sm+0x34e/0x2740
+[ 1503.154715]  sctp_primitive_SEND+0x57/0x70
+[ 1503.154807]  sctp_sendmsg+0xaa6/0x1b10
+[ 1503.154897]  sock_sendmsg+0x68/0x80
+[ 1503.154987]  ___sys_sendmsg+0x431/0x4b0
+[ 1503.155078]  __sys_sendmsg+0xa4/0x130
+[ 1503.155168]  do_syscall_64+0x171/0x3f0
+[ 1503.155259]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
-Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
-Signed-off-by: Schuyler Patton <spatton@ti.com>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+[ 1503.155436] Freed by task 1932:
+[ 1503.155527]  __kasan_slab_free+0x134/0x180
+[ 1503.155618]  kfree+0xbc/0x180
+[ 1503.155709]  skb_release_data+0x27f/0x2c0
+[ 1503.155800]  consume_skb+0x94/0xe0
+[ 1503.155889]  sctp_chunk_put+0x1aa/0x1f0
+[ 1503.155979]  sctp_inq_pop+0x2f8/0x6e0
+[ 1503.156070]  sctp_assoc_bh_rcv+0x6a/0x230
+[ 1503.156164]  sctp_inq_push+0x117/0x150
+[ 1503.156255]  sctp_backlog_rcv+0xdf/0x4a0
+[ 1503.156346]  __release_sock+0x142/0x250
+[ 1503.156436]  release_sock+0x80/0x180
+[ 1503.156526]  sctp_sendmsg+0xbb0/0x1b10
+[ 1503.156617]  sock_sendmsg+0x68/0x80
+[ 1503.156708]  ___sys_sendmsg+0x431/0x4b0
+[ 1503.156799]  __sys_sendmsg+0xa4/0x130
+[ 1503.156889]  do_syscall_64+0x171/0x3f0
+[ 1503.156980]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+[ 1503.157158] The buggy address belongs to the object at ffff8800298ab600
+                which belongs to the cache kmalloc-1024 of size 1024
+[ 1503.157444] The buggy address is located 176 bytes inside of
+                1024-byte region [ffff8800298ab600, ffff8800298aba00)
+[ 1503.157702] The buggy address belongs to the page:
+[ 1503.157820] page:ffffea0000a62a00 count:1 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
+[ 1503.158053] flags: 0x4000000000008100(slab|head)
+[ 1503.158171] raw: 4000000000008100 0000000000000000 0000000000000000 00000001800e000e
+[ 1503.158350] raw: dead000000000100 dead000000000200 ffff880036002600 0000000000000000
+[ 1503.158523] page dumped because: kasan: bad access detected
+
+[ 1503.158698] Memory state around the buggy address:
+[ 1503.158816]  ffff8800298ab900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[ 1503.158988]  ffff8800298ab980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[ 1503.159165] >ffff8800298aba00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[ 1503.159338]                    ^
+[ 1503.159436]  ffff8800298aba80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1503.159610]  ffff8800298abb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1503.159785] ==================================================================
+[ 1503.159964] Disabling lock debugging due to kernel taint
+
+The test scenario to trigger the issue consists of 4 devices:
+- H0: data sender, connected to LAN0
+- H1: data receiver, connected to LAN1
+- GW0 and GW1: routers between LAN0 and LAN1. Both of them have an
+  ethernet connection on LAN0 and LAN1
+On H{0,1} set GW0 as default gateway while on GW0 set GW1 as next hop for
+data from LAN0 to LAN1.
+Moreover create an ip6ip6 tunnel between H0 and H1 and send 3 concurrent
+data streams (TCP/UDP/SCTP) from H0 to H1 through ip6ip6 tunnel (send
+buffer size is set to 16K). While data streams are active flush the route
+cache on HA multiple times.
+I have not been able to identify a given commit that introduced the issue
+since, using the reproducer described above, the kasan report has been
+triggered from 4.14 and I have not gone back further.
+
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/cpsw.c |    3 ++-
+ net/ipv6/ndisc.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -996,7 +996,8 @@ static void _cpsw_adjust_link(struct cps
- 		/* set speed_in input in case RMII mode is used in 100Mbps */
- 		if (phy->speed == 100)
- 			mac_control |= BIT(15);
--		else if (phy->speed == 10)
-+		/* in band mode only works in 10Mbps RGMII mode */
-+		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
- 			mac_control |= BIT(18); /* In Band mode */
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -1546,7 +1546,8 @@ static void ndisc_fill_redirect_hdr_opti
+ 	*(opt++) = (rd_len >> 3);
+ 	opt += 6;
  
- 		if (priv->rx_pause)
+-	memcpy(opt, ipv6_hdr(orig_skb), rd_len - 8);
++	skb_copy_bits(orig_skb, skb_network_offset(orig_skb), opt,
++		      rd_len - 8);
+ }
+ 
+ void ndisc_send_redirect(struct sk_buff *skb, const struct in6_addr *target)
