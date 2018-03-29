@@ -1,63 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752870AbeC2Lu6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:50:58 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33628 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeC2Luz (ORCPT
+        id S1753142AbeC2LuZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:50:25 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:58984 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752756AbeC2L0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:50:55 -0400
-X-Google-Smtp-Source: AIpwx4+oeBrKrEzmdkSZFQpFajorFfplhuZtaN4wjNuBcLThTS05QdL+x5RRyYLyXUN+pHpbtYwxeg==
-Date: Thu, 29 Mar 2018 20:50:51 +0900
-From: Stafford Horne <shorne@gmail.com>
-To: Shea Levy <shea@shealevy.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        openrisc@lists.librecores.org
-Subject: Re: [PATCH v5 12/16] openrisc: Switch to generic free_initrd_mem.
-Message-ID: <20180329115051.GF2836@lianli.shorne-pla.net>
-References: <20180328203659.18692-1-shea@shealevy.com>
- <20180329113207.30674-1-shea@shealevy.com>
- <20180329113207.30674-12-shea@shealevy.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329113207.30674-12-shea@shealevy.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Thu, 29 Mar 2018 07:26:11 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org
+Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Jiri Slaby <jslaby@suse.com>, x86@kernel.org
+Subject: [PATCH 006/109] x86: use _do_fork() in compat_sys_x86_clone()
+Date: Thu, 29 Mar 2018 13:22:43 +0200
+Message-Id: <20180329112426.23043-7-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
+References: <20180329112426.23043-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 07:32:03AM -0400, Shea Levy wrote:
-> The generic implementation is functionally identical.
-> 
-> Signed-off-by: Shea Levy <shea@shealevy.com>
+It is trivial to directly call _do_fork() instead of the sys_clone()
+syscall in compat_sys_x86_clone().
 
-Acked-by: Stafford Horne <shorne@gmail.com>
+This patch is part of a series which removes in-kernel calls to syscalls.
+On this basis, the syscall entry path can be streamlined. For details, see
+http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-> ---
->  arch/openrisc/mm/init.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
-> index 6972d5d6f23f..c1a3dcf9ad40 100644
-> --- a/arch/openrisc/mm/init.c
-> +++ b/arch/openrisc/mm/init.c
-> @@ -222,13 +222,6 @@ void __init mem_init(void)
->  	return;
->  }
->  
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void free_initmem(void)
->  {
->  	free_initmem_default(-1);
-> -- 
-> 2.16.2
-> 
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: x86@kernel.org
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ arch/x86/ia32/sys_ia32.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index 6512498bbef6..aa024a2dd34f 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -41,6 +41,7 @@
+ #include <linux/highuid.h>
+ #include <linux/sysctl.h>
+ #include <linux/slab.h>
++#include <linux/sched/task.h>
+ #include <asm/mman.h>
+ #include <asm/types.h>
+ #include <linux/uaccess.h>
+@@ -241,6 +242,6 @@ COMPAT_SYSCALL_DEFINE5(x86_clone, unsigned long, clone_flags,
+ 		       unsigned long, newsp, int __user *, parent_tidptr,
+ 		       unsigned long, tls_val, int __user *, child_tidptr)
+ {
+-	return sys_clone(clone_flags, newsp, parent_tidptr, child_tidptr,
++	return _do_fork(clone_flags, newsp, 0, parent_tidptr, child_tidptr,
+ 			tls_val);
+ }
+-- 
+2.16.3
