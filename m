@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752780AbeC2WPI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:15:08 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35921 "EHLO
+        id S1752447AbeC2WPa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:15:30 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46351 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752206AbeC2WHF (ORCPT
+        with ESMTP id S1752303AbeC2WHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:07:05 -0400
-X-Google-Smtp-Source: AIpwx49s4nZ2VSuQt8brYbkFPl5/6m0Oe9IUUiTUiMylZc2xt3Vz1mD1dn3jP6Jw8vS+lS2oJKYC+A==
+        Thu, 29 Mar 2018 18:07:04 -0400
+X-Google-Smtp-Source: AIpwx49VK+Efq3Tlvtb0zCEk5LUukoCoSqt99N3BYlE0HvUtjnIjewJv8dJEPRvsJius5AIjcpqsJQ==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         keith.busch@intel.com, javier@cnexlabs.com,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 08/37] lightnvm: pblk: add padding distribution sysfs attribute
-Date: Fri, 30 Mar 2018 00:04:55 +0200
-Message-Id: <20180329220524.30363-9-mb@lightnvm.io>
+Subject: [GIT PULL 07/37] lightnvm: remove multiple groups in 1.2 data structure
+Date: Fri, 30 Mar 2018 00:04:54 +0200
+Message-Id: <20180329220524.30363-8-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
 References: <20180329220524.30363-1-mb@lightnvm.io>
@@ -27,289 +26,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Only one id group from the 1.2 specification is supported. Make
+sure that only the first group is accessible.
 
-When pblk receives a sync, all data up to that point in the write buffer
-must be comitted to persistent storage, and as flash memory comes with a
-minimal write size there is a significant cost involved both in terms
-of time for completing the sync and in terms of write amplification
-padded sectors for filling up to the minimal write size.
-
-In order to get a better understanding of the costs involved for syncs,
-Add a sysfs attribute to pblk: padded_dist, showing a normalized
-distribution of sectors padded. In order to facilitate measurements of
-specific workloads during the lifetime of the pblk instance, the
-distribution can be reset by writing 0 to the attribute.
-
-Do this by introducing counters for each possible padding:
-{0..(minimal write size - 1)} and calculate the normalized distribution
-when showing the attribute.
-
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-Signed-off-by: Javier González <javier@cnexlabs.com>
-Rearranged total_buckets statement in pblk_sysfs_get_padding_dist
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-init.c  | 16 +++++++-
- drivers/lightnvm/pblk-rb.c    | 17 +++++----
- drivers/lightnvm/pblk-sysfs.c | 87 ++++++++++++++++++++++++++++++++++++++++++-
- drivers/lightnvm/pblk.h       |  6 ++-
- 4 files changed, 113 insertions(+), 13 deletions(-)
+ drivers/nvme/host/lightnvm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 0ffc17ccf1cc..8416910ee8bf 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -921,6 +921,7 @@ static void pblk_free(struct pblk *pblk)
- {
- 	pblk_luns_free(pblk);
- 	pblk_lines_free(pblk);
-+	kfree(pblk->pad_dist);
- 	pblk_line_meta_free(pblk);
- 	pblk_core_free(pblk);
- 	pblk_l2p_free(pblk);
-@@ -998,11 +999,13 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	pblk->pad_rst_wa = 0;
- 	pblk->gc_rst_wa = 0;
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 940c9b9a2a09..dc0b1335c7c6 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -166,7 +166,8 @@ struct nvme_nvm_id {
+ 	__le32			dom;
+ 	struct nvme_nvm_addr_format ppaf;
+ 	__u8			resv[228];
+-	struct nvme_nvm_id_group groups[4];
++	struct nvme_nvm_id_group group;
++	__u8			resv2[2880];
+ } __packed;
  
-+	atomic64_set(&pblk->nr_flush, 0);
-+	pblk->nr_flush_rst = 0;
-+
- #ifdef CONFIG_NVM_DEBUG
- 	atomic_long_set(&pblk->inflight_writes, 0);
- 	atomic_long_set(&pblk->padded_writes, 0);
- 	atomic_long_set(&pblk->padded_wb, 0);
--	atomic_long_set(&pblk->nr_flush, 0);
- 	atomic_long_set(&pblk->req_writes, 0);
- 	atomic_long_set(&pblk->sub_writes, 0);
- 	atomic_long_set(&pblk->sync_writes, 0);
-@@ -1034,10 +1037,17 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 		goto fail_free_luns;
- 	}
+ struct nvme_nvm_bb_tbl {
+@@ -208,7 +209,7 @@ static int init_grps(struct nvm_id *nvm_id, struct nvme_nvm_id *nvme_nvm_id)
+ 	if (nvme_nvm_id->cgrps != 1)
+ 		return -EINVAL;
  
-+	pblk->pad_dist = kzalloc((pblk->min_write_pgs - 1) * sizeof(atomic64_t),
-+				 GFP_KERNEL);
-+	if (!pblk->pad_dist) {
-+		ret = -ENOMEM;
-+		goto fail_free_line_meta;
-+	}
-+
- 	ret = pblk_core_init(pblk);
- 	if (ret) {
- 		pr_err("pblk: could not initialize core\n");
--		goto fail_free_line_meta;
-+		goto fail_free_pad_dist;
- 	}
+-	src = &nvme_nvm_id->groups[0];
++	src = &nvme_nvm_id->group;
+ 	grp = &nvm_id->grp;
  
- 	ret = pblk_l2p_init(pblk);
-@@ -1097,6 +1107,8 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	pblk_l2p_free(pblk);
- fail_free_core:
- 	pblk_core_free(pblk);
-+fail_free_pad_dist:
-+	kfree(pblk->pad_dist);
- fail_free_line_meta:
- 	pblk_line_meta_free(pblk);
- fail_free_luns:
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index 7044b5599cc4..8b1434060fb3 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -437,9 +437,7 @@ static int pblk_rb_may_write_flush(struct pblk_rb *rb, unsigned int nr_entries,
- 	if (bio->bi_opf & REQ_PREFLUSH) {
- 		struct pblk *pblk = container_of(rb, struct pblk, rwb);
- 
--#ifdef CONFIG_NVM_DEBUG
--		atomic_long_inc(&pblk->nr_flush);
--#endif
-+		atomic64_inc(&pblk->nr_flush);
- 		if (pblk_rb_flush_point_set(&pblk->rwb, bio, mem))
- 			*io_ret = NVM_IO_OK;
- 	}
-@@ -620,14 +618,17 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb, struct nvm_rq *rqd,
- 			pr_err("pblk: could not pad page in write bio\n");
- 			return NVM_IO_ERR;
- 		}
-+
-+		if (pad < pblk->min_write_pgs)
-+			atomic64_inc(&pblk->pad_dist[pad - 1]);
-+		else
-+			pr_warn("pblk: padding more than min. sectors\n");
-+
-+		atomic64_add(pad, &pblk->pad_wa);
- 	}
- 
--	atomic64_add(pad, &((struct pblk *)
--			(container_of(rb, struct pblk, rwb)))->pad_wa);
--
- #ifdef CONFIG_NVM_DEBUG
--	atomic_long_add(pad, &((struct pblk *)
--			(container_of(rb, struct pblk, rwb)))->padded_writes);
-+	atomic_long_add(pad, &pblk->padded_writes);
- #endif
- 
- 	return NVM_IO_OK;
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index beed99936c89..c2cf6c939752 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -340,15 +340,62 @@ static ssize_t pblk_sysfs_get_write_amp_trip(struct pblk *pblk, char *page)
- 		atomic64_read(&pblk->pad_wa) - pblk->pad_rst_wa, page);
- }
- 
-+static long long bucket_percentage(unsigned long long bucket,
-+				   unsigned long long total)
-+{
-+	int p = bucket * 100;
-+
-+	p = div_u64(p, total);
-+
-+	return p;
-+}
-+
-+static ssize_t pblk_sysfs_get_padding_dist(struct pblk *pblk, char *page)
-+{
-+	int sz = 0;
-+	unsigned long long total;
-+	unsigned long long total_buckets = 0;
-+	int buckets = pblk->min_write_pgs - 1;
-+	int i;
-+
-+	total = atomic64_read(&pblk->nr_flush) - pblk->nr_flush_rst;
-+	if (!total) {
-+		for (i = 0; i < (buckets + 1); i++)
-+			sz += snprintf(page + sz, PAGE_SIZE - sz,
-+				"%d:0 ", i);
-+		sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
-+
-+		return sz;
-+	}
-+
-+	for (i = 0; i < buckets; i++)
-+		total_buckets += atomic64_read(&pblk->pad_dist[i]);
-+
-+	sz += snprintf(page + sz, PAGE_SIZE - sz, "0:%lld%% ",
-+		bucket_percentage(total - total_buckets, total));
-+
-+	for (i = 0; i < buckets; i++) {
-+		unsigned long long p;
-+
-+		p = bucket_percentage(atomic64_read(&pblk->pad_dist[i]),
-+					  total);
-+		sz += snprintf(page + sz, PAGE_SIZE - sz, "%d:%lld%% ",
-+				i + 1, p);
-+	}
-+	sz += snprintf(page + sz, PAGE_SIZE - sz, "\n");
-+
-+	return sz;
-+}
-+
- #ifdef CONFIG_NVM_DEBUG
- static ssize_t pblk_sysfs_stats_debug(struct pblk *pblk, char *page)
- {
- 	return snprintf(page, PAGE_SIZE,
--		"%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\n",
-+		"%lu\t%lu\t%ld\t%llu\t%ld\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\t%lu\n",
- 			atomic_long_read(&pblk->inflight_writes),
- 			atomic_long_read(&pblk->inflight_reads),
- 			atomic_long_read(&pblk->req_writes),
--			atomic_long_read(&pblk->nr_flush),
-+			(u64)atomic64_read(&pblk->nr_flush),
- 			atomic_long_read(&pblk->padded_writes),
- 			atomic_long_read(&pblk->padded_wb),
- 			atomic_long_read(&pblk->sub_writes),
-@@ -426,6 +473,32 @@ static ssize_t pblk_sysfs_set_write_amp_trip(struct pblk *pblk,
- }
- 
- 
-+static ssize_t pblk_sysfs_set_padding_dist(struct pblk *pblk,
-+			const char *page, size_t len)
-+{
-+	size_t c_len;
-+	int reset_value;
-+	int buckets = pblk->min_write_pgs - 1;
-+	int i;
-+
-+	c_len = strcspn(page, "\n");
-+	if (c_len >= len)
-+		return -EINVAL;
-+
-+	if (kstrtouint(page, 0, &reset_value))
-+		return -EINVAL;
-+
-+	if (reset_value !=  0)
-+		return -EINVAL;
-+
-+	for (i = 0; i < buckets; i++)
-+		atomic64_set(&pblk->pad_dist[i], 0);
-+
-+	pblk->nr_flush_rst = atomic64_read(&pblk->nr_flush);
-+
-+	return len;
-+}
-+
- static struct attribute sys_write_luns = {
- 	.name = "write_luns",
- 	.mode = 0444,
-@@ -486,6 +559,11 @@ static struct attribute sys_write_amp_trip = {
- 	.mode = 0644,
- };
- 
-+static struct attribute sys_padding_dist = {
-+	.name = "padding_dist",
-+	.mode = 0644,
-+};
-+
- #ifdef CONFIG_NVM_DEBUG
- static struct attribute sys_stats_debug_attr = {
- 	.name = "stats",
-@@ -506,6 +584,7 @@ static struct attribute *pblk_attrs[] = {
- 	&sys_lines_info_attr,
- 	&sys_write_amp_mileage,
- 	&sys_write_amp_trip,
-+	&sys_padding_dist,
- #ifdef CONFIG_NVM_DEBUG
- 	&sys_stats_debug_attr,
- #endif
-@@ -539,6 +618,8 @@ static ssize_t pblk_sysfs_show(struct kobject *kobj, struct attribute *attr,
- 		return pblk_sysfs_get_write_amp_mileage(pblk, buf);
- 	else if (strcmp(attr->name, "write_amp_trip") == 0)
- 		return pblk_sysfs_get_write_amp_trip(pblk, buf);
-+	else if (strcmp(attr->name, "padding_dist") == 0)
-+		return pblk_sysfs_get_padding_dist(pblk, buf);
- #ifdef CONFIG_NVM_DEBUG
- 	else if (strcmp(attr->name, "stats") == 0)
- 		return pblk_sysfs_stats_debug(pblk, buf);
-@@ -557,6 +638,8 @@ static ssize_t pblk_sysfs_store(struct kobject *kobj, struct attribute *attr,
- 		return pblk_sysfs_set_sec_per_write(pblk, buf, len);
- 	else if (strcmp(attr->name, "write_amp_trip") == 0)
- 		return pblk_sysfs_set_write_amp_trip(pblk, buf, len);
-+	else if (strcmp(attr->name, "padding_dist") == 0)
-+		return pblk_sysfs_set_padding_dist(pblk, buf, len);
- 	return 0;
- }
- 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 4b7d8618631f..17e2f242f7da 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -626,12 +626,16 @@ struct pblk {
- 	u64 gc_rst_wa;
- 	u64 pad_rst_wa;
- 
-+	/* Counters used for calculating padding distribution */
-+	atomic64_t *pad_dist;		/* Padding distribution buckets */
-+	u64 nr_flush_rst;		/* Flushes reset value for pad dist.*/
-+	atomic64_t nr_flush;		/* Number of flush/fua I/O */
-+
- #ifdef CONFIG_NVM_DEBUG
- 	/* Non-persistent debug counters, 4kb sector I/Os */
- 	atomic_long_t inflight_writes;	/* Inflight writes (user and gc) */
- 	atomic_long_t padded_writes;	/* Sectors padded due to flush/fua */
- 	atomic_long_t padded_wb;	/* Sectors padded in write buffer */
--	atomic_long_t nr_flush;		/* Number of flush/fua I/O */
- 	atomic_long_t req_writes;	/* Sectors stored on write buffer */
- 	atomic_long_t sub_writes;	/* Sectors submitted from buffer */
- 	atomic_long_t sync_writes;	/* Sectors synced to media */
+ 	grp->mtype = src->mtype;
 -- 
 2.11.0
