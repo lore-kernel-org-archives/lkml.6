@@ -1,103 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751068AbeC2FMx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 01:12:53 -0400
-Received: from ozlabs.org ([103.22.144.67]:48145 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750708AbeC2FMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 01:12:51 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 29 Mar 2018 16:11:57 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        id S1751235AbeC2FNR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 01:13:17 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:55125 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751124AbeC2FNP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 01:13:15 -0400
+X-Google-Smtp-Source: AIpwx4/ZkHly2D8bQ9XGVq0DPaEE6jUjLUH+PrRLudfjoSEFnM2JcHXIs2Qg9fRhbs4lImnv2fQUlg==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: General protection fault with use_blk_mq=1.
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <735c5d75-eacf-8ed2-ba9b-9ff4b0b5290d@kernel.dk>
+Date: Thu, 29 Mar 2018 07:13:11 +0200
+Cc: "Zephaniah E. Loss-Cutler-Hull" <warp@aehallh.com>,
+        "Zephaniah E. Loss-Cutler-Hull" <warp-spam_kernel@aehallh.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: linux-next: manual merge of the kvm tree with the kvm-fixes tree
-Message-ID: <20180329161157.692371b9@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xtKjDh0m5V9HKV0B7=+SJxM"; protocol="application/pgp-signature"
+        linux-block <linux-block@vger.kernel.org>, linux-scsi@vger.kernel.org
+Message-Id: <882A26D2-BEB8-4CE3-B132-0DE31BFD5D28@linaro.org>
+References: <7d8a9c62-7d3e-879c-5b5b-30707f04553e@aehallh.com>
+ <ae71cc99-02f1-2b42-bb76-d6e28d61ca21@kernel.dk>
+ <b347896e-f770-8987-ad90-a595a5fa926a@aehallh.com>
+ <735c5d75-eacf-8ed2-ba9b-9ff4b0b5290d@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T5DLW1014314
 
---Sig_/xtKjDh0m5V9HKV0B7=+SJxM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the kvm tree got a conflict in:
+> Il giorno 29 mar 2018, alle ore 05:22, Jens Axboe <axboe@kernel.dk> ha scritto:
+> 
+> On 3/28/18 9:13 PM, Zephaniah E. Loss-Cutler-Hull wrote:
+>> On 03/28/2018 06:02 PM, Jens Axboe wrote:
+>>> On 3/28/18 5:03 PM, Zephaniah E. Loss-Cutler-Hull wrote:
+>>>> I am not subscribed to any of the lists on the To list here, please CC
+>>>> me on any replies.
+>>>> 
+>>>> I am encountering a fairly consistent crash anywhere from 15 minutes to
+>>>> 12 hours after boot with scsi_mod.use_blk_mq=1 dm_mod.use_blk_mq=1> 
+>>>> The crash looks like:
+>>>> 
+>> 
+>>>> 
+>>>> Looking through the code, I'd guess that this is dying inside
+>>>> blkg_rwstat_add, which calls percpu_counter_add_batch, which is what RIP
+>>>> is pointing at.
+>>> 
+>>> Leaving the whole thing here for Paolo - it's crashing off insertion of
+>>> a request coming out of SG_IO. Don't think we've seen this BFQ failure
+>>> case before.
+>>> 
+>>> You can mitigate this by switching the scsi-mq devices to mq-deadline
+>>> instead.
+>>> 
+>> 
+>> I'm thinking that I should also be able to mitigate it by disabling
+>> CONFIG_DEBUG_BLK_CGROUP.
+>> 
+>> That should remove that entire chunk of code.
+>> 
+>> Of course, that won't help if this is actually a symptom of a bigger
+>> problem.
+> 
+> Yes, it's not a given that it will fully mask the issue at hand. But
+> turning off BFQ has a much higher chance of working for you.
+> 
+> This time actually CC'ing Paolo.
+> 
 
-  arch/x86/kvm/vmx.c
+Hi Zephaniah,
+if you are actually interested in the benefits of BFQ (low latency,
+high responsiveness, fairness, ...) then it may be worth to try what
+you yourself suggest: disabling CONFIG_DEBUG_BLK_CGROUP.  Also because
+this option activates the heavy computation of debug cgroup statistics,
+which probably you don't use.
 
-between commit:
+In addition, the outcome of your attempt without
+CONFIG_DEBUG_BLK_CGROUP would give us useful bisection information:
+- if no failure occurs, then the issue is likely to be confined in
+that debugging code (which, on the bright side, is likely to be of
+occasional interest, for only a handful of developers)
+- if the issue still shows up, then we may have new hints on this odd
+failure
 
-  9d1887ef3252 ("KVM: nVMX: sync vmcs02 segment regs prior to vmx_set_cr0")
+Finally, consider that this issue has been reported to disappear from
+4.16 [1], and, as a plus, that the service quality of BFQ had a
+further boost exactly from 4.16.
 
-from the kvm-fixes tree and commit:
+Looking forward to your feedback, in case you try BFQ without
+CONFIG_DEBUG_BLK_CGROUP,
+Paolo
 
-  2bb8cafea80b ("KVM: vVMX: signal failure for nested VMEntry if emulation_=
-required")
+[1] https://www.spinics.net/lists/linux-block/msg21422.html
 
-from the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/kvm/vmx.c
-index 92496b9b5f2b,9bc05f5349c8..000000000000
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@@ -10952,6 -11081,21 +11092,16 @@@ static int prepare_vmcs02(struct kvm_vc
-  	/* Note: modifies VM_ENTRY/EXIT_CONTROLS and GUEST/HOST_IA32_EFER */
-  	vmx_set_efer(vcpu, vcpu->arch.efer);
- =20
- -	if (vmx->nested.dirty_vmcs12) {
- -		prepare_vmcs02_full(vcpu, vmcs12, from_vmentry);
- -		vmx->nested.dirty_vmcs12 =3D false;
- -	}
- -
-+ 	/*
-+ 	 * Guest state is invalid and unrestricted guest is disabled,
-+ 	 * which means L1 attempted VMEntry to L2 with invalid state.
-+ 	 * Fail the VMEntry.
-+ 	 */
-+ 	if (vmx->emulation_required) {
-+ 		*entry_failure_code =3D ENTRY_FAIL_DEFAULT;
-+ 		return 1;
-+ 	}
-+=20
-  	/* Shadow page tables on either EPT or shadow page tables. */
-  	if (nested_vmx_load_cr3(vcpu, vmcs12->guest_cr3, nested_cpu_has_ept(vmcs=
-12),
-  				entry_failure_code))
-
---Sig_/xtKjDh0m5V9HKV0B7=+SJxM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq8dZ0ACgkQAVBC80lX
-0GyxOgf/UoGIEdsWueZrvrHbwHdu+zS1PjUUc21a2oblc+w2reNO6LLXdJGGjNRz
-/g09EyXKUqSZipKxwSE0yTcaiv6zutHxoQ3jNgJIfB4f6I1O0QFUdznLwfrSqtu+
-2HPXKkBZe9V5V3KHmS31HBQ2Gn0qHGlZL9v8aYGE17ec5hj7VyRmgTSMR+Iv36lX
-OKfpfcJ2RTXbSzrrDrLnwW8/c4+JZwkGsnlJuPGclDc00sYuSXnX6N212H5Od0xZ
-L3gDhIG6vbT5KQiY72Qr1EY5iHyYBVavccG7Ds87hM7xo1Q0Ab31aNBkgx06OJqm
-/fLALB+BEu0raCNgK03f79qN6V34ew==
-=xwCR
------END PGP SIGNATURE-----
-
---Sig_/xtKjDh0m5V9HKV0B7=+SJxM--
+> 
+> -- 
+> Jens Axboe
