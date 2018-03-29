@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48NpKKSUqg4rimkuteK6xsnZm1SQqXdCZCeNmq+n1uZWAauUivpLt+wk0HneMeVcA8KjQvF
-ARC-Seal: i=1; a=rsa-sha256; t=1522346695; cv=none;
+X-Google-Smtp-Source: AIpwx48Cf3u2mHgwnjHPR/saamV+8bDSex4kyglQkX3vb/Z+kpAu7UYvIpW0Vje0NCBpMS0RgTBc
+ARC-Seal: i=1; a=rsa-sha256; t=1522346692; cv=none;
         d=google.com; s=arc-20160816;
-        b=F9oJ80XB96jJBWgNXp2B1pQ97vJ0Ethf8y6H8QCOwbTKQtvBoL/O5nMHENX048FFHH
-         xA2lM6U9EXVIkkONxBaTij3sMwf5DClKYndoGEYUv3I82rFyppSndj9SM2INvLp+I9Le
-         almiKzz+gIPa7sJ6krRawYiEPph/RnZIcNIpC5NXAVOod3SriZesSEADOGwQ4VA6svTI
-         AyjDZuMLboBwzG/TboCzIqonEDPa4uTgVetuPJrFC6/sJ4ZabwSNmUFACnTa/ACEW/wo
-         Hoz9pmW+IFKl1HpKo065dtbZdBqeelD69QgcguMbosqcdLJ4dGoYiJ8BXTPVBb32dnpb
-         2jtQ==
+        b=EkwNLHYhR+zQ/AL4NmGWzHtl8KoRKASiwZp6Zip82dVd9H22iOB72/N/WmNRPDEL8r
+         W4xWCa46AhqGTfGiCniTxdRmHqflDkYfa4Sqfsw6HUkomIJY62K37WNPlQk+/M/7YRBD
+         Z3F7dZWQ8d+GwfxsmB0gMh3v/GtllUJSvL1fB8xEnMxzawCsCK6058AFLNiktHpb4sz3
+         HuyQnawAeRbOS+9X8IQLhBQOwWrPrfpzCwfvaiAQMUTAFFe47gtwwIXlJ4yfA2uSv066
+         1qayFP80mm14pjBp6hf68rXLAuGVgoJMZER4CAcav8V+YYdAXcrzNk4zg9wCZDj37Qv3
+         L+Rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LuUMLAE+PdGRw+N53USStlNatBMz0X90mKEkwMbQ+Mo=;
-        b=QAj7mrD+DqsAU4HH/ubln0f7ey98TAusV4V4/HKBCK47s5cFSzXF1cqa/jrT34PILo
-         JUfcldP6mzeOAXr54B78v5AVlOurWr+GiEVxUIELrGDNt8bu/WPTTzNEd9hgFqaDJaeD
-         Y/EMG4rBmSeKZ/opb3VVXlgaTTJu89r6gy6BHVqodU19rwwmOastNNVQXDmAATgbn9VG
-         xe6AbV3L90O2pRwK6mP3opvvFUw+ETxkFIZFquzUCb3hfpogThvBllz2aHJxpmJs2gZz
-         bjMIaCZ3hTeW1Dd2b5rUiejl8Lbu/AGCOTmWDIwa0wohNjUpPCGr6wQaRBF3FTZT8NVX
-         iCeg==
+        bh=g53IMIwZKHRvtC59iKLQZ8f3q+igmjvmeVNeDN4USW0=;
+        b=GPMowtv63QNwQZ6r0lxxVtL6co8zlzN12jV2s5qIgNmB3gmrNA1AweBGaDO7Ho4KaL
+         DGhDxBL352KG35mWwcytmjQnWwx1QHpb8o4IRPSNHEzI/0bm0z+gS4nX7M6ATZdG/8aY
+         iO01L6PzxNmWsxz1yIz5GeQxec/P1Vm62TME3G/dKMBdSjaYItn5B9/r1hMKYiVHTBsK
+         KaTazj8p3EZqGYFeVZK8VE7gTkkKLc2rDJtsGNKB90DWccU+WPps0GFAWGk2FvCPHhmd
+         kN6giXgxTiUqV+udJdbDEgRBt5YE2slNUMulFAuC15VXnqZa3rF0GLJo7Eh7RSIHFXdI
+         5zQQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Shannon Nelson <shannon.nelson@oracle.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 08/43] net: ipv6: keep sk status consistent after datagram connect failure
-Date: Thu, 29 Mar 2018 20:00:03 +0200
-Message-Id: <20180329175730.961864384@linuxfoundation.org>
+Subject: [PATCH 4.14 07/43] macvlan: filter out unsupported feature flags
+Date: Thu, 29 Mar 2018 20:00:02 +0200
+Message-Id: <20180329175730.856662053@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296121064789785?=
-X-GMAIL-MSGID: =?utf-8?q?1596296207924216439?=
+X-GMAIL-THRID: =?utf-8?q?1596296092990311959?=
+X-GMAIL-MSGID: =?utf-8?q?1596296205140872159?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,79 +50,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Shannon Nelson <shannon.nelson@oracle.com>
 
 
-[ Upstream commit 2f987a76a97773beafbc615b9c4d8fe79129a7f4 ]
+[ Upstream commit 13fbcc8dc573482dd3f27568257fd7087f8935f4 ]
 
-On unsuccesful ip6_datagram_connect(), if the failure is caused by
-ip6_datagram_dst_update(), the sk peer information are cleared, but
-the sk->sk_state is preserved.
+Adding a macvlan device on top of a lowerdev that supports
+the xfrm offloads fails with a new regression:
+  # ip link add link ens1f0 mv0 type macvlan
+  RTNETLINK answers: Operation not permitted
 
-If the socket was already in an established status, the overall sk
-status is inconsistent and fouls later checks in datagram code.
+Tracing down the failure shows that the macvlan device inherits
+the NETIF_F_HW_ESP and NETIF_F_HW_ESP_TX_CSUM feature flags
+from the lowerdev, but with no dev->xfrmdev_ops API filled
+in, it doesn't actually support xfrm.  When the request is
+made to add the new macvlan device, the XFRM listener for
+NETDEV_REGISTER calls xfrm_api_check() which fails the new
+registration because dev->xfrmdev_ops is NULL.
 
-Fix this saving the old peer information and restoring them in
-case of failure. This also aligns ipv6 datagram connect() behavior
-with ipv4.
+The macvlan creation succeeds when we filter out the ESP
+feature flags in macvlan_fix_features(), so let's filter them
+out like we're already filtering out ~NETIF_F_NETNS_LOCAL.
+When XFRM support is added in the future, we can add the flags
+into MACVLAN_FEATURES.
 
-v1 -> v2:
- - added missing Fixes tag
+This same problem could crop up in the future with any other
+new feature flags, so let's filter out any flags that aren't
+defined as supported in macvlan.
 
-Fixes: 85cb73ff9b74 ("net: ipv6: reset daddr and dport in sk if connect() fails")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Fixes: d77e38e612a0 ("xfrm: Add an IPsec hardware offloading API")
+Reported-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/datagram.c |   21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/net/macvlan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -146,10 +146,12 @@ int __ip6_datagram_connect(struct sock *
- 	struct sockaddr_in6	*usin = (struct sockaddr_in6 *) uaddr;
- 	struct inet_sock	*inet = inet_sk(sk);
- 	struct ipv6_pinfo	*np = inet6_sk(sk);
--	struct in6_addr		*daddr;
-+	struct in6_addr		*daddr, old_daddr;
-+	__be32			fl6_flowlabel = 0;
-+	__be32			old_fl6_flowlabel;
-+	__be32			old_dport;
- 	int			addr_type;
- 	int			err;
--	__be32			fl6_flowlabel = 0;
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -1037,7 +1037,7 @@ static netdev_features_t macvlan_fix_fea
+ 	lowerdev_features &= (features | ~NETIF_F_LRO);
+ 	features = netdev_increment_features(lowerdev_features, features, mask);
+ 	features |= ALWAYS_ON_FEATURES;
+-	features &= ~NETIF_F_NETNS_LOCAL;
++	features &= (ALWAYS_ON_FEATURES | MACVLAN_FEATURES);
  
- 	if (usin->sin6_family == AF_INET) {
- 		if (__ipv6_only_sock(sk))
-@@ -239,9 +241,13 @@ ipv4_connected:
- 		}
- 	}
- 
-+	/* save the current peer information before updating it */
-+	old_daddr = sk->sk_v6_daddr;
-+	old_fl6_flowlabel = np->flow_label;
-+	old_dport = inet->inet_dport;
-+
- 	sk->sk_v6_daddr = *daddr;
- 	np->flow_label = fl6_flowlabel;
--
- 	inet->inet_dport = usin->sin6_port;
- 
- 	/*
-@@ -251,11 +257,12 @@ ipv4_connected:
- 
- 	err = ip6_datagram_dst_update(sk, true);
- 	if (err) {
--		/* Reset daddr and dport so that udp_v6_early_demux()
--		 * fails to find this socket
-+		/* Restore the socket peer info, to keep it consistent with
-+		 * the old socket state
- 		 */
--		memset(&sk->sk_v6_daddr, 0, sizeof(sk->sk_v6_daddr));
--		inet->inet_dport = 0;
-+		sk->sk_v6_daddr = old_daddr;
-+		np->flow_label = old_fl6_flowlabel;
-+		inet->inet_dport = old_dport;
- 		goto out;
- 	}
- 
+ 	return features;
+ }
