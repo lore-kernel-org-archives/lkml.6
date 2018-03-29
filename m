@@ -1,59 +1,302 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752334AbeC2MLM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:11:12 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38204 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750753AbeC2MLL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:11:11 -0400
-From: Colin King <colin.king@canonical.com>
-To: Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] qedr: ix spelling mistake: "hanlde" -> "handle"
-Date: Thu, 29 Mar 2018 13:11:07 +0100
-Message-Id: <20180329121107.27248-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752299AbeC2MWa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:22:30 -0400
+Received: from mga04.intel.com ([192.55.52.120]:18224 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750820AbeC2MW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 08:22:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="39141481"
+Subject: Re: [PATCH V4 2/3] mmc: sdhci: Add support for O2 hardware tuning
+To: "ernest.zhang" <ernest.zhang@bayhubtech.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: xiaoguang.yu@bayhubtech.com, shirley.her@bayhubtech.com,
+        yuxiang.wan@bayhubtech.com
+References: <1520604265-4430-1-git-send-email-ernest.zhang@bayhubtech.com>
+ <1520604265-4430-2-git-send-email-ernest.zhang@bayhubtech.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <16cf1d6e-65d6-4fac-aa44-18edefcd3d14@intel.com>
+Date: Thu, 29 Mar 2018 15:21:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520604265-4430-2-git-send-email-ernest.zhang@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 09/03/18 16:04, ernest.zhang wrote:
+> Add hardware tuning function instead of software tuning because O2/Bayhub
+> SD host controller support hardware tuning.
+> 
+> Changes: Add many functions to execute hardware tuning for eMMC 1.8V HS200
+> mode, the hardware tuning command and procedure is based on O2/Bayhub 
+> hardware tuning spec.
+> 
+> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
+> ---
 
-Trivial fix to spelling mistake in DP_ERR message text
+This is where the change log should be:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/qedr/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+e.g.
 
-diff --git a/drivers/infiniband/hw/qedr/main.c b/drivers/infiniband/hw/qedr/main.c
-index 1f032fdbdb19..36d60d3c1630 100644
---- a/drivers/infiniband/hw/qedr/main.c
-+++ b/drivers/infiniband/hw/qedr/main.c
-@@ -708,7 +708,7 @@ static void qedr_affiliated_event(void *context, u8 e_code, void *fw_handle)
- 			     "Error: CQ event with NULL pointer ibcq. Handle=%llx\n",
- 			     roce_handle64);
- 		}
--		DP_ERR(dev, "CQ event %d on hanlde %p\n", e_code, cq);
-+		DP_ERR(dev, "CQ event %d on handle %p\n", e_code, cq);
- 		break;
- 	case EVENT_TYPE_QP:
- 		qp = (struct qedr_qp *)(uintptr_t)roce_handle64;
-@@ -724,7 +724,7 @@ static void qedr_affiliated_event(void *context, u8 e_code, void *fw_handle)
- 			     "Error: QP event with NULL pointer ibqp. Handle=%llx\n",
- 			     roce_handle64);
- 		}
--		DP_ERR(dev, "QP event %d on hanlde %p\n", e_code, qp);
-+		DP_ERR(dev, "QP event %d on handle %p\n", e_code, qp);
- 		break;
- 	default:
- 		break;
--- 
-2.15.1
+Changes in V4:
+	<what you changed between the 3rd version and the 4th version>
+
+Changes in V3:
+	<what you changed between the 2nd version and the 3rd version>
+
+etc.
+
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 193 +++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci.c             |   5 +-
+>  2 files changed, 197 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index d465751..a918984 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -17,6 +17,9 @@
+>   */
+>  
+>  #include <linux/pci.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/mmc/mmc.h>
+> +#include <linux/delay.h>
+>  
+>  #include "sdhci.h"
+>  #include "sdhci-pci.h"
+> @@ -55,6 +58,194 @@
+>  
+>  #define O2_SD_VENDOR_SETTING	0x110
+>  #define O2_SD_VENDOR_SETTING2	0x1C8
+> +#define O2_SD_HW_TUNING_DISABLE	BIT(4)
+> +
+> +static void sdhci_o2_start_tuning(struct sdhci_host *host)
+> +{
+> +	u16 ctrl;
+> +
+> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	ctrl |= SDHCI_CTRL_EXEC_TUNING;
+> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+> +
+> +	/*
+> +	 * As per the Host Controller spec v3.00, tuning command
+> +	 * generates Buffer Read Ready interrupt, so enable that.
+> +	 *
+> +	 * Note: The spec clearly says that when tuning sequence
+> +	 * is being performed, the controller does not generate
+> +	 * interrupts other than Buffer Read Ready interrupt. But
+> +	 * to make sure we don't hit a controller bug, we _only_
+> +	 * enable Buffer Read Ready interrupt here.
+> +	 */
+> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_INT_ENABLE);
+> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_SIGNAL_ENABLE);
+> +}
+> +
+> +static void sdhci_o2_end_tuning(struct sdhci_host *host)
+> +{
+> +	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+> +	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
+> +}
+> +
+> +static inline bool sdhci_data_line_cmd(struct mmc_command *cmd)
+> +{
+> +	return cmd->data || cmd->flags & MMC_RSP_BUSY;
+> +}
+> +
+> +static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
+> +{
+> +	if (sdhci_data_line_cmd(mrq->cmd))
+> +		del_timer(&host->data_timer);
+> +	else
+> +		del_timer(&host->timer);
+> +}
+> +
+> +static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
+> +{
+> +	u16 reg;
+> +
+> +	/* enable hardware tuning */
+> +	reg = sdhci_readw(host, O2_SD_VENDOR_SETTING);
+> +	reg &= ~O2_SD_HW_TUNING_DISABLE;
+> +	sdhci_writew(host, reg, O2_SD_VENDOR_SETTING);
+> +}
+> +
+> +
+> +static int sdhci_o2_send_tuning(struct sdhci_host *host, u32 opcode)
+> +{
+> +	struct mmc_command cmd = { };
+> +	struct mmc_data data = { };
+> +	struct scatterlist sg;
+> +	struct mmc_request mrq = { };
+> +	unsigned long flags;
+> +	u32 b = host->sdma_boundary;
+> +	int size = 64;
+> +	u8 *data_buf = kzalloc(size, GFP_KERNEL);
+> +
+> +	if (!data_buf)
+> +		return -ENOMEM;
+> +
+> +	cmd.opcode = opcode;
+> +	cmd.flags = MMC_RSP_PRESENT | MMC_RSP_OPCODE | MMC_RSP_CRC;
+> +	cmd.mrq = &mrq;
+> +	cmd.data = NULL;
+
+As previously, please explain why you have cmd.data = NULL but mrq.data = &data
+
+> +	mrq.cmd = &cmd;
+> +	mrq.data = &data;
+> +	data.blksz = size;
+> +	data.blocks = 1;
+> +	data.flags = MMC_DATA_READ;
+> +
+> +	data.timeout_ns = 50 * NSEC_PER_MSEC;
+> +
+> +	data.sg = &sg;
+> +	data.sg_len = 1;
+> +	sg_init_one(&sg, data_buf, size);
+> +
+> +	spin_lock_irqsave(&host->lock, flags);
+> +
+> +	sdhci_writew(host, SDHCI_MAKE_BLKSZ(b, 64), SDHCI_BLOCK_SIZE);
+> +
+> +	/*
+> +	 * The tuning block is sent by the card to the host controller.
+> +	 * So we set the TRNS_READ bit in the Transfer Mode register.
+> +	 * This also takes care of setting DMA Enable and Multi Block
+> +	 * Select in the same register to 0.
+> +	 */
+> +	sdhci_writew(host, SDHCI_TRNS_READ, SDHCI_TRANSFER_MODE);
+> +
+> +	sdhci_send_command(host, &cmd);
+> +
+> +	host->cmd = NULL;
+> +
+> +	sdhci_del_timer(host, &mrq);
+> +
+> +	host->tuning_done = 0;
+> +
+> +	mmiowb();
+> +	spin_unlock_irqrestore(&host->lock, flags);
+> +
+> +	/* Wait for Buffer Read Ready interrupt */
+> +	wait_event_timeout(host->buf_ready_int, (host->tuning_done == 1),
+> +			   msecs_to_jiffies(50));
+> +	kfree(data_buf);
+> +	return 0;
+> +}
+> +
+> +static void sdhci_o2_reset_tuning(struct sdhci_host *host)
+> +{
+> +	u16 ctrl;
+> +
+> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	ctrl &= ~SDHCI_CTRL_TUNED_CLK;
+> +	ctrl &= ~SDHCI_CTRL_EXEC_TUNING;
+> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+> +}
+> +
+> +static void __sdhci_o2_execute_tuning(struct sdhci_host *host, u32 opcode)
+> +{
+> +	int i;
+> +
+> +	sdhci_o2_send_tuning(host, MMC_SEND_TUNING_BLOCK_HS200);
+> +
+> +	for (i = 0; i < 150; i++) {
+> +		u16 ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +
+> +		if (!(ctrl & SDHCI_CTRL_EXEC_TUNING)) {
+> +			if (ctrl & SDHCI_CTRL_TUNED_CLK) {
+> +				host->tuning_done = true;
+> +				return;
+> +			}
+> +			pr_warn("%s: HW tuning failed !\n",
+> +				   mmc_hostname(host->mmc));
+> +			break;
+> +		}
+> +
+> +		mdelay(1);
+> +	}
+> +
+> +	pr_info("%s: Tuning failed, falling back to fixed sampling clock\n",
+> +		mmc_hostname(host->mmc));
+> +	sdhci_o2_reset_tuning(host);
+> +}
+> +
+> +static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +	int current_bus_width = 0;
+> +
+> +	/*
+> +	 * This handler only implements the eMMC tuning that is specific to
+> +	 * this controller.  Fall back to the standard method for other TIMING.
+> +	 */
+> +	if (host->timing != MMC_TIMING_MMC_HS200)
+> +		return sdhci_execute_tuning(mmc, opcode);
+> +
+> +	if (WARN_ON(opcode != MMC_SEND_TUNING_BLOCK_HS200))
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * o2 sdhci host didn't support 8bit emmc tuning
+> +	 */
+> +	if (mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
+> +		current_bus_width = mmc->ios.bus_width;
+> +		sdhci_set_bus_width(host, MMC_BUS_WIDTH_4);
+> +	}
+> +
+> +	sdhci_o2_set_tuning_mode(host);
+> +
+> +	sdhci_o2_start_tuning(host);
+> +
+> +	__sdhci_o2_execute_tuning(host, opcode);
+> +
+> +	sdhci_o2_end_tuning(host);
+> +
+> +	if (current_bus_width == MMC_BUS_WIDTH_8)
+> +		sdhci_set_bus_width(host, current_bus_width);
+> +
+> +	host->flags &= ~SDHCI_HS400_TUNING;
+> +	return 0;
+> +}
+>  
+>  static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
+>  {
+> @@ -215,6 +406,8 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  			}
+>  		}
+>  
+> +		host->mmc_host_ops.execute_tuning = sdhci_o2_execute_tuning;
+> +
+>  		if (chip->pdev->device != PCI_DEVICE_ID_O2_FUJIN2)
+>  			break;
+>  		/* set dll watch dog timer */
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 2ededa7..3bf6117 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -955,7 +955,10 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>  	if (data == NULL) {
+>  		if (host->quirks2 &
+>  			SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD) {
+> -			sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
+> +			/* must not clear SDHCI_TRANSFER_MODE when tuning */
+> +			if (cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) {
+> +				sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
+> +			}
+>  		} else {
+>  		/* clear Auto CMD settings for no data CMDs */
+>  			mode = sdhci_readw(host, SDHCI_TRANSFER_MODE);
+> 
