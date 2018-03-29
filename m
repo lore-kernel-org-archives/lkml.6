@@ -1,158 +1,209 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1884642-1522361196-2-11469093992681693219
+X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346966-2-9596917519285192929
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522361195; b=MmHU3QBSob0oji4q1PbmdOVWJZ2SrdFXmzhSa1UUbMHpCvI64O
-    uMAYoxVozCJVOeohQsMmnLCBw9dqWydLAbIRu7Qvi0snHNJv1Izlm0unwEs+K3ob
-    LuNa+FPhTeQGGRKIv9PzBVsdb5Z8CnH0rOX/AGbY/VYN9kY7fucPw20kMxlgSOT5
-    XkGAVnBXkWNFOduphM5nrzpHbI1+wFXw6NfKAJdfAnrPIYGMO8seOEXZY+0EcYBV
-    OvbR4iK0tlaCDX+C1atRRgx2HKNxMbESkwfyQqszbaVR5NvmBQ+6N/QiRUGvF+WB
-    Z4yHhtRsKq6F6Md5ul2biR2l52tLKUDIu9mg==
+    1522346965; b=V9o5MJzFA+DxdMDbuhTRX8DETVQe1POtXevbEhQlYonpvNcE4m
+    nqwB0KdWTdbTi7OyIVGH9fBaRzcmIZrv6mImy9c6qeM9F3+pjCpPhyeIjh6/CGri
+    Y8Oj370pVFCK4CV/H/7pBf11GtZp2LG4CyvfOPOAYN9d8jH5wUH7Pj0Bst050oI3
+    O7rLlKumOsejsmjrxCuYvuwAqIGVxYr88ud0L3YDxW6kOMy6DiYq+zMMwFBpmNk2
+    ErOFXThKf+tuYuCGPCvSMirCxYqZ9zELngqvguNMcMcpbPLG9qwIMaZbMoUvUaoH
+    25cP+gQ/f44QDATDOijfz+VsGQv8EMAG47sQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1522361195; bh=mAQefUdPXraS04Ju/VIvXlW8QcGdTu
-    df+euAMyplBGg=; b=n7/uQDeRuOV2ijjg7wLKhyzg+xn/xzgRpBnraU+KiPICCD
-    UtojcCYgjbF9PkF2Ohx/4VjRsWQcsfwkD3Lmars/w/Ep90/TpAfMV+6iFQUDigJM
-    eC71CVi3I4w0uz0MoOVTGkt0p42DBV0Ja+kPBshaUDIM9tu85VGYs8pjWpDA35zl
-    r3G49pW35LpLitd7uWH4J7BwhoQ84MQG8zIebL25N4dljzKYnNMW1XIsoqzf02lv
-    WUqefU5dG2GDrBpEzwMx3dEbvfPdojIgxaHRTBRbvXcXMiB1HCyPTTM7tdYZ04Tz
-    2p+gc7FxgBzelJQSPqE1xNZNIDm5UiBb8ziD0MlQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MPdq8GBx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1522346965; bh=b9rBhmGodGWR0IUm/7/Va1Dr/4sg/O
+    HtcAGYyXuQX6c=; b=F26sy4tct1RLay6kOfhjN4Z6J54i18sX/+qwn7yG/JkWsf
+    RJ4RMFNdWj2cZAaZtlqJQCbPs5Xj8ODLe9pMPOlnSfKqSCYu6o7kd66nTTFoyqKR
+    qNPEtfsz4hSVu+WzZagMSLI2vEOxM4VINxcI2sX3KP0Fw+NIEXrcwpbROvJTS31n
+    eFVsgeMLMMRjlab/S5ZWHgfY3q+bPKRS+SHJS0dvY5hCPAw7/xso7aL1Z/wnF+x3
+    cW+cHMeSSzngEkL9z/m9dxHQdwiSm9U0IhHn+jRtDcYCq134mhP5t66yZ6z96jJm
+    t9QfbvjLCDWLun6WQg7QVUD2E1TVGl8k8CZoPeTw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=cahSplF1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MPdq8GBx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=cahSplF1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKPrQVP7+odc0Y9TNdb2mt47uGie6qEE+h9tndP/C2O7VjJOWzWB/XMpQYaSd63Pso+D831WkPM45D2lyqIufyXogkDi/+C6ZCwhGlzMgxOOPCVXDd/A
-    cXrlWCta2ID98Ay66QZ3uKBkpGJqSlYAo3jslJVBm55mtQVgEIskW69SkdueQyo6yn8I09kM5GfMnNjHi+Xgmq3I2quNky1VgGjKIQWSHVlZlMP0Mkf56hTV
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=J1gerpJq6k4A:10
-    a=v2DPQv5-lfwA:10 a=U0zfkUukAAAA:8 a=VwQbUJbxAAAA:8 a=IojNT2NR04zwuxZg3fsA:9
-    a=CjuIK1q_8ugA:10 a=rdti5zajfK0A:10 a=rXRU1dkEVDZ1dOovDhQH:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfMEHCITAM6kKOLx1w26x1uZFjpgY+C6odHvNqCTbXsitxGTbG1JyJg+s/gSPvBQq4pr/USC6cJj1cJ3qzjWZR7DoEGWj2uVN2wkzsuCikfNU/H7pWQgV
+    Lu6cl7Vpr8mSEGIDQZpffxMYdhlE+ckIOtvw6bvcCbLc8pIba6rTQQEP0i8OVFEyqv01gp5y4l/Xi7c4NAJi6WpbN2nYvlkWsEDrcc7TWd8kMNCaDbWI/IaS
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=uHxRW4g1Worn-nSmixsA:9
+    a=y9_ts17jaSkH_6mj:21 a=A8nZr1-LtZStosO9:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751191AbeC2WGc (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 18:06:32 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33704 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751172AbeC2WGb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 18:06:31 -0400
-X-Google-Smtp-Source: AIpwx49aSvIhbmUnlNR1C1ykrumO9PE9gHNLFYxs1VyyD7ZVAZ1WcrMaeMISHpi1K58Fa6vQaMSrEQ==
-Date: Thu, 29 Mar 2018 15:06:28 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: "kernelci.org bot" <bot@kernelci.org>
+        id S1754315AbeC2SIa (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 14:08:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60636 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754306AbeC2SI1 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:08:27 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/20] 4.4.126-stable review
-Message-ID: <20180329220628.GB5526@roeck-us.net>
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 20/20] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
+Date: Thu, 29 Mar 2018 20:00:56 +0200
+Message-Id: <20180329175742.888986849@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
- <5abd622f.cb98df0a.3c8b9.f18b@mx.google.com>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5abd622f.cb98df0a.3c8b9.f18b@mx.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 03:01:19PM -0700, kernelci.org bot wrote:
-> stable-rc/linux-4.4.y boot: 105 boots: 1 failed, 92 passed with 10 offline, 2 untried/unknown (v4.4.125-21-g290572f02954)
-> 
-> Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.4.y/kernel/v4.4.125-21-g290572f02954/
-> Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y/kernel/v4.4.125-21-g290572f02954/
-> 
-> Tree: stable-rc
-> Branch: linux-4.4.y
-> Git Describe: v4.4.125-21-g290572f02954
-> Git Commit: 290572f02954767c84991efa816fbfb56c7da9df
-> Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> Tested: 53 unique boards, 20 SoC families, 16 builds out of 177
-> 
-> Boot Regressions Detected:
-> 
-> arm:
-> 
->     at91_dt_defconfig:
->         at91sam9261ek:
->             lab-free-electrons: failing since 6 days (last pass: v4.4.123 - first fail: v4.4.123-97-g3054df73e9af)
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
->From the boot log, this may suffer from the regression I have been talking
-about. The boot log repeats
+------------------
 
-13:42:46.064162  genirq: Flags mismatch irq 16. 00040080 (ttyS0) vs. 00040080 (pmc)
-13:42:46.071500  atmel_usart fffff200.serial: atmel_startup - Can't get irq
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-forever.
 
-Guenter
+[ Upstream commit 484d802d0f2f29c335563fcac2a8facf174a1bbc ]
 
-> 
-> Boot Failure Detected:
-> 
-> arm:
-> 
->     at91_dt_defconfig
->         at91sam9261ek: 1 failed lab
-> 
-> Offline Platforms:
-> 
-> arm:
-> 
->     sunxi_defconfig:
->         sun5i-r8-chip: 1 offline lab
->         sun7i-a20-cubietruck: 1 offline lab
-> 
->     multi_v7_defconfig:
->         exynos5410-odroidxu: 1 offline lab
->         sun5i-r8-chip: 1 offline lab
->         sun7i-a20-cubietruck: 1 offline lab
->         tegra20-iris-512: 1 offline lab
->         tegra30-beaver: 1 offline lab
-> 
->     exynos_defconfig:
->         exynos5410-odroidxu: 1 offline lab
-> 
->     tegra_defconfig:
->         tegra20-iris-512: 1 offline lab
->         tegra30-beaver: 1 offline lab
-> 
-> ---
-> For more info write to <info@kernelci.org>
+There is no need for complex checking between the last consumed index
+and current consumed index, a simple subtraction will do.
+
+This also eliminates the possibility of a permanent transmit queue stall
+under the following conditions:
+
+- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
+  point where we run out of free descriptors, so we stop the transmit
+  queue at the end of bcm_sysport_xmit()
+
+- because of our locking, we have the transmit process disable
+  interrupts which means we can be blocking the TX reclamation process
+
+- when TX reclamation finally runs, we will be computing the difference
+  between ring->c_index (last consumed index by SW) and what the HW
+  reports through its register
+
+- this register is masked with (ring->size - 1) = 0xff, which will lead
+  to stripping the upper bits of the index (register is 16-bits wide)
+
+- we will be computing last_tx_cn as 0, which means there is no work to
+  be done, and we never wake-up the transmit queue, leaving it
+  permanently disabled
+
+A practical example is e.g: ring->c_index aka last_c_index = 12, we
+pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
+so last_tx_cn == 0, nothing happens.
+
+Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/broadcom/bcmsysport.c |   33 +++++++++++++----------------
+ drivers/net/ethernet/broadcom/bcmsysport.h |    2 -
+ 2 files changed, 16 insertions(+), 19 deletions(-)
+
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -729,37 +729,33 @@ static unsigned int __bcm_sysport_tx_rec
+ 					     struct bcm_sysport_tx_ring *ring)
+ {
+ 	struct net_device *ndev = priv->netdev;
+-	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
+ 	unsigned int pkts_compl = 0, bytes_compl = 0;
++	unsigned int txbds_processed = 0;
+ 	struct bcm_sysport_cb *cb;
++	unsigned int txbds_ready;
++	unsigned int c_index;
+ 	u32 hw_ind;
+ 
+ 	/* Compute how many descriptors have been processed since last call */
+ 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
+ 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
+-	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
+-
+-	last_c_index = ring->c_index;
+-	num_tx_cbs = ring->size;
+-
+-	c_index &= (num_tx_cbs - 1);
+-
+-	if (c_index >= last_c_index)
+-		last_tx_cn = c_index - last_c_index;
+-	else
+-		last_tx_cn = num_tx_cbs - last_c_index + c_index;
++	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
+ 
+ 	netif_dbg(priv, tx_done, ndev,
+-		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
+-		  ring->index, c_index, last_tx_cn, last_c_index);
++		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
++		  ring->index, ring->c_index, c_index, txbds_ready);
+ 
+-	while (last_tx_cn-- > 0) {
+-		cb = ring->cbs + last_c_index;
++	while (txbds_processed < txbds_ready) {
++		cb = &ring->cbs[ring->clean_index];
+ 		bcm_sysport_tx_reclaim_one(priv, cb, &bytes_compl, &pkts_compl);
+ 
+ 		ring->desc_count++;
+-		last_c_index++;
+-		last_c_index &= (num_tx_cbs - 1);
++		txbds_processed++;
++
++		if (likely(ring->clean_index < ring->size - 1))
++			ring->clean_index++;
++		else
++			ring->clean_index = 0;
+ 	}
+ 
+ 	ring->c_index = c_index;
+@@ -1229,6 +1225,7 @@ static int bcm_sysport_init_tx_ring(stru
+ 	netif_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
+ 	ring->index = index;
+ 	ring->size = size;
++	ring->clean_index = 0;
+ 	ring->alloc_size = ring->size;
+ 	ring->desc_cpu = p;
+ 	ring->desc_count = ring->size;
+--- a/drivers/net/ethernet/broadcom/bcmsysport.h
++++ b/drivers/net/ethernet/broadcom/bcmsysport.h
+@@ -638,7 +638,7 @@ struct bcm_sysport_tx_ring {
+ 	unsigned int	desc_count;	/* Number of descriptors */
+ 	unsigned int	curr_desc;	/* Current descriptor */
+ 	unsigned int	c_index;	/* Last consumer index */
+-	unsigned int	p_index;	/* Current producer index */
++	unsigned int	clean_index;	/* Current clean index */
+ 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
+ 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
+ 	struct bcm_sysport_priv *priv;	/* private context backpointer */
