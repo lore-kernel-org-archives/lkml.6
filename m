@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346966-2-9596917519285192929
+X-Cyrus-Session-Id: sloti22d1t05-1456203-1522346960-2-16007362930189886120
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522346965; b=V9o5MJzFA+DxdMDbuhTRX8DETVQe1POtXevbEhQlYonpvNcE4m
-    nqwB0KdWTdbTi7OyIVGH9fBaRzcmIZrv6mImy9c6qeM9F3+pjCpPhyeIjh6/CGri
-    Y8Oj370pVFCK4CV/H/7pBf11GtZp2LG4CyvfOPOAYN9d8jH5wUH7Pj0Bst050oI3
-    O7rLlKumOsejsmjrxCuYvuwAqIGVxYr88ud0L3YDxW6kOMy6DiYq+zMMwFBpmNk2
-    ErOFXThKf+tuYuCGPCvSMirCxYqZ9zELngqvguNMcMcpbPLG9qwIMaZbMoUvUaoH
-    25cP+gQ/f44QDATDOijfz+VsGQv8EMAG47sQ==
+    1522346959; b=PG7RAvu4DAQao8h7s58Q3RDtU8Y5pT30Tz6gTH4FsCEZ81lvIL
+    TWZh4JKiuDl7etMml/kopkhFWevTtK0rktICLJ0eA2FEeRnA28u1frvrRX9NmMJr
+    OvAnlFnKOkqKjQ4SyjlpoKEp1rGIxe3rZGuLGmPd9seJO6nzJJKBv8gmmOJoehbN
+    Oy7kQnxc6PTPy/E0qxq7yyavMQVYcmRdEyM7OP+MYUZcLsqsPedVA8E9wp1GUM8l
+    GkceqWIp8Wnab/zvgDqb/r8g8RM+943rj8ER6awTjM1YZ4PyQsHb8Btlw/ZFNHJC
+    IwDp7hP/3Qknrzh5sDteb2v18Y14IDx+kiCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1522346965; bh=b9rBhmGodGWR0IUm/7/Va1Dr/4sg/O
-    HtcAGYyXuQX6c=; b=F26sy4tct1RLay6kOfhjN4Z6J54i18sX/+qwn7yG/JkWsf
-    RJ4RMFNdWj2cZAaZtlqJQCbPs5Xj8ODLe9pMPOlnSfKqSCYu6o7kd66nTTFoyqKR
-    qNPEtfsz4hSVu+WzZagMSLI2vEOxM4VINxcI2sX3KP0Fw+NIEXrcwpbROvJTS31n
-    eFVsgeMLMMRjlab/S5ZWHgfY3q+bPKRS+SHJS0dvY5hCPAw7/xso7aL1Z/wnF+x3
-    cW+cHMeSSzngEkL9z/m9dxHQdwiSm9U0IhHn+jRtDcYCq134mhP5t66yZ6z96jJm
-    t9QfbvjLCDWLun6WQg7QVUD2E1TVGl8k8CZoPeTw==
+    :list-id; s=fm2; t=1522346959; bh=+xV2GPc2lSPYjWwzoSe4ozCdpcQXjc
+    YdY2PFdkGA7qE=; b=fr1HIymfOyGq9ZbpV5n9k3R7Qad+VzGKTUX9ANzA3aZpKz
+    66jeguRVi6hgKcMOfoSRZUkAlMq3a/ohy/ggD9qfO9a3gRnS9vE21Eb0h+CqVoM2
+    bRNOgU5SqPq6oLv5V1EIA5GX99jyxGLeQJvBje4sdwfxA3h4CXc1UIcvaV5sfUET
+    MdcfWN/4wSEmyZ29weMD/IAnSZNx41eZRGjZt+NtItOG4NIzksg/tRzWLOWX1nbt
+    7KhVbxkGJFaEuVZzCF5mC3QFQ5mD7UsdYqspe4lBemBPnUQ4k39raA47oQSJ7ahD
+    XBtqJyTTgOCcl86awqNTzkuUDPaX4XM3XXdl0tgw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMEHCITAM6kKOLx1w26x1uZFjpgY+C6odHvNqCTbXsitxGTbG1JyJg+s/gSPvBQq4pr/USC6cJj1cJ3qzjWZR7DoEGWj2uVN2wkzsuCikfNU/H7pWQgV
-    Lu6cl7Vpr8mSEGIDQZpffxMYdhlE+ckIOtvw6bvcCbLc8pIba6rTQQEP0i8OVFEyqv01gp5y4l/Xi7c4NAJi6WpbN2nYvlkWsEDrcc7TWd8kMNCaDbWI/IaS
+X-CM-Envelope: MS4wfJwzXzmOV88nMJ615EGVyzKM/lVnscI+v6rxX2INtYhoeDzF5VF4n+CU85vXq/qO//WfPn/t+SVj50Po/J38lBtMlSTqnhndDtjczyNfm2QNK3KaL4Vh
+    8bl6iAz/ohgE1IBtQU3D86doujKYXZY/7FJ0p8569EteJ/ZC/DxeCKYhjnWw2bKgf+lyhw/MaqvcuJOEIP4B0MeD+5IE6VWqndadNd3JtmEQRB2vFCXPhrgM
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=uHxRW4g1Worn-nSmixsA:9
-    a=y9_ts17jaSkH_6mj:21 a=A8nZr1-LtZStosO9:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=vaY82krVgZPQqbDzlp4A:9
+    a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754315AbeC2SIa (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 14:08:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60636 "EHLO
+        id S1754114AbeC2SJD (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 14:09:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60644 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754306AbeC2SI1 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:08:27 -0400
+        with ESMTP id S1754316AbeC2SIa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:08:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Arkadi Sharshevsky <arkadis@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 20/20] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
-Date: Thu, 29 Mar 2018 20:00:56 +0200
-Message-Id: <20180329175742.888986849@linuxfoundation.org>
+Subject: [PATCH 4.4 13/20] team: Fix double free in error path
+Date: Thu, 29 Mar 2018 20:00:49 +0200
+Message-Id: <20180329175742.449285547@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
@@ -92,118 +93,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Arkadi Sharshevsky <arkadis@mellanox.com>
 
 
-[ Upstream commit 484d802d0f2f29c335563fcac2a8facf174a1bbc ]
+[ Upstream commit cbcc607e18422555db569b593608aec26111cb0b ]
 
-There is no need for complex checking between the last consumed index
-and current consumed index, a simple subtraction will do.
+The __send_and_alloc_skb() receives a skb ptr as a parameter but in
+case it fails the skb is not valid:
+- Send failed and released the skb internally.
+- Allocation failed.
 
-This also eliminates the possibility of a permanent transmit queue stall
-under the following conditions:
+The current code tries to release the skb in case of failure which
+causes redundant freeing.
 
-- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
-  point where we run out of free descriptors, so we stop the transmit
-  queue at the end of bcm_sysport_xmit()
-
-- because of our locking, we have the transmit process disable
-  interrupts which means we can be blocking the TX reclamation process
-
-- when TX reclamation finally runs, we will be computing the difference
-  between ring->c_index (last consumed index by SW) and what the HW
-  reports through its register
-
-- this register is masked with (ring->size - 1) = 0xff, which will lead
-  to stripping the upper bits of the index (register is 16-bits wide)
-
-- we will be computing last_tx_cn as 0, which means there is no work to
-  be done, and we never wake-up the transmit queue, leaving it
-  permanently disabled
-
-A practical example is e.g: ring->c_index aka last_c_index = 12, we
-pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
-so last_tx_cn == 0, nothing happens.
-
-Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 9b00cf2d1024 ("team: implement multipart netlink messages for options transfers")
+Signed-off-by: Arkadi Sharshevsky <arkadis@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c |   33 +++++++++++++----------------
- drivers/net/ethernet/broadcom/bcmsysport.h |    2 -
- 2 files changed, 16 insertions(+), 19 deletions(-)
+ drivers/net/team/team.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -729,37 +729,33 @@ static unsigned int __bcm_sysport_tx_rec
- 					     struct bcm_sysport_tx_ring *ring)
- {
- 	struct net_device *ndev = priv->netdev;
--	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
- 	unsigned int pkts_compl = 0, bytes_compl = 0;
-+	unsigned int txbds_processed = 0;
- 	struct bcm_sysport_cb *cb;
-+	unsigned int txbds_ready;
-+	unsigned int c_index;
- 	u32 hw_ind;
- 
- 	/* Compute how many descriptors have been processed since last call */
- 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
- 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
--	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
--
--	last_c_index = ring->c_index;
--	num_tx_cbs = ring->size;
--
--	c_index &= (num_tx_cbs - 1);
--
--	if (c_index >= last_c_index)
--		last_tx_cn = c_index - last_c_index;
--	else
--		last_tx_cn = num_tx_cbs - last_c_index + c_index;
-+	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
- 
- 	netif_dbg(priv, tx_done, ndev,
--		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
--		  ring->index, c_index, last_tx_cn, last_c_index);
-+		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
-+		  ring->index, ring->c_index, c_index, txbds_ready);
- 
--	while (last_tx_cn-- > 0) {
--		cb = ring->cbs + last_c_index;
-+	while (txbds_processed < txbds_ready) {
-+		cb = &ring->cbs[ring->clean_index];
- 		bcm_sysport_tx_reclaim_one(priv, cb, &bytes_compl, &pkts_compl);
- 
- 		ring->desc_count++;
--		last_c_index++;
--		last_c_index &= (num_tx_cbs - 1);
-+		txbds_processed++;
-+
-+		if (likely(ring->clean_index < ring->size - 1))
-+			ring->clean_index++;
-+		else
-+			ring->clean_index = 0;
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -2380,7 +2380,7 @@ send_done:
+ 	if (!nlh) {
+ 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
+ 		if (err)
+-			goto errout;
++			return err;
+ 		goto send_done;
  	}
  
- 	ring->c_index = c_index;
-@@ -1229,6 +1225,7 @@ static int bcm_sysport_init_tx_ring(stru
- 	netif_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
- 	ring->index = index;
- 	ring->size = size;
-+	ring->clean_index = 0;
- 	ring->alloc_size = ring->size;
- 	ring->desc_cpu = p;
- 	ring->desc_count = ring->size;
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -638,7 +638,7 @@ struct bcm_sysport_tx_ring {
- 	unsigned int	desc_count;	/* Number of descriptors */
- 	unsigned int	curr_desc;	/* Current descriptor */
- 	unsigned int	c_index;	/* Last consumer index */
--	unsigned int	p_index;	/* Current producer index */
-+	unsigned int	clean_index;	/* Current clean index */
- 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
- 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
- 	struct bcm_sysport_priv *priv;	/* private context backpointer */
+@@ -2660,7 +2660,7 @@ send_done:
+ 	if (!nlh) {
+ 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
+ 		if (err)
+-			goto errout;
++			return err;
+ 		goto send_done;
+ 	}
+ 
