@@ -1,160 +1,94 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1884642-1522361303-2-11148216390445258299
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enro, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522361302; b=iobmjV7g4jLdJq4psIymj5huDp/1aDm0k5O5e3L0sjKERnLXl5
-    uspvA+6U4g4LZfdlKUDDBMpkq6AINHPjN0fjX8hj7ABdzhRCwOznTnsN962zxVhT
-    TueLJy1vXe73+hb8JBXPZP6zgngb5kmyJj4qyEQlZrW4fFV7Iy0qwqwjZJ3UinPv
-    DhUN18NRx/r4O8ADfC5bC4ki4PY+hw2KW83DLtVym/iOjp7+dGgSfb9whIRjgYGg
-    iVOMkb+t+/TII51X/Xke79r/n/S7Cble05ZAR6FZn/kIDyhXgLnWZSL+x6Ksn0o8
-    HUvS+p/sCZifDe8jxQEEhHs5ncy29kv5zoIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1522361302; bh=R2mXx7lgcpzVRavGJSbE7i1+vKkYUS
-    dZAqFXWTjC+7c=; b=dJDgYdl0PkYIbeu+mRmePlvH4uJaTz8/EYxzcQYjoYOSLe
-    WK2XdcCrj8TaGmf+t1G7axucT2//B/qaclsXYm6AjrL5HCQQl8kJAZrsX/seczHz
-    74Gk+tEPNWxbTZW/WNsFe5F1/chaBX7qVvrfBRLX5JD6M66PjMnEQLQR4HMEAeh4
-    dJXwCXn/SqKPtxIo+zA0rfZeW8RVsP3BbzCuzqmWgIzZ5uZvI8UtNt/yJHWX4QJy
-    58HlpJA3kXBtJsEMkqE6+dYKWXksCJNuDCzRImJ4ZUCRm7a0St/R/67w9g+lmBwp
-    EamwZ6hi9x7QKub34pdZiS6AYMc4LeOF05NZsySg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lqjEBFeV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qaB6IvqQ;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=lqjEBFeV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qaB6IvqQ;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAgJ9kLesHfJT3VDe64D6JVALkFBt9VKydVBIGh7CUTgWGIIGOUSx+VM3emaenatDg6yu3lKXckoGJp2nYZgTebhPqLhg//cSaZEYSxTBCUDDahy0LlJ
-    SceAUN/wykHEywKarBljkpYhQalPggrnyKAKEl9EYg4FtM5WOa/JrbIjUR1yE0jCMs11J7U8ut/fBmj146hQx9dF6KRq37hih/mxDvpMM47RFHDbVyeRLJyf
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=toPVVLyrJj4A:10
-    a=v2DPQv5-lfwA:10 a=U0zfkUukAAAA:8 a=VwQbUJbxAAAA:8 a=Pybxfbv0walMmDmpvIYA:9
-    a=CjuIK1q_8ugA:10 a=rdti5zajfK0A:10 a=rXRU1dkEVDZ1dOovDhQH:22
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751865AbeC2WIV (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 18:08:21 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40173 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751209AbeC2WIT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 18:08:19 -0400
-X-Google-Smtp-Source: AIpwx4//lJiUaWoO8JWklOZaR5e5kJAJUKxVvIOnpDG+k0Tyfg+CLkLFLwOIsqB3H4RCmfjNOMlzMg==
-Date: Thu, 29 Mar 2018 15:08:17 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: "kernelci.org bot" <bot@kernelci.org>
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49XRIQYr305rkNCalfIN9UKladPDMcBi/Tk6qCvUuaX303/WbydNEumDURrjszxyBkkF7Fm
+ARC-Seal: i=1; a=rsa-sha256; t=1522346847; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kXGjSAO7laoxJyp5k7pOEN/AAo394JlLVR48AuzeiROqmfyhw/r3dZc8//CwmVCE69
+         GHnkS4f9MVWG+OKh9WQfYIvhQesOcCYZbFSzhvyUwRq69P5CNs0ID22BTdhSiXuOYNox
+         SXh0hajIkjcc2e8mOEL4CUYXby6+vgYnE8WQqIEi3peDsogwQaW08cdDpOWQUeyLcNr0
+         IKjsqeh4o3QczugoftYrD9Zob7l9qMSGbCYiSMNZcAXPLG2ACV+hhgqCpwl64ixM7xIi
+         lomHTMX2fFZSlX2zrCTZ/6y/ns/X4kRsE1si+Kp3enJTv22SBLsJePIMuzRkJ7dHf3Hq
+         XrEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=MaYqeV9YmzKTi0r55Xr4cqp6ZOjLv53ClNjePZwvCy4=;
+        b=PoSf1xmYt36ZpE2UKazcWIGmVBYwvWigyL2olzgbtHAFXXmuA3etuJ0OB5qBHrphhL
+         xp1xl0LSuvBJFiJYQTGc2oYurNCJ8pJrJ2bCuu+SxdBVD5pzQZMn/9D3cWa22hz0Uhb/
+         X1OPZjXrseoUIDBw5IH2ouCkj+DaONwtQ6RXKTDm6cl935beLNolrBTYf25oQjaiiqw2
+         gFVSWaI/XMlThTl4P5MEAwk8jdeDucoQRRDGZpFLsCTPzXITCU72ILw73JQ03z7j1URy
+         gda3ZlZtJCPxIcMZGdby7kUSOP8TyMihyA9aWAM/4qsUzR12f+AUqenCuGCHP0e8dVsY
+         obrQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/28] 4.9.92-stable review
-Message-ID: <20180329220817.GC5526@roeck-us.net>
+	stable@vger.kernel.org,
+	Kirill Tkhai <ktkhai@virtuozzo.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 09/28] net: Fix hlist corruptions in inet_evict_bucket()
+Date: Thu, 29 Mar 2018 20:00:28 +0200
+Message-Id: <20180329175734.574879436@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
- <5abd622e.5b88df0a.be1c9.da43@mx.google.com>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5abd622e.5b88df0a.be1c9.da43@mx.google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1596296057389749858?=
+X-GMAIL-MSGID: =?utf-8?q?1596296367940806545?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 03:01:18PM -0700, kernelci.org bot wrote:
-> stable-rc/linux-4.9.y boot: 122 boots: 1 failed, 104 passed with 14 offline, 3 untried/unknown (v4.9.91-29-gcdf42b7a5c27)
-> 
-> Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.9.y/kernel/v4.9.91-29-gcdf42b7a5c27/
-> Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y/kernel/v4.9.91-29-gcdf42b7a5c27/
-> 
-> Tree: stable-rc
-> Branch: linux-4.9.y
-> Git Describe: v4.9.91-29-gcdf42b7a5c27
-> Git Commit: cdf42b7a5c277bc4a4dd0853f6e2155a3ead8b02
-> Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> Tested: 63 unique boards, 22 SoC families, 19 builds out of 183
-> 
-> Boot Regressions Detected:
-> 
-> arm:
-> 
->     multi_v7_defconfig:
->         sun8i-a33-sinlinx-sina33:
->             lab-free-electrons: new failure (last pass: v4.9.91)
-> 
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-This is an actual crash.
+------------------
 
-> Boot Failure Detected:
-> 
-> arm:
-> 
->     multi_v7_defconfig
->         sun8i-a33-sinlinx-sina33: 1 failed lab
-> 
-> Offline Platforms:
-> 
-> arm:
-> 
->     sunxi_defconfig:
->         sun5i-r8-chip: 1 offline lab
->         sun7i-a20-cubietruck: 1 offline lab
-> 
->     multi_v7_defconfig:
->         exynos5410-odroidxu: 1 offline lab
->         exynos5800-peach-pi: 1 offline lab
->         sun5i-r8-chip: 1 offline lab
->         sun7i-a20-cubietruck: 1 offline lab
->         tegra20-iris-512: 1 offline lab
->         tegra30-beaver: 1 offline lab
-> 
->     exynos_defconfig:
->         exynos5410-odroidxu: 1 offline lab
->         exynos5800-peach-pi: 1 offline lab
-> 
->     davinci_all_defconfig:
->         dm365evm,legacy: 1 offline lab
-> 
->     tegra_defconfig:
->         tegra20-iris-512: 1 offline lab
->         tegra30-beaver: 1 offline lab
-> 
-> arm64:
-> 
->     defconfig:
->         meson-gxbb-odroidc2: 1 offline lab
-> 
-> ---
-> For more info write to <info@kernelci.org>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+
+
+[ Upstream commit a560002437d3646dafccecb1bf32d1685112ddda ]
+
+inet_evict_bucket() iterates global list, and
+several tasks may call it in parallel. All of
+them hash the same fq->list_evictor to different
+lists, which leads to list corruption.
+
+This patch makes fq be hashed to expired list
+only if this has not been made yet by another
+task. Since inet_frag_alloc() allocates fq
+using kmem_cache_zalloc(), we may rely on
+list_evictor is initially unhashed.
+
+The problem seems to exist before async
+pernet_operations, as there was possible to have
+exit method to be executed in parallel with
+inet_frags::frags_work, so I add two Fixes tags.
+This also may go to stable.
+
+Fixes: d1fe19444d82 "inet: frag: don't re-use chainlist for evictor"
+Fixes: f84c6821aa54 "net: Convert pernet_subsys, registered from inet_init()"
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv4/inet_fragment.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -119,6 +119,9 @@ out:
+ 
+ static bool inet_fragq_should_evict(const struct inet_frag_queue *q)
+ {
++	if (!hlist_unhashed(&q->list_evictor))
++		return false;
++
+ 	return q->net->low_thresh == 0 ||
+ 	       frag_mem_limit(q->net) >= q->net->low_thresh;
+ }
