@@ -1,91 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeC2Ohs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:37:48 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:52829 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751164AbeC2Ohq (ORCPT
+        id S1751195AbeC2Okq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:40:46 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:35216 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1750884AbeC2Oko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:37:46 -0400
-X-Google-Smtp-Source: AIpwx4+qZWleVs0tu16aiE1qbH7YMm6moVCLZbtBa3ewgRL6VWGvAmX4A/JqXKJP4MYmjENf7YzxZCnha9irNFYRrxI=
+        Thu, 29 Mar 2018 10:40:44 -0400
+Date: Thu, 29 Mar 2018 10:40:43 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: schwidefsky@de.ibm.com, <borntraeger@de.ibm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <parri.andrea@gmail.com>, <will.deacon@arm.com>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
+        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
+        <akiyks@gmail.com>
+Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
+In-Reply-To: <20180329021812.GV3675@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1803291021500.1292-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <CADnq5_P-z=Noos_jaME9_CERri3C-m2hPPvx2bArr36O=1FnrA@mail.gmail.com>
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-2-christian.koenig@amd.com> <20180328123830.GB25060@infradead.org>
- <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com> <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
- <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com> <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
- <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com> <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
- <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com> <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
- <CADnq5_P-z=Noos_jaME9_CERri3C-m2hPPvx2bArr36O=1FnrA@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 29 Mar 2018 10:37:44 -0400
-Message-ID: <CADnq5_PP_COGHxLdDtfnLrho8RNXLQFHc5s07+g55d9oXvB6rg@mail.gmail.com>
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: linaro-mm-sig@lists.linaro.org,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        linux-media <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2TEbqag017185
 
-Sorry, didn't mean to drop the lists here. re-adding.
+On Wed, 28 Mar 2018, Paul E. McKenney wrote:
 
-On Wed, Mar 28, 2018 at 4:05 PM, Alex Deucher <alexdeucher@gmail.com> wrote:
-> On Wed, Mar 28, 2018 at 3:53 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
->>
->>
->> On 28/03/18 01:44 PM, Christian König wrote:
->>> Well, isn't that exactly what dma_map_resource() is good for? As far as
->>> I can see it makes sure IOMMU is aware of the access route and
->>> translates a CPU address into a PCI Bus address.
->>
->>> I'm using that with the AMD IOMMU driver and at least there it works
->>> perfectly fine.
->>
->> Yes, it would be nice, but no arch has implemented this yet. We are just
->> lucky in the x86 case because that arch is simple and doesn't need to do
->> anything for P2P (partially due to the Bus and CPU addresses being the
->> same). But in the general case, you can't rely on it.
->
-> Could we do something for the arches where it works?  I feel like peer
-> to peer has dragged out for years because everyone is trying to boil
-> the ocean for all arches.  There are a huge number of use cases for
-> peer to peer on these "simple" architectures which actually represent
-> a good deal of the users that want this.
->
-> Alex
->
->>
->>>>> Yeah, but not for ours. See if you want to do real peer 2 peer you need
->>>>> to keep both the operation as well as the direction into account.
->>>> Not sure what you are saying here... I'm pretty sure we are doing "real"
->>>> peer 2 peer...
->>>>
->>>>> For example when you can do writes between A and B that doesn't mean
->>>>> that writes between B and A work. And reads are generally less likely to
->>>>> work than writes. etc...
->>>> If both devices are behind a switch then the PCI spec guarantees that A
->>>> can both read and write B and vice versa.
->>>
->>> Sorry to say that, but I know a whole bunch of PCI devices which
->>> horrible ignores that.
->>
->> Can you elaborate? As far as the device is concerned it shouldn't know
->> whether a request comes from a peer or from the host. If it does do
->> crazy stuff like that it's well out of spec. It's up to the switch (or
->> root complex if good support exists) to route the request to the device
->> and it's the root complex that tends to be what drops the load requests
->> which causes the asymmetries.
->>
->> Logan
->> _______________________________________________
->> amd-gfx mailing list
->> amd-gfx@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+> > > In the meantime, does the cat file look to you like it correctly
+> > > models the combination of TSO and multicopy atomicity?  Do the
+> > > fences really work, or did I just get lucky with my choice of
+> > > litmus tests?
+> > 
+> > You got lucky.  Try creating an SB litmus test where, instead of an
+> > smp_mb() fence between the write and the read, each thread executes
+> > some other kind of fence.
+> 
+> Ah, it does indeed get "Never" in that case, which I do not believe
+> to e correct.
+> 
+> > The acyclicity condition should have been written more like this:
+> > 
+> > let po_ghb = ([R] ; po ; [M]) | ([M] ; po ; [W])
+> > 
+> > acyclic mfence | po_ghb | rf | fr | co as tso-mca
+> > 
+> > I don't know what the fence instruction is on s390; change the "mfence"
+> > above accordingly.  The main difference between this and the
+> > corresponding expression in x86tso.cat is that I replaced rfe with rf.
+> 
+> The s390 fence instruction is "bcr 14,0" or "bcr 15,0", depending on
+> how recent of hardware you are running.  The latter works everywhere,
+> if I recall correctly.  But I do not believe that herd knows about either
+> instruction yet.
+
+Herd does not need to understand s390 assembly in order to handle the 
+things defined in linux.def, such as "smp_mb()".  linux.def doesn't 
+contain any x86 assembly language stuff either (or PPC or ARM).
+
+>  Ah, and I need to lose the "empty rmw & (fre;coe)".
+> That appears to be where my spurious ordering was coming from, strange
+> though that seems to me.
+
+No, don't drop it; it was not the source of your spurious ordering.  
+The extra ordering came from your "(po \ (W * R))" term, which 
+unintentionally matches fences as well as memory accesses.
+
+> And your use of "rf" instead of "rfe" makes sense, as that is what makes
+> the read-from-write provide ordering, correct?  And that should also cover
+> the "Uniproc check" that would otherwise be required, right?
+
+I don't think so...
+
+> Except that I get "Sometimes" on CoWR+poonceonce+Once.litmus...
+
+Exactly.
+
+> Which I can fix by unioning po-loc into po-ghb.  Or is there some
+> better way to do this?
+
+You could just keep the "uniproc" check.  These two approaches accept 
+the same set of litmus tests.
+
+Logically, I think of these as two distinct categories of ordering.  
+po_ghb and tso-mca have to do with the order in which stores reach the 
+cache, whereas "uniproc" (AKA sequential consistency per variable) has 
+to do with enforcement of the cache coherence requirements.  Clearly 
+they are related, but they aren't the same thing.
+
+> > This doesn't account for atomic operations properly; see the "implied" 
+> > term in x86tso.cat.
+> 
+> I will look at this more later, reaching end of both battery and useful
+> attention span...
+
+Alan
