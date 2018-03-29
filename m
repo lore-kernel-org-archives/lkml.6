@@ -1,101 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752290AbeC2S5d (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 14:57:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39690 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751249AbeC2S5b (ORCPT
+        id S1752282AbeC2S7m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 14:59:42 -0400
+Received: from fallback5.mail.ru ([94.100.181.253]:54398 "EHLO
+        fallback.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751151AbeC2S7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 14:57:31 -0400
-Subject: Re: [PATCH v3 01/14] KVM: s390: refactor crypto initialization
-To: Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-2-git-send-email-akrowiak@linux.vnet.ibm.com>
- <f87a6adb-8982-c194-7925-0c88060ebef2@linux.vnet.ibm.com>
- <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
- <3227b02e-4a16-295d-9a01-043702cf149d@linux.vnet.ibm.com>
- <20180326104455.7773be7b.cohuck@redhat.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Thu, 29 Mar 2018 14:57:22 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180326104455.7773be7b.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18032918-0008-0000-0000-000002ECE9E3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008766; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01010227; UDB=6.00514694; IPR=6.00789506;
- MB=3.00020316; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-29 18:57:27
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032918-0009-0000-0000-000038B84B14
-Message-Id: <5c659a5e-1933-366b-65fc-6e9eabe504d5@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-29_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803290196
+        Thu, 29 Mar 2018 14:59:38 -0400
+From: Sergey Suloev <ssuloev@orpaltech.com>
+To: Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Sergey Suloev <ssuloev@orpaltech.com>
+Subject: [PATCH 5/6] spi: sun4i: introduce register set/unset helpers
+Date: Thu, 29 Mar 2018 21:59:06 +0300
+Message-Id: <20180329185907.27281-6-ssuloev@orpaltech.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180329185907.27281-1-ssuloev@orpaltech.com>
+References: <20180329185907.27281-1-ssuloev@orpaltech.com>
+X-7FA49CB5: 0D63561A33F958A55778B6CBB183EA6FA67B693F76D0AEE7F409322A2F59C95C725E5C173C3A84C3ADE50F0DA4A4E48C53333C6F2D013B24463FC242DBD691A6C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917D3AC8FC500FE72F639A6197812DC186E069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/26/2018 04:44 AM, Cornelia Huck wrote:
-> On Thu, 15 Mar 2018 15:55:39 +0100
-> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
->
->> On 15/03/2018 15:48, Tony Krowiak wrote:
->>> On 03/15/2018 08:26 AM, Pierre Morel wrote:
->>>> On 14/03/2018 19:25, Tony Krowiak wrote:
->>>>> diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
->>>>> index a3dbd45..4ca9077 100644
->>>>> --- a/arch/s390/kvm/Kconfig
->>>>> +++ b/arch/s390/kvm/Kconfig
->>>>> @@ -33,6 +33,7 @@ config KVM
->>>>>        select HAVE_KVM_INVALID_WAKEUPS
->>>>>        select SRCU
->>>>>        select KVM_VFIO
->>>>> +    select ZCRYPT
->>>> I do not think it is a good solution to *always* enable ZCRYPT
->>>> when we have KVM.
->>> If CONFIG_ZCRYPT is not selected, then the kvm_ap_apxa_installed()
->>> function will not compile
->>> because it calls a zcrypt interface. How would you suggest we make
->>> sure zcrypt interfaces
->>> used in KVM are built if CONFIG_ZCRYPT is not selected?
->> if zcrypt is not configured, I suppose that the KVM code initializaing CRYCB
->> has no use but the function will be called from KVM.
->> So I would do something like:
->>
->> #ifdef ZCRYPT
->> external definitions.
->> #else
->> stubs returning error -ENOZCRYPT (or whatever)
->> #endif
-> The kvm code used some kind of detection for crycb before (IIRC it was
-> for the key-wrapping stuff). I assume that usage is independent of
-> zcrypt driver usage in the host?
-A function in kvm-s390.c was replaced with a call to the function in
-ap_bus.c that was externalized in patch 2/14. This was done to remove
-duplicate code. Since zcrypt is built into the kernel, I didn't think
-it would be a problem, but apparently because of the way zcrypt is
-configured, it is still possible to remove it from the kernel build.
->
-> So, I think that apxa detection function should be used to s390
-> architecture base code and not be conditional on anything.
-I am convinced that the original function from kvm_s390.c should be
-restored.
->
+Two helper functions were added in order to update
+registers easily.
+
+Signed-off-by: Sergey Suloev <ssuloev@orpaltech.com>
+
+---
+ drivers/spi/spi-sun4i.c | 40 +++++++++++++++++++---------------------
+ 1 file changed, 19 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/spi/spi-sun4i.c b/drivers/spi/spi-sun4i.c
+index 4f24e12..fc913d4 100644
+--- a/drivers/spi/spi-sun4i.c
++++ b/drivers/spi/spi-sun4i.c
+@@ -107,29 +107,29 @@ static inline void sun4i_spi_write(struct sun4i_spi *sspi, u32 reg, u32 value)
+ 	writel(value, sspi->base_addr + reg);
+ }
+ 
+-static inline u32 sun4i_spi_get_tx_fifo_count(struct sun4i_spi *sspi)
++static inline void sun4i_spi_set(struct sun4i_spi *sspi, u32 addr, u32 val)
+ {
+-	u32 reg = sun4i_spi_read(sspi, SUN4I_FIFO_STA_REG);
+-
+-	reg >>= SUN4I_FIFO_STA_TF_CNT_BITS;
++	u32 reg = sun4i_spi_read(sspi, addr);
+ 
+-	return reg & SUN4I_FIFO_STA_TF_CNT_MASK;
++	reg |= val;
++	sun4i_spi_write(sspi, addr, reg);
+ }
+ 
+-static inline void sun4i_spi_enable_interrupt(struct sun4i_spi *sspi, u32 mask)
++static inline void sun4i_spi_unset(struct sun4i_spi *sspi, u32 addr, u32 val)
+ {
+-	u32 reg = sun4i_spi_read(sspi, SUN4I_INT_CTL_REG);
++	u32 reg = sun4i_spi_read(sspi, addr);
+ 
+-	reg |= mask;
+-	sun4i_spi_write(sspi, SUN4I_INT_CTL_REG, reg);
++	reg &= ~val;
++	sun4i_spi_write(sspi, addr, reg);
+ }
+ 
+-static inline void sun4i_spi_disable_interrupt(struct sun4i_spi *sspi, u32 mask)
++static inline u32 sun4i_spi_get_tx_fifo_count(struct sun4i_spi *sspi)
+ {
+-	u32 reg = sun4i_spi_read(sspi, SUN4I_INT_CTL_REG);
++	u32 reg = sun4i_spi_read(sspi, SUN4I_FIFO_STA_REG);
+ 
+-	reg &= ~mask;
+-	sun4i_spi_write(sspi, SUN4I_INT_CTL_REG, reg);
++	reg >>= SUN4I_FIFO_STA_TF_CNT_BITS;
++
++	return reg & SUN4I_FIFO_STA_TF_CNT_MASK;
+ }
+ 
+ static inline void sun4i_spi_drain_fifo(struct sun4i_spi *sspi, int len)
+@@ -256,13 +256,12 @@ static int sun4i_spi_transfer_one(struct spi_master *master,
+ 	/* Clear pending interrupts */
+ 	sun4i_spi_write(sspi, SUN4I_INT_STA_REG, ~0);
+ 
++	/* Reset FIFOs */
++	sun4i_spi_set(sspi, SUN4I_CTL_REG,
++		      SUN4I_CTL_RF_RST | SUN4I_CTL_TF_RST);
+ 
+ 	reg = sun4i_spi_read(sspi, SUN4I_CTL_REG);
+ 
+-	/* Reset FIFOs */
+-	sun4i_spi_write(sspi, SUN4I_CTL_REG,
+-			reg | SUN4I_CTL_RF_RST | SUN4I_CTL_TF_RST);
+-
+ 	/*
+ 	 * Setup the transfer control register: Chip Select,
+ 	 * polarities, etc.
+@@ -341,12 +340,11 @@ static int sun4i_spi_transfer_one(struct spi_master *master,
+ 	 */
+ 	sun4i_spi_fill_fifo(sspi, SUN4I_FIFO_DEPTH);
+ 
+-	/* Enable the transfer complete interrupt */
+-	sun4i_spi_enable_interrupt(sspi, SUN4I_INT_CTL_TC);
++	/* Enable transfer complete interrupt */
++	sun4i_spi_set(sspi, SUN4I_INT_CTL_REG, SUN4I_INT_CTL_TC);
+ 
+ 	/* Start the transfer */
+-	reg = sun4i_spi_read(sspi, SUN4I_CTL_REG);
+-	sun4i_spi_write(sspi, SUN4I_CTL_REG, reg | SUN4I_CTL_XCH);
++	sun4i_spi_set(sspi, SUN4I_CTL_REG, SUN4I_CTL_XCH);
+ 
+ 	ret = sun4i_spi_wait_for_transfer(spi, tfr);
+ 
+-- 
+2.16.2
