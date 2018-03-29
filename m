@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49eHuud+CBLx25PAs/vRDMMjVsGkxOibG1XjvYkUMERPwwX2aKR3435anqwUuQ7RWoJWjDq
-ARC-Seal: i=1; a=rsa-sha256; t=1522346534; cv=none;
+X-Google-Smtp-Source: AIpwx4/JitkR6UD75Xs/No33MOtMYwX+64WdcT3VWkl6zNsAh4EyI5ZnCgc9nwRtnbqlv9IKmncV
+ARC-Seal: i=1; a=rsa-sha256; t=1522346531; cv=none;
         d=google.com; s=arc-20160816;
-        b=fBHTFm+IDhbx2IDFpPbPq2DCOb9M7XCfmDHn76dxcRuKaAgMkKRDeHfrD9o6/c65k5
-         EqVwDNedjFLLFeH8P5KZrjv4p+42EOGsX+rzjci08xs62QYnTDRfmV8dv02QJV6S4JrX
-         o3pTF7ZcMhamebKOuIl6JJkbxDxDTkMcsHaZDJ0sUwzEBSnkMWaFmc7t8PeOdSfVMUzE
-         /IAt7j8eOpf/HjMbrihfffPQo+4VQuAFIS0Y6AlsezOKCfLzST3IlIbSCseHfCEB6kah
-         zQN4huA7amBuJIKfw+IsABxOQl/fGTJn6D4hsYIX1RclB2ZcbZqXdQY63+nWgDWnDvSz
-         g/bg==
+        b=MZiSdwRCrfREJ1q7wV579fmtGRqx9I1wAhfbyBRDRHKw20RAwc2zyp2uXUQBfE2ojR
+         OaTkGGbJxGb+oOTd/UHWGfX7UVgjFKKuXkqSWDD9lN8W7rUvqnOqfTcUloq5moAx1TOq
+         2ASMiZmpC9dxdvc2GAelHZCktQPgc6PW2qMdmH4NxYcN7JDUmydpLTStFyD3qBpUHts/
+         LizmcCNRsk12hKjIGCZarDm35ENA4HvD4OniSY1yAsiukdYNJqImXMMFOylPUeHSAMM9
+         amChoF9FlzJAjzlhEQj64j8zSbtGY3W64+FMnRpArx2Dxr6NUsm4TchJ75iobkOy/FUp
+         JRvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=P20PrqN0elL6RExRjdoiSPKhtyM8im7a7fK8SC54f44=;
-        b=ZohH4ZGQ7hGcRdkabg0tMGXKViSyRV+jb+2L0Y/xLS0WQfL+pQc1iXkn02XCYb/GjZ
-         BIT2jFfnDOP8GVbo6aDKNi1mXUZzD/Hm4IOi96APUQY/zQmiVUrClxUgmencKS5pHUze
-         LCPigA440bEkqxwv1vCLsJ9hBF1TAssKSz+CYOk1aB0Qafounm8xptWUGCsMifqfhBKK
-         DUWQEEYYGZNC8X8FeB/jNlBhc9m5Mt2RoPb2cz4YHUVvf8+0R/k/gdZad9wO63Q9XCKo
-         2vSUWMk/bKBmrkogEiwPsxuEiLH4UBVtCe9d57vu1fXy5CQQjfYu+O/7CpBX9XUCpH/q
-         eThA==
+        bh=iCFWcVYhNzDADgs45OCGv3pvoJD3xI7nUcwYYaY7lPI=;
+        b=s4RqUHZR6kwjFqwWEMOEl0eB5BPGD31/Q2BFC6XOxH4yB7GJSK6mJoBKv227tNJeRm
+         So3Jz8mR1MRGXm6OQkWDGXLvq/3FvoNKeTgfpp2KnO7pFFv7gEBuxB7wHDyWbRTjXE6V
+         EYvRCJK8k2+DXqjjx5e/AB89RFtuLGpadsfzR6qqwsVmzW4F6HWx/FirYJUAyncr0dgx
+         WJycH2mfe48eYV6gWECIupBkt3B5KGfxNHb5J9UthbvVSX235AKr/MTIbqbHxvB29mb1
+         g6RWieepec9x0k3ygBWU7TjEX7speY/0JSzvjipT7/JXB1HtRTPLabCwwY7u1Re0IKYN
+         mr5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paul Blakey <paulb@mellanox.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	xu heng <xuheng333@zoho.com>,
+	Guillaume Nault <g.nault@alphalink.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 19/47] rhashtable: Fix rhlist duplicates insertion
-Date: Thu, 29 Mar 2018 20:00:00 +0200
-Message-Id: <20180329175730.507661079@linuxfoundation.org>
+Subject: [PATCH 4.15 18/47] ppp: avoid loop in xmit recursion detection code
+Date: Thu, 29 Mar 2018 19:59:59 +0200
+Message-Id: <20180329175730.423736967@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296039463531522?=
-X-GMAIL-MSGID: =?utf-8?q?1596296039463531522?=
+X-GMAIL-THRID: =?utf-8?q?1596296036023455533?=
+X-GMAIL-MSGID: =?utf-8?q?1596296036023455533?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,57 +50,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Blakey <paulb@mellanox.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit d3dcf8eb615537526bd42ff27a081d46d337816e ]
+[ Upstream commit 6d066734e9f09cdea4a3b9cb76136db3f29cfb02 ]
 
-When inserting duplicate objects (those with the same key),
-current rhlist implementation messes up the chain pointers by
-updating the bucket pointer instead of prev next pointer to the
-newly inserted node. This causes missing elements on removal and
-travesal.
+We already detect situations where a PPP channel sends packets back to
+its upper PPP device. While this is enough to avoid deadlocking on xmit
+locks, this doesn't prevent packets from looping between the channel
+and the unit.
 
-Fix that by properly updating pprev pointer to point to
-the correct rhash_head next pointer.
+The problem is that ppp_start_xmit() enqueues packets in ppp->file.xq
+before checking for xmit recursion. Therefore, __ppp_xmit_process()
+might dequeue a packet from ppp->file.xq and send it on the channel
+which, in turn, loops it back on the unit. Then ppp_start_xmit()
+queues the packet back to ppp->file.xq and __ppp_xmit_process() picks
+it up and sends it again through the channel. Therefore, the packet
+will loop between __ppp_xmit_process() and ppp_start_xmit() until some
+other part of the xmit path drops it.
 
-Issue: 1241076
-Change-Id: I86b2c140bcb4aeb10b70a72a267ff590bb2b17e7
-Fixes: ca26893f05e8 ('rhashtable: Add rhlist interface')
-Signed-off-by: Paul Blakey <paulb@mellanox.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+For L2TP, we rapidly fill the skb's headroom and pppol2tp_xmit() drops
+the packet after a few iterations. But PPTP reallocates the headroom
+if necessary, letting the loop run and exhaust the machine resources
+(as reported in https://bugzilla.kernel.org/show_bug.cgi?id=199109).
+
+Fix this by letting __ppp_xmit_process() enqueue the skb to
+ppp->file.xq, so that we can check for recursion before adding it to
+the queue. Now ppp_xmit_process() can drop the packet when recursion is
+detected.
+
+__ppp_channel_push() is a bit special. It calls __ppp_xmit_process()
+without having any actual packet to send. This is used by
+ppp_output_wakeup() to re-enable transmission on the parent unit (for
+implementations like ppp_async.c, where the .start_xmit() function
+might not consume the skb, leaving it in ppp->xmit_pending and
+disabling transmission).
+Therefore, __ppp_xmit_process() needs to handle the case where skb is
+NULL, dequeuing as many packets as possible from ppp->file.xq.
+
+Reported-by: xu heng <xuheng333@zoho.com>
+Fixes: 55454a565836 ("ppp: avoid dealock on recursive xmit")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/rhashtable.h |    4 +++-
- lib/rhashtable.c           |    4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ppp/ppp_generic.c |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
---- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -750,8 +750,10 @@ slow_path:
- 		if (!key ||
- 		    (params.obj_cmpfn ?
- 		     params.obj_cmpfn(&arg, rht_obj(ht, head)) :
--		     rhashtable_compare(&arg, rht_obj(ht, head))))
-+		     rhashtable_compare(&arg, rht_obj(ht, head)))) {
-+			pprev = &head->next;
- 			continue;
-+		}
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -257,7 +257,7 @@ struct ppp_net {
+ /* Prototypes. */
+ static int ppp_unattached_ioctl(struct net *net, struct ppp_file *pf,
+ 			struct file *file, unsigned int cmd, unsigned long arg);
+-static void ppp_xmit_process(struct ppp *ppp);
++static void ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb);
+ static void ppp_send_frame(struct ppp *ppp, struct sk_buff *skb);
+ static void ppp_push(struct ppp *ppp);
+ static void ppp_channel_push(struct channel *pch);
+@@ -513,13 +513,12 @@ static ssize_t ppp_write(struct file *fi
+ 		goto out;
+ 	}
  
- 		data = rht_obj(ht, head);
+-	skb_queue_tail(&pf->xq, skb);
+-
+ 	switch (pf->kind) {
+ 	case INTERFACE:
+-		ppp_xmit_process(PF_TO_PPP(pf));
++		ppp_xmit_process(PF_TO_PPP(pf), skb);
+ 		break;
+ 	case CHANNEL:
++		skb_queue_tail(&pf->xq, skb);
+ 		ppp_channel_push(PF_TO_CHANNEL(pf));
+ 		break;
+ 	}
+@@ -1267,8 +1266,8 @@ ppp_start_xmit(struct sk_buff *skb, stru
+ 	put_unaligned_be16(proto, pp);
  
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -537,8 +537,10 @@ static void *rhashtable_lookup_one(struc
- 		if (!key ||
- 		    (ht->p.obj_cmpfn ?
- 		     ht->p.obj_cmpfn(&arg, rht_obj(ht, head)) :
--		     rhashtable_compare(&arg, rht_obj(ht, head))))
-+		     rhashtable_compare(&arg, rht_obj(ht, head)))) {
-+			pprev = &head->next;
- 			continue;
-+		}
+ 	skb_scrub_packet(skb, !net_eq(ppp->ppp_net, dev_net(dev)));
+-	skb_queue_tail(&ppp->file.xq, skb);
+-	ppp_xmit_process(ppp);
++	ppp_xmit_process(ppp, skb);
++
+ 	return NETDEV_TX_OK;
  
- 		if (!ht->rhlist)
- 			return rht_obj(ht, head);
+  outf:
+@@ -1420,13 +1419,14 @@ static void ppp_setup(struct net_device
+  */
+ 
+ /* Called to do any work queued up on the transmit side that can now be done */
+-static void __ppp_xmit_process(struct ppp *ppp)
++static void __ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
+ {
+-	struct sk_buff *skb;
+-
+ 	ppp_xmit_lock(ppp);
+ 	if (!ppp->closing) {
+ 		ppp_push(ppp);
++
++		if (skb)
++			skb_queue_tail(&ppp->file.xq, skb);
+ 		while (!ppp->xmit_pending &&
+ 		       (skb = skb_dequeue(&ppp->file.xq)))
+ 			ppp_send_frame(ppp, skb);
+@@ -1440,7 +1440,7 @@ static void __ppp_xmit_process(struct pp
+ 	ppp_xmit_unlock(ppp);
+ }
+ 
+-static void ppp_xmit_process(struct ppp *ppp)
++static void ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
+ {
+ 	local_bh_disable();
+ 
+@@ -1448,7 +1448,7 @@ static void ppp_xmit_process(struct ppp
+ 		goto err;
+ 
+ 	(*this_cpu_ptr(ppp->xmit_recursion))++;
+-	__ppp_xmit_process(ppp);
++	__ppp_xmit_process(ppp, skb);
+ 	(*this_cpu_ptr(ppp->xmit_recursion))--;
+ 
+ 	local_bh_enable();
+@@ -1458,6 +1458,8 @@ static void ppp_xmit_process(struct ppp
+ err:
+ 	local_bh_enable();
+ 
++	kfree_skb(skb);
++
+ 	if (net_ratelimit())
+ 		netdev_err(ppp->dev, "recursion detected\n");
+ }
+@@ -1942,7 +1944,7 @@ static void __ppp_channel_push(struct ch
+ 	if (skb_queue_empty(&pch->file.xq)) {
+ 		ppp = pch->ppp;
+ 		if (ppp)
+-			__ppp_xmit_process(ppp);
++			__ppp_xmit_process(ppp, NULL);
+ 	}
+ }
+ 
