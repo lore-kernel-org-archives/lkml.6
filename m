@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48lJR9qNCKTJ7JecJGzzg1VTvCQZVA89WE2IIZckMwRnvke+lFK4cX49HoruS1ZGXPPDjO/
-ARC-Seal: i=1; a=rsa-sha256; t=1522346514; cv=none;
+X-Google-Smtp-Source: AIpwx49r947LezqsQFkoLpKCg0H9OkHI1D2hlfGVlBApCLe/OPJfg73E/AzpsPrcXQYpxsOyicxt
+ARC-Seal: i=1; a=rsa-sha256; t=1522346511; cv=none;
         d=google.com; s=arc-20160816;
-        b=WCPrEFgcNtAJKcuYudv0guNyxSH1nXL5eePGLXdIyjA7JiIbrzlsjZJPJw/0a1lRyi
-         bm6lJBiExqYpjxDxneddAX/33u9f3vdrcyDOW9AgmDPje6Nj7SslykJrYDi95P0kY8dg
-         X9Azm3JHQa4cloqQEGeGRlpEv/5GHFv7rrsRqJ2vxgi2p3yH60m0g13LyyUk/HfacBMH
-         ZFzpekdF/rrhsJSvdCLGHmlwoqnH2hde5I+KP0nw4Dg/xea7c3r9sgFjIy0Ls1RahsSn
-         lPpdJkxxxwaYPN6UK6FwocSSTa5A64sn4TJPKwOOPj5vJYwz7m7f3WgykR6BGPeSwlad
-         Akfg==
+        b=NLgQTb+nIbv4ETFYMFcHd+UOo3c8v7eXFzjzfD77GP1Fxmangl6XQBlZuoCOF5SGiB
+         lq5JYDb6wqmiqnbw9Ntz3hIEWP9TGsw10vtyYYI9DLjmgS2wTxjhtAQhgNnwR68k3X+L
+         IF7Lr78BwIjFDwm7Kw2+5c3I0ScBwpNg1gnNykjDGW2h0OrLWc1inyUbjNIg0NLAyig7
+         7h34AEgqb6wlOyv/skiXPlUBwN75/FIGBqmFaFrZXvq6SmXoFnQhztBvjBBNwE7/HNGu
+         FIAYwSAA56Hznv89Zlu7UkvoGrOlQpwIfwiNJZ+QldF4SeAX8aGvYEE5eax/p9l/SQrN
+         rrjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=c0jCr0nO12wmok9WRkydLsvI5uBb6we4U5FXgmZ9+Y4=;
-        b=ZlBfrmz5rXwe8cEy2VxF47ezDas5l7y5/2VBf6/zhiKvb9HPPmDs8rDo8HHTluUGx+
-         ghr+VSpAHXKxv6/JqtJLwbXnnykXBiVv+Bqce2NYAcYhKbVjOOdHkcduI5aVGOD0sYPj
-         5mEUKLu0dCG/nLxchr7HdnyE2xC6I3pfdKfgFpgKtYAJ1TVKZ4ezqCarYvUf8OTe+e3y
-         WhSEPfKyuB1VrCNGWqPDCJaNeIxgj/xWdhGFS/cT9wtvSqP93/9Tz6pu/eAeDLimKa5Y
-         73SflwdPkmvmkJVi+a7O5Vg2JOdcRReMsdvGBxH4zyBU4DpdyabsJJ9aa36oSp0JFmtc
-         upQg==
+        bh=s7qLJS17Ca3n/rG4ttHNviA0QBjzc6ivZ58WmgYOkSg=;
+        b=Ov/nI4lNRguPXdqm6n3uLnhmbL6mEis13BuX5AeWRZalsUS53YD5p/vVyytvDstTZh
+         oQM+Pboce4VwuhZFCohmlA6Y5uZKtwRFnN+hOk5/WKsAVzbPIjLphU8aJn1pJmf2aVfP
+         RfU1Z51ScgAmVIasTRLwoqniNsWtBZoU7FV/51fpjfcW3XbsaZAb3QgPQ+31lhas+1KQ
+         Inu1IVA5BkHd7awKY029JQWKWccEhd5C0CHIfmXkERjlm5ntSIL2BCnXFSSMb7ctyTnI
+         CPx8s5d0vgdppOin3VT9hKiRIe/6nxIVNF3AFZJpVXf3S3wKVDxiBca1Z8heioW1Xsyt
+         5EKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Soheil Hassas Yeganeh <soheil@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Yuchung Cheng <ycheng@google.com>,
+	Michal Kalderon <Michal.Kalderon@cavium.com>,
+	Ariel Elior <Ariel.Elior@cavium.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 04/47] tcp: purge write queue upon aborting the connection
-Date: Thu, 29 Mar 2018 19:59:45 +0200
-Message-Id: <20180329175729.480077131@linuxfoundation.org>
+Subject: [PATCH 4.15 03/47] qed: Fix MPA unalign flow in case header is split across two packets.
+Date: Thu, 29 Mar 2018 19:59:44 +0200
+Message-Id: <20180329175729.415925739@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296018203827825?=
-X-GMAIL-MSGID: =?utf-8?q?1596296018203827825?=
+X-GMAIL-THRID: =?utf-8?q?1596296015582016535?=
+X-GMAIL-MSGID: =?utf-8?q?1596296015582016535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,49 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Soheil Hassas Yeganeh <soheil@google.com>
+From: Michal Kalderon <Michal.Kalderon@cavium.com>
 
 
-[ Upstream commit e05836ac07c77dd90377f8c8140bce2a44af5fe7 ]
+[ Upstream commit 933e8c91b9f5a2f504f6da1f069c410449b9f4b9 ]
 
-When the connection is aborted, there is no point in
-keeping the packets on the write queue until the connection
-is closed.
+There is a corner case in the MPA unalign flow where a FPDU header is
+split over two tcp segments. The length of the first fragment in this
+case was not initialized properly and should be '1'
 
-Similar to a27fd7a8ed38 ('tcp: purge write queue upon RST'),
-this is essential for a correct MSG_ZEROCOPY implementation,
-because userspace cannot call close(fd) before receiving
-zerocopy signals even when the connection is aborted.
+Fixes: c7d1d839 ("qed: Add support for MPA header being split over two tcp packets")
 
-Fixes: f214f915e7db ("tcp: enable MSG_ZEROCOPY")
-Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c       |    1 +
- net/ipv4/tcp_timer.c |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -3542,6 +3542,7 @@ int tcp_abort(struct sock *sk, int err)
- 
- 	bh_unlock_sock(sk);
- 	local_bh_enable();
-+	tcp_write_queue_purge(sk);
- 	release_sock(sk);
- 	return 0;
- }
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -34,6 +34,7 @@ static void tcp_write_err(struct sock *s
- 	sk->sk_err = sk->sk_err_soft ? : ETIMEDOUT;
- 	sk->sk_error_report(sk);
- 
-+	tcp_write_queue_purge(sk);
- 	tcp_done(sk);
- 	__NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPABORTONTIMEOUT);
- }
+--- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+@@ -1906,8 +1906,8 @@ qed_iwarp_update_fpdu_length(struct qed_
+ 		/* Missing lower byte is now available */
+ 		mpa_len = fpdu->fpdu_length | *mpa_data;
+ 		fpdu->fpdu_length = QED_IWARP_FPDU_LEN_WITH_PAD(mpa_len);
+-		fpdu->mpa_frag_len = fpdu->fpdu_length;
+ 		/* one byte of hdr */
++		fpdu->mpa_frag_len = 1;
+ 		fpdu->incomplete_bytes = fpdu->fpdu_length - 1;
+ 		DP_VERBOSE(p_hwfn,
+ 			   QED_MSG_RDMA,
