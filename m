@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeC2Eb3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 00:31:29 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:32908 "EHLO
+        id S1752673AbeC2Eb1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 00:31:27 -0400
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:32910 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751865AbeC2EbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751642AbeC2EbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 00:31:24 -0400
 From: Chen-Yu Tsai <wens@csie.org>
 To: Lee Jones <lee.jones@linaro.org>
@@ -12,9 +12,9 @@ Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] mfd: axp20x: Const-ify struct mfd_cell and struct resource
-Date: Thu, 29 Mar 2018 12:31:13 +0800
-Message-Id: <20180329043115.7132-2-wens@csie.org>
+Subject: [PATCH 2/3] mfd: axp20x: Use DEFINE_RES_IRQ to declare resources for mfd_cells
+Date: Thu, 29 Mar 2018 12:31:14 +0800
+Message-Id: <20180329043115.7132-3-wens@csie.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329043115.7132-1-wens@csie.org>
 References: <20180329043115.7132-1-wens@csie.org>
@@ -22,219 +22,246 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The axp20x driver has lots of mfd_cell and resource structs.
-These can all be const-ified.
+Previously we were open coding the interrupts for the various mfd
+cells. This made the code somewhat long due to pretty-formatting.
+
+This patch convert those into one-line declarations with DEFINE_RES_IRQ,
+making the code shorter and easier to read.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/mfd/axp20x.c       | 44 ++++++++++++++++++++++----------------------
- include/linux/mfd/axp20x.h |  2 +-
- 2 files changed, 23 insertions(+), 23 deletions(-)
+ drivers/mfd/axp20x.c | 187 +++++++++------------------------------------------
+ 1 file changed, 30 insertions(+), 157 deletions(-)
 
 diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-index aaf2acbef701..14be0f658d74 100644
+index 14be0f658d74..b3051e1c3ddc 100644
 --- a/drivers/mfd/axp20x.c
 +++ b/drivers/mfd/axp20x.c
-@@ -169,18 +169,18 @@ static const struct regmap_access_table axp806_volatile_table = {
- 	.n_yes_ranges	= ARRAY_SIZE(axp806_volatile_ranges),
+@@ -181,17 +181,8 @@ static const struct resource axp20x_ac_power_supply_resources[] = {
  };
  
--static struct resource axp152_pek_resources[] = {
-+static const struct resource axp152_pek_resources[] = {
- 	DEFINE_RES_IRQ_NAMED(AXP152_IRQ_PEK_RIS_EDGE, "PEK_DBR"),
- 	DEFINE_RES_IRQ_NAMED(AXP152_IRQ_PEK_FAL_EDGE, "PEK_DBF"),
+ static const struct resource axp20x_pek_resources[] = {
+-	{
+-		.name	= "PEK_DBR",
+-		.start	= AXP20X_IRQ_PEK_RIS_EDGE,
+-		.end	= AXP20X_IRQ_PEK_RIS_EDGE,
+-		.flags	= IORESOURCE_IRQ,
+-	}, {
+-		.name	= "PEK_DBF",
+-		.start	= AXP20X_IRQ_PEK_FAL_EDGE,
+-		.end	= AXP20X_IRQ_PEK_FAL_EDGE,
+-		.flags	= IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_PEK_RIS_EDGE, "PEK_DBR"),
++	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_PEK_FAL_EDGE, "PEK_DBF"),
  };
  
--static struct resource axp20x_ac_power_supply_resources[] = {
-+static const struct resource axp20x_ac_power_supply_resources[] = {
- 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_ACIN_PLUGIN, "ACIN_PLUGIN"),
- 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_ACIN_REMOVAL, "ACIN_REMOVAL"),
- 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_ACIN_OVER_V, "ACIN_OVER_V"),
+ static const struct resource axp20x_usb_power_supply_resources[] = {
+@@ -207,93 +198,32 @@ static const struct resource axp22x_usb_power_supply_resources[] = {
  };
  
--static struct resource axp20x_pek_resources[] = {
-+static const struct resource axp20x_pek_resources[] = {
- 	{
- 		.name	= "PEK_DBR",
- 		.start	= AXP20X_IRQ_PEK_RIS_EDGE,
-@@ -194,19 +194,19 @@ static struct resource axp20x_pek_resources[] = {
- 	},
+ static const struct resource axp22x_pek_resources[] = {
+-	{
+-		.name   = "PEK_DBR",
+-		.start  = AXP22X_IRQ_PEK_RIS_EDGE,
+-		.end    = AXP22X_IRQ_PEK_RIS_EDGE,
+-		.flags  = IORESOURCE_IRQ,
+-	}, {
+-		.name   = "PEK_DBF",
+-		.start  = AXP22X_IRQ_PEK_FAL_EDGE,
+-		.end    = AXP22X_IRQ_PEK_FAL_EDGE,
+-		.flags  = IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_PEK_RIS_EDGE, "PEK_DBR"),
++	DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_PEK_FAL_EDGE, "PEK_DBF"),
  };
  
--static struct resource axp20x_usb_power_supply_resources[] = {
-+static const struct resource axp20x_usb_power_supply_resources[] = {
- 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_PLUGIN, "VBUS_PLUGIN"),
- 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
- 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_VALID, "VBUS_VALID"),
- 	DEFINE_RES_IRQ_NAMED(AXP20X_IRQ_VBUS_NOT_VALID, "VBUS_NOT_VALID"),
+ static const struct resource axp288_power_button_resources[] = {
+-	{
+-		.name	= "PEK_DBR",
+-		.start	= AXP288_IRQ_POKP,
+-		.end	= AXP288_IRQ_POKP,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	{
+-		.name	= "PEK_DBF",
+-		.start	= AXP288_IRQ_POKN,
+-		.end	= AXP288_IRQ_POKN,
+-		.flags	= IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ_NAMED(AXP288_IRQ_POKP, "PEK_DBR"),
++	DEFINE_RES_IRQ_NAMED(AXP288_IRQ_POKN, "PEK_DBF"),
  };
  
--static struct resource axp22x_usb_power_supply_resources[] = {
-+static const struct resource axp22x_usb_power_supply_resources[] = {
- 	DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_VBUS_PLUGIN, "VBUS_PLUGIN"),
- 	DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
+ static const struct resource axp288_fuel_gauge_resources[] = {
+-	{
+-		.start = AXP288_IRQ_QWBTU,
+-		.end   = AXP288_IRQ_QWBTU,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_WBTU,
+-		.end   = AXP288_IRQ_WBTU,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_QWBTO,
+-		.end   = AXP288_IRQ_QWBTO,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_WBTO,
+-		.end   = AXP288_IRQ_WBTO,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_WL2,
+-		.end   = AXP288_IRQ_WL2,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_WL1,
+-		.end   = AXP288_IRQ_WL1,
+-		.flags = IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ(AXP288_IRQ_QWBTU),
++	DEFINE_RES_IRQ(AXP288_IRQ_WBTU),
++	DEFINE_RES_IRQ(AXP288_IRQ_QWBTO),
++	DEFINE_RES_IRQ(AXP288_IRQ_WBTO),
++	DEFINE_RES_IRQ(AXP288_IRQ_WL2),
++	DEFINE_RES_IRQ(AXP288_IRQ_WL1),
  };
  
--static struct resource axp22x_pek_resources[] = {
-+static const struct resource axp22x_pek_resources[] = {
- 	{
- 		.name   = "PEK_DBR",
- 		.start  = AXP22X_IRQ_PEK_RIS_EDGE,
-@@ -220,7 +220,7 @@ static struct resource axp22x_pek_resources[] = {
- 	},
+ static const struct resource axp803_pek_resources[] = {
+-	{
+-		.name   = "PEK_DBR",
+-		.start  = AXP803_IRQ_PEK_RIS_EDGE,
+-		.end    = AXP803_IRQ_PEK_RIS_EDGE,
+-		.flags  = IORESOURCE_IRQ,
+-	}, {
+-		.name   = "PEK_DBF",
+-		.start  = AXP803_IRQ_PEK_FAL_EDGE,
+-		.end    = AXP803_IRQ_PEK_FAL_EDGE,
+-		.flags  = IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ_NAMED(AXP803_IRQ_PEK_RIS_EDGE, "PEK_DBR"),
++	DEFINE_RES_IRQ_NAMED(AXP803_IRQ_PEK_FAL_EDGE, "PEK_DBF"),
  };
  
--static struct resource axp288_power_button_resources[] = {
-+static const struct resource axp288_power_button_resources[] = {
- 	{
- 		.name	= "PEK_DBR",
- 		.start	= AXP288_IRQ_POKP,
-@@ -235,7 +235,7 @@ static struct resource axp288_power_button_resources[] = {
- 	},
+ static const struct resource axp809_pek_resources[] = {
+-	{
+-		.name   = "PEK_DBR",
+-		.start  = AXP809_IRQ_PEK_RIS_EDGE,
+-		.end    = AXP809_IRQ_PEK_RIS_EDGE,
+-		.flags  = IORESOURCE_IRQ,
+-	}, {
+-		.name   = "PEK_DBF",
+-		.start  = AXP809_IRQ_PEK_FAL_EDGE,
+-		.end    = AXP809_IRQ_PEK_FAL_EDGE,
+-		.flags  = IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ_NAMED(AXP809_IRQ_PEK_RIS_EDGE, "PEK_DBR"),
++	DEFINE_RES_IRQ_NAMED(AXP809_IRQ_PEK_FAL_EDGE, "PEK_DBF"),
  };
  
--static struct resource axp288_fuel_gauge_resources[] = {
-+static const struct resource axp288_fuel_gauge_resources[] = {
- 	{
- 		.start = AXP288_IRQ_QWBTU,
- 		.end   = AXP288_IRQ_QWBTU,
-@@ -268,7 +268,7 @@ static struct resource axp288_fuel_gauge_resources[] = {
- 	},
+ static const struct regmap_config axp152_regmap_config = {
+@@ -738,83 +668,26 @@ static const struct mfd_cell axp152_cells[] = {
  };
  
--static struct resource axp803_pek_resources[] = {
-+static const struct resource axp803_pek_resources[] = {
- 	{
- 		.name   = "PEK_DBR",
- 		.start  = AXP803_IRQ_PEK_RIS_EDGE,
-@@ -282,7 +282,7 @@ static struct resource axp803_pek_resources[] = {
- 	},
+ static const struct resource axp288_adc_resources[] = {
+-	{
+-		.name  = "GPADC",
+-		.start = AXP288_IRQ_GPADC,
+-		.end   = AXP288_IRQ_GPADC,
+-		.flags = IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ_NAMED(AXP288_IRQ_GPADC, "GPADC"),
  };
  
--static struct resource axp809_pek_resources[] = {
-+static const struct resource axp809_pek_resources[] = {
- 	{
- 		.name   = "PEK_DBR",
- 		.start  = AXP809_IRQ_PEK_RIS_EDGE,
-@@ -648,7 +648,7 @@ static const struct regmap_irq_chip axp809_regmap_irq_chip = {
- 	.num_regs		= 5,
+ static const struct resource axp288_extcon_resources[] = {
+-	{
+-		.start = AXP288_IRQ_VBUS_FALL,
+-		.end   = AXP288_IRQ_VBUS_FALL,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_VBUS_RISE,
+-		.end   = AXP288_IRQ_VBUS_RISE,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_MV_CHNG,
+-		.end   = AXP288_IRQ_MV_CHNG,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_BC_USB_CHNG,
+-		.end   = AXP288_IRQ_BC_USB_CHNG,
+-		.flags = IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ(AXP288_IRQ_VBUS_FALL),
++	DEFINE_RES_IRQ(AXP288_IRQ_VBUS_RISE),
++	DEFINE_RES_IRQ(AXP288_IRQ_MV_CHNG),
++	DEFINE_RES_IRQ(AXP288_IRQ_BC_USB_CHNG),
  };
  
--static struct mfd_cell axp20x_cells[] = {
-+static const struct mfd_cell axp20x_cells[] = {
- 	{
- 		.name		= "axp20x-gpio",
- 		.of_compatible	= "x-powers,axp209-gpio",
-@@ -677,7 +677,7 @@ static struct mfd_cell axp20x_cells[] = {
- 	},
+ static const struct resource axp288_charger_resources[] = {
+-	{
+-		.start = AXP288_IRQ_OV,
+-		.end   = AXP288_IRQ_OV,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_DONE,
+-		.end   = AXP288_IRQ_DONE,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_CHARGING,
+-		.end   = AXP288_IRQ_CHARGING,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_SAFE_QUIT,
+-		.end   = AXP288_IRQ_SAFE_QUIT,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_SAFE_ENTER,
+-		.end   = AXP288_IRQ_SAFE_ENTER,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_QCBTU,
+-		.end   = AXP288_IRQ_QCBTU,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_CBTU,
+-		.end   = AXP288_IRQ_CBTU,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_QCBTO,
+-		.end   = AXP288_IRQ_QCBTO,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-	{
+-		.start = AXP288_IRQ_CBTO,
+-		.end   = AXP288_IRQ_CBTO,
+-		.flags = IORESOURCE_IRQ,
+-	},
++	DEFINE_RES_IRQ(AXP288_IRQ_OV),
++	DEFINE_RES_IRQ(AXP288_IRQ_DONE),
++	DEFINE_RES_IRQ(AXP288_IRQ_CHARGING),
++	DEFINE_RES_IRQ(AXP288_IRQ_SAFE_QUIT),
++	DEFINE_RES_IRQ(AXP288_IRQ_SAFE_ENTER),
++	DEFINE_RES_IRQ(AXP288_IRQ_QCBTU),
++	DEFINE_RES_IRQ(AXP288_IRQ_CBTU),
++	DEFINE_RES_IRQ(AXP288_IRQ_QCBTO),
++	DEFINE_RES_IRQ(AXP288_IRQ_CBTO),
  };
  
--static struct mfd_cell axp221_cells[] = {
-+static const struct mfd_cell axp221_cells[] = {
- 	{
- 		.name		= "axp221-pek",
- 		.num_resources	= ARRAY_SIZE(axp22x_pek_resources),
-@@ -703,7 +703,7 @@ static struct mfd_cell axp221_cells[] = {
- 	},
- };
- 
--static struct mfd_cell axp223_cells[] = {
-+static const struct mfd_cell axp223_cells[] = {
- 	{
- 		.name			= "axp221-pek",
- 		.num_resources		= ARRAY_SIZE(axp22x_pek_resources),
-@@ -729,7 +729,7 @@ static struct mfd_cell axp223_cells[] = {
- 	},
- };
- 
--static struct mfd_cell axp152_cells[] = {
-+static const struct mfd_cell axp152_cells[] = {
- 	{
- 		.name			= "axp20x-pek",
- 		.num_resources		= ARRAY_SIZE(axp152_pek_resources),
-@@ -737,7 +737,7 @@ static struct mfd_cell axp152_cells[] = {
- 	},
- };
- 
--static struct resource axp288_adc_resources[] = {
-+static const struct resource axp288_adc_resources[] = {
- 	{
- 		.name  = "GPADC",
- 		.start = AXP288_IRQ_GPADC,
-@@ -746,7 +746,7 @@ static struct resource axp288_adc_resources[] = {
- 	},
- };
- 
--static struct resource axp288_extcon_resources[] = {
-+static const struct resource axp288_extcon_resources[] = {
- 	{
- 		.start = AXP288_IRQ_VBUS_FALL,
- 		.end   = AXP288_IRQ_VBUS_FALL,
-@@ -769,7 +769,7 @@ static struct resource axp288_extcon_resources[] = {
- 	},
- };
- 
--static struct resource axp288_charger_resources[] = {
-+static const struct resource axp288_charger_resources[] = {
- 	{
- 		.start = AXP288_IRQ_OV,
- 		.end   = AXP288_IRQ_OV,
-@@ -817,7 +817,7 @@ static struct resource axp288_charger_resources[] = {
- 	},
- };
- 
--static struct mfd_cell axp288_cells[] = {
-+static const struct mfd_cell axp288_cells[] = {
- 	{
- 		.name = "axp288_adc",
- 		.num_resources = ARRAY_SIZE(axp288_adc_resources),
-@@ -848,7 +848,7 @@ static struct mfd_cell axp288_cells[] = {
- 	},
- };
- 
--static struct mfd_cell axp803_cells[] = {
-+static const struct mfd_cell axp803_cells[] = {
- 	{
- 		.name			= "axp221-pek",
- 		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
-@@ -857,14 +857,14 @@ static struct mfd_cell axp803_cells[] = {
- 	{	.name			= "axp20x-regulator" },
- };
- 
--static struct mfd_cell axp806_cells[] = {
-+static const struct mfd_cell axp806_cells[] = {
- 	{
- 		.id			= 2,
- 		.name			= "axp20x-regulator",
- 	},
- };
- 
--static struct mfd_cell axp809_cells[] = {
-+static const struct mfd_cell axp809_cells[] = {
- 	{
- 		.name			= "axp221-pek",
- 		.num_resources		= ARRAY_SIZE(axp809_pek_resources),
-@@ -875,7 +875,7 @@ static struct mfd_cell axp809_cells[] = {
- 	},
- };
- 
--static struct mfd_cell axp813_cells[] = {
-+static const struct mfd_cell axp813_cells[] = {
- 	{
- 		.name			= "axp221-pek",
- 		.num_resources		= ARRAY_SIZE(axp803_pek_resources),
-diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
-index 82bf7747b312..a2489363a998 100644
---- a/include/linux/mfd/axp20x.h
-+++ b/include/linux/mfd/axp20x.h
-@@ -642,7 +642,7 @@ struct axp20x_dev {
- 	struct regmap_irq_chip_data	*regmap_irqc;
- 	long				variant;
- 	int                             nr_cells;
--	struct mfd_cell                 *cells;
-+	const struct mfd_cell           *cells;
- 	const struct regmap_config	*regmap_cfg;
- 	const struct regmap_irq_chip	*regmap_irq_chip;
- };
+ static const struct mfd_cell axp288_cells[] = {
 -- 
 2.16.3
