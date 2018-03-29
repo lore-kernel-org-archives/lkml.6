@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752821AbeC2L0Q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:26:16 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59810 "EHLO
+        id S1753180AbeC2LqZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:46:25 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59868 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752740AbeC2L0J (ORCPT
+        with ESMTP id S1752787AbeC2L0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:26:09 -0400
+        Thu, 29 Mar 2018 07:26:15 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Jiri Slaby <jslaby@suse.com>, x86@kernel.org
-Subject: [PATCH 007/109] x86: remove compat_sys_x86_waitpid()
-Date: Thu, 29 Mar 2018 13:22:44 +0200
-Message-Id: <20180329112426.23043-8-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org
+Subject: [PATCH 001/109] syscalls: define and explain goal to not call syscalls in the kernel
+Date: Thu, 29 Mar 2018 13:22:38 +0200
+Message-Id: <20180329112426.23043-2-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,64 +21,77 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-compat_sys_x86_waitpid() is not needed, as it takes the same parameters
-(int, *int, int) as the native syscall.
+The syscall entry points to the kernel defined by SYSCALL_DEFINEx()
+and COMPAT_SYSCALL_DEFINEx() should only be called from userspace
+through kernel entry points, but not from the kernel itself. This
+will allow cleanups and optimizations to the entry paths *and* to
+the parts of the kernel code which currently need to pretend to be
+userspace in order to make use of syscalls.
 
-Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: x86@kernel.org
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
- arch/x86/ia32/sys_ia32.c               | 6 ------
- arch/x86/include/asm/sys_ia32.h        | 3 ---
- 3 files changed, 1 insertion(+), 10 deletions(-)
+ Documentation/process/adding-syscalls.rst | 32 +++++++++++++++++++++++++++++++
+ include/linux/syscalls.h                  |  7 +++++++
+ 2 files changed, 39 insertions(+)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 2a5e99cff859..ef6edaf285cd 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -13,7 +13,7 @@
- 4	i386	write			sys_write
- 5	i386	open			sys_open			compat_sys_open
- 6	i386	close			sys_close
--7	i386	waitpid			sys_waitpid			compat_sys_x86_waitpid
-+7	i386	waitpid			sys_waitpid
- 8	i386	creat			sys_creat
- 9	i386	link			sys_link
- 10	i386	unlink			sys_unlink
-diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
-index aa024a2dd34f..23a5260eae67 100644
---- a/arch/x86/ia32/sys_ia32.c
-+++ b/arch/x86/ia32/sys_ia32.c
-@@ -169,12 +169,6 @@ COMPAT_SYSCALL_DEFINE1(x86_mmap, struct mmap_arg_struct32 __user *, arg)
- 			       a.offset>>PAGE_SHIFT);
- }
+diff --git a/Documentation/process/adding-syscalls.rst b/Documentation/process/adding-syscalls.rst
+index 8cc25a06f353..556613744556 100644
+--- a/Documentation/process/adding-syscalls.rst
++++ b/Documentation/process/adding-syscalls.rst
+@@ -487,6 +487,38 @@ patchset, for the convenience of reviewers.
+ The man page should be cc'ed to linux-man@vger.kernel.org
+ For more details, see https://www.kernel.org/doc/man-pages/patches.html
  
--COMPAT_SYSCALL_DEFINE3(x86_waitpid, compat_pid_t, pid, unsigned int __user *,
--		       stat_addr, int, options)
--{
--	return compat_sys_wait4(pid, stat_addr, options, NULL);
--}
--
- /* warning: next two assume little endian */
- COMPAT_SYSCALL_DEFINE5(x86_pread, unsigned int, fd, char __user *, ubuf,
- 		       u32, count, u32, poslo, u32, poshi)
-diff --git a/arch/x86/include/asm/sys_ia32.h b/arch/x86/include/asm/sys_ia32.h
-index 906794aa034e..2ee6e3b96656 100644
---- a/arch/x86/include/asm/sys_ia32.h
-+++ b/arch/x86/include/asm/sys_ia32.h
-@@ -35,9 +35,6 @@ asmlinkage long compat_sys_x86_fstatat(unsigned int, const char __user *,
- struct mmap_arg_struct32;
- asmlinkage long compat_sys_x86_mmap(struct mmap_arg_struct32 __user *);
++
++Do not call System Calls in the Kernel
++--------------------------------------
++
++System calls are, as stated above, interaction points between userspace and
++the kernel.  Therefore, system call functions such as ``sys_xyzzy()`` or
++``compat_sys_xyzzy()`` should only be called from userspace via the syscall
++table, but not from elsewhere in the kernel.  If the syscall functionality is
++useful to be used within the kernel, needs to be shared between an old and a
++new syscall, or needs to be shared between a syscall and its compatibility
++variant, it should be implemented by means of a "helper" function (such as
++``kern_xyzzy()``).  This kernel function may then be called within the
++syscall stub (``sys_xyzzy()``), the compatibility syscall stub
++(``compat_sys_xyzzy()``), and/or other kernel code.
++
++At least on 64-bit x86, it will be a hard requirement from v4.17 onwards to not
++call system call functions in the kernel.  It uses a different calling
++convention for system calls where ``struct pt_regs`` is decoded on-the-fly in a
++syscall wrapper which then hands processing over to the actual syscall function.
++This means that only those parameters which are actually needed for a specific
++syscall are passed on during syscall entry, instead of filling in six CPU
++registers with random user space content all the time (which may cause serious
++trouble down the call chain).
++
++Moreover, rules on how data may be accessed may differ between kernel data and
++user data.  This is another reason why calling ``sys_xyzzy()`` is generally a
++bad idea.
++
++Exceptions to this rule are only allowed in architecture-specific overrides,
++architecture-specific compatibility wrappers, or other code in arch/.
++
++
+ References and Sources
+ ----------------------
  
--asmlinkage long compat_sys_x86_waitpid(compat_pid_t, unsigned int __user *,
--				       int);
--
- asmlinkage long compat_sys_x86_pread(unsigned int, char __user *, u32, u32,
- 				     u32);
- asmlinkage long compat_sys_x86_pwrite(unsigned int, const char __user *, u32,
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index a78186d826d7..0526286a0314 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -941,4 +941,11 @@ asmlinkage long sys_pkey_free(int pkey);
+ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+ 			  unsigned mask, struct statx __user *buffer);
+ 
++
++/*
++ * Kernel code should not call syscalls (i.e., sys_xyzyyz()) directly.
++ * Instead, use one of the functions which work equivalently, such as
++ * the ksys_xyzyyz() functions prototyped below.
++ */
++
+ #endif
 -- 
 2.16.3
