@@ -1,51 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751903AbeC2HQk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:16:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52324 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750946AbeC2HQf (ORCPT
+        id S1751230AbeC2HQi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:16:38 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:44998 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeC2HQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 03:16:35 -0400
-Date: Thu, 29 Mar 2018 09:16:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>
-Subject: Re: [PATCH 10/10] softirq: Remove __ARCH_SET_SOFTIRQ_PENDING
-Message-ID: <20180329071619.GO4082@hirez.programming.kicks-ass.net>
-References: <1522290425-22844-1-git-send-email-frederic@kernel.org>
- <1522290425-22844-11-git-send-email-frederic@kernel.org>
+X-Google-Smtp-Source: AIpwx48qe/FStT0fhBp5mC2jRTEksRMx2V5p43d7MtWMAXY9wpX3dau9z//bFHHXOtQBH0oy4Pm5XXdPzgxSv4/pk28=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522290425-22844-11-git-send-email-frederic@kernel.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
+References: <20180327092031.11251-1-brgl@bgdev.pl> <20180327092031.11251-8-brgl@bgdev.pl>
+ <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 29 Mar 2018 09:16:33 +0200
+Message-ID: <CAMRc=Me6giXHneuuRTPSwfw8HxwbDVCTgReZ_6HBv90ushf+-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] remoteproc/davinci: use the reset framework
+To: Suman Anna <s-anna@ti.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 04:27:05AM +0200, Frederic Weisbecker wrote:
-> The last user of __ARCH_SET_SOFTIRQ_PENDING has been converted to generic
-> per-cpu softirq mask. We can now remove this conditional.
+2018-03-29 0:30 GMT+02:00 Suman Anna <s-anna@ti.com>:
+> Hi Bart,
+>
+> On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Switch to using the reset framework instead of handcoded reset routines
+>> we used so far.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>  drivers/remoteproc/da8xx_remoteproc.c | 33 ++++++++++++++++++++++++++++-----
+>>  1 file changed, 28 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+>> index b668e32996e2..788f59809c02 100644
+>> --- a/drivers/remoteproc/da8xx_remoteproc.c
+>> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+>> @@ -10,6 +10,7 @@
+>>
+>>  #include <linux/bitops.h>
+>>  #include <linux/clk.h>
+>> +#include <linux/reset.h>
+>>  #include <linux/err.h>
+>>  #include <linux/interrupt.h>
+>>  #include <linux/io.h>
+>> @@ -20,8 +21,6 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/remoteproc.h>
+>>
+>> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+>> -
+>>  #include "remoteproc_internal.h"
+>>
+>>  static char *da8xx_fw_name;
+>> @@ -72,6 +71,7 @@ struct da8xx_rproc {
+>>       struct da8xx_rproc_mem *mem;
+>>       int num_mems;
+>>       struct clk *dsp_clk;
+>> +     struct reset_control *dsp_reset;
+>>       void (*ack_fxn)(struct irq_data *data);
+>>       struct irq_data *irq_data;
+>>       void __iomem *chipsig;
+>> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>>       struct device *dev = rproc->dev.parent;
+>>       struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+>>       struct clk *dsp_clk = drproc->dsp_clk;
+>> +     struct reset_control *dsp_reset = drproc->dsp_reset;
+>>       int ret;
+>>
+>>       /* hw requires the start (boot) address be on 1KB boundary */
+>> @@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>>               return ret;
+>>       }
+>>
+>> -     davinci_clk_reset_deassert(dsp_clk);
+>> +     ret = reset_control_deassert(dsp_reset);
+>> +     if (ret) {
+>> +             dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
+>> +             clk_disable_unprepare(dsp_clk);
+>> +             return ret;
+>> +     }
+>>
+>>       return 0;
+>>  }
+>> @@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>>  static int da8xx_rproc_stop(struct rproc *rproc)
+>>  {
+>>       struct da8xx_rproc *drproc = rproc->priv;
+>> +     struct device *dev = rproc->dev.parent;
+>> +     int ret;
+>> +
+>> +     ret = reset_control_assert(drproc->dsp_reset);
+>> +     if (ret) {
+>> +             dev_err(dev, "reset_control_assert() failed: %d\n", ret);
+>> +             return ret;
+>> +     }
+>>
+>> -     davinci_clk_reset_assert(drproc->dsp_clk);
+>>       clk_disable_unprepare(drproc->dsp_clk);
+>>
+>>       return 0;
+>> @@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>       struct resource *bootreg_res;
+>>       struct resource *chipsig_res;
+>>       struct clk *dsp_clk;
+>> +     struct reset_control *dsp_reset;
+>>       void __iomem *chipsig;
+>>       void __iomem *bootreg;
+>>       int irq;
+>> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>               return PTR_ERR(dsp_clk);
+>>       }
+>>
+>> +     dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
+>> +     if (IS_ERR(dsp_reset)) {
+>> +             if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
+>> +                     dev_err(dev, "unable to get reset control: %ld\n",
+>> +                             PTR_ERR(dsp_reset));
+>> +
+>> +             return PTR_ERR(dsp_reset);
+>> +     }
+>> +
+>>       if (dev->of_node) {
+>>               ret = of_reserved_mem_device_init(dev);
+>>               if (ret) {
+>> @@ -309,7 +332,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>        * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+>>        * held in reset at the time it is called.
+>>        */
+>> -     ret = davinci_clk_reset_assert(drproc->dsp_clk);
+>> +     ret = reset_control_assert(dsp_reset);
+>>       if (ret)
+>>               goto free_rproc;
+>>
+>
+> Tested your previous branch, need one more change in this patch to have
+> the remoteproc boot be actually executing some code. The acquired
+> dsp_reset is not stored in the drproc, so the start and stop were not
+> effective. The issue was masked because reset_control_assert() and
+> deassert() return 0 when a NULL pointer is passed in.
+>
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -311,6 +311,7 @@ static int da8xx_rproc_probe(struct platform_device
+> *pdev)
+>         drproc = rproc->priv;
+>         drproc->rproc = rproc;
+>         drproc->dsp_clk = dsp_clk;
+> +       drproc->dsp_reset = dsp_reset;
+>         rproc->has_iommu = false;
+>
+> regards
+> Suman
+>
 
-This seems like half a cleanup; who still has local_softirq_pending()
-after this?
+Oh snap, thanks for spotting it.
 
->  
->  #else /* local_softirq_pending */
->  
-> -#ifndef __ARCH_SET_SOFTIRQ_PENDING
->  #define set_softirq_pending(x) (local_softirq_pending() = (x))
->  #define or_softirq_pending(x)  (local_softirq_pending() |= (x))
-> -#endif
->  
->  #endif /* local_softirq_pending */
+I'll just resend last two patches, since the previous six will be
+picked up at different places.
+
+Thanks,
+Bartosz
