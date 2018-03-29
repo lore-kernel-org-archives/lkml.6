@@ -1,71 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752082AbeC2S7k (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 14:59:40 -0400
-Received: from fallback7.mail.ru ([94.100.181.128]:50154 "EHLO
-        fallback.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751096AbeC2S7i (ORCPT
+        id S1752080AbeC2TCR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 15:02:17 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:43312 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbeC2TCO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 14:59:38 -0400
-From: Sergey Suloev <ssuloev@orpaltech.com>
-To: Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Sergey Suloev <ssuloev@orpaltech.com>
-Subject: [PATCH 1/6] spi: core: handle timeout error from transfer_one()
-Date: Thu, 29 Mar 2018 21:59:02 +0300
-Message-Id: <20180329185907.27281-2-ssuloev@orpaltech.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180329185907.27281-1-ssuloev@orpaltech.com>
-References: <20180329185907.27281-1-ssuloev@orpaltech.com>
-X-7FA49CB5: 0D63561A33F958A580B087001892C764A67B693F76D0AEE7805F6469B87D5BC0725E5C173C3A84C37C6C241D99759064AE0A0621C6B81FEB3946EFC6A664F553C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917DA9421E42869FF8C6A3CB6A274E9D547069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
-X-Mras: OK
+        Thu, 29 Mar 2018 15:02:14 -0400
+X-Google-Smtp-Source: AIpwx4/ljf8zX3KHfVn2R5IS4zD3EuFvgXSyPfR0XdM/ngJ+/EV/qgsvFDsG0vFyij4Vb+hgxckboP3R/hlG09/JR+0=
+MIME-Version: 1.0
+In-Reply-To: <20180329160215.glnrmyunujcc4vwg@quack2.suse.cz>
+References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152167306807.5268.8483232024444414342.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180329160215.glnrmyunujcc4vwg@quack2.suse.cz>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 29 Mar 2018 12:02:13 -0700
+Message-ID: <CAPcyv4h8CgZmiDLh5p8Vnt0SjB2FvZgGuRMZ+ZYRO=H3mkES_A@mail.gmail.com>
+Subject: Re: [PATCH v7 07/14] fs, dax: use page->mapping to warn if truncate
+ collides with a busy page
+To: Jan Kara <jack@suse.cz>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>, david <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As long as sun4i/sun6i SPI drivers have overriden the default
-"wait for completion" procedure then we need to properly
-handle -ETIMEDOUT error from transfer_one().
+On Thu, Mar 29, 2018 at 9:02 AM, Jan Kara <jack@suse.cz> wrote:
+> On Wed 21-03-18 15:57:48, Dan Williams wrote:
+>> Catch cases where extent unmap operations encounter pages that are
+>> pinned / busy. Typically this is pinned pages that are under active dma.
+>> This warning is a canary for potential data corruption as truncated
+>> blocks could be allocated to a new file while the device is still
+>> performing i/o.
+>>
+>> Here is an example of a collision that this implementation catches:
+>>
+>>  WARNING: CPU: 2 PID: 1286 at fs/dax.c:343 dax_disassociate_entry+0x55/0x80
+>>  [..]
+>>  Call Trace:
+>>   __dax_invalidate_mapping_entry+0x6c/0xf0
+>>   dax_delete_mapping_entry+0xf/0x20
+>>   truncate_exceptional_pvec_entries.part.12+0x1af/0x200
+>>   truncate_inode_pages_range+0x268/0x970
+>>   ? tlb_gather_mmu+0x10/0x20
+>>   ? up_write+0x1c/0x40
+>>   ? unmap_mapping_range+0x73/0x140
+>>   xfs_free_file_space+0x1b6/0x5b0 [xfs]
+>>   ? xfs_file_fallocate+0x7f/0x320 [xfs]
+>>   ? down_write_nested+0x40/0x70
+>>   ? xfs_ilock+0x21d/0x2f0 [xfs]
+>>   xfs_file_fallocate+0x162/0x320 [xfs]
+>>   ? rcu_read_lock_sched_held+0x3f/0x70
+>>   ? rcu_sync_lockdep_assert+0x2a/0x50
+>>   ? __sb_start_write+0xd0/0x1b0
+>>   ? vfs_fallocate+0x20c/0x270
+>>   vfs_fallocate+0x154/0x270
+>>   SyS_fallocate+0x43/0x80
+>>   entry_SYSCALL_64_fastpath+0x1f/0x96
+>>
+>> Cc: Jeff Moyer <jmoyer@redhat.com>
+>> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+>> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+>> Reviewed-by: Jan Kara <jack@suse.cz>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>
+> Two comments when looking at this now:
+>
+>> +#define for_each_entry_pfn(entry, pfn, end_pfn) \
+>> +     for (pfn = dax_radix_pfn(entry), \
+>> +                     end_pfn = pfn + dax_entry_size(entry) / PAGE_SIZE; \
+>> +                     pfn < end_pfn; \
+>> +                     pfn++)
+>
+> Why don't you declare 'end_pfn' inside the for() block? That way you don't
+> have to pass the variable as an argument to for_each_entry_pfn(). It's not
+> like you need end_pfn anywhere in the loop body, you just use it to cache
+> loop termination index.
 
-Signed-off-by: Sergey Suloev <ssuloev@orpaltech.com>
+Agreed, good catch.
 
----
- drivers/spi/spi.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+>
+>> @@ -547,6 +599,10 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+>>
+>>       spin_lock_irq(&mapping->tree_lock);
+>>       new_entry = dax_radix_locked_entry(pfn, flags);
+>> +     if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
+>> +             dax_disassociate_entry(entry, mapping, false);
+>> +             dax_associate_entry(new_entry, mapping);
+>> +     }
+>
+> I find it quite tricky that in case we pass zero page / empty entry into
+> dax_[dis]associate_entry(), it will not do anything because
+> dax_entry_size() will return 0. Can we add an explicit check into
+> dax_[dis]associate_entry() or at least a comment there?
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index b33a727..2dcd4f6 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1028,7 +1028,7 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
- 			reinit_completion(&ctlr->xfer_completion);
- 
- 			ret = ctlr->transfer_one(ctlr, msg->spi, xfer);
--			if (ret < 0) {
-+			if (ret < 0 && ret != -ETIMEDOUT) {
- 				SPI_STATISTICS_INCREMENT_FIELD(statm,
- 							       errors);
- 				SPI_STATISTICS_INCREMENT_FIELD(stats,
-@@ -1051,7 +1051,7 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
- 								 msecs_to_jiffies(ms));
- 			}
- 
--			if (ms == 0) {
-+			if (ms == 0 || ret == -ETIMEDOUT) {
- 				SPI_STATISTICS_INCREMENT_FIELD(statm,
- 							       timedout);
- 				SPI_STATISTICS_INCREMENT_FIELD(stats,
-@@ -1059,6 +1059,7 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
- 				dev_err(&msg->spi->dev,
- 					"SPI transfer timed out\n");
- 				msg->status = -ETIMEDOUT;
-+				ret = 0;
- 			}
- 		} else {
- 			if (xfer->len)
--- 
-2.16.2
+Ok, will do.
