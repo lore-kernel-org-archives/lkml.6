@@ -1,100 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751974AbeC2Qtz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:49:55 -0400
-Received: from mail-by2nam03on0086.outbound.protection.outlook.com ([104.47.42.86]:7288
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751150AbeC2Qtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:49:53 -0400
-From: Alan Douglas <adouglas@cadence.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Niklas Cassel <niklas.cassel@axis.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "cyrille.pitchen@free-electrons.com"
-        <cyrille.pitchen@free-electrons.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: RE: [PATCH v5 07/12] PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64
- if a 64-bit BAR was set-up
-Thread-Topic: [PATCH v5 07/12] PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64
- if a 64-bit BAR was set-up
-Thread-Index: AQHTxosQ1pBWmSR6xEK26yNat+laXKPloajwgABpnYCAAVpXIA==
-Date: Thu, 29 Mar 2018 16:49:51 +0000
-Message-ID: <CO2PR07MB97249009D56FA041EAD1146D8A20@CO2PR07MB972.namprd07.prod.outlook.com>
-References: <20180328115018.31921-1-niklas.cassel@axis.com>
- <20180328115018.31921-8-niklas.cassel@axis.com>
- <CO2PR07MB97221CD6D90F81C2D81D65BD8A30@CO2PR07MB972.namprd07.prod.outlook.com>
- <20180328193717.GA97213@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180328193717.GA97213@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWRvdWdsYXNcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy0zZTNhNjQ1Yy0zMzcxLTExZTgtODZlMi1mNDk2MzQ4NmY0ZWNcYW1lLXRlc3RcM2UzYTY0NWQtMzM3MS0xMWU4LTg2ZTItZjQ5NjM0ODZmNGVjYm9keS50eHQiIHN6PSIxNTMxIiB0PSIxMzE2NjgxNTgxMTM1MTI4MDIiIGg9InpIMzFOYnhleDZqVFBITjV1VU1oT0RaK3hXbz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=adouglas@cadence.com;
-x-originating-ip: [59.145.174.78]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR07MB2646;7:atrCZV3i44Rmr6EPRI9xnDtPCw27NCghrtYFq6wFD3rSYcO0vEgg4oEfG6DyIqglTxbcFmxOOtQ+2qhXoRn1I3lEiRJ4py9oUna4YpuTbJKftXK4p+O1LRlNwkJnN1IetZhMD+s5ItE/2IAIJ3xnryqwihW5udmV5VpPzS17hmo89JJ06yKkXxE9WCvHfEJoxH+FrXZ63T+ezKzaoo+IbJrQGqdjhp0NnZtK5hn2R/0UsxwtWB/13IhLtSRhsAtM;20:jAYSK3c3lT41cjygYwaGojOFqB9fXpLZvQ148QaH6/mYXbEv0Jc7xXM8nmyIJSM6jLlngSemBVaMJ2bUdW3pixWQ+TQo+zTmlzNJRokdamqcgbkvBHB0EtfPlhoxcaZAClLJMcwoPf7DhPRUTj7fEfl5YZr29I/ckwZeYMbidE1O4mTavIUN3Tkt8t4TpeBcht2R5zNH/hdHWJjvBSk9T5JUDWLi8r5QTQS0E22N6QplvDgCRWalv9ftDUyhmK97
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: ce24d663-fab7-4788-44ef-08d595951707
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CO2PR07MB2646;
-x-ms-traffictypediagnostic: CO2PR07MB2646:
-x-microsoft-antispam-prvs: <CO2PR07MB2646E4E6442F92E2F46C02C2D8A20@CO2PR07MB2646.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(72806322054110);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:CO2PR07MB2646;BCL:0;PCL:0;RULEID:;SRVR:CO2PR07MB2646;
-x-forefront-prvs: 0626C21B10
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(346002)(39860400002)(376002)(396003)(36092001)(199004)(189003)(8936002)(66066001)(186003)(86362001)(6246003)(9686003)(106356001)(14454004)(11346002)(446003)(2906002)(53936002)(3660700001)(316002)(8676002)(25786009)(55016002)(478600001)(33656002)(76176011)(229853002)(59450400001)(4326008)(5660300001)(6116002)(3846002)(5250100002)(3280700002)(105586002)(7696005)(99286004)(97736004)(68736007)(81166006)(7736002)(305945005)(81156014)(6916009)(102836004)(26005)(6436002)(74316002)(476003)(2900100001)(54906003)(486005)(15760500003)(486005)(53546011)(6506007)(93886005);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB2646;H:CO2PR07MB972.namprd07.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: eNhty9NOFZ+6HoXxvNZlSW7ia9NUwvJBCz5Tx6OC0YoNXExlh6t0InejAafnl6y8Cn/9zE89ZYFQGeAgvLnNDJ4Cb/z1lL/wDBv3OvkM7g29ZvGlkVjbxlaxu/9MLEFjyy+p4eOftG7BqLcBg82D2vvnFldpwxRPP3naO2erdQ3ExJ5/thJCAL8/vHR2XX3ZvbG5UuBazTiOiINWd12LBZ+UwpHKmqHriV5VZJbcTI5LzTFq0gO+wvSvYFOcdTrHiH54o0Dg0fAj3YTpAu+sdjPHueyo+vdA4YffH6gajwZgNi/M1Z3qLEuhAQPlnpgJxgnH1OUaAGmJHbHHGABnog==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1751210AbeC2QwR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:52:17 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44432 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeC2QwQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:52:16 -0400
+X-Google-Smtp-Source: AIpwx4+q1yG1csEoWeWWvIH1VaEXPUBb7JDDEVWgbEdzI6OhAXJPOIWsCHxfYF8znBm9r35jvO0n4A==
+Subject: Re: [PATCH 4/4] nvmet-fc: Use new SGL alloc/free helper for requests
+To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
+References: <20180329160721.4691-1-logang@deltatee.com>
+ <20180329160721.4691-5-logang@deltatee.com>
+From: James Smart <james.smart@broadcom.com>
+Message-ID: <15f4d135-7600-02b3-f50f-ed8deddd7b98@broadcom.com>
+Date: Thu, 29 Mar 2018 09:52:12 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce24d663-fab7-4788-44ef-08d595951707
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2018 16:49:51.0873
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB2646
+In-Reply-To: <20180329160721.4691-5-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2TGo3tB028285
 
-On Wed, Mar 28, 2018 at 20:37, Bjorn Helgaas wrote:
-> On Wed, Mar 28, 2018 at 01:24:10PM +0000, Alan Douglas wrote:
-> > > On 28/03/2018 12:51, Niklas Cassel wrote:
-> > > cdns_pcie_ep_set_bar() does some round-up of the BAR size, which
-> > > means that a 64-bit BAR can be set-up, even when the flag
-> > > PCI_BASE_ADDRESS_MEM_TYPE_64 isn't set.
-> >
-> > > If a 64-bit BAR was set-up, set the flag
-> PCI_BASE_ADDRESS_MEM_TYPE_64, so that the calling function can know
-> what BAR width that was actually set-up.
-> >
-> > > I'm not sure why cdns_pcie_ep_set_bar() doesn't obey the flag
-> PCI_BASE_ADDRESS_MEM_TYPE_64, but I leave this for the MAINTAINER to
-> fix, since there might be a reason why > this flag is ignored.
-> > Will investigate and fix this in future patch
-> >
-> > > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > > ---
-> > >  drivers/pci/cadence/pcie-cadence-ep.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > Change looks good to me.
-> 
-> It will be helpful to Lorenzo if you spell this out, e.g.,
-> 
->   Acked-by: Alan Douglas <adouglas@cadence.com>
-Acked-by: Alan Douglas <adouglas@cadence.com>
-> 
-> Also, it looks like we need a MAINTAINERS update to add drivers/pci/cadence/
-> to the "PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
-> filename patterns.
-Lorenzo please let me know if I should create a patch for this, it sounds good to me.
+overall - I'm a little concerned about the replacement.
+
+I know the code depends on the null/zero checks in 
+nvmet_fc_free_tgt_pgs() as there are paths that can call them twice.  
+Your replacement in that routine is fine, but you've fully removed any 
+initialization to zero or setting to zero on free. Given the structure 
+containing the req structure is reused, I'd rather that that code was 
+left in some way... or that nvmet_req_free_sgl() or 
+nvmet_fc_free_tgt_pgs() was updated to set req->sg to null and (not sure 
+necessary if req->sg is null) set req->sg_cnt to 0.
+
+also - sg_cnt isn't referenced as there is an assumption that: transfer 
+length meant there would be (transfer length / PAGESIZE + 1 if partial 
+page) pages allocated and sg_cnt would always equal that page cnt  thus 
+the fcpreq->sgXXX setting behavior in nvmet_fc_transfer_fcp_data().   Is 
+that no longer valid ?   I may not have watched closely enough when the 
+sgl_alloc() common routine was introduced as it may have invalidated 
+these assumptions that were true before.
+
+-- james
+
+
+On 3/29/2018 9:07 AM, Logan Gunthorpe wrote:
+> Use the new helpers introduced earlier to allocate the SGLs for
+> the request.
+>
+> To do this, we drop the appearantly redundant data_sg and data_sg_cnt
+> members as they are identical to the existing req.sg and req.sg_cnt.
+>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Cc: James Smart <james.smart@broadcom.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Sagi Grimberg <sagi@grimberg.me>
+> ---
+>   drivers/nvme/target/fc.c | 38 +++++++++++---------------------------
+>   1 file changed, 11 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
+> index 9f2f8ab83158..00135ff7d1c2 100644
+> --- a/drivers/nvme/target/fc.c
+> +++ b/drivers/nvme/target/fc.c
+> @@ -74,8 +74,6 @@ struct nvmet_fc_fcp_iod {
+>   	struct nvme_fc_cmd_iu		cmdiubuf;
+>   	struct nvme_fc_ersp_iu		rspiubuf;
+>   	dma_addr_t			rspdma;
+> -	struct scatterlist		*data_sg;
+> -	int				data_sg_cnt;
+>   	u32				offset;
+>   	enum nvmet_fcp_datadir		io_dir;
+>   	bool				active;
+> @@ -1696,43 +1694,34 @@ EXPORT_SYMBOL_GPL(nvmet_fc_rcv_ls_req);
+>   static int
+>   nvmet_fc_alloc_tgt_pgs(struct nvmet_fc_fcp_iod *fod)
+>   {
+> -	struct scatterlist *sg;
+> -	unsigned int nent;
+>   	int ret;
+>   
+> -	sg = sgl_alloc(fod->req.transfer_len, GFP_KERNEL, &nent);
+> -	if (!sg)
+> -		goto out;
+> +	ret = nvmet_req_alloc_sgl(&fod->req, &fod->queue->nvme_sq);
+> +	if (ret < 0)
+> +		return NVME_SC_INTERNAL;
+>   
+> -	fod->data_sg = sg;
+> -	fod->data_sg_cnt = nent;
+> -	ret = fc_dma_map_sg(fod->tgtport->dev, sg, nent,
+> +	ret = fc_dma_map_sg(fod->tgtport->dev, fod->req.sg, fod->req.sg_cnt,
+>   			    ((fod->io_dir == NVMET_FCP_WRITE) ?
+>   				    DMA_FROM_DEVICE : DMA_TO_DEVICE));
+>   			    /* note: write from initiator perspective */
+>   	if (!ret)
+> -		goto out;
+> +		return NVME_SC_INTERNAL;
+>   
+>   	return 0;
+> -
+> -out:
+> -	return NVME_SC_INTERNAL;
+>   }
+>   
+>   static void
+>   nvmet_fc_free_tgt_pgs(struct nvmet_fc_fcp_iod *fod)
+>   {
+> -	if (!fod->data_sg || !fod->data_sg_cnt)
+> +	if (!fod->req.sg || !fod->req.sg_cnt)
+>   		return;
+>   
+> -	fc_dma_unmap_sg(fod->tgtport->dev, fod->data_sg, fod->data_sg_cnt,
+> +	fc_dma_unmap_sg(fod->tgtport->dev, fod->req.sg, fod->req.sg_cnt,
+>   				((fod->io_dir == NVMET_FCP_WRITE) ?
+>   					DMA_FROM_DEVICE : DMA_TO_DEVICE));
+> -	sgl_free(fod->data_sg);
+> -	fod->data_sg = NULL;
+> -	fod->data_sg_cnt = 0;
+> -}
+>   
+> +	nvmet_req_free_sgl(&fod->req);
+> +}handl
+>   
+>   static bool
+>   queue_90percent_full(struct nvmet_fc_tgt_queue *q, u32 sqhd)
+> @@ -1871,7 +1860,7 @@ nvmet_fc_transfer_fcp_data(struct nvmet_fc_tgtport *tgtport,
+>   	fcpreq->fcp_error = 0;
+>   	fcpreq->rsplen = 0;
+>   
+> -	fcpreq->sg = &fod->data_sg[fod->offset / PAGE_SIZE];
+> +	fcpreq->sg = &fod->req.sg[fod->offset / PAGE_SIZE];
+>   	fcpreq->sg_cnt = DIV_ROUND_UP(tlen, PAGE_SIZE);
+>   
+>   	/*
+> @@ -2083,7 +2072,7 @@ __nvmet_fc_fcp_nvme_cmd_done(struct nvmet_fc_tgtport *tgtport,
+>   		 * There may be a status where data still was intended to
+>   		 * be moved
+>   		 */
+> -		if ((fod->io_dir == NVMET_FCP_READ) && (fod->data_sg_cnt)) {
+> +		if ((fod->io_dir == NVMET_FCP_READ) && (fod->req.sg_cnt)) {
+>   			/* push the data over before sending rsp */
+>   			nvmet_fc_transfer_fcp_data(tgtport, fod,
+>   						NVMET_FCOP_READDATA);
+> @@ -2153,9 +2142,6 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport *tgtport,
+>   	/* clear any response payload */
+>   	memset(&fod->rspiubuf, 0, sizeof(fod->rspiubuf));
+>   
+> -	fod->data_sg = NULL;
+> -	fod->data_sg_cnt = 0;
+> -
+>   	ret = nvmet_req_init(&fod->req,
+>   				&fod->queue->nvme_cq,
+>   				&fod->queue->nvme_sq,
+> @@ -2178,8 +2164,6 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport *tgtport,
+>   			return;
+>   		}
+>   	}
+> -	fod->req.sg = fod->data_sg;
+> -	fod->req.sg_cnt = fod->data_sg_cnt;
+>   	fod->offset = 0;
+>   
+>   	if (fod->io_dir == NVMET_FCP_WRITE) {
