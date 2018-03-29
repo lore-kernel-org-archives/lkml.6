@@ -1,73 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751218AbeC2PLO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:11:14 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:44529 "EHLO mail.thorsis.com"
+        id S1751865AbeC2PNM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:13:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59809 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750732AbeC2PLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:11:13 -0400
-From: Alexander Dahl <ada@thorsis.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Date: Thu, 29 Mar 2018 17:11:08 +0200
-Message-ID: <2097113.JiHb7Y1Uf1@ada>
-In-Reply-To: <3478710.yJBBt3uoRT@ada>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com> <20180328155033.GH13942@piout.net> <3478710.yJBBt3uoRT@ada>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751195AbeC2PNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:13:11 -0400
+Date: Thu, 29 Mar 2018 17:13:09 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
+Message-ID: <20180329151309.omdoxcdku5xoshgx@pathway.suse.cz>
+References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
+ <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
+ <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
+ <1519752950.10722.231.camel@linux.intel.com>
+ <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
+ <1519814544.10722.266.camel@linux.intel.com>
+ <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
+ <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
+ <1520000254.10722.389.camel@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520000254.10722.389.camel@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2TFBIix020771
 
-Hei hei,
-
-Am Donnerstag, 29. März 2018, 10:01:26 CEST schrieb Alexander Dahl:
-> This is the result:
+On Fri 2018-03-02 16:17:34, Andy Shevchenko wrote:
+> On Fri, 2018-03-02 at 13:53 +0100, Petr Mladek wrote:
+> > %p has many modifiers where the pointer is dereferenced. An invalid
+> > pointer might cause kernel to crash silently.
+> > 
+> > Note that printk() formats the string under logbuf_lock. Any recursive
+> > printks are redirected to the printk_safe implementation and the
+> > messages
+> > are stored into per-CPU buffers. These buffers might be eventually
+> > flushed
+> > in printk_safe_flush_on_panic() but it is not guaranteed.
+> > 
+> > In general, we should do our best to get useful message from printk().
+> > All pointers to the first memory page must be invalid. Let's prevent
+> > the dereference and print "(null)" in this case. This is already done
+> > in many other situations, including "%s" format handling and many
+> > page fault handlers.
+> > 
 > 
-> INT                NAME          RATE             MAX
->  17 [vel     timer@fffa]  1837 Ints/s     (max:  1912)
->  26 [      vel     eth0]     3 Ints/s     (max:    11)
+> 
+> With such explanation it makes at least clear for the reader why it's
+> done.
+> 
+> Thanks!
+> 
+> Would you be okay if I take this one as a first in my series and
+> resubmit the series based on it?
 
-Above was with v4.16-rc7+, and CONFIG_ATMEL_CLOCKSOURCE_TCB=y, 
-CONFIG_ATMEL_TCLIB=n (as one might see in the name column).
+The original simple patch grew into something bigger. I have it
+almost ready. It looks the following way at the moment:
 
-Now, v4.16-rc7+, with CONFIG_ATMEL_CLOCKSOURCE_PIT=y, CONFIG_ATMEL_TCLIB=y, 
-CONFIG_ATMEL_TCB_CLKSRC=y (old driver I guess):
+  vsprintf: Shuffle ptr_to_id() code
+  vsprintf: Consistent %pK handling for kptr_restrict == 0
+  vsprintf: Do not check address of well-known strings
+  vsprintf: Consolidate handling of unknown pointer specifiers
+  vsprintf: Factor out %p[iI] handler as ip_addr_string()
+  vsprintf: Factor out %pV handler as va_format()
+  vsprintf: Factor out %pO handler as kobject_string()
+  vsprintf: Prevent crash when dereferencing invalid pointers
+  vsprintf: Avoid confusion between invalid address and value
 
-INT                NAME          RATE             MAX
- 19 [ vel     tc_clkevt]  1898 Ints/s     (max:  1945)
- 26 [      vel     eth0]     3 Ints/s     (max:    11)
+ Documentation/core-api/printk-formats.rst |   8 +
+ lib/test_printf.c                         |  37 ++-
+ lib/vsprintf.c                            | 445 ++++++++++++++++++------------
+ 3 files changed, 307 insertions(+), 183 deletions(-)
 
-So the rates here are roughly the same with old and new driver and the same 
-kernel source. As Alexandre stated in IRC, the rates should be the same with 
-old and new driver on the otherwise same kernel source.
+I still would like to do some final review and check with a fresh
+head after Easter holidays.
 
-I just double checked it, and with the other clocksource on v4.16-rc7+ I get:
 
-INT                NAME          RATE             MAX
- 17 [vel     timer@fffa]  1904 Ints/s     (max:  1922)
- 26 [      vel     eth0]     6 Ints/s     (max:     7)
+Now, I am unsure how to merge it with your patchset. Most of your
+patches are independent and should be applied. But there will be
+some merge conflicts.
 
-The lower rates I reported yesterday were from older kernels v4.14.29-rt25 and 
-v4.15.13, so there might be the question why v4.16-rc7+ has a much higher rate 
-with tc_clkevt? But there's no real difference between tc_clkevt and 
-timer@fffa… when both measured with v4.16-rc7+ on this target. I know 
-Alexandre has lower rates though, may depend on other parameters.
+On possibility would be that I take your still valid changes via
+printk.git. Then you would even need not send anything. I could
+resolve the conflicts when applying the patches.
 
-So for completeness, I just tested the clean v4.16-rc7 without this patch 
-series: 
+Or would you prefer to resend your patchset without the controversal
+check removal? And wait for my patchset?
 
-INT                NAME          RATE             MAX
- 19 [ vel     tc_clkevt]  1903 Ints/s     (max:  1930)
- 26 [      vel     eth0]     7 Ints/s     (max:     7)
-
-Basically the same for this one, too.
-
-HTH & Greets
-Alex
+Best Regards,
+Petr
