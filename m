@@ -1,193 +1,258 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeC2Htv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:49:51 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37632 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751230AbeC2Htq (ORCPT
+        id S1752173AbeC2HuQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:50:16 -0400
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:44290 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbeC2HuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:49:46 -0400
-X-Google-Smtp-Source: AIpwx49UJWIKDqAPkc8Lz0+Ohd2Z1ftUQzpT5W53ZxViEouhvZLw914ZVkJDdH6NHWgz8gje28eNgw==
-Subject: Re: [PATCH v4 2/2] drm/xen-front: Add support for Xen PV display
- frontend
-To: daniel.vetter@intel.com, jgross@suse.com, konrad.wilk@oracle.com,
-        airlied@linux.ie,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
-References: <1522219661-26827-1-git-send-email-andr2000@gmail.com>
- <1522219661-26827-3-git-send-email-andr2000@gmail.com>
- <20180328074251.GE14155@phenom.ffwll.local>
- <32481355-27f6-695b-c6c1-8113ea268a33@gmail.com>
- <20180329071748.GG3881@phenom.ffwll.local>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <d5efc0d5-bfbc-9281-fb1e-3a09de3d43d9@gmail.com>
-Date: Thu, 29 Mar 2018 10:49:42 +0300
+        Thu, 29 Mar 2018 03:50:14 -0400
+X-Google-Smtp-Source: AIpwx48vBywwnamEZH0dnXW+VE7YPFyoLWMSSFUUbl3Tl0Vm/iEKrhqqntoL3w6Lm9GdXGGBolH3JA==
+From: Todor Tomov <todor.tomov@linaro.org>
+Subject: Re: [v2,2/2] media: Add a driver for the ov7251 camera sensor
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1521778460-8717-3-git-send-email-todor.tomov@linaro.org>
+ <20180323134003.GB11499@w540>
+Message-ID: <419f6976-ee6a-f2c1-1097-a51776469ee4@linaro.org>
+Date: Thu, 29 Mar 2018 10:50:10 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180329071748.GG3881@phenom.ffwll.local>
-Content-Type: multipart/mixed;
- boundary="------------0F431B0390EA6413AB0422ED"
+In-Reply-To: <20180323134003.GB11499@w540>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------0F431B0390EA6413AB0422ED
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Jacopo,
 
-On 03/29/2018 10:17 AM, Daniel Vetter wrote:
-> On Wed, Mar 28, 2018 at 01:29:46PM +0300, Oleksandr Andrushchenko wrote:
->> Hi, Daniel!
+Thank you for your prompt review.
+
+On 23.03.2018 15:40, jacopo mondi wrote:
+> Hi Todor,
+>    thanks for the patch.
+> 
+> When running checkpatch --strict I see a few warning you can easily
+> close (braces indentation mostly, and one additional empty line at
+> line 1048).
+
+Thank you for pointing me to the --strict mode. There are a few CHECKs for
+braces alignment for which the alignment is still better as it is now
+I think. However there were also a few reasonable points and I have
+updated the code according to them.
+
+> 
+> A few more nits below.
+> 
+> On Fri, Mar 23, 2018 at 12:14:20PM +0800, Todor Tomov wrote:
+>> The ov7251 sensor is a 1/7.5-Inch B&W VGA (640x480) CMOS Digital Image
+>> Sensor from Omnivision.
 >>
->> I just noticed I have missed one change in the patch:
->> the below must be static.
+>> The driver supports the following modes:
+>> - 640x480 30fps
+>> - 640x480 60fps
+>> - 640x480 90fps
 >>
->> On 03/28/2018 10:42 AM, Daniel Vetter wrote:
->>> +enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
->>> +		const struct drm_display_mode *mode)
->>> +{
->>> +	struct xen_drm_front_drm_pipeline *pipeline =
->>> +			container_of(crtc,
->> Could you please amend the patch in attachment
->> when merging, so I don't resend?
-> Merging is up to you, as soon as you have your commit rights.
-Thank you, meanwhile I'll need to rebase onto the latest drm-tip
-fixing 2 more minor issues (attached) and making the driver work after
-the API change [1]. So, I'll post v4 right after fd.o is back online
-with the v3..v4 diff to make review simpler
-> -Daniel
-Thank you,
-Oleksandr
->> Thank you in advance,
->> Oleksandr
->>  From 3a82d76bd3d954056b760e5d1d09e2f96a2786ef Mon Sep 17 00:00:00 2001
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> Date: Wed, 28 Mar 2018 13:24:04 +0300
->> Subject: [PATCH] drm/xen-front: Make display_mode_valid static
+>> Output format is MIPI RAW 10.
 >>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> The driver supports configuration via user controls for:
+>> - exposure and gain;
+>> - horizontal and vertical flip;
+>> - test pattern.
+>>
+>> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 >> ---
->>   drivers/gpu/drm/xen/xen_drm_front_kms.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>  drivers/media/i2c/Kconfig  |   13 +
+>>  drivers/media/i2c/Makefile |    1 +
+>>  drivers/media/i2c/ov7251.c | 1494 ++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 1508 insertions(+)
+>>  create mode 100644 drivers/media/i2c/ov7251.c
 >>
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.c b/drivers/gpu/drm/xen/xen_drm_front_kms.c
->> index 545049dfaf0a..bd676be5a0db 100644
->> --- a/drivers/gpu/drm/xen/xen_drm_front_kms.c
->> +++ b/drivers/gpu/drm/xen/xen_drm_front_kms.c
->> @@ -273,7 +273,7 @@ static void display_update(struct drm_simple_display_pipe *pipe,
->>   	drm_dev_exit(idx);
->>   }
->>   
->> -enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
->> +static enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
->>   		const struct drm_display_mode *mode)
->>   {
->>   	struct xen_drm_front_drm_pipeline *pipeline =
->> -- 
->> 2.7.4
+>> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+>> index 541f0d28..89aecb3 100644
+>> --- a/drivers/media/i2c/Kconfig
+>> +++ b/drivers/media/i2c/Kconfig
+>> @@ -688,6 +688,19 @@ config VIDEO_OV5695
+>>  	  To compile this driver as a module, choose M here: the
+>>  	  module will be called ov5695.
 >>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
-[1] 
-https://github.com/freedesktop/drm-misc/commit/0c9c7fd00e17907efb35697ecb9f2df39a0b536c
+>> +config VIDEO_OV7251
+>> +	tristate "OmniVision OV7251 sensor support"
+>> +	depends on OF
+>> +	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+>> +	depends on MEDIA_CAMERA_SUPPORT
+>> +	select V4L2_FWNODE
+>> +	---help---
+>> +	  This is a Video4Linux2 sensor-level driver for the OmniVision
+>> +	  OV7251 camera.
+>> +
+>> +	  To compile this driver as a module, choose M here: the
+>> +	  module will be called ov7251.
+>> +
+>>  config VIDEO_OV772X
+>>  	tristate "OmniVision OV772x sensor support"
+>>  	depends on I2C && VIDEO_V4L2
+>> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+>> index ea34aee..c8585b1 100644
+>> --- a/drivers/media/i2c/Makefile
+>> +++ b/drivers/media/i2c/Makefile
+>> @@ -70,6 +70,7 @@ obj-$(CONFIG_VIDEO_OV5647) += ov5647.o
+>>  obj-$(CONFIG_VIDEO_OV5670) += ov5670.o
+>>  obj-$(CONFIG_VIDEO_OV5695) += ov5695.o
+>>  obj-$(CONFIG_VIDEO_OV6650) += ov6650.o
+>> +obj-$(CONFIG_VIDEO_OV7251) += ov7251.o
+>>  obj-$(CONFIG_VIDEO_OV7640) += ov7640.o
+>>  obj-$(CONFIG_VIDEO_OV7670) += ov7670.o
+>>  obj-$(CONFIG_VIDEO_OV772X) += ov772x.o
+>> diff --git a/drivers/media/i2c/ov7251.c b/drivers/media/i2c/ov7251.c
+>> new file mode 100644
+>> index 0000000..7b401a9
+>> --- /dev/null
+>> +++ b/drivers/media/i2c/ov7251.c
+>> @@ -0,0 +1,1494 @@
 
---------------0F431B0390EA6413AB0422ED
-Content-Type: text/x-patch;
- name="0001-drm-xen-front-Free-page-on-event-channel-error-path.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-drm-xen-front-Free-page-on-event-channel-error-path.pat";
- filename*1="ch"
+<snip>
 
->From e16847ef23d19106c6855951674624bfd37e4209 Mon Sep 17 00:00:00 2001
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Date: Thu, 29 Mar 2018 08:54:25 +0300
-Subject: [PATCH 1/2] drm/xen-front: Free page on event channel error path
+>> +static int ov7251_s_power(struct v4l2_subdev *sd, int on)
+>> +{
+>> +	struct ov7251 *ov7251 = to_ov7251(sd);
+>> +	int ret = 0;
+>> +
+>> +	mutex_lock(&ov7251->power_lock);
+>> +
+>> +	/*
+>> +	 * If the power state is modified from 0 to 1 or from 1 to 0,
+>> +	 * update the power state.
+>> +	 */
+>> +	if (ov7251->power_on == !on) {
+> 
+>         if (ov7251->power_on == !!on) {
+>                 mutex_unlock(&ov7251->power_lock);
+>                 return 0;
+>         }
+> 
+> And you can save one indentation level and remove ret initialization.
+> 
 
-While creating an event channel a page was leaked in case
-of error. Fix this by freeing the page.
+Good hint, I'd rather save one indentation level by:
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+	if (ov7251->power_on == !!on)
+		goto exit;
 
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
-index e521785fd22b..02b6f3d9fe4c 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
-@@ -186,8 +186,10 @@ static int evtchnl_alloc(struct xen_drm_front_info *front_info, int index,
- 				sring, XEN_PAGE_SIZE);
- 
- 		ret = xenbus_grant_ring(xb_dev, sring, 1, &gref);
--		if (ret < 0)
-+		if (ret < 0) {
-+			free_page(page);
- 			goto fail;
-+		}
- 
- 		handler = evtchnl_interrupt_ctrl;
- 	} else {
-@@ -195,8 +197,10 @@ static int evtchnl_alloc(struct xen_drm_front_info *front_info, int index,
- 
- 		ret = gnttab_grant_foreign_access(xb_dev->otherend_id,
- 				virt_to_gfn((void *)page), 0);
--		if (ret < 0)
-+		if (ret < 0) {
-+			free_page(page);
- 			goto fail;
-+		}
- 
- 		gref = ret;
- 		handler = evtchnl_interrupt_evt;
+> 
+>> +		if (on) {
+>> +			ret = ov7251_set_power_on(ov7251);
+>> +			if (ret < 0)
+>> +				goto exit;
+>> +
+>> +			ret = ov7251_set_register_array(ov7251,
+>> +					ov7251_global_init_setting,
+>> +					ARRAY_SIZE(ov7251_global_init_setting));
+>> +			if (ret < 0) {
+>> +				dev_err(ov7251->dev,
+>> +					"could not set init registers\n");
+>> +				ov7251_set_power_off(ov7251);
+>> +				goto exit;
+>> +			}
+>> +
+>> +			ov7251->power_on = true;
+>> +		} else {
+>> +			ov7251_set_power_off(ov7251);
+>> +			ov7251->power_on = false;
+>> +		}
+>> +	}
+>> +
+>> +exit:
+>> +	mutex_unlock(&ov7251->power_lock);
+>> +
+>> +	return ret;
+>> +}
+>> +
+
+<snip>
+
+>> +
+>> +static int ov7251_enum_frame_size(struct v4l2_subdev *subdev,
+>> +				  struct v4l2_subdev_pad_config *cfg,
+>> +				  struct v4l2_subdev_frame_size_enum *fse)
+>> +{
+> 
+> Shouldn't you check for (pad != 0) in all subdev pad operations?
+> I see other driver with a single pad doing this...
+
+I looked up now and I can see that this is checked in v4l2-subdev.c
+in subdev_do_ioctl() before the driver's callback is called.
+
+> 
+> 
+>> +	if (fse->code != MEDIA_BUS_FMT_SBGGR10_1X10)
+>> +		return -EINVAL;
+>> +
+>> +	if (fse->index >= ARRAY_SIZE(ov7251_mode_info_data))
+>> +		return -EINVAL;
+>> +
+>> +	fse->min_width = ov7251_mode_info_data[fse->index].width;
+>> +	fse->max_width = ov7251_mode_info_data[fse->index].width;
+>> +	fse->min_height = ov7251_mode_info_data[fse->index].height;
+>> +	fse->max_height = ov7251_mode_info_data[fse->index].height;
+>> +
+>> +	return 0;
+>> +}
+>> +
+
+<snip>
+
+>> +
+>> +static const struct i2c_device_id ov7251_id[] = {
+>> +	{ "ov7251", 0 },
+>> +	{}
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, ov7251_id);
+>> +
+>> +static const struct of_device_id ov7251_of_match[] = {
+>> +	{ .compatible = "ovti,ov7251" },
+>> +	{ /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, ov7251_of_match);
+>> +
+>> +static struct i2c_driver ov7251_i2c_driver = {
+>> +	.driver = {
+>> +		.of_match_table = of_match_ptr(ov7251_of_match),
+>> +		.name  = "ov7251",
+>> +	},
+>> +	.probe  = ov7251_probe,
+>> +	.remove = ov7251_remove,
+>> +	.id_table = ov7251_id,
+> 
+> As this driver depends on CONFIG_OF, I've been suggested to use probe_new and
+> get rid of i2c id_tables.
+
+Yes, I'll do that.
+
+> 
+> With the above nits clarified, and as you addressed my v1 comments:
+> 
+> Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Would you like to see the corrections or I can add the tag before sending them?
+
+> 
+> Thanks
+>    j
+> 
+>> +};
+>> +
+>> +module_i2c_driver(ov7251_i2c_driver);
+>> +
+>> +MODULE_DESCRIPTION("Omnivision OV7251 Camera Driver");
+>> +MODULE_AUTHOR("Todor Tomov <todor.tomov@linaro.org>");
+>> +MODULE_LICENSE("GPL v2");
+
 -- 
-2.7.4
-
-
---------------0F431B0390EA6413AB0422ED
-Content-Type: text/x-patch;
- name="0002-drm-xen-front-Align-documentation-title-w-other-driv.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0002-drm-xen-front-Align-documentation-title-w-other-driv.pa";
- filename*1="tch"
-
->From a6668b48003b46cd711f7e56faaf35dbad769c03 Mon Sep 17 00:00:00 2001
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Date: Thu, 29 Mar 2018 09:13:11 +0300
-Subject: [PATCH 2/2] drm/xen-front: Align documentation title w/ other drivers
-
-Align title of the documentation for the driver with the rest of the drivers,
-e.g. have drm/xen-front in front of the title.
-
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- Documentation/gpu/xen-front.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/gpu/xen-front.rst b/Documentation/gpu/xen-front.rst
-index 8188e03c9d23..009d942386c5 100644
---- a/Documentation/gpu/xen-front.rst
-+++ b/Documentation/gpu/xen-front.rst
-@@ -1,6 +1,6 @@
--====================================
--Xen para-virtualized frontend driver
--====================================
-+====================================================
-+ drm/xen-front Xen para-virtualized frontend driver
-+====================================================
- 
- This frontend driver implements Xen para-virtualized display
- according to the display protocol described at
--- 
-2.7.4
-
-
---------------0F431B0390EA6413AB0422ED--
+Best regards,
+Todor Tomov
