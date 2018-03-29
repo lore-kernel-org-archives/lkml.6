@@ -1,45 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752497AbeC2NBc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:01:32 -0400
-Received: from smtprelay0015.hostedemail.com ([216.40.44.15]:43262 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751227AbeC2NBa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:01:30 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1566:1593:1594:1711:1714:1730:1747:1777:1792:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3867:3870:4250:4321:5007:6119:7903:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12296:12438:12740:12760:12895:13069:13311:13357:13439:13869:14659:14721:21063:21080:21433:21627:30005:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: line45_46cdf049c4712
-X-Filterd-Recvd-Size: 1639
-Message-ID: <1522328485.2210.30.camel@perches.com>
-Subject: Re: [PATCH] qed: fix a bunch of spelling mistakes/typos
-From: Joe Perches <joe@perches.com>
-To: Colin King <colin.king@canonical.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 29 Mar 2018 06:01:25 -0700
-In-Reply-To: <20180329124144.27841-1-colin.king@canonical.com>
-References: <20180329124144.27841-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752623AbeC2NCX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:02:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39766 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752278AbeC2NCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 09:02:22 -0400
+Date: Thu, 29 Mar 2018 15:02:20 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Alexander Dahl <ada@thorsis.com>, linux-arm-kernel@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180329130220.GM13942@piout.net>
+References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+ <3478710.yJBBt3uoRT@ada>
+ <20180329104542.GK13942@piout.net>
+ <3103570.fW0XyqvKVi@ada>
+ <20180329114255.GL13942@piout.net>
+ <e3235587-8362-e1fc-a813-39f790a1c8b4@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3235587-8362-e1fc-a813-39f790a1c8b4@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-29 at 13:41 +0100, Colin King wrote:
-> Trivial fix to spelling mistakes/typos in various DP_* messages.
-[]
-> diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-[]
-> @@ -231,7 +231,7 @@ static void qed_vf_pf_acquire_reduce_resc(struct qed_hwfn *p_hwfn,
->  {
->  	DP_VERBOSE(p_hwfn,
->  		   QED_MSG_IOV,
-> -		   "PF unwilling to fullill resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
-> +		   "PF unwilling to fulfil resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
+On 29/03/2018 at 14:07:34 +0200, Daniel Lezcano wrote:
+> On 29/03/2018 13:42, Alexandre Belloni wrote:
+> > On 29/03/2018 at 13:31:18 +0200, Alexander Dahl wrote:
+> >> Pretty sure. I rebuilt the whole BSP and added another line to the kernel 
+> >> source to see if the tree I applied the patches to, was actually built:
+> >>
+> >>
+> >> diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
+> >> index 7fde9cfbf203..f85affc74a86 100644
+> >> --- a/drivers/clocksource/timer-atmel-tcb.c
+> >> +++ b/drivers/clocksource/timer-atmel-tcb.c
+> >> @@ -222,7 +222,8 @@ static int __init tc_clkevt_register(struct device_node *node,
+> >>                 goto err_slow;
+> >>         clk_disable(tce.clk);
+> >>  
+> >> -       clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
+> >> +       pr_info( "*** bits: 0x%x, BIT(bits): 0x%lx\n", bits, BIT(bits) );
+> >> +       clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
+> >>  
+> >>         ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
+> >>                           tce.clkevt.name, &tce);
+> >>
+> >>
+> > 
+> > I've just tested on a g20, old driver:
+> > INT                NAME          RATE             MAX
+> >  16 [vel     at91_tick,]   175 Ints/s     (max:   231)
+> >  19 [ vel     tc_clkevt]   129 Ints/s     (max:   129)
+> > 
+> > 
+> > new driver:
+> > INT                NAME          RATE             MAX
+> >  17 [vel     timer@fffa]   129 Ints/s     (max:   129)
+> >  18 [     vel     ttyS0]   175 Ints/s     (max:   231)
+> 
+> Can you give in both platforms how fast the clocksource wraps up ?
+> 
 
-Substituting one typo for another
+sam9g20, old:
+clocksource: pit: mask: 0xfffffff max_cycles: 0xfffffff, max_idle_ns: 14370379250 ns
+sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every 21474836475000000ns
+clocksource: tcb_clksrc: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 114963034405 ns
 
-fulfil->fulfill
+sam9g20, new:
+clocksource: timer@fffa0000:0,1: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 114963034405 ns
+sched_clock: 32 bits at 16MHz, resolution 60ns, wraps every 129171948513ns
+
+sama5d4, old:
+clocksource: pit: mask: 0x7ffffff max_cycles: 0x7ffffff, max_idle_ns: 10859434279 ns
+sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every 21474836475000000ns
+clocksource: tcb_clksrc: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 173750949719 ns
+
+sama5d4, new:
+clocksource: timer@fc024000:0: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 173750949719 ns
+sched_clock: 32 bits at 11MHz, resolution 90ns, wraps every 195225786322ns
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
