@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/JitkR6UD75Xs/No33MOtMYwX+64WdcT3VWkl6zNsAh4EyI5ZnCgc9nwRtnbqlv9IKmncV
-ARC-Seal: i=1; a=rsa-sha256; t=1522346531; cv=none;
+X-Google-Smtp-Source: AIpwx4+qQ+FeKBMJ7ZQ2r/0H3nz6mcllKMi2d0sIuW9Zff9JAQXvEM0AVLDrr8uaNelJWLd1nlKn
+ARC-Seal: i=1; a=rsa-sha256; t=1522346528; cv=none;
         d=google.com; s=arc-20160816;
-        b=MZiSdwRCrfREJ1q7wV579fmtGRqx9I1wAhfbyBRDRHKw20RAwc2zyp2uXUQBfE2ojR
-         OaTkGGbJxGb+oOTd/UHWGfX7UVgjFKKuXkqSWDD9lN8W7rUvqnOqfTcUloq5moAx1TOq
-         2ASMiZmpC9dxdvc2GAelHZCktQPgc6PW2qMdmH4NxYcN7JDUmydpLTStFyD3qBpUHts/
-         LizmcCNRsk12hKjIGCZarDm35ENA4HvD4OniSY1yAsiukdYNJqImXMMFOylPUeHSAMM9
-         amChoF9FlzJAjzlhEQj64j8zSbtGY3W64+FMnRpArx2Dxr6NUsm4TchJ75iobkOy/FUp
-         JRvA==
+        b=feLLN2nfybE0yIoKgTEx0Y1tyVIvRAyUmJjsgwyC4dkIoe4C5MJGId5fVRkYowY0Am
+         E/+Lg3EX6v4oDeIi2BtCdJspmcxSH0y+M6UZMJNSFgNChtZuoSjJoywEU4JgWTAkaiGP
+         F8RMSkq3C04mq6Xla8SyRwykOcLv4CTgCrIDNC6nNsFXBfHtnZciPQkzwoXzUd3CTGRr
+         WIehilLmXh8e8jmy3qsjcve2W1W1uSnRUnvtQrCuOP6T/AeEcteDPkQtt5skn0ZNi8Co
+         zUXXiw7RuasW7W1jZWMdmqq3Gzz7yoI0Frux0H5JIA3f1IjWRfmO+R3EEq9H7LGUCJ+n
+         xp7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iCFWcVYhNzDADgs45OCGv3pvoJD3xI7nUcwYYaY7lPI=;
-        b=s4RqUHZR6kwjFqwWEMOEl0eB5BPGD31/Q2BFC6XOxH4yB7GJSK6mJoBKv227tNJeRm
-         So3Jz8mR1MRGXm6OQkWDGXLvq/3FvoNKeTgfpp2KnO7pFFv7gEBuxB7wHDyWbRTjXE6V
-         EYvRCJK8k2+DXqjjx5e/AB89RFtuLGpadsfzR6qqwsVmzW4F6HWx/FirYJUAyncr0dgx
-         WJycH2mfe48eYV6gWECIupBkt3B5KGfxNHb5J9UthbvVSX235AKr/MTIbqbHxvB29mb1
-         g6RWieepec9x0k3ygBWU7TjEX7speY/0JSzvjipT7/JXB1HtRTPLabCwwY7u1Re0IKYN
-         mr5Q==
+        bh=QaJrjz0ybGc/dvgsdV9/dpTv5iE/JvuQrV/iABvZE3s=;
+        b=A2FSc1bZH0RLeA+Onv1mqiDbyiPQLV9J7IMSbEclByBIlHTNPIDKkC/4c9CKxrbGvn
+         7oL05xH7dgh1ke1zB4vreo0e8pHDvWmSTDOCCtwytCIUoIYzmCR4uwYNfSKB/sfR03Tl
+         GtdW7OwsbjsyDEOXBd1NlldiOlT8SeEw0nmy6yVvmJDs23m5BEo4PQijhv19kqnWRHeh
+         ap942cXKCmXc8i4pUhD1wGz9NMhdh2aXyC2Bd5RF6L+yV+rAxdfU/hvg9WrMXWVIYCSO
+         Cnq02+kx4WgzdUoQ9y+S9T0yU9xhR9O8HgbwLw4BwWOekK4Fyj+bHaY+/PgPRTVCoag8
+         BspA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	xu heng <xuheng333@zoho.com>,
-	Guillaume Nault <g.nault@alphalink.fr>,
+	Roman Mashak <mrv@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 18/47] ppp: avoid loop in xmit recursion detection code
-Date: Thu, 29 Mar 2018 19:59:59 +0200
-Message-Id: <20180329175730.423736967@linuxfoundation.org>
+Subject: [PATCH 4.15 17/47] net sched actions: return explicit error when tunnel_key mode is not specified
+Date: Thu, 29 Mar 2018 19:59:58 +0200
+Message-Id: <20180329175730.359995361@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296036023455533?=
-X-GMAIL-MSGID: =?utf-8?q?1596296036023455533?=
+X-GMAIL-THRID: =?utf-8?q?1596296033440716481?=
+X-GMAIL-MSGID: =?utf-8?q?1596296033440716481?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,142 +50,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guillaume Nault <g.nault@alphalink.fr>
+From: Roman Mashak <mrv@mojatatu.com>
 
 
-[ Upstream commit 6d066734e9f09cdea4a3b9cb76136db3f29cfb02 ]
+[ Upstream commit 51d4740f88affd85d49c04e3c9cd129c0e33bcb9 ]
 
-We already detect situations where a PPP channel sends packets back to
-its upper PPP device. While this is enough to avoid deadlocking on xmit
-locks, this doesn't prevent packets from looping between the channel
-and the unit.
+If set/unset mode of the tunnel_key action is not provided, ->init() still
+returns 0, and the caller proceeds with bogus 'struct tc_action *' object,
+this results in crash:
 
-The problem is that ppp_start_xmit() enqueues packets in ppp->file.xq
-before checking for xmit recursion. Therefore, __ppp_xmit_process()
-might dequeue a packet from ppp->file.xq and send it on the channel
-which, in turn, loops it back on the unit. Then ppp_start_xmit()
-queues the packet back to ppp->file.xq and __ppp_xmit_process() picks
-it up and sends it again through the channel. Therefore, the packet
-will loop between __ppp_xmit_process() and ppp_start_xmit() until some
-other part of the xmit path drops it.
+% tc actions add action tunnel_key src_ip 1.1.1.1 dst_ip 2.2.2.1 id 7 index 1
 
-For L2TP, we rapidly fill the skb's headroom and pppol2tp_xmit() drops
-the packet after a few iterations. But PPTP reallocates the headroom
-if necessary, letting the loop run and exhaust the machine resources
-(as reported in https://bugzilla.kernel.org/show_bug.cgi?id=199109).
+[   35.805515] general protection fault: 0000 [#1] SMP PTI
+[   35.806161] Modules linked in: act_tunnel_key kvm_intel kvm irqbypass
+crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64
+crypto_simd glue_helper cryptd serio_raw
+[   35.808233] CPU: 1 PID: 428 Comm: tc Not tainted 4.16.0-rc4+ #286
+[   35.808929] RIP: 0010:tcf_action_init+0x90/0x190
+[   35.809457] RSP: 0018:ffffb8edc068b9a0 EFLAGS: 00010206
+[   35.810053] RAX: 1320c000000a0003 RBX: 0000000000000001 RCX: 0000000000000000
+[   35.810866] RDX: 0000000000000070 RSI: 0000000000007965 RDI: ffffb8edc068b910
+[   35.811660] RBP: ffffb8edc068b9d0 R08: 0000000000000000 R09: ffffb8edc068b808
+[   35.812463] R10: ffffffffc02bf040 R11: 0000000000000040 R12: ffffb8edc068bb38
+[   35.813235] R13: 0000000000000000 R14: 0000000000000000 R15: ffffb8edc068b910
+[   35.814006] FS:  00007f3d0d8556c0(0000) GS:ffff91d1dbc40000(0000)
+knlGS:0000000000000000
+[   35.814881] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   35.815540] CR2: 000000000043f720 CR3: 0000000019248001 CR4: 00000000001606a0
+[   35.816457] Call Trace:
+[   35.817158]  tc_ctl_action+0x11a/0x220
+[   35.817795]  rtnetlink_rcv_msg+0x23d/0x2e0
+[   35.818457]  ? __slab_alloc+0x1c/0x30
+[   35.819079]  ? __kmalloc_node_track_caller+0xb1/0x2b0
+[   35.819544]  ? rtnl_calcit.isra.30+0xe0/0xe0
+[   35.820231]  netlink_rcv_skb+0xce/0x100
+[   35.820744]  netlink_unicast+0x164/0x220
+[   35.821500]  netlink_sendmsg+0x293/0x370
+[   35.822040]  sock_sendmsg+0x30/0x40
+[   35.822508]  ___sys_sendmsg+0x2c5/0x2e0
+[   35.823149]  ? pagecache_get_page+0x27/0x220
+[   35.823714]  ? filemap_fault+0xa2/0x640
+[   35.824423]  ? page_add_file_rmap+0x108/0x200
+[   35.825065]  ? alloc_set_pte+0x2aa/0x530
+[   35.825585]  ? finish_fault+0x4e/0x70
+[   35.826140]  ? __handle_mm_fault+0xbc1/0x10d0
+[   35.826723]  ? __sys_sendmsg+0x41/0x70
+[   35.827230]  __sys_sendmsg+0x41/0x70
+[   35.827710]  do_syscall_64+0x68/0x120
+[   35.828195]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[   35.828859] RIP: 0033:0x7f3d0ca4da67
+[   35.829331] RSP: 002b:00007ffc9f284338 EFLAGS: 00000246 ORIG_RAX:
+000000000000002e
+[   35.830304] RAX: ffffffffffffffda RBX: 00007ffc9f284460 RCX: 00007f3d0ca4da67
+[   35.831247] RDX: 0000000000000000 RSI: 00007ffc9f2843b0 RDI: 0000000000000003
+[   35.832167] RBP: 000000005aa6a7a9 R08: 0000000000000001 R09: 0000000000000000
+[   35.833075] R10: 00000000000005f1 R11: 0000000000000246 R12: 0000000000000000
+[   35.833997] R13: 00007ffc9f2884c0 R14: 0000000000000001 R15: 0000000000674640
+[   35.834923] Code: 24 30 bb 01 00 00 00 45 31 f6 eb 5e 8b 50 08 83 c2 07 83 e2
+fc 83 c2 70 49 8b 07 48 8b 40 70 48 85 c0 74 10 48 89 14 24 4c 89 ff <ff> d0 48
+8b 14 24 48 01 c2 49 01 d6 45 85 ed 74 05 41 83 47 2c
+[   35.837442] RIP: tcf_action_init+0x90/0x190 RSP: ffffb8edc068b9a0
+[   35.838291] ---[ end trace a095c06ee4b97a26 ]---
 
-Fix this by letting __ppp_xmit_process() enqueue the skb to
-ppp->file.xq, so that we can check for recursion before adding it to
-the queue. Now ppp_xmit_process() can drop the packet when recursion is
-detected.
-
-__ppp_channel_push() is a bit special. It calls __ppp_xmit_process()
-without having any actual packet to send. This is used by
-ppp_output_wakeup() to re-enable transmission on the parent unit (for
-implementations like ppp_async.c, where the .start_xmit() function
-might not consume the skb, leaving it in ppp->xmit_pending and
-disabling transmission).
-Therefore, __ppp_xmit_process() needs to handle the case where skb is
-NULL, dequeuing as many packets as possible from ppp->file.xq.
-
-Reported-by: xu heng <xuheng333@zoho.com>
-Fixes: 55454a565836 ("ppp: avoid dealock on recursive xmit")
-Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
+Fixes: d0f6dd8a914f ("net/sched: Introduce act_tunnel_key")
+Signed-off-by: Roman Mashak <mrv@mojatatu.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ppp/ppp_generic.c |   26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ net/sched/act_tunnel_key.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -257,7 +257,7 @@ struct ppp_net {
- /* Prototypes. */
- static int ppp_unattached_ioctl(struct net *net, struct ppp_file *pf,
- 			struct file *file, unsigned int cmd, unsigned long arg);
--static void ppp_xmit_process(struct ppp *ppp);
-+static void ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb);
- static void ppp_send_frame(struct ppp *ppp, struct sk_buff *skb);
- static void ppp_push(struct ppp *ppp);
- static void ppp_channel_push(struct channel *pch);
-@@ -513,13 +513,12 @@ static ssize_t ppp_write(struct file *fi
- 		goto out;
- 	}
- 
--	skb_queue_tail(&pf->xq, skb);
--
- 	switch (pf->kind) {
- 	case INTERFACE:
--		ppp_xmit_process(PF_TO_PPP(pf));
-+		ppp_xmit_process(PF_TO_PPP(pf), skb);
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -153,6 +153,7 @@ static int tunnel_key_init(struct net *n
+ 		metadata->u.tun_info.mode |= IP_TUNNEL_INFO_TX;
  		break;
- 	case CHANNEL:
-+		skb_queue_tail(&pf->xq, skb);
- 		ppp_channel_push(PF_TO_CHANNEL(pf));
- 		break;
+ 	default:
++		ret = -EINVAL;
+ 		goto err_out;
  	}
-@@ -1267,8 +1266,8 @@ ppp_start_xmit(struct sk_buff *skb, stru
- 	put_unaligned_be16(proto, pp);
- 
- 	skb_scrub_packet(skb, !net_eq(ppp->ppp_net, dev_net(dev)));
--	skb_queue_tail(&ppp->file.xq, skb);
--	ppp_xmit_process(ppp);
-+	ppp_xmit_process(ppp, skb);
-+
- 	return NETDEV_TX_OK;
- 
-  outf:
-@@ -1420,13 +1419,14 @@ static void ppp_setup(struct net_device
-  */
- 
- /* Called to do any work queued up on the transmit side that can now be done */
--static void __ppp_xmit_process(struct ppp *ppp)
-+static void __ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
- {
--	struct sk_buff *skb;
--
- 	ppp_xmit_lock(ppp);
- 	if (!ppp->closing) {
- 		ppp_push(ppp);
-+
-+		if (skb)
-+			skb_queue_tail(&ppp->file.xq, skb);
- 		while (!ppp->xmit_pending &&
- 		       (skb = skb_dequeue(&ppp->file.xq)))
- 			ppp_send_frame(ppp, skb);
-@@ -1440,7 +1440,7 @@ static void __ppp_xmit_process(struct pp
- 	ppp_xmit_unlock(ppp);
- }
- 
--static void ppp_xmit_process(struct ppp *ppp)
-+static void ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
- {
- 	local_bh_disable();
- 
-@@ -1448,7 +1448,7 @@ static void ppp_xmit_process(struct ppp
- 		goto err;
- 
- 	(*this_cpu_ptr(ppp->xmit_recursion))++;
--	__ppp_xmit_process(ppp);
-+	__ppp_xmit_process(ppp, skb);
- 	(*this_cpu_ptr(ppp->xmit_recursion))--;
- 
- 	local_bh_enable();
-@@ -1458,6 +1458,8 @@ static void ppp_xmit_process(struct ppp
- err:
- 	local_bh_enable();
- 
-+	kfree_skb(skb);
-+
- 	if (net_ratelimit())
- 		netdev_err(ppp->dev, "recursion detected\n");
- }
-@@ -1942,7 +1944,7 @@ static void __ppp_channel_push(struct ch
- 	if (skb_queue_empty(&pch->file.xq)) {
- 		ppp = pch->ppp;
- 		if (ppp)
--			__ppp_xmit_process(ppp);
-+			__ppp_xmit_process(ppp, NULL);
- 	}
- }
  
