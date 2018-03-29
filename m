@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/yFmWYATSBukj+sXEBIZfsgJhrgztNpJdScS7swm1410MyMOwaObDqE7+kXw8EqEG3Mwcs
-ARC-Seal: i=1; a=rsa-sha256; t=1522346902; cv=none;
+X-Google-Smtp-Source: AIpwx4/+8xJ4mJZaI1yb74pzTjXAXzB12UWltbAySRGQLpXjeYs3991KgqsBEakcfi9UgKVar0mg
+ARC-Seal: i=1; a=rsa-sha256; t=1522346899; cv=none;
         d=google.com; s=arc-20160816;
-        b=U4LVD6nE5Wrowt7reR1ATyhPIgm12T2LOZD9YDlew+NWcO3ULK6LKKiTC22KHebJ8g
-         VDkBa8v5BZiSojeZdyRgau43hb8mPCunlmsm8EqjZOxMXUlWKqi62ycD6EU3vnHq5btY
-         T6ZjT6Kdqdbd+suPqcpxVPIChf6tqhAhy6gVr4is3bvOPFXHb0hPTSOXxu5deBfeVLrP
-         bwhj6OVII6v7XS2jEa4NXYQx7BzQ3L2J82ecLhRqCW0B6pSk2anfYLLuZrhnjigALrR5
-         cWyZ6ogrEkuABe+/4nYJkgVvfqcbMgeDODY8KNH6ahfbMab5rujhIQkHdOTYOGM2ihAp
-         Qj6A==
+        b=vEb4eaep+QQCRewGM09oEAVuic/dV9zmTCL1u76W3Y6+/pNBeQ1sfkD2Q/Tgqrqbdf
+         B9LQHg8JDBs9VewEMh1NdOFVEFIgincQ+GkoK7+adQ3czrMtOdNKO/y6d+aOBs+W/nwe
+         HtmQoeUMvKjoQ1BBXfe6nf0dOH+p/UjSrFqtCGXSuKQl29Q6oGi/y+ihKWy2XDX6b8Xi
+         oaV61bbyo+Q8U2KDoe3N433+YB88fEOmUaKYT3Ob4MHtCEIXt2JijcyICxWW2il6MpxZ
+         xyqy4PNI0Yz5luBeCD47k3RtfLhkYz4GbOigEHeeg4a+6U5CiCcNKBu4jaintqOpa0FJ
+         6sRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2P/xCYN6wF28rs+vopHIGf5Cw1vd+JPcOveDbiGUNlM=;
-        b=K04Sd0lZje2jjZsEnOs9F660wek2qHl8mrPHH9Lcmw0rtKlSqpOTbztWGRggWyNIk6
-         COxhEBoItYeM5upuGTFHfF1WF7eUHawjYi5x30iDs55AFN91eg2INgD4/1aaluOOPf4z
-         dvFOj4MMXxDtk+bEJn35k8Uck3qStf+1TCE8hIgLWUk1tQREowb1h5DHBlFNFAPFyQ5P
-         68819ppTRILmIMkufwDP3SRhUFaQJ/CIt7BMtHrVIC/v3Ikg+uELldWUZLv9jRSbLeVT
-         XpZUlHn1GGsmAyHdD1ESu8zU9OLdzfpFSQbRNmD35scAjmBwBCdYEZAQ1pCOXvJVKuw7
-         ebNg==
+        bh=luTAwdwU/L1HqhHJFfq0wLKUt0dZTCTybiQHS4bxGDE=;
+        b=dg85aMprKka6zWskDTA65FqwL/UnlbDeiFM4xqIu/+bNHCtCGdZQldqq+g+zEXVxSz
+         jIAwQ/ZiaFN8KYQez8B8/N1xyVtjgvEdajIT3LBe8deWmsXq+RyDFNM1GKbrLD1/OT7g
+         SPHunBTGIr1zHjfxCx1j39ZBqdxyZzeTadv0DXUukg6ZCrVXoNQ5YK+Q6tguhq7a5lxl
+         QI6L5UslkqMP81Vy9Y7kTi6WvGHzc4o4LKeB/TyDzz7OZeU7qPLCR8tU9/RedqjPozuz
+         tXymEAQi/e9g3K9YTO1hH4Q2Idfb/Pd2uMBZFCOyWWSeyh+a0dOw3OHoNI77mToojL8F
+         Hk3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@osg.samsung.com>,
-	syzbot <syzkaller@googlegroups.com>,
+	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 18/20] ieee802154: 6lowpan: fix possible NULL deref in lowpan_device_event()
-Date: Thu, 29 Mar 2018 20:00:54 +0200
-Message-Id: <20180329175742.805429429@linuxfoundation.org>
+Subject: [PATCH 4.4 17/20] s390/qeth: on channel error, reject further cmd requests
+Date: Thu, 29 Mar 2018 20:00:53 +0200
+Message-Id: <20180329175742.761700707@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296051714340324?=
-X-GMAIL-MSGID: =?utf-8?q?1596296425641191742?=
+X-GMAIL-THRID: =?utf-8?q?1596296072058867998?=
+X-GMAIL-MSGID: =?utf-8?q?1596296422936056053?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,55 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit ca0edb131bdf1e6beaeb2b8289fd6b374b74147d ]
+[ Upstream commit a6c3d93963e4b333c764fde69802c3ea9eaa9d5c ]
 
-A tun device type can trivially be set to arbitrary value using
-TUNSETLINK ioctl().
+When the IRQ handler determines that one of the cmd IO channels has
+failed and schedules recovery, block any further cmd requests from
+being submitted. The request would inevitably stall, and prevent the
+recovery from making progress until the request times out.
 
-Therefore, lowpan_device_event() must really check that ieee802154_ptr
-is not NULL.
+This sort of error was observed after Live Guest Relocation, where
+the pending IO on the READ channel intentionally gets terminated to
+kick-start recovery. Simultaneously the guest executed SIOCETHTOOL,
+triggering qeth to issue a QUERY CARD INFO command. The command
+then stalled in the inoperabel WRITE channel.
 
-Fixes: 2c88b5283f60d ("ieee802154: 6lowpan: remove check on null")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Alexander Aring <alex.aring@gmail.com>
-Cc: Stefan Schmidt <stefan@osg.samsung.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Stefan Schmidt <stefan@osg.samsung.com>
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ieee802154/6lowpan/core.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/s390/net/qeth_core_main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ieee802154/6lowpan/core.c
-+++ b/net/ieee802154/6lowpan/core.c
-@@ -206,9 +206,13 @@ static inline void lowpan_netlink_fini(v
- static int lowpan_device_event(struct notifier_block *unused,
- 			       unsigned long event, void *ptr)
- {
--	struct net_device *wdev = netdev_notifier_info_to_dev(ptr);
-+	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
-+	struct wpan_dev *wpan_dev;
- 
--	if (wdev->type != ARPHRD_IEEE802154)
-+	if (ndev->type != ARPHRD_IEEE802154)
-+		return NOTIFY_DONE;
-+	wpan_dev = ndev->ieee802154_ptr;
-+	if (!wpan_dev)
- 		goto out;
- 
- 	switch (event) {
-@@ -217,8 +221,8 @@ static int lowpan_device_event(struct no
- 		 * also delete possible lowpan interfaces which belongs
- 		 * to the wpan interface.
- 		 */
--		if (wdev->ieee802154_ptr->lowpan_dev)
--			lowpan_dellink(wdev->ieee802154_ptr->lowpan_dev, NULL);
-+		if (wpan_dev->lowpan_dev)
-+			lowpan_dellink(wpan_dev->lowpan_dev, NULL);
- 		break;
- 	default:
- 		break;
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -1166,6 +1166,7 @@ static void qeth_irq(struct ccw_device *
+ 		}
+ 		rc = qeth_get_problem(cdev, irb);
+ 		if (rc) {
++			card->read_or_write_problem = 1;
+ 			qeth_clear_ipacmd_list(card);
+ 			qeth_schedule_recovery(card);
+ 			goto out;
