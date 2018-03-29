@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753050AbeC2Lpb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:45:31 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59894 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752803AbeC2L0Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752821AbeC2L0Q (ORCPT <rfc822;w@1wt.eu>);
         Thu, 29 Mar 2018 07:26:16 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59810 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752740AbeC2L0J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 07:26:09 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org
-Subject: [PATCH 012/109] net: socket: add __sys_bind() helper; remove in-kernel call to syscall
-Date: Thu, 29 Mar 2018 13:22:49 +0200
-Message-Id: <20180329112426.23043-13-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Jiri Slaby <jslaby@suse.com>, x86@kernel.org
+Subject: [PATCH 007/109] x86: remove compat_sys_x86_waitpid()
+Date: Thu, 29 Mar 2018 13:22:44 +0200
+Message-Id: <20180329112426.23043-8-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,79 +22,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the net-internal helper __sys_bind() allows us to avoid the
-internal calls to the sys_bind() syscall.
+compat_sys_x86_waitpid() is not needed, as it takes the same parameters
+(int, *int, int) as the native syscall.
 
-This patch is part of a series which removes in-kernel calls to syscalls.
-On this basis, the syscall entry path can be streamlined. For details, see
-http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
-
-Cc: David S. Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
+Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: x86@kernel.org
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- include/linux/socket.h | 1 +
- net/compat.c           | 2 +-
- net/socket.c           | 9 +++++++--
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
+ arch/x86/ia32/sys_ia32.c               | 6 ------
+ arch/x86/include/asm/sys_ia32.h        | 3 ---
+ 3 files changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index f8d040434a13..e9cee272da13 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -364,5 +364,6 @@ extern int __sys_sendto(int fd, void __user *buff, size_t len,
- extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
- 			 int __user *upeer_addrlen, int flags);
- extern int __sys_socket(int family, int type, int protocol);
-+extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen);
- 
- #endif /* _LINUX_SOCKET_H */
-diff --git a/net/compat.c b/net/compat.c
-index 5b3b74c5812e..bba555b1d863 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -814,7 +814,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
- 		ret = __sys_socket(a0, a1, a[2]);
- 		break;
- 	case SYS_BIND:
--		ret = sys_bind(a0, compat_ptr(a1), a[2]);
-+		ret = __sys_bind(a0, compat_ptr(a1), a[2]);
- 		break;
- 	case SYS_CONNECT:
- 		ret = sys_connect(a0, compat_ptr(a1), a[2]);
-diff --git a/net/socket.c b/net/socket.c
-index 07f379e50def..291cdae97341 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1462,7 +1462,7 @@ SYSCALL_DEFINE4(socketpair, int, family, int, type, int, protocol,
-  *	the protocol layer (having also checked the address is ok).
-  */
- 
--SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
-+int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen)
- {
- 	struct socket *sock;
- 	struct sockaddr_storage address;
-@@ -1485,6 +1485,11 @@ SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
- 	return err;
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 2a5e99cff859..ef6edaf285cd 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -13,7 +13,7 @@
+ 4	i386	write			sys_write
+ 5	i386	open			sys_open			compat_sys_open
+ 6	i386	close			sys_close
+-7	i386	waitpid			sys_waitpid			compat_sys_x86_waitpid
++7	i386	waitpid			sys_waitpid
+ 8	i386	creat			sys_creat
+ 9	i386	link			sys_link
+ 10	i386	unlink			sys_unlink
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index aa024a2dd34f..23a5260eae67 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -169,12 +169,6 @@ COMPAT_SYSCALL_DEFINE1(x86_mmap, struct mmap_arg_struct32 __user *, arg)
+ 			       a.offset>>PAGE_SHIFT);
  }
  
-+SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
-+{
-+	return __sys_bind(fd, umyaddr, addrlen);
-+}
-+
- /*
-  *	Perform a listen. Basically, we allow the protocol to do anything
-  *	necessary for a listen, and if that works, we mark the socket as
-@@ -2471,7 +2476,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
- 		err = __sys_socket(a0, a1, a[2]);
- 		break;
- 	case SYS_BIND:
--		err = sys_bind(a0, (struct sockaddr __user *)a1, a[2]);
-+		err = __sys_bind(a0, (struct sockaddr __user *)a1, a[2]);
- 		break;
- 	case SYS_CONNECT:
- 		err = sys_connect(a0, (struct sockaddr __user *)a1, a[2]);
+-COMPAT_SYSCALL_DEFINE3(x86_waitpid, compat_pid_t, pid, unsigned int __user *,
+-		       stat_addr, int, options)
+-{
+-	return compat_sys_wait4(pid, stat_addr, options, NULL);
+-}
+-
+ /* warning: next two assume little endian */
+ COMPAT_SYSCALL_DEFINE5(x86_pread, unsigned int, fd, char __user *, ubuf,
+ 		       u32, count, u32, poslo, u32, poshi)
+diff --git a/arch/x86/include/asm/sys_ia32.h b/arch/x86/include/asm/sys_ia32.h
+index 906794aa034e..2ee6e3b96656 100644
+--- a/arch/x86/include/asm/sys_ia32.h
++++ b/arch/x86/include/asm/sys_ia32.h
+@@ -35,9 +35,6 @@ asmlinkage long compat_sys_x86_fstatat(unsigned int, const char __user *,
+ struct mmap_arg_struct32;
+ asmlinkage long compat_sys_x86_mmap(struct mmap_arg_struct32 __user *);
+ 
+-asmlinkage long compat_sys_x86_waitpid(compat_pid_t, unsigned int __user *,
+-				       int);
+-
+ asmlinkage long compat_sys_x86_pread(unsigned int, char __user *, u32, u32,
+ 				     u32);
+ asmlinkage long compat_sys_x86_pwrite(unsigned int, const char __user *, u32,
 -- 
 2.16.3
