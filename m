@@ -1,198 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751974AbeC2Osc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:48:32 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:53658 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750979AbeC2Osa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:48:30 -0400
-Subject: Re: [net-next,v2,01/10] soc: ti: K2G: enhancement to support QMSS in
- NSS
-To: Grygorii Strashko <grygorii.strashko@ti.com>, <robh+dt@kernel.org>,
-        <ssantosh@kernel.org>, <malat@debian.org>, <w-kwok2@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <davem@davemloft.net>,
-        <netdev@vger.kernel.org>
-CC: <mark.rutland@arm.com>
-References: <1522168309-12338-2-git-send-email-m-karicheri2@ti.com>
- <1ccf03e7-17b4-cf00-176d-0e41038c88f8@ti.com>
-From: Murali Karicheri <m-karicheri2@ti.com>
-Organization: Texas Instruments
-Message-ID: <9ef90d5d-3714-3705-73d9-f3c04069279d@ti.com>
-Date: Thu, 29 Mar 2018 10:50:46 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <1ccf03e7-17b4-cf00-176d-0e41038c88f8@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1751227AbeC2OuD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:50:03 -0400
+Received: from mail.visioncatalog.de ([217.6.246.34]:56453 "EHLO
+        root.phytec.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750820AbeC2OuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:50:02 -0400
+From: Daniel Schultz <d.schultz@phytec.de>
+To: lee.jones@linaro.org
+Cc: zyw@rock-chips.com, zhangqing@rock-chips.com, xsf@rock-chips.com,
+        tony.xie@rock-chips.com, w.egorov@phytec.de,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/2] mfd: rk808: Refactor shutdown functions
+Date: Thu, 29 Mar 2018 16:49:59 +0200
+Message-Id: <1522335000-23057-1-git-send-email-d.schultz@phytec.de>
+X-Mailer: git-send-email 2.7.4
+X-MIMETrack: Itemize by SMTP Server on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 29.03.2018 16:50:00,
+        Serialize by Router on Idefix/Phytec(Release 9.0.1FP7|August  17, 2016) at
+ 29.03.2018 16:50:00,
+        Serialize complete at 29.03.2018 16:50:00
+X-TNEFEvaluated: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Grygorii,
+Since all three shutdown functions have almost the same code, all logic
+from the shutdown functions can be refactored to a new function
+"rk808_update_bits", which can update a register by a given address and
+bitmask.
 
-Thanks for reviewing this!
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+---
+Changes:
+	v2: Re-submit with recipients from Rockchip.
+	v3: - Added devicetree property to enable the PMIC reset seperate from 
+	      "rockchip,system-power-controller".
+	    - Dropped the first patch of this serie.
+	v4: Splitted refactoring and the new reset feature.
+	v5: Removed null pointer from rk808_update_bits.
 
-On 03/28/2018 03:01 PM, Grygorii Strashko wrote:
-> Hi Murali,
-> 
-> On 03/27/2018 11:31 AM, Murali Karicheri wrote:
->> Navigator Subsystem (NSS) available on K2G SoC has a cut down
->> version of QMSS with less number of queues, internal linking ram
->> with lesser number of buffers etc.  It doesn't have status and
->> explicit push register space as in QMSS available on other K2 SoCs.
->> So define reg indices specific to QMSS on K2G. This patch introduces
->> "keystone-navigator-qmss-l" compatibility to identify QMSS on
->> K2G NSS (QMSS Lite) and to customize the dts handling code. Per
->> Device manual, descriptors with index less than or equal to
->> regions0_size is in region 0 in the case of QMSS where as for
->> QMSS Lite, descriptors with index less than regions0_size is in
->> region 0. So update the size accordingly in the regions0_size bits
->> of the linking ram size 0 register.
->>
->> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
->> Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
->> ---
->>   .../bindings/soc/ti/keystone-navigator-qmss.txt    |  7 ++
->>   drivers/soc/ti/knav_qmss.h                         |  6 ++
->>   drivers/soc/ti/knav_qmss_queue.c                   | 90 ++++++++++++++++------
->>   3 files changed, 81 insertions(+), 22 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
->> index 77cd42c..1b0878a 100644
->> --- a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
->> +++ b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
->> @@ -18,6 +18,7 @@ pool management.
->>   
->>   Required properties:
->>   - compatible	: Must be "ti,keystone-navigator-qmss";
->> +		: Must be "ti,keystone-navigator-qmss-l" for NSS Lite
-> 
-> 
-> I think, It will be more accurate to add K2G specific compat string
-> like "ti,66ak2g-navss-qm":
-> 
-> compatible = "ti,66ak2g-navss-qm", "ti,keystone-navigator-qmss";
-> 
-> because 66ak2g TRM doesn't mention "Navss light" and this Navss version is used
-> only in 66ak2g Soc. As result, 66ak2g Navss QM is subset of of keystone 2 Navss QM 
-> which should be defined in DT by adding more specific compat string in addition
-> to generic one.  
-> 
+ drivers/mfd/rk808.c | 46 +++++++++++++---------------------------------
+ 1 file changed, 13 insertions(+), 33 deletions(-)
 
-As I have mentioned in the commit description, it is not a subset of the K2
-registers. There are some differences that makes it not compatible with K2 QMSS.
-See my description, 
-
->>It doesn't have status and explicit push register space as in QMSS available on
->>other K2 SoCs.
-
-And also
-
->> Per Device manual, descriptors with index less than or equal to
->> regions0_size is in region 0 in the case of QMSS where as for
->> QMSS Lite, descriptors with index less than regions0_size is in
->> region 0. So update the size accordingly in the regions0_size bits
->> of the linking ram size 0 register
-
-So will have to use a specific compatible = "ti,66ak2g-navss-qm" for this QM IMO.
-
-Murali
-> 
->>   - clocks	: phandle to the reference clock for this device.
->>   - queue-range	: <start number> total range of queue numbers for the device.
->>   - linkram0	: <address size> for internal link ram, where size is the total
->> @@ -39,6 +40,12 @@ Required properties:
->>   			  - Descriptor memory setup region.
->>   			  - Queue Management/Queue Proxy region for queue Push.
->>   			  - Queue Management/Queue Proxy region for queue Pop.
->> +
->> +For NSS lite, following QMSS reg indexes are used in that order
-> 
-> For 66AK2G NAVSS QM..
-> 
->> +			  - Queue Peek region.
->> +			  - Queue configuration region.
->> +			  - Queue Management/Queue Proxy region for queue Push/Pop.
->> +
->>   - queue-pools	: child node classifying the queue ranges into pools.
->>   		  Queue ranges are grouped into 3 type of pools:
->>   		  - qpend	    : pool of qpend(interruptible) queues
->> diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
->> index 905b974..5fa1ce6 100644
->> --- a/drivers/soc/ti/knav_qmss.h
->> +++ b/drivers/soc/ti/knav_qmss.h
->> @@ -292,6 +292,11 @@ struct knav_queue {
->>   	struct list_head		list;
->>   };
->>   
->> +enum qmss_version {
->> +	QMSS,
->> +	QMSS_LITE,
-> 
-> QMSS_66AK2G
-> 
->> +};
->> +
->>   struct knav_device {
->>   	struct device				*dev;
->>   	unsigned				base_id;
->> @@ -305,6 +310,7 @@ struct knav_device {
->>   	struct list_head			pools;
->>   	struct list_head			pdsps;
->>   	struct list_head			qmgrs;
->> +	enum qmss_version			version;
->>   };
->>   
-> 
-> [...]
-> 
->>   }
->>   
->> +/* Match table for of_platform binding */
->> +static const struct of_device_id keystone_qmss_of_match[] = {
->> +	{
->> +		.compatible = "ti,keystone-navigator-qmss",
-> 
-> 		.data	= (void *)QMSS,
-> 
->> +	},
->> +	{
->> +		.compatible = "ti,keystone-navigator-qmss-l",
->> +		.data	= (void *)QMSS_LITE,
->> +	},
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
->> +
->>   static int knav_queue_probe(struct platform_device *pdev)
->>   {
->>   	struct device_node *node = pdev->dev.of_node;
->>   	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
->> +	const struct of_device_id *match;
->>   	struct device *dev = &pdev->dev;
->>   	u32 temp[2];
->>   	int ret;
->> @@ -1700,6 +1749,10 @@ static int knav_queue_probe(struct platform_device *pdev)
->>   		return -ENOMEM;
->>   	}
->>   
->> +	match = of_match_device(of_match_ptr(keystone_qmss_of_match), dev);
->> +	if (match && match->data)
->> +		kdev->version = QMSS_LITE;
-> 
-> 	if (match)
-> 		kdev->version = match->data;
-> 	else
-> 		error?
-> [...]
-> 
-
-
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index 216fbf6..1cb1b3a 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -369,58 +369,38 @@ static const struct regmap_irq_chip rk818_irq_chip = {
+ 
+ static struct i2c_client *rk808_i2c_client;
+ 
+-static void rk805_device_shutdown(void)
++static void rk808_update_bits(unsigned int reg, unsigned int bit_mask)
+ {
+ 	int ret;
+ 	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+ 
+ 	if (!rk808) {
+ 		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk805, so do nothing here\n");
++			 "have no rk805/rk808/rk818, so do nothing here\n");
+ 		return;
+ 	}
+ 
+ 	ret = regmap_update_bits(rk808->regmap,
+-				 RK805_DEV_CTRL_REG,
+-				 DEV_OFF, DEV_OFF);
++				 reg,
++				 bit_mask, bit_mask);
+ 	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++		dev_err(&rk808_i2c_client->dev,
++			"can't write to register 0x%x: %x!\n", reg, ret);
+ }
+ 
+-static void rk808_device_shutdown(void)
++static void rk805_device_shutdown(void)
+ {
+-	int ret;
+-	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+-
+-	if (!rk808) {
+-		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk808, so do nothing here\n");
+-		return;
+-	}
++	rk808_update_bits(RK805_DEV_CTRL_REG, DEV_OFF);
++}
+ 
+-	ret = regmap_update_bits(rk808->regmap,
+-				 RK808_DEVCTRL_REG,
+-				 DEV_OFF_RST, DEV_OFF_RST);
+-	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++static void rk808_device_shutdown(void)
++{
++	rk808_update_bits(RK808_DEVCTRL_REG, DEV_OFF_RST);
+ }
+ 
+ static void rk818_device_shutdown(void)
+ {
+-	int ret;
+-	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+-
+-	if (!rk808) {
+-		dev_warn(&rk808_i2c_client->dev,
+-			 "have no rk818, so do nothing here\n");
+-		return;
+-	}
+-
+-	ret = regmap_update_bits(rk808->regmap,
+-				 RK818_DEVCTRL_REG,
+-				 DEV_OFF, DEV_OFF);
+-	if (ret)
+-		dev_err(&rk808_i2c_client->dev, "power off error!\n");
++	rk808_update_bits(RK818_DEVCTRL_REG, DEV_OFF);
+ }
+ 
+ static const struct of_device_id rk808_of_match[] = {
 -- 
-Murali Karicheri
-Linux Kernel, Keystone
+2.7.4
