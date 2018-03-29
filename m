@@ -1,71 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeC2Pe2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:34:28 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:39608 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750979AbeC2Pe0 (ORCPT
+        id S1752135AbeC2PiZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:38:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42707 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751215AbeC2PiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:34:26 -0400
-X-Google-Smtp-Source: AIpwx4/ziudrbo1jL5iF7voygOtKWWPnG7YXVoNRrzQQ6e7Mux/cnb0mrXy2npklzZ6K7eROimmCSnKBRXlKlTEeBeo=
+        Thu, 29 Mar 2018 11:38:23 -0400
+From: Colin King <colin.king@canonical.com>
+To: Solomon Peachy <pizza@shaftnet.org>, Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cw1200: fix spelling mistake: "Mailformed" -> "Malformed"
+Date: Thu, 29 Mar 2018 16:38:18 +0100
+Message-Id: <20180329153818.29538-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <1522260676.12357.121.camel@perches.com>
-References: <20180328175736.17360-1-rvarsha016@gmail.com> <1522260676.12357.121.camel@perches.com>
-From: Varsha Rao <rvarsha016@gmail.com>
-Date: Thu, 29 Mar 2018 21:03:45 +0530
-Message-ID: <CAAFX7JTfWdaGra+kWBJt-GXVVO601K03qWnExFKFD_9vxS-03g@mail.gmail.com>
-Subject: Re: [PATCH] crypto: cavium: zip: Remove unnecessary parentheses
-To: Joe Perches <joe@perches.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cocci <cocci@systeme.lip6.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 11:41 PM, Joe Perches wrote:
->
-> On Wed, 2018-03-28 at 23:27, Varsha Rao wrote:
-> > This patch fixes the clang warning of extraneous parentheses, with the
-> > following coccinelle script.
-> >
-> > @@
-> > identifier i;
-> > constant c;
-> > @@
-> > (
-> > -((i == c))
-> > +i == c
-> > >
-> >
-> > -((i <= c))
-> > +i <= c
->
-> Why just the "==" and "<=" cases?
-> Why not "<", ">" and ">=" too?
->
-> Why not expression instead of constant?
+From: Colin Ian King <colin.king@canonical.com>
 
-Initially I had the other cases too and used expression instead of
-constant. But the results included only "==" and "<=" cases with
-constant. Along with one false positive case.
+Trivial fix to spelling mistake in wiphy_warn warning message text
 
---- a/drivers/crypto/cavium/zip/zip_main.c
-+++ b/drivers/crypto/cavium/zip/zip_main.c
-@@ -99,7 +99,7 @@ static struct zip_device *zip_alloc_devi
-  */
- struct zip_device *zip_get_device(int node)
- {
--    if ((node < MAX_ZIP_DEVICES) && (node >= 0))
-+    if (node < MAX_ZIP_DEVICES && node >= 0)
-         return zip_dev[node];
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/st/cw1200/txrx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-     zip_err("ZIP device not found for node id %d\n", node);
-
-I checked if there was any case of extra parentheses around relational
-operators left, but there were none. Hence, in the script I included
-only the cases present in the result.
-
-Thanks,
-Varsha
+diff --git a/drivers/net/wireless/st/cw1200/txrx.c b/drivers/net/wireless/st/cw1200/txrx.c
+index e9050b41157a..f7b1b0062db3 100644
+--- a/drivers/net/wireless/st/cw1200/txrx.c
++++ b/drivers/net/wireless/st/cw1200/txrx.c
+@@ -1069,7 +1069,7 @@ void cw1200_rx_cb(struct cw1200_common *priv,
+ 	}
+ 
+ 	if (skb->len < sizeof(struct ieee80211_pspoll)) {
+-		wiphy_warn(priv->hw->wiphy, "Mailformed SDU rx'ed. Size is lesser than IEEE header.\n");
++		wiphy_warn(priv->hw->wiphy, "Malformed SDU rx'ed. Size is lesser than IEEE header.\n");
+ 		goto drop;
+ 	}
+ 
+-- 
+2.15.1
