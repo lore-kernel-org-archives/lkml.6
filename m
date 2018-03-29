@@ -1,11 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4151933-1522302752-2-5197346106830234918
+X-Cyrus-Session-Id: sloti22d1t05-4151933-1522302748-2-957975641915089255
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES ensk.us-asciisv, BAYES_USED global,
-  SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -13,24 +12,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522302751; b=Z7sP68YR2RPubzp/2jLkbDAenZeDQodUVVrhgaDqlUeCoX0
-    uhlDWOTy2y3iiPHdlZFOIZ9H/TMPB8MgWZKgE5Qdo/I9vC8rvFuaJDATLg6BLOVx
-    YUJ0U+dXHKHPReSdhDY7YepsSBH9btg/7URH70/Tkeddku+OFEvwXu0QLjXmz03o
-    FWCDk5mqo4g+7dUCb1Fn4pa2Uzjme2qJlMLRo/hR1nHCLCgVlINa6u5NJNN8qckr
-    WqZ1R9Lrwd1qoLvszk4vVU7d4jDlzHaVVboacICSjkJvn3jK2QzHhD4eJ/Esyh/G
-    RN/h94ToFvLQzzoY1jFrMcKJYrOkPnfOnH83xAg==
+    t=1522302748; b=Bpcq8xLkpP5kL/dspBXdj7jpdzfMjfDCVncrqBYuztf+loV
+    zVNE8o6DsxZ4sxEFozO/uwHx2wSDTyrAKmU74xWBfsn1OKylSveP8ygzH3wV8qh9
+    2Xg/9s4yrAJ/2X1cY0jSLpAPTkIdHurbEBLsJVECk0kiVmmmnrQE+o80GMI8pasz
+    Wvv5/iyxthHrSjMhKagiHL9yrWddB6/5DNLmUusuHgzSKKhey+7lcqoQPyKofRNr
+    1FXDuqb4svVHHpAHxaGna7ZaiT57u24fzGxBWrSbPIFU4QK+su50uaovO16DdM6Y
+    jb2aB4pPFH1MrMzWPMMy5hN5p+Bs4z78uKxIt8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1522302751; bh=G
-    agw8/wDAKtcVTfBX5TmTFrX95XChiHQ1+rUIK4usrw=; b=vxKYtj33P/nzoBxAy
-    rXO24oWjNaP8P47GmlgGdHT1baywW77EUYRz9akCa32oAFU5ncYa9+hkLQ65GI4f
-    eUEcZtxGUUsWueBpYExGHC50q+qdl5BXIwLAxw2WfljXUfvsw/84EcAWyr/3faX0
-    JJaROi9RkpTfDr1TOUzHdjyd2HKRmrow/rJdIPDfOMJ4geeZrlthRLdLT0D745B1
-    ZSnPT5D2jQ+DrJZGSlmgZ5zAhztZd1UWIyNfu9x7/IjWKyTYWK9H9m4Q1JNIGT7M
-    1xaJ4MBcdUUWSyNOMbv5eMEosR0EdwOeq9X/rTrLflLTGW53CvaVs4oFY7IITHNk
-    mlnZw==
+    :content-transfer-encoding:sender; s=arctest; t=1522302748; bh=i
+    c2FFDfWzI+t01XcrUCQTqOSM4pRcXgJPdB3yhYR3+M=; b=V93H4TW86BfsuoAKY
+    3affeoLB02GDSLKqgWsM7otNIUekeIwD7rN9PHfnFlyfiMkfL2g9zGpZFDlpodjZ
+    S0NY50wLDAArixyfq5IgVDyQtCbs4LxCaWKXEj/UPtd8vYlVK2Z3tIczlRGkUFnx
+    xTZNay49Nr+AZmQGR/uLuBqgHXHUEWVJ97uv7Q/d400HY/7HFTUuprZUuYuUNP4T
+    9LUrpMuqeEjWCHpiPNwCeLX8yRbhpRmsL024axAiIUvUhdXo637e02tszhqQw2su
+    G53i7hbhW85Fr24Cd0L6Bgrq4udWhRuzsh5isbPj8DkzgMvbXMqjSZzZmGj3nzbr
+    CW75A==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
@@ -55,43 +54,43 @@ Authentication-Results: mx1.messagingengine.com;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCAIM6scjBSGMUhqWnPRZQoXGOiyTPC1kVM6kWxkirE5vjQIAkfvXxWXyhHKImCHoASJBzOJgN9Eu6oAYr+n/H9EEByns3UJz1O61eB3FgfI4MFfD+e0
-    BPNOF99Bku1Tu927j3oWwoBo964l6AVeguDZ59C48dSY792CXxOGLVeSVMmZo1E1COcjgClFujy/mKkX/rB/KYogvci6FUcHAAWw0JJNUHpgPD3G3Z329PIs
-    OVKAqBNFI6WrSS/6r1Ywgg==
+X-CM-Envelope: MS4wfNLVoax+TN6KO6XLigtvrnsE03Ns/hezq7+qoIU21Qd7TUlqe9GYNMu8JINHq49zMqCBmnEr04nBYjWHEyqE9AYwkrOq57oAqPLu4FayqDYsJrFJtJqw
+    LfMdcD9yXZsLjpjJ0TqNlM6doA7AV/VotRzOqvdcLlj2QsEu6GWPNA7r1R6fejmxqHsaqrhpCgFYz1pgt2AvThGdaVvCspV0+zT1uTPXLXkCImdjJrsFU+8S
+    NoOrcvxCuG9iHiUZ4V7snA==
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
     a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=2tVUsQXlzfN4wu-OacwA:9 a=wo00M_fbomGCIDl8:21 a=TKiBwV1OdNmKy844:21
-    a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=MJ2wh_4khJxs5KCPlb8A:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH 5/9] staging: ks7010: Change mac_address_valid to a bool
- instead of int.
-Date: Wed, 28 Mar 2018 22:51:48 -0700
-Message-Id: <20180329055152.13059-5-quytelda@tamalin.org>
+Subject: [PATCH 6/9] staging: ks7010: Remove unused member 'reg_net' from
+ 'ks_wlan_private'.
+Date: Wed, 28 Mar 2018 22:51:49 -0700
+Message-Id: <20180329055152.13059-6-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329055152.13059-1-quytelda@tamalin.org>
 References: <20180329055152.13059-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:rEsd5FHru8xXN6bUiBsHTK2eI+A+q9IkkkQ8feKmaH8cqjTIx1G
- ubADVNRQBZMct28FUJNg+oeStT5911wwFaNGJUS+kc9a+7pWS+FpDtd6VQNVJEeL+2HU4Yn
- 6RCCoF9QdavNaBbYtzIEaFPQSrly4Qi2++WwAymqfpykN8zyoQ5bBWT58HBta9m4IPUz+pM
- lPSGU4BYLPkqAmQ6QTTCA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hjeliiW2dRY=:lkdkeYDx8djEqi0NJMojoF
- k/wbXlg5YFJ2EJUT3LzHB71/v31Gkw7EptHOJIOOINi/a2P/vH1MUnphBaEl3MWsThds2DvPv
- ozaApUPVI7oJahOztX90Mao1fh9Mrtk1P4DiUg7EJbapUkRrNZGFbJdO0LafXxG1OpnvlWFMD
- kUfb0AmmgOtuLTVcyqCdPfhpK/ge2Gt31vcOfpOdQfKzMQvx9MoTUp5DBzNcdt0yo3IJepiAt
- LmxtcrQjekqp6R64AW4bOrLJJ0qyi9dA5V7W65fuSScZONqWx1T822q6cchhXBKXe9Mk1T5bs
- chKeNYCOVCDVarXqUKMRmThrhW9V8gci7STAfnMxHmqxcd5YHA906708BTTTfIeHJwt0B2K8y
- 2b22xaEsPrfxtEXA6V3GNy9dzTAi3sdVHEq0MAYYQcwdeHVezvwpM9V5M09smnwZ1flvo9xzP
- Y5PvQ6wayQaNCtX5wivh7xdRomayQzcao4ez0DO3pZlg8rspGGYFpyHi/XwnPE8wdYfF48F9j
- OS8PJ9ddkwOnrH/eagVGPGrwcom8vhSRNSVSMJ184qmFeH+6Pyq3p/gykE3RYLR5a5JUHYf9B
- unMN57hFVqvshG0jbFnswGchtfvaNuZD566o/m46uTZYjwDKpI8xhKe+xHiPoM/9YyDHWjigT
- tC7VYAfWFQVNmUD79iatWIycGhN1vTWKuCqdgrkJyBz1T/qEiNAwhOe0wewSjKqQaFwKdDxAg
- jN+JmOg2ydSytiClBscSMzuDiQ+D64XiMWvO9Q==
+X-Provags-ID: V03:K0:jwA0KTyCh9DMSHBTS47DZ9xwZcC9hcjslv/QmLAm12XlLQHqAEk
+ 1LQQg6WXDQGRibYUmoDEjlpePSZ2wMisj3NUAYLzZd6adq4pyIJB8YVPnYRaRmV5YMuw0P9
+ XblmEa6vfaoTTaJceBVtiYh+jD5pc2sE6tfw6QLLvJOdNmexFAcQNIKDlnNasZ1roknKMtO
+ Q/LJyCqJqDVJV65uNJp/g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hdZnXA4jVVo=:79XnmLJcNcF59O6/dIZSv8
+ E1cz9JCoK0NmW3GGispeeBH3KFMiW8ge6Ez+3+a1CEz7APhQqzj55o1aGyO5/Fe9LVJdRS8SF
+ BBuTP2RRvp0XzQKIbRIFJUCM486mqkskNnzLwKcwJL/gxL38iHiRSKd0DNAecwJ9HlrrN4tTL
+ WHldSluIHWe0/4WivC8QVc5cC4dKxOykKi6BU8Vx43GI7AB00+mV6f3lzmkS2UxKWLF77jb5F
+ LIuvqTgVUMrO8e87TIkZPmIhMqWusDy8u3p9LCi5LjblfAIkAkudNzQnVo85GJMo6nv74lPbO
+ 65QvoqRtQdy8leHDsGppzaEVNlhsf6Kd9YzWk41iJE/+ZbzkrG/iRjYRhR05STXcuszTD/h9s
+ uY88olQvG/XgRGG0a6abc/qXGgoGK42EZu7OCoaMxbZHk7VxsYdum21HAeiiq4Bg5zNAWx44T
+ F3UyOvUwUr7VyTLJlAcsTCvKHacgGBiM5Od5uA4K3Q2CTYeNwyWKnZ91FSAuTjoGEIz5xqY0e
+ HyO5F6mm2I+p5wrwYTpzN7BBNMhLauPwl0Ls3TJk7vIqWOUF1TDAUXxAD8QaijGanZgtHH5iu
+ A+hqLGSX8vOWH3cSAJ2BT771MbgYt/qRJc4Mh7oEKC9miTf9v1vCUiM18dxD3S8Zud2SCaq5L
+ CQcFLmLfdQKbzidRVZM/hjxor8NMBG1JLqX3W6DI+m2U8FV9AblGSJSGsc9gC+aQl7GpUIJ5Q
+ tkz13jVD2goPmCVmhTtA9esAzV+jZo7alXHhJQ==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -113,73 +112,25 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-'mac_address_valid' is only ever assigned 0 or 1, so it makes more sense
-to use a bool type for this variable.
+'reg_net' is never used in this driver.
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>x
 ---
- drivers/staging/ks7010/ks_hostif.c   | 4 ++--
- drivers/staging/ks7010/ks_wlan.h     | 2 +-
- drivers/staging/ks7010/ks_wlan_net.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/ks7010/ks_wlan.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index a02b73e4e81f..79d21a64ffa2 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -523,7 +523,7 @@ void hostif_mib_get_confirm(struct ks_wlan_private *priv)
- 		/* MAC address */
- 		hostif_sme_enqueue(priv, SME_GET_MAC_ADDRESS);
- 		memcpy(priv->eth_addr, priv->rxp, ETH_ALEN);
--		priv->mac_address_valid = 1;
-+		priv->mac_address_valid = true;
- 		dev->dev_addr[0] = priv->eth_addr[0];
- 		dev->dev_addr[1] = priv->eth_addr[1];
- 		dev->dev_addr[2] = priv->eth_addr[2];
-@@ -638,7 +638,7 @@ void hostif_mib_set_confirm(struct ks_wlan_private *priv)
- 		hostif_sme_enqueue(priv, SME_MULTICAST_CONFIRM);
- 		break;
- 	case LOCAL_CURRENTADDRESS:
--		priv->mac_address_valid = 1;
-+		priv->mac_address_valid = true;
- 		break;
- 	case DOT11_RSN_CONFIG_MULTICAST_CIPHER:
- 		hostif_sme_enqueue(priv, SME_RSN_MCAST_CONFIRM);
 diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index f1f6c88adcca..846bb1041850 100644
+index 846bb1041850..1b7036c32d1c 100644
 --- a/drivers/staging/ks7010/ks_wlan.h
 +++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -456,7 +456,7 @@ struct ks_wlan_private {
- 	unsigned char firmware_version[128 + 1];
- 	int version_size;
+@@ -406,7 +406,6 @@ struct ks_wlan_private {
+ 	struct tasklet_struct rx_bh_task;
  
--	int mac_address_valid;	/* Mac Address Status */
-+	bool mac_address_valid;	/* Mac Address Status */
+ 	struct net_device *net_dev;
+-	int reg_net;	/* register_netdev */
+ 	struct net_device_stats nstats;
+ 	struct iw_statistics wstats;
  
- 	int dev_state;
- 
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 41f89f930f50..df6192be8a3e 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -2767,7 +2767,7 @@ int ks_wlan_set_mac_address(struct net_device *dev, void *addr)
- 	memcpy(dev->dev_addr, mac_addr->sa_data, dev->addr_len);
- 	memcpy(priv->eth_addr, mac_addr->sa_data, ETH_ALEN);
- 
--	priv->mac_address_valid = 0;
-+	priv->mac_address_valid = false;
- 	hostif_sme_enqueue(priv, SME_MACADDRESS_SET_REQUEST);
- 	netdev_info(dev, "ks_wlan:  MAC ADDRESS = %pM\n", priv->eth_addr);
- 	return 0;
-@@ -2890,7 +2890,7 @@ int ks_wlan_net_start(struct net_device *dev)
- 	/* int rc; */
- 
- 	priv = netdev_priv(dev);
--	priv->mac_address_valid = 0;
-+	priv->mac_address_valid = false;
- 	priv->need_commit = 0;
- 
- 	priv->device_open_status = 1;
 -- 
 2.16.3
 
