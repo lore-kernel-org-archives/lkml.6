@@ -1,270 +1,103 @@
-Return-Path: <jsimmons@infradead.org>
-X-Google-Smtp-Source: AIpwx4+y66u0xRrRHFuNZgNvc8R5Z/45RvKSRuitYfDzEnlvzuVtI/y7s/4CBl7J/2TeYdgAzswX
-ARC-Seal: i=1; a=rsa-sha256; t=1522436252; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AIpwx48forTCQZl/226c3gmoL4XpSUEQcaBtQ4uC8Sd8FcSaMDprzgjISzhRlUn0junf4ur0QxSG
+ARC-Seal: i=1; a=rsa-sha256; t=1522297643; cv=none;
         d=google.com; s=arc-20160816;
-        b=MzBCp9xbWyqOBXCws5whscN8iNJmYbPK5oa5r3GlFxbMpS9mulUtJJE1k2kddPwuR7
-         K8UaLEanPpBTN/mNV/RYAk+HrkjMGTOc52Fvz0AGLTGLU1H+4vV/8YoSL0WXbaaF4FSY
-         QPuRJrcKjRwDNY57u/lIMRIolFNaDoNsECktqwIhLywmhDacyqhS1ClsftIl/1hG199r
-         oN5K41c2kDRiGnfEyXNo2ACp3hLsXR1Vi/e6lcjfwyX0pjJ69prXAQTe90JNmbeX0Hay
-         MXIInsSQH2TstezAhAriHYI038SN6zRCNSVZN9BdFOXdEgFx9u2Xm2dVgUtzcmu5G6HA
-         la0Q==
+        b=x87IuLLuwGq9/aoDyy7BdFOGQljQJj9ZYR69uX89W0EhYGpVml0SmmG1Kgp10ZEfth
+         Bb0QFksu9RrY7uzMlwDMJRO28qJ/9j/Py1oJhtRm00GfKSD0C7PNazKILXVOmJQYO5tz
+         nzzj4Kohs5TTRx3XawG8DbhMAiIGmDsBAH9Zro4YdqmHh2xHKKHSM9xz7lHDfw/yuVlK
+         ZfEmSJZRjIPob3gmafseK95fG8YsnR79Ri7+nMveNkyhKtcJdLXLIE7vtjFdyzoy1NB+
+         kKCA5KwpBd99XiADIvJJAz1WchUKn1iTDsniM5596gsJ5z7OGjuSbnagD6NpnaulF4VT
+         AY/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=X0vsKl/zfrkOoRPtrrcXBtGzErSjkPBUSLFcsymiyFQ=;
-        b=kLcDi79SyLbDS9xZoHN8CTftUkciCcyjSfe8Z3vs5s7CisuJ066I4e1T26eSU4Ue+x
-         MsdN7shyeaLNDIvp/K7poNmppY6xpjAMdxhZm0TxbO7TvqOI20kR6FGZ/DCjZNDR15AJ
-         m17NxCNt0x7F5NlLEXV6yJ/NQmP2xlZAdzG6HvypPWPjB2YZHcvGx54zdPTXmVekp/8R
-         cAFF9LVqe8gqHOQERVh7AwzcFNHHQEF9LQm8pcbEUsw3AS3h8bK1K7Mjzkf7ZsmfL1GA
-         cYhW/eQ1qvCytaeLiF2uYmRaw5tiR19IB/T1YBswdXXvPyNdB7/ZMy3axx5HiG6mtBYv
-         KEzA==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=XknVV4H+uBJ/TVSllaBdukppiSVz9ruwj0iR51eTNyU=;
+        b=re11ph7tz0s/B8i8pCfoJSvxq6Ti80fA1W+4/JkVImceTW2vcIk/aN40RuZHpX6ZZx
+         2XynEsmuXuCvjYGclsgXZxC+zpIAROl75YazzIVP0RXf9KcvO2E3QciiVEzgy/SKrpfj
+         T7Ff7eGgHFqrCfnUgGY2gWw2yqiht8DuO8OIy88Ckd1VSeVMWnH2pI9KSI9C4sjH1hD2
+         z1qG3mzlJKFrm6nt2DpQ808qoMmKqtmh1TnUK7TmuXQeOfYoZ2bYgLHfVqFovDyHjVgf
+         9yPtMsWJm+peHUJ00wT1m4IlmKhSKNQgf8Ug+lbes/OyMcYYBhh/jz3KuQMQwnOT2JKy
+         fNtw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=IvGtI4ib;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=IvGtI4ib;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
-Date: Fri, 30 Mar 2018 19:57:27 +0100 (BST)
-From: James Simmons <jsimmons@infradead.org>
-To: NeilBrown <neilb@suse.com>
-cc: Oleg Drokin <oleg.drokin@intel.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Andreas Dilger <andreas.dilger@intel.com>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 04/17] staging: lustre: remove unused hash tables.
-In-Reply-To: <152229760834.27689.17845742683913841545.stgit@noble>
-Message-ID: <alpine.LFD.2.21.1803301957190.9681@casper.infradead.org>
-References: <152229732768.27689.4800156943561963977.stgit@noble> <152229760834.27689.17845742683913841545.stgit@noble>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Thu, 29 Mar 2018 15:26:48 +1100
+Subject: [PATCH 02/17] staging: lustre: remove unused
+ ldlm_completion_ast_async()
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152229760829.27689.12680083968318847851.stgit@noble>
+In-Reply-To: <152229732768.27689.4800156943561963977.stgit@noble>
+References: <152229732768.27689.4800156943561963977.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180330_195727_295731_FF39CB81 
-X-CRM114-Status: GOOD (  22.84  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: SpamAssassin version 3.4.1 on casper.infradead.org summary:
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596244789353686161?=
-X-GMAIL-MSGID: =?utf-8?q?1596390115719540785?=
+X-GMAIL-THRID: =?utf-8?q?1596244774179791010?=
+X-GMAIL-MSGID: =?utf-8?q?1596244774179791010?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This function is unused.
 
-> exp_lock_hash and exp_flock_hash are unused in
-> the client, so remove all references.
-> 
-> Also remove unused hashtable size definitions.
-
+Signed-off-by: NeilBrown <neilb@suse.com>
 Reviewed-by: James Simmons <jsimmons@infradead.org>
+---
+ drivers/staging/lustre/lustre/include/lustre_dlm.h |    1 -
+ drivers/staging/lustre/lustre/ldlm/ldlm_request.c  |   23 --------------------
+ 2 files changed, 24 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/include/lustre_dlm.h b/drivers/staging/lustre/lustre/include/lustre_dlm.h
+index 239aa2b1268f..7407acf60cf8 100644
+--- a/drivers/staging/lustre/lustre/include/lustre_dlm.h
++++ b/drivers/staging/lustre/lustre/include/lustre_dlm.h
+@@ -1227,7 +1227,6 @@ int ldlm_lock_change_resource(struct ldlm_namespace *, struct ldlm_lock *,
+  * processing.
+  * @{
+  */
+-int ldlm_completion_ast_async(struct ldlm_lock *lock, __u64 flags, void *data);
+ int ldlm_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data);
+ /** @} ldlm_local_ast */
  
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  drivers/staging/lustre/lustre/include/lustre_dlm.h |   10 -------
->  .../staging/lustre/lustre/include/lustre_export.h  |    7 -----
->  .../staging/lustre/lustre/include/obd_support.h    |   18 -------------
->  drivers/staging/lustre/lustre/ldlm/ldlm_flock.c    |   11 +-------
->  drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     |   14 ----------
->  drivers/staging/lustre/lustre/ldlm/ldlm_request.c  |   27 +-------------------
->  drivers/staging/lustre/lustre/obdclass/genops.c    |    2 -
->  7 files changed, 3 insertions(+), 86 deletions(-)
-> 
-> diff --git a/drivers/staging/lustre/lustre/include/lustre_dlm.h b/drivers/staging/lustre/lustre/include/lustre_dlm.h
-> index 7407acf60cf8..5a355fbab401 100644
-> --- a/drivers/staging/lustre/lustre/include/lustre_dlm.h
-> +++ b/drivers/staging/lustre/lustre/include/lustre_dlm.h
-> @@ -629,16 +629,6 @@ struct ldlm_lock {
->  	 * Tree node for ldlm_extent.
->  	 */
->  	struct ldlm_interval	*l_tree_node;
-> -	/**
-> -	 * Per export hash of locks.
-> -	 * Protected by per-bucket exp->exp_lock_hash locks.
-> -	 */
-> -	struct hlist_node	l_exp_hash;
-> -	/**
-> -	 * Per export hash of flock locks.
-> -	 * Protected by per-bucket exp->exp_flock_hash locks.
-> -	 */
-> -	struct hlist_node	l_exp_flock_hash;
->  	/**
->  	 * Requested mode.
->  	 * Protected by lr_lock.
-> diff --git a/drivers/staging/lustre/lustre/include/lustre_export.h b/drivers/staging/lustre/lustre/include/lustre_export.h
-> index 40cd168ed2ea..19ce13bc8ee6 100644
-> --- a/drivers/staging/lustre/lustre/include/lustre_export.h
-> +++ b/drivers/staging/lustre/lustre/include/lustre_export.h
-> @@ -102,13 +102,6 @@ struct obd_export {
->  	struct ptlrpc_connection *exp_connection;
->  	/** Connection count value from last successful reconnect rpc */
->  	__u32		     exp_conn_cnt;
-> -	/** Hash list of all ldlm locks granted on this export */
-> -	struct cfs_hash	       *exp_lock_hash;
-> -	/**
-> -	 * Hash list for Posix lock deadlock detection, added with
-> -	 * ldlm_lock::l_exp_flock_hash.
-> -	 */
-> -	struct cfs_hash	       *exp_flock_hash;
->  	struct list_head		exp_outstanding_replies;
->  	struct list_head		exp_uncommitted_replies;
->  	spinlock_t		  exp_uncommitted_replies_lock;
-> diff --git a/drivers/staging/lustre/lustre/include/obd_support.h b/drivers/staging/lustre/lustre/include/obd_support.h
-> index 8595091b8b86..eb2d6cb6b40b 100644
-> --- a/drivers/staging/lustre/lustre/include/obd_support.h
-> +++ b/drivers/staging/lustre/lustre/include/obd_support.h
-> @@ -67,27 +67,9 @@ extern char obd_jobid_var[];
->  #define HASH_UUID_BKT_BITS 5
->  #define HASH_UUID_CUR_BITS 7
->  #define HASH_UUID_MAX_BITS 12
-> -#define HASH_NID_BKT_BITS 5
-> -#define HASH_NID_CUR_BITS 7
-> -#define HASH_NID_MAX_BITS 12
-> -#define HASH_NID_STATS_BKT_BITS 5
-> -#define HASH_NID_STATS_CUR_BITS 7
-> -#define HASH_NID_STATS_MAX_BITS 12
-> -#define HASH_LQE_BKT_BITS 5
-> -#define HASH_LQE_CUR_BITS 7
-> -#define HASH_LQE_MAX_BITS 12
->  #define HASH_CONN_BKT_BITS 5
->  #define HASH_CONN_CUR_BITS 5
->  #define HASH_CONN_MAX_BITS 15
-> -#define HASH_EXP_LOCK_BKT_BITS  5
-> -#define HASH_EXP_LOCK_CUR_BITS  7
-> -#define HASH_EXP_LOCK_MAX_BITS  16
-> -#define HASH_CL_ENV_BKT_BITS    5
-> -#define HASH_CL_ENV_BITS	10
-> -#define HASH_JOB_STATS_BKT_BITS 5
-> -#define HASH_JOB_STATS_CUR_BITS 7
-> -#define HASH_JOB_STATS_MAX_BITS 12
-> -
->  /* Timeout definitions */
->  #define OBD_TIMEOUT_DEFAULT	     100
->  /* Time to wait for all clients to reconnect during recovery (hard limit) */
-> diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
-> index 411b540b96d9..94f3b1e49896 100644
-> --- a/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
-> +++ b/drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
-> @@ -83,9 +83,6 @@ ldlm_flock_destroy(struct ldlm_lock *lock, enum ldlm_mode mode)
->  	LDLM_DEBUG(lock, "%s(mode: %d)",
->  		   __func__, mode);
->  
-> -	/* Safe to not lock here, since it should be empty anyway */
-> -	LASSERT(hlist_unhashed(&lock->l_exp_flock_hash));
-> -
->  	list_del_init(&lock->l_res_link);
->  
->  	/* client side - set a flag to prevent sending a CANCEL */
-> @@ -263,15 +260,9 @@ static int ldlm_process_flock_lock(struct ldlm_lock *req)
->  		lock->l_policy_data.l_flock.start =
->  			new->l_policy_data.l_flock.end + 1;
->  		new2->l_conn_export = lock->l_conn_export;
-> -		if (lock->l_export) {
-> +		if (lock->l_export)
->  			new2->l_export = class_export_lock_get(lock->l_export,
->  							       new2);
-> -			if (new2->l_export->exp_lock_hash &&
-> -			    hlist_unhashed(&new2->l_exp_hash))
-> -				cfs_hash_add(new2->l_export->exp_lock_hash,
-> -					     &new2->l_remote_handle,
-> -					     &new2->l_exp_hash);
-> -		}
->  		ldlm_lock_addref_internal_nolock(new2,
->  						 lock->l_granted_mode);
->  
-> diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-> index 95bea351d21d..b8fd778d9832 100644
-> --- a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-> +++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-> @@ -318,18 +318,6 @@ static int ldlm_lock_destroy_internal(struct ldlm_lock *lock)
->  	}
->  	ldlm_set_destroyed(lock);
->  
-> -	if (lock->l_export && lock->l_export->exp_lock_hash) {
-> -		/* NB: it's safe to call cfs_hash_del() even lock isn't
-> -		 * in exp_lock_hash.
-> -		 */
-> -		/* In the function below, .hs_keycmp resolves to
-> -		 * ldlm_export_lock_keycmp()
-> -		 */
-> -		/* coverity[overrun-buffer-val] */
-> -		cfs_hash_del(lock->l_export->exp_lock_hash,
-> -			     &lock->l_remote_handle, &lock->l_exp_hash);
-> -	}
-> -
->  	ldlm_lock_remove_from_lru(lock);
->  	class_handle_unhash(&lock->l_handle);
->  
-> @@ -419,8 +407,6 @@ static struct ldlm_lock *ldlm_lock_new(struct ldlm_resource *resource)
->  	lock->l_blocking_lock = NULL;
->  	INIT_LIST_HEAD(&lock->l_sl_mode);
->  	INIT_LIST_HEAD(&lock->l_sl_policy);
-> -	INIT_HLIST_NODE(&lock->l_exp_hash);
-> -	INIT_HLIST_NODE(&lock->l_exp_flock_hash);
->  
->  	lprocfs_counter_incr(ldlm_res_to_ns(resource)->ns_stats,
->  			     LDLM_NSS_LOCKS);
-> diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
-> index be43958e4090..8e79f5e073ff 100644
-> --- a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
-> +++ b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
-> @@ -405,19 +405,7 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
->  	cleanup_phase = 0;
->  
->  	lock_res_and_lock(lock);
-> -	/* Key change rehash lock in per-export hash with new key */
-> -	if (exp->exp_lock_hash) {
-> -		/* In the function below, .hs_keycmp resolves to
-> -		 * ldlm_export_lock_keycmp()
-> -		 */
-> -		/* coverity[overrun-buffer-val] */
-> -		cfs_hash_rehash_key(exp->exp_lock_hash,
-> -				    &lock->l_remote_handle,
-> -				    &reply->lock_handle,
-> -				    &lock->l_exp_hash);
-> -	} else {
-> -		lock->l_remote_handle = reply->lock_handle;
-> -	}
-> +	lock->l_remote_handle = reply->lock_handle;
->  
->  	*flags = ldlm_flags_from_wire(reply->lock_flags);
->  	lock->l_flags |= ldlm_flags_from_wire(reply->lock_flags &
-> @@ -1884,18 +1872,7 @@ static int replay_lock_interpret(const struct lu_env *env,
->  
->  	/* Key change rehash lock in per-export hash with new key */
->  	exp = req->rq_export;
-> -	if (exp && exp->exp_lock_hash) {
-> -		/* In the function below, .hs_keycmp resolves to
-> -		 * ldlm_export_lock_keycmp()
-> -		 */
-> -		/* coverity[overrun-buffer-val] */
-> -		cfs_hash_rehash_key(exp->exp_lock_hash,
-> -				    &lock->l_remote_handle,
-> -				    &reply->lock_handle,
-> -				    &lock->l_exp_hash);
-> -	} else {
-> -		lock->l_remote_handle = reply->lock_handle;
-> -	}
-> +	lock->l_remote_handle = reply->lock_handle;
->  
->  	LDLM_DEBUG(lock, "replayed lock:");
->  	ptlrpc_import_recovery_state_machine(req->rq_import);
-> diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
-> index 63ccbabb4c5a..86e22472719a 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/genops.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/genops.c
-> @@ -721,8 +721,6 @@ struct obd_export *class_new_export(struct obd_device *obd,
->  		return ERR_PTR(-ENOMEM);
->  
->  	export->exp_conn_cnt = 0;
-> -	export->exp_lock_hash = NULL;
-> -	export->exp_flock_hash = NULL;
->  	atomic_set(&export->exp_refcount, 2);
->  	atomic_set(&export->exp_rpc_count, 0);
->  	atomic_set(&export->exp_cb_count, 0);
-> 
-> 
-> 
+diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
+index c3c9186b74ce..be43958e4090 100644
+--- a/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
++++ b/drivers/staging/lustre/lustre/ldlm/ldlm_request.c
+@@ -191,29 +191,6 @@ static int ldlm_completion_tail(struct ldlm_lock *lock, void *data)
+ 	return result;
+ }
+ 
+-/**
+- * Implementation of ->l_completion_ast() for a client, that doesn't wait
+- * until lock is granted. Suitable for locks enqueued through ptlrpcd, of
+- * other threads that cannot block for long.
+- */
+-int ldlm_completion_ast_async(struct ldlm_lock *lock, __u64 flags, void *data)
+-{
+-	if (flags == LDLM_FL_WAIT_NOREPROC) {
+-		LDLM_DEBUG(lock, "client-side enqueue waiting on pending lock");
+-		return 0;
+-	}
+-
+-	if (!(flags & LDLM_FL_BLOCKED_MASK)) {
+-		wake_up(&lock->l_waitq);
+-		return ldlm_completion_tail(lock, data);
+-	}
+-
+-	LDLM_DEBUG(lock,
+-		   "client-side enqueue returned a blocked lock, going forward");
+-	return 0;
+-}
+-EXPORT_SYMBOL(ldlm_completion_ast_async);
+-
+ /**
+  * Generic LDLM "completion" AST. This is called in several cases:
+  *
