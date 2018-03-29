@@ -1,133 +1,98 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3731766-1522423938-2-8403157432285793852
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522423938; b=C2N/UVbL2ExOFL1RtqgctLICe1PzJnXoDSJcDKj7Mk9eHgy5IR
-    90HhLRyaA2q3VAL+KMi83VzTV9qzCALVpmNOzJTefsWr9ctLLsdKsGvZ9H62xrLt
-    BwiVIIay7KI2cx3/e5/z16vP+iWQ8r3OeZ+ZJwWCXdX8ZgQyHp21pmOiEmDkqLpd
-    FfCHxz8ZH04CzpMmMkjNE1kUijZsADiVfYzFScZhnjwhw6ritSFZGV5PvcHxh82D
-    ApEXEwTGSHiwlPDXZkc+rr1LEH9qw/HW126BZp8K/cPkZPCe9AcoRXVCGeOeHkF5
-    53aKtvrpk+Ht0+rceGe+vhYk4sU56uPZZlig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1522423938; bh=
-    AWzjj26Df3fJmez+FE+BVtIPdTEkX+sNlAJZn623qQc=; b=sBLrj3wb4QO7lJlq
-    irgq5j1ur4N9Gs71lB8XVmKY2/LntU3KKvZPtxZLCsO6t587HlbO5mDBqyz2Frl9
-    2Dv9L0XAA2PPedoaQgu62Zffo8HWaFYbh2JHRQfr1+rNBp+ehNF29bToJHIrq3hC
-    wbP4PNr41JiXIOtwNqOMhKTPRFQCcMqgtSb/SqeoS793g2WYTjqMQfPq8qGOoTJp
-    2LWWoINq2GrEVgdm2WyUxT2fz/Ej5VRawjS8ouHJoVnYHd/QiQzpZBp0cgVm6Ngj
-    RFVilDbBicE3oskeciAtlNxfw4lW+3NIBdmiHcP6bnXuaoItfZ4out8hwEt6ZFK5
-    KuBDoQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=vDRzBJTx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=vDRzBJTx x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAsnNBrNCC6mGrZHBpZMOrKbjTPdvTCKDXEzKIkdvo8CsLFq50HATZ5GYQhMCMy7gQAGCUdgC7fUZQVNOdOcUYXZqWXlLaZO0gzQF3DDv1rtX+SREE0w
-    hGDfRu33lPYLeCLELzSHJnMsHWp14Sh6D3VRaxX2shFSx1UIXp7MiAn6f6b6I3TLBHFXRK3/2H86uQR9llO/a5d36BWPtSZTrnZwCgNsxD5uCFwies+YVe99
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
-    a=JAGRcNAvqmLdBlwhYKUA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751322AbeC3PcP (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 30 Mar 2018 11:32:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42738 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751267AbeC3PcO (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 30 Mar 2018 11:32:14 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: viro@zeniv.linux.org.uk
-Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 23/32] net/caif: convert to ->poll_mask
-Date: Fri, 30 Mar 2018 17:08:00 +0200
-Message-Id: <20180330150809.28094-24-hch@lst.de>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180330150809.28094-1-hch@lst.de>
-References: <20180330150809.28094-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Return-Path: <moritz.fischer@ettus.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522338175; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Vp48epymqfhNFKgG2GOxMuEA6VBqdscwjx7JYODR0By8cQ3bxUtKTML31MHEsKfM32
+         QDFvp2yYlBBZBNLSy+OEag+HvINThTBi9OmcwQpuOQUjf0J4FsWJNBuQYQGHEI5Z3xtP
+         dCdCTldcUw0/owoxFB4T1EelU4V1fW33qoYWgws+/Gpy/FKCsLxOD1mbx7gMHDMIus00
+         EzDMWtjS/RAWsdF8wg8CsMGARjcpktOe9tV9pnhhBQtALN1EjolO44o/74nMktXNflrj
+         u67VsIYX9rjR8C2m671dBwk4oe4a/w9S6AE/qpxCgMref0j8JN83Uul2DfmH0kK+uQNe
+         tpFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=DYuzwaUm0hGRFFwPjeo7EcMuqvEl5bxUMZF3K300kyw=;
+        b=ZqlUKEetkjLgBuMr5E8OvsPlOS3316z53Pvjq3l/N0jgPaJFLqngT66g7yloDefoq1
+         UlrlUYm40m1xI3Rqw2HvACHDUCwvbix+X7hPv8EILHri/qQ1UbACx05tjbyrxYp8QOqH
+         Ss0uzoPuyUhY17Dr4nqRttnjTe9MYA0zQ5EApvi1nsrtnCcv0nYYO8Up9T13bCEDib9x
+         J5Gj7TQi7eze6i7l0h6ys8/gQt4pBcB2IXNWSguc6XTUOWOU20He5KijwzNSs+qUmJlp
+         LWFBiL8ZH4LnQ0/jvVpzzCDZPcaqAhFND/jiJHbNcMO7CWSBpbBXyCTBCJYW8hGkpqoY
+         lX9A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of moritz.fischer@ettus.com) smtp.mailfrom=moritz.fischer@ettus.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of moritz.fischer@ettus.com) smtp.mailfrom=moritz.fischer@ettus.com
+X-Google-Smtp-Source: AIpwx4/LzbmgOF2OZX3jce32Hc0DELehSrJUkle2LJj2Dsoct/0mw/32CNkLWvrmTJFy5V2PrDlHeg==
+From: Moritz Fischer <mdf@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: atull@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH 0/6] FPGA Manager Patches for 4.17
+Date: Thu, 29 Mar 2018 08:36:52 -0700
+Message-Id: <20180329153658.11614-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596287274725977231?=
+X-GMAIL-MSGID: =?utf-8?q?1596287274725977231?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- net/caif/caif_socket.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Hi Greg,
 
-diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
-index a6fb1b3bcad9..c7991867d622 100644
---- a/net/caif/caif_socket.c
-+++ b/net/caif/caif_socket.c
-@@ -934,15 +934,11 @@ static int caif_release(struct socket *sock)
- }
- 
- /* Copied from af_unix.c:unix_poll(), added CAIF tx_flow handling */
--static __poll_t caif_poll(struct file *file,
--			      struct socket *sock, poll_table *wait)
-+static __poll_t caif_poll_mask(struct socket *sock, __poll_t events)
- {
- 	struct sock *sk = sock->sk;
--	__poll_t mask;
- 	struct caifsock *cf_sk = container_of(sk, struct caifsock, sk);
--
--	sock_poll_wait(file, sk_sleep(sk), wait);
--	mask = 0;
-+	__poll_t mask = 0;
- 
- 	/* exceptional events? */
- 	if (sk->sk_err)
-@@ -976,7 +972,7 @@ static const struct proto_ops caif_seqpacket_ops = {
- 	.socketpair = sock_no_socketpair,
- 	.accept = sock_no_accept,
- 	.getname = sock_no_getname,
--	.poll = caif_poll,
-+	.poll_mask = caif_poll_mask,
- 	.ioctl = sock_no_ioctl,
- 	.listen = sock_no_listen,
- 	.shutdown = sock_no_shutdown,
-@@ -997,7 +993,7 @@ static const struct proto_ops caif_stream_ops = {
- 	.socketpair = sock_no_socketpair,
- 	.accept = sock_no_accept,
- 	.getname = sock_no_getname,
--	.poll = caif_poll,
-+	.poll_mask = caif_poll_mask,
- 	.ioctl = sock_no_ioctl,
- 	.listen = sock_no_listen,
- 	.shutdown = sock_no_shutdown,
+can you please take the following patches for 4.17.
+
+Alan's changes are mostly refactoring in preparation for non-dt based
+FPGA regions.
+
+Anatolij's changes fix a small issue with altera-ps-spi FPGAs,
+where the FPGA is being reset unnessesarily on driver load.
+
+All patches have been reviewed on the list.
+
+I'm sending the patches this time instead of Alan so I can get more
+familiar with the process.
+
+If you prefer to pull instead there's also a signed tag:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mdf/linux.git tags/fpga-for-greg-4.17
+
+Thanks,
+
+Moritz
+
+Alan Tull (5):
+  fpga: region: don't use drvdata in common fpga code
+  fpga: manager: don't use drvdata in common fpga code
+  fpga: bridge: don't use drvdata in common fpga code
+  fpga: region: change fpga_region_register to have one param
+  fpga: fpga-region: comment on fpga_region_program_fpga locking
+
+Anatolij Gustschin (1):
+  fpga-manager: altera-ps-spi: preserve nCONFIG state
+
+ Documentation/fpga/fpga-mgr.txt     | 24 +++++++++++++++------
+ Documentation/fpga/fpga-region.txt  |  3 +--
+ drivers/fpga/altera-cvp.c           | 18 ++++++++++++----
+ drivers/fpga/altera-fpga2sdram.c    | 20 +++++++++++++----
+ drivers/fpga/altera-freeze-bridge.c | 18 +++++++++++++---
+ drivers/fpga/altera-hps2fpga.c      | 16 +++++++++++---
+ drivers/fpga/altera-pr-ip-core.c    | 17 +++++++++++++--
+ drivers/fpga/altera-ps-spi.c        | 20 +++++++++++++----
+ drivers/fpga/fpga-bridge.c          | 43 ++++++++++++++-----------------------
+ drivers/fpga/fpga-mgr.c             | 39 ++++++++++++---------------------
+ drivers/fpga/fpga-region.c          | 14 ++++++++++--
+ drivers/fpga/ice40-spi.c            | 20 +++++++++++++----
+ drivers/fpga/of-fpga-region.c       |  4 +++-
+ drivers/fpga/socfpga-a10.c          | 16 +++++++++++---
+ drivers/fpga/socfpga.c              | 18 +++++++++++++---
+ drivers/fpga/ts73xx-fpga.c          | 18 +++++++++++++---
+ drivers/fpga/xilinx-pr-decoupler.c  | 15 ++++++++++---
+ drivers/fpga/xilinx-spi.c           | 18 +++++++++++++---
+ drivers/fpga/zynq-fpga.c            | 16 +++++++++++---
+ include/linux/fpga/fpga-bridge.h    |  7 +++---
+ include/linux/fpga/fpga-mgr.h       |  8 +++----
+ include/linux/fpga/fpga-region.h    |  4 +++-
+ 22 files changed, 262 insertions(+), 114 deletions(-)
+
 -- 
-2.14.2
-
+2.16.2
