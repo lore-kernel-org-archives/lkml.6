@@ -1,152 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeC2Obf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:31:35 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35258 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbeC2Obd (ORCPT
+        id S1751241AbeC2Odz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:33:55 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51668 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeC2Ody (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:31:33 -0400
-X-Google-Smtp-Source: AIpwx48uOJa22KhVw+beagbynLj7Z6DxdbiVWghrE882eecBN6Ea9FEqTwribRadeoXLzZ186XLLdA==
-Date: Thu, 29 Mar 2018 15:31:29 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: thierry.reding@gmail.com, alexandre.torgue@st.com,
-        benjamin.gaignard@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, mcoquelin.stm32@gmail.com,
-        benjamin.gaignard@st.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 4/8] mfd: stm32-timers: add support for dmas
-Message-ID: <20180329143129.xdvw6gujghkwbjtm@dell>
-References: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
- <1518602679-3064-5-git-send-email-fabrice.gasnier@st.com>
- <20180328152251.xeh72dpeflzohn4k@dell>
- <106ff518-4973-5d4a-b5bf-dd58cbd8439a@st.com>
- <20180329125912.jgasmw75qvtlszgx@dell>
- <12d53b2e-eec4-a498-1e1f-c217161c5086@st.com>
+        Thu, 29 Mar 2018 10:33:54 -0400
+X-Google-Smtp-Source: AIpwx4+6M0ixpwXgf0nZ2TZmu30hqHeGwWs6M5lVX4752fs8kWU8csFCnRXG8BaWaKwsLhHH6xZiIw==
+Date: Thu, 29 Mar 2018 17:33:16 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCHv2 06/14] mm/page_alloc: Propagate encryption KeyID
+ through page allocator
+Message-ID: <20180329143316.2qreoaw6dng2kvct@node.shutemov.name>
+References: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
+ <20180328165540.648-7-kirill.shutemov@linux.intel.com>
+ <20180329112034.GE31039@dhcp22.suse.cz>
+ <20180329123712.zlo6qmstj3zm5v27@node.shutemov.name>
+ <20180329125227.GF31039@dhcp22.suse.cz>
+ <20180329131308.cq64n3dvnre2wcz5@node.shutemov.name>
+ <20180329133700.GG31039@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <12d53b2e-eec4-a498-1e1f-c217161c5086@st.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180329133700.GG31039@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018, Fabrice Gasnier wrote:
-
-> On 03/29/2018 02:59 PM, Lee Jones wrote:
-> > On Wed, 28 Mar 2018, Fabrice Gasnier wrote:
+On Thu, Mar 29, 2018 at 03:37:00PM +0200, Michal Hocko wrote:
+> On Thu 29-03-18 16:13:08, Kirill A. Shutemov wrote:
+> > On Thu, Mar 29, 2018 at 02:52:27PM +0200, Michal Hocko wrote:
+> > > On Thu 29-03-18 15:37:12, Kirill A. Shutemov wrote:
+> > > > On Thu, Mar 29, 2018 at 01:20:34PM +0200, Michal Hocko wrote:
+> > > > > On Wed 28-03-18 19:55:32, Kirill A. Shutemov wrote:
+> > > > > > Modify several page allocation routines to pass down encryption KeyID to
+> > > > > > be used for the allocated page.
+> > > > > > 
+> > > > > > There are two basic use cases:
+> > > > > > 
+> > > > > >  - alloc_page_vma() use VMA's KeyID to allocate the page.
+> > > > > > 
+> > > > > >  - Page migration and NUMA balancing path use KeyID of original page as
+> > > > > >    KeyID for newly allocated page.
+> > > > > 
+> > > > > I am sorry but I am out of time to look closer but this just raised my
+> > > > > eyebrows. This looks like a no-go. The basic allocator has no business
+> > > > > in fancy stuff like a encryption key. If you need something like that
+> > > > > then just build a special allocator API on top. This looks like a no-go
+> > > > > to me.
+> > > > 
+> > > > The goal is to make memory encryption first class citizen in memory
+> > > > management and not to invent parallel subsysustem (as we did with hugetlb).
+> > > 
+> > > How do you get a page_keyid for random kernel allocation?
 > > 
-> >> On 03/28/2018 05:22 PM, Lee Jones wrote:
-> >>> On Wed, 14 Feb 2018, Fabrice Gasnier wrote:
-> >>>
-> >>>> STM32 Timers can support up to 7 DMA requests:
-> >>>> - 4 channels, update, compare and trigger.
-> >>>> Optionally request part, or all DMAs from stm32-timers MFD core.
-> >>>>
-> >>>> Also add routine to implement burst reads using DMA from timer registers.
-> >>>> This is exported. So, it can be used by child drivers, PWM capture
-> >>>> for instance (but not limited to).
-> >>>>
-> >>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> >>>> Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-> >>>> ---
-> >>>> Changes in v2:
-> >>>> - Abstract DMA handling from child driver: move it to MFD core
-> >>>> - Add comments on optional dma support
-> >>>> ---
-> >>>>  drivers/mfd/stm32-timers.c       | 215 ++++++++++++++++++++++++++++++++++++++-
-> >>>>  include/linux/mfd/stm32-timers.h |  27 +++++
-> >>>>  2 files changed, 238 insertions(+), 4 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/mfd/stm32-timers.c b/drivers/mfd/stm32-timers.c
-> >>>> index a6675a4..2cdad2c 100644
-> >>>> --- a/drivers/mfd/stm32-timers.c
-> >>>> +++ b/drivers/mfd/stm32-timers.c
-> > 
-> > [...]
-> > 
-> >>>> +	struct dma_chan *dmas[STM32_TIMERS_MAX_DMAS];
-> >>>> +	struct stm32_timers ddata;
-> >>>
-> >>> This looks odd to me.  Why can't you expand the current ddata
-> >>> structure?  Wouldn't it be better to create a stm32_timers_dma
-> >>> structure to place all this information in (except *dev, that should
-> >>> live in the ddata struct), then place a reference in the existing
-> >>> stm32_timers struct?
-> >>
-> >> Maybe I miss-understand you here, from what we discussed in V1:
-> >> https://lkml.org/lkml/2018/1/23/574
-> >>> ... "passing in the physical address of the parent MFD into
-> >>> a child device doesn't quite sit right with me"
-> >> I introduced this private struct in MFD parent, and completely hide it
-> >> from the child.
-> >>
-> >> So, do you suggest to add struct definition here ? But make it part of
-> >> struct stm32_timers *ddata?
-> >>
-> >> And only put declaration in include/linux/mfd/stm32-timers.h:
-> >> + struct stm32_timers_dma;
-> >>
-> >> struct stm32_timers {
-> >> 	struct clk *clk;
-> >> 	struct regmap *regmap;
-> >> 	u32 max_arr;
-> >> +	struct stm32_timers_dma;
-> >> };
-> > 
-> > Yes, that's the basic idea.
-> > 
-> >> I can probably spare the *dev then... use dev->parent in child driver.
-> > 
-> > What would you use dev->parent for?
+> > Initial feature enabling only targets userspace anonymous memory, but we
+> > can definately use the same technology in the future for kernel hardening
+> > if we would choose so.
 > 
-> Hi Lee,
-> 
-> This is to follow your sugestion to use *dev instead of *ddata when
-> calling stm32_timers_dma_burst_read(), the idea is to use it on child side:
-> stm32_timers_dma_burst_read(dev->parent,...) from pwm driver.
-> Then there is no need to keep *dev inside ddata struct.
+> So what kind of key are you going to use for those allocations.
 
-I'm wondering if it would be neater to us the child's *dev, then do
-the ->parent deference in the parent MFD (with a comment to say what
-you're doing of course).
+KeyID zero is default. You can think about this as do-not-encrypt.
 
-> > [...]
-> > 
-> >>>> +static int stm32_timers_remove(struct platform_device *pdev)
-> >>>> +{
-> >>>> +	struct stm32_timers *ddata = platform_get_drvdata(pdev);
-> >>>> +	struct stm32_timers_priv *priv = to_stm32_timers_priv(ddata);
-> >>>> +
-> >>>> +	of_platform_depopulate(&pdev->dev);
-> >>>
-> >>> Why can't you continue using devm_*?
-> >>
-> >> I can use devm_of_platform_depopulate() here if you prefer, and keep
-> >> devm_of_platform_populate() in probe.
-> > 
-> > The point of devm_* is that you don't have to call depopulate.
-> > 
-> > It happens automatically once this driver is unbound.
-> 
-> Ok, so to clarify, keeping devm_ here may be a bit racy:
-> of_platform_depopulate will happen after dma has been released (there is
-> no devm_ variant to release dma).
-> Only way to prevent race condition here, is to enforce
-> of_platform_depopulate() is called before dma release (e.g. in reverse
-> order compared to probe).
-> 
-> Do you wish I add a comment about it ?
+In MKTME case it means that this memory is encrypted with TME key (random
+generated at boot).
 
-Best thing to do then is keep the non-devm variant and provide a
-comment as to why is it not possible to use devm_*.
+> Moreover why cannot you simply wrap those few places which are actually
+> using the encryption now?
+
+We can wrap these few places. And I tried this approach. It proved to be
+slow.
+
+Hardware doesn't enforce coherency between mappings of the same physical
+page with different KeyIDs. OS is responsible for cache management: the
+cache has flushed before switching the page to other KeyID.
+
+As we allocate encrypted and unencrypted pages from the same pool, the
+approach with wrapper forces us to flush cache on allocation (to switch it
+non-zero KeyID) *and* freeing (to switch it back to KeyID-0) encrypted page.
+We don't know if the page will be allocated next time using wrapper or
+not, so we have to play safe.
+
+This way it's about 4-6 times slower to allocate-free encrypted page
+comparing to unencrypted one. On macrobenchmark, I see about 15% slowdown.
+
+With approach I propose we can often avoid cache flushing: we can only
+flush the cache on allocation and only if the page had different KeyID
+last time it was allocated. It brings slowdown on macrobenchmark to 3.6%
+which is more reasonable (more optimizations possible).
+
+Other way to keep separate pool of encrypted pages within page allocator.
+I think it would cause more troubles...
+
+I would be glad to find less intrusive way to get reasonable performance.
+Any suggestions?
+
+> > For anonymous memory, we can get KeyID from VMA or from other page
+> > (migration case).
+> > 
+> > > > Making memory encryption integral part of Linux VM would involve handing
+> > > > encrypted page everywhere we expect anonymous page to appear.
+> > > 
+> > > How many architectures will implement this feature?
+> > 
+> > I can't read the future.
+> 
+> Fair enough, only few of us can, but you are proposing a generic code
+> changes based on a single architecture design so we should better make
+> sure other architectures can work with that approach without a major
+> refactoring.
+
+I tried to keep the implementation as generic as possible: VMA may be
+encrypted, you can point to deseried key with an integer (KeyID),
+allocation of encrypted page *may* require special handling.
+
+Ther only assumption I made is that KeyID 0 is special, meaning
+no-encryption. I think it's reasonable assumption, but easily
+fixable if proved to be wrong.
+
+If you see other places I made the abstaction too tied to specific HW
+implementation, let me know.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+ Kirill A. Shutemov
