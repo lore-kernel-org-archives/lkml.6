@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+9dF2CndfrkHRNsEFhAt6FSRYfb2Rhv2ewYBloFH6MbyvgwbqRiuXQ8SXFjlbz2JNeo0iB
-ARC-Seal: i=1; a=rsa-sha256; t=1522346517; cv=none;
+X-Google-Smtp-Source: AIpwx48lJR9qNCKTJ7JecJGzzg1VTvCQZVA89WE2IIZckMwRnvke+lFK4cX49HoruS1ZGXPPDjO/
+ARC-Seal: i=1; a=rsa-sha256; t=1522346514; cv=none;
         d=google.com; s=arc-20160816;
-        b=idv4RDBF/Xr7j6k4Dfo9ytDOX5jLda1DJp1NLC4t9Gs0T3KuBC/ZWeSJorV2sE046X
-         mlDBh4+xVQgqea5nKtTDy7qspiqTtHBwR7/DlwNd/8G38w34lBYLRA+uGyAYUm1UZv6D
-         POnqG01FGpkREms2PYRWZzU+KfU7lYSU34XC3PvWEFshbkXraXfVau5uSmO/kqGGzfMB
-         POMnr7miU4oxvqtVtB31ShQzBW8Z3AITwM/EFX5PjTKlQH3c5bN9X6EGOJKg0B04mPwF
-         BaSXqmwRQ4z98KqauNNAhSoxBM6hscqSYFCDaJtbiXVcjqbo8Ux5GNBwkaO4saT27xe8
-         J1sw==
+        b=WCPrEFgcNtAJKcuYudv0guNyxSH1nXL5eePGLXdIyjA7JiIbrzlsjZJPJw/0a1lRyi
+         bm6lJBiExqYpjxDxneddAX/33u9f3vdrcyDOW9AgmDPje6Nj7SslykJrYDi95P0kY8dg
+         X9Azm3JHQa4cloqQEGeGRlpEv/5GHFv7rrsRqJ2vxgi2p3yH60m0g13LyyUk/HfacBMH
+         ZFzpekdF/rrhsJSvdCLGHmlwoqnH2hde5I+KP0nw4Dg/xea7c3r9sgFjIy0Ls1RahsSn
+         lPpdJkxxxwaYPN6UK6FwocSSTa5A64sn4TJPKwOOPj5vJYwz7m7f3WgykR6BGPeSwlad
+         Akfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t8Bckoy+/+tILWyKtZTUD8QuW6IgQldTErmbiEIYNk0=;
-        b=vJxYgsc05w44fkxe2iU/yrobFPyhoVguqwu4YtTuNTe4T7gl7t1KoCKcqjvnQ0YCOV
-         36TM2KeS6iMgLHqrrWpRPFJ7JydNcEg8qQpJjL6J7sayxpOoNwSwC3zcAc3GF15rt25Z
-         3lZym3PnnfesoA5rdT98SMJFSZ86QXs6DEjnXmBn1mdRpzuBiWCJLP4S66yvygsbrr9O
-         sxG4hfIsRZl3cD85FEk6kEThqlZ0BP8pzQVY+KkjPCAxwhkgjjdwyue+0tVX3ICETu7B
-         eIR+kSEHMybSoUEycSYGfMwP4hQfQXGwEEaUsbz9Ui04zmVMhATa718Y1sGEM6bnUFKw
-         aHjQ==
+        bh=c0jCr0nO12wmok9WRkydLsvI5uBb6we4U5FXgmZ9+Y4=;
+        b=ZlBfrmz5rXwe8cEy2VxF47ezDas5l7y5/2VBf6/zhiKvb9HPPmDs8rDo8HHTluUGx+
+         ghr+VSpAHXKxv6/JqtJLwbXnnykXBiVv+Bqce2NYAcYhKbVjOOdHkcduI5aVGOD0sYPj
+         5mEUKLu0dCG/nLxchr7HdnyE2xC6I3pfdKfgFpgKtYAJ1TVKZ4ezqCarYvUf8OTe+e3y
+         WhSEPfKyuB1VrCNGWqPDCJaNeIxgj/xWdhGFS/cT9wtvSqP93/9Tz6pu/eAeDLimKa5Y
+         73SflwdPkmvmkJVi+a7O5Vg2JOdcRReMsdvGBxH4zyBU4DpdyabsJJ9aa36oSp0JFmtc
+         upQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michal Kalderon <Michal.Kalderon@cavium.com>,
-	Ariel Elior <Ariel.Elior@cavium.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Yuchung Cheng <ycheng@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 05/47] qed: Fix non TCP packets should be dropped on iWARP ll2 connection
-Date: Thu, 29 Mar 2018 19:59:46 +0200
-Message-Id: <20180329175729.533834724@linuxfoundation.org>
+Subject: [PATCH 4.15 04/47] tcp: purge write queue upon aborting the connection
+Date: Thu, 29 Mar 2018 19:59:45 +0200
+Message-Id: <20180329175729.480077131@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296021593210759?=
-X-GMAIL-MSGID: =?utf-8?q?1596296021593210759?=
+X-GMAIL-THRID: =?utf-8?q?1596296018203827825?=
+X-GMAIL-MSGID: =?utf-8?q?1596296018203827825?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,53 +52,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Kalderon <Michal.Kalderon@cavium.com>
+From: Soheil Hassas Yeganeh <soheil@google.com>
 
 
-[ Upstream commit 16da09047d3fb991dc48af41f6d255fd578e8ca2 ]
+[ Upstream commit e05836ac07c77dd90377f8c8140bce2a44af5fe7 ]
 
-FW workaround. The iWARP LL2 connection did not expect TCP packets
-to arrive on it's connection. The fix drops any non-tcp packets
+When the connection is aborted, there is no point in
+keeping the packets on the write queue until the connection
+is closed.
 
-Fixes b5c29ca ("qed: iWARP CM - setup a ll2 connection for handling
-SYN packets")
+Similar to a27fd7a8ed38 ('tcp: purge write queue upon RST'),
+this is essential for a correct MSG_ZEROCOPY implementation,
+because userspace cannot call close(fd) before receiving
+zerocopy signals even when the connection is aborted.
 
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
+Fixes: f214f915e7db ("tcp: enable MSG_ZEROCOPY")
+Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/ipv4/tcp.c       |    1 +
+ net/ipv4/tcp_timer.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-@@ -1681,6 +1681,13 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *
- 	iph = (struct iphdr *)((u8 *)(ethh) + eth_hlen);
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -3542,6 +3542,7 @@ int tcp_abort(struct sock *sk, int err)
  
- 	if (eth_type == ETH_P_IP) {
-+		if (iph->protocol != IPPROTO_TCP) {
-+			DP_NOTICE(p_hwfn,
-+				  "Unexpected ip protocol on ll2 %x\n",
-+				  iph->protocol);
-+			return -EINVAL;
-+		}
-+
- 		cm_info->local_ip[0] = ntohl(iph->daddr);
- 		cm_info->remote_ip[0] = ntohl(iph->saddr);
- 		cm_info->ip_version = TCP_IPV4;
-@@ -1689,6 +1696,14 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *
- 		*payload_len = ntohs(iph->tot_len) - ip_hlen;
- 	} else if (eth_type == ETH_P_IPV6) {
- 		ip6h = (struct ipv6hdr *)iph;
-+
-+		if (ip6h->nexthdr != IPPROTO_TCP) {
-+			DP_NOTICE(p_hwfn,
-+				  "Unexpected ip protocol on ll2 %x\n",
-+				  iph->protocol);
-+			return -EINVAL;
-+		}
-+
- 		for (i = 0; i < 4; i++) {
- 			cm_info->local_ip[i] =
- 			    ntohl(ip6h->daddr.in6_u.u6_addr32[i]);
+ 	bh_unlock_sock(sk);
+ 	local_bh_enable();
++	tcp_write_queue_purge(sk);
+ 	release_sock(sk);
+ 	return 0;
+ }
+--- a/net/ipv4/tcp_timer.c
++++ b/net/ipv4/tcp_timer.c
+@@ -34,6 +34,7 @@ static void tcp_write_err(struct sock *s
+ 	sk->sk_err = sk->sk_err_soft ? : ETIMEDOUT;
+ 	sk->sk_error_report(sk);
+ 
++	tcp_write_queue_purge(sk);
+ 	tcp_done(sk);
+ 	__NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPABORTONTIMEOUT);
+ }
