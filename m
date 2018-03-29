@@ -1,55 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751938AbeC2Rjx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 13:39:53 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:42356 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751164AbeC2Rjw (ORCPT
+        id S1752082AbeC2RlB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 13:41:01 -0400
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:37025 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751164AbeC2Rk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 13:39:52 -0400
-X-Google-Smtp-Source: AIpwx4+6bmOsYWcEqfnzJF7hP8iC1TwiNIOp7Yz3XOc0cluDzHXk5n71VjXhDq+p0T3AYLYzKgTtBg==
-Subject: Re: [PATCH 4/4] nvmet-fc: Use new SGL alloc/free helper for requests
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-References: <20180329160721.4691-1-logang@deltatee.com>
- <20180329160721.4691-5-logang@deltatee.com>
- <15f4d135-7600-02b3-f50f-ed8deddd7b98@broadcom.com>
- <bd62c2e6-558c-e314-177f-c95cf842c741@deltatee.com>
-From: James Smart <james.smart@broadcom.com>
-Message-ID: <aef7b203-a16b-738f-4ca2-d50768d70ca0@broadcom.com>
-Date: Thu, 29 Mar 2018 10:39:48 -0700
+        Thu, 29 Mar 2018 13:40:59 -0400
+X-Google-Smtp-Source: AIpwx4+uV8yQ7PiJxXVKaiHCtrZbizJ8XwsKYZ5uHrKu1Z2CChm66+4EtV57A7yfuzNCAken7zA/ZQ==
+Subject: Re: Problem with commit 31e77c93e432 "sched/fair: Update blocked load
+ when newly idle"
+To: Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e1da0be1-94d8-d5d0-8329-4507c51ddd64@gmail.com>
+ <20180324064627.GA10884@linaro.org>
+ <c5daea3c-0834-1629-3e38-3db5130eb32f@gmail.com>
+ <6b151c56-9ead-7bbe-d1b7-b0e6d69c0d7f@arm.com>
+ <CAKfTPtDigSEOmtxk7daTTBb3o6kVR8AgUVhu4X6YWutK9yWNwg@mail.gmail.com>
+ <CAKfTPtAisq0tQ_Kw3OptJYm=u7tSk6vyi3CFZJdhBxD=d=EN1g@mail.gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <796bbd7b-8512-7370-28c9-0f082dc3f287@gmail.com>
+Date: Thu, 29 Mar 2018 19:40:50 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <bd62c2e6-558c-e314-177f-c95cf842c741@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <CAKfTPtAisq0tQ_Kw3OptJYm=u7tSk6vyi3CFZJdhBxD=d=EN1g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/29/2018 10:02 AM, Logan Gunthorpe wrote:
-> Per the bug in the previous patch, I don't think that was ever a valid
-> assumption. It doesn't have anything to do with the sgl_alloc change
-> either. The dma_map interface is allowed to merge SGLs and that's why it
-> can return fewer nents than it was passed. I'm not sure how many or
-> which DMA ops actually do this which is why it hasn't actually
-> manifested itself as a bug; but it is part of how the interface is
-> specified to work.
+Am 29.03.2018 um 09:41 schrieb Vincent Guittot:
+> On 28 March 2018 at 16:01, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>> Hi,
+>>
+>> On 28 March 2018 at 12:37, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>> Hi,
+>>>
+>>> On 03/24/2018 01:47 PM, Heiner Kallweit wrote:
+>>>>
+>>>> Am 24.03.2018 um 07:46 schrieb Vincent Guittot:
+>>>>>
+>>>>> Hi Heiner,
+>>>>>
+>>>>> Le Friday 23 Mar 2018 à 22:28:09 (+0100), Heiner Kallweit a écrit :
+>>>>>>
+>>>>>> Recently I started to get the following problems with linux-next:
+>>>>>>
+>>>>>> - When working via Putty/SSH on the system the console frequently
+>>>>>> freezes
+>>>>>>    for few seconds. Sometimes only opening a second console makes the
+>>>>>>    first one react again.
+>>>>>>
+>>>>>> - I get "INFO: rcu_sched detected stalls on CPUs/tasks:" warnings as
+>>>>>>    described in [1].
+>>>>>>
+>>>
+>>> I can't catch this issue on my Juno r0 (arm64 big.Little).
+>>>
+>>> root@juno:~# uname -r
+>>> 4.16.0-rc4-00198-g31e77c93e432
+>>>
+>>> I'm using openssh-client and openssh-server though.
+>>
+>> I think that I have finally been able to reproduce it on my hikey
+>> (octo cortex-A53) after unplugging 6 cores and waiting for almost 2
+>> hours
+>> This seems to happen only on dual core system as I haven't faced that
+>> before on the hikey which I have used for my tests
+>>
+> 
+> I'm finally not so sure that i have the right set up to reproduce the
+> problem as I haven't been able to reproduce it since.
+> 
+> Heiner,
+> 
+> How fast the problem happens on your board ?
+> Are you doing anything specific on the console that trigger the problem ?
+> 
+Hi Vincent,
 
-Argh.. yep. I'll have to correct that assumption. The bug would have 
-only shown up on i/o sizes beyond a particular length.
+the lag when working on the console is constantly there, the "rcu_preempt
+detected stalls" happens after several hours (so far always within 24h)
+w/o any triggering event I would be aware of. It occured also when the
+system was idle at that point in time.
 
->
-> I think we need to store the sg_map_cnt separately and use it instead of
-> the calculation based on the transfer length. But this is really a fix
-> that should be rolled in with the previous patch. If you can point me to
-> where this needs to change I can update my patch, or if you want to fix
-> it yourself go ahead.
-I'll fix it as it's part of the assumption fix.
+Rgds, Heiner
 
-With the nulling/zeroing, I'm good with your patch.
-
--- james.
+> Regards,
+> Vincent
+> 
+>>>
+>>>>>> Bisecting the issue resulted in:
+>>>>>>
+>>>>>> 31e77c93e432dec79c7d90b888bbfc3652592741 is the first bad commit
+>>>>>> commit 31e77c93e432dec79c7d90b888bbfc3652592741
+>>>>>> Author: Vincent Guittot <vincent.guittot@linaro.org>
+>>>>>> Date:   Wed Feb 14 16:26:46 2018 +0100
+>>>>>>
+>>>>>>      sched/fair: Update blocked load when newly idle
+>>>>>>
+>>>>>>      When NEWLY_IDLE load balance is not triggered, we might need to
+>>>>>> update the
+>>>>>>      blocked load anyway. We can kick an ilb so an idle CPU will take
+>>>>>> care of
+>>>>>>      updating blocked load or we can try to update them locally before
+>>>>>> entering
+>>>>>>      idle. In the latter case, we reuse part of the nohz_idle_balance.
+>>>>>>
+>>>>>> After reversing this commit at least the issue with the freezing console
+>>>>>> is gone. The second one appeared only sporadically, I still have to see
+>>>>>> whether it pops up again.
+>>>
+>>>
+>>> [...]
+>>>
+> 
