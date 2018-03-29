@@ -1,80 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752344AbeC2QZg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:25:36 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:43615 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752004AbeC2QZe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:25:34 -0400
-Subject: Re: [net-next PATCH v2 03/10] net: netcp: ethss: make call to
- gbe_sgmii_config() conditional
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
-        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-References: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
- <1522168309-12338-4-git-send-email-m-karicheri2@ti.com>
- <20180327171817.GO5862@lunn.ch>
-From: Murali Karicheri <m-karicheri2@ti.com>
-Organization: Texas Instruments
-Message-ID: <24d6d476-1c04-c9be-e32f-4d024be649f2@ti.com>
-Date: Thu, 29 Mar 2018 12:27:40 -0400
+        id S1752600AbeC2QZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:25:56 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:46512 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752261AbeC2QZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:25:54 -0400
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc: linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-2-christian.koenig@amd.com>
+ <20180328123830.GB25060@infradead.org>
+ <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
+ <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
+ <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
+ <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
+ <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+ <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
+ <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+Date: Thu, 29 Mar 2018 10:25:52 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180327171817.GO5862@lunn.ch>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: bhelgaas@google.com, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 01:18 PM, Andrew Lunn wrote:
-> On Tue, Mar 27, 2018 at 12:31:42PM -0400, Murali Karicheri wrote:
->> As a preparatory patch to add support for 2u cpsw hardware found on
->> K2G SoC, make call to gbe_sgmii_config() conditional. This is required
->> since 2u uses RGMII interface instead of SGMII and to allow for driver
->> re-use.
->>
->> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
->> ---
->>  drivers/net/ethernet/ti/netcp_ethss.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
->> index 56dbc0b..1dea891 100644
->> --- a/drivers/net/ethernet/ti/netcp_ethss.c
->> +++ b/drivers/net/ethernet/ti/netcp_ethss.c
->> @@ -2271,7 +2271,8 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
->>  
->>  	void (*hndlr)(struct net_device *) = gbe_adjust_link;
->>  
->> -	gbe_sgmii_config(priv, slave);
->> +	if ((priv->ss_version == GBE_SS_VERSION_14) || IS_SS_ID_NU(priv))
->> +		gbe_sgmii_config(priv, slave);
+
+
+On 29/03/18 10:10 AM, Christian König wrote:
+> Why not? I mean the dma_map_resource() function is for P2P while other 
+> dma_map_* functions are only for system memory.
+
+Oh, hmm, I wasn't aware dma_map_resource was exclusively for mapping
+P2P. Though it's a bit odd seeing we've been working under the
+assumption that PCI P2P is different as it has to translate the PCI bus
+address. Where as P2P for devices on other buses is a big unknown.
+
+>> And this is necessary to
+>> check if the DMA ops in use support it or not. We can't have the
+>> dma_map_X() functions do the wrong thing because they don't support it yet.
 > 
-> Or maybe:
-> 
->    if (slave->phy_node == PHY_INTERFACE_MODE_SGMII)
->    	gbe_sgmii_config(priv, slave);
-> 
-> 	Andrew
-> Actually, on specific cpsw hardware, driver supports specific interface. Driver also
-uses link-interface DT property to configure this and link-interface can be without phy
-as well. So essentially the above code looks good IMO.
+> Well that sounds like we should just return an error from 
+> dma_map_resources() when an architecture doesn't support P2P yet as Alex 
+> suggested.
 
-I need to change this as 
+Yes, well except in our patch-set we can't easily use
+dma_map_resources() as we either have SGLs to deal with or we need to
+create whole new interfaces to a number of subsystems.
 
-if (IS_SS_ID_VER_14(priv) || IS_SS_ID_NU(priv))
-    gbe_sgmii_config(priv, slave);
+> You don't seem to understand the implications: The devices do have a 
+> common upstream bridge! In other words your code would currently claim 
+> that P2P is supported, but in practice it doesn't work.
 
-Based on the link-interface, driver selects the phy mode and pass it to of_phy_connect().
+Do they? They don't on any of the Intel machines I'm looking at. The
+previous version of the patchset not only required a common upstream
+bridge but two layers of upstream bridges on both devices which would
+effectively limit transfers to PCIe switches only. But Bjorn did not
+like this.
 
-I will update the above in v3.
--- 
-Murali Karicheri
-Linux Kernel, Keystone
+> You need to include both drivers which participate in the P2P 
+> transaction to make sure that both supports this and give them 
+> opportunity to chicken out and in the case of AMD APUs even redirect the 
+> request to another location (e.g. participate in the DMA translation).
+
+I don't think it's the drivers responsibility to reject P2P . The
+topology is what governs support or not. The discussions we had with
+Bjorn settled on if the devices are all behind the same bridge they can
+communicate with each other. This is essentially guaranteed by the PCI spec.
+
+> DMA-buf fortunately seems to handle all this already, that's why we 
+> choose it as base for our implementation.
+
+Well, unfortunately DMA-buf doesn't help for the drivers we are working
+with as neither the block layer nor the RDMA subsystem have any
+interfaces for it.
+
+Logan
