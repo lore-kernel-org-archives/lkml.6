@@ -1,43 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752679AbeC2MKn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:10:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34512 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752614AbeC2MKm (ORCPT
+        id S1752334AbeC2MLM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:11:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38204 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750753AbeC2MLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:10:42 -0400
-Date: Thu, 29 Mar 2018 14:10:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v2] perf, pt, coresight: Clean up address filter structure
-Message-ID: <20180329121036.GZ4043@hirez.programming.kicks-ass.net>
-References: <20180329120648.11902-1-alexander.shishkin@linux.intel.com>
+        Thu, 29 Mar 2018 08:11:11 -0400
+From: Colin King <colin.king@canonical.com>
+To: Michal Kalderon <Michal.Kalderon@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] qedr: ix spelling mistake: "hanlde" -> "handle"
+Date: Thu, 29 Mar 2018 13:11:07 +0100
+Message-Id: <20180329121107.27248-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329120648.11902-1-alexander.shishkin@linux.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 03:06:48PM +0300, Alexander Shishkin wrote:
-> This is a cosmetic patch that deals with the address filter structure's
-> ambiguous fields 'filter' and 'range'. The former stands to mean that the
-> filter's *action* should be to filter the traces to its address range if
-> it's set or stop tracing if it's unset. This is confusing and hard on the
-> eyes, so this patch replaces it with 'action' enum. The 'range' field is
-> completely redundant (meaning that the filter is an address range as
-> opposed to a single address trigger), as we can use zero size to mean the
-> same thing.
-> 
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Trivial fix to spelling mistake in DP_ERR message text
 
-Ingo, can you merge this?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/qedr/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/qedr/main.c b/drivers/infiniband/hw/qedr/main.c
+index 1f032fdbdb19..36d60d3c1630 100644
+--- a/drivers/infiniband/hw/qedr/main.c
++++ b/drivers/infiniband/hw/qedr/main.c
+@@ -708,7 +708,7 @@ static void qedr_affiliated_event(void *context, u8 e_code, void *fw_handle)
+ 			     "Error: CQ event with NULL pointer ibcq. Handle=%llx\n",
+ 			     roce_handle64);
+ 		}
+-		DP_ERR(dev, "CQ event %d on hanlde %p\n", e_code, cq);
++		DP_ERR(dev, "CQ event %d on handle %p\n", e_code, cq);
+ 		break;
+ 	case EVENT_TYPE_QP:
+ 		qp = (struct qedr_qp *)(uintptr_t)roce_handle64;
+@@ -724,7 +724,7 @@ static void qedr_affiliated_event(void *context, u8 e_code, void *fw_handle)
+ 			     "Error: QP event with NULL pointer ibqp. Handle=%llx\n",
+ 			     roce_handle64);
+ 		}
+-		DP_ERR(dev, "QP event %d on hanlde %p\n", e_code, qp);
++		DP_ERR(dev, "QP event %d on handle %p\n", e_code, qp);
+ 		break;
+ 	default:
+ 		break;
+-- 
+2.15.1
