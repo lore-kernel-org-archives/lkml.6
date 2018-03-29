@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753282AbeC2Lsl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:48:41 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59098 "EHLO
+        id S1753249AbeC2Lsk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:48:40 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59050 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752759AbeC2L0N (ORCPT
+        with ESMTP id S1752760AbeC2L0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 07:26:13 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 062/109] inotify: add do_inotify_init() helper; remove in-kernel call to syscall
-Date: Thu, 29 Mar 2018 13:23:39 +0200
-Message-Id: <20180329112426.23043-63-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org
+Subject: [PATCH 027/109] net: socket: add __compat_sys_getsockopt() helper; remove in-kernel call to compat syscall
+Date: Thu, 29 Mar 2018 13:23:04 +0200
+Message-Id: <20180329112426.23043-28-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,49 +22,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the inotify-internal do_inotify_init() helper allows us to get rid
-of the in-kernel call to sys_inotify_init1() syscall.
+Using the net-internal helper __compat_sys_getsockopt() allows us to avoid
+the internal calls to the compat_sys_getsockopt() syscall.
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Acked-by: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/notify/inotify/inotify_user.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/compat.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 2c908b31d6c9..43c23653ce2e 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -635,7 +635,7 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
+diff --git a/net/compat.c b/net/compat.c
+index 75bfcbbb2e3e..cdf5b0c1b962 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -509,8 +509,9 @@ int compat_sock_get_timestampns(struct sock *sk, struct timespec __user *usersta
+ }
+ EXPORT_SYMBOL(compat_sock_get_timestampns);
  
- 
- /* inotify syscalls */
--SYSCALL_DEFINE1(inotify_init1, int, flags)
-+static int do_inotify_init(int flags)
+-COMPAT_SYSCALL_DEFINE5(getsockopt, int, fd, int, level, int, optname,
+-		       char __user *, optval, int __user *, optlen)
++static int __compat_sys_getsockopt(int fd, int level, int optname,
++				   char __user *optval,
++				   int __user *optlen)
  {
- 	struct fsnotify_group *group;
- 	int ret;
-@@ -660,9 +660,14 @@ SYSCALL_DEFINE1(inotify_init1, int, flags)
- 	return ret;
+ 	int err;
+ 	struct socket *sock = sockfd_lookup(fd, &err);
+@@ -536,6 +537,12 @@ COMPAT_SYSCALL_DEFINE5(getsockopt, int, fd, int, level, int, optname,
+ 	return err;
  }
  
-+SYSCALL_DEFINE1(inotify_init1, int, flags)
++COMPAT_SYSCALL_DEFINE5(getsockopt, int, fd, int, level, int, optname,
++		       char __user *, optval, int __user *, optlen)
 +{
-+	return do_inotify_init(flags);
++	return __compat_sys_getsockopt(fd, level, optname, optval, optlen);
 +}
 +
- SYSCALL_DEFINE0(inotify_init)
- {
--	return sys_inotify_init1(0);
-+	return do_inotify_init(0);
- }
- 
- SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ struct compat_group_req {
+ 	__u32				 gr_interface;
+ 	struct __kernel_sockaddr_storage gr_group
+@@ -874,8 +881,9 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
+ 					      compat_ptr(a[3]), a[4]);
+ 		break;
+ 	case SYS_GETSOCKOPT:
+-		ret = compat_sys_getsockopt(a0, a1, a[2],
+-				compat_ptr(a[3]), compat_ptr(a[4]));
++		ret = __compat_sys_getsockopt(a0, a1, a[2],
++					      compat_ptr(a[3]),
++					      compat_ptr(a[4]));
+ 		break;
+ 	case SYS_SENDMSG:
+ 		ret = compat_sys_sendmsg(a0, compat_ptr(a1), a[2]);
 -- 
 2.16.3
