@@ -1,138 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeC2IZf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 04:25:35 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36691 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeC2IZd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 04:25:33 -0400
-X-Google-Smtp-Source: AIpwx4/QfTc5gAjcD9XJzwf7pZyYduAvwAuO8QjPQaC4SM3JM8phUvZW11oLE7ocfSa7IPoADObgsQ==
-Subject: Re: [PATCH v3 1/2] Documentation: Documentation for qcom, llcc
-To: Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Cc: linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, kyan@codeaurora.org, ckadabi@codeaurora.org
-References: <1522176722-12691-1-git-send-email-rishabhb@codeaurora.org>
- <1522176722-12691-2-git-send-email-rishabhb@codeaurora.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <887b47bf-3927-7d07-5000-9d74e83be5fe@linaro.org>
-Date: Thu, 29 Mar 2018 11:25:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1751106AbeC2I32 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 04:29:28 -0400
+Received: from mga18.intel.com ([134.134.136.126]:53364 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750708AbeC2I31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 04:29:27 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="42259177"
+Date: Thu, 29 Mar 2018 11:29:23 +0300
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Todor Tomov <todor.tomov@linaro.org>
+Cc: jacopo mondi <jacopo@jmondi.org>, mchehab@kernel.org,
+        hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2,2/2] media: Add a driver for the ov7251 camera sensor
+Message-ID: <20180329082923.e55pclvlclamnsqz@paasikivi.fi.intel.com>
+References: <1521778460-8717-3-git-send-email-todor.tomov@linaro.org>
+ <20180323134003.GB11499@w540>
+ <419f6976-ee6a-f2c1-1097-a51776469ee4@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1522176722-12691-2-git-send-email-rishabhb@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <419f6976-ee6a-f2c1-1097-a51776469ee4@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Todor and Jacopo,
 
-On 03/27/2018 09:52 PM, Rishabh Bhatnagar wrote:
-> Documentation for last level cache controller device tree bindings,
-> client bindings usage examples.
+On Thu, Mar 29, 2018 at 10:50:10AM +0300, Todor Tomov wrote:
+...
+> >> +static const struct of_device_id ov7251_of_match[] = {
+> >> +	{ .compatible = "ovti,ov7251" },
+> >> +	{ /* sentinel */ }
+> >> +};
+> >> +MODULE_DEVICE_TABLE(of, ov7251_of_match);
+> >> +
+> >> +static struct i2c_driver ov7251_i2c_driver = {
+> >> +	.driver = {
+> >> +		.of_match_table = of_match_ptr(ov7251_of_match),
+> >> +		.name  = "ov7251",
+> >> +	},
+> >> +	.probe  = ov7251_probe,
+> >> +	.remove = ov7251_remove,
+> >> +	.id_table = ov7251_id,
+> > 
+> > As this driver depends on CONFIG_OF, I've been suggested to use probe_new and
+> > get rid of i2c id_tables.
 > 
-> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> ---
->  .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-> new file mode 100644
-> index 0000000..ceb20a4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-> @@ -0,0 +1,70 @@
-> +== Introduction==
-> +
-> +LLCC (Last Level Cache Controller) driver is implemented as a platform device.
-> +The driver Programs the SCT (system configuration table). The SCT programming
-> +divides the system cache into slices. Each slice is assigned an ID A.K.A
-> +SCID(Sub-cache ID).
-> +HW modules that are designated to use the system cache are known as clients.
-> +Each client must also be represented as a node in the device tree just like
-> +any other hw module.
-> +One client can have multiple SCID's assigned meaning each client could get
-> +multiple slices in the cache. Client can use the slices for various pre-defined
-> +usecases. Each client defines a set of names for these usecases in its
-> +device tree binding.
-> +Client makes a request to LLCC device to get cache-slices properties for each
-> +of its usecase. Client gets the information like cache slice ID and size of the
-> +cache slice.
+> Yes, I'll do that.
 
-All this describes the driver, please just describe what is LLCC and for
-what it used for.
+The proposal sounds good to me but rather than adding CONFIG_OF dependency,
+I'd instead suggest changing the of_property_read_u32 to
+fwnode_property_read_u32; then the driver may work on ACPI based systems as
+well. There's another change needed, too, which is not using of_match_ptr
+macro, but instead assigning the of_match_table unconditionally.
 
-> +
-> +== llcc device ==
-
-drop this.
-
-> +
-> +Properties:
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be "qcom,sdm855-llcc"
-> +
-> +- reg:
-> +	Usage: required
-> +	Value Type: <prop-encoded-array>
-> +	Definition: must be addresses and sizes of the LLCC registers
-> +
-> +- #cache-cells:
-> +	Usage: required
-> +	Value Type: <u32>
-> +	Definition: Number of cache cells, must be 1
-> +
-> +- max-slices:
-> +	usage: required
-> +	Value Type: <u32>
-> +	Definition: Number of cache slices supported by hardware
-> +
-> +Example:
-> +
-> +	llcc: qcom,sdm855-llcc@01100000 {
-
-this should be qcom,llcc@1100000
-
-> +		compatible = "qcom,sdm845-llcc";
-> +		reg = <0x01100000 0x250000>;
-> +		#cache-cells = <1>;
-> +		max-slices = <32>;
-> +	};
-> +
-> +== Client ==
-> +
-> +Required properties:
-> +- cache-slice-names:
-
-in my opinion this shouldn't be required but optional.
-
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: A set of names that identify the usecase names of a client that
-> +			uses cache slice. These strings are used to look up the cache slice
-> +		    entries by name.
-> +
-> +- cache-slices:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: The tuple has phandle to llcc device as the first argument and
-> +			the second argument is the usecase id of the client.
-> +For Example:
-> +
-> +	venus {
-> +		cache-slice-names = "vidsc0", "vidsc1";
-> +		cache-slices = <&llcc 2>, <&llcc 3>;
-
-please make 2,3 and so on #defines.
+Up to you.
 
 -- 
-regards,
-Stan
+Sakari Ailus
+sakari.ailus@linux.intel.com
