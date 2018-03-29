@@ -1,46 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeC2O5f (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:57:35 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:46366 "EHLO vps0.lunn.ch"
+        id S1752334AbeC2O6P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:58:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:2874 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752106AbeC2O5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:57:34 -0400
-Date: Thu, 29 Mar 2018 16:57:27 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH net-next 3/8] net: mscc: Add MDIO driver
-Message-ID: <20180329145727.GB25752@lunn.ch>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-4-alexandre.belloni@bootlin.com>
- <20180323204939.GS24361@lunn.ch>
- <20180329140544.GB12066@piout.net>
- <20180329144041.GA25752@lunn.ch>
- <20180329145352.GD12066@piout.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329145352.GD12066@piout.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1750732AbeC2O6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:58:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="32488877"
+Message-ID: <1522335490.2964.2.camel@intel.com>
+Subject: Re: [PATCH] time: export nsec_to_clock_t
+From: Zhang Rui <rui.zhang@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>, John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org
+Date: Thu, 29 Mar 2018 22:58:10 +0800
+In-Reply-To: <20180328141205.2954245-1-arnd@arndb.de>
+References: <20180328141205.2954245-1-arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > It sounds like the correct fix is for get_phy_id() to look at the
-> > error code for mdiobus_read(bus, addr, MII_PHYSID1). If it is EIO and
-> > maybe ENODEV, set *phy_id to 0xffffffff and return. The scan code
-> > should then do the correct thing.
-> > 
+On 三, 2018-03-28 at 16:11 +0200, Arnd Bergmann wrote:
+> nsec_to_clock_t was traditionally used only in the core kernel, now
+> we
+> have a sysfs file that needs it from a loadable module, causing a
+> link-time error:
 > 
-> That could work indeed. Do you want me to test and send a patch?
+> ERROR: "nsec_to_clock_t" [drivers/thermal/thermal_sys.ko] undefined!
+> 
+> This exports the function the same way that we do for related
+> interfaces.
+> 
+> Fixes: 96cea33badc5 ("thermal: Add cooling device's statistics in
+> sysfs")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Yes please.
+Thanks for the fix.
+can I take this patch through thermal tree?
 
-Thanks
-	Andrew
+thanks,
+rui
+> ---
+>  kernel/time/time.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/time/time.c b/kernel/time/time.c
+> index 6fa99213fc72..97a262531f68 100644
+> --- a/kernel/time/time.c
+> +++ b/kernel/time/time.c
+> @@ -768,6 +768,7 @@ u64 nsec_to_clock_t(u64 x)
+>  	return div_u64(x * 9, (9ull * NSEC_PER_SEC + (USER_HZ / 2))
+> / USER_HZ);
+>  #endif
+>  }
+> +EXPORT_SYMBOL(nsec_to_clock_t);
+>  
+>  u64 jiffies64_to_nsecs(u64 j)
+>  {
