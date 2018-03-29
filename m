@@ -1,50 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754417AbeC2SJZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 14:09:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37182 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754401AbeC2SJW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 14:09:22 -0400
-Date: Thu, 29 Mar 2018 20:08:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH 10/10] softirq: Remove __ARCH_SET_SOFTIRQ_PENDING
-Message-ID: <20180329180836.GS4082@hirez.programming.kicks-ass.net>
-References: <1522290425-22844-1-git-send-email-frederic@kernel.org>
- <1522290425-22844-11-git-send-email-frederic@kernel.org>
- <20180329071619.GO4082@hirez.programming.kicks-ass.net>
- <20180329134745.GA12958@lerouge>
- <20180329140111.GC4043@hirez.programming.kicks-ass.net>
- <20180329140748.GB12958@lerouge>
- <20180329165343.39f4486f@mschwideX1>
+        id S1754442AbeC2SJb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 14:09:31 -0400
+Received: from verein.lst.de ([213.95.11.211]:51599 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754420AbeC2SJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 14:09:28 -0400
+Date: Thu, 29 Mar 2018 20:09:27 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        david@fromorbit.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 05/14] ext4, dax: introduce ext4_dax_aops
+Message-ID: <20180329180927.GA16055@lst.de>
+References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com> <152167305782.5268.13485258587227210521.stgit@dwillia2-desk3.amr.corp.intel.com> <20180329154035.lvsepjvt6vcplshw@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180329165343.39f4486f@mschwideX1>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180329154035.lvsepjvt6vcplshw@quack2.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 04:53:43PM +0200, Martin Schwidefsky wrote:
-> The lowcore optimization for softirq_pending field is not really needed,
-> just nice to have. But if there is a strong reason to make a common
-> definition for it we can certainly do that.
+On Thu, Mar 29, 2018 at 05:40:35PM +0200, Jan Kara wrote:
+> So ext4_direct_IO() for IS_DAX() files will just bail out. So could you
+> just provide ext4_dax_direct_IO() which will bail out and use it here? With
+> a similar comment as in xfs_vm_direct_IO() that open still needs this
+> method set... Thanks!
 
-A slightly related question; would it make sense to move all kernel
-static per-cpu stuff into lowcore, or is that asking for too much
-trickery?
+In fact a common noop_direct_IO might make sense.
