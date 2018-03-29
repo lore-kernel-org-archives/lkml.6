@@ -1,65 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751256AbeC2EDo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 00:03:44 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42042 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeC2EDn (ORCPT
+        id S1751935AbeC2ERQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 00:17:16 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51634 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751085AbeC2ERP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 00:03:43 -0400
-X-Google-Smtp-Source: AIpwx49io6tCw8bqMQ6/VtYxu9Hon9cMB/7QwQDpjN793lSYfTc13HH+bzyRvEpl0QFNM+5iL82P1g==
-Subject: Re: [PATCH v2 1/1] xen-netback: process malformed sk_buff correctly
- to avoid BUG_ON()
-To: Dongli Zhang <dongli.zhang@oracle.com>, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org, paul.durrant@citrix.com, wei.liu2@citrix.com
-References: <1522295463-469-1-git-send-email-dongli.zhang@oracle.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <2c741a81-23b3-fa26-89b2-6c3d94b20b96@gmail.com>
-Date: Wed, 28 Mar 2018 21:03:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1522295463-469-1-git-send-email-dongli.zhang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Mar 2018 00:17:15 -0400
+From: Mike Kravetz <mike.kravetz@oracle.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Michal Hocko <mhocko@kernel.org>, Yisheng Xie <xieyisheng1@huawei.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Nic Losby <blurbdust@gmail.com>, Dan Rue <dan.rue@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH 0/1] fix regression in hugetlbfs overflow checking
+Date: Wed, 28 Mar 2018 21:16:55 -0700
+Message-Id: <20180329041656.19691-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.13.6
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8846 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=904
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803290046
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit 63489f8e8211 ("hugetlbfs: check for pgoff value overflow")
+introduced a regression in 32 bit kernels.  When creating the mask
+to check vm_pgoff, it incorrectly specified that the size of a loff_t
+was the size of a long.  This prevents mapping hugetlbfs files at
+offsets greater than 4GB on 32 bit kernels.
 
+The above is in the commit message.  63489f8e8211 has been sent upstream
+and to stable, so cc'ing stable here as well.
 
-On 03/28/2018 08:51 PM, Dongli Zhang wrote:
-> The "BUG_ON(!frag_iter)" in function xenvif_rx_next_chunk() is triggered if
-> the received sk_buff is malformed, that is, when the sk_buff has pattern
-> (skb->data_len && !skb_shinfo(skb)->nr_frags). Below is a sample call
-> stack:
-> 
->...
+I would appreciate some more eyes on this code.  There have been several
+fixes and we keep running into issues.
 
+Mike Kravetz (1):
+  hugetlbfs: fix bug in pgoff overflow checking
 
-> 
-> The issue is hit by xen-netback when there is bug with other networking
-> interface (e.g., dom0 physical NIC), who has generated and forwarded
-> malformed sk_buff to dom0 vifX.Y. It is possible to reproduce the issue on
-> purpose with below sample code in a kernel module:
-> 
-> skb->dev = dev; // dev of vifX.Y
-> skb->len = 386;
-> skb->data_len = 352;
-> skb->tail = 98;
-> skb->end = 384;
-> skb_shinfo(skb)->nr_frags = 0;
-> dev->netdev_ops->ndo_start_xmit(skb, dev);
->
+ fs/hugetlbfs/inode.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-This would be a serious bug in the provider of such skb.
-
-Are you sure you do not have instead an skb with a chain of skbs ?
-
-(skb_shinfo(skb)->frag_list would be not NULL)
-
-Maybe your driver is wrongly advertising NETIF_F_FRAGLIST
-
-commit 2167ca029c244901831 would be the bug origin then...
+-- 
+2.13.6
