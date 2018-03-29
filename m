@@ -1,81 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751974AbeC2HdD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:33:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:32798 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeC2HdA (ORCPT
+        id S1751169AbeC2Hg3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:36:29 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:33991 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750708AbeC2Hg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:33:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4FF5B6070A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rfried@codeaurora.org
-Subject: Re: [PATCH v2] wcn36xx: Disable 5GHz for wcn3610
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: loic.poulain@linaro.org, wcn36xx@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20180329065818.9338-1-rfried@codeaurora.org>
- <874lkzmjxu.fsf@kamboji.qca.qualcomm.com>
-From: Ramon Fried <rfried@codeaurora.org>
-Message-ID: <2d978343-2057-8424-a249-83a0394da5a7@codeaurora.org>
-Date: Thu, 29 Mar 2018 10:32:55 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <874lkzmjxu.fsf@kamboji.qca.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Mar 2018 03:36:27 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>
+Subject: Re: [PATCH] drm: clarify adjusted_mode for a bridge connected to a
+ crtc
+Thread-Topic: [PATCH] drm: clarify adjusted_mode for a bridge connected to a
+ crtc
+Thread-Index: AQHTxeNrXc81Ni58ZkqJDtQmzYCJWqPms5kA
+Date: Thu, 29 Mar 2018 07:35:11 +0000
+Message-ID: <ffc34eb4-c5bd-8e53-0dc5-3a3c7a2e111f@st.com>
+References: <20180226121605.12050-1-philippe.cornu@st.com>
+ <20180327155102.GW14155@phenom.ffwll.local>
+In-Reply-To: <20180327155102.GW14155@phenom.ffwll.local>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.49]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <780965730DA77D4EB87DF9A8B3D46893@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-29_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2T7aWgY023012
 
-(adding Bjorn Andersson)
+Hi Daniel,
 
-
-On 3/29/2018 10:15 AM, Kalle Valo wrote:
-> (adding devicetree list)
->
-> Ramon Fried <rfried@codeaurora.org> writes:
->
->> wcn3610 can only operate on 2.4GHz band due to RF limitation.
->> If wcn36xx digital block is associated with an external IRIS
->> RF module, retrieve the id and disable 5GHz band in case of
->> wcn3610 id.
+On 03/27/2018 05:51 PM, Daniel Vetter wrote:
+> On Mon, Feb 26, 2018 at 01:16:04PM +0100, Philippe Cornu wrote:
+>> This patch clarifies the adjusted_mode documentation
+>> for a bridge directly connected to a crtc.
 >>
->> Signed-off-by: Ramon Fried <rfried@codeaurora.org>
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 >> ---
->> v2: fixed wrong assignment, which is logically introduces the 
->> 	same behaviour, but for correctness.
+>> This patch is linked to the discussion https://lkml.org/lkml/2018/1/25/367
+> 
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+Many thanks for the review.
+
+> 
+> Aside, and kinda why I noticed this patch to begin with: You have drm-misc
+> commit rights, but you seem to not use that. And with 18 patches in the
+> 4.17 cycle you're the top contributor who's not pushing his own patches.
+> 
+> What's the hold-up? Tools don't work, or something else? I really think
+> regular contributors should just push their own stuff themselves (after
+> appropriate review ofc).
+> -Daniel
+> 
+
+I still consider myself a drm “beginner”, my first patch in drm was last 
+summer so less than 1 year ago.
+However, thank you for your encouraging return, I will immediately study 
+the matter (dim...) and prepare myself.
+
+Thank you,
+Philippe :-)
+
 >>
->>  drivers/net/wireless/ath/wcn36xx/main.c    | 4 +++-
->>  drivers/net/wireless/ath/wcn36xx/wcn36xx.h | 1 +
->>  2 files changed, 4 insertions(+), 1 deletion(-)
+>>   include/drm/drm_bridge.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
->> index ab5be6d2c691..833531a68c95 100644
->> --- a/drivers/net/wireless/ath/wcn36xx/main.c
->> +++ b/drivers/net/wireless/ath/wcn36xx/main.c
->> @@ -1146,7 +1146,7 @@ static int wcn36xx_init_ieee80211(struct wcn36xx *wcn)
->>  		BIT(NL80211_IFTYPE_MESH_POINT);
->>  
->>  	wcn->hw->wiphy->bands[NL80211_BAND_2GHZ] = &wcn_band_2ghz;
->> -	if (wcn->rf_id != RF_IRIS_WCN3620)
->> +	if (wcn->rf_id != RF_IRIS_WCN3610 && wcn->rf_id != RF_IRIS_WCN3620)
->>  		wcn->hw->wiphy->bands[NL80211_BAND_5GHZ] = &wcn_band_5ghz;
->>  
->>  	wcn->hw->wiphy->max_scan_ssids = WCN36XX_MAX_SCAN_SSIDS;
->> @@ -1248,6 +1248,8 @@ static int wcn36xx_platform_get_resources(struct wcn36xx *wcn,
->>  	if (iris_node) {
->>  		if (of_device_is_compatible(iris_node, "qcom,wcn3620"))
->>  			wcn->rf_id = RF_IRIS_WCN3620;
->> +		else if (of_device_is_compatible(iris_node, "qcom,wcn3610"))
->> +			wcn->rf_id = RF_IRIS_WCN3610;
->>  		of_node_put(iris_node);
->>  	}
-> Should we document qcom,wcn3610 just like wcn3620 is:
->
-> Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt:                    "qcom,wcn3620",
-IMHO the mentioned bindings is related to the PIL (peripheral image loaded) which is just the firmware part and has
-nothing to do with wifi frontend(IRIS).
+>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+>> index 3270fec46979..b5f3c070467c 100644
+>> --- a/include/drm/drm_bridge.h
+>> +++ b/include/drm/drm_bridge.h
+>> @@ -177,7 +177,8 @@ struct drm_bridge_funcs {
+>>   	 * pipeline has been called already. If the bridge is the first element
+>>   	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
+>>   	 * pipe (i.e.  clocks and timing signals) is off when this function is
+>> -	 * called.
+>> +	 * called. If the bridge is connected to the crtc, the adjusted_mode
+>> +	 * parameter is the one defined in &drm_crtc_state.adjusted_mode.
+>>   	 */
+>>   	void (*mode_set)(struct drm_bridge *bridge,
+>>   			 struct drm_display_mode *mode,
+>> -- 
+>> 2.15.1
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
