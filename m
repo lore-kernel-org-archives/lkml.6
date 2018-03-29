@@ -1,96 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeC2OP3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:15:29 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:43144 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750979AbeC2OP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:15:27 -0400
-From: Borislav Petkov <bp@alien8.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org
-Subject: [PATCH] efi/cper: Remove the INDENT_SP silliness
-Date: Thu, 29 Mar 2018 16:14:20 +0200
-Message-Id: <20180329141420.13042-1-bp@alien8.de>
-X-Mailer: git-send-email 2.13.0
+        id S1751207AbeC2OUf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:20:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40652 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbeC2OUc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:20:32 -0400
+Date: Thu, 29 Mar 2018 07:20:27 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
+        torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, hmclauchlan@fb.com, tautschn@amazon.co.uk,
+        Amir Goldstein <amir73il@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Jaswinder Singh <jaswinder@infradead.org>,
+        Jeff Dike <jdike@addtoit.com>, Jiri Slaby <jslaby@suse.com>,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-s390@vger.kernel.org,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>, netdev@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        user-mode-linux-devel@lists.sourceforge.net, x86@kernel.org
+Subject: Re: [PATCH 000/109] remove in-kernel calls to syscalls
+Message-ID: <20180329142027.GA24860@bombadil.infradead.org>
+References: <20180329112426.23043-1-linux@dominikbrodowski.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Thu, Mar 29, 2018 at 01:22:37PM +0200, Dominik Brodowski wrote:
+> At least on 64-bit x86, it will likely be a hard requirement from v4.17
+> onwards to not call system call functions in the kernel: It is better to
+> use use a different calling convention for system calls there, where 
+> struct pt_regs is decoded on-the-fly in a syscall wrapper which then hands
+> processing over to the actual syscall function. This means that only those
+> parameters which are actually needed for a specific syscall are passed on
+> during syscall entry, instead of filling in six CPU registers with random
+> user space content all the time (which may cause serious trouble down the
+> call chain).[*]
 
-A separate define just to print a space character is silly and
-completely unneeded. Remove it.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org
----
- drivers/firmware/efi/cper-arm.c | 6 ++----
- drivers/firmware/efi/cper.c     | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
-index 698e5c8e0c8d..502811344e81 100644
---- a/drivers/firmware/efi/cper-arm.c
-+++ b/drivers/firmware/efi/cper-arm.c
-@@ -30,8 +30,6 @@
- #include <acpi/ghes.h>
- #include <ras/ras_event.h>
- 
--#define INDENT_SP	" "
--
- static const char * const arm_reg_ctx_strs[] = {
- 	"AArch32 general purpose registers",
- 	"AArch32 EL1 context registers",
-@@ -283,7 +281,7 @@ void cper_print_proc_arm(const char *pfx,
- 			pfx, proc->psci_state);
- 	}
- 
--	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-+	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
- 
- 	err_info = (struct cper_arm_err_info *)(proc + 1);
- 	for (i = 0; i < proc->err_info_num; i++) {
-@@ -310,7 +308,7 @@ void cper_print_proc_arm(const char *pfx,
- 		if (err_info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO) {
- 			printk("%serror_info: 0x%016llx\n", newpfx,
- 			       err_info->error_info);
--			snprintf(infopfx, sizeof(infopfx), "%s%s", newpfx, INDENT_SP);
-+			snprintf(infopfx, sizeof(infopfx), "%s ", newpfx);
- 			cper_print_arm_err_info(infopfx, err_info->type,
- 						err_info->error_info);
- 		}
-diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-index 5a59b582c9aa..3bf0dca378a6 100644
---- a/drivers/firmware/efi/cper.c
-+++ b/drivers/firmware/efi/cper.c
-@@ -37,8 +37,6 @@
- #include <acpi/ghes.h>
- #include <ras/ras_event.h>
- 
--#define INDENT_SP	" "
--
- static char rcd_decode_str[CPER_REC_LEN];
- 
- /*
-@@ -433,7 +431,7 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
- 	if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
- 		printk("%s""fru_text: %.20s\n", pfx, gdata->fru_text);
- 
--	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-+	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
- 	if (guid_equal(sec_type, &CPER_SEC_PROC_GENERIC)) {
- 		struct cper_sec_proc_generic *proc_err = acpi_hest_get_payload(gdata);
- 
-@@ -510,7 +508,7 @@ void cper_estatus_print(const char *pfx,
- 		       "It has been corrected by h/w "
- 		       "and requires no further action");
- 	printk("%s""event severity: %s\n", pfx, cper_severity_str(severity));
--	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-+	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
- 
- 	apei_estatus_for_each_section(estatus, gdata) {
- 		cper_estatus_print_section(newpfx, gdata, sec_no);
--- 
-2.13.0
+How do we stop new ones from springing up?  Some kind of linker trick
+like was used to, er, "dissuade" people from using gets()?
