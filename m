@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+1rbz5flFiYV+MRLMfebuDJC7awr/zg8Ku0LkitroM3FUcCG5KmQV/zAt0uJcLYwTtDuwe
-ARC-Seal: i=1; a=rsa-sha256; t=1522346565; cv=none;
+X-Google-Smtp-Source: AIpwx4+fdu5kzbM8Dw2W6cp1WNwQlvcteaxzFItGF+TxoPxBuhF1A5gdyIGEYA/qt1C4eqdOc1+N
+ARC-Seal: i=1; a=rsa-sha256; t=1522346562; cv=none;
         d=google.com; s=arc-20160816;
-        b=G4PaIziq9srY6GvSXnGxZByp+CgdMQf01tMtkOPk8Q8TwlVEm9YlT4lZCqQhMQGltb
-         f3PVglwTQY0oHz/PSSU5vQp+ys1Z5+8T9f8CUbIl2rDJxUJhB95siHo+0+htMwJKMNyN
-         cOhosjxLHUJOZW4CX3wvzwHs78U/lrHmJeKbzAmtwI2RhQJqhSOcLStr/ehYyxmOJN9z
-         x6GhGjf17OtKjCScD7DznFnZf8KzSMDLpH4OMMXC8Cz9ByFAIB6zIDn7tBkDXEmvDodZ
-         zWxyn4yt6Nr7U7mPs+DA3Ea+ktIVKi++A9nPdK5VK/C2D/0tWC3DupEtpbO41kW5Ptlf
-         yRgQ==
+        b=lAl39ae0t8k7bIB2qKIuHlRSr55lWTt7rOg2UVoP6P8JuDedp8VMXLGTSKKoM/GtZq
+         3+WyC5z4yRYWB7/qJt/0ul9G1cIBiZoIXSDIy3qBUYfvPNLKS0cKn/VUw9O0pIZdErsY
+         UKGfjbXXdVhlCvF8+4g45M0xwy1OCSOAhQn2br1RyH7U6Rtr3PFvNnqeXwEAFRml+i/d
+         mKOtf9gMIH81CAYVp00ZybnpXILFL7QqPpK3IENQzeAamplgszQixWO3vkUiz5t4DhEL
+         xvRur7kYi/ENSZuR6s1fwNuA08/Iqh0ZkEUIq9OIfYiUh2kCwbGAb12/oeyUUZqutAUd
+         gjLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=44XucoFIP0PfoXu2JJjK2wXhbzT2r7BXJjRX3O/ah9k=;
-        b=wRIRK9ip4i/oor8/tEGeo23SdcyC7dz6NkNqv6OYvyOwxiz22ZRUOnnjHE46gpPiwy
-         v8+HRCZ7y8zotXLpuz2IlJ99t7WnGhHbiU8tg1Rvilc8T5t28AT1Uq8+5QMqPWtyy6nj
-         PLyxPlkiLdp3hO2048oo8SpimI0XoyQg8yEz0uSjgFBihEpYcVq9NAmfdzVaSIj1XWRx
-         B3oyfeWASTv21BjqW2HAHaBiccQOta2fte3oV32gutvL3EOa6Y8JRVM6wsvLY9Mk9AcS
-         MsCepxEfR4URa1agTxg4IUx696BYDTfjNkG8Pi79L5l0ThQ0z05PyD7M20ACX+qS+6PR
-         t85A==
+        bh=7TWBjXP1mc/kPOOKDLEbvCB5VPZFGujbmGOxbJHC2Ug=;
+        b=Rkp+csUqvZzbTjrQ7il2SQH8TqD6Xc6kjioRRp+2TqN9DTIFLqjqVg/DI4K/3GveSR
+         xkAiM11vDrd6mNlUqhIxIhHVv5jeoOGngMu5GtxLiVTjF5YKmBH2LDMWRZ5Qy5Rh3R7n
+         RZzRwKWgB48J+37Bs/7964JUn5YX0VjsF46Vthi0f4u8e5ek5xYoP34becaj6zoCc2kv
+         iuPZmJrmJrf1Gi8MuDEEUzOdzJo1EVFt4tm+8AenYxHfFKa9nIUDP05ie/n+uS8PRiWn
+         E5mL9vvDpEQQesieSA/vIP71kZLamZM91PsdT/5Lz7qPQgLZQpeAtGf8TTsAPwKuu5Jp
+         wS3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 29/47] s390/qeth: on channel error, reject further cmd requests
-Date: Thu, 29 Mar 2018 20:00:10 +0200
-Message-Id: <20180329175731.565401652@linuxfoundation.org>
+Subject: [PATCH 4.15 28/47] s390/qeth: lock read device while queueing next buffer
+Date: Thu, 29 Mar 2018 20:00:09 +0200
+Message-Id: <20180329175731.452004879@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296072058867998?=
-X-GMAIL-MSGID: =?utf-8?q?1596296072058867998?=
+X-GMAIL-THRID: =?utf-8?q?1596296068868373661?=
+X-GMAIL-MSGID: =?utf-8?q?1596296068868373661?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,33 +52,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit a6c3d93963e4b333c764fde69802c3ea9eaa9d5c ]
+[ Upstream commit 17bf8c9b3d499d5168537c98b61eb7a1fcbca6c2 ]
 
-When the IRQ handler determines that one of the cmd IO channels has
-failed and schedules recovery, block any further cmd requests from
-being submitted. The request would inevitably stall, and prevent the
-recovery from making progress until the request times out.
-
-This sort of error was observed after Live Guest Relocation, where
-the pending IO on the READ channel intentionally gets terminated to
-kick-start recovery. Simultaneously the guest executed SIOCETHTOOL,
-triggering qeth to issue a QUERY CARD INFO command. The command
-then stalled in the inoperabel WRITE channel.
+For calling ccw_device_start(), issue_next_read() needs to hold the
+device's ccwlock.
+This is satisfied for the IRQ handler path (where qeth_irq() gets called
+under the ccwlock), but we need explicit locking for the initial call by
+the MPC initialization.
 
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/s390/net/qeth_core_main.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 --- a/drivers/s390/net/qeth_core_main.c
 +++ b/drivers/s390/net/qeth_core_main.c
-@@ -1175,6 +1175,7 @@ static void qeth_irq(struct ccw_device *
- 		}
- 		rc = qeth_get_problem(cdev, irb);
- 		if (rc) {
-+			card->read_or_write_problem = 1;
- 			qeth_clear_ipacmd_list(card);
- 			qeth_schedule_recovery(card);
- 			goto out;
+@@ -526,8 +526,7 @@ static inline int qeth_is_cq(struct qeth
+ 	    queue == card->qdio.no_in_queues - 1;
+ }
+ 
+-
+-static int qeth_issue_next_read(struct qeth_card *card)
++static int __qeth_issue_next_read(struct qeth_card *card)
+ {
+ 	int rc;
+ 	struct qeth_cmd_buffer *iob;
+@@ -558,6 +557,17 @@ static int qeth_issue_next_read(struct q
+ 	return rc;
+ }
+ 
++static int qeth_issue_next_read(struct qeth_card *card)
++{
++	int ret;
++
++	spin_lock_irq(get_ccwdev_lock(CARD_RDEV(card)));
++	ret = __qeth_issue_next_read(card);
++	spin_unlock_irq(get_ccwdev_lock(CARD_RDEV(card)));
++
++	return ret;
++}
++
+ static struct qeth_reply *qeth_alloc_reply(struct qeth_card *card)
+ {
+ 	struct qeth_reply *reply;
+@@ -1183,7 +1193,7 @@ static void qeth_irq(struct ccw_device *
+ 		return;
+ 	if (channel == &card->read &&
+ 	    channel->state == CH_STATE_UP)
+-		qeth_issue_next_read(card);
++		__qeth_issue_next_read(card);
+ 
+ 	iob = channel->iob;
+ 	index = channel->buf_no;
