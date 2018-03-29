@@ -1,80 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeC2NoT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:44:19 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41202 "EHLO mail.bootlin.com"
+        id S1752752AbeC2NpO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:45:14 -0400
+Received: from mga01.intel.com ([192.55.52.88]:25532 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752067AbeC2NoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:44:18 -0400
-Date: Thu, 29 Mar 2018 15:44:16 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Josh Wu <rainyfeeling@outlook.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-Message-ID: <20180329154416.5c1a0013@bbrezillon>
-In-Reply-To: <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
-References: <20180329131054.22506-1-peda@axentia.se>
-        <20180329153322.5e2fc1e7@bbrezillon>
-        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752299AbeC2NpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 09:45:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="37876468"
+Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Alison Schofield <alison.schofield@intel.com>
+References: <20180329000024.GA16648@alison-desk.jf.intel.com>
+ <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <aa369ee2-6557-8e3f-e2b4-d347b27825a6@linux.intel.com>
+Date: Thu, 29 Mar 2018 06:45:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018 15:37:43 +0200
-Peter Rosin <peda@axentia.se> wrote:
+On 03/29/2018 06:16 AM, Thomas Gleixner wrote:
+>> This is OK at least on the hardware we are immediately concerned about
+>> because the LLC sharing happens at both the slice and at the package
+>> level, which are also NUMA boundaries.
+> So that addresses the scheduler interaction, but it still leaves the
+> information in the sysfs files unchanged. See cpu/intel_cacheinfo.c.  There
+> are applications which use that information so it should be correct.
 
-> On 2018-03-29 15:33, Boris Brezillon wrote:
-> > On Thu, 29 Mar 2018 15:10:54 +0200
-> > Peter Rosin <peda@axentia.se> wrote:
-> >   
-> >> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
-> >> flash accesses have a tendency to cause display disturbances. Add a
-> >> module param to disable DMA from the NAND controller, since that fixes
-> >> the display problem for me.
-> >>
-> >> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >> ---
-> >>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
-> >>  1 file changed, 6 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> >> index b2f00b398490..2ff7a77c7b8e 100644
-> >> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-> >> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> >> @@ -129,6 +129,11 @@
-> >>  #define DEFAULT_TIMEOUT_MS			1000
-> >>  #define MIN_DMA_LEN				128
-> >>  
-> >> +static bool atmel_nand_avoid_dma __read_mostly;
-> >> +
-> >> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
-> >> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);  
-> > 
-> > I'm not a big fan of those driver specific cmdline parameters. Can't we
-> > instead give an higher priority to HLCDC master using the bus matrix?  
-> 
-> I don't know if it will be enough, but we sure can try. However, I have
-> no idea how to do that. I will happily test stuff though...
+Were you thinking of shared_cpu_list/map?  The information in there is
+correct for core->off-package access.  It is not correct for
+core->on-package access, unless that access is perfectly interleaved
+across both package "slices".
 
-There's no interface to configure that from Linux, but you can try to
-tweak it with devmem and if that does the trick, maybe we can expose a
-way to configure that from Linux. For more details, see the "Bus Matrix
-(MATRIX)" section in Atmel datasheets.
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+We could try to add an attribute or two to clarify this situation.  But,
+similar to the CPUID leaves, I don't think we actually have a precise
+way to describe the way the cache actually works here.
