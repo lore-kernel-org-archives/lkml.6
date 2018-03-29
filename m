@@ -1,204 +1,157 @@
-Return-Path: <darrick.wong@oracle.com>
-X-Google-Smtp-Source: AG47ELuPEoB/xHeLvRi5U1RxYxAwo+0vnTol9PSWZ1TH5kmygdu9iOHCGNntPpwHy7gS4jeH6ZAo
-ARC-Seal: i=1; a=rsa-sha256; t=1522046919; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AIpwx49ToUCK7FICMY00r00lP0K9erVf3qw7FW6zQke1nH4/dpwoTF342+iXj4jeuLNxhGmCvPTG
+ARC-Seal: i=1; a=rsa-sha256; t=1522297632; cv=none;
         d=google.com; s=arc-20160816;
-        b=W73ip0WBhUtDB02/L9wXl99kcI+y/wUWvvCfgcvJxU2fu4f0CUOjOgsGeVI076ImVZ
-         bLve1A6j73rYY03YN4ubZSDiBKVEuJxYCpPrVcbF7oWMkbewqp/3SDXU1z/oAB3+mvF0
-         dbm9+OOw9gCqXT2pmAxy9y/9SWP++ssafnJlHof7tn5CuRReI44AZOnOjKRX0mjoTBwF
-         zpzJvBcKZHgZ2cMRTFGQGwQVC/sPtD0BEL0Q3FTvGkC+ySi3UVTPtsVRuzt41zJCHZnF
-         6RlNYjJkTCyAaLhJ0NRiiz7FnSj7ILLhJPNSo/Ve3ISVbVF0tvjlhO1fdA1p+JtgCYrt
-         ToHQ==
+        b=JdeoYa2qlIE1UdBON5U7BtcXlaD6rPHFdxn4P9wSBqWr33vVfe6LmQV93aDx2ZEobK
+         arERWLVLTFCfa1f99TdbqL+t75+iiZu6nDV9aXmDlN91u1rhKXz3XiiCpN832/IB3uZf
+         t7MYRz4nIfUxUSUsj6vXZXbGlEz4MQ+T7EmMeDgVvGEKcIiotFIpTcaL0ar7D7j36Xy3
+         oyQHwj63+U/a/JJzVkpHnuyqN7ERbIWYDFp4Ek5cxsmdyJVugR0mL6mlXx7wmaxIJsst
+         vd6enS6n0bNvYy2RvnwaqoPZ+ETZnJoRcCv9ZOJ9nk8mZFX7zwwEqgSeUZciO7UtU+Xv
+         h0BA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=avZtNWep19ddQJTmjaCIz2jjwsmWwUtsv1fFxseMOBo=;
-        b=D+ekgm9lP96AoHLlRN5RS1PKRh3lyyiadj8V9ljik1b9uHuArZlSMKYJ5aUcxETL41
-         hujSBkUK4tOHVZrjAvAKZl7LKYry2AJGokywlyysq0aMOmIXkyxluD6Ihemt20sz0Qcn
-         IdpDibDR3f/P9ALU95GA3Z48Q5oHEv7kA5/SNC1bNdhDmnxo+pExY+tqSn9v6t98xEqU
-         Lzs2d5EFy4H8YcUZd0iZlZgP6xGbP9bZaHyUtztA3ozJqUhwvvrG8TfSnCL/7uWiYCmC
-         mZfta2xgUQ6zcGZP7RmMi3sqhaeYkxXWBYflmtlZhCcLKACLLFK5BKcnMPSkhrKzYIH7
-         RwOQ==
+        h=content-transfer-encoding:mime-version:user-agent:message-id:cc
+         :subject:date:to:from:arc-authentication-results;
+        bh=2rZg28dJxL0112fr2Awxg72EnM2l+bNY8uTsWR8VVyU=;
+        b=HjBC15/+nP+8HJfBLYKd0ggOnNq0jNSwjEKY36M6ZErwk+LrmsDpJzd6rG6oHIg29O
+         dUYplSi8LsbJw560lrzgFiKcp8Fsned/BhFAdwqskVisKXcT2rEpUpKBNun/g/YFv/Dr
+         hJrftdsysJ2uncfMgnPZeY7K+iXWo7FPUmYenVPndvvtL0VXYHvcR05s7jvCYabVyv7g
+         VTl30MmGYv6oQBpr4qi4/1Ffjk+rdwIPXyZ00X+YPSxDMapu0Cfpo9atCLdioOOmzXx1
+         X+bMx+ugSQm/ID9E+Lvckt3EpQQWhin9jgvkeDpSCKOWJRg0ydoaELlmyTOYn514INCW
+         UgBA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=W0XtpVvw;
-       spf=pass (google.com: domain of darrick.wong@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=darrick.wong@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=W0XtpVvw;
-       spf=pass (google.com: domain of darrick.wong@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=darrick.wong@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Date: Sun, 25 Mar 2018 23:48:19 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Sasha Levin <Alexander.Levin@microsoft.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@lst.de>, xfs <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Josh Triplett <josh@joshtriplett.org>, Takashi Iwai <tiwai@suse.de>,
-        Michal Hocko <mhocko@kernel.org>, Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] xfs: always free inline data before resetting inode fork
- during ifree
-Message-ID: <20180326064819.GS4818@magnolia>
-References: <20171123060137.GL2135@magnolia>
- <20180323013037.GA9190@wotan.suse.de>
- <20180323034145.GH4818@magnolia>
- <20180323170813.GD30543@wotan.suse.de>
- <20180323172620.GK4818@magnolia>
- <20180323182302.GB9190@wotan.suse.de>
- <20180324090638.GB1170@kroah.com>
- <20180324172159.GR4818@magnolia>
- <20180326045241.GA3394@sasha-vm>
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Thu, 29 Mar 2018 15:26:48 +1100
+Subject: [PATCH 00/17] staging: Assorted lustre cleanup
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152229732768.27689.4800156943561963977.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326045241.GA3394@sasha-vm>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8843 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803260064
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1595753768288631831?=
-X-GMAIL-MSGID: =?utf-8?q?1595981870598804582?=
+X-GMAIL-THRID: =?utf-8?q?1596244761675363046?=
+X-GMAIL-MSGID: =?utf-8?q?1596244761675363046?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 26, 2018 at 04:54:59AM +0000, Sasha Levin wrote:
-> On Sat, Mar 24, 2018 at 10:21:59AM -0700, Darrick J. Wong wrote:
-> >On Sat, Mar 24, 2018 at 10:06:38AM +0100, Greg Kroah-Hartman wrote:
-> >> On Fri, Mar 23, 2018 at 06:23:02PM +0000, Luis R. Rodriguez wrote:
-> >> > On Fri, Mar 23, 2018 at 10:26:20AM -0700, Darrick J. Wong wrote:
-> >> > > On Fri, Mar 23, 2018 at 05:08:13PM +0000, Luis R. Rodriguez wrote:
-> >> > > > On Thu, Mar 22, 2018 at 08:41:45PM -0700, Darrick J. Wong wrote:
-> >> > > > > On Fri, Mar 23, 2018 at 01:30:37AM +0000, Luis R. Rodriguez wrote:
-> >> > > > > > On Wed, Nov 22, 2017 at 10:01:37PM -0800, Darrick J. Wong wrote:
-> >> > > > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> >> > > > > > > index 61d1cb7..8012741 100644
-> >> > > > > > > --- a/fs/xfs/xfs_inode.c
-> >> > > > > > > +++ b/fs/xfs/xfs_inode.c
-> >> > > > > > > @@ -2401,6 +2401,24 @@ xfs_ifree_cluster(
-> >> > > > > > >  }
-> >> > > > > > >
-> >> > > > > > >  /*
-> >> > > > > > > + * Free any local-format buffers sitting around before we reset to
-> >> > > > > > > + * extents format.
-> >> > > > > > > + */
-> >> > > > > > > +static inline void
-> >> > > > > > > +xfs_ifree_local_data(
-> >> > > > > > > +	struct xfs_inode	*ip,
-> >> > > > > > > +	int			whichfork)
-> >> > > > > > > +{
-> >> > > > > > > +	struct xfs_ifork	*ifp;
-> >> > > > > > > +
-> >> > > > > > > +	if (XFS_IFORK_FORMAT(ip, whichfork) != XFS_DINODE_FMT_LOCAL)
-> >> > > > > > > +		return;
-> >> > > > > >
-> >> > > > > > I'm new to all this so this was a bit hard to follow. I'm confused with how
-> >> > > > > > commit 43518812d2 ("xfs: remove support for inlining data/extents into the
-> >> > > > > > inode fork") exacerbated the leak, isn't that commit about
-> >> > > > > > XFS_DINODE_FMT_EXTENTS?
-> >> > > > >
-> >> > > > > Not specifically _EXTENTS, merely any fork (EXTENTS or LOCAL) whose
-> >> > > > > incore data was small enough to fit in if_inline_ata.
-> >> > > >
-> >> > > > Got it, I thought those were XFS_DINODE_FMT_EXTENTS by definition.
-> >> > > >
-> >> > > > > > Did we have cases where the format was XFS_DINODE_FMT_LOCAL and yet
-> >> > > > > > ifp->if_u1.if_data == ifp->if_u2.if_inline_data ?
-> >> > > > >
-> >> > > > > An empty directory is 6 bytes, which is what you get with a fresh mkdir
-> >> > > > > or after deleting everything in the directory.  Prior to the 43518812d2
-> >> > > > > patch we could get away with not even checking if we had to free if_data
-> >> > > > > when deleting a directory because it fit within if_inline_data.
-> >> > > >
-> >> > > > Ah got it. So your fix *is* also applicable even prior to commit 43518812d2.
-> >> > >
-> >> > > You'd have to modify the patch so that it doesn't try to kmem_free
-> >> > > if_data if if_data == if_inline_data but otherwise (in theory) I think
-> >> > > that the concept applies to pre-4.15 kernels.
-> >> > >
-> >> > > (YMMV, please do run this through QA/kmemleak just in case I'm wrong, etc...)
-> >> >
-> >> > Well... so we need a resolution and better get testing this already given that
-> >> > *I believe* the new auto-selection algorithm used to cherry pick patches onto
-> >> > stable for linux-4.14.y (covered on a paper [0] and when used, stable patches
-> >> > are prefixed with AUTOSEL, a recent discussion covered this in November 2017
-> >> > [1]) recommended to merge your commit 98c4f78dcdd8 ("xfs: always free inline
-> >> > data before resetting inode fork during ifree") as stable commit 1eccdbd4836a41
-> >> > on v4.14.17 *without* merging commit 43518812d2 ("xfs: remove support for
-> >> > inlining data/extents into the inode fork").
-> >> >
-> >> > Sasha, Greg,
-> >> >
-> >> > Can you confirm if the algorithm was used in this case?
-> >>
-> >> No idea.
-> >>
-> >> I think xfs should just be added to the "blacklist" so that it is not
-> >> even looked at for these types of auto-selected patches.  Much like the
-> >> i915 driver currently is handled (it too is ignored for these patches
-> >> due to objections from the maintainers of it.)
-> >
-> >Just out of curiosity, how does this autoselection mechanism work today?
-> >If it's smart enough to cherry pick patches, apply them to a kernel,
-> >build the kernel and run xfstests, and propose the patches if nothing
-> >weird happened, then I'd be interested in looking further.  I've nothing
-> >against algorithmic selection per se, but I'd want to know more about
-> >the data sets and parameters that feed the algorithm.
-> 
-> It won't go beyond build testing.
+I'm currently working on converting lustre to use
+rhashtables instead of its own resizeable hash tables.
+That is progressing well, but I need some changes to
+rhashtable first, and that will take a little while.
+So here are some other patches.
+Some are cleanups related to hashtables,
+some are related to measuring time in jiffies
+and some are random other things I found as I was looking
+at stuff.
 
-No further regression testing ==> please blacklist XFS.
+James, if this jiffie stuff conflicts with your time-keeping stuff, we
+can just drop it.  Last time I cleaned up jiffie-related code you
+said it didn't conflict significantly, so I'm hoping this won't
+either.
 
-We will continue our current practices w.r.t. stable.
+Thanks,
+NeilBrown
 
---D
 
-> >I did receive the AUTOSEL tagged patches a few days ago, but I couldn't
-> >figure out what automated regression testing, if any, had been done; or
-> >whether the patch submission was asking if we wanted it put into 4.14
-> >or if it was a declaration that they were on their way in.  Excuse me
-> 
-> There would be (at least) 3 different mails involved in this process:
-> 
->  1. You'd get a mail from me, proposing this patch for stable. We give
->  at least 1 week (but usually closer to 2) to comment on whether this
->  patch should or should not go in stable.
-> 
->  2. If no objections were received, Greg would add it to his queue and
->  you'd get another mail about that.
-> 
->  3. A few more days later, Greg would release that stable tree and you'd
->  get another mail.
-> 
-> >for being behind the times, but I'd gotten accustomed xfs patches only
-> >ending up in the stable kernels because we'd deliberately put them
-> >there. :)
-> >
-> >If blacklisting xfs is more convenient then I'm happy to continue things
-> >as they were.
-> 
-> No problem with blacklisting subsystems if maintainers prefer it that
-> way, but the i915 case was slightly different as their development
-> process was very quirky and testing was complex, so they asked to just
-> keep doing their own selection for stable.
-> 
-> However, looking at stable history, it seems that no patch from fs/xfs/
-> was proposed for stable for about half a year now, which is something
-> that the autoselection project is trying to help with.
-> 
-> A different flow I'm working on for this is to send an email as a reply
-> to the original patch submission to lkml if the patch is selected by the
-> network, including details about which trees it was applied to and build
-> results. I think it might work better for subsystems such as xfs.
-> 
-> 
-> --
-> Thanks,
-> Sasha--
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+
+NeilBrown (17):
+      staging: lustre: remove invariant in cl_io_read_ahead()
+      staging: lustre: remove unused ldlm_completion_ast_async()
+      staging: lustre: LNET excludes USERIO
+      staging: lustre: remove unused hash tables.
+      staging: lustre: remove unneeded include.
+      staging: lustre: tidy up ldlm_resource_putref()
+      staging: lustre: ldlm: free resource when ldlm_lock_create() fails.
+      staging: lustre: add container_of_safe()
+      staging: lustre: cfs_time_current() -> jiffies.
+      staging: lustre: libcfs: discard cfs_time_add/sub
+      staging: lustre: libcfs: discard cfs_time_shift().
+      staging: lustre: libcfs: discard cfs_time_after()
+      staging: lustre: libcfs: remove cfs_timeout_cap()
+      staging: lustre: discard cfs_duration_sec()
+      staging: lustre: discard cfs_time_before_64()
+      staging: lustre: discard linux-time.h
+      staging: lustre: remove cruft from libcfs/linux/libcfs.h
+
+
+ .../staging/lustre/include/linux/libcfs/curproc.h  |    2 
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |   17 +--
+ .../lustre/include/linux/libcfs/libcfs_time.h      |   79 ---------------
+ .../lustre/include/linux/libcfs/linux/libcfs.h     |   18 ---
+ .../lustre/include/linux/libcfs/linux/linux-time.h |  103 --------------------
+ drivers/staging/lustre/lnet/Kconfig                |    2 
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c    |   32 +++---
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    |    6 +
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c |   17 ++-
+ .../staging/lustre/lnet/klnds/socklnd/socklnd.c    |   15 +--
+ .../staging/lustre/lnet/klnds/socklnd/socklnd_cb.c |   87 ++++++++---------
+ drivers/staging/lustre/lnet/libcfs/debug.c         |    2 
+ drivers/staging/lustre/lnet/libcfs/tracefile.c     |   12 +-
+ drivers/staging/lustre/lnet/lnet/lib-move.c        |   14 +--
+ drivers/staging/lustre/lnet/lnet/net_fault.c       |   40 ++++----
+ drivers/staging/lustre/lnet/lnet/peer.c            |    2 
+ drivers/staging/lustre/lnet/lnet/router.c          |   17 ++-
+ drivers/staging/lustre/lnet/lnet/router_proc.c     |   13 +--
+ drivers/staging/lustre/lnet/selftest/conrpc.c      |   14 +--
+ drivers/staging/lustre/lnet/selftest/console.c     |    4 -
+ drivers/staging/lustre/lnet/selftest/framework.c   |    2 
+ drivers/staging/lustre/lnet/selftest/timer.c       |    4 -
+ drivers/staging/lustre/lustre/include/cl_object.h  |   10 +-
+ drivers/staging/lustre/lustre/include/lu_object.h  |    6 +
+ drivers/staging/lustre/lustre/include/lustre_dlm.h |   13 ---
+ .../staging/lustre/lustre/include/lustre_export.h  |    7 -
+ drivers/staging/lustre/lustre/include/lustre_net.h |    7 +
+ drivers/staging/lustre/lustre/include/obd_class.h  |   10 +-
+ .../staging/lustre/lustre/include/obd_support.h    |   18 ---
+ drivers/staging/lustre/lustre/ldlm/ldlm_flock.c    |   11 --
+ drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     |   22 +---
+ drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c    |    5 -
+ drivers/staging/lustre/lustre/ldlm/ldlm_request.c  |   66 ++-----------
+ drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |   25 ++---
+ .../staging/lustre/lustre/llite/llite_internal.h   |    2 
+ drivers/staging/lustre/lustre/llite/llite_lib.c    |    4 -
+ drivers/staging/lustre/lustre/llite/llite_nfs.c    |    2 
+ drivers/staging/lustre/lustre/llite/lproc_llite.c  |   12 +-
+ drivers/staging/lustre/lustre/llite/statahead.c    |    4 -
+ drivers/staging/lustre/lustre/llite/vvp_internal.h |    8 +-
+ drivers/staging/lustre/lustre/lmv/lmv_internal.h   |    2 
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c        |    2 
+ .../staging/lustre/lustre/lov/lov_cl_internal.h    |   18 ++-
+ drivers/staging/lustre/lustre/lov/lov_internal.h   |    2 
+ drivers/staging/lustre/lustre/lov/lov_obd.c        |    2 
+ drivers/staging/lustre/lustre/lov/lov_request.c    |    4 -
+ drivers/staging/lustre/lustre/mdc/mdc_request.c    |    2 
+ drivers/staging/lustre/lustre/obdclass/cl_io.c     |    1 
+ drivers/staging/lustre/lustre/obdclass/cl_object.c |    1 
+ drivers/staging/lustre/lustre/obdclass/genops.c    |    2 
+ .../lustre/lustre/obdclass/lprocfs_status.c        |   12 +-
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |    8 +-
+ .../staging/lustre/lustre/obdclass/obd_config.c    |    2 
+ .../staging/lustre/lustre/obdecho/echo_client.c    |    2 
+ drivers/staging/lustre/lustre/osc/osc_cache.c      |    2 
+ .../staging/lustre/lustre/osc/osc_cl_internal.h    |   10 +-
+ drivers/staging/lustre/lustre/osc/osc_internal.h   |    2 
+ drivers/staging/lustre/lustre/osc/osc_io.c         |    2 
+ drivers/staging/lustre/lustre/osc/osc_object.c     |   11 +-
+ drivers/staging/lustre/lustre/osc/osc_page.c       |    4 -
+ drivers/staging/lustre/lustre/osc/osc_request.c    |    6 +
+ drivers/staging/lustre/lustre/ptlrpc/client.c      |    4 -
+ drivers/staging/lustre/lustre/ptlrpc/import.c      |   10 +-
+ drivers/staging/lustre/lustre/ptlrpc/pinger.c      |   23 ++--
+ drivers/staging/lustre/lustre/ptlrpc/service.c     |    6 +
+ include/linux/kernel.h                             |   16 +++
+ 66 files changed, 284 insertions(+), 606 deletions(-)
+ delete mode 100644 drivers/staging/lustre/include/linux/libcfs/libcfs_time.h
+ delete mode 100644 drivers/staging/lustre/include/linux/libcfs/linux/linux-time.h
+
+--
+Signature
