@@ -1,262 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752942AbeC2MZy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:25:54 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49099 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752427AbeC2MXE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:23:04 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: [PATCH v8 08/10] sched: idle: Select idle state before stopping the tick
-Date: Thu, 29 Mar 2018 14:16:24 +0200
-Message-ID: <1717553.uJRtP9dZYi@aspire.rjw.lan>
-In-Reply-To: <40092860.XNQZrLjKDd@aspire.rjw.lan>
-References: <40092860.XNQZrLjKDd@aspire.rjw.lan>
+        id S1752614AbeC2M0s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:26:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:29504 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751182AbeC2M0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 08:26:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="37859587"
+Subject: Re: [PATCH V4 1/3] mmc: sdhci: Add support for O2 eMMC HS200 mode
+To: "ernest.zhang" <ernest.zhang@bayhubtech.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: xiaoguang.yu@bayhubtech.com, shirley.her@bayhubtech.com,
+        yuxiang.wan@bayhubtech.com
+References: <1520604265-4430-1-git-send-email-ernest.zhang@bayhubtech.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <fbdc3592-cb50-9c0e-d5fd-0ab087f09a69@intel.com>
+Date: Thu, 29 Mar 2018 15:25:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1520604265-4430-1-git-send-email-ernest.zhang@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 09/03/18 16:04, ernest.zhang wrote:
+> When use eMMC as boot device, the eMMC signaling voltage is tied to 1.8v
+> fixed output voltage, bios can set o2 sd host controller PCI configuration
+> register 0x308 bit4 to 1 to let driver skip 3.3v signaling voltage and 
+> direct use 1.8v singling voltage in eMMC initialize process.
+> 
+> Changes: Check PCIe register 0x308 bit 4 and skip eMMC 3.3v initialization
+> process if it is set to 1.
+> 
+> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
 
-In order to address the issue with short idle duration predictions
-by the idle governor after the scheduler tick has been stopped,
-reorder the code in cpuidle_idle_call() so that the governor idle
-state selection runs before tick_nohz_idle_go_idle() and use the
-"nohz" hint returned by cpuidle_select() to decide whether or not
-to stop the tick.
+Notwithstanding minor formatting comment below:
 
-This isn't straightforward, because menu_select() invokes
-tick_nohz_get_sleep_length() to get the time to the next timer
-event and the number returned by the latter comes from
-__tick_nohz_idle_stop_tick().  Fortunately, however, it is possible
-to compute that number without actually stopping the tick and with
-the help of the existing code.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Namely, tick_nohz_get_sleep_length() can be made call
-tick_nohz_next_event(), introduced earlier, to get the time to the
-next non-highres timer event.  If that happens, tick_nohz_next_event()
-need not be called by __tick_nohz_idle_stop_tick() again.
+> ---
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index 555970a..d465751 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -3,6 +3,7 @@
+>   *
+>   * Authors: Peter Guo <peter.guo@bayhubtech.com>
+>   *          Adam Lee <adam.lee@canonical.com>
+> + *          Ernest Zhang <ernest.zhang@bayhubtech.com>
+>   *
+>   * This software is licensed under the terms of the GNU General Public
+>   * License version 2, as published by the Free Software Foundation, and
+> @@ -39,6 +40,7 @@
+>  #define O2_SD_MISC_CTRL4	0xFC
+>  #define O2_SD_TUNING_CTRL	0x300
+>  #define O2_SD_PLL_SETTING	0x304
+> +#define O2_SD_MISC_SETTING	0x308
+>  #define O2_SD_CLK_SETTING	0x328
+>  #define O2_SD_CAP_REG2		0x330
+>  #define O2_SD_CAP_REG0		0x334
+> @@ -184,6 +186,7 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  	struct sdhci_pci_chip *chip;
+>  	struct sdhci_host *host;
+>  	u32 reg;
+> +	int ret;
+>  
+>  	chip = slot->chip;
+>  	host = slot->host;
+> @@ -197,6 +200,21 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  		if (reg & 0x1)
+>  			host->quirks |= SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12;
+>  
+> +		if (chip->pdev->device == PCI_DEVICE_ID_O2_SEABIRD0) {
+> +			ret = pci_read_config_dword(chip->pdev,
+> +						    O2_SD_MISC_SETTING, &reg);
+> +			if (ret)
+> +				return -EIO;
+> +			if (reg & (1 << 4)) {
+> +				pr_info("%s: emmc 1.8v flag is set, force 1.8v signaling voltage\n",
+> +				     mmc_hostname(host->mmc));
 
-If it turns out that the scheduler tick cannot be stopped going
-forward or the next timer event is too close for the tick to be
-stopped, tick_nohz_get_sleep_length() can simply return the time to
-the next event currently programmed into the corresponding clock
-event device.
+Indenting is a little odd i.e. checkpatch says
 
-In addition to knowing the return value of tick_nohz_next_event(),
-however, tick_nohz_get_sleep_length() needs to know the time to the
-next highres timer event, but with the scheduler tick timer excluded,
-which can be computed with the help of hrtimer_get_next_event().
+CHECK: Alignment should match open parenthesis
+#58: FILE: drivers/mmc/host/sdhci-pci-o2micro.c:210:
++                               pr_info("%s: emmc 1.8v flag is set, force
+1.8v signaling voltage\n",
++                                    mmc_hostname(host->mmc))
 
-That minimum of that number and the tick_nohz_next_event() return
-value is the total time to the next timer event with the assumption
-that the tick will be stopped.  It can be returned to the idle
-governor which can use it for predicting idle duration (under the
-assumption that the tick will be stopped) and deciding whether or
-not it makes sense to stop the tick before putting the CPU into the
-selected idle state.
-
-With the above, the sleep_length field in struct tick_sched is not
-necessary any more, so drop it.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v7 -> v8:
-  * Some changes moved to patch [06/10].
-  * Use hrtimer_get_next_event() in tick_nohz_get_sleep_length().
-  * Add timer_clear_idle() to tick_nohz_idle_retain_tick().
-
----
- include/linux/hrtimer.h  |    2 -
- include/linux/tick.h     |    2 +
- kernel/sched/idle.c      |   11 ++++++--
- kernel/time/hrtimer.c    |   56 +++++++++++++++++++++++++++++++++----------
- kernel/time/tick-sched.c |   61 +++++++++++++++++++++++++++++++++++++----------
- kernel/time/tick-sched.h |    2 -
- kernel/time/timer.c      |    4 +--
- 7 files changed, 105 insertions(+), 33 deletions(-)
-
-Index: linux-pm/include/linux/tick.h
-===================================================================
---- linux-pm.orig/include/linux/tick.h
-+++ linux-pm/include/linux/tick.h
-@@ -115,6 +115,7 @@ enum tick_dep_bits {
- extern bool tick_nohz_enabled;
- extern int tick_nohz_tick_stopped(void);
- extern void tick_nohz_idle_stop_tick(void);
-+extern void tick_nohz_idle_retain_tick(void);
- extern void tick_nohz_idle_restart_tick(void);
- extern void tick_nohz_idle_enter(void);
- extern void tick_nohz_idle_exit(void);
-@@ -137,6 +138,7 @@ static inline void tick_nohz_idle_stop_t
- #define tick_nohz_enabled (0)
- static inline int tick_nohz_tick_stopped(void) { return 0; }
- static inline void tick_nohz_idle_stop_tick(void) { }
-+static inline void tick_nohz_idle_retain_tick(void) { }
- static inline void tick_nohz_idle_restart_tick(void) { }
- static inline void tick_nohz_idle_enter(void) { }
- static inline void tick_nohz_idle_exit(void) { }
-Index: linux-pm/kernel/sched/idle.c
-===================================================================
---- linux-pm.orig/kernel/sched/idle.c
-+++ linux-pm/kernel/sched/idle.c
-@@ -190,13 +190,18 @@ static void cpuidle_idle_call(void)
- 	} else {
- 		bool stop_tick = true;
- 
--		tick_nohz_idle_stop_tick();
--		rcu_idle_enter();
--
- 		/*
- 		 * Ask the cpuidle framework to choose a convenient idle state.
- 		 */
- 		next_state = cpuidle_select(drv, dev, &stop_tick);
-+
-+		if (stop_tick)
-+			tick_nohz_idle_stop_tick();
-+		else
-+			tick_nohz_idle_retain_tick();
-+
-+		rcu_idle_enter();
-+
- 		entered_state = call_cpuidle(drv, dev, next_state);
- 		/*
- 		 * Give the governor an opportunity to reflect on the outcome
-Index: linux-pm/kernel/time/tick-sched.c
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.c
-+++ linux-pm/kernel/time/tick-sched.c
-@@ -930,16 +930,19 @@ static bool can_stop_idle_tick(int cpu,
- 
- static void __tick_nohz_idle_stop_tick(struct tick_sched *ts)
- {
--	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
- 	ktime_t expires;
- 	int cpu = smp_processor_id();
- 
--	WARN_ON_ONCE(ts->timer_expires_base);
--
--	if (!can_stop_idle_tick(cpu, ts))
--		goto out;
--
--	expires = tick_nohz_next_event(ts, cpu);
-+	/*
-+	 * If tick_nohz_get_sleep_length() ran tick_nohz_next_event(), the
-+	 * tick timer expiration time is known already.
-+	 */
-+	if (ts->timer_expires_base)
-+		expires = ts->timer_expires;
-+	else if (can_stop_idle_tick(cpu, ts))
-+		expires = tick_nohz_next_event(ts, cpu);
-+	else
-+		return;
- 
- 	ts->idle_calls++;
- 
-@@ -958,9 +961,6 @@ static void __tick_nohz_idle_stop_tick(s
- 	} else {
- 		tick_nohz_retain_tick(ts);
- 	}
--
--out:
--	ts->sleep_length = ktime_sub(dev->next_event, ts->idle_entrytime);
- }
- 
- /**
-@@ -973,6 +973,16 @@ void tick_nohz_idle_stop_tick(void)
- 	__tick_nohz_idle_stop_tick(this_cpu_ptr(&tick_cpu_sched));
- }
- 
-+void tick_nohz_idle_retain_tick(void)
-+{
-+	tick_nohz_retain_tick(this_cpu_ptr(&tick_cpu_sched));
-+	/*
-+	 * Undo the effect of get_next_timer_interrupt() called from
-+	 * tick_nohz_next_event().
-+	 */
-+	timer_clear_idle();
-+}
-+
- /**
-  * tick_nohz_idle_enter - prepare for entering idle on the current CPU
-  *
-@@ -1036,15 +1046,42 @@ bool tick_nohz_idle_got_tick(void)
- }
- 
- /**
-- * tick_nohz_get_sleep_length - return the length of the current sleep
-+ * tick_nohz_get_sleep_length - return the expected length of the current sleep
-  *
-  * Called from power state control code with interrupts disabled
-  */
- ktime_t tick_nohz_get_sleep_length(void)
- {
-+	struct clock_event_device *dev = __this_cpu_read(tick_cpu_device.evtdev);
- 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
-+	int cpu = smp_processor_id();
-+	/*
-+	 * The idle entry time is expected to be a sufficient approximation of
-+	 * the current time at this point.
-+	 */
-+	ktime_t now = ts->idle_entrytime;
-+	ktime_t next_event;
-+
-+	WARN_ON_ONCE(!ts->inidle);
-+
-+	if (!can_stop_idle_tick(cpu, ts))
-+		goto out_dev;
-+
-+	next_event = tick_nohz_next_event(ts, cpu);
-+	if (!next_event)
-+		goto out_dev;
-+
-+	/*
-+	 * If the next highres timer to expire is earlier than next_event, the
-+	 * idle governor needs to know that.
-+	 */
-+	next_event = min_t(u64, next_event,
-+			   hrtimer_get_next_event(&ts->sched_timer));
-+
-+	return ktime_sub(next_event, now);
- 
--	return ts->sleep_length;
-+out_dev:
-+	return ktime_sub(dev->next_event, now);
- }
- 
- /**
-Index: linux-pm/kernel/time/tick-sched.h
-===================================================================
---- linux-pm.orig/kernel/time/tick-sched.h
-+++ linux-pm/kernel/time/tick-sched.h
-@@ -38,7 +38,6 @@ enum tick_nohz_mode {
-  * @idle_exittime:	Time when the idle state was left
-  * @idle_sleeptime:	Sum of the time slept in idle with sched tick stopped
-  * @iowait_sleeptime:	Sum of the time slept in idle with sched tick stopped, with IO outstanding
-- * @sleep_length:	Duration of the current idle sleep
-  * @timer_expires:	Anticipated timer expiration time (in case sched tick is stopped)
-  * @timer_expires_base:	Base time clock monotonic for @timer_expires
-  * @do_timer_lst:	CPU was the last one doing do_timer before going idle
-@@ -60,7 +59,6 @@ struct tick_sched {
- 	ktime_t				idle_exittime;
- 	ktime_t				idle_sleeptime;
- 	ktime_t				iowait_sleeptime;
--	ktime_t				sleep_length;
- 	unsigned long			last_jiffies;
- 	u64				timer_expires;
- 	u64				timer_expires_base;
+> +				host->flags &= ~SDHCI_SIGNALING_330;
+> +				host->flags |= SDHCI_SIGNALING_180;
+> +				host->mmc->caps2 |= MMC_CAP2_NO_SD;
+> +				host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
+> +			}
+> +		}
+> +
+>  		if (chip->pdev->device != PCI_DEVICE_ID_O2_FUJIN2)
+>  			break;
+>  		/* set dll watch dog timer */
+> 
