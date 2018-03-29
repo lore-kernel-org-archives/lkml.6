@@ -1,75 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeC2NuP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:50:15 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58262 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeC2NuO (ORCPT
+        id S1752628AbeC2NxE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:53:04 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:52730 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751908AbeC2NxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:50:14 -0400
-Date: Thu, 29 Mar 2018 16:49:57 +0300
-From: Shamir Rabinovitch <shamir.rabinovitch@oracle.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] qedr: ix spelling mistake: "hanlde" -> "handle"
-Message-ID: <20180329134957.GA29272@srabinov-linux.nl.oracle.com>
-References: <20180329121107.27248-1-colin.king@canonical.com>
+        Thu, 29 Mar 2018 09:53:03 -0400
+X-Google-Smtp-Source: AIpwx4+bpJqTouBxeL53zqY2NtuyvWARZVI5qnT2yvb54me7Oce8+hbPUzNFbmzU1sE6Kxlv8uko/8+dOBpI4iYdp+s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329121107.27248-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8846 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=462
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803290140
+In-Reply-To: <20180329085017.tkdtx77u4khiuqhw@8bytes.org>
+References: <20180215191729.15777-1-dima@arista.com> <20180315134649.skh2aukcmg5ud74y@8bytes.org>
+ <1521123183.2686.7.camel@arista.com> <20180315142253.GC5259@8bytes.org>
+ <1521124490.2686.16.camel@arista.com> <1521124920.2686.20.camel@arista.com>
+ <20180315152828.GA11365@8bytes.org> <1521579013.2686.83.camel@arista.com> <20180329085017.tkdtx77u4khiuqhw@8bytes.org>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Thu, 29 Mar 2018 14:52:41 +0100
+Message-ID: <CAJwJo6aav1Ggsat2o9H8HL0bjTzTcjtwKPL5EU0iJQo6v5-WQA@mail.gmail.com>
+Subject: Re: [PATCHv3] iommu/intel: Ratelimit each dmar fault printing
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Dmitry Safonov <dima@arista.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 01:11:07PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in DP_ERR message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/qedr/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/qedr/main.c b/drivers/infiniband/hw/qedr/main.c
-> index 1f032fdbdb19..36d60d3c1630 100644
-> --- a/drivers/infiniband/hw/qedr/main.c
-> +++ b/drivers/infiniband/hw/qedr/main.c
-> @@ -708,7 +708,7 @@ static void qedr_affiliated_event(void *context, u8 e_code, void *fw_handle)
->  			     "Error: CQ event with NULL pointer ibcq. Handle=%llx\n",
->  			     roce_handle64);
->  		}
-> -		DP_ERR(dev, "CQ event %d on hanlde %p\n", e_code, cq);
-> +		DP_ERR(dev, "CQ event %d on handle %p\n", e_code, cq);
->  		break;
->  	case EVENT_TYPE_QP:
->  		qp = (struct qedr_qp *)(uintptr_t)roce_handle64;
-> @@ -724,7 +724,7 @@ static void qedr_affiliated_event(void *context, u8 e_code, void *fw_handle)
->  			     "Error: QP event with NULL pointer ibqp. Handle=%llx\n",
->  			     roce_handle64);
->  		}
-> -		DP_ERR(dev, "QP event %d on hanlde %p\n", e_code, qp);
-> +		DP_ERR(dev, "QP event %d on handle %p\n", e_code, qp);
->  		break;
->  	default:
->  		break;
-> -- 
-> 2.15.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2018-03-29 9:50 GMT+01:00 Joerg Roedel <joro@8bytes.org>:
+> On Tue, Mar 20, 2018 at 08:50:13PM +0000, Dmitry Safonov wrote:
+>> Hmm, but this fixes my softlockup issue, because it's about time spent
+>> in printk() inside irq-disabled section, rather about exiting the dmar-
+>> clearing loop.
+>> And on my hw doesn't make any difference to limit loop or not because
+>> clearing a fault is much faster than hw could generate a new fault.
+>> ITOW, it fixes the softlockup for me and the loop-related lockup can't
+>> happen on hw I have (so it's the other issue, [possible?] on other hw).
+>
+> It might solve your issue, but someone else might still run into it with
+> a different setup. An upstream fix needs to solve it for everyone.
 
-Reviewed-by: Shamir Rabinovitch <shamir.rabinovitch@oracle.com>
+Ok, I'll resend v4 with an additional patch to limit the loop.
+
+Thanks,
+             Dmitry
