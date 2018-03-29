@@ -1,105 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeC2CA3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 22:00:29 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:59885 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeC2CA2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 22:00:28 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w2T20PvN014892
-X-Nifty-SrcIP: [209.85.217.176]
-X-Google-Smtp-Source: AIpwx49o3qsWe7UlEaIe10criw8bulnFdAVJNNQJTBhCWZyiOi/vxOxndHk8rpqvWpdaGqiyfo4Nu3pqcIxfj32wNH0=
+        id S1752222AbeC2CBC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 22:01:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751513AbeC2CBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 22:01:00 -0400
+Subject: Re: [PATCH] vhost-net: add time limitation for tx polling(Internet
+ mail)
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: =?UTF-8?B?aGFpYmluemhhbmco5byg5rW35paMKQ==?=
+        <haibinzhang@tencent.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?bGlkb25nY2hlbijpmYjnq4vkuJwp?= <lidongchen@tencent.com>,
+        =?UTF-8?B?eXVuZmFuZ3RhaSjlj7Dov5Dmlrkp?= <yunfangtai@tencent.com>
+References: <88D661ADF6AFBF42B2AB88D8E7682B0901FC412A@EXMBX-SZMAIL011.tencent.com>
+ <0b1846d3-dfcf-df0c-f94c-65d414331d88@redhat.com>
+ <20180328182813-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <f1a80199-ccf2-850b-1249-31f8f920ede3@redhat.com>
+Date: Thu, 29 Mar 2018 10:00:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180329085809.78af08ff@canb.auug.org.au>
-References: <20180329085809.78af08ff@canb.auug.org.au>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 29 Mar 2018 10:59:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARRbEacK7Y9+yYjLEDVOu7iz8BJetaFd82NMw2cEnbaJg@mail.gmail.com>
-Message-ID: <CAK7LNARRbEacK7Y9+yYjLEDVOu7iz8BJetaFd82NMw2cEnbaJg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Taehee Yoo <ap420073@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180328182813-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
 
-2018-03-29 6:58 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Masahiro,
+
+On 2018年03月28日 23:31, Michael S. Tsirkin wrote:
+> On Wed, Mar 28, 2018 at 02:37:04PM +0800, Jason Wang wrote:
+>>
+>> On 2018年03月28日 12:01, haibinzhang(张海斌) wrote:
+>>> On 2018年03月27日 19:26, Jason wrote
+>>> On 2018年03月27日 17:12, haibinzhang wrote:
+>>>>> handle_tx() will delay rx for a long time when busy tx polling udp packets
+>>>>> with short length(ie: 1byte udp payload), because setting VHOST_NET_WEIGHT
+>>>>> takes into account only sent-bytes but no time.
+>>>> Interesting.
+>>>>
+>>>> Looking at vhost_can_busy_poll() it tries to poke pending vhost work and
+>>>> exit the busy loop if it found one. So I believe something block the
+>>>> work queuing. E.g did reverting 8241a1e466cd56e6c10472cac9c1ad4e54bc65db
+>>>> fix the issue?
+>>> "busy tx polling" means using netperf send udp packets with 1 bytes payload(total 47bytes frame lenght),
+>>> and handle_tx() will be busy sending packets continuously.
+>>>
+>>>>>     It's not fair for handle_rx(),
+>>>>> so needs to limit max time of tx polling.
+>>>>>
+>>>>> ---
+>>>>>     drivers/vhost/net.c | 3 ++-
+>>>>>     1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>>>>> index 8139bc70ad7d..dc9218a3a75b 100644
+>>>>> --- a/drivers/vhost/net.c
+>>>>> +++ b/drivers/vhost/net.c
+>>>>> @@ -473,6 +473,7 @@ static void handle_tx(struct vhost_net *net)
+>>>>>     	struct socket *sock;
+>>>>>     	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+>>>>>     	bool zcopy, zcopy_used;
+>>>>> +	unsigned long start = jiffies;
+>>>> Checking jiffies is tricky, need to convert it to ms or whatever others.
+>>>>
+>>>>>     	mutex_lock(&vq->mutex);
+>>>>>     	sock = vq->private_data;
+>>>>> @@ -580,7 +581,7 @@ static void handle_tx(struct vhost_net *net)
+>>>>>     		else
+>>>>>     			vhost_zerocopy_signal_used(net, vq);
+>>>>>     		vhost_net_tx_packet(net);
+>>>>> -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+>>>>> +		if (unlikely(total_len >= VHOST_NET_WEIGHT) || unlikely(jiffies - start >= 1)) {
+>>>> How value 1 is determined here? And we need a complete test to make sure
+>>>> this won't affect other use cases.
+>>> We just want <1ms ping latency, but actually we are not sure what value is reasonable.
+>>> We have some test results using netperf before this patch as follow,
+>>>
+>>>       Udp payload    1byte    100bytes    1000bytes    1400bytes
+>>>     Ping avg latency    25ms     10ms       2ms         1.5ms
+>>>
+>>> What is other testcases?
+>> Something like https://patchwork.kernel.org/patch/10151645/.
+>>
+>> Btw, you need use time_before() to properly handle jiffies overflow and I
+>> would also suggest you to try something like #packets limit (e.g 64).
+> Maybe a ring size?
+
+Yes or a factor of ring size.
+
 >
-> After merging the kbuild tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> net/ipv4/netfilter/nf_nat_snmp_basic_main.c:57:10: fatal err
-> or: nf_nat_snmp_basic.asn1.h: No such file or directory
->  #include "nf_nat_snmp_basic.asn1.h"
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Presuambly caused by commit
->
->   9ee1b1bb8743 ("kbuild: rename *-asn1.[ch] to *.asn1.[ch]")
->
-> though I am not sure why it didn't fail yesterday.
->
-> I reverted that commit (and the following one because of a conflict)
-> for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
+>> For long term, we definitely need more worker threads.
+>>
+>> Thanks
+> Only helps when you have spare CPUs.
 
+Right.
 
-Thanks for the report.
+Thanks
 
-I think my patch is just a coincidence.
-
-The netfilter Makefile seems weird.
-
-I queued up the following fix-up to my kbuild tree.
-Hopefully linux-next will be OK tomorrow.
-
-
-
-
-
-
-commit 28913ee8191adf4bbc01cbfb9ee18cca782ab141
-Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu Mar 29 09:24:28 2018 +0900
-
-    netfilter: nf_nat_snmp_basic: add correct dependency to Makefile
-
-    nf_nat_snmp_basic_main.c includes a generated header, but the
-    necessary dependency is missing in Makefile. This could cause
-    build error in parallel building.
-
-    Remove a weird line, and add a correct one.
-
-    Fixes: cc2d58634e0f ("netfilter: nf_nat_snmp_basic: use asn1
-decoder library")
-    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-    Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-diff --git a/net/ipv4/netfilter/Makefile b/net/ipv4/netfilter/Makefile
-index 2dad20e..9bd19cd 100644
---- a/net/ipv4/netfilter/Makefile
-+++ b/net/ipv4/netfilter/Makefile
-@@ -29,7 +29,7 @@ obj-$(CONFIG_NF_NAT_H323) += nf_nat_h323.o
- obj-$(CONFIG_NF_NAT_PPTP) += nf_nat_pptp.o
-
- nf_nat_snmp_basic-y := nf_nat_snmp_basic-asn1.o nf_nat_snmp_basic_main.o
--nf_nat_snmp_basic-y : nf_nat_snmp_basic-asn1.h nf_nat_snmp_basic-asn1.c
-+$(obj)/nf_nat_snmp_basic_main.o: $(obj)/nf_nat_snmp_basic-asn1.h
- obj-$(CONFIG_NF_NAT_SNMP_BASIC) += nf_nat_snmp_basic.o
- clean-files := nf_nat_snmp_basic-asn1.c nf_nat_snmp_basic-asn1.h
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+>>>> Another thought is introduce another limit of #packets, but this need
+>>>> benchmark too.
+>>>>
+>>>> Thanks
+>>>>
+>>>>>     			vhost_poll_queue(&vq->poll);
+>>>>>     			break;
+>>>>>     		}
