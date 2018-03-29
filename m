@@ -1,79 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346898-2-2549920225187258535
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522346898; b=Fiq1INFaNi/Alg0qMLAZbJShjH2LnA1k2ELcGWgVDFPPhmjQNh
-    hdAM1vtCczMGY6+irKR1SlwFGS+XEkEhLOpcUd8dPjgDTgTdFA8YSY3nPCnYNRr7
-    NM00k2Eiu83NJQRWVBxGAEeDu7w5oFUGrotuWEUdpjY9fy/fO0Lu2JUWt7t0SLKK
-    +onwKIuKLwe/cW9z/d2CfTHUE13cMffb+MwDayK8s8HOvh3KzitI+R1hoDhdBfx+
-    67/Hl9qGqzTo0SWWOhElWtJ00n9UyOk8GAc7Cn1zKrl0+3XGzh0OWhwc73V0+1o6
-    wHpQqglJ4QyUyqfvSkfFu6wVxQMPourGkzHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1522346898; bh=ujGUzzvICLboNLsLb1o/LaXe4ISYlm
-    /vzBKjlYJlumg=; b=S6226eF8mV0xHq2zo5ctzYM7hhKfPQtFS1rii3kPNIY9t1
-    /ZDfpKharSH7apE6T0UIAQjXGpyryL3I7Va2B6lvrpqBy9AFlINMghOOS7uMX1gB
-    9Tnn6r7B2q8F3UWfQt+mVXgXHUoArQDO3hwOHpYMdesu1QUhwS8/DO5PiVFmij+f
-    07e8ngQt30++nKKv1d7wONHKhbTmmYpn5vYhwxDrIDQlBiOorUsEJOMS3EQZFbDC
-    DT6M2te3GD/ZuXwId6RMkqDFx1R9MbHIdZJPktnWxHMY+ZtXyDoXoZrSng6+CWl7
-    Ius4xJvRP8fv6HLur510BN5ql8Ae/Y5NLyo7eNxQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDTitxvicUMBfq9TjtdpvqBq0WH7uqUd7LzZcAhxlWk2ukcJL4QbNj9hxOeVB6wIJ7/mIZ26ajDE5+GUbCZHAZS5LysdyqOUFDQrolSe2xhvd7vaZHAF
-    AVIvchd38MGiUURFJrf94/nG3gwiH997eQ8bX782yFwK1aLVU/0nL80pdNDCacwx6/5mUgAFGixJ6X4XEfpWGn6sP0xDrdq6PtvPCQO2yUhuH3y2GrQhWnp+
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=VnNF1IyMAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=5obkJBC4009fAKjw8KMA:9
-    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754234AbeC2SIP (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 14:08:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60568 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754076AbeC2SIN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:08:13 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48XAEyNjiRaQxi1q+inLIKl6UKJSSaMrHgoE7QvMAW0Yp8kfAgSD8+cYJLvOcsQ3CWr9HjV
+ARC-Seal: i=1; a=rsa-sha256; t=1522346896; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GKDKpG7fhqxsVV8vhW0EPWXQSa/qkg3MKXU2eeIXp4PiSdbPz9wZLOI0RtBv4FsGL0
+         RdrUsyEB02Je0Q/QL5ce5nuLY998Vw+jEJkzr7nkHbaphoDATMS5684d4kkCrCQJy0Fi
+         Bf+0bOEvJVK838z6QnB3P+J2AzabJOCyykXdFjkMbFcrGMOkyQExuNjaDcSDTYrBRjWs
+         HgybfCHCCZJPD6fiYEmDFUOu9gGQx0iCNuP2g/RkHlatgo5rZFgjXKXwm0BIJhQI/lER
+         +gIfmkvXGxWJbpPBRiP8yYVdJEROg5TcjL9hM4DTMnBbQrlElFephFMvSiAm0W1eMyjn
+         3yxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Xn+YMJRel8ESxNXYt3KuIsRCoUpnVyu9notBg+qiuAM=;
+        b=U26EmtmzY2Gh0B2WWgHsQw4Pc7rADY2cYjUnsR6R0e+SV8gZZ1+mz6QVUqZzV5xhx4
+         mVeLZr72GcDq5/QiyiH4/bNasQmLDIBPTmKvvVP6OPX3Kx3GsnK7tnfKky22Zh/KkFuK
+         z42WKibuN0dqR29CddL7GEpoMrRcnr4CafOL3EuujfMfS+6Nm+GFXKQnIWiJA18fhEDH
+         L7Z4s7Hq8gvS4+jJFKtX/gBEej5KfkDPmmgrPRSTNNCnJUNlSmoEdEJqiHXxKbfdliC2
+         F+Exy08+y9xFoXBoJD98uZuqH9p6P36MgY4BvvaDnc6ELfLyMBtERDGZjhii86PkjGzC
+         2i8w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 15/20] s390/qeth: when thread completes, wake up all waiters
-Date: Thu, 29 Mar 2018 20:00:51 +0200
-Message-Id: <20180329175742.647123546@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 16/20] s390/qeth: lock read device while queueing next buffer
+Date: Thu, 29 Mar 2018 20:00:52 +0200
+Message-Id: <20180329175742.721313684@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
@@ -81,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1596296068868373661?=
+X-GMAIL-MSGID: =?utf-8?q?1596296419364951278?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -94,28 +52,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit 1063e432bb45be209427ed3f1ca3908e4aa3c7d7 ]
+[ Upstream commit 17bf8c9b3d499d5168537c98b61eb7a1fcbca6c2 ]
 
-qeth_wait_for_threads() is potentially called by multiple users, make
-sure to notify all of them after qeth_clear_thread_running_bit()
-adjusted the thread_running_mask. With no timeout, callers would
-otherwise stall.
+For calling ccw_device_start(), issue_next_read() needs to hold the
+device's ccwlock.
+This is satisfied for the IRQ handler path (where qeth_irq() gets called
+under the ccwlock), but we need explicit locking for the initial call by
+the MPC initialization.
 
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/net/qeth_core_main.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 --- a/drivers/s390/net/qeth_core_main.c
 +++ b/drivers/s390/net/qeth_core_main.c
-@@ -952,7 +952,7 @@ void qeth_clear_thread_running_bit(struc
- 	spin_lock_irqsave(&card->thread_mask_lock, flags);
- 	card->thread_running_mask &= ~thread;
- 	spin_unlock_irqrestore(&card->thread_mask_lock, flags);
--	wake_up(&card->wait_q);
-+	wake_up_all(&card->wait_q);
+@@ -517,8 +517,7 @@ static inline int qeth_is_cq(struct qeth
+ 	    queue == card->qdio.no_in_queues - 1;
  }
- EXPORT_SYMBOL_GPL(qeth_clear_thread_running_bit);
  
+-
+-static int qeth_issue_next_read(struct qeth_card *card)
++static int __qeth_issue_next_read(struct qeth_card *card)
+ {
+ 	int rc;
+ 	struct qeth_cmd_buffer *iob;
+@@ -549,6 +548,17 @@ static int qeth_issue_next_read(struct q
+ 	return rc;
+ }
+ 
++static int qeth_issue_next_read(struct qeth_card *card)
++{
++	int ret;
++
++	spin_lock_irq(get_ccwdev_lock(CARD_RDEV(card)));
++	ret = __qeth_issue_next_read(card);
++	spin_unlock_irq(get_ccwdev_lock(CARD_RDEV(card)));
++
++	return ret;
++}
++
+ static struct qeth_reply *qeth_alloc_reply(struct qeth_card *card)
+ {
+ 	struct qeth_reply *reply;
+@@ -1174,7 +1184,7 @@ static void qeth_irq(struct ccw_device *
+ 		return;
+ 	if (channel == &card->read &&
+ 	    channel->state == CH_STATE_UP)
+-		qeth_issue_next_read(card);
++		__qeth_issue_next_read(card);
+ 
+ 	iob = channel->iob;
+ 	index = channel->buf_no;
