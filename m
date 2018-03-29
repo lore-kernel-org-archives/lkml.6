@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeC2LzW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:55:22 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59628 "EHLO
+        id S1753370AbeC2L4R (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:56:17 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59534 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752699AbeC2L0G (ORCPT
+        with ESMTP id S1752401AbeC2L0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 07:26:06 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Alexander Viro <viro@ZenIV.linux.org.uk>
-Subject: [PATCH 052/109] fs: add do_epoll_*() helpers; remove internal calls to sys_epoll_*()
-Date: Thu, 29 Mar 2018 13:23:29 +0200
-Message-Id: <20180329112426.23043-53-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 072/109] fs: add ksys_unlink() wrapper; remove in-kernel calls to sys_unlink()
+Date: Thu, 29 Mar 2018 13:23:49 +0200
+Message-Id: <20180329112426.23043-73-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -21,92 +22,115 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the helper functions do_epoll_create() and do_epoll_wait() allows us
-to remove in-kernel calls to the related syscall functions.
+Using this wrapper allows us to avoid the in-kernel calls to the
+sys_unlink() syscall. The ksys_ prefix denotes that this function is meant
+s a drop-in replacement for the syscall. In particular, it uses the same
+calling convention as sys_unlink().
+
+In the near future, all callers of ksys_unlink() should be converted to
+call do_unlinkat() directly or, at least, to operate on regular kernel
+pointers.
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/eventpoll.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ include/linux/syscalls.h | 11 +++++++++++
+ init/do_mounts.h         |  2 +-
+ init/do_mounts_initrd.c  |  4 ++--
+ init/do_mounts_rd.c      |  2 +-
+ init/initramfs.c         |  4 ++--
+ 5 files changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 0f3494ed3ed0..602ca4285b2e 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1936,7 +1936,7 @@ static void clear_tfile_check_list(void)
- /*
-  * Open an eventpoll file descriptor.
-  */
--SYSCALL_DEFINE1(epoll_create1, int, flags)
-+static int do_epoll_create(int flags)
- {
- 	int error, fd;
- 	struct eventpoll *ep = NULL;
-@@ -1979,12 +1979,17 @@ SYSCALL_DEFINE1(epoll_create1, int, flags)
- 	return error;
- }
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 090645b48447..7cbfb41e666b 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -954,4 +954,15 @@ int ksys_chroot(const char __user *filename);
+ ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count);
+ int ksys_chdir(const char __user *filename);
  
-+SYSCALL_DEFINE1(epoll_create1, int, flags)
++/*
++ * The following kernel syscall equivalents are just wrappers to fs-internal
++ * functions. Therefore, provide stubs to be inlined at the callsites.
++ */
++extern long do_unlinkat(int dfd, struct filename *name);
++
++static inline long ksys_unlink(const char __user *pathname)
 +{
-+	return do_epoll_create(flags);
++	return do_unlinkat(AT_FDCWD, getname(pathname));
 +}
 +
- SYSCALL_DEFINE1(epoll_create, int, size)
- {
- 	if (size <= 0)
- 		return -EINVAL;
+ #endif
+diff --git a/init/do_mounts.h b/init/do_mounts.h
+index 5b05c8f93f47..401f90ee1eeb 100644
+--- a/init/do_mounts.h
++++ b/init/do_mounts.h
+@@ -16,7 +16,7 @@ extern int root_mountflags;
  
--	return sys_epoll_create1(0);
-+	return do_epoll_create(0);
+ static inline int create_dev(char *name, dev_t dev)
+ {
+-	sys_unlink(name);
++	ksys_unlink(name);
+ 	return sys_mknod(name, S_IFBLK|0600, new_encode_dev(dev));
  }
  
- /*
-@@ -2148,8 +2153,8 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
-  * Implement the event wait interface for the eventpoll file. It is the kernel
-  * part of the user space epoll_wait(2).
-  */
--SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
--		int, maxevents, int, timeout)
-+static int do_epoll_wait(int epfd, struct epoll_event __user *events,
-+			 int maxevents, int timeout)
- {
- 	int error;
- 	struct fd f;
-@@ -2190,6 +2195,12 @@ SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
- 	return error;
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 83f396d30b9a..e9e9e1c67d31 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -128,11 +128,11 @@ bool __init initrd_load(void)
+ 		 * mounted in the normal path.
+ 		 */
+ 		if (rd_load_image("/initrd.image") && ROOT_DEV != Root_RAM0) {
+-			sys_unlink("/initrd.image");
++			ksys_unlink("/initrd.image");
+ 			handle_initrd();
+ 			return true;
+ 		}
+ 	}
+-	sys_unlink("/initrd.image");
++	ksys_unlink("/initrd.image");
+ 	return false;
+ }
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index 2d365c398ccc..5b69056f610a 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -288,7 +288,7 @@ int __init rd_load_image(char *from)
+ 	sys_close(out_fd);
+ out:
+ 	kfree(buf);
+-	sys_unlink("/dev/ram");
++	ksys_unlink("/dev/ram");
+ 	return res;
  }
  
-+SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
-+		int, maxevents, int, timeout)
-+{
-+	return do_epoll_wait(epfd, events, maxevents, timeout);
-+}
-+
- /*
-  * Implement the event wait interface for the eventpoll file. It is the kernel
-  * part of the user space epoll_pwait(2).
-@@ -2214,7 +2225,7 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
- 		set_current_blocked(&ksigmask);
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 6f972df15bf2..08eb551168a8 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -319,7 +319,7 @@ static void __init clean_path(char *path, umode_t fmode)
+ 		if (S_ISDIR(st.mode))
+ 			sys_rmdir(path);
+ 		else
+-			sys_unlink(path);
++			ksys_unlink(path);
  	}
+ }
  
--	error = sys_epoll_wait(epfd, events, maxevents, timeout);
-+	error = do_epoll_wait(epfd, events, maxevents, timeout);
+@@ -591,7 +591,7 @@ static void __init clean_rootfs(void)
+ 				if (S_ISDIR(st.mode))
+ 					sys_rmdir(dirp->d_name);
+ 				else
+-					sys_unlink(dirp->d_name);
++					ksys_unlink(dirp->d_name);
+ 			}
  
- 	/*
- 	 * If we changed the signal mask, we need to restore the original one.
-@@ -2257,7 +2268,7 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
- 		set_current_blocked(&ksigmask);
- 	}
- 
--	err = sys_epoll_wait(epfd, events, maxevents, timeout);
-+	err = do_epoll_wait(epfd, events, maxevents, timeout);
- 
- 	/*
- 	 * If we changed the signal mask, we need to restore the original one.
+ 			num -= dirp->d_reclen;
 -- 
 2.16.3
