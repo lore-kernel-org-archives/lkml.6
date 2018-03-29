@@ -1,180 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751230AbeC2HQi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:16:38 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44998 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeC2HQf (ORCPT
+        id S1751183AbeC2HRx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:17:53 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34880 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeC2HRw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:16:35 -0400
-X-Google-Smtp-Source: AIpwx48qe/FStT0fhBp5mC2jRTEksRMx2V5p43d7MtWMAXY9wpX3dau9z//bFHHXOtQBH0oy4Pm5XXdPzgxSv4/pk28=
+        Thu, 29 Mar 2018 03:17:52 -0400
+X-Google-Smtp-Source: AIpwx487uc9FebdiPxP7vFKZqq7m1eFR1ZSWj/XSibqDr4vG95L015c26kRw7B6AiYZWxQ0v+pBrMQ==
+Date: Thu, 29 Mar 2018 09:17:48 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc: daniel.vetter@intel.com, jgross@suse.com, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
+Subject: Re: [PATCH v4 2/2] drm/xen-front: Add support for Xen PV display
+ frontend
+Message-ID: <20180329071748.GG3881@phenom.ffwll.local>
+Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        daniel.vetter@intel.com, jgross@suse.com, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
+References: <1522219661-26827-1-git-send-email-andr2000@gmail.com>
+ <1522219661-26827-3-git-send-email-andr2000@gmail.com>
+ <20180328074251.GE14155@phenom.ffwll.local>
+ <32481355-27f6-695b-c6c1-8113ea268a33@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
-References: <20180327092031.11251-1-brgl@bgdev.pl> <20180327092031.11251-8-brgl@bgdev.pl>
- <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 29 Mar 2018 09:16:33 +0200
-Message-ID: <CAMRc=Me6giXHneuuRTPSwfw8HxwbDVCTgReZ_6HBv90ushf+-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] remoteproc/davinci: use the reset framework
-To: Suman Anna <s-anna@ti.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <32481355-27f6-695b-c6c1-8113ea268a33@gmail.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-29 0:30 GMT+02:00 Suman Anna <s-anna@ti.com>:
-> Hi Bart,
->
-> On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> Switch to using the reset framework instead of handcoded reset routines
->> we used so far.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>  drivers/remoteproc/da8xx_remoteproc.c | 33 ++++++++++++++++++++++++++++-----
->>  1 file changed, 28 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
->> index b668e32996e2..788f59809c02 100644
->> --- a/drivers/remoteproc/da8xx_remoteproc.c
->> +++ b/drivers/remoteproc/da8xx_remoteproc.c
->> @@ -10,6 +10,7 @@
->>
->>  #include <linux/bitops.h>
->>  #include <linux/clk.h>
->> +#include <linux/reset.h>
->>  #include <linux/err.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/io.h>
->> @@ -20,8 +21,6 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/remoteproc.h>
->>
->> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
->> -
->>  #include "remoteproc_internal.h"
->>
->>  static char *da8xx_fw_name;
->> @@ -72,6 +71,7 @@ struct da8xx_rproc {
->>       struct da8xx_rproc_mem *mem;
->>       int num_mems;
->>       struct clk *dsp_clk;
->> +     struct reset_control *dsp_reset;
->>       void (*ack_fxn)(struct irq_data *data);
->>       struct irq_data *irq_data;
->>       void __iomem *chipsig;
->> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>       struct device *dev = rproc->dev.parent;
->>       struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->>       struct clk *dsp_clk = drproc->dsp_clk;
->> +     struct reset_control *dsp_reset = drproc->dsp_reset;
->>       int ret;
->>
->>       /* hw requires the start (boot) address be on 1KB boundary */
->> @@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>               return ret;
->>       }
->>
->> -     davinci_clk_reset_deassert(dsp_clk);
->> +     ret = reset_control_deassert(dsp_reset);
->> +     if (ret) {
->> +             dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
->> +             clk_disable_unprepare(dsp_clk);
->> +             return ret;
->> +     }
->>
->>       return 0;
->>  }
->> @@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>  static int da8xx_rproc_stop(struct rproc *rproc)
->>  {
->>       struct da8xx_rproc *drproc = rproc->priv;
->> +     struct device *dev = rproc->dev.parent;
->> +     int ret;
->> +
->> +     ret = reset_control_assert(drproc->dsp_reset);
->> +     if (ret) {
->> +             dev_err(dev, "reset_control_assert() failed: %d\n", ret);
->> +             return ret;
->> +     }
->>
->> -     davinci_clk_reset_assert(drproc->dsp_clk);
->>       clk_disable_unprepare(drproc->dsp_clk);
->>
->>       return 0;
->> @@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>       struct resource *bootreg_res;
->>       struct resource *chipsig_res;
->>       struct clk *dsp_clk;
->> +     struct reset_control *dsp_reset;
->>       void __iomem *chipsig;
->>       void __iomem *bootreg;
->>       int irq;
->> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>               return PTR_ERR(dsp_clk);
->>       }
->>
->> +     dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
->> +     if (IS_ERR(dsp_reset)) {
->> +             if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
->> +                     dev_err(dev, "unable to get reset control: %ld\n",
->> +                             PTR_ERR(dsp_reset));
->> +
->> +             return PTR_ERR(dsp_reset);
->> +     }
->> +
->>       if (dev->of_node) {
->>               ret = of_reserved_mem_device_init(dev);
->>               if (ret) {
->> @@ -309,7 +332,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>        * *not* in reset, but da8xx_rproc_start() needs the DSP to be
->>        * held in reset at the time it is called.
->>        */
->> -     ret = davinci_clk_reset_assert(drproc->dsp_clk);
->> +     ret = reset_control_assert(dsp_reset);
->>       if (ret)
->>               goto free_rproc;
->>
->
-> Tested your previous branch, need one more change in this patch to have
-> the remoteproc boot be actually executing some code. The acquired
-> dsp_reset is not stored in the drproc, so the start and stop were not
-> effective. The issue was masked because reset_control_assert() and
-> deassert() return 0 when a NULL pointer is passed in.
->
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -311,6 +311,7 @@ static int da8xx_rproc_probe(struct platform_device
-> *pdev)
->         drproc = rproc->priv;
->         drproc->rproc = rproc;
->         drproc->dsp_clk = dsp_clk;
-> +       drproc->dsp_reset = dsp_reset;
->         rproc->has_iommu = false;
->
-> regards
-> Suman
->
+On Wed, Mar 28, 2018 at 01:29:46PM +0300, Oleksandr Andrushchenko wrote:
+> Hi, Daniel!
+> 
+> I just noticed I have missed one change in the patch:
+> the below must be static.
+> 
+> On 03/28/2018 10:42 AM, Daniel Vetter wrote:
+> > +enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
+> > +		const struct drm_display_mode *mode)
+> > +{
+> > +	struct xen_drm_front_drm_pipeline *pipeline =
+> > +			container_of(crtc,
+> Could you please amend the patch in attachment
+> when merging, so I don't resend?
 
-Oh snap, thanks for spotting it.
+Merging is up to you, as soon as you have your commit rights.
+-Daniel
 
-I'll just resend last two patches, since the previous six will be
-picked up at different places.
+> 
+> Thank you in advance,
+> Oleksandr
 
-Thanks,
-Bartosz
+> From 3a82d76bd3d954056b760e5d1d09e2f96a2786ef Mon Sep 17 00:00:00 2001
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> Date: Wed, 28 Mar 2018 13:24:04 +0300
+> Subject: [PATCH] drm/xen-front: Make display_mode_valid static
+> 
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> ---
+>  drivers/gpu/drm/xen/xen_drm_front_kms.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.c b/drivers/gpu/drm/xen/xen_drm_front_kms.c
+> index 545049dfaf0a..bd676be5a0db 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front_kms.c
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_kms.c
+> @@ -273,7 +273,7 @@ static void display_update(struct drm_simple_display_pipe *pipe,
+>  	drm_dev_exit(idx);
+>  }
+>  
+> -enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
+> +static enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
+>  		const struct drm_display_mode *mode)
+>  {
+>  	struct xen_drm_front_drm_pipeline *pipeline =
+> -- 
+> 2.7.4
+> 
+
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
