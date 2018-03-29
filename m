@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752687AbeC2LGt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:06:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43900 "EHLO
+        id S1752714AbeC2LG4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:06:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43984 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752663AbeC2LGo (ORCPT
+        with ESMTP id S1752695AbeC2LGw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:06:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A68D360C55
+        Thu, 29 Mar 2018 07:06:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41DB260BFA
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
 From: Manu Gautam <mgautam@codeaurora.org>
@@ -17,10 +17,10 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         robh+dt@kernel.org, vivek.gautam@codeaurora.org, evgreen@chromium.org,
         dianders@chromium.org, linux-arm-msm@vger.kernel.org,
         Manu Gautam <mgautam@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v4 6/7] dt-bindings: phy-qcom-usb2: Add support to override tuning values
-Date: Thu, 29 Mar 2018 16:34:25 +0530
-Message-Id: <1522321466-21755-7-git-send-email-mgautam@codeaurora.org>
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH v4 7/7] phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845
+Date: Thu, 29 Mar 2018 16:34:26 +0530
+Message-Id: <1522321466-21755-8-git-send-email-mgautam@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
 References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
@@ -28,55 +28,187 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To improve eye diagram for PHYs on different boards of same SOC,
-some parameters may need to be changed. Provide device tree
-properties to override these from board specific device tree
-files. While at it, replace "qcom,qusb2-v2-phy" with compatible
-string for USB2 PHY on sdm845 which was earlier added for
-sdm845 only.
+There are two QUSB2 PHYs present on sdm845. In order
+to improve eye diagram for both the PHYs some parameters
+need to be changed. Provide device tree properties to
+override these from board specific device tree files.
 
 Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
 ---
- .../devicetree/bindings/phy/qcom-qusb2-phy.txt        | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/phy/qualcomm/phy-qcom-qusb2.c | 112 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 111 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-index 42c9742..0ed140a 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-@@ -6,7 +6,7 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
- Required properties:
-  - compatible: compatible list, contains
- 	       "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
--	       "qcom,qusb2-v2-phy" for QUSB2 V2 PHY.
-+	       "qcom,sdm845-qusb2-phy" for 10nm PHY on sdm845.
+diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+index 40fdef8..adcc3f8 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
++++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+@@ -60,6 +60,17 @@
+ #define CORE_RESET				BIT(5)
+ #define CORE_RESET_MUX				BIT(6)
  
-  - reg: offset and length of the PHY register set.
-  - #phy-cells: must be 0.
-@@ -27,6 +27,23 @@ Optional properties:
- 		tuning parameter value for qusb2 phy.
++/* QUSB2PHY_IMP_CTRL1 register bits */
++#define IMP_RES_OFFSET_MASK			GENMASK(5, 0)
++#define IMP_RES_OFFSET_SHIFT			0x0
++
++/* QUSB2PHY_PORT_TUNE1 register bits */
++#define HSTX_TRIM_MASK				GENMASK(7, 4)
++#define HSTX_TRIM_SHIFT				0x4
++#define PREEMPH_HALF_WIDTH			BIT(2)
++#define PREEMPHASIS_EN_MASK			GENMASK(1, 0)
++#define PREEMPHASIS_EN_SHIFT			0x0
++
+ #define QUSB2PHY_PLL_ANALOG_CONTROLS_TWO	0x04
+ #define QUSB2PHY_PLL_CLOCK_INVERTERS		0x18c
+ #define QUSB2PHY_PLL_CMODE			0x2c
+@@ -241,6 +252,18 @@ struct qusb2_phy_cfg {
+  * @tcsr: TCSR syscon register map
+  * @cell: nvmem cell containing phy tuning value
+  *
++ * @override_imp_res_offset: PHY should use different rescode offset
++ * @imp_res_offset_value: rescode offset to be updated in IMP_CTRL1 register
++ *
++ * @override_hstx_trim: PHY should use different HSTX o/p current value
++ * @hstx_trim_value: HSTX_TRIM value to be updated in TUNE1 register
++ *
++ * @override_preemphasis: PHY should use different pre-amphasis amplitude
++ * @preemphasis_level: Amplitude Pre-Emphasis to be updated in TUNE1 register
++ *
++ * @override_preemphasis_width: PHY should use different pre-emphasis duration
++ * @preemphasis_width: half/full-width Pre-Emphasis updated via TUNE1
++ *
+  * @cfg: phy config data
+  * @has_se_clk_scheme: indicate if PHY has single-ended ref clock scheme
+  * @phy_initialized: indicate if PHY has been initialized
+@@ -259,12 +282,35 @@ struct qusb2_phy {
+ 	struct regmap *tcsr;
+ 	struct nvmem_cell *cell;
  
-  - qcom,tcsr-syscon: Phandle to TCSR syscon register region.
-+ - qcom,imp-res-offset-value: It is a 6 bit value that specifies offset to be
-+		added to PHY refgen RESCODE via IMP_CTRL1 register. It is a PHY
-+		tuning paramter that may vary for different boards of same SOC.
-+ - qcom,hstx-trim-value: It is a 4 bit value that specifies tuning for HSTX
-+		output current. 0x0 value corresponding to 24mA which is maximum
-+		current and 0xf corresponds to lowest current which is 15mA.
-+ - qcom,preemphasis-level: It is a 2 bit value that specifies pre-emphasis level.
-+		Possible values are:
-+		00: NONE
-+		01: +5%
-+		10: +10%
-+		11: +15%
-+- qcom,preemphasis-width: It is a 1 bit value that specifies how long the HSTX
-+		pre-emphasis (specified using qcom,preemphasis-level) must be in
-+		effect. Possible values are:
-+		0: Full-bit width
-+		1: Half-bit width
++	bool override_imp_res_offset;
++	u8 imp_res_offset_value;
++	bool override_hstx_trim;
++	u8 hstx_trim_value;
++	bool override_preemphasis;
++	u8 preemphasis_level;
++	bool override_preemphasis_width;
++	u8 preemphasis_width;
++
+ 	const struct qusb2_phy_cfg *cfg;
+ 	bool has_se_clk_scheme;
+ 	bool phy_initialized;
+ 	enum phy_mode mode;
+ };
  
- Example:
- 	hsusb_phy: phy@7411000 {
++static inline void qusb2_write_mask(void __iomem *base, u32 offset,
++				    u32 val, u32 mask)
++{
++	u32 reg;
++
++	reg = readl(base + offset);
++	reg &= ~mask;
++	reg |= val;
++	writel(reg, base + offset);
++
++	/* Ensure above write is completed */
++	readl(base + offset);
++}
++
+ static inline void qusb2_setbits(void __iomem *base, u32 offset, u32 val)
+ {
+ 	u32 reg;
+@@ -305,6 +351,42 @@ void qcom_qusb2_phy_configure(void __iomem *base,
+ }
+ 
+ /*
++ * Update board specific PHY tuning override values if specified from
++ * device tree.
++ *
++ */
++static void qusb2_phy_override_phy_params(struct qusb2_phy *qphy)
++{
++	const struct qusb2_phy_cfg *cfg = qphy->cfg;
++
++	if (qphy->override_imp_res_offset)
++		qusb2_write_mask(qphy->base, QUSB2PHY_IMP_CTRL1,
++			     qphy->imp_res_offset_value << IMP_RES_OFFSET_SHIFT,
++			     IMP_RES_OFFSET_MASK);
++
++	if (qphy->override_hstx_trim)
++		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
++				 qphy->hstx_trim_value << HSTX_TRIM_SHIFT,
++				 HSTX_TRIM_MASK);
++
++	if (qphy->override_preemphasis)
++		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
++				qphy->preemphasis_level << PREEMPHASIS_EN_SHIFT,
++				PREEMPHASIS_EN_MASK);
++
++	if (qphy->override_preemphasis_width) {
++		if (qphy->preemphasis_width)
++			qusb2_setbits(qphy->base,
++				      cfg->regs[QUSB2PHY_PORT_TUNE1],
++				      PREEMPH_HALF_WIDTH);
++		else
++			qusb2_clrbits(qphy->base,
++				      cfg->regs[QUSB2PHY_PORT_TUNE1],
++				      PREEMPH_HALF_WIDTH);
++	}
++}
++
++/*
+  * Fetches HS Tx tuning value from nvmem and sets the
+  * QUSB2PHY_PORT_TUNE1/2 register.
+  * For error case, skip setting the value and use the default value.
+@@ -525,6 +607,9 @@ static int qusb2_phy_init(struct phy *phy)
+ 	qcom_qusb2_phy_configure(qphy->base, cfg->regs, cfg->tbl,
+ 				 cfg->tbl_num);
+ 
++	/* Override board specific PHY tuning values */
++	qusb2_phy_override_phy_params(qphy);
++
+ 	/* Set efuse value for tuning the PHY */
+ 	qusb2_phy_set_tune2_param(qphy);
+ 
+@@ -647,7 +732,7 @@ static int qusb2_phy_exit(struct phy *phy)
+ 		.compatible	= "qcom,msm8996-qusb2-phy",
+ 		.data		= &msm8996_phy_cfg,
+ 	}, {
+-		.compatible	= "qcom,qusb2-v2-phy",
++		.compatible	= "qcom,sdm845-qusb2-phy",
+ 		.data		= &qusb2_v2_phy_cfg,
+ 	},
+ 	{ },
+@@ -736,6 +821,31 @@ static int qusb2_phy_probe(struct platform_device *pdev)
+ 		qphy->cell = NULL;
+ 		dev_dbg(dev, "failed to lookup tune2 hstx trim value\n");
+ 	}
++
++	if (of_find_property(dev->of_node, "qcom,imp-res-offset-value", NULL)) {
++		qphy->override_imp_res_offset = true;
++		of_property_read_u8(dev->of_node, "qcom,imp-res-offset-value",
++				    &qphy->imp_res_offset_value);
++	}
++
++	if (of_find_property(dev->of_node, "qcom,hstx-trim-value", NULL)) {
++		qphy->override_hstx_trim = true;
++		of_property_read_u8(dev->of_node, "qcom,hstx-trim-value",
++				    &qphy->hstx_trim_value);
++	}
++
++	if (of_find_property(dev->of_node, "qcom,preemphasis-level", NULL)) {
++		qphy->override_preemphasis = true;
++		of_property_read_u8(dev->of_node, "qcom,preemphasis-level",
++				    &qphy->preemphasis_level);
++	}
++
++	if (of_find_property(dev->of_node, "qcom,preemphasis-width", NULL)) {
++		qphy->override_preemphasis_width = true;
++		of_property_read_u8(dev->of_node, "qcom,preemphasis-width",
++				    &qphy->preemphasis_width);
++	}
++
+ 	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+ 	/*
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
