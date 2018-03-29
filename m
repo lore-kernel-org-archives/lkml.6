@@ -1,214 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752714AbeC2LG4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:06:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43984 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752695AbeC2LGw (ORCPT
+        id S1752278AbeC2LLE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:11:04 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:16339 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeC2LLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:06:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41DB260BFA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-From: Manu Gautam <mgautam@codeaurora.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>, robh@kernel.org,
-        sboyd@codeaurora.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, vivek.gautam@codeaurora.org, evgreen@chromium.org,
-        dianders@chromium.org, linux-arm-msm@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH v4 7/7] phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845
-Date: Thu, 29 Mar 2018 16:34:26 +0530
-Message-Id: <1522321466-21755-8-git-send-email-mgautam@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
+        Thu, 29 Mar 2018 07:11:03 -0400
+X-IronPort-AV: E=Sophos;i="5.48,376,1517900400";
+   d="scan'208";a="10628981"
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <corbet@lwn.net>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v4 0/9] extend PWM framework to support PWM modes
+Date: Thu, 29 Mar 2018 14:10:26 +0300
+Message-ID: <1522321835-6460-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two QUSB2 PHYs present on sdm845. In order
-to improve eye diagram for both the PHYs some parameters
-need to be changed. Provide device tree properties to
-override these from board specific device tree files.
+Hi all,
 
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
----
- drivers/phy/qualcomm/phy-qcom-qusb2.c | 112 +++++++++++++++++++++++++++++++++-
- 1 file changed, 111 insertions(+), 1 deletion(-)
+Please give feedback on these patches which extends the PWM framework in
+order to support multiple PWM modes of operations. This series is a rework
+of [1] and [2].
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-index 40fdef8..adcc3f8 100644
---- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-@@ -60,6 +60,17 @@
- #define CORE_RESET				BIT(5)
- #define CORE_RESET_MUX				BIT(6)
- 
-+/* QUSB2PHY_IMP_CTRL1 register bits */
-+#define IMP_RES_OFFSET_MASK			GENMASK(5, 0)
-+#define IMP_RES_OFFSET_SHIFT			0x0
-+
-+/* QUSB2PHY_PORT_TUNE1 register bits */
-+#define HSTX_TRIM_MASK				GENMASK(7, 4)
-+#define HSTX_TRIM_SHIFT				0x4
-+#define PREEMPH_HALF_WIDTH			BIT(2)
-+#define PREEMPHASIS_EN_MASK			GENMASK(1, 0)
-+#define PREEMPHASIS_EN_SHIFT			0x0
-+
- #define QUSB2PHY_PLL_ANALOG_CONTROLS_TWO	0x04
- #define QUSB2PHY_PLL_CLOCK_INVERTERS		0x18c
- #define QUSB2PHY_PLL_CMODE			0x2c
-@@ -241,6 +252,18 @@ struct qusb2_phy_cfg {
-  * @tcsr: TCSR syscon register map
-  * @cell: nvmem cell containing phy tuning value
-  *
-+ * @override_imp_res_offset: PHY should use different rescode offset
-+ * @imp_res_offset_value: rescode offset to be updated in IMP_CTRL1 register
-+ *
-+ * @override_hstx_trim: PHY should use different HSTX o/p current value
-+ * @hstx_trim_value: HSTX_TRIM value to be updated in TUNE1 register
-+ *
-+ * @override_preemphasis: PHY should use different pre-amphasis amplitude
-+ * @preemphasis_level: Amplitude Pre-Emphasis to be updated in TUNE1 register
-+ *
-+ * @override_preemphasis_width: PHY should use different pre-emphasis duration
-+ * @preemphasis_width: half/full-width Pre-Emphasis updated via TUNE1
-+ *
-  * @cfg: phy config data
-  * @has_se_clk_scheme: indicate if PHY has single-ended ref clock scheme
-  * @phy_initialized: indicate if PHY has been initialized
-@@ -259,12 +282,35 @@ struct qusb2_phy {
- 	struct regmap *tcsr;
- 	struct nvmem_cell *cell;
- 
-+	bool override_imp_res_offset;
-+	u8 imp_res_offset_value;
-+	bool override_hstx_trim;
-+	u8 hstx_trim_value;
-+	bool override_preemphasis;
-+	u8 preemphasis_level;
-+	bool override_preemphasis_width;
-+	u8 preemphasis_width;
-+
- 	const struct qusb2_phy_cfg *cfg;
- 	bool has_se_clk_scheme;
- 	bool phy_initialized;
- 	enum phy_mode mode;
- };
- 
-+static inline void qusb2_write_mask(void __iomem *base, u32 offset,
-+				    u32 val, u32 mask)
-+{
-+	u32 reg;
-+
-+	reg = readl(base + offset);
-+	reg &= ~mask;
-+	reg |= val;
-+	writel(reg, base + offset);
-+
-+	/* Ensure above write is completed */
-+	readl(base + offset);
-+}
-+
- static inline void qusb2_setbits(void __iomem *base, u32 offset, u32 val)
- {
- 	u32 reg;
-@@ -305,6 +351,42 @@ void qcom_qusb2_phy_configure(void __iomem *base,
- }
- 
- /*
-+ * Update board specific PHY tuning override values if specified from
-+ * device tree.
-+ *
-+ */
-+static void qusb2_phy_override_phy_params(struct qusb2_phy *qphy)
-+{
-+	const struct qusb2_phy_cfg *cfg = qphy->cfg;
-+
-+	if (qphy->override_imp_res_offset)
-+		qusb2_write_mask(qphy->base, QUSB2PHY_IMP_CTRL1,
-+			     qphy->imp_res_offset_value << IMP_RES_OFFSET_SHIFT,
-+			     IMP_RES_OFFSET_MASK);
-+
-+	if (qphy->override_hstx_trim)
-+		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
-+				 qphy->hstx_trim_value << HSTX_TRIM_SHIFT,
-+				 HSTX_TRIM_MASK);
-+
-+	if (qphy->override_preemphasis)
-+		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
-+				qphy->preemphasis_level << PREEMPHASIS_EN_SHIFT,
-+				PREEMPHASIS_EN_MASK);
-+
-+	if (qphy->override_preemphasis_width) {
-+		if (qphy->preemphasis_width)
-+			qusb2_setbits(qphy->base,
-+				      cfg->regs[QUSB2PHY_PORT_TUNE1],
-+				      PREEMPH_HALF_WIDTH);
-+		else
-+			qusb2_clrbits(qphy->base,
-+				      cfg->regs[QUSB2PHY_PORT_TUNE1],
-+				      PREEMPH_HALF_WIDTH);
-+	}
-+}
-+
-+/*
-  * Fetches HS Tx tuning value from nvmem and sets the
-  * QUSB2PHY_PORT_TUNE1/2 register.
-  * For error case, skip setting the value and use the default value.
-@@ -525,6 +607,9 @@ static int qusb2_phy_init(struct phy *phy)
- 	qcom_qusb2_phy_configure(qphy->base, cfg->regs, cfg->tbl,
- 				 cfg->tbl_num);
- 
-+	/* Override board specific PHY tuning values */
-+	qusb2_phy_override_phy_params(qphy);
-+
- 	/* Set efuse value for tuning the PHY */
- 	qusb2_phy_set_tune2_param(qphy);
- 
-@@ -647,7 +732,7 @@ static int qusb2_phy_exit(struct phy *phy)
- 		.compatible	= "qcom,msm8996-qusb2-phy",
- 		.data		= &msm8996_phy_cfg,
- 	}, {
--		.compatible	= "qcom,qusb2-v2-phy",
-+		.compatible	= "qcom,sdm845-qusb2-phy",
- 		.data		= &qusb2_v2_phy_cfg,
- 	},
- 	{ },
-@@ -736,6 +821,31 @@ static int qusb2_phy_probe(struct platform_device *pdev)
- 		qphy->cell = NULL;
- 		dev_dbg(dev, "failed to lookup tune2 hstx trim value\n");
- 	}
-+
-+	if (of_find_property(dev->of_node, "qcom,imp-res-offset-value", NULL)) {
-+		qphy->override_imp_res_offset = true;
-+		of_property_read_u8(dev->of_node, "qcom,imp-res-offset-value",
-+				    &qphy->imp_res_offset_value);
-+	}
-+
-+	if (of_find_property(dev->of_node, "qcom,hstx-trim-value", NULL)) {
-+		qphy->override_hstx_trim = true;
-+		of_property_read_u8(dev->of_node, "qcom,hstx-trim-value",
-+				    &qphy->hstx_trim_value);
-+	}
-+
-+	if (of_find_property(dev->of_node, "qcom,preemphasis-level", NULL)) {
-+		qphy->override_preemphasis = true;
-+		of_property_read_u8(dev->of_node, "qcom,preemphasis-level",
-+				    &qphy->preemphasis_level);
-+	}
-+
-+	if (of_find_property(dev->of_node, "qcom,preemphasis-width", NULL)) {
-+		qphy->override_preemphasis_width = true;
-+		of_property_read_u8(dev->of_node, "qcom,preemphasis-width",
-+				    &qphy->preemphasis_width);
-+	}
-+
- 	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
- 	/*
+The current patch series add the following PWM modes:
+- PWM mode normal
+- PWM mode complementary
+- PWM mode push-pull
+
+Normal mode - for PWM channels with one output; output waveforms looks like
+this:
+             __    __    __    __
+    PWM   __|  |__|  |__|  |__|  |__
+            <--T-->
+
+    Where T is the signal period
+
+Since PWMs with more than one output per channel could be used as one
+output PWM the normal mode is the default mode for all PWMs (if not
+specified otherwise).
+
+Complementary mode - for PWM channels with two outputs; output waveforms
+for a PWM channel in complementary mode looks line this:
+             __    __    __    __
+    PWMH1 __|  |__|  |__|  |__|  |__
+          __    __    __    __    __
+    PWML1   |__|  |__|  |__|  |__|
+            <--T-->
+
+    Where T is the signal period.
+
+Push-pull mode - for PWM channels with two outputs; output waveforms for a
+PWM channel in push-pull mode with normal polarity looks like this:
+            __          __
+    PWMH __|  |________|  |________
+                  __          __
+    PWML ________|  |________|  |__
+           <--T-->
+
+    If polarity is inversed:
+         __    ________    ________
+    PWMH   |__|        |__|
+         ________    ________    __
+    PWML         |__|        |__|
+           <--T-->
+
+    Where T is the signal period.
+
+The PWM working modes are per PWM channel registered as PWM's capabilities.
+The driver registers itself to PWM core a get_caps() function, in
+struct pwm_ops, that will be used by PWM core to retrieve PWM capabilities.
+If this function is not registered in driver's probe, a default function
+will be used to retrieve PWM capabilities. Currently, the default
+capabilities includes only PWM normal mode.
+
+PWM state has been updated to keep PWM mode. PWM mode could be configured
+via sysfs or via DT. pwm_apply_state() will do the preliminary validation
+for PWM mode to be applied.
+
+In sysfs, user could get PWM modes by reading mode file of PWM device:
+root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# ls -l
+total 0
+-r--r--r-- 1 root root 4096 Oct  9 09:07 capture
+lrwxrwxrwx 1 root root    0 Oct  9 09:07 device -> ../../pwmchip0
+-rw-r--r-- 1 root root 4096 Oct  9 08:42 duty_cycle
+-rw-r--r-- 1 root root 4096 Oct  9 08:44 enable
+--w------- 1 root root 4096 Oct  9 09:07 export
+-rw-r--r-- 1 root root 4096 Oct  9 08:43 mode
+-r--r--r-- 1 root root 4096 Oct  9 09:07 npwm
+-rw-r--r-- 1 root root 4096 Oct  9 08:42 period
+-rw-r--r-- 1 root root 4096 Oct  9 08:44 polarity
+drwxr-xr-x 2 root root    0 Oct  9 09:07 power
+lrwxrwxrwx 1 root root    0 Oct  9 09:07 subsystem -> ../../../../../../../../class/pwm
+-rw-r--r-- 1 root root 4096 Oct  9 08:42 uevent
+--w------- 1 root root 4096 Oct  9 09:07 unexport
+root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# cat mode
+normal complementary [push-pull]
+
+The mode enclosed in bracket is the currently active mode.
+
+The mode could be set, via sysfs, by writing to mode file one of the modes
+displayed at read:
+root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# echo normal > mode
+root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# cat mode
+[normal] complementary push-pull 
+
+The PWM push-pull mode could be usefull in applications like half bridge
+converters.
+
+This series also add PWM modes support for Atmel/Microchip SoCs.
+
+Thank you,
+Claudiu Beznea
+
+[1] https://www.spinics.net/lists/arm-kernel/msg580275.html
+[2] https://lkml.org/lkml/2018/1/12/359
+
+Changes in v4:
+- removed changes related to pwm_config() as per maintainer proposals
+- added pwm_mode_get_valid() to retrieve a valid PWM mode fror PWM device
+  instead of using BIT(ffs(caps.mode) - 1) and changed drivers to use
+  pwm_mode_get_valid() instead of pwm_get_caps() + BIT(ffs(caps.mode) - 1)
+  (patches 2, 3, 4 from this series)
+- renamed PWM_MODE() macro in PWMC_MODE() to avoid conflicts with
+  pwm-sun4i.c driver ('C' stands for capability)
+- removed pwm_caps_valid() function
+- renamed PWM_DTMODE_COMPLEMENTARY and PWM_DTMODE_PUSH_PULL macros in
+  PWM_MODE_COMPLEMENTARY and PWM_MODE_PUSH_PULL
+
+Changes in v3:
+- removed changes related to only one of_xlate function for all PWM drivers
+- switch to PWM capabilities per PWM channel nor per PWM chip
+- squash documentation and bindings patches as requeted by reviewer
+- introduced PWM_MODE(name) macro and used a bit enum for pwm modes
+- related to DT bindings, used flags cell also for PWM modes
+- updated of_xlate specific functions with "state->mode = mode;"
+  instructions to avoid pwm_apply_state() failures
+- use available modes for PWM channel in pwm_config() by first calling
+  pwm_get_caps() to get caps.modes
+- use loops through available modes in mode_store()/mode_show() and also in
+  of_pwm_xlate_with_flags() instead of "if else" instructions; in this way,
+  the addition of a new mode is independent of this code sections
+- use DTLI=1, DTHI=0 register settings to obtain push-pull mode waveforms
+  for Atmel/Microchip PWM controller.
+
+Changes in v2:
+- remove of_xlate and of_pwm_n_cells and use generic functions to pharse DT
+  inputs; this is done in patches 1, 2, 3, 4, 5, 6, 7 of this series; this will
+  make easy the addition of PWM mode support from DT
+- add PWM mode normal
+- register PWM modes as capabilities of PWM chips at driver probe and, in case
+  driver doesn't provide these capabilities use default ones
+- change the way PWM mode is pharsed via DT by using a new input for pwms
+  binding property
+
+
+Claudiu Beznea (9):
+  pwm: extend PWM framework with PWM modes
+  pwm: clps711x: populate PWM mode in of_xlate function
+  pwm: cros-ec: populate PWM mode in of_xlate function
+  pwm: pxa: populate PWM mode in of_xlate function
+  pwm: add PWM modes
+  pwm: atmel: add pwm capabilities
+  pwm: add push-pull mode support
+  pwm: add documentation for pwm push-pull mode
+  pwm: atmel: add push-pull mode support
+
+ Documentation/devicetree/bindings/pwm/pwm.txt |  11 ++-
+ Documentation/pwm.txt                         |  42 ++++++++-
+ drivers/pwm/core.c                            | 125 +++++++++++++++++++++++++-
+ drivers/pwm/pwm-atmel.c                       | 118 +++++++++++++++++-------
+ drivers/pwm/pwm-clps711x.c                    |  10 ++-
+ drivers/pwm/pwm-cros-ec.c                     |   1 +
+ drivers/pwm/pwm-pxa.c                         |   1 +
+ drivers/pwm/sysfs.c                           |  61 +++++++++++++
+ include/dt-bindings/pwm/pwm.h                 |   2 +
+ include/linux/pwm.h                           |  64 +++++++++++++
+ 10 files changed, 395 insertions(+), 40 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
