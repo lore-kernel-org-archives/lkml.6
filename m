@@ -1,72 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751209AbeC2Tin (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 15:38:43 -0400
-Received: from mx1.riseup.net ([198.252.153.129]:32888 "EHLO mx1.riseup.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeC2Tim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 15:38:42 -0400
-X-Riseup-User-ID: 3780616662E890B2D718A54AFD63E9B0018A4E6E0955F48ED345B1E748139578
-From: Francisco Jerez <currojerez@riseup.net>
-To: Fabio Estevam <festevam@gmail.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Cc: linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kbuild-all@01.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        0day robot <fengguang.wu@intel.com>, Len Brown <lenb@kernel.org>
-Subject: Re: [kbuild-all] [PATCH] OPTIONAL: cpufreq/intel_pstate: fix debugfs_simple_attr.cocci warnings
-In-Reply-To: <CAOMZO5CLpW+2yCYRwAJTPWtXgXkaPGyPQrB3cbBGYvV1fryUQw@mail.gmail.com>
-References: <alpine.DEB.2.20.1803292109180.2750@hadrien> <CAOMZO5CLpW+2yCYRwAJTPWtXgXkaPGyPQrB3cbBGYvV1fryUQw@mail.gmail.com>
-Date: Thu, 29 Mar 2018 12:23:10 -0700
-Message-ID: <87a7uqofdt.fsf@riseup.net>
+        id S1752147AbeC2TjQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 15:39:16 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:37450 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752069AbeC2TjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 15:39:13 -0400
+X-Google-Smtp-Source: AIpwx48f+vkSrU790KY9xQ4Z1XMJjZfU2hGL1L2crkhkX5t94Rty/58/4/TZqJBg5+SlsQ4g+jOnvTvpcBcJkE82QIg=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="==-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <1522321466-21755-5-git-send-email-mgautam@codeaurora.org>
+References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org> <1522321466-21755-5-git-send-email-mgautam@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 29 Mar 2018 12:39:11 -0700
+X-Google-Sender-Auth: nzTgNyWe0R66vEr8e3C5DxNDH9A
+Message-ID: <CAD=FV=W-OfjagiDxchV-aBNzhfV-2=MN+CJtoLAMe2jGYUc4uA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/7] dt-bindings: phy-qcom-qmp: Update bindings for sdm845
+To: Manu Gautam <mgautam@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Varadarajan Narayanan <varada@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==-=-=
-Content-Type: multipart/mixed; boundary="=-=-="
+Hi,
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Fabio Estevam <festevam@gmail.com> writes:
-
-> Hi Julia,
+On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
+> Update compatible strings for USB3 PHYs on SDM845.
+> One is QMPv3 DisplayPort-USB combo PHY and other one
+> is USB UNI PHY which is single lane USB3 PHY without
+> DP capability. While at it also remove "qcom,qmp-v3-usb3-phy"
+> compatible string which was earlier added for sdm845
+> only as there wouldn't be any user of same.
 >
-> On Thu, Mar 29, 2018 at 4:12 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
->>  Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
->>  for debugfs files.
->>
->> Semantic patch information:
->>  Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
->>  imposes some significant overhead as compared to
->>  DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
->
-> Just curious: could you please expand on what "imposes some
-> significant overhead" means?
->
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Probably negligible given that this code will only be run once at system
-boot and then never used again in production systems.  But I guess the
-micro-optimization doesn't hurt either.
+IMHO you should remove Rob's Review until he re-reviews.  I want to
+make sure he's OK with the removal of the "qcom,qmp-v3-usb3-phy".
+Rob: that compatible string was _just_ added and was intended for
+SDM845.  It's not expected that there are any users yet.  IMHO that
+means it's OK to remove, but it would be good to get your confirmation
+that you agree.  See the discussion at
+<https://patchwork.kernel.org/patch/10302761/>.
 
-> Thanks
 
---=-=-=--
+> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
---==-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEAREIAB0WIQST8OekYz69PM20/4aDmTidfVK/WwUCWr09HgAKCRCDmTidfVK/
-W156AP9KZh/1SG7KxnlAfAXBy4IFoLtoupi3W4fh4IIxGcK1YwD7BIGdIlJON3UW
-/gQFirlZ4u8XIdHmrxC+uOk+gj14SRQ=
-=/l9F
------END PGP SIGNATURE-----
---==-=-=--
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
