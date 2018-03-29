@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+jR1OZt9ILp026mrdu58n2F+dqVaFSN+mfKgOtWIDydUUteqrkBnVg/bH3Ls6xgBVx22+l
-ARC-Seal: i=1; a=rsa-sha256; t=1522346678; cv=none;
+X-Google-Smtp-Source: AIpwx4+m407+MJ81T7bRxPUhgqkDFnej/L2eMmt6kiC9O6/ETuDRySmHxhoTJH0KAAoZaWzHZonB
+ARC-Seal: i=1; a=rsa-sha256; t=1522346675; cv=none;
         d=google.com; s=arc-20160816;
-        b=0jGMUG69wBWWyCkX1yVWgUSH143GcohXdWUXspjtbq55ZtLHpk7PWaXhbcE+nJ5CMX
-         Cu6WdHlG027bPlHON7ENZcnAflgPxeM8uWJWEb7p2zSJuxZmMzZDjaAhZY7mjVKcl6DH
-         8p1xVjBOJ6srPmnIa2ROEKhjvmlDdQepmlb5V++TsNy4LI9kDk8VhoTNI+6iVLaLbUf0
-         yi55Pb8FAjXpkCUxJ+XlCgMJhc2ToGpv6p2UCguFsaI/dwU+wvpDFrrN+TznKo7z2vcf
-         VDK4LWQQhgw8GG/6QhP27YXOmwS1TCMPXjsEnVoKflXxV5nB/9Fr2yysv3etm+zkuKbH
-         fugg==
+        b=m6N2HetnGUfIXjkZWywONqt3bi+HMVYO6PtIpu7kd2KuizCtOwv0bWa6thXjtFJj8P
+         E4hRJC84Br9piMoOHnRJHqME/Y6blY8F0qv9uBY6W+5VwMO4KfvMM5fVXj4UdQbCu39e
+         jcplOpA/zvv6ax2jj+revYDEBf9xL12vFY6ZxHCrnu8bXSE9YM6hgpX4B0X5YmW7ut/h
+         J9xLpDwpy4KkFyLWeBIEW7IufpPbxKvSwbfKzNHk2RM/QMOpkwsQs5NlFQEAPmakkHVc
+         lX+PWvMOzAjutPnGhevIEZSnSQLtk3/rD4RGW0KMy90xhpMBDpyfmfxtLL+LnxQ7Ton8
+         j6LQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=epz/4EYMei5iWqrMtHFyTiGF7UJMABGcpWJZuDbsKog=;
-        b=TgvvNleWtmyeMWq/YnN04nvogvgwyaCwB5aw2Hbt6gFmdx8hCJtjwFEtw1Ph2pbMsA
-         WHlmQQcXXRVD2qyyjMHxbziOx1uGOx1EhinqWATkBl8mjQQjMLv51bFfnJoe8rXcDDIu
-         lPKT2X/KfdYYfZjOpVK8qnv6cL2PzO4kQOGJ+yO0kdcILIRo42+l1DvUWWUYmY2yYADb
-         1PzrWEc9Fna6OX6ZwWiS5WtZn8Wv9IlwygsDAg/FP/y5TFLBtI3+pve7fL1piXYxDBKO
-         w0ekdwB2UP6dURHLw2xids4ebYdWxJ3v4mDz0QoKGs1WvYuwjMpKCHjyuc0V7XO7PSWJ
-         z/bQ==
+        bh=mY84Ry/MKzzm7vybLg4reVzvHWsls/58DV0bDmuaB4M=;
+        b=ZhSXlSC7JsXRVurXfB5IJ7huV+BAEtw4titqok7B1tE6BpFZHJABTcSxa0nigIqLVD
+         1SiBbvicS4lSglMqk+JvOqhNWTNbnZuVgJ3GGf3E94/FSfBhOiykK5qST0HjY92Hj2Ix
+         HHWpnzB19GqKO47K5eMEVxIcTyoZ0PlyNeFK1SJrhBDbYUWPbe8KFt4GkyyUqtdQw8X7
+         3zOdhRZzBkeR/mna2O/WtubzQq/2YQlIScKnyexmUSspz6cEzG5N3Zd/jv+KVjsWBvwv
+         dMjy/bQWLSus3sMWHnQvW3HTmNxy2ZhzORLRTDIjsKwaccu/f6VFrPNcBRCAuW/XxWbV
+         UBHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Soheil Hassas Yeganeh <soheil@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
 	Eric Dumazet <edumazet@google.com>,
-	Yuchung Cheng <ycheng@google.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@osg.samsung.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/43] tcp: purge write queue upon aborting the connection
-Date: Thu, 29 Mar 2018 19:59:57 +0200
-Message-Id: <20180329175730.377602314@linuxfoundation.org>
+Subject: [PATCH 4.14 19/43] ieee802154: 6lowpan: fix possible NULL deref in lowpan_device_event()
+Date: Thu, 29 Mar 2018 20:00:14 +0200
+Message-Id: <20180329175732.127977782@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296018203827825?=
-X-GMAIL-MSGID: =?utf-8?q?1596296190316955364?=
+X-GMAIL-THRID: =?utf-8?q?1596296051714340324?=
+X-GMAIL-MSGID: =?utf-8?q?1596296187477658713?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,49 +52,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Soheil Hassas Yeganeh <soheil@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit e05836ac07c77dd90377f8c8140bce2a44af5fe7 ]
+[ Upstream commit ca0edb131bdf1e6beaeb2b8289fd6b374b74147d ]
 
-When the connection is aborted, there is no point in
-keeping the packets on the write queue until the connection
-is closed.
+A tun device type can trivially be set to arbitrary value using
+TUNSETLINK ioctl().
 
-Similar to a27fd7a8ed38 ('tcp: purge write queue upon RST'),
-this is essential for a correct MSG_ZEROCOPY implementation,
-because userspace cannot call close(fd) before receiving
-zerocopy signals even when the connection is aborted.
+Therefore, lowpan_device_event() must really check that ieee802154_ptr
+is not NULL.
 
-Fixes: f214f915e7db ("tcp: enable MSG_ZEROCOPY")
-Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Fixes: 2c88b5283f60d ("ieee802154: 6lowpan: remove check on null")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Stefan Schmidt <stefan@osg.samsung.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Stefan Schmidt <stefan@osg.samsung.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c       |    1 +
- net/ipv4/tcp_timer.c |    1 +
- 2 files changed, 2 insertions(+)
+ net/ieee802154/6lowpan/core.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -3445,6 +3445,7 @@ int tcp_abort(struct sock *sk, int err)
+--- a/net/ieee802154/6lowpan/core.c
++++ b/net/ieee802154/6lowpan/core.c
+@@ -206,9 +206,13 @@ static inline void lowpan_netlink_fini(v
+ static int lowpan_device_event(struct notifier_block *unused,
+ 			       unsigned long event, void *ptr)
+ {
+-	struct net_device *wdev = netdev_notifier_info_to_dev(ptr);
++	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
++	struct wpan_dev *wpan_dev;
  
- 	bh_unlock_sock(sk);
- 	local_bh_enable();
-+	tcp_write_queue_purge(sk);
- 	release_sock(sk);
- 	return 0;
- }
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -36,6 +36,7 @@ static void tcp_write_err(struct sock *s
- 	sk->sk_err = sk->sk_err_soft ? : ETIMEDOUT;
- 	sk->sk_error_report(sk);
+-	if (wdev->type != ARPHRD_IEEE802154)
++	if (ndev->type != ARPHRD_IEEE802154)
++		return NOTIFY_DONE;
++	wpan_dev = ndev->ieee802154_ptr;
++	if (!wpan_dev)
+ 		return NOTIFY_DONE;
  
-+	tcp_write_queue_purge(sk);
- 	tcp_done(sk);
- 	__NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPABORTONTIMEOUT);
- }
+ 	switch (event) {
+@@ -217,8 +221,8 @@ static int lowpan_device_event(struct no
+ 		 * also delete possible lowpan interfaces which belongs
+ 		 * to the wpan interface.
+ 		 */
+-		if (wdev->ieee802154_ptr->lowpan_dev)
+-			lowpan_dellink(wdev->ieee802154_ptr->lowpan_dev, NULL);
++		if (wpan_dev->lowpan_dev)
++			lowpan_dellink(wpan_dev->lowpan_dev, NULL);
+ 		break;
+ 	default:
+ 		return NOTIFY_DONE;
