@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753200AbeC2LoA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:44:00 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59534 "EHLO
+        id S1753128AbeC2Ln6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:43:58 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59048 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752740AbeC2L0R (ORCPT
+        with ESMTP id S1752824AbeC2L0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 07:26:17 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Alexander Viro <viro@ZenIV.linux.org.uk>
-Subject: [PATCH 049/109] fs: add do_pipe2() helper; remove internal call to sys_pipe2()
-Date: Thu, 29 Mar 2018 13:23:26 +0200
-Message-Id: <20180329112426.23043-50-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 043/109] sched: add do_sched_yield() helper; remove in-kernel call to sched_yield()
+Date: Thu, 29 Mar 2018 13:23:20 +0200
+Message-Id: <20180329112426.23043-44-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -21,46 +22,53 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this helper removes an in-kernel call to the sys_pipe2() syscall.
+Using the sched-internal do_sched_yield() helper allows us to get rid of
+the sched-internal call to the sys_sched_yield() syscall.
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/pipe.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ kernel/sched/core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 7b1954caf388..39d6f431da83 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -841,7 +841,7 @@ int do_pipe_flags(int *fd, int flags)
-  * sys_pipe() is the normal C calling standard for creating
-  * a pipe. It's not the way Unix traditionally does this, though.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e7c535eee0a6..8de4919c889a 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4892,7 +4892,7 @@ SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, unsigned int, len,
+  *
+  * Return: 0.
   */
--SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
-+static int do_pipe2(int __user *fildes, int flags)
+-SYSCALL_DEFINE0(sched_yield)
++static void do_sched_yield(void)
  {
- 	struct file *files[2];
- 	int fd[2];
-@@ -863,9 +863,14 @@ SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
- 	return error;
- }
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+@@ -4913,7 +4913,11 @@ SYSCALL_DEFINE0(sched_yield)
+ 	sched_preempt_enable_no_resched();
  
-+SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags)
-+{
-+	return do_pipe2(fildes, flags);
+ 	schedule();
 +}
-+
- SYSCALL_DEFINE1(pipe, int __user *, fildes)
- {
--	return sys_pipe2(fildes, 0);
-+	return do_pipe2(fildes, 0);
+ 
++SYSCALL_DEFINE0(sched_yield)
++{
++	do_sched_yield();
+ 	return 0;
  }
  
- static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
+@@ -4997,7 +5001,7 @@ EXPORT_SYMBOL(__cond_resched_softirq);
+ void __sched yield(void)
+ {
+ 	set_current_state(TASK_RUNNING);
+-	sys_sched_yield();
++	do_sched_yield();
+ }
+ EXPORT_SYMBOL(yield);
+ 
 -- 
 2.16.3
