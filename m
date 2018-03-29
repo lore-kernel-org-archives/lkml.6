@@ -1,45 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752500AbeC2QC3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:02:29 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:45242 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752286AbeC2QC1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:02:27 -0400
-Date: Thu, 29 Mar 2018 12:02:26 -0400 (EDT)
-Message-Id: <20180329.120226.667773214188824967.davem@davemloft.net>
-To: dhowells@redhat.com
-Cc: netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] rxrpc: Tracing updates
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <152219147024.24730.12727053395895392426.stgit@warthog.procyon.org.uk>
-References: <152219147024.24730.12727053395895392426.stgit@warthog.procyon.org.uk>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752568AbeC2QDJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:03:09 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:63669 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751981AbeC2QDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:03:08 -0400
+Date: Thu, 29 Mar 2018 18:02:46 +0200
+Message-ID: <20180329180246.Horde.AZE7BIRE2MuhcbAJb5Gg0A3@messagerie.si.c-s.fr>
+From: LEROY Christophe <christophe.leroy@c-s.fr>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Paul Mackerras <paulus@samba.org>, LKML <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 15/19] powerpc: Add missing prototype
+References: <20180322202007.23088-1-malat@debian.org>
+ <20180322202007.23088-16-malat@debian.org>
+ <bd4be06c-b5f5-2516-1c1d-d2b6d7861090@c-s.fr>
+ <CA+7wUsyRSSkwgpBodKkPjhUxiHy-t1q2Q7nsorfRoL=wfxgyFQ@mail.gmail.com>
+In-Reply-To: <CA+7wUsyRSSkwgpBodKkPjhUxiHy-t1q2Q7nsorfRoL=wfxgyFQ@mail.gmail.com>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Tue, 27 Mar 2018 23:57:50 +0100
+Mathieu Malaterre <malat@debian.org> a écrit :
 
-> Here are some patches that update tracing in AF_RXRPC and AFS:
-> 
->  (1) Add a tracepoint for tracking resend events.
-> 
->  (2) Use debug_ids in traces rather than pointers (as pointers are now hashed)
->      and allow use of the same debug_id in AFS calls as in the corresponding
->      AF_RXRPC calls.  This makes filtering the trace output much easier.
-> 
->  (3) Add a tracepoint for tracking call completion.
-> 
-> The patches are tagged here:
-> 
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
-> 	rxrpc-next-20180327
+> On Fri, Mar 23, 2018 at 1:20 PM, christophe leroy
+> <christophe.leroy@c-s.fr> wrote:
+>>
+>>
+>> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
+>>>
+>>> Add one missing prototype for function rh_dump_blk. Fix warning treated as
+>>> error in W=1:
+>>>
+>>>    arch/powerpc/lib/rheap.c:740:6: error: no previous prototype for
+>>> ‘rh_dump_blk’ [-Werror=missing-prototypes]
+>>>
+>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>>> ---
+>>>   arch/powerpc/include/asm/rheap.h | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/arch/powerpc/include/asm/rheap.h
+>>> b/arch/powerpc/include/asm/rheap.h
+>>> index 172381769cfc..e75d96de19a0 100644
+>>> --- a/arch/powerpc/include/asm/rheap.h
+>>> +++ b/arch/powerpc/include/asm/rheap.h
+>>> @@ -83,6 +83,9 @@ extern int rh_get_stats(rh_info_t * info, int what, int
+>>> max_stats,
+>>>   /* Simple dump of remote heap info */
+>>>   extern void rh_dump(rh_info_t * info);
+>>>   +/* Simple dump of remote info block */
+>>> +extern void rh_dump_blk(rh_info_t *info, rh_block_t *blk);
+>>> +
+>>
+>>
+>> Only used in one place, should be static
+>
+> Well here is what I see over here:
+>
+> $ git grep rh_dump_blk
+> ...
+> arch/powerpc/lib/rheap.c:EXPORT_SYMBOL_GPL(rh_dump_blk);
 
-Pulled, thank you.
+If it was really used by anybody in a module, it would already be in a  
+.h so I think we should simply delete the function
+
+Christophe
+
+>
+>
+>
+>> Christophe
+>>
+>>>   /* Set owner of taken block */
+>>>   extern int rh_set_owner(rh_info_t * info, unsigned long start, const
+>>> char *owner);
+>>>
+>>
+>>
+>> ---
+>> L'absence de virus dans ce courrier électronique a été vérifiée par le
+>> logiciel antivirus Avast.
+>> https://www.avast.com/antivirus
+>>
