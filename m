@@ -1,122 +1,91 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu551R9gHb8+O+pVO9tTviEm5kkKuP8iaXALL4P5WxDvQn0nchFY6ucR59qL9DpQvr38omj
-ARC-Seal: i=1; a=rsa-sha256; t=1521483214; cv=none;
+Return-Path: <ben.hutchings@codethink.co.uk>
+X-Google-Smtp-Source: AIpwx48oAItJECYrg+gWifb+OqkgZEwUCd6AG2BfhVKVVg68huAea9vHZc/uFXJt54ASTzrSgq1i
+ARC-Seal: i=1; a=rsa-sha256; t=1522337337; cv=none;
         d=google.com; s=arc-20160816;
-        b=oUcPKCQpytcl/sV9Yxfch/HCu1wLMZaUqqvsCLmJ6WC5qpY/DW2cfhSITaMkMLiGW5
-         cCFRv63qkb3yFWZAteVADxKp/K16w3H92XC0OUYo/Ni5972mAepY2ujUEWUk/zNxt+B8
-         PQBwzhezR1GxnpiMyiJSvdiiJ418rArrtN6MUu3+zDDOaJ+YfJsEm6Aol4guM/QIlf8V
-         z/wb0IbT8sD5dBm7HdfE/4VCNeiImdd95pjKojzl3CzsfhRzAuw6dwE8RWN+a1Y13bR1
-         Y2SZ1HIzgBW11H+kol5p96RNgauGD85eNQYCIWKLplMjsZ45K6WnPHPnFXDF55ClYSZg
-         /WMw==
+        b=Hx10BnFNElVkMWtI0OQKUUGKdUkWm1C03cPvj9+76C19/GO3fdIs1oBhQSJmACyxVa
+         15cTB5pEdLbAOjicnCcP/9RuvJD9SP02zpOHCbyAQc2OT2EoaPPDhiAeR7Xx4wMYsonR
+         /6toKo5/uPz5WH8pVABjtkSLY7nMuZ39/lrI4WPbDMDMv0fKPThGJuDTxq4V5ePu3PEy
+         htTEygTu9DxbtH4mBNuz86clg9ycr+g2VrPwd/rLiX+rM8LwMMXfIGHuYbkWR2TAJXKo
+         jnXSKI6suwXhYUJPxuerS5PLbsFpSRug6oj3IdHb8j8lnuqThZHgL9+ztup4tCT3eEFy
+         gxxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=RyIVF2MP7xpZBYw/VmVEB8jB1CJLODif7mNzWPvIp8c=;
-        b=zZhrmKDDOCMQOej9rzLstCel2didl/RL2Ig7Syj8+ZKCxonWYgaW1ZhAlwqDMpHWGJ
-         cp+3zx4dgYJdmb8l/FYowRCSIWF7WiQziOW31DoJU0nHA+2uvbb3opbjA/qB7OpuA7Od
-         LT+PiScgj03+ALElzwNRuh/KYhECZ4CGEnx5PJlDFV97M3Q+Zm2jAQDon45P6GDegjrB
-         r6SZ7C3iruls29umeyVNau6VodJHc7d93FS7+HLqfdz+9pJyHcObxAV+YYYEHmv4DlAv
-         STRCTeut0XEc/L729wfLq9XylP7EpMd9+C63cl5VEY50oPIDOhe6hGnek6TbhwGvWGwB
-         9p2w==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:date:cc:to:from:subject:message-id
+         :arc-authentication-results;
+        bh=6rCXdko5t3ZURWbi1KHMrobriuPn5Gjf0uYhpl5XrcY=;
+        b=e7r8vKtTYevgp2lD50ExKEDMqpeD4+Nqb3W0NDn8gc2pjf8NOBtwvLwicbEFLoyn6t
+         UdpbSLpqOOV0tB60hbKAac3rdziU5BGIT4xdYjSjGcKHdupoXTobe2Ad5PSQ7gJ1pX8l
+         zEzukkYCnrH+iL1GpqJSd+ki+OTVsEXr4YnR9KHvP59Zn8DEbgWT1fLaxQS1NuQRe8i8
+         h7f+X3K2lsAGZjKJPt99OC6+RgbYlQvkssbgPVUWBrT8ySbs9NxMTSJDmcNAnqzHKQ78
+         lXwIccLQBkkoCurEFzP1gfktTeVL2SWiSJvFSjuZl2wSqv0QkNdltI61iLaotMdo9dog
+         zcmA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Prarit Bhargava <prarit@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	David Arcari <darcari@redhat.com>,
-	Myron Stowe <mstowe@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Keith Busch <keith.busch@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 009/134] PCI/MSI: Stop disabling MSI/MSI-X in pci_device_shutdown()
-Date: Mon, 19 Mar 2018 19:04:52 +0100
-Message-Id: <20180319171850.444128621@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
+       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+Message-ID: <1522337334.2654.14.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 009/134] PCI/MSI: Stop disabling MSI/MSI-X in
+ pci_device_shutdown()
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Alex Williamson
+ <alex.williamson@redhat.com>, David Arcari <darcari@redhat.com>, Myron
+ Stowe <mstowe@redhat.com>, Lukas Wunner <lukas@wunner.de>,  Keith Busch
+ <keith.busch@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Sasha Levin <alexander.levin@microsoft.com>
+Date: Thu, 29 Mar 2018 16:28:54 +0100
+In-Reply-To: <20180319171850.444128621@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	 <20180319171850.444128621@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
 X-GMAIL-THRID: =?utf-8?q?1595390574168988527?=
-X-GMAIL-MSGID: =?utf-8?q?1595390783467864632?=
+X-GMAIL-MSGID: =?utf-8?q?1596286395787190534?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, 2018-03-19 at 19:04 +0100, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Prarit Bhargava <prarit@redhat.com>
+> 
+> 
+> [ Upstream commit fda78d7a0ead144f4b2cdb582dcba47911f4952c ]
+[...]
+> The MSI disabling code was added by d52877c7b1af ("pci/irq: let
+> pci_device_shutdown to call pci_msi_shutdown v2") because a driver left MSI
+> enabled and kdump failed because the kexeced kernel wasn't prepared to
+> receive the MSI interrupts.
+> 
+> Subsequent commits 1851617cd2da ("PCI/MSI: Disable MSI at enumeration even
+> if kernel doesn't support MSI")
 
-------------------
+This went into 4.2 and hasn't been backported.
 
-From: Prarit Bhargava <prarit@redhat.com>
+> and  e80e7edc55ba ("PCI/MSI: Initialize MSI capability for all
+> architectures")
 
+This went into 4.5 and hasn't been backported.
 
-[ Upstream commit fda78d7a0ead144f4b2cdb582dcba47911f4952c ]
+> changed the kexeced kernel to disable all MSIs itself so it no longer
+> depends on the crashed kernel to clean up after itself.
+[...]
 
-The pci_bus_type .shutdown method, pci_device_shutdown(), is called from
-device_shutdown() in the kernel restart and shutdown paths.
+So I think 3.18-stable and 4.4-stable will need backports of the later
+changes in order for this to work properly.
 
-Previously, pci_device_shutdown() called pci_msi_shutdown() and
-pci_msix_shutdown().  This disables MSI and MSI-X, which causes the device
-to fall back to raising interrupts via INTx.  But the driver is still bound
-to the device, it doesn't know about this change, and it likely doesn't
-have an INTx handler, so these INTx interrupts cause "nobody cared"
-warnings like this:
+Ben.
 
-  irq 16: nobody cared (try booting with the "irqpoll" option)
-  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.8.2-1.el7_UNSUPPORTED.x86_64 #1
-  Hardware name: Hewlett-Packard HP Z820 Workstation/158B, BIOS J63 v03.90 06/
-  ...
-
-The MSI disabling code was added by d52877c7b1af ("pci/irq: let
-pci_device_shutdown to call pci_msi_shutdown v2") because a driver left MSI
-enabled and kdump failed because the kexeced kernel wasn't prepared to
-receive the MSI interrupts.
-
-Subsequent commits 1851617cd2da ("PCI/MSI: Disable MSI at enumeration even
-if kernel doesn't support MSI") and  e80e7edc55ba ("PCI/MSI: Initialize MSI
-capability for all architectures") changed the kexeced kernel to disable
-all MSIs itself so it no longer depends on the crashed kernel to clean up
-after itself.
-
-Stop disabling MSI/MSI-X in pci_device_shutdown().  This resolves the
-"nobody cared" unhandled IRQ issue above.  It also allows PCI serial
-devices, which may rely on the MSI interrupts, to continue outputting
-messages during reboot/shutdown.
-
-[bhelgaas: changelog, drop pci_msi_shutdown() and pci_msix_shutdown() calls
-altogether]
-Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=187351
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: Alex Williamson <alex.williamson@redhat.com>
-CC: David Arcari <darcari@redhat.com>
-CC: Myron Stowe <mstowe@redhat.com>
-CC: Lukas Wunner <lukas@wunner.de>
-CC: Keith Busch <keith.busch@intel.com>
-CC: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pci/pci-driver.c |    2 --
- 1 file changed, 2 deletions(-)
-
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -463,8 +463,6 @@ static void pci_device_shutdown(struct d
- 
- 	if (drv && drv->shutdown)
- 		drv->shutdown(pci_dev);
--	pci_msi_shutdown(pci_dev);
--	pci_msix_shutdown(pci_dev);
- 
- #ifdef CONFIG_KEXEC_CORE
- 	/*
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
