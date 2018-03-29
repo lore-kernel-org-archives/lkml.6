@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49CRX+14NEmoU0dvw05zYzAP/YIaV8bNSZog6MTiY2pXif8JhBM7MnjNvQqk+nInVUl8Q5F
-ARC-Seal: i=1; a=rsa-sha256; t=1522346830; cv=none;
+X-Google-Smtp-Source: AIpwx48o0z8eOv4CLEvTosgWTEn8RZu+FhOwtgjKt2n326VPubHNYomktfCJgw58GBByL4LxxYh8
+ARC-Seal: i=1; a=rsa-sha256; t=1522346828; cv=none;
         d=google.com; s=arc-20160816;
-        b=G1UljiIZ5Ha8d11Tvy6P5EoCgI9ztITmWgguiA0x9OvR+HD5d2dla+iArLFZK9d77b
-         a3oy+Kq4w8w82YvCwYI0ce55b3vyNPNHWqqq3RSpzxtTUWNNtOfpzFh3RrO45fYQEF4/
-         4lOKl4dqrw3xpYlNewIBtF0f9uIVcwjR3SqJfwVKaJHf8/N9d+sESBmYgpgtY79nLU1/
-         9+VekXy3K60coapYY/sv9mMSJfcOBrfBvFdSKHeSI8vVhk3OTNkcP8ogTp2TriGPJlmU
-         fReH0TdYR4TCXW/sCEkEfk8SnbZCMBYwp+cqgQaf8tAO22250cC+JXqi8/tdAgv9/vpU
-         pHaA==
+        b=DkgZPRGBBtoke8h73qczIqatohA8BDxbwxMK/DOBEz40kYpxUXO7ACVMpDUsMi5GWr
+         gFu9vtcsF6mPIHmKBf0qg6mmSazDcRcTHFaeCEzwVJQJTBvgo53qaicvPBSopFvKFAL0
+         DrODi9WteoO1n0bmvYD+PaUL68r7lxQmmnWsFtpBYG3SdqoAuzILrrWNDMjTpLezi6ja
+         tmFsPGmXFlPDhUbJVgX7DSt0r8PBsznCBrCUuywf48dlqVkodGQ71BwvZZ3ooZbr0Y+m
+         +WJIZLWKqL2HSxbRC5ohBedZy95YqsowwbMFs6BMl4dfWxHBLkANJ1VaKj2KMaIJjrYg
+         AFUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=C+DazihG8EmjVfmtqz9esANEGKQu3nrni7tyYhB/neo=;
-        b=KrQzJEcS2KLao/bp4HjXnp8dRjjet4scAQi6Zp8vPKT+bmuJJAvBn5J15qe8M7XotV
-         P3YPF/bUKjbrwHh9VEWtumOIXQ3h7lXkLP3UJdyvcKWqOdi/PafTsK5R/VpL3zfOhWmB
-         Oe3W29+V0J1ao/dJ0GMFVnVF6mV0GOCxnERptqpoLigvLw14KIiMlyp3jKYnRFa/6Fbt
-         xkr4WsnfZCLUpNXBAfbcE3EWauvU5YfVDfMI6T0xegozgnf2S54OC/v47EKRPjEtByeA
-         UqMYxnHhlxO4Ez9kgUs4dP6690mc3PboIg7lbURVpIZ5FrLPizN7G1t7j3oaCYA2S0/H
-         Po3Q==
+        bh=N4HaH4CpMpqgKMWAqPccc9XKw82Qtxa1rDQv1tDNgA0=;
+        b=IZ86ffwSBLAIEXd1bN4VBY/4E8/Ap5XL3zwwTDtu03nSF43m/yKS//MuRen8TtGEZ0
+         vSYqV+dId+NHwM0zb7MnLPnP/yXYL/mklnQZX5vnsM8a3kraJtyz8J2taJUQlQ4XbTvF
+         abn26/m62nhaEPRDYt5ru6yY7K+VozleGujyKw2XQ6CT4yNk3O2XheXOO29GVrKH4jlH
+         UXByn7be3DpTn+n2HvBK8M8MwHf7W8vww7kHcawhPDgaTCpVtgeqiSkOv8Kh10SMFY2M
+         4XHO+hnjx4Z/YyVBdc10p8w6TE2nYPah10aAUZgsL8Zwjb8oyjbvFpqomBM3P3+dS5pt
+         UBOA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roman Mashak <mrv@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 03/28] net sched actions: return explicit error when tunnel_key mode is not specified
-Date: Thu, 29 Mar 2018 20:00:22 +0200
-Message-Id: <20180329175733.875320757@linuxfoundation.org>
+	Yunsheng Lin <linyunsheng@huawei.com>,
+	lipeng <lipeng321@huawei.com>,
+	Jun He <hjat2005@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Erick Reyes <erickreyes@google.com>
+Subject: [PATCH 4.9 28/28] net: hns: Fix a skb used after free bug
+Date: Thu, 29 Mar 2018 20:00:47 +0200
+Message-Id: <20180329175736.812183587@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296033440716481?=
-X-GMAIL-MSGID: =?utf-8?q?1596296350270454486?=
+X-GMAIL-THRID: =?utf-8?q?1596296347320331744?=
+X-GMAIL-MSGID: =?utf-8?q?1596296347320331744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,84 +52,148 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roman Mashak <mrv@mojatatu.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
+commit 27463ad99f738ed93c7c8b3e2e5bc8c4853a2ff2 upstream.
 
-[ Upstream commit 51d4740f88affd85d49c04e3c9cd129c0e33bcb9 ]
+skb maybe freed in hns_nic_net_xmit_hw() and return NETDEV_TX_OK,
+which cause hns_nic_net_xmit to use a freed skb.
 
-If set/unset mode of the tunnel_key action is not provided, ->init() still
-returns 0, and the caller proceeds with bogus 'struct tc_action *' object,
-this results in crash:
+BUG: KASAN: use-after-free in hns_nic_net_xmit_hw+0x62c/0x940...
+	[17659.112635]      alloc_debug_processing+0x18c/0x1a0
+	[17659.117208]      __slab_alloc+0x52c/0x560
+	[17659.120909]      kmem_cache_alloc_node+0xac/0x2c0
+	[17659.125309]      __alloc_skb+0x6c/0x260
+	[17659.128837]      tcp_send_ack+0x8c/0x280
+	[17659.132449]      __tcp_ack_snd_check+0x9c/0xf0
+	[17659.136587]      tcp_rcv_established+0x5a4/0xa70
+	[17659.140899]      tcp_v4_do_rcv+0x27c/0x620
+	[17659.144687]      tcp_prequeue_process+0x108/0x170
+	[17659.149085]      tcp_recvmsg+0x940/0x1020
+	[17659.152787]      inet_recvmsg+0x124/0x180
+	[17659.156488]      sock_recvmsg+0x64/0x80
+	[17659.160012]      SyS_recvfrom+0xd8/0x180
+	[17659.163626]      __sys_trace_return+0x0/0x4
+	[17659.167506] INFO: Freed in kfree_skbmem+0xa0/0xb0 age=23 cpu=1 pid=13
+	[17659.174000]      free_debug_processing+0x1d4/0x2c0
+	[17659.178486]      __slab_free+0x240/0x390
+	[17659.182100]      kmem_cache_free+0x24c/0x270
+	[17659.186062]      kfree_skbmem+0xa0/0xb0
+	[17659.189587]      __kfree_skb+0x28/0x40
+	[17659.193025]      napi_gro_receive+0x168/0x1c0
+	[17659.197074]      hns_nic_rx_up_pro+0x58/0x90
+	[17659.201038]      hns_nic_rx_poll_one+0x518/0xbc0
+	[17659.205352]      hns_nic_common_poll+0x94/0x140
+	[17659.209576]      net_rx_action+0x458/0x5e0
+	[17659.213363]      __do_softirq+0x1b8/0x480
+	[17659.217062]      run_ksoftirqd+0x64/0x80
+	[17659.220679]      smpboot_thread_fn+0x224/0x310
+	[17659.224821]      kthread+0x150/0x170
+	[17659.228084]      ret_from_fork+0x10/0x40
 
-% tc actions add action tunnel_key src_ip 1.1.1.1 dst_ip 2.2.2.1 id 7 index 1
+	BUG: KASAN: use-after-free in hns_nic_net_xmit+0x8c/0xc0...
+	[17751.080490]      __slab_alloc+0x52c/0x560
+	[17751.084188]      kmem_cache_alloc+0x244/0x280
+	[17751.088238]      __build_skb+0x40/0x150
+	[17751.091764]      build_skb+0x28/0x100
+	[17751.095115]      __alloc_rx_skb+0x94/0x150
+	[17751.098900]      __napi_alloc_skb+0x34/0x90
+	[17751.102776]      hns_nic_rx_poll_one+0x180/0xbc0
+	[17751.107097]      hns_nic_common_poll+0x94/0x140
+	[17751.111333]      net_rx_action+0x458/0x5e0
+	[17751.115123]      __do_softirq+0x1b8/0x480
+	[17751.118823]      run_ksoftirqd+0x64/0x80
+	[17751.122437]      smpboot_thread_fn+0x224/0x310
+	[17751.126575]      kthread+0x150/0x170
+	[17751.129838]      ret_from_fork+0x10/0x40
+	[17751.133454] INFO: Freed in kfree_skbmem+0xa0/0xb0 age=19 cpu=7 pid=43
+	[17751.139951]      free_debug_processing+0x1d4/0x2c0
+	[17751.144436]      __slab_free+0x240/0x390
+	[17751.148051]      kmem_cache_free+0x24c/0x270
+	[17751.152014]      kfree_skbmem+0xa0/0xb0
+	[17751.155543]      __kfree_skb+0x28/0x40
+	[17751.159022]      napi_gro_receive+0x168/0x1c0
+	[17751.163074]      hns_nic_rx_up_pro+0x58/0x90
+	[17751.167041]      hns_nic_rx_poll_one+0x518/0xbc0
+	[17751.171358]      hns_nic_common_poll+0x94/0x140
+	[17751.175585]      net_rx_action+0x458/0x5e0
+	[17751.179373]      __do_softirq+0x1b8/0x480
+	[17751.183076]      run_ksoftirqd+0x64/0x80
+	[17751.186691]      smpboot_thread_fn+0x224/0x310
+	[17751.190826]      kthread+0x150/0x170
+	[17751.194093]      ret_from_fork+0x10/0x40
 
-[   35.805515] general protection fault: 0000 [#1] SMP PTI
-[   35.806161] Modules linked in: act_tunnel_key kvm_intel kvm irqbypass
-crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64
-crypto_simd glue_helper cryptd serio_raw
-[   35.808233] CPU: 1 PID: 428 Comm: tc Not tainted 4.16.0-rc4+ #286
-[   35.808929] RIP: 0010:tcf_action_init+0x90/0x190
-[   35.809457] RSP: 0018:ffffb8edc068b9a0 EFLAGS: 00010206
-[   35.810053] RAX: 1320c000000a0003 RBX: 0000000000000001 RCX: 0000000000000000
-[   35.810866] RDX: 0000000000000070 RSI: 0000000000007965 RDI: ffffb8edc068b910
-[   35.811660] RBP: ffffb8edc068b9d0 R08: 0000000000000000 R09: ffffb8edc068b808
-[   35.812463] R10: ffffffffc02bf040 R11: 0000000000000040 R12: ffffb8edc068bb38
-[   35.813235] R13: 0000000000000000 R14: 0000000000000000 R15: ffffb8edc068b910
-[   35.814006] FS:  00007f3d0d8556c0(0000) GS:ffff91d1dbc40000(0000)
-knlGS:0000000000000000
-[   35.814881] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   35.815540] CR2: 000000000043f720 CR3: 0000000019248001 CR4: 00000000001606a0
-[   35.816457] Call Trace:
-[   35.817158]  tc_ctl_action+0x11a/0x220
-[   35.817795]  rtnetlink_rcv_msg+0x23d/0x2e0
-[   35.818457]  ? __slab_alloc+0x1c/0x30
-[   35.819079]  ? __kmalloc_node_track_caller+0xb1/0x2b0
-[   35.819544]  ? rtnl_calcit.isra.30+0xe0/0xe0
-[   35.820231]  netlink_rcv_skb+0xce/0x100
-[   35.820744]  netlink_unicast+0x164/0x220
-[   35.821500]  netlink_sendmsg+0x293/0x370
-[   35.822040]  sock_sendmsg+0x30/0x40
-[   35.822508]  ___sys_sendmsg+0x2c5/0x2e0
-[   35.823149]  ? pagecache_get_page+0x27/0x220
-[   35.823714]  ? filemap_fault+0xa2/0x640
-[   35.824423]  ? page_add_file_rmap+0x108/0x200
-[   35.825065]  ? alloc_set_pte+0x2aa/0x530
-[   35.825585]  ? finish_fault+0x4e/0x70
-[   35.826140]  ? __handle_mm_fault+0xbc1/0x10d0
-[   35.826723]  ? __sys_sendmsg+0x41/0x70
-[   35.827230]  __sys_sendmsg+0x41/0x70
-[   35.827710]  do_syscall_64+0x68/0x120
-[   35.828195]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-[   35.828859] RIP: 0033:0x7f3d0ca4da67
-[   35.829331] RSP: 002b:00007ffc9f284338 EFLAGS: 00000246 ORIG_RAX:
-000000000000002e
-[   35.830304] RAX: ffffffffffffffda RBX: 00007ffc9f284460 RCX: 00007f3d0ca4da67
-[   35.831247] RDX: 0000000000000000 RSI: 00007ffc9f2843b0 RDI: 0000000000000003
-[   35.832167] RBP: 000000005aa6a7a9 R08: 0000000000000001 R09: 0000000000000000
-[   35.833075] R10: 00000000000005f1 R11: 0000000000000246 R12: 0000000000000000
-[   35.833997] R13: 00007ffc9f2884c0 R14: 0000000000000001 R15: 0000000000674640
-[   35.834923] Code: 24 30 bb 01 00 00 00 45 31 f6 eb 5e 8b 50 08 83 c2 07 83 e2
-fc 83 c2 70 49 8b 07 48 8b 40 70 48 85 c0 74 10 48 89 14 24 4c 89 ff <ff> d0 48
-8b 14 24 48 01 c2 49 01 d6 45 85 ed 74 05 41 83 47 2c
-[   35.837442] RIP: tcf_action_init+0x90/0x190 RSP: ffffb8edc068b9a0
-[   35.838291] ---[ end trace a095c06ee4b97a26 ]---
-
-Fixes: d0f6dd8a914f ("net/sched: Introduce act_tunnel_key")
-Signed-off-by: Roman Mashak <mrv@mojatatu.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 13ac695e7ea1 ("net:hns: Add support of Hip06 SoC to the Hislicon Network Subsystem")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: lipeng <lipeng321@huawei.com>
+Reported-by: Jun He <hjat2005@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Erick Reyes <erickreyes@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/act_tunnel_key.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/net/sched/act_tunnel_key.c
-+++ b/net/sched/act_tunnel_key.c
-@@ -141,6 +141,7 @@ static int tunnel_key_init(struct net *n
- 		metadata->u.tun_info.mode |= IP_TUNNEL_INFO_TX;
- 		break;
- 	default:
-+		ret = -EINVAL;
- 		goto err_out;
- 	}
+---
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c |   22 ++++++++++------------
+ drivers/net/ethernet/hisilicon/hns/hns_enet.h |    6 +++---
+ 2 files changed, 13 insertions(+), 15 deletions(-)
+
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -299,9 +299,9 @@ static void fill_tso_desc(struct hnae_ri
+ 			     mtu);
+ }
  
+-int hns_nic_net_xmit_hw(struct net_device *ndev,
+-			struct sk_buff *skb,
+-			struct hns_nic_ring_data *ring_data)
++netdev_tx_t hns_nic_net_xmit_hw(struct net_device *ndev,
++				struct sk_buff *skb,
++				struct hns_nic_ring_data *ring_data)
+ {
+ 	struct hns_nic_priv *priv = netdev_priv(ndev);
+ 	struct hnae_ring *ring = ring_data->ring;
+@@ -360,6 +360,10 @@ int hns_nic_net_xmit_hw(struct net_devic
+ 	dev_queue = netdev_get_tx_queue(ndev, skb->queue_mapping);
+ 	netdev_tx_sent_queue(dev_queue, skb->len);
+ 
++	netif_trans_update(ndev);
++	ndev->stats.tx_bytes += skb->len;
++	ndev->stats.tx_packets++;
++
+ 	wmb(); /* commit all data before submit */
+ 	assert(skb->queue_mapping < priv->ae_handle->q_num);
+ 	hnae_queue_xmit(priv->ae_handle->qs[skb->queue_mapping], buf_num);
+@@ -1408,17 +1412,11 @@ static netdev_tx_t hns_nic_net_xmit(stru
+ 				    struct net_device *ndev)
+ {
+ 	struct hns_nic_priv *priv = netdev_priv(ndev);
+-	int ret;
+ 
+ 	assert(skb->queue_mapping < ndev->ae_handle->q_num);
+-	ret = hns_nic_net_xmit_hw(ndev, skb,
+-				  &tx_ring_data(priv, skb->queue_mapping));
+-	if (ret == NETDEV_TX_OK) {
+-		netif_trans_update(ndev);
+-		ndev->stats.tx_bytes += skb->len;
+-		ndev->stats.tx_packets++;
+-	}
+-	return (netdev_tx_t)ret;
++
++	return hns_nic_net_xmit_hw(ndev, skb,
++				   &tx_ring_data(priv, skb->queue_mapping));
+ }
+ 
+ static int hns_nic_change_mtu(struct net_device *ndev, int new_mtu)
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.h
+@@ -91,8 +91,8 @@ void hns_ethtool_set_ops(struct net_devi
+ void hns_nic_net_reset(struct net_device *ndev);
+ void hns_nic_net_reinit(struct net_device *netdev);
+ int hns_nic_init_phy(struct net_device *ndev, struct hnae_handle *h);
+-int hns_nic_net_xmit_hw(struct net_device *ndev,
+-			struct sk_buff *skb,
+-			struct hns_nic_ring_data *ring_data);
++netdev_tx_t hns_nic_net_xmit_hw(struct net_device *ndev,
++				struct sk_buff *skb,
++				struct hns_nic_ring_data *ring_data);
+ 
+ #endif	/**__HNS_ENET_H */
