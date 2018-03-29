@@ -1,121 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeC2JYi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 05:24:38 -0400
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:36754 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeC2JYh (ORCPT
+        id S1752487AbeC2JYr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 05:24:47 -0400
+Received: from mailcfe05.cfe.gob.mx ([159.16.1.18]:49270 "EHLO
+        mailcfe01.cfe.gob.mx" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752453AbeC2JYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 05:24:37 -0400
-X-Google-Smtp-Source: AIpwx48KCnAtXux9WbMLQ6xetneJ7jNHLe5Vnol1mj68yOM0h0T2045UGQZdA6IpTyQumf3gQmfyCA==
-Subject: Re: [PATCH v5 0/1] drm/xen-front: Add support for Xen PV display
- frontend
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180329092247.23905-1-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <7d9511c8-c3ed-b834-3f23-9664281d4468@gmail.com>
-Date: Thu, 29 Mar 2018 12:24:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 29 Mar 2018 05:24:45 -0400
+X-AuditID: c0a8c840-290869e000001696-ff-5abcb0dccd93
+References: <OF4C7A8D76.B1D9D2D6-ON8625825F.0032DC37-8625825F.0032DC71@LocalDomain>
+In-Reply-To: <OF4C7A8D76.B1D9D2D6-ON8625825F.0032DC37-8625825F.0032DC71@LocalDomain>
+Subject: Re: Important Notice. (Treat As Urgent)
 MIME-Version: 1.0
-In-Reply-To: <20180329092247.23905-1-andr2000@gmail.com>
-Content-Type: multipart/mixed;
- boundary="------------B0F36CF2C88CD34800597A42"
-Content-Language: en-US
+From: omar.gamez01@cfe.gob.mx
+Message-ID: <OFA41F2DEC.76D13458-ON8625825F.0033B32A-8625825F.0033B361@cfe.gob.mx>
+Date: Thu, 29 Mar 2018 03:24:42 -0600
+X-Mailer: Lotus Domino Web Server Release 9.0.1FP3 January  12, 2015
+X-MIMETrack: Serialize by HTTP Server on LDGITX02/CORP/CFE(Release 9.0.1FP3|January  12, 2015) at
+ 29/03/2018 03:24:42 a. m.,
+        Serialize complete at 29/03/2018 03:24:42 a. m.,
+        Serialize by Router on LDGITH02/CORP/CFE(Release 9.0.1FP3|January  12, 2015) at
+ 29/03/2018 03:22:46 a. m.
+Content-Type: text/plain; charset=UTF-8
+X-Notes-Item: linux-kernel@vger.kernel.org; name=AltBlindCopyTo
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrILMWRmVeSWpSXmKPExsVyYMUJDt07G/ZEGdyZZGBxedccNgdGj8+b
+        5AIYo7hsUlJzMstSi/TtErgy2jYsZC9YxVTx9sF8lgbGT4xdjJwcEgImEu0T/7B1MXJxCAns
+        Y5RYtG8NWEJIIFhibtdCdhCbUyBEovXrDLC4sICBRM/SSSwgNq+AoMTJmU/AbDYBWYn9UxeC
+        2SICLBIrv38Hs5mB7D9vNkDVB0ncm9YGZrMIqEosOHyTGeIIF4kJVxuZQI6QEJjPJPGg7QTQ
+        Yg6gZnWJ9fOEIOZoSyxb+JoZJMwkoCgx41gsiCkhYC/x6Y3TBEbBWUgOmoXQOwtJ7wJG5lWM
+        IrmJmTnJaakGhnpAUi89P0kvt2ITIyQgHXYwrjocdIhRgINRiYfXYtHuKCHWxLLiytxDjBIc
+        zEoivO81gEK8KYmVValF+fFFpTmpxYcYpTlYlMR5N6qviRISSE8sSc1OTS1ILYLJMnFwSjUw
+        Kr6LrdmqHfehra9i1nLLlngGSYcEV429Qjp+a1fvzjOakbXosVjYPb7f729laW+Qzrix10vA
+        NkOlJ5gxt2Zh4K7u0Fu+GW8sbfkzfpbp3extdetp9lt7reaktWvxIadHVclmkWc37vnx4ou5
+        bI2noNhZ9qiFqwTUzaalnkmL9C8+XvOqk02JpTgj0VCLuag4EQCgMyi8RAIAAA==
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T9OpPK030338
 
-This is a multi-part message in MIME format.
---------------B0F36CF2C88CD34800597A42
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Good Day and congratulations . My Client Mrs. Marilyn Boldon has made a donation 3.5m euros to you, contact her through her private email: marilynbold60@gmail.com for more detail on how to receive this donation.
 
-On 03/29/2018 12:22 PM, Oleksandr Andrushchenko wrote:
-> Changes since v4:
-For your convenience I am attaching diff between v4..v5
-
---------------B0F36CF2C88CD34800597A42
-Content-Type: text/x-patch;
- name="v4_v5.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="v4_v5.diff"
-
-diff --git a/Documentation/gpu/xen-front.rst b/Documentation/gpu/xen-front.rst
-index 8188e03c9d23..009d942386c5 100644
---- a/Documentation/gpu/xen-front.rst
-+++ b/Documentation/gpu/xen-front.rst
-@@ -1,6 +1,6 @@
--====================================
--Xen para-virtualized frontend driver
--====================================
-+====================================================
-+ drm/xen-front Xen para-virtualized frontend driver
-+====================================================
- 
- This frontend driver implements Xen para-virtualized display
- according to the display protocol described at
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
-index e521785fd22b..02b6f3d9fe4c 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
-@@ -186,8 +186,10 @@ static int evtchnl_alloc(struct xen_drm_front_info *front_info, int index,
- 				sring, XEN_PAGE_SIZE);
- 
- 		ret = xenbus_grant_ring(xb_dev, sring, 1, &gref);
--		if (ret < 0)
-+		if (ret < 0) {
-+			free_page(page);
- 			goto fail;
-+		}
- 
- 		handler = evtchnl_interrupt_ctrl;
- 	} else {
-@@ -195,8 +197,10 @@ static int evtchnl_alloc(struct xen_drm_front_info *front_info, int index,
- 
- 		ret = gnttab_grant_foreign_access(xb_dev->otherend_id,
- 				virt_to_gfn((void *)page), 0);
--		if (ret < 0)
-+		if (ret < 0) {
-+			free_page(page);
- 			goto fail;
-+		}
- 
- 		gref = ret;
- 		handler = evtchnl_interrupt_evt;
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_kms.c b/drivers/gpu/drm/xen/xen_drm_front_kms.c
-index 545049dfaf0a..f3ef9dfb4dfb 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_kms.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_kms.c
-@@ -107,12 +107,13 @@ static void send_pending_event(struct xen_drm_front_drm_pipeline *pipeline)
- }
- 
- static void display_enable(struct drm_simple_display_pipe *pipe,
--		struct drm_crtc_state *crtc_state)
-+		struct drm_crtc_state *crtc_state,
-+		struct drm_plane_state *plane_state)
- {
- 	struct xen_drm_front_drm_pipeline *pipeline =
- 			to_xen_drm_pipeline(pipe);
- 	struct drm_crtc *crtc = &pipe->crtc;
--	struct drm_framebuffer *fb = pipe->plane.state->fb;
-+	struct drm_framebuffer *fb = plane_state->fb;
- 	int ret, idx;
- 
- 	if (!drm_dev_enter(pipe->crtc.dev, &idx))
-@@ -273,7 +274,7 @@ static void display_update(struct drm_simple_display_pipe *pipe,
- 	drm_dev_exit(idx);
- }
- 
--enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
-+static enum drm_mode_status display_mode_valid(struct drm_crtc *crtc,
- 		const struct drm_display_mode *mode)
- {
- 	struct xen_drm_front_drm_pipeline *pipeline =
-
---------------B0F36CF2C88CD34800597A42--
+Barrister. Omar Gamez Vargas. Esq.
+M.Williams Chambers and Associates.    
