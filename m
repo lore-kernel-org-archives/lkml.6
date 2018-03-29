@@ -1,85 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeC2Ox4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:53:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55902 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750708AbeC2Oxy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:53:54 -0400
-Date: Thu, 29 Mar 2018 16:53:43 +0200
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH 10/10] softirq: Remove __ARCH_SET_SOFTIRQ_PENDING
-In-Reply-To: <20180329140748.GB12958@lerouge>
-References: <1522290425-22844-1-git-send-email-frederic@kernel.org>
-        <1522290425-22844-11-git-send-email-frederic@kernel.org>
-        <20180329071619.GO4082@hirez.programming.kicks-ass.net>
-        <20180329134745.GA12958@lerouge>
-        <20180329140111.GC4043@hirez.programming.kicks-ass.net>
-        <20180329140748.GB12958@lerouge>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1752116AbeC2OyG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:54:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43453 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbeC2OyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:54:04 -0400
+Date: Thu, 29 Mar 2018 16:53:52 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH net-next 3/8] net: mscc: Add MDIO driver
+Message-ID: <20180329145352.GD12066@piout.net>
+References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
+ <20180323201117.8416-4-alexandre.belloni@bootlin.com>
+ <20180323204939.GS24361@lunn.ch>
+ <20180329140544.GB12066@piout.net>
+ <20180329144041.GA25752@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032914-0044-0000-0000-000005414FF4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032914-0045-0000-0000-0000288152EF
-Message-Id: <20180329165343.39f4486f@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-29_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803290157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180329144041.GA25752@lunn.ch>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018 16:07:49 +0200
-Frederic Weisbecker <frederic@kernel.org> wrote:
-
-> On Thu, Mar 29, 2018 at 04:01:11PM +0200, Peter Zijlstra wrote:
-> > On Thu, Mar 29, 2018 at 03:47:46PM +0200, Frederic Weisbecker wrote:  
-> > > On Thu, Mar 29, 2018 at 09:16:19AM +0200, Peter Zijlstra wrote:  
-> > > > On Thu, Mar 29, 2018 at 04:27:05AM +0200, Frederic Weisbecker wrote:  
-> > > > > The last user of __ARCH_SET_SOFTIRQ_PENDING has been converted to generic
-> > > > > per-cpu softirq mask. We can now remove this conditional.  
-> > > > 
-> > > > This seems like half a cleanup; who still has local_softirq_pending()
-> > > > after this?  
+On 29/03/2018 at 16:40:41 +0200, Andrew Lunn wrote:
+> > > > +	for (i = 0; i < PHY_MAX_ADDR; i++) {
+> > > > +		if (mscc_miim_read(bus, i, MII_PHYSID1) < 0)
+> > > > +			bus->phy_mask |= BIT(i);
+> > > > +	}
 > > > 
-> > > Only s390 because it uses lowcore to store such cpu data.  
+> > > Why do this? Especially so for the external bus, where the PHYs might
+> > > have a GPIO reset line, and won't respond until the gpio is
+> > > released. The core code does that just before it scans the bus, or
+> > > just before it scans the particular address on the bus, depending on
+> > > the scope of the GPIO.
+> > > 
 > > 
-> > Is it worth keeping it there? It seems an aweful shame to keep this
-> > stuff special cased for just the one arch. At the very least this
-> > should've mentioned s390 is special and why.  
+> > IIRC, this was needed when probing the bus without DT, in that case, the
+> > mdiobus_scan loop of __mdiobus_register() will fail when doing the
+> > get_phy_id for phys 0 to 31 because get_phy_id() transforms any error in
+> > -EIO and so it is impossible to register the bus. Other drivers have a
+> > similar code to handle that case.
 > 
-> Right, I thought well about moving that special case to s390. I can
-> do that in v2.
+> Hi Alexandre
+> 
+> Do you mean mscc_miim_read() will return -EIO if there is no device on
+> the bus at the address trying to be read? Most devices just return
+> 0xffff because there is a pull up on the data line, nothing is driving
+> it, so all 1's are read.
+> 
 
-The lowcore optimization for softirq_pending field is not really needed,
-just nice to have. But if there is a strong reason to make a common
-definition for it we can certainly do that.
+It will return -EIO but I tried to be clever and return -ENODEV but this
+gets changed to -EIO by get_phy_id.
 
-First try has hit the wall due to include file hell though.
+> It sounds like the correct fix is for get_phy_id() to look at the
+> error code for mdiobus_read(bus, addr, MII_PHYSID1). If it is EIO and
+> maybe ENODEV, set *phy_id to 0xffffffff and return. The scan code
+> should then do the correct thing.
+> 
+
+That could work indeed. Do you want me to test and send a patch?
+
 
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
