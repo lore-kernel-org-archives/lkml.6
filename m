@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+BrPBWQlKURypECzEGndh13TUjEL8K6Ms0SeXo49U5zESUKYvH4jzcoHvowfxDDi157xPq
-ARC-Seal: i=1; a=rsa-sha256; t=1522346716; cv=none;
+X-Google-Smtp-Source: AIpwx48Pauxfy6ew3piwGiLOwRXa0UKzTfCGY7k4BRVMAbJbxM4h7uUuSyZKqeZyFCALyudr8Nt0
+ARC-Seal: i=1; a=rsa-sha256; t=1522346709; cv=none;
         d=google.com; s=arc-20160816;
-        b=sa4iRJYKh2wNk5l0srot0Zy0ghvCQqP81A8OGBxJnocPdtcezCTMowvoRIE4FcSezv
-         iduUjFtH+4CKkSaLlOdqduP6BT80YQ9RSilmjSU+OBtGX+C3DvqTyVZsaG5IL71+z1ib
-         394nqgDfjQzSa+QdRK7YUGk0fWtEPDG9drbPmN7sxnlnjZ94/mMJ51Bn0a4xZyJRl25P
-         YLaP/bzmOkMstCaZlx5XXA8AybrdNJM+a4aSR6sF+5Vqv9cINqLN11GBRjl4pEukFTBC
-         Hsorxw9eQs25Ef6ZN/XiYZCa1fyLcLFOiwae0SfHgiVCywFbiA1cSPucxlUCpRit9gmm
-         2VLA==
+        b=RxkEAj58ds1qtaOu8Rjk+OHQSdFxRydS1hIkcED10JBC576Xj2h3CeO0hvb4jo0yfp
+         FrMURKNXgm3jo1kDhJbxspuOTQ9+9qriDpMETf3irV/tAxf+w354uYFK0imVYL6JjgsY
+         xysvxcZ+mUo1gL8SPFmBqJRlcsIwfLdAmDNUhDpie/fKKWkoPROIIy2G+iTh7wYLLAaD
+         U/lbvMoOO6em9nLT5S1+TnGEtOlI/XLBwwLHfRvbr5wh+f41LuMOERqXTbu8T4l3l4MN
+         UgTHYU0ENla24vgNPAqA/y9jKj+caAafPM6QY3eKSwCx9Ne13rAKjdjB6RLQKhjzoFFK
+         Hp8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+I0y7Gxw9gPhTCIJO5AKwsxSkaFitWJDE0oQtz2Ip6E=;
-        b=ZSVgCo9hma3mPrWl85i5pgjdUsrCo76nC8VIqht8juC4NaNojs6//Y8Rso5aRzBE2f
-         v7A7o/8sjr0mgsYdndjVBoSr6xWKy3dhS3Z2fdKoYw+hmjTuvW4fSr5SoWRpfmnl5jyP
-         s0PNwcnHjl+UYfl8by98FRAh1yf/f8EkecIoCu07SP05JifEkt+J9j2NcOH8rQIBoLLo
-         7sfXK6Ojxh3wWLKmSLvXVkuVq2zhLGrqftCaqBFZb5kF9bsIBb2uljstOCxu6HftkN9V
-         sBTSCe0adxfNzZHVPjV62rMHraIEcr+FuOt5l4wCyv3tZ+CLccfr35vL8oVBpj307B/l
-         NCAA==
+        bh=5f0QEW5SiJBB+1oU/7myBRS++6AZBDT3ZCZqT4QEgsw=;
+        b=BEE5jI0EmfrNaGrSm1Paqp+d3ccbeR+VeM5nWVQhyUnc7PTbvEqFFi+D8xL8WEFjue
+         0bMaKcZMl/ZsmqXFKNouFZOpD3TXEEyY7jnXakQCnqgxT9Mn5luBv1bqYpB5kmDE0T4+
+         eeKEdVp4Y+9euYFdO6a5hiH/zfNLlgIKBSKJP9pBBVkuYYAgup+jePY6zYACqX2noDDQ
+         IFx2zP2JdrXpDasF+cXRHfykQMj8II2YdYTubNjgonnytIkMiheULUtJAB54DCu0ggzf
+         /oNhGUsBNZJRLSv3r1gW4gCvjXLWi+LWkhCJ//Ab61eKxJdoTRMKIdoXYOKCsFBBIVbE
+         J/cw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Randy E. Witt" <randy.e.witt@intel.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 33/43] skbuff: Fix not waking applications when errors are enqueued
-Date: Thu, 29 Mar 2018 20:00:28 +0200
-Message-Id: <20180329175733.626168276@linuxfoundation.org>
+Subject: [PATCH 4.14 31/43] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
+Date: Thu, 29 Mar 2018 20:00:26 +0200
+Message-Id: <20180329175733.358339899@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296148190849084?=
-X-GMAIL-MSGID: =?utf-8?q?1596296230725221873?=
+X-GMAIL-THRID: =?utf-8?q?1596296154266944554?=
+X-GMAIL-MSGID: =?utf-8?q?1596296223265447231?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +49,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
 
-[ Upstream commit 6e5d58fdc9bedd0255a8781b258f10bbdc63e975 ]
+[ Upstream commit 484d802d0f2f29c335563fcac2a8facf174a1bbc ]
 
-When errors are enqueued to the error queue via sock_queue_err_skb()
-function, it is possible that the waiting application is not notified.
+There is no need for complex checking between the last consumed index
+and current consumed index, a simple subtraction will do.
 
-Calling 'sk->sk_data_ready()' would not notify applications that
-selected only POLLERR events in poll() (for example).
+This also eliminates the possibility of a permanent transmit queue stall
+under the following conditions:
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: Randy E. Witt <randy.e.witt@intel.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
+  point where we run out of free descriptors, so we stop the transmit
+  queue at the end of bcm_sysport_xmit()
+
+- because of our locking, we have the transmit process disable
+  interrupts which means we can be blocking the TX reclamation process
+
+- when TX reclamation finally runs, we will be computing the difference
+  between ring->c_index (last consumed index by SW) and what the HW
+  reports through its register
+
+- this register is masked with (ring->size - 1) = 0xff, which will lead
+  to stripping the upper bits of the index (register is 16-bits wide)
+
+- we will be computing last_tx_cn as 0, which means there is no work to
+  be done, and we never wake-up the transmit queue, leaving it
+  permanently disabled
+
+A practical example is e.g: ring->c_index aka last_c_index = 12, we
+pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
+so last_tx_cn == 0, nothing happens.
+
+Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   33 +++++++++++++----------------
+ drivers/net/ethernet/broadcom/bcmsysport.h |    2 -
+ 2 files changed, 16 insertions(+), 19 deletions(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4171,7 +4171,7 @@ int sock_queue_err_skb(struct sock *sk,
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -855,10 +855,12 @@ static void bcm_sysport_tx_reclaim_one(s
+ static unsigned int __bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
+ 					     struct bcm_sysport_tx_ring *ring)
+ {
+-	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
+ 	unsigned int pkts_compl = 0, bytes_compl = 0;
+ 	struct net_device *ndev = priv->netdev;
++	unsigned int txbds_processed = 0;
+ 	struct bcm_sysport_cb *cb;
++	unsigned int txbds_ready;
++	unsigned int c_index;
+ 	u32 hw_ind;
  
- 	skb_queue_tail(&sk->sk_error_queue, skb);
- 	if (!sock_flag(sk, SOCK_DEAD))
--		sk->sk_data_ready(sk);
-+		sk->sk_error_report(sk);
- 	return 0;
- }
- EXPORT_SYMBOL(sock_queue_err_skb);
+ 	/* Clear status before servicing to reduce spurious interrupts */
+@@ -871,29 +873,23 @@ static unsigned int __bcm_sysport_tx_rec
+ 	/* Compute how many descriptors have been processed since last call */
+ 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
+ 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
+-	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
+-
+-	last_c_index = ring->c_index;
+-	num_tx_cbs = ring->size;
+-
+-	c_index &= (num_tx_cbs - 1);
+-
+-	if (c_index >= last_c_index)
+-		last_tx_cn = c_index - last_c_index;
+-	else
+-		last_tx_cn = num_tx_cbs - last_c_index + c_index;
++	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
+ 
+ 	netif_dbg(priv, tx_done, ndev,
+-		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
+-		  ring->index, c_index, last_tx_cn, last_c_index);
++		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
++		  ring->index, ring->c_index, c_index, txbds_ready);
+ 
+-	while (last_tx_cn-- > 0) {
+-		cb = ring->cbs + last_c_index;
++	while (txbds_processed < txbds_ready) {
++		cb = &ring->cbs[ring->clean_index];
+ 		bcm_sysport_tx_reclaim_one(ring, cb, &bytes_compl, &pkts_compl);
+ 
+ 		ring->desc_count++;
+-		last_c_index++;
+-		last_c_index &= (num_tx_cbs - 1);
++		txbds_processed++;
++
++		if (likely(ring->clean_index < ring->size - 1))
++			ring->clean_index++;
++		else
++			ring->clean_index = 0;
+ 	}
+ 
+ 	u64_stats_update_begin(&priv->syncp);
+@@ -1406,6 +1402,7 @@ static int bcm_sysport_init_tx_ring(stru
+ 	netif_tx_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
+ 	ring->index = index;
+ 	ring->size = size;
++	ring->clean_index = 0;
+ 	ring->alloc_size = ring->size;
+ 	ring->desc_cpu = p;
+ 	ring->desc_count = ring->size;
+--- a/drivers/net/ethernet/broadcom/bcmsysport.h
++++ b/drivers/net/ethernet/broadcom/bcmsysport.h
+@@ -706,7 +706,7 @@ struct bcm_sysport_tx_ring {
+ 	unsigned int	desc_count;	/* Number of descriptors */
+ 	unsigned int	curr_desc;	/* Current descriptor */
+ 	unsigned int	c_index;	/* Last consumer index */
+-	unsigned int	p_index;	/* Current producer index */
++	unsigned int	clean_index;	/* Current clean index */
+ 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
+ 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
+ 	struct bcm_sysport_priv *priv;	/* private context backpointer */
