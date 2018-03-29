@@ -1,97 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752964AbeC2Lqj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:46:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38149 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752154AbeC2Lqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:46:38 -0400
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc: ARM Maintainers <arm@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] MAINTAINERS: update entry for entry for ARM/berlin
-References: <20180329164240.20cfddbc@xhacker.debian>
-Date: Thu, 29 Mar 2018 13:46:36 +0200
-In-Reply-To: <20180329164240.20cfddbc@xhacker.debian> (Jisheng Zhang's message
-        of "Thu, 29 Mar 2018 16:42:40 +0800")
-Message-ID: <87fu4jt883.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1753081AbeC2LqY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:46:24 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59862 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752791AbeC2L0P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 07:26:15 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org
+Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 045/109] mm: add kernel_move_pages() helper, move compat syscall to mm/migrate.c
+Date: Thu, 29 Mar 2018 13:23:22 +0200
+Message-Id: <20180329112426.23043-46-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
+References: <20180329112426.23043-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jisheng,
+Move compat_sys_move_pages() to mm/migrate.c and make it call a newly
+introduced helper -- kernel_move_pages() -- instead of the syscall.
+
+This patch is part of a series which removes in-kernel calls to syscalls.
+On this basis, the syscall entry path can be streamlined. For details, see
+http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ kernel/compat.c | 22 ----------------------
+ mm/migrate.c    | 39 +++++++++++++++++++++++++++++++++++----
+ 2 files changed, 35 insertions(+), 26 deletions(-)
+
+diff --git a/kernel/compat.c b/kernel/compat.c
+index 51bdf1808943..6d21894806b4 100644
+--- a/kernel/compat.c
++++ b/kernel/compat.c
+@@ -488,28 +488,6 @@ get_compat_sigset(sigset_t *set, const compat_sigset_t __user *compat)
+ }
+ EXPORT_SYMBOL_GPL(get_compat_sigset);
  
- On jeu., mars 29 2018, Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
-
-> Change the entry name and move it to its alphabetical location.
-> We move to ARM/Synaptics instead of ARM/Marvell.
->
-> This patch also updates my email address from marvell to synaptics.
->
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  MAINTAINERS | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6e950b8b4a41..0a0da6a8e607 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1578,15 +1578,6 @@ ARM/MAGICIAN MACHINE SUPPORT
->  M:	Philipp Zabel <philipp.zabel@gmail.com>
->  S:	Maintained
->  
-> -ARM/Marvell Berlin SoC support
-> -M:	Jisheng Zhang <jszhang@marvell.com>
-> -M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> -L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> -S:	Maintained
-> -F:	arch/arm/mach-berlin/
-> -F:	arch/arm/boot/dts/berlin*
-> -F:	arch/arm64/boot/dts/marvell/berlin*
-> -
->  ARM/Marvell Dove/MV78xx0/Orion SOC support
->  M:	Jason Cooper <jason@lakedaemon.net>
->  M:	Andrew Lunn <andrew@lunn.ch>
-> @@ -2006,6 +1997,15 @@ F:	arch/arm/boot/dts/stm32*
->  F:	arch/arm/mach-stm32/
->  F:	drivers/clocksource/armv7m_systick.c
->  
-> +ARM/Synaptics Berlin SoC support
-> +M:	Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> +M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	arch/arm/mach-berlin/
-> +F:	arch/arm/boot/dts/berlin*
-> +F:	arch/arm64/boot/dts/marvell/berlin*
-
-I though you had move the dts file from
-arch/arm64/boot/dts/marvell/berlin* to arch/arm64/boot/dts/synatpics,
-according a patch you submitted in September.
-
-What happened?
-
-Gregory
-
-> +
->  ARM/TANGO ARCHITECTURE
->  M:	Marc Gonzalez <marc.w.gonzalez@free.fr>
->  M:	Mans Rullgard <mans@mansr.com>
-> -- 
-> 2.16.3
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+-#ifdef CONFIG_NUMA
+-COMPAT_SYSCALL_DEFINE6(move_pages, pid_t, pid, compat_ulong_t, nr_pages,
+-		       compat_uptr_t __user *, pages32,
+-		       const int __user *, nodes,
+-		       int __user *, status,
+-		       int, flags)
+-{
+-	const void __user * __user *pages;
+-	int i;
+-
+-	pages = compat_alloc_user_space(nr_pages * sizeof(void *));
+-	for (i = 0; i < nr_pages; i++) {
+-		compat_uptr_t p;
+-
+-		if (get_user(p, pages32 + i) ||
+-			put_user(compat_ptr(p), pages + i))
+-			return -EFAULT;
+-	}
+-	return sys_move_pages(pid, nr_pages, pages, nodes, status, flags);
+-}
+-#endif
+-
+ /*
+  * Allocate user-space memory for the duration of a single system call,
+  * in order to marshall parameters inside a compat thunk.
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 1e5525a25691..003886606a22 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -34,6 +34,7 @@
+ #include <linux/backing-dev.h>
+ #include <linux/compaction.h>
+ #include <linux/syscalls.h>
++#include <linux/compat.h>
+ #include <linux/hugetlb.h>
+ #include <linux/hugetlb_cgroup.h>
+ #include <linux/gfp.h>
+@@ -1745,10 +1746,10 @@ static int do_pages_stat(struct mm_struct *mm, unsigned long nr_pages,
+  * Move a list of pages in the address space of the currently executing
+  * process.
+  */
+-SYSCALL_DEFINE6(move_pages, pid_t, pid, unsigned long, nr_pages,
+-		const void __user * __user *, pages,
+-		const int __user *, nodes,
+-		int __user *, status, int, flags)
++static int kernel_move_pages(pid_t pid, unsigned long nr_pages,
++			     const void __user * __user *pages,
++			     const int __user *nodes,
++			     int __user *status, int flags)
+ {
+ 	struct task_struct *task;
+ 	struct mm_struct *mm;
+@@ -1807,6 +1808,36 @@ SYSCALL_DEFINE6(move_pages, pid_t, pid, unsigned long, nr_pages,
+ 	return err;
+ }
+ 
++SYSCALL_DEFINE6(move_pages, pid_t, pid, unsigned long, nr_pages,
++		const void __user * __user *, pages,
++		const int __user *, nodes,
++		int __user *, status, int, flags)
++{
++	return kernel_move_pages(pid, nr_pages, pages, nodes, status, flags);
++}
++
++#ifdef CONFIG_COMPAT
++COMPAT_SYSCALL_DEFINE6(move_pages, pid_t, pid, compat_ulong_t, nr_pages,
++		       compat_uptr_t __user *, pages32,
++		       const int __user *, nodes,
++		       int __user *, status,
++		       int, flags)
++{
++	const void __user * __user *pages;
++	int i;
++
++	pages = compat_alloc_user_space(nr_pages * sizeof(void *));
++	for (i = 0; i < nr_pages; i++) {
++		compat_uptr_t p;
++
++		if (get_user(p, pages32 + i) ||
++			put_user(compat_ptr(p), pages + i))
++			return -EFAULT;
++	}
++	return kernel_move_pages(pid, nr_pages, pages, nodes, status, flags);
++}
++#endif /* CONFIG_COMPAT */
++
+ #ifdef CONFIG_NUMA_BALANCING
+ /*
+  * Returns true if this is a safe migration target node for misplaced NUMA
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.16.3
