@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753289AbeC2Lt7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:49:59 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59534 "EHLO
+        id S1753385AbeC2Lu2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:50:28 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59894 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752757AbeC2L0L (ORCPT
+        with ESMTP id S1752753AbeC2L0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:26:11 -0400
+        Thu, 29 Mar 2018 07:26:10 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 047/109] mm: add kernel_[sg]et_mempolicy() helpers; remove in-kernel calls to syscalls
-Date: Thu, 29 Mar 2018 13:23:24 +0200
-Message-Id: <20180329112426.23043-48-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Alexander Viro <viro@ZenIV.linux.org.uk>
+Subject: [PATCH 089/109] fs: add ksys_sync() helper; remove in-kernel calls to sys_sync()
+Date: Thu, 29 Mar 2018 13:24:06 +0200
+Message-Id: <20180329112426.23043-90-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,95 +21,128 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the mm-internal kernel_[sg]et_mempolicy() helper allows us to get
-rid of the mm-internal calls to the sys_[sg]et_mempolicy() syscalls.
+Using this helper allows us to avoid the in-kernel calls to the
+sys_sync() syscall. The ksys_ prefix denotes that this function
+is meant as a drop-in replacement for the syscall. In particular, it
+uses the same calling convention as sys_sync().
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- mm/mempolicy.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ arch/sparc/kernel/setup_32.c | 2 +-
+ drivers/tty/sysrq.c          | 2 +-
+ fs/sync.c                    | 7 ++++++-
+ include/linux/syscalls.h     | 1 +
+ kernel/power/hibernate.c     | 2 +-
+ kernel/power/suspend.c       | 2 +-
+ kernel/power/user.c          | 2 +-
+ 7 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index e4d7d4c0b253..ca817e768d0e 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1365,8 +1365,8 @@ SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
+diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
+index 2e3a3e203061..13664c377196 100644
+--- a/arch/sparc/kernel/setup_32.c
++++ b/arch/sparc/kernel/setup_32.c
+@@ -86,7 +86,7 @@ static void prom_sync_me(void)
+ 	show_free_areas(0, NULL);
+ 	if (!is_idle_task(current)) {
+ 		local_irq_enable();
+-		sys_sync();
++		ksys_sync();
+ 		local_irq_disable();
+ 	}
+ 	prom_printf("Returning to prom\n");
+diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+index b674793be478..6364890575ec 100644
+--- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -660,7 +660,7 @@ static void sysrq_do_reset(struct timer_list *t)
+ 
+ 	state->reset_requested = true;
+ 
+-	sys_sync();
++	ksys_sync();
+ 	kernel_restart(NULL);
  }
  
- /* Set the process memory policy */
--SYSCALL_DEFINE3(set_mempolicy, int, mode, const unsigned long __user *, nmask,
--		unsigned long, maxnode)
-+static long kernel_set_mempolicy(int mode, const unsigned long __user *nmask,
-+				 unsigned long maxnode)
+diff --git a/fs/sync.c b/fs/sync.c
+index 6e0a2cbaf6de..602ae94bb67e 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -105,7 +105,7 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
+  * just write metadata (such as inodes or bitmaps) to block device page cache
+  * and do not sync it on their own in ->sync_fs().
+  */
+-SYSCALL_DEFINE0(sync)
++void ksys_sync(void)
  {
- 	int err;
- 	nodemask_t nodes;
-@@ -1384,6 +1384,12 @@ SYSCALL_DEFINE3(set_mempolicy, int, mode, const unsigned long __user *, nmask,
- 	return do_set_mempolicy(mode, flags, &nodes);
- }
+ 	int nowait = 0, wait = 1;
  
-+SYSCALL_DEFINE3(set_mempolicy, int, mode, const unsigned long __user *, nmask,
-+		unsigned long, maxnode)
-+{
-+	return kernel_set_mempolicy(mode, nmask, maxnode);
+@@ -117,6 +117,11 @@ SYSCALL_DEFINE0(sync)
+ 	iterate_bdevs(fdatawait_one_bdev, NULL);
+ 	if (unlikely(laptop_mode))
+ 		laptop_sync_completion();
 +}
 +
- static int kernel_migrate_pages(pid_t pid, unsigned long maxnode,
- 				const unsigned long __user *old_nodes,
- 				const unsigned long __user *new_nodes)
-@@ -1485,9 +1491,11 @@ SYSCALL_DEFINE4(migrate_pages, pid_t, pid, unsigned long, maxnode,
- 
- 
- /* Retrieve NUMA policy */
--SYSCALL_DEFINE5(get_mempolicy, int __user *, policy,
--		unsigned long __user *, nmask, unsigned long, maxnode,
--		unsigned long, addr, unsigned long, flags)
-+static int kernel_get_mempolicy(int __user *policy,
-+				unsigned long __user *nmask,
-+				unsigned long maxnode,
-+				unsigned long addr,
-+				unsigned long flags)
- {
- 	int err;
- 	int uninitialized_var(pval);
-@@ -1510,6 +1518,13 @@ SYSCALL_DEFINE5(get_mempolicy, int __user *, policy,
- 	return err;
++SYSCALL_DEFINE0(sync)
++{
++	ksys_sync();
+ 	return 0;
  }
  
-+SYSCALL_DEFINE5(get_mempolicy, int __user *, policy,
-+		unsigned long __user *, nmask, unsigned long, maxnode,
-+		unsigned long, addr, unsigned long, flags)
-+{
-+	return kernel_get_mempolicy(policy, nmask, maxnode, addr, flags);
-+}
-+
- #ifdef CONFIG_COMPAT
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 3a2e90842ff8..0a9942b3e718 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -960,6 +960,7 @@ int ksys_getdents64(unsigned int fd, struct linux_dirent64 __user *dirent,
+ int ksys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg);
+ off_t ksys_lseek(unsigned int fd, off_t offset, unsigned int whence);
+ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count);
++void ksys_sync(void);
  
- COMPAT_SYSCALL_DEFINE5(get_mempolicy, int __user *, policy,
-@@ -1528,7 +1543,7 @@ COMPAT_SYSCALL_DEFINE5(get_mempolicy, int __user *, policy,
- 	if (nmask)
- 		nm = compat_alloc_user_space(alloc_size);
- 
--	err = sys_get_mempolicy(policy, nm, nr_bits+1, addr, flags);
-+	err = kernel_get_mempolicy(policy, nm, nr_bits+1, addr, flags);
- 
- 	if (!err && nmask) {
- 		unsigned long copy_size;
-@@ -1560,7 +1575,7 @@ COMPAT_SYSCALL_DEFINE3(set_mempolicy, int, mode, compat_ulong_t __user *, nmask,
- 			return -EFAULT;
+ /*
+  * The following kernel syscall equivalents are just wrappers to fs-internal
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index a5c36e9c56a6..4710f1b142fc 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -701,7 +701,7 @@ int hibernate(void)
  	}
  
--	return sys_set_mempolicy(mode, nm, nr_bits+1);
-+	return kernel_set_mempolicy(mode, nm, nr_bits+1);
- }
+ 	pr_info("Syncing filesystems ... \n");
+-	sys_sync();
++	ksys_sync();
+ 	pr_info("done.\n");
  
- COMPAT_SYSCALL_DEFINE6(mbind, compat_ulong_t, start, compat_ulong_t, len,
+ 	error = freeze_processes();
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 0685c4499431..4c10be0f4843 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -560,7 +560,7 @@ static int enter_state(suspend_state_t state)
+ #ifndef CONFIG_SUSPEND_SKIP_SYNC
+ 	trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+ 	pr_info("Syncing filesystems ... ");
+-	sys_sync();
++	ksys_sync();
+ 	pr_cont("done.\n");
+ 	trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+ #endif
+diff --git a/kernel/power/user.c b/kernel/power/user.c
+index 22df9f7ff672..75c959de4b29 100644
+--- a/kernel/power/user.c
++++ b/kernel/power/user.c
+@@ -224,7 +224,7 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
+ 			break;
+ 
+ 		printk("Syncing filesystems ... ");
+-		sys_sync();
++		ksys_sync();
+ 		printk("done.\n");
+ 
+ 		error = freeze_processes();
 -- 
 2.16.3
