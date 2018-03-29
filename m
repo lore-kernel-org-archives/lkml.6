@@ -1,54 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeC2QLg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:11:36 -0400
-Received: from smtprelay0069.hostedemail.com ([216.40.44.69]:45962 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751859AbeC2QLe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:11:34 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:599:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:2911:3138:3139:3140:3141:3142:3622:3865:3867:3872:4321:4425:5007:10004:10400:10848:11026:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: cup92_81caf15d7bd00
-X-Filterd-Recvd-Size: 1957
-Message-ID: <1522339890.2210.35.camel@perches.com>
-Subject: Re: [PATCH] vsprintf: Make "null" pointer dereference more robust
-From: Joe Perches <joe@perches.com>
-To: Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Tobin C . Harding" <me@tobin.cc>, linux@rasmusvillemoes.dk,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date: Thu, 29 Mar 2018 09:11:30 -0700
-In-Reply-To: <20180329151309.omdoxcdku5xoshgx@pathway.suse.cz>
-References: <20180216210711.79901-1-andriy.shevchenko@linux.intel.com>
-         <20180216210711.79901-8-andriy.shevchenko@linux.intel.com>
-         <20180227155047.o74ohmoyj56up6pa@pathway.suse.cz>
-         <1519752950.10722.231.camel@linux.intel.com>
-         <20180228100437.o4juwxbzomkqjvjx@pathway.suse.cz>
-         <1519814544.10722.266.camel@linux.intel.com>
-         <20180302125118.bjd3tbuu72vgfczo@pathway.suse.cz>
-         <20180302125359.szbin2kznxvoq7sc@pathway.suse.cz>
-         <1520000254.10722.389.camel@linux.intel.com>
-         <20180329151309.omdoxcdku5xoshgx@pathway.suse.cz>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752446AbeC2QOn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:14:43 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:33806 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752077AbeC2QOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:14:41 -0400
+Date: Thu, 29 Mar 2018 18:14:22 +0200
+Message-ID: <20180329181422.Horde.4gvIQbpSZkuyC4Yzg06PKw2@messagerie.si.c-s.fr>
+From: LEROY Christophe <christophe.leroy@c-s.fr>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH v2 03/19] powerpc: Mark variables as unused
+References: <20180322202007.23088-4-malat@debian.org>
+ <20180328193307.978-1-malat@debian.org>
+In-Reply-To: <20180328193307.978-1-malat@debian.org>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-29 at 17:13 +0200, Petr Mladek wrote:
-> The original simple patch grew into something bigger. I have it
-> almost ready. It looks the following way at the moment:
-[]
->   vsprintf: Factor out %p[iI] handler as ip_addr_string()
->   vsprintf: Factor out %pV handler as va_format()
->   vsprintf: Factor out %pO handler as kobject_string()
+Mathieu Malaterre <malat@debian.org> a écrit :
 
-I would like to review these before being applied.
+> Add gcc attribute unused for two variables. Fix warnings treated as errors
+> with W=1:
+>
+>   arch/powerpc/kernel/prom_init.c:1388:8: error: variable ‘path’ set  
+> but not used [-Werror=unused-but-set-variable]
+>
+> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+> v2: move path within ifdef DEBUG_PROM
+>
+>  arch/powerpc/kernel/prom_init.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/prom_init.c  
+> b/arch/powerpc/kernel/prom_init.c
+> index acf4b2e0530c..4163b11abb6c 100644
+> --- a/arch/powerpc/kernel/prom_init.c
+> +++ b/arch/powerpc/kernel/prom_init.c
+> @@ -603,7 +603,7 @@ static void __init early_cmdline_parse(void)
+>  	const char *opt;
+>
+>  	char *p;
+> -	int l = 0;
+> +	int l __maybe_unused = 0;
+>
+>  	prom_cmd_line[0] = 0;
+>  	p = prom_cmd_line;
+> @@ -1385,7 +1385,7 @@ static void __init reserve_mem(u64 base, u64 size)
+>  static void __init prom_init_mem(void)
+>  {
+>  	phandle node;
+> -	char *path, type[64];
+> +	char *path __maybe_unused, type[64];
+
+You should enclose that in an ifdef DEBUG_PROM instead of hiding the warning
+
+Christophe
+
+>  	unsigned int plen;
+>  	cell_t *p, *endp;
+>  	__be32 val;
+> @@ -1406,7 +1406,6 @@ static void __init prom_init_mem(void)
+>  	prom_debug("root_size_cells: %x\n", rsc);
+>
+>  	prom_debug("scanning memory:\n");
+> -	path = prom_scratch;
+>
+>  	for (node = 0; prom_next_node(&node); ) {
+>  		type[0] = 0;
+> @@ -1431,6 +1430,7 @@ static void __init prom_init_mem(void)
+>  		endp = p + (plen / sizeof(cell_t));
+>
+>  #ifdef DEBUG_PROM
+> +		path = prom_scratch;
+>  		memset(path, 0, PROM_SCRATCH_SIZE);
+>  		call_prom("package-to-path", 3, 1, node, path, PROM_SCRATCH_SIZE-1);
+>  		prom_debug("  node %s :\n", path);
+> --
+> 2.11.0
