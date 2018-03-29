@@ -1,37 +1,40 @@
-Return-Path: <a13xp0p0v88@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522306715; cv=none;
+Return-Path: <dave.hansen@linux.intel.com>
+X-Google-Smtp-Source: AIpwx49J0K4o+h/zhm4pgc0Fw0jfViPalr5qF0b0aexgdabZZsD6xKfRTXSMQWHiXACKyabO2T6V
+ARC-Seal: i=1; a=rsa-sha256; t=1522331487; cv=none;
         d=google.com; s=arc-20160816;
-        b=p5Po+yhTvPlWumC6P1bcAgm6o9g8NgNbwewh79LrloqiRwaprjotpQvQsgNRC2m3gj
-         MU6O+pGlIP635YjckfAd9CCCAREMHoKhr4x5pX3OMcsNctaqm3Qz8Sd4NDnQKCL2WM5g
-         lCthxwkEJ5BVK6AkbDZfWB+SvhpsPuC58OyiW0qY8f6PaaEs1/F/PqwwoFxEvmSCY6oN
-         iGC/4HMHnt9NvZ+E8rNT0iVq7UVqpTUueZShQ/Ej+T5WsVd82dBknIFxcaTGnopHveLN
-         8xupMJGYNwPpVkGF6o2tTlosYFEJC86PHqLF7NQ2+eldhj22vdZrpWTdwhIEsYFNYr4C
-         FIyQ==
+        b=Y1E9l9uIXk4ZT+4vhpfvi13CWfX8xWOizwIhubwFKc3LVaUHqaSq7GOzBlqtlS6ocg
+         YZHAGEFLuc2mk9mJi2wqmSVFBM0U5WcuWcS9wrv3PeNdRPEqPCW8A4UqJCpYHMaabVj3
+         Hr36rvcQ70tqJNiau74A7OXawszGeIc/VlrN8VwjjoMpXMMcX2ngFnUkpYSSnJLcYZot
+         M5VoKC+mrnKSHr04qVkER+0T0dgRRjXRdwWGOdhebntqBxMWVzmDzJzOUeAj86AZsTIv
+         bav+EW0uIHphfm/KHi1NBjd/U/VvU+ohhRy5z1cBBtVoST6F13HQhm1jBIRlPM/Ou005
+         HAUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject:reply-to
+         :user-agent:date:message-id:from:references:to:subject
          :arc-authentication-results;
-        bh=ri1xETBcwWWE2wRvKzY/yorhFVuCpbxIHi2eKc18tkI=;
-        b=UwIHDLODXRIcmVfYMJO9Pn//+AGIg39dj+XyE15eckzrSJ5M6TNLD8pozggd7gcUf+
-         xg9+ATV+aPS8mzzEQ1WUsN2OH0ZxG3bnQuwQGs31rsp2k5NY6ySoRJe8FmqH9YFrP0Wj
-         sjlgtWI6tWLDOGYSo27FI9nJNapDOOWMWhzbepxQ6AMn/D4JoVaX+pQBHc2/O4l1iStb
-         EhRXn14zyxUUogcHD/NPvFaEBwJaQ5gisaBB9bBlhJcK9kFLAHAaStgT8C0+F05Q9SSf
-         oexXl+o0gHlWlV0KSBL/+gD+EDRgT1QU3aJ8ovA72Hom2GLT1DLpDEx+QLaBWSe9BG+k
-         xnmQ==
+        bh=U/AzwZRGrb3eKJzf9KHgnqb8Bs7eAs/Gje4EZgwOY2I=;
+        b=Er45TbLhy6XCnOj6PuzQ525pa6QaGkUUZaK2N2FmndJegsaHqIz9VWmjj3HJkPqK1h
+         1ESZsamF6LjCNkGjRGUwPZZdWSLig2T76rrZeQwqlkdngmB/29ceR1lOs6BaBhGPlxym
+         kwl1+3v0pNf4Luj0L3IYCiAr8HNwM4ZR7U1pVOxsTEsOnNIFscl7bXffbMHmj2byoQ+l
+         rnFrLkZbEXZQ+D2GlvAx7ZIv3tLh+LzAwk4Yo9FUHzAwmmZ+gy9/f99qcn42xUxWiZWT
+         ZiXvrlOF3MVMIlgIoEmpntpO+LCP/LAZQPjjnGmzwJsK+WRgm3F0FkXzkoMwV/tlZHMQ
+         TMGw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
-X-Google-Smtp-Source: AIpwx49LofDCGwMuqSCcevD04ZX+15bWbKZsJ7WPafygp+8oY4jv8rTMPTUgOncj+G3v6LI54mKrLA==
-Reply-To: alex.popov@linux.com
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="37877982"
 Subject: Re: [PATCH RFC v10 2/6] x86/entry: Add STACKLEAK erasing the kernel
  stack at the end of syscalls
-To: Dave Hansen <dave.hansen@linux.intel.com>,
- kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>,
- PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
- Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
+To: alex.popov@linux.com, kernel-hardening@lists.openwall.com,
+ Kees Cook <keescook@chromium.org>, PaX Team <pageexec@freemail.hu>,
+ Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
+ Laura Abbott <labbott@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
  Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
  Richard Sandiford <richard.sandiford@arm.com>,
  Thomas Gleixner <tglx@linutronix.de>, "H . Peter Anvin" <hpa@zytor.com>,
@@ -61,46 +64,37 @@ To: Dave Hansen <dave.hansen@linux.intel.com>,
 References: <1522267032-6603-1-git-send-email-alex.popov@linux.com>
  <1522267032-6603-3-git-send-email-alex.popov@linux.com>
  <77fab6ea-0bbf-d68b-a38e-3e22d1ae6093@linux.intel.com>
-From: Alexander Popov <alex.popov@linux.com>
-Message-ID: <16a56461-6501-7eb9-e1a4-761c9eff9386@linux.com>
-Date: Thu, 29 Mar 2018 09:58:32 +0300
+ <16a56461-6501-7eb9-e1a4-761c9eff9386@linux.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <ad614e86-7e39-e9b7-4a8f-3ea1f5a7b61d@linux.intel.com>
+Date: Thu, 29 Mar 2018 06:51:23 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <77fab6ea-0bbf-d68b-a38e-3e22d1ae6093@linux.intel.com>
+In-Reply-To: <16a56461-6501-7eb9-e1a4-761c9eff9386@linux.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596212693741401562?=
-X-GMAIL-MSGID: =?utf-8?q?1596254287176950802?=
+X-GMAIL-MSGID: =?utf-8?q?1596280261144036649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 29.03.2018 01:55, Dave Hansen wrote:
-> On 03/28/2018 12:57 PM, Alexander Popov wrote:
->> +.macro ERASE_KSTACK
->> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
->> +	PUSH_AND_CLEAR_REGS
->> +	call erase_kstack
->> +	POP_REGS
->> +#endif
->> +.endm
+On 03/28/2018 11:58 PM, Alexander Popov wrote:
+>> I noticed the 64-bit version saves/restores registers while
+>> the 32-bit version doesn't.  What's the reasoning there?
+> When erase_kstack() is called from the trampoline stack, it must save and
+> restore any modified registers, since all registers except RDI are live
+> (prepared for the userspace).
 > 
-> Thanks again for the hard work to trim down the complexity of the
-> assembly. 
+> When erase_kstack() is called from the thread stack, it can clobber registers
+> according the function call convention without any harm.
 
-Hello Dave, thanks!
+Oh, and since there's no 32-bit trampoline stack, we don't need it on
+32-bit?
 
-> I noticed the 64-bit version saves/restores registers while
-> the 32-bit version doesn't.  What's the reasoning there?
-
-When erase_kstack() is called from the trampoline stack, it must save and
-restore any modified registers, since all registers except RDI are live
-(prepared for the userspace).
-
-When erase_kstack() is called from the thread stack, it can clobber registers
-according the function call convention without any harm.
-
-Best regards,
-Alexander
+If end up reposting this set again, could you add a few comments about
+this around the ERASE_KSTACK macro definitions, or perhaps the call
+sites?  You might even want to call them ERASE_KSTACK_CLOBBER (for
+32-bit) and ERASE_KSTACK_NOCLOBBER (for 64-bit) to make this more clear.
