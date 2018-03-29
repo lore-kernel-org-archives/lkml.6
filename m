@@ -1,58 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeC2NSk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:18:40 -0400
-Received: from smtprelay0172.hostedemail.com ([216.40.44.172]:38914 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751227AbeC2NSj (ORCPT
+        id S1752663AbeC2NTo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:19:44 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41545 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752387AbeC2NTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:18:39 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3867:3870:3872:4250:4321:4362:5007:6119:7903:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12296:12438:12740:12760:12895:13069:13141:13230:13311:13357:13439:13869:14659:14721:21063:21080:21433:21499:21627:30005:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: land91_4b5192ad89f32
-X-Filterd-Recvd-Size: 2075
-Message-ID: <1522329516.2210.32.camel@perches.com>
-Subject: Re: [PATCH] qed: fix a bunch of spelling mistakes/typos
-From: Joe Perches <joe@perches.com>
-To: Colin Ian King <colin.king@canonical.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 29 Mar 2018 06:18:36 -0700
-In-Reply-To: <96d001c9-9e14-9b5a-b0ca-a2e402840351@canonical.com>
-References: <20180329124144.27841-1-colin.king@canonical.com>
-         <1522328485.2210.30.camel@perches.com>
-         <96d001c9-9e14-9b5a-b0ca-a2e402840351@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Mar 2018 09:19:42 -0400
+X-Google-Smtp-Source: AIpwx48IwnvISSU7UkmPz1HS0Wl/f2wnLBKkmqfmCR8JVj0GfizRU7vJPdMzXid7HaktPHEmHHWagg==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper DRM driver
+Date: Thu, 29 Mar 2018 16:19:30 +0300
+Message-Id: <20180329131931.29957-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-29 at 14:13 +0100, Colin Ian King wrote:
-> On 29/03/18 14:01, Joe Perches wrote:
-> > On Thu, 2018-03-29 at 13:41 +0100, Colin King wrote:
-> > > Trivial fix to spelling mistakes/typos in various DP_* messages.
-> > 
-> > []
-> > > diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-> > 
-> > []
-> > > @@ -231,7 +231,7 @@ static void qed_vf_pf_acquire_reduce_resc(struct qed_hwfn *p_hwfn,
-> > >  {
-> > >  	DP_VERBOSE(p_hwfn,
-> > >  		   QED_MSG_IOV,
-> > > -		   "PF unwilling to fullill resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
-> > > +		   "PF unwilling to fulfil resource request: rxq [%02x/%02x] txq [%02x/%02x] sbs [%02x/%02x] mac [%02x/%02x] vlan [%02x/%02x] mc [%02x/%02x] cids [%02x/%02x]. Try PF recommended amount\n",
-> > 
-> > Substituting one typo for another
-> > 
-> > fulfil->fulfill
-> > 
-> 
-> Ah, US english vs non-US english issue. I can resend if required.
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Thanks.
+Hello!
 
-OK, nevermind then.  It's not sensible to convert valid spellings.
+When using Xen PV DRM frontend driver then on backend side one will need
+to do copying of display buffers' contents (filled by the
+frontend's user-space) into buffers allocated at the backend side.
+Taking into account the size of display buffers and frames per seconds
+it may result in unneeded huge data bus occupation and performance loss.
+
+This helper driver allows implementing zero-copying use-cases
+when using Xen para-virtualized frontend display driver by
+implementing a DRM/KMS helper driver running on backend's side.
+It utilizes PRIME buffers API to share frontend's buffers with
+physical device drivers on backend's side:
+
+ - a dumb buffer created on backend's side can be shared
+   with the Xen PV frontend driver, so it directly writes
+   into backend's domain memory (into the buffer exported from
+   DRM/KMS driver of a physical display device)
+ - a dumb buffer allocated by the frontend can be imported
+   into physical device DRM/KMS driver, thus allowing to
+   achieve no copying as well
+
+For that reason number of IOCTLs are introduced:
+ -  DRM_XEN_ZCOPY_DUMB_FROM_REFS
+    This will create a DRM dumb buffer from grant references provided
+    by the frontend
+ - DRM_XEN_ZCOPY_DUMB_TO_REFS
+   This will grant references to a dumb/display buffer's memory provided
+   by the backend
+ - DRM_XEN_ZCOPY_DUMB_WAIT_FREE
+   This will block until the dumb buffer with the wait handle provided
+   be freed
+
+With this helper driver I was able to drop CPU usage from 17% to 3%
+on Renesas R-Car M3 board.
+
+This was tested with Renesas' Wayland-KMS and backend running as DRM master.
+
+Thank you,
+Oleksandr
+
+Oleksandr Andrushchenko (1):
+  drm/xen-zcopy: Add Xen zero-copy helper DRM driver
+
+ Documentation/gpu/drivers.rst               |   1 +
+ Documentation/gpu/xen-zcopy.rst             |  32 +
+ drivers/gpu/drm/xen/Kconfig                 |  25 +
+ drivers/gpu/drm/xen/Makefile                |   5 +
+ drivers/gpu/drm/xen/xen_drm_zcopy.c         | 880 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_zcopy_balloon.c | 154 +++++
+ drivers/gpu/drm/xen/xen_drm_zcopy_balloon.h |  38 ++
+ include/uapi/drm/xen_zcopy_drm.h            | 129 ++++
+ 8 files changed, 1264 insertions(+)
+ create mode 100644 Documentation/gpu/xen-zcopy.rst
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy_balloon.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy_balloon.h
+ create mode 100644 include/uapi/drm/xen_zcopy_drm.h
+
+-- 
+2.16.2
