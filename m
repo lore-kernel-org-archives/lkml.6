@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49RgDu4HMisV3TBnnM+vcHQcWXCdqUziu8yhf+PUhCjZXbtHa3MbWGLCWC3dw+SsbWaVEx6
-ARC-Seal: i=1; a=rsa-sha256; t=1522346554; cv=none;
+X-Google-Smtp-Source: AIpwx4/rh2N7ZaH9SItDA4ktXXFZ3qBRnckJ5x8/ePDfGqagPv9RaXDxtq7MysNNhjDc8DjPC5u6
+ARC-Seal: i=1; a=rsa-sha256; t=1522346551; cv=none;
         d=google.com; s=arc-20160816;
-        b=IbklIK/5qVyGEM/aYTvRtIffYs+7U95j9txSXa4y5TsFVslFxh+DXtNlESmuLqH9qZ
-         NydISZj8kBbZEK5xDhNtL6SAxfppx6VtGcnn4vOZh/spy3UIoE/H0Jc0DRfNfy0SKyEL
-         vTZWkipC+lspFnn2PVUNC7xISq8E8HWUwDonhzAdn1wE3/UScfRDqTumlFEHRUtlwPhq
-         tJEPdjIpewmDbpaTzi6R9NMDNi95RAlG3kNTeaWmeFxeowo+PLE5C0q91jtsKFb2HsC1
-         7DwAiUCiJGJO9zr2qAkaJWKJZGJS61qqp79GPKxgMIauehRqzUSlqPZSwf9z/H5CvBf9
-         w7zw==
+        b=AhlmG80BGe/OrjDZkQIbbWoXjAxkAUXOH8vySTOFfAz8uaieazZ2W8GcRzKgvVNL8C
+         1GQNwnJ+pMWW3TZv0qVU6U6pbgZ/M+hYUyHjiZyGTdu8ris5e6jJFuML9unG0tXNyj1h
+         qlNpWuNxctA9IxOd9TpLJzEQWoeqqqGeamBB3JsIglzlhTBehNMV7zQF3WWCAxrQKfkt
+         5lfdQnAn5H7UjJafI21GrEJgxXrBRfRc+508d0RlrdauLHO5/EAVpjpqAcLEB76m/dnu
+         Y93xwITknobdy8tOrxL8ehCfm+fcqZm+mfSJU5cesJWVbbm4NyetN/YqU8D/wU7DLpBd
+         6oSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BRfpAU6xBgD9Kph5C7wt7ZR+1XzMRKMR37iw3lo7/4w=;
-        b=tGunJbb7iMAucmrCWzVkgmsZ3iNz/D80REIVEFK520Khq03235SnSDZ997ZbVH2wmG
-         VtuWwuEV6Gm5AG7wQym551OwMWe3EUrlpzcMUynZYg7hyH7IvV+xzQJyRdts0vPKY4df
-         Fge4Sv1OiiX94NbZv4Znb63fEbrNJxvzTOGMb0+UUlVC3lmuIRw3NVGkFVLTrmhId5M6
-         pJVizKZchm5QmiOzIoVB4ayxc6FtAg7cTDMLr1Ty/fqgHCwiHkXxDlCkRjAaR4qzF7mF
-         s4Q6ML+47QN8tU/ZXRq0j1yOQdK5md3QNpDBwTdlyqr937YEKJo+L72Mtt7G7MLRXFs8
-         c4bA==
+        bh=HgjbtKV/UBaSzyukzsj27Y+V1C8X63ldn+XFQfJx5nE=;
+        b=cjVWqx0QV/IY6W42fy0LJbprH5lvvcAnNVnyU8ltu4mNjWE7bTL8YzxtU4K2iSWgv6
+         VM0vZEeUPvEZdTPAhZCBLrz4d0jl9NT5FOGCTf6UdCfKl8mY9o/hSxKyhmbuVn/AYgDA
+         Fe3lqVVSbsMBCZvgbHD/sn6TZ5b8tRK+/ZluZyc90FNp4Gqn8fBw8FPgH3RZnnoOUKn6
+         rlqque9npl4lk7xvirRLU+oWni5EnxuO6XiKNstotDPAcxzewfy4s/bgJx3ERnG3i/GB
+         g11KArI2MU1mpECszLGCOM0D7K0uXCgTVhnIYNwF3NA9/p/1ZDCPOXBMkNAT0oA9TGuw
+         ZgZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arkadi Sharshevsky <arkadis@mellanox.com>,
-	Jiri Pirko <jiri@mellanox.com>,
+	Kirill Tkhai <ktkhai@virtuozzo.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 08/47] devlink: Remove redundant free on error path
-Date: Thu, 29 Mar 2018 19:59:49 +0200
-Message-Id: <20180329175729.751101432@linuxfoundation.org>
+Subject: [PATCH 4.15 25/47] net: Fix hlist corruptions in inet_evict_bucket()
+Date: Thu, 29 Mar 2018 20:00:06 +0200
+Message-Id: <20180329175731.120226973@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296060251224081?=
-X-GMAIL-MSGID: =?utf-8?q?1596296060251224081?=
+X-GMAIL-THRID: =?utf-8?q?1596296057389749858?=
+X-GMAIL-MSGID: =?utf-8?q?1596296057389749858?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,83 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arkadi Sharshevsky <arkadis@mellanox.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
 
-[ Upstream commit 7fe4d6dcbcb43fe0282d4213fc52be178bb30e91 ]
+[ Upstream commit a560002437d3646dafccecb1bf32d1685112ddda ]
 
-The current code performs unneeded free. Remove the redundant skb freeing
-during the error path.
+inet_evict_bucket() iterates global list, and
+several tasks may call it in parallel. All of
+them hash the same fq->list_evictor to different
+lists, which leads to list corruption.
 
-Fixes: 1555d204e743 ("devlink: Support for pipeline debug (dpipe)")
-Signed-off-by: Arkadi Sharshevsky <arkadis@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+This patch makes fq be hashed to expired list
+only if this has not been made yet by another
+task. Since inet_frag_alloc() allocates fq
+using kmem_cache_zalloc(), we may rely on
+list_evictor is initially unhashed.
+
+The problem seems to exist before async
+pernet_operations, as there was possible to have
+exit method to be executed in parallel with
+inet_frags::frags_work, so I add two Fixes tags.
+This also may go to stable.
+
+Fixes: d1fe19444d82 "inet: frag: don't re-use chainlist for evictor"
+Fixes: f84c6821aa54 "net: Convert pernet_subsys, registered from inet_init()"
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/devlink.c |   16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ net/ipv4/inet_fragment.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/core/devlink.c
-+++ b/net/core/devlink.c
-@@ -1776,7 +1776,7 @@ send_done:
- 	if (!nlh) {
- 		err = devlink_dpipe_send_and_alloc_skb(&skb, info);
- 		if (err)
--			goto err_skb_send_alloc;
-+			return err;
- 		goto send_done;
- 	}
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -119,6 +119,9 @@ out:
  
-@@ -1785,7 +1785,6 @@ send_done:
- nla_put_failure:
- 	err = -EMSGSIZE;
- err_table_put:
--err_skb_send_alloc:
- 	genlmsg_cancel(skb, hdr);
- 	nlmsg_free(skb);
- 	return err;
-@@ -2051,7 +2050,7 @@ static int devlink_dpipe_entries_fill(st
- 					     table->counters_enabled,
- 					     &dump_ctx);
- 	if (err)
--		goto err_entries_dump;
-+		return err;
- 
- send_done:
- 	nlh = nlmsg_put(dump_ctx.skb, info->snd_portid, info->snd_seq,
-@@ -2059,16 +2058,10 @@ send_done:
- 	if (!nlh) {
- 		err = devlink_dpipe_send_and_alloc_skb(&dump_ctx.skb, info);
- 		if (err)
--			goto err_skb_send_alloc;
-+			return err;
- 		goto send_done;
- 	}
- 	return genlmsg_reply(dump_ctx.skb, info);
--
--err_entries_dump:
--err_skb_send_alloc:
--	genlmsg_cancel(dump_ctx.skb, dump_ctx.hdr);
--	nlmsg_free(dump_ctx.skb);
--	return err;
+ static bool inet_fragq_should_evict(const struct inet_frag_queue *q)
+ {
++	if (!hlist_unhashed(&q->list_evictor))
++		return false;
++
+ 	return q->net->low_thresh == 0 ||
+ 	       frag_mem_limit(q->net) >= q->net->low_thresh;
  }
- 
- static int devlink_nl_cmd_dpipe_entries_get(struct sk_buff *skb,
-@@ -2207,7 +2200,7 @@ send_done:
- 	if (!nlh) {
- 		err = devlink_dpipe_send_and_alloc_skb(&skb, info);
- 		if (err)
--			goto err_skb_send_alloc;
-+			return err;
- 		goto send_done;
- 	}
- 	return genlmsg_reply(skb, info);
-@@ -2215,7 +2208,6 @@ send_done:
- nla_put_failure:
- 	err = -EMSGSIZE;
- err_table_put:
--err_skb_send_alloc:
- 	genlmsg_cancel(skb, hdr);
- 	nlmsg_free(skb);
- 	return err;
