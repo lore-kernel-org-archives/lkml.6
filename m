@@ -1,37 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49PuamnCXvBqQUuToOXMOc5cScK7Qv1kB4bvEhIMBYHtaNsvFTPaqoidJoGOlkhqrxUK0js
-ARC-Seal: i=1; a=rsa-sha256; t=1522346722; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dO8SxFk+zLlAWg8MZPQ37eKlgpr7d+YHXVM5xc1NP/pzUGhVwlvo6hbX0OqimPAC9E
-         WNTydNumKJijXD6R12fgiUYOTStGY3CYi6VxZOKntRAbX3lnT2XxVKJlyddeEdvRtmIO
-         Db2WrvO/G5PNoBeDUKNoWFH1zBdXs9VXg+ndijRchcYP4QwAuXn3UdDc5a481ZRHFml2
-         PZsGSXhOFw9qQeuDWmNMTMUXSnnJJ0EirziTErFRcW5lDbqFfYGlhF7rND/kGcOni1A5
-         9sEaro3VtKHiNPiv9P9xKy7hYzgBnzZh6sU71uPRNSTInWgru7ihCj5faiCZ6f9kn+45
-         RJ5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=KDMIbCttQbwz42eC8DXpJ1QFn5/6mqW3k/60DU26CLg=;
-        b=STUYQu15yU8ppT4ARO6VDP1YFfgusGAdcXn0oM4zgkSmZOFhUjeHMbqMwZmYTV0Imz
-         TTf/mF5J+6XwHzGsvcMvpQlE+Zeq2qapp3a5htEH5zmOUcji/vWxqumSK2l6wRcRXUUH
-         DK3mtIXYuO5xIbJdOef7vWqGrtn+CyZrPg1f309tsnXcCuHQjkXz+CBhCxoGHhNFpk6v
-         QYeP7hzEE5aQ+6mefAvpwkObVPm2eW2z2GAXY3TMGYkJOIlbRD6OkkchDRYfmdGva/uW
-         XgMU31n42KmO7KC2Z2uQfh6x4oZk7ls0oaBM2K+5H2kD1ayi3FE7HO68oV44PFEE7rPU
-         ZlTA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346719-2-3732287930132362441
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522346718; b=YacbKORIAZ8rr2DoeesGcoFe64fwRQ8vQgpfN+dv6bnJMa6WMW
+    lSCbBxFOuG/9wkD4r0bpTIqoFBdbjTiiEyBKo5bHVnQIEVOOGnZZgOFr78pow6Zp
+    sdpt7ckTD97CU1UJiRvGYw7OgnmHadm4fPY5rdWSSbPfeMWvM25i2eDYMcYYOLTq
+    VXD2ceYIX2L8p7eTiUmcWfqE4v7niJbkrr5RDer4RYMO45cP4o9eVqgHRKfVm92v
+    7EQMKBvB8uMNTY3YBfoCAvLJOzyU6cwYdPtMHw36CuIJTm6UN33MRjkVqv03QiER
+    9ODbabiI0+nTlB3GW3y/1yQ/bHNxalfy0BQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1522346718; bh=OfU8KT9wnIT3QGcyGaGKiE9DzS0dZS
+    0T6HfKM+CrcSM=; b=Xzpi++Al6sqxQZs+CdfzG6unq3rAKe/E0E4B55q3ScE4oS
+    Xp0hsOPT0mebncHNY6bOrJcz4fwrZi1l3k+wClAVPmWzOkFfEwnBVZkes92osfCa
+    2WWzhe4F6r/Y2Gqww6HkkhE/mhLC9YwD18svv8AWGRMqQNTFMk7dmZ4WxNUNYYoZ
+    48ve+T9fqnxewUmp5jjJ28YuYcmqK7EpXUZ/C6VfheUCI5rMP1pwIddEa+xFTLIA
+    MEJSFusgvFqUifBCVzXcCYuhkEjkhoIhaDGWzQsKxn9BsmF+sWCfppAH7/6CBzas
+    ykjwlPUOxuPYd/qKXg8DFeqzKKaDCkl/QNqMuo/w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBPVAcDOs/vR/vQi9Ee1MprPziikQVQUGTY9RGZ/YLuiD3zCsWQ04f9oBvT3Ra1CQwdgOZKSd5XchWN/cUe/jWM3WBVsy27ZwWhATy3STXX9hzgUYYF1
+    t7N2pJ+u9etD0xq7+ByDUm5UkYbOJujriFpjcDSgUVD+PNVM3hEjr/Zw8ShKoJYnvk9jJ1QX+Cb8bpdQx1k+mAL2eIUz5rpHDMT+RDRAwtXqovDfp7igkP8B
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=zAyngx5bAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=wMhl-A6El2MiV7JXehAA:9
+    a=QEXdDO2ut3YA:10 a=4LA4qAFo6bo561LpWNDU:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752199AbeC2SFO (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 14:05:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59034 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751893AbeC2SFM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:05:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Madalin Bucur <madalin.bucur@nxp.com>,
-	Roy Pledge <roy.pledge@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 35/43] soc/fsl/qbman: fix issue in qman_delete_cgr_safe()
-Date: Thu, 29 Mar 2018 20:00:30 +0200
-Message-Id: <20180329175733.942516176@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Michal Kalderon <michal.kalderon@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 32/43] qede: Fix qedr link update
+Date: Thu, 29 Mar 2018 20:00:27 +0200
+Message-Id: <20180329175733.480826122@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -39,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296074802248802?=
-X-GMAIL-MSGID: =?utf-8?q?1596296236524115930?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,67 +94,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Madalin Bucur <madalin.bucur@nxp.com>
+From: Michal Kalderon <Michal.Kalderon@cavium.com>
 
 
-[ Upstream commit 96f413f47677366e0ae03797409bfcc4151dbf9e ]
+[ Upstream commit 4609adc27175839408359822523de7247d56c87f ]
 
-The wait_for_completion() call in qman_delete_cgr_safe()
-was triggering a scheduling while atomic bug, replacing the
-kthread with a smp_call_function_single() call to fix it.
+Link updates were not reported to qedr correctly.
+Leading to cases where a link could be down, but qedr
+would see it as up.
+In addition, once qede was loaded, link state would be up,
+regardless of the actual link state.
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: Roy Pledge <roy.pledge@nxp.com>
+Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/soc/fsl/qbman/qman.c |   28 +++++-----------------------
- 1 file changed, 5 insertions(+), 23 deletions(-)
+ drivers/net/ethernet/qlogic/qede/qede_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/soc/fsl/qbman/qman.c
-+++ b/drivers/soc/fsl/qbman/qman.c
-@@ -2414,39 +2414,21 @@ struct cgr_comp {
- 	struct completion completion;
- };
+--- a/drivers/net/ethernet/qlogic/qede/qede_main.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
+@@ -2066,8 +2066,6 @@ static int qede_load(struct qede_dev *ed
+ 	link_params.link_up = true;
+ 	edev->ops->common->set_link(edev->cdev, &link_params);
  
--static int qman_delete_cgr_thread(void *p)
-+static void qman_delete_cgr_smp_call(void *p)
- {
--	struct cgr_comp *cgr_comp = (struct cgr_comp *)p;
--	int ret;
+-	qede_rdma_dev_event_open(edev);
 -
--	ret = qman_delete_cgr(cgr_comp->cgr);
--	complete(&cgr_comp->completion);
--
--	return ret;
-+	qman_delete_cgr((struct qman_cgr *)p);
- }
+ 	edev->state = QEDE_STATE_OPEN;
  
- void qman_delete_cgr_safe(struct qman_cgr *cgr)
- {
--	struct task_struct *thread;
--	struct cgr_comp cgr_comp;
--
- 	preempt_disable();
- 	if (qman_cgr_cpus[cgr->cgrid] != smp_processor_id()) {
--		init_completion(&cgr_comp.completion);
--		cgr_comp.cgr = cgr;
--		thread = kthread_create(qman_delete_cgr_thread, &cgr_comp,
--					"cgr_del");
--
--		if (IS_ERR(thread))
--			goto out;
--
--		kthread_bind(thread, qman_cgr_cpus[cgr->cgrid]);
--		wake_up_process(thread);
--		wait_for_completion(&cgr_comp.completion);
-+		smp_call_function_single(qman_cgr_cpus[cgr->cgrid],
-+					 qman_delete_cgr_smp_call, cgr, true);
- 		preempt_enable();
- 		return;
+ 	DP_INFO(edev, "Ending successfully qede load\n");
+@@ -2168,12 +2166,14 @@ static void qede_link_update(void *dev,
+ 			DP_NOTICE(edev, "Link is up\n");
+ 			netif_tx_start_all_queues(edev->ndev);
+ 			netif_carrier_on(edev->ndev);
++			qede_rdma_dev_event_open(edev);
+ 		}
+ 	} else {
+ 		if (netif_carrier_ok(edev->ndev)) {
+ 			DP_NOTICE(edev, "Link is down\n");
+ 			netif_tx_disable(edev->ndev);
+ 			netif_carrier_off(edev->ndev);
++			qede_rdma_dev_event_close(edev);
+ 		}
  	}
--out:
-+
- 	qman_delete_cgr(cgr);
- 	preempt_enable();
  }
