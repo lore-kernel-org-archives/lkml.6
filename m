@@ -1,302 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752299AbeC2MWa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:22:30 -0400
-Received: from mga04.intel.com ([192.55.52.120]:18224 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750820AbeC2MW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:22:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
-   d="scan'208";a="39141481"
-Subject: Re: [PATCH V4 2/3] mmc: sdhci: Add support for O2 hardware tuning
-To: "ernest.zhang" <ernest.zhang@bayhubtech.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: xiaoguang.yu@bayhubtech.com, shirley.her@bayhubtech.com,
-        yuxiang.wan@bayhubtech.com
-References: <1520604265-4430-1-git-send-email-ernest.zhang@bayhubtech.com>
- <1520604265-4430-2-git-send-email-ernest.zhang@bayhubtech.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <16cf1d6e-65d6-4fac-aa44-18edefcd3d14@intel.com>
-Date: Thu, 29 Mar 2018 15:21:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752747AbeC2MXK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:23:10 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45551 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752568AbeC2MXG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 08:23:06 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: [PATCH v8 04/10] jiffies: Introduce USER_TICK_USEC and redefine TICK_USEC
+Date: Thu, 29 Mar 2018 14:03:27 +0200
+Message-ID: <4774145.lbZZYcCZWE@aspire.rjw.lan>
+In-Reply-To: <40092860.XNQZrLjKDd@aspire.rjw.lan>
+References: <40092860.XNQZrLjKDd@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <1520604265-4430-2-git-send-email-ernest.zhang@bayhubtech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/18 16:04, ernest.zhang wrote:
-> Add hardware tuning function instead of software tuning because O2/Bayhub
-> SD host controller support hardware tuning.
-> 
-> Changes: Add many functions to execute hardware tuning for eMMC 1.8V HS200
-> mode, the hardware tuning command and procedure is based on O2/Bayhub 
-> hardware tuning spec.
-> 
-> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
-> ---
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Subject: [PATCH] 
 
-This is where the change log should be:
+Since the subsequent changes will need a TICK_USEC definition
+analogous to TICK_NSEC, rename the existing TICK_USEC as
+USER_TICK_USEC, update its users and redefine TICK_USEC
+accordingly.
 
-e.g.
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-Changes in V4:
-	<what you changed between the 3rd version and the 4th version>
+v7 -> v8: No changes.
 
-Changes in V3:
-	<what you changed between the 2nd version and the 3rd version>
+---
+ drivers/net/ethernet/sfc/mcdi.c |    2 +-
+ include/linux/jiffies.h         |    7 +++++--
+ kernel/time/ntp.c               |    2 +-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-etc.
-
->  drivers/mmc/host/sdhci-pci-o2micro.c | 193 +++++++++++++++++++++++++++++++++++
->  drivers/mmc/host/sdhci.c             |   5 +-
->  2 files changed, 197 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index d465751..a918984 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -17,6 +17,9 @@
->   */
->  
->  #include <linux/pci.h>
-> +#include <linux/mmc/host.h>
-> +#include <linux/mmc/mmc.h>
-> +#include <linux/delay.h>
->  
->  #include "sdhci.h"
->  #include "sdhci-pci.h"
-> @@ -55,6 +58,194 @@
->  
->  #define O2_SD_VENDOR_SETTING	0x110
->  #define O2_SD_VENDOR_SETTING2	0x1C8
-> +#define O2_SD_HW_TUNING_DISABLE	BIT(4)
-> +
-> +static void sdhci_o2_start_tuning(struct sdhci_host *host)
-> +{
-> +	u16 ctrl;
-> +
-> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +	ctrl |= SDHCI_CTRL_EXEC_TUNING;
-> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-> +
-> +	/*
-> +	 * As per the Host Controller spec v3.00, tuning command
-> +	 * generates Buffer Read Ready interrupt, so enable that.
-> +	 *
-> +	 * Note: The spec clearly says that when tuning sequence
-> +	 * is being performed, the controller does not generate
-> +	 * interrupts other than Buffer Read Ready interrupt. But
-> +	 * to make sure we don't hit a controller bug, we _only_
-> +	 * enable Buffer Read Ready interrupt here.
-> +	 */
-> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_INT_ENABLE);
-> +	sdhci_writel(host, SDHCI_INT_DATA_AVAIL, SDHCI_SIGNAL_ENABLE);
-> +}
-> +
-> +static void sdhci_o2_end_tuning(struct sdhci_host *host)
-> +{
-> +	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-> +	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-> +}
-> +
-> +static inline bool sdhci_data_line_cmd(struct mmc_command *cmd)
-> +{
-> +	return cmd->data || cmd->flags & MMC_RSP_BUSY;
-> +}
-> +
-> +static void sdhci_del_timer(struct sdhci_host *host, struct mmc_request *mrq)
-> +{
-> +	if (sdhci_data_line_cmd(mrq->cmd))
-> +		del_timer(&host->data_timer);
-> +	else
-> +		del_timer(&host->timer);
-> +}
-> +
-> +static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
-> +{
-> +	u16 reg;
-> +
-> +	/* enable hardware tuning */
-> +	reg = sdhci_readw(host, O2_SD_VENDOR_SETTING);
-> +	reg &= ~O2_SD_HW_TUNING_DISABLE;
-> +	sdhci_writew(host, reg, O2_SD_VENDOR_SETTING);
-> +}
-> +
-> +
-> +static int sdhci_o2_send_tuning(struct sdhci_host *host, u32 opcode)
-> +{
-> +	struct mmc_command cmd = { };
-> +	struct mmc_data data = { };
-> +	struct scatterlist sg;
-> +	struct mmc_request mrq = { };
-> +	unsigned long flags;
-> +	u32 b = host->sdma_boundary;
-> +	int size = 64;
-> +	u8 *data_buf = kzalloc(size, GFP_KERNEL);
-> +
-> +	if (!data_buf)
-> +		return -ENOMEM;
-> +
-> +	cmd.opcode = opcode;
-> +	cmd.flags = MMC_RSP_PRESENT | MMC_RSP_OPCODE | MMC_RSP_CRC;
-> +	cmd.mrq = &mrq;
-> +	cmd.data = NULL;
-
-As previously, please explain why you have cmd.data = NULL but mrq.data = &data
-
-> +	mrq.cmd = &cmd;
-> +	mrq.data = &data;
-> +	data.blksz = size;
-> +	data.blocks = 1;
-> +	data.flags = MMC_DATA_READ;
-> +
-> +	data.timeout_ns = 50 * NSEC_PER_MSEC;
-> +
-> +	data.sg = &sg;
-> +	data.sg_len = 1;
-> +	sg_init_one(&sg, data_buf, size);
-> +
-> +	spin_lock_irqsave(&host->lock, flags);
-> +
-> +	sdhci_writew(host, SDHCI_MAKE_BLKSZ(b, 64), SDHCI_BLOCK_SIZE);
-> +
-> +	/*
-> +	 * The tuning block is sent by the card to the host controller.
-> +	 * So we set the TRNS_READ bit in the Transfer Mode register.
-> +	 * This also takes care of setting DMA Enable and Multi Block
-> +	 * Select in the same register to 0.
-> +	 */
-> +	sdhci_writew(host, SDHCI_TRNS_READ, SDHCI_TRANSFER_MODE);
-> +
-> +	sdhci_send_command(host, &cmd);
-> +
-> +	host->cmd = NULL;
-> +
-> +	sdhci_del_timer(host, &mrq);
-> +
-> +	host->tuning_done = 0;
-> +
-> +	mmiowb();
-> +	spin_unlock_irqrestore(&host->lock, flags);
-> +
-> +	/* Wait for Buffer Read Ready interrupt */
-> +	wait_event_timeout(host->buf_ready_int, (host->tuning_done == 1),
-> +			   msecs_to_jiffies(50));
-> +	kfree(data_buf);
-> +	return 0;
-> +}
-> +
-> +static void sdhci_o2_reset_tuning(struct sdhci_host *host)
-> +{
-> +	u16 ctrl;
-> +
-> +	ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +	ctrl &= ~SDHCI_CTRL_TUNED_CLK;
-> +	ctrl &= ~SDHCI_CTRL_EXEC_TUNING;
-> +	sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
-> +}
-> +
-> +static void __sdhci_o2_execute_tuning(struct sdhci_host *host, u32 opcode)
-> +{
-> +	int i;
-> +
-> +	sdhci_o2_send_tuning(host, MMC_SEND_TUNING_BLOCK_HS200);
-> +
-> +	for (i = 0; i < 150; i++) {
-> +		u16 ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +
-> +		if (!(ctrl & SDHCI_CTRL_EXEC_TUNING)) {
-> +			if (ctrl & SDHCI_CTRL_TUNED_CLK) {
-> +				host->tuning_done = true;
-> +				return;
-> +			}
-> +			pr_warn("%s: HW tuning failed !\n",
-> +				   mmc_hostname(host->mmc));
-> +			break;
-> +		}
-> +
-> +		mdelay(1);
-> +	}
-> +
-> +	pr_info("%s: Tuning failed, falling back to fixed sampling clock\n",
-> +		mmc_hostname(host->mmc));
-> +	sdhci_o2_reset_tuning(host);
-> +}
-> +
-> +static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	int current_bus_width = 0;
-> +
-> +	/*
-> +	 * This handler only implements the eMMC tuning that is specific to
-> +	 * this controller.  Fall back to the standard method for other TIMING.
-> +	 */
-> +	if (host->timing != MMC_TIMING_MMC_HS200)
-> +		return sdhci_execute_tuning(mmc, opcode);
-> +
-> +	if (WARN_ON(opcode != MMC_SEND_TUNING_BLOCK_HS200))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * o2 sdhci host didn't support 8bit emmc tuning
-> +	 */
-> +	if (mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
-> +		current_bus_width = mmc->ios.bus_width;
-> +		sdhci_set_bus_width(host, MMC_BUS_WIDTH_4);
-> +	}
-> +
-> +	sdhci_o2_set_tuning_mode(host);
-> +
-> +	sdhci_o2_start_tuning(host);
-> +
-> +	__sdhci_o2_execute_tuning(host, opcode);
-> +
-> +	sdhci_o2_end_tuning(host);
-> +
-> +	if (current_bus_width == MMC_BUS_WIDTH_8)
-> +		sdhci_set_bus_width(host, current_bus_width);
-> +
-> +	host->flags &= ~SDHCI_HS400_TUNING;
-> +	return 0;
-> +}
->  
->  static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
->  {
-> @@ -215,6 +406,8 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
->  			}
->  		}
->  
-> +		host->mmc_host_ops.execute_tuning = sdhci_o2_execute_tuning;
-> +
->  		if (chip->pdev->device != PCI_DEVICE_ID_O2_FUJIN2)
->  			break;
->  		/* set dll watch dog timer */
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 2ededa7..3bf6117 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -955,7 +955,10 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  	if (data == NULL) {
->  		if (host->quirks2 &
->  			SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD) {
-> -			sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
-> +			/* must not clear SDHCI_TRANSFER_MODE when tuning */
-> +			if (cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) {
-> +				sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
-> +			}
->  		} else {
->  		/* clear Auto CMD settings for no data CMDs */
->  			mode = sdhci_readw(host, SDHCI_TRANSFER_MODE);
-> 
+Index: linux-pm/include/linux/jiffies.h
+===================================================================
+--- linux-pm.orig/include/linux/jiffies.h
++++ linux-pm/include/linux/jiffies.h
+@@ -62,8 +62,11 @@ extern int register_refined_jiffies(long
+ /* TICK_NSEC is the time between ticks in nsec assuming SHIFTED_HZ */
+ #define TICK_NSEC ((NSEC_PER_SEC+HZ/2)/HZ)
+ 
+-/* TICK_USEC is the time between ticks in usec assuming fake USER_HZ */
+-#define TICK_USEC ((1000000UL + USER_HZ/2) / USER_HZ)
++/* TICK_USEC is the time between ticks in usec assuming SHIFTED_HZ */
++#define TICK_USEC ((USEC_PER_SEC + HZ/2) / HZ)
++
++/* USER_TICK_USEC is the time between ticks in usec assuming fake USER_HZ */
++#define USER_TICK_USEC ((1000000UL + USER_HZ/2) / USER_HZ)
+ 
+ #ifndef __jiffy_arch_data
+ #define __jiffy_arch_data
+Index: linux-pm/drivers/net/ethernet/sfc/mcdi.c
+===================================================================
+--- linux-pm.orig/drivers/net/ethernet/sfc/mcdi.c
++++ linux-pm/drivers/net/ethernet/sfc/mcdi.c
+@@ -375,7 +375,7 @@ static int efx_mcdi_poll(struct efx_nic
+ 	 * because generally mcdi responses are fast. After that, back off
+ 	 * and poll once a jiffy (approximately)
+ 	 */
+-	spins = TICK_USEC;
++	spins = USER_TICK_USEC;
+ 	finish = jiffies + MCDI_RPC_TIMEOUT;
+ 
+ 	while (1) {
+Index: linux-pm/kernel/time/ntp.c
+===================================================================
+--- linux-pm.orig/kernel/time/ntp.c
++++ linux-pm/kernel/time/ntp.c
+@@ -31,7 +31,7 @@
+ 
+ 
+ /* USER_HZ period (usecs): */
+-unsigned long			tick_usec = TICK_USEC;
++unsigned long			tick_usec = USER_TICK_USEC;
+ 
+ /* SHIFTED_HZ period (nsecs): */
+ unsigned long			tick_nsec;
