@@ -1,37 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49SB5C6Cm9ylYukMGvedEMkVBuUIiSi85Tu7lnhml5deBOvQN5pxnFl7Nf0WegSLcuHBip3
-ARC-Seal: i=1; a=rsa-sha256; t=1522346672; cv=none;
-        d=google.com; s=arc-20160816;
-        b=WMGsMa+YQHl9UKPWd8Mz+AojVh7TWa/SQCVA2MQ75aqis7yEDr93FXy6+tWu8L6Xpi
-         5PH+Ac9sZC5e3Q27b3hbWjRwDVCMKNPndpuLdvE9NmkmEudp4MhQqqiooe97bkAN92dY
-         6s8XBoFp9RnyCgYspDMfEm03eMaUzSRj0pdNCgAFtdvW6sqxCVPGHt1ChW7yTXqXRz0d
-         cZcFzgu2eupTOr2yaTpKchOtTT/aJ/j+YCfFmwc3U8AOPzG5lM6ClCGH6Hy13EGmkiQj
-         ENXPnM98QOiF12nztxiPoFq3Mj9ir1kZwXtt0EWs83vCOR1LE/G/jZFZ5Ke/YYhxKqnk
-         YpaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=ma6Sf1myrr8UhXxbDiSL+3jMMf8Rk2p6sZhd9JyzqgE=;
-        b=eAY09RTQGLGRJVXEv5FTZunKYYTDnZOOAo048N6hEesOe7ePrict0ON0Kh6D37rHEh
-         1hBVO4WHFD0A5x/mjuOX/okniCTha9dXrt0vdKnYnDhQah4OnWcYanhhsYc9QX3BuZJf
-         xGQPCf6rMEMw74aBRxEQ7VBsZFeNiWvek9Fk/F47ygq3KcVnUSJBP31k3pFGwIs3p6LN
-         cfaiLrHhpB8ba1E7ScVExNONhAmlAY6A6ejiwBZ93B9d172cElFvMqa5NlyabhjOoKtl
-         fFTHVVby2uA8wdBXaiVvhQ1bTSxOuT6HJii1bzhlisc3t5MDenVHJ4pdQkHQgaeur2j5
-         MHjw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1351814-1522346670-2-11664514900750816076
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522346669; b=VKRmX2EyL40PjPtm6Yvk3QhYR3+Zkbv2CEEhFanWuqNAxWueX3
+    agEte+RDYqknWz9iSq7naAqLMZSpjZ2eyJIqdqU9ffuSx1RgI2HUjSHG63qyFkWa
+    bIw4NBamTfYGWLxwHZ4Zly/doTmimffBgfXSnb/aMwwW2n1YbhSj6DvOmlsSRY4t
+    SugBggYn1ZunBubGsCMmxpvojeFC+ev25MF1KcZUeW4rheXM0vfJUIJRfGHAixCu
+    7yzMSbZlKbdPLAovAYRWjzZCX/p00BTcXZc8izV8tVP5ldQSJtBrIU92wdLVF6q/
+    V931zNczWfbP58cTRS2Wq7mvvruXC4MecMcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1522346669; bh=Z36qr/6kvh5hSDz4EHvb1OP1BwmcRz
+    zJP0FJ+bU7+40=; b=vDNP/y86UPtfS9VkxE67Qka0JQt0cPOHcUnzVOZNhVii++
+    2SmC1hPRtglHqGd8jQrd7GnjFLzi1nexcfagS9vvUPyLzK3c0Y+yMCsieItwc3Er
+    ICJtsnpYx04IyUkuS9JCeUPfNYU5wD00MTJYo42/j4ZclcM6Ej/TLHd3fWKtUufK
+    sz4OTcAVr5uBCpi0rkatEaTgzWSMCoxf8ZoePyLWAahS01l508tdRjgPg/29sHjH
+    ylrQwZSM2cuIeY4aPMtPKMU1n4YS8byAgWb6AV1lFVNOj38MtCWoiSpN7eoyqxEC
+    DrFdPm0C8Moo1hc8jz17lj7Iq8bDG7cWcqHGs3Rw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAfCLYGiOZbqV22UXr6ms1Dk7vVJw4rbN1S+mOsRBtmuXnxWLtj5q+RF3IzNnY6OeQ7GzFLJSIfFOQ//a3CjX+RlX//ft/53vLwwvjeCJyYiICfbj3Ds
+    LV50xveDM5rs+kczjkNrk7Bv2IHN28OphBm3AFZDXVJr/TmXplkPU6M7MU9s3Fofdl2uWFCYn/ws2u0oN7MAsn5IIuhLH4xSvRaps5jIuQe0IAdvY1Wqk/iy
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=VwQbUJbxAAAA:8 a=jKjxfLc-AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=hjTGy2TR-yuV7bmPjl8A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753203AbeC2SEZ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 14:04:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58780 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753146AbeC2SEY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:04:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Alexey Kodanev <alexey.kodanev@oracle.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 18/43] sch_netem: fix skb leak in netem_enqueue()
-Date: Thu, 29 Mar 2018 20:00:13 +0200
-Message-Id: <20180329175731.963383228@linuxfoundation.org>
+        stable@vger.kernel.org, xu heng <xuheng333@zoho.com>,
+        Guillaume Nault <g.nault@alphalink.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 15/43] ppp: avoid loop in xmit recursion detection code
+Date: Thu, 29 Mar 2018 20:00:10 +0200
+Message-Id: <20180329175731.656227777@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -39,10 +83,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296048390316813?=
-X-GMAIL-MSGID: =?utf-8?q?1596296184065887055?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,96 +93,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit 35d889d10b649fda66121891ec05eca88150059d ]
+[ Upstream commit 6d066734e9f09cdea4a3b9cb76136db3f29cfb02 ]
 
-When we exceed current packets limit and we have more than one
-segment in the list returned by skb_gso_segment(), netem drops
-only the first one, skipping the rest, hence kmemleak reports:
+We already detect situations where a PPP channel sends packets back to
+its upper PPP device. While this is enough to avoid deadlocking on xmit
+locks, this doesn't prevent packets from looping between the channel
+and the unit.
 
-unreferenced object 0xffff880b5d23b600 (size 1024):
-  comm "softirq", pid 0, jiffies 4384527763 (age 2770.629s)
-  hex dump (first 32 bytes):
-    00 80 23 5d 0b 88 ff ff 00 00 00 00 00 00 00 00  ..#]............
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000d8a19b9d>] __alloc_skb+0xc9/0x520
-    [<000000001709b32f>] skb_segment+0x8c8/0x3710
-    [<00000000c7b9bb88>] tcp_gso_segment+0x331/0x1830
-    [<00000000c921cba1>] inet_gso_segment+0x476/0x1370
-    [<000000008b762dd4>] skb_mac_gso_segment+0x1f9/0x510
-    [<000000002182660a>] __skb_gso_segment+0x1dd/0x620
-    [<00000000412651b9>] netem_enqueue+0x1536/0x2590 [sch_netem]
-    [<0000000005d3b2a9>] __dev_queue_xmit+0x1167/0x2120
-    [<00000000fc5f7327>] ip_finish_output2+0x998/0xf00
-    [<00000000d309e9d3>] ip_output+0x1aa/0x2c0
-    [<000000007ecbd3a4>] tcp_transmit_skb+0x18db/0x3670
-    [<0000000042d2a45f>] tcp_write_xmit+0x4d4/0x58c0
-    [<0000000056a44199>] tcp_tasklet_func+0x3d9/0x540
-    [<0000000013d06d02>] tasklet_action+0x1ca/0x250
-    [<00000000fcde0b8b>] __do_softirq+0x1b4/0x5a3
-    [<00000000e7ed027c>] irq_exit+0x1e2/0x210
+The problem is that ppp_start_xmit() enqueues packets in ppp->file.xq
+before checking for xmit recursion. Therefore, __ppp_xmit_process()
+might dequeue a packet from ppp->file.xq and send it on the channel
+which, in turn, loops it back on the unit. Then ppp_start_xmit()
+queues the packet back to ppp->file.xq and __ppp_xmit_process() picks
+it up and sends it again through the channel. Therefore, the packet
+will loop between __ppp_xmit_process() and ppp_start_xmit() until some
+other part of the xmit path drops it.
 
-Fix it by adding the rest of the segments, if any, to skb 'to_free'
-list. Add new __qdisc_drop_all() and qdisc_drop_all() functions
-because they can be useful in the future if we need to drop segmented
-GSO packets in other places.
+For L2TP, we rapidly fill the skb's headroom and pppol2tp_xmit() drops
+the packet after a few iterations. But PPTP reallocates the headroom
+if necessary, letting the loop run and exhaust the machine resources
+(as reported in https://bugzilla.kernel.org/show_bug.cgi?id=199109).
 
-Fixes: 6071bd1aa13e ("netem: Segment GSO packets on enqueue")
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Fix this by letting __ppp_xmit_process() enqueue the skb to
+ppp->file.xq, so that we can check for recursion before adding it to
+the queue. Now ppp_xmit_process() can drop the packet when recursion is
+detected.
+
+__ppp_channel_push() is a bit special. It calls __ppp_xmit_process()
+without having any actual packet to send. This is used by
+ppp_output_wakeup() to re-enable transmission on the parent unit (for
+implementations like ppp_async.c, where the .start_xmit() function
+might not consume the skb, leaving it in ppp->xmit_pending and
+disabling transmission).
+Therefore, __ppp_xmit_process() needs to handle the case where skb is
+NULL, dequeuing as many packets as possible from ppp->file.xq.
+
+Reported-by: xu heng <xuheng333@zoho.com>
+Fixes: 55454a565836 ("ppp: avoid dealock on recursive xmit")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/sch_generic.h |   19 +++++++++++++++++++
- net/sched/sch_netem.c     |    2 +-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/net/ppp/ppp_generic.c |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
---- a/include/net/sch_generic.h
-+++ b/include/net/sch_generic.h
-@@ -723,6 +723,16 @@ static inline void __qdisc_drop(struct s
- 	*to_free = skb;
- }
- 
-+static inline void __qdisc_drop_all(struct sk_buff *skb,
-+				    struct sk_buff **to_free)
-+{
-+	if (skb->prev)
-+		skb->prev->next = *to_free;
-+	else
-+		skb->next = *to_free;
-+	*to_free = skb;
-+}
-+
- static inline unsigned int __qdisc_queue_drop_head(struct Qdisc *sch,
- 						   struct qdisc_skb_head *qh,
- 						   struct sk_buff **to_free)
-@@ -841,6 +851,15 @@ static inline int qdisc_drop(struct sk_b
- 	qdisc_qstats_drop(sch);
- 
- 	return NET_XMIT_DROP;
-+}
-+
-+static inline int qdisc_drop_all(struct sk_buff *skb, struct Qdisc *sch,
-+				 struct sk_buff **to_free)
-+{
-+	__qdisc_drop_all(skb, to_free);
-+	qdisc_qstats_drop(sch);
-+
-+	return NET_XMIT_DROP;
- }
- 
- /* Length to Time (L2T) lookup in a qdisc_rate_table, to determine how
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -513,7 +513,7 @@ static int netem_enqueue(struct sk_buff
+--- a/drivers/net/ppp/ppp_generic.c
++++ b/drivers/net/ppp/ppp_generic.c
+@@ -256,7 +256,7 @@ struct ppp_net {
+ /* Prototypes. */
+ static int ppp_unattached_ioctl(struct net *net, struct ppp_file *pf,
+ 			struct file *file, unsigned int cmd, unsigned long arg);
+-static void ppp_xmit_process(struct ppp *ppp);
++static void ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb);
+ static void ppp_send_frame(struct ppp *ppp, struct sk_buff *skb);
+ static void ppp_push(struct ppp *ppp);
+ static void ppp_channel_push(struct channel *pch);
+@@ -512,13 +512,12 @@ static ssize_t ppp_write(struct file *fi
+ 		goto out;
  	}
  
- 	if (unlikely(sch->q.qlen >= sch->limit))
--		return qdisc_drop(skb, sch, to_free);
-+		return qdisc_drop_all(skb, sch, to_free);
+-	skb_queue_tail(&pf->xq, skb);
+-
+ 	switch (pf->kind) {
+ 	case INTERFACE:
+-		ppp_xmit_process(PF_TO_PPP(pf));
++		ppp_xmit_process(PF_TO_PPP(pf), skb);
+ 		break;
+ 	case CHANNEL:
++		skb_queue_tail(&pf->xq, skb);
+ 		ppp_channel_push(PF_TO_CHANNEL(pf));
+ 		break;
+ 	}
+@@ -1264,8 +1263,8 @@ ppp_start_xmit(struct sk_buff *skb, stru
+ 	put_unaligned_be16(proto, pp);
  
- 	qdisc_qstats_backlog_inc(sch, skb);
+ 	skb_scrub_packet(skb, !net_eq(ppp->ppp_net, dev_net(dev)));
+-	skb_queue_tail(&ppp->file.xq, skb);
+-	ppp_xmit_process(ppp);
++	ppp_xmit_process(ppp, skb);
++
+ 	return NETDEV_TX_OK;
+ 
+  outf:
+@@ -1417,13 +1416,14 @@ static void ppp_setup(struct net_device
+  */
+ 
+ /* Called to do any work queued up on the transmit side that can now be done */
+-static void __ppp_xmit_process(struct ppp *ppp)
++static void __ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
+ {
+-	struct sk_buff *skb;
+-
+ 	ppp_xmit_lock(ppp);
+ 	if (!ppp->closing) {
+ 		ppp_push(ppp);
++
++		if (skb)
++			skb_queue_tail(&ppp->file.xq, skb);
+ 		while (!ppp->xmit_pending &&
+ 		       (skb = skb_dequeue(&ppp->file.xq)))
+ 			ppp_send_frame(ppp, skb);
+@@ -1437,7 +1437,7 @@ static void __ppp_xmit_process(struct pp
+ 	ppp_xmit_unlock(ppp);
+ }
+ 
+-static void ppp_xmit_process(struct ppp *ppp)
++static void ppp_xmit_process(struct ppp *ppp, struct sk_buff *skb)
+ {
+ 	local_bh_disable();
+ 
+@@ -1445,7 +1445,7 @@ static void ppp_xmit_process(struct ppp
+ 		goto err;
+ 
+ 	(*this_cpu_ptr(ppp->xmit_recursion))++;
+-	__ppp_xmit_process(ppp);
++	__ppp_xmit_process(ppp, skb);
+ 	(*this_cpu_ptr(ppp->xmit_recursion))--;
+ 
+ 	local_bh_enable();
+@@ -1455,6 +1455,8 @@ static void ppp_xmit_process(struct ppp
+ err:
+ 	local_bh_enable();
+ 
++	kfree_skb(skb);
++
+ 	if (net_ratelimit())
+ 		netdev_err(ppp->dev, "recursion detected\n");
+ }
+@@ -1939,7 +1941,7 @@ static void __ppp_channel_push(struct ch
+ 	if (skb_queue_empty(&pch->file.xq)) {
+ 		ppp = pch->ppp;
+ 		if (ppp)
+-			__ppp_xmit_process(ppp);
++			__ppp_xmit_process(ppp, NULL);
+ 	}
+ }
  
