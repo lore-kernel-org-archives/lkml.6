@@ -1,83 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeC2Vl0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 17:41:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36712 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751189AbeC2VlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 17:41:24 -0400
-Date: Thu, 29 Mar 2018 23:41:20 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/kvm: replace TASK_UNINTERRUPTIBLE with TASK_KILLABLE
-Message-ID: <20180329214116.GO26753@flask>
-References: <20180316105729.ykomeftdvlzqm4p6@gmail.com>
+        id S1752247AbeC2VqN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 17:46:13 -0400
+Received: from ms.lwn.net ([45.79.88.28]:53696 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751172AbeC2VqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 17:46:09 -0400
+Date: Thu, 29 Mar 2018 15:46:07 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 00/32] docs/vm: convert to ReST format
+Message-ID: <20180329154607.3d8bda75@lwn.net>
+In-Reply-To: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316105729.ykomeftdvlzqm4p6@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-16 00:57-1000, Joey Pabalinas:
-> There doesn't seem to be any advantage to having a *completely*
-> uninterruptible task here. For most users, allowing a task to respond
-> to the SIGKILL interrupt signal (all other signals are ignored just like
-> TASK_UNINTERRUPTIBLE) will not impact them at all.
+On Wed, 21 Mar 2018 21:22:16 +0200
+Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+
+> These patches convert files in Documentation/vm to ReST format, add an
+> initial index and link it to the top level documentation.
 > 
-> However, for the rare edge-cases where a task becomes stuck, maybe due to
-> snapshot corruption or some other similarly unrecoverable error, it
-> is *much* more convenient for a user to be able to have the additional
-> option of nuking that task with SIGKILL, rather than annoying them by
-> forcing them to reboot in order to remove the immortal process.
+> There are no contents changes in the documentation, except few spelling
+> fixes. The relatively large diffstat stems from the indentation and
+> paragraph wrapping changes.
 > 
-> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-> 
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index bc1a27280c4bf77899..7d4faee962e0c2e3c1 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -154,8 +154,8 @@ void kvm_async_pf_task_wait(u32 token, int interrupt_kernel)
->  
->  	for (;;) {
->  		if (!n.halted)
-> -			prepare_to_swait(&n.wq, &wait, TASK_UNINTERRUPTIBLE);
-> -		if (hlist_unhashed(&n.link))
-> +			prepare_to_swait(&n.wq, &wait, TASK_KILLABLE);
+> I've tried to keep the formatting as consistent as possible, but I could
+> miss some places that needed markup and add some markup where it was not
+> necessary.
 
-Makes sense, but it's not as easy:
+So I've been pondering on these for a bit.  It looks like a reasonable and
+straightforward RST conversion, no real complaints there.  But I do have a
+couple of concerns...
 
-> +		if (hlist_unhashed(&n.link) || fatal_signal_pending(current))
+One is that, as we move documentation into RST, I'm really trying to
+organize it a bit so that it is better tuned to the various audiences we
+have.  For example, ksm.txt is going to be of interest to sysadmin types,
+who might want to tune it.  mmu_notifier.txt is of interest to ...
+somebody, but probably nobody who is thinking in user space.  And so on.
 
-Removing the waiter from the list is currently waker's job, but the
-entry is stack-allocated by waiter;  simply breaking there would cause
-use after free on the waker's side.
+So I would really like to see this material split up and put into the
+appropriate places in the RST hierarchy - admin-guide for administrative
+stuff, core-api for kernel development topics, etc.  That, of course,
+could be done separately from the RST conversion, but I suspect I know
+what will (or will not) happen if we agree to defer that for now :)
 
-We could take the lock again near the end of kvm_async_pf_task_wait to
-remove the entry and use a variable (instead of hlist_unhashed) to
-signal that the wakeup happened.
+The other is the inevitable merge conflicts that changing that many doc
+files will create.  Sending the patches through Andrew could minimize
+that, I guess, or at least make it his problem.  Alternatively, we could
+try to do it as an end-of-merge-window sort of thing.  I can try to manage
+that, but an ack or two from the mm crowd would be nice to have.
 
-And there is another problem as well: If the waiting task is killed
-before the wakeup arrives, the waker allocates a dummy entry that is not
-going to be consumed by a future waiter, leading to a leak that could
-potentially deplete the whole memory.
+Thanks,
 
-A solution to that could use a list of waiters that were killed before
-the wakeup, so the normal working case wouldn't regress.
-
-Doing that to handle snapshot corruption is definitely not worth it --
-restoring from a snapshot should do apf_task_wake_all, so the corruption
-would have to be very precise.
-
-I remember we had a bug where tasks were getting stuck when running
-nested and maybe there are going to be other cases to excuse the change.
-I'm slightly against changing the behavior as it's pretty hard to test,
-but I can be easily convinced with a well reasoned patch,
-
-thanks!
+jon
