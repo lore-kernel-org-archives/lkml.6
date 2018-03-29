@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeC2WHm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:07:42 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:40328 "EHLO
+        id S1752823AbeC2WHq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:07:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:35982 "EHLO
         mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752643AbeC2WH1 (ORCPT
+        with ESMTP id S1752787AbeC2WHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:07:27 -0400
-X-Google-Smtp-Source: AIpwx4+WKbgV9fJkpJqUCiJatT/jsW72UFxpttHU8MHX+yUc0/uM0YN+lVnEG0TdJHn4ICzSWQw53A==
+        Thu, 29 Mar 2018 18:07:43 -0400
+X-Google-Smtp-Source: AIpwx49NX3YJe3vRn3Ug75tkLXMNzwUZXTCz5jLzUW/myRBbV7XFv0+32EhWDSOXcwS+Df27frzZdw==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         keith.busch@intel.com, javier@cnexlabs.com,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 26/37] lightnvm: complete geo structure with maxoc*
-Date: Fri, 30 Mar 2018 00:05:13 +0200
-Message-Id: <20180329220524.30363-27-mb@lightnvm.io>
+Subject: [GIT PULL 35/37] lightnvm: pblk: don't recover unwritten lines
+Date: Fri, 30 Mar 2018 00:05:22 +0200
+Message-Id: <20180329220524.30363-36-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
 References: <20180329220524.30363-1-mb@lightnvm.io>
@@ -26,86 +27,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Javier González <javier@cnexlabs.com>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Complete the generic geometry structure with the maxoc and maxocpu
-felds, present in the 2.0 spec. Also, expose them through sysfs.
+If the line has not been written to, we should not
+try to recover any data from it, so check the state of the
+chunks in the line before attempting to read smeta.
 
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/nvme/host/lightnvm.c | 17 +++++++++++++++++
- include/linux/lightnvm.h     |  2 ++
- 2 files changed, 19 insertions(+)
+ drivers/lightnvm/pblk-recovery.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index f7f7769e7588..41b38ebdb1f3 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -323,6 +323,13 @@ static int nvme_nvm_setup_12(struct nvme_nvm_id12 *id,
- 	geo->ws_opt = sec_per_pg;
- 	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC safe values */
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 26356429dc72..3e079c2afa6e 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -864,6 +864,21 @@ static void pblk_recov_wa_counters(struct pblk *pblk,
+ 	}
+ }
  
-+	/* Do not impose values for maximum number of open blocks as it is
-+	 * unspecified in 1.2. Users of 1.2 must be aware of this and eventually
-+	 * specify these values through a quirk if restrictions apply.
-+	 */
-+	geo->maxoc = geo->all_luns * geo->nr_chks;
-+	geo->maxocpu = geo->nr_chks;
++static int pblk_line_was_written(struct pblk_line *line,
++			    struct pblk_line_meta *lm)
++{
 +
- 	geo->mccap = le32_to_cpu(src->mccap);
++	int i;
++	int state_mask = NVM_CHK_ST_OFFLINE | NVM_CHK_ST_FREE;
++
++	for (i = 0; i < lm->blk_per_line; i++) {
++		if (!(line->chks[i].state & state_mask))
++			return 1;
++	}
++
++	return 0;
++}
++
+ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ {
+ 	struct pblk_line_meta *lm = &pblk->lm;
+@@ -900,6 +915,9 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 		line->lun_bitmap = ((void *)(smeta_buf)) +
+ 						sizeof(struct line_smeta);
  
- 	geo->trdt = le32_to_cpu(src->trdt);
-@@ -409,6 +416,8 @@ static int nvme_nvm_setup_20(struct nvme_nvm_id20 *id,
- 	geo->ws_min = le32_to_cpu(id->ws_min);
- 	geo->ws_opt = le32_to_cpu(id->ws_opt);
- 	geo->mw_cunits = le32_to_cpu(id->mw_cunits);
-+	geo->maxoc = le32_to_cpu(id->maxoc);
-+	geo->maxocpu = le32_to_cpu(id->maxocpu);
- 
- 	geo->trdt = le32_to_cpu(id->trdt);
- 	geo->trdm = le32_to_cpu(id->trdm);
-@@ -1050,6 +1059,10 @@ static ssize_t nvm_dev_attr_show_20(struct device *dev,
- 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->ws_min);
- 	} else if (strcmp(attr->name, "ws_opt") == 0) {
- 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->ws_opt);
-+	} else if (strcmp(attr->name, "maxoc") == 0) {
-+		return scnprintf(page, PAGE_SIZE, "%u\n", geo->maxoc);
-+	} else if (strcmp(attr->name, "maxocpu") == 0) {
-+		return scnprintf(page, PAGE_SIZE, "%u\n", geo->maxocpu);
- 	} else if (strcmp(attr->name, "mw_cunits") == 0) {
- 		return scnprintf(page, PAGE_SIZE, "%u\n", geo->mw_cunits);
- 	} else if (strcmp(attr->name, "write_typ") == 0) {
-@@ -1147,6 +1160,8 @@ static NVM_DEV_ATTR_20_RO(chunks);
- static NVM_DEV_ATTR_20_RO(clba);
- static NVM_DEV_ATTR_20_RO(ws_min);
- static NVM_DEV_ATTR_20_RO(ws_opt);
-+static NVM_DEV_ATTR_20_RO(maxoc);
-+static NVM_DEV_ATTR_20_RO(maxocpu);
- static NVM_DEV_ATTR_20_RO(mw_cunits);
- static NVM_DEV_ATTR_20_RO(write_typ);
- static NVM_DEV_ATTR_20_RO(write_max);
-@@ -1163,6 +1178,8 @@ static struct attribute *nvm_dev_attrs_20[] = {
- 	&dev_attr_clba.attr,
- 	&dev_attr_ws_min.attr,
- 	&dev_attr_ws_opt.attr,
-+	&dev_attr_maxoc.attr,
-+	&dev_attr_maxocpu.attr,
- 	&dev_attr_mw_cunits.attr,
- 
- 	&dev_attr_read_typ.attr,
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index a073c0c76260..870959a58fef 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -296,6 +296,8 @@ struct nvm_geo {
- 	u32	ws_min;		/* minimum write size */
- 	u32	ws_opt;		/* optimal write size */
- 	u32	mw_cunits;	/* distance required for successful read */
-+	u32	maxoc;		/* maximum open chunks */
-+	u32	maxocpu;	/* maximum open chunks per parallel unit */
- 
- 	/* device capabilities */
- 	u32	mccap;
++		if (!pblk_line_was_written(line, lm))
++			continue;
++
+ 		/* Lines that cannot be read are assumed as not written here */
+ 		if (pblk_line_read_smeta(pblk, line))
+ 			continue;
 -- 
 2.11.0
