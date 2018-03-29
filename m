@@ -1,87 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeC2Gva (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 02:51:30 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:52676 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750732AbeC2Gv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 02:51:29 -0400
-Date: Thu, 29 Mar 2018 08:51:27 +0200
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Derek Robson <robsonde@gmail.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>, <ben@decadent.org.uk>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-Subject: Re: Regression in 4.16-rc7 - ipsec vpn broken
-Message-ID: <20180329065127.yn6sm3xvs2givubo@gauss3.secunet.de>
-References: <CAMfSVWDZn28cYpseJCc=gO1uD1Cr_P5vKRW8FjaqczooyecHwg@mail.gmail.com>
+        id S1751150AbeC2G57 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 02:57:59 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50578 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeC2G56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 02:57:58 -0400
+X-Google-Smtp-Source: AIpwx4/WmcrmJmeeIH2xDh908U7atGVQExjCjw5G20g4vIcWAy8xNYhKeKX68sN3nIlmtP1S5iLNAA==
+Date: Thu, 29 Mar 2018 08:57:53 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Christian =?iso-8859-1?Q?K=F6nig?=
+        <ckoenig.leichtzumerken@gmail.com>
+Cc: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180329065753.GD3881@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-4-christian.koenig@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAMfSVWDZn28cYpseJCc=gO1uD1Cr_P5vKRW8FjaqczooyecHwg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 8BACC077-052A-431B-9F83-CCCF15358D76
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180325110000.2238-4-christian.koenig@amd.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please always make sure to Cc netdev@vger.kernel.org
-on networking problems.
-
-On Wed, Mar 28, 2018 at 10:21:32PM +0000, Derek Robson wrote:
-> The ipsec VPN is broken in 4.16-rc7 and seem to have been broken in all of
-> 4.15
+On Sun, Mar 25, 2018 at 12:59:56PM +0200, Christian König wrote:
+> Add a peer2peer flag noting that the importer can deal with device
+> resources which are not backed by pages.
 > 
-> connecting from an iphone seems to give a timeout.
+> Signed-off-by: Christian König <christian.koenig@amd.com>
+
+Um strictly speaking they all should, but ttm never bothered to use the
+real interfaces but just hacked around the provided sg list, grabbing the
+underlying struct pages, then rebuilding&remapping the sg list again.
+
+The entire point of using sg lists was exactly to allow this use case of
+peer2peer dma (or well in general have special exporters which managed
+memory/IO ranges not backed by struct page). So essentially you're having
+a "I'm totally not broken flag" here.
+
+I think a better approach would be if we add a requires_struct_page or so,
+and annotate the current importers accordingly. Or we just fix them up (it
+is all in shared ttm code after all, I think everyone else got this
+right).
+-Daniel
+
+> ---
+>  drivers/dma-buf/dma-buf.c | 1 +
+>  include/linux/dma-buf.h   | 4 ++++
+>  2 files changed, 5 insertions(+)
 > 
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index ffaa2f9a9c2c..f420225f93c6 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -565,6 +565,7 @@ struct dma_buf_attachment *dma_buf_attach(const struct dma_buf_attach_info *info
+>  
+>  	attach->dev = info->dev;
+>  	attach->dmabuf = dmabuf;
+> +	attach->peer2peer = info->peer2peer;
+>  	attach->priv = info->priv;
+>  	attach->invalidate = info->invalidate;
+>  
+> diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+> index 15dd8598bff1..1ef50bd9bc5b 100644
+> --- a/include/linux/dma-buf.h
+> +++ b/include/linux/dma-buf.h
+> @@ -313,6 +313,7 @@ struct dma_buf {
+>   * @dmabuf: buffer for this attachment.
+>   * @dev: device attached to the buffer.
+>   * @node: list of dma_buf_attachment.
+> + * @peer2peer: true if the importer can handle peer resources without pages.
+>   * @priv: exporter specific attachment data.
+>   *
+>   * This structure holds the attachment information between the dma_buf buffer
+> @@ -328,6 +329,7 @@ struct dma_buf_attachment {
+>  	struct dma_buf *dmabuf;
+>  	struct device *dev;
+>  	struct list_head node;
+> +	bool peer2peer;
+>  	void *priv;
+>  
+>  	/**
+> @@ -392,6 +394,7 @@ struct dma_buf_export_info {
+>   * @dmabuf:	the exported dma_buf
+>   * @dev:	the device which wants to import the attachment
+>   * @priv:	private data of importer to this attachment
+> + * @peer2peer:	true if the importer can handle peer resources without pages
+>   * @invalidate:	callback to use for invalidating mappings
+>   *
+>   * This structure holds the information required to attach to a buffer. Used
+> @@ -401,6 +404,7 @@ struct dma_buf_attach_info {
+>  	struct dma_buf *dmabuf;
+>  	struct device *dev;
+>  	void *priv;
+> +	bool peer2peer;
+>  	void (*invalidate)(struct dma_buf_attachment *attach);
+>  };
+>  
+> -- 
+> 2.14.1
 > 
-> A bisect brings me to this commit as the one that is the issue.
-> 
-> commit: acf568ee859f098279eadf551612f103afdacb4e  (xfrm: Reinject
-> transport-mode packets through tasklet)
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-I have a fix queued for this commit in the ipsec tree.
-
-Can you please try if the patch below fixes your problems?
-
-Thanks!
-
-Subject: [PATCH] xfrm: Fix transport mode skb control buffer usage.
-
-A recent commit introduced a new struct xfrm_trans_cb
-that is used with the sk_buff control buffer. Unfortunately
-it placed the structure in front of the control buffer and
-overlooked that the IPv4/IPv6 control buffer is still needed
-for some layer 4 protocols. As a result the IPv4/IPv6 control
-buffer is overwritten with this structure. Fix this by setting
-a apropriate header in front of the structure.
-
-Fixes acf568ee859f ("xfrm: Reinject transport-mode packets ...")
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
----
- net/xfrm/xfrm_input.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index 1472c0857975..81788105c164 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -26,6 +26,12 @@ struct xfrm_trans_tasklet {
- };
- 
- struct xfrm_trans_cb {
-+	union {
-+		struct inet_skb_parm	h4;
-+#if IS_ENABLED(CONFIG_IPV6)
-+		struct inet6_skb_parm	h6;
-+#endif
-+	} header;
- 	int (*finish)(struct net *net, struct sock *sk, struct sk_buff *skb);
- };
- 
 -- 
-2.14.1
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
