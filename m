@@ -1,131 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752446AbeC2TQq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 15:16:46 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42861 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751210AbeC2TPt (ORCPT
+        id S1752488AbeC2TQy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 15:16:54 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39414 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752453AbeC2TQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 15:15:49 -0400
-X-Google-Smtp-Source: AIpwx48KRuD1T44tjLO9GaGLFV9lA5rx4fSvFyqnYhM3CNY71kxlfbH714ZjmrfBARPpaH7thBp0bA==
-From: Thierry Escande <thierry.escande@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 1/4] arm64: dts: apq8096-db820c: Enable wlan and bt en pins
-Date: Thu, 29 Mar 2018 21:15:21 +0200
-Message-Id: <20180329191524.30225-2-thierry.escande@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180329191524.30225-1-thierry.escande@linaro.org>
-References: <20180329191524.30225-1-thierry.escande@linaro.org>
+        Thu, 29 Mar 2018 15:16:52 -0400
+Subject: Re: [RFC PATCH v2 3/4] mm/rmqueue_bulk: alloc without touching
+ individual page structure
+To: Aaron Lu <aaron.lu@intel.com>, Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20180320085452.24641-1-aaron.lu@intel.com>
+ <20180320085452.24641-4-aaron.lu@intel.com>
+ <12a89171-27b8-af4f-450e-41e5775683c5@suse.cz>
+ <20180321150140.GA1838@intel.com>
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
+Organization: Oracle
+Message-ID: <1df1e702-98bb-8785-206b-d0a44bcc0ec0@oracle.com>
+Date: Thu, 29 Mar 2018 15:16:12 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
+In-Reply-To: <20180321150140.GA1838@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8847 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=883
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803290197
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 03/21/2018 11:01 AM, Aaron Lu wrote:
+>> I'm sorry, but I feel the added complexity here is simply too large to
+>> justify the change. Especially if the motivation seems to be just the
+>> microbenchmark. It would be better if this was motivated by a real
+>> workload where zone lock contention was identified as the main issue,
+>> and we would see the improvements on the workload. We could also e.g.
+>> find out that the problem can be avoided at a different level.
+> 
+> One thing I'm aware of is there is some app that consumes a ton of
+> memory and when it misbehaves or crashes, it takes some 10-20 minutes to
+> have it exit(munmap() takes a long time to free all those consumed
+> memory).
+> 
+> THP could help a lot, but it's beyond my understanding why they didn't
+> use it.
 
-This patch enables regulators and gpios for the Qualcomm QCA6174 BT/WLAN
-combo controller.
+One of our apps has the same issue with taking a long time to exit.  The 
+time is in the kernel's munmap/exit path.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
----
-
-v7:
-- New patch in this patchset
-
- .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    | 22 +++++++++++++++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       | 31 ++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-index 59b29ddfb6e9..5d50f45c4df7 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi
-@@ -14,6 +14,28 @@
- 		};
- 	};
- 
-+	bt_en_gpios: bt_en_gpios {
-+		pinconf {
-+			pins = "gpio19";
-+			function = PMIC_GPIO_FUNC_NORMAL;
-+			output-low;
-+			power-source = <PM8994_GPIO_S4>; // 1.8V
-+			qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
-+			bias-pull-down;
-+		};
-+	};
-+
-+	wlan_en_gpios: wlan_en_gpios {
-+		pinconf {
-+			pins = "gpio8";
-+			function = PMIC_GPIO_FUNC_NORMAL;
-+			output-low;
-+			power-source = <PM8994_GPIO_S4>; // 1.8V
-+			qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
-+			bias-pull-down;
-+		};
-+	};
-+
- 	volume_up_gpio: pm8996_gpio2 {
- 		pinconf {
- 			pins = "gpio2";
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index 1c8f1b86472d..ec5e6eee0a7a 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -139,9 +139,40 @@
- 			pinctrl-0 = <&usb2_vbus_det_gpio>;
- 		};
- 
-+		bt_en: bt-en-1-8v {
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&bt_en_gpios>;
-+			compatible = "regulator-fixed";
-+			regulator-name = "bt-en-regulator";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+
-+			/* WLAN card specific delay */
-+			startup-delay-us = <70000>;
-+			enable-active-high;
-+		};
-+
-+		wlan_en: wlan-en-1-8v {
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&wlan_en_gpios>;
-+			compatible = "regulator-fixed";
-+			regulator-name = "wlan-en-regulator";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+
-+			gpio = <&pm8994_gpios 8 0>;
-+
-+			/* WLAN card specific delay */
-+			startup-delay-us = <70000>;
-+			enable-active-high;
-+		};
-+
- 		agnoc@0 {
- 			qcom,pcie@600000 {
-+				status = "okay";
- 				perst-gpio = <&msmgpio 35 GPIO_ACTIVE_LOW>;
-+				vddpe-supply = <&wlan_en>;
-+				vddpe1-supply = <&bt_en>;
- 			};
- 
- 			qcom,pcie@608000 {
--- 
-2.14.1
+Also, Vlastimil, to your point about real workloads, I've seen 
+zone->lock and lru_lock heavily contended in a decision support 
+benchmark.  Setting the pcp list sizes artificially high with 
+percpu_pagelist_fraction didn't make it go any faster, but given that 
+Aaron and I have seen the contention shift to lru_lock in this case, I'm 
+curious what will happen to the benchmark when both locks are no longer 
+contended.  Will report back once this experiment is done.
