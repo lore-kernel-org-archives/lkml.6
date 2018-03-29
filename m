@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+tboOwuJN4jes24NLZ6rIBxjJNGU8FPcRgtCdWsQG2g9egHINEtckMKqqH6bQmXy9jG4bk
-ARC-Seal: i=1; a=rsa-sha256; t=1522346602; cv=none;
+X-Google-Smtp-Source: AIpwx49hqWapyDiiapeZ/bqgVsBuSMQkvzaHAy3EoOPYIhBAFkKUowSVvfSF4bwX8u9p3QEe2z2A
+ARC-Seal: i=1; a=rsa-sha256; t=1522346598; cv=none;
         d=google.com; s=arc-20160816;
-        b=nNkqpYRh+H8+HS4FxGn/UJONHGytNBrIk2bM7VS1LwcQgz9RJnUPtO2od+mYlHE/+w
-         Zd7w00rQ2sjOvn33F72EHpRbHMXE3tJY/Baef42lnglQpOJfHY5Kcab/sH+7t5aTn3G1
-         sqdI+9+D1GBZrxsUduATcuWJ52/IamrDsnbL7WDA+HFJUl1GJk2aat/xCg6hvQmpyVQi
-         XMv32NZVTudT6VkhKNDCf33VrmpbDpKnj8VgOiuCYDmy8n9tU64Q0PJWolJsAbykLK1l
-         h/3j8PFs4abTMweZxtBuem6e5UzOaNiv8bG5RnaRXmhq3ng3WDSx2mYNtwkD3DMKHJF+
-         /WOA==
+        b=YCtK6pS3I+GW3yAbg2lmLuTZwnAcQTNQVijznxi/CgNqEFi6Zei1tYw8wMsR7SskI6
+         34kb7T3p+ywmjhURIazAI6SP71y8cs1Oomkmtw2kVIRLmkXoZCrdz/FCkIJj8W/9WZu6
+         qphDKxSD5OXMA0UrWxGPr64Qulf2rWd874swCU12ZwS1EwFT88YDM6iuvMFaww30sn7J
+         +7FJZMc6Wrb4eUC1eyU9uJ25WYtinPFlfHNMcF3vJ69GACLd29wSCGKKk42cOFy91Hcu
+         t6AB8nPstWPvdhA8CoL9ewvASiYp/VUyeYZcdC+1ooArX5BjK41h1UYcRc68gukonqZ0
+         0PGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9PVnsUQnW+mMHNiKSm//pIdYyc8j+G1atxt4OReDQhM=;
-        b=sbmyYeG83P22Zdu7IdNUEHLRcxWe/H1Wfoagi/Jj2/jZcGmn7V9t2I1O3w8hTCeIO7
-         VkHyxxOK4EsWR80o0MgcSt65QSKn9W7qriAi89XpvnfLGQeY3+e19t5cW3BJi/mWqm/R
-         G3GJMyAPBds149goHGo2uXB/fjVSDUKH61PlnuSf2IgUgU/q36oo0BMmgvHFhXaXtBSC
-         NjXwhgkwTH/gOKfr+BidRhYNxC9Jf17QShh+xYqEkx4+/2OL0bTKZVwAUylgzY+7iJq+
-         fly91VwwwHik8Mk4yW2GMHuofJwNHjIUO4Cl3MHtVfig7ouCVV3TfICd3q9KpulMtLG/
-         Lk2Q==
+        bh=5hJ0k6ZI7pinBtrtwuIvTYoS7p5XKFwaM/5GFqIm6ro=;
+        b=HqW91xjMSQfTCNjC1C/GWlFJnZsSSlcvnv08EB69pVbIWTKEvH8eyR3vJdczka1YLE
+         ZQb3PgAEoUy2vnDap4kpzGtoJQol6meHrhzCKo6A0asOESDawPz3t0wvNZXwrz44YiWs
+         NX+ZndycorJ8RjoQsfDZ+J4Fmf1ZEizY5LWQ2ejayl45NZa/bBkbUxsALXyg0BJeFrVC
+         bcPlicbOLTSXx2rFn1U6GMTRN/xCtcBd32CBgKY+jmQBmuOXDakIeq08KgWmc8kuetuj
+         /k981PEqobQx6y9ncaS2zo1WLrhyLLHOO19jC+u6XH6591Xive4kyDjEDcqrNkmFERJ5
+         f3Yw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Ursula Braun <ursula.braun@de.ibm.com>,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 41/47] net/iucv: Free memory obtained by kzalloc
-Date: Thu, 29 Mar 2018 20:00:22 +0200
-Message-Id: <20180329175732.929516413@linuxfoundation.org>
+Subject: [PATCH 4.15 40/47] net: fec: Fix unbalanced PM runtime calls
+Date: Thu, 29 Mar 2018 20:00:21 +0200
+Message-Id: <20180329175732.840556965@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296110854357073?=
-X-GMAIL-MSGID: =?utf-8?q?1596296110854357073?=
+X-GMAIL-THRID: =?utf-8?q?1596296106771354924?=
+X-GMAIL-MSGID: =?utf-8?q?1596296106771354924?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,36 +49,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
 
-[ Upstream commit fa6a91e9b907231d2e38ea5ed89c537b3525df3d ]
+[ Upstream commit a069215cf5985f3aa1bba550264907d6bd05c5f7 ]
 
-Free memory by calling put_device(), if afiucv_iucv_init is not
-successful.
+When unbinding/removing the driver, we will run into the following warnings:
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Ursula Braun <ursula.braun@de.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+[  259.655198] fec 400d1000.ethernet: 400d1000.ethernet supply phy not found, using dummy regulator
+[  259.665065] fec 400d1000.ethernet: Unbalanced pm_runtime_enable!
+[  259.672770] fec 400d1000.ethernet (unnamed net_device) (uninitialized): Invalid MAC address: 00:00:00:00:00:00
+[  259.683062] fec 400d1000.ethernet (unnamed net_device) (uninitialized): Using random MAC address: f2:3e:93:b7:29:c1
+[  259.696239] libphy: fec_enet_mii_bus: probed
+
+Avoid these warnings by balancing the runtime PM calls during fec_drv_remove().
+
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/iucv/af_iucv.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/fec_main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -2433,9 +2433,11 @@ static int afiucv_iucv_init(void)
- 	af_iucv_dev->driver = &af_iucv_driver;
- 	err = device_register(af_iucv_dev);
- 	if (err)
--		goto out_driver;
-+		goto out_iucv_dev;
- 	return 0;
- 
-+out_iucv_dev:
-+	put_device(af_iucv_dev);
- out_driver:
- 	driver_unregister(&af_iucv_driver);
- out_iucv:
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3578,6 +3578,8 @@ fec_drv_remove(struct platform_device *p
+ 	fec_enet_mii_remove(fep);
+ 	if (fep->reg_phy)
+ 		regulator_disable(fep->reg_phy);
++	pm_runtime_put(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
+ 	if (of_phy_is_fixed_link(np))
+ 		of_phy_deregister_fixed_link(np);
+ 	of_node_put(fep->phy_node);
