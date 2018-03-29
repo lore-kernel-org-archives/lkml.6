@@ -1,112 +1,172 @@
-Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AIpwx4+Z12YKP/IYWUBdf6fXNdq4dg/sF9U/DnfDscgpedMbNLbdbSsrpYCLoVy6OxF2m1af2je3
-ARC-Seal: i=1; a=rsa-sha256; t=1522337341; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AeW/AhEDBbd1SraJ6Aq2uc49fs668WPkZyfC5lqZ72u7Inf9zg0PjFyPNUpAeMl8gk
-         wjvL0IRE1zLCdYBS9ckBiMSOXY/xAvKbTRrLFiDHdcw9wFSTkR8PTEm1MHPP5ZDrOtbr
-         V7Wy8BkK9KCpLiNqQhQajSQCnJ1SkOvgI7Q1l9StAJpjblRtDcapx0v1osl8hpcbqNjU
-         49Df8eu4STY5+D26iIwIPFTL2QXNilr2A4rYEcoHLOTvbv5Aiio9Q6+yY6HKxE0qOvir
-         3Li4dn4y9S8wFAq5sH3OQ5MHQuR96EpConIQZ0AUtey8CJYUOBIZfKhTIYS42fs6GRfA
-         0m5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=jnFJyU6U/r5raNKz0Ux3T0Kwl9p3kn1puS17NJMv3N8=;
-        b=YcXru2nwt49Pdq18z0e4Tf+6S3IwM/Ep/kwfHncpdSwoMfQVYfcArkfPU97xjnzGJZ
-         GKvawUk1UCH2IP67upWLKGRSiocAgU9nvAeTekYtobCvWCnvX3WF/zA53ASGUOugaTDn
-         ev3PrsT+CwooX+kOYFsX3iEThXxpN2+g5cSI6Y25I1IgBWZ7GzHZnebUbXl7CiyGKVkU
-         mz85zxhCGQV3ShKTOC/Z2zgsQl9F/N5Z7oLy1iWWynv/ZE86qxVsN9YQFjnRatPnjc0h
-         Tos/5deA4Z5x4tiFHyYBhKru3g4ftq90eEGxKDCona1Lg5AEeLU/jU/TBNgT78/dTewr
-         5oOg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1149473-1522337391-2-11366994838056602800
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522337390; b=THG9q/p2ucN5NOwzzG3oqyVOBoUfIzQWiiSEk4CmOKtsuqz465
+    FMnfW9jAlb2y5uyTqMrfqrzoQbEKfkJYvlisT7jAeXUr1+SOT0OmzH+wm/cbj6Ny
+    g+BHpNxzx/Ribsm655A10IAarsN/fZK2erBk/qrdw29XbyYWeZjTZqGeP06lboGj
+    gDaU7JTWZzHV8KHOt4U/xdxp01SJCv5ne31pV0HQG8+pdKvy9WldfFAx+UD7147D
+    fb0+P843frjJsTFzSTAnuMdUugWrjibCsZOLXlyPYJwKKzBUakJDk5yOIwB48deT
+    /u7ywky02bPMGaKK+QxuMBURL2Bc38jfg2Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1522337390; bh=
+    onxN5iPZW7Lt8ch2U53qU4HRStc7gkcGDk3ruYV5jbs=; b=aD1cIQ313zLJ8x+p
+    OwszS2ICNjRmwzkTm6ZnyERCv+ZN5SwVlwGQQ9IZpa1VYVJ7oPDGcGk7ILenbeNj
+    zSt9JKMtVemowmD6LdroPBibRPtBIzdIK7QAmFwRgwH3y87ZzI3QclDztqkjt2d0
+    gXjysMC7aEGkXYrzRTpjgX6ariQzvkNLTo5NiRPUBfzDMjvZxjs3t5AYagapeZfA
+    GdIoPxH5r4nt9b7fhig305g23XLvmsYoef3pnbCDqJsgYuPdHg7KQQDRV48e9Hx6
+    +VFeJOUyzRDyDr5Vzk14I+bM08e9b0ScrHkk8j/kNAzmPCtst4gLvjv95BfZjm+h
+    p/A0GA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNe1s0R6fo8qSXaRQW0m9MvzBRXdoq9E5mKA4mfjvkyyAKJLMDMOeJEQPiEZ5K525kQEFKzF1gzRWxkpnkGrAd/3k6iClzZeYf1Lh2OgZHprDYCrCj5I
+    VSBLpyql9AbbarSRxkS8OTlQanG/Jv2j5Zuj+NrGIli47gTjIhQNLThjc2AzJ64chtoNOuYn81MhodfQDPKK1K6+T/wFNU096C0pPfFhb7VimVHLSIG3V8sT
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
+    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=OdSsmgxJ-UETYCq5LY4A:9
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752296AbeC2P3k (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 11:29:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53454 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752080AbeC2P3E (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:29:04 -0400
 From: Hans de Goede <hdegoede@redhat.com>
 To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Hans de Goede <hdegoede@redhat.com>,
-	Michael Thayer <michael.thayer@oracle.com>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2 1/4] virt: vbox: Move declarations of vboxguest private functions to private header
-Date: Thu, 29 Mar 2018 17:28:54 +0200
-Message-Id: <20180329152857.32694-1-hdegoede@redhat.com>
+        Michael Thayer <michael.thayer@oracle.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH v2 3/4] virt: vbox: Use __get_free_pages instead of kmalloc for DMA32 memory
+Date: Thu, 29 Mar 2018 17:28:56 +0200
+Message-Id: <20180329152857.32694-3-hdegoede@redhat.com>
+In-Reply-To: <20180329152857.32694-1-hdegoede@redhat.com>
+References: <20180329152857.32694-1-hdegoede@redhat.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596286400660557451?=
-X-GMAIL-MSGID: =?utf-8?q?1596286400660557451?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Move the declarations of functions from vboxguest_utils.c which are only
-meant for vboxguest internal use from include/linux/vbox_utils.h to
-drivers/virt/vboxguest/vboxguest_core.h.
+It is not possible to get DMA32 zone memory through kmalloc, causing
+the vboxguest driver to malfunction due to getting memory above
+4G which the PCI device cannot handle.
+
+This commit changes the kmalloc calls where the 4G limit matters to
+using __get_free_pages() fixing vboxguest not working on x86_64 guests
+with more then 4G RAM.
 
 Cc: stable@vger.kernel.org
+Reported-by: Eloy Coto Pereiro <eloy.coto@gmail.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/virt/vboxguest/vboxguest_core.h |  8 ++++++++
- include/linux/vbox_utils.h              | 23 -----------------------
- 2 files changed, 8 insertions(+), 23 deletions(-)
+ drivers/virt/vboxguest/vboxguest_linux.c | 19 ++++++++++++++++---
+ drivers/virt/vboxguest/vboxguest_utils.c |  5 +++--
+ 2 files changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/virt/vboxguest/vboxguest_core.h b/drivers/virt/vboxguest/vboxguest_core.h
-index 6c784bf4fa6d..39ed85cf9244 100644
---- a/drivers/virt/vboxguest/vboxguest_core.h
-+++ b/drivers/virt/vboxguest/vboxguest_core.h
-@@ -171,4 +171,12 @@ irqreturn_t vbg_core_isr(int irq, void *dev_id);
+diff --git a/drivers/virt/vboxguest/vboxguest_linux.c b/drivers/virt/vboxguest/vboxguest_linux.c
+index 82e280d38cc2..398d22693234 100644
+--- a/drivers/virt/vboxguest/vboxguest_linux.c
++++ b/drivers/virt/vboxguest/vboxguest_linux.c
+@@ -87,6 +87,7 @@ static long vbg_misc_device_ioctl(struct file *filp, unsigned int req,
+ 	struct vbg_session *session = filp->private_data;
+ 	size_t returned_size, size;
+ 	struct vbg_ioctl_hdr hdr;
++	bool is_vmmdev_req;
+ 	int ret = 0;
+ 	void *buf;
  
- void vbg_linux_mouse_event(struct vbg_dev *gdev);
+@@ -106,8 +107,17 @@ static long vbg_misc_device_ioctl(struct file *filp, unsigned int req,
+ 	if (size > SZ_16M)
+ 		return -E2BIG;
  
-+/* Private (non exported) functions form vboxguest_utils.c */
-+void *vbg_req_alloc(size_t len, enum vmmdev_request_type req_type);
-+int vbg_req_perform(struct vbg_dev *gdev, void *req);
-+int vbg_hgcm_call32(
-+	struct vbg_dev *gdev, u32 client_id, u32 function, u32 timeout_ms,
-+	struct vmmdev_hgcm_function_parameter32 *parm32, u32 parm_count,
-+	int *vbox_status);
+-	/* __GFP_DMA32 because IOCTL_VMMDEV_REQUEST passes this to the host */
+-	buf = kmalloc(size, GFP_KERNEL | __GFP_DMA32);
++	/*
++	 * IOCTL_VMMDEV_REQUEST needs the buffer to be below 4G to avoid
++	 * the need for a bounce-buffer and another copy later on.
++	 */
++	is_vmmdev_req = (req & ~IOCSIZE_MASK) == VBG_IOCTL_VMMDEV_REQUEST(0) ||
++			 req == VBG_IOCTL_VMMDEV_REQUEST_BIG;
 +
- #endif
-diff --git a/include/linux/vbox_utils.h b/include/linux/vbox_utils.h
-index c71def6b310f..a240ed2a0372 100644
---- a/include/linux/vbox_utils.h
-+++ b/include/linux/vbox_utils.h
-@@ -24,24 +24,6 @@ __printf(1, 2) void vbg_debug(const char *fmt, ...);
- #define vbg_debug pr_debug
- #endif
++	if (is_vmmdev_req)
++		buf = vbg_req_alloc(size, VBG_IOCTL_HDR_TYPE_DEFAULT);
++	else
++		buf = kmalloc(size, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
  
--/**
-- * Allocate memory for generic request and initialize the request header.
-- *
-- * Return: the allocated memory
-- * @len:		Size of memory block required for the request.
-- * @req_type:		The generic request type.
-- */
--void *vbg_req_alloc(size_t len, enum vmmdev_request_type req_type);
--
--/**
-- * Perform a generic request.
-- *
-- * Return: VBox status code
-- * @gdev:		The Guest extension device.
-- * @req:		Pointer to the request structure.
-- */
--int vbg_req_perform(struct vbg_dev *gdev, void *req);
--
- int vbg_hgcm_connect(struct vbg_dev *gdev,
- 		     struct vmmdev_hgcm_service_location *loc,
- 		     u32 *client_id, int *vbox_status);
-@@ -52,11 +34,6 @@ int vbg_hgcm_call(struct vbg_dev *gdev, u32 client_id, u32 function,
- 		  u32 timeout_ms, struct vmmdev_hgcm_function_parameter *parms,
- 		  u32 parm_count, int *vbox_status);
+@@ -132,7 +142,10 @@ static long vbg_misc_device_ioctl(struct file *filp, unsigned int req,
+ 		ret = -EFAULT;
  
--int vbg_hgcm_call32(
--	struct vbg_dev *gdev, u32 client_id, u32 function, u32 timeout_ms,
--	struct vmmdev_hgcm_function_parameter32 *parm32, u32 parm_count,
--	int *vbox_status);
--
- /**
-  * Convert a VirtualBox status code to a standard Linux kernel return value.
-  * Return: 0 or negative errno value.
+ out:
+-	kfree(buf);
++	if (is_vmmdev_req)
++		vbg_req_free(buf, size);
++	else
++		kfree(buf);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/virt/vboxguest/vboxguest_utils.c b/drivers/virt/vboxguest/vboxguest_utils.c
+index bad915463359..bf4474214b4d 100644
+--- a/drivers/virt/vboxguest/vboxguest_utils.c
++++ b/drivers/virt/vboxguest/vboxguest_utils.c
+@@ -65,8 +65,9 @@ VBG_LOG(vbg_debug, pr_debug);
+ void *vbg_req_alloc(size_t len, enum vmmdev_request_type req_type)
+ {
+ 	struct vmmdev_request_header *req;
++	int order = get_order(PAGE_ALIGN(len));
+ 
+-	req = kmalloc(len, GFP_KERNEL | __GFP_DMA32);
++	req = (void *)__get_free_pages(GFP_KERNEL | GFP_DMA32, order);
+ 	if (!req)
+ 		return NULL;
+ 
+@@ -87,7 +88,7 @@ void vbg_req_free(void *req, size_t len)
+ 	if (!req)
+ 		return;
+ 
+-	kfree(req);
++	free_pages((unsigned long)req, get_order(PAGE_ALIGN(len)));
+ }
+ 
+ /* Note this function returns a VBox status code, not a negative errno!! */
 -- 
 2.17.0.rc1
