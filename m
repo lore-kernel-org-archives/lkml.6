@@ -1,95 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeC2OqY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:46:24 -0400
-Received: from smtp-out4.electric.net ([192.162.216.181]:52397 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750732AbeC2OqW (ORCPT
+        id S1751974AbeC2Osc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:48:32 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:53658 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750979AbeC2Osa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:46:22 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Dominik Brodowski'" <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@ZenIV.linux.org.uk" <viro@ZenIV.linux.org.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "hmclauchlan@fb.com" <hmclauchlan@fb.com>,
-        "tautschn@amazon.co.uk" <tautschn@amazon.co.uk>,
-        Amir Goldstein <amir73il@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darren Hart" <dvhart@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Jaswinder Singh <jaswinder@infradead.org>,
-        Jeff Dike <jdike@addtoit.com>, Jiri Slaby <jslaby@suse.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "user-mode-linux-devel@lists.sourceforge.net"
-        <user-mode-linux-devel@lists.sourceforge.net>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH 000/109] remove in-kernel calls to syscalls
-Thread-Topic: [PATCH 000/109] remove in-kernel calls to syscalls
-Thread-Index: AQHTx2xJix6+xeNkAEOttoYzhanKr6PnSfuA
-Date: Thu, 29 Mar 2018 14:46:44 +0000
-Message-ID: <07438b1e94ff42a184adb7134a680069@AcuMS.aculab.com>
-References: <20180329112426.23043-1-linux@dominikbrodowski.net>
- <20180329142027.GA24860@bombadil.infradead.org>
- <20180329144209.GA25559@isilmar-4.linta.de>
-In-Reply-To: <20180329144209.GA25559@isilmar-4.linta.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 29 Mar 2018 10:48:30 -0400
+Subject: Re: [net-next,v2,01/10] soc: ti: K2G: enhancement to support QMSS in
+ NSS
+To: Grygorii Strashko <grygorii.strashko@ti.com>, <robh+dt@kernel.org>,
+        <ssantosh@kernel.org>, <malat@debian.org>, <w-kwok2@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>
+CC: <mark.rutland@arm.com>
+References: <1522168309-12338-2-git-send-email-m-karicheri2@ti.com>
+ <1ccf03e7-17b4-cf00-176d-0e41038c88f8@ti.com>
+From: Murali Karicheri <m-karicheri2@ti.com>
+Organization: Texas Instruments
+Message-ID: <9ef90d5d-3714-3705-73d9-f3c04069279d@ti.com>
+Date: Thu, 29 Mar 2018 10:50:46 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <1ccf03e7-17b4-cf00-176d-0e41038c88f8@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dominik Brodowski
-> Sent: 29 March 2018 15:42
-> On Thu, Mar 29, 2018 at 07:20:27AM -0700, Matthew Wilcox wrote:
-> > On Thu, Mar 29, 2018 at 01:22:37PM +0200, Dominik Brodowski wrote:
-> > > At least on 64-bit x86, it will likely be a hard requirement from v4.17
-> > > onwards to not call system call functions in the kernel: It is better to
-> > > use use a different calling convention for system calls there, where
-> > > struct pt_regs is decoded on-the-fly in a syscall wrapper which then hands
-> > > processing over to the actual syscall function. This means that only those
-> > > parameters which are actually needed for a specific syscall are passed on
-> > > during syscall entry, instead of filling in six CPU registers with random
-> > > user space content all the time (which may cause serious trouble down the
-> > > call chain).[*]
-> >
-> > How do we stop new ones from springing up?  Some kind of linker trick
-> > like was used to, er, "dissuade" people from using gets()?
+Hi Grygorii,
+
+Thanks for reviewing this!
+
+On 03/28/2018 03:01 PM, Grygorii Strashko wrote:
+> Hi Murali,
 > 
-> Once the patches which modify the syscall calling convention are merged,
-> it won't compile on 64-bit x86, but bark loudly. That should frighten anyone.
-> Meow.
+> On 03/27/2018 11:31 AM, Murali Karicheri wrote:
+>> Navigator Subsystem (NSS) available on K2G SoC has a cut down
+>> version of QMSS with less number of queues, internal linking ram
+>> with lesser number of buffers etc.  It doesn't have status and
+>> explicit push register space as in QMSS available on other K2 SoCs.
+>> So define reg indices specific to QMSS on K2G. This patch introduces
+>> "keystone-navigator-qmss-l" compatibility to identify QMSS on
+>> K2G NSS (QMSS Lite) and to customize the dts handling code. Per
+>> Device manual, descriptors with index less than or equal to
+>> regions0_size is in region 0 in the case of QMSS where as for
+>> QMSS Lite, descriptors with index less than regions0_size is in
+>> region 0. So update the size accordingly in the regions0_size bits
+>> of the linking ram size 0 register.
+>>
+>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+>> ---
+>>   .../bindings/soc/ti/keystone-navigator-qmss.txt    |  7 ++
+>>   drivers/soc/ti/knav_qmss.h                         |  6 ++
+>>   drivers/soc/ti/knav_qmss_queue.c                   | 90 ++++++++++++++++------
+>>   3 files changed, 81 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
+>> index 77cd42c..1b0878a 100644
+>> --- a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
+>> +++ b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
+>> @@ -18,6 +18,7 @@ pool management.
+>>   
+>>   Required properties:
+>>   - compatible	: Must be "ti,keystone-navigator-qmss";
+>> +		: Must be "ti,keystone-navigator-qmss-l" for NSS Lite
+> 
+> 
+> I think, It will be more accurate to add K2G specific compat string
+> like "ti,66ak2g-navss-qm":
+> 
+> compatible = "ti,66ak2g-navss-qm", "ti,keystone-navigator-qmss";
+> 
+> because 66ak2g TRM doesn't mention "Navss light" and this Navss version is used
+> only in 66ak2g Soc. As result, 66ak2g Navss QM is subset of of keystone 2 Navss QM 
+> which should be defined in DT by adding more specific compat string in addition
+> to generic one.  
+> 
 
-Should be pretty easy to ensure the prototypes aren't in any normal header.
-Renaming the global symbols (to not match the function name) will make it
-much harder to call them as well.
+As I have mentioned in the commit description, it is not a subset of the K2
+registers. There are some differences that makes it not compatible with K2 QMSS.
+See my description, 
 
-	David
+>>It doesn't have status and explicit push register space as in QMSS available on
+>>other K2 SoCs.
+
+And also
+
+>> Per Device manual, descriptors with index less than or equal to
+>> regions0_size is in region 0 in the case of QMSS where as for
+>> QMSS Lite, descriptors with index less than regions0_size is in
+>> region 0. So update the size accordingly in the regions0_size bits
+>> of the linking ram size 0 register
+
+So will have to use a specific compatible = "ti,66ak2g-navss-qm" for this QM IMO.
+
+Murali
+> 
+>>   - clocks	: phandle to the reference clock for this device.
+>>   - queue-range	: <start number> total range of queue numbers for the device.
+>>   - linkram0	: <address size> for internal link ram, where size is the total
+>> @@ -39,6 +40,12 @@ Required properties:
+>>   			  - Descriptor memory setup region.
+>>   			  - Queue Management/Queue Proxy region for queue Push.
+>>   			  - Queue Management/Queue Proxy region for queue Pop.
+>> +
+>> +For NSS lite, following QMSS reg indexes are used in that order
+> 
+> For 66AK2G NAVSS QM..
+> 
+>> +			  - Queue Peek region.
+>> +			  - Queue configuration region.
+>> +			  - Queue Management/Queue Proxy region for queue Push/Pop.
+>> +
+>>   - queue-pools	: child node classifying the queue ranges into pools.
+>>   		  Queue ranges are grouped into 3 type of pools:
+>>   		  - qpend	    : pool of qpend(interruptible) queues
+>> diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
+>> index 905b974..5fa1ce6 100644
+>> --- a/drivers/soc/ti/knav_qmss.h
+>> +++ b/drivers/soc/ti/knav_qmss.h
+>> @@ -292,6 +292,11 @@ struct knav_queue {
+>>   	struct list_head		list;
+>>   };
+>>   
+>> +enum qmss_version {
+>> +	QMSS,
+>> +	QMSS_LITE,
+> 
+> QMSS_66AK2G
+> 
+>> +};
+>> +
+>>   struct knav_device {
+>>   	struct device				*dev;
+>>   	unsigned				base_id;
+>> @@ -305,6 +310,7 @@ struct knav_device {
+>>   	struct list_head			pools;
+>>   	struct list_head			pdsps;
+>>   	struct list_head			qmgrs;
+>> +	enum qmss_version			version;
+>>   };
+>>   
+> 
+> [...]
+> 
+>>   }
+>>   
+>> +/* Match table for of_platform binding */
+>> +static const struct of_device_id keystone_qmss_of_match[] = {
+>> +	{
+>> +		.compatible = "ti,keystone-navigator-qmss",
+> 
+> 		.data	= (void *)QMSS,
+> 
+>> +	},
+>> +	{
+>> +		.compatible = "ti,keystone-navigator-qmss-l",
+>> +		.data	= (void *)QMSS_LITE,
+>> +	},
+>> +	{},
+>> +};
+>> +MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
+>> +
+>>   static int knav_queue_probe(struct platform_device *pdev)
+>>   {
+>>   	struct device_node *node = pdev->dev.of_node;
+>>   	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
+>> +	const struct of_device_id *match;
+>>   	struct device *dev = &pdev->dev;
+>>   	u32 temp[2];
+>>   	int ret;
+>> @@ -1700,6 +1749,10 @@ static int knav_queue_probe(struct platform_device *pdev)
+>>   		return -ENOMEM;
+>>   	}
+>>   
+>> +	match = of_match_device(of_match_ptr(keystone_qmss_of_match), dev);
+>> +	if (match && match->data)
+>> +		kdev->version = QMSS_LITE;
+> 
+> 	if (match)
+> 		kdev->version = match->data;
+> 	else
+> 		error?
+> [...]
+> 
+
+
+-- 
+Murali Karicheri
+Linux Kernel, Keystone
