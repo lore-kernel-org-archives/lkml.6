@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/+LepnvpHiuITuiFsDy4tAuCqN494WGgVlFp1JjidfxdhMpI3Ar3SZsp/k2w+rZMvqGXX6
-ARC-Seal: i=1; a=rsa-sha256; t=1522346825; cv=none;
+X-Google-Smtp-Source: AIpwx48LqaS1R8IpQmIs6DRvOkbzGOTS6OT2L89+RMLWtmUgLYVRmkakJNH19OiPJpGY1d7crEVF
+ARC-Seal: i=1; a=rsa-sha256; t=1522346822; cv=none;
         d=google.com; s=arc-20160816;
-        b=I7hGTn6KYULaAGGA4yJmO1Z0af01SU0jAmmJb0wjxomujHIHdjKA514D9cNwL1seVG
-         3y+4vhdCxaSOQbvGEp7i42FwdEaiFKBzWgZF3BmgmAqsUBEfTgykMnAcea/i7grCKIDm
-         QD/ncAoTJv9pYsKI/8W7N+S7TLxZvrs99Si5wkI/XqVkupd6a7k/4IRaHGwoM45pCSTL
-         hza2QTfp9HWni/Kw5i0AWgQGuvobYSmxg63euCnaF8svvvkbl8B4WMBOaLExyKvkoWDY
-         aJyvXtio4qnfOuOJG/603MPCisTIwufWbR01JN0pVhBpTKo1OZ5sXGUBPPbfZ0wMKAhp
-         HjBQ==
+        b=Bx34x1xCIfkkpCYpGe76F5dFc1pV59Vwmi0RK4Oc8E8yfLQEsNZGRwkFHZb6PrR2mu
+         PUKeDB5sPxk66k7eBFu0TvJeyJvuNKyQzbaNyij66Pf6A1/0C8+spexC2xG7wnu/9RG4
+         nqFO46Ux3rHWWvIzxFRE1QFtYnwH5C87MKlPn3PNoGegERKwZkMRaRdxKpAMkbX8d3VU
+         tTP+1PDCDgLQf5v9+N0HfrUg3sgm9rlhkZJlxaDCr0xkNEAHA+I1AikvNCkLOoj8lHqs
+         Co9Uv1/G6Lxq7XOJv8mg5dLTJtPVbUxI9TJXEPn/N2b7OLJbdAV2x0r8ZvYl59qFaP3Q
+         enIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ifwNW5B9NEMusyW6qfM8A4FRIFzG4osrg+3wOxie0yE=;
-        b=DLQ4nLjIU6IdmXka+1TLwd9F4N5Ovl/xr+6BIucQlzYLFbeqZ7d+a7yyaEzImbX4+N
-         b3I+txLJ2kYvedQ5fZkbS+27NGXI9Yps+jmXPf90+Atc/KLckbRD2VZUkOJzPEQYfsQc
-         ktkQY633rahBDbzyiMinr6KYpGy7m+T2HTPI87jCmccsD+3iGajtSs1CQq/o3Eki+s/L
-         sxkKnzAIDiJ2SbNKKxmdH/IWUrZ0959pkpQ+0lgkEUGf5C+MpuKM4GHp6nPlTYIK3Td0
-         xdI5bDBTAwtJI/WM+uk4M+vlyFMGNFwSOtLWvgGkFRFoAkHDhZhsigGtFyk9tXDxBsDp
-         NNFQ==
+        bh=/NFH2srUFQ4Uc1y7i1PPVxZUt56L3hkDzaeyoXXaEz0=;
+        b=xF+V+rAYM6uGFl1O94+OUmjiu+hpkKhNEZvKK5w4SE7TQZPIdeSPaKTIXFVeEhWpFq
+         yEOckJxU0QDeijZGRNOMqied3zjQkZNVm2wUme0Zna8s2JYXJ64vQ+IyQ7wpHtgP1m48
+         fzVxb6kIZeLtiG8/ajMhNaJdI3yj0r0EPM+zjXhUE1Atnr9VWHwENUMTqOct8J2KUDTs
+         6wFmEPwZ34XV0LFi0rUy0qVhsnc76paicVO3n5p75oQGbZuooALMwZPd1nGtJCYZlMZG
+         TL7rSCzL6Gnpj+uAFGjCCnox4tET2q9r+91fRpLkI6b+CHHbTZ1oqmRB0tMz18WrbD+R
+         WU/A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+ea75c0ffcd353d32515f064aaebefc5279e6161e@syzkaller.appspotmail.com,
-	Tom Herbert <tom@quantonium.net>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 27/28] kcm: lock lower socket in kcm_attach
-Date: Thu, 29 Mar 2018 20:00:46 +0200
-Message-Id: <20180329175736.687245659@linuxfoundation.org>
+Subject: [PATCH 4.9 26/28] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
+Date: Thu, 29 Mar 2018 20:00:45 +0200
+Message-Id: <20180329175736.551698073@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296045408642540?=
-X-GMAIL-MSGID: =?utf-8?q?1596296344981024550?=
+X-GMAIL-THRID: =?utf-8?q?1596296154266944554?=
+X-GMAIL-MSGID: =?utf-8?q?1596296342134747564?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,103 +49,118 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Herbert <tom@quantonium.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
 
-[ Upstream commit 2cc683e88c0c993ac3721d9b702cb0630abe2879 ]
+[ Upstream commit 484d802d0f2f29c335563fcac2a8facf174a1bbc ]
 
-Need to lock lower socket in order to provide mutual exclusion
-with kcm_unattach.
+There is no need for complex checking between the last consumed index
+and current consumed index, a simple subtraction will do.
 
-v2: Add Reported-by for syzbot
+This also eliminates the possibility of a permanent transmit queue stall
+under the following conditions:
 
-Fixes: ab7ac4eb9832e32a09f4e804 ("kcm: Kernel Connection Multiplexor module")
-Reported-by: syzbot+ea75c0ffcd353d32515f064aaebefc5279e6161e@syzkaller.appspotmail.com
-Signed-off-by: Tom Herbert <tom@quantonium.net>
+- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
+  point where we run out of free descriptors, so we stop the transmit
+  queue at the end of bcm_sysport_xmit()
+
+- because of our locking, we have the transmit process disable
+  interrupts which means we can be blocking the TX reclamation process
+
+- when TX reclamation finally runs, we will be computing the difference
+  between ring->c_index (last consumed index by SW) and what the HW
+  reports through its register
+
+- this register is masked with (ring->size - 1) = 0xff, which will lead
+  to stripping the upper bits of the index (register is 16-bits wide)
+
+- we will be computing last_tx_cn as 0, which means there is no work to
+  be done, and we never wake-up the transmit queue, leaving it
+  permanently disabled
+
+A practical example is e.g: ring->c_index aka last_c_index = 12, we
+pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
+so last_tx_cn == 0, nothing happens.
+
+Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/kcm/kcmsock.c |   33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   33 +++++++++++++----------------
+ drivers/net/ethernet/broadcom/bcmsysport.h |    2 -
+ 2 files changed, 16 insertions(+), 19 deletions(-)
 
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -1375,24 +1375,32 @@ static int kcm_attach(struct socket *soc
- 	struct list_head *head;
- 	int index = 0;
- 	struct strp_callbacks cb;
--	int err;
-+	int err = 0;
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -707,37 +707,33 @@ static unsigned int __bcm_sysport_tx_rec
+ 					     struct bcm_sysport_tx_ring *ring)
+ {
+ 	struct net_device *ndev = priv->netdev;
+-	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
+ 	unsigned int pkts_compl = 0, bytes_compl = 0;
++	unsigned int txbds_processed = 0;
+ 	struct bcm_sysport_cb *cb;
++	unsigned int txbds_ready;
++	unsigned int c_index;
+ 	u32 hw_ind;
  
- 	csk = csock->sk;
- 	if (!csk)
- 		return -EINVAL;
+ 	/* Compute how many descriptors have been processed since last call */
+ 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
+ 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
+-	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
+-
+-	last_c_index = ring->c_index;
+-	num_tx_cbs = ring->size;
+-
+-	c_index &= (num_tx_cbs - 1);
+-
+-	if (c_index >= last_c_index)
+-		last_tx_cn = c_index - last_c_index;
+-	else
+-		last_tx_cn = num_tx_cbs - last_c_index + c_index;
++	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
  
-+	lock_sock(csk);
+ 	netif_dbg(priv, tx_done, ndev,
+-		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
+-		  ring->index, c_index, last_tx_cn, last_c_index);
++		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
++		  ring->index, ring->c_index, c_index, txbds_ready);
+ 
+-	while (last_tx_cn-- > 0) {
+-		cb = ring->cbs + last_c_index;
++	while (txbds_processed < txbds_ready) {
++		cb = &ring->cbs[ring->clean_index];
+ 		bcm_sysport_tx_reclaim_one(priv, cb, &bytes_compl, &pkts_compl);
+ 
+ 		ring->desc_count++;
+-		last_c_index++;
+-		last_c_index &= (num_tx_cbs - 1);
++		txbds_processed++;
 +
- 	/* Only allow TCP sockets to be attached for now */
- 	if ((csk->sk_family != AF_INET && csk->sk_family != AF_INET6) ||
--	    csk->sk_protocol != IPPROTO_TCP)
--		return -EOPNOTSUPP;
-+	    csk->sk_protocol != IPPROTO_TCP) {
-+		err = -EOPNOTSUPP;
-+		goto out;
-+	}
- 
- 	/* Don't allow listeners or closed sockets */
--	if (csk->sk_state == TCP_LISTEN || csk->sk_state == TCP_CLOSE)
--		return -EOPNOTSUPP;
-+	if (csk->sk_state == TCP_LISTEN || csk->sk_state == TCP_CLOSE) {
-+		err = -EOPNOTSUPP;
-+		goto out;
-+	}
- 
- 	psock = kmem_cache_zalloc(kcm_psockp, GFP_KERNEL);
--	if (!psock)
--		return -ENOMEM;
-+	if (!psock) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
- 
- 	psock->mux = mux;
- 	psock->sk = csk;
-@@ -1406,7 +1414,7 @@ static int kcm_attach(struct socket *soc
- 	err = strp_init(&psock->strp, csk, &cb);
- 	if (err) {
- 		kmem_cache_free(kcm_psockp, psock);
--		return err;
-+		goto out;
++		if (likely(ring->clean_index < ring->size - 1))
++			ring->clean_index++;
++		else
++			ring->clean_index = 0;
  	}
  
- 	write_lock_bh(&csk->sk_callback_lock);
-@@ -1418,7 +1426,8 @@ static int kcm_attach(struct socket *soc
- 		write_unlock_bh(&csk->sk_callback_lock);
- 		strp_done(&psock->strp);
- 		kmem_cache_free(kcm_psockp, psock);
--		return -EALREADY;
-+		err = -EALREADY;
-+		goto out;
- 	}
- 
- 	psock->save_data_ready = csk->sk_data_ready;
-@@ -1454,7 +1463,10 @@ static int kcm_attach(struct socket *soc
- 	/* Schedule RX work in case there are already bytes queued */
- 	strp_check_rcv(&psock->strp);
- 
--	return 0;
-+out:
-+	release_sock(csk);
-+
-+	return err;
- }
- 
- static int kcm_attach_ioctl(struct socket *sock, struct kcm_attach *info)
-@@ -1506,6 +1518,7 @@ static void kcm_unattach(struct kcm_psoc
- 
- 	if (WARN_ON(psock->rx_kcm)) {
- 		write_unlock_bh(&csk->sk_callback_lock);
-+		release_sock(csk);
- 		return;
- 	}
- 
+ 	ring->c_index = c_index;
+@@ -1207,6 +1203,7 @@ static int bcm_sysport_init_tx_ring(stru
+ 	netif_tx_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
+ 	ring->index = index;
+ 	ring->size = size;
++	ring->clean_index = 0;
+ 	ring->alloc_size = ring->size;
+ 	ring->desc_cpu = p;
+ 	ring->desc_count = ring->size;
+--- a/drivers/net/ethernet/broadcom/bcmsysport.h
++++ b/drivers/net/ethernet/broadcom/bcmsysport.h
+@@ -638,7 +638,7 @@ struct bcm_sysport_tx_ring {
+ 	unsigned int	desc_count;	/* Number of descriptors */
+ 	unsigned int	curr_desc;	/* Current descriptor */
+ 	unsigned int	c_index;	/* Last consumer index */
+-	unsigned int	p_index;	/* Current producer index */
++	unsigned int	clean_index;	/* Current clean index */
+ 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
+ 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
+ 	struct bcm_sysport_priv *priv;	/* private context backpointer */
