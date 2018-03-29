@@ -1,49 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751219AbeC2PSA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:18:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54208 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750708AbeC2PR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:17:59 -0400
-Subject: Re: [PATCH v4 1/2] locking/rwsem: Add DEBUG_RWSEMS to look for
- lock/unlock mismatches
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-References: <1522246852-17501-1-git-send-email-longman@redhat.com>
- <1522246852-17501-2-git-send-email-longman@redhat.com>
- <20180329013224.tfryvl6lv5i72jwm@linux-n805>
- <1b8d58b1-faf3-f210-7356-9d67930a2efb@redhat.com>
- <20180329150148.ydmsymzupgi5v7ql@linux-n805>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7a38857b-37eb-0860-75c2-c9bf00622377@redhat.com>
-Date: Thu, 29 Mar 2018 11:17:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751994AbeC2PV0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:21:26 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40724 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751124AbeC2PVY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:21:24 -0400
+X-Google-Smtp-Source: AG47ELu66oBZuWhEzkk7DEpwX1f3tVF/a6Qo+MuvtHHPWZ8REHxjnsNdHcod+LUA/FN9L6Rtyi3NMEHfUhC1TaIIfN4=
 MIME-Version: 1.0
-In-Reply-To: <20180329150148.ydmsymzupgi5v7ql@linux-n805>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180329141420.13042-1-bp@alien8.de>
+References: <20180329141420.13042-1-bp@alien8.de>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 29 Mar 2018 17:21:22 +0200
+Message-ID: <CAKv+Gu8ZqpmM9XFjU4LBrm3sdP5rH8TBxvtU4_a0VbT+qo856w@mail.gmail.com>
+Subject: Re: [PATCH] efi/cper: Remove the INDENT_SP silliness
+To: Borislav Petkov <bp@alien8.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/29/2018 11:01 AM, Davidlohr Bueso wrote:
-> On Thu, 29 Mar 2018, Waiman Long wrote:
+On 29 March 2018 at 16:14, Borislav Petkov <bp@alien8.de> wrote:
+> From: Borislav Petkov <bp@suse.de>
 >
->> Because it checks the owner field which is present only if
->> RWSEM_SPIN_ON_OWNER is defined. Mutex is different in the sense that the
->> owner field is always there no matter if MUTEX_SPIN_ON_OWNER is set
->> or not.
+> A separate define just to print a space character is silly and
+> completely unneeded. Remove it.
 >
-> Ah right; that's after Peter's mutex rewrite iirc. No objections from me.
->
-> Acked-by: Davidlohr Bueso <dave@stgolabs.net>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: linux-efi@vger.kernel.org
 
-In reality, I think RWSEM_SPIN_ON_OWNER is almost always set if the xadd
-version of rwsem is used. So we may do some cleanup here if necessary.
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
--Longman
+I'll pick this up after the merge window
+
+> ---
+>  drivers/firmware/efi/cper-arm.c | 6 ++----
+>  drivers/firmware/efi/cper.c     | 6 ++----
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
+> index 698e5c8e0c8d..502811344e81 100644
+> --- a/drivers/firmware/efi/cper-arm.c
+> +++ b/drivers/firmware/efi/cper-arm.c
+> @@ -30,8 +30,6 @@
+>  #include <acpi/ghes.h>
+>  #include <ras/ras_event.h>
+>
+> -#define INDENT_SP      " "
+> -
+>  static const char * const arm_reg_ctx_strs[] = {
+>         "AArch32 general purpose registers",
+>         "AArch32 EL1 context registers",
+> @@ -283,7 +281,7 @@ void cper_print_proc_arm(const char *pfx,
+>                         pfx, proc->psci_state);
+>         }
+>
+> -       snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
+> +       snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
+>
+>         err_info = (struct cper_arm_err_info *)(proc + 1);
+>         for (i = 0; i < proc->err_info_num; i++) {
+> @@ -310,7 +308,7 @@ void cper_print_proc_arm(const char *pfx,
+>                 if (err_info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO) {
+>                         printk("%serror_info: 0x%016llx\n", newpfx,
+>                                err_info->error_info);
+> -                       snprintf(infopfx, sizeof(infopfx), "%s%s", newpfx, INDENT_SP);
+> +                       snprintf(infopfx, sizeof(infopfx), "%s ", newpfx);
+>                         cper_print_arm_err_info(infopfx, err_info->type,
+>                                                 err_info->error_info);
+>                 }
+> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+> index 5a59b582c9aa..3bf0dca378a6 100644
+> --- a/drivers/firmware/efi/cper.c
+> +++ b/drivers/firmware/efi/cper.c
+> @@ -37,8 +37,6 @@
+>  #include <acpi/ghes.h>
+>  #include <ras/ras_event.h>
+>
+> -#define INDENT_SP      " "
+> -
+>  static char rcd_decode_str[CPER_REC_LEN];
+>
+>  /*
+> @@ -433,7 +431,7 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
+>         if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
+>                 printk("%s""fru_text: %.20s\n", pfx, gdata->fru_text);
+>
+> -       snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
+> +       snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
+>         if (guid_equal(sec_type, &CPER_SEC_PROC_GENERIC)) {
+>                 struct cper_sec_proc_generic *proc_err = acpi_hest_get_payload(gdata);
+>
+> @@ -510,7 +508,7 @@ void cper_estatus_print(const char *pfx,
+>                        "It has been corrected by h/w "
+>                        "and requires no further action");
+>         printk("%s""event severity: %s\n", pfx, cper_severity_str(severity));
+> -       snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
+> +       snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
+>
+>         apei_estatus_for_each_section(estatus, gdata) {
+>                 cper_estatus_print_section(newpfx, gdata, sec_no);
+> --
+> 2.13.0
+>
