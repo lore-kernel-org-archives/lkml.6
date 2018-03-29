@@ -1,82 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752173AbeC2OfE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:35:04 -0400
-Received: from mga12.intel.com ([192.55.52.136]:15219 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750946AbeC2OfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:35:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
-   d="scan'208";a="37895689"
-Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
- LLC
-To: Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180329000024.GA16648@alison-desk.jf.intel.com>
- <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
- <20180329134723.GA4043@hirez.programming.kicks-ass.net>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
-        David Rientjes <rientjes@google.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <8a24d82e-a8dd-2f35-4764-a58fd6c64ae8@linux.intel.com>
-Date: Thu, 29 Mar 2018 07:34:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751199AbeC2OhX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:37:23 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:41083 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeC2OhU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:37:20 -0400
+X-Google-Smtp-Source: AIpwx49DRVY3twXC1C+vBVCXuqc5TLJ3kC1bcB5WIXKCjx3EbnQzt422XjZbeH6pEZG2CBrdTnAxHw==
+Date: Thu, 29 Mar 2018 09:37:15 -0500
+From: Andy Gross <andy.gross@linaro.org>
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: Sricharan R <sricharan@codeaurora.org>, robh+dt@kernel.org,
+        robh@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        sboyd@codeaurora.org, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com
+Subject: Re: [PATCH v3 04/13] ARM: dts: ipq4019: Update ipq4019-dk01.1 board
+ data
+Message-ID: <20180329143715.GA31757@hector.attlocal.net>
+References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
+ <1521518336-5467-5-git-send-email-sricharan@codeaurora.org>
+ <20180320143131.4eenixtbhciq5fwc@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20180329134723.GA4043@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320143131.4eenixtbhciq5fwc@localhost>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/29/2018 06:47 AM, Peter Zijlstra wrote:
-> The issue is that HPC workloads care about cache-size-per-cpu measure,
-> and the way they go about obtaining that is reading the cache-size and
-> dividing it by the h-weight of the cache-mask.
-
-That works, but only if the memory being accessed is slice/node-local.
-If it's spread across the package, it'll be wrong.
-
-But, the HPC folks are the ones that are the most likely to have good
-NUMA affinity, so that would seem to point us in the direction of both
-halving the size and the mask so that the LLC _looks_ split to userspace.
-
-> Now the patch does in fact change the cache-mask as exposed to
-> userspace, it however does _NOT_ change the cache-size. This means that
-> anybody using the values from sysfs to compute size/weight, now gets
-> double the value they ought to get.
+On Tue, Mar 20, 2018 at 07:31:31AM -0700, Richard Cochran wrote:
+> On Tue, Mar 20, 2018 at 09:28:47AM +0530, Sricharan R wrote:
+> > Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+> > Adds missing memory, reserved-memory nodes.
+> > 
+> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> > ---
+> >  arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 28 +++++++++++++++++++++++++++
 > 
-> So either is must not change the llc-mask, or also change the llc-size.
-
-IOW, don't make it look like we've either doubled or halved the exposed
-size of the llc.
-
-> Which then leads to the conclusion that the current:
+> Q: Does mainline Linux even boot on the DK?
 > 
->> +             /* Do not use LLC for scheduler decisions: */
->> +             return false;
+> A: No, it doesn't.
+
+If you aren't actually testing/validating this specific board, how can you make
+a statement like this?  Unless you have tested these specifically on this board,
+I'd appreciate not getting false information about what is or is not working.
+
 > 
-> is wrong. Also, that comment is *completely* wrong, since the return
-> value has *nothing* to do with scheduler decisions
+> Please add the missing basic board support before hacking random stuff
+> into the DTS.
 
-OK, got it.  That comment betrayed my ignorance.  I'm glad we put it there.
+Feel free to send your own contributions where you are adding the things that
+are important to you.
 
-What should we say, though?
+Regards,
 
-             /*
-	      * false means 'c' does not share the LLC of 'o'.
-	      * Note: this decision gets reflected all the way
-	      * out to userspace
-	      */
-             return false;
+Andy Gross
