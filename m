@@ -1,112 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752492AbeC2PqJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:46:09 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53678 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752290AbeC2PqF (ORCPT
+        id S1751862AbeC2Pvd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:51:33 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:44926 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbeC2Pvc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:46:05 -0400
-Date: Thu, 29 Mar 2018 17:46:00 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Dan Williams <dcbw@redhat.com>
-Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
- omap4-droid4: add soundcard
-Message-ID: <20180329154600.qhels5fqzzg364gj@earth.universe>
-References: <20180323103006.alymgb3ywftb4gek@earth.universe>
- <20180326141638.GB1450@amd>
- <20180326155828.ttnduivadob4iqmd@earth.universe>
- <20180327121441.GH29239@sirena.org.uk>
- <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
- <20180328022910.GM29239@sirena.org.uk>
- <20180328140219.f6667up5evrrafkv@earth.universe>
- <20180329014507.GM5700@atomide.com>
- <20180329133613.khldv72w3zj63vsk@earth.universe>
- <20180329135904.GN5700@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hmjo6ahyvmg6zlgq"
-Content-Disposition: inline
-In-Reply-To: <20180329135904.GN5700@atomide.com>
-User-Agent: NeoMutt/20180223
+        Thu, 29 Mar 2018 11:51:32 -0400
+Date: Thu, 29 Mar 2018 11:51:29 -0400 (EDT)
+Message-Id: <20180329.115129.836008300996726229.davem@davemloft.net>
+To: mdf@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, robh+dt@kernel.org, andrew@lunn.ch,
+        f.fainelli@gmail.com
+Subject: Re: [PATCH v6 1/2] dt-bindings: net: Add bindings for National
+ Instruments XGE netdev
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180327214315.3224-1-mdf@kernel.org>
+References: <20180327214315.3224-1-mdf@kernel.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Moritz Fischer <mdf@kernel.org>
+Date: Tue, 27 Mar 2018 14:43:14 -0700
 
---hmjo6ahyvmg6zlgq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This adds bindings for the NI XGE 1G/10G network device.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
 
-Hi,
-
-On Thu, Mar 29, 2018 at 06:59:04AM -0700, Tony Lindgren wrote:
-> > I think cpcap is always the clock and frame master, but I think
-> > mdm6600 is the remote side and OMAP is not involved at all.
->=20
-> OK. So could it be just an alsamixer on/off toggle then for
-> "Modem" or something similar?
-
-I think so. We might want to have an "Mode" enum instead, though.
-That can be extended, once we unlock the other modes (bluetooth,
-bluetooth call).
-
-> > > Then using the n_gsm ts 27.010 uart mux, I dial:
-> > >=20
-> > > ./ngsm-rw 1 "AT+CFUN=3D1"		# connect to network
-> > > U0001+CFUN:OK
-> > > ./ngsm-rw 2 "AT+CMUT=3D0"		# unmute speaker over ch2, do this over qm=
-i?
-> > > U0001+CMUT:OK
-> > > ./ngsm-rw 1 "ATD#123"		# dial number
-> > > U0001D:OK
->=20
-> There's a typo above, it should be just ATD123 where 123 is the
-> number.
->=20
-> I was just doing few test calls to robots. Payback time for all
-> the robocalls, you know! :)
->
-> > > And I do hear a voice talking over the speakerphone :) Sorry have not=
- tested the
-> > > mic yet..
->=20
-> And calling a person I can hear the other end but the mic is
-> not working. So maybe I need to tweak the alsamixer settings
-> too for mic?
-
-Your override kills most settings from alsamixer. You can try to
-just override CPCAP_REG_VAUDIOC, CPCAP_REG_CC and CPCAP_REG_CDI
-and setup everything else with alsamixer.
-
--- Sebastian
-
---hmjo6ahyvmg6zlgq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlq9CjUACgkQ2O7X88g7
-+przkQ//X/5hsQChHBeVIjqlDhdUuMlOScdWIVtCkqvjvmIJ6BOuOwH1/eTaZo3S
-vPetWimm69AYWiGZVe2RH6eIQol1SaGGTT0kUrOa3drtybAyp2Ck2YCukumgk8NX
-ZNaPcg8X7eCTpHwd92bTocoThtnS7hBbLCQkpZWMYtmVRn8OibVaB7C+6wSr+tlu
-bkrtLNDa5Zy7y8lKv98Kb9+7UrDPzRXN2q8JGb3NiH2S0by6+nB6uAQvApO7XuD+
-VnhlsvnVR6BFakVdqiaM1En9omPSGdpxGhluqoroWaftgHMc2jjopahk6Yjj6UtQ
-iLkkZ5yWRVcogTNYTFKCYhfOyQiJVycYL7yf7TIiLwxBgJJi/2nuGtUWcsMQ/GAW
-lhGKcqTuoK7SBW+mM0ghzpa8QzP50KVBlwQBAkKkVzEXmL/6MP3ipUCXHnssPlt/
-57n7vgcJTG+cxM03rQsIO1ut6+Jo3ytTFuRkhBLnEOXSSwPwalxLQYDudSqaty6h
-S5XnJUfbLt4DC9e9n38lOpuLFmI5U7XtXn8nghteUxJNytKDfyavJeA0qUb0UqNN
-R3Hdy71YL2NYUWh5KfjIRosTCn66KuOnhMFbyRdTL7tMlRiix0GreDDkJQ4CIr1l
-J0XAghjRrSqzcHccvOGeQiKlBtpw6XONEX/Ka0CWrB6RqeHQ37g=
-=2Fvm
------END PGP SIGNATURE-----
-
---hmjo6ahyvmg6zlgq--
+Applied.
