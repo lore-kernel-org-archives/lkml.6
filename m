@@ -1,53 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751189AbeC2IeC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 04:34:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750707AbeC2IeB (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 04:34:01 -0400
-Date: Thu, 29 Mar 2018 10:33:58 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: "Jin, Yao" <yao.jin@linux.intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, acme@kernel.org, jolsa@kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v3 0/5] Support perf -vv
-Message-ID: <20180329083358.GA28857@krava>
-References: <1522335382-11983-1-git-send-email-yao.jin@linux.intel.com>
- <20180329072006.yrsujdaayek2wpfo@gmail.com>
- <ef9f7e74-d94a-895d-fb26-35f2820fd95f@linux.intel.com>
+        id S1751085AbeC2Iiq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 04:38:46 -0400
+Received: from 8bytes.org ([81.169.241.247]:44720 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750707AbeC2Iip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 04:38:45 -0400
+Date: Thu, 29 Mar 2018 10:38:42 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, Scott Wood <swood@redhat.com>
+Subject: Re: [PATCH 00/10 v3] iommu/amd: lock splitting & GFP_KERNEL
+ allocation
+Message-ID: <20180329083842.ik7rxmfajhj5x3sq@8bytes.org>
+References: <20180322152242.12705-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ef9f7e74-d94a-895d-fb26-35f2820fd95f@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180322152242.12705-1-bigeasy@linutronix.de>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 03:49:18PM +0800, Jin, Yao wrote:
-
-SNIP
-
-> > That would make it easier to grep around in the source looking for where code
-> > related a particular features is located.
-> > 
+On Thu, Mar 22, 2018 at 04:22:32PM +0100, Sebastian Andrzej Siewior wrote:
+> Hi,
 > 
-> Good idea, thanks! I will support it in v4.
+> this is the rebase on top of iommu/x86/amd of my last series. It takes
+> Scotts comments into consideration from my v2.
 > 
-> > BTW. #2: to the compulsive perfectionist in me "HAVE_DWARF_GETLOCATIONS" is now
-> > sticking out like a sore thumb: it's the only library flag left that doesn't have
-> > the _SUPPORT suffix. Rename it to HAVE_DWARF_GETLOCATIONS_SUPPORT perhaps?
-> > 
-> > Thanks,
-> >
-> > 	Ingo
-> >
+> It contains lock splitting and GFP_KERNEL allocation of remap-table.
+> Mostly cleanup.
 > 
-> OK, I will rename it to HAVE_DWARF_GETLOCATIONS_SUPPORT in v4.
+> The patches were boot tested on an AMD EPYC 7601.
 
-thanks for doing this, I'll ack the new version then
-
-jirka
+Applied, thanks.
