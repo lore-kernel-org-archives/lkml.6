@@ -1,76 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751043AbeC2ASA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 20:18:00 -0400
-Received: from mga03.intel.com ([134.134.136.65]:13538 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750733AbeC2AR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 20:17:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,374,1517904000";
-   d="scan'208";a="212171952"
-Subject: Re: [PATCH 00/11] Use global pages with PTI
-To: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-References: <20180323174447.55F35636@viggo.jf.intel.com>
- <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com>
- <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com>
- <alpine.DEB.2.21.1803271526260.1964@nanos.tec.linutronix.de>
- <c0e7ca0b-dcb5-66e2-9df6-f53e4eb22781@linux.intel.com>
- <alpine.DEB.2.21.1803271949250.1618@nanos.tec.linutronix.de>
- <20180327200719.lvdomez6hszpmo4s@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        the arch/x86 maintainers <x86@kernel.org>, namit@vmware.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <0d6ea030-ec3b-d649-bad7-89ff54094e25@linux.intel.com>
-Date: Wed, 28 Mar 2018 17:17:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180327200719.lvdomez6hszpmo4s@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751113AbeC2Adq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 20:33:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56148 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeC2Adp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 20:33:45 -0400
+From: Tyler Hicks <tyhicks@canonical.com>
+To: ecryptfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH] eCryptfs: don't pass up plaintext names when using filename encryption
+Date: Thu, 29 Mar 2018 00:32:47 +0000
+Message-Id: <1522283567-4889-1-git-send-email-tyhicks@canonical.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <891ab33d-a140-0a6d-6907-ba226590eb3f@canonical.com>
+References: <891ab33d-a140-0a6d-6907-ba226590eb3f@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 01:07 PM, Ingo Molnar wrote:
-> * Thomas Gleixner <tglx@linutronix.de> wrote:
->>> systems.  Atoms are going to be the easiest thing to get my hands on,
->>> but I tend to shy away from them for performance work.
->> What I have in mind is that I wonder whether the whole circus is worth it
->> when there is no performance advantage on PCID systems.
+Both ecryptfs_filldir() and ecryptfs_readlink_lower() use
+ecryptfs_decode_and_decrypt_filename() to translate lower filenames to
+upper filenames. The function correctly passes up lower filenames,
+unchanged, when filename encryption isn't in use. However, it was also
+passing up lower filenames when the filename wasn't encrypted or
+when decryption failed. Since 88ae4ab9802e, eCryptfs refuses to lookup
+lower plaintext names when filename encryption is enabled so this
+resulted in a situation where userspace would see lower plaintext
+filenames in calls to getdents(2) but then not be able to lookup those
+filenames.
 
-I was waiting on trying to find a relatively recent Atom system (they
-actually come in reasonably sized servers [1]), but I'm hitting a snag
-there, so I figured I'd just share a kernel compile using Ingo's
-perf-based methodology on a Skylake desktop system with PCIDs.  Here's
-the kernel compile:
+An example of this can be seen when enabling filename encryption on an
+eCryptfs mount at the root directory of an Ext4 filesystem:
 
-No Global pages (baseline): 186.951 seconds time elapsed  ( +-  0.35% )
-28 Global pages (this set): 185.756 seconds time elapsed  ( +-  0.09% )
-                             -1.195 seconds (-0.64%)
+$ ls -1i /lower
+12 ECRYPTFS_FNEK_ENCRYPTED.FWYZD8TcW.5FV-TKTEYOHsheiHX9a-w.NURCCYIMjI8pn5BDB9-h3fXwrE--
+11 lost+found
+$ ls -1i /upper
+ls: cannot access '/upper/lost+found': No such file or directory
+ ? lost+found
+12 test
 
-Lower is better here, obviously.
+With this change, the lower lost+found dentry is ignored:
 
-I also re-checked everything using will-it-scale's llseek1 test[2] which
-is basically a microbenchmark of a halfway reasonable syscall.  Higher
-here is better.
+$ ls -1i /lower
+12 ECRYPTFS_FNEK_ENCRYPTED.FWYZD8TcW.5FV-TKTEYOHsheiHX9a-w.NURCCYIMjI8pn5BDB9-h3fXwrE--
+11 lost+found
+$ ls -1i /upper
+12 test
 
-No Global pages (baseline): 15783951 lseeks/sec
-28 Global pages (this set): 16054688 lseeks/sec
-			     +270737 lseeks/sec (+1.71%)
+Additionally, some potentially noisy error/info messages in the related
+code paths are turned into debug messages so that the logs can't be
+easily filled.
 
-So, both the kernel compile and the microbenchmark got measurably faster.
+Fixes: 88ae4ab9802e ("ecryptfs_lookup(): try either only encrypted or plaintext name")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+---
+ fs/ecryptfs/crypto.c | 41 ++++++++++++++++++++++++++++-------------
+ fs/ecryptfs/file.c   | 21 ++++++++++++++++-----
+ 2 files changed, 44 insertions(+), 18 deletions(-)
 
-1.
-https://ark.intel.com/products/97933/Intel-Atom-Processor-C3955-16M-Cache-up-to-2_40-GHz
-2.
-https://github.com/antonblanchard/will-it-scale/blob/master/tests/lseek1.c
+diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+index 846ca15..4dd842f 100644
+--- a/fs/ecryptfs/crypto.c
++++ b/fs/ecryptfs/crypto.c
+@@ -1997,6 +1997,16 @@ int ecryptfs_encrypt_and_encode_filename(
+ 	return rc;
+ }
+ 
++static bool is_dot_dotdot(const char *name, size_t name_size)
++{
++	if (name_size == 1 && name[0] == '.')
++		return true;
++	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
++		return true;
++
++	return false;
++}
++
+ /**
+  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
+  * @plaintext_name: The plaintext name
+@@ -2021,13 +2031,21 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
+ 	size_t packet_size;
+ 	int rc = 0;
+ 
+-	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)
+-	    && !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)
+-	    && (name_size > ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE)
+-	    && (strncmp(name, ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX,
+-			ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE) == 0)) {
+-		const char *orig_name = name;
+-		size_t orig_name_size = name_size;
++	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) &&
++	    !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)) {
++		if (is_dot_dotdot(name, name_size)) {
++			rc = ecryptfs_copy_filename(plaintext_name,
++						    plaintext_name_size,
++						    name, name_size);
++			goto out;
++		}
++
++		if (name_size <= ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE ||
++		    strncmp(name, ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX,
++			    ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE)) {
++			rc = -EINVAL;
++			goto out;
++		}
+ 
+ 		name += ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE;
+ 		name_size -= ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE;
+@@ -2047,12 +2065,9 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
+ 						  decoded_name,
+ 						  decoded_name_size);
+ 		if (rc) {
+-			printk(KERN_INFO "%s: Could not parse tag 70 packet "
+-			       "from filename; copying through filename "
+-			       "as-is\n", __func__);
+-			rc = ecryptfs_copy_filename(plaintext_name,
+-						    plaintext_name_size,
+-						    orig_name, orig_name_size);
++			ecryptfs_printk(KERN_DEBUG,
++					"%s: Could not parse tag 70 packet from filename\n",
++					__func__);
+ 			goto out_free;
+ 		}
+ 	} else {
+diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
+index c74ed3c..b76a985 100644
+--- a/fs/ecryptfs/file.c
++++ b/fs/ecryptfs/file.c
+@@ -82,17 +82,28 @@ ecryptfs_filldir(struct dir_context *ctx, const char *lower_name,
+ 						  buf->sb, lower_name,
+ 						  lower_namelen);
+ 	if (rc) {
+-		printk(KERN_ERR "%s: Error attempting to decode and decrypt "
+-		       "filename [%s]; rc = [%d]\n", __func__, lower_name,
+-		       rc);
+-		goto out;
++		if (rc != -EINVAL) {
++			ecryptfs_printk(KERN_DEBUG,
++					"%s: Error attempting to decode and decrypt filename [%s]; rc = [%d]\n",
++					__func__, lower_name, rc);
++			return rc;
++		}
++
++		/* Mask -EINVAL errors as these are most likely due a plaintext
++		 * filename present in the lower filesystem despite filename
++		 * encryption being enabled. One unavoidable example would be
++		 * the "lost+found" dentry in the root directory of an Ext4
++		 * filesystem.
++		 */
++		return 0;
+ 	}
++
+ 	buf->caller->pos = buf->ctx.pos;
+ 	rc = !dir_emit(buf->caller, name, name_size, ino, d_type);
+ 	kfree(name);
+ 	if (!rc)
+ 		buf->entries_written++;
+-out:
++
+ 	return rc;
+ }
+ 
+-- 
+2.7.4
