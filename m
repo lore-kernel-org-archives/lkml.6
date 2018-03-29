@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/9zjJ/FhcNjkadS36HqKUyAcDTu21W+DTwspt3ZF3bNjePRmUQRdStd1Q497E/SMWBYDHy
-ARC-Seal: i=1; a=rsa-sha256; t=1522346789; cv=none;
+X-Google-Smtp-Source: AIpwx48LEcxsfgcj4gAO9SZTLoOpW2wV1CFC8kZdudsb0pa52GrRDzdvi+BjHq2IblQwcgk2CgET
+ARC-Seal: i=1; a=rsa-sha256; t=1522346786; cv=none;
         d=google.com; s=arc-20160816;
-        b=zhF6aJBM5pFRSyc5VxTeWjJEwceI4GAwx/iKOOzxc/pnHT6WTLX9Ki6968AZhymjd8
-         sz0eEB/jBLrA/nwKPn9Navd4/Ld7Hf6uvQQcH/mVC0lbTO4wlTuascd8WTuXh4VmZL1b
-         TOkP7wKXaWS3fumC7eJuqFndejibvOvjXCc/EUBbymTIpeqKF2LArnpdx2oZ+oNng47q
-         M/EBYlCMqBD/dQOFr+1g8PXqNWt0ajKDOe7ww2ERvzU0iFVRhWL0PQzlwOKkEVIJx/nP
-         5l5LWQeR1NaZvBQkGj5CZUQdPm8I/01QQAGDgvPc+L5s9HxQvzRMUWplSBUCYkgFfOsd
-         7RaQ==
+        b=ZfUTB8fh0gBq9dPyO7eyf8us/umTT++F21hWGzmC7fEiOUYfmfUzIYkqVpE5y3wl0N
+         QWYWuFvZO8WJ5mwgMJMB9ddwI5IXOOKrISpfKWTB3g8X7WQAnUPnJeX0KV5PrfGedQcW
+         lW5+UPVZdrD6kLfQJ2SzwTURczgf0r0uL8Ck6Irj7Aw2mIod+ox7DWoTWOb//hGq8kNT
+         8UAqX0DDsiaRn1fLCX1vllrSFPpWJB441rM0udMaZy/EH2CTUjR/78O6OvaBOgFmEqNt
+         5kv3QdCwk/UOd1N7QtRwKOv009OZhpq7ccFhqM8l5PBAnvnz/HdW42+ROt88W3hBpq+o
+         74wg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=u2uG8zsvHkQyA1uyXSohsufvHlwku8+jl215itgLLTw=;
-        b=MaRVxgZb7x/FJ5tOvraAbwM45oqnRomPCAaggTLLhGShPet52WH5wBA8xgBvdU0txL
-         xUGHvewMopCaGEEwfn6En0gq5pPWss8hoNxmmdgB4JTo0BCSCExWy7cFUC5xSBOTyj9l
-         zzgzKuVmufo8SjLG2MvOv/E0Z57e83uIUMeTdYK9zvyuLkfjW4bmtFppdLyk6M39enQt
-         ZXpR235PAZAn79oOBUmHx4eIr2so9/W3FLKs/z4r9FB7nyevE+9u5YR81aCbyvfn416c
-         kbp54idYQXAdOFxIQMQa/YWTHlWURXcoVZLNIhYTVtTOMzQoRdJhbU+uLpDFcNYD1Tyr
-         Qkgw==
+        bh=458jVModZx/iFI7+puEymbXvTofl6ACNWCiyLRgEsbQ=;
+        b=U3IKb7INAk68IdrtkhsIHvzyMlWN09Pz4mT9ngJfA7hBRQrsSfCk74IesBsdSx9qoE
+         6xk5+s6s5Krv6CPcPdnnWkQuu4tJVKBd8zoFPNS2XO1eBw+7Q+hPe/iuk0Yte9ADn7K7
+         JE8ArRVI/ZJTOmSgHuLbtopXPURaRpvJUq/LmQnw88RAAsqPJaSnmXeT6jVhaTgLdBaI
+         w254o+3dmM2xv8g7wj24b39oKNFol2RAr4CVM3Us4HA3ZJvth4O+yyE8ZeeogCekrAPj
+         szQteS7JcI2PRUSjbVvTs3GTB5RUH/0fQx+JL7ujEce9K1eKzoz0vfVVxsjngsPgpG5M
+         IaHw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
+	=?UTF-8?q?Holsety=20Chen=20 ?= <Holsety.Chen@moxa.com>,
+	=?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>,
+	Schuyler Patton <spatton@ti.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 15/28] net: fec: Fix unbalanced PM runtime calls
-Date: Thu, 29 Mar 2018 20:00:34 +0200
-Message-Id: <20180329175735.225362309@linuxfoundation.org>
+Subject: [PATCH 4.9 14/28] net: ethernet: ti: cpsw: add check for in-band mode setting with RGMII PHY interface
+Date: Thu, 29 Mar 2018 20:00:33 +0200
+Message-Id: <20180329175735.118000328@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296106771354924?=
-X-GMAIL-MSGID: =?utf-8?q?1596296307518219377?=
+X-GMAIL-THRID: =?utf-8?q?1596296104396396575?=
+X-GMAIL-MSGID: =?utf-8?q?1596296304228408067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,36 +52,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: "SZ Lin (林上智)" <sz.lin@moxa.com>
 
 
-[ Upstream commit a069215cf5985f3aa1bba550264907d6bd05c5f7 ]
+[ Upstream commit f9db50691db4a7d860fce985f080bb3fc23a7ede ]
 
-When unbinding/removing the driver, we will run into the following warnings:
+According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
+DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register is only
+available when PHY is configured in RGMII mode with 10Mbps speed. It will
+cause some networking issues without RGMII mode, such as carrier sense
+errors and low throughput. TI also mentioned this issue in their forum[4].
 
-[  259.655198] fec 400d1000.ethernet: 400d1000.ethernet supply phy not found, using dummy regulator
-[  259.665065] fec 400d1000.ethernet: Unbalanced pm_runtime_enable!
-[  259.672770] fec 400d1000.ethernet (unnamed net_device) (uninitialized): Invalid MAC address: 00:00:00:00:00:00
-[  259.683062] fec 400d1000.ethernet (unnamed net_device) (uninitialized): Using random MAC address: f2:3e:93:b7:29:c1
-[  259.696239] libphy: fec_enet_mii_bus: probed
+This patch adds the check mechanism for PHY interface with RGMII interface
+type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
 
-Avoid these warnings by balancing the runtime PM calls during fec_drv_remove().
+References:
+[1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
+[2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
+[3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
+[4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
+Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
+Signed-off-by: Schuyler Patton <spatton@ti.com>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/fec_main.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/ti/cpsw.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3533,6 +3533,8 @@ fec_drv_remove(struct platform_device *p
- 	fec_enet_mii_remove(fep);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
-+	pm_runtime_put(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
- 	if (of_phy_is_fixed_link(np))
- 		of_phy_deregister_fixed_link(np);
- 	of_node_put(fep->phy_node);
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -901,7 +901,8 @@ static void _cpsw_adjust_link(struct cps
+ 		/* set speed_in input in case RMII mode is used in 100Mbps */
+ 		if (phy->speed == 100)
+ 			mac_control |= BIT(15);
+-		else if (phy->speed == 10)
++		/* in band mode only works in 10Mbps RGMII mode */
++		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
+ 			mac_control |= BIT(18); /* In Band mode */
+ 
+ 		if (priv->rx_pause)
