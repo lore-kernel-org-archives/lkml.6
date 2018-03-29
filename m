@@ -1,200 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752082AbeC2HZF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:25:05 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:42057 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeC2HZB (ORCPT
+        id S1752543AbeC2H1N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:27:13 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:39921 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeC2H1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:25:01 -0400
-X-Google-Smtp-Source: AG47ELtIOY296AWzUL1CbR6uuwRf/viGUB1cnhONhUNJ0aj0niB8ssq0raSBnTbpPNfWRQqH66cRLZntqoR/NwOBpgxmsdimIyqj
+        Thu, 29 Mar 2018 03:27:05 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: mnarani@xilinx.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <73c4907bf2b8671333f5f9f6b18d0fc7>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: adrian.hunter@intel.com, michal.simek@xilinx.com,
+        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, Manish Narani <mnarani@xilinx.com>
+Subject: Re: [RFC PATCH] sdhci: arasan: Add runtime PM support
+To: naranimanish@gmail.com
+References: <1522302530-27550-1-git-send-email-naranimanish@gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <83c564e8-6ebf-f21c-676f-05ab75016777@rock-chips.com>
+Date: Thu, 29 Mar 2018 15:27:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Date: Thu, 29 Mar 2018 00:25:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000878b6a05688805c5@google.com>
-Subject: INFO: task hung in stop_sync_thread (2)
-From: syzbot <syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        wensong@linux-vs.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1522302530-27550-1-git-send-email-naranimanish@gmail.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2018/3/29 13:48, naranimanish@gmail.com wrote:
+> From: Manish Narani <mnarani@xilinx.com>
+> 
+> This patch adds runtime PM support in Arasan SD driver.
+> 
+> Signed-off-by: Manish Narani <mnarani@xilinx.com>
+> ---
+>   drivers/mmc/host/sdhci-of-arasan.c | 83 +++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 81 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index c33a5f7..47196b5 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -23,6 +23,7 @@
+>   #include <linux/mfd/syscon.h>
+>   #include <linux/module.h>
+>   #include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+>   #include <linux/phy/phy.h>
+>   #include <linux/regmap.h>
+>   #include <linux/of.h>
+> @@ -349,6 +350,75 @@ static const struct sdhci_pltfm_data sdhci_arasan_cqe_pdata = {
+>   			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
+>   };
+>   
+> +#ifdef CONFIG_PM
+> +/**
+> + * sdhci_arasan_runtime_suspend - Suspend method for the driver
+> + * @dev:	Address of the device structure
+> + * Returns 0 on success and error value on error
+> + *
+> + * Put the device in a low power state.
+> + */
+> +static int sdhci_arasan_runtime_suspend(struct device *dev)
+> +{
 
-syzbot hit the following crash on net-next commit
-5d22d47b9ed96eddb35821dc2cc4f629f45827f7 (Tue Mar 27 17:33:21 2018 +0000)
-Merge branch 'sfc-filter-locking'
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=5fe074c01b2032ce9618
+Would you help take care of cqhci_suspend?
 
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6119456711376896
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=4372867303600475372
-compiler: gcc (GCC) 7.1.1 20170620
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct sdhci_host *host = platform_get_drvdata(pdev);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
+> +	int ret;
+> +
+> +	ret = sdhci_runtime_suspend_host(host);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (host->tuning_mode != SDHCI_TUNING_MODE_3)
+> +		mmc_retune_needed(host->mmc);
+> +
+> +	clk_disable(pltfm_host->clk);
+> +	clk_disable(sdhci_arasan->clk_ahb);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * sdhci_arasan_runtime_resume - Resume method for the driver
+> + * @dev:	Address of the device structure
+> + * Returns 0 on success and error value on error
+> + *
+> + * Resume operation after suspend
+> + */
+> +static int sdhci_arasan_runtime_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct sdhci_host *host = platform_get_drvdata(pdev);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
+> +	int ret;
+> +
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+Ditto, for cqhci_resume.
 
-IPVS: sync thread started: state = BACKUP, mcast_ifn = syz_tun, syncid = 4,  
-id = 0
-IPVS: stopping backup sync thread 25415 ...
-INFO: task syz-executor7:25421 blocked for more than 120 seconds.
-       Not tainted 4.16.0-rc6+ #284
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor7   D23688 25421   4408 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2862 [inline]
-  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
-  schedule+0xf5/0x430 kernel/sched/core.c:3499
-  schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
-  do_wait_for_common kernel/sched/completion.c:86 [inline]
-  __wait_for_common kernel/sched/completion.c:107 [inline]
-  wait_for_common kernel/sched/completion.c:118 [inline]
-  wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
-  kthread_stop+0x14a/0x7a0 kernel/kthread.c:530
-  stop_sync_thread+0x3d9/0x740 net/netfilter/ipvs/ip_vs_sync.c:1996
-  do_ip_vs_set_ctl+0x2b1/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2394
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0x97/0xa0 net/ipv4/ip_sockglue.c:1253
-  sctp_setsockopt+0x2ca/0x63e0 net/sctp/socket.c:4154
-  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:3039
-  SYSC_setsockopt net/socket.c:1850 [inline]
-  SyS_setsockopt+0x189/0x360 net/socket.c:1829
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454889
-RSP: 002b:00007fc927626c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007fc9276276d4 RCX: 0000000000454889
-RDX: 000000000000048c RSI: 0000000000000000 RDI: 0000000000000017
-RBP: 000000000072bf58 R08: 0000000000000018 R09: 0000000000000000
-R10: 0000000020000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 000000000000051c R14: 00000000006f9b40 R15: 0000000000000001
-
-Showing all locks held in the system:
-2 locks held by khungtaskd/868:
-  #0:  (rcu_read_lock){....}, at: [<00000000a1a8f002>]  
-check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
-  #0:  (rcu_read_lock){....}, at: [<00000000a1a8f002>] watchdog+0x1c5/0xd60  
-kernel/hung_task.c:249
-  #1:  (tasklist_lock){.+.+}, at: [<0000000037c2f8f9>]  
-debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
-1 lock held by rsyslogd/4247:
-  #0:  (&f->f_pos_lock){+.+.}, at: [<000000000d8d6983>]  
-__fdget_pos+0x12b/0x190 fs/file.c:765
-2 locks held by getty/4338:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4339:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4340:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4341:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4342:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4343:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4344:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-3 locks held by kworker/0:5/6494:
-  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-[<00000000a062b18e>] work_static include/linux/workqueue.h:198 [inline]
-  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-[<00000000a062b18e>] set_work_data kernel/workqueue.c:619 [inline]
-  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-[<00000000a062b18e>] set_work_pool_and_clear_pending kernel/workqueue.c:646  
-[inline]
-  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
-[<00000000a062b18e>] process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
-  #1:  ((addr_chk_work).work){+.+.}, at: [<00000000278427d5>]  
-process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
-  #2:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20  
-net/core/rtnetlink.c:74
-1 lock held by syz-executor7/25421:
-  #0:  (ipvs->sync_mutex){+.+.}, at: [<00000000d414a689>]  
-do_ip_vs_set_ctl+0x277/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2393
-2 locks held by syz-executor7/25427:
-  #0:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20  
-net/core/rtnetlink.c:74
-  #1:  (ipvs->sync_mutex){+.+.}, at: [<00000000e6d48489>]  
-do_ip_vs_set_ctl+0x10f8/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2388
-1 lock held by syz-executor7/25435:
-  #0:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20  
-net/core/rtnetlink.c:74
-1 lock held by ipvs-b:2:0/25415:
-  #0:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20  
-net/core/rtnetlink.c:74
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 868 Comm: khungtaskd Not tainted 4.16.0-rc6+ #284
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
-  check_hung_task kernel/hung_task.c:132 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
-  watchdog+0x90c/0xd60 kernel/hung_task.c:249
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0x6/0x10  
-arch/x86/include/asm/irqflags.h:54
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+> +	ret = clk_enable(sdhci_arasan->clk_ahb);
+> +	if (ret) {
+> +		dev_err(dev, "Cannot enable AHB clock.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_enable(pltfm_host->clk);
+> +	if (ret) {
+> +		dev_err(dev, "Cannot enable SD clock.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = sdhci_runtime_resume_host(host);
+> +	if (ret)
+> +		goto out;
+> +
+> +	return 0;
+> +out:
+> +	clk_disable(pltfm_host->clk);
+> +	clk_disable(sdhci_arasan->clk_ahb);
+> +
+> +	return ret;
+> +}
+> +#endif /* ! CONFIG_PM */
+> +
+>   #ifdef CONFIG_PM_SLEEP
+>   /**
+>    * sdhci_arasan_suspend - Suspend method for the driver
+> @@ -443,8 +513,11 @@ static int sdhci_arasan_resume(struct device *dev)
+>   }
+>   #endif /* ! CONFIG_PM_SLEEP */
+>   
+> -static SIMPLE_DEV_PM_OPS(sdhci_arasan_dev_pm_ops, sdhci_arasan_suspend,
+> -			 sdhci_arasan_resume);
+> +static const struct dev_pm_ops sdhci_arasan_dev_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(sdhci_arasan_suspend, sdhci_arasan_resume)
+> +	SET_RUNTIME_PM_OPS(sdhci_arasan_runtime_suspend,
+> +			   sdhci_arasan_runtime_resume, NULL)
+> +};
+>   
+>   static const struct of_device_id sdhci_arasan_of_match[] = {
+>   	/* SoC-specific compatible strings w/ soc_ctl_map */
+> @@ -806,6 +879,12 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		goto err_add_host;
+>   
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 2000);
+> +	pm_runtime_mark_last_busy(&pdev->dev);
+> +	pm_runtime_use_autosuspend(&pdev->dev);
+> +
+>   	return 0;
+>   
+>   err_add_host:
+> 
