@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48XeClhyhsJL5pkvg+UXQ/rL1hTzVaCIU7+LcQbQdAyYmfxFQjN3+GLeKhWFIezjbLez2dJ
-ARC-Seal: i=1; a=rsa-sha256; t=1522346522; cv=none;
+X-Google-Smtp-Source: AIpwx4+9dF2CndfrkHRNsEFhAt6FSRYfb2Rhv2ewYBloFH6MbyvgwbqRiuXQ8SXFjlbz2JNeo0iB
+ARC-Seal: i=1; a=rsa-sha256; t=1522346517; cv=none;
         d=google.com; s=arc-20160816;
-        b=m0Rndwr8fcBDLZ2Yy0TAt6OG4UfvDfrje4+mIdZC0MfbnOm3uPRX20VeHyMZaywunX
-         x0e7EWj4H2tRsw3JEmcW0HzqIpKohO3QKfK4aAPA7GohmBu+KUfQPkTmDXsWCLATOO3I
-         WU2nPP80BevAAaZvnkAyvxyvtCepyy7Q6PLGnpn5AcWS2hmCmGymR5kLqKJ78zliW9Z9
-         UWStMfm7Otyg2GiwV8B3XRlJLqQudRLHGIxXh/NQyYiswE2hFra5fENS7VYRIpAPHYA+
-         SwtMSUB1dCrXrCJXzW4ax8NFs/Gqx0MLrvrH6u+3lmgkizjjjrCC5toVDqsMIY9UIMH3
-         xE2g==
+        b=idv4RDBF/Xr7j6k4Dfo9ytDOX5jLda1DJp1NLC4t9Gs0T3KuBC/ZWeSJorV2sE046X
+         mlDBh4+xVQgqea5nKtTDy7qspiqTtHBwR7/DlwNd/8G38w34lBYLRA+uGyAYUm1UZv6D
+         POnqG01FGpkREms2PYRWZzU+KfU7lYSU34XC3PvWEFshbkXraXfVau5uSmO/kqGGzfMB
+         POMnr7miU4oxvqtVtB31ShQzBW8Z3AITwM/EFX5PjTKlQH3c5bN9X6EGOJKg0B04mPwF
+         BaSXqmwRQ4z98KqauNNAhSoxBM6hscqSYFCDaJtbiXVcjqbo8Ux5GNBwkaO4saT27xe8
+         J1sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NbYTuZMfuAXyNgJzdxH1uNOnX3LMAOAhYYBuEgLzuXM=;
-        b=CF9D1RXIR+cfo92OQj+wwtzMJxkEPuMGrR/TZmgK7spvP4xZZy5RYOBOj8eXEW5ESm
-         8Wa7jOsu29yEloVUwfXpK8HVMkVia1TBBF81QZM1lmhIvj0MGKRqkEeBgp1zynkN1Lil
-         u6wura/0v43ayDqdaZ4PGFmx8kqUmKBO6kYp59kBiPIpa+oEal8SIletPyf3JiBsDSTd
-         UnsrklO5w6YsBFjZmRETX2CNE10HmLfZeSPwhK8/eWW8j2gHje05PnKUl4yJFj9x5+JH
-         2SgD/BF3cFnYyxr2Z4CdC2Z2amWaNTXDg4S3COJTQSjJhKeAQpm/HCHnMPc3O8B3YfAi
-         aGhA==
+        bh=t8Bckoy+/+tILWyKtZTUD8QuW6IgQldTErmbiEIYNk0=;
+        b=vJxYgsc05w44fkxe2iU/yrobFPyhoVguqwu4YtTuNTe4T7gl7t1KoCKcqjvnQ0YCOV
+         36TM2KeS6iMgLHqrrWpRPFJ7JydNcEg8qQpJjL6J7sayxpOoNwSwC3zcAc3GF15rt25Z
+         3lZym3PnnfesoA5rdT98SMJFSZ86QXs6DEjnXmBn1mdRpzuBiWCJLP4S66yvygsbrr9O
+         sxG4hfIsRZl3cD85FEk6kEThqlZ0BP8pzQVY+KkjPCAxwhkgjjdwyue+0tVX3ICETu7B
+         eIR+kSEHMybSoUEycSYGfMwP4hQfQXGwEEaUsbz9Ui04zmVMhATa718Y1sGEM6bnUFKw
+         aHjQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Michal Kalderon <Michal.Kalderon@cavium.com>,
+	Ariel Elior <Ariel.Elior@cavium.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 07/47] net: phy: relax error checking when creating sysfs link netdev->phydev
-Date: Thu, 29 Mar 2018 19:59:48 +0200
-Message-Id: <20180329175729.678329945@linuxfoundation.org>
+Subject: [PATCH 4.15 05/47] qed: Fix non TCP packets should be dropped on iWARP ll2 connection
+Date: Thu, 29 Mar 2018 19:59:46 +0200
+Message-Id: <20180329175729.533834724@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296027400290457?=
-X-GMAIL-MSGID: =?utf-8?q?1596296027400290457?=
+X-GMAIL-THRID: =?utf-8?q?1596296021593210759?=
+X-GMAIL-MSGID: =?utf-8?q?1596296021593210759?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,56 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Michal Kalderon <Michal.Kalderon@cavium.com>
 
 
-[ Upstream commit 4414b3ed74be0e205e04e12cd83542a727d88255 ]
+[ Upstream commit 16da09047d3fb991dc48af41f6d255fd578e8ca2 ]
 
-Some ethernet drivers (like TI CPSW) may connect and manage >1 Net PHYs per
-one netdevice, as result such drivers will produce warning during system
-boot and fail to connect second phy to netdevice when PHYLIB framework
-will try to create sysfs link netdev->phydev for second PHY
-in phy_attach_direct(), because sysfs link with the same name has been
-created already for the first PHY. As result, second CPSW external
-port will became unusable.
+FW workaround. The iWARP LL2 connection did not expect TCP packets
+to arrive on it's connection. The fix drops any non-tcp packets
 
-Fix it by relaxing error checking when PHYLIB framework is creating sysfs
-link netdev->phydev in phy_attach_direct(), suppressing warning by using
-sysfs_create_link_nowarn() and adding error message instead.
-After this change links (phy->netdev and netdev->phy) creation failure is not
-fatal any more and system can continue working, which fixes TI CPSW issue.
+Fixes b5c29ca ("qed: iWARP CM - setup a ll2 connection for handling
+SYN packets")
 
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Fixes: a3995460491d ("net: phy: Relax error checking on sysfs_create_link()")
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy_device.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -999,10 +999,17 @@ int phy_attach_direct(struct net_device
- 	err = sysfs_create_link(&phydev->mdio.dev.kobj, &dev->dev.kobj,
- 				"attached_dev");
- 	if (!err) {
--		err = sysfs_create_link(&dev->dev.kobj, &phydev->mdio.dev.kobj,
--					"phydev");
--		if (err)
--			goto error;
-+		err = sysfs_create_link_nowarn(&dev->dev.kobj,
-+					       &phydev->mdio.dev.kobj,
-+					       "phydev");
-+		if (err) {
-+			dev_err(&dev->dev, "could not add device link to %s err %d\n",
-+				kobject_name(&phydev->mdio.dev.kobj),
-+				err);
-+			/* non-fatal - some net drivers can use one netdevice
-+			 * with more then one phy
-+			 */
-+		}
+--- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+@@ -1681,6 +1681,13 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *
+ 	iph = (struct iphdr *)((u8 *)(ethh) + eth_hlen);
  
- 		phydev->sysfs_links = true;
- 	}
+ 	if (eth_type == ETH_P_IP) {
++		if (iph->protocol != IPPROTO_TCP) {
++			DP_NOTICE(p_hwfn,
++				  "Unexpected ip protocol on ll2 %x\n",
++				  iph->protocol);
++			return -EINVAL;
++		}
++
+ 		cm_info->local_ip[0] = ntohl(iph->daddr);
+ 		cm_info->remote_ip[0] = ntohl(iph->saddr);
+ 		cm_info->ip_version = TCP_IPV4;
+@@ -1689,6 +1696,14 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *
+ 		*payload_len = ntohs(iph->tot_len) - ip_hlen;
+ 	} else if (eth_type == ETH_P_IPV6) {
+ 		ip6h = (struct ipv6hdr *)iph;
++
++		if (ip6h->nexthdr != IPPROTO_TCP) {
++			DP_NOTICE(p_hwfn,
++				  "Unexpected ip protocol on ll2 %x\n",
++				  iph->protocol);
++			return -EINVAL;
++		}
++
+ 		for (i = 0; i < 4; i++) {
+ 			cm_info->local_ip[i] =
+ 			    ntohl(ip6h->daddr.in6_u.u6_addr32[i]);
