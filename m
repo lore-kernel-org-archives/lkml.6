@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+N6YcygO1Q1rt8NewqagOa1W6B5c0/7jjx+COiXIpFgI05JyA4NrEqEaGQ3/NNqXaDoIMK
-ARC-Seal: i=1; a=rsa-sha256; t=1522346622; cv=none;
+X-Google-Smtp-Source: AIpwx4+ZoI8fijc/DAOBy7LblJg8JQmpZgJrc6a+DYqSjbS2n30+PnbbNMqnhJ+QoJj6gguC9lEG
+ARC-Seal: i=1; a=rsa-sha256; t=1522346618; cv=none;
         d=google.com; s=arc-20160816;
-        b=e6OHNtkcWRk3R1cjecsdatS0V/sPw2qeJUUDhJzMnsU9fti2UXSRGRMsXFyZJnE2gY
-         RIi+XZ+ncdnl8Amo/Ln0uFylaYkTZ53mDzk6QwvXGSR6sbGeBosfoMpv6ZrZah0Gjv17
-         TP1RMYMgseYHk8znp/c5pDdHqEhg8cLdpXQYLhBxn14296UcOjjgFtbhhodJIyeQonWX
-         5c1vPuhzDhOrp6H7Mmy00xjbhXGHeC6ClLqrZFnoHG2mzwa2+myIV/YKlXqkVBDUuZ2c
-         mXdocZEBTJLIkivw7BoYK+/3FfTZ/54zEcg/VHYKk7MypyEgZX7jCoQzyNdEPGX1z3QE
-         gkoQ==
+        b=Vbg7mxATgiOK298dmED5kfMt3U2JRJMSuK3c28SXfTVx/pKO7v5EpQQ3JwCU9TwYdW
+         8S6wI6oIdWPYMYLGNyZzNcgugzqwlhCIVvhogE0w6wLMVTunXW5OUQSLVeKxL6CawQml
+         ZF+AzN/exKNrPD84gC///NW7WI3fs9wEElM0kf+2K/ElYPHZVwmjY1uo6RxZLTRLsoj3
+         tFFwJOW1Ad4jbV2Ai/Mvwr69RPJV6WyCXhs9VcB4fVuqViO8qrfYxUPr8yb/p6SAnHn2
+         lhUDQ37y2/zsx16cFGNGMZaZgrJqYSXDxQGr62Ay30OUxdJevIVpjXqfWX3Possm0KJ5
+         JcrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hOQ2SRKGHD+etU06sng3SJnsWZMFsp6ohWJJLmMDBc8=;
-        b=k1hehOjkMLKqAuzKBKC7iKdPUP3fTP9ebEeqO75IzyiYLG76+EROHRVB+YSL+aFXVF
-         7MZVc4+vjVCsMkCiWYcuEDVqbMvm+EStnmNsnG13SO23CXnTkZq4Eh/YOgzYstQMz1hE
-         dLnIsJVODhChcCMobc4pPi5vW4GfnNdbH+WBfws+2SZOCIkuYTjREGW20HXlJm9ilMRJ
-         u9gZ/B7HnByhJ046an+mMKTwEAz5LlovwuI+1jkE/6yxrfJzx0DVmi9CVMTuiljh5COy
-         jXn4KvkZoIfC3CsC4h+X0h8nEfLEJgojQ4tOrxQ/H63dFy/uqtyU2svfUprS+Mj7iME/
-         +5GQ==
+        bh=+7ouaDGdO4lMvfs6c3YOZhLQ3X5oyO5AxwEQsM8BIgA=;
+        b=hwImK7aiPQc5qt2iKfnsuyjedFTBqKv/FgwUVbMG5oe1zK8wmuCViBamUiEx1pHx9E
+         Jpr15H5eZ7Yo0zCzFCH4dtc2IqmLu5sxARLB90cQX0WYX/fnyy1BeTiWzZDJTvMDmHd7
+         pjrRFz5pxjmA8dyqDZKzQyiLLmjalB53ZDTUy39HGqJUXh/TAAERpEX9bo+NYtxN2rZk
+         QvS/SEE1RWWvIA4/Tv4qy73ssnqFWVX7Em9XVhpp7KEPHZkcUEUzk24F2AaapoinQAEs
+         V0AU5kASbwLZEH39XzAFvwe3XHZlie90HbcyebaL2pKN3hK+byDL8hktzfsE/noBlJkD
+         b0Fg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Tom Herbert <tom@quantonium.net>,
 	David Lebrun <dlebrun@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 13/47] ipv6: sr: fix scheduling in RCU when creating seg6 lwtunnel state
-Date: Thu, 29 Mar 2018 19:59:54 +0200
-Message-Id: <20180329175730.075690629@linuxfoundation.org>
+Subject: [PATCH 4.15 12/47] ipv6: sr: fix NULL pointer dereference when setting encap source address
+Date: Thu, 29 Mar 2018 19:59:53 +0200
+Message-Id: <20180329175730.008593841@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296131804343440?=
-X-GMAIL-MSGID: =?utf-8?q?1596296131804343440?=
+X-GMAIL-THRID: =?utf-8?q?1596296128728424009?=
+X-GMAIL-MSGID: =?utf-8?q?1596296128728424009?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,66 +53,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: David Lebrun <dlebrun@google.com>
 
 
-[ Upstream commit 191f86ca8ef27f7a492fd1c03620498c6e94f0ac ]
+[ Upstream commit 8936ef7604c11b5d701580d779e0f5684abc7b68 ]
 
-The seg6_build_state() function is called with RCU read lock held,
-so we cannot use GFP_KERNEL. This patch uses GFP_ATOMIC instead.
+When using seg6 in encap mode, we call ipv6_dev_get_saddr() to set the
+source address of the outer IPv6 header, in case none was specified.
+Using skb->dev can lead to BUG() when it is in an inconsistent state.
+This patch uses the net_device attached to the skb's dst instead.
 
-[   92.770271] =============================
-[   92.770628] WARNING: suspicious RCU usage
-[   92.770921] 4.16.0-rc4+ #12 Not tainted
-[   92.771277] -----------------------------
-[   92.771585] ./include/linux/rcupdate.h:302 Illegal context switch in RCU read-side critical section!
-[   92.772279]
-[   92.772279] other info that might help us debug this:
-[   92.772279]
-[   92.773067]
-[   92.773067] rcu_scheduler_active = 2, debug_locks = 1
-[   92.773514] 2 locks held by ip/2413:
-[   92.773765]  #0:  (rtnl_mutex){+.+.}, at: [<00000000e5461720>] rtnetlink_rcv_msg+0x441/0x4d0
-[   92.774377]  #1:  (rcu_read_lock){....}, at: [<00000000df4f161e>] lwtunnel_build_state+0x59/0x210
-[   92.775065]
-[   92.775065] stack backtrace:
-[   92.775371] CPU: 0 PID: 2413 Comm: ip Not tainted 4.16.0-rc4+ #12
-[   92.775791] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1.fc27 04/01/2014
-[   92.776608] Call Trace:
-[   92.776852]  dump_stack+0x7d/0xbc
-[   92.777130]  __schedule+0x133/0xf00
-[   92.777393]  ? unwind_get_return_address_ptr+0x50/0x50
-[   92.777783]  ? __sched_text_start+0x8/0x8
-[   92.778073]  ? rcu_is_watching+0x19/0x30
-[   92.778383]  ? kernel_text_address+0x49/0x60
-[   92.778800]  ? __kernel_text_address+0x9/0x30
-[   92.779241]  ? unwind_get_return_address+0x29/0x40
-[   92.779727]  ? pcpu_alloc+0x102/0x8f0
-[   92.780101]  _cond_resched+0x23/0x50
-[   92.780459]  __mutex_lock+0xbd/0xad0
-[   92.780818]  ? pcpu_alloc+0x102/0x8f0
-[   92.781194]  ? seg6_build_state+0x11d/0x240
-[   92.781611]  ? save_stack+0x9b/0xb0
-[   92.781965]  ? __ww_mutex_wakeup_for_backoff+0xf0/0xf0
-[   92.782480]  ? seg6_build_state+0x11d/0x240
-[   92.782925]  ? lwtunnel_build_state+0x1bd/0x210
-[   92.783393]  ? ip6_route_info_create+0x687/0x1640
-[   92.783846]  ? ip6_route_add+0x74/0x110
-[   92.784236]  ? inet6_rtm_newroute+0x8a/0xd0
+[940807.667429] BUG: unable to handle kernel NULL pointer dereference at 000000000000047c
+[940807.762427] IP: ipv6_dev_get_saddr+0x8b/0x1d0
+[940807.815725] PGD 0 P4D 0
+[940807.847173] Oops: 0000 [#1] SMP PTI
+[940807.890073] Modules linked in:
+[940807.927765] CPU: 6 PID: 0 Comm: swapper/6 Tainted: G        W        4.16.0-rc1-seg6bpf+ #2
+[940808.028988] Hardware name: HP ProLiant DL120 G6/ProLiant DL120 G6, BIOS O26    09/06/2010
+[940808.128128] RIP: 0010:ipv6_dev_get_saddr+0x8b/0x1d0
+[940808.187667] RSP: 0018:ffff88043fd836b0 EFLAGS: 00010206
+[940808.251366] RAX: 0000000000000005 RBX: ffff88042cb1c860 RCX: 00000000000000fe
+[940808.338025] RDX: 00000000000002c0 RSI: ffff88042cb1c860 RDI: 0000000000004500
+[940808.424683] RBP: ffff88043fd83740 R08: 0000000000000000 R09: ffffffffffffffff
+[940808.511342] R10: 0000000000000040 R11: 0000000000000000 R12: ffff88042cb1c850
+[940808.598012] R13: ffffffff8208e380 R14: ffff88042ac8da00 R15: 0000000000000002
+[940808.684675] FS:  0000000000000000(0000) GS:ffff88043fd80000(0000) knlGS:0000000000000000
+[940808.783036] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[940808.852975] CR2: 000000000000047c CR3: 00000004255fe000 CR4: 00000000000006e0
+[940808.939634] Call Trace:
+[940808.970041]  <IRQ>
+[940808.995250]  ? ip6t_do_table+0x265/0x640
+[940809.043341]  seg6_do_srh_encap+0x28f/0x300
+[940809.093516]  ? seg6_do_srh+0x1a0/0x210
+[940809.139528]  seg6_do_srh+0x1a0/0x210
+[940809.183462]  seg6_output+0x28/0x1e0
+[940809.226358]  lwtunnel_output+0x3f/0x70
+[940809.272370]  ip6_xmit+0x2b8/0x530
+[940809.313185]  ? ac6_proc_exit+0x20/0x20
+[940809.359197]  inet6_csk_xmit+0x7d/0xc0
+[940809.404173]  tcp_transmit_skb+0x548/0x9a0
+[940809.453304]  __tcp_retransmit_skb+0x1a8/0x7a0
+[940809.506603]  ? ip6_default_advmss+0x40/0x40
+[940809.557824]  ? tcp_current_mss+0x24/0x90
+[940809.605925]  tcp_retransmit_skb+0xd/0x80
+[940809.654016]  tcp_xmit_retransmit_queue.part.17+0xf9/0x210
+[940809.719797]  tcp_ack+0xa47/0x1110
+[940809.760612]  tcp_rcv_established+0x13c/0x570
+[940809.812865]  tcp_v6_do_rcv+0x151/0x3d0
+[940809.858879]  tcp_v6_rcv+0xa5c/0xb10
+[940809.901770]  ? seg6_output+0xdd/0x1e0
+[940809.946745]  ip6_input_finish+0xbb/0x460
+[940809.994837]  ip6_input+0x74/0x80
+[940810.034612]  ? ip6_rcv_finish+0xb0/0xb0
+[940810.081663]  ipv6_rcv+0x31c/0x4c0
+...
 
 Fixes: 6c8702c60b886 ("ipv6: sr: add support for SRH encapsulation and injection with lwtunnels")
+Reported-by: Tom Herbert <tom@quantonium.net>
 Signed-off-by: David Lebrun <dlebrun@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/seg6_iptunnel.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/seg6_iptunnel.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 --- a/net/ipv6/seg6_iptunnel.c
 +++ b/net/ipv6/seg6_iptunnel.c
-@@ -419,7 +419,7 @@ static int seg6_build_state(struct nlatt
+@@ -93,7 +93,8 @@ static void set_tun_src(struct net *net,
+ /* encapsulate an IPv6 packet within an outer IPv6 header with a given SRH */
+ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ {
+-	struct net *net = dev_net(skb_dst(skb)->dev);
++	struct dst_entry *dst = skb_dst(skb);
++	struct net *net = dev_net(dst->dev);
+ 	struct ipv6hdr *hdr, *inner_hdr;
+ 	struct ipv6_sr_hdr *isrh;
+ 	int hdrlen, tot_len, err;
+@@ -134,7 +135,7 @@ int seg6_do_srh_encap(struct sk_buff *sk
+ 	isrh->nexthdr = proto;
  
- 	slwt = seg6_lwt_lwtunnel(newts);
+ 	hdr->daddr = isrh->segments[isrh->first_segment];
+-	set_tun_src(net, skb->dev, &hdr->daddr, &hdr->saddr);
++	set_tun_src(net, ip6_dst_idev(dst)->dev, &hdr->daddr, &hdr->saddr);
  
--	err = dst_cache_init(&slwt->cache, GFP_KERNEL);
-+	err = dst_cache_init(&slwt->cache, GFP_ATOMIC);
- 	if (err) {
- 		kfree(newts);
- 		return err;
+ #ifdef CONFIG_IPV6_SEG6_HMAC
+ 	if (sr_has_hmac(isrh)) {
