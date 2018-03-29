@@ -1,128 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752051AbeC2PCt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:02:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45818 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbeC2PCr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:02:47 -0400
-Date: Thu, 29 Mar 2018 12:02:40 -0300
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Nasser <afshin.nasser@gmail.com>
-Cc: p.zabel@pengutronix.de, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, bparrot@ti.com, garsilva@embeddedor.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: tvp5150: fix color burst lock instability
- on some hardware
-Message-ID: <20180329120240.169a5f33@vento.lan>
-In-Reply-To: <20180329143435.GA4392@smart-ThinkPad-T410>
-References: <20180325225633.5899-1-Afshin.Nasser@gmail.com>
-        <20180326064353.187f752c@vento.lan>
-        <20180326222921.GA5373@smart-ThinkPad-T410>
-        <20180329143435.GA4392@smart-ThinkPad-T410>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1752156AbeC2PC4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:02:56 -0400
+Received: from mga06.intel.com ([134.134.136.31]:3229 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750708AbeC2PCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:02:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="28596203"
+Subject: [PATCH v4 1/3] perf/core: store context switch out type into Perf
+ trace
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <6f4a5d0d-9e1f-d5a1-7719-7547bb688453@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <f8d6833d-2ba3-e7cb-5422-adffb24dd33e@linux.intel.com>
+Date: Thu, 29 Mar 2018 18:02:48 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <6f4a5d0d-9e1f-d5a1-7719-7547bb688453@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 29 Mar 2018 19:04:35 +0430
-Nasser <afshin.nasser@gmail.com> escreveu:
 
-> On Tue, Mar 27, 2018 at 02:59:21AM +0430, Nasser wrote:
-> Hi Mauro,
-> 
-> Thank you for taking time to review my patch.
-> 
-> May be I should rephrase the commit message to something like:
-> 	Use the default register values as suggested in TVP5150AM1 datasheet
-> 
-> As this is not a hardware-dependent issue. Am I missing something?
+Store preempting context switch out event into Perf trace as a part of 
+PERF_RECORD_SWITCH[_CPU_WIDE] record.
 
-It is not a matter of rephasing, but, instead, to be sure that it won't
-cause regressions on existing hardware.
+Percentage of preempting and non-preempting context switches help 
+understanding the nature of workloads (CPU or IO bound) that are running 
+on a machine;
 
-Yet, it would worth if you could describe at the patch what hardware
-did you test it, and if VBI was tested too.
+The event is treated as preemption one when task->state value of the 
+thread being switched out is TASK_RUNNING. Event type encoding is 
+implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
+	
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ include/uapi/linux/perf_event.h       | 4 ++++
+ kernel/events/core.c                  | 4 ++++
+ tools/include/uapi/linux/perf_event.h | 4 ++++
+ 3 files changed, 12 insertions(+)
 
-Anyway, I'll try to find some time to run some tests on the hardware
-I have with tvp5150 too.
-
-Regards,
-Mauro
-
-> 
-> > On Mon, Mar 26, 2018 at 06:43:53AM -0300, Mauro Carvalho Chehab wrote:  
-> > > Hi Nasser,
-> > > 
-> > > Em Mon, 26 Mar 2018 03:26:33 +0430
-> > > Nasser Afshin <afshin.nasser@gmail.com> escreveu:
-> > >   
-> > > > According to the datasheet, INTREQ/GPCL/VBLK should have a pull-up/down
-> > > > resistor if it's been disabled. On hardware that does not have such
-> > > > resistor, we should use the default output enable value.
-> > > > This prevents the color burst lock instability problem.  
-> > >  
-> > 
-> > Color burst lock instability is just a side effect of not using the
-> > recommended value for this bit. If we use the recommended setting, we
-> > will support more hardware while not breaking anything.
-> >   
-> > > If this is hardware-dependent, you should instead store it at
-> > > OF (for SoC) or pass via platform_data (for PCI/USB devices).
-> > >  
-> > 
-> > We have used the recommended value for this bit (as the datasheet
-> > suggests) while we are in tvp5150_init_enable but in tvp5150_s_stream
-> > we are using the wrong value.
-> > 
-> > Also we have this comment at line 319:
-> >     /* Default values as sugested at TVP5150AM1 datasheet */
-> > But as you see, TVP5150_MISC_CTL is not set to its suggested default
-> > value.
-> >    
-> > > > 
-> > > > Signed-off-by: Nasser Afshin <Afshin.Nasser@gmail.com>
-> > > > ---
-> > > >  drivers/media/i2c/tvp5150.c | 5 +++--
-> > > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-> > > > index 2476d812f669..0e9713814816 100644
-> > > > --- a/drivers/media/i2c/tvp5150.c
-> > > > +++ b/drivers/media/i2c/tvp5150.c
-> > > > @@ -328,7 +328,7 @@ static const struct i2c_reg_value tvp5150_init_default[] = {
-> > > >  		TVP5150_OP_MODE_CTL,0x00
-> > > >  	},
-> > > >  	{ /* 0x03 */
-> > > > -		TVP5150_MISC_CTL,0x01
-> > > > +		TVP5150_MISC_CTL,0x21
-> > > >  	},
-> > > >  	{ /* 0x06 */
-> > > >  		TVP5150_COLOR_KIL_THSH_CTL,0x10
-> > > > @@ -1072,7 +1072,8 @@ static int tvp5150_s_stream(struct v4l2_subdev *sd, int enable)
-> > > >  		 * Enable the YCbCr and clock outputs. In discrete sync mode
-> > > >  		 * (non-BT.656) additionally enable the the sync outputs.
-> > > >  		 */
-> > > > -		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE;
-> > > > +		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE |
-> > > > +			TVP5150_MISC_CTL_INTREQ_OE;
-> > > >  		if (decoder->mbus_type == V4L2_MBUS_PARALLEL)
-> > > >  			val |= TVP5150_MISC_CTL_SYNC_OE;
-> > > >  	}  
-> > > 
-> > > 
-> > > 
-> > > Thanks,
-> > > Mauro  
-> 
-> Thanks,
-> Nasser
-
-
-
-Thanks,
-Mauro
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 912b85b52344..cd6ad7e13824 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -655,6 +655,10 @@ struct perf_event_mmap_page {
+  * perf_event_attr::precise_ip.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++/*
++ * Indicates that thread was preempted in TASK_RUNNING state
++ */
++#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 7517b4fb3ef4..6b760e785116 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
+ 		},
+ 	};
+ 
++	if (!sched_in && task->state == TASK_RUNNING)
++		switch_event.event_id.header.misc |=
++				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
++
+ 	perf_iterate_sb(perf_event_switch_output,
+ 		       &switch_event,
+ 		       NULL);
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 912b85b52344..cd6ad7e13824 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -655,6 +655,10 @@ struct perf_event_mmap_page {
+  * perf_event_attr::precise_ip.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++/*
++ * Indicates that thread was preempted in TASK_RUNNING state
++ */
++#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
