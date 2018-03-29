@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684034-1522355665-2-4632492179906036824
+X-Cyrus-Session-Id: sloti22d1t05-1684034-1522355652-2-11230052551980743476
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roen, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
   MailFrom='org'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522355664; b=UMQqKq0qtoeq5PTqyJXLsPdlyUmEHSvrILXXmTvHzd4fGGETIG
-    YDcyYL8ywB2uLCnyxiNeeCdFQvVLkfeqVI89Hivr6vXNkNuWaAf0rd1mt8SSNuW4
-    yLM1KVMpEkbb42Tg9i6Rj+zhhgaasnku61fggmDFNzzSO3n7da2iwhlHzSlvsNXE
-    Z8eT34ITgoCz5kDnTPynd0XJOIKl2PrFc+CeDOjxRPrDP4Cgu1O6mvbNZSnAd12s
-    +oUaX2ZZryRQ9CXcxthzHJMy2w1b7dyfpHWSw4h+weIG24dW/7POghLBDhDyHCB3
-    a5XBHgkzSXQVJsciFDY6s68rRrAOl0Unf51Q==
+    1522355651; b=aFkP8v7WzjShaf3R7l7RTODjXcaXPxQAgaj4mO8c7GDkQcTYK8
+    dyg7Wq1FQ0etlR8x8j4Qqi+yowRAba/st6oxwS/xCw1juBIqZvWobEkEC8XH9A7R
+    r4yU/ewgeKchme50oyhP0JOIWm9ExP/d68b/aHX3xm66XqcTepaBgeOGCv3KmBVd
+    VC3mPgMUJ8nMGZ5xhsKU3aTRf4lAPVyCeNLwpbWYtFPrWlhcT42J783HqxZJKBvb
+    hSvVMzb3+LEcrpdRz4W6pp4biN1NIN/9ohEG8qq/Y7XFaUbOITPG991yEeYm/xnJ
+    dHcyM7uq2eXSLsHPgdrF2MVWlHHX9BkGR/6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1522355664; bh=
-    ECZVXycrzuZfx9mX2KOU5/i/bofgvKPmcHTRcZqx6ps=; b=evteKmOeV1srn10H
-    yG4PIV+g4R2pfzbYj9YvN8HxWVxCyCqfuHSaSEYYyg8baFumrH97pynExXw+12Po
-    aonajCRPGEta9HxlB5EYeT3cLzcMtTHBeH3tbAVEG1w7Adwdsnf4hEBWgRkkJR2N
-    i1TTbkwkRqRNGxnmt8bWf/BqGcY13tabakthpBkalGm8eEsIIh/UIedAutcOQKvV
-    cqIs0n6sywUiVKmaD6NrUG1rYWgsWEk7872ukd4eTuoU3+rF6BJtNJCcJJld3Yyb
-    jAOLXPYCmvXC8itP6vUa/+PqLAwcBkzihawcBkRtUcgoWK4JHuGb500M8vYtQ5OI
-    f2pwiw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=nD3ocZRY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=fm2; t=1522355651; bh=
+    JNVdscXCCQiUwhgLW/bxTAACwhyL7g7fxqz9weX/MEI=; b=DTGsdvqi97smB84v
+    0GPzykUcWnXrBQu+M7l+6lXOPwZvstSQbwVhydaQtOPKz39uOgu2ZnCjfWa0Tw42
+    E81KpwI9YktXWzl848fRCLSzdcvYxtoTp2gDALenhI/MvmzkbB/7IVSI5LckQ8sM
+    TEbhmDCUYPnU/rM+SDw3ITwoESkOaWMeu3FTi+EfyElBvmDCZR5KFnMPBv5zQZzX
+    54UEGZmeE5tkeN6vrhp6ul49b2cPX+XUK+K3gvQ4Ul+4z/rZEsbzUfhF20PfQXos
+    6f+anPZbA/+6STmSbXKhTDmjIYX174ShN/5ENwc0aVhoY9Tz+iR6x+xSbfTIKhPG
+    BIHfzg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=bWxkCJP7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=nD3ocZRY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=bWxkCJP7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,28 +51,28 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDdnWRG4ISzIqx1koOPQOJrwQYEhfJDP9QM7J+36jIQvaiw43W8MxlbxVdMqoWjipKrmO78ZpJ8wEeH9eIqlgy8Cq9VTsAFWOzqwL7Wk/mp0qSeeO6e7
-    9LW4qitvCO9O/lOxEPB8BjLymcbJBJS5j+CNLZ1LnV4uurPUCrI2RDyQap4/AZExtL5rY/2GcozY5kY4+RQvd02g4QshQlCpvrKgr2FL3W5kXpeUaWDIZXko
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGJE0GKPjSps9WoSy9I8oI+G7y8t7jUtbnITLQrhlWslepG78OVOkAt7fTYSd9SgSQbY5DnOoi2Zxq+zzBACpxHKGSJICUFD6nzsdStmPKQbnGoxNtCz
+    JEuioBzkMW1aH5/Ulfgtzqp5zohyFHotne6W2PKxIj6P4dAdgceqD6z6WEFk4XuaEjOD6tMfQDOL1lRQnTf7u8n5fW7giu+EMlu1ckzeA4amQgu1LTZWLbmu
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
-    a=zC15u5H8aKBIYaXgerkA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=KaBQk26Pbc5VCaRScTQA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752705AbeC2UeW (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 16:34:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53702 "EHLO
+        id S1752578AbeC2UeI (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 16:34:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53612 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752623AbeC2UeU (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 29 Mar 2018 16:34:20 -0400
+        with ESMTP id S1752531AbeC2UeF (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 29 Mar 2018 16:34:05 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/30] net/unix: convert to ->poll_mask
-Date: Thu, 29 Mar 2018 22:33:11 +0200
-Message-Id: <20180329203328.3248-14-hch@lst.de>
+Subject: [PATCH 09/30] net: refactor socket_poll
+Date: Thu, 29 Mar 2018 22:33:07 +0200
+Message-Id: <20180329203328.3248-10-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180329203328.3248-1-hch@lst.de>
 References: <20180329203328.3248-1-hch@lst.de>
@@ -83,98 +83,75 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Factor out two busy poll related helpers for late reuse, and remove
+a command that isn't very helpful, especially with the __poll_t
+annotations in place.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/unix/af_unix.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+ include/net/busy_poll.h | 15 +++++++++++++++
+ net/socket.c            | 21 ++++-----------------
+ 2 files changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 2d465bdeccbc..619c6921dd46 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -638,9 +638,8 @@ static int unix_stream_connect(struct socket *, struct sockaddr *,
- static int unix_socketpair(struct socket *, struct socket *);
- static int unix_accept(struct socket *, struct socket *, int, bool);
- static int unix_getname(struct socket *, struct sockaddr *, int *, int);
--static __poll_t unix_poll(struct file *, struct socket *, poll_table *);
--static __poll_t unix_dgram_poll(struct file *, struct socket *,
--				    poll_table *);
-+static __poll_t unix_poll_mask(struct socket *, __poll_t);
-+static __poll_t unix_dgram_poll_mask(struct socket *, __poll_t);
- static int unix_ioctl(struct socket *, unsigned int, unsigned long);
- static int unix_shutdown(struct socket *, int);
- static int unix_stream_sendmsg(struct socket *, struct msghdr *, size_t);
-@@ -681,7 +680,7 @@ static const struct proto_ops unix_stream_ops = {
- 	.socketpair =	unix_socketpair,
- 	.accept =	unix_accept,
- 	.getname =	unix_getname,
--	.poll =		unix_poll,
-+	.poll_mask =	unix_poll_mask,
- 	.ioctl =	unix_ioctl,
- 	.listen =	unix_listen,
- 	.shutdown =	unix_shutdown,
-@@ -704,7 +703,7 @@ static const struct proto_ops unix_dgram_ops = {
- 	.socketpair =	unix_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	unix_getname,
--	.poll =		unix_dgram_poll,
-+	.poll_mask =	unix_dgram_poll_mask,
- 	.ioctl =	unix_ioctl,
- 	.listen =	sock_no_listen,
- 	.shutdown =	unix_shutdown,
-@@ -726,7 +725,7 @@ static const struct proto_ops unix_seqpacket_ops = {
- 	.socketpair =	unix_socketpair,
- 	.accept =	unix_accept,
- 	.getname =	unix_getname,
--	.poll =		unix_dgram_poll,
-+	.poll_mask =	unix_dgram_poll_mask,
- 	.ioctl =	unix_ioctl,
- 	.listen =	unix_listen,
- 	.shutdown =	unix_shutdown,
-@@ -2640,13 +2639,10 @@ static int unix_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 	return err;
+diff --git a/include/net/busy_poll.h b/include/net/busy_poll.h
+index 71c72a939bf8..c5187438af38 100644
+--- a/include/net/busy_poll.h
++++ b/include/net/busy_poll.h
+@@ -121,6 +121,21 @@ static inline void sk_busy_loop(struct sock *sk, int nonblock)
+ #endif
  }
  
--static __poll_t unix_poll(struct file *file, struct socket *sock, poll_table *wait)
-+static __poll_t unix_poll_mask(struct socket *sock, __poll_t events)
++static inline void sock_poll_busy_loop(struct socket *sock, __poll_t events)
++{
++	if (sk_can_busy_loop(sock->sk) &&
++	    events && (events & POLL_BUSY_LOOP)) {
++		/* once, only if requested by syscall */
++		sk_busy_loop(sock->sk, 1);
++	}
++}
++
++/* if this socket can poll_ll, tell the system call */
++static inline __poll_t sock_poll_busy_flag(struct socket *sock)
++{
++	return sk_can_busy_loop(sock->sk) ? POLL_BUSY_LOOP : 0;
++}
++
+ /* used in the NIC receive handler to mark the skb */
+ static inline void skb_mark_napi_id(struct sk_buff *skb,
+ 				    struct napi_struct *napi)
+diff --git a/net/socket.c b/net/socket.c
+index a93c99b518ca..3f859a07641a 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1117,24 +1117,11 @@ EXPORT_SYMBOL(sock_create_lite);
+ /* No kernel lock held - perfect */
+ static __poll_t sock_poll(struct file *file, poll_table *wait)
  {
- 	struct sock *sk = sock->sk;
--	__poll_t mask;
+-	__poll_t busy_flag = 0;
+-	struct socket *sock;
 -
--	sock_poll_wait(file, sk_sleep(sk), wait);
--	mask = 0;
-+	__poll_t mask = 0;
+-	/*
+-	 *      We can't return errors to poll, so it's either yes or no.
+-	 */
+-	sock = file->private_data;
+-
+-	if (sk_can_busy_loop(sock->sk)) {
+-		/* this socket can poll_ll so tell the system call */
+-		busy_flag = POLL_BUSY_LOOP;
+-
+-		/* once, only if requested by syscall */
+-		if (wait && (wait->_key & POLL_BUSY_LOOP))
+-			sk_busy_loop(sock->sk, 1);
+-	}
++	struct socket *sock = file->private_data;
++	__poll_t events = poll_requested_events(wait);
  
- 	/* exceptional events? */
- 	if (sk->sk_err)
-@@ -2675,15 +2671,11 @@ static __poll_t unix_poll(struct file *file, struct socket *sock, poll_table *wa
- 	return mask;
+-	return busy_flag | sock->ops->poll(file, sock, wait);
++	sock_poll_busy_loop(sock, events);
++	return sock->ops->poll(file, sock, wait) | sock_poll_busy_flag(sock);
  }
  
--static __poll_t unix_dgram_poll(struct file *file, struct socket *sock,
--				    poll_table *wait)
-+static __poll_t unix_dgram_poll_mask(struct socket *sock, __poll_t events)
- {
- 	struct sock *sk = sock->sk, *other;
--	unsigned int writable;
--	__poll_t mask;
--
--	sock_poll_wait(file, sk_sleep(sk), wait);
--	mask = 0;
-+	int writable;
-+	__poll_t mask = 0;
- 
- 	/* exceptional events? */
- 	if (sk->sk_err || !skb_queue_empty(&sk->sk_error_queue))
-@@ -2709,7 +2701,7 @@ static __poll_t unix_dgram_poll(struct file *file, struct socket *sock,
- 	}
- 
- 	/* No write status requested, avoid expensive OUT tests. */
--	if (!(poll_requested_events(wait) & (EPOLLWRBAND|EPOLLWRNORM|EPOLLOUT)))
-+	if (!(events & (EPOLLWRBAND|EPOLLWRNORM|EPOLLOUT)))
- 		return mask;
- 
- 	writable = unix_writable(sk);
+ static int sock_mmap(struct file *file, struct vm_area_struct *vma)
 -- 
 2.14.2
 
