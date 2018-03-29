@@ -1,59 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751642AbeC2Ohc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:37:32 -0400
-Received: from mga17.intel.com ([192.55.52.151]:27532 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751164AbeC2Ohb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:37:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
-   d="scan'208";a="37896179"
-Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
- LLC
-To: Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180329000024.GA16648@alison-desk.jf.intel.com>
- <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
- <20180329134723.GA4043@hirez.programming.kicks-ass.net>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
-        David Rientjes <rientjes@google.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <596dcb0c-5bbc-f3be-203b-571170ee8f11@linux.intel.com>
-Date: Thu, 29 Mar 2018 07:37:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752021AbeC2Ohs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:37:48 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:52829 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751164AbeC2Ohq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:37:46 -0400
+X-Google-Smtp-Source: AIpwx4+qZWleVs0tu16aiE1qbH7YMm6moVCLZbtBa3ewgRL6VWGvAmX4A/JqXKJP4MYmjENf7YzxZCnha9irNFYRrxI=
 MIME-Version: 1.0
-In-Reply-To: <20180329134723.GA4043@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CADnq5_P-z=Noos_jaME9_CERri3C-m2hPPvx2bArr36O=1FnrA@mail.gmail.com>
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-2-christian.koenig@amd.com> <20180328123830.GB25060@infradead.org>
+ <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com> <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
+ <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com> <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
+ <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com> <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com> <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <CADnq5_P-z=Noos_jaME9_CERri3C-m2hPPvx2bArr36O=1FnrA@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 29 Mar 2018 10:37:44 -0400
+Message-ID: <CADnq5_PP_COGHxLdDtfnLrho8RNXLQFHc5s07+g55d9oXvB6rg@mail.gmail.com>
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linaro-mm-sig@lists.linaro.org,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        linux-media <linux-media@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2TEbqag017185
 
-On 03/29/2018 06:47 AM, Peter Zijlstra wrote:
-> Further I think Dave argued that we should not change the llc-size,
-> because while SNC presents a subset of the cache to local CPUs, for
-> remote data the whole cache is still available, again something some
-> applications might rely on.
+Sorry, didn't mean to drop the lists here. re-adding.
 
-BTW, I may have argued this in the past, but I don't think it's the best
-thing to do.
-
-If anything, we should optimize for the _users_ of this information: the
-performance-sensitive ones who are digging up the cache topology.  They
-are also likely to be the most NUMA-affinitized and stay node-local with
-much of their memory traffic.  That would seem to point us in the
-direction of enumerating two separate, half-sized LLCs "shared" only by
-the slice when SNC mode is on.
-
-That's what I've argued to the hardware folks lately, at least.
+On Wed, Mar 28, 2018 at 4:05 PM, Alex Deucher <alexdeucher@gmail.com> wrote:
+> On Wed, Mar 28, 2018 at 3:53 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
+>>
+>>
+>> On 28/03/18 01:44 PM, Christian König wrote:
+>>> Well, isn't that exactly what dma_map_resource() is good for? As far as
+>>> I can see it makes sure IOMMU is aware of the access route and
+>>> translates a CPU address into a PCI Bus address.
+>>
+>>> I'm using that with the AMD IOMMU driver and at least there it works
+>>> perfectly fine.
+>>
+>> Yes, it would be nice, but no arch has implemented this yet. We are just
+>> lucky in the x86 case because that arch is simple and doesn't need to do
+>> anything for P2P (partially due to the Bus and CPU addresses being the
+>> same). But in the general case, you can't rely on it.
+>
+> Could we do something for the arches where it works?  I feel like peer
+> to peer has dragged out for years because everyone is trying to boil
+> the ocean for all arches.  There are a huge number of use cases for
+> peer to peer on these "simple" architectures which actually represent
+> a good deal of the users that want this.
+>
+> Alex
+>
+>>
+>>>>> Yeah, but not for ours. See if you want to do real peer 2 peer you need
+>>>>> to keep both the operation as well as the direction into account.
+>>>> Not sure what you are saying here... I'm pretty sure we are doing "real"
+>>>> peer 2 peer...
+>>>>
+>>>>> For example when you can do writes between A and B that doesn't mean
+>>>>> that writes between B and A work. And reads are generally less likely to
+>>>>> work than writes. etc...
+>>>> If both devices are behind a switch then the PCI spec guarantees that A
+>>>> can both read and write B and vice versa.
+>>>
+>>> Sorry to say that, but I know a whole bunch of PCI devices which
+>>> horrible ignores that.
+>>
+>> Can you elaborate? As far as the device is concerned it shouldn't know
+>> whether a request comes from a peer or from the host. If it does do
+>> crazy stuff like that it's well out of spec. It's up to the switch (or
+>> root complex if good support exists) to route the request to the device
+>> and it's the root complex that tends to be what drops the load requests
+>> which causes the asymmetries.
+>>
+>> Logan
+>> _______________________________________________
+>> amd-gfx mailing list
+>> amd-gfx@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
