@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ZcfptUBdTkYa1TJjxbvTpVWK8xrvWoAIj9EEivQKW986GqgJMj2nBhUiHaIR9ezzpBUvm
-ARC-Seal: i=1; a=rsa-sha256; t=1522346631; cv=none;
+X-Google-Smtp-Source: AIpwx48DU5x2+FMLN2kUUnJ3aMzd6k2h46KMleqnIE5ZdOw6k82d6R7faNnBbBq2TXEi2tFOJHOh
+ARC-Seal: i=1; a=rsa-sha256; t=1522346628; cv=none;
         d=google.com; s=arc-20160816;
-        b=cniHUFpc230CDJm65JWSBOwL1yi8kvdFmqc7riuzl1Zk4p26oDinY+PZzRTJoH5mME
-         AAVKRDsLf31LD83LUuSmEsvE6qJe3VCvyORG3lcsX+kti0AxCg5FrhK/Y2OR/aTmwhCb
-         7kaM3XlbQSJw0cA5Iqb9YtBtX0wyo0SVsPBQYPEGI2E/SAHDwfUY6QGZukvn8JywwLv7
-         O6+R8fueeP36tFfoKy5aMdau61ysk4NObhIOrcziOF+DrtCd7vFp6MF5IlZDiSAUUpVo
-         ZgzZTQeQlDEASAmPoLhVFcNz8WLhLdYoDgablHfrIU2BoGaE+0nFDznmOU0fp6W+gspK
-         jGAA==
+        b=uWNKgefZ3C8PvDZcHVKW1XI18L7GLH5m4tag5vBkAqWGRwmrXP/9O/hCos8Kt74Ygg
+         E7w9vlnfTFt/lg7XJb+9JhZQ35U1RNhQWqSdRikOvEpTzQBRqHajfnuzIJZwD+kKrT/z
+         /12dHKk5BtzRL6u3dqLgLPMFjccwZrOjzO4udgaOAdhFxi2/O70LZ1/R2/ZydjSa/vNS
+         AWWnoNTxu3s79MQif48EAPRcTDOKVCAvXKg4VLpAg/2W2Iy/yGSFI22YZ8G2s90P6iqr
+         6CT3fW3ndCRUexhtU3H1d9NsNIz9gareNDLDIOtDzAHWIMLK7YlpCk0AaP6WeDDnk+2X
+         jZLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D2fNgAZQD93AtHZIsw0T8QmDfCaqT1VBNTfiartabMk=;
-        b=QRRYipVLhD5SszIGsbzqAvE/hSLsciqcaj7ci0prkUW3R4LC88d7JOcgYZo5tOzyKW
-         wfbJO0D8FmBd0g2bRVm09iisLt8pbeJzht+WOFwxEa6nA35T2rMsWUSAWaDKi+TlWy2J
-         ko5sV07ZFdWbR/5VntTjF2wHUB/snoZRzHEzKNBvJLcRQxB/pGHfR1rtGNeVjKfVUAGV
-         4KlhJSkdRRhikRjovE0HgC28vaf6V61FVw/A/Kg1VJehqSOgETom1cwjcfv00N46aRnd
-         VcAwAahiMys73f8TMj3M6hWwP5sgdxOiR2Jb8c6pU48TJG4aVstz7pg41cM84eZ1BN6c
-         ijCw==
+        bh=nzVF3WgmBkqiwWifHfSEhulQvU9XH5LksZMjdFe9WiA=;
+        b=iKdDy2PpCKvW1s5gbiqLGNXjISKD3MRRHY1l2qlz5zxYV9CuEvsM94wA28N7ppYiWn
+         uP7xEHCmQs6gHTkOLqyMwmrRd/fSaDl+sv+Wpo2lH5ONc1iRlmIYG2/d+efs/sXiOwPR
+         svCyOyUnBqyvflmO6sL7NJ74RqKFfnpgQ4eH0n9f4r0kzmOjCk6nLr4Jv/QZudTzEekS
+         u/o7C4G6lTWLOmVAg1DOX0W/8dg9QwaeN+EAprbUo3V/rwVECmKdcyrCcrXDolkk/n7q
+         ciEy86B0dpBV/JFnKHZLqwNs1GyI7CXofptgYTmIFLvv3IEs4PLYNNhPflgj+oul3ZiF
+         bzEg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Brad Mouring <brad.mouring@ni.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 06/47] sysfs: symlink: export sysfs_create_link_nowarn()
-Date: Thu, 29 Mar 2018 19:59:47 +0200
-Message-Id: <20180329175729.602192724@linuxfoundation.org>
+Subject: [PATCH 4.15 15/47] net: phy: Tell caller result of phy_change()
+Date: Thu, 29 Mar 2018 19:59:56 +0200
+Message-Id: <20180329175730.206175888@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296141904379331?=
-X-GMAIL-MSGID: =?utf-8?q?1596296141904379331?=
+X-GMAIL-THRID: =?utf-8?q?1596296138907684725?=
+X-GMAIL-MSGID: =?utf-8?q?1596296138907684725?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +49,241 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Brad Mouring <brad.mouring@ni.com>
 
 
-[ Upstream commit 2399ac42e762ab25c58420e25359b2921afdc55f ]
+[ Upstream commit a2c054a896b8ac794ddcfc7c92e2dc7ec4ed4ed5 ]
 
-The sysfs_create_link_nowarn() is going to be used in phylib framework in
-subsequent patch which can be built as module. Hence, export
-sysfs_create_link_nowarn() to avoid build errors.
+In 664fcf123a30e (net: phy: Threaded interrupts allow some simplification)
+the phy_interrupt system was changed to use a traditional threaded
+interrupt scheme instead of a workqueue approach.
 
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Fixes: a3995460491d ("net: phy: Relax error checking on sysfs_create_link()")
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+With this change, the phy status check moved into phy_change, which
+did not report back to the caller whether or not the interrupt was
+handled. This means that, in the case of a shared phy interrupt,
+only the first phydev's interrupt registers are checked (since
+phy_interrupt() would always return IRQ_HANDLED). This leads to
+interrupt storms when it is a secondary device that's actually the
+interrupt source.
+
+Signed-off-by: Brad Mouring <brad.mouring@ni.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/sysfs/symlink.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/phy/phy.c |  173 ++++++++++++++++++++++++--------------------------
+ include/linux/phy.h   |    1 
+ 2 files changed, 86 insertions(+), 88 deletions(-)
 
---- a/fs/sysfs/symlink.c
-+++ b/fs/sysfs/symlink.c
-@@ -107,6 +107,7 @@ int sysfs_create_link_nowarn(struct kobj
- {
- 	return sysfs_do_create_link(kobj, target, name, 0);
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -615,6 +615,91 @@ static void phy_error(struct phy_device
  }
-+EXPORT_SYMBOL_GPL(sysfs_create_link_nowarn);
  
  /**
-  *	sysfs_delete_link - remove symlink in object's directory.
++ * phy_disable_interrupts - Disable the PHY interrupts from the PHY side
++ * @phydev: target phy_device struct
++ */
++static int phy_disable_interrupts(struct phy_device *phydev)
++{
++	int err;
++
++	/* Disable PHY interrupts */
++	err = phy_config_interrupt(phydev, PHY_INTERRUPT_DISABLED);
++	if (err)
++		goto phy_err;
++
++	/* Clear the interrupt */
++	err = phy_clear_interrupt(phydev);
++	if (err)
++		goto phy_err;
++
++	return 0;
++
++phy_err:
++	phy_error(phydev);
++
++	return err;
++}
++
++/**
++ * phy_change - Called by the phy_interrupt to handle PHY changes
++ * @phydev: phy_device struct that interrupted
++ */
++static irqreturn_t phy_change(struct phy_device *phydev)
++{
++	if (phy_interrupt_is_valid(phydev)) {
++		if (phydev->drv->did_interrupt &&
++		    !phydev->drv->did_interrupt(phydev))
++			goto ignore;
++
++		if (phy_disable_interrupts(phydev))
++			goto phy_err;
++	}
++
++	mutex_lock(&phydev->lock);
++	if ((PHY_RUNNING == phydev->state) || (PHY_NOLINK == phydev->state))
++		phydev->state = PHY_CHANGELINK;
++	mutex_unlock(&phydev->lock);
++
++	if (phy_interrupt_is_valid(phydev)) {
++		atomic_dec(&phydev->irq_disable);
++		enable_irq(phydev->irq);
++
++		/* Reenable interrupts */
++		if (PHY_HALTED != phydev->state &&
++		    phy_config_interrupt(phydev, PHY_INTERRUPT_ENABLED))
++			goto irq_enable_err;
++	}
++
++	/* reschedule state queue work to run as soon as possible */
++	phy_trigger_machine(phydev, true);
++	return IRQ_HANDLED;
++
++ignore:
++	atomic_dec(&phydev->irq_disable);
++	enable_irq(phydev->irq);
++	return IRQ_NONE;
++
++irq_enable_err:
++	disable_irq(phydev->irq);
++	atomic_inc(&phydev->irq_disable);
++phy_err:
++	phy_error(phydev);
++	return IRQ_NONE;
++}
++
++/**
++ * phy_change_work - Scheduled by the phy_mac_interrupt to handle PHY changes
++ * @work: work_struct that describes the work to be done
++ */
++void phy_change_work(struct work_struct *work)
++{
++	struct phy_device *phydev =
++		container_of(work, struct phy_device, phy_queue);
++
++	phy_change(phydev);
++}
++
++/**
+  * phy_interrupt - PHY interrupt handler
+  * @irq: interrupt line
+  * @phy_dat: phy_device pointer
+@@ -632,9 +717,7 @@ static irqreturn_t phy_interrupt(int irq
+ 	disable_irq_nosync(irq);
+ 	atomic_inc(&phydev->irq_disable);
+ 
+-	phy_change(phydev);
+-
+-	return IRQ_HANDLED;
++	return phy_change(phydev);
+ }
+ 
+ /**
+@@ -652,32 +735,6 @@ static int phy_enable_interrupts(struct
+ }
+ 
+ /**
+- * phy_disable_interrupts - Disable the PHY interrupts from the PHY side
+- * @phydev: target phy_device struct
+- */
+-static int phy_disable_interrupts(struct phy_device *phydev)
+-{
+-	int err;
+-
+-	/* Disable PHY interrupts */
+-	err = phy_config_interrupt(phydev, PHY_INTERRUPT_DISABLED);
+-	if (err)
+-		goto phy_err;
+-
+-	/* Clear the interrupt */
+-	err = phy_clear_interrupt(phydev);
+-	if (err)
+-		goto phy_err;
+-
+-	return 0;
+-
+-phy_err:
+-	phy_error(phydev);
+-
+-	return err;
+-}
+-
+-/**
+  * phy_start_interrupts - request and enable interrupts for a PHY device
+  * @phydev: target phy_device struct
+  *
+@@ -728,64 +785,6 @@ int phy_stop_interrupts(struct phy_devic
+ EXPORT_SYMBOL(phy_stop_interrupts);
+ 
+ /**
+- * phy_change - Called by the phy_interrupt to handle PHY changes
+- * @phydev: phy_device struct that interrupted
+- */
+-void phy_change(struct phy_device *phydev)
+-{
+-	if (phy_interrupt_is_valid(phydev)) {
+-		if (phydev->drv->did_interrupt &&
+-		    !phydev->drv->did_interrupt(phydev))
+-			goto ignore;
+-
+-		if (phy_disable_interrupts(phydev))
+-			goto phy_err;
+-	}
+-
+-	mutex_lock(&phydev->lock);
+-	if ((PHY_RUNNING == phydev->state) || (PHY_NOLINK == phydev->state))
+-		phydev->state = PHY_CHANGELINK;
+-	mutex_unlock(&phydev->lock);
+-
+-	if (phy_interrupt_is_valid(phydev)) {
+-		atomic_dec(&phydev->irq_disable);
+-		enable_irq(phydev->irq);
+-
+-		/* Reenable interrupts */
+-		if (PHY_HALTED != phydev->state &&
+-		    phy_config_interrupt(phydev, PHY_INTERRUPT_ENABLED))
+-			goto irq_enable_err;
+-	}
+-
+-	/* reschedule state queue work to run as soon as possible */
+-	phy_trigger_machine(phydev, true);
+-	return;
+-
+-ignore:
+-	atomic_dec(&phydev->irq_disable);
+-	enable_irq(phydev->irq);
+-	return;
+-
+-irq_enable_err:
+-	disable_irq(phydev->irq);
+-	atomic_inc(&phydev->irq_disable);
+-phy_err:
+-	phy_error(phydev);
+-}
+-
+-/**
+- * phy_change_work - Scheduled by the phy_mac_interrupt to handle PHY changes
+- * @work: work_struct that describes the work to be done
+- */
+-void phy_change_work(struct work_struct *work)
+-{
+-	struct phy_device *phydev =
+-		container_of(work, struct phy_device, phy_queue);
+-
+-	phy_change(phydev);
+-}
+-
+-/**
+  * phy_stop - Bring down the PHY link, and stop checking the status
+  * @phydev: target phy_device struct
+  */
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -897,7 +897,6 @@ int phy_driver_register(struct phy_drive
+ int phy_drivers_register(struct phy_driver *new_driver, int n,
+ 			 struct module *owner);
+ void phy_state_machine(struct work_struct *work);
+-void phy_change(struct phy_device *phydev);
+ void phy_change_work(struct work_struct *work);
+ void phy_mac_interrupt(struct phy_device *phydev, int new_link);
+ void phy_start_machine(struct phy_device *phydev);
