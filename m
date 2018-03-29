@@ -1,181 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeC2QBE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:01:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:44043 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752199AbeC2QBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:01:03 -0400
-X-Google-Smtp-Source: AG47ELtTHP15A8qazy3rbdLagAOGVYjEAqqtfE6Ydoyf200eY7REF3SFtaDY6NaSGl5u8QjQO65JMxaU5d1DxblcLBuVqeNS8hEL
+        id S1752236AbeC2QCT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:02:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39212 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751213AbeC2QCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:02:17 -0400
+Date: Thu, 29 Mar 2018 18:02:15 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 07/14] fs, dax: use page->mapping to warn if truncate
+ collides with a busy page
+Message-ID: <20180329160215.glnrmyunujcc4vwg@quack2.suse.cz>
+References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152167306807.5268.8483232024444414342.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Date: Thu, 29 Mar 2018 09:01:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f2c42e05688f3ab6@google.com>
-Subject: general protection fault in try_to_wake_up
-From: syzbot <syzbot+d1fe9b7b917f2715c7d4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, pmladek@suse.com, rostedt@goodmis.org,
-        sergey.senozhatsky@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152167306807.5268.8483232024444414342.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed 21-03-18 15:57:48, Dan Williams wrote:
+> Catch cases where extent unmap operations encounter pages that are
+> pinned / busy. Typically this is pinned pages that are under active dma.
+> This warning is a canary for potential data corruption as truncated
+> blocks could be allocated to a new file while the device is still
+> performing i/o.
+> 
+> Here is an example of a collision that this implementation catches:
+> 
+>  WARNING: CPU: 2 PID: 1286 at fs/dax.c:343 dax_disassociate_entry+0x55/0x80
+>  [..]
+>  Call Trace:
+>   __dax_invalidate_mapping_entry+0x6c/0xf0
+>   dax_delete_mapping_entry+0xf/0x20
+>   truncate_exceptional_pvec_entries.part.12+0x1af/0x200
+>   truncate_inode_pages_range+0x268/0x970
+>   ? tlb_gather_mmu+0x10/0x20
+>   ? up_write+0x1c/0x40
+>   ? unmap_mapping_range+0x73/0x140
+>   xfs_free_file_space+0x1b6/0x5b0 [xfs]
+>   ? xfs_file_fallocate+0x7f/0x320 [xfs]
+>   ? down_write_nested+0x40/0x70
+>   ? xfs_ilock+0x21d/0x2f0 [xfs]
+>   xfs_file_fallocate+0x162/0x320 [xfs]
+>   ? rcu_read_lock_sched_held+0x3f/0x70
+>   ? rcu_sync_lockdep_assert+0x2a/0x50
+>   ? __sb_start_write+0xd0/0x1b0
+>   ? vfs_fallocate+0x20c/0x270
+>   vfs_fallocate+0x154/0x270
+>   SyS_fallocate+0x43/0x80
+>   entry_SYSCALL_64_fastpath+0x1f/0x96
+> 
+> Cc: Jeff Moyer <jmoyer@redhat.com>
+> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-syzbot hit the following crash on upstream commit
-bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
-Merge tag 'pinctrl-v4.16-3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=d1fe9b7b917f2715c7d4
+Two comments when looking at this now:
 
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4649457446551552
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4909621332410368
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
-compiler: gcc (GCC) 7.1.1 20170620
+> +#define for_each_entry_pfn(entry, pfn, end_pfn) \
+> +	for (pfn = dax_radix_pfn(entry), \
+> +			end_pfn = pfn + dax_entry_size(entry) / PAGE_SIZE; \
+> +			pfn < end_pfn; \
+> +			pfn++)
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d1fe9b7b917f2715c7d4@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+Why don't you declare 'end_pfn' inside the for() block? That way you don't
+have to pass the variable as an argument to for_each_entry_pfn(). It's not
+like you need end_pfn anywhere in the loop body, you just use it to cache
+loop termination index.
 
-IPVS: ftp: loaded support on port[0] = 21
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4170 Comm: syz-executor0 Not tainted 4.16.0-rc6+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__lock_acquire+0x209/0x3e00 kernel/locking/lockdep.c:3320
-RSP: 0018:ffff8801db206f60 EFLAGS: 00010002
-RAX: 078e0401078e0401 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 1ffff100389fe583 RSI: 0000000000000000 RDI: ffff8801c4ff2c18
-RBP: ffff8801db2072f0 R08: ffffffff814d839c R09: 0000000000000001
-R10: 0000000000000000 R11: ffff8801c4ff2c10 R12: 0000000000000000
-R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b793c440
-FS:  00000000014fa940(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004cb4e0 CR3: 00000001b7980002 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-  try_to_wake_up+0xbc/0x15f0 kernel/sched/core.c:1989
-  default_wake_function+0x30/0x50 kernel/sched/core.c:3693
-  autoremove_wake_function+0x78/0x350 kernel/sched/wait.c:377
-  __wake_up_common+0x18e/0x780 kernel/sched/wait.c:97
-  __wake_up_common_lock+0x1b4/0x310 kernel/sched/wait.c:125
-  __wake_up+0xe/0x10 kernel/sched/wait.c:149
-  wake_up_klogd_work_func+0x4a/0x70 kernel/printk/printk.c:2869
-  irq_work_run_list+0x184/0x240 kernel/irq_work.c:155
-  irq_work_tick+0x136/0x1a0 kernel/irq_work.c:181
-  update_process_times+0x48/0x60 kernel/time/timer.c:1639
-  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
-  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1194
-  __run_hrtimer kernel/time/hrtimer.c:1349 [inline]
-  __hrtimer_run_queues+0x39c/0xec0 kernel/time/hrtimer.c:1411
-  hrtimer_interrupt+0x2a5/0x6f0 kernel/time/hrtimer.c:1469
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:778  
-[inline]
-RIP: 0010:console_unlock+0xb18/0xfb0 kernel/printk/printk.c:2403
-RSP: 0018:ffff8801b79068d8 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff12
-RAX: ffff8801b793c440 RBX: 0000000000000200 RCX: ffffffff815a8d6f
-RDX: 0000000000000000 RSI: 1ffff10036f279af RDI: 0000000000000293
-RBP: ffff8801b7906a40 R08: 1ffff10036f20ce9 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: ffffffff83ba15e0 R15: dffffc0000000000
-  vprintk_emit+0x5c3/0xb90 kernel/printk/printk.c:1907
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
-  vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
-  printk+0xaa/0xca kernel/printk/printk.c:1980
-  kasan_die_handler+0x3d/0x3f arch/x86/mm/kasan_init_64.c:248
-  notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
-  __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
-  atomic_notifier_call_chain+0x77/0x140 kernel/notifier.c:193
-  notify_die+0x18c/0x280 kernel/notifier.c:549
-  do_general_protection+0x331/0x3e0 arch/x86/kernel/traps.c:558
-  general_protection+0x25/0x50 arch/x86/entry/entry_64.S:1150
-RIP: 0010:find_entry.isra.14+0x9f/0x1d0 fs/proc/proc_sysctl.c:119
-RSP: 0018:ffff8801b7906fc8 EFLAGS: 00010202
-RAX: 00f1c08020f1c080 RBX: ffff8801c4f95058 RCX: ffffffff81d29eae
-RDX: 0000000000000000 RSI: ffff8801b8991678 RDI: ffff8801c4f95070
-RBP: ffff8801b7907008 R08: 1ffff10036f20d55 R09: 0000000000000004
-R10: ffff8801b7906f70 R11: 0000000000000000 R12: ffff8801b89915f8
-R13: dffffc0000000000 R14: 078e0401078e0401 R15: ffff8801b8991678
-  find_subdir+0xa8/0x170 fs/proc/proc_sysctl.c:923
-  get_subdir fs/proc/proc_sysctl.c:977 [inline]
-  __register_sysctl_table+0x6d5/0x10b0 fs/proc/proc_sysctl.c:1327
-  register_net_sysctl+0x29/0x30 net/sysctl_net.c:120
-  mpls_dev_sysctl_register+0x1cf/0x2e0 net/mpls/af_mpls.c:1369
-  mpls_add_dev net/mpls/af_mpls.c:1420 [inline]
-  mpls_dev_notify+0x2af/0x980 net/mpls/af_mpls.c:1542
-  notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
-  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
-  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
-  call_netdevice_notifiers_info+0x32/0x70 net/core/dev.c:1707
-  call_netdevice_notifiers net/core/dev.c:1725 [inline]
-  register_netdevice+0xd40/0x1020 net/core/dev.c:7929
-  register_netdev+0x1a/0x30 net/core/dev.c:8014
-  sit_init_net+0x384/0xa70 net/ipv6/sit.c:1852
-  ops_init+0x10a/0x570 net/core/net_namespace.c:118
-  setup_net+0x351/0x760 net/core/net_namespace.c:302
-  copy_net_ns+0x238/0x580 net/core/net_namespace.c:426
-  create_new_namespaces+0x425/0x880 kernel/nsproxy.c:107
-  unshare_nsproxy_namespaces+0xae/0x1e0 kernel/nsproxy.c:206
-  SYSC_unshare kernel/fork.c:2407 [inline]
-  SyS_unshare+0x653/0xfa0 kernel/fork.c:2357
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x457327
-RSP: 002b:00007ffdd0bf1928 EFLAGS: 00000202 ORIG_RAX: 0000000000000110
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000457327
-RDX: 0000000000000000 RSI: 00007ffdd0bf1900 RDI: 0000000040000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000410710
-R13: 00000000004107a0 R14: 0000000000000000 R15: 0000000000000000
-Code: 48 85 c0 4c 8b 9d e8 fc ff ff 8b 8d e0 fc ff ff 44 8b 8d d8 fc ff ff  
-4c 8b 85 d0 fc ff ff 44 8b 95 c8 fc ff ff 0f 84 9b 07 00 00 <f0> ff 80 38  
-01 00 00 49 8d bf 70 08 00 00 48 ba 00 00 00 00 00
-RIP: __lock_acquire+0x209/0x3e00 kernel/locking/lockdep.c:3320 RSP:  
-ffff8801db206f60
----[ end trace b962f2b4a8ee2930 ]---
+> @@ -547,6 +599,10 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+>  
+>  	spin_lock_irq(&mapping->tree_lock);
+>  	new_entry = dax_radix_locked_entry(pfn, flags);
+> +	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
+> +		dax_disassociate_entry(entry, mapping, false);
+> +		dax_associate_entry(new_entry, mapping);
+> +	}
 
+I find it quite tricky that in case we pass zero page / empty entry into
+dax_[dis]associate_entry(), it will not do anything because
+dax_entry_size() will return 0. Can we add an explicit check into
+dax_[dis]associate_entry() or at least a comment there?
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
