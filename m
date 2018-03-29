@@ -1,39 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeC2WZt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:25:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751124AbeC2WZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:25:48 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180329.115956.476747368912393740.davem@davemloft.net>
-References: <20180329.115956.476747368912393740.davem@davemloft.net> <152219064515.24098.9428175357244257284.stgit@warthog.procyon.org.uk>
-To: David Miller <davem@davemloft.net>
-Cc: dhowells@redhat.com, netdev@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/6] rxrpc: Fixes
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <30570.1522362346.1@warthog.procyon.org.uk>
-Date: Thu, 29 Mar 2018 23:25:46 +0100
-Message-ID: <30571.1522362346@warthog.procyon.org.uk>
+        id S1752154AbeC2W0N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:26:13 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:62436 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751124AbeC2W0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 18:26:11 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+From: Chris Wilson <chris@chris-wilson.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: intel-gfx@lists.freedesktop.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] trace: Default to using trace_global_clock if sched_clock is unstable
+Date: Thu, 29 Mar 2018 23:25:57 +0100
+Message-Id: <20180329222557.6274-1-chris@chris-wilson.co.uk>
+X-Mailer: git-send-email 2.16.3
+X-Originating-IP: 78.156.65.138
+X-Country: code=GB country="United Kingdom" ip=78.156.65.138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> wrote:
+Across suspend, we may see a very large drift in timestamps if the sched
+clock is unstable, prompting the global trace's ringbuffer code to warn
+and suggest switching to the global clock. Preempt this request by
+detecting when the sched clock is unstable (determined during
+late_initcall) and automatically switching the default clock over to
+trace_global_clock.
 
-> David, this GIT URL has tons of unrelated changes.  It seems to bring in
-> the parts of Linus's tree that haven't proagated to 'net' yet.
+This should prevent requiring user interaction to resolve warnings such
+as:
 
-Sorry about that, I rebased on the wrong branch by accident.
+    Delta way too big! 18446743856563626466 ts=18446744054496180323 write stamp = 197932553857
+    If you just came from a suspend/resume,
+    please switch to the trace global clock:
+    echo global > /sys/kernel/debug/tracing/trace_clock
 
-I've got some more fixes.  Should I just give the lot to you to pull into your
-net-next tree, given that the merge window may well open Sunday?
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ kernel/trace/trace.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-David
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 13baf85b27d8..c5462513db90 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -41,6 +41,7 @@
+ #include <linux/nmi.h>
+ #include <linux/fs.h>
+ #include <linux/trace.h>
++#include <linux/sched/clock.h>
+ #include <linux/sched/rt.h>
+ 
+ #include "trace.h"
+@@ -8505,3 +8506,15 @@ __init static int clear_boot_tracer(void)
+ 
+ fs_initcall(tracer_init_tracefs);
+ late_initcall_sync(clear_boot_tracer);
++
++#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
++__init static int tracing_set_default_clock(void)
++{
++	/* sched_clock_stable() is determined in late_initcall */
++	if (!trace_boot_clock && !sched_clock_stable())
++		tracing_set_clock(&global_trace, "global");
++
++	return 0;
++}
++late_initcall_sync(tracing_set_default_clock);
++#endif
+-- 
+2.16.3
