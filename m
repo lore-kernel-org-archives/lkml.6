@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Pauxfy6ew3piwGiLOwRXa0UKzTfCGY7k4BRVMAbJbxM4h7uUuSyZKqeZyFCALyudr8Nt0
-ARC-Seal: i=1; a=rsa-sha256; t=1522346709; cv=none;
+X-Google-Smtp-Source: AIpwx49Q+H0ALENRkVPhMTXej9ZgMGNSMMnPnqu9pZKf8Ad4y9XOUPZiTOLM8cH2inOllWuKq072
+ARC-Seal: i=1; a=rsa-sha256; t=1522346707; cv=none;
         d=google.com; s=arc-20160816;
-        b=RxkEAj58ds1qtaOu8Rjk+OHQSdFxRydS1hIkcED10JBC576Xj2h3CeO0hvb4jo0yfp
-         FrMURKNXgm3jo1kDhJbxspuOTQ9+9qriDpMETf3irV/tAxf+w354uYFK0imVYL6JjgsY
-         xysvxcZ+mUo1gL8SPFmBqJRlcsIwfLdAmDNUhDpie/fKKWkoPROIIy2G+iTh7wYLLAaD
-         U/lbvMoOO6em9nLT5S1+TnGEtOlI/XLBwwLHfRvbr5wh+f41LuMOERqXTbu8T4l3l4MN
-         UgTHYU0ENla24vgNPAqA/y9jKj+caAafPM6QY3eKSwCx9Ne13rAKjdjB6RLQKhjzoFFK
-         Hp8A==
+        b=dukzFmE7McKHKtfnqI4hwzUbZMrxF8PfowrChqr22Zkcj3HqmO3G5zKvfasAGp879Y
+         f50FdW3S0DUadwhu1Tb4dnjyuRxpbNGlFOQ2/3aEX7mgJr+GpGCrdCNxB4Qze10qKRuI
+         Ao7T8wYnZyr4Uw1C1tuo5wdnx3wuaqEgayjV/Or608eqVrfYRoORuv6eFunQL8lhB/sQ
+         XdKUO+NXQo/f7UBU7rDx+ommYrXQ9m7zzqtEL8zVepp3DWtLRC/0DbGBIKEdfEg8o51I
+         jNVAwWRcsfSqyB60hzlSIs3R1oh8wswEIf6K5iNgHS43ufjS5nLgH6NydPrUerEsDzu9
+         vVCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5f0QEW5SiJBB+1oU/7myBRS++6AZBDT3ZCZqT4QEgsw=;
-        b=BEE5jI0EmfrNaGrSm1Paqp+d3ccbeR+VeM5nWVQhyUnc7PTbvEqFFi+D8xL8WEFjue
-         0bMaKcZMl/ZsmqXFKNouFZOpD3TXEEyY7jnXakQCnqgxT9Mn5luBv1bqYpB5kmDE0T4+
-         eeKEdVp4Y+9euYFdO6a5hiH/zfNLlgIKBSKJP9pBBVkuYYAgup+jePY6zYACqX2noDDQ
-         IFx2zP2JdrXpDasF+cXRHfykQMj8II2YdYTubNjgonnytIkMiheULUtJAB54DCu0ggzf
-         /oNhGUsBNZJRLSv3r1gW4gCvjXLWi+LWkhCJ//Ab61eKxJdoTRMKIdoXYOKCsFBBIVbE
-         J/cw==
+        bh=+ED0wwIOPNqCWuvkIGYRcBNXOskUMiwWjEDbrNW/j/0=;
+        b=hnwyeci7f4q9yPrpPgB/2+zRYLoY7OKfNc8rhCWe+Sxz0EvmnMtQwCd9OZPighM7iP
+         TSosrR/sJv4m2ecOdV9IkkdydhU2coYku6o7xo+cZx9fWhzl+7Vam40IAJ30/Qn9E2SG
+         /HoAVskB/5u8hv8QhEUEkmMjZ5pGzrvA2Ey7kdAwRchrtm+Q2Nvs2KgGnd+KKrrOqwt0
+         yspyxGm5LQewb+QXEqxmu1zMGtqrRzb1UshWq7St0BFMlfnS9UWx5xipbM1gXwxevk64
+         a3ljLokBlLRHi1bfMW4R4ET4romxgpgmvQ3zDct8iUDQJV7OsL/o0ncAH8f2pH2vR/YQ
+         yUMg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
+	David Ahern <dsahern@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 31/43] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
-Date: Thu, 29 Mar 2018 20:00:26 +0200
-Message-Id: <20180329175733.358339899@linuxfoundation.org>
+Subject: [PATCH 4.14 30/43] net: Only honor ifindex in IP_PKTINFO if non-0
+Date: Thu, 29 Mar 2018 20:00:25 +0200
+Message-Id: <20180329175733.265590324@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296154266944554?=
-X-GMAIL-MSGID: =?utf-8?q?1596296223265447231?=
+X-GMAIL-THRID: =?utf-8?q?1596296117721109691?=
+X-GMAIL-MSGID: =?utf-8?q?1596296220991036748?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,121 +49,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: David Ahern <dsahern@gmail.com>
 
 
-[ Upstream commit 484d802d0f2f29c335563fcac2a8facf174a1bbc ]
+[ Upstream commit 2cbb4ea7de167b02ffa63e9cdfdb07a7e7094615 ]
 
-There is no need for complex checking between the last consumed index
-and current consumed index, a simple subtraction will do.
+Only allow ifindex from IP_PKTINFO to override SO_BINDTODEVICE settings
+if the index is actually set in the message.
 
-This also eliminates the possibility of a permanent transmit queue stall
-under the following conditions:
-
-- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
-  point where we run out of free descriptors, so we stop the transmit
-  queue at the end of bcm_sysport_xmit()
-
-- because of our locking, we have the transmit process disable
-  interrupts which means we can be blocking the TX reclamation process
-
-- when TX reclamation finally runs, we will be computing the difference
-  between ring->c_index (last consumed index by SW) and what the HW
-  reports through its register
-
-- this register is masked with (ring->size - 1) = 0xff, which will lead
-  to stripping the upper bits of the index (register is 16-bits wide)
-
-- we will be computing last_tx_cn as 0, which means there is no work to
-  be done, and we never wake-up the transmit queue, leaving it
-  permanently disabled
-
-A practical example is e.g: ring->c_index aka last_c_index = 12, we
-pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
-so last_tx_cn == 0, nothing happens.
-
-Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c |   33 +++++++++++++----------------
- drivers/net/ethernet/broadcom/bcmsysport.h |    2 -
- 2 files changed, 16 insertions(+), 19 deletions(-)
+ net/ipv4/ip_sockglue.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -855,10 +855,12 @@ static void bcm_sysport_tx_reclaim_one(s
- static unsigned int __bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
- 					     struct bcm_sysport_tx_ring *ring)
- {
--	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
- 	unsigned int pkts_compl = 0, bytes_compl = 0;
- 	struct net_device *ndev = priv->netdev;
-+	unsigned int txbds_processed = 0;
- 	struct bcm_sysport_cb *cb;
-+	unsigned int txbds_ready;
-+	unsigned int c_index;
- 	u32 hw_ind;
- 
- 	/* Clear status before servicing to reduce spurious interrupts */
-@@ -871,29 +873,23 @@ static unsigned int __bcm_sysport_tx_rec
- 	/* Compute how many descriptors have been processed since last call */
- 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
- 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
--	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
--
--	last_c_index = ring->c_index;
--	num_tx_cbs = ring->size;
--
--	c_index &= (num_tx_cbs - 1);
--
--	if (c_index >= last_c_index)
--		last_tx_cn = c_index - last_c_index;
--	else
--		last_tx_cn = num_tx_cbs - last_c_index + c_index;
-+	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
- 
- 	netif_dbg(priv, tx_done, ndev,
--		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
--		  ring->index, c_index, last_tx_cn, last_c_index);
-+		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
-+		  ring->index, ring->c_index, c_index, txbds_ready);
- 
--	while (last_tx_cn-- > 0) {
--		cb = ring->cbs + last_c_index;
-+	while (txbds_processed < txbds_ready) {
-+		cb = &ring->cbs[ring->clean_index];
- 		bcm_sysport_tx_reclaim_one(ring, cb, &bytes_compl, &pkts_compl);
- 
- 		ring->desc_count++;
--		last_c_index++;
--		last_c_index &= (num_tx_cbs - 1);
-+		txbds_processed++;
-+
-+		if (likely(ring->clean_index < ring->size - 1))
-+			ring->clean_index++;
-+		else
-+			ring->clean_index = 0;
- 	}
- 
- 	u64_stats_update_begin(&priv->syncp);
-@@ -1406,6 +1402,7 @@ static int bcm_sysport_init_tx_ring(stru
- 	netif_tx_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
- 	ring->index = index;
- 	ring->size = size;
-+	ring->clean_index = 0;
- 	ring->alloc_size = ring->size;
- 	ring->desc_cpu = p;
- 	ring->desc_count = ring->size;
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -706,7 +706,7 @@ struct bcm_sysport_tx_ring {
- 	unsigned int	desc_count;	/* Number of descriptors */
- 	unsigned int	curr_desc;	/* Current descriptor */
- 	unsigned int	c_index;	/* Last consumer index */
--	unsigned int	p_index;	/* Current producer index */
-+	unsigned int	clean_index;	/* Current clean index */
- 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
- 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
- 	struct bcm_sysport_priv *priv;	/* private context backpointer */
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -258,7 +258,8 @@ int ip_cmsg_send(struct sock *sk, struct
+ 			src_info = (struct in6_pktinfo *)CMSG_DATA(cmsg);
+ 			if (!ipv6_addr_v4mapped(&src_info->ipi6_addr))
+ 				return -EINVAL;
+-			ipc->oif = src_info->ipi6_ifindex;
++			if (src_info->ipi6_ifindex)
++				ipc->oif = src_info->ipi6_ifindex;
+ 			ipc->addr = src_info->ipi6_addr.s6_addr32[3];
+ 			continue;
+ 		}
+@@ -288,7 +289,8 @@ int ip_cmsg_send(struct sock *sk, struct
+ 			if (cmsg->cmsg_len != CMSG_LEN(sizeof(struct in_pktinfo)))
+ 				return -EINVAL;
+ 			info = (struct in_pktinfo *)CMSG_DATA(cmsg);
+-			ipc->oif = info->ipi_ifindex;
++			if (info->ipi_ifindex)
++				ipc->oif = info->ipi_ifindex;
+ 			ipc->addr = info->ipi_spec_dst.s_addr;
+ 			break;
+ 		}
