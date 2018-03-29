@@ -1,39 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeC2QJH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:09:07 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:45364 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752673AbeC2QJF (ORCPT
+        id S1752538AbeC2QJi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:09:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36022 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbeC2QJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:09:05 -0400
-Date: Thu, 29 Mar 2018 12:09:03 -0400 (EDT)
-Message-Id: <20180329.120903.1175452061863560219.davem@davemloft.net>
-To: dongli.zhang@oracle.com
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, wei.liu2@citrix.com, paul.durrant@citrix.com
-Subject: Re: [PATCH 1/1] xen-netback: process malformed sk_buff correctly
- to avoid BUG_ON()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1522194136-11985-1-git-send-email-dongli.zhang@oracle.com>
-References: <1522194136-11985-1-git-send-email-dongli.zhang@oracle.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 29 Mar 2018 12:09:36 -0400
+Date: Thu, 29 Mar 2018 18:09:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+Message-ID: <20180329160914.GR4082@hirez.programming.kicks-ass.net>
+References: <20180329000024.GA16648@alison-desk.jf.intel.com>
+ <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
+ <20180329134723.GA4043@hirez.programming.kicks-ass.net>
+ <8a24d82e-a8dd-2f35-4764-a58fd6c64ae8@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a24d82e-a8dd-2f35-4764-a58fd6c64ae8@linux.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongli Zhang <dongli.zhang@oracle.com>
-Date: Wed, 28 Mar 2018 07:42:16 +0800
+On Thu, Mar 29, 2018 at 07:34:58AM -0700, Dave Hansen wrote:
+> What should we say, though?
+> 
+>              /*
+> 	      * false means 'c' does not share the LLC of 'o'.
+> 	      * Note: this decision gets reflected all the way
+> 	      * out to userspace
+> 	      */
+>              return false;
 
-> The "BUG_ON(!frag_iter)" in function xenvif_rx_next_chunk() is triggered if
-> the received sk_buff is malformed, that is, when the sk_buff has pattern
-> (skb->data_len && !skb_shinfo(skb)->nr_frags). Below is a sample call
-> stack:
-
-We should fix the parts of the kernel which build illegal malformed
-SKBs rather than adding checks to every driver in the tree.
-
-I'm not applying this, sorry.
+That works, I suppose. You might want to put in a refernce to wherever
+it is you shrink llc-size such that cache-per-cpu remains invariant.
