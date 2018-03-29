@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49XRIQYr305rkNCalfIN9UKladPDMcBi/Tk6qCvUuaX303/WbydNEumDURrjszxyBkkF7Fm
-ARC-Seal: i=1; a=rsa-sha256; t=1522346847; cv=none;
+X-Google-Smtp-Source: AIpwx4+yxNaGJ2qrGUvY5yippaJGQG08vvMHkmbWtHkb41oxuRNUWOW1yfvllrGE2CczCnPDs8k2
+ARC-Seal: i=1; a=rsa-sha256; t=1522346844; cv=none;
         d=google.com; s=arc-20160816;
-        b=kXGjSAO7laoxJyp5k7pOEN/AAo394JlLVR48AuzeiROqmfyhw/r3dZc8//CwmVCE69
-         GHnkS4f9MVWG+OKh9WQfYIvhQesOcCYZbFSzhvyUwRq69P5CNs0ID22BTdhSiXuOYNox
-         SXh0hajIkjcc2e8mOEL4CUYXby6+vgYnE8WQqIEi3peDsogwQaW08cdDpOWQUeyLcNr0
-         IKjsqeh4o3QczugoftYrD9Zob7l9qMSGbCYiSMNZcAXPLG2ACV+hhgqCpwl64ixM7xIi
-         lomHTMX2fFZSlX2zrCTZ/6y/ns/X4kRsE1si+Kp3enJTv22SBLsJePIMuzRkJ7dHf3Hq
-         XrEw==
+        b=vQgsMFcU7gYos6E4Kl9uZmME4X0BAjTIFitqXX5kHMRyzk+rzbVQCqxmYe8oWiPYz7
+         o44kxRh9+hPC3dbD1LPhVJB4WxuZIUiaaxdTrh8dPybDvwKjsDo6i5sMfOat1xe5SyDm
+         qOej07Je82BIhGVs60+CJbzB51JLd5zJ/b8YTuuNswRlJJuvgzIo0mIP3840CZ7Y33GH
+         ANSu+Oxx7KqvCJXyc3ijnEfC99XZ69jpHjzkdqRnOqSpblJdM5GPk3UuRJJUhbaRREI+
+         f9PLYrAW40GnKofs5uThEZ+AQ8hWbdh39P3Kw8scQ4/T0WjHqPy0hSwn1Q3vDVgnBDgo
+         WSOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MaYqeV9YmzKTi0r55Xr4cqp6ZOjLv53ClNjePZwvCy4=;
-        b=PoSf1xmYt36ZpE2UKazcWIGmVBYwvWigyL2olzgbtHAFXXmuA3etuJ0OB5qBHrphhL
-         xp1xl0LSuvBJFiJYQTGc2oYurNCJ8pJrJ2bCuu+SxdBVD5pzQZMn/9D3cWa22hz0Uhb/
-         X1OPZjXrseoUIDBw5IH2ouCkj+DaONwtQ6RXKTDm6cl935beLNolrBTYf25oQjaiiqw2
-         gFVSWaI/XMlThTl4P5MEAwk8jdeDucoQRRDGZpFLsCTPzXITCU72ILw73JQ03z7j1URy
-         gda3ZlZtJCPxIcMZGdby7kUSOP8TyMihyA9aWAM/4qsUzR12f+AUqenCuGCHP0e8dVsY
-         obrQ==
+        bh=kmCC55iEPPTQdmKoTutWc9sB0kYt4UTnva6lS2QI26I=;
+        b=RSyajo1oAZeLFC5D1bFG8MQHHvd51MypTVNTTOhuhlB//rJOPMT16Na7nEDHjjHD4D
+         2tFCeDX6TQzuvVlG+d7muxpMgPGkm+rH/SMw40kNbYlobhmqzLaPvNlB/fmPldTuw7sn
+         5+hTyUoKo63GwsgbuMjyaNpkOZEVQbRJJOSgqIdp9Rzt88hVoesGXjUdj1TKfW8U74JT
+         eduIbuaNHPPhlkkW38XBztC2pIluwbzOHu/UWLDWHsE3RsGE4sVXcR5Gdb0Vq6CCskpv
+         zLOzcLt6ZoO19LJRlWuTPtRAhI2MrVw+QHNyv7H5Ws2TYynaj7hHBEwcYbn+fSiLG2go
+         YNLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kirill Tkhai <ktkhai@virtuozzo.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrei Vagin <avagin@virtuozzo.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 09/28] net: Fix hlist corruptions in inet_evict_bucket()
-Date: Thu, 29 Mar 2018 20:00:28 +0200
-Message-Id: <20180329175734.574879436@linuxfoundation.org>
+Subject: [PATCH 4.9 08/28] net: use skb_to_full_sk() in skb_update_prio()
+Date: Thu, 29 Mar 2018 20:00:27 +0200
+Message-Id: <20180329175734.474910176@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296057389749858?=
-X-GMAIL-MSGID: =?utf-8?q?1596296367940806545?=
+X-GMAIL-THRID: =?utf-8?q?1596296054834790372?=
+X-GMAIL-MSGID: =?utf-8?q?1596296365509441087?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +50,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit a560002437d3646dafccecb1bf32d1685112ddda ]
+[ Upstream commit 4dcb31d4649df36297296b819437709f5407059c ]
 
-inet_evict_bucket() iterates global list, and
-several tasks may call it in parallel. All of
-them hash the same fq->list_evictor to different
-lists, which leads to list corruption.
+Andrei Vagin reported a KASAN: slab-out-of-bounds error in
+skb_update_prio()
 
-This patch makes fq be hashed to expired list
-only if this has not been made yet by another
-task. Since inet_frag_alloc() allocates fq
-using kmem_cache_zalloc(), we may rely on
-list_evictor is initially unhashed.
+Since SYNACK might be attached to a request socket, we need to
+get back to the listener socket.
+Since this listener is manipulated without locks, add const
+qualifiers to sock_cgroup_prioidx() so that the const can also
+be used in skb_update_prio()
 
-The problem seems to exist before async
-pernet_operations, as there was possible to have
-exit method to be executed in parallel with
-inet_frags::frags_work, so I add two Fixes tags.
-This also may go to stable.
+Also add the const qualifier to sock_cgroup_classid() for consistency.
 
-Fixes: d1fe19444d82 "inet: frag: don't re-use chainlist for evictor"
-Fixes: f84c6821aa54 "net: Convert pernet_subsys, registered from inet_init()"
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Fixes: ca6fb0651883 ("tcp: attach SYNACK messages to request sockets instead of listener")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Andrei Vagin <avagin@virtuozzo.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/cgroup-defs.h |    4 ++--
+ net/core/dev.c              |   22 +++++++++++++++-------
+ 2 files changed, 17 insertions(+), 9 deletions(-)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -119,6 +119,9 @@ out:
- 
- static bool inet_fragq_should_evict(const struct inet_frag_queue *q)
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -609,13 +609,13 @@ struct sock_cgroup_data {
+  * updaters and return part of the previous pointer as the prioidx or
+  * classid.  Such races are short-lived and the result isn't critical.
+  */
+-static inline u16 sock_cgroup_prioidx(struct sock_cgroup_data *skcd)
++static inline u16 sock_cgroup_prioidx(const struct sock_cgroup_data *skcd)
  {
-+	if (!hlist_unhashed(&q->list_evictor))
-+		return false;
-+
- 	return q->net->low_thresh == 0 ||
- 	       frag_mem_limit(q->net) >= q->net->low_thresh;
+ 	/* fallback to 1 which is always the ID of the root cgroup */
+ 	return (skcd->is_data & 1) ? skcd->prioidx : 1;
  }
+ 
+-static inline u32 sock_cgroup_classid(struct sock_cgroup_data *skcd)
++static inline u32 sock_cgroup_classid(const struct sock_cgroup_data *skcd)
+ {
+ 	/* fallback to 0 which is the unconfigured default classid */
+ 	return (skcd->is_data & 1) ? skcd->classid : 0;
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3179,15 +3179,23 @@ static inline int __dev_xmit_skb(struct
+ #if IS_ENABLED(CONFIG_CGROUP_NET_PRIO)
+ static void skb_update_prio(struct sk_buff *skb)
+ {
+-	struct netprio_map *map = rcu_dereference_bh(skb->dev->priomap);
++	const struct netprio_map *map;
++	const struct sock *sk;
++	unsigned int prioidx;
+ 
+-	if (!skb->priority && skb->sk && map) {
+-		unsigned int prioidx =
+-			sock_cgroup_prioidx(&skb->sk->sk_cgrp_data);
++	if (skb->priority)
++		return;
++	map = rcu_dereference_bh(skb->dev->priomap);
++	if (!map)
++		return;
++	sk = skb_to_full_sk(skb);
++	if (!sk)
++		return;
+ 
+-		if (prioidx < map->priomap_len)
+-			skb->priority = map->priomap[prioidx];
+-	}
++	prioidx = sock_cgroup_prioidx(&sk->sk_cgrp_data);
++
++	if (prioidx < map->priomap_len)
++		skb->priority = map->priomap[prioidx];
+ }
+ #else
+ #define skb_update_prio(skb)
