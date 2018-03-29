@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48kRh81bYuhfQ/rzQOyLkjpAbPgZXyySjmc2MGQqaj4eoBTz6bSDzOj0JbviJoUjYDT5AIC
-ARC-Seal: i=1; a=rsa-sha256; t=1522346865; cv=none;
+X-Google-Smtp-Source: AIpwx4/d/mt3L1PpRU1/fWkosESpHVqNqrR0PHomBzunKU1QvfQqIIp67NjKc7PO/8drpRjxNEvx
+ARC-Seal: i=1; a=rsa-sha256; t=1522346862; cv=none;
         d=google.com; s=arc-20160816;
-        b=X/CtoSejISmROD3tSvci3g+YJ1ZXOswUmIWH869eUcFoAV1c/VpEMTgprH0pkCZk2+
-         FcUyFmg66SXliaF9PyOWVMGx7N5VfGLtjSm0TLm3jntBn1aLRTtWDiaQ7IESEuH80acS
-         dPRLOCcSAmoLNLBSA8aRyb16Y3/g8O/tJi9kITp7uHYfQLHWQ5pE3RkJh+NPSPL/mVeD
-         vTrLbnQIuw4rGWFQsldYfELQP+GeAx/pzOryfSSBrE7XBDiVqjiOYJuRuJOyfkfUYp5q
-         SL+YyqEqHlg3zqaw0akpHkpQS/MZdqtIfzS2dJTt2QAXxehzLUYCP17WbA/OhXkglxQq
-         T4EQ==
+        b=Nm5kcwwMb5ePiNZSqayKpLJ/mST9eYzIRsmaoT55MIoWARHKCLNVm7XN+vVrspnAI+
+         1PIEZaFU3G2ipKHCdVQ4rjaP7GPyjvIcwO43EFFbAfZt8cLEAO2B4tOu7f9sLOEA9zzk
+         KRRGm9siJXRo8ZwLr3XU7HCrX11/aKAhUXqzVQleGCK3c+hqN+xOWmB3btpS1Oe/n0Uh
+         Cfe75UMlDjK0PfVigdypsXvX/MvCHdStwsJxYnKFZn/TJXpUcCPtlG0H59iHZsexhTZd
+         daLBGVVbydirHHssLMXUwdMlE1FNyuKDLSE3SkRv6dBT1fj6uK24VvjFGBDVyyQ2kJrY
+         WPvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=k/cq8lIz+kGARkAVE3c9g1II+1SHl6eze3i+QKhCGXA=;
-        b=uAMZDrvI0IccDp0DtoUaWirZ5Uv4YRdSFYNU2RFTPYY+sl2dp1k7XKE1YURdLhpyvi
-         LR8T9r3yAbqTYrt1E13STZTey5RhsPO5YxdFDmFo+9qt0vneAlprpsm55cFEOOfwQZ13
-         hsYf0fR/rnvl293FqkZypqD7zf3/faSSDyBp71IGzUeBjHP5viWalgPPjDMztkgqplfx
-         LaYIJrCJatIFp0JI20aeDMlpa8CBnXq0xFLj6wuH7KGdmpLUDTgEx8tjVdj0ENEP5TWJ
-         d7IMayzYXDhksX8MlNRxDor0LvW/ZAmRpQffw2CjNbHI3NL2gtkDPuNZkidd/HdHsmAD
-         Nv/A==
+        bh=jcs4rCUg+NsYk/UgwzrkMuCQ0S+gcM2CxIX72jVlLUQ=;
+        b=BkAjjhuIyQp/9yJKwe0LiWNJP+00Xjz/CY7V+UTIbh89kxS/hqKYOQfkA4i0h1JmGK
+         0LKyv6nVC/Ma9JdM8ttPJXqb2RFaf+b6p/pdMiWXUa3lqTdSB9fTwlcHuQwKsJJbwi1x
+         70Fy4eQQyDPg7JrPLYDD+EDvsnc7Ut3riPBY2OrvCs/dtZd8as2KN/CyD8voTBIbsPBV
+         t5jm5hKetr6fwAwwVhUH/+ketqaC58duP4J+lE+jutzYSLJrXivztP/5yuoCULn/93wq
+         /sUnLejwfBRjCjYj7QQuV40TxuXb0t5OsgEUXUytcN+8GRFzIxwRXNMNsPev/MTofnUv
+         lrlQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 02/20] genirq: Track whether the trigger type has been set
-Date: Thu, 29 Mar 2018 20:00:38 +0200
-Message-Id: <20180329175741.988003717@linuxfoundation.org>
+	"Randy E. Witt" <randy.e.witt@intel.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 12/20] skbuff: Fix not waking applications when errors are enqueued
+Date: Thu, 29 Mar 2018 20:00:48 +0200
+Message-Id: <20180329175742.402912487@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296321269609847?=
-X-GMAIL-MSGID: =?utf-8?q?1596296386262304555?=
+X-GMAIL-THRID: =?utf-8?q?1596296148190849084?=
+X-GMAIL-MSGID: =?utf-8?q?1596296383318406854?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,103 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-commit 4f8413a3a799c958f7a10a6310a451e6b8aef5ad upstream.
 
-When requesting a shared interrupt, we assume that the firmware
-support code (DT or ACPI) has called irqd_set_trigger_type
-already, so that we can retrieve it and check that the requester
-is being reasonnable.
+[ Upstream commit 6e5d58fdc9bedd0255a8781b258f10bbdc63e975 ]
 
-Unfortunately, we still have non-DT, non-ACPI systems around,
-and these guys won't call irqd_set_trigger_type before requesting
-the interrupt. The consequence is that we fail the request that
-would have worked before.
+When errors are enqueued to the error queue via sock_queue_err_skb()
+function, it is possible that the waiting application is not notified.
 
-We can either chase all these use cases (boring), or address it
-in core code (easier). Let's have a per-irq_desc flag that
-indicates whether irqd_set_trigger_type has been called, and
-let's just check it when checking for a shared interrupt.
-If it hasn't been set, just take whatever the interrupt
-requester asks.
+Calling 'sk->sk_data_ready()' would not notify applications that
+selected only POLLERR events in poll() (for example).
 
-Fixes: 382bd4de6182 ("genirq: Use irqd_get_trigger_type to compare the trigger type for shared IRQs")
-Cc: stable@vger.kernel.org
-Reported-and-tested-by: Petr Cvek <petrcvekcz@gmail.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: Randy E. Witt <randy.e.witt@intel.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/irq.h |   11 ++++++++++-
- kernel/irq/manage.c |   13 ++++++++++++-
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ net/core/skbuff.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -191,6 +191,7 @@ struct irq_data {
-  * IRQD_IRQ_INPROGRESS		- In progress state of the interrupt
-  * IRQD_WAKEUP_ARMED		- Wakeup mode armed
-  * IRQD_FORWARDED_TO_VCPU	- The interrupt is forwarded to a VCPU
-+ * IRQD_DEFAULT_TRIGGER_SET	- Expected trigger already been set
-  */
- enum {
- 	IRQD_TRIGGER_MASK		= 0xf,
-@@ -206,6 +207,7 @@ enum {
- 	IRQD_IRQ_INPROGRESS		= (1 << 18),
- 	IRQD_WAKEUP_ARMED		= (1 << 19),
- 	IRQD_FORWARDED_TO_VCPU		= (1 << 20),
-+	IRQD_DEFAULT_TRIGGER_SET	= (1 << 25),
- };
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3571,7 +3571,7 @@ int sock_queue_err_skb(struct sock *sk,
  
- #define __irqd_to_state(d)		((d)->common->state_use_accessors)
-@@ -235,18 +237,25 @@ static inline void irqd_mark_affinity_wa
- 	__irqd_to_state(d) |= IRQD_AFFINITY_SET;
+ 	skb_queue_tail(&sk->sk_error_queue, skb);
+ 	if (!sock_flag(sk, SOCK_DEAD))
+-		sk->sk_data_ready(sk);
++		sk->sk_error_report(sk);
+ 	return 0;
  }
- 
-+static inline bool irqd_trigger_type_was_set(struct irq_data *d)
-+{
-+	return __irqd_to_state(d) & IRQD_DEFAULT_TRIGGER_SET;
-+}
-+
- static inline u32 irqd_get_trigger_type(struct irq_data *d)
- {
- 	return __irqd_to_state(d) & IRQD_TRIGGER_MASK;
- }
- 
- /*
-- * Must only be called inside irq_chip.irq_set_type() functions.
-+ * Must only be called inside irq_chip.irq_set_type() functions or
-+ * from the DT/ACPI setup code.
-  */
- static inline void irqd_set_trigger_type(struct irq_data *d, u32 type)
- {
- 	__irqd_to_state(d) &= ~IRQD_TRIGGER_MASK;
- 	__irqd_to_state(d) |= type & IRQD_TRIGGER_MASK;
-+	__irqd_to_state(d) |= IRQD_DEFAULT_TRIGGER_SET;
- }
- 
- static inline bool irqd_is_level_type(struct irq_data *d)
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1189,7 +1189,18 @@ __setup_irq(unsigned int irq, struct irq
- 		 * set the trigger type must match. Also all must
- 		 * agree on ONESHOT.
- 		 */
--		unsigned int oldtype = irqd_get_trigger_type(&desc->irq_data);
-+		unsigned int oldtype;
-+
-+		/*
-+		 * If nobody did set the configuration before, inherit
-+		 * the one provided by the requester.
-+		 */
-+		if (irqd_trigger_type_was_set(&desc->irq_data)) {
-+			oldtype = irqd_get_trigger_type(&desc->irq_data);
-+		} else {
-+			oldtype = new->flags & IRQF_TRIGGER_MASK;
-+			irqd_set_trigger_type(&desc->irq_data, oldtype);
-+		}
- 
- 		if (!((old->flags & new->flags) & IRQF_SHARED) ||
- 		    (oldtype != (new->flags & IRQF_TRIGGER_MASK)) ||
+ EXPORT_SYMBOL(sock_queue_err_skb);
