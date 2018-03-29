@@ -1,98 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeC2Okq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:40:46 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:35216 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1750884AbeC2Oko (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:40:44 -0400
-Date: Thu, 29 Mar 2018 10:40:43 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: schwidefsky@de.ibm.com, <borntraeger@de.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <parri.andrea@gmail.com>, <will.deacon@arm.com>,
-        <peterz@infradead.org>, <boqun.feng@gmail.com>, <npiggin@gmail.com>,
-        <dhowells@redhat.com>, <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>,
-        <akiyks@gmail.com>
-Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
-In-Reply-To: <20180329021812.GV3675@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1803291021500.1292-100000@iolanthe.rowland.org>
+        id S1751933AbeC2Okx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:40:53 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:46343 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750884AbeC2Okv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:40:51 -0400
+Date: Thu, 29 Mar 2018 16:40:41 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH net-next 3/8] net: mscc: Add MDIO driver
+Message-ID: <20180329144041.GA25752@lunn.ch>
+References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
+ <20180323201117.8416-4-alexandre.belloni@bootlin.com>
+ <20180323204939.GS24361@lunn.ch>
+ <20180329140544.GB12066@piout.net>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180329140544.GB12066@piout.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018, Paul E. McKenney wrote:
-
-> > > In the meantime, does the cat file look to you like it correctly
-> > > models the combination of TSO and multicopy atomicity?  Do the
-> > > fences really work, or did I just get lucky with my choice of
-> > > litmus tests?
+On Thu, Mar 29, 2018 at 04:05:44PM +0200, Alexandre Belloni wrote:
+> On 23/03/2018 at 21:49:39 +0100, Andrew Lunn wrote:
+> > On Fri, Mar 23, 2018 at 09:11:12PM +0100, Alexandre Belloni wrote:
+> > > Add a driver for the Microsemi MII Management controller (MIIM) found on
+> > > Microsemi SoCs.
+> > > On Ocelot, there are two controllers, one is connected to the internal
+> > > PHYs, the other one can communicate with external PHYs.
 > > 
-> > You got lucky.  Try creating an SB litmus test where, instead of an
-> > smp_mb() fence between the write and the read, each thread executes
-> > some other kind of fence.
-> 
-> Ah, it does indeed get "Never" in that case, which I do not believe
-> to e correct.
-> 
-> > The acyclicity condition should have been written more like this:
+> > Hi Alexandre
 > > 
-> > let po_ghb = ([R] ; po ; [M]) | ([M] ; po ; [W])
+> > This looks to be standalone. Such drivers we try to put in
+> > drivers/net/phy.
 > > 
-> > acyclic mfence | po_ghb | rf | fr | co as tso-mca
+> > > +static int mscc_miim_read(struct mii_bus *bus, int mii_id, int regnum)
+> > > +{
+> > > +	struct mscc_miim_dev *miim = bus->priv;
+> > > +	u32 val;
+> > > +	int ret;
+> > > +
+> > > +	mutex_lock(&miim->lock);
 > > 
-> > I don't know what the fence instruction is on s390; change the "mfence"
-> > above accordingly.  The main difference between this and the
-> > corresponding expression in x86tso.cat is that I replaced rfe with rf.
+> > What are you locking against here?
+> > 
+> > And you don't appear to initialize the mutex anywhere.
+> > 
+> > > +static int mscc_miim_reset(struct mii_bus *bus)
+> > > +{
+> > > +	struct mscc_miim_dev *miim = bus->priv;
+> > > +	int i;
+> > > +
+> > > +	if (miim->phy_regs) {
+> > > +		writel(0, miim->phy_regs + MSCC_PHY_REG_PHY_CFG);
+> > > +		writel(0x1ff, miim->phy_regs + MSCC_PHY_REG_PHY_CFG);
+> > > +		mdelay(500);
+> > > +	}
+> > > +
+> > > +	for (i = 0; i < PHY_MAX_ADDR; i++) {
+> > > +		if (mscc_miim_read(bus, i, MII_PHYSID1) < 0)
+> > > +			bus->phy_mask |= BIT(i);
+> > > +	}
+> > 
+> > Why do this? Especially so for the external bus, where the PHYs might
+> > have a GPIO reset line, and won't respond until the gpio is
+> > released. The core code does that just before it scans the bus, or
+> > just before it scans the particular address on the bus, depending on
+> > the scope of the GPIO.
+> > 
 > 
-> The s390 fence instruction is "bcr 14,0" or "bcr 15,0", depending on
-> how recent of hardware you are running.  The latter works everywhere,
-> if I recall correctly.  But I do not believe that herd knows about either
-> instruction yet.
+> IIRC, this was needed when probing the bus without DT, in that case, the
+> mdiobus_scan loop of __mdiobus_register() will fail when doing the
+> get_phy_id for phys 0 to 31 because get_phy_id() transforms any error in
+> -EIO and so it is impossible to register the bus. Other drivers have a
+> similar code to handle that case.
 
-Herd does not need to understand s390 assembly in order to handle the 
-things defined in linux.def, such as "smp_mb()".  linux.def doesn't 
-contain any x86 assembly language stuff either (or PPC or ARM).
+Hi Alexandre
 
->  Ah, and I need to lose the "empty rmw & (fre;coe)".
-> That appears to be where my spurious ordering was coming from, strange
-> though that seems to me.
+Do you mean mscc_miim_read() will return -EIO if there is no device on
+the bus at the address trying to be read? Most devices just return
+0xffff because there is a pull up on the data line, nothing is driving
+it, so all 1's are read.
 
-No, don't drop it; it was not the source of your spurious ordering.  
-The extra ordering came from your "(po \ (W * R))" term, which 
-unintentionally matches fences as well as memory accesses.
+It sounds like the correct fix is for get_phy_id() to look at the
+error code for mdiobus_read(bus, addr, MII_PHYSID1). If it is EIO and
+maybe ENODEV, set *phy_id to 0xffffffff and return. The scan code
+should then do the correct thing.
 
-> And your use of "rf" instead of "rfe" makes sense, as that is what makes
-> the read-from-write provide ordering, correct?  And that should also cover
-> the "Uniproc check" that would otherwise be required, right?
-
-I don't think so...
-
-> Except that I get "Sometimes" on CoWR+poonceonce+Once.litmus...
-
-Exactly.
-
-> Which I can fix by unioning po-loc into po-ghb.  Or is there some
-> better way to do this?
-
-You could just keep the "uniproc" check.  These two approaches accept 
-the same set of litmus tests.
-
-Logically, I think of these as two distinct categories of ordering.  
-po_ghb and tso-mca have to do with the order in which stores reach the 
-cache, whereas "uniproc" (AKA sequential consistency per variable) has 
-to do with enforcement of the cache coherence requirements.  Clearly 
-they are related, but they aren't the same thing.
-
-> > This doesn't account for atomic operations properly; see the "implied" 
-> > term in x86tso.cat.
-> 
-> I will look at this more later, reaching end of both battery and useful
-> attention span...
-
-Alan
+       Andrew
