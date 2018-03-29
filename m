@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4151933-1522302742-14-5671397284885363426
+X-Cyrus-Session-Id: sloti22d1t05-4151933-1522302736-2-12134401602818585148
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES daensv, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522302742; b=EWkZgY3Cj/E2BJJrzB0JLsK0l54IHaAUs/P1uTfQPK6HED5
-    21YL18U20iiWORTQu6ElvBeHqJPZFDFHvlF9RKbFRQu+9uEBeJP1HHFU8BzyLBIy
-    1pgWbKo4JpzIUKlJXaR1jbjvIikibEGZX60uQcQyVtSUud/22ZkMsdAPr1zCo1UB
-    eX1kByBl/GEPF6MwhZ/+e5fiV2U++SAPe2sRya1mEAzaLcvhXzJBVaRPZF4iSMF0
-    6EHa/rscO5gSriog+ad+VKgFNG1M2oJwOy1O3Cf9jXH0w5yLQQd6Dw54QyYuoLay
-    CvZDf7VLYVQoKdpaBo/uQT9+hKn1jW1hCxruIHg==
+    t=1522302735; b=PYFLuhgMDrgOHyXwv4bNy0Fe8eLn0qzb3hGUekaz1PTVYoo
+    41sZvbzDS9SOXkXRZA4COsztvCczZqxctfgRh1w+Gg6+h3GqivIhHlEsT/RUb7ot
+    0kZzldyB1mln8Dhw+VCUZAq8RUCViXFCmCm20mOmKOy83k4uzeMncV9GkrURFaju
+    kGKUlT2gjYAAuYWHXoG0dKtRITYI05szHyLM3+nAXfqydoi6Kxl48+puAOUVUavQ
+    KZ24saL+97dFhSsNR5ssuPyFJfLSqVT33NtlGbGGIhyQqZN64ANFXBuYAa3Q40cR
+    gjX5+htftyh5c2JJHV7Yc0AE7O8seU5XAoIg6oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1522302742; bh=6
-    tHqYmzJMgPSsn+YkvFpg7kE/ujTFPWLgomxkog7od4=; b=pCMnNp1OA60NnaF0K
-    5D8ZAYWVsOu1cmeZsQ1acRyPE4YW9C9AxOB1DypwYHJCFeNUd0vJ0wv32hJuxq1N
-    0UEae7Htj1Hb2F1TqKybWSvmJb5KdGePDENxTQviqpgIMErmS5Lb1CxG04fUXn1f
-    +aX8bdDCKDSOZSSJXkf3WsPWXyi8PCS3dGe2m/QwE331CG3vNu1iC+M5pqezVRmA
-    EL314RCRQPSlmBOCXbedeGxfly6cWrfDzYYLBV0BeTjo5B1SPvtgtae3x3350CLO
-    HdqXycmBlLlPk4lIay6hHPzmqYfOHQm7gQQ7tBTMbSwF4bJHOSMRylUpBNDPJDEl
-    zfhtg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=arctest; t=1522302735; bh=R
+    XfoswCZe1+xsCcId9y74FTrT6DZo45FcDn8IAXXOeg=; b=qx5zUkrO2AEgKx01l
+    XAf6nRw1b8dr3vz5DR/MLvfQe9w7k5w16CoAybk1TI2M9nnPSglcVNBfGQCMEY4d
+    RM0+pK8E8X/FHvt9qladYc1hA4smM7l23OaoWJaabFO4VOCaZbwocoTJKrhsOQFD
+    btMsCtYNNFPsQRxn5UhU/hddMQmYTdh2AwArvWqs6GVJ4n2olG/1DgrecBM8ahn1
+    UOw3HGZzo4Ausz3vq7lTlYynPMJ/7Jxn+ztszJzNl0wM2wBsZr6yWXTEPpqA7Lhe
+    REqkHz3sZU+TKZgCKWZVZ1D895ev1LFrPPyOU5IsKsBenycoCiooQP8OsC79Cf2X
+    LCLTg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
     iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
@@ -54,42 +54,42 @@ Authentication-Results: mx3.messagingengine.com;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLSaTndxAjlFmV7qgZN8MyNnFEIMZ8Wg+KTcdSBMIwcjS51NrXsXCizFwETSjde1YWPlBW19UKETRBefHr80vled+Txf5Cuy8QadQkD0/vxi5FZPXCXY
-    lSRBimvAYTpq8qr7D5uvm0WfMwQsO9jCw/dgvXrtaBeicpT/wp6VBKbD0CSB3a1JMAC3Z1Q6oZkR5rmOJ0+ebuMtlwvTxT7lJR106V4swf+mSD5GMY/sbEJh
-    GzWJnN6f6CyE1lo/RzECNg==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+X-CM-Envelope: MS4wfFbQP1lBiKOiGAVOQunP81s3Lk1OGvq+ro7NpUTJAP11NJoeFX/CtWrov4pKoNr27FveWO+0vBhQC0JKxyDDhq8+OSlCkmVaX9HHJPM1/Uzp9ZkKU+C5
+    m+JodP72f6r6+92gECRFGpkCC609uBWBaIuA1/QP6YhfJitDuF1SA5Per8ByMGcLoWRSkex1TME/feIJYolsM3yXkkZlhWtT0E38oZg6wGqZsh56Wp4X2UO+
+    Mb8mSUvSFwoEi9za3WscKQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
     a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=cwik_FzxO5pWwJNOveAA:9 a=AUzTJ_VtHuwZaDiL:21 a=D_GfnP_hIqyXqNfL:21
-    a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=86c-8aGkN_Si5_EGlHIA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH 4/9] staging: ks7010: Rename ks_wlan_set_multicast_list()
-Date: Wed, 28 Mar 2018 22:51:47 -0700
-Message-Id: <20180329055152.13059-4-quytelda@tamalin.org>
+Subject: [PATCH 2/9] staging: ks7010: Remove unecessary cast.
+Date: Wed, 28 Mar 2018 22:51:45 -0700
+Message-Id: <20180329055152.13059-2-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329055152.13059-1-quytelda@tamalin.org>
 References: <20180329055152.13059-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:ZAliOxnwE2qF2Z37XXddrLP9ZeZ9DMx2ntaIYN2HyYei3lRkAvs
- jO5Du+KLmBh5l9Q45yPKepMSVMuA43ru9s5rpBhpCB2JFxZUR13bn274gV30bt4lf2OczHw
- LFIdX01rjtM91x+4UuSneamta3UaFxY5m28avbG/Wu3GJQ63ErSJfdlQtpZhmYBxuRLwrj/
- DY53g60wbPzT497ajGpSw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:MI6y2r5EgeU=:iD0En2SO34W5FmZxcKw6Zb
- 2yP/X2PQJVQ27VbJDfawUEmPTUcVf8siqQXYVEwGbWBHQmLy2N+DScvESPjTdq7rGaVDEJLPZ
- g7p23gqvMrOttaLFol1lzyyWEyyVuQa+VLphOkdrLkR++VkMacManygG3mX3I5aho9o07F2AU
- ALYB+HUB2nQuBGw9HiaOZ7yqva1FHxzKWtoiZtOxK0jXlst3WU+gn4HpS7YfSrR+O2Jw1ocUD
- 5HRLTwNMNCq8lycIf0eP74Q4Mugbd/SOExomYT7+f58sfCj3ZvN0MJ9gnuvBymAPz7ac47tER
- n/BT+oHVjTrDYI0AoffqsDCMjh0wxKKUss+Ra9ifmMuxlJyYILEgswCvEpMsdER/cMxDT8y1x
- y3+71p0IEIdLsr6tcAp6nP7ELKY2UbX9/OWVzHnwlCVfwrceAZkYay/+GR8tlrX94J/PRGHBK
- tahWyeVuSdoBuUTlmzid2QGMb0r7lu5kBsAB/boD2KVMWnxnqmoMsOAH2q7kAKIqulIxcAuO4
- PL6FWVXqFY5qJfF69c4fph9IVcvhHSLP+VK+aSM3/hRV3aeS+oi/9Zc0WuvxNNewKjHsymrcM
- ujdLsU92ME3wkA90qdByLiNMb5oH8MjelzKyKYWp0aXWVsJy+zKLkhmdA7HTOY8x0qB5NknIp
- Aq8y3DTIOpjaSvXRHODW2y5tSot8IZx+v34GjkgDDQQSRY9ERbZKa6YAuzS/rLRSn+1y1KuRR
- WTH82h8tMMwmrsr1gV8Q+oahw2XVTQx9p66zOA==
+X-Provags-ID: V03:K0:c3Srrb3jQfDOlfulVSRsEKry4n7sk5FW1JCSh9zwDFa8p55YnE5
+ Vgf2k93Z1r7Zb69GsjCIkQ6BfwiRFeGJgiq1JFXwBn0rVWfLCviS84W7AKDNGMeH6fBHHO4
+ nOkls+8n3qqO8Ge7audx86b35J+1/Irip6JqxVsWWn1VPDk+1ews2y+lGqPnMEG8NHPYXb7
+ WSY9Z1B1bQk3gHcAIL3Tw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OclOSXdRGf0=:3Q9WbANDo3Uwzxgwe+D+uD
+ majuJQ3vw47F6hVnP+qlxCjXiQ47VaIY3foaxLWeIJ5qXtLK5qFv7nClEOVL6H0KPd3kJOZd3
+ RamgufhxJ4l6vjdUuzJoDvAnKtYah/fbmpx+TWb0baW8QHZG0ARbe1rTbvSR8IqZW5SwvkGh9
+ lg0Wlkoi80pTShH0YibZ4vhQ06Pf0ePzk29zpMwQiZQE6GhrP+ENxEsWLYCxEIkbwiz/tV+LX
+ quOWkIe/COO/J/3+aRjNV3HleDE6x4TlYa2C0dhIxeFIHmS7iSvzmMhaRXg/qyQQp461RiqIa
+ gz5NkjwVE+jD9mLMAmQfZToF7peaxBIYM7BVP+lTIz/wmmmYtJW6oXxPVgzxo8DXfgnNr1esQ
+ L29kctQMuW+zSSyHCFqD3ueyMi+ys4Jyk4CxzZxxPboWO5qTsY0c86uERCp4vwdnEK2PLJulO
+ /qulHyrWvAmAyuV5m8K2Bd61sdYcZ1bgwg8VujCZsqi1FpCHAv/bDQtEEGEo6IP+M8cgWPaTo
+ CSSNQE5bmsZwNp4+uAq+48aO17l9FxSSrZ2I3SELOpPCNDtS/MVfKvKNpTV6wtpt8Pyvk1Ksq
+ U7TOAYlbjB9c/nrUBxvZCwpQKWtfGOeYl80HTUDWFANjQtYTHvz7IeY9k0DImrDYVCbCl+/YB
+ e0odX150Ne2lOEqi5Bo51SGh2jXjukbmKkp/X5fHEogAwilk58wzaWvgEq04TUpI24EGFwtL8
+ chd1STr3IZrkcoxIIL83r0kGIJPO1Z66czgi8A==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -111,47 +111,27 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-All of the net_device_ops callbacks are named after their counterparts
-in the kernel's 'struct net_device_ops', except
-ks_wlan_set_multicast_list().  Rename it to ks_wlan_set_rx_mode() for
-greater consistency.
+The driver casts '&ks_wlan_handler_def' to 'struct iw_handler_def *',
+but it is already of that type.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_wlan_net.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/ks7010/ks_wlan_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 2f84c5dc1324..41f89f930f50 100644
+index f6e496aa68de..544bfa403d9f 100644
 --- a/drivers/staging/ks7010/ks_wlan_net.c
 +++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -72,7 +72,7 @@ static const struct iw_handler_def ks_wlan_handler_def;
- static int ks_wlan_open(struct net_device *dev);
- static int ks_wlan_close(struct net_device *dev);
- static int ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev);
--static void ks_wlan_set_multicast_list(struct net_device *dev);
-+static void ks_wlan_set_rx_mode(struct net_device *dev);
- static int ks_wlan_set_mac_address(struct net_device *dev, void *addr);
- static int ks_wlan_netdev_ioctl(struct net_device *dev, struct ifreq *rq,
- 				int cmd);
-@@ -2833,7 +2833,7 @@ void send_packet_complete(struct ks_wlan_private *priv, struct sk_buff *skb)
-  * This routine is not state sensitive and need not be SMP locked.
-  */
- static
--void ks_wlan_set_multicast_list(struct net_device *dev)
-+void ks_wlan_set_rx_mode(struct net_device *dev)
- {
- 	struct ks_wlan_private *priv = netdev_priv(dev);
+@@ -2904,7 +2904,7 @@ int ks_wlan_net_start(struct net_device *dev)
  
-@@ -2877,7 +2877,7 @@ static const struct net_device_ops ks_wlan_netdev_ops = {
- 	.ndo_open = ks_wlan_open,
- 	.ndo_stop = ks_wlan_close,
- 	.ndo_start_xmit = ks_wlan_start_xmit,
--	.ndo_set_rx_mode = ks_wlan_set_multicast_list,
-+	.ndo_set_rx_mode = ks_wlan_set_rx_mode,
- 	.ndo_set_mac_address = ks_wlan_set_mac_address,
- 	.ndo_do_ioctl = ks_wlan_netdev_ioctl,
- 	.ndo_tx_timeout = ks_wlan_tx_timeout,
+ 	/* The ks_wlan-specific entries in the device structure. */
+ 	dev->netdev_ops = &ks_wlan_netdev_ops;
+-	dev->wireless_handlers = (struct iw_handler_def *)&ks_wlan_handler_def;
++	dev->wireless_handlers = &ks_wlan_handler_def;
+ 	dev->watchdog_timeo = TX_TIMEOUT;
+ 
+ 	netif_carrier_off(dev);
 -- 
 2.16.3
 
