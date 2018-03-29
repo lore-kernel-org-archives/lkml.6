@@ -1,105 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752080AbeC2TCR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 15:02:17 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:43312 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751147AbeC2TCO (ORCPT
+        id S1751907AbeC2TGk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 15:06:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34712 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750866AbeC2TGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 15:02:14 -0400
-X-Google-Smtp-Source: AIpwx4/ljf8zX3KHfVn2R5IS4zD3EuFvgXSyPfR0XdM/ngJ+/EV/qgsvFDsG0vFyij4Vb+hgxckboP3R/hlG09/JR+0=
-MIME-Version: 1.0
-In-Reply-To: <20180329160215.glnrmyunujcc4vwg@quack2.suse.cz>
-References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152167306807.5268.8483232024444414342.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180329160215.glnrmyunujcc4vwg@quack2.suse.cz>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 29 Mar 2018 12:02:13 -0700
-Message-ID: <CAPcyv4h8CgZmiDLh5p8Vnt0SjB2FvZgGuRMZ+ZYRO=H3mkES_A@mail.gmail.com>
-Subject: Re: [PATCH v7 07/14] fs, dax: use page->mapping to warn if truncate
- collides with a busy page
-To: Jan Kara <jack@suse.cz>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>, david <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Mar 2018 15:06:39 -0400
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Dave Young <dyoung@redhat.com>,
+        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Subject: [PATCH] powerpc: kexec_file: Fix error code when trying to load kdump kernel
+Date: Thu, 29 Mar 2018 16:05:43 -0300
+X-Mailer: git-send-email 2.16.2
+X-TM-AS-GCONF: 00
+x-cbid: 18032919-8235-0000-0000-00000D3C92F5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008766; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000255; SDB=6.01010231; UDB=6.00514696; IPR=6.00789509;
+ MB=3.00020316; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-29 19:06:38
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032919-8236-0000-0000-00004043DF85
+Message-Id: <20180329190543.25118-1-bauerman@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-29_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803290197
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 9:02 AM, Jan Kara <jack@suse.cz> wrote:
-> On Wed 21-03-18 15:57:48, Dan Williams wrote:
->> Catch cases where extent unmap operations encounter pages that are
->> pinned / busy. Typically this is pinned pages that are under active dma.
->> This warning is a canary for potential data corruption as truncated
->> blocks could be allocated to a new file while the device is still
->> performing i/o.
->>
->> Here is an example of a collision that this implementation catches:
->>
->>  WARNING: CPU: 2 PID: 1286 at fs/dax.c:343 dax_disassociate_entry+0x55/0x80
->>  [..]
->>  Call Trace:
->>   __dax_invalidate_mapping_entry+0x6c/0xf0
->>   dax_delete_mapping_entry+0xf/0x20
->>   truncate_exceptional_pvec_entries.part.12+0x1af/0x200
->>   truncate_inode_pages_range+0x268/0x970
->>   ? tlb_gather_mmu+0x10/0x20
->>   ? up_write+0x1c/0x40
->>   ? unmap_mapping_range+0x73/0x140
->>   xfs_free_file_space+0x1b6/0x5b0 [xfs]
->>   ? xfs_file_fallocate+0x7f/0x320 [xfs]
->>   ? down_write_nested+0x40/0x70
->>   ? xfs_ilock+0x21d/0x2f0 [xfs]
->>   xfs_file_fallocate+0x162/0x320 [xfs]
->>   ? rcu_read_lock_sched_held+0x3f/0x70
->>   ? rcu_sync_lockdep_assert+0x2a/0x50
->>   ? __sb_start_write+0xd0/0x1b0
->>   ? vfs_fallocate+0x20c/0x270
->>   vfs_fallocate+0x154/0x270
->>   SyS_fallocate+0x43/0x80
->>   entry_SYSCALL_64_fastpath+0x1f/0x96
->>
->> Cc: Jeff Moyer <jmoyer@redhat.com>
->> Cc: Matthew Wilcox <mawilcox@microsoft.com>
->> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
->> Reviewed-by: Jan Kara <jack@suse.cz>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->
-> Two comments when looking at this now:
->
->> +#define for_each_entry_pfn(entry, pfn, end_pfn) \
->> +     for (pfn = dax_radix_pfn(entry), \
->> +                     end_pfn = pfn + dax_entry_size(entry) / PAGE_SIZE; \
->> +                     pfn < end_pfn; \
->> +                     pfn++)
->
-> Why don't you declare 'end_pfn' inside the for() block? That way you don't
-> have to pass the variable as an argument to for_each_entry_pfn(). It's not
-> like you need end_pfn anywhere in the loop body, you just use it to cache
-> loop termination index.
+kexec_file_load() on powerpc doesn't support kdump kernels yet, so it
+returns -ENOTSUPP in that case.
 
-Agreed, good catch.
+I've recently learned that this errno is internal to the kernel and isn't
+supposed to be exposed to userspace. Therefore, change to -EOPNOTSUPP which
+is defined in an uapi header.
 
->
->> @@ -547,6 +599,10 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
->>
->>       spin_lock_irq(&mapping->tree_lock);
->>       new_entry = dax_radix_locked_entry(pfn, flags);
->> +     if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
->> +             dax_disassociate_entry(entry, mapping, false);
->> +             dax_associate_entry(new_entry, mapping);
->> +     }
->
-> I find it quite tricky that in case we pass zero page / empty entry into
-> dax_[dis]associate_entry(), it will not do anything because
-> dax_entry_size() will return 0. Can we add an explicit check into
-> dax_[dis]associate_entry() or at least a comment there?
+This does indeed make kexec-tools happier. Before the patch, on ppc64le:
 
-Ok, will do.
+  # ~bauermann/src/kexec-tools/build/sbin/kexec -s -p /boot/vmlinuz
+  kexec_file_load failed: Unknown error 524
+
+After the patch:
+
+  # ~bauermann/src/kexec-tools/build/sbin/kexec -s -p /boot/vmlinuz
+  kexec_file_load failed: Operation not supported
+
+Fixes: a0458284f062 ("powerpc: Add support code for kexec_file_load()")
+Reported-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+---
+ arch/powerpc/kernel/machine_kexec_file_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+This is a minor issue, but since it's a simple patch it might be worth
+applying it to stable branches.
+
+This is the kexec-tools thread where this problem was brought up:
+
+https://lists.infradead.org/pipermail/kexec/2018-March/020346.html
+
+And this is an instance of a similar fix being applied elsewhere in the
+kernel, for the same reasons:
+
+https://patchwork.kernel.org/patch/8490791/
+
+The test shown in the commit log was made using Hari Bathini's patch
+adding kexec_file_load() support to kexec-tools in ppc64.
+
+diff --git a/arch/powerpc/kernel/machine_kexec_file_64.c b/arch/powerpc/kernel/machine_kexec_file_64.c
+index e4395f937d63..45e0b7d5f200 100644
+--- a/arch/powerpc/kernel/machine_kexec_file_64.c
++++ b/arch/powerpc/kernel/machine_kexec_file_64.c
+@@ -43,7 +43,7 @@ int arch_kexec_kernel_image_probe(struct kimage *image, void *buf,
+ 
+ 	/* We don't support crash kernels yet. */
+ 	if (image->type == KEXEC_TYPE_CRASH)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(kexec_file_loaders); i++) {
+ 		fops = kexec_file_loaders[i];
