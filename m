@@ -1,95 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeC2HpO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:45:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36428 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751086AbeC2HpL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:45:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A71446070A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Ramon Fried <rfried@codeaurora.org>
-Cc: loic.poulain@linaro.org, wcn36xx@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        bjorn.andersson@linaro.org
-Subject: Re: [PATCH v2] wcn36xx: Disable 5GHz for wcn3610
-References: <20180329065818.9338-1-rfried@codeaurora.org>
-        <874lkzmjxu.fsf@kamboji.qca.qualcomm.com>
-        <2d978343-2057-8424-a249-83a0394da5a7@codeaurora.org>
-Date: Thu, 29 Mar 2018 10:45:06 +0300
-In-Reply-To: <2d978343-2057-8424-a249-83a0394da5a7@codeaurora.org> (Ramon
-        Fried's message of "Thu, 29 Mar 2018 10:32:55 +0300")
-Message-ID: <87k1tvl3zx.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1751219AbeC2Ht1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:49:27 -0400
+Received: from mga11.intel.com ([192.55.52.93]:30153 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750884AbeC2Ht0 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 03:49:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="28517287"
+Subject: Re: [PATCH v3 0/5] Support perf -vv
+To: Ingo Molnar <mingo@kernel.org>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1522335382-11983-1-git-send-email-yao.jin@linux.intel.com>
+ <20180329072006.yrsujdaayek2wpfo@gmail.com>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <ef9f7e74-d94a-895d-fb26-35f2820fd95f@linux.intel.com>
+Date: Thu, 29 Mar 2018 15:49:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180329072006.yrsujdaayek2wpfo@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(really adding Bjorn)
 
-Ramon Fried <rfried@codeaurora.org> writes:
 
-> (adding Bjorn Andersson)
->
->
-> On 3/29/2018 10:15 AM, Kalle Valo wrote:
->> (adding devicetree list)
+On 3/29/2018 3:20 PM, Ingo Molnar wrote:
+> 
+> * Jin Yao <yao.jin@linux.intel.com> wrote:
+> 
+>> For example:
 >>
->> Ramon Fried <rfried@codeaurora.org> writes:
->>
->>> wcn3610 can only operate on 2.4GHz band due to RF limitation.
->>> If wcn36xx digital block is associated with an external IRIS
->>> RF module, retrieve the id and disable 5GHz band in case of
->>> wcn3610 id.
->>>
->>> Signed-off-by: Ramon Fried <rfried@codeaurora.org>
->>> ---
->>> v2: fixed wrong assignment, which is logically introduces the 
->>> 	same behaviour, but for correctness.
->>>
->>>  drivers/net/wireless/ath/wcn36xx/main.c    | 4 +++-
->>>  drivers/net/wireless/ath/wcn36xx/wcn36xx.h | 1 +
->>>  2 files changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
->>> index ab5be6d2c691..833531a68c95 100644
->>> --- a/drivers/net/wireless/ath/wcn36xx/main.c
->>> +++ b/drivers/net/wireless/ath/wcn36xx/main.c
->>> @@ -1146,7 +1146,7 @@ static int wcn36xx_init_ieee80211(struct wcn36xx *wcn)
->>>  		BIT(NL80211_IFTYPE_MESH_POINT);
->>>  
->>>  	wcn->hw->wiphy->bands[NL80211_BAND_2GHZ] = &wcn_band_2ghz;
->>> -	if (wcn->rf_id != RF_IRIS_WCN3620)
->>> +	if (wcn->rf_id != RF_IRIS_WCN3610 && wcn->rf_id != RF_IRIS_WCN3620)
->>>  		wcn->hw->wiphy->bands[NL80211_BAND_5GHZ] = &wcn_band_5ghz;
->>>  
->>>  	wcn->hw->wiphy->max_scan_ssids = WCN36XX_MAX_SCAN_SSIDS;
->>> @@ -1248,6 +1248,8 @@ static int wcn36xx_platform_get_resources(struct wcn36xx *wcn,
->>>  	if (iris_node) {
->>>  		if (of_device_is_compatible(iris_node, "qcom,wcn3620"))
->>>  			wcn->rf_id = RF_IRIS_WCN3620;
->>> +		else if (of_device_is_compatible(iris_node, "qcom,wcn3610"))
->>> +			wcn->rf_id = RF_IRIS_WCN3610;
->>>  		of_node_put(iris_node);
->>>  	}
->> Should we document qcom,wcn3610 just like wcn3620 is:
->>
->> Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt:
->> "qcom,wcn3620",
+>> $ ./perf version --build-options
+>>      or
+>>    ./perf --version --build-options
+>>      or
+>>    ./perf -v --build-options
+>>      or
+>>    ./perf -vv
+> 
+> Thank you, the UI looks perfect to me!
+> 
+>> perf version 4.13.rc5.g4c1df1
+>>                   dwarf: [ on  ]
+>>      dwarf_getlocations: [ on  ]
+>>                   glibc: [ on  ]
+>>                    gtk2: [ on  ]
+>>                libaudit: [ OFF ]
+>>                  libbfd: [ on  ]
+>>                  libelf: [ on  ]
+>>                 libnuma: [ on  ]
+>> numa_num_possible_cpus: [ on  ]
+>>                 libperl: [ on  ]
+>>               libpython: [ on  ]
+>>                libslang: [ on  ]
+>>               libcrypto: [ on  ]
+>>               libunwind: [ on  ]
+>>      libdw-dwarf-unwind: [ on  ]
+>>                    zlib: [ on  ]
+>>                    lzma: [ on  ]
+>>               get_cpuid: [ on  ]
+>>                     bpf: [ on  ]
+> 
+> ... and it's a nice touch that this is now printed in color, like the perf build
+> system does.
+> 
+
+Yes, the printing is in color yet. Green for [on] and red for [OFF]. :)
+
+> BTW., perhaps it would be nice to also print the macro name that is used within
+> the sources:
+> 
+>                    dwarf: [ on  ]    # HAVE_DWARF_SUPPORT
+>       dwarf_getlocations: [ on  ]    # HAVE_DWARF_GETLOCATIONS
+>                    glibc: [ on  ]    # HAVE_GLIBC_SUPPORT
+>                     gtk2: [ on  ]    # HAVE_GTK2_SUPPORT
+>                 libaudit: [ OFF ]    # HAVE_LIBAUDIT_SUPPORT
+> 	...
+> 
+> ?
+> 
+> That would make it easier to grep around in the source looking for where code
+> related a particular features is located.
+> 
+
+Good idea, thanks! I will support it in v4.
+
+> BTW. #2: to the compulsive perfectionist in me "HAVE_DWARF_GETLOCATIONS" is now
+> sticking out like a sore thumb: it's the only library flag left that doesn't have
+> the _SUPPORT suffix. Rename it to HAVE_DWARF_GETLOCATIONS_SUPPORT perhaps?
 >
-> IMHO the mentioned bindings is related to the PIL (peripheral image
-> loaded) which is just the firmware part and has
-> nothing to do with wifi frontend(IRIS).
+ > Thanks,
+ >
+ > 	Ingo
+ >
 
-Should we then have a bindings document for wcn36xx or is it ok to use
-compatible strings like this without any docs? I'm not very familiar
-with the devicetree stuff.
+OK, I will rename it to HAVE_DWARF_GETLOCATIONS_SUPPORT in v4.
 
--- 
-Kalle Valo
+Thanks
+Jin Yao
