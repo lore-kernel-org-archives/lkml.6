@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeC2OzM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:55:12 -0400
-Received: from mail-pf0-f177.google.com ([209.85.192.177]:39403 "EHLO
-        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751187AbeC2OzK (ORCPT
+        id S1752246AbeC2OzR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:55:17 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41569 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbeC2OzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:55:10 -0400
-X-Google-Smtp-Source: AIpwx494AaJlqL24dkZI24v0xx20omIaLnoS1KQDPjOEF/MaVvIArocX7Of/nDp9Of11Uzw/83pMuA==
+        Thu, 29 Mar 2018 10:55:14 -0400
+X-Google-Smtp-Source: AIpwx4/cg7RkfHW7XtI0XRVVp0G6TQ09lQ6Z0hwWwtECBHAWxsDWRqug+UH2NIsJKsudKvpxss/gXA==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: slongerbeam@gmail.com, mchehab@kernel.org, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -15,29 +15,49 @@ Cc: todor.tomov@linaro.org, nicolas.dechesne@linaro.org,
         dragonboard@lists.96boards.org, loic.poulain@linaro.org,
         daniel.thompson@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [RESEND PATCH] Add pixel clock support to OV5640 camera sensor
-Date: Thu, 29 Mar 2018 20:24:59 +0530
-Message-Id: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
+Subject: [RESEND PATCH] media: i2c: ov5640: Add pixel clock support
+Date: Thu, 29 Mar 2018 20:25:00 +0530
+Message-Id: <1522335300-13467-2-git-send-email-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
+References: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Some of the camera subsystems like camss in Qualcommm MSM chipsets
-require pixel clock support in camera sensor drivers for proper functioning.
-So, add a default pixel clock rate of 96MHz to OV5640 camera sensor driver.
+require pixel clock support in camera sensor drivers. So, this commit
+adds a default pixel clock rate of 96MHz to OV5640 camera sensor driver.
 
 According to the datasheet, 96MHz can be used as a pixel clock rate for
 most of the modes.
 
-This patch has been validated on Dragonboard410c with OV5640 connected
-using D3 Camera Mezzanine.
-
-Manivannan Sadhasivam (1):
-  media: i2c: ov5640: Add pixel clock support
-
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
  drivers/media/i2c/ov5640.c | 4 ++++
  1 file changed, 4 insertions(+)
 
+diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+index 39a2269..7152c84 100644
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -162,6 +162,7 @@ struct ov5640_ctrls {
+ 		struct v4l2_ctrl *auto_gain;
+ 		struct v4l2_ctrl *gain;
+ 	};
++	struct v4l2_ctrl *pixel_clock;
+ 	struct v4l2_ctrl *brightness;
+ 	struct v4l2_ctrl *saturation;
+ 	struct v4l2_ctrl *contrast;
+@@ -2009,6 +2010,9 @@ static int ov5640_init_controls(struct ov5640_dev *sensor)
+ 	ctrls->gain = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_GAIN,
+ 					0, 1023, 1, 0);
+ 
++	/* Pixel clock (default of 96MHz) */
++	ctrls->pixel_clock = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_PIXEL_RATE,
++					1, INT_MAX, 1, 96000000);
+ 	ctrls->saturation = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_SATURATION,
+ 					      0, 255, 1, 64);
+ 	ctrls->hue = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HUE,
 -- 
 2.7.4
