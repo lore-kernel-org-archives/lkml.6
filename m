@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752578AbeC2Jr3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 05:47:29 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:53663 "EHLO
+        id S1752334AbeC2JvW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 05:51:22 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:53817 "EHLO
         lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeC2Jr1 (ORCPT
+        with ESMTP id S1751249AbeC2JvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 05:47:27 -0400
-Subject: Re: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar()
- handle 64-bit BARs properly
+        Thu, 29 Mar 2018 05:51:20 -0400
+Subject: Re: [PATCH v5 08/12] PCI: endpoint: Handle 64-bit BARs properly
 To: Niklas Cassel <niklas.cassel@axis.com>,
         <cyrille.pitchen@free-electrons.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
+        Bjorn Helgaas <bhelgaas@google.com>, Sekhar Nori <nsekhar@ti.com>,
+        John Keeping <john@metanate.com>, Niklas Cassel <niklass@axis.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>
 References: <20180328115018.31921-1-niklas.cassel@axis.com>
- <20180328115018.31921-7-niklas.cassel@axis.com>
-CC: Niklas Cassel <niklass@axis.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
+ <20180328115018.31921-9-niklas.cassel@axis.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <45971780-3a46-061d-bb76-2f450401c797@ti.com>
-Date: Thu, 29 Mar 2018 15:17:11 +0530
+Message-ID: <390035dc-7e33-184f-a2eb-909c09e2c455@ti.com>
+Date: Thu, 29 Mar 2018 15:20:51 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
  Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180328115018.31921-7-niklas.cassel@axis.com>
+In-Reply-To: <20180328115018.31921-9-niklas.cassel@axis.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -33,46 +31,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+
 
 On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
-> Since a 64-bit BAR consists of a BAR pair, we need to write to both
-> BARs in the BAR pair to setup the BAR properly.
+> If a 64-bit BAR was set-up, we need to skip a BAR,
+> since a 64-bit BAR consists of a BAR pair.
+> 
+> We need to check what BAR width the epc->ops->set_bar() specific
+> implementation actually did set-up, since some drivers, like the
+> Cadence EP controller, sometimes sets up a 64-bit BAR, even though
+> a 32-bit BAR was requested.
 > 
 > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
->  drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-> index 5a0bb53c795c..571b90f88d84 100644
-> --- a/drivers/pci/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/dwc/pcie-designware-ep.c
-> @@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
->  		return ret;
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 91274779e59f..d46e3ebabb8e 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -380,6 +380,13 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+>  			if (bar == test_reg_bar)
+>  				return ret;
+>  		}
+> +		/*
+> +		 * pci_epc_set_bar() sets PCI_BASE_ADDRESS_MEM_TYPE_64
+> +		 * if the specific implementation required a 64-bit BAR,
+> +		 * even if we only requested a 32-bit BAR.
+> +		 */
+> +		if (epf_bar->flags & PCI_BASE_ADDRESS_MEM_TYPE_64)
+> +			bar++;
+>  	}
 >  
->  	dw_pcie_dbi_ro_wr_en(pci);
-> -	dw_pcie_writel_dbi2(pci, reg, size - 1);
-> -	dw_pcie_writel_dbi(pci, reg, flags);
-> +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> +		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> +		dw_pcie_writel_dbi(pci, reg, flags);
-> +		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> +		dw_pcie_writel_dbi(pci, reg + 4, 0);
-> +	} else {
-> +		dw_pcie_writel_dbi2(pci, reg, size - 1);
-> +		dw_pcie_writel_dbi(pci, reg, flags);
-> +	}
-
-
-I think this should work too?
-	dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-	dw_pcie_writel_dbi(pci, reg, flags);
-
-	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-		dw_pcie_writel_dbi(pci, reg + 4, 0);
-	}
-
-Thanks
-Kishon
+>  	return 0;
+> 
