@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeC2Hvy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:51:54 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:16928 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751398AbeC2Hvw (ORCPT
+        id S1752474AbeC2HwD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:52:03 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:38405 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751927AbeC2HwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:51:52 -0400
+        Thu, 29 Mar 2018 03:52:01 -0400
 X-IronPort-AV: E=Sophos;i="5.48,375,1517842800";
-   d="scan'208";a="276602239"
+   d="scan'208";a="276602266"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -19,9 +19,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v3 3/8] DT: arm: renesas,rzn1: add the RZ/N1 SoC and RZN1D-DB board
-Date: Thu, 29 Mar 2018 08:46:59 +0100
-Message-Id: <1522309629-10152-4-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v3 4/8] reset: Renesas RZ/N1 reboot driver
+Date: Thu, 29 Mar 2018 08:47:00 +0100
+Message-Id: <1522309629-10152-5-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -29,38 +29,158 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documents the RZ/N1 bindings for both the RZ/N1 and the RZN1D-DB
-board.
+The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
+to reboot the Cortex-A7 cores. This driver is a sub driver of
+the sysctrl MFD.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/power/reset/Kconfig       |   7 +++
+ drivers/power/reset/Makefile      |   1 +
+ drivers/power/reset/rzn1-reboot.c | 105 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 113 insertions(+)
+ create mode 100644 drivers/power/reset/rzn1-reboot.c
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index d3d1df9..52368fc 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -47,7 +47,10 @@ SoCs:
-     compatible = "renesas,r8a77980"
-   - R-Car D3 (R8A77995)
-     compatible = "renesas,r8a77995"
--
-+  - RZ/N1 Family (R9A06G032 & R9A06G033)
-+    compatible = "renesas,rzn1"
-+  - RZ/N1D (R9A06G032)
-+    compatible = "renesas,r9a06g032", "renesas,rzn1"
+diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+index df58fc8..1416d88 100644
+--- a/drivers/power/reset/Kconfig
++++ b/drivers/power/reset/Kconfig
+@@ -144,6 +144,13 @@ config POWER_RESET_RESTART
+ 	  Instead they restart, and u-boot holds the SoC until the
+ 	  user presses a key. u-boot then boots into Linux.
  
- Boards:
- 
-@@ -104,6 +107,8 @@ Boards:
-     compatible = "renesas,porter", "renesas,r8a7791"
-   - RSKRZA1 (YR0K77210C000BE)
-     compatible = "renesas,rskrza1", "renesas,r7s72100"
-+  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
-+    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1"
-   - Salvator-X (RTP0RC7795SIPB0010S)
-     compatible = "renesas,salvator-x", "renesas,r8a7795"
-   - Salvator-X (RTP0RC7796SIPB0011S)
++config POWER_RESET_RZN1
++	bool "Renesas RZ/N1 reboot driver"
++	depends on ARCH_RZN1
++	help
++	  This driver allows rebooting the CA7 cores of the
++	  Renesas RZ/N1 Family of SoC (Part # R9A06G0xx).
++
+ config POWER_RESET_ST
+ 	bool "ST restart driver"
+ 	depends on ARCH_STI
+diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+index 7778c74..bad9702 100644
+--- a/drivers/power/reset/Makefile
++++ b/drivers/power/reset/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
+ obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+ obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+ obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
++obj-$(CONFIG_POWER_RESET_RZN1) += rzn1-reboot.o
+ obj-$(CONFIG_POWER_RESET_ST) += st-poweroff.o
+ obj-$(CONFIG_POWER_RESET_VERSATILE) += arm-versatile-reboot.o
+ obj-$(CONFIG_POWER_RESET_VEXPRESS) += vexpress-poweroff.o
+diff --git a/drivers/power/reset/rzn1-reboot.c b/drivers/power/reset/rzn1-reboot.c
+new file mode 100644
+index 0000000..54fdd81
+--- /dev/null
++++ b/drivers/power/reset/rzn1-reboot.c
+@@ -0,0 +1,105 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * RZ/N1 reboot driver
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
++ * Derived from zx-reboot.c
++ */
++
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/notifier.h>
++#include <linux/platform_device.h>
++#include <linux/reboot.h>
++#include <linux/regmap.h>
++
++/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
++#define RZN1_SYSCTRL_REG_RSTEN			0x120
++#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN		0
++#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN		1
++#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK		0x6
++#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN		3
++#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN		4
++#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN		5
++#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN			6
++#define RZN1_SYSCTRL_REG_RSTCTRL		0x198
++#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ		1
++#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK	0x6
++#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ		3
++#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ	4
++#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ	5
++#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ		6
++
++static struct regmap *sysctrl;
++
++static int rzn1_reboot_handler(struct notifier_block *this,
++			      unsigned long mode, void *cmd)
++{
++	regmap_write_bits(sysctrl,
++			RZN1_SYSCTRL_REG_RSTEN,
++			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
++				BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN),
++			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
++				BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN));
++	regmap_write_bits(sysctrl,
++			RZN1_SYSCTRL_REG_RSTCTRL,
++			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ),
++			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ));
++
++	mdelay(50);
++	pr_emerg("Unable to restart system\n");
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block rzn1_reboot_nb = {
++	.notifier_call = rzn1_reboot_handler,
++	.priority = 128,
++};
++
++static int rzn1_reboot_probe(struct platform_device *pdev)
++{
++	int err;
++	struct device *parent;
++
++	parent = pdev->dev.parent;
++	if (!parent || !parent->of_node)
++		dev_err(&pdev->dev, "couldn't find sysctrl node\n");
++		return -ENODEV;
++	}
++	sysctrl = syscon_node_to_regmap(parent->of_node);
++	if (IS_ERR(sysctrl)) {
++		dev_err(&pdev->dev, "couldn't find find regmap\n");
++		return PTR_ERR(sysctrl);
++	}
++	err = register_restart_handler(&rzn1_reboot_nb);
++	if (err) {
++		dev_err(&pdev->dev, "register restart handler failed(err=%d)\n",
++			err);
++	}
++
++	return err;
++}
++
++static const struct of_device_id rzn1_reboot_of_match[] = {
++	{ .compatible = "renesas,rzn1-reboot" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
++
++static struct platform_driver rzn1_reboot_driver = {
++	.probe = rzn1_reboot_probe,
++	.driver = {
++		.name = "rzn1-reboot",
++		.of_match_table = rzn1_reboot_of_match,
++	},
++};
++module_platform_driver(rzn1_reboot_driver);
++
++MODULE_DESCRIPTION("RZ/N1 reboot driver");
++MODULE_AUTHOR("Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
