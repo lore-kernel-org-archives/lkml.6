@@ -1,80 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752932AbeC2N6i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:58:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33893 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752899AbeC2N6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:58:37 -0400
-Date: Thu, 29 Mar 2018 06:58:26 -0700
-From: tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-f58385f629c87a9e210108b39c1f4950d0363ad2@git.kernel.org>
-Cc: jolsa@kernel.org, kan.liang@linux.intel.com, tglx@linutronix.de,
-        acme@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        wangnan0@huawei.com, namhyung@kernel.org, mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, wangnan0@huawei.com, mingo@kernel.org,
-        namhyung@kernel.org, jolsa@kernel.org, acme@redhat.com,
-        tglx@linutronix.de, kan.liang@linux.intel.com, hpa@zytor.com
-In-Reply-To: <1522071729-16776-1-git-send-email-kan.liang@linux.intel.com>
-References: <1522071729-16776-1-git-send-email-kan.liang@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf mmap: Fix accessing unmapped mmap in
- perf_mmap__read_done()
-Git-Commit-ID: f58385f629c87a9e210108b39c1f4950d0363ad2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752977AbeC2N7M convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:59:12 -0400
+Received: from muru.com ([72.249.23.125]:34304 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752791AbeC2N7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 09:59:09 -0400
+Date: Thu, 29 Mar 2018 06:59:04 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180329135904.GN5700@atomide.com>
+References: <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180327121441.GH29239@sirena.org.uk>
+ <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180329133613.khldv72w3zj63vsk@earth.universe>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180329133613.khldv72w3zj63vsk@earth.universe>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f58385f629c87a9e210108b39c1f4950d0363ad2
-Gitweb:     https://git.kernel.org/tip/f58385f629c87a9e210108b39c1f4950d0363ad2
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Mon, 26 Mar 2018 09:42:09 -0400
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 27 Mar 2018 13:13:38 -0300
+* Sebastian Reichel <sebastian.reichel@collabora.co.uk> [180329 13:37]:
+> Hi,
+> 
+> On Wed, Mar 28, 2018 at 06:45:07PM -0700, Tony Lindgren wrote:
+> > Hi,
+> > 
+> > * Sebastian Reichel <sebastian.reichel@collabora.co.uk> [180328 14:03]:
+> > > Hi,
+> > > 
+> > > On Wed, Mar 28, 2018 at 10:29:10AM +0800, Mark Brown wrote:
+> > > > On Wed, Mar 28, 2018 at 12:22:37AM +0200, Sebastian Reichel wrote:
+> > > > > On Tue, Mar 27, 2018 at 08:14:41PM +0800, Mark Brown wrote:
+> > > > 
+> > > > > > No, this is exactly the sort of use case with multiple DAIs that the
+> > > > > > graph card is intended to enable over the old simple-card.
+> > > > 
+> > > > > +----------+         +-------------+
+> > > > > | OMAP4    |         | CPCAP       |
+> > > > > |          |         |             |
+> > > > > | [McBSP2] | <-----> | [HiFi DAI]  |
+> > > > > |          |         |             |
+> > > > > | [McBSP3] | <--+--> | [Voice DAI] |
+> > > > > |          |    |    |             |
+> > > > > +----------+    |    +-------------+
+> > > > >                 |
+> > > > > +----------+    |    +-------------+
+> > > > > | MDM6600  |    |    | WL1285      |
+> > > > > |          |    |    |             |
+> > > > > |    [DAI] | <--+--> | [DAI]       |
+> > > > > |          |         |             |
+> > > > > +----------+         +-------------+
+> > > > 
+> > > > > Legend:
+> > > > >     OMAP4   = SoC running Linux
+> > > > >     CPCAP   = Audio codec
+> > > > >     MDM6600 = Baseband
+> > > > >     WL1285  = Bluetooth
+> > > > 
+> > > > > Re-reading the audio-graph-card binding document I still don't see
+> > > > > how the network (OMAP.McBSP3, CPCAP.Voice, MDM6600, WL1285) is
+> > > > > supposed to look like. It seems to expect point-to-point DAI
+> > > > > connections.
+> > > > 
+> > > > Ugh, a TDM mux?
+> > > 
+> > > Yes, at least that's how I understood Motorola's code.
+> > 
+> > Hmm is there some active component doing the muxing then?
+> > Maybe the "AT+CMUT=0" part below?
+> 
+> I don't think, that there is a special hardware mux. I think each
+> device is configured to use a proper timeslot and/or is being used
+> exclusively.
 
-perf mmap: Fix accessing unmapped mmap in perf_mmap__read_done()
+OK. I wonder what "AT+CMUT=0" on mdm6600 then does? If a voice
+call is requested and mdm6600 only has one i2s output it seems
+kind of unnecesary :)
 
-There is a segmentation fault when running 'perf trace'. For example:
+> > > > That's really unusual and not particularly supported yet, you'd
+> > > > need to extend the graph card to do it.  It's where things should
+> > > > end up for a generic card though.
+> > > 
+> > > Motorola's driver provided the following modes:
+> > > 
+> > > OMAP4 <-> CPCAP      (voice recording)
+> > > MDM6600 <-> CPCAP    (voice call, CPU not involved)
+> > > OMAP4 <-> WL1285     (bluetooth HFP/HSP)
+> > > MDM6600 <-> WL1285   (bluetooth voice call)
+> > > 
+> > > In case of the last two variants, the bus clock is provided by
+> > > CPCAP, so it needs to be enabled for any audio stream. I suppose
+> > > the codec <-> codec as part of TDM is out of scope for the graph
+> > > card and we need a Droid 4 specific card driver?
+> > 
+> > Hmm well I got audio call hacked to work as a proof of concept hack,
+> > see below. Maybe it can be used to verify some of the assumptions
+> > above.
+> 
+> Your proof of concept verifies the assumption, that the modem is
+> connected to the CPCAP voice DAI. This patchset is a proof, that the
+> voice DAI is connected to OMAP. So we can tell for sure, that this
+> is not a common direct DAI-to-DAI connection.
 
-  [root@jouet e]# perf trace -e *chdir -o /tmp/bla perf report --ignore-vmlinux -i ../perf.data
+OK
 
-The perf_mmap__consume() could unmap the mmap. It needs to check the
-refcnt in perf_mmap__read_done().
+> > @@ -510,17 +510,17 @@
+> >  07f4: 0000
+> >  07f8: 0000
+> >  07fc: 0000
+> > -0800: 0065
+> > -0804: 0000
+> > -0808: 0040
+> > +0800: 0025     # CPCAP_REG_VAUDIOC     VAUDIO Control
+> 
+> enable vaudio (obviously required :))
+> 
+> > +0804: 60cf     # CPCAP_REG_CC          Codec Control, moto cpcap.c:1337 sets 0x0093?
+> 
+> 0x6000 => clkfreq=19200000
+> 
+> The following bits are automatically set via DAPM by cpcap codec,
+> once it is used:
+> 
+> 0x00c0 => "ADC Left" + "DAC Voice"
+> 0x000f => "Highpass Filter TX" + "Highpass Filter RX"
+> 
+> > +0808: ae0a     # CPCAP_REG_CDI         Codec Digital Interface
+> 
+> 0xa000 => enable PLL & use clock 1
+> 
+> This should be used by default for VOICE DAI.
+> 
+> 0x0e00 => "Voice DAI Clock"=1 (handled by DAPM) , mode=I2S
+> 0x000a => CPCAP_BIT_CLK_INV | CPCAP_BIT_MIC1_RX_TIMESLOT0
+> 
+> >  080c: 0000
+> >  0810: 0004
+> > -0814: 0804
+> > -0818: 079c
+> > -081c: 0000
+> > -0820: 0924
+> > -0824: 0000
+> > -0828: 0000
+> > +0814: 0cc0     # CPCAP_REG_TXI         TX Inputs, moto cpcap.c:1340 sets 0x0CC6?
+> > +0818: 0610     # CPCAP_REG_TXMP        TX MIC PGA's, moto cpcap.c:1343 sets 0x0273?
+> > +081c: 0006     # CPCAP_REG_RXOA        RX Output Amplifiers
+> > +0820: 0b2c     # CPCAP_REG_RXVC        RX Volume Control
+> > +0824: 0606     # CPCAP_REG_RXCOA       RX Codec to Output Amps
+> > +0828: 0600     # CPCAP_REG_RXSDOA      RX Stereo DAC to Output Amps
+> 
+> This configures the loudspeaker, mics and volume and enables the
+> required clocks/DACs/... This is already covered by the cpcap codec
+> driver. You just need to configure everything correctly in
+> alsamixer.
+> 
+> >  082c: 0400
+> >  0830: 0000
+> >  0834: 0030
+> > 
+> > I wonder if mdm6600 is the i2s master during the voice call?
+> 
+> I think cpcap is always the clock and frame master, but I think
+> mdm6600 is the remote side and OMAP is not involved at all.
 
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: ee023de05f35 ("perf mmap: Introduce perf_mmap__read_done()")
-Link: http://lkml.kernel.org/r/1522071729-16776-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/mmap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+OK. So could it be just an alsamixer on/off toggle then for
+"Modem" or something similar?
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 38ca3ffb9d61..f6cfc52ff1fe 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -317,5 +317,11 @@ out:
-  */
- void perf_mmap__read_done(struct perf_mmap *map)
- {
-+	/*
-+	 * Check if event was unmapped due to a POLLHUP/POLLERR.
-+	 */
-+	if (!refcount_read(&map->refcnt))
-+		return;
-+
- 	map->prev = perf_mmap__read_head(map);
- }
+> > Then using the n_gsm ts 27.010 uart mux, I dial:
+> > 
+> > ./ngsm-rw 1 "AT+CFUN=1"		# connect to network
+> > U0001+CFUN:OK
+> > ./ngsm-rw 2 "AT+CMUT=0"		# unmute speaker over ch2, do this over qmi?
+> > U0001+CMUT:OK
+> > ./ngsm-rw 1 "ATD#123"		# dial number
+> > U0001D:OK
+
+There's a typo above, it should be just ATD123 where 123 is the
+number.
+
+I was just doing few test calls to robots. Payback time for all
+the robocalls, you know! :)
+
+> > And I do hear a voice talking over the speakerphone :) Sorry have not tested the
+> > mic yet..
+
+And calling a person I can hear the other end but the mic is
+not working. So maybe I need to tweak the alsamixer settings
+too for mic?
+
+Regards,
+
+Tony
