@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeC2W3W (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:29:22 -0400
-Received: from mga05.intel.com ([192.55.52.43]:60712 "EHLO mga05.intel.com"
+        id S1752414AbeC2W3w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:29:52 -0400
+Received: from mga05.intel.com ([192.55.52.43]:60715 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751124AbeC2W3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:29:19 -0400
+        id S1751935AbeC2W3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 18:29:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,378,1517904000";
-   d="scan'208";a="28690087"
+   d="scan'208";a="28690106"
 From: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 To: vikas.shivappa@intel.com, tony.luck@intel.com,
         ravi.v.shankar@intel.com, fenghua.yu@intel.com,
@@ -18,101 +18,169 @@ To: vikas.shivappa@intel.com, tony.luck@intel.com,
         hpa@zytor.com
 Cc: linux-kernel@vger.kernel.org, ak@linux.intel.com,
         vikas.shivappa@linux.intel.com
-Subject: [PATCH RFC 0/6] Memory b/w allocation software controller
-Date: Thu, 29 Mar 2018 15:26:10 -0700
-Message-Id: <1522362376-3505-1-git-send-email-vikas.shivappa@linux.intel.com>
+Subject: [PATCH 6/6] x86/intel_rdt/mba_sc: Add support to dynamically update the memory b/w
+Date: Thu, 29 Mar 2018 15:26:16 -0700
+Message-Id: <1522362376-3505-7-git-send-email-vikas.shivappa@linux.intel.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522362376-3505-1-git-send-email-vikas.shivappa@linux.intel.com>
+References: <1522362376-3505-1-git-send-email-vikas.shivappa@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel RDT memory bandwidth allocation (MBA) currently uses the resctrl
-interface and uses the schemata file in each rdtgroup to specify the max
-b/w percentage that is allowed to be used by the "threads" and "cpus" in
-the rdtgroup. These values are specified "per package" in each rdtgroup
-in the schemata file as below:
+The software controller uses the existing MBM overflow timer calls (once
+per second currently) to read the bandwidth to ensure that always
 
-$ cat /sys/fs/resctrl/p1/schemata 
-    L3:0=7ff;1=7ff
-    MB:0=100;1=50
+	"current b/w < user specified max b/w"
 
-In the above example the MB is the memory bandwidth percentage and "0"
-and "1" specify the package/socket ids. The threads in rdtgroup "p1"
-would get 100% memory b/w on socket0 and 50% b/w on socket1.
+Similarly when we see that the current b/w is too low, we also try to
+increase the b/w. We use a threshold b/w or a delta b/w which is
+calculated dynamically to determine what is too low. OS then uses the
+"IA32_MBA_THRTL_MSR" to change the b/w. The change itself is currently
+linear and is in the increment of decrement of the "b/w granularity"
+specified by the SKU. The values written to the MSR are also cached so
+that we donot do a rdmsr for every 1s.
 
-However, Memory bandwidth allocation (MBA) is a core specific mechanism
-which means that when the Memory b/w percentage is specified in the
-schemata per package it actually is applied on a per core basis via
-IA32_MBA_THRTL_MSR interface. This may lead to confusion in scenarios
-below:
+Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
+---
+ arch/x86/kernel/cpu/intel_rdt.c         |  2 +-
+ arch/x86/kernel/cpu/intel_rdt.h         |  1 +
+ arch/x86/kernel/cpu/intel_rdt_monitor.c | 71 +++++++++++++++++++++++++++++++--
+ 3 files changed, 69 insertions(+), 5 deletions(-)
 
-1. User may not see increase in actual b/w when percentage values are
-   increased:
-
-This can occur when aggregate L2 external b/w is more than L3 external
-b/w. Consider an SKL SKU with 24 cores on a package and where L2
-external b/w is 10GBps (hence aggregate L2 external b/w is 240GBps) and
-L3 external b/w is 100GBps. Now a workload with '20 threads, having 50%
-b/w, each consuming 5GBps' consumes the max L3 b/w of 100GBps although
-the percentage value specified is only 50% << 100%. Hence increasing
-the b/w percentage will not yeild any more b/w. This is because
-although the L2 external b/w still has capacity, the L3 external b/w
-is fully used. Also note that this would be dependent on number of
-cores the benchmark is run on.
-
-2. Same b/w percentage may mean different actual b/w depending on # of
-   threads:
-
-For the same SKU in #1, a 'single thread, with 10% b/w' and '4 thread,
-with 10% b/w' can consume upto 10GBps and 40GBps although they have same
-percentage b/w of 10%. This is simply because as threads start using
-more cores in an rdtgroup, the actual b/w may increase or vary although
-user specified b/w percentage is same.
-
-In order to mitigate this and make the interface more user friendly, we
-can let the user specify the max bandwidth per rdtgroup in bytes(or mega
-bytes). The kernel underneath would use a software feedback mechanism or
-a "Software Controller" which reads the actual b/w using MBM counters
-and adjust the memowy bandwidth percentages to ensure the "actual b/w
-< user b/w".
-
-The legacy behaviour is default and user can switch to the "MBA software
-controller" mode using a mount option 'mba_MB'.
-
-To use the feature mount the file system using mba_MB option:
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index 78beb64..700e957 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -341,7 +341,7 @@ static int get_cache_id(int cpu, int level)
+  * that can be written to QOS_MSRs.
+  * There are currently no SKUs which support non linear delay values.
+  */
+-static u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
++u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
+ {
+ 	if (r->membw.delay_linear)
+ 		return MAX_MBA_BW - bw;
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index b74619d..aafbc4b 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -474,6 +474,7 @@ void mbm_setup_overflow_handler(struct rdt_domain *dom,
+ 				unsigned long delay_ms);
+ void mbm_handle_overflow(struct work_struct *work);
+ void setup_ctrlval(struct rdt_resource *r, u32 *dc, u32 *dm);
++u32 delay_bw_map(unsigned long bw, struct rdt_resource *r);
+ void cqm_setup_limbo_handler(struct rdt_domain *dom, unsigned long delay_ms);
+ void cqm_handle_limbo(struct work_struct *work);
+ bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
+index 509f338..13b6eff 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
++++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
+@@ -272,6 +272,10 @@ static int __mon_event_count(u32 rmid, struct rmid_read *rr, struct mbm_state **
  
-$ mount -t resctrl resctrl [-o cdp[,cdpl2][mba_MB]] /sys/fs/resctrl
-
-We could also use a config option as suggested by Fenghua. This may be
-useful in situations where other resources need such options and we dont
-have to keep growing the if else in the mount. However it needs enough
-isolation when implemented with respect to resetting the values.
-
-If the MBA is specified in MB(megabytes) then user can enter the max b/w
-in MB rather than the percentage values. The default when mounted is
-max_u32.
-
-$ echo "L3:0=3;1=c\nMB:0=1024;1=500" > /sys/fs/resctrl/p0/schemata
-$ echo "L3:0=3;1=3\nMB:0=1024;1=500" > /sys/fs/resctrl/p1/schemata
-
-In the above example the tasks in "p1" and "p0" rdtgroup
-would use a max b/w of 1024MBps on socket0 and 500MBps on socket1.
-
-Vikas Shivappa (6):
-  x86/intel_rdt/mba_sc: Add documentation for MBA software controller
-  x86/intel_rdt/mba_sc: Add support to enable/disable via mount option
-  x86/intel_rdt/mba_sc: Add initialization support
-  x86/intel_rdt/mba_sc: Add schemata support
-  x86/intel_rdt/mba_sc: Add counting for MBA software controller
-  x86/intel_rdt/mba_sc: Add support to dynamically update the memory b/w
-
- Documentation/x86/intel_rdt_ui.txt          |  63 +++++++++++++++++
- arch/x86/kernel/cpu/intel_rdt.c             |  50 +++++++++----
- arch/x86/kernel/cpu/intel_rdt.h             |  34 ++++++++-
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c |  10 ++-
- arch/x86/kernel/cpu/intel_rdt_monitor.c     | 105 +++++++++++++++++++++++++---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    |  34 ++++++++-
- 6 files changed, 268 insertions(+), 28 deletions(-)
-
+ 	rr->val += m->chunks;
+ 
++	/*
++	 * We only do the bw calculations for the mbm overflow
++	 * periodic timer calls and for local events only.
++	 */
+ 	if(!md)
+ 		goto out;
+ 
+@@ -320,10 +324,61 @@ void mon_event_count(void *info)
+ 	}
+ }
+ 
+-static void mbm_update(struct rdt_domain *d, int rmid)
++/*
++ * Check the current b/w using the MBM counters to always ensure that
++ * current b/w < user specified b/w. If the current b/w is way less than
++ * the user defined b/w (determined by the delta b/w)
++ * then try to increase the b/w
++ */
++static void update_mba_bw(struct rdtgroup *rgrp, struct mbm_state *m)
+ {
++	u32 closid, rmid, cur_msr, cur_msr_val, new_msr_val;
++	struct rdt_resource *r_mba;
++	u64 cur_bw, user_bw, thrshl_bw;
++	struct rdt_domain *dom_mba;
++
++	r_mba = &rdt_resources_all[RDT_RESOURCE_MBA];
++	closid = rgrp->closid;
++	rmid = rgrp->mon.rmid;
++
++	dom_mba = get_domain_from_cpu(smp_processor_id(), r_mba);
++	if (!dom_mba) {
++		pr_warn_once("Failure to get domain for MBA update\n");
++		return;
++	}
++
++	cur_bw = m->prev_bw;
++	user_bw = dom_mba->ctrl_val[closid];
++	thrshl_bw = m->delta_bw;
++	cur_msr_val = dom_mba->msr_val[closid];
++	/*
++	 * Scale up/down the b/w linearly.
++	 */
++	if (user_bw < cur_bw && cur_msr_val > r_mba->membw.min_bw) {
++		new_msr_val = cur_msr_val - r_mba->membw.bw_gran;
++	} else if ((cur_bw && user_bw > (cur_bw + thrshl_bw)) &&
++		   cur_msr_val < MAX_MBA_BW) {
++		new_msr_val = cur_msr_val + r_mba->membw.bw_gran;
++	} else {
++		return;
++	}
+ 
++	cur_msr = r_mba->msr_base + closid;
++	wrmsrl(cur_msr, delay_bw_map(new_msr_val, r_mba));
++	dom_mba->msr_val[closid] = new_msr_val;
++
++	/*
++	 * When the counter is read next time, recaliberate the
++	 * threshold since we changed the MSR value.
++	 */
++	m->thrshl_calib = true;
++}
++
++static void mbm_update(struct rdt_domain *d, struct rdtgroup *rgrp, bool prgrp)
++{
++	int rmid = rgrp->mon.rmid;
+ 	struct rmid_read rr;
++	struct mbm_state *m;
+ 
+ 	rr.first = false;
+ 	rr.d = d;
+@@ -338,7 +393,15 @@ static void mbm_update(struct rdt_domain *d, int rmid)
+ 	}
+ 	if (is_mbm_local_enabled()) {
+ 		rr.evtid = QOS_L3_MBM_LOCAL_EVENT_ID;
+-		__mon_event_count(rmid, &rr, NULL);
++		__mon_event_count(rmid, &rr, &m);
++
++		/*
++		 * Call the MBA software controller core function
++		 * only for the control groups and when user has enabled
++		 * the software controller explicitly.
++		 */
++		if (prgrp && is_mba_MBctrl())
++			update_mba_bw(rgrp, m);
+ 	}
+ }
+ 
+@@ -404,11 +467,11 @@ void mbm_handle_overflow(struct work_struct *work)
+ 		goto out_unlock;
+ 
+ 	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
+-		mbm_update(d, prgrp->mon.rmid);
++		mbm_update(d, prgrp, true);
+ 
+ 		head = &prgrp->mon.crdtgrp_list;
+ 		list_for_each_entry(crgrp, head, mon.crdtgrp_list)
+-			mbm_update(d, crgrp->mon.rmid);
++			mbm_update(d, crgrp, false);
+ 	}
+ 
+ 	schedule_delayed_work_on(cpu, &d->mbm_over, delay);
 -- 
 1.9.1
