@@ -1,80 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeC2NNq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:13:46 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54178 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751908AbeC2NNp (ORCPT
+        id S1752552AbeC2NP5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:15:57 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35742 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751908AbeC2NP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:13:45 -0400
-X-Google-Smtp-Source: AIpwx4/QdJgl6ukkWgNHQdKEV3SSUtWfGtWQvIqbn1NQwk43mkZOOTPtKff5M6D15dOSaIMC3CTmHw==
-Date: Thu, 29 Mar 2018 16:13:08 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCHv2 06/14] mm/page_alloc: Propagate encryption KeyID
- through page allocator
-Message-ID: <20180329131308.cq64n3dvnre2wcz5@node.shutemov.name>
-References: <20180328165540.648-1-kirill.shutemov@linux.intel.com>
- <20180328165540.648-7-kirill.shutemov@linux.intel.com>
- <20180329112034.GE31039@dhcp22.suse.cz>
- <20180329123712.zlo6qmstj3zm5v27@node.shutemov.name>
- <20180329125227.GF31039@dhcp22.suse.cz>
+        Thu, 29 Mar 2018 09:15:56 -0400
+X-Google-Smtp-Source: AG47ELu3ZqSBt9IYZHXk9hJqkOlhdr+VNmkftz73QzcW+LLoggPnq4ti4/eHs2Z9eh/orKdxDLBMO02VoF16Ipv5Tfc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329125227.GF31039@dhcp22.suse.cz>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180329123544.GA22551@gondor.apana.org.au>
+References: <20180329120612.6104-1-agruenba@redhat.com> <20180329123544.GA22551@gondor.apana.org.au>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Thu, 29 Mar 2018 15:15:54 +0200
+Message-ID: <CAHc6FU4i5LDoqXXTgAKtTA8EtGyawxXtY4iavo7NjHCsbX1G8w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gfs2: Stop using rhashtable_walk_peek
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: cluster-devel <cluster-devel@redhat.com>, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>,
+        Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 02:52:27PM +0200, Michal Hocko wrote:
-> On Thu 29-03-18 15:37:12, Kirill A. Shutemov wrote:
-> > On Thu, Mar 29, 2018 at 01:20:34PM +0200, Michal Hocko wrote:
-> > > On Wed 28-03-18 19:55:32, Kirill A. Shutemov wrote:
-> > > > Modify several page allocation routines to pass down encryption KeyID to
-> > > > be used for the allocated page.
-> > > > 
-> > > > There are two basic use cases:
-> > > > 
-> > > >  - alloc_page_vma() use VMA's KeyID to allocate the page.
-> > > > 
-> > > >  - Page migration and NUMA balancing path use KeyID of original page as
-> > > >    KeyID for newly allocated page.
-> > > 
-> > > I am sorry but I am out of time to look closer but this just raised my
-> > > eyebrows. This looks like a no-go. The basic allocator has no business
-> > > in fancy stuff like a encryption key. If you need something like that
-> > > then just build a special allocator API on top. This looks like a no-go
-> > > to me.
-> > 
-> > The goal is to make memory encryption first class citizen in memory
-> > management and not to invent parallel subsysustem (as we did with hugetlb).
-> 
-> How do you get a page_keyid for random kernel allocation?
+On 29 March 2018 at 14:35, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Thu, Mar 29, 2018 at 02:06:10PM +0200, Andreas Gruenbacher wrote:
+>> Here's a second version of the patch (now a patch set) to eliminate
+>> rhashtable_walk_peek in gfs2.
+>>
+>> The first patch introduces lockref_put_not_zero, the inverse of
+>> lockref_get_not_zero.
+>>
+>> The second patch eliminates rhashtable_walk_peek in gfs2.  In
+>> gfs2_glock_iter_next, the new lockref function from patch one is used to
+>> drop a lockref count as long as the count doesn't drop to zero.  This is
+>> almost always the case; if there is a risk of dropping the last
+>> reference, we must defer that to a work queue because dropping the last
+>> reference may sleep.
+>
+> In light of Neil's latest patch, do we still need this?
 
-Initial feature enabling only targets userspace anonymous memory, but we
-can definately use the same technology in the future for kernel hardening
-if we would choose so.
+For all I know, Neil's latest plan is to get rhashtable_walk_peek
+replaced and removed because it is unfixable. This patch removes the
+one and only user.
 
-For anonymous memory, we can get KeyID from VMA or from other page
-(migration case).
-
-> > Making memory encryption integral part of Linux VM would involve handing
-> > encrypted page everywhere we expect anonymous page to appear.
-> 
-> How many architectures will implement this feature?
-
-I can't read the future.
-
-I'm only aware about one architecture so far.
-
--- 
- Kirill A. Shutemov
+Thanks,
+Andreas
