@@ -1,79 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeC2SoY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 14:44:24 -0400
-Received: from mail-vk0-f47.google.com ([209.85.213.47]:38453 "EHLO
-        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750866AbeC2SoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 14:44:22 -0400
-X-Google-Smtp-Source: AIpwx4+uPxU+SadWud5tmJnRg46Ymu78f0b/I2sbOVEfbKFBGYvHefpZc4nDpnQo4ylkItQ5lao8kfIXFf8ieD9oGsQ=
+        id S1752383AbeC2SrW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 14:47:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751750AbeC2SrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 14:47:19 -0400
+Subject: Re: [PATCH v5 1/9] sysctl: Add flags to support min/max range
+ clamping
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <1521224030-2185-1-git-send-email-longman@redhat.com>
+ <1521224030-2185-2-git-send-email-longman@redhat.com>
+ <20180317011021.GB4449@wotan.suse.de>
+ <35f54e8f-b80e-aa3b-b008-79ba7ca3bff2@redhat.com>
+ <20180329181515.GL30543@wotan.suse.de>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <3e2b8e6a-f6d1-f80a-ed43-e937d8ca8383@redhat.com>
+Date: Thu, 29 Mar 2018 14:47:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <1522321466-21755-3-git-send-email-mgautam@codeaurora.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org> <1522321466-21755-3-git-send-email-mgautam@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 29 Mar 2018 11:44:20 -0700
-X-Google-Sender-Auth: 2PfKQDXQ3JSWoBf9aZ8rGx48Lmw
-Message-ID: <CAD=FV=XtviSYq=2w=Ld1xq5U2VPy=u=q6a3+4qd2zVGB+f9P8A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] phy: qcom-qmp: Enable pipe_clk before PHY initialization
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Varadarajan Narayanan <varada@codeaurora.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180329181515.GL30543@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
-> QMP PHY for USB/PCIE requires pipe_clk for locking of
-> retime buffers at the pipe interface. Driver checks for
-> PHY_STATUS without enabling pipe_clk due to which
-> phy_init() fails with initialization timeout.
-> Though pipe_clk is output from PHY (after PLL is programmed
-> during initialization sequence) to GCC clock_ctl and then fed
-> back to PHY but for PHY_STATUS register to reflect successful
-> initialization pipe_clk from GCC must be present.
-> Since, clock driver now ignores status_check for pipe_clk on
-> clk_enable/disable, driver can safely enable/disable pipe_clk
-> from phy_init/exit.
+On 03/29/2018 02:15 PM, Luis R. Rodriguez wrote:
+> On Mon, Mar 19, 2018 at 11:39:19AM -0400, Waiman Long wrote:
+>> On 03/16/2018 09:10 PM, Luis R. Rodriguez wrote:
+>>> On Fri, Mar 16, 2018 at 02:13:42PM -0400, Waiman Long wrote:
+>>>> When the CTL_FLAGS_CLAMP_RANGE flag is set in the ctl_table
+>>>> entry, any update from the userspace will be clamped to the given
+>>>> range without error if either the proc_dointvec_minmax() or the
+>>>> proc_douintvec_minmax() handlers is used.
+>>> I don't get it.  Why define a generic range flag when we can be mores specific and
+>>> you do that in your next patch. What's the point of this flag then?
+>>>
+>>>   Luis
+>> I was thinking about using the signed/unsigned bits as just annotations
+>> for ranges for future extension. For the purpose of this patchset alone,
+>> I can merge the three bits into just two.
+> Only introduce flags which you will actually use in the same patch series.
 >
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp.c | 22 ++++++++--------------
->  1 file changed, 8 insertions(+), 14 deletions(-)
+>   Luis
 
-Overall this looks much better than the previous version.  Thanks!  :)
+Yes, will do. Since the merge window is coming, should I wait until it
+is over to send out the new patch?
 
-I wonder one thing though.  You describe the original problem as this:
-
-1. If you don't turn the clock on in qcom_qmp_phy_init() then the PHY
-never sets the "ready" status.
-
-2. If you don't have the PHY powered on / out of reset (which happens
-in qcom_qmp_phy_init()) then when you enable/disable the clock it
-doesn't properly update the status.  That's why you needed patch #1 in
-this series.
-
-
-I wonder: could you solve the above _without_ needing to use
-BRANCH_HALT_DELAY in the clock driver?  Specifically, can you tell me
-what happens if you put the clk_prepare_enable() after you've powered
-on the PHY and taken it out of reset but before you check the status?
-Said another way, put the "clk_prepare_enable(qphy->pipe_clk)" call
-right before the "readl_poll_timeout" of the ready status?
-
-
-If you do that, you'll turn everything on.  Then you'll check that the
-clock's status is OK and then that the PHY's status is OK.
-
-
--Doug
+Cheers,
+Longman
