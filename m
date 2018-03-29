@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752728AbeC2WHf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:07:35 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42645 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752635AbeC2WHZ (ORCPT
+        id S1752965AbeC2WJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:09:56 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35970 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752635AbeC2WHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:07:25 -0400
-X-Google-Smtp-Source: AIpwx4/QZrGKfsuAO7WpQ60jXR7Gl+lOvau3DiNJpOReMqZarzW2hFdeUvhwOqPHQlLGnluUtZh6nw==
+        Thu, 29 Mar 2018 18:07:36 -0400
+X-Google-Smtp-Source: AIpwx4/MjdOCHjtYM91LcL0uo9gUH0pqiTOfjXN4h7mhE3kvwwnKhAHy5EAHRSKBL7jHa4YHT8A7Qw==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         keith.busch@intel.com, javier@cnexlabs.com,
-        Johannes Thumshirn <jthumshirn@suse.de>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 20/37] lightnvm: centralize permission check for lightnvm ioctl
-Date: Fri, 30 Mar 2018 00:05:07 +0200
-Message-Id: <20180329220524.30363-21-mb@lightnvm.io>
+Subject: [GIT PULL 33/37] lightnvm: pblk: implement get log report chunk
+Date: Fri, 30 Mar 2018 00:05:20 +0200
+Message-Id: <20180329220524.30363-34-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
 References: <20180329220524.30363-1-mb@lightnvm.io>
@@ -27,93 +26,618 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Javier González <javier@cnexlabs.com>
 
-Currently all functions for handling the lightnvm core ioctl commands
-do a check for CAP_SYS_ADMIN.
+In preparation of pblk supporting 2.0, implement the get log report
+chunk in pblk. Also, define the chunk states as given in the 2.0 spec.
 
-Change this to fail early in nvm_ctl_ioctl(), so we don't have to
-duplicate the permission checks all over.
-
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/core.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+ drivers/lightnvm/pblk-core.c | 138 +++++++++++++++++++++++----
+ drivers/lightnvm/pblk-init.c | 222 ++++++++++++++++++++++++++++++-------------
+ drivers/lightnvm/pblk.h      |   7 ++
+ include/linux/lightnvm.h     |  13 +++
+ 4 files changed, 298 insertions(+), 82 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 3eec948d1b7e..5b197d6bb6d9 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -1019,9 +1019,6 @@ static long nvm_ioctl_info(struct file *file, void __user *arg)
- 	struct nvm_tgt_type *tt;
- 	int tgt_iter = 0;
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index c3eb135fce07..94d5d97c9d8a 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -44,11 +44,12 @@ static void pblk_line_mark_bb(struct work_struct *work)
+ }
  
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	info = memdup_user(arg, sizeof(struct nvm_ioctl_info));
- 	if (IS_ERR(info))
- 		return -EFAULT;
-@@ -1060,9 +1057,6 @@ static long nvm_ioctl_get_devices(struct file *file, void __user *arg)
- 	struct nvm_dev *dev;
- 	int i = 0;
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	devices = kzalloc(sizeof(struct nvm_ioctl_get_devices), GFP_KERNEL);
- 	if (!devices)
- 		return -ENOMEM;
-@@ -1103,9 +1097,6 @@ static long nvm_ioctl_dev_create(struct file *file, void __user *arg)
+ static void pblk_mark_bb(struct pblk *pblk, struct pblk_line *line,
+-			 struct ppa_addr *ppa)
++			 struct ppa_addr ppa_addr)
  {
- 	struct nvm_ioctl_create create;
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+-	int pos = pblk_ppa_to_pos(geo, *ppa);
++	struct ppa_addr *ppa;
++	int pos = pblk_ppa_to_pos(geo, ppa_addr);
  
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	if (copy_from_user(&create, arg, sizeof(struct nvm_ioctl_create)))
- 		return -EFAULT;
+ 	pr_debug("pblk: erase failed: line:%d, pos:%d\n", line->id, pos);
+ 	atomic_long_inc(&pblk->erase_failed);
+@@ -58,26 +59,38 @@ static void pblk_mark_bb(struct pblk *pblk, struct pblk_line *line,
+ 		pr_err("pblk: attempted to erase bb: line:%d, pos:%d\n",
+ 							line->id, pos);
  
-@@ -1141,9 +1132,6 @@ static long nvm_ioctl_dev_remove(struct file *file, void __user *arg)
- 	struct nvm_dev *dev;
- 	int ret = 0;
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	if (copy_from_user(&remove, arg, sizeof(struct nvm_ioctl_remove)))
- 		return -EFAULT;
- 
-@@ -1168,9 +1156,6 @@ static long nvm_ioctl_dev_init(struct file *file, void __user *arg)
- {
- 	struct nvm_ioctl_dev_init init;
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	if (copy_from_user(&init, arg, sizeof(struct nvm_ioctl_dev_init)))
- 		return -EFAULT;
- 
-@@ -1187,9 +1172,6 @@ static long nvm_ioctl_dev_factory(struct file *file, void __user *arg)
- {
- 	struct nvm_ioctl_dev_factory fact;
- 
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	if (copy_from_user(&fact, arg, sizeof(struct nvm_ioctl_dev_factory)))
- 		return -EFAULT;
- 
-@@ -1205,6 +1187,9 @@ static long nvm_ctl_ioctl(struct file *file, uint cmd, unsigned long arg)
- {
- 	void __user *argp = (void __user *)arg;
- 
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
++	/* Not necessary to mark bad blocks on 2.0 spec. */
++	if (geo->version == NVM_OCSSD_SPEC_20)
++		return;
 +
- 	switch (cmd) {
- 	case NVM_INFO:
- 		return nvm_ioctl_info(file, argp);
++	ppa = kmalloc(sizeof(struct ppa_addr), GFP_ATOMIC);
++	if (!ppa)
++		return;
++
++	*ppa = ppa_addr;
+ 	pblk_gen_run_ws(pblk, NULL, ppa, pblk_line_mark_bb,
+ 						GFP_ATOMIC, pblk->bb_wq);
+ }
+ 
+ static void __pblk_end_io_erase(struct pblk *pblk, struct nvm_rq *rqd)
+ {
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct nvm_chk_meta *chunk;
+ 	struct pblk_line *line;
++	int pos;
+ 
+ 	line = &pblk->lines[pblk_ppa_to_line(rqd->ppa_addr)];
++	pos = pblk_ppa_to_pos(geo, rqd->ppa_addr);
++	chunk = &line->chks[pos];
++
+ 	atomic_dec(&line->left_seblks);
+ 
+ 	if (rqd->error) {
+-		struct ppa_addr *ppa;
+-
+-		ppa = kmalloc(sizeof(struct ppa_addr), GFP_ATOMIC);
+-		if (!ppa)
+-			return;
+-
+-		*ppa = rqd->ppa_addr;
+-		pblk_mark_bb(pblk, line, ppa);
++		chunk->state = NVM_CHK_ST_OFFLINE;
++		pblk_mark_bb(pblk, line, rqd->ppa_addr);
++	} else {
++		chunk->state = NVM_CHK_ST_FREE;
+ 	}
+ 
+ 	atomic_dec(&pblk->inflight_io);
+@@ -92,6 +105,49 @@ static void pblk_end_io_erase(struct nvm_rq *rqd)
+ 	mempool_free(rqd, pblk->e_rq_pool);
+ }
+ 
++/*
++ * Get information for all chunks from the device.
++ *
++ * The caller is responsible for freeing the returned structure
++ */
++struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk)
++{
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct nvm_chk_meta *meta;
++	struct ppa_addr ppa;
++	unsigned long len;
++	int ret;
++
++	ppa.ppa = 0;
++
++	len = geo->all_chunks * sizeof(*meta);
++	meta = kzalloc(len, GFP_KERNEL);
++	if (!meta)
++		return ERR_PTR(-ENOMEM);
++
++	ret = nvm_get_chunk_meta(dev, meta, ppa, geo->all_chunks);
++	if (ret) {
++		kfree(meta);
++		return ERR_PTR(-EIO);
++	}
++
++	return meta;
++}
++
++struct nvm_chk_meta *pblk_chunk_get_off(struct pblk *pblk,
++					      struct nvm_chk_meta *meta,
++					      struct ppa_addr ppa)
++{
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	int ch_off = ppa.m.grp * geo->num_chk * geo->num_lun;
++	int lun_off = ppa.m.pu * geo->num_chk;
++	int chk_off = ppa.m.chk;
++
++	return meta + ch_off + lun_off + chk_off;
++}
++
+ void __pblk_map_invalidate(struct pblk *pblk, struct pblk_line *line,
+ 			   u64 paddr)
+ {
+@@ -1091,10 +1147,34 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
+ 	return 1;
+ }
+ 
++static int pblk_prepare_new_line(struct pblk *pblk, struct pblk_line *line)
++{
++	struct pblk_line_meta *lm = &pblk->lm;
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	int blk_to_erase = atomic_read(&line->blk_in_line);
++	int i;
++
++	for (i = 0; i < lm->blk_per_line; i++) {
++		struct pblk_lun *rlun = &pblk->luns[i];
++		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
++		int state = line->chks[pos].state;
++
++		/* Free chunks should not be erased */
++		if (state & NVM_CHK_ST_FREE) {
++			set_bit(pblk_ppa_to_pos(geo, rlun->bppa),
++							line->erase_bitmap);
++			blk_to_erase--;
++		}
++	}
++
++	return blk_to_erase;
++}
++
+ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ {
+ 	struct pblk_line_meta *lm = &pblk->lm;
+-	int blk_in_line = atomic_read(&line->blk_in_line);
++	int blk_to_erase;
+ 
+ 	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
+ 	if (!line->map_bitmap)
+@@ -1107,7 +1187,21 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ 		return -ENOMEM;
+ 	}
+ 
++	/* Bad blocks do not need to be erased */
++	bitmap_copy(line->erase_bitmap, line->blk_bitmap, lm->blk_per_line);
++
+ 	spin_lock(&line->lock);
++
++	/* If we have not written to this line, we need to mark up free chunks
++	 * as already erased
++	 */
++	if (line->state == PBLK_LINESTATE_NEW) {
++		blk_to_erase = pblk_prepare_new_line(pblk, line);
++		line->state = PBLK_LINESTATE_FREE;
++	} else {
++		blk_to_erase = atomic_read(&line->blk_in_line);
++	}
++
+ 	if (line->state != PBLK_LINESTATE_FREE) {
+ 		kfree(line->map_bitmap);
+ 		kfree(line->invalid_bitmap);
+@@ -1119,15 +1213,12 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ 
+ 	line->state = PBLK_LINESTATE_OPEN;
+ 
+-	atomic_set(&line->left_eblks, blk_in_line);
+-	atomic_set(&line->left_seblks, blk_in_line);
++	atomic_set(&line->left_eblks, blk_to_erase);
++	atomic_set(&line->left_seblks, blk_to_erase);
+ 
+ 	line->meta_distance = lm->meta_distance;
+ 	spin_unlock(&line->lock);
+ 
+-	/* Bad blocks do not need to be erased */
+-	bitmap_copy(line->erase_bitmap, line->blk_bitmap, lm->blk_per_line);
+-
+ 	kref_init(&line->ref);
+ 
+ 	return 0;
+@@ -1583,12 +1674,14 @@ static void pblk_line_should_sync_meta(struct pblk *pblk)
+ 
+ void pblk_line_close(struct pblk *pblk, struct pblk_line *line)
+ {
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct pblk_line_meta *lm = &pblk->lm;
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+ 	struct list_head *move_list;
++	int i;
+ 
+ #ifdef CONFIG_NVM_DEBUG
+-	struct pblk_line_meta *lm = &pblk->lm;
+-
+ 	WARN(!bitmap_full(line->map_bitmap, lm->sec_per_line),
+ 				"pblk: corrupt closed line %d\n", line->id);
+ #endif
+@@ -1610,6 +1703,15 @@ void pblk_line_close(struct pblk *pblk, struct pblk_line *line)
+ 	line->smeta = NULL;
+ 	line->emeta = NULL;
+ 
++	for (i = 0; i < lm->blk_per_line; i++) {
++		struct pblk_lun *rlun = &pblk->luns[i];
++		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
++		int state = line->chks[pos].state;
++
++		if (!(state & NVM_CHK_ST_OFFLINE))
++			state = NVM_CHK_ST_CLOSED;
++	}
++
+ 	spin_unlock(&line->lock);
+ 	spin_unlock(&l_mg->gc_lock);
+ }
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 5b381700ef30..27b4974930b4 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -451,6 +451,7 @@ static void pblk_line_meta_free(struct pblk_line *line)
+ {
+ 	kfree(line->blk_bitmap);
+ 	kfree(line->erase_bitmap);
++	kfree(line->chks);
+ }
+ 
+ static void pblk_lines_free(struct pblk *pblk)
+@@ -495,55 +496,44 @@ static int pblk_bb_get_tbl(struct nvm_tgt_dev *dev, struct pblk_lun *rlun,
+ 	return 0;
+ }
+ 
+-static void *pblk_bb_get_log(struct pblk *pblk)
++static void *pblk_bb_get_meta(struct pblk *pblk)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+-	u8 *log;
++	u8 *meta;
+ 	int i, nr_blks, blk_per_lun;
+ 	int ret;
+ 
+ 	blk_per_lun = geo->num_chk * geo->pln_mode;
+ 	nr_blks = blk_per_lun * geo->all_luns;
+ 
+-	log = kmalloc(nr_blks, GFP_KERNEL);
+-	if (!log)
++	meta = kmalloc(nr_blks, GFP_KERNEL);
++	if (!meta)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	for (i = 0; i < geo->all_luns; i++) {
+ 		struct pblk_lun *rlun = &pblk->luns[i];
+-		u8 *log_pos = log + i * blk_per_lun;
++		u8 *meta_pos = meta + i * blk_per_lun;
+ 
+-		ret = pblk_bb_get_tbl(dev, rlun, log_pos, blk_per_lun);
++		ret = pblk_bb_get_tbl(dev, rlun, meta_pos, blk_per_lun);
+ 		if (ret) {
+-			kfree(log);
++			kfree(meta);
+ 			return ERR_PTR(-EIO);
+ 		}
+ 	}
+ 
+-	return log;
++	return meta;
+ }
+ 
+-static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
+-			u8 *bb_log, int blk_per_line)
++static void *pblk_chunk_get_meta(struct pblk *pblk)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+-	int i, bb_cnt = 0;
+-	int blk_per_lun = geo->num_chk * geo->pln_mode;
+ 
+-	for (i = 0; i < blk_per_line; i++) {
+-		struct pblk_lun *rlun = &pblk->luns[i];
+-		u8 *lun_bb_log = bb_log + i * blk_per_lun;
+-
+-		if (lun_bb_log[line->id] == NVM_BLK_T_FREE)
+-			continue;
+-
+-		set_bit(pblk_ppa_to_pos(geo, rlun->bppa), line->blk_bitmap);
+-		bb_cnt++;
+-	}
+-
+-	return bb_cnt;
++	if (geo->version == NVM_OCSSD_SPEC_12)
++		return pblk_bb_get_meta(pblk);
++	else
++		return pblk_chunk_get_info(pblk);
+ }
+ 
+ static int pblk_luns_init(struct pblk *pblk)
+@@ -644,8 +634,131 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
+ 	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
+ }
+ 
+-static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
+-				void *chunk_log, long *nr_bad_blks)
++static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
++				   void *chunk_meta)
++{
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct pblk_line_meta *lm = &pblk->lm;
++	int i, chk_per_lun, nr_bad_chks = 0;
++
++	chk_per_lun = geo->num_chk * geo->pln_mode;
++
++	for (i = 0; i < lm->blk_per_line; i++) {
++		struct pblk_lun *rlun = &pblk->luns[i];
++		struct nvm_chk_meta *chunk;
++		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
++		u8 *lun_bb_meta = chunk_meta + pos * chk_per_lun;
++
++		chunk = &line->chks[pos];
++
++		/*
++		 * In 1.2 spec. chunk state is not persisted by the device. Thus
++		 * some of the values are reset each time pblk is instantiated.
++		 */
++		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
++			chunk->state =  NVM_CHK_ST_FREE;
++		else
++			chunk->state = NVM_CHK_ST_OFFLINE;
++
++		chunk->type = NVM_CHK_TP_W_SEQ;
++		chunk->wi = 0;
++		chunk->slba = -1;
++		chunk->cnlb = geo->clba;
++		chunk->wp = 0;
++
++		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
++			continue;
++
++		set_bit(pos, line->blk_bitmap);
++		nr_bad_chks++;
++	}
++
++	return nr_bad_chks;
++}
++
++static int pblk_setup_line_meta_20(struct pblk *pblk, struct pblk_line *line,
++				   struct nvm_chk_meta *meta)
++{
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct pblk_line_meta *lm = &pblk->lm;
++	int i, nr_bad_chks = 0;
++
++	for (i = 0; i < lm->blk_per_line; i++) {
++		struct pblk_lun *rlun = &pblk->luns[i];
++		struct nvm_chk_meta *chunk;
++		struct nvm_chk_meta *chunk_meta;
++		struct ppa_addr ppa;
++		int pos;
++
++		ppa = rlun->bppa;
++		pos = pblk_ppa_to_pos(geo, ppa);
++		chunk = &line->chks[pos];
++
++		ppa.m.chk = line->id;
++		chunk_meta = pblk_chunk_get_off(pblk, meta, ppa);
++
++		chunk->state = chunk_meta->state;
++		chunk->type = chunk_meta->type;
++		chunk->wi = chunk_meta->wi;
++		chunk->slba = chunk_meta->slba;
++		chunk->cnlb = chunk_meta->cnlb;
++		chunk->wp = chunk_meta->wp;
++
++		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
++			continue;
++
++		if (chunk->type & NVM_CHK_TP_SZ_SPEC) {
++			WARN_ONCE(1, "pblk: custom-sized chunks unsupported\n");
++			continue;
++		}
++
++		set_bit(pos, line->blk_bitmap);
++		nr_bad_chks++;
++	}
++
++	return nr_bad_chks;
++}
++
++static long pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
++				 void *chunk_meta, int line_id)
++{
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++	struct pblk_line_meta *lm = &pblk->lm;
++	long nr_bad_chks, chk_in_line;
++
++	line->pblk = pblk;
++	line->id = line_id;
++	line->type = PBLK_LINETYPE_FREE;
++	line->state = PBLK_LINESTATE_NEW;
++	line->gc_group = PBLK_LINEGC_NONE;
++	line->vsc = &l_mg->vsc_list[line_id];
++	spin_lock_init(&line->lock);
++
++	if (geo->version == NVM_OCSSD_SPEC_12)
++		nr_bad_chks = pblk_setup_line_meta_12(pblk, line, chunk_meta);
++	else
++		nr_bad_chks = pblk_setup_line_meta_20(pblk, line, chunk_meta);
++
++	chk_in_line = lm->blk_per_line - nr_bad_chks;
++	if (nr_bad_chks < 0 || nr_bad_chks > lm->blk_per_line ||
++					chk_in_line < lm->min_blk_line) {
++		line->state = PBLK_LINESTATE_BAD;
++		list_add_tail(&line->list, &l_mg->bad_list);
++		return 0;
++	}
++
++	atomic_set(&line->blk_in_line, chk_in_line);
++	list_add_tail(&line->list, &l_mg->free_list);
++	l_mg->nr_free_lines++;
++
++	return chk_in_line;
++}
++
++static int pblk_alloc_line_meta(struct pblk *pblk, struct pblk_line *line)
+ {
+ 	struct pblk_line_meta *lm = &pblk->lm;
+ 
+@@ -659,7 +772,13 @@ static int pblk_setup_line_meta(struct pblk *pblk, struct pblk_line *line,
+ 		return -ENOMEM;
+ 	}
+ 
+-	*nr_bad_blks = pblk_bb_line(pblk, line, chunk_log, lm->blk_per_line);
++	line->chks = kmalloc(lm->blk_per_line * sizeof(struct nvm_chk_meta),
++								GFP_KERNEL);
++	if (!line->chks) {
++		kfree(line->erase_bitmap);
++		kfree(line->blk_bitmap);
++		return -ENOMEM;
++	}
+ 
+ 	return 0;
+ }
+@@ -846,10 +965,9 @@ static int pblk_line_meta_init(struct pblk *pblk)
+ static int pblk_lines_init(struct pblk *pblk)
+ {
+ 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+-	struct pblk_line_meta *lm = &pblk->lm;
+ 	struct pblk_line *line;
+-	void *chunk_log;
+-	long nr_bad_blks = 0, nr_free_blks = 0;
++	void *chunk_meta;
++	long nr_free_chks = 0;
+ 	int i, ret;
+ 
+ 	ret = pblk_line_meta_init(pblk);
+@@ -864,11 +982,9 @@ static int pblk_lines_init(struct pblk *pblk)
+ 	if (ret)
+ 		goto fail_free_meta;
+ 
+-	chunk_log = pblk_bb_get_log(pblk);
+-	if (IS_ERR(chunk_log)) {
+-		pr_err("pblk: could not get bad block log (%lu)\n",
+-							PTR_ERR(chunk_log));
+-		ret = PTR_ERR(chunk_log);
++	chunk_meta = pblk_chunk_get_meta(pblk);
++	if (IS_ERR(chunk_meta)) {
++		ret = PTR_ERR(chunk_meta);
+ 		goto fail_free_luns;
+ 	}
+ 
+@@ -876,52 +992,30 @@ static int pblk_lines_init(struct pblk *pblk)
+ 								GFP_KERNEL);
+ 	if (!pblk->lines) {
+ 		ret = -ENOMEM;
+-		goto fail_free_chunk_log;
++		goto fail_free_chunk_meta;
+ 	}
+ 
+ 	for (i = 0; i < l_mg->nr_lines; i++) {
+-		int chk_in_line;
+-
+ 		line = &pblk->lines[i];
+ 
+-		line->pblk = pblk;
+-		line->id = i;
+-		line->type = PBLK_LINETYPE_FREE;
+-		line->state = PBLK_LINESTATE_FREE;
+-		line->gc_group = PBLK_LINEGC_NONE;
+-		line->vsc = &l_mg->vsc_list[i];
+-		spin_lock_init(&line->lock);
+-
+-		ret = pblk_setup_line_meta(pblk, line, chunk_log, &nr_bad_blks);
++		ret = pblk_alloc_line_meta(pblk, line);
+ 		if (ret)
+ 			goto fail_free_lines;
+ 
+-		chk_in_line = lm->blk_per_line - nr_bad_blks;
+-		if (nr_bad_blks < 0 || nr_bad_blks > lm->blk_per_line ||
+-					chk_in_line < lm->min_blk_line) {
+-			line->state = PBLK_LINESTATE_BAD;
+-			list_add_tail(&line->list, &l_mg->bad_list);
+-			continue;
+-		}
+-
+-		nr_free_blks += chk_in_line;
+-		atomic_set(&line->blk_in_line, chk_in_line);
+-
+-		l_mg->nr_free_lines++;
+-		list_add_tail(&line->list, &l_mg->free_list);
++		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
+ 	}
+ 
+-	pblk_set_provision(pblk, nr_free_blks);
++	pblk_set_provision(pblk, nr_free_chks);
+ 
+-	kfree(chunk_log);
++	kfree(chunk_meta);
+ 	return 0;
+ 
+ fail_free_lines:
+ 	while (--i >= 0)
+ 		pblk_line_meta_free(&pblk->lines[i]);
+ 	kfree(pblk->lines);
+-fail_free_chunk_log:
+-	kfree(chunk_log);
++fail_free_chunk_meta:
++	kfree(chunk_meta);
+ fail_free_luns:
+ 	kfree(pblk->luns);
+ fail_free_meta:
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 40aee9e48af4..39e47e3d6f23 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -297,6 +297,7 @@ enum {
+ 	PBLK_LINETYPE_DATA = 2,
+ 
+ 	/* Line state */
++	PBLK_LINESTATE_NEW = 9,
+ 	PBLK_LINESTATE_FREE = 10,
+ 	PBLK_LINESTATE_OPEN = 11,
+ 	PBLK_LINESTATE_CLOSED = 12,
+@@ -426,6 +427,8 @@ struct pblk_line {
+ 
+ 	unsigned long *lun_bitmap;	/* Bitmap for LUNs mapped in line */
+ 
++	struct nvm_chk_meta *chks;	/* Chunks forming line */
++
+ 	struct pblk_smeta *smeta;	/* Start metadata */
+ 	struct pblk_emeta *emeta;	/* End medatada */
+ 
+@@ -729,6 +732,10 @@ void pblk_set_sec_per_write(struct pblk *pblk, int sec_per_write);
+ int pblk_setup_w_rec_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 			struct pblk_c_ctx *c_ctx);
+ void pblk_discard(struct pblk *pblk, struct bio *bio);
++struct nvm_chk_meta *pblk_chunk_get_info(struct pblk *pblk);
++struct nvm_chk_meta *pblk_chunk_get_off(struct pblk *pblk,
++					      struct nvm_chk_meta *lp,
++					      struct ppa_addr ppa);
+ void pblk_log_write_err(struct pblk *pblk, struct nvm_rq *rqd);
+ void pblk_log_read_err(struct pblk *pblk, struct nvm_rq *rqd);
+ int pblk_submit_io(struct pblk *pblk, struct nvm_rq *rqd);
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index da45efa09bb2..6e0859b9d4d2 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -232,6 +232,19 @@ struct nvm_addrf {
+ 	u64	rsv_mask[2];
+ };
+ 
++enum {
++	/* Chunk states */
++	NVM_CHK_ST_FREE =	1 << 0,
++	NVM_CHK_ST_CLOSED =	1 << 1,
++	NVM_CHK_ST_OPEN =	1 << 2,
++	NVM_CHK_ST_OFFLINE =	1 << 3,
++
++	/* Chunk types */
++	NVM_CHK_TP_W_SEQ =	1 << 0,
++	NVM_CHK_TP_W_RAN =	1 << 1,
++	NVM_CHK_TP_SZ_SPEC =	1 << 4,
++};
++
+ /*
+  * Note: The structure size is linked to nvme_nvm_chk_meta such that the same
+  * buffer can be used when converting from little endian to cpu addressing.
 -- 
 2.11.0
