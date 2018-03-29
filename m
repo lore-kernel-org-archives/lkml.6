@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48LEcxsfgcj4gAO9SZTLoOpW2wV1CFC8kZdudsb0pa52GrRDzdvi+BjHq2IblQwcgk2CgET
-ARC-Seal: i=1; a=rsa-sha256; t=1522346786; cv=none;
+X-Google-Smtp-Source: AIpwx4+s3yufv5vgp0Xg13RACKdpkRfr4NCptQmnOXzCZAZmyV4DRIj144KVm1LpxjBdz5eyCs3N
+ARC-Seal: i=1; a=rsa-sha256; t=1522346783; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZfUTB8fh0gBq9dPyO7eyf8us/umTT++F21hWGzmC7fEiOUYfmfUzIYkqVpE5y3wl0N
-         QWYWuFvZO8WJ5mwgMJMB9ddwI5IXOOKrISpfKWTB3g8X7WQAnUPnJeX0KV5PrfGedQcW
-         lW5+UPVZdrD6kLfQJ2SzwTURczgf0r0uL8Ck6Irj7Aw2mIod+ox7DWoTWOb//hGq8kNT
-         8UAqX0DDsiaRn1fLCX1vllrSFPpWJB441rM0udMaZy/EH2CTUjR/78O6OvaBOgFmEqNt
-         5kv3QdCwk/UOd1N7QtRwKOv009OZhpq7ccFhqM8l5PBAnvnz/HdW42+ROt88W3hBpq+o
-         74wg==
+        b=CP2eDOrEPX+GHRT3hR6Qcj/z9mT217UKYoCaRAubMYkINTM08U9sG7QnoAm+lCb7lz
+         92IMJVJA7HMUsNbM375ApIpC5OnlXopFWVIXRhOir4we0Frkg0pndrxBy7DAemvJstGj
+         /TVVh38MU5ed1xUdoLU5SW3AcpwSqDWjGCZPJ0iWR/onLV2S2V+GUjG3OS6tDPe38/57
+         emFyPq5yJ0Jn+EJr6W9P5ug5UlW+ljoNlGrw136Ia9gzTDALEe+4VphP3Ci99Y7vt+jd
+         fIPKFTdqzOaJZlk+it02lbQRCGfgrgRv/H/REbhZimHT4FImgrgwuzNWAju1YDjxLotS
+         l3FQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=458jVModZx/iFI7+puEymbXvTofl6ACNWCiyLRgEsbQ=;
-        b=U3IKb7INAk68IdrtkhsIHvzyMlWN09Pz4mT9ngJfA7hBRQrsSfCk74IesBsdSx9qoE
-         6xk5+s6s5Krv6CPcPdnnWkQuu4tJVKBd8zoFPNS2XO1eBw+7Q+hPe/iuk0Yte9ADn7K7
-         JE8ArRVI/ZJTOmSgHuLbtopXPURaRpvJUq/LmQnw88RAAsqPJaSnmXeT6jVhaTgLdBaI
-         w254o+3dmM2xv8g7wj24b39oKNFol2RAr4CVM3Us4HA3ZJvth4O+yyE8ZeeogCekrAPj
-         szQteS7JcI2PRUSjbVvTs3GTB5RUH/0fQx+JL7ujEce9K1eKzoz0vfVVxsjngsPgpG5M
-         IaHw==
+        bh=KSF+rHImCvrjIFC1Y7W0rXiqPrgR0iNudp8wIcvHsDA=;
+        b=l5GsqIPNMTR5GmhGslFnJG2OvbS0wvtVMuEGu/F+iX+U6bfRADRZMpaMMWJW21slxM
+         wuMIBweoL7obLPZX6eNWTXnvvDDb1Liaxbke21a3p9nUau0XQILKPUQ8XO7Hxskal0oV
+         SiTFWDg/+6CifswSReAcuywBDDkicRzOwoDG9hXJtBNOP/JCKAeQBYF5sIznJGdPz4OU
+         wZ81T2Z0pOKdCgpBgVdk1SpS2jmx3XVujDrukBcE+jz3uucN9HknMlo92ZOG6SHjdOds
+         +0Kp8I4Um1grG0Vg+X+UNOKCuvn9OIPn8LS/DenarSVQ6tSewhKFi3Iso/qlLBelkpbh
+         DGrA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Holsety=20Chen=20 ?= <Holsety.Chen@moxa.com>,
-	=?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>,
-	Schuyler Patton <spatton@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 14/28] net: ethernet: ti: cpsw: add check for in-band mode setting with RGMII PHY interface
-Date: Thu, 29 Mar 2018 20:00:33 +0200
-Message-Id: <20180329175735.118000328@linuxfoundation.org>
+Subject: [PATCH 4.9 13/28] net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
+Date: Thu, 29 Mar 2018 20:00:32 +0200
+Message-Id: <20180329175735.056901751@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175733.447823703@linuxfoundation.org>
 References: <20180329175733.447823703@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296104396396575?=
-X-GMAIL-MSGID: =?utf-8?q?1596296304228408067?=
+X-GMAIL-THRID: =?utf-8?q?1596296100956392169?=
+X-GMAIL-MSGID: =?utf-8?q?1596296301054281865?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,45 +49,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "SZ Lin (林上智)" <sz.lin@moxa.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit f9db50691db4a7d860fce985f080bb3fc23a7ede ]
+[ Upstream commit 00777fac28ba3e126b9e63e789a613e8bd2cab25 ]
 
-According to AM335x TRM[1] 14.3.6.2, AM437x TRM[2] 15.3.6.2 and
-DRA7 TRM[3] 24.11.4.8.7.3.3, in-band mode in EXT_EN(bit18) register is only
-available when PHY is configured in RGMII mode with 10Mbps speed. It will
-cause some networking issues without RGMII mode, such as carrier sense
-errors and low throughput. TI also mentioned this issue in their forum[4].
+If the optional regulator is deferred, we must release some resources.
+They will be re-allocated when the probe function will be called again.
 
-This patch adds the check mechanism for PHY interface with RGMII interface
-type, the in-band mode can only be set in RGMII mode with 10Mbps speed.
-
-References:
-[1]: https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
-[2]: http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf
-[3]: http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf
-[4]: https://e2e.ti.com/support/arm/sitara_arm/f/791/p/640765/2392155
-
-Suggested-by: Holsety Chen (陳憲輝) <Holsety.Chen@moxa.com>
-Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
-Signed-off-by: Schuyler Patton <spatton@ti.com>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Fixes: 6eacf31139bf ("ethernet: arc: Add support for Rockchip SoC layer device tree bindings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/cpsw.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/arc/emac_rockchip.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -901,7 +901,8 @@ static void _cpsw_adjust_link(struct cps
- 		/* set speed_in input in case RMII mode is used in 100Mbps */
- 		if (phy->speed == 100)
- 			mac_control |= BIT(15);
--		else if (phy->speed == 10)
-+		/* in band mode only works in 10Mbps RGMII mode */
-+		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
- 			mac_control |= BIT(18); /* In Band mode */
- 
- 		if (priv->rx_pause)
+--- a/drivers/net/ethernet/arc/emac_rockchip.c
++++ b/drivers/net/ethernet/arc/emac_rockchip.c
+@@ -169,8 +169,10 @@ static int emac_rockchip_probe(struct pl
+ 	/* Optional regulator for PHY */
+ 	priv->regulator = devm_regulator_get_optional(dev, "phy");
+ 	if (IS_ERR(priv->regulator)) {
+-		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
++		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER) {
++			err = -EPROBE_DEFER;
++			goto out_clk_disable;
++		}
+ 		dev_err(dev, "no regulator found\n");
+ 		priv->regulator = NULL;
+ 	}
