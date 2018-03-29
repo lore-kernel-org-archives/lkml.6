@@ -1,98 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752600AbeC2QZ4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:25:56 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46512 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752261AbeC2QZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:25:54 -0400
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc: linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-media@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-2-christian.koenig@amd.com>
- <20180328123830.GB25060@infradead.org>
- <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
- <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
- <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
- <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
- <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
- <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
- <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
- <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
- <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
- <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
- <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
-Date: Thu, 29 Mar 2018 10:25:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752394AbeC2Q1P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:27:15 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:33512 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751161AbeC2Q1O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:27:14 -0400
+Date: Thu, 29 Mar 2018 12:26:56 -0400
+From: Rich Felker <dalias@libc.org>
+To: Shea Levy <shea@shealevy.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Subject: Re: [PATCH v5 15/16] sh: Switch to generic free_initrd_mem.
+Message-ID: <20180329162656.GP1436@brightrain.aerifal.cx>
+References: <20180328203659.18692-1-shea@shealevy.com>
+ <20180329113207.30674-1-shea@shealevy.com>
+ <20180329113207.30674-15-shea@shealevy.com>
 MIME-Version: 1.0
-In-Reply-To: <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: bhelgaas@google.com, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180329113207.30674-15-shea@shealevy.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 29/03/18 10:10 AM, Christian König wrote:
-> Why not? I mean the dma_map_resource() function is for P2P while other 
-> dma_map_* functions are only for system memory.
-
-Oh, hmm, I wasn't aware dma_map_resource was exclusively for mapping
-P2P. Though it's a bit odd seeing we've been working under the
-assumption that PCI P2P is different as it has to translate the PCI bus
-address. Where as P2P for devices on other buses is a big unknown.
-
->> And this is necessary to
->> check if the DMA ops in use support it or not. We can't have the
->> dma_map_X() functions do the wrong thing because they don't support it yet.
+On Thu, Mar 29, 2018 at 07:32:06AM -0400, Shea Levy wrote:
+> The generic implementation is functionally identical.
 > 
-> Well that sounds like we should just return an error from 
-> dma_map_resources() when an architecture doesn't support P2P yet as Alex 
-> suggested.
+> Signed-off-by: Shea Levy <shea@shealevy.com>
+> ---
+>  arch/sh/mm/init.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+> index ce0bbaa7e404..7451459d0725 100644
+> --- a/arch/sh/mm/init.c
+> +++ b/arch/sh/mm/init.c
+> @@ -477,13 +477,6 @@ void free_initmem(void)
+>  	free_initmem_default(-1);
+>  }
+>  
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -void free_initrd_mem(unsigned long start, unsigned long end)
+> -{
+> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
+> -}
+> -#endif
+> -
+>  #ifdef CONFIG_MEMORY_HOTPLUG
+>  int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
+>  		bool want_memblock)
+> -- 
+> 2.16.2
 
-Yes, well except in our patch-set we can't easily use
-dma_map_resources() as we either have SGLs to deal with or we need to
-create whole new interfaces to a number of subsystems.
+LGTM.
 
-> You don't seem to understand the implications: The devices do have a 
-> common upstream bridge! In other words your code would currently claim 
-> that P2P is supported, but in practice it doesn't work.
-
-Do they? They don't on any of the Intel machines I'm looking at. The
-previous version of the patchset not only required a common upstream
-bridge but two layers of upstream bridges on both devices which would
-effectively limit transfers to PCIe switches only. But Bjorn did not
-like this.
-
-> You need to include both drivers which participate in the P2P 
-> transaction to make sure that both supports this and give them 
-> opportunity to chicken out and in the case of AMD APUs even redirect the 
-> request to another location (e.g. participate in the DMA translation).
-
-I don't think it's the drivers responsibility to reject P2P . The
-topology is what governs support or not. The discussions we had with
-Bjorn settled on if the devices are all behind the same bridge they can
-communicate with each other. This is essentially guaranteed by the PCI spec.
-
-> DMA-buf fortunately seems to handle all this already, that's why we 
-> choose it as base for our implementation.
-
-Well, unfortunately DMA-buf doesn't help for the drivers we are working
-with as neither the block layer nor the RDMA subsystem have any
-interfaces for it.
-
-Logan
+Acked-by: Rich Felker <dalias@libc.org>
