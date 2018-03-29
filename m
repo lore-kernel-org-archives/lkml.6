@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753310AbeC2Ljs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:39:48 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59216 "EHLO
+        id S1753475AbeC2LkS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:40:18 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59868 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752870AbeC2L0V (ORCPT
+        with ESMTP id S1752869AbeC2L0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 07:26:21 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 033/109] ipc: add msgget syscall wrapper
-Date: Thu, 29 Mar 2018 13:23:10 +0200
-Message-Id: <20180329112426.23043-34-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Alexander Viro <viro@ZenIV.linux.org.uk>
+Subject: [PATCH 088/109] fs: add ksys_read() helper; remove in-kernel calls to sys_read()
+Date: Thu, 29 Mar 2018 13:24:05 +0200
+Message-Id: <20180329112426.23043-89-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,82 +21,136 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide ksys_msgget() wrapper to avoid in-kernel calls to this syscall.
-The ksys_ prefix denotes that this function is meant as a drop-in
-replacement for the syscall. In particular, it uses the same calling
-convention as sys_msgget().
+Using this helper allows us to avoid the in-kernel calls to the
+sys_read() syscall. The ksys_ prefix denotes that this function
+is meant as a drop-in replacement for the syscall. In particular, it
+uses the same calling convention as sys_read().
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- ipc/msg.c     | 7 ++++++-
- ipc/syscall.c | 4 ++--
- ipc/util.h    | 1 +
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ arch/s390/kernel/compat_linux.c |  2 +-
+ fs/read_write.c                 |  7 ++++++-
+ include/linux/syscalls.h        |  1 +
+ init/do_mounts.c                |  2 +-
+ init/do_mounts_rd.c             | 10 +++++-----
+ 5 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 0dcc6699dc53..64e8276be164 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -263,7 +263,7 @@ static inline int msg_security(struct kern_ipc_perm *ipcp, int msgflg)
- 	return security_msg_queue_associate(msq, msgflg);
+diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
+index 9c5e975f71a6..af0469f204fd 100644
+--- a/arch/s390/kernel/compat_linux.c
++++ b/arch/s390/kernel/compat_linux.c
+@@ -460,7 +460,7 @@ COMPAT_SYSCALL_DEFINE3(s390_read, unsigned int, fd, char __user *, buf, compat_s
+ 	if ((compat_ssize_t) count < 0)
+ 		return -EINVAL; 
+ 
+-	return sys_read(fd, buf, count);
++	return ksys_read(fd, buf, count);
  }
  
--SYSCALL_DEFINE2(msgget, key_t, key, int, msgflg)
-+long ksys_msgget(key_t key, int msgflg)
+ COMPAT_SYSCALL_DEFINE3(s390_write, unsigned int, fd, const char __user *, buf, compat_size_t, count)
+diff --git a/fs/read_write.c b/fs/read_write.c
+index b38b008a078e..fc441e1ac683 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -568,7 +568,7 @@ static inline void file_pos_write(struct file *file, loff_t pos)
+ 	file->f_pos = pos;
+ }
+ 
+-SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
++ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count)
  {
- 	struct ipc_namespace *ns;
- 	static const struct ipc_ops msg_ops = {
-@@ -280,6 +280,11 @@ SYSCALL_DEFINE2(msgget, key_t, key, int, msgflg)
- 	return ipcget(ns, &msg_ids(ns), &msg_ops, &msg_params);
+ 	struct fd f = fdget_pos(fd);
+ 	ssize_t ret = -EBADF;
+@@ -583,6 +583,11 @@ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
+ 	return ret;
  }
  
-+SYSCALL_DEFINE2(msgget, key_t, key, int, msgflg)
++SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 +{
-+	return ksys_msgget(key, msgflg);
++	return ksys_read(fd, buf, count);
 +}
 +
- static inline unsigned long
- copy_msqid_to_user(void __user *buf, struct msqid64_ds *in, int version)
+ ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count)
  {
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index a536cca37661..355c4a644bbf 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -68,7 +68,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 					   second, fifth, third);
+ 	struct fd f = fdget_pos(fd);
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 0f24e5334569..3a2e90842ff8 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -959,6 +959,7 @@ int ksys_getdents64(unsigned int fd, struct linux_dirent64 __user *dirent,
+ 		    unsigned int count);
+ int ksys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg);
+ off_t ksys_lseek(unsigned int fd, off_t offset, unsigned int whence);
++ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count);
+ 
+ /*
+  * The following kernel syscall equivalents are just wrappers to fs-internal
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index b17e0095eb4e..2c71dabe5626 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -500,7 +500,7 @@ void __init change_floppy(char *fmt, ...)
+ 		ksys_ioctl(fd, TCGETS, (long)&termios);
+ 		termios.c_lflag &= ~ICANON;
+ 		ksys_ioctl(fd, TCSETSF, (long)&termios);
+-		sys_read(fd, &c, 1);
++		ksys_read(fd, &c, 1);
+ 		termios.c_lflag |= ICANON;
+ 		ksys_ioctl(fd, TCSETSF, (long)&termios);
+ 		ksys_close(fd);
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index 13e54148c0e0..12c159824c7b 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -91,7 +91,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
+ 	 * Read block 0 to test for compressed kernel
+ 	 */
+ 	ksys_lseek(fd, start_block * BLOCK_SIZE, 0);
+-	sys_read(fd, buf, size);
++	ksys_read(fd, buf, size);
+ 
+ 	*decompressor = decompress_method(buf, size, &compress_name);
+ 	if (compress_name) {
+@@ -137,7 +137,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
+ 	 * Read 512 bytes further to check if cramfs is padded
+ 	 */
+ 	ksys_lseek(fd, start_block * BLOCK_SIZE + 0x200, 0);
+-	sys_read(fd, buf, size);
++	ksys_read(fd, buf, size);
+ 
+ 	if (cramfsb->magic == CRAMFS_MAGIC) {
+ 		printk(KERN_NOTICE
+@@ -151,7 +151,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
+ 	 * Read block 1 to test for minix and ext2 superblock
+ 	 */
+ 	ksys_lseek(fd, (start_block+1) * BLOCK_SIZE, 0);
+-	sys_read(fd, buf, size);
++	ksys_read(fd, buf, size);
+ 
+ 	/* Try minix */
+ 	if (minixsb->s_magic == MINIX_SUPER_MAGIC ||
+@@ -269,7 +269,7 @@ int __init rd_load_image(char *from)
+ 			}
+ 			printk("Loading disk #%d... ", disk);
  		}
- 	case MSGGET:
--		return sys_msgget((key_t) first, second);
-+		return ksys_msgget((key_t) first, second);
- 	case MSGCTL:
- 		return sys_msgctl(first, second, (struct msqid_ds __user *)ptr);
+-		sys_read(in_fd, buf, BLOCK_SIZE);
++		ksys_read(in_fd, buf, BLOCK_SIZE);
+ 		ksys_write(out_fd, buf, BLOCK_SIZE);
+ #if !defined(CONFIG_S390)
+ 		if (!(i % 16)) {
+@@ -307,7 +307,7 @@ static int crd_infd, crd_outfd;
  
-@@ -161,7 +161,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 		return compat_sys_msgrcv(first, ptr, second, fifth, third);
- 	}
- 	case MSGGET:
--		return sys_msgget(first, second);
-+		return ksys_msgget(first, second);
- 	case MSGCTL:
- 		return compat_sys_msgctl(first, second, compat_ptr(ptr));
- 
-diff --git a/ipc/util.h b/ipc/util.h
-index 1f1109b83437..b35c0dfe3bc3 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -242,6 +242,7 @@ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
- 		     const struct timespec __user *timeout);
- long ksys_semget(key_t key, int nsems, int semflg);
- long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
-+long ksys_msgget(key_t key, int msgflg);
- 
- /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
- #ifdef CONFIG_COMPAT
+ static long __init compr_fill(void *buf, unsigned long len)
+ {
+-	long r = sys_read(crd_infd, buf, len);
++	long r = ksys_read(crd_infd, buf, len);
+ 	if (r < 0)
+ 		printk(KERN_ERR "RAMDISK: error while reading compressed data");
+ 	else if (r == 0)
 -- 
 2.16.3
