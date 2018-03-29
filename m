@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeC2Hvn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:51:43 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:62650 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751935AbeC2Hvm (ORCPT
+        id S1752374AbeC2Hvy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:51:54 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:16928 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751398AbeC2Hvw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:51:42 -0400
+        Thu, 29 Mar 2018 03:51:52 -0400
 X-IronPort-AV: E=Sophos;i="5.48,375,1517842800";
-   d="scan'208";a="276602217"
+   d="scan'208";a="276602239"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -19,9 +19,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v3 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1 reboot driver
-Date: Thu, 29 Mar 2018 08:46:58 +0100
-Message-Id: <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v3 3/8] DT: arm: renesas,rzn1: add the RZ/N1 SoC and RZN1D-DB board
+Date: Thu, 29 Mar 2018 08:46:59 +0100
+Message-Id: <1522309629-10152-4-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -29,41 +29,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-as part of the sysctrl MFD to handle rebooting the CA7 cores.
-This documents the driver bindings.
+This documents the RZ/N1 bindings for both the RZ/N1 and the RZN1D-DB
+board.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- .../bindings/power/renesas,rzn1-reboot.txt           | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
+ Documentation/devicetree/bindings/arm/shmobile.txt | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-new file mode 100644
-index 0000000..f592769
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-@@ -0,0 +1,20 @@
-+DT bindings for the Renesas RZ/N1 Reboot Driver
-+
-+== Reboot Driver Node ==
-+
-+The reboot driver is always a subnode of the system controller node, see
-+renesas,rzn1-sysctrl.txt for details.
-+
-+Bindings:
-++ Required:
-+	compatible = "renesas,rzn1-reboot";
-+
-+Example:
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
-+		reg = <0x4000c000 0x1000>;
-+
-+		reboot {
-+			compatible = "renesas,rzn1-reboot";
-+		};
-+	};
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index d3d1df9..52368fc 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -47,7 +47,10 @@ SoCs:
+     compatible = "renesas,r8a77980"
+   - R-Car D3 (R8A77995)
+     compatible = "renesas,r8a77995"
+-
++  - RZ/N1 Family (R9A06G032 & R9A06G033)
++    compatible = "renesas,rzn1"
++  - RZ/N1D (R9A06G032)
++    compatible = "renesas,r9a06g032", "renesas,rzn1"
+ 
+ Boards:
+ 
+@@ -104,6 +107,8 @@ Boards:
+     compatible = "renesas,porter", "renesas,r8a7791"
+   - RSKRZA1 (YR0K77210C000BE)
+     compatible = "renesas,rskrza1", "renesas,r7s72100"
++  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
++    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1"
+   - Salvator-X (RTP0RC7795SIPB0010S)
+     compatible = "renesas,salvator-x", "renesas,r8a7795"
+   - Salvator-X (RTP0RC7796SIPB0011S)
 -- 
 2.7.4
