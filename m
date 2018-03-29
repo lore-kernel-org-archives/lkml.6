@@ -1,127 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeC2EyT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 00:54:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34350 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752166AbeC2EyR (ORCPT
+        id S1752286AbeC2E4L (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 00:56:11 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:39943 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751205AbeC2E4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 00:54:17 -0400
-Date: Wed, 28 Mar 2018 19:18:12 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: schwidefsky@de.ibm.com, borntraeger@de.ibm.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180328163344.GT3675@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1803281350370.1375-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1803281350370.1375-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18032904-0024-0000-0000-0000033D9E87
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008763; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01009947; UDB=6.00514528; IPR=6.00789225;
- MB=3.00020304; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-29 04:54:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032904-0025-0000-0000-0000477AAE06
-Message-Id: <20180329021812.GV3675@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-29_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803290054
+        Thu, 29 Mar 2018 00:56:08 -0400
+X-Google-Smtp-Source: AIpwx4+sm43Ane8pLNv7/P7xtlGhdlVXyem3BpcMDLtB7716lYZaAbgHZCvxD2aUJwkjcAAg3RWacw==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: General protection fault with use_blk_mq=1.
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <ae71cc99-02f1-2b42-bb76-d6e28d61ca21@kernel.dk>
+Date: Thu, 29 Mar 2018 06:56:04 +0200
+Cc: "Zephaniah E. Loss-Cutler-Hull" <warp-spam_kernel@aehallh.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Message-Id: <AC9AB9BB-F60B-40E6-A632-782DBFABDAE8@linaro.org>
+References: <7d8a9c62-7d3e-879c-5b5b-30707f04553e@aehallh.com>
+ <ae71cc99-02f1-2b42-bb76-d6e28d61ca21@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2T4uHfR010209
 
-On Wed, Mar 28, 2018 at 02:04:07PM -0400, Alan Stern wrote:
-> On Wed, 28 Mar 2018, Paul E. McKenney wrote:
+
+
+> Il giorno 29 mar 2018, alle ore 03:02, Jens Axboe <axboe@kernel.dk> ha scritto:
 > 
-> > On Wed, Mar 28, 2018 at 11:01:25AM -0400, Alan Stern wrote:
-> > > On Wed, 28 Mar 2018, Paul E. McKenney wrote:
-> > > 
-> > > > Hello!
-> > > > 
-> > > > The prototype patch shown below provides files required to allow herd7 to
-> > > > evaluate C-language litmus tests for the multicopy-atomic TSO ordering
-> > > > provided by s390.  This patch should be viewed with great suspicion.
-> > > > It does what I expect it to do on SB (with and without barriers),
-> > > > IRIW without barriers, and Alan's SB with read-of-write added, but my
-> > > > expectations are quite likely faulty, and my test cases are very few
-> > > > in number.
-> > > > 
-> > > > Either way, this is the easy part.  The hard part (which I am happy
-> > > > to leave to others) is making litmus7 and klitmus7 able to do tests
-> > > > on actual hardware, as well as enabling herd to handle litmus tests
-> > > > containing BAL.  ;-)
-> > > > 
-> > > > Note that CPU architectures already supported by herd might well need
-> > > > only a .cfg file that refers to herd's pre-existing support.
-> > > > 
-> > > > Thoughts?
-> > > 
-> > > I don't quite see the point of this.  You're not suggesting that we
-> > > have one Linux Kernel Memory Consistency Model for s390 and another
-> > > one for all the other architectures, are you?
-> > 
-> > Certainly not for common code!
-> > 
-> > > If the idea is merely to provide a herd model for s390 then it should 
-> > > go into the DIY repository, not into the LKMM repository.
-> > 
-> > Makes sense.
-> > 
-> > In the meantime, does the cat file look to you like it correctly
-> > models the combination of TSO and multicopy atomicity?  Do the
-> > fences really work, or did I just get lucky with my choice of
-> > litmus tests?
+> On 3/28/18 5:03 PM, Zephaniah E. Loss-Cutler-Hull wrote:
+>> I am not subscribed to any of the lists on the To list here, please CC
+>> me on any replies.
+>> 
+>> I am encountering a fairly consistent crash anywhere from 15 minutes to
+>> 12 hours after boot with scsi_mod.use_blk_mq=1 dm_mod.use_blk_mq=1> 
+>> The crash looks like:
+>> 
+>> [ 5466.075993] general protection fault: 0000 [#1] PREEMPT SMP PTI
+>> [ 5466.075997] Modules linked in: esp4 xfrm4_mode_tunnel fuse usblp
+>> uvcvideo pci_stub vboxpci(O) vboxnetadp(O) vboxnetflt(O) vboxdrv(O)
+>> ip6table_filter ip6_tables xt_tcpudp nf_conntrack_ipv4 nf_defrag_ipv4
+>> xt_conntrack nf_conntrack iptable_filter ip_tables x_tables intel_rapl
+>> joydev serio_raw wmi_bmof iwldvm iwlwifi shpchp kvm_intel kvm irqbypass
+>> autofs4 algif_skcipher nls_iso8859_1 nls_cp437 crc32_pclmul
+>> ghash_clmulni_intel
+>> [ 5466.076022] CPU: 3 PID: 10573 Comm: pool Tainted: G           O    
+>> 4.15.13-f1-dirty #148
+>> [ 5466.076024] Hardware name: Hewlett-Packard HP EliteBook Folio
+>> 9470m/18DF, BIOS 68IBD Ver. F.44 05/22/2013
+>> [ 5466.076029] RIP: 0010:percpu_counter_add_batch+0x2b/0xb0
+>> [ 5466.076031] RSP: 0018:ffffa556c47afb58 EFLAGS: 00010002
+>> [ 5466.076033] RAX: ffff95cda87ce018 RBX: ffff95cda87cdb68 RCX:
+>> 0000000000000000
+>> [ 5466.076034] RDX: 000000003fffffff RSI: ffffffff896495c4 RDI:
+>> ffffffff895b2bed
+>> [ 5466.076036] RBP: 000000003fffffff R08: 0000000000000000 R09:
+>> ffff95cb7d5f8148
+>> [ 5466.076037] R10: 0000000000000200 R11: 0000000000000000 R12:
+>> 0000000000000001
+>> [ 5466.076038] R13: ffff95cda87ce088 R14: ffff95cda6ebd100 R15:
+>> ffffa556c47afc58
+>> [ 5466.076040] FS:  00007f25f5305700(0000) GS:ffff95cdbeac0000(0000)
+>> knlGS:0000000000000000
+>> [ 5466.076042] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [ 5466.076043] CR2: 00007f25e807e0a8 CR3: 00000003ed5a6001 CR4:
+>> 00000000001606e0
+>> [ 5466.076044] Call Trace:
+>> [ 5466.076050]  bfqg_stats_update_io_add+0x58/0x100
+>> [ 5466.076055]  bfq_insert_requests+0xec/0xd80
+>> [ 5466.076059]  ? blk_rq_append_bio+0x8f/0xa0
+>> [ 5466.076061]  ? blk_rq_map_user_iov+0xc3/0x1d0
+>> [ 5466.076065]  blk_mq_sched_insert_request+0xa3/0x130
+>> [ 5466.076068]  blk_execute_rq+0x3a/0x50
+>> [ 5466.076070]  sg_io+0x197/0x3e0
+>> [ 5466.076073]  ? dput+0xca/0x210
+>> [ 5466.076077]  ? mntput_no_expire+0x11/0x1a0
+>> [ 5466.076079]  scsi_cmd_ioctl+0x289/0x400
+>> [ 5466.076082]  ? filename_lookup+0xe1/0x170
+>> [ 5466.076085]  sd_ioctl+0xc7/0x1a0
+>> [ 5466.076088]  blkdev_ioctl+0x4d4/0x8c0
+>> [ 5466.076091]  block_ioctl+0x39/0x40
+>> [ 5466.076094]  do_vfs_ioctl+0x92/0x5e0
+>> [ 5466.076097]  ? __fget+0x73/0xc0
+>> [ 5466.076099]  SyS_ioctl+0x74/0x80
+>> [ 5466.076102]  do_syscall_64+0x60/0x110
+>> [ 5466.076106]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+>> [ 5466.076109] RIP: 0033:0x7f25f75fef47
+>> [ 5466.076110] RSP: 002b:00007f25f53049a8 EFLAGS: 00000246 ORIG_RAX:
+>> 0000000000000010
+>> [ 5466.076112] RAX: ffffffffffffffda RBX: 000000000000000c RCX:
+>> 00007f25f75fef47
+>> [ 5466.076114] RDX: 00007f25f53049b0 RSI: 0000000000002285 RDI:
+>> 000000000000000c
+>> [ 5466.076115] RBP: 0000000000000010 R08: 00007f25e8007818 R09:
+>> 0000000000000200
+>> [ 5466.076116] R10: 0000000000000001 R11: 0000000000000246 R12:
+>> 0000000000000000
+>> [ 5466.076118] R13: 0000000000000000 R14: 00007f25f8a6b5e0 R15:
+>> 00007f25e80173e0
+>> [ 5466.076120] Code: 41 55 49 89 fd bf 01 00 00 00 41 54 49 89 f4 55 89
+>> d5 53 e8 18 e1 bb ff 48 c7 c7 c4 95 64 89 e8 dc e9 fb ff 49 8b 45 20 48
+>> 63 d5 <65> 8b 18 48 63 db 4c 01 e3 48 39 d3 7d 0a f7 dd 48 63 ed 48 39
+>> [ 5466.076147] RIP: percpu_counter_add_batch+0x2b/0xb0 RSP: ffffa556c47afb58
+>> [ 5466.076149] ---[ end trace 8d7eb80aafef4494 ]---
+>> [ 5466.670153] note: pool[10573] exited with preempt_count 2
+>> 
+>> (I only have the one instance right this minute as a result of not
+>> having remote syslog setup before now.)
+>> 
+>> This is clearly deep in the blk_mq code, and it goes away when I remove
+>> the use_blk_mq kernel command line parameters.
+>> 
+>> My next obvious step is to try and disable the load of the vbox modules.
+>> 
+>> I can include the full dmesg output if it would be helpful.
+>> 
+>> The system is an older HP Ultrabook, and the root partition is, sda1 (a
+>> SSD) -> a LUKS encrypted partition -> LVM -> BTRFS.
+>> 
+>> The kernel is a stock 4.15.11, however I only recently added the blk_mq
+>> options, so while I can state that I have seen this on multiple kernels
+>> in the 4.15.x series, I have not tested earlier kernels in this
+>> configuration.
+>> 
+>> Looking through the code, I'd guess that this is dying inside
+>> blkg_rwstat_add, which calls percpu_counter_add_batch, which is what RIP
+>> is pointing at.
 > 
-> You got lucky.  Try creating an SB litmus test where, instead of an
-> smp_mb() fence between the write and the read, each thread executes
-> some other kind of fence.
-
-Ah, it does indeed get "Never" in that case, which I do not believe
-to e correct.
-
-> The acyclicity condition should have been written more like this:
+> Leaving the whole thing here for Paolo - it's crashing off insertion of
+> a request coming out of SG_IO. Don't think we've seen this BFQ failure
+> case before.
 > 
-> let po_ghb = ([R] ; po ; [M]) | ([M] ; po ; [W])
+
+Actually, we have.  Found and reported by Ming about two months and a
+half ago:
+https://www.spinics.net/lists/linux-block/msg21422.html
+
+Then it just disappeared with 4.16, and Ming moved on.  This forced me
+to abandon the problem, as I never succeeded in reproducing it.
+
+Thanks,
+Paolo
+
+> You can mitigate this by switching the scsi-mq devices to mq-deadline
+> instead.
 > 
-> acyclic mfence | po_ghb | rf | fr | co as tso-mca
-> 
-> I don't know what the fence instruction is on s390; change the "mfence"
-> above accordingly.  The main difference between this and the
-> corresponding expression in x86tso.cat is that I replaced rfe with rf.
-
-The s390 fence instruction is "bcr 14,0" or "bcr 15,0", depending on
-how recent of hardware you are running.  The latter works everywhere,
-if I recall correctly.  But I do not believe that herd knows about either
-instruction yet.  Ah, and I need to lose the "empty rmw & (fre;coe)".
-That appears to be where my spurious ordering was coming from, strange
-though that seems to me.
-
-And your use of "rf" instead of "rfe" makes sense, as that is what makes
-the read-from-write provide ordering, correct?  And that should also cover
-the "Uniproc check" that would otherwise be required, right?
-
-Except that I get "Sometimes" on CoWR+poonceonce+Once.litmus...
-Which I can fix by unioning po-loc into po-ghb.  Or is there some
-better way to do this?
-
-> This doesn't account for atomic operations properly; see the "implied" 
-> term in x86tso.cat.
-
-I will look at this more later, reaching end of both battery and useful
-attention span...
-
-							Thanx, Paul
+> -- 
+> Jens Axboe
