@@ -1,67 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751223AbeC2OOW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:14:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42024 "EHLO mail.bootlin.com"
+        id S1751249AbeC2OP3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:15:29 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43144 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750732AbeC2OOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:14:20 -0400
-Date: Thu, 29 Mar 2018 16:14:08 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH net-next 3/8] net: mscc: Add MDIO driver
-Message-ID: <20180329141408.GC12066@piout.net>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-4-alexandre.belloni@bootlin.com>
- <9547b11d-147d-5029-0abe-8bf0f705c959@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9547b11d-147d-5029-0abe-8bf0f705c959@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1750979AbeC2OP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:15:27 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org
+Subject: [PATCH] efi/cper: Remove the INDENT_SP silliness
+Date: Thu, 29 Mar 2018 16:14:20 +0200
+Message-Id: <20180329141420.13042-1-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/03/2018 at 14:51:19 -0700, Florian Fainelli wrote:
-> > +	writel(MSCC_MIIM_CMD_VLD | (mii_id << MSCC_MIIM_CMD_PHYAD_SHIFT) |
-> > +	       (regnum << MSCC_MIIM_CMD_REGAD_SHIFT) | MSCC_MIIM_CMD_OPR_READ,
-> > +	       miim->regs + MSCC_MIIM_REG_CMD);
-> > +
-> > +	ret = mscc_miim_wait_ready(bus);
-> > +	if (ret)
-> > +		goto out;
-> 
-> Your example had an interrupt specified, can't you use that instead of
-> polling?
-> 
+From: Borislav Petkov <bp@suse.de>
 
-the interrupt doesn't handle that. It is used to detect when a PHY
-register has changed once the MIIM controller is configured to poll the
-phys. At some point, this could be used to replace the PHY interrupts
-but it doesn't correspond to the linux model so I didn't investigate too
-much.
+A separate define just to print a space character is silly and
+completely unneeded. Remove it.
 
->  > +	for (i = 0; i < PHY_MAX_ADDR; i++) {
-> > +		if (mscc_miim_read(bus, i, MII_PHYSID1) < 0)
-> > +			bus->phy_mask |= BIT(i);
-> > +	}
-> 
-> What is this used for? You have an OF MDIO bus which would create a
-> phy_device for each node specified, is this a similar workaround to what
-> drivers/net/phy/mdio-bcm-unimac.c has to do? If so, please document it
-> as such.
-> 
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org
+---
+ drivers/firmware/efi/cper-arm.c | 6 ++----
+ drivers/firmware/efi/cper.c     | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-I replied to Andrew who had the same question.
-
+diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
+index 698e5c8e0c8d..502811344e81 100644
+--- a/drivers/firmware/efi/cper-arm.c
++++ b/drivers/firmware/efi/cper-arm.c
+@@ -30,8 +30,6 @@
+ #include <acpi/ghes.h>
+ #include <ras/ras_event.h>
+ 
+-#define INDENT_SP	" "
+-
+ static const char * const arm_reg_ctx_strs[] = {
+ 	"AArch32 general purpose registers",
+ 	"AArch32 EL1 context registers",
+@@ -283,7 +281,7 @@ void cper_print_proc_arm(const char *pfx,
+ 			pfx, proc->psci_state);
+ 	}
+ 
+-	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
++	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
+ 
+ 	err_info = (struct cper_arm_err_info *)(proc + 1);
+ 	for (i = 0; i < proc->err_info_num; i++) {
+@@ -310,7 +308,7 @@ void cper_print_proc_arm(const char *pfx,
+ 		if (err_info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO) {
+ 			printk("%serror_info: 0x%016llx\n", newpfx,
+ 			       err_info->error_info);
+-			snprintf(infopfx, sizeof(infopfx), "%s%s", newpfx, INDENT_SP);
++			snprintf(infopfx, sizeof(infopfx), "%s ", newpfx);
+ 			cper_print_arm_err_info(infopfx, err_info->type,
+ 						err_info->error_info);
+ 		}
+diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+index 5a59b582c9aa..3bf0dca378a6 100644
+--- a/drivers/firmware/efi/cper.c
++++ b/drivers/firmware/efi/cper.c
+@@ -37,8 +37,6 @@
+ #include <acpi/ghes.h>
+ #include <ras/ras_event.h>
+ 
+-#define INDENT_SP	" "
+-
+ static char rcd_decode_str[CPER_REC_LEN];
+ 
+ /*
+@@ -433,7 +431,7 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
+ 	if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
+ 		printk("%s""fru_text: %.20s\n", pfx, gdata->fru_text);
+ 
+-	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
++	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
+ 	if (guid_equal(sec_type, &CPER_SEC_PROC_GENERIC)) {
+ 		struct cper_sec_proc_generic *proc_err = acpi_hest_get_payload(gdata);
+ 
+@@ -510,7 +508,7 @@ void cper_estatus_print(const char *pfx,
+ 		       "It has been corrected by h/w "
+ 		       "and requires no further action");
+ 	printk("%s""event severity: %s\n", pfx, cper_severity_str(severity));
+-	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
++	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
+ 
+ 	apei_estatus_for_each_section(estatus, gdata) {
+ 		cper_estatus_print_section(newpfx, gdata, sec_no);
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.13.0
