@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+24Z0X36ZkKyQH+cHMr2gTUO0DU7Ptqp3AmMMPNmEUQMcI7UuJwnNQTf9GxRBzIQ5wqP0e
-ARC-Seal: i=1; a=rsa-sha256; t=1522346856; cv=none;
+X-Google-Smtp-Source: AIpwx4+U2yRMNUtROqSVmGXst1A6eZPumCo35H0TeB8SEgcL1nVZckfpeadL0rdemZhivPWU/5jN
+ARC-Seal: i=1; a=rsa-sha256; t=1522346853; cv=none;
         d=google.com; s=arc-20160816;
-        b=mQKr2fVktolygsznYCYunkMGQG1EnCPR33B/Cjak8Ho4cU3YlOjA/uHI4FObbTv0/i
-         ksW3yLXpuMs5Q/x9Mq1vNPxOFw8KYhKUXc7zQYyekaVo2MzE6wYxRSp/vC0vWNi8oEZh
-         ayT+qVyBD6X9Z58+nVPTmP5OH4AfxV6vz8obxRueRmnjWhUyFjD/PmycNMJME82ggGiM
-         okK6jboGwkPGUmRh8sPZHm+m2KyjQuwDLAwMHFlRxO0mi3C7naQ3/bx74/04z4hSSITe
-         hOAWlcyYCHjtBeEnBO2B7VzYkfa2/ZguKys9+fNG4L8Q3wrtn/JSQ196tM59wqIRhR2b
-         IW+g==
+        b=DGVq37ff8a55PVWW1a9RSZT89/0VTv5brjb1CIu4Crg9O6eQG/A89kfcE5SNBMKque
+         30JQNvblY/9ob0yUtZ1NAo+7MXYXotSqb51v0Bp2JmidoOhpLPz2vZlMPDUiikBUZ1xU
+         zpcF0F7Iv3z/uUZMP07WvDczCb4LGir9fJGbOImOKVbXwSORai0U3tyB9b+HkTxrVUCi
+         7kMfOdigWzJZz5iZhcLLG+6+Zrz9OsacqnW0asNoeL7XQ8gyturo7JNSd8MiM9TjjvMa
+         3xlH3Mloz74snAh6E0uMxchoQrVpnFdevYPq09Un3qMuM7kv7H6Bhj38DzqtzjfYhE6t
+         Fyfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9EG/WJhnoZ69WS7trs7vdegznyIZzgHwCTRF3MEpxjQ=;
-        b=KA5r+haSnY0HfgHQ3lPDNV2fXXfkz/su7svL/VH1zFqTJ8/ZCvYWddEWP13kQZQoZa
-         I/fNjQsRrxLH9hIqMDn94QLuymo3c5nER+lXOdJTplxIioXvKs9JkW2migundnzqXUIp
-         BgY4FIUZqOkEhwcOrKd6iUZ5Nz5oBeiux3xwru1eT40gY94Pu+SLGyYbpw6eD+1Yndv4
-         xO2Z/Ha3vK3YKd5jTN17H6YLPsK3zw5yydcZwoKGKzh47sRPDxV/417fcDniHlrvE1Eg
-         EgxAApGRELoJS7GJWtAdnGapB1OtndcePwlFyw3kdWX66MFLQmo2jZ/yLtezwfLFI950
-         YSWA==
+        bh=WuWgu9vwWJpSBg987+q6nQm6OB5cpCwzk2Ju+F/lmyw=;
+        b=c4E0up2kZHhQT2ibv92PPjhk2BmmoqA17VtoI+DquWbA3rTYDDHjUnZJDg9mczAoqp
+         2G5hCy6lJX+6vCx6wUcl+hfU789JpgiTX///Zh6WRbOASJGW/9eTa7OGTAlF6VjK7JZa
+         jwe5RkOHzQyUtPmVbwDEjR9S4bddKzrE4qwBoMJKYHNPqnhowCnSsLLtSK4xxGcnZZaz
+         2YJBnhDdCvlnFYf32wNKu0PiIbAmRtkTAcwCFnKeBQlRjW0fQhF0gfL7OhhOb+zDqC4g
+         hVpUuE/fqHEeugMBiKliZnIXQ3UevQtXOwcOskS8mlMNF8SQWR+I0Ofpyz8rJg7Bi7y0
+         Q8tA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,23 +26,26 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
-	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 10/20] netlink: avoid a double skb free in genlmsg_mcast()
-Date: Thu, 29 Mar 2018 20:00:46 +0200
-Message-Id: <20180329175742.320701878@linuxfoundation.org>
+	Johannes Thumshirn <jthumshirn@suse.de>,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Christoph Hellwig <hch@lst.de>,
+	Doug Gilbert <dgilbert@interlog.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Tony Battersby <tonyb@cybernetics.com>
+Subject: [PATCH 4.4 01/20] scsi: sg: dont return bogus Sg_requests
+Date: Thu, 29 Mar 2018 20:00:37 +0200
+Message-Id: <20180329175741.949669985@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175741.886181131@linuxfoundation.org>
 References: <20180329175741.886181131@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296114205984093?=
-X-GMAIL-MSGID: =?utf-8?q?1596296377060969363?=
+X-GMAIL-THRID: =?utf-8?q?1596296289036439826?=
+X-GMAIL-MSGID: =?utf-8?q?1596296374432949148?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +53,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
+commit 48ae8484e9fc324b4968d33c585e54bc98e44d61 upstream.
 
-[ Upstream commit 02a2385f37a7c6594c9d89b64c4a1451276f08eb ]
+If the list search in sg_get_rq_mark() fails to find a valid request, we
+return a bogus element. This then can later lead to a GPF in
+sg_remove_scat().
 
-nlmsg_multicast() consumes always the skb, thus the original skb must be
-freed only when this function is called with a clone.
+So don't return bogus Sg_requests in sg_get_rq_mark() but NULL in case
+the list search doesn't find a valid request.
 
-Fixes: cb9f7a9a5c96 ("netlink: ensure to loop over all netns in genlmsg_multicast_allns()")
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Doug Gilbert <dgilbert@interlog.com>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Acked-by: Doug Gilbert <dgilbert@interlog.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Tony Battersby <tonyb@cybernetics.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/netlink/genetlink.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netlink/genetlink.c
-+++ b/net/netlink/genetlink.c
-@@ -1143,7 +1143,7 @@ static int genlmsg_mcast(struct sk_buff
- 	if (!err)
- 		delivered = true;
- 	else if (err != -ESRCH)
--		goto error;
-+		return err;
- 	return delivered ? 0 : -ESRCH;
-  error:
- 	kfree_skb(skb);
+---
+ drivers/scsi/sg.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -2074,11 +2074,12 @@ sg_get_rq_mark(Sg_fd * sfp, int pack_id)
+ 		if ((1 == resp->done) && (!resp->sg_io_owned) &&
+ 		    ((-1 == pack_id) || (resp->header.pack_id == pack_id))) {
+ 			resp->done = 2;	/* guard against other readers */
+-			break;
++			write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
++			return resp;
+ 		}
+ 	}
+ 	write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
+-	return resp;
++	return NULL;
+ }
+ 
+ /* always adds to end of list */
