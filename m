@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752962AbeC2WMY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:12:24 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41334 "EHLO
+        id S1752969AbeC2WM5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:12:57 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33184 "EHLO
         mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752591AbeC2WHV (ORCPT
+        with ESMTP id S1752561AbeC2WHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 18:07:21 -0400
-X-Google-Smtp-Source: AIpwx4+dDrscTmjRXE3Bnv9mpt2oVkKbj7iyTXXbrdFT8HeRNlIwaB54/+hl7fMMOowWsAcaeu4MUQ==
+        Thu, 29 Mar 2018 18:07:19 -0400
+X-Google-Smtp-Source: AIpwx4/lCb8XEMBvMDNeJ4pdoruPLHQ+I0M+QyT4SGKSawm4UobQIt+GyIcbC9Akx/W5U2HsQ9MH2g==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         keith.busch@intel.com, javier@cnexlabs.com,
         Heiner Litz <hlitz@ucsc.edu>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 21/37] lightnvm: Avoid validation of default op value
-Date: Fri, 30 Mar 2018 00:05:08 +0200
-Message-Id: <20180329220524.30363-22-mb@lightnvm.io>
+Subject: [GIT PULL 19/37] lightnvm: fix bad block initialization
+Date: Fri, 30 Mar 2018 00:05:06 +0200
+Message-Id: <20180329220524.30363-20-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
 References: <20180329220524.30363-1-mb@lightnvm.io>
@@ -29,31 +29,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Heiner Litz <hlitz@ucsc.edu>
 
-Fixes: 38401d231de65 ("lightnvm: set target over-provision on create ioctl")
+fix reading bad block device information to correctly setup the per line
+blk_bitmap during lightnvm initialization
+
 Signed-off-by: Heiner Litz <hlitz@ucsc.edu>
-Reviewed-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/lightnvm/pblk-init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 5b197d6bb6d9..c4f12b1ae8b8 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -304,11 +304,9 @@ static int __nvm_config_extended(struct nvm_dev *dev,
- 	}
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 43b835678f48..ee936c1ff764 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -460,10 +460,11 @@ static int pblk_bb_line(struct pblk *pblk, struct pblk_line *line,
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+ 	int i, bb_cnt = 0;
++	int blk_per_lun = geo->nr_chks * geo->plane_mode;
  
- 	/* op not set falls into target's default */
--	if (e->op == 0xFFFF)
-+	if (e->op == 0xFFFF) {
- 		e->op = NVM_TARGET_DEFAULT_OP;
--
--	if (e->op < NVM_TARGET_MIN_OP ||
--	    e->op > NVM_TARGET_MAX_OP) {
-+	} else if (e->op < NVM_TARGET_MIN_OP || e->op > NVM_TARGET_MAX_OP) {
- 		pr_err("nvm: invalid over provisioning value\n");
- 		return -EINVAL;
- 	}
+ 	for (i = 0; i < blk_per_line; i++) {
+ 		struct pblk_lun *rlun = &pblk->luns[i];
+-		u8 *lun_bb_log = bb_log + i * blk_per_line;
++		u8 *lun_bb_log = bb_log + i * blk_per_lun;
+ 
+ 		if (lun_bb_log[line->id] == NVM_BLK_T_FREE)
+ 			continue;
 -- 
 2.11.0
