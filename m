@@ -1,59 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeC2QZY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:25:24 -0400
-Received: from mga06.intel.com ([134.134.136.31]:7968 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752281AbeC2QZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:25:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
-   d="scan'208";a="37919771"
-Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
- LLC
-To: Peter Zijlstra <peterz@infradead.org>
-References: <20180329000024.GA16648@alison-desk.jf.intel.com>
- <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
- <20180329134723.GA4043@hirez.programming.kicks-ass.net>
- <8a24d82e-a8dd-2f35-4764-a58fd6c64ae8@linux.intel.com>
- <20180329160914.GR4082@hirez.programming.kicks-ass.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
-        David Rientjes <rientjes@google.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <224bbc83-125d-0507-92af-5b6b4af62834@linux.intel.com>
-Date: Thu, 29 Mar 2018 09:25:21 -0700
+        id S1752344AbeC2QZg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:25:36 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:43615 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752004AbeC2QZe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:25:34 -0400
+Subject: Re: [net-next PATCH v2 03/10] net: netcp: ethss: make call to
+ gbe_sgmii_config() conditional
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
+        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>
+References: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
+ <1522168309-12338-4-git-send-email-m-karicheri2@ti.com>
+ <20180327171817.GO5862@lunn.ch>
+From: Murali Karicheri <m-karicheri2@ti.com>
+Organization: Texas Instruments
+Message-ID: <24d6d476-1c04-c9be-e32f-4d024be649f2@ti.com>
+Date: Thu, 29 Mar 2018 12:27:40 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180329160914.GR4082@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180327171817.GO5862@lunn.ch>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/29/2018 09:09 AM, Peter Zijlstra wrote:
-> On Thu, Mar 29, 2018 at 07:34:58AM -0700, Dave Hansen wrote:
->> What should we say, though?
+On 03/27/2018 01:18 PM, Andrew Lunn wrote:
+> On Tue, Mar 27, 2018 at 12:31:42PM -0400, Murali Karicheri wrote:
+>> As a preparatory patch to add support for 2u cpsw hardware found on
+>> K2G SoC, make call to gbe_sgmii_config() conditional. This is required
+>> since 2u uses RGMII interface instead of SGMII and to allow for driver
+>> re-use.
 >>
->>              /*
->> 	      * false means 'c' does not share the LLC of 'o'.
->> 	      * Note: this decision gets reflected all the way
->> 	      * out to userspace
->> 	      */
->>              return false;
-> That works, I suppose. You might want to put in a refernce to wherever
-> it is you shrink llc-size such that cache-per-cpu remains invariant.
+>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> ---
+>>  drivers/net/ethernet/ti/netcp_ethss.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+>> index 56dbc0b..1dea891 100644
+>> --- a/drivers/net/ethernet/ti/netcp_ethss.c
+>> +++ b/drivers/net/ethernet/ti/netcp_ethss.c
+>> @@ -2271,7 +2271,8 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
+>>  
+>>  	void (*hndlr)(struct net_device *) = gbe_adjust_link;
+>>  
+>> -	gbe_sgmii_config(priv, slave);
+>> +	if ((priv->ss_version == GBE_SS_VERSION_14) || IS_SS_ID_NU(priv))
+>> +		gbe_sgmii_config(priv, slave);
+> 
+> Or maybe:
+> 
+>    if (slave->phy_node == PHY_INTERFACE_MODE_SGMII)
+>    	gbe_sgmii_config(priv, slave);
+> 
+> 	Andrew
+> Actually, on specific cpsw hardware, driver supports specific interface. Driver also
+uses link-interface DT property to configure this and link-interface can be without phy
+as well. So essentially the above code looks good IMO.
 
-Hmm, if we shrink llc-size by splitting it, do we also need to create a
-unique "id" for each slice?
+I need to change this as 
+
+if (IS_SS_ID_VER_14(priv) || IS_SS_ID_NU(priv))
+    gbe_sgmii_config(priv, slave);
+
+Based on the link-interface, driver selects the phy mode and pass it to of_phy_connect().
+
+I will update the above in v3.
+-- 
+Murali Karicheri
+Linux Kernel, Keystone
