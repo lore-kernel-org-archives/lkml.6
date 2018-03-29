@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753250AbeC2UiP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 16:38:15 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:33946 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753150AbeC2UiL (ORCPT
+        id S1753257AbeC2Ui2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 16:38:28 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:39769 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752969AbeC2UiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 16:38:11 -0400
-X-Google-Smtp-Source: AIpwx49LSo4/8tDAz11uOoy2adOv4vvOFEzGS4U4yXr99ndVN9y7zGMc63zk+lBP024vMLgRzaMwv1oYD1E48xaGdH4=
+        Thu, 29 Mar 2018 16:38:25 -0400
+X-Google-Smtp-Source: AIpwx4/wJR16kUXDNSsKZHfAuzFb0XHixqaxMFDcSnRn3cZfzyWS0oJEPQJoGftC4Kd3R/t7W9ZhLnqS2Ovz6DxYyDU=
 MIME-Version: 1.0
-In-Reply-To: <1522321466-21755-8-git-send-email-mgautam@codeaurora.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org> <1522321466-21755-8-git-send-email-mgautam@codeaurora.org>
+In-Reply-To: <1522321466-21755-7-git-send-email-mgautam@codeaurora.org>
+References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org> <1522321466-21755-7-git-send-email-mgautam@codeaurora.org>
 From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 29 Mar 2018 13:38:09 -0700
-X-Google-Sender-Auth: w5DRGgAfEP_hoShV8ZEREXK3fGY
-Message-ID: <CAD=FV=X70gNedZjCiKQTOqtDf5UttViAiibgRjCoKWVJZqcKEQ@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845
+Date: Thu, 29 Mar 2018 13:38:23 -0700
+X-Google-Sender-Auth: qlkwmoc-5JRetwiH1ppsQ3xoOgk
+Message-ID: <CAD=FV=VGtmWTaa_aRG6UVAtCzy3cS8sTZDCqAgRMYeg7U02qTw@mail.gmail.com>
+Subject: Re: [PATCH v4 6/7] dt-bindings: phy-qcom-usb2: Add support to
+ override tuning values
 To: Manu Gautam <mgautam@codeaurora.org>
 Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -23,7 +24,7 @@ Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
         Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>
+        Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -32,206 +33,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi,
 
 On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
-> There are two QUSB2 PHYs present on sdm845. In order
-> to improve eye diagram for both the PHYs some parameters
-> need to be changed. Provide device tree properties to
-> override these from board specific device tree files.
+> To improve eye diagram for PHYs on different boards of same SOC,
+> some parameters may need to be changed. Provide device tree
+> properties to override these from board specific device tree
+> files. While at it, replace "qcom,qusb2-v2-phy" with compatible
+> string for USB2 PHY on sdm845 which was earlier added for
+> sdm845 only.
 >
 > Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qusb2.c | 112 +++++++++++++++++++++++++++++++++-
->  1 file changed, 111 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/phy/qcom-qusb2-phy.txt        | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> index 40fdef8..adcc3f8 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> @@ -60,6 +60,17 @@
->  #define CORE_RESET                             BIT(5)
->  #define CORE_RESET_MUX                         BIT(6)
+> diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> index 42c9742..0ed140a 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> @@ -6,7 +6,7 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+>  Required properties:
+>   - compatible: compatible list, contains
+>                "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
+> -              "qcom,qusb2-v2-phy" for QUSB2 V2 PHY.
+> +              "qcom,sdm845-qusb2-phy" for 10nm PHY on sdm845.
 >
-> +/* QUSB2PHY_IMP_CTRL1 register bits */
-> +#define IMP_RES_OFFSET_MASK                    GENMASK(5, 0)
-> +#define IMP_RES_OFFSET_SHIFT                   0x0
-> +
-> +/* QUSB2PHY_PORT_TUNE1 register bits */
-> +#define HSTX_TRIM_MASK                         GENMASK(7, 4)
-> +#define HSTX_TRIM_SHIFT                                0x4
-> +#define PREEMPH_HALF_WIDTH                     BIT(2)
-> +#define PREEMPHASIS_EN_MASK                    GENMASK(1, 0)
-> +#define PREEMPHASIS_EN_SHIFT                   0x0
-> +
->  #define QUSB2PHY_PLL_ANALOG_CONTROLS_TWO       0x04
->  #define QUSB2PHY_PLL_CLOCK_INVERTERS           0x18c
->  #define QUSB2PHY_PLL_CMODE                     0x2c
-> @@ -241,6 +252,18 @@ struct qusb2_phy_cfg {
->   * @tcsr: TCSR syscon register map
->   * @cell: nvmem cell containing phy tuning value
->   *
-> + * @override_imp_res_offset: PHY should use different rescode offset
-> + * @imp_res_offset_value: rescode offset to be updated in IMP_CTRL1 register
-> + *
-> + * @override_hstx_trim: PHY should use different HSTX o/p current value
-> + * @hstx_trim_value: HSTX_TRIM value to be updated in TUNE1 register
-> + *
-> + * @override_preemphasis: PHY should use different pre-amphasis amplitude
-> + * @preemphasis_level: Amplitude Pre-Emphasis to be updated in TUNE1 register
-> + *
-> + * @override_preemphasis_width: PHY should use different pre-emphasis duration
-> + * @preemphasis_width: half/full-width Pre-Emphasis updated via TUNE1
-> + *
-
-nit: spacing here doesn't match spacing in the structure.  AKA: you've
-smashed together all 8 properties in the structure but not in the
-description.
-
-
->   * @cfg: phy config data
->   * @has_se_clk_scheme: indicate if PHY has single-ended ref clock scheme
->   * @phy_initialized: indicate if PHY has been initialized
-> @@ -259,12 +282,35 @@ struct qusb2_phy {
->         struct regmap *tcsr;
->         struct nvmem_cell *cell;
+>   - reg: offset and length of the PHY register set.
+>   - #phy-cells: must be 0.
+> @@ -27,6 +27,23 @@ Optional properties:
+>                 tuning parameter value for qusb2 phy.
 >
-> +       bool override_imp_res_offset;
-> +       u8 imp_res_offset_value;
-> +       bool override_hstx_trim;
-> +       u8 hstx_trim_value;
-> +       bool override_preemphasis;
-> +       u8 preemphasis_level;
-> +       bool override_preemphasis_width;
-> +       u8 preemphasis_width;
-> +
->         const struct qusb2_phy_cfg *cfg;
->         bool has_se_clk_scheme;
->         bool phy_initialized;
->         enum phy_mode mode;
->  };
->
-> +static inline void qusb2_write_mask(void __iomem *base, u32 offset,
-> +                                   u32 val, u32 mask)
-> +{
-> +       u32 reg;
-> +
-> +       reg = readl(base + offset);
-> +       reg &= ~mask;
-> +       reg |= val;
+>   - qcom,tcsr-syscon: Phandle to TCSR syscon register region.
 
-"reg |= (val & mask)" instead of just "reg |= val"
-
-You don't do any bounds checking of the device tree entries and this
-will at least make sure that a bad value for a field won't screw up
-other fields (and so, presumably, it will be easier to find the bug).
+Just to confirm: the new properties below work just fine on the old
+msm8996 PHY too, right?
 
 
-> +       writel(reg, base + offset);
-> +
-> +       /* Ensure above write is completed */
-> +       readl(base + offset);
+> + - qcom,imp-res-offset-value: It is a 6 bit value that specifies offset to be
+> +               added to PHY refgen RESCODE via IMP_CTRL1 register. It is a PHY
+> +               tuning paramter that may vary for different boards of same SOC.
+> + - qcom,hstx-trim-value: It is a 4 bit value that specifies tuning for HSTX
+> +               output current. 0x0 value corresponding to 24mA which is maximum
+> +               current and 0xf corresponds to lowest current which is 15mA.
+> + - qcom,preemphasis-level: It is a 2 bit value that specifies pre-emphasis level.
+> +               Possible values are:
+> +               00: NONE
+> +               01: +5%
+> +               10: +10%
+> +               11: +15%
 
-You're using readl() and writel() which have barriers.  Why do you
-need this extra readl()?
-
-
-> +}
-> +
->  static inline void qusb2_setbits(void __iomem *base, u32 offset, u32 val)
->  {
->         u32 reg;
-> @@ -305,6 +351,42 @@ void qcom_qusb2_phy_configure(void __iomem *base,
->  }
->
->  /*
-> + * Update board specific PHY tuning override values if specified from
-> + * device tree.
-> + *
-
-nit: remove extra comment line with just a "*" on it.
+The user of the device tree will expect to specify this in decimal,
+right?  So list the above as 0, 1, 2, 3.  ...not 00, 01, 10, 11.
+(though below I suggest that specifying 0, 1, 2, 3 is probably not
+quite the right way to describe this property).
 
 
-> + */
-> +static void qusb2_phy_override_phy_params(struct qusb2_phy *qphy)
-> +{
-> +       const struct qusb2_phy_cfg *cfg = qphy->cfg;
-> +
-> +       if (qphy->override_imp_res_offset)
-> +               qusb2_write_mask(qphy->base, QUSB2PHY_IMP_CTRL1,
-> +                            qphy->imp_res_offset_value << IMP_RES_OFFSET_SHIFT,
-> +                            IMP_RES_OFFSET_MASK);
-> +
-> +       if (qphy->override_hstx_trim)
-> +               qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
-> +                                qphy->hstx_trim_value << HSTX_TRIM_SHIFT,
-> +                                HSTX_TRIM_MASK);
-> +
-> +       if (qphy->override_preemphasis)
-> +               qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
-> +                               qphy->preemphasis_level << PREEMPHASIS_EN_SHIFT,
-> +                               PREEMPHASIS_EN_MASK);
-> +
-> +       if (qphy->override_preemphasis_width) {
-> +               if (qphy->preemphasis_width)
-> +                       qusb2_setbits(qphy->base,
-> +                                     cfg->regs[QUSB2PHY_PORT_TUNE1],
-> +                                     PREEMPH_HALF_WIDTH);
-> +               else
-> +                       qusb2_clrbits(qphy->base,
-> +                                     cfg->regs[QUSB2PHY_PORT_TUNE1],
-> +                                     PREEMPH_HALF_WIDTH);
-> +       }
-> +}
-> +
-> +/*
->   * Fetches HS Tx tuning value from nvmem and sets the
->   * QUSB2PHY_PORT_TUNE1/2 register.
->   * For error case, skip setting the value and use the default value.
-> @@ -525,6 +607,9 @@ static int qusb2_phy_init(struct phy *phy)
->         qcom_qusb2_phy_configure(qphy->base, cfg->regs, cfg->tbl,
->                                  cfg->tbl_num);
->
-> +       /* Override board specific PHY tuning values */
-> +       qusb2_phy_override_phy_params(qphy);
-> +
->         /* Set efuse value for tuning the PHY */
->         qusb2_phy_set_tune2_param(qphy);
->
-> @@ -647,7 +732,7 @@ static int qusb2_phy_exit(struct phy *phy)
->                 .compatible     = "qcom,msm8996-qusb2-phy",
->                 .data           = &msm8996_phy_cfg,
->         }, {
-> -               .compatible     = "qcom,qusb2-v2-phy",
-> +               .compatible     = "qcom,sdm845-qusb2-phy",
->                 .data           = &qusb2_v2_phy_cfg,
+> +- qcom,preemphasis-width: It is a 1 bit value that specifies how long the HSTX
+> +               pre-emphasis (specified using qcom,preemphasis-level) must be in
+> +               effect. Possible values are:
+> +               0: Full-bit width
+> +               1: Half-bit width
 
-Can you change the name of the structure to match (AKA include sdm845?)
+Perhaps just make this a boolean property.  If it exists then you get
+the non-default case.  AKA: if the default is full bit width, then
+you'd allow a boolean property "qcom,preemphasis-half-width" to
+override.  If the default is half bit width then you'd allow
+"qcom,preemphasis-full-width" to override.
 
 
->         },
->         { },
-> @@ -736,6 +821,31 @@ static int qusb2_phy_probe(struct platform_device *pdev)
->                 qphy->cell = NULL;
->                 dev_dbg(dev, "failed to lookup tune2 hstx trim value\n");
->         }
-> +
-> +       if (of_find_property(dev->of_node, "qcom,imp-res-offset-value", NULL)) {
-
-Get rid of the extra of_find_property().  Just use the error code from
-the property_read() to know if it was there and you've done two steps
-in one (read it and know if it was there).
+For all the above optional bits, please indicate what the default is
+if they aren't specified.  If you have to specify a different default
+for sdm845 vs. msm8996 then so be it (though it would be nice to avoid
+it by changing the default for sdm845 unless that's totally crazy).
 
 
-> +               qphy->override_imp_res_offset = true;
-> +               of_property_read_u8(dev->of_node, "qcom,imp-res-offset-value",
-> +                                   &qphy->imp_res_offset_value);
+Overall this looks pretty good to me.  Certainly the descriptions are
+very understandable and this will make tuning on a per-board /
+per-port basis much easier!  Thanks!
 
-You probably don't want of_property_read_u8(), even if you intend the
-property to bit in 8 bits.  You probably want to use
-of_property_read_u32() to read into a temporary value and then copy
-that to your 8-bit structure element.
 
-If you use of_property_read_u8 then you have to "/bits/ 8" in the
-device tree and that's ugly and doesn't seem to be what's done very
-often.  People just always stick a u32 in the device tree.
+One last overall comment is that ideally we could make the device tree
+a little bit more human readable.  Right now we'll have a set of
+properties that looks like this (numbers made up):
+
+qcom,imp-res-offset-value = <0x13>;
+qcom,hstx-trim-value = <0x7>;
+qcom,preemphasis-level = <1>;
+qcom,preemphasis-width = <0>;
+
+
+One option to make that more readable would be to change the units, AKA:
+
+qcom,hstx-trim-ma = <18>;
+qcom,preemphasis-percent = <5>;
+
+...then the code would translate from these human-readable values to
+the real numbers.
+
+
+Another option would be to add a #include to the bindings.  I'd defer
+to the wisdom of the bindings guys about if this is better or worse
+than adding the units, but personally I like it better because:
+* You get a compile-time error if you use an unsupported value.
+* You don't need to add the code to translate.
+
+So you'd add a ".h" file as part of this bindings patch (see git
+history for other examples) and you'd have stuff like:
+
+#define SDM845_QUSB2_TRIM_24MA 0
+...
+#define SDM845_QUSB2_TRIM_15MA 0xf
+
+#define SDM845_QUSB2_PREEMPHASIS_NONE 0
+#define SDM845_QUSB2_PREEMPHASIS_5_PERCENT 1
+#define SDM845_QUSB2_PREEMPHASIS_10_PERCENT 2
+#define SDM845_QUSB2_PREEMPHASIS_15_PERCENT 3
+
+...then you'd use those #defines in the description of the properties.
+
+--
+
+One last note: from the current code
+<https://patchwork.kernel.org/patch/10314925/> all of these new
+properties need to be specified as 8-bit numbers, not 32-bit.  AKA:
+
+qcom,imp-res-offset-value = /bits/ 8 <0x13>;
+qcom,hstx-trim-value = /bits/ 8 <0x7>;
+qcom,preemphasis-level = /bits/ 8 <1>;
+qcom,preemphasis-width = /bits/ 8 <0>;
+
+
+If we decide to keep it that way then it needs to be documented in the
+bindings file.  IMHO we should just specify that these are normal
+(32-bit) properties even if we expect that they'll always be 8-bits.
+That seems to be commonplace elsewhere.
 
 
 
