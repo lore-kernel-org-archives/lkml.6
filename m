@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+m407+MJ81T7bRxPUhgqkDFnej/L2eMmt6kiC9O6/ETuDRySmHxhoTJH0KAAoZaWzHZonB
-ARC-Seal: i=1; a=rsa-sha256; t=1522346675; cv=none;
+X-Google-Smtp-Source: AIpwx49SB5C6Cm9ylYukMGvedEMkVBuUIiSi85Tu7lnhml5deBOvQN5pxnFl7Nf0WegSLcuHBip3
+ARC-Seal: i=1; a=rsa-sha256; t=1522346672; cv=none;
         d=google.com; s=arc-20160816;
-        b=m6N2HetnGUfIXjkZWywONqt3bi+HMVYO6PtIpu7kd2KuizCtOwv0bWa6thXjtFJj8P
-         E4hRJC84Br9piMoOHnRJHqME/Y6blY8F0qv9uBY6W+5VwMO4KfvMM5fVXj4UdQbCu39e
-         jcplOpA/zvv6ax2jj+revYDEBf9xL12vFY6ZxHCrnu8bXSE9YM6hgpX4B0X5YmW7ut/h
-         J9xLpDwpy4KkFyLWeBIEW7IufpPbxKvSwbfKzNHk2RM/QMOpkwsQs5NlFQEAPmakkHVc
-         lX+PWvMOzAjutPnGhevIEZSnSQLtk3/rD4RGW0KMy90xhpMBDpyfmfxtLL+LnxQ7Ton8
-         j6LQ==
+        b=WMGsMa+YQHl9UKPWd8Mz+AojVh7TWa/SQCVA2MQ75aqis7yEDr93FXy6+tWu8L6Xpi
+         5PH+Ac9sZC5e3Q27b3hbWjRwDVCMKNPndpuLdvE9NmkmEudp4MhQqqiooe97bkAN92dY
+         6s8XBoFp9RnyCgYspDMfEm03eMaUzSRj0pdNCgAFtdvW6sqxCVPGHt1ChW7yTXqXRz0d
+         cZcFzgu2eupTOr2yaTpKchOtTT/aJ/j+YCfFmwc3U8AOPzG5lM6ClCGH6Hy13EGmkiQj
+         ENXPnM98QOiF12nztxiPoFq3Mj9ir1kZwXtt0EWs83vCOR1LE/G/jZFZ5Ke/YYhxKqnk
+         YpaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mY84Ry/MKzzm7vybLg4reVzvHWsls/58DV0bDmuaB4M=;
-        b=ZhSXlSC7JsXRVurXfB5IJ7huV+BAEtw4titqok7B1tE6BpFZHJABTcSxa0nigIqLVD
-         1SiBbvicS4lSglMqk+JvOqhNWTNbnZuVgJ3GGf3E94/FSfBhOiykK5qST0HjY92Hj2Ix
-         HHWpnzB19GqKO47K5eMEVxIcTyoZ0PlyNeFK1SJrhBDbYUWPbe8KFt4GkyyUqtdQw8X7
-         3zOdhRZzBkeR/mna2O/WtubzQq/2YQlIScKnyexmUSspz6cEzG5N3Zd/jv+KVjsWBvwv
-         dMjy/bQWLSus3sMWHnQvW3HTmNxy2ZhzORLRTDIjsKwaccu/f6VFrPNcBRCAuW/XxWbV
-         UBHg==
+        bh=ma6Sf1myrr8UhXxbDiSL+3jMMf8Rk2p6sZhd9JyzqgE=;
+        b=eAY09RTQGLGRJVXEv5FTZunKYYTDnZOOAo048N6hEesOe7ePrict0ON0Kh6D37rHEh
+         1hBVO4WHFD0A5x/mjuOX/okniCTha9dXrt0vdKnYnDhQah4OnWcYanhhsYc9QX3BuZJf
+         xGQPCf6rMEMw74aBRxEQ7VBsZFeNiWvek9Fk/F47ygq3KcVnUSJBP31k3pFGwIs3p6LN
+         cfaiLrHhpB8ba1E7ScVExNONhAmlAY6A6ejiwBZ93B9d172cElFvMqa5NlyabhjOoKtl
+         fFTHVVby2uA8wdBXaiVvhQ1bTSxOuT6HJii1bzhlisc3t5MDenVHJ4pdQkHQgaeur2j5
+         MHjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Stefan Schmidt <stefan@osg.samsung.com>,
-	syzbot <syzkaller@googlegroups.com>,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 19/43] ieee802154: 6lowpan: fix possible NULL deref in lowpan_device_event()
-Date: Thu, 29 Mar 2018 20:00:14 +0200
-Message-Id: <20180329175732.127977782@linuxfoundation.org>
+Subject: [PATCH 4.14 18/43] sch_netem: fix skb leak in netem_enqueue()
+Date: Thu, 29 Mar 2018 20:00:13 +0200
+Message-Id: <20180329175731.963383228@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296051714340324?=
-X-GMAIL-MSGID: =?utf-8?q?1596296187477658713?=
+X-GMAIL-THRID: =?utf-8?q?1596296048390316813?=
+X-GMAIL-MSGID: =?utf-8?q?1596296184065887055?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,55 +50,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit ca0edb131bdf1e6beaeb2b8289fd6b374b74147d ]
+[ Upstream commit 35d889d10b649fda66121891ec05eca88150059d ]
 
-A tun device type can trivially be set to arbitrary value using
-TUNSETLINK ioctl().
+When we exceed current packets limit and we have more than one
+segment in the list returned by skb_gso_segment(), netem drops
+only the first one, skipping the rest, hence kmemleak reports:
 
-Therefore, lowpan_device_event() must really check that ieee802154_ptr
-is not NULL.
+unreferenced object 0xffff880b5d23b600 (size 1024):
+  comm "softirq", pid 0, jiffies 4384527763 (age 2770.629s)
+  hex dump (first 32 bytes):
+    00 80 23 5d 0b 88 ff ff 00 00 00 00 00 00 00 00  ..#]............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000d8a19b9d>] __alloc_skb+0xc9/0x520
+    [<000000001709b32f>] skb_segment+0x8c8/0x3710
+    [<00000000c7b9bb88>] tcp_gso_segment+0x331/0x1830
+    [<00000000c921cba1>] inet_gso_segment+0x476/0x1370
+    [<000000008b762dd4>] skb_mac_gso_segment+0x1f9/0x510
+    [<000000002182660a>] __skb_gso_segment+0x1dd/0x620
+    [<00000000412651b9>] netem_enqueue+0x1536/0x2590 [sch_netem]
+    [<0000000005d3b2a9>] __dev_queue_xmit+0x1167/0x2120
+    [<00000000fc5f7327>] ip_finish_output2+0x998/0xf00
+    [<00000000d309e9d3>] ip_output+0x1aa/0x2c0
+    [<000000007ecbd3a4>] tcp_transmit_skb+0x18db/0x3670
+    [<0000000042d2a45f>] tcp_write_xmit+0x4d4/0x58c0
+    [<0000000056a44199>] tcp_tasklet_func+0x3d9/0x540
+    [<0000000013d06d02>] tasklet_action+0x1ca/0x250
+    [<00000000fcde0b8b>] __do_softirq+0x1b4/0x5a3
+    [<00000000e7ed027c>] irq_exit+0x1e2/0x210
 
-Fixes: 2c88b5283f60d ("ieee802154: 6lowpan: remove check on null")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Alexander Aring <alex.aring@gmail.com>
-Cc: Stefan Schmidt <stefan@osg.samsung.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Stefan Schmidt <stefan@osg.samsung.com>
+Fix it by adding the rest of the segments, if any, to skb 'to_free'
+list. Add new __qdisc_drop_all() and qdisc_drop_all() functions
+because they can be useful in the future if we need to drop segmented
+GSO packets in other places.
+
+Fixes: 6071bd1aa13e ("netem: Segment GSO packets on enqueue")
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ieee802154/6lowpan/core.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ include/net/sch_generic.h |   19 +++++++++++++++++++
+ net/sched/sch_netem.c     |    2 +-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
---- a/net/ieee802154/6lowpan/core.c
-+++ b/net/ieee802154/6lowpan/core.c
-@@ -206,9 +206,13 @@ static inline void lowpan_netlink_fini(v
- static int lowpan_device_event(struct notifier_block *unused,
- 			       unsigned long event, void *ptr)
- {
--	struct net_device *wdev = netdev_notifier_info_to_dev(ptr);
-+	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
-+	struct wpan_dev *wpan_dev;
+--- a/include/net/sch_generic.h
++++ b/include/net/sch_generic.h
+@@ -723,6 +723,16 @@ static inline void __qdisc_drop(struct s
+ 	*to_free = skb;
+ }
  
--	if (wdev->type != ARPHRD_IEEE802154)
-+	if (ndev->type != ARPHRD_IEEE802154)
-+		return NOTIFY_DONE;
-+	wpan_dev = ndev->ieee802154_ptr;
-+	if (!wpan_dev)
- 		return NOTIFY_DONE;
++static inline void __qdisc_drop_all(struct sk_buff *skb,
++				    struct sk_buff **to_free)
++{
++	if (skb->prev)
++		skb->prev->next = *to_free;
++	else
++		skb->next = *to_free;
++	*to_free = skb;
++}
++
+ static inline unsigned int __qdisc_queue_drop_head(struct Qdisc *sch,
+ 						   struct qdisc_skb_head *qh,
+ 						   struct sk_buff **to_free)
+@@ -841,6 +851,15 @@ static inline int qdisc_drop(struct sk_b
+ 	qdisc_qstats_drop(sch);
  
- 	switch (event) {
-@@ -217,8 +221,8 @@ static int lowpan_device_event(struct no
- 		 * also delete possible lowpan interfaces which belongs
- 		 * to the wpan interface.
- 		 */
--		if (wdev->ieee802154_ptr->lowpan_dev)
--			lowpan_dellink(wdev->ieee802154_ptr->lowpan_dev, NULL);
-+		if (wpan_dev->lowpan_dev)
-+			lowpan_dellink(wpan_dev->lowpan_dev, NULL);
- 		break;
- 	default:
- 		return NOTIFY_DONE;
+ 	return NET_XMIT_DROP;
++}
++
++static inline int qdisc_drop_all(struct sk_buff *skb, struct Qdisc *sch,
++				 struct sk_buff **to_free)
++{
++	__qdisc_drop_all(skb, to_free);
++	qdisc_qstats_drop(sch);
++
++	return NET_XMIT_DROP;
+ }
+ 
+ /* Length to Time (L2T) lookup in a qdisc_rate_table, to determine how
+--- a/net/sched/sch_netem.c
++++ b/net/sched/sch_netem.c
+@@ -513,7 +513,7 @@ static int netem_enqueue(struct sk_buff
+ 	}
+ 
+ 	if (unlikely(sch->q.qlen >= sch->limit))
+-		return qdisc_drop(skb, sch, to_free);
++		return qdisc_drop_all(skb, sch, to_free);
+ 
+ 	qdisc_qstats_backlog_inc(sch, skb);
+ 
