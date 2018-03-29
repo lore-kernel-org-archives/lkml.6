@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeC2Po7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:44:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35793 "EHLO mx2.suse.de"
+        id S1752278AbeC2Ppc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:45:32 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:46182 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751935AbeC2Po5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:44:57 -0400
-Date: Thu, 29 Mar 2018 17:44:55 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.com>,
-        kbuild test robot <lkp@intel.com>, david@fromorbit.com, hch@lst.de,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz
-Subject: Re: [PATCH v7 06/14] ext2, dax: introduce ext2_dax_aops
-Message-ID: <20180329154455.rq4dcvtplgciv3xm@quack2.suse.cz>
-References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152167306296.5268.6656046711107190095.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1751161AbeC2Ppa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:45:30 -0400
+To: christian.koenig@amd.com, Christoph Hellwig <hch@infradead.org>
+Cc: linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-2-christian.koenig@amd.com>
+ <20180328123830.GB25060@infradead.org>
+ <613a6c91-7e72-5589-77e6-587ec973d553@gmail.com>
+ <c81df70d-191d-bf8e-293a-413dd633e1fc@deltatee.com>
+ <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
+ <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
+ <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+ <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
+ <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+Date: Thu, 29 Mar 2018 09:45:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152167306296.5268.6656046711107190095.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, hch@infradead.org, christian.koenig@amd.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-03-18 15:57:43, Dan Williams wrote:
-> In preparation for the dax implementation to start associating dax pages
-> to inodes via page->mapping, we need to provide a 'struct
-> address_space_operations' instance for dax. Otherwise, direct-I/O
-> triggers incorrect page cache assumptions and warnings.
+
+
+On 29/03/18 05:44 AM, Christian König wrote:
+> Am 28.03.2018 um 21:53 schrieb Logan Gunthorpe:
+>>
+>> On 28/03/18 01:44 PM, Christian König wrote:
+>>> Well, isn't that exactly what dma_map_resource() is good for? As far as
+>>> I can see it makes sure IOMMU is aware of the access route and
+>>> translates a CPU address into a PCI Bus address.
+>>> I'm using that with the AMD IOMMU driver and at least there it works
+>>> perfectly fine.
+>> Yes, it would be nice, but no arch has implemented this yet. We are just
+>> lucky in the x86 case because that arch is simple and doesn't need to do
+>> anything for P2P (partially due to the Bus and CPU addresses being the
+>> same). But in the general case, you can't rely on it.
 > 
-> Cc: Jan Kara <jack@suse.com>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Well, that an arch hasn't implemented it doesn't mean that we don't have 
+> the right interface to do it.
 
-Thanks for the cleanup in the patch when setting inode ops. The patch looks
-good except the same comment applies as for ext4 - please provide
-ext2_dax_direct_IO() which will just bail and use it in ext2_dax_aops.
+Yes, but right now we don't have a performant way to check if we are
+doing P2P or not in the dma_map_X() wrappers. And this is necessary to
+check if the DMA ops in use support it or not. We can't have the
+dma_map_X() functions do the wrong thing because they don't support it yet.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Devices integrated in the CPU usually only "claim" to be PCIe devices. 
+> In reality their memory request path go directly through the integrated 
+> north bridge. The reason for this is simple better throughput/latency.
+
+These are just more reasons why our patchset restricts to devices behind
+a switch. And more mess for someone to deal with if they need to relax
+that restriction.
+
+Logan
