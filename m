@@ -1,165 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeC2PaS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 11:30:18 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1975 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752469AbeC2PaP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 11:30:15 -0400
-Subject: Re: [RESEND PATCH v2 4/8] mfd: stm32-timers: add support for dmas
-To: Lee Jones <lee.jones@linaro.org>
-CC: <thierry.reding@gmail.com>, <alexandre.torgue@st.com>,
-        <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <benjamin.gaignard@st.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-References: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
- <1518602679-3064-5-git-send-email-fabrice.gasnier@st.com>
- <20180328152251.xeh72dpeflzohn4k@dell>
- <106ff518-4973-5d4a-b5bf-dd58cbd8439a@st.com>
- <20180329125912.jgasmw75qvtlszgx@dell>
- <12d53b2e-eec4-a498-1e1f-c217161c5086@st.com>
- <20180329143129.xdvw6gujghkwbjtm@dell>
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <805c6c6c-4984-1436-56a7-a44d23a06429@st.com>
-Date: Thu, 29 Mar 2018 17:29:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752514AbeC2Pay (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 11:30:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34487 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751256AbeC2Pax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 11:30:53 -0400
+Date: Thu, 29 Mar 2018 17:30:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 04/14] xfs, dax: introduce xfs_dax_aops
+Message-ID: <20180329153051.xostr764yps6bjg2@quack2.suse.cz>
+References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152167305269.5268.2789359915651914497.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180329143129.xdvw6gujghkwbjtm@dell>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-29_09:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152167305269.5268.2789359915651914497.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/29/2018 04:31 PM, Lee Jones wrote:
-> On Thu, 29 Mar 2018, Fabrice Gasnier wrote:
+On Wed 21-03-18 15:57:32, Dan Williams wrote:
+> In preparation for the dax implementation to start associating dax pages
+> to inodes via page->mapping, we need to provide a 'struct
+> address_space_operations' instance for dax. Otherwise, direct-I/O
+> triggers incorrect page cache assumptions and warnings like the
+> following:
 > 
->> On 03/29/2018 02:59 PM, Lee Jones wrote:
->>> On Wed, 28 Mar 2018, Fabrice Gasnier wrote:
->>>
->>>> On 03/28/2018 05:22 PM, Lee Jones wrote:
->>>>> On Wed, 14 Feb 2018, Fabrice Gasnier wrote:
->>>>>
->>>>>> STM32 Timers can support up to 7 DMA requests:
->>>>>> - 4 channels, update, compare and trigger.
->>>>>> Optionally request part, or all DMAs from stm32-timers MFD core.
->>>>>>
->>>>>> Also add routine to implement burst reads using DMA from timer registers.
->>>>>> This is exported. So, it can be used by child drivers, PWM capture
->>>>>> for instance (but not limited to).
->>>>>>
->>>>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->>>>>> Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
->>>>>> ---
->>>>>> Changes in v2:
->>>>>> - Abstract DMA handling from child driver: move it to MFD core
->>>>>> - Add comments on optional dma support
->>>>>> ---
->>>>>>  drivers/mfd/stm32-timers.c       | 215 ++++++++++++++++++++++++++++++++++++++-
->>>>>>  include/linux/mfd/stm32-timers.h |  27 +++++
->>>>>>  2 files changed, 238 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/mfd/stm32-timers.c b/drivers/mfd/stm32-timers.c
->>>>>> index a6675a4..2cdad2c 100644
->>>>>> --- a/drivers/mfd/stm32-timers.c
->>>>>> +++ b/drivers/mfd/stm32-timers.c
->>>
->>> [...]
->>>
->>>>>> +	struct dma_chan *dmas[STM32_TIMERS_MAX_DMAS];
->>>>>> +	struct stm32_timers ddata;
->>>>>
->>>>> This looks odd to me.  Why can't you expand the current ddata
->>>>> structure?  Wouldn't it be better to create a stm32_timers_dma
->>>>> structure to place all this information in (except *dev, that should
->>>>> live in the ddata struct), then place a reference in the existing
->>>>> stm32_timers struct?
->>>>
->>>> Maybe I miss-understand you here, from what we discussed in V1:
->>>> https://lkml.org/lkml/2018/1/23/574
->>>>> ... "passing in the physical address of the parent MFD into
->>>>> a child device doesn't quite sit right with me"
->>>> I introduced this private struct in MFD parent, and completely hide it
->>>> from the child.
->>>>
->>>> So, do you suggest to add struct definition here ? But make it part of
->>>> struct stm32_timers *ddata?
->>>>
->>>> And only put declaration in include/linux/mfd/stm32-timers.h:
->>>> + struct stm32_timers_dma;
->>>>
->>>> struct stm32_timers {
->>>> 	struct clk *clk;
->>>> 	struct regmap *regmap;
->>>> 	u32 max_arr;
->>>> +	struct stm32_timers_dma;
->>>> };
->>>
->>> Yes, that's the basic idea.
->>>
->>>> I can probably spare the *dev then... use dev->parent in child driver.
->>>
->>> What would you use dev->parent for?
->>
->> Hi Lee,
->>
->> This is to follow your sugestion to use *dev instead of *ddata when
->> calling stm32_timers_dma_burst_read(), the idea is to use it on child side:
->> stm32_timers_dma_burst_read(dev->parent,...) from pwm driver.
->> Then there is no need to keep *dev inside ddata struct.
+>  WARNING: CPU: 27 PID: 1783 at fs/xfs/xfs_aops.c:1468
+>  xfs_vm_set_page_dirty+0xf3/0x1b0 [xfs]
+>  [..]
+>  CPU: 27 PID: 1783 Comm: dma-collision Tainted: G           O 4.15.0-rc2+ #984
+>  [..]
+>  Call Trace:
+>   set_page_dirty_lock+0x40/0x60
+>   bio_set_pages_dirty+0x37/0x50
+>   iomap_dio_actor+0x2b7/0x3b0
+>   ? iomap_dio_zero+0x110/0x110
+>   iomap_apply+0xa4/0x110
+>   iomap_dio_rw+0x29e/0x3b0
+>   ? iomap_dio_zero+0x110/0x110
+>   ? xfs_file_dio_aio_read+0x7c/0x1a0 [xfs]
+>   xfs_file_dio_aio_read+0x7c/0x1a0 [xfs]
+>   xfs_file_read_iter+0xa0/0xc0 [xfs]
+>   __vfs_read+0xf9/0x170
+>   vfs_read+0xa6/0x150
+>   SyS_pread64+0x93/0xb0
+>   entry_SYSCALL_64_fastpath+0x1f/0x96
 > 
-> I'm wondering if it would be neater to us the child's *dev, then do
-> the ->parent deference in the parent MFD (with a comment to say what
-> you're doing of course).
+> ...where the default set_page_dirty() handler assumes that dirty state
+> is being tracked in 'struct page' flags.
 > 
+> Cc: Jeff Moyer <jmoyer@redhat.com>
+> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-There's already dev.parent dereference in child drivers, for same
-purpose: dev_get_drvdata(pdev->dev.parent). So, I guess same can be done
-here ?
+Looks good to me. You can add:
 
-Thanks for you review,
-I'll update all this and send a v3.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Best regards,
-Fabrice
+								Honza
 
->>> [...]
->>>
->>>>>> +static int stm32_timers_remove(struct platform_device *pdev)
->>>>>> +{
->>>>>> +	struct stm32_timers *ddata = platform_get_drvdata(pdev);
->>>>>> +	struct stm32_timers_priv *priv = to_stm32_timers_priv(ddata);
->>>>>> +
->>>>>> +	of_platform_depopulate(&pdev->dev);
->>>>>
->>>>> Why can't you continue using devm_*?
->>>>
->>>> I can use devm_of_platform_depopulate() here if you prefer, and keep
->>>> devm_of_platform_populate() in probe.
->>>
->>> The point of devm_* is that you don't have to call depopulate.
->>>
->>> It happens automatically once this driver is unbound.
->>
->> Ok, so to clarify, keeping devm_ here may be a bit racy:
->> of_platform_depopulate will happen after dma has been released (there is
->> no devm_ variant to release dma).
->> Only way to prevent race condition here, is to enforce
->> of_platform_depopulate() is called before dma release (e.g. in reverse
->> order compared to probe).
->>
->> Do you wish I add a comment about it ?
+> ---
+>  fs/xfs/xfs_aops.c |   21 +++++++++++++++++----
+>  fs/xfs/xfs_aops.h |    1 +
+>  fs/xfs/xfs_iops.c |    5 ++++-
+>  3 files changed, 22 insertions(+), 5 deletions(-)
 > 
-> Best thing to do then is keep the non-devm variant and provide a
-> comment as to why is it not possible to use devm_*.
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 9c6a830da0ee..5f1f5948ecc2 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -1194,16 +1194,22 @@ xfs_vm_writepages(
+>  	int			ret;
+>  
+>  	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+> -	if (dax_mapping(mapping))
+> -		return dax_writeback_mapping_range(mapping,
+> -				xfs_find_bdev_for_inode(mapping->host), wbc);
+> -
+>  	ret = write_cache_pages(mapping, wbc, xfs_do_writepage, &wpc);
+>  	if (wpc.ioend)
+>  		ret = xfs_submit_ioend(wbc, wpc.ioend, ret);
+>  	return ret;
+>  }
+>  
+> +STATIC int
+> +xfs_dax_writepages(
+> +	struct address_space	*mapping,
+> +	struct writeback_control *wbc)
+> +{
+> +	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+> +	return dax_writeback_mapping_range(mapping,
+> +			xfs_find_bdev_for_inode(mapping->host), wbc);
+> +}
+> +
+>  /*
+>   * Called to move a page into cleanable state - and from there
+>   * to be released. The page should already be clean. We always
+> @@ -1505,3 +1511,10 @@ const struct address_space_operations xfs_address_space_operations = {
+>  	.is_partially_uptodate  = block_is_partially_uptodate,
+>  	.error_remove_page	= generic_error_remove_page,
+>  };
+> +
+> +const struct address_space_operations xfs_dax_aops = {
+> +	.direct_IO		= xfs_vm_direct_IO,
+> +	.writepages		= xfs_dax_writepages,
+> +	.set_page_dirty		= noop_set_page_dirty,
+> +	.invalidatepage		= noop_invalidatepage,
+> +};
+> diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
+> index 88c85ea63da0..69346d460dfa 100644
+> --- a/fs/xfs/xfs_aops.h
+> +++ b/fs/xfs/xfs_aops.h
+> @@ -54,6 +54,7 @@ struct xfs_ioend {
+>  };
+>  
+>  extern const struct address_space_operations xfs_address_space_operations;
+> +extern const struct address_space_operations xfs_dax_aops;
+>  
+>  int	xfs_setfilesize(struct xfs_inode *ip, xfs_off_t offset, size_t size);
+>  
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 56475fcd76f2..951e84df5576 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1272,7 +1272,10 @@ xfs_setup_iops(
+>  	case S_IFREG:
+>  		inode->i_op = &xfs_inode_operations;
+>  		inode->i_fop = &xfs_file_operations;
+> -		inode->i_mapping->a_ops = &xfs_address_space_operations;
+> +		if (IS_DAX(inode))
+> +			inode->i_mapping->a_ops = &xfs_dax_aops;
+> +		else
+> +			inode->i_mapping->a_ops = &xfs_address_space_operations;
+>  		break;
+>  	case S_IFDIR:
+>  		if (xfs_sb_version_hasasciici(&XFS_M(inode->i_sb)->m_sb))
 > 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
