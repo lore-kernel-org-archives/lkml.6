@@ -1,55 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752918AbeC2OGM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:06:12 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:39293 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752511AbeC2OGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:06:11 -0400
-X-Google-Smtp-Source: AIpwx482aBMLpeZ6/bGZOvHzrMgfx+oLVN77LM7YRwul4oLfvAfUb6Vv1OfcLhUxN6aBRs3GPY++RA==
-Date: Thu, 29 Mar 2018 16:06:06 +0200
-From: Ingo Molnar <mingo@kernel.org>
+        id S1752851AbeC2OHx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:07:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58508 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752496AbeC2OHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:07:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F4D2175B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Thu, 29 Mar 2018 16:07:49 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] perf, pt, coresight: Clean up address filter structure
-Message-ID: <20180329140606.zcomu2u2xzyss4tm@gmail.com>
-References: <20180329120648.11902-1-alexander.shishkin@linux.intel.com>
- <20180329121036.GZ4043@hirez.programming.kicks-ass.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+Subject: Re: [PATCH 10/10] softirq: Remove __ARCH_SET_SOFTIRQ_PENDING
+Message-ID: <20180329140748.GB12958@lerouge>
+References: <1522290425-22844-1-git-send-email-frederic@kernel.org>
+ <1522290425-22844-11-git-send-email-frederic@kernel.org>
+ <20180329071619.GO4082@hirez.programming.kicks-ass.net>
+ <20180329134745.GA12958@lerouge>
+ <20180329140111.GC4043@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180329121036.GZ4043@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180329140111.GC4043@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Thu, Mar 29, 2018 at 03:06:48PM +0300, Alexander Shishkin wrote:
-> > This is a cosmetic patch that deals with the address filter structure's
-> > ambiguous fields 'filter' and 'range'. The former stands to mean that the
-> > filter's *action* should be to filter the traces to its address range if
-> > it's set or stop tracing if it's unset. This is confusing and hard on the
-> > eyes, so this patch replaces it with 'action' enum. The 'range' field is
-> > completely redundant (meaning that the filter is an address range as
-> > opposed to a single address trigger), as we can use zero size to mean the
-> > same thing.
+On Thu, Mar 29, 2018 at 04:01:11PM +0200, Peter Zijlstra wrote:
+> On Thu, Mar 29, 2018 at 03:47:46PM +0200, Frederic Weisbecker wrote:
+> > On Thu, Mar 29, 2018 at 09:16:19AM +0200, Peter Zijlstra wrote:
+> > > On Thu, Mar 29, 2018 at 04:27:05AM +0200, Frederic Weisbecker wrote:
+> > > > The last user of __ARCH_SET_SOFTIRQ_PENDING has been converted to generic
+> > > > per-cpu softirq mask. We can now remove this conditional.
+> > > 
+> > > This seems like half a cleanup; who still has local_softirq_pending()
+> > > after this?
 > > 
-> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Only s390 because it uses lowcore to store such cpu data.
 > 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Is it worth keeping it there? It seems an aweful shame to keep this
+> stuff special cased for just the one arch. At the very least this
+> should've mentioned s390 is special and why.
+
+Right, I thought well about moving that special case to s390. I can
+do that in v2.
+
 > 
-> Ingo, can you merge this?
+> And I don't see s390 people on Cc either.
 
-Sure, will do!
+Oops, forgot to add them.
 
-Thanks,
-
-	Ingo
+Thanks.
