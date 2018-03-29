@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/LrGeWAovSN/6lpZOX+1LseXVGHEzVaV0ZcC1GqKbsrLPqW/Db7pxVR/G9Xy4ecS6t8IP8
-ARC-Seal: i=1; a=rsa-sha256; t=1522346581; cv=none;
+X-Google-Smtp-Source: AIpwx49n9Rqn+Cb1J7Hdaxn37aFsJ15JUbIivMZBHMRFyuSBOyGpk41VfeBuvWgpGP0NY547nzgQ
+ARC-Seal: i=1; a=rsa-sha256; t=1522346575; cv=none;
         d=google.com; s=arc-20160816;
-        b=xOheK7MeOWrC/Wt4fxTpB9aE8xkrva0FViBJXCuVqPB9inSsREBsAxD9y+uhgbMw5N
-         ZCQ/cUbrvRp/+RJlYsM/dlfdJeIliVdistR4YUJXuNpYFazaMYDHOdnhWonQryravNcX
-         SV8Ei3YQ4lObs3YwOa+5AtuClHHwTDn08hvEeL/zOlJm/NUI5qofrjkeugex9Kq1Ai1x
-         RJ2/gPs6jLpR6XVDScV7Omi3D9aroj/b0D799KyeEUdjZBRvO3Bl1e5URlx/eZv+qOA3
-         hBRT/8ogWk3LsQ9BXnpiKFdyxeB3ZonpyyZaqCgAvTtGTIkc6ZBjmAEW60uBYP+gjARG
-         uSgA==
+        b=a452sndVPo3YakjwHDAdKsShhmbiA1MJTn6rmUgGvI6WrTPyPghB+gRBe2oCCWCM5y
+         6owW0xW1GaLbt/yl4I8BiCbsfpVuAfKs6SnOCQBfNppBEcBZKrUorXiGVX4VyNR7sG9R
+         JET13n20mjjw/zhAubRZjl3gzMf8Cyv1xbP/7E0SukPopKzEgzD/9XB8poN0lAlXCrt7
+         ugNg1sxZHptJMUKAeRsQJrsnyJ1LppI5gS2N17n/2LLKS5SzCUDU4ymtBxZXKLM1Hl8E
+         8fcJ6rjmsNXYwg3w+aT//cAafhUBIZNSp+4OV2k5MR92nxHAa7V6WxUEhPXz9vqY5Kc2
+         cFGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7mhFTWqtaU82dJPN0YZSGymGUzDwEOTxfuYBi6UnWHU=;
-        b=gthgwVbsjSH5iGkbmDV8PNIAlA+8AJoW5GEiiqeCVXyVr1TN/iznh6IHURKExzB13M
-         Dcsj7fIpe4mUtrVX1YTaBXH6hmz2CsKq3LgN+nJXqsWrBokNbRY6fzC2qiZQp9nfL4ns
-         ZMpCXTrWKAynWEyt+cuH5RXn3vMN8NgIw/xSYJW8ANsofT0x6+JsEILOMhlpROnWRND8
-         uDzFBfbctbZdy1JDWbT12/rdWhh3ifUKkAW3O1v64OJZsjvkETJUy6lpkD/IZi1R/Rv5
-         yCPbz05Fir3+fkLKJZb3Lp9jUiIbjitkj+lLVcqZp3QLXVhDm/U4i6hZAsm2tEULHWB0
-         A+DQ==
+        bh=/9AtqQM4gNcOAF+jnX7iX5Y+5G3CJoJ6QDm9j9Gb4sA=;
+        b=GXQaDcGuLJSv+RUxA+ng3IScoexDtvJ5avWbTFHkyA7mMnbgpWITKc9nol4psutTBP
+         omrW8XNLfRMJLsHRR1K7LaQqU3boWI0hR8JGYU2rDtAognb9wGY9DQE0ovE9Qzo/nppt
+         SxW4/mJEgBqu36bHaWTCA1gl/jgRzvj7TrodjsF9/14VfE6r5/H37EipxRWrEDkmdO0E
+         rq5GFjsyIhs0JCkajPkyIS2yDHS7cRKGhMm8PATSwaBnyDylhN4Z7ulBRIMrsdGpTLQE
+         gJy+780K4ibKSUA/lkvy6rwhsN28RzDrsGkQzHCx922i2LQcfD0zj3x6z+riwRa63sw1
+         3ydg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com,
-	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	Camelia Groza <camelia.groza@nxp.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 35/47] dccp: check sk for closed state in dccp_sendmsg()
-Date: Thu, 29 Mar 2018 20:00:16 +0200
-Message-Id: <20180329175732.210194134@linuxfoundation.org>
+Subject: [PATCH 4.15 33/47] dpaa_eth: increment the RX dropped counter when needed
+Date: Thu, 29 Mar 2018 20:00:14 +0200
+Message-Id: <20180329175731.939328400@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296089395383323?=
-X-GMAIL-MSGID: =?utf-8?q?1596296089395383323?=
+X-GMAIL-THRID: =?utf-8?q?1596296083643005828?=
+X-GMAIL-MSGID: =?utf-8?q?1596296083643005828?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +49,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Camelia Groza <camelia.groza@nxp.com>
 
 
-[ Upstream commit 67f93df79aeefc3add4e4b31a752600f834236e2 ]
+[ Upstream commit e4d1b37c17d000a3da9368a3e260fb9ea4927c25 ]
 
-dccp_disconnect() sets 'dp->dccps_hc_tx_ccid' tx handler to NULL,
-therefore if DCCP socket is disconnected and dccp_sendmsg() is
-called after it, it will cause a NULL pointer dereference in
-dccp_write_xmit().
-
-This crash and the reproducer was reported by syzbot. Looks like
-it is reproduced if commit 69c64866ce07 ("dccp: CVE-2017-8824:
-use-after-free in DCCP code") is applied.
-
-Reported-by: syzbot+f99ab3887ab65d70f816@syzkaller.appspotmail.com
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/proto.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -789,6 +789,11 @@ int dccp_sendmsg(struct sock *sk, struct
- 	if (skb == NULL)
- 		goto out_release;
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -2310,8 +2310,10 @@ static enum qman_cb_dqrr_result rx_defau
  
-+	if (sk->sk_state == DCCP_CLOSED) {
-+		rc = -ENOTCONN;
-+		goto out_discard;
+ 	skb_len = skb->len;
+ 
+-	if (unlikely(netif_receive_skb(skb) == NET_RX_DROP))
++	if (unlikely(netif_receive_skb(skb) == NET_RX_DROP)) {
++		percpu_stats->rx_dropped++;
+ 		return qman_cb_dqrr_consume;
 +	}
-+
- 	skb_reserve(skb, sk->sk_prot->max_header);
- 	rc = memcpy_from_msg(skb_put(skb, len), msg, len);
- 	if (rc != 0)
+ 
+ 	percpu_stats->rx_packets++;
+ 	percpu_stats->rx_bytes += skb_len;
