@@ -1,150 +1,138 @@
-Return-Path: <blackzert@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521825918; cv=none;
-        d=google.com; s=arc-20160816;
-        b=wC4kxbvLh4MtGU+gVsSZewWpGrOLipMJHrRuJER3U8TbfAFzdJjX0c9kOHSanRZtqs
-         TN2Kw2KKqUHp9xOJCNA7UDow5UDgaH5/Wom6hy3xrhFrbzxKo3XSpQLtur1OQupdRR7w
-         pUTxDzB0RqWq6aiMtIZMIDy06gTwf/hzgY7+GFpPULBnMfDeRQO3FleoDJVruVMcRbIV
-         FB93Xh8RvyjXMYVIhAKNN0tXDDR0It9OE1nk88SeuGDpv2baJ+BNdcO5sVhqvwQi3Mfc
-         i8ok3SdKm1zyA5erFsVF6YhHFTm6mS6nI5AZjx0ZxETSikq4NHiCn/bArD9fpw688Hqq
-         LqXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=+OZYzmT42h5SnWF0OczzPVpdipxT1C1TADxUtBA1ByE=;
-        b=tsI8GBDEnXWCVIl6sDsWc/LLfrMas0ANnP5ErG8KkFWGurVjQlcOgZH2uWjFSJx/QS
-         v5gCufqVeNs4/fRKCgfcFN363pMTI4agyoatmhxat8T4HDspYCT5O31JXzdS3VM5giFx
-         OUZWTUsqaMCXbgcUaDOzCwRiEm65C2o7mF8NeBj9MK8Y++06rHLsSS/nYLce2/sR/9Sa
-         MaGRzMSgu95V5ayfiTaGF+K/jLKw57TwbYYNwC+/WHgPmKiRw/cyD85R20JB+eljxw8O
-         obEbPnOQ6H4cZjiOtBRbaoaEM+c5/uhh67fQFvLl6G2DjtY8/q0Qc/lqT9UJfkndAKqs
-         +e5g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=OMlmcj8c;
-       spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=OMlmcj8c;
-       spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELs5zcJhgSg9vwDza07EaDR0FQ17bw+vBwBGrJupYOX3TXXRodca/W9uPN4u58MIyJuxfBeFnQ==
-Content-Type: text/plain;
-	charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [RFC PATCH v2 0/2] Randomization of address chosen by mmap.
-From: Ilya Smith <blackzert@gmail.com>
-In-Reply-To: <20180322135729.dbfd3575819c92c0f88c5c21@linux-foundation.org>
-Date: Fri, 23 Mar 2018 20:25:15 +0300
-Cc: rth@twiddle.net,
- ink@jurassic.park.msu.ru,
- mattst88@gmail.com,
- vgupta@synopsys.com,
- linux@armlinux.org.uk,
- tony.luck@intel.com,
- fenghua.yu@intel.com,
- jhogan@kernel.org,
- ralf@linux-mips.org,
- jejb@parisc-linux.org,
- Helge Deller <deller@gmx.de>,
- benh@kernel.crashing.org,
- paulus@samba.org,
- mpe@ellerman.id.au,
- schwidefsky@de.ibm.com,
- heiko.carstens@de.ibm.com,
- ysato@users.sourceforge.jp,
- dalias@libc.org,
- davem@davemloft.net,
- tglx@linutronix.de,
- mingo@redhat.com,
- hpa@zytor.com,
- x86@kernel.org,
- nyc@holomorphy.com,
- viro@zeniv.linux.org.uk,
- arnd@arndb.de,
- gregkh@linuxfoundation.org,
- deepa.kernel@gmail.com,
- mhocko@suse.com,
- hughd@google.com,
- kstewart@linuxfoundation.org,
- pombredanne@nexb.com,
- steve.capper@arm.com,
- punit.agrawal@arm.com,
- paul.burton@mips.com,
- aneesh.kumar@linux.vnet.ibm.com,
- npiggin@gmail.com,
- keescook@chromium.org,
- bhsharma@redhat.com,
- riel@redhat.com,
- nitin.m.gupta@oracle.com,
- kirill.shutemov@linux.intel.com,
- dan.j.williams@intel.com,
- jack@suse.cz,
- ross.zwisler@linux.intel.com,
- jglisse@redhat.com,
- willy@infradead.org,
- aarcange@redhat.com,
- oleg@redhat.com,
- linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- linux-ia64@vger.kernel.org,
- linux-metag@vger.kernel.org,
- linux-mips@linux-mips.org,
- linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org,
- linux-mm@kvack.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C43F853F-6B54-42DF-AEF2-64B22DAB8A1D@gmail.com>
-References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
- <20180322135729.dbfd3575819c92c0f88c5c21@linux-foundation.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-460763-1522314623-2-9487587918432502739
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522314622; b=HRZvwok7XgkV9/ENz774MOJwJblQ+XIT2irIpPoAjyONg7hROW
+    2lp5kflLPujvM+PrYP8kuymUoHxUxAf6qt4zkOWTAtdJ4/n9XlO8eQlP9fPrPMZE
+    XQVHid0Vxu+74ZNaD6gClDeUQmZZt2rJ5+e2F25tCm496NQhl6BOFLHre0a2YQ+c
+    uVgVWIp4Pln9g+FgKSVGkEHuQAk0IyZvTlfnqkBjKGj47eiZS7ZaPg7RA+YmK8vW
+    i7k92H7A3IZTq6sAgkUlMYTahLeTsKtUgI+vUCqumOyP7K9IQqMHr8ibS7PzruHL
+    CnIXL2DAVtp6rEdkrlxSqpwENiGnRdCWK/oA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522314622; bh=XQz/F
+    yVptEUW8YftZwVMdTxDN/BbZ/ys2wrLe8P+3+w=; b=mtRko0miJAQF7Bbjm90iX
+    rIxViIdSHMVoLp83KtTeBH7FkK6JJWU3p27gVRWmLuYw2Db+n7hF7jBigar0J5ni
+    FfXk89WWVmVo/APmpt4vPB9vlmcsW8CVxkQ1RWPbc1anKmCFCqlMk2LNHMNQth7r
+    dpDhWnKpVRdBJthAgDVnA2K/xiU1WLCkuuhs0IZxC54wf56mHCqiKHWJCDFfWmYc
+    dbWCMc8G86WsVx3Otk+MfhmP6NiEEergwFbPQn28DOu9yYYBSEyCiKchf7zJaeF5
+    ca7MTFjdF3+TK6mbnVKeL5dxXesMFIpYXMWdAKnbqVY3o2l7pLFLEI2lm0T7lniV
+    w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TgK+5PyA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ETzbZ3UO;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TgK+5PyA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ETzbZ3UO;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEKZgepScbMNBfqEd/ovSbofqBubxaN3uLXqCKTh0+TgKDvgdja/V5C7IayODl97X44LrLepXGEgXoeIaKSa6hrsAcvuaMcHmY7qw8Aqmx9CPJVeMVww
+    GpcvuAzD3PC+xBLiYF8Ko9z/4DovVoNl4cGSGVK5+Gpc5XIEKELhFJZuTDPxrNTcI6PU6fL5jos6XX1ZliWM8DvWXN9IpKYd3AL60GQ1Xe25kmggzPK+KWRP
+    dxsdRycvmZUy+4PsZs/o5A==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=MsQ-QqnFFZYA:10 a=v2DPQv5-lfwA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=DDOyTI_5AAAA:8 a=9EBvDAQEqJaQTFMUwpYA:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4/SrdsgyDM10WSRSFF4vPbD99TK/WEdf2ba/FwFxKOpG1nA6QUqngdeczRCUMmmDKT4Z/+TMA==
+From: Shreeya Patel <shreeya.patel23498@gmail.com>
+To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+ Michael.Hennerich@analog.com, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devel@driverdev.osuosl.org, daniel.baluta@gmail.com
+Subject: [PATCH v6 0/6] adis16209 driver cleanup
+Date: Thu, 29 Mar 2018 14:40:02 +0530
+Message-Id: <cover.1522306893.git.shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Shreeya Patel <shreeya.patel23498@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595656488556903336?=
-X-GMAIL-MSGID: =?utf-8?q?1595750134334041968?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello, Andrew
+This patchset has been introduced for the cleanup of
+adis16209 driver.
+This patchset cleans up miscellaneous code fragments
+and improves the code readability.
+After the cleanup, driver is moved from staging to
+mailine IIO subsystem directory.
 
-Thanks for reading this patch.
+Changes in v6
+  -This patchset has some new patches introduced for more
+cleanup and from the previous version, patch *[1/6] has
+been included in this patch series.
 
-> On 22 Mar 2018, at 23:57, Andrew Morton <akpm@linux-foundation.org> =
-wrote:
->=20
-> On Thu, 22 Mar 2018 19:36:36 +0300 Ilya Smith <blackzert@gmail.com> =
-wrote:
->=20
->> Current implementation doesn't randomize address returned by mmap.
->> All the entropy ends with choosing mmap_base_addr at the process
->> creation. After that mmap build very predictable layout of address
->> space. It allows to bypass ASLR in many cases.
->=20
-> Perhaps some more effort on the problem description would help.  *Are*
-> people predicting layouts at present?  What problems does this cause?=20=
+Shreeya Patel (6):
+  Staging: iio: adis16209: Indent the field definitions
+  Staging: iio: adis16209: Prefer reverse christmas tree ordering
+  Staging: iio: adis16209: Add blank lines
+  Staging: iio: adis16209: Remove unused headers
+  Staging: iio: adis16209: Use GENMASK
+  Staging: iio: adis16209: Move adis16209 driver out of staging
 
-> How are they doing this and are there other approaches to solving the
-> problem?
->=20
-Sorry, I=E2=80=99ve lost it in first version. In short - memory layout =
-could be easily=20
-repaired by single leakage. Also any Out of Bounds error may easily be=20=
+ drivers/iio/accel/Kconfig             |  12 ++
+ drivers/iio/accel/Makefile            |   1 +
+ drivers/iio/accel/adis16209.c         | 330 +++++++++++++++++++++++++++++++++
+ drivers/staging/iio/accel/Kconfig     |  12 --
+ drivers/staging/iio/accel/Makefile    |   1 -
+ drivers/staging/iio/accel/adis16209.c | 334 ----------------------------------
+ 6 files changed, 343 insertions(+), 347 deletions(-)
+ create mode 100644 drivers/iio/accel/adis16209.c
+ delete mode 100644 drivers/staging/iio/accel/adis16209.c
 
-exploited according to current implementation. All because mmap choose =
-address=20
-just before previously allocated segment. You can read more about it =
-here:=20
-http://www.openwall.com/lists/oss-security/2018/02/27/5
-Some test are available here https://github.com/blackzert/aslur.=20
-To solve the problem Kernel should randomize address on any mmap so
-attacker could never easily gain needed addresses.
+-- 
+2.7.4
 
-> Mainly: what value does this patchset have to our users?  This reader
-> is unable to determine that from the information which you have
-> provided.  Full details, please.
-
-The value of this patch is to decrease successful rate of exploitation
-vulnerable applications.These could be either remote or local vectors.
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
