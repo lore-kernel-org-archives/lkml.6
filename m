@@ -1,76 +1,145 @@
-Return-Path: <joe@perches.com>
-X-Google-Smtp-Source: AIpwx481dPVF2owO4GkDYh7Pcvou3rZepzsgUo6aeJBbzRVGOM32CaCJzv3R7aEhbSvLTeyGmQnf
-ARC-Seal: i=1; a=rsa-sha256; t=1522306127; cv=none;
-        d=google.com; s=arc-20160816;
-        b=UpHNdVYYR91Xfupr0jZb9fWRIgi4+FZTw0kigYUtSsiUvmABj6RqlixYrYgCgRvwQB
-         W7C1ytFdMZSJxRET4N0V7z7JuKFE+XwB46WPvD7oRQbKA+31QJ57NQ381t4/njaTqMGQ
-         hdF4roAw9xIMhBv1u1YGquaZrBAmhmqJOL1T9y8kFyMeG+9CwFVFTfyr0BVM8gZEPSTX
-         SbIVL1RCs7Q/ofHqePfcqEQHwDcw6C2h2e7tXeM/+5JfKg0944wRoKeuUdCaZZi7fHsq
-         QTA2nfvekqPXUyEcqZ+B/v2tMyfVVP5343j8qu54YlTjj5oVsK0jqjxvvdkvQDMRM6B3
-         zZqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=YvBwUw/AkmGV2sxMsZMNPlaDit1uvlJWd7Oax4JpScs=;
-        b=qo2UAbjchaSzX/vVB4BcAGLe6qcQmWMjpm1jcSggoJm/WdlyXj2kAj3rtSUFBNa/Gx
-         uh57njla1QNYG/KeoqxfhrgfdG9wRv+TFSISTwykV0DwKeMY/ZVt28gB9e4wqO6TABk8
-         Nb2Q3fntyWDsOgR9D71AX/tGoqQVP7UydyqCEU17p0PrQeYON2ELS4uXMmSqN3W/Gu3V
-         ZEwQzOXt6fP5boucReEIyiITl4d0m2rxzsZdox7QyznmYCs/8sA9P3oE9jCUraueJlbS
-         7Y6cxbJfruNo5K4DBd5ecCBw2Ca/vBm082lQmHygfQgJVs76tqE5lQTmapxVx18M+kGM
-         jvxA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 216.40.44.172 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 216.40.44.172 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3866:3867:3868:3870:3871:3872:4321:5007:7774:7903:10004:10400:10848:11026:11232:11658:11914:12296:12438:12679:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:21740:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: heat91_1221e815dc220
-X-Filterd-Recvd-Size: 1954
-Message-ID: <1522306123.2210.28.camel@perches.com>
-Subject: Re: [PATCH v4] ANDROID: binder: change down_write to down_read
-From: Joe Perches <joe@perches.com>
-To: Minchan Kim <minchan@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Cc: Arve =?ISO-8859-1?Q?Hj=F8nnev=E5g?= <arve@android.com>, Todd Kjos
- <tkjos@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Martijn Coenen <maco@android.com>
-Date: Wed, 28 Mar 2018 23:48:43 -0700
-In-Reply-To: <20180329064013.198620-1-minchan@kernel.org>
-References: <20180329064013.198620-1-minchan@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-10225-1522303753-2-871334792633542820
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522303752; b=U3JuUfABc+z0Bbq2NwxUDs8PejsqaWAyRjQj42whToYmLM/
+    EVD8GRs6jhB+Z54P0yhqcJfP5E2FejvMNi8pKLXuhjgDjlkIaYgpZlHREPBr1Qo4
+    G9du0hlLTKBmEJBWfwL2ikE4tSt39WNIUCRtXb5Lf4tTwh4l+V3NbNweFQuwFWyx
+    kJs4dslpYP0APfR/5ZV9kDKC//KBTb5YwqLZU5soJF68eOqoHXLgkYNB5SnxYY5S
+    B7Y2m14t+dKa8S2ZFesRJW3kBCBeEfj8f3Y7iT0PTXzKF2p+c1exLC1XKS/TuuSi
+    PcsO75Arc9+T4+ohliblChgIJZWwQRk9CGiAyBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1522303752; bh=oULlYP5MwS8Y95IQbya0rgymhr
+    7W7MC4t6AJ3dz07nY=; b=BeFssoVK6d6ep+SA6sckS3v+A7X1KoPKYtjIU22a6u
+    Z8U18i9EOdJ91ewyBemiT/NGmXSZxOs6InvE8/px5tR9a1tFJ2SlPhMxSJf6qQ5+
+    oi9ntRGq+TCE1+zVj1i8yRL8uUr8KSmim/N/B70umzCjreyP/lqsKuf9sBulgznc
+    4zjIzd/eBDVnzKGJbVJ4KehSq1smEeXHw0lk8ElYWNL3Pivw10qw52m8fvO4CiWn
+    0jvz5d4WYlDX1saNi2JYNNt7YUNDq0bXxMuTuithAPV8FDKjoOtO6H4kQo7oMED0
+    b/SmqMNV397KWR/VTP7mG4sVrlRSeeJ7RQxRyvbHxiPg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=nifty.com header.i=@nifty.com header.b=tnDSBDqd x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=socionext.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=nifty.com header.i=@nifty.com header.b=tnDSBDqd x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=socionext.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKwXHRVNA1QekLX+XNfV+E8e17rb+G6VzHm3XOJ8vNs5OZVSk0le+oJwZQS1JSypldw7At4wwjJfrgi7V2LjXk3WbfYWeRQJX//LZLlOPDPP0aoomjsk
+    kHyZl0HB6cnShCBbjbTDk8QpSEaONlKxsAEQ9ITRn+Zj6QPQnec+u4Z/eSllnJTZJXGXSDx1v3c8jjZHZchVqqcIwMqqycZqflr8O/FKhYN/w23gmmzJFRat
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=c-n4J4-pAAAA:8
+    a=VwQbUJbxAAAA:8 a=LUjSBQz4yZDabbV9TEcA:9 a=x8gzFH9gYPwA:10
+    a=L0NDqeB7ZLmQzAogN4cw:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750716AbeC2GI4 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 02:08:56 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:30847 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeC2GIz (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 29 Mar 2018 02:08:55 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w2T6882v017946
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Felipe Balbi <felipe.balbi@linux.intel.com>,
+        linux-usb@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: dwc3: of-simple: use managed and shared reset control
+Date: Thu, 29 Mar 2018 15:07:56 +0900
+Message-Id: <1522303676-7035-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596231778699320743?=
-X-GMAIL-MSGID: =?utf-8?q?1596253670066217456?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 2018-03-29 at 15:40 +0900, Minchan Kim wrote:
-> binder_update_page_range needs down_write of mmap_sem because
-> vm_insert_page need to change vma->vm_flags to VM_MIXEDMAP unless
-> it is set. However, when I profile binder working, it seems
-> every binder buffers should be mapped in advance by binder_mmap.
-> It means we could set VM_MIXEDMAP in bider_mmap time which is
+This driver handles the reset control in a common manner; deassert
+resets before use, assert them after use.  There is no good reason
+why it should be exclusive.
 
-typo trivia: binder_mmap
+Also, use devm_ for clean-up.
 
-> already hold a mmap_sem as down_write so binder_update_page_range
-> doesn't need to hold a mmap_sem as down_write.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-and style trivia:
+CCing Philipp Zabel.
+I see his sob in commit 06c47e6286d5.
 
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-[]
-> @@ -4722,7 +4722,8 @@ static int binder_mmap(struct file *filp, struct vm_area_struct *vma)
->  		failure_string = "bad vm_flags";
->  		goto err_bad_arg;
->  	}
-> -	vma->vm_flags = (vma->vm_flags | VM_DONTCOPY) & ~VM_MAYWRITE;
-> +	vma->vm_flags = (vma->vm_flags | VM_DONTCOPY | VM_MIXEDMAP) &
-> +							~VM_MAYWRITE;
 
-Perhaps this is clearer as
+ drivers/usb/dwc3/dwc3-of-simple.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-	vma->vm_flags |= VM_DONTCOPY | VM_MIXEDMAP;
-	vma->vm_flags &= ~VM_MAYWRITE;
+diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+index e54c362..bd6ab65 100644
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -91,7 +91,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, simple);
+ 	simple->dev = dev;
+ 
+-	simple->resets = of_reset_control_array_get_optional_exclusive(np);
++	simple->resets = devm_reset_control_array_get_optional_shared(dev);
+ 	if (IS_ERR(simple->resets)) {
+ 		ret = PTR_ERR(simple->resets);
+ 		dev_err(dev, "failed to get device resets, err=%d\n", ret);
+@@ -100,7 +100,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ 
+ 	ret = reset_control_deassert(simple->resets);
+ 	if (ret)
+-		goto err_resetc_put;
++		return ret;
+ 
+ 	ret = dwc3_of_simple_clk_init(simple, of_count_phandle_with_args(np,
+ 						"clocks", "#clock-cells"));
+@@ -126,8 +126,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+ err_resetc_assert:
+ 	reset_control_assert(simple->resets);
+ 
+-err_resetc_put:
+-	reset_control_put(simple->resets);
+ 	return ret;
+ }
+ 
+@@ -146,7 +144,6 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
+ 	simple->num_clocks = 0;
+ 
+ 	reset_control_assert(simple->resets);
+-	reset_control_put(simple->resets);
+ 
+ 	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
+-- 
+2.7.4
+
