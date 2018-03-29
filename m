@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684034-1522356365-2-12842846449136979279
+X-Cyrus-Session-Id: sloti22d1t05-1684034-1522356355-2-8954474318963045606
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522356364; b=vW22GnGvZPhMkzNfu84RbOWBez+9OOgzalPFbtKnQrdJvODgG6
-    AJv4Og8kdAUGJsWXtI74DtXS6L+Et2h0ySx9YrSCtYEtmCccBrNXQZxXIHZTnweb
-    0Mza607BmCKZyhfGR3+rEGopyVQBog0CiOX01W4r30DCVu3Yeo7GIL2x4MDwJc82
-    Abzjz7MrVJ404+3DYSDv+ouu8pJvkyCbTPunvkVgiRtT8uLQ7rRhACWvkbB9pa0p
-    q5ovQZ6W0XbN5Nyo89+I9N1o2ZKpqTTaYbq+nw2zp1dsCYlgXK4RTQ1CrzbCSdY2
-    xXhEo+fuDUAjqMNmrzVMKPBTlPuZ4Spo2P7g==
+    1522356354; b=H5XpwQZa8GrRCDjI1HraCxHFeUN30SMhCf7Ox33c8LF6dyfhHQ
+    v11Jcq6vA1Gf84OQwb/JuoSfS229z8ZNj98GPuD+gc2xEhOlvuvN7veQur/+HCj1
+    iADk8NB1xugKodaMzZ2G08KWzvW4vn0PKKA8xcE2UrRYYzzhMAARQ0khCGRwqbvL
+    OyXbIUXLddbSJoSyGW9uePargqLsD2gMyGVi6B6MVp6cdOKDU45m1rsEp5W34aT5
+    cjPshF2hBVCLK1F+/gUZxlTD3L00R2pvNrjAUk9ebLbWjDX6ie4SdBXbTsvKjm7D
+    d0KcKXcOtK0WWOKdOJiw3xwVp5MD6IQknN/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1522356364; bh=
-    fo7oLDEdGYA1TmjvJ4dqPxJH63maEIwJWwaITuWPRuE=; b=qrhzjwelaOoxebHR
-    6D5y5XqSAS5vIgRxDOersF71cDYB6L+xBnouGwbwjx7ZxjrNrLBCZAQC3O1xXmLZ
-    0RRZfgXIyPLZM/HKdpEUSmNvUTVzh9s/vVQRoy7BAzL6VjJVTWAfjfAYpT0bgdQQ
-    5N3FcFnRSHd0dEsZ5K9d4VvpK3I/3Guh9kLSrRwud5GCqLV7uPCbAQSPReSr5Y0p
-    5Shsp+uzPfPZHoC0GeIsfDjFqPUgejG+1s/7l+im0DiOgWXrbi8eG4op4KIblJaI
-    Ooa9XhJog23JCX3sGPS/lj3KyHh/aedwkryUKiVzoEkPp7+4sHXbmOnRfQSsGAaE
-    bTg1Cw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=h4Nxve0o x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=fm2; t=1522356354; bh=
+    1si15/k92O64BjEg9GI66p/P/bvbDGCIkXVUaQBDLRo=; b=p49AOCEuw9Jcd9Us
+    ism/jesn0RtHNDrMGZ9lIN7caEIZ0GLxL6NjfZJj9GWtX5bFz89JCS6OLS5AwTea
+    DZWfErBzKxgDTzov2Jwh8vPszTA9VXE2UepqBZpJrBXYldWheJTIY8nKkxepGDVF
+    qF0D90Cwm51wCj0d5dqsgAwcOa19naXEjk/jgYsQNSi0Cmp4N/7TA4YQ+1fuLSRG
+    33+o/9snPctS1osi/C7OzckoB1DdxUPHNUPgYKDLdgcB0ULqD+Dv93tgC62PNqu7
+    DXiaGoxzZ9ZLqC1UFyz9TNy1Q2bB68JIZEkb9CGn8Z1qAA8GA7fndsnqV+tc3nOF
+    vSKRRg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=sgaM9LhC x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=h4Nxve0o x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=sgaM9LhC x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,28 +51,29 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNWYEWKvr7HHtHnIsvIOCuSsk6Om1JcFVhfcH4zQ2DxQezTOTaCOcBD2osaFhRVtmNmiT0GHX377P2Pvb+p+cKnKvGLGeRDXCWSFRGBuYoGtJ7yuiwe/
-    Wdo9e5nOYtCcoyagVOVVz9/nbepATCw9y+KTliMyWVuNpwnVuoI8/gru93J7m066QX8B4jKm63Y/TUp0GBIn679XsbDIWIRi31X0yuCs+mxZvTZH9Fu9/6ig
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
-    a=b3adHlZHBvu0lEI6to8A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfApJCxSRRfZqWyIf4xHseF7LpG0J5sXNTBUn/Gw5AJYEioVpIGYKudmpxvJotvAIq/YaWb1ImEYV4CQl/oJmac4nVVWfJ8ZG/dqW80R7ZgBjNrvB1QGY
+    hPm3070H5RIKrWvPinlTeKIJDpi6bVK18uy6z5gnyAOTu39c68qcaqlpytT0OMPY8+SVKKpx3mS0vWORoy5m7Qm7HW9wzINXiAgwsCyyBZC7C5N5j67n4Pcw
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=ag1SF4gXAAAA:8
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=qqTsrR_GCXNHh_hb46oA:9 a=x8gzFH9gYPwA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752431AbeC2Ud7 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 16:33:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53548 "EHLO
+        id S1752455AbeC2UeA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 29 Mar 2018 16:34:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53538 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752390AbeC2Udy (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 29 Mar 2018 16:33:54 -0400
+        with ESMTP id S1752343AbeC2Udv (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 29 Mar 2018 16:33:51 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/30] aio: simplify cancellation
-Date: Thu, 29 Mar 2018 22:33:04 +0200
-Message-Id: <20180329203328.3248-7-hch@lst.de>
+Subject: [PATCH 05/30] fs: introduce new ->get_poll_head and ->poll_mask methods
+Date: Thu, 29 Mar 2018 22:33:03 +0200
+Message-Id: <20180329203328.3248-6-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180329203328.3248-1-hch@lst.de>
 References: <20180329203328.3248-1-hch@lst.de>
@@ -83,111 +84,186 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-With the current aio code there is no need for the magic KIOCB_CANCELLED
-value, as a cancelation just kicks the driver to queue the completion
-ASAP, with all actual completion handling done in another thread. Given
-that both the completion path and cancelation take the context lock there
-is no need for magic cmpxchg loops either.  If we remove iocbs from the
-active list before calling ->ki_cancel we can also rely on the invariant
-thay anything found on the list has a ->ki_cancel callback and can be
-cancelled, further simplifing the code.
+->get_poll_head returns the waitqueue that the poll operation is going
+to sleep on.  Note that this means we can only use a single waitqueue
+for the poll, unlike some current drivers that use two waitqueues for
+different events.  But now that we have keyed wakeups and heavily use
+those for poll there aren't that many good reason left to keep the
+multiple waitqueues, and if there are any ->poll is still around, the
+driver just won't support aio poll.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/aio.c | 49 ++++++-------------------------------------------
- 1 file changed, 6 insertions(+), 43 deletions(-)
+ Documentation/filesystems/Locking |  7 ++++++-
+ Documentation/filesystems/vfs.txt | 13 +++++++++++++
+ fs/select.c                       | 28 ++++++++++++++++++++++++++++
+ include/linux/fs.h                |  2 ++
+ include/linux/poll.h              | 27 +++++++++++++++++++++++----
+ 5 files changed, 72 insertions(+), 5 deletions(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 0df07d399a05..c724f1429176 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -162,19 +162,6 @@ struct fsync_iocb {
- 	bool			datasync;
+diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
+index 220bba28f72b..6d227f9d7bd9 100644
+--- a/Documentation/filesystems/Locking
++++ b/Documentation/filesystems/Locking
+@@ -440,6 +440,8 @@ prototypes:
+ 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
+ 	int (*iterate) (struct file *, struct dir_context *);
+ 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
++	struct wait_queue_head * (*get_poll_head)(struct file *, __poll_t);
++	__poll_t (*poll_mask) (struct file *, __poll_t);
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+ 	int (*mmap) (struct file *, struct vm_area_struct *);
+@@ -470,7 +472,7 @@ prototypes:
  };
  
--/*
-- * We use ki_cancel == KIOCB_CANCELLED to indicate that a kiocb has been either
-- * cancelled or completed (this makes a certain amount of sense because
-- * successful cancellation - io_cancel() - does deliver the completion to
-- * userspace).
-- *
-- * And since most things don't implement kiocb cancellation and we'd really like
-- * kiocb completion to be lockless when possible, we use ki_cancel to
-- * synchronize cancellation and completion - we only set it to KIOCB_CANCELLED
-- * with xchg() or cmpxchg(), see batch_complete_aio() and kiocb_cancel().
-- */
--#define KIOCB_CANCELLED		((void *) (~0ULL))
--
- struct aio_kiocb {
- 	union {
- 		struct kiocb		rw;
-@@ -572,27 +559,6 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
- }
- EXPORT_SYMBOL(kiocb_set_cancel_fn);
+ locking rules:
+-	All may block.
++	All except for ->poll_mask may block.
  
--static int kiocb_cancel(struct aio_kiocb *kiocb)
--{
--	kiocb_cancel_fn *old, *cancel;
--
--	/*
--	 * Don't want to set kiocb->ki_cancel = KIOCB_CANCELLED unless it
--	 * actually has a cancel function, hence the cmpxchg()
--	 */
--
--	cancel = READ_ONCE(kiocb->ki_cancel);
--	do {
--		if (!cancel || cancel == KIOCB_CANCELLED)
--			return -EINVAL;
--
--		old = cancel;
--		cancel = cmpxchg(&kiocb->ki_cancel, old, KIOCB_CANCELLED);
--	} while (cancel != old);
--
--	return cancel(&kiocb->rw);
--}
--
- static void free_ioctx(struct work_struct *work)
- {
- 	struct kioctx *ctx = container_of(work, struct kioctx, free_work);
-@@ -633,9 +599,8 @@ static void free_ioctx_users(struct percpu_ref *ref)
- 	while (!list_empty(&ctx->active_reqs)) {
- 		req = list_first_entry(&ctx->active_reqs,
- 				       struct aio_kiocb, ki_list);
--
- 		list_del_init(&req->ki_list);
--		kiocb_cancel(req);
-+		req->ki_cancel(&req->rw);
- 	}
+ ->llseek() locking has moved from llseek to the individual llseek
+ implementations.  If your fs is not using generic_file_llseek, you
+@@ -498,6 +500,9 @@ in sys_read() and friends.
+ the lease within the individual filesystem to record the result of the
+ operation
  
- 	spin_unlock_irq(&ctx->ctx_lock);
-@@ -1837,8 +1802,8 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
- {
- 	struct kioctx *ctx;
- 	struct aio_kiocb *kiocb;
-+	int ret = -EINVAL;
- 	u32 key;
--	int ret;
++->poll_mask can be called with or without the waitqueue lock for the waitqueue
++returned from ->get_poll_head.
++
+ --------------------------- dquot_operations -------------------------------
+ prototypes:
+ 	int (*write_dquot) (struct dquot *);
+diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
+index f608180ad59d..50ee13563271 100644
+--- a/Documentation/filesystems/vfs.txt
++++ b/Documentation/filesystems/vfs.txt
+@@ -857,6 +857,8 @@ struct file_operations {
+ 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
+ 	int (*iterate) (struct file *, struct dir_context *);
+ 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
++	struct wait_queue_head * (*get_poll_head)(struct file *, __poll_t);
++	__poll_t (*poll_mask) (struct file *, __poll_t);
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+ 	int (*mmap) (struct file *, struct vm_area_struct *);
+@@ -901,6 +903,17 @@ otherwise noted.
+ 	activity on this file and (optionally) go to sleep until there
+ 	is activity. Called by the select(2) and poll(2) system calls
  
- 	ret = get_user(key, &iocb->aio_key);
- 	if (unlikely(ret))
-@@ -1849,13 +1814,11 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
- 		return -EINVAL;
++  get_poll_head: Returns the struct wait_queue_head that poll, select,
++  epoll or aio poll should wait on in case this instance only has single
++  waitqueue.  Can return NULL to indicate polling is not supported,
++  or a POLL* value using the POLL_TO_PTR helper in case a grave error
++  occured and ->poll_mask shall not be called.
++
++  poll_mask: return the mask of POLL* values describing the file descriptor
++  state.  Called either before going to sleep on the waitqueue returned by
++  get_poll_head, or after it has been woken.  If ->get_poll_head and
++  ->poll_mask are implemented ->poll does not need to be implement.
++
+   unlocked_ioctl: called by the ioctl(2) system call.
  
- 	spin_lock_irq(&ctx->ctx_lock);
--
- 	kiocb = lookup_kiocb(ctx, iocb, key);
--	if (kiocb)
--		ret = kiocb_cancel(kiocb);
--	else
--		ret = -EINVAL;
--
-+	if (kiocb) {
-+		list_del_init(&kiocb->ki_list);
-+		ret = kiocb->ki_cancel(&kiocb->rw);
+   compat_ioctl: called by the ioctl(2) system call when 32 bit system calls
+diff --git a/fs/select.c b/fs/select.c
+index ba91103707ea..cc270d7f6192 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -34,6 +34,34 @@
+ 
+ #include <linux/uaccess.h>
+ 
++__poll_t vfs_poll(struct file *file, struct poll_table_struct *pt)
++{
++	unsigned int events = poll_requested_events(pt);
++	struct wait_queue_head *head;
++
++	if (unlikely(!file_can_poll(file)))
++		return DEFAULT_POLLMASK;
++
++	if (file->f_op->poll)
++		return file->f_op->poll(file, pt);
++
++	/*
++	 * Only get the poll head and do the first mask check if we are actually
++	 * going to sleep on this file:
++	 */
++	if (pt && pt->_qproc) {
++		head = vfs_get_poll_head(file, events);
++		if (!head)
++			return DEFAULT_POLLMASK;
++		if (IS_ERR(head))
++			return PTR_TO_POLL(head);
++
++		pt->_qproc(file, head, pt);
 +	}
- 	spin_unlock_irq(&ctx->ctx_lock);
++
++	return file->f_op->poll_mask(file, events);
++}
++EXPORT_SYMBOL_GPL(vfs_poll);
  
- 	if (!ret) {
+ /*
+  * Estimate expected accuracy in ns from a timeval.
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 79c413985305..6ea2c0843bb1 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1708,6 +1708,8 @@ struct file_operations {
+ 	int (*iterate) (struct file *, struct dir_context *);
+ 	int (*iterate_shared) (struct file *, struct dir_context *);
+ 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
++	struct wait_queue_head * (*get_poll_head)(struct file *, __poll_t);
++	__poll_t (*poll_mask) (struct file *, __poll_t);
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+ 	int (*mmap) (struct file *, struct vm_area_struct *);
+diff --git a/include/linux/poll.h b/include/linux/poll.h
+index 7e0fdcf905d2..42e8e8665fb0 100644
+--- a/include/linux/poll.h
++++ b/include/linux/poll.h
+@@ -74,18 +74,37 @@ static inline void init_poll_funcptr(poll_table *pt, poll_queue_proc qproc)
+ 	pt->_key   = ~(__poll_t)0; /* all events enabled */
+ }
+ 
++/*
++ * ->get_poll_head can return a __poll_t in the PTR_ERR, use these macros
++ * to return the value and recover it.  It takes care of the negation as
++ * well as off the annotations.
++ */
++#define POLL_TO_PTR(mask)	(ERR_PTR(-(__force int)(mask)))
++#define PTR_TO_POLL(ptr)	((__force __poll_t)-PTR_ERR((ptr)))
++
+ static inline bool file_can_poll(struct file *file)
+ {
+-	return file->f_op->poll;
++	return file->f_op->poll ||
++		(file->f_op->get_poll_head && file->f_op->poll_mask);
+ }
+ 
+-static inline __poll_t vfs_poll(struct file *file, struct poll_table_struct *pt)
++static inline struct wait_queue_head *vfs_get_poll_head(struct file *file,
++		__poll_t events)
+ {
+-	if (unlikely(!file->f_op->poll))
++	if (unlikely(!file->f_op->get_poll_head || !file->f_op->poll_mask))
++		return NULL;
++	return file->f_op->get_poll_head(file, events);
++}
++
++static inline __poll_t vfs_poll_mask(struct file *file, __poll_t events)
++{
++	if (unlikely(!file->f_op->poll_mask))
+ 		return DEFAULT_POLLMASK;
+-	return file->f_op->poll(file, pt);
++	return file->f_op->poll_mask(file, events) & events;
+ }
+ 
++__poll_t vfs_poll(struct file *file, struct poll_table_struct *pt);
++
+ struct poll_table_entry {
+ 	struct file *filp;
+ 	__poll_t key;
 -- 
 2.14.2
 
