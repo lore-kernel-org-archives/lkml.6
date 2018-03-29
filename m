@@ -1,47 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752082AbeC2KuJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 06:50:09 -0400
-Received: from smtp2.it.da.ut.ee ([193.40.5.67]:51280 "EHLO smtp2.it.da.ut.ee"
+        id S1752314AbeC2Kzr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 06:55:47 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:34482 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeC2KuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 06:50:07 -0400
-Date: Thu, 29 Mar 2018 13:50:02 +0300 (EEST)
-From: Meelis Roos <mroos@linux.ee>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-cc: Linux Kernel list <linux-kernel@vger.kernel.org>,
-        linux-ide@vger.kernel.org
-Subject: Re: 4.16-rc2+git: pata_serverworks: hanging ata detection thread on
- HP DL380G3
-In-Reply-To: <1597679.yzYZqmDdA5@amdc3058>
-Message-ID: <alpine.LRH.2.21.1803291349480.12825@math.ut.ee>
-References: <alpine.LRH.2.21.1802261049140.4893@math.ut.ee> <alpine.LRH.2.21.1803291153070.12825@math.ut.ee> <CGME20180329101255epcas2p22aeb95d869cdd2954bb9183037dace5f@epcas2p2.samsung.com> <1597679.yzYZqmDdA5@amdc3058>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1751059AbeC2Kzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 06:55:46 -0400
+Date: Thu, 29 Mar 2018 12:54:49 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, x86@kernel.org, tony.luck@intel.com
+Subject: Re: [PATCH v3 3/8] efi: Decode IA32/X64 Processor Error Info
+ Structure
+Message-ID: <20180329105448.GB29198@pd.tnic>
+References: <20180324184940.19762-1-Yazen.Ghannam@amd.com>
+ <20180324184940.19762-4-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180324184940.19762-4-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Thursday, March 29, 2018 11:54:09 AM Meelis Roos wrote:
-> > > 4.16 git bootup on HP Proliant DL380 G3 pauses for a a minute or two and 
-> > > then continues with "blocked for more than 120 seconds" message with 
-> > > libata detection functions in ther stack - 
-> > > async_synchronize_cookie_domain() as the last. It seems to happen during 
-> > > IDE CD-ROM detection (detected before but registered as sr0 after the 
-> > > warning). After detection, the eject button on the drive did not work.
-> > > 
-> > > 
-> > > pata_serverworks is the libata driver in use.
+On Sat, Mar 24, 2018 at 01:49:35PM -0500, Yazen Ghannam wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
 > 
-> There were no changes to pata_serverworks since 2014 and libata changes
-> in v4.16 look obviously correct..
+> Print the fields in the IA32/X64 Processor Error Info Structure.
 > 
-> > This is still the same in 4.16.0-rc7-00062-g0b412605ef5f.
+> Based on UEFI 2.7 Table 253. IA32/X64 Processor Error Information
+> Structure.
 > 
-> Any chance that you could bisect this issue?
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+> Link:
+> https://lkml.kernel.org/r/20180226193904.20532-4-Yazen.Ghannam@amd.com
+> 
+> v2->v3:
+> * Fix table number in commit message.
+> * Don't print raw validation bits.
+> 
+> v1->v2:
+> * Add parantheses around "bits" expression in macro.
+> * Fix indentation on multi-line statements.
+> 
+>  drivers/firmware/efi/cper-x86.c | 50 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
+> index 863f0cd2a0ff..a9ab3bbf7986 100644
+> --- a/drivers/firmware/efi/cper-x86.c
+> +++ b/drivers/firmware/efi/cper-x86.c
+> @@ -3,15 +3,28 @@
+>  
+>  #include <linux/cper.h>
+>  
+> +#define INDENT_SP	" "
 
-Yes, will do.
+There's that thing again. So it was a total waste of time discussing
+this last time. So let me save my time this time:
+
+NAKed-by: Borislav Petkov <bp@suse.de>
 
 -- 
-Meelis Roos (mroos@linux.ee)
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
