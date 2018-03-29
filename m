@@ -1,68 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeC2VKY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 17:10:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36508 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750971AbeC2VKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 17:10:23 -0400
-Date: Thu, 29 Mar 2018 23:10:20 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.16-rc8
-Message-ID: <20180329211019.GB27079@flask>
+        id S1751938AbeC2VOS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 17:14:18 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:38073 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750753AbeC2VOQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 17:14:16 -0400
+X-Google-Smtp-Source: AIpwx48LLzH4YS1EVgL0K9E/Qg9n8x4vzdRap6Ejh9pf1WSwX1gT5GWrW/Yl0byOSyANPI467JaZiQ==
+Date: Thu, 29 Mar 2018 21:14:13 +0000
+From: Sargun Dhillon <sargun@sargun.me>
+To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
+        igor.stoppa@huawei.com, casey@schaufler-ca.com, jmorris@namei.org,
+        sds@tycho.nsa.gov, paul@paul-moore.com, plautrba@redhat.com
+Subject: [PATCH v3 0/1] Safe LSM (un)loading, and immutable hooks
+Message-ID: <cover.1522357211.git.sargun@sargun.me>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+The biggest security benefit of this patchset is the introduction of
+read-only hooks. Currently, if you have any LSMs with mutable hooks
+it will render all heads, and list nodes mutable. This is a prime
+place to attack, because being able to manipulate those hooks is a
+way to bypass all LSMs easily.
 
-The following changes since commit daaf216c06fba4ee4dc3f62715667da929d68774:
+By moving to hlist_head, it keeps a singly-linked, non-circular list.
+This can always be marked as read only because we add a mutable "null"
+hook. All immutable LSMs should be installed as immutable hooks and
+sit before the null hook.
 
-  KVM: x86: Fix device passthrough when SME is active (2018-03-16 14:32:23 +0100)
++------+   +-----------+   +-----------+   +-----------+   +------------------+
+|      |   |           |   |           |   |           |   |                  |
+| HEAD +---> Immutable +---> Immutable +---> Null hook +--->   Mutable Hook   |
+|      |   |  Hook 1   |   |  Hook 2   |   |           |   |                  |
++------+   +-----------+   +-----------+   +-----------+   +------------------+
+                 |               |                                  |
+                 v               v                                  v
+             Callback        Callback                           Callback
 
-are available in the Git repository at:
+If LSMs have a model to be unloaded, or are compled as modules,
+they should mark themselves mutable at runtime.
 
-  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
+In order to provide safe code-unloading, there is a shared SRCU between
+all security hooks. This SRCU is very cheap for runtime overhead on
+reads, but there is synchronization around it for unloads. There is
+only a cost to pay at unload time, which is based on the execution time
+of longest chain of callbacks after synchronization begins.
 
-for you to fetch changes up to 17a1079d9c63579d6e392a526405b8888e9ede37:
+Because of all of this, we can now load LSMs at runtime, so those APIs
+are exposed. It is up to the module author to check if
+CONFIG_SECURITY_WRITABLE_HOOKS is enabled prior to trying to load.
 
-  KVM: x86: Fix pv tlb flush dependencies (2018-03-28 15:53:34 +0200)
 
-----------------------------------------------------------------
-KVM fixes for v4.16-rc8
+Changes since:
+v2:
+	* Split out hlist_head patch
+	* Apply Tetsuo's changes to clean up functions which are not
+	  covered by call_int_hook / call_void_hook
+	* Disable NULL hook checking when uneeded
+v1:
+	* Add SRCU to allow for code-unloading
+	* Add concurrency control around hook mutation
 
-PPC:
- - Fix a bug causing occasional machine check exceptions on POWER8 hosts
-   (introduced in 4.16-rc1)
+Sargun Dhillon (1):
+  security: Add mechanism to safely (un)load LSMs after boot time
 
-x86:
- - Fix a guest crashing regression with nested VMX and restricted guest
-   (introduced in 4.16-rc1)
+ include/linux/lsm_hooks.h  |  23 ++---
+ security/Kconfig           |   2 +-
+ security/apparmor/lsm.c    |   2 +-
+ security/commoncap.c       |   2 +-
+ security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
+ security/selinux/hooks.c   |   5 +-
+ security/smack/smack_lsm.c |   3 +-
+ security/tomoyo/tomoyo.c   |   3 +-
+ security/yama/yama_lsm.c   |   2 +-
+ 9 files changed, 196 insertions(+), 56 deletions(-)
 
- - Fix dependency check for pv tlb flush (The wrong dependency that
-   effectively disabled the feature was added in 4.16-rc4, the original
-   feature in 4.16-rc1, so it got decent testing.)
-
-----------------------------------------------------------------
-Paolo Bonzini (1):
-      Merge tag 'kvm-ppc-fixes-4.16-3' of git://git.kernel.org/.../paulus/powerpc into kvm-master
-
-Paul Mackerras (1):
-      KVM: PPC: Book3S HV: Fix duplication of host SLB entries
-
-Sean Christopherson (1):
-      KVM: nVMX: sync vmcs02 segment regs prior to vmx_set_cr0
-
-Wanpeng Li (1):
-      KVM: x86: Fix pv tlb flush dependencies
-
- arch/powerpc/kvm/book3s_hv_rmhandlers.S | 35 +++++++++++++++++----------------
- arch/x86/kernel/kvm.c                   |  4 ++--
- arch/x86/kvm/vmx.c                      | 10 +++++-----
- 3 files changed, 25 insertions(+), 24 deletions(-)
+-- 
+2.14.1
