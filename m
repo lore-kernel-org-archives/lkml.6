@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753031AbeC2LrX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:47:23 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59008 "EHLO
+        id S1753198AbeC2LsL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:48:11 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59716 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752779AbeC2L0O (ORCPT
+        with ESMTP id S1752764AbeC2L0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:26:14 -0400
+        Thu, 29 Mar 2018 07:26:13 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 056/109] fs: add do_vmsplice() helper; remove in-kernel call to syscall
-Date: Thu, 29 Mar 2018 13:23:33 +0200
-Message-Id: <20180329112426.23043-57-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org
+Subject: [PATCH 064/109] fs/quota: add kernel_quotactl() helper; remove in-kernel call to syscall
+Date: Thu, 29 Mar 2018 13:23:41 +0200
+Message-Id: <20180329112426.23043-65-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -22,56 +21,96 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the fs-internal do_vmsplice() helper allows us to get rid of the
-fs-internal call to the sys_vmsplice() syscall.
+Using the fs-internal kernel_quotactl() helper allows us to get rid of
+the fs-internal call to the sys_quotactl() syscall.
 
 This patch is part of a series which removes in-kernel calls to syscalls.
 On this basis, the syscall entry path can be streamlined. For details, see
 http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/splice.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/quota/compat.c        |  8 ++++----
+ fs/quota/quota.c         | 10 ++++++++--
+ include/linux/quotaops.h |  3 +++
+ 3 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 39e2dc01ac12..005d09cf3fa8 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1331,8 +1331,8 @@ static long vmsplice_to_pipe(struct file *file, const struct iovec __user *uiov,
-  * Currently we punt and implement it as a normal copy, see pipe_to_user().
-  *
-  */
--SYSCALL_DEFINE4(vmsplice, int, fd, const struct iovec __user *, iov,
--		unsigned long, nr_segs, unsigned int, flags)
-+static long do_vmsplice(int fd, const struct iovec __user *iov,
-+			unsigned long nr_segs, unsigned int flags)
- {
- 	struct fd f;
- 	long error;
-@@ -1358,6 +1358,12 @@ SYSCALL_DEFINE4(vmsplice, int, fd, const struct iovec __user *, iov,
- 	return error;
- }
- 
-+SYSCALL_DEFINE4(vmsplice, int, fd, const struct iovec __user *, iov,
-+		unsigned long, nr_segs, unsigned int, flags)
-+{
-+	return do_vmsplice(fd, iov, nr_segs, flags);
-+}
-+
- #ifdef CONFIG_COMPAT
- COMPAT_SYSCALL_DEFINE4(vmsplice, int, fd, const struct compat_iovec __user *, iov32,
- 		    unsigned int, nr_segs, unsigned int, flags)
-@@ -1375,7 +1381,7 @@ COMPAT_SYSCALL_DEFINE4(vmsplice, int, fd, const struct compat_iovec __user *, io
- 		    put_user(v.iov_len, &iov[i].iov_len))
- 			return -EFAULT;
+diff --git a/fs/quota/compat.c b/fs/quota/compat.c
+index 779caed4f078..1577a2fd51f4 100644
+--- a/fs/quota/compat.c
++++ b/fs/quota/compat.c
+@@ -59,7 +59,7 @@ asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+ 	case Q_GETQUOTA:
+ 		dqblk = compat_alloc_user_space(sizeof(struct if_dqblk));
+ 		compat_dqblk = addr;
+-		ret = sys_quotactl(cmd, special, id, dqblk);
++		ret = kernel_quotactl(cmd, special, id, dqblk);
+ 		if (ret)
+ 			break;
+ 		if (copy_in_user(compat_dqblk, dqblk, sizeof(*compat_dqblk)) ||
+@@ -75,12 +75,12 @@ asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+ 			get_user(data, &compat_dqblk->dqb_valid) ||
+ 			put_user(data, &dqblk->dqb_valid))
+ 			break;
+-		ret = sys_quotactl(cmd, special, id, dqblk);
++		ret = kernel_quotactl(cmd, special, id, dqblk);
+ 		break;
+ 	case Q_XGETQSTAT:
+ 		fsqstat = compat_alloc_user_space(sizeof(struct fs_quota_stat));
+ 		compat_fsqstat = addr;
+-		ret = sys_quotactl(cmd, special, id, fsqstat);
++		ret = kernel_quotactl(cmd, special, id, fsqstat);
+ 		if (ret)
+ 			break;
+ 		ret = -EFAULT;
+@@ -113,7 +113,7 @@ asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+ 		ret = 0;
+ 		break;
+ 	default:
+-		ret = sys_quotactl(cmd, special, id, addr);
++		ret = kernel_quotactl(cmd, special, id, addr);
  	}
--	return sys_vmsplice(fd, iov, nr_segs, flags);
-+	return do_vmsplice(fd, iov, nr_segs, flags);
+ 	return ret;
  }
- #endif
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index 43612e2a73af..860bfbe7a07a 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -833,8 +833,8 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
+  * calls. Maybe we need to add the process quotas etc. in the future,
+  * but we probably should use rlimits for that.
+  */
+-SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
+-		qid_t, id, void __user *, addr)
++int kernel_quotactl(unsigned int cmd, const char __user *special,
++		    qid_t id, void __user *addr)
+ {
+ 	uint cmds, type;
+ 	struct super_block *sb = NULL;
+@@ -885,3 +885,9 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
+ 		path_put(pathp);
+ 	return ret;
+ }
++
++SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
++		qid_t, id, void __user *, addr)
++{
++	return kernel_quotactl(cmd, special, id, addr);
++}
+diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+index 2fb6fb11132e..dc905a4ff8d7 100644
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -27,6 +27,9 @@ static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
+ 		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
+ }
  
++int kernel_quotactl(unsigned int cmd, const char __user *special,
++		    qid_t id, void __user *addr);
++
+ #if defined(CONFIG_QUOTA)
+ 
+ #define quota_error(sb, fmt, args...) \
 -- 
 2.16.3
