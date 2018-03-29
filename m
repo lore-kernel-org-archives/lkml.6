@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752571AbeC2Hwl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 03:52:41 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:50897 "EHLO
+        id S1752532AbeC2Hwk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 03:52:40 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:63421 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751219AbeC2Hwj (ORCPT
+        by vger.kernel.org with ESMTP id S1751225AbeC2Hwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 03:52:39 -0400
+        Thu, 29 Mar 2018 03:52:37 -0400
 X-IronPort-AV: E=Sophos;i="5.48,376,1517842800";
-   d="scan'208";a="276602334"
+   d="scan'208";a="276602297"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -19,9 +19,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v3 7/8] DT: arm: Add Renesas RZN1D-DB Board base file
-Date: Thu, 29 Mar 2018 08:47:03 +0100
-Message-Id: <1522309629-10152-8-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v3 5/8] arm: shmobile: Add the RZ/N1 arch to the shmobile Kconfig
+Date: Thu, 29 Mar 2018 08:47:01 +0100
+Message-Id: <1522309629-10152-6-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -29,47 +29,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+Add the RZ/N1 Family (Part #R9A06G0xx) ARCH config to the rest of
+the Renesas SoC collection.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ arch/arm/mach-shmobile/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-new file mode 100644
-index 0000000..a462b1a
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZN1D-DB Board
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 280e731..221fbcb 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -110,6 +110,11 @@ config ARCH_R8A7794
+ 	bool "R-Car E2 (R8A77940)"
+ 	select ARCH_RCAR_GEN2
+ 
++config ARCH_RZN1
++	bool "RZ/N1 (R9A06G0xx) Family"
++	select ARM_AMBA
++	select CPU_V7
 +
-+/dts-v1/;
-+
-+#include "r9a06g0xx.dtsi"
-+
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032", "renesas,rzn1";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+};
-+&uart0 {
-+	status = "okay";
-+};
+ config ARCH_SH73A0
+ 	bool "SH-Mobile AG5 (R8A73A00)"
+ 	select ARCH_RMOBILE
 -- 
 2.7.4
