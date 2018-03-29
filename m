@@ -1,120 +1,139 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3011300-1522263709-2-17041279522117431082
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-190428-1522308324-2-4944864654283877885
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522263708; b=K/zWH9rj4/B47+LlJXuysj5Z9mWTBnRdP9Nm/4mv/y0tbrb
-    ZoGQ1QQAaLQ7cajvncU1J1eQNamO7bTcyWM4+NowdJH17zbh48nY8+w7p7yrfnb6
-    kmowWrOgJb78iCQmttWOjMi86jfOU9SE244mB5eOxoOmbcBB0RrrnSChemlA53yf
-    +60hd3Ts2VoendJbJl/tMvUITFCs56Teiz7fQF1ysPPoB2gbyunSnvmMotrZMMQ0
-    uAGxG1YeAuz/8S9NyizgDyEZmvWS+x19VUqsV0pDAgA4WRl5r8PFNyM405HllpQ/
-    7KaUoGs8Ckk9Iq4MPRhyDJHRERpqgHcfoyp05FQ==
+    t=1522308323; b=M2c+uT2zy7RKbrxOwBADJVfJwbhUHjBQxmK24vvDXaQrecF
+    py0UVYSxknl6Ees/+rosF3hJkUmSWumfgyR0L/OG68Fwmqd2JMZfnPMpnC9lbVSH
+    teDbyvsxzzqWcprJfMxCB6g0s7zs3VW/M1SB2aXjwqzvN+7G2+yd7iQdgb7qzASo
+    +Urs6/fvJxcOuIiKJ3RXvLXikhV3fBZzTKyO1NVgKJumHKJpgBOe5FA/zPvB81eZ
+    VOiLjjRauid69NlJzmpeOREUAz3J6ibEUSVY8e20+iKpjNjBgK5lwLINPxNd5ScZ
+    U9Px94cp/d+axcglUYynTmAAjcvEIIMBmo2XlFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1522263708; bh=Gzsa1p7iecG4GYql+SM7WbD/7ju/6n8dNzpN6f26nNs=; b=R
-    KA+I6iNxBFjisZGmNttgVixxcFqlLIneXQnGz/5uD9+776ZicHEIidzz//wzs3XU
-    n1GHO5UhuMCkXcE0MvSfRpLXyVjdZM3iC4BV0YXE1ku9IbgFUCusRrsAS022bakB
-    j14Gl36b2ZMzuSgBBnoK2yxlIY6UdrpNdpjp647NQ1HsaX8hgGc8GTNY3mzfdFlg
-    notFw3BGhWxB8KqCAKxhr4tE52te5AtViBfAGyVHb6rUiDrOYQbPa5PeGn+HSSft
-    sqaEU8paROLo1vLxdkIEFVoYLlwmfTFjm+U3D/RRr4WgvSVL0QVGO24yh7xy7vAk
-    NScL8lxkvlFY9Xmw0A6lQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b=c4t3YEC2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=networkplumber.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1522308323; bh=I
+    jiy2uEi/vdSkkmDEXNbDmQWRAtPKSCt59hyxCLrI4Q=; b=wQcD7hzC6k2gyf4R3
+    TaRaSC9LvV1ahVdPPFW1+BJDEDU+bdLfE5Vkc0wJl+t5vbZn1xpI0E4bFb+WajvR
+    zPovfGVxoXHUMvXgfTa/1MdPGj9pIL45fh5Vwy9kLk5LtBMUrUfW++w3W6ZwKg4C
+    Yw38d7tWb7wSBrR16djjXfjDwXjPEX5D5BjNQKlGxNeXflQEfapSRnj4bVeBYclm
+    zHiaZgCxpzLs5VX7TdC9J2WRN/NscQYpfrOaqPFLpEcG7+prxrSln95FJgUn1juj
+    BGIds7MFI5sQ1EHaFyPwHE/j2RX4y1VenwKC2fq8yRXTgagrvSNO7l1vHrislMjX
+    E6hRQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h18q7Grn;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=networkplumber.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b=c4t3YEC2 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=networkplumber.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h18q7Grn;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=networkplumber.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI43Rh7pExPdQow3tGd37TBBG2ljF0iWcTd2L6Dqz7ETcwXRHp2014+nF4Pcm4Ybz+2wwkQmzRq72tl3gCESuA+EoHP3T4sX2q8LpAb0R1CSWzCILnTx
-    F+MEuP1EzuQS18dk0q2umxEpujwdWZdfwOaOaQGZ6YKeSK794K/GBi1jKqzyy/5EyMwb9GyzJBrLLKWDeCwmxD2H5BXG/FDXDS0PUrTesEeHQ+10zYBJ7LMP
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=yMhMjlubAAAA:8 a=UqCG9HQmAAAA:8 a=VwQbUJbxAAAA:8 a=E_-xDWRltKT_GDG8RqwA:9
-    a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfJAve83O5fpy+v5pR5TQPcc59yILx4P1Xpd/PqxgEhJ1RuF8e7JEduvrA6Qf7LPqv+OX/y8bDi7yNGCXEHKqJZ7C3VWMu9n3aaFTdmZ0biLPupvhF3Bd
+    WlSQe/avnmqlMvx0FeOZMLJi8+BvpsUP9/8hMYRWQiNwwWMjBy3DYP5zSVuFIX0AE0Jzw4wtgaUy3+sXAEe3hb/DT01L010UmcANYQNw4JtQKJbWx31s5EhM
+    Iooy3rlWJ8mD4IXQddE2TA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8 a=UqCG9HQmAAAA:8
+    a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8 a=c11wnXLowsIY3vp5NUYA:9 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752377AbeC1TBq (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Mar 2018 15:01:46 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:41353 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752907AbeC1TBp (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Mar 2018 15:01:45 -0400
-X-Google-Smtp-Source: AIpwx49DD2H1Do4IskMFkya77kh7qV2+jHPvZuMe82R7D31w4dxBs9qCqpJn8meBIgFKMpT3Zo3CTQ==
-Date: Wed, 28 Mar 2018 12:01:42 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: kys@exchange.microsoft.com
-Cc: kys@microsoft.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        olaf@aepfle.de, apw@canonical.com, vkuznets@redhat.com,
-        jasowang@redhat.com, leann.ogasawara@canonical.com,
-        marcelo.cerri@canonical.com, sthemmin@microsoft.com,
-        Michael Kelley <mhkelley@outlook.com>,
-        Stable <stable@vger.kernel.org>
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Thu, 29 Mar 2018 09:24:45 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Stephen Hemminger <stephen@networkplumber.org>
 Subject: Re: [PATCH 1/1] Drivers: hv: vmbus: Fix ring buffer signaling
-Message-ID: <20180328120142.7ba72aa2@xeon-e3>
-In-Reply-To: <20180305052408.19475-1-kys@exchange.microsoft.com>
+Message-ID: <20180329072445.GA13733@kroah.com>
 References: <20180305052408.19475-1-kys@exchange.microsoft.com>
+ <20180328120142.7ba72aa2@xeon-e3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+In-Reply-To: <20180328120142.7ba72aa2@xeon-e3>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: olaf@aepfle.de, kys@exchange.microsoft.com, sthemmin@microsoft.com,
+ jasowang@redhat.com, linux-kernel@vger.kernel.org,
+ Stable <stable@vger.kernel.org>, Michael Kelley <mhkelley@outlook.com>,
+ marcelo.cerri@canonical.com, apw@canonical.com, devel@linuxdriverproject.org,
+ vkuznets@redhat.com, leann.ogasawara@canonical.com
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun,  4 Mar 2018 22:24:08 -0700
-kys@exchange.microsoft.com wrote:
+On Wed, Mar 28, 2018 at 12:01:42PM -0700, Stephen Hemminger wrote:
+> On Sun,  4 Mar 2018 22:24:08 -0700
+> kys@exchange.microsoft.com wrote:
+> 
+> > From: Michael Kelley <mhkelley@outlook.com>
+> > 
+> > Fix bugs in signaling the Hyper-V host when freeing space in the
+> > host->guest ring buffer:
+> > 
+> > 1. The interrupt_mask must not be used to determine whether to signal
+> >    on the host->guest ring buffer
+> > 2. The ring buffer write_index must be read (via hv_get_bytes_to_write)
+> >    *after* pending_send_sz is read in order to avoid a race condition
+> > 3. Comparisons with pending_send_sz must treat the "equals" case as
+> >    not-enough-space
+> > 4. Don't signal if the pending_send_sz feature is not present. Older
+> >    versions of Hyper-V that don't implement this feature will poll.
+> > 
+> > Fixes: 03bad714a161 ("vmbus: more host signalling avoidance")
+> > 
+> > Cc: Stable <stable@vger.kernel.org> # 4.14 and above
+> > Signed-off-by: Michael Kelley <mhkelley@outlook.com>
+> > Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+> 
+> What ever happened to this patch? It doesn't seem to be in char-misc, upstream,
+> or stable kernel tree yet.
+> 
 
-> From: Michael Kelley <mhkelley@outlook.com>
-> 
-> Fix bugs in signaling the Hyper-V host when freeing space in the
-> host->guest ring buffer:
-> 
-> 1. The interrupt_mask must not be used to determine whether to signal
->    on the host->guest ring buffer
-> 2. The ring buffer write_index must be read (via hv_get_bytes_to_write)
->    *after* pending_send_sz is read in order to avoid a race condition
-> 3. Comparisons with pending_send_sz must treat the "equals" case as
->    not-enough-space
-> 4. Don't signal if the pending_send_sz feature is not present. Older
->    versions of Hyper-V that don't implement this feature will poll.
-> 
-> Fixes: 03bad714a161 ("vmbus: more host signalling avoidance")
-> 
-> Cc: Stable <stable@vger.kernel.org> # 4.14 and above
-> Signed-off-by: Michael Kelley <mhkelley@outlook.com>
-> Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+It was in the 4.14.31 and 4.15.14 stable releases.
 
-What ever happened to this patch? It doesn't seem to be in char-misc, upstream,
-or stable kernel tree yet.
+thanks,
+
+greg k-h
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
