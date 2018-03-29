@@ -1,44 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752531AbeC2Qee (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:34:34 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:36507 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbeC2Qed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:34:33 -0400
-X-Google-Smtp-Source: AIpwx4/JcbVg9iVVr2/Q9rKN7Kjq0uBkrVrtBwOk33AHyQFQDmtcBOk9WssqvqywFiQ/GZD2P5EvOA==
-Subject: Re: [PATCH 3/4] nvmet-fc: Don't use the count returned by the
- dma_map_sg call
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-References: <20180329160721.4691-1-logang@deltatee.com>
- <20180329160721.4691-4-logang@deltatee.com>
- <03cb3610-8ec7-9dc4-9e0a-82f4c30de578@broadcom.com>
- <5ba62675-39b4-6409-5628-c59d8ae048de@deltatee.com>
-From: James Smart <james.smart@broadcom.com>
-Message-ID: <5a5ab779-c949-8caa-abff-88063e885cd5@broadcom.com>
-Date: Thu, 29 Mar 2018 09:34:29 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752543AbeC2Qe5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:34:57 -0400
+Received: from muru.com ([72.249.23.125]:34396 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751398AbeC2Qez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 12:34:55 -0400
+Date: Thu, 29 Mar 2018 09:34:50 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180329163450.GQ5700@atomide.com>
+References: <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180327121441.GH29239@sirena.org.uk>
+ <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180329160828.GA14007@amd>
 MIME-Version: 1.0
-In-Reply-To: <5ba62675-39b4-6409-5628-c59d8ae048de@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180329160828.GA14007@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/29/2018 9:30 AM, Logan Gunthorpe wrote:
-> Can you elaborate? The 'data_sg_cnt' member was in 'struct
-> nvmet_fc_fcp_iod' which is declared in fc.c so it doesn't seem sane for
-> lower driver to access it... In fact the next patch in the series
-> removes it completely.
->
-> Logan
+* Pavel Machek <pavel@ucw.cz> [180329 16:09]:
+> > Then using the n_gsm ts 27.010 uart mux, I dial:
+> > 
+> > ./ngsm-rw 1 "AT+CFUN=1"		# connect to network
+> > U0001+CFUN:OK
+> > ./ngsm-rw 2 "AT+CMUT=0"		# unmute speaker over ch2, do this over qmi?
+> > U0001+CMUT:OK
+> > ./ngsm-rw 1 "ATD#123"		# dial number
+> > U0001D:OK
+> > 
+> > And I do hear a voice talking over the speakerphone :) Sorry have not tested the
+> > mic yet..
+> 
+> Hehe, ok, that's fun! I don't need +CMUT=0. It gave me error but then
+> the call worked, anyway... (I'm working with ttyUSB4).
 
-actually, I do think it's ok. about to post review on the next patch
+Oh interesting. So maybe Android is doing AT+CMUT=0 for some other
+modems and it's not really needed? Or you have settings preserved
+from warm boot from Android?
 
--- james
+I did not have any luck with ttyUSB4 last night. Did you dial with
+ATD123; or ATD123? So is the semicolon really needed?
+
+> I don't know how to hang the call up. ATH did not work for me.
+
+OK ATH works for me on n_gsm channel 1.
+
+> And no, microphone does not work.
+
+Yeah so conf calls only for now.
+
+Tony
