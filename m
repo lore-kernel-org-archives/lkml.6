@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/Bxebi8QAE2UHoV80U/NYeXY7lrW9w7N+j90I6NQBgMmzudnn4RYV7OZBHV1FekRaS512c
-ARC-Seal: i=1; a=rsa-sha256; t=1522346646; cv=none;
+X-Google-Smtp-Source: AIpwx484fWjOey8aY7oYrn4M2iIhI8JglD52ZFHutQcs8NV0kt2Se0a4j7O1mN6T47tpSyk2uH+U
+ARC-Seal: i=1; a=rsa-sha256; t=1522346850; cv=none;
         d=google.com; s=arc-20160816;
-        b=KTi6xukqRkJ+9Fyu10Pzx05rL9F9IDPNxdw0p1HrugWO2hs2NT0W6gh6M6aMP7BLUB
-         8L75XjDyby9MnnhkfILzbPSbeYGXXUyIP6WNOYrEbZAVQL3S4gvNeVuFjbK3WAPrGdyg
-         2/thEJQbyr8w+vxHjnGCPKNcROVTQQCyh7cAfDsU7bYxNmu496WrasukqzKyzNDn4rBy
-         4iS83Nvud/IvcPku5pd5/fpIKcdzlyIWPvNsBlKLTC5YQnyfr6brcdPE9FpDcBgjk3A2
-         CcEnwgSjBnII7Ml57Ua/CDiSj9CMaSdtIpbXzPJpWWxJxVxciVT0zUdDD/hUNJtuN+UD
-         9bZg==
+        b=cOhib4sJI7KTdy3E4ntGTaXmbW7B7SHrJEkiEl5fAxahEthnkVLg25PQIxuZGgvYd2
+         2+tH4f4Z5xAe5D/9PV5droE645D2HtkbZA46qWZ1cqj53mQ6b7YDp1Du7PxDDSpCqV+H
+         O/zWsE/yt1eRyRuEiAgaE46Y326h2pdSVn9bFuwNHUOsBEifgdfHNrGoTM5ThFKZ0AYq
+         9rOrbH7D3vxe8qnWgdxo2EnG6CKBzo9yuebbpO2DEBc0KAnBW37yPSnktIAbyuPNdmmR
+         Eu6GlA7CkLT+wcbyKpd9nXnvk9Cg5eEUoKT6cJZ0gNm7wST3J6hkRr2CxjXdx3jjfNPN
+         bvAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
+        h=content-transfer-encoding:user-agent:mime-version:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ThoWa9XXxqG0bFQvr2x6gMuc0mJVGRVqa5gsINNGtYw=;
-        b=x+YlGxtQcE5ZKln9bCdz/+pElluE5uvXbi6wSsWD2xZJrtsoGJ9sG7vUk3nV4nnVvz
-         hmtYiXMUD8yG20J/rUjYGaBVf7qF7ULpf7kSCv75H3n4aX0VPh0CxoaJ+imU8UeWwjSO
-         mmcOgS92zK2e/s0sxjhpECrSpGiJKmyRhcAVACEDMNTM3zUC1XUH2zsuKCQMjGHmWmEy
-         GY8/BqEjBXRIleYXpnOya06VTPWjo3PjwdxI4wqs0I0wCDNwf7V2dEDiltxu3QWB4MJx
-         0wuyDvVHnEgYorVCi7rECrnev7hblEvJPCX2h5pNPeG492pYl9IY/HNq+RzkvzL1e2r9
-         JBWw==
+        bh=EN2Fo40R3DheZRl7WU1QYaFTBbsBrRpoyISFD11q4gg=;
+        b=B5oKsERZPVr8f9e7FM+SJDjGFIoJukD2wM/3gxlfwsSGtr4j7RXj32hfO60GZ0/XF4
+         qS5ttzS0oDWjm+gAFW46MoM2fCrGz13O0iCDUjMDfQ+MztBulGM4tjlTnFRmIt1/6u5N
+         UY8WrSZhsMIGuuQZzvYt/oozuPYETqKmpU9E+6D/fg5Eu73blX5R00uyPfEFxO+23EWJ
+         pIRsea1iiKcoWu2qw9XHVViXWGGnsBcThT+BRdqk5eo7nVOp7tSgYe1gKY5t1AwA8fCl
+         Lshv/ux+gaTWIWaY3cVBSQPepo90RmfCppmTkgYOlFOze8gRYrFHA098MYIB92gFaWok
+         jSWg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -25,160 +25,181 @@ Authentication-Results: mx.google.com;
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Timofey Titovets <nefelim4ag@gmail.com>,
-	Yongjian Xu <yongjianchn@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Soheil Hassas Yeganeh <soheil@google.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 01/43] tcp: reset sk_send_head in tcp_write_queue_purge
-Date: Thu, 29 Mar 2018 19:59:56 +0200
-Message-Id: <20180329175730.305913574@linuxfoundation.org>
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuahkh@osg.samsung.com,
+	patches@kernelci.org,
+	ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH 4.9 00/28] 4.9.92-stable review
+Date: Thu, 29 Mar 2018 20:00:19 +0200
+Message-Id: <20180329175733.447823703@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
-References: <20180329175730.190353692@linuxfoundation.org>
-User-Agent: quilt/0.65
 MIME-Version: 1.0
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.92-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.92-rc1
+X-KernelTest-Deadline: 2018-03-31T17:57+00:00
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296157626587019?=
-X-GMAIL-MSGID: =?utf-8?q?1596296157626587019?=
+X-GMAIL-THRID: =?utf-8?q?1596296370676575757?=
+X-GMAIL-MSGID: =?utf-8?q?1596296370676575757?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.9.92 release.
+There are 28 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Mar 31 17:57:18 UTC 2018.
+Anything received after that time might be too late.
 
-From: Soheil Hassas Yeganeh <soheil@google.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.92-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.92-rc1
+
+Yunsheng Lin <linyunsheng@huawei.com>
+    net: hns: Fix a skb used after free bug
+
+Tom Herbert <tom@quantonium.net>
+    kcm: lock lower socket in kcm_attach
+
+Florian Fainelli <f.fainelli@gmail.com>
+    net: systemport: Rewrite __bcm_sysport_tx_reclaim()
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qeth: on channel error, reject further cmd requests
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qeth: lock read device while queueing next buffer
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qeth: when thread completes, wake up all waiters
+
+Julian Wiedmann <jwi@linux.vnet.ibm.com>
+    s390/qeth: free netdevice when removing a card
+
+Madalin Bucur <madalin.bucur@nxp.com>
+    soc/fsl/qbman: fix issue in qman_delete_cgr_safe()
+
+Arkadi Sharshevsky <arkadis@mellanox.com>
+    team: Fix double free in error path
+
+Vinicius Costa Gomes <vinicius.gomes@intel.com>
+    skbuff: Fix not waking applications when errors are enqueued
+
+David Ahern <dsahern@gmail.com>
+    net: Only honor ifindex in IP_PKTINFO if non-0
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    netlink: avoid a double skb free in genlmsg_mcast()
+
+Arvind Yadav <arvind.yadav.cs@gmail.com>
+    net/iucv: Free memory obtained by kzalloc
+
+Florian Fainelli <f.fainelli@gmail.com>
+    net: fec: Fix unbalanced PM runtime calls
+
+SZ Lin (林上智) <sz.lin@moxa.com>
+    net: ethernet: ti: cpsw: add check for in-band mode setting with RGMII PHY interface
+
+Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
+
+Eric Dumazet <edumazet@google.com>
+    l2tp: do not accept arbitrary sockets
+
+Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+    ipv6: fix access to non-linear packet in ndisc_fill_redirect_hdr_option()
+
+Alexey Kodanev <alexey.kodanev@oracle.com>
+    dccp: check sk for closed state in dccp_sendmsg()
+
+Kirill Tkhai <ktkhai@virtuozzo.com>
+    net: Fix hlist corruptions in inet_evict_bucket()
+
+Eric Dumazet <edumazet@google.com>
+    net: use skb_to_full_sk() in skb_update_prio()
+
+Eric Dumazet <edumazet@google.com>
+    ieee802154: 6lowpan: fix possible NULL deref in lowpan_device_event()
+
+Alexey Kodanev <alexey.kodanev@oracle.com>
+    sch_netem: fix skb leak in netem_enqueue()
+
+Paul Blakey <paulb@mellanox.com>
+    rhashtable: Fix rhlist duplicates insertion
+
+Guillaume Nault <g.nault@alphalink.fr>
+    ppp: avoid loop in xmit recursion detection code
+
+Roman Mashak <mrv@mojatatu.com>
+    net sched actions: return explicit error when tunnel_key mode is not specified
+
+Marc Zyngier <marc.zyngier@arm.com>
+    genirq: Track whether the trigger type has been set
+
+Johannes Thumshirn <jthumshirn@suse.de>
+    scsi: sg: don't return bogus Sg_requests
 
 
-tcp_write_queue_purge clears all the SKBs in the write queue
-but does not reset the sk_send_head. As a result, we can have
-a NULL pointer dereference anywhere that we use tcp_send_head
-instead of the tcp_write_queue_tail.
+-------------
 
-For example, after a27fd7a8ed38 (tcp: purge write queue upon RST),
-we can purge the write queue on RST. Prior to
-75c119afe14f (tcp: implement rb-tree based retransmit queue),
-tcp_push will only check tcp_send_head and then accesses
-tcp_write_queue_tail to send the actual SKB. As a result, it will
-dereference a NULL pointer.
+Diffstat:
 
-This has been reported twice for 4.14 where we don't have
-75c119afe14f:
-
-By Timofey Titovets:
-
-[  422.081094] BUG: unable to handle kernel NULL pointer dereference
-at 0000000000000038
-[  422.081254] IP: tcp_push+0x42/0x110
-[  422.081314] PGD 0 P4D 0
-[  422.081364] Oops: 0002 [#1] SMP PTI
-
-By Yongjian Xu:
-
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
-IP: tcp_push+0x48/0x120
-PGD 80000007ff77b067 P4D 80000007ff77b067 PUD 7fd989067 PMD 0
-Oops: 0002 [#18] SMP PTI
-Modules linked in: tcp_diag inet_diag tcp_bbr sch_fq iTCO_wdt
-iTCO_vendor_support pcspkr ixgbe mdio i2c_i801 lpc_ich joydev input_leds shpchp
-e1000e igb dca ptp pps_core hwmon mei_me mei ipmi_si ipmi_msghandler sg ses
-scsi_transport_sas enclosure ext4 jbd2 mbcache sd_mod ahci libahci megaraid_sas
-wmi ast ttm dm_mirror dm_region_hash dm_log dm_mod dax
-CPU: 6 PID: 14156 Comm: [ET_NET 6] Tainted: G D 4.14.26-1.el6.x86_64 #1
-Hardware name: LENOVO ThinkServer RD440 /ThinkServer RD440, BIOS A0TS80A
-09/22/2014
-task: ffff8807d78d8140 task.stack: ffffc9000e944000
-RIP: 0010:tcp_push+0x48/0x120
-RSP: 0018:ffffc9000e947a88 EFLAGS: 00010246
-RAX: 00000000000005b4 RBX: ffff880f7cce9c00 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff8807d00f5000
-RBP: ffffc9000e947aa8 R08: 0000000000001c84 R09: 0000000000000000
-R10: ffff8807d00f5158 R11: 0000000000000000 R12: ffff8807d00f5000
-R13: 0000000000000020 R14: 00000000000256d4 R15: 0000000000000000
-FS: 00007f5916de9700(0000) GS:ffff88107fd00000(0000) knlGS:0000000000000000
-CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000038 CR3: 00000007f8226004 CR4: 00000000001606e0
-Call Trace:
-tcp_sendmsg_locked+0x33d/0xe50
-tcp_sendmsg+0x37/0x60
-inet_sendmsg+0x39/0xc0
-sock_sendmsg+0x49/0x60
-sock_write_iter+0xb6/0x100
-do_iter_readv_writev+0xec/0x130
-? rw_verify_area+0x49/0xb0
-do_iter_write+0x97/0xd0
-vfs_writev+0x7e/0xe0
-? __wake_up_common_lock+0x80/0xa0
-? __fget_light+0x2c/0x70
-? __do_page_fault+0x1e7/0x530
-do_writev+0x60/0xf0
-? inet_shutdown+0xac/0x110
-SyS_writev+0x10/0x20
-do_syscall_64+0x6f/0x140
-? prepare_exit_to_usermode+0x8b/0xa0
-entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x3135ce0c57
-RSP: 002b:00007f5916de4b00 EFLAGS: 00000293 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000003135ce0c57
-RDX: 0000000000000002 RSI: 00007f5916de4b90 RDI: 000000000000606f
-RBP: 0000000000000000 R08: 0000000000000000 R09: 00007f5916de8c38
-R10: 0000000000000000 R11: 0000000000000293 R12: 00000000000464cc
-R13: 00007f5916de8c30 R14: 00007f58d8bef080 R15: 0000000000000002
-Code: 48 8b 97 60 01 00 00 4c 8d 97 58 01 00 00 41 b9 00 00 00 00 41 89 f3 4c 39
-d2 49 0f 44 d1 41 81 e3 00 80 00 00 0f 85 b0 00 00 00 <80> 4a 38 08 44 8b 8f 74
-06 00 00 44 89 8f 7c 06 00 00 83 e6 01
-RIP: tcp_push+0x48/0x120 RSP: ffffc9000e947a88
-CR2: 0000000000000038
----[ end trace 8d545c2e93515549 ]---
-
-Fixes: a27fd7a8ed38 (tcp: purge write queue upon RST)
-Reported-by: Timofey Titovets <nefelim4ag@gmail.com>
-Reported-by: Yongjian Xu <yongjianchn@gmail.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
-Tested-by: Yongjian Xu <yongjianchn@gmail.com>
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/tcp.h |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1600,6 +1600,11 @@ enum tcp_chrono {
- void tcp_chrono_start(struct sock *sk, const enum tcp_chrono type);
- void tcp_chrono_stop(struct sock *sk, const enum tcp_chrono type);
- 
-+static inline void tcp_init_send_head(struct sock *sk)
-+{
-+	sk->sk_send_head = NULL;
-+}
-+
- /* write queue abstraction */
- static inline void tcp_write_queue_purge(struct sock *sk)
- {
-@@ -1610,6 +1615,7 @@ static inline void tcp_write_queue_purge
- 		sk_wmem_free_skb(sk, skb);
- 	sk_mem_reclaim(sk);
- 	tcp_clear_all_retrans_hints(tcp_sk(sk));
-+	tcp_init_send_head(sk);
- }
- 
- static inline struct sk_buff *tcp_write_queue_head(const struct sock *sk)
-@@ -1672,11 +1678,6 @@ static inline void tcp_check_send_head(s
- 		tcp_sk(sk)->highest_sack = NULL;
- }
- 
--static inline void tcp_init_send_head(struct sock *sk)
--{
--	sk->sk_send_head = NULL;
--}
--
- static inline void __tcp_add_write_queue_tail(struct sock *sk, struct sk_buff *skb)
- {
- 	__skb_queue_tail(&sk->sk_write_queue, skb);
+ Makefile                                      |  4 ++--
+ drivers/net/ethernet/arc/emac_rockchip.c      |  6 +++--
+ drivers/net/ethernet/broadcom/bcmsysport.c    | 33 ++++++++++++---------------
+ drivers/net/ethernet/broadcom/bcmsysport.h    |  2 +-
+ drivers/net/ethernet/freescale/fec_main.c     |  2 ++
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 22 ++++++++----------
+ drivers/net/ethernet/hisilicon/hns/hns_enet.h |  6 ++---
+ drivers/net/ethernet/ti/cpsw.c                |  3 ++-
+ drivers/net/ppp/ppp_generic.c                 | 26 +++++++++++----------
+ drivers/net/team/team.c                       |  4 ++--
+ drivers/s390/net/qeth_core_main.c             | 21 ++++++++++++-----
+ drivers/s390/net/qeth_l2_main.c               |  2 +-
+ drivers/s390/net/qeth_l3_main.c               |  2 +-
+ drivers/scsi/sg.c                             |  5 ++--
+ drivers/soc/fsl/qbman/qman.c                  | 28 ++++-------------------
+ include/linux/cgroup-defs.h                   |  4 ++--
+ include/linux/irq.h                           | 11 ++++++++-
+ include/linux/rhashtable.h                    |  4 +++-
+ include/net/sch_generic.h                     | 19 +++++++++++++++
+ kernel/irq/manage.c                           | 13 ++++++++++-
+ lib/rhashtable.c                              |  4 +++-
+ net/core/dev.c                                | 22 ++++++++++++------
+ net/core/skbuff.c                             |  2 +-
+ net/dccp/proto.c                              |  5 ++++
+ net/ieee802154/6lowpan/core.c                 | 12 ++++++----
+ net/ipv4/inet_fragment.c                      |  3 +++
+ net/ipv4/ip_sockglue.c                        |  6 +++--
+ net/ipv6/ndisc.c                              |  3 ++-
+ net/iucv/af_iucv.c                            |  4 +++-
+ net/kcm/kcmsock.c                             | 33 +++++++++++++++++++--------
+ net/l2tp/l2tp_core.c                          |  8 +++++--
+ net/netlink/genetlink.c                       |  2 +-
+ net/sched/act_tunnel_key.c                    |  1 +
+ net/sched/sch_netem.c                         |  2 +-
+ 34 files changed, 202 insertions(+), 122 deletions(-)
