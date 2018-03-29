@@ -1,123 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeC2QIe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 12:08:34 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44738 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752252AbeC2QIb (ORCPT
+        id S1752701AbeC2QJH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 12:09:07 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:45364 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752673AbeC2QJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 12:08:31 -0400
-Date: Thu, 29 Mar 2018 18:08:28 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
-Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
- omap4-droid4: add soundcard
-Message-ID: <20180329160828.GA14007@amd>
-References: <20180322234832.o24ut5ahon46mdu4@earth.universe>
- <20180323100930.GA21644@amd>
- <20180323103006.alymgb3ywftb4gek@earth.universe>
- <20180326141638.GB1450@amd>
- <20180326155828.ttnduivadob4iqmd@earth.universe>
- <20180327121441.GH29239@sirena.org.uk>
- <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
- <20180328022910.GM29239@sirena.org.uk>
- <20180328140219.f6667up5evrrafkv@earth.universe>
- <20180329014507.GM5700@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
-Content-Disposition: inline
-In-Reply-To: <20180329014507.GM5700@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 29 Mar 2018 12:09:05 -0400
+Date: Thu, 29 Mar 2018 12:09:03 -0400 (EDT)
+Message-Id: <20180329.120903.1175452061863560219.davem@davemloft.net>
+To: dongli.zhang@oracle.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, wei.liu2@citrix.com, paul.durrant@citrix.com
+Subject: Re: [PATCH 1/1] xen-netback: process malformed sk_buff correctly
+ to avoid BUG_ON()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1522194136-11985-1-git-send-email-dongli.zhang@oracle.com>
+References: <1522194136-11985-1-git-send-email-dongli.zhang@oracle.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Dongli Zhang <dongli.zhang@oracle.com>
+Date: Wed, 28 Mar 2018 07:42:16 +0800
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The "BUG_ON(!frag_iter)" in function xenvif_rx_next_chunk() is triggered if
+> the received sk_buff is malformed, that is, when the sk_buff has pattern
+> (skb->data_len && !skb_shinfo(skb)->nr_frags). Below is a sample call
+> stack:
 
-Hi!
+We should fix the parts of the kernel which build illegal malformed
+SKBs rather than adding checks to every driver in the tree.
 
-> @@ -510,17 +510,17 @@
->  07f4: 0000
->  07f8: 0000
->  07fc: 0000
-> -0800: 0065
-> -0804: 0000
-> -0808: 0040
-> +0800: 0025     # CPCAP_REG_VAUDIOC     VAUDIO Control
-> +0804: 60cf     # CPCAP_REG_CC          Codec Control, moto cpcap.c:1337 =
-sets 0x0093?
-> +0808: ae0a     # CPCAP_REG_CDI         Codec Digital Interface
->  080c: 0000
->  0810: 0004
-> -0814: 0804
-> -0818: 079c
-> -081c: 0000
-> -0820: 0924
-> -0824: 0000
-> -0828: 0000
-> +0814: 0cc0     # CPCAP_REG_TXI         TX Inputs, moto cpcap.c:1340 sets=
- 0x0CC6?
-> +0818: 0610     # CPCAP_REG_TXMP        TX MIC PGA's, moto cpcap.c:1343 s=
-ets 0x0273?
-> +081c: 0006     # CPCAP_REG_RXOA        RX Output Amplifiers
-> +0820: 0b2c     # CPCAP_REG_RXVC        RX Volume Control
-> +0824: 0606     # CPCAP_REG_RXCOA       RX Codec to Output Amps
-> +0828: 0600     # CPCAP_REG_RXSDOA      RX Stereo DAC to Output Amps
->  082c: 0400
->  0830: 0000
->  0834: 0030
->=20
-> I wonder if mdm6600 is the i2s master during the voice call?
->=20
-> Then using the n_gsm ts 27.010 uart mux, I dial:
->=20
-> ./ngsm-rw 1 "AT+CFUN=3D1"		# connect to network
-> U0001+CFUN:OK
-> ./ngsm-rw 2 "AT+CMUT=3D0"		# unmute speaker over ch2, do this over qmi?
-> U0001+CMUT:OK
-> ./ngsm-rw 1 "ATD#123"		# dial number
-> U0001D:OK
->=20
-> And I do hear a voice talking over the speakerphone :) Sorry have not tes=
-ted the
-> mic yet..
-
-Hehe, ok, that's fun! I don't need +CMUT=3D0. It gave me error but then
-the call worked, anyway... (I'm working with ttyUSB4).
-
-I don't know how to hang the call up. ATH did not work for me.
-
-And no, microphone does not work.
-
-Thanks!
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlq9D3wACgkQMOfwapXb+vJOXACeJS8eBaU9CzbKBlKXSGMIoiax
-lP8AoMHbGnIDq2WJe7JmFQzS8qX2vta+
-=YR7x
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
+I'm not applying this, sorry.
