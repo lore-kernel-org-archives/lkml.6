@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeC2LqZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 07:46:25 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:59868 "EHLO
+        id S1753234AbeC2Lq1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 07:46:27 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59320 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752787AbeC2L0P (ORCPT
+        with ESMTP id S1752783AbeC2L0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 07:26:15 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org
 Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org
-Subject: [PATCH 001/109] syscalls: define and explain goal to not call syscalls in the kernel
-Date: Thu, 29 Mar 2018 13:22:38 +0200
-Message-Id: <20180329112426.23043-2-linux@dominikbrodowski.net>
+        linux-arch@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org
+Subject: [PATCH 102/109] kexec: move sys_kexec_load() prototype to syscalls.h
+Date: Thu, 29 Mar 2018 13:24:19 +0200
+Message-Id: <20180329112426.23043-103-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
 References: <20180329112426.23043-1-linux@dominikbrodowski.net>
@@ -21,77 +22,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The syscall entry points to the kernel defined by SYSCALL_DEFINEx()
-and COMPAT_SYSCALL_DEFINEx() should only be called from userspace
-through kernel entry points, but not from the kernel itself. This
-will allow cleanups and optimizations to the entry paths *and* to
-the parts of the kernel code which currently need to pretend to be
-userspace in order to make use of syscalls.
+As the syscall function should only be called from the system call table
+but not from elsewhere in the kernel, move the prototype for
+sys_kexec_load() to include/syscall.h.
 
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: kexec@lists.infradead.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- Documentation/process/adding-syscalls.rst | 32 +++++++++++++++++++++++++++++++
- include/linux/syscalls.h                  |  7 +++++++
- 2 files changed, 39 insertions(+)
+ include/linux/kexec.h    | 4 ----
+ include/linux/syscalls.h | 4 ++++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/process/adding-syscalls.rst b/Documentation/process/adding-syscalls.rst
-index 8cc25a06f353..556613744556 100644
---- a/Documentation/process/adding-syscalls.rst
-+++ b/Documentation/process/adding-syscalls.rst
-@@ -487,6 +487,38 @@ patchset, for the convenience of reviewers.
- The man page should be cc'ed to linux-man@vger.kernel.org
- For more details, see https://www.kernel.org/doc/man-pages/patches.html
- 
-+
-+Do not call System Calls in the Kernel
-+--------------------------------------
-+
-+System calls are, as stated above, interaction points between userspace and
-+the kernel.  Therefore, system call functions such as ``sys_xyzzy()`` or
-+``compat_sys_xyzzy()`` should only be called from userspace via the syscall
-+table, but not from elsewhere in the kernel.  If the syscall functionality is
-+useful to be used within the kernel, needs to be shared between an old and a
-+new syscall, or needs to be shared between a syscall and its compatibility
-+variant, it should be implemented by means of a "helper" function (such as
-+``kern_xyzzy()``).  This kernel function may then be called within the
-+syscall stub (``sys_xyzzy()``), the compatibility syscall stub
-+(``compat_sys_xyzzy()``), and/or other kernel code.
-+
-+At least on 64-bit x86, it will be a hard requirement from v4.17 onwards to not
-+call system call functions in the kernel.  It uses a different calling
-+convention for system calls where ``struct pt_regs`` is decoded on-the-fly in a
-+syscall wrapper which then hands processing over to the actual syscall function.
-+This means that only those parameters which are actually needed for a specific
-+syscall are passed on during syscall entry, instead of filling in six CPU
-+registers with random user space content all the time (which may cause serious
-+trouble down the call chain).
-+
-+Moreover, rules on how data may be accessed may differ between kernel data and
-+user data.  This is another reason why calling ``sys_xyzzy()`` is generally a
-+bad idea.
-+
-+Exceptions to this rule are only allowed in architecture-specific overrides,
-+architecture-specific compatibility wrappers, or other code in arch/.
-+
-+
- References and Sources
- ----------------------
- 
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index f16f6ceb3875..0ebcbeb21056 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -223,10 +223,6 @@ struct kimage {
+ extern void machine_kexec(struct kimage *image);
+ extern int machine_kexec_prepare(struct kimage *image);
+ extern void machine_kexec_cleanup(struct kimage *image);
+-extern asmlinkage long sys_kexec_load(unsigned long entry,
+-					unsigned long nr_segments,
+-					struct kexec_segment __user *segments,
+-					unsigned long flags);
+ extern int kernel_kexec(void);
+ extern struct page *kimage_alloc_control_pages(struct kimage *image,
+ 						unsigned int order);
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index a78186d826d7..0526286a0314 100644
+index 815fbdd9cca1..8330f046541e 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -941,4 +941,11 @@ asmlinkage long sys_pkey_free(int pkey);
+@@ -936,6 +936,10 @@ asmlinkage long sys_pkey_mprotect(unsigned long start, size_t len,
+ 				  unsigned long prot, int pkey);
+ asmlinkage long sys_pkey_alloc(unsigned long flags, unsigned long init_val);
+ asmlinkage long sys_pkey_free(int pkey);
++asmlinkage long sys_kexec_load(unsigned long entry,
++			       unsigned long nr_segments,
++			       struct kexec_segment __user *segments,
++			       unsigned long flags);
  asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
  			  unsigned mask, struct statx __user *buffer);
  
-+
-+/*
-+ * Kernel code should not call syscalls (i.e., sys_xyzyyz()) directly.
-+ * Instead, use one of the functions which work equivalently, such as
-+ * the ksys_xyzyyz() functions prototyped below.
-+ */
-+
- #endif
 -- 
 2.16.3
