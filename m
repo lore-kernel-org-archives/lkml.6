@@ -1,87 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752087AbeC2TT5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 15:19:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55936 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeC2TT4 (ORCPT
+        id S1752273AbeC2TU3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 15:20:29 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:45489 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeC2TU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 15:19:56 -0400
-Date: Thu, 29 Mar 2018 16:19:46 -0300
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Nasser <afshin.nasser@gmail.com>
-Cc: p.zabel@pengutronix.de, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, bparrot@ti.com, garsilva@embeddedor.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: tvp5150: fix color burst lock instability
- on some hardware
-Message-ID: <20180329161946.3a8cdd0d@recife.lan>
-In-Reply-To: <20180329180757.GA27220@smart-ThinkPad-T410>
-References: <20180325225633.5899-1-Afshin.Nasser@gmail.com>
-        <20180326064353.187f752c@vento.lan>
-        <20180326222921.GA5373@smart-ThinkPad-T410>
-        <20180329143435.GA4392@smart-ThinkPad-T410>
-        <20180329120240.169a5f33@vento.lan>
-        <20180329180757.GA27220@smart-ThinkPad-T410>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 29 Mar 2018 15:20:27 -0400
+X-Google-Smtp-Source: AIpwx4/cSNgsU8pwaZi+2ljY0FWqLmCHQFT7RKd5WqZAcYifSg/PwAOkh8n6eBYd7yagFbxENoS6BQ==
+Date: Thu, 29 Mar 2018 13:20:21 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Colin King <colin.king@canonical.com>
+Cc: Michal Kalderon <Michal.Kalderon@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] qedr: ix spelling mistake: "hanlde" -> "handle"
+Message-ID: <20180329192021.GA24572@ziepe.ca>
+References: <20180329121107.27248-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180329121107.27248-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 29 Mar 2018 22:37:57 +0430
-Nasser <afshin.nasser@gmail.com> escreveu:
-
-> On Thu, Mar 29, 2018 at 12:02:40PM -0300, Mauro Carvalho Chehab wrote:
-> > Em Thu, 29 Mar 2018 19:04:35 +0430
-> > Nasser <afshin.nasser@gmail.com> escreveu:
-> >   
-> > > On Tue, Mar 27, 2018 at 02:59:21AM +0430, Nasser wrote:
-> > > Hi Mauro,
-> > > 
-> > > Thank you for taking time to review my patch.
-> > > 
-> > > May be I should rephrase the commit message to something like:
-> > > 	Use the default register values as suggested in TVP5150AM1 datasheet
-> > > 
-> > > As this is not a hardware-dependent issue. Am I missing something?  
-> > 
-> > It is not a matter of rephasing, but, instead, to be sure that it won't
-> > cause regressions on existing hardware.
-> > 
-> > Yet, it would worth if you could describe at the patch what hardware
-> > did you test it, and if VBI was tested too.
-> >   
+On Thu, Mar 29, 2018 at 01:11:07PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Does this means that I should resend the patch with this additional info?
-> Sorry for not being clear about that. This was a custom board based on
-> ARM. The VBI was not used.
-
-That's what I suspected when you send your patch :-)
-
-The tvp5150 is used by several USB and PCI devices for analog TV and
-for video stream capture, with may have different requirements from what
-you're doing on your ARM board.
-
-Changing a register setting global wide without enough care will
-very likely break support for existing boards.
-
-That's why I said that the right thing to do is to pass a parameter to
-the driver specifying what "extra" features are needed.
-
-Without looking at tvp5150/tvp5151/tvp5150am datasheets nor testing,
-I'd risk to say that, at the specific case of your patch, touching at
-VBLK settings have a potential risk of affecting VBI handling.
-
-> > Anyway, I'll try to find some time to run some tests on the hardware
-> > I have with tvp5150 too.  
+> Trivial fix to spelling mistake in DP_ERR message text
 > 
-> It sounds great.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Shamir Rabinovitch <shamir.rabinovitch@oracle.com>
+> ---
+>  drivers/infiniband/hw/qedr/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yes, but I won't be able to do it on the next couple of weeks. We're
-approaching the merge window for Kernel 4.17.
+applied to for-next, thanks.
 
-Thanks,
-Mauro
+I also fixed the spelling error in the subject :)
+
+Jason
