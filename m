@@ -1,172 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751113AbeC2Adq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 20:33:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56148 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeC2Adp (ORCPT
+        id S1751189AbeC2AgB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 20:36:01 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:59274 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeC2AgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 20:33:45 -0400
-From: Tyler Hicks <tyhicks@canonical.com>
-To: ecryptfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] eCryptfs: don't pass up plaintext names when using filename encryption
-Date: Thu, 29 Mar 2018 00:32:47 +0000
-Message-Id: <1522283567-4889-1-git-send-email-tyhicks@canonical.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <891ab33d-a140-0a6d-6907-ba226590eb3f@canonical.com>
-References: <891ab33d-a140-0a6d-6907-ba226590eb3f@canonical.com>
+        Wed, 28 Mar 2018 20:36:00 -0400
+Date: Thu, 29 Mar 2018 11:36:04 +1100 (AEDT)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: Jiri Kosina <trivial@kernel.org>
+cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] macintosh/adb: Use C99 initializers for struct adb_driver
+ instances
+Message-ID: <alpine.LNX.2.21.1803291117110.30@nippy.intranet>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both ecryptfs_filldir() and ecryptfs_readlink_lower() use
-ecryptfs_decode_and_decrypt_filename() to translate lower filenames to
-upper filenames. The function correctly passes up lower filenames,
-unchanged, when filename encryption isn't in use. However, it was also
-passing up lower filenames when the filename wasn't encrypted or
-when decryption failed. Since 88ae4ab9802e, eCryptfs refuses to lookup
-lower plaintext names when filename encryption is enabled so this
-resulted in a situation where userspace would see lower plaintext
-filenames in calls to getdents(2) but then not be able to lookup those
-filenames.
+No change to object files.
 
-An example of this can be seen when enabling filename encryption on an
-eCryptfs mount at the root directory of an Ext4 filesystem:
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-$ ls -1i /lower
-12 ECRYPTFS_FNEK_ENCRYPTED.FWYZD8TcW.5FV-TKTEYOHsheiHX9a-w.NURCCYIMjI8pn5BDB9-h3fXwrE--
-11 lost+found
-$ ls -1i /upper
-ls: cannot access '/upper/lost+found': No such file or directory
- ? lost+found
-12 test
-
-With this change, the lower lost+found dentry is ignored:
-
-$ ls -1i /lower
-12 ECRYPTFS_FNEK_ENCRYPTED.FWYZD8TcW.5FV-TKTEYOHsheiHX9a-w.NURCCYIMjI8pn5BDB9-h3fXwrE--
-11 lost+found
-$ ls -1i /upper
-12 test
-
-Additionally, some potentially noisy error/info messages in the related
-code paths are turned into debug messages so that the logs can't be
-easily filled.
-
-Fixes: 88ae4ab9802e ("ecryptfs_lookup(): try either only encrypted or plaintext name")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 ---
- fs/ecryptfs/crypto.c | 41 ++++++++++++++++++++++++++++-------------
- fs/ecryptfs/file.c   | 21 ++++++++++++++++-----
- 2 files changed, 44 insertions(+), 18 deletions(-)
+ drivers/macintosh/adb-iop.c    | 14 +++++++-------
+ drivers/macintosh/macio-adb.c  | 15 +++++++--------
+ drivers/macintosh/via-macii.c  | 14 +++++++-------
+ drivers/macintosh/via-pmu.c    | 14 +++++++-------
+ drivers/macintosh/via-pmu68k.c | 14 +++++++-------
+ 5 files changed, 35 insertions(+), 36 deletions(-)
 
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index 846ca15..4dd842f 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1997,6 +1997,16 @@ int ecryptfs_encrypt_and_encode_filename(
- 	return rc;
- }
+diff --git a/drivers/macintosh/adb-iop.c b/drivers/macintosh/adb-iop.c
+index 15db69d8ba69..ca623e6446e4 100644
+--- a/drivers/macintosh/adb-iop.c
++++ b/drivers/macintosh/adb-iop.c
+@@ -53,13 +53,13 @@ static void adb_iop_poll(void);
+ static int adb_iop_reset_bus(void);
  
-+static bool is_dot_dotdot(const char *name, size_t name_size)
-+{
-+	if (name_size == 1 && name[0] == '.')
-+		return true;
-+	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
-+		return true;
-+
-+	return false;
-+}
-+
- /**
-  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
-  * @plaintext_name: The plaintext name
-@@ -2021,13 +2031,21 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
- 	size_t packet_size;
- 	int rc = 0;
+ struct adb_driver adb_iop_driver = {
+-	"ISM IOP",
+-	adb_iop_probe,
+-	adb_iop_init,
+-	adb_iop_send_request,
+-	adb_iop_autopoll,
+-	adb_iop_poll,
+-	adb_iop_reset_bus
++	.name         = "ISM IOP",
++	.probe        = adb_iop_probe,
++	.init         = adb_iop_init,
++	.send_request = adb_iop_send_request,
++	.autopoll     = adb_iop_autopoll,
++	.poll         = adb_iop_poll,
++	.reset_bus    = adb_iop_reset_bus
+ };
  
--	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)
--	    && !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)
--	    && (name_size > ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE)
--	    && (strncmp(name, ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX,
--			ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE) == 0)) {
--		const char *orig_name = name;
--		size_t orig_name_size = name_size;
-+	if ((mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) &&
-+	    !(mount_crypt_stat->flags & ECRYPTFS_ENCRYPTED_VIEW_ENABLED)) {
-+		if (is_dot_dotdot(name, name_size)) {
-+			rc = ecryptfs_copy_filename(plaintext_name,
-+						    plaintext_name_size,
-+						    name, name_size);
-+			goto out;
-+		}
-+
-+		if (name_size <= ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE ||
-+		    strncmp(name, ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX,
-+			    ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE)) {
-+			rc = -EINVAL;
-+			goto out;
-+		}
+ static void adb_iop_end_req(struct adb_request *req, int state)
+diff --git a/drivers/macintosh/macio-adb.c b/drivers/macintosh/macio-adb.c
+index 9a6223add30e..eb3adfb7f88d 100644
+--- a/drivers/macintosh/macio-adb.c
++++ b/drivers/macintosh/macio-adb.c
+@@ -70,14 +70,13 @@ static void macio_adb_poll(void);
+ static int macio_adb_reset_bus(void);
  
- 		name += ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE;
- 		name_size -= ECRYPTFS_FNEK_ENCRYPTED_FILENAME_PREFIX_SIZE;
-@@ -2047,12 +2065,9 @@ int ecryptfs_decode_and_decrypt_filename(char **plaintext_name,
- 						  decoded_name,
- 						  decoded_name_size);
- 		if (rc) {
--			printk(KERN_INFO "%s: Could not parse tag 70 packet "
--			       "from filename; copying through filename "
--			       "as-is\n", __func__);
--			rc = ecryptfs_copy_filename(plaintext_name,
--						    plaintext_name_size,
--						    orig_name, orig_name_size);
-+			ecryptfs_printk(KERN_DEBUG,
-+					"%s: Could not parse tag 70 packet from filename\n",
-+					__func__);
- 			goto out_free;
- 		}
- 	} else {
-diff --git a/fs/ecryptfs/file.c b/fs/ecryptfs/file.c
-index c74ed3c..b76a985 100644
---- a/fs/ecryptfs/file.c
-+++ b/fs/ecryptfs/file.c
-@@ -82,17 +82,28 @@ ecryptfs_filldir(struct dir_context *ctx, const char *lower_name,
- 						  buf->sb, lower_name,
- 						  lower_namelen);
- 	if (rc) {
--		printk(KERN_ERR "%s: Error attempting to decode and decrypt "
--		       "filename [%s]; rc = [%d]\n", __func__, lower_name,
--		       rc);
--		goto out;
-+		if (rc != -EINVAL) {
-+			ecryptfs_printk(KERN_DEBUG,
-+					"%s: Error attempting to decode and decrypt filename [%s]; rc = [%d]\n",
-+					__func__, lower_name, rc);
-+			return rc;
-+		}
-+
-+		/* Mask -EINVAL errors as these are most likely due a plaintext
-+		 * filename present in the lower filesystem despite filename
-+		 * encryption being enabled. One unavoidable example would be
-+		 * the "lost+found" dentry in the root directory of an Ext4
-+		 * filesystem.
-+		 */
-+		return 0;
- 	}
-+
- 	buf->caller->pos = buf->ctx.pos;
- 	rc = !dir_emit(buf->caller, name, name_size, ino, d_type);
- 	kfree(name);
- 	if (!rc)
- 		buf->entries_written++;
--out:
-+
- 	return rc;
- }
+ struct adb_driver macio_adb_driver = {
+-	"MACIO",
+-	macio_probe,
+-	macio_init,
+-	macio_send_request,
+-	/*macio_write,*/
+-	macio_adb_autopoll,
+-	macio_adb_poll,
+-	macio_adb_reset_bus
++	.name         = "MACIO",
++	.probe        = macio_probe,
++	.init         = macio_init,
++	.send_request = macio_send_request,
++	.autopoll     = macio_adb_autopoll,
++	.poll         = macio_adb_poll,
++	.reset_bus    = macio_adb_reset_bus,
+ };
  
--- 
-2.7.4
+ int macio_probe(void)
+diff --git a/drivers/macintosh/via-macii.c b/drivers/macintosh/via-macii.c
+index 4ba06a1695ea..cf6f7d52d6be 100644
+--- a/drivers/macintosh/via-macii.c
++++ b/drivers/macintosh/via-macii.c
+@@ -91,13 +91,13 @@ static void macii_poll(void);
+ static int macii_reset_bus(void);
+ 
+ struct adb_driver via_macii_driver = {
+-	"Mac II",
+-	macii_probe,
+-	macii_init,
+-	macii_send_request,
+-	macii_autopoll,
+-	macii_poll,
+-	macii_reset_bus
++	.name         = "Mac II",
++	.probe        = macii_probe,
++	.init         = macii_init,
++	.send_request = macii_send_request,
++	.autopoll     = macii_autopoll,
++	.poll         = macii_poll,
++	.reset_bus    = macii_reset_bus,
+ };
+ 
+ static enum macii_state {
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index c4c2b3b85ebc..8da474899d79 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -199,13 +199,13 @@ static const struct file_operations pmu_options_proc_fops;
+ 
+ #ifdef CONFIG_ADB
+ struct adb_driver via_pmu_driver = {
+-	"PMU",
+-	pmu_probe,
+-	pmu_init,
+-	pmu_send_request,
+-	pmu_adb_autopoll,
+-	pmu_poll_adb,
+-	pmu_adb_reset_bus
++	.name         = "PMU",
++	.probe        = pmu_probe,
++	.init         = pmu_init,
++	.send_request = pmu_send_request,
++	.autopoll     = pmu_adb_autopoll,
++	.poll         = pmu_poll_adb,
++	.reset_bus    = pmu_adb_reset_bus,
+ };
+ #endif /* CONFIG_ADB */
+ 
+diff --git a/drivers/macintosh/via-pmu68k.c b/drivers/macintosh/via-pmu68k.c
+index 7d9c4baf8c11..d545ed45e482 100644
+--- a/drivers/macintosh/via-pmu68k.c
++++ b/drivers/macintosh/via-pmu68k.c
+@@ -120,13 +120,13 @@ static void pmu_enable_backlight(int on);
+ static void pmu_set_brightness(int level);
+ 
+ struct adb_driver via_pmu_driver = {
+-	"68K PMU",
+-	pmu_probe,
+-	pmu_init,
+-	pmu_send_request,
+-	pmu_autopoll,
+-	pmu_poll,
+-	pmu_reset_bus
++	.name         = "68K PMU",
++	.probe        = pmu_probe,
++	.init         = pmu_init,
++	.send_request = pmu_send_request,
++	.autopoll     = pmu_autopoll,
++	.poll         = pmu_poll,
++	.reset_bus    = pmu_reset_bus,
+ };
+ 
+ /*
