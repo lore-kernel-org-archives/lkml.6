@@ -1,82 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1445413-1522346719-2-3732287930132362441
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522346718; b=YacbKORIAZ8rr2DoeesGcoFe64fwRQ8vQgpfN+dv6bnJMa6WMW
-    lSCbBxFOuG/9wkD4r0bpTIqoFBdbjTiiEyBKo5bHVnQIEVOOGnZZgOFr78pow6Zp
-    sdpt7ckTD97CU1UJiRvGYw7OgnmHadm4fPY5rdWSSbPfeMWvM25i2eDYMcYYOLTq
-    VXD2ceYIX2L8p7eTiUmcWfqE4v7niJbkrr5RDer4RYMO45cP4o9eVqgHRKfVm92v
-    7EQMKBvB8uMNTY3YBfoCAvLJOzyU6cwYdPtMHw36CuIJTm6UN33MRjkVqv03QiER
-    9ODbabiI0+nTlB3GW3y/1yQ/bHNxalfy0BQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1522346718; bh=OfU8KT9wnIT3QGcyGaGKiE9DzS0dZS
-    0T6HfKM+CrcSM=; b=Xzpi++Al6sqxQZs+CdfzG6unq3rAKe/E0E4B55q3ScE4oS
-    Xp0hsOPT0mebncHNY6bOrJcz4fwrZi1l3k+wClAVPmWzOkFfEwnBVZkes92osfCa
-    2WWzhe4F6r/Y2Gqww6HkkhE/mhLC9YwD18svv8AWGRMqQNTFMk7dmZ4WxNUNYYoZ
-    48ve+T9fqnxewUmp5jjJ28YuYcmqK7EpXUZ/C6VfheUCI5rMP1pwIddEa+xFTLIA
-    MEJSFusgvFqUifBCVzXcCYuhkEjkhoIhaDGWzQsKxn9BsmF+sWCfppAH7/6CBzas
-    ykjwlPUOxuPYd/qKXg8DFeqzKKaDCkl/QNqMuo/w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBPVAcDOs/vR/vQi9Ee1MprPziikQVQUGTY9RGZ/YLuiD3zCsWQ04f9oBvT3Ra1CQwdgOZKSd5XchWN/cUe/jWM3WBVsy27ZwWhATy3STXX9hzgUYYF1
-    t7N2pJ+u9etD0xq7+ByDUm5UkYbOJujriFpjcDSgUVD+PNVM3hEjr/Zw8ShKoJYnvk9jJ1QX+Cb8bpdQx1k+mAL2eIUz5rpHDMT+RDRAwtXqovDfp7igkP8B
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=zAyngx5bAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=wMhl-A6El2MiV7JXehAA:9
-    a=QEXdDO2ut3YA:10 a=4LA4qAFo6bo561LpWNDU:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeC2SFO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 29 Mar 2018 14:05:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59034 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbeC2SFM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 29 Mar 2018 14:05:12 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/4zcppj1hQfGsNMdLB7V5uBqEZViQthIZ1s4pHbH892kzgmQxxHgKKOUa55buk6zBNFs/S
+ARC-Seal: i=1; a=rsa-sha256; t=1522346718; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ifwaaaR9PZ/FrCgUvvREJBmRemHc65JNUyHL18MzPu00x/AcyCmL0vFKwodU5path4
+         OhgtzBJ7nmtxe3kTh7K5uf4DzREDm2eHfLwg2gSw7ekJMIvBYdYTay8P4qabRr5ZsWpy
+         FE+xXulg5Qyx8OXXqFpzbtm7MVVP4vmJq2lMGWY1bPYn06cSIiyf3DGK/epOVEI6MEMm
+         rUlQ0ORTSbfNMZCUOPxIQEM6qq8FjL82nTjl04fFhDfICzjsus4NPHk2cmVCe1AIRFMj
+         nTNcXqfk/INztouGN8MMTlbhmLoGWVhavYS865eJ035/lXnoae93GBv7P+a1WUEu7HFU
+         yZjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=5qMZgB4Sz6+CXqLuwvdFetWoyF5VsgT3j/EcbYA8Rso=;
+        b=z7SirxrUadomKrWlzvzunMAX8rKDigPELNEaHbjdjo9iBPpgje4G9yFGKmhTgYJqDP
+         ojyKobhyo6WUkcpRTjrtdGpFFIQ7cziYhuUGZqLTEvPNBj/OMbqchvMlbXjqOSNpheCT
+         qG1IjZU8G/lPv3SkpVXJSlj4k4i7eQkNhjtCLosftMrM24L/e4q0eCLLCKQDBpCH0Bng
+         XdoC6WIWdRjZOKrstQVaLATteKqzWBM5ooPZPegFfH/Yrcgd7a2t3nOW8reo09mfn9Am
+         0XNnP3vzf5rLhvAQUgP9+2pc0yJEVuld8U3LKbWYkr29h3E0Adh9qWtWdmElfiBDQnvN
+         QRsg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michal Kalderon <michal.kalderon@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 32/43] qede: Fix qedr link update
-Date: Thu, 29 Mar 2018 20:00:27 +0200
-Message-Id: <20180329175733.480826122@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Arkadi Sharshevsky <arkadis@mellanox.com>,
+	Jiri Pirko <jiri@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 34/43] team: Fix double free in error path
+Date: Thu, 29 Mar 2018 20:00:29 +0200
+Message-Id: <20180329175733.806830645@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -84,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1596296150991249448?=
+X-GMAIL-MSGID: =?utf-8?q?1596296233320005745?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -94,48 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Kalderon <Michal.Kalderon@cavium.com>
+From: Arkadi Sharshevsky <arkadis@mellanox.com>
 
 
-[ Upstream commit 4609adc27175839408359822523de7247d56c87f ]
+[ Upstream commit cbcc607e18422555db569b593608aec26111cb0b ]
 
-Link updates were not reported to qedr correctly.
-Leading to cases where a link could be down, but qedr
-would see it as up.
-In addition, once qede was loaded, link state would be up,
-regardless of the actual link state.
+The __send_and_alloc_skb() receives a skb ptr as a parameter but in
+case it fails the skb is not valid:
+- Send failed and released the skb internally.
+- Allocation failed.
 
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+The current code tries to release the skb in case of failure which
+causes redundant freeing.
+
+Fixes: 9b00cf2d1024 ("team: implement multipart netlink messages for options transfers")
+Signed-off-by: Arkadi Sharshevsky <arkadis@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qede/qede_main.c |    4 ++--
+ drivers/net/team/team.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qede/qede_main.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
-@@ -2066,8 +2066,6 @@ static int qede_load(struct qede_dev *ed
- 	link_params.link_up = true;
- 	edev->ops->common->set_link(edev->cdev, &link_params);
- 
--	qede_rdma_dev_event_open(edev);
--
- 	edev->state = QEDE_STATE_OPEN;
- 
- 	DP_INFO(edev, "Ending successfully qede load\n");
-@@ -2168,12 +2166,14 @@ static void qede_link_update(void *dev,
- 			DP_NOTICE(edev, "Link is up\n");
- 			netif_tx_start_all_queues(edev->ndev);
- 			netif_carrier_on(edev->ndev);
-+			qede_rdma_dev_event_open(edev);
- 		}
- 	} else {
- 		if (netif_carrier_ok(edev->ndev)) {
- 			DP_NOTICE(edev, "Link is down\n");
- 			netif_tx_disable(edev->ndev);
- 			netif_carrier_off(edev->ndev);
-+			qede_rdma_dev_event_close(edev);
- 		}
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -2394,7 +2394,7 @@ send_done:
+ 	if (!nlh) {
+ 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
+ 		if (err)
+-			goto errout;
++			return err;
+ 		goto send_done;
  	}
- }
+ 
+@@ -2680,7 +2680,7 @@ send_done:
+ 	if (!nlh) {
+ 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
+ 		if (err)
+-			goto errout;
++			return err;
+ 		goto send_done;
+ 	}
+ 
