@@ -1,365 +1,457 @@
-Return-Path: <kernel-hardening-return-12776-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49TJmES2XuoIsbVhDSO01a5YPof1ViWelWRKTq6ee3eiIkUZ+euLkOm32CtkQkumE8Tw3Dd
-ARC-Seal: i=1; a=rsa-sha256; t=1522183166; cv=none;
+Return-Path: <kernel-hardening-return-12830-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49p7OGGiW/iIGyRi3/Zthr0ISVKx6QXyFyWtffptTG9OnmnGwx4AzswCvMXUz4fLqrP9gEz
+ARC-Seal: i=1; a=rsa-sha256; t=1522391309; cv=none;
         d=google.com; s=arc-20160816;
-        b=gHXhrTHGzqesQa3l2GO1mqiDENR5Xbrq0oDo2grIErc+yvNj6sA8JDAthpJH6sQPir
-         fN9KtCr6RCwH6euHKLgdUcXjXua1Z+k7p4Fsr6JNRBuZg1zno4XZHmShP4RvntgpdlhS
-         cgVxSilrtANRdUG7lA1ZE+u35Tfg4Li5feBxdnq/a1LFZ88axt6R7Ad1o8a3JJO1e/3p
-         WAXz/Xt22PtOx/bn4nzmOLEe16BSnFV1qsQcE/et6sgJAlaWKpSQ0m8zxcQZXgWYMaDn
-         dxPZB7S0EhlxyShwmNhHjfcL3QEpsUUbJlDzbXZDotumnkSx4Dsan4t9FVOVJgKW0/HE
-         D8SQ==
+        b=U/r2PTpbVjnKS4XErx0uHHn7OHoi1ugB4F584D9aX4vA20uT6JshfmOWoHzqogjykU
+         O+lCdLO8JS5OGmqRCRgLEbDRyIo15383tKNkmhqu9ZXj/1HsnYQKS9sfpYX7pkTdNCPN
+         lsWzZ29sZ+g3oeGy9BODjtwZ9LagSOXP7GD9Yv25K834awI2z2tEIM5BGs+YTD+g9BFh
+         pQs8b4Oi3/M0o7O19P2oCkC12ovogyRn43Fm7zFBmL4IL+sIZWkrbPOJ8U834apAz6eR
+         76JwmsLRJl/+n5YPIypcGgec3wKVetTFhpBZ/8GHWgWA99waE5lTCOvuAOyPG3FDWCop
+         O1Cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=vC/d9z+pMQEkwyVoB5/EXjWPzAxTOA+Zblq9ig8DFgE=;
-        b=mz1Vv2kwox32KXX1QVNHZ6AnChbENGEAq/kpPGUxUrFnhNox8lXTSCamHI2jjBYkjK
-         mFfxrA5L02+CU5baYEjI9RGPEgFghPzb79y9BhCFAD0Ok1SxR9OTfTf8Mc/2lNkUsrDQ
-         zFlf1O74ZQBdxUglwPBu3Vz5aLdiviQwlqc3cH+Cwjs263W6BB+fsvaCijGM7uAxS1h9
-         le8rS7DRFUC1HozO9LWH91fOKdKhi5VBjORdlezFdBZHoNCWOSLGestFfRIXja14rGeG
-         md/mtUp7UtB1VU6T9RFdvEQcs79jhCrxOxFEoS0gGczFaN/YmIgRTSquGeTcEuh0GQxs
-         L5MQ==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:delivered-to:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=AGsBmvx62VS18A7jT2VE6e74JX8xHFnmcPo+UHsmhlo=;
+        b=rWQRJaxqm5D0q5NTAJyUDm+NoLwLOqxZjIthEQciEyFIhF7O1rpcfPBbFqd+Y2VuFX
+         7LB3PJa/3ctrUKrKzbHhZhmEDGOLRLHMfEnt8JmozqnL4ek5ZFj0JcWgWSg22lMokDcm
+         bXoKkjGb3NoVz6hjw9r+UZrAy5b4VkC2/Lvwo/Epo9cogW/l0ZEU8bMHyocLrz4aeFuF
+         sFu6y763zmnDbEYU+RiCyZpZ7aOcRies36QJEo4x03tnZveYe9AGOrQTy2PbzXw9hb1Q
+         xEnPL46ZvlmmkOPmL2SXjSr6dcBZS8JlCsc9l3typ6amzh3Ou0yKfwGdnWzFc8LsUR8N
+         dHFw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=JgEQ1oux;
-       spf=pass (google.com: domain of kernel-hardening-return-12776-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12776-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Bp/V+jH8;
+       spf=pass (google.com: domain of kernel-hardening-return-12830-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12830-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=JgEQ1oux;
-       spf=pass (google.com: domain of kernel-hardening-return-12776-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12776-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Bp/V+jH8;
+       spf=pass (google.com: domain of kernel-hardening-return-12830-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12830-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Tue, 27 Mar 2018 13:39:04 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Boaz Harrosh <ooo@electrozaur.com>
-Cc: linux-kernel@vger.kernel.org,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	kernel-hardening@lists.openwall.com
-Subject: [PATCH] exofs: Avoid VLA in structures
-Message-ID: <20180327203904.GA1151@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20180327203904.GA1151@beast>
+In-Reply-To: <20180327203904.GA1151@beast>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 29 Mar 2018 21:32:17 +0000
+Message-ID: <CAKwvOdmCdgy8YiFwXj3Vg_hniiEgH6AMagm9XKC-SrydRazudg@mail.gmail.com>
+Subject: Re: [PATCH] exofs: Avoid VLA in structures
+To: Kees Cook <keescook@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, ooo@electrozaur.com,
+	LKML <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596124735903775296?=
-X-GMAIL-MSGID: =?utf-8?q?1596124735903775296?=
+X-GMAIL-MSGID: =?utf-8?q?1596342989813283734?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On the quest to remove all VLAs from the kernel[1] this adjusts several
-cases where allocation is made after an array of structures that points
-back into the allocation. The allocations are changed to perform explicit
-calculations instead of using a Variable Length Array in a structure.
-Additionally, this lets Clang compile this code now, since Clang does not
-support VLAIS[2].
+On Tue, Mar 27, 2018 at 1:39 PM Kees Cook <keescook@chromium.org> wrote:
 
-[1] https://lkml.org/lkml/2018/3/7/621
-[2] https://lkml.org/lkml/2013/9/23/500
+> On the quest to remove all VLAs from the kernel[1] this adjusts several
+> cases where allocation is made after an array of structures that points
+> back into the allocation. The allocations are changed to perform explicit
+> calculations instead of using a Variable Length Array in a structure.
+> Additionally, this lets Clang compile this code now, since Clang does not
+> support VLAIS[2].
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-I not sure the best way to test this. Kconfig implies I need special hardware?
----
- fs/exofs/ore.c      | 84 +++++++++++++++++++++++++++++++----------------------
- fs/exofs/ore_raid.c | 73 ++++++++++++++++++++++++++++++++++------------
- fs/exofs/super.c    | 23 +++++++--------
- 3 files changed, 114 insertions(+), 66 deletions(-)
+> [1] https://lkml.org/lkml/2018/3/7/621
+> [2] https://lkml.org/lkml/2013/9/23/500
 
-diff --git a/fs/exofs/ore.c b/fs/exofs/ore.c
-index 3c6a9c156b7a..cfa862ea19d2 100644
---- a/fs/exofs/ore.c
-+++ b/fs/exofs/ore.c
-@@ -146,68 +146,82 @@ int  _ore_get_io_state(struct ore_layout *layout,
- 			struct ore_io_state **pios)
- {
- 	struct ore_io_state *ios;
--	struct page **pages;
--	struct osd_sg_entry *sgilist;
-+	size_t size_ios, size_extra, size_total;
-+	void *ios_extra;
-+
-+	/*
-+	 * The desired layout looks like this, with the extra_allocation
-+	 * items pointed at from fields within ios or per_dev:
-+
- 	struct __alloc_all_io_state {
- 		struct ore_io_state ios;
- 		struct ore_per_dev_state per_dev[numdevs];
- 		union {
- 			struct osd_sg_entry sglist[sgs_per_dev * numdevs];
- 			struct page *pages[num_par_pages];
--		};
--	} *_aios;
--
--	if (likely(sizeof(*_aios) <= PAGE_SIZE)) {
--		_aios = kzalloc(sizeof(*_aios), GFP_KERNEL);
--		if (unlikely(!_aios)) {
--			ORE_DBGMSG("Failed kzalloc bytes=%zd\n",
--				   sizeof(*_aios));
-+		} extra_allocation;
-+	} whole_allocation;
-+
-+	*/
-+
-+	/* This should never happen, so abort early if it ever does. */
-+	if (sgs_per_dev && num_par_pages) {
-+		ORE_DBGMSG("Tried to use both pages and sglist\n");
-+		*pios = NULL;
-+		return -EINVAL;
-+	}
-+
-+	if (numdevs > (INT_MAX - sizeof(*ios)) /
-+		       sizeof(struct ore_per_dev_state))
-+		return -ENOMEM;
-+	size_ios = sizeof(*ios) + sizeof(struct ore_per_dev_state) * numdevs;
-+
-+	if (sgs_per_dev * numdevs > INT_MAX / sizeof(struct osd_sg_entry))
-+		return -ENOMEM;
-+	if (num_par_pages > INT_MAX / sizeof(struct page *))
-+		return -ENOMEM;
-+	size_extra = max(sizeof(struct osd_sg_entry) * (sgs_per_dev * numdevs),
-+			 sizeof(struct page *) * num_par_pages);
-+
-+	size_total = size_ios + size_extra;
-+
-+	if (likely(size_total <= PAGE_SIZE)) {
-+		ios = kzalloc(size_total, GFP_KERNEL);
-+		if (unlikely(!ios)) {
-+			ORE_DBGMSG("Failed kzalloc bytes=%zd\n", size_total);
- 			*pios = NULL;
- 			return -ENOMEM;
- 		}
--		pages = num_par_pages ? _aios->pages : NULL;
--		sgilist = sgs_per_dev ? _aios->sglist : NULL;
--		ios = &_aios->ios;
-+		ios_extra = (char *)ios + size_ios;
- 	} else {
--		struct __alloc_small_io_state {
--			struct ore_io_state ios;
--			struct ore_per_dev_state per_dev[numdevs];
--		} *_aio_small;
--		union __extra_part {
--			struct osd_sg_entry sglist[sgs_per_dev * numdevs];
--			struct page *pages[num_par_pages];
--		} *extra_part;
--
--		_aio_small = kzalloc(sizeof(*_aio_small), GFP_KERNEL);
--		if (unlikely(!_aio_small)) {
-+		ios = kzalloc(size_ios, GFP_KERNEL);
-+		if (unlikely(!ios)) {
- 			ORE_DBGMSG("Failed alloc first part bytes=%zd\n",
--				   sizeof(*_aio_small));
-+				   size_ios);
- 			*pios = NULL;
- 			return -ENOMEM;
- 		}
--		extra_part = kzalloc(sizeof(*extra_part), GFP_KERNEL);
--		if (unlikely(!extra_part)) {
-+		ios_extra = kzalloc(size_extra, GFP_KERNEL);
-+		if (unlikely(!ios_extra)) {
- 			ORE_DBGMSG("Failed alloc second part bytes=%zd\n",
--				   sizeof(*extra_part));
--			kfree(_aio_small);
-+				   size_extra);
-+			kfree(ios);
- 			*pios = NULL;
- 			return -ENOMEM;
- 		}
- 
--		pages = num_par_pages ? extra_part->pages : NULL;
--		sgilist = sgs_per_dev ? extra_part->sglist : NULL;
- 		/* In this case the per_dev[0].sgilist holds the pointer to
- 		 * be freed
- 		 */
--		ios = &_aio_small->ios;
- 		ios->extra_part_alloc = true;
- 	}
- 
--	if (pages) {
--		ios->parity_pages = pages;
-+	if (num_par_pages) {
-+		ios->parity_pages = ios_extra;
- 		ios->max_par_pages = num_par_pages;
- 	}
--	if (sgilist) {
-+	if (sgs_per_dev) {
-+		struct osd_sg_entry *sgilist = ios_extra;
- 		unsigned d;
- 
- 		for (d = 0; d < numdevs; ++d) {
-diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
-index 27cbdb697649..659129d5e9f7 100644
---- a/fs/exofs/ore_raid.c
-+++ b/fs/exofs/ore_raid.c
-@@ -71,6 +71,11 @@ static int _sp2d_alloc(unsigned pages_in_unit, unsigned group_width,
- {
- 	struct __stripe_pages_2d *sp2d;
- 	unsigned data_devs = group_width - parity;
-+
-+	/*
-+	 * Desired allocation layout is, though when larger than PAGE_SIZE,
-+	 * each struct __alloc_1p_arrays is separately allocated:
-+
- 	struct _alloc_all_bytes {
- 		struct __alloc_stripe_pages_2d {
- 			struct __stripe_pages_2d sp2d;
-@@ -82,55 +87,85 @@ static int _sp2d_alloc(unsigned pages_in_unit, unsigned group_width,
- 			char page_is_read[data_devs];
- 		} __a1pa[pages_in_unit];
- 	} *_aab;
-+
- 	struct __alloc_1p_arrays *__a1pa;
- 	struct __alloc_1p_arrays *__a1pa_end;
--	const unsigned sizeof__a1pa = sizeof(_aab->__a1pa[0]);
-+
-+	*/
-+
-+	char *__a1pa;
-+	char *__a1pa_end;
-+
-+	const size_t sizeof_stripe_pages_2d =
-+		sizeof(struct __stripe_pages_2d) +
-+		sizeof(struct __1_page_stripe) * pages_in_unit;
-+	const size_t sizeof__a1pa =
-+		ALIGN(sizeof(struct page *) * (2 * group_width) + data_devs,
-+		      sizeof(void *));
-+	const size_t sizeof__a1pa_arrays = sizeof__a1pa * pages_in_unit;
-+	const size_t alloc_total = sizeof_stripe_pages_2d +
-+				   sizeof__a1pa_arrays;
-+
- 	unsigned num_a1pa, alloc_size, i;
- 
- 	/* FIXME: check these numbers in ore_verify_layout */
--	BUG_ON(sizeof(_aab->__asp2d) > PAGE_SIZE);
-+	BUG_ON(sizeof_stripe_pages_2d > PAGE_SIZE);
- 	BUG_ON(sizeof__a1pa > PAGE_SIZE);
- 
--	if (sizeof(*_aab) > PAGE_SIZE) {
--		num_a1pa = (PAGE_SIZE - sizeof(_aab->__asp2d)) / sizeof__a1pa;
--		alloc_size = sizeof(_aab->__asp2d) + sizeof__a1pa * num_a1pa;
-+	/*
-+	 * If alloc_total would be larger than PAGE_SIZE, only allocate
-+	 * as many a1pa items as would fill the rest of the page, instead
-+	 * of the full pages_in_unit count.
-+	 */
-+	if (alloc_total > PAGE_SIZE) {
-+		num_a1pa = (PAGE_SIZE - sizeof_stripe_pages_2d) / sizeof__a1pa;
-+		alloc_size = sizeof_stripe_pages_2d + sizeof__a1pa * num_a1pa;
- 	} else {
- 		num_a1pa = pages_in_unit;
--		alloc_size = sizeof(*_aab);
-+		alloc_size = alloc_total;
- 	}
- 
--	_aab = kzalloc(alloc_size, GFP_KERNEL);
--	if (unlikely(!_aab)) {
-+	*psp2d = sp2d = kzalloc(alloc_size, GFP_KERNEL);
-+	if (unlikely(!sp2d)) {
- 		ORE_DBGMSG("!! Failed to alloc sp2d size=%d\n", alloc_size);
- 		return -ENOMEM;
- 	}
-+	/* From here Just call _sp2d_free */
- 
--	sp2d = &_aab->__asp2d.sp2d;
--	*psp2d = sp2d; /* From here Just call _sp2d_free */
--
--	__a1pa = _aab->__a1pa;
--	__a1pa_end = __a1pa + num_a1pa;
-+	/* Find start of a1pa area. */
-+	__a1pa = (char *)sp2d + sizeof_stripe_pages_2d;
-+	/* Find end of the _allocated_ a1pa area. */
-+	__a1pa_end = __a1pa + alloc_size;
- 
-+	/* Allocate additionally needed a1pa items in PAGE_SIZE chunks. */
- 	for (i = 0; i < pages_in_unit; ++i) {
- 		if (unlikely(__a1pa >= __a1pa_end)) {
- 			num_a1pa = min_t(unsigned, PAGE_SIZE / sizeof__a1pa,
- 							pages_in_unit - i);
-+			alloc_size = sizeof__a1pa * num_a1pa;
- 
--			__a1pa = kcalloc(num_a1pa, sizeof__a1pa, GFP_KERNEL);
-+			__a1pa = kzalloc(alloc_size, GFP_KERNEL);
- 			if (unlikely(!__a1pa)) {
- 				ORE_DBGMSG("!! Failed to _alloc_1p_arrays=%d\n",
- 					   num_a1pa);
- 				return -ENOMEM;
- 			}
--			__a1pa_end = __a1pa + num_a1pa;
-+			__a1pa_end = __a1pa + alloc_size;
- 			/* First *pages is marked for kfree of the buffer */
- 			sp2d->_1p_stripes[i].alloc = true;
- 		}
- 
--		sp2d->_1p_stripes[i].pages = __a1pa->pages;
--		sp2d->_1p_stripes[i].scribble = __a1pa->scribble ;
--		sp2d->_1p_stripes[i].page_is_read = __a1pa->page_is_read;
--		++__a1pa;
-+		/*
-+		 * Attach all _lp_stripes pointers to the allocation for
-+		 * it which was either part of the original PAGE_SIZE
-+		 * allocation or the subsequent allocation in this loop.
-+		 */
-+		sp2d->_1p_stripes[i].pages = (void *)__a1pa;
-+		sp2d->_1p_stripes[i].scribble =
-+			sp2d->_1p_stripes[i].pages + group_width;
-+		sp2d->_1p_stripes[i].page_is_read =
-+			(char *)(sp2d->_1p_stripes[i].scribble + group_width);
-+		__a1pa += sizeof__a1pa;
- 	}
- 
- 	sp2d->parity = parity;
-diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-index 179cd5c2f52a..f3c29e9326f1 100644
---- a/fs/exofs/super.c
-+++ b/fs/exofs/super.c
-@@ -549,27 +549,26 @@ static int exofs_devs_2_odi(struct exofs_dt_device_info *dt_dev,
- static int __alloc_dev_table(struct exofs_sb_info *sbi, unsigned numdevs,
- 		      struct exofs_dev **peds)
- {
--	struct __alloc_ore_devs_and_exofs_devs {
--		/* Twice bigger table: See exofs_init_comps() and comment at
--		 * exofs_read_lookup_dev_table()
--		 */
--		struct ore_dev *oreds[numdevs * 2 - 1];
--		struct exofs_dev eds[numdevs];
--	} *aoded;
-+	/* Twice bigger table: See exofs_init_comps() and comment at
-+	 * exofs_read_lookup_dev_table()
-+	 */
-+	size_t numores = numdevs * 2 - 1;
- 	struct exofs_dev *eds;
- 	unsigned i;
- 
--	aoded = kzalloc(sizeof(*aoded), GFP_KERNEL);
--	if (unlikely(!aoded)) {
-+	sbi->oc.ods = kzalloc(numores * sizeof(struct ore_dev *) +
-+			      numdevs * sizeof(struct exofs_dev), GFP_KERNEL);
-+	if (unlikely(!sbi->oc.ods)) {
- 		EXOFS_ERR("ERROR: failed allocating Device array[%d]\n",
- 			  numdevs);
- 		return -ENOMEM;
- 	}
- 
--	sbi->oc.ods = aoded->oreds;
--	*peds = eds = aoded->eds;
-+	/* Start of allocated struct exofs_dev entries */
-+	*peds = eds = (void *)sbi->oc.ods[numores];
-+	/* Initialize pointers into struct exofs_dev */
- 	for (i = 0; i < numdevs; ++i)
--		aoded->oreds[i] = &eds[i].ored;
-+		sbi->oc.ods[i] = &eds[i].ored;
- 	return 0;
- }
- 
--- 
-2.7.4
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> I not sure the best way to test this. Kconfig implies I need special
+hardware?
+> ---
+>   fs/exofs/ore.c      | 84
++++++++++++++++++++++++++++++++----------------------
+>   fs/exofs/ore_raid.c | 73 ++++++++++++++++++++++++++++++++++------------
+>   fs/exofs/super.c    | 23 +++++++--------
+>   3 files changed, 114 insertions(+), 66 deletions(-)
+
+> diff --git a/fs/exofs/ore.c b/fs/exofs/ore.c
+> index 3c6a9c156b7a..cfa862ea19d2 100644
+> --- a/fs/exofs/ore.c
+> +++ b/fs/exofs/ore.c
+> @@ -146,68 +146,82 @@ int  _ore_get_io_state(struct ore_layout *layout,
+>                          struct ore_io_state **pios)
+>   {
+>          struct ore_io_state *ios;
+> -       struct page **pages;
+> -       struct osd_sg_entry *sgilist;
+> +       size_t size_ios, size_extra, size_total;
+> +       void *ios_extra;
+> +
+> +       /*
+> +        * The desired layout looks like this, with the extra_allocation
+> +        * items pointed at from fields within ios or per_dev:
+> +
+>          struct __alloc_all_io_state {
+>                  struct ore_io_state ios;
+>                  struct ore_per_dev_state per_dev[numdevs];
+>                  union {
+>                          struct osd_sg_entry sglist[sgs_per_dev * numdevs];
+>                          struct page *pages[num_par_pages];
+> -               };
+> -       } *_aios;
+> -
+> -       if (likely(sizeof(*_aios) <= PAGE_SIZE)) {
+> -               _aios = kzalloc(sizeof(*_aios), GFP_KERNEL);
+> -               if (unlikely(!_aios)) {
+> -                       ORE_DBGMSG("Failed kzalloc bytes=%zd\n",
+> -                                  sizeof(*_aios));
+> +               } extra_allocation;
+> +       } whole_allocation;
+> +
+> +       */
+> +
+> +       /* This should never happen, so abort early if it ever does. */
+> +       if (sgs_per_dev && num_par_pages) {
+> +               ORE_DBGMSG("Tried to use both pages and sglist\n");
+> +               *pios = NULL;
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (numdevs > (INT_MAX - sizeof(*ios)) /
+> +                      sizeof(struct ore_per_dev_state))
+> +               return -ENOMEM;
+> +       size_ios = sizeof(*ios) + sizeof(struct ore_per_dev_state) *
+numdevs;
+
+Can all these invariant checks that return -ENOMEM be grouped together, as
+it seems we have ...
+
+> +
+> +       if (sgs_per_dev * numdevs > INT_MAX / sizeof(struct osd_sg_entry))
+> +               return -ENOMEM;
+> +       if (num_par_pages > INT_MAX / sizeof(struct page *))
+> +               return -ENOMEM;
+
+...a whole bunch of single conditions with the same body, can be combined
+with one:
+
+if (a)
+   return d;
+if (b)
+   return d;
+if (c)
+   return d;
+
+->
+
+if (a || b || c)
+   return d;
+
+> +       size_extra = max(sizeof(struct osd_sg_entry) * (sgs_per_dev *
+numdevs),
+
+Do you need parens around the sub-expression `(sgs_per_dev * numdevs)`?
+
+> +                        sizeof(struct page *) * num_par_pages);
+> +
+> +       size_total = size_ios + size_extra;
+> +
+> +       if (likely(size_total <= PAGE_SIZE)) {
+> +               ios = kzalloc(size_total, GFP_KERNEL);
+> +               if (unlikely(!ios)) {
+> +                       ORE_DBGMSG("Failed kzalloc bytes=%zd\n",
+size_total);
+>                          *pios = NULL;
+>                          return -ENOMEM;
+>                  }
+> -               pages = num_par_pages ? _aios->pages : NULL;
+> -               sgilist = sgs_per_dev ? _aios->sglist : NULL;
+> -               ios = &_aios->ios;
+> +               ios_extra = (char *)ios + size_ios;
+>          } else {
+> -               struct __alloc_small_io_state {
+> -                       struct ore_io_state ios;
+> -                       struct ore_per_dev_state per_dev[numdevs];
+> -               } *_aio_small;
+> -               union __extra_part {
+> -                       struct osd_sg_entry sglist[sgs_per_dev * numdevs];
+> -                       struct page *pages[num_par_pages];
+> -               } *extra_part;
+> -
+> -               _aio_small = kzalloc(sizeof(*_aio_small), GFP_KERNEL);
+> -               if (unlikely(!_aio_small)) {
+> +               ios = kzalloc(size_ios, GFP_KERNEL);
+> +               if (unlikely(!ios)) {
+>                          ORE_DBGMSG("Failed alloc first part bytes=%zd\n",
+> -                                  sizeof(*_aio_small));
+> +                                  size_ios);
+>                          *pios = NULL;
+>                          return -ENOMEM;
+>                  }
+> -               extra_part = kzalloc(sizeof(*extra_part), GFP_KERNEL);
+> -               if (unlikely(!extra_part)) {
+> +               ios_extra = kzalloc(size_extra, GFP_KERNEL);
+> +               if (unlikely(!ios_extra)) {
+>                          ORE_DBGMSG("Failed alloc second part bytes=%zd\n",
+> -                                  sizeof(*extra_part));
+> -                       kfree(_aio_small);
+> +                                  size_extra);
+> +                       kfree(ios);
+>                          *pios = NULL;
+>                          return -ENOMEM;
+>                  }
+
+> -               pages = num_par_pages ? extra_part->pages : NULL;
+> -               sgilist = sgs_per_dev ? extra_part->sglist : NULL;
+>                  /* In this case the per_dev[0].sgilist holds the pointer
+to
+>                   * be freed
+>                   */
+> -               ios = &_aio_small->ios;
+>                  ios->extra_part_alloc = true;
+>          }
+
+> -       if (pages) {
+> -               ios->parity_pages = pages;
+> +       if (num_par_pages) {
+> +               ios->parity_pages = ios_extra;
+>                  ios->max_par_pages = num_par_pages;
+>          }
+> -       if (sgilist) {
+> +       if (sgs_per_dev) {
+> +               struct osd_sg_entry *sgilist = ios_extra;
+>                  unsigned d;
+
+>                  for (d = 0; d < numdevs; ++d) {
+> diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
+> index 27cbdb697649..659129d5e9f7 100644
+> --- a/fs/exofs/ore_raid.c
+> +++ b/fs/exofs/ore_raid.c
+> @@ -71,6 +71,11 @@ static int _sp2d_alloc(unsigned pages_in_unit,
+unsigned group_width,
+>   {
+>          struct __stripe_pages_2d *sp2d;
+>          unsigned data_devs = group_width - parity;
+> +
+> +       /*
+> +        * Desired allocation layout is, though when larger than
+PAGE_SIZE,
+> +        * each struct __alloc_1p_arrays is separately allocated:
+> +
+>          struct _alloc_all_bytes {
+>                  struct __alloc_stripe_pages_2d {
+>                          struct __stripe_pages_2d sp2d;
+> @@ -82,55 +87,85 @@ static int _sp2d_alloc(unsigned pages_in_unit,
+unsigned group_width,
+>                          char page_is_read[data_devs];
+>                  } __a1pa[pages_in_unit];
+>          } *_aab;
+> +
+>          struct __alloc_1p_arrays *__a1pa;
+>          struct __alloc_1p_arrays *__a1pa_end;
+> -       const unsigned sizeof__a1pa = sizeof(_aab->__a1pa[0]);
+> +
+> +       */
+> +
+> +       char *__a1pa;
+> +       char *__a1pa_end;
+> +
+
+Just my notes, since this block could use another eye for review:
+
+> +       const size_t sizeof_stripe_pages_2d =
+> +               sizeof(struct __stripe_pages_2d) +
+> +               sizeof(struct __1_page_stripe) * pages_in_unit;
+
+Ok, so this replaces sizeof(_aab->__asp2d).
+
+> +       const size_t sizeof__a1pa =
+> +               ALIGN(sizeof(struct page *) * (2 * group_width) +
+data_devs,
+> +                     sizeof(void *));
+
+And this replaces sizeof(_aab->__a1pa[0]);
+
+> +       const size_t sizeof__a1pa_arrays = sizeof__a1pa * pages_in_unit;
+
+This replaces sizeof(_aab->__a1pa[pages_in_unit]);
+
+> +       const size_t alloc_total = sizeof_stripe_pages_2d +
+> +                                  sizeof__a1pa_arrays;
+
+Replaces sizeof(*_aab);
+
+This is the trickiest part of this patch IMO, I think it needs careful
+review, but looks correct to me.
+
+> +
+>          unsigned num_a1pa, alloc_size, i;
+
+>          /* FIXME: check these numbers in ore_verify_layout */
+> -       BUG_ON(sizeof(_aab->__asp2d) > PAGE_SIZE);
+> +       BUG_ON(sizeof_stripe_pages_2d > PAGE_SIZE);
+>          BUG_ON(sizeof__a1pa > PAGE_SIZE);
+
+> -       if (sizeof(*_aab) > PAGE_SIZE) {
+> -               num_a1pa = (PAGE_SIZE - sizeof(_aab->__asp2d)) /
+sizeof__a1pa;
+> -               alloc_size = sizeof(_aab->__asp2d) + sizeof__a1pa *
+num_a1pa;
+> +       /*
+> +        * If alloc_total would be larger than PAGE_SIZE, only allocate
+> +        * as many a1pa items as would fill the rest of the page, instead
+> +        * of the full pages_in_unit count.
+> +        */
+> +       if (alloc_total > PAGE_SIZE) {
+> +               num_a1pa = (PAGE_SIZE - sizeof_stripe_pages_2d) /
+sizeof__a1pa;
+> +               alloc_size = sizeof_stripe_pages_2d + sizeof__a1pa *
+num_a1pa;
+>          } else {
+>                  num_a1pa = pages_in_unit;
+> -               alloc_size = sizeof(*_aab);
+> +               alloc_size = alloc_total;
+>          }
+
+> -       _aab = kzalloc(alloc_size, GFP_KERNEL);
+> -       if (unlikely(!_aab)) {
+> +       *psp2d = sp2d = kzalloc(alloc_size, GFP_KERNEL);
+> +       if (unlikely(!sp2d)) {
+>                  ORE_DBGMSG("!! Failed to alloc sp2d size=%d\n",
+alloc_size);
+>                  return -ENOMEM;
+>          }
+> +       /* From here Just call _sp2d_free */
+
+> -       sp2d = &_aab->__asp2d.sp2d;
+> -       *psp2d = sp2d; /* From here Just call _sp2d_free */
+> -
+> -       __a1pa = _aab->__a1pa;
+> -       __a1pa_end = __a1pa + num_a1pa;
+> +       /* Find start of a1pa area. */
+> +       __a1pa = (char *)sp2d + sizeof_stripe_pages_2d;
+> +       /* Find end of the _allocated_ a1pa area. */
+> +       __a1pa_end = __a1pa + alloc_size;
+
+> +       /* Allocate additionally needed a1pa items in PAGE_SIZE chunks. */
+>          for (i = 0; i < pages_in_unit; ++i) {
+>                  if (unlikely(__a1pa >= __a1pa_end)) {
+>                          num_a1pa = min_t(unsigned, PAGE_SIZE /
+sizeof__a1pa,
+>                                                          pages_in_unit -
+i);
+> +                       alloc_size = sizeof__a1pa * num_a1pa;
+
+> -                       __a1pa = kcalloc(num_a1pa, sizeof__a1pa,
+GFP_KERNEL);
+> +                       __a1pa = kzalloc(alloc_size, GFP_KERNEL);
+>                          if (unlikely(!__a1pa)) {
+>                                  ORE_DBGMSG("!! Failed to
+_alloc_1p_arrays=%d\n",
+>                                             num_a1pa);
+>                                  return -ENOMEM;
+>                          }
+> -                       __a1pa_end = __a1pa + num_a1pa;
+> +                       __a1pa_end = __a1pa + alloc_size;
+>                          /* First *pages is marked for kfree of the buffer
+*/
+>                          sp2d->_1p_stripes[i].alloc = true;
+>                  }
+
+> -               sp2d->_1p_stripes[i].pages = __a1pa->pages;
+> -               sp2d->_1p_stripes[i].scribble = __a1pa->scribble ;
+> -               sp2d->_1p_stripes[i].page_is_read = __a1pa->page_is_read;
+> -               ++__a1pa;
+> +               /*
+> +                * Attach all _lp_stripes pointers to the allocation for
+> +                * it which was either part of the original PAGE_SIZE
+> +                * allocation or the subsequent allocation in this loop.
+> +                */
+> +               sp2d->_1p_stripes[i].pages = (void *)__a1pa;
+> +               sp2d->_1p_stripes[i].scribble =
+> +                       sp2d->_1p_stripes[i].pages + group_width;
+> +               sp2d->_1p_stripes[i].page_is_read =
+> +                       (char *)(sp2d->_1p_stripes[i].scribble +
+group_width);
+
+Can you DRY up `sp2d->_1p_stripes[i]`? ex.
+
+struct _1p_stripes* stripe;
+
+for (i = 0; i < pages_in_unit; ...
+   ...
+   stripe = &sp2d->_1p_stripes[i];
+   stripe->pages = (void*)__a1pa;
+   stripe->scribble = stripe->pages + group_width;
+   stripe->page_is_read = (char*)stripe->scribble + group_width;
+
+> +               __a1pa += sizeof__a1pa;
+>          }
+
+>          sp2d->parity = parity;
+> diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+> index 179cd5c2f52a..f3c29e9326f1 100644
+> --- a/fs/exofs/super.c
+> +++ b/fs/exofs/super.c
+> @@ -549,27 +549,26 @@ static int exofs_devs_2_odi(struct
+exofs_dt_device_info *dt_dev,
+>   static int __alloc_dev_table(struct exofs_sb_info *sbi, unsigned numdevs,
+>                        struct exofs_dev **peds)
+>   {
+> -       struct __alloc_ore_devs_and_exofs_devs {
+> -               /* Twice bigger table: See exofs_init_comps() and comment
+at
+> -                * exofs_read_lookup_dev_table()
+> -                */
+> -               struct ore_dev *oreds[numdevs * 2 - 1];
+> -               struct exofs_dev eds[numdevs];
+> -       } *aoded;
+> +       /* Twice bigger table: See exofs_init_comps() and comment at
+> +        * exofs_read_lookup_dev_table()
+> +        */
+> +       size_t numores = numdevs * 2 - 1;
+
+const size_t
+
+>          struct exofs_dev *eds;
+>          unsigned i;
+
+> -       aoded = kzalloc(sizeof(*aoded), GFP_KERNEL);
+> -       if (unlikely(!aoded)) {
+> +       sbi->oc.ods = kzalloc(numores * sizeof(struct ore_dev *) +
+> +                             numdevs * sizeof(struct exofs_dev),
+GFP_KERNEL);
+> +       if (unlikely(!sbi->oc.ods)) {
+>                  EXOFS_ERR("ERROR: failed allocating Device array[%d]\n",
+>                            numdevs);
+>                  return -ENOMEM;
+>          }
+
+> -       sbi->oc.ods = aoded->oreds;
+> -       *peds = eds = aoded->eds;
+> +       /* Start of allocated struct exofs_dev entries */
+> +       *peds = eds = (void *)sbi->oc.ods[numores];
+> +       /* Initialize pointers into struct exofs_dev */
+>          for (i = 0; i < numdevs; ++i)
+> -               aoded->oreds[i] = &eds[i].ored;
+> +               sbi->oc.ods[i] = &eds[i].ored;
+>          return 0;
+>   }
+
+> --
+> 2.7.4
 
 
--- 
-Kees Cook
-Pixel Security
+> --
+> Kees Cook
+> Pixel Security
+
+The sizeof calculations replacing the VLAIS I pointed out are pretty tricky
+to follow, but I feel pretty confident about this patch.  With the changes
+I recommend, feel free to add my Reviewed-by tag.  It would be good to get
+additional review and testing from the maintainer.
+
+Thanks for taking the time to tackle this.
+
+--
+Thanks,
+~Nick Desaulniers
