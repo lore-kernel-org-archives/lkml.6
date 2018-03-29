@@ -1,281 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753177AbeC2MHA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:07:00 -0400
-Received: from mga12.intel.com ([192.55.52.136]:8115 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752082AbeC2MG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 08:06:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
-   d="scan'208";a="28558740"
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH v2] perf, pt, coresight: Clean up address filter structure
-Date: Thu, 29 Mar 2018 15:06:48 +0300
-Message-Id: <20180329120648.11902-1-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.16.1
+        id S1752663AbeC2MHj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:07:39 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37858 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752299AbeC2MHh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 08:07:37 -0400
+X-Google-Smtp-Source: AIpwx48RYosQovJRkSQyBwiFpQtG5AYUzonNgnQ+eTNHrzeblV9eg35PMsYpP6a0/BiQX93SXud9Ig==
+Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alexander Dahl <ada@thorsis.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+ <3478710.yJBBt3uoRT@ada> <20180329104542.GK13942@piout.net>
+ <3103570.fW0XyqvKVi@ada> <20180329114255.GL13942@piout.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e3235587-8362-e1fc-a813-39f790a1c8b4@linaro.org>
+Date: Thu, 29 Mar 2018 14:07:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180329114255.GL13942@piout.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cosmetic patch that deals with the address filter structure's
-ambiguous fields 'filter' and 'range'. The former stands to mean that the
-filter's *action* should be to filter the traces to its address range if
-it's set or stop tracing if it's unset. This is confusing and hard on the
-eyes, so this patch replaces it with 'action' enum. The 'range' field is
-completely redundant (meaning that the filter is an address range as
-opposed to a single address trigger), as we can use zero size to mean the
-same thing.
+On 29/03/2018 13:42, Alexandre Belloni wrote:
+> On 29/03/2018 at 13:31:18 +0200, Alexander Dahl wrote:
+>> Pretty sure. I rebuilt the whole BSP and added another line to the kernel 
+>> source to see if the tree I applied the patches to, was actually built:
+>>
+>>
+>> diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
+>> index 7fde9cfbf203..f85affc74a86 100644
+>> --- a/drivers/clocksource/timer-atmel-tcb.c
+>> +++ b/drivers/clocksource/timer-atmel-tcb.c
+>> @@ -222,7 +222,8 @@ static int __init tc_clkevt_register(struct device_node *node,
+>>                 goto err_slow;
+>>         clk_disable(tce.clk);
+>>  
+>> -       clockevents_config_and_register(&tce.clkevt, 32768, 1, bits - 1);
+>> +       pr_info( "*** bits: 0x%x, BIT(bits): 0x%lx\n", bits, BIT(bits) );
+>> +       clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
+>>  
+>>         ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
+>>                           tce.clkevt.name, &tce);
+>>
+>>
+> 
+> I've just tested on a g20, old driver:
+> INT                NAME          RATE             MAX
+>  16 [vel     at91_tick,]   175 Ints/s     (max:   231)
+>  19 [ vel     tc_clkevt]   129 Ints/s     (max:   129)
+> 
+> 
+> new driver:
+> INT                NAME          RATE             MAX
+>  17 [vel     timer@fffa]   129 Ints/s     (max:   129)
+>  18 [     vel     ttyS0]   175 Ints/s     (max:   231)
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- arch/x86/events/intel/pt.c                       | 13 ++++--
- drivers/hwtracing/coresight/coresight-etm-perf.c | 59 +++++++++++-------------
- include/linux/perf_event.h                       | 14 ++++--
- kernel/events/core.c                             | 26 +++++++----
- 4 files changed, 63 insertions(+), 49 deletions(-)
+Can you give in both platforms how fast the clocksource wraps up ?
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 81fd41d5a0d9..3b993942a0e4 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -1186,8 +1186,12 @@ static int pt_event_addr_filters_validate(struct list_head *filters)
- 	int range = 0;
- 
- 	list_for_each_entry(filter, filters, entry) {
--		/* PT doesn't support single address triggers */
--		if (!filter->range || !filter->size)
-+		/*
-+		 * PT doesn't support single address triggers and
-+		 * 'start' filters.
-+		 */
-+		if (!filter->size ||
-+		    filter->action == PERF_ADDR_FILTER_ACTION_START)
- 			return -EOPNOTSUPP;
- 
- 		if (!filter->inode) {
-@@ -1227,7 +1231,10 @@ static void pt_event_addr_filters_sync(struct perf_event *event)
- 
- 		filters->filter[range].msr_a  = msr_a;
- 		filters->filter[range].msr_b  = msr_b;
--		filters->filter[range].config = filter->filter ? 1 : 2;
-+		if (filter->action == PERF_ADDR_FILTER_ACTION_FILTER)
-+			filters->filter[range].config = 1;
-+		else
-+			filters->filter[range].config = 2;
- 		range++;
- 	}
- 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 8a0ad77574e7..4e5ed6597f2f 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -393,35 +393,26 @@ static int etm_addr_filters_validate(struct list_head *filters)
- 		if (++index > ETM_ADDR_CMP_MAX)
- 			return -EOPNOTSUPP;
- 
-+		/* filter::size==0 means single address trigger */
-+		if (filter->size) {
-+			/*
-+			 * The existing code relies on START/STOP filters
-+			 * being address filters.
-+			 */
-+			if (filter->action == PERF_ADDR_FILTER_ACTION_START ||
-+			    filter->action == PERF_ADDR_FILTER_ACTION_STOP)
-+				return -EOPNOTSUPP;
-+
-+			range = true;
-+		} else
-+			address = true;
-+
- 		/*
--		 * As taken from the struct perf_addr_filter documentation:
--		 *	@range:	1: range, 0: address
--		 *
- 		 * At this time we don't allow range and start/stop filtering
- 		 * to cohabitate, they have to be mutually exclusive.
- 		 */
--		if ((filter->range == 1) && address)
-+		if (range && address)
- 			return -EOPNOTSUPP;
--
--		if ((filter->range == 0) && range)
--			return -EOPNOTSUPP;
--
--		/*
--		 * For range filtering, the second address in the address
--		 * range comparator needs to be higher than the first.
--		 * Invalid otherwise.
--		 */
--		if (filter->range && filter->size == 0)
--			return -EINVAL;
--
--		/*
--		 * Everything checks out with this filter, record what we've
--		 * received before moving on to the next one.
--		 */
--		if (filter->range)
--			range = true;
--		else
--			address = true;
- 	}
- 
- 	return 0;
-@@ -441,18 +432,20 @@ static void etm_addr_filters_sync(struct perf_event *event)
- 		stop = start + filter->size;
- 		etm_filter = &filters->etm_filter[i];
- 
--		if (filter->range == 1) {
-+		switch (filter->action) {
-+		case PERF_ADDR_FILTER_ACTION_FILTER:
- 			etm_filter->start_addr = start;
- 			etm_filter->stop_addr = stop;
- 			etm_filter->type = ETM_ADDR_TYPE_RANGE;
--		} else {
--			if (filter->filter == 1) {
--				etm_filter->start_addr = start;
--				etm_filter->type = ETM_ADDR_TYPE_START;
--			} else {
--				etm_filter->stop_addr = stop;
--				etm_filter->type = ETM_ADDR_TYPE_STOP;
--			}
-+			break;
-+		case PERF_ADDR_FILTER_ACTION_START:
-+			etm_filter->start_addr = start;
-+			etm_filter->type = ETM_ADDR_TYPE_START;
-+			break;
-+		case PERF_ADDR_FILTER_ACTION_STOP:
-+			etm_filter->stop_addr = stop;
-+			etm_filter->type = ETM_ADDR_TYPE_STOP;
-+			break;
- 		}
- 		i++;
- 	}
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index ff39ab011376..e71e99eb9a4e 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -449,14 +449,19 @@ struct pmu {
- 	int (*filter_match)		(struct perf_event *event); /* optional */
- };
- 
-+enum perf_addr_filter_action_t {
-+	PERF_ADDR_FILTER_ACTION_STOP = 0,
-+	PERF_ADDR_FILTER_ACTION_START,
-+	PERF_ADDR_FILTER_ACTION_FILTER,
-+};
-+
- /**
-  * struct perf_addr_filter - address range filter definition
-  * @entry:	event's filter list linkage
-  * @inode:	object file's inode for file-based filters
-  * @offset:	filter range offset
-- * @size:	filter range size
-- * @range:	1: range, 0: address
-- * @filter:	1: filter/start, 0: stop
-+ * @size:	filter range size (size==0 means single address trigger)
-+ * @action:	filter/start/stop
-  *
-  * This is a hardware-agnostic filter configuration as specified by the user.
-  */
-@@ -465,8 +470,7 @@ struct perf_addr_filter {
- 	struct inode		*inode;
- 	unsigned long		offset;
- 	unsigned long		size;
--	unsigned int		range	: 1,
--				filter	: 1;
-+	enum perf_addr_filter_action_t	action;
- };
- 
- /**
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7517b4fb3ef4..fc1c330c6bd6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8803,7 +8803,8 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
-  *  * for kernel addresses: <start address>[/<size>]
-  *  * for object files:     <start address>[/<size>]@</path/to/object/file>
-  *
-- * if <size> is not specified, the range is treated as a single address.
-+ * if <size> is not specified or is zero, the range is treated as a single
-+ * address; not valid for ACTION=="filter".
-  */
- enum {
- 	IF_ACT_NONE = -1,
-@@ -8853,6 +8854,11 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 		return -ENOMEM;
- 
- 	while ((start = strsep(&fstr, " ,\n")) != NULL) {
-+		static const enum perf_addr_filter_action_t actions[] = {
-+			[IF_ACT_FILTER]	= PERF_ADDR_FILTER_ACTION_FILTER,
-+			[IF_ACT_START]	= PERF_ADDR_FILTER_ACTION_START,
-+			[IF_ACT_STOP]	= PERF_ADDR_FILTER_ACTION_STOP,
-+		};
- 		ret = -EINVAL;
- 
- 		if (!*start)
-@@ -8869,12 +8875,11 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 		switch (token) {
- 		case IF_ACT_FILTER:
- 		case IF_ACT_START:
--			filter->filter = 1;
--
- 		case IF_ACT_STOP:
- 			if (state != IF_STATE_ACTION)
- 				goto fail;
- 
-+			filter->action = actions[token];
- 			state = IF_STATE_SOURCE;
- 			break;
- 
-@@ -8887,15 +8892,12 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 			if (state != IF_STATE_SOURCE)
- 				goto fail;
- 
--			if (token == IF_SRC_FILE || token == IF_SRC_KERNEL)
--				filter->range = 1;
--
- 			*args[0].to = 0;
- 			ret = kstrtoul(args[0].from, 0, &filter->offset);
- 			if (ret)
- 				goto fail;
- 
--			if (filter->range) {
-+			if (token == IF_SRC_KERNEL || token == IF_SRC_FILE) {
- 				*args[1].to = 0;
- 				ret = kstrtoul(args[1].from, 0, &filter->size);
- 				if (ret)
-@@ -8903,7 +8905,7 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 			}
- 
- 			if (token == IF_SRC_FILE || token == IF_SRC_FILEADDR) {
--				int fpos = filter->range ? 2 : 1;
-+				int fpos = token == IF_SRC_FILE ? 2 : 1;
- 
- 				filename = match_strdup(&args[fpos]);
- 				if (!filename) {
-@@ -8929,6 +8931,14 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 			if (kernel && event->attr.exclude_kernel)
- 				goto fail;
- 
-+			/*
-+			 * ACTION "filter" must have a non-zero length region
-+			 * specified.
-+			 */
-+			if (filter->action == PERF_ADDR_FILTER_ACTION_FILTER &&
-+			    !filter->size)
-+				goto fail;
-+
- 			if (!kernel) {
- 				if (!filename)
- 					goto fail;
 -- 
-2.16.2
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
