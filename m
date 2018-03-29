@@ -1,87 +1,72 @@
-Date: Thu, 29 Mar 2018 19:04:20 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: atull@kernel.org, linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org
-Subject: Re: [PATCH 3/6] fpga: bridge: don't use drvdata in common fpga code
-Message-ID: <20180329170420.GD8501@kroah.com>
+Return-Path: <moritz.fischer@ettus.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522338185; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GkntRrzaAhR1U7O7Rz+QLi7XSeaLTF+cwFi+kXpM9iFTIv/AGEBr7tpAdFAHUxPGFm
+         bAzu9mAR+9s2mBBHej0XIaUpimmHpAnP+A7u0n7vuFyPHm/ayl0lukC1+54HOC/Ujjvu
+         8mQJS8yg6MQ/bHtgYQ4hDsvp+ruNeM7kNDUbpVHSDg/npY/MsaVojogoIvbDB2bn9kxQ
+         t6lT3DboglufHxmh40DJolLoZ9KcySttKUmlIIFzv79m8EYcNtRLXJae0Aw5d+bwSqx5
+         h9/rNTSXZdkIJcO7cqkgKMWMmkyTkfwBSvKEQKPXl82xLLnPJsbqtMJnH+4FMSi2u7+S
+         fhyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=DYQOrmGLKmS21CXf9yjRbVOUQn+BAWdjj/vyTTjbKNU=;
+        b=iUTBter41iDthDPWv5F8e6a2bKngd27lcWaHogrpvvs4QrM1gsceO6P51qXVAMy7sr
+         VAFCBnC1mzOsv9rADdSYYZodkht0hfWNqEO4mK6nY8//1QisdTO6w8KORz4GroVHNEgi
+         daq2VbaSM0uQoFTd1Kpb4xtYHiM1dh8fRqV9+sxNovmcdwwkbsrvKKZ4WXTCiESCDvmW
+         U1ddbS6SdSrJdMexS7+o4l1dbCEL9eKVgCtNTAjRpRPxZFmX6sWZ94w6Q5AO67P3AUGX
+         RME/+p8+raZzNY2aRqXjjfSxS4yeu8WTeFLmIVoA4lqZyopyl8UhokfL2Aueh55BsCWK
+         gkmA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of moritz.fischer@ettus.com) smtp.mailfrom=moritz.fischer@ettus.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of moritz.fischer@ettus.com) smtp.mailfrom=moritz.fischer@ettus.com
+X-Google-Smtp-Source: AIpwx49HtvWsElJ6QwRM27V2H2vfrorotIkTfRp1JtMPmRG9a5TYLnRfC6Qzn0BA6z1AQRVpGC42nA==
+From: Moritz Fischer <mdf@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: atull@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	Anatolij Gustschin <agust@denx.de>,
+	Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH 6/6] fpga-manager: altera-ps-spi: preserve nCONFIG state
+Date: Thu, 29 Mar 2018 08:36:58 -0700
+Message-Id: <20180329153658.11614-7-mdf@kernel.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180329153658.11614-1-mdf@kernel.org>
 References: <20180329153658.11614-1-mdf@kernel.org>
- <20180329153658.11614-4-mdf@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329153658.11614-4-mdf@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596287285023274584?=
+X-GMAIL-MSGID: =?utf-8?q?1596287285023274584?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 08:36:55AM -0700, Moritz Fischer wrote:
-> From: Alan Tull <atull@kernel.org>
-> 
-> Change fpga_bridge_register to not set drvdata.
-> 
-> Change the register/unregister functions parameters to take the
-> bridge struct:
-> * int fpga_bridge_register(struct fpga_bridge *bridge);
-> * void fpga_bridge_unregister(struct fpga_bridge *bridge);
-> 
-> Change the drivers that call fpga_bridge_register to alloc the struct
-> fpga_bridge (using devm_kzalloc) and partly fill it, adding name,
-> ops, parent device, and priv.
-> 
-> The rationale is that setting drvdata is fine for DT based devices
-> that will have one manager, bridge, or region per platform device.
-> However PCIe based devices may have multiple FPGA mgr/bridge/regions
-> under one pcie device.  Without these changes, the PCIe solution has
-> to create an extra device for each child mgr/bridge/region to hold
-> drvdata.
-> 
-> Signed-off-by: Alan Tull <atull@kernel.org>
-> Reported-by: Jiuyue Ma <majiuyue@huawei.com>
-> Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> ---
->  drivers/fpga/altera-fpga2sdram.c    | 20 +++++++++++++----
->  drivers/fpga/altera-freeze-bridge.c | 18 +++++++++++++---
->  drivers/fpga/altera-hps2fpga.c      | 16 +++++++++++---
->  drivers/fpga/fpga-bridge.c          | 43 ++++++++++++++-----------------------
->  drivers/fpga/xilinx-pr-decoupler.c  | 15 ++++++++++---
->  include/linux/fpga/fpga-bridge.h    |  7 +++---
->  6 files changed, 76 insertions(+), 43 deletions(-)
-> 
-> diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
-> index d4eeb74388da..a4593c0f5e42 100644
-> --- a/drivers/fpga/altera-fpga2sdram.c
-> +++ b/drivers/fpga/altera-fpga2sdram.c
-> @@ -106,10 +106,15 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct alt_fpga2sdram_data *priv;
-> +	struct fpga_bridge *br;
->  	u32 enable;
->  	struct regmap *sysmgr;
->  	int ret = 0;
->  
-> +	br = devm_kzalloc(dev, sizeof(*br), GFP_KERNEL);
-> +	if (!br)
-> +		return -ENOMEM;
-> +
->  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->  	if (!priv)
->  		return -ENOMEM;
-> @@ -131,8 +136,13 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
->  	/* Get f2s bridge configuration saved in handoff register */
->  	regmap_read(sysmgr, SYSMGR_ISWGRP_HANDOFF3, &priv->mask);
->  
-> -	ret = fpga_bridge_register(dev, F2S_BRIDGE_NAME,
-> -				   &altera_fpga2sdram_br_ops, priv);
-> +	br->parent = dev;
-> +	br->name = F2S_BRIDGE_NAME;
-> +	br->br_ops = &altera_fpga2sdram_br_ops;
-> +	br->priv = priv;
-> +	platform_set_drvdata(pdev, br);
+From: Anatolij Gustschin <agust@denx.de>
 
-Same question here, why not fpga_bridge_create(...)?
+If the driver module is loaded when FPGA is configured, the FPGA
+is reset because nconfig is pulled low (low-active gpio inited
+with GPIOD_OUT_HIGH activates the signal which means setting its
+value to low). Init nconfig with GPIOD_OUT_LOW to prevent this.
 
-thanks,
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Signed-off-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/fpga/altera-ps-spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
+index b061408bf0ae..250d9cf9bb1b 100644
+--- a/drivers/fpga/altera-ps-spi.c
++++ b/drivers/fpga/altera-ps-spi.c
+@@ -254,7 +254,7 @@ static int altera_ps_probe(struct spi_device *spi)
+ 
+ 	conf->data = of_id->data;
+ 	conf->spi = spi;
+-	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_HIGH);
++	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_LOW);
+ 	if (IS_ERR(conf->config)) {
+ 		dev_err(&spi->dev, "Failed to get config gpio: %ld\n",
+ 			PTR_ERR(conf->config));
+-- 
+2.16.2
