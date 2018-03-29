@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752944AbeC2WJ2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 18:09:28 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33809 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752734AbeC2WHh (ORCPT
+        id S1752925AbeC2WJ0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 18:09:26 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36879 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752737AbeC2WHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Mar 2018 18:07:37 -0400
-X-Google-Smtp-Source: AIpwx4/Nl57gpwCwpS6dzhWQaZeQPMHZ36jkw1wdavxKzwT/Ra3/j0x5ir0NcXwVBkv6W4MUwELjgQ==
+X-Google-Smtp-Source: AIpwx4/G7dhwcp/thv1yjOft96CwLnRDVmvoSGfWImTwJUt5FhlFnumlI0sZ/hpKHsv5t04BKnykEQ==
 From: =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To: axboe@fb.com
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         keith.busch@intel.com, javier@cnexlabs.com,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 34/37] lightnvm: pblk: implement 2.0 support
-Date: Fri, 30 Mar 2018 00:05:21 +0200
-Message-Id: <20180329220524.30363-35-mb@lightnvm.io>
+Subject: [GIT PULL 30/37] lightnvm: implement get log report chunk helpers
+Date: Fri, 30 Mar 2018 00:05:17 +0200
+Message-Id: <20180329220524.30363-31-mb@lightnvm.io>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180329220524.30363-1-mb@lightnvm.io>
 References: <20180329220524.30363-1-mb@lightnvm.io>
@@ -28,459 +28,232 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Javier González <javier@cnexlabs.com>
 
-Implement 2.0 support in pblk. This includes the address formatting and
-mapping paths, as well as the sysfs entries for them.
+The 2.0 spec provides a report chunk log page that can be retrieved
+using the stangard nvme get log page. This replaces the dedicated
+get/put bad block table in 1.2.
+
+This patch implements the helper functions to allow targets retrieve the
+chunk metadata using get log page. It makes nvme_get_log_ext available
+outside of nvme core so that we can use it form lightnvm.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-init.c  |  56 ++++++++++--
- drivers/lightnvm/pblk-sysfs.c |  46 +++++++---
- drivers/lightnvm/pblk.h       | 192 +++++++++++++++++++++++++++++++++---------
- 3 files changed, 232 insertions(+), 62 deletions(-)
+ drivers/lightnvm/core.c      | 11 +++++++
+ drivers/nvme/host/core.c     |  4 +--
+ drivers/nvme/host/lightnvm.c | 74 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/lightnvm.h     | 24 ++++++++++++++
+ 4 files changed, 111 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 27b4974930b4..91a5bc2556a3 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -229,20 +229,62 @@ static int pblk_set_addrf_12(struct nvm_geo *geo, struct nvm_addrf_12 *dst)
- 	return dst->blk_offset + src->blk_len;
+diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+index 77901bf17416..63171cdce270 100644
+--- a/drivers/lightnvm/core.c
++++ b/drivers/lightnvm/core.c
+@@ -712,6 +712,17 @@ static void nvm_free_rqd_ppalist(struct nvm_tgt_dev *tgt_dev,
+ 	nvm_dev_dma_free(tgt_dev->parent, rqd->ppa_list, rqd->dma_ppa_list);
  }
  
-+static int pblk_set_addrf_20(struct nvm_geo *geo, struct nvm_addrf *adst,
-+			     struct pblk_addrf *udst)
++int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev, struct nvm_chk_meta *meta,
++		struct ppa_addr ppa, int nchks)
 +{
-+	struct nvm_addrf *src = &geo->addrf;
++	struct nvm_dev *dev = tgt_dev->parent;
 +
-+	adst->ch_len = get_count_order(geo->num_ch);
-+	adst->lun_len = get_count_order(geo->num_lun);
-+	adst->chk_len = src->chk_len;
-+	adst->sec_len = src->sec_len;
++	nvm_ppa_tgt_to_dev(tgt_dev, &ppa, 1);
 +
-+	adst->sec_offset = 0;
-+	adst->ch_offset = adst->sec_len;
-+	adst->lun_offset = adst->ch_offset + adst->ch_len;
-+	adst->chk_offset = adst->lun_offset + adst->lun_len;
-+
-+	adst->sec_mask = ((1ULL << adst->sec_len) - 1) << adst->sec_offset;
-+	adst->chk_mask = ((1ULL << adst->chk_len) - 1) << adst->chk_offset;
-+	adst->lun_mask = ((1ULL << adst->lun_len) - 1) << adst->lun_offset;
-+	adst->ch_mask = ((1ULL << adst->ch_len) - 1) << adst->ch_offset;
-+
-+	udst->sec_stripe = geo->ws_opt;
-+	udst->ch_stripe = geo->num_ch;
-+	udst->lun_stripe = geo->num_lun;
-+
-+	udst->sec_lun_stripe = udst->sec_stripe * udst->ch_stripe;
-+	udst->sec_ws_stripe = udst->sec_lun_stripe * udst->lun_stripe;
-+
-+	return adst->chk_offset + adst->chk_len;
++	return dev->ops->get_chk_meta(tgt_dev->parent, meta,
++						(sector_t)ppa.ppa, nchks);
 +}
-+
- static int pblk_set_addrf(struct pblk *pblk)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
- 	int mod;
++EXPORT_SYMBOL(nvm_get_chunk_meta);
  
--	div_u64_rem(geo->clba, pblk->min_write_pgs, &mod);
--	if (mod) {
--		pr_err("pblk: bad configuration of sectors/pages\n");
-+	switch (geo->version) {
-+	case NVM_OCSSD_SPEC_12:
-+		div_u64_rem(geo->clba, pblk->min_write_pgs, &mod);
-+		if (mod) {
-+			pr_err("pblk: bad configuration of sectors/pages\n");
-+			return -EINVAL;
-+		}
-+
-+		pblk->addrf_len = pblk_set_addrf_12(geo, (void *)&pblk->addrf);
-+		break;
-+	case NVM_OCSSD_SPEC_20:
-+		pblk->addrf_len = pblk_set_addrf_20(geo, (void *)&pblk->addrf,
-+								&pblk->uaddrf);
-+		break;
-+	default:
-+		pr_err("pblk: OCSSD revision not supported (%d)\n",
-+								geo->version);
- 		return -EINVAL;
- 	}
- 
--	pblk->addrf_len = pblk_set_addrf_12(geo, (void *)&pblk->addrf);
--
- 	return 0;
+ int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *tgt_dev, struct ppa_addr *ppas,
+ 		       int nr_ppas, int type)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index e7ec2fb5c59a..f81e3b323366 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2219,8 +2219,8 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
  }
  
-@@ -1110,7 +1152,9 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
- 	struct pblk *pblk;
- 	int ret;
- 
--	if (geo->version != NVM_OCSSD_SPEC_12) {
-+	/* pblk supports 1.2 and 2.0 versions */
-+	if (!(geo->version == NVM_OCSSD_SPEC_12 ||
-+					geo->version == NVM_OCSSD_SPEC_20)) {
- 		pr_err("pblk: OCSSD version not supported (%u)\n",
- 							geo->version);
- 		return ERR_PTR(-EINVAL);
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index fd2caad39d49..e61909af23a5 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -113,15 +113,14 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
+ int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+-			    u8 log_page, void *log,
+-			    size_t size, size_t offset)
++		     u8 log_page, void *log,
++		     size_t size, size_t offset)
  {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
--	struct nvm_addrf_12 *ppaf;
--	struct nvm_addrf_12 *geo_ppaf;
- 	ssize_t sz = 0;
- 
--	ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
--	geo_ppaf = (struct nvm_addrf_12 *)&geo->addrf;
-+	if (geo->version == NVM_OCSSD_SPEC_12) {
-+		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
-+		struct nvm_addrf_12 *gppaf = (struct nvm_addrf_12 *)&geo->addrf;
- 
--	sz = snprintf(page, PAGE_SIZE,
--		"g:(b:%d)blk:%d/%d,pg:%d/%d,lun:%d/%d,ch:%d/%d,pl:%d/%d,sec:%d/%d\n",
-+		sz = snprintf(page, PAGE_SIZE,
-+			"g:(b:%d)blk:%d/%d,pg:%d/%d,lun:%d/%d,ch:%d/%d,pl:%d/%d,sec:%d/%d\n",
- 			pblk->addrf_len,
- 			ppaf->blk_offset, ppaf->blk_len,
- 			ppaf->pg_offset, ppaf->pg_len,
-@@ -130,14 +129,33 @@ static ssize_t pblk_sysfs_ppaf(struct pblk *pblk, char *page)
- 			ppaf->pln_offset, ppaf->pln_len,
- 			ppaf->sec_offset, ppaf->sec_len);
- 
--	sz += snprintf(page + sz, PAGE_SIZE - sz,
--		"d:blk:%d/%d,pg:%d/%d,lun:%d/%d,ch:%d/%d,pl:%d/%d,sec:%d/%d\n",
--			geo_ppaf->blk_offset, geo_ppaf->blk_len,
--			geo_ppaf->pg_offset, geo_ppaf->pg_len,
--			geo_ppaf->lun_offset, geo_ppaf->lun_len,
--			geo_ppaf->ch_offset, geo_ppaf->ch_len,
--			geo_ppaf->pln_offset, geo_ppaf->pln_len,
--			geo_ppaf->sec_offset, geo_ppaf->sec_len);
-+		sz += snprintf(page + sz, PAGE_SIZE - sz,
-+			"d:blk:%d/%d,pg:%d/%d,lun:%d/%d,ch:%d/%d,pl:%d/%d,sec:%d/%d\n",
-+			gppaf->blk_offset, gppaf->blk_len,
-+			gppaf->pg_offset, gppaf->pg_len,
-+			gppaf->lun_offset, gppaf->lun_len,
-+			gppaf->ch_offset, gppaf->ch_len,
-+			gppaf->pln_offset, gppaf->pln_len,
-+			gppaf->sec_offset, gppaf->sec_len);
-+	} else {
-+		struct nvm_addrf *ppaf = &pblk->addrf;
-+		struct nvm_addrf *gppaf = &geo->addrf;
-+
-+		sz = snprintf(page, PAGE_SIZE,
-+			"pblk:(s:%d)ch:%d/%d,lun:%d/%d,chk:%d/%d/sec:%d/%d\n",
-+			pblk->addrf_len,
-+			ppaf->ch_offset, ppaf->ch_len,
-+			ppaf->lun_offset, ppaf->lun_len,
-+			ppaf->chk_offset, ppaf->chk_len,
-+			ppaf->sec_offset, ppaf->sec_len);
-+
-+		sz += snprintf(page + sz, PAGE_SIZE - sz,
-+			"device:ch:%d/%d,lun:%d/%d,chk:%d/%d,sec:%d/%d\n",
-+			gppaf->ch_offset, gppaf->ch_len,
-+			gppaf->lun_offset, gppaf->lun_len,
-+			gppaf->chk_offset, gppaf->chk_len,
-+			gppaf->sec_offset, gppaf->sec_len);
-+	}
- 
- 	return sz;
- }
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 39e47e3d6f23..9c682acfc5d1 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -561,6 +561,18 @@ enum {
- 	PBLK_STATE_STOPPED = 3,
+ 	struct nvme_command c = { };
+ 	unsigned long dwlen = size / 4 - 1;
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index 08f0f6b5bc06..ffd64a83c8c3 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
+ 	nvme_nvm_admin_set_bb_tbl	= 0xf1,
  };
  
-+/* Internal format to support not power-of-2 device formats */
-+struct pblk_addrf {
-+	/* gen to dev */
-+	int sec_stripe;
-+	int ch_stripe;
-+	int lun_stripe;
-+
-+	/* dev to gen */
-+	int sec_lun_stripe;
-+	int sec_ws_stripe;
++enum nvme_nvm_log_page {
++	NVME_NVM_LOG_REPORT_CHUNK	= 0xca,
 +};
 +
- struct pblk {
+ struct nvme_nvm_ph_rw {
+ 	__u8			opcode;
+ 	__u8			flags;
+@@ -236,6 +240,16 @@ struct nvme_nvm_id20 {
+ 	__u8			vs[1024];
+ };
+ 
++struct nvme_nvm_chk_meta {
++	__u8	state;
++	__u8	type;
++	__u8	wi;
++	__u8	rsvd[5];
++	__le64	slba;
++	__le64	cnlb;
++	__le64	wp;
++};
++
+ /*
+  * Check we didn't inadvertently grow the command struct
+  */
+@@ -252,6 +266,9 @@ static inline void _nvme_nvm_check_size(void)
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_bb_tbl) != 64);
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20_addrf) != 8);
+ 	BUILD_BUG_ON(sizeof(struct nvme_nvm_id20) != NVME_IDENTIFY_DATA_SIZE);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) != 32);
++	BUILD_BUG_ON(sizeof(struct nvme_nvm_chk_meta) !=
++						sizeof(struct nvm_chk_meta));
+ }
+ 
+ static void nvme_nvm_set_addr_12(struct nvm_addrf_12 *dst,
+@@ -552,6 +569,61 @@ static int nvme_nvm_set_bb_tbl(struct nvm_dev *nvmdev, struct ppa_addr *ppas,
+ 	return ret;
+ }
+ 
++/*
++ * Expect the lba in device format
++ */
++static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
++				 struct nvm_chk_meta *meta,
++				 sector_t slba, int nchks)
++{
++	struct nvm_geo *geo = &ndev->geo;
++	struct nvme_ns *ns = ndev->q->queuedata;
++	struct nvme_ctrl *ctrl = ns->ctrl;
++	struct nvme_nvm_chk_meta *dev_meta = (struct nvme_nvm_chk_meta *)meta;
++	struct ppa_addr ppa;
++	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
++	size_t log_pos, offset, len;
++	int ret, i;
++
++	/* Normalize lba address space to obtain log offset */
++	ppa.ppa = slba;
++	ppa = dev_to_generic_addr(ndev, ppa);
++
++	log_pos = ppa.m.chk;
++	log_pos += ppa.m.pu * geo->num_chk;
++	log_pos += ppa.m.grp * geo->num_lun * geo->num_chk;
++
++	offset = log_pos * sizeof(struct nvme_nvm_chk_meta);
++
++	while (left) {
++		len = min_t(unsigned int, left, ctrl->max_hw_sectors << 9);
++
++		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
++				dev_meta, len, offset);
++		if (ret) {
++			dev_err(ctrl->device, "Get REPORT CHUNK log error\n");
++			break;
++		}
++
++		for (i = 0; i < len; i += sizeof(struct nvme_nvm_chk_meta)) {
++			meta->state = dev_meta->state;
++			meta->type = dev_meta->type;
++			meta->wi = dev_meta->wi;
++			meta->slba = le64_to_cpu(dev_meta->slba);
++			meta->cnlb = le64_to_cpu(dev_meta->cnlb);
++			meta->wp = le64_to_cpu(dev_meta->wp);
++
++			meta++;
++			dev_meta++;
++		}
++
++		offset += len;
++		left -= len;
++	}
++
++	return ret;
++}
++
+ static inline void nvme_nvm_rqtocmd(struct nvm_rq *rqd, struct nvme_ns *ns,
+ 				    struct nvme_nvm_command *c)
+ {
+@@ -683,6 +755,8 @@ static struct nvm_dev_ops nvme_nvm_dev_ops = {
+ 	.get_bb_tbl		= nvme_nvm_get_bb_tbl,
+ 	.set_bb_tbl		= nvme_nvm_set_bb_tbl,
+ 
++	.get_chk_meta		= nvme_nvm_get_chk_meta,
++
+ 	.submit_io		= nvme_nvm_submit_io,
+ 	.submit_io_sync		= nvme_nvm_submit_io_sync,
+ 
+diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+index f3b273e543c3..da45efa09bb2 100644
+--- a/include/linux/lightnvm.h
++++ b/include/linux/lightnvm.h
+@@ -81,10 +81,13 @@ struct nvm_rq;
+ struct nvm_id;
+ struct nvm_dev;
+ struct nvm_tgt_dev;
++struct nvm_chk_meta;
+ 
+ typedef int (nvm_id_fn)(struct nvm_dev *);
+ typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 *);
+ typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, int, int);
++typedef int (nvm_get_chk_meta_fn)(struct nvm_dev *, struct nvm_chk_meta *,
++								sector_t, int);
+ typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
+ typedef int (nvm_submit_io_sync_fn)(struct nvm_dev *, struct nvm_rq *);
+ typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
+@@ -98,6 +101,8 @@ struct nvm_dev_ops {
+ 	nvm_op_bb_tbl_fn	*get_bb_tbl;
+ 	nvm_op_set_bb_fn	*set_bb_tbl;
+ 
++	nvm_get_chk_meta_fn	*get_chk_meta;
++
+ 	nvm_submit_io_fn	*submit_io;
+ 	nvm_submit_io_sync_fn	*submit_io_sync;
+ 
+@@ -227,6 +232,20 @@ struct nvm_addrf {
+ 	u64	rsv_mask[2];
+ };
+ 
++/*
++ * Note: The structure size is linked to nvme_nvm_chk_meta such that the same
++ * buffer can be used when converting from little endian to cpu addressing.
++ */
++struct nvm_chk_meta {
++	u8	state;
++	u8	type;
++	u8	wi;
++	u8	rsvd[5];
++	u64	slba;
++	u64	cnlb;
++	u64	wp;
++};
++
+ struct nvm_target {
+ 	struct list_head list;
  	struct nvm_tgt_dev *dev;
- 	struct gendisk *disk;
-@@ -573,7 +585,8 @@ struct pblk {
- 	struct pblk_line_mgmt l_mg;		/* Line management */
- 	struct pblk_line_meta lm;		/* Line metadata */
+@@ -492,6 +511,11 @@ extern struct nvm_dev *nvm_alloc_dev(int);
+ extern int nvm_register(struct nvm_dev *);
+ extern void nvm_unregister(struct nvm_dev *);
  
--	struct nvm_addrf addrf;
-+	struct nvm_addrf addrf;		/* Aligned address format */
-+	struct pblk_addrf uaddrf;	/* Unaligned address format */
- 	int addrf_len;
- 
- 	struct pblk_rb rwb;
-@@ -954,16 +967,39 @@ static inline int pblk_ppa_to_pos(struct nvm_geo *geo, struct ppa_addr p)
- static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
- 					      u64 line_id)
- {
--	struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
-+	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct nvm_geo *geo = &dev->geo;
- 	struct ppa_addr ppa;
- 
--	ppa.ppa = 0;
--	ppa.g.blk = line_id;
--	ppa.g.pg = (paddr & ppaf->pg_mask) >> ppaf->pg_offset;
--	ppa.g.lun = (paddr & ppaf->lun_mask) >> ppaf->lun_offset;
--	ppa.g.ch = (paddr & ppaf->ch_mask) >> ppaf->ch_offset;
--	ppa.g.pl = (paddr & ppaf->pln_mask) >> ppaf->pln_offset;
--	ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sec_offset;
-+	if (geo->version == NVM_OCSSD_SPEC_12) {
-+		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
 +
-+		ppa.ppa = 0;
-+		ppa.g.blk = line_id;
-+		ppa.g.pg = (paddr & ppaf->pg_mask) >> ppaf->pg_offset;
-+		ppa.g.lun = (paddr & ppaf->lun_mask) >> ppaf->lun_offset;
-+		ppa.g.ch = (paddr & ppaf->ch_mask) >> ppaf->ch_offset;
-+		ppa.g.pl = (paddr & ppaf->pln_mask) >> ppaf->pln_offset;
-+		ppa.g.sec = (paddr & ppaf->sec_mask) >> ppaf->sec_offset;
-+	} else {
-+		struct pblk_addrf *uaddrf = &pblk->uaddrf;
-+		int secs, chnls, luns;
++extern int nvm_get_chunk_meta(struct nvm_tgt_dev *tgt_dev,
++			      struct nvm_chk_meta *meta, struct ppa_addr ppa,
++			      int nchks);
 +
-+		ppa.ppa = 0;
-+
-+		ppa.m.chk = line_id;
-+
-+		paddr = div_u64_rem(paddr, uaddrf->sec_stripe, &secs);
-+		ppa.m.sec = secs;
-+
-+		paddr = div_u64_rem(paddr, uaddrf->ch_stripe, &chnls);
-+		ppa.m.grp = chnls;
-+
-+		paddr = div_u64_rem(paddr, uaddrf->lun_stripe, &luns);
-+		ppa.m.pu = luns;
-+
-+		ppa.m.sec += uaddrf->sec_stripe * paddr;
-+	}
- 
- 	return ppa;
- }
-@@ -971,14 +1007,30 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
- static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
- 							struct ppa_addr p)
- {
--	struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
-+	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct nvm_geo *geo = &dev->geo;
- 	u64 paddr;
- 
--	paddr = (u64)p.g.ch << ppaf->ch_offset;
--	paddr |= (u64)p.g.lun << ppaf->lun_offset;
--	paddr |= (u64)p.g.pg << ppaf->pg_offset;
--	paddr |= (u64)p.g.pl << ppaf->pln_offset;
--	paddr |= (u64)p.g.sec << ppaf->sec_offset;
-+	if (geo->version == NVM_OCSSD_SPEC_12) {
-+		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
-+
-+		paddr = (u64)p.g.ch << ppaf->ch_offset;
-+		paddr |= (u64)p.g.lun << ppaf->lun_offset;
-+		paddr |= (u64)p.g.pg << ppaf->pg_offset;
-+		paddr |= (u64)p.g.pl << ppaf->pln_offset;
-+		paddr |= (u64)p.g.sec << ppaf->sec_offset;
-+	} else {
-+		struct pblk_addrf *uaddrf = &pblk->uaddrf;
-+		u64 secs = p.m.sec;
-+		int sec_stripe;
-+
-+		paddr = (u64)p.m.grp * uaddrf->sec_stripe;
-+		paddr += (u64)p.m.pu * uaddrf->sec_lun_stripe;
-+
-+		secs = div_u64_rem(secs, uaddrf->sec_stripe, &sec_stripe);
-+		paddr += secs * uaddrf->sec_ws_stripe;
-+		paddr += sec_stripe;
-+	}
- 
- 	return paddr;
- }
-@@ -995,14 +1047,37 @@ static inline struct ppa_addr pblk_ppa32_to_ppa64(struct pblk *pblk, u32 ppa32)
- 		ppa64.c.line = ppa32 & ((~0U) >> 1);
- 		ppa64.c.is_cached = 1;
- 	} else {
--		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
-+		struct nvm_tgt_dev *dev = pblk->dev;
-+		struct nvm_geo *geo = &dev->geo;
- 
--		ppa64.g.ch = (ppa32 & ppaf->ch_mask) >> ppaf->ch_offset;
--		ppa64.g.lun = (ppa32 & ppaf->lun_mask) >> ppaf->lun_offset;
--		ppa64.g.blk = (ppa32 & ppaf->blk_mask) >> ppaf->blk_offset;
--		ppa64.g.pg = (ppa32 & ppaf->pg_mask) >> ppaf->pg_offset;
--		ppa64.g.pl = (ppa32 & ppaf->pln_mask) >> ppaf->pln_offset;
--		ppa64.g.sec = (ppa32 & ppaf->sec_mask) >> ppaf->sec_offset;
-+		if (geo->version == NVM_OCSSD_SPEC_12) {
-+			struct nvm_addrf_12 *ppaf =
-+					(struct nvm_addrf_12 *)&pblk->addrf;
-+
-+			ppa64.g.ch = (ppa32 & ppaf->ch_mask) >>
-+							ppaf->ch_offset;
-+			ppa64.g.lun = (ppa32 & ppaf->lun_mask) >>
-+							ppaf->lun_offset;
-+			ppa64.g.blk = (ppa32 & ppaf->blk_mask) >>
-+							ppaf->blk_offset;
-+			ppa64.g.pg = (ppa32 & ppaf->pg_mask) >>
-+							ppaf->pg_offset;
-+			ppa64.g.pl = (ppa32 & ppaf->pln_mask) >>
-+							ppaf->pln_offset;
-+			ppa64.g.sec = (ppa32 & ppaf->sec_mask) >>
-+							ppaf->sec_offset;
-+		} else {
-+			struct nvm_addrf *lbaf = &pblk->addrf;
-+
-+			ppa64.m.grp = (ppa32 & lbaf->ch_mask) >>
-+							lbaf->ch_offset;
-+			ppa64.m.pu = (ppa32 & lbaf->lun_mask) >>
-+							lbaf->lun_offset;
-+			ppa64.m.chk = (ppa32 & lbaf->chk_mask) >>
-+							lbaf->chk_offset;
-+			ppa64.m.sec = (ppa32 & lbaf->sec_mask) >>
-+							lbaf->sec_offset;
-+		}
- 	}
- 
- 	return ppa64;
-@@ -1018,14 +1093,27 @@ static inline u32 pblk_ppa64_to_ppa32(struct pblk *pblk, struct ppa_addr ppa64)
- 		ppa32 |= ppa64.c.line;
- 		ppa32 |= 1U << 31;
- 	} else {
--		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)&pblk->addrf;
-+		struct nvm_tgt_dev *dev = pblk->dev;
-+		struct nvm_geo *geo = &dev->geo;
- 
--		ppa32 |= ppa64.g.ch << ppaf->ch_offset;
--		ppa32 |= ppa64.g.lun << ppaf->lun_offset;
--		ppa32 |= ppa64.g.blk << ppaf->blk_offset;
--		ppa32 |= ppa64.g.pg << ppaf->pg_offset;
--		ppa32 |= ppa64.g.pl << ppaf->pln_offset;
--		ppa32 |= ppa64.g.sec << ppaf->sec_offset;
-+		if (geo->version == NVM_OCSSD_SPEC_12) {
-+			struct nvm_addrf_12 *ppaf =
-+					(struct nvm_addrf_12 *)&pblk->addrf;
-+
-+			ppa32 |= ppa64.g.ch << ppaf->ch_offset;
-+			ppa32 |= ppa64.g.lun << ppaf->lun_offset;
-+			ppa32 |= ppa64.g.blk << ppaf->blk_offset;
-+			ppa32 |= ppa64.g.pg << ppaf->pg_offset;
-+			ppa32 |= ppa64.g.pl << ppaf->pln_offset;
-+			ppa32 |= ppa64.g.sec << ppaf->sec_offset;
-+		} else {
-+			struct nvm_addrf *lbaf = &pblk->addrf;
-+
-+			ppa32 |= ppa64.m.grp << lbaf->ch_offset;
-+			ppa32 |= ppa64.m.pu << lbaf->lun_offset;
-+			ppa32 |= ppa64.m.chk << lbaf->chk_offset;
-+			ppa32 |= ppa64.m.sec << lbaf->sec_offset;
-+		}
- 	}
- 
- 	return ppa32;
-@@ -1143,6 +1231,9 @@ static inline int pblk_set_progr_mode(struct pblk *pblk, int type)
- 	struct nvm_geo *geo = &dev->geo;
- 	int flags;
- 
-+	if (geo->version == NVM_OCSSD_SPEC_20)
-+		return 0;
-+
- 	flags = geo->pln_mode >> 1;
- 
- 	if (type == PBLK_WRITE)
-@@ -1162,6 +1253,9 @@ static inline int pblk_set_read_mode(struct pblk *pblk, int type)
- 	struct nvm_geo *geo = &dev->geo;
- 	int flags;
- 
-+	if (geo->version == NVM_OCSSD_SPEC_20)
-+		return 0;
-+
- 	flags = NVM_IO_SUSPEND | NVM_IO_SCRAMBLE_ENABLE;
- 	if (type == PBLK_READ_SEQUENTIAL)
- 		flags |= geo->pln_mode >> 1;
-@@ -1175,16 +1269,21 @@ static inline int pblk_io_aligned(struct pblk *pblk, int nr_secs)
- }
- 
- #ifdef CONFIG_NVM_DEBUG
--static inline void print_ppa(struct ppa_addr *p, char *msg, int error)
-+static inline void print_ppa(struct nvm_geo *geo, struct ppa_addr *p,
-+			     char *msg, int error)
- {
- 	if (p->c.is_cached) {
- 		pr_err("ppa: (%s: %x) cache line: %llu\n",
- 				msg, error, (u64)p->c.line);
--	} else {
-+	} else if (geo->version == NVM_OCSSD_SPEC_12) {
- 		pr_err("ppa: (%s: %x):ch:%d,lun:%d,blk:%d,pg:%d,pl:%d,sec:%d\n",
- 			msg, error,
- 			p->g.ch, p->g.lun, p->g.blk,
- 			p->g.pg, p->g.pl, p->g.sec);
-+	} else {
-+		pr_err("ppa: (%s: %x):ch:%d,lun:%d,chk:%d,sec:%d\n",
-+			msg, error,
-+			p->m.grp, p->m.pu, p->m.chk, p->m.sec);
- 	}
- }
- 
-@@ -1194,13 +1293,13 @@ static inline void pblk_print_failed_rqd(struct pblk *pblk, struct nvm_rq *rqd,
- 	int bit = -1;
- 
- 	if (rqd->nr_ppas ==  1) {
--		print_ppa(&rqd->ppa_addr, "rqd", error);
-+		print_ppa(&pblk->dev->geo, &rqd->ppa_addr, "rqd", error);
- 		return;
- 	}
- 
- 	while ((bit = find_next_bit((void *)&rqd->ppa_status, rqd->nr_ppas,
- 						bit + 1)) < rqd->nr_ppas) {
--		print_ppa(&rqd->ppa_list[bit], "rqd", error);
-+		print_ppa(&pblk->dev->geo, &rqd->ppa_list[bit], "rqd", error);
- 	}
- 
- 	pr_err("error:%d, ppa_status:%llx\n", error, rqd->ppa_status);
-@@ -1216,16 +1315,25 @@ static inline int pblk_boundary_ppa_checks(struct nvm_tgt_dev *tgt_dev,
- 	for (i = 0; i < nr_ppas; i++) {
- 		ppa = &ppas[i];
- 
--		if (!ppa->c.is_cached &&
--				ppa->g.ch < geo->num_ch &&
--				ppa->g.lun < geo->num_lun &&
--				ppa->g.pl < geo->num_pln &&
--				ppa->g.blk < geo->num_chk &&
--				ppa->g.pg < geo->num_pg &&
--				ppa->g.sec < geo->ws_min)
--			continue;
-+		if (geo->version == NVM_OCSSD_SPEC_12) {
-+			if (!ppa->c.is_cached &&
-+					ppa->g.ch < geo->num_ch &&
-+					ppa->g.lun < geo->num_lun &&
-+					ppa->g.pl < geo->num_pln &&
-+					ppa->g.blk < geo->num_chk &&
-+					ppa->g.pg < geo->num_pg &&
-+					ppa->g.sec < geo->ws_min)
-+				continue;
-+		} else {
-+			if (!ppa->c.is_cached &&
-+					ppa->m.grp < geo->num_ch &&
-+					ppa->m.pu < geo->num_lun &&
-+					ppa->m.chk < geo->num_chk &&
-+					ppa->m.sec < geo->clba)
-+				continue;
-+		}
- 
--		print_ppa(ppa, "boundary", i);
-+		print_ppa(geo, ppa, "boundary", i);
- 
- 		return 1;
- 	}
+ extern int nvm_set_tgt_bb_tbl(struct nvm_tgt_dev *, struct ppa_addr *,
+ 			      int, int);
+ extern int nvm_submit_io(struct nvm_tgt_dev *, struct nvm_rq *);
 -- 
 2.11.0
