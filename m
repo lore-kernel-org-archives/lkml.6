@@ -1,79 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752865AbeC2MCF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 08:02:05 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:58770 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752144AbeC2L0B (ORCPT
+        id S1753226AbeC2MCx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 08:02:53 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34380 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbeC2MCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 07:26:01 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org
-Cc: viro@ZenIV.linux.org.uk, torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org,
-        "Tautschnig, Michael" <tautschn@amazon.co.uk>,
-        Michael Tautschnig <tautschn@amazon.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Jaswinder Singh <jaswinder@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
-Subject: [PATCH 101/109] x86/sigreturn: use SYSCALL_DEFINE0
-Date: Thu, 29 Mar 2018 13:24:18 +0200
-Message-Id: <20180329112426.23043-102-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180329112426.23043-1-linux@dominikbrodowski.net>
-References: <20180329112426.23043-1-linux@dominikbrodowski.net>
+        Thu, 29 Mar 2018 08:02:51 -0400
+Date: Thu, 29 Mar 2018 14:01:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: akpm@linux-foundation.org, mhocko@suse.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, bp@suse.de,
+        rientjes@google.com, tglx@linutronix.de
+Subject: Re: [PATCH v2] lockdep: Show address of "struct lockdep_map" at
+ print_lock().
+Message-ID: <20180329120156.GY4043@hirez.programming.kicks-ass.net>
+References: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180326160549.GL4043@hirez.programming.kicks-ass.net>
+ <201803270558.HCA41032.tVFJOFOMOFLHSQ@I-love.SAKURA.ne.jp>
+ <201803271941.GBE57310.tVSOJLQOFFOHFM@I-love.SAKURA.ne.jp>
+ <201803291926.FEH43221.VSOQHOtFJFLMOF@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201803291926.FEH43221.VSOQHOtFJFLMOF@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tautschnig, Michael" <tautschn@amazon.co.uk>
+On Thu, Mar 29, 2018 at 07:26:52PM +0900, Tetsuo Handa wrote:
+> >From 91c081c4c5f6a99402542951e7de661c38f928ab Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Tue, 27 Mar 2018 19:38:33 +0900
+> Subject: [PATCH v2] lockdep: Show address of "struct lockdep_map" at print_lock().
+> 
+> Since "struct lockdep_map" is embedded into lock objects, we can know
+> which instance of a lock object is acquired using hlock->instance field.
+> This will help finding which threads are causing a lock contention.
+> 
+> Currently, print_lock() is printing hlock->acquire_ip field in both
+> "[<%px>]" and "%pS" format. But "[<%px>]" is little useful nowadays, for
+> we use scripts/faddr2line which receives "%pS" for finding the location
+> in the source code. And I want to reduce amount of output, for
+> debug_show_all_locks() might print a lot.
+> 
+> Therefore, this patch replaces "[<%px>]" for printing hlock->acquire_ip
+> field with "%p" for printing hlock->instance field.
+> 
+> [  251.305475] 3 locks held by a.out/31106:
+> [  251.308949]  #0: 00000000b0f753ba (&mm->mmap_sem){++++}, at: copy_process.part.41+0x10d5/0x1fe0
+> [  251.314283]  #1: 00000000ef64d539 (&mm->mmap_sem/1){+.+.}, at: copy_process.part.41+0x10fe/0x1fe0
+> [  251.319618]  #2: 00000000b41a282e (&mapping->i_mmap_rwsem){++++}, at: copy_process.part.41+0x12f2/0x1fe0
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Acked-by: David Rientjes <rientjes@google.com>
 
-All definitions of syscalls in x86 except for those patched here have
-already been using the appropriate SYSCALL_DEFINE*.
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Signed-off-by: Michael Tautschnig <tautschn@amazon.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Jaswinder Singh <jaswinder@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: x86@kernel.org
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- arch/x86/kernel/signal.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Ingo, can you merge this?
 
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 83a26726b689..da270b95fe4d 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -25,6 +25,7 @@
- #include <linux/user-return-notifier.h>
- #include <linux/uprobes.h>
- #include <linux/context_tracking.h>
-+#include <linux/syscalls.h>
- 
- #include <asm/processor.h>
- #include <asm/ucontext.h>
-@@ -601,7 +602,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
-  * Do a signal return; undo the signal stack.
-  */
- #ifdef CONFIG_X86_32
--asmlinkage long sys_sigreturn(void)
-+SYSCALL_DEFINE0(sigreturn)
- {
- 	struct pt_regs *regs = current_pt_regs();
- 	struct sigframe __user *frame;
-@@ -633,7 +634,7 @@ asmlinkage long sys_sigreturn(void)
- }
- #endif /* CONFIG_X86_32 */
- 
--asmlinkage long sys_rt_sigreturn(void)
-+SYSCALL_DEFINE0(rt_sigreturn)
- {
- 	struct pt_regs *regs = current_pt_regs();
- 	struct rt_sigframe __user *frame;
--- 
-2.16.3
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  kernel/locking/lockdep.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 12a2805..0233863 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -556,9 +556,9 @@ static void print_lock(struct held_lock *hlock)
+>  		return;
+>  	}
+>  
+> +	printk(KERN_CONT "%p", hlock->instance);
+>  	print_lock_name(lock_classes + class_idx - 1);
+> -	printk(KERN_CONT ", at: [<%px>] %pS\n",
+> -		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
+> +	printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
+>  }
+>  
+>  static void lockdep_print_held_locks(struct task_struct *curr)
+> -- 
+> 1.8.3.1
+> 
