@@ -1,92 +1,158 @@
-Return-Path: <fengguang.wu@intel.com>
-X-Google-Smtp-Source: AIpwx48CI+5mhFw+4PfanVLaNR/xsXcDyLjwGdfjeIPiZHQ+zcPcXLWgrNOMtf60NsCL13r3/hk9
-ARC-Seal: i=1; a=rsa-sha256; t=1522376134; cv=none;
+Return-Path: <minchan.kim@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522291331; cv=none;
         d=google.com; s=arc-20160816;
-        b=PRo2FxZPahEckl0g57DBSMQAacNT7ear8WJB19oaSuZtcaIbFe6CMdm2R5XIiEYzre
-         FhSz/kSqffs5WMCWkNmS/TQTnBXbbJSn0/weeafAtWZF7CNaFSj49YyTLUf0Hkmt8Flz
-         TGrM2fsFMFwf+r7Mcdpf/B3PjY1tjjgEURUIL/AoqcKN5AfWbMEHBEZoVN8gxllUfAhl
-         NLBjkY1oXFKWQO5X7IoF/1OUfs5+Xo1Jikk4tfqjKPSCPoSufL8sr2nl75xpgXwafxOs
-         QSJGCP62BkHB6nyE9QugSEwUA0vGVLyH06pxwRizRcQ7YXpn6WoH01R/e9t7sq3J/ARK
-         fwcA==
+        b=CiwLg/Nmo4Qaq6fxb75x2ZGy7Kuk2dx7S7oNz7r57EEMN0TbvcZKyLnOydVSoCvrgj
+         8GsPQwelX6d+bGekxpGSh2vRVPs9PB7eRXr+GHVOT8QhsYC9OOouvCDcy9BlNLkNJbox
+         QsTJCKZk/HWDCtDT2ZgaIJUP0FUK7mZv/HR2CLuZSBWP7NDQIiiB1plAiiyaf3MRBryJ
+         vQ7c9zG2QqoQuYDksDegHAqAwUZxf/fA4TAwegjXMRzx13g//I8lq7cEowhG6r0Wq+nL
+         j+KQxsQtSLd5eKGHVjmRVV5A3EsprKGWw2jrnBrYalapNd5pVBrNB9ECXU5EL/BU/hL3
+         J9Cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=ruLVdU3oTZjKJ1mP5viQtykmbH9WadXsBV9s0LVNMw8=;
-        b=NT5lpSSXYvafJLyZAPkQ6TFNRo2Il3sXBfw2DECiR+WWshGW4zPpiDpZfsfvwcvjZH
-         68j8ItOXnm2Pm0VIwf7qGa2VNYwHpXPlo9A6W8EWRxI2p5fku7FMESP/H1AZ+pCohAE6
-         6P7NOR2jiajoROUpEtAMMqGamxSZHr7/igyZ6kEj5WjpkIuxlbLjZFlphcIKk4eGk2UJ
-         pBU1a6bePeX01dkeGtckWtuu266vzBOEcQ+IvM2c4FgrfshZGtFhMFtO3z4ZqdK1v+L6
-         ORtoboVdQ6AiFmJAEs3MaOz0bMM/wwm7wnW2vWMl3jVWCaks+6rki7jI08LJWkR6bdqC
-         WHMA==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:sender:dkim-signature:arc-authentication-results;
+        bh=7A6UO742e0YPfs1fr/TuYRbA+MrpVigyX0IGlf9j5vo=;
+        b=Es0kP5ViGWAVUIuk24E99kmKYv4MJK1pfQr+phYDF+PfL+MJzdwBQGzpKCxrr2jkSn
+         QfWUs1SoYKVOabE3vyfSo5sGbcwTGeSFBR3uwPNIjJQ2+qAroW8UhBRAKFKebGMWSjOV
+         hNXc5N9zxgYzMpWNxgAMlEUfa7J0xKAjDUVFMTwfnZ+o1/HfP+CJfysNwAuZHgsFr3PZ
+         YNy4w50YRl60KGUuBBzJVfE+qCaF5PPQkpXEuEEtsih2wNsEJoEk7qBXmxnSpWqBOqup
+         jZHONxY3eS/ZEgFII5VK8VLdit5MC50X2X1zJMimh+vBFD8iyI1xKlBrp0CNHNvK3N1w
+         53bw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mOJLsQko;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,378,1517904000";
-   d="scan'208";a="38047988"
-Date: Fri, 30 Mar 2018 10:15:30 +0800
-From: Fengguang Wu <fengguang.wu@intel.com>
-To: Minchan Kim <minchan@kernel.org>
-Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-	LKML <linux-kernel@vger.kernel.org>, Todd Kjos <tkjos@google.com>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mOJLsQko;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
+X-Google-Smtp-Source: AIpwx48BB8tQwB7u95fc7C5M2WQGgOwtgJfxNBohZQ78ZQvF3jGDQ/Bs7xSgBdoQK/ZJwJ3jymoNGQ==
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date: Thu, 29 Mar 2018 11:42:04 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Todd Kjos <tkjos@google.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
 	Martijn Coenen <maco@android.com>
 Subject: Re: [PATCH v3] ANDROID: binder: change down_write to down_read
-Message-ID: <20180330021530.iisqrcuw4uoohvv4@wfg-t540p.sh.intel.com>
+Message-ID: <20180329024204.GB91696@rodete-desktop-imager.corp.google.com>
 References: <20180329023712.133164-1-minchan@kernel.org>
- <201803300705.KbdKYZ01%fengguang.wu@intel.com>
- <20180330003736.GA255979@rodete-desktop-imager.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180330003736.GA255979@rodete-desktop-imager.corp.google.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180329023712.133164-1-minchan@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596231778699320743?=
-X-GMAIL-MSGID: =?utf-8?q?1596327077808752110?=
+X-GMAIL-MSGID: =?utf-8?q?1596238154661509619?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 09:37:36AM +0900, Minchan Kim wrote:
->On Fri, Mar 30, 2018 at 07:42:37AM +0800, kbuild test robot wrote:
->> Hi Minchan,
->>
->> I love your patch! Yet something to improve:
->
->Glad to hear.
->It's first time someone loves my patch. ;-)
 
-FYI, that message originates from Linus. :-)
+On Thu, Mar 29, 2018 at 11:37:12AM +0900, Minchan Kim wrote:
+> binder_update_page_range needs down_write of mmap_sem because
+> vm_insert_page need to change vma->vm_flags to VM_MIXEDMAP unless
+> it is set. However, when I profile binder working, it seems
+> every binder buffers should be mapped in advance by binder_mmap.
+> It means we could set VM_MIXEDMAP in bider_mmap time which is
+> already hold a mmap_sem as down_write so binder_update_page_range
+> doesn't need to hold a mmap_sem as down_write.
+> 
+> Android suffers from mmap_sem contention so let's reduce mmap_sem
+> down_write.
+> 
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Arve Hjønnevåg <arve@android.com>
+> Reviewed-by: Martijn Coenen <maco@android.com>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
 
->> [auto build test ERROR on staging/staging-testing]
->> [also build test ERROR on v4.16-rc7 next-20180329]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>
->> url:    https://github.com/0day-ci/linux/commits/Minchan-Kim/ANDROID-binder-change-down_write-to-down_read/20180330-043057
->> config: x86_64-randconfig-x014-201812 (attached as .config)
->> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
->> reproduce:
->>         # save the attached .config to linux build tree
->>         make ARCH=x86_64
->>
->> All errors (new ones prefixed by >>):
->>
->>    drivers//android/binder.c: In function 'binder_mmap':
->> >> drivers//android/binder.c:4725:24: error: 'struct vm_area_struct' has no member named 'flags'; did you mean 'vm_flags'?
->>      vma->vm_flags = (vma->flags | VM_DONTCOPY | VM_MIXEDMAP) &
->>                            ^~~~~
->>                            vm_flags
->
->http://lkml.kernel.org/r/<20180329065424.203172-1-minchan@kernel.org>
->
->This time, I was little bit fast. :)
+Sent wrong version. Sorry for that. Please ignore this and take it.
 
-Hurrah, quick hands! :)
+>From 480e992d4a650fb98e1397114d75dea7af8e6d0c Mon Sep 17 00:00:00 2001
+From: Minchan Kim <minchan@kernel.org>
+Date: Wed, 28 Mar 2018 11:32:42 +0900
+Subject: [PATCH v3] ANDROID: binder: change down_write to down_read
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Cheers,
-Fengguang
+binder_update_page_range needs down_write of mmap_sem because
+vm_insert_page need to change vma->vm_flags to VM_MIXEDMAP unless
+it is set. However, when I profile binder working, it seems
+every binder buffers should be mapped in advance by binder_mmap.
+It means we could set VM_MIXEDMAP in bider_mmap time which is
+already hold a mmap_sem as down_write so binder_update_page_range
+doesn't need to hold a mmap_sem as down_write.
+
+Android suffers from mmap_sem contention so let's reduce mmap_sem
+down_write.
+
+Cc: Arve Hjønnevåg <arve@android.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Martijn Coenen <maco@android.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+
+>From v2:
+  * Fix vma->flag setting - Arve
+
+>From v1:
+  * remove WARN_ON_ONCE - Greg
+  * add reviewed-by - Martijn
+
+Martijn, I took your LGTM of v1 as Reviewed-by. If you don't like it
+or want to change it to acked-by, please, tell me.
+
+ drivers/android/binder.c       | 3 ++-
+ drivers/android/binder_alloc.c | 6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 764b63a5aade..fe62be7d7113 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -4722,7 +4722,8 @@ static int binder_mmap(struct file *filp, struct vm_area_struct *vma)
+ 		failure_string = "bad vm_flags";
+ 		goto err_bad_arg;
+ 	}
+-	vma->vm_flags = (vma->vm_flags | VM_DONTCOPY) & ~VM_MAYWRITE;
++	vma->vm_flags = (vma->vm_flags | VM_DONTCOPY | VM_MIXEDMAP) &
++							~VM_MAYWRITE;
+ 	vma->vm_ops = &binder_vm_ops;
+ 	vma->vm_private_data = proc;
+ 
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 5a426c877dfb..4f382d51def1 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -219,7 +219,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
+ 		mm = alloc->vma_vm_mm;
+ 
+ 	if (mm) {
+-		down_write(&mm->mmap_sem);
++		down_read(&mm->mmap_sem);
+ 		vma = alloc->vma;
+ 	}
+ 
+@@ -288,7 +288,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
+ 		/* vm_insert_page does not seem to increment the refcount */
+ 	}
+ 	if (mm) {
+-		up_write(&mm->mmap_sem);
++		up_read(&mm->mmap_sem);
+ 		mmput(mm);
+ 	}
+ 	return 0;
+@@ -321,7 +321,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
+ 	}
+ err_no_vma:
+ 	if (mm) {
+-		up_write(&mm->mmap_sem);
++		up_read(&mm->mmap_sem);
+ 		mmput(mm);
+ 	}
+ 	return vma ? -ENOMEM : -ESRCH;
+-- 
+2.17.0.rc1.321.gba9d0f2565-goog
