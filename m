@@ -1,90 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752764AbeC2NmM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 09:42:12 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:32945 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752427AbeC2NmK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 09:42:10 -0400
-X-Google-Smtp-Source: AIpwx489/A4BX+iQlGWrPuKqh/zV+z82yLBWCq8JV5p6zjlEQ3sKNBlMtlrlv87abt9qxSE/H1Dlkw==
-Subject: Re: [PATCH v1] hwmon, via-cputem: support new centaur CPUs
-To: David Wang <davidwang@zhaoxin.com>, jdelvare@suse.com,
-        tglx@linutronix.de, mingo@redhat.com, rjw@rjwysocki.net,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: brucechang@via-alliance.com, cooperyan@zhaoxin.com,
-        qiyuanwang@zhaoxin.com, benjaminpan@viatech.com, lukelin@viacpu.com,
-        timguo@zhaoxin.com
-References: <1522305403-21009-1-git-send-email-davidwang@zhaoxin.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <7fd20afd-ef30-5a25-7fd2-b5f7f60b5a1f@roeck-us.net>
-Date: Thu, 29 Mar 2018 06:42:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752701AbeC2NoT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 09:44:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41202 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752067AbeC2NoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 09:44:18 -0400
+Date: Thu, 29 Mar 2018 15:44:16 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Josh Wu <rainyfeeling@outlook.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180329154416.5c1a0013@bbrezillon>
+In-Reply-To: <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+References: <20180329131054.22506-1-peda@axentia.se>
+        <20180329153322.5e2fc1e7@bbrezillon>
+        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1522305403-21009-1-git-send-email-davidwang@zhaoxin.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/28/2018 11:36 PM, David Wang wrote:
-> Newer centaur CPUs(Family == 7) also support this cpu temperature sensor.
+On Thu, 29 Mar 2018 15:37:43 +0200
+Peter Rosin <peda@axentia.se> wrote:
+
+> On 2018-03-29 15:33, Boris Brezillon wrote:
+> > On Thu, 29 Mar 2018 15:10:54 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
+> >> flash accesses have a tendency to cause display disturbances. Add a
+> >> module param to disable DMA from the NAND controller, since that fixes
+> >> the display problem for me.
+> >>
+> >> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >> ---
+> >>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
+> >>  1 file changed, 6 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >> index b2f00b398490..2ff7a77c7b8e 100644
+> >> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >> @@ -129,6 +129,11 @@
+> >>  #define DEFAULT_TIMEOUT_MS			1000
+> >>  #define MIN_DMA_LEN				128
+> >>  
+> >> +static bool atmel_nand_avoid_dma __read_mostly;
+> >> +
+> >> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
+> >> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);  
+> > 
+> > I'm not a big fan of those driver specific cmdline parameters. Can't we
+> > instead give an higher priority to HLCDC master using the bus matrix?  
 > 
-> Signed-off-by: David Wang <davidwang@zhaoxin.com>
-> ---
+> I don't know if it will be enough, but we sure can try. However, I have
+> no idea how to do that. I will happily test stuff though...
 
-FWIW, this would be v2, not v1, and a changelog would be appreciated.
+There's no interface to configure that from Linux, but you can try to
+tweak it with devmem and if that does the trick, maybe we can expose a
+way to configure that from Linux. For more details, see the "Bus Matrix
+(MATRIX)" section in Atmel datasheets.
 
->   drivers/hwmon/via-cputemp.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/hwmon/via-cputemp.c b/drivers/hwmon/via-cputemp.c
-> index 07a0cb0..2f5bd50 100644
-> --- a/drivers/hwmon/via-cputemp.c
-> +++ b/drivers/hwmon/via-cputemp.c
-> @@ -136,6 +136,11 @@ static int via_cputemp_probe(struct platform_device *pdev)
->   	data->id = pdev->id;
->   	data->name = "via_cputemp";
->   
-> +	if (c->x86 == 7) {
-> +		data->msr_temp = 0x1423;
-> +		goto test_access;
-> +	}
-
-Please rework to not require a goto. Something like
-
-	if (c->x86 == 7) {
-		data->msr_temp = 0x1423;
-	} else switch (c->x86_model) {
-		...
-	}
-
-should do.
-
-Thanks,
-Guenter
-
-> +
->   	switch (c->x86_model) {
->   	case 0xA:
->   		/* C7 A */
-> @@ -152,6 +157,7 @@ static int via_cputemp_probe(struct platform_device *pdev)
->   		return -ENODEV;
->   	}
->   
-> +test_access:
->   	/* test if we can access the TEMPERATURE MSR */
->   	err = rdmsr_safe_on_cpu(data->id, data->msr_temp, &eax, &edx);
->   	if (err) {
-> @@ -283,6 +289,7 @@ static int via_cputemp_down_prep(unsigned int cpu)
->   	{ X86_VENDOR_CENTAUR, 6, 0xa, }, /* C7 A */
->   	{ X86_VENDOR_CENTAUR, 6, 0xd, }, /* C7 D */
->   	{ X86_VENDOR_CENTAUR, 6, 0xf, }, /* Nano */
-> +	{ X86_VENDOR_CENTAUR, 7, X86_MODEL_ANY, },
->   	{}
->   };
->   MODULE_DEVICE_TABLE(x86cpu, cputemp_ids);
-> 
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
