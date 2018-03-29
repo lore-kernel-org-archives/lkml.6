@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49MgZTNHYUJXAZTMStUvr3If9pEClxL0zfMxO+Kog9JOH0GqJNfihPy5FGv0IZJGBLId/rp
-ARC-Seal: i=1; a=rsa-sha256; t=1522346548; cv=none;
+X-Google-Smtp-Source: AIpwx4/+o3+SX6sFSH57AlgG7ojTZvaRoXmfSaQ8BmelRcebYt965G5ab/cMtIUpHcaQllpVJfN+
+ARC-Seal: i=1; a=rsa-sha256; t=1522346546; cv=none;
         d=google.com; s=arc-20160816;
-        b=0trLYka7wu+/QODwpkkjzDViEeKaY05lx8JX48NMZAxd5ipjeMo2gd2hiW5IfZwexN
-         9nxHLuzPJGUE+KKzG8sB26Tq5cnbaSedGei7l5k9RC/81Xz6Ds5jzT35rk6ytlbiw2sj
-         B0lNgxi4YaoinsgSba83YDtJkLcADgaMSS0vULyY6OZurGZO47AfU5G4xrpD4v3A7nxH
-         mmygZaraCbDu9sCAgBHUmWOZ7mNj3enJD3lG7lqbBzZOWhx0pFSXdqQ5sVv0xIHec2JX
-         zjg9sOCdVgRd4W6uIbdkfOFLzFQ6fU5uex4W21C/l9lDYTqeb/bZJHHXjxoKGEzPt+at
-         6t1Q==
+        b=Bqq2yCbbIcnPZbsqB48aKbzPDXB9dlSZZGtNLqf8GkUaPDuYEp85zD94wEIYo82/jo
+         8XIdtlg6smGc5JUDVnGheh8u3tHU6dLldbZmXX9U33Ys1l5YssTPpHM/AYmkX3IIGQ5X
+         JbhL3zkdv4f8UDjAAruaQ+mGuccRWEFCTbfNbuaQpJ99SCIdMrvbdvh2+5MoHm2XcDDn
+         aTbMw04cU3L74AqFx1V2CkSUchxmuruWVmX3POrE/HimmJL2jpalR8i4wKP3//G4FZSU
+         y8kFRtO40V2YRrYxhJytIq7ceQx8u5yZfMyTTrRbH7DUAsmrA3Rmqk4S//rjmvHES63f
+         7Y6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=71+T5BBmS1jFiCHQFGajd9XUZFLllTwxPnxbHCqZb8g=;
-        b=FRuDeUGP2XplHl/M7iryWMgfEIn2o70dKbFd/01w+C0HbYOpWk6E5iFec1S1Mn3UiY
-         TWmHSkMjjn9btH71RT5/0Qt35dQQnTwpRzC45zLgLRkzsyCMj2OclQSJiBKMVBAdJwba
-         jov8OsTqpUQf99l1Wj5tticyYwuxJOJrPPxGiGmDQLQCP23xVEDQyoTzi/Z5crxkHJtt
-         Tox8+fFg6goCOQqYaQK7Lo6pqaY5IZN435uUv4j499i0pmcZ6ODmMDkFQcW9ZTwibfjy
-         gE56ScGp/dsUNAgXGSWhHNYB22SY+cS7hkWgrxI7nCNtgykpd8S4QXQyCyuEbxONkc+k
-         JaKQ==
+        bh=RsS+ua/PD6UVtEVAm/0n4qeTIV29slW+4RnSwBEwz/w=;
+        b=DLXBn8gKTB5nCurb3pqk6ld698FU9QZ9cfK8wui0ic/SYswFwdpvKT7BdNIcTKVuS6
+         dtl61f1oE1JZdku/sE/NQ5GnU5Qju4kHEYLRuuDn5AhPkOxyQuQy1EgmpHjZFctOVVga
+         qhAT/MTv2deGv91rUSscLbFyDEuZuL9rnMOyN+dWIe6CGMdeBiOwXjHRSIdsF0rV/YFp
+         /OBZAKW3X5Lszx0f4dzh60pE+ZMI0I+QoJ8sh/syROgC7ZRtBG4cSTGMJ0/lZjd05s//
+         xE9kHjOaJH2INzzmnguz9LGeIyq+6LKVHchGQ6SSOTe9hLen8C8R6JxIplaR7NOCDWIF
+         Z3JQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,13 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
-	Andrei Vagin <avagin@virtuozzo.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@osg.samsung.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 24/47] net: use skb_to_full_sk() in skb_update_prio()
-Date: Thu, 29 Mar 2018 20:00:05 +0200
-Message-Id: <20180329175731.036306102@linuxfoundation.org>
+Subject: [PATCH 4.15 23/47] ieee802154: 6lowpan: fix possible NULL deref in lowpan_device_event()
+Date: Thu, 29 Mar 2018 20:00:04 +0200
+Message-Id: <20180329175730.973977320@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296054834790372?=
-X-GMAIL-MSGID: =?utf-8?q?1596296054834790372?=
+X-GMAIL-THRID: =?utf-8?q?1596296051714340324?=
+X-GMAIL-MSGID: =?utf-8?q?1596296051714340324?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,77 +55,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 4dcb31d4649df36297296b819437709f5407059c ]
+[ Upstream commit ca0edb131bdf1e6beaeb2b8289fd6b374b74147d ]
 
-Andrei Vagin reported a KASAN: slab-out-of-bounds error in
-skb_update_prio()
+A tun device type can trivially be set to arbitrary value using
+TUNSETLINK ioctl().
 
-Since SYNACK might be attached to a request socket, we need to
-get back to the listener socket.
-Since this listener is manipulated without locks, add const
-qualifiers to sock_cgroup_prioidx() so that the const can also
-be used in skb_update_prio()
+Therefore, lowpan_device_event() must really check that ieee802154_ptr
+is not NULL.
 
-Also add the const qualifier to sock_cgroup_classid() for consistency.
-
-Fixes: ca6fb0651883 ("tcp: attach SYNACK messages to request sockets instead of listener")
+Fixes: 2c88b5283f60d ("ieee802154: 6lowpan: remove check on null")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Andrei Vagin <avagin@virtuozzo.com>
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Stefan Schmidt <stefan@osg.samsung.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Stefan Schmidt <stefan@osg.samsung.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/cgroup-defs.h |    4 ++--
- net/core/dev.c              |   22 +++++++++++++++-------
- 2 files changed, 17 insertions(+), 9 deletions(-)
+ net/ieee802154/6lowpan/core.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -755,13 +755,13 @@ struct sock_cgroup_data {
-  * updaters and return part of the previous pointer as the prioidx or
-  * classid.  Such races are short-lived and the result isn't critical.
-  */
--static inline u16 sock_cgroup_prioidx(struct sock_cgroup_data *skcd)
-+static inline u16 sock_cgroup_prioidx(const struct sock_cgroup_data *skcd)
+--- a/net/ieee802154/6lowpan/core.c
++++ b/net/ieee802154/6lowpan/core.c
+@@ -206,9 +206,13 @@ static inline void lowpan_netlink_fini(v
+ static int lowpan_device_event(struct notifier_block *unused,
+ 			       unsigned long event, void *ptr)
  {
- 	/* fallback to 1 which is always the ID of the root cgroup */
- 	return (skcd->is_data & 1) ? skcd->prioidx : 1;
- }
+-	struct net_device *wdev = netdev_notifier_info_to_dev(ptr);
++	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
++	struct wpan_dev *wpan_dev;
  
--static inline u32 sock_cgroup_classid(struct sock_cgroup_data *skcd)
-+static inline u32 sock_cgroup_classid(const struct sock_cgroup_data *skcd)
- {
- 	/* fallback to 0 which is the unconfigured default classid */
- 	return (skcd->is_data & 1) ? skcd->classid : 0;
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -3247,15 +3247,23 @@ static inline int __dev_xmit_skb(struct
- #if IS_ENABLED(CONFIG_CGROUP_NET_PRIO)
- static void skb_update_prio(struct sk_buff *skb)
- {
--	struct netprio_map *map = rcu_dereference_bh(skb->dev->priomap);
-+	const struct netprio_map *map;
-+	const struct sock *sk;
-+	unsigned int prioidx;
+-	if (wdev->type != ARPHRD_IEEE802154)
++	if (ndev->type != ARPHRD_IEEE802154)
++		return NOTIFY_DONE;
++	wpan_dev = ndev->ieee802154_ptr;
++	if (!wpan_dev)
+ 		return NOTIFY_DONE;
  
--	if (!skb->priority && skb->sk && map) {
--		unsigned int prioidx =
--			sock_cgroup_prioidx(&skb->sk->sk_cgrp_data);
-+	if (skb->priority)
-+		return;
-+	map = rcu_dereference_bh(skb->dev->priomap);
-+	if (!map)
-+		return;
-+	sk = skb_to_full_sk(skb);
-+	if (!sk)
-+		return;
- 
--		if (prioidx < map->priomap_len)
--			skb->priority = map->priomap[prioidx];
--	}
-+	prioidx = sock_cgroup_prioidx(&sk->sk_cgrp_data);
-+
-+	if (prioidx < map->priomap_len)
-+		skb->priority = map->priomap[prioidx];
- }
- #else
- #define skb_update_prio(skb)
+ 	switch (event) {
+@@ -217,8 +221,8 @@ static int lowpan_device_event(struct no
+ 		 * also delete possible lowpan interfaces which belongs
+ 		 * to the wpan interface.
+ 		 */
+-		if (wdev->ieee802154_ptr->lowpan_dev)
+-			lowpan_dellink(wdev->ieee802154_ptr->lowpan_dev, NULL);
++		if (wpan_dev->lowpan_dev)
++			lowpan_dellink(wpan_dev->lowpan_dev, NULL);
+ 		break;
+ 	default:
+ 		return NOTIFY_DONE;
