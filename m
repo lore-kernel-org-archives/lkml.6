@@ -1,90 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeC2OyX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:54:23 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40893 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeC2OyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:54:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
-   d="scan'208";a="212361512"
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Subject: [PATCH v4 0/3] perf/core: expose thread context switch out event type
- to user space
-Message-ID: <6f4a5d0d-9e1f-d5a1-7719-7547bb688453@linux.intel.com>
-Date: Thu, 29 Mar 2018 17:54:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752199AbeC2OzM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:55:12 -0400
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:39403 "EHLO
+        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbeC2OzK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:55:10 -0400
+X-Google-Smtp-Source: AIpwx494AaJlqL24dkZI24v0xx20omIaLnoS1KQDPjOEF/MaVvIArocX7Of/nDp9Of11Uzw/83pMuA==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: slongerbeam@gmail.com, mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: todor.tomov@linaro.org, nicolas.dechesne@linaro.org,
+        dragonboard@lists.96boards.org, loic.poulain@linaro.org,
+        daniel.thompson@linaro.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [RESEND PATCH] Add pixel clock support to OV5640 camera sensor
+Date: Thu, 29 Mar 2018 20:24:59 +0530
+Message-Id: <1522335300-13467-1-git-send-email-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some of the camera subsystems like camss in Qualcommm MSM chipsets
+require pixel clock support in camera sensor drivers for proper functioning.
+So, add a default pixel clock rate of 96MHz to OV5640 camera sensor driver.
 
-Implement preempting context switch out event as a part of 
-PERF_RECORD_SWITCH[_CPU_WIDE] record. The event is treated as preemption 
-one when task->state value of the thread being switched out is TASK_RUNNING;
+According to the datasheet, 96MHz can be used as a pixel clock rate for
+most of the modes.
 
-Percentage of preempting and non-preempting context switches help 
-understanding the nature of workloads (CPU or IO bound) that are running 
-on the machine;
+This patch has been validated on Dragonboard410c with OV5640 connected
+using D3 Camera Mezzanine.
 
-Event type encoding is implemented using a new
-PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit in misc field of event record header;
+Manivannan Sadhasivam (1):
+  media: i2c: ov5640: Add pixel clock support
 
-Perf tool report and script commands have been extended to decode 
-new PREEMPT bit and the updated output looks like this:
+ drivers/media/i2c/ov5640.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-tools/perf/perf report -D -i perf.data | grep _SWITCH
-
-0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
-4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
-0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-
-perf script --show-switch-events -F +misc -I -i perf.data:
-
-          hdparm  4073 [004] U       762.198265:     380194 cycles:ppp:      7faf727f5a23 strchr (/usr/lib64/ld-2.26.so)
-          hdparm  4073 [004] K       762.198366:     441572 cycles:ppp:  ffffffffb9218435 alloc_set_pte (/lib/modules/4.16.0-rc6+/build/vmlinux)
-          hdparm  4073 [004] S       762.198391: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-         swapper     0 [004]         762.198392: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-         swapper     0 [004] Sp      762.198477: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  4073/4073 
-          hdparm  4073 [004]         762.198478: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-         swapper     0 [007] K       762.198514:    2303073 cycles:ppp:  ffffffffb98b0c66 intel_idle (/lib/modules/4.16.0-rc6+/build/vmlinux)
-         swapper     0 [007] Sp      762.198561: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  1134/1134 
-  kworker/u16:18  1134 [007]         762.198562: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-  kworker/u16:18  1134 [007] S       762.198567: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-
-The documentation has been updated to mention PREEMPT switch out events 
-and its decoding symbols in perf script output.
-
-The changes have been manually tested on Fedora 27 with the patched kernel:
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-
----
- Alexey Budankov (3):
-	perf/core: store context switch out type into Perf trace
-	perf report: extend raw dump (-D) out with switch out event type
-	perf script: extend misc field decoding with switch out event type
-
- include/uapi/linux/perf_event.h          |  4 ++++
- kernel/events/core.c                     |  4 ++++
- tools/include/uapi/linux/perf_event.h    |  4 ++++
- tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
- tools/perf/builtin-script.c              |  5 ++++-
- tools/perf/util/event.c                  |  4 +++-
- 6 files changed, 28 insertions(+), 10 deletions(-)
+-- 
+2.7.4
