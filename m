@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/4zcppj1hQfGsNMdLB7V5uBqEZViQthIZ1s4pHbH892kzgmQxxHgKKOUa55buk6zBNFs/S
-ARC-Seal: i=1; a=rsa-sha256; t=1522346718; cv=none;
+X-Google-Smtp-Source: AIpwx4+BrPBWQlKURypECzEGndh13TUjEL8K6Ms0SeXo49U5zESUKYvH4jzcoHvowfxDDi157xPq
+ARC-Seal: i=1; a=rsa-sha256; t=1522346716; cv=none;
         d=google.com; s=arc-20160816;
-        b=ifwaaaR9PZ/FrCgUvvREJBmRemHc65JNUyHL18MzPu00x/AcyCmL0vFKwodU5path4
-         OhgtzBJ7nmtxe3kTh7K5uf4DzREDm2eHfLwg2gSw7ekJMIvBYdYTay8P4qabRr5ZsWpy
-         FE+xXulg5Qyx8OXXqFpzbtm7MVVP4vmJq2lMGWY1bPYn06cSIiyf3DGK/epOVEI6MEMm
-         rUlQ0ORTSbfNMZCUOPxIQEM6qq8FjL82nTjl04fFhDfICzjsus4NPHk2cmVCe1AIRFMj
-         nTNcXqfk/INztouGN8MMTlbhmLoGWVhavYS865eJ035/lXnoae93GBv7P+a1WUEu7HFU
-         yZjQ==
+        b=sa4iRJYKh2wNk5l0srot0Zy0ghvCQqP81A8OGBxJnocPdtcezCTMowvoRIE4FcSezv
+         iduUjFtH+4CKkSaLlOdqduP6BT80YQ9RSilmjSU+OBtGX+C3DvqTyVZsaG5IL71+z1ib
+         394nqgDfjQzSa+QdRK7YUGk0fWtEPDG9drbPmN7sxnlnjZ94/mMJ51Bn0a4xZyJRl25P
+         YLaP/bzmOkMstCaZlx5XXA8AybrdNJM+a4aSR6sF+5Vqv9cINqLN11GBRjl4pEukFTBC
+         Hsorxw9eQs25Ef6ZN/XiYZCa1fyLcLFOiwae0SfHgiVCywFbiA1cSPucxlUCpRit9gmm
+         2VLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=5qMZgB4Sz6+CXqLuwvdFetWoyF5VsgT3j/EcbYA8Rso=;
-        b=z7SirxrUadomKrWlzvzunMAX8rKDigPELNEaHbjdjo9iBPpgje4G9yFGKmhTgYJqDP
-         ojyKobhyo6WUkcpRTjrtdGpFFIQ7cziYhuUGZqLTEvPNBj/OMbqchvMlbXjqOSNpheCT
-         qG1IjZU8G/lPv3SkpVXJSlj4k4i7eQkNhjtCLosftMrM24L/e4q0eCLLCKQDBpCH0Bng
-         XdoC6WIWdRjZOKrstQVaLATteKqzWBM5ooPZPegFfH/Yrcgd7a2t3nOW8reo09mfn9Am
-         0XNnP3vzf5rLhvAQUgP9+2pc0yJEVuld8U3LKbWYkr29h3E0Adh9qWtWdmElfiBDQnvN
-         QRsg==
+        bh=+I0y7Gxw9gPhTCIJO5AKwsxSkaFitWJDE0oQtz2Ip6E=;
+        b=ZSVgCo9hma3mPrWl85i5pgjdUsrCo76nC8VIqht8juC4NaNojs6//Y8Rso5aRzBE2f
+         v7A7o/8sjr0mgsYdndjVBoSr6xWKy3dhS3Z2fdKoYw+hmjTuvW4fSr5SoWRpfmnl5jyP
+         s0PNwcnHjl+UYfl8by98FRAh1yf/f8EkecIoCu07SP05JifEkt+J9j2NcOH8rQIBoLLo
+         7sfXK6Ojxh3wWLKmSLvXVkuVq2zhLGrqftCaqBFZb5kF9bsIBb2uljstOCxu6HftkN9V
+         sBTSCe0adxfNzZHVPjV62rMHraIEcr+FuOt5l4wCyv3tZ+CLccfr35vL8oVBpj307B/l
+         NCAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arkadi Sharshevsky <arkadis@mellanox.com>,
-	Jiri Pirko <jiri@mellanox.com>,
+	"Randy E. Witt" <randy.e.witt@intel.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 34/43] team: Fix double free in error path
-Date: Thu, 29 Mar 2018 20:00:29 +0200
-Message-Id: <20180329175733.806830645@linuxfoundation.org>
+Subject: [PATCH 4.14 33/43] skbuff: Fix not waking applications when errors are enqueued
+Date: Thu, 29 Mar 2018 20:00:28 +0200
+Message-Id: <20180329175733.626168276@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
 References: <20180329175730.190353692@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296150991249448?=
-X-GMAIL-MSGID: =?utf-8?q?1596296233320005745?=
+X-GMAIL-THRID: =?utf-8?q?1596296148190849084?=
+X-GMAIL-MSGID: =?utf-8?q?1596296230725221873?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arkadi Sharshevsky <arkadis@mellanox.com>
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
 
-[ Upstream commit cbcc607e18422555db569b593608aec26111cb0b ]
+[ Upstream commit 6e5d58fdc9bedd0255a8781b258f10bbdc63e975 ]
 
-The __send_and_alloc_skb() receives a skb ptr as a parameter but in
-case it fails the skb is not valid:
-- Send failed and released the skb internally.
-- Allocation failed.
+When errors are enqueued to the error queue via sock_queue_err_skb()
+function, it is possible that the waiting application is not notified.
 
-The current code tries to release the skb in case of failure which
-causes redundant freeing.
+Calling 'sk->sk_data_ready()' would not notify applications that
+selected only POLLERR events in poll() (for example).
 
-Fixes: 9b00cf2d1024 ("team: implement multipart netlink messages for options transfers")
-Signed-off-by: Arkadi Sharshevsky <arkadis@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: Randy E. Witt <randy.e.witt@intel.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/skbuff.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -2394,7 +2394,7 @@ send_done:
- 	if (!nlh) {
- 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
- 		if (err)
--			goto errout;
-+			return err;
- 		goto send_done;
- 	}
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -4171,7 +4171,7 @@ int sock_queue_err_skb(struct sock *sk,
  
-@@ -2680,7 +2680,7 @@ send_done:
- 	if (!nlh) {
- 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
- 		if (err)
--			goto errout;
-+			return err;
- 		goto send_done;
- 	}
- 
+ 	skb_queue_tail(&sk->sk_error_queue, skb);
+ 	if (!sock_flag(sk, SOCK_DEAD))
+-		sk->sk_data_ready(sk);
++		sk->sk_error_report(sk);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(sock_queue_err_skb);
