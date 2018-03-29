@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+b8S1aC58q66s/PzDRbCAXIG/ex0/uP4HjBfpkBk5Xg6ie9Px7XRPV4TpR2s/8L3Ix/b47
-ARC-Seal: i=1; a=rsa-sha256; t=1522346556; cv=none;
+X-Google-Smtp-Source: AIpwx49RgDu4HMisV3TBnnM+vcHQcWXCdqUziu8yhf+PUhCjZXbtHa3MbWGLCWC3dw+SsbWaVEx6
+ARC-Seal: i=1; a=rsa-sha256; t=1522346554; cv=none;
         d=google.com; s=arc-20160816;
-        b=z+E5RwiTE8WgKkO5UuuEVupsc61oY6amgMhD2SwkzFUi/el8k0YLWg83dIZK8+KpiF
-         nF/11knaQECD58xprvoQDPqX+YIl94RyY+Ep7tAC7AbmP8EYgWcyen3psovox4RXlXHy
-         rEY54QR0ZeX8kuxBHAyR2mMuvUU808XsF8GE5TQQLzPrj+0nzK5E9ksMqHRXjb8z6/vy
-         eTEl0WXFvZ7zQRmbM6CXB/UCMu9STT6zUx+QXusubdzjtWjgCWOWO8geo9WnZ3HWaC7H
-         drrEo7T8K+4/FLYQmvGNvz5RfXeMaw9V0MsPhaltpsEgs+junhWRkFe1zq/mbqFHMcGD
-         57Iw==
+        b=IbklIK/5qVyGEM/aYTvRtIffYs+7U95j9txSXa4y5TsFVslFxh+DXtNlESmuLqH9qZ
+         NydISZj8kBbZEK5xDhNtL6SAxfppx6VtGcnn4vOZh/spy3UIoE/H0Jc0DRfNfy0SKyEL
+         vTZWkipC+lspFnn2PVUNC7xISq8E8HWUwDonhzAdn1wE3/UScfRDqTumlFEHRUtlwPhq
+         tJEPdjIpewmDbpaTzi6R9NMDNi95RAlG3kNTeaWmeFxeowo+PLE5C0q91jtsKFb2HsC1
+         7DwAiUCiJGJO9zr2qAkaJWKJZGJS61qqp79GPKxgMIauehRqzUSlqPZSwf9z/H5CvBf9
+         w7zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jqxHKhckHNVjkiqLSuJiV31F3vcmUCKI7WGZaGo0QLg=;
-        b=RyBBksPu0D2k0cD/dQDjTSMjh29U+5PfPhP64iuT9shLExvUYY2I6yRdfWT5tb2gNq
-         o3yLqxEt0VvMPQGTy4Y9pHlN73XQd+SHBSp3n9ogX//PWE6ZPnM3D097kl7tly0Ai1pM
-         0CdWN/jBD43IS6os9oDQ+7VzD7GdegQYfdbNsu9nE7B4yAda9l3JfhVDdTFyGlaF12v2
-         r282Hd4DcsQi93BTleR7b1N+25ZVzDIJJxSq7jMCShxWtrspgssI2q8QvnZ41engsWQ0
-         OAyhO/CEktc+hZWanvV/LgTaKCGTSp3Z11I1178L5UJF9tX3y+66PyMFIqDTr+hMY4wG
-         ZoMg==
+        bh=BRfpAU6xBgD9Kph5C7wt7ZR+1XzMRKMR37iw3lo7/4w=;
+        b=tGunJbb7iMAucmrCWzVkgmsZ3iNz/D80REIVEFK520Khq03235SnSDZ997ZbVH2wmG
+         VtuWwuEV6Gm5AG7wQym551OwMWe3EUrlpzcMUynZYg7hyH7IvV+xzQJyRdts0vPKY4df
+         Fge4Sv1OiiX94NbZv4Znb63fEbrNJxvzTOGMb0+UUlVC3lmuIRw3NVGkFVLTrmhId5M6
+         pJVizKZchm5QmiOzIoVB4ayxc6FtAg7cTDMLr1Ty/fqgHCwiHkXxDlCkRjAaR4qzF7mF
+         s4Q6ML+47QN8tU/ZXRq0j1yOQdK5md3QNpDBwTdlyqr937YEKJo+L72Mtt7G7MLRXFs8
+         c4bA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-	Ursula Braun <ubraun@linux.vnet.ibm.com>,
+	Arkadi Sharshevsky <arkadis@mellanox.com>,
+	Jiri Pirko <jiri@mellanox.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 26/47] s390/qeth: free netdevice when removing a card
-Date: Thu, 29 Mar 2018 20:00:07 +0200
-Message-Id: <20180329175731.241533400@linuxfoundation.org>
+Subject: [PATCH 4.15 08/47] devlink: Remove redundant free on error path
+Date: Thu, 29 Mar 2018 19:59:49 +0200
+Message-Id: <20180329175729.751101432@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180329175729.225211114@linuxfoundation.org>
 References: <20180329175729.225211114@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296062916351982?=
-X-GMAIL-MSGID: =?utf-8?q?1596296062916351982?=
+X-GMAIL-THRID: =?utf-8?q?1596296060251224081?=
+X-GMAIL-MSGID: =?utf-8?q?1596296060251224081?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,71 +50,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Arkadi Sharshevsky <arkadis@mellanox.com>
 
 
-[ Upstream commit 6be687395b3124f002a653c1a50b3260222b3cd7 ]
+[ Upstream commit 7fe4d6dcbcb43fe0282d4213fc52be178bb30e91 ]
 
-On removal, a qeth card's netdevice is currently not properly freed
-because the call chain looks as follows:
+The current code performs unneeded free. Remove the redundant skb freeing
+during the error path.
 
-qeth_core_remove_device(card)
-	lx_remove_device(card)
-		unregister_netdev(card->dev)
-		card->dev = NULL			!!!
-	qeth_core_free_card(card)
-		if (card->dev)				!!!
-			free_netdev(card->dev)
-
-Fix it by free'ing the netdev straight after unregistering. This also
-fixes the sysfs-driven layer switch case (qeth_dev_layer2_store()),
-where the need to free the current netdevice was not considered at all.
-
-Note that free_netdev() takes care of the netif_napi_del() for us too.
-
-Fixes: 4a71df50047f ("qeth: new qeth device driver")
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Reviewed-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Fixes: 1555d204e743 ("devlink: Support for pipeline debug (dpipe)")
+Signed-off-by: Arkadi Sharshevsky <arkadis@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |    2 --
- drivers/s390/net/qeth_l2_main.c   |    2 +-
- drivers/s390/net/qeth_l3_main.c   |    2 +-
- 3 files changed, 2 insertions(+), 4 deletions(-)
+ net/core/devlink.c |   16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -5022,8 +5022,6 @@ static void qeth_core_free_card(struct q
- 	QETH_DBF_HEX(SETUP, 2, &card, sizeof(void *));
- 	qeth_clean_channel(&card->read);
- 	qeth_clean_channel(&card->write);
--	if (card->dev)
--		free_netdev(card->dev);
- 	qeth_free_qdio_buffers(card);
- 	unregister_service_level(&card->qeth_service_level);
- 	kfree(card);
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -933,8 +933,8 @@ static void qeth_l2_remove_device(struct
- 		qeth_l2_set_offline(cgdev);
- 
- 	if (card->dev) {
--		netif_napi_del(&card->napi);
- 		unregister_netdev(card->dev);
-+		free_netdev(card->dev);
- 		card->dev = NULL;
- 	}
- 	return;
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -3042,8 +3042,8 @@ static void qeth_l3_remove_device(struct
- 		qeth_l3_set_offline(cgdev);
- 
- 	if (card->dev) {
--		netif_napi_del(&card->napi);
- 		unregister_netdev(card->dev);
-+		free_netdev(card->dev);
- 		card->dev = NULL;
+--- a/net/core/devlink.c
++++ b/net/core/devlink.c
+@@ -1776,7 +1776,7 @@ send_done:
+ 	if (!nlh) {
+ 		err = devlink_dpipe_send_and_alloc_skb(&skb, info);
+ 		if (err)
+-			goto err_skb_send_alloc;
++			return err;
+ 		goto send_done;
  	}
  
+@@ -1785,7 +1785,6 @@ send_done:
+ nla_put_failure:
+ 	err = -EMSGSIZE;
+ err_table_put:
+-err_skb_send_alloc:
+ 	genlmsg_cancel(skb, hdr);
+ 	nlmsg_free(skb);
+ 	return err;
+@@ -2051,7 +2050,7 @@ static int devlink_dpipe_entries_fill(st
+ 					     table->counters_enabled,
+ 					     &dump_ctx);
+ 	if (err)
+-		goto err_entries_dump;
++		return err;
+ 
+ send_done:
+ 	nlh = nlmsg_put(dump_ctx.skb, info->snd_portid, info->snd_seq,
+@@ -2059,16 +2058,10 @@ send_done:
+ 	if (!nlh) {
+ 		err = devlink_dpipe_send_and_alloc_skb(&dump_ctx.skb, info);
+ 		if (err)
+-			goto err_skb_send_alloc;
++			return err;
+ 		goto send_done;
+ 	}
+ 	return genlmsg_reply(dump_ctx.skb, info);
+-
+-err_entries_dump:
+-err_skb_send_alloc:
+-	genlmsg_cancel(dump_ctx.skb, dump_ctx.hdr);
+-	nlmsg_free(dump_ctx.skb);
+-	return err;
+ }
+ 
+ static int devlink_nl_cmd_dpipe_entries_get(struct sk_buff *skb,
+@@ -2207,7 +2200,7 @@ send_done:
+ 	if (!nlh) {
+ 		err = devlink_dpipe_send_and_alloc_skb(&skb, info);
+ 		if (err)
+-			goto err_skb_send_alloc;
++			return err;
+ 		goto send_done;
+ 	}
+ 	return genlmsg_reply(skb, info);
+@@ -2215,7 +2208,6 @@ send_done:
+ nla_put_failure:
+ 	err = -EMSGSIZE;
+ err_table_put:
+-err_skb_send_alloc:
+ 	genlmsg_cancel(skb, hdr);
+ 	nlmsg_free(skb);
+ 	return err;
