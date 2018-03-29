@@ -1,52 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeC2Aso (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 28 Mar 2018 20:48:44 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42696 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751207AbeC2AsR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Mar 2018 20:48:17 -0400
-X-Google-Smtp-Source: AIpwx49pMYIyToB4IZ/pO7uv6zqdIiHxRS0BijGhqwS43y58tjGO/bMdLPkmlqAxvO1wYNpTKdMRYg==
-From: Laura Abbott <labbott@redhat.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Laura Abbott <labbott@redhat.com>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] objtool: Support HOSTCFLAGS and HOSTLDFLAGS
-Date: Wed, 28 Mar 2018 17:48:04 -0700
-Message-Id: <20180329004805.7278-3-labbott@redhat.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180329004805.7278-1-labbott@redhat.com>
-References: <20180329004805.7278-1-labbott@redhat.com>
+        id S1751193AbeC2Awg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 28 Mar 2018 20:52:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:49235 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751070AbeC2Awf (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Mar 2018 20:52:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,374,1517904000";
+   d="scan'208";a="215651601"
+Subject: Re: [PATCH v2 4/4] perf: Support perf -vv
+To: Ingo Molnar <mingo@kernel.org>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1522249028-15099-1-git-send-email-yao.jin@linux.intel.com>
+ <1522249028-15099-5-git-send-email-yao.jin@linux.intel.com>
+ <20180328154622.65ate24g7be2xg3a@gmail.com>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <e0682929-5cc1-386e-fb53-e8971469e61c@linux.intel.com>
+Date: Thu, 29 Mar 2018 08:52:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180328154622.65ate24g7be2xg3a@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It may be useful to compile host programs with different flags (e.g.
-hardening). Ensure that objtool picks up the appropriate flags.
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
- tools/objtool/Makefile | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index e6acc281dd37..0ff3bcac1ca9 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -31,8 +31,9 @@ INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
- 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
--CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
--LDFLAGS  += -lelf $(LIBSUBCMD)
-+CFLAGS   += -Wall -Werror $(WARNINGS) $(HOSTCFLAGS) -fomit-frame-pointer -O2 -g \
-+	    $(INCLUDES)
-+LDFLAGS  += -lelf $(LIBSUBCMD) $(HOSTLDFLAGS)
- 
- # Allow old libelf to be used:
- elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
--- 
-2.16.2
+On 3/28/2018 11:46 PM, Ingo Molnar wrote:
+> 
+> * Jin Yao <yao.jin@linux.intel.com> wrote:
+> 
+>> $ ./perf -vv or ./perf -version --build-options
+>> perf version 4.13.rc5.gcb1183
+> 
+> My suggestion was to add the 'version' subcommand like Git has, not a "-version"
+> option:
+> 
+>    $ git version
+>    git version 2.14.1
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
+
+Hi Ingo,
+
+Sorry about that. Actually I find it's a bug in my patch. The 'perf 
+-vxyz' is mapped to 'perf --version' mistakenly. So 'perf -version' will 
+be mapped to 'perf --version' and 'perf -vabc' will be mapped too.
+
+I will fix this bug.
+
+Currently, 'perf -v', 'perf version' and 'perf --version' have the same 
+behavior.
+
+So I will let:
+'perf -v --build-options',
+'perf version --build-options',
+'perf --version --build-options',
+'perf -vv'
+have same output.
+
+For example,
+
+$ ./perf version --build-options
+perf version 4.13.rc5.gcb1183
+                  dwarf: [ on  ]
+     dwarf_getlocations: [ on  ]
+                  glibc: [ on  ]
+                   gtk2: [ on  ]
+               libaudit: [ OFF ]
+                 libbfd: [ on  ]
+                 libelf: [ on  ]
+                libnuma: [ on  ]
+numa_num_possible_cpus: [ on  ]
+                libperl: [ on  ]
+              libpython: [ on  ]
+               libslang: [ on  ]
+              libcrypto: [ on  ]
+              libunwind: [ on  ]
+     libdw-dwarf-unwind: [ on  ]
+                   zlib: [ on  ]
+                   lzma: [ on  ]
+              get_cpuid: [ on  ]
+                    bpf: [ on  ]
+
+Thanks
+Jin Yao
