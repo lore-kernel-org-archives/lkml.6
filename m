@@ -1,62 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751199AbeC2OhX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 10:37:23 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:41083 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750732AbeC2OhU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 10:37:20 -0400
-X-Google-Smtp-Source: AIpwx49DRVY3twXC1C+vBVCXuqc5TLJ3kC1bcB5WIXKCjx3EbnQzt422XjZbeH6pEZG2CBrdTnAxHw==
-Date: Thu, 29 Mar 2018 09:37:15 -0500
-From: Andy Gross <andy.gross@linaro.org>
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: Sricharan R <sricharan@codeaurora.org>, robh+dt@kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        sboyd@codeaurora.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com
-Subject: Re: [PATCH v3 04/13] ARM: dts: ipq4019: Update ipq4019-dk01.1 board
- data
-Message-ID: <20180329143715.GA31757@hector.attlocal.net>
-References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
- <1521518336-5467-5-git-send-email-sricharan@codeaurora.org>
- <20180320143131.4eenixtbhciq5fwc@localhost>
+        id S1751642AbeC2Ohc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 10:37:32 -0400
+Received: from mga17.intel.com ([192.55.52.151]:27532 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751164AbeC2Ohb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 10:37:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,376,1517904000";
+   d="scan'208";a="37896179"
+Subject: Re: [PATCH v3] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+To: Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180329000024.GA16648@alison-desk.jf.intel.com>
+ <alpine.DEB.2.21.1803291505590.1477@nanos.tec.linutronix.de>
+ <20180329134723.GA4043@hirez.programming.kicks-ass.net>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <596dcb0c-5bbc-f3be-203b-571170ee8f11@linux.intel.com>
+Date: Thu, 29 Mar 2018 07:37:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320143131.4eenixtbhciq5fwc@localhost>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20180329134723.GA4043@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 07:31:31AM -0700, Richard Cochran wrote:
-> On Tue, Mar 20, 2018 at 09:28:47AM +0530, Sricharan R wrote:
-> > Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-> > Adds missing memory, reserved-memory nodes.
-> > 
-> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> > ---
-> >  arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 28 +++++++++++++++++++++++++++
-> 
-> Q: Does mainline Linux even boot on the DK?
-> 
-> A: No, it doesn't.
+On 03/29/2018 06:47 AM, Peter Zijlstra wrote:
+> Further I think Dave argued that we should not change the llc-size,
+> because while SNC presents a subset of the cache to local CPUs, for
+> remote data the whole cache is still available, again something some
+> applications might rely on.
 
-If you aren't actually testing/validating this specific board, how can you make
-a statement like this?  Unless you have tested these specifically on this board,
-I'd appreciate not getting false information about what is or is not working.
+BTW, I may have argued this in the past, but I don't think it's the best
+thing to do.
 
-> 
-> Please add the missing basic board support before hacking random stuff
-> into the DTS.
+If anything, we should optimize for the _users_ of this information: the
+performance-sensitive ones who are digging up the cache topology.  They
+are also likely to be the most NUMA-affinitized and stay node-local with
+much of their memory traffic.  That would seem to point us in the
+direction of enumerating two separate, half-sized LLCs "shared" only by
+the slice when SNC mode is on.
 
-Feel free to send your own contributions where you are adding the things that
-are important to you.
-
-Regards,
-
-Andy Gross
+That's what I've argued to the hardware folks lately, at least.
