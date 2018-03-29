@@ -1,71 +1,399 @@
-Return-Path: <atull@kernel.org>
-X-Google-Smtp-Source: AIpwx48/qVjqzVhHbCLVchBKOOL/dMkYhYWy4F7WSaf/ZbxIPGmfL1Enk2iuKp80mK27mZdEcbBt
-ARC-Seal: i=1; a=rsa-sha256; t=1522355965; cv=none;
+Return-Path: <moritz.fischer@ettus.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522338181; cv=none;
         d=google.com; s=arc-20160816;
-        b=fBn3feVp/Yo7UZ2UMvhXaOkdwD+CffFTModqACJyUM8XnPBsWdAGLjEIOBOfXZo925
-         x9Jtsquw/vVq12MK4KquFVA4AHZM3JRdUzmiHvaj5sHWgO39mT3B6sqXmePPNRDYKD3N
-         W97uGn/RaeRAtwfN5EK/Zd+aOe1chbw83F/tXvIxtrLmwHQaiZuxO4WloiDlVyVoq3Ms
-         tTFkO+I28kDhH+DQejr+9WGSnem3IPYL8bxJcQ1EnUes0Kv809xrx4FDLuvvRfpE65+m
-         wANDN6UcnOz0tlLRT/t4PIb7PciCqRTGiIb1lmrvBOff1020LNpri57WFOH1MOS47l4c
-         kCKQ==
+        b=bBle2q10lMxIV4liFRJWxoVgrYqMLiFvuhdvl0i7Sia8dOI0F4hxvn9Zcwftr3/E0s
+         k36N/3OpRYtWM/RB4m+ds+ZaupeDJUF11ur2w/rejcBB1y0z2D6ZuaG5gUVNK97+oPXa
+         +cgrK1Iax5zPkDHMyc/igYm1OnY3STUQO+KH2DZa6kNhotFNDfAaNcZ485410n9cqL8I
+         GnPx9f9WbGVoOO5mg2qI29SImSLeIqXyabAvVkfNKn5O5cXfGxyy2/XjJ5aN0EDdIxqm
+         oqT9MNdu2yWfpBn53CSvBDpAnUAdDIVk5cyF5NE6gDJ01BGGJEUzQCLrXGMhkclrDanZ
+         Vo3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dmarc-filter:arc-authentication-results;
-        bh=+7VBfQtNehGP5if7WhUnA+oT1s3KgOl1myFEqx3c8vo=;
-        b=N1nnB/+fBirYVZbuno8j3DW2N9vvRhaEL0QVZUj4N2BPSs+oHNTq26sUQN9fkmTwB0
-         8uG5/9jGPPRoah+v081Z6XP9rip/JlMvH7E4jrDZPb8y6//hvd6mkHdTDz4QqCsYZzUd
-         BVkezFzFSTYWQV1VhlZZxE2UByR2TlCtqljQ5vTl4QcyHD2k0v+rlWvTxISBnnotUnAB
-         D7XENnLQopw0sXonTPXO1dBUeKq8LJmkA8247nrUBHRCk92WFkGfBYIdqHiaYEJTrZcT
-         B/lh52jYP2HkSpvvDLE96AhbzJNpBbP5mYfEs8fTiTWNuptpv2klFSgkk+dWoqc1HDTk
-         8fgA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=aPt5VnB5BkFAhyl9cLSxQz1U0XcIQ88Ii/DxITE3WgM=;
+        b=vgOIUfeW59ba0hSIRF1GdOrSzehTzo9thDHbGRIz9V2vzRT1bJ1m8rLfdkgLa1h7f3
+         xnvOc1rQ8aZrFV2+lvCGPHNEyQNft1dMPL4OQx/g7G8XMice9QbWizd6fd6ysqBTCODN
+         Dw6DejvEacs/jMM2/RRt8h3s4bleN3Q8fu9NaCjyxXV7EWbSDufCxjQhtCzxxk2i91G4
+         loAJiJVP7il/9BXNnFz/dxNrGC+7t9ysmbpgGheXk2EF4UfnHZ0ObGphMaKiB/g9UKNu
+         MEoYwRqxiWYzL7bvpTvqLQJcX/Sxa1UWSagp/g5Bjjy8EdGhnMWQS1sY794Pc3Vc/Kaz
+         wS4w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of atull@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=atull@kernel.org
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of moritz.fischer@ettus.com) smtp.mailfrom=moritz.fischer@ettus.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of atull@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=atull@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA99217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-MIME-Version: 1.0
-In-Reply-To: <20180329170142.GB8501@kroah.com>
-References: <20180329153658.11614-1-mdf@kernel.org> <20180329153658.11614-2-mdf@kernel.org>
- <20180329170142.GB8501@kroah.com>
-From: Alan Tull <atull@kernel.org>
-Date: Thu, 29 Mar 2018 15:38:43 -0500
-X-Gmail-Original-Message-ID: <CANk1AXT_hKKgi8G1pkDrgfg425i-jLkjiC3TZ2AUee11_PSSYQ@mail.gmail.com>
-Message-ID: <CANk1AXT_hKKgi8G1pkDrgfg425i-jLkjiC3TZ2AUee11_PSSYQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] fpga: region: don't use drvdata in common fpga code
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of moritz.fischer@ettus.com) smtp.mailfrom=moritz.fischer@ettus.com
+X-Google-Smtp-Source: AIpwx49uiEe3Zi2M1lBFD1Zf8G3cjLSXbOvCm4+bbQen2YHp8ZrQ6/G1OCny0MaatozCCpz4ltzakQ==
+From: Moritz Fischer <mdf@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: atull@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH 3/6] fpga: bridge: don't use drvdata in common fpga code
+Date: Thu, 29 Mar 2018 08:36:55 -0700
+Message-Id: <20180329153658.11614-4-mdf@kernel.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180329153658.11614-1-mdf@kernel.org>
+References: <20180329153658.11614-1-mdf@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596287276477563606?=
-X-GMAIL-MSGID: =?utf-8?q?1596305929100517136?=
+X-GMAIL-THRID: =?utf-8?q?1596287280954423653?=
+X-GMAIL-MSGID: =?utf-8?q?1596287280954423653?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 12:01 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+From: Alan Tull <atull@kernel.org>
 
-Hi Greg,
+Change fpga_bridge_register to not set drvdata.
 
-> On Thu, Mar 29, 2018 at 08:36:53AM -0700, Moritz Fischer wrote:
->> From: Alan Tull <atull@kernel.org>
->>
->> Part of patchset that changes the following fpga_*_register
->> functions to not set drvdata:
->> * fpga_region_register.
->> * fpga_mgr_register
->> * fpga_bridge_register
->
-> That's not what this specific patch does.  Please do not write generic
-> changelog text that is identical for 3 patches that does different
-> things in each one :(
+Change the register/unregister functions parameters to take the
+bridge struct:
+* int fpga_bridge_register(struct fpga_bridge *bridge);
+* void fpga_bridge_unregister(struct fpga_bridge *bridge);
 
-Thanks for the guidance, it's always helpful.  I'll clean up.
+Change the drivers that call fpga_bridge_register to alloc the struct
+fpga_bridge (using devm_kzalloc) and partly fill it, adding name,
+ops, parent device, and priv.
 
-Alan
+The rationale is that setting drvdata is fine for DT based devices
+that will have one manager, bridge, or region per platform device.
+However PCIe based devices may have multiple FPGA mgr/bridge/regions
+under one pcie device.  Without these changes, the PCIe solution has
+to create an extra device for each child mgr/bridge/region to hold
+drvdata.
 
->
-> thanks,
->
-> greg k-h
+Signed-off-by: Alan Tull <atull@kernel.org>
+Reported-by: Jiuyue Ma <majiuyue@huawei.com>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/fpga/altera-fpga2sdram.c    | 20 +++++++++++++----
+ drivers/fpga/altera-freeze-bridge.c | 18 +++++++++++++---
+ drivers/fpga/altera-hps2fpga.c      | 16 +++++++++++---
+ drivers/fpga/fpga-bridge.c          | 43 ++++++++++++++-----------------------
+ drivers/fpga/xilinx-pr-decoupler.c  | 15 ++++++++++---
+ include/linux/fpga/fpga-bridge.h    |  7 +++---
+ 6 files changed, 76 insertions(+), 43 deletions(-)
+
+diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
+index d4eeb74388da..a4593c0f5e42 100644
+--- a/drivers/fpga/altera-fpga2sdram.c
++++ b/drivers/fpga/altera-fpga2sdram.c
+@@ -106,10 +106,15 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct alt_fpga2sdram_data *priv;
++	struct fpga_bridge *br;
+ 	u32 enable;
+ 	struct regmap *sysmgr;
+ 	int ret = 0;
+ 
++	br = devm_kzalloc(dev, sizeof(*br), GFP_KERNEL);
++	if (!br)
++		return -ENOMEM;
++
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+@@ -131,8 +136,13 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 	/* Get f2s bridge configuration saved in handoff register */
+ 	regmap_read(sysmgr, SYSMGR_ISWGRP_HANDOFF3, &priv->mask);
+ 
+-	ret = fpga_bridge_register(dev, F2S_BRIDGE_NAME,
+-				   &altera_fpga2sdram_br_ops, priv);
++	br->parent = dev;
++	br->name = F2S_BRIDGE_NAME;
++	br->br_ops = &altera_fpga2sdram_br_ops;
++	br->priv = priv;
++	platform_set_drvdata(pdev, br);
++
++	ret = fpga_bridge_register(br);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -146,7 +156,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 				 (enable ? "enabling" : "disabling"));
+ 			ret = _alt_fpga2sdram_enable_set(priv, enable);
+ 			if (ret) {
+-				fpga_bridge_unregister(&pdev->dev);
++				fpga_bridge_unregister(br);
+ 				return ret;
+ 			}
+ 		}
+@@ -157,7 +167,9 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 
+ static int alt_fpga_bridge_remove(struct platform_device *pdev)
+ {
+-	fpga_bridge_unregister(&pdev->dev);
++	struct fpga_bridge *br = platform_get_drvdata(pdev);
++
++	fpga_bridge_unregister(br);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/fpga/altera-freeze-bridge.c b/drivers/fpga/altera-freeze-bridge.c
+index 6159cfcf78a2..498bc6c1d533 100644
+--- a/drivers/fpga/altera-freeze-bridge.c
++++ b/drivers/fpga/altera-freeze-bridge.c
+@@ -219,6 +219,7 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = pdev->dev.of_node;
++	struct fpga_bridge *br;
+ 	void __iomem *base_addr;
+ 	struct altera_freeze_br_data *priv;
+ 	struct resource *res;
+@@ -227,6 +228,10 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
+ 	if (!np)
+ 		return -ENODEV;
+ 
++	br = devm_kzalloc(dev, sizeof(*br), GFP_KERNEL);
++	if (!br)
++		return -ENOMEM;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base_addr = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base_addr))
+@@ -254,13 +259,20 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
+ 
+ 	priv->base_addr = base_addr;
+ 
+-	return fpga_bridge_register(dev, FREEZE_BRIDGE_NAME,
+-				    &altera_freeze_br_br_ops, priv);
++	br->parent = dev;
++	br->name = FREEZE_BRIDGE_NAME;
++	br->br_ops = &altera_freeze_br_br_ops;
++	br->priv = priv;
++	platform_set_drvdata(pdev, br);
++
++	return fpga_bridge_register(br);
+ }
+ 
+ static int altera_freeze_br_remove(struct platform_device *pdev)
+ {
+-	fpga_bridge_unregister(&pdev->dev);
++	struct fpga_bridge *br = platform_get_drvdata(pdev);
++
++	fpga_bridge_unregister(br);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/fpga/altera-hps2fpga.c b/drivers/fpga/altera-hps2fpga.c
+index 406d2f10741f..2a695f53962d 100644
+--- a/drivers/fpga/altera-hps2fpga.c
++++ b/drivers/fpga/altera-hps2fpga.c
+@@ -139,6 +139,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct altera_hps2fpga_data *priv;
+ 	const struct of_device_id *of_id;
++	struct fpga_bridge *br;
+ 	u32 enable;
+ 	int ret;
+ 
+@@ -150,6 +151,10 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 
+ 	priv = (struct altera_hps2fpga_data *)of_id->data;
+ 
++	br = devm_kzalloc(dev, sizeof(*br), GFP_KERNEL);
++	if (!br)
++		return -ENOMEM;
++
+ 	priv->bridge_reset = of_reset_control_get_exclusive_by_index(dev->of_node,
+ 								     0);
+ 	if (IS_ERR(priv->bridge_reset)) {
+@@ -190,8 +195,13 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	ret = fpga_bridge_register(dev, priv->name, &altera_hps2fpga_br_ops,
+-				   priv);
++	br->parent = dev;
++	br->name = priv->name;
++	br->br_ops = &altera_hps2fpga_br_ops;
++	br->priv = priv;
++	platform_set_drvdata(pdev, br);
++
++	ret = fpga_bridge_register(br);
+ err:
+ 	if (ret)
+ 		clk_disable_unprepare(priv->clk);
+@@ -204,7 +214,7 @@ static int alt_fpga_bridge_remove(struct platform_device *pdev)
+ 	struct fpga_bridge *bridge = platform_get_drvdata(pdev);
+ 	struct altera_hps2fpga_data *priv = bridge->priv;
+ 
+-	fpga_bridge_unregister(&pdev->dev);
++	fpga_bridge_unregister(bridge);
+ 
+ 	clk_disable_unprepare(priv->clk);
+ 
+diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
+index 31bd2c59c305..ac40e3ae8921 100644
+--- a/drivers/fpga/fpga-bridge.c
++++ b/drivers/fpga/fpga-bridge.c
+@@ -329,48 +329,42 @@ ATTRIBUTE_GROUPS(fpga_bridge);
+ 
+ /**
+  * fpga_bridge_register - register a fpga bridge driver
+- * @dev:	FPGA bridge device from pdev
+- * @name:	FPGA bridge name
+- * @br_ops:	pointer to structure of fpga bridge ops
+- * @priv:	FPGA bridge private data
++ * @bridge:	FPGA bridge struct
++ *
++ * The following fields must be set in the bridge struct:
++ * name, br_ops, and parent.
+  *
+  * Return: 0 for success, error code otherwise.
+  */
+-int fpga_bridge_register(struct device *dev, const char *name,
+-			 const struct fpga_bridge_ops *br_ops, void *priv)
++int fpga_bridge_register(struct fpga_bridge *bridge)
+ {
+-	struct fpga_bridge *bridge;
++	struct device *dev = bridge->parent;
++	const char *name = bridge->name;
+ 	int id, ret = 0;
+ 
++	if (!dev) {
++		pr_err("Attempt to register fpga bridge without parent\n");
++		return -EINVAL;
++	}
++
+ 	if (!name || !strlen(name)) {
+ 		dev_err(dev, "Attempt to register with no name!\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
+-	if (!bridge)
+-		return -ENOMEM;
+-
+ 	id = ida_simple_get(&fpga_bridge_ida, 0, 0, GFP_KERNEL);
+-	if (id < 0) {
+-		ret = id;
+-		goto error_kfree;
+-	}
++	if (id < 0)
++		return id;
+ 
+ 	mutex_init(&bridge->mutex);
+ 	INIT_LIST_HEAD(&bridge->node);
+ 
+-	bridge->name = name;
+-	bridge->br_ops = br_ops;
+-	bridge->priv = priv;
+-
+ 	device_initialize(&bridge->dev);
+-	bridge->dev.groups = br_ops->groups;
++	bridge->dev.groups = bridge->br_ops->groups;
+ 	bridge->dev.class = fpga_bridge_class;
+ 	bridge->dev.parent = dev;
+ 	bridge->dev.of_node = dev->of_node;
+ 	bridge->dev.id = id;
+-	dev_set_drvdata(dev, bridge);
+ 
+ 	ret = dev_set_name(&bridge->dev, "br%d", id);
+ 	if (ret)
+@@ -389,8 +383,6 @@ int fpga_bridge_register(struct device *dev, const char *name,
+ 
+ error_device:
+ 	ida_simple_remove(&fpga_bridge_ida, id);
+-error_kfree:
+-	kfree(bridge);
+ 
+ 	return ret;
+ }
+@@ -400,10 +392,8 @@ EXPORT_SYMBOL_GPL(fpga_bridge_register);
+  * fpga_bridge_unregister - unregister a fpga bridge driver
+  * @dev: FPGA bridge device from pdev
+  */
+-void fpga_bridge_unregister(struct device *dev)
++void fpga_bridge_unregister(struct fpga_bridge *bridge)
+ {
+-	struct fpga_bridge *bridge = dev_get_drvdata(dev);
+-
+ 	/*
+ 	 * If the low level driver provides a method for putting bridge into
+ 	 * a desired state upon unregister, do it.
+@@ -420,7 +410,6 @@ static void fpga_bridge_dev_release(struct device *dev)
+ 	struct fpga_bridge *bridge = to_fpga_bridge(dev);
+ 
+ 	ida_simple_remove(&fpga_bridge_ida, bridge->dev.id);
+-	kfree(bridge);
+ }
+ 
+ static int __init fpga_bridge_dev_init(void)
+diff --git a/drivers/fpga/xilinx-pr-decoupler.c b/drivers/fpga/xilinx-pr-decoupler.c
+index 0d7743089414..629337bd3768 100644
+--- a/drivers/fpga/xilinx-pr-decoupler.c
++++ b/drivers/fpga/xilinx-pr-decoupler.c
+@@ -94,9 +94,14 @@ MODULE_DEVICE_TABLE(of, xlnx_pr_decoupler_of_match);
+ static int xlnx_pr_decoupler_probe(struct platform_device *pdev)
+ {
+ 	struct xlnx_pr_decoupler_data *priv;
++	struct fpga_bridge *br;
+ 	int err;
+ 	struct resource *res;
+ 
++	br = devm_kzalloc(&pdev->dev, sizeof(*br), GFP_KERNEL);
++	if (!br)
++		return -ENOMEM;
++
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+@@ -120,9 +125,13 @@ static int xlnx_pr_decoupler_probe(struct platform_device *pdev)
+ 
+ 	clk_disable(priv->clk);
+ 
+-	err = fpga_bridge_register(&pdev->dev, "Xilinx PR Decoupler",
+-				   &xlnx_pr_decoupler_br_ops, priv);
++	br->parent = &pdev->dev;
++	br->name = "Xilinx PR Decoupler";
++	br->br_ops = &xlnx_pr_decoupler_br_ops;
++	br->priv = priv;
++	platform_set_drvdata(pdev, br);
+ 
++	err = fpga_bridge_register(br);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "unable to register Xilinx PR Decoupler");
+ 		clk_unprepare(priv->clk);
+@@ -137,7 +146,7 @@ static int xlnx_pr_decoupler_remove(struct platform_device *pdev)
+ 	struct fpga_bridge *bridge = platform_get_drvdata(pdev);
+ 	struct xlnx_pr_decoupler_data *p = bridge->priv;
+ 
+-	fpga_bridge_unregister(&pdev->dev);
++	fpga_bridge_unregister(bridge);
+ 
+ 	clk_unprepare(p->clk);
+ 
+diff --git a/include/linux/fpga/fpga-bridge.h b/include/linux/fpga/fpga-bridge.h
+index 3694821a6d2d..c46b7ac0a4bd 100644
+--- a/include/linux/fpga/fpga-bridge.h
++++ b/include/linux/fpga/fpga-bridge.h
+@@ -26,6 +26,7 @@ struct fpga_bridge_ops {
+  * struct fpga_bridge - FPGA bridge structure
+  * @name: name of low level FPGA bridge
+  * @dev: FPGA bridge device
++ * @parent: parent device
+  * @mutex: enforces exclusive reference to bridge
+  * @br_ops: pointer to struct of FPGA bridge ops
+  * @info: fpga image specific information
+@@ -35,6 +36,7 @@ struct fpga_bridge_ops {
+ struct fpga_bridge {
+ 	const char *name;
+ 	struct device dev;
++	struct device *parent;
+ 	struct mutex mutex; /* for exclusive reference to bridge */
+ 	const struct fpga_bridge_ops *br_ops;
+ 	struct fpga_image_info *info;
+@@ -62,8 +64,7 @@ int of_fpga_bridge_get_to_list(struct device_node *np,
+ 			       struct fpga_image_info *info,
+ 			       struct list_head *bridge_list);
+ 
+-int fpga_bridge_register(struct device *dev, const char *name,
+-			 const struct fpga_bridge_ops *br_ops, void *priv);
+-void fpga_bridge_unregister(struct device *dev);
++int fpga_bridge_register(struct fpga_bridge *br);
++void fpga_bridge_unregister(struct fpga_bridge *br);
+ 
+ #endif /* _LINUX_FPGA_BRIDGE_H */
+-- 
+2.16.2
