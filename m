@@ -1,47 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeC3Ok5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 10:40:57 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:59734 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751163AbeC3Ok4 (ORCPT
+        id S1752279AbeC3OqK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 10:46:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59500 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751254AbeC3OqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 10:40:56 -0400
-Date: Fri, 30 Mar 2018 10:40:54 -0400 (EDT)
-Message-Id: <20180330.104054.147506012234775496.davem@davemloft.net>
-To: mike.looijmans@topic.nl
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
-        robh+dt@kernel.org, frowand.list@gmail.com
-Subject: Re: [PATCH v4 0/2] of_net: Implement of_get_nvmem_mac_address
- helper
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1522301389-11034-1-git-send-email-mike.looijmans@topic.nl>
-References: <1522046489-19652-1-git-send-email-mike.looijmans@topic.nl>
-        <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
-        <1522301389-11034-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Fri, 30 Mar 2018 10:46:08 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA1646070A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH] io: prevent compiler reordering on the default writeX()
+ implementation
+To: arnd@arndb.de, timur@codeaurora.org, sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1522420199-23548-1-git-send-email-okaya@codeaurora.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <4e3acc1a-0c06-5b1b-1b87-91bef2daae38@codeaurora.org>
+Date: Fri, 30 Mar 2018 10:46:05 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1522420199-23548-1-git-send-email-okaya@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Date: Thu, 29 Mar 2018 07:29:47 +0200
+On 3/30/2018 10:29 AM, Sinan Kaya wrote:
+> In the abscence of a write barrier or when using a strongly ordered
+> architecture, writeX() should at least have a compiler barrier in
+> it to prevent commpiler from clobbering the execution order.
 
-> Posted this as a small set now, with an (optional) second patch that shows
-> how the changes work and what I've used to test the code on a Topic Miami board.
-> I've taken the liberty to add appropriate "Acked" and "Review" tags.
-> 
-> v4: Replaced "6" with ETH_ALEN
-> 
-> v3: Add patch that implements mac in nvmem for the Cadence MACB controller
->     Remove the integrated of_get_mac_address call
-> 
-> v2: Use of_nvmem_cell_get to avoid needing the assiciated device
->     Use void* instead of char*
->     Add devicetree binding doc
+Same is true for readX(). I'll wait for review feedback on this before
+posting another change for readX().
 
-Series applied to net-next, thank you.
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
