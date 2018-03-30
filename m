@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753243AbeC3VPL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:15:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48864 "EHLO mx1.redhat.com"
+        id S1753285AbeC3VPT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:15:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48446 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752889AbeC3VPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:15:08 -0400
+        id S1752889AbeC3VPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:15:15 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next 10/12] rxrpc: Fix apparent leak of rxrpc_local
- objects
+Subject: [PATCH net-next 11/12] rxrpc: Add a tracepoint to track rxrpc_peer
+ refcounting
 From: David Howells <dhowells@redhat.com>
 To: netdev@vger.kernel.org
 Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date: Fri, 30 Mar 2018 22:15:06 +0100
-Message-ID: <152244450674.4629.4649583360796859288.stgit@warthog.procyon.org.uk>
+Date: Fri, 30 Mar 2018 22:15:13 +0100
+Message-ID: <152244451323.4629.14491504044376715256.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152244444395.4629.2080470182140292459.stgit@warthog.procyon.org.uk>
 References: <152244444395.4629.2080470182140292459.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,124 +28,212 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rxrpc_local objects cannot be disposed of until all the connections that
-point to them have been RCU'd as a connection object holds refcount on the
-local endpoint it is communicating through.  Currently, this can cause an
-assertion failure to occur when a network namespace is destroyed as there's
-no check that the RCU destructors for the connections have been run before
-we start trying to destroy local endpoints.
+Add a tracepoint to track reference counting on the rxrpc_peer struct.
 
-The kernel reports:
-
-	rxrpc: AF_RXRPC: Leaked local 0000000036a41bc1 {5}
-	------------[ cut here ]------------
-	kernel BUG at ../net/rxrpc/local_object.c:439!
-
-Fix this by keeping a count of the live connections and waiting for it to
-go to zero at the end of rxrpc_destroy_all_connections().
-
-Fixes: dee46364ce6f ("rxrpc: Add RCU destruction for connections and calls")
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- net/rxrpc/ar-internal.h  |    1 +
- net/rxrpc/call_accept.c  |    2 ++
- net/rxrpc/conn_client.c  |    1 +
- net/rxrpc/conn_object.c  |    8 ++++++++
- net/rxrpc/conn_service.c |    1 +
- net/rxrpc/net_ns.c       |    1 +
- 6 files changed, 14 insertions(+)
+ include/trace/events/rxrpc.h |   42 +++++++++++++++++++++++++++
+ net/rxrpc/ar-internal.h      |   23 +++------------
+ net/rxrpc/peer_event.c       |    2 +
+ net/rxrpc/peer_object.c      |   65 +++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 110 insertions(+), 22 deletions(-)
 
+diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
+index 0410dfeb79c6..9e96c2fe2793 100644
+--- a/include/trace/events/rxrpc.h
++++ b/include/trace/events/rxrpc.h
+@@ -50,6 +50,14 @@ enum rxrpc_local_trace {
+ 	rxrpc_local_queued,
+ };
+ 
++enum rxrpc_peer_trace {
++	rxrpc_peer_got,
++	rxrpc_peer_new,
++	rxrpc_peer_processing,
++	rxrpc_peer_put,
++	rxrpc_peer_queued_error,
++};
++
+ enum rxrpc_conn_trace {
+ 	rxrpc_conn_got,
+ 	rxrpc_conn_new_client,
+@@ -230,6 +238,13 @@ enum rxrpc_congest_change {
+ 	EM(rxrpc_local_put,			"PUT") \
+ 	E_(rxrpc_local_queued,			"QUE")
+ 
++#define rxrpc_peer_traces \
++	EM(rxrpc_peer_got,			"GOT") \
++	EM(rxrpc_peer_new,			"NEW") \
++	EM(rxrpc_peer_processing,		"PRO") \
++	EM(rxrpc_peer_put,			"PUT") \
++	E_(rxrpc_peer_queued_error,		"QER")
++
+ #define rxrpc_conn_traces \
+ 	EM(rxrpc_conn_got,			"GOT") \
+ 	EM(rxrpc_conn_new_client,		"NWc") \
+@@ -482,6 +497,33 @@ TRACE_EVENT(rxrpc_local,
+ 		      __entry->where)
+ 	    );
+ 
++TRACE_EVENT(rxrpc_peer,
++	    TP_PROTO(struct rxrpc_peer *peer, enum rxrpc_peer_trace op,
++		     int usage, const void *where),
++
++	    TP_ARGS(peer, op, usage, where),
++
++	    TP_STRUCT__entry(
++		    __field(unsigned int,	peer		)
++		    __field(int,		op		)
++		    __field(int,		usage		)
++		    __field(const void *,	where		)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->peer = peer->debug_id;
++		    __entry->op = op;
++		    __entry->usage = usage;
++		    __entry->where = where;
++			   ),
++
++	    TP_printk("P=%08x %s u=%d sp=%pSR",
++		      __entry->peer,
++		      __print_symbolic(__entry->op, rxrpc_peer_traces),
++		      __entry->usage,
++		      __entry->where)
++	    );
++
+ TRACE_EVENT(rxrpc_conn,
+ 	    TP_PROTO(struct rxrpc_connection *conn, enum rxrpc_conn_trace op,
+ 		     int usage, const void *where),
 diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index cc51d3eb0548..d40d54b78567 100644
+index d40d54b78567..c46583bc255d 100644
 --- a/net/rxrpc/ar-internal.h
 +++ b/net/rxrpc/ar-internal.h
-@@ -77,6 +77,7 @@ struct rxrpc_net {
- 	rwlock_t		call_lock;	/* Lock for ->calls */
- 	atomic_t		nr_calls;	/* Count of allocated calls */
+@@ -1041,25 +1041,10 @@ struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *,
+ struct rxrpc_peer *rxrpc_alloc_peer(struct rxrpc_local *, gfp_t);
+ struct rxrpc_peer *rxrpc_lookup_incoming_peer(struct rxrpc_local *,
+ 					      struct rxrpc_peer *);
+-
+-static inline struct rxrpc_peer *rxrpc_get_peer(struct rxrpc_peer *peer)
+-{
+-	atomic_inc(&peer->usage);
+-	return peer;
+-}
+-
+-static inline
+-struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *peer)
+-{
+-	return atomic_inc_not_zero(&peer->usage) ? peer : NULL;
+-}
+-
+-extern void __rxrpc_put_peer(struct rxrpc_peer *peer);
+-static inline void rxrpc_put_peer(struct rxrpc_peer *peer)
+-{
+-	if (peer && atomic_dec_and_test(&peer->usage))
+-		__rxrpc_put_peer(peer);
+-}
++struct rxrpc_peer *rxrpc_get_peer(struct rxrpc_peer *);
++struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *);
++void rxrpc_put_peer(struct rxrpc_peer *);
++void __rxrpc_queue_peer_error(struct rxrpc_peer *);
  
-+	atomic_t		nr_conns;
- 	struct list_head	conn_proc_list;	/* List of conns in this namespace for proc */
- 	struct list_head	service_conns;	/* Service conns in this namespace */
- 	rwlock_t		conn_lock;	/* Lock for ->conn_proc_list, ->service_conns */
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index 5a9b1d916124..f67017dcb25e 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -219,6 +219,8 @@ void rxrpc_discard_prealloc(struct rxrpc_sock *rx)
- 		list_del(&conn->proc_link);
- 		write_unlock(&rxnet->conn_lock);
- 		kfree(conn);
-+		if (atomic_dec_and_test(&rxnet->nr_conns))
-+			wake_up_atomic_t(&rxnet->nr_conns);
- 		tail = (tail + 1) & (size - 1);
- 	}
+ /*
+  * proc.c
+diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
+index d01eb9a06448..78c2f95d1f22 100644
+--- a/net/rxrpc/peer_event.c
++++ b/net/rxrpc/peer_event.c
+@@ -192,7 +192,7 @@ void rxrpc_error_report(struct sock *sk)
+ 	rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
  
-diff --git a/net/rxrpc/conn_client.c b/net/rxrpc/conn_client.c
-index 041da40dbf93..5736f643c516 100644
---- a/net/rxrpc/conn_client.c
-+++ b/net/rxrpc/conn_client.c
-@@ -207,6 +207,7 @@ rxrpc_alloc_client_connection(struct rxrpc_conn_parameters *cp, gfp_t gfp)
- 	if (ret < 0)
- 		goto error_2;
- 
-+	atomic_inc(&rxnet->nr_conns);
- 	write_lock(&rxnet->conn_lock);
- 	list_add_tail(&conn->proc_link, &rxnet->conn_proc_list);
- 	write_unlock(&rxnet->conn_lock);
-diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
-index bfc46fd69a62..0950ee3d26f5 100644
---- a/net/rxrpc/conn_object.c
-+++ b/net/rxrpc/conn_object.c
-@@ -365,6 +365,9 @@ static void rxrpc_destroy_connection(struct rcu_head *rcu)
- 	key_put(conn->params.key);
- 	key_put(conn->server_key);
- 	rxrpc_put_peer(conn->params.peer);
-+
-+	if (atomic_dec_and_test(&conn->params.local->rxnet->nr_conns))
-+		wake_up_atomic_t(&conn->params.local->rxnet->nr_conns);
- 	rxrpc_put_local(conn->params.local);
- 
- 	kfree(conn);
-@@ -458,6 +461,7 @@ void rxrpc_destroy_all_connections(struct rxrpc_net *rxnet)
- 
- 	_enter("");
- 
-+	atomic_dec(&rxnet->nr_conns);
- 	rxrpc_destroy_all_client_connections(rxnet);
- 
- 	del_timer_sync(&rxnet->service_conn_reap_timer);
-@@ -475,5 +479,9 @@ void rxrpc_destroy_all_connections(struct rxrpc_net *rxnet)
- 
- 	ASSERT(list_empty(&rxnet->conn_proc_list));
- 
-+	/* We need to wait for the connections to be destroyed by RCU as they
-+	 * pin things that we still need to get rid of.
-+	 */
-+	wait_on_atomic_t(&rxnet->nr_conns, atomic_t_wait, TASK_UNINTERRUPTIBLE);
+ 	/* The ref we obtained is passed off to the work item */
+-	rxrpc_queue_work(&peer->error_distributor);
++	__rxrpc_queue_peer_error(peer);
  	_leave("");
  }
-diff --git a/net/rxrpc/conn_service.c b/net/rxrpc/conn_service.c
-index f6fcdb3130a1..80773a50c755 100644
---- a/net/rxrpc/conn_service.c
-+++ b/net/rxrpc/conn_service.c
-@@ -132,6 +132,7 @@ struct rxrpc_connection *rxrpc_prealloc_service_connection(struct rxrpc_net *rxn
- 		conn->state = RXRPC_CONN_SERVICE_PREALLOC;
- 		atomic_set(&conn->usage, 2);
  
-+		atomic_inc(&rxnet->nr_conns);
- 		write_lock(&rxnet->conn_lock);
- 		list_add_tail(&conn->link, &rxnet->service_conns);
- 		list_add_tail(&conn->proc_link, &rxnet->conn_proc_list);
-diff --git a/net/rxrpc/net_ns.c b/net/rxrpc/net_ns.c
-index 101019b0be34..fa9ce60e7bfa 100644
---- a/net/rxrpc/net_ns.c
-+++ b/net/rxrpc/net_ns.c
-@@ -57,6 +57,7 @@ static __net_init int rxrpc_init_net(struct net *net)
- 	rwlock_init(&rxnet->call_lock);
- 	atomic_set(&rxnet->nr_calls, 1);
+diff --git a/net/rxrpc/peer_object.c b/net/rxrpc/peer_object.c
+index 94a6dbfcf129..a4a750aea1e5 100644
+--- a/net/rxrpc/peer_object.c
++++ b/net/rxrpc/peer_object.c
+@@ -386,9 +386,54 @@ struct rxrpc_peer *rxrpc_lookup_peer(struct rxrpc_local *local,
+ }
  
-+	atomic_set(&rxnet->nr_conns, 1);
- 	INIT_LIST_HEAD(&rxnet->conn_proc_list);
- 	INIT_LIST_HEAD(&rxnet->service_conns);
- 	rwlock_init(&rxnet->conn_lock);
+ /*
+- * Discard a ref on a remote peer record.
++ * Get a ref on a peer record.
+  */
+-void __rxrpc_put_peer(struct rxrpc_peer *peer)
++struct rxrpc_peer *rxrpc_get_peer(struct rxrpc_peer *peer)
++{
++	const void *here = __builtin_return_address(0);
++	int n;
++
++	n = atomic_inc_return(&peer->usage);
++	trace_rxrpc_peer(peer, rxrpc_peer_got, n, here);
++	return peer;
++}
++
++/*
++ * Get a ref on a peer record unless its usage has already reached 0.
++ */
++struct rxrpc_peer *rxrpc_get_peer_maybe(struct rxrpc_peer *peer)
++{
++	const void *here = __builtin_return_address(0);
++
++	if (peer) {
++		int n = __atomic_add_unless(&peer->usage, 1, 0);
++		if (n > 0)
++			trace_rxrpc_peer(peer, rxrpc_peer_got, n + 1, here);
++		else
++			peer = NULL;
++	}
++	return peer;
++}
++
++/*
++ * Queue a peer record.  This passes the caller's ref to the workqueue.
++ */
++void __rxrpc_queue_peer_error(struct rxrpc_peer *peer)
++{
++	const void *here = __builtin_return_address(0);
++	int n;
++
++	n = atomic_read(&peer->usage);
++	if (rxrpc_queue_work(&peer->error_distributor))
++		trace_rxrpc_peer(peer, rxrpc_peer_queued_error, n, here);
++	else
++		rxrpc_put_peer(peer);
++}
++
++/*
++ * Discard a peer record.
++ */
++static void __rxrpc_put_peer(struct rxrpc_peer *peer)
+ {
+ 	struct rxrpc_net *rxnet = peer->local->rxnet;
+ 
+@@ -402,6 +447,22 @@ void __rxrpc_put_peer(struct rxrpc_peer *peer)
+ 	kfree_rcu(peer, rcu);
+ }
+ 
++/*
++ * Drop a ref on a peer record.
++ */
++void rxrpc_put_peer(struct rxrpc_peer *peer)
++{
++	const void *here = __builtin_return_address(0);
++	int n;
++
++	if (peer) {
++		n = atomic_dec_return(&peer->usage);
++		trace_rxrpc_peer(peer, rxrpc_peer_put, n, here);
++		if (n == 0)
++			__rxrpc_put_peer(peer);
++	}
++}
++
+ /**
+  * rxrpc_kernel_get_peer - Get the peer address of a call
+  * @sock: The socket on which the call is in progress.
