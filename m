@@ -1,23 +1,23 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx48wl8smEsZrNwxuH/bSME3HFkxfPurO13HBNe/+46hmN5YCl/bwKiXkRcz3Td+ly0KjBo2A
-ARC-Seal: i=1; a=rsa-sha256; t=1522393801; cv=none;
+X-Google-Smtp-Source: AIpwx4+L+cgebEWdxxvgIMmDiRMM+nLLj007+286G7e63Vt93UjbxILjdpPw2zhiXBFyFsq1Li1e
+ARC-Seal: i=1; a=rsa-sha256; t=1522393799; cv=none;
         d=google.com; s=arc-20160816;
-        b=olKvGU78ELAq11MBnX13j5mxoE9LpbvZoIsUox2B0T8iF3TQzM+5gtRLP5BfTnK/+1
-         pJ3LOfwJzjON3G/EXmMDXsTPSnSx1xS2bLL/+mA9A02oSfNnV/pFwBQEm4dIDXop88Sv
-         1Sk5T0WNfG0cIwZuqonL+BGmkAIUNvObZ4N0xzA8u77QsXqSBTmb0RxB4Lnx94X6+2bk
-         2grA+nqFHVDs787pD983h08TAd5tu5i5RyLkISgzhMhfwrNZ7zrN2+OoykY0x1k9jyHH
-         9nZN1SxrsM4bpU3z2fNCwHv2w4HR/HhiqPkk0UjV6CV8oYk2yEyF++Z8uhR8wZCwotvT
-         MLyw==
+        b=rMsrogG5x8IiSp3j7Qq21LtIhbQb1S9KndJDT+IDFNeOaRiJU8mzQ4RAaac5KRE1zG
+         IKZvthHjAR68AcxbrzD84ZYIBH4C/T7j1bnnI7v4DpuYfnO2KABAVR0b+al5zYvjKf+K
+         XGRC4zbQ17EjkJdOlXhpx6NQxTuNVWjEd0dewarhVYXY2S03K9o43x61vel0RgXSitI+
+         pgVJ/2GIUlvlCV3ZrxbYWEdEEH/IRkhzTPHfByV5u85tpvC3jj3kIIjCd/SqAuR+k22O
+         gLCjoDb/D0w0LbtSQy7+vasqmHEhkWTAC0bGlQh57BaxL7vcs8arKaBUDEUZlQMU7DRF
+         uk9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=toZsHcJ5V4Fb9J9FAQx56aAn4a5VxmvX4VFMjwp/Po4=;
-        b=OQXP8KQUWDL5FkKI9H+kibzOt9UIdx9Oc1RmRrvrIhon+biTrl0bWmPyK6stC/bM3u
-         tqrL3QTR9V+n3bAurnOYVnHAgGYYjCcbTrrLdi8gMNPTMQvLTXo+vwhwYj2x8g87R7xf
-         WSiw7jTuwtoMA21KHzJ6uu5FYUdyUYCL4b2izmhzUTsEh30dhK3L9zxtqpfnqv9qEMlO
-         bw2Qrb97+vcYmEERl6yEa/+gMrakq3GCQt9AA9qAFtb3KgOso/MJosOrOebxmF+w20bz
-         YBiLXclJYy4ty29SULxCA15UpqjShl0wFPQcGRYx6UJTDJoQPi6d/ddO0UQiuiGHtXDy
-         +yzw==
+        bh=v73nl5Sk9z8ExCbT9mm52GVUE0cXb9NKSGbBELVmd7M=;
+        b=OUNytzeHHEYb/Pl8gitDtGAGnTWxmA9oHfp7rmIJnDnK0oNZGkCUd7IZEpKRLlbVkV
+         xokeJTiJGnBJq+VRk6+/OS7qiYoan6LqWNNez0lOSymMfyGns9O7jwUbRlHpVzg9gNfY
+         6Ou3GcvQIWTSjGf4UwA6Gpit5JndYJ7Fd3gmPAxfW2DJmjo32EjEvVnQnWSn4P4QgTlP
+         a8dqIWNO2sXggXle+L89e/DwH2d4Tm8m+m+sLB7IYoYRMm3w6nxbL/o+Ze4cbfSASebn
+         3wl2rFN6ISRYqT+Bj19LmpLfeHboKrbDBn8GnH3eIOJTor2Z+FZlFI3rU+NEfL8UAs2u
+         7PbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
@@ -29,65 +29,74 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 72/76] staging: ks7010: Remove dummy address set.
-Date: Fri, 30 Mar 2018 00:08:37 -0700
-Message-Id: <20180330070842.25224-74-quytelda@tamalin.org>
+Subject: [PATCH 70/72] staging: ks7010: Rename ks_wlan_set_multicast_list()
+Date: Fri, 30 Mar 2018 00:08:34 -0700
+Message-Id: <20180330070842.25224-71-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:Q78hJzEAv5JLrcCBMO0Eq4qyqo4WibYrBOCC/cWjt79s2AVOsoH
- VwKgnq2MyZ7oycmT4Rnjl8ILwdcF22IOrMsgl9xIIDWmAYcCIjHPL4GQZkOiq/Wu8R6a7wB
- BalK0ypIDCL026mFH9+nvCkkRS2Ki92WWOMQTDKRpd2RmDl6bZi60/JdufyJi7UmJcweqzN
- mKO6KVh8JNGOJlN0ICTSg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:oKCpVLhauUY=:86VD6fRZrZnaxBDIIuIAuB
- f8agdTJeywurY2EUAFLTiaaxrAl/5PpdFrKCW7jnWTD12jKxVUE6Z3mryg3oM6s83FKatHzrD
- v+SAUChkaywpkyxgiLEBFQfslNlaHLv81bpdZnc1X6mXyj0G8dAlV/txytcijk1DcOnmGB7LF
- DtbyYypK/ZOmBFwm2K+TcB2P97og76D3oK2ZD6bFTsjovIpdhRoODYX4LJUeDBV115PqQjMMM
- ODfgsAPnnLZG00ewGp5ooUDK3BzTBHmWLu8pVbqHWLUcdt9ssAJ3ndhNTObUpCslM2SjvjJ6E
- HZK+Kk910FX9HCTPsfeVm1Vy3IhkgJId3EMHNl8ogvqI6GAIOCay4jKSJ3JouWEuklGLvyWOH
- kIeVuoHxqX2SpSUaPJ8lvr1qXaeXprBhl+qB50nosSN9z4Nfl1VZWPbebWBsMwwueXWfBpnjc
- N68PH6ffsXpenN4YLVBy7V3AynLl7H9L6aPTrI2PoAMuJe8oFSqoDlVP3unIzvJ/wjMUaAlv+
- 53wHnELsOvGiMOBezBH0QxkspeeAM+kXAXRXqJIoO7Hx1jr0eEWt6r1C+b95V6tOdzFLIxp1a
- Ls5nOpFAuIKnSyySqCPy3sdr/a7hy3rCWGBPmEFHqN6ySyhqk1BY6dxOA0Zb8D4EMJInqmCB9
- ioPjHht/S/CIpEKJWGN8wt00XaRNYb3scWBwp2VFVQmJ/qaM+fWy7t6U2+l/Zniq5bJf/QBxL
- PKRYJ+n0yDlSupSYEzY7QtMOCUfQXr0W8HEyvA==
+X-Provags-ID: V03:K0:kWQ/TR11DwV4Nni3Op1X9lAY8daCZg8YSDjtMZuJIoEinI3Hg4T
+ H5gz1VOLs09AA8jOl8rWaRdpxVNrludtPr/bQF/9hgckQakv9i22gqdXa++0hCBDQHPDxlf
+ I/aESgnTrcoVZF2qJiBOlNsOPHkli9kuLwJ/qaBVACrBt8AjPav3FPvJ4ZIf7TKZtZO96JO
+ C9wtQdUqMcYapv7XYgrLQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ICaL69QgPno=:kVGOKZJmcfKsYLH3G+/FCW
+ F+Fr8LE1jloomGUM3gJgwWhGUM8vnToER2XiEjw4wuQhy/zgptYGvW3AzlFU9rQvTCPNmUhyY
+ EQR9XkMskuTMmk+OayPVlfA9Oq65DOuvAWc1Wu1RICmQjniPz6IdtEnelcoKNgisqpMprSX3q
+ Rl1c+WSw7OGaRXb8UekOYxP5C7371RoI3im7479ZgGTRqajHE94HeP6clgGSTcE511bdgg9xm
+ g6SBLf5wJWy3olfut+Cf5PEbD74MVzxRoDMfNVyLyhSyMe/u8H4WgO4lnGqofh/nZECE8rD/n
+ nLko53DQwE+DExm0++U4vExFG76YISNxoO9FUcuSh7v16EZwBz5a5CWzM+GkK5bF91W22xo0L
+ EmaC3OisXz3a6iLRUUwQwv0meYlAvaIbrORmSN9YIzx4DPfqrfCXcEeZHyGlAlrJLlfNsT3rp
+ B0kqXLQVPTDsJm0WKXAg55YbcWBnXderkUqPcWbtvC4yzLROTHoFVJQ4tpd6GVCbpzs5iNdKb
+ T4fa/1q+x5p61OMK23o4igW0Ta6KV9Plkhm0XGzALPYuIbsitzXXFejO4PkD1LL2eyHzB9uSr
+ 7Tq5fjpN/acfC1kuszaxEm2jfXo/uSpqCIJseTpbOmrvnQp5e+hbL6nigFEWsIDJb87fS7vwf
+ 3zrxJ5SbId8Cr7q725QKmnmfeOBB7nu+KzFuGCTqFUGSbv3PnwJlMOC6jvmow9F41E1wlw42P
+ knG3sVNs3AbOsjnABiq7CutZo17k1mXBn9VM1w==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596345602818208283?=
-X-GMAIL-MSGID: =?utf-8?q?1596345602818208283?=
+X-GMAIL-THRID: =?utf-8?q?1596345599842678462?=
+X-GMAIL-MSGID: =?utf-8?q?1596345599842678462?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Setting a dummy address during the driver probe is not necessary.
-The dev_addr field is already zeroed out from alloc_etherdev().
+All of the net_device_ops callbacks are named after their counterparts
+in the kernel's 'struct net_device_ops', except
+ks_wlan_set_multicast_list().  Rename it to ks_wlan_set_rx_mode() for
+greater consistency.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_wlan_net.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/staging/ks7010/ks_wlan_net.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 5c5569000fce..afbc472baa05 100644
+index 29dd07cdd69d..e98f6163e724 100644
 --- a/drivers/staging/ks7010/ks_wlan_net.c
 +++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -2852,9 +2852,6 @@ int ks_wlan_close(struct net_device *dev)
- /* Operational parameters that usually are not changed. */
- /* Time in jiffies before concluding the transmitter is hung. */
- #define TX_TIMEOUT  (3 * HZ)
--static const unsigned char dummy_addr[] = {
--	0x00, 0x0b, 0xe3, 0x00, 0x00, 0x00
--};
+@@ -72,7 +72,7 @@ static const struct iw_handler_def ks_wlan_handler_def;
+ static int ks_wlan_open(struct net_device *dev);
+ static int ks_wlan_close(struct net_device *dev);
+ static int ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev);
+-static void ks_wlan_set_multicast_list(struct net_device *dev);
++static void ks_wlan_set_rx_mode(struct net_device *dev);
+ static int ks_wlan_set_mac_address(struct net_device *dev, void *addr);
+ static int ks_wlan_netdev_ioctl(struct net_device *dev, struct ifreq *rq,
+ 				int cmd);
+@@ -2817,7 +2817,7 @@ void send_packet_complete(struct ks_wlan_private *priv, struct sk_buff *skb)
+  * This routine is not state sensitive and need not be SMP locked.
+  */
+ static
+-void ks_wlan_set_multicast_list(struct net_device *dev)
++void ks_wlan_set_rx_mode(struct net_device *dev)
+ {
+ 	struct ks_wlan_private *priv = netdev_priv(dev);
  
- static const struct net_device_ops ks_wlan_netdev_ops = {
+@@ -2861,7 +2861,7 @@ static const struct net_device_ops ks_wlan_netdev_ops = {
+ 	.ndo_open = ks_wlan_open,
+ 	.ndo_stop = ks_wlan_close,
  	.ndo_start_xmit = ks_wlan_start_xmit,
-@@ -2882,9 +2879,6 @@ int ks_wlan_net_start(struct net_device *dev)
- 	atomic_set(&update_phyinfo, 0);
- 	timer_setup(&update_phyinfo_timer, ks_wlan_update_phyinfo_timeout, 0);
- 
--	/* dummy address set */
--	ether_addr_copy(dev->dev_addr, dummy_addr);
--
- 	/* The ks_wlan-specific entries in the device structure. */
- 	dev->netdev_ops = &ks_wlan_netdev_ops;
- 	dev->wireless_handlers = &ks_wlan_handler_def;
+-	.ndo_set_rx_mode = ks_wlan_set_multicast_list,
++	.ndo_set_rx_mode = ks_wlan_set_rx_mode,
+ 	.ndo_set_mac_address = ks_wlan_set_mac_address,
+ 	.ndo_do_ioctl = ks_wlan_netdev_ioctl,
+ 	.ndo_tx_timeout = ks_wlan_tx_timeout,
 -- 
 2.16.3
