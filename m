@@ -1,87 +1,105 @@
-Return-Path: <opensource.ganesh@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522373944; cv=none;
+Return-Path: <minchan.kim@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522377654; cv=none;
         d=google.com; s=arc-20160816;
-        b=k550c6l5kvDQLrj7dpZqQr58w8P4Y/gH1fEnrlEpIdsISv4X05RBynmTO+82edEjV9
-         9Dce1PAtTCn73lmTzuHmnG/vF3Emz24cDz0SGPaz/8Aet449cb0lL6Tu0w18t2u8B3yt
-         9UR2PCbTRr1y+rsXyOfRDUCavXIZTurgXNsnUF1FwLj0zv4qGWDUTOnT3aR/Oz66s1fW
-         CspREDjs5WK77IHOWThUCWTwpCImtjxDgzoHs9gbvFbx0JYWnt43Y44k0BHOs8f9EtBz
-         6kjbpxb3IMZ3NYU1l/mHvlExaMu/AVyveyr53OsN1/GHoM20KkB3D/tzisu8GiAfgSFS
-         o2WA==
+        b=kfUe7pWRLbMkmTtaICPGQSuHPls5buyALECVEyW4PdfmQhmMECQf6MWuWdqV/CTCBh
+         OUI5Itbsim1E3TOIcF7VgNN3qJi/4eAjOR+qKRmCvUC73QL21QhiOTpCsi+zRmhAEplT
+         Eg6NfSCs0DJRL4UL8ZKBVgMlr7HyVzzNqsuyS/HSUTrjMHPxksZk4xOpbWTIp1l+qFki
+         wp4nSHybfSo1iAwI2rTjbPbhb+6mQ9xWveduWAhvLSXQPWRKTIOVSk/Suj6NzkTIU1Pp
+         2XM86GukDad+QwjA3jHTNaC2ygL2fCrayNAY7lA4XUP7uXBKpP5gHmIYhIM6za98usAp
+         mVDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=cJF/KlIP2Znzrqew5cfnvQTsMWEQykAKfrA0VahZ38k=;
-        b=MhVJ6XVpKlYqLHLaJkKyNA0dAyTrZyh8jDTnuei5/uxXEuwTClo5V5LNZteiwte9BR
-         xolCURKbExexBycbZeYaW8iuRpkIKdXBxSNaOdaB3YLldeXN0jb9QZQVDNT0c/dT+ugb
-         Z8eQazM/iI7I3zuV0f9UCqR0KGVu6cbDmxkWK83DH1zJb56+b3iPipFqRRf5WN0XpyIX
-         mNI6uS4HsRFXNSgbvxW/Cq0KbCjNPuHyhMcozXcES0kETibT27zlPtHrO7QABzZG3UO9
-         V2BQBEbBA2DDRf28ejfU2c8m7OhYIWl+PJyRwNm8Iy3VhJOiR9uIIQkdxMKta4GEuxK/
-         DM2Q==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:sender:dkim-signature
+         :arc-authentication-results;
+        bh=HzAey2PHgNMBGX9QwaYWa0PqhpwmTWRs5M4wyJYzsK8=;
+        b=xKk+Ay96XhGvBF1YkVDM3rdNtJPjNjy29Q70FGf2n5F9YBygHGvurZEJAu+dw4vIG2
+         2LCY18R/lgI6Fwy4iYbJKDR5sDPOzfr6PgOdvNbEM4rxGh1L4ok2Q3KP9gotmcihz06S
+         haGw+KtKvo5cj7myIdclV3RDuim/bYLA9bQ42yGmmfaRerQ16eQ/SdUnWjpcS+LhIz8m
+         /ydnPP7ih/llohLXdyIlQycEq21EgIjXfbh3stXAw1Cn3WJJYntBYbanJOIM2hcgNv/d
+         TcTsuHBQEZ8E9vNdqQBrTmQC6JLlaJbZxwkVCpXI405/O8k0f4odNX8lKZ3hM7KTgH25
+         795w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DhkF+GNB;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JYt06ujF;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DhkF+GNB;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx484x6D6kOQXJlgliHpp9qrbPS0AdM6N7g4CfLlLKmirYO/i2xxQYR4sBtCFn3SoKhGvTMGfO52LwzADQ1IdYHw=
-MIME-Version: 1.0
-In-Reply-To: <20180330012921.GB255979@rodete-desktop-imager.corp.google.com>
-References: <20180329065424.203172-1-minchan@kernel.org> <CADAEsF8Y2CJsuom=9au0-uvZAALvrLTdTnrkxrGjW9C9F6hTVg@mail.gmail.com>
- <20180330012921.GB255979@rodete-desktop-imager.corp.google.com>
-From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Date: Fri, 30 Mar 2018 09:39:03 +0800
-Message-ID: <CADAEsF_B2Jt=OQetHLKqfSq=wU4SSzQYtTLjYExiS9a09na6zA@mail.gmail.com>
-Subject: Re: [PATCH v5] ANDROID: binder: change down_write to down_read
-To: Minchan Kim <minchan@kernel.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JYt06ujF;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
+X-Google-Smtp-Source: AIpwx4/J2JFMDxgsrctKDF4CnJE9kGK358/fgBNaWqomkfuNbyGJZt59qjfgTj+VDGbOnlJYlikbZw==
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date: Fri, 30 Mar 2018 11:40:48 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Ganesh Mahendran <opensource.ganesh@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>,
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-	Todd Kjos <tkjos@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Martijn Coenen <maco@android.com>
-Content-Type: text/plain; charset="UTF-8"
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Martijn Coenen <maco@android.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v5] ANDROID: binder: change down_write to down_read
+Message-ID: <20180330024048.GC255979@rodete-desktop-imager.corp.google.com>
+References: <20180329065424.203172-1-minchan@kernel.org>
+ <CADAEsF8Y2CJsuom=9au0-uvZAALvrLTdTnrkxrGjW9C9F6hTVg@mail.gmail.com>
+ <20180330012921.GB255979@rodete-desktop-imager.corp.google.com>
+ <CADAEsF_B2Jt=OQetHLKqfSq=wU4SSzQYtTLjYExiS9a09na6zA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADAEsF_B2Jt=OQetHLKqfSq=wU4SSzQYtTLjYExiS9a09na6zA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596254032587353794?=
-X-GMAIL-MSGID: =?utf-8?q?1596324780681462836?=
+X-GMAIL-MSGID: =?utf-8?q?1596328671907422306?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-03-30 9:29 GMT+08:00 Minchan Kim <minchan@kernel.org>:
-> Hi Ganesh,
->
-> On Fri, Mar 30, 2018 at 09:21:55AM +0800, Ganesh Mahendran wrote:
->> 2018-03-29 14:54 GMT+08:00 Minchan Kim <minchan@kernel.org>:
->> > binder_update_page_range needs down_write of mmap_sem because
->> > vm_insert_page need to change vma->vm_flags to VM_MIXEDMAP unless
->> > it is set. However, when I profile binder working, it seems
->> > every binder buffers should be mapped in advance by binder_mmap.
->> > It means we could set VM_MIXEDMAP in binder_mmap time which is
->> > already hold a mmap_sem as down_write so binder_update_page_range
->> > doesn't need to hold a mmap_sem as down_write.
->> >
->> > Android suffers from mmap_sem contention so let's reduce mmap_sem
->> > down_write.
->>
->> Hi, Minchan:
->>
->> It seems there is performance regression of this patch.
->
-> You mean "This patch aims for solving performance regression" not "This patch
-> makes performance regression"?
+On Fri, Mar 30, 2018 at 09:39:03AM +0800, Ganesh Mahendran wrote:
+> 2018-03-30 9:29 GMT+08:00 Minchan Kim <minchan@kernel.org>:
+> > Hi Ganesh,
+> >
+> > On Fri, Mar 30, 2018 at 09:21:55AM +0800, Ganesh Mahendran wrote:
+> >> 2018-03-29 14:54 GMT+08:00 Minchan Kim <minchan@kernel.org>:
+> >> > binder_update_page_range needs down_write of mmap_sem because
+> >> > vm_insert_page need to change vma->vm_flags to VM_MIXEDMAP unless
+> >> > it is set. However, when I profile binder working, it seems
+> >> > every binder buffers should be mapped in advance by binder_mmap.
+> >> > It means we could set VM_MIXEDMAP in binder_mmap time which is
+> >> > already hold a mmap_sem as down_write so binder_update_page_range
+> >> > doesn't need to hold a mmap_sem as down_write.
+> >> >
+> >> > Android suffers from mmap_sem contention so let's reduce mmap_sem
+> >> > down_write.
+> >>
+> >> Hi, Minchan:
+> >>
+> >> It seems there is performance regression of this patch.
+> >
+> > You mean "This patch aims for solving performance regression" not "This patch
+> > makes performance regression"?
+> 
+> After applying this patch in our devices, app launch time increases
+> about 15% in average.
+> "This patch makes performance regression", yes, from the results, it
+> is like this.
+> 
+> I will do more test of this patch.
 
-After applying this patch in our devices, app launch time increases
-about 15% in average.
-"This patch makes performance regression", yes, from the results, it
-is like this.
+Thanks for the testing. Every apps increases time?
+I will appreciate if you confirm the problem again.
 
-I will do more test of this patch.
+I guess the reason is currently rw_semaphore's preferrence for writer
+at up_write so If binder uses down_read instead of down_write, binder
+should compete other down_read callers at wake up time from up_write
+and could lose wakeup chance if it is low priority. 
 
->
->>
->> Do you have some test result of android app launch time or binderThroughput?
->
-> Unfortunately, I don't have any number. The goal is to reduce the number of
-> call mmap_sem as write-side lock because it makes priority inversion of threads
-> easily and that's one of clear part I spot that we don't need write-side lock.
->
-> Thanks.
+Anyway, I think it's abuse of using down_write to get lock holding
+asap where it's down_read enough. I guess there is tradeoff based on
+binder's priority. 
+If we go to the speculative page faults or range-lock instad of mmap_sem,
+the situation would be much improved.
+
+Anyway, currently, I have no idea to overcome such prioriy inversion
+problem from rw_semaphore and I believe generally changing from
+down_read to down_write is good thing to prevent contention.
+
+Ccing maintainers.
