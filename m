@@ -1,242 +1,86 @@
-Return-Path: <boris.brezillon@bootlin.com>
-X-Google-Smtp-Source: AIpwx4/TORyC07RwKlPdmsn4Cfpo/ySjgLNzmJXs6iugoFcqSATnb1mHK8nWhOm2MlepqxVOYVoW
-ARC-Seal: i=1; a=rsa-sha256; t=1522396078; cv=none;
+Return-Path: <geert.uytterhoeven@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522396522; cv=none;
         d=google.com; s=arc-20160816;
-        b=liZQ43ZIRKbIpgx/P85tt00ll5ay4K981ywsIvEK4C4kYCd6pFPnNBYGBzqDqOR2ho
-         XCGUGC/9yqE3pV9CQtmxe1OrUA9MP8G4WkKEVvzcO1t0E5+RPBpR0Lh4WLAk1MxwxqxV
-         K7WMWkdyCV/ACtb9o4QXV2WoNfeq3t90wXawxZqb0Nwrzzrvr1tGcOzaLJYBC4UqrBio
-         6T0ME125HrCsE2Da+neB8oEQTFbEvajTvKqI2KVSavOF3sjktGfExUULTlNx2WwFrjUX
-         ucnTHSeFK0KFWw1C6MO/7DiC6PjGgUYb1Sa98HiHdE1b4YXSBGMQizn2Q5XT+ix/tA4/
-         5A5Q==
+        b=vqyRigce4P7KAOaotZCfy5l/abT+Sv9Ho3TARNFzCe40s30VMv3jPs33r4LOGbOU3o
+         KFtLfyMqFi7qumFv4GeMnAsc3JC5mXjihPJfsvY7D8YNY7Ktk8xQqlifNq9nh60u/XzX
+         iS5f2UBHEEae0WyjTd1bzRQIoqszELbXEusHkxUHCSrYO7tUrmXFXxifXvLfcDGRIssx
+         t/ep49ymkah5x59SvJbMNk3mrTiFQEPsxpDrjB8A9Ucs+BvpfsWjPsbzucbnOzxMifR5
+         ngtljtXf5m/iad7A/KOK34/6khrkVVXkdeMpTmYBf0HBNGhxFIBW6rMQeDLf0c/zuqDg
+         ZQng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=qV4Y6fvJrO7Bi4RQj+76C1Xt+F7SYBMnac7zr3jv0Jw=;
-        b=hNAq0La8ECNN5WneMlkA2DVkGnRZMEm/MHasoLfoD6/YoBjuRaPSBCPxFETK4Ci/Wh
-         m6EfnUGNbT+AvBz5f/XlZOcOPIadpCyLI6knZukcln8Pqfv5L8pAI+CSrgyo+ykkODuZ
-         qLouGvsyhbFqaIbFwEMOGsmDlWHCrhpSjPpqallbdDmVApKuRo5k+JsTl7v5Z5FY0KOr
-         cr9TjuqRZjg4+f0Cmk9jrF35moKWU6Zh4pcASf/Wqp4zOClJCK0qlESPnu34eRDyDDLX
-         cqNE7yiQSqcYXMIsiAO45GVOtRGqd1+LzBtEfeRiFQ8rTW60QWuGTNq+Kz8lWGD8jpBB
-         L3rg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=NgPkZTc8EoLB7dtNGzLHY3q6bgIElIYHJ/aIoORdA1s=;
+        b=JXQD571FXW4/U1j9qUFZSjTHbvoJ0IiEURRr+FFbwUhNte+Fg8R5XWO8zyQBX55EXq
+         GLACttcwTIDlpSEnnL5uUgqksHozqlHVHd3EN1GBmNyhV2q6sHlTGeK6CRZZemYykJMf
+         MM9NmQLwwwmwGfP6uuh1j9CxS3Z8OgYG1zZw+hy/Yw9e8YY58cSdnxNYB/l0gsrKKRs4
+         q/lb4JXiycDvqhoYOyV5QqnbubQRf4pC7JG8ad3FGhnTR9XyXj7DoIlQnefS7Jz7ta2I
+         e9hR1qoJ8VybJBFZxN1uEJR8dGBPnpLJrS93jDpX4e2CycivNtlha5ZUzBN58A2RiMuG
+         e2Nw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TxZDpNrH;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-	linux-i2c@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Przemyslaw Sroka <psroka@cadence.com>,
-	Arkadiusz Golec <agolec@cadence.com>,
-	Alan Douglas <adouglas@cadence.com>,
-	Bartosz Folta <bfolta@cadence.com>,
-	Damian Kos <dkos@cadence.com>,
-	Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-	Cyprian Wronka <cwronka@cadence.com>,
-	Suresh Punnoose <sureshp@cadence.com>,
-	Rafal Ciepiela <rafalc@cadence.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Nishanth Menon <nm@ti.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=TxZDpNrH;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+X-Google-Smtp-Source: AIpwx49omFZqhUFGx0K0OcS4G+5pXSjQ7VF4YN7bT+6rFwYlMM5Qh1wssClOijFOJV81EcMUlCVH1Ynk08zvRxfin5I=
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20180330074751.25987-5-boris.brezillon@bootlin.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com> <20180330074751.25987-5-boris.brezillon@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Mar 2018 09:55:22 +0200
+X-Google-Sender-Auth: gLUpy2HHb04rvKAfBmAsfUidLYc
+Message-ID: <CAMuHMdW-MhzaW-bWL25Y+--UHxLB+Mm5+SmhwA+PiezUEg0Ycw@mail.gmail.com>
+Subject: Re: [PATCH v4 04/10] dt-bindings: i3c: Document core bindings
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>,
+	Przemyslaw Sroka <psroka@cadence.com>, Arkadiusz Golec <agolec@cadence.com>,
+	Alan Douglas <adouglas@cadence.com>, Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>,
+	Alicja Jurasik-Urbaniak <alicja@cadence.com>, Cyprian Wronka <cwronka@cadence.com>,
+	Suresh Punnoose <sureshp@cadence.com>, Rafal Ciepiela <rafalc@cadence.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Nishanth Menon <nm@ti.com>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vitor Soares <Vitor.Soares@synopsys.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Xiang Lin <Xiang.Lin@synaptics.com>,
-	linux-gpio@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v4 04/10] dt-bindings: i3c: Document core bindings
-Date: Fri, 30 Mar 2018 09:47:45 +0200
-Message-Id: <20180330074751.25987-5-boris.brezillon@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180330074751.25987-1-boris.brezillon@bootlin.com>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vitor Soares <Vitor.Soares@synopsys.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Xiang Lin <Xiang.Lin@synaptics.com>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596347989623961595?=
-X-GMAIL-MSGID: =?utf-8?q?1596347989623961595?=
+X-GMAIL-MSGID: =?utf-8?q?1596348456023256292?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-A new I3C subsystem has been added and a generic description has been
-created to represent the I3C bus and the devices connected on it.
+Hi Boris,
 
-Document this generic representation.
+On Fri, Mar 30, 2018 at 9:47 AM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> A new I3C subsystem has been added and a generic description has been
+> created to represent the I3C bus and the devices connected on it.
+>
+> Document this generic representation.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
+> Changes in v4:
+> - Clarify the fact that static address == I3C address and dynamic
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
-Changes in v4:
-- Clarify the fact that static address == I3C address and dynamic
-  address == I3C address
-- Use i2c-scl-hz in the example
+static address == I2C address?
 
-Changes in v3:
-- Rename {i2c,i3c}-scl-frequency DT prop into {i2c,i3c}-scl-hz
-- Rework the way we expose the provisional ID and LVR information
-- Rename dynamic-address into assigned-address
-- Enforce the I3C master node name
+>   address == I3C address
 
-Changes in v2:
-- Define how to describe I3C devices in the DT and when it should be
-  used. Note that the parsing of I3C devices is not yet implemented in
-  the framework. Will be added when someone really needs it.
----
- Documentation/devicetree/bindings/i3c/i3c.txt | 140 ++++++++++++++++++++++++++
- 1 file changed, 140 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/i3c/i3c.txt b/Documentation/devicetree/bindings/i3c/i3c.txt
-new file mode 100644
-index 000000000000..13b719f1ef15
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i3c/i3c.txt
-@@ -0,0 +1,140 @@
-+Generic device tree bindings for I3C busses
-+===========================================
-+
-+This document describes generic bindings that should be used to describe I3C
-+busses in a device tree.
-+
-+Required properties
-+-------------------
-+
-+- #address-cells  - should be <3>. Read more about addresses below.
-+- #size-cells     - should be <0>.
-+- compatible      - name of the I3C master controller driving the I3C bus
-+
-+For other required properties e.g. to describe register sets,
-+clocks, etc. check the binding documentation of the specific driver.
-+The node describing an I3C bus should be named i3c-master.
-+
-+Optional properties
-+-------------------
-+
-+These properties may not be supported by all I3C master drivers. Each I3C
-+master bindings should specify which of them are supported.
-+
-+- i3c-scl-hz: frequency of the SCL signal used for I3C transfers.
-+	      When undefined the core sets it to 12.5MHz.
-+
-+- i2c-scl-hz: frequency of the SCL signal used for I2C transfers.
-+	      When undefined, the core looks at LVR (Legacy Virtual Register)
-+	      values of I2C devices described in the device tree to determine
-+	      the maximum I2C frequency.
-+
-+I2C devices
-+===========
-+
-+Each I2C device connected to the bus should be described in a subnode. All
-+properties described in Documentation/devicetree/bindings/i2c/i2c.txt are
-+valid here, but several new properties have been added.
-+
-+New constraint on existing properties:
-+--------------------------------------
-+- reg: contains 3 cells
-+  + first cell : still encoding the I2C address
-+
-+  + second cell: should have bit 31 set to 1 to signify that this is an I2C
-+		 device. Bits 0 to 7 encode the I3C LVR (Legacy Virtual
-+		 Register):
-+
-+	bit[7:5]: I2C device index. Possible values
-+	* 0: I2C device has a 50 ns spike filter
-+	* 1: I2C device does not have a 50 ns spike filter but supports high
-+	     frequency on SCL
-+	* 2: I2C device does not have a 50 ns spike filter and is not tolerant
-+	     to high frequencies
-+	* 3-7: reserved
-+
-+	bit[4]: tell whether the device operates in FM (Fast Mode) or FM+ mode
-+	* 0: FM+ mode
-+	* 1: FM mode
-+
-+	bit[3:0]: device type
-+	* 0-15: reserved
-+
-+  + third cell: should be 0
-+
-+I3C devices
-+===========
-+
-+All I3C devices are supposed to support DAA (Dynamic Address Assignment), and
-+are thus discoverable. So, by default, I3C devices do not have to be described
-+in the device tree.
-+This being said, one might want to attach extra resources to these devices,
-+and those resources may have to be described in the device tree, which in turn
-+means we have to describe I3C devices.
-+
-+Another use case for describing an I3C device in the device tree is when this
-+I3C device has a static I2C address and we want to assign it a specific I3C
-+dynamic address before the DAA takes place (so that other devices on the bus
-+can't take this dynamic address).
-+
-+The I3C device should be names <device-type>@<static-i2c-address>,<i3c-pid>,
-+where device-type is describing the type of device connected on the bus
-+(gpio-controller, sensor, ...).
-+
-+Required properties
-+-------------------
-+- reg: contains 3 cells
-+  + first cell : encodes the static I2C address. Should be 0 if the device does
-+		 not have one (0 is not a valid I2C address).
-+
-+  + second and third cells: should encode the ProvisionalID. The second cell
-+			    contains the manufacturer ID left-shifted by 1.
-+			    The third cell contains ORing of the part ID
-+			    left-shifted by 16, the instance ID left-shifted
-+			    by 12 and the extra information. This encoding is
-+			    following the PID definition provided by the I3C
-+			    specification.
-+
-+Optional properties
-+-------------------
-+- assigned-address: dynamic address to be assigned to this device. This
-+		    property is only valid if the I3C device has a static
-+		    address (first cell of the reg property != 0).
-+
-+
-+Example:
-+
-+	i3c-master@d040000 {
-+		compatible = "cdns,i3c-master";
-+		clocks = <&coreclock>, <&i3csysclock>;
-+		clock-names = "pclk", "sysclk";
-+		interrupts = <3 0>;
-+		reg = <0x0d040000 0x1000>;
-+		#address-cells = <3>;
-+		#size-cells = <0>;
-+
-+		status = "okay";
-+		i2c-scl-hz = <100000>;
-+
-+		/* I2C device. */
-+		nunchuk: nunchuk@52 {
-+			compatible = "nintendo,nunchuk";
-+			reg = <0x52 0x80000010 0x0>;
-+		};
-+
-+		/* I3C device with a static I2C address. */
-+		thermal_sensor: sensor@68,39200144004 {
-+			reg = <0x68 0x392 0x144004>;
-+			assigned-address = <0xa>;
-+		};
-+
-+		/*
-+		 * I3C device without a static I2C address but requiring
-+		 * resources described in the DT.
-+		 */
-+		sensor@0,39200154004 {
-+			reg = <0x0 0x392 0x154004>;
-+			clocks = <&clock_provider 0>;
-+		};
-+	};
-+
+                        Geert
+
 -- 
-2.14.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
