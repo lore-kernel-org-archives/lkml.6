@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753039AbeC3Dvq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 23:51:46 -0400
-Received: from mx.socionext.com ([202.248.49.38]:46792 "EHLO mx.socionext.com"
+        id S1753046AbeC3DwA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 23:52:00 -0400
+Received: from mx.socionext.com ([202.248.49.38]:46785 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752619AbeC3Dvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 23:51:43 -0400
+        id S1752977AbeC3Dvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 23:51:45 -0400
 From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -16,9 +16,9 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 1/2] dt-bindings: thermal: uniphier: add a compatible string for PXs3
-Date: Fri, 30 Mar 2018 12:51:19 +0900
-Message-Id: <1522381880-18892-2-git-send-email-hayashi.kunihiko@socionext.com>
+Subject: [PATCH 2/2] thermal: uniphier: add UniPhier PXs3 support
+Date: Fri, 30 Mar 2018 12:51:20 +0900
+Message-Id: <1522381880-18892-3-git-send-email-hayashi.kunihiko@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522381880-18892-1-git-send-email-hayashi.kunihiko@socionext.com>
 References: <1522381880-18892-1-git-send-email-hayashi.kunihiko@socionext.com>
@@ -26,25 +26,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a compatible string for thermal monitor implemented on
-UniPhier PXs3 SoC.
+Add support for UniPhier PXs3 SoC. It is equivalent to LD20.
 
 Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 ---
- Documentation/devicetree/bindings/thermal/uniphier-thermal.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/thermal/uniphier_thermal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/uniphier-thermal.txt b/Documentation/devicetree/bindings/thermal/uniphier-thermal.txt
-index 686c0b4..ceb92a9 100644
---- a/Documentation/devicetree/bindings/thermal/uniphier-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/uniphier-thermal.txt
-@@ -8,6 +8,7 @@ Required properties:
- - compatible :
-   - "socionext,uniphier-pxs2-thermal" : For UniPhier PXs2 SoC
-   - "socionext,uniphier-ld20-thermal" : For UniPhier LD20 SoC
-+  - "socionext,uniphier-pxs3-thermal" : For UniPhier PXs3 SoC
- - interrupts : IRQ for the temperature alarm
- - #thermal-sensor-cells : Should be 0. See ./thermal.txt for details.
- 
+diff --git a/drivers/thermal/uniphier_thermal.c b/drivers/thermal/uniphier_thermal.c
+index 9570473..55477d7 100644
+--- a/drivers/thermal/uniphier_thermal.c
++++ b/drivers/thermal/uniphier_thermal.c
+@@ -365,6 +365,10 @@ static const struct of_device_id uniphier_tm_dt_ids[] = {
+ 		.compatible = "socionext,uniphier-ld20-thermal",
+ 		.data       = &uniphier_ld20_tm_data,
+ 	},
++	{
++		.compatible = "socionext,uniphier-pxs3-thermal",
++		.data       = &uniphier_ld20_tm_data,
++	},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, uniphier_tm_dt_ids);
 -- 
 2.7.4
