@@ -1,111 +1,145 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2068237-1522510939-2-2247662419231338308
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2915802-1522393773-5-4813581843570477048
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522510938; b=GZLWfP4e/Kqlgx0n/RJ2pjXzTOZGo9+V+CuinE+K9TMXuVC1Xi
-    1mq00edLAzgWmTQP45yWeFOvp6aQIvmxneHYg2SKb7zy1UHCekCAWR7HgEfSHyKK
-    GDWDX3ilPKPs+Zp1x+kFQZcrwoaoB/9RJ+MrVjkCacYm2pWfTUbEKRZfDez3ukZ9
-    O8wdqw07OfrlAfeDRQRbImJZ9QpPM23n9TgEPjIcw3zTRVDNWVvz1hj4Alt/Hh2v
-    A301m8o/8+uS/y7wnXlh6eFSKrcw7iVFnFTjYFwKsayQ3xE0jnQWdfW+JzjrOtdL
-    k9keYRU21o9xV4LASS7LGbmPfoCG+DSWA4fg==
+    1522393773; b=ks/B2RojhYMRcxZzszSzK5GCRQDkFbJWRrvtAtdyVPVpqVZW+W
+    rV49PY9u5FojKT36AfU6CuqcVG8fNjkvfQ+BzPYt9hMiaFEooKMExt7yghvDSqSO
+    zMZ/GGgX8z8eFaaH9A+/SlPpRY1NrUGJf5dFjt3GWcwyzj71sAeP6A7H2GQ0REA4
+    Aj4XMDZFydA/LW9gOWLV/Kx+yMWq4vy7vT8Pd8GedWDTpyyj87y13E9ms4bn+cYc
+    e1Xj4gUgnFeG9xXxl3sItsgUjFWDvHGeLQVncKkRxtwdh0N2h8GpvTnowBJEJtwR
+    1HPcCHv8bYbZPLuduxOV8Xgtnl5orLpRy6Rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1522510938; bh=CMMeFIHUvEgdD4fdsxJu9YXk2Zy+Qk
-    jhXG9k/UsAWO0=; b=s7bjQHLrWgv6qJbXgzbYFZu0cfE8VmuYvXV3b4tvWjwu0c
-    vZ1yiH9mStDqp0RlM8GpSlPifG8s+6TW/DF0PHGnppfnj5SrVLI0BbewN1UmPGE8
-    RnJpE/+74skMPF12ti5tkPNMNKyQvl+awKVznnTrH3dbWqsARZxyzSL8QOsa9fl/
-    hYmXwIZ6rpXr2beW2ry6bcl90m1AJ9mjx9ybJahuOPQkXc9W7AgiPM7/qIStPit1
-    jiRGBtcYBAcDH90lEYcBv7BXgaiGJ5Apse5Y/n1lAvtQ++XUkk0nXRxl+OH95jJ0
-    TdalQ9oeqRCcMpVi3Puwvr+PKKZKf6DMBt47ZC9w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522393773; bh=48h23
+    xVur+r0PZARS6u3DujJORxlKDyjvhj/1b6RJXI=; b=XJBgXKFR/FKMmM7ReZHO5
+    5nDBRgnE3aO3al3khpubfz5Coy9XZY/6jD9+I+vpCXNUlbINqPn2DrF38HlZbzq5
+    0GEoo73Ia8hDn62DAfd4WSioJd2+Uo6GUrYtlrh6Ne14+LQmb4swc1ijYZOLDqd8
+    f8PnKDnWqGCAJg6FhgB1/6Q9heGrqL9Hg5DdgoaIpc8oI5LHDsGVi/SGDQdsYnzz
+    56WwedUKxpdQqZ34L/LPV2indfNR6RlzYX6gOCgcbBmXIOeQHjaFtL9P8qn4s6Za
+    y1CtNqs3WZ1JzuIzyLnbyhEmRE7ACElS8cGdXrP1J9GX0dmRKcAD/8WXbcHQc86C
+    A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfO3rkasa+GtNCg3oYV1w5ZQ4A6D92Y9Y0Ac2X97fYoqLTeqreSKs2DDnT8wb9F237WdlKtp6hxMYROUCENOsxuj+wnYIO30qowWsKRcUYdPG4bX2CQEi
-    Es9u7njNLGKXVx+Kj68vtZoX8w8E0roB3BWd4MDOuvZPGDqo2itlVtMOemmKV1AYB54ldrRGFxPnqlbRotnWvYV6g2oozB4FT9mWgsTsncQhMVUtub0zUOfq
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=danhDmx_AAAA:8
-    a=VwQbUJbxAAAA:8 a=DfNHnWVPAAAA:8 a=APxziFbbeBc5x69s2ecA:9
-    a=P4VdviVPEcjfz_PVVggX:22 a=AjGcO6oz07-iQ99wixmX:22 a=rjTVMONInIDnV1a_A2c_:22
+X-CM-Envelope: MS4wfOfvxGDWBsRsErEu1jxQsf9GZnjUaJhf/yTB92tSl3zUg3M6bgQ9eASmvoC4QvaQzBNE6yQQ3MSM5b082JP9/+FItsVu/RE3JSmcfmRtxYcC6aE4RbiR
+    VDWY8GFBsrzP3ZVHeitbo9or3du78jfx8wLWxR5r5HmQMb0YdRD/iOXzIUPFdLMQULpayP8enYcveCC/lV0pxKVIFqGnN7smsC+WdvbK/JUOHpHGMKkjcn/V
+    +gCsKLy2Ga8DF835PNZxPA==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
+    a=bTZhXF_3Es1RlC27uLMA:9 a=J38sKhbewBX8-xsW:21 a=6n9lg6l9SQjj86zw:21
+    a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752598AbeCaPmO (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 31 Mar 2018 11:42:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48245 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752423AbeCaPmO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 31 Mar 2018 11:42:14 -0400
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: mlindner@marvell.com, stephen@networkplumber.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Stable <stable@vger.kernel.org>
-Subject: [PATCH] sky2: Increase D3 delay to sky2 stops working after suspend
-Date: Sat, 31 Mar 2018 23:42:03 +0800
-Message-Id: <20180331154203.5562-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Quytelda Kahja <quytelda@tamalin.org>
+To: gregkh@linuxfoundation.org,
+	wsa@the-dreams.de
+Subject: [PATCH 01/76] staging: ks7010: Use the ARRAY_SIZE() macro to
+ calculate array sizes.
+Date: Fri, 30 Mar 2018 00:07:24 -0700
+Message-Id: <20180330070842.25224-1-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.3
+X-Provags-ID: V03:K0:omegR1/TGFZiwu1arUqPAnu5CbpTGYWWe2Qz4dr1sn5yuNUzb7Q
+ 3GJnzYnubFcerAygZDpKYbA+wY0vbyyR8/6S5A0IS/K2cDgeRdCb1DWzAOjnXqerxQcCz7Q
+ c8GtdK7igMwsS0f1SoZhLscF13rwl0OHjwuJZfhZnANx64DIlGHwZEzJpTkhQUzoPNlLeQx
+ TY3yRjq2ONTWQ03mSbVHQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:jG6hTA4+q/w=:ZPymJRKsANDWBi4ThHhH8F
+ jnaVkXMlB+mMDgwU9KzAGkIsZ+e9ChFp3WTwyhSz57BnnOZkXopecw5+dPSOZWFQNcydph8D8
+ L2vCG+rn8PFP58unGp9scV6r6LWF8E9g9tA6G4LzdqCUAZQ6TPkE+2amo/AHdJ84+fugW8jrB
+ WBbnrd0+5U0oh0yTDYEkUP/dRVHUiLU/yUZxcJTwowrq6Ra++AHmlzTc19QSoiIwY05j3nhn0
+ QYUe0uyU0KD+sBDxUAjJb0LGiWQBXGVsGvoWuTLmPvuG5wuSoCcbeCY/F3ivLD25JjFAey9SC
+ UN+bjSN/YoTaG7mSAyZLTNISYdH2WhgTrGtSj33lZuhy665lwiEnHgxq/OCaK3d3SNaSxKNZI
+ IjFxn7Txq/tNBwZS2uPznXRbcX64zE4bvyKx7vR8ySXPkEcwIMK1gVzbu3Olv1BeGrGZvrVkb
+ RDlxbSNSC5H9v3vpsV/FJOVanlgQ7DSvi59sZeRHf6dh+x+FjNumJN89z/nJ5lKbhQaJsjNLh
+ xhK46l3WTR7QDY12DNc5EKbiNGc6NI6aArQ9YwZN9cjJ2VhGHWCP9fjkRElJ3Mn/UR8Lrdanp
+ NJCDI2iBc2g5Y1fAdvsPwALRxn4lOyTqvcERfE0kgcbPjlcM3OhYzCWxy1rtfGjgEYIFFnyEg
+ eLXUkV5wduERk51IUXLbU5pve7wN+qjNvUDT5lmrfPKXR0SZRuym93fp7EAXdhRZh271YIxg2
+ n0TOcasFKXf5iC7JGZQiS0P+UR1mpm90tjrbgw==
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
+ linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The sky2 ethernet stops working after system resume from suspend:
-[ 582.852065] sky2 0000:04:00.0: Refused to change power state, currently in D3
+This macro, provided in 'linux/kernel.h', will calculate the size
+more succinctly than a division operation.
 
-The current 150ms delay is not enough, change it to 200ms can solve the
-issue.
-
-BugLink: https://bugs.launchpad.net/bugs/1758507
-Cc: Stable <stable@vger.kernel.org>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/net/ethernet/marvell/sky2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/ks7010/ks_wlan_net.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
-index 9fe85300e7b6..5754116a6a4d 100644
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -5087,7 +5087,7 @@ static int sky2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	INIT_WORK(&hw->restart_work, sky2_restart);
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 9078e13b0d4a..533feef604a9 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -2702,10 +2702,9 @@ static const iw_handler ks_wlan_private_handler[] = {
+ };
  
- 	pci_set_drvdata(pdev, hw);
--	pdev->d3_delay = 150;
-+	pdev->d3_delay = 200;
- 
- 	return 0;
- 
+ static const struct iw_handler_def ks_wlan_handler_def = {
+-	.num_standard = sizeof(ks_wlan_handler) / sizeof(iw_handler),
+-	.num_private = sizeof(ks_wlan_private_handler) / sizeof(iw_handler),
+-	.num_private_args =
+-	    sizeof(ks_wlan_private_args) / sizeof(struct iw_priv_args),
++	.num_standard = ARRAY_SIZE(ks_wlan_handler),
++	.num_private = ARRAY_SIZE(ks_wlan_private_handler),
++	.num_private_args = ARRAY_SIZE(ks_wlan_private_args),
+ 	.standard = (iw_handler *)ks_wlan_handler,
+ 	.private = (iw_handler *)ks_wlan_private_handler,
+ 	.private_args = (struct iw_priv_args *)ks_wlan_private_args,
 -- 
-2.15.1
+2.16.3
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
