@@ -1,177 +1,181 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3097409-1522402232-2-10814386102610810484
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522402232; b=mcKBNI5TD02Q3t1yzBnx6uNAbJw6OFfnYorgmYLhE4Md0luzDE
-    ywj3AtAKMwiMwubBmMia95qZ5mrzpIIYegTFvS1r5DOtB2FR6BSFRr7QKwlyN+Dk
-    s+opqsHQqS2UrZerl3PWgNdQIz0a9rV+dg3q0fMECBI2gyOun6BVJCFqjqPsm5px
-    QcrdSAw/G0IKDqoNAmrvpusOOPx94/EFib31jnMSubjF3RJxAkhWxMNbnLq79bnu
-    5XWuCGnOlHiFf2YMP4BM7LVLGN/aa1mOeFixi0vIl4ONo9zfVih4bSZmNphiUDX0
-    79H188OLr8Mtt3JSVbpHjFbpkWwJQnzhng5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:message-id
-    :references:to:sender:list-id; s=fm2; t=1522402232; bh=g/a4cfsM1
-    UH22rsj6hnFohEIi5QK5lz9362uQGu72E8=; b=jEltKiz0vJPtCZtF2QjPqOlzf
-    kRaFK0CtObNwszn+sqPhsQ16Hv5HxWG/oY7pxqXnsbXWJPTQCOQ88v7TgVW5wjXG
-    nEBFEEcVWJ+3tQPlfAStwVGggLIV18KsTHwnWh1rX2cHbgjuiP6meLdbaF9e+D3s
-    AQrrJ9Fb6ee9bJWIcc5m1jd9z8u3JCmW9RSD/z9sJJIka7Mcyx3nOpu4YOVKQxlc
-    MuQsYAMZZNGitLkOVipLZDRJ6gkg7Ai9W7cmMc6utd0E3OUJDOfC7Ac5NVOlodhl
-    zFCmmGjtrljyYpbbhTDfQzdsMnyWpRY6gTI8jb6pA16D5XDFpMCmtIcyyLriA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=L2pG0xfB;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=L2pG0xfB;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAVG8a9Q57h34prW12DFBQh1yn/dRCQqQ7jP8nuzO7F1t27mxQZMoWJwlOKWr4DDQciDNVtBKX+HS8mGN4gJq7JJy3stQlbf9uIwJqooHgiC26wBRRZo
-    3A1a1L9K14YF3zsBHcstJogvhR5jWovPYCn8u4m1Wd3OzI/7OmFF671TE/ySirZUr+dCUt/EC5RUKjunOkbRMbCJcB6Y7EmrRGI0qrB1b76Gw1DRbYyS82sT
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=p-nOP-kxAAAA:8 a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=2dK-GM5NKjdM7omtH-EA:9
-    a=CjuIK1q_8ugA:10 a=XN2wCei03jY4uMu7D0Wg:22 a=rjTVMONInIDnV1a_A2c_:22
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751180AbeC3JaU (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 30 Mar 2018 05:30:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58800 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751129AbeC3JaS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 30 Mar 2018 05:30:18 -0400
-X-Google-Smtp-Source: AIpwx4/7KC3+weeAU9VwlSLB5W75PBi9X+8L9UHLiOLPfonWhTNGh+eWbpJ0PaQip9s64d2Wriygdg==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH v2] PCI / PM: Always check PME wakeup capability for
- runtime wakeup support
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <1748267.LlfkqdCPEG@aspire.rjw.lan>
-Date: Fri, 30 Mar 2018 17:30:10 +0800
-Cc: linux-pci@vger.kernel.org, bhelgaas@google.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <44B8B950-4C07-447E-9F12-AD60C536150F@canonical.com>
-References: <20180319140910.26496-1-kai.heng.feng@canonical.com>
- <5DC805B1-51DA-4D0F-9A43-9D5FE549AB13@canonical.com>
- <1748267.LlfkqdCPEG@aspire.rjw.lan>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-X-Mailer: Apple Mail (2.3445.5.20)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <hejianet@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522397782; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kYXDL5siQUVA1J3GYGOIuqiGvTZaWDSLtwkRnU+kHtyEvA4QVMR7NTjkpACQRZH7xJ
+         YWJdQR4rFMlkOPVqdHhaJ/4gjsHS7TJhCVjTQX07Do2i/QUM15GWMrMAqNjCBK/6XTot
+         xjMHAGb6TRgtk4JJwJW8WkryVvEx2HCjeeHpNDZSguiAu+y5+omDVu39GZEe8BM45uoY
+         eauU0tD687edYEJwB/dnylZF176BMFubpeFKE9XqzFqBiPQTEwMqehyqFjjoEcm2HJeC
+         AxN5/cNMMxF9KJFt8PlkdaR5bwLgER4z25opk68hYs+xVvvwcPazItGJZfqNRueNJ9Vp
+         /JZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=hLVAh1qePdXf/73THfpCY/DET6toK+YBtetPJiUu9OA=;
+        b=JlzCSL3O0aNzDEedojepLxpQiKN2ZI+2W7IUiKWqujs2olUfbadUv/grHb1Aj7Ag7n
+         Yupl8Zg4cRnkxNxCqESK4p6RuATsdW/KoAwHr96tgP9so0EJSCn01LTnKeKRKvXdSfie
+         sZbEIu1vgg5SapwkR2X9B5154Mnr2XhR6HYE6PQTdjlC4F1JUOFEWhFHIInrNC2TQyuj
+         d7pA8jAy/B1uD+NrDFOJq7axmDAC+McgFjIqM6x3Lve2UmsPCJeZPZG5Mk9lu9UIBPxn
+         ip/d5e/tspCQ5gJtTrp47IjehPaQQy8jZiThOnUExXB+oB0w5O9jM0IrXXxLx69XasJ9
+         CW0A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fROEsuAz;
+       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=fROEsuAz;
+       spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx49JA9ZdZQf0cxlzZiJ6QaX6sGutESYZZqkOA2vfo6bc5sDGurDQJj9F1aEXLh33Smt8QJureg==
+From: Jia He <hejianet@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will.deacon@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Gioh Kim <gi-oh.kim@profitbricks.com>,
+	Steven Sistare <steven.sistare@oracle.com>,
+	Daniel Vacek <neelx@redhat.com>,
+	Eugeniu Rosca <erosca@de.adit-jv.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	James Morse <james.morse@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Steve Capper <steve.capper@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Kemi Wang <kemi.wang@intel.com>,
+	Petr Tesarik <ptesarik@suse.com>,
+	YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Nikolay Borisov <nborisov@suse.com>,
+	richard.weiyang@gmail.com,
+	Jia He <hejianet@gmail.com>
+Subject: [PATCH v4 0/5] optimize memblock_next_valid_pfn and early_pfn_valid
+Date: Fri, 30 Mar 2018 01:15:50 -0700
+Message-Id: <1522397755-33393-1-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596349777664574955?=
+X-GMAIL-MSGID: =?utf-8?q?1596349777664574955?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+where possible") tried to optimize the loop in memmap_init_zone(). But
+there is still some room for improvement.
 
-> On Monday, March 26, 2018 7:54:35 AM CEST Kai Heng Feng wrote:
->> Hi Bjorn, Rafael,
->>
->>> On Mar 19, 2018, at 10:09 PM, Kai-Heng Feng <kai.heng.feng@canonical.com>
->>> wrote:
->>>
->>> USB controller ASM1042 stops working after commit de3ef1eb1cd0 ("PM /
->>> core: Drop run_wake flag from struct dev_pm_info").
->>>
->>> The device in question is not power managed by platform firmware,
->>> furthermore, it only supports PME# from D3cold:
->>> Capabilities: [78] Power Management version 3
->>>        Flags: PMEClk- DSI- D1- D2- AuxCurrent=55mA PME(D0-,D1-,D2-,D3hot-,D3cold+)
->>>        Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
->>>
->>> Before commit de3ef1eb1cd0, the device never gets runtime suspended.
->>> After that commit, the device gets runtime suspended, so it does not
->>> respond to any PME#.
->>>
->>> usb_hcd_pci_probe() mandatorily calls device_wakeup_enable(), hence
->>> device_can_wakeup() in pci_dev_run_wake() always returns true.
->>>
->>> So pci_dev_run_wake() needs to check PME wakeup capability as its first
->>> condition.
->>>
->>> Fixes: de3ef1eb1cd0 ("PM / core: Drop run_wake flag from struct
->>> dev_pm_info")
->>> Cc: stable@vger.kernel.org # 4.13+
->>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>
->>
->> Is there any improvement I can address?
->> Or do you have any concern about this patch?
->>
->> Kai-Heng
->>
->>> ---
->>> v2: Explicitly check dev->pme_support.
->>>
->>>  drivers/pci/pci.c | 8 ++++----
->>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->>> index f6a4dd10d9b0..52821a21fc07 100644
->>> --- a/drivers/pci/pci.c
->>> +++ b/drivers/pci/pci.c
->>> @@ -2125,16 +2125,16 @@ bool pci_dev_run_wake(struct pci_dev *dev)
->>>  {
->>>  	struct pci_bus *bus = dev->bus;
->>>
->>> -	if (device_can_wakeup(&dev->dev))
->>> -		return true;
->>> -
->>>  	if (!dev->pme_support)
->>>  		return false;
->>>
->>>  	/* PME-capable in principle, but not from the target power state */
->>> -	if (!pci_pme_capable(dev, pci_target_state(dev, false)))
->>> +	if (!pci_pme_capable(dev, pci_target_state(dev, true)))
->
-> So why do you change 'false' to 'true' here?
->
-> At least that change should be mentioned in the changelog too.
+Patch 1 remain the memblock_next_valid_pfn on arm and arm64
+Patch 2 optimizes the memblock_next_valid_pfn()
+Patch 3~5 optimizes the early_pfn_valid()
 
-I'll update the reason in the change log.
+I tested the pfn loop process in memmap_init(), the same as before.
+As for the performance improvement, after this set, I can see the time
+overhead of memmap_init() is reduced from 41313 us to 24345 us in my
+armv8a server(QDF2400 with 96G memory).
 
-Thanks.
+Attached the memblock region information in my server.
+[   86.956758] Zone ranges:
+[   86.959452]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
+[   86.966041]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
+[   86.972631] Movable zone start for each node
+[   86.977179] Early memory node ranges
+[   86.980985]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
+[   86.987666]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
+[   86.994348]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
+[   87.001029]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
+[   87.007710]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
+[   87.014392]   node   0: [mem 0x0000000003410000-0x000000000563ffff]
+[   87.021073]   node   0: [mem 0x0000000005640000-0x000000000567ffff]
+[   87.027754]   node   0: [mem 0x0000000005680000-0x00000000056dffff]
+[   87.034435]   node   0: [mem 0x00000000056e0000-0x00000000086fffff]
+[   87.041117]   node   0: [mem 0x0000000008700000-0x000000000871ffff]
+[   87.047798]   node   0: [mem 0x0000000008720000-0x000000000894ffff]
+[   87.054479]   node   0: [mem 0x0000000008950000-0x0000000008baffff]
+[   87.061161]   node   0: [mem 0x0000000008bb0000-0x0000000008bcffff]
+[   87.067842]   node   0: [mem 0x0000000008bd0000-0x0000000008c4ffff]
+[   87.074524]   node   0: [mem 0x0000000008c50000-0x0000000008e2ffff]
+[   87.081205]   node   0: [mem 0x0000000008e30000-0x0000000008e4ffff]
+[   87.087886]   node   0: [mem 0x0000000008e50000-0x0000000008fcffff]
+[   87.094568]   node   0: [mem 0x0000000008fd0000-0x000000000910ffff]
+[   87.101249]   node   0: [mem 0x0000000009110000-0x00000000092effff]
+[   87.107930]   node   0: [mem 0x00000000092f0000-0x000000000930ffff]
+[   87.114612]   node   0: [mem 0x0000000009310000-0x000000000963ffff]
+[   87.121293]   node   0: [mem 0x0000000009640000-0x000000000e61ffff]
+[   87.127975]   node   0: [mem 0x000000000e620000-0x000000000e64ffff]
+[   87.134657]   node   0: [mem 0x000000000e650000-0x000000000fffffff]
+[   87.141338]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
+[   87.148019]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
+[   87.154701]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
+[   87.161383]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
+[   87.168064]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
+[   87.174746]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
+[   87.181427]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+[   87.188108]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
+[   87.194791] Initmem setup node 0 [mem 0x0000000000200000-0x00000017ffffffff]
 
->
->>> return false;
->>>
->>> +	if (device_can_wakeup(&dev->dev))
->>> +		return true;
->>> +
->>>  	while (bus->parent) {
->>>  		struct pci_dev *bridge = bus->self;
+Without this patchset:
+[  117.106153] Initmem setup node 0 [mem 0x0000000000200000-0x00000017ffffffff]
+[  117.113677] before memmap_init
+[  117.118195] after  memmap_init
+>>> memmap_init takes 4518 us
+[  117.121446] before memmap_init
+[  117.154992] after  memmap_init
+>>> memmap_init takes 33546 us
+[  117.158241] before memmap_init
+[  117.161490] after  memmap_init
+>>> memmap_init takes 3249 us
+>>> totally takes 41313 us
+
+With this patchset:
+[   87.194791] Initmem setup node 0 [mem 0x0000000000200000-0x00000017ffffffff]
+[   87.202314] before memmap_init
+[   87.206164] after  memmap_init
+>>> memmap_init takes 3850 us
+[   87.209416] before memmap_init
+[   87.226662] after  memmap_init
+>>> memmap_init takes 17246 us
+[   87.229911] before memmap_init
+[   87.233160] after  memmap_init
+>>> memmap_init takes 3249 us
+>>> totally takes 24345 us
+
+Changelog:
+V4: - refine patches as suggested by Danial Vacek and Wei Yang
+    - optimized on arm besides arm64
+V3: - fix 2 issues reported by kbuild test robot
+V2: - rebase to mmotm latest
+    - remain memblock_next_valid_pfn on arm64
+    - refine memblock_search_pfn_regions and pfn_valid_region
+
+Jia He (5):
+  mm: page_alloc: remain memblock_next_valid_pfn() on arm and arm64
+  arm: arm64: page_alloc: reduce unnecessary binary search in
+    memblock_next_valid_pfn()
+  mm/memblock: introduce memblock_search_pfn_regions()
+  arm64: introduce pfn_valid_region()
+  mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
+
+ arch/arm/include/asm/page.h   |  4 ++-
+ arch/arm/mm/init.c            | 71 ++++++++++++++++++++++++++++++++++++++++++-
+ arch/arm64/include/asm/page.h |  4 ++-
+ arch/arm64/mm/init.c          | 71 ++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/memblock.h      |  2 ++
+ include/linux/mmzone.h        |  7 ++++-
+ mm/memblock.c                 |  9 ++++++
+ mm/page_alloc.c               | 14 ++++++++-
+ 8 files changed, 176 insertions(+), 6 deletions(-)
+
+-- 
+2.7.4
