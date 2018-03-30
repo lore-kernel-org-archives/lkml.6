@@ -1,59 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751232AbeC3FmE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 01:42:04 -0400
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:41547 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeC3FmC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 01:42:02 -0400
-X-Google-Smtp-Source: AIpwx4+az3XB6EPKY7f6wiDKavk8OTOJoWPGgHDQ2FOEA6ENCb1Odz6QOieAfNUOJrq+w/qsFNloAw==
-Date: Fri, 30 Mar 2018 14:41:56 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Maninder Singh <maninder1.s@samsung.com>
-Cc: Vaneet Narang <v.narang@samsung.com>, Nick Terrell <terrelln@fb.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "ngupta@vflare.org" <ngupta@vflare.org>,
-        Kees Cook <keescook@chromium.org>,
-        "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        PANKAJ MISHRA <pankaj.m@samsung.com>,
-        AMIT SAHRAWAT <a.sahrawat@samsung.com>, Yann Collet <cyan@fb.com>
-Subject: Re: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
- length.
-Message-ID: <20180330054156.GA10282@jagdpanzerIV>
-References: <20180329102046epcms5p8ecc9532b03bab4f47cbdbb2507171b86@epcms5p8>
- <20180323134319epcms5p62e6021aa33c941c46ecdb8b5364b614c@epcms5p6>
- <1663C9A3-7DAC-4A11-894C-C99E07BEDAD2@fb.com>
- <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
- <20180321082628.GB2746@jagdpanzerIV>
- <CGME20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d@epcms5p6>
- <20180329102613epcms5p6ffaa80d12115ded8f3c9ef01dd009744@epcms5p6>
+        id S1751337AbeC3FnV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 01:43:21 -0400
+Received: from eahe.aehallh.com ([50.116.20.20]:36008 "EHLO eahe.aehallh.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751248AbeC3FnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 01:43:19 -0400
+Subject: Re: General protection fault with use_blk_mq=1.
+From: "Zephaniah E. Loss-Cutler-Hull" <warp@aehallh.com>
+To: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
+Cc: "Zephaniah E. Loss-Cutler-Hull" <warp-spam_kernel@aehallh.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>, linux-scsi@vger.kernel.org
+References: <7d8a9c62-7d3e-879c-5b5b-30707f04553e@aehallh.com>
+ <ae71cc99-02f1-2b42-bb76-d6e28d61ca21@kernel.dk>
+ <b347896e-f770-8987-ad90-a595a5fa926a@aehallh.com>
+ <735c5d75-eacf-8ed2-ba9b-9ff4b0b5290d@kernel.dk>
+ <882A26D2-BEB8-4CE3-B132-0DE31BFD5D28@linaro.org>
+ <0a96375b-5a2e-e828-fa1f-a14af192be4c@aehallh.com>
+Message-ID: <c74c49e4-8b34-4361-a4ad-b4e9de2110a6@aehallh.com>
+Date: Thu, 29 Mar 2018 22:43:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329102613epcms5p6ffaa80d12115ded8f3c9ef01dd009744@epcms5p6>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <0a96375b-5a2e-e828-fa1f-a14af192be4c@aehallh.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/29/18 15:56), Maninder Singh wrote:
-> Hello Nick/Sergey,
+On 03/29/2018 02:12 AM, Zephaniah E. Loss-Cutler-Hull wrote:
+> On 03/28/2018 10:13 PM, Paolo Valente wrote:
+>> In addition, the outcome of your attempt without
+>> CONFIG_DEBUG_BLK_CGROUP would give us useful bisection information:
+>> - if no failure occurs, then the issue is likely to be confined in
+>> that debugging code (which, on the bright side, is likely to be of
+>> occasional interest, for only a handful of developers)
+>> - if the issue still shows up, then we may have new hints on this odd
+>> failure
+>>
+>> Finally, consider that this issue has been reported to disappear from
+>> 4.16 [1], and, as a plus, that the service quality of BFQ had a
+>> further boost exactly from 4.16.
 > 
-> Any suggestion or comments, so that we can change code and resend the patch?
+> I look forward to that either way then.
+>>
+>> Looking forward to your feedback, in case you try BFQ without
+>> CONFIG_DEBUG_BLK_CGROUP,
+> 
+> I'm running that now, judging from the past if it survives until
+> tomorrow evening then we're good, so I should hopefully know in the next
+> day.
 
-Well... there were no replies to
- https://marc.info/?l=linux-kernel&m=152161450026771&w=2
-and
- https://marc.info/?l=linux-kernel&m=152161860627974&w=2
+Alright, I now have an uptime of over 20 hours, with
+scsi_mod.use_blk_mq=1 dm_mod.use_blk_mq=1
 
-	-ss
+I did upgrade from 4.15.13 to 4.15.14 in the process, but a quick look
+at the changes doesn't have anything jump out at me as impacting this.
+
+So I'm reasonably comfortable stating that disabling
+CONFIG_DEBUG_BLK_CGROUP was sufficient to render this stable.
+
+Regards,
+Zephaniah E. Loss-Cutler-Hull.
