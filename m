@@ -1,59 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752453AbeC3H1m (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 03:27:42 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45833 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752384AbeC3H1i (ORCPT
+        id S1751204AbeC3Hdy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 03:33:54 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50604 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750738AbeC3Hdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 03:27:38 -0400
-Date: Fri, 30 Mar 2018 09:27:33 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] DT: arm: Add the RZN1D-DB Board to Renesas
- Makefile target
-Message-ID: <20180330072733.z7lffttcqb6adfnu@verge.net.au>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
- <1522309629-10152-9-git-send-email-michel.pollet@bp.renesas.com>
+        Fri, 30 Mar 2018 03:33:53 -0400
+X-Google-Smtp-Source: AIpwx49PHjGF48xpqOlAuTEPOpdqKX6M97XniA9pELXPEGCvXMlm1UXRXHAB6JkOXVeeyXdy8K8Jgg==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522309629-10152-9-git-send-email-michel.pollet@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180330072243.19368-1-ssuloev@orpaltech.com>
+References: <20180330072243.19368-1-ssuloev@orpaltech.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 30 Mar 2018 15:33:30 +0800
+X-Gmail-Original-Message-ID: <CAGb2v642R=zNmLLz2t4B=xB9wu9yefRs6WG_5fPkuD1-9vLTQg@mail.gmail.com>
+Message-ID: <CAGb2v642R=zNmLLz2t4B=xB9wu9yefRs6WG_5fPkuD1-9vLTQg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] spi: Add support for DMA transfers in sun6i SPI driver
+To: Sergey Suloev <ssuloev@orpaltech.com>
+Cc: Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, linux-spi@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 08:47:04AM +0100, Michel Pollet wrote:
-> This adds the newly added board to the Renesas built target
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm/boot/dts/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 8164c12..1849228 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -806,6 +806,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
->  	r8a7793-gose.dtb \
->  	r8a7794-alt.dtb \
->  	r8a7794-silk.dtb \
-> +	r9a06g032-rzn1d400-db.dtb \
->  	sh73a0-kzm9g.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += \
->  	rv1108-evb.dtb \
+On Fri, Mar 30, 2018 at 3:22 PM, Sergey Suloev <ssuloev@orpaltech.com> wrote:
+> The following patchset provides corrections for PIO-mode
+> and support for DMA transfers in sun6i SPI driver.
 
-I think you can squash this patch into the one that adds the corresponding
-dts file.
+Is this the same series you sent 12 hours ago? What's different?
+Please version your patch series and provide a changelog.
+
+ChenYu
+
+> Sergey Suloev (6):
+>   spi: sun6i: coding style/readability improvements
+>   spi: sun6i: handle chip select polarity flag
+>   spi: sun6i: restrict transfer length in PIO-mode
+>   spi: sun6i: use completion provided by SPI core
+>   spi: sun6i: introduce register set/unset helpers
+>   spi: sun6i: add DMA transfers support
+>
+>  drivers/spi/spi-sun6i.c | 501 ++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 378 insertions(+), 123 deletions(-)
+>
+> --
+> 2.16.2
+>
