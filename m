@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751868AbeC3KC6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:02:58 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63679 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751337AbeC3KCn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751361AbeC3KCn (ORCPT <rfc822;w@1wt.eu>);
         Fri, 30 Mar 2018 06:02:43 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:58426 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751195AbeC3KCi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 06:02:38 -0400
 From: Fabrice Gasnier <fabrice.gasnier@st.com>
 To: <lee.jones@linaro.org>, <thierry.reding@gmail.com>,
         <alexandre.torgue@st.com>
@@ -16,14 +16,16 @@ CC: <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
         <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <linux-pwm@vger.kernel.org>
-Subject: [PATCH v3 0/6] Add support for PWM input capture on STM32
-Date: Fri, 30 Mar 2018 12:01:18 +0200
-Message-ID: <1522404084-24903-1-git-send-email-fabrice.gasnier@st.com>
+Subject: [PATCH v3 5/6] pwm: stm32: use input prescaler to improve period capture
+Date: Fri, 30 Mar 2018 12:01:23 +0200
+Message-ID: <1522404084-24903-6-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522404084-24903-1-git-send-email-fabrice.gasnier@st.com>
+References: <1522404084-24903-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG5NODE3.st.com
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG5NODE3.st.com
  (10.75.127.15)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-30_04:,,
  signatures=0
@@ -31,44 +33,128 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for capture to stm32-pwm driver.
-Capture is based on DMAs.
-- First two patches add support for requesting DMAs to MFD core
-- Next three patches add support for capture to stm32-pwm driver
-- This has been tested on stm32429i-eval board.
+Using input prescaler, capture unit will trigger DMA once every
+configurable /2, /4 or /8 events (rising edge). This helps improve
+period (only) capture accuracy at high rates.
 
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
 ---
-Changes in v3:
-- Dropped 2 precusor patches applied by Thierry in pwm tree:
-  "pwm: stm32: fix, remove unused struct device"
-  "pwm: stm32: protect common prescaler for all channels"
-- Note: this series applies on top on pwm tree
-- Implements Lee's comments on MFD part: rework stm32_timers_dma struct,
-  exported routine prototype now use generic device struct, more
-  various comments (see patch 2 changelog).
-
-Resend v2:
-- Add collected Acks
-
 Changes in v2:
-- Abstract DMA handling from child driver: move it to MFD core
-- Rework pwm capture routines to adopt this change
-- Comment on optional dma support, beautify DMAs probe
+- Adopt DMA read from MFD core.
+---
+ drivers/pwm/pwm-stm32.c          | 63 ++++++++++++++++++++++++++++++++++++++--
+ include/linux/mfd/stm32-timers.h |  1 +
+ 2 files changed, 62 insertions(+), 2 deletions(-)
 
-Fabrice Gasnier (6):
-  dt-bindings: mfd: stm32-timers: add support for dmas
-  mfd: stm32-timers: add support for dmas
-  pwm: stm32: add capture support
-  pwm: stm32: improve capture by tuning counter prescaler
-  pwm: stm32: use input prescaler to improve period capture
-  ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
-
- .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
- arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
- drivers/mfd/stm32-timers.c                         | 219 +++++++++++++++++-
- drivers/pwm/pwm-stm32.c                            | 257 +++++++++++++++++++++
- include/linux/mfd/stm32-timers.h                   |  44 ++++
- 5 files changed, 541 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
+index c6eb0a8..21ea762 100644
+--- a/drivers/pwm/pwm-stm32.c
++++ b/drivers/pwm/pwm-stm32.c
+@@ -9,6 +9,7 @@
+  *             pwm-atmel.c from Bo Shen
+  */
+ 
++#include <linux/bitfield.h>
+ #include <linux/mfd/stm32-timers.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -169,7 +170,7 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	struct stm32_pwm *priv = to_stm32_pwm_dev(chip);
+ 	unsigned long long prd, div, dty;
+ 	unsigned long rate;
+-	unsigned int psc = 0, scale;
++	unsigned int psc = 0, icpsc, scale;
+ 	u32 raw_prd, raw_dty;
+ 	int ret = 0;
+ 
+@@ -223,6 +224,7 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	/*
+ 	 * Got a capture. Try to improve accuracy at high rates:
+ 	 * - decrease counter clock prescaler, scale up to max rate.
++	 * - use input prescaler, capture once every /2 /4 or /8 edges.
+ 	 */
+ 	if (raw_prd) {
+ 		u32 max_arr = priv->max_arr - 0x1000; /* arbitrary margin */
+@@ -242,8 +244,65 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			goto stop;
+ 	}
+ 
++	/* Compute intermediate period not to exceed timeout at low rates */
+ 	prd = (unsigned long long)raw_prd * (psc + 1) * NSEC_PER_SEC;
+-	result->period = DIV_ROUND_UP_ULL(prd, rate);
++	do_div(prd, rate);
++
++	for (icpsc = 0; icpsc < MAX_TIM_ICPSC ; icpsc++) {
++		/* input prescaler: also keep arbitrary margin */
++		if (raw_prd >= (priv->max_arr - 0x1000) >> (icpsc + 1))
++			break;
++		if (prd >= (tmo_ms * NSEC_PER_MSEC) >> (icpsc + 2))
++			break;
++	}
++
++	if (!icpsc)
++		goto done;
++
++	/* Last chance to improve period accuracy, using input prescaler */
++	regmap_update_bits(priv->regmap,
++			   pwm->hwpwm < 2 ? TIM_CCMR1 : TIM_CCMR2,
++			   TIM_CCMR_IC1PSC | TIM_CCMR_IC2PSC,
++			   FIELD_PREP(TIM_CCMR_IC1PSC, icpsc) |
++			   FIELD_PREP(TIM_CCMR_IC2PSC, icpsc));
++
++	ret = stm32_pwm_raw_capture(priv, pwm, tmo_ms, &raw_prd, &raw_dty);
++	if (ret)
++		goto stop;
++
++	if (raw_dty >= (raw_prd >> icpsc)) {
++		/*
++		 * We may fall here using input prescaler, when input
++		 * capture starts on high side (before falling edge).
++		 * Example with icpsc to capture on each 4 events:
++		 *
++		 *       start   1st capture                     2nd capture
++		 *         v     v                               v
++		 *         ___   _____   _____   _____   _____   ____
++		 * TI1..4     |__|    |__|    |__|    |__|    |__|
++		 *            v  v    .  .    .  .    .       v  v
++		 * icpsc1/3:  .  0    .  1    .  2    .  3    .  0
++		 * icpsc2/4:  0       1       2       3       0
++		 *            v  v                            v  v
++		 * CCR1/3  ......t0..............................t2
++		 * CCR2/4  ..t1..............................t1'...
++		 *               .                            .  .
++		 * Capture0:     .<----------------------------->.
++		 * Capture1:     .<-------------------------->.  .
++		 *               .                            .  .
++		 * Period:       .<------>                    .  .
++		 * Low side:                                  .<>.
++		 *
++		 * Result:
++		 * - Period = Capture0 / icpsc
++		 * - Duty = Period - Low side = Period - (Capture0 - Capture1)
++		 */
++		raw_dty = (raw_prd >> icpsc) - (raw_prd - raw_dty);
++	}
++
++done:
++	prd = (unsigned long long)raw_prd * (psc + 1) * NSEC_PER_SEC;
++	result->period = DIV_ROUND_UP_ULL(prd, rate << icpsc);
+ 	dty = (unsigned long long)raw_dty * (psc + 1) * NSEC_PER_SEC;
+ 	result->duty_cycle = DIV_ROUND_UP_ULL(dty, rate);
+ stop:
+diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
+index 3c72b70..2f505c2 100644
+--- a/include/linux/mfd/stm32-timers.h
++++ b/include/linux/mfd/stm32-timers.h
+@@ -82,6 +82,7 @@
+ #define TIM_DCR_DBL	GENMASK(12, 8)	/* DMA burst len */
+ 
+ #define MAX_TIM_PSC		0xFFFF
++#define MAX_TIM_ICPSC		0x3
+ #define TIM_CR2_MMS_SHIFT	4
+ #define TIM_CR2_MMS2_SHIFT	20
+ #define TIM_SMCR_TS_SHIFT	4
 -- 
 1.9.1
