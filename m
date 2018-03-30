@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3815124-1522424618-2-11463329856546255312
+X-Cyrus-Session-Id: sloti22d1t05-3815124-1522424599-2-1134020504064317367
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522424617; b=uoCduiuNfDrlD/mr1DZOXxKEMFd4WFH2pI72Cx4DK3kGXIYNGD
-    qyKN91KgggWE3UE4Bf+kXSYvIo4Wa3SWND/mZej5+INJnwOW8Gc7sLyvC3xtrN4N
-    2oyWm+wLr6dPsMhxWl8JqieKHmpWSqzXWlQiZ0qYk2x+wBXc1tRDcQ74u259L7L8
-    PnaWR7yhs4J95hYppil/62Vn4OmmlpHDC2amz2Wo7oW6fyZJHd/n/yfE/G/nC3Uy
-    xFKsGiHx7WUlDZ/TgcH1sjEiAMium3nNOd1y0v6IkjB7MFIryRpL+IwJzaRDilr4
-    LOcE9LH7hfDSqh+lpwpIz5vDVhnAnDov+C/Q==
+    1522424598; b=Mzf5/ysuZz/wKcgN8Nz4pih0R/j835BolBr/Cknh2xxVbabzBS
+    YXZp0u63DU7bTWM4+rdAjmHVIy4PO0kLb3bzP1ORTsl4SM4Tcs5ZJIhvUzjVMsHc
+    PGjvQBQmtaXb74teb+lL9DDg5KMIGHd3WJcXEHEYQoGz6Af0WUj8I6qW3gUIxbjb
+    1bDNUDH47tzHD3peEKbpJ4HeGamZTJDSE5gZdFoSTATmEPmZ2Zq1coqE0133Expp
+    2Lo7AZhU7hUSnq73EkzKrM4YIXbDJcbKqLXCWDTsMlFqiG7ncFNhzfINz3S6Sd8R
+    e5lZsIMLmIJH35GgtnO6dKfsEnClNczJ25Eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1522424617; bh=
-    OHZ4aktvZgwBFU9y32htmcYpxVzm3/zUzCsSiAFBoU4=; b=N9uaxXLZEOgY4gCi
-    VJ8gd2Fgup9rEfLu9SY2qZefR+8JK5++1rZadIOwMo/7By4g13XN7fo1EdYRVWTs
-    Zr409s/5jlYOYhhRqCUrtpb6ZsL/ALHeKSlNvu+svF68W88tPLVAqU+bwTpxTNDH
-    2UXqSMaGN2efuyVFnpYijlSm9jO4I11zsGQS3s3riAIUQhxVdR9FM9hasMv3X28t
-    pD9kw0Sg6J5wL1hXJ21Igd00h1/pl7HdH4QtURrS8TEMGijHdYtfoEt7ggbLRO7/
-    pYVFM9oyAfeirM/u0sWcXZ4JW1DAt81voV5hBXHOVSY1crxmCKTENw4/EIfErcqe
-    eMjjxQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=W1nUlWT+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=fm2; t=1522424598; bh=
+    Pk3+G53masUqCvGg+9ZJVQANHedsSP2rQmUlAw9sCrA=; b=msmvxHVjTDC0C9jW
+    +xizsBCu8mMME87YguJUkBJjupItugIU1Ze8ngKkwIy2E4Dt0XMN/Pksqgo4nuXH
+    GSBia3cFbwnf/54KjJnUHq3yj5ce5stJCBP2zfp6WiAcxx1acQ2X/XsqklbGFPlO
+    GCJiaFQJMaXg1gcVn/GIi+r3kZej+zSYJrBwi7lDXI26HAMhue8xI/TIGvN//j+w
+    S2uxXVsHDotPWy3f2qz9BCDs4EWxrJfm/DnLy0hi5o6br6xyQ/rLogWmQscn8WGQ
+    chdeHuuaPfUCoVxOBxABfx701tD/+lyW/MHTAU+j+MHbH8wtJvLpnncKHVryPY5r
+    vf7sAw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=aXPlKRau x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=W1nUlWT+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=aXPlKRau x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,28 +51,28 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAI/v742h2pI/THtzjUKAYua1x9fhtmAeCypqs7ir4jrYi2G+aKzRz5Hxj4T81dYWc8u5ycicIOSOcPmcjt/YNpNZkim3eDGjRMI/jqaTQYi+5pQDu9g
-    HnCKJ1P3azPNAahCwl3lTPYjoGXIIBGQ852AiKF+NkRWXp65GziyKJxVlA9hPb2IJ1mReT3EE2Ehvva4gNRrq8pQ/of9s8gZJzElKSSOW9y0Xi2AT5wlQgaU
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIdZHug8M6o59EAazReK/deb40mYSUeP9mpAyWCORVrDRN+Sooc7fH/8xIncj/mEtUFUaHkdkFxXFUmQ73GK8cG9YbSvB6BKGQkm+Hf65qrc2yKRtPqZ
+    Z8Msueg3ttg1+u2ES1Eur+mPzoFUnM0JYhATBtsX5qqSKfnGwamkWMQZVOgV9qIzj3tgxIUdKV5iHzN0ovDWZ8F4jMeyV2APwi03ZEhxbURA8cFKrPv/Yqyn
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
-    a=CdJLp5WRwxpRCsuKMh0A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=GvLFIiL7OleGfqNn4fMA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751267AbeC3Pcp (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 30 Mar 2018 11:32:45 -0400
+        id S1752694AbeC3Pcu (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 30 Mar 2018 11:32:50 -0400
 Received: from bombadil.infradead.org ([198.137.202.133]:42738 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751216AbeC3Pcn (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 30 Mar 2018 11:32:43 -0400
+        with ESMTP id S1751216AbeC3Pcs (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 30 Mar 2018 11:32:48 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 26/32] net/iucv: convert to ->poll_mask
-Date: Fri, 30 Mar 2018 17:08:03 +0200
-Message-Id: <20180330150809.28094-27-hch@lst.de>
+Subject: [PATCH 25/32] net/phonet: convert to ->poll_mask
+Date: Fri, 30 Mar 2018 17:08:02 +0200
+Message-Id: <20180330150809.28094-26-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180330150809.28094-1-hch@lst.de>
 References: <20180330150809.28094-1-hch@lst.de>
@@ -85,52 +85,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/iucv/af_iucv.h | 2 --
- net/iucv/af_iucv.c         | 7 ++-----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ net/phonet/socket.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/include/net/iucv/af_iucv.h b/include/net/iucv/af_iucv.h
-index f4c21b5a1242..b0eaeb02d46d 100644
---- a/include/net/iucv/af_iucv.h
-+++ b/include/net/iucv/af_iucv.h
-@@ -153,8 +153,6 @@ struct iucv_sock_list {
- 	atomic_t	  autobind_name;
- };
- 
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait);
- void iucv_sock_link(struct iucv_sock_list *l, struct sock *s);
- void iucv_sock_unlink(struct iucv_sock_list *l, struct sock *s);
- void iucv_accept_enqueue(struct sock *parent, struct sock *sk);
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index 1e8cc7bcbca3..539a312dc481 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -1489,14 +1489,11 @@ static inline __poll_t iucv_accept_poll(struct sock *parent)
+diff --git a/net/phonet/socket.c b/net/phonet/socket.c
+index 28d981512f5f..70ac4539d5b7 100644
+--- a/net/phonet/socket.c
++++ b/net/phonet/socket.c
+@@ -341,15 +341,12 @@ static int pn_socket_getname(struct socket *sock, struct sockaddr *addr,
  	return 0;
  }
  
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait)
-+static __poll_t iucv_sock_poll_mask(struct socket *sock, __poll_t events)
+-static __poll_t pn_socket_poll(struct file *file, struct socket *sock,
+-					poll_table *wait)
++static __poll_t pn_socket_poll_mask(struct socket *sock, __poll_t events)
  {
  	struct sock *sk = sock->sk;
+ 	struct pep_sock *pn = pep_sk(sk);
  	__poll_t mask = 0;
  
--	sock_poll_wait(file, sk_sleep(sk), wait);
+-	poll_wait(file, sk_sleep(sk), wait);
 -
- 	if (sk->sk_state == IUCV_LISTEN)
- 		return iucv_accept_poll(sk);
- 
-@@ -2389,7 +2386,7 @@ static const struct proto_ops iucv_sock_ops = {
- 	.getname	= iucv_sock_getname,
- 	.sendmsg	= iucv_sock_sendmsg,
- 	.recvmsg	= iucv_sock_recvmsg,
--	.poll		= iucv_sock_poll,
-+	.poll_mask	= iucv_sock_poll_mask,
- 	.ioctl		= sock_no_ioctl,
- 	.mmap		= sock_no_mmap,
+ 	if (sk->sk_state == TCP_CLOSE)
+ 		return EPOLLERR;
+ 	if (!skb_queue_empty(&sk->sk_receive_queue))
+@@ -474,7 +471,7 @@ const struct proto_ops phonet_stream_ops = {
  	.socketpair	= sock_no_socketpair,
+ 	.accept		= pn_socket_accept,
+ 	.getname	= pn_socket_getname,
+-	.poll		= pn_socket_poll,
++	.poll_mask	= pn_socket_poll_mask,
+ 	.ioctl		= pn_socket_ioctl,
+ 	.listen		= pn_socket_listen,
+ 	.shutdown	= sock_no_shutdown,
 -- 
 2.14.2
 
