@@ -1,53 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751248AbeC3G15 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 02:27:57 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45213 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbeC3G14 (ORCPT
+        id S1751250AbeC3Gdp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 02:33:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34000 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeC3Gdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 02:27:56 -0400
-Date: Fri, 30 Mar 2018 08:27:52 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michal =?utf-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>,
-        Dave Young <dyoung@redhat.com>
-Subject: Re: [PATCH] powerpc: kexec_file: Fix error code when trying to load
- kdump kernel
-Message-ID: <20180330062751.q6p5ofb5ia3auj7e@verge.net.au>
-References: <20180329190543.25118-1-bauerman@linux.vnet.ibm.com>
+        Fri, 30 Mar 2018 02:33:43 -0400
+Date: Thu, 29 Mar 2018 23:33:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>, linaro-mm-sig@lists.linaro.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+Message-ID: <20180330063334.GA8634@infradead.org>
+References: <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
+ <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+ <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
+ <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+ <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+ <20180330015854.GA3572@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180329190543.25118-1-bauerman@linux.vnet.ibm.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180330015854.GA3572@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 04:05:43PM -0300, Thiago Jung Bauermann wrote:
-> kexec_file_load() on powerpc doesn't support kdump kernels yet, so it
-> returns -ENOTSUPP in that case.
-> 
-> I've recently learned that this errno is internal to the kernel and isn't
-> supposed to be exposed to userspace. Therefore, change to -EOPNOTSUPP which
-> is defined in an uapi header.
-> 
-> This does indeed make kexec-tools happier. Before the patch, on ppc64le:
-> 
->   # ~bauermann/src/kexec-tools/build/sbin/kexec -s -p /boot/vmlinuz
->   kexec_file_load failed: Unknown error 524
-> 
-> After the patch:
-> 
->   # ~bauermann/src/kexec-tools/build/sbin/kexec -s -p /boot/vmlinuz
->   kexec_file_load failed: Operation not supported
-> 
-> Fixes: a0458284f062 ("powerpc: Add support code for kexec_file_load()")
-> Reported-by: Dave Young <dyoung@redhat.com>
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+On Thu, Mar 29, 2018 at 09:58:54PM -0400, Jerome Glisse wrote:
+> dma_map_resource() is the right API (thought its current implementation
+> is fill with x86 assumptions). So i would argue that arch can decide to
+> implement it or simply return dma error address which trigger fallback
+> path into the caller (at least for GPU drivers). SG variant can be added
+> on top.
 
-Reviewed-by: Simon Horman <horms@verge.net.au>
+It isn't in general.  It doesn't integrate with scatterlists (see my
+comment to page one), and it doesn't integrate with all the subsystems
+that also need a kernel virtual address.
