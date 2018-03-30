@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3779118-1522424641-2-13702010937716941854
+X-Cyrus-Session-Id: sloti22d1t05-3815124-1522424618-2-11463329856546255312
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522424641; b=Dj57rdb9EhgZeLxbpNYy5UA1papWCBbq5+LgdkhyCR/KT7JcCH
-    HvhjKuL7p6535T9mfWYtNfbwhdyEqdMBwxGdDBTHwWiOn4pZglVmNyS7FWCjlnwh
-    +3Vyk87mC5bpIE/k8mcvOmOJBNhZPdnpieLoq06YkPr32p95qhvyco4S0hwkoJIv
-    vyLANAf1fq6IPJFdYcXcUprQ7WSG6S1L0I7y+/3weBBp0idLpLfm9gY7mqswnwGH
-    8QZnt4791EcQ7R8SmDQGf1yqGUqzsctJsN131Qgfh6y+KZTDHgBBByBEW70eN0fW
-    qLoW7vWkpbFiSq6rf5X6juQwrdzhTD5WyjTw==
+    1522424617; b=uoCduiuNfDrlD/mr1DZOXxKEMFd4WFH2pI72Cx4DK3kGXIYNGD
+    qyKN91KgggWE3UE4Bf+kXSYvIo4Wa3SWND/mZej5+INJnwOW8Gc7sLyvC3xtrN4N
+    2oyWm+wLr6dPsMhxWl8JqieKHmpWSqzXWlQiZ0qYk2x+wBXc1tRDcQ74u259L7L8
+    PnaWR7yhs4J95hYppil/62Vn4OmmlpHDC2amz2Wo7oW6fyZJHd/n/yfE/G/nC3Uy
+    xFKsGiHx7WUlDZ/TgcH1sjEiAMium3nNOd1y0v6IkjB7MFIryRpL+IwJzaRDilr4
+    LOcE9LH7hfDSqh+lpwpIz5vDVhnAnDov+C/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1522424641; bh=
-    4dnPmNefiHvdfKN2SYWYNxS7OjcIzPROfuqRLYbzNw8=; b=J1bFHZsGLvwypeO2
-    McoGTKl69Z33YCtQ3ga+hbhfX2n3wlOfYDb/97BAeNLJsKcV4fHRLQMQD2teIgeS
-    +ECKmX6L3XYeStVKwZOR6AzGV3ChmoioZ1wARLH1hOYaj2NmrI55LBHhNirl0TJE
-    qmvYF8Hujf9qVO/0Tom7NjES+989DIzzAs9epkLgweoJoRa5psgo5NQCLKtye7Sy
-    xFi5hm5j1DXQpCI7i/sdl6GV1xf90Jyss6J51DKLb5SQE6r6DZk/12r7rwCpAvk6
-    pgfvc7nbWAiDuy3pzqQk39bEbpa5D1nWGOMznLf97+jGNtFDtOlshooydDWXWEel
-    W8IsdQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=V67gryGD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=fm2; t=1522424617; bh=
+    OHZ4aktvZgwBFU9y32htmcYpxVzm3/zUzCsSiAFBoU4=; b=N9uaxXLZEOgY4gCi
+    VJ8gd2Fgup9rEfLu9SY2qZefR+8JK5++1rZadIOwMo/7By4g13XN7fo1EdYRVWTs
+    Zr409s/5jlYOYhhRqCUrtpb6ZsL/ALHeKSlNvu+svF68W88tPLVAqU+bwTpxTNDH
+    2UXqSMaGN2efuyVFnpYijlSm9jO4I11zsGQS3s3riAIUQhxVdR9FM9hasMv3X28t
+    pD9kw0Sg6J5wL1hXJ21Igd00h1/pl7HdH4QtURrS8TEMGijHdYtfoEt7ggbLRO7/
+    pYVFM9oyAfeirM/u0sWcXZ4JW1DAt81voV5hBXHOVSY1crxmCKTENw4/EIfErcqe
+    eMjjxQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=W1nUlWT+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=V67gryGD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=W1nUlWT+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,28 +51,28 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPOkAtGN2zM5W4eREerZC8j6B+QXkBjgdDi1R3VnZcvrznHFCpIqyj/YdwPbxYws+HNTn/5EH+DQVeKzuULGQ/61fJpOCC96HT7qydVzYYNKc/GFM1E1
-    EsdH8NwvjzLd9Bd9KuyF9ixECJNLM7O6/lB+318ij8ssug7Qxds93+Om/KTnJtzENJW5X6hiIIA3mutbXRcFRYI9sOIpdvNQ14lnxxCvAi8i6yLXYGVyEYsQ
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAI/v742h2pI/THtzjUKAYua1x9fhtmAeCypqs7ir4jrYi2G+aKzRz5Hxj4T81dYWc8u5ycicIOSOcPmcjt/YNpNZkim3eDGjRMI/jqaTQYi+5pQDu9g
+    HnCKJ1P3azPNAahCwl3lTPYjoGXIIBGQ852AiKF+NkRWXp65GziyKJxVlA9hPb2IJ1mReT3EE2Ehvva4gNRrq8pQ/of9s8gZJzElKSSOW9y0Xi2AT5wlQgaU
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
-    a=Bt-OzgS1u0sNeZ1bWukA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=CdJLp5WRwxpRCsuKMh0A:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeC3Pck (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 30 Mar 2018 11:32:40 -0400
+        id S1751267AbeC3Pcp (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 30 Mar 2018 11:32:45 -0400
 Received: from bombadil.infradead.org ([198.137.202.133]:42738 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751267AbeC3Pcg (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 30 Mar 2018 11:32:36 -0400
+        with ESMTP id S1751216AbeC3Pcn (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 30 Mar 2018 11:32:43 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 28/32] crypto: af_alg: convert to ->poll_mask
-Date: Fri, 30 Mar 2018 17:08:05 +0200
-Message-Id: <20180330150809.28094-29-hch@lst.de>
+Subject: [PATCH 26/32] net/iucv: convert to ->poll_mask
+Date: Fri, 30 Mar 2018 17:08:03 +0200
+Message-Id: <20180330150809.28094-27-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180330150809.28094-1-hch@lst.de>
 References: <20180330150809.28094-1-hch@lst.de>
@@ -85,105 +85,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- crypto/af_alg.c         | 13 +++----------
- crypto/algif_aead.c     |  4 ++--
- crypto/algif_skcipher.c |  4 ++--
- include/crypto/if_alg.h |  3 +--
- 4 files changed, 8 insertions(+), 16 deletions(-)
+ include/net/iucv/af_iucv.h | 2 --
+ net/iucv/af_iucv.c         | 7 ++-----
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 50d75de539f5..330aef1cd08b 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -1060,19 +1060,12 @@ void af_alg_async_cb(struct crypto_async_request *_req, int err)
- }
- EXPORT_SYMBOL_GPL(af_alg_async_cb);
+diff --git a/include/net/iucv/af_iucv.h b/include/net/iucv/af_iucv.h
+index f4c21b5a1242..b0eaeb02d46d 100644
+--- a/include/net/iucv/af_iucv.h
++++ b/include/net/iucv/af_iucv.h
+@@ -153,8 +153,6 @@ struct iucv_sock_list {
+ 	atomic_t	  autobind_name;
+ };
  
--/**
-- * af_alg_poll - poll system call handler
-- */
--__poll_t af_alg_poll(struct file *file, struct socket *sock,
--			 poll_table *wait)
-+__poll_t af_alg_poll_mask(struct socket *sock, __poll_t events)
+-__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
+-			    poll_table *wait);
+ void iucv_sock_link(struct iucv_sock_list *l, struct sock *s);
+ void iucv_sock_unlink(struct iucv_sock_list *l, struct sock *s);
+ void iucv_accept_enqueue(struct sock *parent, struct sock *sk);
+diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+index 1e8cc7bcbca3..539a312dc481 100644
+--- a/net/iucv/af_iucv.c
++++ b/net/iucv/af_iucv.c
+@@ -1489,14 +1489,11 @@ static inline __poll_t iucv_accept_poll(struct sock *parent)
+ 	return 0;
+ }
+ 
+-__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
+-			    poll_table *wait)
++static __poll_t iucv_sock_poll_mask(struct socket *sock, __poll_t events)
  {
  	struct sock *sk = sock->sk;
- 	struct alg_sock *ask = alg_sk(sk);
- 	struct af_alg_ctx *ctx = ask->private;
--	__poll_t mask;
--
+ 	__poll_t mask = 0;
+ 
 -	sock_poll_wait(file, sk_sleep(sk), wait);
--	mask = 0;
-+	__poll_t mask = 0;
+-
+ 	if (sk->sk_state == IUCV_LISTEN)
+ 		return iucv_accept_poll(sk);
  
- 	if (!ctx->more || ctx->used)
- 		mask |= EPOLLIN | EPOLLRDNORM;
-@@ -1082,7 +1075,7 @@ __poll_t af_alg_poll(struct file *file, struct socket *sock,
- 
- 	return mask;
- }
--EXPORT_SYMBOL_GPL(af_alg_poll);
-+EXPORT_SYMBOL_GPL(af_alg_poll_mask);
- 
- /**
-  * af_alg_alloc_areq - allocate struct af_alg_async_req
-diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
-index 4b07edd5a9ff..330cf9f2b767 100644
---- a/crypto/algif_aead.c
-+++ b/crypto/algif_aead.c
-@@ -375,7 +375,7 @@ static struct proto_ops algif_aead_ops = {
- 	.sendmsg	=	aead_sendmsg,
- 	.sendpage	=	af_alg_sendpage,
- 	.recvmsg	=	aead_recvmsg,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static int aead_check_key(struct socket *sock)
-@@ -471,7 +471,7 @@ static struct proto_ops algif_aead_ops_nokey = {
- 	.sendmsg	=	aead_sendmsg_nokey,
- 	.sendpage	=	aead_sendpage_nokey,
- 	.recvmsg	=	aead_recvmsg_nokey,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static void *aead_bind(const char *name, u32 type, u32 mask)
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index c4e885df4564..15cf3c5222e0 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -205,7 +205,7 @@ static struct proto_ops algif_skcipher_ops = {
- 	.sendmsg	=	skcipher_sendmsg,
- 	.sendpage	=	af_alg_sendpage,
- 	.recvmsg	=	skcipher_recvmsg,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static int skcipher_check_key(struct socket *sock)
-@@ -301,7 +301,7 @@ static struct proto_ops algif_skcipher_ops_nokey = {
- 	.sendmsg	=	skcipher_sendmsg_nokey,
- 	.sendpage	=	skcipher_sendpage_nokey,
- 	.recvmsg	=	skcipher_recvmsg_nokey,
--	.poll		=	af_alg_poll,
-+	.poll_mask	=	af_alg_poll_mask,
- };
- 
- static void *skcipher_bind(const char *name, u32 type, u32 mask)
-diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
-index 482461d8931d..cc414db9da0a 100644
---- a/include/crypto/if_alg.h
-+++ b/include/crypto/if_alg.h
-@@ -245,8 +245,7 @@ ssize_t af_alg_sendpage(struct socket *sock, struct page *page,
- 			int offset, size_t size, int flags);
- void af_alg_free_resources(struct af_alg_async_req *areq);
- void af_alg_async_cb(struct crypto_async_request *_req, int err);
--__poll_t af_alg_poll(struct file *file, struct socket *sock,
--			 poll_table *wait);
-+__poll_t af_alg_poll_mask(struct socket *sock, __poll_t events);
- struct af_alg_async_req *af_alg_alloc_areq(struct sock *sk,
- 					   unsigned int areqlen);
- int af_alg_get_rsgl(struct sock *sk, struct msghdr *msg, int flags,
+@@ -2389,7 +2386,7 @@ static const struct proto_ops iucv_sock_ops = {
+ 	.getname	= iucv_sock_getname,
+ 	.sendmsg	= iucv_sock_sendmsg,
+ 	.recvmsg	= iucv_sock_recvmsg,
+-	.poll		= iucv_sock_poll,
++	.poll_mask	= iucv_sock_poll_mask,
+ 	.ioctl		= sock_no_ioctl,
+ 	.mmap		= sock_no_mmap,
+ 	.socketpair	= sock_no_socketpair,
 -- 
 2.14.2
 
