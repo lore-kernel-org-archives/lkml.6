@@ -1,119 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeC3Rtn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:49:43 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55556 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeC3Rtk (ORCPT
+        id S1752357AbeC3Ruy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:50:54 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49530 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeC3Rux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:49:40 -0400
-X-Google-Smtp-Source: AIpwx4/LUCsKB2o8Xm2bFSeTX5N0fXozY9Oog6sKoWJdo7eJvJ7Yfq3y3zlMon2Ldb9cX8Psgz4KUWg3q3Q5LO7wqhk=
+        Fri, 30 Mar 2018 13:50:53 -0400
+Date: Fri, 30 Mar 2018 19:50:50 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Tony Lindgren <tony@atomide.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180330175050.GA26571@amd>
+References: <20180329014507.GM5700@atomide.com>
+ <20180329133613.khldv72w3zj63vsk@earth.universe>
+ <20180329135904.GN5700@atomide.com>
+ <20180329154600.qhels5fqzzg364gj@earth.universe>
+ <20180329163716.GA20743@amd>
+ <20180329164113.GR5700@atomide.com>
+ <20180329184007.GA27688@amd>
+ <20180329215612.GS5700@atomide.com>
+ <20180330103744.GA17404@amd>
+ <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
 MIME-Version: 1.0
-In-Reply-To: <20180330010757.GA12896@roeck-us.net>
-References: <1522250043-8065-5-git-send-email-tharvey@gateworks.com> <20180330010757.GA12896@roeck-us.net>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Fri, 30 Mar 2018 10:49:38 -0700
-Message-ID: <CAJ+vNU3ARKLK5AcssEP-_P8AmwnAnS8VtAEO1ppwum2jpCqAYQ@mail.gmail.com>
-Subject: Re: [v3,4/4] watchdog: add Gateworks System Controller support
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Wim Van Sebroeck <wim@iguana.be>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Content-Disposition: inline
+In-Reply-To: <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 6:07 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Wed, Mar 28, 2018 at 08:14:03AM -0700, Tim Harvey wrote:
->> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
->> ---
->>  drivers/watchdog/Kconfig   |  10 ++++
->>  drivers/watchdog/Makefile  |   1 +
->>  drivers/watchdog/gsc_wdt.c | 146 +++++++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 157 insertions(+)
->>  create mode 100644 drivers/watchdog/gsc_wdt.c
->>
-<snip>
->> +
->> +static const struct watchdog_info gsc_wdt_info = {
->> +     .options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING,
->
-> Please confirm that WDIOF_MAGICCLOSE is not set on purpose.
->
->> +     .identity = "GSC Watchdog"
->> +};
->> +
-<snip>
->> +
->> +static int gsc_wdt_probe(struct platform_device *pdev)
->> +{
->> +     struct gsc_dev *gsc = dev_get_drvdata(pdev->dev.parent);
->> +     struct device *dev = &pdev->dev;
->> +     struct gsc_wdt *wdt;
->> +     int ret;
->> +     unsigned int reg;
->> +
-<snip>
->> +     /* ensure WD bit enabled */
->> +     if (regmap_read(gsc->regmap, GSC_CTRL_1, &reg))
->> +             return -EIO;
->> +     if (!(reg & (1 << GSC_CTRL_1_WDT_ENABLE))) {
->
-> BIT()
->
->> +             dev_err(dev, "not enabled - must be manually enabled\n");
->
-> This doesn't make sense. Bail out if the watchdog is disabled ? Why ?
->
->> +             return -EINVAL;
->> +     }
->> +
-<snip>
->> +
->> +     watchdog_set_nowayout(&wdt->wdt_dev, 1);
->
-> WATCHDOG_NOWAYOUT ?
->
 
-Guenter,
+--T4sUOijqQbZv57TR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the review!
+On Fri 2018-03-30 15:07:24, Merlijn Wajer wrote:
+> On 30/03/18 12:37, Pavel Machek wrote:
+> > On Thu 2018-03-29 14:56:13, Tony Lindgren wrote:
+> >> * Pavel Machek <pavel@ucw.cz> [180329 18:41]:
+> >>> Thanks. I got call working including outgoing audio: in capture
+> >>> settings, right->mic 1, Mic1 + Mic2 in alsamixer -> 100%. But I had
+> >>> the other phone muted, so I don't yet know if such call would be of
+> >>> usable quality.
+> >>
+> >> Great, good to hear that :)
+> >=20
+> > I also got ofonod to work, with rather crazy hacks. But I now have
+> > incoming/outgoing calls with GUI :-).
+>=20
+> Would you mind sharing those hacks - I would like to play around with
+> ofonod as well. Maybe I can help with a way forward.
 
-The watchdog implementation of the GSC is such that it is enabled and
-reset via a single non-volatile I2C register bit. If this bit is set
-the watchdog will start ticking down automatically on board power up.
-The register definitions don't provide a condition where it can be
-enabled in a volatile way such that after board power-cycle it is
-disabled again nor do they provide a separate register for enable vs
-reset.
+Okay. Here's less hacky version of the hack, but still using AT
+commands. You still need to set up udev, as described in the other
+mail.
 
-In the typical case the user boots the board, driver registers
-watchdog, userspace watchdog daemon enables watchdog and it starts
-ticking. User now powers down the board and later powers it back up.
-The watchdog was enabled previously by userspace and the register is
-non-volatile so the watchdog starts ticking before the kernel driver
-and watchdog daemon yet the user breaks out into the bootloader or
-boots a different OS without a watchdog daemon and the board resets
-without them expecting it. The feature that the watchdog starts
-ticking at board power-up before the CPU has even fetched code was
-part of its design and was put there to work around some SoC errata
-that can cause the CPU to fail to fetch boot code. This has caused me
-to implement a watchdog driver that never actually 'enables' or
-'disables' the watchdog which is why there is no MAGIC CLOSE and why I
-always set nowayout. Its possible this is a fairly unique case of a
-watchdog. The probe failure if the watchdog isn't enabled is because I
-don't want a non-enabled watchdog to get enabled just because the
-driver/daemon were there.
+And... it seems I can have a qmi connection, too, but that's topic for
+other email.
 
-I agree it's a very strange behavior and I'm not sure how to best
-document or support it with the Linux watchdog API. I welcome any
-recomendations!
+Good luck,
+								Pavel
 
-Regards,
 
-Tim
+diff --git a/drivers/atmodem/sms.c b/drivers/atmodem/sms.c
+index 68b89862..3a9f4bc0 100644
+--- a/drivers/atmodem/sms.c
++++ b/drivers/atmodem/sms.c
+@@ -440,6 +440,8 @@ static void at_cmt_notify(GAtResult *result, gpointer u=
+ser_data)
+ 	if (data->vendor !=3D OFONO_VENDOR_SIMCOM)
+ 		at_ack_delivery(sms);
+=20
++	return;
++
+ err:
+ 	ofono_error("Unable to parse CMT notification");
+ }
+diff --git a/plugins/udevng.c b/plugins/udevng.c
+index ff5d41af..a4b18488 100644
+--- a/plugins/udevng.c
++++ b/plugins/udevng.c
+@@ -233,10 +233,11 @@ static gboolean setup_gobi(struct modem_info *modem)
+ 		}
+ 	}
+=20
++	DBG("qmi=3D%s net=3D%s mdm=3D%s gps=3D%s diag=3D%s", qmi, net, mdm, gps, =
+diag);
++=09
+ 	if (qmi =3D=3D NULL || mdm =3D=3D NULL || net =3D=3D NULL)
+ 		return FALSE;
+=20
+-	DBG("qmi=3D%s net=3D%s mdm=3D%s gps=3D%s diag=3D%s", qmi, net, mdm, gps, =
+diag);
+=20
+ 	ofono_modem_set_string(modem->modem, "Device", qmi);
+ 	ofono_modem_set_string(modem->modem, "Modem", mdm);
+@@ -1250,6 +1251,7 @@ static struct {
+ 	{ "cinterion",	setup_serial_modem	},
+ 	{ "nokiacdma",	setup_serial_modem	},
+ 	{ "sim900",	setup_serial_modem	},
++	{ "g1",		setup_serial_modem	},
+ 	{ "wavecom",	setup_wavecom		},
+ 	{ "tc65",	setup_tc65		},
+ 	{ "ehs6",	setup_ehs6		},
+@@ -1578,8 +1580,6 @@ static struct {
+ 	{ "mbm",	"cdc_ether",	"0930"		},
+ 	{ "mbm",	"cdc_ncm",	"0930"		},
+ 	{ "hso",	"hso"				},
+-	{ "gobi",	"qmi_wwan"			},
+-	{ "gobi",	"qcserial"			},
+ 	{ "sierra",	"qmi_wwan",	"1199"		},
+ 	{ "sierra",	"qcserial",	"1199"		},
+ 	{ "sierra",	"sierra"			},
+@@ -1602,6 +1602,8 @@ static struct {
+ 	{ "telit",	"cdc_acm",	"1bc7", "0021"	},
+ 	{ "telitqmi",	"qmi_wwan",	"1bc7", "1201"	},
+ 	{ "telitqmi",	"option",	"1bc7", "1201"	},
++	{ "telitqmi",	"qmi_wwan",	"22b8", "2a70"	},
++	{ "telitqmi",	"option",	"22b8", "2a70"	},
+ 	{ "nokia",	"option",	"0421", "060e"	},
+ 	{ "nokia",	"option",	"0421", "0623"	},
+ 	{ "samsung",	"option",	"04e8", "6889"	},
+@@ -1717,10 +1719,12 @@ static void check_device(struct udev_device *device)
+ 			return;
+ 	}
+=20
++#if 0
+ 	if ((g_str_equal(bus, "usb") =3D=3D TRUE) ||
+ 			(g_str_equal(bus, "usbmisc") =3D=3D TRUE))
+ 		check_usb_device(device);
+ 	else
++#endif
+ 		add_serial_device(device);
+=20
+ }
+@@ -1749,14 +1753,17 @@ static gboolean create_modem(gpointer key, gpointer=
+ value, gpointer user_data)
+ 		if (g_str_equal(driver_list[i].name, modem->driver) =3D=3D FALSE)
+ 			continue;
+=20
++		DBG("Attempting modem setup, driver %s", modem->driver);
+ 		if (driver_list[i].setup(modem) =3D=3D TRUE) {
+ 			ofono_modem_set_string(modem->modem, "SystemPath",
+ 								syspath);
+ 			ofono_modem_register(modem->modem);
+ 			return FALSE;
+ 		}
++		DBG("Modem setup failed, driver %s", modem->driver);	=09
+ 	}
+=20
++	DBG("Modem setup failed or not in driver_list?");
+ 	return TRUE;
+ }
+=20
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--T4sUOijqQbZv57TR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq+ePoACgkQMOfwapXb+vJKZgCeI0fCULSgCsD0Awxz7p+CVB5m
+j1sAnifN/0d4PoPt1B6sFrbGEV3S9tTE
+=PmCh
+-----END PGP SIGNATURE-----
+
+--T4sUOijqQbZv57TR--
