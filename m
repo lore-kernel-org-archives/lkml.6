@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeC3RN3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:13:29 -0400
-Received: from vern.gendns.com ([206.190.152.46]:38325 "EHLO vern.gendns.com"
+        id S1752300AbeC3ROE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:14:04 -0400
+Received: from vern.gendns.com ([206.190.152.46]:38420 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750927AbeC3RN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:13:27 -0400
-Subject: Re: [PATCH v5 4/8] remoteproc/davinci: add the missing retval check
- for clk_enable()
+        id S1751473AbeC3ROC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 13:14:02 -0400
+Subject: Re: [PATCH v5 5/8] remoteproc/davinci: prepare and unprepare the
+ clock where needed
 To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -21,14 +21,14 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 References: <20180330152856.12297-1-brgl@bgdev.pl>
- <20180330152856.12297-5-brgl@bgdev.pl>
+ <20180330152856.12297-6-brgl@bgdev.pl>
 From: David Lechner <david@lechnology.com>
-Message-ID: <6d4dcee6-6480-03fb-c0f8-f750d22f8cf6@lechnology.com>
-Date: Fri, 30 Mar 2018 12:13:28 -0500
+Message-ID: <4122b904-ee40-db8b-ecd5-813d75b3cba2@lechnology.com>
+Date: Fri, 30 Mar 2018 12:14:03 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
  Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180330152856.12297-5-brgl@bgdev.pl>
+In-Reply-To: <20180330152856.12297-6-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -51,8 +51,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 3/30/18 10:28 AM, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> The davinci platform is being switched to using the common clock
-> framework, where clk_enable() can fail. Add the return value check.
+> We're currently switching the platform to using the common clock
+> framework. We need to explicitly prepare and unprepare the rproc
+> clock.
 > 
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > Acked-by: Suman Anna <s-anna@ti.com>
