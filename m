@@ -1,74 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753294AbeC3Php (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:37:45 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:54800 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752249AbeC3Phn (ORCPT
+        id S1753266AbeC3PjD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:39:03 -0400
+Received: from gateway33.websitewelcome.com ([192.185.145.24]:33280 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753176AbeC3PjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:37:43 -0400
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-CC: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jh80.chung@samsung.com" <jh80.chung@samsung.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
-        "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
-        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-Subject: DW MMC multislot support
-Thread-Topic: DW MMC multislot support
-Thread-Index: AQHTyD0JSeKceRkIz0KVQ7V0wLDfzA==
-Date: Fri, 30 Mar 2018 15:37:39 +0000
-Message-ID: <1522424259.32101.7.camel@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.75]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1CC2C62C4259CA4791F613D157505327@internal.synopsys.com>
+        Fri, 30 Mar 2018 11:39:00 -0400
+Date: Fri, 30 Mar 2018 10:38:58 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] IB/ocrdma_hw: Remove redundant checks and goto labels
+Message-ID: <20180330153858.GA14385@embeddedgus>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f1w7H-000CvL-6R
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.145.54.187]:34692
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2UFbo9R011980
 
-Hi,
+Check on return values and goto label mbx_err are unnecessary.
 
-I have plans to add multislot support to DesignWare MMC driver.
+Addresses-Coverity-ID: 1271151 ("Identical code for different branches")
+Addresses-Coverity-ID: 1268788 ("Identical code for different branches")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/infiniband/hw/ocrdma/ocrdma_hw.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-As of today I have proof of concept for multislot DW MMC driver with two slots working
-simultaneously:
-I reverted all commits which remove previous implementation of "pseudo-multislot"
-and add all required steps for changing slot number to __dw_mci_start_request function.
-
-But I have several issues with set_ios function in multislot mode (as each slot
-is registered as separate mmc host):
-1) We can change clock for slot 1 while slot 0 is active.
-2) We can disable one slot (by calling set_ios with 'power_mode' == MMC_POWER_OFF)
- which cause clock disable for all slots.
-3) We can enable one slot (by calling set_ios with 'power_mode' == MMC_POWER_ON)
- which cause DMA and FIFO reset while another slot is active.
-And so on...
-
-
-Here is my ideas how to fix this:
-1) In set_ios function we can simply store parameters
- (like clock speed/timings/bus width) to corresponding slot structure and apply
- them only in the beginning of __dw_mci_start_request function if current slot is
- changed.
- Another option is to choose maximum clock which is suitable for both slots
- instead of clock switch on every slot change.
-2) Do all actions for slot disabling ('power_mode' == MMC_POWER_OFF) only if
- others slots are disabled too.
-3) Do all actions for slot enabling ('power_mode' == MMC_POWER_ON) only if
- no slots are enabled.
-
-
-Maybe you have any comments or remarks about this?
-All comments and suggestions are more than welcome.
+diff --git a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+index 9904918..90cf772 100644
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_hw.c
+@@ -2014,7 +2014,7 @@ static int ocrdma_mbx_reg_mr_cont(struct ocrdma_dev *dev,
+ 				  struct ocrdma_hw_mr *hwmr, u32 pbl_cnt,
+ 				  u32 pbl_offset, u32 last)
+ {
+-	int status = -ENOMEM;
++	int status;
+ 	int i;
+ 	struct ocrdma_reg_nsmr_cont *cmd;
+ 
+@@ -2033,9 +2033,7 @@ static int ocrdma_mbx_reg_mr_cont(struct ocrdma_dev *dev,
+ 		    upper_32_bits(hwmr->pbl_table[i + pbl_offset].pa);
+ 	}
+ 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
+-	if (status)
+-		goto mbx_err;
+-mbx_err:
++
+ 	kfree(cmd);
+ 	return status;
+ }
+@@ -3133,12 +3131,12 @@ static int ocrdma_create_eqs(struct ocrdma_dev *dev)
+ static int ocrdma_mbx_modify_eqd(struct ocrdma_dev *dev, struct ocrdma_eq *eq,
+ 				 int num)
+ {
+-	int i, status = -ENOMEM;
++	int i, status;
+ 	struct ocrdma_modify_eqd_req *cmd;
+ 
+ 	cmd = ocrdma_init_emb_mqe(OCRDMA_CMD_MODIFY_EQ_DELAY, sizeof(*cmd));
+ 	if (!cmd)
+-		return status;
++		return -ENOMEM;
+ 
+ 	ocrdma_init_mch(&cmd->cmd.req, OCRDMA_CMD_MODIFY_EQ_DELAY,
+ 			OCRDMA_SUBSYS_COMMON, sizeof(*cmd));
+@@ -3151,9 +3149,7 @@ static int ocrdma_mbx_modify_eqd(struct ocrdma_dev *dev, struct ocrdma_eq *eq,
+ 				(eq[i].aic_obj.prev_eqd * 65)/100;
+ 	}
+ 	status = ocrdma_mbx_cmd(dev, (struct ocrdma_mqe *)cmd);
+-	if (status)
+-		goto mbx_err;
+-mbx_err:
++
+ 	kfree(cmd);
+ 	return status;
+ }
 -- 
- Eugeniy Paltsev
+2.7.4
