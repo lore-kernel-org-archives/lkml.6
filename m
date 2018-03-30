@@ -1,31 +1,31 @@
 Return-Path: <hejianet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522397823; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522397809; cv=none;
         d=google.com; s=arc-20160816;
-        b=r3gxrTAULU1sEaadbBFr0SqFG6UzY9pdKxfimqQa56bPaC7+lpqHzXAjYZMdq3TWGi
-         OVQOyFsf1pFIJUdGI+xpnTO126st6fO23gpOyNIQeUtsoGEyx9gWECIbgoC2Pqtu+qdy
-         MPcJZmSWOCkR0zpkI05LfT9vKx8es7MxkczkUT26SyWXirvT/J7nHgsnYImA/ihY9Gb1
-         F7nlNeknXAOnOKeqsZJtHS/k2/PSlv+krjtEgZ+byfmRR32tmwl1rxtvwNYCUNjDt304
-         hOmiNSTgXf7WpqpX8/sDQoE2HzCGztl8o+kC7awTwzykvxSiC5lwVjEVhipEsyvPqo1l
-         XnAA==
+        b=mnapGLTDPfkV/oa+Sp7IPYv9DlFlHaSZmSJyrFIUHSD+pZcK2uxAFg8UmuK7KmxIhg
+         vinJWzEsbPFPlZ9Fc1I5d30vV3JREbmYx+XmmNPe46dNNMhUzS2+FwrWR/EwmhcBzm6O
+         cyEMSEOlKO7VTVg1OrD1ajZ7QqFeAyMLxUSIbC5hEGcgjupJcY3aq6u5IuIbX2slpP+P
+         66sdjB9f/EIOdK3/QD6P3idthPXgJHMnbvN/v8rvgUMrGBBct0+qFzS4nRtAm1v3rIUz
+         OGYZ9mt7hmxBD56yNudrtUMdClojXa2l9INNLDgMB5KqK8j8F0zE8GL66A0qzu+Mvqzc
+         /OeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=qp5NKpTdcRM6Rau/uqwRW72+6gftVpoNr2Kh3FeSdLk=;
-        b=KshiIh9vlzDaOmTig2DfsswC9gb/wxsNdeT7HKF3QjaU/FvLe1R+alyPQQP6pDSecQ
-         DLysppsFBd5C1Uk55uLRKlrtsrvUqsF/JhBF8kxmMhlp25kHM+W9FcGBKDWqprbT/17l
-         difBaIVT7sv6MnNQGnNFMkN/sZSDKr/H1T8BXJuMo+IOYljGaaPgFzoeM2QswTVKkenC
-         wZlAp4ru01dnKEyG1pZnhHghPR3rYAwoEXsrZ31Hw/JSk5qARYdBa95ZXp1mYb+yedrR
-         syWLFg9N0Rwty9osX+ugjFmMBgQM2VU0IVmrwkPLBfsY4qhEHgb0BCL23CTOzhoXdmnB
-         XmfA==
+        bh=47sVWvofKdNwuFJvbzgAe8kFJ6Tq+S03IUJifBHaXXU=;
+        b=aq/DzkZ8gyu7ItUwgR7mBPL3SvVQqsEd01MJBovgn3ghUer6ded7fQjAM2OfAJgQ/V
+         MEnk6dx3dK04Zo1TiYrC74JDTT7/4l+9Wn4Qqm2DyLjmdezU0j9hrOyZ29bnAG2ZTBld
+         cpLvvGmLfMAYBipN8XczQZi55pmGUMhd4VJlgzddd2vA0mJR+0A+3Vkv5eU7MvNi1HQn
+         SCjgPFgT7Fffk7kerXVKNb+4hI04gDVR8qNV8nr+hTnmfZkJQCCvW+FZ9r1ScJajAvxN
+         RAwptVQ6S944ZA1R+Mig5PGEQAquSwGEFAfinnCdLJEOaol66HUDdYrWgS4pDFVE4IFE
+         Pv4g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mVkfziFH;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Yjzc+gRf;
        spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mVkfziFH;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Yjzc+gRf;
        spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4/EpwqQ2BYQnuzuswGVHM7PlY3i/PJmfcSFEFIRKWfO8Y4KeWIvSPeM+/u0dZ9Pss2tuN3/9w==
+X-Google-Smtp-Source: AIpwx49esvadygjyZB0eJlzssdtdrFKJF9ueE+BcR4YlDj7/WIYv27X0tVAi41jZXajjohsg6tRxVw==
 From: Jia He <hejianet@gmail.com>
 To: Russell King <linux@armlinux.org.uk>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -63,58 +63,206 @@ Cc: Pavel Tatashin <pasha.tatashin@oracle.com>,
 	richard.weiyang@gmail.com,
 	Jia He <hejianet@gmail.com>,
 	Jia He <jia.he@hxt-semitech.com>
-Subject: [PATCH v4 3/5] mm/memblock: introduce memblock_search_pfn_regions()
-Date: Fri, 30 Mar 2018 01:15:53 -0700
-Message-Id: <1522397755-33393-4-git-send-email-hejianet@gmail.com>
+Subject: [PATCH v4 2/5] arm: arm64: page_alloc: reduce unnecessary binary search in memblock_next_valid_pfn()
+Date: Fri, 30 Mar 2018 01:15:52 -0700
+Message-Id: <1522397755-33393-3-git-send-email-hejianet@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522397755-33393-1-git-send-email-hejianet@gmail.com>
 References: <1522397755-33393-1-git-send-email-hejianet@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596349819957995721?=
-X-GMAIL-MSGID: =?utf-8?q?1596349819957995721?=
+X-GMAIL-THRID: =?utf-8?q?1596349805736411755?=
+X-GMAIL-MSGID: =?utf-8?q?1596349805736411755?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This api is the preparation for further optimizing early_pfn_valid
+Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+where possible") optimized the loop in memmap_init_zone(). But there is
+still some room for improvement. E.g. if pfn and pfn+1 are in the same
+memblock region, we can simply pfn++ instead of doing the binary search
+in memblock_next_valid_pfn.
 
 Signed-off-by: Jia He <jia.he@hxt-semitech.com>
 ---
- include/linux/memblock.h | 2 ++
- mm/memblock.c            | 9 +++++++++
- 2 files changed, 11 insertions(+)
+ arch/arm/include/asm/page.h   |  1 +
+ arch/arm/mm/init.c            | 31 ++++++++++++++++++++++++-------
+ arch/arm64/include/asm/page.h |  1 +
+ arch/arm64/mm/init.c          | 31 ++++++++++++++++++++++++-------
+ mm/page_alloc.c               |  5 +++--
+ 5 files changed, 53 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 0257aee..a0127b3 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -203,6 +203,8 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
- 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
- #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
+index 4355f0e..7a0404f 100644
+--- a/arch/arm/include/asm/page.h
++++ b/arch/arm/include/asm/page.h
+@@ -157,6 +157,7 @@ extern void copy_page(void *to, const void *from);
+ typedef struct page *pgtable_t;
  
-+int memblock_search_pfn_regions(unsigned long pfn);
-+
- /**
-  * for_each_free_mem_range - iterate through free memblock areas
-  * @i: u64 used as loop variable
-diff --git a/mm/memblock.c b/mm/memblock.c
-index ba7c878..0f4004c 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1617,6 +1617,15 @@ static int __init_memblock memblock_search(struct memblock_type *type, phys_addr
- 	return -1;
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
++extern int early_region_idx;
+ extern int pfn_valid(unsigned long);
+ #endif
+ 
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 0fb85ca..7779804 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -193,6 +193,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
  }
  
-+/* search memblock with the input pfn, return the region idx */
-+int __init_memblock memblock_search_pfn_regions(unsigned long pfn)
-+{
-+	struct memblock_type *type = &memblock.memory;
-+	int mid = memblock_search(type, PFN_PHYS(pfn));
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
++int early_region_idx __meminitdata = -1;
 +
-+	return mid;
-+}
-+
- bool __init memblock_is_reserved(phys_addr_t addr)
+ int pfn_valid(unsigned long pfn)
  {
- 	return memblock_search(&memblock.reserved, addr) != -1;
+ 	return memblock_is_map_memory(__pfn_to_phys(pfn));
+@@ -200,31 +202,46 @@ int pfn_valid(unsigned long pfn)
+ EXPORT_SYMBOL(pfn_valid);
+ 
+ /* HAVE_MEMBLOCK is always enabled on arm */
+-unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
++unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
++							int *last_idx)
+ {
+ 	struct memblock_type *type = &memblock.memory;
++	struct memblock_region *regions = type->regions;
+ 	unsigned int right = type->cnt;
+ 	unsigned int mid, left = 0;
++	unsigned long start_pfn, end_pfn;
+ 	phys_addr_t addr = PFN_PHYS(++pfn);
+ 
++	/* fast path, return pfn+1 if next pfn is in the same region */
++	if (*last_idx != -1) {
++		start_pfn = PFN_DOWN(regions[*last_idx].base);
++		end_pfn = PFN_DOWN(regions[*last_idx].base +
++				regions[*last_idx].size);
++
++		if (pfn >= start_pfn && pfn < end_pfn)
++			return pfn;
++	}
++
++	/* slow path, do the binary searching */
+ 	do {
+ 		mid = (right + left) / 2;
+ 
+-		if (addr < type->regions[mid].base)
++		if (addr < regions[mid].base)
+ 			right = mid;
+-		else if (addr >= (type->regions[mid].base +
+-				  type->regions[mid].size))
++		else if (addr >= (regions[mid].base + regions[mid].size))
+ 			left = mid + 1;
+ 		else {
+-			/* addr is within the region, so pfn is valid */
++			*last_idx = mid;
+ 			return pfn;
+ 		}
+ 	} while (left < right);
+ 
+ 	if (right == type->cnt)
+ 		return -1UL;
+-	else
+-		return PHYS_PFN(type->regions[right].base);
++
++	*last_idx = right;
++
++	return PHYS_PFN(regions[*last_idx].base);
+ }
+ EXPORT_SYMBOL(memblock_next_valid_pfn);
+ #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+index 60d02c8..84b503a 100644
+--- a/arch/arm64/include/asm/page.h
++++ b/arch/arm64/include/asm/page.h
+@@ -38,6 +38,7 @@ extern void clear_page(void *to);
+ typedef struct page *pgtable_t;
+ 
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
++extern int early_region_idx;
+ extern int pfn_valid(unsigned long);
+ #endif
+ 
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 13e43ff..cd9b473 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -285,6 +285,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+ #endif /* CONFIG_NUMA */
+ 
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
++int early_region_idx __meminitdata = -1;
++
+ int pfn_valid(unsigned long pfn)
+ {
+ 	return memblock_is_map_memory(pfn << PAGE_SHIFT);
+@@ -292,31 +294,46 @@ int pfn_valid(unsigned long pfn)
+ EXPORT_SYMBOL(pfn_valid);
+ 
+ /* HAVE_MEMBLOCK is always enabled on arm64 */
+-unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
++unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn,
++							int *last_idx)
+ {
+ 	struct memblock_type *type = &memblock.memory;
++	struct memblock_region *regions = type->regions;
+ 	unsigned int right = type->cnt;
+ 	unsigned int mid, left = 0;
++	unsigned long start_pfn, end_pfn;
+ 	phys_addr_t addr = PFN_PHYS(++pfn);
+ 
++	/* fast path, return pfn+1 if next pfn is in the same region */
++	if (*last_idx != -1) {
++		start_pfn = PFN_DOWN(regions[*last_idx].base);
++		end_pfn = PFN_DOWN(regions[*last_idx].base +
++				regions[*last_idx].size);
++
++		if (pfn >= start_pfn && pfn < end_pfn)
++			return pfn;
++	}
++
++	/* slow path, do the binary searching */
+ 	do {
+ 		mid = (right + left) / 2;
+ 
+-		if (addr < type->regions[mid].base)
++		if (addr < regions[mid].base)
+ 			right = mid;
+-		else if (addr >= (type->regions[mid].base +
+-				  type->regions[mid].size))
++		else if (addr >= (regions[mid].base + regions[mid].size))
+ 			left = mid + 1;
+ 		else {
+-			/* addr is within the region, so pfn is valid */
++			*last_idx = mid;
+ 			return pfn;
+ 		}
+ 	} while (left < right);
+ 
+ 	if (right == type->cnt)
+ 		return -1UL;
+-	else
+-		return PHYS_PFN(type->regions[right].base);
++
++	*last_idx = right;
++
++	return PHYS_PFN(regions[*last_idx].base);
+ }
+ EXPORT_SYMBOL(memblock_next_valid_pfn);
+ #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 8a92df7..f99b513 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5453,8 +5453,9 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
+  * done. Non-atomic initialization, single-pass.
+  */
+ #if (defined CONFIG_HAVE_MEMBLOCK) && (defined CONFIG_HAVE_ARCH_PFN_VALID)
+-extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+-#define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
++extern unsigned long memblock_next_valid_pfn(unsigned long pfn, int *last_idx);
++#define skip_to_last_invalid_pfn(pfn) \
++		(memblock_next_valid_pfn(pfn, &early_region_idx) - 1)
+ #endif
+ 
+ #ifndef skip_to_last_invalid_pfn
 -- 
 2.7.4
