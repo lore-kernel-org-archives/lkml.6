@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752867AbeC3VEy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:04:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
+        id S1752903AbeC3VFB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:05:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752568AbeC3VEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:04:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7099C21777
+        id S1752869AbeC3VE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:04:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E64521777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v5 01/14] PCI: Add pcie_get_speed_cap() to find max
- supported link speed
+Subject: [PATCH v5 02/14] PCI: Add pcie_get_width_cap() to find max
+ supported link width
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Tal Gilboa <talgi@mellanox.com>
 Cc: Tariq Toukan <tariqt@mellanox.com>,
@@ -21,8 +21,8 @@ Cc: Tariq Toukan <tariqt@mellanox.com>,
         everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Date: Fri, 30 Mar 2018 16:04:48 -0500
-Message-ID: <152244388865.135666.13225254795423314446.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Fri, 30 Mar 2018 16:04:56 -0500
+Message-ID: <152244389596.135666.10041465699313744043.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -35,133 +35,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tal Gilboa <talgi@mellanox.com>
 
-Add pcie_get_speed_cap() to find the max link speed supported by a device.
-Change max_link_speed_show() to use pcie_get_speed_cap().
+Add pcie_get_width_cap() to find the max link width supported by a device.
+Change max_link_width_show() to use pcie_get_width_cap().
 
 Signed-off-by: Tal Gilboa <talgi@mellanox.com>
-[bhelgaas: return speed directly instead of error and *speed, don't export
+[bhelgaas: return width directly instead of error and *width, don't export
 outside drivers/pci]
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
 ---
- drivers/pci/pci-sysfs.c |   28 ++--------------------------
- drivers/pci/pci.c       |   44 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pci.h       |   10 ++++++++++
- 3 files changed, 56 insertions(+), 26 deletions(-)
+ drivers/pci/pci-sysfs.c |   10 ++--------
+ drivers/pci/pci.c       |   18 ++++++++++++++++++
+ drivers/pci/pci.h       |    1 +
+ 3 files changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 7dc5be545d18..c2ea05fbbf1d 100644
+index c2ea05fbbf1d..63d0952684fb 100644
 --- a/drivers/pci/pci-sysfs.c
 +++ b/drivers/pci/pci-sysfs.c
-@@ -158,33 +158,9 @@ static DEVICE_ATTR_RO(resource);
- static ssize_t max_link_speed_show(struct device *dev,
+@@ -167,15 +167,9 @@ static DEVICE_ATTR_RO(max_link_speed);
+ static ssize_t max_link_width_show(struct device *dev,
  				   struct device_attribute *attr, char *buf)
  {
 -	struct pci_dev *pci_dev = to_pci_dev(dev);
 -	u32 linkcap;
 -	int err;
--	const char *speed;
 -
 -	err = pcie_capability_read_dword(pci_dev, PCI_EXP_LNKCAP, &linkcap);
 -	if (err)
 -		return -EINVAL;
--
--	switch (linkcap & PCI_EXP_LNKCAP_SLS) {
--	case PCI_EXP_LNKCAP_SLS_16_0GB:
--		speed = "16 GT/s";
--		break;
--	case PCI_EXP_LNKCAP_SLS_8_0GB:
--		speed = "8 GT/s";
--		break;
--	case PCI_EXP_LNKCAP_SLS_5_0GB:
--		speed = "5 GT/s";
--		break;
--	case PCI_EXP_LNKCAP_SLS_2_5GB:
--		speed = "2.5 GT/s";
--		break;
--	default:
--		speed = "Unknown speed";
--	}
 +	struct pci_dev *pdev = to_pci_dev(dev);
  
--	return sprintf(buf, "%s\n", speed);
-+	return sprintf(buf, "%s\n", PCIE_SPEED2STR(pcie_get_speed_cap(pdev)));
+-	return sprintf(buf, "%u\n", (linkcap & PCI_EXP_LNKCAP_MLW) >> 4);
++	return sprintf(buf, "%u\n", pcie_get_width_cap(pdev));
  }
- static DEVICE_ATTR_RO(max_link_speed);
+ static DEVICE_ATTR_RO(max_link_width);
  
 diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f6a4dd10d9b0..b29d3436ee9f 100644
+index b29d3436ee9f..43075be79388 100644
 --- a/drivers/pci/pci.c
 +++ b/drivers/pci/pci.c
-@@ -5146,6 +5146,50 @@ int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
+@@ -5190,6 +5190,24 @@ enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev)
+ 	return PCI_SPEED_UNKNOWN;
  }
- EXPORT_SYMBOL(pcie_get_minimum_link);
  
 +/**
-+ * pcie_get_speed_cap - query for the PCI device's link speed capability
++ * pcie_get_width_cap - query for the PCI device's link width capability
 + * @dev: PCI device to query
 + *
-+ * Query the PCI device speed capability.  Return the maximum link speed
++ * Query the PCI device width capability.  Return the maximum link width
 + * supported by the device.
 + */
-+enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev)
++enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev)
 +{
-+	u32 lnkcap2, lnkcap;
-+
-+	/*
-+	 * PCIe r4.0 sec 7.5.3.18 recommends using the Supported Link
-+	 * Speeds Vector in Link Capabilities 2 when supported, falling
-+	 * back to Max Link Speed in Link Capabilities otherwise.
-+	 */
-+	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP2, &lnkcap2);
-+	if (lnkcap2) { /* PCIe r3.0-compliant */
-+		if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_16_0GB)
-+			return PCIE_SPEED_16_0GT;
-+		else if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_8_0GB)
-+			return PCIE_SPEED_8_0GT;
-+		else if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_5_0GB)
-+			return PCIE_SPEED_5_0GT;
-+		else if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_2_5GB)
-+			return PCIE_SPEED_2_5GT;
-+		return PCI_SPEED_UNKNOWN;
-+	}
++	u32 lnkcap;
 +
 +	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &lnkcap);
-+	if (lnkcap) {
-+		if (lnkcap & PCI_EXP_LNKCAP_SLS_16_0GB)
-+			return PCIE_SPEED_16_0GT;
-+		else if (lnkcap & PCI_EXP_LNKCAP_SLS_8_0GB)
-+			return PCIE_SPEED_8_0GT;
-+		else if (lnkcap & PCI_EXP_LNKCAP_SLS_5_0GB)
-+			return PCIE_SPEED_5_0GT;
-+		else if (lnkcap & PCI_EXP_LNKCAP_SLS_2_5GB)
-+			return PCIE_SPEED_2_5GT;
-+	}
++	if (lnkcap)
++		return (lnkcap & PCI_EXP_LNKCAP_MLW) >> 4;
 +
-+	return PCI_SPEED_UNKNOWN;
++	return PCIE_LNK_WIDTH_UNKNOWN;
 +}
 +
  /**
   * pci_select_bars - Make BAR mask from the type of resource
   * @dev: the PCI device for which BAR mask is made
 diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index fcd81911b127..1186d8be6055 100644
+index 1186d8be6055..66738f1050c0 100644
 --- a/drivers/pci/pci.h
 +++ b/drivers/pci/pci.h
-@@ -253,6 +253,16 @@ bool pci_bus_clip_resource(struct pci_dev *dev, int idx);
- void pci_reassigndev_resource_alignment(struct pci_dev *dev);
- void pci_disable_bridge_window(struct pci_dev *dev);
+@@ -262,6 +262,7 @@ void pci_disable_bridge_window(struct pci_dev *dev);
+ 	 "Unknown speed")
  
-+/* PCIe link information */
-+#define PCIE_SPEED2STR(speed) \
-+	((speed) == PCIE_SPEED_16_0GT ? "16 GT/s" : \
-+	 (speed) == PCIE_SPEED_8_0GT ? "8 GT/s" : \
-+	 (speed) == PCIE_SPEED_5_0GT ? "5 GT/s" : \
-+	 (speed) == PCIE_SPEED_2_5GT ? "2.5 GT/s" : \
-+	 "Unknown speed")
-+
-+enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
-+
+ enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
++enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
+ 
  /* Single Root I/O Virtualization */
  struct pci_sriov {
- 	int		pos;		/* Capability position */
