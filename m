@@ -1,202 +1,152 @@
-Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx4/lDFLQ0PDhk9M9dpGoJkK10rfEoBqj/yo1MSquEG/6VQ19uPtCrDo9dco3Ji5jFmIvDht8
-ARC-Seal: i=1; a=rsa-sha256; t=1522393797; cv=none;
-        d=google.com; s=arc-20160816;
-        b=aaul9Qfhc0U1Hc4eCd1qeWwBqKkEEnWScE6OYZqerk6x3mtfRLxWM5zcEg3wANzQ8r
-         3uTHrRIFhfn+M+QAju2Z3VvGYSvBltYQcwbcMBal1Vdj4y+5hUOquYOL4GZThnkTg6fq
-         LUCat98iJuAP/pZmfjIn6Yc8eS52j3Dn7VxtuzIneYhjI0VjQANvtVsFYvER6IRHmzVk
-         Gbd9874g51owyKhIEgSaldfL2P0hrfRDnvokEiTNn0/MPqIVCNEdOKTUymvW09/p5gJs
-         iIckRv/QSn7lzAqgko56mLUolVeUQADUOyePcvtVsmkenycfCUQniVtCYuyt7X/+aIJx
-         ngTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=X5Z+/YigAoi17l5lk0qsO7279LMSFWYmnbcjLTAQuJ4=;
-        b=ylW9aTt5qGj68st0Bok8Zh85asQTVPgBxD4S6RLyNVCK/D+YpLLpRL3KUvB6Smz/3+
-         SilXg1GZwaIj1TIH5VOxfzFOXPWyG2wTMKLsUzpGjVIR+xUdHECFxoVPTS6hRdmY3IBj
-         3+aLfp6xH5T0VmiNqtLWkDacg0sOudNEcpUYm41RSuyTomQMlgtyvbdwfAd/MbuLhxlZ
-         Aoh94tIVJX+8sw0RCMldVdpDKbeEJcy2zVoIm8j2pQ37hLbpXahTdOha1R50pnnbALm3
-         uRx7/SUEv6fG+0yl85sY8mlTluF5YG3TjW6Owwy/oS4P63altuzaYFWlCqhewNH/AQji
-         Oyhw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2927865-1522393796-2-4217814963503219398
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522393796; b=YSeIUjPfyOkslUJA51t7TGhq/U74cndwjzpIdHCXlP8FpXx29e
+    +ICZ2tE95XzhN2Mn21NeSTei6hDwQLQrwJo7S7X5wimw3Ogu59TZLbaibQMl5Lqf
+    AS9827Vh76C2JqxCfroBINvk62Ld4I9ACctSOkssegCGYOOO/WvATN95RlTXaS4z
+    VrrjRM3Pic2KbQTIzYjNiasXSAJyj3gEu7o569ci9AsJHSEcwItyGEyIBmDo2Rbx
+    Jrq6dEOGxFsWCxs0QjyjLQN36icr4O+SjRVcm9S71k3Oh0D1uqXnwpm7VV7fhZb+
+    LC58+iqwf2XvxDTSwvMUT4BhmjfAHSohLdMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522393796; bh=oSo4B
+    XOojuK5f/bjLZeFa5ZxjP06wBnDbcg8tfkKtRo=; b=fbEt4z94HLeOIjXQ4f4og
+    D1QNFw8WzqS2h5mc+hQHLbth+KCDcMMOGB7R0ZIVgHcQQbvNwWx6fTSK9RdIlA99
+    BHlbb8Mhqoq3pwM9vvhUjmWbj5KlA/25MRfnUnvh9OiPTFi+FpU6Akv23Xapj1jO
+    5YBDg/Rl9h21sLw2KkKT4zMV3qBUCPyi0dEkFdlCLyXpKAF3tiWVAMxWWpSo1ye+
+    frcWIzlkl9ymDnUmmBp3ZSqMX60AlVh2oinff9ptDK6OM5hM2yurmJMHIn25xAcL
+    ljf0UcvtYHZC3jYtAj8YVB+yzkCDGzypAEsPSWq7hNQL1UPHNC0zO3vuSC7lSBOz
+    A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAKONdNvunf2PxkMu6TKqpPhXu1EB+iwdNR1I06Pz0Y/vU0gDh82oa76S/mqDN49Z2WNtxh5/fFfX7JA0ohHHpUeZeAb55VVZtGzyl6nMEzriMSkwbCq
+    idB6co9tbqteJOOqoDlDKj9gT2KPVJj1M4Qdgl26po2f7XPdV5T6xfLRwkvyDQA0piGpI4I7eHJo34Boq6NHn4KVINN1q/+raRzmB6RWoIFtfsgF0z215dkP
+    1LcMCdQHO4/X4WtcnqH4KQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
+    a=VWgisWAj3vx_v9YcBVEA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Cc: driverdev-devel@linuxdriverproject.org,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 69/76] staging: ks7010: Remove 'eth_addr' field from 'struct ks_wlan_private'.
-Date: Fri, 30 Mar 2018 00:08:32 -0700
-Message-Id: <20180330070842.25224-69-quytelda@tamalin.org>
+Subject: [PATCH 19/76] staging: ks7010: Remove trailing _t from 'struct
+ fh_parms_t'.
+Date: Fri, 30 Mar 2018 00:07:42 -0700
+Message-Id: <20180330070842.25224-19-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:i6Y3VuCIGrTC4KwauSJdJKHJHor4ne95krMo8ZH1f5LzZYbBZ+h
- A6vU0KmehVj4QjgoUGkkcLO4blpXkm5PGHzm5hW/TPkOKO3YZ6ISxMEbY1I48qwrAiwHYQD
- cmXki96kyqOzq5+Z8t2Vy4CL3PMT8x1pjIXAYz7sr2hBq8VlW/trpQZHIqNfxEtelURh8MD
- MJxTIlwEsaOYlyqt/Q7gQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:yCtXgHQYjYk=:TRMvaqASDL/I9SMI0AS9fi
- MMjyQ3HHW44k3sBpwwY21gMaxffERgGHp6R29VojoIJke/q4dfc30EndZT6Ssxb6ZkyH9yuwi
- Q9xE1CNhnuBVn7PFNyShHHsLCH3/2D+S/mEOP+eV26hDPzcjOzf4a0WnsceFLCZfwoFyNixsG
- WKw4OT9THlrlDw6iUbR01hBxEjUo1ApZpxSNCJ0+g3qvxCKZMcktbEHQTKyPqRzNXDi+5RdWQ
- aHy8GnyhAj4DN/5Nplm9P7wTgQYbAbH22avwzQz1Ik837RzbRG5KDC4VDvxgfpgBJUOrCTXoq
- PV2dxfWsfy4HHlwgUGviSoiPnxD/MldGxfW4lAF/GAJzIjOI0FFjCqnQd0K7pUhq4tPtJyiLb
- TSk8FoZcKwOB63xFFvCjEJ6cEp2M2wbcLuDAuK7K17zoJaGBi7biahHBOhyX67qPLK/PixypK
- jeTGU7rVjR9RoHgQ7fV3++x0BxNlPt17gzUrOuY7seSAg8u9ttdt7a/HYooUP/g507ai+y0ux
- VxyNTq8s0tLx2S7+QvGoGqwS/AeG4hICK0up2reVGXAgjwp2hC6umTg7IWWpk7lUEDeTpwBTD
- Nobj+M7Q484eWcWqEfDWyXrUkVx/ygfRbAO9XRnw6eFtUZccwGvMK9d8X+F6INhIJdWJH1LRV
- NKjACNl6a8ORbnmgZlip0OkjjnWsuE3W9nM8Jm3sxqqTEafJcAaq6dg0LMELyX129tSr8sBd2
- u1zBhxToqo1gtw7YDccHaPfqkBKSprpO5iDVxQ==
+X-Provags-ID: V03:K0:j3waek/Q+3FkvKzjVhF248BY9OJw7g6INPHCo/FY4jw5Kg1fDeQ
+ 4cWqM6M+w40Isnqvrx5XsEWAhw+pcf9TfcA4TJgakZLlnsg+TTDJ58Xf7pDNZ5jn9sGP3cV
+ 9SceziJ2BHhDp+l/tI/hMG892BaBYq/MpXOoFOLl8Mc/+2XdOD9BDgeMX9IUS3qTTPR86+j
+ 4WJOFUt/xNshTvg4WXU+Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:RXt/7+YHgMw=:SdumeXkak9OCFU1yjHc3yi
+ MLrTDUgqZnhM8bj/Gh9vt+5t09AsQfohT8gkTputFLA1wLpPt58ruZhDJfgdJ/tFOZo+p91Kg
+ 6YBDB+E4gvIZ9GeNhUwZvyOtLu94G2M7N5OO8+e8TYyiNj89LKsixbsCbbCCaJNs2mBYbrecq
+ jKUX6KpyTkOzG2ZeSqFJoZlJsXcZuIQgFLGCN8jvqxtvsBENy3rW/c4Q2MuYA6RKiT3VBbH1G
+ rSfJ7n/CcNRwyA9tAqPsFA18kpZKzTvssWr4g8Sl1NyMlD6PdZzgRaYh045cl7SMsFjAF6FAd
+ UuEGZGn/EJAWxA5BtA6JztWazVkXYXns1ViuX5tiQEf6hdVRpcGg22PSj5Nx/R9PwlABuJ6/I
+ 7uwjxIfg7ePSrp24sY0hEuDneweYrTjChnto591af6GRn4+vJml4VLlROYE7zzmo7t/+4v5Fy
+ lWZxgbKVnN/gZIf4PztG05xYWnPfugyZiCjMG8e0XcDQ5jWx7BlbUkMUk3eHk2OLREsSoPfcD
+ 6jhv7dRUJG1nA7ck4xW/h6kCtYvQmKoOCvsnV+z7YhAxV7dwBuTUI0pd7CSBSXGA4dg1+5z71
+ RcTELm0uYBhrtOjhFetuYM9RlOPeCS59TwP9oOS2kiwPo0X9gpkycpNB8/fpzfFP29JMvzjTH
+ yX4FMAHhxr0AP/ALDp+Dk01Mtc5cW6NKoH9ixu5hgM+Dbg/XbFXnAUD+0bxkeFpkG3OVozsB+
+ LDILlby1zvagLK2K9WtrOqreM6dNha7G3vQ1zw==
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
+ linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596345598630368809?=
-X-GMAIL-MSGID: =?utf-8?q?1596345598630368809?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The ethernet address of the network device is already stored in the
-'dev_addr' field of 'struct net_device'.  Since 'struct ks_wlan_private'
-keeps a pointer to the driver's 'struct net_device', there is no reason
-to duplicate this information in 'struct ks_wlan_private'.
+The "_t" suffix is not needed for structure names in this driver, and is a
+reflection of an older typedef system that is no longer in place. Replace
+all occurences of 'struct fh_parms_t' with 'struct fh_parms'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c   | 29 +++++++++++------------------
- drivers/staging/ks7010/ks_wlan.h     |  2 --
- drivers/staging/ks7010/ks_wlan_net.c |  5 ++---
- 3 files changed, 13 insertions(+), 23 deletions(-)
+ drivers/staging/ks7010/ks_hostif.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 1eff78540683..3c8a8d0f800c 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -388,6 +388,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
- static
- void hostif_data_indication(struct ks_wlan_private *priv)
- {
-+	struct net_device * dev = priv->net_dev;
- 	unsigned int rx_ind_size;	/* indicate data size */
- 	struct sk_buff *skb;
- 	unsigned short auth_type;
-@@ -411,9 +412,9 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 	eth_proto = ntohs(eth_hdr->h_proto);
+diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
+index aa1f5fefa818..697cd52292f9 100644
+--- a/drivers/staging/ks7010/ks_hostif.h
++++ b/drivers/staging/ks7010/ks_hostif.h
+@@ -238,7 +238,7 @@ struct rate_set8 {
+ 	u8 rate_pad;
+ } __packed;
  
- 	/* source address check */
--	if (memcmp(&priv->eth_addr[0], eth_hdr->h_source, ETH_ALEN) == 0) {
--		netdev_err(priv->net_dev, "invalid : source is own mac address !!\n");
--		netdev_err(priv->net_dev,
-+	if (memcmp(dev->dev_addr, eth_hdr->h_source, ETH_ALEN) == 0) {
-+		netdev_err(dev, "invalid : source is own mac address !!\n");
-+		netdev_err(dev,
- 			   "eth_hdrernet->h_dest=%02X:%02X:%02X:%02X:%02X:%02X\n",
- 			   eth_hdr->h_source[0], eth_hdr->h_source[1],
- 			   eth_hdr->h_source[2], eth_hdr->h_source[3],
-@@ -443,7 +444,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 			priv->nstats.rx_dropped++;
- 			return;
- 		}
--		netdev_dbg(priv->net_dev, "SNAP, rx_ind_size = %d\n",
-+		netdev_dbg(dev, "SNAP, rx_ind_size = %d\n",
- 			   rx_ind_size);
- 
- 		size = ETH_ALEN * 2;
-@@ -463,7 +464,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 			priv->nstats.rx_dropped++;
- 			return;
- 		}
--		netdev_dbg(priv->net_dev, "NETBEUI/NetBIOS rx_ind_size=%d\n",
-+		netdev_dbg(dev, "NETBEUI/NetBIOS rx_ind_size=%d\n",
- 			   rx_ind_size);
- 
- 		/* 8802/FDDI MAC copy */
-@@ -480,7 +481,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 		aa1x_hdr = (struct ieee802_1x_hdr *)(priv->rxp + 14);
- 		break;
- 	default:	/* other rx data */
--		netdev_err(priv->net_dev, "invalid data format\n");
-+		netdev_err(dev, "invalid data format\n");
- 		priv->nstats.rx_errors++;
- 		return;
- 	}
-@@ -522,17 +523,9 @@ void hostif_mib_get_confirm(struct ks_wlan_private *priv)
- 	case DOT11_MAC_ADDRESS:
- 		/* MAC address */
- 		hostif_sme_enqueue(priv, SME_GET_MAC_ADDRESS);
--		memcpy(priv->eth_addr, priv->rxp, ETH_ALEN);
-+		memcpy(dev->dev_addr, priv->rxp, ETH_ALEN);
- 		priv->mac_address_valid = true;
--		dev->dev_addr[0] = priv->eth_addr[0];
--		dev->dev_addr[1] = priv->eth_addr[1];
--		dev->dev_addr[2] = priv->eth_addr[2];
--		dev->dev_addr[3] = priv->eth_addr[3];
--		dev->dev_addr[4] = priv->eth_addr[4];
--		dev->dev_addr[5] = priv->eth_addr[5];
--		dev->dev_addr[6] = 0x00;
--		dev->dev_addr[7] = 0x00;
--		netdev_info(dev, "MAC ADDRESS = %pM\n", priv->eth_addr);
-+		netdev_info(dev, "MAC ADDRESS = %pM\n", dev->dev_addr);
- 		break;
- 	case DOT11_PRODUCT_VERSION:
- 		/* firmware version */
-@@ -1111,7 +1104,7 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 
- 	/* skb check */
- 	eth = (struct ethhdr *)skb->data;
--	if (memcmp(&priv->eth_addr[0], eth->h_source, ETH_ALEN) != 0) {
-+	if (memcmp(priv->net_dev->dev_addr, eth->h_source, ETH_ALEN) != 0) {
- 		netdev_err(priv->net_dev, "invalid mac address !!\n");
- 		netdev_err(priv->net_dev, "ethernet->h_source=%pM\n", eth->h_source);
- 		ret = -ENXIO;
-@@ -2167,7 +2160,7 @@ void hostif_sme_execute(struct ks_wlan_private *priv, int event)
- 	case SME_MACADDRESS_SET_REQUEST:
- 		hostif_mib_set_request(priv, LOCAL_CURRENTADDRESS, ETH_ALEN,
- 				       MIB_VALUE_TYPE_OSTRING,
--				       &priv->eth_addr[0]);
-+				       priv->net_dev->dev_addr);
- 		break;
- 	case SME_BSS_SCAN_REQUEST:
- 		hostif_bss_scan_request(priv, priv->reg.scan_type,
-diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index eb0c14e78bd2..012e0fe2b60d 100644
---- a/drivers/staging/ks7010/ks_wlan.h
-+++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -421,8 +421,6 @@ struct ks_wlan_private {
- 	struct work_struct wakeup_work;
- 	int scan_ind_count;
- 
--	unsigned char eth_addr[ETH_ALEN];
--
- 	struct local_aplist aplist;
- 	struct local_ap current_ap;
- 	struct power_save_status psstatus;
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index d6bfbc1f8558..35c615433687 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -2749,11 +2749,10 @@ int ks_wlan_set_mac_address(struct net_device *dev, void *addr)
- 	if (netif_running(dev))
- 		return -EBUSY;
- 	memcpy(dev->dev_addr, mac_addr->sa_data, dev->addr_len);
--	memcpy(priv->eth_addr, mac_addr->sa_data, ETH_ALEN);
- 
- 	priv->mac_address_valid = false;
- 	hostif_sme_enqueue(priv, SME_MACADDRESS_SET_REQUEST);
--	netdev_info(dev, "ks_wlan:  MAC ADDRESS = %pM\n", priv->eth_addr);
-+	netdev_info(dev, "ks_wlan:  MAC ADDRESS = %pM\n", dev->dev_addr);
- 	return 0;
- }
- 
-@@ -2884,7 +2883,7 @@ int ks_wlan_net_start(struct net_device *dev)
- 	timer_setup(&update_phyinfo_timer, ks_wlan_update_phyinfo_timeout, 0);
- 
- 	/* dummy address set */
--	ether_addr_copy(dev->dev_addr, priv->eth_addr);
-+	ether_addr_copy(dev->dev_addr, dummy_addr);
- 
- 	/* The ks_wlan-specific entries in the device structure. */
- 	dev->netdev_ops = &ks_wlan_netdev_ops;
+-struct fh_parms_t {
++struct fh_parms {
+ 	__le16 dwell_time;
+ 	u8 hop_set;
+ 	u8 hop_pattern;
+@@ -300,7 +300,7 @@ struct link_ap_info_t {
+ 	__le16 beacon_period;	/* +10 */
+ 	__le16 capability;	/* +12 */
+ 	struct rate_set8 rate_set;	/* +14 */
+-	struct fh_parms_t fh_parameter;	/* +24 */
++	struct fh_parms fh_parameter;	/* +24 */
+ 	struct ds_parms_t ds_parameter;	/* +29 */
+ 	struct cf_parms_t cf_parameter;	/* +30 */
+ 	struct ibss_parms_t ibss_parameter;	/* +36 */
 -- 
 2.16.3
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
