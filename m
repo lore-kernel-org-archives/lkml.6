@@ -1,67 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeC3OON (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 10:14:13 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47326 "EHLO vps0.lunn.ch"
+        id S1752072AbeC3OQs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 10:16:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39587 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750794AbeC3OOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 10:14:12 -0400
-Date: Fri, 30 Mar 2018 16:14:09 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frans Meulenbroeks <fransmeulenbroeks@gmail.com>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH] fix typo in command value in
- drivers/net/phy/mdio-bitbang.
-Message-ID: <20180330141409.GC28244@lunn.ch>
-References: <CACW_hTauBL6but9143Kio-ZU5jsMKx2uTEUv3kHFaTGuwdyHZA@mail.gmail.com>
+        id S1751248AbeC3OQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 10:16:46 -0400
+Date: Fri, 30 Mar 2018 16:16:34 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+Subject: Re: [PATCH net-next 5/8] net: mscc: Add initial Ocelot switch support
+Message-ID: <20180330141634.GD14180@piout.net>
+References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
+ <20180323201117.8416-6-alexandre.belloni@bootlin.com>
+ <1df0a932-f7c1-f1b5-9a35-3c16d0c551e5@gmail.com>
+ <20180330124537.GC14180@piout.net>
+ <20180330135422.GA28244@lunn.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACW_hTauBL6but9143Kio-ZU5jsMKx2uTEUv3kHFaTGuwdyHZA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180330135422.GA28244@lunn.ch>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 02:03:38PM +0200, Frans Meulenbroeks wrote:
-> mdio-bitbang mentioned 10 for both read and write.
-> However mdio read opcode is 10 and write opcode is 01
-> Fixed comment.
+On 30/03/2018 at 15:54:22 +0200, Andrew Lunn wrote:
+> > > All of this sounds like it should be moved into the br_join/leave, this
+> > > does not appear to be the right place to do that.
+> > > 
+> > 
+> > No, I've triple checked because this is a comment that both Andrew and
+> > you had. Once a port is added to the PGID MASK, it will start forwarding
+> > frames so we really want that to happen only when the port is in
+> > BR_STATE_FORWARDING state. Else, we may forward frames between the
+> > addition of the port to the bridge and setting the port to the
+> > BR_STATE_BLOCKING state.
 > 
-> Signed-off-by: Frans Meulenbroeks <fransmeulenbroeks@gmail.com>
-
-Hi Frans
-
-The correct place to send this patch is <netdev@vger.kernel.org> and
-David Miller <davem@davemloft.net>. Please can you submit it again, to
-these addresses.
-
-In general, if you don't know where to send a patch,
-scripts/get_maintainers.pl will tell you.
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
-
-
-> ---
->  drivers/net/phy/mdio-bitbang.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Alexandre
 > 
-> diff --git a/drivers/net/phy/mdio-bitbang.c b/drivers/net/phy/mdio-bitbang.c
-> index 61a543c..403b085 100644
-> --- a/drivers/net/phy/mdio-bitbang.c
-> +++ b/drivers/net/phy/mdio-bitbang.c
-> @@ -113,7 +113,7 @@ static void mdiobb_cmd(struct mdiobb_ctrl *ctrl, int
-> op, u8 phy, u8 reg)
->         for (i = 0; i < 32; i++)
->                 mdiobb_send_bit(ctrl, 1);
+> Interesting observation. I took a look at some of the other join
+> implementations. mv88e6xxx does the join immediately. mt7539 does it
+> immediately, if the port is enabled. lan9303 does it immediately.
+> qca8k does it immediately. b53 does it immediately.
 > 
-> -       /* send the start bit (01) and the read opcode (10) or write (10).
-> +       /* send the start bit (01) and the read opcode (10) or write (01).
->            Clause 45 operation uses 00 for the start and 11, 10 for
->            read/write */
->         mdiobb_send_bit(ctrl, 0);
-> -- 
-> 2.7.4
+
+I had a look at b53, my impression was that b53_br_join() adds the port
+to the bridge but b53_br_set_stp_state() actually enables forwarding. So
+as long as the default on the port is PORT_CTRL_DIS_STATE, the port will
+not be forwarding frames. And this is the case because b53_enable_port()
+does put 0 in B53_PORT_CTRL.
+
+The fact is that ocelot doesn't have separate controls. The port is
+either forwarding or not. If it is not forwarding, then there is nothing
+to tell the HW to do.
+
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
