@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeC3RSt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:18:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58804 "EHLO
+        id S1752572AbeC3RTD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:19:03 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58824 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752414AbeC3RSq (ORCPT
+        with ESMTP id S1752484AbeC3RSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:18:46 -0400
+        Fri, 30 Mar 2018 13:18:48 -0400
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Sebastian Reichel <sre@kernel.org>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -17,9 +17,9 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv3 7/8] drm/omap: panel-dsi-cm: add rotation support
-Date: Fri, 30 Mar 2018 19:18:21 +0200
-Message-Id: <20180330171822.25896-8-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv3 8/8] ARM: dts: omap4-droid4: Add LCD panel rotation property
+Date: Fri, 30 Mar 2018 19:18:22 +0200
+Message-Id: <20180330171822.25896-9-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
 References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
@@ -27,60 +27,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Reichel <sre@kernel.org>
-
-Add support to inform the DRM subsystem about the orientation
-the display has been mounted to the casing.
+This adds a LCD panel rotation hint to the Droid 4. If the
+display is rotated this way the keyboard can be used properly.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/omap4-droid4-xt894.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-index 428de90fced1..21a828f88d30 100644
---- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-+++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-@@ -68,6 +68,7 @@ struct panel_drv_data {
+diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+index bdf73cbcec3a..3ed090a9db6c 100644
+--- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
++++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+@@ -214,6 +214,7 @@
  
- 	int width_mm;
- 	int height_mm;
-+	int rotation;
+ 		width-mm = <50>;
+ 		height-mm = <89>;
++		rotation = <90>;
+ 		backlight = <&lcd_backlight>;
  
- 	struct omap_dsi_pin_config pin_config;
- 
-@@ -1210,6 +1211,14 @@ static void dsicm_get_size(struct omap_dss_device *dssdev,
- 	*height = ddata->height_mm;
- }
- 
-+static void dsicm_get_rotation(struct omap_dss_device *dssdev,
-+			       int *rotation)
-+{
-+	struct panel_drv_data *ddata = to_panel_data(dssdev);
-+
-+	*rotation = ddata->rotation;
-+}
-+
- static struct omap_dss_driver dsicm_ops = {
- 	.connect	= dsicm_connect,
- 	.disconnect	= dsicm_disconnect,
-@@ -1223,6 +1232,7 @@ static struct omap_dss_driver dsicm_ops = {
- 	.get_timings	= dsicm_get_timings,
- 	.check_timings	= dsicm_check_timings,
- 	.get_size	= dsicm_get_size,
-+	.get_rotation   = dsicm_get_rotation,
- 
- 	.enable_te	= dsicm_enable_te,
- 	.get_te		= dsicm_get_te,
-@@ -1270,6 +1280,9 @@ static int dsicm_probe_of(struct platform_device *pdev)
- 	ddata->height_mm = 0;
- 	of_property_read_u32(node, "height-mm", &ddata->height_mm);
- 
-+	ddata->rotation = -1;
-+	of_property_read_u32(node, "rotation", &ddata->rotation);
-+
- 	ddata->vpnl = devm_regulator_get_optional(&pdev->dev, "vpnl");
- 	if (IS_ERR(ddata->vpnl)) {
- 		err = PTR_ERR(ddata->vpnl);
+ 		panel-timing {
 -- 
 2.16.2
