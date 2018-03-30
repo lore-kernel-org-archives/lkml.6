@@ -1,27 +1,27 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx4+o4b/A0DPnafjZnCcBGefut1cGxu6xt+8SnDkqJOdTH1ue8+gG7xwb/AlE2ry46dvHFApq
-ARC-Seal: i=1; a=rsa-sha256; t=1522393791; cv=none;
+X-Google-Smtp-Source: AIpwx483ciQ5lbRxuCl85vlEwMDRg93IWe7SMzTxWRirtNB/S5CUqp3gq+TOefLCUPDE2evWfVwg
+ARC-Seal: i=1; a=rsa-sha256; t=1522393790; cv=none;
         d=google.com; s=arc-20160816;
-        b=m2cp2pZmFrP+Fd9RgJ1x3O/CGGrOY6V8y5VVMyrA+jBb2JPzIpVACpqsmkIs3eQxf8
-         /9NmIPbEk1g9MGrLN/0MskVPL1dKhSCriaESGNqmj9U92/VGOKle4WqFM4vD1tlaWMep
-         sKm77tFkYhbKWOFS5IgosaMBW7qwAimVEkeC94tl2iTZOmFgPowmH94KFZYXvbjtmAk1
-         3RllZpxbypixttJXCaSTgQp7avxe2DF5L7XdeX3BxdFO/1wl8P1vSukFmuDU/pWyJyOd
-         ODi0rsDAT15+ht4j91jjJZCxoW2bCKVy2C7pcmMbrucYyBENljRXF237F/Cd6Pqpt48N
-         hM4Q==
+        b=NNEeenn/XBuptdRl8AjdmnouHNj2+oKm0PP70fHVoygcfpOLK7i4KTkvL5/Y5OZTff
+         m1X2c8oJ9VYAf/PhdufmgWnUonB9xpBkPXXEACDeHcUXnMEp1fuq6zbuNhdR36ZemS1V
+         dfjCG4UPcUmkK1EfQhTAx4BNFQKBln22X4ENBQ/OvAETxQyxV2mhVidtV/8dpKu0I/HB
+         Vrqp1udnJJnxH3PddmlAvczPRjfPUrmUBsfaJ5IR0em7u93o+xHjz+Vo4UCyRPbAA1Xv
+         U1teZ7teXJztA2imDDvrNQyLLDE8vosAXfHcanG3IMllob7g0N4uOXM2CPRKFaBv6P+u
+         QyLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=H5r23RW3JJSfBzZpGA6TrSzgyHFejC3qPKrAw8bJHlI=;
-        b=ZL1kS/ORqealOhjDCMm8OfbICp3b3EcCDmSRquAKOWS2xVMGvCIa+EALaz5p+3s3JI
-         aZuC1F0KRv8NtyOCnZPgfvH04f6ISCqiEOp+xiD9W8QkrG5RQzfnOuWUd/3tPl7yVILP
-         L6A6wna38ON5Gd8N/palMnYPWodAiDNdxtQM5CF52O8tARYHbTKplD6hVh2TBeIvfRjk
-         z8qCxSxQU9x2GzUg2HLKp53FAm1PFN9YbxoLJUjnG2qm03wulgLpEErQ+AdAPckLuNEc
-         XHdOTOo1Jjd5ydG5oxJ/1RtN6CpTI+j/uAe24ulFix1VjZ1eQ09xTaUXD5k+7h8QOVYM
-         hT8A==
+        bh=toDBUverASQL5BHx/OAF2vE5YTyBVy2tp5GkFvaio7w=;
+        b=HEfzUQAkHfE9DCtPwGIaJjNslhkr3zaMwhcPjE+1Lrb2cPoj26+hODEaMBwPuMLSlN
+         vWWopyQ9oFHd0OZDQbW12ldHRlNmlvXF+aGdqUyaIjiC8uavVPqO+hJri6S4aZcmu248
+         hoaCv+GaGB7Yb+MauUtWtWkncnQmMuaPBvP4Jb/8G6X0028hTDtqrJdc76/Q2gNDzNhF
+         TAuaFVyWAozYa3+1+QRoBP5CBMdJ70w1smULnUH9FvCNOZ7EnPTw+FeDQ/X5+f01KAAf
+         KQgJsNu/QQdIPzaqb2w2/LezViZSn11VRgMlf6GGN/taql5XXBuswNaGeD6rbI4EI2Ap
+         O6Xw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
@@ -29,78 +29,92 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 62/76] staging: ks7010: Remove trailing _t from 'struct mic_failure_t'.
-Date: Fri, 30 Mar 2018 00:08:25 -0700
-Message-Id: <20180330070842.25224-62-quytelda@tamalin.org>
+Subject: [PATCH 61/76] staging: ks7010: Remove trailing _t from 'struct wpa_key_t'.
+Date: Fri, 30 Mar 2018 00:08:24 -0700
+Message-Id: <20180330070842.25224-61-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:frlpwvo6hN2kbBUEoQQYJtJm770xbrYWg2ScIKrb11II5kizcc3
- UN8KRCP/R1nAcRcruwCniSnifp1iaIopBDf8Py/0zITTCMGP0eA3jOePMxIvJSB4fHLX/Sx
- MLSRD99J/ALQy3OJ25XQL4ZWzcXWlJihCQGb1QVm4J4gdFI/ZIrK6PzAtE0wbhdvq+mbtfH
- uW5ws0fWwqHFl+HIW0bDw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:K6LOW1J+A5I=:Ka9f1vBxY/rPuvb5KCR6ia
- w/3pFIARCQfbeN9KsqLAmLV9GpJzJJY7e+veKZkLd9En5szzR4wFdIVLhdF7kRdCCY9NZGs/5
- PtTpLBzy2snOX3JnGQFcwNi06jOi9LDzXldkqYWODonmum/vgajeT6WOwK/xMhXBnWXUs72+3
- 9L9JnHrKeEruG6UQnavMy2nIQi1g8FUUa5x9Xy1cwoDucy02bF1yr+MzVTWcLIY69Sf5YqQpi
- 6dYcS+moty8Zha7xsAWkfcqfQ73ajCi2+LWK0pRUpZsUUzOQmNEnmIiG3D/glj9Bc7H5RhcY+
- 2BxcNmU+De9wxY11TK8xCga5re4qiWjXcP1ZhCvJ6TW22osxT6w9ycGQH9tj9bNtFpA0NrDRn
- paVigYSqIrzgx+k0Kq1C/7AI5mOAh3ui1gl9DfehDUO24FRIJ3lohzDZvNJN/JWuWljaPWsao
- j27ciR0qghPRXmDgZQ05HcM4WfUhnA3NTjEID0Mxoq/gaIE5b0KoLVFpns8kQ820/CyZXQTe5
- GXyynQYUyu5Qq+XErcrQqjTuxTfKZKwYGZzSF29b3js3TeK2bKrH9uD/WIME3DuhZoY43kcGt
- dpTGznd8rWRlVwi+bb6y7rjTq9FFoI71OB3/VCcReA3Kh+E2IF2kb9ItH2l8j4QxwFrqUQ/La
- bcPo2a1M1g3+EQhAhSOUBQzbYwQSIpF0i3bNF0qkdd3cvqy1ZprEjS/q/hXlWu4fjh9xMQcBq
- r7sb7ECU84+CQLyUSaMbczj1MSjoMqANhjcGNA==
+X-Provags-ID: V03:K0:CNB5ABEKGN7P6m9mPwhItRdLUrK9HT4TQ6vJcHNV757Y+PB6RRx
+ HG4wj+Uck+T8XvpHu86iqSJsf0wSWqGCk6cmPnjteRw5vTwsLXazRWNdqyKMQX38Jf1xhEc
+ B7D3cDwM9JhA8oOHEkma05D2AlOmsI0rxYxPAwx6XNByWT0OUERczvlJdGBrwE71fhio7E5
+ el6OusbYcW4JYc5YuL2SQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:i1x1Ig2+GJo=:wtSsOpZMWCW+ZZHr5KJhyr
+ 8eypTItdaAwPwfL+auoFawwAbIK08I6HToe5SD8JHp+SfhCCH3ixZhQimM7+8ktmxZAW+SCB4
+ Pcagc3mK9OcdS6fx9fWC9KQbwqTLFe88PZA0Lw5IzYYdCeU3CESf6U7c8sDwJB1sTeV1lspqM
+ 6XkuQmS8GzqeZs6zw2M9WaiqiHxqKmprrA9nbE+vO+Ff033QVZWKNoUgrfo54lmeRL8lV4B6m
+ 1H+1tlt5vHJ93/5YnkEpUfB5vAJBBhLz0d+CLBGqBA9BeEO5sX6V8gfpckRI7MSoqKv1tpA3V
+ AkWU3DYwPf/BLi0zlWWPrJnOHg+5xp1jMuq6eXCs8kQ4CxLXPKC2PMqPyu/9+TtNLjBfC8cNm
+ V84kdulQ8FsIQ/JkUvcENOZQImvVlwe01CRu/9vUeX05eAlcwFXwObDIpPICjRpwmOPYqUGts
+ +u5gElsVe97FhARKfE/E8zewSOtb3r0ZId/Yuq9RUqfa/ysC8gilNDVCQzdNPVRA1TxRlUtjn
+ IA7USYiQkwonzsKMDgh6YxM1h+PZAM9F/jqmEYsREcBsFDTMSkc3bkZkSiP8VnvoFPjJNra5J
+ eM+B9Ljjg3ose6/6vdVvI52nP/EkPKGP0lZA2WvnjQP41FcfEnDBX5Ed5p44wStNmFgKeoBB2
+ Q5PrBeHflk+yPYSgG/0+lfuWxp0JBy5dnmvx39Ccz6VLwYYffseVMma2vm2/HyXOPt815HeAG
+ 5H5s932D3Vb9t9U40fvYl4yKGjCphxO5nqcF8A==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596345592592264214?=
-X-GMAIL-MSGID: =?utf-8?q?1596345592592264214?=
+X-GMAIL-THRID: =?utf-8?q?1596345591342548909?=
+X-GMAIL-MSGID: =?utf-8?q?1596345591342548909?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct mic_failure_t' with 'struct mic_failure'.
+all occurences of 'struct wpa_key_t' with 'struct wpa_key'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 2 +-
- drivers/staging/ks7010/ks_wlan.h   | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c   | 2 +-
+ drivers/staging/ks7010/ks_wlan.h     | 4 ++--
+ drivers/staging/ks7010/ks_wlan_net.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index d8b40fd83b6b..fbe18ddf3ea0 100644
+index 0e6f9e954a36..d8b40fd83b6b 100644
 --- a/drivers/staging/ks7010/ks_hostif.c
 +++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -314,7 +314,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
- 	unsigned char recv_mic[8];
- 	char buf[128];
- 	unsigned long now;
--	struct mic_failure_t *mic_failure;
-+	struct mic_failure *mic_failure;
+@@ -318,7 +318,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
  	struct michael_mic_t michael_mic;
  	union iwreq_data wrqu;
  	unsigned int key_index = auth_type - 1;
+-	struct wpa_key_t *key = &priv->wpa.key[key_index];
++	struct wpa_key *key = &priv->wpa.key[key_index];
+ 
+ 	eth_hdr = (struct ether_hdr *)(priv->rxp);
+ 	eth_proto = ntohs(eth_hdr->h_proto);
 diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index 2458dbba66a0..c3e61021a75a 100644
+index ece9950ba893..2458dbba66a0 100644
 --- a/drivers/staging/ks7010/ks_wlan.h
 +++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -357,7 +357,7 @@ struct wpa_key {
- #define WPA_KEY_INDEX_MAX 4
- #define WPA_RX_SEQ_LEN 6
+@@ -339,7 +339,7 @@ enum {
  
--struct mic_failure_t {
-+struct mic_failure {
- 	u16 failure;	/* MIC Failure counter 0 or 1 or 2 */
- 	u16 counter;	/* 1sec counter 0-60 */
- 	u32 last_failure_time;
-@@ -375,7 +375,7 @@ struct wpa_status_t {
+ #define MIC_KEY_SIZE 8
+ 
+-struct wpa_key_t {
++struct wpa_key {
+ 	u32 ext_flags;	/* IW_ENCODE_EXT_xxx */
+ 	u8 tx_seq[IW_ENCODE_SEQ_MAX_SIZE];	/* LSB first */
+ 	u8 rx_seq[IW_ENCODE_SEQ_MAX_SIZE];	/* LSB first */
+@@ -373,7 +373,7 @@ struct wpa_status_t {
+ 	int key_mgmt_suite;	/* authentication key management suite */
+ 	int auth_alg;
  	int txkey;
- 	struct wpa_key key[WPA_KEY_INDEX_MAX];
+-	struct wpa_key_t key[WPA_KEY_INDEX_MAX];
++	struct wpa_key key[WPA_KEY_INDEX_MAX];
  	struct scan_ext scan_ext;
--	struct mic_failure_t mic_failure;
-+	struct mic_failure mic_failure;
+ 	struct mic_failure_t mic_failure;
  };
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index a4f10bec865f..1b8234720d78 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -1706,7 +1706,7 @@ static int ks_wlan_set_encode_ext(struct net_device *dev,
+ 	struct iw_encode_ext *enc;
+ 	int index = dwrq->flags & IW_ENCODE_INDEX;
+ 	unsigned int commit = 0;
+-	struct wpa_key_t *key;
++	struct wpa_key *key;
  
- #include <linux/list.h>
+ 	enc = (struct iw_encode_ext *)extra;
+ 	if (!enc)
 -- 
 2.16.3
