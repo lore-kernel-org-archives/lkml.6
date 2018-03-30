@@ -1,85 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751254AbeC3KxS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:53:18 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:54713 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750794AbeC3KxQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 06:53:16 -0400
-Date: Fri, 30 Mar 2018 16:21:57 +0530
-From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "stephen@networkplumber.org" <stephen@networkplumber.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Ganesh GR <ganeshgr@chelsio.com>,
-        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
-        Indranil Choudhury <indranil@chelsio.com>
-Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
- dump in second kernel
-Message-ID: <20180330105156.GA24344@chelsio.com>
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
- <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
- <20180330103907.GC3313@nanopsycho>
+        id S1751271AbeC3Kyu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 06:54:50 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7138 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751239AbeC3Kyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 06:54:49 -0400
+Subject: Re: [PATCH] f2fs: remain written times to update inode during fsync
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180330055126.36202-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <f25729ee-cd16-0029-a8ff-1daa5b82dd06@huawei.com>
+Date: Fri, 30 Mar 2018 18:54:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330103907.GC3313@nanopsycho>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180330055126.36202-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, March 03/30/18, 2018 at 16:09:07 +0530, Jiri Pirko wrote:
-> Sat, Mar 24, 2018 at 11:56:33AM CET, rahul.lakkireddy@chelsio.com wrote:
-> >Add a new module crashdd that exports the /sys/kernel/crashdd/
-> >directory in second kernel, containing collected hardware/firmware
-> >dumps.
-> >
-> >The sequence of actions done by device drivers to append their device
-> >specific hardware/firmware logs to /sys/kernel/crashdd/ directory are
-> >as follows:
-> >
-> >1. During probe (before hardware is initialized), device drivers
-> >register to the crashdd module (via crashdd_add_dump()), with
-> >callback function, along with buffer size and log name needed for
-> >firmware/hardware log collection.
-> >
-> >2. Crashdd creates a driver's directory under
-> >/sys/kernel/crashdd/<driver>. Then, it allocates the buffer with
-> 
-> This smells. I need to identify the exact ASIC instance that produced
-> the dump. To identify by driver name does not help me if I have multiple
-> instances of the same driver. This looks wrong to me. This looks like
-> a job for devlink where you have 1 devlink instance per 1 ASIC instance.
-> 
-> Please see:
-> http://patchwork.ozlabs.org/project/netdev/list/?series=36524
-> 
-> I bevieve that the solution in the patchset could be used for
-> your usecase too.
-> 
-> 
+Hi Jaegeuk,
 
-The sysfs approach proposed here had been dropped in favour exporting
-the dumps as ELF notes in /proc/vmcore.
+On 2018/3/30 13:51, Jaegeuk Kim wrote:
+> This fixes xfstests/generic/392.
 
-Will be posting the new patches soon.
+Hmm... Could you please give more details about this issue and solution in
+commit message, since I can catch up the solution only with the code.
 
-> >requested size and invokes the device driver's registered callback
-> >function.
-> >
-> >3. Device driver collects all hardware/firmware logs into the buffer
-> >and returns control back to crashdd.
-> >
-> >4. Crashdd exposes the buffer as a binary file via
-> >/sys/kernel/crashdd/<driver>/<dump_file>.
-> >
+Thanks,
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
+>  fs/f2fs/inode.c |  4 ++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 000f93f6767e..675c39d85111 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
+>  	kprojid_t i_projid;		/* id for project quota */
+>  	int i_inline_xattr_size;	/* inline xattr size */
+>  	struct timespec i_crtime;	/* inode creation time */
+> +	struct timespec i_disk_time[4];	/* inode disk times */
+>  };
+>  
+>  static inline void get_extent_info(struct extent_info *ext,
+> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
+>  	f2fs_mark_inode_dirty_sync(inode, true);
+>  }
+>  
+> +static inline bool time_equal(struct timespec a, struct timespec b)
+> +{
+> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
+> +}
+> +
+>  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>  {
+>  	bool ret;
+> @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>  			i_size_read(inode) & ~PAGE_MASK)
+>  		return false;
+>  
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
+> +		return false;
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
+> +		return false;
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
+> +		return false;
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
+> +		return false;
+> +
+>  	down_read(&F2FS_I(inode)->i_sem);
+>  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
+>  	up_read(&F2FS_I(inode)->i_sem);
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 401f09ccce7e..70aba580f4b0 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
+>  	if (inode->i_nlink == 0)
+>  		clear_inline_node(node_page);
+>  
+> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
+> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
+> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+>  }
+>  
+>  void update_inode_page(struct inode *inode)
+> 
