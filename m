@@ -1,58 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeC3Ucw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 16:32:52 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56315 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752206AbeC3Ucv (ORCPT
+        id S1752724AbeC3Uh1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 16:37:27 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35641 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752206AbeC3Uh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 16:32:51 -0400
-Date: Fri, 30 Mar 2018 22:32:44 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-cc: Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        =?ISO-8859-15?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
-        the arch/x86 maintainers <x86@kernel.org>, namit@vmware.com
-Subject: Re: [PATCH 00/11] Use global pages with PTI
-In-Reply-To: <3cdc23a2-99eb-6f93-6934-f7757fa30a3e@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1803302230560.1479@nanos.tec.linutronix.de>
-References: <20180323174447.55F35636@viggo.jf.intel.com> <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com> <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com> <alpine.DEB.2.21.1803271526260.1964@nanos.tec.linutronix.de>
- <c0e7ca0b-dcb5-66e2-9df6-f53e4eb22781@linux.intel.com> <alpine.DEB.2.21.1803271949250.1618@nanos.tec.linutronix.de> <20180327200719.lvdomez6hszpmo4s@gmail.com> <0d6ea030-ec3b-d649-bad7-89ff54094e25@linux.intel.com> <20180330120920.btobga44wqytlkoe@gmail.com>
- <20180330121725.zcklh36ulg7crydw@gmail.com> <3cdc23a2-99eb-6f93-6934-f7757fa30a3e@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 30 Mar 2018 16:37:26 -0400
+X-Google-Smtp-Source: AIpwx4/Gbv44clm4W/iCg58fjTIuttNMR8uqwoFG9StIb6Gxv3JcFJUD+YshUjsEVH7povjXEZI9rCf/kRedBw9AlLM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180330151037.30d2ac6d@gandalf.local.home>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180330102038.2378925b@gandalf.local.home> <CAJWu+ooMPz_nFtULMXp6CnLvM8JFJrSnBGNgPHXKs1k97FQU5Q@mail.gmail.com>
+ <20180330151037.30d2ac6d@gandalf.local.home>
+From: Joel Fernandes <joelaf@google.com>
+Date: Fri, 30 Mar 2018 13:37:24 -0700
+Message-ID: <CAJWu+ooihz7KJG6Av2THBda2mUd=u-zsNVeB4V7XrQNSwxaHNA@mail.gmail.com>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018, Dave Hansen wrote:
+Hi Steve,
 
-> On 03/30/2018 05:17 AM, Ingo Molnar wrote:
-> > BTW., the expectation on !PCID Intel hardware would be for global pages to help 
-> > even more than the 0.6% and 1.7% you measured on PCID hardware: PCID already 
-> > _reduces_ the cost of TLB flushes - so if there's not even PCID then global pages 
-> > should help even more.
-> > 
-> > In theory at least. Would still be nice to measure it.
-> 
-> I did the lseek test on a modern, non-PCID system:
-> 
-> No Global pages (baseline): 6077741 lseeks/sec
-> 94 Global pages (this set): 8433111 lseeks/sec
-> 			   +2355370 lseeks/sec (+38.8%)
+On Fri, Mar 30, 2018 at 12:10 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+[..]
+>> > I wonder if I should have the ring buffer allocate groups of pages, to
+>> > avoid this. Or try to allocate with NORETRY, one page at a time, and
+>> > when that fails, allocate groups of pages with RETRY_MAYFAIL, and that
+>> > may keep it from causing an OOM?
+>> >
+>>
+>> I don't see immediately how that can prevent an OOM in other
+>> applications here? If ftrace allocates lots of memory with
+>> RETRY_MAYFAIL, then we would still OOM in other applications if memory
+>> isn't available. Sorry if I missed something.
+>
+> Here's the idea.
+>
+> Allocate one page at a time with NORETRY. If that fails, then allocate
+> larger amounts (higher order of pages) with RETRY_MAYFAIL. Then if it
+> can't get all the memory it needs, it wont take up all memory in the
+> system before it finds out that it can't have any more.
+>
+> Or perhaps the memory management system can provide a
+> get_available_mem() function that ftrace could call before it tries to
+> increase the ring buffer and take up all the memory of the system
+> before it realizes that it can't get all the memory it wants.
+>
+> The main problem I have with Zhaoyang's patch is that
+> get_available_mem() does not belong in the tracing code. It should be
+> something that the mm subsystem provides.
+>
 
-That's all kernel text, right? What's the result for the case where global
-is only set for all user/kernel shared pages?
+Cool. Personally I like the getting of available memory solution and
+use that, since its simpler.
 
-Thanks,
+MM already provides it through si_mem_available since the commit
+"mm/page_alloc.c: calculate 'available' memory in a separate function"
+(sha d02bd27b). Maybe we could just use that?
 
-	tglx
+MemAvailable was initially added in commit "/proc/meminfo: provide
+estimated available memory" (sha 34e431b0ae39)
+
+thanks,
+
+- Joel
