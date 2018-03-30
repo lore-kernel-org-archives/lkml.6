@@ -1,43 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752741AbeC3HSU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 03:18:20 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45696 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752647AbeC3HSR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 03:18:17 -0400
-Date: Fri, 30 Mar 2018 09:18:13 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] arm: shmobile: Add the RZ/N1 arch to the shmobile
- Kconfig
-Message-ID: <20180330071813.ov5356yaocqptbkx@verge.net.au>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
- <1522309629-10152-6-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522309629-10152-6-git-send-email-michel.pollet@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1752591AbeC3HWz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 03:22:55 -0400
+Received: from smtp57.i.mail.ru ([217.69.128.37]:43752 "EHLO smtp57.i.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751085AbeC3HWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 03:22:53 -0400
+From: Sergey Suloev <ssuloev@orpaltech.com>
+To: Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Sergey Suloev <ssuloev@orpaltech.com>
+Subject: [PATCH 0/6] spi: Add support for DMA transfers in sun6i SPI driver
+Date: Fri, 30 Mar 2018 10:22:37 +0300
+Message-Id: <20180330072243.19368-1-ssuloev@orpaltech.com>
+X-Mailer: git-send-email 2.16.2
+Authentication-Results: smtp57.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A5E661AEA9A400726ABC0A8B6031D50A0087F0100672248076725E5C173C3A84C39D7D3120FB43BDE35133B6664BA740BAF3CCD8A865B74A75C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917A363CF345EC485165E7F4CCF5BDD76AA069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 08:47:01AM +0100, Michel Pollet wrote:
-> Add the RZ/N1 Family (Part #R9A06G0xx) ARCH config to the rest of
-> the Renesas SoC collection.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The following patchset provides corrections for PIO-mode
+and support for DMA transfers in sun6i SPI driver.
 
-Thanks, applied.
+Sergey Suloev (6):
+  spi: sun6i: coding style/readability improvements
+  spi: sun6i: handle chip select polarity flag
+  spi: sun6i: restrict transfer length in PIO-mode
+  spi: sun6i: use completion provided by SPI core
+  spi: sun6i: introduce register set/unset helpers
+  spi: sun6i: add DMA transfers support
+
+ drivers/spi/spi-sun6i.c | 501 ++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 378 insertions(+), 123 deletions(-)
+
+-- 
+2.16.2
