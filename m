@@ -1,61 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752705AbeC3D2r (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 23:28:47 -0400
-Received: from ozlabs.org ([103.22.144.67]:48527 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752487AbeC3D2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 23:28:46 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 30 Mar 2018 14:27:41 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: linux-next: Signed-off-by missing for commits in the spi-nor tree
-Message-ID: <20180330142741.4266629f@canb.auug.org.au>
+        id S1752753AbeC3DcZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 23:32:25 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53281 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752487AbeC3DcY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 23:32:24 -0400
+X-Google-Smtp-Source: AIpwx4+Xe4gFGdU9EYlZaztKYrbwURU+6zvbF99i2J50+u2XItuoct4bX5jlaUVBf2y/Xn7dukolW2ZH2S2NWDr+agU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/cuQvGAT2=nved=W9mFj71Ft"; protocol="application/pgp-signature"
+In-Reply-To: <20180329120528.337bf6cb@gandalf.local.home>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com> <20180329120528.337bf6cb@gandalf.local.home>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Fri, 30 Mar 2018 11:32:22 +0800
+Message-ID: <CAGWkznGH96VcMujvep5VtwO6M42YOmXtV=M+QZM+xWH_5DPcEA@mail.gmail.com>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/cuQvGAT2=nved=W9mFj71Ft
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Cyrille,
-
-Commits
-
-  3efa50903ff3 ("mtd: fsl-quadspi: Distinguish the mtd device names")
-  85da6da22843 ("dt-bindings: fsl-quadspi: Add the example of two SPI NOR")
-
-are missing a Signed-off-by from their committer.
-
-P.S. should I be changing the contact I have for the spi-nor trees?
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/cuQvGAT2=nved=W9mFj71Ft
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq9rq4ACgkQAVBC80lX
-0GxG/Af/TiE7jaWI/bEPIs3ME5Qy7DClrh+MHtUDH7AQmHG5gfbMfpvQM8P/r1di
-+QamUDVCqDd856veO8CtfKtJulVmpzdXMcxCcfsqROtRHMofJPDPQsH6ILfikZZP
-IjmqQPx3HZj3ArUcXVx9geaSqQKEbvvjKLCng8+/zGQJ8JBlIhDqp5WEp+ZGTTKl
-V/QwR0vAU3Z0ZpvhNUFIxLWwYN7bvkvkT538RP8NJmPhfeRFpPKeW/IRRndvUUW2
-znuHZT1kEbHLhkwa0LtwZB+QMFuJcwsj1WEHo4YSqGYiYi2gHOYWRXkLSvakEgGs
-xOqbMdJ35ifpWW3B9eyI4UsKXC4Khw==
-=Rdnd
------END PGP SIGNATURE-----
-
---Sig_/cuQvGAT2=nved=W9mFj71Ft--
+On Fri, Mar 30, 2018 at 12:05 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Thu, 29 Mar 2018 18:41:44 +0800
+> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+>
+>> It is reported that some user app would like to echo a huge
+>> number to "/sys/kernel/debug/tracing/buffer_size_kb" regardless
+>>  of the available memory, which will cause the coinstantaneous
+>> page allocation failed and introduce OOM. The commit checking the
+>> val against the available mem first to avoid the consequence allocation.
+>>
+>
+> One of my tests is to stress buffer_size_kb, and it fails nicely if you
+> try to get too much. Although, it may cause an OOM, but that's expected.
+>
+> The application should do the test (try "free" on the command line).
+> This isn't something that the kernel should be responsible for. If
+> someone wants to allocate all memory for tracing, that's their
+> prerogative.
+>
+> -- Steve
+Steve, thanks for your quick feedback. The original purpose is to
+avoid such kind
+of OOM as kernel can not define the behavior of the application. I
+think it is no need
+to do the alloc->free process if we have known the number of pages
+difinitly lead to failure.
+Furthermore,  the app which screw up the thing usually escape the OOM and cause
+the innocent to be sacrificed.
