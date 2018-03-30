@@ -1,45 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeC3JwE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 05:52:04 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57256 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbeC3JwC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 05:52:02 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] cpufreq: intel_pstate: Do not include debugfs.h
-Date: Fri, 30 Mar 2018 11:52:19 +0200
-Message-ID: <1679361.0Gr8UWkMAK@aspire.rjw.lan>
+        id S1752051AbeC3Jwi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 05:52:38 -0400
+Received: from mail.us.es ([193.147.175.20]:54934 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751118AbeC3Jwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 05:52:36 -0400
+Date: Fri, 30 Mar 2018 11:52:31 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Joe Perches <joe@perches.com>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bridge: netfilter: ebt_stp: Use generic functions for
+ comparisons
+Message-ID: <20180330095231.ph5hqdh2pboblhnk@salvia>
+References: <c22b7398816c4533a65ff57aaa44629729fc7254.1521630169.git.joe@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c22b7398816c4533a65ff57aaa44629729fc7254.1521630169.git.joe@perches.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Mar 21, 2018 at 04:03:22AM -0700, Joe Perches wrote:
+> Instead of unnecessary const declarations, use the generic functions to
+> save a little object space.
+> 
+> $ size net/bridge/netfilter/ebt_stp.o*
+>    text	   data	    bss	    dec	    hex	filename
+>    1250	    144	      0	   1394	    572	net/bridge/netfilter/ebt_stp.o.new
+>    1344	    144	      0	   1488	    5d0	net/bridge/netfilter/ebt_stp.o.old
 
-The intel_pstate driver doesn't use debugfs any more, so drop
-linux/debugfs.h from the list of included headers in it.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |    1 -
- 1 file changed, 1 deletion(-)
-
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -26,7 +26,6 @@
- #include <linux/sysfs.h>
- #include <linux/types.h>
- #include <linux/fs.h>
--#include <linux/debugfs.h>
- #include <linux/acpi.h>
- #include <linux/vmalloc.h>
- #include <trace/events/power.h>
+Applied, thanks Joe.
