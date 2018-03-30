@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752972AbeC3VFQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33576 "EHLO mail.kernel.org"
+        id S1753014AbeC3VFX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:05:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752941AbeC3VFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:05:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FFA821777
+        id S1752978AbeC3VFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:05:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03DCA21777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v5 04/14] PCI: Add pcie_bandwidth_available() to compute
- bandwidth available to device
+Subject: [PATCH v5 05/14] PCI: Add pcie_print_link_status() to log link
+ speed and whether it's limited
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Tal Gilboa <talgi@mellanox.com>
 Cc: Tariq Toukan <tariqt@mellanox.com>,
@@ -21,8 +21,8 @@ Cc: Tariq Toukan <tariqt@mellanox.com>,
         everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Date: Fri, 30 Mar 2018 16:05:11 -0500
-Message-ID: <152244391143.135666.12548496808512444463.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Fri, 30 Mar 2018 16:05:18 -0500
+Message-ID: <152244391852.135666.14903825998610307052.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -35,107 +35,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tal Gilboa <talgi@mellanox.com>
 
-Add pcie_bandwidth_available() to compute the bandwidth available to a
-device.  This may be limited by the device itself or by a slower upstream
-link leading to the device.
+Add pcie_print_link_status().  This logs the current settings of the link
+(speed, width, and total available bandwidth).
 
-The available bandwidth at each link along the path is computed as:
+If the device is capable of more bandwidth but is limited by a slower
+upstream link, we include information about the link that limits the
+device's performance.
 
-  link_speed * link_width * (1 - encoding_overhead)
+The user may be able to move the device to a different slot for better
+performance.
 
-The encoding overhead is about 20% for 2.5 and 5.0 GT/s links using 8b/10b
-encoding, and about 1.5% for 8 GT/s or higher speed links using 128b/130b
-encoding.
-
-Also return the device with the slowest link and the speed and width of
-that link.
+This provides a unified method for all PCI devices to report status and
+issues, instead of each device reporting in a different way, using
+different code.
 
 Signed-off-by: Tal Gilboa <talgi@mellanox.com>
-[bhelgaas: changelog, leave pcie_get_minimum_link() alone for now, return
-bw directly, use pci_upstream_bridge(), check "next_bw <= bw" to find
-uppermost limiting device, return speed/width of the limiting device]
+[bhelgaas: changelog, reword log messages, print device capabilities when
+not limited]
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/pci.c   |   54 +++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pci.h |    3 +++
- 2 files changed, 57 insertions(+)
+ drivers/pci/pci.c   |   29 +++++++++++++++++++++++++++++
+ include/linux/pci.h |    1 +
+ 2 files changed, 30 insertions(+)
 
 diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 9ce89e254197..e00d56b12747 100644
+index e00d56b12747..cec7aed09f6b 100644
 --- a/drivers/pci/pci.c
 +++ b/drivers/pci/pci.c
-@@ -5146,6 +5146,60 @@ int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
+@@ -5283,6 +5283,35 @@ u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed *speed,
+ 	return *width * PCIE_SPEED2MBS_ENC(*speed);
  }
- EXPORT_SYMBOL(pcie_get_minimum_link);
  
 +/**
-+ * pcie_bandwidth_available - determine minimum link settings of a PCIe
-+ *			      device and its bandwidth limitation
++ * pcie_print_link_status - Report the PCI device's link speed and width
 + * @dev: PCI device to query
-+ * @limiting_dev: storage for device causing the bandwidth limitation
-+ * @speed: storage for speed of limiting device
-+ * @width: storage for width of limiting device
 + *
-+ * Walk up the PCI device chain and find the point where the minimum
-+ * bandwidth is available.  Return the bandwidth available there and (if
-+ * limiting_dev, speed, and width pointers are supplied) information about
-+ * that point.
++ * Report the available bandwidth at the device.  If this is less than the
++ * device is capable of, report the device's maximum possible bandwidth and
++ * the upstream link that limits its performance to less than that.
 + */
-+u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev **limiting_dev,
-+			     enum pci_bus_speed *speed,
-+			     enum pcie_link_width *width)
++void pcie_print_link_status(struct pci_dev *dev)
 +{
-+	u16 lnksta;
-+	enum pci_bus_speed next_speed;
-+	enum pcie_link_width next_width;
-+	u32 bw, next_bw;
++	enum pcie_link_width width, width_cap;
++	enum pci_bus_speed speed, speed_cap;
++	struct pci_dev *limiting_dev = NULL;
++	u32 bw_avail, bw_cap;
 +
-+	*speed = PCI_SPEED_UNKNOWN;
-+	*width = PCIE_LNK_WIDTH_UNKNOWN;
-+	bw = 0;
++	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
++	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width);
 +
-+	while (dev) {
-+		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
-+
-+		next_speed = pcie_link_speed[lnksta & PCI_EXP_LNKSTA_CLS];
-+		next_width = (lnksta & PCI_EXP_LNKSTA_NLW) >>
-+			PCI_EXP_LNKSTA_NLW_SHIFT;
-+
-+		next_bw = next_width * PCIE_SPEED2MBS_ENC(next_speed);
-+
-+		/* Check if current device limits the total bandwidth */
-+		if (!bw || next_bw <= bw) {
-+			bw = next_bw;
-+
-+			if (limiting_dev)
-+				*limiting_dev = dev;
-+			if (speed)
-+				*speed = next_speed;
-+			if (width)
-+				*width = next_width;
-+		}
-+
-+		dev = pci_upstream_bridge(dev);
-+	}
-+
-+	return bw;
++	if (bw_avail >= bw_cap)
++		pci_info(dev, "%d Mb/s available bandwidth (%s x%d link)\n",
++			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
++	else
++		pci_info(dev, "%d Mb/s available bandwidth, limited by %s x%d link at %s (capable of %d Mb/s with %s x%d link)\n",
++			 bw_avail, PCIE_SPEED2STR(speed), width,
++			 limiting_dev ? pci_name(limiting_dev) : "<unknown>",
++			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
 +}
-+EXPORT_SYMBOL(pcie_bandwidth_available);
++EXPORT_SYMBOL(pcie_print_link_status);
 +
  /**
-  * pcie_get_speed_cap - query for the PCI device's link speed capability
-  * @dev: PCI device to query
+  * pci_select_bars - Make BAR mask from the type of resource
+  * @dev: the PCI device for which BAR mask is made
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 8043a5937ad0..f2bf2b7a66c7 100644
+index f2bf2b7a66c7..38f7957121ef 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1083,6 +1083,9 @@ int pcie_get_mps(struct pci_dev *dev);
- int pcie_set_mps(struct pci_dev *dev, int mps);
- int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
- 			  enum pcie_link_width *width);
-+u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev **limiting_dev,
-+			     enum pci_bus_speed *speed,
-+			     enum pcie_link_width *width);
+@@ -1086,6 +1086,7 @@ int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
+ u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev **limiting_dev,
+ 			     enum pci_bus_speed *speed,
+ 			     enum pcie_link_width *width);
++void pcie_print_link_status(struct pci_dev *dev);
  void pcie_flr(struct pci_dev *dev);
  int __pci_reset_function_locked(struct pci_dev *dev);
  int pci_reset_function(struct pci_dev *dev);
