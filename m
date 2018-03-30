@@ -1,126 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752796AbeC3Uqs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 16:46:48 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53978 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752571AbeC3Uqr (ORCPT
+        id S1752786AbeC3UyE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 16:54:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48416 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752568AbeC3UyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 16:46:47 -0400
-Date: Fri, 30 Mar 2018 22:46:44 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
-Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
- omap4-droid4: add soundcard
-Message-ID: <20180330204644.GA1804@amd>
-References: <20180329135904.GN5700@atomide.com>
- <20180329154600.qhels5fqzzg364gj@earth.universe>
- <20180329163716.GA20743@amd>
- <20180329164113.GR5700@atomide.com>
- <20180329184007.GA27688@amd>
- <20180329215612.GS5700@atomide.com>
- <20180330103744.GA17404@amd>
- <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
- <20180330175050.GA26571@amd>
- <20180330180151.GA27494@amd>
+        Fri, 30 Mar 2018 16:54:02 -0400
+Date: Fri, 30 Mar 2018 13:53:56 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, Michal Hocko <mhocko@suse.com>,
+        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180330205356.GA13332@bombadil.infradead.org>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180330102038.2378925b@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330180151.GA27494@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180330102038.2378925b@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 30, 2018 at 10:20:38AM -0400, Steven Rostedt wrote:
+> That said, it appears you are having issues that were caused by the
+> change by commit 848618857d2 ("tracing/ring_buffer: Try harder to
+> allocate"), where we replaced NORETRY with RETRY_MAYFAIL. The point of
+> NORETRY was to keep allocations of the tracing ring-buffer from causing
+> OOMs. But the RETRY was too strong in that case, because there were
+> those that wanted to allocate large ring buffers but it would fail due
+> to memory being used that could be reclaimed. Supposedly, RETRY_MAYFAIL
+> is to allocate with reclaim but still allow to fail, and isn't suppose
+> to trigger an OOM. From my own tests, this is obviously not the case.
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's not exactly what the comment says in gfp.h:
 
-Hi!
+ * __GFP_RETRY_MAYFAIL: The VM implementation will retry memory reclaim
+ *   procedures that have previously failed if there is some indication
+ *   that progress has been made else where.  It can wait for other
+ *   tasks to attempt high level approaches to freeing memory such as
+ *   compaction (which removes fragmentation) and page-out.
+ *   There is still a definite limit to the number of retries, but it is
+ *   a larger limit than with __GFP_NORETRY.
+ *   Allocations with this flag may fail, but only when there is
+ *   genuinely little unused memory. While these allocations do not
+ *   directly trigger the OOM killer, their failure indicates that
+ *   the system is likely to need to use the OOM killer soon.  The
+ *   caller must handle failure, but can reasonably do so by failing
+ *   a higher-level request, or completing it only in a much less
+ *   efficient manner.
+ *   If the allocation does fail, and the caller is in a position to
+ *   free some non-essential memory, doing so could benefit the system
+ *   as a whole.
 
-> > > Would you mind sharing those hacks - I would like to play around with
-> > > ofonod as well. Maybe I can help with a way forward.
-> >=20
-> > Okay. Here's less hacky version of the hack, but still using AT
-> > commands. You still need to set up udev, as described in the other
-> > mail.
-> >=20
-> > And... it seems I can have a qmi connection, too, but that's topic for
-> > other email.
->=20
-> This, applied on top of previous patch, gives me some kind of qmi
-> connection, AFAICT. I can enable/online a modem, but nothing else
-> works.
->=20
-> LocationReporting is advertised but does not work. dial-number does
-> not work either. But from list-modems, it looks like some kind of
-> communication works...
+It seems to me that what you're asking for at the moment is
+lower-likelihood-of-failure-than-GFP_KERNEL, and it's not entirely
+clear to me why your allocation is so much more important than other
+allocations in the kernel.
 
-Ok, strange.
-
-So there's ofonod in the maemo-leste already.
-
-user@devuan:~$ /usr/sbin/ofonod -v
-1.22
-
-=2E..and it seems to somehow work with the droid 4, in default
-configuration, thinking it is "Gobi" modem.=20
-
-user@devuan:/my/ofono$ sudo python2 test/list-modems
-[ /gobi_0 ]
-    Features =3D sms net rat ussd sim gps
-        Emergency =3D 0
-	    Powered =3D 1
-	        Lockdown =3D 0
-		    Interfaces =3D org.ofono.SmartMessaging
-		    org.ofono.PushNotification
-		    org.ofono.MessageManager
-		    org.ofono.NetworkRegistration
-		    org.ofono.RadioSettings
-		    org.ofono.SupplementaryServices
-		    org.ofono.NetworkMonitor org.ofono.MessageWaiting
-		    org.ofono.AllowedAccessPoints org.ofono.SimManager
-		    org.ofono.LocationReporting
-		    org.ofono.VoiceCallManager
-		        Online =3D 1
-			    Model =3D 196
-			        Revision =3D M6600A-SCAUHSZ-3.1.3310T  1
-				[Jun 09 2011 17:00:00]
-				    Type =3D hardware
-=2E..
-
-=2E.. and it seems to kind-of work. Even incoming SMSes work, which I
-could not get to work in AT mode. Otoh, voice calls do not, so...
-
-Confused,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlq+ojQACgkQMOfwapXb+vKtTQCdHy9xyOIrDEAF8CvzuUqzmHei
-wuwAoLQnAXPZn3vJuz54lusymybIVXmI
-=uQ/Y
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
+Also, the pattern you have is very close to that of vmalloc.  You're
+allocating one page at a time to satisfy a multi-page request.  In lieu
+of actually thinking about what you should do, I might recommend using the
+same GFP flags as vmalloc() which works out to GFP_KERNEL | __GFP_NOWARN
+(possibly | __GFP_HIGHMEM if you can tolerate having to kmap the pages
+when accessed from within the kernel).
