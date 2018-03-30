@@ -1,153 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeC3PRf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:17:35 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:55016 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeC3PRd (ORCPT
+        id S1752154AbeC3PSM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:18:12 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:59429 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751180AbeC3PSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:17:33 -0400
-Date: Fri, 30 Mar 2018 08:16:00 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz
-Subject: Re: [PATCH v7 12/14] xfs: prepare xfs_break_layouts() to be called
- with XFS_MMAPLOCK_EXCL
-Message-ID: <20180330151600.GC13552@magnolia>
-References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152167310017.5268.8654419042128713101.stgit@dwillia2-desk3.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152167310017.5268.8654419042128713101.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8847 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803300158
+        Fri, 30 Mar 2018 11:18:09 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+From: Chris Wilson <chris@chris-wilson.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: intel-gfx@lists.freedesktop.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2 1/2] trace: Default to using trace_global_clock if sched_clock is unstable
+Date: Fri, 30 Mar 2018 16:01:31 +0100
+Message-Id: <20180330150132.16903-1-chris@chris-wilson.co.uk>
+X-Mailer: git-send-email 2.16.3
+X-Originating-IP: 78.156.65.138
+X-Country: code=GB country="United Kingdom" ip=78.156.65.138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 03:58:20PM -0700, Dan Williams wrote:
-> In preparation for adding coordination between extent unmap operations
-> and busy dax-pages, update xfs_break_layouts() to permit it to be called
-> with the mmap lock held. This lock scheme will be required for
-> coordinating the break of 'dax layouts' (non-idle dax (ZONE_DEVICE)
-> pages mapped into the file's address space). Breaking dax layouts will
-> be added to xfs_break_layouts() in a future patch, for now this preps
-> the unmap call sites to take and hold XFS_MMAPLOCK_EXCL over the call to
-> xfs_break_layouts().
-> 
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Across suspend, we may see a very large drift in timestamps if the sched
+clock is unstable, prompting the global trace's ringbuffer code to warn
+and suggest switching to the global clock. Preempt this request by
+detecting when the sched clock is unstable (determined during
+late_initcall) and automatically switching the default clock over to
+trace_global_clock.
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+This should prevent requiring user interaction to resolve warnings such
+as:
 
---D
+    Delta way too big! 18446743856563626466 ts=18446744054496180323 write stamp = 197932553857
+    If you just came from a suspend/resume,
+    please switch to the trace global clock:
+    echo global > /sys/kernel/debug/tracing/trace_clock
 
-> ---
->  fs/xfs/xfs_file.c  |    5 +----
->  fs/xfs/xfs_ioctl.c |    5 +----
->  fs/xfs/xfs_iops.c  |   10 +++++++---
->  fs/xfs/xfs_pnfs.c  |    3 ++-
->  4 files changed, 11 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 9ea08326f876..18edf04811d0 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -768,7 +768,7 @@ xfs_file_fallocate(
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	long			error;
->  	enum xfs_prealloc_flags	flags = 0;
-> -	uint			iolock = XFS_IOLOCK_EXCL;
-> +	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
->  	loff_t			new_size = 0;
->  	bool			do_file_insert = false;
->  
-> @@ -782,9 +782,6 @@ xfs_file_fallocate(
->  	if (error)
->  		goto out_unlock;
->  
-> -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> -	iolock |= XFS_MMAPLOCK_EXCL;
-> -
->  	if (mode & FALLOC_FL_PUNCH_HOLE) {
->  		error = xfs_free_file_space(ip, offset, len);
->  		if (error)
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 89fb1eb80aae..4151fade4bb1 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -614,7 +614,7 @@ xfs_ioc_space(
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct iattr		iattr;
->  	enum xfs_prealloc_flags	flags = 0;
-> -	uint			iolock = XFS_IOLOCK_EXCL;
-> +	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
->  	int			error;
->  
->  	/*
-> @@ -648,9 +648,6 @@ xfs_ioc_space(
->  	if (error)
->  		goto out_unlock;
->  
-> -	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> -	iolock |= XFS_MMAPLOCK_EXCL;
-> -
->  	switch (bf->l_whence) {
->  	case 0: /*SEEK_SET*/
->  		break;
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 951e84df5576..d23aa08426f9 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -1028,13 +1028,17 @@ xfs_vn_setattr(
->  
->  	if (iattr->ia_valid & ATTR_SIZE) {
->  		struct xfs_inode	*ip = XFS_I(d_inode(dentry));
-> -		uint			iolock = XFS_IOLOCK_EXCL;
-> +		uint			iolock;
-> +
-> +		xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
-> +		iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
->  
->  		error = xfs_break_layouts(d_inode(dentry), &iolock);
-> -		if (error)
-> +		if (error) {
-> +			xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
->  			return error;
-> +		}
->  
-> -		xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
->  		error = xfs_vn_setattr_size(dentry, iattr);
->  		xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
->  	} else {
-> diff --git a/fs/xfs/xfs_pnfs.c b/fs/xfs/xfs_pnfs.c
-> index aa6c5c193f45..6ea7b0b55d02 100644
-> --- a/fs/xfs/xfs_pnfs.c
-> +++ b/fs/xfs/xfs_pnfs.c
-> @@ -43,7 +43,8 @@ xfs_break_layouts(
->  	while ((error = break_layout(inode, false) == -EWOULDBLOCK)) {
->  		xfs_iunlock(ip, *iolock);
->  		error = break_layout(inode, true);
-> -		*iolock = XFS_IOLOCK_EXCL;
-> +		*iolock &= ~XFS_IOLOCK_SHARED;
-> +		*iolock |= XFS_IOLOCK_EXCL;
->  		xfs_ilock(ip, *iolock);
->  	}
->  
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+v2: Tell the user what's happening and what they can do to correct it.
+---
+ kernel/trace/trace.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 13baf85b27d8..7c155fa879e1 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -41,6 +41,7 @@
+ #include <linux/nmi.h>
+ #include <linux/fs.h>
+ #include <linux/trace.h>
++#include <linux/sched/clock.h>
+ #include <linux/sched/rt.h>
+ 
+ #include "trace.h"
+@@ -8505,3 +8506,21 @@ __init static int clear_boot_tracer(void)
+ 
+ fs_initcall(tracer_init_tracefs);
+ late_initcall_sync(clear_boot_tracer);
++
++#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
++__init static int tracing_set_default_clock(void)
++{
++	/* sched_clock_stable() is determined in late_initcall */
++	if (trace_boot_clock || sched_clock_stable()) {
++		printk(KERN_WARNING
++		       "Unstable clock detected, switching default tracing clock to \"global\"\n"
++		       "If you want to keep using the local clock, then add:\n"
++		       "  \"trace_clock=local\"\n"
++		       "on the kernel command line\n");
++		tracing_set_clock(&global_trace, "global");
++	}
++
++	return 0;
++}
++late_initcall_sync(tracing_set_default_clock);
++#endif
+-- 
+2.16.3
