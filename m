@@ -1,42 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751323AbeC3LCp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 07:02:45 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:46551 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750794AbeC3LCn (ORCPT
+        id S1751258AbeC3LEA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 07:04:00 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:36162 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeC3LD6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 07:02:43 -0400
-Subject: Re: [PATCH] ARM: dts: da850-evm: Enable usb_phy, usb0 and usb1
-To: Adam Ford <aford173@gmail.com>, <adam.ford@logicpd.com>
-CC: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1521476482-23335-1-git-send-email-aford173@gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <eec8a86a-13a6-34c2-c353-1cf6bf69e4e7@ti.com>
-Date: Fri, 30 Mar 2018 16:32:08 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 30 Mar 2018 07:03:58 -0400
+X-Google-Smtp-Source: AIpwx4/IdosPLGDPj3qe5MGYsUPSnAPnh/oDiEnzod6EtHXss/IyoMjyFPkCmVvWi3OYrD2Op52bhw==
+Date: Fri, 30 Mar 2018 13:03:54 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
+        torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: Re: [PATCH 0/7] use struct pt_regs based syscall calling for x86-64
+Message-ID: <20180330110354.cnrtmjkk77hhbekt@gmail.com>
+References: <20180330093720.6780-1-linux@dominikbrodowski.net>
+ <20180330101602.ongosnigfmdmgayb@gmail.com>
+ <20180330104649.GB12688@light.dominikbrodowski.net>
 MIME-Version: 1.0
-In-Reply-To: <1521476482-23335-1-git-send-email-aford173@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330104649.GB12688@light.dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 19 March 2018 09:51 PM, Adam Ford wrote:
-> The EVM kit has two USB ports.  This patch will enable both
-> when booting with device tree.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Applied for v4.18
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+
+> > > The whole series is available at
+> > > 
+> > >         https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-WIP
+> > 
+> > BTW., I'd like all these bits to go through the x86 tree.
+> > 
+> > What is the expected merge route of the generic preparatory bits?
+> 
+> My current plan is to push the 109 patch bomb to remove in-kernel calls to syscalls
+> directly to Linus once v4.16 is released.
+
+Are there any (textual and semantic) conflicts with the latest -next?
+
+Also, to what extent were these 109 patches tested in -next?
+
+> For this series of seven patches, I am content with them going upstream through 
+> the x86 tree (once that contains a backmerge of Linus' tree or the syscalls 
+> tree, obviously). IMO, these seven patches should be kept together, and not 
+> routed upstream through different channels.
+
+Of course they should stay together - the generic code impact is minimal, these 
+are 95% x86.
 
 Thanks,
-Sekhar
+
+	Ingo
