@@ -1,49 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752222AbeC3Ohl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 10:37:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751263AbeC3Ohk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 10:37:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93399217A8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 30 Mar 2018 10:37:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH] trace: Default to using trace_global_clock if
- sched_clock is unstable
-Message-ID: <20180330103738.7f8a959b@gandalf.local.home>
-In-Reply-To: <152241887306.28244.3237898674442763768@mail.alporthouse.com>
-References: <20180329222557.6274-1-chris@chris-wilson.co.uk>
-        <20180330094845.068a9a81@gandalf.local.home>
-        <152241887306.28244.3237898674442763768@mail.alporthouse.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752203AbeC3Ok5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 10:40:57 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:59734 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751163AbeC3Ok4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 10:40:56 -0400
+Date: Fri, 30 Mar 2018 10:40:54 -0400 (EDT)
+Message-Id: <20180330.104054.147506012234775496.davem@davemloft.net>
+To: mike.looijmans@topic.nl
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+        robh+dt@kernel.org, frowand.list@gmail.com
+Subject: Re: [PATCH v4 0/2] of_net: Implement of_get_nvmem_mac_address
+ helper
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1522301389-11034-1-git-send-email-mike.looijmans@topic.nl>
+References: <1522046489-19652-1-git-send-email-mike.looijmans@topic.nl>
+        <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
+        <1522301389-11034-1-git-send-email-mike.looijmans@topic.nl>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018 15:07:53 +0100
-Chris Wilson <chris@chris-wilson.co.uk> wrote:
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Date: Thu, 29 Mar 2018 07:29:47 +0200
 
+> Posted this as a small set now, with an (optional) second patch that shows
+> how the changes work and what I've used to test the code on a Topic Miami board.
+> I've taken the liberty to add appropriate "Acked" and "Review" tags.
+> 
+> v4: Replaced "6" with ETH_ALEN
+> 
+> v3: Add patch that implements mac in nvmem for the Cadence MACB controller
+>     Remove the integrated of_get_mac_address call
+> 
+> v2: Use of_nvmem_cell_get to avoid needing the assiciated device
+>     Use void* instead of char*
+>     Add devicetree binding doc
 
-> Sure, I was mainly floating the idea of trying to pick sensible
-> defaults. Unstable clocks are quite rare nowadays, the ones we have in
-> the lab are a pair of Core2 Duo.
-
-I still have a box too ;-)
-
-I'm not so against having global_clock become default if the TSC is
-unstable. But there needs to be a printk warning (not a WARN, but
-something like: 
-
- Warning: TSC unstable, switching tracing_clock default to "global"
- If you want to keep local, then add "trace_clock=local" on the
-  kernel command line.
-
--- Steve
+Series applied to net-next, thank you.
