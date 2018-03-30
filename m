@@ -1,15 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeC3LsY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 07:48:24 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:33576 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751297AbeC3LsU (ORCPT
+        id S1751384AbeC3MAR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 08:00:17 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33940 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751204AbeC3MAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 07:48:20 -0400
-Date: Fri, 30 Mar 2018 13:48:08 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Ingo Molnar <mingo@kernel.org>
+        Fri, 30 Mar 2018 08:00:15 -0400
+X-Google-Smtp-Source: AIpwx4/M2NA0ZHZ3L8QThaiaUW/YedEpKyeW6ETYgzqPPQ/FuadtCQ2ZwUn40WqfQ9vmeU+5LVNOnA==
+Date: Fri, 30 Mar 2018 14:00:11 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
 Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
         torvalds@linux-foundation.org, arnd@arndb.de,
         linux-arch@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
@@ -19,47 +20,55 @@ Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
         Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
 Subject: Re: [PATCH 0/7] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180330114808.GA10671@light.dominikbrodowski.net>
+Message-ID: <20180330120010.yjjihmfsi7yjcvo5@gmail.com>
 References: <20180330093720.6780-1-linux@dominikbrodowski.net>
  <20180330101602.ongosnigfmdmgayb@gmail.com>
  <20180330104649.GB12688@light.dominikbrodowski.net>
  <20180330110354.cnrtmjkk77hhbekt@gmail.com>
+ <20180330114808.GA10671@light.dominikbrodowski.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330110354.cnrtmjkk77hhbekt@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180330114808.GA10671@light.dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 01:03:54PM +0200, Ingo Molnar wrote:
-> 
-> * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
-> 
-> > > > The whole series is available at
-> > > > 
-> > > >         https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-WIP
-> > > 
-> > > BTW., I'd like all these bits to go through the x86 tree.
-> > > 
-> > > What is the expected merge route of the generic preparatory bits?
+
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+
+> On Fri, Mar 30, 2018 at 01:03:54PM +0200, Ingo Molnar wrote:
 > > 
-> > My current plan is to push the 109 patch bomb to remove in-kernel calls to syscalls
-> > directly to Linus once v4.16 is released.
+> > * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+> > 
+> > > > > The whole series is available at
+> > > > > 
+> > > > >         https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-WIP
+> > > > 
+> > > > BTW., I'd like all these bits to go through the x86 tree.
+> > > > 
+> > > > What is the expected merge route of the generic preparatory bits?
+> > > 
+> > > My current plan is to push the 109 patch bomb to remove in-kernel calls to syscalls
+> > > directly to Linus once v4.16 is released.
+> > 
+> > Are there any (textual and semantic) conflicts with the latest -next?
+> > 
+> > Also, to what extent were these 109 patches tested in -next?
 > 
-> Are there any (textual and semantic) conflicts with the latest -next?
+> These 109 patches are equivalent to the syscalls tree in linux-next. Most of
+> these patches habe been in there for quite a while (the last major batch went
+> in on March 22; other patches are in there since March 14th).
 > 
-> Also, to what extent were these 109 patches tested in -next?
+> Conflicts existend with asm-generic and metag (which contain remvoal of some
+> architectures; I have solved that issue by not caring about those archs any
+> more); trivial conflicts exist since very few days with the vfs and sparc
+> trees.
 
-These 109 patches are equivalent to the syscalls tree in linux-next. Most of
-these patches habe been in there for quite a while (the last major batch went
-in on March 22; other patches are in there since March 14th).
-
-Conflicts existend with asm-generic and metag (which contain remvoal of some
-architectures; I have solved that issue by not caring about those archs any
-more); trivial conflicts exist since very few days with the vfs and sparc
-trees.
+Ok, great - all that sounds good to me, and I'll integrate the x86 bits once the 
+generic bits are upstream.
 
 Thanks,
-	Dominik
+
+	Ingo
