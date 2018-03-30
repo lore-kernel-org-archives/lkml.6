@@ -1,74 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752633AbeC3Thh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 15:37:37 -0400
-Received: from smtprelay0039.hostedemail.com ([216.40.44.39]:48205 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752314AbeC3Thg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 15:37:36 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:800:960:973:981:988:989:1260:1345:1437:1534:1542:1711:1730:1747:1777:1792:1978:1981:2194:2199:2393:2559:2562:3138:3139:3140:3141:3142:3352:3865:3866:3867:3870:5007:6261:10004:10848:11026:11473:11657:11658:11914:12043:12296:12438:12555:12895:13161:13229:13869:14181:14394:14721:21080:21627:21740:30003:30005:30012:30054:30079,0,RBL:172.56.31.163:@perches.com:.lbl8.mailshell.net-62.8.0.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: eggs06_5f279ddbc991e
-X-Filterd-Recvd-Size: 2685
-From: Joe Perches <joe@perches.com>
-To: linux-kernel@vger.kernel.org
-Cc: Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>, netdev@vger.kernel.org
-Subject: [PATCH] ethernet: hisilicon: hns: hns_dsaf_mac: Use generic eth_broadcast_addr
-Date: Fri, 30 Mar 2018 12:37:30 -0700
-Message-Id: <7ca107f9960b176c10c7b1ac4c4fe0b492fb1b48.1522438626.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        id S1752568AbeC3TpZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 15:45:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41364 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752259AbeC3TpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 15:45:24 -0400
+Date: Fri, 30 Mar 2018 15:45:19 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>, Will Davis <wdavis@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>, linaro-mm-sig@lists.linaro.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+Message-ID: <20180330194519.GC3198@redhat.com>
+References: <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+ <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
+ <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+ <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+ <20180330015854.GA3572@redhat.com>
+ <0234bc5e-495e-0f68-fb0a-debb17a35761@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0234bc5e-495e-0f68-fb0a-debb17a35761@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than use an on-stack array to copy a broadcast address, use
-the generic eth_broadcast_addr function to save a trivial amount of
-object code.
+On Fri, Mar 30, 2018 at 12:46:42PM -0600, Logan Gunthorpe wrote:
+> 
+> 
+> On 29/03/18 07:58 PM, Jerome Glisse wrote:
+> > On Thu, Mar 29, 2018 at 10:25:52AM -0600, Logan Gunthorpe wrote:
+> >>
+> >>
+> >> On 29/03/18 10:10 AM, Christian König wrote:
+> >>> Why not? I mean the dma_map_resource() function is for P2P while other 
+> >>> dma_map_* functions are only for system memory.
+> >>
+> >> Oh, hmm, I wasn't aware dma_map_resource was exclusively for mapping
+> >> P2P. Though it's a bit odd seeing we've been working under the
+> >> assumption that PCI P2P is different as it has to translate the PCI bus
+> >> address. Where as P2P for devices on other buses is a big unknown.
+> > 
+> > dma_map_resource() is the right API (thought its current implementation
+> > is fill with x86 assumptions). So i would argue that arch can decide to
+> > implement it or simply return dma error address which trigger fallback
+> > path into the caller (at least for GPU drivers). SG variant can be added
+> > on top.
+> > 
+> > dma_map_resource() is the right API because it has all the necessary
+> > informations. It use the CPU physical address as the common address
+> > "language" with CPU physical address of PCIE bar to map to another
+> > device you can find the corresponding bus address from the IOMMU code
+> > (NOP on x86). So dma_map_resource() knows both the source device which
+> > export its PCIE bar and the destination devices.
+> 
+> Well, as it is today, it doesn't look very sane to me. The default is to
+> just return the physical address if the architecture doesn't support it.
+> So if someone tries this on an arch that hasn't added itself to return
+> an error they're very likely going to just end up DMAing to an invalid
+> address and loosing the data or causing a machine check.
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Looking at upstream code it seems that the x86 bits never made it upstream
+and thus what is now upstream is only for ARM. See [1] for x86 code. Dunno
+what happen, i was convince it got merge. So yes current code is broken on
+x86. ccing Joerg maybe he remembers what happened there.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-index cac86e9ae0dd..9dcc5765f11f 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-@@ -369,7 +369,6 @@ static int hns_mac_port_config_bc_en(struct hns_mac_cb *mac_cb,
- {
- 	int ret;
- 	struct dsaf_device *dsaf_dev = mac_cb->dsaf_dev;
--	u8 addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 	struct dsaf_drv_mac_single_dest_entry mac_entry;
- 
- 	/* directy return ok in debug network mode */
-@@ -377,7 +376,7 @@ static int hns_mac_port_config_bc_en(struct hns_mac_cb *mac_cb,
- 		return 0;
- 
- 	if (!HNS_DSAF_IS_DEBUG(dsaf_dev)) {
--		memcpy(mac_entry.addr, addr, sizeof(mac_entry.addr));
-+		eth_broadcast_addr(mac_entry.addr);
- 		mac_entry.in_vlan_id = vlan_id;
- 		mac_entry.in_port_num = mac_cb->mac_id;
- 		mac_entry.port_num = port_num;
-@@ -404,7 +403,6 @@ int hns_mac_vm_config_bc_en(struct hns_mac_cb *mac_cb, u32 vmid, bool enable)
- 	int ret;
- 	struct dsaf_device *dsaf_dev = mac_cb->dsaf_dev;
- 	u8 port_num;
--	u8 addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 	struct mac_entry_idx *uc_mac_entry;
- 	struct dsaf_drv_mac_single_dest_entry mac_entry;
- 
-@@ -414,7 +412,7 @@ int hns_mac_vm_config_bc_en(struct hns_mac_cb *mac_cb, u32 vmid, bool enable)
- 	uc_mac_entry = &mac_cb->addr_entry_idx[vmid];
- 
- 	if (!HNS_DSAF_IS_DEBUG(dsaf_dev))  {
--		memcpy(mac_entry.addr, addr, sizeof(mac_entry.addr));
-+		eth_broadcast_addr(mac_entry.addr);
- 		mac_entry.in_vlan_id = uc_mac_entry->vlan_id;
- 		mac_entry.in_port_num = mac_cb->mac_id;
- 		ret = hns_mac_get_inner_port_num(mac_cb, vmid, &port_num);
--- 
-2.15.0
+[1] https://lwn.net/Articles/646605/
+
+> 
+> Furthermore, the API does not have all the information it needs to do
+> sane things. A phys_addr_t doesn't really tell you anything about the
+> memory behind it or what needs to be done with it. For example, on some
+> arm64 implementations if the physical address points to a PCI BAR and
+> that BAR is behind a switch with the DMA device then the address must be
+> converted to the PCI BUS address. On the other hand, if it's a physical
+> address of a device in an SOC it might need to  be handled in a
+> completely different way. And right now all the implementations I can
+> find seem to just assume that phys_addr_t points to regular memory and
+> can be treated as such.
+
+Given it is currently only used by ARM folks it appear to at least work
+for them (tm) :) Note that Christian is doing this in PCIE only context
+and again dma_map_resource can easily figure that out if the address is
+a PCIE or something else. Note that the exporter export the CPU bus
+address. So again dma_map_resource has all the informations it will ever
+need, if the peer to peer is fundamentaly un-doable it can return dma
+error and it is up to the caller to handle this, just like GPU code do.
+
+Do you claim that dma_map_resource is missing any information ?
+
+
+> 
+> This is one of the reasons that, based on feedback, our work went from
+> being general P2P with any device to being restricted to only P2P with
+> PCI devices. The dream that we can just grab the physical address of any
+> device and use it in a DMA request is simply not realistic.
+
+I agree and understand that but for platform where such feature make sense
+this will work. For me it is PowerPC and x86 and given PowerPC has CAPI
+which has far more advance feature when it comes to peer to peer, i don't
+see something more basic not working. On x86, Intel is a bit of lone wolf,
+dunno if they gonna support this usecase pro-actively. AMD definitly will.
+
+If you feel like dma_map_resource() can be interpreted too broadly, more
+strict phrasing/wording can be added to it so people better understand its
+limitation and gotcha.
+
+Cheers,
+Jérôme
