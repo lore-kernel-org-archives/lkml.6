@@ -1,79 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752885AbeC3V3o (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:29:44 -0400
-Received: from gateway20.websitewelcome.com ([192.185.69.18]:25059 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752640AbeC3V3n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:29:43 -0400
-Date: Fri, 30 Mar 2018 16:05:06 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] Bluetooth: Mark expected switch fall-throughs
-Message-ID: <20180330210506.GA20604@embeddedgus>
+        id S1752905AbeC3Vag (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:30:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752759AbeC3Vaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:30:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE7A921777
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 30 Mar 2018 17:30:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, Michal Hocko <mhocko@suse.com>,
+        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180330173031.257a491a@gandalf.local.home>
+In-Reply-To: <20180330205356.GA13332@bombadil.infradead.org>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+        <20180330102038.2378925b@gandalf.local.home>
+        <20180330205356.GA13332@bombadil.infradead.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f21Cy-000yGv-De
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.145.54.187]:45296
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Fri, 30 Mar 2018 13:53:56 -0700
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/bluetooth/mgmt.c        | 1 +
- net/bluetooth/rfcomm/sock.c | 1 +
- 2 files changed, 2 insertions(+)
+> It seems to me that what you're asking for at the moment is
+> lower-likelihood-of-failure-than-GFP_KERNEL, and it's not entirely
+> clear to me why your allocation is so much more important than other
+> allocations in the kernel.
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 6e9fc86..8a80d48 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -4801,6 +4801,7 @@ static int load_long_term_keys(struct sock *sk, struct hci_dev *hdev,
- 		case MGMT_LTK_P256_DEBUG:
- 			authenticated = 0x00;
- 			type = SMP_LTK_P256_DEBUG;
-+			/* fall through */
- 		default:
- 			continue;
- 		}
-diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
-index 93a3b21..d606e92 100644
---- a/net/bluetooth/rfcomm/sock.c
-+++ b/net/bluetooth/rfcomm/sock.c
-@@ -221,6 +221,7 @@ static void __rfcomm_sock_close(struct sock *sk)
- 	case BT_CONFIG:
- 	case BT_CONNECTED:
- 		rfcomm_dlc_close(d, 0);
-+		/* fall through */
- 
- 	default:
- 		sock_set_flag(sk, SOCK_ZAPPED);
--- 
-2.7.4
+The ring buffer is for fast tracing and is allocated when a user
+requests it. Usually there's plenty of memory, but when a user wants a
+lot of tracing events stored, they may increase it themselves.
+
+> 
+> Also, the pattern you have is very close to that of vmalloc.  You're
+> allocating one page at a time to satisfy a multi-page request.  In lieu
+> of actually thinking about what you should do, I might recommend using the
+> same GFP flags as vmalloc() which works out to GFP_KERNEL | __GFP_NOWARN
+> (possibly | __GFP_HIGHMEM if you can tolerate having to kmap the pages
+> when accessed from within the kernel).
+
+When the ring buffer was first created, we couldn't use vmalloc because
+vmalloc access wasn't working in NMIs (that has recently changed with
+lots of work to handle faults). But the ring buffer is broken up into
+pages (that are sent to the user or to the network), and allocating one
+page at a time makes everything work fine.
+
+The issue that happens when someone allocates a large ring buffer is
+that it will allocate all memory in the system before it fails. This
+means that there's a short time that any allocation will cause an OOM
+(which is what is happening).
+
+I think I agree with Joel and Zhaoyang, that we shouldn't allocate a
+ring buffer if there's not going to be enough memory to do it. If we
+can see the available memory before we start allocating one page at a
+time, and if the available memory isn't going to be sufficient, there's
+no reason to try to do the allocation, and simply send to the use
+-ENOMEM, and let them try something smaller.
+
+I'll take a look at si_mem_available() that Joel suggested and see if
+we can make that work.
+
+-- Steve
