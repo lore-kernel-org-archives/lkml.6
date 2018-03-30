@@ -1,46 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeC3PfN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:35:13 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47461 "EHLO vps0.lunn.ch"
+        id S1753343AbeC3PfW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:35:22 -0400
+Received: from ms.lwn.net ([45.79.88.28]:59900 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752216AbeC3PfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:35:10 -0400
-Date: Fri, 30 Mar 2018 17:11:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com
-Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
- dump in second kernel
-Message-ID: <20180330151129.GG28244@lunn.ch>
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
- <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
- <20180330103907.GC3313@nanopsycho>
+        id S1752502AbeC3PfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 11:35:20 -0400
+Date: Fri, 30 Mar 2018 09:35:18 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        viro@zeniv.linux.org.uk, x86@kernel.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, tglx@linutronix.de, luto@amacapital.net
+Subject: Re: [PATCH] syscalls: define and explain goal to not call syscalls
+ in the kernel
+Message-ID: <20180330093518.3d8a92f3@lwn.net>
+In-Reply-To: <20180325162527.GA17492@light.dominikbrodowski.net>
+References: <20180325162527.GA17492@light.dominikbrodowski.net>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330103907.GC3313@nanopsycho>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Please see:
-> http://patchwork.ozlabs.org/project/netdev/list/?series=36524
-> 
-> I bevieve that the solution in the patchset could be used for
-> your usecase too.
+On Sun, 25 Mar 2018 18:25:27 +0200
+Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-Hi Jiri
+> As there have been multiple inquiries on the rationale of my patchsets
+> removing in-kernel calls to sys_xyzzy(), here is an updated patch 01/NN
+> which I will push upstream for v4.17-rc1. I will also include a reference
+> to this mail (and therefore to the explanation below) in all related
+> patches of the series. Any improvements, hints, suggestions, spelling
+> fixes, and/or objections?
 
-https://lkml.org/lkml/2018/3/20/436
+I have no objections to the text, but I do wonder about the placement.
+The "adding syscalls" document isn't about *invoking* them; I suspect that
+few people will see it there.  The coding-style document isn't quite right
+either, but I wonder if it might not be a better place in the short term?
 
-How well does this API work for a 2Gbyte snapshot?
+What we may really need is an "assorted rules" document that sits near
+coding style; we can put stuff like this text, "volatile considered
+harmful", and so on there.
 
-    Andrew
+Thanks,
+
+jon
