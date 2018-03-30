@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeC3VFX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:05:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33624 "EHLO mail.kernel.org"
+        id S1753054AbeC3VFc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:05:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752978AbeC3VFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:05:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03DCA21777
+        id S1753021AbeC3VF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:05:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817E321777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v5 05/14] PCI: Add pcie_print_link_status() to log link
- speed and whether it's limited
+Subject: [PATCH v5 06/14] net/mlx4_core: Report PCIe link properties with
+ pcie_print_link_status()
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Tal Gilboa <talgi@mellanox.com>
 Cc: Tariq Toukan <tariqt@mellanox.com>,
@@ -21,8 +21,8 @@ Cc: Tariq Toukan <tariqt@mellanox.com>,
         everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Date: Fri, 30 Mar 2018 16:05:18 -0500
-Message-ID: <152244391852.135666.14903825998610307052.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Fri, 30 Mar 2018 16:05:25 -0500
+Message-ID: <152244392572.135666.7155308160966322239.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -35,78 +35,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tal Gilboa <talgi@mellanox.com>
 
-Add pcie_print_link_status().  This logs the current settings of the link
-(speed, width, and total available bandwidth).
-
-If the device is capable of more bandwidth but is limited by a slower
-upstream link, we include information about the link that limits the
-device's performance.
-
-The user may be able to move the device to a different slot for better
-performance.
-
-This provides a unified method for all PCI devices to report status and
-issues, instead of each device reporting in a different way, using
-different code.
+Use pcie_print_link_status() to report PCIe link speed and possible
+limitations instead of implementing this in the driver itself.
 
 Signed-off-by: Tal Gilboa <talgi@mellanox.com>
-[bhelgaas: changelog, reword log messages, print device capabilities when
-not limited]
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+[bhelgaas: changelog]
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/pci.c   |   29 +++++++++++++++++++++++++++++
- include/linux/pci.h |    1 +
- 2 files changed, 30 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/main.c |   81 -----------------------------
+ 1 file changed, 1 insertion(+), 80 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e00d56b12747..cec7aed09f6b 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5283,6 +5283,35 @@ u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed *speed,
- 	return *width * PCIE_SPEED2MBS_ENC(*speed);
+diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
+index 4d84cab77105..30cacac54e69 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/main.c
++++ b/drivers/net/ethernet/mellanox/mlx4/main.c
+@@ -623,85 +623,6 @@ static int mlx4_dev_cap(struct mlx4_dev *dev, struct mlx4_dev_cap *dev_cap)
+ 	return 0;
  }
  
-+/**
-+ * pcie_print_link_status - Report the PCI device's link speed and width
-+ * @dev: PCI device to query
-+ *
-+ * Report the available bandwidth at the device.  If this is less than the
-+ * device is capable of, report the device's maximum possible bandwidth and
-+ * the upstream link that limits its performance to less than that.
-+ */
-+void pcie_print_link_status(struct pci_dev *dev)
-+{
-+	enum pcie_link_width width, width_cap;
-+	enum pci_bus_speed speed, speed_cap;
-+	struct pci_dev *limiting_dev = NULL;
-+	u32 bw_avail, bw_cap;
-+
-+	bw_cap = pcie_bandwidth_capable(dev, &speed_cap, &width_cap);
-+	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width);
-+
-+	if (bw_avail >= bw_cap)
-+		pci_info(dev, "%d Mb/s available bandwidth (%s x%d link)\n",
-+			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
-+	else
-+		pci_info(dev, "%d Mb/s available bandwidth, limited by %s x%d link at %s (capable of %d Mb/s with %s x%d link)\n",
-+			 bw_avail, PCIE_SPEED2STR(speed), width,
-+			 limiting_dev ? pci_name(limiting_dev) : "<unknown>",
-+			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
-+}
-+EXPORT_SYMBOL(pcie_print_link_status);
-+
- /**
-  * pci_select_bars - Make BAR mask from the type of resource
-  * @dev: the PCI device for which BAR mask is made
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index f2bf2b7a66c7..38f7957121ef 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1086,6 +1086,7 @@ int pcie_get_minimum_link(struct pci_dev *dev, enum pci_bus_speed *speed,
- u32 pcie_bandwidth_available(struct pci_dev *dev, struct pci_dev **limiting_dev,
- 			     enum pci_bus_speed *speed,
- 			     enum pcie_link_width *width);
-+void pcie_print_link_status(struct pci_dev *dev);
- void pcie_flr(struct pci_dev *dev);
- int __pci_reset_function_locked(struct pci_dev *dev);
- int pci_reset_function(struct pci_dev *dev);
+-static int mlx4_get_pcie_dev_link_caps(struct mlx4_dev *dev,
+-				       enum pci_bus_speed *speed,
+-				       enum pcie_link_width *width)
+-{
+-	u32 lnkcap1, lnkcap2;
+-	int err1, err2;
+-
+-#define  PCIE_MLW_CAP_SHIFT 4	/* start of MLW mask in link capabilities */
+-
+-	*speed = PCI_SPEED_UNKNOWN;
+-	*width = PCIE_LNK_WIDTH_UNKNOWN;
+-
+-	err1 = pcie_capability_read_dword(dev->persist->pdev, PCI_EXP_LNKCAP,
+-					  &lnkcap1);
+-	err2 = pcie_capability_read_dword(dev->persist->pdev, PCI_EXP_LNKCAP2,
+-					  &lnkcap2);
+-	if (!err2 && lnkcap2) { /* PCIe r3.0-compliant */
+-		if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_8_0GB)
+-			*speed = PCIE_SPEED_8_0GT;
+-		else if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_5_0GB)
+-			*speed = PCIE_SPEED_5_0GT;
+-		else if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_2_5GB)
+-			*speed = PCIE_SPEED_2_5GT;
+-	}
+-	if (!err1) {
+-		*width = (lnkcap1 & PCI_EXP_LNKCAP_MLW) >> PCIE_MLW_CAP_SHIFT;
+-		if (!lnkcap2) { /* pre-r3.0 */
+-			if (lnkcap1 & PCI_EXP_LNKCAP_SLS_5_0GB)
+-				*speed = PCIE_SPEED_5_0GT;
+-			else if (lnkcap1 & PCI_EXP_LNKCAP_SLS_2_5GB)
+-				*speed = PCIE_SPEED_2_5GT;
+-		}
+-	}
+-
+-	if (*speed == PCI_SPEED_UNKNOWN || *width == PCIE_LNK_WIDTH_UNKNOWN) {
+-		return err1 ? err1 :
+-			err2 ? err2 : -EINVAL;
+-	}
+-	return 0;
+-}
+-
+-static void mlx4_check_pcie_caps(struct mlx4_dev *dev)
+-{
+-	enum pcie_link_width width, width_cap;
+-	enum pci_bus_speed speed, speed_cap;
+-	int err;
+-
+-#define PCIE_SPEED_STR(speed) \
+-	(speed == PCIE_SPEED_8_0GT ? "8.0GT/s" : \
+-	 speed == PCIE_SPEED_5_0GT ? "5.0GT/s" : \
+-	 speed == PCIE_SPEED_2_5GT ? "2.5GT/s" : \
+-	 "Unknown")
+-
+-	err = mlx4_get_pcie_dev_link_caps(dev, &speed_cap, &width_cap);
+-	if (err) {
+-		mlx4_warn(dev,
+-			  "Unable to determine PCIe device BW capabilities\n");
+-		return;
+-	}
+-
+-	err = pcie_get_minimum_link(dev->persist->pdev, &speed, &width);
+-	if (err || speed == PCI_SPEED_UNKNOWN ||
+-	    width == PCIE_LNK_WIDTH_UNKNOWN) {
+-		mlx4_warn(dev,
+-			  "Unable to determine PCI device chain minimum BW\n");
+-		return;
+-	}
+-
+-	if (width != width_cap || speed != speed_cap)
+-		mlx4_warn(dev,
+-			  "PCIe BW is different than device's capability\n");
+-
+-	mlx4_info(dev, "PCIe link speed is %s, device supports %s\n",
+-		  PCIE_SPEED_STR(speed), PCIE_SPEED_STR(speed_cap));
+-	mlx4_info(dev, "PCIe link width is x%d, device supports x%d\n",
+-		  width, width_cap);
+-	return;
+-}
+-
+ /*The function checks if there are live vf, return the num of them*/
+ static int mlx4_how_many_lives_vf(struct mlx4_dev *dev)
+ {
+@@ -3475,7 +3396,7 @@ static int mlx4_load_one(struct pci_dev *pdev, int pci_dev_data,
+ 	 * express device capabilities are under-satisfied by the bus.
+ 	 */
+ 	if (!mlx4_is_slave(dev))
+-		mlx4_check_pcie_caps(dev);
++		pcie_print_link_status(dev->persist->pdev);
+ 
+ 	/* In master functions, the communication channel must be initialized
+ 	 * after obtaining its address from fw */
