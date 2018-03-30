@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeC3P3Q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:29:16 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:56113 "EHLO
+        id S1752128AbeC3P3N (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:29:13 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40502 "EHLO
         mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752021AbeC3P3F (ORCPT
+        with ESMTP id S1751418AbeC3P3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:29:05 -0400
-X-Google-Smtp-Source: AIpwx48QhciU4Qaf++BrbH8gGcDfUILEnXLB1Ovkq7kyQuXy/oYLEfAW8c25eMhzUzuLq8XztakiWA==
+        Fri, 30 Mar 2018 11:29:06 -0400
+X-Google-Smtp-Source: AIpwx4+786dOm9dN+pQK2woKBujJP+y8tk5dbCuN/pATcEZSDFIIIy02O4JTK2EYj2SieiY+E9VUpQ==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,9 +21,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 3/8] clk: davinci: add a reset lookup table for psc0
-Date: Fri, 30 Mar 2018 17:28:51 +0200
-Message-Id: <20180330152856.12297-4-brgl@bgdev.pl>
+Subject: [PATCH v5 4/8] remoteproc/davinci: add the missing retval check for clk_enable()
+Date: Fri, 30 Mar 2018 17:28:52 +0200
+Message-Id: <20180330152856.12297-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
 References: <20180330152856.12297-1-brgl@bgdev.pl>
@@ -33,53 +33,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-In order to be able to use the reset framework in legacy boot mode as
-well, add the reset lookup table to the psc driver for da850 variant.
+The davinci platform is being switched to using the common clock
+framework, where clk_enable() can fail. Add the return value check.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/clk/davinci/psc-da850.c | 7 +++++++
- drivers/clk/davinci/psc.c       | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-index ccc7eb17bf3a..d196dcbed560 100644
---- a/drivers/clk/davinci/psc-da850.c
-+++ b/drivers/clk/davinci/psc-da850.c
-@@ -6,6 +6,7 @@
-  */
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index bf3b9034c319..2b24291337b7 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	int ret;
  
- #include <linux/clk-provider.h>
-+#include <linux/reset-controller.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -66,8 +67,14 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
- 				"fck",	"ecap.1",
- 				"fck",	"ecap.2");
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+ 	if (rproc->bootaddr & 0x3ff) {
+@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
  
-+static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
-+	RESET_LOOKUP("da850-psc0", 15, "davinci-rproc.0", NULL),
-+};
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	clk_enable(dsp_clk);
++	ret = clk_enable(dsp_clk);
++	if (ret) {
++		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		return ret;
++	}
 +
- static int da850_psc0_init(struct device *dev, void __iomem *base)
- {
-+	reset_controller_add_lookup(da850_psc0_reset_lookup_table,
-+				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
- 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
- }
+ 	davinci_clk_reset_deassert(dsp_clk);
  
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 3b0e59dfbdd7..063df62381ea 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
- 
- 	psc->rcdev.ops = &davinci_psc_reset_ops;
- 	psc->rcdev.owner = THIS_MODULE;
-+	psc->rcdev.dev = dev;
- 	psc->rcdev.of_node = dev->of_node;
- 	psc->rcdev.of_reset_n_cells = 1;
- 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
+ 	return 0;
 -- 
 2.16.3
