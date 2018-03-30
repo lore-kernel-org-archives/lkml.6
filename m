@@ -1,136 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeC3Ogr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 10:36:47 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:47062 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751163AbeC3Ogp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 10:36:45 -0400
-From: Sekhar Nori <nsekhar@ti.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-CC: Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] mtd: nand: davinci: don't acquire and enable clock
-Date: Fri, 30 Mar 2018 20:00:51 +0530
-Message-ID: <20180330143051.26423-1-nsekhar@ti.com>
-X-Mailer: git-send-email 2.16.2
+        id S1752222AbeC3Ohl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 10:37:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751263AbeC3Ohk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 10:37:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93399217A8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 30 Mar 2018 10:37:38 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
+Subject: Re: [PATCH] trace: Default to using trace_global_clock if
+ sched_clock is unstable
+Message-ID: <20180330103738.7f8a959b@gandalf.local.home>
+In-Reply-To: <152241887306.28244.3237898674442763768@mail.alporthouse.com>
+References: <20180329222557.6274-1-chris@chris-wilson.co.uk>
+        <20180330094845.068a9a81@gandalf.local.home>
+        <152241887306.28244.3237898674442763768@mail.alporthouse.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NAND itself is an asynchronous interface, it does not have any
-clock input. DaVinci NAND driver acquires clock for AEMIF
-(asynchronous external memory interface) which is an on-chip
-IP to which NAND is connected.
+On Fri, 30 Mar 2018 15:07:53 +0100
+Chris Wilson <chris@chris-wilson.co.uk> wrote:
 
-The same clock is also enabled in AEMIF driver (either present
-drivers/memory or from machine code for some older platforms).
-AEMIF timing must be initialized before NAND can be accessed.
-This ensures that AEMIF clock is enabled too.
 
-Remove the superfluous clock acquisition and enable in DaVinci
-NAND driver.
+> Sure, I was mainly floating the idea of trying to pick sensible
+> defaults. Unstable clocks are quite rare nowadays, the ones we have in
+> the lab are a pair of Core2 Duo.
 
-Tested on K2L, K2HK, K2E, DA850 EVM, DA850 LCDK in device-tree
-boot and DM644x EVM in legacy boot.
+I still have a box too ;-)
 
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
----
-Hi Boris,
+I'm not so against having global_clock become default if the TSC is
+unstable. But there needs to be a printk warning (not a WARN, but
+something like: 
 
-If/when this patch gets accepted, it will nice to put this on
-an immutable branch others can merge. There is potential cleanup
-in drivers/clock and in DaVinci machine code that will depend
-on this.
+ Warning: TSC unstable, switching tracing_clock default to "global"
+ If you want to keep local, then add "trace_clock=local" on the
+  kernel command line.
 
-Thanks,
-Sekhar
-
- drivers/mtd/nand/raw/davinci_nand.c | 25 +------------------------
- 1 file changed, 1 insertion(+), 24 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 0f09518d980f..7255a0d94374 100644
---- a/drivers/mtd/nand/raw/davinci_nand.c
-+++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -27,7 +27,6 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/err.h>
--#include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
-@@ -55,7 +54,6 @@ struct davinci_nand_info {
- 	struct nand_chip	chip;
- 
- 	struct device		*dev;
--	struct clk		*clk;
- 
- 	bool			is_readmode;
- 
-@@ -703,22 +701,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 	/* Use board-specific ECC config */
- 	info->chip.ecc.mode	= pdata->ecc_mode;
- 
--	ret = -EINVAL;
--
--	info->clk = devm_clk_get(&pdev->dev, "aemif");
--	if (IS_ERR(info->clk)) {
--		ret = PTR_ERR(info->clk);
--		dev_dbg(&pdev->dev, "unable to get AEMIF clock, err %d\n", ret);
--		return ret;
--	}
--
--	ret = clk_prepare_enable(info->clk);
--	if (ret < 0) {
--		dev_dbg(&pdev->dev, "unable to enable AEMIF clock, err %d\n",
--			ret);
--		goto err_clk_enable;
--	}
--
- 	spin_lock_irq(&davinci_nand_lock);
- 
- 	/* put CSxNAND into NAND mode */
-@@ -732,7 +714,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 	ret = nand_scan_ident(mtd, pdata->mask_chipsel ? 2 : 1, NULL);
- 	if (ret < 0) {
- 		dev_dbg(&pdev->dev, "no NAND chip(s) found\n");
--		goto err;
-+		return ret;
- 	}
- 
- 	switch (info->chip.ecc.mode) {
-@@ -838,9 +820,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 	nand_cleanup(&info->chip);
- 
- err:
--	clk_disable_unprepare(info->clk);
--
--err_clk_enable:
- 	spin_lock_irq(&davinci_nand_lock);
- 	if (info->chip.ecc.mode == NAND_ECC_HW_SYNDROME)
- 		ecc4_busy = false;
-@@ -859,8 +838,6 @@ static int nand_davinci_remove(struct platform_device *pdev)
- 
- 	nand_release(nand_to_mtd(&info->chip));
- 
--	clk_disable_unprepare(info->clk);
--
- 	return 0;
- }
- 
--- 
-2.16.2
+-- Steve
