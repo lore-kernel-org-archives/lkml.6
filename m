@@ -1,50 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751250AbeC3Gdp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 02:33:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34000 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeC3Gdn (ORCPT
+        id S1751129AbeC3Gup (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 02:50:45 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:37494 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeC3Gun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 02:33:43 -0400
-Date: Thu, 29 Mar 2018 23:33:34 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@infradead.org>, linaro-mm-sig@lists.linaro.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-Message-ID: <20180330063334.GA8634@infradead.org>
-References: <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
- <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
- <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
- <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
- <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
- <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
- <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
- <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
- <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
- <20180330015854.GA3572@redhat.com>
+        Fri, 30 Mar 2018 02:50:43 -0400
+X-Google-Smtp-Source: AG47ELuQIMv1lEH50Jl9i5xxjOofRdajp1PUcxUmpqgHHqHc6BaeMy1lZv2NvqASXKLOiC7xdH4atZzY3yhOVbfZYqw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330015854.GA3572@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <796bbd7b-8512-7370-28c9-0f082dc3f287@gmail.com>
+References: <e1da0be1-94d8-d5d0-8329-4507c51ddd64@gmail.com>
+ <20180324064627.GA10884@linaro.org> <c5daea3c-0834-1629-3e38-3db5130eb32f@gmail.com>
+ <6b151c56-9ead-7bbe-d1b7-b0e6d69c0d7f@arm.com> <CAKfTPtDigSEOmtxk7daTTBb3o6kVR8AgUVhu4X6YWutK9yWNwg@mail.gmail.com>
+ <CAKfTPtAisq0tQ_Kw3OptJYm=u7tSk6vyi3CFZJdhBxD=d=EN1g@mail.gmail.com> <796bbd7b-8512-7370-28c9-0f082dc3f287@gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 30 Mar 2018 08:50:22 +0200
+Message-ID: <CAKfTPtD17yUrp5G7gPN6ijB+C-TKJcK1UTCmP_JhMK5DvSDN_g@mail.gmail.com>
+Subject: Re: Problem with commit 31e77c93e432 "sched/fair: Update blocked load
+ when newly idle"
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 09:58:54PM -0400, Jerome Glisse wrote:
-> dma_map_resource() is the right API (thought its current implementation
-> is fill with x86 assumptions). So i would argue that arch can decide to
-> implement it or simply return dma error address which trigger fallback
-> path into the caller (at least for GPU drivers). SG variant can be added
-> on top.
+On 29 March 2018 at 19:40, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> Am 29.03.2018 um 09:41 schrieb Vincent Guittot:
 
-It isn't in general.  It doesn't integrate with scatterlists (see my
-comment to page one), and it doesn't integrate with all the subsystems
-that also need a kernel virtual address.
+>>
+>> I'm finally not so sure that i have the right set up to reproduce the
+>> problem as I haven't been able to reproduce it since.
+>>
+>> Heiner,
+>>
+>> How fast the problem happens on your board ?
+>> Are you doing anything specific on the console that trigger the problem ?
+>>
+> Hi Vincent,
+>
+> the lag when working on the console is constantly there, the "rcu_preempt
+> detected stalls" happens after several hours (so far always within 24h)
+> w/o any triggering event I would be aware of. It occured also when the
+> system was idle at that point in time.
+
+Ok, so I don't have the problem on my hikey as the console never lag
+on my setup.
+
+Can you send me the config of  your kernel ? I'd like to check if you
+have enable something that could trigger such problem
+
+Thanks,
+Vincent
+
+>
+> Rgds, Heiner
+>
+>> Regards,
+>> Vincent
+>>
+>>>>
+>>>>>>> Bisecting the issue resulted in:
+>>>>>>>
+>>>>>>> 31e77c93e432dec79c7d90b888bbfc3652592741 is the first bad commit
+>>>>>>> commit 31e77c93e432dec79c7d90b888bbfc3652592741
+>>>>>>> Author: Vincent Guittot <vincent.guittot@linaro.org>
+>>>>>>> Date:   Wed Feb 14 16:26:46 2018 +0100
+>>>>>>>
+>>>>>>>      sched/fair: Update blocked load when newly idle
+>>>>>>>
+>>>>>>>      When NEWLY_IDLE load balance is not triggered, we might need to
+>>>>>>> update the
+>>>>>>>      blocked load anyway. We can kick an ilb so an idle CPU will take
+>>>>>>> care of
+>>>>>>>      updating blocked load or we can try to update them locally before
+>>>>>>> entering
+>>>>>>>      idle. In the latter case, we reuse part of the nohz_idle_balance.
+>>>>>>>
+>>>>>>> After reversing this commit at least the issue with the freezing console
+>>>>>>> is gone. The second one appeared only sporadically, I still have to see
+>>>>>>> whether it pops up again.
+>>>>
+>>>>
+>>>> [...]
+>>>>
+>>
+>
