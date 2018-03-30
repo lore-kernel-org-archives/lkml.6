@@ -1,84 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751247AbeC3KQI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:16:08 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34411 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750802AbeC3KQG (ORCPT
+        id S1751275AbeC3KQr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 06:16:47 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42945 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750802AbeC3KQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 06:16:06 -0400
-X-Google-Smtp-Source: AIpwx4+jfTwPrXzprGyXL6mkpPWPzNGR+BN96IEYyCuLboiqWYLGMl95Q7arOEL4tc7UpasMHzJHBw==
-Date: Fri, 30 Mar 2018 12:16:02 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
-        torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: Re: [PATCH 0/7] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180330101602.ongosnigfmdmgayb@gmail.com>
-References: <20180330093720.6780-1-linux@dominikbrodowski.net>
+        Fri, 30 Mar 2018 06:16:46 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: George Cherian <george.cherian@cavium.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viresh.kumar@linaro.org
+Subject: Re: [PATCH] cpufreq: cppc: Use transition_delay_us depending on the transition_latency
+Date: Fri, 30 Mar 2018 12:17:03 +0200
+Message-ID: <2363055.ek83znc87k@aspire.rjw.lan>
+In-Reply-To: <1521801031-158659-1-git-send-email-george.cherian@cavium.com>
+References: <1521801031-158659-1-git-send-email-george.cherian@cavium.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330093720.6780-1-linux@dominikbrodowski.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
-
-> A few questions remain, from important stuff to bikeshedding:
+On Friday, March 23, 2018 11:30:31 AM CEST George Cherian wrote:
+> With commit e948bc8fbee0 ("cpufreq: Cap the default transition delay
+> value to 10 ms")  the cpufreq was not honouring the delay passed via
+> ACPI (PCCT). Due to which on ARM based platforms using CPPC the cpufreq
+> governor tries to change the frequency of CPU faster than expeted.
 > 
-> 1) Is it acceptable to pass the existing struct pt_regs to the sys_*()
->    kernel functions in emulate_vsyscall(), or should it use a hand-crafted
->    struct pt_regs instead?
-
-I think so: we already have task_pt_regs() which gives access to the real return 
-registers on the kernel stack.
-
-I think as long as we constify the pointer, we should pass in the real thing.
-
-> 2) Is it the right approach to generate the __sys32_ia32_*() names to
->    include in the syscall table on-the-fly, or should they all be listed
->    in arch/x86/entry/syscalls/syscall_32.tbl ?
-
-I think as a general principle all system call tables should point to the 
-first-hop wrapper symbol name (i.e. __sys32_ia32_*() in this case), not to the 
-generic symbol name - even though we could generate the former from the latter.
-
-The more indirection in these tables, the harder to read they become I think.
-
-> 3) I have chosen to name the default 64-bit syscall stub sys_*(), same as
->    the "normal" syscall, and the IA32_EMULATION compat syscall stub
->    compat_sys_*(), same as the "normal" compat syscall. Though this
->    might cause some confusion, as the "same" function uses a different
->    calling convention and different parameters on x86, it has the
->    advantages that
->         - the kernel *has* a function sys_*() implementing the syscall,
->           so those curious in stack traces etc. will find it in plain
->           sight,
->         - it is easier to handle in the syscall table generation, and
->         - error injection works the same.
-
-I don't think there should be a symbol space overlap, that will only lead to 
-confusion. The symbols can be _similar_, with a prefix, underscores or so, but 
-they shouldn't match I think.
-
-> The whole series is available at
+> This leads to continuous error messages like the following.
+> " ACPI CPPC: PCC check channel failed. Status=0 "
 > 
->         https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-WIP
+> Earlier (without above commit) the default transition delay was
+> taken form the value passed from PCCT. Use the same value provided by PCCT
+> to set the transition_delay_us.
+> 
+> Fixes: e948bc8fbee0 (cpufreq: Cap the default transition delay value to 10 ms)
+> Signed-off-by: George Cherian <george.cherian@cavium.com>
+> ---
+>  drivers/cpufreq/cppc_cpufreq.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index a1c3025..dcb1cb9 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/cpu.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/dmi.h>
+> +#include <linux/time.h>
+>  #include <linux/vmalloc.h>
+>  
+>  #include <asm/unaligned.h>
+> @@ -162,6 +163,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	policy->cpuinfo.max_freq = cppc_dmi_max_khz;
+>  
+>  	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
+> +	policy->transition_delay_us = cppc_get_transition_latency(cpu_num) /
+> +		NSEC_PER_USEC;
+>  	policy->shared_type = cpu->shared_type;
+>  
+>  	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
+> 
 
-BTW., I'd like all these bits to go through the x86 tree.
-
-What is the expected merge route of the generic preparatory bits?
-
-Thanks,
-
-	Ingo
+Applied, thanks!
