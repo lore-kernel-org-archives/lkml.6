@@ -1,108 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751358AbeC3PYa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:24:30 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35840 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751216AbeC3PY3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:24:29 -0400
-X-Google-Smtp-Source: AIpwx49NAixyXC4TwVaTiWSgHfo2s1pOdGSWeNbZ5d0taa67+2sW+6cijXpQrjc+VJU0Ku6kJoXA3A==
-Subject: Re: [PATCH V7 00/13] drivers: Boot Constraint core
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, robdclark@gmail.com,
-        s.hauer@pengutronix.de, l.stach@pengutronix.de, shawnguo@kernel.org,
-        fabio.estevam@nxp.com, nm@ti.com, xuwei5@hisilicon.com,
-        robh+dt@kernel.org, olof@lixom.net
-References: <cover.1519380923.git.viresh.kumar@linaro.org>
- <20180322012606.vuaemu3pvpeojtwr@vireshk-mac-ubuntu>
- <20180323150420.GA21152@kroah.com>
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Openpgp: preference=signencrypt
-Message-ID: <cbcfeb15-d940-f066-739d-25adfe09f019@linaro.org>
-Date: Fri, 30 Mar 2018 18:24:25 +0300
+        id S1751922AbeC3PZS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:25:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39778 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751216AbeC3PZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 11:25:17 -0400
+Date: Fri, 30 Mar 2018 11:25:13 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Will Davis <wdavis@nvidia.com>, linaro-mm-sig@lists.linaro.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+Message-ID: <20180330152513.GA3198@redhat.com>
+References: <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+ <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
+ <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+ <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+ <20180330015854.GA3572@redhat.com>
+ <20180330063334.GA8634@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180323150420.GA21152@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180330063334.GA8634@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg and Viresh,
+On Thu, Mar 29, 2018 at 11:33:34PM -0700, Christoph Hellwig wrote:
+> On Thu, Mar 29, 2018 at 09:58:54PM -0400, Jerome Glisse wrote:
+> > dma_map_resource() is the right API (thought its current implementation
+> > is fill with x86 assumptions). So i would argue that arch can decide to
+> > implement it or simply return dma error address which trigger fallback
+> > path into the caller (at least for GPU drivers). SG variant can be added
+> > on top.
+> 
+> It isn't in general.  It doesn't integrate with scatterlists (see my
+> comment to page one), and it doesn't integrate with all the subsystems
+> that also need a kernel virtual address.
 
-On 03/23/2018 05:04 PM, Greg Kroah-Hartman wrote:
-> On Thu, Mar 22, 2018 at 09:26:06AM +0800, Viresh Kumar wrote:
->> On 23-02-18, 15:53, Viresh Kumar wrote:
->>> Problem statement:
->>>
->>> Some devices are powered ON by the bootloader before the bootloader
->>> handovers control to Linux. It maybe important for some of those devices
->>> to keep working until the time a Linux device driver probes the device
->>> and reconfigure its resources.
->>>
->>> A typical example of that can be the LCD controller, which is used by
->>> the bootloaders to show image(s) while the platform is booting into
->>> Linux.  The LCD controller can be using some resources, like clk,
->>> regulators, etc, that are shared between several devices. These shared
->>> resources should be configured to satisfy need of all the users.  If
->>> another device's (X) driver gets probed before the LCD controller driver
->>> in this case, then it may end up disabling or reconfiguring these
->>> resources to ranges satisfying the current users (only device X) and
->>> that can make the LCD screen unstable.
->>>
->>> Another case can be a debug serial port enabled from the bootloader.
->>>
->>> Of course we can have more complex cases where the same resource is
->>> getting used by two devices while the kernel boots and the order in
->>> which devices get probed wouldn't matter as the other device will surely
->>> break then.
->>
->> And we have a _real_ use case for this complex scenario as well.
->>
->> Georgi (cc'd) is currently working[1] on implementing generic support for the
->> interconnect bus, which tries to play with the bandwidth of the bus based on how
->> much are the requirements from different parts of the SoC. The 4th version was
->> posted recently by him, and things are looking good/positive.
->>
->> The bootloader configures the interconnect to provide sufficient bandwidth for
->> all the devices which are used during boot, few of them are the CPUs, serial and
->> the LCD controller. As the kernel starts taking control of things, the drivers
->> being probed start putting their requirements on the interconnect bus.  Because
->> the interconnect doesn't have any representation from the devices which are not
->> yet initialized by the kernel, the interconnect core incorrectly reduces the
->> bandwidth of the bus to a level unacceptable to the devices running currently,
->> like the CPUs and this makes kernel boot awfully slow. This is not an ordering
->> problem as no matter which device we probe first, we are going to break
->> something else.
+IIRC SG variant was proposed at the time dma_map_resource() was added,
+dunno why they did not make it (again from memory i think it was because
+it grows the scatterlist struct size). My point is more than people that
+need SG variant should work on adding it. People who do not, should not
+be stop by the lack of it. There is something there upstream, it does
+not make sense to not use it. The dma-buf infrastructure is useful to
+many drivers.
 
-The interconnect core takes requests from consumer drivers for their
-bandwidth needs and configures the hardware to keep the lowest possible
-power profile. I think that the boot constraint patches would be useful
-to make a board run at maximum performance during boot, until all
-consumer drivers are probed and all bandwidth requests are taken into
-account.
+If you do not want to share the underlying logic of dma_map_resource()
+fine (ie not sharing code inside drivers/iommu/*). I thought it would
+be a good thing to share code ...
 
->> Georgi already tried using the boot constraint patches to solve this complex
->> problem, and its a perfect fit.
-
-These patches solve a common problem for different subsystems, so it
-makes sense to handle it into the driver core, instead of leaving each
-subsystem to do their own hacks.
-
-> I'm delaying this as I still don't see that "perfect fit" yet.  If there
-> are add-on patches that take better advantage of this, great, let's see
-> those, but right now, it feels like you are the only one wanting this.
-> And the increased complexity overall seems not really worth it yet :(
-
-The interconnect code is still under review, but on the next submission
-i will include a patch to make use of the boot constraints, so that we
-hopefully move this forward.
-
-Thanks,
-Georgi
+Cheers,
+Jérôme
