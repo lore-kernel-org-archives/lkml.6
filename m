@@ -1,107 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeC3Rqv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:46:51 -0400
-Received: from muru.com ([72.249.23.125]:34592 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751264AbeC3Rqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:46:49 -0400
-Date: Fri, 30 Mar 2018 10:46:44 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc: Merlijn Wajer <merlijn@wizzup.org>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, kernel@collabora.com,
-        Dan Williams <dcbw@redhat.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [alsa-devel] omap4-droid4: voice call support was Re: [PATCHv5,
- 5/5] ARM: dts: omap4-droid4: add soundcard
-Message-ID: <20180330174644.GW5700@atomide.com>
-References: <20180329154600.qhels5fqzzg364gj@earth.universe>
- <20180329163716.GA20743@amd>
- <20180329164113.GR5700@atomide.com>
- <20180329184007.GA27688@amd>
- <20180329215612.GS5700@atomide.com>
- <20180330103744.GA17404@amd>
- <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
- <20180330152227.GU5700@atomide.com>
- <CAOf5uwnF8qTqX9O6s226=Nd4FbGjGev4LDonovgoXtoEH9QdVA@mail.gmail.com>
- <20180330154445.GV5700@atomide.com>
+        id S1752206AbeC3Rsp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:48:45 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36852 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751327AbeC3Rsm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 13:48:42 -0400
+X-Google-Smtp-Source: AIpwx495RbglAs8SdH1+CaM4I/IdMrhaoyR/ZcmCloPUqrLyBdGYlSOgjXaEBbvG3j5s9wrvqd4KbA==
+Date: Fri, 30 Mar 2018 10:48:38 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Tim Harvey <tharvey@gateworks.com>, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>, Wim Van Sebroeck <wim@iguana.be>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [v3,4/4] watchdog: add Gateworks System Controller support
+Message-ID: <20180330174838.GA141984@dtor-ws>
+References: <1522250043-8065-5-git-send-email-tharvey@gateworks.com>
+ <20180330010757.GA12896@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330154445.GV5700@atomide.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180330010757.GA12896@roeck-us.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [180330 15:46]:
-> * Michael Nazzareno Trimarchi <michael@amarulasolutions.com> [180330 15:27]:
-> > Hi
+On Thu, Mar 29, 2018 at 06:07:57PM -0700, Guenter Roeck wrote:
+> On Wed, Mar 28, 2018 at 08:14:03AM -0700, Tim Harvey wrote:
+> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> > ---
+> >  drivers/watchdog/Kconfig   |  10 ++++
+> >  drivers/watchdog/Makefile  |   1 +
+> >  drivers/watchdog/gsc_wdt.c | 146 +++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 157 insertions(+)
+> >  create mode 100644 drivers/watchdog/gsc_wdt.c
 > > 
-> > On Fri., 30 Mar. 2018, 11:22 pm Tony Lindgren, <tony@atomide.com> wrote:
-> > 
-> > > * Merlijn Wajer <merlijn@wizzup.org> [180330 13:09]:
-> > > > On 30/03/18 12:37, Pavel Machek wrote:
-> > > > > On Thu 2018-03-29 14:56:13, Tony Lindgren wrote:
-> > > > >> * Pavel Machek <pavel@ucw.cz> [180329 18:41]:
-> > > > >>> Thanks. I got call working including outgoing audio: in capture
-> > > > >>> settings, right->mic 1, Mic1 + Mic2 in alsamixer -> 100%. But I had
-> > > > >>> the other phone muted, so I don't yet know if such call would be of
-> > > > >>> usable quality.
-> > > > >>
-> > > > >> Great, good to hear that :)
-> > > > >
-> > > > > I also got ofonod to work, with rather crazy hacks. But I now have
-> > > > > incoming/outgoing calls with GUI :-).
-> > > >
-> > > > Would you mind sharing those hacks - I would like to play around with
-> > > > ofonod as well. Maybe I can help with a way forward.
-> > >
-> > > Yeah that would be fun to play with :)
-> > >
-> > > Below is a patch that works better at least for ModemManager,
-> > > does anybody have ideas what the unused three ports might be?
-> > >
-> > > I wonder if ofono can use /dev/ttyUSB0 CQDM port?
-> > >
-> > 
-> > One of them can be used proprably to bridge debug for modem certification.
-> > This is usually disable for production device. The other could used for
-> > unsolicited response of GPS function if exists in this modem
+> > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> > index ca200d1..c9d4b2e 100644
+> > --- a/drivers/watchdog/Kconfig
+> > +++ b/drivers/watchdog/Kconfig
+> > @@ -150,6 +150,16 @@ config GPIO_WATCHDOG_ARCH_INITCALL
+> >  	  arch_initcall.
+> >  	  If in doubt, say N.
+> >  
+> > +config GSC_WATCHDOG
+> > +	tristate "Gateworks System Controller (GSC) Watchdog support"
+> > +	depends on MFD_GATEWORKS_GSC
+> > +	select WATCHDOG_CORE
+> > +	help
+> > +	  Say Y here to include support for the GSC Watchdog.
+> > +
+> > +	  This driver can also be built as a module. If so the module
+> > +	  will be called gsc_wdt.
+> > +
+> >  config MENF21BMC_WATCHDOG
+> >  	tristate "MEN 14F021P00 BMC Watchdog"
+> >  	depends on MFD_MENF21BMC || COMPILE_TEST
+> > diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> > index 715a210..499327e 100644
+> > --- a/drivers/watchdog/Makefile
+> > +++ b/drivers/watchdog/Makefile
+> > @@ -215,6 +215,7 @@ obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
+> >  obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
+> >  obj-$(CONFIG_DA9063_WATCHDOG) += da9063_wdt.o
+> >  obj-$(CONFIG_GPIO_WATCHDOG)	+= gpio_wdt.o
+> > +obj-$(CONFIG_GSC_WATCHDOG)	+= gsc_wdt.o
+> >  obj-$(CONFIG_TANGOX_WATCHDOG) += tangox_wdt.o
+> >  obj-$(CONFIG_WDAT_WDT) += wdat_wdt.o
+> >  obj-$(CONFIG_WM831X_WATCHDOG) += wm831x_wdt.o
+> > diff --git a/drivers/watchdog/gsc_wdt.c b/drivers/watchdog/gsc_wdt.c
+> > new file mode 100644
+> > index 0000000..b43d083
+> > --- /dev/null
+> > +++ b/drivers/watchdog/gsc_wdt.c
+> > @@ -0,0 +1,146 @@
+> > +/* SPDX-License-Identifier: GPL-2.0
+> > + *
+> > + * Copyright (C) 2018 Gateworks Corporation
+> > + *
+> > + * This driver registers a Linux Watchdog for the GSC
+> > + */
+> > +#include <linux/mfd/gsc.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/watchdog.h>
+> > +
+> > +#define WDT_DEFAULT_TIMEOUT	60
+> > +
+> > +struct gsc_wdt {
+> > +	struct watchdog_device wdt_dev;
+> > +	struct gsc_dev *gsc;
+> > +};
+> > +
+> > +static int gsc_wdt_start(struct watchdog_device *wdd)
+> > +{
+> > +	struct gsc_wdt *wdt = watchdog_get_drvdata(wdd);
+> > +	unsigned int reg = (1 << GSC_CTRL_1_WDT_ENABLE);
 > 
-> OK so at least one of the ports is probably permanently disabled then.
+> Please use BIT().
 > 
-> GPS is there for sure, it can be accessed with at least mmcli with
-> ModemManager running assuming modem instance 0:
+> > +	int ret;
+> > +
+> > +	dev_dbg(wdd->parent, "%s timeout=%d\n", __func__, wdd->timeout);
 > 
-> $ mmcli -m 0 --enable
-> $ mmcli -m 0 --location-enable-gps-raw
-> $ sudo chmod a+r /dev/cdc-wdm0
+> I don't think those debug messages add any value.
 > 
-> Then configure gpsd to use /dev/cdc-wdm0.
+> > +
+> > +	/* clear first as regmap_update_bits will not write if no change */
+> > +	ret = regmap_update_bits(wdt->gsc->regmap, GSC_CTRL_1, reg, 0);
+> > +	if (ret)
+> > +		return ret;
+> > +	return regmap_update_bits(wdt->gsc->regmap, GSC_CTRL_1, reg, reg);
+> > +}
+> > +
+> > +static int gsc_wdt_stop(struct watchdog_device *wdd)
+> > +{
+> > +	struct gsc_wdt *wdt = watchdog_get_drvdata(wdd);
+> > +	unsigned int reg = (1 << GSC_CTRL_1_WDT_ENABLE);
+> > +
 > 
-> But having a dedicated NMEA port would be nice. Any ideas how the
-> GPS port might be enabled for ttyUSB, should it start just printing
-> out data if GPS is enabled?
+> BIT(). You might as well drop the variable and just use
+> BIT(GSC_CTRL_1_WDT_ENABLE) below.
 > 
-> FYI, selecting the "BP HW Diag & Boot AP" option from bootloader with the
-> volume buttons routes the whole modem to the OTG USB interface with
-> the same ports available to PC so that's probably for cert use.
-> If needed we can do this from Linux too by just by setting one of
-> the USB PHY pins high with cpcap_usb_gpio_set_mode().
+> > +	dev_dbg(wdd->parent, "%s\n", __func__);
+> > +
+> > +	return regmap_update_bits(wdt->gsc->regmap, GSC_CTRL_1, reg, 0);
+> > +}
+> > +
+> > +static int gsc_wdt_set_timeout(struct watchdog_device *wdd,
+> > +			       unsigned int timeout)
+> > +{
+> > +	struct gsc_wdt *wdt = watchdog_get_drvdata(wdd);
+> > +	unsigned int long_sel = 0;
+> > +
+> > +	dev_dbg(wdd->parent, "%s: %d\n", __func__, timeout);
+> > +
+> > +	switch (timeout) {
+> > +	case 60:
+> > +		long_sel = (1 << GSC_CTRL_1_WDT_TIME);
+> > +	case 30:
+> > +		regmap_update_bits(wdt->gsc->regmap, GSC_CTRL_1,
+> > +				   (1 << GSC_CTRL_1_WDT_TIME),
+> 
+> BIT()
+> 
+> > +				   (long_sel << GSC_CTRL_1_WDT_TIME));
 
-And after some searching the the three unknown ports seem to
-be NMEA, TCMD and MUX in some unknown order. No idea what the
-TCMD and MUX are here.
+This looks wrong. Are you sure that in case of 60 timeout you want to
+actually write
 
-Looks like /dev/ttyUSB3 pretty much just echoes back the
-characters typed in.
+	((1 << GSC_CTRL_1_WDT_TIME) << GSC_CTRL_1_WDT_TIME)
 
-Regards,
+to the register?
 
-Tony
+Or you meant to write:
+
+	long_sel = timeout > 30;
+	regmap_update_bits(wdt->gsc->regmap, GSC_CTRL_1,
+			   (long_sel << GSC_CTRL_1_WDT_TIME),
+
+Thanks.
+
+-- 
+Dmitry
