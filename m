@@ -1,30 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752344AbeC3B0I (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 21:26:08 -0400
-Received: from mga05.intel.com ([192.55.52.43]:2663 "EHLO mga05.intel.com"
+        id S1752564AbeC3B34 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 21:29:56 -0400
+Received: from mga11.intel.com ([192.55.52.93]:18964 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751215AbeC3B0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 21:26:06 -0400
+        id S1752480AbeC3B3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 21:29:54 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,378,1517904000";
-   d="yaml'?scan'208";a="28159185"
-Date: Fri, 30 Mar 2018 09:24:00 +0800
+   d="yaml'?scan'208";a="29627704"
+Date: Fri, 30 Mar 2018 09:27:21 +0800
 From: kernel test robot <xiaolong.ye@intel.com>
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-acpi@vger.kernel.org, devel@acpica.org, linux-pm@vger.kernel.org,
-        lkp@01.org
-Subject: [lkp-robot] [sched]  f4b457d904:  vm-scalability.throughput -8.2%
- regression
-Message-ID: <20180330012400.GB3621@yexl-desktop>
+To: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Tony Lindgren <tony@atomide.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Laura Abbott <lauraa@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>, Michal Nazarewicz <mina86@mina86.com>,
+        Minchan Kim <minchan@kernel.org>, Rik van Riel <riel@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Subject: [lkp-robot] [mm/cma]  4405c5fd84:  vm-scalability.throughput +26.5%
+ improvement
+Message-ID: <20180330012721.GA3845@yexl-desktop>
 Reply-To: kernel test robot <xiaolong.ye@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="kORqDWCi7qDJ0mEj"
+Content-Type: multipart/mixed; boundary="jI8keyz6grp/JLjh"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 User-Agent: NeoMutt/20170113 (1.7.2)
@@ -33,7 +42,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---kORqDWCi7qDJ0mEj
+--jI8keyz6grp/JLjh
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -41,22 +50,28 @@ Content-Transfer-Encoding: 8bit
 
 Greeting,
 
-FYI, we noticed a -8.2% regression of vm-scalability.throughput due to commit:
+FYI, we noticed a +26.5% improvement of vm-scalability.throughput due to commit:
 
 
-commit: f4b457d90488952f0f685941a419e3f22ed56df4 ("sched: idle: Select idle state before stopping the tick")
-https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git idle-tick
+commit: 4405c5fd8434809972dd2996c4dbfe5124b01d55 ("mm/cma: manage the memory of the CMA area by using the ZONE_MOVABLE")
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
 in testcase: vm-scalability
-on test machine: 56 threads Intel(R) Xeon(R) CPU E5-2695 v3 @ 2.30GHz with 256G memory
+on test machine: 72 threads Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz with 128G memory
 with following parameters:
 
-	runtime: 300s
-	test: small-allocs-mt
+	runtime: 300
+	thp_enabled: never
+	thp_defrag: always
+	nr_task: 8
+	nr_pmem: 4
+	priority: 1
+	test: swap-w-seq-mt
 	cpufreq_governor: performance
 
 test-description: The motivation behind this suite is to exercise functions and regions of the mm/ of the Linux kernel which are of interest to us.
 test-url: https://git.kernel.org/cgit/linux/kernel/git/wfg/vm-scalability.git/
+
 
 
 Details are as below:
@@ -71,155 +86,178 @@ To reproduce:
         bin/lkp run     job.yaml
 
 =========================================================================================
-compiler/cpufreq_governor/kconfig/rootfs/runtime/tbox_group/test/testcase:
-  gcc-7/performance/x86_64-rhel-7.2/debian-x86_64-2016-08-31.cgz/300s/lkp-hsw-ep5/small-allocs-mt/vm-scalability
+compiler/cpufreq_governor/kconfig/nr_pmem/nr_task/priority/rootfs/runtime/tbox_group/test/testcase/thp_defrag/thp_enabled:
+  gcc-7/performance/x86_64-rhel-7.2/4/8/1/debian-x86_64-2016-08-31.cgz/300/lkp-hsw-ep2/swap-w-seq-mt/vm-scalability/always/never
 
 commit: 
-  616cc2d73a ("cpuidle: Return nohz hint from cpuidle_select()")
-  f4b457d904 ("sched: idle: Select idle state before stopping the tick")
+  41fd9c44d9 ("mm/page_alloc: don't reserve ZONE_HIGHMEM for ZONE_MOVABLE request")
+  4405c5fd84 ("mm/cma: manage the memory of the CMA area by using the ZONE_MOVABLE")
 
-616cc2d73a1f78f8 f4b457d90488952f0f685941a4 
+41fd9c44d94101ec 4405c5fd8434809972dd2996c4 
 ---------------- -------------------------- 
          %stddev     %change         %stddev
              \          |                \  
-      9678            -8.2%       8888        vm-scalability.median
-    542003            -8.2%     497740        vm-scalability.throughput
-      8924           -14.4%       7642        vm-scalability.time.involuntary_context_switches
-  36200385            -8.2%   33245872        vm-scalability.time.minor_page_faults
-    431.00            +5.7%     455.75        vm-scalability.time.percent_of_cpu_this_job_got
-    871.96            +9.4%     954.17        vm-scalability.time.system_time
-    440.87            -2.0%     432.12        vm-scalability.time.user_time
-  38355611            -8.2%   35207200        vm-scalability.time.voluntary_context_switches
- 1.629e+08            -8.2%  1.496e+08        vm-scalability.workload
-      1824 ± 10%      +7.9%       1969 ±  9%  proc-vmstat.pgactivate
-    251096            -8.0%     230901        vmstat.system.cs
-      0.00 ± 19%      +0.0        0.01 ±  7%  mpstat.cpu.soft%
-      2.10            -0.3        1.84        mpstat.cpu.usr%
-    536133 ±  2%     +18.1%     633055 ±  2%  softirqs.RCU
-    528501           +37.0%     724182        softirqs.SCHED
-   1080212           +66.7%    1800314        softirqs.TIMER
-  16475040           -70.0%    4936102        cpuidle.C1.time
-   1107989           -89.4%     116924 ±  3%  cpuidle.C1.usage
- 9.244e+08 ±  3%     -91.2%   81145933 ±  9%  cpuidle.C1E.time
-   8079537 ±  2%     -94.9%     414952 ±  6%  cpuidle.C1E.usage
- 8.713e+09           -90.1%  8.668e+08        cpuidle.C3.time
-  25043408           -88.1%    2974532        cpuidle.C3.usage
- 5.406e+09 ±  2%    +159.2%  1.401e+10        cpuidle.C6.time
-  18924649          +144.9%   46347159        cpuidle.C6.usage
-  62626212 ±  5%     -96.2%    2350100 ± 15%  cpuidle.POLL.time
-    136735           -98.5%       2067 ±  5%  cpuidle.POLL.usage
-    159.25            +3.8%     165.25        turbostat.Avg_MHz
-   1106579           -89.5%     116023 ±  4%  turbostat.C1
-      0.10 ±  5%      -0.1        0.03        turbostat.C1%
-   8078055 ±  2%     -94.9%     413304 ±  6%  turbostat.C1E
-      5.40 ±  3%      -4.9        0.47 ±  9%  turbostat.C1E%
-  25043071           -88.1%    2973755        turbostat.C3
-     50.91           -45.8        5.07        turbostat.C3%
-  18923465          +144.9%   46346009        turbostat.C6
-     31.58 ±  2%     +50.4       81.99        turbostat.C6%
-     16.76           -84.4%       2.61        turbostat.CPU%c3
-      7.45 ±  5%    +206.3%      22.84        turbostat.CPU%c6
-     68.41            -2.9%      66.40        turbostat.PkgWatt
-    263.87 ± 11%     +58.4%     417.90 ±  7%  sched_debug.cfs_rq:/.exec_clock.stddev
-     79744 ±  2%     +11.5%      88901        sched_debug.cfs_rq:/.min_vruntime.avg
-     86046 ±  2%     +11.0%      95473        sched_debug.cfs_rq:/.min_vruntime.max
-      2472 ±  9%     +29.4%       3198 ± 10%  sched_debug.cfs_rq:/.min_vruntime.stddev
-     -2401          -382.2%       6777 ± 50%  sched_debug.cfs_rq:/.spread0.avg
-      3899 ± 47%    +242.7%      13362 ± 29%  sched_debug.cfs_rq:/.spread0.max
-      2473 ±  9%     +29.4%       3201 ± 10%  sched_debug.cfs_rq:/.spread0.stddev
-      1048 ± 14%     +56.8%       1645 ± 16%  sched_debug.cpu.nr_load_updates.stddev
-      8420 ± 11%     +49.9%      12620 ± 13%  sched_debug.cpu.nr_switches.stddev
-    -12.79           +31.3%     -16.79        sched_debug.cpu.nr_uninterruptible.min
-      6.83 ± 11%     +24.8%       8.52 ±  4%  sched_debug.cpu.nr_uninterruptible.stddev
-      8033 ± 11%     +47.8%      11870 ± 14%  sched_debug.cpu.sched_count.stddev
-      4015 ± 11%     +47.4%       5920 ± 14%  sched_debug.cpu.sched_goidle.stddev
-    354735           +11.4%     395332        sched_debug.cpu.ttwu_count.max
-    329194           -10.7%     294033        sched_debug.cpu.ttwu_count.min
-      5653 ± 15%    +216.7%      17905 ±  5%  sched_debug.cpu.ttwu_count.stddev
- 3.254e+11            -8.6%  2.974e+11        perf-stat.branch-instructions
-      1.96            +1.6        3.52        perf-stat.branch-miss-rate%
- 6.392e+09           +63.6%  1.046e+10        perf-stat.branch-misses
-      4.73            -0.8        3.92        perf-stat.cache-miss-rate%
- 1.687e+09            -9.3%   1.53e+09        perf-stat.cache-misses
- 3.564e+10            +9.6%  3.905e+10        perf-stat.cache-references
-  77069002            -8.2%   70758635        perf-stat.context-switches
-      2.33           +15.7%       2.70        perf-stat.cpi
- 2.818e+12            +5.8%   2.98e+12        perf-stat.cpu-cycles
-    275787 ±  2%      +6.8%     294526        perf-stat.cpu-migrations
-      0.96            +0.1        1.04 ±  3%  perf-stat.dTLB-load-miss-rate%
- 3.217e+11            -6.1%   3.02e+11        perf-stat.dTLB-loads
- 2.957e+08 ±  2%      +4.0%  3.077e+08        perf-stat.dTLB-store-misses
- 1.792e+11            +6.1%  1.901e+11        perf-stat.dTLB-stores
-     57.82            +5.1       62.95        perf-stat.iTLB-load-miss-rate%
- 6.899e+08           +10.1%  7.595e+08        perf-stat.iTLB-load-misses
- 5.034e+08 ±  2%     -11.2%  4.471e+08        perf-stat.iTLB-loads
-  1.21e+12            -8.6%  1.105e+12        perf-stat.instructions
-      1753           -17.0%       1455        perf-stat.instructions-per-iTLB-miss
-      0.43           -13.6%       0.37        perf-stat.ipc
-  36958457            -8.0%   34003884        perf-stat.minor-faults
- 1.057e+09            -9.9%  9.532e+08        perf-stat.node-load-misses
- 3.475e+08 ±  2%     -10.5%   3.11e+08        perf-stat.node-store-misses
- 2.242e+08           -10.6%  2.005e+08        perf-stat.node-stores
-  36958459            -8.0%   34003902        perf-stat.page-faults
+   3278698           +26.5%    4148766 ±  2%  vm-scalability.throughput
+      0.76 ±  2%      -7.9%       0.70 ±  2%  vm-scalability.free_time
+    414083           +28.8%     533402 ±  2%  vm-scalability.median
+     37.39           -11.2%      33.19        vm-scalability.time.elapsed_time
+     37.39           -11.2%      33.19        vm-scalability.time.elapsed_time.max
+    646.75           -10.1%     581.25        vm-scalability.time.percent_of_cpu_this_job_got
+    182.59           -24.6%     137.76 ±  2%  vm-scalability.time.system_time
+     59.42            -6.8%      55.40        vm-scalability.time.user_time
+      8942 ±  9%    +105.6%      18384 ±  6%  vm-scalability.time.voluntary_context_switches
+   2089321 ±  5%     -26.6%    1532791 ±  3%  cpuidle.C1.time
+  62485028           -32.1%   42426989 ±  4%  interrupts.CAL:Function_call_interrupts
+      9.87            -2.0        7.89        mpstat.cpu.sys%
+    859.75 ± 14%     +54.6%       1329 ± 34%  slabinfo.dmaengine-unmap-16.active_objs
+    859.75 ± 14%     +54.6%       1329 ± 34%  slabinfo.dmaengine-unmap-16.num_objs
+   2691121 ±  9%     -31.9%    1832052 ±  8%  softirqs.RCU
+    565376           -10.6%     505518 ±  2%  softirqs.TIMER
+   1798289 ± 20%    +219.4%    5744223 ±  6%  numa-numastat.node0.numa_foreign
+  11379510 ±  6%     -30.9%    7864229 ±  5%  numa-numastat.node1.local_node
+  11380678 ±  6%     -30.9%    7867707 ±  5%  numa-numastat.node1.numa_hit
+   1798289 ± 20%    +219.4%    5744223 ±  6%  numa-numastat.node1.numa_miss
+   1799458 ± 20%    +219.4%    5747704 ±  6%  numa-numastat.node1.other_node
+ 7.148e+08 ±  4%     -35.5%  4.607e+08 ±  6%  perf-node.node-load-misses
+ 2.806e+08 ±  2%     -25.9%  2.079e+08 ±  7%  perf-node.node-loads
+     27.75 ±  5%      +9.9%      30.50 ±  3%  perf-node.node-local-load-ratio
+ 2.166e+08 ±  3%     -27.1%  1.579e+08 ±  8%  perf-node.node-store-misses
+ 2.734e+08 ±  9%     -43.9%  1.534e+08 ± 10%  perf-node.node-stores
+    447.75 ±  2%     -10.8%     399.25 ±  2%  turbostat.Avg_MHz
+     15.16 ±  2%      -1.8       13.36        turbostat.Busy%
+      0.07 ±  5%      -0.0        0.06 ±  7%  turbostat.C1%
+ 1.875e+08           -33.8%  1.242e+08 ±  4%  turbostat.IRQ
+    152.01            -2.7%     147.85        turbostat.PkgWatt
+     14.18            -2.3%      13.85        turbostat.RAMWatt
+    586.75 ±  7%     +13.5%     666.25 ±  3%  vmstat.memory.buff
+   5757201 ±  3%     +22.8%    7068800 ±  4%  vmstat.memory.free
+  27365780           -39.1%   16652327 ±  2%  vmstat.memory.swpd
+      9.00           -22.2%       7.00        vmstat.procs.r
+    829.00 ± 13%     -38.6%     509.00 ±  5%  vmstat.swap.si
+   1658990           -26.7%    1215747        vmstat.swap.so
+   1636758           -23.0%    1260916        vmstat.system.in
+     47862 ±  6%     -65.1%      16689 ±  6%  meminfo.CmaFree
+  83417008            -9.9%   75152314        meminfo.Committed_AS
+   1850235           -19.2%    1494102 ±  4%  meminfo.Inactive
+   1849617           -19.3%    1493422 ±  4%  meminfo.Inactive(anon)
+   5362375 ±  3%     +22.4%    6564299        meminfo.MemAvailable
+   5534597 ±  2%     +22.3%    6766142        meminfo.MemFree
+    103923           -21.3%      81789        meminfo.PageTables
+  73933617           +13.6%   83992710        meminfo.SwapFree
+  11799653            -8.0%   10850808 ±  3%  numa-meminfo.node0.AnonPages
+    937028           -19.4%     755072 ±  6%  numa-meminfo.node0.Inactive
+    936810           -19.4%     754801 ±  6%  numa-meminfo.node0.Inactive(anon)
+   2741438 ±  8%     +35.6%    3716602 ±  9%  numa-meminfo.node0.MemFree
+     59023           -51.4%      28701 ±  9%  numa-meminfo.node0.PageTables
+    921828 ±  2%     -20.4%     733395 ±  5%  numa-meminfo.node1.Inactive
+    921425 ±  2%     -20.5%     732971 ±  5%  numa-meminfo.node1.Inactive(anon)
+     45693           +17.0%      53445 ±  5%  numa-meminfo.node1.PageTables
+      8923 ±  4%     +66.6%      14863 ± 25%  sched_debug.cfs_rq:/.min_vruntime.avg
+     16889 ± 10%     +36.7%      23084 ± 14%  sched_debug.cfs_rq:/.min_vruntime.max
+      2110 ±  9%     +22.4%       2584 ± 11%  sched_debug.cfs_rq:/.min_vruntime.stddev
+      2287 ± 30%    +205.4%       6985 ± 10%  sched_debug.cfs_rq:/.spread0.avg
+     10329 ± 13%     +47.8%      15262 ±  5%  sched_debug.cfs_rq:/.spread0.max
+      2119 ±  8%     +21.2%       2569 ± 10%  sched_debug.cfs_rq:/.spread0.stddev
+      1223 ± 17%     +25.1%       1531 ± 21%  sched_debug.cfs_rq:/.util_avg.max
+      3392 ± 36%    +534.3%      21519 ± 58%  sched_debug.cpu.avg_idle.min
+   2929484 ±  2%      -8.5%    2679073 ±  3%  numa-vmstat.node0.nr_anon_pages
+    705776 ±  9%     +36.5%     963258 ±  6%  numa-vmstat.node0.nr_free_pages
+    232015           -20.0%     185568 ±  7%  numa-vmstat.node0.nr_inactive_anon
+     11856 ±  6%     +23.8%      14680 ±  9%  numa-vmstat.node0.nr_indirectly_reclaimable
+     14587           -51.7%       7041 ±  7%  numa-vmstat.node0.nr_page_table_pages
+   3831258 ±  3%     -25.8%    2842415 ± 11%  numa-vmstat.node0.nr_vmscan_write
+   3831285 ±  3%     -25.8%    2842319 ± 11%  numa-vmstat.node0.nr_written
+    232105           -20.0%     185668 ±  7%  numa-vmstat.node0.nr_zone_inactive_anon
+    942274 ± 14%    +268.2%    3469716 ±  7%  numa-vmstat.node0.numa_foreign
+     11986 ±  5%     -64.6%       4238 ±  8%  numa-vmstat.node1.nr_free_cma
+    228092 ±  2%     -21.5%     179096 ±  6%  numa-vmstat.node1.nr_inactive_anon
+     11051 ±  6%     -25.6%       8224 ± 17%  numa-vmstat.node1.nr_indirectly_reclaimable
+      2930 ±  9%     -11.1%       2604 ± 10%  numa-vmstat.node1.nr_mapped
+     11307 ±  2%     +17.1%      13236 ±  6%  numa-vmstat.node1.nr_page_table_pages
+   4507408 ±  3%     -19.7%    3619831 ± 10%  numa-vmstat.node1.nr_vmscan_write
+   4507421 ±  3%     -19.7%    3619853 ± 10%  numa-vmstat.node1.nr_written
+    228157 ±  2%     -21.5%     179161 ±  6%  numa-vmstat.node1.nr_zone_inactive_anon
+   7544972 ±  3%     -36.3%    4806885 ±  9%  numa-vmstat.node1.numa_hit
+   7381155 ±  3%     -37.1%    4641005 ±  9%  numa-vmstat.node1.numa_local
+    943340 ± 14%    +268.0%    3471701 ±  7%  numa-vmstat.node1.numa_miss
+   1107163 ± 12%    +228.6%    3637587 ±  7%  numa-vmstat.node1.numa_other
+      0.77 ±  2%      -0.2        0.58 ±  4%  perf-stat.branch-miss-rate%
+ 1.461e+09           -23.3%  1.121e+09 ±  6%  perf-stat.branch-misses
+     25.39            -1.6       23.82 ±  2%  perf-stat.cache-miss-rate%
+ 1.492e+09 ±  2%     -26.0%  1.104e+09 ±  7%  perf-stat.cache-misses
+ 5.877e+09           -21.2%  4.634e+09 ±  6%  perf-stat.cache-references
+      1.63           -10.3%       1.47        perf-stat.cpi
+ 1.223e+12 ±  2%     -12.0%  1.075e+12 ±  7%  perf-stat.cpu-cycles
+      1.01 ±  2%      -0.2        0.85 ±  6%  perf-stat.dTLB-load-miss-rate%
+ 1.873e+09 ± 10%     -24.1%  1.423e+09 ±  6%  perf-stat.dTLB-load-misses
+ 1.038e+11 ±  2%     -13.8%   8.95e+10 ±  7%  perf-stat.dTLB-stores
+ 5.226e+08 ±  5%     -21.4%  4.108e+08        perf-stat.iTLB-load-misses
+  90580077 ±  5%     -13.8%   78079215 ±  4%  perf-stat.iTLB-loads
+      1434 ±  5%     +24.6%       1787 ±  8%  perf-stat.instructions-per-iTLB-miss
+      0.61           +11.5%       0.68        perf-stat.ipc
+      5290 ±  3%     -17.7%       4356 ±  5%  perf-stat.major-faults
+     71.12            -2.3       68.81        perf-stat.node-load-miss-rate%
+ 7.031e+08 ±  4%     -33.4%  4.681e+08 ±  6%  perf-stat.node-load-misses
+ 2.853e+08 ±  3%     -25.6%  2.122e+08 ±  7%  perf-stat.node-loads
+     45.16 ±  6%      +4.0       49.16 ±  3%  perf-stat.node-store-miss-rate%
+ 2.153e+08 ±  3%     -29.0%  1.529e+08        perf-stat.node-store-misses
+ 2.634e+08 ± 11%     -39.9%  1.584e+08 ±  6%  perf-stat.node-stores
+    119681 ±  3%     -27.8%      86457 ±  5%  proc-vmstat.allocstall_movable
+     40547 ± 14%     -53.6%      18814 ± 31%  proc-vmstat.allocstall_normal
+    629.25 ± 93%     -99.7%       2.00 ± 61%  proc-vmstat.compact_stall
+     18.75 ± 31%    +212.0%      58.50 ± 89%  proc-vmstat.kswapd_high_wmark_hit_quickly
+    129618 ±  3%     +26.4%     163840 ±  3%  proc-vmstat.nr_dirty_background_threshold
+    259555 ±  3%     +26.4%     328082 ±  3%  proc-vmstat.nr_dirty_threshold
+     11625 ±  5%     -64.0%       4188 ±  8%  proc-vmstat.nr_free_cma
+   1344481 ±  3%     +26.2%    1696756 ±  3%  proc-vmstat.nr_free_pages
+    465487           -19.8%     373471 ±  3%  proc-vmstat.nr_inactive_anon
+    189.25 ±  5%     -24.7%     142.50 ±  9%  proc-vmstat.nr_isolated_anon
+     26266           -22.0%      20495        proc-vmstat.nr_page_table_pages
+   8458281 ±  2%     -23.7%    6456268 ±  4%  proc-vmstat.nr_vmscan_write
+  16689767           -34.4%   10944327 ±  5%  proc-vmstat.nr_written
+    465637           -19.8%     373643 ±  3%  proc-vmstat.nr_zone_inactive_anon
+   4610783 ±  2%     +72.2%    7938811        proc-vmstat.numa_foreign
+  20568554           -17.2%   17030926        proc-vmstat.numa_hit
+  20554622           -17.2%   17017000        proc-vmstat.numa_local
+   4610783 ±  2%     +72.2%    7938811        proc-vmstat.numa_miss
+   4624715 ±  2%     +72.0%    7952737        proc-vmstat.numa_other
+  11566637 ±  2%     -14.0%    9944302 ±  5%  proc-vmstat.numa_pte_updates
+   1439116 ±  2%     -24.9%    1080676 ± 11%  proc-vmstat.pgalloc_dma32
+  17284194           -33.1%   11570103 ±  5%  proc-vmstat.pgdeactivate
+      9.00 ± 19%  +15077.8%       1366 ± 77%  proc-vmstat.pgmigrate_success
+  17280106           -32.9%   11600628 ±  5%  proc-vmstat.pgrefill
+  12136735 ± 12%     -38.3%    7491459 ± 14%  proc-vmstat.pgscan_direct
+   6262493           -30.7%    4340098 ±  5%  proc-vmstat.pgscan_kswapd
+  10431149 ±  2%     -36.6%    6608259 ±  5%  proc-vmstat.pgsteal_direct
+   6260464           -30.7%    4337402 ±  5%  proc-vmstat.pgsteal_kswapd
+      6045 ± 17%     -47.4%       3179 ± 23%  proc-vmstat.pswpin
+  16693811           -34.4%   10948374 ±  5%  proc-vmstat.pswpout
+     33044 ±  6%     -20.3%      26344 ±  4%  proc-vmstat.slabs_scanned
+     
+
+
+                               vm-scalability.throughput                        
+                                                                                
+  4.4e+06 +-+---------------------------------------------------------------+   
+          |     O                                                           |   
+  4.2e+06 +-O O   O O   O    O     O O O O O                                |   
+          O           O          O           O                              |   
+          |                                                                 |   
+    4e+06 +-+                                  O                            |   
+          |                O   O                                            |   
+  3.8e+06 +-+                                                               |   
+          |                                                                 |   
+  3.6e+06 +-+                                                               |   
+          |                                                                 |   
+          |                     .+                                          |   
+  3.4e+06 +-+                 .+  +                 .+.+.+.. .+.+.+.        |   
+          |  + .+.+.+.+.+..+.+     +.+.+.+.   .+. .+        +       +.+. .+.|   
+  3.2e+06 +-+---------------------------------------------------------------+   
                                                                                 
                                                                                                                                                                 
-                              vm-scalability.throughput                         
                                                                                 
-  600000 +-+----------------------------------------------------------------+   
-         |    +.++.+. +.+.++.+.+    ++.+    +.+.++.+    +.++    +.+.++.+.+ .|   
-  500000 +-+O O OO O OO O OO O OO O OO O O OO O  O O O  :  :    :         + |   
-         |    :                :    :  :    :   O  :    :  :    :           |   
-         |    :                :    :  :    :      :    :  :    :           |   
-  400000 +-+ :                 :   :    :   :       :  :    :   :           |   
-         |:  :                 :   :    :   :       :  :    :   :           |   
-  300000 +-+ :                 :   :    :   :       :  :    :   :           |   
-         |:  :                  :  :    :  :        :  :    :  :            |   
-  200000 +-+ :                  :  :    :  :        :  :    :  :            |   
-         |:  :                  :  :    :  :        :  :    :  :            |   
-         | ::                   : :      : :         ::      : :            |   
-  100000 +-+:                   : :      : :         ::      : :            |   
-         | ::                   : :      : :         ::      : :            |   
-       0 O-O----------------------------------------------------------------+   
-                                                                                
-                                                                                                                                                                
-                                vm-scalability.median                           
-                                                                                
-  10000 +-+-----------------------------------------------------------------+   
-   9000 +-+O O.O O  +.O+.+.+  O    +.+.+O   O+   O.+O   ++.+    +.+  +    +.|   
-        |    :    O O  O O OO : O OO O O  O :O O   O    :  :    :           |   
-   8000 +-+  :                :    :   :    :      :    :  :    :           |   
-   7000 +-+  :                :    :   :    :      :    :  :    :           |   
-        |:  :                  :   :   :   :       :   :    :  :            |   
-   6000 +-+ :                  :   :   :   :       :   :    :  :            |   
-   5000 +-+ :                  :   :   :   :       :   :    :  :            |   
-   4000 +-+ :                  :  :     :  :        :  :    :  :            |   
-        |:  :                  :  :     :  :        :  :    :  :            |   
-   3000 +-+ :                  :  :     :  :        :  :    :  :            |   
-   2000 +-+:                    : :     : :         : :      ::             |   
-        | ::                    : :     : :         : :      ::             |   
-   1000 +-+:                    : :     : :         : :      ::             |   
-      0 O-O-----------------------------------------------------------------+   
-                                                                                
-                                                                                                                                                                
-                                vm-scalability.workload                         
-                                                                                
-  1.8e+08 +-+---------------------------------------------------------------+   
-          |    +.++.+. +.+.++.++    +.+.+    ++.+.++    +.+.+   +.+.++.+.+ .|   
-  1.6e+08 +-+O O OO O OO O OO OO O OO O OO O OO   OO O  :   :   :         + |   
-  1.4e+08 +-+  :               :    :   :    :  O  :    :   :   :           |   
-          |    :               :    :   :    :     :    :   :   :           |   
-  1.2e+08 +-+ :                 :   :   :   :       :   :   :   :           |   
-    1e+08 +-+ :                 :   :   :   :       :   :   :   :           |   
-          |:  :                 :   :   :   :       :   :   :   :           |   
-    8e+07 +-+ :                 :  :     :  :       :  :     : :            |   
-    6e+07 +-+ :                 :  :     :  :       :  :     : :            |   
-          |:  :                 :  :     :  :       :  :     : :            |   
-    4e+07 +-+:                   : :     : :         : :     : :            |   
-    2e+07 +-+:                   : :     : :         : :     : :            |   
-          | ::                   : :     : :         : :     : :            |   
-        0 O-O---------------------------------------------------------------+   
-                                                                                
-                                                                                                                                                                
+[*] bisect-good sample
+[O] bisect-bad  sample
 
 
 
@@ -232,13 +270,13 @@ design or configuration may affect actual performance.
 Thanks,
 Xiaolong
 
---kORqDWCi7qDJ0mEj
+--jI8keyz6grp/JLjh
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-4.16.0-rc5-00005-gf4b457d"
+Content-Disposition: attachment; filename="config-4.16.0-rc6-00268-g4405c5f"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 4.16.0-rc5 Kernel Configuration
+# Linux/x86_64 4.16.0-rc6 Kernel Configuration
 #
 CONFIG_64BIT=y
 CONFIG_X86_64=y
@@ -6176,6 +6214,7 @@ CONFIG_TMPFS_POSIX_ACL=y
 CONFIG_TMPFS_XATTR=y
 CONFIG_HUGETLBFS=y
 CONFIG_HUGETLB_PAGE=y
+CONFIG_MEMFD_CREATE=y
 CONFIG_ARCH_HAS_GIGANTIC_PAGE=y
 CONFIG_CONFIGFS_FS=y
 CONFIG_EFIVAR_FS=y
@@ -7005,7 +7044,7 @@ CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
 CONFIG_SBITMAP=y
 # CONFIG_STRING_SELFTEST is not set
 
---kORqDWCi7qDJ0mEj
+--jI8keyz6grp/JLjh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -7017,48 +7056,59 @@ export_top_env()
 	export testcase='vm-scalability'
 	export category='benchmark'
 	export runtime=300
-	export size=
-	export job_origin='/lkp/lkp/.src-20180327-105649/allot/cyclic:linux-devel:devel-hourly/lkp-hsw-ep5/vm-scalability.yaml'
+	export nr_task=8
+	export job_origin='/lkp/lkp/.src-20180323-172938/allot/cyclic:linux-next:master/lkp-hsw-ep2/vm-scalability-swap-4pmem.yaml'
 	export queue='bisect'
-	export testbox='lkp-hsw-ep5'
-	export tbox_group='lkp-hsw-ep5'
-	export submit_id='5abc25020b9a932f3adbee5c'
-	export job_file='/lkp/scheduled/lkp-hsw-ep5/vm-scalability-300s-small-allocs-mt-performance-debian-x86_64-2016-08-31.cgz-f4b457d90488952f0f685941a419e3f22ed56df4-20180329-12090-veooix-0.yaml'
-	export id='c3796cbc26413cc85f83721b826ac347e580d78c'
-	export model='Haswell-EP'
-	export nr_cpu=56
-	export memory='256G'
-	export hdd_partitions='/dev/disk/by-id/scsi-36b083fe0cfc0d1001f7658010d19fb9c-part1'
-	export ssd_partitions=
+	export testbox='lkp-hsw-ep2'
+	export tbox_group='lkp-hsw-ep2'
+	export submit_id='5abc40c00b9a93ca226d7f00'
+	export job_file='/lkp/scheduled/lkp-hsw-ep2/vm-scalability-300-never-always-8-4-1-swap-w-seq-mt-performance-debian-x86_64-2016-08-31.cgz-4405c5fd8434809972dd2996c4dbfe5124b01d55-20180329-51746-1u3sba-0.yaml'
+	export id='18fb750c6f96cbbdb5c968af29e3786407227a43'
+	export model='Brickland Haswell-EP'
+	export nr_cpu=72
+	export memory='128G'
+	export nr_ssd_partitions=1
+	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2BA800G3_BTTV451305A2800JGN-part1'
 	export swap_partitions=
 	export rootfs_partition=
-	export brand='Intel(R) Xeon(R) CPU E5-2695 v3 @ 2.30GHz'
-	export need_kconfig='CONFIG_BLK_DEV_LOOP'
-	export commit='f4b457d90488952f0f685941a419e3f22ed56df4'
+	export brand='Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz'
+	export need_kconfig='CONFIG_LIBNVDIMM
+CONFIG_BTT
+CONFIG_BLK_DEV_PMEM
+CONFIG_X86_PMEM_LEGACY
+CONFIG_SWAP
+CONFIG_MMU
+CONFIG_BLOCK
+CONFIG_BLK_DEV_LOOP'
+	export commit='4405c5fd8434809972dd2996c4dbfe5124b01d55'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
 	export rootfs='debian-x86_64-2016-08-31.cgz'
-	export enqueue_time='2018-03-29 07:28:02 +0800'
-	export _id='5abc25020b9a932f3adbee5c'
-	export _rt='/result/vm-scalability/300s-small-allocs-mt-performance/lkp-hsw-ep5/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4'
+	export enqueue_time='2018-03-29 09:26:24 +0800'
+	export _id='5abc40c00b9a93ca226d7f00'
+	export _rt='/result/vm-scalability/300-never-always-8-4-1-swap-w-seq-mt-performance/lkp-hsw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55'
 	export user='lkp'
-	export head_commit='6478d6842b83dabd97ee4a1d288649740e46294b'
-	export base_commit='0c8efd610b58cb23cefdfa12015799079aef94ae'
-	export branch='linux-devel/devel-hourly-2018031702'
-	export result_root='/result/vm-scalability/300s-small-allocs-mt-performance/lkp-hsw-ep5/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/0'
+	export head_commit='3d6ac126000cd9378aab4fc70defe1540b5cdc8c'
+	export base_commit='3eb2ce825ea1ad89d20f7a3b5780df850e4be274'
+	export branch='linux-next/master'
+	export result_root='/result/vm-scalability/300-never-always-8-4-1-swap-w-seq-mt-performance/lkp-hsw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/0'
 	export LKP_SERVER='inn'
 	export max_uptime=1500
 	export initrd='/osimage/debian/debian-x86_64-2016-08-31.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/scheduled/lkp-hsw-ep5/vm-scalability-300s-small-allocs-mt-performance-debian-x86_64-2016-08-31.cgz-f4b457d90488952f0f685941a419e3f22ed56df4-20180329-12090-veooix-0.yaml
+job=/lkp/scheduled/lkp-hsw-ep2/vm-scalability-300-never-always-8-4-1-swap-w-seq-mt-performance-debian-x86_64-2016-08-31.cgz-4405c5fd8434809972dd2996c4dbfe5124b01d55-20180329-51746-1u3sba-0.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
-branch=linux-devel/devel-hourly-2018031702
-commit=f4b457d90488952f0f685941a419e3f22ed56df4
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/vmlinuz-4.16.0-rc5-00005-gf4b457d
+branch=linux-next/master
+commit=4405c5fd8434809972dd2996c4dbfe5124b01d55
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/vmlinuz-4.16.0-rc6-00268-g4405c5f
+memmap=24G!4G
+memmap=24G!28G
+memmap=24G!66G
+memmap=24G!90G
 max_uptime=1500
-RESULT_ROOT=/result/vm-scalability/300s-small-allocs-mt-performance/lkp-hsw-ep5/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/0
+RESULT_ROOT=/result/vm-scalability/300-never-always-8-4-1-swap-w-seq-mt-performance/lkp-hsw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/0
 LKP_SERVER=inn
 debug
 apic=debug
@@ -7080,16 +7130,16 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/modules.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/modules.cgz'
 	export bm_initrd='/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-01-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-30a7acd57389_2018-01-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/vm-scalability_2018-02-09.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/vm-scalability-x86_64-1.0-0_2018-02-09.cgz,/osimage/pkg/common/vm-scalability-x86_64.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
 	export repeat_to=2
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/vmlinuz-4.16.0-rc5-00005-gf4b457d'
-	export dequeue_time='2018-03-29 07:32:40 +0800'
-	export job_initrd='/lkp/scheduled/lkp-hsw-ep5/vm-scalability-300s-small-allocs-mt-performance-debian-x86_64-2016-08-31.cgz-f4b457d90488952f0f685941a419e3f22ed56df4-20180329-12090-veooix-0.cgz'
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/vmlinuz-4.16.0-rc6-00268-g4405c5f'
+	export dequeue_time='2018-03-29 09:49:28 +0800'
+	export job_initrd='/lkp/scheduled/lkp-hsw-ep2/vm-scalability-300-never-always-8-4-1-swap-w-seq-mt-performance-debian-x86_64-2016-08-31.cgz-4405c5fd8434809972dd2996c4dbfe5124b01d55-20180329-51746-1u3sba-0.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -7105,9 +7155,18 @@ run_job()
 
 	export_top_env
 
+	run_setup thp_enabled='never' thp_defrag='always' $LKP_SRC/setup/transparent_hugepage
+
+	run_setup nr_pmem=4 $LKP_SRC/setup/disk
+
+	run_setup priority=1 $LKP_SRC/setup/swap
+
+	run_setup bp1_memmap='24G!4G' bp2_memmap='24G!28G' bp3_memmap='24G!66G' bp4_memmap='24G!90G' $LKP_SRC/setup/boot_params
+
 	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
 
-	run_monitor $LKP_SRC/monitors/no-stdout/wrapper perf-profile
+	run_monitor delay=20 $LKP_SRC/monitors/no-stdout/wrapper perf-profile
+	run_monitor $LKP_SRC/monitors/wrapper perf-node
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
 	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
 	run_monitor $LKP_SRC/monitors/wrapper iostat
@@ -7136,13 +7195,14 @@ run_job()
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test test='small-allocs-mt' $LKP_SRC/tests/wrapper vm-scalability
+	run_test test='swap-w-seq-mt' $LKP_SRC/tests/wrapper vm-scalability
 }
 
 extract_stats()
 {
 	$LKP_SRC/stats/wrapper perf-profile
 	$LKP_SRC/stats/wrapper vm-scalability
+	$LKP_SRC/stats/wrapper perf-node
 	$LKP_SRC/stats/wrapper kmsg
 	$LKP_SRC/stats/wrapper boot-time
 	$LKP_SRC/stats/wrapper iostat
@@ -7175,40 +7235,54 @@ extract_stats()
 
 "$@"
 
---kORqDWCi7qDJ0mEj
+--jI8keyz6grp/JLjh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="job.yaml"
 
 ---
 
-#! jobs/vm-scalability.yaml
+#! jobs/vm-scalability-swap-4pmem.yaml
 suite: vm-scalability
 testcase: vm-scalability
 category: benchmark
-perf-profile: 
-runtime: 300s
-size: 
+runtime: 300
+transparent_hugepage:
+  thp_enabled: never
+  thp_defrag: always
+nr_task: 8
+disk:
+  nr_pmem: 4
+swap:
+  priority: 1
+perf-profile:
+  delay: 20
 vm-scalability:
-  test: small-allocs-mt
-job_origin: "/lkp/lkp/.src-20180327-105649/allot/cyclic:linux-devel:devel-hourly/lkp-hsw-ep5/vm-scalability.yaml"
+  test: swap-w-seq-mt
+boot_params:
+  bp1_memmap: 24G!4G
+  bp2_memmap: 24G!28G
+  bp3_memmap: 24G!66G
+  bp4_memmap: 24G!90G
+perf-node: 
+job_origin: "/lkp/lkp/.src-20180323-172938/allot/cyclic:linux-next:master/lkp-hsw-ep2/vm-scalability-swap-4pmem.yaml"
 
 #! queue options
 queue: bisect
-testbox: lkp-hsw-ep5
-tbox_group: lkp-hsw-ep5
-submit_id: 5abc25020b9a932f3adbee5c
-job_file: "/lkp/scheduled/lkp-hsw-ep5/vm-scalability-300s-small-allocs-mt-performance-debian-x86_64-2016-08-31.cgz-f4b457d90488952f0f685941a419e3f22ed56df4-20180329-12090-veooix-0.yaml"
-id: c3796cbc26413cc85f83721b826ac347e580d78c
+testbox: lkp-hsw-ep2
+tbox_group: lkp-hsw-ep2
+submit_id: 5abc40c00b9a93ca226d7f00
+job_file: "/lkp/scheduled/lkp-hsw-ep2/vm-scalability-300-never-always-8-4-1-swap-w-seq-mt-performance-debian-x86_64-2016-08-31.cgz-4405c5fd8434809972dd2996c4dbfe5124b01d55-20180329-51746-1u3sba-0.yaml"
+id: 18fb750c6f96cbbdb5c968af29e3786407227a43
 
-#! hosts/lkp-hsw-ep5
-model: Haswell-EP
-nr_cpu: 56
-memory: 256G
-hdd_partitions: "/dev/disk/by-id/scsi-36b083fe0cfc0d1001f7658010d19fb9c-part1"
-ssd_partitions: 
+#! hosts/lkp-hsw-ep2
+model: Brickland Haswell-EP
+nr_cpu: 72
+memory: 128G
+nr_ssd_partitions: 1
+ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BA800G3_BTTV451305A2800JGN-part1"
 swap_partitions: 
 rootfs_partition: 
-brand: Intel(R) Xeon(R) CPU E5-2695 v3 @ 2.30GHz
+brand: Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
 
 #! include/category/benchmark
 kmsg: 
@@ -7240,40 +7314,56 @@ mpstat:
 #! include/category/ALL
 cpufreq_governor: performance
 
+#! include/disk/nr_pmem
+need_kconfig:
+- CONFIG_LIBNVDIMM
+- CONFIG_BTT
+- CONFIG_BLK_DEV_PMEM
+- CONFIG_X86_PMEM_LEGACY
+- CONFIG_SWAP
+- CONFIG_MMU
+- CONFIG_BLOCK
+- CONFIG_BLK_DEV_LOOP
+
+#! include/swap
+
 #! include/vm-scalability
-need_kconfig: CONFIG_BLK_DEV_LOOP
 
 #! include/queue/cyclic
-commit: f4b457d90488952f0f685941a419e3f22ed56df4
+commit: 4405c5fd8434809972dd2996c4dbfe5124b01d55
 
 #! default params
 kconfig: x86_64-rhel-7.2
 compiler: gcc-7
 rootfs: debian-x86_64-2016-08-31.cgz
-enqueue_time: 2018-03-29 07:28:02.239527896 +08:00
-_id: 5abc25020b9a932f3adbee5c
-_rt: "/result/vm-scalability/300s-small-allocs-mt-performance/lkp-hsw-ep5/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4"
+enqueue_time: 2018-03-29 09:26:24.442908763 +08:00
+_id: 5abc40c00b9a93ca226d7f00
+_rt: "/result/vm-scalability/300-never-always-8-4-1-swap-w-seq-mt-performance/lkp-hsw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55"
 
 #! schedule options
 user: lkp
-head_commit: 6478d6842b83dabd97ee4a1d288649740e46294b
-base_commit: 0c8efd610b58cb23cefdfa12015799079aef94ae
-branch: linux-devel/devel-hourly-2018031702
-result_root: "/result/vm-scalability/300s-small-allocs-mt-performance/lkp-hsw-ep5/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/0"
+head_commit: 3d6ac126000cd9378aab4fc70defe1540b5cdc8c
+base_commit: 3eb2ce825ea1ad89d20f7a3b5780df850e4be274
+branch: linux-next/master
+result_root: "/result/vm-scalability/300-never-always-8-4-1-swap-w-seq-mt-performance/lkp-hsw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/0"
 LKP_SERVER: inn
 max_uptime: 1500
 initrd: "/osimage/debian/debian-x86_64-2016-08-31.cgz"
 bootloader_append:
 - root=/dev/ram0
 - user=lkp
-- job=/lkp/scheduled/lkp-hsw-ep5/vm-scalability-300s-small-allocs-mt-performance-debian-x86_64-2016-08-31.cgz-f4b457d90488952f0f685941a419e3f22ed56df4-20180329-12090-veooix-0.yaml
+- job=/lkp/scheduled/lkp-hsw-ep2/vm-scalability-300-never-always-8-4-1-swap-w-seq-mt-performance-debian-x86_64-2016-08-31.cgz-4405c5fd8434809972dd2996c4dbfe5124b01d55-20180329-51746-1u3sba-0.yaml
 - ARCH=x86_64
 - kconfig=x86_64-rhel-7.2
-- branch=linux-devel/devel-hourly-2018031702
-- commit=f4b457d90488952f0f685941a419e3f22ed56df4
-- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/vmlinuz-4.16.0-rc5-00005-gf4b457d
+- branch=linux-next/master
+- commit=4405c5fd8434809972dd2996c4dbfe5124b01d55
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/vmlinuz-4.16.0-rc6-00268-g4405c5f
+- memmap=24G!4G
+- memmap=24G!28G
+- memmap=24G!66G
+- memmap=24G!90G
 - max_uptime=1500
-- RESULT_ROOT=/result/vm-scalability/300s-small-allocs-mt-performance/lkp-hsw-ep5/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/0
+- RESULT_ROOT=/result/vm-scalability/300-never-always-8-4-1-swap-w-seq-mt-performance/lkp-hsw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/0
 - LKP_SERVER=inn
 - debug
 - apic=debug
@@ -7295,12 +7385,12 @@ bootloader_append:
 - console=ttyS0,115200
 - vga=normal
 - rw
-modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/modules.cgz"
+modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/modules.cgz"
 bm_initrd: "/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-01-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-30a7acd57389_2018-01-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/vm-scalability_2018-02-09.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/vm-scalability-x86_64-1.0-0_2018-02-09.cgz,/osimage/pkg/common/vm-scalability-x86_64.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz"
 lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
 site: inn
 
-#! /lkp/lkp/.src-20180328-142725/include/site/inn
+#! /lkp/lkp/.src-20180327-163009/include/site/inn
 LKP_CGI_PORT: 80
 LKP_CIFS_PORT: 139
 oom-killer: 
@@ -7310,18 +7400,32 @@ watchdog:
 repeat_to: 2
 
 #! user overrides
-kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/f4b457d90488952f0f685941a419e3f22ed56df4/vmlinuz-4.16.0-rc5-00005-gf4b457d"
-dequeue_time: 2018-03-29 07:32:40.108006864 +08:00
+kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/4405c5fd8434809972dd2996c4dbfe5124b01d55/vmlinuz-4.16.0-rc6-00268-g4405c5f"
+dequeue_time: 2018-03-29 09:49:28.745444575 +08:00
+
+#! /lkp/lkp/.src-20180328-142725/include/site/inn
 job_state: finished
-loadavg: 47.34 34.86 15.64 1/505 9382
-start_time: '1522280051'
-end_time: '1522280355'
+loadavg: 3.30 0.99 0.35 1/636 2870
+start_time: '1522288226'
+end_time: '1522288259'
 version: "/lkp/lkp/.src-20180328-142725"
 
---kORqDWCi7qDJ0mEj
+--jI8keyz6grp/JLjh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=reproduce
 
+echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
+echo 'always' > /sys/kernel/mm/transparent_hugepage/defrag
+ "modprobe" "nd_e820"
+swapoff -a
+mkswap /dev/pmem0
+swapon /dev/pmem0 -p 1
+mkswap /dev/pmem1
+swapon /dev/pmem1 -p 1
+mkswap /dev/pmem2
+swapon /dev/pmem2 -p 1
+mkswap /dev/pmem3
+swapon /dev/pmem3 -p 1
 
 for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
 do
@@ -7334,13 +7438,13 @@ done
 
 cd /lkp/benchmarks/vm-scalability
  mount -t tmpfs -o size=100% vm-scalability-tmp /tmp/vm-scalability-tmp
- truncate -s 270380142592 /tmp/vm-scalability-tmp/vm-scalability.img
+ truncate -s 33615683584 /tmp/vm-scalability-tmp/vm-scalability.img
  mkfs.xfs -q /tmp/vm-scalability-tmp/vm-scalability.img
  mount -o loop /tmp/vm-scalability-tmp/vm-scalability.img /tmp/vm-scalability-tmp/vm-scalability
- ./case-small-allocs-mt
- ./usemem --runtime 300 -t 56 --readonly --unit 40960 78536544841
+ ./case-swap-w-seq-mt
+ ./usemem --runtime 300 -t 8 12450745728
  umount /tmp/vm-scalability-tmp/vm-scalability
  rm /tmp/vm-scalability-tmp/vm-scalability.img
  umount /tmp/vm-scalability-tmp
 
---kORqDWCi7qDJ0mEj--
+--jI8keyz6grp/JLjh--
