@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752686AbeC3MBB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 08:01:01 -0400
-Received: from mail-by2nam01on0068.outbound.protection.outlook.com ([104.47.34.68]:46592
+        id S1752733AbeC3MBb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 08:01:31 -0400
+Received: from mail-by2nam01on0053.outbound.protection.outlook.com ([104.47.34.53]:44448
         "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752592AbeC3MAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 08:00:38 -0400
+        id S1752275AbeC3MAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 08:00:30 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Vadim.Lomovtsev@cavium.com;
 From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
@@ -15,9 +15,9 @@ To: sgoutham@cavium.com, sunil.kovvuri@gmail.com, rric@kernel.org,
         linux-kernel@vger.kernel.org, davem@davemloft.net
 Cc: dnelson@redhat.com, ynorov@caviumnetworks.com,
         Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
-Subject: [PATCH v2 7/7] net: thunderx: add ndo_set_rx_mode callback implementation for VF
-Date: Fri, 30 Mar 2018 04:59:53 -0700
-Message-Id: <20180330115953.17154-8-Vadim.Lomovtsev@caviumnetworks.com>
+Subject: [PATCH v2 4/7] net: thunderx: add new messages for handle ndo_set_rx_mode callback
+Date: Fri, 30 Mar 2018 04:59:50 -0700
+Message-Id: <20180330115953.17154-5-Vadim.Lomovtsev@caviumnetworks.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180330115953.17154-1-Vadim.Lomovtsev@caviumnetworks.com>
 References: <20180327150736.10718-1-Vadim.Lomovtsev@caviumnetworks.com>
@@ -29,48 +29,48 @@ X-ClientProxiedBy: CO2PR04CA0006.namprd04.prod.outlook.com
  (2603:10b6:102:1::16) To CY4PR07MB2997.namprd07.prod.outlook.com
  (2603:10b6:903:d0::11)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ffa88d47-0306-4569-6591-08d59635d94b
+X-MS-Office365-Filtering-Correlation-Id: d3bbef28-86c5-4c31-369a-08d59635d490
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:CY4PR07MB2997;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;3:WKwilrz0xmzOwVbxlGJS3nhhjieK1wjlfRJtxg+nOZhPGaCaEiRZCNlfANVvDlltAWu2ZkOMvbWTAfO86I+zbx3alMKLwKBYVhUU8Hpzsexpg52IQpNeM1tnRCAcUQB8IQAS/TjHG6lmNu4N0G6qzH2jJrrePBxSc1h5D48DY+eGMqCuDvbewYvJfBazkOY3UchAmf1TMdmBTUG60hShBNIkfrfJje8RL6cSF+bTMqi+2OiItXgirhXJ8K/kKIo5;25:Iu2PVclYQF3c21loUDAx5r5MsbZNrsng5RugkHfdVGF3h6eNY+RL4ofj4zutTLic1pJuqj1riLjSvKTpiVENQzKFNI6zMssy7uDcJ8L2iqNJtYpRQaLgCq1zD+W4+OcC9bkmsBKHR/guIRTktaiHE9bm9H9+uIG+Vie9lrAzG0tydhhJtot+2hrFGWqyiriCIOEcXSm0Bxhh/gkAZhkn4caTgrAbqn+PjJwV8Z81pdWlH623GbeF0YXk8eJRK6P4PacczYCGBAwUu7Tuhmr9RaXS/gBqraFhvdtndjzdC2rU0doMhpnLItBn0OrW/g9NJe0L/ug+YLanx6UMO1b0vA==;31:zZE2dBMDmXjk1e9y1rykgb9Pif78E0YQ7FSgEdbkUQnwzFbFNS+XrqZrrRzrhTUEkl7K9G63wAy3ch1Z8o/JzOr+lXMOD2Za9qwcLtbZZyLRMsSZl9f3JbFhOjjXe4/XAk9sZLqecmZ73soBx8ju0HQMeDnDLZrv0fGKvEi0D3y41nVdagem36apuW6Dd4ylADmXGiveRxNq/DJ00aGChQXIoOiqpUG869auYjezU6U=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;3:bin9r6jcTnZa42qY6O6fVCjTgky5offzGQOp3W7kXYpjBsFEygF2rpJTSGO0ofvN82CIfGN+7kevwKyv/l1OzqbUsyZVAAA0fRKfrtutbEHdqT2GZfNDsKqRT/+4u0qx8eFhPzfpL9jDK9eKygXs67iOe7OU/OPWVUKJcSVCc9F50T/HtHD3m2U1SEdl0KWJDlE2epNnGMLQ/h4PhJxblLUtH3F/BcMt1VtQH46erN9/xMX0G2XZQ9kH2NIjreSd;25:KT95iZmKd/xSDPSWz77PDQgadLlEBunYrCp92YLY2bTPazIh8rD8d0pUCqIH82EbiHrOiQneKLZPP9LizhN9Vw+U+fu9dh2uqIaPbYcrWDXDmCGcb9hO3i6t9fZa0Xj7w5IuxCZRercrqX0K85E0Va4IfrjmaSHiEp4MuoXejW4cBLpWibMWu15lGyPGVD2sF1Q/QRmQPHtBzwEd49Mn7wDdFJYaT6eujc64W0F9wjBwdlVxZxfXPfFZir3Prt751rv/MGIERh7Gxt/ievMKyWkfT2BXIeq0+IoDGsWPRP/nFODuPVlzxmGd1eHsUmpVaHoQCYeA/liGqdRGHkyMJw==;31:1/N8KpqdF7rDQofbzm/s0wQCstCE5Lo5VsiQQAdh7v1lKWHYA0Ecw05AeglYqFmzfYnAHqsf00Vo+u/DqA6cj6yOxs09QeQcOfx2PN2TbqUU34iOVvPdqX9pFFJL52fXH5WtgpGE5D7qi+vP2ZvSk8Z8PVHx2M7ls5eGuVQfNn3n3Qs3kMpYIA/REpyQZP7XrzqmUbMdwtBqV4SmLL526u+WZ4GVLua6V0502YQ+x1w=
 X-MS-TrafficTypeDiagnostic: CY4PR07MB2997:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;20:5J1DL720F618xZKMZ26SHBqVJQLJ5d0hv9Y41zbubLporGU80mOd3v9il4tE6z0Nc0GT7k9AVwP410+R9SFlyI5QTKoqjvCHefur94brYyzIkwV2IHvIDQwQp755ALp4gDgRW0//3S1LbBYil2+7qANucFjmqyV2Esey6vkiz9aIrG8zQ01UC0Ldn6ERXwRucjssV/oMeqBVs2A1WNQppYJnYmk4110F5+yjnCyUkLRlHNczDm8DsSuSwVPBhigT16u0d0mUpapMJmqCqnC/f/0bSVzPbBI3BHLqYHtqEtH0oruGNvLlvJRxOMluhqIshvGyDoXVpF2+SYJW/yq4kMAV5gIVDmrVE3NuhKe1xYdjZJGBNcSIgoc8mifdiobUAnDv178Dkb0oQh+9ca/b1XkUvsHvxA9ReZuYA/FKcIlC7zMSWOs6sWe2FVowmm1nmG29kLEMgq9WY3SRdUb11bFtIA4n7hvsUGgegushwFkw7ErdimgXQsAsVjWS/G5z+MvenXKQeeB3hfYsp+WBivuRISvehqkyKe7TdL90+mZmOOeP+/h6a9bRuxn74hPmKMiLPUPW/pK8a78+tNaQdnQ8PYI0E6mn39EAYZKKfWU=
-X-Microsoft-Antispam-PRVS: <CY4PR07MB299791CA56BCE76DCC8B7A198AA10@CY4PR07MB2997.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(277106579953875)(17755550239193);
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;20:/3gyAYgx0qRdfsiIiTKBDHx8ThYd1ulo13ECHx1h0KChPO6YIr/FpUpDqfuadsIFb5jGSbmRFa3e9o0SskBvfcjRt7Wbua3IusGKcgxtXSvEYgQ5DaUzSw+7xiSQ0/nhLmaZgsIv0g1CMUt1tjRsn/7OjLM6rF3yCxtMSOPZxjb0DDp8Z+hHYW3z2RxVr2/+08z7dXUvoYCPFVhkd9A+wHW0kQj4BTou5oiUqshFJlOn8RkoGOMnhsqZVSmPB4Dhk4tUJhwlu/eDW24dIUGIIrvBMvxW5A2Eu4eqtgY86/7x/Gk+ixc0LM/Hk+podBUugVLAZQdpHjRManOlnR+r60ZykJpQ/Nizt17eZFZqcUiAKV8jXShr06pYQ2N1uYgPmst1CdhkDVWT5jAtpU3jswUBS1xkYby0x09wm+il3jJL6kIkE1eem7S5tizScwM5Xt3WVv3PaWv9EDVfYqzrDyxrnVWf3CAoLGNT+2d0cUX3VAoMHv3Lkq2rV38JInM2cyMjshR56GV76B2OQdlQOfrXlwzbf/XkjZifIdzKD6EIfx+vbQAJo+YGFeNsrH20j7PrwZ3M2DplZPFNcXPYXJhSCTSdVf9mZVC33EH5HcA=;4:UiWwZ54aL0jwuDuB17pQ42PwInPuONC/YDwpzMEzBtygP1MO1ijwyfXZ/mtFRMZWO1Y0D9P6PLJl3SOO9oePxhz3DPaC0K/Rm7XUp5zVWGXBrJBk+n3BQOtTIKeBkkq+OBc4Jg4yKWmwes6NBQHfk/slCAB/UTL5VEq0XzGkdeDwPgAUTjlhGsfool/Ua1vGnhIySK8nF+ut6ecsJTlEjx1RrIxpjuPJrDM5Qag+k+KvLHNsXyyHu9IU7RBdXJWg/R5iACqlNWhPxmyWjl3EUQ==
+X-Microsoft-Antispam-PRVS: <CY4PR07MB2997FAB692615F47E5C654AF8AA10@CY4PR07MB2997.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:CY4PR07MB2997;BCL:0;PCL:0;RULEID:;SRVR:CY4PR07MB2997;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;4:YbN6+YcY8e7H8Xji+vHJqcLF23nms/C3JUk0imiNv1aGz+RlHeoAQG05Gml+3l8nB6NMHbFzPZcN8AS9a30CcXsVj2nbn15JUqnnceXrMzNehPRlgfn6NT/D1kpa14XJCBSKrgm4/yMVM0q6l7s/VIq+XhZ7qJep04ghCXtGBWGfH9qqY3SbnEFFVeEx9nTD5P0pOZaBXqq1alPnO6/zhz2aqRNOxNOCmJFZemKRdfRI4dKman3blmpZ9M/RO2EzwzPHcqTPwQPxElwsj9eQXf4CeVU4svW4oWk9O7U5rs1JHZCqaTvk99M4n0n7yaB2VfSgmOpNQ8Ar4gMVNGA4Fn5VvIBuOkhCxXnbI0ejryY=
 X-Forefront-PRVS: 06274D1C43
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(39380400002)(346002)(366004)(39850400004)(189003)(199004)(3846002)(6116002)(1076002)(105586002)(81156014)(81166006)(8676002)(48376002)(50466002)(53416004)(5660300001)(52116002)(97736004)(51416003)(6506007)(8936002)(59450400001)(76176011)(386003)(69596002)(2906002)(6486002)(6512007)(72206003)(39060400002)(6666003)(47776003)(316002)(7736002)(16586007)(106356001)(486005)(486005)(476003)(107886003)(446003)(305945005)(53936002)(11346002)(2616005)(66066001)(16526019)(956004)(478600001)(68736007)(36756003)(50226002)(26005)(4326008)(42882007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB2997;H:localhost.localdomain.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR07MB2997;23:YYbiuxCqBAYSuN3z++l8TJk1rDgC8HUCc+e4uWGG8?=
- =?us-ascii?Q?jBohDtxKHPJHXvgh+vK34nnqbPwH6qTrD0GONJmZFylXbL7KmyQQ014NaiWA?=
- =?us-ascii?Q?gJXGN9PmOk2DbTp2jMOIxqPfpftsmoMO7ntGPBHAXmRroghHwNKI2TLR5Hjv?=
- =?us-ascii?Q?tQQsdCNwZFjOgG4bwJ25acHTWVqm2mpkYN3lVeFiCQc6pBAW9wpINkwFtrfs?=
- =?us-ascii?Q?fpzk9JaWD+Gc6A7idoncg4jsEXt5sUvYnY1dDRU+haripMWqSPdFMVWGj8m0?=
- =?us-ascii?Q?Nf3/fKKvPHVdxsktp3+avrsr031dyBQxfzna7zhlr621im2nt04ZwwiAMoxR?=
- =?us-ascii?Q?7ASfjYrc939wReBzsGexWM7ku3w/axIKVlLHbKGwQrgErL8UME9ahncEqPod?=
- =?us-ascii?Q?Tdo1sFJzcR52c///LNfI2xTv+5Om7VAo/MQDjx9hIXbn8vTyh7/I5BCKETkb?=
- =?us-ascii?Q?0E/aRuN7DxMqPMzV97BeWVq0QmB/FXfHqBQ05zDf9hXEK9KSLlMVicJNbrkX?=
- =?us-ascii?Q?/R6/bl9bk3Y1ME9IWbWee6MRVRVsdTFVmIOHW3eFrhWBwXsKE2KtxD0uxFp5?=
- =?us-ascii?Q?oDM0vGG02zHQbe394WaI0KSguzuTffN7po7+BIF3XHcS/LwwfY5TEI7ZUBqm?=
- =?us-ascii?Q?E+MsP3xGI8gRkxOU7MpoRq0DJh9rGu7tc2+KSgjVKHAYmlpttyubKwBvAplY?=
- =?us-ascii?Q?QvwcDZFK3Ni2dGhmhsC6fXXAgQXcCI4fkJ8jD+C6firG4tPN6q3kmIZbeLlV?=
- =?us-ascii?Q?xnDgrDlOc4piRKPlJlvHxiBXFo29mw0sby6c03ceLWCDLH9TzEBdbJuuCjbT?=
- =?us-ascii?Q?NtfJVUDVq/Ijl3KZekduNkzrIJLys5pMpYJWXc72dZSz9J3cSS4m/oMemsRV?=
- =?us-ascii?Q?8CYJwIaERhxiHR1dtxTIwJXrHmSUOp8GhK3AMyb9MX+mo3ybEtOjdZ4lSx1g?=
- =?us-ascii?Q?I/d1ojmSVraViUfOx16utNyHpfUBj6JF6O70Rtc4n3atz0O/byZXq+efJcIB?=
- =?us-ascii?Q?SQRShLofflpWSvT/3nQ8D3dDYiBkhunQdFuRgnl6dAX8elB8RrZmDXSpoF+J?=
- =?us-ascii?Q?O/47bBt84zMYAhYwSB6v0+j6Tm7bv/QGsLCp9+LOKNTC9hjFpyctxWi9gotI?=
- =?us-ascii?Q?/ENjcG0dkgEiQphzna3gNoK5I3ENrkA4MDFc5STFZdApipjLkflwO6an3o+0?=
- =?us-ascii?Q?TEtOUxvxtyMRGsRw53Ur3K4UgFqZL9+sz/P6vxinQtVNbQrxkvTXBDH+GvkP?=
- =?us-ascii?Q?k9hsYaUh+Q8UxS/eSzhkPN1Q/WlnkVCS4JDTLR9fmdUWJtp5mo+B6SMgndO5?=
- =?us-ascii?Q?UcmzBOIm6D/ZM6QCzX2JxjhFZUfwJ5Shfa1taDTA1sm?=
-X-Microsoft-Antispam-Message-Info: wBNkVIpasoks387CgTAyfl83tLNAvoLYO1WfGGMAjVSGvDgYcbhbs9IDrukRcFeHhPQzYDuFAP7WQRKG9Y3a7bMs0WwzwQhyVGSkpDuAMsAAXKHS7G8sMbUf3NAmvkKakuZ3XeM7bcvlBxr1XeCfQxJi1J8NoeGXddBS4FJJ7p+BUbRzGso0ED75o2l0sEzo
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;6:jIwbeOEPBCk/NFyqDIRQi95t+rY+HICPQAsZyYXuQTr11/SUee6YmnXM8v7TNyuw2Abbt2mkdswaMm7XDiKFuXQRCiqkKpaUHlCkb+0drv42+OOPBAJ/OobMNxdiiyRABxWrl/LHRolvnUQ7qjpFgiUyRFk6Z7oER7bwqO4Hq9Fk2PVP48Rz+Xzw2vroYXnhcvf4VYWvdVhKzytSuKaJjTmfhO59aC3rOUR8y+c7e61NNEIyO6gczn+44Hngs6RQLkqyz2ADCJtjF8MbH3fbuw4aTU6Mv3Jmrqn4dYPRZgT9tkZlIWQG4RPub2bHajl3jArD3lvG59UKqKbD0J0nkE9gLoBR/H08bzlIB3OsBrjeDz+pCN1IRhjZR0xucpwlCBn/6m1KNb+kYCyXQbmMrjOo8BaSf1EBiS4GVF+1/zlO5ybM0xgQtDHIMziWWMm7j4CZcbV4RsRQACBcb8TcnA==;5:UdAHxKsSSy/IE0axu8AN6hkrzZX15V+xqmsQQiEu+0QLMhKmoO/NDr1l1woD9N2hWqY2wtXWzbYiBofzilBA6gHS9I2SFU06t6hDGXgg4EmHqzc4LcctsuSau0xbdIVf2ClkqDIJDTSVLGl99GF+HOxWWXOBsj5t6xQ9UeO3UWI=;24:EKsNKEEEBsaLc5A+JixiJgB7TRDXwR5JgmMs/ZSYayBGwMZTqDvx88OjSA+htRJUM8ITlvg91Bwo/D8ra+LFcWDYTUcQoLiezvLPNJUrzAM=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(39380400002)(346002)(366004)(39850400004)(189003)(199004)(3846002)(6116002)(1076002)(105586002)(81156014)(81166006)(8676002)(48376002)(50466002)(53416004)(5660300001)(52116002)(97736004)(51416003)(6506007)(8936002)(76176011)(386003)(69596002)(2906002)(6486002)(6512007)(72206003)(39060400002)(6666003)(47776003)(316002)(7736002)(16586007)(106356001)(486005)(486005)(476003)(107886003)(446003)(305945005)(53936002)(11346002)(2616005)(66066001)(16526019)(15650500001)(956004)(478600001)(68736007)(36756003)(50226002)(26005)(4326008)(42882007)(25786009)(227083002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB2997;H:localhost.localdomain.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR07MB2997;23:5xofPDRQob2NKAt1BcV3jHctUV7IZtY85CDwrSgmI?=
+ =?us-ascii?Q?i0MC1eX3PgBzuIPokkYxu3pMzgHzYx/vlP1kiX1xVjtkk0pH/mrM+zL10Flf?=
+ =?us-ascii?Q?jAGBf3pFgGd7XsFpsQmzzBrUIMxCJ6Dgn7ANHz8TETtXJOKUdfJuu28KVgJQ?=
+ =?us-ascii?Q?pmBtDda5qZAZlLjxUdo9C2p5B1JodjFJeR0VHEt//zqcYgPsZE8UI2ZuHmKn?=
+ =?us-ascii?Q?bUbBhPh7POsGq9fTVD6F4Uzt5U3dr0LunKhGKecsGsZ0CLVNjLi+exVkSIJ+?=
+ =?us-ascii?Q?cjKU1vb9aRpAdr+7iPF4hTNe5ErlcGTmBmYfwU2C8HX249FbaWjjf6uHXI2l?=
+ =?us-ascii?Q?X7H3OClPHUVTJRxLZ/MSoWiycU6uoms2ktY9yLOb+4y1IcfEOhv1oHNunBxG?=
+ =?us-ascii?Q?ia3XqiR0TMWsbUfORWJ6j5bXw7kkMmRWP8rI5zVcJDQEK6Lfs7UE0LnX6Edl?=
+ =?us-ascii?Q?1N2kTw2qtNvWYWFOojGCTU5i6itpx7bEEY64Nc5mhoMdgT0VYG7VN+gjosIq?=
+ =?us-ascii?Q?ewbDJQhfvgABC4HkqHO9zDb2CeGQHZo3LPGqmJ4QsU38i/AIi0eSiBfIKP21?=
+ =?us-ascii?Q?VmC5CPyboIlRWW/fy+BhztC3Dzj+1k2AZxQQvaHnuOwgCwm90DA6p2FLAfuA?=
+ =?us-ascii?Q?y+ev0u4+n3OST8Y6F0mT7VA4rtl0UZgzt26+XWM6qxWsll/ZDZ3gUSOySUNj?=
+ =?us-ascii?Q?aJeW7hJggT0WWwfqM1wEg8O5JuNihWmQ/8Nc5kYtSIjhnSM7Bi8OyL1RswnE?=
+ =?us-ascii?Q?oFHcuKN7Z7zBy63DQDIHWhmcdc57vHDXmeRnk3W83GXzwn0tSG2nUFllHoIw?=
+ =?us-ascii?Q?KS+5ghdpHapZl/0Sa4PZpVwa9p5ZrVwkVHqwBijNHY/qUDPtqkMc1E2FFMYS?=
+ =?us-ascii?Q?evTOw2+ZyZLfXCSucHOorz2xZIg4yqUx1Zox3T1teIVbqdCbA7Ywge/tw8qu?=
+ =?us-ascii?Q?nWqp5+GwkdWkhU4SZgy7uFVR8EZ33GhcowSA0ako2EG9OX4MEB1o2d1mEExV?=
+ =?us-ascii?Q?XEAiYsrzao2/E1wwqoiawGVV7fz+DE1oJS/XYg5SCeMvqTBSYGSmausRoddt?=
+ =?us-ascii?Q?gOgsFGv14nAcpc5dfJAR3XvPX7j6G680bzlxB3pv8O8jJ4RbzrtzphSR77cP?=
+ =?us-ascii?Q?viRXUqEx79utebzyg/pwqL1lQQhmVBIRW4uIUi4BSWNCVTP4n5Bus9v4bimt?=
+ =?us-ascii?Q?dbT9DMerej6MMtM5cnyRFDtGEm/nSyzdq+5babxzhIxhqr/jw3XwaTUpbP2N?=
+ =?us-ascii?Q?AWJblTIJXLW8X9mhr7aMe0YZwAAJ5FjmEu27jajSFOl3eLPTlPvrQ5ApDciS?=
+ =?us-ascii?Q?Sf0qvZodS2r4A64L2AlVKDn5AJHxtGFzPei3CWRzb/5kbAunUt7LD89Fdl/x?=
+ =?us-ascii?Q?in2QA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: ixIr9v7qeZOhir9dwqSV4eHcKUwyAJzxNeHaF0gyejs67SanvzbfOFugy6YvFW7K7r4EI4hDZcGfnnt/9kMr2n7dyZqfYy65zwEPF9E/G48fj5dtpPPiV1ciOgaIo+hAg41sEov8u/ym3GirzvDEjIDiJgPOlys4SSBw+owjB6IxPnDETbPzBkO/niN50zSb
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;6:+4Mh1fOQ1hBvabOJEm5WUvgQXKNxmGxOF51HsH/e5J7901FpppPUCYupQxAlmN1SowhfeTaUA38wdvoZ0iXCi2zzE5OV3vj2huTJShJBNXmeMMRJjQzh48+czDMGYxQqgsNcaTewv1mJx3k+/nzs3DN12uV8TzBWnsy88wt/BsFNsElfVw/OtnradKcfIX+YJs5Hw9Lx7ZjP9Ud+IsMzciH/gOpHcURfomNGcs9yzw+YYKgNHMji4irZtBW+27JK5XynR7JxCd3uNFn2cKX/vPlzPssgdR33x1OyLR0HV4aAkW3mPdPK1tqbDZJFzuCtZy7Jb9cYiV6y8upi6WeF+V8OW3zeTqLK5VGH8PHodevFbZjZpLERCKFMeXDeYVTIjE4vAVkJ4Ukbvw4LPB6NDaN1oghguqdjgcX6qZXRtyzjfX3TBX8U00MD4+zVWDaIRd84rSAiqQURxuXyZ3MPSw==;5:bo1JbHp+jwdUxf73oLCnc97+VEx+RIdzZj5SY802jXbCkYOj+3hL7dGxnM4bLzziMfq1B9LPC5dQ1JN06FY5chWcZz/OAsLlAw1xtpc7SLLUanHyVgpl0okVerRG963URDj1vmblYjDnfnDsvSc3eHkY6/Hxpi4H1wKQAFzUjtM=;24:n4IhUVq1nmeucWIm0Mz5QFUjQRN5d2kTdw7I1iBndkofg+B7krWzuc9Nd9DaZ1Jgvpc/AFMU66QFuT5iCziKV1iEAqKCASdOx1n91f3AvR4=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;7:dYxng7MoOi38hrYxQukDDYGo/1WSzS9n9ig30XOs0feKlINK44W/3NZTeGrAjJsEGs6mzmr2iE857fQYLKwbjbJqtOTWne/esz8WeMN6biz9Q9eA4DaQDgZ5DwCqKYZlIoT8gIO+MEJIy6hyo3QBCpEO1c0ZWl/0j4jEd2jlYVBIGPhqtB+DzQhkpGgjBiFeg2zqrEn8LKms/RXUNJu/Rl5PrxvzlejInNfswbM3vOTLiF98Ak6nxZb69RdpCWRs
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;7:Y/3yNJtWpsIirCqm88lSbXEpt5KRr92JklvlHZr3B4bC2rnBckcVvioHuOST2WD/P0mkQPXQw8FLqNnivTJacrxHb5vSLAO9Vzk8gCmVy/Q3kCv6s+qdvO0gBP4H/uFF1YvduulsEC690mAqtnSwA/63D2dSK0swSNwjMZJSzvovaZGW+VsocZwGVOYvSNvxhtfi6RwCmU+LZoIoTgOpCUaC7uPHeB6z58+S371k43gj6IXrgdJS/J6T2lL63NLG
 X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2018 12:00:36.0198 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffa88d47-0306-4569-6591-08d59635d94b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2018 12:00:28.0822 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3bbef28-86c5-4c31-369a-08d59635d490
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR07MB2997
@@ -80,183 +80,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
 
-The ndo_set_rx_mode() is called from atomic context which causes
-messages response timeouts while VF to PF communication via MSIx.
-To get rid of that we're copy passed mc list, parse flags and queue
-handling of kernel request to ordered workqueue.
+The kernel calls ndo_set_rx_mode() callback supplying it will all necessary
+info, such as device state flags, multicast mac addresses list and so on.
+Since we have only 128 bits to communicate with PF we need to initiate
+several requests to PF with small/short operation each based on input data.
+
+So this commit implements following PF messages codes along with new
+data structures for them:
+NIC_MBOX_MSG_RESET_XCAST to flush all filters configured for this
+                          particular network interface (VF)
+NIC_MBOX_MSG_ADD_MCAST   to add new MAC address to DMAC filter registers
+                          for this particular network interface (VF)
+NIC_MBOX_MSG_SET_XCAST   to apply filtering configuration to filter control
+                          register
 
 Signed-off-by: Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
 ---
- drivers/net/ethernet/cavium/thunder/nicvf_main.c | 110 ++++++++++++++++++++++-
- 1 file changed, 109 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cavium/thunder/nic.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-index 7d9c5ffbd041..c8a8faaf17e9 100644
---- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
-@@ -21,6 +21,7 @@
- #include <linux/bpf_trace.h>
- #include <linux/filter.h>
- #include <linux/net_tstamp.h>
-+#include <linux/workqueue.h>
+diff --git a/drivers/net/ethernet/cavium/thunder/nic.h b/drivers/net/ethernet/cavium/thunder/nic.h
+index 4cacce5d2b16..069289b4f968 100644
+--- a/drivers/net/ethernet/cavium/thunder/nic.h
++++ b/drivers/net/ethernet/cavium/thunder/nic.h
+@@ -403,6 +403,9 @@ struct nicvf {
+ #define	NIC_MBOX_MSG_PTP_CFG		0x19	/* HW packet timestamp */
+ #define	NIC_MBOX_MSG_CFG_DONE		0xF0	/* VF configuration done */
+ #define	NIC_MBOX_MSG_SHUTDOWN		0xF1	/* VF is being shutdown */
++#define	NIC_MBOX_MSG_RESET_XCAST	0xF2    /* Reset DCAM filtering mode */
++#define	NIC_MBOX_MSG_ADD_MCAST		0xF3    /* Add MAC to DCAM filters */
++#define	NIC_MBOX_MSG_SET_XCAST		0xF4    /* Set MCAST/BCAST RX mode */
  
- #include "nic_reg.h"
- #include "nic.h"
-@@ -67,6 +68,9 @@ module_param(cpi_alg, int, S_IRUGO);
- MODULE_PARM_DESC(cpi_alg,
- 		 "PFC algorithm (0=none, 1=VLAN, 2=VLAN16, 3=IP Diffserv)");
- 
-+/* workqueue for handling kernel ndo_set_rx_mode() calls */
-+static struct workqueue_struct *nicvf_rx_mode_wq;
-+
- static inline u8 nicvf_netdev_qidx(struct nicvf *nic, u8 qidx)
- {
- 	if (nic->sqs_mode)
-@@ -1919,6 +1923,100 @@ static int nicvf_ioctl(struct net_device *netdev, struct ifreq *req, int cmd)
- 	}
- }
- 
-+static void nicvf_set_rx_mode_task(struct work_struct *work_arg)
-+{
-+	struct nicvf_work *vf_work = container_of(work_arg, struct nicvf_work,
-+						  work.work);
-+	struct nicvf *nic = container_of(vf_work, struct nicvf, rx_mode_work);
-+	union nic_mbx mbx = {};
-+	struct xcast_addr *xaddr, *next;
-+
-+	if (!vf_work)
-+		return;
-+
-+	/* From the inside of VM code flow we have only 128 bits memory
-+	 * available to send message to host's PF, so send all mc addrs
-+	 * one by one, starting from flush command in case if kernel
-+	 * requests to configure specific MAC filtering
-+	 */
-+
-+	/* flush DMAC filters and reset RX mode */
-+	mbx.xcast.msg = NIC_MBOX_MSG_RESET_XCAST;
-+	nicvf_send_msg_to_pf(nic, &mbx);
-+
-+	if (vf_work->mode & BGX_XCAST_MCAST_FILTER) {
-+		/* once enabling filtering, we need to signal to PF to add
-+		 * its' own LMAC to the filter to accept packets for it.
-+		 */
-+		mbx.xcast.msg = NIC_MBOX_MSG_ADD_MCAST;
-+		mbx.xcast.data.mac = 0;
-+		nicvf_send_msg_to_pf(nic, &mbx);
-+	}
-+
-+	/* check if we have any specific MACs to be added to PF DMAC filter */
-+	if (vf_work->mc) {
-+		/* now go through kernel list of MACs and add them one by one */
-+		list_for_each_entry_safe(xaddr, next,
-+					 &vf_work->mc->list, list) {
-+			mbx.xcast.msg = NIC_MBOX_MSG_ADD_MCAST;
-+			mbx.xcast.data.mac = xaddr->addr;
-+			nicvf_send_msg_to_pf(nic, &mbx);
-+
-+			/* after receiving ACK from PF release memory */
-+			list_del(&xaddr->list);
-+			kfree(xaddr);
-+			vf_work->mc->count--;
-+		}
-+		kfree(vf_work->mc);
-+	}
-+
-+	/* and finally set rx mode for PF accordingly */
-+	mbx.xcast.msg = NIC_MBOX_MSG_SET_XCAST;
-+	mbx.xcast.data.mode = vf_work->mode;
-+
-+	nicvf_send_msg_to_pf(nic, &mbx);
-+}
-+
-+static void nicvf_set_rx_mode(struct net_device *netdev)
-+{
-+	struct nicvf *nic = netdev_priv(netdev);
-+	struct netdev_hw_addr *ha;
-+	struct xcast_addr_list *mc_list = NULL;
-+	u8 mode = 0;
-+
-+	if (netdev->flags & IFF_PROMISC) {
-+		mode = BGX_XCAST_BCAST_ACCEPT | BGX_XCAST_MCAST_ACCEPT;
-+	} else {
-+		if (netdev->flags & IFF_BROADCAST)
-+			mode |= BGX_XCAST_BCAST_ACCEPT;
-+
-+		if (netdev->flags & IFF_ALLMULTI) {
-+			mode |= BGX_XCAST_MCAST_ACCEPT;
-+		} else if (netdev->flags & IFF_MULTICAST) {
-+			mode |= BGX_XCAST_MCAST_FILTER;
-+			/* here we need to copy mc addrs */
-+			if (netdev_mc_count(netdev)) {
-+				struct xcast_addr *xaddr;
-+
-+				mc_list = kmalloc(sizeof(*mc_list), GFP_ATOMIC);
-+				INIT_LIST_HEAD(&mc_list->list);
-+				netdev_hw_addr_list_for_each(ha, &netdev->mc) {
-+					xaddr = kmalloc(sizeof(*xaddr),
-+							GFP_ATOMIC);
-+					xaddr->addr =
-+						ether_addr_to_u64(ha->addr);
-+					list_add_tail(&xaddr->list,
-+						      &mc_list->list);
-+					mc_list->count++;
-+				}
-+			}
-+		}
-+	}
-+	nic->rx_mode_work.mc = mc_list;
-+	nic->rx_mode_work.mode = mode;
-+	queue_delayed_work(nicvf_rx_mode_wq, &nic->rx_mode_work.work, 2 * HZ);
-+}
-+
- static const struct net_device_ops nicvf_netdev_ops = {
- 	.ndo_open		= nicvf_open,
- 	.ndo_stop		= nicvf_stop,
-@@ -1931,6 +2029,7 @@ static const struct net_device_ops nicvf_netdev_ops = {
- 	.ndo_set_features       = nicvf_set_features,
- 	.ndo_bpf		= nicvf_xdp,
- 	.ndo_do_ioctl           = nicvf_ioctl,
-+	.ndo_set_rx_mode        = nicvf_set_rx_mode,
+ struct nic_cfg_msg {
+ 	u8    msg;
+@@ -556,6 +559,14 @@ struct set_ptp {
+ 	bool  enable;
  };
  
- static int nicvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
-@@ -2071,6 +2170,8 @@ static int nicvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	INIT_WORK(&nic->reset_task, nicvf_reset_task);
- 
-+	INIT_DELAYED_WORK(&nic->rx_mode_work.work, nicvf_set_rx_mode_task);
++struct xcast {
++	u8    msg;
++	union {
++		u8    mode;
++		u64   mac;
++	} data;
++};
 +
- 	err = register_netdev(netdev);
- 	if (err) {
- 		dev_err(dev, "Failed to register netdevice\n");
-@@ -2109,6 +2210,8 @@ static void nicvf_remove(struct pci_dev *pdev)
- 	nic = netdev_priv(netdev);
- 	pnetdev = nic->pnicvf->netdev;
+ /* 128 bit shared memory between PF and each VF */
+ union nic_mbx {
+ 	struct { u8 msg; }	msg;
+@@ -576,6 +587,7 @@ union nic_mbx {
+ 	struct reset_stat_cfg	reset_stat;
+ 	struct pfc		pfc;
+ 	struct set_ptp		ptp;
++	struct xcast            xcast;
+ };
  
-+	cancel_delayed_work_sync(&nic->rx_mode_work.work);
-+
- 	/* Check if this Qset is assigned to different VF.
- 	 * If yes, clean primary and all secondary Qsets.
- 	 */
-@@ -2140,12 +2243,17 @@ static struct pci_driver nicvf_driver = {
- static int __init nicvf_init_module(void)
- {
- 	pr_info("%s, ver %s\n", DRV_NAME, DRV_VERSION);
--
-+	nicvf_rx_mode_wq = alloc_ordered_workqueue("nicvf_generic",
-+						   WQ_MEM_RECLAIM);
- 	return pci_register_driver(&nicvf_driver);
- }
- 
- static void __exit nicvf_cleanup_module(void)
- {
-+	if (nicvf_rx_mode_wq) {
-+		destroy_workqueue(nicvf_rx_mode_wq);
-+		nicvf_rx_mode_wq = NULL;
-+	}
- 	pci_unregister_driver(&nicvf_driver);
- }
- 
+ #define NIC_NODE_ID_MASK	0x03
 -- 
 2.14.3
