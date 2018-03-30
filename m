@@ -1,100 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752292AbeC3PTE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:19:04 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43792 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751216AbeC3PTC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:19:02 -0400
-X-Google-Smtp-Source: AIpwx4/NmWf/JrIJIieBmPAGxMG7EZMmc2T+Wy9JwJUYAFRraAau2hNDA0c6Ae55fTIiMi2lMTewSQ==
-Date: Fri, 30 Mar 2018 07:55:40 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: davidwang <davidwang@zhaoxin.com>
-Cc: jdelvare@suse.com, tglx@linutronix.de, mingo@redhat.com,
-        rafel.j.wysocki@intel.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brucechang@via-alliance.com,
-        cooperyan@zhaoxin.com, qiyuanwang@zhaoxin.com, benjaminpan@viatech.com,
-        lukelin@viacpu.com, timguo@zhaoxin.com
-Subject: Re: [v3] hwmon, via-cputem: support new centaur CPUs
-Message-ID: <20180330145540.GA13899@roeck-us.net>
-References: <1522371888-30013-1-git-send-email-davidwang@zhaoxin.com>
+        id S1751714AbeC3PWd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:22:33 -0400
+Received: from muru.com ([72.249.23.125]:34514 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751180AbeC3PWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 11:22:31 -0400
+Date: Fri, 30 Mar 2018 08:22:27 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180330152227.GU5700@atomide.com>
+References: <20180329014507.GM5700@atomide.com>
+ <20180329133613.khldv72w3zj63vsk@earth.universe>
+ <20180329135904.GN5700@atomide.com>
+ <20180329154600.qhels5fqzzg364gj@earth.universe>
+ <20180329163716.GA20743@amd>
+ <20180329164113.GR5700@atomide.com>
+ <20180329184007.GA27688@amd>
+ <20180329215612.GS5700@atomide.com>
+ <20180330103744.GA17404@amd>
+ <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522371888-30013-1-git-send-email-davidwang@zhaoxin.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 09:04:48AM +0800, davidwang wrote:
-> New centaur CPUs(Familiy == 7) also support this cpu temperature sensor.
+* Merlijn Wajer <merlijn@wizzup.org> [180330 13:09]:
+> On 30/03/18 12:37, Pavel Machek wrote:
+> > On Thu 2018-03-29 14:56:13, Tony Lindgren wrote:
+> >> * Pavel Machek <pavel@ucw.cz> [180329 18:41]:
+> >>> Thanks. I got call working including outgoing audio: in capture
+> >>> settings, right->mic 1, Mic1 + Mic2 in alsamixer -> 100%. But I had
+> >>> the other phone muted, so I don't yet know if such call would be of
+> >>> usable quality.
+> >>
+> >> Great, good to hear that :)
+> > 
+> > I also got ofonod to work, with rather crazy hacks. But I now have
+> > incoming/outgoing calls with GUI :-).
 > 
-> Change from v2 to v3:
-> *replace "goto" with "if...else.." according to suggestion from Guenter
->  
-> Change from v1 to v2:
-> *fixed the wrong if condition in patch v1.
-> 	
-> Signed-off-by: David Wang <davidwang@zhaoxin.com>
+> Would you mind sharing those hacks - I would like to play around with
+> ofonod as well. Maybe I can help with a way forward.
 
-Applied to hwmon-next.
+Yeah that would be fun to play with :)
 
-Thanks,
-Guenter
+Below is a patch that works better at least for ModemManager,
+does anybody have ideas what the unused three ports might be?
 
-> ---
->  drivers/hwmon/via-cputemp.c | 31 ++++++++++++++++++-------------
->  1 file changed, 18 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/hwmon/via-cputemp.c b/drivers/hwmon/via-cputemp.c
-> index 07a0cb0..0e81f28 100644
-> --- a/drivers/hwmon/via-cputemp.c
-> +++ b/drivers/hwmon/via-cputemp.c
-> @@ -136,20 +136,24 @@ static int via_cputemp_probe(struct platform_device *pdev)
->  	data->id = pdev->id;
->  	data->name = "via_cputemp";
->  
-> -	switch (c->x86_model) {
-> -	case 0xA:
-> -		/* C7 A */
-> -	case 0xD:
-> -		/* C7 D */
-> -		data->msr_temp = 0x1169;
-> -		data->msr_vid = 0x198;
-> -		break;
-> -	case 0xF:
-> -		/* Nano */
-> +	if (c->x86 == 7) {
->  		data->msr_temp = 0x1423;
-> -		break;
-> -	default:
-> -		return -ENODEV;
-> +	} else {
-> +		switch (c->x86_model) {
-> +		case 0xA:
-> +			/* C7 A */
-> +		case 0xD:
-> +			/* C7 D */
-> +			data->msr_temp = 0x1169;
-> +			data->msr_vid = 0x198;
-> +			break;
-> +		case 0xF:
-> +			/* Nano */
-> +			data->msr_temp = 0x1423;
-> +			break;
-> +		default:
-> +			return -ENODEV;
-> +		}
->  	}
->  
->  	/* test if we can access the TEMPERATURE MSR */
-> @@ -283,6 +287,7 @@ static int via_cputemp_down_prep(unsigned int cpu)
->  	{ X86_VENDOR_CENTAUR, 6, 0xa, }, /* C7 A */
->  	{ X86_VENDOR_CENTAUR, 6, 0xd, }, /* C7 D */
->  	{ X86_VENDOR_CENTAUR, 6, 0xf, }, /* Nano */
-> +	{ X86_VENDOR_CENTAUR, 7, X86_MODEL_ANY, },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(x86cpu, cputemp_ids);
+I wonder if ofono can use /dev/ttyUSB0 CQDM port?
+
+Regards,
+
+Tony
+
+8< -------------------------
+>From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Sun, 19 Nov 2017 19:55:56 -0800
+Subject: [PATCH] USB: qcaux: Add droid 4 mdm6600 modem
+
+We have five USB ports on mdm6600 modem and does not have the same
+layout as layout as Gobi 1K/2K/etc devices listed in qcserial.c
+
+So we should not be adding them to qcserial.c but instead use
+qcaux.c or option.c as noted by Dan Williams <dcbw@redhat.com>.
+
+The ttyUSB ports detected by ModemManager are:
+
+ttyUSB0 CQDM-capable
+ttyUSB1 no response
+ttyUSB2 no response
+ttyUSB3 no response
+ttyUSB4 AT-capable
+
+Note that it takes a while for ModemManager to start while it's
+detecting the ports, so we may want to eventually limit the ports.
+
+So far no luck finding out what the unused three ports are, maybe
+there is NMEA there if somebody knows how to enable it.
+
+Signed-off-by: Tony Lingren <tony@atomide.com>
+---
+ drivers/usb/serial/qcaux.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/serial/qcaux.c b/drivers/usb/serial/qcaux.c
+--- a/drivers/usb/serial/qcaux.c
++++ b/drivers/usb/serial/qcaux.c
+@@ -66,6 +66,7 @@ static const struct usb_device_id id_table[] = {
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(UTSTARCOM_VENDOR_ID, 0xff, 0xfe, 0xff) },  /* WMC */
+ 	{ USB_VENDOR_AND_INTERFACE_INFO(UTSTARCOM_VENDOR_ID, 0xff, 0xff, 0xff) },  /* DIAG */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x1fac, 0x0151, 0xff, 0xff, 0xff) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x22b8, 0x2a70, 0xff, 0xff, 0xff) },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(usb, id_table);
+-- 
+2.16.3
