@@ -1,57 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeC3Qy5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 12:54:57 -0400
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:43432 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751339AbeC3Qyy (ORCPT
+        id S1752077AbeC3Qzt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 12:55:49 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41209 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750927AbeC3Qzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 12:54:54 -0400
-X-Google-Smtp-Source: AIpwx4+yv/I9xVw0WFg7VFmodyHOO4Z9p8Yc4VNtNzaxQ/RRhzxI+PhYkiSY/K6p1oGqCTMaGxUpL0Y/UOYUv2p8CJs=
+        Fri, 30 Mar 2018 12:55:47 -0400
+X-Google-Smtp-Source: AIpwx4/7cg4hplg7j7Uk2VFmeyFByOkJioCCQ8JAcf04S9OxV8BQMqj1CM3p6XDUfCVmFXR3TG3JLA==
+Date: Fri, 30 Mar 2018 09:55:44 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] crypto/ecc: Actually remove stack VLA usage
+Message-ID: <20180330165544.GA13206@beast>
 MIME-Version: 1.0
-In-Reply-To: <94eb2c05b2d8af3dfa0568a3f964@google.com>
-References: <000000000000878b6a05688805c5@google.com> <94eb2c05b2d8af3dfa0568a3f964@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 30 Mar 2018 18:54:33 +0200
-Message-ID: <CACT4Y+Yj+yAQ3gAAsJfHt5cHsxtC_opKWa4qJEUF=3bMtEGDCg@mail.gmail.com>
-Subject: Re: INFO: task hung in stop_sync_thread (2)
-To: syzbot <syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com>
-Cc: coreteam@netfilter.org, David Miller <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>, horms@verge.net.au,
-        Julian Anastasov <ja@ssi.bg>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        LKML <linux-kernel@vger.kernel.org>, lvs-devel@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        syzkaller-bugs@googlegroups.com, wensong@linux-vs.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 6:46 PM, syzbot
-<syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com> wrote:
-> syzbot has found reproducer for the following crash on net-next commit
+On the quest to remove all VLAs from the kernel[1], this avoids VLAs
+by just using the maximum allocation size (4 bytes) for stack arrays.
+All the VLAs in ecc were either 3 or 4 bytes (or a multiple), so just
+make it 4 bytes all the time. Initialization routines are adjusted to
+check that ndigits does not end up larger than the arrays.
 
-/\/\/\/\/\/\
+This includes a removal of the earlier attempt at this fix from
+commit a963834b4742 ("crypto/ecc: Remove stack VLA usage")
 
-now syzbot can test fixes
+[1] https://lkml.org/lkml/2018/3/7/621
 
-> 18845557fd6fc1998f2d0d8c30467f86db587529 (Thu Mar 29 20:24:06 2018 +0000)
-> Merge tag 'wireless-drivers-next-for-davem-2018-03-29' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=5fe074c01b2032ce9618
->
-> So far this crash happened 2 times on net-next.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5531070485233664
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=5632385408303104
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=6520566391504896
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=-37309782588693906
-> compiler: gcc (GCC) 7.1.1 20170620
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+v2:
+- Squash revert (herbert)
+---
+ crypto/ecc.c  | 66 +++++++++++++++++++++++++----------------------------------
+ crypto/ecc.h  |  4 +++-
+ crypto/ecdh.c |  4 ++--
+ 3 files changed, 33 insertions(+), 41 deletions(-)
+
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index 9c066b5ac12d..815541309a95 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -515,7 +515,7 @@ static void vli_mmod_fast_256(u64 *result, const u64 *product,
+ static bool vli_mmod_fast(u64 *result, u64 *product,
+ 			  const u64 *curve_prime, unsigned int ndigits)
+ {
+-	u64 tmp[2 * ndigits];
++	u64 tmp[2 * ECC_MAX_DIGITS];
+ 
+ 	switch (ndigits) {
+ 	case 3:
+@@ -536,7 +536,7 @@ static bool vli_mmod_fast(u64 *result, u64 *product,
+ static void vli_mod_mult_fast(u64 *result, const u64 *left, const u64 *right,
+ 			      const u64 *curve_prime, unsigned int ndigits)
+ {
+-	u64 product[2 * ndigits];
++	u64 product[2 * ECC_MAX_DIGITS];
+ 
+ 	vli_mult(product, left, right, ndigits);
+ 	vli_mmod_fast(result, product, curve_prime, ndigits);
+@@ -546,7 +546,7 @@ static void vli_mod_mult_fast(u64 *result, const u64 *left, const u64 *right,
+ static void vli_mod_square_fast(u64 *result, const u64 *left,
+ 				const u64 *curve_prime, unsigned int ndigits)
+ {
+-	u64 product[2 * ndigits];
++	u64 product[2 * ECC_MAX_DIGITS];
+ 
+ 	vli_square(product, left, ndigits);
+ 	vli_mmod_fast(result, product, curve_prime, ndigits);
+@@ -560,8 +560,8 @@ static void vli_mod_square_fast(u64 *result, const u64 *left,
+ static void vli_mod_inv(u64 *result, const u64 *input, const u64 *mod,
+ 			unsigned int ndigits)
+ {
+-	u64 a[ndigits], b[ndigits];
+-	u64 u[ndigits], v[ndigits];
++	u64 a[ECC_MAX_DIGITS], b[ECC_MAX_DIGITS];
++	u64 u[ECC_MAX_DIGITS], v[ECC_MAX_DIGITS];
+ 	u64 carry;
+ 	int cmp_result;
+ 
+@@ -649,8 +649,8 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
+ 				      u64 *curve_prime, unsigned int ndigits)
+ {
+ 	/* t1 = x, t2 = y, t3 = z */
+-	u64 t4[ndigits];
+-	u64 t5[ndigits];
++	u64 t4[ECC_MAX_DIGITS];
++	u64 t5[ECC_MAX_DIGITS];
+ 
+ 	if (vli_is_zero(z1, ndigits))
+ 		return;
+@@ -711,7 +711,7 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
+ static void apply_z(u64 *x1, u64 *y1, u64 *z, u64 *curve_prime,
+ 		    unsigned int ndigits)
+ {
+-	u64 t1[ndigits];
++	u64 t1[ECC_MAX_DIGITS];
+ 
+ 	vli_mod_square_fast(t1, z, curve_prime, ndigits);    /* z^2 */
+ 	vli_mod_mult_fast(x1, x1, t1, curve_prime, ndigits); /* x1 * z^2 */
+@@ -724,7 +724,7 @@ static void xycz_initial_double(u64 *x1, u64 *y1, u64 *x2, u64 *y2,
+ 				u64 *p_initial_z, u64 *curve_prime,
+ 				unsigned int ndigits)
+ {
+-	u64 z[ndigits];
++	u64 z[ECC_MAX_DIGITS];
+ 
+ 	vli_set(x2, x1, ndigits);
+ 	vli_set(y2, y1, ndigits);
+@@ -750,7 +750,7 @@ static void xycz_add(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
+ 		     unsigned int ndigits)
+ {
+ 	/* t1 = X1, t2 = Y1, t3 = X2, t4 = Y2 */
+-	u64 t5[ndigits];
++	u64 t5[ECC_MAX_DIGITS];
+ 
+ 	/* t5 = x2 - x1 */
+ 	vli_mod_sub(t5, x2, x1, curve_prime, ndigits);
+@@ -791,9 +791,9 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
+ 		       unsigned int ndigits)
+ {
+ 	/* t1 = X1, t2 = Y1, t3 = X2, t4 = Y2 */
+-	u64 t5[ndigits];
+-	u64 t6[ndigits];
+-	u64 t7[ndigits];
++	u64 t5[ECC_MAX_DIGITS];
++	u64 t6[ECC_MAX_DIGITS];
++	u64 t7[ECC_MAX_DIGITS];
+ 
+ 	/* t5 = x2 - x1 */
+ 	vli_mod_sub(t5, x2, x1, curve_prime, ndigits);
+@@ -846,9 +846,9 @@ static void ecc_point_mult(struct ecc_point *result,
+ 			   unsigned int ndigits)
+ {
+ 	/* R0 and R1 */
+-	u64 rx[2][ndigits];
+-	u64 ry[2][ndigits];
+-	u64 z[ndigits];
++	u64 rx[2][ECC_MAX_DIGITS];
++	u64 ry[2][ECC_MAX_DIGITS];
++	u64 z[ECC_MAX_DIGITS];
+ 	int i, nb;
+ 	int num_bits = vli_num_bits(scalar, ndigits);
+ 
+@@ -943,13 +943,13 @@ int ecc_is_key_valid(unsigned int curve_id, unsigned int ndigits,
+ int ecc_gen_privkey(unsigned int curve_id, unsigned int ndigits, u64 *privkey)
+ {
+ 	const struct ecc_curve *curve = ecc_get_curve(curve_id);
+-	u64 priv[ndigits];
++	u64 priv[ECC_MAX_DIGITS];
+ 	unsigned int nbytes = ndigits << ECC_DIGITS_TO_BYTES_SHIFT;
+ 	unsigned int nbits = vli_num_bits(curve->n, ndigits);
+ 	int err;
+ 
+ 	/* Check that N is included in Table 1 of FIPS 186-4, section 6.1.1 */
+-	if (nbits < 160)
++	if (nbits < 160 || ndigits > ARRAY_SIZE(priv))
+ 		return -EINVAL;
+ 
+ 	/*
+@@ -988,10 +988,10 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
+ {
+ 	int ret = 0;
+ 	struct ecc_point *pk;
+-	u64 priv[ndigits];
++	u64 priv[ECC_MAX_DIGITS];
+ 	const struct ecc_curve *curve = ecc_get_curve(curve_id);
+ 
+-	if (!private_key || !curve) {
++	if (!private_key || !curve || ndigits > ARRAY_SIZE(priv)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1025,30 +1025,25 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ {
+ 	int ret = 0;
+ 	struct ecc_point *product, *pk;
+-	u64 *priv, *rand_z;
++	u64 priv[ECC_MAX_DIGITS];
++	u64 rand_z[ECC_MAX_DIGITS];
++	unsigned int nbytes;
+ 	const struct ecc_curve *curve = ecc_get_curve(curve_id);
+ 
+-	if (!private_key || !public_key || !curve) {
++	if (!private_key || !public_key || !curve ||
++	    ndigits > ARRAY_SIZE(priv) || ndigits > ARRAY_SIZE(rand_z)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+-	priv = kmalloc_array(ndigits, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	nbytes = ndigits << ECC_DIGITS_TO_BYTES_SHIFT;
+ 
+-	rand_z = kmalloc_array(ndigits, sizeof(*rand_z), GFP_KERNEL);
+-	if (!rand_z) {
+-		ret = -ENOMEM;
+-		goto kfree_out;
+-	}
++	get_random_bytes(rand_z, nbytes);
+ 
+ 	pk = ecc_alloc_point(ndigits);
+ 	if (!pk) {
+ 		ret = -ENOMEM;
+-		goto kfree_out;
++		goto out;
+ 	}
+ 
+ 	product = ecc_alloc_point(ndigits);
+@@ -1057,8 +1052,6 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ 		goto err_alloc_product;
+ 	}
+ 
+-	get_random_bytes(rand_z, ndigits << ECC_DIGITS_TO_BYTES_SHIFT);
+-
+ 	ecc_swap_digits(public_key, pk->x, ndigits);
+ 	ecc_swap_digits(&public_key[ndigits], pk->y, ndigits);
+ 	ecc_swap_digits(private_key, priv, ndigits);
+@@ -1073,9 +1066,6 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ 	ecc_free_point(product);
+ err_alloc_product:
+ 	ecc_free_point(pk);
+-kfree_out:
+-	kzfree(priv);
+-	kzfree(rand_z);
+ out:
+ 	return ret;
+ }
+diff --git a/crypto/ecc.h b/crypto/ecc.h
+index e4fd4492c765..f75a86baa3bd 100644
+--- a/crypto/ecc.h
++++ b/crypto/ecc.h
+@@ -26,7 +26,9 @@
+ #ifndef _CRYPTO_ECC_H
+ #define _CRYPTO_ECC_H
+ 
+-#define ECC_MAX_DIGITS	4 /* 256 */
++#define ECC_CURVE_NIST_P192_DIGITS  3
++#define ECC_CURVE_NIST_P256_DIGITS  4
++#define ECC_MAX_DIGITS              ECC_CURVE_NIST_P256_DIGITS
+ 
+ #define ECC_DIGITS_TO_BYTES_SHIFT 3
+ 
+diff --git a/crypto/ecdh.c b/crypto/ecdh.c
+index 3aca0933ec44..3f91ef13c8c6 100644
+--- a/crypto/ecdh.c
++++ b/crypto/ecdh.c
+@@ -30,8 +30,8 @@ static inline struct ecdh_ctx *ecdh_get_ctx(struct crypto_kpp *tfm)
+ static unsigned int ecdh_supported_curve(unsigned int curve_id)
+ {
+ 	switch (curve_id) {
+-	case ECC_CURVE_NIST_P192: return 3;
+-	case ECC_CURVE_NIST_P256: return 4;
++	case ECC_CURVE_NIST_P192: return ECC_CURVE_NIST_P192_DIGITS;
++	case ECC_CURVE_NIST_P256: return ECC_CURVE_NIST_P256_DIGITS;
+ 	default: return 0;
+ 	}
+ }
+-- 
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
