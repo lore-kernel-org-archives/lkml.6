@@ -1,324 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeC3Cdj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 22:33:39 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34458 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751865AbeC3Cdg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 22:33:36 -0400
-X-Google-Smtp-Source: AIpwx4+5/9R/5Vze/jcm2AFr3PgJXz1lrCTi/biF42UR2Xo17ZD12KcXxdc/Kd/mIal3WxCDfWsiAw==
-Date: Fri, 30 Mar 2018 02:33:33 +0000
-From: Sargun Dhillon <sargun@sargun.me>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
-        igor.stoppa@huawei.com, jmorris@namei.org, sds@tycho.nsa.gov,
-        paul@paul-moore.com, plautrba@redhat.com
-Subject: Re: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
- after boot time
-Message-ID: <20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
-References: <cover.1522357211.git.sargun@sargun.me>
- <5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
- <3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
+        id S1752634AbeC3Cqh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 22:46:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44390 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751215AbeC3Cqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 22:46:35 -0400
+Subject: Re: [RFC PATCH V2 8/8] vhost: event suppression for packed ring
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1522035533-11786-1-git-send-email-jasowang@redhat.com>
+ <1522035533-11786-9-git-send-email-jasowang@redhat.com>
+ <20180330020518.tja3lxkfz7mdwasj@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <013655c0-6950-8937-7489-95f9b0583642@redhat.com>
+Date: Fri, 30 Mar 2018 10:46:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180330020518.tja3lxkfz7mdwasj@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 02:37:10PM -0700, Casey Schaufler wrote:
-> On 3/29/2018 2:14 PM, Sargun Dhillon wrote:
-> > This patch introduces a mechanism to add mutable hooks and immutable
-> > hooks to the callback chain. It adds an intermediary item to the
-> > chain which separates mutable and immutable hooks. Immutable hooks
-> > are then marked as read-only, as well as the hook heads. This does
-> > not preclude some hooks being able to be mutated (removed).
-> >
-> > It also wraps the hook unloading, and execution with an SRCU. One
-> > SRCU is used across all hooks, as the SRCU struct can be memory
-> > intensive, and hook execution time in general should be relatively
-> > short.
-> >
-> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> > ---
-> >  include/linux/lsm_hooks.h  |  23 ++---
-> >  security/Kconfig           |   2 +-
-> >  security/apparmor/lsm.c    |   2 +-
-> >  security/commoncap.c       |   2 +-
-> >  security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
-> >  security/selinux/hooks.c   |   5 +-
-> >  security/smack/smack_lsm.c |   3 +-
-> >  security/tomoyo/tomoyo.c   |   3 +-
-> >  security/yama/yama_lsm.c   |   2 +-
-> >  9 files changed, 196 insertions(+), 56 deletions(-)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index 09bc60fb35f1..689e5e72fb38 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
-> >  extern char *lsm_names;
-> >  
-> >  extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> > -				char *lsm);
-> > +				char *lsm, bool is_mutable);
-> >  
-> > -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
-> > +#define __lsm_ro_after_init	__ro_after_init
-> > +/* Currently required to handle SELinux runtime hook disable. */
-> > +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
-> > +#define __lsm_mutable_after_init
-> >  /*
-> >   * Assuring the safety of deleting a security module is up to
-> >   * the security module involved. This may entail ordering the
-> > @@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> >   * disabling their module is a good idea needs to be at least as
-> >   * careful as the SELinux team.
-> >   */
-> > -static inline void security_delete_hooks(struct security_hook_list *hooks,
-> > -						int count)
-> > -{
-> > -	int i;
-> > -
-> > -	for (i = 0; i < count; i++)
-> > -		hlist_del_rcu(&hooks[i].list);
-> > -}
-> > -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
-> > -
-> > -/* Currently required to handle SELinux runtime hook disable. */
-> > -#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
-> > -#define __lsm_ro_after_init
-> > +extern void security_delete_hooks(struct security_hook_list *hooks, int count);
-> >  #else
-> > -#define __lsm_ro_after_init	__ro_after_init
-> > +#define __lsm_mutable_after_init __ro_after_init
-> >  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
-> >  
-> >  extern int __init security_module_enable(const char *module);
-> > diff --git a/security/Kconfig b/security/Kconfig
-> > index c4302067a3ad..a3b8b1142e6f 100644
-> > --- a/security/Kconfig
-> > +++ b/security/Kconfig
-> > @@ -32,7 +32,7 @@ config SECURITY
-> >  	  If you are unsure how to answer this question, answer N.
-> >  
-> >  config SECURITY_WRITABLE_HOOKS
-> > -	depends on SECURITY
-> > +	depends on SECURITY && SRCU
-> >  	bool
-> >  	default n
-> >  
-> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> > index 9a65eeaf7dfa..d6cca8169df0 100644
-> > --- a/security/apparmor/lsm.c
-> > +++ b/security/apparmor/lsm.c
-> > @@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
-> >  		goto buffers_out;
-> >  	}
-> >  	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
-> > -				"apparmor");
-> > +				"apparmor", false);
-> >  
-> >  	/* Report that AppArmor successfully initialized */
-> >  	apparmor_initialized = 1;
-> > diff --git a/security/commoncap.c b/security/commoncap.c
-> > index 48620c93d697..fe4b0d9d44ce 100644
-> > --- a/security/commoncap.c
-> > +++ b/security/commoncap.c
-> > @@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
-> >  void __init capability_add_hooks(void)
-> >  {
-> >  	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
-> > -				"capability");
-> > +				"capability", false);
-> >  }
-> >  
-> >  #endif /* CONFIG_SECURITY */
-> > diff --git a/security/security.c b/security/security.c
-> > index 3cafff61b049..2ddb64864e3e 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -29,6 +29,11 @@
-> >  #include <linux/backing-dev.h>
-> >  #include <linux/string.h>
-> >  #include <net/flow.h>
-> > +#include <linux/srcu.h>
-> > +#include <linux/mutex.h>
-> > +
-> > +#define SECURITY_HOOK_COUNT \
-> > +	(sizeof(security_hook_heads) / sizeof(struct hlist_head))
-> >  
-> >  #define MAX_LSM_EVM_XATTR	2
-> >  
-> > @@ -36,7 +41,10 @@
-> >  #define SECURITY_NAME_MAX	10
-> >  
-> >  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
-> > +EXPORT_SYMBOL_GPL(security_hook_heads);
-> > +
-> >  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
-> > +static DEFINE_MUTEX(security_hook_mutex);
-> >  
-> >  char *lsm_names;
-> >  /* Boot-time LSM user choice */
-> > @@ -53,6 +61,103 @@ static void __init do_security_initcalls(void)
-> >  	}
-> >  }
-> >  
-> > +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
-> > +DEFINE_STATIC_SRCU(security_hook_srcu);
-> > +static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
-> > +#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
-> 
-> The HAS_FUNC() macro will work, but it's awkward outside of the
-> call_..._hook() macros. I think you should document how to use it
-> properly somewhere in here. There are enough cases where the
-> call_..._hook() macros aren't used that someone could have trouble
-> figuring out how to use it.
-> 
-> 
-What about something like:
 
- security/security.c | 58 ++++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 42 insertions(+), 16 deletions(-)
 
-diff --git a/security/security.c b/security/security.c
-index 2ddb64864e3e..bc14125cfc78 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -62,9 +62,37 @@ static void __init do_security_initcalls(void)
- }
- 
- #ifdef CONFIG_SECURITY_WRITABLE_HOOKS
--DEFINE_STATIC_SRCU(security_hook_srcu);
-+/*
-+ * With writable hooks, we setup a structure like this:
-+ * +------+   +-----------+   +-----------+   +-----------+   +--------------+
-+ * |      |   |           |   |           |   |           |   |              |
-+ * | HEAD +---> Immutable +---> Immutable +---> Null hook +---> Mutable Hook |
-+ * |      |   |  Hook 1   |   |  Hook 2   |   |           |   |              |
-+ * +------+   +-----------+   +-----------+   +-----------+   +--------------+
-+ *                  |               |                                |
-+ *                  v               v                                v
-+ *              Callback        Callback                         Callback
-+ *
-+ * The hooks before to null hook are marked only after kernel initialization.
-+ * The null hook, as well as the hooks succeeding it are not marked read only,
-+ * therefore allowing them be (un)loaded after initialization time.
-+ *
-+ * Since the null hook doesn't have a callback, we need to check if a hook
-+ * is the null hook prior to invoking it.
-+ */
- static struct security_hook_list	null_hooks[SECURITY_HOOK_COUNT];
--#define HAS_FUNC(SHL, FUNC)	(SHL->hook.FUNC)
-+DEFINE_STATIC_SRCU(security_hook_srcu);
-+
-+static inline bool is_null_hook(struct security_hook_list *shl)
-+{
-+	union {
-+		void *cb_ptr;
-+		union security_list_options slo;
-+	} hook_options;
-+
-+	hook_options.slo = shl->hook;
-+	return !hook_options.cb_ptr;
-+}
- 
- static inline int lock_lsm(void)
- {
-@@ -88,14 +116,9 @@ static inline void unlock_lsm(int idx)
- static void security_add_hook(struct security_hook_list *hook, bool is_mutable)
- {
- 	struct security_hook_list *mutable_hook;
--	union {
--		void *cb_ptr;
--		union security_list_options slo;
--	} hook_options;
- 
- 	hlist_for_each_entry(mutable_hook, hook->head, list) {
--		hook_options.slo = mutable_hook->hook;
--		if (hook_options.cb_ptr)
-+		if (!is_null_hook(mutable_hook))
- 			continue;
- 
- 		if (is_mutable)
-@@ -139,7 +162,10 @@ void security_delete_hooks(struct security_hook_list *hooks, int count)
- EXPORT_SYMBOL_GPL(security_delete_hooks);
- 
- #else
--#define HAS_FUNC(SHL, FUNC)	true
-+static inline bool is_null_hook(struct security_hook_list *shl)
-+{
-+	return false;
-+}
- 
- static inline int lock_lsm(void)
- {
-@@ -309,7 +335,7 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
- 									\
- 		srcu_idx = lock_lsm();					\
- 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) \
--			if (HAS_FUNC(P, FUNC))				\
-+			if (!is_null_hook(P))			\
- 				P->hook.FUNC(__VA_ARGS__);		\
- 		unlock_lsm(srcu_idx);					\
- 	} while (0)
-@@ -322,7 +348,7 @@ EXPORT_SYMBOL(unregister_lsm_notifier);
- 		struct security_hook_list *P;			\
- 								\
- 		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
--			if (HAS_FUNC(P, FUNC)) {		\
-+			if (!is_null_hook(P)) {			\
- 				RC = P->hook.FUNC(__VA_ARGS__);	\
- 				if (RC != 0)			\
- 					break;			\
-@@ -434,7 +460,7 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- 	 */
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.vm_enough_memory, list) {
--		if (!HAS_FUNC(hp, vm_enough_memory))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.vm_enough_memory(mm, pages);
- 		if (rc <= 0) {
-@@ -928,7 +954,7 @@ int security_inode_getsecurity(struct inode *inode, const char *name,
- 	 */
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecurity, list) {
--		if (!HAS_FUNC(hp, inode_getsecurity))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.inode_getsecurity(inode, name, buffer, alloc);
- 		if (rc != -EOPNOTSUPP)
-@@ -953,7 +979,7 @@ int security_inode_setsecurity(struct inode *inode, const char *name,
- 	 */
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.inode_setsecurity, list) {
--		if (!HAS_FUNC(hp, inode_setsecurity))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.inode_setsecurity(inode, name, value, size,
- 						flags);
-@@ -1264,7 +1290,7 @@ int security_task_prctl(int option, unsigned long arg2,
- 
- 	srcu_idx = lock_lsm();
- 	hlist_for_each_entry(hp, &security_hook_heads.task_prctl, list) {
--		if (!HAS_FUNC(hp, task_prctl))
-+		if (is_null_hook(hp))
- 			continue;
- 		thisrc = hp->hook.task_prctl(option, arg2, arg3, arg4, arg5);
- 		if (thisrc != -ENOSYS) {
-@@ -1774,7 +1800,7 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 	hlist_for_each_entry(hp,
- 				&security_hook_heads.xfrm_state_pol_flow_match,
- 				list) {
--		if (!HAS_FUNC(hp, xfrm_state_pol_flow_match))
-+		if (is_null_hook(hp))
- 			continue;
- 		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, fl);
- 		break;
+On 2018年03月30日 10:05, Tiwei Bie wrote:
+> On Mon, Mar 26, 2018 at 11:38:53AM +0800, Jason Wang wrote:
+>> This patch introduces basic support for event suppression aka driver
+>> and device area. Compile tested only.
+>>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+> [...]
+>> +
+>> +static bool vhost_notify_packed(struct vhost_dev *dev,
+>> +				struct vhost_virtqueue *vq)
+>> +{
+>> +	__virtio16 event_off_wrap, event_flags;
+>> +	__u16 old, new;
+>> +	bool v, wrap;
+>> +	int off;
+>> +
+>> +	/* Flush out used descriptors updates. This is paired
+>> +	 * with the barrier that the Guest executes when enabling
+>> +	 * interrupts.
+>> +	 */
+>> +	smp_mb();
+>> +
+>> +	if (vhost_get_avail(vq, event_flags,
+>> +			   &vq->driver_event->desc_event_flags) < 0) {
+>> +		vq_err(vq, "Failed to get driver desc_event_flags");
+>> +		return true;
+>> +	}
+>> +
+>> +	if (!(event_flags & cpu_to_vhost16(vq, RING_EVENT_FLAGS_DESC)))
+>> +		return event_flags ==
+>> +		       cpu_to_vhost16(vq, RING_EVENT_FLAGS_ENABLE);
+> Maybe it would be better to not use '&' here. Because these flags
+> are not defined as bits which can be ORed or ANDed. Instead, they
+> are defined as values:
+>
+> 0x0  enable
+> 0x1  disable
+> 0x2  desc
+> 0x3  reserved
+
+Yes the code seems tricky. Let me fix it in next version.
+
+>
+>> +
+>> +	/* Read desc event flags before event_off and event_wrap */
+>> +	smp_rmb();
+>> +
+>> +	if (vhost_get_avail(vq, event_off_wrap,
+>> +			    &vq->driver_event->desc_event_off_warp) < 0) {
+>> +		vq_err(vq, "Failed to get driver desc_event_off/wrap");
+>> +		return true;
+>> +	}
+>> +
+>> +	off = vhost16_to_cpu(vq, event_off_wrap);
+>> +
+>> +	wrap = off & 0x1;
+>> +	off >>= 1;
+> Based on the below definitions in spec, wrap counter is
+> the most significant bit.
+>
+> struct pvirtq_event_suppress {
+> 	le16 {
+> 		desc_event_off : 15; /* Descriptor Ring Change Event Offset */
+> 		desc_event_wrap : 1; /* Descriptor Ring Change Event Wrap Counter */
+> 	} desc; /* If desc_event_flags set to RING_EVENT_FLAGS_DESC */
+> 	le16 {
+> 		desc_event_flags : 2, /* Descriptor Ring Change Event Flags */
+> 		reserved : 14; /* Reserved, set to 0 */
+> 	} flags;
+> };
+
+Will fix this in next version.
+
+>
+>> +
+>> +
+>> +	old = vq->signalled_used;
+>> +	v = vq->signalled_used_valid;
+>> +	new = vq->signalled_used = vq->last_used_idx;
+>> +	vq->signalled_used_valid = true;
+>> +
+>> +	if (unlikely(!v))
+>> +		return true;
+>> +
+>> +	return vhost_vring_packed_need_event(vq, new, old, off) &&
+>> +	       wrap == vq->used_wrap_counter;
+>> +}
+>> +
+>> +static bool vhost_notify(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+>> +{
+>> +	if (vhost_has_feature(vq, VIRTIO_F_RING_PACKED))
+>> +		return vhost_notify_packed(dev, vq);
+>> +	else
+>> +		return vhost_notify_split(dev, vq);
+>> +}
+>> +
+>>   /* This actually signals the guest, using eventfd. */
+>>   void vhost_signal(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+>>   {
+>> @@ -2789,7 +2911,17 @@ static bool vhost_enable_notify_packed(struct vhost_dev *dev,
+>>   	__virtio16 flags;
+>>   	int ret;
+>>   
+>> -	/* FIXME: disable notification through device area */
+>> +	if (!(vq->used_flags & VRING_USED_F_NO_NOTIFY))
+>> +		return false;
+>> +	vq->used_flags &= ~VRING_USED_F_NO_NOTIFY;
+>> +
+>> +	flags = cpu_to_vhost16(vq, RING_EVENT_FLAGS_ENABLE);
+>> +	ret = vhost_update_device_flags(vq, flags);
+>> +	if (ret) {
+>> +		vq_err(vq, "Failed to enable notification at %p: %d\n",
+>> +		       &vq->device_event->desc_event_flags, ret);
+>> +		return false;
+>> +	}
+>>   
+>>   	/* They could have slipped one in as we were doing that: make
+>>   	 * sure it's written, then check again. */
+>> @@ -2855,7 +2987,18 @@ EXPORT_SYMBOL_GPL(vhost_enable_notify);
+>>   static void vhost_disable_notify_packed(struct vhost_dev *dev,
+>>   					struct vhost_virtqueue *vq)
+>>   {
+>> -	/* FIXME: disable notification through device area */
+>> +	__virtio16 flags;
+>> +	int r;
+>> +
+>> +	if (vq->used_flags & VRING_USED_F_NO_NOTIFY)
+>> +		return;
+>> +	vq->used_flags |= VRING_USED_F_NO_NOTIFY;
+>> +
+>> +	flags = cpu_to_vhost16(vq, RING_EVENT_FLAGS_DISABLE);
+>> +	r = vhost_update_device_flags(vq, flags);
+>> +	if (r)
+>> +		vq_err(vq, "Failed to enable notification at %p: %d\n",
+>> +		       &vq->device_event->desc_event_flags, r);
+>>   }
+>>   
+>>   static void vhost_disable_notify_split(struct vhost_dev *dev,
+>> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+>> index 8a9df4f..02d7a36 100644
+>> --- a/drivers/vhost/vhost.h
+>> +++ b/drivers/vhost/vhost.h
+>> @@ -96,8 +96,14 @@ struct vhost_virtqueue {
+>>   		struct vring_desc __user *desc;
+>>   		struct vring_desc_packed __user *desc_packed;
+> Do you think it'd be better to name the desc type as
+> struct vring_packed_desc?
+
+Ok. Will do.
+
+> And it will be consistent
+> with other names, like:
+>
+> struct vring_packed;
+> struct vring_packed_desc_event;
+>
+>>   	};
+>> -	struct vring_avail __user *avail;
+>> -	struct vring_used __user *used;
+>> +	union {
+>> +		struct vring_avail __user *avail;
+>> +		struct vring_packed_desc_event __user *driver_event;
+>> +	};
+>> +	union {
+>> +		struct vring_used __user *used;
+>> +		struct vring_packed_desc_event __user *device_event;
+>> +	};
+>>   	const struct vhost_umem_node *meta_iotlb[VHOST_NUM_ADDRS];
+>>   	struct file *kick;
+>>   	struct eventfd_ctx *call_ctx;
+>> diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+>> index e297580..7cdbf06 100644
+>> --- a/include/uapi/linux/virtio_ring.h
+>> +++ b/include/uapi/linux/virtio_ring.h
+>> @@ -75,6 +75,25 @@ struct vring_desc_packed {
+>>   	__virtio16 flags;
+>>   };
+>>   
+>> +/* Enable events */
+>> +#define RING_EVENT_FLAGS_ENABLE 0x0
+>> +/* Disable events */
+>> +#define RING_EVENT_FLAGS_DISABLE 0x1
+>> +/*
+>> + * Enable events for a specific descriptor
+>> + * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
+>> + * Only valid if VIRTIO_F_RING_EVENT_IDX has been negotiated.
+>> + */
+>> +#define RING_EVENT_FLAGS_DESC 0x2
+>> +/* The value 0x3 is reserved */
+>> +
+>> +struct vring_packed_desc_event {
+>> +	/* Descriptor Ring Change Event Offset and Wrap Counter */
+>> +	__virtio16 desc_event_off_warp;
+>> +	/* Descriptor Ring Change Event Flags */
+>> +	__virtio16 desc_event_flags;
+> Do you think it'd be better to remove the prefix (desc_event_) for
+> the fields. And it will be consistent with other definitions, e.g.:
+>
+> struct vring_packed_desc {
+>          /* Buffer Address. */
+>          __virtio64 addr;
+>          /* Buffer Length. */
+>          __virtio32 len;
+>          /* Buffer ID. */
+>          __virtio16 id;
+>          /* The flags depending on descriptor type. */
+>          __virtio16 flags;
+> };
+
+Yes. Let me do it in next version.
+
+Thanks for the review!
+
+>> +};
+>> +
+>>   /* Virtio ring descriptors: 16 bytes.  These can chain together via "next". */
+>>   struct vring_desc {
+>>   	/* Address (guest-physical). */
+>> -- 
+>> 2.7.4
+>>
