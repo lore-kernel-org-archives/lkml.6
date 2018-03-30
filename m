@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeC3RTD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:19:03 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58824 "EHLO
+        id S1752370AbeC3RSn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:18:43 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58760 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752484AbeC3RSs (ORCPT
+        with ESMTP id S1752286AbeC3RSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:18:48 -0400
+        Fri, 30 Mar 2018 13:18:38 -0400
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Sebastian Reichel <sre@kernel.org>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -17,9 +17,9 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv3 8/8] ARM: dts: omap4-droid4: Add LCD panel rotation property
-Date: Fri, 30 Mar 2018 19:18:22 +0200
-Message-Id: <20180330171822.25896-9-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv3 4/8] drm/omap: make omap_framebuffer_get_next_connector static
+Date: Fri, 30 Mar 2018 19:18:18 +0200
+Message-Id: <20180330171822.25896-5-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
 References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
@@ -27,25 +27,100 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a LCD panel rotation hint to the Droid 4. If the
-display is rotated this way the keyboard can be used properly.
+omap_framebuffer_get_next_connector() is only required within omap_fb,
+so let's make it static. The function had to be moved before the first
+(and only) user.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- arch/arm/boot/dts/omap4-droid4-xt894.dts | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/omapdrm/omap_fb.c | 54 +++++++++++++++++++--------------------
+ drivers/gpu/drm/omapdrm/omap_fb.h |  2 --
+ 2 files changed, 27 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-index bdf73cbcec3a..3ed090a9db6c 100644
---- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-+++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-@@ -214,6 +214,7 @@
+diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c b/drivers/gpu/drm/omapdrm/omap_fb.c
+index b65212c9a423..3f0b1f976691 100644
+--- a/drivers/gpu/drm/omapdrm/omap_fb.c
++++ b/drivers/gpu/drm/omapdrm/omap_fb.c
+@@ -95,6 +95,33 @@ static void omap_framebuffer_destroy(struct drm_framebuffer *fb)
+ 	kfree(omap_fb);
+ }
  
- 		width-mm = <50>;
- 		height-mm = <89>;
-+		rotation = <90>;
- 		backlight = <&lcd_backlight>;
++/* iterate thru all the connectors, returning ones that are attached
++ * to the same fb..
++ */
++static struct drm_connector *omap_framebuffer_get_next_connector(
++		struct drm_framebuffer *fb, struct drm_connector *from)
++{
++	struct drm_device *dev = fb->dev;
++	struct list_head *connector_list = &dev->mode_config.connector_list;
++	struct drm_connector *connector = from;
++
++	if (!from)
++		return list_first_entry_or_null(connector_list, typeof(*from),
++						head);
++
++	list_for_each_entry_from(connector, connector_list, head) {
++		if (connector != from) {
++			struct drm_encoder *encoder = connector->encoder;
++			struct drm_crtc *crtc = encoder ? encoder->crtc : NULL;
++			if (crtc && crtc->primary->fb == fb)
++				return connector;
++
++		}
++	}
++
++	return NULL;
++}
++
+ static int omap_framebuffer_dirty(struct drm_framebuffer *fb,
+ 				  struct drm_file *file_priv,
+ 				  unsigned flags, unsigned color,
+@@ -329,33 +356,6 @@ void omap_framebuffer_unpin(struct drm_framebuffer *fb)
+ 	mutex_unlock(&omap_fb->lock);
+ }
  
- 		panel-timing {
+-/* iterate thru all the connectors, returning ones that are attached
+- * to the same fb..
+- */
+-struct drm_connector *omap_framebuffer_get_next_connector(
+-		struct drm_framebuffer *fb, struct drm_connector *from)
+-{
+-	struct drm_device *dev = fb->dev;
+-	struct list_head *connector_list = &dev->mode_config.connector_list;
+-	struct drm_connector *connector = from;
+-
+-	if (!from)
+-		return list_first_entry_or_null(connector_list, typeof(*from),
+-						head);
+-
+-	list_for_each_entry_from(connector, connector_list, head) {
+-		if (connector != from) {
+-			struct drm_encoder *encoder = connector->encoder;
+-			struct drm_crtc *crtc = encoder ? encoder->crtc : NULL;
+-			if (crtc && crtc->primary->fb == fb)
+-				return connector;
+-
+-		}
+-	}
+-
+-	return NULL;
+-}
+-
+ #ifdef CONFIG_DEBUG_FS
+ void omap_framebuffer_describe(struct drm_framebuffer *fb, struct seq_file *m)
+ {
+diff --git a/drivers/gpu/drm/omapdrm/omap_fb.h b/drivers/gpu/drm/omapdrm/omap_fb.h
+index 94ad5f9e4404..c20cb4bc714d 100644
+--- a/drivers/gpu/drm/omapdrm/omap_fb.h
++++ b/drivers/gpu/drm/omapdrm/omap_fb.h
+@@ -38,8 +38,6 @@ int omap_framebuffer_pin(struct drm_framebuffer *fb);
+ void omap_framebuffer_unpin(struct drm_framebuffer *fb);
+ void omap_framebuffer_update_scanout(struct drm_framebuffer *fb,
+ 		struct drm_plane_state *state, struct omap_overlay_info *info);
+-struct drm_connector *omap_framebuffer_get_next_connector(
+-		struct drm_framebuffer *fb, struct drm_connector *from);
+ bool omap_framebuffer_supports_rotation(struct drm_framebuffer *fb);
+ void omap_framebuffer_describe(struct drm_framebuffer *fb, struct seq_file *m);
+ 
 -- 
 2.16.2
