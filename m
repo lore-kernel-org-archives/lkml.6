@@ -1,220 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeC3HW6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 03:22:58 -0400
-Received: from smtp57.i.mail.ru ([217.69.128.37]:43862 "EHLO smtp57.i.mail.ru"
+        id S1752431AbeC3HYJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 03:24:09 -0400
+Received: from smtp57.i.mail.ru ([217.69.128.37]:43936 "EHLO smtp57.i.mail.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752370AbeC3HW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 03:22:56 -0400
+        id S1751085AbeC3HW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 03:22:57 -0400
 From: Sergey Suloev <ssuloev@orpaltech.com>
 To: Mark Brown <broonie@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>
 Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Sergey Suloev <ssuloev@orpaltech.com>
-Subject: [PATCH 1/6] spi: sun6i: coding style/readability improvements
-Date: Fri, 30 Mar 2018 10:22:38 +0300
-Message-Id: <20180330072243.19368-2-ssuloev@orpaltech.com>
+Subject: [PATCH 2/6] spi: sun6i: handle chip select polarity flag
+Date: Fri, 30 Mar 2018 10:22:39 +0300
+Message-Id: <20180330072243.19368-3-ssuloev@orpaltech.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180330072243.19368-1-ssuloev@orpaltech.com>
 References: <20180330072243.19368-1-ssuloev@orpaltech.com>
 Authentication-Results: smtp57.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
-X-7FA49CB5: 0D63561A33F958A538E9FD8347209FA6BC0A8B6031D50A009C7BED3C7C76799E725E5C173C3A84C39D7D3120FB43BDE306A40A42B1AF00E11D6A3D1828C120DEC4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917FB9ED6DAE09EA82C4E9ABD469779872F069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-7FA49CB5: 0D63561A33F958A539CCA3AC6E934867BC0A8B6031D50A009606EB66F9EE38A7725E5C173C3A84C39D7D3120FB43BDE33E9F334EFAB29724B17145F0B7815491C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D849176E7C3182A54F3193B3A26EEC0DFD2AE6069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
 X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor changes to fulfill the coding style and
-improve the readability.
+The chip select polarity flag is declared as supported
+but is not handled in the code.
 
 Signed-off-by: Sergey Suloev <ssuloev@orpaltech.com>
 
 ---
- drivers/spi/spi-sun6i.c | 115 +++++++++++++++++++++++++++---------------------
- 1 file changed, 65 insertions(+), 50 deletions(-)
+ drivers/spi/spi-sun6i.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
-index 8533f4e..ff790dc 100644
+index ff790dc..f992a7d 100644
 --- a/drivers/spi/spi-sun6i.c
 +++ b/drivers/spi/spi-sun6i.c
-@@ -88,8 +88,12 @@
- #define SUN6I_TXDATA_REG		0x200
- #define SUN6I_RXDATA_REG		0x300
- 
-+#define SUN6I_SPI_MODE_BITS		(SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST)
-+
-+#define SUN6I_SPI_MAX_SPEED_HZ		100000000
-+#define SUN6I_SPI_MIN_SPEED_HZ		3000
-+
- struct sun6i_spi {
--	struct spi_master	*master;
- 	void __iomem		*base_addr;
- 	struct clk		*hclk;
- 	struct clk		*mclk;
-@@ -189,6 +193,9 @@ static void sun6i_spi_set_cs(struct spi_device *spi, bool enable)
+@@ -193,6 +193,12 @@ static void sun6i_spi_set_cs(struct spi_device *spi, bool enable)
  	else
  		reg &= ~SUN6I_TFR_CTL_CS_LEVEL;
  
-+	/* We want to control the chip select manually */
-+	reg |= SUN6I_TFR_CTL_CS_MANUAL;
-+
- 	sun6i_spi_write(sspi, SUN6I_TFR_CTL_REG, reg);
- }
- 
-@@ -197,6 +204,48 @@ static size_t sun6i_spi_max_transfer_size(struct spi_device *spi)
- 	return SUN6I_MAX_XFER_SIZE - 1;
- }
- 
-+static int sun6i_spi_prepare_message(struct spi_master *master,
-+				     struct spi_message *msg)
-+{
-+	struct spi_device *spi = msg->spi;
-+	struct sun6i_spi *sspi = spi_master_get_devdata(master);
-+	u32 reg;
-+
-+	/*
-+	 * Setup the transfer control register: Chip Select,
-+	 * polarities, etc.
-+	 */
-+	reg = sun6i_spi_read(sspi, SUN6I_TFR_CTL_REG);
-+
-+	if (spi->mode & SPI_CPOL)
-+		reg |= SUN6I_TFR_CTL_CPOL;
++	/* Handle chip select "reverse" polarity */
++	if (spi->mode & SPI_CS_HIGH)
++		reg &= ~SUN6I_TFR_CTL_SPOL;
 +	else
-+		reg &= ~SUN6I_TFR_CTL_CPOL;
++		reg |= SUN6I_TFR_CTL_SPOL;
 +
-+	if (spi->mode & SPI_CPHA)
-+		reg |= SUN6I_TFR_CTL_CPHA;
-+	else
-+		reg &= ~SUN6I_TFR_CTL_CPHA;
-+
-+	if (spi->mode & SPI_LSB_FIRST)
-+		reg |= SUN6I_TFR_CTL_FBS;
-+	else
-+		reg &= ~SUN6I_TFR_CTL_FBS;
-+
-+	/*
-+	 * If it's a TX only transfer, we don't want to fill the RX
-+	 * FIFO with bogus data
-+	 */
-+	if (sspi->rx_buf)
-+		reg &= ~SUN6I_TFR_CTL_DHB;
-+	else
-+		reg |= SUN6I_TFR_CTL_DHB;
-+
-+	sun6i_spi_write(sspi, SUN6I_TFR_CTL_REG, reg);
-+
-+	return 0;
-+}
-+
- static int sun6i_spi_transfer_one(struct spi_master *master,
- 				  struct spi_device *spi,
- 				  struct spi_transfer *tfr)
-@@ -235,40 +284,6 @@ static int sun6i_spi_transfer_one(struct spi_master *master,
- 			(trig_level << SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_BITS) |
- 			(trig_level << SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_BITS));
- 
--	/*
--	 * Setup the transfer control register: Chip Select,
--	 * polarities, etc.
--	 */
--	reg = sun6i_spi_read(sspi, SUN6I_TFR_CTL_REG);
--
--	if (spi->mode & SPI_CPOL)
--		reg |= SUN6I_TFR_CTL_CPOL;
--	else
--		reg &= ~SUN6I_TFR_CTL_CPOL;
--
--	if (spi->mode & SPI_CPHA)
--		reg |= SUN6I_TFR_CTL_CPHA;
--	else
--		reg &= ~SUN6I_TFR_CTL_CPHA;
--
--	if (spi->mode & SPI_LSB_FIRST)
--		reg |= SUN6I_TFR_CTL_FBS;
--	else
--		reg &= ~SUN6I_TFR_CTL_FBS;
--
--	/*
--	 * If it's a TX only transfer, we don't want to fill the RX
--	 * FIFO with bogus data
--	 */
--	if (sspi->rx_buf)
--		reg &= ~SUN6I_TFR_CTL_DHB;
--	else
--		reg |= SUN6I_TFR_CTL_DHB;
--
--	/* We want to control the chip select manually */
--	reg |= SUN6I_TFR_CTL_CS_MANUAL;
--
--	sun6i_spi_write(sspi, SUN6I_TFR_CTL_REG, reg);
- 
- 	/* Ensure that we have a parent clock fast enough */
- 	mclk_rate = clk_get_rate(sspi->mclk);
-@@ -442,12 +457,24 @@ static int sun6i_spi_probe(struct platform_device *pdev)
- 	struct resource	*res;
- 	int ret = 0, irq;
- 
--	master = spi_alloc_master(&pdev->dev, sizeof(struct sun6i_spi));
-+	master = spi_alloc_master(&pdev->dev, sizeof(*sspi));
- 	if (!master) {
- 		dev_err(&pdev->dev, "Unable to allocate SPI Master\n");
- 		return -ENOMEM;
- 	}
- 
-+	master->max_speed_hz = SUN6I_SPI_MAX_SPEED_HZ;
-+	master->min_speed_hz = SUN6I_SPI_MIN_SPEED_HZ;
-+	master->num_chipselect = 4;
-+	master->mode_bits = SUN6I_SPI_MODE_BITS;
-+	master->bits_per_word_mask = SPI_BPW_MASK(8);
-+	master->set_cs = sun6i_spi_set_cs;
-+	master->prepare_message = sun6i_spi_prepare_message;
-+	master->transfer_one = sun6i_spi_transfer_one;
-+	master->max_transfer_size = sun6i_spi_max_transfer_size;
-+	master->dev.of_node = pdev->dev.of_node;
-+	master->auto_runtime_pm = true;
-+
- 	platform_set_drvdata(pdev, master);
- 	sspi = spi_master_get_devdata(master);
- 
-@@ -466,26 +493,14 @@ static int sun6i_spi_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, irq, sun6i_spi_handler,
--			       0, "sun6i-spi", sspi);
-+			       0, dev_name(&pdev->dev), sspi);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Cannot request IRQ\n");
- 		goto err_free_master;
- 	}
- 
--	sspi->master = master;
- 	sspi->fifo_depth = (unsigned long)of_device_get_match_data(&pdev->dev);
- 
--	master->max_speed_hz = 100 * 1000 * 1000;
--	master->min_speed_hz = 3 * 1000;
--	master->set_cs = sun6i_spi_set_cs;
--	master->transfer_one = sun6i_spi_transfer_one;
--	master->num_chipselect = 4;
--	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST;
--	master->bits_per_word_mask = SPI_BPW_MASK(8);
--	master->dev.of_node = pdev->dev.of_node;
--	master->auto_runtime_pm = true;
--	master->max_transfer_size = sun6i_spi_max_transfer_size;
--
- 	sspi->hclk = devm_clk_get(&pdev->dev, "ahb");
- 	if (IS_ERR(sspi->hclk)) {
- 		dev_err(&pdev->dev, "Unable to acquire AHB clock\n");
-@@ -525,7 +540,7 @@ static int sun6i_spi_probe(struct platform_device *pdev)
- 
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret) {
--		dev_err(&pdev->dev, "cannot register SPI master\n");
-+		dev_err(&pdev->dev, "Couldn't register SPI master\n");
- 		goto err_pm_disable;
- 	}
+ 	/* We want to control the chip select manually */
+ 	reg |= SUN6I_TFR_CTL_CS_MANUAL;
  
 -- 
 2.16.2
