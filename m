@@ -1,31 +1,31 @@
 Return-Path: <hejianet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522397849; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522397823; cv=none;
         d=google.com; s=arc-20160816;
-        b=ErIB9GSrGZ0dYKVH2ilWolI24li7A4yLHCTk4yNiC8Y4ErugE8bwKQbxK5FrXsGKX5
-         LIrYCKR3BV0Vf3xfVgpkvVouyELpPccIr2xSIY5xeh2FgUtJTMk560eV6NHDPJgU82+0
-         Q/ZjUMiXtPsMQikEJKHaXujslpU9xaakWCAVATK++A6yllPijp1Wbdr2m3jQboYs0ojl
-         PZSk2tfMNlsSZqI0elF0RvGRYys/nMqX7SagsR21Wb4Cy4ZmxOILIaTn7x6qRm01e9sP
-         av0GjndY0pzSsR+whDs+sP4ZKp5sfuR1pKjD4yXE2n7zUlXkPLYRW9IF7iOMyoHeItqO
-         fx7A==
+        b=r3gxrTAULU1sEaadbBFr0SqFG6UzY9pdKxfimqQa56bPaC7+lpqHzXAjYZMdq3TWGi
+         OVQOyFsf1pFIJUdGI+xpnTO126st6fO23gpOyNIQeUtsoGEyx9gWECIbgoC2Pqtu+qdy
+         MPcJZmSWOCkR0zpkI05LfT9vKx8es7MxkczkUT26SyWXirvT/J7nHgsnYImA/ihY9Gb1
+         F7nlNeknXAOnOKeqsZJtHS/k2/PSlv+krjtEgZ+byfmRR32tmwl1rxtvwNYCUNjDt304
+         hOmiNSTgXf7WpqpX8/sDQoE2HzCGztl8o+kC7awTwzykvxSiC5lwVjEVhipEsyvPqo1l
+         XnAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=6Xi2gqOglNMvtA6STOTHUjz4SQcQoRXbWivLVdbm/ts=;
-        b=rKW3CwkOMs2R63AWHJ3yxEVLkmHY7+RqLbRItnzhJ91wrEFFn1WLAtXDLDWdQOmATV
-         OKAdbfFRT+aGopsdRbeybyefYCEFs3F1703MnXiHYGbErjuFSJ/dA63cTSDkGSDzkw+n
-         FIMFh4vIEcKze0lTFOwqpc2Ru0zXMmNTRlNvZcR1YUB9oWo5gBqlGjrnfuILb2PBH24z
-         ZBGokaQ6SARax4vnEP5rG/AIvPnOshK8N01+1q2l4/LbAN81wEC+A8GqClTb9h7Hgpek
-         fZpTJTsX5YnxDMM92tvGpSKgl2lzr9ojiB4rtHky3PeRP8fmF+DQsUluKJRf6BV/0W5u
-         Cwpg==
+        bh=qp5NKpTdcRM6Rau/uqwRW72+6gftVpoNr2Kh3FeSdLk=;
+        b=KshiIh9vlzDaOmTig2DfsswC9gb/wxsNdeT7HKF3QjaU/FvLe1R+alyPQQP6pDSecQ
+         DLysppsFBd5C1Uk55uLRKlrtsrvUqsF/JhBF8kxmMhlp25kHM+W9FcGBKDWqprbT/17l
+         difBaIVT7sv6MnNQGnNFMkN/sZSDKr/H1T8BXJuMo+IOYljGaaPgFzoeM2QswTVKkenC
+         wZlAp4ru01dnKEyG1pZnhHghPR3rYAwoEXsrZ31Hw/JSk5qARYdBa95ZXp1mYb+yedrR
+         syWLFg9N0Rwty9osX+ugjFmMBgQM2VU0IVmrwkPLBfsY4qhEHgb0BCL23CTOzhoXdmnB
+         XmfA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=E8z36mdG;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mVkfziFH;
        spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=E8z36mdG;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=mVkfziFH;
        spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+KBnuapx600Rfh0zv6YU6DChAjx95i40RKKl2j9fwq1UnbLQStPPpi0k45G4vfQJx+P4z7Cw==
+X-Google-Smtp-Source: AIpwx4/EpwqQ2BYQnuzuswGVHM7PlY3i/PJmfcSFEFIRKWfO8Y4KeWIvSPeM+/u0dZ9Pss2tuN3/9w==
 From: Jia He <hejianet@gmail.com>
 To: Russell King <linux@armlinux.org.uk>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -63,51 +63,58 @@ Cc: Pavel Tatashin <pasha.tatashin@oracle.com>,
 	richard.weiyang@gmail.com,
 	Jia He <hejianet@gmail.com>,
 	Jia He <jia.he@hxt-semitech.com>
-Subject: [PATCH v4 5/5] mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
-Date: Fri, 30 Mar 2018 01:15:55 -0700
-Message-Id: <1522397755-33393-6-git-send-email-hejianet@gmail.com>
+Subject: [PATCH v4 3/5] mm/memblock: introduce memblock_search_pfn_regions()
+Date: Fri, 30 Mar 2018 01:15:53 -0700
+Message-Id: <1522397755-33393-4-git-send-email-hejianet@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522397755-33393-1-git-send-email-hejianet@gmail.com>
 References: <1522397755-33393-1-git-send-email-hejianet@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596349847700103649?=
-X-GMAIL-MSGID: =?utf-8?q?1596349847700103649?=
+X-GMAIL-THRID: =?utf-8?q?1596349819957995721?=
+X-GMAIL-MSGID: =?utf-8?q?1596349819957995721?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-where possible") optimized the loop in memmap_init_zone(). But there is
-still some room for improvement. E.g. in early_pfn_valid(), if pfn and
-pfn+1 are in the same memblock region, we can record the last returned
-memblock region index and check check pfn++ is still in the same region.
-
-Currently it only improve the performance on arm64 and will have no
-impact on other arches.
+This api is the preparation for further optimizing early_pfn_valid
 
 Signed-off-by: Jia He <jia.he@hxt-semitech.com>
 ---
- include/linux/mmzone.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ include/linux/memblock.h | 2 ++
+ mm/memblock.c            | 9 +++++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index d797716..b68d22c 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1267,9 +1267,14 @@ static inline int pfn_present(unsigned long pfn)
- })
- #else
- #define pfn_to_nid(pfn)		(0)
--#endif
-+#endif /*CONFIG_NUMA*/
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 0257aee..a0127b3 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -203,6 +203,8 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+ 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
+ #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
  
-+#ifdef CONFIG_HAVE_ARCH_PFN_VALID
-+#define early_pfn_valid(pfn) pfn_valid_region(pfn, &early_region_idx)
-+#else
- #define early_pfn_valid(pfn)	pfn_valid(pfn)
-+#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
++int memblock_search_pfn_regions(unsigned long pfn);
 +
- void sparse_init(void);
- #else
- #define sparse_init()	do {} while (0)
+ /**
+  * for_each_free_mem_range - iterate through free memblock areas
+  * @i: u64 used as loop variable
+diff --git a/mm/memblock.c b/mm/memblock.c
+index ba7c878..0f4004c 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1617,6 +1617,15 @@ static int __init_memblock memblock_search(struct memblock_type *type, phys_addr
+ 	return -1;
+ }
+ 
++/* search memblock with the input pfn, return the region idx */
++int __init_memblock memblock_search_pfn_regions(unsigned long pfn)
++{
++	struct memblock_type *type = &memblock.memory;
++	int mid = memblock_search(type, PFN_PHYS(pfn));
++
++	return mid;
++}
++
+ bool __init memblock_is_reserved(phys_addr_t addr)
+ {
+ 	return memblock_search(&memblock.reserved, addr) != -1;
 -- 
 2.7.4
