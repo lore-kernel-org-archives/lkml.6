@@ -1,79 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752128AbeC3RHV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:07:21 -0400
-Received: from sauhun.de ([88.99.104.3]:35196 "EHLO pokefinder.org"
+        id S1752199AbeC3RKo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:10:44 -0400
+Received: from vern.gendns.com ([206.190.152.46]:38158 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751256AbeC3RHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:07:20 -0400
-Date: Fri, 30 Mar 2018 19:07:13 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PULL REQUEST] i2c for 4.16
-Message-ID: <20180330170707.6nmjytx4e2s7azrz@tetsubishi>
+        id S1751749AbeC3RKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 13:10:42 -0400
+Subject: Re: [PATCH v5 1/8] ARM: davinci: dts: make psc0 a reset provider
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180330152856.12297-1-brgl@bgdev.pl>
+ <20180330152856.12297-2-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <7a069665-966e-9277-2b4c-a0505804e94a@lechnology.com>
+Date: Fri, 30 Mar 2018 12:10:20 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gqjwnvvepfxmhigw"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180330152856.12297-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---gqjwnvvepfxmhigw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Linus,
+On 3/30/18 10:28 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The psc driver registers with the reset framework as a provider. Add
+> the #reset-cells property to the psc0 node.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   arch/arm/boot/dts/da850.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+> index a3b9a99b43ca..dad64dbf1f23 100644
+> --- a/arch/arm/boot/dts/da850.dtsi
+> +++ b/arch/arm/boot/dts/da850.dtsi
+> @@ -123,6 +123,7 @@
+>   			compatible = "ti,da850-psc0";
+>   			reg = <0x10000 0x1000>;
+>   			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+>   			#power-domain-cells = <1>;
+>   			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+>   				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+> 
 
-here is a simple but worthwhile I2C driver fix for 4.16.
-
-Please pull.
-
-Thanks,
-
-   Wolfram
-
-
-The following changes since commit c698ca5278934c0ae32297a8725ced2e27585d7f:
-
-  Linux 4.16-rc6 (2018-03-18 17:48:42 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-
-for you to fetch changes up to 771b7bf05339081019d22452ebcab6929372e13e:
-
-  i2c: i2c-stm32f7: fix no check on returned setup (2018-03-24 13:37:41 +0100)
-
-----------------------------------------------------------------
-Pierre-Yves MORDRET (1):
-      i2c: i2c-stm32f7: fix no check on returned setup
-
- drivers/i2c/busses/i2c-stm32f7.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
---gqjwnvvepfxmhigw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq+brQACgkQFA3kzBSg
-KbalyxAAqQBlQfQZvL03T7q0iF/3UJ8d+d2ixlDZGKwxS7C24VhaB+hWBU0tBPhe
-FMNCFEmqTdC0UvBgiaQQxfe173KuJFmt94d0Hpm+7lvkHBB1wkGsm8Jy7yAwpbQ3
-pn96leWsp44SdTanZZ2S/746MyX1Fvjhltry/vWa6H35FJk3XwOcEePun1bv1ptR
-Frnr3aYpId+hH/NlpTsKVLNC2Znlbb9BE6FBoarGGiVUU8+75VP2weDKUavEc/pM
-r3DyCQjigr1s/PODPqtZqrGYLltmlzqT9DYlGUPtDK14O7IfXTNDveZ7C1RlOPiz
-iJlMnY10sKcdyRD/i0Q30yWt1mYQ1YHEDKMAvQOtc0fjIxHVTtyZdU/lse8lXJJj
-tgx2Y4Ojcfl1gL4IJoT4K5cCmNko8L/gw0HK0rwKQVpU7twvPwq6JCc1+v0F0FYr
-dku7gjbNcyjb8fx/Iwb5HGN1dia77TmXJTrzMeLeYXyhUb2+V0IAuDnCO1PxlrgP
-5lcTbzm5/R6cfdgglIaLFKn71wYWoPQeUKwxswr0inMlh5xt5A281/4iz0ezrTDe
-r90O8dhW4ES/UUGkBiCMqcBIansLPZZLLDw529yhYaOf5nXHdwbblY7xyOQk++Tr
-HI54mEq8IX6O5Y2SEa+iWQF1sL6SGITbZNLM29cbI8RnBv6su5g=
-=B/6q
------END PGP SIGNATURE-----
-
---gqjwnvvepfxmhigw--
+Reviewed-by: David Lechner <david@lechnology.com>
