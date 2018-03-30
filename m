@@ -1,74 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeC3Viy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:38:54 -0400
-Received: from gateway30.websitewelcome.com ([192.185.179.30]:24599 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752203AbeC3Vix (ORCPT
+        id S1752658AbeC3Vjr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:39:47 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44302 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752486AbeC3Vjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:38:53 -0400
-Date: Fri, 30 Mar 2018 16:18:44 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] PM / QoS: mark expected switch fall-throughs
-Message-ID: <20180330211844.GA23072@embeddedgus>
+        Fri, 30 Mar 2018 17:39:45 -0400
+X-Google-Smtp-Source: AIpwx4+Yyg2xYAZy392gPfmZJxejaaBcG/Fbk2j20bRyQUogHEZT3a+BihfSjokgbKyaBvemB2sPnkyNbz4Ie9gTBgM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f21Q5-001Bja-BE
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.145.54.187]:45392
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <281D9C45-537A-4804-A9FA-6816E0FCAD27@goldelico.com>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+ <CACRpkdYfk7P0+Ysy43HboBe0Z66vO3COXRgUGaZ7Y9sSDh+yxA@mail.gmail.com>
+ <EA5887ED-9C02-4FFF-AC29-14F7D4F0B32D@goldelico.com> <281D9C45-537A-4804-A9FA-6816E0FCAD27@goldelico.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 31 Mar 2018 00:39:44 +0300
+Message-ID: <CAHp75VdWYDvZ0tS-MXB+MeEAF+v1ry31ka7oKAn12-Ov=ZPcXw@mail.gmail.com>
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
+ and pcal9555a
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>, Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>, kernel@pyra-handheld.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Thu, Mar 29, 2018 at 10:29 PM, H. Nikolaus Schaller
+<hns@goldelico.com> wrote:
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-This code was compiled with GCC 7.3.0
+> Another issue I have fixed is that the pcal6524 has 4 registers per
+> bank while the pcal9555a has only 2.
 
- kernel/power/qos.c | 2 ++
- 1 file changed, 2 insertions(+)
+So, you mean it's still in non-working case in Linus' tree?
+Please, send patches!
 
-diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-index 9d75039..fa39092 100644
---- a/kernel/power/qos.c
-+++ b/kernel/power/qos.c
-@@ -295,6 +295,7 @@ int pm_qos_update_target(struct pm_qos_constraints *c, struct plist_node *node,
- 		 * changed
- 		 */
- 		plist_del(node, &c->list);
-+		/* fall through */
- 	case PM_QOS_ADD_REQ:
- 		plist_node_init(node, new_value);
- 		plist_add(node, &c->list);
-@@ -367,6 +368,7 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
- 		break;
- 	case PM_QOS_UPDATE_REQ:
- 		pm_qos_flags_remove_req(pqf, req);
-+		/* fall through */
- 	case PM_QOS_ADD_REQ:
- 		req->flags = val;
- 		INIT_LIST_HEAD(&req->node);
+> This is encoded in the address
+> constants for the new "L"-registers and has to be taken care of in
+> pca953x_read_regs_24() and pca953x_write_regs_24().
+>
+> But I still have another problem:
+>
+> [    4.808823] pca953x 4-0022: irq 186: unsupported type 8
+> [    4.814303] genirq: Setting trigger mode 8 for irq 186 failed (pca953x_irq_set_type+0x0/0xa8)
+>
+> This comes from https://elixir.bootlin.com/linux/v4.16-rc7/source/sound/soc/codecs/ts3a227e.c#L314
+>
+> It appears that the pca953x driver/interrupt-controller can't handle
+> IRQF_TRIGGER_LOW, but that is hard coded into the ts3a227 driver.
+>
+> Anyone with knowledge and help about this issue?
+
+This is easy to fix (not read datasheet for better solution though):
+emulate it via FALLING (LOW) and RISING (HIGH).
+
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
