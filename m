@@ -1,41 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752757AbeC3XLH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 19:11:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42092 "EHLO mail.kernel.org"
+        id S1752735AbeC3XWS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 19:22:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752357AbeC3XLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 19:11:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7D7A217A8
+        id S1752357AbeC3XWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 19:22:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8957D217D2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 30 Mar 2018 18:10:54 -0500
+Date: Fri, 30 Mar 2018 18:22:15 -0500
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: KarimAllah Ahmed <karahmed@amazon.de>
 Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
         linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] PCI/IOV: Use VF0 cached config registers for
+Subject: Re: [PATCH v4 2/2] PCI/IOV: Use VF0 cached config space size for
  other VFs
-Message-ID: <20180330231054.GI9322@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <20180330232215.GJ9322@bhelgaas-glaptop.roam.corp.google.com>
 References: <1521489961-18291-1-git-send-email-karahmed@amazon.de>
+ <1521489961-18291-2-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521489961-18291-1-git-send-email-karahmed@amazon.de>
+In-Reply-To: <1521489961-18291-2-git-send-email-karahmed@amazon.de>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 09:06:00PM +0100, KarimAllah Ahmed wrote:
-> Cache some config data from VF0 and use it for all other VFs instead of
-> reading it from the config space of each VF.  We assume these items are the
-> same across all associated VFs:
-> 
->    Revision ID
->    Class Code
->    Subsystem Vendor ID
->    Subsystem ID
+On Mon, Mar 19, 2018 at 09:06:01PM +0100, KarimAllah Ahmed wrote:
+> Cache the config space size from VF0 and use it for all other VFs instead
+> of reading it from the config space of each VF.  We assume that it will be
+> the same across all associated VFs.
 > 
 > This is an optimization when enabling SR-IOV on a device with many VFs.
 > 
@@ -43,200 +39,99 @@ On Mon, Mar 19, 2018 at 09:06:00PM +0100, KarimAllah Ahmed wrote:
 > Cc: linux-pci@vger.kernel.org
 > Cc: linux-kernel@vger.kernel.org
 > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> [bhelgaas: changelog, simplify comments, remove unused "device"]
-> Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 
-I applied this one to pci/virtualization for v4.17, thanks!
+I didn't apply this one because:
 
-I changed the ifdefs from CONFIG_PCI_ATS to CONFIG_PCI_IOV.  I know we
-use CONFIG_PCI_ATS in linux/pci.h, but I think that's a mistake.
+  - I don't like the "add two leading underscores to the name"
+    disease.  I'd really like pci_cfg_space_size() to be able to
+    figure out whether this is VF0 and do the right thing.  But I
+    don't know if we can tell from the pci_dev whether it is VF0.  We
+    do know that every VF is a PCIe device; maybe that's useful
+    somehow.
+
+  - Whatever the name ends up being, it should be declared in
+    drivers/pci/pci.h, not include/linux/pci.h, because it shouldn't
+    be used outside the PCI core.
 
 > ---
-> v3->v4:
-> - Restructure the code to handle CONFIG_PCI_ATS
-> 
->  drivers/pci/iov.c   | 42 +++++++++++++++++++++++++++++++++++-------
->  drivers/pci/pci.h   |  4 ++++
->  drivers/pci/probe.c | 47 ++++++++++++++++++++++++++++++++++++++++++-----
->  3 files changed, 81 insertions(+), 12 deletions(-)
+>  drivers/pci/iov.c   |  3 +++
+>  drivers/pci/pci.h   |  1 +
+>  drivers/pci/probe.c | 11 ++++++++++-
+>  include/linux/pci.h |  1 +
+>  4 files changed, 15 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> index 677924a..30bf8f7 100644
+> index 30bf8f7..046e0d3 100644
 > --- a/drivers/pci/iov.c
 > +++ b/drivers/pci/iov.c
-> @@ -114,6 +114,29 @@ resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
->  	return dev->sriov->barsz[resno - PCI_IOV_RESOURCES];
+> @@ -135,6 +135,9 @@ static void pci_read_vf_config_common(struct pci_dev *virtfn)
+>  			     &physfn->sriov->subsystem_vendor);
+>  	pci_read_config_word(virtfn, PCI_SUBSYSTEM_ID,
+>  			     &physfn->sriov->subsystem_device);
+> +
+> +	virtfn->class = physfn->sriov->class;
+
+Oops, where did this come from?  It looks like this belongs in a
+different patch because this patch doesn't do anything else with
+virtfn->class.
+
+> +	physfn->sriov->cfg_size = __pci_cfg_space_size(virtfn);
 >  }
 >  
-> +static void pci_read_vf_config_common(struct pci_dev *virtfn)
-> +{
-> +	struct pci_dev *physfn = virtfn->physfn;
-> +
-> +	/*
-> +	 * Some config registers are the same across all associated VFs.
-> +	 * Read them once from VF0 so we can skip reading them from the
-> +	 * other VFs.
-> +	 *
-> +	 * PCIe r4.0, sec 9.3.4.1, technically doesn't require all VFs to
-> +	 * have the same Revision ID and Subsystem ID, but we assume they
-> +	 * do.
-> +	 */
-> +	pci_read_config_dword(virtfn, PCI_CLASS_REVISION,
-> +			      &physfn->sriov->class);
-> +	pci_read_config_byte(virtfn, PCI_HEADER_TYPE,
-> +			     &physfn->sriov->hdr_type);
-> +	pci_read_config_word(virtfn, PCI_SUBSYSTEM_VENDOR_ID,
-> +			     &physfn->sriov->subsystem_vendor);
-> +	pci_read_config_word(virtfn, PCI_SUBSYSTEM_ID,
-> +			     &physfn->sriov->subsystem_device);
-> +}
-> +
 >  int pci_iov_add_virtfn(struct pci_dev *dev, int id)
->  {
->  	int i;
-> @@ -136,13 +159,17 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
->  	virtfn->devfn = pci_iov_virtfn_devfn(dev, id);
->  	virtfn->vendor = dev->vendor;
->  	virtfn->device = iov->vf_device;
-> +	virtfn->is_virtfn = 1;
-> +	virtfn->physfn = pci_dev_get(dev);
-> +
-> +	if (id == 0)
-> +		pci_read_vf_config_common(virtfn);
-> +
->  	rc = pci_setup_device(virtfn);
->  	if (rc)
-> -		goto failed0;
-> +		goto failed1;
->  
->  	virtfn->dev.parent = dev->dev.parent;
-> -	virtfn->physfn = pci_dev_get(dev);
-> -	virtfn->is_virtfn = 1;
->  	virtfn->multifunction = 0;
->  
->  	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++) {
-> @@ -163,10 +190,10 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
->  	sprintf(buf, "virtfn%u", id);
->  	rc = sysfs_create_link(&dev->dev.kobj, &virtfn->dev.kobj, buf);
->  	if (rc)
-> -		goto failed1;
-> +		goto failed2;
->  	rc = sysfs_create_link(&virtfn->dev.kobj, &dev->dev.kobj, "physfn");
->  	if (rc)
-> -		goto failed2;
-> +		goto failed3;
->  
->  	kobject_uevent(&virtfn->dev.kobj, KOBJ_CHANGE);
->  
-> @@ -174,11 +201,12 @@ int pci_iov_add_virtfn(struct pci_dev *dev, int id)
->  
->  	return 0;
->  
-> -failed2:
-> +failed3:
->  	sysfs_remove_link(&dev->dev.kobj, buf);
-> +failed2:
-> +	pci_stop_and_remove_bus_device(virtfn);
->  failed1:
->  	pci_dev_put(dev);
-> -	pci_stop_and_remove_bus_device(virtfn);
->  failed0:
->  	virtfn_remove_bus(dev->bus, bus);
->  failed:
 > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index fcd8191..bdb4ba2 100644
+> index bdb4ba2..69da57b 100644
 > --- a/drivers/pci/pci.h
 > +++ b/drivers/pci/pci.h
-> @@ -271,6 +271,10 @@ struct pci_sriov {
+> @@ -271,6 +271,7 @@ struct pci_sriov {
 >  	u16		driver_max_VFs;	/* Max num VFs driver supports */
 >  	struct pci_dev	*dev;		/* Lowest numbered PF */
 >  	struct pci_dev	*self;		/* This PF */
-> +	u32		class;		/* VF device */
-> +	u8		hdr_type;	/* VF header type */
-> +	u16		subsystem_vendor; /* VF subsystem vendor */
-> +	u16		subsystem_device; /* VF subsystem device */
->  	resource_size_t	barsz[PCI_SRIOV_NUM_BARS];	/* VF BAR size */
->  	bool		drivers_autoprobe; /* Auto probing of VFs by driver */
->  };
+> +	u32		cfg_size;	/* VF config space size */
+>  	u32		class;		/* VF device */
+>  	u8		hdr_type;	/* VF header type */
+>  	u16		subsystem_vendor; /* VF subsystem vendor */
 > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index ef53774..21ee1c3 100644
+> index 21ee1c3..fd21e2b 100644
 > --- a/drivers/pci/probe.c
 > +++ b/drivers/pci/probe.c
-> @@ -1389,6 +1389,43 @@ int pci_cfg_space_size(struct pci_dev *dev)
+> @@ -1365,7 +1365,7 @@ static int pci_cfg_space_size_ext(struct pci_dev *dev)
+>  	return PCI_CFG_SPACE_EXP_SIZE;
+>  }
+>  
+> -int pci_cfg_space_size(struct pci_dev *dev)
+> +int __pci_cfg_space_size(struct pci_dev *dev)
+>  {
+>  	int pos;
+>  	u32 status;
+> @@ -1389,6 +1389,15 @@ int pci_cfg_space_size(struct pci_dev *dev)
 >  	return PCI_CFG_SPACE_SIZE;
 >  }
 >  
-> +static int pci_cfg_space_class(struct pci_dev *dev)
+> +int pci_cfg_space_size(struct pci_dev *dev)
 > +{
-> +	int class;
-> +
 > +#ifdef CONFIG_PCI_ATS
 > +	if (dev->is_virtfn)
-> +		return dev->physfn->sriov->class;
+> +		return dev->physfn->sriov->cfg_size;
 > +#endif
-> +	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-> +	return class;
+> +	return __pci_cfg_space_size(dev);
 > +}
 > +
-> +static void pci_cfg_space_subsystem(struct pci_dev *dev, u16 *vendor, u16 *device)
-> +{
-> +#ifdef CONFIG_PCI_ATS
-> +	if (dev->is_virtfn) {
-> +		*vendor = dev->physfn->sriov->subsystem_vendor;
-> +		*device = dev->physfn->sriov->subsystem_device;
-> +		return;
-> +	}
-> +#endif
-> +	pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, vendor);
-> +	pci_read_config_word(dev, PCI_SUBSYSTEM_ID, device);
-> +}
-> +
-> +static u8 pci_cfg_space_hdr_type(struct pci_dev *dev)
-> +{
-> +	u8 hdr_type;
-> +
-> +#ifdef CONFIG_PCI_ATS
-> +	if (dev->is_virtfn)
-> +		return dev->physfn->sriov->hdr_type;
-> +#endif
-> +	pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type);
-> +	return hdr_type;
-> +}
-> +
->  #define LEGACY_IO_RESOURCE	(IORESOURCE_IO | IORESOURCE_PCI_FIXED)
+>  static int pci_cfg_space_class(struct pci_dev *dev)
+>  {
+>  	int class;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 024a1be..fcd5d88 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1290,6 +1290,7 @@ int pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
 >  
->  static void pci_msi_setup_pci_dev(struct pci_dev *dev)
-> @@ -1454,8 +1491,7 @@ int pci_setup_device(struct pci_dev *dev)
->  	struct pci_bus_region region;
->  	struct resource *res;
->  
-> -	if (pci_read_config_byte(dev, PCI_HEADER_TYPE, &hdr_type))
-> -		return -EIO;
-> +	hdr_type = pci_cfg_space_hdr_type(dev);
->  
->  	dev->sysdata = dev->bus->sysdata;
->  	dev->dev.parent = dev->bus->bridge;
-> @@ -1477,7 +1513,8 @@ int pci_setup_device(struct pci_dev *dev)
->  		     dev->bus->number, PCI_SLOT(dev->devfn),
->  		     PCI_FUNC(dev->devfn));
->  
-> -	pci_read_config_dword(dev, PCI_CLASS_REVISION, &class);
-> +	class = pci_cfg_space_class(dev);
-> +
->  	dev->revision = class & 0xff;
->  	dev->class = class >> 8;		    /* upper 3 bytes */
->  
-> @@ -1517,8 +1554,8 @@ int pci_setup_device(struct pci_dev *dev)
->  			goto bad;
->  		pci_read_irq(dev);
->  		pci_read_bases(dev, 6, PCI_ROM_ADDRESS);
-> -		pci_read_config_word(dev, PCI_SUBSYSTEM_VENDOR_ID, &dev->subsystem_vendor);
-> -		pci_read_config_word(dev, PCI_SUBSYSTEM_ID, &dev->subsystem_device);
-> +
-> +		pci_cfg_space_subsystem(dev, &dev->subsystem_vendor, &dev->subsystem_device);
->  
->  		/*
->  		 * Do the ugly legacy mode stuff here rather than broken chip
+>  void pci_walk_bus(struct pci_bus *top, int (*cb)(struct pci_dev *, void *),
+>  		  void *userdata);
+> +int __pci_cfg_space_size(struct pci_dev *dev);
+>  int pci_cfg_space_size(struct pci_dev *dev);
+>  unsigned char pci_bus_max_busnr(struct pci_bus *bus);
+>  void pci_setup_bridge(struct pci_bus *bus);
 > -- 
 > 2.7.4
 > 
