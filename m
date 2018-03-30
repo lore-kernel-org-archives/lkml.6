@@ -1,67 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751337AbeC3FnV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 01:43:21 -0400
-Received: from eahe.aehallh.com ([50.116.20.20]:36008 "EHLO eahe.aehallh.com"
+        id S1751266AbeC3Fva (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 01:51:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751248AbeC3FnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 01:43:19 -0400
-Subject: Re: General protection fault with use_blk_mq=1.
-From: "Zephaniah E. Loss-Cutler-Hull" <warp@aehallh.com>
-To: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
-Cc: "Zephaniah E. Loss-Cutler-Hull" <warp-spam_kernel@aehallh.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, linux-scsi@vger.kernel.org
-References: <7d8a9c62-7d3e-879c-5b5b-30707f04553e@aehallh.com>
- <ae71cc99-02f1-2b42-bb76-d6e28d61ca21@kernel.dk>
- <b347896e-f770-8987-ad90-a595a5fa926a@aehallh.com>
- <735c5d75-eacf-8ed2-ba9b-9ff4b0b5290d@kernel.dk>
- <882A26D2-BEB8-4CE3-B132-0DE31BFD5D28@linaro.org>
- <0a96375b-5a2e-e828-fa1f-a14af192be4c@aehallh.com>
-Message-ID: <c74c49e4-8b34-4361-a4ad-b4e9de2110a6@aehallh.com>
-Date: Thu, 29 Mar 2018 22:43:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <0a96375b-5a2e-e828-fa1f-a14af192be4c@aehallh.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1750794AbeC3Fv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 01:51:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD932217A8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: remain written times to update inode during fsync
+Date: Thu, 29 Mar 2018 22:51:26 -0700
+Message-Id: <20180330055126.36202-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.15.0.531.g2ccb3012c9-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/29/2018 02:12 AM, Zephaniah E. Loss-Cutler-Hull wrote:
-> On 03/28/2018 10:13 PM, Paolo Valente wrote:
->> In addition, the outcome of your attempt without
->> CONFIG_DEBUG_BLK_CGROUP would give us useful bisection information:
->> - if no failure occurs, then the issue is likely to be confined in
->> that debugging code (which, on the bright side, is likely to be of
->> occasional interest, for only a handful of developers)
->> - if the issue still shows up, then we may have new hints on this odd
->> failure
->>
->> Finally, consider that this issue has been reported to disappear from
->> 4.16 [1], and, as a plus, that the service quality of BFQ had a
->> further boost exactly from 4.16.
-> 
-> I look forward to that either way then.
->>
->> Looking forward to your feedback, in case you try BFQ without
->> CONFIG_DEBUG_BLK_CGROUP,
-> 
-> I'm running that now, judging from the past if it survives until
-> tomorrow evening then we're good, so I should hopefully know in the next
-> day.
+This fixes xfstests/generic/392.
 
-Alright, I now have an uptime of over 20 hours, with
-scsi_mod.use_blk_mq=1 dm_mod.use_blk_mq=1
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h  | 15 +++++++++++++++
+ fs/f2fs/inode.c |  4 ++++
+ 2 files changed, 19 insertions(+)
 
-I did upgrade from 4.15.13 to 4.15.14 in the process, but a quick look
-at the changes doesn't have anything jump out at me as impacting this.
-
-So I'm reasonably comfortable stating that disabling
-CONFIG_DEBUG_BLK_CGROUP was sufficient to render this stable.
-
-Regards,
-Zephaniah E. Loss-Cutler-Hull.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 000f93f6767e..675c39d85111 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -664,6 +664,7 @@ struct f2fs_inode_info {
+ 	kprojid_t i_projid;		/* id for project quota */
+ 	int i_inline_xattr_size;	/* inline xattr size */
+ 	struct timespec i_crtime;	/* inode creation time */
++	struct timespec i_disk_time[4];	/* inode disk times */
+ };
+ 
+ static inline void get_extent_info(struct extent_info *ext,
+@@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
++static inline bool time_equal(struct timespec a, struct timespec b)
++{
++	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
++}
++
+ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ {
+ 	bool ret;
+@@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ 			i_size_read(inode) & ~PAGE_MASK)
+ 		return false;
+ 
++	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
++		return false;
++	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
++		return false;
++	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
++		return false;
++	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
++		return false;
++
+ 	down_read(&F2FS_I(inode)->i_sem);
+ 	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
+ 	up_read(&F2FS_I(inode)->i_sem);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 401f09ccce7e..70aba580f4b0 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
+ 	if (inode->i_nlink == 0)
+ 		clear_inline_node(node_page);
+ 
++	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
++	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
++	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
++	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+ }
+ 
+ void update_inode_page(struct inode *inode)
+-- 
+2.15.0.531.g2ccb3012c9-goog
