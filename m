@@ -1,61 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751345AbeC3KiS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:38:18 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:17878 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbeC3KiQ (ORCPT
+        id S1751392AbeC3KjM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 06:39:12 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55724 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeC3KjJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 06:38:16 -0400
-Subject: Re: [PATCH 1/3] iio: adc: meson-saradc: squash and share the common
- adc platform data
-To: Jonathan Cameron <jic23@kernel.org>
-References: <20180326084629.100070-1-yixun.lan@amlogic.com>
- <20180326084629.100070-2-yixun.lan@amlogic.com>
- <20180330104813.7dd79bd5@archlinux>
-CC: <yixun.lan@amlogic.com>, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>, <linux-iio@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <c0dde5a6-c490-c8ea-5652-bcc27ee9f0e7@amlogic.com>
-Date: Fri, 30 Mar 2018 18:37:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Fri, 30 Mar 2018 06:39:09 -0400
+X-Google-Smtp-Source: AIpwx49dRfIKKvD5gMkBjA2IAqiq+G6JlpST5d+osDjJ/xjijIlkXYUDR9+e3G8PqzLzDfAZF6y+3A==
+Date: Fri, 30 Mar 2018 12:39:07 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        stephen@networkplumber.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
+        nirranjan@chelsio.com, indranil@chelsio.com
+Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
+ dump in second kernel
+Message-ID: <20180330103907.GC3313@nanopsycho>
+References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
 MIME-Version: 1.0
-In-Reply-To: <20180330104813.7dd79bd5@archlinux>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.20.235]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/30/18 17:48, Jonathan Cameron wrote:
-> On Mon, 26 Mar 2018 16:46:27 +0800
-> Yixun Lan <yixun.lan@amlogic.com> wrote:
-> 
->> Extract and promote common adc platform data into a new structure,
->> to make it better share the info between several SoCs,
->> this will avoid duplicating the code all over the place,
->> Save a few memory and make the code more maintainable.
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> Applied to the togreg branch of iio.git and pushed out as testing
-> for the autobuilders to play with it.
+Sat, Mar 24, 2018 at 11:56:33AM CET, rahul.lakkireddy@chelsio.com wrote:
+>Add a new module crashdd that exports the /sys/kernel/crashdd/
+>directory in second kernel, containing collected hardware/firmware
+>dumps.
+>
+>The sequence of actions done by device drivers to append their device
+>specific hardware/firmware logs to /sys/kernel/crashdd/ directory are
+>as follows:
+>
+>1. During probe (before hardware is initialized), device drivers
+>register to the crashdd module (via crashdd_add_dump()), with
+>callback function, along with buffer size and log name needed for
+>firmware/hardware log collection.
+>
+>2. Crashdd creates a driver's directory under
+>/sys/kernel/crashdd/<driver>. Then, it allocates the buffer with
 
-Hi Jonathan
+This smells. I need to identify the exact ASIC instance that produced
+the dump. To identify by driver name does not help me if I have multiple
+instances of the same driver. This looks wrong to me. This looks like
+a job for devlink where you have 1 devlink instance per 1 ASIC instance.
 
-  Great! Thanks for taking these
+Please see:
+http://patchwork.ozlabs.org/project/netdev/list/?series=36524
 
-Yixun
+I bevieve that the solution in the patchset could be used for
+your usecase too.
+
+
+>requested size and invokes the device driver's registered callback
+>function.
+>
+>3. Device driver collects all hardware/firmware logs into the buffer
+>and returns control back to crashdd.
+>
+>4. Crashdd exposes the buffer as a binary file via
+>/sys/kernel/crashdd/<driver>/<dump_file>.
+>
