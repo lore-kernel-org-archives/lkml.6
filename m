@@ -1,192 +1,345 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752072AbeC3SBz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 14:01:55 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49846 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751163AbeC3SBy (ORCPT
+        id S1752314AbeC3SJS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 14:09:18 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35308 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751358AbeC3SJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 14:01:54 -0400
-Date: Fri, 30 Mar 2018 20:01:51 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
-Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
- omap4-droid4: add soundcard
-Message-ID: <20180330180151.GA27494@amd>
-References: <20180329133613.khldv72w3zj63vsk@earth.universe>
- <20180329135904.GN5700@atomide.com>
- <20180329154600.qhels5fqzzg364gj@earth.universe>
- <20180329163716.GA20743@amd>
- <20180329164113.GR5700@atomide.com>
- <20180329184007.GA27688@amd>
- <20180329215612.GS5700@atomide.com>
- <20180330103744.GA17404@amd>
- <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
- <20180330175050.GA26571@amd>
+        Fri, 30 Mar 2018 14:09:14 -0400
+X-Google-Smtp-Source: AIpwx4+1bSGko9oVMPWraQXajvtMTYnSePE5EC/PhxxFBVvGY+ErbHqUnFHdSQuCRoOVcRnVvLfrHg==
+Date: Fri, 30 Mar 2018 11:09:11 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Eugen Hristev <eugen.hristev@microchip.com>,
+        ludovic.desroches@microchip.com, alexandre.belloni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, nicolas.ferre@microchip.com
+Subject: Re: [PATCH v2 07/10] input: touchscreen: touch_adc: add generic
+ resistive ADC touchscreen
+Message-ID: <20180330180911.GA143703@dtor-ws>
+References: <1522153963-1121-1-git-send-email-eugen.hristev@microchip.com>
+ <1522153963-1121-8-git-send-email-eugen.hristev@microchip.com>
+ <20180330135835.6a8f57f1@archlinux>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330175050.GA26571@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180330135835.6a8f57f1@archlinux>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Mar 30, 2018 at 01:58:35PM +0100, Jonathan Cameron wrote:
+> On Tue, 27 Mar 2018 15:32:40 +0300
+> Eugen Hristev <eugen.hristev@microchip.com> wrote:
+> 
+> > This adds a generic resistive touchscreen (GRTS) driver, which is based
+> > on an IIO device (an ADC). It must be connected to the channels of an ADC
+> > to receive touch data. Then it will feed the data into the input subsystem
+> > where it registers an input device.
+> > It uses an IIO callback buffer to register to the IIO device
+> > 
+> > Some parts of this patch are based on initial original work by
+> > Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
+> > 
+> > Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> I like this a lot!
+> 
+> A few minor bits and bobs inline.  Over to Dmitry for the input
+> side of things.
+> 
+> Jonathan
+> 
+> > ---
+> > Changes in v2:
+> >  - this is now a generic resistive adc touchscreen driver
+> > 
+> >  drivers/input/touchscreen/Kconfig     |  13 +++
+> >  drivers/input/touchscreen/Makefile    |   1 +
+> >  drivers/input/touchscreen/touch_adc.c | 199 ++++++++++++++++++++++++++++++++++
+> >  3 files changed, 213 insertions(+)
+> >  create mode 100644 drivers/input/touchscreen/touch_adc.c
+> > 
+> > diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+> > index 4f15496..afd879f 100644
+> > --- a/drivers/input/touchscreen/Kconfig
+> > +++ b/drivers/input/touchscreen/Kconfig
+> > @@ -92,6 +92,19 @@ config TOUCHSCREEN_AD7879_SPI
+> >  	  To compile this driver as a module, choose M here: the
+> >  	  module will be called ad7879-spi.
+> >  
+> > +config TOUCHSCREEN_ADC
+> > +	tristate "Generic ADC based resistive touchscreen"
+> > +	depends on IIO
+> > +	select IIO_BUFFER_CB
+> > +	help
+> > +	  Say Y here if you want to use the generic ADC
+> > +	  resistive touchscreen driver.
+> > +
+> > +	  If unsure, say N (but it's safe to say "Y").
+> > +
+> > +	  To compile this driver as a module, choose M here: the
+> > +	  module will be called touch_adc.ko.
+> > +
+> >  config TOUCHSCREEN_AR1021_I2C
+> >  	tristate "Microchip AR1020/1021 i2c touchscreen"
+> >  	depends on I2C && OF
+> > diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
+> > index dddae79..cbe6121 100644
+> > --- a/drivers/input/touchscreen/Makefile
+> > +++ b/drivers/input/touchscreen/Makefile
+> > @@ -13,6 +13,7 @@ obj-$(CONFIG_TOUCHSCREEN_AD7877)	+= ad7877.o
+> >  obj-$(CONFIG_TOUCHSCREEN_AD7879)	+= ad7879.o
+> >  obj-$(CONFIG_TOUCHSCREEN_AD7879_I2C)	+= ad7879-i2c.o
+> >  obj-$(CONFIG_TOUCHSCREEN_AD7879_SPI)	+= ad7879-spi.o
+> > +obj-$(CONFIG_TOUCHSCREEN_ADC)		+= touch_adc.o
+> >  obj-$(CONFIG_TOUCHSCREEN_ADS7846)	+= ads7846.o
+> >  obj-$(CONFIG_TOUCHSCREEN_AR1021_I2C)	+= ar1021_i2c.o
+> >  obj-$(CONFIG_TOUCHSCREEN_ATMEL_MXT)	+= atmel_mxt_ts.o
+> > diff --git a/drivers/input/touchscreen/touch_adc.c b/drivers/input/touchscreen/touch_adc.c
+> > new file mode 100644
+> > index 0000000..de4b929
+> > --- /dev/null
+> > +++ b/drivers/input/touchscreen/touch_adc.c
+> > @@ -0,0 +1,199 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * ADC generic resistive touchscreen (GRTS)
+> > + *
+> > + * Copyright (C) 2017,2018 Microchip Technology,
+> > + * Author: Eugen Hristev <eugen.hristev@microchip.com>
+> > + *
+> > + */
+> > +#include <linux/input.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/iio/consumer.h>
+> > +#include <linux/iio/iio.h>
+> > +#include <linux/module.h>
+> > +
+> > +#define DRIVER_NAME					"touch_adc"
+> > +#define GRTS_DEFAULT_PRESSURE_THRESHOLD			10000
+> > +#define MAX_POS_MASK					GENMASK(11, 0)
+> > +
+> > +/**
+> > + * grts_state - generic resistive touch screen information struct
+> > + * @pressure_threshold:	number representing the threshold for the pressure
+> > + * @pressure:		are we getting pressure info or not
+> > + * @iio_chans:		list of channels acquired
+> > + * @iio_cb:		iio_callback buffer for the data
+> > + * @input:		the input device structure that we register
+> > + */
+> > +struct grts_state {
+> > +	u32			pressure_threshold;
+> > +	bool			pressure;
+> > +	struct iio_channel	*iio_chans;
+> > +	struct iio_cb_buffer	*iio_cb;
+> > +	struct input_dev	*input;
+> > +};
+> > +
+> > +static int grts_cb(const void *data, void *private)
+> > +{
+> > +	const u16 *touch_info = data;
+> > +	struct grts_state *st = private;
+> > +
+> > +	unsigned int x, y, press = 0xFFFF;
+> > +
+> > +	/* channel data coming in buffer in the order below */
+> > +	x = touch_info[0];
+> > +	y = touch_info[1];
+> > +	if (st->pressure)
+> > +		press = touch_info[2];
+> > +
+> > +	if ((!x && !y) || (st->pressure && (press > st->pressure_threshold))) {
+> Ah, clearly pressure is the other way around to I assumed and gets larger as
+> the pressure is reduced.  hmm.
 
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, in this case it should not be reported directly as ABS_PRESSURE, as
+ABSP_RESSURE value is expected to grow the firmer the finger touches the
+surface, and reduce to 0 when finger is about to be lifted.
 
-On Fri 2018-03-30 19:50:50, Pavel Machek wrote:
-> On Fri 2018-03-30 15:07:24, Merlijn Wajer wrote:
-> > On 30/03/18 12:37, Pavel Machek wrote:
-> > > On Thu 2018-03-29 14:56:13, Tony Lindgren wrote:
-> > >> * Pavel Machek <pavel@ucw.cz> [180329 18:41]:
-> > >>> Thanks. I got call working including outgoing audio: in capture
-> > >>> settings, right->mic 1, Mic1 + Mic2 in alsamixer -> 100%. But I had
-> > >>> the other phone muted, so I don't yet know if such call would be of
-> > >>> usable quality.
-> > >>
-> > >> Great, good to hear that :)
-> > >=20
-> > > I also got ofonod to work, with rather crazy hacks. But I now have
-> > > incoming/outgoing calls with GUI :-).
-> >=20
-> > Would you mind sharing those hacks - I would like to play around with
-> > ofonod as well. Maybe I can help with a way forward.
->=20
-> Okay. Here's less hacky version of the hack, but still using AT
-> commands. You still need to set up udev, as described in the other
-> mail.
->=20
-> And... it seems I can have a qmi connection, too, but that's topic for
-> other email.
+> 
+> > +		/* report end of touch */
+> > +		input_report_key(st->input, BTN_TOUCH, 0);
+> > +		input_sync(st->input);
+> > +		return 0;
+> > +	}
+> > +
+> > +	/* report proper touch to subsystem*/
+> > +	input_report_abs(st->input, ABS_X, x);
+> > +	input_report_abs(st->input, ABS_Y, y);
+> > +	if (st->pressure)
+> > +		input_report_abs(st->input, ABS_PRESSURE, press);
+> > +	input_report_key(st->input, BTN_TOUCH, 1);
+> > +	input_sync(st->input);
+> blank line preferred here.
+> 
+> > +	return 0;
+> > +}
+> > +
+> > +static int grts_open(struct input_dev *dev)
+> > +{
+> > +	int ret;
+> > +	struct grts_state *st = input_get_drvdata(dev);
+> > +
+> > +	ret = iio_channel_start_all_cb(st->iio_cb);
+> > +	if (ret) {
+> > +		dev_err(dev->dev.parent, "failed to start callback buffer.\n");
+> > +		return ret;
+> Drop the return ret out of the brackets.
 
-This, applied on top of previous patch, gives me some kind of qmi
-connection, AFAICT. I can enable/online a modem, but nothing else
-works.
+Actually I prefer explicit "success" return path. But I would
+appreciate if we called this "ret" variable "error".
 
-LocationReporting is advertised but does not work. dial-number does
-not work either. But from list-modems, it looks like some kind of
-communication works...
-								Pavel
+> 
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +static void grts_close(struct input_dev *dev)
+> > +{
+> > +	struct grts_state *st = input_get_drvdata(dev);
+> > +
+> > +	iio_channel_stop_all_cb(st->iio_cb);
+> > +}
+> > +
+> > +static int grts_probe(struct platform_device *pdev)
+> > +{
+> > +	struct grts_state *st;
+> > +	struct input_dev *input;
+> > +	struct device *dev = &pdev->dev;
+> > +	struct device_node *node = dev->of_node;
+> > +	struct iio_channel *chan;
+> > +	int ret = 0;
+> > +
+> > +	st = devm_kzalloc(dev, sizeof(struct grts_state), GFP_KERNEL);
+> > +	if (!st)
+> > +		return -ENOMEM;
+> > +
+> > +	ret = of_property_read_u32(node,
+> > +			"generic-adc-resistive-touchscreen,pressure-threshold",
+> > +			&st->pressure_threshold);
+> > +	if (ret < 0) {
+> > +		dev_dbg(dev, "can't get touchscreen pressure threshold property.\n");
+> > +		st->pressure_threshold = GRTS_DEFAULT_PRESSURE_THRESHOLD;
+> > +	}
+> > +
+> > +	/* get the channels from IIO device */
+> > +	st->iio_chans = devm_iio_channel_get_all(dev);
+> > +
+> > +	if (IS_ERR(st->iio_chans)) {
+> > +		if (PTR_ERR(st->iio_chans) != -EPROBE_DEFER)
+> > +			dev_err(dev, "can't get iio channels.\n");
+> > +		return PTR_ERR(st->iio_chans);
+> > +	}
+> > +
+> > +	chan = &st->iio_chans[0];
+> > +	st->pressure = false;
+> > +	while (chan && chan->indio_dev) {
+> > +		if (!strcmp(chan->channel->datasheet_name, "pressure"))
+> > +			st->pressure = true;
+> > +		chan++;
+> > +	}
+> > +
+> > +	input = devm_input_allocate_device(dev);
+> > +	if (!input) {
+> > +		dev_err(dev, "failed to allocate input device.\n");
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	input->name = DRIVER_NAME;
+> > +	input->id.bustype = BUS_HOST;
+> > +	input->dev.parent = dev;
 
-user@devuan:/my/ofono/test$ sudo python2 ./list-modems=20
-[ /gobi_0 ]
-    SystemPath =3D /sys/devices/platform/44000000.ocp/4a064000.usbhshost/4a=
-064800.ohci/usb2/2-1
-    Features =3D sim gps=20
-    Emergency =3D 0
-    Powered =3D 1
-    Lockdown =3D 0
-    Interfaces =3D org.ofono.SimManager org.ofono.LocationReporting org.ofo=
-no.VoiceCallManager=20
-    Online =3D 1
-    Model =3D 196
-    Revision =3D M6600A-SCAUHSZ-3.1.3310T  1  [Jun 09 2011 17:00:00]
-    Type =3D hardware
-    Serial =3D 809DE736
-    Manufacturer =3D QUALCOMM INCORPORATED
-    [ org.ofono.SimManager ]
-        Present =3D 0
-    [ org.ofono.LocationReporting ]
-        Type =3D nmea
-        Enabled =3D 0
-    [ org.ofono.VoiceCallManager ]
-        EmergencyNumbers =3D 08 000 999 110 112 911 118 119=20
+This is already being set by devm_input_allocate_device().
 
-user@devuan:/my/ofono/test$=20
+> > +	input->open = grts_open;
+> > +	input->close = grts_close;
+> > +
+> > +	input_set_abs_params(input, ABS_X, 0, MAX_POS_MASK - 1, 0, 0);
+> > +	input_set_abs_params(input, ABS_Y, 0, MAX_POS_MASK - 1, 0, 0);
+> > +	if (st->pressure)
+> > +		input_set_abs_params(input, ABS_PRESSURE, 0, 0xffffff, 0, 0);
 
+It would be good if you used the API from
+include/linux/input/touchscreen.h to parse standard touchscreen
+properties and implement sizing, flippign and rotation of the screen.
 
+> > +
+> > +	input->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
+> > +	input->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
+> > +
+> > +	st->input = input;
+> > +	input_set_drvdata(input, st);
+> > +
+> > +	ret = input_register_device(input);
+> > +	if (ret) {
+> > +		dev_err(dev, "failed to register input device.");
+> > +		return ret;
+> > +	}
+> > +
+> > +	st->iio_cb = iio_channel_get_all_cb(&pdev->dev, grts_cb, st);
 
+Hmm, we don't have devm-variant for this? Then you could use
+devm_add_action_or_reset() to add cleanup action and completely remove
+grts_remove().
 
-diff --git a/doc/location-reporting-api.txt b/doc/location-reporting-api.txt
-index 21e346d4..ff0a35dc 100644
---- a/doc/location-reporting-api.txt
-+++ b/doc/location-reporting-api.txt
-@@ -13,7 +13,7 @@ Methods		dict GetProperties()
- 		filedescriptor Request()
-=20
- 			Asks to turn ON the NMEA stream and supplies the
--			gps device file descriptor. The external cliend should
-+			gps device file descriptor. The external client should
- 			use the file descriptor to receive the NMEA data.
-=20
- 			Possible Errors: [service].Error.InProgress
-diff --git a/plugins/udevng.c b/plugins/udevng.c
-index a4b18488..1c6a6679 100644
---- a/plugins/udevng.c
-+++ b/plugins/udevng.c
-@@ -234,9 +234,10 @@ static gboolean setup_gobi(struct modem_info *modem)
- 	}
-=20
- 	DBG("qmi=3D%s net=3D%s mdm=3D%s gps=3D%s diag=3D%s", qmi, net, mdm, gps, =
-diag);
--=09
-+#if 0=09
- 	if (qmi =3D=3D NULL || mdm =3D=3D NULL || net =3D=3D NULL)
- 		return FALSE;
-+#endif
-=20
-=20
- 	ofono_modem_set_string(modem->modem, "Device", qmi);
-@@ -1251,7 +1252,7 @@ static struct {
- 	{ "cinterion",	setup_serial_modem	},
- 	{ "nokiacdma",	setup_serial_modem	},
- 	{ "sim900",	setup_serial_modem	},
--	{ "g1",		setup_serial_modem	},
-+	//	{ "g1",		setup_serial_modem	},
- 	{ "wavecom",	setup_wavecom		},
- 	{ "tc65",	setup_tc65		},
- 	{ "ehs6",	setup_ehs6		},
-@@ -1602,8 +1603,8 @@ static struct {
- 	{ "telit",	"cdc_acm",	"1bc7", "0021"	},
- 	{ "telitqmi",	"qmi_wwan",	"1bc7", "1201"	},
- 	{ "telitqmi",	"option",	"1bc7", "1201"	},
--	{ "telitqmi",	"qmi_wwan",	"22b8", "2a70"	},
--	{ "telitqmi",	"option",	"22b8", "2a70"	},
-+	{ "gobi",	"qmi_wwan",	"22b8", "2a70"	},
-+	{ "gobi",	"option",	"22b8", "2a70"	},
- 	{ "nokia",	"option",	"0421", "060e"	},
- 	{ "nokia",	"option",	"0421", "0623"	},
- 	{ "samsung",	"option",	"04e8", "6889"	},
-@@ -1719,7 +1720,7 @@ static void check_device(struct udev_device *device)
- 			return;
- 	}
-=20
--#if 0
-+#if 1
- 	if ((g_str_equal(bus, "usb") =3D=3D TRUE) ||
- 			(g_str_equal(bus, "usbmisc") =3D=3D TRUE))
- 		check_usb_device(device);
+> > +
+> > +	if (IS_ERR(st->iio_cb)) {
+> > +		dev_err(dev, "failed to allocate callback buffer.\n");
+> > +		ret =  PTR_ERR(st->iio_cb);
+> > +		return ret;
+> > +	}
+> > +
+> > +	platform_set_drvdata(pdev, st);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int grts_remove(struct platform_device *pdev)
+> > +{
+> > +	struct grts_state *st = platform_get_drvdata(pdev);
+> > +
+> > +	iio_channel_release_all_cb(st->iio_cb);
+> > +	input_unregister_device(st->input);
 
+This call is not needed since you are using managed input device. 
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> blank line preferred before simple returns.
+> 
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct of_device_id grts_of_match[] = {
+> > +	{
+> > +		.compatible = "generic-resistive-adc-touch",
+> > +	}, {
+> > +		/* sentinel */
+> > +	},
+> > +};
+> > +
+> > +MODULE_DEVICE_TABLE(of, grts_of_match);
+> > +
+> > +static struct platform_driver grts_driver = {
+> > +	.probe = grts_probe,
+> > +	.remove = grts_remove,
+> > +	.driver = {
+> > +		   .name = DRIVER_NAME,
+> > +		   .of_match_table = of_match_ptr(grts_of_match),
+> > +	},
+> > +};
+> > +
+> > +module_platform_driver(grts_driver);
+> > +
+> > +MODULE_AUTHOR("Eugen Hristev <eugen.hristev@microchip.com>");
+> > +MODULE_DESCRIPTION("Generic ADC Resistive Touch Driver");
+> > +MODULE_LICENSE("GPL v2");
+> 
 
---jI8keyz6grp/JLjh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thanks.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlq+e48ACgkQMOfwapXb+vJD1gCgxNvt0ofMvzAYh/uqSmUDyQrX
-/bYAn0SgUaES+d4ejF2SWAuPL8ZF9pSk
-=ErPL
------END PGP SIGNATURE-----
-
---jI8keyz6grp/JLjh--
+-- 
+Dmitry
