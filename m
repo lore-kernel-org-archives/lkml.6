@@ -1,52 +1,87 @@
-Return-Path: <john3909@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522010213; cv=none;
-        d=google.com; s=arc-20160816;
-        b=h8J8nJOisDAN35tNGssPyu4VG8vE8m0CY0sQ/Rvwja5WZCtUU+xm/DxiN1wb5JSQ6m
-         GrjI9zkUA/pgWB3OmunX0Jx2Nu86VOp+IsKjK8E+YGGUqnn1cSbPxUfpFho6I4Gdcv0R
-         y0WM9SD7MzFaOnSEStXs8v2JUAnjxcXjoInWMBSOrmvUHH2Ur6Z9xbybIkEyrpIVwX9G
-         fMXePGNaBQoPT47vx6oclczPg7LWdP6/AvijbQJ1zXzn+8U2XSZAv3aGZ4ajwsDKb2Vm
-         KNVtHsMXpDr4CQqwxcDHaylvRWE5cESGDK0e+e++YoYE8Yl8uy7MyX/FPM+aHCn3c/FF
-         9CCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=x+NQkA453I7j7Y8IniTUVQ+wVulIyq4O21XSq77PLtE=;
-        b=h5tWWBy9uvqlc6X5I5cjq8R87Buschhjnm9B0oX8mpmlqIy0+bthqnVJ/GOBKbiFuX
-         oa6muDOmRPuLIf5QiwnTxhffW6gGyDpgYvyMhGXnEVBYKKbEekOPj7kruTSiVFeza/FE
-         3hQQsFYLBBnPgoQHqvs3+34rfwAFQR+AlhN1y+mKlvUffndEJtjgKy5+gtaexo8Pr8wA
-         0q1McDy1pd4tYL65EYVW/5TTqzSKl+0hgsbEprQGqS6l5THgo2wIfXTON/swYmoRF8IU
-         xyL9y9yR58krrQ+pQ2zx1UiTfWJC6yMZGdB9bvfXHOiXEdOzluj7Gw3Lyp0fi3PYGf+y
-         Xx9g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ym98lzMf;
-       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=john3909@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ym98lzMf;
-       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=john3909@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELvLbdc34TZXO9BUU8QXPrly3Rg80MWh53cJmDAwZYafl0bSOkXVaiFN0+45K+XSCcqbSMUf+Q==
-Content-Type: text/plain;
-	charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3134603-1522401233-3-4475087914938171244
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522401232; b=h5Ci75vw3IyeskOiDgDaw4iZuZlQQAiANMJivQ+adEhHXlJhAj
+    7xPyF3uFyXTmZvcDSPaP37MhT2Hpg6AaFKi/mQN8kGLqwCREb4zZ9ciW/TOdnLy4
+    RojLJm7bAlm71iwarbDRa3DWKd3GF3Bje00od3nhFtioHeiCILVV6qSBBxMZho+/
+    4gkWoDtedzh9iIkfanMJ0sS1pVhLAGIXp3ty5sJvw37e+ausdufobc8Qfdck/4KN
+    F8MKuE9WheCgUHr+zD+14860Lp/ojG3W3c9A7lG4fYxI41Dw/xkO1CLMQzwDqAg3
+    IH3mKYwkuSKhmTPJpLBgUh0dM5Z+8YOcs18Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522401232; bh=+Vph3
+    BdPppo7yEbWhmhbKHm1CC9kJHBIjIBhoq1CDRo=; b=LtjUD7ByxEdUjR2jxLayV
+    OVazUxagoJw4WgupHO35PBaV9n3XvSgnLNLqoxXwpoqfXDuy215ogF9GRZ6CUZSk
+    q4Hy7+jd2oabPwzMW56KzynriP/EGbbc8HmPZ8YcCiy+4/FkTKBTBFIXEiXOCBhc
+    MLAHo09EkwL6Rnv5c2MC9k6hcrhWzpBFBPdiOqq7eJRXRbeyCWCAuRHsH9DqgA3B
+    rjZ+vyRhZR00omrNy1+dPnV2AipuscUdWhcfLbyiLVz4AuBSmbs7EPBvavAUulOT
+    3Tx+n2aDA23L8ftR5ZqP1Z5yWDc+RmaAdn9SWMkCy+I0NqCh8FrxZ9J3K1yQZMNb
+    Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIRl2fToEXChJORK19RO6O6vt+zLq9MrcafP6kC0ld+uXv8NGCd5czcTsAgf2NXaIC2S73eyfSjhFYek8IonfuMk/Xu1IqU1NR+SC6mbWlKdPFegGYjr
+    uvLhSnV4GsClxbaUTFf26XaGBJLAbLsqQ1O/uSGCZHQ/hBJWT3OLlFai0Ke+C59jS4SK/2UacN1rOl49k8Ugx0kpHIel3huzaRWX82AtAADaUlICKcPLTyXH
+    cKCiD6XekQxGED6boyVpMg==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+    a=8b9GpE9nAAAA:8 a=JOA0iUbgAAAA:8 a=jtbBNqsHAAAA:8 a=XYAwZIGsAAAA:8
+    a=8AirrxEcAAAA:8 a=yC-0_ovQAAAA:8 a=DDOyTI_5AAAA:8 a=hLaCA-7ODhTW-bIc2LoA:9
+    a=gPT-JFiBhUCMOxS2:21 a=-z6eNua5abzaG1io:21 a=QEXdDO2ut3YA:10
+    a=aTf_0Hi-Eh8A:10 a=pwgGltORyH8A:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=T3LWEMljR5ZiDmsYVIUa:22 a=nG9pSErA777cby-CJFl-:22 a=RWaeYqt-Cn-VcsFsiLGo:22
+    a=E8ToXWR_bxluHZ7gmE-Z:22 a=ST-jHhOKWsTCqRlWije3:22 a=QsnFDINu91a9xkgZirup:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C13820838
+Authentication-Results: mail.kernel.org;
+ dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org;
+ spf=none smtp.mailfrom=jic23@kernel.org
+Date: Fri, 30 Mar 2018 10:13:37 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: John Syne <john3909@gmail.com>
 Subject: Re: meter ABI: (was Re: [PATCH v2 1/3] staging:iio:meter: Replaces
  IIO_DEV_ATTR_CH_OFF by IIO_DEVICE_ATTR)
-From: John Syne <john3909@gmail.com>
-In-Reply-To: <20180325172911.39c0e42f@archlinux>
-Date: Sun, 25 Mar 2018 13:36:40 -0700
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- devel@driverdev.osuosl.org,
- Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
- Hartmut Knaack <knaack.h@gmx.de>,
- daniel.baluta@nxp.com,
- Michael Hennerich <michael.hennerich@analog.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AA2E74B3-EA99-46F7-9FC8-29C8FE6CDC14@gmail.com>
+Message-ID: <20180330101337.73d3413c@archlinux>
+In-Reply-To: <AA2E74B3-EA99-46F7-9FC8-29C8FE6CDC14@gmail.com>
 References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <20180307200730.08ed3c2f@archlinux>
@@ -60,1565 +95,302 @@ References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <20180324150205.709aa211@archlinux>
  <D48DD58E-EB75-48F4-8E34-69D619206BA1@gmail.com>
  <20180325172911.39c0e42f@archlinux>
-To: Jonathan Cameron <jic23@kernel.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+ <AA2E74B3-EA99-46F7-9FC8-29C8FE6CDC14@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, linux-iio@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
+ daniel.baluta@nxp.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595278152164006674?=
-X-GMAIL-MSGID: =?utf-8?q?1595943381527736087?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-> On Mar 25, 2018, at 9:29 AM, Jonathan Cameron <jic23@kernel.org> =
-wrote:
->=20
-> On Sat, 24 Mar 2018 15:45:21 -0700
-> John Syne <john3909@gmail.com> wrote:
->=20
->>> On Mar 24, 2018, at 8:02 AM, Jonathan Cameron <jic23@kernel.org> =
-wrote:
->>>=20
->>> On Mon, 19 Mar 2018 22:57:16 -0700
->>> John Syne <john3909@gmail.com> wrote:
->>>=20
->>>> Hi Jonathan,
->>>>=20
->>>> Thank you for all your hard work. Your feedback is really helpful. =
-I=E2=80=99m surprised that no one from Analog Device has offered any =
-suggestions.
->>>>=20
->>>=20
->>> Sadly those active in the mainline linux kernel from ADI are focused =
-in
->>> other areas currently :( =20
->> Good point. I will reach out to Analog Devices and get a name of =
-someone=20
->> who is knowledgeable in this area. Perhaps Lars-Peters has a =
-suggestion.=20
-> Yes, Lars or Michael Hennerich (+CC) are my normal contact points.
-> I believe this is outside both of their areas, but they may be able to
-> put you in contact with the right person.  If nothing else it would be
-> good to make someone in ADI aware that people care about linux support =
-for
-> these parts!
-I sent in a request to ADI for a contact person to help with the review.
->=20
->>>> Anyway, please see my comments inline below
->>>>=20
->>>> Regards,
->>>> John
->>>>=20
->>>>=20
->>>>=20
->>>>=20
->>>>=20
->>>>> On Mar 18, 2018, at 5:23 AM, Jonathan Cameron <jic23@kernel.org> =
-wrote:
->>>>>=20
->>>>> On Sat, 17 Mar 2018 23:11:45 -0700
->>>>> John Syne <john3909@gmail.com> wrote:
->>>>>=20
->>>>>> Hi Jonathan,   =20
->>>>> Hi John and All,
->>>>>=20
->>>>> I'd love to get some additional input on this from anyone =
-interested.
->>>>> There are a lot of weird and wonderful derived quantities in an =
-energy
->>>>> meter and it seems we need to make some fundamental changes to =
-support
->>>>> them - including potentially a userspace breaking change to the =
-event
->>>>> code description.
->>>>>=20
->>>>>>=20
->>>>>> Here is the complete list of registers for the ADE7878 which I =
-copied from the data sheet. I added a column =E2=80=9CIIO Attribute=E2=80=9D=
- which I hope follows your IIO ABI. Please make any changes you feel are =
-incorrect. BTW, there are several registers that cannot be generalized =
-and are used purely for chip configuration. I think we should add a new =
-naming convention, namely {register}_{<chip-register-name>}. Also, I see =
-in the sys_bus_iio doc =20
->=20
-> No, registers can always be broken up in to real meaningful values if
-> they are exposed to userspace and userspace has a reason to tweak
-> them.
->=20
-> We never expose raw registers to userspace except through
-> debugfs and the clue is in the name - purely for debug.
-OK
->=20
->=20
->>>=20
->>>=20
->>>=20
->>>=20
->>>>>> in_accel_x_peak_raw
->>>>>>=20
->>>>>> so shouldn=E2=80=99t the phase be represented as follows:
->>>>>>=20
->>>>>> in_current_A_scale   =20
->>>>> I'm still confused.  What does A represent here?  I assumed that =
-was a wild
->>>>> card for the channel number before but clearly not.
->>>>>=20
->>>>> Ah, you are labelling the 3 separate phases as A, B and C. Hmm.
->>>>> I guess they sort of look like axis, and sort of like independent =
-channels.
->>>>> So could be indexed or done via modifiers depending on how you =
-look at it.   =20
->>>> In metering terminology, the three phases are commonly referred to =
-as RED, GREEN, BLUE or PhaseA, PhaseB, PhaseC and Neutral. Analog =
-Devices uses the ABCN nomenclature so anyone using this driver will =
-probably have referenced the Analog Devices datasheet so this =
-terminology should be familiar.  =20
->>> Which is more commonly used in general?  We are designing what we =
-hope
->>> will be a general interface and last thing we want is to have =
-everyone
->>> not using ADI parts confused!  Personally not assigning 'colours' =
-makes
->>> more sense to me. =20
->> I did a little research and here is the naming used by vendor:
->>=20
->> ST Microelectronics: P1, P2, P3, N
->> =
-http://www.st.com/content/ccc/resource/technical/document/application_note=
-/5e/f4/22/4d/90/96/4c/c4/CD00153264.pdf/files/CD00153264.pdf/jcr:content/t=
-ranslations/en.CD00153264.pdf
->>=20
->> Teridian: ABCN
->> https://www.mouser.com/ds/2/256/71M6513-71M6513H-22603.pdf
->>=20
->> Maxim Integrated: ABCN
->> https://datasheets.maximintegrated.com/en/ds/78M6631.pdf
->>=20
->> Microchip: ABCN
->> http://ww1.microchip.com/downloads/en/DeviceDoc/51643b.pdf
->>=20
->> NXP: L1, L2, L3, N
->> =
-https://www.nxp.com/support/developer-resources/reference-designs/kinetis-=
-km3x-256-mcu-three-phase-metering-reference-design:RD-KM3x-256-3PH-METERIN=
-G
->>=20
->> Renesas: ABCN
->> =
-https://www.renesas.com/en-us/solutions/home/metering/power-meter-three.ht=
-ml
->>=20
->> So the most consistent would be ABCN
-> Cool.   Makes sense to go with that.  Thanks for checking this out.
->=20
->>=20
->>=20
->> All vendor providing three phase energy metering ICs use the ABCN =
-terminology.=20
->>>=20
->>> (btw please wrap any lines that don't need to be long to around 80 =
-characters).
->>>=20
->>>>>=20
->>>>> Hmm. With neutral in there as well I guess we need to make them
->>>>> modifiers (but might change my mind later ;)
->>>>>=20
->>>>> Particularly as we are using the the modifier for RMS under the =
-previous
->>>>> plan... It appears we should treat that instead like we did for =
-peak
->>>>> and do it as an additional info mask element.  The problem with =
-doing that
->>>>> on a continuous measurement is that we can't treat it as a channel =
-to
->>>>> be output through the buffered interface.   =20
->>>> I=E2=80=99ve changed the layout of the spreadsheet to breakout the =
-Direction, Type, Index, Modifier and Info Mask to make sure there is no =
-miss-understanding and will help identify all the items we need to add.
->>>>=20
->>>> The ADE7878 channels that will use the buffer are IAWV, VAWV, IBWV, =
-VBWV, ICWV, VCWV, INWV, AVA, BVA, CVA, AWATT, BWATT, CWATT, AVAR, BVAR, =
-and CVAR. So I guess we have to add an index =20
->>> Probably a good idea anyway, we are sort of slowly moving away
->>> from index less channels.  The ABI always allowed index assignment
->>> and it makes for easier userspace code.
->>>=20
->>>>=20
->>>> Address Register 	IIO Attribute						=
-	Dir	Type		Index 	Modifier	Info Mask	=
-R/W	Bit		Bit Length	Type	Default	Description=20
->>>> 										=
-										=
-					Length 	During Comm			=
-Value=09
->>>> 0xE50C	IAWV	in_current0_phaseA_instantaneous		=
-in	current			0	phaseA	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase A current. =20
->>>=20
->>> I'm unconvinced by "instantaneous".  That is the default assumption =
-that you are
->>> measuring current at this point in time.  I'm still confused on what =
-this actually
->>> is. Is it effectively the DC current? I.e. the wave form value for =
-current?=20
->>> You answer this below.  They are DC measurements.. =20
->> No, they are the output of the ADC at a point in time. The ADC =
-samples=20
->> continuous at 8,000 samples per second, so when you read this =
-register
->> you are getting the sample measured just before your read. I don=E2=80=99=
-t know
->> why anyone would read this register. The samples are streamed via
->> the SPI interface, with IAWV, VAWV, IBWV, VBWV, ICWV, VCWV, INWV,=20
->> AVA, BVA, CVA, AWATT, BWATT, CWATT, AVAR, BVAR, and CVAR transmitted=20=
-
->> every 125uS. Probably better not to expose these registers to user =
-space.
-> I'm happy not to expose them, but if they are the instantaneous values
-> they are what I mean by DC values, literally the number you would
-> see on an oscilloscope if you were to probe them.
-If you could read the instantaneous register after each sample, then you=20=
-
-would get an oscilloscope display of a sine wave. However, since a user=20=
-
-space app cannot read this on each sample, the output would look pretty
-random. Certainly not a DC value, which is much more consistent.=20
->=20
->>=20
->>=20
->>>=20
->>> Which actually raises a point I'd forgotten.  We have an explicit =
-type=20
->>> for altvoltage (defined for DDS devices as the waveform amplitude =
-IIRC).
->>> We should be consistent with that if possible.
->>>=20
->>> So I think this should be.
->>> in_current0_phaseA_raw =20
->> Yeah, that sounds correct, which reminds me of another issue that =
-does not make
->> sense. To me, gain is something that is hardware related and is used =
-to magnify=20
->> an input signal or is used to calibrate a measurement. Scale on the =
-other had is=20
->> something that is used to convert a raw measurement into something =
-that is more=20
->> meaningful, such as 0x820000 =3D 220V. So everywhere we have used =
-scale and gain=20
->> interchangeable is confusing.
->=20
-> Agreed - up to a point.  If you have a hardware gain control which for =
-whatever
-> reason results in a different scaling needing to be applied to go from =
-userspace
-> value to real world value (sometimes happens with multi range devices) =
-then we
-> expose it only once - as scale.
->=20
-> We have hardwaregain and calibgain for tweaking the gain to account =
-for cases
-> where it isn't apparent in the output value (hardware gain - normally =
-used
-> when we are measuring something about the signal that isn't it's =
-magnitude),
-> or is compensating for inaccuracies in the circuitry or sensor =
-(calibgain)
-That is what we have, the ADE7854 has a hardwaregain before the ADC to =
-allow
-various input voltage and current ranges: 0-250mV, 0-0.5V, etc. Also, we =
-have
-calibgain, which is used to compensate for the selected current =
-transformer or=20
-rogowski coil and the termination resistors.=20
-
-Maybe we should add additional attributes for scale and the real world =
-values?
-The scale attribute would convert the raw value to real world value =
-(220V, 100A
-25KWh, etc)
->>=20
->>> etc
->>> A channel can be uniquely identified using index and modifier as as =
-pair (if we add
->>> the new field for computation applied that will also allow separate =
-identification).
->>> So the later channels can be.
->>>=20
->>> in_current0_phaseB_raw etc
->>>=20
->>> Indexes can be shared by different types as well.  Often done to =
-associate
->>> different measurements of the same signal (though the ABI doesn't =
-specify
->>> that).
->>>=20
->>>> 0xE50D	IBWV	in_current1_phaseB_instantaneous		=
-in	current			1	phaseB	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase B current.
->>>> 0xE50E	ICWV	in_current2_phaseC_instantaneous		=
-in	current			2	phaseC	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase C current.
->>>> 0xE50F	INWV	in_current3_phaseN_instantaneous		=
-in	current			3	neutral	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of neutral current (ADE7868 and ADE7878 only). =20
->>> in_voltage0_phaseA_raw
->>>=20
->>>> 0xE510	VAWV	in_voltage4_phaseA_instantaneous		=
-in	voltage			4	phaseA	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase A voltage.
->>>> 0xE511	VBWV	in_voltage5_phaseB_instantaneous		=
-in	voltage			5	phaseB	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase B voltage.
->>>> 0xE512	VCWV	in_voltage6_phaseC_instantaneous		=
-in	voltage			6	phaseC	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase C voltage.
->>>> 0xE513	AWATT	in_power7_phaseA_instantaneous			=
-in	power			7	phaseA	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase A total active power.
->>>> 0xE514	BWATT	in_power8_phaseB_instantaneous			=
-in	power			8	phaseB	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase B total active power.
->>>> 0xE515	CWATT	in_power9_phaseC_instantaneous			=
-in	power			9	phaseC	instantaneous	R	=
-24		32 SE		S		N/A		=
-Instantaneous value of Phase C total active power. =20
->>> in_power0_phaseC_raw
->>>=20
->>>> 0xE516	AVAR	in_powerreactive10_phaseA_instantaneous	in	=
-powerreactive		10	phaseA	instantaneous	R	24		=
-32 SE		S		N/A		Instantaneous value of =
-Phase A total reactive power (ADE7858, ADE7868, and ADE7878 only). =20
->>> in_powerreactive0_phaseA_raw etc =20
->>>> 0xE517	BVAR	in_powerreactive11_phaseB_instantaneous	in	=
-powerreactive		11	phaseB	instantaneous	R	24		=
-32 SE		S		N/A		Instantaneous value of =
-Phase B total reactive power (ADE7858, ADE7868, and ADE7878 only).
->>>> 0xE518	CVAR	in_powerreactive12_phaseC_instantaneous	in	=
-powerreactive		12	phaseC	instantaneous	R	24		=
-32 SE		S		N/A		Instantaneous value of =
-Phase C total reactive power (ADE7858, ADE7868, and ADE7878 only).
->>>> 0xE519	AVA		in_powerapparent13_phaseA_instantaneous	=
-in	powerapparent	13	phaseA	instantaneous	R	24		=
-32 SE		S		N/A		Instantaneous value of =
-Phase A apparent power.
->>>> 0xE51A	BVA		in_powerapparent14_phaseB_instantaneous	=
-in	powerapparent	14	phaseB	instantaneous	R	24		=
-32 SE		S		N/A		Instantaneous value of =
-Phase B apparent power.
->>>> 0xE51B	CVA		in_powerappatent15_phaseC_instantaneous	=
-in	powerapparent	15	phaseC	instantaneous	R	24		=
-32 SE		S		N/A		Instantaneous value of =
-Phase C apparent power.
->>>>=20
->>>> The ADE9000 channels that use the buffer are IA, VA, IB, VB, IC, VC =
-and IN =20
->>>>>=20
->>>>> So again we have run out of space. It's increasingly looking like =
-we need
->>>>> room for another field in the events - to cleanly represent =
-computed values.
->>>>>=20
->>>>> Hmm. What is the current usage? - it's been a while so I had to go
->>>>> look in the header.
->>>>>=20
->>>>> 0-15 Channel (lots of channels)
->>>>> 31-16 Channel 2  (36 modifiers - lots of channels)
->>>>> 47-32 Channel Type (31 used so far - this looks most likely to run =
-out of
->>>>> space in the long run so leave this one alone).
->>>>> 54-48 Event Direction (4 used)
->>>>> 55 Differential  (1: channel 2 as differential pair 0: as a =
-modifier)
->>>>> 63-56 Event Type (6 used)
->>>>>=20
->>>>> So I think we can pinch bit 53 as another flag to indicate we have
->>>>> a computed value or possibly bit 63 as event types are few and
->>>>> far between as well.
->>>>>=20
->>>>> Probably reasonable to assume we never have 16 bits worth
->>>>> of channels and computed channels at the same time?
->>>>> Hence I think we can steal bits off the top of Channel.
->>>>> How many do we need?  Not sure unfortunately but feels like
->>>>> 8 should be plenty.   =20
->>>> When you speak of Channels here, are you referring to measurements =
-that will use the buffer? Even when counting all the IIO attributes, the =
-ADE9000 has 462 registers, and not all of those would be defined as =
-attributes. I think 8 Bits should be more than enough. =20
->>> Not quite.  This is all about allowing us to differentiate between
->>> the actual channels where a channel is a single measurement that we
->>> are interested in.=20
->>> So we care about 256 measurements that are otherwise =
-indistinguishable
->>> using combination of index, modifier and our new propose
->>> computedvalue bit. =20
->> Got it.
->>>=20
->>>>>=20
->>>>> The other element of this is we add a new field to iio_chan_spec
->>>>> to contain 'derived_type' or something like that which has
->>>>> rms and sum squared etc. Over time we can move some of those
->>>>> from the modifiers and free up a few entires there.
->>>>> So modifier might be "X and Y and Z" with a derived_type of=20
->>>>> sum_squared to give existing sum_squared_x_y_z but no
->>>>> rush on that.
->>>>>=20
->>>>> Anyhow so now we have an extra element to play that will result
->>>>> in a different channel.
->>>>>=20
->>>>> Whilst here we should think about any other mods needed to
->>>>> that event structure.  It is a little unfortunate that this
->>>>> will be a breaking change for any old userspace code playing
->>>>> with new drivers but it can't be helped as we didn't have
->>>>> reserved values in the original definition (oops).
->>>>>=20
->>>>> At somepoint we may need to add the 'shared by derived_value'
->>>>> info mask but I think we can ignore that for now (seems
->>>>> moderately unlikely to have anything in it!)   =20
->>>>>>=20
->>>>>> But for now, I followed your instructions from your reply.
->>>>>>=20
->>>>>> After finalizing this one, I will work on the ADE9000, which as =
-way more registers ;-)
->>>>>>=20
->>>>>> Once we can agree on the register naming, I will update the =
-ADE7854 driver for Rodrigo, which will go a long way to getting it out =
-of staging.   =20
->>>>> I'll edit to fit with new scheme and insert indexes which I think =
-would be
->>>>> preferred though optional under the ABI as we only have one of =
-each type/   =20
->>>>>>=20
->>>>>> Address	Register	IIO Attribute	R/W	Bit Length	=
-Bit Length During Communications	Type	Default Value	=
-Description
->>>>>> 0x4380	AIGAIN	in_current0_phaseA_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase A current gain adjust.   =20
->>>>> A, B, C, N aren't obvious to the lay reader so I suggest we burn a =
-few characters and stick phase in for ABC and just have neutral for
->>>>> the neutral one. Not sure about capitalization or not though.
->>>>>=20
->>>>>> 0x4381	AVGAIN	in_voltage0_phaseA_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase A voltage gain adjust.
->>>>>> 0x4382	BIGAIN	in_current0_phaseB_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase B current gain adjust.
->>>>>> 0x4383	BVGAIN	in_voltage0_phaseB_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase B voltage gain adjust.
->>>>>> 0x4384	CIGAIN	in_current0_phaseC_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase C current gain adjust.
->>>>>> 0x4385	CVGAIN	in_voltage0_phaseC_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase C voltage gain adjust.
->>>>>> 0x4386	NIGAIN	in_current0_neutral_scale	R/W	24	=
-32 ZPSE	S	0x000000	Neutral current gain adjust (ADE7868 and =
-ADE7878 only).
->>>>>> 0x4387	AIRMSOS	in_current0_phaseA_rms_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase A current rms offset.
->>>>>> 0x4388	AVRMSOS	in_voltage0_phaseA_rms_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase A voltage rms offset.
->>>>>> 0x4389	BIRMSOS	in_current0_phaseB_rms_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase B current rms offset.
->>>>>> 0x438A	BVRMSOS	in_voltage0_phaseB_rms_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase B voltage rms offset.
->>>>>> 0x438B	CIRMSOS	in_current0_phaseC_rms_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase C current rms offset.
->>>>>> 0x438C	CVRMSOS	in_voltage0_phaseC_rms_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase C voltage rms offset.
->>>>>> 0x438D	NIRMSOS	in_current0_neutral_rms_offset	R/W	24	=
-32 ZPSE	S	0x000000	Neutral current rms offset (ADE7868 and =
-ADE7878 only).
->>>>>> 0x438E	AVAGAIN	in_powerapparent0_phaseA_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase A apparent power gain adjust.
->>>>>> 0x438F	BVAGAIN	in_powerapparent0_phaseB_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase B apparent power gain adjust.
->>>>>> 0x4390	CVAGAIN	in_powerapparent0_phaseC_scale	R/W	24	=
-32 ZPSE	S	0x000000	Phase C apparent power gain adjust.
->>>>>> 0x4391	AWGAIN	in_power0_phaseA_scale	R/W	24	32 ZPSE	=
-S	0x000000	Phase A total active power gain adjust.
->>>>>> 0x4392	AWATTOS	in_power0_phaseA_offset	R/W	24	32 ZPSE	=
-S	0x000000	Phase A total active power offset adjust.
->>>>>> 0x4393	BWGAIN	in_power0_phaseB_scale	R/W	24	32 ZPSE	=
-S	0x000000	Phase B total active power gain adjust.
->>>>>> 0x4394	BWATTOS	in_power0_phaseB_offset	R/W	24	32 ZPSE	=
-S	0x000000	Phase B total active power offset adjust.
->>>>>> 0x4395	CWGAIN	in_power0_PhaseC_scale	R/W	24	32 ZPSE	=
-S	0x000000	Phase C total active power gain adjust.
->>>>>> 0x4396	CWATTOS	in_power0_phaseC_offset	R/W	24	32 ZPSE	=
-S	0x000000	Phase C total active power offset adjust.
->>>>>> 0x4397	AVARGAIN	in_powerreactive0_phaseA_scale	R/W	=
-24	32 ZPSE	S	0x000000	Phase A total reactive power =
-gain adjust (ADE7858, ADE7868, and ADE7878).
->>>>>> 0x4398	AVAROS	in_powerreactive0_phaseA_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase A total reactive power offset =
-adjust (ADE7858, ADE7868, and ADE7878).
->>>>>> 0x4399	BVARGAIN	in_powerreactive0_phaseB_scale	R/W	=
-24	32 ZPSE	S	0x000000	Phase B total reactive power =
-gain adjust (ADE7858, ADE7868, and ADE7878).
->>>>>> 0x439A	BVAROS	in_powerreactive0_phaseB_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase B total reactive power offset =
-adjust (ADE7858, ADE7868, and ADE7878).
->>>>>> 0x439B	CVARGAIN	in_powerreactive0_phaseC_scale	R/W	=
-24	32 ZPSE	S	0x000000	Phase C total reactive power =
-gain adjust (ADE7858, ADE7868, and ADE7878).
->>>>>> 0x439C	CVAROS	in_powerreactive0_phaseC_offset	R/W	24	=
-32 ZPSE	S	0x000000	Phase C total reactive power offset =
-adjust (ADE7858, ADE7868, and ADE7878).
->>>>>> 0x439D	AFWGAIN	in_power0_phaseA_fundamental_scale	R/W	=
-24	32 ZPSE	S	0x000000	Phase A fundamental active power =
-gain adjust. Location reserved for ADE7854, ADE7858, and ADE7868.   =20
->>>>> Hmm. fundamental is the oddity here.  I here because  it is sort =
-of a derived value
->>>>> and sort of a filter applied.  Can it be sensible combined with =
-RMS? probably not but
->>>>> it can be combined with peak for example (which I'd also ideally =
-move into
->>>>> the derived representation.).   =20
->>>> Includes only the measurement spectrum at 50Hz or 60Hz and does not =
-include harmonic.  =20
->>> I think for that we need to define a different indexed channel and =
-define
->>> the filters applied with appropriate values to make it a band pass =
-at these
->>> frequencies.  We may need to expand the current filter definitions =
-to do this
->>> but that is fine if needed.
->>>=20
->>>=20
->>>>=20
->>>>>=20
->>>>>> 0x439E	AFWATTOS	in_power0_phaseA_fundamental_offset	=
-R/W	24	32 ZPSE	S	0x000000	Phase A fundamental =
-active power offset adjust. Location reserved for ADE7854, ADE7858, and =
-ADE7868.
->>>>>> 0x439F	BFWGAIN	in_power0_phaseB_fundamental_scale	R/W	=
-24	32 ZPSE	S	0x000000	Phase B fundamental active power =
-gain adjust (ADE7878 only).
->>>>>> 0x43A0	BFWATTOS	in_power0_phaseB_fundamental_offset	=
-R/W	24	32 ZPSE	S	0x000000	Phase B fundamental =
-active power offset adjust (ADE7878 only).
->>>>>> 0x43A1	CFWGAIN	in_power0_phaseC_fundamental_scale	R/W	=
-24	32 ZPSE	S	0x000000	Phase C fundamental active power =
-gain adjust.
->>>>>> 0x43A2	CFWATTOS	in_power0_phaseC_fundamental_offset	=
-R/W	24	32 ZPSE	S	0x000000	Phase C fundamental =
-active power offset adjust (ADE7878 only).
->>>>>> 0x43A3	AFVARGAIN	=
-in_powerreactive0_phaseA_fundamental_scale	R/W	24	32 ZPSE	=
-S	0x000000	Phase A fundamental reactive power gain adjust =
-(ADE7878 only).
->>>>>> 0x43A4	AFVAROS	in_powerreactive0_phaseA_fundamental_offset	=
-R/W	24	32 ZPSE	S	0x000000	Phase A fundamental =
-reactive power offset adjust (ADE7878 only).
->>>>>> 0x43A5	BFVARGAIN	=
-in_powerreactive0_phaseB_fundamental_scale	R/W	24	32 ZPSE	=
-S	0x000000	Phase B fundamental reactive power gain adjust =
-(ADE7878 only).
->>>>>> 0x43A6	BFVAROS	in_powerreactive0_phaseB_fundamental_offset	=
-R/W	24	32 ZPSE	S	0x000000	Phase B fundamental =
-reactive power offset adjust (ADE7878 only).
->>>>>> 0x43A7	CFVARGAIN	=
-in_powerreactive0_phaseC_fundamental_scale	R/W	24	32 ZPSE	=
-S	0x000000	Phase C fundamental reactive power gain adjust =
-(ADE7878 only).
->>>>>> 0x43A8	CFVAROS	in_powerreactive0_phaseC_fundamental_offset	=
-R/W	24	32 ZPSE	S	0x000000	Phase C fundamental =
-reactive power offset adjust (ADE7878 only).
->>>>>> 0x43A9	VATHR1	regiister_VATHR1	R/W	24	32 ZP	=
-U	0x000000	Most significant 24 bits of VATHR[47:0] =
-threshold used in phase apparent power datapath.   =20
->>>>> Do not expose these to userspace. Why would it care?   =20
->>>> Brilliant, yes these should be moved the the DeviceTree (DT) =20
->>>=20
->>> Cool
->>>=20
->>>>>=20
->>>>>> 0x43AA	VATHR0	register_VATHR0	R/W	24	32 ZP	U	=
-0x000000	Less significant 24 bits of VATHR[47:0] threshold used =
-in phase apparent power datapath.
->>>>>> 0x43AB	WTHR1	register_WTHR1	R/W	24	32 ZP	U	=
-0x000000	Most significant 24 bits of WTHR[47:0] threshold used in =
-phase total/fundamental active power datapath.
->>>>>> 0x43AC	WTHR0	register_WTHR0	R/W	24	32 ZP	U	=
-0x000000	Less significant 24 bits of WTHR[47:0] threshold used in =
-phase total/fundamental active power datapath.
->>>>>> 0x43AD	VARTHR1	register_VARTHR1	R/W	24	32 ZP	=
-U	0x000000	Most significant 24 bits of VARTHR[47:0] =
-threshold used in phase total/fundamental reactive power datapath =
-(ADE7858, ADE7868, and ADE7878).
->>>>>> 0x43AE	VARTHR0	register_VARTHR0	R/W	24	32 ZP	=
-U	0x000000	Less significant 24 bits of VARTHR[47:0] =
-threshold used in phase total/fundamental reactive power datapath =
-(ADE7858, ADE7868, and ADE7878).
->>>>>> 0x43AF	Reserved		N/A4	N/A4	N/A4	N/A4	=
-0x000000	This memory location should be kept at 0x000000 for =
-proper operation.
->>>>>> 0x43B0	VANOLOAD	register_VANOLOAD	R/W	24	=
-32 ZPSE	S	0x0000000	No load threshold in the apparent power =
-datapath.   =20
->>>>> This one is kind of an event parameter, but one that controls =
-internal creep prevention.
->>>>> This will be a driver specific attr I think for now. We may add it =
-to info_mask
->>>>> later if we get lots of meter drivers.=20
->>>>> Something like
->>>>> in_power0_no_load_thresh though I haven't really thought about it =
-or looked
->>>>> for similar precedence.   =20
->>>> Again, this is something that would be set and never changed, so I =
-think this should be moved to DT. =20
->>>=20
->>> Cool.
->>>=20
->>>>>=20
->>>>>=20
->>>>>> 0x43B1	APNOLOAD	register_APNOLOAD	R/W	24	=
-32 ZPSE	S	0x0000000	No load threshold in the =
-total/fundamental active power datapath.   =20
->>>>> in_activepower0_no_load_thresh   =20
->>>> DT =20
->>>>>> 0x43B2	VARNOLOAD	register_VARNOLOAD	R/W	24	=
-32 ZPSE	S	0x0000000	No load threshold in the =
-total/fundamental reactive power datapath. Location reserved for =
-ADE7854.   =20
->>>>> in_reactivpower0_no_load_thresh   =20
->>>> DT =20
->>>>>=20
->>>>>> 0x43B3	VLEVEL	register_VLEVEL	R/W	24	32 ZPSE	S	=
-0x000000	Register used in the algorithm that computes the =
-fundamental active and reactive powers (ADE7878 only).   =20
->>>>> This one looks like a characteristic of the circuit attached.  So =
-should be devicetree
->>>>> or similar and not exposed to userspace.   =20
->>>> DT =20
->>>>>=20
->>>>>> 0x43B5	DICOEFF	register_DICOEFF	R/W	24	32 ZPSE	=
-S	0x0000000	Register used in the digital integrator =
-algorithm. If the integrator is turned on, it must be set at 0xFF8000. =
-In practice, it is transmitted as 0xFFF8000.   =20
->>>>> no userspace interface.   =20
->>>> DT =20
->>>>>=20
->>>>>> 0x43B6	HPFDIS	register_HPFDIS	R/W	24	32 ZP	U	=
-0x000000	Disables/enables the HPF in the current datapath (see =
-Table 34).   =20
->>>>> We have controls for high pass filters, you'll need to map on to =
-them.
->>>>> Disable is usually setting 3DB point to 0 IIRC.   =20
->>>> DT =20
->>>>>=20
->>>>>> 0x43B8	ISUMLVL	register_ISUMLVL	R/W	24	32 ZPSE	=
-S	0x000000	Threshold used in comparison between the sum of =
-phase currents and the neutral current (ADE7868 and ADE7878 only).   =20
->>>>> This is an event threshold so needs to map to the events =
-infrastructure
->>>>> as best we can.  It's actually a pain to describe so may be device =
-specific ABI.   =20
->>>> DT. I=E2=80=99m not sure why this would be mapped to the events =
-infrastructure? There is no event generated by this register. =20
->>> Control parameter of an event I think?
->>> So the event description is separate from that of the channels and =
-has it's
->>> own extended ABI to describe this sort of value. =20
->> Do you have an example where a control parameter is used with an =
-event?=20
->> I have not seen this anywhere.
->=20
-> Sure in the abi docs these are easy to find as they have
-> the type of event in the name.
->=20
-> Taking a few relevant entries...
->=20
-> /sys/.../events/in_accel_thresh_rising_en
-> /sys/.../events/in_accel_thresh_rising_value
-> /sys/.../events/in_accel_x_thresh_rising_hysteresis
-> /sys/.../events/in_accel_x_thresh_rising_period
-> /sys/.../events/in_accel_thresh_rising_low_pass_filter_3db
->=20
-> Grep for iio_event_spec to find how they are defined.  It's pretty
-> similar to a channel and they are associated with a particular =
-channel.
-I=E2=80=99ll take a look.
->=20
->>>=20
->>>>>=20
->>>>>> 0x43BF	ISUM	register_ISUM	R	28	32 ZP	S	=
-N/A4	Sum of IAWV, IBWV, and ICWV registers (ADE7868 and ADE7878 =
-only).   =20
->>>>> So this would be using a modifier for AandBandC phases (similar to =
-the XandYanZ ones for mems devices and
->>>>> a derived value of sum I think So would look something like.
->>>>> in_current0_phaseA&phaseB&phaseC_sum and yet another channel
->>>>>=20
->>>>>> 0x43C0	AIRMS	in_current0_phaseA_rms	R	24	32 ZP	=
-S	N/A4	Phase A current rms value.
->>>>>> 0x43C1	AVRMS	in_voltage0_phaseA_rms	R	24	32 ZP	=
-S	N/A4	Phase A voltage rms value.
->>>>>> 0x43C2	BIRMS	in_current0_phaseB_rms	R	24	32 ZP	=
-S	N/A4	Phase B current rms value.
->>>>>> 0x43C3	BVRMS	in_voltage0_phaseB_rms	R	24	32 ZP	=
-S	N/A4	Phase B voltage rms value.
->>>>>> 0x43C4	CIRMS	in_current0_phaseC_rms	R	24	32 ZP	=
-S	N/A4	Phase C current rms value.
->>>>>> 0x43C5	CVRMS	in_voltage0_phaseC_rms	R	24	32 ZP	=
-S	N/A4	Phase C voltage rms value.
->>>>>> 0x43C6	NIRMS	in_current0_neutral_rms	R	24	32 ZP	=
-S	N/A4	Neutral current rms value (ADE7868 and ADE7878 only).
->>>>>> 0xE228	Run	register_Run	R/W	16	16	U	=
-0x0000	Run register starts and stops the DSP. See the Digital Signal =
-Processor section for more details.   =20
->>>>> Not exposed to userspace.   =20
->>>> DT =20
->>>>>=20
->>>>>> 0xE400	AWATTHR	in_energy0_phaseA_raw	R	32	32	=
-S	0x00000000	Phase A total active energy accumulation.
->>>>>> 0xE401	BWATTHR	in_energy0_phaseB_raw	R	32	32	=
-S	0x00000000	Phase B total active energy accumulation.
->>>>>> 0xE402	CWATTHR	in_energy0_phaseC_raw	R	32	32	=
-S	0x00000000	Phase C total active energy accumulation.
->>>>>> 0xE403	AFWATTHR	in_energy0_phaseA_fundamental_raw	=
-R	32	32	S	0x00000000	Phase A fundamental =
-active energy accumulation (ADE7878 only).
->>>>>> 0xE404	BFWATTHR	in_energy0_phaseB_fundamental_raw	=
-R	32	32	S	0x00000000	Phase B fundamental =
-active energy accumulation (ADE7878 only).
->>>>>> 0xE405	CFWATTHR	in_energy0_phaseC_fundamental_raw	=
-R	32	32	S	0x00000000	Phase C fundamental =
-active energy accumulation (ADE7878 only).
->>>>>> 0xE406	AVARHR	in_energyreactive0_phaseA_raw	R	32	=
-32	S	0x00000000	Phase A total reactive energy =
-accumulation (ADE7858, ADE7868, and ADE7878 only).
->>>>>> 0xE407	BVARHR	in_energyreactive0_phaseB_raw	R	32	=
-32	S	0x00000000	Phase B total reactive energy =
-accumulation (ADE7858, ADE7868, and ADE7878 only).
->>>>>> 0xE408	CVARHR	in_energyreactive0_phaseC_raw	R	32	=
-32	S	0x00000000	Phase C total reactive energy =
-accumulation (ADE7858, ADE7868, and ADE7878 only).
->>>>>> 0xE409	AFVARHR	in_energyreactive0_phaseA_fundamental_raw	=
-R	32	32	S	0x00000000	Phase A fundamental =
-reactive energy accumulation (ADE7878 only).
->>>>>> 0xE40A	BFVARHR	in_energyreactive0_phaseB_fundamental_raw	=
-R	32	32	S	0x00000000	Phase B fundamental =
-reactive energy accumulation (ADE7878 only).
->>>>>> 0xE40B	CFVARHR	in_energyreactive0_phaseC_fundamental_raw	=
-R	32	32	S	0x00000000	Phase C fundamental =
-reactive energy accumulation (ADE7878 only).
->>>>>> 0xE40C	AVAHR	in_energyapparent0_phaseA_raw	R	32	=
-32	S	0x00000000	Phase A apparent energy accumulation.
->>>>>> 0xE40D	BVAHR	in_energyapparent0_phaseB_raw	R	32	=
-32	S	0x00000000	Phase B apparent energy accumulation.
->>>>>> 0xE40E	CVAHR	in_energyapparent0_phaseC_raw	R	32	=
-32	S	0x00000000	Phase C apparent energy accumulation.
->>>>>> 0xE500	IPEAK	in_current0_peak	R	32	32	=
-U	N/A	Current peak register. See Figure 50 and Table 35 for =
-details about its composition.   =20
->>>>> Oh goody. I have no idea how we expose the which phase element of =
-this
->>>>> cleanly.  One option I suppose is to have in_current0_phaseA_peak =
-etc
->>>>> and have all but the current peak return an error when read? It is =
-a bit
->>>>> nasty but only so much we can do and keep with a consistent =
-interface.
->>>>>=20
->>>>>> 0xE501	VPEAK	in_voltage_peak	R	32	32	U	=
-N/A	Voltage peak register. See Figure 50 and Table 36 for details =
-about its composition.   =20
->>>>> Same as peak.
->>>>>=20
->>>>>> 0xE502	STATUS0	register_STATUS0	R/W	32	32	=
-U	N/A	Interrupt Status Register 0. See Table 37.
->>>>>> 0xE503	STATUS1	register_STATUS1	R/W	32	32	=
-U	N/A	Interrupt Status Register 1. See Table 38.   =20
->>>>> No userspace interface except via events interface or error =
-reports.   =20
->>>> Isn=E2=80=99t this tied to the event framework? My thinking is the =
-user interface should be notified when certain conditions occur. =20
->>>=20
->>> Probably depending on the condition.  If it looks like a threshold =
-on something
->>> it can go through as an event.  If it is a 'fault' detection in the =
-measurement
->>> hardware we need to look at a RAS type notification. This is always =
-a tricky
->>> topic and the upshot is we normally just end up dumping them in the =
-kernel log
->>> as anything else is hard to do (from a persuading other people of =
-it's importance
->>> point of view). =20
->> Let=E2=80=99s take some examples:
->> STATUS0:0	AEHF	Bit set when the Watt hour registers reach =
-threshold.
->> This means the Watt hour registers must be read or the watt hour =
-register will=20
->> wrap and you will loose the energy accumulated. So I=E2=80=99m not =
-sure how IIO handles=20
->> events with user space, but can I assume it is using a poll or select =
-to monitor for=20
->> events?
->=20
-> Do we get interrupts to indicate a state change in here?  We can poll =
-otherwise
-> but it's not exactly elegant to do so.  Had a quick look - as this is =
-the
-> interrupt status register we are fine :)
-Yes, there is an interrupt associated with this status register. There =
-is also a mask
-register to prevent an interrupt from any of these events.=20
->=20
-> This would be controlled by something like.
-> in_power0_thresh_rising_value
->=20
-> =46rom a userspace point of view, there is an ioctl that gets you an =
-anonymous
-> chardev.  Once you have that you can use poll / select to monitor for =
-events
-> and act on them.
-Perfect
->=20
-> There is example code in the iio_event_monitor program in toos/iio in =
-the
-> kernel tree.
-I=E2=80=99ll take a look
->=20
->=20
->>=20
->> STATUS0:6	REVAPA	ACCMODE has changed sign. Power is exported =
-rather
->> than imported. User space application would use this to indicate the =
-direction
->> of power flow.
-> This is where we start to run into a problem - mostly IIO only allows =
-for
-> a single threshold for rising and falling on a given channel.  No way =
-to
-> tell which one triggered in the ABI - even code says what and on what =
-channel
-> it doesn't distinguish multiple levels.
-Yeah, there is no threshold here. It occurs with the phase exceeds 90 =
-deg,
-which indicates that the power is now being exported to the grid.
->=20
-> We can play games with defining additional channels but it isn't that =
-elegant.
-> Now assuming we want to do both directions of change..
-Correct, we need to know when the power is flowing from the power grid =
-or
-flowing to the power grid. This is common with Distributed Energy =
-Resources
-(DER) such as solar panels or wind farms.=20
->=20
-> in_power0_thresh_either_value =3D 0
-> (to indicate a transition across 0 power - I assume the other =
-direction is
-> negative?)
-> and associated event code.
->=20
->>=20
->> STATUS1:0	NLOAD	At least one phase has entered no load =
-condition. User=20
->> space app would probably alert the user of a faulty condition.
-> Not sure what this maps to - but would be based on how it was =
-detected.
-> Is this effectively 0 current?
-The ADC is noisy and doesn=E2=80=99t output 0x000 when the current is =
-0A, so anything=20
-below a defined threshold is considered to be NoLoad.
->=20
->>=20
->> STATUS1:3	ZXTOVA	Indicates Phase A voltage zero crossing is =
-missing. This=20
->> is another fault condition.
->=20
-> Similar to the rate of change detection in some ways, but only =
-explicitly looks
-> at the 0 point.  We would need something new to represent this I =
-think=E2=80=A6
-This occurs when we have a phase failure (transformer failure, etc) or a =
-sensor=20
-failure (wiring failure, etc). If phase failure occurs, it could cause =
-damage to=20
-equipment like a motor.
->=20
->>=20
->> STATUS1:16	SAG	This indicates a sag occurred on one of the =
-phases. User=20
->> space appmight signal the user and record this condition to a log =
-file.
-> This is effectively a measurement of our AC voltage dropping?  Simple =
-threshold
-> event on the phase voltage I think.
->>=20
->> STATUS1:17	OV		This indicates that an over voltage =
-event occurred and a=20
->> user space app would signal the user and record this to a log file.
-> Voltage threshold.
->=20
->>=20
->> All of these conditions can be masked via the MASK0 and MASK1 =
-registers.
->>=20
->> Not sure how IIO would handle this?
-> Masking is handled via the relevant *_en attributes for the events.
-Nice
->=20
->>=20
->>>=20
->>>=20
->>>>>=20
->>>>>> 0xE504	AIMAV	in_currentA_mav	R	20	32 ZP	U	=
-N/A	Phase A current mean absolute value computed during PSM0 and =
-PSM1 modes (ADE7868 and ADE7878 only).   =20
->>>>> Probably a longer name as mav is cryptic.
->>>>> in_current0_phaseA_meanabs_raw - it could have a scale and all =
-sorts of fun.
->>>>> So I think this needs to be using the new derived infrastructure =
-proposed here
->>>>> rather than being an info_mask element.   =20
->>>> The same way a knowledgeable person understands what RMS means, so =
-they should also understand what MAV means.  =20
->>> hehe. I know RMS and not MAV so I suspect it a bit dependent on =
-where exactly you came across
->>> the terms ;) =20
->> MAV is just another way to calculate RMS, but is not as accurate. It =
-is just a statistical term,=20
->> Mean Absolute Value (MAV).
-> Sure.
->=20
->>>=20
->>>>>=20
->>>>>> 0xE505	BIMAV	in_currentB_mav	R	20	32 ZP	U	=
-N/A	Phase B current mean absolute value computed during PSM0 and =
-PSM1 modes (ADE7868 and ADE7878 only).
->>>>>> 0xE506	CIMAV	in_currentC_mav	R	20	32 ZP	U	=
-N/A	Phase C current mean absolute value computed during PSM0 and =
-PSM1 modes (ADE7868 and ADE7878 only).
->>>>>> 0xE507	OILVL	register_OILVL	R/W	24	32 ZP	U	=
-0xFFFFFF	Overcurrent threshold.
->>>>>> 0xE508	OVLVL	register_OVLVL	R/W	24	32 ZP	U	=
-0xFFFFFF	Overvoltage threshold.   =20
->>>>> These presumably result in interrupts? (I'm running out of time so =
-not checking)
->>>>> In which case standard event interface should work.
->>>>>=20
->>>>>> 0xE509	SAGLVL	register_SAGLVL	R/W	24	32 ZP	U	=
-0x000000	Voltage SAG level threshold.   =20
->>>>> That's another event I think=E2=80=A6    =20
->>>> Again, this is only setting the threshold, not generating any =
-event. =20
->>>=20
->>> What does the threshold result it?  Presumably an event so this is =
-exposed as a
->>> control parameter of the event.  There is a whole set of ABI for =
-that=E2=80=A6 =20
->> Where can I read about this. Are there any good implementations to =
-help me understand?
-> In a simple case see something like adc/max1363.c
->=20
-> There are more complex cases - just grep iio_event_spec.
-I=E2=80=99ll take a look
->=20
->>>=20
->>>=20
->>>>>=20
->>>>>> 0xE50A	MASK0	register_MASK0	R/W	32	32	U	=
-0x00000000	Interrupt Enable Register 0. See Table 39.
->>>>>> 0xE50B	MASK1	register_MASK1	R/W	32	32	U	=
-0x00000000	Interrupt Enable Register 1. See Table 40.   =20
->>>>>=20
->>>>>> 0xE50C	IAWV	in_currentA_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase A current.
->>>>>> 0xE50D	IBWV	in_currentB_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase B current.
->>>>>> 0xE50E	ICWV	in_currentC_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase C current.
->>>>>> 0xE50F	INWV	in_currentN_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of neutral current (ADE7868 =
-and ADE7878 only).
->>>>>> 0xE510	VAWV	in_voltageA_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase A voltage.
->>>>>> 0xE511	VBWV	in_voltageB_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase B voltage.
->>>>>> 0xE512	VCWV	in_voltageC_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase C voltage.   =20
->>>>> OK, this is getting silly.  I presume this means the values above =
-are filtered and these
->>>>> aren't?  If so you need to have channels for both and different =
-filter values.   =20
->>>> These are the actual samples from the ADC and not a calculated =
-measurement over 10/12 cycles. These are the samples that are placed in =
-the buffer. =20
->>> OK, so DC values which answers my question above.
->>> So this is the 'normal' measurement.  For the multi cycle ones we =
-need to
->>> represent them as additional measurements using the index and =
-describe the
->>> filtering applied to them (or use altvoltage etc to say we are =
-looking
->>> at measurements related to the fact they are alternating rather than =
-DC. =20
->> I answered this above. I think we should remove these registers as I =
-cannot see how anyone would use=20
->> them
-> Cool. Even easier.   Though if we have a device that will allow us to =
-push these
-> through the buffered interface (rather than the SPI master stuff on =
-here)
-> then we would have the channels, but not export the _RAW attribute - =
-thus
-> making them readable only as a stream of data.
-There is no way to read all these instantaneous registers every 125uS. =
-The=20
-SPI master interface is the only way to retrieve these measurements,=20
-running at about 4Mbps.=20
->=20
->>>=20
->>>>>=20
->>>>>> 0xE513	AWATT	in_powerA_instantaneous	R	24	32 SE	=
-S	N/A	Instantaneous value of Phase A total active power.
->>>>>> 0xE514	BWATT	in_powerB_instantaneous	R	24	32 SE	=
-S	N/A	Instantaneous value of Phase B total active power.
->>>>>> 0xE515	CWATT	in_powerC_instantaneous	R	24	32 SE	=
-S	N/A	Instantaneous value of Phase C total active power.
->>>>>> 0xE516	AVAR	in_powerreactiveA_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase A total reactive =
-power (ADE7858, ADE7868, and ADE7878 only).
->>>>>> 0xE517	BVAR	in_powerreactiveB_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase B total reactive =
-power (ADE7858, ADE7868, and ADE7878 only).
->>>>>> 0xE518	CVAR	in_powerreactiveC_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase C total reactive =
-power (ADE7858, ADE7868, and ADE7878 only).
->>>>>> 0xE519	AVA	in_powerapparentA_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase A apparent power.
->>>>>> 0xE51A	BVA	in_powerapparentB_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase B apparent power.
->>>>>> 0xE51B	CVA	in_powerappatentC_instantaneous	R	24	=
-32 SE	S	N/A	Instantaneous value of Phase C apparent power.   =
-=20
->>>>> Same for all of these.
->>>>>=20
->>>>>> 0xE51F	CHECKSUM	register_CHECKSUM	R	32	=
-32	U	0x33666787	Checksum verification. See the Checksum =
-Register section for details.   =20
->>>>> Not exposed to userspace.   =20
->>>> Yeah, this is only used to check the communication for errors. =20
->>>>>=20
->>>>>> 0xE520	VNOM	in_voltage_rms_nominal	R/W	24	32 ZP	=
-S	0x000000	Nominal phase voltage rms used in the =
-alternative computation of the apparent power. When the VNOMxEN bit is =
-set, the applied voltage input in the corresponding phase is ignored and =
-all corresponding rms voltage instances are replaced by the value in the =
-VNOM register.   =20
->>>>> Why would this be done?  Sounds like something that is a circuit =
-design time
->>>>> decision so a job for DT to me.   =20
->>>> Yeah, I agree. =20
->>>>>=20
->>>>>> 0xE600	PHSTATUS	in_current_phase_peak	R	16	=
-16	U	N/A	Phase peak register. See Table 41.
->>>>>> 0xE601	ANGLE0	register_ANGLE0	R	16	16	U	=
-N/A	Time Delay 0. See the Time Interval Between Phases section for =
-details.
->>>>>> 0xE602	ANGLE1	register_ANGLE1	R	16	16	U	=
-N/A	Time Delay 1. See the Time Interval Between Phases section for =
-details.
->>>>>> 0xE603	ANGLE2	register_ANGLE2	R	16	16	U	=
-N/A	Time Delay 2. See the Time Interval Between Phases section for =
-details.   =20
->>>>> Hmm. More fun.  These are derived values between to phase =
-measurements.=20
->>>>> The phase as a modifier falls down a bit here - if we had just =
-treated
->>>>> them as channels we could have done this a differential angle =
-channel.
->>>>> Right now I'm not sure how we do this, could do it as a derived =
-values so something like
->>>>> in_angle0_phaseA&phaseB_diff_raw etc but that feels odd.
->>>>> This one needs more thought.
->>>>>=20
->>>>>> 0xE604 to 0xE606	Reserved						=
-	These addresses should not be written for proper operation.
->>>>>> 0xE607	PERIOD	register_PERIOD	R	16	16	U	=
-N/A	Network line period.   =20
->>>>> Superficially this sounds like a channel free element so =
-shared_by_all.
->>>>>=20
->>>>>> 0xE608	PHNOLOAD	register_PHNOLOAD	R	16	=
-16	U	N/A	Phase no load register. See Table 42.   =20
->>>>> Hmm. So this is kind of a set of events with but without I think =
-an interrupt.
->>>>> Odd.
->>>>>=20
->>>>>> 0xE60C	LINECYC	register_LINECYC	R/W	16	16	=
-U	0xFFFF	Line cycle accumulation mode count.   =20
->>>>> in_count0_raw probably though it's a bit of a stretch.
->>>>>=20
->>>>>> 0xE60D	ZXTOUT	register_ZXTOUT	R/W	16	16	U	=
-0xFFFF	Zero-crossing timeout count.   =20
->>>>> This is going to be another top level one I think and device =
-specific for now.
->>>>>=20
->>>>>> 0xE60E	COMPMODE	register_COMPMODE	R/W	16	=
-16	U	0x01FF	Computation-mode register. See Table 43.   =20
->>>>> If there is stuff to control in here it need breaking out.
->>>>>=20
->>>>>> 0xE60F	Gain	register_Gain	R/W	16	16	U	=
-0x0000	PGA gains at ADC inputs. See Table 44.   =20
->>>>> Oh goody another scale value. Needs breaking up into separate =
-controls.
->>>>> Do these directly effect the measured output voltage etc? If they =
-do then
->>>>> I'm not sure how to separate the two gains, there ought to be a =
-'right'
->>>>> answer.  If this is about matching to the circuit present then =
-they
->>>>> should probably be coming from DT or simillar.
->>>>>=20
->>>>>=20
->>>>>> 0xE610	CFMODE	register_CFMODE	R/W	16	16	U	=
-0x0E88	CFx configuration register. See Table 45.
->>>>>> 0xE611	CF1DEN	register_CF1DEN	R/W	16	16	U	=
-0x0000	CF1 denominator.
->>>>>> 0xE612	CF2DEN	register_CF2DEN	R/W	16	16	U	=
-0x0000	CF2 denominator.
->>>>>> 0xE613	CF3DEN	register_CF3DEN	R/W	16	16	U	=
-0x0000	CF3 denominator.   =20
->>>>> Are these things that should be in DT?  Look very quickly like =
-they are todo with other circuits nearby.   =20
->>>> Agreed =20
->>>>>=20
->>>>>> 0xE614	APHCAL	register_APHCAL	R/W	10	16 ZP	S	=
-0x0000	Phase calibration of Phase A. See Table 46.
->>>>>> 0xE615	BPHCAL	register_BPHCAL	R/W	10	16 ZP	S	=
-0x0000	Phase calibration of Phase B. See Table 46.
->>>>>> 0xE616	CPHCAL	register__CPHCAL	R/W	10	16 ZP	=
-S	0x0000	Phase calibration of Phase C. See Table 46.   =20
->>>>> I'm not actually sure how you would set these.  Per circuit =
-design?   =20
->>>> There should be some base calibration stored in DT and fine tuned =
-calibration stored in an INI file or custom eeprom of nvram.  =20
->>> Hmm. Then we need to expose them to userspace to allow that INI to =
-be applied.
->>>=20
->>> Lets deal with the rest first and come back to these. May well need
->>> some device specific ABI which is always annoying.. =20
->> Agreed
->>>=20
->>>>>=20
->>>>>> 0xE617	PHSIGN	register_PHSIGN	R	16	16	U	=
-N/A	Power sign register. See Table 47.
->>>>>> 0xE618	CONFIG	register_CONFIG	R/W	16	16	U	=
-0x0000	ADE7878 configuration register. See Table 48.
->>>>>> 0xE700	MMODE	register__MMODE	R/W	8	8	U	=
-0x1C	Measurement mode register. See Table 49.
->>>>>> 0xE701	ACCMODE	register__ACCMODE	R/W	8	8	=
-U	0x00	Accumulation mode register. See Table 50.
->>>>>> 0xE702	LCYCMODE	register_LCYCMODE	R/W	8	=
-8	U	0x78	Line accumulation mode behavior. See Table 52.   =
-=20
->>>> All to DT =20
->>>>>> 0xE703	PEAKCYC	register_PEAKCYC	R/W	8	8	=
-U	0x00	Peak detection half line cycles.
->>>>>> 0xE704	SAGCYC	register_SAGCYC	R/W	8	8	U	=
-0x00	SAG detection half line cycles.   =20
->>>>> Some of these are event controls. Map them as such.   =20
->>>> Agreed =20
->>>>>=20
->>>>>> 0xE705	CFCYC	register_CFCYC	R/W	8	8	U	=
-0x01	Number of CF pulses between two consecutive energy latches. See =
-the Synchronizing Energy Registers with CFx Outputs section.
->>>>>> 0xE706	HSDC_CFG	register_HSDC_CFG	R/W	8	=
-8	U	0x00	HSDC configuration register. See Table 53.   =20
->>>> DT =20
->>>>>> 0xE707	Version	register_Version	R	8	8	=
-U		Version of die.   =20
->>>> Might want to expose this to User Space as there could be =
-differences between die version
->>>> in_version0_raw =20
->>>>>> 0xEBFF	Reserved			8	8			=
-This address can be used in manipulating the SS/HSA pin when SPI is =
-chosen as the active port. See the Serial Interfaces section for =
-details.
->>>>>> 0xEC00	LPOILVL	register_LPOILVL	R/W	8	8	=
-U	0x07	"Overcurrent threshold used during PSM2 mode (ADE7868 =
-and ADE7878
->>>>>> only). See Table 54 in which the register is detailed."
->>>>>> 0xEC01	CONFIG2	register_CONFIG2	R/W	8	8	=
-U	0x00	Configuration register used during PSM1 mode. See Table =
-55.   =20
->>>> All to DT =20
->>>>>=20
->>>>> As you can guess I was running out of stamina towards the end of =
-that.
->>>>>=20
->>>>> I'm not totally sure of the answer I provided. It may take some =
-more thought.
->>>>> Ideally some others will give input on this question.   =20
->>>>=20
->>>> Thank you again for all your feedback. I=E2=80=99ll generate a new =
-list and send it next. =20
->>> Cool.
->>>=20
->>> Jonathan
->>>=20
->>>>=20
->>>> Regards,
->>>> John =20
->>>>>=20
->>>>> Jonathan   =20
->>>>>>=20
->>>>>> Regards,
->>>>>> John
->>>>>>=20
->>>>>>=20
->>>>>>=20
->>>>>>=20
->>>>>>=20
->>>>>>> On Mar 17, 2018, at 1:30 PM, Jonathan Cameron <jic23@kernel.org> =
-wrote:
->>>>>>>=20
->>>>>>> On Wed, 14 Mar 2018 23:12:02 -0700
->>>>>>> John Syne <john3909@gmail.com> wrote:
->>>>>>>=20
->>>>>>>> Hi Jonathan,
->>>>>>>>=20
->>>>>>>> I have been looking at the IIO ABI docs and if I understand
->>>>>>>> correctly, the idea is to use consistent naming conventions? So =
-for
->>>>>>>> example, looking at the ADE7854 datasheet, the naming matching =
-the
->>>>>>>> ADE7854 registers would be as follows:     =20
->>>>>>>=20
->>>>>>> Welcome to one of the big reasons no one tidied these drivers
->>>>>>> up originally.  Still we have moved on somewhat since then
->>>>>>> so similar circumstances have come up in other types of sensor.
->>>>>>>=20
->>>>>>>>=20
->>>>>>>> {direction}_{type}_{index}_{modifier}_{info_mask}
->>>>>>>>=20
->>>>>>>> AIGAIN	-	In_current_a_gain     =20
->>>>>>> Other than the fact that gain isn't an ABI element and that =
-index
->>>>>>> doesn't have
->>>>>>> _ before it that is right.
->>>>>>> in_voltageA_scale
->>>>>>>=20
->>>>>>> That was a weird quirk a long time back which we should probably
->>>>>>> not have done (copied it from hwmon)
->>>>>>>=20
->>>>>>>> AVGAIN	-	in_voltage_a_gain
->>>>>>>> BIGAIN	-	in_current_b_gain
->>>>>>>> BVGAIN	-	in_voltage_b_gain
->>>>>>>> =E2=80=94
->>>>>>>> How do we represent the rms and offset
->>>>>>>> AIRMSOS	-	in_current_a_rmsoffset
->>>>>>>> AVRMSOS	-	in_voltage_a_rmsoffset     =20
->>>>>>>=20
->>>>>>> Right now we can't unfortunately though this one is easier to =
-fix.
->>>>>>> We already have modifiers for multi axis devices doing =
-sum_squared
->>>>>>> so add one of those for root_mean_square - this one is well =
-known
->>>>>>> enough that rms is fine in the string.
->>>>>>>=20
->>>>>>> It's a effectively a different channel be it one derived from a =
-simple
->>>>>>> one.  This is going to get tricky however as we would normally =
-use
->>>>>>> modifier to specialise a channel type - thoughts on this below.
->>>>>>>=20
->>>>>>>> =E2=80=94
->>>>>>>> Here I don=E2=80=99t understand how to represent both the phase =
-and the active/reactive/apparent power components. Do we combine the =
-phase and quadrature part like this
->>>>>>>> AVAGAIN		-	in_power_a_gain				=
-/* apparent power */
->>>>>>>> =E2=80=94
->>>>>>>> AWGAIN		-	in_power_ai_gain				=
-/* active power */     =20
->>>>>>> And that is the problem.  How do we represent the various power =
-types.
->>>>>>> Hmm. We could do it with modifiers but above we show that we =
-have already used them.
->>>>>>>=20
->>>>>>> It would be easy enough to add yet another field to the channel =
-spec to specify
->>>>>>> this but there is a problem - Events.  The event format is =
-already pretty full
->>>>>>> so where do we put this extra element if we need to define a =
-channel separated
->>>>>>> only by it.
->>>>>>>=20
->>>>>>> One thought is we could instead define these as different top =
-level
->>>>>>> IIO_CHAN_TYPES in a similar fashion to we do for relative =
-humidity vs
->>>>>>> the proposed absolute humidity.
->>>>>>>=20
->>>>>>> in_powerreactiveA_scale
->>>>>>> in_poweractivceA_scale
->>>>>>> (or in_powerrealA_scale to match with what I got taught years =
-ago?)
->>>>>>>=20
->>>>>>> I presume we keep in_powerA_scale etc for the apparent power and
->>>>>>> modify any docs to make that clear.
->>>>>>>=20
->>>>>>>> =E2=80=94
->>>>>>>> AVARGAIN	-	in_power_aq_gain				=
-/* reactive power */
->>>>>>>> =E2=80=94
->>>>>>>> Now here it becomes more complicated. Not sure how this gets =
-handled.=20
->>>>>>>> AFWATTOS	-	in_power_a_active/fundamental/offset     =
-=20
->>>>>>> Yeah, some of these are getting odd.
->>>>>>> If I read this correctly this is the active power estimate based =
-on only
->>>>>>> the fundamental frequency - so no harmonics?
->>>>>>>=20
->>>>>>> Hmm.  This then becomes a separate channel with additional =
-properties
->>>>>>> specifying it is only the fundamental.  This feels a bit like a =
-filter
->>>>>>> be it an unusual one?  Might just be necessary to add a =
-_fundamental_only
->>>>>>> element on the end (would be info_mask if this is common enough =
-to
->>>>>>> justify that rather than using the extended methods to define =
-it.).
->>>>>>>=20
->>>>>>>=20
->>>>>>>> =E2=80=94
->>>>>>>> AWATTHR	-	in_energy_ai_accumulation     =20
->>>>>>> Great, just when I thought we had gone far enough they define =
-reactive
->>>>>>> energy which is presumably roughly the same as reactivepower * =
-time?
->>>>>>> In that case we need types for that as well.
->>>>>>> in_energyreactiveA_*
->>>>>>> in_energyactiveA_*
->>>>>>>=20
->>>>>>>> =E2=80=94
->>>>>>>> AVARHR		-	in_energy_aq_accumulation
->>>>>>>> =E2=80=94
->>>>>>>> IPEAK		-	in_current_peak     =20
->>>>>>> That one is easy as we have an info_mask element for peak and =
-one
->>>>>>> for peak_scale that has always been a bit odd but was needed =
-somewhere.
->>>>>>>=20
->>>>>>>> =E2=80=94
->>>>>>>>=20
->>>>>>>> I=E2=80=99ll leave it there, because there are some even more =
-complicated register naming issues.     =20
->>>>>>> Something to look forward to.  Gah, I always hated power =
-engineering
->>>>>>> though I taught it very briefly (I really pity those students :(
->>>>>>>=20
->>>>>>> Jonathan
->>>>>>>=20
->>>>>>>>=20
->>>>>>>> Regards,
->>>>>>>> John
->>>>>>>>=20
->>>>>>>>=20
->>>>>>>>=20
->>>>>>>>=20
->>>>>>>>=20
->>>>>>>>> On Mar 10, 2018, at 7:10 AM, Jonathan Cameron =
-<jic23@kernel.org> wrote:
->>>>>>>>>=20
->>>>>>>>> On Thu, 8 Mar 2018 21:37:33 -0300
->>>>>>>>> Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
->>>>>>>>>=20
->>>>>>>>>> On 03/07, Jonathan Cameron wrote:       =20
->>>>>>>>>>> On Tue, 6 Mar 2018 21:43:47 -0300
->>>>>>>>>>> Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
->>>>>>>>>>>=20
->>>>>>>>>>>> The macro IIO_DEV_ATTR_CH_OFF is a wrapper for =
-IIO_DEVICE_ATTR, with a
->>>>>>>>>>>> tiny change in the name definition. This extra macro does =
-not improve
->>>>>>>>>>>> the readability and also creates some checkpatch errors.
->>>>>>>>>>>>=20
->>>>>>>>>>>> This patch fixes the checkpatch.pl errors:
->>>>>>>>>>>>=20
->>>>>>>>>>>> staging/iio/meter/ade7753.c:391: ERROR: Use 4 digit octal =
-(0777) not
->>>>>>>>>>>> decimal permissions
->>>>>>>>>>>> staging/iio/meter/ade7753.c:395: ERROR: Use 4 digit octal =
-(0777) not
->>>>>>>>>>>> decimal permissions
->>>>>>>>>>>> staging/iio/meter/ade7759.c:331: ERROR: Use 4 digit octal =
-(0777) not
->>>>>>>>>>>> decimal permissions
->>>>>>>>>>>> staging/iio/meter/ade7759.c:335: ERROR: Use 4 digit octal =
-(0777) not
->>>>>>>>>>>> decimal permissions
->>>>>>>>>>>>=20
->>>>>>>>>>>> Signed-off-by: Rodrigo Siqueira =
-<rodrigosiqueiramelo@gmail.com>         =20
->>>>>>>>>>>=20
->>>>>>>>>>> Hmm. I wondered a bit about this one. It's a correct patch =
-in of
->>>>>>>>>>> itself but the interface in question doesn't even vaguely =
-conform
->>>>>>>>>>> to any of defined IIO ABI.  Anyhow, it's still and =
-improvement so
->>>>>>>>>>> I'll take it.         =20
->>>>>>>>>>=20
->>>>>>>>>> I am not sure if I understood the comment about the ABI. The =
-meter
->>>>>>>>>> interface is wrong because it uses things like =
-IIO_DEVICE_ATTR? It
->>>>>>>>>> should use iio_info together with *write_raw and *read_raw. =
-Right? Is it
->>>>>>>>>> the ABI problem that you refer?       =20
->>>>>>>>> The ABI is about the userspace interface of IIO.  It is =
-defined
->>>>>>>>> in Documentation/ABI/testing/sysfs-bus-iio*
->>>>>>>>> So this documents the naming of sysfs attributes and (more or =
-less)
->>>>>>>>> describes a consistent interface to userspace across lots of =
-different
->>>>>>>>> types of devices.
->>>>>>>>>=20
->>>>>>>>> A lot of these older drivers in staging involve a good deal of =
-ABI that
->>>>>>>>> was not reviewed or discussed.  That is one of the biggest =
-reasons we
->>>>>>>>> didn't take them out of staging in the first place.
->>>>>>>>>=20
->>>>>>>>> In order for generic userspace programs to have any idea what =
-to do
->>>>>>>>> with these devices this all needs to be fixed.
->>>>>>>>>=20
->>>>>>>>> There may well be cases where we need to expand the existing =
-ABI to
->>>>>>>>> cover new things.   That's fine, but it has to be done with =
-full
->>>>>>>>> review of the relevant documentation patches.
->>>>>>>>>=20
->>>>>>>>> Incidentally if you want an easy driver to work on moving out =
-of staging
->>>>>>>>> then first thing to do is to compare what it shows to =
-userspace with these
->>>>>>>>> docs.  If it's totally different then you have a big job on =
-your hands
->>>>>>>>> as often ABI can take a lot of discussion and a long time to =
-establish
->>>>>>>>> a consensus.
->>>>>>>>>=20
->>>>>>>>> Jonathan
->>>>>>>>>=20
->>>>>>>>>=20
->>>>>>>>>>=20
->>>>>>>>>> Thanks :)
->>>>>>>>>>=20
->>>>>>>>>>> Applied to the togreg branch of iio.git and pushed out as =
-testing
->>>>>>>>>>> for the autobuilders to play with it.
->>>>>>>>>>>=20
->>>>>>>>>>> I also added the removal of the header define which is no
->>>>>>>>>>> longer used.
->>>>>>>>>>>=20
->>>>>>>>>>> Please note, following discussions with Michael, I am going =
-to send
->>>>>>>>>>> an email announcing an intent to drop these meter drivers =
-next
->>>>>>>>>>> cycle unless someone can provide testing for any attempt to
->>>>>>>>>>> move them out of staging.  I'm still taking patches on the =
-basis
->>>>>>>>>>> that 'might' happen - but I wouldn't focus on these until we
->>>>>>>>>>> have some certainty on whether they will be around long =
-term!
->>>>>>>>>>>=20
->>>>>>>>>>> Jonathan
->>>>>>>>>>>=20
->>>>>>>>>>>> ---
->>>>>>>>>>>> drivers/staging/iio/meter/ade7753.c | 18 ++++++++++--------
->>>>>>>>>>>> drivers/staging/iio/meter/ade7759.c | 18 ++++++++++--------
->>>>>>>>>>>> 2 files changed, 20 insertions(+), 16 deletions(-)
->>>>>>>>>>>>=20
->>>>>>>>>>>> diff --git a/drivers/staging/iio/meter/ade7753.c =
-b/drivers/staging/iio/meter/ade7753.c
->>>>>>>>>>>> index c44eb577dc35..275e8dfff836 100644
->>>>>>>>>>>> --- a/drivers/staging/iio/meter/ade7753.c
->>>>>>>>>>>> +++ b/drivers/staging/iio/meter/ade7753.c
->>>>>>>>>>>> @@ -388,14 +388,16 @@ static IIO_DEV_ATTR_VPERIOD(0444,
->>>>>>>>>>>> 		ade7753_read_16bit,
->>>>>>>>>>>> 		NULL,
->>>>>>>>>>>> 		ADE7753_PERIOD);
->>>>>>>>>>>> -static IIO_DEV_ATTR_CH_OFF(1, 0644,
->>>>>>>>>>>> -		ade7753_read_8bit,
->>>>>>>>>>>> -		ade7753_write_8bit,
->>>>>>>>>>>> -		ADE7753_CH1OS);
->>>>>>>>>>>> -static IIO_DEV_ATTR_CH_OFF(2, 0644,
->>>>>>>>>>>> -		ade7753_read_8bit,
->>>>>>>>>>>> -		ade7753_write_8bit,
->>>>>>>>>>>> -		ADE7753_CH2OS);
->>>>>>>>>>>> +
->>>>>>>>>>>> +static IIO_DEVICE_ATTR(choff_1, 0644,
->>>>>>>>>>>> +			ade7753_read_8bit,
->>>>>>>>>>>> +			ade7753_write_8bit,
->>>>>>>>>>>> +			ADE7753_CH1OS);
->>>>>>>>>>>> +
->>>>>>>>>>>> +static IIO_DEVICE_ATTR(choff_2, 0644,
->>>>>>>>>>>> +			ade7753_read_8bit,
->>>>>>>>>>>> +			ade7753_write_8bit,
->>>>>>>>>>>> +			ADE7753_CH2OS);
->>>>>>>>>>>>=20
->>>>>>>>>>>> static int ade7753_set_irq(struct device *dev, bool enable)
->>>>>>>>>>>> {
->>>>>>>>>>>> diff --git a/drivers/staging/iio/meter/ade7759.c =
-b/drivers/staging/iio/meter/ade7759.c
->>>>>>>>>>>> index 1decb2b8afab..c078b770fa53 100644
->>>>>>>>>>>> --- a/drivers/staging/iio/meter/ade7759.c
->>>>>>>>>>>> +++ b/drivers/staging/iio/meter/ade7759.c
->>>>>>>>>>>> @@ -328,14 +328,16 @@ static =
-IIO_DEV_ATTR_ACTIVE_POWER_GAIN(0644,
->>>>>>>>>>>> 		ade7759_read_16bit,
->>>>>>>>>>>> 		ade7759_write_16bit,
->>>>>>>>>>>> 		ADE7759_APGAIN);
->>>>>>>>>>>> -static IIO_DEV_ATTR_CH_OFF(1, 0644,
->>>>>>>>>>>> -		ade7759_read_8bit,
->>>>>>>>>>>> -		ade7759_write_8bit,
->>>>>>>>>>>> -		ADE7759_CH1OS);
->>>>>>>>>>>> -static IIO_DEV_ATTR_CH_OFF(2, 0644,
->>>>>>>>>>>> -		ade7759_read_8bit,
->>>>>>>>>>>> -		ade7759_write_8bit,
->>>>>>>>>>>> -		ADE7759_CH2OS);
->>>>>>>>>>>> +
->>>>>>>>>>>> +static IIO_DEVICE_ATTR(choff_1, 0644,
->>>>>>>>>>>> +			ade7759_read_8bit,
->>>>>>>>>>>> +			ade7759_write_8bit,
->>>>>>>>>>>> +			ADE7759_CH1OS);
->>>>>>>>>>>> +
->>>>>>>>>>>> +static IIO_DEVICE_ATTR(choff_2, 0644,
->>>>>>>>>>>> +			ade7759_read_8bit,
->>>>>>>>>>>> +			ade7759_write_8bit,
->>>>>>>>>>>> +			ADE7759_CH2OS);
->>>>>>>>>>>>=20
->>>>>>>>>>>> static int ade7759_set_irq(struct device *dev, bool enable)
->>>>>>>>>>>> {         =20
->>>>>>>>>>>=20
->>>>>>>>>> --
->>>>>>>>>> To unsubscribe from this list: send the line "unsubscribe =
-linux-iio" in
->>>>>>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>>>>>> More majordomo info at  =
-http://vger.kernel.org/majordomo-info.html       =20
->>>>>>>>>=20
->>>>>>>>> _______________________________________________
->>>>>>>>> devel mailing list
->>>>>>>>> devel@linuxdriverproject.org
->>>>>>>>> =
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel =
-      =20
+T24gU3VuLCAyNSBNYXIgMjAxOCAxMzozNjo0MCAtMDcwMApKb2huIFN5bmUgPGpvaG4zOTA5QGdt
+YWlsLmNvbT4gd3JvdGU6Cgo+ID4gT24gTWFyIDI1LCAyMDE4LCBhdCA5OjI5IEFNLCBKb25hdGhh
+biBDYW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPiB3cm90ZToKPiA+IAo+ID4gT24gU2F0LCAyNCBN
+YXIgMjAxOCAxNTo0NToyMSAtMDcwMAo+ID4gSm9obiBTeW5lIDxqb2huMzkwOUBnbWFpbC5jb20+
+IHdyb3RlOgo+ID4gICAKPiA+Pj4gT24gTWFyIDI0LCAyMDE4LCBhdCA4OjAyIEFNLCBKb25hdGhh
+biBDYW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPiB3cm90ZToKPiA+Pj4gCj4gPj4+IE9uIE1vbiwg
+MTkgTWFyIDIwMTggMjI6NTc6MTYgLTA3MDAKPiA+Pj4gSm9obiBTeW5lIDxqb2huMzkwOUBnbWFp
+bC5jb20+IHdyb3RlOgo+ID4+PiAgIAo+ID4+Pj4gSGkgSm9uYXRoYW4sCj4gPj4+PiAKPiA+Pj4+
+IFRoYW5rIHlvdSBmb3IgYWxsIHlvdXIgaGFyZCB3b3JrLiBZb3VyIGZlZWRiYWNrIGlzIHJlYWxs
+eSBoZWxwZnVsLiBJ4oCZbSBzdXJwcmlzZWQgdGhhdCBubyBvbmUgZnJvbSBBbmFsb2cgRGV2aWNl
+IGhhcyBvZmZlcmVkIGFueSBzdWdnZXN0aW9ucy4KPiA+Pj4+ICAgCj4gPj4+IAo+ID4+PiBTYWRs
+eSB0aG9zZSBhY3RpdmUgaW4gdGhlIG1haW5saW5lIGxpbnV4IGtlcm5lbCBmcm9tIEFESSBhcmUg
+Zm9jdXNlZCBpbgo+ID4+PiBvdGhlciBhcmVhcyBjdXJyZW50bHkgOiggICAgCj4gPj4gR29vZCBw
+b2ludC4gSSB3aWxsIHJlYWNoIG91dCB0byBBbmFsb2cgRGV2aWNlcyBhbmQgZ2V0IGEgbmFtZSBv
+ZiBzb21lb25lIAo+ID4+IHdobyBpcyBrbm93bGVkZ2VhYmxlIGluIHRoaXMgYXJlYS4gUGVyaGFw
+cyBMYXJzLVBldGVycyBoYXMgYSBzdWdnZXN0aW9uLiAgIAo+ID4gWWVzLCBMYXJzIG9yIE1pY2hh
+ZWwgSGVubmVyaWNoICgrQ0MpIGFyZSBteSBub3JtYWwgY29udGFjdCBwb2ludHMuCj4gPiBJIGJl
+bGlldmUgdGhpcyBpcyBvdXRzaWRlIGJvdGggb2YgdGhlaXIgYXJlYXMsIGJ1dCB0aGV5IG1heSBi
+ZSBhYmxlIHRvCj4gPiBwdXQgeW91IGluIGNvbnRhY3Qgd2l0aCB0aGUgcmlnaHQgcGVyc29uLiAg
+SWYgbm90aGluZyBlbHNlIGl0IHdvdWxkIGJlCj4gPiBnb29kIHRvIG1ha2Ugc29tZW9uZSBpbiBB
+REkgYXdhcmUgdGhhdCBwZW9wbGUgY2FyZSBhYm91dCBsaW51eCBzdXBwb3J0IGZvcgo+ID4gdGhl
+c2UgcGFydHMhICAKPiBJIHNlbnQgaW4gYSByZXF1ZXN0IHRvIEFESSBmb3IgYSBjb250YWN0IHBl
+cnNvbiB0byBoZWxwIHdpdGggdGhlIHJldmlldy4KCkNvb2wuCgo+ID4gICAKPiA+Pj4+IEFueXdh
+eSwgcGxlYXNlIHNlZSBteSBjb21tZW50cyBpbmxpbmUgYmVsb3cKPiA+Pj4+IAo+ID4+Pj4gUmVn
+YXJkcywKPiA+Pj4+IEpvaG4KPiA+Pj4+IAo+ID4+Pj4gCj4gPj4+PiAKPiA+Pj4+IAo+ID4+Pj4g
+ICAKPiA+Pj4+PiBPbiBNYXIgMTgsIDIwMTgsIGF0IDU6MjMgQU0sIEpvbmF0aGFuIENhbWVyb24g
+PGppYzIzQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4+Pj4+IAo+ID4+Pj4+IE9uIFNhdCwgMTcgTWFy
+IDIwMTggMjM6MTE6NDUgLTA3MDAKPiA+Pj4+PiBKb2huIFN5bmUgPGpvaG4zOTA5QGdtYWlsLmNv
+bT4gd3JvdGU6Cj4gPj4+Pj4gICAKPiA+Pj4+Pj4gSGkgSm9uYXRoYW4sICAgICAgCj4gPj4+Pj4g
+SGkgSm9obiBhbmQgQWxsLAo+ID4+Pj4+IAo+ID4+Pj4+IEknZCBsb3ZlIHRvIGdldCBzb21lIGFk
+ZGl0aW9uYWwgaW5wdXQgb24gdGhpcyBmcm9tIGFueW9uZSBpbnRlcmVzdGVkLgo+ID4+Pj4+IFRo
+ZXJlIGFyZSBhIGxvdCBvZiB3ZWlyZCBhbmQgd29uZGVyZnVsIGRlcml2ZWQgcXVhbnRpdGllcyBp
+biBhbiBlbmVyZ3kKPiA+Pj4+PiBtZXRlciBhbmQgaXQgc2VlbXMgd2UgbmVlZCB0byBtYWtlIHNv
+bWUgZnVuZGFtZW50YWwgY2hhbmdlcyB0byBzdXBwb3J0Cj4gPj4+Pj4gdGhlbSAtIGluY2x1ZGlu
+ZyBwb3RlbnRpYWxseSBhIHVzZXJzcGFjZSBicmVha2luZyBjaGFuZ2UgdG8gdGhlIGV2ZW50Cj4g
+Pj4+Pj4gY29kZSBkZXNjcmlwdGlvbi4KPiA+Pj4+PiAgIAo+ID4+Pj4+PiAKPiA+Pj4+Pj4gSGVy
+ZSBpcyB0aGUgY29tcGxldGUgbGlzdCBvZiByZWdpc3RlcnMgZm9yIHRoZSBBREU3ODc4IHdoaWNo
+IEkgY29waWVkIGZyb20gdGhlIGRhdGEgc2hlZXQuIEkgYWRkZWQgYSBjb2x1bW4g4oCcSUlPIEF0
+dHJpYnV0ZeKAnSB3aGljaCBJIGhvcGUgZm9sbG93cyB5b3VyIElJTyBBQkkuIFBsZWFzZSBtYWtl
+IGFueSBjaGFuZ2VzIHlvdSBmZWVsIGFyZSBpbmNvcnJlY3QuIEJUVywgdGhlcmUgYXJlIHNldmVy
+YWwgcmVnaXN0ZXJzIHRoYXQgY2Fubm90IGJlIGdlbmVyYWxpemVkIGFuZCBhcmUgdXNlZCBwdXJl
+bHkgZm9yIGNoaXAgY29uZmlndXJhdGlvbi4gSSB0aGluayB3ZSBzaG91bGQgYWRkIGEgbmV3IG5h
+bWluZyBjb252ZW50aW9uLCBuYW1lbHkge3JlZ2lzdGVyfV97PGNoaXAtcmVnaXN0ZXItbmFtZT59
+LiBBbHNvLCBJIHNlZSBpbiB0aGUgc3lzX2J1c19paW8gZG9jICAgIAo+ID4gCj4gPiBObywgcmVn
+aXN0ZXJzIGNhbiBhbHdheXMgYmUgYnJva2VuIHVwIGluIHRvIHJlYWwgbWVhbmluZ2Z1bCB2YWx1
+ZXMgaWYKPiA+IHRoZXkgYXJlIGV4cG9zZWQgdG8gdXNlcnNwYWNlIGFuZCB1c2Vyc3BhY2UgaGFz
+IGEgcmVhc29uIHRvIHR3ZWFrCj4gPiB0aGVtLgo+ID4gCj4gPiBXZSBuZXZlciBleHBvc2UgcmF3
+IHJlZ2lzdGVycyB0byB1c2Vyc3BhY2UgZXhjZXB0IHRocm91Z2gKPiA+IGRlYnVnZnMgYW5kIHRo
+ZSBjbHVlIGlzIGluIHRoZSBuYW1lIC0gcHVyZWx5IGZvciBkZWJ1Zy4gIAo+IE9LCj4gPiAKPiA+
+ICAgCj4gPj4+IAo+ID4+PiAKPiA+Pj4gCj4gPj4+ICAgCj4gPj4+Pj4+IGluX2FjY2VsX3hfcGVh
+a19yYXcKPiA+Pj4+Pj4gCj4gPj4+Pj4+IHNvIHNob3VsZG7igJl0IHRoZSBwaGFzZSBiZSByZXBy
+ZXNlbnRlZCBhcyBmb2xsb3dzOgo+ID4+Pj4+PiAKPiA+Pj4+Pj4gaW5fY3VycmVudF9BX3NjYWxl
+ICAgICAgCj4gPj4+Pj4gSSdtIHN0aWxsIGNvbmZ1c2VkLiAgV2hhdCBkb2VzIEEgcmVwcmVzZW50
+IGhlcmU/ICBJIGFzc3VtZWQgdGhhdCB3YXMgYSB3aWxkCj4gPj4+Pj4gY2FyZCBmb3IgdGhlIGNo
+YW5uZWwgbnVtYmVyIGJlZm9yZSBidXQgY2xlYXJseSBub3QuCj4gPj4+Pj4gCj4gPj4+Pj4gQWgs
+IHlvdSBhcmUgbGFiZWxsaW5nIHRoZSAzIHNlcGFyYXRlIHBoYXNlcyBhcyBBLCBCIGFuZCBDLiBI
+bW0uCj4gPj4+Pj4gSSBndWVzcyB0aGV5IHNvcnQgb2YgbG9vayBsaWtlIGF4aXMsIGFuZCBzb3J0
+IG9mIGxpa2UgaW5kZXBlbmRlbnQgY2hhbm5lbHMuCj4gPj4+Pj4gU28gY291bGQgYmUgaW5kZXhl
+ZCBvciBkb25lIHZpYSBtb2RpZmllcnMgZGVwZW5kaW5nIG9uIGhvdyB5b3UgbG9vayBhdCBpdC4g
+ICAgICAKPiA+Pj4+IEluIG1ldGVyaW5nIHRlcm1pbm9sb2d5LCB0aGUgdGhyZWUgcGhhc2VzIGFy
+ZSBjb21tb25seSByZWZlcnJlZCB0byBhcyBSRUQsIEdSRUVOLCBCTFVFIG9yIFBoYXNlQSwgUGhh
+c2VCLCBQaGFzZUMgYW5kIE5ldXRyYWwuIEFuYWxvZyBEZXZpY2VzIHVzZXMgdGhlIEFCQ04gbm9t
+ZW5jbGF0dXJlIHNvIGFueW9uZSB1c2luZyB0aGlzIGRyaXZlciB3aWxsIHByb2JhYmx5IGhhdmUg
+cmVmZXJlbmNlZCB0aGUgQW5hbG9nIERldmljZXMgZGF0YXNoZWV0IHNvIHRoaXMgdGVybWlub2xv
+Z3kgc2hvdWxkIGJlIGZhbWlsaWFyLiAgICAgCj4gPj4+IFdoaWNoIGlzIG1vcmUgY29tbW9ubHkg
+dXNlZCBpbiBnZW5lcmFsPyAgV2UgYXJlIGRlc2lnbmluZyB3aGF0IHdlIGhvcGUKPiA+Pj4gd2ls
+bCBiZSBhIGdlbmVyYWwgaW50ZXJmYWNlIGFuZCBsYXN0IHRoaW5nIHdlIHdhbnQgaXMgdG8gaGF2
+ZSBldmVyeW9uZQo+ID4+PiBub3QgdXNpbmcgQURJIHBhcnRzIGNvbmZ1c2VkISAgUGVyc29uYWxs
+eSBub3QgYXNzaWduaW5nICdjb2xvdXJzJyBtYWtlcwo+ID4+PiBtb3JlIHNlbnNlIHRvIG1lLiAg
+ICAKPiA+PiBJIGRpZCBhIGxpdHRsZSByZXNlYXJjaCBhbmQgaGVyZSBpcyB0aGUgbmFtaW5nIHVz
+ZWQgYnkgdmVuZG9yOgo+ID4+IAo+ID4+IFNUIE1pY3JvZWxlY3Ryb25pY3M6IFAxLCBQMiwgUDMs
+IE4KPiA+PiBodHRwOi8vd3d3LnN0LmNvbS9jb250ZW50L2NjYy9yZXNvdXJjZS90ZWNobmljYWwv
+ZG9jdW1lbnQvYXBwbGljYXRpb25fbm90ZS81ZS9mNC8yMi80ZC85MC85Ni80Yy9jNC9DRDAwMTUz
+MjY0LnBkZi9maWxlcy9DRDAwMTUzMjY0LnBkZi9qY3I6Y29udGVudC90cmFuc2xhdGlvbnMvZW4u
+Q0QwMDE1MzI2NC5wZGYKPiA+PiAKPiA+PiBUZXJpZGlhbjogQUJDTgo+ID4+IGh0dHBzOi8vd3d3
+Lm1vdXNlci5jb20vZHMvMi8yNTYvNzFNNjUxMy03MU02NTEzSC0yMjYwMy5wZGYKPiA+PiAKPiA+
+PiBNYXhpbSBJbnRlZ3JhdGVkOiBBQkNOCj4gPj4gaHR0cHM6Ly9kYXRhc2hlZXRzLm1heGltaW50
+ZWdyYXRlZC5jb20vZW4vZHMvNzhNNjYzMS5wZGYKPiA+PiAKPiA+PiBNaWNyb2NoaXA6IEFCQ04K
+PiA+PiBodHRwOi8vd3cxLm1pY3JvY2hpcC5jb20vZG93bmxvYWRzL2VuL0RldmljZURvYy81MTY0
+M2IucGRmCj4gPj4gCj4gPj4gTlhQOiBMMSwgTDIsIEwzLCBOCj4gPj4gaHR0cHM6Ly93d3cubnhw
+LmNvbS9zdXBwb3J0L2RldmVsb3Blci1yZXNvdXJjZXMvcmVmZXJlbmNlLWRlc2lnbnMva2luZXRp
+cy1rbTN4LTI1Ni1tY3UtdGhyZWUtcGhhc2UtbWV0ZXJpbmctcmVmZXJlbmNlLWRlc2lnbjpSRC1L
+TTN4LTI1Ni0zUEgtTUVURVJJTkcKPiA+PiAKPiA+PiBSZW5lc2FzOiBBQkNOCj4gPj4gaHR0cHM6
+Ly93d3cucmVuZXNhcy5jb20vZW4tdXMvc29sdXRpb25zL2hvbWUvbWV0ZXJpbmcvcG93ZXItbWV0
+ZXItdGhyZWUuaHRtbAo+ID4+IAo+ID4+IFNvIHRoZSBtb3N0IGNvbnNpc3RlbnQgd291bGQgYmUg
+QUJDTiAgCj4gPiBDb29sLiAgIE1ha2VzIHNlbnNlIHRvIGdvIHdpdGggdGhhdC4gIFRoYW5rcyBm
+b3IgY2hlY2tpbmcgdGhpcyBvdXQuCj4gPiAgIAo+ID4+IAo+ID4+IAo+ID4+IEFsbCB2ZW5kb3Ig
+cHJvdmlkaW5nIHRocmVlIHBoYXNlIGVuZXJneSBtZXRlcmluZyBJQ3MgdXNlIHRoZSBBQkNOIHRl
+cm1pbm9sb2d5LiAgIAo+ID4+PiAKPiA+Pj4gKGJ0dyBwbGVhc2Ugd3JhcCBhbnkgbGluZXMgdGhh
+dCBkb24ndCBuZWVkIHRvIGJlIGxvbmcgdG8gYXJvdW5kIDgwIGNoYXJhY3RlcnMpLgo+ID4+PiAg
+IAo+ID4+Pj4+IAo+ID4+Pj4+IEhtbS4gV2l0aCBuZXV0cmFsIGluIHRoZXJlIGFzIHdlbGwgSSBn
+dWVzcyB3ZSBuZWVkIHRvIG1ha2UgdGhlbQo+ID4+Pj4+IG1vZGlmaWVycyAoYnV0IG1pZ2h0IGNo
+YW5nZSBteSBtaW5kIGxhdGVyIDspCj4gPj4+Pj4gCj4gPj4+Pj4gUGFydGljdWxhcmx5IGFzIHdl
+IGFyZSB1c2luZyB0aGUgdGhlIG1vZGlmaWVyIGZvciBSTVMgdW5kZXIgdGhlIHByZXZpb3VzCj4g
+Pj4+Pj4gcGxhbi4uLiBJdCBhcHBlYXJzIHdlIHNob3VsZCB0cmVhdCB0aGF0IGluc3RlYWQgbGlr
+ZSB3ZSBkaWQgZm9yIHBlYWsKPiA+Pj4+PiBhbmQgZG8gaXQgYXMgYW4gYWRkaXRpb25hbCBpbmZv
+IG1hc2sgZWxlbWVudC4gIFRoZSBwcm9ibGVtIHdpdGggZG9pbmcgdGhhdAo+ID4+Pj4+IG9uIGEg
+Y29udGludW91cyBtZWFzdXJlbWVudCBpcyB0aGF0IHdlIGNhbid0IHRyZWF0IGl0IGFzIGEgY2hh
+bm5lbCB0bwo+ID4+Pj4+IGJlIG91dHB1dCB0aHJvdWdoIHRoZSBidWZmZXJlZCBpbnRlcmZhY2Uu
+ICAgICAgCj4gPj4+PiBJ4oCZdmUgY2hhbmdlZCB0aGUgbGF5b3V0IG9mIHRoZSBzcHJlYWRzaGVl
+dCB0byBicmVha291dCB0aGUgRGlyZWN0aW9uLCBUeXBlLCBJbmRleCwgTW9kaWZpZXIgYW5kIElu
+Zm8gTWFzayB0byBtYWtlIHN1cmUgdGhlcmUgaXMgbm8gbWlzcy11bmRlcnN0YW5kaW5nIGFuZCB3
+aWxsIGhlbHAgaWRlbnRpZnkgYWxsIHRoZSBpdGVtcyB3ZSBuZWVkIHRvIGFkZC4KPiA+Pj4+IAo+
+ID4+Pj4gVGhlIEFERTc4NzggY2hhbm5lbHMgdGhhdCB3aWxsIHVzZSB0aGUgYnVmZmVyIGFyZSBJ
+QVdWLCBWQVdWLCBJQldWLCBWQldWLCBJQ1dWLCBWQ1dWLCBJTldWLCBBVkEsIEJWQSwgQ1ZBLCBB
+V0FUVCwgQldBVFQsIENXQVRULCBBVkFSLCBCVkFSLCBhbmQgQ1ZBUi4gU28gSSBndWVzcyB3ZSBo
+YXZlIHRvIGFkZCBhbiBpbmRleCAgICAKPiA+Pj4gUHJvYmFibHkgYSBnb29kIGlkZWEgYW55d2F5
+LCB3ZSBhcmUgc29ydCBvZiBzbG93bHkgbW92aW5nIGF3YXkKPiA+Pj4gZnJvbSBpbmRleCBsZXNz
+IGNoYW5uZWxzLiAgVGhlIEFCSSBhbHdheXMgYWxsb3dlZCBpbmRleCBhc3NpZ25tZW50Cj4gPj4+
+IGFuZCBpdCBtYWtlcyBmb3IgZWFzaWVyIHVzZXJzcGFjZSBjb2RlLgo+ID4+PiAgIAo+ID4+Pj4g
+Cj4gPj4+PiBBZGRyZXNzIFJlZ2lzdGVyIAlJSU8gQXR0cmlidXRlCQkJCQkJCURpcglUeXBlCQlJ
+bmRleCAJTW9kaWZpZXIJSW5mbyBNYXNrCVIvVwlCaXQJCUJpdCBMZW5ndGgJVHlwZQlEZWZhdWx0
+CURlc2NyaXB0aW9uIAo+ID4+Pj4gCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCUxlbmd0aCAJRHVy
+aW5nIENvbW0JCQlWYWx1ZQkKPiA+Pj4+IDB4RTUwQwlJQVdWCWluX2N1cnJlbnQwX3BoYXNlQV9p
+bnN0YW50YW5lb3VzCQlpbgljdXJyZW50CQkJMAlwaGFzZUEJaW5zdGFudGFuZW91cwlSCTI0CQkz
+MiBTRQkJUwkJTi9BCQlJbnN0YW50YW5lb3VzIHZhbHVlIG9mIFBoYXNlIEEgY3VycmVudC4gICAg
+Cj4gPj4+IAo+ID4+PiBJJ20gdW5jb252aW5jZWQgYnkgImluc3RhbnRhbmVvdXMiLiAgVGhhdCBp
+cyB0aGUgZGVmYXVsdCBhc3N1bXB0aW9uIHRoYXQgeW91IGFyZQo+ID4+PiBtZWFzdXJpbmcgY3Vy
+cmVudCBhdCB0aGlzIHBvaW50IGluIHRpbWUuICBJJ20gc3RpbGwgY29uZnVzZWQgb24gd2hhdCB0
+aGlzIGFjdHVhbGx5Cj4gPj4+IGlzLiBJcyBpdCBlZmZlY3RpdmVseSB0aGUgREMgY3VycmVudD8g
+SS5lLiB0aGUgd2F2ZSBmb3JtIHZhbHVlIGZvciBjdXJyZW50PyAKPiA+Pj4gWW91IGFuc3dlciB0
+aGlzIGJlbG93LiAgVGhleSBhcmUgREMgbWVhc3VyZW1lbnRzLi4gICAgCj4gPj4gTm8sIHRoZXkg
+YXJlIHRoZSBvdXRwdXQgb2YgdGhlIEFEQyBhdCBhIHBvaW50IGluIHRpbWUuIFRoZSBBREMgc2Ft
+cGxlcyAKPiA+PiBjb250aW51b3VzIGF0IDgsMDAwIHNhbXBsZXMgcGVyIHNlY29uZCwgc28gd2hl
+biB5b3UgcmVhZCB0aGlzIHJlZ2lzdGVyCj4gPj4geW91IGFyZSBnZXR0aW5nIHRoZSBzYW1wbGUg
+bWVhc3VyZWQganVzdCBiZWZvcmUgeW91ciByZWFkLiBJIGRvbuKAmXQga25vdwo+ID4+IHdoeSBh
+bnlvbmUgd291bGQgcmVhZCB0aGlzIHJlZ2lzdGVyLiBUaGUgc2FtcGxlcyBhcmUgc3RyZWFtZWQg
+dmlhCj4gPj4gdGhlIFNQSSBpbnRlcmZhY2UsIHdpdGggSUFXViwgVkFXViwgSUJXViwgVkJXViwg
+SUNXViwgVkNXViwgSU5XViwgCj4gPj4gQVZBLCBCVkEsIENWQSwgQVdBVFQsIEJXQVRULCBDV0FU
+VCwgQVZBUiwgQlZBUiwgYW5kIENWQVIgdHJhbnNtaXR0ZWQgCj4gPj4gZXZlcnkgMTI1dVMuIFBy
+b2JhYmx5IGJldHRlciBub3QgdG8gZXhwb3NlIHRoZXNlIHJlZ2lzdGVycyB0byB1c2VyIHNwYWNl
+LiAgCj4gPiBJJ20gaGFwcHkgbm90IHRvIGV4cG9zZSB0aGVtLCBidXQgaWYgdGhleSBhcmUgdGhl
+IGluc3RhbnRhbmVvdXMgdmFsdWVzCj4gPiB0aGV5IGFyZSB3aGF0IEkgbWVhbiBieSBEQyB2YWx1
+ZXMsIGxpdGVyYWxseSB0aGUgbnVtYmVyIHlvdSB3b3VsZAo+ID4gc2VlIG9uIGFuIG9zY2lsbG9z
+Y29wZSBpZiB5b3Ugd2VyZSB0byBwcm9iZSB0aGVtLiAgCj4gSWYgeW91IGNvdWxkIHJlYWQgdGhl
+IGluc3RhbnRhbmVvdXMgcmVnaXN0ZXIgYWZ0ZXIgZWFjaCBzYW1wbGUsIHRoZW4geW91IAo+IHdv
+dWxkIGdldCBhbiBvc2NpbGxvc2NvcGUgZGlzcGxheSBvZiBhIHNpbmUgd2F2ZS4gSG93ZXZlciwg
+c2luY2UgYSB1c2VyIAo+IHNwYWNlIGFwcCBjYW5ub3QgcmVhZCB0aGlzIG9uIGVhY2ggc2FtcGxl
+LCB0aGUgb3V0cHV0IHdvdWxkIGxvb2sgcHJldHR5Cj4gcmFuZG9tLiBDZXJ0YWlubHkgbm90IGEg
+REMgdmFsdWUsIHdoaWNoIGlzIG11Y2ggbW9yZSBjb25zaXN0ZW50LgpXZSBhcmUgdmlvbGVudGx5
+IGFncmVlaW5nIGJ5IHRoZSBzb3VuZCBvZiBpdCAtIGp1c3QgaGF2ZSBhIHNsaWdodGx5IGRpZmZl
+cmVudAp2aWV3IG9mIHRlcm1pbm9sb2d5LCBJJ20gaGFwcHkgdG8gaGF2ZSBhIHJhcGlkbHkgdmFy
+eWluZyBEQyB2b2x0YWdlIGFzCm15IHZpZXcsIHlvdSB3YW50IHRvIHRoaW5rIG9mIGl0IGRpZmZl
+cmVudGx5LgoKQW55aG93IHRoZSBvc2NpbGxvc2NvcGUgYml0IG1ha2VzIGl0IGNsZWFyIHdlIGFy
+ZSB0YWxraW5nIGFib3V0IHRoZSBzYW1lCnRoaW5nIDspICAKIAo+ID4gICAKPiA+PiAKPiA+PiAg
+IAo+ID4+PiAKPiA+Pj4gV2hpY2ggYWN0dWFsbHkgcmFpc2VzIGEgcG9pbnQgSSdkIGZvcmdvdHRl
+bi4gIFdlIGhhdmUgYW4gZXhwbGljaXQgdHlwZSAKPiA+Pj4gZm9yIGFsdHZvbHRhZ2UgKGRlZmlu
+ZWQgZm9yIEREUyBkZXZpY2VzIGFzIHRoZSB3YXZlZm9ybSBhbXBsaXR1ZGUgSUlSQykuCj4gPj4+
+IFdlIHNob3VsZCBiZSBjb25zaXN0ZW50IHdpdGggdGhhdCBpZiBwb3NzaWJsZS4KPiA+Pj4gCj4g
+Pj4+IFNvIEkgdGhpbmsgdGhpcyBzaG91bGQgYmUuCj4gPj4+IGluX2N1cnJlbnQwX3BoYXNlQV9y
+YXcgICAgCj4gPj4gWWVhaCwgdGhhdCBzb3VuZHMgY29ycmVjdCwgd2hpY2ggcmVtaW5kcyBtZSBv
+ZiBhbm90aGVyIGlzc3VlIHRoYXQgZG9lcyBub3QgbWFrZQo+ID4+IHNlbnNlLiBUbyBtZSwgZ2Fp
+biBpcyBzb21ldGhpbmcgdGhhdCBpcyBoYXJkd2FyZSByZWxhdGVkIGFuZCBpcyB1c2VkIHRvIG1h
+Z25pZnkgCj4gPj4gYW4gaW5wdXQgc2lnbmFsIG9yIGlzIHVzZWQgdG8gY2FsaWJyYXRlIGEgbWVh
+c3VyZW1lbnQuIFNjYWxlIG9uIHRoZSBvdGhlciBoYWQgaXMgCj4gPj4gc29tZXRoaW5nIHRoYXQg
+aXMgdXNlZCB0byBjb252ZXJ0IGEgcmF3IG1lYXN1cmVtZW50IGludG8gc29tZXRoaW5nIHRoYXQg
+aXMgbW9yZSAKPiA+PiBtZWFuaW5nZnVsLCBzdWNoIGFzIDB4ODIwMDAwID0gMjIwVi4gU28gZXZl
+cnl3aGVyZSB3ZSBoYXZlIHVzZWQgc2NhbGUgYW5kIGdhaW4gCj4gPj4gaW50ZXJjaGFuZ2VhYmxl
+IGlzIGNvbmZ1c2luZy4gIAo+ID4gCj4gPiBBZ3JlZWQgLSB1cCB0byBhIHBvaW50LiAgSWYgeW91
+IGhhdmUgYSBoYXJkd2FyZSBnYWluIGNvbnRyb2wgd2hpY2ggZm9yIHdoYXRldmVyCj4gPiByZWFz
+b24gcmVzdWx0cyBpbiBhIGRpZmZlcmVudCBzY2FsaW5nIG5lZWRpbmcgdG8gYmUgYXBwbGllZCB0
+byBnbyBmcm9tIHVzZXJzcGFjZQo+ID4gdmFsdWUgdG8gcmVhbCB3b3JsZCB2YWx1ZSAoc29tZXRp
+bWVzIGhhcHBlbnMgd2l0aCBtdWx0aSByYW5nZSBkZXZpY2VzKSB0aGVuIHdlCj4gPiBleHBvc2Ug
+aXQgb25seSBvbmNlIC0gYXMgc2NhbGUuCj4gPiAKPiA+IFdlIGhhdmUgaGFyZHdhcmVnYWluIGFu
+ZCBjYWxpYmdhaW4gZm9yIHR3ZWFraW5nIHRoZSBnYWluIHRvIGFjY291bnQgZm9yIGNhc2VzCj4g
+PiB3aGVyZSBpdCBpc24ndCBhcHBhcmVudCBpbiB0aGUgb3V0cHV0IHZhbHVlIChoYXJkd2FyZSBn
+YWluIC0gbm9ybWFsbHkgdXNlZAo+ID4gd2hlbiB3ZSBhcmUgbWVhc3VyaW5nIHNvbWV0aGluZyBh
+Ym91dCB0aGUgc2lnbmFsIHRoYXQgaXNuJ3QgaXQncyBtYWduaXR1ZGUpLAo+ID4gb3IgaXMgY29t
+cGVuc2F0aW5nIGZvciBpbmFjY3VyYWNpZXMgaW4gdGhlIGNpcmN1aXRyeSBvciBzZW5zb3IgKGNh
+bGliZ2FpbikgIAo+IFRoYXQgaXMgd2hhdCB3ZSBoYXZlLCB0aGUgQURFNzg1NCBoYXMgYSBoYXJk
+d2FyZWdhaW4gYmVmb3JlIHRoZSBBREMgdG8gYWxsb3cKPiB2YXJpb3VzIGlucHV0IHZvbHRhZ2Ug
+YW5kIGN1cnJlbnQgcmFuZ2VzOiAwLTI1MG1WLCAwLTAuNVYsIGV0Yy4gQWxzbywgd2UgaGF2ZQo+
+IGNhbGliZ2Fpbiwgd2hpY2ggaXMgdXNlZCB0byBjb21wZW5zYXRlIGZvciB0aGUgc2VsZWN0ZWQg
+Y3VycmVudCB0cmFuc2Zvcm1lciBvciAKPiByb2dvd3NraSBjb2lsIGFuZCB0aGUgdGVybWluYXRp
+b24gcmVzaXN0b3JzLiAKPiAKPiBNYXliZSB3ZSBzaG91bGQgYWRkIGFkZGl0aW9uYWwgYXR0cmli
+dXRlcyBmb3Igc2NhbGUgYW5kIHRoZSByZWFsIHdvcmxkIHZhbHVlcz8KPiBUaGUgc2NhbGUgYXR0
+cmlidXRlIHdvdWxkIGNvbnZlcnQgdGhlIHJhdyB2YWx1ZSB0byByZWFsIHdvcmxkIHZhbHVlICgy
+MjBWLCAxMDBBCj4gMjVLV2gsIGV0YykKClNvIGl0IHNob3VsZCBiZSBwb3NzaWJsZSB0byBkZWZp
+bmUgZXZlcnl0aGluZyB1c2luZyBleGlzdGluZyBhdHRyaWJ1dGVzIGFuZCBJCndvdWxkIHJlYWxs
+eSBsaWtlIHRvIGF2b2lkIGFkZGluZyBtb3JlIGlmIHdlIHBvc3NpYmx5IGNhbi4gSXQncyB3YXkg
+dG8gZWFzeQp0byBlbmQgdXAgd2l0aCBtb3JlIHRoYW4gb25lIHdheSBvZiBkZXNjcmliaW5nIHRo
+aW5ncy4KCmNhbGliZ2FpbiBpcyBnb29kIGZvciBtYXBwaW5nIGZyb20gc29tZSBtZWFzdXJlbWVu
+dCB0byBhbiBleHBlY3RlZCBnYWluLgpUaGF0IGhhcmR3YXJlZ2FpbiBoYXMgdHdvIG9wdGlvbnMu
+CjEpIFRoZSBkZXZpY2UgaXMgaW50ZXJuYWxseSBjb21wZW5zYXRpbmcgZm9yIGl0IHNvIGlmIHlv
+dSB3ZXJlIHRvIGhhdmUgYSAyNTBtVgp2YWx1ZSBpdCB3b3VsZCBoYXZlIHRoZSBzYW1lIHJhdyBj
+b3VudHMgdmFsdWUgKHNlZW1zIHVubGlrZWx5IGJ1dCB0aGVyZSBhcmUKZGV2aWNlcyB0aGF0IGRv
+IHRoaXMpCjIpIFRoZSBkZXZpY2UgaXMgbm90IGNvbXBlbnNhdGluZyBmb3IgaXQsIGluIHdoaWNo
+IGNhc2UgaXQgaXMgc2ltcGx5ICdzY2FsZScuCgpTbyB3ZSB0d2VhayB0aGUgY2FsaWJnYWluIHRv
+IGFkanVzdCBmb3IgdGhlIGFuYWxvZyBjaXJjdWl0IHRoZW4gc2V0IHRoZQp0aGUgc2NhbGUgdG8g
+dGhlIHJpZ2h0IHJhbmdlLiAgQXQgdGhhdCBwb2ludCBpbiB1c2Vyc3BhY2Ugd2UgdGFrZQpfcmF3
+ICogX3NjYWxlIGFuZCBnZXQgdGhlIHJlYWwgd29ybGQgdmFsdWUgb2YgdGhlIHJlbGV2YW50IHRo
+aW5nLgoKSWYgZm9yIHdoYXRldmVyIHJlYXNvbiB0aGlzIGlzbid0IHBvc3NpYmxlICh1c3VhbGx5
+IGEgbm9uIGxpbmVhciB0cmFuc2Zvcm0KZnJvbSB0aGUgYWRjIHJlYWRpbmcgdG8gcmVhbCB3b3Js
+ZCkgdGhlbiB3ZSBkbyBoYXZlIHRoZSBvcHRpb24gb2YgcHJvdmlkaW5nCl9QUk9DRVNTRUQgb3V0
+cHV0cyB3aGljaCBhcmUgaW4gdGhlIGJhc2UgdW5pdHMgb2YgdGhlIHJlbGV2YW50IElJTyB1bml0
+LgpIb3dldmVyLCB3ZSBvbmx5IGRvIHRoaXMgaWYgd2UgJ2Nhbid0JyBkbyB0aGUgY29udmVyc2lv
+biBpbiB1c2Vyc3BhY2UuCgoKPiA+PiBTVEFUVVMwOjYJUkVWQVBBCUFDQ01PREUgaGFzIGNoYW5n
+ZWQgc2lnbi4gUG93ZXIgaXMgZXhwb3J0ZWQgcmF0aGVyCj4gPj4gdGhhbiBpbXBvcnRlZC4gVXNl
+ciBzcGFjZSBhcHBsaWNhdGlvbiB3b3VsZCB1c2UgdGhpcyB0byBpbmRpY2F0ZSB0aGUgZGlyZWN0
+aW9uCj4gPj4gb2YgcG93ZXIgZmxvdy4gIAo+ID4gVGhpcyBpcyB3aGVyZSB3ZSBzdGFydCB0byBy
+dW4gaW50byBhIHByb2JsZW0gLSBtb3N0bHkgSUlPIG9ubHkgYWxsb3dzIGZvcgo+ID4gYSBzaW5n
+bGUgdGhyZXNob2xkIGZvciByaXNpbmcgYW5kIGZhbGxpbmcgb24gYSBnaXZlbiBjaGFubmVsLiAg
+Tm8gd2F5IHRvCj4gPiB0ZWxsIHdoaWNoIG9uZSB0cmlnZ2VyZWQgaW4gdGhlIEFCSSAtIGV2ZW4g
+Y29kZSBzYXlzIHdoYXQgYW5kIG9uIHdoYXQgY2hhbm5lbAo+ID4gaXQgZG9lc24ndCBkaXN0aW5n
+dWlzaCBtdWx0aXBsZSBsZXZlbHMuICAKPiBZZWFoLCB0aGVyZSBpcyBubyB0aHJlc2hvbGQgaGVy
+ZS4gSXQgb2NjdXJzIHdpdGggdGhlIHBoYXNlIGV4Y2VlZHMgOTAgZGVnLAo+IHdoaWNoIGluZGlj
+YXRlcyB0aGF0IHRoZSBwb3dlciBpcyBub3cgYmVpbmcgZXhwb3J0ZWQgdG8gdGhlIGdyaWQuCldl
+IGNvdWxkIHBlcmhhcHMgdXNlIGEgZml4ZWQgdGhyZXNob2xkIHRvIHJlcHJlc2VudCB0aGlzIHRo
+ZW4uCldvdWxkIG5lZWQgYSBwaGFzZSBjaGFubmVsIHRvIGFzc29jaWF0ZSBpdCB3aXRoIGJ1dCB0
+aGF0IHNob3VsZCBiZSBmaW5lLgpOb3RoaW5nIHNheXMgYSB0aHJlc2hvbGQgbmVlZHMgdG8gYmUg
+Y2hhbmdlYWJsZSA6KQoKaW5fcGhhc2UwX3RocmVzaF9laXRoZXJfdmFsdWUgPSA5MCBkZWdyZWVz
+Cgo+ID4gCj4gPiBXZSBjYW4gcGxheSBnYW1lcyB3aXRoIGRlZmluaW5nIGFkZGl0aW9uYWwgY2hh
+bm5lbHMgYnV0IGl0IGlzbid0IHRoYXQgZWxlZ2FudC4KPiA+IE5vdyBhc3N1bWluZyB3ZSB3YW50
+IHRvIGRvIGJvdGggZGlyZWN0aW9ucyBvZiBjaGFuZ2UuLiAgCj4gQ29ycmVjdCwgd2UgbmVlZCB0
+byBrbm93IHdoZW4gdGhlIHBvd2VyIGlzIGZsb3dpbmcgZnJvbSB0aGUgcG93ZXIgZ3JpZCBvcgo+
+IGZsb3dpbmcgdG8gdGhlIHBvd2VyIGdyaWQuIFRoaXMgaXMgY29tbW9uIHdpdGggRGlzdHJpYnV0
+ZWQgRW5lcmd5IFJlc291cmNlcwo+IChERVIpIHN1Y2ggYXMgc29sYXIgcGFuZWxzIG9yIHdpbmQg
+ZmFybXMuIAo+ID4gCj4gPiBpbl9wb3dlcjBfdGhyZXNoX2VpdGhlcl92YWx1ZSA9IDAKPiA+ICh0
+byBpbmRpY2F0ZSBhIHRyYW5zaXRpb24gYWNyb3NzIDAgcG93ZXIgLSBJIGFzc3VtZSB0aGUgb3Ro
+ZXIgZGlyZWN0aW9uIGlzCj4gPiBuZWdhdGl2ZT8pCj4gPiBhbmQgYXNzb2NpYXRlZCBldmVudCBj
+b2RlLgo+ID4gICAKPiA+PiAKPiA+PiBTVEFUVVMxOjAJTkxPQUQJQXQgbGVhc3Qgb25lIHBoYXNl
+IGhhcyBlbnRlcmVkIG5vIGxvYWQgY29uZGl0aW9uLiBVc2VyIAo+ID4+IHNwYWNlIGFwcCB3b3Vs
+ZCBwcm9iYWJseSBhbGVydCB0aGUgdXNlciBvZiBhIGZhdWx0eSBjb25kaXRpb24uICAKPiA+IE5v
+dCBzdXJlIHdoYXQgdGhpcyBtYXBzIHRvIC0gYnV0IHdvdWxkIGJlIGJhc2VkIG9uIGhvdyBpdCB3
+YXMgZGV0ZWN0ZWQuCj4gPiBJcyB0aGlzIGVmZmVjdGl2ZWx5IDAgY3VycmVudD8gIAo+IFRoZSBB
+REMgaXMgbm9pc3kgYW5kIGRvZXNu4oCZdCBvdXRwdXQgMHgwMDAgd2hlbiB0aGUgY3VycmVudCBp
+cyAwQSwgc28gYW55dGhpbmcgCj4gYmVsb3cgYSBkZWZpbmVkIHRocmVzaG9sZCBpcyBjb25zaWRl
+cmVkIHRvIGJlIE5vTG9hZC4KU28gdGhhdCdzIGEgc2ltcGxlIGxvdyBjdXJyZW50IHRocmVzaG9s
+ZCAtIGFnYWluIHdpdGggYSBmaXhlZCB2YWx1ZSB3aGljaCBpcwpmaW5lIHRvIHJlcHJlc2VudCBh
+cyB3aXRoIHRoZSBwaGFzZSBvbmUgYWJvdmUuCgo+ID4gICAKPiA+PiAKPiA+PiBTVEFUVVMxOjMJ
+WlhUT1ZBCUluZGljYXRlcyBQaGFzZSBBIHZvbHRhZ2UgemVybyBjcm9zc2luZyBpcyBtaXNzaW5n
+LiBUaGlzIAo+ID4+IGlzIGFub3RoZXIgZmF1bHQgY29uZGl0aW9uLiAgCj4gPiAKPiA+IFNpbWls
+YXIgdG8gdGhlIHJhdGUgb2YgY2hhbmdlIGRldGVjdGlvbiBpbiBzb21lIHdheXMsIGJ1dCBvbmx5
+IGV4cGxpY2l0bHkgbG9va3MKPiA+IGF0IHRoZSAwIHBvaW50LiAgV2Ugd291bGQgbmVlZCBzb21l
+dGhpbmcgbmV3IHRvIHJlcHJlc2VudCB0aGlzIEkgdGhpbmvigKYgIAo+IFRoaXMgb2NjdXJzIHdo
+ZW4gd2UgaGF2ZSBhIHBoYXNlIGZhaWx1cmUgKHRyYW5zZm9ybWVyIGZhaWx1cmUsIGV0Yykgb3Ig
+YSBzZW5zb3IgCj4gZmFpbHVyZSAod2lyaW5nIGZhaWx1cmUsIGV0YykuIElmIHBoYXNlIGZhaWx1
+cmUgb2NjdXJzLCBpdCBjb3VsZCBjYXVzZSBkYW1hZ2UgdG8gCj4gZXF1aXBtZW50IGxpa2UgYSBt
+b3Rvci4KClRoaXMgbmVlZHMgc29tZSB0aG91Z2h0LiAgQ291bGQgYmUgdGhlIGtlcm5lbCdzIFJB
+UyBpbmZyYXN0cnVjdHVyZSBpcyB0aGUgd2F5CnRvIGdvIGJ1dCB0aGlzIGlzIGFuIG9kZCB0aGlu
+ZyB0byBtYXAgdG8gaXQgKGFuZCB0aGF0IGlzIGEgcmF0aGVyIGNvbnNlcnZhdGl2ZQpwYXJ0IG9m
+IHRoZSBrZXJuZWwgLSBpdCdzIGhhcmQgZW5vdWdoIGdldHRpbmcgcGVvcGxlIHRvIGFncmVlIG9u
+IGNvbXB1dGVyIGhhcmR3YXJlCmZhdWx0IGRlc2NyaXB0aW9ucykuCj4gPiAgIAo+ID4+IAouLgo+
+ID4+Pj4+IE9LLCB0aGlzIGlzIGdldHRpbmcgc2lsbHkuICBJIHByZXN1bWUgdGhpcyBtZWFucyB0
+aGUgdmFsdWVzIGFib3ZlIGFyZSBmaWx0ZXJlZCBhbmQgdGhlc2UKPiA+Pj4+PiBhcmVuJ3Q/ICBJ
+ZiBzbyB5b3UgbmVlZCB0byBoYXZlIGNoYW5uZWxzIGZvciBib3RoIGFuZCBkaWZmZXJlbnQgZmls
+dGVyIHZhbHVlcy4gICAgICAKPiA+Pj4+IFRoZXNlIGFyZSB0aGUgYWN0dWFsIHNhbXBsZXMgZnJv
+bSB0aGUgQURDIGFuZCBub3QgYSBjYWxjdWxhdGVkIG1lYXN1cmVtZW50IG92ZXIgMTAvMTIgY3lj
+bGVzLiBUaGVzZSBhcmUgdGhlIHNhbXBsZXMgdGhhdCBhcmUgcGxhY2VkIGluIHRoZSBidWZmZXIu
+ICAgIAo+ID4+PiBPSywgc28gREMgdmFsdWVzIHdoaWNoIGFuc3dlcnMgbXkgcXVlc3Rpb24gYWJv
+dmUuCj4gPj4+IFNvIHRoaXMgaXMgdGhlICdub3JtYWwnIG1lYXN1cmVtZW50LiAgRm9yIHRoZSBt
+dWx0aSBjeWNsZSBvbmVzIHdlIG5lZWQgdG8KPiA+Pj4gcmVwcmVzZW50IHRoZW0gYXMgYWRkaXRp
+b25hbCBtZWFzdXJlbWVudHMgdXNpbmcgdGhlIGluZGV4IGFuZCBkZXNjcmliZSB0aGUKPiA+Pj4g
+ZmlsdGVyaW5nIGFwcGxpZWQgdG8gdGhlbSAob3IgdXNlIGFsdHZvbHRhZ2UgZXRjIHRvIHNheSB3
+ZSBhcmUgbG9va2luZwo+ID4+PiBhdCBtZWFzdXJlbWVudHMgcmVsYXRlZCB0byB0aGUgZmFjdCB0
+aGV5IGFyZSBhbHRlcm5hdGluZyByYXRoZXIgdGhhbiBEQy4gICAgCj4gPj4gSSBhbnN3ZXJlZCB0
+aGlzIGFib3ZlLiBJIHRoaW5rIHdlIHNob3VsZCByZW1vdmUgdGhlc2UgcmVnaXN0ZXJzIGFzIEkg
+Y2Fubm90IHNlZSBob3cgYW55b25lIHdvdWxkIHVzZSAKPiA+PiB0aGVtICAKPiA+IENvb2wuIEV2
+ZW4gZWFzaWVyLiAgIFRob3VnaCBpZiB3ZSBoYXZlIGEgZGV2aWNlIHRoYXQgd2lsbCBhbGxvdyB1
+cyB0byBwdXNoIHRoZXNlCj4gPiB0aHJvdWdoIHRoZSBidWZmZXJlZCBpbnRlcmZhY2UgKHJhdGhl
+ciB0aGFuIHRoZSBTUEkgbWFzdGVyIHN0dWZmIG9uIGhlcmUpCj4gPiB0aGVuIHdlIHdvdWxkIGhh
+dmUgdGhlIGNoYW5uZWxzLCBidXQgbm90IGV4cG9ydCB0aGUgX1JBVyBhdHRyaWJ1dGUgLSB0aHVz
+Cj4gPiBtYWtpbmcgdGhlbSByZWFkYWJsZSBvbmx5IGFzIGEgc3RyZWFtIG9mIGRhdGEuICAKPiBU
+aGVyZSBpcyBubyB3YXkgdG8gcmVhZCBhbGwgdGhlc2UgaW5zdGFudGFuZW91cyByZWdpc3RlcnMg
+ZXZlcnkgMTI1dVMuIFRoZSAKPiBTUEkgbWFzdGVyIGludGVyZmFjZSBpcyB0aGUgb25seSB3YXkg
+dG8gcmV0cmlldmUgdGhlc2UgbWVhc3VyZW1lbnRzLCAKPiBydW5uaW5nIGF0IGFib3V0IDRNYnBz
+LiAKU291bmRzIGxpa2UgYmVzdCBwbGFuIGlzIGRvbid0IGhhdmUgdXNlcnNwYWNlIGFjY2VzcyB0
+byB0aGVtIC0ganVzdCBoYXZlIHRoZSBjaGFubmVscwpmb3IgYXNzb2NpYXRlZCBldmVudHMgaWYg
+dGhlcmUgYXJlIGFueS4KCi4uLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9y
+ZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcml2ZXJkZXYtZGV2ZWwK
