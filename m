@@ -1,51 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751258AbeC3KWl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:22:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35382 "EHLO mail.bootlin.com"
+        id S1751225AbeC3K1V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 06:27:21 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56966 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750765AbeC3KWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 06:22:40 -0400
-Date: Fri, 30 Mar 2018 12:22:27 +0200
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?B?TWlxdcOobA==?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>, stefanc@marvell.com,
-        ymarkman@marvell.com, Yelena Krivosheev <yelena@marvell.com>
-Subject: Re: [PATCH] net: mvneta: fix enable of all initialized RXQs
-Message-ID: <20180330122227.02c64a7a@windsurf>
-In-Reply-To: <20180330100531.5995-1-gregory.clement@bootlin.com>
-References: <20180330100531.5995-1-gregory.clement@bootlin.com>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1750790AbeC3K1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 06:27:20 -0400
+Date: Fri, 30 Mar 2018 12:26:21 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Wang <davidwang@zhaoxin.com>
+Cc: tony.luck@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brucechang@via-alliance.com,
+        cooperyan@zhaoxin.com, qiyuanwang@zhaoxin.com, benjaminpan@viatech.com,
+        lukelin@viacpu.com, timguo@zhaoxin.com
+Subject: Re: [PATCH 1/2] x86/mce: new centaur CPUs support MCE broadcasting
+Message-ID: <20180330102621.GA30063@pd.tnic>
+References: <1522403622-31146-1-git-send-email-davidwang@zhaoxin.com>
+ <1522403622-31146-2-git-send-email-davidwang@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1522403622-31146-2-git-send-email-davidwang@zhaoxin.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Fri, 30 Mar 2018 12:05:31 +0200, Gregory CLEMENT wrote:
-> From: Yelena Krivosheev <yelena@marvell.com>
+On Fri, Mar 30, 2018 at 05:53:41PM +0800, David Wang wrote:
+> This patch is used to tell the kernel that newer Centaur CPU support MCE
+> broadcasting.
 > 
-> In mvneta_port_up() we enable relevant RX and TX port queues by write
-> queues bit map to an appropriate register.
+> Signed-off-by: David Wang <davidwang@zhaoxin.com>
+> ---
+>  arch/x86/kernel/cpu/mcheck/mce.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> q_map must be ZERO in the beginning of this process.
-> 
-> Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+> index 7065846..82b25e1 100644
+> --- a/arch/x86/kernel/cpu/mcheck/mce.c
+> +++ b/arch/x86/kernel/cpu/mcheck/mce.c
+> @@ -1688,6 +1688,17 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+>  		if (c->x86 == 6 && c->x86_model == 45)
+>  			quirk_no_way_out = quirk_sandybridge_ifu;
+>  	}
+> +
+> +	if (c->x86_vendor == X86_VENDOR_CENTAUR) {
+> +		/*
+> +		 * All newer centaur CPUs support MCE broadcasting. Enable
+> +		 * synchronization with a one second timeout.
+> +		 */
+> +		if ((c->x86 > 6 || (c->x86 == 6 && c->x86_model == 0xf && c->x86_mask >=0xe)) &&
 
-Acked-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Are some specs or manuals available somewhere on the web for those?
 
-Thanks,
+Thx.
 
-Thomas
 -- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
