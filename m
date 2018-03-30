@@ -1,83 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752619AbeC3RoE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:44:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37928 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752072AbeC3RoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:44:00 -0400
-Date: Fri, 30 Mar 2018 20:43:58 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH RFC] ACPI: disable extra P_LVLx access on KVM
-Message-ID: <1522431741-4678-1-git-send-email-mst@redhat.com>
+        id S1752106AbeC3Rqv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:46:51 -0400
+Received: from muru.com ([72.249.23.125]:34592 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751264AbeC3Rqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 13:46:49 -0400
+Date: Fri, 30 Mar 2018 10:46:44 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc: Merlijn Wajer <merlijn@wizzup.org>, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, kernel@collabora.com,
+        Dan Williams <dcbw@redhat.com>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        linux-omap@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: Re: [alsa-devel] omap4-droid4: voice call support was Re: [PATCHv5,
+ 5/5] ARM: dts: omap4-droid4: add soundcard
+Message-ID: <20180330174644.GW5700@atomide.com>
+References: <20180329154600.qhels5fqzzg364gj@earth.universe>
+ <20180329163716.GA20743@amd>
+ <20180329164113.GR5700@atomide.com>
+ <20180329184007.GA27688@amd>
+ <20180329215612.GS5700@atomide.com>
+ <20180330103744.GA17404@amd>
+ <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
+ <20180330152227.GU5700@atomide.com>
+ <CAOf5uwnF8qTqX9O6s226=Nd4FbGjGev4LDonovgoXtoEH9QdVA@mail.gmail.com>
+ <20180330154445.GV5700@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Mutt-Fcc: =sent
+In-Reply-To: <20180330154445.GV5700@atomide.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As documented by commit b488f021 "ACPI: restore comment justifying
-'extra' P_LVLx access", Linux does an extra IO read after entering idle
-because on (some) chipsets STPCLK# doesn't get asserted in time
-to prevent further instruction processing.
+* Tony Lindgren <tony@atomide.com> [180330 15:46]:
+> * Michael Nazzareno Trimarchi <michael@amarulasolutions.com> [180330 15:27]:
+> > Hi
+> > 
+> > On Fri., 30 Mar. 2018, 11:22 pm Tony Lindgren, <tony@atomide.com> wrote:
+> > 
+> > > * Merlijn Wajer <merlijn@wizzup.org> [180330 13:09]:
+> > > > On 30/03/18 12:37, Pavel Machek wrote:
+> > > > > On Thu 2018-03-29 14:56:13, Tony Lindgren wrote:
+> > > > >> * Pavel Machek <pavel@ucw.cz> [180329 18:41]:
+> > > > >>> Thanks. I got call working including outgoing audio: in capture
+> > > > >>> settings, right->mic 1, Mic1 + Mic2 in alsamixer -> 100%. But I had
+> > > > >>> the other phone muted, so I don't yet know if such call would be of
+> > > > >>> usable quality.
+> > > > >>
+> > > > >> Great, good to hear that :)
+> > > > >
+> > > > > I also got ofonod to work, with rather crazy hacks. But I now have
+> > > > > incoming/outgoing calls with GUI :-).
+> > > >
+> > > > Would you mind sharing those hacks - I would like to play around with
+> > > > ofonod as well. Maybe I can help with a way forward.
+> > >
+> > > Yeah that would be fun to play with :)
+> > >
+> > > Below is a patch that works better at least for ModemManager,
+> > > does anybody have ideas what the unused three ports might be?
+> > >
+> > > I wonder if ofono can use /dev/ttyUSB0 CQDM port?
+> > >
+> > 
+> > One of them can be used proprably to bridge debug for modem certification.
+> > This is usually disable for production device. The other could used for
+> > unsolicited response of GPS function if exists in this modem
+> 
+> OK so at least one of the ports is probably permanently disabled then.
+> 
+> GPS is there for sure, it can be accessed with at least mmcli with
+> ModemManager running assuming modem instance 0:
+> 
+> $ mmcli -m 0 --enable
+> $ mmcli -m 0 --location-enable-gps-raw
+> $ sudo chmod a+r /dev/cdc-wdm0
+> 
+> Then configure gpsd to use /dev/cdc-wdm0.
+> 
+> But having a dedicated NMEA port would be nice. Any ideas how the
+> GPS port might be enabled for ttyUSB, should it start just printing
+> out data if GPS is enabled?
+> 
+> FYI, selecting the "BP HW Diag & Boot AP" option from bootloader with the
+> volume buttons routes the whole modem to the OTG USB interface with
+> the same ports available to PC so that's probably for cert use.
+> If needed we can do this from Linux too by just by setting one of
+> the USB PHY pins high with cpcap_usb_gpio_set_mode().
 
-This can never be the case on KVM, and a timer read causes an expensive
-VM exit in turn causing useless load on host system. Detect KVM and skip
-the read.  TODO: whitelist more hypervisors?
+And after some searching the the three unknown ports seem to
+be NMEA, TCMD and MUX in some unknown order. No idea what the
+TCMD and MUX are here.
 
-Note: very lightly tested.  Pls don't apply this yet, I am working on a
-_CST implementation for KVM and will repost this without the RFC tag
-when it's been tested properly.
+Looks like /dev/ttyUSB3 pretty much just echoes back the
+characters typed in.
 
-Posting now for early flames/feedback.
+Regards,
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/acpi/processor_idle.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index abb559c..8ae28dc 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -33,6 +33,7 @@
- #include <linux/cpuidle.h>
- #include <linux/cpu.h>
- #include <acpi/processor.h>
-+#include <linux/kvm_para.h>
- 
- /*
-  * Include the apic definitions for x86 to have the APIC timer related defines
-@@ -665,7 +666,8 @@ static void __cpuidle acpi_idle_do_entry(struct acpi_processor_cx *cx)
- 		/* Dummy wait op - must do something useless after P_LVL2 read
- 		   because chipsets cannot guarantee that STPCLK# signal
- 		   gets asserted in time to freeze execution properly. */
--		inl(acpi_gbl_FADT.xpm_timer_block.address);
-+		if (!kvm_para_available())
-+			inl(acpi_gbl_FADT.xpm_timer_block.address);
- 	}
- }
- 
-@@ -687,7 +689,8 @@ static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
- 		else if (cx->entry_method == ACPI_CSTATE_SYSTEMIO) {
- 			inb(cx->address);
- 			/* See comment in acpi_idle_do_entry() */
--			inl(acpi_gbl_FADT.xpm_timer_block.address);
-+			if (!kvm_para_available())
-+				inl(acpi_gbl_FADT.xpm_timer_block.address);
- 		} else
- 			return -ENODEV;
- 	}
--- 
-MST
+Tony
