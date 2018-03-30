@@ -1,82 +1,118 @@
-Return-Path: <hch@lst.de>
-X-Google-Smtp-Source: AG47ELsC855muxMr73Aibk6D1kE2n84RH2VbNwRciiIcerOqicUlIWsHqz//K7pEu6YDgVIpsG0V
-ARC-Seal: i=1; a=rsa-sha256; t=1520926048; cv=none;
+Return-Path: <kernel-hardening-return-12833-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/I8vZEhM8sfnSaUcaLEIO3bot9LcOANoK9Z7MnWPe8ktywKyXzOnkjP0LycnEsyidZJ19G
+ARC-Seal: i=1; a=rsa-sha256; t=1522400037; cv=none;
         d=google.com; s=arc-20160816;
-        b=f54m2KatG5AvOuO66+z7OMg9s430oOMGiwvNbGNlli19NVwguw6h6offfs863iWod5
-         EC8s+L9Qhg6374piqzZ33N9qC9PQvhALZOMxrjKGL1j5o39Q8lT0RtSfgDTSnCoQTPUO
-         wLpr34yCU57xuZwAKV2LUMgJziSdshBFhs9xunXEoQh1OspbcBaTAy8zoCSZWnYg1d0c
-         Sgg/oMHRXmZIAT7WDJj8/1Pmt4rTRWPdWjq7nr9ZkqQGdFOzeVTo4Hh6dyUo28EHEdzC
-         hujhejK4jVxqJCIG+BDB7ikQDpYqtF6np09XyYzbF9ZpGjl3t0YU8dE+hT1zIucTPSrj
-         n/IQ==
+        b=sY7aZzTlIPjnr4aL+O7fEPXjcdRtzMK8L02h/m2POdMSmkHfDkjau8AIbYixHWV9Mj
+         iX/+rhsbMLXtv6hMQ9OYyBlIoFlgb7xLN+ecc9xM2bsI6tERj7hUh2EmoCsKg6VJ/+Bx
+         0v1VdlgRySSUUzgCdIvgPS9RLKRB4deradiEFb5zrL7boUaWdd0yFHMQyaDlZOO1k0dh
+         V2U8kMSCy4Ddu9MN7K+3ZqcmFxCjkKcg1rAILUnHDSXKnSlR/bbDLr7KNcUv0zeZD5EM
+         kqlPKNJ9tvdkYXoYUCn98K8KO6Gz7Yhi+AEpq9qzTgv5AC9iZLT5cqRtG3MUUiscKaff
+         cTCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=3R2hAeVQOlSxLgdFuATQ8cSNflDigwlFv5YYwHsY58I=;
-        b=iPnQjdg++Mcmk9M564c27qzoZ+ddSoFL30i96bG86WiTajxj7tmV18N7k5vaM8JB32
-         mUe1Zywx5eAZjHGdSSgatQEEBNPXdtZBs5QcD210M1/m2t9mGwaVvoP7An4FwBbjTOqL
-         atDvdMMc/eZnj8TREYvN5/plQsjbTju4ZvwFjfIlZuKxLgxQfaMYwZMKxxVUxi8n98Pk
-         ooBTNJhT8vbf7hr1SWifs4MKKISJFidZpm6RwJQ/D6UtzAEKpbeQjsLX1iegPbsJlldr
-         8txai1bbGSa3cSHiQl5IXm8HhIJLwddKgkhAI07Bkp+crCz0HhEcWk04kDoQRPBNZ23w
-         U/3Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=pDoNOVwK7qAVEtx0ZUWXAmQXO3jwjzFr/1BD4vPGBZ4=;
+        b=0JjpGdmiKrG/Nj/+f5uU6EVMwzOWEu+wWRXTrmHFGSLZhULiGPKipnzSjdR1Yep9ky
+         hFJoOQvDHhaMrkF+jP28v9HpRn6o/8By6g4sr0UwcmMD83EIb6imiv5apxCZOk3QdjA0
+         AEwZgfgBKQONzxpjeS01X0/06AP/FlW1gLoqZc+2lijUGLpU5fFSI+oe/Vs/hWqJYnnx
+         dxnc6cUEiHsYlm16Qw6RmK6QDWw1ACLPStLJQR66VUuIHTKtaDHIqk4LFV9yivqe9qO9
+         LUF+PzKfiIwWXJFWn+z44jyB5mHuPzVaQ9ZoB7RsCgGBA38Lw4AVzANujq21e1kZbuY5
+         0V7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of hch@lst.de designates 213.95.11.211 as permitted sender) smtp.mailfrom=hch@lst.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QxF86thL;
+       spf=pass (google.com: domain of kernel-hardening-return-12833-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12833-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of hch@lst.de designates 213.95.11.211 as permitted sender) smtp.mailfrom=hch@lst.de
-Date: Tue, 13 Mar 2018 08:27:28 +0100
-From: "hch@lst.de" <hch@lst.de>
-To: Nipun Gupta <nipun.gupta@nxp.com>
-Cc: Sinan Kaya <okaya@codeaurora.org>, "hch@lst.de" <hch@lst.de>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-	"rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>,
-	"jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"johan@kernel.org" <johan@kernel.org>,
-	"msuchanek@suse.de" <msuchanek@suse.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	Bharat Bhushan <bharat.bhushan@nxp.com>,
-	Leo Li <leoyang.li@nxp.com>
-Subject: Re: [PATCH] dma-mapping: move dma configuration to bus
-	infrastructure
-Message-ID: <20180313072727.GA32191@lst.de>
-References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com> <6a76df69-8c6c-52a6-0afd-fd0b8d2ff703@codeaurora.org> <HE1PR0401MB24250A8631823FB3108EA62CE6D20@HE1PR0401MB2425.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HE1PR0401MB24250A8631823FB3108EA62CE6D20@HE1PR0401MB2425.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=QxF86thL;
+       spf=pass (google.com: domain of kernel-hardening-return-12833-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12833-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com,
+	linux-crypto@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Kees Cook <keescook@chromium.org>,
+	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+	Eric Biggers <ebiggers3@gmail.com>
+Subject: [v3] crypto: ctr - avoid VLA use
+Date: Fri, 30 Mar 2018 10:53:26 +0200
+Message-Id: <1522400006-8859-1-git-send-email-s.mesoraca16@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594746017210545974?=
-X-GMAIL-MSGID: =?utf-8?q?1594806552985527781?=
+X-GMAIL-THRID: =?utf-8?q?1596352141229362174?=
+X-GMAIL-MSGID: =?utf-8?q?1596352141229362174?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 04:22:53AM +0000, Nipun Gupta wrote:
-> > Isn't this one or the other one but not both?
-> > 
-> > Something like:
-> > 
-> > if (dev->of_node)
-> > 	of_dma_deconfigure(dev);
-> > else
-> > 	acpi_dma_deconfigure(dev);
-> > 
-> > should work.
-> 
-> I understand your point. Seems reasonable as we should not expect
-> the 'of/acpi DMA deconfigure' API to not fail when they are not configured.
-> 
-> But, here we would also need to get dma_device (just as we get in
-> 'pci_dma_configure') and need a check on it as for PCI there 'of_node'
-> is present in the dma_dev.
+All ciphers implemented in Linux have a block size less than or
+equal to 16 bytes and the most demanding hw require 16 bytes
+alignment for the block buffer.
+We avoid 2 VLAs[1] by always allocating 16 bytes with 16 bytes
+alignment, unless the architecture supports efficient unaligned
+accesses.
+We also check the selected cipher at instance creation time, if
+it doesn't comply with these limits, we fail the creation.
 
-Both of_dma_deconfigure and acpi_dma_deconfigure just end up calling
-arch_teardown_dma_ops.  So my preference would be to just remove
-of_dma_deconfigure and acpi_dma_deconfigure and call arch_teardown_dma_ops
-as a prep patch before this one.
+[1] https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+---
+ crypto/ctr.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/crypto/ctr.c b/crypto/ctr.c
+index 854d924..49c469d 100644
+--- a/crypto/ctr.c
++++ b/crypto/ctr.c
+@@ -21,6 +21,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ 
++#define MAX_BLOCKSIZE 16
++#define MAX_ALIGNMASK 15
++
+ struct crypto_ctr_ctx {
+ 	struct crypto_cipher *child;
+ };
+@@ -58,7 +61,7 @@ static void crypto_ctr_crypt_final(struct blkcipher_walk *walk,
+ 	unsigned int bsize = crypto_cipher_blocksize(tfm);
+ 	unsigned long alignmask = crypto_cipher_alignmask(tfm);
+ 	u8 *ctrblk = walk->iv;
+-	u8 tmp[bsize + alignmask];
++	u8 tmp[MAX_BLOCKSIZE + MAX_ALIGNMASK];
+ 	u8 *keystream = PTR_ALIGN(tmp + 0, alignmask + 1);
+ 	u8 *src = walk->src.virt.addr;
+ 	u8 *dst = walk->dst.virt.addr;
+@@ -106,7 +109,7 @@ static int crypto_ctr_crypt_inplace(struct blkcipher_walk *walk,
+ 	unsigned int nbytes = walk->nbytes;
+ 	u8 *ctrblk = walk->iv;
+ 	u8 *src = walk->src.virt.addr;
+-	u8 tmp[bsize + alignmask];
++	u8 tmp[MAX_BLOCKSIZE + MAX_ALIGNMASK];
+ 	u8 *keystream = PTR_ALIGN(tmp + 0, alignmask + 1);
+ 
+ 	do {
+@@ -206,6 +209,14 @@ static struct crypto_instance *crypto_ctr_alloc(struct rtattr **tb)
+ 	if (alg->cra_blocksize < 4)
+ 		goto out_put_alg;
+ 
++	/* Block size must be <= MAX_BLOCKSIZE. */
++	if (alg->cra_blocksize > MAX_BLOCKSIZE)
++		goto out_put_alg;
++
++	/* Alignmask must be <= MAX_ALIGNMASK. */
++	if (alg->cra_alignmask > MAX_ALIGNMASK)
++		goto out_put_alg;
++
+ 	/* If this is false we'd fail the alignment of crypto_inc. */
+ 	if (alg->cra_blocksize % 4)
+ 		goto out_put_alg;
+-- 
+1.9.1
