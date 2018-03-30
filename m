@@ -1,12 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeC3RMb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:12:31 -0400
-Received: from vern.gendns.com ([206.190.152.46]:38286 "EHLO vern.gendns.com"
+        id S1752232AbeC3RN3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:13:29 -0400
+Received: from vern.gendns.com ([206.190.152.46]:38325 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750927AbeC3RM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:12:29 -0400
-Subject: Re: [PATCH v5 3/8] clk: davinci: add a reset lookup table for psc0
+        id S1750927AbeC3RN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 13:13:27 -0400
+Subject: Re: [PATCH v5 4/8] remoteproc/davinci: add the missing retval check
+ for clk_enable()
 To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -20,14 +21,14 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 References: <20180330152856.12297-1-brgl@bgdev.pl>
- <20180330152856.12297-4-brgl@bgdev.pl>
+ <20180330152856.12297-5-brgl@bgdev.pl>
 From: David Lechner <david@lechnology.com>
-Message-ID: <a96712b7-2f2d-5a6d-a37a-a43063fb801b@lechnology.com>
-Date: Fri, 30 Mar 2018 12:12:30 -0500
+Message-ID: <6d4dcee6-6480-03fb-c0f8-f750d22f8cf6@lechnology.com>
+Date: Fri, 30 Mar 2018 12:13:28 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
  Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180330152856.12297-4-brgl@bgdev.pl>
+In-Reply-To: <20180330152856.12297-5-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -50,10 +51,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 3/30/18 10:28 AM, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> In order to be able to use the reset framework in legacy boot mode as
-> well, add the reset lookup table to the psc driver for da850 variant.
+> The davinci platform is being switched to using the common clock
+> framework, where clk_enable() can fail. Add the return value check.
 > 
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Acked-by: Suman Anna <s-anna@ti.com>
 > ---
 
 Reviewed-by: David Lechner <david@lechnology.com>
