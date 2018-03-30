@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeC3PaM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:30:12 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56117 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752129AbeC3P3I (ORCPT
+        id S1752617AbeC3PaK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:30:10 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52838 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeC3P3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:29:08 -0400
-X-Google-Smtp-Source: AIpwx48pOSIvzY892HtfXjafWzulgE+h5hho9yLiKz6mHP/xnyQ4fzPN+QjTORN/xdgtM6qdJYYY1Q==
+        Fri, 30 Mar 2018 11:29:09 -0400
+X-Google-Smtp-Source: AIpwx48lkFU0fY80J3JTAHiZ5XRv6uLCuvmMQw8f5UP7DWp3Nu81YLASlYQwh/po3a90No+aeQsqUA==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,9 +21,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 5/8] remoteproc/davinci: prepare and unprepare the clock where needed
-Date: Fri, 30 Mar 2018 17:28:53 +0200
-Message-Id: <20180330152856.12297-6-brgl@bgdev.pl>
+Subject: [PATCH v5 6/8] remoteproc/davinci: use octal permissions for module_param()
+Date: Fri, 30 Mar 2018 17:28:54 +0200
+Message-Id: <20180330152856.12297-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
 References: <20180330152856.12297-1-brgl@bgdev.pl>
@@ -33,40 +33,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We're currently switching the platform to using the common clock
-framework. We need to explicitly prepare and unprepare the rproc
-clock.
+Checkpatch recommends to use octal perms instead of S_IRUGO.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/remoteproc/da8xx_remoteproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 2b24291337b7..f134192922e0 100644
+index f134192922e0..b668e32996e2 100644
 --- a/drivers/remoteproc/da8xx_remoteproc.c
 +++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
+@@ -25,7 +25,7 @@
+ #include "remoteproc_internal.h"
  
- 	writel(rproc->bootaddr, drproc->bootreg);
+ static char *da8xx_fw_name;
+-module_param(da8xx_fw_name, charp, S_IRUGO);
++module_param(da8xx_fw_name, charp, 0444);
+ MODULE_PARM_DESC(da8xx_fw_name,
+ 		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
  
--	ret = clk_enable(dsp_clk);
-+	ret = clk_prepare_enable(dsp_clk);
- 	if (ret) {
--		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- 	struct da8xx_rproc *drproc = rproc->priv;
- 
- 	davinci_clk_reset_assert(drproc->dsp_clk);
--	clk_disable(drproc->dsp_clk);
-+	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
- }
 -- 
 2.16.3
