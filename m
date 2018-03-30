@@ -1,42 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeC3Bs1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 21:48:27 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:52662 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752096AbeC3Bs0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 21:48:26 -0400
-Date: Thu, 29 Mar 2018 21:48:22 -0400 (EDT)
-Message-Id: <20180329.214822.1871100263972510651.davem@davemloft.net>
-To: dhowells@redhat.com
-Cc: netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/6] rxrpc: Fixes
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <30571.1522362346@warthog.procyon.org.uk>
-References: <20180329.115956.476747368912393740.davem@davemloft.net>
-        <152219064515.24098.9428175357244257284.stgit@warthog.procyon.org.uk>
-        <30571.1522362346@warthog.procyon.org.uk>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752608AbeC3B7B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 21:59:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43202 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751906AbeC3B67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 21:58:59 -0400
+Date: Thu, 29 Mar 2018 21:58:54 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>, linaro-mm-sig@lists.linaro.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+Message-ID: <20180330015854.GA3572@redhat.com>
+References: <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
+ <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
+ <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+ <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
+ <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+ <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Thu, 29 Mar 2018 23:25:46 +0100
+On Thu, Mar 29, 2018 at 10:25:52AM -0600, Logan Gunthorpe wrote:
+> 
+> 
+> On 29/03/18 10:10 AM, Christian König wrote:
+> > Why not? I mean the dma_map_resource() function is for P2P while other 
+> > dma_map_* functions are only for system memory.
+> 
+> Oh, hmm, I wasn't aware dma_map_resource was exclusively for mapping
+> P2P. Though it's a bit odd seeing we've been working under the
+> assumption that PCI P2P is different as it has to translate the PCI bus
+> address. Where as P2P for devices on other buses is a big unknown.
 
-> David Miller <davem@davemloft.net> wrote:
-> 
->> David, this GIT URL has tons of unrelated changes.  It seems to bring in
->> the parts of Linus's tree that haven't proagated to 'net' yet.
-> 
-> Sorry about that, I rebased on the wrong branch by accident.
-> 
-> I've got some more fixes.  Should I just give the lot to you to pull into your
-> net-next tree, given that the merge window may well open Sunday?
+dma_map_resource() is the right API (thought its current implementation
+is fill with x86 assumptions). So i would argue that arch can decide to
+implement it or simply return dma error address which trigger fallback
+path into the caller (at least for GPU drivers). SG variant can be added
+on top.
 
-That's up to you.
+dma_map_resource() is the right API because it has all the necessary
+informations. It use the CPU physical address as the common address
+"language" with CPU physical address of PCIE bar to map to another
+device you can find the corresponding bus address from the IOMMU code
+(NOP on x86). So dma_map_resource() knows both the source device which
+export its PCIE bar and the destination devices.
+
+
+So i don't think Christian need to base his patchset on yours. This
+is orthogonal. Christian is using existing upstream API, if it is
+broken on some arch it is up to those arch to fix it, or return error
+if it is not fixable. In fact i would assume that you would need to
+base your patchset on top of dma_map_resource() too ...
+
+Moreover i doubt Christian want to have struct page for this. For
+nouveau there will be HMM struct page and this would conflict.
+
+AFAICT you need struct page because the API you are trying to expose
+to user space rely on "regular" filesystem/RDMA umem API which all
+assume struct page. GPU drivers do not have this requirement and it
+should not be impose on them.
+
+
+So from my point of view Christian patchset is good as it is. Modulo
+better commit message.
+
+
+Bottom line i think we need common PCIE helper for P2P and the current
+dma_map_resource() is the right kind from POV. What you are doing with
+struct page is specific to your sub-system and should not be impose on
+others.
+
+Cheers,
+Jérôme
