@@ -1,152 +1,133 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2920516-1522393766-2-13488481613274087316
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522393765; b=S4PWt5K8/uV+Adj7GCbFqofRXnDRF1O0/bijLlC6boontGZq+8
-    xiNpdOHOqAmSh+Oz7GMze/T+B8XJfQN9A/gO7HU/pKv0Qo+8TgBlCBdb/fhyB08+
-    QBkWRdJ2bQPlKJyPiij9cowKq7RNwDn22Rnl3HTwFCky4K49WIkbDmt3LVTcRJ0p
-    mD+nJdsvkzBu1Nf3SEMnzd46n6oqssX2w8+5UWkxjQoVCcjyKYKZrd3Z+uLJ6pU9
-    l4cEIqpfnX/EoXKr5MDoc7gmIYBq26S47NY1vb8RcANp3e07Xk8kWwvucauBQf9W
-    7Yw8f7z+10H2OqDbqPn6PXaN3YlNrVainXvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522393765; bh=i1My/
-    0XU9QEf+1frWy5uPJKbflcmAWJ4SQaJ9OLkAnQ=; b=TnCBZGYSb954Vd1higZH9
-    XdPJ7s/OM0FdHm/yXrN1l57lUUxUG//ywisq+BCt86WdGrvEfeSk1mDEUm3MaYgp
-    NhrBcqIYFrMTH01c422MDWlM7yW5buM8yIDuDsy60dGxpyQoeqyAKxRGxm7dZOfv
-    SHkwPLEOosobtGxOPgyjFbJ2RlFQh0b03EFhglQGMvpkg4Wv0oDTgNmjXf9ODBTS
-    bI/KH0gwoUbhih01HVHssLspA6GyPDEbEHSyyGa0Gi9eB9tnqdAjjLtcxVRRJHof
-    qvdacEyTejmR8AdbF3GPl1VEp0zhPvlFQjXC3YVzNTDrcMtPzOxZvzcgokZVvmj2
-    w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFgo66jSg5i4zy9ev1rBq0dzWLKaPXSIbEsSqOj/I8k1fobfijwXdeI9sRosfM5fmRWjEIvBYjZo7QN7lDOvG8cZ1WgtnPbxDmehN9BjBhIVO56uXvw7
-    +fWiavYd41CZOIash01/XC4z1+7y0TDbYfrSzf+XgMjK56z5kuFrzFuYoVJTIZHjKNaSmQZ3gn63yyDQ6PI7B2b/TxA2ZkdXHg6CaLFd5EmswMf7Z5wnz1wV
-    m997Th7jtjqLR+0gxtaiEg==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=4pWhBJYePLsalNw6YyoA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Return-Path: <quytelda@tamalin.org>
+X-Google-Smtp-Source: AIpwx48/zcV9Ke/ZyNjB7f/Hl1+w5QcrMlFAT1CLJIuBLIUVX6p6RfMQnQ2YidgFC9CPX9jQbEie
+ARC-Seal: i=1; a=rsa-sha256; t=1522393765; cv=none;
+        d=google.com; s=arc-20160816;
+        b=RZNwZKwZfAhkn095RgDo/ixOgerU652lnV2GSJ77T/YZw8UO375ObgIK1ycPeZ1yL/
+         Uhbe6lCZzjKva14JFegiQ5hcdqA65m2YgJ7leqI/OGUKkjyz+mala5d0Cx0SsZmBoTCR
+         HSvbzdtd5xDYwgMOpTai9bLtW23AYxLMSG3RwLHRjdeCMRpB+/WN0FJLq2t/OW2zO7SF
+         +wrAmONYeFbvLGMR+CO4WsRBakMYkrMXOyx0IrW9BphfANC00yozx8JlYSURbvDuXyee
+         AVsxYQb3om6ZV3aCbsTXQ25M0tbSRiodkf9SoDaP4a4TastSu0P1eV7FeIs/KJiWSYye
+         /xfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=GgtOltGtO315cehNkwj1CLh8tFgbEw2z8jpNmNsIUsw=;
+        b=iZnx7hx4j1K3hWQeqQPwZXaiK7gmpj+zvX+zFV44vV/MIofT2Nl2r6t4jLTp+qy7Yy
+         6fxA0abtD1lS7K3kTXEEeHbGollcAHqz0LfQwiaXPMdwmZ532XWlUoX8iv5vHDWATzRP
+         kuG5fuGOIEm4KRzYhiDgwPCZjmkjMem+PiLfT8JoZJRnWbmvlWOwhMJdbpfigKGMyZ2w
+         8RZAfT3i5DBfHL3taJMY7j9+AwShWbZEfmDJ8IYqhPA9W2RHPkUQ8D45AK4RvDjPE3uD
+         UV+oGJKrEZmviu6ZPxYpdg6FGItiUUgyYOT6fJHD7gVcxRxl+MaWMxZZMBWUYSQGvjDX
+         R/GA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH 02/76] staging: ks7010: Remove trailing _t from 'struct
- wpa_suite_t'.
-Date: Fri, 30 Mar 2018 00:07:25 -0700
-Message-Id: <20180330070842.25224-2-quytelda@tamalin.org>
+Cc: driverdev-devel@linuxdriverproject.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Quytelda Kahja <quytelda@tamalin.org>
+Subject: [PATCH 31/76] staging: ks7010: Remove trailing _t from 'struct hostif_request_t'.
+Date: Fri, 30 Mar 2018 00:07:54 -0700
+Message-Id: <20180330070842.25224-31-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:60FRffpUhE3KR+4Jxxv9p2m9S/WRsltKi5MuGpvD/AzhnmwF2Dj
- Vh/HX+9E8QKia7uLGa20IgzXHox8VVdGz6UVXDeXyhg1+uAHrSjVV6p9YC3NtjikvTQrRRB
- 9BmvQtN790iPu0B8TMNJ0uZ0t/eJ0IMYc0bRuTE73gwka++09ZBzGbtN14ftjr/om+eBwp0
- Iw32X9r0kyHfZD3rJhmxw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:J4BMuOKLGBM=:d0uJSX1TRS3vzsdXOAGGkb
- YB5vs4MF8KeX8Ww4w2zBVaPCrkzfybL0y+OmOjw6m3pudZsxJtwojKVmkIHpTRNTwPwwAPxbc
- cefQMNKatgLo7bklgwSzhpbAR5HVBO51L/g1njaEXvJzqcAlJdusGoCdvBRl5BErSNODojS75
- PeV2kuCe2QSCedj5fEp2M2yTdvQORsVFR8UcMxiSjdOSQ7oxsevXT4JpfglwgyEU0JYTPfmSr
- G8rjMHPRIlUf/7RB1s19cT9ZkZTtF0VTCBF9RI6UKkzvZ97LMciP8M654dNcayB8PJnU3QWXe
- uiwkV8ReFPX4AoB13JY3K5nzT0XSZeO/77veQHkTgsz9flthOReA2/KpLafC9vx2MU79Z4HlJ
- G/3ML4TXxR6yln7BhFEgv0WJ49XOj567C9aAlsr0bNbqc0+BihWepY0Y5o+VX8rDutsPYX/Ot
- BH7aTBXw7Qu29jGa39OsHyRvxSWiSPDlY/CitzhK38hp/8fv14ArxMvHwngKeLhiJl79OUzkU
- sl6OgfoaWVduPbcHfTb4bBFXLzSpPMWi2MK0/KVdD5jvQhZihRDsNjCUjwKhfb3MG924w3T8M
- 5jgjkeHkbbhOfP1inPnIfP5Y3ydZyckSWLZWIHgK9jVkbuN7bU14CmK3ZOJ+M67x2EXQ0mTue
- 2wZaVzANx/WpDcgEM1ljtQYFYEb+JggOnv7I9TfOus2uPGnp6GGN1aPMfpyAfbecMCsw/o8ad
- he7B8kVzXEN6tjEVJ/mfYFpU7lAGjvI3G1Nu8g==
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
- linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Provags-ID: V03:K0:Uziq88a0qDMZxTDNsUETV9LqVmfNq+1kRRqN2O/goDnsfH6obEn
+ WxT8uYGMwLkD0QKaiNrLksrXMKRdjPpX/pZvFi1uCoRZARhV5lsaTcjEFnu8hIJ0dBMDVwe
+ vuk8zPg/AKYvF7t7C+faEUEnj7DJG53lEOVBF1w7dmBrGSvs6F58WDOGfZS4eEAO10UXnBz
+ x4ldk1IahBEUvi8Yf+WuQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:eDTD2btfekg=:nwgNgWCp8tdS9UiMngt78o
+ bM+lNe9n60Kgg3UewT3NRebvVtMa9bQ0kRH6WyT1kct7quoBW61362OrQUz5/V8GdbKOlmRFa
+ jG9kFi7Go1pRMw6i910p15+lWEzcrUoUMU3dH5DGdOGP2k76NKyaXK3YJTJvK2hVHXOSWLKl2
+ uBMBf+yo4imB+E43iF2tw/INArzrHOX2yXIDU9Q9tGpOKVpl5T2KiPQAj+6Xf5qRPA4rGgXPw
+ DAKREXLq/S6+REki60u/0k8ZXu8a2ZjwMlUduVP4dsg+5GXKEqzmkcLLVdjdTY7kUkdbdpYfQ
+ rGb6PTdsQMKmxUDA1qg7SJ2tyirjNWRCAjjkq7c+1lEl7SCZ3BS+MFXi8QekjRfCKkdBQV8H1
+ JZoONSe5m875Jaft/4zUgI2cCjQfiKtUwKpQCIcLvwvv7kapRCt0ETfwAX2g616mwviI7HsKf
+ URppInmDbyvEbMj+4/3HmrNH18TdVC7esGFD9fspHCXSWh4LseLy/lC+86zI1Y5jByD78ccME
+ 6WfOzWRcwDhVA+t+FC6fvXUcF+GIcP3aNFBfSXTqHiYK1++H/EAat/v5ZvK2N1sXcQ55NIxfV
+ vA/oZYMIDj4mTWYcwFGSkfwigj+yq+zlF2mKa+pCJniIRg935i79ViNZS8xU6qIH983X2iJvD
+ MP9WVFsj8kXZtmD9/mGorAS1Lr3kSLxDSdBdAqqDPLxSI5ROE8jWj6qWcZMAqpTn3DhWaaMgJ
+ nHV2OG7vgLpUSfTgv5I89+KVpHqzV1ZDLcFaUg==
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596345565198965877?=
+X-GMAIL-MSGID: =?utf-8?q?1596345565198965877?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct wpa_suite_t' with 'struct wpa_suite'.
+all occurences of 'struct hostif_request_t' with 'struct hostif_request'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c |  2 +-
+ drivers/staging/ks7010/ks_hostif.h | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 676961cf4103..af1a5c123789 100644
+index 5c78f94e6f72..9798e2427f36 100644
 --- a/drivers/staging/ks7010/ks_hostif.c
 +++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1660,7 +1660,7 @@ void hostif_sme_set_wep(struct ks_wlan_private *priv, int type)
- 	}
+@@ -1313,7 +1313,7 @@ static __le16 ks_wlan_cap(struct ks_wlan_private *priv)
+ 	return cpu_to_le16((uint16_t)capability);
  }
  
--struct wpa_suite_t {
-+struct wpa_suite {
- 	__le16 size;
- 	unsigned char suite[4][CIPHER_ID_LEN];
- } __packed;
-@@ -1673,7 +1673,7 @@ struct rsn_mode_t {
- static
- void hostif_sme_set_rsn(struct ks_wlan_private *priv, int type)
+-static void init_request(struct ks_wlan_private *priv, struct hostif_request_t *req)
++static void init_request(struct ks_wlan_private *priv, struct hostif_request *req)
  {
--	struct wpa_suite_t wpa_suite;
-+	struct wpa_suite wpa_suite;
- 	struct rsn_mode_t rsn_mode;
- 	__le32 val;
+ 	req->phy_type = cpu_to_le16((uint16_t)(priv->reg.phy_type));
+ 	req->cts_mode = cpu_to_le16((uint16_t)(priv->reg.cts_mode));
+diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
+index 615e2ed979e1..ad42c35d0f2d 100644
+--- a/drivers/staging/ks7010/ks_hostif.h
++++ b/drivers/staging/ks7010/ks_hostif.h
+@@ -343,7 +343,7 @@ struct hostif_stop_confirm {
+ #define CTS_MODE_FALSE	0
+ #define CTS_MODE_TRUE	1
  
+-struct hostif_request_t {
++struct hostif_request {
+ 	__le16 phy_type;
+ 	__le16 cts_mode;
+ 	__le16 scan_type;
+@@ -360,7 +360,7 @@ struct hostif_request_t {
+  */
+ struct hostif_ps_adhoc_set_request_t {
+ 	struct hostif_hdr header;
+-	struct hostif_request_t request;
++	struct hostif_request request;
+ 	__le16 channel;
+ } __packed;
+ 
+@@ -381,7 +381,7 @@ struct hostif_ps_adhoc_set_confirm_t {
+  */
+ struct hostif_infrastructure_set_request_t {
+ 	struct hostif_hdr header;
+-	struct hostif_request_t request;
++	struct hostif_request request;
+ 	struct ssid ssid;
+ 	__le16 beacon_lost_count;
+ 	__le16 auth_type;
+@@ -403,7 +403,7 @@ struct hostif_infrastructure_set_confirm_t {
+  */
+ struct hostif_adhoc_set_request_t {
+ 	struct hostif_hdr header;
+-	struct hostif_request_t request;
++	struct hostif_request request;
+ 	struct ssid ssid;
+ 	__le16 channel;
+ } __packed;
+@@ -417,7 +417,7 @@ struct hostif_adhoc_set_request_t {
+  */
+ struct hostif_adhoc_set2_request_t {
+ 	struct hostif_hdr header;
+-	struct hostif_request_t request;
++	struct hostif_request request;
+ 	__le16 reserved;
+ 	struct ssid ssid;
+ 	struct channel_list channel_list;
 -- 
 2.16.3
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
