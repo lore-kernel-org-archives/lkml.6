@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753085AbeC3VFk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:05:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33720 "EHLO mail.kernel.org"
+        id S1753122AbeC3VFq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:05:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753058AbeC3VFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:05:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1271221777
+        id S1753090AbeC3VFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:05:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A6121777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v5 07/14] net/mlx5: Report PCIe link properties with
- pcie_print_link_status()
+Subject: [PATCH v5 08/14] net/mlx5e: Use pcie_bandwidth_available() to
+ compute bandwidth
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Tal Gilboa <talgi@mellanox.com>
 Cc: Tariq Toukan <tariqt@mellanox.com>,
@@ -21,8 +21,8 @@ Cc: Tariq Toukan <tariqt@mellanox.com>,
         everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Date: Fri, 30 Mar 2018 16:05:33 -0500
-Message-ID: <152244393306.135666.8628641854997205700.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Fri, 30 Mar 2018 16:05:41 -0500
+Message-ID: <152244394162.135666.4917184975514407800.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -35,29 +35,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tal Gilboa <talgi@mellanox.com>
 
-Use pcie_print_link_status() to report PCIe link speed and possible
-limitations.
+Use the new pci_bandwidth_available() function to calculate maximum
+available bandwidth through the PCI chain instead of computing it ourselves
+with mlx5e_get_pci_bw().
+
+This is used to detect when the device is capable of more bandwidth than is
+available in the current slot.  The driver may adjust compression settings
+accordingly.
+
+Note that pci_bandwidth_available() accounts for PCIe encoding overhead, so
+it is more accurate than mlx5e_get_pci_bw() was.
 
 Signed-off-by: Tal Gilboa <talgi@mellanox.com>
-[bhelgaas: changelog]
+[bhelgaas: remove mlx5e_get_pci_bw() wrapper altogether]
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/main.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |   32 +--------------------
+ 1 file changed, 1 insertion(+), 31 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-index 2ef641c91c26..622f02d34aae 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -1043,6 +1043,10 @@ static int mlx5_load_one(struct mlx5_core_dev *dev, struct mlx5_priv *priv,
- 	dev_info(&pdev->dev, "firmware version: %d.%d.%d\n", fw_rev_maj(dev),
- 		 fw_rev_min(dev), fw_rev_sub(dev));
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index 47bab842c5ee..93291ec4a3d1 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -3864,36 +3864,6 @@ void mlx5e_build_default_indir_rqt(u32 *indirection_rqt, int len,
+ 		indirection_rqt[i] = i % num_channels;
+ }
  
-+	/* Only PFs hold the relevant PCIe information for this query */
-+	if (mlx5_core_is_pf(dev))
-+		pcie_print_link_status(dev->pdev);
-+
- 	/* on load removing any previous indication of internal error, device is
- 	 * up
- 	 */
+-static int mlx5e_get_pci_bw(struct mlx5_core_dev *mdev, u32 *pci_bw)
+-{
+-	enum pcie_link_width width;
+-	enum pci_bus_speed speed;
+-	int err = 0;
+-
+-	err = pcie_get_minimum_link(mdev->pdev, &speed, &width);
+-	if (err)
+-		return err;
+-
+-	if (speed == PCI_SPEED_UNKNOWN || width == PCIE_LNK_WIDTH_UNKNOWN)
+-		return -EINVAL;
+-
+-	switch (speed) {
+-	case PCIE_SPEED_2_5GT:
+-		*pci_bw = 2500 * width;
+-		break;
+-	case PCIE_SPEED_5_0GT:
+-		*pci_bw = 5000 * width;
+-		break;
+-	case PCIE_SPEED_8_0GT:
+-		*pci_bw = 8000 * width;
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+ static bool cqe_compress_heuristic(u32 link_speed, u32 pci_bw)
+ {
+ 	return (link_speed && pci_bw &&
+@@ -3979,7 +3949,7 @@ void mlx5e_build_nic_params(struct mlx5_core_dev *mdev,
+ 	params->num_tc       = 1;
+ 
+ 	mlx5e_get_max_linkspeed(mdev, &link_speed);
+-	mlx5e_get_pci_bw(mdev, &pci_bw);
++	pci_bw = pcie_bandwidth_available(mdev->pdev, NULL, NULL, NULL);
+ 	mlx5_core_dbg(mdev, "Max link speed = %d, PCI BW = %d\n",
+ 		      link_speed, pci_bw);
+ 
