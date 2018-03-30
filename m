@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeC3MAk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 08:00:40 -0400
-Received: from mail-sn1nam02on0086.outbound.protection.outlook.com ([104.47.36.86]:55618
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1752686AbeC3MBB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 08:01:01 -0400
+Received: from mail-by2nam01on0068.outbound.protection.outlook.com ([104.47.34.68]:46592
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752455AbeC3MAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 08:00:35 -0400
+        id S1752592AbeC3MAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 08:00:38 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Vadim.Lomovtsev@cavium.com;
 From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
@@ -15,69 +15,62 @@ To: sgoutham@cavium.com, sunil.kovvuri@gmail.com, rric@kernel.org,
         linux-kernel@vger.kernel.org, davem@davemloft.net
 Cc: dnelson@redhat.com, ynorov@caviumnetworks.com,
         Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
-Subject: [PATCH v2 6/7] net: thunderx: add workqueue control structures for handle ndo_set_rx_mode request
-Date: Fri, 30 Mar 2018 04:59:52 -0700
-Message-Id: <20180330115953.17154-7-Vadim.Lomovtsev@caviumnetworks.com>
+Subject: [PATCH v2 7/7] net: thunderx: add ndo_set_rx_mode callback implementation for VF
+Date: Fri, 30 Mar 2018 04:59:53 -0700
+Message-Id: <20180330115953.17154-8-Vadim.Lomovtsev@caviumnetworks.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180330115953.17154-1-Vadim.Lomovtsev@caviumnetworks.com>
 References: <20180327150736.10718-1-Vadim.Lomovtsev@caviumnetworks.com>
  <20180330115953.17154-1-Vadim.Lomovtsev@caviumnetworks.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [50.233.148.156]
 X-ClientProxiedBy: CO2PR04CA0006.namprd04.prod.outlook.com
  (2603:10b6:102:1::16) To CY4PR07MB2997.namprd07.prod.outlook.com
  (2603:10b6:903:d0::11)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ec10399c-7684-4c36-8ed1-08d59635d74f
+X-MS-Office365-Filtering-Correlation-Id: ffa88d47-0306-4569-6591-08d59635d94b
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:CY4PR07MB2997;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;3:RbIKYwFT+l5scRX/YFFP7SbyuAOoWEgbq0AbcMybJ4q+aD99R+yHSb5CarI0CI6tM6/9WCWGuOr8RYj4PUJMRQs2/85uwnGs/ftdhoBCGuqeqQDNgV7kE5NjAnQHevtsDcHIb2Pbm7ItOb/VSsO10qmO1xozbBf0qBF3WiHJ0AKh+UmkdW+Ff36Rizmju4Fbhmq2zv+EyxE/w0fdJCvwlyYzb9PlG/Cc0/jEuRtoTJfYImWFeb8smSQnaIdfJzKi;25:cCUC5shM9b2IG1QWv4q1YIb7XYgEvDvCxO7DilOF+mR0mFrONmFyPuHlOJUVi4Q5B+o0t7IBzfwCHE0EoT//XQp/H7PmMCBbiSN9wrcSFksXKqExWgnVPynnEKnZGQ79FtD6PtLPY0R+t0BIsGM/0tB8SaSZWULwcPL4lrBsY2yTV5fpXUsAW1pt4sPnsDPIYta6GGn1DUulWQsoQ7/HynXL/P837zp6MJ6zqc2ZpaWbvfLl0yNy9lTy3WyklS1AxsPsI0bnvN1TWlbyeEw2jP5bFHo+PezOqMFaam/lhiwQhZ0XQ6WmDJsfBTvqOBw7eONhiCeYuV/oZrbVjEGeKw==;31:WPQ3jf6VhYj/rKJqz7OgtFiADLYp8zLyIJ8CTUXmU/ct8yZ3lMOOrvHTLD8wlWThucbRbV1NJE3x5YpJ2oGYpYqVjax4NcFTVf16BaCP1BjbAHbEQ+FNEGLN6y9eplvSZKUQmJ5VBfMVU9uJNHBuQ8mUZQyyx7a+oYo32v7pxLlGRk1kmZkeK1B1zFYB5oUCYRLVLPksPbumENFZVXBqux4i/8ObYSo4DPrE9u2Y6a4=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;3:WKwilrz0xmzOwVbxlGJS3nhhjieK1wjlfRJtxg+nOZhPGaCaEiRZCNlfANVvDlltAWu2ZkOMvbWTAfO86I+zbx3alMKLwKBYVhUU8Hpzsexpg52IQpNeM1tnRCAcUQB8IQAS/TjHG6lmNu4N0G6qzH2jJrrePBxSc1h5D48DY+eGMqCuDvbewYvJfBazkOY3UchAmf1TMdmBTUG60hShBNIkfrfJje8RL6cSF+bTMqi+2OiItXgirhXJ8K/kKIo5;25:Iu2PVclYQF3c21loUDAx5r5MsbZNrsng5RugkHfdVGF3h6eNY+RL4ofj4zutTLic1pJuqj1riLjSvKTpiVENQzKFNI6zMssy7uDcJ8L2iqNJtYpRQaLgCq1zD+W4+OcC9bkmsBKHR/guIRTktaiHE9bm9H9+uIG+Vie9lrAzG0tydhhJtot+2hrFGWqyiriCIOEcXSm0Bxhh/gkAZhkn4caTgrAbqn+PjJwV8Z81pdWlH623GbeF0YXk8eJRK6P4PacczYCGBAwUu7Tuhmr9RaXS/gBqraFhvdtndjzdC2rU0doMhpnLItBn0OrW/g9NJe0L/ug+YLanx6UMO1b0vA==;31:zZE2dBMDmXjk1e9y1rykgb9Pif78E0YQ7FSgEdbkUQnwzFbFNS+XrqZrrRzrhTUEkl7K9G63wAy3ch1Z8o/JzOr+lXMOD2Za9qwcLtbZZyLRMsSZl9f3JbFhOjjXe4/XAk9sZLqecmZ73soBx8ju0HQMeDnDLZrv0fGKvEi0D3y41nVdagem36apuW6Dd4ylADmXGiveRxNq/DJ00aGChQXIoOiqpUG869auYjezU6U=
 X-MS-TrafficTypeDiagnostic: CY4PR07MB2997:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;20:u7epodgzBTs2ALY3Ui72JUJ8QAzD1pj5buy7yEztBfE72kgZ/H/D6x+XTBEtZMnJcpdJAiQzh+55o5h6UUaOX4/AB8SVhLbl3sWniFirjRN1SUhdDXdU8KGzXBzK0jDY20rj4V8c61i5ksI0QklSYHr6dUn07ip26Fh5Ujug+vMDRw3V8x+ilHK4G+Xs5drGw3Ud2OOWkp1rLGWow6diF1wGcnra49+G1wI5DaI1nwvwGq8h/U6UNo2fHuu9Xgs2xQqYgl3kZMW5QI1j1Gi4EUxZh7Yby6tza3xPIe60XMU/Bxeh++L5J0JJe8gIsgQEw+VmJDQCuq3XD4RU4su0GHoKb6IkDeoQnw47FCxKpVtmm60yjr+BqtS+8XkcKsyGMFNfCxx6uznbjyEqzWBZvT5YGfU8nNdiTaBn+H2Ah+w5nm0A3t7ivAjR01J30QX1hY0PG8l2/hcEYS17J6jk19hNnDB5rk4gYBHgU85PhowGZn+LnnFu62qAXnXmpNFGDV8BQrFa424+aAo8pLDyIWLhw1jahBizhicB2bfqV0PQ92j5vTDZjfgN2etLRd/zua0YdTpZiLVt/CgjvijU610ZSs5iUHNX5RQfRKMWLRQ=;4:jQG/mAwaRNbqAiZj7TM9u411ho74oH/0xfSoCGCMo1TyL/tXWn5WR3tIUVkUo77pmroA5jRhf4+bKahZLkbqE0LgPMOIzWG1A0DSIQeLGr9ZEmwnv/dAU8roVyhH/mclEORBiYXP4UsvRHhL+nGdDQRl6VhUiZtWB3pmpAPgZXAyqjvYNqp1hZ96K8Vx8uvfT0PuawSKkrQLVX55eNvIqle+hAeOwLrnESmE6qijxFhIWCRQ4Nd5inl8XiOD/GDai88VAIbdlcsSe+73mU5fWg==
-X-Microsoft-Antispam-PRVS: <CY4PR07MB29974EFC2A160D47EE43F83B8AA10@CY4PR07MB2997.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;20:5J1DL720F618xZKMZ26SHBqVJQLJ5d0hv9Y41zbubLporGU80mOd3v9il4tE6z0Nc0GT7k9AVwP410+R9SFlyI5QTKoqjvCHefur94brYyzIkwV2IHvIDQwQp755ALp4gDgRW0//3S1LbBYil2+7qANucFjmqyV2Esey6vkiz9aIrG8zQ01UC0Ldn6ERXwRucjssV/oMeqBVs2A1WNQppYJnYmk4110F5+yjnCyUkLRlHNczDm8DsSuSwVPBhigT16u0d0mUpapMJmqCqnC/f/0bSVzPbBI3BHLqYHtqEtH0oruGNvLlvJRxOMluhqIshvGyDoXVpF2+SYJW/yq4kMAV5gIVDmrVE3NuhKe1xYdjZJGBNcSIgoc8mifdiobUAnDv178Dkb0oQh+9ca/b1XkUvsHvxA9ReZuYA/FKcIlC7zMSWOs6sWe2FVowmm1nmG29kLEMgq9WY3SRdUb11bFtIA4n7hvsUGgegushwFkw7ErdimgXQsAsVjWS/G5z+MvenXKQeeB3hfYsp+WBivuRISvehqkyKe7TdL90+mZmOOeP+/h6a9bRuxn74hPmKMiLPUPW/pK8a78+tNaQdnQ8PYI0E6mn39EAYZKKfWU=
+X-Microsoft-Antispam-PRVS: <CY4PR07MB299791CA56BCE76DCC8B7A198AA10@CY4PR07MB2997.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(277106579953875)(17755550239193);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:CY4PR07MB2997;BCL:0;PCL:0;RULEID:;SRVR:CY4PR07MB2997;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;4:YbN6+YcY8e7H8Xji+vHJqcLF23nms/C3JUk0imiNv1aGz+RlHeoAQG05Gml+3l8nB6NMHbFzPZcN8AS9a30CcXsVj2nbn15JUqnnceXrMzNehPRlgfn6NT/D1kpa14XJCBSKrgm4/yMVM0q6l7s/VIq+XhZ7qJep04ghCXtGBWGfH9qqY3SbnEFFVeEx9nTD5P0pOZaBXqq1alPnO6/zhz2aqRNOxNOCmJFZemKRdfRI4dKman3blmpZ9M/RO2EzwzPHcqTPwQPxElwsj9eQXf4CeVU4svW4oWk9O7U5rs1JHZCqaTvk99M4n0n7yaB2VfSgmOpNQ8Ar4gMVNGA4Fn5VvIBuOkhCxXnbI0ejryY=
 X-Forefront-PRVS: 06274D1C43
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(39380400002)(346002)(366004)(39850400004)(189003)(199004)(3846002)(6116002)(1076002)(105586002)(81156014)(81166006)(8676002)(50466002)(53416004)(5660300001)(52116002)(97736004)(23676004)(6506007)(8936002)(59450400001)(76176011)(386003)(69596002)(2906002)(6486002)(6512007)(72206003)(39060400002)(6666003)(47776003)(316002)(7736002)(106356001)(486005)(486005)(476003)(107886003)(446003)(305945005)(53936002)(11346002)(2616005)(66066001)(16526019)(956004)(478600001)(68736007)(36756003)(50226002)(26005)(4326008)(2870700001)(42882007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB2997;H:localhost.localdomain.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjA3TUIyOTk3OzIzOjIyYzg2Tlc5bFR1Y245bnBpbk5TMUQ4eXRL?=
- =?utf-8?B?ZGRhWmVpUDMyRmFHSXRHdXY2NFNIZ0hBMDFoR1Z4dWkxRDJCZDZ0VGFCQjhq?=
- =?utf-8?B?TVY1WVBiZHArN21sTktjLzF0c0V0U0ZzekpoMThuNFlDOEc2T2V6YVp1WjF1?=
- =?utf-8?B?dGZmLzFZUlpEb3prdTcrL2NHNnlPMTVwRlNBT25pYWRaeG0rbStBeTZwQk8r?=
- =?utf-8?B?bk5QZ2JFZC8zNE1ENGszM3NsL21NK2N0a241L2FmUzQwZW5HbERDSDFFQUxs?=
- =?utf-8?B?RmJid0ZOTHZZZ1VqenkzWFhRMk5sL2FQVEcvT0xUK1crRU80b08xeXh6NHhh?=
- =?utf-8?B?WnJwR25mV2ljOVhsVEFnVmQ4aER0Nzg5a2wvV1lvdzJiYU1sTXpjMlR5SENE?=
- =?utf-8?B?S08yc29VN2dZbFBrcE53WUxqNHN3VGVqV3kxaFlUSnU4VFpxMGZWREVCLy9B?=
- =?utf-8?B?WE5VL0Z4MEhzZXdaUzBWczU1NGpWaEZkaWVCWGdqM1pZUFB0bzN6enIwb2Zk?=
- =?utf-8?B?VVo2MmRQek1jZ09xVThzUDRWWEgxMTN6ek54ZkN5Y01veUlDMHU5ODQ4ajBl?=
- =?utf-8?B?bFZERFRnVVQvQXphUXg3ZC93cW5vU3JsM0QvZldMZllYRENoYUkvamdYL2dQ?=
- =?utf-8?B?YVF1RDZZc0ZIV1lxdjM2bmJLcGV2MWJVdTFaTHRUa1YwYitJL2NadlU5TE1C?=
- =?utf-8?B?ZTNPREp0SDJBVFV1K0xTSXpZdEpMYW9PeWZYRjZvUGU4OXc3bzJNcHRCZnlY?=
- =?utf-8?B?bGNsZGw1VGdKV0FQcTBCZEVCblpvSEFwZ3BkZTBMTU9seDJSdTRBQkVCTGxB?=
- =?utf-8?B?cGR2dk93SjhKaXlxV3V6UElwbk9hbTllSDR1NksrcjBmV1JPTTlpQkk5R2V3?=
- =?utf-8?B?VzNuZ2ExK3g0Qm1LZHJRZElSaGM2NjRSc1M5TEpvdUNqaXUrU3RZdk1ZemhP?=
- =?utf-8?B?alo4VmNkdG9uNkMvakIrdklieVhjNlFRallSN084R2ZwVTBNa2dYMHZUR3Bn?=
- =?utf-8?B?S2pkb0I4N1JMc2lBN29MWFhsZXcrMFllazVybEcwVVdKVEZmWjZsdTBIZXBG?=
- =?utf-8?B?eE5SZHcxQVFRSC9EOC9ndkQwTlMreGhOc25NUnU1UTI5UG9UeHNJa3FDMVdQ?=
- =?utf-8?B?bkhOQlN3emI5QlpJTnZiTTFJcW9hU2JtVmU3T2x2QlUwdUFaVjYyRUc1dXpB?=
- =?utf-8?B?NCtUOHR3ZE12SGhSdGxTNEJtMTFqUlVFV2VjWXowL280USs0Sm85SWxCUll2?=
- =?utf-8?B?RWJTek4rRmJHUDAxdnFmMGxjeVZXb3BnS1JtWXl5SDhiSXZza1FrTGo1a2Fl?=
- =?utf-8?B?RE1vQ1hqWmZPZi9Fb2N0WmVaQW9TMlo4Z2REaWR5elM0SmNvSi8weFNWdVVM?=
- =?utf-8?B?NFBoOTVtWGExeVNXeDFjV3A3Y1Y4U1I0WFlZNTJQc0NzQUhvN3c1Nnora2dP?=
- =?utf-8?B?NlhpeittNEM2YnM3ZU11ZWNxTWhHNTJ2MUZtT255TFMwdUViQmlrQ0oybzJO?=
- =?utf-8?B?QU9lSkQ3cVdweGhpUklDT0dia3VHY0dYRS8ySS9IQkFBbHlnQTR4eHkwWldR?=
- =?utf-8?B?YzRBMWs5U2pISVQ5NTBNNFJzY1MwRVQwRWxOQW8zMFZveGlUajZlWk0wZVgz?=
- =?utf-8?B?Y2t0NUNGZkQxTG1YeE1UNWZCN1poOGEvaTY2eXhmcGM2SUU3SU85U0h6cmc0?=
- =?utf-8?B?Nmk4d0ZTckNxMWp1WjMxSDA2VTVSY01ic3BnY0ZuRCt1SGoyWXhjVWo4cjhL?=
- =?utf-8?Q?jkJJTyxqOp1XRJMpJcKLlE6IaZWDQy/oQxeYc=3D?=
-X-Microsoft-Antispam-Message-Info: c1GyIlKqiRDEosy4bDFQBankWAAF0bz5fnAH2OEVEAjwGmIBkbVEQi5lMMrBYLOYI4QPqXHunniG19NVYwD59PIjj4E6QrtZRw4px5Ze2IA66iJ3b6l07itj7799EZHPDEnMrJwFkohMmBKlaOKbAhnjo3mSgCTN4JhRLly7uk7NNViA2O/1J+1CxuVk5IMh
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;6:vX/JR4Kc6DzVLiEaxJ2nB/o2vmUhR5z6ba+C6uu6BHomH/qN8ZDRY6NhIx9Om0XcEFkk1F9rvAUsXB6bkJeLiIRrURrr2sCHoPgsWkruesfxhvwj9vGIj2wJButn/QW5T/Yvbo9biSOCgD3KslRlO1fyVf8GFu5raOtpn4XymFsqXyq3Xr0A3eQnxqqGRtx88HFsjg2RdtmBff4uFxZypq0GzK0jkNLjEzvd+KpMyMEnaCqNd+RBBkSyUhHPkGruhLqXIVKZGXGmjWErBTx4kTUdo+uxds/8j/oeGaUQJlReJxMSodoxBit+vLMRmAujGa5nsLRb4DFe1Wq77Z1EjwPJa17ERZHhC/4ax0mXmuc8s8D7F/DXwMNFQhJIsIV7EKIGdvpgEGUeG0XHSfQjdkacMm8YlTfv3SSCt5y8Q60dqPBdInTHwSSh6vtxGKG8yW9mRaLUPNz0e5pWPPxGRg==;5:WZf3YvcpQeP4yKwgfHypfKjS3oamNgD/VVmcFCh+8+pqBTTIBKdAFSb9TIETXMU4EExNRAXqk0ymCUao2VMfqkCahPPK74HaaAnOqEav9BF1+wA+bZ9VbmNQ64iTR5DldyK3qwMbWsmcW94VACxNhh62+IagevrT5T01pnk8Ldw=;24:iC790EQom9jUCiAK7+Y06AoXiMqLpzHP0hXtoaX8KCLWOeB0mYfT1w/qTw8wlFnijQfxQ6gYB/s/Jx8QB+RsUwEEt21twOnpJtWB1Bohu2U=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(39380400002)(346002)(366004)(39850400004)(189003)(199004)(3846002)(6116002)(1076002)(105586002)(81156014)(81166006)(8676002)(48376002)(50466002)(53416004)(5660300001)(52116002)(97736004)(51416003)(6506007)(8936002)(59450400001)(76176011)(386003)(69596002)(2906002)(6486002)(6512007)(72206003)(39060400002)(6666003)(47776003)(316002)(7736002)(16586007)(106356001)(486005)(486005)(476003)(107886003)(446003)(305945005)(53936002)(11346002)(2616005)(66066001)(16526019)(956004)(478600001)(68736007)(36756003)(50226002)(26005)(4326008)(42882007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB2997;H:localhost.localdomain.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR07MB2997;23:YYbiuxCqBAYSuN3z++l8TJk1rDgC8HUCc+e4uWGG8?=
+ =?us-ascii?Q?jBohDtxKHPJHXvgh+vK34nnqbPwH6qTrD0GONJmZFylXbL7KmyQQ014NaiWA?=
+ =?us-ascii?Q?gJXGN9PmOk2DbTp2jMOIxqPfpftsmoMO7ntGPBHAXmRroghHwNKI2TLR5Hjv?=
+ =?us-ascii?Q?tQQsdCNwZFjOgG4bwJ25acHTWVqm2mpkYN3lVeFiCQc6pBAW9wpINkwFtrfs?=
+ =?us-ascii?Q?fpzk9JaWD+Gc6A7idoncg4jsEXt5sUvYnY1dDRU+haripMWqSPdFMVWGj8m0?=
+ =?us-ascii?Q?Nf3/fKKvPHVdxsktp3+avrsr031dyBQxfzna7zhlr621im2nt04ZwwiAMoxR?=
+ =?us-ascii?Q?7ASfjYrc939wReBzsGexWM7ku3w/axIKVlLHbKGwQrgErL8UME9ahncEqPod?=
+ =?us-ascii?Q?Tdo1sFJzcR52c///LNfI2xTv+5Om7VAo/MQDjx9hIXbn8vTyh7/I5BCKETkb?=
+ =?us-ascii?Q?0E/aRuN7DxMqPMzV97BeWVq0QmB/FXfHqBQ05zDf9hXEK9KSLlMVicJNbrkX?=
+ =?us-ascii?Q?/R6/bl9bk3Y1ME9IWbWee6MRVRVsdTFVmIOHW3eFrhWBwXsKE2KtxD0uxFp5?=
+ =?us-ascii?Q?oDM0vGG02zHQbe394WaI0KSguzuTffN7po7+BIF3XHcS/LwwfY5TEI7ZUBqm?=
+ =?us-ascii?Q?E+MsP3xGI8gRkxOU7MpoRq0DJh9rGu7tc2+KSgjVKHAYmlpttyubKwBvAplY?=
+ =?us-ascii?Q?QvwcDZFK3Ni2dGhmhsC6fXXAgQXcCI4fkJ8jD+C6firG4tPN6q3kmIZbeLlV?=
+ =?us-ascii?Q?xnDgrDlOc4piRKPlJlvHxiBXFo29mw0sby6c03ceLWCDLH9TzEBdbJuuCjbT?=
+ =?us-ascii?Q?NtfJVUDVq/Ijl3KZekduNkzrIJLys5pMpYJWXc72dZSz9J3cSS4m/oMemsRV?=
+ =?us-ascii?Q?8CYJwIaERhxiHR1dtxTIwJXrHmSUOp8GhK3AMyb9MX+mo3ybEtOjdZ4lSx1g?=
+ =?us-ascii?Q?I/d1ojmSVraViUfOx16utNyHpfUBj6JF6O70Rtc4n3atz0O/byZXq+efJcIB?=
+ =?us-ascii?Q?SQRShLofflpWSvT/3nQ8D3dDYiBkhunQdFuRgnl6dAX8elB8RrZmDXSpoF+J?=
+ =?us-ascii?Q?O/47bBt84zMYAhYwSB6v0+j6Tm7bv/QGsLCp9+LOKNTC9hjFpyctxWi9gotI?=
+ =?us-ascii?Q?/ENjcG0dkgEiQphzna3gNoK5I3ENrkA4MDFc5STFZdApipjLkflwO6an3o+0?=
+ =?us-ascii?Q?TEtOUxvxtyMRGsRw53Ur3K4UgFqZL9+sz/P6vxinQtVNbQrxkvTXBDH+GvkP?=
+ =?us-ascii?Q?k9hsYaUh+Q8UxS/eSzhkPN1Q/WlnkVCS4JDTLR9fmdUWJtp5mo+B6SMgndO5?=
+ =?us-ascii?Q?UcmzBOIm6D/ZM6QCzX2JxjhFZUfwJ5Shfa1taDTA1sm?=
+X-Microsoft-Antispam-Message-Info: wBNkVIpasoks387CgTAyfl83tLNAvoLYO1WfGGMAjVSGvDgYcbhbs9IDrukRcFeHhPQzYDuFAP7WQRKG9Y3a7bMs0WwzwQhyVGSkpDuAMsAAXKHS7G8sMbUf3NAmvkKakuZ3XeM7bcvlBxr1XeCfQxJi1J8NoeGXddBS4FJJ7p+BUbRzGso0ED75o2l0sEzo
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;6:jIwbeOEPBCk/NFyqDIRQi95t+rY+HICPQAsZyYXuQTr11/SUee6YmnXM8v7TNyuw2Abbt2mkdswaMm7XDiKFuXQRCiqkKpaUHlCkb+0drv42+OOPBAJ/OobMNxdiiyRABxWrl/LHRolvnUQ7qjpFgiUyRFk6Z7oER7bwqO4Hq9Fk2PVP48Rz+Xzw2vroYXnhcvf4VYWvdVhKzytSuKaJjTmfhO59aC3rOUR8y+c7e61NNEIyO6gczn+44Hngs6RQLkqyz2ADCJtjF8MbH3fbuw4aTU6Mv3Jmrqn4dYPRZgT9tkZlIWQG4RPub2bHajl3jArD3lvG59UKqKbD0J0nkE9gLoBR/H08bzlIB3OsBrjeDz+pCN1IRhjZR0xucpwlCBn/6m1KNb+kYCyXQbmMrjOo8BaSf1EBiS4GVF+1/zlO5ybM0xgQtDHIMziWWMm7j4CZcbV4RsRQACBcb8TcnA==;5:UdAHxKsSSy/IE0axu8AN6hkrzZX15V+xqmsQQiEu+0QLMhKmoO/NDr1l1woD9N2hWqY2wtXWzbYiBofzilBA6gHS9I2SFU06t6hDGXgg4EmHqzc4LcctsuSau0xbdIVf2ClkqDIJDTSVLGl99GF+HOxWWXOBsj5t6xQ9UeO3UWI=;24:EKsNKEEEBsaLc5A+JixiJgB7TRDXwR5JgmMs/ZSYayBGwMZTqDvx88OjSA+htRJUM8ITlvg91Bwo/D8ra+LFcWDYTUcQoLiezvLPNJUrzAM=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;7:CPs4cBzgZExxxRNgcHIxgDnD1S8Zn/Xg4sW9b9QODNRct+ovszATPPDbvY5rPITcXLmDSoMu30WQ90wjW6zMFOsxlmWoRJbdqXBqfR3Hk+3FgjX0aSjFIy0aJHDjrvk7rWeL5he+RsiDhC6SCy38lfp+XR3toZ+tqKVykxb1YgiOqoIAkZ7sDhF3TSW+COPVb8Y6EKvPt2z6wodKOCdfW49A2FEqWx03tBloLHbT6W6OQG8hs/RZVBLNrg+IU3PX
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;7:dYxng7MoOi38hrYxQukDDYGo/1WSzS9n9ig30XOs0feKlINK44W/3NZTeGrAjJsEGs6mzmr2iE857fQYLKwbjbJqtOTWne/esz8WeMN6biz9Q9eA4DaQDgZ5DwCqKYZlIoT8gIO+MEJIy6hyo3QBCpEO1c0ZWl/0j4jEd2jlYVBIGPhqtB+DzQhkpGgjBiFeg2zqrEn8LKms/RXUNJu/Rl5PrxvzlejInNfswbM3vOTLiF98Ak6nxZb69RdpCWRs
 X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2018 12:00:32.6916 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec10399c-7684-4c36-8ed1-08d59635d74f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2018 12:00:36.0198 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffa88d47-0306-4569-6591-08d59635d94b
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR07MB2997
@@ -87,52 +80,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
 
-The kernel calls ndo_set_rx_mode() callback from atomic context which
-causes messaging timeouts between VF and PF (as they’re implemented via
-MSIx). So in order to handle ndo_set_rx_mode() we need to get rid of it.
-
-This commit implements necessary workqueue related structures to let VF
-queue kernel request processing in non-atomic context later.
+The ndo_set_rx_mode() is called from atomic context which causes
+messages response timeouts while VF to PF communication via MSIx.
+To get rid of that we're copy passed mc list, parse flags and queue
+handling of kernel request to ordered workqueue.
 
 Signed-off-by: Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
 ---
- drivers/net/ethernet/cavium/thunder/nic.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/net/ethernet/cavium/thunder/nicvf_main.c | 110 ++++++++++++++++++++++-
+ 1 file changed, 109 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/nic.h b/drivers/net/ethernet/cavium/thunder/nic.h
-index 069289b4f968..5fc46c5a4f36 100644
---- a/drivers/net/ethernet/cavium/thunder/nic.h
-+++ b/drivers/net/ethernet/cavium/thunder/nic.h
-@@ -265,6 +265,22 @@ struct nicvf_drv_stats {
+diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+index 7d9c5ffbd041..c8a8faaf17e9 100644
+--- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
++++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+@@ -21,6 +21,7 @@
+ #include <linux/bpf_trace.h>
+ #include <linux/filter.h>
+ #include <linux/net_tstamp.h>
++#include <linux/workqueue.h>
  
- struct cavium_ptp;
+ #include "nic_reg.h"
+ #include "nic.h"
+@@ -67,6 +68,9 @@ module_param(cpi_alg, int, S_IRUGO);
+ MODULE_PARM_DESC(cpi_alg,
+ 		 "PFC algorithm (0=none, 1=VLAN, 2=VLAN16, 3=IP Diffserv)");
  
-+struct xcast_addr {
-+	struct list_head list;
-+	u64              addr;
-+};
++/* workqueue for handling kernel ndo_set_rx_mode() calls */
++static struct workqueue_struct *nicvf_rx_mode_wq;
 +
-+struct xcast_addr_list {
-+	struct list_head list;
-+	int              count;
-+};
-+
-+struct nicvf_work {
-+	struct delayed_work    work;
-+	u8                     mode;
-+	struct xcast_addr_list *mc;
-+};
-+
- struct nicvf {
- 	struct nicvf		*pnicvf;
- 	struct net_device	*netdev;
-@@ -313,6 +329,7 @@ struct nicvf {
- 	struct nicvf_pfc	pfc;
- 	struct tasklet_struct	qs_err_task;
- 	struct work_struct	reset_task;
-+	struct nicvf_work       rx_mode_work;
+ static inline u8 nicvf_netdev_qidx(struct nicvf *nic, u8 qidx)
+ {
+ 	if (nic->sqs_mode)
+@@ -1919,6 +1923,100 @@ static int nicvf_ioctl(struct net_device *netdev, struct ifreq *req, int cmd)
+ 	}
+ }
  
- 	/* PTP timestamp */
- 	struct cavium_ptp	*ptp_clock;
++static void nicvf_set_rx_mode_task(struct work_struct *work_arg)
++{
++	struct nicvf_work *vf_work = container_of(work_arg, struct nicvf_work,
++						  work.work);
++	struct nicvf *nic = container_of(vf_work, struct nicvf, rx_mode_work);
++	union nic_mbx mbx = {};
++	struct xcast_addr *xaddr, *next;
++
++	if (!vf_work)
++		return;
++
++	/* From the inside of VM code flow we have only 128 bits memory
++	 * available to send message to host's PF, so send all mc addrs
++	 * one by one, starting from flush command in case if kernel
++	 * requests to configure specific MAC filtering
++	 */
++
++	/* flush DMAC filters and reset RX mode */
++	mbx.xcast.msg = NIC_MBOX_MSG_RESET_XCAST;
++	nicvf_send_msg_to_pf(nic, &mbx);
++
++	if (vf_work->mode & BGX_XCAST_MCAST_FILTER) {
++		/* once enabling filtering, we need to signal to PF to add
++		 * its' own LMAC to the filter to accept packets for it.
++		 */
++		mbx.xcast.msg = NIC_MBOX_MSG_ADD_MCAST;
++		mbx.xcast.data.mac = 0;
++		nicvf_send_msg_to_pf(nic, &mbx);
++	}
++
++	/* check if we have any specific MACs to be added to PF DMAC filter */
++	if (vf_work->mc) {
++		/* now go through kernel list of MACs and add them one by one */
++		list_for_each_entry_safe(xaddr, next,
++					 &vf_work->mc->list, list) {
++			mbx.xcast.msg = NIC_MBOX_MSG_ADD_MCAST;
++			mbx.xcast.data.mac = xaddr->addr;
++			nicvf_send_msg_to_pf(nic, &mbx);
++
++			/* after receiving ACK from PF release memory */
++			list_del(&xaddr->list);
++			kfree(xaddr);
++			vf_work->mc->count--;
++		}
++		kfree(vf_work->mc);
++	}
++
++	/* and finally set rx mode for PF accordingly */
++	mbx.xcast.msg = NIC_MBOX_MSG_SET_XCAST;
++	mbx.xcast.data.mode = vf_work->mode;
++
++	nicvf_send_msg_to_pf(nic, &mbx);
++}
++
++static void nicvf_set_rx_mode(struct net_device *netdev)
++{
++	struct nicvf *nic = netdev_priv(netdev);
++	struct netdev_hw_addr *ha;
++	struct xcast_addr_list *mc_list = NULL;
++	u8 mode = 0;
++
++	if (netdev->flags & IFF_PROMISC) {
++		mode = BGX_XCAST_BCAST_ACCEPT | BGX_XCAST_MCAST_ACCEPT;
++	} else {
++		if (netdev->flags & IFF_BROADCAST)
++			mode |= BGX_XCAST_BCAST_ACCEPT;
++
++		if (netdev->flags & IFF_ALLMULTI) {
++			mode |= BGX_XCAST_MCAST_ACCEPT;
++		} else if (netdev->flags & IFF_MULTICAST) {
++			mode |= BGX_XCAST_MCAST_FILTER;
++			/* here we need to copy mc addrs */
++			if (netdev_mc_count(netdev)) {
++				struct xcast_addr *xaddr;
++
++				mc_list = kmalloc(sizeof(*mc_list), GFP_ATOMIC);
++				INIT_LIST_HEAD(&mc_list->list);
++				netdev_hw_addr_list_for_each(ha, &netdev->mc) {
++					xaddr = kmalloc(sizeof(*xaddr),
++							GFP_ATOMIC);
++					xaddr->addr =
++						ether_addr_to_u64(ha->addr);
++					list_add_tail(&xaddr->list,
++						      &mc_list->list);
++					mc_list->count++;
++				}
++			}
++		}
++	}
++	nic->rx_mode_work.mc = mc_list;
++	nic->rx_mode_work.mode = mode;
++	queue_delayed_work(nicvf_rx_mode_wq, &nic->rx_mode_work.work, 2 * HZ);
++}
++
+ static const struct net_device_ops nicvf_netdev_ops = {
+ 	.ndo_open		= nicvf_open,
+ 	.ndo_stop		= nicvf_stop,
+@@ -1931,6 +2029,7 @@ static const struct net_device_ops nicvf_netdev_ops = {
+ 	.ndo_set_features       = nicvf_set_features,
+ 	.ndo_bpf		= nicvf_xdp,
+ 	.ndo_do_ioctl           = nicvf_ioctl,
++	.ndo_set_rx_mode        = nicvf_set_rx_mode,
+ };
+ 
+ static int nicvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+@@ -2071,6 +2170,8 @@ static int nicvf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	INIT_WORK(&nic->reset_task, nicvf_reset_task);
+ 
++	INIT_DELAYED_WORK(&nic->rx_mode_work.work, nicvf_set_rx_mode_task);
++
+ 	err = register_netdev(netdev);
+ 	if (err) {
+ 		dev_err(dev, "Failed to register netdevice\n");
+@@ -2109,6 +2210,8 @@ static void nicvf_remove(struct pci_dev *pdev)
+ 	nic = netdev_priv(netdev);
+ 	pnetdev = nic->pnicvf->netdev;
+ 
++	cancel_delayed_work_sync(&nic->rx_mode_work.work);
++
+ 	/* Check if this Qset is assigned to different VF.
+ 	 * If yes, clean primary and all secondary Qsets.
+ 	 */
+@@ -2140,12 +2243,17 @@ static struct pci_driver nicvf_driver = {
+ static int __init nicvf_init_module(void)
+ {
+ 	pr_info("%s, ver %s\n", DRV_NAME, DRV_VERSION);
+-
++	nicvf_rx_mode_wq = alloc_ordered_workqueue("nicvf_generic",
++						   WQ_MEM_RECLAIM);
+ 	return pci_register_driver(&nicvf_driver);
+ }
+ 
+ static void __exit nicvf_cleanup_module(void)
+ {
++	if (nicvf_rx_mode_wq) {
++		destroy_workqueue(nicvf_rx_mode_wq);
++		nicvf_rx_mode_wq = NULL;
++	}
+ 	pci_unregister_driver(&nicvf_driver);
+ }
+ 
 -- 
 2.14.3
