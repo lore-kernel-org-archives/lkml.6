@@ -1,86 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752447AbeC3TXQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 15:23:16 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:36202 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752069AbeC3TXN (ORCPT
+        id S1752633AbeC3Thh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 15:37:37 -0400
+Received: from smtprelay0039.hostedemail.com ([216.40.44.39]:48205 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752314AbeC3Thg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 15:23:13 -0400
-From: Nick Terrell <terrelln@fb.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Geliang Tang <geliangtang@gmail.com>
-Subject: Re: [RESEND PATCH] crypto: Add zstd support
-Thread-Topic: [RESEND PATCH] crypto: Add zstd support
-Thread-Index: AQHTwWccFi06nKjRkE6KKlwSZjTSzqPbqsUAgA1nsICAACPKgA==
-Date: Fri, 30 Mar 2018 19:23:06 +0000
-Message-ID: <992742B1-A16C-4DFF-95BB-6FF09F7CCA4C@fb.com>
-References: <20180321224929.3076350-1-terrelln@fb.com>
- <20180322043230.GD3181@jagdpanzerIV>
- <20180330171459.GB27856@gondor.apana.org.au>
-In-Reply-To: <20180330171459.GB27856@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2620:10d:c090:200::6:900f]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR15MB1351;7:bwzFLC4O4ayc5bkXxMwK883fJTNnSGwQJSAj1xRPHYgruGBUI52UIbqPoorTHrQQRnLRcPr04qbulaz6b0MLShBu+2vULpMBPa5aZ5JuQW0I3Nu5roeXUzeTlepxQF58M8wAYSNsxDURWvDnNk20Mqxcx8NBIKAPZ/Ae8KZtBFrVnke2ibUl5lbUWmf3Y+sRKBXPtNUWtuYHfrvtbGF0o2gIrrMK7JPtnEMC5HJySs5hdMiWGPNcMS7E4cqSLVfr;20:4tDoE+4th1Z2aOkyUzrtiOaxhrvBheyyUSCQWJN7IvSPFDXuV/GxSc/QF8DW8Zx4pu2rRT6NXK0HlJ5s9mhlhG0h4Uw9jpw+qxUOmyKJs474jHUt44Vln56/vMXBXrYTcoC2LEuEct2af0DlPZNKIsUiL6IKLbSNXrttUyVOoYc=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 23059bec-c910-4618-e9a8-08d59673aa0c
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1351;
-x-ms-traffictypediagnostic: CY4PR15MB1351:
-x-microsoft-antispam-prvs: <CY4PR15MB1351EA89C05EE51C04342BADABA10@CY4PR15MB1351.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(10436049006162)(85827821059158)(67672495146484)(42068640409301);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231221)(11241501184)(944501327)(52105095)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:CY4PR15MB1351;BCL:0;PCL:0;RULEID:;SRVR:CY4PR15MB1351;
-x-forefront-prvs: 06274D1C43
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(346002)(376002)(396003)(199004)(189003)(86362001)(53546011)(186003)(5250100002)(8676002)(81166006)(5660300001)(486005)(36756003)(82746002)(575784001)(4326008)(54906003)(316002)(81156014)(486005)(8936002)(6246003)(2616005)(102836004)(6486002)(83716003)(6506007)(25786009)(97736004)(106356001)(76176011)(476003)(478600001)(7736002)(229853002)(6306002)(6116002)(2900100001)(6512007)(39060400002)(105586002)(6916009)(966005)(6436002)(305945005)(33656002)(14454004)(2906002)(446003)(46003)(11346002)(3280700002)(3660700001)(53936002)(68736007)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1351;H:CY4PR15MB1543.namprd15.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: /OhU00BpvS6Au+E+YznkYuJCsXPUlo6Q/lSt/EicPziXHinZ0FjaoiNzgzFpz6Y8TNeQdrCEXyNhK/ZAUW6oBrOcms8c8IMeZ+6Dgek9aaWzML41xIPnBP5G7a/DPvz8twU/bY3b3XRMVbFi26syiTPJ9xQYdO/0mQ40ccgp9nrOM3mF9sg+XJsQAJ09snA/NAyQy+qgq4kU08H9zSSHsY+7MCoa6g47jTS8FUneJvozQTR71U6qWbgeJrLQee8HdqZMUP2Ao5C1RL/W2V9GhVnfWwoE1o7o5anw4hgmajbpLSGSN/oNKnJbH4t2MI1eRKKGQdDeppDR6gSDii4jETRJsCZbgqCvmRozszwuf+FyXPCOZLd5WbxbWKZej0brVmFLZpWr3mmwfqLZOL+A6XS2GLixKd8dzI0HC6jhjmw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8082CBCA03CD0A478EFAABDE9CEB2431@namprd15.prod.outlook.com>
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23059bec-c910-4618-e9a8-08d59673aa0c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Mar 2018 19:23:06.0077
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1351
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-30_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+        Fri, 30 Mar 2018 15:37:36 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:800:960:973:981:988:989:1260:1345:1437:1534:1542:1711:1730:1747:1777:1792:1978:1981:2194:2199:2393:2559:2562:3138:3139:3140:3141:3142:3352:3865:3866:3867:3870:5007:6261:10004:10848:11026:11473:11657:11658:11914:12043:12296:12438:12555:12895:13161:13229:13869:14181:14394:14721:21080:21627:21740:30003:30005:30012:30054:30079,0,RBL:172.56.31.163:@perches.com:.lbl8.mailshell.net-62.8.0.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: eggs06_5f279ddbc991e
+X-Filterd-Recvd-Size: 2685
+From: Joe Perches <joe@perches.com>
+To: linux-kernel@vger.kernel.org
+Cc: Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>, netdev@vger.kernel.org
+Subject: [PATCH] ethernet: hisilicon: hns: hns_dsaf_mac: Use generic eth_broadcast_addr
+Date: Fri, 30 Mar 2018 12:37:30 -0700
+Message-Id: <7ca107f9960b176c10c7b1ac4c4fe0b492fb1b48.1522438626.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2UJNKkC028330
 
-> On Mar 30, 2018, at 10:14 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> 
-> On Thu, Mar 22, 2018 at 01:32:30PM +0900, Sergey Senozhatsky wrote:
->> On (03/21/18 15:49), Nick Terrell wrote:
->>> depends on CONFIG_CRYPTO_ZSTD, which isn't defined until this patch is in
->> 
->> Yikes! How come I missed that... :)
->> 
->>> [0] lkml.kernel.org/r/9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com
->> 
->> Signed-off-by: Nick Terrell <terrelln@fb.com> ?
-> 
-> Please resend with sign-off.
+Rather than use an on-stack array to copy a broadcast address, use
+the generic eth_broadcast_addr function to save a trivial amount of
+object code.
 
-Sorry about that, resent as http://lkml.kernel.org/r/20180330191453.3535287-1-terrelln@fb.com.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> 
-> Thanks,
-> -- 
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: https://urldefense.proofpoint.com/v2/url?u=http-3A__gondor.apana.org.au_-7Eherbert_&d=DwIBAg&c=5VD0RTtNlTh3ycd41b3MUw&r=HQM5IQdWOB8WaMoii2dYTw&m=9TJPOvcdtkpIjIAGJJ6-7fzehxatF48hBoFlxI0lAw8&s=79UWdDJu7MxUVoJ2mEANx31Yj5EYfAyJl8noCeBv-4c&e=
-> PGP Key: https://urldefense.proofpoint.com/v2/url?u=http-3A__gondor.apana.org.au_-7Eherbert_pubkey.txt&d=DwIBAg&c=5VD0RTtNlTh3ycd41b3MUw&r=HQM5IQdWOB8WaMoii2dYTw&m=9TJPOvcdtkpIjIAGJJ6-7fzehxatF48hBoFlxI0lAw8&s=9Pll03qIuCxGGfTX0v5TkbxRUh7p76X1keoDqWC49UA&e=
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
+index cac86e9ae0dd..9dcc5765f11f 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
+@@ -369,7 +369,6 @@ static int hns_mac_port_config_bc_en(struct hns_mac_cb *mac_cb,
+ {
+ 	int ret;
+ 	struct dsaf_device *dsaf_dev = mac_cb->dsaf_dev;
+-	u8 addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 	struct dsaf_drv_mac_single_dest_entry mac_entry;
+ 
+ 	/* directy return ok in debug network mode */
+@@ -377,7 +376,7 @@ static int hns_mac_port_config_bc_en(struct hns_mac_cb *mac_cb,
+ 		return 0;
+ 
+ 	if (!HNS_DSAF_IS_DEBUG(dsaf_dev)) {
+-		memcpy(mac_entry.addr, addr, sizeof(mac_entry.addr));
++		eth_broadcast_addr(mac_entry.addr);
+ 		mac_entry.in_vlan_id = vlan_id;
+ 		mac_entry.in_port_num = mac_cb->mac_id;
+ 		mac_entry.port_num = port_num;
+@@ -404,7 +403,6 @@ int hns_mac_vm_config_bc_en(struct hns_mac_cb *mac_cb, u32 vmid, bool enable)
+ 	int ret;
+ 	struct dsaf_device *dsaf_dev = mac_cb->dsaf_dev;
+ 	u8 port_num;
+-	u8 addr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+ 	struct mac_entry_idx *uc_mac_entry;
+ 	struct dsaf_drv_mac_single_dest_entry mac_entry;
+ 
+@@ -414,7 +412,7 @@ int hns_mac_vm_config_bc_en(struct hns_mac_cb *mac_cb, u32 vmid, bool enable)
+ 	uc_mac_entry = &mac_cb->addr_entry_idx[vmid];
+ 
+ 	if (!HNS_DSAF_IS_DEBUG(dsaf_dev))  {
+-		memcpy(mac_entry.addr, addr, sizeof(mac_entry.addr));
++		eth_broadcast_addr(mac_entry.addr);
+ 		mac_entry.in_vlan_id = uc_mac_entry->vlan_id;
+ 		mac_entry.in_port_num = mac_cb->mac_id;
+ 		ret = hns_mac_get_inner_port_num(mac_cb, vmid, &port_num);
+-- 
+2.15.0
