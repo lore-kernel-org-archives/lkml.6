@@ -1,27 +1,27 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx48YfbFMugqOAOHMshSrsn3Ha506BT+WRVHogBqFpNGss4Fj4peObFo0h51wBFr0RjJC7Ef5
-ARC-Seal: i=1; a=rsa-sha256; t=1522393758; cv=none;
+X-Google-Smtp-Source: AIpwx4+wtXhd0li7O05PRPgV4o2ZPZ9FevZgx+lRDM2SfZayAkGsVFB/HnsaiwH2z8fyVRhXepwX
+ARC-Seal: i=1; a=rsa-sha256; t=1522393757; cv=none;
         d=google.com; s=arc-20160816;
-        b=eS0B+wRkgaIfXvQN4IlzrXazh8Ps7wKtGPL+Wc6hTX4wV0D/sDdL8lb6G9Bn7sATf1
-         ye+I9fMI+zsIFyjAEaaLyCgsC/5ThuSclHzepR+kXioO9XwEVU41iHJ3iqhm1l84uNgT
-         NNlEdenAe+9FPn3srQvBjc+Nk8BXQrVyWdvj5hY2ZoAVq8Ov/k9sM20SQ+Fvp0Pv1l1X
-         7JauXAKMjpruBwOUVSSaS7SqlMzTQuarUTjQEJiKK9KVnvd4RVKW4vOV2xHWRnxpQfmI
-         FrXoJfH6ATXcHIhdhpGgfNzz4wE+zpmw5KlYBU1xIKlqIm5d0z/FYDl1Ky1bXy5NpKCI
-         nwzA==
+        b=gGnrMz6xmsYFNiI+iE2RbguxRk6dedB0rNqYBgtjH6FP/I0IlrpiovwY+I00j2oTEH
+         jNGY72C7aXKWXTvnNx0widS30xs5dT8vyUbw6NlINitgL6xfQ5hA+8MwywWhs8mzwZJM
+         +2gKPC52Nr1DwknZE+qk2JuiyndlN8yvWStAZpBxDIt2jzHhg04S0THAgsDDuoTAhty2
+         UC6mszHvRntBPSjEoPIASfWLiKVnCo27ZyFVu7B+q7lKcRtRU1afLrgfj1IWdGyFYVkg
+         hwwplTiWSfOsgzRD+HnsTZI4zZLfJmTCD3jZvKD8xkETinbl85o7oes80z6H4vQYV+h6
+         afdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=pQAaxmdqrJ9S8bqlKLlkkM1uihNWRioSfKDXMz8CRqI=;
-        b=sQgNY6CfMdwr4Yls9APxh6K1TGSSBp0980zAAq2MhBPzMUyBthLBf/gA56zCyuNokF
-         YJU2iDZdZnw4W8VuEQozq7nUE6R1gz3/6fTdRzD5Q5BhJPXyWSdGLPTpV+BpndhIFsFN
-         +tTT3xSCeej6MYvh9T0hn8XBvi/HHtttYRkauYzx8ekaQJtJxiFb2/0vGQWpjKdCegoW
-         4jb7HXlKxOHQdwYaQ7R4eADty/uFsjeXD+EpuxleBPrAuLLZ/0tOAe973Md76GeCew8B
-         OkYDFBM1Mfl0jMIDBg3HFE6vz06uC2V167hiDrv0Jvx2HEdy/fepMxYWIDXRW2Z24vgE
-         XKlg==
+        bh=u5iKhbWc/iw4/nzmM9j5dqAWL+vbJfLBr8ZHUK9RzHE=;
+        b=K1y2BYEUQg8bDPgPJ5YIxRfC6yz4Vx6SlP/u3MTXgdq5gaYaM/wpWu30E8yUbMbof0
+         9lCblCbN7ZWyeraufb0+ARivx66dPvrWqnDMLGb8629lgK+LZGRJER1AW/dm6nAdevim
+         1pT+eU+iIu0e7W+zEuH8bpHmEQ2rugdRTu7AFQmtuL9CfHarluQDEX/hTXlgx1OxQhzj
+         bsJVhckJB5Tf5xt7dounL43cpNvzUPg1l+PJW/Dgs4gEgMoFdqJM5QVg7iRxG3bPeFAf
+         H+TL1Jo7y1I4SQbHGm/Ng+AoDPbE3bYN9zgxv8kmKJFEGUnqEa5arFTeWAvCDu87iTy5
+         EBvw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
@@ -29,55 +29,64 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 23/76] staging: ks7010: Remove trailing _t from 'struct rsn_t'.
-Date: Fri, 30 Mar 2018 00:07:46 -0700
-Message-Id: <20180330070842.25224-23-quytelda@tamalin.org>
+Subject: [PATCH 22/76] staging: ks7010: Remove trailing _t from 'struct ibss_parms_t'.
+Date: Fri, 30 Mar 2018 00:07:45 -0700
+Message-Id: <20180330070842.25224-22-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:vqp6+VckTxZPp0lB6hBdcyIpJgPAmAEtdnrsfSoBi/oBb7YNIQA
- sgOmbO7eJCs6W3d1PkZvmLcHzXXcxl3HoAftnvLZ1dULFVJ1cSM0Lwm/DpdoCCWjZXAbXvd
- VyX5LdstJHldgUrIc7GI+7SA98dE7Woh3BbEzr/s0bP6VjT/OZGabQ3i+WdcO9LSzKxU/sv
- NtXAkKXdxrUl6vePXAVbQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bwqvMhrBCnE=:MAUR59/I8uRYvy8VblDdse
- lckHVCFkr2upZlU6mVQE9csd7zJtxhVFfhF8dNjNAos8xpFoDNKY6hW9RaS1NLuLp3kuvW5kM
- 8yim3Ebi/wlTIELoxPS+vF500CKEBUtlNf0FyO6JBAZJAQXp+VKbs7gqMrIzzmuQn+IN/aiCJ
- jXD7nlxN/DwcMfI9jZW/staK7IkaFECLqudRv0fvYZoXCznMy+BFeo7pSi9F8e+YfPp6bmgBA
- cX3xYuj61UvODWPjzvLhuojsWOSd4E2j/AwRRY+2jhd9PJ1RnAS3+zN8VjDTNiI3f8PQ1SGL7
- SuJsWatKaVjZZmVj8R+1SLLAgRdG/1cXsl9PaY7IB1yc7Y+KUAobEvjgBSUsaL3wf4WB/cY1F
- 518rE6V0CCpFamtIyxzWD2TAF6KGqLhW8YAeN/pEFnxFet+NMxohIuNkj1UifdIHS+FvMmlz1
- jjQO5H9Lgm13sPwqsmc22Zl972ZpAVZkclR9wJrYizdMX9bptqK+vWLAY1cBI2ZRkYOPaFEoG
- 66WvvA1KM6GqbkU+YVvp0xUq0yMesFyx0cyN9fMtj+VSULQuMkmMQs4LiIPTLEM9humUMhZvk
- QyErMzUc05s8ohG0TP3kGYWHgtqepwBSVHx+HTe/PkxBTDZQX4bC+TRG8WDajXfMkuhkK4wav
- LYoxazbGnXfaCmsefP4Z6cF7hmKFgvqeXy+ad46uJhlNjiUQLHf4v8K1t9sQotzvFuqHP+PzT
- fiJuVnTnFzsMY36f1NWKxDs6Vyu6B5HqYEhvQw==
+X-Provags-ID: V03:K0:5vRgfILJdZUH/A58uQ+FhsIkWJ44hw3v7VSRTYIXwbimVrdKwXl
+ SzshC90fad7MOtWyGIjmHVLpePlO6Lb5GR+bloVZlVKTe6lClR31khiXihARz+02uQzVsKM
+ BrAvZuPVqK5epbOYjV1iBJ8//UwA+bBOnNfIp01b1x4cvNP/7Qp7bb8rWuTb2R6IOtTmj5U
+ 4ZV+QrpBeh6yT+5gbq5dg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:mJ8gIwjUvK4=:6U8Q5nN8kfnIU03jFWnANf
+ eUKaynLNn61+EK3N+2MjvVSNXLWahYD2Igf1Vez2h+UMrDsxctWzZFg5G6oxtoTBr2LUB4PvR
+ pg/k+O0HP1yr1dWyP3qGBib+bI5gHEKkVU2PJ5A3DzIHIXp7WWR+K8VV0vUWeJUvX8XYKiNc1
+ LqkTgYRhH5UEBw8erZpqb+OAARmZoQj5QVSTYF/P96ZcIWE03R7eQCwSvm6g1y96Wtnsryg4I
+ GYw4hqKIURfaIdWTVPTJBTLfhiW8flSsu3FmGoxj5154qXxUvtaood+k/SxDQ71ENf3Ssp3GY
+ zqzhmqHoeTEjnFOPu3fMLURucHCqYNYL3tzfr3vv9EYHn2I36Y7idiNY2nFX1vb6gEv2g1qGB
+ sw1s20viw8r6KhOBguAKQRsbx/FUhhfksB2uagEZv2YBHArdRe8Tk3YP1be0yKnq8dv+iwTsn
+ YD18ZcDh7e/5gcuE6DeQhBvpiA1LRfOng97gKRy0F/kJlNKmmV9Pbytz6FZPLjcfw5wSW3hGC
+ v4P4X2DecXoJuzViafxoGmknhrwNPx51uJuvtfzX6CafpBP9PPe09GJHZI1zcSxsXDTLpNO6i
+ prMswNVCG0F6vUlaNjBBshZDZfWk4AiG5W+By7UQvTvppgNvlb+nijJUZ4+a5OSctso8+qgVW
+ Hq8ETHhfz4zVbsR2i9hvUV3Hw73gDv085XMsqBd7jQPvZkjwHDWU1pJZqnSTo31wX7n1zTbV7
+ xAXJfR6ViEEx9ufDg1cQ6xgBgye9c3bN3OJKrg==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596345558139967312?=
-X-GMAIL-MSGID: =?utf-8?q?1596345558139967312?=
+X-GMAIL-THRID: =?utf-8?q?1596345557100254652?=
+X-GMAIL-MSGID: =?utf-8?q?1596345557100254652?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct rsn_t' with 'struct rsn'.
+all occurences of 'struct ibss_parms_t' with 'struct ibss_parms'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/ks7010/ks_hostif.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index 8a203d759aa1..548ad0e8a5f0 100644
+index f4e7500c07db..8a203d759aa1 100644
 --- a/drivers/staging/ks7010/ks_hostif.h
 +++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -260,7 +260,7 @@ struct ibss_parms {
+@@ -256,7 +256,7 @@ struct cf_parms {
+ 	__le16 dur_remaining;
+ } __packed;
+ 
+-struct ibss_parms_t {
++struct ibss_parms {
  	__le16 atim_window;
  } __packed;
  
--struct rsn_t {
-+struct rsn {
- 	u8 size;
- #define RSN_BODY_SIZE 64
- 	u8 body[RSN_BODY_SIZE];
+@@ -303,7 +303,7 @@ struct link_ap_info_t {
+ 	struct fh_parms fh_parameter;	/* +24 */
+ 	struct ds_parms ds_parameter;	/* +29 */
+ 	struct cf_parms cf_parameter;	/* +30 */
+-	struct ibss_parms_t ibss_parameter;	/* +36 */
++	struct ibss_parms ibss_parameter;	/* +36 */
+ 	struct erp_params_t erp_parameter;	/* +38 */
+ 	u8 pad1;	/* +39 */
+ 	struct rate_set8 ext_rate_set;	/* +40 */
 -- 
 2.16.3
