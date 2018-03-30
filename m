@@ -1,31 +1,31 @@
 Return-Path: <leo.yan@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1522379746; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522379774; cv=none;
         d=google.com; s=arc-20160816;
-        b=QzXkxTPfTRV0tBReKILSPkbuf+SS9HmAV/UUMxm1PCuKPDqvasjFETqW5gkoiRK6uv
-         p2DLqdCggBM4SIW+2AQ9254fgQrNlKs5XRlGKNZE37bt7VP9uZ6Y+oeINnM9xgdG58Ny
-         UwvZGqRK1i1KUaK32X7LiPx16O/pxKkjgBpA9S5ApyiqHGi8JzjtigtlH8qcsKCr78qx
-         mrwF41is8Fy0rWF1OuZ0W3wj4frxg7XBt+1qIjR6cXQtPQYUurQm4AsEKN9MQF4haQ1R
-         E0Rl+6BjIxfOOle81eS2TF15hWRKYIChc1tsPucFbwSlc6TZBzeG6Z4v6RTW0nAywVby
-         OhZw==
+        b=y8uwvvXS/iScXVH1enYfMLQwd1cP7G6mAhO/qZ457svK1f/KKZv5KyNkvDb3gxRa/f
+         wag0Dso+Id2KIsNrFC7wbsBfiyS1+OLFnsEZhd1dZ7ILBEw0R4iTpX0/vgjRg/WVQW/5
+         Bhtic39sw1vqdUf5HmR4Kfe+DhNUP7OLCOHApFh8+77QrFV1lEpMPl+cn/2kqMtZTgx3
+         Q3dCVMYs26XvbbCbs8kov3CAvcxoO93hTeNuwYsrw+0b7/LqcwXnwR3sSXKzf4gfJd7Y
+         RZWYaGBaVpbOawM8OfdJllEx3ZTguK/e+iyyLNzmC8Zw5XmmA4opsrdEqsDkaurjm7Rb
+         Ob+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=g8hRWBH9Ffr8aq1M++fL3sQ9CcLWhWZkFaFf/4I20MQ=;
-        b=NDVXUVF0/OlF9VpiQO8FVwXcncv9d2gZcyw7cCFzsYSGVXLdrwiyD6uUHBeE3iEWgi
-         Eluhc3cBExi0VLrvOWBnsaVM9ACGeAQjc8DLUQJXJlw/vXoXiaGG4NWv3j9bvSEzpXgy
-         HkeRTRZ7a1Su+c0uzI3Ov/wQ6yPbqftm3IwliuqJdGFoFK0mBDj4VKoUDTjZn7tPKqUC
-         7ti8oIpcwBbA2DPfBZ0KMFbpZKNGNzKoTGU062wlrHZatSTLh6RYUCmyDjMJEgXtW/9p
-         mUp5eJYqeWIwB5knsGeipboc+zQ5eHSjbj3zPR8GDHD6AeC9YQ3RNqo7KvpBv7q1twph
-         bXgQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=gsayClFC98iYx6/DqOyvc4Nh2Po2oTAyjfQNyaF63bo=;
+        b=O+46V9AcX7fDmYxZBZZudOy80QSb31xNrLvyQwwltEnlaQsw+ojF+EzwKQ34GnZEUu
+         3o9HHAzu6WqE4nAPyV5I1sNesSrOe/nXETGCeK754uRYMDXB3YW88LOu+zDQVLQ6S4MS
+         zW0c0ia1VzLmKGagUpuqUGa5PPimqWfmixVlyzEd4b+EWM90J1WxJ30cJ6sF2bPmUB9P
+         6vA2ubr4XhecaXjWdBC+qP9wgwg3Ml4JVPcZ1l2kA3A65jfhNnkrmqGyJcx8I+v0ZKF7
+         w8Tj9+SiBA3uZOTU3KCHBEx5Rq2SF49tr6YHDLCOaZN52cPqTmU6fwZitqaa9mqmYVb7
+         vZGg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=GLWOQTv4;
+       dkim=pass header.i=@linaro.org header.s=google header.b=jVhtZPFl;
        spf=pass (google.com: domain of leo.yan@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=leo.yan@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=GLWOQTv4;
+       dkim=pass header.i=@linaro.org header.s=google header.b=jVhtZPFl;
        spf=pass (google.com: domain of leo.yan@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=leo.yan@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx4/T8uY17IfiY71hFu/7ZK2I9ULoXw2Dm4S5vUsbCd4jBVt8hqpeZOA0t1j0uO1tw/MOAgU9Ow==
+X-Google-Smtp-Source: AIpwx49Ya12GIE5O5AG+OL9u4AAiz/FtPzW6sRbRaqBOXWx5/1smn6ZBkLv+tC+DU/WaPcI4ozhrew==
 From: Leo Yan <leo.yan@linaro.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -37,117 +37,150 @@ To: Jonathan Corbet <corbet@lwn.net>,
 	Kim Phillips <kim.phillips@arm.com>,
 	Mike Leach <mike.leach@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v4 0/6] Coresight: Support panic kdump
-Date: Fri, 30 Mar 2018 11:15:18 +0800
-Message-Id: <1522379724-30648-1-git-send-email-leo.yan@linaro.org>
+Subject: [PATCH v4 6/6] coresight: etm4x: Support panic kdump
+Date: Fri, 30 Mar 2018 11:15:24 +0800
+Message-Id: <1522379724-30648-7-git-send-email-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522379724-30648-1-git-send-email-leo.yan@linaro.org>
+References: <1522379724-30648-1-git-send-email-leo.yan@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596330865086330396?=
-X-GMAIL-MSGID: =?utf-8?q?1596330865086330396?=
+X-GMAIL-THRID: =?utf-8?q?1596330894018976405?=
+X-GMAIL-MSGID: =?utf-8?q?1596330894018976405?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch set is to explore Coresight tracing data for postmortem
-debugging.  When kernel panic happens, the Coresight panic kdump can
-help to save on-chip tracing data and tracer metadata into DRAM, later
-relies on kdump and crash/perf tools to recovery tracing data for
-"offline" analysis.
+ETMv4 hardware information and configuration needs to be saved as
+metadata; the metadata format should be compatible with 'perf' tool and
+finally is used by tracing data decoder.  ETMv4 works as tracer per CPU,
+we cannot wait for gathering ETM info after CPU panic has happened in
+case there have CPU is locked up and can't response inter-processor
+interrupt for execution dump operations; so it's more reliable to gather
+tracer metadata when all of the CPUs are alive.
 
-The documentation is important to understand the purpose of Coresight
-panic kdump, the implementation of framework and usage. Patches 0001
-and patch 0002 are used for creating new sub directory for placing
-Coresight docs and add a new doc for Coresight panic kdump.
+This patch saves ETMv4 metadata but with the different method for
+different registers.  Since values in TRCIDR{0, 1, 2, 8} and
+TRCAUTHSTATUS are read-only and won't change afterward, thus those
+registers values are filled into metadata structure when tracers are
+instantiated.  The configuration and control registers TRCCONFIGR and
+TRCTRACEIDR are dynamically configured, their values are recorded during
+tracer enabling phase.
 
-Patch 0003 introduces the simple panic kdump framework which provides
-helper functions can be used by Coresight devices, and it registers
-panic notifier for dump tracing data.
+To avoid unnecessary overload introduced by set/clear operations for
+updating kdump node, we only set ETMv4 metadata info for the
+corresponding kdump node at initialization and won't be cleared anymore.
 
-Patches 0004/0005 support panic kdump for ETB; Patch 0006 supports the
-kdump for ETMv4.
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ drivers/hwtracing/coresight/coresight-etm4x.c | 27 +++++++++++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-etm4x.h | 15 +++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-This patch set has been reworked by following suggestions at Linaro
-HKG18 connect (mainly suggestions from Mathieu, thanks a lot!), and
-it's rebased on acme git tree [1] with last commit 109d59b900e7 ('perf
-vendor events s390: Add JSON files for IBM z14').
-
-Due Coresight kdump data structure has been changed significantly, the
-corresponding crash extension program also has been updated for this
-reason [2]; furthermore the crash extension program is updated to
-dynamically generate kernel buildid according to vmlinux elf info [3],
-this is a fixing for the old code which uses hard-coded buildid value.
-
-This patch set has been verified on 96boards Hikey620 with Coresight
-enabling by the sysFS interface.  Also the updated crash extension
-program has been verified to cowork with Coresight panic kdump and it
-successfully extracts tracing data from the vmcore and finally can be
-decoded by perf tool.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
-[2] https://git.linaro.org/people/leo.yan/crash.git/tree/extensions/csdump.c
-[3] https://git.linaro.org/people/leo.yan/crash.git/tree/extensions/csdump_buildid.c
-
-Changes from v3:
-* Following Mathieu suggestion, reworked the panic kdump framework,
-  used kdump array to maintain source and sink device handlers;
-* According to Mathieu suggestion, optimized panic notifier to
-  firstly dump panic CPU tracing data and then dump other CPUs tracing
-  data;
-* Refined doc to reflect these implementation changes;
-* Changed ETMv4 driver to add source device handler at probe phase;
-* Refactored crash extension program to reflect kernel changes.
-
-Changes from v2:
-* Add the two patches for documentation.
-* Following Mathieu suggestion, reworked the panic kdump framework,
-  removed the useless flag "PRE_PANIC".
-* According to comment, changed to add and delete kdump node operations
-  in sink enable/disable functions;
-* According to Mathieu suggestion, handle kdump node
-  addition/deletion/updating separately for sysFS interface and perf
-  method.
-
-Changes from v1:
-* Add support to dump ETMv4 meta data.
-* Wrote 'crash' extension csdump.so so rely on it to generate 'perf'
-  format compatible file.
-* Refactored panic dump driver to support pre & post panic dump.
-
-Changes from RFC:
-* Follow Mathieu's suggestion, use general framework to support dump
-  functionality.
-* Changed to use perf to analyse trace data.
-
-Leo Yan (6):
-  doc: Add Coresight documentation directory
-  doc: Add documentation for Coresight panic kdump
-  coresight: Support panic kdump functionality
-  coresight: tmc: Hook callback for panic kdump
-  coresight: Set and clear sink device handler for kdump node
-  coresight: etm4x: Support panic kdump
-
- Documentation/trace/coresight-cpu-debug.txt        | 187 ----------
- Documentation/trace/coresight.txt                  | 383 ---------------------
- .../trace/coresight/coresight-cpu-debug.txt        | 187 ++++++++++
- .../trace/coresight/coresight-panic-kdump.txt      | 130 +++++++
- Documentation/trace/coresight/coresight.txt        | 383 +++++++++++++++++++++
- MAINTAINERS                                        |   5 +-
- drivers/hwtracing/coresight/Kconfig                |   9 +
- drivers/hwtracing/coresight/Makefile               |   1 +
- drivers/hwtracing/coresight/coresight-etm-perf.c   |   5 +
- drivers/hwtracing/coresight/coresight-etm4x.c      |  27 ++
- drivers/hwtracing/coresight/coresight-etm4x.h      |  15 +
- .../hwtracing/coresight/coresight-panic-kdump.c    | 199 +++++++++++
- drivers/hwtracing/coresight/coresight-priv.h       |  12 +
- drivers/hwtracing/coresight/coresight-tmc-etf.c    |  30 ++
- drivers/hwtracing/coresight/coresight.c            |  16 +-
- include/linux/coresight.h                          |   4 +
- 16 files changed, 1019 insertions(+), 574 deletions(-)
- delete mode 100644 Documentation/trace/coresight-cpu-debug.txt
- delete mode 100644 Documentation/trace/coresight.txt
- create mode 100644 Documentation/trace/coresight/coresight-cpu-debug.txt
- create mode 100644 Documentation/trace/coresight/coresight-panic-kdump.txt
- create mode 100644 Documentation/trace/coresight/coresight.txt
- create mode 100644 drivers/hwtracing/coresight/coresight-panic-kdump.c
-
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+index cf364a5..88b1e19 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+@@ -288,6 +288,8 @@ static int etm4_enable(struct coresight_device *csdev,
+ 	int ret;
+ 	u32 val;
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
++	struct etmv4_config *config = &drvdata->config;
++	struct etmv4_metadata *metadata = &drvdata->metadata;
+ 
+ 	val = local_cmpxchg(&drvdata->mode, CS_MODE_DISABLED, mode);
+ 
+@@ -306,6 +308,10 @@ static int etm4_enable(struct coresight_device *csdev,
+ 		ret = -EINVAL;
+ 	}
+ 
++	/* Update tracer meta data after tracer configuration */
++	metadata->trcconfigr = config->cfg;
++	metadata->trctraceidr = drvdata->trcid;
++
+ 	/* The tracer didn't start */
+ 	if (ret)
+ 		local_set(&drvdata->mode, CS_MODE_DISABLED);
+@@ -438,6 +444,7 @@ static void etm4_init_arch_data(void *info)
+ 	u32 etmidr4;
+ 	u32 etmidr5;
+ 	struct etmv4_drvdata *drvdata = info;
++	struct etmv4_metadata *metadata = &drvdata->metadata;
+ 
+ 	/* Make sure all registers are accessible */
+ 	etm4_os_unlock(drvdata);
+@@ -590,6 +597,16 @@ static void etm4_init_arch_data(void *info)
+ 	drvdata->nrseqstate = BMVAL(etmidr5, 25, 27);
+ 	/* NUMCNTR, bits[30:28] number of counters available for tracing */
+ 	drvdata->nr_cntr = BMVAL(etmidr5, 28, 30);
++
++	/* Update metadata */
++	metadata->magic = ETM4_METADATA_MAGIC;
++	metadata->cpu = drvdata->cpu;
++	metadata->trcidr0 = readl_relaxed(drvdata->base + TRCIDR0);
++	metadata->trcidr1 = readl_relaxed(drvdata->base + TRCIDR1);
++	metadata->trcidr2 = readl_relaxed(drvdata->base + TRCIDR2);
++	metadata->trcidr8 = readl_relaxed(drvdata->base + TRCIDR8);
++	metadata->trcauthstatus = readl_relaxed(drvdata->base + TRCAUTHSTATUS);
++
+ 	CS_LOCK(drvdata->base);
+ }
+ 
+@@ -957,6 +974,7 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
+ 	struct device *dev = &adev->dev;
+ 	struct coresight_platform_data *pdata = NULL;
+ 	struct etmv4_drvdata *drvdata;
++	struct etmv4_metadata *metadata;
+ 	struct resource *res = &adev->res;
+ 	struct coresight_desc desc = { 0 };
+ 	struct device_node *np = adev->dev.of_node;
+@@ -1027,6 +1045,15 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
+ 		goto err_arch_supported;
+ 	}
+ 
++	/* Set source device handler and metadata into kdump node */
++	metadata = &drvdata->metadata;
++	ret = coresight_kdump_source(drvdata->cpu, drvdata->csdev,
++				     (char *)metadata, sizeof(*metadata));
++	if (ret) {
++		coresight_unregister(drvdata->csdev);
++		goto err_arch_supported;
++	}
++
+ 	ret = etm_perf_symlink(drvdata->csdev, true);
+ 	if (ret) {
+ 		coresight_unregister(drvdata->csdev);
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
+index b3b5ea7..08dc8b7 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x.h
++++ b/drivers/hwtracing/coresight/coresight-etm4x.h
+@@ -198,6 +198,20 @@
+ #define ETM_EXLEVEL_NS_HYP		BIT(14)
+ #define ETM_EXLEVEL_NS_NA		BIT(15)
+ 
++#define ETM4_METADATA_MAGIC		0x4040404040404040ULL
++
++struct etmv4_metadata {
++	u64 magic;
++	u64 cpu;
++	u64 trcconfigr;
++	u64 trctraceidr;
++	u64 trcidr0;
++	u64 trcidr1;
++	u64 trcidr2;
++	u64 trcidr8;
++	u64 trcauthstatus;
++};
++
+ /**
+  * struct etmv4_config - configuration information related to an ETMv4
+  * @mode:	Controls various modes supported by this ETM.
+@@ -393,6 +407,7 @@ struct etmv4_drvdata {
+ 	bool				atbtrig;
+ 	bool				lpoverride;
+ 	struct etmv4_config		config;
++	struct etmv4_metadata		metadata;
+ };
+ 
+ /* Address comparator access types */
 -- 
 2.7.4
