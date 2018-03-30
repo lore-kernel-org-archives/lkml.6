@@ -1,112 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeC3Bok (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 21:44:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47340 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751906AbeC3Boj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 21:44:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EB4217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk@google.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] ext4: handle errors on ext4_commit_super
-Date: Thu, 29 Mar 2018 18:44:29 -0700
-Message-Id: <20180330014429.27824-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.15.0.531.g2ccb3012c9-goog
+        id S1752651AbeC3Bs1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 21:48:27 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:52662 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752096AbeC3Bs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 21:48:26 -0400
+Date: Thu, 29 Mar 2018 21:48:22 -0400 (EDT)
+Message-Id: <20180329.214822.1871100263972510651.davem@davemloft.net>
+To: dhowells@redhat.com
+Cc: netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/6] rxrpc: Fixes
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <30571.1522362346@warthog.procyon.org.uk>
+References: <20180329.115956.476747368912393740.davem@davemloft.net>
+        <152219064515.24098.9428175357244257284.stgit@warthog.procyon.org.uk>
+        <30571.1522362346@warthog.procyon.org.uk>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@google.com>
+From: David Howells <dhowells@redhat.com>
+Date: Thu, 29 Mar 2018 23:25:46 +0100
 
-When remounting ext4 from ro to rw, currently it allows its transition,
-even if ext4_commit_super() returns EIO. Even worse thing is, after that,
-fs/buffer complains buffer dirty bits like:
+> David Miller <davem@davemloft.net> wrote:
+> 
+>> David, this GIT URL has tons of unrelated changes.  It seems to bring in
+>> the parts of Linus's tree that haven't proagated to 'net' yet.
+> 
+> Sorry about that, I rebased on the wrong branch by accident.
+> 
+> I've got some more fixes.  Should I just give the lot to you to pull into your
+> net-next tree, given that the merge window may well open Sunday?
 
- Call trace:
- [<ffffff9750c259dc>] mark_buffer_dirty+0x184/0x1a4
- [<ffffff9750cb398c>] __ext4_handle_dirty_super+0x4c/0xfc
- [<ffffff9750c7a9fc>] ext4_file_open+0x154/0x1c0
- [<ffffff9750bea51c>] do_dentry_open+0x114/0x2d0
- [<ffffff9750bea75c>] vfs_open+0x5c/0x94
- [<ffffff9750bf879c>] path_openat+0x668/0xfe8
- [<ffffff9750bf8088>] do_filp_open+0x74/0x120
- [<ffffff9750beac98>] do_sys_open+0x148/0x254
- [<ffffff9750beade0>] SyS_openat+0x10/0x18
- [<ffffff9750a83ab0>] el0_svc_naked+0x24/0x28
- EXT4-fs (dm-1): previous I/O error to superblock detected
- Buffer I/O error on dev dm-1, logical block 0, lost sync page write
- EXT4-fs (dm-1): re-mounted. Opts: (null)
- Buffer I/O error on dev dm-1, logical block 80, lost async page write
-
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
----
- fs/ext4/super.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 39bf464c35f1..b268bfea879c 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2151,7 +2151,7 @@ static int ext4_setup_super(struct super_block *sb, struct ext4_super_block *es,
- 	if (sbi->s_journal)
- 		ext4_set_feature_journal_needs_recovery(sb);
- 
--	ext4_commit_super(sb, 1);
-+	res = ext4_commit_super(sb, 1);
- done:
- 	if (test_opt(sb, DEBUG))
- 		printk(KERN_INFO "[EXT4 FS bs=%lu, gc=%u, "
-@@ -4739,11 +4739,10 @@ static int ext4_commit_super(struct super_block *sb, int sync)
- 		unlock_buffer(sbh);
- 		error = __sync_dirty_buffer(sbh,
- 			REQ_SYNC | (test_opt(sb, BARRIER) ? REQ_FUA : 0));
--		if (error)
-+		if (error && !buffer_write_io_error(sbh))
- 			return error;
- 
--		error = buffer_write_io_error(sbh);
--		if (error) {
-+		if (buffer_write_io_error(sbh)) {
- 			ext4_msg(sb, KERN_ERR, "I/O error while writing "
- 			       "superblock");
- 			clear_buffer_write_io_error(sbh);
-@@ -5144,8 +5143,12 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
- 			if (sbi->s_journal)
- 				ext4_clear_journal_err(sb, es);
- 			sbi->s_mount_state = le16_to_cpu(es->s_state);
--			if (!ext4_setup_super(sb, es, 0))
--				sb->s_flags &= ~SB_RDONLY;
-+
-+			err = ext4_setup_super(sb, es, 0);
-+			if (err)
-+				goto restore_opts;
-+
-+			sb->s_flags &= ~SB_RDONLY;
- 			if (ext4_has_feature_mmp(sb))
- 				if (ext4_multi_mount_protect(sb,
- 						le64_to_cpu(es->s_mmp_block))) {
-@@ -5169,8 +5172,10 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
- 	}
- 
- 	ext4_setup_system_zone(sb);
--	if (sbi->s_journal == NULL && !(old_sb_flags & SB_RDONLY))
--		ext4_commit_super(sb, 1);
-+	if (sbi->s_journal == NULL && !(old_sb_flags & SB_RDONLY)) {
-+		err = ext4_commit_super(sb, 1);
-+		goto restore_opts;
-+	}
- 
- #ifdef CONFIG_QUOTA
- 	/* Release old quota file names */
--- 
-2.15.0.531.g2ccb3012c9-goog
+That's up to you.
