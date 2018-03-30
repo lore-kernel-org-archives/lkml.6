@@ -1,60 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752305AbeC3QAw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 12:00:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35250 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751251AbeC3QAu (ORCPT
+        id S1751968AbeC3QLq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 12:11:46 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:41107 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbeC3QLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 12:00:50 -0400
-From: Colin King <colin.king@canonical.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Harry Wentland <harry.wentland@amd.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amd/display: fix spelling mistake: "Usupported" -> "Unsupported"
-Date: Fri, 30 Mar 2018 17:00:47 +0100
-Message-Id: <20180330160047.7368-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 30 Mar 2018 12:11:44 -0400
+X-Google-Smtp-Source: AG47ELvO+41bxfwvgc+G9uuQJbu5Otp/9ZYSGAAUBSincCEfp6g3yexqyevZesCmoQiwO4zblAK0UA==
+From: Ryan Grachek <ryan@edited.us>
+Cc: Ryan Grachek <ryan@edited.us>, Wei Xu <xuwei5@hisilicon.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: hikey: Enable SDIO high-speed mode on WL1835 module
+Date: Fri, 30 Mar 2018 11:11:18 -0500
+Message-Id: <20180330161118.5751-1-ryan@edited.us>
+X-Mailer: git-send-email 2.11.0
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+According to hardware documentation, the WL1835MOD WiFi chip
+supports SDIO high-speed mode, which increases the clock to
+50 MHz. This results in a modest increase in throughput.
 
-Trivial fix to spelling mistake in DRM_ERROR error message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Ryan Grachek <ryan@edited.us>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index e42a28e3adc5..1df1c91b6ae5 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -1521,7 +1521,7 @@ static int amdgpu_dm_initialize_drm_device(struct amdgpu_device *adev)
- 		break;
- #endif
- 	default:
--		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
-+		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
- 		goto fail;
- 	}
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+index 5d5aa4f4a235..a5e0cc4370e1 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
++++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+@@ -322,6 +322,7 @@
  
-@@ -1715,7 +1715,7 @@ static int dm_early_init(void *handle)
- 		break;
- #endif
- 	default:
--		DRM_ERROR("Usupported ASIC type: 0x%X\n", adev->asic_type);
-+		DRM_ERROR("Unsupported ASIC type: 0x%X\n", adev->asic_type);
- 		return -EINVAL;
- 	}
- 
+ 		dwmmc_2: dwmmc2@f723f000 {
+ 			bus-width = <0x4>;
++			cap-sd-highspeed;
+ 			non-removable;
+ 			vmmc-supply = <&reg_vdd_3v3>;
+ 			mmc-pwrseq = <&wl1835_pwrseq>;
 -- 
-2.15.1
+2.11.0
