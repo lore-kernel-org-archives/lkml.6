@@ -1,23 +1,23 @@
 Return-Path: <boris.brezillon@bootlin.com>
-X-Google-Smtp-Source: AIpwx49DqgK9hU9mp6BxGJYnc8xhQ0Jw83gvjvziMYuGqbaOqCYTI9aZK9e3UzH0492yFCSPF0EV
-ARC-Seal: i=1; a=rsa-sha256; t=1522396080; cv=none;
+X-Google-Smtp-Source: AIpwx4/ZoClTPJfoU3qPr9Wh78TDlSs+dzp8X5/FYW/eES8dhIuNzgc4GO8rVTfQ/ZSvhFwIvjFm
+ARC-Seal: i=1; a=rsa-sha256; t=1522396079; cv=none;
         d=google.com; s=arc-20160816;
-        b=zlbBjlhEqni3nWuEC4O/2xMZ7D0hqdk8RDw9peICxkVkwEneWfltOclFDH9qPvTwUv
-         l0lLlS3yTFSW4Uh1ZsD4ekq5T/9kuW6SMkEb5d32MeEe7OJ9dy+klM4rbmoxZd+TB8Gf
-         /E9R0rZJjzTH12JZeBw3FOA573/kag3n2A3xBiKyS/KwLt8EXh+VHBIOZx7XYtVqw9AW
-         Dhl+/xyxQLwCokUif3eJVbQKnfYocr/3li3kYnRT03XlR9rTMxAIzD0ldYe921Njeztu
-         BVnrKyJ38n8tTVdvuNH+qHSxjtzcUnAQJ43ZHW1ppR/FA8JuVAZSobCFfx/VWmeKAg5o
-         VUDA==
+        b=lKVSBEVlLoxIwbgb5xqB8+b9gJXMr/S5m0S3Ewpk2K+6xDvO2cof9cpiJX0UdxdULQ
+         PS1GxelU+D6e+euCW92RflqWCNkUpkNafIodE8Me/D018ajQ6dG9Ep6ilu3yCfDxJpEd
+         be3QESsIDa3yAg5eeSIrmWVAkFlOuCOL330DdTrLgKT4ua0HuJpX3/G7NV3/f3ftqxW9
+         EvMJRMCzBpLL8fuFlQzdZp94y7M/A7IHtlFi6TTzBODgna5Q1wTPE5TWo5nIs8aHyANv
+         ycNPiYV/6PaHrS8PNHcgDtSQDr25I4nVlnVg3w3J9a0F9Yi5QbG5zWRCaojlb03lCBh9
+         mxrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=3gPacNMAP65VMlsSouVp0U0ewgs5xKXZCapJ8YAxxm8=;
-        b=0XCAQT2FHmOjBOfZGAy4ebkNiMWVN3ctdQNyIUOILnLkI586epSQYhNYwq0ko3u9Nm
-         97gex8ZCySqUWqxY22csN5l7RapU+czEKxm+pEZ6iYliJabWZkH1KnJRv/4REt5jPAms
-         Aj8fr7mpa1pu0ERuT8rPJtZIbaylU4wQHlzhQtnnZGE5a2d2cB7i0i4xrU9XAVSVHRF0
-         tojzkkgAh926CfngIbPYHFVQ/kXlynSgyrWH9E9zrwRzRhtQosKB6OvPGM1ZRg9VlsRy
-         fXWOoWKyWWv0kD57MbUviEy8TwaXnqQyqOLMAsVYPnliEXJzJQTlR/mxPOcVsb9u/Z4N
-         3zfg==
+        bh=qKR0HU8VYDBXm9UgRCb4ENJSygL2FGy40HUaSUBuhLo=;
+        b=nb3DthDjAjcBcOCqDLV5uKUuu4Yr8R8I25K/BRgj1WAj/RFOKSPDCqj+jegy/6co/N
+         rf06tvTYeb/Bwt/XTM+0Y0zH8J7aJ9zhgqVHbv86NGIUlcB0BynK+dRlfFJCq31hIAE6
+         pThTTXYu/CY0EvvVZ10XbHAnaztmXmrA3BObF/NgV9IMuu4fP/3Nsl9rY5RJE1qELnLE
+         JGokP0PAXUCywXkjzYL7vf19V5E1F3RvwOOByCRzU+vAD3l2Mu8tQG6lkEVRg1Bw4n2W
+         n+fplCiNuRyZe1cz5H8FjSDmBT0UuUDhPPLy5q6evykK8D/KjF00e1oBbRYQLZBts61Z
+         RuvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
 Authentication-Results: mx.google.com;
@@ -53,78 +53,47 @@ Cc: Przemyslaw Sroka <psroka@cadence.com>,
 	Xiang Lin <Xiang.Lin@synaptics.com>,
 	linux-gpio@vger.kernel.org,
 	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v4 08/10] dt-bindings: i3c: Document Cadence I3C master bindings
-Date: Fri, 30 Mar 2018 09:47:49 +0200
-Message-Id: <20180330074751.25987-9-boris.brezillon@bootlin.com>
+Subject: [PATCH v4 06/10] MAINTAINERS: Add myself as the I3C subsystem maintainer
+Date: Fri, 30 Mar 2018 09:47:47 +0200
+Message-Id: <20180330074751.25987-7-boris.brezillon@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180330074751.25987-1-boris.brezillon@bootlin.com>
 References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596347992501604184?=
-X-GMAIL-MSGID: =?utf-8?q?1596347992501604184?=
+X-GMAIL-THRID: =?utf-8?q?1596347991175328662?=
+X-GMAIL-MSGID: =?utf-8?q?1596347991175328662?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Document Cadence I3C master DT bindings.
+Create an entry for the I3C subsystem and mark it as maintained by me.
+There's no official git repository, patchwork instance, mailing list or
+website yet, but this will be added after the subsystem has been
+accepted.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 ---
-Changes in v4:
-- Fix example to match the new representation
----
- .../devicetree/bindings/i3c/cdns,i3c-master.txt    | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
-new file mode 100644
-index 000000000000..0e2b8b8770bf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
-@@ -0,0 +1,44 @@
-+Bindings for cadence I3C master block
-+=====================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3bdc260e36b7..f323864131ed 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6669,6 +6669,15 @@ L:	linux-i2c@vger.kernel.org
+ S:	Maintained
+ F:	drivers/i2c/i2c-stub.c
+ 
++I3C SUBSYSTEM
++M:	Boris Brezillon <boris.brezillon@bootlin.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/i3c/
++F:	Documentation/driver-api/i3c
++F:	drivers/i3c/
++F:	include/linux/i3c/
++F:	include/dt-bindings/i3c/
 +
-+Required properties:
-+--------------------
-+- compatible: shall be "cdns,i3c-master"
-+- clocks: shall reference the pclk and sysclk
-+- clock-names: shall contain "pclk" and "sysclk"
-+- interrupts: the interrupt line connected to this I3C master
-+- reg: I3C master registers
-+
-+Mandatory properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- #address-cells: shall be set to 1
-+- #size-cells: shall be set to 0
-+
-+Optional properties defined by the generic binding (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details):
-+
-+- i2c-scl-hz
-+- i3c-scl-hz
-+
-+I3C device connected on the bus follow the generic description (see
-+Documentation/devicetree/bindings/i3c/i3c.txt for more details).
-+
-+Example:
-+
-+	i3c-master@0d040000 {
-+		compatible = "cdns,i3c-master";
-+		clocks = <&coreclock>, <&i3csysclock>;
-+		clock-names = "pclk", "sysclk";
-+		interrupts = <3 0>;
-+		reg = <0x0d040000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-scl-hz = <100000>;
-+
-+		nunchuk: nunchuk@52 {
-+			compatible = "nintendo,nunchuk";
-+			reg = <0x52 0x80000010 0>;
-+		};
-+	};
-+
+ IA64 (Itanium) PLATFORM
+ M:	Tony Luck <tony.luck@intel.com>
+ M:	Fenghua Yu <fenghua.yu@intel.com>
 -- 
 2.14.1
