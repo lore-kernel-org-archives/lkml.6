@@ -1,44 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752847AbeC3VWJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:22:09 -0400
-Received: from mga05.intel.com ([192.55.52.43]:27342 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752797AbeC3VWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:22:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,383,1517904000";
-   d="scan'208";a="46714908"
-Date: Fri, 30 Mar 2018 15:24:39 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: "Rodrigo R. Galvao" <rosattig@linux.vnet.ibm.com>
-Cc: hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmet: fix nvmet_execute_write_zeroes function
-Message-ID: <20180330212439.GA28945@localhost.localdomain>
-References: <1522444730-2060-1-git-send-email-rosattig@linux.vnet.ibm.com>
+        id S1752838AbeC3V01 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:26:27 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:37031 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752571AbeC3V0Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:26:24 -0400
+X-Google-Smtp-Source: AIpwx4+VAElZbEjGjHgOzhLq6f4X9bFS1m7s27/0zBEqnXL2z5CFqwOnQOw467cYC5tnV0duJSjZYuldgvw/DKQyYTs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522444730-2060-1-git-send-email-rosattig@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 31 Mar 2018 00:26:23 +0300
+Message-ID: <CAHp75VeOTjZ30ok1JOW0cefZfxqUM-f0-zpTnC5TonyeqQVUKg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: dwapb: Add support for 32 interrupts
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 06:18:50PM -0300, Rodrigo R. Galvao wrote:
-> When trying to issue write_zeroes command against TARGET the nr_sector is
-> being incremented by 1, which ends up hitting the following condition at
-> __blkdev_issue_zeroout:
-> 
->      if ((sector | nr_sects) & bs_mask)
->                 return -EINVAL;
-> 
-> Causing the command to always fail. Removing the increment makes the
-> command to work properly.
+On Wed, Mar 28, 2018 at 5:22 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> The DesignWare GPIO IP can be configured for either 1 or 32 interrupts,
 
-Doesn't that mean your host is using this command wrong? The NLB is a
-0's based value, we're supposed to +1 to get the correct block count.
+1 to 32, or just a choice between two?
+
+> but the driver currently only supports 1 interrupt. See the DesignWare
+> DW_apb_gpio Databook description of the 'GPIO_INTR_IO' parameter.
+
+Will see after holiday and perhaps make more comments. Here is just a
+brief review.
+
+> +- interrupts : The interrupts to the parent controller raised when GPIOs
+> +  generate the interrupts. If the controller provides one combined interrupt
+> +  for all GPIOs, specify a single interrupt. If the controller provides one
+> +  interrupt for each GPIO, provide a list of interrupts that correspond to each
+> +  of the GPIO pins. When specifying multiple interrupts, if any of the GPIOs are
+> +  not connected to an interrupt, use the interrupt-mask property.
+> +- interrupt-mask : a 32-bit bit mask that specifies which interrupts in the list
+> +  of interrupts is valid, bit is 1 for a valid irq.
+
+So, but why one will need that in practice? GPIO driver usually
+provides a pin based IRQ chip which maps each pin to the corresponding
+offset inside specific IRQ domain.
+
+> +                       struct device_node *np = to_of_node(fwnode);
+> +                       u32 irq_mask = 0xFFFFFFFF;
+
+Why? Shouldn't it be dependent to the amount of actual pins / ports?
+Intel Quark has only 8 AFAIR.
+
+> +                       int j;
+> +
+> +                       /* Optional irq mask */
+> +                       fwnode_property_read_u32(fwnode, "interrupt-mask", &irq_mask);
+> +
+> +                       /*
+> +                        * The IP has configuration options to allow a single
+> +                        * combined interrupt or one per gpio. If one per gpio,
+> +                        * some might not be used.
+> +                        */
+
+> +                       for (j = 0; j < pp->ngpio; j++) {
+> +                               if (irq_mask & BIT(j)) {
+
+for_each_set_bit() is in kernel for ages!
+
+> +                                       pp->irq[j] = irq_of_parse_and_map(np, j);
+> +                                       if (pp->irq[j])
+> +                                               pp->has_irq = true;
+> +                               }
+> +                       }
+
+
+So, on the first glance the patch looks either superfluous or taking
+wrong approach. Please, elaborate more why it's done in this way and
+what the case for all this in practice.
+
+-- 
+With Best Regards,
+Andy Shevchenko
