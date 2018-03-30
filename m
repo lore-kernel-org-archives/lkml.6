@@ -1,260 +1,113 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4978bzvJ4anwCJGg/K4LWRY038u79OvVXKlIXry9dTH9vA9OkU/n4/cKyE0GMPrsNiM87Rp
-ARC-Seal: i=1; a=rsa-sha256; t=1522346701; cv=none;
-        d=google.com; s=arc-20160816;
-        b=xGKLFA+k2mA3ZZzov0ClMzAEWpxZCf45kcJ4UM/3m6YeUgdyoGF/M/f3dMnfSo4jCV
-         WDktwVmHquePzBBbT63Gh3bNRrMI8rRc8eml7wI/GHAgS/6KUQjaBwNsp6UNTLhdLTaF
-         bFArJanj8fMaDfrsSUCj4bhajVITlOAqnlnw/lGd5kO5rH0LxoKtSk+iHnolWV5UzG/C
-         l8wdW0gRc6Iupvg5aTVHupQw4FSSxl95Cchap9rRxUgI6KyJin2/zuzC+z/rcnV2+phv
-         oOi2TUaSMIQwHqyevSbR5fjGCBwYBPZmm0HtaLWgM6PyMSilEiWjaw4UomZ+fiiC700u
-         xKKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:user-agent:mime-version:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=5KnjS4bnfuYR3AP1Eg0DdFKbOnbx0WYOgEMYNgnMKXc=;
-        b=uj6AmjG2rHyUrU+BllZP9n/11LbGn1VCkSXUc49pcd702ONhZR9mmkRTqFpRWt6DRt
-         g/xndOBou6TsLfmmgbBm/aA34hMdNFunxU36TSbt8afWUtt4Yt30e5eGDY27TzXJo+nS
-         hj0NBU+eadVowLsA+iJl2D9QD43MnA6cFg83WUFgMacRcc95CziS5riUh7h835Ztxo2f
-         /sqrPUFjy+Dfpg4LXgIvpZSzU3qnO9S9dkxixsUg358iVqtLxdjTW3oXd0BqgTnwsEiq
-         UHTFNVUwUxQwSlqUsIFDiiSrYOqt4zWYzibIt2IIvImWO9yQn7BKT+U3uvTe7RL5Wyi5
-         4tuA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuahkh@osg.samsung.com,
-	patches@kernelci.org,
-	ben.hutchings@codethink.co.uk,
-	lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org
-Subject: [PATCH 4.14 00/43] 4.14.32-stable review
-Date: Thu, 29 Mar 2018 19:59:55 +0200
-Message-Id: <20180329175730.190353692@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.3
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3684987-1522423195-2-5322438639066208711
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522423194; b=QYGAwqghjRNY/W2M8qnwOu5BmqsmiT7/FWn8dCKAjkY3qIu4IS
+    +Fc+nCCMstlA0T7LXa3KKXUfPKChl/IZkKoTUhWm7Yrec50J7JodKuXQ53ElKKCE
+    2zB02Zi9Da0nI8jKKpRddKmJ9GFeNb3MAmKoWDmrLdeOM2Az/pWG5NYz72gCZIS+
+    Jko5wnNY6Cp4WjNbwb8GNEWuexMgGCK2Szi4ThvlW3UYj1lP5V6FsJwqatFs7GwJ
+    Sn7a+eZTMRFR6YzpNYERkYQ5e8Gp5hjYgzG/4nyf29qfAEaCpAdjIYwl4TqYCFtf
+    9VDq6mrn24/NemS9hKkJxK8p5rST9ZcPYQsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1522423194;
+    bh=Zi9C93zjIyPTZeDKcrluGHV+Us4sK0IUOuF2Mwi8SIs=; b=ehEfv9mPAWGw
+    EVU/v3oqAxmMycL3pwEq+X23Tvtz1mirDDTke7OhdRk/9B6mik9r80MHYvZPW2aQ
+    S2U83zrweDwJ3dBO11UXldPfmck5NZirA8EbYtnefIgiIOgDrHhe3Hp0CsgORDoJ
+    pto74SMAncNmsk6A74a9c9tufb6AOHf7VeN94qwz/hKPrxvotnbGiEs5an/KQ0PX
+    h84n5byX72hL8BzFfGJOJylLxDj0hT0ssoPlz0x3FmFIx3eS0scXw6G7wDT0WJSm
+    DRbTGfF37WrPzUtpJy/yRAsolKEiw1RFU9SzqI61yDPamVHMnFnhiUNiZ/Dce9Jt
+    0crqlYAX+A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hEfIMyax x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mfdu7ihX;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hEfIMyax x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=mfdu7ihX;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDg1HBMGyNMSMLpyto9QEt6CpH6HwikvHGpoe1JO+6nnQ5f+dQzPE2zwqPH+BrcTemEdW0pnQmBEgjhn5PETP7TApS2DDwlScBjNvABHpJubshq9GLvY
+    XfWPgBr2Ytx/jx1ksgvjcECInvvcVYRN1ttSD3JmfffhpZ8IfpLxEjb37hbc0DeePFrwbW2Yy2nrvNbVQWWHmI9Syb24l1Cq5HT9vSZtBedU2hzqbOCRQj7R
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=bdhgAJw2s1sA:10
+    a=v2DPQv5-lfwA:10 a=fXDnvd45PkOifeEcT_IA:9 a=QEXdDO2ut3YA:10
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751280AbeC3PTw (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 30 Mar 2018 11:19:52 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:38495 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbeC3PTv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 30 Mar 2018 11:19:51 -0400
+X-Google-Smtp-Source: AIpwx48Xrae1NJYovCW7LXCnpKBE6j8/3iaAXtx0GidVLt5fgstYocLYeWZcO2itMLgg2TnxpDySRw==
+Subject: Re: [PATCH 4.14 00/43] 4.14.32-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuahkh@osg.samsung.com, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180329175730.190353692@linuxfoundation.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <74cfb8c0-b4f9-19a4-729f-ef5081d1752a@roeck-us.net>
+Date: Fri, 30 Mar 2018 08:19:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.32-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.32-rc1
-X-KernelTest-Deadline: 2018-03-31T17:57+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180329175730.190353692@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596296215155327589?=
-X-GMAIL-MSGID: =?utf-8?q?1596296215155327589?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.14.32 release.
-There are 43 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On 03/29/2018 10:59 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.32 release.
+> There are 43 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Mar 31 17:57:12 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Responses should be made by Sat Mar 31 17:57:12 UTC 2018.
-Anything received after that time might be too late.
+For v4.14.31-44-g0bfe33a:
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.32-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
+Build results:
+	total: 145 pass: 145 fail: 0
+Qemu test results:
+	total: 141 pass: 141 fail: 0
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.32-rc1
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qeth: on channel error, reject further cmd requests
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qeth: lock read device while queueing next buffer
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qeth: when thread completes, wake up all waiters
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qeth: free netdevice when removing a card
-
-Camelia Groza <camelia.groza@nxp.com>
-    dpaa_eth: remove duplicate increment of the tx_errors counter
-
-Camelia Groza <camelia.groza@nxp.com>
-    dpaa_eth: increment the RX dropped counter when needed
-
-Camelia Groza <camelia.groza@nxp.com>
-    dpaa_eth: remove duplicate initialization
-
-Madalin Bucur <madalin.bucur@nxp.com>
-    dpaa_eth: fix error in dpaa_remove()
-
-Madalin Bucur <madalin.bucur@nxp.com>
-    soc/fsl/qbman: fix issue in qman_delete_cgr_safe()
-
-Arkadi Sharshevsky <arkadis@mellanox.com>
-    team: Fix double free in error path
-
-Vinicius Costa Gomes <vinicius.gomes@intel.com>
-    skbuff: Fix not waking applications when errors are enqueued
-
-Michal Kalderon <Michal.Kalderon@cavium.com>
-    qede: Fix qedr link update
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: systemport: Rewrite __bcm_sysport_tx_reclaim()
-
-David Ahern <dsahern@gmail.com>
-    net: Only honor ifindex in IP_PKTINFO if non-0
-
-Nicolas Dichtel <nicolas.dichtel@6wind.com>
-    netlink: avoid a double skb free in genlmsg_mcast()
-
-Arvind Yadav <arvind.yadav.cs@gmail.com>
-    net/iucv: Free memory obtained by kzalloc
-
-Florian Fainelli <f.fainelli@gmail.com>
-    net: fec: Fix unbalanced PM runtime calls
-
-SZ Lin (林上智) <sz.lin@moxa.com>
-    net: ethernet: ti: cpsw: add check for in-band mode setting with RGMII PHY interface
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    net: ethernet: arc: Fix a potential memory leak if an optional regulator is deferred
-
-Eric Dumazet <edumazet@google.com>
-    l2tp: do not accept arbitrary sockets
-
-Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-    ipv6: fix access to non-linear packet in ndisc_fill_redirect_hdr_option()
-
-Alexey Kodanev <alexey.kodanev@oracle.com>
-    dccp: check sk for closed state in dccp_sendmsg()
-
-Kirill Tkhai <ktkhai@virtuozzo.com>
-    net: Fix hlist corruptions in inet_evict_bucket()
-
-Eric Dumazet <edumazet@google.com>
-    net: use skb_to_full_sk() in skb_update_prio()
-
-Eric Dumazet <edumazet@google.com>
-    ieee802154: 6lowpan: fix possible NULL deref in lowpan_device_event()
-
-Alexey Kodanev <alexey.kodanev@oracle.com>
-    sch_netem: fix skb leak in netem_enqueue()
-
-Tom Herbert <tom@quantonium.net>
-    kcm: lock lower socket in kcm_attach
-
-Paul Blakey <paulb@mellanox.com>
-    rhashtable: Fix rhlist duplicates insertion
-
-Guillaume Nault <g.nault@alphalink.fr>
-    ppp: avoid loop in xmit recursion detection code
-
-Roman Mashak <mrv@mojatatu.com>
-    net sched actions: return explicit error when tunnel_key mode is not specified
-
-Brad Mouring <brad.mouring@ni.com>
-    net: phy: Tell caller result of phy_change()
-
-Ido Schimmel <idosch@mellanox.com>
-    mlxsw: spectrum_buffers: Set a minimum quota for CPU port traffic
-
-David Lebrun <dlebrun@google.com>
-    ipv6: sr: fix scheduling in RCU when creating seg6 lwtunnel state
-
-David Lebrun <dlebrun@google.com>
-    ipv6: sr: fix NULL pointer dereference when setting encap source address
-
-Stefano Brivio <sbrivio@redhat.com>
-    ipv6: old_dport should be a __be16 in __ip6_datagram_connect()
-
-Paolo Abeni <pabeni@redhat.com>
-    net: ipv6: keep sk status consistent after datagram connect failure
-
-Shannon Nelson <shannon.nelson@oracle.com>
-    macvlan: filter out unsupported feature flags
-
-Arkadi Sharshevsky <arkadis@mellanox.com>
-    devlink: Remove redundant free on error path
-
-Grygorii Strashko <grygorii.strashko@ti.com>
-    net: phy: relax error checking when creating sysfs link netdev->phydev
-
-Grygorii Strashko <grygorii.strashko@ti.com>
-    sysfs: symlink: export sysfs_create_link_nowarn()
-
-Michal Kalderon <Michal.Kalderon@cavium.com>
-    qed: Fix non TCP packets should be dropped on iWARP ll2 connection
-
-Soheil Hassas Yeganeh <soheil@google.com>
-    tcp: purge write queue upon aborting the connection
-
-Soheil Hassas Yeganeh <soheil@google.com>
-    tcp: reset sk_send_head in tcp_write_queue_purge
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- drivers/net/ethernet/arc/emac_rockchip.c           |   6 +-
- drivers/net/ethernet/broadcom/bcmsysport.c         |  33 ++--
- drivers/net/ethernet/broadcom/bcmsysport.h         |   2 +-
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c     |   8 +-
- drivers/net/ethernet/freescale/fec_main.c          |   2 +
- .../net/ethernet/mellanox/mlxsw/spectrum_buffers.c |  12 +-
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c        |  15 ++
- drivers/net/ethernet/qlogic/qede/qede_main.c       |   4 +-
- drivers/net/ethernet/ti/cpsw.c                     |   3 +-
- drivers/net/macvlan.c                              |   2 +-
- drivers/net/phy/phy.c                              | 173 ++++++++++-----------
- drivers/net/phy/phy_device.c                       |  15 +-
- drivers/net/ppp/ppp_generic.c                      |  26 ++--
- drivers/net/team/team.c                            |   4 +-
- drivers/s390/net/qeth_core_main.c                  |  21 ++-
- drivers/s390/net/qeth_l2_main.c                    |   2 +-
- drivers/s390/net/qeth_l3_main.c                    |   2 +-
- drivers/soc/fsl/qbman/qman.c                       |  28 +---
- fs/sysfs/symlink.c                                 |   1 +
- include/linux/cgroup-defs.h                        |   4 +-
- include/linux/phy.h                                |   1 -
- include/linux/rhashtable.h                         |   4 +-
- include/net/sch_generic.h                          |  19 +++
- include/net/tcp.h                                  |  11 +-
- lib/rhashtable.c                                   |   4 +-
- net/core/dev.c                                     |  22 ++-
- net/core/devlink.c                                 |  16 +-
- net/core/skbuff.c                                  |   2 +-
- net/dccp/proto.c                                   |   5 +
- net/ieee802154/6lowpan/core.c                      |  12 +-
- net/ipv4/inet_fragment.c                           |   3 +
- net/ipv4/ip_sockglue.c                             |   6 +-
- net/ipv4/tcp.c                                     |   1 +
- net/ipv4/tcp_timer.c                               |   1 +
- net/ipv6/datagram.c                                |  21 ++-
- net/ipv6/ndisc.c                                   |   3 +-
- net/ipv6/seg6_iptunnel.c                           |   7 +-
- net/iucv/af_iucv.c                                 |   4 +-
- net/kcm/kcmsock.c                                  |  33 ++--
- net/l2tp/l2tp_core.c                               |   8 +-
- net/netlink/genetlink.c                            |   2 +-
- net/sched/act_tunnel_key.c                         |   1 +
- net/sched/sch_netem.c                              |   2 +-
- 44 files changed, 320 insertions(+), 235 deletions(-)
+Guenter
