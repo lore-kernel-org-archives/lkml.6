@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752247AbeC3MA0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 08:00:26 -0400
-Received: from mail-sn1nam02on0075.outbound.protection.outlook.com ([104.47.36.75]:14287
+        id S1752568AbeC3MAf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 08:00:35 -0400
+Received: from mail-sn1nam02on0083.outbound.protection.outlook.com ([104.47.36.83]:41728
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751204AbeC3MAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 08:00:21 -0400
+        id S1751204AbeC3MA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 08:00:28 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Vadim.Lomovtsev@cavium.com;
 From: Vadim Lomovtsev <Vadim.Lomovtsev@caviumnetworks.com>
@@ -15,68 +15,62 @@ To: sgoutham@cavium.com, sunil.kovvuri@gmail.com, rric@kernel.org,
         linux-kernel@vger.kernel.org, davem@davemloft.net
 Cc: dnelson@redhat.com, ynorov@caviumnetworks.com,
         Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
-Subject: [PATCH v2 0/7] net: thunderx: implement DMAC filtering support
-Date: Fri, 30 Mar 2018 04:59:46 -0700
-Message-Id: <20180330115953.17154-1-Vadim.Lomovtsev@caviumnetworks.com>
+Subject: [PATCH v2 3/7] net: thunderx: add multicast filter management support
+Date: Fri, 30 Mar 2018 04:59:49 -0700
+Message-Id: <20180330115953.17154-4-Vadim.Lomovtsev@caviumnetworks.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180327150736.10718-1-Vadim.Lomovtsev@caviumnetworks.com>
+In-Reply-To: <20180330115953.17154-1-Vadim.Lomovtsev@caviumnetworks.com>
 References: <20180327150736.10718-1-Vadim.Lomovtsev@caviumnetworks.com>
+ <20180330115953.17154-1-Vadim.Lomovtsev@caviumnetworks.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [50.233.148.156]
 X-ClientProxiedBy: CO2PR04CA0006.namprd04.prod.outlook.com
  (2603:10b6:102:1::16) To CY4PR07MB2997.namprd07.prod.outlook.com
  (2603:10b6:903:d0::11)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 17b297c4-e445-43e7-6840-08d59635ce31
+X-MS-Office365-Filtering-Correlation-Id: c0faaf57-b5c8-447f-0b27-08d59635d321
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:CY4PR07MB2997;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;3:OenmwWC/7c8oPWwx912gbHROqNAANClm5DzN8MKESh7ZN8IqCA+uAijaZR1mqYaEZonJhxKH0+I4fREsBWW0ijMuJR9JlyjB+YiPBklfmktCgadeQbvL5kqZwUDPCboe1+vZP0H5Xfju3UCHmBFXhknBiDlLfFwot+uIirE6kLvmsVQMeZhIgOW2KSUuR+BiTN3KIw6L7+9aTsvnqo5XDGToKhe9EXmnKpYFw4u5Aq9HNTRYI+Yqq7l4YdMeSjnU;25:KYPG5VgyY4v9AZPHMeGVyq3JL8JuBcRqulp2pONSRvDi+9cxPadiQVu+QJydtC20yPZYzZBZW84ytYSengbIe1FnYFLti2KXIooMwP0p0SlBt/ImSynyyJeVZoWNDYdu4Vd9iJukcaXTm3bzVZ6W7i8X1iyCYgiFAcTDzzkZophYA19mDAKs3RdXfgTJYJLALymRsf16LAjXBpA5uGvH6ZFm5mVLXGvM3JjvTmUJDPzW1yPtbA/DipWfRNahJ53h73yWxJ7vMD979TO/6RQFd4wcXP0M9E9xu8aDbIZdXoo7Pg8QUTjDVdfchWJn4BM4FQ3r4qN9JCSfEUmbhRCn3w==;31:A/YkFmhqTeiVY4R7c3xAPE9QKWrS8uspRqoLCb82mxaTNrnKiBcdaeCXHILIYuBLSTY+y/Oe9fNOUzXQK4ofrrwULHkoNDZYcNRLVcprxjjU//Irp5NqTng36qmuH1zga1F+k0ptME39GVZ1qAv1zKqOWkOH6W0EQBmD80VYBwqF+glU1iGtvwHXMokg/7Knp54RfxzBfdbakhM/aQrr4KC4NpQUe2KsBf0nzphYSHs=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;3:k2BuprhIQ2opLTHPVQBseIvRd3XpcOmpadBfxDarLmi6femMilDDcKDIrmhpgVWdNwzeuFN7gA95IvVSVAR27lFXymdkrK8kdSLgJLpROzs6ME8IhodUthd8c1N+kE0ym/AoBqIGkTmOgX3IB+KeFpXVvhgK+BuxhY2x4wWx9Jom3HClZOwVsZu9D+oNkI4xdEqxjxuoiGiEwRAWqtttJWyaQ6dgRxT4USnb0KAv8BEG+v41584e1ZILszMjKxCn;25:JqgGTsAKJSMvq7HXc5B+EFWOqrnTIRiKIxMO1wAUukSwx8FYHpkBq2MaYjBUBLzO/MbMhoJxBkr1FqqcvlReSvCa5ShDvEM4FfBtJ+WB0j6rkAbuDuyFDe2Q06mSIZCHsVzOmNtDLaWxV98233ZPWaK02LYbZApjOGeKUGdLTniYndrKJebDggIlgkl8WqovnN0vFp37JlAQS+HsyfetktL8EkCFFicksjpyDeokE3wbVug+XqpzYtjyLZbR4vcMEzyZFLmGcHXFemmnhqimmSldo/NZSTyTbNouDC6malwYPoChGSJiJoI0FabcECQJx6qWEbzBl+555awA7VWLmg==;31:x8u54wH26qbW95NZlpEWjJePCqR2bIlPpfrBkYQXj4w/1lu2Krl2qoVUqUkMPmAhfHQMA3KdNYF6jBneK2z7B/35rKPv2LSMpaioxp99/mXI7IM61v1O9wtS4WCEUL1MQkjyg7KcxqLlO+aKGd6bDN/lHEj4EkP3EEgYP0zFjojA0pvA+Ek3rY1DCVHREljCKaGt5lDaYIpW/a/tvC/YNCysWU9K6Qs5sklBP9BeqSo=
 X-MS-TrafficTypeDiagnostic: CY4PR07MB2997:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;20:T2l/3fj2xhQDIIpndGV4b8rKtRNotE97YJ/yZ8Oyi9/MvGHQL+dSHMgUUGJgmQJrMwhDfjMaCLYwQZdl9eflS0voEx2fh/pVBrkX02YosUhZ/F5w2VtxIdNSVI7gAjXNkQl8+gCfv+TdP/yeQTANu43omFNYTMtkAC8/kQdlHT2xmvN5DxUfJ/NsQM5sbEsiOtR7SWx5TBcKztFW19bc1xWXXir8yE5zJyUT/GQ8nNOteKekX1R/ax3kTPQw5YnZmTMNHHM6CokGDLvDYD1GCYWhNlhNFMuegG7ToantXUwXFWJZLMktaSAsC5KWGrunUulvqEOgPw5hpo4ANCD++B12GbNxjGX1VELJ+Ai1119M9KJcETx4N+KKxz268fA9dIE2DSQQaVBkCBc8GQCmPUaWqsH7YaE1HcD8gM3JYxP8Gsa7cOId3D4vF5qRLQ57lwxdS8WfHyNl/JvRHg8ktMwdl2pHs0I4KnBYrPBYo/D+Wnoi0VlLoL0HhWj0MuG3dA05kdcNyWdri4njvx9DdXTdY/PLhHlFySwiPz6q03lEyGb4HVgNWIHmmnC/1qOZwamNo8TUJbjyNRlTtdxTr/AMiynaNVWdl7vix4PRA1g=;4:ayyn3gqxj/g+kquIDB+S4hv2t5i53YS4CItWD7nqtskdNdopzyx0cbpw7VNL+eVEK92s0B6KWHaCRUbH304+u4wnQGBxn14CZe/3FNe75wL7k89hdGIRKBUt+TJZfG7uvKhZBRuvbnvQGmpXvUvZGsKQ/kaI+Gh2JH6z2yam5xmApVfbybmCPP8dRYIa7NzJVs/fXkGsA4p27Hcbva4NGuHUe8y6JkWEriUAigemPeBAahygfhQJdlY3OcAkOce6Ph3r+UBkIV+mwcN4ekcQpw==
-X-Microsoft-Antispam-PRVS: <CY4PR07MB29972E9509AAE3FD9B1164D58AA10@CY4PR07MB2997.namprd07.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;20:i9YcRoXOT1UiGyNDnmnxMiGHMdE2s3hdIhq/qAWHpfl5R2xvydivMYwJ1nU4SBP9ijnM8yqhZqlF1248Gk/+H9W/957JQ7FD22vhGEef5qmcy5J+aZrlh84rBU7nhoqxryCAy4aD2G1I8jLcbn2X7MX0DUjUVZGRDq4txyk3ckcQ9iy6NcRekPeb49Fm7L25adU5J2jCkOyWBeO/yTbRZnrTVnnQA3pgmPHbirCAbJMGf5mNgUx0Z/0PgOkAB8xLjhCYav6aHIbqDue3+oj8p++MArQj66HrcJ9R/jbbi0mcEvxOGCM41hpyrNwtjFWbXeZJqjxg5Muvh/AJ0TRm/Pmdi452Exl3Wd0Evxnxc9pgb9ZAT7yUOAvq06FbvkQxsicUOSqQHXksCz6r5wdqrujytYd6aXeQ3hAE9S4h9qJBQm5kSDmXIe+Y4mKvxpb2Fq35sCBP96wmGo/zj8i8vmKYcl7jILkP//pvNHJOEo2o2qJZJM+azAcKbpZdO/wlHRQjK5sGu9IifZgHqLFbkMNkqWT/m9dUb8ABt1Rfn7euSdiNQsDFSmBP590Mp78Tq/w4Jjcrf2+KRtFTAM07KysyH+DDRz411X4oDKKxk4s=;4:ESpxPgrOOpbQj0FQxK4gEGlYgR6Zaebxby3pN1G8cCuVVlv1wmbhajZKkIRt123jjqRZ29BCKHYo1mnFwdcvC4K4YZh+u6TcjzRFjgGhNmKwU/3L/ZOaaSHeQmc3VHAb1kv3xjbrgm3svhrd5GZibcCpa8oxxV19W2xyzcDC2XCwiGWvUnsHK+NDUSM8i6YA+xrQ+lwUL4HkZV2Xo1Ystk4thAa7mzlqBEtAzBzDQXjynJuNIjWjYANGvBjgKLrA/Y9VRUeuZPJxlDmEuvn6mA==
+X-Microsoft-Antispam-PRVS: <CY4PR07MB29973DC2BF371CD557CA1ECA8AA10@CY4PR07MB2997.namprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:CY4PR07MB2997;BCL:0;PCL:0;RULEID:;SRVR:CY4PR07MB2997;
 X-Forefront-PRVS: 06274D1C43
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(39380400002)(346002)(366004)(39850400004)(189003)(199004)(3846002)(6116002)(1076002)(105586002)(81156014)(81166006)(8676002)(50466002)(53416004)(5660300001)(52116002)(97736004)(23676004)(6506007)(8936002)(59450400001)(76176011)(386003)(69596002)(2906002)(6486002)(6512007)(72206003)(39060400002)(6666003)(47776003)(316002)(7736002)(106356001)(486005)(486005)(476003)(107886003)(446003)(305945005)(53936002)(11346002)(2616005)(66066001)(16526019)(956004)(478600001)(68736007)(36756003)(50226002)(26005)(4326008)(2870700001)(42882007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB2997;H:localhost.localdomain.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjA3TUIyOTk3OzIzOmpBaXVYZHN5Y0RNaWwyOW9oYS8rRXM4SUhG?=
- =?utf-8?B?ZlptTHBnVDJGR1FEalBoVTdMcUpWM005M2dzTTFCdFI1Qm9FdWtIZ3ZZRWZH?=
- =?utf-8?B?M2tMeDRFUDYxR0ZpYk1Fc09Udk5WMmlQUEFoZlVoamhhQ0lpVTRuR0hOR25Y?=
- =?utf-8?B?WTdic3B5MmtlVTNXbHNOV2Q3RDdacmhFb0R0bzZYVkJTcG9vNk1XemN6NW5D?=
- =?utf-8?B?MXFvekRBMzhJWmJUN0huWDR6V211UHdsa0c2MmVIMG5NUE9jdnlyVzVXNkd0?=
- =?utf-8?B?MUhJU1QwSTN6WWRabmRnZ0Z4eDVVTUlNWkR2VHNPYVRnSFJNWmlPZHhzYVI3?=
- =?utf-8?B?N2FvdEI5ZGtvNTdORVF6dThnRWZGb1ZaelNlL3hTYmVmd1dIRHd4Ty91aWNm?=
- =?utf-8?B?NHRhaFNqQlA2aDMwZTB5MlE2WFNacXk5TVN1SWhKQzlrSi9CSzJ5eW14VjVP?=
- =?utf-8?B?NEp4YU51aVM4K21Nck1lemhRV1d6QVdGNHJTWnFDWXJ2eE1uYnpYVU9sTHpy?=
- =?utf-8?B?Zld5bFF2RVlwb2tjcDIweVFLc2doamppNkV0YWJHOXB4czJFNis5b0h2N0pr?=
- =?utf-8?B?am1KT0pvVGd3U0V1cjNoSmxqY1l1ZXpUN1BLdURUWS9udWUyVHhTZmhlbHdu?=
- =?utf-8?B?NzNWWFl4am1KUHhsemt0NjNBcTVXd00wdEFYUXUyM0RUS25VWmlBb3gyLzRu?=
- =?utf-8?B?U1FxNm1VZ2IrUUF6VTVqRWdNOGVUSytwVXlHK1RTQ3paWTI1d2o0Uy85dXBv?=
- =?utf-8?B?N3AxeVNPVEZDSG40R1dqNi9lMW5NYXcwaTkwanNVS3ZySmswYUIvSFBENTly?=
- =?utf-8?B?RnZCV2t2enBwdmxiYzJ2RDhIRnhUQ1NpRncwcThhK2NJUnQxR0tuTmxFY1ll?=
- =?utf-8?B?YjgzNURBQzRSSEVyaUZsV1M0SFVlbk9yTG5OcXJpcnNTSFZzdUY4NlRxME5U?=
- =?utf-8?B?b2FsUGNQNkl3VVpPQW5DWm9oajlBcG0rRW5lVG9UeDdjSEs4YVNPWmFyR0ZM?=
- =?utf-8?B?K25WeXBpNEQ3VkFoYkhNWFlRVTgxR1M1c0pYUXF2dnFXWXJDZi91Qzl1Nmt1?=
- =?utf-8?B?WStDTk14bFJod1lQZGdSUDBZQVM2Z0JZSzMrZ2VISEdpMnFoRWZMLzEzbmQ3?=
- =?utf-8?B?Uno2amJJd2pXVWx6L3BIR0F5cXF1eTBPb3JhbVMxMnRreWV4eDFHbCtjbC9w?=
- =?utf-8?B?QjU3bUVRRHkrRS90aS9uandEekJ1SHRQVXhyT3hsWmtyWUl5ZE1VRnNtWjhO?=
- =?utf-8?B?dkVJd0xpZnFSUEVkTnZpYUp0UnZ2QzErbWxXRzRCRVdkb2hlT3BCZFNNWEFB?=
- =?utf-8?B?WWoxUVlrTmVyOXdZVlEwT1dxNWJCdzlvUHQwdGVUb3lpQ3Z3dmcvL09xaElr?=
- =?utf-8?B?dGpMSkx6dHFIUTQzYXdaQzBhMml5Q0dFNHFpWXVxeGhBVDFCb0FyWURKMFF4?=
- =?utf-8?B?UDVmWHY0U2JtL0ljWU9oUHBsaUpBVnFXY1UxejczclVWcWhyUUp6NnhJM0Yv?=
- =?utf-8?B?SFB4QkNqS0MwSm5Vcjc1N3dIcXB4N08wTW10c3B6SDlnd3VlU1Y2WFJiRVZF?=
- =?utf-8?B?VmRlb2ZnZnJ3aVFvaWgvcXdSbGE1eENLcllUbnBEVW51N01FdEY1R3pma1dq?=
- =?utf-8?B?Vk9BMjV1akMrckQ5ZnJlS1dGYzRtcWQ5cm1sNjBud25YOHJsK1pmZ3hpMXpn?=
- =?utf-8?B?YjdLa1BSOTRDVnp5dktkb2V2WFJhWVJ1cW9ValY4QnJ6RU4vQU1XVXZrTWpI?=
- =?utf-8?Q?ZaEDRm6sjWpaUymw/wG3BNwjTxgbbizFGURqM=3D?=
-X-Microsoft-Antispam-Message-Info: BWv8BedApKV/a515QGw//reC9JIv85Urkx/iQLWuMzPRvJXBApb5eHDZoqzN+pURKQCP1V2x4Rzv1d3bzjy+BULuMRViAzU9HEa1VRry5qrS/bjubXh67hPRoVQg1sBhKk5bGkftjewM3QKpZCNXn/G912DDhc5hWiFO99AUCFJ61gYiXTdteHEvY5cYHCcC
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;6:UVN5wwMdFl9xS8V5YWlDtZa2Iz1JGnzXR4V+WfQJECyOjIMXQMhLJged4PiZ/COjrunMFeRggNXzNqEYDKygWDLEgYBrXmglS/Xb92HEGzHOinDbfhoZCyVQ/UVCUQAhBWEb8E0CpbClgzxd9LfOynGcTc/tYGeyske+snBuZvwZ71SuigZV2pxBmIk/9dKCjtkgjL2TGfW/32wkN+v2+1z4bfuOCobDiqQVUa6KB7TjOowOs0WRq4dYj21wV0dtpPn21Tu1wY+AYWeDhD097k0+G+NRaA7GOAFqwr2jo9zhpTdIgZwEW9Jms0M4xKp3xD1iGQ/5kT1b+657J6gDv936grNOW3yIws9tda5J8zIK0HNcfO0kiPAeBkiBYLoLK3ldG+1BM75KRivcA60ZPMnOV68K1ojFYmrN2MSA9qknoeV9WbEywUM0yaxPsRp0Zuj3IOIVufQLuB30Mjy0yg==;5:/zpt74XX6ztN/gLr2Yl6sdn4EEly+EpfZw45fSkIjKHmfdjvWgX1Hr109A+wo7GsL3SqyAVEov3y7lYlcbG50UHJtPhgZlPM++DcrqRBaapD2IzRsgBAkeGUX2Gw1Lj4TzADciZUB9cQoxgtSZIonutr7iNyYUmLTrbh/qJFRiE=;24:paza5qLfk6G1r3dQt9Ch4qeSidKKxaW1agZybtw5xt6EfSlU/lGbCeQKRLmXdCaV6kndFMCmEFgag3ZwLbxMP1o6RTDblszsRexI/goIUrE=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(396003)(376002)(39380400002)(346002)(366004)(39850400004)(189003)(199004)(3846002)(6116002)(1076002)(105586002)(81156014)(81166006)(8676002)(48376002)(50466002)(53416004)(5660300001)(52116002)(97736004)(51416003)(6506007)(8936002)(59450400001)(76176011)(386003)(69596002)(2906002)(6486002)(6512007)(72206003)(39060400002)(6666003)(47776003)(316002)(7736002)(16586007)(106356001)(486005)(486005)(476003)(107886003)(446003)(305945005)(53936002)(11346002)(2616005)(66066001)(16526019)(956004)(478600001)(68736007)(36756003)(50226002)(26005)(4326008)(42882007)(5890100001)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB2997;H:localhost.localdomain.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR07MB2997;23:FcbF3ATpGdn8MEHheZXhgaGmb7PjqDsIaH4BImYi3?=
+ =?us-ascii?Q?O3HygO4i9pIraTJdj+qWOOpMHHY3N2Fp0DcANARNVdKtD/Q9wGS5WfPJ6842?=
+ =?us-ascii?Q?nsISWOPDgAbq1jsXvsLGg/sfWIbqSdIiNiJ1tXFzcK5/8evhJl2dohnn4Ewt?=
+ =?us-ascii?Q?KWLIxsXKBw4ecaWs5MXMgf+mNT88zGc9cX6QmbaucW3n4zU/cP88z0VHCXLA?=
+ =?us-ascii?Q?fdoYmcyS04X6Df4tJXkRSZ/OV99tC2Y2d+xcZqk1TEeHzO9RGSfchDgRDG1k?=
+ =?us-ascii?Q?/CSOsWegievtv1fVnfh2/JOi+pPMWlSce9V2T9M6BjkPr7hIf0HOaaGQK3b+?=
+ =?us-ascii?Q?Jkb/OgVS6x7P62LgWnK1EwLchOZmhVTjPhkMPA7QRSEIUf6518KGih8ku3je?=
+ =?us-ascii?Q?eueoB6Ror66rHmIyNc4z2lQ5nuIXEG0U7jMKgW50AI3uP/7vIbjzm+VKzBvt?=
+ =?us-ascii?Q?OVlQsKLQt72YivZ9LzEKWFM43AS2Th0o/RH8CaxJ0sc7uG/jvcz/Yf6au664?=
+ =?us-ascii?Q?VopIcx3lzBdrbVIHF760WW2SSfwzSZ/1ue9Ya5Ph+yE0bSl3+pUgRy3wZlaR?=
+ =?us-ascii?Q?DvAiwCozwHD4oG0sPeCyP3mv/RIAbKNrtflv+QA5LPqW3wraxQERmsXCAWdY?=
+ =?us-ascii?Q?AEWZgnt4QRIKuQ7Zmmeo0ySk/E2R8CgdDHHS1PAH3c57Vra5YPnGVfaiRusd?=
+ =?us-ascii?Q?YAg2DZ0UsAqxOmTq5wUSi0/VM87ULd7bIXXIs+aw7PyhwLx+AyZp/GW9XqbO?=
+ =?us-ascii?Q?DvpZUbZdW7aqwMlukqmt+Cca3/NfE6rIoeGFFxYSwO7rWQxC9w52AQTbNmal?=
+ =?us-ascii?Q?Azjk8XaQmV+qoe4rHy99F8d7VioixLc+fMli7MakiKREgc/BTLmxfnFR7E8n?=
+ =?us-ascii?Q?BxTCxlxTHBvqsdwfFB8pearUv9q1p3xkWi+Ho+Ev8PHbqlhlT0fkm05fNSVB?=
+ =?us-ascii?Q?mshaGj71M387u0xHcHy8eorvj78N4W1L2GUlE0DdMkYvSz5h7/lmCfSIvY56?=
+ =?us-ascii?Q?HaXfpCy/w9xBFG+7VjxQ/QKJV1crRmj4BCgrYQc70zGiwZjMHY866zND6xx2?=
+ =?us-ascii?Q?sSwKcXG5ANBzkgAHIz4kodHxN4iulUqIAkCCFiAWAH/ZodWAQqdGqRwBuBPS?=
+ =?us-ascii?Q?BR2BMaKH6T2yxBJ+jbMrMG8nD6mTCe6EMPAT7dhlnYzctddXzfmHIEPfmOfm?=
+ =?us-ascii?Q?zVn592yp7yDHfrwHHktl3qpQyBYDhtlTG2IDvKJShgbc6tj5fRK3ZqD4PjbJ?=
+ =?us-ascii?Q?3S8hN4x9o1hay8U1VMsPLhtHdxEcmOqiXnjpd9WQlgVQQt8z8NPfFjaUAiG8?=
+ =?us-ascii?Q?OCS9MwQxM9uK7vulVe4PADlMBnYRy+ZJllyuFMSM5AHl79Nq81qd7YMqFSgW?=
+ =?us-ascii?Q?p8jOw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: dXK8Frum9rNYY/5pdHSkJB0HCHrynHcXHNMnhqhkP1Aq8IZLNl2tc72IJF+sxin8U+rZQLo3AVWmjwWju3hsZ+ODcXm/MvIAJXNraipStKVVKH2Ms64rEBAif7Af3QNCWm4bn9d2B4Neymcr261TLsTuCWHakhTDjgCC892Tr354KEREdC3qRuc5H1rbD06K
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;6:uFYY8ViWA0aWTVT1RnUEjPUWxNf2Brr8RQmfZ5uCPZl1bvSvlKy1XgZpwe61kuUyjMtzZvsDN8ivbhTmoW4eDsA7OQW6YGkHEbG8GEbphYRnf8h8ETXaV/XHmp741USRjLC3WzhllFoqddB5TDZrgcWH7UFP7P+rjhccHb60MUNw9ySm6Zk/UtD/pt+W/ZxduNQ2IndMB7rkcsi+AJHXQjLRBvn5cG7oeD+S3PKvMftQthP0lbC+Onw5/LB3/r671FiwWMKWENKKcRsprri79RZL6Fs2MnutCgljbzs3YJO6IHd6JDLE9QR0YgxO0EI0AI13DTzwbk6P2EfqlPlxFWG9xaTEFwbPjFPYBWgMfIr7TuQC2kD6UjIxBBCJxpTwpYIBNEEvcd3Y9zmRDi5f0PxYQXGg55zpmy4vsR1B+RpshKfiu846XOZZFkSXDQoHnJAFCX2GC33Zl86bYNNu4Q==;5:89EDHJix2baTxHfwqpw45hLiAvJNC+8dwWH9cgZHoJe23J9nt23BuX+4lXBKkyv1lxTWuSP7hLxgNBfhORFMqrswLYbzwznw/w+GvRFqS9wnPdvRlEjky7Hxijn6hSCfNcen9AFJXFdDN440OfwCd7OoI/g2Gpva9JMuYS7v+gg=;24:USjW79koFnNk07E5tWU/sEucPgOFz2+X6dD47huqp9OtOIeYPZyl9TtbEQeAvj35iUFC+4tFoTccvYIYEsUrP/NNOnkMHhZTo1eSShiKnqA=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;7:etFqY79dBUsIY5yEJ+7PsEh5Y7JoPY58W0KzezJVk8skTZLixpYUWijCuwSjaf5M+SOohjlRfv131SUUD7PInDtoY8kfTD4dq22xzIqXH7VHvJ8ec9GLLB+lHg2X0OvcwKpTZSEZOQvHs6zd4bQLcmo2IvdjtE/2V7iMiVq0vwY4uzT40qXWJ8e+BX/igW7EbNw9FF5XvK/F7T3S1nXD8GVhTzB6015qBxcKidv4dPkw9UJ9ea/HVxy40By1EqfM
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB2997;7:9i2A01NVGGhwcpMtWFTp3c9lYgHYdD43Fy8GcFwTE3Z0eORKqlab9boiqfFnKi6C28hvYoMtWShN0ww2n76m5bTG7UixDsEdc2Qe8W0UP1vYsFdascpr3Y1Y1fUUmxtO4lPf0fcRR5FYmfAKMu7gvzW9IcM7wzRntcNoI2xJSiMmlQwQyzOgmniEzgByesCrlTnYmM0mxLG3dQ8w28uVxRhBO0Yz3ybJYq5qWHoso49ZP+Wk70VFSs4UGdUZAXf5
 X-OriginatorOrg: caviumnetworks.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2018 12:00:17.3789 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17b297c4-e445-43e7-6840-08d59635ce31
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2018 12:00:25.6603 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0faaf57-b5c8-447f-0b27-08d59635d321
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR07MB2997
@@ -86,37 +80,209 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
 
-By default CN88XX BGX accepts all incoming multicast and broadcast
-packets and filtering is disabled. The nic driver doesn't provide
-an ability to change such behaviour.
+The ThunderX NIC could be partitioned to up to 128 VFs and thus
+represented to system. Each VF is mapped to pair BGX:LMAC, and each of VF
+is configured by kernel individually. Eventually the bunch of VFs could be
+mapped onto same pair BGX:LMAC and thus could cause several multicast
+filtering configuration requests to LMAC with the same MAC addresses.
 
-This series is to implement DMAC filtering management for CN88XX
-nic driver allowing user to enable/disable filtering and configure
-specific MAC addresses to filter traffic.
+This commit is to add ThunderX NIC BGX filtering manipulation routines.
 
-Changes from v1:
-build issues:
- - update code in order to address compiler warnings;
-checkpatch.pl reported issues:
- - update code in order to fit 80 symbols length;
- - update commit descriptions in order to fit 80 symbols length;
+Signed-off-by: Vadim Lomovtsev <Vadim.Lomovtsev@cavium.com>
+---
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 144 ++++++++++++++++++++++
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.h |  10 +-
+ 2 files changed, 153 insertions(+), 1 deletion(-)
 
-Vadim Lomovtsev (7):
-  net: thunderx: move filter register related macro into proper place
-  net: thunderx: add MAC address filter tracking for LMAC
-  net: thunderx: add multicast filter management support
-  net: thunderx: add new messages for handle ndo_set_rx_mode callback
-  net: thunderx: add XCAST messages handlers for PF
-  net: thunderx: add workqueue control structures for handle
-    ndo_set_rx_mode request
-  net: thunderx: add ndo_set_rx_mode callback implementation for VF
-
- drivers/net/ethernet/cavium/thunder/nic.h         |  29 ++++
- drivers/net/ethernet/cavium/thunder/nic_main.c    |  45 ++++-
- drivers/net/ethernet/cavium/thunder/nicvf_main.c  | 110 +++++++++++-
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 201 ++++++++++++++++++++--
- drivers/net/ethernet/cavium/thunder/thunder_bgx.h |  19 +-
- 5 files changed, 374 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+index de90e6aa5a4f..5d08d2aeb172 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+@@ -258,6 +258,150 @@ static void bgx_flush_dmac_cam_filter(struct bgx *bgx, int lmacid)
+ 			      sizeof(u64), 0);
+ }
+ 
++static void bgx_lmac_remove_filters(struct lmac *lmac, u8 vf_id)
++{
++	int i = 0;
++
++	if (!lmac)
++		return;
++
++	/* We've got reset filters request from some of attached VF, while the
++	 * others might want to keep their configuration. So in this case lets
++	 * iterate over all of configured filters and decrease number of
++	 * referencies. if some addresses get zero refs remove them from list
++	 */
++	for (i = lmac->dmacs_cfg - 1; i >= 0; i--) {
++		lmac->dmacs[i].vf_map &= ~BIT_ULL(vf_id);
++		if (!lmac->dmacs[i].vf_map) {
++			lmac->dmacs_cfg--;
++			lmac->dmacs[i].dmac = 0;
++			lmac->dmacs[i].vf_map = 0;
++		}
++	}
++}
++
++static int bgx_lmac_save_filter(struct lmac *lmac, u64 dmac, u8 vf_id)
++{
++	u8 i = 0;
++
++	if (!lmac)
++		return -1;
++
++	/* At the same time we could have several VFs 'attached' to some
++	 * particular LMAC, and each VF is represented as network interface
++	 * for kernel. So from user perspective it should be possible to
++	 * manipulate with its' (VF) receive modes. However from PF
++	 * driver perspective we need to keep track of filter configurations
++	 * for different VFs to prevent filter values dupes
++	 */
++	for (i = 0; i < lmac->dmacs_cfg; i++) {
++		if (lmac->dmacs[i].dmac == dmac) {
++			lmac->dmacs[i].vf_map |= BIT_ULL(vf_id);
++			return -1;
++		}
++	}
++
++	if (!(lmac->dmacs_cfg < lmac->dmacs_count))
++		return -1;
++
++	/* keep it for further tracking */
++	lmac->dmacs[lmac->dmacs_cfg].dmac = dmac;
++	lmac->dmacs[lmac->dmacs_cfg].vf_map = BIT_ULL(vf_id);
++	lmac->dmacs_cfg++;
++	return 0;
++}
++
++static int bgx_set_dmac_cam_filter_mac(struct bgx *bgx, int lmacid,
++				       u64 cam_dmac, u8 idx)
++{
++	struct lmac *lmac = NULL;
++	u64 cfg = 0;
++
++	/* skip zero addresses as meaningless */
++	if (!cam_dmac || !bgx)
++		return -1;
++
++	lmac = &bgx->lmac[lmacid];
++
++	/* configure DCAM filtering for designated LMAC */
++	cfg = RX_DMACX_CAM_LMACID(lmacid & LMAC_ID_MASK) |
++		RX_DMACX_CAM_EN | cam_dmac;
++	bgx_reg_write(bgx, 0, BGX_CMR_RX_DMACX_CAM +
++		      ((lmacid * lmac->dmacs_count) + idx) * sizeof(u64), cfg);
++	return 0;
++}
++
++void bgx_set_dmac_cam_filter(int node, int bgx_idx, int lmacid,
++			     u64 cam_dmac, u8 vf_id)
++{
++	struct bgx *bgx = get_bgx(node, bgx_idx);
++	struct lmac *lmac = NULL;
++
++	if (!bgx)
++		return;
++
++	lmac = &bgx->lmac[lmacid];
++
++	if (!cam_dmac)
++		cam_dmac = ether_addr_to_u64(lmac->mac);
++
++	/* since we might have several VFs attached to particular LMAC
++	 * and kernel could call mcast config for each of them with the
++	 * same MAC, check if requested MAC is already in filtering list and
++	 * updare/prepare list of MACs to be applied later to HW filters
++	 */
++	bgx_lmac_save_filter(lmac, cam_dmac, vf_id);
++}
++EXPORT_SYMBOL(bgx_set_dmac_cam_filter);
++
++void bgx_set_xcast_mode(int node, int bgx_idx, int lmacid, u8 mode)
++{
++	struct bgx *bgx = get_bgx(node, bgx_idx);
++	struct lmac *lmac = NULL;
++	u64 cfg = 0;
++	u8 i = 0;
++
++	if (!bgx)
++		return;
++
++	lmac = &bgx->lmac[lmacid];
++
++	cfg = bgx_reg_read(bgx, lmacid, BGX_CMRX_RX_DMAC_CTL);
++	if (mode & BGX_XCAST_BCAST_ACCEPT)
++		cfg |= BCAST_ACCEPT;
++	else
++		cfg &= ~BCAST_ACCEPT;
++
++	/* disable all MCASTs and DMAC filtering */
++	cfg &= ~(CAM_ACCEPT | BGX_MCAST_MODE(MCAST_MODE_MASK));
++
++	/* check requested bits and set filtergin mode appropriately */
++	if (mode & (BGX_XCAST_MCAST_ACCEPT)) {
++		cfg |= (BGX_MCAST_MODE(MCAST_MODE_ACCEPT));
++	} else if (mode & BGX_XCAST_MCAST_FILTER) {
++		cfg |= (BGX_MCAST_MODE(MCAST_MODE_CAM_FILTER) | CAM_ACCEPT);
++		for (i = 0; i < lmac->dmacs_cfg; i++)
++			bgx_set_dmac_cam_filter_mac(bgx, lmacid,
++						    lmac->dmacs[i].dmac, i);
++	}
++	bgx_reg_write(bgx, lmacid, BGX_CMRX_RX_DMAC_CTL, cfg);
++}
++EXPORT_SYMBOL(bgx_set_xcast_mode);
++
++void bgx_reset_xcast_mode(int node, int bgx_idx, int lmacid, u8 vf_id)
++{
++	struct bgx *bgx = get_bgx(node, bgx_idx);
++
++	if (!bgx)
++		return;
++
++	bgx_lmac_remove_filters(&bgx->lmac[lmacid], vf_id);
++	bgx_flush_dmac_cam_filter(bgx, lmacid);
++	bgx_set_xcast_mode(node, bgx_idx, lmacid,
++			   (BGX_XCAST_BCAST_ACCEPT | BGX_XCAST_MCAST_ACCEPT));
++}
++EXPORT_SYMBOL(bgx_reset_xcast_mode);
++
+ void bgx_lmac_rx_tx_enable(int node, int bgx_idx, int lmacid, bool enable)
+ {
+ 	struct bgx *bgx = get_bgx(node, bgx_idx);
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.h b/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
+index 52439da62c97..cbdd20b9ee6f 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.h
+@@ -30,6 +30,7 @@
+ #define    DEFAULT_PAUSE_TIME			0xFFFF
+ 
+ #define	   BGX_ID_MASK				0x3
++#define	   LMAC_ID_MASK				0x3
+ 
+ #define    MAX_DMAC_PER_LMAC_TNS_BYPASS_MODE	2
+ 
+@@ -57,7 +58,7 @@
+ #define BGX_CMRX_RX_FIFO_LEN		0x108
+ #define BGX_CMR_RX_DMACX_CAM		0x200
+ #define  RX_DMACX_CAM_EN			BIT_ULL(48)
+-#define  RX_DMACX_CAM_LMACID(x)			(x << 49)
++#define  RX_DMACX_CAM_LMACID(x)			(((u64)x) << 49)
+ #define  RX_DMAC_COUNT				32
+ #define BGX_CMR_RX_STREERING		0x300
+ #define  RX_TRAFFIC_STEER_RULE_COUNT		8
+@@ -205,6 +206,13 @@
+ #define LMAC_INTR_LINK_UP	BIT(0)
+ #define LMAC_INTR_LINK_DOWN	BIT(1)
+ 
++#define BGX_XCAST_BCAST_ACCEPT  BIT(0)
++#define BGX_XCAST_MCAST_ACCEPT  BIT(1)
++#define BGX_XCAST_MCAST_FILTER  BIT(2)
++
++void bgx_set_dmac_cam_filter(int node, int bgx_idx, int lmacid, u64 mac, u8 vf);
++void bgx_reset_xcast_mode(int node, int bgx_idx, int lmacid, u8 vf);
++void bgx_set_xcast_mode(int node, int bgx_idx, int lmacid, u8 mode);
+ void octeon_mdiobus_force_mod_depencency(void);
+ void bgx_lmac_rx_tx_enable(int node, int bgx_idx, int lmacid, bool enable);
+ void bgx_add_dmac_addr(u64 dmac, int node, int bgx_idx, int lmac);
 -- 
 2.14.3
