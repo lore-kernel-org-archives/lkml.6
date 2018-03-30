@@ -1,77 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeC3Uh1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 16:37:27 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35641 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752206AbeC3Uh0 (ORCPT
+        id S1752796AbeC3Uqs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 16:46:48 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53978 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752571AbeC3Uqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 16:37:26 -0400
-X-Google-Smtp-Source: AIpwx4/Gbv44clm4W/iCg58fjTIuttNMR8uqwoFG9StIb6Gxv3JcFJUD+YshUjsEVH7povjXEZI9rCf/kRedBw9AlLM=
+        Fri, 30 Mar 2018 16:46:47 -0400
+Date: Fri, 30 Mar 2018 22:46:44 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Tony Lindgren <tony@atomide.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180330204644.GA1804@amd>
+References: <20180329135904.GN5700@atomide.com>
+ <20180329154600.qhels5fqzzg364gj@earth.universe>
+ <20180329163716.GA20743@amd>
+ <20180329164113.GR5700@atomide.com>
+ <20180329184007.GA27688@amd>
+ <20180329215612.GS5700@atomide.com>
+ <20180330103744.GA17404@amd>
+ <a2a7a65c-1794-66c7-0f69-5919d32665fb@wizzup.org>
+ <20180330175050.GA26571@amd>
+ <20180330180151.GA27494@amd>
 MIME-Version: 1.0
-In-Reply-To: <20180330151037.30d2ac6d@gandalf.local.home>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
- <20180330102038.2378925b@gandalf.local.home> <CAJWu+ooMPz_nFtULMXp6CnLvM8JFJrSnBGNgPHXKs1k97FQU5Q@mail.gmail.com>
- <20180330151037.30d2ac6d@gandalf.local.home>
-From: Joel Fernandes <joelaf@google.com>
-Date: Fri, 30 Mar 2018 13:37:24 -0700
-Message-ID: <CAJWu+ooihz7KJG6Av2THBda2mUd=u-zsNVeB4V7XrQNSwxaHNA@mail.gmail.com>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Content-Disposition: inline
+In-Reply-To: <20180330180151.GA27494@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
 
-On Fri, Mar 30, 2018 at 12:10 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-[..]
->> > I wonder if I should have the ring buffer allocate groups of pages, to
->> > avoid this. Or try to allocate with NORETRY, one page at a time, and
->> > when that fails, allocate groups of pages with RETRY_MAYFAIL, and that
->> > may keep it from causing an OOM?
->> >
->>
->> I don't see immediately how that can prevent an OOM in other
->> applications here? If ftrace allocates lots of memory with
->> RETRY_MAYFAIL, then we would still OOM in other applications if memory
->> isn't available. Sorry if I missed something.
->
-> Here's the idea.
->
-> Allocate one page at a time with NORETRY. If that fails, then allocate
-> larger amounts (higher order of pages) with RETRY_MAYFAIL. Then if it
-> can't get all the memory it needs, it wont take up all memory in the
-> system before it finds out that it can't have any more.
->
-> Or perhaps the memory management system can provide a
-> get_available_mem() function that ftrace could call before it tries to
-> increase the ring buffer and take up all the memory of the system
-> before it realizes that it can't get all the memory it wants.
->
-> The main problem I have with Zhaoyang's patch is that
-> get_available_mem() does not belong in the tracing code. It should be
-> something that the mm subsystem provides.
->
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cool. Personally I like the getting of available memory solution and
-use that, since its simpler.
+Hi!
 
-MM already provides it through si_mem_available since the commit
-"mm/page_alloc.c: calculate 'available' memory in a separate function"
-(sha d02bd27b). Maybe we could just use that?
+> > > Would you mind sharing those hacks - I would like to play around with
+> > > ofonod as well. Maybe I can help with a way forward.
+> >=20
+> > Okay. Here's less hacky version of the hack, but still using AT
+> > commands. You still need to set up udev, as described in the other
+> > mail.
+> >=20
+> > And... it seems I can have a qmi connection, too, but that's topic for
+> > other email.
+>=20
+> This, applied on top of previous patch, gives me some kind of qmi
+> connection, AFAICT. I can enable/online a modem, but nothing else
+> works.
+>=20
+> LocationReporting is advertised but does not work. dial-number does
+> not work either. But from list-modems, it looks like some kind of
+> communication works...
 
-MemAvailable was initially added in commit "/proc/meminfo: provide
-estimated available memory" (sha 34e431b0ae39)
+Ok, strange.
 
-thanks,
+So there's ofonod in the maemo-leste already.
 
-- Joel
+user@devuan:~$ /usr/sbin/ofonod -v
+1.22
+
+=2E..and it seems to somehow work with the droid 4, in default
+configuration, thinking it is "Gobi" modem.=20
+
+user@devuan:/my/ofono$ sudo python2 test/list-modems
+[ /gobi_0 ]
+    Features =3D sms net rat ussd sim gps
+        Emergency =3D 0
+	    Powered =3D 1
+	        Lockdown =3D 0
+		    Interfaces =3D org.ofono.SmartMessaging
+		    org.ofono.PushNotification
+		    org.ofono.MessageManager
+		    org.ofono.NetworkRegistration
+		    org.ofono.RadioSettings
+		    org.ofono.SupplementaryServices
+		    org.ofono.NetworkMonitor org.ofono.MessageWaiting
+		    org.ofono.AllowedAccessPoints org.ofono.SimManager
+		    org.ofono.LocationReporting
+		    org.ofono.VoiceCallManager
+		        Online =3D 1
+			    Model =3D 196
+			        Revision =3D M6600A-SCAUHSZ-3.1.3310T  1
+				[Jun 09 2011 17:00:00]
+				    Type =3D hardware
+=2E..
+
+=2E.. and it seems to kind-of work. Even incoming SMSes work, which I
+could not get to work in AT mode. Otoh, voice calls do not, so...
+
+Confused,
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq+ojQACgkQMOfwapXb+vKtTQCdHy9xyOIrDEAF8CvzuUqzmHei
+wuwAoLQnAXPZn3vJuz54lusymybIVXmI
+=uQ/Y
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
