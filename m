@@ -1,79 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753343AbeC3VRd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:17:33 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54740 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753167AbeC3VRb (ORCPT
+        id S1753007AbeC3VTD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:19:03 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752753AbeC3VTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:17:31 -0400
-Date: Fri, 30 Mar 2018 23:17:29 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Tony Lindgren <tony@atomide.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
-Subject: Re: 4.16-rc5 on Motorola Droid 4
-Message-ID: <20180330211729.GA3389@amd>
-References: <20180318220418.GA22880@amd>
- <20180320140322.GU5799@atomide.com>
- <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
- <20180327212156.GA10834@amd>
- <20180330121959.uxx6kcl7v5w777vq@earth.universe>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Content-Disposition: inline
-In-Reply-To: <20180330121959.uxx6kcl7v5w777vq@earth.universe>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 30 Mar 2018 17:19:02 -0400
+From: "Rodrigo R. Galvao" <rosattig@linux.vnet.ibm.com>
+Cc: hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, rosattig@linux.vnet.ibm.com
+Subject: [PATCH] nvmet: fix nvmet_execute_write_zeroes function
+Date: Fri, 30 Mar 2018 18:18:50 -0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18033021-0024-0000-0000-00001827E5E2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008773; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000255; SDB=6.01010755; UDB=6.00515008; IPR=6.00790033;
+ MB=3.00020336; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-30 21:18:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18033021-0025-0000-0000-00004F517C3A
+Message-Id: <1522444730-2060-1-git-send-email-rosattig@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803300214
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When trying to issue write_zeroes command against TARGET the nr_sector is
+being incremented by 1, which ends up hitting the following condition at
+__blkdev_issue_zeroout:
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+     if ((sector | nr_sects) & bs_mask)
+                return -EINVAL;
 
-On Fri 2018-03-30 14:19:59, Sebastian Reichel wrote:
-> Hi,
->=20
-> On Tue, Mar 27, 2018 at 11:21:56PM +0200, Pavel Machek wrote:
-> > Also, if you know how to get information from light sensor, that would
-> > be nice.
->=20
-> You need CONFIG_SENSORS_ISL29028. Once the driver is probed:
->=20
-> $ cat /sys/bus/iio/devices/iio\:device1/name
-> isl29030
-> $ cat /sys/bus/iio/devices/iio\:device1/in_illuminance_input
-> 19
+Causing the command to always fail. Removing the increment makes the
+command to work properly.
 
-Thanks, that works.
+Signed-off-by: Rodrigo R. Galvao <rosattig@linux.vnet.ibm.com>
+---
+ drivers/nvme/target/io-cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I was also able to get accelerometers to work, but they are extremely
-slow to read (6 seconds for all 3 axis). Interesting, but probably not
-too important for now.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlq+qWkACgkQMOfwapXb+vJcagCeOC0Ob0OW88gG5JzFRVNTmU+8
-zQYAnAxfDt8CcEvGRtUtEyd0NcZcBTr2
-=7JY8
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
+diff --git a/drivers/nvme/target/io-cmd.c b/drivers/nvme/target/io-cmd.c
+index 28bbdff..8d72686 100644
+--- a/drivers/nvme/target/io-cmd.c
++++ b/drivers/nvme/target/io-cmd.c
+@@ -174,7 +174,7 @@ static void nvmet_execute_write_zeroes(struct nvmet_req *req)
+ 	sector = le64_to_cpu(write_zeroes->slba) <<
+ 		(req->ns->blksize_shift - 9);
+ 	nr_sector = (((sector_t)le16_to_cpu(write_zeroes->length)) <<
+-		(req->ns->blksize_shift - 9)) + 1;
++		(req->ns->blksize_shift - 9));
+ 
+ 	if (__blkdev_issue_zeroout(req->ns->bdev, sector, nr_sector,
+ 				GFP_KERNEL, &bio, 0))
+-- 
+2.7.4
