@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeC3LoT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 07:44:19 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42028 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbeC3LoQ (ORCPT
+        id S1752622AbeC3LsY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 07:48:24 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:33576 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751297AbeC3LsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 07:44:16 -0400
-X-Google-Smtp-Source: AIpwx4/v9LGLpD0//+qet0wmaIKQMm95aIpCib5D3MTOcGRQM+qZTURc7mVti9d9wF9oX9Fy80D9WQ==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [PATCH] PM / devfreq: use put_device() instead of kfree()
-Date: Fri, 30 Mar 2018 17:14:03 +0530
-Message-Id: <d8d8708d2283349c2c4f3e9f3c9fd5f47126d2bc.1522410143.git.arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 30 Mar 2018 07:48:20 -0400
+Date: Fri, 30 Mar 2018 13:48:08 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
+        torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: Re: [PATCH 0/7] use struct pt_regs based syscall calling for x86-64
+Message-ID: <20180330114808.GA10671@light.dominikbrodowski.net>
+References: <20180330093720.6780-1-linux@dominikbrodowski.net>
+ <20180330101602.ongosnigfmdmgayb@gmail.com>
+ <20180330104649.GB12688@light.dominikbrodowski.net>
+ <20180330110354.cnrtmjkk77hhbekt@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330110354.cnrtmjkk77hhbekt@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Never directly free @dev after calling device_register() or
-device_unregister(), even if device_register() returned an error.
-Always use put_device() to give up the reference initialized.
+On Fri, Mar 30, 2018 at 01:03:54PM +0200, Ingo Molnar wrote:
+> 
+> * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+> 
+> > > > The whole series is available at
+> > > > 
+> > > >         https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-WIP
+> > > 
+> > > BTW., I'd like all these bits to go through the x86 tree.
+> > > 
+> > > What is the expected merge route of the generic preparatory bits?
+> > 
+> > My current plan is to push the 109 patch bomb to remove in-kernel calls to syscalls
+> > directly to Linus once v4.16 is released.
+> 
+> Are there any (textual and semantic) conflicts with the latest -next?
+> 
+> Also, to what extent were these 109 patches tested in -next?
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/devfreq/devfreq.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+These 109 patches are equivalent to the syscalls tree in linux-next. Most of
+these patches habe been in there for quite a while (the last major batch went
+in on March 22; other patches are in there since March 14th).
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index fe2af6a..a225b94 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -625,7 +625,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	err = device_register(&devfreq->dev);
- 	if (err) {
- 		mutex_unlock(&devfreq->lock);
--		goto err_dev;
-+		put_device(&devfreq->dev);
-+		goto err_out;
- 	}
- 
- 	devfreq->trans_table =	devm_kzalloc(&devfreq->dev,
-@@ -671,6 +672,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	mutex_unlock(&devfreq_list_lock);
- 
- 	device_unregister(&devfreq->dev);
-+	devfreq = NULL;
- err_dev:
- 	if (devfreq)
- 		kfree(devfreq);
--- 
-2.7.4
+Conflicts existend with asm-generic and metag (which contain remvoal of some
+architectures; I have solved that issue by not caring about those archs any
+more); trivial conflicts exist since very few days with the vfs and sparc
+trees.
+
+Thanks,
+	Dominik
