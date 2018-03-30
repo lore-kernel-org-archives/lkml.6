@@ -1,23 +1,23 @@
 Return-Path: <boris.brezillon@bootlin.com>
-X-Google-Smtp-Source: AIpwx4/ZoClTPJfoU3qPr9Wh78TDlSs+dzp8X5/FYW/eES8dhIuNzgc4GO8rVTfQ/ZSvhFwIvjFm
-ARC-Seal: i=1; a=rsa-sha256; t=1522396079; cv=none;
+X-Google-Smtp-Source: AIpwx4+oj8fZ1pmFcKoGy1dVL8Bqyh3rENVY4t6lUQFxamb6bHN56zdpLngU85FG9aRsGAQzhDIC
+ARC-Seal: i=1; a=rsa-sha256; t=1522396078; cv=none;
         d=google.com; s=arc-20160816;
-        b=lKVSBEVlLoxIwbgb5xqB8+b9gJXMr/S5m0S3Ewpk2K+6xDvO2cof9cpiJX0UdxdULQ
-         PS1GxelU+D6e+euCW92RflqWCNkUpkNafIodE8Me/D018ajQ6dG9Ep6ilu3yCfDxJpEd
-         be3QESsIDa3yAg5eeSIrmWVAkFlOuCOL330DdTrLgKT4ua0HuJpX3/G7NV3/f3ftqxW9
-         EvMJRMCzBpLL8fuFlQzdZp94y7M/A7IHtlFi6TTzBODgna5Q1wTPE5TWo5nIs8aHyANv
-         ycNPiYV/6PaHrS8PNHcgDtSQDr25I4nVlnVg3w3J9a0F9Yi5QbG5zWRCaojlb03lCBh9
-         mxrg==
+        b=pL4076Qgqm2Ux8KKuG3lCR6losQQDNNJqMbCPNq8JVmTOu5DqvLc/PkPd49+g4jiI1
+         K6of2C+umx5CBZMKtAedpM0ad4By3gsl6CkVr+sD2atSYZHZEGQB055lMa1vjt07jbdK
+         nxzC73ktSV1ZoZ9sTPxBYRLpvq/u/JyyyY1CT9MJ3EKvM3pluj4izzmszbDeqc9TNVr1
+         haXktQbxsdB8r1fD2mddfIxZnREoao3LpGqN7X14X5MoXwDiEjaQPhglACt90mBsDkTT
+         1GfC2n96n0xuaEBZKskBRogMADQItDkTwjU+ia60828R39u5S9I198SFfFROk5dU8I/g
+         B+eQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=qKR0HU8VYDBXm9UgRCb4ENJSygL2FGy40HUaSUBuhLo=;
-        b=nb3DthDjAjcBcOCqDLV5uKUuu4Yr8R8I25K/BRgj1WAj/RFOKSPDCqj+jegy/6co/N
-         rf06tvTYeb/Bwt/XTM+0Y0zH8J7aJ9zhgqVHbv86NGIUlcB0BynK+dRlfFJCq31hIAE6
-         pThTTXYu/CY0EvvVZ10XbHAnaztmXmrA3BObF/NgV9IMuu4fP/3Nsl9rY5RJE1qELnLE
-         JGokP0PAXUCywXkjzYL7vf19V5E1F3RvwOOByCRzU+vAD3l2Mu8tQG6lkEVRg1Bw4n2W
-         n+fplCiNuRyZe1cz5H8FjSDmBT0UuUDhPPLy5q6evykK8D/KjF00e1oBbRYQLZBts61Z
-         RuvQ==
+        bh=d9GO7dGHt+gRVArEzrUchj/2BTua36FWmjURZvGrsio=;
+        b=Szq+PDDapNngwZ0r/CWqIlQt/rx38aUUS/hcQIGc+alqRxHnAMCY53L6v5a0r25XZw
+         D76NkMwTxVwya32G9kfn9Hlv+98GAPVWenrVnDBzJINPgejepWPUkn00e4OOY3WTMT0c
+         9rvt8J4eosnTR/PNTalgxOMQch7gY0NRErytFhRopkVdWrK9xrVEtTr1FiAKGjh483qf
+         Vuk1Hb3LbpAauISF4HS7USDnEH4lbKJMbgyQtjiJLfomzCnUvxVdva+vYYlazk5iBcBV
+         MO/Sbs8AepS+9usawd03YdGp3srRVKeahg1QplVbaduD+mEXQYzm/Umk3EK0muZ0aDOc
+         oUgw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
 Authentication-Results: mx.google.com;
@@ -53,47 +53,62 @@ Cc: Przemyslaw Sroka <psroka@cadence.com>,
 	Xiang Lin <Xiang.Lin@synaptics.com>,
 	linux-gpio@vger.kernel.org,
 	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v4 06/10] MAINTAINERS: Add myself as the I3C subsystem maintainer
-Date: Fri, 30 Mar 2018 09:47:47 +0200
-Message-Id: <20180330074751.25987-7-boris.brezillon@bootlin.com>
+Subject: [PATCH v4 05/10] dt-bindings: i3c: Add macros to help fill I3C/I2C device's reg property
+Date: Fri, 30 Mar 2018 09:47:46 +0200
+Message-Id: <20180330074751.25987-6-boris.brezillon@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180330074751.25987-1-boris.brezillon@bootlin.com>
 References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596347991175328662?=
-X-GMAIL-MSGID: =?utf-8?q?1596347991175328662?=
+X-GMAIL-THRID: =?utf-8?q?1596347990519200027?=
+X-GMAIL-MSGID: =?utf-8?q?1596347990519200027?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Create an entry for the I3C subsystem and mark it as maintained by me.
-There's no official git repository, patchwork instance, mailing list or
-website yet, but this will be added after the subsystem has been
-accepted.
+The reg property of devices connected to an I3C bus have 3 cells, and
+filling them manually is not trivial. Provides macros to help doing
+that.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/dt-bindings/i3c/i3c.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 include/dt-bindings/i3c/i3c.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3bdc260e36b7..f323864131ed 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6669,6 +6669,15 @@ L:	linux-i2c@vger.kernel.org
- S:	Maintained
- F:	drivers/i2c/i2c-stub.c
- 
-+I3C SUBSYSTEM
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/i3c/
-+F:	Documentation/driver-api/i3c
-+F:	drivers/i3c/
-+F:	include/linux/i3c/
-+F:	include/dt-bindings/i3c/
+diff --git a/include/dt-bindings/i3c/i3c.h b/include/dt-bindings/i3c/i3c.h
+new file mode 100644
+index 000000000000..97448c546649
+--- /dev/null
++++ b/include/dt-bindings/i3c/i3c.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2017 Cadence Design Systems Inc.
++ *
++ * Author: Boris Brezillon <boris.brezillon@bootlin.com>
++ */
 +
- IA64 (Itanium) PLATFORM
- M:	Tony Luck <tony.luck@intel.com>
- M:	Fenghua Yu <fenghua.yu@intel.com>
++#ifndef _DT_BINDINGS_I3C_I3C_H
++#define _DT_BINDINGS_I3C_I3C_H
++
++#define IS_I2C_DEV		0x80000000
++
++#define I2C_DEV(addr, lvr)					\
++	(addr) (IS_I2C_DEV | (lvr)) 0x0
++
++#define I3C_PID(manufid, partid, instid, extrainfo)		\
++	((manufid) << 1)					\
++	(((partid) << 16) | ((instid) << 12) | (extrainfo))
++
++#define I3C_DEV_WITH_STATIC_ADDR(addr, manufid, partid,		\
++				 instid, extrainfo)		\
++	(addr) I3C_PID(manufid, partid, instid, extrainfo)
++
++#define I3C_DEV(manufid, partid, instid, extrainfo)		\
++	I3C_DEV_WITH_STATIC_ADDR(0x0, manufid, partid,		\
++				 instid, extrainfo)
++
++#endif
 -- 
 2.14.1
