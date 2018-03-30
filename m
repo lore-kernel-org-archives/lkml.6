@@ -1,167 +1,194 @@
-Return-Path: <ji_hun.kim@samsung.com>
-X-Google-Smtp-Source: AIpwx49+5iohm79Or5aWl3eh1ncNHXsvK7tdLdY9ldnV15LDknrqKHTxq1usEl4XPiB+LrCHX+CR
-ARC-Seal: i=1; a=rsa-sha256; t=1522381178; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Sdu6gUduyngvTAK2t1PCdLtOZydhwOCUObpaoKzJ5m50q0H6uD2V/QA0aLmvZ9aodl
-         6plM27XZL2rOMzAGYdtjuxuMOCk4AgwvgBKMXEj8cpuBIkPL2FTaFHz99jBnNE8odXCO
-         sLRiOuut4awV6GykxiT0F18ghdduklXKtR53EWKkAn6viO9jBKgy8r37Qxg00vrAULTG
-         wR7HH3HOIN7spzPezPDm5CZ4eHYhqmYwOlN8VeYIqkA4T5yNKIBB0gmXc1oCsloxtjLq
-         6NiPreOcg+0vQzZGxImI9AE4P2OPftQTTND/JuMcQmHAwn3Ttvr1lK8Q4ava1v8nejpT
-         yrQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:dlp-filter:cms-type:user-agent:in-reply-to
-         :content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=7rh2HVY2Sb68xx9eX+kwuRhXqdxMzRIrKLMeawGwGi0=;
-        b=ryGkmqgwYJPDVIA7YzzXQe0cXD2K1RIygyaBU/25xFse42zkLrzpPQc3LOwiO4YlcC
-         /OMSBpbpEzJ3KswKYM8AHjVt/Pmzq3vRUD7SIAdM2o9XzOIyBJ2yizb/FZGjuiQIFGjd
-         Srcy7JvTcfgO6Af2k/53+GX46JOaW/PVrkoRP4lnrE/WjcaWcoWFtQrt64xXrJzi8Mit
-         AbT+VbR1XiYjUouqF5ChU4AZoZmdY+ypKdSooZeSpA9PRwsMShbUPc6Wd68rk1Dw/H83
-         pCB2jYk2+cHHwEkzva4SKujSpd+88w6pDOTQDW0WDfNik3bf6isWXvbIi76hOdwvVOzR
-         E5mQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=YyJ/tlqv;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.25 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=YyJ/tlqv;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.25 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180330033936epoutp021d5a82d48e7f8d07317b2bfb5db58f1f~glZ0jkU292107821078epoutp02X
-X-AuditID: b6c32a48-8c1ff70000000ff2-84-5abdb177152d
-Date: Fri, 30 Mar 2018 12:39:33 +0900
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: gregkh@linuxfoundation.org, forest@alittletooquiet.net,
-	dartnorris@gmail.com, santhameena13@gmail.com, julia.lawall@lip6.fr,
-	y.k.oh@samsung.com, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3] staging: vt6655: check for memory allocation
- failures
-Message-id: <20180330033933.GA26489@ubuntu>
-MIME-version: 1.0
-Content-type: text/plain; charset="us-ascii"
-Content-disposition: inline
-In-reply-to: <be23acda-38c0-dce3-9c79-8672113f6960@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnk+LIzCtJLcpLzFFi42LZdljTXLd8494ogy8HDCzWTVzIZHHm/Vkm
-	iz1nfrFb3J/wiNWiefF6NotlD04zWmy9JW1xedccNouT2+QttnT9YHXg8mhufM/qcW/fYRaP
-	nbPusnvsn7uG3WPvliyPvi2rGD0+b5ILYI9KtclITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw
-	1DW0tDBXUshLzE21VXLxCdB1y8wBOk5JoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYqsUbWho
-	pGdoYK5nZGSkZ2Iea2VkClSSkJrRf/42U8FjgYqJf9+wNjB+5+li5OSQEDCR6LvSz9TFyMUh
-	JLCDUWLz9AZ2COc7o8SsLwdYYKr+TVnMApHYwChxfesOVgjnJaPEyqXdTCBVLAKqEh9WrwCz
-	2QQ0JTZ2X2MEsUUE1CVOL9vFCmIzC3xhlFhyjAPEFhbwl/jX/QJsA6+AtsSxD2uYIWxBiR+T
-	77FA1OtInD22jhHClpZ49HcGO4jNKWAr8fblYbAaUQEViSknt7GBHCQh8JxN4u2580wQZ7tI
-	XNnYzQphC0u8Or6FHcKWlni2aiMjhF0tseDKDqg3ayRu/l8K1Wss0dtzgRliMZ9Ex+G/QL0c
-	QHFeiY42IYgSD4nb1z5BjXSUmPXpKTMkUM4ySkzc/4h5AqPsLCT/zELyzywk/yxgZF7FKJZa
-	UJybnlpsVGCiV5yYW1yal66XnJ+7iRGcCLU8djAeOOdziFGAg1GJh1eBZW+UEGtiWXFl7iFG
-	CQ5mJRHe8qlAId6UxMqq1KL8+KLSnNTiQ4ymwDiZyCwlmpwPTNJ5JfGGJpYGJmZmhuZGpgbm
-	SuK8bQEuUUIC6YklqdmpqQWpRTB9TBycUg2Mu0PuOKRw/Xpa5SdXwrOzuM/o34OmS/v9l3zY
-	4Var8O1JpHZm4qNH7w4W3dX4LXbs32Pu+Yr37ndlbzp/Ov306XIH59z/X3s2Hor5WfzIIccz
-	0WA3V1AxxyMrtyNC1+feM0v+6B6yaM8akbfr96x1uP7T5vukkv2ilfbP1yk8DHHUv3WiQTQq
-	Q4mlOCPRUIu5qDgRAAZLq7WaAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsVy+t9jQd3yjXujDP6v5LJYN3Ehk8WZ92eZ
-	LPac+cVucX/CI1aL5sXr2SyWPTjNaLH1lrTF5V1z2CxObpO32NL1g9WBy6O58T2rx719h1k8
-	ds66y+6xf+4ado+9W7I8+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK6P//G2mgscCFRP/vmFt
-	YPzO08XIySEhYCLxb8pili5GLg4hgXWMEhsubmSEcF4ySqzt6WMGqWIRUJX4sHoFE4jNJqAp
-	sbH7GiOILSKgLnF62S5WkAZmgS+MEs0/Z7F3MXJwCAv4SlztDgap4RXQljj2YQ0zxNDzjBLr
-	Fq5mgkgISvyYfI8FxGYW0JJYv/M4E4QtLfHo7wx2EJtTwFbi7cvDYDWiAioSU05uY5vAyD8L
-	SfssJO2zkLQvYGRexSiZWlCcm55bbFRglJdarlecmFtcmpeul5yfu4kRGAXbDmv172B8vCT+
-	EKMAB6MSD28F294oIdbEsuLK3EOMEhzMSiK85VOBQrwpiZVVqUX58UWlOanFhxilOViUxHn5
-	849FCgmkJ5akZqemFqQWwWSZODilGhjZ2rt4FheoPOU9YqaTkn/n+/uUdMvFCSfPeCrMTNmS
-	+sbpn7fG2VXJL69dMDzsuPh++ItQTVf9Gd+O+cuc0OHJPauhIXnmwYTcq/xh7szKc9UM5r9+
-	9nBv7uFUAZWMmIdht28eOm6RlTbrwm6NU0nPtFnYj/F/ZPrEnF6qfORJouPXY4Wzk0qVWIoz
-	Eg21mIuKEwHtKr1HfgIAAA==
-X-CMS-MailID: 20180330033935epcas2p3506493d3249f829de15e1c58116ebff1
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf
-X-RootMTR: 20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2435352-1522381834-2-5707913500234263470
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522381834; b=lMm5XLY3zdOzLacuMwuWbp9hhzY/JmeRuX/6lp+2lYy7ra4k+G
+    6nV4SoZO+6ViaXYSfT/8y9mmNciqIFLVivTKW9wYgcdtk6wlnObfdfpw8izDuATk
+    SLG18Rkfb0r03DWFsTFEa7RoTMpMX/XQB4K6+D6ZXX9qcf3h1LqO37kkKM7vN7Al
+    se84EKogrRzzt/EKJrh8P/EKL2jtJwyy7KDwh/pabDrCvOjkrPecNEwt0dYs28KD
+    k93+A/wESw/79CRTMAFNadK/v7s1Aw2lASg/Cxq9InBeFN9qGU7wmatjHRdeZD9u
+    fcbiP5om1IpPY7SX+GTViAUjVN4T93d+Q+fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc
+    :content-transfer-encoding:content-type:sender; s=fm2; t=
+    1522381834; bh=r3Ay/0+s58ibQOm/bXyTvP7OkGpk5Y2yWq1KdylH52M=; b=J
+    0yQd1hvoh45/rmZDDRrgHOHiXb7OwYMAKX93JfZ01uEMixG4XKLV8dH79FRJ/WpN
+    Qbf+74JNwmROjM+iHuARSr4RdCaGbIDUrhODvG+9jyYlfND3trrhtNwIke2iIQ6M
+    1saXKhqbhcS44KJKpjxZip3y4h94VU19YcGwMCgMX+QlhJLvvWBt0+Hu+yVx7j5v
+    WDEcHWaoFMEu6RgiBM/xafh+xJ0lqX3Hu3xXF5TjDOAoBxOOsR2DsinciVxrGoeb
+    pRaf9PV1z79TiH2TkAZWNeB+mSVAswykcrPBHzmw36bp13xF4OswWqeFOZLyFy9A
+    a1tkWDmccdmoZ15r0Z+RQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KYmisP5I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=B25EBe6o;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KYmisP5I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=B25EBe6o;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLxDsgJCshKtCLpoNXE7O6Pdf7l3bK4SxN4Xd6ChuWTZ5l2h7KqI1y1HKsvqRCFjFpTCY3ugnyyZO2vzOheIMj2vmjWQ8k4zQQtP0Bkepm5v2dhQju8w
+    h6AIWsYpaAbW2VWRWuubJEs8bC7DxaFFNpcsyYqzm3JUM0rGSsQUyOCPi2L/11QRxbWVDY1QZuJQLbqUtWQhd81Sk7k6DxVKOQ7+dPAqyOoMrYVj9R5Saamj
+    +H4FUyFNUYG29T9QMySCQQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=tmjX-nCzVX8A:10 a=xqWC_Br6kY4A:10 a=4_-BN3WEXhEA:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=d7t9H59NRuQhWdtjDVAA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4+BsuRwPF6BDxG3sQERUMZSEsrt2N6u2P2taQFlSXZqE52Ixd2ma/vSk0wHjS/8zEcRpuTkLQ==
+Subject: Re: [PATCH v3] staging: vt6655: check for memory allocation failures
+To: Ji-Hun Kim <ji_hun.kim@samsung.com>
 References: <CGME20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf@epcas2p2.samsung.com>
-	<1522377844-23591-1-git-send-email-ji_hun.kim@samsung.com>
-	<be23acda-38c0-dce3-9c79-8672113f6960@gmail.com>
+ <1522377844-23591-1-git-send-email-ji_hun.kim@samsung.com>
+ <be23acda-38c0-dce3-9c79-8672113f6960@gmail.com>
+ <20180330033933.GA26489@ubuntu>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <b66f4737-f66b-7104-ddec-2da292d1c5ef@gmail.com>
+Date: Fri, 30 Mar 2018 11:50:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180330033933.GA26489@ubuntu>
+Content-Language: en-US
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, y.k.oh@samsung.com, gregkh@linuxfoundation.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ julia.lawall@lip6.fr, forest@alittletooquiet.net, santhameena13@gmail.com
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596328885827783260?=
-X-GMAIL-MSGID: =?utf-8?q?1596332366809701878?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 11:15:03AM +0800, Jia-Ju Bai wrote:
-> 
-> 
-> On 2018/3/30 10:44, Ji-Hun Kim wrote:
-> >@@ -1165,10 +1205,18 @@ static int vnt_start(struct ieee80211_hw *hw)
-> >  	}
-> >  	dev_dbg(&priv->pcid->dev, "call device init rd0 ring\n");
-> >-	device_init_rd0_ring(priv);
-> >-	device_init_rd1_ring(priv);
-> >-	device_init_td0_ring(priv);
-> >-	device_init_td1_ring(priv);
-> >+	ret = device_init_rd0_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >+	ret = device_init_rd1_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >+	ret = device_init_td0_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >+	ret = device_init_td1_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >  	device_init_registers(priv);
-> >@@ -1178,6 +1226,8 @@ static int vnt_start(struct ieee80211_hw *hw)
-> >  	ieee80211_wake_queues(hw);
-> >  	return 0;
-> >+error:
-> >+	return ret;
-> >  }
-> 
-> This code will lead to memory leaks when device_init_rd1_ring()
-> fails, because the memory allocated by device_init_rd0_ring() is not
-> freed.
-> 
-> I think this one will be better:
->     ret = device_init_rd0_ring(priv);
->     if (ret)
->         goto error_init_rd0_ring;
->     ret = device_init_rd1_ring(priv);
->     if (ret)
->         goto error_init_rd1_ring;
->     ret = device_init_td0_ring(priv);
->     if (ret)
->         goto error_init_td0_ring;
->     ret = device_init_td1_ring(priv);
->     if (ret)
->         goto error_init_td1_ring;
->     ......
-> error_init_td1_ring:
->     device_free_td0_ring(priv);
-> error_init_td0_ring:
->     device_free_rd1_ring(priv);
-> error_init_rd1_ring:
->     device_free_rd0_ring(priv);
-> error_init_rd0_ring:
->     return ret;
-> 
-> 
-> Best wishes,
-> Jia-Ju Bai
-> 
-> 
-But, those freeing function are already placed in the each device_init
-functions for allocation fail like below. 
 
-@@ -550,20 +554,29 @@ static void device_init_rd0_ring(struct vnt_private *priv)
-+       return 0;
-+error:
-+       device_free_rd0_ring(priv);
-+       return ret;
 
-Would freeing in the vnt_start() be better instead of freeing in
-device_init_rd0_ring function?
+On 2018/3/30 11:39, Ji-Hun Kim wrote:
+> On Fri, Mar 30, 2018 at 11:15:03AM +0800, Jia-Ju Bai wrote:
+>>
+>> On 2018/3/30 10:44, Ji-Hun Kim wrote:
+>>> @@ -1165,10 +1205,18 @@ static int vnt_start(struct ieee80211_hw *hw)
+>>>   	}
+>>>   	dev_dbg(&priv->pcid->dev, "call device init rd0 ring\n");
+>>> -	device_init_rd0_ring(priv);
+>>> -	device_init_rd1_ring(priv);
+>>> -	device_init_td0_ring(priv);
+>>> -	device_init_td1_ring(priv);
+>>> +	ret = device_init_rd0_ring(priv);
+>>> +	if (ret)
+>>> +		goto error;
+>>> +	ret = device_init_rd1_ring(priv);
+>>> +	if (ret)
+>>> +		goto error;
+>>> +	ret = device_init_td0_ring(priv);
+>>> +	if (ret)
+>>> +		goto error;
+>>> +	ret = device_init_td1_ring(priv);
+>>> +	if (ret)
+>>> +		goto error;
+>>>   	device_init_registers(priv);
+>>> @@ -1178,6 +1226,8 @@ static int vnt_start(struct ieee80211_hw *hw)
+>>>   	ieee80211_wake_queues(hw);
+>>>   	return 0;
+>>> +error:
+>>> +	return ret;
+>>>   }
+>> This code will lead to memory leaks when device_init_rd1_ring()
+>> fails, because the memory allocated by device_init_rd0_ring() is not
+>> freed.
+>>
+>> I think this one will be better:
+>>      ret = device_init_rd0_ring(priv);
+>>      if (ret)
+>>          goto error_init_rd0_ring;
+>>      ret = device_init_rd1_ring(priv);
+>>      if (ret)
+>>          goto error_init_rd1_ring;
+>>      ret = device_init_td0_ring(priv);
+>>      if (ret)
+>>          goto error_init_td0_ring;
+>>      ret = device_init_td1_ring(priv);
+>>      if (ret)
+>>          goto error_init_td1_ring;
+>>      ......
+>> error_init_td1_ring:
+>>      device_free_td0_ring(priv);
+>> error_init_td0_ring:
+>>      device_free_rd1_ring(priv);
+>> error_init_rd1_ring:
+>>      device_free_rd0_ring(priv);
+>> error_init_rd0_ring:
+>>      return ret;
+>>
+>>
+>> Best wishes,
+>> Jia-Ju Bai
+>>
+>>
+> But, those freeing function are already placed in the each device_init
+> functions for allocation fail like below.
 
-Best regards,
-Ji-Hun
+I think it is okay.
+I suppose that, for each device_init function, you only free the 
+resources allocated in this function, and do not handle the resources in 
+other functions.
+
+> @@ -550,20 +554,29 @@ static void device_init_rd0_ring(struct vnt_private *priv)
+> +       return 0;
+> +error:
+> +       device_free_rd0_ring(priv);
+> +       return ret;
+
+This code is needed to free the resources allocated in this function.
+
+
+Best wishes,
+Jia-Ju Bai
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
