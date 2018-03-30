@@ -1,23 +1,23 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx4+L+cgebEWdxxvgIMmDiRMM+nLLj007+286G7e63Vt93UjbxILjdpPw2zhiXBFyFsq1Li1e
-ARC-Seal: i=1; a=rsa-sha256; t=1522393799; cv=none;
+X-Google-Smtp-Source: AIpwx49AokveZQLsSIqMLsrbRdrmW5LD0amZ7ua8lrV0GxmW6/KOOlCefP5xeIDxVKsTyWPcTQQR
+ARC-Seal: i=1; a=rsa-sha256; t=1522393798; cv=none;
         d=google.com; s=arc-20160816;
-        b=rMsrogG5x8IiSp3j7Qq21LtIhbQb1S9KndJDT+IDFNeOaRiJU8mzQ4RAaac5KRE1zG
-         IKZvthHjAR68AcxbrzD84ZYIBH4C/T7j1bnnI7v4DpuYfnO2KABAVR0b+al5zYvjKf+K
-         XGRC4zbQ17EjkJdOlXhpx6NQxTuNVWjEd0dewarhVYXY2S03K9o43x61vel0RgXSitI+
-         pgVJ/2GIUlvlCV3ZrxbYWEdEEH/IRkhzTPHfByV5u85tpvC3jj3kIIjCd/SqAuR+k22O
-         gLCjoDb/D0w0LbtSQy7+vasqmHEhkWTAC0bGlQh57BaxL7vcs8arKaBUDEUZlQMU7DRF
-         uk9A==
+        b=IQb70oF/g8lCQr996s/vDAEclNdqPG5ecm4oanEjQYggLUNWGznNFQKRcQ1qsnRAMJ
+         QKPWAfMOVjo8ZIVLyRxbZ7o3ShNbjiYZLHJZTgRhIH0FQLRXQ1tBXYNsHtUDC7tfnhqm
+         W06aNIHrbpb5we/T6QyVBDfnfxARvF2sCBi6JbvnilSsBmj8KUxzQMImF8M5ZjZ8pO75
+         0hMbxdOxS39e8gJJ47T1VDywHxXNa3ZL9gXmNl7zINla9a9ch3yBae11PAwq+9hgSFh8
+         WTF8W0P9q8qflBhy/5HrYCXzoJsWSKRU17bnZlFg5j5lsRx1JKpuT5ywJgzsr9G8uaQ7
+         SGyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=v73nl5Sk9z8ExCbT9mm52GVUE0cXb9NKSGbBELVmd7M=;
-        b=OUNytzeHHEYb/Pl8gitDtGAGnTWxmA9oHfp7rmIJnDnK0oNZGkCUd7IZEpKRLlbVkV
-         xokeJTiJGnBJq+VRk6+/OS7qiYoan6LqWNNez0lOSymMfyGns9O7jwUbRlHpVzg9gNfY
-         6Ou3GcvQIWTSjGf4UwA6Gpit5JndYJ7Fd3gmPAxfW2DJmjo32EjEvVnQnWSn4P4QgTlP
-         a8dqIWNO2sXggXle+L89e/DwH2d4Tm8m+m+sLB7IYoYRMm3w6nxbL/o+Ze4cbfSASebn
-         3wl2rFN6ISRYqT+Bj19LmpLfeHboKrbDBn8GnH3eIOJTor2Z+FZlFI3rU+NEfL8UAs2u
-         7PbQ==
+        bh=tcQVEW9G/6Ynw8ttTjYGLfCDVLNx10FM9/eWz2EU4Zs=;
+        b=RcwftaWzbiiq1iRhfns/hQSfpM2OWSgm5KuRRahRIpEGWQkC+RMIQjUUC20kOhg9mz
+         gP7Dsz0EWBI3W82ETzIFUjgL4JN7F6OY/Rr+BibgLFFxDPdmnAfwUUffkznbG9H3MOH5
+         /IW48HNSzDdD0bmH6n+zHLOiuU0YFiepiVa3VMiJHPucGmUj7HzvopcZ9QgW3lgOpZmo
+         Z/IVcV6/qKMGhF71j8eumn2UgxwxIL/xDwg9hiNu+Ix17PbL1luyifoOzdo4xKp0PP+K
+         7sY2gvws89FhVGJBiPEGq0N8C3xZVj41jYssVqy1baR0ZGKzom/ojy7IHIn7HoEUsX46
+         u+Mw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
@@ -29,74 +29,67 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 70/72] staging: ks7010: Rename ks_wlan_set_multicast_list()
-Date: Fri, 30 Mar 2018 00:08:34 -0700
-Message-Id: <20180330070842.25224-71-quytelda@tamalin.org>
+Subject: [PATCH 70/76] staging: ks7010: Remove extra blank line between functions.
+Date: Fri, 30 Mar 2018 00:08:33 -0700
+Message-Id: <20180330070842.25224-70-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:kWQ/TR11DwV4Nni3Op1X9lAY8daCZg8YSDjtMZuJIoEinI3Hg4T
- H5gz1VOLs09AA8jOl8rWaRdpxVNrludtPr/bQF/9hgckQakv9i22gqdXa++0hCBDQHPDxlf
- I/aESgnTrcoVZF2qJiBOlNsOPHkli9kuLwJ/qaBVACrBt8AjPav3FPvJ4ZIf7TKZtZO96JO
- C9wtQdUqMcYapv7XYgrLQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ICaL69QgPno=:kVGOKZJmcfKsYLH3G+/FCW
- F+Fr8LE1jloomGUM3gJgwWhGUM8vnToER2XiEjw4wuQhy/zgptYGvW3AzlFU9rQvTCPNmUhyY
- EQR9XkMskuTMmk+OayPVlfA9Oq65DOuvAWc1Wu1RICmQjniPz6IdtEnelcoKNgisqpMprSX3q
- Rl1c+WSw7OGaRXb8UekOYxP5C7371RoI3im7479ZgGTRqajHE94HeP6clgGSTcE511bdgg9xm
- g6SBLf5wJWy3olfut+Cf5PEbD74MVzxRoDMfNVyLyhSyMe/u8H4WgO4lnGqofh/nZECE8rD/n
- nLko53DQwE+DExm0++U4vExFG76YISNxoO9FUcuSh7v16EZwBz5a5CWzM+GkK5bF91W22xo0L
- EmaC3OisXz3a6iLRUUwQwv0meYlAvaIbrORmSN9YIzx4DPfqrfCXcEeZHyGlAlrJLlfNsT3rp
- B0kqXLQVPTDsJm0WKXAg55YbcWBnXderkUqPcWbtvC4yzLROTHoFVJQ4tpd6GVCbpzs5iNdKb
- T4fa/1q+x5p61OMK23o4igW0Ta6KV9Plkhm0XGzALPYuIbsitzXXFejO4PkD1LL2eyHzB9uSr
- 7Tq5fjpN/acfC1kuszaxEm2jfXo/uSpqCIJseTpbOmrvnQp5e+hbL6nigFEWsIDJb87fS7vwf
- 3zrxJ5SbId8Cr7q725QKmnmfeOBB7nu+KzFuGCTqFUGSbv3PnwJlMOC6jvmow9F41E1wlw42P
- knG3sVNs3AbOsjnABiq7CutZo17k1mXBn9VM1w==
+X-Provags-ID: V03:K0:hHCzlfWHaOOEVkMGuipUm6lBzh6me2vS9zNHqpCg/4PR6ay9EFV
+ VDy/HI2sq5ZHRBkSCKQs9uyscGKLtbKHvnaiiyCY9fNOE2mz7PbWEAvnUYmeytUUlyjHZ6P
+ 0Uy4wQlIep7CmlxIhHW1ybdpPyUNZrRTO2v0q5m28fnIk2arScLOuk0Y1RCoZuDj0gBiW/d
+ hpmwkSdRgu4VHJhy+Owlg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:QdsD+kFtVxM=:eV98OI5DGnxLfrxHblFcOR
+ OBneuLEqWYTGYOKHWCeme2Yx/wqJId/f5dOQEGxGrH+t20iGavwT7ANGLNZRHHN5ByHD6xM06
+ 98msQ6QFLYejQqSQ7/3kCDIECiapVTIrRorbgt9m4PUHddZC5qUlTCEj4HP0yAweflNHOO17O
+ 94F81iZR0vOtDQYQhR5e9+nhgHb/PgvXHPCMkW6LVMMuwkIHwjif8tqgoiaZOyVE6aot68lZO
+ YEvTkYgSuXr7dXyfCxhR0TPgL+uzsCReI5nN86haiy/rQsfMXyy5DSm9v9Um7olglaD35Gq+M
+ +08fSN+p9GuikipcSD16pjn4tJNu6tajbaDvQTgrGClbxxfcfEWpMuZIeJpdYOj5kRHeskhi3
+ lCXowAjGdcqK9Twnl2GdiG7M0+/R2dbMAR6PBd4fQjcj8f8DgBxs0uW2stez8CpasQwhcomC/
+ qMUZf4/yNKMfJaB30MEpzhlPRx8CGFZGIesJ10uEHSUREqwIeAG0O/wKvOwZ7SdTOsyWjNSL5
+ yK6lYIQbKe7CqfeWz0hjIR7vDhQC0rGdz4tp3QzhsgeAHSLuDM2xfJ0chyX1ME0l6DaXjR2qu
+ 1yuzmNNe+bfu0MEPayUb/D7XI6f7N2f8Yb91TUNpBZ0qzvmK27y66f9x9skxfpLsC/Xb/n3Vx
+ T/wDJXKwfbkxZs+0k2tVlGgYQN/FY16VPizBtpQKG4GPdK6Ti9lWctqMTpoQqNz0FkG9ohDD6
+ pi0rABbAVGEbIv5lNAD2U3cjO6Y2YspxWZPQ1w==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596345599842678462?=
-X-GMAIL-MSGID: =?utf-8?q?1596345599842678462?=
+X-GMAIL-THRID: =?utf-8?q?1596345599363234699?=
+X-GMAIL-MSGID: =?utf-8?q?1596345599363234699?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-All of the net_device_ops callbacks are named after their counterparts
-in the kernel's 'struct net_device_ops', except
-ks_wlan_set_multicast_list().  Rename it to ks_wlan_set_rx_mode() for
-greater consistency.
+Remove an extra blank line indicated by checkpatch.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_wlan_net.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/ks7010/ks7010_sdio.c | 3 ++-
+ drivers/staging/ks7010/ks_hostif.c   | 1 -
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 29dd07cdd69d..e98f6163e724 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -72,7 +72,7 @@ static const struct iw_handler_def ks_wlan_handler_def;
- static int ks_wlan_open(struct net_device *dev);
- static int ks_wlan_close(struct net_device *dev);
- static int ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev);
--static void ks_wlan_set_multicast_list(struct net_device *dev);
-+static void ks_wlan_set_rx_mode(struct net_device *dev);
- static int ks_wlan_set_mac_address(struct net_device *dev, void *addr);
- static int ks_wlan_netdev_ioctl(struct net_device *dev, struct ifreq *rq,
- 				int cmd);
-@@ -2817,7 +2817,7 @@ void send_packet_complete(struct ks_wlan_private *priv, struct sk_buff *skb)
-  * This routine is not state sensitive and need not be SMP locked.
-  */
- static
--void ks_wlan_set_multicast_list(struct net_device *dev)
-+void ks_wlan_set_rx_mode(struct net_device *dev)
- {
- 	struct ks_wlan_private *priv = netdev_priv(dev);
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index d083bf8d238e..930d1f7d7dbf 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -305,7 +305,8 @@ static void tx_device_task(struct ks_wlan_private *priv)
+ 	if (priv->dev_state >= DEVICE_STATE_BOOT) {
+ 		ret = write_to_device(priv, sp->sendp, sp->size);
+ 		if (ret) {
+-			netdev_err(priv->net_dev, "write_to_device error !!(%d)\n", ret);
++			netdev_err(priv->net_dev,
++				   "write_to_device() error (%d)!\n", ret);
+ 			queue_delayed_work(priv->wq, &priv->rw_dwork, 1);
+ 			return;
+ 		}
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index 3c8a8d0f800c..b97080f8ebd2 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -221,7 +221,6 @@ static u8 read_ie(unsigned char *bp, u8 max, u8 *body)
+ 	return size;
+ }
  
-@@ -2861,7 +2861,7 @@ static const struct net_device_ops ks_wlan_netdev_ops = {
- 	.ndo_open = ks_wlan_open,
- 	.ndo_stop = ks_wlan_close,
- 	.ndo_start_xmit = ks_wlan_start_xmit,
--	.ndo_set_rx_mode = ks_wlan_set_multicast_list,
-+	.ndo_set_rx_mode = ks_wlan_set_rx_mode,
- 	.ndo_set_mac_address = ks_wlan_set_mac_address,
- 	.ndo_do_ioctl = ks_wlan_netdev_ioctl,
- 	.ndo_tx_timeout = ks_wlan_tx_timeout,
+-
+ static
+ int get_ap_information(struct ks_wlan_private *priv, struct ap_info *ap_info,
+ 		       struct local_ap *ap)
 -- 
 2.16.3
