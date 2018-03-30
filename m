@@ -1,64 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751252AbeC3FL2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 01:11:28 -0400
-Received: from mx56.baidu.com ([61.135.168.56]:14235 "EHLO
-        tc-sys-mailedm04.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750752AbeC3FL1 (ORCPT
+        id S1751242AbeC3FVS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 01:21:18 -0400
+Received: from mail-it0-f41.google.com ([209.85.214.41]:40078 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeC3FVR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 01:11:27 -0400
-From: Li RongQing <lirongqing@baidu.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: limit a process RSS
-Date: Fri, 30 Mar 2018 13:11:14 +0800
-Message-Id: <1522386674-12047-1-git-send-email-lirongqing@baidu.com>
-X-Mailer: git-send-email 1.7.10.1
+        Fri, 30 Mar 2018 01:21:17 -0400
+X-Google-Smtp-Source: AIpwx4+QA5l5jZFFNVdn5DzQiLZDVnPfOrR3jTKuypgBm18Vmt44/LtdtXtkUE7+BTpIUOHa8zAQ9+bLX5PxsbjebUM=
+MIME-Version: 1.0
+In-Reply-To: <s5hr2o3j6yp.wl-tiwai@suse.de>
+References: <s5hr2o3j6yp.wl-tiwai@suse.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 29 Mar 2018 19:21:15 -1000
+X-Google-Sender-Auth: yKTlze9a0-lYz1folF99LAExZI4
+Message-ID: <CA+55aFz6RHHYLbFL3SufhTkp0CzBiHD=NLgKrv0daJfc1LbZXg@mail.gmail.com>
+Subject: Re: [GIT PULL] sound fixes for 4.16-final
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-we cannot limit a process RSS although there is ulimit -m,
-not sure why and when ulimit -m is not working, make it work
+On Thu, Mar 29, 2018 at 4:23 AM, Takashi Iwai <tiwai@suse.de> wrote:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.16
 
-similar requirement:
-https://stackoverflow.com/questions/3360348/why-ulimit-cant-limit-resident-memory-successfully-and-how
+No such tag. Forgot to push?
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- mm/memory.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+There's the "for-linus" branch that matches the commit id you stated,
+but no tags that point to it..
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 5fcfc24904d1..50cf9399477c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4140,6 +4140,9 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 		ret = __handle_mm_fault(vma, address, flags);
- 
- 	if (flags & FAULT_FLAG_USER) {
-+		unsigned long total_rss = get_mm_rss(current->mm);
-+		u64 rlimit;
-+
- 		mem_cgroup_oom_disable();
- 		/*
- 		 * The task may have entered a memcg OOM situation but
-@@ -4149,6 +4152,17 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 		 */
- 		if (task_in_memcg_oom(current) && !(ret & VM_FAULT_OOM))
- 			mem_cgroup_oom_synchronize(false);
-+
-+		rlimit = current->signal->rlim[RLIMIT_RSS].rlim_cur;
-+
-+		if (unlikely(total_rss > (rlimit >> PAGE_SHIFT)) &&
-+			(current->pid != 1)) {
-+
-+			pr_info("kill process %s rsslimit[%lluK] rss[%luK]\n",
-+				current->comm, (rlimit >> 10),
-+				total_rss << (PAGE_SHIFT - 10));
-+			do_group_exit(SIGKILL);
-+		}
- 	}
- 
- 	return ret;
--- 
-2.11.0
+Hmm?
+
+          Linus
