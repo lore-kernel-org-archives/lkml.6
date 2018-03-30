@@ -1,23 +1,23 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx485hic1DKuxI/DXnsXAYe4jKikXl+8HvXfxDdGD3V1JmFlFNJlcHSeEF4oeRRGeiLq/H0oK
-ARC-Seal: i=1; a=rsa-sha256; t=1522393802; cv=none;
+X-Google-Smtp-Source: AIpwx48wl8smEsZrNwxuH/bSME3HFkxfPurO13HBNe/+46hmN5YCl/bwKiXkRcz3Td+ly0KjBo2A
+ARC-Seal: i=1; a=rsa-sha256; t=1522393801; cv=none;
         d=google.com; s=arc-20160816;
-        b=zFEolZFxH81lVZRU5M516U7fAzJTcXCZxoP8uC1kXmt1AtKv5IRS6qPELyYOTkxcq9
-         QLU7CurMF6mBYiQsDw8DHzOarTFAwU6qEzpfEalsvUnnyX9aM4cguchYE++XX1VfnRHu
-         B7w/umIFJGSmaF/EBU9g1dkk42uTJKqWbLi/i5+UcStLUUAJlB/Bn75gYzPH/HRpgm88
-         jtO0nfV9FX12um/UibpdewlK6qDdtL8s2ijgkdkTaQXKv4a3W0oYkHtwUNIZ9m+TPUTz
-         Y9cVAgd92jfNG+AHzQb61O6TOzJ4iumg6P1ecsmBftk0usMsbXh43zu8PZunvg5UJ2m0
-         Z7iQ==
+        b=olKvGU78ELAq11MBnX13j5mxoE9LpbvZoIsUox2B0T8iF3TQzM+5gtRLP5BfTnK/+1
+         pJ3LOfwJzjON3G/EXmMDXsTPSnSx1xS2bLL/+mA9A02oSfNnV/pFwBQEm4dIDXop88Sv
+         1Sk5T0WNfG0cIwZuqonL+BGmkAIUNvObZ4N0xzA8u77QsXqSBTmb0RxB4Lnx94X6+2bk
+         2grA+nqFHVDs787pD983h08TAd5tu5i5RyLkISgzhMhfwrNZ7zrN2+OoykY0x1k9jyHH
+         9nZN1SxrsM4bpU3z2fNCwHv2w4HR/HhiqPkk0UjV6CV8oYk2yEyF++Z8uhR8wZCwotvT
+         MLyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=tcQVEW9G/6Ynw8ttTjYGLfCDVLNx10FM9/eWz2EU4Zs=;
-        b=Vtpoh6RKRYnjh29MDx94QOXiaGiHsATMpW9US4FjTFE+jcOnTho3M9ERBRhJJ4qLMf
-         0u/AsUQLJRr2u8HG3YybQue4W0fOm+ycL6IYZyKX3F9avabmoNoGXNZ6jEe4xaRALShl
-         T+zLI0KCgCxG/wMRpa3IawTcEaqm8sZ1Eo/7R/zoy8wmcLN1+2KsafY0qX+3RjCeCXHg
-         /yGSa4UMcjkaCL+19KkMc0E3HEiHEuNCv5rC/eo8Wq+vcdTYHmUv9R8qoUVEQiHZDC+J
-         arzb+cODB8BnbO6s0b1e9FXFR/yfGUzDH0IEbQlwrKrh8T3Akw5EO3n1pym06gcpnVCH
-         YLDw==
+        bh=toZsHcJ5V4Fb9J9FAQx56aAn4a5VxmvX4VFMjwp/Po4=;
+        b=OQXP8KQUWDL5FkKI9H+kibzOt9UIdx9Oc1RmRrvrIhon+biTrl0bWmPyK6stC/bM3u
+         tqrL3QTR9V+n3bAurnOYVnHAgGYYjCcbTrrLdi8gMNPTMQvLTXo+vwhwYj2x8g87R7xf
+         WSiw7jTuwtoMA21KHzJ6uu5FYUdyUYCL4b2izmhzUTsEh30dhK3L9zxtqpfnqv9qEMlO
+         bw2Qrb97+vcYmEERl6yEa/+gMrakq3GCQt9AA9qAFtb3KgOso/MJosOrOebxmF+w20bz
+         YBiLXclJYy4ty29SULxCA15UpqjShl0wFPQcGRYx6UJTDJoQPi6d/ddO0UQiuiGHtXDy
+         +yzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
@@ -29,67 +29,65 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 72/72] staging: ks7010: Remove extra blank line between functions.
-Date: Fri, 30 Mar 2018 00:08:38 -0700
-Message-Id: <20180330070842.25224-75-quytelda@tamalin.org>
+Subject: [PATCH 72/76] staging: ks7010: Remove dummy address set.
+Date: Fri, 30 Mar 2018 00:08:37 -0700
+Message-Id: <20180330070842.25224-74-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:+W1RGs6DX6j9SWjla72qBwS44rDTsLupTakNxQ+ygfEHhUlzyng
- /rfLxEvVvvTgGFlCwtV5OoXMK202g8sjmIQqNDnQxXukSqeQPTR6Y/BtAylmjFtyEhA0XfV
- mUdI42Qd9Lgb7uFcK4MKcBQBgfSXWFVgzwrqZ6tFwvnTEQU0KvX7+AppMlhJ4l/cz9XqwrN
- TUT9v9nOWphUrW6nY33qQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:YnGsTmCfrGw=:w23787qS05XksAJ9/yKgkk
- Y5o4TnS3Y1/05Z9VC9tA3P9s7MVD3byFCWh/MUfipSD2ZD3seAJibRxeOpxCcp3L335IbL8bQ
- eOMOZnzDmCrOBiN4HB5odslHsU+EqeFNK4zV4LTSmf+4bMG61ycGbnOaQ8YwvLiBP4VwHcNdI
- ZczgDp/CswL/mhLAsnbgD/kBYvSafUxlP0Otxdxb7rgPvpHcj0jCyiQkLQA0urAwD5YGDS7cK
- uOz6BSgegbeqBze5H6Ba8lxLexynRw0CaNGzMRwVbUPAaTaLq6vs7CP5yGJm3cot/QD+KagPJ
- LyWPqVYQPrbxNJaX5XbVUjt1wsaoVQnAi78f307K8TKML5XI6VZFMqT59vKtRBSYfDr5CxLfL
- /TrGBfqdcSiryNi/S5x0SX+CAXTDDRaVyW0MfekvD9PuO7EdF8wJ7gvI/wLSXvzFSg3CY1xtm
- AK5Rgp8wV9d+9hidkjujVlYh0q5J3nmb0up33Aw/jH1KLvDOScLZlOsdKT8dzLhXjbvjCCdhe
- kiHeWSwmheZBmwBfwg2FQfdmGigg4hlSRFAJMWLz3BYWAqIQ88GL5QEcbW45jhM0d/ykEErF4
- H3/jjmlAuRmstb9DCFXDnO3B/DMnaDNDHlOmVIF2irUMwlfpWYFBNFUzj1eoYwkCaq1WZF36Q
- NLORiV4Xcut4ozYqHDANKHIey7NHoF9qUQd+RnfI8c8GnYiyj0Qb9DOd2kzAR/lP1o1XUKR0r
- 0OkjPr504hzYroXNCar2/O0pAzsCnqdAh/NWFA==
+X-Provags-ID: V03:K0:Q78hJzEAv5JLrcCBMO0Eq4qyqo4WibYrBOCC/cWjt79s2AVOsoH
+ VwKgnq2MyZ7oycmT4Rnjl8ILwdcF22IOrMsgl9xIIDWmAYcCIjHPL4GQZkOiq/Wu8R6a7wB
+ BalK0ypIDCL026mFH9+nvCkkRS2Ki92WWOMQTDKRpd2RmDl6bZi60/JdufyJi7UmJcweqzN
+ mKO6KVh8JNGOJlN0ICTSg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:oKCpVLhauUY=:86VD6fRZrZnaxBDIIuIAuB
+ f8agdTJeywurY2EUAFLTiaaxrAl/5PpdFrKCW7jnWTD12jKxVUE6Z3mryg3oM6s83FKatHzrD
+ v+SAUChkaywpkyxgiLEBFQfslNlaHLv81bpdZnc1X6mXyj0G8dAlV/txytcijk1DcOnmGB7LF
+ DtbyYypK/ZOmBFwm2K+TcB2P97og76D3oK2ZD6bFTsjovIpdhRoODYX4LJUeDBV115PqQjMMM
+ ODfgsAPnnLZG00ewGp5ooUDK3BzTBHmWLu8pVbqHWLUcdt9ssAJ3ndhNTObUpCslM2SjvjJ6E
+ HZK+Kk910FX9HCTPsfeVm1Vy3IhkgJId3EMHNl8ogvqI6GAIOCay4jKSJ3JouWEuklGLvyWOH
+ kIeVuoHxqX2SpSUaPJ8lvr1qXaeXprBhl+qB50nosSN9z4Nfl1VZWPbebWBsMwwueXWfBpnjc
+ N68PH6ffsXpenN4YLVBy7V3AynLl7H9L6aPTrI2PoAMuJe8oFSqoDlVP3unIzvJ/wjMUaAlv+
+ 53wHnELsOvGiMOBezBH0QxkspeeAM+kXAXRXqJIoO7Hx1jr0eEWt6r1C+b95V6tOdzFLIxp1a
+ Ls5nOpFAuIKnSyySqCPy3sdr/a7hy3rCWGBPmEFHqN6ySyhqk1BY6dxOA0Zb8D4EMJInqmCB9
+ ioPjHht/S/CIpEKJWGN8wt00XaRNYb3scWBwp2VFVQmJ/qaM+fWy7t6U2+l/Zniq5bJf/QBxL
+ PKRYJ+n0yDlSupSYEzY7QtMOCUfQXr0W8HEyvA==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596345599363234699?=
-X-GMAIL-MSGID: =?utf-8?q?1596345603612153241?=
+X-GMAIL-THRID: =?utf-8?q?1596345602818208283?=
+X-GMAIL-MSGID: =?utf-8?q?1596345602818208283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Remove an extra blank line indicated by checkpatch.
+Setting a dummy address during the driver probe is not necessary.
+The dev_addr field is already zeroed out from alloc_etherdev().
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks7010_sdio.c | 3 ++-
- drivers/staging/ks7010/ks_hostif.c   | 1 -
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/ks7010/ks_wlan_net.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index d083bf8d238e..930d1f7d7dbf 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -305,7 +305,8 @@ static void tx_device_task(struct ks_wlan_private *priv)
- 	if (priv->dev_state >= DEVICE_STATE_BOOT) {
- 		ret = write_to_device(priv, sp->sendp, sp->size);
- 		if (ret) {
--			netdev_err(priv->net_dev, "write_to_device error !!(%d)\n", ret);
-+			netdev_err(priv->net_dev,
-+				   "write_to_device() error (%d)!\n", ret);
- 			queue_delayed_work(priv->wq, &priv->rw_dwork, 1);
- 			return;
- 		}
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 3c8a8d0f800c..b97080f8ebd2 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -221,7 +221,6 @@ static u8 read_ie(unsigned char *bp, u8 max, u8 *body)
- 	return size;
- }
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 5c5569000fce..afbc472baa05 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -2852,9 +2852,6 @@ int ks_wlan_close(struct net_device *dev)
+ /* Operational parameters that usually are not changed. */
+ /* Time in jiffies before concluding the transmitter is hung. */
+ #define TX_TIMEOUT  (3 * HZ)
+-static const unsigned char dummy_addr[] = {
+-	0x00, 0x0b, 0xe3, 0x00, 0x00, 0x00
+-};
  
+ static const struct net_device_ops ks_wlan_netdev_ops = {
+ 	.ndo_start_xmit = ks_wlan_start_xmit,
+@@ -2882,9 +2879,6 @@ int ks_wlan_net_start(struct net_device *dev)
+ 	atomic_set(&update_phyinfo, 0);
+ 	timer_setup(&update_phyinfo_timer, ks_wlan_update_phyinfo_timeout, 0);
+ 
+-	/* dummy address set */
+-	ether_addr_copy(dev->dev_addr, dummy_addr);
 -
- static
- int get_ap_information(struct ks_wlan_private *priv, struct ap_info *ap_info,
- 		       struct local_ap *ap)
+ 	/* The ks_wlan-specific entries in the device structure. */
+ 	dev->netdev_ops = &ks_wlan_netdev_ops;
+ 	dev->wireless_handlers = &ks_wlan_handler_def;
 -- 
 2.16.3
