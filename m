@@ -1,49 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752655AbeC3Tyz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 15:54:55 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:50490 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752545AbeC3Tyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 15:54:53 -0400
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-To: Mark Brown <broonie@kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH] spi: stm32: Fix error handling in stm32_spi_probe()
-Date: Fri, 30 Mar 2018 22:54:44 +0300
-Message-Id: <1522439684-7510-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
+        id S1752677AbeC3UBE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 16:01:04 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:43000 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752455AbeC3UBD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 16:01:03 -0400
+X-Google-Smtp-Source: AIpwx49ZNhP/S43ufYVaQ9JPBGcS54juGoIJmDK8OdaExXQk+JJklC2lvxvHI+RIjug5F62Kjaf8BkiRBXgtztev/sbRR/zkbR26
+MIME-Version: 1.0
+Date: Fri, 30 Mar 2018 13:01:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001f05330568a6b369@google.com>
+Subject: WARNING: kmalloc bug in bfs_fill_super
+From: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>
+To: aivazian.tigran@gmail.com, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clk_get_rate() is below clk_prepare_enable(), so
-its error should lead to goto err_clk_disable, not to err_master_put.
+Hello,
 
-Found by Linux Driver Verification project (linuxtesting.org).
+syzbot hit the following crash on upstream commit
+9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
+Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=71c6b5d68e91149fc8a4
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+So far this crash happened 2 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4931648743276544
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5311241039904768
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6519557879496704
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+compiler: gcc (GCC) 7.1.1 20170620
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+BFS-fs: bfs_fill_super(): loop0 is unclean, continuing
+WARNING: CPU: 1 PID: 4468 at mm/slab_common.c:1012 kmalloc_slab+0x5d/0x70  
+mm/slab_common.c:1012
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 4468 Comm: syzkaller458727 Not tainted 4.16.0-rc7+ #7
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:kmalloc_slab+0x5d/0x70 mm/slab_common.c:1012
+RSP: 0018:ffff8801ad117908 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8801b904e004 RCX: ffffffff820931da
+RDX: 1ffff1003a1dfac4 RSI: 0000000000000000 RDI: 0000000000800000
+RBP: ffff8801ad117908 R08: 1ffff10035a22e81 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 00000000007fffff
+R13: ffff8801b904e000 R14: 00000000014080c0 R15: ffff8801d9194cc0
+  __do_kmalloc mm/slab.c:3701 [inline]
+  __kmalloc+0x25/0x760 mm/slab.c:3715
+  kmalloc include/linux/slab.h:517 [inline]
+  kzalloc include/linux/slab.h:701 [inline]
+  bfs_fill_super+0x3d3/0xea0 fs/bfs/inode.c:362
+  mount_bdev+0x2b7/0x370 fs/super.c:1119
+  bfs_mount+0x34/0x40 fs/bfs/inode.c:465
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2509 [inline]
+  do_new_mount fs/namespace.c:2512 [inline]
+  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
+  SYSC_mount fs/namespace.c:3058 [inline]
+  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x442d3a
+RSP: 002b:00007ffd0d12ac38 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000442d3a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffd0d12ac40
+RBP: 0000000000000004 R08: 0000000000000000 R09: 000000000000000a
+R10: 00000000c0ed0000 R11: 0000000000000297 R12: 0000000000401ba0
+R13: 0000000000401c30 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- drivers/spi/spi-stm32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-index ba9743fa2326..ad1e55d3d5d5 100644
---- a/drivers/spi/spi-stm32.c
-+++ b/drivers/spi/spi-stm32.c
-@@ -1129,7 +1129,7 @@ static int stm32_spi_probe(struct platform_device *pdev)
- 	if (!spi->clk_rate) {
- 		dev_err(&pdev->dev, "clk rate = 0\n");
- 		ret = -EINVAL;
--		goto err_master_put;
-+		goto err_clk_disable;
- 	}
- 
- 	spi->rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
--- 
-2.7.4
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
