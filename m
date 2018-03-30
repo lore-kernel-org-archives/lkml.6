@@ -1,244 +1,138 @@
-Return-Path: <kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4+n93SS0ALj+ey2jxJoykrpm5Uv1eqh0/FBpw5jtIclMg5gIA5LkFa7U3lRiXTjP1JGIDfB
-ARC-Seal: i=1; a=rsa-sha256; t=1522461179; cv=none;
+Return-Path: <xieyisheng1@huawei.com>
+X-Google-Smtp-Source: AIpwx48DrITX8Tq3LxgZ1mMlkiQXVPAGJ1A540UGOHaaPGECw6YgaJLzYG+2HtaKb5v/MnZH2XJN
+ARC-Seal: i=1; a=rsa-sha256; t=1522386029; cv=none;
         d=google.com; s=arc-20160816;
-        b=v7DDrN3EA3aUDJ8e3wB2VvnSKEdQj2Sqcg9J/xP/K+LvzH4l9HK7V6VZfuNagTl6cJ
-         u35OrtiJuxWIsOxF1AVKYS1ytr/yBgH9R7k8mUNeClBbZsYSfrFabDbbC52RhXvs5AlQ
-         S1gCe4nPcYptLLuJWiZV4ZWe4YQdT7vWY69C9cxSl1q6yucmKEAaB9jYeutkW2DpoQSK
-         6GsIjB+CtXiTqoLxPClTFJw9t6+CTIk7tg+jWYyM6YmeO8Gi/Cq4sXuRj3AMlQKv9iTJ
-         nGFOeo94ViempdNZyuHCB8XfY4/MCs7MSA483Sq6DUy7dwTYZV2UZpyMSZLkhTIv5xF0
-         9agw==
+        b=gfx0PKB2/Gn6KabNb6MKmJNLv3L56pWhXPwpa7IIiqGhp5b/2b9H4flmZLNXrWCQHf
+         bQeSlM4ts4Kgmo3tiWb2foat1KRoPwPgRKoTYRrOZyRrSFLZZgtsGYOoqexwOa7U1r9U
+         Zi/yqidYUD9GvlUeCI0Q94VIwGdUvOWr+THSfVpx2BoyiWa6xI86U+HOB8IkHunyqPdA
+         ZrJbBZuuRoLNW89W2NIb40eh9bdPULEMVcRF9h9B9xrPLwY03Hwfz+nLAdVNlJXKpCp1
+         RhLeaOA/vGgDFIU22arTsFADLibEvHOy7qSyknQtkDmXPpMQh65+HiBG4CGrWD8fcJFi
+         camg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=pU4bnVT94aB2863bO/FEp94lh2qIMfiybQq0IjDRgr4=;
-        b=ZFEB3wJeD6Ybz01pNq7DBgFl6uSfoMIlfHgiy0mjE3WEOGIc+WjpPuUOoEKAcGUBT3
-         QKd8y57OaNRQ8As/8VLn2R4RNcLOKIbOpdFwW9dj3WmM07ew9VTS++OqMOl+UFySvp5z
-         xFh4Tai1d6fufEKg18IRjbY5lqHGeBdeHaEMMDxdjPC+OSfJVYcUL2vYLbBnr3RunL7n
-         APm3emxoAZjXSViIkxhNE3tetMUS3UrXUL7YQQhpu4i2JpJCeOheyQa4B5ewdo/qQsiE
-         7Rr7CpodY6G/hTb6HMldNWqHaHMKFfGKytaDQ6QYrVIiKjLCjCX1B7jZBp/G+4eEZj+k
-         URZg==
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=lwCj4GKGBkNA08ZtKaVyU1SqOSs0pEwct78ENswoJb8=;
+        b=DUFNM2v/4aIp6fJPTtA6fXd1LvSVrwgrU8YnpxqtdOhvfLlgAhd7Tb8n1TwiE4LCC5
+         BcDzqCM+JNoNYL0PsS6sIeZAH8qubc/vMu8VmKYBmwwN3diMC/PtyC9wDkxccbJtWAzb
+         8qycTVPjaJ4J6nk0MGzZDG4a3647KzupOKtn4fu0nF0wVd44LJm2okezG+n4zvE6+5GH
+         lbBxuiClKcEUriuLqpf16r34jPMEi+IYCGYFgGW0XlaG3JnhgXxqRVXBwUBWQKiFT3BI
+         zpTS2RE/UxUrNNGFBNxuHwjyncekAdJyfo527crZl/mpUIxG3ZZNAm8pCUC9NFP4xpSs
+         kZHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=aIJfVgkh;
-       spf=pass (google.com: domain of kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.191 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=aIJfVgkh;
-       spf=pass (google.com: domain of kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Fri, 30 Mar 2018 18:52:36 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	David Laight <David.Laight@aculab.com>,
-	Ian Abbott <abbotti@mev.co.uk>, linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com
-Subject: [PATCH v7] kernel.h: Retain constant expression output for
- max()/min()
-Message-ID: <20180331015236.GA3852@beast>
+       spf=pass (google.com: domain of xieyisheng1@huawei.com designates 45.249.212.191 as permitted sender) smtp.mailfrom=xieyisheng1@huawei.com
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <akpm@linux-foundation.org>
+CC: <arnd@arndb.de>, <kstewart@linuxfoundation.org>,
+	<gregkh@linuxfoundation.org>, <toshi.kani@hpe.com>,
+	<linux-arch@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<jcm@redhat.com>, <guohanjun@huawei.com>, <wangzhou1@hisilicon.com>,
+	<tanxiaojun@huawei.com>, Yisheng Xie <xieyisheng1@huawei.com>
+Subject: [RFC PATCH] lib/ioremap: Avoid triggering BUG_ON when end is not PAGE_ALIGN
+Date: Fri, 30 Mar 2018 12:49:45 +0800
+Message-ID: <1522385385-7074-1-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596416253887758070?=
-X-GMAIL-MSGID: =?utf-8?q?1596416253887758070?=
+X-GMAIL-THRID: =?utf-8?q?1596337453491201592?=
+X-GMAIL-MSGID: =?utf-8?q?1596337453491201592?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In the effort to remove all VLAs from the kernel[1], it is desirable to
-build with -Wvla. However, this warning is overly pessimistic, in that
-it is only happy with stack array sizes that are declared as constant
-expressions, and not constant values. One case of this is the evaluation
-of the max() macro which, due to its construction, ends up converting
-constant expression arguments into a constant value result.
+Zhou reported a bug on Hisilicon arm64 D06 platform with 64KB page size:
 
-All attempts to rewrite this macro with __builtin_constant_p() failed with
-older compilers (e.g. gcc 4.4)[2]. However, Martin Uecker, constructed[3]
-a mind-shattering solution that works everywhere. Cthulhu fhtagn!
+ [    2.470908] kernel BUG at lib/ioremap.c:72!
+ [    2.475079] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+ [    2.480551] Modules linked in:
+ [    2.483594] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc7-00062-g0b41260-dirty #23
+ [    2.491756] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI Nemo 2.0 RC0 - B120 03/23/2018
+ [    2.500614] pstate: 80c00009 (Nzcv daif +PAN +UAO)
+ [    2.505395] pc : ioremap_page_range+0x268/0x36c
+ [    2.509912] lr : pci_remap_iospace+0xe4/0x100
+ [...]
+ [    2.603733] Call trace:
+ [    2.606168]  ioremap_page_range+0x268/0x36c
+ [    2.610337]  pci_remap_iospace+0xe4/0x100
+ [    2.614334]  acpi_pci_probe_root_resources+0x1d4/0x214
+ [    2.619460]  pci_acpi_root_prepare_resources+0x18/0xa8
+ [    2.624585]  acpi_pci_root_create+0x98/0x214
+ [    2.628843]  pci_acpi_scan_root+0x124/0x20c
+ [    2.633013]  acpi_pci_root_add+0x224/0x494
+ [    2.637096]  acpi_bus_attach+0xf8/0x200
+ [    2.640918]  acpi_bus_attach+0x98/0x200
+ [    2.644740]  acpi_bus_attach+0x98/0x200
+ [    2.648562]  acpi_bus_scan+0x48/0x9c
+ [    2.652125]  acpi_scan_init+0x104/0x268
+ [    2.655948]  acpi_init+0x308/0x374
+ [    2.659337]  do_one_initcall+0x48/0x14c
+ [    2.663160]  kernel_init_freeable+0x19c/0x250
+ [    2.667504]  kernel_init+0x10/0x100
+ [    2.670979]  ret_from_fork+0x10/0x18
 
-This patch updates the min()/max() macros to evaluate to a constant
-expression when called on constant expression arguments. This removes
-several false-positive stack VLA warnings from an x86 allmodconfig build
-when -Wvla is added:
+The cause is the size of PCI IO resource is 32KB, which is 4K aligned but
+not 64KB aligned, so when do ioremap_pte_range(), its incoming end is not
+PAGE_ALIGN on 64KB page size system, but ioremap_pte_range increase the
+addr by PAGE_SIZE, which makes addr != end until trigger BUG_ON.
 
-$ diff -u before.txt after.txt | grep ^-
--drivers/input/touchscreen/cyttsp4_core.c:871:2: warning: ISO C90 forbids variable length array ‘ids’ [-Wvla]
--fs/btrfs/tree-checker.c:344:4: warning: ISO C90 forbids variable length array ‘namebuf’ [-Wvla]
--lib/vsprintf.c:747:2: warning: ISO C90 forbids variable length array ‘sym’ [-Wvla]
--net/ipv4/proc.c:403:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
--net/ipv6/proc.c:198:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
--net/ipv6/proc.c:218:2: warning: ISO C90 forbids variable length array ‘buff64’ [-Wvla]
+This patch introduces pte_addr_end(addr, end) to resolve this problem, just
+as what pmd_addr_end do. When end is not PAGE_ALIGN, it will return end
+instead of addr + PAGE_SIZE, therefore ioremap_pte_range() can break out
+when real end is coming.
 
-This also updates the one case where different enums were being compared
-and explicitly casts them to int (which matches the old side-effect of
-the single-evaluation code).
-
-[1] https://lkml.org/lkml/2018/3/7/621
-[2] https://lkml.org/lkml/2018/3/10/170
-[3] https://lkml.org/lkml/2018/3/20/845
-
-Co-Developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-Co-Developed-by: Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Reported-by: Zhou Wang <wangzhou1@hisilicon.com>
+Tested-by: Xiaojun Tan <tanxiaojun@huawei.com>
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
-v7:
-- __is_constant() renamed to __is_constexpr() (Miguel Ojeda)
-- adjust memory offset from 1 to 8 (David Laight)
-- min_t()/max_t() "t" renamed back to "type" (0-day bot)
-- add Acks
----
- drivers/char/tpm/tpm_tis_core.h |  8 ++---
- include/linux/kernel.h          | 71 ++++++++++++++++++++++++-----------------
- 2 files changed, 45 insertions(+), 34 deletions(-)
+ include/asm-generic/pgtable.h | 7 +++++++
+ lib/ioremap.c                 | 5 ++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index d5c6a2e952b3..f6e1dbe212a7 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -62,10 +62,10 @@ enum tis_defaults {
- /* Some timeout values are needed before it is known whether the chip is
-  * TPM 1.0 or TPM 2.0.
-  */
--#define TIS_TIMEOUT_A_MAX	max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
--#define TIS_TIMEOUT_B_MAX	max(TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
--#define TIS_TIMEOUT_C_MAX	max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
--#define TIS_TIMEOUT_D_MAX	max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
-+#define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
-+#define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
-+#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
-+#define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index bfbb44a..7d5ee84 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -478,6 +478,13 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+ })
+ #endif
  
- #define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
- #define	TPM_INT_ENABLE(l)		(0x0008 | ((l) << 12))
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 3fd291503576..87acb8b58ae9 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -783,41 +783,58 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- #endif /* CONFIG_TRACING */
- 
++#ifndef pte_addr_end
++#define pte_addr_end(addr, end)						\
++({	unsigned long __boundary = ((addr) + PAGE_SIZE) & PAGE_MASK;	\
++	(__boundary - 1 < (end) - 1) ? __boundary : (end);		\
++})
++#endif
++
  /*
-- * min()/max()/clamp() macros that also do
-- * strict type-checking.. See the
-- * "unnecessary" pointer comparison.
-+ * min()/max()/clamp() macros must accomplish three things:
-+ *
-+ * - avoid multiple evaluations of the arguments (so side-effects like
-+ *   "x++" happen only once) when non-constant.
-+ * - perform strict type-checking (to generate warnings instead of
-+ *   nasty runtime surprises). See the "unnecessary" pointer comparison
-+ *   in __typecheck().
-+ * - retain result as a constant expressions when called with only
-+ *   constant expressions (to avoid tripping VLA warnings in stack
-+ *   allocation usage).
-+ */
-+#define __typecheck(x, y) \
-+		(!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-+
-+/*
-+ * This returns a constant expression while determining if an argument is
-+ * a constant expression, most importantly without evaluating the argument.
-+ * Glory to Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
-  */
--#define __min(t1, t2, min1, min2, x, y) ({		\
--	t1 min1 = (x);					\
--	t2 min2 = (y);					\
--	(void) (&min1 == &min2);			\
--	min1 < min2 ? min1 : min2; })
-+#define __is_constexpr(x) \
-+	(sizeof(int) == sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)))
-+
-+#define __no_side_effects(x, y) \
-+		(__is_constexpr(x) && __is_constexpr(y))
-+
-+#define __safe_cmp(x, y) \
-+		(__typecheck(x, y) && __no_side_effects(x, y))
-+
-+#define __cmp(x, y, op)	((x) op (y) ? (x) : (y))
-+
-+#define __cmp_once(x, y, op) ({		\
-+		typeof(x) __x = (x);	\
-+		typeof(y) __y = (y);	\
-+		__cmp(__x, __y, op); })
-+
-+#define __careful_cmp(x, y, op)				\
-+		__builtin_choose_expr(__safe_cmp(x, y),	\
-+				      __cmp(x, y, op), __cmp_once(x, y, op))
+  * When walking page tables, we usually want to skip any p?d_none entries;
+  * and any p?d_bad entries - reporting the error before resetting to none.
+diff --git a/lib/ioremap.c b/lib/ioremap.c
+index 54e5bba..82c8502 100644
+--- a/lib/ioremap.c
++++ b/lib/ioremap.c
+@@ -63,16 +63,19 @@ static int ioremap_pte_range(pmd_t *pmd, unsigned long addr,
+ {
+ 	pte_t *pte;
+ 	u64 pfn;
++	unsigned long next;
  
- /**
-  * min - return minimum of two values of the same or compatible types
-  * @x: first value
-  * @y: second value
-  */
--#define min(x, y)					\
--	__min(typeof(x), typeof(y),			\
--	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
--	      x, y)
--
--#define __max(t1, t2, max1, max2, x, y) ({		\
--	t1 max1 = (x);					\
--	t2 max2 = (y);					\
--	(void) (&max1 == &max2);			\
--	max1 > max2 ? max1 : max2; })
-+#define min(x, y)	__careful_cmp(x, y, <)
+ 	pfn = phys_addr >> PAGE_SHIFT;
+ 	pte = pte_alloc_kernel(pmd, addr);
+ 	if (!pte)
+ 		return -ENOMEM;
+ 	do {
++		next = pte_addr_end(addr, end);
++
+ 		BUG_ON(!pte_none(*pte));
+ 		set_pte_at(&init_mm, addr, pte, pfn_pte(pfn, prot));
+ 		pfn++;
+-	} while (pte++, addr += PAGE_SIZE, addr != end);
++	} while (pte++, addr = next, addr != end);
+ 	return 0;
+ }
  
- /**
-  * max - return maximum of two values of the same or compatible types
-  * @x: first value
-  * @y: second value
-  */
--#define max(x, y)					\
--	__max(typeof(x), typeof(y),			\
--	      __UNIQUE_ID(max1_), __UNIQUE_ID(max2_),	\
--	      x, y)
-+#define max(x, y)	__careful_cmp(x, y, >)
- 
- /**
-  * min3 - return minimum of three values
-@@ -869,10 +886,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
-  * @x: first value
-  * @y: second value
-  */
--#define min_t(type, x, y)				\
--	__min(type, type,				\
--	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
--	      x, y)
-+#define min_t(type, x, y)	__careful_cmp((type)(x), (type)(y), <)
- 
- /**
-  * max_t - return maximum of two values, using the specified type
-@@ -880,10 +894,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
-  * @x: first value
-  * @y: second value
-  */
--#define max_t(type, x, y)				\
--	__max(type, type,				\
--	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
--	      x, y)
-+#define max_t(type, x, y)	__careful_cmp((type)(x), (type)(y), >)
- 
- /**
-  * clamp_t - return a value clamped to a given range using a given type
 -- 
-2.7.4
-
-
--- 
-Kees Cook
-Pixel Security
+1.7.12.4
