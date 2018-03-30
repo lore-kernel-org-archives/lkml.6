@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752282AbeC3RSg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:18:36 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58726 "EHLO
+        id S1752479AbeC3RSq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:18:46 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58788 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeC3RSd (ORCPT
+        with ESMTP id S1752344AbeC3RSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:18:33 -0400
+        Fri, 30 Mar 2018 13:18:43 -0400
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Sebastian Reichel <sre@kernel.org>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -17,9 +17,9 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv3 2/8] drm/omap: add manual update detection helper
-Date: Fri, 30 Mar 2018 19:18:16 +0200
-Message-Id: <20180330171822.25896-3-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv3 6/8] drm/omap: add support for rotation hints from display drivers
+Date: Fri, 30 Mar 2018 19:18:20 +0200
+Message-Id: <20180330171822.25896-7-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
 References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
@@ -27,46 +27,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for manually updated display support, such as DSI
-command mode panels, this adds a simple helper to see if a connector
-is manually updated.
+This adds support for setting DRM panel orientation property
+based on rotation information from the display driver.
 
-Tested-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/gpu/drm/omapdrm/omap_connector.c | 8 ++++++++
- drivers/gpu/drm/omapdrm/omap_connector.h | 1 +
- 2 files changed, 9 insertions(+)
+ drivers/gpu/drm/omapdrm/dss/omapdss.h    |  2 ++
+ drivers/gpu/drm/omapdrm/omap_connector.c | 34 +++++++++++++++++++++++++++++++-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss.h b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+index 14d74adb13fb..01a2a6638f70 100644
+--- a/drivers/gpu/drm/omapdrm/dss/omapdss.h
++++ b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+@@ -554,6 +554,8 @@ struct omap_dss_driver {
+ 			    struct videomode *vm);
+ 	void (*get_size)(struct omap_dss_device *dssdev,
+ 			 unsigned int *width, unsigned int *height);
++	void (*get_rotation)(struct omap_dss_device *dssdev,
++				int *rotation);
+ 
+ 	int (*set_wss)(struct omap_dss_device *dssdev, u32 wss);
+ 	u32 (*get_wss)(struct omap_dss_device *dssdev);
 diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
-index a0d7b1d905e8..a33b51484b2d 100644
+index a33b51484b2d..f8ae8bdf9211 100644
 --- a/drivers/gpu/drm/omapdrm/omap_connector.c
 +++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-@@ -57,6 +57,14 @@ bool omap_connector_get_hdmi_mode(struct drm_connector *connector)
- 	return omap_connector->hdmi_mode;
- }
+@@ -249,6 +249,8 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
+ 	struct drm_connector *connector = NULL;
+ 	struct omap_connector *omap_connector;
+ 	bool hpd_supported = false;
++	int rotation = -1;
++	int ret;
  
-+bool omap_connector_get_manually_updated(struct drm_connector *connector)
-+{
-+	struct omap_connector *omap_connector = to_omap_connector(connector);
-+
-+	return !!(omap_connector->dssdev->caps &
-+		  OMAP_DSS_DISPLAY_CAP_MANUAL_UPDATE);
-+}
-+
- static enum drm_connector_status omap_connector_detect(
- 		struct drm_connector *connector, bool force)
- {
-diff --git a/drivers/gpu/drm/omapdrm/omap_connector.h b/drivers/gpu/drm/omapdrm/omap_connector.h
-index 98bbc779b302..652136d167f5 100644
---- a/drivers/gpu/drm/omapdrm/omap_connector.h
-+++ b/drivers/gpu/drm/omapdrm/omap_connector.h
-@@ -33,5 +33,6 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
- struct drm_encoder *omap_connector_attached_encoder(
- 		struct drm_connector *connector);
- bool omap_connector_get_hdmi_mode(struct drm_connector *connector);
-+bool omap_connector_get_manually_updated(struct drm_connector *connector);
+ 	DBG("%s", dssdev->name);
  
- #endif /* __OMAPDRM_CONNECTOR_H__ */
+@@ -267,7 +269,7 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
+ 	drm_connector_helper_add(connector, &omap_connector_helper_funcs);
+ 
+ 	if (dssdev->driver->register_hpd_cb) {
+-		int ret = dssdev->driver->register_hpd_cb(dssdev,
++		ret = dssdev->driver->register_hpd_cb(dssdev,
+ 							  omap_connector_hpd_cb,
+ 							  omap_connector);
+ 		if (!ret)
+@@ -288,6 +290,36 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
+ 	connector->interlace_allowed = 1;
+ 	connector->doublescan_allowed = 0;
+ 
++	if (dssdev->driver->get_rotation)
++		dssdev->driver->get_rotation(dssdev, &rotation);
++
++	switch (rotation) {
++	case 0:
++		connector->display_info.panel_orientation =
++			DRM_MODE_PANEL_ORIENTATION_NORMAL;
++		break;
++	case 90:
++		connector->display_info.panel_orientation =
++			DRM_MODE_PANEL_ORIENTATION_RIGHT_UP;
++		break;
++	case 180:
++		connector->display_info.panel_orientation =
++			DRM_MODE_PANEL_ORIENTATION_BOTTOM_UP;
++		break;
++	case 270:
++		connector->display_info.panel_orientation =
++			DRM_MODE_PANEL_ORIENTATION_LEFT_UP;
++		break;
++	default:
++		connector->display_info.panel_orientation =
++			DRM_MODE_PANEL_ORIENTATION_UNKNOWN;
++		break;
++	}
++
++	ret = drm_connector_init_panel_orientation_property(connector, 0, 0);
++	if (ret)
++		DBG("%s: Failed to init orientation property (%d)", dssdev->name, ret);
++
+ 	return connector;
+ 
+ fail:
 -- 
 2.16.2
