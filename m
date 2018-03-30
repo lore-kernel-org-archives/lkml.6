@@ -1,125 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeC3Qdw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 12:33:52 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54147 "EHLO
+        id S1751897AbeC3QiC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 12:38:02 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39487 "EHLO
         mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeC3Qdu (ORCPT
+        with ESMTP id S1751167AbeC3QiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 12:33:50 -0400
-X-Google-Smtp-Source: AIpwx4/dYhJIsln7QIYywzseG+EJgpnb6iOgWLGYe+ZoaFsu7PtPzIduJciWC5NcthZI3s91KHyDtPG69joDTKGHGBI=
+        Fri, 30 Mar 2018 12:38:00 -0400
+X-Google-Smtp-Source: AIpwx4/75lYNyHBgsGz7XTGAk12KShi1liBZ7iOaWKuMMDy0Vk2VIQRkWtyeU0e4BYpopMeKvs9bjV2+f9YDN1cEnEU=
 MIME-Version: 1.0
-From: DaeRyong Jeong <threeearcat@gmail.com>
-Date: Sat, 31 Mar 2018 01:33:48 +0900
-Message-ID: <CACsK=jcYaF8ZP6DKTnvTh6SFLh+=eh+SJtn5xjpuxRxpiM9_BA@mail.gmail.com>
-Subject: kernel BUG at /home/blee/project/race-fuzzer/kernels/kernel_v4.16-rc3/net/packet/af_packet.c:LINE!
-To: linux-kernel@vger.kernel.org
-Cc: Byoungyoung Lee <byoungyoung@purdue.edu>,
-        Kyungtae Kim <kt0755@gmail.com>, netdev@vger.kernel.org
+In-Reply-To: <20180330102038.2378925b@gandalf.local.home>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com> <20180330102038.2378925b@gandalf.local.home>
+From: Joel Fernandes <joelaf@google.com>
+Date: Fri, 30 Mar 2018 09:37:58 -0700
+Message-ID: <CAJWu+ooMPz_nFtULMXp6CnLvM8JFJrSnBGNgPHXKs1k97FQU5Q@mail.gmail.com>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We report the crash: kernel BUG at
-/home/blee/project/race-fuzzer/kernels/kernel_v4.16-rc3/net/packet/af_packet.c:LINE!
+Hi Steve,
 
-This crash has been found in v4.16-rc3 using RaceFuzzer (a modified
-version of Syzkaller), which we describe more at the end of this
-report. Our analysis shows that the race occurs when invoking two
-syscalls concurrently, (setsockopt$packet_int) and (bind$packet).
-We have confirmed that the kernel v4.16-rc3, v4.16-rc7, and v4.15.14
-built with gcc 7.1.0 are crashing by running the provided C repro
-program within a few minutes (5 minutes).
-Note that this crash can be triggered from the user space.
+On Fri, Mar 30, 2018 at 7:20 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> [ Adding memory management folks to discuss the issue ]
+>
+> On Thu, 29 Mar 2018 18:41:44 +0800
+> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+>
+>> It is reported that some user app would like to echo a huge
+>> number to "/sys/kernel/debug/tracing/buffer_size_kb" regardless
+>>  of the available memory, which will cause the coinstantaneous
+>> page allocation failed and introduce OOM. The commit checking the
+>> val against the available mem first to avoid the consequence allocation.
+>>
+>> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
+>> ---
+>>  kernel/trace/trace.c | 39 ++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 38 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+>> index 2d0ffcc..a4a4237 100644
+>> --- a/kernel/trace/trace.c
+>> +++ b/kernel/trace/trace.c
+>> @@ -43,6 +43,8 @@
+>>  #include <linux/trace.h>
+>>  #include <linux/sched/rt.h>
+>>
+>> +#include <linux/mm.h>
+>> +#include <linux/swap.h>
+>>  #include "trace.h"
+>>  #include "trace_output.h"
+>>
+>> @@ -5967,6 +5969,39 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
+>>       return ret;
+>>  }
+>>
+>> +static long get_available_mem(void)
+>> +{
+>> +     struct sysinfo i;
+>> +     long available;
+>> +     unsigned long pagecache;
+>> +     unsigned long wmark_low = 0;
+>> +     unsigned long pages[NR_LRU_LISTS];
+>> +     struct zone *zone;
+>> +     int lru;
+>> +
+>> +     si_meminfo(&i);
+>> +     si_swapinfo(&i);
+>> +
+>> +     for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+>> +             pages[lru] = global_page_state(NR_LRU_BASE + lru);
+>> +
+>> +     for_each_zone(zone)
+>> +             wmark_low += zone->watermark[WMARK_LOW];
+>> +
+>> +     available = i.freeram - wmark_low;
+>> +
+>> +     pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+>> +     pagecache -= min(pagecache / 2, wmark_low);
+>> +     available += pagecache;
+>> +
+>> +     available += global_page_state(NR_SLAB_RECLAIMABLE) -
+>> +             min(global_page_state(NR_SLAB_RECLAIMABLE) / 2, wmark_low);
+>> +
+>> +     if (available < 0)
+>> +             available = 0;
+>> +     return available;
+>> +}
+>> +
+>
+> As I stated in my other reply, the above function does not belong in
+> tracing.
+>
+> That said, it appears you are having issues that were caused by the
+> change by commit 848618857d2 ("tracing/ring_buffer: Try harder to
+> allocate"), where we replaced NORETRY with RETRY_MAYFAIL. The point of
+> NORETRY was to keep allocations of the tracing ring-buffer from causing
+> OOMs. But the RETRY was too strong in that case, because there were
 
-C repro code : https://kiwi.cs.purdue.edu/static/race-fuzzer/afpacket-setsockopt-bind-repro.c
-kernel config v4.16-rc3 :
-https://kiwi.cs.purdue.edu/static/race-fuzzer/afpacket-setsockopt-bind-v4.16-rc3.config
-kernel config v4.16-rc7 :
-https://kiwi.cs.purdue.edu/static/race-fuzzer/afpacket-setsockopt-bind-v4.16-rc7.config
-kernel config v4.15.14 :
-https://kiwi.cs.purdue.edu/static/race-fuzzer/afpacket-setsockopt-bind-v4.15.14.config
+Yes this was discussed with -mm folks. Basically the problem we were
+seeing is devices with tonnes of free memory (but free as in free but
+used by page cache)  were not being used so it was unnecessarily
+failing to allocate ring buffer on the system with otherwise lots of
+memory.
 
-[  881.047513] ------------[ cut here ]------------
-[  881.048416] kernel BUG at
-/home/blee/project/race-fuzzer/kernels/kernel_v4.16-rc3/net/packet/af_packet.c:3107!
-[  881.050014] invalid opcode: 0000 [#1] SMP KASAN
-[  881.050698] Dumping ftrace buffer:
-[  881.051244]    (ftrace buffer empty)
-[  881.051768] Modules linked in:
-[  881.052236] CPU: 1 PID: 18247 Comm: syz-executor0 Not tainted 4.16.0-rc3 #1
-[  881.053247] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
-[  881.054880] RIP: 0010:packet_do_bind+0x88d/0x950
-[  881.055553] RSP: 0018:ffff8802231d7b08 EFLAGS: 00010212
-[  881.056310] RAX: 0000000000010000 RBX: ffff8800af831740 RCX: ffffc900025ce000
-[  881.057318] RDX: 00000000000000a5 RSI: ffffffff838b257d RDI: 0000000000000001
-[  881.058301] RBP: ffff8802231d7c10 R08: ffff8802342f2480 R09: 0000000000000000
-[  881.059298] R10: 0000000000000001 R11: 0000000000000000 R12: ffff8802309f8f00
-[  881.060314] R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000001000
-[  881.061320] FS:  00007f7fab50d700(0000) GS:ffff88023fc00000(0000)
-knlGS:0000000000000000
-[  881.062467] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  881.063285] CR2: 0000000020038000 CR3: 00000000b11c9000 CR4: 00000000000006e0
-[  881.064317] Call Trace:
-[  881.064686]  ? compat_packet_setsockopt+0x100/0x100
-[  881.065430]  ? __sanitizer_cov_trace_const_cmp8+0x18/0x20
-[  881.066188]  packet_bind+0xa2/0xe0
-[  881.066690]  SYSC_bind+0x279/0x2f0
-[  881.067180]  ? move_addr_to_kernel.part.19+0xc0/0xc0
-[  881.067896]  ? do_futex+0x1e90/0x1e90
-[  881.068435]  ? SyS_sched_getaffinity+0xe3/0x100
-[  881.069112]  ? mark_held_locks+0x25/0xb0
-[  881.069677]  ? SyS_socketpair+0x4a0/0x4a0
-[  881.070265]  SyS_bind+0x24/0x30
-[  881.070732]  do_syscall_64+0x209/0x5d0
-[  881.071270]  ? syscall_return_slowpath+0x3e0/0x3e0
-[  881.071929]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  881.072675]  ? syscall_return_slowpath+0x260/0x3e0
-[  881.073365]  ? mark_held_locks+0x25/0xb0
-[  881.073950]  ? entry_SYSCALL_64_after_hwframe+0x52/0xb7
-[  881.074693]  ? trace_hardirqs_off_caller+0xb5/0x120
-[  881.075390]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  881.076079]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-[  881.076797] RIP: 0033:0x453909
-[  881.077238] RSP: 002b:00007f7fab50caf8 EFLAGS: 00000212 ORIG_RAX:
-0000000000000031
-[  881.078268] RAX: ffffffffffffffda RBX: 00000000007080d8 RCX: 0000000000453909
-[  881.079239] RDX: 0000000000000014 RSI: 000000002001f000 RDI: 0000000000000015
-[  881.080268] RBP: 0000000000000250 R08: 0000000000000000 R09: 0000000000000000
-[  881.081256] R10: 0000000000000000 R11: 0000000000000212 R12: 00000000004a82d3
-[  881.082272] R13: 00000000ffffffff R14: 0000000000000015 R15: 000000002001f000
-[  881.083251] Code: c0 fd 48 c7 c2 00 c8 d9 84 be ab 02 00 00 48 c7
-c7 60 c8 d9 84 c6 05 e7 a2 48 02 01 e8 3f 17 af fd e9 60 fb ff ff e8
-43 b3 c0 fd <0f> 0b e8 3c b3 c0 fd 48 8b bd 20 ff ff ff e8 60 1e e7 fd
-4c 89
-[  881.085828] RIP: packet_do_bind+0x88d/0x950 RSP: ffff8802231d7b08
-[  881.086619] ---[ end trace 9c461502752b4f3e ]---
-[  881.087181] Kernel panic - not syncing: Fatal exception
-[  881.088352] Dumping ftrace buffer:
-[  881.088877]    (ftrace buffer empty)
-[  881.089414] Kernel Offset: disabled
-[  881.089950] Rebooting in 86400 seconds..
+> those that wanted to allocate large ring buffers but it would fail due
+> to memory being used that could be reclaimed. Supposedly, RETRY_MAYFAIL
+> is to allocate with reclaim but still allow to fail, and isn't suppose
+> to trigger an OOM. From my own tests, this is obviously not the case.
+>
 
-= About RaceFuzzer
+IIRC, the OOM that my patch was trying to avoid, was being triggered
+in the path/context of the write to buffer_size_kb itself (when not
+doing the NORETRY),  not by other processes.
 
-RaceFuzzer is a customized version of Syzkaller, specifically tailored
-to find race condition bugs in the Linux kernel. While we leverage
-many different technique, the notable feature of RaceFuzzer is in
-leveraging a custom hypervisor (QEMU/KVM) to interleave the
-scheduling. In particular, we modified the hypervisor to intentionally
-stall a per-core execution, which is similar to supporting per-core
-breakpoint functionality. This allows RaceFuzzer to force the kernel
-to deterministically trigger racy condition (which may rarely happen
-in practice due to randomness in scheduling).
+> Perhaps this is because the ring buffer allocates one page at a time,
+> and by doing so, it can get every last available page, and if anything
+> in the mean time does an allocation without MAYFAIL, it will cause an
+> OOM. For example, when I stressed this I triggered this:
+>
+>  pool invoked oom-killer: gfp_mask=0x14200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
+>  pool cpuset=/ mems_allowed=0
+>  CPU: 7 PID: 1040 Comm: pool Not tainted 4.16.0-rc4-test+ #663
+>  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+>  Call Trace:
+>   dump_stack+0x8e/0xce
+>   dump_header.isra.30+0x6e/0x28f
+>   ? _raw_spin_unlock_irqrestore+0x30/0x60
+>   oom_kill_process+0x218/0x400
+>   ? has_capability_noaudit+0x17/0x20
+>   out_of_memory+0xe3/0x5c0
+>   __alloc_pages_slowpath+0xa8e/0xe50
+>   __alloc_pages_nodemask+0x206/0x220
+>   alloc_pages_current+0x6a/0xe0
+>   __page_cache_alloc+0x6a/0xa0
+>   filemap_fault+0x208/0x5f0
+>   ? __might_sleep+0x4a/0x80
+>   ext4_filemap_fault+0x31/0x44
+>   __do_fault+0x20/0xd0
+>   __handle_mm_fault+0xc08/0x1160
+>   handle_mm_fault+0x76/0x110
+>   __do_page_fault+0x299/0x580
+>   do_page_fault+0x2d/0x110
+>   ? page_fault+0x2f/0x50
+>   page_fault+0x45/0x50
 
-RaceFuzzer's C repro always pinpoints two racy syscalls. Since C
-repro's scheduling synchronization should be performed at the user
-space, its reproducibility is limited (reproduction may take from 1
-second to 10 minutes (or even more), depending on a bug). This is
-because, while RaceFuzzer precisely interleaves the scheduling at the
-kernel's instruction level when finding this bug, C repro cannot fully
-utilize such a feature. Please disregard all code related to
-"should_hypercall" in the C repro, as this is only for our debugging
-purposes using our own hypervisor.
+But this OOM is not in the path of the buffer_size_kb write, right? So
+then what does it have to do with buffer_size_kb write failure?
+
+I guess the original issue reported is that the buffer_size_kb write
+causes *other* applications to fail allocation. So in that case,
+capping the amount that ftrace writes makes sense. Basically my point
+is I don't see how the patch you mentioned introduces the problem here
+- in the sense the patch just makes ftrace allocate from memory it
+couldn't before and to try harder.
+
+>
+> I wonder if I should have the ring buffer allocate groups of pages, to
+> avoid this. Or try to allocate with NORETRY, one page at a time, and
+> when that fails, allocate groups of pages with RETRY_MAYFAIL, and that
+> may keep it from causing an OOM?
+>
+
+I don't see immediately how that can prevent an OOM in other
+applications here? If ftrace allocates lots of memory with
+RETRY_MAYFAIL, then we would still OOM in other applications if memory
+isn't available. Sorry if I missed something.
+
+Thanks,
+
+- Joel
