@@ -1,60 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751282AbeC3KHz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:07:55 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42844 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeC3KHx (ORCPT
+        id S1751252AbeC3KK0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 06:10:26 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34076 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751119AbeC3KKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 06:07:53 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Lenny Szubowicz <lszubowi@redhat.com>
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI: acpi_pad: Fix memory leak in power saving threads
-Date: Fri, 30 Mar 2018 12:08:10 +0200
-Message-ID: <2044415.8uv91vuFCW@aspire.rjw.lan>
-In-Reply-To: <1522159000-7778-1-git-send-email-lszubowi@redhat.com>
-References: <1522159000-7778-1-git-send-email-lszubowi@redhat.com>
+        Fri, 30 Mar 2018 06:10:24 -0400
+X-Google-Smtp-Source: AIpwx4+EX0wvjDrh9hpyRHhsSHtSL14jDzqp2ExJ3mM8jGR9BJs67kcnpqd0GN2IvMzpJ37sO6tcig==
+Date: Fri, 30 Mar 2018 12:10:20 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
+        torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Denys Vlasenko <dvlasenk@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH 7/7] x86/entry/64: extend register clearing on syscall
+ entry to lower registers
+Message-ID: <20180330101020.6g2pib3xaftawl5h@gmail.com>
+References: <20180330093720.6780-1-linux@dominikbrodowski.net>
+ <20180330093720.6780-8-linux@dominikbrodowski.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330093720.6780-8-linux@dominikbrodowski.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, March 27, 2018 3:56:40 PM CEST Lenny Szubowicz wrote:
-> Fix once per second (round_robin_time) memory leak of about 1 KB in
-> each acpi_pad kernel idling thread that is activated.
-> 
-> Found by testing with kmemleak.
-> 
-> Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-> ---
->  drivers/acpi/acpi_pad.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
-> index 7544310..552c1f7 100644
-> --- a/drivers/acpi/acpi_pad.c
-> +++ b/drivers/acpi/acpi_pad.c
-> @@ -110,6 +110,7 @@ static void round_robin_cpu(unsigned int tsk_index)
->  		cpumask_andnot(tmp, cpu_online_mask, pad_busy_cpus);
->  	if (cpumask_empty(tmp)) {
->  		mutex_unlock(&round_robin_lock);
-> +		free_cpumask_var(tmp);
->  		return;
->  	}
->  	for_each_cpu(cpu, tmp) {
-> @@ -127,6 +128,8 @@ static void round_robin_cpu(unsigned int tsk_index)
->  	mutex_unlock(&round_robin_lock);
->  
->  	set_cpus_allowed_ptr(current, cpumask_of(preferred_cpu));
-> +
-> +	free_cpumask_var(tmp);
->  }
->  
->  static void exit_round_robin(unsigned int tsk_index)
-> 
 
-Applied, thanks!
+* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+
+>  	.endif
+>  	pushq	\rdx		/* pt_regs->dx */
+> +	xorl	%edx, %edx	/* nosepc   dx */
+>  	pushq   %rcx		/* pt_regs->cx */
+> +	xorl	%ecx, %ecx	/* nosepc   cx */
+>  	pushq   \rax		/* pt_regs->ax */
+>  	pushq   %r8		/* pt_regs->r8 */
+>  	xorl	%r8d, %r8d	/* nospec   r8 */
+> diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+> index 08425c42f8b7..23e0945959e5 100644
+> --- a/arch/x86/entry/entry_64_compat.S
+> +++ b/arch/x86/entry/entry_64_compat.S
+> @@ -220,8 +220,11 @@ GLOBAL(entry_SYSCALL_compat_after_hwframe)
+>  	pushq	%rax			/* pt_regs->orig_ax */
+>  	pushq	%rdi			/* pt_regs->di */
+>  	pushq	%rsi			/* pt_regs->si */
+> +	xorl	%esi, %esi		/* nosepc   si */
+>  	pushq	%rdx			/* pt_regs->dx */
+> +	xorl	%edx, %edx		/* nosepc   dx */
+>  	pushq	%rbp			/* pt_regs->cx (stashed in bp) */
+> +	xorl	%ecx, %ecx		/* nosepc   cx */
+>  	pushq	$-ENOSYS		/* pt_regs->ax */
+>  	pushq   $0			/* pt_regs->r8  = 0 */
+>  	xorl	%r8d, %r8d		/* nospec   r8 */
+> @@ -365,8 +368,11 @@ ENTRY(entry_INT80_compat)
+>  
+>  	pushq	(%rdi)			/* pt_regs->di */
+>  	pushq	%rsi			/* pt_regs->si */
+> +	xorl	%esi, %esi		/* nosepc   si */
+>  	pushq	%rdx			/* pt_regs->dx */
+> +	xorl	%edx, %edx		/* nosepc   dx */
+>  	pushq	%rcx			/* pt_regs->cx */
+> +	xorl	%ecx, %ecx		/* nosepc   cx */
+>  	pushq	$-ENOSYS		/* pt_regs->ax */
+>  	pushq   $0			/* pt_regs->r8  = 0 */
+>  	xorl	%r8d, %r8d		/* nospec   r8 */
+
+s/nosepc
+ /nospec
+
+Thanks,
+
+	Ingo
