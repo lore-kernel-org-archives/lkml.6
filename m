@@ -1,141 +1,106 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4151933-1522302736-2-12134401602818585148
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES daensv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522302735; b=PYFLuhgMDrgOHyXwv4bNy0Fe8eLn0qzb3hGUekaz1PTVYoo
-    41sZvbzDS9SOXkXRZA4COsztvCczZqxctfgRh1w+Gg6+h3GqivIhHlEsT/RUb7ot
-    0kZzldyB1mln8Dhw+VCUZAq8RUCViXFCmCm20mOmKOy83k4uzeMncV9GkrURFaju
-    kGKUlT2gjYAAuYWHXoG0dKtRITYI05szHyLM3+nAXfqydoi6Kxl48+puAOUVUavQ
-    KZ24saL+97dFhSsNR5ssuPyFJfLSqVT33NtlGbGGIhyQqZN64ANFXBuYAa3Q40cR
-    gjX5+htftyh5c2JJHV7Yc0AE7O8seU5XAoIg6oQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1522302735; bh=R
-    XfoswCZe1+xsCcId9y74FTrT6DZo45FcDn8IAXXOeg=; b=qx5zUkrO2AEgKx01l
-    XAf6nRw1b8dr3vz5DR/MLvfQe9w7k5w16CoAybk1TI2M9nnPSglcVNBfGQCMEY4d
-    RM0+pK8E8X/FHvt9qladYc1hA4smM7l23OaoWJaabFO4VOCaZbwocoTJKrhsOQFD
-    btMsCtYNNFPsQRxn5UhU/hddMQmYTdh2AwArvWqs6GVJ4n2olG/1DgrecBM8ahn1
-    UOw3HGZzo4Ausz3vq7lTlYynPMJ/7Jxn+ztszJzNl0wM2wBsZr6yWXTEPpqA7Lhe
-    REqkHz3sZU+TKZgCKWZVZ1D895ev1LFrPPyOU5IsKsBenycoCiooQP8OsC79Cf2X
-    LCLTg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFbQP1lBiKOiGAVOQunP81s3Lk1OGvq+ro7NpUTJAP11NJoeFX/CtWrov4pKoNr27FveWO+0vBhQC0JKxyDDhq8+OSlCkmVaX9HHJPM1/Uzp9ZkKU+C5
-    m+JodP72f6r6+92gECRFGpkCC609uBWBaIuA1/QP6YhfJitDuF1SA5Per8ByMGcLoWRSkex1TME/feIJYolsM3yXkkZlhWtT0E38oZg6wGqZsh56Wp4X2UO+
-    Mb8mSUvSFwoEi9za3WscKQ==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=86c-8aGkN_Si5_EGlHIA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org,
-	wsa@the-dreams.de
-Subject: [PATCH 2/9] staging: ks7010: Remove unecessary cast.
-Date: Wed, 28 Mar 2018 22:51:45 -0700
-Message-Id: <20180329055152.13059-2-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180329055152.13059-1-quytelda@tamalin.org>
-References: <20180329055152.13059-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:c3Srrb3jQfDOlfulVSRsEKry4n7sk5FW1JCSh9zwDFa8p55YnE5
- Vgf2k93Z1r7Zb69GsjCIkQ6BfwiRFeGJgiq1JFXwBn0rVWfLCviS84W7AKDNGMeH6fBHHO4
- nOkls+8n3qqO8Ge7audx86b35J+1/Irip6JqxVsWWn1VPDk+1ews2y+lGqPnMEG8NHPYXb7
- WSY9Z1B1bQk3gHcAIL3Tw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:OclOSXdRGf0=:3Q9WbANDo3Uwzxgwe+D+uD
- majuJQ3vw47F6hVnP+qlxCjXiQ47VaIY3foaxLWeIJ5qXtLK5qFv7nClEOVL6H0KPd3kJOZd3
- RamgufhxJ4l6vjdUuzJoDvAnKtYah/fbmpx+TWb0baW8QHZG0ARbe1rTbvSR8IqZW5SwvkGh9
- lg0Wlkoi80pTShH0YibZ4vhQ06Pf0ePzk29zpMwQiZQE6GhrP+ENxEsWLYCxEIkbwiz/tV+LX
- quOWkIe/COO/J/3+aRjNV3HleDE6x4TlYa2C0dhIxeFIHmS7iSvzmMhaRXg/qyQQp461RiqIa
- gz5NkjwVE+jD9mLMAmQfZToF7peaxBIYM7BVP+lTIz/wmmmYtJW6oXxPVgzxo8DXfgnNr1esQ
- L29kctQMuW+zSSyHCFqD3ueyMi+ys4Jyk4CxzZxxPboWO5qTsY0c86uERCp4vwdnEK2PLJulO
- /qulHyrWvAmAyuV5m8K2Bd61sdYcZ1bgwg8VujCZsqi1FpCHAv/bDQtEEGEo6IP+M8cgWPaTo
- CSSNQE5bmsZwNp4+uAq+48aO17l9FxSSrZ2I3SELOpPCNDtS/MVfKvKNpTV6wtpt8Pyvk1Ksq
- U7TOAYlbjB9c/nrUBxvZCwpQKWtfGOeYl80HTUDWFANjQtYTHvz7IeY9k0DImrDYVCbCl+/YB
- e0odX150Ne2lOEqi5Bo51SGh2jXjukbmKkp/X5fHEogAwilk58wzaWvgEq04TUpI24EGFwtL8
- chd1STr3IZrkcoxIIL83r0kGIJPO1Z66czgi8A==
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
- linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
+Return-Path: <kernel-hardening-return-12831-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/TrOlDP3rThxEThWk692upO79CBwL8sfVW5oshyA8MjZBqds/wRKfsopvvlUEyAGUxeLkf
+ARC-Seal: i=1; a=rsa-sha256; t=1522391594; cv=none;
+        d=google.com; s=arc-20160816;
+        b=wRV/tADXAtum52ZPIPwx4iz+2T00S6N0iijBYeX0C3nHQDbp65G+KYSGQjOd87FRob
+         EThsPrQWWvjHkb56oWrkHcrrq+doEB2GJbjMzPFhQywTorCJAAfsJ1dfWxLT3uF+MdX7
+         2ba3gBdfWRXgMV9paTaQ3Gd6mTCkH5EkG8RVH47o1lBr5xOW2aHTsFgkel53aA28BrNa
+         S+vM/bdvXM3uKHl0m7CXAwzShs9iyAj14sS+ujfg40cKbdizT55IlH20snDIqpvav33D
+         Va8YWLzYQB8GUAJycejUdHUpqm0x8ZKZ7PZ6GFF1FsKAIRcQG7pSJvEhqN1Y88ff7Y9T
+         JWNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:message-id:subject:cc:to:from:date
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=rtD7+ZpVkBq9qZp2nYhM+pdaSeJnvU08oAkLCESqL3Y=;
+        b=fz424vVRXFNbDyxwlMmrdsjrGMWJeVx6mkES007yvmGg1VVPMVmnooTJVaWpIjm5k6
+         TI2dQFk/vXBdfRI3o8/WTUJbKXxFo7qqwgOmGr1hNgdo5bWTbGbnxQxEbbtEU04TH3q2
+         T1FZddoSSIUTUjahL7vbRa2LzD8OAwgevG53mXFp5B8QcNwz/erWO6PmRVrLGKR9ZKnV
+         nImVJI10IrF6Td0//1qiXVmBhdq7GP503UH5t1SAC/v4+ME+MfpXbLN67ND7l5yk//qa
+         shc61tHl3dai5G4EbXm3PgFhGlCVR1z7385DAd2Tr65uWipJzS96CwjuQ9DbNTLfJZGq
+         sD5Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12831-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12831-gregkh=linuxfoundation.org@lists.openwall.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12831-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12831-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+X-IronPort-AV: E=Sophos;i="5.48,380,1517871600";
+   d="scan'208";a="260356484"
+Date: Fri, 30 Mar 2018 08:32:56 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Laura Abbott <labbott@redhat.com>
+cc: Linus Walleij <linus.walleij@linaro.org>, kbuild-all@01.org,
+    Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
+    Laura Abbott <labbott@redhat.com>, linux-gpio@vger.kernel.org,
+    linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+    Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH] gpio: fix ifnullfree.cocci warnings (fwd)
+Message-ID: <alpine.DEB.2.20.1803300829580.2870@hadrien>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596343288243285153?=
+X-GMAIL-MSGID: =?utf-8?q?1596343288243285153?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The driver casts '&ks_wlan_handler_def' to 'struct iw_handler_def *',
-but it is already of that type.
+From: Fengguang Wu <fengguang.wu@intel.com>
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+NULL check before kfree is not needed.
+
+Generated by: scripts/coccinelle/free/ifnullfree.cocci
+
+Fixes: ad85ae608fe0 ("gpio: Remove VLA from gpiolib")
+CC: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+
 ---
- drivers/staging/ks7010/ks_wlan_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index f6e496aa68de..544bfa403d9f 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -2904,7 +2904,7 @@ int ks_wlan_net_start(struct net_device *dev)
- 
- 	/* The ks_wlan-specific entries in the device structure. */
- 	dev->netdev_ops = &ks_wlan_netdev_ops;
--	dev->wireless_handlers = (struct iw_handler_def *)&ks_wlan_handler_def;
-+	dev->wireless_handlers = &ks_wlan_handler_def;
- 	dev->watchdog_timeo = TX_TIMEOUT;
- 
- 	netif_carrier_off(dev);
--- 
-2.16.3
+url:
+https://github.com/0day-ci/linux/commits/Laura-Abbott/gpio-Remove-VLA-from-gpiolib/20180330-065639
+base:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+for-next
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ gpiolib.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2758,8 +2758,7 @@ int gpiod_get_array_value_complex(bool r
+
+ 		ret = gpio_chip_get_multiple(chip, mask, bits);
+ 		if (ret) {
+-			if (slowpath)
+-				kfree(slowpath);
++			kfree(slowpath);
+ 			return ret;
+ 		}
+
+@@ -2774,8 +2773,7 @@ int gpiod_get_array_value_complex(bool r
+ 			trace_gpio_value(desc_to_gpio(desc), 1, value);
+ 		}
+
+-		if (slowpath)
+-			kfree(slowpath);
++		kfree(slowpath);
+ 	}
+ 	return 0;
+ }
+@@ -3020,8 +3018,7 @@ int gpiod_set_array_value_complex(bool r
+ 		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
+
+-		if (slowpath)
+-			kfree(slowpath);
++		kfree(slowpath);
+ 	}
+ 	return 0;
+ }
