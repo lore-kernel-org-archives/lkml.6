@@ -1,91 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751258AbeC3Eyy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 00:54:54 -0400
-Received: from mga03.intel.com ([134.134.136.65]:29899 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750741AbeC3Eyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 00:54:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,380,1517904000";
-   d="scan'208";a="38073326"
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v5 0/3] perf/core: expose thread context switch out event type
- to user space
-Organization: Intel Corp.
-Message-ID: <45f6ea8a-a420-d176-50aa-9b3975c0ea7a@linux.intel.com>
-Date: Fri, 30 Mar 2018 07:54:43 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751271AbeC3E52 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 00:57:28 -0400
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:36012 "EHLO
+        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750741AbeC3E51 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 00:57:27 -0400
+X-Google-Smtp-Source: AIpwx48+wtS8MBBlKywlnB6/k12lIIBtnXD/dWTlqp3AQhGz2woI16tygh/IqsKmHilWvflL4t/urG3jtUxw/I6mNVQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180328194741.GJ13039@localhost.localdomain>
+References: <20180327043851.6640-1-baegjae@gmail.com> <20180328080646.GB20373@lst.de>
+ <20180328194741.GJ13039@localhost.localdomain>
+From: Baegjae Sung <baegjae@gmail.com>
+Date: Fri, 30 Mar 2018 13:57:25 +0900
+Message-ID: <CAB2tqtvZ6zQ60jca7W4uKka2LfavsW=oKhTx9Gv0sXR7-SBUVg@mail.gmail.com>
+Subject: Re: [PATCH] nvme-multipath: implement active-active round-robin path selector
+To: Keith Busch <keith.busch@intel.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@fb.com, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Eric Chang <echang@sk.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-03-29 4:47 GMT+09:00 Keith Busch <keith.busch@intel.com>:
+> On Wed, Mar 28, 2018 at 10:06:46AM +0200, Christoph Hellwig wrote:
+>> For PCIe devices the right policy is not a round robin but to use
+>> the pcie device closer to the node.  I did a prototype for that
+>> long ago and the concept can work.  Can you look into that and
+>> also make that policy used automatically for PCIe devices?
+>
+> Yeah, that is especially true if you've multiple storage accessing
+> threads scheduled on different nodes. On the other hand, round-robin
+> may still benefit if both paths are connected to different root ports
+> on the same node (who would do that?!).
+>
+> But I wasn't aware people use dual-ported PCIe NVMe connected to a
+> single host (single path from two hosts seems more common). If that's a
+> thing, we should get some numa awareness. I couldn't find your prototype,
+> though. I had one stashed locally from a while back and hope it resembles
+> what you had in mind:
 
-Implement preempting context switch out event as a part of 
-PERF_RECORD_SWITCH[_CPU_WIDE] record. The event is treated as preemption 
-one when task->state value of the thread being switched out is TASK_RUNNING;
+Our prototype uses dual-ported PCIe NVMe connected to a single host. The
+host's HBA is connected to two switches, and the two switches are connected
+to a dual-port NVMe SSD. In this environment, active-active round-robin path
+selection is good to utilize the full performance of a dual-port NVMe SSD.
+You can also fail over a single switch failure. You can see the prototype
+in link below.
+https://youtu.be/u_ou-AQsvOs?t=307 (presentation in OCP Summit 2018)
 
-Percentage of preempting and non-preempting context switches help 
-understanding the nature of workloads (CPU or IO bound) that are running 
-on the machine;
+I agree that active-standby closer path selection is the right policy
+if multiple
+nodes attempt to access the storage system through multiple paths.
+However, I believe that NVMe multipath needs to provide multiple policy for
+path selection. Some people may want to use multiple paths simultaneously
+(active-active) if they use a small number of nodes and want to utilize full
+capability. If the capability of paths is same, the round-robin can be
+the right
+policy. If the capability of paths is different, a more adoptive
+method would be
+needed (e.g., checking path condition to balance IO).
 
-Event type encoding is implemented using a new
-PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit in misc field of event record header;
+We are moving to the NVMe fabrics for our next prototype. So, I think we will
+have a chance to discuss about this policy issue in more detail. I will continue
+to follow this issue.
 
-Perf tool report and script commands have been extended to decode 
-new PREEMPT bit and the updated output looks like this:
-
-tools/perf/perf report -D -i perf.data | grep _SWITCH
-
-0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
-4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
-0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-
-perf script --show-switch-events -F +misc -I -i perf.data:
-
-          hdparm  4073 [004] U       762.198265:     380194 cycles:ppp:      7faf727f5a23 strchr (/usr/lib64/ld-2.26.so)
-          hdparm  4073 [004] K       762.198366:     441572 cycles:ppp:  ffffffffb9218435 alloc_set_pte (/lib/modules/4.16.0-rc6+/build/vmlinux)
-          hdparm  4073 [004] S       762.198391: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-         swapper     0 [004]         762.198392: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-         swapper     0 [004] Sp      762.198477: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  4073/4073 
-          hdparm  4073 [004]         762.198478: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-         swapper     0 [007] K       762.198514:    2303073 cycles:ppp:  ffffffffb98b0c66 intel_idle (/lib/modules/4.16.0-rc6+/build/vmlinux)
-         swapper     0 [007] Sp      762.198561: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  1134/1134 
-  kworker/u16:18  1134 [007]         762.198562: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-  kworker/u16:18  1134 [007] S       762.198567: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-
-The documentation has been updated to mention PREEMPT switch out events 
-and its decoding symbols in perf script output.
-
-The changes have been manually tested on Fedora 27 with the patched kernel:
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-
----
- Alexey Budankov (3):
-	perf/core: store context switch out type into Perf trace
-	perf report: extend raw dump (-D) out with switch out event type
-	perf script: extend misc field decoding with switch out event type
-
- include/uapi/linux/perf_event.h          | 18 +++++++++++++++---
- kernel/events/core.c                     |  4 ++++
- tools/include/uapi/linux/perf_event.h    | 18 +++++++++++++++---
- tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
- tools/perf/builtin-script.c              |  5 ++++-
- tools/perf/util/event.c                  |  4 +++-
- 6 files changed, 50 insertions(+), 16 deletions(-)
+> ---
+> struct nvme_ns *nvme_find_path_numa(struct nvme_ns_head *head)
+> {
+>         int distance, current = INT_MAX, node = cpu_to_node(smp_processor_id());
+>         struct nvme_ns *ns, *path = NULL;
+>
+>         list_for_each_entry_rcu(ns, &head->list, siblings) {
+>                 if (ns->ctrl->state != NVME_CTRL_LIVE)
+>                         continue;
+>                 if (ns->disk->node_id == node)
+>                         return ns;
+>
+>                 distance = node_distance(node, ns->disk->node_id);
+>                 if (distance < current) {
+>                         current = distance;
+>                         path = ns;
+>                 }
+>         }
+>         return path;
+> }
+> --
