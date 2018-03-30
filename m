@@ -1,460 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeC3TPR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 15:15:17 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44922 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752343AbeC3TPQ (ORCPT
+        id S1752575AbeC3TSF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 15:18:05 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.85]:46559 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752478AbeC3TSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 15:15:16 -0400
-Smtp-Origin-Hostprefix: dev
-From: Nick Terrell <terrelln@fb.com>
-Smtp-Origin-Hostname: dev10183.prn2.facebook.com
-To: Nick Terrell <terrelln@fb.com>
-CC: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        <kernel-team@fb.com>, Chris Mason <clm@fb.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        Geliang Tang <geliangtang@gmail.com>
-Smtp-Origin-Cluster: prn2c22
-Subject: [RESEND PATCH] crypto: Add zstd support
-Date: Fri, 30 Mar 2018 12:14:53 -0700
-Message-ID: <20180330191453.3535287-1-terrelln@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        Fri, 30 Mar 2018 15:18:04 -0400
+Date: Fri, 30 Mar 2018 14:17:59 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        Alex Elder <elder@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] rbd: remove VLA usage
+Message-ID: <20180330191759.GA18176@embeddedgus>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-30_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f1zXG-003inK-0g
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.145.54.187]:41868
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds zstd support to crypto and scompress. Only supports the default
-level.
+In preparation to enabling -Wvla, remove the use of stack VLA.
 
-Previously we held off on this patch, since there weren't any users.
-Now zram is ready for zstd support, but depends on CONFIG_CRYPTO_ZSTD,
-which isn't defined until this patch is in. I also see a patch adding
-zstd to pstore [0], which depends on crypto zstd.
+In this particular case, variable buf_size is replaced with a constant
+expression that can be computed at preprocessing time. This avoids two
+VLA warnings. Also, as a consequence of the mentioned change, some code
+was slightly refactored.
 
-[0] lkml.kernel.org/r/9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com
+The use of stack Variable Length Arrays needs to be avoided, as they
+can be a vector for stack exhaustion, which can be both a runtime bug
+or a security flaw. Also, in general, as code evolves it is easy to
+lose track of how big a VLA can get. Thus, we can end up having runtime
+failures that are hard to debug.
 
-Signed-off-by: Nick Terrell <terrelln@fb.com>
+Also, fixed as part of the directive to remove all VLAs from
+the kernel: https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- crypto/Kconfig   |   9 ++
- crypto/Makefile  |   1 +
- crypto/testmgr.c |  10 +++
- crypto/testmgr.h |  71 +++++++++++++++
- crypto/zstd.c    | 265 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 356 insertions(+)
- create mode 100644 crypto/zstd.c
+ drivers/block/rbd.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index b75264b..500583c 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1677,6 +1677,15 @@ config CRYPTO_LZ4HC
- 	help
- 	  This is the LZ4 high compression mode algorithm.
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 1e03b04..5133122 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3091,20 +3091,20 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
+ {
+ 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+ 	struct rbd_client_id cid = rbd_get_cid(rbd_dev);
+-	int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
+-	char buf[buf_size];
++	char buf[4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
+ 	void *p = buf;
  
-+config CRYPTO_ZSTD
-+	tristate "Zstd compression algorithm"
-+	select CRYPTO_ALGAPI
-+	select CRYPTO_ACOMP2
-+	select ZSTD_COMPRESS
-+	select ZSTD_DECOMPRESS
-+	help
-+	  This is the zstd algorithm.
-+
- comment "Random Number Generation"
+ 	dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
  
- config CRYPTO_ANSI_CPRNG
-diff --git a/crypto/Makefile b/crypto/Makefile
-index cdbc03b..2900ab1 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -136,6 +136,7 @@ obj-$(CONFIG_CRYPTO_USER_API_HASH) += algif_hash.o
- obj-$(CONFIG_CRYPTO_USER_API_SKCIPHER) += algif_skcipher.o
- obj-$(CONFIG_CRYPTO_USER_API_RNG) += algif_rng.o
- obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
-+obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
+ 	/* encode *LockPayload NotifyMessage (op + ClientId) */
+-	ceph_start_encoding(&p, 2, 1, buf_size - CEPH_ENCODING_START_BLK_LEN);
++	ceph_start_encoding(&p, 2, 1,
++			    sizeof(buf) - CEPH_ENCODING_START_BLK_LEN);
+ 	ceph_encode_32(&p, notify_op);
+ 	ceph_encode_64(&p, cid.gid);
+ 	ceph_encode_64(&p, cid.handle);
  
- ecdh_generic-y := ecc.o
- ecdh_generic-y += ecdh.o
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index d5e23a1..71b2798 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3576,6 +3576,16 @@ static const struct alg_test_desc alg_test_descs[] = {
- 				.decomp = __VECS(zlib_deflate_decomp_tv_template)
- 			}
- 		}
-+	}, {
-+		.alg = "zstd",
-+		.test = alg_test_comp,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.comp = {
-+				.comp = __VECS(zstd_comp_tv_template),
-+				.decomp = __VECS(zstd_decomp_tv_template)
-+			}
-+		}
+ 	return ceph_osdc_notify(osdc, &rbd_dev->header_oid,
+-				&rbd_dev->header_oloc, buf, buf_size,
++				&rbd_dev->header_oloc, buf, sizeof(buf),
+ 				RBD_NOTIFY_TIMEOUT, preply_pages, preply_len);
+ }
+ 
+@@ -3610,19 +3610,18 @@ static void __rbd_acknowledge_notify(struct rbd_device *rbd_dev,
+ 				     u64 notify_id, u64 cookie, s32 *result)
+ {
+ 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
+-	int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
+-	char buf[buf_size];
++	char buf[4 + CEPH_ENCODING_START_BLK_LEN];
++	int buf_size = 0;
+ 	int ret;
+ 
+ 	if (result) {
+ 		void *p = buf;
+ 
++		buf_size = sizeof(buf);
+ 		/* encode ResponseMessage */
+ 		ceph_start_encoding(&p, 1, 1,
+ 				    buf_size - CEPH_ENCODING_START_BLK_LEN);
+ 		ceph_encode_32(&p, *result);
+-	} else {
+-		buf_size = 0;
  	}
- };
  
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 6044f69..9b5b930 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -35255,4 +35255,75 @@ static const struct comp_testvec lz4hc_decomp_tv_template[] = {
- 	},
- };
- 
-+static const struct comp_testvec zstd_comp_tv_template[] = {
-+	{
-+		.inlen	= 68,
-+		.outlen	= 39,
-+		.input	= "The algorithm is zstd. "
-+			  "The algorithm is zstd. "
-+			  "The algorithm is zstd.",
-+		.output	= "\x28\xb5\x2f\xfd\x00\x50\xf5\x00\x00\xb8\x54\x68\x65"
-+			  "\x20\x61\x6c\x67\x6f\x72\x69\x74\x68\x6d\x20\x69\x73"
-+			  "\x20\x7a\x73\x74\x64\x2e\x20\x01\x00\x55\x73\x36\x01"
-+			  ,
-+	},
-+	{
-+		.inlen	= 244,
-+		.outlen	= 151,
-+		.input	= "zstd, short for Zstandard, is a fast lossless "
-+			  "compression algorithm, targeting real-time "
-+			  "compression scenarios at zlib-level and better "
-+			  "compression ratios. The zstd compression library "
-+			  "provides in-memory compression and decompression "
-+			  "functions.",
-+		.output	= "\x28\xb5\x2f\xfd\x00\x50\x75\x04\x00\x42\x4b\x1e\x17"
-+			  "\x90\x81\x31\x00\xf2\x2f\xe4\x36\xc9\xef\x92\x88\x32"
-+			  "\xc9\xf2\x24\x94\xd8\x68\x9a\x0f\x00\x0c\xc4\x31\x6f"
-+			  "\x0d\x0c\x38\xac\x5c\x48\x03\xcd\x63\x67\xc0\xf3\xad"
-+			  "\x4e\x90\xaa\x78\xa0\xa4\xc5\x99\xda\x2f\xb6\x24\x60"
-+			  "\xe2\x79\x4b\xaa\xb6\x6b\x85\x0b\xc9\xc6\x04\x66\x86"
-+			  "\xe2\xcc\xe2\x25\x3f\x4f\x09\xcd\xb8\x9d\xdb\xc1\x90"
-+			  "\xa9\x11\xbc\x35\x44\x69\x2d\x9c\x64\x4f\x13\x31\x64"
-+			  "\xcc\xfb\x4d\x95\x93\x86\x7f\x33\x7f\x1a\xef\xe9\x30"
-+			  "\xf9\x67\xa1\x94\x0a\x69\x0f\x60\xcd\xc3\xab\x99\xdc"
-+			  "\x42\xed\x97\x05\x00\x33\xc3\x15\x95\x3a\x06\xa0\x0e"
-+			  "\x20\xa9\x0e\x82\xb9\x43\x45\x01",
-+	},
-+};
-+
-+static const struct comp_testvec zstd_decomp_tv_template[] = {
-+	{
-+		.inlen	= 43,
-+		.outlen	= 68,
-+		.input	= "\x28\xb5\x2f\xfd\x04\x50\xf5\x00\x00\xb8\x54\x68\x65"
-+			  "\x20\x61\x6c\x67\x6f\x72\x69\x74\x68\x6d\x20\x69\x73"
-+			  "\x20\x7a\x73\x74\x64\x2e\x20\x01\x00\x55\x73\x36\x01"
-+			  "\x6b\xf4\x13\x35",
-+		.output	= "The algorithm is zstd. "
-+			  "The algorithm is zstd. "
-+			  "The algorithm is zstd.",
-+	},
-+	{
-+		.inlen	= 155,
-+		.outlen	= 244,
-+		.input	= "\x28\xb5\x2f\xfd\x04\x50\x75\x04\x00\x42\x4b\x1e\x17"
-+			  "\x90\x81\x31\x00\xf2\x2f\xe4\x36\xc9\xef\x92\x88\x32"
-+			  "\xc9\xf2\x24\x94\xd8\x68\x9a\x0f\x00\x0c\xc4\x31\x6f"
-+			  "\x0d\x0c\x38\xac\x5c\x48\x03\xcd\x63\x67\xc0\xf3\xad"
-+			  "\x4e\x90\xaa\x78\xa0\xa4\xc5\x99\xda\x2f\xb6\x24\x60"
-+			  "\xe2\x79\x4b\xaa\xb6\x6b\x85\x0b\xc9\xc6\x04\x66\x86"
-+			  "\xe2\xcc\xe2\x25\x3f\x4f\x09\xcd\xb8\x9d\xdb\xc1\x90"
-+			  "\xa9\x11\xbc\x35\x44\x69\x2d\x9c\x64\x4f\x13\x31\x64"
-+			  "\xcc\xfb\x4d\x95\x93\x86\x7f\x33\x7f\x1a\xef\xe9\x30"
-+			  "\xf9\x67\xa1\x94\x0a\x69\x0f\x60\xcd\xc3\xab\x99\xdc"
-+			  "\x42\xed\x97\x05\x00\x33\xc3\x15\x95\x3a\x06\xa0\x0e"
-+			  "\x20\xa9\x0e\x82\xb9\x43\x45\x01\xaa\x6d\xda\x0d",
-+		.output	= "zstd, short for Zstandard, is a fast lossless "
-+			  "compression algorithm, targeting real-time "
-+			  "compression scenarios at zlib-level and better "
-+			  "compression ratios. The zstd compression library "
-+			  "provides in-memory compression and decompression "
-+			  "functions.",
-+	},
-+};
- #endif	/* _CRYPTO_TESTMGR_H */
-diff --git a/crypto/zstd.c b/crypto/zstd.c
-new file mode 100644
-index 0000000..9a76b3e
---- /dev/null
-+++ b/crypto/zstd.c
-@@ -0,0 +1,265 @@
-+/*
-+ * Cryptographic API.
-+ *
-+ * Copyright (c) 2017-present, Facebook, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+#include <linux/crypto.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/mm.h>
-+#include <linux/module.h>
-+#include <linux/net.h>
-+#include <linux/vmalloc.h>
-+#include <linux/zstd.h>
-+#include <crypto/internal/scompress.h>
-+
-+
-+#define ZSTD_DEF_LEVEL	3
-+
-+struct zstd_ctx {
-+	ZSTD_CCtx *cctx;
-+	ZSTD_DCtx *dctx;
-+	void *cwksp;
-+	void *dwksp;
-+};
-+
-+static ZSTD_parameters zstd_params(void)
-+{
-+	return ZSTD_getParams(ZSTD_DEF_LEVEL, 0, 0);
-+}
-+
-+static int zstd_comp_init(struct zstd_ctx *ctx)
-+{
-+	int ret = 0;
-+	const ZSTD_parameters params = zstd_params();
-+	const size_t wksp_size = ZSTD_CCtxWorkspaceBound(params.cParams);
-+
-+	ctx->cwksp = vzalloc(wksp_size);
-+	if (!ctx->cwksp) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	ctx->cctx = ZSTD_initCCtx(ctx->cwksp, wksp_size);
-+	if (!ctx->cctx) {
-+		ret = -EINVAL;
-+		goto out_free;
-+	}
-+out:
-+	return ret;
-+out_free:
-+	vfree(ctx->cwksp);
-+	goto out;
-+}
-+
-+static int zstd_decomp_init(struct zstd_ctx *ctx)
-+{
-+	int ret = 0;
-+	const size_t wksp_size = ZSTD_DCtxWorkspaceBound();
-+
-+	ctx->dwksp = vzalloc(wksp_size);
-+	if (!ctx->dwksp) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	ctx->dctx = ZSTD_initDCtx(ctx->dwksp, wksp_size);
-+	if (!ctx->dctx) {
-+		ret = -EINVAL;
-+		goto out_free;
-+	}
-+out:
-+	return ret;
-+out_free:
-+	vfree(ctx->dwksp);
-+	goto out;
-+}
-+
-+static void zstd_comp_exit(struct zstd_ctx *ctx)
-+{
-+	vfree(ctx->cwksp);
-+	ctx->cwksp = NULL;
-+	ctx->cctx = NULL;
-+}
-+
-+static void zstd_decomp_exit(struct zstd_ctx *ctx)
-+{
-+	vfree(ctx->dwksp);
-+	ctx->dwksp = NULL;
-+	ctx->dctx = NULL;
-+}
-+
-+static int __zstd_init(void *ctx)
-+{
-+	int ret;
-+
-+	ret = zstd_comp_init(ctx);
-+	if (ret)
-+		return ret;
-+	ret = zstd_decomp_init(ctx);
-+	if (ret)
-+		zstd_comp_exit(ctx);
-+	return ret;
-+}
-+
-+static void *zstd_alloc_ctx(struct crypto_scomp *tfm)
-+{
-+	int ret;
-+	struct zstd_ctx *ctx;
-+
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = __zstd_init(ctx);
-+	if (ret) {
-+		kfree(ctx);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return ctx;
-+}
-+
-+static int zstd_init(struct crypto_tfm *tfm)
-+{
-+	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	return __zstd_init(ctx);
-+}
-+
-+static void __zstd_exit(void *ctx)
-+{
-+	zstd_comp_exit(ctx);
-+	zstd_decomp_exit(ctx);
-+}
-+
-+static void zstd_free_ctx(struct crypto_scomp *tfm, void *ctx)
-+{
-+	__zstd_exit(ctx);
-+	kzfree(ctx);
-+}
-+
-+static void zstd_exit(struct crypto_tfm *tfm)
-+{
-+	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	__zstd_exit(ctx);
-+}
-+
-+static int __zstd_compress(const u8 *src, unsigned int slen,
-+			   u8 *dst, unsigned int *dlen, void *ctx)
-+{
-+	size_t out_len;
-+	struct zstd_ctx *zctx = ctx;
-+	const ZSTD_parameters params = zstd_params();
-+
-+	out_len = ZSTD_compressCCtx(zctx->cctx, dst, *dlen, src, slen, params);
-+	if (ZSTD_isError(out_len))
-+		return -EINVAL;
-+	*dlen = out_len;
-+	return 0;
-+}
-+
-+static int zstd_compress(struct crypto_tfm *tfm, const u8 *src,
-+			 unsigned int slen, u8 *dst, unsigned int *dlen)
-+{
-+	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	return __zstd_compress(src, slen, dst, dlen, ctx);
-+}
-+
-+static int zstd_scompress(struct crypto_scomp *tfm, const u8 *src,
-+			  unsigned int slen, u8 *dst, unsigned int *dlen,
-+			  void *ctx)
-+{
-+	return __zstd_compress(src, slen, dst, dlen, ctx);
-+}
-+
-+static int __zstd_decompress(const u8 *src, unsigned int slen,
-+			     u8 *dst, unsigned int *dlen, void *ctx)
-+{
-+	size_t out_len;
-+	struct zstd_ctx *zctx = ctx;
-+
-+	out_len = ZSTD_decompressDCtx(zctx->dctx, dst, *dlen, src, slen);
-+	if (ZSTD_isError(out_len))
-+		return -EINVAL;
-+	*dlen = out_len;
-+	return 0;
-+}
-+
-+static int zstd_decompress(struct crypto_tfm *tfm, const u8 *src,
-+			   unsigned int slen, u8 *dst, unsigned int *dlen)
-+{
-+	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	return __zstd_decompress(src, slen, dst, dlen, ctx);
-+}
-+
-+static int zstd_sdecompress(struct crypto_scomp *tfm, const u8 *src,
-+			    unsigned int slen, u8 *dst, unsigned int *dlen,
-+			    void *ctx)
-+{
-+	return __zstd_decompress(src, slen, dst, dlen, ctx);
-+}
-+
-+static struct crypto_alg alg = {
-+	.cra_name		= "zstd",
-+	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
-+	.cra_ctxsize		= sizeof(struct zstd_ctx),
-+	.cra_module		= THIS_MODULE,
-+	.cra_init		= zstd_init,
-+	.cra_exit		= zstd_exit,
-+	.cra_u			= { .compress = {
-+	.coa_compress		= zstd_compress,
-+	.coa_decompress		= zstd_decompress } }
-+};
-+
-+static struct scomp_alg scomp = {
-+	.alloc_ctx		= zstd_alloc_ctx,
-+	.free_ctx		= zstd_free_ctx,
-+	.compress		= zstd_scompress,
-+	.decompress		= zstd_sdecompress,
-+	.base			= {
-+		.cra_name	= "zstd",
-+		.cra_driver_name = "zstd-scomp",
-+		.cra_module	 = THIS_MODULE,
-+	}
-+};
-+
-+static int __init zstd_mod_init(void)
-+{
-+	int ret;
-+
-+	ret = crypto_register_alg(&alg);
-+	if (ret)
-+		return ret;
-+
-+	ret = crypto_register_scomp(&scomp);
-+	if (ret)
-+		crypto_unregister_alg(&alg);
-+
-+	return ret;
-+}
-+
-+static void __exit zstd_mod_fini(void)
-+{
-+	crypto_unregister_alg(&alg);
-+	crypto_unregister_scomp(&scomp);
-+}
-+
-+module_init(zstd_mod_init);
-+module_exit(zstd_mod_fini);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Zstd Compression Algorithm");
-+MODULE_ALIAS_CRYPTO("zstd");
+ 	ret = ceph_osdc_notify_ack(osdc, &rbd_dev->header_oid,
 -- 
-2.9.5
+2.7.4
