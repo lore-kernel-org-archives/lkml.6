@@ -1,135 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751243AbeC3IU5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 04:20:57 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38342 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbeC3IUx (ORCPT
+        id S1751254AbeC3IV5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 04:21:57 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:50953 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750741AbeC3IVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 04:20:53 -0400
-X-Google-Smtp-Source: AIpwx4/7KD5rpzhKG0418QqlChzzEhB5VXnxrCfMGeDtcZLlQaSvMS1O40fMvH34aMImTE/1Fc+Tzg==
-Message-ID: <1522398050.3871.12.camel@baylibre.com>
-Subject: Re: [PATCH v5 08/10] clk: fix CLK_SET_RATE_GATE with clock rate
- protection
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Date: Fri, 30 Mar 2018 10:20:50 +0200
-In-Reply-To: <20171201215200.23523-9-jbrunet@baylibre.com>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
-         <20171201215200.23523-9-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 30 Mar 2018 04:21:55 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yuwang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T-MBAEC_1522398091;
+Subject: Re: [PATCH] ftrace: fix task's invalid comm of <...> when big pid
+To: Steven Rostedt <rostedt@goodmis.org>
+References: <1522240347-24465-1-git-send-email-yuwang@linux.alibaba.com>
+ <20180328113522.21b4298b@gandalf.local.home>
+ <20180328114434.3a05d3bc@gandalf.local.home>
+ <5ABC4C76.3090202@linux.alibaba.com>
+ <20180329102642.23fa246a@gandalf.local.home>
+Cc: Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+From: Wang Yu <yuwang@linux.alibaba.com>
+Message-ID: <6ea3f860-c7ae-6400-3f15-842a06f20ae8@linux.alibaba.com>
+Date: Fri, 30 Mar 2018 16:21:31 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:45.0)
+ Gecko/20100101 Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180329102642.23fa246a@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2017-12-01 at 22:51 +0100, Jerome Brunet wrote:
-> Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
-> clock tree
 
-Hi Mike, Stephen,
 
-Gentle ping.
-This patch has been waiting for while now.
-As far as I know, the only blocking point to merging this patch is the qcom mmc
-driver. The clocks used in this driver rely on the broken implementation of
-CLK_SET_RATE_GATE, effectively ignoring the flag.
-
-Since the flag is ignored, removing it from this particular clock won't make any
-difference. Can we just do that until a better fix is available for this qcom
-mmc clock ?
-
---- A bit of history ----
-
-I managed to have a run on kci - based on v4.12-rc6:
-https://kernelci.org/boot/all/job/khilman/branch/to-build/kernel/v4.12-rc6-10-ge
-a373ddef830/
-
-There was no build regression but kci did find one boot regression on qcom
-platforms:
-* qcom-apq8064-cm-qs600
-* qcom-apq8064-ifc6410
-
-it seems the problem is coming from the clock used by the mmc driver
-(drivers/mmc/host/mmci.c)
-
-the driver does following sequence:
-* get_clk
-* prepare_enable
-* get_rate
-* set_rate
-* ...
-
-with clock SDCx_clk (qcom_apq8064.dtsi:1037). This clock has CLK_SET_RATE_PARENT
-flag so it will transmit the request to its parent.
-The parent of this clock is SDCx_src which has the CLK_SET_RATE_GATE flag.
-
-So obviously, is CLK_SET_RATE_GATE was enforced, the sequence used by mmci
-driver would never had worked.
-
-This particular driver rely on the fact that the clock can while the clock is
-on. Either it actually works and we can remove CLK_SET_RATE_GATE until a better
-solution comes.
-OR, it does not work which means nobody has been using this driver for a long
-time.
-
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Acked-by: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/clk.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index f6fe5e5595ca..1af843ae20ff 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -605,6 +605,9 @@ static void clk_core_unprepare(struct clk_core *core)
->  	if (WARN_ON(core->prepare_count == 1 && core->flags & CLK_IS_CRITICAL))
->  		return;
->  
-> +	if (core->flags & CLK_SET_RATE_GATE)
-> +		clk_core_rate_unprotect(core);
-> +
->  	if (--core->prepare_count > 0)
->  		return;
->  
-> @@ -679,6 +682,16 @@ static int clk_core_prepare(struct clk_core *core)
->  
->  	core->prepare_count++;
->  
-> +	/*
-> +	 * CLK_SET_RATE_GATE is a special case of clock protection
-> +	 * Instead of a consumer claiming exclusive rate control, it is
-> +	 * actually the provider which prevents any consumer from making any
-> +	 * operation which could result in a rate change or rate glitch while
-> +	 * the clock is prepared.
-> +	 */
-> +	if (core->flags & CLK_SET_RATE_GATE)
-> +		clk_core_rate_protect(core);
-> +
->  	return 0;
->  unprepare:
->  	clk_core_unprepare(core->parent);
-> @@ -1780,9 +1793,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->  	if (clk_core_rate_is_protected(core))
->  		return -EBUSY;
->  
-> -	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
-> -		return -EBUSY;
-> -
->  	/* calculate new rates and get the topmost changed clock */
->  	top = clk_calc_new_rates(core, req_rate);
->  	if (!top)
+在 18/3/29 下午10:26, Steven Rostedt 写道:
+> On Thu, 29 Mar 2018 10:16:22 +0800
+> Wang Yu <yuwang@linux.alibaba.com> wrote:
+>
+>>> What you can do is make that map_pid_to_cmdline array bigger.
+>>>
+>>> -- Steve
+>> I am sorry about it, and as the number of cpu cores increases, the current
+>>
+>> PID_MAX_DEFAULT is too small, our online machines set the pid_max 65536 as default, so the task
+>> pid number bigger than PID_MAX_DEFAULT can't show the real comm (only <...>), so i want to
+>> ajust the PID_MAX_DEFAULT upto 4x, and what do you think?
+>>
+>>     * This controls the default maximum pid allocated to a process
+>>     */
+>> -#define PID_MAX_DEFAULT (CONFIG_BASE_SMALL ? 0x1000 : 0x8000)
+>> +#define PID_MAX_DEFAULT (CONFIG_BASE_SMALL ? 0x1000 : 0x20000)
+> What I was thinking is to make the map_pid_to_cmdline array dynamic
+> (not static), and be set to pid_max (after pid_max is determined).
+>
+> Now, pid_max can be changed at run time. Thus, the tracing code will
+> need to keep a separate variable for that array to store the length. It
+> can not rely on pid_max. But if a pid that is greater than pid_max is
+> found, we could kick off a work thread to increase the array.
+thanks for your reply, thanks, if map_pid_to_cmdline need dynamic, 
+saved_cmdlines_buffer
