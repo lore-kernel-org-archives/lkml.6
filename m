@@ -1,98 +1,91 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2671055-1522389798-2-14201865543695418063
+X-Cyrus-Session-Id: sloti22d1t05-2746287-1522389977-2-18420814892600224056
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522389797; b=bu2OUKAR7uYqmHToOukfLqwYx/7Hsyugu+tqIl6D475Xyz0Pda
-    5NjXHvo2c32Pir4DH7PIs+Zrcawi/b+6H+ocLH5fQcck31+K8Xtz4vC62nf1IzUD
-    1lHstLsOVOcWTXV/9VPGf25KSzoUv6/I1BslZXQEQp+PKiz/Aqc+3VEc/uCDXVCb
-    bnjsoOnoeqYgrVMEqCAnltVHKiEJMuObKRlYOZZM1hZKaZnKJH8MX0iSnEDKlHYh
-    y5nDpeu5c6PibQpuVfc/HcAJaHlkB76D4Kv/zdxdNPemFTEds/QQ2bNVGdsbbiGc
-    cioV/BQd1SwGE+0ZrxBuohWxtiNvZfNDGuqA==
+    1522389977; b=mF/a6awujW8wSoG+LJ5vWC8nbipvAKZsTPoWH5TWxtrovwfrz7
+    66nqiA0qxSIk7/UTAYzArsGSkEXpRgQnMyHzLRFyrWF05u8WkYcSxEZ7umZHscug
+    CcPIRtFMC7egXxP7MAr77vkDjqyqvRUOERPD9adEszfTL2W5fNxsGibgaEQnf9LJ
+    5nxYsctFjXYlvDe2bvcdpIL+zLpG/DCeoTFT2jjRLB34XOtPmS4jH2BZ+3DLbeVR
+    lnzThh/wKGl5PlALxDnumLtwS5skW3nRJQgQI85IMZU6LTGtXtaik5DxwKD+6dAo
+    G44DeJKr/1ro3wYRfxEkeGbTY68buGGd5Reg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:list-id:list-unsubscribe
+    messagingengine.com; h=message-id:subject:from:to:date
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522389797; bh=Ddtwb
-    a7qlBi/PM6WzBDYu10oQk/QVh5UGsENtMszAlw=; b=oPbBHwSDds9fxRQTwZkA1
-    lZzdcifRsSHinXEv5sywL1M25mUOtIoFOA29mJJpoW3WG5zVmhH+a7GLKzxHI9l7
-    B2+at456t+CyMJS8RCJg1V/J9ftz8eljRH8L7tkH1mthY0hUaUfZ8fag8H7QDo1E
-    s+7ES6y/7MhH0N0DXG4es7ka4zuM0850qHbv0wq67eph72B4OuX9y3NDdeE3VBf4
-    DsmQxM2zzePdUac1Yt/tWMWLZ1JxWVOP7dNqCzUAnA5q4pXJt6rSeiy9NCHiB7HE
-    /8Py/QPJwvDMaa4MRTCi6CbF2AoasAWzvmks8k3CzUMhRwQAw+isWdZ6PJQHAQQ4
+    :content-transfer-encoding:sender; s=fm2; t=1522389977; bh=lu6yZ
+    LV3m9pBjoCz/tJ/7ZxiLvPAXoYSiQvEqg9K7Ys=; b=iToUTTenfKjmySGUqD6Y+
+    gAcUX/PhpxWN4B2WCu7NX5eqWJ35PDcS/1Mrm34FnCSj1yRb7aznJ6NGLh6LI00/
+    jCGaUqqq+d/9jR5EXRNwXmAnEsOPkzwdVnRZFEerAx+vIbxTZ5gZeoCXRtaHaby0
+    KFxMfE9k1wrnfFxVlbsukMT3zIqeHlWvfhtrW1SRdRoye82S0kRqE/zDSFFRsJTV
+    GUnrop92KerS0SDN3EUQxN78QnX1J8HLp3s9YMnKsuT4DrbfUYxSQomUxgAqtXR3
+    3atSghB6P5uRRRc1xV/iqVo+SGLB+FkNyPuy1h2OeccNDM6giVoh5vCm5PA2GA5v
     Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=perches.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=perches.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGWJD8jAjfkSvE8dRLDGF0YNgxE1pVFsZrSQ0CidJ3BTtDYphe4zs6xYJsqoBEVj+0+GoFJHqe0abpmGuz6Y3a00BPscdLrFwOyLi5EL8J2iav39hRvT
-    s2Mgs59BQdGjfYlcaMwQfr9YYKg5SXdaPWYt4HdYehK6EheO33frHVIWK/oF3ZQONVx0Pp6DGcxkn/ZkG+OeHZ6LXUa90dy4xWKxU4rtXff2QoSSue5F9jer
-    GDBz4ExfMoaSyFkbpJ3GNw==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=IJv9LcIfAAAA:8 a=DDOyTI_5AAAA:8
-    a=vDD48JHQrOGzIsrck90A:9 a=i4LNjD9uRrixXcL0:21 a=serdVw6V7r1idLbv:21
-    a=CjuIK1q_8ugA:10 a=cmr4hm9N53k6aw-X_--Q:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfI16FMOBbqVbDGvwmFF8yu7XaRFolXmYzWZkQKqkbB0WttdQJwP7B/h8bnTqMcxRY42knxDC2GXAMtqJLQnsyIiKI9XMKiLfiJz1dnHoW3BDFs8pKUG7
+    gT3a4yD56gWWwR/rrkaYyL/8Sx25iESkowgIcCamc8zg7OngxkZ5M65EKvINRH83oiwPmu77mFCwazE5P2LUr0wTBJFFpIbE4hxg4jj4uUBnqwQseaUmHf9x
+    StT/9n0fAwEaC4iZVlAFTg==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=cUzyIW75ZKYjmxImxzQA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AIpwx48wgpu2Cusgiz08JgIvFcH7m7ePAabjJBo1ifyNGEP0GcO3Fsddh+GQYnscFpyUiV6DIlPOvs1khLBS4wEEkQc=
-MIME-Version: 1.0
-In-Reply-To: <1522303346.2210.19.camel@perches.com>
-References: <20180329055152.13059-1-quytelda@tamalin.org>
- <1522303346.2210.19.camel@perches.com>
-From: Quytelda Kahja <quytelda@tamalin.org>
-Date: Thu, 29 Mar 2018 23:03:10 -0700
-X-Gmail-Original-Message-ID: <CAFLvi20F6HhQqunU2Pde6e4fahFHEnRW2sR-c6V0L-fbsMJQhA@mail.gmail.com>
-Message-ID: <CAFLvi20F6HhQqunU2Pde6e4fahFHEnRW2sR-c6V0L-fbsMJQhA@mail.gmail.com>
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Remote-Spam-Summary: 2, 0, 0, , d41d8cd98f00b204, joe@perches.com, :::::::::::,
+ RULES_HIT:41:355:379:541:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3871:3872:3873:3874:4250:4321:5007:6691:9389:10004:10400:10848:11026:11232:11658:11914:12296:12740:12760:12895:13069:13095:13138:13231:13255:13311:13357:13439:14659:14721:21080:21433:21627:30012:30054:30079:30091,
+ 0,
+ RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,
+ CacheIP:none, Bayesian:0.5, 0.5, 0.5, Netcheck:none, DomainCache:0,
+ MSF:not bulk, SPF:fn, MSBL:0, DNSBL:neutral, Custom_rules:0:0:0, LFtime:20,
+ LUA_SUMMARY:none
+X-HE-Tag: cave15_8c4daef027d11
+X-Filterd-Recvd-Size: 1621
+Message-ID: <1522389962.2210.38.camel@perches.com>
 Subject: Re: [PATCH 1/9] staging: ks7010: Replace manual array copy with
  ether_addr_copy().
-To: Joe Perches <joe@perches.com>
-X-Provags-ID: V03:K0:T+W0jfsaQYnyjoNIQxeRV/d8g6vLLfSPxp0+I3sEZM0nDlTaE9/
- NviD8TftrEQsQ7zGMEzy0WqHhQdIWFFyg7qFnoNsTKbiMifzSD/ERnqnOugypq+y+I77egO
- XzdZANn0XIY042ICY7ENg6g1qc4aHgO1UoQWRi3v4FY9o4VzyrBzVUbiKsAtKSSAZ2VzpJq
- uZQrZcBrjCewLy4V4g7/g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZA6SHMdb2N0=:3XHWNHbGw9SVgIU36LPEJ2
- w4N/Z87zgpXHGIZ/jvxKM5ICFXwvE9ZMzRGP0T5x9pWyWoXUbgWHn8YSvyfzgoCUO3DnRpy9l
- AMogc+MvRykI7KuPFiME+T7a7rYopxpkDkln+W4w9cuk1B3DonV5QQDAy/dYvbTvZ6XG9V13a
- vT+wQOZoCfLCy2UiXsbsl8Fm3SHuPFodTc2KhClkAwRH0zeAzEtebm+jTIzVSalpUugbt7XJS
- sPteQefP0y7T2LsMhxzKVL6oCyGcs6VycRh1crAocd7GIAw+QhZZrOeQJiYjywkTsr6pBdltb
- vsz2JMY+aojo4jvTMpB33mVtBgm85HnDecIu+fReCekC2/Wa+Mb34Quq3Vmzq9Inv4w93//Qo
- 4WHbdNLSscavQEwAXKJmu/0AvaGTD3T5BEkmof55kcp1/Mawz2NpMi2hnaiKA4q1cj8pOUNw0
- y9xRweA3tQUm3OPjdlk6JVXMGNubRnTGtIH3xX7dyLvYdN4zAgbq5QIl+L9pzvUnvDF4166Wk
- kF9i05f099+rzZi1CmNFM4UcfWCtuYC2Xlv0OHs8gTd1egIhWsAsdqjFdcX3P68UYfE9PLb/p
- iq1xRGgDslTFOCGjJRVjtH53awFyRagg8vvrDjZNz+zebA7QN0+8j3Vdy4+IObBqDRQF4lbBE
- +ljBJKXfdbKWXtuiouicJoYhY3a3BWYr3TRHSab5cFoGdWKjGrrlgpGdCW4z6vLm0DiAL9bgG
- IrP4tymSa+cQM/9IIA40o4AZ8qkLI41bppPgzvbSeF1gdzz31Ztw1qxkbAk=
+From: Joe Perches <joe@perches.com>
+To: Quytelda Kahja <quytelda@tamalin.org>
+Date: Thu, 29 Mar 2018 23:06:02 -0700
+In-Reply-To: <CAFLvi20F6HhQqunU2Pde6e4fahFHEnRW2sR-c6V0L-fbsMJQhA@mail.gmail.com>
+References: <20180329055152.13059-1-quytelda@tamalin.org>
+ <1522303346.2210.19.camel@perches.com>
+ <CAFLvi20F6HhQqunU2Pde6e4fahFHEnRW2sR-c6V0L-fbsMJQhA@mail.gmail.com>
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -114,52 +107,20 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If we just want to have the address field full of zeros during the
-driver probe, is there a reason we should zero it explicitly here?
-When the 'struct net_device' is first allocated using
-alloc_etherdev(), the dev_addr field is explicitly set to zeros (in
-the subfunction dev_addr_init() in net/core/dev_addr_lists.c), so it
-should be zeroed already at this point in the code.
+On Thu, 2018-03-29 at 23:03 -0700, Quytelda Kahja wrote:
+> If we just want to have the address field full of zeros during the
+> driver probe, is there a reason we should zero it explicitly here?
+> When the 'struct net_device' is first allocated using
+> alloc_etherdev(), the dev_addr field is explicitly set to zeros (in
+> the subfunction dev_addr_init() in net/core/dev_addr_lists.c), so it
+> should be zeroed already at this point in the code.
 
-Thank you,
-Quytelda Kahja
+You didn't describe the removal in your commit message
+so it looked unintentional.
 
-On Wed, Mar 28, 2018 at 11:02 PM, Joe Perches <joe@perches.com> wrote:
-> On Wed, 2018-03-28 at 22:51 -0700, Quytelda Kahja wrote:
->> Copying the dummy HW address into the struct net_device doesn't need
->> to be done byte by byte; use ether_addr_copy() instead.
->> Additionally, dev->dev_addr is not eight bytes long.
->> ether_setup() sets the dev->addr_len to ETH_ALEN (defined as 6)
->> in the net core code.
-> []
->> diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-> []
->> @@ -2900,15 +2900,7 @@ int ks_wlan_net_start(struct net_device *dev)
->>       timer_setup(&update_phyinfo_timer, ks_wlan_update_phyinfo_timeout, 0);
->>
->>       /* dummy address set */
->> -     memcpy(priv->eth_addr, dummy_addr, ETH_ALEN);
->
-> why remove the copy of dummy_addr into priv->eth_addr ?
->
-> Also, dummy_addr could be removed and eth_zero_addr()
-> used instead.
->
->> -     dev->dev_addr[0] = priv->eth_addr[0];
->> -     dev->dev_addr[1] = priv->eth_addr[1];
->> -     dev->dev_addr[2] = priv->eth_addr[2];
->> -     dev->dev_addr[3] = priv->eth_addr[3];
->> -     dev->dev_addr[4] = priv->eth_addr[4];
->> -     dev->dev_addr[5] = priv->eth_addr[5];
->> -     dev->dev_addr[6] = 0x00;
->> -     dev->dev_addr[7] = 0x00;
->> +     ether_addr_copy(dev->dev_addr, priv->eth_addr);
->
-> Perhaps
->
->         eth_zero_addr(priv->eth_addr);
->         eth_zero_addr(dev->dev_addr);
->
+You should describe _why_ it's OK to remove it in that
+commit message.
+
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
