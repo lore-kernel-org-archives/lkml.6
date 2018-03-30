@@ -1,45 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeC3Nt1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 09:49:27 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35071 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750794AbeC3NtZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 09:49:25 -0400
-X-Google-Smtp-Source: AIpwx494VlsEZ/ySlBapsPrfAyilTzq+GZEELUWl1VZP9DbNRJk8axtAATJX5wLbllqJ67GmdGuM6Q==
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fix for 4.16-rc8
-Date: Fri, 30 Mar 2018 15:48:59 +0200
-Message-Id: <1522417739-26858-1-git-send-email-idryomov@gmail.com>
-X-Mailer: git-send-email 2.4.3
+        id S1751868AbeC3Nyh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 09:54:37 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:47308 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750794AbeC3Nyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 09:54:35 -0400
+Date: Fri, 30 Mar 2018 15:54:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+Subject: Re: [PATCH net-next 5/8] net: mscc: Add initial Ocelot switch support
+Message-ID: <20180330135422.GA28244@lunn.ch>
+References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
+ <20180323201117.8416-6-alexandre.belloni@bootlin.com>
+ <1df0a932-f7c1-f1b5-9a35-3c16d0c551e5@gmail.com>
+ <20180330124537.GC14180@piout.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330124537.GC14180@piout.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+> > All of this sounds like it should be moved into the br_join/leave, this
+> > does not appear to be the right place to do that.
+> > 
+> 
+> No, I've triple checked because this is a comment that both Andrew and
+> you had. Once a port is added to the PGID MASK, it will start forwarding
+> frames so we really want that to happen only when the port is in
+> BR_STATE_FORWARDING state. Else, we may forward frames between the
+> addition of the port to the bridge and setting the port to the
+> BR_STATE_BLOCKING state.
 
-The following changes since commit 3eb2ce825ea1ad89d20f7a3b5780df850e4be274:
+Hi Alexandre
 
-  Linux 4.16-rc7 (2018-03-25 12:44:30 -1000)
+Interesting observation. I took a look at some of the other join
+implementations. mv88e6xxx does the join immediately. mt7539 does it
+immediately, if the port is enabled. lan9303 does it immediately.
+qca8k does it immediately. b53 does it immediately.
 
-are available in the git repository at:
+Either they all get it wrong, or we make the assumption the bridge
+sets the STP state first, then has the port join the bridge.
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-4.16-rc8
+Looking at the code, br_add_if() it calls
+netdev_master_upper_dev_link() and then later
 
-for you to fetch changes up to 85784f9395987a422fa04263e7c0fb13da11eb5c:
+        if (netif_running(dev) && netif_oper_up(dev) &&
+            (br->dev->flags & IFF_UP))
+                br_stp_enable_port(p);
 
-  ceph: only dirty ITER_IOVEC pages for direct read (2018-03-30 11:17:48 +0200)
+So it does look like there is a window of time between the port
+joining and the STP state being set.
 
-----------------------------------------------------------------
-A fix for a dio-enabled loop on ceph deadlock from Zheng, marked for
-stable.
+I know in the past, we have run into the opposite problem. A port
+leaves the bridge, while in blocked state. The port should then
+becomes an individual port, so the STP state needs setting to
+forwarding. I don't remember where we fix this.
 
-----------------------------------------------------------------
-Yan, Zheng (1):
-      ceph: only dirty ITER_IOVEC pages for direct read
+I don't like that this new driver is different, but it also looks like
+we have a real problem here. More digging needed.
 
- fs/ceph/file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+   Andrew
