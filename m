@@ -1,94 +1,96 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2915802-1522393773-5-4813581843570477048
+X-Cyrus-Session-Id: sloti22d1t05-2920516-1522393786-5-2384379042288800866
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522393773; b=ks/B2RojhYMRcxZzszSzK5GCRQDkFbJWRrvtAtdyVPVpqVZW+W
-    rV49PY9u5FojKT36AfU6CuqcVG8fNjkvfQ+BzPYt9hMiaFEooKMExt7yghvDSqSO
-    zMZ/GGgX8z8eFaaH9A+/SlPpRY1NrUGJf5dFjt3GWcwyzj71sAeP6A7H2GQ0REA4
-    Aj4XMDZFydA/LW9gOWLV/Kx+yMWq4vy7vT8Pd8GedWDTpyyj87y13E9ms4bn+cYc
-    e1Xj4gUgnFeG9xXxl3sItsgUjFWDvHGeLQVncKkRxtwdh0N2h8GpvTnowBJEJtwR
-    1HPcCHv8bYbZPLuduxOV8Xgtnl5orLpRy6Rg==
+    1522393785; b=IFMsRSFjbCe5g8OyIM1zlArNjxEOpBiVevx9eRDWh+EsSwstzx
+    u+NATWUddltLIYBQkUHJQel/SaKgodOvaN1x/XTyomKpyLXaW0H//dBw4B39751J
+    7hS2GpjNwVXj9/v32M400I1qpdHCF5VZo1fIKsZv39iKCNqN02CicZhUJIWnK6aZ
+    ciO77Mkx47AF+t8cUUydPBxhiIttKNq8BAG1ocfwgQxA/UrbaO8u8pFHSNB2fsj9
+    7BQeNul0xfj78gJZeDxUKPTo1bQM6bhKh8K/e9z2tzMn06vvye7UUytJvksJNoAK
+    8M3y/Np61CXJLrHcxUMmngI4My+9C5mLohvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522393773; bh=48h23
-    xVur+r0PZARS6u3DujJORxlKDyjvhj/1b6RJXI=; b=XJBgXKFR/FKMmM7ReZHO5
-    5nDBRgnE3aO3al3khpubfz5Coy9XZY/6jD9+I+vpCXNUlbINqPn2DrF38HlZbzq5
-    0GEoo73Ia8hDn62DAfd4WSioJd2+Uo6GUrYtlrh6Ne14+LQmb4swc1ijYZOLDqd8
-    f8PnKDnWqGCAJg6FhgB1/6Q9heGrqL9Hg5DdgoaIpc8oI5LHDsGVi/SGDQdsYnzz
-    56WwedUKxpdQqZ34L/LPV2indfNR6RlzYX6gOCgcbBmXIOeQHjaFtL9P8qn4s6Za
-    y1CtNqs3WZ1JzuIzyLnbyhEmRE7ACElS8cGdXrP1J9GX0dmRKcAD/8WXbcHQc86C
-    A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522393785; bh=CgYUz
+    ZVpcwhIQhASohMxX9MI/MjGAvSVaGg6LnX9jyU=; b=gWL5J0s2QAsR7ZgQPoikW
+    ZoYh64nkbo+G1iz0zJc/k/KM1fAXydsywS5kQtKKXrilr1g9OK9Rgshklo+1NNHI
+    wkt8MVbXYwk835R+Cn3UljTLYiyfw4sei1zlBhbT9mM8l3xOVwFZaU79BIQbLzz4
+    y10p0ozlLGXGaNDItnKKalThCBPUhxS3rPsolcri7Zt02N4xaRIwPhBdyx9TbHj/
+    XWYDzxk44jvk+klwqwLmHV8NDforBoq4XGQ5l03cZb4EbVBFglk1A3g4kzNNLIIO
+    sT/u9497tZULaA+k//jlHIaf1W/a636iu84d9qyEoeDn5fx0HOmmyaOznxqntgVb
+    Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOfvxGDWBsRsErEu1jxQsf9GZnjUaJhf/yTB92tSl3zUg3M6bgQ9eASmvoC4QvaQzBNE6yQQ3MSM5b082JP9/+FItsVu/RE3JSmcfmRtxYcC6aE4RbiR
-    VDWY8GFBsrzP3ZVHeitbo9or3du78jfx8wLWxR5r5HmQMb0YdRD/iOXzIUPFdLMQULpayP8enYcveCC/lV0pxKVIFqGnN7smsC+WdvbK/JUOHpHGMKkjcn/V
-    +gCsKLy2Ga8DF835PNZxPA==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+X-CM-Envelope: MS4wfGDxYA26F5p3HOUrv7BYaO9sz87rhmoV8n0PLUiscKllvawgQk4iNBlLsHGE1Awxk4Fmz627rFek6eSSAzDTNXI92AHgzDfwN1oKh/Z7YENDF/WP2Q9m
+    Cvwc+iZRkPPU5iZpcr97pzwcZKVPG0IZB6nlD3gCyOTORl/AKloXPh/0NCcktGCpJ9nCWUOHVN92P9fzMGMW5XNiaBu8BUzxiLq9NqLDMNexMP8PyMInfSyF
+    zvnIbD44B80zRLxqrSHQ3g==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=bTZhXF_3Es1RlC27uLMA:9 a=J38sKhbewBX8-xsW:21 a=6n9lg6l9SQjj86zw:21
-    a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=gpGHsg53_5QM18PxnzIA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH 01/76] staging: ks7010: Use the ARRAY_SIZE() macro to
- calculate array sizes.
-Date: Fri, 30 Mar 2018 00:07:24 -0700
-Message-Id: <20180330070842.25224-1-quytelda@tamalin.org>
+Subject: [PATCH 12/76] staging: ks7010: Remove trailing _t from 'struct
+ hostif_mib_set_confirm_t'.
+Date: Fri, 30 Mar 2018 00:07:35 -0700
+Message-Id: <20180330070842.25224-12-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
-X-Provags-ID: V03:K0:omegR1/TGFZiwu1arUqPAnu5CbpTGYWWe2Qz4dr1sn5yuNUzb7Q
- 3GJnzYnubFcerAygZDpKYbA+wY0vbyyR8/6S5A0IS/K2cDgeRdCb1DWzAOjnXqerxQcCz7Q
- c8GtdK7igMwsS0f1SoZhLscF13rwl0OHjwuJZfhZnANx64DIlGHwZEzJpTkhQUzoPNlLeQx
- TY3yRjq2ONTWQ03mSbVHQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:jG6hTA4+q/w=:ZPymJRKsANDWBi4ThHhH8F
- jnaVkXMlB+mMDgwU9KzAGkIsZ+e9ChFp3WTwyhSz57BnnOZkXopecw5+dPSOZWFQNcydph8D8
- L2vCG+rn8PFP58unGp9scV6r6LWF8E9g9tA6G4LzdqCUAZQ6TPkE+2amo/AHdJ84+fugW8jrB
- WBbnrd0+5U0oh0yTDYEkUP/dRVHUiLU/yUZxcJTwowrq6Ra++AHmlzTc19QSoiIwY05j3nhn0
- QYUe0uyU0KD+sBDxUAjJb0LGiWQBXGVsGvoWuTLmPvuG5wuSoCcbeCY/F3ivLD25JjFAey9SC
- UN+bjSN/YoTaG7mSAyZLTNISYdH2WhgTrGtSj33lZuhy665lwiEnHgxq/OCaK3d3SNaSxKNZI
- IjFxn7Txq/tNBwZS2uPznXRbcX64zE4bvyKx7vR8ySXPkEcwIMK1gVzbu3Olv1BeGrGZvrVkb
- RDlxbSNSC5H9v3vpsV/FJOVanlgQ7DSvi59sZeRHf6dh+x+FjNumJN89z/nJ5lKbhQaJsjNLh
- xhK46l3WTR7QDY12DNc5EKbiNGc6NI6aArQ9YwZN9cjJ2VhGHWCP9fjkRElJ3Mn/UR8Lrdanp
- NJCDI2iBc2g5Y1fAdvsPwALRxn4lOyTqvcERfE0kgcbPjlcM3OhYzCWxy1rtfGjgEYIFFnyEg
- eLXUkV5wduERk51IUXLbU5pve7wN+qjNvUDT5lmrfPKXR0SZRuym93fp7EAXdhRZh271YIxg2
- n0TOcasFKXf5iC7JGZQiS0P+UR1mpm90tjrbgw==
+In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
+References: <20180330070842.25224-1-quytelda@tamalin.org>
+X-Provags-ID: V03:K0:gladxBE2aUoAm+pClkG9yIK/5YUbWzqxqGLhZ3MWfi2Y2kXd9Fx
+ +/KR0uJSWbfWrRlDPFGyxPJ2iTK4//Gvo8t+CAy9+/Nv/IUe9mptKZMHXm3ifLuz9Jm91ov
+ lLvJ4sTgB9IV9Pw4W6Zh4OF69YGFYAbOxqgk9gmHXx27eGK5ZNHMz62glu0VwZ4EczVEsXX
+ DYztYlYgBoqOn0WcF11tQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:C5fwGeBdU5A=:ZJjjT7zjjUTiNZkChVqSuT
+ 5Ybqn22wvXeyuaiZSGbCsgxf3ax3TlJsQj8cwCq2b2OMrHyVvWEVmUOcundWK4ZobPqvww6gh
+ HH3lSvYhvYozFhprEtfw3hSnnEx4r9POxnfB8g1leXesWBosxMycJ4fbBl7Fcs6djB96t0ELS
+ 4I1pXpnwjYSt0oeL1XZyCPlgqLWphfT0uN/kCaJom1A0cRMgU6X3m4+h2CtmlXLoXeBVEfsmW
+ elDgQN22LfczzsVmCyU3gSLThDVyJrAZh0iwA8HwoTzkKV+WB+gHeEZvxupDTZPfTVCA474kf
+ Ox3aRmMF6LeQZHy9Af6k9K6c+RfTXRP4Cquidkx/I/qTbHICKgK4VqrCRNSu9aC3qdo1GYgSb
+ KwI5JePsbk0NISFLPIIMu5tz3BgG5sB0xXDZcT7nC5A5QXz3Zv32BwVGPxTCflL34vrKb/ovL
+ y39oBNsAGbpsV7jPaIq3hin3q0pnSpL74QGRC8ucL0U8MklcKP6i0mCEdog7RVIr5OLkoAtFi
+ uyeprdvlncwsY9jK/9j8aXITZ874CZsfwoGQlpfa9nWO183Xn9GnZqyINjVPUcNC+6u0pdPGx
+ fTfquKu8l6qlypSdaXLcW5psCarGUvsysgWig0xbOlkRuvad0L3JRdozqba5ySGTvxr1fkJZd
+ BOERg8r9cw6SE3qK6yQYRf3NqmQHvsij//YHthJ19ofIcFb92X8gMdMk57ZyEEQJZybHKmAQx
+ fRouVx1xICfCd2s3dHwQKd1XEHGUpU/XcJ8LnQ==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -110,32 +112,29 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This macro, provided in 'linux/kernel.h', will calculate the size
-more succinctly than a division operation.
+The "_t" suffix is not needed for structure names in this driver, and is a
+reflection of an older typedef system that is no longer in place. Replace
+all occurences of 'struct hostif_mib_set_confirm_t' with 'struct
+hostif_mib_set_confirm'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_wlan_net.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/staging/ks7010/ks_hostif.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 9078e13b0d4a..533feef604a9 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -2702,10 +2702,9 @@ static const iw_handler ks_wlan_private_handler[] = {
- };
+diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
+index 5261810fbc76..7a0e0c610c50 100644
+--- a/drivers/staging/ks7010/ks_hostif.h
++++ b/drivers/staging/ks7010/ks_hostif.h
+@@ -175,7 +175,7 @@ struct hostif_mib_set_request {
+ 	struct hostif_mib_value mib_value;
+ } __packed;
  
- static const struct iw_handler_def ks_wlan_handler_def = {
--	.num_standard = sizeof(ks_wlan_handler) / sizeof(iw_handler),
--	.num_private = sizeof(ks_wlan_private_handler) / sizeof(iw_handler),
--	.num_private_args =
--	    sizeof(ks_wlan_private_args) / sizeof(struct iw_priv_args),
-+	.num_standard = ARRAY_SIZE(ks_wlan_handler),
-+	.num_private = ARRAY_SIZE(ks_wlan_private_handler),
-+	.num_private_args = ARRAY_SIZE(ks_wlan_private_args),
- 	.standard = (iw_handler *)ks_wlan_handler,
- 	.private = (iw_handler *)ks_wlan_private_handler,
- 	.private_args = (struct iw_priv_args *)ks_wlan_private_args,
+-struct hostif_mib_set_confirm_t {
++struct hostif_mib_set_confirm {
+ 	struct hostif_hdr header;
+ 	__le32 mib_status;
+ 	__le32 mib_attribute;
 -- 
 2.16.3
 
