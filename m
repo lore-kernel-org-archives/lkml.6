@@ -1,52 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751301AbeC3KGF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:06:05 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35183 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751053AbeC3KGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 06:06:03 -0400
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>, stefanc@marvell.com,
-        ymarkman@marvell.com, Yelena Krivosheev <yelena@marvell.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH] net: mvneta: fix enable of all initialized RXQs
-Date: Fri, 30 Mar 2018 12:05:31 +0200
-Message-Id: <20180330100531.5995-1-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.16.2
+        id S1751263AbeC3KH0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 06:07:26 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50040 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbeC3KHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 06:07:25 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] power/hibernate: Change message when writing to /sys/power/resume
+Date: Fri, 30 Mar 2018 12:07:41 +0200
+Message-ID: <14931924.qmLzAlZrf0@aspire.rjw.lan>
+In-Reply-To: <1522256470-2825-2-git-send-email-mario.limonciello@dell.com>
+References: <1522256470-2825-1-git-send-email-mario.limonciello@dell.com> <1522256470-2825-2-git-send-email-mario.limonciello@dell.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yelena Krivosheev <yelena@marvell.com>
+On Wednesday, March 28, 2018 7:01:10 PM CEST Mario Limonciello wrote:
+> This file is used both for setting the wakeup device without kernel
+> command line as well as for actually waking the system (when appropriate
+> swap header is in place).
+> 
+> To avoid confusion on incorrect logs in system log downgrade the
+> message to debug and make it clearer.
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+> ---
+>  kernel/power/hibernate.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index d58fad3d..1028ecb 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -1053,7 +1053,7 @@ static ssize_t resume_store(struct kobject *kobj, struct kobj_attribute *attr,
+>  	lock_system_sleep();
+>  	swsusp_resume_device = res;
+>  	unlock_system_sleep();
+> -	pr_info("Starting manual resume from disk\n");
+> +	pm_pr_dbg("Configured resume from disk to %u\n", swsusp_resume_device);
+>  	noresume = 0;
+>  	software_resume();
+>  	return n;
+> 
 
-In mvneta_port_up() we enable relevant RX and TX port queues by write
-queues bit map to an appropriate register.
-
-q_map must be ZERO in the beginning of this process.
-
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/net/ethernet/marvell/mvneta.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 25e9a551cc8c..3f6fb635738c 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -1132,6 +1132,7 @@ static void mvneta_port_up(struct mvneta_port *pp)
- 	}
- 	mvreg_write(pp, MVNETA_TXQ_CMD, q_map);
- 
-+	q_map = 0;
- 	/* Enable all initialized RXQs. */
- 	for (queue = 0; queue < rxq_number; queue++) {
- 		struct mvneta_rx_queue *rxq = &pp->rxqs[queue];
--- 
-2.16.2
+Both [1-2/2] applied, thanks!
