@@ -1,182 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751897AbeC3QiC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 12:38:02 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39487 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751167AbeC3QiA (ORCPT
+        id S1752125AbeC3Qjk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 12:39:40 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:51468 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751298AbeC3Qjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 12:38:00 -0400
-X-Google-Smtp-Source: AIpwx4/75lYNyHBgsGz7XTGAk12KShi1liBZ7iOaWKuMMDy0Vk2VIQRkWtyeU0e4BYpopMeKvs9bjV2+f9YDN1cEnEU=
+        Fri, 30 Mar 2018 12:39:39 -0400
+Date: Sat, 31 Mar 2018 00:39:31 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "crypto/ecc: Remove stack VLA usage"
+Message-ID: <20180330163930.GA27856@gondor.apana.org.au>
+References: <20180326230308.GA27259@beast>
 MIME-Version: 1.0
-In-Reply-To: <20180330102038.2378925b@gandalf.local.home>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com> <20180330102038.2378925b@gandalf.local.home>
-From: Joel Fernandes <joelaf@google.com>
-Date: Fri, 30 Mar 2018 09:37:58 -0700
-Message-ID: <CAJWu+ooMPz_nFtULMXp6CnLvM8JFJrSnBGNgPHXKs1k97FQU5Q@mail.gmail.com>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326230308.GA27259@beast>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Mon, Mar 26, 2018 at 04:03:08PM -0700, Kees Cook wrote:
+> This reverts commit 14de52112ee70ca289fa77bf2d9cbc79fd2c811f.
+> 
+> The solution was incomplete and inefficient. This will be fixed
+> correctly in the next patch.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-On Fri, Mar 30, 2018 at 7:20 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> [ Adding memory management folks to discuss the issue ]
->
-> On Thu, 29 Mar 2018 18:41:44 +0800
-> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
->
->> It is reported that some user app would like to echo a huge
->> number to "/sys/kernel/debug/tracing/buffer_size_kb" regardless
->>  of the available memory, which will cause the coinstantaneous
->> page allocation failed and introduce OOM. The commit checking the
->> val against the available mem first to avoid the consequence allocation.
->>
->> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
->> ---
->>  kernel/trace/trace.c | 39 ++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 38 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
->> index 2d0ffcc..a4a4237 100644
->> --- a/kernel/trace/trace.c
->> +++ b/kernel/trace/trace.c
->> @@ -43,6 +43,8 @@
->>  #include <linux/trace.h>
->>  #include <linux/sched/rt.h>
->>
->> +#include <linux/mm.h>
->> +#include <linux/swap.h>
->>  #include "trace.h"
->>  #include "trace_output.h"
->>
->> @@ -5967,6 +5969,39 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
->>       return ret;
->>  }
->>
->> +static long get_available_mem(void)
->> +{
->> +     struct sysinfo i;
->> +     long available;
->> +     unsigned long pagecache;
->> +     unsigned long wmark_low = 0;
->> +     unsigned long pages[NR_LRU_LISTS];
->> +     struct zone *zone;
->> +     int lru;
->> +
->> +     si_meminfo(&i);
->> +     si_swapinfo(&i);
->> +
->> +     for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
->> +             pages[lru] = global_page_state(NR_LRU_BASE + lru);
->> +
->> +     for_each_zone(zone)
->> +             wmark_low += zone->watermark[WMARK_LOW];
->> +
->> +     available = i.freeram - wmark_low;
->> +
->> +     pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
->> +     pagecache -= min(pagecache / 2, wmark_low);
->> +     available += pagecache;
->> +
->> +     available += global_page_state(NR_SLAB_RECLAIMABLE) -
->> +             min(global_page_state(NR_SLAB_RECLAIMABLE) / 2, wmark_low);
->> +
->> +     if (available < 0)
->> +             available = 0;
->> +     return available;
->> +}
->> +
->
-> As I stated in my other reply, the above function does not belong in
-> tracing.
->
-> That said, it appears you are having issues that were caused by the
-> change by commit 848618857d2 ("tracing/ring_buffer: Try harder to
-> allocate"), where we replaced NORETRY with RETRY_MAYFAIL. The point of
-> NORETRY was to keep allocations of the tracing ring-buffer from causing
-> OOMs. But the RETRY was too strong in that case, because there were
+Hmm you didn't post this to linux-crypto so it's not in patchwork.
 
-Yes this was discussed with -mm folks. Basically the problem we were
-seeing is devices with tonnes of free memory (but free as in free but
-used by page cache)  were not being used so it was unnecessarily
-failing to allocate ring buffer on the system with otherwise lots of
-memory.
-
-> those that wanted to allocate large ring buffers but it would fail due
-> to memory being used that could be reclaimed. Supposedly, RETRY_MAYFAIL
-> is to allocate with reclaim but still allow to fail, and isn't suppose
-> to trigger an OOM. From my own tests, this is obviously not the case.
->
-
-IIRC, the OOM that my patch was trying to avoid, was being triggered
-in the path/context of the write to buffer_size_kb itself (when not
-doing the NORETRY),  not by other processes.
-
-> Perhaps this is because the ring buffer allocates one page at a time,
-> and by doing so, it can get every last available page, and if anything
-> in the mean time does an allocation without MAYFAIL, it will cause an
-> OOM. For example, when I stressed this I triggered this:
->
->  pool invoked oom-killer: gfp_mask=0x14200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
->  pool cpuset=/ mems_allowed=0
->  CPU: 7 PID: 1040 Comm: pool Not tainted 4.16.0-rc4-test+ #663
->  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
->  Call Trace:
->   dump_stack+0x8e/0xce
->   dump_header.isra.30+0x6e/0x28f
->   ? _raw_spin_unlock_irqrestore+0x30/0x60
->   oom_kill_process+0x218/0x400
->   ? has_capability_noaudit+0x17/0x20
->   out_of_memory+0xe3/0x5c0
->   __alloc_pages_slowpath+0xa8e/0xe50
->   __alloc_pages_nodemask+0x206/0x220
->   alloc_pages_current+0x6a/0xe0
->   __page_cache_alloc+0x6a/0xa0
->   filemap_fault+0x208/0x5f0
->   ? __might_sleep+0x4a/0x80
->   ext4_filemap_fault+0x31/0x44
->   __do_fault+0x20/0xd0
->   __handle_mm_fault+0xc08/0x1160
->   handle_mm_fault+0x76/0x110
->   __do_page_fault+0x299/0x580
->   do_page_fault+0x2d/0x110
->   ? page_fault+0x2f/0x50
->   page_fault+0x45/0x50
-
-But this OOM is not in the path of the buffer_size_kb write, right? So
-then what does it have to do with buffer_size_kb write failure?
-
-I guess the original issue reported is that the buffer_size_kb write
-causes *other* applications to fail allocation. So in that case,
-capping the amount that ftrace writes makes sense. Basically my point
-is I don't see how the patch you mentioned introduces the problem here
-- in the sense the patch just makes ftrace allocate from memory it
-couldn't before and to try harder.
-
->
-> I wonder if I should have the ring buffer allocate groups of pages, to
-> avoid this. Or try to allocate with NORETRY, one page at a time, and
-> when that fails, allocate groups of pages with RETRY_MAYFAIL, and that
-> may keep it from causing an OOM?
->
-
-I don't see immediately how that can prevent an OOM in other
-applications here? If ftrace allocates lots of memory with
-RETRY_MAYFAIL, then we would still OOM in other applications if memory
-isn't available. Sorry if I missed something.
+Anyway, I'd prefer if you just squashed this together with the
+subsequent patch.  It's not that complex to require a revert and
+a new patch to be readable.
 
 Thanks,
-
-- Joel
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
