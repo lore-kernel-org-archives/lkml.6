@@ -1,81 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751243AbeC3LJy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 07:09:54 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33488 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751096AbeC3LJw (ORCPT
+        id S1751241AbeC3LSB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 07:18:01 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33498 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeC3LR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 07:09:52 -0400
-X-Google-Smtp-Source: AIpwx4+Tur2Qu1E1XiFs6veQnpKXJMTJIKnbrpnQLGatmi4pQq4cPFZPZOmfZ6EqmYu8eQq2TJKbFDJM67St3BaA9SQ=
+        Fri, 30 Mar 2018 07:17:59 -0400
+X-Google-Smtp-Source: AIpwx4/bfmUNke/z1UtYb1NdlVsgxj6FuGhyGphIaivvOPVNnJToLwTta6UkrPw70RzZjILSdFIoBw==
+Date: Fri, 30 Mar 2018 13:17:56 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH v4 2/2] locking/debug: Restructure the lock debugging menu
+Message-ID: <20180330111756.jvikchnxaeqkojao@gmail.com>
+References: <1522246852-17501-1-git-send-email-longman@redhat.com>
+ <1522246852-17501-3-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180326084629.100070-4-yixun.lan@amlogic.com>
-References: <20180326084629.100070-1-yixun.lan@amlogic.com> <20180326084629.100070-4-yixun.lan@amlogic.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 30 Mar 2018 13:09:31 +0200
-Message-ID: <CAFBinCCK+Y0QAHcGDXvXvSqChS91XK5C6d5XunkmUVBQa4nn+Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] iio: adc: meson-axg: add saradc driver
-To: Yixun Lan <yixun.lan@amlogic.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-        linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522246852-17501-3-git-send-email-longman@redhat.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 10:46 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
-> From: Xingyu Chen <xingyu.chen@amlogic.com>
->
-> Add the SAR ADC driver for the Amlogic Meson-AXG SoC.
->
-> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-I suggest changing the subject of this patch to:
-iio: adc: meson-saradc: add support for Meson AXG
 
-(because "iio: adc: meson-axg" does not point to the "meson-saradc"
-driver and no new driver is added with this patch)
+* Waiman Long <longman@redhat.com> wrote:
 
-with that:
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
+> Two config options in the lock debugging menu that are probably the most
+> frequently used, as far as I am concerned, is the PROVE_LOCKING and
+> LOCK_STAT. From a UI perspective, they should be front and center. So
+> these two options are now moved to the top of the lock debugging menu.
+> 
+> The DEBUG_WW_MUTEX_SLOWPATH option is also added to the PROVE_LOCKING
+> umbrella.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 > ---
->  drivers/iio/adc/meson_saradc.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
-> index 799ed929ab99..a5d481a2b4ef 100644
-> --- a/drivers/iio/adc/meson_saradc.c
-> +++ b/drivers/iio/adc/meson_saradc.c
-> @@ -935,6 +935,11 @@ static const struct meson_sar_adc_data meson_sar_adc_gxm_data = {
->         .name = "meson-gxm-saradc",
->  };
->
-> +static const struct meson_sar_adc_data meson_sar_adc_axg_data = {
-> +       .param = &meson_sar_adc_gxl_param,
-> +       .name = "meson-axg-saradc",
-> +};
-> +
->  static const struct of_device_id meson_sar_adc_of_match[] = {
->         {
->                 .compatible = "amlogic,meson8-saradc",
-> @@ -953,6 +958,9 @@ static const struct of_device_id meson_sar_adc_of_match[] = {
->         }, {
->                 .compatible = "amlogic,meson-gxm-saradc",
->                 .data = &meson_sar_adc_gxm_data,
-> +       }, {
-> +               .compatible = "amlogic,meson-axg-saradc",
-> +               .data = &meson_sar_adc_axg_data,
->         },
->         {},
->  };
-> --
-> 2.15.1
->
+>  lib/Kconfig.debug | 146 ++++++++++++++++++++++++++++--------------------------
+>  1 file changed, 76 insertions(+), 70 deletions(-)
+> 
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 6aad28c..dc9ffe2 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1034,6 +1034,79 @@ config DEBUG_PREEMPT
+>  
+>  menu "Lock Debugging (spinlocks, mutexes, etc...)"
+>  
+> +config LOCK_DEBUGGING_SUPPORT
+> +	bool
+> +	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
+> +	default y
+
+Ok, this patch is a nice reorganization - but could we please split this into two 
+patches, the first one adds the LOCK_DEBUGGING_SUPPORT helper, the other does the 
+reordering of the entries (without changing anything in the entries)?
+
+It's hard to review when the two steps are mixed up.
+
+Thanks,
+
+	Ingo
