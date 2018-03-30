@@ -1,76 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752968AbeC3Pdc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 11:33:32 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:40660 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752584AbeC3Pd2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 11:33:28 -0400
-X-Google-Smtp-Source: AIpwx49P89DMspJaMTzsyFU3F6vSJzKBd4oPRHTI11UE6dUKiEPtIlvJcJ5PuRwanW4mXQyftv2J+hC5b3J8NONZ3/I=
+        id S1753328AbeC3PfN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 11:35:13 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:47461 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752216AbeC3PfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 11:35:10 -0400
+Date: Fri, 30 Mar 2018 17:11:29 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        stephen@networkplumber.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
+        nirranjan@chelsio.com, indranil@chelsio.com
+Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
+ dump in second kernel
+Message-ID: <20180330151129.GG28244@lunn.ch>
+References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <20180330103907.GC3313@nanopsycho>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803300821330.2870@hadrien>
-References: <alpine.DEB.2.20.1803292109180.2750@hadrien> <CAOMZO5CLpW+2yCYRwAJTPWtXgXkaPGyPQrB3cbBGYvV1fryUQw@mail.gmail.com>
- <alpine.DEB.2.20.1803292140340.2750@hadrien> <87po3mxf73.fsf@suse.de> <alpine.DEB.2.20.1803300821330.2870@hadrien>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 30 Mar 2018 12:33:27 -0300
-Message-ID: <CAOMZO5Ac1U158pWJApPBdU6d9mNLjMwk5D6CjdH+fm+rqNFqaA@mail.gmail.com>
-Subject: Re: [kbuild-all] [PATCH] OPTIONAL: cpufreq/intel_pstate: fix
- debugfs_simple_attr.cocci warnings
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Nicolai Stange <nstange@suse.de>,
-        Francisco Jerez <currojerez@riseup.net>, linux-pm@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kbuild-all@01.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        0day robot <fengguang.wu@intel.com>, Len Brown <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330103907.GC3313@nanopsycho>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 3:22 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+> Please see:
+> http://patchwork.ozlabs.org/project/netdev/list/?series=36524
+> 
+> I bevieve that the solution in the patchset could be used for
+> your usecase too.
 
->> From commit 49d200deaa68 ("debugfs: prevent access to removed files' private
->> data"):
->>
->>     Upon return of debugfs_remove()/debugfs_remove_recursive(), it might
->>     still be attempted to access associated private file data through
->>     previously opened struct file objects. If that data has been freed by
->>     the caller of debugfs_remove*() in the meanwhile, the reading/writing
->>     process would either encounter a fault or, if the memory address in
->>     question has been reassigned again, unrelated data structures could get
->>     overwritten.
->>     [...]
->>     Currently, there are ~1000 call sites of debugfs_create_file() spread
->>     throughout the whole tree and touching all of those struct file_operations
->>     in order to make them file removal aware by means of checking the result of
->>     debugfs_use_file_start() from within their methods is unfeasible.
->>
->>     Instead, wrap the struct file_operations by a lifetime managing proxy at
->>     file open [...]
->>
->> The additional overhead comes in terms of additional memory needed: for
->> debugs files created through debugfs_create_file(), one such struct
->> file_operations proxy is allocated for each struct file instantiation,
->> c.f. full_proxy_open().
->>
->> This was needed to "repair" the ~1000 call sites without touching them.
->>
->> New debugfs users should make their file_operations removal aware
->> themselves by means of DEFINE_DEBUGFS_ATTRIBUTE() and signal that fact to
->> the debugfs core by instantiating them through
->> debugfs_create_file_unsafe().
->>
->> See commit c64688081490 ("debugfs: add support for self-protecting
->> attribute file fops") for further information.
+Hi Jiri
 
-Thanks for the detailed explanation, Nicolai!
+https://lkml.org/lkml/2018/3/20/436
 
-> Thanks.  Perhaps it would be good to add a reference to this commit in
-> the message generated by the semantic patch.
+How well does this API work for a 2Gbyte snapshot?
 
-Yes, that would be very helpful indeed.
-
-Thanks
+    Andrew
