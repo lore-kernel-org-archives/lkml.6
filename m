@@ -1,178 +1,69 @@
-Return-Path: <opensource.ganesh@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1520832786; cv=none;
+Return-Path: <minhnpq16@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522405045; cv=none;
         d=google.com; s=arc-20160816;
-        b=UqpAqiP3ekbmDJY3HiBdPkGNdSIwCnSsOdpFuB5iuVp11DXXjqsSzvciln1rlmu3na
-         pQ6QvszGLPhiUtGfTx6Ot3wdIV8+ryO9rNYSiiwy7owCXkwq8FsLSMvzKF6lmf8mwSwH
-         bVTApXU696ogadYbmCEwE+Unxo6Fysfie/5L5es39+8CoDG4cHDjASsvMW8dGznIGXl5
-         qjlBPvxtXHfARZqnQOqK3QYuc3TgycdagHn9LG623jduFvdqTXrbQjF6x5J4pkJmOslj
-         HgTuiMT07mnBeNC8X0+S0U5lX430npJg6yCZ8bfmUE5sWg7NW31AxIuMf+RT617R3CNt
-         sIUg==
+        b=o9p7jWtxC/jzQcxn7ZAXQfjhjBeYoGWcYWJBnyW+CmFxWFG+hLyNmIfJPop2TgswI/
+         quw4etR6jmQU7GoqpQYRib9Hf3Fggpto3thI9n9Erz+fbNbGrYRZWpF8OK4bWhW3vZyo
+         1agC3PfuI8htIjzsOknSPDgLp4O+05ZtIoUmZUbCqfUursaCO2yvO7MoQfduDDrHSb7O
+         3JE8DyI+iJ5ZjKEjs3hDW9+gcL5h35retF0RaOBiOoDmVF1wWNGD+TOew7SO1UKAwDy/
+         RQk3cX576lig/2kUGRTAxUC5EFZXeD9HzRDAEP841rcPytccMXypvykf7nnToR4y1enn
+         sicA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=athTWfq0BGtTLdyMVzUWpYs1AF9f/8/2j8JGc4Oq0HE=;
-        b=C5jRBD7fBuDcmLfo5KuZu4D32XTjIs1lEcTWT1x4ZYNRLPcAU/9USipj5/a5BoheRk
-         GjIcgmQ3MtsVTp4asEps99SgHcK+dB4mggRDeTldOnH8xMxpQqHrTcWdkJyWtncVgVEX
-         VG/qQwGaxZBI8CnmvMO9J9UAgjt21Oxde+jRHpKEpY9L+qILKv5lV/C58ubXrzpQQDTv
-         ikfhVhrrgoNw1ghuQgtETS2LgEyuYYAuoBZ1XtSlSYfkOpMcrw2Iou1zizpaEQJJO3Dm
-         x1m5DyWSOk6zdoyC8JxpCF/4eBCsXkExcgXMp/b1cfIMtObLZ6W0fFhDI6zPqldPslRt
-         PAVA==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=1uQrfsaOpG3iSFl2R23BM9AOO09al4bw4qVstBLpMS0=;
+        b=zWN7L8uSj/FzGOS9XVsF9yso/eXjgGZ7k/FJc5jobMXci4Tl+puEjbUB7L4/7JuRJg
+         JYWxErcSpt+QunD29ANEuCswKY7WB8h23M0K5QFko2AaE8IBeDCtoVmpPB/CGPLKXi/p
+         1Lrhhup9OeC3d4+vXmtiaDtK2jJ+04kE4oLcuhHxjFgyQSTtGITJ4BWN3ml2YzHY5Pfs
+         FW1oTLj1EoWXFl8wO8QH/0ABqKplRoFMlw+B2+UsYiI1RLp3SUwzwaaYRLiCX4FSR31G
+         zkpnbijvg3KqNjEz0zD+nuT08gEpBlkFjrkMKb2w2JvEZiAoU4k/jXbNmsdTbzZQxSvl
+         G+Aw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AAZ4ckzF;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Me8ggwM4;
+       spf=pass (google.com: domain of minhnpq16@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minhnpq16@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AAZ4ckzF;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Me8ggwM4;
+       spf=pass (google.com: domain of minhnpq16@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minhnpq16@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELshP4+MZY6lOc5CcT/TPt8mNp/ZtdrctR/qQaMrH4UReEf4eqh6RBdp7GFx1OBQKnk6OyknxtX/KJX4jETiXHU=
+X-Google-Smtp-Source: AIpwx49mg4A9Zm/OWCF5lOugWCaudb7eXGK+WlXysgz3ymCjuztaSX0QhjUBcAZSXB/IOoPIZYqfwQ==
+Date: Fri, 30 Mar 2018 12:17:23 +0200
+From: Nguyen Phan Quang Minh <minhnpq16@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Razvan Stefanescu <razvan.stefanescu@nxp.com>,
+	linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: [PATCH] staging: fsl-dpaa2/ethsw: Remove unused variable irq
+Message-ID: <20180330101723.GA10648@minhnpqrs-ubuntu>
 MIME-Version: 1.0
-In-Reply-To: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com>
-References: <1520239666-2964-1-git-send-email-opensource.ganesh@gmail.com>
-From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Date: Mon, 12 Mar 2018 13:33:04 +0800
-Message-ID: <CADAEsF-KO52z1sby9uk+1NWNkDo+apCRV+1dpbFe2AwDmccjXA@mail.gmail.com>
-Subject: Re: [PATCH v2] PM / wakeup: use seq_open() to show wakeup stats
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Ganesh Mahendran <opensource.ganesh@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594086852232118519?=
-X-GMAIL-MSGID: =?utf-8?q?1594708759602490866?=
+X-GMAIL-THRID: =?utf-8?q?1596357393227856444?=
+X-GMAIL-MSGID: =?utf-8?q?1596357393227856444?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello, Rafael:
+Local variable irq is not used. Remove it.
 
-2018-03-05 16:47 GMT+08:00 Ganesh Mahendran <opensource.ganesh@gmail.com>:
-> single_open() interface requires that the whole output must
-> fit into a single buffer. This will lead to timeout when
-> system memory is not in a good situation.
->
-> This patch use seq_open() to show wakeup stats. This method
-> need only one page, so timeout will not be observed.
->
-> Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
-> ----
-> v2: use srcu_read_lock instead of rcu_read_lock
+Signed-off-by: Nguyen Phan Quang Minh<minhnpq16@gmail.com>
+---
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-How about the V2 patch?
-If you have other concern, please let me know.
-
-Thanks.
-
-> ---
->  drivers/base/power/wakeup.c | 77 +++++++++++++++++++++++++++++++++++----------
->  1 file changed, 61 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index ea01621..3bcab7d 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -1029,32 +1029,77 @@ static int print_wakeup_source_stats(struct seq_file *m,
->         return 0;
->  }
->
-> -/**
-> - * wakeup_sources_stats_show - Print wakeup sources statistics information.
-> - * @m: seq_file to print the statistics into.
-> - */
-> -static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
-> +static void *wakeup_sources_stats_seq_start(struct seq_file *m,
-> +                                       loff_t *pos)
->  {
->         struct wakeup_source *ws;
-> -       int srcuidx;
-> +       loff_t n = *pos;
-> +       int *srcuidx = m->private;
->
-> -       seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
-> -               "expire_count\tactive_since\ttotal_time\tmax_time\t"
-> -               "last_change\tprevent_suspend_time\n");
-> +       if (n == 0) {
-> +               seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
-> +                       "expire_count\tactive_since\ttotal_time\tmax_time\t"
-> +                       "last_change\tprevent_suspend_time\n");
-> +       }
->
-> -       srcuidx = srcu_read_lock(&wakeup_srcu);
-> -       list_for_each_entry_rcu(ws, &wakeup_sources, entry)
-> -               print_wakeup_source_stats(m, ws);
-> -       srcu_read_unlock(&wakeup_srcu, srcuidx);
-> +       *srcuidx = srcu_read_lock(&wakeup_srcu);
-> +       list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
-> +               if (n-- > 0)
-> +                       continue;
-> +               goto out;
-> +       }
-> +       ws = NULL;
-> +out:
-> +       return ws;
-> +}
-> +
-> +static void *wakeup_sources_stats_seq_next(struct seq_file *m,
-> +                                       void *v, loff_t *pos)
-> +{
-> +       struct wakeup_source *ws = v;
-> +       struct wakeup_source *next_ws = NULL;
-> +
-> +       ++(*pos);
->
-> -       print_wakeup_source_stats(m, &deleted_ws);
-> +       list_for_each_entry_continue_rcu(ws, &wakeup_sources, entry) {
-> +               next_ws = ws;
-> +               break;
-> +       }
-> +
-> +       return next_ws;
-> +}
-> +
-> +static void wakeup_sources_stats_seq_stop(struct seq_file *m, void *v)
-> +{
-> +       int *srcuidx = m->private;
-> +
-> +       srcu_read_unlock(&wakeup_srcu, *srcuidx);
-> +}
-> +
-> +/**
-> + * wakeup_sources_stats_seq_show - Print wakeup sources statistics information.
-> + * @m: seq_file to print the statistics into.
-> + * @v: wakeup_source of each iteration
-> + */
-> +static int wakeup_sources_stats_seq_show(struct seq_file *m, void *v)
-> +{
-> +       struct wakeup_source *ws = v;
-> +
-> +       print_wakeup_source_stats(m, ws);
->
->         return 0;
->  }
->
-> +static const struct seq_operations wakeup_sources_stats_seq_ops = {
-> +       .start = wakeup_sources_stats_seq_start,
-> +       .next  = wakeup_sources_stats_seq_next,
-> +       .stop  = wakeup_sources_stats_seq_stop,
-> +       .show  = wakeup_sources_stats_seq_show,
-> +};
-> +
->  static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
->  {
-> -       return single_open(file, wakeup_sources_stats_show, NULL);
-> +       return seq_open_private(file, &wakeup_sources_stats_seq_ops, sizeof(int));
->  }
->
->  static const struct file_operations wakeup_sources_stats_fops = {
-> @@ -1062,7 +1107,7 @@ static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
->         .open = wakeup_sources_stats_open,
->         .read = seq_read,
->         .llseek = seq_lseek,
-> -       .release = single_release,
-> +       .release = seq_release_private,
->  };
->
->  static int __init wakeup_sources_debugfs_init(void)
-> --
-> 1.9.1
->
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index c723a04bc3d6..a698498b8537 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -616,10 +616,8 @@ static void ethsw_teardown_irqs(struct fsl_mc_device *sw_dev)
+ {
+ 	struct device *dev = &sw_dev->dev;
+ 	struct ethsw_core *ethsw = dev_get_drvdata(dev);
+-	struct fsl_mc_device_irq *irq;
+ 	int err;
+ 
+-	irq = sw_dev->irqs[DPSW_IRQ_INDEX_IF];
+ 	err = dpsw_set_irq_enable(ethsw->mc_io, 0, ethsw->dpsw_handle,
+ 				  DPSW_IRQ_INDEX_IF, 0);
+ 	if (err)
+-- 
+2.15.1
