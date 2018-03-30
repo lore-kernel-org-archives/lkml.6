@@ -1,115 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751249AbeC3KnY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 06:43:24 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52000 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750794AbeC3KnX (ORCPT
+        id S1751264AbeC3Ksk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 06:48:40 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:58920 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbeC3Ksi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 06:43:23 -0400
-Date: Fri, 30 Mar 2018 11:43:13 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc: David Miller <davem@davemloft.net>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] net: mvneta: improve suspend/resume
-Message-ID: <20180330104312.GH16141@n2100.armlinux.org.uk>
-References: <20180330183332.3e180a1a@xhacker.debian>
- <20180330183615.6b34d153@xhacker.debian>
+        Fri, 30 Mar 2018 06:48:38 -0400
+Date: Fri, 30 Mar 2018 12:46:49 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
+        torvalds@linux-foundation.org, arnd@arndb.de,
+        linux-arch@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: Re: [PATCH 0/7] use struct pt_regs based syscall calling for x86-64
+Message-ID: <20180330104649.GB12688@light.dominikbrodowski.net>
+References: <20180330093720.6780-1-linux@dominikbrodowski.net>
+ <20180330101602.ongosnigfmdmgayb@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330183615.6b34d153@xhacker.debian>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180330101602.ongosnigfmdmgayb@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 06:36:15PM +0800, Jisheng Zhang wrote:
-> Current suspend/resume implementation reuses the mvneta_open() and
-> mvneta_close(), but it could be optimized to take only necessary
-> actions during suspend/resume.
+On Fri, Mar 30, 2018 at 12:16:02PM +0200, Ingo Molnar wrote:
 > 
-> One obvious problem of current implementation is: after hundreds of
-> system suspend/resume cycles, the resume of mvneta could fail due to
-> fragmented dma coherent memory. After this patch, the non-necessary
-> memory alloc/free is optimized out.
+> * Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+> 
+> > A few questions remain, from important stuff to bikeshedding:
+> > 
+> > 1) Is it acceptable to pass the existing struct pt_regs to the sys_*()
+> >    kernel functions in emulate_vsyscall(), or should it use a hand-crafted
+> >    struct pt_regs instead?
+> 
+> I think so: we already have task_pt_regs() which gives access to the real return 
+> registers on the kernel stack.
+> 
+> I think as long as we constify the pointer, we should pass in the real thing.
 
-I don't think you've properly tested this.  Please ensure that you test
-patches with the appropriate debug options enabled.
+Good idea. I have updated the patchset accordingly.
 
-> @@ -4586,16 +4586,43 @@ static int mvneta_remove(struct platform_device *pdev)
->  #ifdef CONFIG_PM_SLEEP
->  static int mvneta_suspend(struct device *device)
->  {
-> +	int queue;
->  	struct net_device *dev = dev_get_drvdata(device);
->  	struct mvneta_port *pp = netdev_priv(dev);
->  
-> -	rtnl_lock();
-> -	if (netif_running(dev))
-> -		mvneta_stop(dev);
-> -	rtnl_unlock();
-...
-> +	mvneta_stop_dev(pp);
+> > 2) Is it the right approach to generate the __sys32_ia32_*() names to
+> >    include in the syscall table on-the-fly, or should they all be listed
+> >    in arch/x86/entry/syscalls/syscall_32.tbl ?
+> 
+> I think as a general principle all system call tables should point to the 
+> first-hop wrapper symbol name (i.e. __sys32_ia32_*() in this case), not to the 
+> generic symbol name - even though we could generate the former from the latter.
+> 
+> The more indirection in these tables, the harder to read they become I think.
+> 
+> > 3) I have chosen to name the default 64-bit syscall stub sys_*(), same as
+> >    the "normal" syscall, and the IA32_EMULATION compat syscall stub
+> >    compat_sys_*(), same as the "normal" compat syscall. Though this
+> >    might cause some confusion, as the "same" function uses a different
+> >    calling convention and different parameters on x86, it has the
+> >    advantages that
+> >         - the kernel *has* a function sys_*() implementing the syscall,
+> >           so those curious in stack traces etc. will find it in plain
+> >           sight,
+> >         - it is easier to handle in the syscall table generation, and
+> >         - error injection works the same.
+> 
+> I don't think there should be a symbol space overlap, that will only lead to 
+> confusion. The symbols can be _similar_, with a prefix, underscores or so, but 
+> they shouldn't match I think.
 
-You're removing the rtnl_lock() that I introduced in 3b8bc67413de
-("net: mvneta: ensure PM paths take the rtnl lock") which is necessary
-to provide phylink with consistent locking.  mvneta_stop_dev() calls
-phylink_stop() which will check that the rtnl lock is held, and will
-print a warning if it isn't.
+OK, I'll wait for a few more opinions on these two related issues, and update
+the code accordingly then.
 
-Your patch will cause a regression here.
+> > The whole series is available at
+> > 
+> >         https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-WIP
+> 
+> BTW., I'd like all these bits to go through the x86 tree.
+> 
+> What is the expected merge route of the generic preparatory bits?
 
-> +
-> +	for (queue = 0; queue < rxq_number; queue++) {
-> +		struct mvneta_rx_queue *rxq = &pp->rxqs[queue];
-> +
-> +		mvneta_rxq_drop_pkts(pp, rxq);
-> +	}
-> +
-> +	for (queue = 0; queue < txq_number; queue++) {
-> +		struct mvneta_tx_queue *txq = &pp->txqs[queue];
-> +
-> +		mvneta_txq_hw_deinit(pp, txq);
-> +	}
-> +
-> +clean_exit:
->  	netif_device_detach(dev);
->  	clk_disable_unprepare(pp->clk_bus);
->  	clk_disable_unprepare(pp->clk);
-> +
->  	return 0;
->  }
->  
-> @@ -4604,7 +4631,7 @@ static int mvneta_resume(struct device *device)
->  	struct platform_device *pdev = to_platform_device(device);
->  	struct net_device *dev = dev_get_drvdata(device);
->  	struct mvneta_port *pp = netdev_priv(dev);
-> -	int err;
-> +	int err, queue;
->  
->  	clk_prepare_enable(pp->clk);
->  	if (!IS_ERR(pp->clk_bus))
-> @@ -4626,12 +4653,36 @@ static int mvneta_resume(struct device *device)
->  	}
->  
->  	netif_device_attach(dev);
-> -	rtnl_lock();
-> -	if (netif_running(dev)) {
-> -		mvneta_open(dev);
-> -		mvneta_set_rx_mode(dev);
-...
->  	}
-> -	rtnl_unlock();
-...
-> +	mvneta_start_dev(pp);
+My current plan is to push the 109 patch bomb to remove in-kernel calls to syscalls
+directly to Linus once v4.16 is released.
 
-Same applies here.
+For this series of seven patches, I am content with them going upstream through
+the x86 tree (once that contains a backmerge of Linus' tree or the syscalls
+tree, obviously). IMO, these seven patches should be kept together, and not routed
+upstream through different channels.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Thanks,
+	Dominik
