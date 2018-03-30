@@ -1,109 +1,102 @@
-Return-Path: <outreachy-kernel+bncBCAMTT4T6ABRBBGR57KQKGQE52LFIMI@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1522264196; cv=pass;
+Return-Path: <outreachy-kernel+bncBDJI5MPT4AIBBC4R7DKQKGQEV3VQNNY@googlegroups.com>
+ARC-Seal: i=3; a=rsa-sha256; t=1522403467; cv=pass;
         d=google.com; s=arc-20160816;
-        b=md9ovpaMMoC0YKUHnxFx/K8OpKbro1UrfwH4WAJJ5yChAubupJdcJMnoTJCm5g9ABQ
-         3k3ZzV1y5csXNyt3AcdbRGTe+l/MEpEIx+mrJfZAZ+JCXFhxFRyD13PYIbsggWPUmiib
-         D5e0pxzcUYhpYrresJOfseREhpGkgqCCdM6mxe9dKfoUjm/nDl5kxCyAt9r/ufsPhCoN
-         rKA7vIwKp40JbIZTEJ+KxZj1bAjCHYfx8Dshx9qmEQsDSD9B6L5rDkX+YxMfJQjVz1Kt
-         Qu4DTfSpIbnvxqOOMrBrwrGsMVDMc8N6v3oYRHrOPxhytC/nwkXeJs1McNMQhOf4ar6n
-         hdDg==
+        b=NkK0+3gBtJwAFC/EuS5adSKW0cWWWwEB2K5yb520qOhpWJVduQfAHw3VmhHohpyECW
+         4R225W3pJ9vJiht4MYjj10/AFqNuQnPw8LzQ5hw4Iw6tYCG9aaLRL2w+XG2w6+R53HqE
+         oiE3dxiCwyzKEvhtCeAJmhgIWYfHhpItqo3bqlnanYMJLo2dOP1I/vylXgDlRwYrCaSZ
+         8gPRxX1L2Eo6C3lgYsGxzeG3BAEYIy9qIrX7D0tsBRZFO7s1buaXTj5mDQNM0p3ulWCD
+         wGL+vAaSqnIUsecuRhVXdlZ13cb605Bd9ChcHhR92Rpk7GdXqe2aZ8c0MyOcGb2yFc69
+         XTUA==
 ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature:dkim-signature
-         :arc-authentication-results:arc-message-signature
+         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:arc-authentication-results:arc-message-signature
          :arc-authentication-results;
-        bh=zcfJHOeU+xS0y2YPJHIB/xJO2wt/Vg0/TJKoaqU/FjQ=;
-        b=UJbLIeY2gMt/YrMLTkDvKUlYWsD3O+I/o76XN5IqPPmXoKBMcceGJg7ULNYWzHzADq
-         cqOr2kALmlf9rR4eqN6dn6diswDPh3mvCXA2+xKXuu+zqBA2AFPICJrqwA1ICRW5BBJO
-         3PFIZUE7ADbINDYXXhnyL/n8zRpQrUxAEVmG3eYCzd7KV6sH4O4vR917m5cYaAxDzZZm
-         d5nD+y8CseWgVf15wMJsFMUjVZAHUFDozXxaPTo/KFEJswSYs1fmlbDtE4FnPC7wh0+B
-         WOnbB7YDdkIMXTY+xaD3gM6izmIHLzbeevvElAc51TS0IOp0ktKr38LcpDeyhu6gi/Ka
-         F+/w==
+        bh=xpOU23rxu7Wx+OnUdNMD8V0ZkMnutSgBpOM7dML2Y4k=;
+        b=ZWdxXXEkGpRQaToZbKHkqFGBnrGwYu2zY1NdoGXruiY+lEz+ZXP1pEpRhLt5pOkAff
+         LrmF8i9dr/pWtcu6ZrfsEcW+vJ09E8MG0m9jDBevbpUYEORa2qefbaBOFxzlK7EO8/VR
+         chzYEfDQfbIr6+LzwQgdSjlOb/Tizctq/1kTtlKRv4DTBV0QYMAEb60bV9J5TP1F+h9W
+         oNDAGuAKhMgohUexgbCvXZBrq2Z7lLvKurdlw2RZd+WVkSU5SxOnCKFojJt0Jzjt8Vjk
+         548Lh9kPJV/doiHlSyxSGmf0WLhg9uZQD6D/XeJBnydDfFFW4T0lIZZu8ivwVpq9GVFh
+         a8zA==
 ARC-Authentication-Results: i=3; mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=Jg0OtR1T;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VviJ5xd9;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrbbgr57kqkgqe52lfimi@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRBBGR57KQKGQE52LFIMI@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=bLicxzI4;
+       arc=pass (i=2 spf=pass spfdomain=us.es);
+       spf=pass (google.com: domain of outreachy-kernel+bncbdji5mpt4aibbc4r7dkqkgqev3vqnny@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBDJI5MPT4AIBBC4R7DKQKGQEV3VQNNY@googlegroups.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=Jg0OtR1T;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VviJ5xd9;
-       arc=pass (i=2 spf=pass spfdomain=gmail.com dkim=pass dkdomain=gmail.com dmarc=pass fromdomain=gmail.com);
-       spf=pass (google.com: domain of outreachy-kernel+bncbcamtt4t6abrbbgr57kqkgqe52lfimi@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBCAMTT4T6ABRBBGR57KQKGQE52LFIMI@googlegroups.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-ARC-Seal: i=2; a=rsa-sha256; t=1522264196; cv=pass;
+       dkim=pass header.i=@googlegroups.com header.s=20161025 header.b=bLicxzI4;
+       arc=pass (i=2 spf=pass spfdomain=us.es);
+       spf=pass (google.com: domain of outreachy-kernel+bncbdji5mpt4aibbc4r7dkqkgqev3vqnny@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBDJI5MPT4AIBBC4R7DKQKGQEV3VQNNY@googlegroups.com
+ARC-Seal: i=2; a=rsa-sha256; t=1522403467; cv=pass;
         d=google.com; s=arc-20160816;
-        b=qNR0Mj7NF1FFcRxkCbRxCf56Tbw/1Icew9lwcI5E2FFxTImfJjm/GAgL9ZpU1ghqIH
-         YkZaWwYkxEv1agk0IQv9Gf/YrqEH5mCBRqlqMICwEUKTn+2kCzaLMaWaJqfrhJiJgbkl
-         t2JCle+n6Oq/4XI9pTD6U48L3N2IY58NCmOJSgnFfbgp4dW793exkvsLNdjGuomL33XK
-         YW7P8HmRVKt0VAhjSo8/Ey5fbzGuKri4SsD8KyFUtfNndTN3W77d58S3rm3qdBKpqRpZ
-         J6qgDrvYUTFBlQzsIqQDWr4hzZhrZ1x878NtfxSGxzrUjTCt+4J9avLygeT9NuGJyBqq
-         /3Hw==
+        b=mxe5KYXYPD/TNgWwK/DXmgTk+/liQpRU22uiZIex1Xlq5L3II66ksGZLd5tdkmxd5f
+         k0YlBA6eqRGJ3BGfSieTONOeE1eWCGF7vET3QldcM0V3vzbLgy40msVOIpgZMjMFKacO
+         OYzzhfsnr9lMmTOl083YuTMHAUdpcqGJ+ZWuzlbwcxtwgTpYQGzJ7rPnkWoITvl1Ci0Q
+         r41EzD5oFoLK0Ud/A3oLqKd1rqpy/x4fMqPDDUN+EzLw74dxW2ZkSQx5p17/cD+6sQSw
+         kQwGukrbWh61xvF3FLMp3dIczpRUOom86kTVH0wnyhKSeXmuQLZAAUqMpApI/Ly6xaxn
+         Z1QQ==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:arc-authentication-results
-         :arc-message-signature:sender:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=zcfJHOeU+xS0y2YPJHIB/xJO2wt/Vg0/TJKoaqU/FjQ=;
-        b=HhAR9t395Pao+K2j3x6KffZ8QA551b2ae03pfFHjVhYeI99EgBtJDEfxw/pMNZvpNM
-         XP98nmNqRfnllZpsIJl10trw29i76dTGRWfP3wcZcMnNYpw6lpZi4z0JVF3MZzqspt0f
-         yZFwSeTQl/nWmJan/XCgb0vQRbbsclGVNx+070K2WvCmr/abK3kxgOikFNkQfcytsMMl
-         4fDxUsLga/S1HzV0dnU9TCi3TYoVn9vHkZxDVY04csI+rrQKiJ3ctS/AYCmotdkKAoVM
-         Y2rbJVrviGW3Nb4qXzXKKFTdNOi+baopClWnVKPqUDbZUNToG82EaYgqoePCreZL6zCL
-         DHRQ==
+         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :arc-authentication-results:arc-message-signature:sender
+         :dkim-signature:arc-authentication-results;
+        bh=xpOU23rxu7Wx+OnUdNMD8V0ZkMnutSgBpOM7dML2Y4k=;
+        b=boHnZQOxHS5m14lkhDubMtQVIFYupyHkP1cp8LJILeDVhrMkxkjXyJahG1S/qizUEB
+         /fo6C0nfq/Ps8DNbkKRMKi9M4DIYtgMo9an9PlIgDZSqujz5wm6TWSq8O738ugGs3/xP
+         IR77ZZ5191UcG3r/impsVzvjXrtambb1QR4wHfHwDp80+dcYB0tqGpYhHg1l5afD6coN
+         j5Lt7AEN0DGS5S4KrREzNde8Ix4Xb1i3rMn/Raa54xW9xfJPlPfpUwu9K2EavvurD9D6
+         qVVG8TvqoWysbL+igPJkFRe342exUlCRb9ju87FDy+juZqfGcm3SoJuOJIFVUWdMuO4h
+         EaRQ==
 ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kVio7JQY;
-       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c05::243 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of pneira@us.es designates 193.147.175.20 as permitted sender) smtp.mailfrom=pneira@us.es
 Sender: outreachy-kernel@googlegroups.com
-X-Google-Smtp-Source: AG47ELuYFzay1Z+7tvgNgbeugGjUc++vFLXZl7eTpmZwUD3hF/FkJJOrLWUqhpbCRp3AvLtS4dZ9hw==
+X-Google-Smtp-Source: AIpwx4/3342oGFUxBQpVzHX1J9nMBx8civq9MTF4q+C5HZnyfy7rOs+0Cbk1UwEHgjOYqfZIl+uSUQ==
 X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1522264196; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522403466; cv=none;
         d=google.com; s=arc-20160816;
-        b=uZ8jdplyBfgMO7vS4h1YAOPIEwaj1gtYoTUl7kmyfIFEdW7p7Xpl7aoW3ZDyuTAGWe
-         7xrc2ENGlQRk0shrEXzR5zDBPBBpR5YottzcwRpGMGb0LyaLH+paOVKNBZZYiVTFV63w
-         xzmp+j7uQDRm7Ew0aXlwwj4u/aimTO9XesDjl+TOwbs95G+kpkbR7xeCRttnLS4zDIDX
-         EaEq950ldQJphQao8Je7GVHa8sXUVK1S2Vb74SEN5UXbiAJRB64vEBW+OhKv76zxz5/6
-         YH1MON3Q9dBYWHPJt3+J5yY9786FviFJ4IKrLE/iicX/4kvfSCxz4y1C8tuaCLnELUV+
-         EPhQ==
+        b=n4v1vZpSgJ3nXbUSVo2yoqfjTJlWSpwOPtKDeyyy7kdY8XBK8zuYc9k/a41rNhCN1m
+         UVYB2roAZDk5wxrfLnxUEl8DfDX0Q1qzd6eAF0Fe0oagHtZvo5/0MOy6Uri99unCjJMx
+         4FAnLJqsU1g+02rI5f0ylPpTeM2aJzu6bWPU2MSLeDEW/kGg0CBqwGgGxqldJSv4udAU
+         eFpG5t2Foc+WOpWg5oGO/IvRtCDLYnmeP6CbkUpAbeRwRAALBMwtqO9v9E7GqeiNgOGN
+         sXVa0OEVekJNb9ApipKAgWB3cBRQ7jvZjRXdqgayeC6GpRFN3DnpF4zT6ei7pJfAr7lz
+         O+KA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=aHD3PfvJXOfeSAhofrvTdBjPzvzwlA7MxUo0KMdRzao=;
-        b=I8lxxOi9Ubd3oyZo8zftQSDGIZypTk04vPp8rJuNuuqHfr/dYc+wCpNbQ49wh30HFo
-         qmWQHtKi3CXERZi21vamRXTtMkxH5AraObsCXxPU2rwELYV1f3tA9qOPzEFpC6n8/sOs
-         qvRS4uuH8JfJaPYf2vcfWHpF+hL2kD4SkqaIS1e6kZgD3m0ESkgNCO1o/6BfgiNw0DdW
-         /PeAbcgTrmiceEtPzKPzjwdiPXv0UC35rvq6EJh97o3AYpi34WT/vgDwFVtQDhfi+sJD
-         ryV0cOZreJdtX3LBuy8+BYZg4V5kHHzg4jA60/ZcTWeftQAes89XOwVP6SKo5+fgMT0n
-         2FDg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=EGzSBnni46b0zYzP5gvCj9ApBr0e9dK8d6u+Tv8pME0=;
+        b=IV1dOi2aKFHyQ3EZOobjLQUmzGCU1A6v0wyrtTHruQTP8qytQfHxCeeMXsBLj5VF2s
+         HTgN7gyDWoPYx9OupEeSPAbi944TJ3FvLIzprHu2pOvQHaH7kBU3vjs7dPIYSr2dzQsr
+         jycdujSMNZyGybAeILi/PGSXiG6k0JUywCfzvHEIPax7wshKe/tsOs1eVJ6go06gahVK
+         0STjStEydANulaBydxI/eH34RxNrezrrmszSu8uAOM//zu6rtWOENlceZK+Lhib8oZSc
+         z6znwSEtxmdNqDTaB+OuADLVUH5IsXCmRemj+oRtLRJHzRkcVDpvND2k+Dp+Tm/qRk2R
+         qyjw==
 ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kVio7JQY;
-       spf=pass (google.com: domain of arushisinghal19971997@gmail.com designates 2607:f8b0:400e:c05::243 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Date: Thu, 29 Mar 2018 00:39:50 +0530
-From: Arushi Singhal <arushisinghal19971997@gmail.com>
-To: pablo@netfilter.org
+       spf=pass (google.com: domain of pneira@us.es designates 193.147.175.20 as permitted sender) smtp.mailfrom=pneira@us.es
+Date: Fri, 30 Mar 2018 11:51:00 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
 Cc: outreachy-kernel <outreachy-kernel@googlegroups.com>,
 	Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
 	Florian Westphal <fw@strlen.de>,
 	"David S. Miller" <davem@davemloft.net>,
 	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
 	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [Outreachy kernel] [PATCH] net: netfilter: Merge assignment with return
-Message-ID: <20180328190950.GA3151@seema-Inspiron-15-3567>
+Subject: [Outreachy kernel] Re: [PATCH] net: netfilter: Merge assignment with return
+Message-ID: <20180330095100.gujsk7v2rot22eni@salvia>
+References: <20180328190950.GA3151@seema-Inspiron-15-3567>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Original-Sender: arushisinghal19971997@gmail.com
-X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
- header.i=@gmail.com header.s=20161025 header.b=kVio7JQY;       spf=pass
- (google.com: domain of arushisinghal19971997@gmail.com designates
- 2607:f8b0:400e:c05::243 as permitted sender) smtp.mailfrom=arushisinghal19971997@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+In-Reply-To: <20180328190950.GA3151@seema-Inspiron-15-3567>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Original-Sender: pablo@netfilter.org
+X-Original-Authentication-Results: gmr-mx.google.com;       spf=pass
+ (google.com: domain of pneira@us.es designates 193.147.175.20 as permitted
+ sender) smtp.mailfrom=pneira@us.es
 Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
 X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
 X-Google-Group-Id: 672804067692
@@ -114,54 +107,18 @@ List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegro
  <https://groups.google.com/group/outreachy-kernel/subscribe>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596209702586221835?=
-X-GMAIL-MSGID: =?utf-8?q?1596209702586221835?=
+X-GMAIL-MSGID: =?utf-8?q?1596355738618591283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Merge assignment with return statement to directly return the value.
+On Thu, Mar 29, 2018 at 12:39:50AM +0530, Arushi Singhal wrote:
+> Merge assignment with return statement to directly return the value.
 
-Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
----
- net/netfilter/nf_conntrack_netlink.c | 5 ++---
- net/netfilter/xt_hashlimit.c         | 3 +--
- 2 files changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index dd177eb..bfa8b7f 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -1497,9 +1497,8 @@ ctnetlink_setup_nat(struct nf_conn *ct, const struct nlattr * const cda[])
- 	if (ret < 0)
- 		return ret;
- 
--	ret = ctnetlink_parse_nat_setup(ct, NF_NAT_MANIP_SRC,
--					cda[CTA_NAT_SRC]);
--	return ret;
-+	return ctnetlink_parse_nat_setup(ct, NF_NAT_MANIP_SRC,
-+					 cda[CTA_NAT_SRC]);
- #else
- 	if (!cda[CTA_NAT_DST] && !cda[CTA_NAT_SRC])
- 		return 0;
-diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
-index 66f5aca..9e8ba2e 100644
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -534,8 +534,7 @@ static u64 user2rate_bytes(u32 user)
- 	u64 r;
- 
- 	r = user ? U32_MAX / user : U32_MAX;
--	r = (r - 1) << XT_HASHLIMIT_BYTE_SHIFT;
--	return r;
-+	return (r - 1) << XT_HASHLIMIT_BYTE_SHIFT;
- }
- 
- static void rateinfo_recalc(struct dsthash_ent *dh, unsigned long now,
--- 
-2.7.4
+Applied, thanks Arushi.
 
 -- 
 You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
 To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
 To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180328190950.GA3151%40seema-Inspiron-15-3567.
+To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180330095100.gujsk7v2rot22eni%40salvia.
 For more options, visit https://groups.google.com/d/optout.
