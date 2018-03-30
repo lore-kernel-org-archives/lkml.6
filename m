@@ -1,68 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752640AbeC3Tvj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 15:51:39 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56282 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752427AbeC3Tvi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 15:51:38 -0400
-Date: Fri, 30 Mar 2018 21:51:33 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression caused by commit bc976233a872, ethernet r8169 stops
- working after system S3
-In-Reply-To: <E3F55561-8733-4056-ABEC-5AF87AC288CB@canonical.com>
-Message-ID: <alpine.DEB.2.21.1803302137510.1479@nanos.tec.linutronix.de>
-References: <E3F55561-8733-4056-ABEC-5AF87AC288CB@canonical.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1752655AbeC3Tyz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 15:54:55 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:50490 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752545AbeC3Tyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 15:54:53 -0400
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Mark Brown <broonie@kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: [PATCH] spi: stm32: Fix error handling in stm32_spi_probe()
+Date: Fri, 30 Mar 2018 22:54:44 +0300
+Message-Id: <1522439684-7510-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 31 Mar 2018, Kai-Heng Feng wrote:
-> A user reported [1] that the Realtek ethernet r8169 stops working after S3
-> since v4.15-rc6. The issue still exists in Linus' tree:
-> 
-> [ 150.877998] IPv6: ADDRCONF(NETDEV_UP): enp1s0: link is not ready
-> [ 150.944101] do_IRQ: 3.37 No irq handler for vector
-> [ 150.944105] r8169 0000:01:00.0 enp1s0: link down
-> [ 150.944180] IPv6: ADDRCONF(NETDEV_UP): enp1s0: link is not ready
-> 
-> My desktop also has this device, which is also affected by this regression. So
-> I did a bisect, and this is the bad commit:
-> bc976233a872 genirq/msi x86/vector: Prevent reservation mode for non maskable
-> MSI
-> 
-> After this commit gets reverted, the issue is gone.
+clk_get_rate() is below clk_prepare_enable(), so
+its error should lead to goto err_clk_disable, not to err_master_put.
 
-Sigh. Can you please apply the debug patch below and provide the output of
+Found by Linux Driver Verification project (linuxtesting.org).
 
-# cat /proc/interrupts
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+ drivers/spi/spi-stm32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-and full dmesg after resume.
-
-Thanks,
-
-	tglx
-
-8<------------------
---- a/kernel/irq/cpuhotplug.c
-+++ b/kernel/irq/cpuhotplug.c
-@@ -134,6 +134,10 @@ static bool migrate_one_irq(struct irq_d
- 		brokeaff = false;
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index ba9743fa2326..ad1e55d3d5d5 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -1129,7 +1129,7 @@ static int stm32_spi_probe(struct platform_device *pdev)
+ 	if (!spi->clk_rate) {
+ 		dev_err(&pdev->dev, "clk rate = 0\n");
+ 		ret = -EINVAL;
+-		goto err_master_put;
++		goto err_clk_disable;
  	}
  
-+	pr_info("IRQ%u: New affinity: %*pbl effective: %*pbl\n",
-+		cpumask_pr_args(affinity),
-+		irq_data_get_effective_affinity_mask(d));
-+
- 	if (maskchip && chip->irq_unmask)
- 		chip->irq_unmask(d);
- 
+ 	spi->rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+-- 
+2.7.4
