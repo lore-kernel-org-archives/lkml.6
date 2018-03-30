@@ -1,64 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751258AbeC3LEA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 07:04:00 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36162 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbeC3LD6 (ORCPT
+        id S1751243AbeC3LGI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 07:06:08 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:40501 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750794AbeC3LGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 07:03:58 -0400
-X-Google-Smtp-Source: AIpwx4/IdosPLGDPj3qe5MGYsUPSnAPnh/oDiEnzod6EtHXss/IyoMjyFPkCmVvWi3OYrD2Op52bhw==
-Date: Fri, 30 Mar 2018 13:03:54 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
-        torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: Re: [PATCH 0/7] use struct pt_regs based syscall calling for x86-64
-Message-ID: <20180330110354.cnrtmjkk77hhbekt@gmail.com>
-References: <20180330093720.6780-1-linux@dominikbrodowski.net>
- <20180330101602.ongosnigfmdmgayb@gmail.com>
- <20180330104649.GB12688@light.dominikbrodowski.net>
+        Fri, 30 Mar 2018 07:06:06 -0400
+X-Google-Smtp-Source: AIpwx48bUPlj7K10Z06AvTJKsa4qDY3+uWrO8pMgDeTNyAh27t+rTMm+nawHqizBeb1crAJulzUIX6zZ2ku4P0o5JAk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330104649.GB12688@light.dominikbrodowski.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180326084629.100070-3-yixun.lan@amlogic.com>
+References: <20180326084629.100070-1-yixun.lan@amlogic.com> <20180326084629.100070-3-yixun.lan@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Fri, 30 Mar 2018 13:05:45 +0200
+Message-ID: <CAFBinCBQS779Cfu-=nmcA5CJLETy25bYbeN1XgACQpRk4Yw6sg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: iio: adc: document the Meson AXG support
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+        linux-iio@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 26, 2018 at 10:46 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+> From: Xingyu Chen <xingyu.chen@amlogic.com>
+>
+> Update the documentation to expicitly support the Meson-AXG SoC.
+>
+> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-* Dominik Brodowski <linux@dominikbrodowski.net> wrote:
-
-> > > The whole series is available at
-> > > 
-> > >         https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-WIP
-> > 
-> > BTW., I'd like all these bits to go through the x86 tree.
-> > 
-> > What is the expected merge route of the generic preparatory bits?
-> 
-> My current plan is to push the 109 patch bomb to remove in-kernel calls to syscalls
-> directly to Linus once v4.16 is released.
-
-Are there any (textual and semantic) conflicts with the latest -next?
-
-Also, to what extent were these 109 patches tested in -next?
-
-> For this series of seven patches, I am content with them going upstream through 
-> the x86 tree (once that contains a backmerge of Linus' tree or the syscalls 
-> tree, obviously). IMO, these seven patches should be kept together, and not 
-> routed upstream through different channels.
-
-Of course they should stay together - the generic code impact is minimal, these 
-are 95% x86.
-
-Thanks,
-
-	Ingo
+> ---
+>  Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> index 1e6ee3deb4fa..d1acd5ea2737 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/amlogic,meson-saradc.txt
+> @@ -7,6 +7,7 @@ Required properties:
+>                         - "amlogic,meson-gxbb-saradc" for GXBB
+>                         - "amlogic,meson-gxl-saradc" for GXL
+>                         - "amlogic,meson-gxm-saradc" for GXM
+> +                       - "amlogic,meson-axg-saradc" for AXG
+>                 along with the generic "amlogic,meson-saradc"
+>  - reg:         the physical base address and length of the registers
+>  - interrupts:  the interrupt indicating end of sampling
+> --
+> 2.15.1
+>
