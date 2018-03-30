@@ -1,35 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752837AbeC3WYE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 18:24:04 -0400
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:37357 "EHLO
-        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752282AbeC3WYD (ORCPT
+        id S1752732AbeC3Wb4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 18:31:56 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56284 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752486AbeC3Wby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 18:24:03 -0400
-X-Google-Smtp-Source: AIpwx48wOWU/Ex5iJlvRSwJlbws1J1KK0qijxG9d1eAyDDfDl6PtQjiERWqVi0g5GpyNifYQinLe3GqxcKESVL+LoF8=
+        Fri, 30 Mar 2018 18:31:54 -0400
+Date: Sat, 31 Mar 2018 00:31:52 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180330223152.GB3389@amd>
+References: <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180327121441.GH29239@sirena.org.uk>
+ <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180329133613.khldv72w3zj63vsk@earth.universe>
+ <20180329135904.GN5700@atomide.com>
+ <20180329154600.qhels5fqzzg364gj@earth.universe>
+ <20180329160611.GP5700@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKVPjObJXVDhzNcY-u0jJ5ovqDQGjcrJrNjVzRdjTSUD4YSD8w@mail.gmail.com>
-References: <CAKVPjObJXVDhzNcY-u0jJ5ovqDQGjcrJrNjVzRdjTSUD4YSD8w@mail.gmail.com>
-From: =?UTF-8?Q?Daniel_Ku=C4=8Dera?= <daniel.kucera@gmail.com>
-Date: Sat, 31 Mar 2018 00:24:02 +0200
-Message-ID: <CAKVPjOZmZ5Rvpa-yCiYXyUhiQ6XKaa3Lb0Xx7TPBjU83AYNT+A@mail.gmail.com>
-Subject: Re: [PATCH] usb: plusb: Add support for PL-27A1
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        usb@vger.kernel.org
-Cc: roed@onet.eu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+Content-Disposition: inline
+In-Reply-To: <20180329160611.GP5700@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Roman,
 
-it would be at least polite to mention where you got the code from:
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://lkml.org/lkml/2016/2/21/14
+Hi!
 
--- 
+> > Your override kills most settings from alsamixer. You can try to
+> > just override CPCAP_REG_VAUDIOC, CPCAP_REG_CC and CPCAP_REG_CDI
+> > and setup everything else with alsamixer.
+>=20
+> OK I'll try to narrow it down and play with the mic settings
+> tonight or over the weekend.
 
-S pozdravom / Best regards
-Daniel Kucera.
+No, just the three+alsamixer will not work. You also need to
+
+814: |=3D 400
+
+824: |=3D 400 CPCAP_REG_RXCOA : CPCAP_BIT_PGA_CDC_EN
+81c: |=3D 006 CPCAP_REG_RXOA : CPCAP_BIT_A2_LDSP_L_EN / CPCAP_BIT_A2_LDSP_R=
+_EN
+
+You can set those using sudo aplay -D plughw:CARD=3DAudio,DEV=3D1
+/usr/share/sounds/alsa/Front_Left.wav ... but that will do bad stuff
+to the rest of the bits.
+
+You might find this useful:
+
+ watch 'cat /sys/kernel/debug/regmap/spi0.0/registers | grep "0800\|0804\|0=
+808\|0814\|0818\|081c\|0820\|0824\|0828"'
+
+Good luck, I need some sleep,
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq+utgACgkQMOfwapXb+vKdRwCgk42W9KTV2310PKUMvFqHFiRD
+sz0AoI4KM0o0hvQUfK+kuSG80yd5ldHp
+=498e
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
