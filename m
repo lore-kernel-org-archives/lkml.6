@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeC3ROS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:14:18 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:12712
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752006AbeC3ROQ (ORCPT
+        id S1752278AbeC3RPL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:15:11 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:51480 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751256AbeC3RPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:14:16 -0400
-X-IronPort-AV: E=Sophos;i="5.48,382,1517871600";
-   d="scan'208";a="260442748"
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Nicolai Stange <nstange@suse.de>, linux-pm@vger.kernel.org,
-        yamada.masahiro@socionext.com
-Subject: [PATCH] debugfs_simple_attr.cocci: add clarifying information
-Date: Fri, 30 Mar 2018 18:43:44 +0200
-Message-Id: <1522428224-20192-1-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
+        Fri, 30 Mar 2018 13:15:08 -0400
+Date: Sat, 31 Mar 2018 01:14:59 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        Chris Mason <clm@fb.com>, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, Geliang Tang <geliangtang@gmail.com>
+Subject: Re: [RESEND PATCH] crypto: Add zstd support
+Message-ID: <20180330171459.GB27856@gondor.apana.org.au>
+References: <20180321224929.3076350-1-terrelln@fb.com>
+ <20180322043230.GD3181@jagdpanzerIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322043230.GD3181@jagdpanzerIV>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The referenced commit gives some information about the overhead
-reduced by this change.
+On Thu, Mar 22, 2018 at 01:32:30PM +0900, Sergey Senozhatsky wrote:
+> On (03/21/18 15:49), Nick Terrell wrote:
+> > depends on CONFIG_CRYPTO_ZSTD, which isn't defined until this patch is in
+> 
+> Yikes! How come I missed that... :)
+> 
+> > [0] lkml.kernel.org/r/9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com
+> 
+> Signed-off-by: Nick Terrell <terrelln@fb.com> ?
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Please resend with sign-off.
 
----
- scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci b/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
-index 7c31231..6ff97e2 100644
---- a/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
-+++ b/scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
-@@ -5,6 +5,8 @@
- //# Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
- //# imposes some significant overhead as compared to
- //# DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
-+//# See commit c64688081490 ("debugfs: add support for self-protecting
-+//# attribute file fops") for further information.
- //
- // Copyright (C): 2016 Nicolai Stange
- // Options: --no-includes
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
