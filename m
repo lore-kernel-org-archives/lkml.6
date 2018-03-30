@@ -1,90 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeC3E52 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 00:57:28 -0400
-Received: from mail-qt0-f170.google.com ([209.85.216.170]:36012 "EHLO
-        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbeC3E51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 00:57:27 -0400
-X-Google-Smtp-Source: AIpwx48+wtS8MBBlKywlnB6/k12lIIBtnXD/dWTlqp3AQhGz2woI16tygh/IqsKmHilWvflL4t/urG3jtUxw/I6mNVQ=
+        id S1751263AbeC3FAT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 01:00:19 -0400
+Received: from mga07.intel.com ([134.134.136.100]:16873 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750752AbeC3FAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 01:00:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,380,1517904000";
+   d="scan'208";a="38074070"
+Subject: [PATCH v5 1/3] perf/core: store context switch out type into Perf
+ trace
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <45f6ea8a-a420-d176-50aa-9b3975c0ea7a@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <7693b616-f284-179d-b3a8-30d28df9efb0@linux.intel.com>
+Date: Fri, 30 Mar 2018 08:00:12 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180328194741.GJ13039@localhost.localdomain>
-References: <20180327043851.6640-1-baegjae@gmail.com> <20180328080646.GB20373@lst.de>
- <20180328194741.GJ13039@localhost.localdomain>
-From: Baegjae Sung <baegjae@gmail.com>
-Date: Fri, 30 Mar 2018 13:57:25 +0900
-Message-ID: <CAB2tqtvZ6zQ60jca7W4uKka2LfavsW=oKhTx9Gv0sXR7-SBUVg@mail.gmail.com>
-Subject: Re: [PATCH] nvme-multipath: implement active-active round-robin path selector
-To: Keith Busch <keith.busch@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@fb.com, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Eric Chang <echang@sk.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <45f6ea8a-a420-d176-50aa-9b3975c0ea7a@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-29 4:47 GMT+09:00 Keith Busch <keith.busch@intel.com>:
-> On Wed, Mar 28, 2018 at 10:06:46AM +0200, Christoph Hellwig wrote:
->> For PCIe devices the right policy is not a round robin but to use
->> the pcie device closer to the node.  I did a prototype for that
->> long ago and the concept can work.  Can you look into that and
->> also make that policy used automatically for PCIe devices?
->
-> Yeah, that is especially true if you've multiple storage accessing
-> threads scheduled on different nodes. On the other hand, round-robin
-> may still benefit if both paths are connected to different root ports
-> on the same node (who would do that?!).
->
-> But I wasn't aware people use dual-ported PCIe NVMe connected to a
-> single host (single path from two hosts seems more common). If that's a
-> thing, we should get some numa awareness. I couldn't find your prototype,
-> though. I had one stashed locally from a while back and hope it resembles
-> what you had in mind:
 
-Our prototype uses dual-ported PCIe NVMe connected to a single host. The
-host's HBA is connected to two switches, and the two switches are connected
-to a dual-port NVMe SSD. In this environment, active-active round-robin path
-selection is good to utilize the full performance of a dual-port NVMe SSD.
-You can also fail over a single switch failure. You can see the prototype
-in link below.
-https://youtu.be/u_ou-AQsvOs?t=307 (presentation in OCP Summit 2018)
+Store preempting context switch out event into Perf trace as a part of 
+PERF_RECORD_SWITCH[_CPU_WIDE] record.
 
-I agree that active-standby closer path selection is the right policy
-if multiple
-nodes attempt to access the storage system through multiple paths.
-However, I believe that NVMe multipath needs to provide multiple policy for
-path selection. Some people may want to use multiple paths simultaneously
-(active-active) if they use a small number of nodes and want to utilize full
-capability. If the capability of paths is same, the round-robin can be
-the right
-policy. If the capability of paths is different, a more adoptive
-method would be
-needed (e.g., checking path condition to balance IO).
+Percentage of preempting and non-preempting context switches help 
+understanding the nature of workloads (CPU or IO bound) that are running 
+on a machine;
 
-We are moving to the NVMe fabrics for our next prototype. So, I think we will
-have a chance to discuss about this policy issue in more detail. I will continue
-to follow this issue.
+The event is treated as preemption one when task->state value of the 
+thread being switched out is TASK_RUNNING. Event type encoding is 
+implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
+	
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ include/uapi/linux/perf_event.h       | 18 +++++++++++++++---
+ kernel/events/core.c                  |  4 ++++
+ tools/include/uapi/linux/perf_event.h | 18 +++++++++++++++---
+ 3 files changed, 34 insertions(+), 6 deletions(-)
 
-> ---
-> struct nvme_ns *nvme_find_path_numa(struct nvme_ns_head *head)
-> {
->         int distance, current = INT_MAX, node = cpu_to_node(smp_processor_id());
->         struct nvme_ns *ns, *path = NULL;
->
->         list_for_each_entry_rcu(ns, &head->list, siblings) {
->                 if (ns->ctrl->state != NVME_CTRL_LIVE)
->                         continue;
->                 if (ns->disk->node_id == node)
->                         return ns;
->
->                 distance = node_distance(node, ns->disk->node_id);
->                 if (distance < current) {
->                         current = distance;
->                         path = ns;
->                 }
->         }
->         return path;
-> }
-> --
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 912b85b52344..b8e288a1f740 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
+ #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
+ #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
+ /*
+- * Indicates that the content of PERF_SAMPLE_IP points to
+- * the actual instruction that triggered the event. See also
+- * perf_event_attr::precise_ip.
++ * These PERF_RECORD_MISC_* flags below are safely reused
++ * for the following events:
++ *
++ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
++ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
++ *
++ *
++ * PERF_RECORD_MISC_EXACT_IP:
++ *   Indicates that the content of PERF_SAMPLE_IP points to
++ *   the actual instruction that triggered the event. See also
++ *   perf_event_attr::precise_ip.
++ *
++ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
++ *   Indicates that thread was preempted in TASK_RUNNING state.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index fc1c330c6bd6..872a5aaa77eb 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
+ 		},
+ 	};
+ 
++	if (!sched_in && task->state == TASK_RUNNING)
++		switch_event.event_id.header.misc |=
++				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
++
+ 	perf_iterate_sb(perf_event_switch_output,
+ 		       &switch_event,
+ 		       NULL);
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 912b85b52344..b8e288a1f740 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -650,11 +650,23 @@ struct perf_event_mmap_page {
+ #define PERF_RECORD_MISC_COMM_EXEC		(1 << 13)
+ #define PERF_RECORD_MISC_SWITCH_OUT		(1 << 13)
+ /*
+- * Indicates that the content of PERF_SAMPLE_IP points to
+- * the actual instruction that triggered the event. See also
+- * perf_event_attr::precise_ip.
++ * These PERF_RECORD_MISC_* flags below are safely reused
++ * for the following events:
++ *
++ *   PERF_RECORD_MISC_EXACT_IP           - PERF_RECORD_SAMPLE of precise events
++ *   PERF_RECORD_MISC_SWITCH_OUT_PREEMPT - PERF_RECORD_SWITCH* events
++ *
++ *
++ * PERF_RECORD_MISC_EXACT_IP:
++ *   Indicates that the content of PERF_SAMPLE_IP points to
++ *   the actual instruction that triggered the event. See also
++ *   perf_event_attr::precise_ip.
++ *
++ * PERF_RECORD_MISC_SWITCH_OUT_PREEMPT:
++ *   Indicates that thread was preempted in TASK_RUNNING state.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
