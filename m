@@ -1,69 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeC3Vs1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:48:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47564 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752249AbeC3Vs0 (ORCPT
+        id S1752819AbeC3WSE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 18:18:04 -0400
+Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:51790
+        "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752478AbeC3WSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:48:26 -0400
-Subject: Re: [PATCH] nvmet: fix nvmet_execute_write_zeroes function
-To: Keith Busch <keith.busch@intel.com>
-Cc: linux-kernel@vger.kernel.org, hch@lst.de,
-        linux-nvme@lists.infradead.org, sagi@grimberg.me
-References: <1522444730-2060-1-git-send-email-rosattig@linux.vnet.ibm.com>
- <20180330212439.GA28945@localhost.localdomain>
-From: =?UTF-8?Q?Rodrigo_Rosatti_Galv=c3=a3o?=
-        <rosattig@linux.vnet.ibm.com>
-Date: Fri, 30 Mar 2018 18:48:18 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180330212439.GA28945@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18033021-0024-0000-0000-00001827EB1C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008773; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01010764; UDB=6.00515014; IPR=6.00790042;
- MB=3.00020337; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-30 21:48:24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18033021-0025-0000-0000-00004F518AE1
-Message-Id: <93622938-f532-b8ac-2bca-fe40ed759e71@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-30_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803300218
+        Fri, 30 Mar 2018 18:18:01 -0400
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH 2/2] cifs: smbd: disconnect transport on RDMA errors
+Date: Fri, 30 Mar 2018 15:16:36 -0700
+Message-Id: <20180330221636.32512-2-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180330221636.32512-1-longli@linuxonhyperv.com>
+References: <20180330221636.32512-1-longli@linuxonhyperv.com>
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfOk9/GjI/YXBjbKCG+YrISH5CJBlpV5FjFxjVk1KcKuTihwxZNW6ASWujcNaHjG81LxNzrdzJquDLgEcGsEeDVkUat4rooOv15ucu+7chNBurPgV3KCt
+ e6RS57aL3YOiiolbCS1pzaJVmB7Zh9tQLeHpVYJLmRYEJe5+8LAJMTX9Ej1jxI+H8v9HrWWGGfux6c61zmZcNKJLyd7Jk9qdpVe3J2P97c5yus0+V7zxw7mC
+ 4xqhAT/1RH5WD2riCyH/NWHYG64tg/hatJ4mSoGxu29SWO5Mr10pJBpKRpzp3xGvTaLd5C4qyDB5IZsaUTLfuXCw+/Q5WAYSUdsVEZxS9mHrxoCOPVeXQSu/
+ 6+PZRa0+3p0AYKnXvdDHSO/vK+73xA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Long Li <longli@microsoft.com>
 
-> Doesn't that mean your host is using this command wrong? The NLB is a
-> 0's based value, we're supposed to +1 to get the correct block count.
+On RDMA errors, transport should disconnect the RDMA CM connection. This
+will notify the upper layer, and it will attempt transport reconnect.
 
-Keith, I tested passing different values to the c (number of blocks) and 
-s (64-bit LBA of first block to access) parameters, and it was failing. 
-When I removed the +1, the command worked fine.
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ fs/cifs/smbdirect.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I used a simple script to validate this:
-
-for s in {0..20}
-     do
-             for c in {0..20}
-             do
-                     nvme write-zeroes /dev/nvme0 -n 10 -s $s -c $c
-             done
-     done
-
-
-Is there some other way to test it?
-
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index 3f7883e..5008af5 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -862,6 +862,8 @@ static int smbd_post_send_negotiate_req(struct smbd_connection *info)
+ 	ib_dma_unmap_single(info->id->device, request->sge[0].addr,
+ 		request->sge[0].length, DMA_TO_DEVICE);
+ 
++	smbd_disconnect_rdma_connection(info);
++
+ dma_mapping_failed:
+ 	mempool_free(request, info->request_mempool);
+ 	return rc;
+@@ -1061,6 +1063,7 @@ static int smbd_post_send(struct smbd_connection *info,
+ 			if (atomic_dec_and_test(&info->send_pending))
+ 				wake_up(&info->wait_send_pending);
+ 		}
++		smbd_disconnect_rdma_connection(info);
+ 	} else
+ 		/* Reset timer for idle connection after packet is sent */
+ 		mod_delayed_work(info->workqueue, &info->idle_timer_work,
+@@ -1202,7 +1205,7 @@ static int smbd_post_recv(
+ 	if (rc) {
+ 		ib_dma_unmap_single(info->id->device, response->sge.addr,
+ 				    response->sge.length, DMA_FROM_DEVICE);
+-
++		smbd_disconnect_rdma_connection(info);
+ 		log_rdma_recv(ERR, "ib_post_recv failed rc=%d\n", rc);
+ 	}
+ 
+@@ -2546,6 +2549,8 @@ struct smbd_mr *smbd_register_mr(
+ 	if (atomic_dec_and_test(&info->mr_used_count))
+ 		wake_up(&info->wait_for_mr_cleanup);
+ 
++	smbd_disconnect_rdma_connection(info);
++
+ 	return NULL;
+ }
+ 
 -- 
-Rodrigo R. Galvão
-Intern - Linux Technology Center - IBM
+2.7.4
