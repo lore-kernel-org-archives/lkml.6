@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeC3RSn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 13:18:43 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58760 "EHLO
+        id S1752635AbeC3RTh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 13:19:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58780 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752286AbeC3RSi (ORCPT
+        with ESMTP id S1752296AbeC3RSl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 13:18:38 -0400
+        Fri, 30 Mar 2018 13:18:41 -0400
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 To: Sebastian Reichel <sre@kernel.org>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
@@ -17,9 +17,9 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv3 4/8] drm/omap: make omap_framebuffer_get_next_connector static
-Date: Fri, 30 Mar 2018 19:18:18 +0200
-Message-Id: <20180330171822.25896-5-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv3 5/8] dt-bindings: panel: common: document orientation property
+Date: Fri, 30 Mar 2018 19:18:19 +0200
+Message-Id: <20180330171822.25896-6-sebastian.reichel@collabora.co.uk>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
 References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
@@ -27,100 +27,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-omap_framebuffer_get_next_connector() is only required within omap_fb,
-so let's make it static. The function had to be moved before the first
-(and only) user.
+Merge "rotation" property description into common panel
+binding.
 
+Suggested-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/gpu/drm/omapdrm/omap_fb.c | 54 +++++++++++++++++++--------------------
- drivers/gpu/drm/omapdrm/omap_fb.h |  2 --
- 2 files changed, 27 insertions(+), 29 deletions(-)
+ .../devicetree/bindings/display/panel/panel-common.txt       | 12 ++++++++++++
+ Documentation/devicetree/bindings/display/panel/panel.txt    |  4 ----
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel.txt
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_fb.c b/drivers/gpu/drm/omapdrm/omap_fb.c
-index b65212c9a423..3f0b1f976691 100644
---- a/drivers/gpu/drm/omapdrm/omap_fb.c
-+++ b/drivers/gpu/drm/omapdrm/omap_fb.c
-@@ -95,6 +95,33 @@ static void omap_framebuffer_destroy(struct drm_framebuffer *fb)
- 	kfree(omap_fb);
- }
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.txt b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+index 557fa765adcb..46ff3c2d0811 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
++++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+@@ -18,6 +18,18 @@ Descriptive Properties
+   physical area where images are displayed. These properties are expressed in
+   millimeters and rounded to the closest unit.
  
-+/* iterate thru all the connectors, returning ones that are attached
-+ * to the same fb..
-+ */
-+static struct drm_connector *omap_framebuffer_get_next_connector(
-+		struct drm_framebuffer *fb, struct drm_connector *from)
-+{
-+	struct drm_device *dev = fb->dev;
-+	struct list_head *connector_list = &dev->mode_config.connector_list;
-+	struct drm_connector *connector = from;
++- rotation: Display rotation in degrees counter clockwise (0,90,180,270).
++  The following values are possible:
 +
-+	if (!from)
-+		return list_first_entry_or_null(connector_list, typeof(*from),
-+						head);
++    0 = The top side of the panel matches the top side of the
++        device's casing (default).
++   90 = The top side of the panel matches the left side of the
++        device's casing.
++  180 = The top side of the panel matches the bottom side of
++        the device's casing. The panel is mounted upside-down.
++  270 = The top side of the panel matches the right side of
++        the device's casing.
 +
-+	list_for_each_entry_from(connector, connector_list, head) {
-+		if (connector != from) {
-+			struct drm_encoder *encoder = connector->encoder;
-+			struct drm_crtc *crtc = encoder ? encoder->crtc : NULL;
-+			if (crtc && crtc->primary->fb == fb)
-+				return connector;
-+
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
- static int omap_framebuffer_dirty(struct drm_framebuffer *fb,
- 				  struct drm_file *file_priv,
- 				  unsigned flags, unsigned color,
-@@ -329,33 +356,6 @@ void omap_framebuffer_unpin(struct drm_framebuffer *fb)
- 	mutex_unlock(&omap_fb->lock);
- }
- 
--/* iterate thru all the connectors, returning ones that are attached
-- * to the same fb..
-- */
--struct drm_connector *omap_framebuffer_get_next_connector(
--		struct drm_framebuffer *fb, struct drm_connector *from)
--{
--	struct drm_device *dev = fb->dev;
--	struct list_head *connector_list = &dev->mode_config.connector_list;
--	struct drm_connector *connector = from;
+ - label: The label property specifies a symbolic name for the panel as a
+   string suitable for use by humans. It typically contains a name inscribed on
+   the system (e.g. as an affixed label) or specified in the system's
+diff --git a/Documentation/devicetree/bindings/display/panel/panel.txt b/Documentation/devicetree/bindings/display/panel/panel.txt
+deleted file mode 100644
+index e2e6867852b8..000000000000
+--- a/Documentation/devicetree/bindings/display/panel/panel.txt
++++ /dev/null
+@@ -1,4 +0,0 @@
+-Common display properties
+--------------------------
 -
--	if (!from)
--		return list_first_entry_or_null(connector_list, typeof(*from),
--						head);
--
--	list_for_each_entry_from(connector, connector_list, head) {
--		if (connector != from) {
--			struct drm_encoder *encoder = connector->encoder;
--			struct drm_crtc *crtc = encoder ? encoder->crtc : NULL;
--			if (crtc && crtc->primary->fb == fb)
--				return connector;
--
--		}
--	}
--
--	return NULL;
--}
--
- #ifdef CONFIG_DEBUG_FS
- void omap_framebuffer_describe(struct drm_framebuffer *fb, struct seq_file *m)
- {
-diff --git a/drivers/gpu/drm/omapdrm/omap_fb.h b/drivers/gpu/drm/omapdrm/omap_fb.h
-index 94ad5f9e4404..c20cb4bc714d 100644
---- a/drivers/gpu/drm/omapdrm/omap_fb.h
-+++ b/drivers/gpu/drm/omapdrm/omap_fb.h
-@@ -38,8 +38,6 @@ int omap_framebuffer_pin(struct drm_framebuffer *fb);
- void omap_framebuffer_unpin(struct drm_framebuffer *fb);
- void omap_framebuffer_update_scanout(struct drm_framebuffer *fb,
- 		struct drm_plane_state *state, struct omap_overlay_info *info);
--struct drm_connector *omap_framebuffer_get_next_connector(
--		struct drm_framebuffer *fb, struct drm_connector *from);
- bool omap_framebuffer_supports_rotation(struct drm_framebuffer *fb);
- void omap_framebuffer_describe(struct drm_framebuffer *fb, struct seq_file *m);
- 
+-- rotation:	Display rotation in degrees counter clockwise (0,90,180,270)
 -- 
 2.16.2
