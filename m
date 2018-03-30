@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeC3VFy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 17:05:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33814 "EHLO mail.kernel.org"
+        id S1753169AbeC3VGB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 17:06:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752900AbeC3VFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 17:05:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E6121777
+        id S1752774AbeC3VF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 17:05:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 435EC21777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v5 09/14] bnx2x: Report PCIe link properties with
+Subject: [PATCH v5 10/14] bnxt_en: Report PCIe link properties with
  pcie_print_link_status()
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Tal Gilboa <talgi@mellanox.com>
@@ -21,8 +21,8 @@ Cc: Tariq Toukan <tariqt@mellanox.com>,
         everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org
-Date: Fri, 30 Mar 2018 16:05:48 -0500
-Message-ID: <152244394874.135666.109326052402414686.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Fri, 30 Mar 2018 16:05:55 -0500
+Message-ID: <152244395584.135666.5051262627122405867.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -47,47 +47,43 @@ about 2000 MB/s for a 16 GT/s x1 link.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |   23 ++++++----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |   19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 74fc9af4aadb..c92601f1b0f3 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -13922,8 +13922,6 @@ static int bnx2x_init_one(struct pci_dev *pdev,
- {
- 	struct net_device *dev = NULL;
- 	struct bnx2x *bp;
--	enum pcie_link_width pcie_width;
--	enum pci_bus_speed pcie_speed;
- 	int rc, max_non_def_sbs;
- 	int rx_count, tx_count, rss_count, doorbell_size;
- 	int max_cos_est;
-@@ -14091,21 +14089,12 @@ static int bnx2x_init_one(struct pci_dev *pdev,
- 		dev_addr_add(bp->dev, bp->fip_mac, NETDEV_HW_ADDR_T_SAN);
- 		rtnl_unlock();
- 	}
--	if (pcie_get_minimum_link(bp->pdev, &pcie_speed, &pcie_width) ||
--	    pcie_speed == PCI_SPEED_UNKNOWN ||
--	    pcie_width == PCIE_LNK_WIDTH_UNKNOWN)
--		BNX2X_DEV_INFO("Failed to determine PCI Express Bandwidth\n");
--	else
--		BNX2X_DEV_INFO(
--		       "%s (%c%d) PCI-E x%d %s found at mem %lx, IRQ %d, node addr %pM\n",
--		       board_info[ent->driver_data].name,
--		       (CHIP_REV(bp) >> 12) + 'A', (CHIP_METAL(bp) >> 4),
--		       pcie_width,
--		       pcie_speed == PCIE_SPEED_2_5GT ? "2.5GHz" :
--		       pcie_speed == PCIE_SPEED_5_0GT ? "5.0GHz" :
--		       pcie_speed == PCIE_SPEED_8_0GT ? "8.0GHz" :
--		       "Unknown",
--		       dev->base_addr, bp->pdev->irq, dev->dev_addr);
-+	BNX2X_DEV_INFO(
-+	       "%s (%c%d) PCI-E found at mem %lx, IRQ %d, node addr %pM\n",
-+	       board_info[ent->driver_data].name,
-+	       (CHIP_REV(bp) >> 12) + 'A', (CHIP_METAL(bp) >> 4),
-+	       dev->base_addr, bp->pdev->irq, dev->dev_addr);
-+	pcie_print_link_status(bp->pdev);
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 1500243b9886..3be42431e029 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -8469,22 +8469,6 @@ static int bnxt_init_mac_addr(struct bnxt *bp)
+ 	return rc;
+ }
  
- 	bnx2x_register_phc(bp);
+-static void bnxt_parse_log_pcie_link(struct bnxt *bp)
+-{
+-	enum pcie_link_width width = PCIE_LNK_WIDTH_UNKNOWN;
+-	enum pci_bus_speed speed = PCI_SPEED_UNKNOWN;
+-
+-	if (pcie_get_minimum_link(pci_physfn(bp->pdev), &speed, &width) ||
+-	    speed == PCI_SPEED_UNKNOWN || width == PCIE_LNK_WIDTH_UNKNOWN)
+-		netdev_info(bp->dev, "Failed to determine PCIe Link Info\n");
+-	else
+-		netdev_info(bp->dev, "PCIe: Speed %s Width x%d\n",
+-			    speed == PCIE_SPEED_2_5GT ? "2.5GT/s" :
+-			    speed == PCIE_SPEED_5_0GT ? "5.0GT/s" :
+-			    speed == PCIE_SPEED_8_0GT ? "8.0GT/s" :
+-			    "Unknown", width);
+-}
+-
+ static int bnxt_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	static int version_printed;
+@@ -8694,8 +8678,7 @@ static int bnxt_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	netdev_info(dev, "%s found at mem %lx, node addr %pM\n",
+ 		    board_info[ent->driver_data].name,
+ 		    (long)pci_resource_start(pdev, 0), dev->dev_addr);
+-
+-	bnxt_parse_log_pcie_link(bp);
++	pcie_print_link_status(pdev);
+ 
+ 	return 0;
  
