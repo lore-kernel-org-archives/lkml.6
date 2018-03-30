@@ -1,90 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752608AbeC3B7B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 21:59:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43202 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751906AbeC3B67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 21:58:59 -0400
-Date: Thu, 29 Mar 2018 21:58:54 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@infradead.org>, linaro-mm-sig@lists.linaro.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-Message-ID: <20180330015854.GA3572@redhat.com>
-References: <5498e9b5-8fe5-8999-a44e-f7dc483bc9ce@amd.com>
- <16c7bef8-5f03-9e89-1f50-b62fb139a36f@deltatee.com>
- <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
- <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
- <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
- <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
- <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
- <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
- <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
- <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+        id S1752659AbeC3CCz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 22:02:55 -0400
+Received: from zxshcas1.zhaoxin.com ([180.169.121.91]:12621 "EHLO
+        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752510AbeC3CCy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Mar 2018 22:02:54 -0400
+From: David Wang <davidwang@zhaoxin.com>
+To: <rjw@rjwysocki.net>, <mingo@kernel.org>, <len.brown@intel.com>,
+        <pavel@ucw.cz>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <hpa@zytor.com>, <x86@kernel.org>, <linux-pm@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
+        <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
+        David Wang <davidwang@zhaoxin.com>
+Subject: [PATCH v2] Optimize C3 entry on Centaur CPUs
+Date: Fri, 30 Mar 2018 10:02:39 +0800
+Message-ID: <1522375359-30370-1-git-send-email-davidwang@zhaoxin.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.29.8.54]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 10:25:52AM -0600, Logan Gunthorpe wrote:
-> 
-> 
-> On 29/03/18 10:10 AM, Christian König wrote:
-> > Why not? I mean the dma_map_resource() function is for P2P while other 
-> > dma_map_* functions are only for system memory.
-> 
-> Oh, hmm, I wasn't aware dma_map_resource was exclusively for mapping
-> P2P. Though it's a bit odd seeing we've been working under the
-> assumption that PCI P2P is different as it has to translate the PCI bus
-> address. Where as P2P for devices on other buses is a big unknown.
+For new Centaur CPUs the ucode will take care of the preservation of
+cache coherence between CPU cores in C-states and the other CPU cores
+regardless of how deep the C-states are, so it is not necessary to
+flush the caches in software before entering C3.
 
-dma_map_resource() is the right API (thought its current implementation
-is fill with x86 assumptions). So i would argue that arch can decide to
-implement it or simply return dma error address which trigger fallback
-path into the caller (at least for GPU drivers). SG variant can be added
-on top.
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
 
-dma_map_resource() is the right API because it has all the necessary
-informations. It use the CPU physical address as the common address
-"language" with CPU physical address of PCIE bar to map to another
-device you can find the corresponding bus address from the IOMMU code
-(NOP on x86). So dma_map_resource() knows both the source device which
-export its PCIE bar and the destination devices.
+Changes from v1 to v2:
+* 1, Add some Family/Model/Stepping contrains to let this patch only apply
+* to new centaur CPUs.       
+* 2, The arbiter disable/enable operations maybe needed for old VIA/Centaur
+* platform. So, delete "flags->bm_control=0" in patch v1.
 
+---
+ arch/x86/kernel/acpi/cstate.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-So i don't think Christian need to base his patchset on yours. This
-is orthogonal. Christian is using existing upstream API, if it is
-broken on some arch it is up to those arch to fix it, or return error
-if it is not fixable. In fact i would assume that you would need to
-base your patchset on top of dma_map_resource() too ...
-
-Moreover i doubt Christian want to have struct page for this. For
-nouveau there will be HMM struct page and this would conflict.
-
-AFAICT you need struct page because the API you are trying to expose
-to user space rely on "regular" filesystem/RDMA umem API which all
-assume struct page. GPU drivers do not have this requirement and it
-should not be impose on them.
-
-
-So from my point of view Christian patchset is good as it is. Modulo
-better commit message.
-
-
-Bottom line i think we need common PCIE helper for P2P and the current
-dma_map_resource() is the right kind from POV. What you are doing with
-struct page is specific to your sub-system and should not be impose on
-others.
-
-Cheers,
-Jérôme
+diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+index dde437f..d92a7f3 100644
+--- a/arch/x86/kernel/acpi/cstate.c
++++ b/arch/x86/kernel/acpi/cstate.c
+@@ -51,6 +51,16 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
+ 	if (c->x86_vendor == X86_VENDOR_INTEL &&
+ 	    (c->x86 > 0xf || (c->x86 == 6 && c->x86_model >= 0x0f)))
+ 			flags->bm_control = 0;
++
++	/*
++	 * For all recent Centaur CPUs, the ucode will make sure that each core can keep
++	 * cache coherence with each other while entering C3 type state.
++	 * So, set bm_check to 1 to indicate that the kernel need not execute a cache 
++	 * flush operation (WBINVD) when entering C3 type state.
++	 */
++	if (c->x86_vendor == X86_VENDOR_CENTAUR &&
++	    (c->x86 > 6 || (c->x86 == 6 && c->x86_model == 0x0f && c->x86_mask>=0x0e)))
++			flags->bm_check = 1;
+ }
+ EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
+ 
+-- 
+1.9.1
