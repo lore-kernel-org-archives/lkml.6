@@ -1,97 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeC3Nst (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 09:48:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751241AbeC3Nss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 09:48:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D17D217A8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 30 Mar 2018 09:48:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH] trace: Default to using trace_global_clock if
- sched_clock is unstable
-Message-ID: <20180330094845.068a9a81@gandalf.local.home>
-In-Reply-To: <20180329222557.6274-1-chris@chris-wilson.co.uk>
-References: <20180329222557.6274-1-chris@chris-wilson.co.uk>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751973AbeC3Nt1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 09:49:27 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35071 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750794AbeC3NtZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 09:49:25 -0400
+X-Google-Smtp-Source: AIpwx494VlsEZ/ySlBapsPrfAyilTzq+GZEELUWl1VZP9DbNRJk8axtAATJX5wLbllqJ67GmdGuM6Q==
+From: Ilya Dryomov <idryomov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 4.16-rc8
+Date: Fri, 30 Mar 2018 15:48:59 +0200
+Message-Id: <1522417739-26858-1-git-send-email-idryomov@gmail.com>
+X-Mailer: git-send-email 2.4.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018 23:25:57 +0100
-Chris Wilson <chris@chris-wilson.co.uk> wrote:
+Hi Linus,
 
-> Across suspend, we may see a very large drift in timestamps if the sched
-> clock is unstable, prompting the global trace's ringbuffer code to warn
-> and suggest switching to the global clock. Preempt this request by
-> detecting when the sched clock is unstable (determined during
-> late_initcall) and automatically switching the default clock over to
-> trace_global_clock.
-> 
-> This should prevent requiring user interaction to resolve warnings such
-> as:
-> 
->     Delta way too big! 18446743856563626466 ts=18446744054496180323 write stamp = 197932553857
->     If you just came from a suspend/resume,
->     please switch to the trace global clock:
->     echo global > /sys/kernel/debug/tracing/trace_clock
+The following changes since commit 3eb2ce825ea1ad89d20f7a3b5780df850e4be274:
 
-global clock has a much higher overhead than the local clock. I rather
-not have it automatically switch even when there's no stable TSC. That
-will be annoying to myself as I have boxes that this would switch on
-and I prefer to keep the local clock.
+  Linux 4.16-rc7 (2018-03-25 12:44:30 -1000)
 
-One can also decide the clock with the kernel command line. Should we
-update that message to also say:
+are available in the git repository at:
 
-  Or set the global clock via the kernel command line with
-  "trace_clock=global"
+  https://github.com/ceph/ceph-client.git tags/ceph-for-4.16-rc8
 
-?
+for you to fetch changes up to 85784f9395987a422fa04263e7c0fb13da11eb5c:
 
--- Steve
+  ceph: only dirty ITER_IOVEC pages for direct read (2018-03-30 11:17:48 +0200)
 
+----------------------------------------------------------------
+A fix for a dio-enabled loop on ceph deadlock from Zheng, marked for
+stable.
 
-> 
-> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 13baf85b27d8..c5462513db90 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -41,6 +41,7 @@
->  #include <linux/nmi.h>
->  #include <linux/fs.h>
->  #include <linux/trace.h>
-> +#include <linux/sched/clock.h>
->  #include <linux/sched/rt.h>
->  
->  #include "trace.h"
-> @@ -8505,3 +8506,15 @@ __init static int clear_boot_tracer(void)
->  
->  fs_initcall(tracer_init_tracefs);
->  late_initcall_sync(clear_boot_tracer);
-> +
-> +#ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
-> +__init static int tracing_set_default_clock(void)
-> +{
-> +	/* sched_clock_stable() is determined in late_initcall */
-> +	if (!trace_boot_clock && !sched_clock_stable())
-> +		tracing_set_clock(&global_trace, "global");
-> +
-> +	return 0;
-> +}
-> +late_initcall_sync(tracing_set_default_clock);
-> +#endif
+----------------------------------------------------------------
+Yan, Zheng (1):
+      ceph: only dirty ITER_IOVEC pages for direct read
+
+ fs/ceph/file.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
