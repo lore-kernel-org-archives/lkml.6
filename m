@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2920516-1522393798-2-15177872113167129460
+X-Cyrus-Session-Id: sloti22d1t05-2927865-1522393797-3-8489797946583536676
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522393797; b=ZOfQ/NujTmJ7yPnRQVd0KYCVlBHiaDZ6A1HEiOaJWZ6sriABzU
-    w89aR3tkQ4wToktemLnKKQ+nFu7ImYt+Iwg9DStDz1xckTHxg+xf93Ern0Lr56g8
-    auNShiuxv1DJY+WHVp4YzpD6XeEv42Dw20yqGhUcDLlsYYGhrslqiCY1GYOcsYf+
-    PntswjzM7YJ7rcYHgIG7XU6H+pQVsETFHzp0mvPpOghrLaTvxTFZQXmRCQaEl36w
-    8pGoSgidn/35G8kWefzF7e1Y1nQr8Pl6AqZ9JnLbJA0OBDTt9W6M8/0VUgbZODoF
-    k0jMm8Sl/b5INLjI6Rwk9FadXDT8ZlK4ZdMg==
+    1522393797; b=kPQncK9M2Plyn2qQRkmepdmXr8kSytPd5xm7o9PbPSmkThmow8
+    Q1RDJNiqeDHDNCpT7QTHQMlAztYeuDrTdn3HX8ZL/IutxQfUal9h2CD70jjzNvyR
+    pyfxgSqGpAv93QgWNuQGFqkM8X4fjiT8F3QDvSPC78CjMSyD+QWi9kiBlJTi90F+
+    mrjPny2J6014tj6rymF5Lug8X83dNw8O/I+leU44ytBZSmDvjrww6sufmJJJg+dC
+    iTGsWuStSSoE5A8smtXAykmv+bS81K+mE5j/WSR/OvMtzomvFLFwrbzsSzLMjOpw
+    LV0VtQ4KULPaZEPjlOtpU+iZ5l6I2n7XYNqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522393797; bh=A9ZPN
-    Xt1dJNyKROWpZWglZcNtOIU9hucTapfOqqv0bc=; b=LvUMoxWWGpBct2kkpwiTG
-    CasT3AOlnSdZ9G/Al00yhpRHJYs1/3sP334PuMvjvzUmeig866yvgd1BG1KCXJUt
-    TE1HBoNaAx19Rfnpo7xsbp2QjzQRuHi3VAF3NwHML+WGbqKwfhpOMBgFpNy2XeUX
-    6E7vNzJ+VO/e3VUMydqCq8KfIf0p5jYJuclwOlBOnjLtmFpmPu6pHY3v4Ysewd6J
-    cihGtVFRup8kGNxDZuGg8FKjv6Ue7iYewXnLZ287dN95fnm4MAkr1f+pjOEeY1pt
-    RbUQcCjXhExjduEabYnKJCZ9qd/IYH8QWvaapKIZ5ghr9eTSVqWTD0YF3Jft0OWl
+    :content-transfer-encoding:sender; s=fm2; t=1522393797; bh=IXuV7
+    vRJps0YYali37oy+Bep6lzngr2R0kLrcqdO9Gg=; b=ZpMxWfdu5MtB53jaw2BOW
+    1EMqbGbKkCs3zypBItBZvEX0jhY3+08nFAdhPSNlAR7l7+WvR/3WGSt/35YmMq82
+    QRGbgZWxYfs6j6mH3LHYlDDsQaPVy+yyC1NOMyeYX5V8SrrGLLrRkl8PtbCOwCVp
+    tH3c8jXrkvUcyTlXEFUUHcLpLPms1z+DSedFSteHUE3JjSk5NkK+EzLg4JJ/oCGl
+    5gTRecdue6d4D7Jw0afBPoVHSvK/Rpo1G7JzxxBM2Pd5HYBVUoYfTjtTGT5tLZ8L
+    8NxjIFxSsTY2OFtKOLfqtGI5nuuRviErOgLqo3+h7N4Das40OgC7Heaj2fDryk7U
     Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
     iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
@@ -54,13 +54,13 @@ Authentication-Results: mx3.messagingengine.com;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOhXLk7OkFJcGWbeNllc5zxwc9cntg20wWlRAlMzJpMdJ+UhWCagT5PZhS/T0+/UrHEh2FxR8HO2FoiRejOC3XuUDFRT/flk/xMZdkDWYA6s7bkHJKPh
-    Svy45TTXKaKybAZ6kj3zGjkU7GXma0aURSn9UAVJ65BmYC/y+7M3D6+nhNIILsUnA2quYr42/0wg22kQ50s8YsLuIltcrwBcUvW/wiNxJLoP6ExR6avJLwjc
-    3NzNfhA37wOoxPhLytbH7Q==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+X-CM-Envelope: MS4wfAHWoTSywvThk9nTrw0v9/1So5Jpf6dqvhp7Nb5E+SZTS/sHTd5poOQgiKB2fbmtFx30Lr7GkaQuknP96Ee64Jh1jy4a3ekO/VLWMIweEkYUqwPDPMP4
+    4ufa23ASXMk/wzuopQW7Z8WDlsKy5wJZPWGRkiJVqF7jXTjtaZjCFPC/5j2jZuNeK71FfZgVYjfjgCRp02k6EhVfhaoh+TQpL3uzYsuL5Y9rbN+Pjh1sbCcR
+    0bUwoEktxcNh8V2OQYSzPA==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
     a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=hi4vKJZ1_tbQI8ndI8sA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
+    a=zcnEEkgR1p4y656zIssA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
@@ -68,29 +68,29 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH 17/76] staging: ks7010: Remove trailing _t from 'struct
- ssid_t'.
-Date: Fri, 30 Mar 2018 00:07:40 -0700
-Message-Id: <20180330070842.25224-17-quytelda@tamalin.org>
+Subject: [PATCH 18/76] staging: ks7010: Remove trailing _t from 'struct
+ rate_set8_t'.
+Date: Fri, 30 Mar 2018 00:07:41 -0700
+Message-Id: <20180330070842.25224-18-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180330070842.25224-1-quytelda@tamalin.org>
 References: <20180330070842.25224-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:0LSypAW6J8GSVEhLiFksmvg00UCe6nYt4Z7bxLjL5hiN/5ta2SQ
- c28RlEpcB1bjFfj2M6W77h16KvFx/3fkdjiUCYDtqjXQkyE4Pnav+qcCdwqF5nzcmcJZRPu
- 6CqRqinqKaE5tb/pkRWlRXOxiJjlII4i8HBYqGnhX3e9tT8vWtKN8tZr5uJxPXVvCqa9uVb
- Sv57zemE6/iClR/S1TBjA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2DUSZXiyVM4=:4AzGc6QT7RBdZ1bSxrUxrH
- DmBQqeVslKJxutzvedqG2jLzmp6R2rAt943WhmBaX7OaUKS0ktY1Irs2yETWiTrBdLh7GQC03
- Hc9QewJr6/JgSRPwCHFFAzydfTkFzpchGMktDrsNIj30O7T1NbKRJB+sPvAH8C7LVjqrDgLG0
- xnOnk8+KBaYEyBc7QUzR36r3v5+P57BcIoGSVTXsKXdj55uUqqNDQsRdfjXS/gbWpqd0uOhm/
- pQT8w4LfDselQAuQ5rUNIV6aRDwuQc81pjhxxAaOdAGSL5HJl6EtW1o2HJ615KPYbTVDScQ6u
- XPtM7/T0HsfSGHGA2qVoud4yxK8AN7FKOAXVfF2DGujg/5RoyAo5A0V4W3w4Crv8PyqlTIr5o
- pQrzeuesz+s/3YQqwBB+sma+cnSVJ7juaZgsRXeD8I6KG2ibtuOXpA70x5fVp1xA5eThk9ojh
- 3QaepgOhEndGSqCHcT5D0L8uXs8ieq1TJChY8c8jw7VzERjU/ctkhVjPdKA3yp/AOOAKzoSmT
- LVALloQAqW3GDN1v0iFKPIlnguzNaGWyF/C8D2MDHG/Jm3qph+a/YBTa3Wd3XJ+gUsWklNGXy
- ddqZftBGejso2vWVGo1TMQCg1Z5UfX7daRH/jnOMriYbGu4FaMZR6UDXOnCb0kOfEkPBkSBGO
- PE9bT/ZEITMIxRN7Y0iT9a2+rL1QbavwTwk+fG5qj32Nn7b6XJffk/AmzuGZhbjWgMdsHHrV4
- xTxjmRPUMyu5G6ykkCK5wiyJhGfvT8xirM5GMA==
+X-Provags-ID: V03:K0:XvoXKVdm3MsXemb5festL5Re8c/5oyLEmQ4P8wI/j6m4/h59lZa
+ VUR0hB7iufvJjXPa+ivauCy261oxSDMdXi+P17nWl0QtGAtijYoroFbOJIfgsdlsROFii8a
+ qBKbeKRxHDTx5WwYRR6cHaOF3kiFTEJQLhHxwSV2qy5KYSBoOYomqoRgsBX1GSQaYrYD4WB
+ qTLfKpbUUlPFlJom/2rew==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gWyj3Jrlt5o=:kaHXA1K3o5LN+hGRFbqUud
+ kjTuXRFr/PBap5ZWSa6SSw7+2Wtu28yKIFFkPFh36OQiNitwFoNSiDcxzdheKkZb3u8AIIWfj
+ m/1vX4juw2zzkgHIIeLQXkafFoZBbq/937lVJS2w90PyyDLj7CiLthK/K3mlELgOwuMNMq6kw
+ qrhYvfuE8pmx2rcUEqI8SldHtxCEVL1QcoZAJZCwLAWD6ZcCPLhpxW3NeGGN80/WibXKUdLvG
+ Jz56/uFzrvlPmDCrkvRBwgCINnskFPnSyp4CbA/qsgdHzFfPTtgopfwLgoJRx6i0WZZWpo7ju
+ iILHDN40W+JCp/LYKf8Uu0sTcAKrDarR5DRNoghAkF7+zV+aQRYwm6Zil3J9ST283ljBzsEeF
+ 7kULOGvbeoEvkrLyx1ppIm+1ZWqU67OjEUXkzpa42UPLJfU+1MAZIKhF0JAvuos3cMU2xtGiu
+ oLVhkSkNofe5tXpXHUFGYg3sYdVQl+d0/1Lkoz1qDBvdw5EkgvxW7dpb1++CHvBy1qDhcDk0C
+ MFE+Qm7si8FpcdrKkvEA/teLK9A0LonKy+Mh9ctPAI81S5hny1D/jA+h3sUt+AM9qa8Jh1C5Y
+ mtYLgP19EQb+iJjqVnYB73icOF6TDqHV+JGQIcUSssHkUEEufae1N/XbGDosmA3GNZT160S9K
+ wxGWvNNZwO8Pc0xwAAPH4mQRv37CJSXV1XWMfh00Rgp9Z4Ao59+JqxdhZb6QXzHb4t8Efuhb2
+ MvqA/fFAX7KoEDYCw+96leVZMnm7Psg2glQEIA==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -114,62 +114,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct ssid_t' with 'struct ssid'.
+all occurences of 'struct rate_set8_t' with 'struct rate_set8'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/ks7010/ks_hostif.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index fe85e22c4a5e..e87153786d61 100644
+index e87153786d61..aa1f5fefa818 100644
 --- a/drivers/staging/ks7010/ks_hostif.h
 +++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -225,7 +225,7 @@ struct hostif_start_confirm {
- 	__le16 result_code;
+@@ -232,7 +232,7 @@ struct ssid {
  } __packed;
  
--struct ssid_t {
-+struct ssid {
+ #define RATE_SET_MAX_SIZE 16
+-struct rate_set8_t {
++struct rate_set8 {
  	u8 size;
- 	u8 body[IEEE80211_MAX_SSID_LEN];
- 	u8 ssid_pad;
-@@ -382,7 +382,7 @@ struct hostif_ps_adhoc_set_confirm_t {
- struct hostif_infrastructure_set_request_t {
- 	struct hostif_hdr header;
- 	struct hostif_request_t request;
--	struct ssid_t ssid;
-+	struct ssid ssid;
- 	__le16 beacon_lost_count;
- 	__le16 auth_type;
- 	struct channel_list channel_list;
-@@ -404,7 +404,7 @@ struct hostif_infrastructure_set_confirm_t {
- struct hostif_adhoc_set_request_t {
- 	struct hostif_hdr header;
- 	struct hostif_request_t request;
--	struct ssid_t ssid;
-+	struct ssid ssid;
- 	__le16 channel;
- } __packed;
- 
-@@ -419,7 +419,7 @@ struct hostif_adhoc_set2_request_t {
- 	struct hostif_hdr header;
- 	struct hostif_request_t request;
- 	__le16 reserved;
--	struct ssid_t ssid;
-+	struct ssid ssid;
- 	struct channel_list channel_list;
- 	u8 bssid[ETH_ALEN];
- } __packed;
-@@ -469,7 +469,7 @@ struct hostif_bss_scan_request_t {
- 	__le32 ch_time_min;
- 	__le32 ch_time_max;
- 	struct channel_list channel_list;
--	struct ssid_t ssid;
-+	struct ssid ssid;
- } __packed;
- 
- struct hostif_bss_scan_confirm_t {
+ 	u8 body[8];
+ 	u8 rate_pad;
+@@ -299,14 +299,14 @@ struct link_ap_info_t {
+ 	u8 pad0;	/* +09 */
+ 	__le16 beacon_period;	/* +10 */
+ 	__le16 capability;	/* +12 */
+-	struct rate_set8_t rate_set;	/* +14 */
++	struct rate_set8 rate_set;	/* +14 */
+ 	struct fh_parms_t fh_parameter;	/* +24 */
+ 	struct ds_parms_t ds_parameter;	/* +29 */
+ 	struct cf_parms_t cf_parameter;	/* +30 */
+ 	struct ibss_parms_t ibss_parameter;	/* +36 */
+ 	struct erp_params_t erp_parameter;	/* +38 */
+ 	u8 pad1;	/* +39 */
+-	struct rate_set8_t ext_rate_set;	/* +40 */
++	struct rate_set8 ext_rate_set;	/* +40 */
+ 	u8 DTIM_period;	/* +50 */
+ 	u8 rsn_mode;	/* +51 */
+ #define RSN_MODE_NONE	0
 -- 
 2.16.3
 
