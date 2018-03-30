@@ -1,141 +1,460 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeC3TKl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 15:10:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752106AbeC3TKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 15:10:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4F8217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 30 Mar 2018 15:10:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180330151037.30d2ac6d@gandalf.local.home>
-In-Reply-To: <CAJWu+ooMPz_nFtULMXp6CnLvM8JFJrSnBGNgPHXKs1k97FQU5Q@mail.gmail.com>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-        <20180330102038.2378925b@gandalf.local.home>
-        <CAJWu+ooMPz_nFtULMXp6CnLvM8JFJrSnBGNgPHXKs1k97FQU5Q@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752546AbeC3TPR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 15:15:17 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44922 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752343AbeC3TPQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 15:15:16 -0400
+Smtp-Origin-Hostprefix: dev
+From: Nick Terrell <terrelln@fb.com>
+Smtp-Origin-Hostname: dev10183.prn2.facebook.com
+To: Nick Terrell <terrelln@fb.com>
+CC: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        <kernel-team@fb.com>, Chris Mason <clm@fb.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        Geliang Tang <geliangtang@gmail.com>
+Smtp-Origin-Cluster: prn2c22
+Subject: [RESEND PATCH] crypto: Add zstd support
+Date: Fri, 30 Mar 2018 12:14:53 -0700
+Message-ID: <20180330191453.3535287-1-terrelln@fb.com>
+X-Mailer: git-send-email 2.9.5
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018 09:37:58 -0700
-Joel Fernandes <joelaf@google.com> wrote:
+Adds zstd support to crypto and scompress. Only supports the default
+level.
 
-> > That said, it appears you are having issues that were caused by the
-> > change by commit 848618857d2 ("tracing/ring_buffer: Try harder to
-> > allocate"), where we replaced NORETRY with RETRY_MAYFAIL. The point of
-> > NORETRY was to keep allocations of the tracing ring-buffer from causing
-> > OOMs. But the RETRY was too strong in that case, because there were  
-> 
-> Yes this was discussed with -mm folks. Basically the problem we were
-> seeing is devices with tonnes of free memory (but free as in free but
-> used by page cache)  were not being used so it was unnecessarily
-> failing to allocate ring buffer on the system with otherwise lots of
-> memory.
+Previously we held off on this patch, since there weren't any users.
+Now zram is ready for zstd support, but depends on CONFIG_CRYPTO_ZSTD,
+which isn't defined until this patch is in. I also see a patch adding
+zstd to pstore [0], which depends on crypto zstd.
 
-Right.
+[0] lkml.kernel.org/r/9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com
 
-> 
-> IIRC, the OOM that my patch was trying to avoid, was being triggered
-> in the path/context of the write to buffer_size_kb itself (when not
-> doing the NORETRY),  not by other processes.
+Signed-off-by: Nick Terrell <terrelln@fb.com>
+---
+ crypto/Kconfig   |   9 ++
+ crypto/Makefile  |   1 +
+ crypto/testmgr.c |  10 +++
+ crypto/testmgr.h |  71 +++++++++++++++
+ crypto/zstd.c    | 265 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 356 insertions(+)
+ create mode 100644 crypto/zstd.c
 
-Yes, that is correct.
-
-> 
-> > Perhaps this is because the ring buffer allocates one page at a time,
-> > and by doing so, it can get every last available page, and if anything
-> > in the mean time does an allocation without MAYFAIL, it will cause an
-> > OOM. For example, when I stressed this I triggered this:
-> >
-> >  pool invoked oom-killer: gfp_mask=0x14200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
-> >  pool cpuset=/ mems_allowed=0
-> >  CPU: 7 PID: 1040 Comm: pool Not tainted 4.16.0-rc4-test+ #663
-> >  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
-> >  Call Trace:
-> >   dump_stack+0x8e/0xce
-> >   dump_header.isra.30+0x6e/0x28f
-> >   ? _raw_spin_unlock_irqrestore+0x30/0x60
-> >   oom_kill_process+0x218/0x400
-> >   ? has_capability_noaudit+0x17/0x20
-> >   out_of_memory+0xe3/0x5c0
-> >   __alloc_pages_slowpath+0xa8e/0xe50
-> >   __alloc_pages_nodemask+0x206/0x220
-> >   alloc_pages_current+0x6a/0xe0
-> >   __page_cache_alloc+0x6a/0xa0
-> >   filemap_fault+0x208/0x5f0
-> >   ? __might_sleep+0x4a/0x80
-> >   ext4_filemap_fault+0x31/0x44
-> >   __do_fault+0x20/0xd0
-> >   __handle_mm_fault+0xc08/0x1160
-> >   handle_mm_fault+0x76/0x110
-> >   __do_page_fault+0x299/0x580
-> >   do_page_fault+0x2d/0x110
-> >   ? page_fault+0x2f/0x50
-> >   page_fault+0x45/0x50  
-> 
-> But this OOM is not in the path of the buffer_size_kb write, right? So
-> then what does it have to do with buffer_size_kb write failure?
-
-Yep. I'll explain below.
-
-> 
-> I guess the original issue reported is that the buffer_size_kb write
-> causes *other* applications to fail allocation. So in that case,
-> capping the amount that ftrace writes makes sense. Basically my point
-> is I don't see how the patch you mentioned introduces the problem here
-> - in the sense the patch just makes ftrace allocate from memory it
-> couldn't before and to try harder.
-
-The issue is that ftrace allocates its ring buffer one page at a time.
-Thus, when a RETRY_MAYFAIL succeeds, that memory is allocated. Since it
-does it one page at a time, even if ftrace does not get all the memory
-it needs at the end, it will take all memory from the system before it
-finds that out. Then, if something else (like the above splat) tries to
-allocate anything, it will fail and trigger an OOM.
-
-> 
-> >
-> > I wonder if I should have the ring buffer allocate groups of pages, to
-> > avoid this. Or try to allocate with NORETRY, one page at a time, and
-> > when that fails, allocate groups of pages with RETRY_MAYFAIL, and that
-> > may keep it from causing an OOM?
-> >  
-> 
-> I don't see immediately how that can prevent an OOM in other
-> applications here? If ftrace allocates lots of memory with
-> RETRY_MAYFAIL, then we would still OOM in other applications if memory
-> isn't available. Sorry if I missed something.
-
-Here's the idea.
-
-Allocate one page at a time with NORETRY. If that fails, then allocate
-larger amounts (higher order of pages) with RETRY_MAYFAIL. Then if it
-can't get all the memory it needs, it wont take up all memory in the
-system before it finds out that it can't have any more.
-
-Or perhaps the memory management system can provide a
-get_available_mem() function that ftrace could call before it tries to
-increase the ring buffer and take up all the memory of the system
-before it realizes that it can't get all the memory it wants.
-
-The main problem I have with Zhaoyang's patch is that
-get_available_mem() does not belong in the tracing code. It should be
-something that the mm subsystem provides.
-
--- Steve
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index b75264b..500583c 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -1677,6 +1677,15 @@ config CRYPTO_LZ4HC
+ 	help
+ 	  This is the LZ4 high compression mode algorithm.
+ 
++config CRYPTO_ZSTD
++	tristate "Zstd compression algorithm"
++	select CRYPTO_ALGAPI
++	select CRYPTO_ACOMP2
++	select ZSTD_COMPRESS
++	select ZSTD_DECOMPRESS
++	help
++	  This is the zstd algorithm.
++
+ comment "Random Number Generation"
+ 
+ config CRYPTO_ANSI_CPRNG
+diff --git a/crypto/Makefile b/crypto/Makefile
+index cdbc03b..2900ab1 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -136,6 +136,7 @@ obj-$(CONFIG_CRYPTO_USER_API_HASH) += algif_hash.o
+ obj-$(CONFIG_CRYPTO_USER_API_SKCIPHER) += algif_skcipher.o
+ obj-$(CONFIG_CRYPTO_USER_API_RNG) += algif_rng.o
+ obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
++obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
+ 
+ ecdh_generic-y := ecc.o
+ ecdh_generic-y += ecdh.o
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index d5e23a1..71b2798 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -3576,6 +3576,16 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 				.decomp = __VECS(zlib_deflate_decomp_tv_template)
+ 			}
+ 		}
++	}, {
++		.alg = "zstd",
++		.test = alg_test_comp,
++		.fips_allowed = 1,
++		.suite = {
++			.comp = {
++				.comp = __VECS(zstd_comp_tv_template),
++				.decomp = __VECS(zstd_decomp_tv_template)
++			}
++		}
+ 	}
+ };
+ 
+diff --git a/crypto/testmgr.h b/crypto/testmgr.h
+index 6044f69..9b5b930 100644
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -35255,4 +35255,75 @@ static const struct comp_testvec lz4hc_decomp_tv_template[] = {
+ 	},
+ };
+ 
++static const struct comp_testvec zstd_comp_tv_template[] = {
++	{
++		.inlen	= 68,
++		.outlen	= 39,
++		.input	= "The algorithm is zstd. "
++			  "The algorithm is zstd. "
++			  "The algorithm is zstd.",
++		.output	= "\x28\xb5\x2f\xfd\x00\x50\xf5\x00\x00\xb8\x54\x68\x65"
++			  "\x20\x61\x6c\x67\x6f\x72\x69\x74\x68\x6d\x20\x69\x73"
++			  "\x20\x7a\x73\x74\x64\x2e\x20\x01\x00\x55\x73\x36\x01"
++			  ,
++	},
++	{
++		.inlen	= 244,
++		.outlen	= 151,
++		.input	= "zstd, short for Zstandard, is a fast lossless "
++			  "compression algorithm, targeting real-time "
++			  "compression scenarios at zlib-level and better "
++			  "compression ratios. The zstd compression library "
++			  "provides in-memory compression and decompression "
++			  "functions.",
++		.output	= "\x28\xb5\x2f\xfd\x00\x50\x75\x04\x00\x42\x4b\x1e\x17"
++			  "\x90\x81\x31\x00\xf2\x2f\xe4\x36\xc9\xef\x92\x88\x32"
++			  "\xc9\xf2\x24\x94\xd8\x68\x9a\x0f\x00\x0c\xc4\x31\x6f"
++			  "\x0d\x0c\x38\xac\x5c\x48\x03\xcd\x63\x67\xc0\xf3\xad"
++			  "\x4e\x90\xaa\x78\xa0\xa4\xc5\x99\xda\x2f\xb6\x24\x60"
++			  "\xe2\x79\x4b\xaa\xb6\x6b\x85\x0b\xc9\xc6\x04\x66\x86"
++			  "\xe2\xcc\xe2\x25\x3f\x4f\x09\xcd\xb8\x9d\xdb\xc1\x90"
++			  "\xa9\x11\xbc\x35\x44\x69\x2d\x9c\x64\x4f\x13\x31\x64"
++			  "\xcc\xfb\x4d\x95\x93\x86\x7f\x33\x7f\x1a\xef\xe9\x30"
++			  "\xf9\x67\xa1\x94\x0a\x69\x0f\x60\xcd\xc3\xab\x99\xdc"
++			  "\x42\xed\x97\x05\x00\x33\xc3\x15\x95\x3a\x06\xa0\x0e"
++			  "\x20\xa9\x0e\x82\xb9\x43\x45\x01",
++	},
++};
++
++static const struct comp_testvec zstd_decomp_tv_template[] = {
++	{
++		.inlen	= 43,
++		.outlen	= 68,
++		.input	= "\x28\xb5\x2f\xfd\x04\x50\xf5\x00\x00\xb8\x54\x68\x65"
++			  "\x20\x61\x6c\x67\x6f\x72\x69\x74\x68\x6d\x20\x69\x73"
++			  "\x20\x7a\x73\x74\x64\x2e\x20\x01\x00\x55\x73\x36\x01"
++			  "\x6b\xf4\x13\x35",
++		.output	= "The algorithm is zstd. "
++			  "The algorithm is zstd. "
++			  "The algorithm is zstd.",
++	},
++	{
++		.inlen	= 155,
++		.outlen	= 244,
++		.input	= "\x28\xb5\x2f\xfd\x04\x50\x75\x04\x00\x42\x4b\x1e\x17"
++			  "\x90\x81\x31\x00\xf2\x2f\xe4\x36\xc9\xef\x92\x88\x32"
++			  "\xc9\xf2\x24\x94\xd8\x68\x9a\x0f\x00\x0c\xc4\x31\x6f"
++			  "\x0d\x0c\x38\xac\x5c\x48\x03\xcd\x63\x67\xc0\xf3\xad"
++			  "\x4e\x90\xaa\x78\xa0\xa4\xc5\x99\xda\x2f\xb6\x24\x60"
++			  "\xe2\x79\x4b\xaa\xb6\x6b\x85\x0b\xc9\xc6\x04\x66\x86"
++			  "\xe2\xcc\xe2\x25\x3f\x4f\x09\xcd\xb8\x9d\xdb\xc1\x90"
++			  "\xa9\x11\xbc\x35\x44\x69\x2d\x9c\x64\x4f\x13\x31\x64"
++			  "\xcc\xfb\x4d\x95\x93\x86\x7f\x33\x7f\x1a\xef\xe9\x30"
++			  "\xf9\x67\xa1\x94\x0a\x69\x0f\x60\xcd\xc3\xab\x99\xdc"
++			  "\x42\xed\x97\x05\x00\x33\xc3\x15\x95\x3a\x06\xa0\x0e"
++			  "\x20\xa9\x0e\x82\xb9\x43\x45\x01\xaa\x6d\xda\x0d",
++		.output	= "zstd, short for Zstandard, is a fast lossless "
++			  "compression algorithm, targeting real-time "
++			  "compression scenarios at zlib-level and better "
++			  "compression ratios. The zstd compression library "
++			  "provides in-memory compression and decompression "
++			  "functions.",
++	},
++};
+ #endif	/* _CRYPTO_TESTMGR_H */
+diff --git a/crypto/zstd.c b/crypto/zstd.c
+new file mode 100644
+index 0000000..9a76b3e
+--- /dev/null
++++ b/crypto/zstd.c
+@@ -0,0 +1,265 @@
++/*
++ * Cryptographic API.
++ *
++ * Copyright (c) 2017-present, Facebook, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++#include <linux/crypto.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/mm.h>
++#include <linux/module.h>
++#include <linux/net.h>
++#include <linux/vmalloc.h>
++#include <linux/zstd.h>
++#include <crypto/internal/scompress.h>
++
++
++#define ZSTD_DEF_LEVEL	3
++
++struct zstd_ctx {
++	ZSTD_CCtx *cctx;
++	ZSTD_DCtx *dctx;
++	void *cwksp;
++	void *dwksp;
++};
++
++static ZSTD_parameters zstd_params(void)
++{
++	return ZSTD_getParams(ZSTD_DEF_LEVEL, 0, 0);
++}
++
++static int zstd_comp_init(struct zstd_ctx *ctx)
++{
++	int ret = 0;
++	const ZSTD_parameters params = zstd_params();
++	const size_t wksp_size = ZSTD_CCtxWorkspaceBound(params.cParams);
++
++	ctx->cwksp = vzalloc(wksp_size);
++	if (!ctx->cwksp) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	ctx->cctx = ZSTD_initCCtx(ctx->cwksp, wksp_size);
++	if (!ctx->cctx) {
++		ret = -EINVAL;
++		goto out_free;
++	}
++out:
++	return ret;
++out_free:
++	vfree(ctx->cwksp);
++	goto out;
++}
++
++static int zstd_decomp_init(struct zstd_ctx *ctx)
++{
++	int ret = 0;
++	const size_t wksp_size = ZSTD_DCtxWorkspaceBound();
++
++	ctx->dwksp = vzalloc(wksp_size);
++	if (!ctx->dwksp) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	ctx->dctx = ZSTD_initDCtx(ctx->dwksp, wksp_size);
++	if (!ctx->dctx) {
++		ret = -EINVAL;
++		goto out_free;
++	}
++out:
++	return ret;
++out_free:
++	vfree(ctx->dwksp);
++	goto out;
++}
++
++static void zstd_comp_exit(struct zstd_ctx *ctx)
++{
++	vfree(ctx->cwksp);
++	ctx->cwksp = NULL;
++	ctx->cctx = NULL;
++}
++
++static void zstd_decomp_exit(struct zstd_ctx *ctx)
++{
++	vfree(ctx->dwksp);
++	ctx->dwksp = NULL;
++	ctx->dctx = NULL;
++}
++
++static int __zstd_init(void *ctx)
++{
++	int ret;
++
++	ret = zstd_comp_init(ctx);
++	if (ret)
++		return ret;
++	ret = zstd_decomp_init(ctx);
++	if (ret)
++		zstd_comp_exit(ctx);
++	return ret;
++}
++
++static void *zstd_alloc_ctx(struct crypto_scomp *tfm)
++{
++	int ret;
++	struct zstd_ctx *ctx;
++
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return ERR_PTR(-ENOMEM);
++
++	ret = __zstd_init(ctx);
++	if (ret) {
++		kfree(ctx);
++		return ERR_PTR(ret);
++	}
++
++	return ctx;
++}
++
++static int zstd_init(struct crypto_tfm *tfm)
++{
++	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	return __zstd_init(ctx);
++}
++
++static void __zstd_exit(void *ctx)
++{
++	zstd_comp_exit(ctx);
++	zstd_decomp_exit(ctx);
++}
++
++static void zstd_free_ctx(struct crypto_scomp *tfm, void *ctx)
++{
++	__zstd_exit(ctx);
++	kzfree(ctx);
++}
++
++static void zstd_exit(struct crypto_tfm *tfm)
++{
++	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	__zstd_exit(ctx);
++}
++
++static int __zstd_compress(const u8 *src, unsigned int slen,
++			   u8 *dst, unsigned int *dlen, void *ctx)
++{
++	size_t out_len;
++	struct zstd_ctx *zctx = ctx;
++	const ZSTD_parameters params = zstd_params();
++
++	out_len = ZSTD_compressCCtx(zctx->cctx, dst, *dlen, src, slen, params);
++	if (ZSTD_isError(out_len))
++		return -EINVAL;
++	*dlen = out_len;
++	return 0;
++}
++
++static int zstd_compress(struct crypto_tfm *tfm, const u8 *src,
++			 unsigned int slen, u8 *dst, unsigned int *dlen)
++{
++	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	return __zstd_compress(src, slen, dst, dlen, ctx);
++}
++
++static int zstd_scompress(struct crypto_scomp *tfm, const u8 *src,
++			  unsigned int slen, u8 *dst, unsigned int *dlen,
++			  void *ctx)
++{
++	return __zstd_compress(src, slen, dst, dlen, ctx);
++}
++
++static int __zstd_decompress(const u8 *src, unsigned int slen,
++			     u8 *dst, unsigned int *dlen, void *ctx)
++{
++	size_t out_len;
++	struct zstd_ctx *zctx = ctx;
++
++	out_len = ZSTD_decompressDCtx(zctx->dctx, dst, *dlen, src, slen);
++	if (ZSTD_isError(out_len))
++		return -EINVAL;
++	*dlen = out_len;
++	return 0;
++}
++
++static int zstd_decompress(struct crypto_tfm *tfm, const u8 *src,
++			   unsigned int slen, u8 *dst, unsigned int *dlen)
++{
++	struct zstd_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	return __zstd_decompress(src, slen, dst, dlen, ctx);
++}
++
++static int zstd_sdecompress(struct crypto_scomp *tfm, const u8 *src,
++			    unsigned int slen, u8 *dst, unsigned int *dlen,
++			    void *ctx)
++{
++	return __zstd_decompress(src, slen, dst, dlen, ctx);
++}
++
++static struct crypto_alg alg = {
++	.cra_name		= "zstd",
++	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
++	.cra_ctxsize		= sizeof(struct zstd_ctx),
++	.cra_module		= THIS_MODULE,
++	.cra_init		= zstd_init,
++	.cra_exit		= zstd_exit,
++	.cra_u			= { .compress = {
++	.coa_compress		= zstd_compress,
++	.coa_decompress		= zstd_decompress } }
++};
++
++static struct scomp_alg scomp = {
++	.alloc_ctx		= zstd_alloc_ctx,
++	.free_ctx		= zstd_free_ctx,
++	.compress		= zstd_scompress,
++	.decompress		= zstd_sdecompress,
++	.base			= {
++		.cra_name	= "zstd",
++		.cra_driver_name = "zstd-scomp",
++		.cra_module	 = THIS_MODULE,
++	}
++};
++
++static int __init zstd_mod_init(void)
++{
++	int ret;
++
++	ret = crypto_register_alg(&alg);
++	if (ret)
++		return ret;
++
++	ret = crypto_register_scomp(&scomp);
++	if (ret)
++		crypto_unregister_alg(&alg);
++
++	return ret;
++}
++
++static void __exit zstd_mod_fini(void)
++{
++	crypto_unregister_alg(&alg);
++	crypto_unregister_scomp(&scomp);
++}
++
++module_init(zstd_mod_init);
++module_exit(zstd_mod_fini);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Zstd Compression Algorithm");
++MODULE_ALIAS_CRYPTO("zstd");
+-- 
+2.9.5
