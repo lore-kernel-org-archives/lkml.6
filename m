@@ -1,137 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752735AbeC3XWS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 19:22:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752357AbeC3XWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 19:22:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8957D217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 30 Mar 2018 18:22:15 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] PCI/IOV: Use VF0 cached config space size for
- other VFs
-Message-ID: <20180330232215.GJ9322@bhelgaas-glaptop.roam.corp.google.com>
-References: <1521489961-18291-1-git-send-email-karahmed@amazon.de>
- <1521489961-18291-2-git-send-email-karahmed@amazon.de>
+        id S1752784AbeC3Xiz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 19:38:55 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46245 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752384AbeC3Xiy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 19:38:54 -0400
+X-Google-Smtp-Source: AIpwx48Jqry3Y3Fc5HQuwmeJYfwSW22qUMuQmBfIm+Pxw/q3ZIpBJs1fXSq6ZrVvkNrNgiwaBMlUVbKlOVAnTY0CSXI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521489961-18291-2-git-send-email-karahmed@amazon.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180330174209.4cb77003@gandalf.local.home>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180330102038.2378925b@gandalf.local.home> <20180330205356.GA13332@bombadil.infradead.org>
+ <20180330173031.257a491a@gandalf.local.home> <20180330174209.4cb77003@gandalf.local.home>
+From: Joel Fernandes <joelaf@google.com>
+Date: Fri, 30 Mar 2018 16:38:52 -0700
+Message-ID: <CAJWu+orx=NZrkAf7x_HqttnrMssmW7DPZOL1fxR=N6D_-fbmtw@mail.gmail.com>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 09:06:01PM +0100, KarimAllah Ahmed wrote:
-> Cache the config space size from VF0 and use it for all other VFs instead
-> of reading it from the config space of each VF.  We assume that it will be
-> the same across all associated VFs.
-> 
-> This is an optimization when enabling SR-IOV on a device with many VFs.
-> 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Hi Steven,
 
-I didn't apply this one because:
+On Fri, Mar 30, 2018 at 2:42 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Fri, 30 Mar 2018 17:30:31 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+>> I'll take a look at si_mem_available() that Joel suggested and see if
+>> we can make that work.
+>
+> Wow, this appears to work great! Joel and Zhaoyang, can you test this?
+>
+> -- Steve
+>
+> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> index a2fd3893cc02..32a803626ee2 100644
+> --- a/kernel/trace/ring_buffer.c
+> +++ b/kernel/trace/ring_buffer.c
+> @@ -1164,6 +1164,11 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
+>         struct buffer_page *bpage, *tmp;
+>         long i;
+>
+> +       /* Check if the available memory is there first */
+> +       i = si_mem_available();
+> +       if (i < nr_pages)
 
-  - I don't like the "add two leading underscores to the name"
-    disease.  I'd really like pci_cfg_space_size() to be able to
-    figure out whether this is VF0 and do the right thing.  But I
-    don't know if we can tell from the pci_dev whether it is VF0.  We
-    do know that every VF is a PCIe device; maybe that's useful
-    somehow.
+Does it make sense to add a small margin here so that after ftrace
+finishes allocating, we still have some memory left for the system?
+But then then we have to define a magic number :-|
 
-  - Whatever the name ends up being, it should be declared in
-    drivers/pci/pci.h, not include/linux/pci.h, because it shouldn't
-    be used outside the PCI core.
-
-> ---
->  drivers/pci/iov.c   |  3 +++
->  drivers/pci/pci.h   |  1 +
->  drivers/pci/probe.c | 11 ++++++++++-
->  include/linux/pci.h |  1 +
->  4 files changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> index 30bf8f7..046e0d3 100644
-> --- a/drivers/pci/iov.c
-> +++ b/drivers/pci/iov.c
-> @@ -135,6 +135,9 @@ static void pci_read_vf_config_common(struct pci_dev *virtfn)
->  			     &physfn->sriov->subsystem_vendor);
->  	pci_read_config_word(virtfn, PCI_SUBSYSTEM_ID,
->  			     &physfn->sriov->subsystem_device);
+> +               return -ENOMEM;
 > +
-> +	virtfn->class = physfn->sriov->class;
 
-Oops, where did this come from?  It looks like this belongs in a
-different patch because this patch doesn't do anything else with
-virtfn->class.
+I tested in Qemu with 1GB memory, I am always able to get it to fail
+allocation even without this patch without causing an OOM. Maybe I am
+not running enough allocations in parallel or something :)
 
-> +	physfn->sriov->cfg_size = __pci_cfg_space_size(virtfn);
->  }
->  
->  int pci_iov_add_virtfn(struct pci_dev *dev, int id)
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index bdb4ba2..69da57b 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -271,6 +271,7 @@ struct pci_sriov {
->  	u16		driver_max_VFs;	/* Max num VFs driver supports */
->  	struct pci_dev	*dev;		/* Lowest numbered PF */
->  	struct pci_dev	*self;		/* This PF */
-> +	u32		cfg_size;	/* VF config space size */
->  	u32		class;		/* VF device */
->  	u8		hdr_type;	/* VF header type */
->  	u16		subsystem_vendor; /* VF subsystem vendor */
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 21ee1c3..fd21e2b 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1365,7 +1365,7 @@ static int pci_cfg_space_size_ext(struct pci_dev *dev)
->  	return PCI_CFG_SPACE_EXP_SIZE;
->  }
->  
-> -int pci_cfg_space_size(struct pci_dev *dev)
-> +int __pci_cfg_space_size(struct pci_dev *dev)
->  {
->  	int pos;
->  	u32 status;
-> @@ -1389,6 +1389,15 @@ int pci_cfg_space_size(struct pci_dev *dev)
->  	return PCI_CFG_SPACE_SIZE;
->  }
->  
-> +int pci_cfg_space_size(struct pci_dev *dev)
-> +{
-> +#ifdef CONFIG_PCI_ATS
-> +	if (dev->is_virtfn)
-> +		return dev->physfn->sriov->cfg_size;
-> +#endif
-> +	return __pci_cfg_space_size(dev);
-> +}
-> +
->  static int pci_cfg_space_class(struct pci_dev *dev)
->  {
->  	int class;
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 024a1be..fcd5d88 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1290,6 +1290,7 @@ int pci_scan_bridge(struct pci_bus *bus, struct pci_dev *dev, int max,
->  
->  void pci_walk_bus(struct pci_bus *top, int (*cb)(struct pci_dev *, void *),
->  		  void *userdata);
-> +int __pci_cfg_space_size(struct pci_dev *dev);
->  int pci_cfg_space_size(struct pci_dev *dev);
->  unsigned char pci_bus_max_busnr(struct pci_bus *bus);
->  void pci_setup_bridge(struct pci_bus *bus);
-> -- 
-> 2.7.4
-> 
+The patch you shared using si_mem_available is working since I'm able
+to allocate till the end without a page allocation failure:
+
+bash-4.3# echo 237800 > /d/tracing/buffer_size_kb
+bash: echo: write error: Cannot allocate memory
+bash-4.3# echo 237700 > /d/tracing/buffer_size_kb
+bash-4.3# free -m
+             total         used         free       shared      buffers
+Mem:           985          977            7           10            0
+-/+ buffers:                977            7
+Swap:            0            0            0
+bash-4.3#
+
+I think this patch is still good to have, since IMO we should not go
+and get page allocation failure (even if its a non-OOM) and subsequent
+stack dump from mm's allocator, if we can avoid it.
+
+Tested-by: Joel Fernandes <joelaf@google.com>
+
+thanks,
+
+- Joel
