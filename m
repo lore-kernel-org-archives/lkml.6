@@ -1,157 +1,153 @@
-Return-Path: <ji_hun.kim@samsung.com>
-X-Google-Smtp-Source: AIpwx4+FRpJU0OiN67MUszmgiMdVUwki8Ofo3+UWMSxNsU245defYFEsYYiPM3CJPyCI2ESw6OlD
-ARC-Seal: i=1; a=rsa-sha256; t=1522381808; cv=none;
+Return-Path: <leo.yan@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1522379746; cv=none;
         d=google.com; s=arc-20160816;
-        b=r2jKBFBBt8cBVB0y6puG00N6ZjnGGDe1fne7Tca67GOneXTD/2E7Pq/ZgdJlfX2mon
-         rhN14BpgToD6DJcP/O45I/p8BN/eknt1F7Da2OJ1wuc6kujgiN1RgYy48W4fBJLsL4Oj
-         1b7KYWprITR/KG/PbI/Hcv7PEUShOLqZOSFMDwlutnd5tBebzqqEhgUugUoh3w8GqKwr
-         MER9LjlElr3h0GvM+OAwAt9ECBHGR46dDEnT2emnUhkBnwXgrXxqbxYx9u7f7jkx45UA
-         3R1XqCSZ1VUlBOxXp2FiipElY7xGutC+++S2KUwFWdWTGXWh0dK1wzAw4dL7wlnLHX8q
-         z9zQ==
+        b=QzXkxTPfTRV0tBReKILSPkbuf+SS9HmAV/UUMxm1PCuKPDqvasjFETqW5gkoiRK6uv
+         p2DLqdCggBM4SIW+2AQ9254fgQrNlKs5XRlGKNZE37bt7VP9uZ6Y+oeINnM9xgdG58Ny
+         UwvZGqRK1i1KUaK32X7LiPx16O/pxKkjgBpA9S5ApyiqHGi8JzjtigtlH8qcsKCr78qx
+         mrwF41is8Fy0rWF1OuZ0W3wj4frxg7XBt+1qIjR6cXQtPQYUurQm4AsEKN9MQF4haQ1R
+         E0Rl+6BjIxfOOle81eS2TF15hWRKYIChc1tsPucFbwSlc6TZBzeG6Z4v6RTW0nAywVby
+         OhZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:dlp-filter:cms-type:user-agent:in-reply-to
-         :content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=yYsfUMlsviuVsggEr+WRUlfm0y+tUrUggjry9dfyWtw=;
-        b=iDJS7RSA+aVLpjI4g0OwuHzcP+e8i9X4ZOTfRHjbah22z9ETguYft+S1WiXmwfXlNq
-         xKUPpfwxEK7rWFeHVd91tj7imULRR3vZMrT/FVUWVK4Hg+kkgWsMFjv63cFwE88Zgqeg
-         tOIsLzYeFIagTD6RNyhdykzdHd3E4RLAY0LaSaOTKxvm6idXIMPnfzvhNchLN5Y93HMO
-         hqaoF9FDSGVNMOqRCM1d6nzwDyiJWmUlgZtShMyzFstzUuo7ve+Fuz+PqQTfpl22fsPR
-         QT0rT4yxS9q73B4vu7CxZCZw8mR+f9gUyKZu2ddI40kuKgfP+KKYkpp+pfHJJLXb2E8L
-         9ZJA==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=g8hRWBH9Ffr8aq1M++fL3sQ9CcLWhWZkFaFf/4I20MQ=;
+        b=NDVXUVF0/OlF9VpiQO8FVwXcncv9d2gZcyw7cCFzsYSGVXLdrwiyD6uUHBeE3iEWgi
+         Eluhc3cBExi0VLrvOWBnsaVM9ACGeAQjc8DLUQJXJlw/vXoXiaGG4NWv3j9bvSEzpXgy
+         HkeRTRZ7a1Su+c0uzI3Ov/wQ6yPbqftm3IwliuqJdGFoFK0mBDj4VKoUDTjZn7tPKqUC
+         7ti8oIpcwBbA2DPfBZ0KMFbpZKNGNzKoTGU062wlrHZatSTLh6RYUCmyDjMJEgXtW/9p
+         mUp5eJYqeWIwB5knsGeipboc+zQ5eHSjbj3zPR8GDHD6AeC9YQ3RNqo7KvpBv7q1twph
+         bXgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=hsua0D93;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.25 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=GLWOQTv4;
+       spf=pass (google.com: domain of leo.yan@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=leo.yan@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=hsua0D93;
-       spf=pass (google.com: domain of ji_hun.kim@samsung.com designates 203.254.224.25 as permitted sender) smtp.mailfrom=ji_hun.kim@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180330035007epoutp02ec7f601e99554045a555970dd95e5dbf~gljAUYLHc2758927589epoutp02j
-X-AuditID: b6c32a39-579ff70000000ff4-eb-5abdb3eeeec3
-Date: Fri, 30 Mar 2018 12:50:03 +0900
-From: Ji-Hun Kim <ji_hun.kim@samsung.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: gregkh@linuxfoundation.org, forest@alittletooquiet.net,
-	dartnorris@gmail.com, santhameena13@gmail.com, julia.lawall@lip6.fr,
-	y.k.oh@samsung.com, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3] staging: vt6655: check for memory allocation
- failures
-Message-id: <20180330035003.GA27619@ubuntu>
-MIME-version: 1.0
-Content-type: text/plain; charset="us-ascii"
-Content-disposition: inline
-In-reply-to: <be23acda-38c0-dce3-9c79-8672113f6960@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdljTQPfd5r1RBoevCFmsm7iQyeLM+7NM
-	FnvO/GK3uD/hEatF8+L1bBbLHpxmtNh6S9ri8q45bBYnt8lbbOn6werA5dHc+J7V496+wywe
-	O2fdZffYP3cNu8feLVkefVtWMXp83iQXwB6VapORmpiSWqSQmpecn5KZl26r5B0c7xxvamZg
-	qGtoaWGupJCXmJtqq+TiE6DrlpkDdJySQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYp2tDQ
-	SM/QwFzPyMhIz8Q81srIFKgkITVj2d5FrAW7+SpmTPzC0sDYzd3FyMkhIWAi0bXyKFMXIxeH
-	kMAORomWzY/ZQRJCAt8ZJXp+WXYxcoAV/TwpDlGzgVHi7+Q7rBDOS0aJU3uOsoIUsQioSjxa
-	mA3SyyagKbGx+xojiC0ioC5xetkuVhCbWeALo8SSYxwgtrCAv8S/7hcsIDavgLbE/1dT2SFs
-	QYkfk++xQNTrSJw9to4RwpaWePR3BlgNp4CtxNuXh8FqRAVUJKac3MYGco+EwGM2iab1PewQ
-	R7tILP5iBvGksMSr41ugwtISl47aQoSrJRZc2cECYddI3Py/lAnCNpbo7bnADLGWT+Ld1x5W
-	iFZeiY42IYgSD4nb1z6xQ9iOErM+PWWGhMhZRomJ+x8xT2CUnYXkm1lIvpmF5JsFjMyrGMVS
-	C4pz01OLDQtM9YoTc4tL89L1kvNzNzGC05+W5Q7GY+d8DjEKcDAq8fAqsOyNEmJNLCuuzD3E
-	KMHBrCTCWz4VKMSbklhZlVqUH19UmpNafIjRFBghE5mlRJPzgak5ryTe0MTSwMTMyNTU0MDC
-	REmcNyDAJUpIID2xJDU7NbUgtQimj4mDU6qB8bSjrtmqT5scK0/kpl/lS4uZFcTeOmdSh4fB
-	z5NL9rhtnJRp/yT6+QGTSwtsE6bbR/s/kRbQXq39wYpv3c2nh34dPHb06EFpeS3BD3rnb0/r
-	lD0+nav42ocvjxpuvZrzOPS1vovPTfeXJg4XjiyIqQixZNWMPVx1Y3Pc6lmPxLM2B6WxyV/3
-	rFBiKc5INNRiLipOBACWxw7WlQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t9jQd23m/dGGdyfpWGxbuJCJosz788y
-	Wew584vd4v6ER6wWzYvXs1kse3Ca0WLrLWmLy7vmsFmc3CZvsaXrB6sDl0dz43tWj3v7DrN4
-	7Jx1l91j/9w17B57t2R59G1ZxejxeZNcAHsUl01Kak5mWWqRvl0CV8ayvYtYC3bzVcyY+IWl
-	gbGbu4uRg0NCwETi50nxLkZODiGBdYwSW5bndjFyAdkvGSW+TvnMBFLDIqAq8WhhNkgNm4Cm
-	xMbua4wgtoiAusTpZbtYQeqZBb4wSjT/nMUOUi8s4CtxtTsYpIZXQFvi/6up7BAzzzNKrFu4
-	mgkiISjxY/I9FhCbWUBLYv3O40wQtrTEo78z2EFsTgFbibcvD4PViAqoSEw5uY1tAiP/LCTt
-	s5C0z0LSvoCReRWjZGpBcW56brFRgWFearlecWJucWleul5yfu4mRmD4bzus1beD8f6S+EOM
-	AhyMSjy8FWx7o4RYE8uKK3MPMUpwMCuJ8JZPBQrxpiRWVqUW5ccXleakFh9ilOZgURLnvZ13
-	LFJIID2xJDU7NbUgtQgmy8TBKdXAKFG4f7mn1XSVC5czjk6v/Wxjwp6qyVl7c+Hj2LstNx66
-	+2XVlma0LaxX+1kS4TXLsiy5KuKambDZg2Zph+7WFV05xbKcqXdDX1tLlm55dkJwx+8q6bsz
-	64/zLg3kTZ7z/OaBIJHirVlLnO1u6EZZh7434vaRmBSwKuvEpwtP5az0jsapHvFUYinOSDTU
-	Yi4qTgQAeC3DdHsCAAA=
-X-CMS-MailID: 20180330035005epcas1p37d4230f41bfde386b0d9cb7d76504469
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf
-X-RootMTR: 20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf
-References: <CGME20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf@epcas2p2.samsung.com>
-	<1522377844-23591-1-git-send-email-ji_hun.kim@samsung.com>
-	<be23acda-38c0-dce3-9c79-8672113f6960@gmail.com>
+       dkim=pass header.i=@linaro.org header.s=google header.b=GLWOQTv4;
+       spf=pass (google.com: domain of leo.yan@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=leo.yan@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AIpwx4/T8uY17IfiY71hFu/7ZK2I9ULoXw2Dm4S5vUsbCd4jBVt8hqpeZOA0t1j0uO1tw/MOAgU9Ow==
+From: Leo Yan <leo.yan@linaro.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	coresight@lists.linaro.org,
+	Kim Phillips <kim.phillips@arm.com>,
+	Mike Leach <mike.leach@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v4 0/6] Coresight: Support panic kdump
+Date: Fri, 30 Mar 2018 11:15:18 +0800
+Message-Id: <1522379724-30648-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596328885827783260?=
-X-GMAIL-MSGID: =?utf-8?q?1596333027811654012?=
+X-GMAIL-THRID: =?utf-8?q?1596330865086330396?=
+X-GMAIL-MSGID: =?utf-8?q?1596330865086330396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 11:15:03AM +0800, Jia-Ju Bai wrote:
-> 
-> 
-> On 2018/3/30 10:44, Ji-Hun Kim wrote:
-> >@@ -1165,10 +1205,18 @@ static int vnt_start(struct ieee80211_hw *hw)
-> >  	}
-> >  	dev_dbg(&priv->pcid->dev, "call device init rd0 ring\n");
-> >-	device_init_rd0_ring(priv);
-> >-	device_init_rd1_ring(priv);
-> >-	device_init_td0_ring(priv);
-> >-	device_init_td1_ring(priv);
-> >+	ret = device_init_rd0_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >+	ret = device_init_rd1_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >+	ret = device_init_td0_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >+	ret = device_init_td1_ring(priv);
-> >+	if (ret)
-> >+		goto error;
-> >  	device_init_registers(priv);
-> >@@ -1178,6 +1226,8 @@ static int vnt_start(struct ieee80211_hw *hw)
-> >  	ieee80211_wake_queues(hw);
-> >  	return 0;
-> >+error:
-> >+	return ret;
-> >  }
-> 
-> This code will lead to memory leaks when device_init_rd1_ring()
-> fails, because the memory allocated by device_init_rd0_ring() is not
-> freed.
-> 
-> I think this one will be better:
->     ret = device_init_rd0_ring(priv);
->     if (ret)
->         goto error_init_rd0_ring;
->     ret = device_init_rd1_ring(priv);
->     if (ret)
->         goto error_init_rd1_ring;
->     ret = device_init_td0_ring(priv);
->     if (ret)
->         goto error_init_td0_ring;
->     ret = device_init_td1_ring(priv);
->     if (ret)
->         goto error_init_td1_ring;
->     ......
-> error_init_td1_ring:
->     device_free_td0_ring(priv);
-> error_init_td0_ring:
->     device_free_rd1_ring(priv);
-> error_init_rd1_ring:
->     device_free_rd0_ring(priv);
-> error_init_rd0_ring:
->     return ret;
-> 
-> 
-> Best wishes,
-> Jia-Ju Bai
-> 
-> 
-Oh, sorry, I got what you said. Yes, you are right. I am going to make patch v4. Thanks!
+This patch set is to explore Coresight tracing data for postmortem
+debugging.  When kernel panic happens, the Coresight panic kdump can
+help to save on-chip tracing data and tracer metadata into DRAM, later
+relies on kdump and crash/perf tools to recovery tracing data for
+"offline" analysis.
 
-Best regards,
-Ji-Hun
+The documentation is important to understand the purpose of Coresight
+panic kdump, the implementation of framework and usage. Patches 0001
+and patch 0002 are used for creating new sub directory for placing
+Coresight docs and add a new doc for Coresight panic kdump.
+
+Patch 0003 introduces the simple panic kdump framework which provides
+helper functions can be used by Coresight devices, and it registers
+panic notifier for dump tracing data.
+
+Patches 0004/0005 support panic kdump for ETB; Patch 0006 supports the
+kdump for ETMv4.
+
+This patch set has been reworked by following suggestions at Linaro
+HKG18 connect (mainly suggestions from Mathieu, thanks a lot!), and
+it's rebased on acme git tree [1] with last commit 109d59b900e7 ('perf
+vendor events s390: Add JSON files for IBM z14').
+
+Due Coresight kdump data structure has been changed significantly, the
+corresponding crash extension program also has been updated for this
+reason [2]; furthermore the crash extension program is updated to
+dynamically generate kernel buildid according to vmlinux elf info [3],
+this is a fixing for the old code which uses hard-coded buildid value.
+
+This patch set has been verified on 96boards Hikey620 with Coresight
+enabling by the sysFS interface.  Also the updated crash extension
+program has been verified to cowork with Coresight panic kdump and it
+successfully extracts tracing data from the vmcore and finally can be
+decoded by perf tool.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
+[2] https://git.linaro.org/people/leo.yan/crash.git/tree/extensions/csdump.c
+[3] https://git.linaro.org/people/leo.yan/crash.git/tree/extensions/csdump_buildid.c
+
+Changes from v3:
+* Following Mathieu suggestion, reworked the panic kdump framework,
+  used kdump array to maintain source and sink device handlers;
+* According to Mathieu suggestion, optimized panic notifier to
+  firstly dump panic CPU tracing data and then dump other CPUs tracing
+  data;
+* Refined doc to reflect these implementation changes;
+* Changed ETMv4 driver to add source device handler at probe phase;
+* Refactored crash extension program to reflect kernel changes.
+
+Changes from v2:
+* Add the two patches for documentation.
+* Following Mathieu suggestion, reworked the panic kdump framework,
+  removed the useless flag "PRE_PANIC".
+* According to comment, changed to add and delete kdump node operations
+  in sink enable/disable functions;
+* According to Mathieu suggestion, handle kdump node
+  addition/deletion/updating separately for sysFS interface and perf
+  method.
+
+Changes from v1:
+* Add support to dump ETMv4 meta data.
+* Wrote 'crash' extension csdump.so so rely on it to generate 'perf'
+  format compatible file.
+* Refactored panic dump driver to support pre & post panic dump.
+
+Changes from RFC:
+* Follow Mathieu's suggestion, use general framework to support dump
+  functionality.
+* Changed to use perf to analyse trace data.
+
+Leo Yan (6):
+  doc: Add Coresight documentation directory
+  doc: Add documentation for Coresight panic kdump
+  coresight: Support panic kdump functionality
+  coresight: tmc: Hook callback for panic kdump
+  coresight: Set and clear sink device handler for kdump node
+  coresight: etm4x: Support panic kdump
+
+ Documentation/trace/coresight-cpu-debug.txt        | 187 ----------
+ Documentation/trace/coresight.txt                  | 383 ---------------------
+ .../trace/coresight/coresight-cpu-debug.txt        | 187 ++++++++++
+ .../trace/coresight/coresight-panic-kdump.txt      | 130 +++++++
+ Documentation/trace/coresight/coresight.txt        | 383 +++++++++++++++++++++
+ MAINTAINERS                                        |   5 +-
+ drivers/hwtracing/coresight/Kconfig                |   9 +
+ drivers/hwtracing/coresight/Makefile               |   1 +
+ drivers/hwtracing/coresight/coresight-etm-perf.c   |   5 +
+ drivers/hwtracing/coresight/coresight-etm4x.c      |  27 ++
+ drivers/hwtracing/coresight/coresight-etm4x.h      |  15 +
+ .../hwtracing/coresight/coresight-panic-kdump.c    | 199 +++++++++++
+ drivers/hwtracing/coresight/coresight-priv.h       |  12 +
+ drivers/hwtracing/coresight/coresight-tmc-etf.c    |  30 ++
+ drivers/hwtracing/coresight/coresight.c            |  16 +-
+ include/linux/coresight.h                          |   4 +
+ 16 files changed, 1019 insertions(+), 574 deletions(-)
+ delete mode 100644 Documentation/trace/coresight-cpu-debug.txt
+ delete mode 100644 Documentation/trace/coresight.txt
+ create mode 100644 Documentation/trace/coresight/coresight-cpu-debug.txt
+ create mode 100644 Documentation/trace/coresight/coresight-panic-kdump.txt
+ create mode 100644 Documentation/trace/coresight/coresight.txt
+ create mode 100644 drivers/hwtracing/coresight/coresight-panic-kdump.c
+
+-- 
+2.7.4
