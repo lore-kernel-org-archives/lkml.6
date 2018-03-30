@@ -1,146 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751933AbeC3QqF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 12:46:05 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:51286 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751298AbeC3QqC (ORCPT
+        id S1751418AbeC3Qtp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 12:49:45 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:33433 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750794AbeC3Qtn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 12:46:02 -0400
-X-Google-Smtp-Source: AG47ELsjV0f8w4DvhHwOmXK6HyZbpRH7RYT7q3bM+1X6swr6XLXqJAwFCMTgR4C5c9qNHWHKoDdMel2d5aOmcZ5Ch/EVzN7vVb5F
+        Fri, 30 Mar 2018 12:49:43 -0400
+X-Google-Smtp-Source: AIpwx4/cnHlwd0Bu+COhe8vWLusEXYxfjArTP7Yx+6LnOXfZ1pqTMZc2LFvRWiBaQINlK/3aCrtNm1x4RY70i9aUygI=
 MIME-Version: 1.0
-Date: Fri, 30 Mar 2018 09:46:01 -0700
-In-Reply-To: <000000000000878b6a05688805c5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <94eb2c05b2d8af3dfa0568a3f964@google.com>
-Subject: Re: INFO: task hung in stop_sync_thread (2)
-From: syzbot <syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        wensong@linux-vs.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180330163930.GA27856@gondor.apana.org.au>
+References: <20180326230308.GA27259@beast> <20180330163930.GA27856@gondor.apana.org.au>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 30 Mar 2018 09:49:41 -0700
+X-Google-Sender-Auth: oofnQknKzI7bxL5kk5ABT0d09J4
+Message-ID: <CAGXu5jKaB169dB47u5YT3ot-r2PvTcT+5Ng+1ZQZV3f3azkJAg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "crypto/ecc: Remove stack VLA usage"
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found reproducer for the following crash on net-next commit
-18845557fd6fc1998f2d0d8c30467f86db587529 (Thu Mar 29 20:24:06 2018 +0000)
-Merge tag 'wireless-drivers-next-for-davem-2018-03-29' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=5fe074c01b2032ce9618
+On Fri, Mar 30, 2018 at 9:39 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Mon, Mar 26, 2018 at 04:03:08PM -0700, Kees Cook wrote:
+>> This reverts commit 14de52112ee70ca289fa77bf2d9cbc79fd2c811f.
+>>
+>> The solution was incomplete and inefficient. This will be fixed
+>> correctly in the next patch.
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>
+> Hmm you didn't post this to linux-crypto so it's not in patchwork.
+>
+> Anyway, I'd prefer if you just squashed this together with the
+> subsequent patch.  It's not that complex to require a revert and
+> a new patch to be readable.
 
-So far this crash happened 2 times on net-next.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5531070485233664
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5632385408303104
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6520566391504896
-Kernel config: https://syzkaller.appspot.com/x/.config?id=-37309782588693906
-compiler: gcc (GCC) 7.1.1 20170620
+Sounds good, thanks!
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+-Kees
 
-INFO: task syzkaller923914:4319 blocked for more than 120 seconds.
-       Not tainted 4.16.0-rc6+ #286
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syzkaller923914 D23312  4319   4316 0x00000000
-Call Trace:
-  context_switch kernel/sched/core.c:2862 [inline]
-  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
-  schedule+0xf5/0x430 kernel/sched/core.c:3499
-  schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
-  do_wait_for_common kernel/sched/completion.c:86 [inline]
-  __wait_for_common kernel/sched/completion.c:107 [inline]
-  wait_for_common kernel/sched/completion.c:118 [inline]
-  wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
-  kthread_stop+0x14a/0x7a0 kernel/kthread.c:530
-  stop_sync_thread+0x3d9/0x740 net/netfilter/ipvs/ip_vs_sync.c:1996
-  do_ip_vs_set_ctl+0x2b1/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2394
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0x97/0xa0 net/ipv4/ip_sockglue.c:1253
-  udp_setsockopt+0x45/0x80 net/ipv4/udp.c:2400
-  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:3039
-  SYSC_setsockopt net/socket.c:1850 [inline]
-  SyS_setsockopt+0x189/0x360 net/socket.c:1829
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4459d9
-RSP: 002b:00007f1d6f47cdb8 EFLAGS: 00000297 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 00000000004459d9
-RDX: 000000000000048c RSI: 0000000000000000 RDI: 0000000000000008
-RBP: 00000000006dac20 R08: 0000000000000018 R09: 0000000000000000
-R10: 0000000020000000 R11: 0000000000000297 R12: 0000000000000000
-R13: 00007fffcf128acf R14: 00007f1d6f47d9c0 R15: 0000000000000001
-INFO: lockdep is turned off.
-NMI backtrace for cpu 1
-CPU: 1 PID: 869 Comm: khungtaskd Not tainted 4.16.0-rc6+ #286
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
-  check_hung_task kernel/hung_task.c:132 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
-  watchdog+0x90c/0xd60 kernel/hung_task.c:249
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 4317 Comm: syzkaller923914 Not tainted 4.16.0-rc6+ #286
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x50
-RSP: 0018:ffff8801b56df138 EFLAGS: 00000093
-RAX: ffff8801cbaae640 RBX: 0000000000000000 RCX: ffffffff866a3971
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff8801db218038
-RBP: ffff8801b56df168 R08: ffff88021fff801c R09: ffff88021fff8008
-R10: ffff88021fff8010 R11: ffff88021fff801d R12: ffff8801db218038
-R13: 0000000000000040 R14: ffff8801db218038 R15: 00000000ffffffff
-FS:  0000000001968880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001c94dc001 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  cpumask_next+0x24/0x30 lib/cpumask.c:21
-  select_idle_smt kernel/sched/fair.c:6116 [inline]
-  select_idle_sibling+0x86d/0xda0 kernel/sched/fair.c:6238
-  select_task_rq_fair+0xe0a/0x2910 kernel/sched/fair.c:6394
-  select_task_rq kernel/sched/core.c:1554 [inline]
-  try_to_wake_up+0x4ee/0x15f0 kernel/sched/core.c:2064
-  default_wake_function+0x30/0x50 kernel/sched/core.c:3693
-  autoremove_wake_function+0x78/0x350 kernel/sched/wait.c:377
-  __wake_up_common+0x18e/0x780 kernel/sched/wait.c:97
-  __wake_up_common_lock+0x1b4/0x310 kernel/sched/wait.c:125
-  __wake_up_sync_key+0x19/0x20 kernel/sched/wait.c:203
-  pipe_write+0x63b/0xd60 fs/pipe.c:477
-  call_write_iter include/linux/fs.h:1782 [inline]
-  new_sync_write fs/read_write.c:469 [inline]
-  __vfs_write+0x684/0x970 fs/read_write.c:482
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4459d9
-RSP: 002b:00007fffcf128b48 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000006dada0 RCX: 00000000004459d9
-RDX: 0000000000000012 RSI: 00000000004adf28 RDI: 0000000000000001
-RBP: 0000000000000010 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dad8c
-R13: 00000000006dada0 R14: 0000000000000005 R15: 0000000000000001
-Code: ff 4c 89 e7 e8 62 b2 38 00 e9 32 fd ff ff 48 8b bd d0 fe ff ff e8 f1  
-b2 38 00 e9 c3 fc ff ff 90 90 90 90 90 90 90 90 90 90 90 90 <55> 65 48 8b  
-04 25 c0 ed 01 00 48 89 e5 65 8b 15 8c 20 90 7e 81
+-- 
+Kees Cook
+Pixel Security
