@@ -1,111 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752756AbeC3U3r (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 16:29:47 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:38192 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeC3U3p (ORCPT
+        id S1752737AbeC3Ucw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 16:32:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56315 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752206AbeC3Ucv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 16:29:45 -0400
-X-Google-Smtp-Source: AIpwx48xl/zIy7UTvAUdJvJI5y0GHDPfqHsecI91Ll2SdXaNmzv1L2EWSyLhC+x9NFLDDRdfAx0qUYjBRX9dC40muMs=
+        Fri, 30 Mar 2018 16:32:51 -0400
+Date: Fri, 30 Mar 2018 22:32:44 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+cc: Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
+        Hugh Dickins <hughd@google.com>,
+        =?ISO-8859-15?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        the arch/x86 maintainers <x86@kernel.org>, namit@vmware.com
+Subject: Re: [PATCH 00/11] Use global pages with PTI
+In-Reply-To: <3cdc23a2-99eb-6f93-6934-f7757fa30a3e@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1803302230560.1479@nanos.tec.linutronix.de>
+References: <20180323174447.55F35636@viggo.jf.intel.com> <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com> <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com> <alpine.DEB.2.21.1803271526260.1964@nanos.tec.linutronix.de>
+ <c0e7ca0b-dcb5-66e2-9df6-f53e4eb22781@linux.intel.com> <alpine.DEB.2.21.1803271949250.1618@nanos.tec.linutronix.de> <20180327200719.lvdomez6hszpmo4s@gmail.com> <0d6ea030-ec3b-d649-bad7-89ff54094e25@linux.intel.com> <20180330120920.btobga44wqytlkoe@gmail.com>
+ <20180330121725.zcklh36ulg7crydw@gmail.com> <3cdc23a2-99eb-6f93-6934-f7757fa30a3e@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180330191759.GA18176@embeddedgus>
-References: <20180330191759.GA18176@embeddedgus>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 30 Mar 2018 22:29:44 +0200
-Message-ID: <CAOi1vP8jzp9s4Qj9rBf90eU1TVY9C3W8ezThUXcSHUOX-B=pQg@mail.gmail.com>
-Subject: Re: [PATCH] rbd: remove VLA usage
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 9:17 PM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> In preparation to enabling -Wvla, remove the use of stack VLA.
->
-> In this particular case, variable buf_size is replaced with a constant
-> expression that can be computed at preprocessing time. This avoids two
-> VLA warnings. Also, as a consequence of the mentioned change, some code
-> was slightly refactored.
->
-> The use of stack Variable Length Arrays needs to be avoided, as they
-> can be a vector for stack exhaustion, which can be both a runtime bug
-> or a security flaw. Also, in general, as code evolves it is easy to
-> lose track of how big a VLA can get. Thus, we can end up having runtime
-> failures that are hard to debug.
->
-> Also, fixed as part of the directive to remove all VLAs from
-> the kernel: https://lkml.org/lkml/2018/3/7/621
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/block/rbd.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 1e03b04..5133122 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -3091,20 +3091,20 @@ static int __rbd_notify_op_lock(struct rbd_device *rbd_dev,
->  {
->         struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
->         struct rbd_client_id cid = rbd_get_cid(rbd_dev);
-> -       int buf_size = 4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN;
-> -       char buf[buf_size];
-> +       char buf[4 + 8 + 8 + CEPH_ENCODING_START_BLK_LEN];
->         void *p = buf;
->
->         dout("%s rbd_dev %p notify_op %d\n", __func__, rbd_dev, notify_op);
->
->         /* encode *LockPayload NotifyMessage (op + ClientId) */
-> -       ceph_start_encoding(&p, 2, 1, buf_size - CEPH_ENCODING_START_BLK_LEN);
-> +       ceph_start_encoding(&p, 2, 1,
-> +                           sizeof(buf) - CEPH_ENCODING_START_BLK_LEN);
->         ceph_encode_32(&p, notify_op);
->         ceph_encode_64(&p, cid.gid);
->         ceph_encode_64(&p, cid.handle);
->
->         return ceph_osdc_notify(osdc, &rbd_dev->header_oid,
-> -                               &rbd_dev->header_oloc, buf, buf_size,
-> +                               &rbd_dev->header_oloc, buf, sizeof(buf),
->                                 RBD_NOTIFY_TIMEOUT, preply_pages, preply_len);
->  }
->
-> @@ -3610,19 +3610,18 @@ static void __rbd_acknowledge_notify(struct rbd_device *rbd_dev,
->                                      u64 notify_id, u64 cookie, s32 *result)
->  {
->         struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
-> -       int buf_size = 4 + CEPH_ENCODING_START_BLK_LEN;
-> -       char buf[buf_size];
-> +       char buf[4 + CEPH_ENCODING_START_BLK_LEN];
-> +       int buf_size = 0;
->         int ret;
->
->         if (result) {
->                 void *p = buf;
->
-> +               buf_size = sizeof(buf);
->                 /* encode ResponseMessage */
->                 ceph_start_encoding(&p, 1, 1,
->                                     buf_size - CEPH_ENCODING_START_BLK_LEN);
->                 ceph_encode_32(&p, *result);
-> -       } else {
-> -               buf_size = 0;
->         }
->
->         ret = ceph_osdc_notify_ack(osdc, &rbd_dev->header_oid,
+On Fri, 30 Mar 2018, Dave Hansen wrote:
 
-Already fixed:
+> On 03/30/2018 05:17 AM, Ingo Molnar wrote:
+> > BTW., the expectation on !PCID Intel hardware would be for global pages to help 
+> > even more than the 0.6% and 1.7% you measured on PCID hardware: PCID already 
+> > _reduces_ the cost of TLB flushes - so if there's not even PCID then global pages 
+> > should help even more.
+> > 
+> > In theory at least. Would still be nice to measure it.
+> 
+> I did the lseek test on a modern, non-PCID system:
+> 
+> No Global pages (baseline): 6077741 lseeks/sec
+> 94 Global pages (this set): 8433111 lseeks/sec
+> 			   +2355370 lseeks/sec (+38.8%)
 
-  https://github.com/ceph/ceph-client/commit/2474e77e75215a3cad3b652d2f55ba5b123cb119
+That's all kernel text, right? What's the result for the case where global
+is only set for all user/kernel shared pages?
 
 Thanks,
 
-                Ilya
+	tglx
