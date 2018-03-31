@@ -1,195 +1,127 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-220671-1520985446-2-12375922768080843765
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-670115-1522461436-2-15535688574387514738
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1520985446; b=qZwKtX887elxy36sLa4lz9yNDO0GvcqZiST2a75kdknoPGU
-    45qQ5NhLa9NuId/iazHMZ43thEDCv+xEGqGH0aHS1IOl9sjjerBjkkOu24bOaRTZ
-    ujNLNZeGD0q7E/NwpcXu0hMZ/ZXDUjzvgB8YM2HJAcsAuQfHt1sn7waiJmF1vzV7
-    5Iw6awMM1UuHbxw9aVAF8Meuxa8djjEo13JiTYt9FT1aPrHUfRnWbKLD1+y2Zrmf
-    4p03Xrrf8LpsPEjZdcctucz6vigLf49rLsZE6QK3oY5vfre+ycHX2WZJFkMp93B8
-    RIeJgGdhl5mjsJL7JcpXxvUDZE9N8CmBm+Xp/0w==
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522461435; b=qjAwpyKhCKhxpnZSx7pACYGmHOZMktrWp5GaxhP1rNqbJRHdvL
+    BbrekYjhtPX/CZVfTmTMEFvV1KDK8s8kRe6uRlmF9ZGNtpSpI/vaNdSAYPcbYgCD
+    RUVW4ptDvdpMLBQHyx6mVCh+opktzbkjz1SV8XRfOqqtgw2ZEgTpp3BP87FMz9Ut
+    gBx/LkJQjjHS2Zk1NAvPPj/vA4gll0wasZ+JrFjPZMXNaJfRrtfdDkEJAS1yyRuI
+    qnYLxecLbq7x5g8kmf1Ao0LBismYui274qx5wrz7SRQkqWoKzyyTGLDszwjGztFN
+    dppF13XM3nAV2bYc1UDihkZn+Nt7vhrUgIqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1520985446; bh=KVRCe0l8vmnzpdynVTCx5qkmmeig0gPoMJUsk6Sdtmo=; b=F
-    /9WCNE7739/zxh5CAoq5h16e7p+cf4TUZR/XsvM3/mxWhTzIklkLcvQD8J/vbzBJ
-    hG6exuPCEMUj0nfvA51F01BSVxofJ14Xzzg3sGUBrZYf0z+Cq81jwAWYvStaflk0
-    ZfecJTIDmtq5COg3yZIZ3dwCQdy4aebjwjDhVaevLOhUAt5T1NVxMiOIK7S944TI
-    I01LIz25CfOLuGiVY5RJz43VX2AxvzMepfabfS16fdE+OKbiZGbdBVOxbzscTJ1Y
-    w7DxM0lb+ZC3XMID4Zr4vTtGmYf0WAE04oSFJSxwHj0BIlHp685tuhUobyX01OZB
-    mGa9V2V9dchyeS32sF+EA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=uhB59fDf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1522461435; bh=gWtQvN1q0uRwxOIFXptStCTmDTf4Ey
+    Bc9G9wCadDO7M=; b=moDukyO1rbbch/N04YRrml97yyx164RlGP93g859EhwIoM
+    CAaewlw85Psh7hVEgZCoDRrCC3BFOvO6kRenOZoRbUX9lsWfTTxui1ZbuxBsss6G
+    xjvjHnP69WcH3fZ+PnHH2Fgy2nMPWfpUvD4cSfTc2JiNeADr4PZvSjyRmtizSpXI
+    rHoGIk+LvK7vN1aowq/C1dApew7DXL+0eX1Vy28sSQbMCEkJEftXIoLsAlkUI4Eg
+    8QbxJP/U/PCFh+rjitxoVgwMan0vXxvp4ySXgCoItivPt73EEiMB1iBcZS1lHMKj
+    eNyQQUqqrqe2/Q12MZT5o/8dT+KrLwoGsnxUj5ew==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered; 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=uhB59fDf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMDrk29vxGE4isIXFU2cG77CGLkPizq8qx+J9WfvlCwlVFFwAgnTpofF2s7eovlrEA7R3WNIE+ZmWHzIbVuoF6ifQavaRMmCuob9qejqB6jBCEpVHxOa
+    FJitdkFXBpodUwhw6zqYPYAoh/UG5I+teIOZmdcCY4ZcagQYoKm9gl/JlLwAviGIqONYidatgFvil4e1sEfJi5cJ2qUdsFbp2A/gycDZNy8r+Z4zJtUJ01YV
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
+    a=fmudEVSGTFKl2g307FAA:9 a=HUqATDVKn4QA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932747AbeCMX5X (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 13 Mar 2018 19:57:23 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:56520 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752885AbeCMX5V (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 13 Mar 2018 19:57:21 -0400
-Subject: Re: [RESEND RFC] translate_pid API
-To: Jann Horn <jannh@google.com>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Nagarajan.Muthukrishnan@oracle.com,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Serge Hallyn <serge.hallyn@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>, xemul@parallels.com
-References: <1520875093-18174-1-git-send-email-nagarathnam.muthusamy@oracle.com>
- <CAG48ez1ww-pVQ9R+d+P+smRR3eaEkJ-=9GW-O-QOvH-YZoFG8A@mail.gmail.com>
- <69f13674-7f84-5dc7-0bd7-e5e65e9cb3b0@oracle.com>
- <CAG48ez3v5rTSUg4VDTYknuOBHnv+FF9=ghZJAsknCXREU+juOg@mail.gmail.com>
- <1a8cac8b-22cc-e194-4244-b20428c8a9c2@oracle.com>
- <CAG48ez05MDH7Wf1_j3qgbrqjEh-GXPLQHfx-Va_pyzvT5hP=gw@mail.gmail.com>
- <df6ad381-db14-3ded-c724-a80565b549b2@oracle.com>
- <CAG48ez0FD747Vth=VQBNeJnFVKRxmd71Xu4atU650t0WxqOuFg@mail.gmail.com>
-From: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-Message-ID: <65625f8c-d701-7407-3999-6ca30a59c236@oracle.com>
-Date: Tue, 13 Mar 2018 16:52:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <CAG48ez0FD747Vth=VQBNeJnFVKRxmd71Xu4atU650t0WxqOuFg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8831 signatures=668690
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803130263
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1752784AbeCaB5N (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 30 Mar 2018 21:57:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752603AbeCaB5M (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 30 Mar 2018 21:57:12 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059EC20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH] f2fs: truncate preallocated blocks in error case
+Date: Fri, 30 Mar 2018 18:57:10 -0700
+Message-Id: <20180331015710.72893-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.15.0.531.g2ccb3012c9-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+If write is failed, we must deallocate the blocks that we couldn't write.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-On 03/13/2018 04:10 PM, Jann Horn wrote:
-> On Tue, Mar 13, 2018 at 3:45 PM, Nagarathnam Muthusamy
-> <nagarathnam.muthusamy@oracle.com> wrote:
->> On 03/13/2018 03:00 PM, Jann Horn wrote:
->>> On Tue, Mar 13, 2018 at 2:44 PM, Nagarathnam Muthusamy
->>> <nagarathnam.muthusamy@oracle.com> wrote:
->>>> On 03/13/2018 02:28 PM, Jann Horn wrote:
->>>>> On Tue, Mar 13, 2018 at 2:20 PM, Nagarathnam Muthusamy
->>>>> <nagarathnam.muthusamy@oracle.com> wrote:
->>>>>> On 03/13/2018 01:47 PM, Jann Horn wrote:
->>>>>>> On Mon, Mar 12, 2018 at 10:18 AM,  <nagarathnam.muthusamy@oracle.com>
->>>>>>> wrote:
-> [...]
->>>>>>>> + */
->>>>>>>> +SYSCALL_DEFINE3(translate_pid, pid_t, pid, u64, source,
->>>>>>>> +               u64, target)
->>>>>>>> +{
->>>>>>>> +       struct pid_namespace *source_ns = NULL, *target_ns = NULL;
->>>>>>>> +       struct pid *struct_pid;
->>>>>>>> +       struct pid_namespace *ph;
->>>>>>>> +       struct hlist_bl_head *shead = NULL;
->>>>>>>> +       struct hlist_bl_head *thead = NULL;
->>>>>>>> +       struct hlist_bl_node *dup_node;
->>>>>>>> +       pid_t result;
->>>>>>>> +
->>>>>>>> +       if (!source) {
->>>>>>>> +               source_ns = &init_pid_ns;
->>>>>>>> +       } else {
->>>>>>>> +               shead = pid_ns_hash_head(pid_ns_hash, source);
->>>>>>>> +               hlist_bl_lock(shead);
->>>>>>>> +               hlist_bl_for_each_entry(ph, dup_node, shead, node) {
->>>>>>>> +                       if (source == ph->ns.ns_id) {
->>>>>>>> +                               source_ns = ph;
->>>>>>>> +                               break;
->>>>>>>> +                       }
->>>>>>>> +               }
->>>>>>>> +               if (!source_ns) {
->>>>>>>> +                       hlist_bl_unlock(shead);
->>>>>>>> +                       return -EINVAL;
->>>>>>>> +               }
->>>>>>>> +       }
->>>>>>>> +       if (!ptrace_may_access(source_ns->child_reaper,
->>>>>>>> +                              PTRACE_MODE_READ_FSCREDS)) {
->>>>>>> AFAICS this proposal breaks the visibility restrictions that
->>>>>>> namespaces normally create. If there are two namespaces-based
->>>>>>> containers that use the same UID range, I don't think they should be
->>>>>>> able to learn information about each other, such as which PIDs are in
->>>>>>> use in the other container; but as far as I can tell, your proposal
->>>>>>> makes it possible to do that (unless an LSM or so is interfering). I
->>>>>>> would prefer it if this API required visibility of the targeted PID
->>>>>>> namespaces in the caller's PID namespace.
->>>>>>
->>>>>> I am trying to simulate the same access restrictions allowed
->>>>>> on a process's /proc/<pid>/ns/pid file. If the translator has
->>>>>> access to /proc/<pid>/ns/pid file of both source and destination
->>>>>> namespaces, shouldn't it be allowed to translate the pid between
->>>>>> them?
->>>>> But the translator doesn't actually need to have access to those
->>>>> procfs files, right?
->>>> I thought it should have access to those procfs files to satisfy the
->>>> visibility constraint that targeted PID namespaces should be visible
->>>> in caller's PID namespace and ptrace_may_access checks that
->>>> constraint.
->>> If there are two containers that use the same UID range,
->>> ptrace_may_access() checks from a process in one container on a
->>> process in another container can pass. Normally, you just can't even
->>> reach the ptrace_may_access() checks because you can't reference
->>> processes in another container in any way.
->>
->> If there is no way to reference the process in another container,
->> there is no way to get to the /proc/<pid>/ns/pidns_id file which
->> exports the ID of that container right? So, a translator has to
->> first guess the container ID then try translate. Even after translation,
->> unless the translator has proper privileges, I believe it cant do
->> anything with just the pid right?
-> Well, yes to both. You'd have to guess the ID of the container, and
-> you wouldn't be able to do much with it, apart from finding valid PIDs
-> and their mapping between namespaces.
->
->>> By the way, a related concern: The use of global identifiers will
->>> probably also negatively affect Checkpoint/Restore In Userspace?
->> Will look into this. Can you point me to the specifics of the
->> usecase which could be negatively affected?
-> AFAICS you won't be able to reliably recreate namespace IDs when a
-> process is checkpointed and resumed, meaning that checkpoint/resume
-> won't work on processes that use these namespace IDs.
-I agree. When the process is resumed, the namespace IDs
-might be obsolete.
-
-Thanks,
-Nagarathnam.
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 8068b015ece5..f18f62dd60a3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2911,6 +2911,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	ret = generic_write_checks(iocb, from);
+ 	if (ret > 0) {
++		bool preallocated = false;
++		size_t target_size;
+ 		int err;
+ 
+ 		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
+@@ -2927,6 +2929,9 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 				}
+ 
+ 		} else {
++			preallocated = true;
++			target_size = iocb->ki_pos + iov_iter_count(from);
++
+ 			err = f2fs_preallocate_blocks(iocb, from);
+ 			if (err) {
+ 				clear_inode_flag(inode, FI_NO_PREALLOC);
+@@ -2939,6 +2944,10 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		blk_finish_plug(&plug);
+ 		clear_inode_flag(inode, FI_NO_PREALLOC);
+ 
++		/* if we couldn't write data, we should deallocate blocks. */
++		if (preallocated && i_size_read(inode) < target_size)
++			f2fs_truncate(inode);
++
+ 		if (ret > 0)
+ 			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
+ 	}
+-- 
+2.15.0.531.g2ccb3012c9-goog
