@@ -1,84 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752967AbeCaIzs (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 04:55:48 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:61753 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752068AbeCaIzq (ORCPT
+        id S1753017AbeCaJ2y (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 05:28:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54657 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752422AbeCaJ2x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 04:55:46 -0400
-X-IronPort-AV: E=Sophos;i="5.48,383,1517871600";
-   d="scan'208";a="320806109"
-Date: Sat, 31 Mar 2018 10:55:44 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Varsha Rao <rvarsha016@gmail.com>
-cc: Joe Perches <joe@perches.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cocci <cocci@systeme.lip6.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [Cocci] [PATCH] crypto: cavium: zip: Remove unnecessary
- parentheses
-In-Reply-To: <CAAFX7JTEK5NyvKmYoC6b4tSv9a7Gv1WHONmp4nXxnuz8rqOmxw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1803311054580.2373@hadrien>
-References: <20180328175736.17360-1-rvarsha016@gmail.com> <1522260676.12357.121.camel@perches.com> <CAAFX7JTfWdaGra+kWBJt-GXVVO601K03qWnExFKFD_9vxS-03g@mail.gmail.com> <alpine.DEB.2.20.1803310817420.2373@hadrien>
- <CAAFX7JTEK5NyvKmYoC6b4tSv9a7Gv1WHONmp4nXxnuz8rqOmxw@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Sat, 31 Mar 2018 05:28:53 -0400
+Date: Sat, 31 Mar 2018 02:28:26 -0700
+From: tip-bot for Colin Ian King <tipbot@zytor.com>
+Message-ID: <tip-eaeb8e76cd5751e805f6e4a3fcec91d283e3b0c2@git.kernel.org>
+Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, peterz@infradead.org,
+        colin.king@canonical.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+Reply-To: hpa@zytor.com, peterz@infradead.org, colin.king@canonical.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+In-Reply-To: <20180313154709.1015-1-colin.king@canonical.com>
+References: <20180313154709.1015-1-colin.king@canonical.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/cpu/tme: Fix spelling: "configuation" ->
+ "configuration"
+Git-Commit-ID: eaeb8e76cd5751e805f6e4a3fcec91d283e3b0c2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  eaeb8e76cd5751e805f6e4a3fcec91d283e3b0c2
+Gitweb:     https://git.kernel.org/tip/eaeb8e76cd5751e805f6e4a3fcec91d283e3b0c2
+Author:     Colin Ian King <colin.king@canonical.com>
+AuthorDate: Tue, 13 Mar 2018 15:47:09 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sat, 31 Mar 2018 10:46:40 +0200
 
+x86/cpu/tme: Fix spelling: "configuation" -> "configuration"
 
-On Sat, 31 Mar 2018, Varsha Rao wrote:
+Trivial fix to spelling mistake in the pr_err_once() error message text.
 
-> On Sat, Mar 31, 2018 at 11:48 AM, Julia Lawall  wrote:
-> > On Thu, 29 Mar 2018, Varsha Rao wrote:
-> >
-> >> On Wed, Mar 28, 2018 at 11:41 PM, Joe Perches wrote:
-> >> >
-> >> > On Wed, 2018-03-28 at 23:27, Varsha Rao wrote:
-> >> > > This patch fixes the clang warning of extraneous parentheses, with the
-> >> > > following coccinelle script.
-> >> > >
-> >> > > @@
-> >> > > identifier i;
-> >> > > constant c;
-> >> > > @@
-> >> > > (
-> >> > > -((i == c))
-> >> > > +i == c
-> >> > > >
-> >> > >
-> >> > > -((i <= c))
-> >> > > +i <= c
-> >> >
-> >> > Why just the "==" and "<=" cases?
-> >> > Why not "<", ">" and ">=" too?
-> >> >
-> >> > Why not expression instead of constant?
-> >>
-> >> Initially I had the other cases too and used expression instead of
-> >> constant. But the results included only "==" and "<=" cases with
-> >> constant. Along with one false positive case.
-> >>
-> >> --- a/drivers/crypto/cavium/zip/zip_main.c
-> >> +++ b/drivers/crypto/cavium/zip/zip_main.c
-> >> @@ -99,7 +99,7 @@ static struct zip_device *zip_alloc_devi
-> >>   */
-> >>  struct zip_device *zip_get_device(int node)
-> >>  {
-> >> -    if ((node < MAX_ZIP_DEVICES) && (node >= 0))
-> >> +    if (node < MAX_ZIP_DEVICES && node >= 0)
-> >
-> > Why is it a false positive?
->
-> The parentheses around multiple expressions in if statement is not
-> considered extra, right?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180313154709.1015-1-colin.king@canonical.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-< and >= should bind tighter than &&.  But perhaps one could fine the
-original code to be more readable.
-
-julia
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 6106d11ceb6b..b9693b80fc21 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -540,7 +540,7 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 	if (mktme_status != MKTME_UNINITIALIZED) {
+ 		if (tme_activate != tme_activate_cpu0) {
+ 			/* Broken BIOS? */
+-			pr_err_once("x86/tme: configuation is inconsistent between CPUs\n");
++			pr_err_once("x86/tme: configuration is inconsistent between CPUs\n");
+ 			pr_err_once("x86/tme: MKTME is not usable\n");
+ 			mktme_status = MKTME_DISABLED;
+ 
