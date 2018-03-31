@@ -1,65 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752825AbeCaAdU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 20:33:20 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54599 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752561AbeCaAdR (ORCPT
+        id S1752788AbeCaAkg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 20:40:36 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60262 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752606AbeCaAkf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 20:33:17 -0400
-X-Google-Smtp-Source: AIpwx49JvC/qIn7Hdmte8yOZ4rDfF5YNrikKmnYAj522nlfvJrYHFlH9GntsCwN09G+CEgFc48OSqw==
-From: Dmitry Safonov <dima@arista.com>
-To: linux-kernel@vger.kernel.org, joro@8bytes.org
-Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
-Subject: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in irq handler
-Date: Sat, 31 Mar 2018 01:33:12 +0100
-Message-Id: <20180331003312.6390-2-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180331003312.6390-1-dima@arista.com>
-References: <20180331003312.6390-1-dima@arista.com>
+        Fri, 30 Mar 2018 20:40:35 -0400
+Date: Sat, 31 Mar 2018 02:40:30 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Tony Lindgren <tony@atomide.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
+Subject: Re: 4.16-rc5 on Motorola Droid 4
+Message-ID: <20180331004030.2kvdhlgynwmeiuib@earth.universe>
+References: <20180318220418.GA22880@amd>
+ <20180320140322.GU5799@atomide.com>
+ <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
+ <20180327212156.GA10834@amd>
+ <20180330121959.uxx6kcl7v5w777vq@earth.universe>
+ <20180330211729.GA3389@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="p3kes3mtjjbjul6e"
+Content-Disposition: inline
+In-Reply-To: <20180330211729.GA3389@amd>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Theoretically, on some machines faults might be generated faster than
-they're cleared by CPU. Let's limit the cleaning-loop by number of hw
-fault registers.
 
-Cc: Alex Williamson <alex.williamson@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux-foundation.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- drivers/iommu/dmar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--p3kes3mtjjbjul6e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 6c4ea32ee6a9..cf1105111209 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1615,7 +1615,7 @@ static int dmar_fault_do_one(struct intel_iommu *iommu, int type,
- irqreturn_t dmar_fault(int irq, void *dev_id)
- {
- 	struct intel_iommu *iommu = dev_id;
--	int reg, fault_index;
-+	int reg, fault_index, i;
- 	u32 fault_status;
- 	unsigned long flag;
- 	static DEFINE_RATELIMIT_STATE(rs,
-@@ -1633,7 +1633,7 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
- 
- 	fault_index = dma_fsts_fault_record_index(fault_status);
- 	reg = cap_fault_reg_offset(iommu->cap);
--	while (1) {
-+	for (i = 0; i < cap_num_fault_regs(iommu->cap); i++) {
- 		/* Disable printing, simply clear the fault when ratelimited */
- 		bool ratelimited = !__ratelimit(&rs);
- 		u8 fault_reason;
--- 
-2.13.6
+Hi,
+
+On Fri, Mar 30, 2018 at 11:17:29PM +0200, Pavel Machek wrote:
+> On Fri 2018-03-30 14:19:59, Sebastian Reichel wrote:
+> > Hi,
+> >=20
+> > On Tue, Mar 27, 2018 at 11:21:56PM +0200, Pavel Machek wrote:
+> > > Also, if you know how to get information from light sensor, that would
+> > > be nice.
+> >=20
+> > You need CONFIG_SENSORS_ISL29028. Once the driver is probed:
+> >=20
+> > $ cat /sys/bus/iio/devices/iio\:device1/name
+> > isl29030
+> > $ cat /sys/bus/iio/devices/iio\:device1/in_illuminance_input
+> > 19
+>=20
+> Thanks, that works.
+>=20
+> I was also able to get accelerometers to work, but they are extremely
+> slow to read (6 seconds for all 3 axis). Interesting, but probably not
+> too important for now.
+
+IIRC this is related to runtime PM. It should not be a problem if
+you use libiio.
+
+-- Sebastian
+
+--p3kes3mtjjbjul6e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlq+2PkACgkQ2O7X88g7
++pqpAQ/9GkUg3mt5twNhoz2iuG1gEvzhfi4Aq3U3nnanGDpvtgyTwApjGThRfqD8
+zJi+bV8q5CGJXyxPDa7IJ4lSM83ugdRnBztuexrN3RzyJzM3SpE37Fd1K+xyby8o
+alVURP+uQyJCHSzBZUWzTxtDaI5xGfySgrM2aB2y1dcE5uaM2aviuJxElWP4Rxto
+UysRb49RXSKq/nTTLROiKtWE8Z/7avR5HEjyJe+Wa0EqiLmbFiBwRne0fy4qy+SZ
+g2VhSxPUIY8iDLZZ5Qh0ZvFVTG4JTMm9YrTREzzHfTQY2/3f8CEZYSqA4ghpeBkB
+mZN4HXD+zBF5XOr2HKkSoZgA0pmupWwlQj9suK0T6fEBECmRj29fLO2Ks1AVFZoT
+iivQaqaiE8ft7sbrJXlcPIcF38YS8pksN2lHsipZun0aQiHTXi4se6To0wHhCKy8
+zREDzd6t4W2fy67xHm14vJM9wEnHbD0ZNfKG+bMkFVikNgD0fIX3M8ZPC9bf10CQ
+7jTg1BgiCj/wc0bBEl0vOB1aFo7aP1coP8YV0YrCN+r4Sh5wApwmpoZahNEoUOEa
+TMgI3R38p54L0EzbbE4zfRqTdIUyzMZv5wTKeltYm9ot3FUPGUvzq2lP/c3INAh1
+osj1/CNndrYifCLCNM7e5SviM7a9z2StRf9vq3vzjJRv0xwgPtE=
+=wreR
+-----END PGP SIGNATURE-----
+
+--p3kes3mtjjbjul6e--
