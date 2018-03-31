@@ -1,61 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753198AbeCaKWZ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 06:22:25 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50544 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752885AbeCaKWY (ORCPT
+        id S1752945AbeCaKcs (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 06:32:48 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43596 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751564AbeCaKcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 06:22:24 -0400
-X-Google-Smtp-Source: AIpwx48jXGjO42t/o/7kc2RELdgv9JheXVDqe1Vh4vWUhxLxxy+pHSdreUDKGR244aBeokXfh4I+OA==
-Date: Sat, 31 Mar 2018 12:22:20 +0200
+        Sat, 31 Mar 2018 06:32:47 -0400
+X-Google-Smtp-Source: AIpwx480NPwZclhjPiOhPZ7DG8ev2wyXXdKViIRDTdqmykzUj50DCLHe13ZRoCsBqt7qBDaNKVoVLA==
+Date: Sat, 31 Mar 2018 12:32:43 +0200
 From: Ingo Molnar <mingo@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        lkp@intel.com, sohil.mehta@intel.com, mitake@dcl.info.waseda.ac.jp,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/urgent] x86/io: Define readq()/writeq() to use 64-bit
- type
-Message-ID: <20180331102220.kmtu62uktmfrfe4a@gmail.com>
-References: <20180119143322.16555-1-andriy.shevchenko@linux.intel.com>
- <tip-0fc8483b698620ea3d8cc6635b54eccc613c23a3@git.kernel.org>
- <1522163426.21176.24.camel@linux.intel.com>
- <20180331101914.ylrlgxhdohcosbnr@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86 PTI fixes
+Message-ID: <20180331103243.sajo2gd35okelfys@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180331101914.ylrlgxhdohcosbnr@gmail.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+Please pull the latest x86-pti-for-linus git tree from:
 
-> > As of today I don't see this in linux-next
-> > 
-> > % git tag --contains 0fc8483b69862
-> > next-20180214
-> > next-20180215
-> > next-20180216
-> > 
-> > What happened to this change?
-> 
-> Hm, so it's a real mystery: I merged it, then removed it 1.5 days later without 
-> reporting anything. According to the Git log timestamp the removal happened late 
-> at night, so maybe it was a tired typo?
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
 
-So just a few seconds after sending this I remembered why I zapped it: it was a 
-Sparse failure reported by the kbuild-test robot.
+   # HEAD: bd6271039ee6f0c9b468148fc2d73e0584af6b4f x86/alternatives: Fixup alternative_call_2
 
-Here's the report:
+Two fixes: a relatively simple objtool fix that makes Clang built kernels work 
+with ORC debug info, plus an alternatives macro fix.
 
-  [tip:x86/urgent 14/14] drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1690:22: sparse: incorrect type in argument 1 (different base types)
+  out-of-topic modifications in x86-pti-for-linus:
+  --------------------------------------------------
+  tools/objtool/check.c              # 3c1f05835cbf: objtool: Add Clang support
 
-Since you were on Cc: of that report I assumed you'd take care of it.
-
-Thanks,
+ Thanks,
 
 	Ingo
+
+------------------>
+Alexey Dobriyan (1):
+      x86/alternatives: Fixup alternative_call_2
+
+Josh Poimboeuf (1):
+      objtool: Add Clang support
+
+
+ arch/x86/include/asm/alternative.h |  4 +---
+ tools/objtool/check.c              | 11 +++++++++++
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index cf5961ca8677..4cd6a3b71824 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -218,13 +218,11 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  */
+ #define alternative_call_2(oldfunc, newfunc1, feature1, newfunc2, feature2,   \
+ 			   output, input...)				      \
+-{									      \
+ 	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
+ 		"call %P[new2]", feature2)				      \
+ 		: output, ASM_CALL_CONSTRAINT				      \
+ 		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
+-		  [new2] "i" (newfunc2), ## input);			      \
+-}
++		  [new2] "i" (newfunc2), ## input)
+ 
+ /*
+  * use this macro(s) if you need more than one output parameter
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 92b6a2c21631..5409f6f6c48d 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1386,6 +1386,17 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
+ 				state->vals[op->dest.reg].offset = -state->stack_size;
+ 			}
+ 
++			else if (op->src.reg == CFI_BP && op->dest.reg == CFI_SP &&
++				 cfa->base == CFI_BP) {
++
++				/*
++				 * mov %rbp, %rsp
++				 *
++				 * Restore the original stack pointer (Clang).
++				 */
++				state->stack_size = -state->regs[CFI_BP].offset;
++			}
++
+ 			else if (op->dest.reg == cfa->base) {
+ 
+ 				/* mov %reg, %rsp */
