@@ -1,50 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752442AbeCaMPv (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 08:15:51 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:46684 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751432AbeCaMPu (ORCPT
+        id S1752576AbeCaMxf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 08:53:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53500 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751432AbeCaMxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 08:15:50 -0400
-X-Google-Smtp-Source: AIpwx48Oa9DuGqHZv6lhzZoPx5pY3TxpBF/1m+SP57dbaiHKZVt46vY01OWMB2AIJ8F1QI4imEc1+GD849F2nyisDHo=
+        Sat, 31 Mar 2018 08:53:34 -0400
+Date: Sat, 31 Mar 2018 05:53:32 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>, Tejun Heo <tj@kernel.org>
+Subject: [PATCH] ida: Remove simple_ida_lock
+Message-ID: <20180331125332.GF13332@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vd6O-=2dtbQ6eH8ye7QpW9PNEyZRdVwAyCDkS4TQW5vPQ@mail.gmail.com>
-References: <20180119143322.16555-1-andriy.shevchenko@linux.intel.com>
- <tip-0fc8483b698620ea3d8cc6635b54eccc613c23a3@git.kernel.org>
- <1522163426.21176.24.camel@linux.intel.com> <20180331101914.ylrlgxhdohcosbnr@gmail.com>
- <20180331102220.kmtu62uktmfrfe4a@gmail.com> <CAHp75Vd6O-=2dtbQ6eH8ye7QpW9PNEyZRdVwAyCDkS4TQW5vPQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 31 Mar 2018 15:15:49 +0300
-Message-ID: <CAHp75VdPEG0xFcNYZZCpx4SPX8+7FHFcAGuSVd0vX7TuknmKiQ@mail.gmail.com>
-Subject: Re: [tip:x86/urgent] x86/io: Define readq()/writeq() to use 64-bit type
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>, sohil.mehta@intel.com,
-        mitake@dcl.info.waseda.ac.jp, linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 31, 2018 at 3:06 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Sat, Mar 31, 2018 at 1:22 PM, Ingo Molnar <mingo@kernel.org> wrote:
->> * Ingo Molnar <mingo@kernel.org> wrote:
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
->>   [tip:x86/urgent 14/14] drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1690:22: sparse: incorrect type in argument 1 (different base types)
->>
->> Since you were on Cc: of that report I assumed you'd take care of it.
->
-> Ah, yes. This one I fixed.
+Improve the scalability of the IDA by using the per-IDA xa_lock rather
+than the global simple_ida_lock.  IDAs are not typically used in
+performance-sensitive locations, but since we have this lock anyway,
+we can use it.  It is also a step towards converting the IDA from the
+radix tree to the XArray.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=for-next&id=71591d1280e5ef02c2af2ffb9801d0c842973be9
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ lib/idr.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
+diff --git a/lib/idr.c b/lib/idr.c
+index b2f7ab31ce55..e80da084117c 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -7,7 +7,6 @@
+ #include <linux/xarray.h>
+ 
+ DEFINE_PER_CPU(struct ida_bitmap *, ida_bitmap);
+-static DEFINE_SPINLOCK(simple_ida_lock);
+ 
+ /**
+  * idr_alloc_u32() - Allocate an ID.
+@@ -572,7 +571,7 @@ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 	if (!ida_pre_get(ida, gfp_mask))
+ 		return -ENOMEM;
+ 
+-	spin_lock_irqsave(&simple_ida_lock, flags);
++	xa_lock_irqsave(&ida->ida_rt, flags);
+ 	ret = ida_get_new_above(ida, start, &id);
+ 	if (!ret) {
+ 		if (id > max) {
+@@ -582,7 +581,7 @@ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
+ 			ret = id;
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&simple_ida_lock, flags);
++	xa_unlock_irqrestore(&ida->ida_rt, flags);
+ 
+ 	if (unlikely(ret == -EAGAIN))
+ 		goto again;
+@@ -606,8 +605,8 @@ void ida_simple_remove(struct ida *ida, unsigned int id)
+ 	unsigned long flags;
+ 
+ 	BUG_ON((int)id < 0);
+-	spin_lock_irqsave(&simple_ida_lock, flags);
++	xa_lock_irqsave(&ida->ida_rt, flags);
+ 	ida_remove(ida, id);
+-	spin_unlock_irqrestore(&simple_ida_lock, flags);
++	xa_unlock_irqrestore(&ida->ida_rt, flags);
+ }
+ EXPORT_SYMBOL(ida_simple_remove);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.16.2
