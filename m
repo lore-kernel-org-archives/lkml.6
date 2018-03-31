@@ -1,82 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752843AbeCaDHi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 23:07:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32788 "EHLO mail.kernel.org"
+        id S1752857AbeCaDfD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 23:35:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752819AbeCaDHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 23:07:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A874021770
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 30 Mar 2018 23:07:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Joel Fernandes <joelaf@google.com>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180330230733.2bf010f2@gandalf.local.home>
-In-Reply-To: <20180331021857.GD13332@bombadil.infradead.org>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-        <20180330102038.2378925b@gandalf.local.home>
-        <20180330205356.GA13332@bombadil.infradead.org>
-        <20180330173031.257a491a@gandalf.local.home>
-        <20180330174209.4cb77003@gandalf.local.home>
-        <CAJWu+orx=NZrkAf7x_HqttnrMssmW7DPZOL1fxR=N6D_-fbmtw@mail.gmail.com>
-        <20180330214151.415e90ea@gandalf.local.home>
-        <20180331021857.GD13332@bombadil.infradead.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752829AbeCaDfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 23:35:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 631352175D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>
+Subject: [PATCH 00/10] softirq: Consolidate and optimize softirq mask v2
+Date: Sat, 31 Mar 2018 05:34:43 +0200
+Message-Id: <1522467293-7320-1-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018 19:18:57 -0700
-Matthew Wilcox <willy@infradead.org> wrote:
+Only the last patch has changed since v1 to integrate review from peterz.
 
-> Again though, this is the same pattern as vmalloc.  There are any number
-> of places where userspace can cause an arbitrarily large vmalloc to be
-> attempted (grep for kvmalloc_array for a list of promising candidates).
-> I'm pretty sure that just changing your GFP flags to GFP_KERNEL |
-> __GFP_NOWARN will give you the exact behaviour that you want with no
-> need to grub around in the VM to find out if your huge allocation is
-> likely to succeed.
+Quote from the v1 summary:
 
-Not sure how this helps. Note, I don't care about consecutive pages, so
-this is not an array. It's a link list of thousands of pages. How do
-you suggest allocating them? The ring buffer is a link list of pages.
+The softirq mask and its accessors/mutators have many implementations
+scattered around many architectures. Most do the same things consisting
+in a field in a per-cpu struct (often irq_cpustat_t) accessed through
+per-cpu ops. We can provide instead a generic efficient version that
+most of them can use. In fact s390 is the only exception because the
+field is stored in lowcore.
 
-What I currently do is to see how many more pages I need. Allocate them
-one at a time and put them in a temporary list, if it succeeds I add
-them to the ring buffer, if not, I free the entire list (it's an all or
-nothing operation).
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
+	softirq/mask-v2
 
-The allocation I'm making doesn't warn. The problem is the
-GFP_RETRY_MAYFAIL, which will try to allocate any possible memory in
-the system. When it succeeds, the ring buffer allocation logic will
-then try to allocate another page. If we add too many pages, we will
-allocate all possible pages and then try to allocate more. This
-allocation will fail without causing an OOM. That's not the problem.
-The problem is if the system is active during this time, and something
-else tries to do any allocation, after all memory has been consumed,
-that allocation will fail. Then it will trigger an OOM.
+HEAD: cce39c380f2dbe3e92db6a018c8ba65579c6311b
 
-I showed this in my Call Trace, that the allocation that failed during
-my test was something completely unrelated, and that failure caused an
-OOM.
+Thanks,
+	Frederic
+---
 
-What this last patch does is see if there's space available before it
-even starts the process.
+Frederic Weisbecker (10):
+      ia64: Convert local_softirq_pending() to per-cpu ops
+      sparc: Convert local_softirq_pending() to use per-cpu op
+      softirq: Turn default irq_cpustat_t to standard per-cpu
+      softirq: Consolidate default local_softirq_pending() implementations
+      ia64: Switch to generic local_softirq_pending() implementation
+      parisc: Switch to generic local_softirq_pending() implementation
+      powerpc: Switch to generic local_softirq_pending() implementation
+      sparc: Switch to generic local_softirq_pending() implementation
+      x86: Switch to generic local_softirq_pending() implementation
+      softirq/s390: Move default mutators of overwritten softirq mask to s390
 
-Maybe I'm missing something, but I don't see how NOWARN can help. My
-allocations are not what is giving the warning.
 
--- Steve
+ arch/ia64/include/asm/hardirq.h     |  2 +-
+ arch/parisc/include/asm/hardirq.h   |  8 --------
+ arch/powerpc/include/asm/hardirq.h  |  7 -------
+ arch/s390/include/asm/hardirq.h     |  2 ++
+ arch/sparc/include/asm/hardirq_64.h |  5 +++--
+ arch/x86/include/asm/hardirq.h      |  8 --------
+ include/linux/interrupt.h           | 13 ++++++++++---
+ include/linux/irq_cpustat.h         | 10 +++-------
+ kernel/softirq.c                    |  4 ++--
+ 9 files changed, 21 insertions(+), 38 deletions(-)
