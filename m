@@ -1,86 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeCaSw4 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 14:52:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55067 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753045AbeCaSwz (ORCPT
+        id S1753243AbeCaTTo (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 15:19:44 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52937 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752949AbeCaTTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 14:52:55 -0400
-Date: Sat, 31 Mar 2018 11:52:20 -0700
-From: tip-bot for Jules Maselbas <tipbot@zytor.com>
-Message-ID: <tip-1b5d43cfb69759d8ef8d30469cea31d0c037aed5@git.kernel.org>
-Cc: peterz@infradead.org, dietmar.eggemann@arm.com,
-        linux-kernel@vger.kernel.org, stephen.kyle@arm.com,
-        jules.maselbas@arm.com, hpa@zytor.com, patrick.bellasi@arm.com,
-        torvalds@linux-foundation.org, chris.redpath@arm.com, mingo@kernel.org,
-        efault@gmx.de, tglx@linutronix.de
-Reply-To: peterz@infradead.org, dietmar.eggemann@arm.com,
-        linux-kernel@vger.kernel.org, stephen.kyle@arm.com,
-        jules.maselbas@arm.com, hpa@zytor.com, patrick.bellasi@arm.com,
-        torvalds@linux-foundation.org, chris.redpath@arm.com, mingo@kernel.org,
-        tglx@linutronix.de, efault@gmx.de
-In-Reply-To: <20180329144301.38419-1-jules.maselbas@arm.com>
-References: <20180329144301.38419-1-jules.maselbas@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/cpufreq/schedutil: Fix error path mutex
- unlock
-Git-Commit-ID: 1b5d43cfb69759d8ef8d30469cea31d0c037aed5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 31 Mar 2018 15:19:43 -0400
+Date: Sat, 31 Mar 2018 21:19:40 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
+Message-ID: <20180331191939.GA8999@amd>
+References: <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180327121441.GH29239@sirena.org.uk>
+ <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180331145531.GA10404@amd>
+ <20180331181935.GX5700@atomide.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
 Content-Disposition: inline
+In-Reply-To: <20180331181935.GX5700@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1b5d43cfb69759d8ef8d30469cea31d0c037aed5
-Gitweb:     https://git.kernel.org/tip/1b5d43cfb69759d8ef8d30469cea31d0c037aed5
-Author:     Jules Maselbas <jules.maselbas@arm.com>
-AuthorDate: Thu, 29 Mar 2018 15:43:01 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 31 Mar 2018 20:42:38 +0200
 
-sched/cpufreq/schedutil: Fix error path mutex unlock
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch prevents the 'global_tunables_lock' mutex from being
-unlocked before being locked.  This mutex is not locked if the
-sugov_kthread_create() function fails.
+On Sat 2018-03-31 11:19:35, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [180331 14:56]:
+> > Hi!
+> >=20
+> > > Hmm well I got audio call hacked to work as a proof of concept hack,
+> > > see below. Maybe it can be used to verify some of the assumptions
+> > > above.
+> > >=20
+> > > Then.. To split the work a bit, can you guys maybe try to decode
+> > > the cpcap register values and try to do a proper ASoC driver patch?
+> >=20
+> > This is not proper patch yet, but it should be a step in that
+> > direction...
+>=20
+> Cool :) Microphone still does not work for me.. I tried tweaking
+> the alsamixer settings but no mic. This is with cold boot with
+> droid4-kexecboot if that might make a difference, we may have
+> some register uninitialized somewhere. Any ideas?
 
-Signed-off-by: Jules Maselbas <jules.maselbas@arm.com>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Chris Redpath <chris.redpath@arm.com>
-Cc: Dietmar Eggermann <dietmar.eggemann@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Stephen Kyle <stephen.kyle@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Cc: nd@arm.com
-Link: http://lkml.kernel.org/r/20180329144301.38419-1-jules.maselbas@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/cpufreq_schedutil.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Ok, I was focusing on the speaker side.
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 7936f548e071..617c6741c525 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -625,10 +625,9 @@ fail:
- 
- stop_kthread:
- 	sugov_kthread_stop(sg_policy);
--
--free_sg_policy:
- 	mutex_unlock(&global_tunables_lock);
- 
-+free_sg_policy:
- 	sugov_policy_free(sg_policy);
- 
- disable_fast_switch:
+alsamixer, tab to go to capture settings, set it to 37 37 Mic2 Mic1
+should work, according to my notes, but not recently tested and not
+tested against real human.
+
+I'll attempt to test it, but something in my userland shuts down
+system just after boot 60% of time, which is rather annoying.
+
+> FYI, I got one of the remaining n_gsm issues tracked down yesterday,
+> at least one more bug to go. Things only work with n_gsm debug
+> enabled right now for some reason..
+
+I don't know why I need n_gsm, but I have my fingers crossed. :-).
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq/30sACgkQMOfwapXb+vIi5ACfa0qh5oBtGYth/duDCcunjPb0
+Y8QAmwW+e8kiuRJdS1aqT/jxe/U5Z9MD
+=2jf8
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
