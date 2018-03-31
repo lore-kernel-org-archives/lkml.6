@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752473AbeCaEMq (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 00:12:46 -0400
-Received: from mga17.intel.com ([192.55.52.151]:34268 "EHLO mga17.intel.com"
+        id S1752857AbeCaEM4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 00:12:56 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21178 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752320AbeCaEMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 00:12:43 -0400
+        id S1752598AbeCaEMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 00:12:54 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,383,1517904000";
-   d="scan'208";a="32965553"
-Subject: [PATCH v8 07/18] fs,
- dax: use page->mapping to warn if truncate collides with a busy page
+   d="scan'208";a="46779051"
+Subject: [PATCH v8 09/18] dax,
+ dm: allow device-mapper to operate without dax support
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
-Cc: Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz, snitzer@redhat.com
-Date: Fri, 30 Mar 2018 21:02:46 -0700
-Message-ID: <152246896677.36038.13246248154525745894.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc: Alasdair Kergon <agk@redhat.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        kbuild test robot <lkp@intel.com>, Mike Snitzer <snitzer@redhat.com>,
+        david@fromorbit.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, jack@suse.cz,
+        snitzer@redhat.com
+Date: Fri, 30 Mar 2018 21:02:58 -0700
+Message-ID: <152246897808.36038.9873046364733003385.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -33,139 +33,294 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Catch cases where extent unmap operations encounter pages that are
-pinned / busy. Typically this is pinned pages that are under active dma.
-This warning is a canary for potential data corruption as truncated
-blocks could be allocated to a new file while the device is still
-performing i/o.
+Change device-mapper's DAX dependency to require the presence of at
+least one DAX_DRIVER. This allows device-mapper to be built without
+bringing the DAX core along which is especially wasteful when there are
+no DAX drivers, like BLK_DEV_PMEM, configured.
 
-Here is an example of a collision that this implementation catches:
-
- WARNING: CPU: 2 PID: 1286 at fs/dax.c:343 dax_disassociate_entry+0x55/0x80
- [..]
- Call Trace:
-  __dax_invalidate_mapping_entry+0x6c/0xf0
-  dax_delete_mapping_entry+0xf/0x20
-  truncate_exceptional_pvec_entries.part.12+0x1af/0x200
-  truncate_inode_pages_range+0x268/0x970
-  ? tlb_gather_mmu+0x10/0x20
-  ? up_write+0x1c/0x40
-  ? unmap_mapping_range+0x73/0x140
-  xfs_free_file_space+0x1b6/0x5b0 [xfs]
-  ? xfs_file_fallocate+0x7f/0x320 [xfs]
-  ? down_write_nested+0x40/0x70
-  ? xfs_ilock+0x21d/0x2f0 [xfs]
-  xfs_file_fallocate+0x162/0x320 [xfs]
-  ? rcu_read_lock_sched_held+0x3f/0x70
-  ? rcu_sync_lockdep_assert+0x2a/0x50
-  ? __sb_start_write+0xd0/0x1b0
-  ? vfs_fallocate+0x20c/0x270
-  vfs_fallocate+0x154/0x270
-  SyS_fallocate+0x43/0x80
-  entry_SYSCALL_64_fastpath+0x1f/0x96
-
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: Alasdair Kergon <agk@redhat.com>
+Reported-by: Bart Van Assche <Bart.VanAssche@wdc.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reviewed-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- fs/dax.c |   63 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ drivers/md/Kconfig         |    1 
+ drivers/md/dm-linear.c     |    6 +++
+ drivers/md/dm-log-writes.c |   95 +++++++++++++++++++++++---------------------
+ drivers/md/dm-stripe.c     |    6 +++
+ drivers/md/dm.c            |   10 +++--
+ include/linux/dax.h        |   30 +++++++++++---
+ 6 files changed, 92 insertions(+), 56 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index b646a46e4d12..a77394fe586e 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -298,6 +298,63 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
- 	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
+diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
+index 2c8ac3688815..6dfc328b8f99 100644
+--- a/drivers/md/Kconfig
++++ b/drivers/md/Kconfig
+@@ -201,7 +201,6 @@ config BLK_DEV_DM_BUILTIN
+ config BLK_DEV_DM
+ 	tristate "Device mapper support"
+ 	select BLK_DEV_DM_BUILTIN
+-	select DAX
+ 	---help---
+ 	  Device-mapper is a low level volume manager.  It works by allowing
+ 	  people to specify mappings for ranges of logical sectors.  Various
+diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+index d5f8eff7c11d..89443e0ededa 100644
+--- a/drivers/md/dm-linear.c
++++ b/drivers/md/dm-linear.c
+@@ -154,6 +154,7 @@ static int linear_iterate_devices(struct dm_target *ti,
+ 	return fn(ti, lc->dev, lc->start, ti->len, data);
  }
  
-+static unsigned long dax_entry_size(void *entry)
++#if IS_ENABLED(CONFIG_DAX_DRIVER)
+ static long linear_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+ 		long nr_pages, void **kaddr, pfn_t *pfn)
+ {
+@@ -184,6 +185,11 @@ static size_t linear_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
+ 	return dax_copy_from_iter(dax_dev, pgoff, addr, bytes, i);
+ }
+ 
++#else
++#define linear_dax_direct_access NULL
++#define linear_dax_copy_from_iter NULL
++#endif
++
+ static struct target_type linear_target = {
+ 	.name   = "linear",
+ 	.version = {1, 4, 0},
+diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
+index 3362d866793b..7fcb4216973f 100644
+--- a/drivers/md/dm-log-writes.c
++++ b/drivers/md/dm-log-writes.c
+@@ -610,51 +610,6 @@ static int log_mark(struct log_writes_c *lc, char *data)
+ 	return 0;
+ }
+ 
+-static int log_dax(struct log_writes_c *lc, sector_t sector, size_t bytes,
+-		   struct iov_iter *i)
+-{
+-	struct pending_block *block;
+-
+-	if (!bytes)
+-		return 0;
+-
+-	block = kzalloc(sizeof(struct pending_block), GFP_KERNEL);
+-	if (!block) {
+-		DMERR("Error allocating dax pending block");
+-		return -ENOMEM;
+-	}
+-
+-	block->data = kzalloc(bytes, GFP_KERNEL);
+-	if (!block->data) {
+-		DMERR("Error allocating dax data space");
+-		kfree(block);
+-		return -ENOMEM;
+-	}
+-
+-	/* write data provided via the iterator */
+-	if (!copy_from_iter(block->data, bytes, i)) {
+-		DMERR("Error copying dax data");
+-		kfree(block->data);
+-		kfree(block);
+-		return -EIO;
+-	}
+-
+-	/* rewind the iterator so that the block driver can use it */
+-	iov_iter_revert(i, bytes);
+-
+-	block->datalen = bytes;
+-	block->sector = bio_to_dev_sectors(lc, sector);
+-	block->nr_sectors = ALIGN(bytes, lc->sectorsize) >> lc->sectorshift;
+-
+-	atomic_inc(&lc->pending_blocks);
+-	spin_lock_irq(&lc->blocks_lock);
+-	list_add_tail(&block->list, &lc->unflushed_blocks);
+-	spin_unlock_irq(&lc->blocks_lock);
+-	wake_up_process(lc->log_kthread);
+-
+-	return 0;
+-}
+-
+ static void log_writes_dtr(struct dm_target *ti)
+ {
+ 	struct log_writes_c *lc = ti->private;
+@@ -920,6 +875,52 @@ static void log_writes_io_hints(struct dm_target *ti, struct queue_limits *limit
+ 	limits->io_min = limits->physical_block_size;
+ }
+ 
++#if IS_ENABLED(CONFIG_DAX_DRIVER)
++static int log_dax(struct log_writes_c *lc, sector_t sector, size_t bytes,
++		   struct iov_iter *i)
 +{
-+	if (dax_is_zero_entry(entry))
++	struct pending_block *block;
++
++	if (!bytes)
 +		return 0;
-+	else if (dax_is_empty_entry(entry))
-+		return 0;
-+	else if (dax_is_pmd_entry(entry))
-+		return PMD_SIZE;
-+	else
-+		return PAGE_SIZE;
-+}
 +
-+static unsigned long dax_radix_end_pfn(void *entry)
-+{
-+	return dax_radix_pfn(entry) + dax_entry_size(entry) / PAGE_SIZE;
-+}
-+
-+/*
-+ * Iterate through all mapped pfns represented by an entry, i.e. skip
-+ * 'empty' and 'zero' entries.
-+ */
-+#define for_each_mapped_pfn(entry, pfn) \
-+	for (pfn = dax_radix_pfn(entry); \
-+			pfn < dax_radix_end_pfn(entry); pfn++)
-+
-+static void dax_associate_entry(void *entry, struct address_space *mapping)
-+{
-+	unsigned long pfn;
-+
-+	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
-+		return;
-+
-+	for_each_mapped_pfn(entry, pfn) {
-+		struct page *page = pfn_to_page(pfn);
-+
-+		WARN_ON_ONCE(page->mapping);
-+		page->mapping = mapping;
++	block = kzalloc(sizeof(struct pending_block), GFP_KERNEL);
++	if (!block) {
++		DMERR("Error allocating dax pending block");
++		return -ENOMEM;
 +	}
-+}
 +
-+static void dax_disassociate_entry(void *entry, struct address_space *mapping,
-+		bool trunc)
-+{
-+	unsigned long pfn;
-+
-+	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
-+		return;
-+
-+	for_each_mapped_pfn(entry, pfn) {
-+		struct page *page = pfn_to_page(pfn);
-+
-+		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
-+		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
-+		page->mapping = NULL;
++	block->data = kzalloc(bytes, GFP_KERNEL);
++	if (!block->data) {
++		DMERR("Error allocating dax data space");
++		kfree(block);
++		return -ENOMEM;
 +	}
++
++	/* write data provided via the iterator */
++	if (!copy_from_iter(block->data, bytes, i)) {
++		DMERR("Error copying dax data");
++		kfree(block->data);
++		kfree(block);
++		return -EIO;
++	}
++
++	/* rewind the iterator so that the block driver can use it */
++	iov_iter_revert(i, bytes);
++
++	block->datalen = bytes;
++	block->sector = bio_to_dev_sectors(lc, sector);
++	block->nr_sectors = ALIGN(bytes, lc->sectorsize) >> lc->sectorshift;
++
++	atomic_inc(&lc->pending_blocks);
++	spin_lock_irq(&lc->blocks_lock);
++	list_add_tail(&block->list, &lc->unflushed_blocks);
++	spin_unlock_irq(&lc->blocks_lock);
++	wake_up_process(lc->log_kthread);
++
++	return 0;
 +}
++
+ static long log_writes_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+ 					 long nr_pages, void **kaddr, pfn_t *pfn)
+ {
+@@ -956,6 +957,10 @@ static size_t log_writes_dax_copy_from_iter(struct dm_target *ti,
+ dax_copy:
+ 	return dax_copy_from_iter(lc->dev->dax_dev, pgoff, addr, bytes, i);
+ }
++#else
++#define log_writes_dax_direct_access NULL
++#define log_writes_dax_copy_from_iter NULL
++#endif
+ 
+ static struct target_type log_writes_target = {
+ 	.name   = "log-writes",
+diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+index b5e892149c54..ac2e8ee9d586 100644
+--- a/drivers/md/dm-stripe.c
++++ b/drivers/md/dm-stripe.c
+@@ -311,6 +311,7 @@ static int stripe_map(struct dm_target *ti, struct bio *bio)
+ 	return DM_MAPIO_REMAPPED;
+ }
+ 
++#if IS_ENABLED(CONFIG_DAX_DRIVER)
+ static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+ 		long nr_pages, void **kaddr, pfn_t *pfn)
+ {
+@@ -351,6 +352,11 @@ static size_t stripe_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
+ 	return dax_copy_from_iter(dax_dev, pgoff, addr, bytes, i);
+ }
+ 
++#else
++#define stripe_dax_direct_access NULL
++#define stripe_dax_copy_from_iter NULL
++#endif
 +
  /*
-  * Find radix tree entry at given index. If it points to an exceptional entry,
-  * return it with the radix tree entry locked. If the radix tree doesn't
-@@ -404,6 +461,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 		}
+  * Stripe status:
+  *
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 68136806d365..ffc93aecc02a 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1800,7 +1800,7 @@ static void cleanup_mapped_device(struct mapped_device *md)
+ static struct mapped_device *alloc_dev(int minor)
+ {
+ 	int r, numa_node_id = dm_get_numa_node();
+-	struct dax_device *dax_dev;
++	struct dax_device *dax_dev = NULL;
+ 	struct mapped_device *md;
+ 	void *old_md;
  
- 		if (pmd_downgrade) {
-+			dax_disassociate_entry(entry, mapping, false);
- 			radix_tree_delete(&mapping->page_tree, index);
- 			mapping->nrexceptional--;
- 			dax_wake_mapping_entry_waiter(mapping, index, entry,
-@@ -453,6 +511,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 	    (radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_DIRTY) ||
- 	     radix_tree_tag_get(page_tree, index, PAGECACHE_TAG_TOWRITE)))
- 		goto out;
-+	dax_disassociate_entry(entry, mapping, trunc);
- 	radix_tree_delete(page_tree, index);
- 	mapping->nrexceptional--;
- 	ret = 1;
-@@ -547,6 +606,10 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+@@ -1866,9 +1866,11 @@ static struct mapped_device *alloc_dev(int minor)
+ 	md->disk->private_data = md;
+ 	sprintf(md->disk->disk_name, "dm-%d", minor);
  
- 	spin_lock_irq(&mapping->tree_lock);
- 	new_entry = dax_radix_locked_entry(pfn, flags);
-+	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
-+		dax_disassociate_entry(entry, mapping, false);
-+		dax_associate_entry(new_entry, mapping);
+-	dax_dev = alloc_dax(md, md->disk->disk_name, &dm_dax_ops);
+-	if (!dax_dev)
+-		goto bad;
++	if (IS_ENABLED(CONFIG_DAX_DRIVER)) {
++		dax_dev = alloc_dax(md, md->disk->disk_name, &dm_dax_ops);
++		if (!dax_dev)
++			goto bad;
 +	}
+ 	md->dax_dev = dax_dev;
  
- 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
- 		/*
+ 	add_disk_no_queue_reg(md->disk);
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index ae27a7efe7ab..f9eb22ad341e 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -26,16 +26,39 @@ extern struct attribute_group dax_attribute_group;
+ 
+ #if IS_ENABLED(CONFIG_DAX)
+ struct dax_device *dax_get_by_host(const char *host);
++struct dax_device *alloc_dax(void *private, const char *host,
++		const struct dax_operations *ops);
+ void put_dax(struct dax_device *dax_dev);
++void kill_dax(struct dax_device *dax_dev);
++void dax_write_cache(struct dax_device *dax_dev, bool wc);
++bool dax_write_cache_enabled(struct dax_device *dax_dev);
+ #else
+ static inline struct dax_device *dax_get_by_host(const char *host)
+ {
+ 	return NULL;
+ }
+-
++static inline struct dax_device *alloc_dax(void *private, const char *host,
++		const struct dax_operations *ops)
++{
++	/*
++	 * Callers should check IS_ENABLED(CONFIG_DAX) to know if this
++	 * NULL is an error or expected.
++	 */
++	return NULL;
++}
+ static inline void put_dax(struct dax_device *dax_dev)
+ {
+ }
++static inline void kill_dax(struct dax_device *dax_dev)
++{
++}
++static inline void dax_write_cache(struct dax_device *dax_dev, bool wc)
++{
++}
++static inline bool dax_write_cache_enabled(struct dax_device *dax_dev)
++{
++	return false;
++}
+ #endif
+ 
+ struct writeback_control;
+@@ -89,18 +112,13 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+ 
+ int dax_read_lock(void);
+ void dax_read_unlock(int id);
+-struct dax_device *alloc_dax(void *private, const char *host,
+-		const struct dax_operations *ops);
+ bool dax_alive(struct dax_device *dax_dev);
+-void kill_dax(struct dax_device *dax_dev);
+ void *dax_get_private(struct dax_device *dax_dev);
+ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+ 		void **kaddr, pfn_t *pfn);
+ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i);
+ void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
+-void dax_write_cache(struct dax_device *dax_dev, bool wc);
+-bool dax_write_cache_enabled(struct dax_device *dax_dev);
+ 
+ ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops);
