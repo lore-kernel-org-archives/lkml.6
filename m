@@ -1,23 +1,23 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx4+zA6UqROzby1vM7+H5pKVxscmmu7axOGQn2cuy5ep1nw4ktXctxHI2xiN1wrdC2YIt86YO
-ARC-Seal: i=1; a=rsa-sha256; t=1522476572; cv=none;
+X-Google-Smtp-Source: AIpwx4+fHqJ5P/Oq0xk434Ty+TCO2meBpq/hCtDnTh2EW2olCY8oGoe7mdSt4RGM61JGVZPw/LDY
+ARC-Seal: i=1; a=rsa-sha256; t=1522476571; cv=none;
         d=google.com; s=arc-20160816;
-        b=K4QTlSS7AbbJkkduy85MhKzbfoBnjdlfsFcVslzx4HAmUGgWaiEQKvELHKxRIwn3Lw
-         dFLv6Qv1e4g9Qze2nHh95pC8rIxuv0kDV8TcIi6pVEAKPt/9CAFQKFRI+TJgV2W9zpit
-         qqbJKnPvEUBQSaMUYykZEd4WxU+TDaRzrYxK3iikLns5jz+ycB3/kkV9wTwjBU0pqcF3
-         pKNQ9T5UBoRZlKY4nmcq0vrr50q02McoYzJOwOv2mjOG7pLXCmkAQ/3XcvYq1R/kq/5A
-         Vs9L2t9WQrwqonKagSXg9Bab1ZEwIr07GGqghW8H5UOE9z9f38MTvNPzthJpSrjV1kiO
-         cjhQ==
+        b=kfpO2QUDw83NNY8GpRJnRIl9sfkWxFXquRCLtYVjmnk/T3+GE7jCzdbXBkdTRJGyfb
+         ON8aCsOKP2zHDM8K7rXPpp4hmbVUyogb4f49s3Pls5GelKQbzhu8OeM6SjZSAEvYHzzC
+         vwn0EFKwun5GTX3FpmYKlC8KQeqNlYmQ41OtvPDoekvo3ziZ335LUg5K6j3zFO4Mi4Do
+         RPq63kgtge0LpziGu9kycy2pvuI0IOSn2xRNZNNs8yJiMaNNWhdqvSEwqO8nBKZfhSkv
+         VUk3Faz5VEl3N072tciFUKQ6PfPcFVzI3na5LHrQqmce2Kk74v3Wmf7ui6tTaZT74n+D
+         fJww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=IkLb9Oo8M7qWZYDCyBuj83S7FwRC3B8YCxRuW1IU4i8=;
-        b=NiDStTeHAkfUhNS6GnEAJFo9ljr+ikLk+eEpq/R+znFW0WlZZI2DlRABEvOO8NcX79
-         nvJg/+R3wiw/6EKnpMFBija975jum4o0reeHow15xU1pMdEaT8UavQUOWmHhFrbUJ0Nb
-         cqp6YqHpxF2M7rC4U4vF8wB8U5usv0NBtn3ezGgQkFNk2yXs/1FTiGv9p1AdAdeCsWn3
-         BagDcbsuwd+k9+nmkm0WZ0PyjCiBQE0yMxowIc9UIW1sxp0ZQZg9/eIzlEgOzeMypbhh
-         zmjpNdNY7wACBhEaDDEHPMVcFwNKV+VWgB25I7JEZvVsnY+PSGm8gy5qV7UjdG4aPRjr
-         iwLA==
+        bh=mWAaJ7Vv44nGACEwnCWzexAtXAFSWKW+xu2LS8TKTt8=;
+        b=y6nweoNZRwzeC486XqMZrAkL4thkEAWkdun14bJcroc9lRfU/CZtt6wrreS+h0yrVV
+         XBbrOpdYRhYmFarTQhyRK1wDAa5vaIi6GgwUyKT8fwqKugqQKcp4y7Ei5Zb0kJgx103v
+         aUTmKnL/vPLFhczfjItwqkEJttUtlSqmqTE1WONMrAN0NE/B3rsc8kfGXCbHqSv/Qzm7
+         xy2h6N23CC9/hN6ymQg8Lmt81WJj5GOheR+DFYTl49+fEF9ZhaclmE3nASvtytnXqInR
+         NjuFxGuudFH1MOyoTGBhkx9ID/l4at2bLBcNqgXe3ROgyu1qL598r7a2a0TawY+nkhtT
+         yt5w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
@@ -29,71 +29,63 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH v2 11/75] staging: ks7010: Remove trailing _t from 'struct hostif_mib_set_request_t'.
-Date: Fri, 30 Mar 2018 23:07:51 -0700
-Message-Id: <20180331060855.9452-11-quytelda@tamalin.org>
+Subject: [PATCH v2 10/75] staging: ks7010: Remove unused 'struct hostif_mib_get_confirm_t'.
+Date: Fri, 30 Mar 2018 23:07:50 -0700
+Message-Id: <20180331060855.9452-10-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:d6elKTOMGtu5JNqYPwreR8fXZg6nGuRzsfZRiw6mTOSgNsuzr44
- XjTQ6t0stxwW25zNSc3V5dS7iQIl4I6OGO89OV8SOs9OIDoqJOhwXVKpmhKdl54wcO/vgNh
- K2xEWRikoinLcRd6BnuPHaJ/uPaWqyo3ZNvMPy09U7K3an7imSCN87YAilzZmTW5zpCcAQG
- xHzlAo7FXUmkBZCeumySA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:xl992v8C8TY=:Mr1nXpmG5+Zji0BwQcqvmY
- dZfkn21j/Dmts/pa+05SMbjvVodJiIRKAzpOQGFbB3sTNzJ8+X1IuD1alMSzQljiPbUESqjiP
- 1hV8HMHh8fBuxp6OpM0rUSEV4mXd6MCIE0k3bGJzugMaxnOpO2kcJaUa4tP6NLjVgVJnRS5pm
- /tFh/UExxYefGROVI39T2ViH0D4fBlwyJXE4LOf2cnDQfm+zz6HbhP2c3P/dTjKEh7+Yr8aek
- MFTOqxhwpRHhRfgQKZ9g4CpGoAqoK8BmIieRmU8FhB1qx5t/Dy9Ac7ANKXy/i22sbfjZC9cGH
- 9MtVq93t8yfLcsoGAAZvpMR9FukI6zq5S+rL2//AkMduEqrtd0azUXpPD+cZn+YjSitm8wHiE
- ReIvY14zNvtwdbJr8UU+0YYSEI70Uxo4+D4RW3lBfIsFx5B74p+qB3Zz/Do8+D5n1/C4ATo0p
- 85wXEcpKspmMxn9I7ng0+Smfj0zflAX+EIfuS/df1oF1qrGF+vObvqMfK+k/i4womTM3ykHqa
- rojJCAd37ULSgRNXSL5Bitv7n/+xesqmeZ2W2Sroxxp4nuNPMi/O943b3AL3jYmjC8rgXyb8P
- 9CN6MJjgpm77b4M9xI4c1wgKvzHUjrUfaIthpkq5zA+nyO5tV6rLPYCs4w0HxyhdqOmon1sR4
- Uvt+YJZFlSMtxyppWF0sSB3ntt1d58W7zmxCKe53/bE3QvLJg/A2XspS1PNMBaom17Cv73der
- tal1xoz4yOptf4iTqChslvc+P6s9nbKiLla2Uw==
+X-Provags-ID: V03:K0:yGaR3F8wkzEHYfODxguYoh3TJ1inHDdyn0hIb0so9tAQ8ouAumq
+ s/vydlAQWcvCo7iwAhFzOtAityFZUp9b1Vm6MRattV6Kdd/XAnYeBZqermXrWpAGYypdz7W
+ oooFqx+SnSrHx6mi3w64wz8IS6TMAhrX0arXi54DdNJrEUcH3sxuNiAct9UjlERL2Ft89d7
+ Zqz83Ua8M8mSuUQ+nZVTA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:wrManTp3o4I=:FxXHdmymH5BsVAgvAniZ7V
+ 4zp6QbHRtiVtrFY5kK+1F4yUVF0KdQ63sRRR55jcvEtffPTB04JDK+XWuHLaZsv5lbrUaTWMg
+ PHJcs1Ttk12j62JGQoB1ovGPLl8mUf44W6pzJZ3vHSsKC6gAWB95Fx/Oo8vjxXpUSv15nRKyO
+ 0SKceUFmPf84AqgGzu4nf3ozx/p1mUJ6idgemjXRo7ua2UpTpZF/TJQXU559IH1FeFTXMjiqU
+ spZpAg1kjY2pp2k9DPMnBfL5NGUctv7i+byrn6PN4hCETc2CGDcVhdtYNG674U7HjK+OcjMlS
+ VMFgD1o0RIZMCEghrsgbqadoh7QfjYr7QzTYRR+ROszjoO8bMeLUCQWPbYc6hPN5oJkb6Q0Xl
+ 0BgS5+BHO86huMXsEAOzhYzpZPK1/2Lb39QQ19+9dgnL+5aZpxDQyXd2KEXo050r7HNysnuq2
+ pxp22003CALpKuGAXnmcdWRtsjPCoU1wrDP3dRwbv2yPQEIUNxt8xEvV9KaXY5Xxp87OmqTdf
+ 6EYlNaPbJUDiJFjEtS/4A2uimoya1dN0r126iovQu5Tpn+M3diHkhcwf1t5eLBI1Hubee+KOe
+ IDXj3vY0DfAkZ4YLDNWTYipMhs4d1acMtGoE0qZwyuBHLQ3d5sLa6pti6skyDRnIK5vLipjFx
+ gIB6cbr0AK9Ju7WL/tLSOVDpp9ljqqRTnZZRbLciOH2s8htDaEonIwtQ142x1rCoFcdwSifon
+ crcHQwT0AcVHpwJ++o50dCoDn3iYqTOB3ceZLg==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596432394526341946?=
-X-GMAIL-MSGID: =?utf-8?q?1596432394526341946?=
+X-GMAIL-THRID: =?utf-8?q?1596432393507782560?=
+X-GMAIL-MSGID: =?utf-8?q?1596432393507782560?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The "_t" suffix is not needed for structure names in this driver, and is a
-reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct hostif_mib_set_request_t' with 'struct
-hostif_mib_set_request'.
+'struct hostif_mib_get_confirm_t' is not used in this driver. Remove
+'struct hostif_mib_get_confirm_t'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 2 +-
- drivers/staging/ks7010/ks_hostif.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/ks7010/ks_hostif.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index cc1e5f441cf0..6295e01d91da 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1258,7 +1258,7 @@ void hostif_mib_set_request(struct ks_wlan_private *priv,
- 			    unsigned long mib_attribute, unsigned short size,
- 			    unsigned short type, void *vp)
- {
--	struct hostif_mib_set_request_t *pp;
-+	struct hostif_mib_set_request *pp;
- 
- 	if (priv->dev_state < DEVICE_STATE_BOOT)
- 		return;
 diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index e6d6c51ccc43..157f1c2394c3 100644
+index aedc832bc04c..e6d6c51ccc43 100644
 --- a/drivers/staging/ks7010/ks_hostif.h
 +++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -156,7 +156,7 @@ struct hostif_mib_value {
+@@ -151,16 +151,10 @@ struct hostif_mib_value {
+ 	u8 body[0];
+ } __packed;
+ 
+-struct hostif_mib_get_confirm_t {
+-	struct hostif_hdr header;
+-	__le32 mib_status;
+ #define MIB_SUCCESS    0
+ #define MIB_INVALID    1
  #define MIB_READ_ONLY  2
  #define MIB_WRITE_ONLY 3
+-	__le32 mib_attribute;
+-	struct hostif_mib_value mib_value;
+-} __packed;
  
--struct hostif_mib_set_request_t {
-+struct hostif_mib_set_request {
+ struct hostif_mib_set_request_t {
  	struct hostif_hdr header;
- 	__le32 mib_attribute;
- 	struct hostif_mib_value mib_value;
 -- 
 2.16.3
