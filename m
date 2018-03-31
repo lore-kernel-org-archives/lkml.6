@@ -1,127 +1,244 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-670115-1522461436-2-15535688574387514738
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522461435; b=qjAwpyKhCKhxpnZSx7pACYGmHOZMktrWp5GaxhP1rNqbJRHdvL
-    BbrekYjhtPX/CZVfTmTMEFvV1KDK8s8kRe6uRlmF9ZGNtpSpI/vaNdSAYPcbYgCD
-    RUVW4ptDvdpMLBQHyx6mVCh+opktzbkjz1SV8XRfOqqtgw2ZEgTpp3BP87FMz9Ut
-    gBx/LkJQjjHS2Zk1NAvPPj/vA4gll0wasZ+JrFjPZMXNaJfRrtfdDkEJAS1yyRuI
-    qnYLxecLbq7x5g8kmf1Ao0LBismYui274qx5wrz7SRQkqWoKzyyTGLDszwjGztFN
-    dppF13XM3nAV2bYc1UDihkZn+Nt7vhrUgIqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1522461435; bh=gWtQvN1q0uRwxOIFXptStCTmDTf4Ey
-    Bc9G9wCadDO7M=; b=moDukyO1rbbch/N04YRrml97yyx164RlGP93g859EhwIoM
-    CAaewlw85Psh7hVEgZCoDRrCC3BFOvO6kRenOZoRbUX9lsWfTTxui1ZbuxBsss6G
-    xjvjHnP69WcH3fZ+PnHH2Fgy2nMPWfpUvD4cSfTc2JiNeADr4PZvSjyRmtizSpXI
-    rHoGIk+LvK7vN1aowq/C1dApew7DXL+0eX1Vy28sSQbMCEkJEftXIoLsAlkUI4Eg
-    8QbxJP/U/PCFh+rjitxoVgwMan0vXxvp4ySXgCoItivPt73EEiMB1iBcZS1lHMKj
-    eNyQQUqqrqe2/Q12MZT5o/8dT+KrLwoGsnxUj5ew==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMDrk29vxGE4isIXFU2cG77CGLkPizq8qx+J9WfvlCwlVFFwAgnTpofF2s7eovlrEA7R3WNIE+ZmWHzIbVuoF6ifQavaRMmCuob9qejqB6jBCEpVHxOa
-    FJitdkFXBpodUwhw6zqYPYAoh/UG5I+teIOZmdcCY4ZcagQYoKm9gl/JlLwAviGIqONYidatgFvil4e1sEfJi5cJ2qUdsFbp2A/gycDZNy8r+Z4zJtUJ01YV
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
-    a=fmudEVSGTFKl2g307FAA:9 a=HUqATDVKn4QA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752784AbeCaB5N (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 30 Mar 2018 21:57:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752603AbeCaB5M (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 30 Mar 2018 21:57:12 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059EC20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH] f2fs: truncate preallocated blocks in error case
-Date: Fri, 30 Mar 2018 18:57:10 -0700
-Message-Id: <20180331015710.72893-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.15.0.531.g2ccb3012c9-goog
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+n93SS0ALj+ey2jxJoykrpm5Uv1eqh0/FBpw5jtIclMg5gIA5LkFa7U3lRiXTjP1JGIDfB
+ARC-Seal: i=1; a=rsa-sha256; t=1522461179; cv=none;
+        d=google.com; s=arc-20160816;
+        b=v7DDrN3EA3aUDJ8e3wB2VvnSKEdQj2Sqcg9J/xP/K+LvzH4l9HK7V6VZfuNagTl6cJ
+         u35OrtiJuxWIsOxF1AVKYS1ytr/yBgH9R7k8mUNeClBbZsYSfrFabDbbC52RhXvs5AlQ
+         S1gCe4nPcYptLLuJWiZV4ZWe4YQdT7vWY69C9cxSl1q6yucmKEAaB9jYeutkW2DpoQSK
+         6GsIjB+CtXiTqoLxPClTFJw9t6+CTIk7tg+jWYyM6YmeO8Gi/Cq4sXuRj3AMlQKv9iTJ
+         nGFOeo94ViempdNZyuHCB8XfY4/MCs7MSA483Sq6DUy7dwTYZV2UZpyMSZLkhTIv5xF0
+         9agw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=pU4bnVT94aB2863bO/FEp94lh2qIMfiybQq0IjDRgr4=;
+        b=ZFEB3wJeD6Ybz01pNq7DBgFl6uSfoMIlfHgiy0mjE3WEOGIc+WjpPuUOoEKAcGUBT3
+         QKd8y57OaNRQ8As/8VLn2R4RNcLOKIbOpdFwW9dj3WmM07ew9VTS++OqMOl+UFySvp5z
+         xFh4Tai1d6fufEKg18IRjbY5lqHGeBdeHaEMMDxdjPC+OSfJVYcUL2vYLbBnr3RunL7n
+         APm3emxoAZjXSViIkxhNE3tetMUS3UrXUL7YQQhpu4i2JpJCeOheyQa4B5ewdo/qQsiE
+         7Rr7CpodY6G/hTb6HMldNWqHaHMKFfGKytaDQ6QYrVIiKjLCjCX1B7jZBp/G+4eEZj+k
+         URZg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=aIJfVgkh;
+       spf=pass (google.com: domain of kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@chromium.org header.s=google header.b=aIJfVgkh;
+       spf=pass (google.com: domain of kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12836-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Date: Fri, 30 Mar 2018 18:52:36 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	David Laight <David.Laight@aculab.com>,
+	Ian Abbott <abbotti@mev.co.uk>, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCH v7] kernel.h: Retain constant expression output for
+ max()/min()
+Message-ID: <20180331015236.GA3852@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596416253887758070?=
+X-GMAIL-MSGID: =?utf-8?q?1596416253887758070?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If write is failed, we must deallocate the blocks that we couldn't write.
+In the effort to remove all VLAs from the kernel[1], it is desirable to
+build with -Wvla. However, this warning is overly pessimistic, in that
+it is only happy with stack array sizes that are declared as constant
+expressions, and not constant values. One case of this is the evaluation
+of the max() macro which, due to its construction, ends up converting
+constant expression arguments into a constant value result.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+All attempts to rewrite this macro with __builtin_constant_p() failed with
+older compilers (e.g. gcc 4.4)[2]. However, Martin Uecker, constructed[3]
+a mind-shattering solution that works everywhere. Cthulhu fhtagn!
+
+This patch updates the min()/max() macros to evaluate to a constant
+expression when called on constant expression arguments. This removes
+several false-positive stack VLA warnings from an x86 allmodconfig build
+when -Wvla is added:
+
+$ diff -u before.txt after.txt | grep ^-
+-drivers/input/touchscreen/cyttsp4_core.c:871:2: warning: ISO C90 forbids variable length array ‘ids’ [-Wvla]
+-fs/btrfs/tree-checker.c:344:4: warning: ISO C90 forbids variable length array ‘namebuf’ [-Wvla]
+-lib/vsprintf.c:747:2: warning: ISO C90 forbids variable length array ‘sym’ [-Wvla]
+-net/ipv4/proc.c:403:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
+-net/ipv6/proc.c:198:2: warning: ISO C90 forbids variable length array ‘buff’ [-Wvla]
+-net/ipv6/proc.c:218:2: warning: ISO C90 forbids variable length array ‘buff64’ [-Wvla]
+
+This also updates the one case where different enums were being compared
+and explicitly casts them to int (which matches the old side-effect of
+the single-evaluation code).
+
+[1] https://lkml.org/lkml/2018/3/7/621
+[2] https://lkml.org/lkml/2018/3/10/170
+[3] https://lkml.org/lkml/2018/3/20/845
+
+Co-Developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Co-Developed-by: Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- fs/f2fs/file.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v7:
+- __is_constant() renamed to __is_constexpr() (Miguel Ojeda)
+- adjust memory offset from 1 to 8 (David Laight)
+- min_t()/max_t() "t" renamed back to "type" (0-day bot)
+- add Acks
+---
+ drivers/char/tpm/tpm_tis_core.h |  8 ++---
+ include/linux/kernel.h          | 71 ++++++++++++++++++++++++-----------------
+ 2 files changed, 45 insertions(+), 34 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 8068b015ece5..f18f62dd60a3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2911,6 +2911,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index d5c6a2e952b3..f6e1dbe212a7 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -62,10 +62,10 @@ enum tis_defaults {
+ /* Some timeout values are needed before it is known whether the chip is
+  * TPM 1.0 or TPM 2.0.
+  */
+-#define TIS_TIMEOUT_A_MAX	max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
+-#define TIS_TIMEOUT_B_MAX	max(TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
+-#define TIS_TIMEOUT_C_MAX	max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
+-#define TIS_TIMEOUT_D_MAX	max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
++#define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
++#define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
++#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
++#define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
  
- 	ret = generic_write_checks(iocb, from);
- 	if (ret > 0) {
-+		bool preallocated = false;
-+		size_t target_size;
- 		int err;
+ #define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
+ #define	TPM_INT_ENABLE(l)		(0x0008 | ((l) << 12))
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 3fd291503576..87acb8b58ae9 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -783,41 +783,58 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+ #endif /* CONFIG_TRACING */
  
- 		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
-@@ -2927,6 +2929,9 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 				}
- 
- 		} else {
-+			preallocated = true;
-+			target_size = iocb->ki_pos + iov_iter_count(from);
+ /*
+- * min()/max()/clamp() macros that also do
+- * strict type-checking.. See the
+- * "unnecessary" pointer comparison.
++ * min()/max()/clamp() macros must accomplish three things:
++ *
++ * - avoid multiple evaluations of the arguments (so side-effects like
++ *   "x++" happen only once) when non-constant.
++ * - perform strict type-checking (to generate warnings instead of
++ *   nasty runtime surprises). See the "unnecessary" pointer comparison
++ *   in __typecheck().
++ * - retain result as a constant expressions when called with only
++ *   constant expressions (to avoid tripping VLA warnings in stack
++ *   allocation usage).
++ */
++#define __typecheck(x, y) \
++		(!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
 +
- 			err = f2fs_preallocate_blocks(iocb, from);
- 			if (err) {
- 				clear_inode_flag(inode, FI_NO_PREALLOC);
-@@ -2939,6 +2944,10 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		blk_finish_plug(&plug);
- 		clear_inode_flag(inode, FI_NO_PREALLOC);
- 
-+		/* if we couldn't write data, we should deallocate blocks. */
-+		if (preallocated && i_size_read(inode) < target_size)
-+			f2fs_truncate(inode);
++/*
++ * This returns a constant expression while determining if an argument is
++ * a constant expression, most importantly without evaluating the argument.
++ * Glory to Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
+  */
+-#define __min(t1, t2, min1, min2, x, y) ({		\
+-	t1 min1 = (x);					\
+-	t2 min2 = (y);					\
+-	(void) (&min1 == &min2);			\
+-	min1 < min2 ? min1 : min2; })
++#define __is_constexpr(x) \
++	(sizeof(int) == sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)))
 +
- 		if (ret > 0)
- 			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
- 	}
++#define __no_side_effects(x, y) \
++		(__is_constexpr(x) && __is_constexpr(y))
++
++#define __safe_cmp(x, y) \
++		(__typecheck(x, y) && __no_side_effects(x, y))
++
++#define __cmp(x, y, op)	((x) op (y) ? (x) : (y))
++
++#define __cmp_once(x, y, op) ({		\
++		typeof(x) __x = (x);	\
++		typeof(y) __y = (y);	\
++		__cmp(__x, __y, op); })
++
++#define __careful_cmp(x, y, op)				\
++		__builtin_choose_expr(__safe_cmp(x, y),	\
++				      __cmp(x, y, op), __cmp_once(x, y, op))
+ 
+ /**
+  * min - return minimum of two values of the same or compatible types
+  * @x: first value
+  * @y: second value
+  */
+-#define min(x, y)					\
+-	__min(typeof(x), typeof(y),			\
+-	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
+-	      x, y)
+-
+-#define __max(t1, t2, max1, max2, x, y) ({		\
+-	t1 max1 = (x);					\
+-	t2 max2 = (y);					\
+-	(void) (&max1 == &max2);			\
+-	max1 > max2 ? max1 : max2; })
++#define min(x, y)	__careful_cmp(x, y, <)
+ 
+ /**
+  * max - return maximum of two values of the same or compatible types
+  * @x: first value
+  * @y: second value
+  */
+-#define max(x, y)					\
+-	__max(typeof(x), typeof(y),			\
+-	      __UNIQUE_ID(max1_), __UNIQUE_ID(max2_),	\
+-	      x, y)
++#define max(x, y)	__careful_cmp(x, y, >)
+ 
+ /**
+  * min3 - return minimum of three values
+@@ -869,10 +886,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+  * @x: first value
+  * @y: second value
+  */
+-#define min_t(type, x, y)				\
+-	__min(type, type,				\
+-	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
+-	      x, y)
++#define min_t(type, x, y)	__careful_cmp((type)(x), (type)(y), <)
+ 
+ /**
+  * max_t - return maximum of two values, using the specified type
+@@ -880,10 +894,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+  * @x: first value
+  * @y: second value
+  */
+-#define max_t(type, x, y)				\
+-	__max(type, type,				\
+-	      __UNIQUE_ID(min1_), __UNIQUE_ID(min2_),	\
+-	      x, y)
++#define max_t(type, x, y)	__careful_cmp((type)(x), (type)(y), >)
+ 
+ /**
+  * clamp_t - return a value clamped to a given range using a given type
 -- 
-2.15.0.531.g2ccb3012c9-goog
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
