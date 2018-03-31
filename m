@@ -1,95 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752837AbeCaBlz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 21:41:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752603AbeCaBly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 21:41:54 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1321021773
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 30 Mar 2018 21:41:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180330214151.415e90ea@gandalf.local.home>
-In-Reply-To: <CAJWu+orx=NZrkAf7x_HqttnrMssmW7DPZOL1fxR=N6D_-fbmtw@mail.gmail.com>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-        <20180330102038.2378925b@gandalf.local.home>
-        <20180330205356.GA13332@bombadil.infradead.org>
-        <20180330173031.257a491a@gandalf.local.home>
-        <20180330174209.4cb77003@gandalf.local.home>
-        <CAJWu+orx=NZrkAf7x_HqttnrMssmW7DPZOL1fxR=N6D_-fbmtw@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752843AbeCaB7G (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 21:59:06 -0400
+Received: from tn-76-7-162-187.sta.embarqhsd.net ([76.7.162.187]:53644 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752788AbeCaB7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 21:59:04 -0400
+Date: Fri, 30 Mar 2018 21:59:03 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: linux-kernel@vger.kernel.org
+Subject: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180331015903.GA29398@animx.eu.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018 16:38:52 -0700
-Joel Fernandes <joelaf@google.com> wrote:
+I reported this before but noone responded.
 
-> > --- a/kernel/trace/ring_buffer.c
-> > +++ b/kernel/trace/ring_buffer.c
-> > @@ -1164,6 +1164,11 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
-> >         struct buffer_page *bpage, *tmp;
-> >         long i;
-> >
-> > +       /* Check if the available memory is there first */
-> > +       i = si_mem_available();
-> > +       if (i < nr_pages)  
-> 
-> Does it make sense to add a small margin here so that after ftrace
-> finishes allocating, we still have some memory left for the system?
-> But then then we have to define a magic number :-|
+I have an iscsi target setup with /dev/sr[012] using pscsi.  On the
+initiator, I mount only 1 disc.  Then I issue find -type f | xargs cat >
+/dev/null  Then after a few seconds, I get 2 oops and the system has to be
+hard reset.
 
-I don't think so. The memory is allocated by user defined numbers. They
-can do "free" to see what is available. The original patch from
-Zhaoyang was due to a script that would just try a very large number
-and cause issues.
+I noticed if I cat /dev/sr1 from the initiator, it doesn't crash.  I was
+also able to burn without crashing.
 
-If the memory is available, I just say let them have it. This is
-borderline user space issue and not a kernel one.
-
-> > +  
-> 
-> I tested in Qemu with 1GB memory, I am always able to get it to fail
-> allocation even without this patch without causing an OOM. Maybe I am
-> not running enough allocations in parallel or something :)
-
-Try just echoing in "1000000" into buffer_size_kb and see what happens.
-
-> 
-> The patch you shared using si_mem_available is working since I'm able
-> to allocate till the end without a page allocation failure:
-> 
-> bash-4.3# echo 237800 > /d/tracing/buffer_size_kb
-> bash: echo: write error: Cannot allocate memory
-> bash-4.3# echo 237700 > /d/tracing/buffer_size_kb
-> bash-4.3# free -m
->              total         used         free       shared      buffers
-> Mem:           985          977            7           10            0
-> -/+ buffers:                977            7
-> Swap:            0            0            0
-> bash-4.3#
-> 
-> I think this patch is still good to have, since IMO we should not go
-> and get page allocation failure (even if its a non-OOM) and subsequent
-> stack dump from mm's allocator, if we can avoid it.
-> 
-> Tested-by: Joel Fernandes <joelaf@google.com>
-
-Great thanks! I'll make it into a formal patch.
-
--- Steve
+Here's the OOPS:
+[2692.733468] WARNING: CPU: 8 PID: 0 at /usr/src/linux/dist/4.15.14-nobklcd/drivers/scsi/scsi_lib.c:1068 scsi_init_io+0x111/0x1a0 [scsi_mod]
+[2692.734154] Modules linked in: dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c crc32c_generic md_mod dm_crypt algif_skcipher af_alg dm_mod dax ext4 crc16 mbcache jbd2 af_packet iscsi_target_mod tcm_loop vhost_scsi vhost target_core_file target_core_iblock target_core_pscsi target_core_mod nfsd exportfs dummy bridge stp llc ib_iser rdma_cm iw_cm ib_cm ib_core ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi netconsole configfs sr_mod cdrom adt7475 hwmon_vid sd_mod sg coretemp x86_pkg_temp_thermal kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc snd_hda_codec_realtek snd_hda_codec_generic nouveau video led_class drm_kms_helper cfbfillrect syscopyarea cfbimgblt
+[2692.737388]  sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec ttm snd_hda_core snd_pcm_oss drm snd_mixer_oss agpgart snd_pcm igb snd_timer snd aesni_intel soundcore hwmon aes_x86_64 i2c_algo_bit ahci mpt3sas crypto_simd i2c_core libahci glue_helper mptsas raid_class libata mptscsih scsi_transport_sas mptbase scsi_mod wmi button unix
+[2692.737388] CPU: 8 PID: 0 Comm: swapper/8 Not tainted 4.15.14 #1
+[2692.737388] Hardware name: Dell Inc. Precision T5610/0WN7Y6, BIOS A16 02/05/2018
+[2692.737388] RIP: 0010:scsi_init_io+0x111/0x1a0 [scsi_mod]
+[2692.737388] RSP: 0018:ffff8806b7a03d78 EFLAGS: 00010046
+[2692.737388] RAX: 0000000000000000 RBX: ffff8806aa4a9c00 RCX: 0000000000000000
+[2692.737388] RDX: 0000000000000000 RSI: ffff8806aa4a9c00 RDI: ffff8806aa4a9d48
+[2692.737388] RBP: ffff8806aa4a9d48 R08: 0000000000000000 R09: ffff8806aa4a9d80
+[2692.737388] R10: ffff8806ab949088 R11: 0000000000000000 R12: ffff8806b29bb000
+[2692.737388] R13: 0000000000000000 R14: ffff8806b29bb000 R15: ffff8806ac4f6950
+[2692.737388] FS:  0000000000000000(0000) GS:ffff8806b7a00000(0000) knlGS:0000000000000000
+[2692.737388] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[2692.737388] CR2: 00007f1359a8b756 CR3: 0000000001c09003 CR4: 00000000001606e0
+[2692.737388] Call Trace:
+[2692.737388]  <IRQ>
+[2692.737388]  ? scsi_setup_cmnd+0xb3/0x140 [scsi_mod]
+[2692.737388]  ? scsi_prep_fn+0x53/0x130 [scsi_mod]
+[2692.737388]  ? blk_peek_request+0x136/0x220
+[2692.737388]  ? scsi_request_fn+0x2b/0x510 [scsi_mod]
+[2692.737388]  ? __blk_run_queue+0x34/0x50
+[2692.737388]  ? blk_run_queue+0x26/0x40
+[2692.737388]  ? scsi_run_queue+0x229/0x2b0 [scsi_mod]
+[2692.737388]  ? scsi_io_completion+0x3ce/0x5a0 [scsi_mod]
+[2692.737388]  ? blk_done_softirq+0x67/0x80
+[2692.737388]  ? __do_softirq+0xdb/0x1dd
+[2692.737388]  ? irq_exit+0xa3/0xb0
+[2692.737388]  ? do_IRQ+0x45/0xc0
+[2692.737388]  ? common_interrupt+0x77/0x77
+[2692.737388]  </IRQ>
+[2692.737388]  ? cpuidle_enter_state+0x124/0x200
+[2692.737388]  ? cpuidle_enter_state+0x119/0x200
+[2692.737388]  ? do_idle+0xdc/0x180
+[2692.737388]  ? cpu_startup_entry+0x14/0x20
+[2692.737388]  ? secondary_startup_64+0xa5/0xb0
+[2692.737388] Code: 8b 7b 30 e8 d2 6b 20 e1 49 8b 17 4c 89 ff 89 c6 89 44 24 04 e8 81 81 22 e1 85 c0 41 89 c4 74 55 41 bc 02 00 00 00 e9 39 ff ff ff <0f> 0b 41 bc 01 00 00 00 e9 2c ff ff ff 48 8b 3d 6b dc 00 00 be 
+[2692.737388] ---[ end trace 9801970f9b249e10 ]---
+[2692.737388] ------------[ cut here ]------------
+[2692.737388] kernel BUG at /usr/src/linux/dist/4.15.14-nobklcd/block/blk-core.c:3235!
+[2692.737388] invalid opcode: 0000 [#1] PREEMPT SMP
+[2692.737388] Modules linked in: dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c crc32c_generic md_mod dm_crypt algif_skcipher af_alg dm_mod dax ext4 crc16 mbcache jbd2 af_packet iscsi_target_mod tcm_loop vhost_scsi vhost target_core_file target_core_iblock target_core_pscsi target_core_mod nfsd exportfs dummy bridge stp llc ib_iser rdma_cm iw_cm ib_cm ib_core ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi netconsole configfs sr_mod cdrom adt7475 hwmon_vid sd_mod sg coretemp x86_pkg_temp_thermal kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc snd_hda_codec_realtek snd_hda_codec_generic nouveau video led_class drm_kms_helper cfbfillrect syscopyarea cfbimgblt
+[2692.737388]  sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec ttm snd_hda_core snd_pcm_oss drm snd_mixer_oss agpgart snd_pcm igb snd_timer snd aesni_intel soundcore hwmon aes_x86_64 i2c_algo_bit ahci mpt3sas crypto_simd i2c_core libahci glue_helper mptsas raid_class libata mptscsih scsi_transport_sas mptbase scsi_mod wmi button unix
+[2692.737388] CPU: 8 PID: 0 Comm: swapper/8 Tainted: G        W        4.15.14 #1
+[2692.737388] Hardware name: Dell Inc. Precision T5610/0WN7Y6, BIOS A16 02/05/2018
+[2692.737388] RIP: 0010:__blk_end_request_all+0x50/0x60
+[2692.737388] RSP: 0018:ffff8806b7a03df8 EFLAGS: 00010002
+[2692.737388] RAX: 0000000000000001 RBX: ffff8806ac4f6950 RCX: 0000000000000000
+[2692.737388] RDX: 0000000000000001 RSI: ffff8806ac36a480 RDI: 0000000000000000
+[2692.737388] RBP: 0000000000000001 R08: 0000000000000000 R09: ffff8806aa4a9d80
+[2692.737388] R10: ffff8806ab949088 R11: 0000000000000000 R12: ffff8806aa4a9c00
+[2692.737388] R13: ffff8806ac4f6950 R14: 0000000000000246 R15: ffff8806ac4f6950
+[2692.737388] FS:  0000000000000000(0000) GS:ffff8806b7a00000(0000) knlGS:0000000000000000
+[2692.737388] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[2692.737388] CR2: 00007f1359a8b756 CR3: 0000000001c09003 CR4: 00000000001606e0
+[2692.737388] Call Trace:
+[2692.737388]  <IRQ>
+[2692.737388]  ? blk_peek_request+0x173/0x220
+[2692.737388]  ? scsi_request_fn+0x2b/0x510 [scsi_mod]
+[2692.737388]  ? __blk_run_queue+0x34/0x50
+[2692.737388]  ? blk_run_queue+0x26/0x40
+[2692.737388]  ? scsi_run_queue+0x229/0x2b0 [scsi_mod]
+[2692.737388]  ? scsi_io_completion+0x3ce/0x5a0 [scsi_mod]
+[2692.737388]  ? blk_done_softirq+0x67/0x80
+[2692.737388]  ? __do_softirq+0xdb/0x1dd
+[2692.737388]  ? irq_exit+0xa3/0xb0
+[2692.737388]  ? do_IRQ+0x45/0xc0
+[2692.737388]  ? common_interrupt+0x77/0x77
+[2692.737388]  </IRQ>
+[2692.737388]  ? cpuidle_enter_state+0x124/0x200
+[2692.737388]  ? cpuidle_enter_state+0x119/0x200
+[2692.737388]  ? do_idle+0xdc/0x180
+[2692.737388]  ? cpu_startup_entry+0x14/0x20
+[2692.737388]  ? secondary_startup_64+0xa5/0xb0
+[2692.737388] Code: ff ff ff 84 c0 75 24 c3 0f 0b 48 8b 87 40 01 00 00 31 c9 48 85 c0 74 df 8b 48 58 40 0f b6 f6 8b 57 58 e8 04 ff ff ff 84 c0 74 dc <0f> 0b 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 41 54 55 53 48 
+[2692.737388] RIP: __blk_end_request_all+0x50/0x60 RSP: ffff8806b7a03df8
+[2692.737388] ---[ end trace 9801970f9b249e11 ]---
+[2692.737388] Kernel panic - not syncing: Fatal exception in interrupt
+[2692.737388] Kernel Offset: disabled
+[2692.737388] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
