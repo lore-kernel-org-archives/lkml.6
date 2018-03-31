@@ -1,51 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753206AbeCaSB1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 14:01:27 -0400
-Received: from smtprelay0070.hostedemail.com ([216.40.44.70]:36411 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752922AbeCaSBZ (ORCPT
+        id S1753206AbeCaSQ6 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 14:16:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59970 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753045AbeCaSQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 14:01:25 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1537:1567:1593:1594:1711:1714:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3872:3874:3876:4321:5007:10004:10400:10481:10848:11232:11658:11914:12740:12760:12895:13069:13311:13357:13439:14180:14659:19900:21060:21080:21627:30054:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: angle46_293fc5d747b23
-X-Filterd-Recvd-Size: 1455
-Message-ID: <1522519281.11653.16.camel@perches.com>
-Subject: Re: [PATCH 02/12] treewide/net: Rename eth_stp_addr to
- ether_stp_addr
-From: Joe Perches <joe@perches.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bridge@lists.linux-foundation.org
-Date: Sat, 31 Mar 2018 11:01:21 -0700
-In-Reply-To: <20180331173643.GD7460@lunn.ch>
-References: <cover.1522479607.git.joe@perches.com>
-         <a2d52bbcdcd36c5062bd4fa175df15acd5f8cb85.1522479607.git.joe@perches.com>
-         <20180331173643.GD7460@lunn.ch>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 31 Mar 2018 14:16:57 -0400
+Subject: Re: [PATCH] x86/xen: Delay get_cpu_cap until stack canary is
+ established
+To: Jason Andryuk <jandryuk@gmail.com>
+Cc: Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20180319165804.10636-1-jandryuk@gmail.com>
+ <c3075b0c-a60b-0809-e34b-223701a53b84@oracle.com>
+ <CAKf6xps0HJecKM0gYSK+3BGhKknYp9Ydxr3S0oWBThtXeytegw@mail.gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <ee25829c-e8de-1171-e54e-3b34206acc9e@oracle.com>
+Date: Sat, 31 Mar 2018 14:10:49 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAKf6xps0HJecKM0gYSK+3BGhKknYp9Ydxr3S0oWBThtXeytegw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8849 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803310188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-31 at 19:36 +0200, Andrew Lunn wrote:
-> On Sat, Mar 31, 2018 at 12:05:17AM -0700, Joe Perches wrote:
-> > --- a/net/bridge/br_device.c
-> > +++ b/net/bridge/br_device.c
-> > @@ -1,4 +1,4 @@
-> > -/*
-> > +gg/*
-> 
-> Hi Joe
-> 
-> This does not look good.
 
-Definitely agree with that.  apologies for not noticing.
 
-It's emacs editing nonsense like a superfluous :wq for vim
+On 03/31/2018 01:38 PM, Jason Andryuk wrote:
+> On Wed, Mar 21, 2018, 5:12 PM Boris Ostrovsky 
+> <boris.ostrovsky@oracle.com <mailto:boris.ostrovsky@oracle.com>> wrote:
+> 
+>     On 03/19/2018 12:58 PM, Jason Andryuk wrote:
+>      > Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
+>     introduced a
+>      > call to get_cpu_cap, which is fstack-protected.  This is works on
+>     x86-64
+>      > as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
+>      > faults with stack protector") ensures the stack protector is
+>     configured,
+>      > but it it did not cover x86-32.
+>      >
+>      > Delay calling get_cpu_cap until after xen_setup_gdt has
+>     initialized the
+>      > stack canary.  Without this, a 32bit PV machine crashes early
+>      > in boot.
+>      > (XEN) Domain 0 (vcpu#0) crashed on cpu#0:
+>      > (XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
+>      > (XEN) CPU:    0
+>      > (XEN) RIP:    e019:[<00000000c10362f8>]
+>      >
+>      > And the PV kernel IP corresponds to init_scattered_cpuid_features
+>      >    0xc10362f8 <+24>:    mov    %gs:0x14,%eax
+>      >
+>      > Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
+>      >
+>      > Signed-off-by: Jason Andryuk <jandryuk@gmail.com
+>     <mailto:jandryuk@gmail.com>>
+>      >
+> 
+> 
+>     Applied to for-linus-4.17
+> 
+> 
+> Thanks. If it's not too late, can this be cc: stable? 
+
+
+We can always try ;-)
+
+This is 4.15 and 4.16 only, I believe.
+
+-boris
+
+
+
+> If not, I'll 
+> submit the request after it is in Linus's tree.
+> 
+> -Jason
+> 
