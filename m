@@ -1,111 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeCaAUR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 20:20:17 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37454 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752384AbeCaAUP (ORCPT
+        id S1752796AbeCaAdS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 20:33:18 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36713 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752384AbeCaAdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 20:20:15 -0400
-X-Google-Smtp-Source: AIpwx49a8QSM3FQpm86dn71OTKU3hLj1uCpN1L/Li7MIhATkq84rWjHtWDax/ZFBKPzcpYnhKtLAzVf82j8jmnZCfFw=
-MIME-Version: 1.0
-In-Reply-To: <CAN05THTrte19yRdyAOHvcjhxmOW=auh=z5nvVXsqcLxbmYn7Dg@mail.gmail.com>
-References: <20180330221636.32512-1-longli@linuxonhyperv.com> <CAN05THTrte19yRdyAOHvcjhxmOW=auh=z5nvVXsqcLxbmYn7Dg@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 30 Mar 2018 19:19:54 -0500
-Message-ID: <CAH2r5msBv0tUjitg64fBaitC83_8i6iGOzzmjhE4HxEUtBe6hQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cifs: smbd: avoid reconnect lockup
-To: ronnie sahlberg <ronniesahlberg@gmail.com>
-Cc: Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
-        linux-cifs <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Mar 2018 20:33:17 -0400
+X-Google-Smtp-Source: AIpwx4+yihyJ2ib+svbWmi4RItvD1L1QI9ZhPGs6K6dTZM5KuvjmE8gfe6iiELp8ME2MqeK/fv7yaA==
+From: Dmitry Safonov <dima@arista.com>
+To: linux-kernel@vger.kernel.org, joro@8bytes.org
+Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
+Subject: [PATCHv4 1/2] iommu/vt-d: Ratelimit each dmar fault printing
+Date: Sat, 31 Mar 2018 01:33:11 +0100
+Message-Id: <20180331003312.6390-1-dima@arista.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
+There is a ratelimit for printing, but it's incremented each time the
+cpu recives dmar fault interrupt. While one interrupt may signal about
+*many* faults.
+So, measuring the impact it turns out that reading/clearing one fault
+takes < 1 usec, and printing info about the fault takes ~170 msec.
 
-added cc:stable
+Having in mind that maximum number of fault recording registers per
+remapping hardware unit is 256.. IRQ handler may run for (170*256) msec.
+And as fault-serving loop runs without a time limit, during servicing
+new faults may occur..
 
-On Fri, Mar 30, 2018 at 5:23 PM, ronnie sahlberg
-<ronniesahlberg@gmail.com> wrote:
-> Looks good to me (both patches)
->
-> Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
->
-> On Sat, Mar 31, 2018 at 8:16 AM, Long Li <longli@linuxonhyperv.com> wrote:
->> From: Long Li <longli@microsoft.com>
->>
->> During transport reconnect, other processes may have registered memory
->> and blocked on transport. This creates a deadlock situation because the
->> transport resources can't be freed, and reconnect is blocked.
->>
->> Fix this by returning to upper layer on timeout. Before returning,
->> transport status is set to reconnecting so other processes will release
->> memory registration resources.
->>
->> Upper layer will retry the reconnect. This is not in fast I/O path so
->> setting the timeout to 5 seconds.
->>
->> Signed-off-by: Long Li <longli@microsoft.com>
->> ---
->>  fs/cifs/smbdirect.c | 12 ++++++++----
->>  1 file changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
->> index 5aa0b54..3f7883e 100644
->> --- a/fs/cifs/smbdirect.c
->> +++ b/fs/cifs/smbdirect.c
->> @@ -1498,8 +1498,8 @@ int smbd_reconnect(struct TCP_Server_Info *server)
->>         log_rdma_event(INFO, "reconnecting rdma session\n");
->>
->>         if (!server->smbd_conn) {
->> -               log_rdma_event(ERR, "rdma session already destroyed\n");
->> -               return -EINVAL;
->> +               log_rdma_event(INFO, "rdma session already destroyed\n");
->> +               goto create_conn;
->>         }
->>
->>         /*
->> @@ -1512,15 +1512,19 @@ int smbd_reconnect(struct TCP_Server_Info *server)
->>         }
->>
->>         /* wait until the transport is destroyed */
->> -       wait_event(server->smbd_conn->wait_destroy,
->> -               server->smbd_conn->transport_status == SMBD_DESTROYED);
->> +       if (!wait_event_timeout(server->smbd_conn->wait_destroy,
->> +               server->smbd_conn->transport_status == SMBD_DESTROYED, 5*HZ))
->> +               return -EAGAIN;
->>
->>         destroy_workqueue(server->smbd_conn->workqueue);
->>         kfree(server->smbd_conn);
->>
->> +create_conn:
->>         log_rdma_event(INFO, "creating rdma session\n");
->>         server->smbd_conn = smbd_get_connection(
->>                 server, (struct sockaddr *) &server->dstaddr);
->> +       log_rdma_event(INFO, "created rdma session info=%p\n",
->> +               server->smbd_conn);
->>
->>         return server->smbd_conn ? 0 : -ENOENT;
->>  }
->> --
->> 2.7.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ratelimit each fault printing rather than each irq printing.
 
+Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
 
+BUG: spinlock lockup suspected on CPU#0, CliShell/9903
+ lock: 0xffffffff81a47440, .magic: dead4ead, .owner: kworker/u16:2/8915, .owner_cpu: 6
+CPU: 0 PID: 9903 Comm: CliShell
+Call Trace:$\n'
+[..] dump_stack+0x65/0x83$\n'
+[..] spin_dump+0x8f/0x94$\n'
+[..] do_raw_spin_lock+0x123/0x170$\n'
+[..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
+[..] uart_chars_in_buffer+0x20/0x4d$\n'
+[..] tty_chars_in_buffer+0x18/0x1d$\n'
+[..] n_tty_poll+0x1cb/0x1f2$\n'
+[..] tty_poll+0x5e/0x76$\n'
+[..] do_select+0x363/0x629$\n'
+[..] compat_core_sys_select+0x19e/0x239$\n'
+[..] compat_SyS_select+0x98/0xc0$\n'
+[..] sysenter_dispatch+0x7/0x25$\n'
+[..]
+NMI backtrace for cpu 6
+CPU: 6 PID: 8915 Comm: kworker/u16:2
+Workqueue: dmar_fault dmar_fault_work
+Call Trace:$\n'
+[..] wait_for_xmitr+0x26/0x8f$\n'
+[..] serial8250_console_putchar+0x1c/0x2c$\n'
+[..] uart_console_write+0x40/0x4b$\n'
+[..] serial8250_console_write+0xe6/0x13f$\n'
+[..] call_console_drivers.constprop.13+0xce/0x103$\n'
+[..] console_unlock+0x1f8/0x39b$\n'
+[..] vprintk_emit+0x39e/0x3e6$\n'
+[..] printk+0x4d/0x4f$\n'
+[..] dmar_fault+0x1a8/0x1fc$\n'
+[..] dmar_fault_work+0x15/0x17$\n'
+[..] process_one_work+0x1e8/0x3a9$\n'
+[..] worker_thread+0x25d/0x345$\n'
+[..] kthread+0xea/0xf2$\n'
+[..] ret_from_fork+0x58/0x90$\n'
 
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux-foundation.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ drivers/iommu/dmar.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+index accf58388bdb..6c4ea32ee6a9 100644
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -1618,17 +1618,13 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
+ 	int reg, fault_index;
+ 	u32 fault_status;
+ 	unsigned long flag;
+-	bool ratelimited;
+ 	static DEFINE_RATELIMIT_STATE(rs,
+ 				      DEFAULT_RATELIMIT_INTERVAL,
+ 				      DEFAULT_RATELIMIT_BURST);
+ 
+-	/* Disable printing, simply clear the fault when ratelimited */
+-	ratelimited = !__ratelimit(&rs);
+-
+ 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
+ 	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
+-	if (fault_status && !ratelimited)
++	if (fault_status && __ratelimit(&rs))
+ 		pr_err("DRHD: handling fault status reg %x\n", fault_status);
+ 
+ 	/* TBD: ignore advanced fault log currently */
+@@ -1638,6 +1634,8 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
+ 	fault_index = dma_fsts_fault_record_index(fault_status);
+ 	reg = cap_fault_reg_offset(iommu->cap);
+ 	while (1) {
++		/* Disable printing, simply clear the fault when ratelimited */
++		bool ratelimited = !__ratelimit(&rs);
+ 		u8 fault_reason;
+ 		u16 source_id;
+ 		u64 guest_addr;
 -- 
-Thanks,
-
-Steve
+2.13.6
