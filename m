@@ -1,76 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752268AbeCaWAm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 18:00:42 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34703 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751305AbeCaWAl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 18:00:41 -0400
-X-Google-Smtp-Source: AIpwx48d7Wq+z2fCppTzMLPy30nN7cSnTFsadJPxQBCG/Oc9NZttk8CswngE6R4/AZ/89pnCdgCZaw==
-Date: Sun, 1 Apr 2018 01:00:36 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: mingo@kernel.org, peterz@infradead.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] refcount: trim headers
-Message-ID: <20180331220036.GA7676@avx2>
+        id S1752412AbeCaWMy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 18:12:54 -0400
+Received: from tn-76-7-162-187.sta.embarqhsd.net ([76.7.162.187]:54309 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751606AbeCaWMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 18:12:53 -0400
+Date: Sat, 31 Mar 2018 18:12:52 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Richard Weinberger <richard.weinberger@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180331221252.GA25573@animx.eu.org>
+References: <20180331015903.GA29398@animx.eu.org>
+ <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel.h is not needed, but compiler.h is.
+Richard Weinberger wrote:
+> On Sat, Mar 31, 2018 at 3:59 AM, Wakko Warner <wakko@animx.eu.org> wrote:
+> > I reported this before but noone responded.
+> 
+> Because you're sending only to LKML.
+> CC'ing storage folks.
 
-mutex.h is not needed only a forward declaration of "struct mutex".
-
-spinlock.h is not needed, spinlock_types.h is enough.
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- arch/x86/include/asm/refcount.h |    1 +
- include/linux/refcount.h        |    7 ++++---
- lib/refcount.c                  |    2 ++
- 3 files changed, 7 insertions(+), 3 deletions(-)
-
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -5,6 +5,7 @@
-  * PaX/grsecurity.
-  */
- #include <linux/refcount.h>
-+#include <asm/bug.h>
- 
- /*
-  * This is the first portion of the refcount error handling, which lives in
---- a/include/linux/refcount.h
-+++ b/include/linux/refcount.h
-@@ -3,9 +3,10 @@
- #define _LINUX_REFCOUNT_H
- 
- #include <linux/atomic.h>
--#include <linux/mutex.h>
--#include <linux/spinlock.h>
--#include <linux/kernel.h>
-+#include <linux/compiler.h>
-+#include <linux/spinlock_types.h>
-+
-+struct mutex;
- 
- /**
-  * struct refcount_t - variant of atomic_t specialized for reference counts
---- a/lib/refcount.c
-+++ b/lib/refcount.c
-@@ -35,7 +35,9 @@
-  *
-  */
- 
-+#include <linux/mutex.h>
- #include <linux/refcount.h>
-+#include <linux/spinlock.h>
- #include <linux/bug.h>
- 
- #ifdef CONFIG_REFCOUNT_FULL
+Thank you.  I wasn't sure who I needed to send it to.
