@@ -1,74 +1,266 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753010AbeCaOi7 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 10:38:59 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:41851 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752859AbeCaOi5 (ORCPT
+        id S1752873AbeCaOzg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 10:55:36 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47022 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752358AbeCaOze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 10:38:57 -0400
-X-Google-Smtp-Source: AIpwx48lv1GOodlISgVakuDmm9sfXhpe6wx2GKdmuuaEsmsZaWRoRyJl7XmJbDdqenNU6XqS7WV6fwcINai0ZJdfdwU=
+        Sat, 31 Mar 2018 10:55:34 -0400
+Date: Sat, 31 Mar 2018 16:55:32 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: call/normal switch was Re: omap4-droid4: voice call support was
+Message-ID: <20180331145531.GA10404@amd>
+References: <20180322234832.o24ut5ahon46mdu4@earth.universe>
+ <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
+ <20180327121441.GH29239@sirena.org.uk>
+ <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
-References: <cover.1522357211.git.sargun@sargun.me> <5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
- <3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com> <20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
- <8b015e9e-dccb-aefd-f5b2-c66eed3c6815@schaufler-ca.com> <CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Sat, 31 Mar 2018 07:38:54 -0700
-X-Google-Sender-Auth: qyTTNQ1Po01PWiK29s4LI1nYTDs
-Message-ID: <CAGXu5jLn6c=mr5VC=fUP4LUD18EuPAYyDkYTrv_rpxSuxAz--A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
- after boot time
-To: Sargun Dhillon <sargun@sargun.me>
-Cc: Casey Schaufler <casey@schaufler-ca.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Igor Stoppa <igor.stoppa@huawei.com>, James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Paul Moore <paul@paul-moore.com>,
-        plautrba@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Disposition: inline
+In-Reply-To: <20180329014507.GM5700@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 11:16 PM, Sargun Dhillon <sargun@sargun.me> wrote:
-> On Fri, Mar 30, 2018 at 2:39 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>  static struct security_hook_list     null_hooks[SECURITY_HOOK_COUNT];
->>> -#define HAS_FUNC(SHL, FUNC)  (SHL->hook.FUNC)
->>> +DEFINE_STATIC_SRCU(security_hook_srcu);
->>> +
->>> +static inline bool is_null_hook(struct security_hook_list *shl)
->>> +{
->>> +     union {
->>> +             void *cb_ptr;
->>> +             union security_list_options slo;
->>> +     } hook_options;
->>> +
->>> +     hook_options.slo = shl->hook;
->>> +     return !hook_options.cb_ptr;
->>> +}
->>
->> I like the HAS_FUNC() approach better.
->
->  Just curious, why? I personally prefer small static inline functions
-> over macros, if possible.
 
-Generally speaking, small static inline functions are better since
-they provide type-checking. In this case, though, it looks like you're
-just doing a cast, but with a union. Why isn't this just:
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-return !!((uintptr_t)shl->hook)
+Hi!
 
-?
+> Hmm well I got audio call hacked to work as a proof of concept hack,
+> see below. Maybe it can be used to verify some of the assumptions
+> above.
+>=20
+> Then.. To split the work a bit, can you guys maybe try to decode
+> the cpcap register values and try to do a proper ASoC driver patch?
 
-Though the security_list_options union exists for callback type
-checking, so really, having HAS_FUNC() with the explicit function
-you're interested in creates a bit of self-documenting code (even if
-it always resolves to the above test).
+This is not proper patch yet, but it should be a step in that
+direction...
 
--Kees
+If someone knows how to express cleanly "active support for modem is
+the same as active audio playback", let me know....
 
--- 
-Kees Cook
-Pixel Security
+Best regards,
+								Pavel
+
+diff --git a/sound/soc/codecs/cpcap.c b/sound/soc/codecs/cpcap.c
+index 3b53bd0..7aaa4db 100644
+--- a/sound/soc/codecs/cpcap.c
++++ b/sound/soc/codecs/cpcap.c
+@@ -221,18 +221,18 @@ struct cpcap_reg_info {
+ };
+=20
+ static const struct cpcap_reg_info cpcap_default_regs[] =3D {
+-	{ CPCAP_REG_CC, 0xFFFF, 0x0000 },
+-	{ CPCAP_REG_CC, 0xFFFF, 0x0000 },
+-	{ CPCAP_REG_CDI, 0xBFFF, 0x0000 },
++	{ CPCAP_REG_CC, 0xFFFF, 0x60cf },
++	{ CPCAP_REG_CDI, 0xBFFF, 0xae0a },
+ 	{ CPCAP_REG_SDAC, 0x0FFF, 0x0000 },
+ 	{ CPCAP_REG_SDACDI, 0x3FFF, 0x0000 },
+-	{ CPCAP_REG_TXI, 0x0FDF, 0x0000 },
+-	{ CPCAP_REG_TXMP, 0x0FFF, 0x0400 },
+-	{ CPCAP_REG_RXOA, 0x01FF, 0x0000 },
+-	{ CPCAP_REG_RXVC, 0xFF3C, 0x0000 },
+-	{ CPCAP_REG_RXCOA, 0x07FF, 0x0000 },
+-	{ CPCAP_REG_RXSDOA, 0x1FFF, 0x0000 },
++	{ CPCAP_REG_TXI, 0x0FFF, 0x0CC0 },
++	{ CPCAP_REG_TXMP, 0x0FFF, 0x0610 },
++	{ CPCAP_REG_RXOA, 0x01FF, 0x0006 },
++	{ CPCAP_REG_RXVC, 0xFF3C, 0x0B2C },
++	{ CPCAP_REG_RXCOA, 0x07FF, 0x0606 },
++	{ CPCAP_REG_RXSDOA, 0x1FFF, 0x0600 },
+ 	{ CPCAP_REG_RXEPOA, 0x7FFF, 0x0000 },
++	{ CPCAP_REG_VAUDIOC, 0xFFFF, 0x0025 },
+ 	{ CPCAP_REG_A2LA, BIT(CPCAP_BIT_A2_FREE_RUN),
+ 	  BIT(CPCAP_BIT_A2_FREE_RUN) },
+ };
+@@ -330,6 +330,11 @@ static const char * const cpcap_in_left_mux_texts[] =
+=3D {
+ 	"Off", "Mic 2", "Ext Left"
+ };
+=20
++static const char * const cpcap_mode_texts[] =3D {
++	"Normal", "Call"
++};
++
++
+ /*
+  * input muxes use unusual register layout, so that we need to use custom
+  * getter/setter methods
+@@ -354,6 +359,8 @@ static SOC_ENUM_SINGLE_DECL(cpcap_hs_l_mux_enum, 0, 6, =
+cpcap_out_mux_texts);
+ static SOC_ENUM_SINGLE_DECL(cpcap_emu_l_mux_enum, 0, 7, cpcap_out_mux_text=
+s);
+ static SOC_ENUM_SINGLE_DECL(cpcap_emu_r_mux_enum, 0, 8, cpcap_out_mux_text=
+s);
+=20
++static SOC_ENUM_SINGLE_DECL(cpcap_mode_enum, 0, 9, cpcap_mode_texts);
++
+ static int cpcap_output_mux_get_enum(struct snd_kcontrol *kcontrol,
+ 				     struct snd_ctl_elem_value *ucontrol)
+ {
+@@ -442,6 +449,86 @@ static int cpcap_output_mux_put_enum(struct snd_kcontr=
+ol *kcontrol,
+ 	return 0;
+ }
+=20
++static int mode;
++
++static int cpcap_mode_get_enum(struct snd_kcontrol *kcontrol,
++				     struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec =3D snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap =3D snd_soc_codec_get_drvdata(codec);
++	struct soc_enum *e =3D (struct soc_enum *)kcontrol->private_value;
++	int err;
++
++	ucontrol->value.enumerated.item[0] =3D mode;
++
++	return 0;
++}
++
++static int cpcap_mode_put_enum(struct snd_kcontrol *kcontrol,
++				     struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_codec *codec =3D snd_soc_dapm_kcontrol_codec(kcontrol);
++	struct cpcap_audio *cpcap =3D snd_soc_codec_get_drvdata(codec);
++	struct snd_soc_dapm_context *dapm =3D
++		snd_soc_dapm_kcontrol_dapm(kcontrol);
++	struct soc_enum *e =3D (struct soc_enum *)kcontrol->private_value;
++	unsigned int muxval =3D ucontrol->value.enumerated.item[0];
++	unsigned int mask =3D BIT(e->shift_l);
++	int err;
++
++	printk("Requested mode %d\n", muxval);
++
++	mode =3D muxval;
++
++	switch (muxval) {
++	case 1:
++
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_VAUDIOC,
++					 0xffff, 0x0025);	// OK
++		if (err)
++			goto out;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_CC,
++					 0xffff, 0x60cf);	// OK
++		if (err)
++			goto out;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI,
++					 0xffff, 0xae0a);	// OK
++		if (err)
++			goto out;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
++					 0xffff, 0x0cc0);
++		if (err)
++			goto out;
++	=09
++		mask =3D 1 << CPCAP_BIT_PGA_CDC_EN | 0x200;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_RXCOA,
++				   mask, mask);
++		if (err)
++			printk("error #3\n");
++
++		mask =3D 1 << CPCAP_BIT_A2_LDSP_L_EN | 1 << CPCAP_BIT_A2_LDSP_R_EN;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_RXOA,
++				   mask, mask);
++		if (err)
++			printk("error #2\n");
++	=09
++		err =3D regmap_update_bits(cpcap->regmap, 0x814,
++				   0x0400, 0x0400);
++		if (err)
++			printk("error #1\n");
++	=09
++	default:
++		break;
++	}
++
++	// FIXME
++//	snd_soc_dapm_mux_update_power(dapm, kcontrol, muxval, e, NULL);
++
++	return 0;
++out: printk("Something failed\n");
++	return -EINVAL;
++}
++
+ static int cpcap_input_right_mux_get_enum(struct snd_kcontrol *kcontrol,
+ 					  struct snd_ctl_elem_value *ucontrol)
+ {
+@@ -630,6 +717,11 @@ static const struct snd_kcontrol_new cpcap_earpiece_mu=
+x =3D
+ 	SOC_DAPM_ENUM_EXT("Earpiece", cpcap_earpiece_mux_enum,
+ 			  cpcap_output_mux_get_enum, cpcap_output_mux_put_enum);
+=20
++static const struct snd_kcontrol_new cpcap_mode =3D
++	SOC_DAPM_ENUM_EXT("Mode", cpcap_mode_enum,
++			  cpcap_mode_get_enum, cpcap_mode_put_enum);
++
++
+ static const struct snd_kcontrol_new cpcap_hifi_mono_mixer_controls[] =3D {
+ 	SOC_DAPM_SINGLE("HiFi Mono Playback Switch",
+ 		CPCAP_REG_RXSDOA, CPCAP_BIT_MONO_DAC1, 1, 0),
+@@ -771,6 +863,10 @@ static const struct snd_soc_dapm_widget cpcap_dapm_wid=
+gets[] =3D {
+ 	SND_SOC_DAPM_MUX("EMU Left Playback Route", SND_SOC_NOPM, 0, 0,
+ 		&cpcap_emu_left_mux),
+=20
++
++	SND_SOC_DAPM_MUX("Mode", SND_SOC_NOPM, 0, 0,
++		&cpcap_mode),
++=09
+ 	/* Output Amplifier */
+ 	SND_SOC_DAPM_PGA("Earpiece PGA",
+ 		CPCAP_REG_RXOA, CPCAP_BIT_A1_EAR_EN, 0, NULL, 0),
+@@ -816,6 +912,9 @@ static const struct snd_soc_dapm_route intercon[] =3D {
+ 	{"Microphone 1 PGA", NULL, "VAUDIO"},
+ 	{"Microphone 2 PGA", NULL, "VAUDIO"},
+=20
++	/* FIXME */
++	{"Mode", NULL, "Voice TX"},
++
+ 	/* Stream -> AIF */
+ 	{"HiFi RX", NULL, "HiFi Playback"},
+ 	{"Voice RX", NULL, "Voice Playback"},
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qDbXVdCdHGoSgWSk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq/oWMACgkQMOfwapXb+vKrEgCffQ5gAH4mNGSZevLA0Oc4iEIX
+xioAnRYG8nJuNbNQN/W7BSdThzKP7yny
+=MoyO
+-----END PGP SIGNATURE-----
+
+--qDbXVdCdHGoSgWSk--
