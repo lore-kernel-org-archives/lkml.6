@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1160787-1522476692-5-15157590077006716862
+X-Cyrus-Session-Id: sloti22d1t05-1160787-1522476690-2-11730947314700497734
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -12,23 +12,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522476692; b=ZQubwW1VuW5i2zWJpTkYi2Voa4gTATFJBDsjCaRXmZar0G+3xI
-    jkbiPJd/oaTuZYQYoIG4aaZZG1l7GVwUDhEcbHbC9nx2QwG12o3v0gqfFuWEQO2q
-    oSgmRgqCEUohqJ6kNCQpTOJmGE6iKSsOV7kXUJsVNz1GoE1bmcfrYT/XQuBZCvQ9
-    stGnHx08gToSvNxiqaRooGLUbo1U5xTIdaLbl6Oo1IbX+Nl6sHntHkvQ6yiplbIi
-    bq+EaRft5S24QNqW7D3AwKG6rYWW0nyIfjMHQ8VgcD+Ot2jXnwaXnLnAyunPDlKn
-    fsm1ZFVbrVJLrG7eDLAC4gxvEYnuu5juGIUw==
+    1522476689; b=ad+yHZCCZa5CJI7i+xU9acp7iU+hNyXEyN46+ACXCNiLO8AlO+
+    v6rc1rPcOUsdUjFnYFOhVHyaFkblkrhBJtHKnNKMB5PiuKV9wSeWVVD/oLvBLrZE
+    LlQr8MYT6TsLysPBWnrNat+JSAOzQKOANEvrdrHWf8NGAWjINM5Bg1NpaEbYQ248
+    GHJFWwLeif2fDQiyFbAWmtfcysVuZbpyVqyhrwT7LrQopa20J2eu6lqKQad+HEz4
+    mxFv1OQHwwdpUCiC9ydzKzFQ+DdApNzvNjVV0emxiIsd0c72k/uhkLpLYdqcKzVz
+    rCasR5ko7WUQCdg+WN2f+zWkSh4nMq3N5Skw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522476692; bh=VenVt
-    qxhYVntRq1rJs6hNBjFqg3L8Lvopy4Ip+gcwV4=; b=NuVCMuFSbPYn2XrMeHWzM
-    pr0LVzyXF1+P+42y5Ls5hmxwKiAvjMNJWKsMUfaO1tE4r7uXEGxLl8QmwlvJIP3d
-    iwkj7lAQf+98snXTv/BKwgWAGV4w+EDgdB8A8gYACkKC+qC2UtC6wH55ZxZoBwOo
-    OSikGqnmq1P/hkAv3usxKFGOpi88OOkRpLAJYpNUiRlt6+WY2uGG7OY2hXltH1LV
-    Ww11UTiD4m+hlkq9f9YM7umsRx7yVgdvLuFjQFpdFAZJIPLysK8zZsgcmHhXBDjz
-    Hih3JaFXUc6sWcwzU2Zq+JdTXC9Y3RmeavFjrg+hopfZ9pMjuwzXAIMDV80SBq7E
+    :content-transfer-encoding:sender; s=fm2; t=1522476689; bh=Mizso
+    FlmaENQ8vctARjmkimB6G3xaDd/rfQv2QwE/ps=; b=JPX2dRuyuSw7BMaJpcC/j
+    4Jv/tUgULBgKfCDo6zT75K1eweEsCSctVo1ii5mzBIzB0TRZi4Kb/8KXQ9oereh8
+    rxlmQpFhZJnBjOLLqu9tIVM/7S3XYE6pcx3HnZC606ZxRyfwwYGbR2YAtgHMfhb9
+    NwsAC58utdsN89hFNAgntyRnnpp26+eIXHwrFx4rLXdGkFEtil5ptdtBOXlvFmOq
+    hg+s1WUkK9W5TyputBoljQY+yVLTAAK4XfX35BbYXM+KAIVCECyhxZ58lL2hepN6
+    QRgxyJRy+vKcgc6ZUy6hh4KnqM8rPhVY4Ed0unGhxkSJRkLHFWxpf1rCrRmlacSy
     Q==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
@@ -54,13 +54,13 @@ Authentication-Results: mx5.messagingengine.com;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKtmL8F2Qyhu2kmFwaxPW3IveexRc4VTQcBH9P09Eb5h3oXwOzjz62muKor+vg9yBxJjzGtbL9NbYunCtRH3yoxTwbtQxoC9Y+gYQE7d7nrYqPtu531d
-    WsDqVB/x0H73/rpSDkMgw0cLOJEeg0j9rG9qLdrLerQQbkY7WS0Z4/RV9koO9C0SXtH8fSVK3E3cogGR++Qu9MTQZhyliuwSVG8PTO7ktfB4i5lx+4+hTLtx
-    cYqdk7YD4PRJuMlCDfZieg==
+X-CM-Envelope: MS4wfBq75w0qUHsMIp7KEGRZM+eL1NP0x/HKZwypqqOSqJxGtVTZHhodTdlHzBjQCRicxu7MVOYG2bPdsTASrSgvpJa5ZXid/4JzeIfva5pC9kT87DRik7f3
+    rUd+p9CEh25PqCdKILhIc1O6J0Xj23K+ryxQJkRCou4c6MUaik9hXK2gqYLFiLRs9VbY2wbbTtkaRyqsirXIfMcxYrUhxWjLFRLxbYG24KzQOZhVbT9s990m
+    CtJzFfaGiZ3ISeSPZh6V4w==
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
     a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=sXtwo3laXlq7sneXbSIA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
+    a=__pXbqSboZWN9RT4u2sA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
@@ -68,30 +68,30 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH v2 42/75] staging: ks7010: Remove unused 'struct
- hostif_associate_indication_t'.
-Date: Fri, 30 Mar 2018 23:08:22 -0700
-Message-Id: <20180331060855.9452-42-quytelda@tamalin.org>
+Subject: [PATCH v2 46/75] staging: ks7010: Remove unused 'struct
+ hostif_phy_information_confirm_t'.
+Date: Fri, 30 Mar 2018 23:08:26 -0700
+Message-Id: <20180331060855.9452-46-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:adYHqI6rtfiKvK2ooQAP7d1okuOnwmFd7z//JP3cjnKgWQYtYjQ
- gTTJhsJaomuqxeHWIoczLobvP9ZsaOm/aWNqupxb5B7R1BEkV4OlQlwaNjZ7D/IyrGtNhGl
- 0jp4Y5kTWx78aQJTdeD+htLmUh2030ofD55LcfHiVfbwc8363Sh/1Ng1+8Pq8462r18xFep
- AQbGcxg4Pxeu5HKIqSAOw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:N8MW5YIthgc=:cEiSlR46uJpDSZQOqNxUWq
- 8T1t3fTAvlm13328YtDra0oHFdzqNtpbRIHaz+XzNvnwtEenZizDhmdU5yHunHFJhoVanKq9S
- OAZkBxW8vVtBo5YM446xKjBglB8AzevaAJpNTg6Cj2onVwvlzlXRaFR03fnqMmEiOt6VPfH2x
- r20qJPttkVQ/hvtsS5++1a/lzYmyY13f506QVeHz4aXY3FEKm2+xRHLaMuCIIEyuKBc9coOKY
- x8rqkCM6/UrqliTAaSYrKJNzml2gzsBWKYV6hhwaz0pdg6B1fa5k+wwXD9fM4zEjUFokDuk6f
- vo/m+lN8tuwnmkCphL/YpH2QdY0MIjz1KjWhZTkavcdY0tcTCcPsKHGkoCg9qMSrK4vjU5MoG
- JwC3FrbfrXCvnSDYqrTNPUIpKzsCGPx83WKOg5BY5vH0YW8SVVlf0xZCQ5I1r9CZiFD31rph9
- d14fYZQhUZil95U3f676tNLOu/c+wXUBOc/LSGOtEwBFuhCpfTXBruAKYZPWWwy1VRdomskBc
- uo08dPnxzJV2jbSNvAEyE4/yYwxWVBgH4XENW5ljkwqEL6UioR4kNYArf8dJl/TEuWeb5L7eL
- oSn0liGJNpbbc3bmTmNIm/mCgctv8kpEaNdhtFzq1UG2nAPjLC/p/FNAnZ9BySpvqYG6fjRhd
- wOaUEoUyRwbnH7AITtXaXcYydUmA6Gq3G6+kBJ/33Bo/ELTiGlpTlw1L5q3jGv9FGuhpV6bkf
- tHUEtAPLLmZx4TH6xg+HJMUjcs/JsM76w16ncA==
+X-Provags-ID: V03:K0:rmTwMMTfdzj0+NeD2BLjwWnXiqxJU7QWV+NztWF6YJI68rJXc0L
+ Cl4gP8D2/lv+y9B4nvnriEETImWEOhhf+oTfR7dP9uqG/aC7cvVEXQYiZjwfjB9MwmVF8OU
+ 6GVstea88QV4qFMZjR9r6V2K9bd8Ggb7VkpFAImezzW4ZFbAqwmVaMP8Pa47tAfPTTEctRf
+ +m4m80KGqCk2blNlqVWTQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:/ECbLpSgvM8=:aaUCrPRm6Qo4Vr0KSYZEG9
+ a7b3Wm/pqR8B4JOGyUkl2Yo59Bo7gIcw/dJmQ2Fx2zSocd3q6M5G62rJvPAYOkGYmj8WbVTkO
+ M322k7Da7SRSMYhEBhl413We/kpQg0lb/eUm9DsWxBlJahT1Zp/QkFacPiQsHggVIjcLZaU7g
+ w/qNUSsEB5u0Xf9IjcmPP4WAPd3mpi9lB6iWcsuKfEK6oV7FOitPhKiYTUqPyPE/1mzZkM16n
+ XgZO76XUZRGaBydp3q9pQ7OJSlp8aKgG06xm5/b2U1/22u9OBkbh3pXIIVlxgw+cqbDh/BZVT
+ JKztXHWRDt+GAun/7o5VlAtz1IpM60Gsl1a0WMrsZGxzhnEV49dJETdmwFCB46ly0lTxyeKCr
+ 3VG1nHTrnPmOH4HheKlc8Z3nsWxISOH65PqHdkw+Z+AHwvtV2ERmqGiKDq8mEubrR1F4IA0SR
+ J0SgdSDGUrBOxfsNhEGagHNERR2zSgxVY2YwpuIUp2o21WYq4IIwOmI3N12AYQkWwBSvwCxC7
+ Pt3O0Ko3+hrZifI3J9tCYiuf0HuEIG4cZDmDKoBCROqc/8RwiOUEmMKHR4IKtCLV/nnlXNIz1
+ lomKk6vW68wNJy2zA1o9kfv6E/O5Q9lzGAvET1KM7N6puLjRITn+6Sc4S16X3ZJENcozKmtWe
+ a69qoUPmM/2Dhe3E1/bnvtZ1z8FKU+lhZR47SIDuLSwi4Q1QS7jcLECTkmzoEkVDvYRlbLfgp
+ 6XIKJLkN0xinRDL4f34DyH+WWYRPqfJafllcrg==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -113,33 +113,37 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-'struct hostif_associate_indication_t' is not used in this driver. Remove
-'struct hostif_associate_indication_t'.
+'struct hostif_phy_information_confirm_t' is not used in this driver.
+Remove 'struct hostif_phy_information_confirm_t'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.h | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/staging/ks7010/ks_hostif.h | 12 ------------
+ 1 file changed, 12 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index d8ecde16ecd0..9c8b0a93f7cf 100644
+index 348fa2844003..869068ed963b 100644
 --- a/drivers/staging/ks7010/ks_hostif.h
 +++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -389,14 +389,6 @@ struct association_response {
- 	__le16 resp_ies_size;
+@@ -409,18 +409,6 @@ struct hostif_phy_information_request {
+ 	__le16 time;	/* unit 100ms */
  } __packed;
  
--struct hostif_associate_indication_t {
+-struct hostif_phy_information_confirm_t {
 -	struct hostif_hdr header;
--	struct association_request assoc_req;
--	struct association_response assoc_resp;
--	/* followed by (req_ies_size + resp_ies_size) octets of data */
--	/* reqIEs data *//* respIEs data */
+-	u8 rssi;
+-	u8 sq;
+-	u8 noise;
+-	u8 link_speed;
+-	__le32 tx_frame;
+-	__le32 rx_frame;
+-	__le32 tx_error;
+-	__le32 rx_error;
 -} __packed;
 -
- struct hostif_bss_scan_request_t {
- 	struct hostif_hdr header;
- 	u8 scan_type;
+ enum sleep_mode_type {
+ 	SLP_ACTIVE,
+ 	SLP_SLEEP
 -- 
 2.16.3
 
