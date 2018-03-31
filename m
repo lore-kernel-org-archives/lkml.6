@@ -1,179 +1,702 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753116AbeCaXBe (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 19:01:34 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:51855 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752283AbeCaXBC (ORCPT
+        id S1752851AbeCaX2Y (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 19:28:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45950 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752547AbeCaX2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 19:01:02 -0400
-X-Google-Smtp-Source: AIpwx49RXp9enoAGLtPPdU/oSL8uiR+fWxsw0ChozNHM0BRTZM6qBBtRBY6cXxTeqH81FsOPCWm5IhbTQ8xaWBPa6HzebNPvUnim
+        Sat, 31 Mar 2018 19:28:23 -0400
 MIME-Version: 1.0
-Date: Sat, 31 Mar 2018 16:01:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113ec036acc2460568bd5427@google.com>
-Subject: WARNING in refcount_inc (3)
-From: syzbot <syzbot+6eaf536fd743f5e119c5@syzkaller.appspotmail.com>
-To: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Sat, 31 Mar 2018 19:28:19 -0400
+From: okaya@codeaurora.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keith Busch <keith.busch@intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci-owner@vger.kernel.org
+Subject: Re: [PATCH v1] PCI/DPC: Rename from pcie-dpc.c to dpc.c.
+In-Reply-To: <152253566671.104119.5361437405172766528.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152253566671.104119.5361437405172766528.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <acbe7200b684cf501ea7aa2ef9c755a7@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2018-03-31 18:34, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Rename from pcie-dpc.c to dpc.c.  The path 
+> "drivers/pci/pcie/pcie-dpc.c"
+> has more occurrences of "pci" than necessary.
+> 
 
-syzbot hit the following crash on bpf-next commit
-1379ef828a18d8f81c526b25e4d5685caa2cfd65 (Thu Mar 29 22:09:44 2018 +0000)
-Merge branch 'bpf-sockmap-ingress'
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=6eaf536fd743f5e119c5
+Makes perfect sense.
 
-So far this crash happened 6 times on bpf-next.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6614614900998144
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5035340528091136
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5063394046509056
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-1280663959502969741
-compiler: gcc (GCC) 7.1.1 20170620
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6eaf536fd743f5e119c5@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-R13: 0000000000000005 R14: 0000000000001380 R15: 00007ffd314c8768
-------------[ cut here ]------------
-------------[ cut here ]------------
-refcount_t: increment on 0; use-after-free.
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 1 PID: 4434 at lib/refcount.c:153 refcount_inc+0x47/0x50  
-lib/refcount.c:153
-WARNING: CPU: 0 PID: 4437 at lib/refcount.c:187  
-refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-Kernel panic - not syncing: panic_on_warn set ...
-
-Modules linked in:
-CPU: 1 PID: 4434 Comm: syzkaller349430 Not tainted 4.16.0-rc6+ #41
-CPU: 0 PID: 4437 Comm: syzkaller349430 Not tainted 4.16.0-rc6+ #41
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-Call Trace:
-RSP: 0018:ffff8801b061f728 EFLAGS: 00010286
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-RAX: dffffc0000000008 RBX: 0000000000000000 RCX: ffffffff815ba4be
-RDX: 0000000000000000 RSI: 1ffff100360c3e95 RDI: 1ffff100360c3e6a
-RBP: ffff8801b061f7b8 R08: 0000000000000000 R09: 0000000000000000
-R10: ffff8801b061f850 R11: 0000000000000000 R12: 1ffff100360c3ee6
-  panic+0x1e4/0x41c kernel/panic.c:183
-R13: 00000000ffffffff R14: 0000000000000001 R15: ffff8801b1be4184
-FS:  0000000001817880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd314c9000 CR3: 00000001b04a1006 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
-  put_net include/net/net_namespace.h:222 [inline]
-  __sk_destruct+0x560/0x920 net/core/sock.c:1592
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:refcount_inc+0x47/0x50 lib/refcount.c:153
-RSP: 0018:ffff8801b058f860 EFLAGS: 00010286
-RAX: dffffc0000000008 RBX: ffff8801ab55a1c4 RCX: ffffffff815ba4be
-RDX: 0000000000000000 RSI: 1ffff100360b1ebc RDI: 1ffff100360b1e91
-RBP: ffff8801b058f868 R08: 0000000000000000 R09: 0000000000000000
-  sk_destruct+0x47/0x80 net/core/sock.c:1601
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b058faf8
-  __sk_free+0xf1/0x2b0 net/core/sock.c:1612
-R13: ffff8801af87b513 R14: ffff8801ab55a1c0 R15: ffff8801af87b501
-  sk_free+0x2a/0x40 net/core/sock.c:1623
-  sock_put include/net/sock.h:1661 [inline]
-  tcp_close+0x967/0x1190 net/ipv4/tcp.c:2329
-  get_net include/net/net_namespace.h:204 [inline]
-  sk_alloc+0x3f9/0x1440 net/core/sock.c:1540
-  inet_release+0xed/0x1c0 net/ipv4/af_inet.c:427
-  sock_release+0x8d/0x1e0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x327/0x7e0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x199/0x270 kernel/task_work.c:113
-  inet_create+0x47c/0xf50 net/ipv4/af_inet.c:320
-  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
-  __sock_create+0x4d4/0x850 net/socket.c:1285
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
-  sock_create net/socket.c:1325 [inline]
-  SYSC_socket net/socket.c:1355 [inline]
-  SyS_socket+0xeb/0x1d0 net/socket.c:1335
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x402950
-RSP: 002b:00007ffd314c8628 EFLAGS: 00000246
-  ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000402950
-RDX: 00000000000000e0 RSI: 00007ffd314c8f00 RDI: 0000000000000003
-RBP: 00007ffd314c8740 R08: 00007ffd314c864c R09: 0000000000000001
-R10: 00007ffd314c8740 R11: 0000000000000246 R12: 00000000006cf4c0
-R13: 00000000006cee40 R14: 0000000000001380 R15: 00007ffd314c8768
-Code:
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-5e
-RIP: 0033:0x4456a7
-41
-RSP: 002b:00007ffd314c8628 EFLAGS: 00000202 ORIG_RAX: 0000000000000029
-5f
-RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00000000004456a7
-5d
-RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: 00007ffd314c8740 R08: 0000000000000000 R09: 0000000000000001
-c3
-R10: 0000000000000006 R11: 0000000000000202 R12: 0000000000000003
-e8
-R13: 0000000000000003 R14: 0000000000006cc2 R15: 00007ffd314c8768
-0a 0b be fe 80 3d 20 c9 84 05 00 75 1a e8 fc 0a be fe 48 c7 c7 e0 78 e5 86  
-c6 05 0b c9 84 05 01 e8 a9 16 8e fe <0f> 0b 31 db eb a3 e8 de 0a be fe 83  
-fb ff 0f 85 63 ff ff ff 31
----[ end trace dd327356f543ce46 ]---
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/pcie/Makefile   |    2
+>  drivers/pci/pcie/dpc.c      |  306 
+> +++++++++++++++++++++++++++++++++++++++++++
+>  drivers/pci/pcie/pcie-dpc.c |  306 
+> -------------------------------------------
+>  3 files changed, 307 insertions(+), 307 deletions(-)
+>  create mode 100644 drivers/pci/pcie/dpc.c
+>  delete mode 100644 drivers/pci/pcie/pcie-dpc.c
+> 
+> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+> index 223e4c34c29a..88d49500e134 100644
+> --- a/drivers/pci/pcie/Makefile
+> +++ b/drivers/pci/pcie/Makefile
+> @@ -16,5 +16,5 @@ obj-$(CONFIG_PCIEAER)		+= aer/
+> 
+>  obj-$(CONFIG_PCIE_PME) += pme.o
+> 
+> -obj-$(CONFIG_PCIE_DPC) += pcie-dpc.o
+> +obj-$(CONFIG_PCIE_DPC) += dpc.o
+>  obj-$(CONFIG_PCIE_PTM) += ptm.o
+> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+> new file mode 100644
+> index 000000000000..38e40c6c576f
+> --- /dev/null
+> +++ b/drivers/pci/pcie/dpc.c
+> @@ -0,0 +1,306 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PCI Express Downstream Port Containment services driver
+> + * Author: Keith Busch <keith.busch@intel.com>
+> + *
+> + * Copyright (C) 2016 Intel Corp.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/init.h>
+> +#include <linux/pci.h>
+> +#include <linux/pcieport_if.h>
+> +#include "../pci.h"
+> +#include "aer/aerdrv.h"
+> +
+> +struct dpc_dev {
+> +	struct pcie_device	*dev;
+> +	struct work_struct	work;
+> +	u16			cap_pos;
+> +	bool			rp_extensions;
+> +	u32			rp_pio_status;
+> +	u8			rp_log_size;
+> +};
+> +
+> +static const char * const rp_pio_error_string[] = {
+> +	"Configuration Request received UR Completion",	 /* Bit Position 0  
+> */
+> +	"Configuration Request received CA Completion",	 /* Bit Position 1  
+> */
+> +	"Configuration Request Completion Timeout",	 /* Bit Position 2  */
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	"I/O Request received UR Completion",		 /* Bit Position 8  */
+> +	"I/O Request received CA Completion",		 /* Bit Position 9  */
+> +	"I/O Request Completion Timeout",		 /* Bit Position 10 */
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	"Memory Request received UR Completion",	 /* Bit Position 16 */
+> +	"Memory Request received CA Completion",	 /* Bit Position 17 */
+> +	"Memory Request Completion Timeout",		 /* Bit Position 18 */
+> +};
+> +
+> +static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
+> +{
+> +	unsigned long timeout = jiffies + HZ;
+> +	struct pci_dev *pdev = dpc->dev->port;
+> +	struct device *dev = &dpc->dev->device;
+> +	u16 cap = dpc->cap_pos, status;
+> +
+> +	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
+> +	while (status & PCI_EXP_DPC_RP_BUSY &&
+> +					!time_after(jiffies, timeout)) {
+> +		msleep(10);
+> +		pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
+> +	}
+> +	if (status & PCI_EXP_DPC_RP_BUSY) {
+> +		dev_warn(dev, "DPC root port still busy\n");
+> +		return -EBUSY;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+> +{
+> +	unsigned long timeout = jiffies + HZ;
+> +	struct pci_dev *pdev = dpc->dev->port;
+> +	struct device *dev = &dpc->dev->device;
+> +	u16 lnk_status;
+> +
+> +	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> +	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
+> +					!time_after(jiffies, timeout)) {
+> +		msleep(10);
+> +		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> +	}
+> +	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
+> +		dev_warn(dev, "Link state not disabled for DPC event\n");
+> +}
+> +
+> +static void dpc_work(struct work_struct *work)
+> +{
+> +	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
+> +	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
+> +	struct pci_bus *parent = pdev->subordinate;
+> +	u16 cap = dpc->cap_pos, ctl;
+> +
+> +	pci_lock_rescan_remove();
+> +	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
+> +					 bus_list) {
+> +		pci_dev_get(dev);
+> +		pci_dev_set_disconnected(dev, NULL);
+> +		if (pci_has_subordinate(dev))
+> +			pci_walk_bus(dev->subordinate,
+> +				     pci_dev_set_disconnected, NULL);
+> +		pci_stop_and_remove_bus_device(dev);
+> +		pci_dev_put(dev);
+> +	}
+> +	pci_unlock_rescan_remove();
+> +
+> +	dpc_wait_link_inactive(dpc);
+> +	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
+> +		return;
+> +	if (dpc->rp_extensions && dpc->rp_pio_status) {
+> +		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
+> +				       dpc->rp_pio_status);
+> +		dpc->rp_pio_status = 0;
+> +	}
+> +
+> +	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
+> +		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
+> +
+> +	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
+> +	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
+> +			      ctl | PCI_EXP_DPC_CTL_INT_EN);
+> +}
+> +
+> +static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
+> +{
+> +	struct device *dev = &dpc->dev->device;
+> +	struct pci_dev *pdev = dpc->dev->port;
+> +	u16 cap = dpc->cap_pos, dpc_status, first_error;
+> +	u32 status, mask, sev, syserr, exc, dw0, dw1, dw2, dw3, log, prefix;
+> +	int i;
+> +
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS, 
+> &status);
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_MASK, &mask);
+> +	dev_err(dev, "rp_pio_status: %#010x, rp_pio_mask: %#010x\n",
+> +		status, mask);
+> +
+> +	dpc->rp_pio_status = status;
+> +
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SEVERITY, &sev);
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SYSERROR, 
+> &syserr);
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_EXCEPTION, 
+> &exc);
+> +	dev_err(dev, "RP PIO severity=%#010x, syserror=%#010x, 
+> exception=%#010x\n",
+> +		sev, syserr, exc);
+> +
+> +	/* Get First Error Pointer */
+> +	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &dpc_status);
+> +	first_error = (dpc_status & 0x1f00) >> 8;
+> +
+> +	status &= ~mask;
+> +	for (i = 0; i < ARRAY_SIZE(rp_pio_error_string); i++) {
+> +		if (status & (1 << i))
+> +			dev_err(dev, "[%2d] %s%s\n", i, rp_pio_error_string[i],
+> +				first_error == i ? " (First)" : "");
+> +	}
+> +
+> +	if (dpc->rp_log_size < 4)
+> +		return;
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG,
+> +			      &dw0);
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 4,
+> +			      &dw1);
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 8,
+> +			      &dw2);
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 12,
+> +			      &dw3);
+> +	dev_err(dev, "TLP Header: %#010x %#010x %#010x %#010x\n",
+> +		dw0, dw1, dw2, dw3);
+> +
+> +	if (dpc->rp_log_size < 5)
+> +		return;
+> +	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_IMPSPEC_LOG, 
+> &log);
+> +	dev_err(dev, "RP PIO ImpSpec Log %#010x\n", log);
+> +
+> +	for (i = 0; i < dpc->rp_log_size - 5; i++) {
+> +		pci_read_config_dword(pdev,
+> +			cap + PCI_EXP_DPC_RP_PIO_TLPPREFIX_LOG, &prefix);
+> +		dev_err(dev, "TLP Prefix Header: dw%d, %#010x\n", i, prefix);
+> +	}
+> +}
+> +
+> +static irqreturn_t dpc_irq(int irq, void *context)
+> +{
+> +	struct dpc_dev *dpc = (struct dpc_dev *)context;
+> +	struct pci_dev *pdev = dpc->dev->port;
+> +	struct device *dev = &dpc->dev->device;
+> +	u16 cap = dpc->cap_pos, ctl, status, source, reason, ext_reason;
+> +
+> +	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
+> +
+> +	if (!(ctl & PCI_EXP_DPC_CTL_INT_EN) || ctl == (u16)(~0))
+> +		return IRQ_NONE;
+> +
+> +	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
+> +
+> +	if (!(status & PCI_EXP_DPC_STATUS_INTERRUPT))
+> +		return IRQ_NONE;
+> +
+> +	if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
+> +		pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
+> +				      PCI_EXP_DPC_STATUS_INTERRUPT);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
+> +			      ctl & ~PCI_EXP_DPC_CTL_INT_EN);
+> +
+> +	pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID,
+> +			     &source);
+> +
+> +	dev_info(dev, "DPC containment event, status:%#06x source:%#06x\n",
+> +		status, source);
+> +
+> +	reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN) >> 1;
+> +	ext_reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN_EXT) >> 5;
+> +
+> +	dev_warn(dev, "DPC %s detected, remove downstream devices\n",
+> +		 (reason == 0) ? "unmasked uncorrectable error" :
+> +		 (reason == 1) ? "ERR_NONFATAL" :
+> +		 (reason == 2) ? "ERR_FATAL" :
+> +		 (ext_reason == 0) ? "RP PIO error" :
+> +		 (ext_reason == 1) ? "software trigger" :
+> +				     "reserved error");
+> +	/* show RP PIO error detail information */
+> +	if (dpc->rp_extensions && reason == 3 && ext_reason == 0)
+> +		dpc_process_rp_pio_error(dpc);
+> +
+> +	schedule_work(&dpc->work);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +#define FLAG(x, y) (((x) & (y)) ? '+' : '-')
+> +static int dpc_probe(struct pcie_device *dev)
+> +{
+> +	struct dpc_dev *dpc;
+> +	struct pci_dev *pdev = dev->port;
+> +	struct device *device = &dev->device;
+> +	int status;
+> +	u16 ctl, cap;
+> +
+> +	if (pcie_aer_get_firmware_first(pdev))
+> +		return -ENOTSUPP;
+> +
+> +	dpc = devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
+> +	if (!dpc)
+> +		return -ENOMEM;
+> +
+> +	dpc->cap_pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_DPC);
+> +	dpc->dev = dev;
+> +	INIT_WORK(&dpc->work, dpc_work);
+> +	set_service_data(dev, dpc);
+> +
+> +	status = devm_request_irq(device, dev->irq, dpc_irq, IRQF_SHARED,
+> +				  "pcie-dpc", dpc);
+> +	if (status) {
+> +		dev_warn(device, "request IRQ%d failed: %d\n", dev->irq,
+> +			 status);
+> +		return status;
+> +	}
+> +
+> +	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP, &cap);
+> +	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
+> +
+> +	dpc->rp_extensions = (cap & PCI_EXP_DPC_CAP_RP_EXT);
+> +	if (dpc->rp_extensions) {
+> +		dpc->rp_log_size = (cap & PCI_EXP_DPC_RP_PIO_LOG_SIZE) >> 8;
+> +		if (dpc->rp_log_size < 4 || dpc->rp_log_size > 9) {
+> +			dev_err(device, "RP PIO log size %u is invalid\n",
+> +				dpc->rp_log_size);
+> +			dpc->rp_log_size = 0;
+> +		}
+> +	}
+> +
+> +	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_NONFATAL | 
+> PCI_EXP_DPC_CTL_INT_EN;
+> +	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+> +
+> +	dev_info(device, "DPC error containment capabilities: Int Msg #%d,
+> RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
+> +		cap & PCI_EXP_DPC_IRQ, FLAG(cap, PCI_EXP_DPC_CAP_RP_EXT),
+> +		FLAG(cap, PCI_EXP_DPC_CAP_POISONED_TLP),
+> +		FLAG(cap, PCI_EXP_DPC_CAP_SW_TRIGGER), dpc->rp_log_size,
+> +		FLAG(cap, PCI_EXP_DPC_CAP_DL_ACTIVE));
+> +	return status;
+> +}
+> +
+> +static void dpc_remove(struct pcie_device *dev)
+> +{
+> +	struct dpc_dev *dpc = get_service_data(dev);
+> +	struct pci_dev *pdev = dev->port;
+> +	u16 ctl;
+> +
+> +	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
+> +	ctl &= ~(PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN);
+> +	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+> +}
+> +
+> +static struct pcie_port_service_driver dpcdriver = {
+> +	.name		= "dpc",
+> +	.port_type	= PCIE_ANY_PORT,
+> +	.service	= PCIE_PORT_SERVICE_DPC,
+> +	.probe		= dpc_probe,
+> +	.remove		= dpc_remove,
+> +};
+> +
+> +static int __init dpc_service_init(void)
+> +{
+> +	return pcie_port_service_register(&dpcdriver);
+> +}
+> +device_initcall(dpc_service_init);
+> diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
+> deleted file mode 100644
+> index 38e40c6c576f..000000000000
+> --- a/drivers/pci/pcie/pcie-dpc.c
+> +++ /dev/null
+> @@ -1,306 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -/*
+> - * PCI Express Downstream Port Containment services driver
+> - * Author: Keith Busch <keith.busch@intel.com>
+> - *
+> - * Copyright (C) 2016 Intel Corp.
+> - */
+> -
+> -#include <linux/delay.h>
+> -#include <linux/interrupt.h>
+> -#include <linux/init.h>
+> -#include <linux/pci.h>
+> -#include <linux/pcieport_if.h>
+> -#include "../pci.h"
+> -#include "aer/aerdrv.h"
+> -
+> -struct dpc_dev {
+> -	struct pcie_device	*dev;
+> -	struct work_struct	work;
+> -	u16			cap_pos;
+> -	bool			rp_extensions;
+> -	u32			rp_pio_status;
+> -	u8			rp_log_size;
+> -};
+> -
+> -static const char * const rp_pio_error_string[] = {
+> -	"Configuration Request received UR Completion",	 /* Bit Position 0  
+> */
+> -	"Configuration Request received CA Completion",	 /* Bit Position 1  
+> */
+> -	"Configuration Request Completion Timeout",	 /* Bit Position 2  */
+> -	NULL,
+> -	NULL,
+> -	NULL,
+> -	NULL,
+> -	NULL,
+> -	"I/O Request received UR Completion",		 /* Bit Position 8  */
+> -	"I/O Request received CA Completion",		 /* Bit Position 9  */
+> -	"I/O Request Completion Timeout",		 /* Bit Position 10 */
+> -	NULL,
+> -	NULL,
+> -	NULL,
+> -	NULL,
+> -	NULL,
+> -	"Memory Request received UR Completion",	 /* Bit Position 16 */
+> -	"Memory Request received CA Completion",	 /* Bit Position 17 */
+> -	"Memory Request Completion Timeout",		 /* Bit Position 18 */
+> -};
+> -
+> -static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
+> -{
+> -	unsigned long timeout = jiffies + HZ;
+> -	struct pci_dev *pdev = dpc->dev->port;
+> -	struct device *dev = &dpc->dev->device;
+> -	u16 cap = dpc->cap_pos, status;
+> -
+> -	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
+> -	while (status & PCI_EXP_DPC_RP_BUSY &&
+> -					!time_after(jiffies, timeout)) {
+> -		msleep(10);
+> -		pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
+> -	}
+> -	if (status & PCI_EXP_DPC_RP_BUSY) {
+> -		dev_warn(dev, "DPC root port still busy\n");
+> -		return -EBUSY;
+> -	}
+> -	return 0;
+> -}
+> -
+> -static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+> -{
+> -	unsigned long timeout = jiffies + HZ;
+> -	struct pci_dev *pdev = dpc->dev->port;
+> -	struct device *dev = &dpc->dev->device;
+> -	u16 lnk_status;
+> -
+> -	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> -	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
+> -					!time_after(jiffies, timeout)) {
+> -		msleep(10);
+> -		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> -	}
+> -	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
+> -		dev_warn(dev, "Link state not disabled for DPC event\n");
+> -}
+> -
+> -static void dpc_work(struct work_struct *work)
+> -{
+> -	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
+> -	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
+> -	struct pci_bus *parent = pdev->subordinate;
+> -	u16 cap = dpc->cap_pos, ctl;
+> -
+> -	pci_lock_rescan_remove();
+> -	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
+> -					 bus_list) {
+> -		pci_dev_get(dev);
+> -		pci_dev_set_disconnected(dev, NULL);
+> -		if (pci_has_subordinate(dev))
+> -			pci_walk_bus(dev->subordinate,
+> -				     pci_dev_set_disconnected, NULL);
+> -		pci_stop_and_remove_bus_device(dev);
+> -		pci_dev_put(dev);
+> -	}
+> -	pci_unlock_rescan_remove();
+> -
+> -	dpc_wait_link_inactive(dpc);
+> -	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
+> -		return;
+> -	if (dpc->rp_extensions && dpc->rp_pio_status) {
+> -		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
+> -				       dpc->rp_pio_status);
+> -		dpc->rp_pio_status = 0;
+> -	}
+> -
+> -	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
+> -		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
+> -
+> -	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
+> -	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
+> -			      ctl | PCI_EXP_DPC_CTL_INT_EN);
+> -}
+> -
+> -static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
+> -{
+> -	struct device *dev = &dpc->dev->device;
+> -	struct pci_dev *pdev = dpc->dev->port;
+> -	u16 cap = dpc->cap_pos, dpc_status, first_error;
+> -	u32 status, mask, sev, syserr, exc, dw0, dw1, dw2, dw3, log, prefix;
+> -	int i;
+> -
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS, 
+> &status);
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_MASK, &mask);
+> -	dev_err(dev, "rp_pio_status: %#010x, rp_pio_mask: %#010x\n",
+> -		status, mask);
+> -
+> -	dpc->rp_pio_status = status;
+> -
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SEVERITY, &sev);
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SYSERROR, 
+> &syserr);
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_EXCEPTION, 
+> &exc);
+> -	dev_err(dev, "RP PIO severity=%#010x, syserror=%#010x, 
+> exception=%#010x\n",
+> -		sev, syserr, exc);
+> -
+> -	/* Get First Error Pointer */
+> -	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &dpc_status);
+> -	first_error = (dpc_status & 0x1f00) >> 8;
+> -
+> -	status &= ~mask;
+> -	for (i = 0; i < ARRAY_SIZE(rp_pio_error_string); i++) {
+> -		if (status & (1 << i))
+> -			dev_err(dev, "[%2d] %s%s\n", i, rp_pio_error_string[i],
+> -				first_error == i ? " (First)" : "");
+> -	}
+> -
+> -	if (dpc->rp_log_size < 4)
+> -		return;
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG,
+> -			      &dw0);
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 4,
+> -			      &dw1);
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 8,
+> -			      &dw2);
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 12,
+> -			      &dw3);
+> -	dev_err(dev, "TLP Header: %#010x %#010x %#010x %#010x\n",
+> -		dw0, dw1, dw2, dw3);
+> -
+> -	if (dpc->rp_log_size < 5)
+> -		return;
+> -	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_IMPSPEC_LOG, 
+> &log);
+> -	dev_err(dev, "RP PIO ImpSpec Log %#010x\n", log);
+> -
+> -	for (i = 0; i < dpc->rp_log_size - 5; i++) {
+> -		pci_read_config_dword(pdev,
+> -			cap + PCI_EXP_DPC_RP_PIO_TLPPREFIX_LOG, &prefix);
+> -		dev_err(dev, "TLP Prefix Header: dw%d, %#010x\n", i, prefix);
+> -	}
+> -}
+> -
+> -static irqreturn_t dpc_irq(int irq, void *context)
+> -{
+> -	struct dpc_dev *dpc = (struct dpc_dev *)context;
+> -	struct pci_dev *pdev = dpc->dev->port;
+> -	struct device *dev = &dpc->dev->device;
+> -	u16 cap = dpc->cap_pos, ctl, status, source, reason, ext_reason;
+> -
+> -	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
+> -
+> -	if (!(ctl & PCI_EXP_DPC_CTL_INT_EN) || ctl == (u16)(~0))
+> -		return IRQ_NONE;
+> -
+> -	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
+> -
+> -	if (!(status & PCI_EXP_DPC_STATUS_INTERRUPT))
+> -		return IRQ_NONE;
+> -
+> -	if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
+> -		pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
+> -				      PCI_EXP_DPC_STATUS_INTERRUPT);
+> -		return IRQ_HANDLED;
+> -	}
+> -
+> -	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
+> -			      ctl & ~PCI_EXP_DPC_CTL_INT_EN);
+> -
+> -	pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID,
+> -			     &source);
+> -
+> -	dev_info(dev, "DPC containment event, status:%#06x source:%#06x\n",
+> -		status, source);
+> -
+> -	reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN) >> 1;
+> -	ext_reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN_EXT) >> 5;
+> -
+> -	dev_warn(dev, "DPC %s detected, remove downstream devices\n",
+> -		 (reason == 0) ? "unmasked uncorrectable error" :
+> -		 (reason == 1) ? "ERR_NONFATAL" :
+> -		 (reason == 2) ? "ERR_FATAL" :
+> -		 (ext_reason == 0) ? "RP PIO error" :
+> -		 (ext_reason == 1) ? "software trigger" :
+> -				     "reserved error");
+> -	/* show RP PIO error detail information */
+> -	if (dpc->rp_extensions && reason == 3 && ext_reason == 0)
+> -		dpc_process_rp_pio_error(dpc);
+> -
+> -	schedule_work(&dpc->work);
+> -
+> -	return IRQ_HANDLED;
+> -}
+> -
+> -#define FLAG(x, y) (((x) & (y)) ? '+' : '-')
+> -static int dpc_probe(struct pcie_device *dev)
+> -{
+> -	struct dpc_dev *dpc;
+> -	struct pci_dev *pdev = dev->port;
+> -	struct device *device = &dev->device;
+> -	int status;
+> -	u16 ctl, cap;
+> -
+> -	if (pcie_aer_get_firmware_first(pdev))
+> -		return -ENOTSUPP;
+> -
+> -	dpc = devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
+> -	if (!dpc)
+> -		return -ENOMEM;
+> -
+> -	dpc->cap_pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_DPC);
+> -	dpc->dev = dev;
+> -	INIT_WORK(&dpc->work, dpc_work);
+> -	set_service_data(dev, dpc);
+> -
+> -	status = devm_request_irq(device, dev->irq, dpc_irq, IRQF_SHARED,
+> -				  "pcie-dpc", dpc);
+> -	if (status) {
+> -		dev_warn(device, "request IRQ%d failed: %d\n", dev->irq,
+> -			 status);
+> -		return status;
+> -	}
+> -
+> -	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP, &cap);
+> -	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
+> -
+> -	dpc->rp_extensions = (cap & PCI_EXP_DPC_CAP_RP_EXT);
+> -	if (dpc->rp_extensions) {
+> -		dpc->rp_log_size = (cap & PCI_EXP_DPC_RP_PIO_LOG_SIZE) >> 8;
+> -		if (dpc->rp_log_size < 4 || dpc->rp_log_size > 9) {
+> -			dev_err(device, "RP PIO log size %u is invalid\n",
+> -				dpc->rp_log_size);
+> -			dpc->rp_log_size = 0;
+> -		}
+> -	}
+> -
+> -	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_NONFATAL | 
+> PCI_EXP_DPC_CTL_INT_EN;
+> -	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+> -
+> -	dev_info(device, "DPC error containment capabilities: Int Msg #%d,
+> RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
+> -		cap & PCI_EXP_DPC_IRQ, FLAG(cap, PCI_EXP_DPC_CAP_RP_EXT),
+> -		FLAG(cap, PCI_EXP_DPC_CAP_POISONED_TLP),
+> -		FLAG(cap, PCI_EXP_DPC_CAP_SW_TRIGGER), dpc->rp_log_size,
+> -		FLAG(cap, PCI_EXP_DPC_CAP_DL_ACTIVE));
+> -	return status;
+> -}
+> -
+> -static void dpc_remove(struct pcie_device *dev)
+> -{
+> -	struct dpc_dev *dpc = get_service_data(dev);
+> -	struct pci_dev *pdev = dev->port;
+> -	u16 ctl;
+> -
+> -	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
+> -	ctl &= ~(PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN);
+> -	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+> -}
+> -
+> -static struct pcie_port_service_driver dpcdriver = {
+> -	.name		= "dpc",
+> -	.port_type	= PCIE_ANY_PORT,
+> -	.service	= PCIE_PORT_SERVICE_DPC,
+> -	.probe		= dpc_probe,
+> -	.remove		= dpc_remove,
+> -};
+> -
+> -static int __init dpc_service_init(void)
+> -{
+> -	return pcie_port_service_register(&dpcdriver);
+> -}
+> -device_initcall(dpc_service_init);
