@@ -1,89 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeCaAkg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 20:40:36 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60262 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752606AbeCaAkf (ORCPT
+        id S1752837AbeCaBcY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 21:32:24 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:45225 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752649AbeCaBcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 20:40:35 -0400
-Date: Sat, 31 Mar 2018 02:40:30 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Tony Lindgren <tony@atomide.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
-Subject: Re: 4.16-rc5 on Motorola Droid 4
-Message-ID: <20180331004030.2kvdhlgynwmeiuib@earth.universe>
-References: <20180318220418.GA22880@amd>
- <20180320140322.GU5799@atomide.com>
- <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
- <20180327212156.GA10834@amd>
- <20180330121959.uxx6kcl7v5w777vq@earth.universe>
- <20180330211729.GA3389@amd>
+        Fri, 30 Mar 2018 21:32:22 -0400
+X-Google-Smtp-Source: AIpwx4/S5S+LHL64eJvS2NriMB+sJ7BmaDy01ykp1BD705QHl0IUpPeyn0BN6mAaq2ZiquH8uRZwQlhAeVQdjhhjrq0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="p3kes3mtjjbjul6e"
-Content-Disposition: inline
-In-Reply-To: <20180330211729.GA3389@amd>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180330042455.81032-1-gthelen@google.com>
+References: <20180330042455.81032-1-gthelen@google.com>
+From: Greg Thelen <gthelen@google.com>
+Date: Fri, 30 Mar 2018 18:32:01 -0700
+Message-ID: <CAHH2K0aH-dJMzR=unhBWPD7=d0RQoTK35o6U4dP+FSKj-a0WgQ@mail.gmail.com>
+Subject: Re: [PATCH] RDMA/ucma: reject AF_IB ip multicast requests
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Sean Hefty <sean.hefty@intel.com>
+Cc: linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Greg Thelen <gthelen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 29, 2018 at 9:24 PM, Greg Thelen <gthelen@google.com> wrote:
+> syzbot discovered that ucma_join_ip_multicast() mishandles AF_IB request
+> addresses.  If an RDMA_USER_CM_CMD_JOIN_IP_MCAST request has
+> cmd.addr.sa_family=AF_IB then ucma_join_ip_multicast() reads beyond the
+> end of its cmd.addr.
+>
+> Reject non IP RDMA_USER_CM_CMD_JOIN_IP_MCAST requests.
+> RDMA_USER_CM_CMD_JOIN_MCAST is interface for AF_IB multicast.
+>
+> And add a buffer length safety check.
+>
+> Fixes: 5bc2b7b397b0 ("RDMA/ucma: Allow user space to specify AF_IB when joining multicast")
+> Signed-off-by: Greg Thelen <gthelen@google.com>
+> ---
+>  drivers/infiniband/core/ucma.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 
---p3kes3mtjjbjul6e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My patch is no longer needed.  linus/master recently picked up
+84652aefb347 ("RDMA/ucma: Introduce safer rdma_addr_size() variants")
+which fixes the same issue.
 
-Hi,
-
-On Fri, Mar 30, 2018 at 11:17:29PM +0200, Pavel Machek wrote:
-> On Fri 2018-03-30 14:19:59, Sebastian Reichel wrote:
-> > Hi,
-> >=20
-> > On Tue, Mar 27, 2018 at 11:21:56PM +0200, Pavel Machek wrote:
-> > > Also, if you know how to get information from light sensor, that would
-> > > be nice.
-> >=20
-> > You need CONFIG_SENSORS_ISL29028. Once the driver is probed:
-> >=20
-> > $ cat /sys/bus/iio/devices/iio\:device1/name
-> > isl29030
-> > $ cat /sys/bus/iio/devices/iio\:device1/in_illuminance_input
-> > 19
->=20
-> Thanks, that works.
->=20
-> I was also able to get accelerometers to work, but they are extremely
-> slow to read (6 seconds for all 3 axis). Interesting, but probably not
-> too important for now.
-
-IIRC this is related to runtime PM. It should not be a problem if
-you use libiio.
-
--- Sebastian
-
---p3kes3mtjjbjul6e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlq+2PkACgkQ2O7X88g7
-+pqpAQ/9GkUg3mt5twNhoz2iuG1gEvzhfi4Aq3U3nnanGDpvtgyTwApjGThRfqD8
-zJi+bV8q5CGJXyxPDa7IJ4lSM83ugdRnBztuexrN3RzyJzM3SpE37Fd1K+xyby8o
-alVURP+uQyJCHSzBZUWzTxtDaI5xGfySgrM2aB2y1dcE5uaM2aviuJxElWP4Rxto
-UysRb49RXSKq/nTTLROiKtWE8Z/7avR5HEjyJe+Wa0EqiLmbFiBwRne0fy4qy+SZ
-g2VhSxPUIY8iDLZZ5Qh0ZvFVTG4JTMm9YrTREzzHfTQY2/3f8CEZYSqA4ghpeBkB
-mZN4HXD+zBF5XOr2HKkSoZgA0pmupWwlQj9suK0T6fEBECmRj29fLO2Ks1AVFZoT
-iivQaqaiE8ft7sbrJXlcPIcF38YS8pksN2lHsipZun0aQiHTXi4se6To0wHhCKy8
-zREDzd6t4W2fy67xHm14vJM9wEnHbD0ZNfKG+bMkFVikNgD0fIX3M8ZPC9bf10CQ
-7jTg1BgiCj/wc0bBEl0vOB1aFo7aP1coP8YV0YrCN+r4Sh5wApwmpoZahNEoUOEa
-TMgI3R38p54L0EzbbE4zfRqTdIUyzMZv5wTKeltYm9ot3FUPGUvzq2lP/c3INAh1
-osj1/CNndrYifCLCNM7e5SviM7a9z2StRf9vq3vzjJRv0xwgPtE=
-=wreR
------END PGP SIGNATURE-----
-
---p3kes3mtjjbjul6e--
+> diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+> index e5a1e7d81326..e410e03940ff 100644
+> --- a/drivers/infiniband/core/ucma.c
+> +++ b/drivers/infiniband/core/ucma.c
+> @@ -1423,11 +1423,19 @@ static ssize_t ucma_join_ip_multicast(struct ucma_file *file,
+>         if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
+>                 return -EFAULT;
+>
+> +       switch (cmd.addr.sin6_family) {
+> +       case AF_INET:
+> +       case AF_INET6:
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +
+>         join_cmd.response = cmd.response;
+>         join_cmd.uid = cmd.uid;
+>         join_cmd.id = cmd.id;
+>         join_cmd.addr_size = rdma_addr_size((struct sockaddr *) &cmd.addr);
+> -       if (!join_cmd.addr_size)
+> +       if (!join_cmd.addr_size || join_cmd.addr_size > sizeof(cmd.addr))
+>                 return -EINVAL;
+>
+>         join_cmd.join_flags = RDMA_MC_JOIN_FLAG_FULLMEMBER;
+> --
+> 2.17.0.rc1.321.gba9d0f2565-goog
+>
