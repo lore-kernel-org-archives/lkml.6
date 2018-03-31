@@ -1,39 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752922AbeCaODr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 10:03:47 -0400
-Received: from ozlabs.org ([103.22.144.67]:40783 "EHLO ozlabs.org"
+        id S1753014AbeCaODy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 10:03:54 -0400
+Received: from ozlabs.org ([103.22.144.67]:55067 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752023AbeCaODq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 10:03:46 -0400
+        id S1752949AbeCaODw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 10:03:52 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 7ab96c0a083f3a298ae595ea142058a20c6e34f6
-In-Reply-To: <20180206123707.13715-1-j.neuschaefer@gmx.net>
+X-powerpc-patch-commit: 9cbaaec1cf0c9f4861c4c1dd65f3ede218c1ab2f
+In-Reply-To: <20180209120732.17863-2-j.neuschaefer@gmx.net>
 To: =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linuxppc-dev@lists.ozlabs.org
+        linux-kernel@vger.kernel.org
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org,
+Cc: devicetree@vger.kernel.org,
         =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Paul Mackerras <paulus@samba.org>, Joel Stanley <joel@jms.id.au>
-Subject: Re: powerpc: wii: Probe the whole devicetree
-Message-Id: <40D0Zm3JrXz9s2R@ozlabs.org>
-Date: Sun,  1 Apr 2018 01:03:44 +1100 (AEDT)
+        linux-gpio@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [v3, 1/4] powerpc: wii: Explicitly configure GPIO owner for poweroff pin
+Message-Id: <40D0Zr5ldZz9s2b@ozlabs.org>
+Date: Sun,  1 Apr 2018 01:03:45 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-02-06 at 12:37:04 UTC, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= wrote:
-> Previously, wii_device_probe would only initialize devices under the
-> /hollywood node. After this patch, platform devices placed outside of
-> /hollywood will also be initialized.
+On Fri, 2018-02-09 at 12:07:28 UTC, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= wrote:
+> The Hollywood chipset's GPIO controller has two sets of registers: One
+> for access by the PowerPC CPU, and one for access by the ARM coprocessor
+> (but both are accessible from the PPC because the memory firewall
+> (AHBPROT) is usually disabled when booting Linux, today).
 > 
-> The intended usecase for this are devices located outside of the
-> Hollywood chip, such as GPIO LEDs and GPIO buttons.
+> The wii_power_off function currently assumes that the poweroff GPIO pin
+> is configured for use via the ARM side, but the upcoming GPIO driver
+> configures all pins for use via the PPC side, breaking poweroff.
+> 
+> Configure the owner register explicitly in wii_power_off to make
+> wii_power_off work with and without the new GPIO driver.
+> 
+> I think the Wii can be switched to the generic gpio-poweroff driver,
+> after the GPIO driver is merged.
 > 
 > Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-Applied to powerpc next, thanks.
+Patches 1, 3 and 4 applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/7ab96c0a083f3a298ae595ea142058
+https://git.kernel.org/powerpc/c/9cbaaec1cf0c9f4861c4c1dd65f3ed
 
 cheers
