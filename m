@@ -1,212 +1,186 @@
-Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx4/rR6QkKlFRMkSTPIRlQfAo+8eK1jbgMNcXYoauIjkCUwGxC0UCZoJJ06bezMXusRuzMS2J
-ARC-Seal: i=1; a=rsa-sha256; t=1522476623; cv=none;
-        d=google.com; s=arc-20160816;
-        b=p0T3LkFBOtyuKgmwdv9SLATd8Qcov6K6Q89Axlo2N5ziHkG3gVQhi9bqqY9xjAPcwu
-         Chk/pSvqATCucJ4vgQssk2sDgyJyLzqlHt7ddl3uoIZIHtUcgeSlgUWRjLCwk68auMYs
-         zjshqVeHVAdd59Nz4856nzMgUjaNGwg7SqCv+iQ6mqga9KB17iKoxcPmSwyM/9QuUIOU
-         lqQ+m9CXKpu9rcdr249VUYVVs5M/1Rwp5WZBWAMyHX3hMSyCExuQYXmqeuhmBMjilfKZ
-         KFL6C7KVNkcz+PQ8w6T+m6avJ0fyuXI4D6EW9Qia6m+gtylGKHROi5N6CJZkuJLnFYdY
-         8DQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=zxrzo0hAlJaep/Qbo03IliABX62+t3O78Nul44RqLQQ=;
-        b=HvIneBaGii6D6kIwcB2U6qEL4cnnFiydfgbhIoruyUb+z8QW/QGwRFKDLF1EmkzV6m
-         SuAWSKXtF2VGYLP5qG3padFK+bS5x2DCmuUbqB22cPAmykzqnQaG+LI1UESLUa7g8COF
-         kjBDJ2wE8ccPwt7w41a9aXpIbdAGPvZlKTLsaUFrBxL15DzkUmVlxn1ztUkp6cYr0PTL
-         yy5BUT1PpDYYyClWbqwmf40VLiFiir3AUGGap5blZeweXxvzAhqlzMo1XYHVryv+i7pf
-         O9TZHxrLkiUzXKAzWZWfZV1BtLwfXm2vnFJLnEcak3VKNR86Rc5uKT8PVpD+lm/d5j5K
-         yLFw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: gregkh@linuxfoundation.org,
-	wsa@the-dreams.de
-Cc: driverdev-devel@linuxdriverproject.org,
-	devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH v2 68/75] staging: ks7010: Replace manual array copy with ether_addr_copy().
-Date: Fri, 30 Mar 2018 23:08:48 -0700
-Message-Id: <20180331060855.9452-68-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1495695-1522488125-5-10830692134782424731
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522488125; b=C/+luBdnzO75XlUmom5rRB5R1r4ska4okv7vkohR5Rj26CAMsP
+    E5mrlUyLXX8arvnRIT/uCCvGEuPPplqQ39I3KyEodJyK6o9FeIgeSdYVCLa/Cbce
+    t3Ap6OfpzCQR9yQJI/EpRcQtXkSmrebcIVC5R//8tk0uWVstGZzc2wAn/1L9bIAH
+    iSTBbi58sq/VGf9SKmCNr+NUik43cIOpjL6hHRSGEERfwYW+PCQwW97tH6CG2OLs
+    q3vKR9B7J5Bt2sk9Hj7zQFglxOwdD6x/W/VY8JuqfUP8CtoagAHiwFzl1uB7Mnwp
+    QKE//QWh5YoA1aM/alB4HNNBp9q7Cekt2W8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522488125; bh=BIw00
+    EbKeoX2GSdR2izJKcBDNqcwA/RL5p9Cz8NGlkI=; b=tiQwya33U87j5m4JfXKDY
+    08CZvmHigid9LITY/dIsbFJGccmplGcUqKK8TjjAK9zKmqOFLqLeQWtPQyFHiFxu
+    9HZ1oLKLP1yWuhpQcxdcxveFdVrEs/0gV/ULgXZCjvo/udD174h/UhN8z24AjPPL
+    nkP7DGBLETYl9PqUKf1p94Awc5qRQdnU0FbNhxEpVjH2E/si18ZMT0Vr8vSvmYtm
+    9QoUUxmoqjU7IlRh3V71nOHQu1qTQOM6t/x9EoYR0w2Ptpv88DGi6MxAJcQfHmVs
+    JF2RBmNuY8cx2uWif/vyz3YPgftVlLc/h654togBWXsyDUnQpdm/PJhftuhKZPVC
+    A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=JKaEED0p x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=JKaEED0p x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBmpTBMBKvFdI3k6ktFSOWgk02fQ+7uXIPNhHb5OSnmjipNUnNHlRTpldLnlorWVDqQjU86p/FqUdHme4AnBikrz3tF6TfVqqqlFSfVUDfpemwlYGNcK
+    8CzVDimCgF5uZWTSkHeVhZf6DsZS3iRj9uuwD5qnJqbrLoVj9R2uVWQfUHdwPR5xCBGEDqxUNQO0FDd8cE1Or0Jrw1HSKkcFqvPyjvhduXg6TTdYXnwzWX5a
+    sDpLpFC5ojW6BOnyNmHewA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
+    a=w39jrxuhPLwgjoi6HQgA:9 a=asRK2qnEoISfb6__:21 a=1vXTxL2uy1HA96aY:21
+    a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Sat, 31 Mar 2018 12:14:20 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Quytelda Kahja <quytelda@tamalin.org>
+Subject: Re: [PATCH v2 68/75] staging: ks7010: Replace manual array copy with
+ ether_addr_copy().
+Message-ID: <20180331091420.3gdpzy557j2g443d@mwanda>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:Z5NBRnrFt4ia88h8DGECJWx1551bHxbdePpzmf4W9koXt+3nCwG
- gqAT1x1TYpw4Xx6/WVavGutV0+3l7Ba083u3j/rSNALKYwbVxVCbGrbnEMdl762W5rvgc9A
- FBKcZpJ//RX3fcJCvmh6CcwR3rzeYQK7YvP8hOGHpKGmjHNx9EdU/KjwvI4T2dm5BbfDah1
- BdK+1LBu9R4u+afrfDpkQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:MAPIeVDJSbY=:qRdCydD9e8dUZyikb5Dduo
- nYO7Bv3kJpBpNhyyPpweIXJy/0zOHYV1stLXcqyX2fn3H9kul5fjYkhUwTdpxqTiFHwj6TNKz
- Y5YhY2qrGA3rUt8r3DSgJVctQPaGEOULDzAxFQ2U+3zQm9U6ebhoEbdjE0umXKGJhUm/n3QmK
- m3zAML5LVZFpEAtoXS3EnwDpziY3BDAolxqXHN0q8/OUe5CJwN3v4nHQF1pJ6vNUfTvQtCaZO
- ghHlndfP45mRdgeW829Ce6V0k7lwbw9F2edHMJQMfgFfsrfjntdlGWU4uIkZsN/zTu4u5kCnu
- pIeYncugpTwWO0TClzW1DUUVqYpRbcTecRDDVFcRfz4HxiBS7duDLtyAeE2heQM/xNY0BVfiB
- UpwsWLx9SBxUCQGgHvQWUdLyh6rDp5jMDIyhyggh3mfZq83UZak/uaTWR2TqGLuoKPcsIqlWm
- melrLzRhNNoqO2dhIf8YXbKaRWfNjuIoBUfxdBvmLPxqb4EFP2bqNL+f9/lhPBIYS2ESvFFZs
- NxRqMEZ+RAyeoQ+TePUKn8ydGmorhoXpHMAs0IP2cPsSXwqvujEBw4gPbveypwSX9itp2Envu
- gNoor4w94dJMRO1hKWgX+io5kEX0vFZsDkL92Fmro4h3H7aFE0tjOATD8or1FJnbh40/xQQjq
- 0wybC3GLV8YWJBXfJ30fbrYqyLiM8Wu+lSin+Ma29Wqy9sodDIFuuDRyZn4Qkm/TOfLUuIzVg
- HP8rChzTL1xnI74jNhXEIPAYfy3dCBy5mh1ETA==
+ <20180331060855.9452-68-quytelda@tamalin.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20180331060855.9452-68-quytelda@tamalin.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8848
+ signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803310095
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+ driverdev-devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
+ wsa@the-dreams.de
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596432448143728817?=
-X-GMAIL-MSGID: =?utf-8?q?1596432448143728817?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Copying the dummy HW address into the struct net_device doesn't need
-to be done byte by byte; use ether_addr_copy() instead.
-Additionally, dev->dev_addr is not eight bytes long.
-ether_setup() sets the dev->addr_len to ETH_ALEN (defined as 6)
-in the net core code.
+I'm in a hurry because I'm leaving for a long weekend so I've reviewed
+the first easy 67 patches but this one is tricky and I'm not able to
+review it properly before I leave.
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
----
- drivers/staging/ks7010/ks_hostif.c   | 29 +++++++++++------------------
- drivers/staging/ks7010/ks_wlan.h     |  2 --
- drivers/staging/ks7010/ks_wlan_net.c | 13 ++-----------
- 3 files changed, 13 insertions(+), 31 deletions(-)
+On Fri, Mar 30, 2018 at 11:08:48PM -0700, Quytelda Kahja wrote:
+> Copying the dummy HW address into the struct net_device doesn't need
+> to be done byte by byte; use ether_addr_copy() instead.
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 1eff78540683..23c637ef147d 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -388,6 +388,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
- static
- void hostif_data_indication(struct ks_wlan_private *priv)
- {
-+	struct net_device *dev = priv->net_dev;
- 	unsigned int rx_ind_size;	/* indicate data size */
- 	struct sk_buff *skb;
- 	unsigned short auth_type;
-@@ -411,9 +412,9 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 	eth_proto = ntohs(eth_hdr->h_proto);
- 
- 	/* source address check */
--	if (memcmp(&priv->eth_addr[0], eth_hdr->h_source, ETH_ALEN) == 0) {
--		netdev_err(priv->net_dev, "invalid : source is own mac address !!\n");
--		netdev_err(priv->net_dev,
-+	if (memcmp(dev->dev_addr, eth_hdr->h_source, ETH_ALEN) == 0) {
-+		netdev_err(dev, "invalid : source is own mac address !!\n");
-+		netdev_err(dev,
- 			   "eth_hdrernet->h_dest=%02X:%02X:%02X:%02X:%02X:%02X\n",
- 			   eth_hdr->h_source[0], eth_hdr->h_source[1],
- 			   eth_hdr->h_source[2], eth_hdr->h_source[3],
-@@ -443,7 +444,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 			priv->nstats.rx_dropped++;
- 			return;
- 		}
--		netdev_dbg(priv->net_dev, "SNAP, rx_ind_size = %d\n",
-+		netdev_dbg(dev, "SNAP, rx_ind_size = %d\n",
- 			   rx_ind_size);
- 
- 		size = ETH_ALEN * 2;
-@@ -463,7 +464,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 			priv->nstats.rx_dropped++;
- 			return;
- 		}
--		netdev_dbg(priv->net_dev, "NETBEUI/NetBIOS rx_ind_size=%d\n",
-+		netdev_dbg(dev, "NETBEUI/NetBIOS rx_ind_size=%d\n",
- 			   rx_ind_size);
- 
- 		/* 8802/FDDI MAC copy */
-@@ -480,7 +481,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
- 		aa1x_hdr = (struct ieee802_1x_hdr *)(priv->rxp + 14);
- 		break;
- 	default:	/* other rx data */
--		netdev_err(priv->net_dev, "invalid data format\n");
-+		netdev_err(dev, "invalid data format\n");
- 		priv->nstats.rx_errors++;
- 		return;
- 	}
-@@ -522,17 +523,9 @@ void hostif_mib_get_confirm(struct ks_wlan_private *priv)
- 	case DOT11_MAC_ADDRESS:
- 		/* MAC address */
- 		hostif_sme_enqueue(priv, SME_GET_MAC_ADDRESS);
--		memcpy(priv->eth_addr, priv->rxp, ETH_ALEN);
-+		memcpy(dev->dev_addr, priv->rxp, ETH_ALEN);
- 		priv->mac_address_valid = true;
--		dev->dev_addr[0] = priv->eth_addr[0];
--		dev->dev_addr[1] = priv->eth_addr[1];
--		dev->dev_addr[2] = priv->eth_addr[2];
--		dev->dev_addr[3] = priv->eth_addr[3];
--		dev->dev_addr[4] = priv->eth_addr[4];
--		dev->dev_addr[5] = priv->eth_addr[5];
--		dev->dev_addr[6] = 0x00;
--		dev->dev_addr[7] = 0x00;
--		netdev_info(dev, "MAC ADDRESS = %pM\n", priv->eth_addr);
-+		netdev_info(dev, "MAC ADDRESS = %pM\n", dev->dev_addr);
- 		break;
- 	case DOT11_PRODUCT_VERSION:
- 		/* firmware version */
-@@ -1111,7 +1104,7 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 
- 	/* skb check */
- 	eth = (struct ethhdr *)skb->data;
--	if (memcmp(&priv->eth_addr[0], eth->h_source, ETH_ALEN) != 0) {
-+	if (memcmp(priv->net_dev->dev_addr, eth->h_source, ETH_ALEN) != 0) {
- 		netdev_err(priv->net_dev, "invalid mac address !!\n");
- 		netdev_err(priv->net_dev, "ethernet->h_source=%pM\n", eth->h_source);
- 		ret = -ENXIO;
-@@ -2167,7 +2160,7 @@ void hostif_sme_execute(struct ks_wlan_private *priv, int event)
- 	case SME_MACADDRESS_SET_REQUEST:
- 		hostif_mib_set_request(priv, LOCAL_CURRENTADDRESS, ETH_ALEN,
- 				       MIB_VALUE_TYPE_OSTRING,
--				       &priv->eth_addr[0]);
-+				       priv->net_dev->dev_addr);
- 		break;
- 	case SME_BSS_SCAN_REQUEST:
- 		hostif_bss_scan_request(priv, priv->reg.scan_type,
-diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index eb0c14e78bd2..012e0fe2b60d 100644
---- a/drivers/staging/ks7010/ks_wlan.h
-+++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -421,8 +421,6 @@ struct ks_wlan_private {
- 	struct work_struct wakeup_work;
- 	int scan_ind_count;
- 
--	unsigned char eth_addr[ETH_ALEN];
--
- 	struct local_aplist aplist;
- 	struct local_ap current_ap;
- 	struct power_save_status psstatus;
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 72a52c6f9fd2..35c615433687 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -2749,11 +2749,10 @@ int ks_wlan_set_mac_address(struct net_device *dev, void *addr)
- 	if (netif_running(dev))
- 		return -EBUSY;
- 	memcpy(dev->dev_addr, mac_addr->sa_data, dev->addr_len);
--	memcpy(priv->eth_addr, mac_addr->sa_data, ETH_ALEN);
- 
- 	priv->mac_address_valid = false;
- 	hostif_sme_enqueue(priv, SME_MACADDRESS_SET_REQUEST);
--	netdev_info(dev, "ks_wlan:  MAC ADDRESS = %pM\n", priv->eth_addr);
-+	netdev_info(dev, "ks_wlan:  MAC ADDRESS = %pM\n", dev->dev_addr);
- 	return 0;
- }
- 
-@@ -2884,15 +2883,7 @@ int ks_wlan_net_start(struct net_device *dev)
- 	timer_setup(&update_phyinfo_timer, ks_wlan_update_phyinfo_timeout, 0);
- 
- 	/* dummy address set */
--	memcpy(priv->eth_addr, dummy_addr, ETH_ALEN);
--	dev->dev_addr[0] = priv->eth_addr[0];
--	dev->dev_addr[1] = priv->eth_addr[1];
--	dev->dev_addr[2] = priv->eth_addr[2];
--	dev->dev_addr[3] = priv->eth_addr[3];
--	dev->dev_addr[4] = priv->eth_addr[4];
--	dev->dev_addr[5] = priv->eth_addr[5];
--	dev->dev_addr[6] = 0x00;
--	dev->dev_addr[7] = 0x00;
-+	ether_addr_copy(dev->dev_addr, dummy_addr);
- 
- 	/* The ks_wlan-specific entries in the device structure. */
- 	dev->netdev_ops = &ks_wlan_netdev_ops;
--- 
-2.16.3
+Fine.
+
+> Additionally, dev->dev_addr is not eight bytes long.
+> ether_setup() sets the dev->addr_len to ETH_ALEN (defined as 6)
+> in the net core code.
+
+So it's a buffer overflow?  The subject should have mentioned that this
+is a bug fix.  But I'm not sure it is.  dev->dev_addr is MAX_ADDR_LEN (32)
+bytes long I believe.  See dev_addr_init() for details.
+
+The commit message didn't make it clear that you were getting rid of
+priv->eth_addr.  It's a good change, but it confused me and I am in a
+hurry.
+
+> 
+> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+> ---
+>  drivers/staging/ks7010/ks_hostif.c   | 29 +++++++++++------------------
+>  drivers/staging/ks7010/ks_wlan.h     |  2 --
+>  drivers/staging/ks7010/ks_wlan_net.c | 13 ++-----------
+>  3 files changed, 13 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+> index 1eff78540683..23c637ef147d 100644
+> --- a/drivers/staging/ks7010/ks_hostif.c
+> +++ b/drivers/staging/ks7010/ks_hostif.c
+> @@ -388,6 +388,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
+>  static
+>  void hostif_data_indication(struct ks_wlan_private *priv)
+>  {
+> +	struct net_device *dev = priv->net_dev;
+>  	unsigned int rx_ind_size;	/* indicate data size */
+>  	struct sk_buff *skb;
+>  	unsigned short auth_type;
+> @@ -411,9 +412,9 @@ void hostif_data_indication(struct ks_wlan_private *priv)
+>  	eth_proto = ntohs(eth_hdr->h_proto);
+>  
+>  	/* source address check */
+> -	if (memcmp(&priv->eth_addr[0], eth_hdr->h_source, ETH_ALEN) == 0) {
+> -		netdev_err(priv->net_dev, "invalid : source is own mac address !!\n");
+> -		netdev_err(priv->net_dev,
+> +	if (memcmp(dev->dev_addr, eth_hdr->h_source, ETH_ALEN) == 0) {
+> +		netdev_err(dev, "invalid : source is own mac address !!\n");
+> +		netdev_err(dev,
+>  			   "eth_hdrernet->h_dest=%02X:%02X:%02X:%02X:%02X:%02X\n",
+>  			   eth_hdr->h_source[0], eth_hdr->h_source[1],
+>  			   eth_hdr->h_source[2], eth_hdr->h_source[3],
+> @@ -443,7 +444,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
+>  			priv->nstats.rx_dropped++;
+>  			return;
+>  		}
+> -		netdev_dbg(priv->net_dev, "SNAP, rx_ind_size = %d\n",
+> +		netdev_dbg(dev, "SNAP, rx_ind_size = %d\n",
+>  			   rx_ind_size);
+
+I don't like the printk cleanups.  They belong in a separate patch and
+they make it harder for reviewers in a hurry to see what the patch is
+doing.
+
+Sorry, gotta run...
+
+regards,
+dan carpenter
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
