@@ -1,163 +1,157 @@
-Return-Path: <wasim.nazir@pathpartnertech.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522517172; cv=none;
+Return-Path: <hdegoede@redhat.com>
+X-Google-Smtp-Source: AIpwx4+Dth63Yg/2BX8BxGFS7QX0AdnuFTrEUmGGJcWaXijMke1UUc8M8/nM3lTymm3KEspC4N5R
+ARC-Seal: i=1; a=rsa-sha256; t=1522498788; cv=none;
         d=google.com; s=arc-20160816;
-        b=LjFzkw9DCehPr+LEgdwFI0ZRe+/Z/2Fh5HZA5RTqHNAH01NiX7EbvAWeb1w5VLTHww
-         5twPf/4aFfC4Ei0w/L1Y2doAt0xeQnZ4j6bHLbscXXfC1rOA6UFBO7L/dMWhuky/l2kG
-         AG5IX/9NYTV7cUsb/iHPE2Nkr5Xar+iIHXh3TkKUfRwyou1KdTRVimR9y5TrgXEzmtjT
-         GXLvjwFjHNDxo02bcpf8nwvMHzOeScrIN36MXn8PgrZGdzgkdh6Slu5b34xiIyeGx2zz
-         KpBxY/vwcZ0/zDCvsRNgmV2JJsn+/kZCfrNCupkpCiKMyCccq68n0+BSYO1l0o589Rce
-         cykw==
+        b=Mve0xMSiqji6ZkhbRrsP0E86sBow6rvBZgeVEfoPGI6zvl0cIxMIFHYAzGS0woiUFa
+         i47QzpyOPY4Aq0Gij9y0DlQsDAcxZlv4x05kdABHlfnXjxq8xTwvKj1b1h9ahGR/v8ZK
+         DNaUvUWJGT3T+Djs5oOhFXvCj/CntbM6jrYhPbCxTDmoMHroVQR5BY1o3v4GRbd5iWhp
+         kYKK5DBH61+Qdz4PRMNaiTGX7mInJgwvoeAbWCg+od3Vv3opqqM/5qIaufI8H+ko4fh1
+         ibC6rGfhzCh1aowQhWjht1W8XNV3phT/Y0W2MYIxAGj0hiSE8D+2FTUg5SROU0cVBvNV
+         AEvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=XWDq9ks8f56hoJO2eujz7zFWmzCoagHebPSdzMNSI8Y=;
-        b=TXaZdzYR/TgvSxv5G/xAnJWIXrOG0ig00SlKc2l5WEN++gngDpfTOEqYKIXexqnIBK
-         9vaePRrPNwh4L6Cd2Wl0XhFG5LGslIegGO7+t3dQTvl5sR/Ce5bx9mMvkb7EXrJ29UbA
-         94ZI8yID8nRtMYH9dmC1c8cXjFcrtkQWkJR0KRmDLqLW3e0TxV9WCqHlE5rEwemuUnzX
-         ocpURGze88sEeZ/0LsRwnlouaRCZKDVCjvn099CethBwyEvvBTcIl8FPUfORhELQCURT
-         t1sxjEIdv5oLLUI/YyvwNvi0AXxWkg/CSloorTyXwm8IGYxSaBBB5ymxK57ARwEcmojd
-         VNTw==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=Zx2RZPAyt5y+3y3koZ3/YzMiwiFiJEuo29sXS6pbv0g=;
+        b=hXUi5e5ea4dnGSolp2fEx45cXNXZsxLkmxIdryw8GIBMhGMcitggnP6vpyNdrxaN/f
+         SS7ZRNGWHMqVixeEc4kDmsvgZ+6Qph27mxW1AL42Oo16qI/HKSUYBJCfUCJMEqhL6KyB
+         Iryng15evlPvuQfLWifCS0Y50Qh1mesfnSKXn+MACsUE4m1VoEQrOqEYudkc6OdL7xv+
+         SWnLHIAp7fRdazqTpxDaVO8GC8QN+Cp4iHjVeFEejP4aGlaQFvYUx1ZBLlyJVKTNFNUR
+         oF5xZA8cqgk8Oh+VWXSSLrKouWetgtoxC4n4k3i+2squDSl7R6DbB32mMGhV7QxMAAcO
+         4Vkw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@pathpartnertech.com header.s=google header.b=e+sMGmW0;
-       spf=pass (google.com: domain of wasim.nazir@pathpartnertech.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wasim.nazir@pathpartnertech.com
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@pathpartnertech.com header.s=google header.b=e+sMGmW0;
-       spf=pass (google.com: domain of wasim.nazir@pathpartnertech.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=wasim.nazir@pathpartnertech.com
-X-Google-Smtp-Source: AIpwx48YqZyu0NVWiCobafk4uFLGd7XD5JeNbUQF+Fnjl2WzFH6M75xDSHWBm5gzeleRQHvbCuIR7iFMYMiuaOe8HoI=
-MIME-Version: 1.0
-References: <CAAYn-eg8L=-2rX4ZcsA6r9J+6ESEvQFrWk1=f+k1ToP2f=6WHQ@mail.gmail.com>
- <20180331140832.GA1074@kroah.com>
-In-Reply-To: <20180331140832.GA1074@kroah.com>
-From: Wasim Nazir <wasim.nazir@pathpartnertech.com>
-Date: Sat, 31 Mar 2018 17:26:00 +0000
-Message-ID: <CAAYn-eg8dUMC056GMm8g2CPAhFTtdri_rn+U9fFtYiXSp6Sw+Q@mail.gmail.com>
-Subject: Re: [PATCH] Patch to replace DEFINE_SEMAPHORE with DEFINE_BINARY_SEMAPHORE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: jhogan@kernel.org, kys@microsoft.com, linuxdrivers@attotech.com,
-	linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-	linux-arm-kernel@lists.infradead.org, Ralf Baechle <ralf@linux-mips.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>, Haiyang Zhang <haiyangz@microsoft.com>,
-	Stephen Hemminger <sthemmin@microsoft.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Ariel Elior <ariel.elior@cavium.com>, everest-linux-l2@cavium.com,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>,
-	Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
-	David Daney <david.daney@cavium.com>, Mihaela Muraru <mihaela.muraru21@gmail.com>,
-	Kishore KP <kishore.p@techveda.org>, Sidong Yang <realwakka@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Phil Elwell <phil@raspberrypi.org>,
-	Ingo Molnar <mingo@kernel.org>, Tycho Andersen <tycho@tycho.ws>, linux-mips@linux-mips.org,
-	linux-efi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org, devel@driverdev.osuosl.org
-Content-Type: multipart/alternative; boundary="0000000000002c48be0568b8a736"
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+From: Hans de Goede <hdegoede@redhat.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Peter Jones <pjones@redhat.com>,
+	Dave Olsthoorn <dave@bewaar.me>,
+	x86@kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH 1/2] efi: Export boot-services code and data as debugfs-blobs
+Date: Sat, 31 Mar 2018 14:19:43 +0200
+Message-Id: <20180331121944.8618-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596460385840802808?=
-X-GMAIL-MSGID: =?utf-8?q?1596474966871235440?=
+X-GMAIL-THRID: =?utf-8?q?1596455689779545050?=
+X-GMAIL-MSGID: =?utf-8?q?1596455689779545050?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---0000000000002c48be0568b8a736
-Content-Type: text/plain; charset="UTF-8"
+Sometimes it is useful to be able to dump the efi boot-services code and
+data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
+but only if efi=debug is passed on the kernel-commandline as this requires
+not freeing those memory-regions, which costs 20+ MB of RAM.
 
-No worries, thanks for the update!
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ arch/x86/platform/efi/quirks.c |  4 +++
+ drivers/firmware/efi/efi.c     | 57 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
 
-On Sat, Mar 31, 2018, 7:38 PM Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-wrote:
-
-> On Sat, Mar 31, 2018 at 07:16:21PM +0530, Wasim Nazir wrote:
-> > This message contains confidential information and is intended only for
-> the
-> > individual(s) named. If you are not the intended recipient, you are
-> > notified that disclosing, copying, distributing or taking any action in
-> > reliance on the contents of this mail and attached file/s is strictly
-> > prohibited. Please notify the sender immediately and delete this e-mail
-> > from your system. E-mail transmission cannot be guaranteed to be secured
-> or
-> > error-free as information could be intercepted, corrupted, lost,
-> destroyed,
-> > arrive late or incomplete, or contain viruses. The sender therefore does
-> > not accept liability for any errors or omissions in the contents of this
-> > message, which arise as a result of e-mail transmission.
->
->
-> This footer is not compatible with patches submitted to the kernel,
-> sorry.  email is now deleted.
->
-> greg k-h
->
-
--- 
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 5b513ccffde4..0f968c7bcfec 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -374,6 +374,10 @@ void __init efi_free_boot_services(void)
+ 	int num_entries = 0;
+ 	void *new, *new_md;
  
-
-This message contains confidential information and is intended only for the 
-individual(s) named. If you are not the intended recipient, you are 
-notified that disclosing, copying, distributing or taking any action in 
-reliance on the contents of this mail and attached file/s is strictly 
-prohibited. Please notify the sender immediately and delete this e-mail 
-from your system. E-mail transmission cannot be guaranteed to be secured or 
-error-free as information could be intercepted, corrupted, lost, destroyed, 
-arrive late or incomplete, or contain viruses. The sender therefore does 
-not accept liability for any errors or omissions in the contents of this 
-message, which arise as a result of e-mail transmission.
-
---0000000000002c48be0568b8a736
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto">No worries, thanks for the update!=C2=A0</div><br><div cl=
-ass=3D"gmail_quote"><div dir=3D"ltr">On Sat, Mar 31, 2018, 7:38 PM Greg Kro=
-ah-Hartman &lt;<a href=3D"mailto:gregkh@linuxfoundation.org">gregkh@linuxfo=
-undation.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" styl=
-e=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">On Sat,=
- Mar 31, 2018 at 07:16:21PM +0530, Wasim Nazir wrote:<br>
-&gt; This message contains confidential information and is intended only fo=
-r the<br>
-&gt; individual(s) named. If you are not the intended recipient, you are<br=
->
-&gt; notified that disclosing, copying, distributing or taking any action i=
-n<br>
-&gt; reliance on the contents of this mail and attached file/s is strictly<=
-br>
-&gt; prohibited. Please notify the sender immediately and delete this e-mai=
-l<br>
-&gt; from your system. E-mail transmission cannot be guaranteed to be secur=
-ed or<br>
-&gt; error-free as information could be intercepted, corrupted, lost, destr=
-oyed,<br>
-&gt; arrive late or incomplete, or contain viruses. The sender therefore do=
-es<br>
-&gt; not accept liability for any errors or omissions in the contents of th=
-is<br>
-&gt; message, which arise as a result of e-mail transmission.<br>
-<br>
-<br>
-This footer is not compatible with patches submitted to the kernel,<br>
-sorry.=C2=A0 email is now deleted.<br>
-<br>
-greg k-h<br>
-</blockquote></div>
-
-<br>
-
-
-
-
-<p><span lang=3D"EN-IN">This
-message contains confidential information and is intended only for the
-individual(s) named.</span><span lang=3D"EN-IN"> </span>If you are not the =
-intended
-recipient, you are notified that disclosing, copying, distributing or takin=
-g any
-action in reliance on the contents of this mail and attached file/s is stri=
-ctly
-prohibited<span lang=3D"EN-IN">. Please notify the
-sender immediately and delete this e-mail from your system. E-mail transmis=
-sion
-cannot be guaranteed to be secured or error-free as information could be
-intercepted, corrupted, lost, destroyed, arrive late or incomplete, or cont=
-ain
-viruses. The sender therefore does not accept liability for any errors or
-omissions in the contents of this message, which arise as a result of e-mai=
-l
-transmission.</span></p>
---0000000000002c48be0568b8a736--
++	/* Keep all regions for /sys/kernel/debug/efi */
++	if (efi_enabled(EFI_DBG))
++		return;
++
+ 	for_each_efi_memory_desc(md) {
+ 		unsigned long long start = md->phys_addr;
+ 		unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index cd42f66a7c85..fddc5f706fd2 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -18,6 +18,7 @@
+ #include <linux/kobject.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
++#include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/efi.h>
+ #include <linux/of.h>
+@@ -316,6 +317,59 @@ static __init int efivar_ssdt_load(void)
+ static inline int efivar_ssdt_load(void) { return 0; }
+ #endif
+ 
++#ifdef CONFIG_DEBUG_FS
++
++#define EFI_DEBUGFS_MAX_BLOBS 32
++
++struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
++
++static void __init efi_debugfs_init(void)
++{
++	struct dentry *efi_debugfs;
++	efi_memory_desc_t *md;
++	char name[32];
++	int type_count[EFI_BOOT_SERVICES_DATA + 1] = {};
++	int i = 0;
++
++	efi_debugfs = debugfs_create_dir("efi", NULL);
++	if (IS_ERR_OR_NULL(efi_debugfs)) {
++		pr_warn("Could not create efi debugfs entry\n");
++		return;
++	}
++
++	for_each_efi_memory_desc(md) {
++		switch (md->type) {
++		case EFI_BOOT_SERVICES_CODE:
++			snprintf(name, sizeof(name), "boot_services_code%d",
++				 type_count[md->type]++);
++			break;
++		case EFI_BOOT_SERVICES_DATA:
++			snprintf(name, sizeof(name), "boot_services_data%d",
++				 type_count[md->type]++);
++			break;
++		default:
++			continue;
++		}
++
++		debugfs_blob[i].size = md->num_pages << EFI_PAGE_SHIFT;
++		debugfs_blob[i].data = memremap(md->phys_addr,
++						debugfs_blob[i].size,
++						MEMREMAP_WB);
++		if (!debugfs_blob[i].data) {
++			pr_warn("Error mapping %s\n", name);
++			continue;
++		}
++
++		debugfs_create_blob(name, 0400, efi_debugfs, &debugfs_blob[i]);
++		i++;
++		if (i == EFI_DEBUGFS_MAX_BLOBS)
++			break;
++	}
++}
++#else
++static inline void efi_debugfs_init(void) {}
++#endif
++
+ /*
+  * We register the efi subsystem with the firmware subsystem and the
+  * efivars subsystem with the efi subsystem, if the system was booted with
+@@ -360,6 +414,9 @@ static int __init efisubsys_init(void)
+ 		goto err_remove_group;
+ 	}
+ 
++	if (efi_enabled(EFI_DBG))
++		efi_debugfs_init();
++
+ 	return 0;
+ 
+ err_remove_group:
+-- 
+2.17.0.rc2
