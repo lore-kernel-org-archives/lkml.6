@@ -1,28 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752911AbeCaHFu (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 03:05:50 -0400
-Received: from smtprelay0011.hostedemail.com ([216.40.44.11]:52173 "EHLO
+        id S1753106AbeCaHGB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 03:06:01 -0400
+Received: from smtprelay0198.hostedemail.com ([216.40.44.198]:60597 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752422AbeCaHFr (ORCPT
+        by vger.kernel.org with ESMTP id S1752422AbeCaHF7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 03:05:47 -0400
+        Sat, 31 Mar 2018 03:05:59 -0400
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:968:973:988:989:1260:1345:1359:1437:1534:1541:1711:1730:1747:1777:1792:2393:2559:2562:3138:3139:3140:3141:3142:3352:3865:3868:4321:4419:5007:6119:6261:7903:10004:10848:11026:11473:11658:11914:12043:12296:12438:12555:12895:12986:13069:13311:13357:14181:14384:14394:14721:21080:21627:30054:30075,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: idea48_898d745d89849
-X-Filterd-Recvd-Size: 2296
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:800:960:973:981:988:989:1260:1345:1359:1437:1534:1542:1711:1730:1747:1777:1792:2393:2559:2562:2693:3138:3139:3140:3141:3142:3353:3865:3866:3867:4321:5007:6261:7875:9592:10004:10848:11026:11473:11657:11658:11914:12043:12114:12296:12438:12555:12683:12895:14181:14394:14721:21080:21451:21627:30012:30054:30055,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
+X-HE-Tag: flesh43_8b378c3b93b00
+X-Filterd-Recvd-Size: 3378
 From: Joe Perches <joe@perches.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 04/12] bridge: netfilter: Use the new global ether_<foo>_addr arrays
-Date: Sat, 31 Mar 2018 00:05:19 -0700
-Message-Id: <df70bafdca663db034626f4f1525826ea263bf2c.1522479607.git.joe@perches.com>
+To: linux-kernel@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH 09/12] iwlwifi: Remove local iwl_bcast_addr and use ether_broadcast_addr
+Date: Sat, 31 Mar 2018 00:05:24 -0700
+Message-Id: <af831d8873ffcc36014244f76d21cd6aaf5aca9c.1522479608.git.joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <cover.1522479607.git.joe@perches.com>
 References: <cover.1522479607.git.joe@perches.com>
@@ -30,36 +29,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the local consts and use the new globals.
+Use the new global to save a little bit of object code.
 
 Signed-off-by: Joe Perches <joe@perches.com>
 ---
- net/bridge/netfilter/ebt_stp.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/dvm/dev.h  | 1 -
+ drivers/net/wireless/intel/iwlwifi/dvm/scan.c | 2 +-
+ drivers/net/wireless/intel/iwlwifi/dvm/sta.c  | 4 +---
+ 3 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/bridge/netfilter/ebt_stp.c b/net/bridge/netfilter/ebt_stp.c
-index 3140eb912d7e..2b7479cc0140 100644
---- a/net/bridge/netfilter/ebt_stp.c
-+++ b/net/bridge/netfilter/ebt_stp.c
-@@ -153,8 +153,6 @@ ebt_stp_mt(const struct sk_buff *skb, struct xt_action_param *par)
- static int ebt_stp_mt_check(const struct xt_mtchk_param *par)
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/dev.h b/drivers/net/wireless/intel/iwlwifi/dvm/dev.h
+index cceb4cd8e501..157cc21c5dfb 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/dev.h
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/dev.h
+@@ -271,7 +271,6 @@ struct iwl_sensitivity_ranges {
+  *
+  ****************************************************************************/
+ void iwl_update_chain_flags(struct iwl_priv *priv);
+-extern const u8 iwl_bcast_addr[ETH_ALEN];
+ 
+ #define IWL_OPERATION_MODE_AUTO     0
+ #define IWL_OPERATION_MODE_HT_ONLY  1
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/scan.c b/drivers/net/wireless/intel/iwlwifi/dvm/scan.c
+index 17e6a32384d3..e40d9b9fc4a9 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/scan.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/scan.c
+@@ -871,7 +871,7 @@ static int iwlagn_request_scan(struct iwl_priv *priv, struct ieee80211_vif *vif)
+ 		/* use bcast addr, will not be transmitted but must be valid */
+ 		cmd_len = iwl_fill_probe_req(
+ 					(struct ieee80211_mgmt *)scan->data,
+-					iwl_bcast_addr, NULL, 0,
++					ether_broadcast_addr, NULL, 0,
+ 					NULL, 0,
+ 					scan_cmd_size - sizeof(*scan));
+ 		break;
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/sta.c b/drivers/net/wireless/intel/iwlwifi/dvm/sta.c
+index de6ec9b7ace4..177a366f7ad3 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/sta.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/sta.c
+@@ -32,8 +32,6 @@
+ #include "dev.h"
+ #include "agn.h"
+ 
+-const u8 iwl_bcast_addr[ETH_ALEN] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+-
+ static int iwl_sta_ucode_activate(struct iwl_priv *priv, u8 sta_id)
  {
- 	const struct ebt_stp_info *info = par->matchinfo;
--	const u8 bridge_ula[6] = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x00};
--	const u8 msk[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
- 	const struct ebt_entry *e = par->entryinfo;
+ 	lockdep_assert_held(&priv->sta_lock);
+@@ -1287,7 +1285,7 @@ int iwlagn_alloc_bcast_station(struct iwl_priv *priv,
+ 	u8 sta_id;
  
- 	if (info->bitmask & ~EBT_STP_MASK || info->invflags & ~EBT_STP_MASK ||
-@@ -162,8 +160,8 @@ static int ebt_stp_mt_check(const struct xt_mtchk_param *par)
- 		return -EINVAL;
- 	/* Make sure the match only receives stp frames */
- 	if (!par->nft_compat &&
--	    (!ether_addr_equal(e->destmac, bridge_ula) ||
--	     !ether_addr_equal(e->destmsk, msk) ||
-+	    (!ether_addr_equal(e->destmac, ether_stp_addr) ||
-+	     !ether_addr_equal(e->destmsk, ether_broadcast_addr) ||
- 	     !(e->bitmask & EBT_DESTMAC)))
- 		return -EINVAL;
- 
+ 	spin_lock_bh(&priv->sta_lock);
+-	sta_id = iwl_prep_station(priv, ctx, iwl_bcast_addr, false, NULL);
++	sta_id = iwl_prep_station(priv, ctx, ether_broadcast_addr, false, NULL);
+ 	if (sta_id == IWL_INVALID_STATION) {
+ 		IWL_ERR(priv, "Unable to prepare broadcast station\n");
+ 		spin_unlock_bh(&priv->sta_lock);
 -- 
 2.15.0
