@@ -1,64 +1,64 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1160787-1522476681-2-7797505768356635655
+X-Cyrus-Session-Id: sloti22d1t05-1111812-1522476672-2-10856581448285943208
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522476680; b=gqw4vRcEkOrUIvT8LC99bF1KhtaRrvgStHDaW1v71L4MXo7sTT
-    2a34n8+oYJSxc3OJeEjkP5q3J1wBMzywdwT/rXSGjwWXtmqeMnyQeN3ap2r1L6IZ
-    DUOtyb0cbNK+7mYO+M34b5hbgrsG7YRn6RYRwa7FszLhrzVWoc73rFImgr+zGWA1
-    Kh/358ADrkZYw3qd6A94w8D+JdwyrHz0VSDi1cApeRWUHn8/R1z0f66LVNsQDfg7
-    I5W3smOMkhlo3QFRJGSluGRh2DzvF/7xiehrLsq9RC5OeLZWSPY5cwwbYR+es8Dq
-    UknsvZdBRGpJ2SdNqlU5s4nHPonKkVzHcSMw==
+    1522476672; b=t5BxccNO5DI+148/Ohz0YjdlydXpAaeH6+0HRvd5xlrpplpeiR
+    luaPh6cpVuGKvmeOqYNqUY7B1Zryuy8PKr6Y3QfZn+5hWKHhvQVvEexGKUc20//Z
+    t0AOlr2xgUD9xMdPjL6SAyid1rDtHPeEGmo/Z11tA0k2RyBQ6LIBpN2z72yaQrUK
+    nos2+IS+M9SHk9m9DmmaUeWVO71/gFQ7vg1YVM9Wxrd7RTJgkZ5x94mY+LTA4l7L
+    VidGJ8nqjnMNngJmGsA8xEO53Ot48AXS91LXG7cQIoYCC5FWMZtWdVXfrK3B02Sp
+    81gc4yia8md87gWZKPwmDKwE7AwK7PHinkEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522476680; bh=gv3WD
-    GH+KrVDXco5ejCz03SuEkYaZ0T1F6F/HFSynT4=; b=QQusOXYoyVUePm1Ky++2X
-    BQu1j22FJYEB41aIHjfUfVkn19Y96K5rf0fvShJCE/OW76mJObsvA8Qq713k+Ylz
-    zq2q1I++lxPLGp/hsV4NTnTHg5e8z3MMJLWn20x8hE+AANHHyi6wx5jUYLHzhbqc
-    Tl+41Uq24LLZ/FSJkH98XKyfOHkhEr3M+C+h1dt7JCeAPTUpZ66Ez9qEtWHP7T1+
-    K/TctUTYeb0woXcZ4/dza7PaAVCZrFRweYJzXngoHfSZ2rBHWBJVI7Av1TI93t5M
-    6AotEB2CjYnFKx9nOg3Vp/V58Gj16s32wKzaC3amYia/Rj5JuRZoM35ZRlaLzsDe
-    g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1522476672; bh=vOYdd
+    KN1vv8M8ymr+9YWAmONV4D1ACo6fDNyuHGRdeI=; b=gG2fdGo6VuWZ3P0YzQmqv
+    DKNxX5N8BU3aPyTCNTAQQBs1kM4XXSO5wQ6BAEEQbOuSuGK7lp52Sygz1wXnDGv+
+    BhSEzQAcicXxD/hxTaCp7/OshI5yHh+/ZI29xW8ZprUz1Ba7Cya1yKCmD5ASYZ84
+    lP6q3A26MtFV+YMIR1DYjCt8r8DPPEzvkWaNAp75F0w+Ug9W9GLj8gXO6pUCURqZ
+    OJD9lweU1zt+2EYVZR6UUXbLqQLWLTRDZxwQ8UK+jVnw9EuGid6D1ZZqn73m24Id
+    lu7DSXyRosajl47eoK5NotLU9HfoMuedXYAf90yxNKbGQUf5EpQyY+59nhxfGWdb
+    A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCygk/0RpbdupYGi7DbvfeXEIM9zUGvTZCthzdlvtBvfLHZ5cHoQqSjrP5imp9+lt+SiEPznZtxUvjXbDpQQCmro5Lsb77sg+r5RHH0aLRSjRyDxATBH
-    FYAvmBdaXSxEvZbdPEXbZylsswFS0tszN4iZyNaDq8lRptb+BsJuB53x8jnpUaaTx5M0kWPDrb404S2SQjDeKz96GASv3zDshEek3fsp1o0zlg5AL0zafD01
-    lOBJJMhG9zr+PtpM5jnvDg==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+X-CM-Envelope: MS4wfKRrHqTvnBw3ppyvE5Y9YgUWhamUPl8+wbJTDlrAwAURmPOHIh3V2pwNJVfxx5dhRiEDJ34ix9bjINT7JU5y5Mxm9z4Yi2Ft1bRFqilQ8GTRYrtMpgvc
+    LK2bYG8XaFIcRcR8JMXDDvSNrkncVyIREo+m2obQ3XYOqBm7d25qXxToAFxPu5kFuoGILYMn79vZ2CF/rt5LDeeFks0AaKLBmVGX4nTfcCqIZqoYHCKPhofo
+    A9eIopuSahp86BfYE/le4Q==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
     a=V_zipIKupC2UuXeJSREA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
@@ -68,30 +68,30 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH v2 45/75] staging: ks7010: Remove trailing _t from 'struct
- hostif_phy_information_request_t'.
-Date: Fri, 30 Mar 2018 23:08:25 -0700
-Message-Id: <20180331060855.9452-45-quytelda@tamalin.org>
+Subject: [PATCH v2 43/75] staging: ks7010: Remove trailing _t from 'struct
+ hostif_bss_scan_request_t'.
+Date: Fri, 30 Mar 2018 23:08:23 -0700
+Message-Id: <20180331060855.9452-43-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:xiHCalvSe6W0OcmW95DefhtvEP1BxwyILNV9VKoX/y5izeEk6vr
- IVgBBnJGvVvxeK6f6Jg3iQY+Nc14MJWJEPJklHgevl5EUtyL4oe4xIKVjUsKElvybm93pZX
- V+3eyV/Kb5LcdFIiDzi7FTr1Bgz8G+LXE84+cHvuP0dgG3v2FI6S7Xd246QRid9q67idtqt
- Yp0mklmL/GsI/3b2/ahMg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:sgoyBfa8KoM=:uI/FWM6xNRkHkm47SF8FZW
- CeGSAx246StFtBeOakbnS/GrpUpfqmD1bxKaZ1fqid5WdVdegzoVuUMKETKq0o1NBm1FV3k42
- geSH6J7vITFqTUb1XtB996bNvM6QEJpWCarOx0QPeZ8zOwDE0v0q8gr5g4Ve9NA3naZyD4mIq
- a595tINKLaMcgGEnoxElgpfbiK/VHg5GG2cEQJKHmEKUVcYKFR/+aQQ3b4Sb5cwWmn3BuOsoT
- gzXFB3UimNo0M+tntva74dqzV11XRFtdxYIvH5FQNV0/8jylMyO4o4T2SHX2sQJyX2cvApJfI
- oZVf1uRJEZpDgk847c8gcbanzZ0fo1466befbKPnphL0a4oeOT/ucoft6NFT+vRlZvSztVkZs
- qWw0N/ESINHHCfFqI7i44Fv1BzN5Xx0xGc0zIsXdoAtI8WgQt0ia+RuFu5M5cuL7RQpmVrUZ/
- zBjga6HOTugyqIqA2y73NGpy9ZyLsOcloYQ0ZOWz7dXqo6QHcG7W7sQf7SeYWVI0STb9W9/xh
- S8Bf35O+4e4jSsTYA4ex/ZTt+KTsP4HBf/yE5VeLaX7XflmWMvwSqoF68kuxwrFuBVBDZnqyi
- UmVDden8gVFs/TXbxROKjcYg8RvunE7bOuoFryPJWtGYoamDeNd6eJz0h3sQRfEjZ97ccf0UN
- QdtbPl22XFqqdkU0qgHqxYzP+BldbkWylbJfog+3gHsgpLl2eckD8XwOLipjC19Q4ifVAOB5M
- a6E5c9vs8KRvmdKesrlLCztZADbU2jQ0/yEmgA==
+X-Provags-ID: V03:K0:JzQfE2y4N6gJ6PTyEFdIPZMkZ61sGpM/t41hofUaIXdAnje96Vk
+ ZbRLqqnQ/WliQu5zbtl4NDEYbyUp15o7icI7pvfqehwCodMZ7RHKZZFgrAyFRiqp1k4Pu0Z
+ QdkWzFADeXgGjAy69ERqkKH63/kiZK9K1dat/QP+xCykSlEI8o2JNTnGTC9QVlQSwXDpfSF
+ iiyuJ0HgWjK0Gyy++cM8g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hrEHZRnNRS0=:VO0oQSjOksvH8bm1PoJ9Ns
+ HBf70JEUPcYuaTPUZizRSaCe/wn1zgB7+dkhCNG1daXKbfPTkbeogprYkuNV7Vyc02EOz7dPO
+ b9ouc1M8iV0YT3SdfKf5teG8hKIK3nNgfP9vG/3TNGYOR+ogbsZg41KKnHeOrWElQquMdp+m/
+ aZ45FufOupC4Q3efDH+mckzTRDMDZNVxEU67wIybOV7tluM6cYnsVwsv/40U9b9hXuIyK+/1g
+ Ps93Ruta5EBkyqKykTezU2Bx9mbFwfgkASWd9fkEcV8BV8vmiG5T9isz5r/hsT9yLJmcNVG9V
+ /psIjlWKn2DpFOZuy6v5toyAx+lHVZyg+VggWPuLLrOGYJhiYcv8lrfYgaqTPhQm3iSS0HmgQ
+ fZkWuIkJjsHGrT/d4fwPC6OoVIsXZa3aaqV/Q9E8Rb7r4+FKgiOr42A7H9sHCcW9xBYpR/H4L
+ FHBTEz/7/y7IzMB94xS1yBBk17TLGATKNiIFk/Yl+af1p5ZTKjZkeS4uK1lqraRrqcKvQ2bf+
+ TaLklNbEbCcthFu3Aai5byZdv0ykn30B5jrCWbVwIyb4IVVrjuf2y2VplxQm+3iPyYYNJVWUW
+ XGEaZK4l8berGKjGAnt1ibKvY1/pB1xy8K/gET7QI8nwNXmzfUhRALJDEfNU5NyfYGGqObXQD
+ eHMBHKfQ6d98TthGl2iORYVq1a/nmSARGcTaGThRWb4yQPTdDcDF00S1eMN/ZjdVy9Zja9WLU
+ jiuv51JeKSMvDwyVyVg3W4bCgqZlJPfHw/c+sg==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -115,8 +115,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct hostif_phy_information_request_t' with 'struct
-hostif_phy_information_request'.
+all occurences of 'struct hostif_bss_scan_request_t' with 'struct
+hostif_bss_scan_request'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
@@ -125,31 +125,31 @@ Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index aa827949db7e..4bd8a285eac5 100644
+index e733a77269df..aa827949db7e 100644
 --- a/drivers/staging/ks7010/ks_hostif.c
 +++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1440,7 +1440,7 @@ void hostif_stop_request(struct ks_wlan_private *priv)
- static
- void hostif_phy_information_request(struct ks_wlan_private *priv)
+@@ -1508,7 +1508,7 @@ void hostif_bss_scan_request(struct ks_wlan_private *priv,
+ 			     unsigned long scan_type, uint8_t *scan_ssid,
+ 			     uint8_t scan_ssid_len)
  {
--	struct hostif_phy_information_request_t *pp;
-+	struct hostif_phy_information_request *pp;
+-	struct hostif_bss_scan_request_t *pp;
++	struct hostif_bss_scan_request *pp;
  
- 	pp = hostif_generic_request(sizeof(*pp), HIF_PHY_INFO_REQ);
+ 	pp = hostif_generic_request(sizeof(*pp), HIF_SCAN_REQ);
  	if (!pp)
 diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index 1aa4da0f5403..348fa2844003 100644
+index 9c8b0a93f7cf..7785e620e03c 100644
 --- a/drivers/staging/ks7010/ks_hostif.h
 +++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -401,7 +401,7 @@ struct hostif_bss_scan_request {
- 	struct ssid ssid;
+@@ -389,7 +389,7 @@ struct association_response {
+ 	__le16 resp_ies_size;
  } __packed;
  
--struct hostif_phy_information_request_t {
-+struct hostif_phy_information_request {
+-struct hostif_bss_scan_request_t {
++struct hostif_bss_scan_request {
  	struct hostif_hdr header;
- 	__le16 type;
- #define NORMAL_TYPE	0
+ 	u8 scan_type;
+ #define ACTIVE_SCAN  0
 -- 
 2.16.3
 
