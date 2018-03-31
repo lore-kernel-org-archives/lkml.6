@@ -1,98 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752869AbeCaCJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 22:09:27 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36171 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752839AbeCaCJZ (ORCPT
+        id S1752853AbeCaCTC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 22:19:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46496 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752784AbeCaCTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 22:09:25 -0400
-X-Google-Smtp-Source: AIpwx4+pKL2Lw+6ZD4gq+b7qoIfwLsPkYPxSyAbCZ10S34W+vMiRucXiSsMgi8eqI9lFHB09ajkNjg==
-From: Chris Chiu <chiu@endlessm.com>
-To: rjw@rjwysocki.net, lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@endlessm.com, Chris Chiu <chiu@endlessm.com>
-Subject: [PATCH] ACPI / PM: Fix wake up by PS2 keyboard fail on ASUS UX331UA
-Date: Sat, 31 Mar 2018 10:09:31 +0800
-Message-Id: <1522462171-84178-1-git-send-email-chiu@endlessm.com>
-X-Mailer: git-send-email 2.5.4 (Apple Git-61)
+        Fri, 30 Mar 2018 22:19:00 -0400
+Date: Fri, 30 Mar 2018 19:18:57 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180331021857.GD13332@bombadil.infradead.org>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180330102038.2378925b@gandalf.local.home>
+ <20180330205356.GA13332@bombadil.infradead.org>
+ <20180330173031.257a491a@gandalf.local.home>
+ <20180330174209.4cb77003@gandalf.local.home>
+ <CAJWu+orx=NZrkAf7x_HqttnrMssmW7DPZOL1fxR=N6D_-fbmtw@mail.gmail.com>
+ <20180330214151.415e90ea@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330214151.415e90ea@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This issue happens on new ASUS laptop UX331UA which has modern
-standby mode (suspend-to-idle). Pressing keys on the PS2 keyboard
-can't wake up the system from suspend-to-idle which is not expected.
-However, pressing power button can wake up without problem.
+On Fri, Mar 30, 2018 at 09:41:51PM -0400, Steven Rostedt wrote:
+> On Fri, 30 Mar 2018 16:38:52 -0700
+> Joel Fernandes <joelaf@google.com> wrote:
+> 
+> > > --- a/kernel/trace/ring_buffer.c
+> > > +++ b/kernel/trace/ring_buffer.c
+> > > @@ -1164,6 +1164,11 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
+> > >         struct buffer_page *bpage, *tmp;
+> > >         long i;
+> > >
+> > > +       /* Check if the available memory is there first */
+> > > +       i = si_mem_available();
+> > > +       if (i < nr_pages)  
+> > 
+> > Does it make sense to add a small margin here so that after ftrace
+> > finishes allocating, we still have some memory left for the system?
+> > But then then we have to define a magic number :-|
+> 
+> I don't think so. The memory is allocated by user defined numbers. They
+> can do "free" to see what is available. The original patch from
+> Zhaoyang was due to a script that would just try a very large number
+> and cause issues.
+> 
+> If the memory is available, I just say let them have it. This is
+> borderline user space issue and not a kernel one.
 
-Per the engineers of ASUS, the keypress event is routed to Embedded
-Controller (EC) in standby mode. EC then signals the SCI event to
-BIOS so BIOS would Notify() power button to wake up the system. It's
-from BIOS perspective. What we observe here is that kernel receives
-the SCI event from SCI interrupt handler which informs that the GPE
-status bit belongs to EC needs to be handled and then queries the EC
-to find out what event is pending. Then execute the following ACPI
-_QDF method which defined in ACPI DSDT for EC to notify power button.
-
- Method (_QDF, 0, NotSerialized)  // _Qxx: EC Query
-        {
-            Notify (PWRB, 0x80) // Status Change
-        }
-
-With more debug messages added to analyze this problem, we find that
-the keypress does wake up the system from suspend-to-idle but it's back
-to suspend again almost immediately. As we see in the following messages,
-the acpi_button_notify() is invoked but acpi_pm_wakeup_event() can not
-really wake up the system here because acpi_s2idle_wakeup() is false.
-The acpi_s2idle_wakeup() returnd false because the acpi_s2idle_sync() has
-alrealdy exited.
-
-[   52.987048] s2idle_loop going s2idle
-[   59.713392] acpi_s2idle_wake enter
-[   59.713394] acpi_s2idle_wake exit
-[   59.760888] acpi_ev_gpe_detect enter
-[   59.760893] acpi_s2idle_sync enter
-[   59.760893] acpi_ec_query_flushed ec pending queries 0
-[   59.760953] Read registers for GPE 50-57: Status=01, Enable=01, RunEnable=01, WakeEnable=00
-[   59.760955] ACPI: EC: ===== IRQ (1) =====
-[   59.760972] ACPI: EC: EC_SC(R) = 0x28 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=0
-[   59.760979] ACPI: EC: +++++ Polling enabled +++++
-[   59.760979] ACPI: EC: ##### Command(QR_EC) submitted/blocked #####
-[   59.761003] acpi_s2idle_sync exit
-[   59.769587] ACPI: EC: ##### Query(0xdf) started #####
-[   59.769611] ACPI: EC: ##### Query(0xdf) stopped #####
-[   59.774154] acpi_button_notify button type 1
-[   59.813175] s2idle_loop going s2idle
-
-acpi_s2idle_sync() already makes an effort to flush the EC event
-queue, but in this case, the EC event has yet to be generated when
-the call to acpi_ec_flush_work() is made. The event is generated
-shortly after, through the ongoing handling of the SCI interrupt
-which is happening on another CPU, and we must synchronize that
-to make sure that it has run and completed. Adding another call to
-acpi_os_wait_events_complete() solves this issue, since that
-function synchronizes with SCI interrupt completion.
-
-Signed-off-by: Chris Chiu <chiu@endlessm.com>
-
----
- drivers/acpi/sleep.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index 8082871..c6e1b4b 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -982,8 +982,9 @@ static void acpi_s2idle_sync(void)
- 	 * The EC driver uses the system workqueue and an additional special
- 	 * one, so those need to be flushed too.
- 	 */
-+	acpi_os_wait_events_complete();	/* synchronize SCI IRQ handling */
- 	acpi_ec_flush_work();
--	acpi_os_wait_events_complete();
-+	acpi_os_wait_events_complete();	/* synchronize Notify handling */
- 	s2idle_wakeup = false;
- }
- 
--- 
-2.7.4
+Again though, this is the same pattern as vmalloc.  There are any number
+of places where userspace can cause an arbitrarily large vmalloc to be
+attempted (grep for kvmalloc_array for a list of promising candidates).
+I'm pretty sure that just changing your GFP flags to GFP_KERNEL |
+__GFP_NOWARN will give you the exact behaviour that you want with no
+need to grub around in the VM to find out if your huge allocation is
+likely to succeed.
