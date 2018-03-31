@@ -1,128 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752377AbeCaVIw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 17:08:52 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:32977 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751271AbeCaVIt (ORCPT
+        id S1752454AbeCaVe6 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 17:34:58 -0400
+Received: from sonic316-20.consmr.mail.bf2.yahoo.com ([74.6.130.194]:35461
+        "EHLO sonic316-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751305AbeCaVe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 17:08:49 -0400
-X-Google-Smtp-Source: AIpwx48PbIiAiJO2Q8QAdpvtEcu5gJQ/2j1/XmpN+rGEp9HVl+T5QZ+pipg4p64WKVhjtWtY466YD49TBT+yGlg0bE4=
+        Sat, 31 Mar 2018 17:34:56 -0400
+X-YMail-OSG: kvW5sD4VM1n.y8ecBHJegpZ6JxtfZQuoPws8GtKwsFOxfjC1nhPvC4FGhr919PM
+ CTzwm.rik0Q2ZdTBXb1pxyAJqo_DNyYPLGBxpgPd5EYM5q6id1lT60XD9AO3rBPLmaif0YmJMgYn
+ GGVwHIyJ27fXHCiqRZk4H.zRyzlosDVD2adx.SiG7aoNEOMTaVdyxI.U_kN6zy1SY3_eRmZ_.Xjv
+ jqASvV7zBm4ihiVFBbk8wF4lZSCkgI2lN9ljvpbg8BNa7tKabwj44qisq0d7ji90AQdNvPA6Srd4
+ Uopbaa0yh5mGuouInceTexp5mG0rWIBxiLvQHrjo_nB4G2TjaswCgvohw_Z5fLqJaG2kGA65Zi.A
+ GjA9gd4Gzc0sn0jLr_8_0MtAso9QmpAFhno_sweQNp64r5mb1nttZukzqOAUIj0Y1eprjh.mAuKC
+ kvgpe9HBxnLsclqs_WyfxHwN3htubRpOSYq_D1Hhutic2T3z0LwF1PkhVBkqmzgR32NNIQHVMGm6
+ I5ScoDQkgq48onL3s7zPw2ZcJibpeIMei_hprDNgOtSGj2xIV1cY-
+Subject: Re: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
+ after boot time
+To: Sargun Dhillon <sargun@sargun.me>
+Cc: LSM <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>, James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Paul Moore <paul@paul-moore.com>,
+        plautrba@redhat.com
+References: <cover.1522357211.git.sargun@sargun.me>
+ <5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
+ <3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com>
+ <20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
+ <8b015e9e-dccb-aefd-f5b2-c66eed3c6815@schaufler-ca.com>
+ <CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <6e9cf9f5-dec9-3e8f-6439-418be708da67@schaufler-ca.com>
+Date: Sat, 31 Mar 2018 14:34:52 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180331015903.GA29398@animx.eu.org>
-References: <20180331015903.GA29398@animx.eu.org>
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Sat, 31 Mar 2018 23:08:47 +0200
-Message-ID: <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-To: Wakko Warner <wakko@animx.eu.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2VL8tdY020098
 
-On Sat, Mar 31, 2018 at 3:59 AM, Wakko Warner <wakko@animx.eu.org> wrote:
-> I reported this before but noone responded.
+On 3/30/2018 11:16 PM, Sargun Dhillon wrote:
+> On Fri, Mar 30, 2018 at 2:39 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 3/29/2018 7:33 PM, Sargun Dhillon wrote:
+>>> On Thu, Mar 29, 2018 at 02:37:10PM -0700, Casey Schaufler wrote:
+>>>> On 3/29/2018 2:14 PM, Sargun Dhillon wrote:
+>>>>> This patch introduces a mechanism to add mutable hooks and immutable
+>>>>> hooks to the callback chain. It adds an intermediary item to the
+>>>>> chain which separates mutable and immutable hooks. Immutable hooks
+>>>>> are then marked as read-only, as well as the hook heads. This does
+>>>>> not preclude some hooks being able to be mutated (removed).
+>>>>>
+>>>>> It also wraps the hook unloading, and execution with an SRCU. One
+>>>>> SRCU is used across all hooks, as the SRCU struct can be memory
+>>>>> intensive, and hook execution time in general should be relatively
+>>>>> short.
+>>>>>
+>>>>> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+>>>>> Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+>>>>> ---
+>>>>>  include/linux/lsm_hooks.h  |  23 ++---
+>>>>>  security/Kconfig           |   2 +-
+>>>>>  security/apparmor/lsm.c    |   2 +-
+>>>>>  security/commoncap.c       |   2 +-
+>>>>>  security/security.c        | 210 ++++++++++++++++++++++++++++++++++++++-------
+>>>>>  security/selinux/hooks.c   |   5 +-
+>>>>>  security/smack/smack_lsm.c |   3 +-
+>>>>>  security/tomoyo/tomoyo.c   |   3 +-
+>>>>>  security/yama/yama_lsm.c   |   2 +-
+>>>>>  9 files changed, 196 insertions(+), 56 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>>>> index 09bc60fb35f1..689e5e72fb38 100644
+>>>>> --- a/include/linux/lsm_hooks.h
+>>>>> +++ b/include/linux/lsm_hooks.h
+>>>>> @@ -1981,9 +1981,12 @@ extern struct security_hook_heads security_hook_heads;
+>>>>>  extern char *lsm_names;
+>>>>>
+>>>>>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>>>>> -                           char *lsm);
+>>>>> +                           char *lsm, bool is_mutable);
+>>>>>
+>>>>> -#ifdef CONFIG_SECURITY_SELINUX_DISABLE
+>>>>> +#define __lsm_ro_after_init        __ro_after_init
+>>>>> +/* Currently required to handle SELinux runtime hook disable. */
+>>>>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+>>>>> +#define __lsm_mutable_after_init
+>>>>>  /*
+>>>>>   * Assuring the safety of deleting a security module is up to
+>>>>>   * the security module involved. This may entail ordering the
+>>>>> @@ -1996,21 +1999,9 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>>>>>   * disabling their module is a good idea needs to be at least as
+>>>>>   * careful as the SELinux team.
+>>>>>   */
+>>>>> -static inline void security_delete_hooks(struct security_hook_list *hooks,
+>>>>> -                                           int count)
+>>>>> -{
+>>>>> -   int i;
+>>>>> -
+>>>>> -   for (i = 0; i < count; i++)
+>>>>> -           hlist_del_rcu(&hooks[i].list);
+>>>>> -}
+>>>>> -#endif /* CONFIG_SECURITY_SELINUX_DISABLE */
+>>>>> -
+>>>>> -/* Currently required to handle SELinux runtime hook disable. */
+>>>>> -#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+>>>>> -#define __lsm_ro_after_init
+>>>>> +extern void security_delete_hooks(struct security_hook_list *hooks, int count);
+>>>>>  #else
+>>>>> -#define __lsm_ro_after_init        __ro_after_init
+>>>>> +#define __lsm_mutable_after_init __ro_after_init
+>>>>>  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+>>>>>
+>>>>>  extern int __init security_module_enable(const char *module);
+>>>>> diff --git a/security/Kconfig b/security/Kconfig
+>>>>> index c4302067a3ad..a3b8b1142e6f 100644
+>>>>> --- a/security/Kconfig
+>>>>> +++ b/security/Kconfig
+>>>>> @@ -32,7 +32,7 @@ config SECURITY
+>>>>>       If you are unsure how to answer this question, answer N.
+>>>>>
+>>>>>  config SECURITY_WRITABLE_HOOKS
+>>>>> -   depends on SECURITY
+>>>>> +   depends on SECURITY && SRCU
+>>>>>     bool
+>>>>>     default n
+>>>>>
+>>>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>>>>> index 9a65eeaf7dfa..d6cca8169df0 100644
+>>>>> --- a/security/apparmor/lsm.c
+>>>>> +++ b/security/apparmor/lsm.c
+>>>>> @@ -1155,7 +1155,7 @@ static int __init apparmor_init(void)
+>>>>>             goto buffers_out;
+>>>>>     }
+>>>>>     security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
+>>>>> -                           "apparmor");
+>>>>> +                           "apparmor", false);
+>>>>>
+>>>>>     /* Report that AppArmor successfully initialized */
+>>>>>     apparmor_initialized = 1;
+>>>>> diff --git a/security/commoncap.c b/security/commoncap.c
+>>>>> index 48620c93d697..fe4b0d9d44ce 100644
+>>>>> --- a/security/commoncap.c
+>>>>> +++ b/security/commoncap.c
+>>>>> @@ -1363,7 +1363,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+>>>>>  void __init capability_add_hooks(void)
+>>>>>  {
+>>>>>     security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+>>>>> -                           "capability");
+>>>>> +                           "capability", false);
+>>>>>  }
+>>>>>
+>>>>>  #endif /* CONFIG_SECURITY */
+>>>>> diff --git a/security/security.c b/security/security.c
+>>>>> index 3cafff61b049..2ddb64864e3e 100644
+>>>>> --- a/security/security.c
+>>>>> +++ b/security/security.c
+>>>>> @@ -29,6 +29,11 @@
+>>>>>  #include <linux/backing-dev.h>
+>>>>>  #include <linux/string.h>
+>>>>>  #include <net/flow.h>
+>>>>> +#include <linux/srcu.h>
+>>>>> +#include <linux/mutex.h>
+>>>>> +
+>>>>> +#define SECURITY_HOOK_COUNT \
+>>>>> +   (sizeof(security_hook_heads) / sizeof(struct hlist_head))
+>>>>>
+>>>>>  #define MAX_LSM_EVM_XATTR  2
+>>>>>
+>>>>> @@ -36,7 +41,10 @@
+>>>>>  #define SECURITY_NAME_MAX  10
+>>>>>
+>>>>>  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+>>>>> +EXPORT_SYMBOL_GPL(security_hook_heads);
+>>>>> +
+>>>>>  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+>>>>> +static DEFINE_MUTEX(security_hook_mutex);
+>>>>>
+>>>>>  char *lsm_names;
+>>>>>  /* Boot-time LSM user choice */
+>>>>> @@ -53,6 +61,103 @@ static void __init do_security_initcalls(void)
+>>>>>     }
+>>>>>  }
+>>>>>
+>>>>> +#ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+>>>>> +DEFINE_STATIC_SRCU(security_hook_srcu);
+>>>>> +static struct security_hook_list   null_hooks[SECURITY_HOOK_COUNT];
+>>>>> +#define HAS_FUNC(SHL, FUNC)        (SHL->hook.FUNC)
+>>>> The HAS_FUNC() macro will work, but it's awkward outside of the
+>>>> call_..._hook() macros. I think you should document how to use it
+>>>> properly somewhere in here. There are enough cases where the
+>>>> call_..._hook() macros aren't used that someone could have trouble
+>>>> figuring out how to use it.
+>>>>
+>>>>
+>>> What about something like:
+>>>
+>>>  security/security.c | 58 ++++++++++++++++++++++++++++++++++++++---------------
+>>>  1 file changed, 42 insertions(+), 16 deletions(-)
+>>>
+>>> diff --git a/security/security.c b/security/security.c
+>>> index 2ddb64864e3e..bc14125cfc78 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -62,9 +62,37 @@ static void __init do_security_initcalls(void)
+>>>  }
+>>>
+>>>  #ifdef CONFIG_SECURITY_WRITABLE_HOOKS
+>>> -DEFINE_STATIC_SRCU(security_hook_srcu);
+>>> +/*
+>>> + * With writable hooks, we setup a structure like this:
+>>> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
+>>> + * |      |   |           |   |           |   |           |   |              |
+>>> + * | HEAD +---> Immutable +---> Immutable +---> Null hook +---> Mutable Hook |
+>>> + * |      |   |  Hook 1   |   |  Hook 2   |   |           |   |              |
+>>> + * +------+   +-----------+   +-----------+   +-----------+   +--------------+
+>>> + *                  |               |                                |
+>>> + *                  v               v                                v
+>>> + *              Callback        Callback                         Callback
+>>> + *
+>>> + * The hooks before to null hook are marked only after kernel initialization.
+>>> + * The null hook, as well as the hooks succeeding it are not marked read only,
+>>> + * therefore allowing them be (un)loaded after initialization time.
+>>> + *
+>>> + * Since the null hook doesn't have a callback, we need to check if a hook
+>>> + * is the null hook prior to invoking it.
+>>> + */
+>> I think a comment like this is helpful.
+>>
+>> Why not have two hook list heads, one for regular hooks and
+>> one for mutable hooks? You can dispense with the "null hook"
+>> handling.
+>>
+> The iterations gets really messy. The patch earlier had a lot of
+> awkward gunk in it. The issue primarily came with deciding to iterate
+> over the second set of hooks iff the first set of hooks failed. With
+> the way the calls are setup, it's messy.
 
-Because you're sending only to LKML.
-CC'ing storage folks.
+Hang on. I would think you'd only call the 2nd list if the first list
+was completed successfully. And of course the void hooks always get
+called regardless. 
 
-> I have an iscsi target setup with /dev/sr[012] using pscsi.  On the
-> initiator, I mount only 1 disc.  Then I issue find -type f | xargs cat >
-> /dev/null  Then after a few seconds, I get 2 oops and the system has to be
-> hard reset.
+> What's your primary issue with the "null hooks"? If it's the null hook
+> checks, I think I can actually remove those.
+
+In the common case of one LSM and no mutable modules you
+are making a check on every hook that will always have the
+same answer. Performance impact *of any amount* that does
+not add value in the common case has to be avoided.
+
+This is a clever implementation. But it does not generalize.
+If I wanted to add a third kind of hooks the mechanism would
+not support it. If you add a 2nd list it's obvious what you'd
+want to do to add a 3rd.
+
 >
-> I noticed if I cat /dev/sr1 from the initiator, it doesn't crash.  I was
-> also able to burn without crashing.
+>>>  static struct security_hook_list     null_hooks[SECURITY_HOOK_COUNT];
+>>> -#define HAS_FUNC(SHL, FUNC)  (SHL->hook.FUNC)
+>>> +DEFINE_STATIC_SRCU(security_hook_srcu);
+>>> +
+>>> +static inline bool is_null_hook(struct security_hook_list *shl)
+>>> +{
+>>> +     union {
+>>> +             void *cb_ptr;
+>>> +             union security_list_options slo;
+>>> +     } hook_options;
+>>> +
+>>> +     hook_options.slo = shl->hook;
+>>> +     return !hook_options.cb_ptr;
+>>> +}
+>> I like the HAS_FUNC() approach better.
+>  Just curious, why? I personally prefer small static inline functions
+> over macros, if possible.
+
+Minimize the complexity, even inside a macro/function. Your
+is_null_hook() function is massively more complicated than the
+HAS_FUNC() macro. I'm still not 100% sure I understand why you
+have the wacky union, and how you can know that it will get you
+the right result on all architectures.
+
 >
-> Here's the OOPS:
-> [2692.733468] WARNING: CPU: 8 PID: 0 at /usr/src/linux/dist/4.15.14-nobklcd/drivers/scsi/scsi_lib.c:1068 scsi_init_io+0x111/0x1a0 [scsi_mod]
-> [2692.734154] Modules linked in: dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c crc32c_generic md_mod dm_crypt algif_skcipher af_alg dm_mod dax ext4 crc16 mbcache jbd2 af_packet iscsi_target_mod tcm_loop vhost_scsi vhost target_core_file target_core_iblock target_core_pscsi target_core_mod nfsd exportfs dummy bridge stp llc ib_iser rdma_cm iw_cm ib_cm ib_core ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi netconsole configfs sr_mod cdrom adt7475 hwmon_vid sd_mod sg coretemp x86_pkg_temp_thermal kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc snd_hda_codec_realtek snd_hda_codec_generic nouveau video led_class drm_kms_helper cfbfillrect syscopyarea cfbimgblt
-> [2692.737388]  sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec ttm snd_hda_core snd_pcm_oss drm snd_mixer_oss agpgart snd_pcm igb snd_timer snd aesni_intel soundcore hwmon aes_x86_64 i2c_algo_bit ahci mpt3sas crypto_simd i2c_core libahci glue_helper mptsas raid_class libata mptscsih scsi_transport_sas mptbase scsi_mod wmi button unix
-> [2692.737388] CPU: 8 PID: 0 Comm: swapper/8 Not tainted 4.15.14 #1
-> [2692.737388] Hardware name: Dell Inc. Precision T5610/0WN7Y6, BIOS A16 02/05/2018
-> [2692.737388] RIP: 0010:scsi_init_io+0x111/0x1a0 [scsi_mod]
-> [2692.737388] RSP: 0018:ffff8806b7a03d78 EFLAGS: 00010046
-> [2692.737388] RAX: 0000000000000000 RBX: ffff8806aa4a9c00 RCX: 0000000000000000
-> [2692.737388] RDX: 0000000000000000 RSI: ffff8806aa4a9c00 RDI: ffff8806aa4a9d48
-> [2692.737388] RBP: ffff8806aa4a9d48 R08: 0000000000000000 R09: ffff8806aa4a9d80
-> [2692.737388] R10: ffff8806ab949088 R11: 0000000000000000 R12: ffff8806b29bb000
-> [2692.737388] R13: 0000000000000000 R14: ffff8806b29bb000 R15: ffff8806ac4f6950
-> [2692.737388] FS:  0000000000000000(0000) GS:ffff8806b7a00000(0000) knlGS:0000000000000000
-> [2692.737388] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [2692.737388] CR2: 00007f1359a8b756 CR3: 0000000001c09003 CR4: 00000000001606e0
-> [2692.737388] Call Trace:
-> [2692.737388]  <IRQ>
-> [2692.737388]  ? scsi_setup_cmnd+0xb3/0x140 [scsi_mod]
-> [2692.737388]  ? scsi_prep_fn+0x53/0x130 [scsi_mod]
-> [2692.737388]  ? blk_peek_request+0x136/0x220
-> [2692.737388]  ? scsi_request_fn+0x2b/0x510 [scsi_mod]
-> [2692.737388]  ? __blk_run_queue+0x34/0x50
-> [2692.737388]  ? blk_run_queue+0x26/0x40
-> [2692.737388]  ? scsi_run_queue+0x229/0x2b0 [scsi_mod]
-> [2692.737388]  ? scsi_io_completion+0x3ce/0x5a0 [scsi_mod]
-> [2692.737388]  ? blk_done_softirq+0x67/0x80
-> [2692.737388]  ? __do_softirq+0xdb/0x1dd
-> [2692.737388]  ? irq_exit+0xa3/0xb0
-> [2692.737388]  ? do_IRQ+0x45/0xc0
-> [2692.737388]  ? common_interrupt+0x77/0x77
-> [2692.737388]  </IRQ>
-> [2692.737388]  ? cpuidle_enter_state+0x124/0x200
-> [2692.737388]  ? cpuidle_enter_state+0x119/0x200
-> [2692.737388]  ? do_idle+0xdc/0x180
-> [2692.737388]  ? cpu_startup_entry+0x14/0x20
-> [2692.737388]  ? secondary_startup_64+0xa5/0xb0
-> [2692.737388] Code: 8b 7b 30 e8 d2 6b 20 e1 49 8b 17 4c 89 ff 89 c6 89 44 24 04 e8 81 81 22 e1 85 c0 41 89 c4 74 55 41 bc 02 00 00 00 e9 39 ff ff ff <0f> 0b 41 bc 01 00 00 00 e9 2c ff ff ff 48 8b 3d 6b dc 00 00 be
-> [2692.737388] ---[ end trace 9801970f9b249e10 ]---
-> [2692.737388] ------------[ cut here ]------------
-> [2692.737388] kernel BUG at /usr/src/linux/dist/4.15.14-nobklcd/block/blk-core.c:3235!
-> [2692.737388] invalid opcode: 0000 [#1] PREEMPT SMP
-> [2692.737388] Modules linked in: dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c crc32c_generic md_mod dm_crypt algif_skcipher af_alg dm_mod dax ext4 crc16 mbcache jbd2 af_packet iscsi_target_mod tcm_loop vhost_scsi vhost target_core_file target_core_iblock target_core_pscsi target_core_mod nfsd exportfs dummy bridge stp llc ib_iser rdma_cm iw_cm ib_cm ib_core ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi netconsole configfs sr_mod cdrom adt7475 hwmon_vid sd_mod sg coretemp x86_pkg_temp_thermal kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc snd_hda_codec_realtek snd_hda_codec_generic nouveau video led_class drm_kms_helper cfbfillrect syscopyarea cfbimgblt
-> [2692.737388]  sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec ttm snd_hda_core snd_pcm_oss drm snd_mixer_oss agpgart snd_pcm igb snd_timer snd aesni_intel soundcore hwmon aes_x86_64 i2c_algo_bit ahci mpt3sas crypto_simd i2c_core libahci glue_helper mptsas raid_class libata mptscsih scsi_transport_sas mptbase scsi_mod wmi button unix
-> [2692.737388] CPU: 8 PID: 0 Comm: swapper/8 Tainted: G        W        4.15.14 #1
-> [2692.737388] Hardware name: Dell Inc. Precision T5610/0WN7Y6, BIOS A16 02/05/2018
-> [2692.737388] RIP: 0010:__blk_end_request_all+0x50/0x60
-> [2692.737388] RSP: 0018:ffff8806b7a03df8 EFLAGS: 00010002
-> [2692.737388] RAX: 0000000000000001 RBX: ffff8806ac4f6950 RCX: 0000000000000000
-> [2692.737388] RDX: 0000000000000001 RSI: ffff8806ac36a480 RDI: 0000000000000000
-> [2692.737388] RBP: 0000000000000001 R08: 0000000000000000 R09: ffff8806aa4a9d80
-> [2692.737388] R10: ffff8806ab949088 R11: 0000000000000000 R12: ffff8806aa4a9c00
-> [2692.737388] R13: ffff8806ac4f6950 R14: 0000000000000246 R15: ffff8806ac4f6950
-> [2692.737388] FS:  0000000000000000(0000) GS:ffff8806b7a00000(0000) knlGS:0000000000000000
-> [2692.737388] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [2692.737388] CR2: 00007f1359a8b756 CR3: 0000000001c09003 CR4: 00000000001606e0
-> [2692.737388] Call Trace:
-> [2692.737388]  <IRQ>
-> [2692.737388]  ? blk_peek_request+0x173/0x220
-> [2692.737388]  ? scsi_request_fn+0x2b/0x510 [scsi_mod]
-> [2692.737388]  ? __blk_run_queue+0x34/0x50
-> [2692.737388]  ? blk_run_queue+0x26/0x40
-> [2692.737388]  ? scsi_run_queue+0x229/0x2b0 [scsi_mod]
-> [2692.737388]  ? scsi_io_completion+0x3ce/0x5a0 [scsi_mod]
-> [2692.737388]  ? blk_done_softirq+0x67/0x80
-> [2692.737388]  ? __do_softirq+0xdb/0x1dd
-> [2692.737388]  ? irq_exit+0xa3/0xb0
-> [2692.737388]  ? do_IRQ+0x45/0xc0
-> [2692.737388]  ? common_interrupt+0x77/0x77
-> [2692.737388]  </IRQ>
-> [2692.737388]  ? cpuidle_enter_state+0x124/0x200
-> [2692.737388]  ? cpuidle_enter_state+0x119/0x200
-> [2692.737388]  ? do_idle+0xdc/0x180
-> [2692.737388]  ? cpu_startup_entry+0x14/0x20
-> [2692.737388]  ? secondary_startup_64+0xa5/0xb0
-> [2692.737388] Code: ff ff ff 84 c0 75 24 c3 0f 0b 48 8b 87 40 01 00 00 31 c9 48 85 c0 74 df 8b 48 58 40 0f b6 f6 8b 57 58 e8 04 ff ff ff 84 c0 74 dc <0f> 0b 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 41 54 55 53 48
-> [2692.737388] RIP: __blk_end_request_all+0x50/0x60 RSP: ffff8806b7a03df8
-> [2692.737388] ---[ end trace 9801970f9b249e11 ]---
-> [2692.737388] Kernel panic - not syncing: Fatal exception in interrupt
-> [2692.737388] Kernel Offset: disabled
-> [2692.737388] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
-
-
-
--- 
-Thanks,
-//richard
+>> What I think would work best is to have a separate list head
+>> for the mutable hooks.
+>>
+>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
