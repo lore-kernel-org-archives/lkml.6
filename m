@@ -1,112 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752843AbeCaB7G (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 21:59:06 -0400
-Received: from tn-76-7-162-187.sta.embarqhsd.net ([76.7.162.187]:53644 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752788AbeCaB7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 21:59:04 -0400
-Date: Fri, 30 Mar 2018 21:59:03 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: linux-kernel@vger.kernel.org
-Subject: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180331015903.GA29398@animx.eu.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1752837AbeCaCIe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 22:08:34 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:43736 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752784AbeCaCIc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 22:08:32 -0400
+X-Google-Smtp-Source: AIpwx49eq/awcOd4t3m5Rojwh9Os1Aeg9tKeDlb2rxorgf4YXljF3DdlXl4pj8/ViGEsA/m4uJi6pQ==
+From: Chris Chiu <chiu@endlessm.com>
+To: rjw@rjwysocki.net, lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, Chris Chiu <chiu@endlessm.com>
+Subject: [PATCH] ACPI / PM: Fix wake up by PS2 keyboard fail on ASUS UX331UA
+Date: Sat, 31 Mar 2018 10:08:23 +0800
+Message-Id: <1522462103-84130-1-git-send-email-chiu@endlessm.com>
+X-Mailer: git-send-email 2.5.4 (Apple Git-61)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I reported this before but noone responded.
+This issue happens on new ASUS laptop UX331UA which has modern
+standby mode (suspend-to-idle). Pressing keys on the PS2 keyboard
+can't wake up the system from suspend-to-idle which is not expected.
+However, pressing power button can wake up without problem.
 
-I have an iscsi target setup with /dev/sr[012] using pscsi.  On the
-initiator, I mount only 1 disc.  Then I issue find -type f | xargs cat >
-/dev/null  Then after a few seconds, I get 2 oops and the system has to be
-hard reset.
+Per the engineers of ASUS, the keypress event is routed to Embedded
+Controller (EC) in standby mode. EC then signals the SCI event to
+BIOS so BIOS would Notify() power button to wake up the system. It's
+from BIOS perspective. What we observe here is that kernel receives
+the SCI event from SCI interrupt handler which informs that the GPE
+status bit belongs to EC needs to be handled and then queries the EC
+to find out what event is pending. Then execute the following ACPI
+_QDF method which defined in ACPI DSDT for EC to notify power button.
 
-I noticed if I cat /dev/sr1 from the initiator, it doesn't crash.  I was
-also able to burn without crashing.
+ Method (_QDF, 0, NotSerialized)  // _Qxx: EC Query
+        {
+            Notify (PWRB, 0x80) // Status Change
+        }
 
-Here's the OOPS:
-[2692.733468] WARNING: CPU: 8 PID: 0 at /usr/src/linux/dist/4.15.14-nobklcd/drivers/scsi/scsi_lib.c:1068 scsi_init_io+0x111/0x1a0 [scsi_mod]
-[2692.734154] Modules linked in: dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c crc32c_generic md_mod dm_crypt algif_skcipher af_alg dm_mod dax ext4 crc16 mbcache jbd2 af_packet iscsi_target_mod tcm_loop vhost_scsi vhost target_core_file target_core_iblock target_core_pscsi target_core_mod nfsd exportfs dummy bridge stp llc ib_iser rdma_cm iw_cm ib_cm ib_core ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi netconsole configfs sr_mod cdrom adt7475 hwmon_vid sd_mod sg coretemp x86_pkg_temp_thermal kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc snd_hda_codec_realtek snd_hda_codec_generic nouveau video led_class drm_kms_helper cfbfillrect syscopyarea cfbimgblt
-[2692.737388]  sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec ttm snd_hda_core snd_pcm_oss drm snd_mixer_oss agpgart snd_pcm igb snd_timer snd aesni_intel soundcore hwmon aes_x86_64 i2c_algo_bit ahci mpt3sas crypto_simd i2c_core libahci glue_helper mptsas raid_class libata mptscsih scsi_transport_sas mptbase scsi_mod wmi button unix
-[2692.737388] CPU: 8 PID: 0 Comm: swapper/8 Not tainted 4.15.14 #1
-[2692.737388] Hardware name: Dell Inc. Precision T5610/0WN7Y6, BIOS A16 02/05/2018
-[2692.737388] RIP: 0010:scsi_init_io+0x111/0x1a0 [scsi_mod]
-[2692.737388] RSP: 0018:ffff8806b7a03d78 EFLAGS: 00010046
-[2692.737388] RAX: 0000000000000000 RBX: ffff8806aa4a9c00 RCX: 0000000000000000
-[2692.737388] RDX: 0000000000000000 RSI: ffff8806aa4a9c00 RDI: ffff8806aa4a9d48
-[2692.737388] RBP: ffff8806aa4a9d48 R08: 0000000000000000 R09: ffff8806aa4a9d80
-[2692.737388] R10: ffff8806ab949088 R11: 0000000000000000 R12: ffff8806b29bb000
-[2692.737388] R13: 0000000000000000 R14: ffff8806b29bb000 R15: ffff8806ac4f6950
-[2692.737388] FS:  0000000000000000(0000) GS:ffff8806b7a00000(0000) knlGS:0000000000000000
-[2692.737388] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[2692.737388] CR2: 00007f1359a8b756 CR3: 0000000001c09003 CR4: 00000000001606e0
-[2692.737388] Call Trace:
-[2692.737388]  <IRQ>
-[2692.737388]  ? scsi_setup_cmnd+0xb3/0x140 [scsi_mod]
-[2692.737388]  ? scsi_prep_fn+0x53/0x130 [scsi_mod]
-[2692.737388]  ? blk_peek_request+0x136/0x220
-[2692.737388]  ? scsi_request_fn+0x2b/0x510 [scsi_mod]
-[2692.737388]  ? __blk_run_queue+0x34/0x50
-[2692.737388]  ? blk_run_queue+0x26/0x40
-[2692.737388]  ? scsi_run_queue+0x229/0x2b0 [scsi_mod]
-[2692.737388]  ? scsi_io_completion+0x3ce/0x5a0 [scsi_mod]
-[2692.737388]  ? blk_done_softirq+0x67/0x80
-[2692.737388]  ? __do_softirq+0xdb/0x1dd
-[2692.737388]  ? irq_exit+0xa3/0xb0
-[2692.737388]  ? do_IRQ+0x45/0xc0
-[2692.737388]  ? common_interrupt+0x77/0x77
-[2692.737388]  </IRQ>
-[2692.737388]  ? cpuidle_enter_state+0x124/0x200
-[2692.737388]  ? cpuidle_enter_state+0x119/0x200
-[2692.737388]  ? do_idle+0xdc/0x180
-[2692.737388]  ? cpu_startup_entry+0x14/0x20
-[2692.737388]  ? secondary_startup_64+0xa5/0xb0
-[2692.737388] Code: 8b 7b 30 e8 d2 6b 20 e1 49 8b 17 4c 89 ff 89 c6 89 44 24 04 e8 81 81 22 e1 85 c0 41 89 c4 74 55 41 bc 02 00 00 00 e9 39 ff ff ff <0f> 0b 41 bc 01 00 00 00 e9 2c ff ff ff 48 8b 3d 6b dc 00 00 be 
-[2692.737388] ---[ end trace 9801970f9b249e10 ]---
-[2692.737388] ------------[ cut here ]------------
-[2692.737388] kernel BUG at /usr/src/linux/dist/4.15.14-nobklcd/block/blk-core.c:3235!
-[2692.737388] invalid opcode: 0000 [#1] PREEMPT SMP
-[2692.737388] Modules linked in: dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq libcrc32c crc32c_generic md_mod dm_crypt algif_skcipher af_alg dm_mod dax ext4 crc16 mbcache jbd2 af_packet iscsi_target_mod tcm_loop vhost_scsi vhost target_core_file target_core_iblock target_core_pscsi target_core_mod nfsd exportfs dummy bridge stp llc ib_iser rdma_cm iw_cm ib_cm ib_core ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi netconsole configfs sr_mod cdrom adt7475 hwmon_vid sd_mod sg coretemp x86_pkg_temp_thermal kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc snd_hda_codec_realtek snd_hda_codec_generic nouveau video led_class drm_kms_helper cfbfillrect syscopyarea cfbimgblt
-[2692.737388]  sysfillrect sysimgblt snd_hda_intel fb_sys_fops cfbcopyarea snd_hda_codec ttm snd_hda_core snd_pcm_oss drm snd_mixer_oss agpgart snd_pcm igb snd_timer snd aesni_intel soundcore hwmon aes_x86_64 i2c_algo_bit ahci mpt3sas crypto_simd i2c_core libahci glue_helper mptsas raid_class libata mptscsih scsi_transport_sas mptbase scsi_mod wmi button unix
-[2692.737388] CPU: 8 PID: 0 Comm: swapper/8 Tainted: G        W        4.15.14 #1
-[2692.737388] Hardware name: Dell Inc. Precision T5610/0WN7Y6, BIOS A16 02/05/2018
-[2692.737388] RIP: 0010:__blk_end_request_all+0x50/0x60
-[2692.737388] RSP: 0018:ffff8806b7a03df8 EFLAGS: 00010002
-[2692.737388] RAX: 0000000000000001 RBX: ffff8806ac4f6950 RCX: 0000000000000000
-[2692.737388] RDX: 0000000000000001 RSI: ffff8806ac36a480 RDI: 0000000000000000
-[2692.737388] RBP: 0000000000000001 R08: 0000000000000000 R09: ffff8806aa4a9d80
-[2692.737388] R10: ffff8806ab949088 R11: 0000000000000000 R12: ffff8806aa4a9c00
-[2692.737388] R13: ffff8806ac4f6950 R14: 0000000000000246 R15: ffff8806ac4f6950
-[2692.737388] FS:  0000000000000000(0000) GS:ffff8806b7a00000(0000) knlGS:0000000000000000
-[2692.737388] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[2692.737388] CR2: 00007f1359a8b756 CR3: 0000000001c09003 CR4: 00000000001606e0
-[2692.737388] Call Trace:
-[2692.737388]  <IRQ>
-[2692.737388]  ? blk_peek_request+0x173/0x220
-[2692.737388]  ? scsi_request_fn+0x2b/0x510 [scsi_mod]
-[2692.737388]  ? __blk_run_queue+0x34/0x50
-[2692.737388]  ? blk_run_queue+0x26/0x40
-[2692.737388]  ? scsi_run_queue+0x229/0x2b0 [scsi_mod]
-[2692.737388]  ? scsi_io_completion+0x3ce/0x5a0 [scsi_mod]
-[2692.737388]  ? blk_done_softirq+0x67/0x80
-[2692.737388]  ? __do_softirq+0xdb/0x1dd
-[2692.737388]  ? irq_exit+0xa3/0xb0
-[2692.737388]  ? do_IRQ+0x45/0xc0
-[2692.737388]  ? common_interrupt+0x77/0x77
-[2692.737388]  </IRQ>
-[2692.737388]  ? cpuidle_enter_state+0x124/0x200
-[2692.737388]  ? cpuidle_enter_state+0x119/0x200
-[2692.737388]  ? do_idle+0xdc/0x180
-[2692.737388]  ? cpu_startup_entry+0x14/0x20
-[2692.737388]  ? secondary_startup_64+0xa5/0xb0
-[2692.737388] Code: ff ff ff 84 c0 75 24 c3 0f 0b 48 8b 87 40 01 00 00 31 c9 48 85 c0 74 df 8b 48 58 40 0f b6 f6 8b 57 58 e8 04 ff ff ff 84 c0 74 dc <0f> 0b 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 41 54 55 53 48 
-[2692.737388] RIP: __blk_end_request_all+0x50/0x60 RSP: ffff8806b7a03df8
-[2692.737388] ---[ end trace 9801970f9b249e11 ]---
-[2692.737388] Kernel panic - not syncing: Fatal exception in interrupt
-[2692.737388] Kernel Offset: disabled
-[2692.737388] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
+With more debug messages added to analyze this problem, we find that
+the keypress does wake up the system from suspend-to-idle but it's back
+to suspend again almost immediately. As we see in the following messages,
+the acpi_button_notify() is invoked but acpi_pm_wakeup_event() can not
+really wake up the system here because acpi_s2idle_wakeup() is false.
+The acpi_s2idle_wakeup() returnd false because the acpi_s2idle_sync() has
+alrealdy exited.
+
+[   52.987048] s2idle_loop going s2idle
+[   59.713392] acpi_s2idle_wake enter
+[   59.713394] acpi_s2idle_wake exit
+[   59.760888] acpi_ev_gpe_detect enter
+[   59.760893] acpi_s2idle_sync enter
+[   59.760893] acpi_ec_query_flushed ec pending queries 0
+[   59.760953] Read registers for GPE 50-57: Status=01, Enable=01, RunEnable=01, WakeEnable=00
+[   59.760955] ACPI: EC: ===== IRQ (1) =====
+[   59.760972] ACPI: EC: EC_SC(R) = 0x28 SCI_EVT=1 BURST=0 CMD=1 IBF=0 OBF=0
+[   59.760979] ACPI: EC: +++++ Polling enabled +++++
+[   59.760979] ACPI: EC: ##### Command(QR_EC) submitted/blocked #####
+[   59.761003] acpi_s2idle_sync exit
+[   59.769587] ACPI: EC: ##### Query(0xdf) started #####
+[   59.769611] ACPI: EC: ##### Query(0xdf) stopped #####
+[   59.774154] acpi_button_notify button type 1
+[   59.813175] s2idle_loop going s2idle
+
+acpi_s2idle_sync() already makes an effort to flush the EC event
+queue, but in this case, the EC event has yet to be generated when
+the call to acpi_ec_flush_work() is made. The event is generated
+shortly after, through the ongoing handling of the SCI interrupt
+which is happening on another CPU, and we must synchronize that
+to make sure that it has run and completed. Adding another call to
+acpi_os_wait_events_complete() solves this issue, since that
+function synchronizes with SCI interrupt completion.
+
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+
+https://phabricator.endlessm.com/T21599
+---
+ drivers/acpi/sleep.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+index 8082871..c6e1b4b 100644
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -982,8 +982,9 @@ static void acpi_s2idle_sync(void)
+ 	 * The EC driver uses the system workqueue and an additional special
+ 	 * one, so those need to be flushed too.
+ 	 */
++	acpi_os_wait_events_complete();	/* synchronize SCI IRQ handling */
+ 	acpi_ec_flush_work();
+-	acpi_os_wait_events_complete();
++	acpi_os_wait_events_complete();	/* synchronize Notify handling */
+ 	s2idle_wakeup = false;
+ }
+ 
+-- 
+2.7.4
