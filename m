@@ -1,65 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeCaEQo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 00:16:44 -0400
-Received: from mga12.intel.com ([192.55.52.136]:11723 "EHLO mga12.intel.com"
+        id S1751385AbeCaEUi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 00:20:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54666 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751476AbeCaEMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 00:12:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,383,1517904000";
-   d="scan'208";a="39603057"
-Subject: [PATCH v8 03/18] block, dax: remove dead code in blkdev_writepages()
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jeff Moyer <jmoyer@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, jack@suse.cz,
-        snitzer@redhat.com
-Date: Fri, 30 Mar 2018 21:02:26 -0700
-Message-ID: <152246894622.36038.13910410206438248860.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1750718AbeCaEUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 00:20:36 -0400
+From: Nicolai Stange <nstange@suse.de>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Nicolai Stange <nstange@suse.de>, Fabio Estevam <festevam@gmail.com>,
+        Francisco Jerez <currojerez@riseup.net>, linux-pm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kbuild-all@01.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        0day robot <fengguang.wu@intel.com>, Len Brown <lenb@kernel.org>
+Subject: Re: [kbuild-all] [PATCH] OPTIONAL: cpufreq/intel_pstate: fix debugfs_simple_attr.cocci warnings
+References: <alpine.DEB.2.20.1803292109180.2750@hadrien>
+        <CAOMZO5CLpW+2yCYRwAJTPWtXgXkaPGyPQrB3cbBGYvV1fryUQw@mail.gmail.com>
+        <alpine.DEB.2.20.1803292140340.2750@hadrien> <87po3mxf73.fsf@suse.de>
+        <alpine.DEB.2.20.1803300821330.2870@hadrien>
+Date: Sat, 31 Mar 2018 06:20:32 +0200
+In-Reply-To: <alpine.DEB.2.20.1803300821330.2870@hadrien> (Julia Lawall's
+        message of "Fri, 30 Mar 2018 08:22:58 +0200 (CEST)")
+Message-ID: <87605cx4dr.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Block device inodes never have S_DAX set, so kill the check for DAX and
-diversion to dax_writeback_mapping_range().
+Julia Lawall <julia.lawall@lip6.fr> writes:
 
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- fs/block_dev.c |    5 -----
- 1 file changed, 5 deletions(-)
+> On Fri, 30 Mar 2018, Nicolai Stange wrote:
+>
+>> Julia Lawall <julia.lawall@lip6.fr> writes:
+>>
+>> > On Thu, 29 Mar 2018, Fabio Estevam wrote:
+>> >
+>> >> Hi Julia,
+>> >>
+>> >> On Thu, Mar 29, 2018 at 4:12 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>> >> >  Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
+>> >> >  for debugfs files.
+>> >> >
+>> >> > Semantic patch information:
+>> >> >  Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
+>> >> >  imposes some significant overhead as compared to
+>> >> >  DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+>> >>
+>> >> Just curious: could you please expand on what "imposes some
+>> >> significant overhead" means?
+>> >
+>> > I don't know.  I didn't write this rule.  Nicolai, can you explain?
+>>
+>> From commit 49d200deaa68 ("debugfs: prevent access to removed files' private
+>> data"):
+>>
+>>     Upon return of debugfs_remove()/debugfs_remove_recursive(), it might
+>>     still be attempted to access associated private file data through
+>>     previously opened struct file objects. If that data has been freed by
+>>     the caller of debugfs_remove*() in the meanwhile, the reading/writing
+>>     process would either encounter a fault or, if the memory address in
+>>     question has been reassigned again, unrelated data structures could get
+>>     overwritten.
+>>     [...]
+>>     Currently, there are ~1000 call sites of debugfs_create_file() spread
+>>     throughout the whole tree and touching all of those struct file_operations
+>>     in order to make them file removal aware by means of checking the result of
+>>     debugfs_use_file_start() from within their methods is unfeasible.
+>>
+>>     Instead, wrap the struct file_operations by a lifetime managing proxy at
+>>     file open [...]
+>>
+>> The additional overhead comes in terms of additional memory needed: for
+>> debugs files created through debugfs_create_file(), one such struct
+>> file_operations proxy is allocated for each struct file instantiation,
+>> c.f. full_proxy_open().
+>>
+>> This was needed to "repair" the ~1000 call sites without touching them.
+>>
+>> New debugfs users should make their file_operations removal aware
+>> themselves by means of DEFINE_DEBUGFS_ATTRIBUTE() and signal that fact to
+>> the debugfs core by instantiating them through
+>> debugfs_create_file_unsafe().
+>>
+>> See commit c64688081490 ("debugfs: add support for self-protecting
+>> attribute file fops") for further information.
+>
+> Thanks.  Perhaps it would be good to add a reference to this commit in
+> the message generated by the semantic patch.
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index fe09ef9c21f3..846ee2d31781 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1946,11 +1946,6 @@ static int blkdev_releasepage(struct page *page, gfp_t wait)
- static int blkdev_writepages(struct address_space *mapping,
- 			     struct writeback_control *wbc)
- {
--	if (dax_mapping(mapping)) {
--		struct block_device *bdev = I_BDEV(mapping->host);
--
--		return dax_writeback_mapping_range(mapping, bdev, wbc);
--	}
- 	return generic_writepages(mapping, wbc);
- }
- 
+Thanks for doing this!
+
+
+>
+> Would it be sufficient to just apply the semantic patch everywhere and
+> submit the patches?
+
+In principle yes. But I'm note sure whether such a mass application is
+worth it: the proxy allocation happens only at file open and the
+expectation is that there aren't that many debugfs files kept open at a
+time. OTOH, a struct file_operation consumes 256 bytes with
+sizeof(long) == 8.
+
+In my opinion, new users should avoid this overhead as it's easily
+doable. For existing ones, I don't know.
+
+Thanks,
+
+Nicolai
+
+-- 
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton,
+HRB 21284 (AG Nürnberg)
