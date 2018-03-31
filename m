@@ -1,87 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeCaHFi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 03:05:38 -0400
-Received: from smtprelay0207.hostedemail.com ([216.40.44.207]:39944 "EHLO
+        id S1752834AbeCaHFq (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 03:05:46 -0400
+Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:55963 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751483AbeCaHFg (ORCPT
+        by vger.kernel.org with ESMTP id S1752396AbeCaHFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 03:05:36 -0400
+        Sat, 31 Mar 2018 03:05:43 -0400
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:541:960:966:968:973:988:989:1260:1345:1437:1534:1543:1711:1730:1747:1777:1792:1801:1981:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3353:3865:3866:3867:3868:3874:4250:4385:4605:5007:6261:10004:10848:11026:11657:11658:11914:12043:12048:12296:12438:12555:12679:12895:13161:13229:14096:14394:14721:21080:21433:21451:21627:30003:30054:30055,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: bell55_87e18b8d8fd34
-X-Filterd-Recvd-Size: 4157
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:800:960:973:988:989:1260:1345:1359:1437:1534:1542:1711:1730:1747:1777:1792:2282:2393:2559:2562:2902:3138:3139:3140:3141:3142:3353:3865:3867:3870:3871:3872:4321:4605:5007:6261:7875:10004:10848:11026:11473:11658:11914:12043:12048:12296:12438:12555:12679:12895:12986:14181:14394:14721:21080:21433:21451:21611:21627:30003:30012:30054:30070,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: spade20_887b8095e093d
+X-Filterd-Recvd-Size: 3436
 From: Joe Perches <joe@perches.com>
-To: netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        b43-dev@lists.infradead.org, bridge@lists.linux-foundation.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Cc: linux-kernel@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com
-Subject: [PATCH 00/12] Ethernet: Add and use ether_<type>_addr globals
-Date: Sat, 31 Mar 2018 00:05:15 -0700
-Message-Id: <cover.1522479607.git.joe@perches.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stephen Hemminger <stephen@networkplumber.org>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bridge@lists.linux-foundation.org
+Subject: [PATCH 02/12] treewide/net: Rename eth_stp_addr to ether_stp_addr
+Date: Sat, 31 Mar 2018 00:05:17 -0700
+Message-Id: <a2d52bbcdcd36c5062bd4fa175df15acd5f8cb85.1522479607.git.joe@perches.com>
 X-Mailer: git-send-email 2.15.0
+In-Reply-To: <cover.1522479607.git.joe@perches.com>
+References: <cover.1522479607.git.joe@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are many local static and non-static arrays that are used for
-Ethernet broadcast address output or comparison.
+eth_stp_addr is not in the same form as the other global ether_<foo>_addr
+addresses like ether_broadcast_addr.
 
-Centralize the array into a single separate file and remove the local
-arrays.
+Convert it treewide.
 
-Joe Perches (12):
-  ethernet: Add generic ether_<foo>_addr addresses
-  treewide/net: Rename eth_stp_addr to ether_stp_addr
-  net: mac80211: Use global ether_broadcast_addr
-  bridge: netfilter: Use the new global ether_<foo>_addr arrays
-  net: atm: Use ether_broadcast_addr
-  wireless: Convert simple uses of a static const Ethernet broadcast address
-  brcmfmac: Convert ALLFFMAC to ether_broadcast_addr
-  iwlegacy: Remove EXPORT_SYMBOL(il_bcast_addr) and use ether_broadcast_addr
-  iwlwifi: Remove local iwl_bcast_addr and use ether_broadcast_addr
-  mvpp2: Use ether_broadcast_addr instead of a local array
-  qlogic: Convert local bcast_addr to global ether_broadcast_addr
-  ethernet: Use ether_zero_addr instead of local statics
+Miscellanea:
 
- drivers/net/dsa/lan9303-core.c                        |  4 ++--
- drivers/net/ethernet/broadcom/b44.c                   |  5 ++---
- drivers/net/ethernet/freescale/gianfar.c              |  3 +--
- drivers/net/ethernet/marvell/mvpp2.c                  |  4 +---
- drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c    |  5 +----
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c        |  6 ++----
- .../net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c  |  6 ++----
- drivers/net/wireless/admtek/adm8211.c                 |  3 +--
- drivers/net/wireless/ath/carl9170/mac.c               |  4 +---
- drivers/net/wireless/broadcom/b43/main.c              |  3 +--
- .../net/wireless/broadcom/brcm80211/brcmfmac/common.c |  2 --
- .../net/wireless/broadcom/brcm80211/brcmfmac/common.h |  2 --
- .../wireless/broadcom/brcm80211/brcmfmac/flowring.c   |  8 ++++----
- drivers/net/wireless/intel/iwlegacy/3945-mac.c        |  2 +-
- drivers/net/wireless/intel/iwlegacy/4965-mac.c        |  2 +-
- drivers/net/wireless/intel/iwlegacy/common.c          |  3 ---
- drivers/net/wireless/intel/iwlegacy/common.h          |  1 -
- drivers/net/wireless/intel/iwlwifi/dvm/dev.h          |  1 -
- drivers/net/wireless/intel/iwlwifi/dvm/scan.c         |  2 +-
- drivers/net/wireless/intel/iwlwifi/dvm/sta.c          |  4 +---
- drivers/net/wireless/marvell/mwifiex/cfg80211.c       |  3 +--
- drivers/net/wireless/realtek/rtlwifi/core.c           |  5 ++---
- drivers/net/wireless/rndis_wlan.c                     |  6 +-----
- drivers/net/wireless/ti/wl1251/main.c                 |  5 +----
- drivers/net/wireless/ti/wlcore/main.c                 |  5 +----
- include/linux/etherdevice.h                           | 13 +++++++++----
- net/atm/lec.c                                         | 12 +++++-------
- net/bridge/br_device.c                                |  4 ++--
- net/bridge/netfilter/ebt_stp.c                        |  6 ++----
- net/ethernet/Makefile                                 |  2 +-
- net/ethernet/ether_addrs.c                            | 19 +++++++++++++++++++
- net/mac80211/iface.c                                  |  5 +----
- net/mac80211/key.c                                    |  6 ++----
- net/mac80211/mesh_hwmp.c                              | 19 ++++++++++---------
- net/mac80211/mesh_pathtbl.c                           |  8 ++++----
- 35 files changed, 83 insertions(+), 105 deletions(-)
- create mode 100644 net/ethernet/ether_addrs.c
+o Add comment to the ether_stp_addr define to show it's for spanning-tree
 
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/net/dsa/lan9303-core.c | 4 ++--
+ include/linux/etherdevice.h    | 3 ++-
+ net/bridge/br_device.c         | 4 ++--
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/dsa/lan9303-core.c b/drivers/net/dsa/lan9303-core.c
+index fefa454f3e56..a6f015ef251a 100644
+--- a/drivers/net/dsa/lan9303-core.c
++++ b/drivers/net/dsa/lan9303-core.c
+@@ -789,7 +789,7 @@ static int lan9303_separate_ports(struct lan9303 *chip)
+ {
+ 	int ret;
+ 
+-	lan9303_alr_del_port(chip, eth_stp_addr, 0);
++	lan9303_alr_del_port(chip, ether_stp_addr, 0);
+ 	ret = lan9303_write_switch_reg(chip, LAN9303_SWE_PORT_MIRROR,
+ 				LAN9303_SWE_PORT_MIRROR_SNIFFER_PORT0 |
+ 				LAN9303_SWE_PORT_MIRROR_MIRRORED_PORT1 |
+@@ -814,7 +814,7 @@ static void lan9303_bridge_ports(struct lan9303 *chip)
+ 
+ 	lan9303_write_switch_reg(chip, LAN9303_SWE_PORT_STATE,
+ 				 chip->swe_port_state);
+-	lan9303_alr_add_port(chip, eth_stp_addr, 0, true);
++	lan9303_alr_add_port(chip, ether_stp_addr, 0, true);
+ }
+ 
+ static void lan9303_handle_reset(struct lan9303 *chip)
+diff --git a/include/linux/etherdevice.h b/include/linux/etherdevice.h
+index 85d2486b2959..142da8043b24 100644
+--- a/include/linux/etherdevice.h
++++ b/include/linux/etherdevice.h
+@@ -70,7 +70,8 @@ extern const u8 ether_zero_addr[ETH_ALEN];	/* all zeros */
+ /* Reserved Ethernet Addresses per IEEE 802.1Q */
+ extern const u8 ether_reserved_addr_base[ETH_ALEN];
+ 
+-#define eth_stp_addr ether_reserved_addr_base
++/* Ethernet bridge - spanning tree protocol */
++#define ether_stp_addr ether_reserved_addr_base
+ 
+ /**
+  * is_link_local_ether_addr - Determine if given Ethernet address is link-local
+diff --git a/net/bridge/br_device.c b/net/bridge/br_device.c
+index 278fc999d355..3abcf69d1976 100644
+--- a/net/bridge/br_device.c
++++ b/net/bridge/br_device.c
+@@ -1,4 +1,4 @@
+-/*
++gg/*
+  *	Device handling code
+  *	Linux ethernet bridge
+  *
+@@ -431,7 +431,7 @@ void br_dev_setup(struct net_device *dev)
+ 	br->bridge_id.prio[0] = 0x80;
+ 	br->bridge_id.prio[1] = 0x00;
+ 
+-	ether_addr_copy(br->group_addr, eth_stp_addr);
++	ether_addr_copy(br->group_addr, ether_stp_addr);
+ 
+ 	br->stp_enabled = BR_NO_STP;
+ 	br->group_fwd_mask = BR_GROUPFWD_DEFAULT;
 -- 
 2.15.0
