@@ -1,34 +1,34 @@
-Return-Path: <3zPO_WgkbAI8BHI3t44xAt881w.z77z4xDBxAv76Cx6C.v75@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+Return-Path: <3y_O_WgkbAI4AGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
 ARC-Seal: i=1; a=rsa-sha256; t=1522529228; cv=none;
         d=google.com; s=arc-20160816;
-        b=VRBKN3LdjnrpuehTQVB7Cq37CJz+I0MrH3o/K2genCha/AQOD69oWXdaGTtdBgoN63
-         m+num88UQHr/4FX95skHxalHMBC2vZC1w6wAJEc8Pv8z7bKwaoUdr7ni9tWqWjdBwm/v
-         pXtiMEkAo95arZsgPRxSHCIJ8XnVt/xM/GsJF+FOHel9zT/JeykBSCD4ulwivbWbMm9r
-         XfpQJckdTH8jCDsDmbSrEWG4e11TMnAReroNnFX1Wu9AkoN8HohwveFAYJy+rg3bOUx4
-         7WL7jOyTs3LjSVisv1PwS/8FbyKRk1IZYPpTFrSPqQOXgZyGQ9Cu6/b1o0Jl7zaOA9GW
-         ctQQ==
+        b=mwmQhUtqopXNFSTx41SW1INMfUuMqgMFj67wQa/9U1+cuPUHmw9ylGtAH0M8EBdnmZ
+         zyelz5+n2MNE6Uvi/grUOglrlJO1hYv0IVAV2+lJKGNnjyiazH8+8JFZrFiQlqoK4ckI
+         0dGJ8ipjRbpCugm3lgiJ40k72DUj4TiSM2V1Mqglg3PzxmPAcv41pvsycgd3+0vdqOIZ
+         63HDJSwGiD7HHi2lS846TTknlQOktlvLQvBXGuvB2FGUf3M6+rBhMwPvNloD2WfXzSnv
+         yQtcEVRVX+aZosnPfxEk3RnqC6YhWUu5IAK508untDMQSLhxpNnxX6IG829gxxjn9Rrv
+         BNgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=to:from:subject:message-id:date:mime-version
          :arc-authentication-results;
         bh=SDqk2Acmq9n2NJAOB+56f8CKau5AyTwRdhJagMF4gZ8=;
-        b=yhKfCM4VBPUfkc3J/1R8bYfshlMweML9x9SV5qo7GsHgusO1hZEm0fFzx+HZaBJX1z
-         cTsk8VVN95vYDooLpTQrBCAzcURnYDxqCe6E8aAlMGIjMpIr5+e/11I1Mm2tpRNfR1dL
-         8SZiF9O6+xYZVoLHcFW4dGwO93U5o3sZkCkXlz+by0Q2+ANxtEAzdqm/DRLd6m4MnyQ7
-         BnlZtJ3sMLxfXNUWPK0ambDUg8lPgqFM1Qb3l1RehwF2b6AmmAnFxOuPyUv1EMJjiouC
-         uaJsSrThzMCuwwPFPa4PpRBzDpjU9AHvq26cgnTysZxHu+Ho2m54y0kUycVvLu3APSPW
-         1sYQ==
+        b=G7Xl7mp1yO7+OKdKoqQQaPgpY232njdDOnUOwK4mNCx+bGtnvEnJUWDUobzHxcYcxK
+         MF7G6mt6jnvmLlhgPHLOMdmQP8wuQXbKrbC2yOImt0O4qzYAgWl4ktSeaI/8229OZsuG
+         TZzeGJotLpT0nu8+CSoXLe1jcKDUBhRFLd3IoIWB5stjXLn5ElmNZaV1+HhJtne90bxD
+         dRx3TGX9pAPwXLDOyz/dvwg+UDSKlNiRQxFTYILCk1ddckfsl3TYBd0EGh9Op8ZcOjRe
+         WsHMfDnVXqaETdY8oUgLSdsQ+h6bSpbdZXyoiXcKEYMS0NjXbYlkL2DOw7L2nQvJJdgr
+         JtOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 3zpo_wgkbai8bhi3t44xat881w.z77z4xdbxav76cx6c.v75@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3zPO_WgkbAI8BHI3t44xAt881w.z77z4xDBxAv76Cx6C.v75@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       spf=pass (google.com: domain of 3y_o_wgkbai4agh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3y_O_WgkbAI4AGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 3zpo_wgkbai8bhi3t44xat881w.z77z4xdbxav76cx6c.v75@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3zPO_WgkbAI8BHI3t44xAt881w.z77z4xDBxAv76Cx6C.v75@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       spf=pass (google.com: domain of 3y_o_wgkbai4agh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3y_O_WgkbAI4AGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AIpwx4+BASpFC9wKzv/sC3ODPZ0QCamqHULZ5Uxb8OVgSmnqCFEo8I6NMcwo78R/fCJ3Q8xyoYa1OQHdqRSSmEj70hNpz+PXOPgR
+X-Google-Smtp-Source: AIpwx4/D5xkyY81wL8xuYRJR7M/SJNI3pOoakBMoG4cBBics3ssdfQ+roC6xMg6REnBs4dRHdKESjhIgcs+qaE/TQ7gYiwRZlakL
 MIME-Version: 1.0
-Date: Sat, 31 Mar 2018 13:47:08 -0700
+Date: Sat, 31 Mar 2018 13:47:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <94eb2c054604d4ac000568bb758c@google.com>
+Message-ID: <001a113f8bf6c849030568bb75d3@google.com>
 Subject: WARNING: refcount bug in put_pid_ns
 From: syzbot <syzbot+66a731f39da94bb14930@syzkaller.appspotmail.com>
 To: gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
@@ -37,7 +37,7 @@ To: gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596487607739609259?=
-X-GMAIL-MSGID: =?utf-8?q?1596487608917142866?=
+X-GMAIL-MSGID: =?utf-8?q?1596487607739609259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
