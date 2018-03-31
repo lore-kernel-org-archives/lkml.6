@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752946AbeCaXBF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 19:01:05 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:41811 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752268AbeCaXBC (ORCPT
+        id S1752851AbeCaXBE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 19:01:04 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:43533 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752247AbeCaXBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 31 Mar 2018 19:01:02 -0400
-X-Google-Smtp-Source: AIpwx4/43w6C4u6vWwC5uDGbnuqj3ab9mO5E9nBQ9o88LRb15zRl3RxkfO0AkGuQBUbtGjd7fbFaOYzhCqe1/lDSrIGYMJZqbZbl
+X-Google-Smtp-Source: AIpwx49G/yTRx7XoHxiOIRvkL8TuLLFIpQoAPT3g/v6w/+4s5W4409DGKuK1CmXubzy19At0E7eBpkfoG3oS8P6r6zfug4yz48UB
 MIME-Version: 1.0
-Date: Sat, 31 Mar 2018 16:01:02 -0700
+Date: Sat, 31 Mar 2018 16:01:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a11447acaa9eec40568bd5438@google.com>
-Subject: BUG: corrupted list in __dentry_kill
-From: syzbot <syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <000000000000a55f900568bd543f@google.com>
+Subject: general protection fault in __list_del_entry_valid (3)
+From: syzbot <syzbot+0bb443b74ce09197e970@syzkaller.appspotmail.com>
+To: davem@davemloft.net, jon.maloy@ericsson.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
+        ying.xue@windriver.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -24,87 +26,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on bpf-next commit
-7828f20e3779e4e85e55371e0e43f5006a15fb41 (Sat Mar 31 00:17:57 2018 +0000)
-Merge branch 'bpf-cgroup-bind-connect'
+syzbot hit the following crash on net-next commit
+c0b6edef0bf0e33c12eaf80c676ff09def011518 (Thu Mar 29 19:58:10 2018 +0000)
+tc-testing: Add newline when writing test case files
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=f3bd89a5ab3266b10540
+https://syzkaller.appspot.com/bug?extid=0bb443b74ce09197e970
 
-So far this crash happened 22 times on bpf-next, upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6290970458980352
+So far this crash happened 40 times on bpf-next, net-next, upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5934690573746176
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6577156880596992
+https://syzkaller.appspot.com/x/repro.syz?id=5611083175821312
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5107570603720704
+https://syzkaller.appspot.com/x/log.txt?id=6249721593069568
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=5909223872832634926
+https://syzkaller.appspot.com/x/.config?id=3327544840960562528
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com
+Reported-by: syzbot+0bb443b74ce09197e970@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-RBP: 00007ffd1bbb3ae0 R08: 0000000020000200 R09: 0000000300000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000001380 R15: 00007ffd1bbb3378
-list_del corruption. prev->next should be 00000000a8104008, but was  
-00000000081c6144
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:53!
-invalid opcode: 0000 [#1] SMP KASAN
+R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+Name sequence creation failed, no memory
+Failed to create subscription for {1020,0,4294967295}
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Modules linked in:
-CPU: 0 PID: 4448 Comm: syzkaller853443 Not tainted 4.16.0-rc6+ #43
+CPU: 0 PID: 4361 Comm: syzkaller865516 Not tainted 4.16.0-rc6+ #288
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:__list_del_entry_valid+0xef/0x150 lib/list_debug.c:51
-RSP: 0018:ffff8801b8f977a0 EFLAGS: 00010282
-RAX: 0000000000000054 RBX: ffff8801b0c1cf60 RCX: 0000000000000000
-RDX: 0000000000000054 RSI: 1ffff100371f2ea9 RDI: ffffed00371f2ee8
-RBP: ffff8801b8f977b8 R08: 1ffff100371f2e40 R09: 0000000000000000
-R10: ffff8801b8f97778 R11: 0000000000000000 R12: ffff8801b0c1cde0
-R13: 1ffff100371f2efd R14: ffff8801b0c1cc70 R15: dffffc0000000000
-FS:  00000000023a5880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+RIP: 0010:__list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51
+RSP: 0018:ffff8801ae29eec8 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 00000000000001f8 RCX: 0000000000000000
+RDX: 000000000000003f RSI: ffff8801c9eb6cd8 RDI: ffff8801c9eb6ce0
+RBP: ffff8801ae29eee0 R08: ffffffff86b2cc9f R09: 0000000000000000
+R10: ffff8801ae29eda8 R11: ffff8801d08cf710 R12: 0000000000400040
+R13: ffff8801ae29f080 R14: ffff8801c9eb6cd8 R15: ffff8801d08cf6c0
+FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004b6fbc CR3: 00000001c85a6004 CR4: 00000000001606f0
+CR2: 0000000020265000 CR3: 000000000846a004 CR4: 00000000001606f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
   __list_del_entry include/linux/list.h:117 [inline]
-  dentry_unlist fs/dcache.c:518 [inline]
-  __dentry_kill+0x260/0x700 fs/dcache.c:571
-  dentry_kill fs/dcache.c:616 [inline]
-  dput.part.20+0x5a0/0x830 fs/dcache.c:831
-  dput+0x1f/0x30 fs/dcache.c:795
-  rpc_gssd_dummy_depopulate net/sunrpc/rpc_pipe.c:1381 [inline]
-  rpc_fill_super+0x628/0xae0 net/sunrpc/rpc_pipe.c:1426
-  mount_ns+0xc4/0x190 fs/super.c:1036
-  rpc_mount+0x9e/0xd0 net/sunrpc/rpc_pipe.c:1451
-  mount_fs+0x66/0x2d0 fs/super.c:1222
-  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:2509 [inline]
-  do_new_mount fs/namespace.c:2512 [inline]
-  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
-  SYSC_mount fs/namespace.c:3058 [inline]
-  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  list_del_init include/linux/list.h:159 [inline]
+  tipc_nametbl_unsubscribe+0x337/0x990 net/tipc/name_table.c:808
+  tipc_sub_unsubscribe+0x6d/0x2e0 net/tipc/subscr.c:164
+  tipc_conn_delete_sub+0x324/0x4a0 net/tipc/topsrv.c:245
+  tipc_topsrv_kern_unsubscr+0x21d/0x350 net/tipc/topsrv.c:598
+  tipc_group_delete+0x2c0/0x3d0 net/tipc/group.c:231
+  tipc_sk_leave+0x10b/0x200 net/tipc/socket.c:2800
+  tipc_release+0x154/0xff0 net/tipc/socket.c:576
+  sock_release+0x8d/0x1e0 net/socket.c:594
+  sock_close+0x16/0x20 net/socket.c:1149
+  __fput+0x327/0x7e0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+  do_group_exit+0x149/0x400 kernel/exit.c:968
+  SYSC_exit_group kernel/exit.c:979 [inline]
+  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x442759
-RSP: 002b:00007ffd1bbb3238 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000442759
-RDX: 00000000200002c0 RSI: 0000000020000140 RDI: 0000000020000300
-RBP: 00007ffd1bbb3ae0 R08: 0000000020000200 R09: 0000000300000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000001380 R15: 00007ffd1bbb3378
-Code: 4c 89 e2 48 c7 c7 c0 bf 75 87 e8 35 c1 46 fe 0f 0b 48 c7 c7 20 c0 75  
-87 e8 27 c1 46 fe 0f 0b 48 c7 c7 80 c0 75 87 e8 19 c1 46 fe <0f> 0b 48 c7  
-c7 e0 c0 75 87 e8 0b c1 46 fe 0f 0b 48 89 df 48 89
-RIP: __list_del_entry_valid+0xef/0x150 lib/list_debug.c:51 RSP:  
-ffff8801b8f977a0
----[ end trace e1b9954cded9aca7 ]---
+RIP: 0033:0x43f0d8
+RSP: 002b:00007ffca6e03198 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f0d8
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004bf1c8 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000000020265000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
+Code: 00 00 00 00 ad de 49 39 c4 74 66 48 b8 00 02 00 00 00 00 ad de 48 89  
+da 48 39 c3 74 65 48 c1 ea 03 48 b8 00 00 00 00 00 fc ff df <80> 3c 02 00  
+75 7b 48 8b 13 48 39 f2 75 57 49 8d 7c 24 08 48 b8
+RIP: __list_del_entry_valid+0x7e/0x150 lib/list_debug.c:51 RSP:  
+ffff8801ae29eec8
+---[ end trace 31f0221025ea0e3e ]---
 
 
 ---
