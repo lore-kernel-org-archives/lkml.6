@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752837AbeCaCIe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 22:08:34 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43736 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752784AbeCaCIc (ORCPT
+        id S1752869AbeCaCJ1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 22:09:27 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36171 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbeCaCJZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 22:08:32 -0400
-X-Google-Smtp-Source: AIpwx49eq/awcOd4t3m5Rojwh9Os1Aeg9tKeDlb2rxorgf4YXljF3DdlXl4pj8/ViGEsA/m4uJi6pQ==
+        Fri, 30 Mar 2018 22:09:25 -0400
+X-Google-Smtp-Source: AIpwx4+pKL2Lw+6ZD4gq+b7qoIfwLsPkYPxSyAbCZ10S34W+vMiRucXiSsMgi8eqI9lFHB09ajkNjg==
 From: Chris Chiu <chiu@endlessm.com>
 To: rjw@rjwysocki.net, lenb@kernel.org
 Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux@endlessm.com, Chris Chiu <chiu@endlessm.com>
 Subject: [PATCH] ACPI / PM: Fix wake up by PS2 keyboard fail on ASUS UX331UA
-Date: Sat, 31 Mar 2018 10:08:23 +0800
-Message-Id: <1522462103-84130-1-git-send-email-chiu@endlessm.com>
+Date: Sat, 31 Mar 2018 10:09:31 +0800
+Message-Id: <1522462171-84178-1-git-send-email-chiu@endlessm.com>
 X-Mailer: git-send-email 2.5.4 (Apple Git-61)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,7 +75,6 @@ function synchronizes with SCI interrupt completion.
 
 Signed-off-by: Chris Chiu <chiu@endlessm.com>
 
-https://phabricator.endlessm.com/T21599
 ---
  drivers/acpi/sleep.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
