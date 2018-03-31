@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753185AbeCaHGG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 03:06:06 -0400
-Received: from smtprelay0052.hostedemail.com ([216.40.44.52]:55984 "EHLO
+        id S1753257AbeCaHGY (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 03:06:24 -0400
+Received: from smtprelay0177.hostedemail.com ([216.40.44.177]:52191 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752422AbeCaHGC (ORCPT
+        by vger.kernel.org with ESMTP id S1753123AbeCaHGD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 03:06:02 -0400
+        Sat, 31 Mar 2018 03:06:03 -0400
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:800:960:973:981:988:989:1260:1345:1359:1437:1534:1543:1711:1730:1747:1777:1792:2393:2559:2562:3138:3139:3140:3141:3142:3354:3865:3866:3867:4321:4605:5007:6261:10004:10394:10848:11026:11233:11473:11657:11658:11914:12043:12048:12114:12296:12438:12555:12895:12986:14181:14394:14721:21080:21433:21627:30012:30045:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: pigs54_8bb2e8f016d0a
-X-Filterd-Recvd-Size: 4472
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:800:960:966:973:988:989:1260:1345:1359:1437:1534:1542:1711:1730:1747:1777:1792:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3353:3865:3866:3867:3872:4321:4385:4605:5007:6261:10004:10848:11026:11473:11657:11658:11914:12043:12296:12438:12555:12679:12895:12986:13869:14181:14394:14721:21080:21524:21627:30005:30012:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: self04_8bf831cd1bc0b
+X-Filterd-Recvd-Size: 2890
 From: Joe Perches <joe@perches.com>
-To: Manish Chopra <manish.chopra@cavium.com>,
-        Rahul Verma <rahul.verma@cavium.com>, Dept-GELinuxNICDev@cavium.com,
-        Harish Patil <harish.patil@cavium.com>
+To: Michael Chan <michael.chan@broadcom.com>,
+        Claudiu Manoil <claudiu.manoil@freescale.com>
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/12] qlogic: Convert local bcast_addr to global ether_broadcast_addr
-Date: Sat, 31 Mar 2018 00:05:26 -0700
-Message-Id: <1241f333e7c6775ea7b7e56c4c4032f727b86ac3.1522479609.git.joe@perches.com>
+Subject: [PATCH 12/12] ethernet: Use ether_zero_addr instead of local statics
+Date: Sat, 31 Mar 2018 00:05:27 -0700
+Message-Id: <d4de4e8a51546af7e0a139e1b24d889383940027.1522479609.git.joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <cover.1522479607.git.joe@perches.com>
 References: <cover.1522479607.git.joe@perches.com>
@@ -26,85 +25,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new global instead of local statics to save a bit of object code.
+This saves a small amount of object code.
+
+Miscellanea:
+
+o __b44_cam_write now use const u8 *data instead of unsigned char *
+  to avoid compiler warnings as it doesn't modify data
 
 Signed-off-by: Joe Perches <joe@perches.com>
 ---
- drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c       | 5 +----
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c           | 6 ++----
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c | 6 ++----
- 3 files changed, 5 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/broadcom/b44.c      | 5 ++---
+ drivers/net/ethernet/freescale/gianfar.c | 3 +--
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-index 1cd39c9a0345..bd21aa3d5833 100644
---- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-+++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_hw.c
-@@ -668,9 +668,6 @@ static void netxen_p3_nic_set_multi(struct net_device *netdev)
+diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
+index e445ab724827..30879ff7de19 100644
+--- a/drivers/net/ethernet/broadcom/b44.c
++++ b/drivers/net/ethernet/broadcom/b44.c
+@@ -220,7 +220,7 @@ static inline void __b44_cam_read(struct b44 *bp, unsigned char *data, int index
+ 	data[1] = (val >> 0) & 0xFF;
+ }
+ 
+-static inline void __b44_cam_write(struct b44 *bp, unsigned char *data, int index)
++static inline void __b44_cam_write(struct b44 *bp, const u8 *data, int index)
  {
- 	struct netxen_adapter *adapter = netdev_priv(netdev);
- 	struct netdev_hw_addr *ha;
--	static const u8 bcast_addr[ETH_ALEN] = {
--		0xff, 0xff, 0xff, 0xff, 0xff, 0xff
--	};
- 	u32 mode = VPORT_MISS_MODE_DROP;
- 	LIST_HEAD(del_list);
- 	struct list_head *head;
-@@ -682,7 +679,7 @@ static void netxen_p3_nic_set_multi(struct net_device *netdev)
- 	list_splice_tail_init(&adapter->mac_list, &del_list);
+ 	u32 val;
  
- 	nx_p3_nic_add_mac(adapter, adapter->mac_addr, &del_list);
--	nx_p3_nic_add_mac(adapter, bcast_addr, &del_list);
-+	nx_p3_nic_add_mac(adapter, ether_broadcast_addr, &del_list);
- 
- 	if (netdev->flags & IFF_PROMISC) {
- 		mode = VPORT_MISS_MODE_ACCEPT_ALL;
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c
-index 7848cf04b29a..948cb7ae9758 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c
-@@ -542,9 +542,6 @@ static void __qlcnic_set_multi(struct net_device *netdev, u16 vlan)
- 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
- 	struct qlcnic_hardware_context *ahw = adapter->ahw;
- 	struct netdev_hw_addr *ha;
--	static const u8 bcast_addr[ETH_ALEN] = {
--		0xff, 0xff, 0xff, 0xff, 0xff, 0xff
--	};
- 	u32 mode = VPORT_MISS_MODE_DROP;
- 
- 	if (!test_bit(__QLCNIC_FW_ATTACHED, &adapter->state))
-@@ -552,7 +549,8 @@ static void __qlcnic_set_multi(struct net_device *netdev, u16 vlan)
- 
- 	qlcnic_nic_add_mac(adapter, adapter->mac_addr, vlan,
- 			   QLCNIC_UNICAST_MAC);
--	qlcnic_nic_add_mac(adapter, bcast_addr, vlan, QLCNIC_BROADCAST_MAC);
-+	qlcnic_nic_add_mac(adapter, ether_broadcast_addr, vlan,
-+			   QLCNIC_BROADCAST_MAC);
- 
- 	if (netdev->flags & IFF_PROMISC) {
- 		if (!(adapter->flags & QLCNIC_PROMISC_DISABLED))
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
-index c58180f40844..17dd0a1353f2 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
-@@ -1546,9 +1546,6 @@ void qlcnic_sriov_vf_set_multi(struct net_device *netdev)
- {
- 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
- 	struct qlcnic_hardware_context *ahw = adapter->ahw;
--	static const u8 bcast_addr[ETH_ALEN] = {
--		0xff, 0xff, 0xff, 0xff, 0xff, 0xff
--	};
- 	struct netdev_hw_addr *ha;
- 	u32 mode = VPORT_MISS_MODE_DROP;
- 
-@@ -1562,7 +1559,8 @@ void qlcnic_sriov_vf_set_multi(struct net_device *netdev)
- 		   (netdev_mc_count(netdev) > ahw->max_mc_count)) {
- 		mode = VPORT_MISS_MODE_ACCEPT_MULTI;
+@@ -1744,7 +1744,6 @@ static void __b44_set_rx_mode(struct net_device *dev)
+ 		val |= RXCONFIG_PROMISC;
+ 		bw32(bp, B44_RXCONFIG, val);
  	} else {
--		qlcnic_vf_add_mc_list(netdev, bcast_addr, QLCNIC_BROADCAST_MAC);
-+		qlcnic_vf_add_mc_list(netdev, ether_broadcast_addr,
-+				      QLCNIC_BROADCAST_MAC);
- 		if (!netdev_mc_empty(netdev)) {
- 			qlcnic_flush_mcast_mac(adapter);
- 			netdev_for_each_mc_addr(ha, netdev)
+-		unsigned char zero[6] = {0, 0, 0, 0, 0, 0};
+ 		int i = 1;
+ 
+ 		__b44_set_mac_addr(bp);
+@@ -1756,7 +1755,7 @@ static void __b44_set_rx_mode(struct net_device *dev)
+ 			i = __b44_load_mcast(bp, dev);
+ 
+ 		for (; i < 64; i++)
+-			__b44_cam_write(bp, zero, i);
++			__b44_cam_write(bp, ether_zero_addr, i);
+ 
+ 		bw32(bp, B44_RXCONFIG, val);
+         	val = br32(bp, B44_CAM_CTRL);
+diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
+index f27f9bae1a4a..24d8c85f8f4e 100644
+--- a/drivers/net/ethernet/freescale/gianfar.c
++++ b/drivers/net/ethernet/freescale/gianfar.c
+@@ -3501,10 +3501,9 @@ static void gfar_set_multi(struct net_device *dev)
+ static void gfar_clear_exact_match(struct net_device *dev)
+ {
+ 	int idx;
+-	static const u8 zero_arr[ETH_ALEN] = {0, 0, 0, 0, 0, 0};
+ 
+ 	for (idx = 1; idx < GFAR_EM_NUM + 1; idx++)
+-		gfar_set_mac_for_addr(dev, idx, zero_arr);
++		gfar_set_mac_for_addr(dev, idx, ether_zero_addr);
+ }
+ 
+ /* Set the appropriate hash bit for the given addr */
 -- 
 2.15.0
