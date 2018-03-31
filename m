@@ -1,23 +1,23 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx48qg0gDt8B1s+hUqtFvUCPohh/OLqWbXAeinvDpDVkMXwwPzWfajqoOpsLTBiQITUczjdlP
-ARC-Seal: i=1; a=rsa-sha256; t=1522476593; cv=none;
+X-Google-Smtp-Source: AIpwx4851ydwg3BropUPXsMiApty8AqtdYXvIreuqqksma+EbXx/scd/d8YsnR8z8vA83B7wsoC5
+ARC-Seal: i=1; a=rsa-sha256; t=1522476592; cv=none;
         d=google.com; s=arc-20160816;
-        b=XXoF0pfqbtP9Snm5+9UfherSiyv4tDhDUdvRJQwkGmEbk70mvlzyZZDn+SyMLkdWyW
-         AEGAW4+h3IEh8UciWPv6XYQjFR2/5no7OvXYLUQyLYQG/s5Y71n59GSqNylC/qFkH1zR
-         boWyS1fkbASbCjbsHP6JF0ZhbqYf8ZI5HCK3U4swdPrAekHctO0L58I8V6QjNaHmcxbQ
-         nNJpoP26+mFgACmQ4FM9KgE6H2V0eoBE+kEU93QcXbV3NACJKD9MIgTxXh0hVssKk2ow
-         XEQk/cWDWz9b/XvCxrFVGEbWiRswDFAy6amHjPC8y2Ja+6NC8+ivC9V7GpOTK4t5cboo
-         bqVA==
+        b=S2We4vhhNVkAx7XVcHYtldHy6VLDAko44ZSwLNK4qpGyt09zcvh82u9aOlUrMzGAyD
+         4VR3qwB2vSAS0nOG5BC57zlV2bOfJkL6+9gmvob7kWDYrqVuMsgjwJZROJ7HtpIXfIxL
+         qTd+kH1L8KisNTiqNdFj9avKsolmA41D8JKVdZxcJ2Id6dxfKNOH+6mc052gvylbAzId
+         +OIDqtlWKmQsxL/bNVpaFGlAwdLKbNy8XZterdyrhqW7t1eWdAIoeCAtSd1qHGsduMSl
+         /bqqDKh7SIYLnPoqhL09TwICCdStpExLOrhL54musv0ZqMAXoumYugnmECiFLAxODI5E
+         K4aA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Rox9U38mcXoy80bAKgKmnuSXT7Q7cZwDZkWI/aLvYYI=;
-        b=nq5cxqAl1QZmDRIPDzqP33ut6uWKs2njPHWTfaa9wksumarcLBtxGZIVlHPtTs3sgn
-         oUg2wMifW7EhX8k6iLsKfE61IDi+4cFhNzvrcWQD/IlH9J6fbFq2+x4U9VO44cQn63A+
-         O/4+SmJxeWgaLiVYdmAamXscz6NAVAnFiMQxpL7MP4F/9cDqcaUNoH3rRO5pX6ktz3Zo
-         mVhUppUWcSqAGPv+idFu05qlS27FWxPXJwNkvRoq7hAlY+ICpc+NXzV+IjAvOpkNnQr0
-         tacHOQaF467Ovphc0qC1OKL6pDTZCOrApjNEfv2Iize+hFRAUljKHaxG0HnnJzz/oWCj
-         +/zg==
+        bh=E8emxCDdBrofcM74gnnXHTlab4xK+EKYNyvReKka9kg=;
+        b=kL0uJoOgslaEQojmxhggh6MQ6KUEQlDYMITN0TquaO7k4+jyCIn8K5XAud0scWAySF
+         Cr2lmAgoN+3bqCK1lZtKWu8vRwkA04W1zY0qIQnIGhkNAA+F+YRysiqV1obuNDMrxgiz
+         ZyIH7tGRAN36prtLHx1+X5hLWf6M2JkNHzaQNN6628FV5CTHAlHcWnHjX/muoq6KeuOw
+         k0IbAlSfQzX/+l1u3JBHk4Rl8Yek4VjnR4rATutpZ/G4Bb2BYDLBBpvw/1rLUq+/PSyJ
+         RfBSvpsf/nqQ2UxGlMt8UA7l7ccIEeeeWVeYzePoA+XwNllMHzKbRqFL4L8nlUIaXdsK
+         61sg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
@@ -29,78 +29,58 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH v2 34/75] staging: ks7010: Remove trailing _t from 'struct hostif_infrastructure_set_request_t'.
-Date: Fri, 30 Mar 2018 23:08:14 -0700
-Message-Id: <20180331060855.9452-34-quytelda@tamalin.org>
+Subject: [PATCH v2 33/75] staging: ks7010: Remove unused 'struct hostif_ps_adhoc_set_confirm_t'.
+Date: Fri, 30 Mar 2018 23:08:13 -0700
+Message-Id: <20180331060855.9452-33-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:wZoF4DEAz40TzzKVeEI6hpJIQRWFlIC9HUhE6SWTQTNlQtM12l4
- fazYqWYDT/a0C78IY//dA5hIoVFPX1/KG8qJW8y0ct+WjoHUkswH9JiUhAyI302DQW4IJPN
- bErlocUUcMX9dvds6xkDTmGX7/eiJrgBWufaYpz97Udj1Voj/dMhXGmVcVKWHWIR15reqJE
- ZimOLPkK/3oXTZd96K4Qg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hADRD8hSUw0=:p9vHu89fbJxFI0qennUYKK
- y33EN6NgTD7bc3DIeC3vBKSke8zyHcSok3IF4sSOWZfvgEGM59t8YMZvVIqy7t7+iyp+RLr8n
- UPOFM4zsgaPtFVhalG9wKdDFxhFUbzHzVJkH6cYcNPgozRU63HBsgAcJ86TfUbEwYIqWBb0yA
- PMDoCwSYylrMOWP/mSnyzC3l5UUfwpGBsrqpk+bRKsthq0guGBPLBLUvFuQS1I7oPJc1TdYPT
- D8eht9xqoWg9xBjqGr02h83QWF/GnCYt8PxVwYQfSmQLjmNcY/ngF9bdEc9ScSxyQZ1bqZdCb
- 49rTxq856H2FUSHhQRxX24iZHZd+Qscr4gr/7LMhE07Klf2CegcdryUnScKlD1CJj0BF92azZ
- mgsJVvJXaV5+M9C/dv+jvZT2t5rAXBg5jX0FxiYSAfPu8efaZnNudj1Zcmf9+h7cnTEmqbmRP
- SO08IvvkTIMgCGscxiodsUo2rR9umi2U/hqx4zdJawLwyy7HMLqIrtxtUXBykPZw6fU3ppfKo
- vKIn9oo+ihmm9wUCmljttURtsEFp5H2vOWMGJnbdo4aTry14S9Nqxb1BBuamCXqmE3fVki+Du
- CjD8xZVRjm2GdvmulUGPKbeI7LfTlqdd/vwpJz14TaI2QPi4YwHXOjws/AhOmAzJIQL8Fdkce
- pZm77kBk1Y/PF9WyTbSqcoRy5eQI9xr+tvylGqZAhA6cfLRjyH3p8J2DhVRm7Bz1dTTUL9e3E
- dzJaNApy+kvmkFe4MS0Vb9cPsgvbabTFa1jOOA==
+X-Provags-ID: V03:K0:S4W5/EnXCOm0oIv6ND2gJof+EkChot/0GcUhWztSC1yk48KRU4b
+ qxhHRHjvR8wZBhxRE6WbJzUWXAvRKOMfA2FhzKOk8fWxQRPlFFHQKqnXH//vcgrxO0WMLwf
+ qpz+NxhQ1etnvLJIpldhUycmuybMMAIqJ5u05w0/GlVPMCQgeH1WZdqn4jD0+v2aIIDzfw+
+ Bnq0UDxKA8yJ82OA5kgQA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:JDBHvwdtoxc=:ySN7urJ+nvLpPRZDhX+FtS
+ tNReKUx70V87BDqDphh0GmmGMcX7U9IsrvF8r4nFT6OJzObs1LeMlvaLDEJp2XkDABZHC7BbH
+ v1/1bFdhhU/sZe7O5PTOiwR0zlIFqIxH6NTsKue6iAxdjL8fVwRaVOND08j+JESTwx+b5xgyi
+ nG4lrLhIUNlJaHddsFMl2NwytfGE4RWmKdtCDDRvPeOt5k8uKIhiJczLImXpWxo2XHjFzJDPq
+ 2n2zMBzSOjygxr6Pf9TsBiag7u67DhiIQ9PDf4s9fmkuy32mYLhsWLsiEYNDtFA0JivrFh3TU
+ wcV3nJ1DEqqDaOkcjRIJ+VUbBUbDFeuLd0ipp0fRqQG9y2tfF6OtFBWFYxFg6IfifjxpajeIG
+ nmffT57RcVo6ythgRnsOfaPNzbLPIZ9WlodD/nLTs/4IwhILlT7M9PLlU9SlqdfK1Em9CNBgL
+ BGaPXlXDaZyC1irT0NKf1FO1J20/M34FlG4Wz5DkbOvCGYZNk9gwI5K6B6figRMMG9MwlHl+q
+ jxl9A5amwJ1Yg/Axi+slIfLdu6YmxM36SzgzyjxlaB7AoVccHt3mUUkZcYww+pcwLqwYP6S1y
+ dwr8UJ6MZO+ZsvW4x4/ZGt3wB1mB2+5xgl0BPYLAqgiH7uECEec7huTRrUQCNmsx0o5ghbl82
+ evmlsRC3ud1MEFkLujivC657C3/ocM5RZrNDbJBYW9xgp7L/2CAn2tfw2T9WGkjzC1SrTdGWg
+ n8438kMmWQZEA1MamQC3i/6OTu8hrtDveCgrGA==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596432415761642060?=
-X-GMAIL-MSGID: =?utf-8?q?1596432415761642060?=
+X-GMAIL-THRID: =?utf-8?q?1596432415511835399?=
+X-GMAIL-MSGID: =?utf-8?q?1596432415511835399?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The "_t" suffix is not needed for structure names in this driver, and is a
-reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct hostif_infrastructure_set_request_t' with
-'struct hostif_infrastructure_set_request'.
+'struct hostif_ps_adhoc_set_confirm_t' is not used in this driver. Remove
+'struct hostif_ps_adhoc_set_confirm_t'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 2 +-
- drivers/staging/ks7010/ks_hostif.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/ks7010/ks_hostif.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 8be5d64f291b..3d6ba74cc3e5 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1344,7 +1344,7 @@ void hostif_ps_adhoc_set_request(struct ks_wlan_private *priv)
- static
- void hostif_infrastructure_set_request(struct ks_wlan_private *priv, int event)
- {
--	struct hostif_infrastructure_set_request_t *pp;
-+	struct hostif_infrastructure_set_request *pp;
- 
- 	pp = hostif_generic_request(sizeof(*pp), event);
- 	if (!pp)
 diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index baa612236eb2..a4f51f3311a1 100644
+index 3faa28c77446..baa612236eb2 100644
 --- a/drivers/staging/ks7010/ks_hostif.h
 +++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -325,13 +325,13 @@ struct hostif_ps_adhoc_set_request {
+@@ -321,11 +321,6 @@ struct hostif_ps_adhoc_set_request {
+ 	__le16 channel;
+ } __packed;
+ 
+-struct hostif_ps_adhoc_set_confirm_t {
+-	struct hostif_hdr header;
+-	__le16 result_code;
+-} __packed;
+-
+ #define AUTH_TYPE_OPEN_SYSTEM 0
  #define AUTH_TYPE_SHARED_KEY  1
  
- /**
-- * struct hostif_infrastructure_set_request_t
-+ * struct hostif_infrastructure_set_request
-  * @capability: bit5  : preamble
-  *              bit6  : pbcc - Not supported always 0
-  *              bit10 : ShortSlotTime
-  *              bit13 : DSSS-OFDM - Not supported always 0
-  */
--struct hostif_infrastructure_set_request_t {
-+struct hostif_infrastructure_set_request {
- 	struct hostif_hdr header;
- 	struct hostif_request request;
- 	struct ssid ssid;
 -- 
 2.16.3
