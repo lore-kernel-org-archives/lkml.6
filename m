@@ -1,27 +1,27 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx49BMENyhk8/dxbMjH9Y+EpU4zxmTaZOgkA/iNamUUGP+FuM9RIbkzdKgaS3HqK+giiKUx33
-ARC-Seal: i=1; a=rsa-sha256; t=1522476611; cv=none;
+X-Google-Smtp-Source: AIpwx48j6Wlz5rAvjRik1hoOXOXfQn8dkqos9iZpVqzot7hPwuYjbwANVvjBOe5RKbfF0jT7ft7G
+ARC-Seal: i=1; a=rsa-sha256; t=1522476610; cv=none;
         d=google.com; s=arc-20160816;
-        b=G94MyeeRA3JrRTY2iA/NZdZMk2/swHtxVH7T78nesWoFDpDLzkf9E7h0yAg44IR7TN
-         K6NpIVCPMj7vcfeR7qfZ0bvQpsF39iktWdmiyd5hag2ufkLzYpjSG1KMrvsENZzSIsUi
-         Ezs+CAdkBgG4ZPgVBYonp5eb36iY5s+Jsf94raoIgy9DmJ2bgx4riPIOGbWKY7iKgAkC
-         rCeZSezrWLhbAOvv8mddhKX+QYjRuYH6hAjF9f3zXTbayNmqtTOY7iWLRIsj2/RxYB0U
-         khmjOQhkVrQhkukPWg3bmoXtFPg9Gu1S2oD3r61xK0IQE8KivS6Yp8cPm8zJVTFmcGcq
-         0lOA==
+        b=cVzHwbptvGPZ/p2O8HHeN+8mprLVwkX2PchcoThOvHsv3lAWw3NjGK+ef3Tk8elwty
+         BwJ288I/AL0Q9wePWF+0BWiaoNRLAoI4CFJ83f1PzqSoWZUnfbYxRrgkqyH5zxd+LpkU
+         XIgsMIKchQ+n2isqDAhWGlE90YBxPBMsZsk6PEv2ngSz+eExlnnlnvhtpUIJxafBAWVf
+         Iov85ezwkM9g0cC0n2GPJW/FnOHXeBmf/OnuQvADForwMM+hQLymF0MV+d0yBKh/dolz
+         umT8Ccfm8B9x0yj4ND0J+cqKL+8p409BygLuze7m0i07xJEbvy7vqy4BINOb0UYUEEtu
+         MWtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=/ztz8zDrE6AdlcwwEhD6IyNBiRNeImwJsvFSpG2Bhmo=;
-        b=mlEvkfvHJUhQGGpQkt8YChw70szM5X1A3sqAI40MDSU2KqecUZg5MDTfRp15L59bKN
-         GXfmktnInX9DfJDlJGyXS4Zy1/ktfLw58zg+whRM4jfEbmY38QgQV6lKnnNNEO/Sraie
-         L83uUj7RskSLU9p2Vdwilr4VQrmVkDmnQqL4nIh/HFuSBIUtNoDEdeDCBJ+jMsqzucib
-         zBo2Wh2LlzpgDf7EAMQe1nBdNpHDHrIVai/NEiiXdjrvxF4yMg3S6gARpt11fP07iv38
-         77SsmlSBVbbutr6g6XZSB6Wcm1pjuDyjnuAHTHFG15mBxMzprkovEJPR+XtCs+7htB3o
-         JLsg==
+        bh=vWJ6v4njFQ2sKPugg6C4apAdHYPwQWPWKW5FiTlHx2o=;
+        b=px5PgxUSerr7fUOfyxH9EDEqIQvzJ08LKQLAar8NEGppdrGMFP0KeIM03MVlz5ztBh
+         TJFbkiTnUzeHHU9H+vYBIW1FWiVRH8mx0sUk/fsA46/tcq/U2Z4ZXtLQkBeC+zNAXdOf
+         kQ/aIUeyC5XJoYqfVGIaVQEjDBZ7b6l+9yaWQ7l+2gwD2fPh/FqTmg9N9Y+cYs2SbXn8
+         c9GFkhWxoJ/VzLyRnvFvWIaT6hko0q04BQl/IDAUJbb5c2y4CivHriOJr2M4yD/oYzfR
+         A9CBl3P6fsmhrpjy76lgzqmS7U+WzuYs+MkvuHzb6JInqh40+aNeyTqIdXYKRavCWB6t
+         GXxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
@@ -29,40 +29,40 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH v2 55/75] staging: ks7010: Remove trailing _t from 'struct local_aplist_t'.
-Date: Fri, 30 Mar 2018 23:08:35 -0700
-Message-Id: <20180331060855.9452-55-quytelda@tamalin.org>
+Subject: [PATCH v2 53/75] staging: ks7010: Remove trailing _t from 'struct wps_ie_t'.
+Date: Fri, 30 Mar 2018 23:08:33 -0700
+Message-Id: <20180331060855.9452-53-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:3UqrVv6rlq89DKjvotIpa6t8IesiPEdV1UVahwH4cZAItXcWk1w
- Lrh1AQ39WQpumCdp8E41DJt4W8j9Ss74suzyCiB8u+ZX4At/ugpGNnMOGaFsmkIzgWOAQTo
- JYMJZGkXNupAp2NNefNxSSIV0/eXf+jbkYCWdvCiQsrAXF4QFA+IgkQID9o6MRPsDq982EW
- FbsPdMgziNvnubLs6JD5w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:C4u9H5IZ4Y0=:bqxnQFlmBqOyBbWqDSuDkv
- jxE4hQKcvxy6ncBZAjN0NkTZJ82R7+VGKXiqrwBr2SJx44x+ATvUYOu1i2fXVNlaBTxQT/QPV
- WKl6M8t+XvkcM6R+AxRK0x1I4ZjGc8XS5bw2CZjoeYvwoSmEaHL1n+FTYhPemGLuzA/Jeay/p
- wBDzpDWCUzD9Q4DrIExIMKoIpDJb3PwMnacmIN9fOCQXPAtGXE9D3LVMgo9ahCBkIQqfhkC09
- PCFMGcXtFfyE3d0zDPLqtqvhX4RXywJoMQjNZxt6r/4fWKACltBNujVcndBuwLjO/ywFAdyid
- RU2V0muBgutQeBmYGx/UlsgRhDHIUE6xHf+o1vylzkt8NAZQi+HO1uKq1W5F1LKxao4q5aRWl
- Trg9tjOsYkJyxvN9CStjJmh3tL2R2WrYzpiZlDItfOxbRwzsJ3AsBmpRwNEzBVAjYsBuopem7
- jkuIFsdGZfqbg08Rtvu6bX+sLmDcwHHkfxL7w4S8lAoUZVcSh3/AktOPP5ipB0cLSMHp3FB7u
- NxfISDbxLINjnYaD/Evhg8td+5GdqGxRbYN32OWZGLHiX87MJYfmnH8qKNhhgYufFFwbVGDCu
- J67F+STnO4KVRjww2ahq5YEzp8AuDjpO63kr+sc7Jf+b0dIpn1CSByDSrIqSK+3ZQ88fSyjfR
- 3IK0nyXJ+4Udx6iDPJL69AiUnRv9+7zeJggr873CLBpMA/g+HMOWSnS9G24iD7euoGaw79nJo
- mqlw1gLDyWR/obXr/JoETTj1FzKtIHVvazDkmfj0ErdbtAjV4kCO5IKMVQNj5XibVKeJju4pq
- Cxlfy2JJ56RRnn7yb4jd1GfKRYzmcn7WQEgBZiThtliqtATA0BtTtmomHEPuWht9g7h4wSS/d
- AUCOt0N54T4yoyZD+Xgb0/hUakosCI4Hxz/fMK2Dd+ZXTLHbJ1bxwwt7zd/JhO
+X-Provags-ID: V03:K0:3t/D1CuOiTsC0dFCDtdsYYUxSiiCxASBBghm3zRY87wouMDW0KR
+ 7WqHAtFEZjsQzXpP+LHXx9YQgJiEejkTEWq1auw+n7RKBdaGl+kMEEqb8hu9Obms1Mrt77U
+ gT6Ugrt4oaa3OZCH2YdnOX0XyGyFX9ypOimvdd/rFeb9d59ZJbE3X6695pt4x3VYW5q7ZKi
+ nGOWpIkIyKzPU+ruTmVsw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:TI4Jvb2SKXU=:eM4JjHCFFQaU7iowd4DjES
+ SgC0AWSSgDdtZ9lUv7obTXcAqpuEOofAcnu9xW9I1qfshm+ht/vAmuuK40oYI/OPc4tNxeQ/O
+ ga+7B5XS4187ddPVUVT5j2dSRgkWnDZETsMvx//UDM1MxaEs4Cu9uuTo4m8Ibeu8qNmJ/x+UW
+ +ShsihbPwLKf4lRkV83yZy4sNPGcdPuCBDBnlBwCyWqbm3vpe7tz7KbwKud50IGfkbapzSqlG
+ IxUoIFY+H0fEjC5X0FmpBWHCN69sBl3vLucM8LZwzi2MDg1dMUfpALtTwSJroqD1pfJyxZ+9b
+ dOzcHx6ztw9h4Ho0MJDusDkGTpjofUCzYSN7GZqkxZEWskI2MA0G1EFEG6O8kE6zFzdn0yPhS
+ CWoofFgJYrkV4r7IfMkIADcjjojAnKL5o3jDL8uPtpCPTLfXrAEOyrErcyw/fAypgtgDvOuov
+ s0IVGR5WVuO46Q+7CdYFT59+KYA9nLE7vsUWnP84C+ASkJY8l4Wjn8TIjAwqOUSbi0AID0Bh2
+ pYJdlvazMQQ7gabePxDVVAvwqrU9+EEIQPW/Y1WyIp67H1YibY8+7kPVjO47fq0Cdmz84hiLV
+ b/3krhIT5s+hkqamsP7hi4xfSOWGfA3Edu8g6FqHTxyL3T+Z0a7XClI9q1tUIkByb4yRnAIGk
+ wqECiD/aHfrCmIK9h4nPe8Ge28hh3ZikPHnm76TJE5jbIpQPPtttr0MNN+xppgjcX/K2Iplaf
+ DXBFxmMp6fCP9TyquC3e88APVWChrlQLutd6w75i/O8345NM9lzKMvongZxVX7BloHtD01hA/
+ 1vXHeEKC5XH3AXzHX0uTvZb8dMN3BbmLMBALD9GgwdNtq08U9m/DTZXkIdNG7xchn+lBqyYVO
+ o0Kxs9DLl8x8e3CWOXvsJ/hsNP92M34gUMyL6HhvVlfdHgXHr1LAvXd7o0psjY
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596432435695772074?=
-X-GMAIL-MSGID: =?utf-8?q?1596432435695772074?=
+X-GMAIL-THRID: =?utf-8?q?1596432433930865644?=
+X-GMAIL-MSGID: =?utf-8?q?1596432433930865644?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct local_aplist_t' with 'struct local_aplist'.
+all occurences of 'struct wps_ie_t' with 'struct wps_ie'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
@@ -70,26 +70,26 @@ Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index 3104ff92c453..57b21d3a2435 100644
+index 10ff4460594f..30d81f9456b7 100644
 --- a/drivers/staging/ks7010/ks_wlan.h
 +++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -244,7 +244,7 @@ struct local_ap {
+@@ -211,7 +211,7 @@ struct rsn_ie {
  
- #define LOCAL_APLIST_MAX 31
- #define LOCAL_CURRENT_AP LOCAL_APLIST_MAX
--struct local_aplist_t {
-+struct local_aplist {
- 	int size;
- 	struct local_ap ap[LOCAL_APLIST_MAX + 1];
+ #ifdef WPS
+ #define WPS_IE_BODY_MAX 255
+-struct wps_ie_t {
++struct wps_ie {
+ 	u8 id;	/* 221 'dd <len> 00 50 F2 04' */
+ 	u8 size;	/* max ? 255 ? */
+ 	u8 body[WPS_IE_BODY_MAX];
+@@ -238,7 +238,7 @@ struct local_ap_t {
+ 	struct rsn_ie wpa_ie;
+ 	struct rsn_ie rsn_ie;
+ #ifdef WPS
+-	struct wps_ie_t wps_ie;
++	struct wps_ie wps_ie;
+ #endif /* WPS */
  };
-@@ -423,7 +423,7 @@ struct ks_wlan_private {
  
- 	unsigned char eth_addr[ETH_ALEN];
- 
--	struct local_aplist_t aplist;
-+	struct local_aplist aplist;
- 	struct local_ap current_ap;
- 	struct power_save_status_t psstatus;
- 	struct sleep_status_t sleepstatus;
 -- 
 2.16.3
