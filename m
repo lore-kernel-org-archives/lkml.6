@@ -1,92 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752516AbeCaIt2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 04:49:28 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:38871 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751560AbeCaIt0 (ORCPT
+        id S1752989AbeCaIwj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 04:52:39 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:17764 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751573AbeCaIwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 04:49:26 -0400
-X-Google-Smtp-Source: AIpwx4+l7fTgoaGOhbEIKsQ3uDNvI63+VhuExesQC1DTkLiMNEg+pQsIrsuMZ0rdAoQnoVCSzPnHIYb/VG551rJFA1Q=
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1803310817420.2373@hadrien>
-References: <20180328175736.17360-1-rvarsha016@gmail.com> <1522260676.12357.121.camel@perches.com>
- <CAAFX7JTfWdaGra+kWBJt-GXVVO601K03qWnExFKFD_9vxS-03g@mail.gmail.com> <alpine.DEB.2.20.1803310817420.2373@hadrien>
-From: Varsha Rao <rvarsha016@gmail.com>
-Date: Sat, 31 Mar 2018 14:18:44 +0530
-Message-ID: <CAAFX7JTEK5NyvKmYoC6b4tSv9a7Gv1WHONmp4nXxnuz8rqOmxw@mail.gmail.com>
-Subject: Re: [Cocci] [PATCH] crypto: cavium: zip: Remove unnecessary parentheses
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Joe Perches <joe@perches.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cocci <cocci@systeme.lip6.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 31 Mar 2018 04:52:35 -0400
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: netdev@vger.kernel.org, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        stephen@networkplumber.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
+        nirranjan@chelsio.com, indranil@chelsio.com,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+Subject: [PATCH net-next v3 0/3] kernel: add support to collect hardware logs in crash recovery kernel
+Date: Sat, 31 Mar 2018 14:20:55 +0530
+Message-Id: <cover.1522483890.git.rahul.lakkireddy@chelsio.com>
+X-Mailer: git-send-email 2.5.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 31, 2018 at 11:48 AM, Julia Lawall  wrote:
-> On Thu, 29 Mar 2018, Varsha Rao wrote:
->
->> On Wed, Mar 28, 2018 at 11:41 PM, Joe Perches wrote:
->> >
->> > On Wed, 2018-03-28 at 23:27, Varsha Rao wrote:
->> > > This patch fixes the clang warning of extraneous parentheses, with the
->> > > following coccinelle script.
->> > >
->> > > @@
->> > > identifier i;
->> > > constant c;
->> > > @@
->> > > (
->> > > -((i == c))
->> > > +i == c
->> > > >
->> > >
->> > > -((i <= c))
->> > > +i <= c
->> >
->> > Why just the "==" and "<=" cases?
->> > Why not "<", ">" and ">=" too?
->> >
->> > Why not expression instead of constant?
->>
->> Initially I had the other cases too and used expression instead of
->> constant. But the results included only "==" and "<=" cases with
->> constant. Along with one false positive case.
->>
->> --- a/drivers/crypto/cavium/zip/zip_main.c
->> +++ b/drivers/crypto/cavium/zip/zip_main.c
->> @@ -99,7 +99,7 @@ static struct zip_device *zip_alloc_devi
->>   */
->>  struct zip_device *zip_get_device(int node)
->>  {
->> -    if ((node < MAX_ZIP_DEVICES) && (node >= 0))
->> +    if (node < MAX_ZIP_DEVICES && node >= 0)
->
-> Why is it a false positive?
+On production servers running variety of workloads over time, kernel
+panic can happen sporadically after days or even months. It is
+important to collect as much debug logs as possible to root cause
+and fix the problem, that may not be easy to reproduce. Snapshot of
+underlying hardware/firmware state (like register dump, firmware
+logs, adapter memory, etc.), at the time of kernel panic will be very
+helpful while debugging the culprit device driver.
 
-The parentheses around multiple expressions in if statement is not
-considered extra, right?
+This series of patches add new generic framework that enable device
+drivers to collect device specific snapshot of the hardware/firmware
+state of the underlying device in the crash recovery kernel. In crash
+recovery kernel, the collected logs are added as elf notes to
+/proc/vmcore, which is copied by user space scripts for post-analysis.
+
+The sequence of actions done by device drivers to append their device
+specific hardware/firmware logs to /proc/vmcore are as follows:
+
+1. During probe (before hardware is initialized), device drivers
+register to the vmcore module (via vmcore_add_device_dump()), with
+callback function, along with buffer size and log name needed for
+firmware/hardware log collection.
+
+2. vmcore module allocates the buffer with requested size. It adds
+an elf note and invokes the device driver's registered callback
+function.
+
+3. Device driver collects all hardware/firmware logs into the buffer
+and returns control back to vmcore module.
+
+The device specific hardware/firmware logs can be seen as elf notes:
+
+# readelf -n /proc/vmcore
+
+Displaying notes found at file offset 0x00001000 with length 0x04003288:
+  Owner                 Data size	Description
+  VMCOREDD_cxgb4_0000:02:00.4 0x02000fd8	Unknown note type: (0x00000700)
+  VMCOREDD_cxgb4_0000:04:00.4 0x02000fd8	Unknown note type: (0x00000700)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  VMCOREINFO           0x0000074f	Unknown note type: (0x00000000)
+
+Patch 1 adds API to vmcore module to allow drivers to register callback
+to collect the device specific hardware/firmware logs.  The logs will
+be added to /proc/vmcore as elf notes.
+
+Patch 2 updates read and mmap logic to append device specific hardware/
+firmware logs as elf notes.
+
+Patch 3 shows a cxgb4 driver example using the API to collect
+hardware/firmware logs in crash recovery kernel, before hardware is
+initialized.
 
 Thanks,
-Varsha
+Rahul
 
-> julia
->
->>          return zip_dev[node];
->>
->>      zip_err("ZIP device not found for node id %d\n", node);
->>
->> I checked if there was any case of extra parentheses around relational
->> operators left, but there were none. Hence, in the script I included
->> only the cases present in the result.
->>
->> Thanks,
->> Varsha
->> _______________________________________________
->> Cocci mailing list
->> Cocci@systeme.lip6.fr
->> https://systeme.lip6.fr/mailman/listinfo/cocci
->>
+RFC v1: https://lkml.org/lkml/2018/3/2/542
+RFC v2: https://lkml.org/lkml/2018/3/16/326
+
+---
+v3:
+- Dropped sysfs crashdd module.
+- Exported dumps as elf notes. Suggested by Eric Biederman
+  <ebiederm@xmission.com>.  Added as patch 2 in this version.
+- Added CONFIG_PROC_VMCORE_DEVICE_DUMP to allow configuring device
+  dump support.
+- Moved logic related to adding dumps from crashdd to vmcore module.
+- Rename all crashdd* to vmcoredd*.
+- Updated comments.
+
+v2:
+- Added ABI Documentation for crashdd.
+- Directly use octal permission instead of macro.
+
+Changes since rfc v2:
+- Moved exporting crashdd from procfs to sysfs. Suggested by
+  Stephen Hemminger <stephen@networkplumber.org>
+- Moved code from fs/proc/crashdd.c to fs/crashdd/ directory.
+- Replaced all proc API with sysfs API and updated comments.
+- Calling driver callback before creating the binary file under
+  crashdd sysfs.
+- Changed binary dump file permission from S_IRUSR to S_IRUGO.
+- Changed module name from CRASH_DRIVER_DUMP to CRASH_DEVICE_DUMP.
+
+rfc v2:
+- Collecting logs in 2nd kernel instead of during kernel panic.
+  Suggested by Eric Biederman <ebiederm@xmission.com>.
+- Added new crashdd module that exports /proc/crashdd/ containing
+  driver's registered hardware/firmware logs in patch 1.
+- Replaced the API to allow drivers to register their hardware/firmware
+  log collect routine in crash recovery kernel in patch 1.
+- Updated patch 2 to use the new API in patch 1.
+
+Rahul Lakkireddy (3):
+  vmcore: add API to collect hardware dump in second kernel
+  vmcore: append device dumps to vmcore as elf notes
+  cxgb4: collect hardware dump in second kernel
+
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  25 ++
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   3 +
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  10 +
+ fs/proc/Kconfig                                  |  10 +
+ fs/proc/vmcore.c                                 | 403 ++++++++++++++++++++++-
+ include/linux/crash_core.h                       |   4 +
+ include/linux/crash_dump.h                       |  10 +
+ include/linux/kcore.h                            |   6 +
+ include/uapi/linux/elf.h                         |   1 +
+ 10 files changed, 463 insertions(+), 13 deletions(-)
+
+-- 
+2.14.1
