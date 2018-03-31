@@ -1,27 +1,27 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx4/+44at2Skc0BGR++VAseUWD68FCqcX3T69/6lflpRhYwAgzrBI+DirByogTqwzklBFygLJ
-ARC-Seal: i=1; a=rsa-sha256; t=1522476622; cv=none;
+X-Google-Smtp-Source: AIpwx48062lnbE+mgW9aE+ZlVPa/NQ+9JdjZWOD91CGMjOppxolm46UJRhurs69PGglL4Ulon7P5
+ARC-Seal: i=1; a=rsa-sha256; t=1522476620; cv=none;
         d=google.com; s=arc-20160816;
-        b=R9kjFToi+shHc6CL8PnatGragpPKDMo45B/1H01Ek+khAccq1KFu0qxDEalLNRNvZO
-         j2sodVHHHO/9Lq4PRKBEJWn1+w6djOkX7Z7Z8lAiy+12Ei6wlnAY6b174DGIVA+lP9qs
-         qwRzsyCMUanOJ9++f9MuJ1LPy4WBgm3C8Qkzl5UhfOaC7KCQDBE2JTjcp/7YZAlShBLf
-         TYyJNJwkZmQSEHHx6oWuqnKveEjqjHAB5S05nkMxVw1mUfkqb9Kvib70KUybqqwEXOBy
-         6c1zNjHgr1Vg8KyRBz5N45ekcUEP/zkizzAwgg+suWtDxOqJRrD28pFrTXrGkrWqbyzL
-         fB5A==
+        b=O+zkLpsPb1zlU72WghH6EsE6/SH9u5UFANgxAfYqMoKVg4zKTtmriYAgCp9OxqtXyG
+         QHIlb5oRXA6n9FXC5EWAj0kLdDB+pwkSeCl3cn/cpu3aTY3GCFspyc7AAwx4WAdUajKC
+         1V7GoCjyF++j41QOEWMCCryV/9ANw7dsCEe/zK567XzAlLfNe5GUxPCa3J1MClBO1Q9S
+         2CA3wDucva0U8X4AUAjMDFWg4cXBuUSCSSnBme/xb5Rcm69sB5JuowEL+84DqiNld3WA
+         IBvBQ8+rUFbAriWb7Xuxic+V3zEfMIH/44CjVGid4RmsvlZN2ruWZE0Yd2Owj0h8Bjah
+         +bhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=6ItKiPbgtFG7KLKIZTSWZ0LnG5xVgghnJQI6U6NuX7Y=;
-        b=XVoesrshsxbXJBTvBTAJw2R2gxpdg7YPbgfRyPYzCsZnSKP+r5DzN4LIxnOa2UTULw
-         /o9ksGac+6z8dEOcNJ+uFy8rHpqILLWN74sAVgO/MXuy8dxJSUvz2MxThxoLaFTAxmxB
-         Y83Boz4uHIrXyABZCfonDn1Wm5IAUh0wMUdLQv33WEWU4IxlU+VYeLZD2LhBgc63B8AD
-         LwWkJCd+43yC9vA7V3LNt31XIpnrOXHb8CZ8vg07sT33ZpCkBlvyK5xHNyGMNzrpP5OM
-         n/wroI1eZsHi+gc+ACPmsohszxZ0B6wwWXglzQUh78gbPA/MjSQHktpn5+HYA67LaH0k
-         Xo4A==
+        bh=4P9FOUBbQ0DMspAF3B1rv2MRaLUfp7v4QUvGJqIGP6w=;
+        b=qlWbGgAux+u3u+F4O0//2Sa6qD/0WKken+FW1DZpA/9oQCnFtFAEWKevx+6qohWymi
+         OObzPUKTOrUFjIKAH0WotCzOcHeRX2MJyFLzIUpP4ql/lEEaeE667rwtHUgPvGFi1DY+
+         teUImzbk6w07LtSLWW1Cif6F9JEdHY2Eqkw7Zzyfzpm1qnnNe9VTGxjFSahcjgf4kvp3
+         2Gu4GOR2IF6Tf9yd30ZcRBhv5kddT/7UdnRa7s+nVgcDCC3sOeAbFlyZKlNHONV92BBA
+         fWpHFZr5ugFAF50ACTjjPqEl0WR85LzAC0FFOsHcALujzVm/OWX+K3fOCL1CSSnDlCi5
+         OuhQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
@@ -29,144 +29,111 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH v2 67/75] staging: ks7010: Remove trailing _t from 'struct michael_mic_t'.
-Date: Fri, 30 Mar 2018 23:08:47 -0700
-Message-Id: <20180331060855.9452-67-quytelda@tamalin.org>
+Subject: [PATCH v2 65/75] staging: ks7010: Remove trailing _t from 'struct pmk_t'.
+Date: Fri, 30 Mar 2018 23:08:45 -0700
+Message-Id: <20180331060855.9452-65-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:2jI1YFGL+4TYlb1wVPevNwgcNVxCpY7ELaBz29KAsP49OarorgY
- XOKkXCEwBNpsav1uGCsIwoZkRCMcuEjogAmBUggftXiMuCFNxamZ39fhlvyVF05MHMf/kbH
- PU96RDnmIMwn4+T0SHOri9Udk/Q4vw7iRQCsR0GJZGZKVdAZsQFrNuHVt8gYjeVz7xl4yyL
- cUrUlF8RMxWoUUI2k8ZEA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:LOGAxFHj3Sk=:0pQ9avVrJXtKCw+ODUnCWt
- oXI5E9QYNUneW1pN33fQSh8qiuIn47yvqS7kdfTNYk2k6svMRFZq92zJYvGDhUMTSbbK4yOO4
- vVQSQFUHtHDJssFTJLgmB+dpSJkLFneBG6Sn3hc6U7wmckue6UFfKz/OiKgu3qbZM3EwNPbQ6
- xzIJEy9zhyiw0HCA3F/kdBftUdj2EZ7yKQszTPbKVzfqiu7CXx4rJJYfN+2AQY/ew17qG6ZmN
- miNiKv3hWMxenDER6qE/CuqqVqrxT+9cpwYV4QZWondI3XPt7YWqVDLIFg45Kw04D4weWtkxs
- ATmCgmLlj/uC0n3rqQexyZCMFAxtquFZopeacVbMe6dG7ZuO/j0Zzn6RxHLdKgcCVpxoe5r6a
- 86PmQmLz/nge+ru2ILGL3UrpYBAMfBQQNr+Zy3OodgT/IBIIeBxmw3IXgtPVJoeMyr5J2MGjH
- 0O4EH9bCsM0/hrz6Io2qO4HvWRulaaybsJEiWfRP3CxSI8AC+M3XB694RilB/keGeObwsksKd
- FUeK1TRtS2WCVGQdVEcPFedPQwYf0Hv6QZg19pHuRpFPd3CokFANuoH2I5YTYV1nRwk8sd6ru
- Dzc9zRD9LKRnMs89g3VKImqnZzRYQoLC5GjB15hpvXVvy8zxPLhlg/wNcDNUZgoEvVMb3IDS7
- 7qSFxVaGGmBgQLakGS2WxEbpZymWV/mkBa5OgvD4YttDR0434M3hQOBIsQYPTntqTDcIlrVtj
- C4TnVfgAHYJSJ+2nHkzfptOuzuMN4DxH4qknFQ==
+X-Provags-ID: V03:K0:RKf9VqOlGMbmn+QQIF4OKZuWGoxvGN9YWG4bgsEm6m5Xe3XLAIO
+ 38y8rQk2+gUJsiMflN174H7Fa11iGkJOzukM8Mfu2xKRQZKLJAbP2HdOFGurIQIFTwNv/54
+ O0yFGn/AYrtJLKuIEFoncu3PvDsuW2Yc53p33UKjHBSKQrcMVSswSZBNuVQuUbX0Rd6xSNe
+ 2laV0BvGzVmTILLX8cGWg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hhZiNJRAqQs=:6XBC0jhjh/QRDE9+d1XFsV
+ drSCgEjDSCq9N256f3KiRO+9tAusc9/X8Vc1GfMSU9JVkWRGGkLtRp+apgJt8HglaVj38rW4I
+ zWGL0U8/XR5k6xsKH65f0rG925adQ1Zf7ps8stdEINN8UgAHZTwKJCp557EJgCBRJRHFU9TPg
+ ohifvLEQfoXIo68Lw8PCCO6ue/VRTY1AfWC0s178BcXGGUTw6mCX1YfRoyf/cf6g+zUrEaAQK
+ kWviZ2VWPO9UjkqSzkEPgqBgXV17LJclyl69fMrWdU61ikF0mJxEvrV+Ijk6i6Q55FlJZlyE1
+ FW1sOWoeeocKFo0amvIwQltvcvjcxNtA8ijIpYXYI7wdmc/Tj9V113x1fmu1sfUS7IYLeTy6U
+ 2EC/CyYR/sw0N5d64gzd5PT1r1GV+ESJA43+uetHloxYinFJ/wYrxAGyCVXPuriCiqqorHJKf
+ eNARP6k76yVr6g+p+Np8EPcS+BYIGIOvBxTnmHNqsURtJ+llQ/xN7iHWHqGohm2bl89/ldri1
+ l/Md5uaR31U5pfkMcaQXUEIblUUmr5UpGc1lboCnvojxUmUcGSWkJV8LguuEQ1qAFVN9b4Txg
+ jnAoxmzu9xJRhtiM0npND4zBsPgPf1+5uHzGV8u8iH9e5hMiVWNu2bR290306yYvTMz2UYtNz
+ dQBaCuaS7xQ5cX4SpU7PUEPFXJr2OvfPRAoMeOq+KAh1qkJFc8Iar88TnI8kfr0pVjTEdmRAQ
+ fmmCtFS2lE1BZcqturC8UNeEErO6wLWcUxkTUg==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596432446872444601?=
-X-GMAIL-MSGID: =?utf-8?q?1596432446872444601?=
+X-GMAIL-THRID: =?utf-8?q?1596432445133492703?=
+X-GMAIL-MSGID: =?utf-8?q?1596432445133492703?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct michael_mic_t' with 'struct michael_mic'.
+all occurences of 'struct pmk_t' with 'struct pmk'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c   |  4 ++--
- drivers/staging/ks7010/michael_mic.c | 12 ++++++------
- drivers/staging/ks7010/michael_mic.h |  4 ++--
- 3 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c   | 2 +-
+ drivers/staging/ks7010/ks_wlan.h     | 2 +-
+ drivers/staging/ks7010/ks_wlan_net.c | 8 ++++----
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index f87e707e8bd3..1eff78540683 100644
+index fbe18ddf3ea0..f87e707e8bd3 100644
 --- a/drivers/staging/ks7010/ks_hostif.c
 +++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -315,7 +315,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
- 	char buf[128];
- 	unsigned long now;
- 	struct mic_failure *mic_failure;
--	struct michael_mic_t michael_mic;
-+	struct michael_mic michael_mic;
- 	union iwreq_data wrqu;
- 	unsigned int key_index = auth_type - 1;
- 	struct wpa_key *key = &priv->wpa.key[key_index];
-@@ -1065,7 +1065,7 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 	int result = 0;
- 	unsigned short eth_proto;
- 	struct ether_hdr *eth_hdr;
--	struct michael_mic_t michael_mic;
-+	struct michael_mic michael_mic;
- 	unsigned short keyinfo = 0;
- 	struct ieee802_1x_hdr *aa1x_hdr;
- 	struct wpa_eapol_key *eap_key;
-diff --git a/drivers/staging/ks7010/michael_mic.c b/drivers/staging/ks7010/michael_mic.c
-index 292eae29c552..51862bcf5f58 100644
---- a/drivers/staging/ks7010/michael_mic.c
-+++ b/drivers/staging/ks7010/michael_mic.c
-@@ -17,14 +17,14 @@
+@@ -2130,7 +2130,7 @@ void hostif_sme_set_pmksa(struct ks_wlan_private *priv)
+ 			u8 pmkid[IW_PMKID_LEN];
+ 		} __packed list[PMK_LIST_MAX];
+ 	} __packed pmkcache;
+-	struct pmk_t *pmk;
++	struct pmk *pmk;
+ 	int i;
  
+ 	i = 0;
+diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
+index 69eac00e75b1..20b584524a77 100644
+--- a/drivers/staging/ks7010/ks_wlan.h
++++ b/drivers/staging/ks7010/ks_wlan.h
+@@ -383,7 +383,7 @@ struct wpa_status {
+ struct pmk_list {
+ 	u16 size;
+ 	struct list_head head;
+-	struct pmk_t {
++	struct pmk {
+ 		struct list_head list;
+ 		u8 bssid[ETH_ALEN];
+ 		u8 pmkid[IW_PMKID_LEN];
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 1b8234720d78..72a52c6f9fd2 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -1818,7 +1818,7 @@ static int ks_wlan_set_pmksa(struct net_device *dev,
+ 	struct ks_wlan_private *priv = netdev_priv(dev);
+ 	struct iw_pmksa *pmksa;
+ 	int i;
+-	struct pmk_t *pmk;
++	struct pmk *pmk;
+ 	struct list_head *ptr;
  
- // Reset the state to the empty message.
--static inline void michael_clear(struct michael_mic_t *mic)
-+static inline void michael_clear(struct michael_mic *mic)
- {
- 	mic->l = mic->k0;
- 	mic->r = mic->k1;
- 	mic->m_bytes = 0;
- }
- 
--static void michael_init(struct michael_mic_t *mic, u8 *key)
-+static void michael_init(struct michael_mic *mic, u8 *key)
- {
- 	// Set the key
- 	mic->k0 = get_unaligned_le32(key);
-@@ -34,7 +34,7 @@ static void michael_init(struct michael_mic_t *mic, u8 *key)
- 	michael_clear(mic);
- }
- 
--static inline void michael_block(struct michael_mic_t *mic)
-+static inline void michael_block(struct michael_mic *mic)
- {
- 	mic->r ^= rol32(mic->l, 17);
- 	mic->l += mic->r;
-@@ -47,7 +47,7 @@ static inline void michael_block(struct michael_mic_t *mic)
- 	mic->l += mic->r;
- }
- 
--static void michael_append(struct michael_mic_t *mic, u8 *src, int bytes)
-+static void michael_append(struct michael_mic *mic, u8 *src, int bytes)
- {
- 	int addlen;
- 
-@@ -81,7 +81,7 @@ static void michael_append(struct michael_mic_t *mic, u8 *src, int bytes)
- 	}
- }
- 
--static void michael_get_mic(struct michael_mic_t *mic, u8 *dst)
-+static void michael_get_mic(struct michael_mic *mic, u8 *dst)
- {
- 	u8 *data = mic->m;
- 
-@@ -110,7 +110,7 @@ static void michael_get_mic(struct michael_mic_t *mic, u8 *dst)
- 	michael_clear(mic);
- }
- 
--void michael_mic_function(struct michael_mic_t *mic, u8 *key,
-+void michael_mic_function(struct michael_mic *mic, u8 *key,
- 			  u8 *data, int len, u8 priority, u8 *result)
- {
- 	u8 pad_data[4] = { priority, 0, 0, 0 };
-diff --git a/drivers/staging/ks7010/michael_mic.h b/drivers/staging/ks7010/michael_mic.h
-index 894a8d4121a4..d33508070088 100644
---- a/drivers/staging/ks7010/michael_mic.h
-+++ b/drivers/staging/ks7010/michael_mic.h
-@@ -10,7 +10,7 @@
-  */
- 
- /* MichaelMIC routine define */
--struct michael_mic_t {
-+struct michael_mic {
- 	u32 k0;	// Key
- 	u32 k1;	// Key
- 	u32 l;	// Current state
-@@ -20,5 +20,5 @@ struct michael_mic_t {
- 	u8 result[8];
- };
- 
--void michael_mic_function(struct michael_mic_t *mic, u8 *key,
-+void michael_mic_function(struct michael_mic *mic, u8 *key,
- 			  u8 *data, int len, u8 priority, u8 *result);
+ 	if (priv->sleep_mode == SLP_SLEEP)
+@@ -1847,7 +1847,7 @@ static int ks_wlan_set_pmksa(struct net_device *dev,
+ 		}
+ 		/* search cache data */
+ 		list_for_each(ptr, &priv->pmklist.head) {
+-			pmk = list_entry(ptr, struct pmk_t, list);
++			pmk = list_entry(ptr, struct pmk, list);
+ 			if (memcmp(pmksa->bssid.sa_data, pmk->bssid, ETH_ALEN) == 0) {
+ 				memcpy(pmk->pmkid, pmksa->pmkid, IW_PMKID_LEN);
+ 				list_move(&pmk->list, &priv->pmklist.head);
+@@ -1869,7 +1869,7 @@ static int ks_wlan_set_pmksa(struct net_device *dev,
+ 			list_add(&pmk->list, &priv->pmklist.head);
+ 			priv->pmklist.size++;
+ 		} else {	/* overwrite old cache data */
+-			pmk = list_entry(priv->pmklist.head.prev, struct pmk_t,
++			pmk = list_entry(priv->pmklist.head.prev, struct pmk,
+ 					 list);
+ 			memcpy(pmk->bssid, pmksa->bssid.sa_data, ETH_ALEN);
+ 			memcpy(pmk->pmkid, pmksa->pmkid, IW_PMKID_LEN);
+@@ -1882,7 +1882,7 @@ static int ks_wlan_set_pmksa(struct net_device *dev,
+ 		}
+ 		/* search cache data */
+ 		list_for_each(ptr, &priv->pmklist.head) {
+-			pmk = list_entry(ptr, struct pmk_t, list);
++			pmk = list_entry(ptr, struct pmk, list);
+ 			if (memcmp(pmksa->bssid.sa_data, pmk->bssid, ETH_ALEN) == 0) {
+ 				eth_zero_addr(pmk->bssid);
+ 				memset(pmk->pmkid, 0, IW_PMKID_LEN);
 -- 
 2.16.3
