@@ -1,471 +1,287 @@
-Date: Sat, 31 Mar 2018 18:17:25 +0200
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2195729-1522513024-2-2620225985335641915
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522513023; b=VCni9Lqhl5osjMthOhI6/lMQ1v45WQBF45hREYrTL/3eRIFHZq
+    CIJnEOXJKqAMcxnWtNQl9KotCIkf+y1nSdGAGMjWFVKt4kVAmSBOi/jxe85sZs2O
+    G/P3RNkSWrbr021i0dppzpmS75hzMrfCPpVgk5SdgA9k0EYEAl41AZQz4IrbbDlh
+    ndg/YU9uzr7lc5NWHIXvrrxf+yuaqB/T6JSPJiXikwkpXx5U6/xF0yA0Vi9tpGVW
+    IqX2yzW1OuoWhKZhaOXddR++0SQxTy/0JBpUpnJ1UbJixBY5sP/HWDrewFaBKx+6
+    pGgsunyxbVUl2MwkEy8yN3JK/hPMQLGM5aLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1522513023;
+    bh=1apFq4lvvu+bsR5VAgjuDZLvMmTguusGpZJ8g9GO/nI=; b=CtRUBMY+X8/3
+    pPHAI/CHVS3e1fPIc8NQAQdwVNpjh7Ot8776PaOv9vNZcQs6NYpvOQmO8MtNDfko
+    gME7E8FwO28GiE2j1J4jEucmMY5SRsON8XBjShVTuc2wn9pZdVQ5wolVOCJWAG7V
+    sfiOstQPJ5jyPKREzgEXpweONGhJOx09DiP+yf0hHibk/kfKCo5ZeFM6qQtq0LnV
+    go5PhZ1uHfMIKokwsbWwTJWc/cu1xEf50tNUwHv8xxXaVl3yFaonaIKzT3xFOD6q
+    QZ30D8nzNBzq4DGOeSMkaRsubfCAOXFlJZevXEGqkQqWkQxR10uXCuA135Y2FO23
+    SqSe78p1uQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJ2nno7bjsrjpBktVQCv8jjd3q2FOXtv/Psy/db4Gn73FuOlaVJgv8NGx+RY9/WYR2Y2gHAVNwt2mAewJPDkjUpEf5GbvFOLe3VJG9HFUnyeIta8oHag
+    j6x60ryAEiCk0wXwEn0+6hC9LrUDHCnGLaXWGrxbZZfE57QcV1QaLbl2Nwo5t814QFfyRm3rhqmojjCK4XqDPfg+vFjdMa8fmd70T0bScuZd+S4lw0gpW3ed
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
+    a=_gQOKeTqB9rtPmahXQQA:9 a=QEXdDO2ut3YA:10 a=1f8Y19yJSJW1zfB2wsQA:9
+    a=ONNS8QRKHyMA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753165AbeCaQQI (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 31 Mar 2018 12:16:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38602 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753085AbeCaQQH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 31 Mar 2018 12:16:07 -0400
+Date: Sat, 31 Mar 2018 18:16:03 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.4.126
-Message-ID: <20180331161725.GB25168@kroah.com>
-References: <20180331161720.GA25168@kroah.com>
+Subject: Linux 4.14.32
+Message-ID: <20180331161603.GA24917@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
 Content-Disposition: inline
-In-Reply-To: <20180331161720.GA25168@kroah.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Makefile b/Makefile
-index 7dcafa5dcd34..2b699c5f6de4 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 4
--SUBLEVEL = 125
-+SUBLEVEL = 126
- EXTRAVERSION =
- NAME = Blurry Fish Butt
- 
-diff --git a/drivers/net/ethernet/arc/emac_rockchip.c b/drivers/net/ethernet/arc/emac_rockchip.c
-index c31c7407b753..425dae560322 100644
---- a/drivers/net/ethernet/arc/emac_rockchip.c
-+++ b/drivers/net/ethernet/arc/emac_rockchip.c
-@@ -150,8 +150,10 @@ static int emac_rockchip_probe(struct platform_device *pdev)
- 	/* Optional regulator for PHY */
- 	priv->regulator = devm_regulator_get_optional(dev, "phy");
- 	if (IS_ERR(priv->regulator)) {
--		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
-+		if (PTR_ERR(priv->regulator) == -EPROBE_DEFER) {
-+			err = -EPROBE_DEFER;
-+			goto out_clk_disable;
-+		}
- 		dev_err(dev, "no regulator found\n");
- 		priv->regulator = NULL;
- 	}
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index 027705117086..af9ec57bbebf 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -729,37 +729,33 @@ static unsigned int __bcm_sysport_tx_reclaim(struct bcm_sysport_priv *priv,
- 					     struct bcm_sysport_tx_ring *ring)
- {
- 	struct net_device *ndev = priv->netdev;
--	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
- 	unsigned int pkts_compl = 0, bytes_compl = 0;
-+	unsigned int txbds_processed = 0;
- 	struct bcm_sysport_cb *cb;
-+	unsigned int txbds_ready;
-+	unsigned int c_index;
- 	u32 hw_ind;
- 
- 	/* Compute how many descriptors have been processed since last call */
- 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
- 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
--	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
--
--	last_c_index = ring->c_index;
--	num_tx_cbs = ring->size;
--
--	c_index &= (num_tx_cbs - 1);
--
--	if (c_index >= last_c_index)
--		last_tx_cn = c_index - last_c_index;
--	else
--		last_tx_cn = num_tx_cbs - last_c_index + c_index;
-+	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
- 
- 	netif_dbg(priv, tx_done, ndev,
--		  "ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
--		  ring->index, c_index, last_tx_cn, last_c_index);
-+		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
-+		  ring->index, ring->c_index, c_index, txbds_ready);
- 
--	while (last_tx_cn-- > 0) {
--		cb = ring->cbs + last_c_index;
-+	while (txbds_processed < txbds_ready) {
-+		cb = &ring->cbs[ring->clean_index];
- 		bcm_sysport_tx_reclaim_one(priv, cb, &bytes_compl, &pkts_compl);
- 
- 		ring->desc_count++;
--		last_c_index++;
--		last_c_index &= (num_tx_cbs - 1);
-+		txbds_processed++;
-+
-+		if (likely(ring->clean_index < ring->size - 1))
-+			ring->clean_index++;
-+		else
-+			ring->clean_index = 0;
- 	}
- 
- 	ring->c_index = c_index;
-@@ -1229,6 +1225,7 @@ static int bcm_sysport_init_tx_ring(struct bcm_sysport_priv *priv,
- 	netif_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
- 	ring->index = index;
- 	ring->size = size;
-+	ring->clean_index = 0;
- 	ring->alloc_size = ring->size;
- 	ring->desc_cpu = p;
- 	ring->desc_count = ring->size;
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.h b/drivers/net/ethernet/broadcom/bcmsysport.h
-index f28bf545d7f4..8ace6ecb5f79 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -638,7 +638,7 @@ struct bcm_sysport_tx_ring {
- 	unsigned int	desc_count;	/* Number of descriptors */
- 	unsigned int	curr_desc;	/* Current descriptor */
- 	unsigned int	c_index;	/* Last consumer index */
--	unsigned int	p_index;	/* Current producer index */
-+	unsigned int	clean_index;	/* Current clean index */
- 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
- 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
- 	struct bcm_sysport_priv *priv;	/* private context backpointer */
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 458e2d97d096..ae8e4fc22e7b 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -3539,6 +3539,8 @@ fec_drv_remove(struct platform_device *pdev)
- 	fec_enet_mii_remove(fep);
- 	if (fep->reg_phy)
- 		regulator_disable(fep->reg_phy);
-+	pm_runtime_put(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
- 	of_node_put(fep->phy_node);
- 	free_netdev(ndev);
- 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index fc958067d10a..435466c17852 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -878,7 +878,8 @@ static void _cpsw_adjust_link(struct cpsw_slave *slave,
- 		/* set speed_in input in case RMII mode is used in 100Mbps */
- 		if (phy->speed == 100)
- 			mac_control |= BIT(15);
--		else if (phy->speed == 10)
-+		/* in band mode only works in 10Mbps RGMII mode */
-+		else if ((phy->speed == 10) && phy_interface_is_rgmii(phy))
- 			mac_control |= BIT(18); /* In Band mode */
- 
- 		if (priv->rx_pause)
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index 61cd53838360..9bca36e1fefd 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -2380,7 +2380,7 @@ send_done:
- 	if (!nlh) {
- 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
- 		if (err)
--			goto errout;
-+			return err;
- 		goto send_done;
- 	}
- 
-@@ -2660,7 +2660,7 @@ send_done:
- 	if (!nlh) {
- 		err = __send_and_alloc_skb(&skb, team, portid, send_func);
- 		if (err)
--			goto errout;
-+			return err;
- 		goto send_done;
- 	}
- 
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index 75d37148c8cd..95c631125a20 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -517,8 +517,7 @@ static inline int qeth_is_cq(struct qeth_card *card, unsigned int queue)
- 	    queue == card->qdio.no_in_queues - 1;
- }
- 
--
--static int qeth_issue_next_read(struct qeth_card *card)
-+static int __qeth_issue_next_read(struct qeth_card *card)
- {
- 	int rc;
- 	struct qeth_cmd_buffer *iob;
-@@ -549,6 +548,17 @@ static int qeth_issue_next_read(struct qeth_card *card)
- 	return rc;
- }
- 
-+static int qeth_issue_next_read(struct qeth_card *card)
-+{
-+	int ret;
-+
-+	spin_lock_irq(get_ccwdev_lock(CARD_RDEV(card)));
-+	ret = __qeth_issue_next_read(card);
-+	spin_unlock_irq(get_ccwdev_lock(CARD_RDEV(card)));
-+
-+	return ret;
-+}
-+
- static struct qeth_reply *qeth_alloc_reply(struct qeth_card *card)
- {
- 	struct qeth_reply *reply;
-@@ -952,7 +962,7 @@ void qeth_clear_thread_running_bit(struct qeth_card *card, unsigned long thread)
- 	spin_lock_irqsave(&card->thread_mask_lock, flags);
- 	card->thread_running_mask &= ~thread;
- 	spin_unlock_irqrestore(&card->thread_mask_lock, flags);
--	wake_up(&card->wait_q);
-+	wake_up_all(&card->wait_q);
- }
- EXPORT_SYMBOL_GPL(qeth_clear_thread_running_bit);
- 
-@@ -1156,6 +1166,7 @@ static void qeth_irq(struct ccw_device *cdev, unsigned long intparm,
- 		}
- 		rc = qeth_get_problem(cdev, irb);
- 		if (rc) {
-+			card->read_or_write_problem = 1;
- 			qeth_clear_ipacmd_list(card);
- 			qeth_schedule_recovery(card);
- 			goto out;
-@@ -1174,7 +1185,7 @@ static void qeth_irq(struct ccw_device *cdev, unsigned long intparm,
- 		return;
- 	if (channel == &card->read &&
- 	    channel->state == CH_STATE_UP)
--		qeth_issue_next_read(card);
-+		__qeth_issue_next_read(card);
- 
- 	iob = channel->iob;
- 	index = channel->buf_no;
-@@ -4969,8 +4980,6 @@ static void qeth_core_free_card(struct qeth_card *card)
- 	QETH_DBF_HEX(SETUP, 2, &card, sizeof(void *));
- 	qeth_clean_channel(&card->read);
- 	qeth_clean_channel(&card->write);
--	if (card->dev)
--		free_netdev(card->dev);
- 	kfree(card->ip_tbd_list);
- 	qeth_free_qdio_buffers(card);
- 	unregister_service_level(&card->qeth_service_level);
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-index 58bcb3c9a86a..acdb5ccb0ab9 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -1062,8 +1062,8 @@ static void qeth_l2_remove_device(struct ccwgroup_device *cgdev)
- 		qeth_l2_set_offline(cgdev);
- 
- 	if (card->dev) {
--		netif_napi_del(&card->napi);
- 		unregister_netdev(card->dev);
-+		free_netdev(card->dev);
- 		card->dev = NULL;
- 	}
- 	return;
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
-index 0d6888cbd96e..bbdb3b6c54bb 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -3243,8 +3243,8 @@ static void qeth_l3_remove_device(struct ccwgroup_device *cgdev)
- 		qeth_l3_set_offline(cgdev);
- 
- 	if (card->dev) {
--		netif_napi_del(&card->napi);
- 		unregister_netdev(card->dev);
-+		free_netdev(card->dev);
- 		card->dev = NULL;
- 	}
- 
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 4b43effbf4fc..cb19c9ad1b57 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -2074,11 +2074,12 @@ sg_get_rq_mark(Sg_fd * sfp, int pack_id)
- 		if ((1 == resp->done) && (!resp->sg_io_owned) &&
- 		    ((-1 == pack_id) || (resp->header.pack_id == pack_id))) {
- 			resp->done = 2;	/* guard against other readers */
--			break;
-+			write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
-+			return resp;
- 		}
- 	}
- 	write_unlock_irqrestore(&sfp->rq_list_lock, iflags);
--	return resp;
-+	return NULL;
- }
- 
- /* always adds to end of list */
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 4889a8ab77ce..a079ed14f230 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1189,10 +1189,8 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 		 * set the trigger type must match. Also all must
- 		 * agree on ONESHOT.
- 		 */
--		unsigned int oldtype = irqd_get_trigger_type(&desc->irq_data);
--
- 		if (!((old->flags & new->flags) & IRQF_SHARED) ||
--		    (oldtype != (new->flags & IRQF_TRIGGER_MASK)) ||
-+		    ((old->flags ^ new->flags) & IRQF_TRIGGER_MASK) ||
- 		    ((old->flags ^ new->flags) & IRQF_ONESHOT))
- 			goto mismatch;
- 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 86b619501350..284370b61b8c 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -3571,7 +3571,7 @@ int sock_queue_err_skb(struct sock *sk, struct sk_buff *skb)
- 
- 	skb_queue_tail(&sk->sk_error_queue, skb);
- 	if (!sock_flag(sk, SOCK_DEAD))
--		sk->sk_data_ready(sk);
-+		sk->sk_error_report(sk);
- 	return 0;
- }
- EXPORT_SYMBOL(sock_queue_err_skb);
-diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-index 9d43c1f40274..ff3b058cf58c 100644
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -789,6 +789,11 @@ int dccp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
- 	if (skb == NULL)
- 		goto out_release;
- 
-+	if (sk->sk_state == DCCP_CLOSED) {
-+		rc = -ENOTCONN;
-+		goto out_discard;
-+	}
-+
- 	skb_reserve(skb, sk->sk_prot->max_header);
- 	rc = memcpy_from_msg(skb_put(skb, len), msg, len);
- 	if (rc != 0)
-diff --git a/net/ieee802154/6lowpan/core.c b/net/ieee802154/6lowpan/core.c
-index 20c49c724ba0..e8b279443d37 100644
---- a/net/ieee802154/6lowpan/core.c
-+++ b/net/ieee802154/6lowpan/core.c
-@@ -206,9 +206,13 @@ static inline void lowpan_netlink_fini(void)
- static int lowpan_device_event(struct notifier_block *unused,
- 			       unsigned long event, void *ptr)
- {
--	struct net_device *wdev = netdev_notifier_info_to_dev(ptr);
-+	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
-+	struct wpan_dev *wpan_dev;
- 
--	if (wdev->type != ARPHRD_IEEE802154)
-+	if (ndev->type != ARPHRD_IEEE802154)
-+		return NOTIFY_DONE;
-+	wpan_dev = ndev->ieee802154_ptr;
-+	if (!wpan_dev)
- 		goto out;
- 
- 	switch (event) {
-@@ -217,8 +221,8 @@ static int lowpan_device_event(struct notifier_block *unused,
- 		 * also delete possible lowpan interfaces which belongs
- 		 * to the wpan interface.
- 		 */
--		if (wdev->ieee802154_ptr->lowpan_dev)
--			lowpan_dellink(wdev->ieee802154_ptr->lowpan_dev, NULL);
-+		if (wpan_dev->lowpan_dev)
-+			lowpan_dellink(wpan_dev->lowpan_dev, NULL);
- 		break;
- 	default:
- 		break;
-diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
-index c5fb2f694ed0..b34fa1bb278f 100644
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -119,6 +119,9 @@ out:
- 
- static bool inet_fragq_should_evict(const struct inet_frag_queue *q)
- {
-+	if (!hlist_unhashed(&q->list_evictor))
-+		return false;
-+
- 	return q->net->low_thresh == 0 ||
- 	       frag_mem_limit(q->net) >= q->net->low_thresh;
- }
-diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index d35509212013..1b93ea766916 100644
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -241,7 +241,8 @@ int ip_cmsg_send(struct net *net, struct msghdr *msg, struct ipcm_cookie *ipc,
- 			src_info = (struct in6_pktinfo *)CMSG_DATA(cmsg);
- 			if (!ipv6_addr_v4mapped(&src_info->ipi6_addr))
- 				return -EINVAL;
--			ipc->oif = src_info->ipi6_ifindex;
-+			if (src_info->ipi6_ifindex)
-+				ipc->oif = src_info->ipi6_ifindex;
- 			ipc->addr = src_info->ipi6_addr.s6_addr32[3];
- 			continue;
- 		}
-@@ -264,7 +265,8 @@ int ip_cmsg_send(struct net *net, struct msghdr *msg, struct ipcm_cookie *ipc,
- 			if (cmsg->cmsg_len != CMSG_LEN(sizeof(struct in_pktinfo)))
- 				return -EINVAL;
- 			info = (struct in_pktinfo *)CMSG_DATA(cmsg);
--			ipc->oif = info->ipi_ifindex;
-+			if (info->ipi_ifindex)
-+				ipc->oif = info->ipi_ifindex;
- 			ipc->addr = info->ipi_spec_dst.s_addr;
- 			break;
- 		}
-diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
-index 55810e4899f1..3db8d7d1a986 100644
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1478,7 +1478,8 @@ static void ndisc_fill_redirect_hdr_option(struct sk_buff *skb,
- 	*(opt++) = (rd_len >> 3);
- 	opt += 6;
- 
--	memcpy(opt, ipv6_hdr(orig_skb), rd_len - 8);
-+	skb_copy_bits(orig_skb, skb_network_offset(orig_skb), opt,
-+		      rd_len - 8);
- }
- 
- void ndisc_send_redirect(struct sk_buff *skb, const struct in6_addr *target)
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index 20ab7b2ec463..aeffb65181f5 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -2381,9 +2381,11 @@ static int afiucv_iucv_init(void)
- 	af_iucv_dev->driver = &af_iucv_driver;
- 	err = device_register(af_iucv_dev);
- 	if (err)
--		goto out_driver;
-+		goto out_iucv_dev;
- 	return 0;
- 
-+out_iucv_dev:
-+	put_device(af_iucv_dev);
- out_driver:
- 	driver_unregister(&af_iucv_driver);
- out_iucv:
-diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-index ec8f6a6485e3..92df832a1896 100644
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1518,9 +1518,14 @@ int l2tp_tunnel_create(struct net *net, int fd, int version, u32 tunnel_id, u32
- 		encap = cfg->encap;
- 
- 	/* Quick sanity checks */
-+	err = -EPROTONOSUPPORT;
-+	if (sk->sk_type != SOCK_DGRAM) {
-+		pr_debug("tunl %hu: fd %d wrong socket type\n",
-+			 tunnel_id, fd);
-+		goto err;
-+	}
- 	switch (encap) {
- 	case L2TP_ENCAPTYPE_UDP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_UDP) {
- 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
-@@ -1528,7 +1533,6 @@ int l2tp_tunnel_create(struct net *net, int fd, int version, u32 tunnel_id, u32
- 		}
- 		break;
- 	case L2TP_ENCAPTYPE_IP:
--		err = -EPROTONOSUPPORT;
- 		if (sk->sk_protocol != IPPROTO_L2TP) {
- 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
- 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
-diff --git a/net/netlink/genetlink.c b/net/netlink/genetlink.c
-index 30c46aaf4575..d681dbaf00c1 100644
---- a/net/netlink/genetlink.c
-+++ b/net/netlink/genetlink.c
-@@ -1143,7 +1143,7 @@ static int genlmsg_mcast(struct sk_buff *skb, u32 portid, unsigned long group,
- 	if (!err)
- 		delivered = true;
- 	else if (err != -ESRCH)
--		goto error;
-+		return err;
- 	return delivered ? 0 : -ESRCH;
-  error:
- 	kfree_skb(skb);
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.14.32 kernel.
+
+All users of the 4.14 kernel series must upgrade.
+
+The updated 4.14.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.14.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                               |    2=20
+ drivers/net/ethernet/arc/emac_rockchip.c               |    6=20
+ drivers/net/ethernet/broadcom/bcmsysport.c             |   33 +--
+ drivers/net/ethernet/broadcom/bcmsysport.h             |    2=20
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c         |    8=20
+ drivers/net/ethernet/freescale/fec_main.c              |    2=20
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_buffers.c |   12 -
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c            |   15 +
+ drivers/net/ethernet/qlogic/qede/qede_main.c           |    4=20
+ drivers/net/ethernet/ti/cpsw.c                         |    3=20
+ drivers/net/macvlan.c                                  |    2=20
+ drivers/net/phy/phy.c                                  |  173 ++++++++----=
+-----
+ drivers/net/phy/phy_device.c                           |   15 +
+ drivers/net/ppp/ppp_generic.c                          |   26 +-
+ drivers/net/team/team.c                                |    4=20
+ drivers/s390/net/qeth_core_main.c                      |   21 +-
+ drivers/s390/net/qeth_l2_main.c                        |    2=20
+ drivers/s390/net/qeth_l3_main.c                        |    2=20
+ drivers/soc/fsl/qbman/qman.c                           |   28 --
+ fs/sysfs/symlink.c                                     |    1=20
+ include/linux/cgroup-defs.h                            |    4=20
+ include/linux/phy.h                                    |    1=20
+ include/linux/rhashtable.h                             |    4=20
+ include/net/sch_generic.h                              |   19 +
+ include/net/tcp.h                                      |   11 -
+ lib/rhashtable.c                                       |    4=20
+ net/core/dev.c                                         |   22 +-
+ net/core/devlink.c                                     |   16 -
+ net/core/skbuff.c                                      |    2=20
+ net/dccp/proto.c                                       |    5=20
+ net/ieee802154/6lowpan/core.c                          |   12 -
+ net/ipv4/inet_fragment.c                               |    3=20
+ net/ipv4/ip_sockglue.c                                 |    6=20
+ net/ipv4/tcp.c                                         |    1=20
+ net/ipv4/tcp_timer.c                                   |    1=20
+ net/ipv6/datagram.c                                    |   21 +-
+ net/ipv6/ndisc.c                                       |    3=20
+ net/ipv6/seg6_iptunnel.c                               |    7=20
+ net/iucv/af_iucv.c                                     |    4=20
+ net/kcm/kcmsock.c                                      |   33 ++-
+ net/l2tp/l2tp_core.c                                   |    8=20
+ net/netlink/genetlink.c                                |    2=20
+ net/sched/act_tunnel_key.c                             |    1=20
+ net/sched/sch_netem.c                                  |    2=20
+ 44 files changed, 319 insertions(+), 234 deletions(-)
+
+Alexey Kodanev (2):
+      sch_netem: fix skb leak in netem_enqueue()
+      dccp: check sk for closed state in dccp_sendmsg()
+
+Arkadi Sharshevsky (2):
+      devlink: Remove redundant free on error path
+      team: Fix double free in error path
+
+Arvind Yadav (1):
+      net/iucv: Free memory obtained by kzalloc
+
+Brad Mouring (1):
+      net: phy: Tell caller result of phy_change()
+
+Camelia Groza (3):
+      dpaa_eth: remove duplicate initialization
+      dpaa_eth: increment the RX dropped counter when needed
+      dpaa_eth: remove duplicate increment of the tx_errors counter
+
+Christophe JAILLET (1):
+      net: ethernet: arc: Fix a potential memory leak if an optional regula=
+tor is deferred
+
+David Ahern (1):
+      net: Only honor ifindex in IP_PKTINFO if non-0
+
+David Lebrun (2):
+      ipv6: sr: fix NULL pointer dereference when setting encap source addr=
+ess
+      ipv6: sr: fix scheduling in RCU when creating seg6 lwtunnel state
+
+Eric Dumazet (3):
+      ieee802154: 6lowpan: fix possible NULL deref in lowpan_device_event()
+      net: use skb_to_full_sk() in skb_update_prio()
+      l2tp: do not accept arbitrary sockets
+
+Florian Fainelli (2):
+      net: fec: Fix unbalanced PM runtime calls
+      net: systemport: Rewrite __bcm_sysport_tx_reclaim()
+
+Greg Kroah-Hartman (1):
+      Linux 4.14.32
+
+Grygorii Strashko (2):
+      sysfs: symlink: export sysfs_create_link_nowarn()
+      net: phy: relax error checking when creating sysfs link netdev->phydev
+
+Guillaume Nault (1):
+      ppp: avoid loop in xmit recursion detection code
+
+Ido Schimmel (1):
+      mlxsw: spectrum_buffers: Set a minimum quota for CPU port traffic
+
+Julian Wiedmann (4):
+      s390/qeth: free netdevice when removing a card
+      s390/qeth: when thread completes, wake up all waiters
+      s390/qeth: lock read device while queueing next buffer
+      s390/qeth: on channel error, reject further cmd requests
+
+Kirill Tkhai (1):
+      net: Fix hlist corruptions in inet_evict_bucket()
+
+Lorenzo Bianconi (1):
+      ipv6: fix access to non-linear packet in ndisc_fill_redirect_hdr_opti=
+on()
+
+Madalin Bucur (2):
+      soc/fsl/qbman: fix issue in qman_delete_cgr_safe()
+      dpaa_eth: fix error in dpaa_remove()
+
+Michal Kalderon (2):
+      qed: Fix non TCP packets should be dropped on iWARP ll2 connection
+      qede: Fix qedr link update
+
+Nicolas Dichtel (1):
+      netlink: avoid a double skb free in genlmsg_mcast()
+
+Paolo Abeni (1):
+      net: ipv6: keep sk status consistent after datagram connect failure
+
+Paul Blakey (1):
+      rhashtable: Fix rhlist duplicates insertion
+
+Roman Mashak (1):
+      net sched actions: return explicit error when tunnel_key mode is not =
+specified
+
+SZ Lin (=E6=9E=97=E4=B8=8A=E6=99=BA) (1):
+      net: ethernet: ti: cpsw: add check for in-band mode setting with RGMI=
+I PHY interface
+
+Shannon Nelson (1):
+      macvlan: filter out unsupported feature flags
+
+Soheil Hassas Yeganeh (2):
+      tcp: reset sk_send_head in tcp_write_queue_purge
+      tcp: purge write queue upon aborting the connection
+
+Stefano Brivio (1):
+      ipv6: old_dport should be a __be16 in __ip6_datagram_connect()
+
+Tom Herbert (1):
+      kcm: lock lower socket in kcm_attach
+
+Vinicius Costa Gomes (1):
+      skbuff: Fix not waking applications when errors are enqueued
+
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlq/tEIACgkQONu9yGCS
+aT4SqRAAw81c0eMnpgw+wjWI+/AkphX1piQTSTzfFbzJuRVLQ7IAUtjFB5yX0sWM
+LcA+iaAotyFzIplUjPsHy5YA/olg3zxti7Wq8NYTHGabff1q1NGDsHFohSVYavsR
+MXbmnI9Ne2sqeTjnyCgmwtSZS2ydDJr2JLKqqFG5kCZH+lregYCY+U8mNSLvW2zk
+Ds/G45KAE4TW3KKoHs80O14kNHh0BwZnIIyi6CV9pLm6au9tZYxNsqestGDcMrjj
+M5NZKyPYeFBIT1ouC8O+s3NR1xH9LKaXEIgh7zOeoX2qEoU7GeRq8A1BaNuZdlVi
+vTGDHz5NsCkTtXCx+Z6hRCSUB8EEf0z2Ti0UD3AHzQWkoP2z+Ub7sujYQewG/nlc
+fNMu/dC7tIeDkMTdt2DHx7pUTfpf7cAuz9up14K9Ey3xGbW9fB4p2N7lqxH1gUk3
+TgLWB6nnT8RI7Yvnox/tO236vVkVz2ir8l4bgPJWD2U1SV66J/aY8Bjm79siPdSq
+1tqRbZFLTHu3I/LD5AkRNEBf3AzCCyA2o4VwgNBBGIUUgDeKbdo57Z3U+9tZPyPu
+Eg0cJw8xYPKt1VhHCzjTQfsnsVtcqucrWj2MFLvrHjvHw1ize5Z6URYWNOvxIc11
+N7jWjn/yv06p10OWo1qN2WBiySAxyNzryWWMM7gyhykTVHQXqk4=
+=7kPk
+-----END PGP SIGNATURE-----
+
+--a8Wt8u1KmwUX3Y2C--
