@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1111812-1522476733-2-2280293936094281011
+X-Cyrus-Session-Id: sloti22d1t05-1160787-1522476726-2-16805012616992290895
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES endanl, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -12,24 +12,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522476732; b=W14/F6pNIH9FYwpIdFSgDXWRxngANMCgfad9HGs4wFKwxaW7KN
-    L7TeLn8FdrwtYJsymkF27Gf0EQ+petZgYvXdHzp1jbprRLONS0+UxYKEwjhhYBWX
-    Fho7gl1xpgJCHtTZViiR+LykQ0PZmdQmrPpJmu+N1ar/cNOYZP/CUjeEPESKapWp
-    UEW1W+xESHgozpG52Z9L9sneL5kLnay22Y7bmo6JhsffeJhySSBg6G2FXwJujpGT
-    qsa1/dBA6gdY8Tu3JxNx/gFyHkws+QBrpgaGwPQM78AW9oWPyOK6wt4ILriwR0Oe
-    29KZCgvlRYjpl/nBSjcNBPWndIQduR3PriTQ==
+    1522476725; b=p2NydSVPAekfdGKCfzRu+dRD1OTcO3agF1gZRyeC/wr4b8oBnd
+    4dhOgk4JPYSYmw5BuDk49f8WzJ5EyG4WfeoGmVGIe41+FUH1OryAPwyAVyeaDuAn
+    xejEUZnwyoa19zQazOBizq4zWb7CBGtUB2ho0rmdmUrbjwldC3g+0ewBxyTy9A7W
+    SZQYrSau8+yy+1oc7DxgXIXCOILcTRWGJJuV1vDVB5qNyeq2fmtu0pQ/kCncUJYP
+    htkME/OnniK+pkIw7NRdI1owrn9bmWZgL4WuAPOAjhSxios+ykWtIWpyi7PEw70h
+    7IiL2CoNLTnNLNwTYgD1hudjJ+wClFlBT4Gw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522476732; bh=5WM+7
-    Xxl2bk29GCdIkGAPpGp6RNcjKoFb+1MGEFu2P8=; b=WcgKSsWoqN+hHVhoV5Q/U
-    3Z92J0A3/I0zV/BZMVAxaMKHMUNmmQNYlwJ8dqFWuhhGiWmome8JMq0rzZQt3DPY
-    vDAnrvCtDaQ+/H0X77YsJ+eF2xRjgviJVrBNP5i+2y9W8wyQKzQvRCEeDhJ2XVC6
-    jplCC1eIWoYz9hBukRup2SZ7Y0nn+2N3TEHK16pjY0W49bdCtdmfMIWMu1M/LXXq
-    Lp1t/iatgLAei3kp/ELVhmHXP396Q/k19s7KhRn27JwNsyiiniJoTWUOaw5WlaU3
-    Lf/k200iiy2E5wJNy3TEoe6lySAllVOLHBmVYN4rwWHUN9+zRsn7nUQKYEQ6Fa1/
-    g==
+    :content-transfer-encoding:sender; s=fm2; t=1522476725; bh=mewPU
+    A1a7j5mOdcxvYrU+rmvbWBzq2VjP72X7NhvOek=; b=LSsGpepqCZkOtWh2hY98x
+    +j7rjM+EwuADkhBZJX+omGMt2XrjWD5YBJsyqAS3Wp+E7TFvsO0mEU6tz/igPmIh
+    yBhC5x+7Lu+6rO+fjHdX8CrKx9SJfga5abnguq9u4Fu+VhBbMEozjXWtzRRjPSxB
+    eF26W03bOWWIO//AWdgue8IDhtaCgY879t3OGRlJ+/VSo2AuTmJYTozMcZVyCsO/
+    BIcm8RPMyhiY5oK8tGZDw2lykCM4Z1O7xL08FVtvLlO4h4X4VHP+FNiin9oTNhw/
+    jkswgJyTOzXY7EHZH6gdWhHyif9YAjuvin+TBdm7pZvOV3+4hnZPVFRpdIGaYFL9
+    Q==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
@@ -54,13 +54,13 @@ Authentication-Results: mx1.messagingengine.com;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLDZpT5Dp6I7Vw6THyE8R8H/oUFZ+4SGQGfUZN/1PN6ySk2HmaiFB5Sjql3qh9ZPi45QF1smgx5NtDmb+LdYP3JYIvmhZo3BOjbwMsUbLV1+muON6xzw
-    lcfrVFsJuL9PnQ67ZC62DArxPrTuZQNGepZbe5NicCtRdneVjuFOaAopwGUHG0oOyTENdMJLNayB4NnPz0RzVstuj/2MnOLhBtFX6M7YLMeRlQ3k5P6cbpo2
-    XdQ/XB8A2WIhJPThC/Z0IQ==
+X-CM-Envelope: MS4wfPYVuUbwD5DDQunBDX7hGIQ5VZJWMbkL/HjiXnx+D0J4uOWxpdnb/ETOV0FS4ouAXMhFEM8BCvyfBlBq8yqJlKQLbFh0CdRBjoTYXzGoLE6jrEuPk0um
+    ZEyqvfEOJb9Y6vPcKSkDemNQiVH3BheL4UMbsZGk86xgEWnHv6rrFLn2VdBaCRbBxBjgH82ulcEiMb7jXzglHKSwa6oOV93EEFBQ1jKPHC6Bfi1rRrT1RHdX
+    xtlhnGTAP4Xt/f/n4z2Ohw==
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
     a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=XFQVhmj8x42Ih_EBxmgA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
+    a=MBXM6yTHWV4dAfAIpPMA:9 a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: none
@@ -68,30 +68,32 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
-Subject: [PATCH v2 62/75] staging: ks7010: Remove trailing _t from 'struct
- mic_failure_t'.
-Date: Fri, 30 Mar 2018 23:08:42 -0700
-Message-Id: <20180331060855.9452-62-quytelda@tamalin.org>
+Subject: [PATCH v2 59/75] staging: ks7010: Remove trailing _t from 'struct
+ sleep_status_t'.
+Date: Fri, 30 Mar 2018 23:08:39 -0700
+Message-Id: <20180331060855.9452-59-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:Nueytt5rVC9Ry4FJQTwv5njUKaAnpNkK1H0JLjtR+86ibWmzltG
- 6t5d0Zu2zYhUipRmwUkaCoozh5VKq6tHcQ0x+5loSf29IJLPiBRmgAOlJ+5Oee6BfPpPvd7
- K0fP3Thn6RGeyXpz/KBgE5oZNwlJy7QWtP3wV3dIoBYHxfLJZ3dOB3EX2l5uNq+EBDUaTeT
- roEai4uegKOeG3GJwoxvQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:8jauT+buURQ=:nTnuACVLH58wmUzSghPgzL
- Flz4ozZkXUF1p/kjwJnN4A4NCtk3+OOP35pwimoYUBIH5gTgacU17lnYQn1k65+24Mnpd4hCd
- nzzSAgP5lfUZI3zqw3J1TBWAmT7Y9wHSM4op6yJvB5OtXY+hh5MLekG8iHxcq3Sr+QKxfhIzd
- np7HlDPC7/+zoWkHzUL8vYwvs+d9zS6q91+yPec0vpF+PSORtouJ/zcuIJyKaciZVBIhJNoYw
- Okv7u4zQ8PC7UbCJwXXhPsc8l0v48i73o9V3ylyJGmUDJoZoQuI+s/eQ7bo2rfFUWrYMRFjKy
- eoBf1xeLE32J5lLrCwFbOFfi9j/Pz+VIys+1ZwAZpIIDjJQndXIjxB952WagXFfUWC3jzv8Wn
- dw6SznrK/1xGOUT8RHGovHV5c0ruh7m8jbiMPjTwPKjFrtjYTEUzMmWE8SWFk2D6BYMmZboDB
- +waR+TSZ5UgaGs3BaTM20D5Bcrbo2Cq1tdayC/h8UtKhxNhiC0YFdvINFMvTtlmmbDrP1jJ4L
- DL0tJdzjw6DUctk0EOT1VHyzSJwrUkWqmNVBnWVOnWTTqbz22OcmUe7JpXwg5qcTEbUw7BbVt
- bBslx9Jri+flrH8wUH0yKWSYPa+YAGfcYHABgUvMh5GI2/CkmmlBaGgk8cPBAislfILJspwcl
- 6kndwT6A53cWRO0ocz4ZAEmIHpVge8er/xjoJO2tNP8Ky7ec1Db0G+i5BXpAoy9QnOpYM70Cf
- 6I5wKIqh6QNEwRDp+4R2YIVcdUHCcLosYYvPRQ==
+X-Provags-ID: V03:K0:lqINBSkNAENt7ttNhz/cRuAHgwxRLJUS/XVI8cndyVeIx6RvrPx
+ mbDqeGKsXAvRrgDUYmPsKndXiTZu+yEbDYmzWztbQ2tvSg5HpJ+Whnk3CKqQiCWy1nup08r
+ Rw9nAiawEeqrwW1f20SulyKi3CkZtKKLWjhGz4CtN+UXResoebVO3NMrwBM74HVOouRC9qv
+ i4GQfOg4sM9uuk8BZ+Glg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lh9SVGZsDUk=:SLPSmBL6mKRKJMx9I0KZVd
+ aukPpLwqo8DvKT/IT+nB+RXLyjoLjx+GkUiVXEF9z17XxNU4vMGeEoZBMQ/YfV8/O+irTCVDG
+ lYeLp6h2tX4VnwqJlRWH/2UfQ64gyh/ZO8du5VnAylzXRpt8J/oyrFdCepyP1Fa2o/661FpLX
+ cH3+moZKg637KeKu4378b10LpzDxme8V2hdyj4bQ0rRTkr+EKi8wQjyE73UCYdzE8jMkgJKqg
+ Lc0khHh/o5KfWtvstsQg0uJ7DWI2O2SjMy5eefuDyhE73TS/FH+t299Kyt71hw6APw1JZc4kG
+ FhmH+fKrtT8nWG2yM4nHpZQxSog771EyXskPACwPSqiRFXjY45iHYEhjxSeFjSvK/EZe6c4FU
+ 86rRsJGWIzSFVPf3+xHLEjVW6wVsCteg0gIuP8yYMNlCq2y6NCgUfllarTDHhDZxaCu/rx8ED
+ qV5VRPLRWozH3pxln2kkhCUCEh5kCn86Qao0IpFjz6lk6j/UwemJfqtly9x8UB6j4vidML1TQ
+ 9HazavVwnNY5pkPJWX59Ni4DUWAHooawI+j/5ZK4IgsNhN4hDT90DaaBerTCV/Y9D4Qdma+Oc
+ UnYFnRRDcaTyaQSZKamuuToerfAJmxIl0wJ2H5O8C/2vgfMGiklHH2YTgsjelQTKNOrrCOBEd
+ QGRBe+udsFUQbSmDvR/CHt/LzfcYc4eKdY4Np+vHizXhZsVL2nwgxFauDp8MOZ1gPDQY9EPa4
+ jQ5S09GFOzSWKTyp6kKMR6DirIWdYK1uuCoV/O/8Gi16hDYgPEP3ktPnGwSLxPqb7q6k2r7T5
+ felDzm+ndcmp0fVAAtmrQTFmkqXwaAn8W1dTIBbgo+bg6YKCBVvRJLfJo2pjlIjpFScD/vfCm
+ xCX5SrsW3ERY2SLIlWHAWkeQ6d6mYJBqjGBXfnDfl5kpzmCa43a628siyqElMO
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -115,49 +117,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct mic_failure_t' with 'struct mic_failure'.
+all occurences of 'struct sleep_status_t' with 'struct sleep_status'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.c | 2 +-
- drivers/staging/ks7010/ks_wlan.h   | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/ks7010/ks_wlan.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index d8b40fd83b6b..fbe18ddf3ea0 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -314,7 +314,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
- 	unsigned char recv_mic[8];
- 	char buf[128];
- 	unsigned long now;
--	struct mic_failure_t *mic_failure;
-+	struct mic_failure *mic_failure;
- 	struct michael_mic_t michael_mic;
- 	union iwreq_data wrqu;
- 	unsigned int key_index = auth_type - 1;
 diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index 2458dbba66a0..c3e61021a75a 100644
+index edd13060c24c..d10ad152aa32 100644
 --- a/drivers/staging/ks7010/ks_wlan.h
 +++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -357,7 +357,7 @@ struct wpa_key {
- #define WPA_KEY_INDEX_MAX 4
- #define WPA_RX_SEQ_LEN 6
- 
--struct mic_failure_t {
-+struct mic_failure {
- 	u16 failure;	/* MIC Failure counter 0 or 1 or 2 */
- 	u16 counter;	/* 1sec counter 0-60 */
- 	u32 last_failure_time;
-@@ -375,7 +375,7 @@ struct wpa_status_t {
- 	int txkey;
- 	struct wpa_key key[WPA_KEY_INDEX_MAX];
- 	struct scan_ext scan_ext;
--	struct mic_failure_t mic_failure;
-+	struct mic_failure mic_failure;
+@@ -285,7 +285,7 @@ struct power_save_status {
+ 	atomic_t snooze_guard;
  };
  
- #include <linux/list.h>
+-struct sleep_status_t {
++struct sleep_status {
+ 	atomic_t status;	/* initialvalue 0 */
+ 	atomic_t doze_request;
+ 	atomic_t wakeup_request;
+@@ -426,7 +426,7 @@ struct ks_wlan_private {
+ 	struct local_aplist aplist;
+ 	struct local_ap current_ap;
+ 	struct power_save_status psstatus;
+-	struct sleep_status_t sleepstatus;
++	struct sleep_status sleepstatus;
+ 	struct wpa_status_t wpa;
+ 	struct pmk_list_t pmklist;
+ 	/* wireless parameter */
 -- 
 2.16.3
 
