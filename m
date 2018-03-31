@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752827AbeCaUrK (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 16:47:10 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:55175 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751207AbeCaUrG (ORCPT
+        id S1752463AbeCaUrI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 16:47:08 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:35833 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751180AbeCaUrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 31 Mar 2018 16:47:06 -0400
-X-Google-Smtp-Source: AIpwx4+vA7frAdr3Mh1GomL19xIjnKIrPkHufQTTELHCRorDfw9VJLtPxQS4Zqg79irNAbx9kg/F1l1O9Yzjldm8ua0ja+jXJN7e
+X-Google-Smtp-Source: AIpwx48xD909+SmDM1zoKzhOvasrEdPmbUZV875+GGLG0GSOCPEwxOQVsdmxvFejy8Z51t6uA1cu+fmsVKqlozTslAAnAyuHghM+
 MIME-Version: 1.0
 Date: Sat, 31 Mar 2018 13:47:05 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113fe4c0a623b10568bb75ea@google.com>
-Subject: general protection fault in __mem_cgroup_free
-From: syzbot <syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+Message-ID: <001a113fe6d0a344f20568bb75df@google.com>
+Subject: KASAN: use-after-free Read in radix_tree_next_chunk
+From: syzbot <syzbot+040b31ac96753fd7eb46@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, billodo@redhat.com, cmaiolino@redhat.com,
+        colin.king@canonical.com, darrick.wong@oracle.com, dchinner@redhat.com,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,80 +30,137 @@ syzbot hit the following crash on upstream commit
 9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
 Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=8a5de3cce7cdc70e9ebe
+https://syzkaller.appspot.com/bug?extid=040b31ac96753fd7eb46
 
-So far this crash happened 14 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5578311367393280
+So far this crash happened 50 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6534913729757184
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5708657048158208
+https://syzkaller.appspot.com/x/repro.syz?id=6221692233842688
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6693821748346880
+https://syzkaller.appspot.com/x/log.txt?id=5252920484298752
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com
+Reported-by: syzbot+040b31ac96753fd7eb46@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-RBP: 00000000006dcc20 R08: 0000000000000002 R09: 0000000000003335
-R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
-R13: 00007f1747954d80 R14: ffffffffffffffff R15: 0000000000000006
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4422 Comm: syzkaller101598 Not tainted 4.16.0-rc7+ #372
+IPVS: ftp: loaded support on port[0] = 21
+XFS (loop5): Invalid device [./file0], error=-15
+XFS (loop7): nobarrier option is deprecated, ignoring.
+XFS (loop7): Invalid device [./file0], error=-15
+==================================================================
+BUG: KASAN: use-after-free in radix_tree_next_chunk+0xde1/0xdf0  
+lib/radix-tree.c:1733
+Read of size 4 at addr ffff8801b1669250 by task syzkaller476032/4458
+
+CPU: 1 PID: 4458 Comm: syzkaller476032 Not tainted 4.16.0-rc7+ #7
+IPVS: ftp: loaded support on port[0] = 21
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:free_mem_cgroup_per_node_info mm/memcontrol.c:4111 [inline]
-RIP: 0010:__mem_cgroup_free+0x71/0x110 mm/memcontrol.c:4120
-RSP: 0018:ffff8801accf75a8 EFLAGS: 00010206
-RAX: 0000000000000011 RBX: 0000000000000000 RCX: ffffffff8310cdfd
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000088
-RBP: ffff8801accf75c8 R08: 0000000000000000 R09: ffff8801accf73a0
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff8801ad210d40 R14: dffffc0000000000 R15: ffff8801ad210d40
-FS:  00007f1747955700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000460000 CR3: 00000001cb367004 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  mem_cgroup_free mm/memcontrol.c:4128 [inline]
-  mem_cgroup_css_alloc+0x403/0x19c0 mm/memcontrol.c:4239
-  css_create kernel/cgroup/cgroup.c:4729 [inline]
-  cgroup_apply_control_enable+0x44d/0xbc0 kernel/cgroup/cgroup.c:2916
-  cgroup_mkdir+0x56f/0xfc0 kernel/cgroup/cgroup.c:4938
-  kernfs_iop_mkdir+0x153/0x1e0 fs/kernfs/dir.c:1099
-  vfs_mkdir+0x390/0x600 fs/namei.c:3800
-  SYSC_mkdirat fs/namei.c:3823 [inline]
-  SyS_mkdirat+0x22b/0x2b0 fs/namei.c:3807
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  radix_tree_next_chunk+0xde1/0xdf0 lib/radix-tree.c:1733
+  radix_tree_gang_lookup_tag+0x36e/0x5e0 lib/radix-tree.c:1918
+IPVS: ftp: loaded support on port[0] = 21
+  xfs_perag_get_tag+0x109/0x6c0 fs/xfs/libxfs/xfs_sb.c:88
+IPVS: ftp: loaded support on port[0] = 21
+  xfs_reclaim_inodes_count+0x82/0xb0 fs/xfs/xfs_icache.c:1362
+  xfs_fs_nr_cached_objects+0x37/0x50 fs/xfs/xfs_super.c:1778
+  super_cache_count+0x96/0x280 fs/super.c:131
+  do_shrink_slab mm/vmscan.c:310 [inline]
+  shrink_slab.part.46+0x30c/0xe80 mm/vmscan.c:475
+  shrink_slab+0x9d/0xb0 mm/vmscan.c:442
+  shrink_node+0x51e/0xf70 mm/vmscan.c:2556
+  shrink_zones mm/vmscan.c:2728 [inline]
+  do_try_to_free_pages+0x383/0x1020 mm/vmscan.c:2790
+  try_to_free_mem_cgroup_pages+0x44d/0xb40 mm/vmscan.c:3079
+IPVS: ftp: loaded support on port[0] = 21
+  reclaim_high.constprop.64+0x1e2/0x330 mm/memcontrol.c:1862
+IPVS: ftp: loaded support on port[0] = 21
+  mem_cgroup_handle_over_high+0x8d/0x130 mm/memcontrol.c:1887
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x242/0x2f0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x440fda
+RSP: 002b:00007ffd309f1880 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000440fda
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffd309f18a0 R08: 0000000000000001 R09: 00000000020eb880
+R10: 00000000020ebb50 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffd309f18d0 R14: 0000000000000000 R15: 00007ffd309f19e8
+
+Allocated by task 4469:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+  kmem_cache_alloc_trace+0x136/0x740 mm/slab.c:3608
+  kmalloc include/linux/slab.h:512 [inline]
+  kzalloc include/linux/slab.h:701 [inline]
+  xfs_fs_fill_super+0xd1/0x1220 fs/xfs/xfs_super.c:1579
+  mount_bdev+0x2b7/0x370 fs/super.c:1119
+  xfs_fs_mount+0x34/0x40 fs/xfs/xfs_super.c:1770
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2509 [inline]
+  do_new_mount fs/namespace.c:2512 [inline]
+  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
+  SYSC_mount fs/namespace.c:3058 [inline]
+  SyS_mount+0xab/0x120 fs/namespace.c:3035
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44a0c9
-RSP: 002b:00007f1747954d78 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
-RAX: ffffffffffffffda RBX: 00000000006dcc24 RCX: 000000000044a0c9
-RDX: 0000000000000020 RSI: 0000000020000280 RDI: 0000000000000005
-RBP: 00000000006dcc20 R08: 0000000000000002 R09: 0000000000003335
-R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
-R13: 00007f1747954d80 R14: ffffffffffffffff R15: 0000000000000006
-Code: 00 00 48 89 f8 48 c1 e8 03 42 80 3c 30 00 0f 85 99 00 00 00 4f 8b a4  
-e5 f0 09 00 00 49 8d bc 24 88 00 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 30  
-00 0f 85 88 00 00 00 49 8b bc 24 88 00 00 00 e8 77
-RIP: free_mem_cgroup_per_node_info mm/memcontrol.c:4111 [inline] RSP:  
-ffff8801accf75a8
-RIP: __mem_cgroup_free+0x71/0x110 mm/memcontrol.c:4120 RSP: ffff8801accf75a8
----[ end trace 57ac07c30502ef78 ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+
+Freed by task 4469:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3486 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3801
+  xfs_fs_fill_super+0x6c3/0x1220 fs/xfs/xfs_super.c:1734
+  mount_bdev+0x2b7/0x370 fs/super.c:1119
+  xfs_fs_mount+0x34/0x40 fs/xfs/xfs_super.c:1770
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2509 [inline]
+  do_new_mount fs/namespace.c:2512 [inline]
+  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
+  SYSC_mount fs/namespace.c:3058 [inline]
+  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+The buggy address belongs to the object at ffff8801b1668e80
+  which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 976 bytes inside of
+  4096-byte region [ffff8801b1668e80, ffff8801b1669e80)
+The buggy address belongs to the page:
+page:ffffea0006c59a00 count:1 mapcount:0 mapping:ffff8801b1668e80 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801b1668e80 0000000000000000 0000000100000001
+raw: ffffea0006c5a2a0 ffffea0006cc47a0 ffff8801dac00dc0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b1669100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b1669180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801b1669200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                  ^
+  ffff8801b1669280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b1669300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
