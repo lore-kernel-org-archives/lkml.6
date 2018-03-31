@@ -1,133 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeCaIFV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 04:05:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46921 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751460AbeCaIFS (ORCPT
+        id S1752162AbeCaIKW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 04:10:22 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:37956 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751564AbeCaIKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 04:05:18 -0400
-Date: Sat, 31 Mar 2018 00:59:54 -0700
-From: tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-f07cbebb6daf04e5c9721e5be2737a6068c7e2a2@git.kernel.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, peterz@infradead.org,
-        paulmck@linux.vnet.ibm.com, hpa@zytor.com, dave@stgolabs.net,
-        tglx@linutronix.de, torvalds@linux-foundation.org, longman@redhat.com
-Reply-To: tglx@linutronix.de, dave@stgolabs.net, torvalds@linux-foundation.org,
-        longman@redhat.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, paulmck@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <1522445280-7767-3-git-send-email-longman@redhat.com>
-References: <1522445280-7767-3-git-send-email-longman@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/Kconfig: Add LOCK_DEBUGGING_SUPPORT to
- make it more readable
-Git-Commit-ID: f07cbebb6daf04e5c9721e5be2737a6068c7e2a2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 31 Mar 2018 04:10:15 -0400
+X-Google-Smtp-Source: AIpwx499jXrK9wXmca/BjWWb5GP8ymzSi1VxWkTBO+D3rHzvtP4iF52z80n3zD7oA/mV5mqIlKUnxQ==
+Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-8-paul@crapouillou.net>
+ <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
+ <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
+ <af33e522-7f87-d62a-0a35-d56a403387b7@linaro.org>
+ <1522335149.1792.0@smtp.crapouillou.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <2234006b-30ff-d5a8-b14a-d6e307c06145@linaro.org>
+Date: Sat, 31 Mar 2018 10:10:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1522335149.1792.0@smtp.crapouillou.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f07cbebb6daf04e5c9721e5be2737a6068c7e2a2
-Gitweb:     https://git.kernel.org/tip/f07cbebb6daf04e5c9721e5be2737a6068c7e2a2
-Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Fri, 30 Mar 2018 17:27:59 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 31 Mar 2018 07:30:50 +0200
+On 29/03/2018 16:52, Paul Cercueil wrote:
+> 
+> 
+> Le mer. 28 mars 2018 à 18:25, Daniel Lezcano <daniel.lezcano@linaro.org>
+> a écrit :
+>> On 28/03/2018 17:15, Paul Cercueil wrote:
+>>>  Le 2018-03-24 07:26, Daniel Lezcano a écrit :
+>>>>  On 18/03/2018 00:29, Paul Cercueil wrote:
+>>>>>  This driver will use the TCU (Timer Counter Unit) present on the
+>>>>> Ingenic
+>>>>>  JZ47xx SoCs to provide the kernel with a clocksource and timers.
+>>>>
+>>>>  Please provide a more detailed description about the timer.
+>>>
+>>>  There's a doc file for that :)
+>>
+>> Usually, when there is a new driver I ask for a description in the
+>> changelog for reference.
+>>
+>>>>  Where is the clocksource ?
+>>>
+>>>  Right, there is no clocksource, just timers.
+>>>
+>>>>  I don't see the point of using channel idx and pwm checking here.
+>>>>
+>>>>  There is one clockevent, why create multiple channels ? Can't you
+>>>> stick
+>>>>  to the usual init routine for a timer.
+>>>
+>>>  So the idea is that we use all the TCU channels that won't be used
+>>> for PWM
+>>>  as timers. Hence the PWM checking. Why is this bad?
+>>
+>> It is not bad but arguable. By checking the channels used by the pwm in
+>> the code, you introduce an adherence between two subsystems even if it
+>> is just related to the DT parsing part.
+>>
+>> As it is not needed to have more than one timer in the time framework
+>> (at least with the same characteristics), the pwm channels check is
+>> pointless. We can assume the author of the DT file is smart enough to
+>> prevent conflicts and define a pwm and a timer properly instead of
+>> adding more code complexity.
+>>
+>> In addition, simplifying the code will allow you to use the timer-of
+>> code and reduce very significantly the init function.
+> 
+> That's what I had in my V1 and V2, my DT node for the timer-ingenic driver
+> had a "timers" property (e.g. "timers = <4 5>;") to select the channels
+> that
+> should be used as timers. Then Rob told me I shouldn't do that, and instead
+> detect the channels that will be used for PWM.
+> 
 
-locking/Kconfig: Add LOCK_DEBUGGING_SUPPORT to make it more readable
+[ ... ]
 
-There are a couples of lock debugging Kconfig options that depends on
-the following support options:
+How do you specify the channels used for PWM ?
 
- - TRACE_IRQFLAGS_SUPPORT
- - STACKTRACE_SUPPORT
- - LOCKDEP_SUPPORT
+>>>>>
+>>>>>  +config INGENIC_TIMER
+>>>>>  +    bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
+>>>>>  +    depends on MACH_INGENIC || COMPILE_TEST
+>>>>
+>>>>  bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if
+>>>> COMPILE_TEST
+>>>>
+>>>>  Remove the depends MACH_INGENIC.
+>>>
+>>>  This driver is not useful on anything else than Ingenic SoCs, why
+>>> should I
+>>>  remove MACH_INGENIC then?
+>>
+>> For COMPILE_TEST on x86.
+> 
+> Well that's a logical OR right here, so it will work...
 
-That makes those lock debugging options harder to read and understand.
-So a new LOCK_DEBUGGING_SUPPORT option is added that is equivalent to
-the above three options together. That makes the Kconfig.debug file
-more readable.
+Right, I missed the second part of the condition. For consistency
+reason, we don't add a dependency on the platform. The platform will
+select it. Look the other timer options and you will see there is no
+MACH deps. I'm trying consolidating all these options to have same
+format and hopefully factor them out.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
-Acked-by: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1522445280-7767-3-git-send-email-longman@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- lib/Kconfig.debug | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 88650ab5cedb..ee7ca42e737e 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1034,6 +1034,11 @@ config DEBUG_PREEMPT
- 
- menu "Lock Debugging (spinlocks, mutexes, etc...)"
- 
-+config LOCK_DEBUGGING_SUPPORT
-+	bool
-+	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	default y
-+
- config DEBUG_RT_MUTEXES
- 	bool "RT Mutex debugging, deadlock detection"
- 	depends on DEBUG_KERNEL && RT_MUTEXES
-@@ -1060,7 +1065,7 @@ config DEBUG_MUTEXES
- 
- config DEBUG_WW_MUTEX_SLOWPATH
- 	bool "Wait/wound mutex debugging: Slowpath testing"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select DEBUG_LOCK_ALLOC
- 	select DEBUG_SPINLOCK
- 	select DEBUG_MUTEXES
-@@ -1084,7 +1089,7 @@ config DEBUG_RWSEMS
- 
- config DEBUG_LOCK_ALLOC
- 	bool "Lock debugging: detect incorrect freeing of live locks"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select DEBUG_SPINLOCK
- 	select DEBUG_MUTEXES
- 	select DEBUG_RT_MUTEXES if RT_MUTEXES
-@@ -1099,7 +1104,7 @@ config DEBUG_LOCK_ALLOC
- 
- config PROVE_LOCKING
- 	bool "Lock debugging: prove locking correctness"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select LOCKDEP
- 	select DEBUG_SPINLOCK
- 	select DEBUG_MUTEXES
-@@ -1144,7 +1149,7 @@ config PROVE_LOCKING
- 
- config LOCKDEP
- 	bool
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select STACKTRACE
- 	select FRAME_POINTER if !MIPS && !PPC && !ARM_UNWIND && !S390 && !MICROBLAZE && !ARC && !SCORE && !X86
- 	select KALLSYMS
-@@ -1155,7 +1160,7 @@ config LOCKDEP_SMALL
- 
- config LOCK_STAT
- 	bool "Lock usage statistics"
--	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-+	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select LOCKDEP
- 	select DEBUG_SPINLOCK
- 	select DEBUG_MUTEXES
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
