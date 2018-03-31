@@ -1,34 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753425AbeCaGRU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 02:17:20 -0400
-Received: from mx3.wp.pl ([212.77.101.9]:17891 "EHLO mx3.wp.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752879AbeCaGRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 02:17:15 -0400
-Date: Fri, 30 Mar 2018 23:17:05 -0700
-From: Jakub Kicinski <kubakici@wp.pl>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mt7601u: phy: mark expected switch fall-through
-Message-ID: <20180330231705.3d12f2a5@cakuba.netronome.com>
-In-Reply-To: <20180330211223.GA22497@embeddedgus>
-References: <20180330211223.GA22497@embeddedgus>
+        id S1753272AbeCaGRj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 02:17:39 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:54184
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753146AbeCaGRh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 02:17:37 -0400
+X-IronPort-AV: E=Sophos;i="5.48,383,1517871600";
+   d="scan'208";a="260468728"
+Date: Sat, 31 Mar 2018 08:17:34 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Joe Perches <joe@perches.com>
+cc: Varsha Rao <rvarsha016@gmail.com>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cocci <cocci@systeme.lip6.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [Cocci] [PATCH] crypto: cavium: zip: Remove unnecessary
+ parentheses
+In-Reply-To: <1522441039.2210.50.camel@perches.com>
+Message-ID: <alpine.DEB.2.20.1803310816360.2373@hadrien>
+References: <20180328175736.17360-1-rvarsha016@gmail.com> <1522260676.12357.121.camel@perches.com> <CAAFX7JTfWdaGra+kWBJt-GXVVO601K03qWnExFKFD_9vxS-03g@mail.gmail.com> <1522441039.2210.50.camel@perches.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-WP-MailID: d3849007efbfef7bc8bbb8364fe54762
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 000000A [MYMk]                               
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018 16:12:23 -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Acked-by: Jakub Kicinski <kubakici@wp.pl>
+
+On Fri, 30 Mar 2018, Joe Perches wrote:
+
+> On Thu, 2018-03-29 at 21:03 +0530, Varsha Rao wrote:
+> > On Wed, Mar 28, 2018 at 11:41 PM, Joe Perches wrote:
+> > >
+> > > On Wed, 2018-03-28 at 23:27, Varsha Rao wrote:
+> > > > This patch fixes the clang warning of extraneous parentheses, with the
+> > > > following coccinelle script.
+> > > >
+> > > > @@
+> > > > identifier i;
+> > > > constant c;
+> > > > @@
+> > > > (
+> > > > -((i == c))
+> > > > +i == c
+> > > > >
+> > > >
+> > > > -((i <= c))
+> > > > +i <= c
+> > >
+> > > Why just the "==" and "<=" cases?
+> > > Why not "<", ">" and ">=" too?
+> > >
+> > > Why not expression instead of constant?
+> >
+> > Initially I had the other cases too and used expression instead of
+> > constant. But the results included only "==" and "<=" cases with
+> > constant. Along with one false positive case.
+> hmm
+> Perhaps you should use something like this?
+> @@
+> identifier i;
+> constant c;
+> @@
+>
+> -(
+> \(i == c\|i <= c\|i < c\|i >= c\|i > c\)
+> -)
+
+This is not safe with respect to !.  The following seems to address this
+problem:
+
+@@
+identifier i;
+constant c;
+expression e;
+@@
+
+(
+!(e)
+|
+-(
+\(i == c\|i <= c\|i < c\|i >= c\|i > c\)
+-)
+)
+
+julia
