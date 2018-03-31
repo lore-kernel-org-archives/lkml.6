@@ -1,37 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeCaOEL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 10:04:11 -0400
-Received: from ozlabs.org ([103.22.144.67]:56723 "EHLO ozlabs.org"
+        id S1753283AbeCaOET (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 10:04:19 -0400
+Received: from ozlabs.org ([103.22.144.67]:60823 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753119AbeCaOEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 10:04:10 -0400
+        id S1753195AbeCaOEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 10:04:13 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 9a2c1d31e6910b9d5e0205f9167d0b1abeea1413
-In-Reply-To: <1522075389-23511-1-git-send-email-weiyongjun1@huawei.com>
-To: Wei Yongjun <weiyongjun1@huawei.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, Rob Herring <robh@kernel.org>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        "Tyrel Datwyler" <tyreld@linux.vnet.ibm.com>
+X-powerpc-patch-commit: 2615c93e5f52db62586112793d889face99eb905
+In-Reply-To: <20180328002544.18526-2-j.neuschaefer@gmx.net>
+To: =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linuxppc-dev@lists.ozlabs.org
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-        Wei Yongjun <weiyongjun1@huawei.com>, linux-kernel@vger.kernel.org
-Subject: Re: [-next] powerpc: Fix error return code in ppc4xx_msi_probe()
-Message-Id: <40D0bD5FH1z9s3q@ozlabs.org>
-Date: Sun,  1 Apr 2018 01:04:08 +1100 (AEDT)
+Cc: Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
+        =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Paul Mackerras <paulus@samba.org>, Joe Perches <joe@perches.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [v2, 1/5] powerpc: mm: Simplify page_is_ram by using memblock_is_memory
+Message-Id: <40D0bH5b9gz9s1S@ozlabs.org>
+Date: Sun,  1 Apr 2018 01:04:11 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-26 at 14:43:09 UTC, Wei Yongjun wrote:
-> Fix to return a negative error code from the error handling
-> case instead of 0, as done elsewhere in this function.
+On Wed, 2018-03-28 at 00:25:40 UTC, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= wrote:
+> Instead of open-coding the search in page_is_ram, call memblock_is_memory.
 > 
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-Applied to powerpc next, thanks.
+Series applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/9a2c1d31e6910b9d5e0205f9167d0b
+https://git.kernel.org/powerpc/c/2615c93e5f52db62586112793d889f
 
 cheers
