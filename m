@@ -1,144 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753388AbeCaQRG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 12:17:06 -0400
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:46624 "EHLO
+        id S1753028AbeCaQTc (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 12:19:32 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:45243 "EHLO
         mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753058AbeCaQRD (ORCPT
+        with ESMTP id S1752412AbeCaQT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 12:17:03 -0400
-X-Google-Smtp-Source: AIpwx49w0nRdmLWRUJ8JAp/gHwvQOgJ9tSeZ9EPfcbtzymp4+f6L8Ql/uJR3O2PKlEe16ypTay2asYO8IsIGAlvMcfA=
+        Sat, 31 Mar 2018 12:19:29 -0400
+X-Google-Smtp-Source: AIpwx49P0ErvHs66XaSUrA1BPK7sr7PnkXiVb1RtMZ7VYspaMVVS84hVutg7YDJ+4eq7pF18LNJoT6t/bbCcWUu1zOA=
 MIME-Version: 1.0
-In-Reply-To: <001a113f9bb81a9bd40568b7a5ae@google.com>
-References: <001a113f9bb81a9bd40568b7a5ae@google.com>
+In-Reply-To: <CACT4Y+Zto0DQLwFtSxZbbkexqDeCwvJ4ks-QHAMn9=o6zxShnw@mail.gmail.com>
+References: <f403043a9be41c978c0560c0d164@google.com> <CANRm+Cy9-R=hBNwwUptVk_f8keX40-9yHkpqstWMP3pLSKpLGw@mail.gmail.com>
+ <CACT4Y+ZxPD_6JEntRVGdngn2QBzABwubYohpKVcWJy0Hv-jXBg@mail.gmail.com> <CACT4Y+Zto0DQLwFtSxZbbkexqDeCwvJ4ks-QHAMn9=o6zxShnw@mail.gmail.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sat, 31 Mar 2018 18:16:42 +0200
-Message-ID: <CACT4Y+Yr5AmEi-2icyF5=f0v8-H05xg8UQsxL_3wXdQyEPnm0w@mail.gmail.com>
-Subject: Re: INFO: task hung in fib6_rules_net_exit
-To: syzbot <syzbot+69bf48842d5035daa7a6@syzkaller.appspotmail.com>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>,
-        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>,
-        netdev <netdev@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-        Vladislav Yasevich <vyasevich@gmail.com>
+Date: Sat, 31 Mar 2018 18:19:08 +0200
+Message-ID: <CACT4Y+ZvP=TqBhEG1iagYMFbwhAr6jXwXgUvkukrrRg+qaJLQw@mail.gmail.com>
+Subject: Re: general protection fault in native_write_cr4
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: syzbot
+        <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, kvm <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, Radim Krcmar <rkrcmar@redhat.com>,
+        syzkaller-bugs@googlegroups.com, Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-#syz dup: INFO: task hung in netdev_run_todo
+On Wed, Dec 27, 2017 at 7:31 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Tue, Dec 26, 2017 at 9:52 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Wed, Dec 20, 2017 at 8:54 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+>>> 2017-12-20 15:49 GMT+08:00 syzbot
+>>> <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>:
+>>>> Hello,
+>>>>
+>>>> syzkaller hit the following crash on
+>>>> f6f3732162b5ae3c771b9285a5a32d72b8586920
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+>>>> compiler: gcc (GCC) 7.1.1 20170620
+>>>> .config is attached
+>>>> Raw console output is attached.
+>>>> C reproducer is attached
+>>>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+>>>> for information about syzkaller reproducers
+>>>>
+>>>>
+>>>
+>>> I will have a look again, you continue to run it in kvm guest, right?
+>>
+>>
+>> Our test machines are GCE VMs, so yes, the kernel that catches GPF is
+>> run as kvm guest.
+>
+> up
+>
+> one of top crashers with 50K crashes
 
-On Sat, Mar 31, 2018 at 6:14 PM, syzbot
-<syzbot+69bf48842d5035daa7a6@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on net-next commit
-> 18845557fd6fc1998f2d0d8c30467f86db587529 (Thu Mar 29 20:24:06 2018 +0000)
-> Merge tag 'wireless-drivers-next-for-davem-2018-03-29' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=69bf48842d5035daa7a6
->
-> Unfortunately, I don't have any reproducer for this crash yet.
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5281628851011584
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=-37309782588693906
-> compiler: gcc (GCC) 7.1.1 20170620
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+69bf48842d5035daa7a6@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
->
-> netlink: 8 bytes leftover after parsing attributes in process
-> `syz-executor5'.
-> IPVS: stopping backup sync thread 7398 ...
-> INFO: task kworker/u4:3:163 blocked for more than 120 seconds.
->       Not tainted 4.16.0-rc6+ #286
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> kworker/u4:3    D19440   163      2 0x80000000
-> Workqueue: netns cleanup_net
-> Call Trace:
->  context_switch kernel/sched/core.c:2862 [inline]
->  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
->  schedule+0xf5/0x430 kernel/sched/core.c:3499
->  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3557
->  __mutex_lock_common kernel/locking/mutex.c:833 [inline]
->  __mutex_lock+0xaad/0x1a80 kernel/locking/mutex.c:893
->  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
->  rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
->  fib6_rules_net_exit+0x12/0x50 net/ipv6/fib6_rules.c:392
->  ops_exit_list.isra.6+0xae/0x150 net/core/net_namespace.c:151
->  cleanup_net+0x4d8/0xa90 net/core/net_namespace.c:522
->  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
->  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
->  kthread+0x33c/0x400 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-> INFO: lockdep is turned off.
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 868 Comm: khungtaskd Not tainted 4.16.0-rc6+ #286
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x24d lib/dump_stack.c:53
->  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
->  check_hung_task kernel/hung_task.c:132 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
->  watchdog+0x90c/0xd60 kernel/hung_task.c:249
->  kthread+0x33c/0x400 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0x6/0x10
-> arch/x86/include/asm/irqflags.h:54
-> Kernel panic - not syncing: hung_task: blocked tasks
-> CPU: 1 PID: 868 Comm: khungtaskd Not tainted 4.16.0-rc6+ #286
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x24d lib/dump_stack.c:53
->  panic+0x1e4/0x41c kernel/panic.c:183
->  check_hung_task kernel/hung_task.c:133 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
->  watchdog+0x91d/0xd60 kernel/hung_task.c:249
->  kthread+0x33c/0x400 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/001a113f9bb81a9bd40568b7a5ae%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+
+This sets a new record of 130000 crashed machines on syzbot infrastructure:
+
+https://syzkaller.appspot.com/bug?id=2bf7b7983c2398ec6f0c4c6c87cb50223e8873f8
+
+
+>>>> kvm: KVM_SET_TSS_ADDR need to be called before entering vcpu
+>>>> kasan: CONFIG_KASAN_INLINE enabled
+>>>> kasan: GPF could be caused by NULL-ptr deref or user memory access
+>>>> general protection fault: 0000 [#1] SMP KASAN
+>>>> Dumping ftrace buffer:
+>>>>    (ftrace buffer empty)
+>>>> Modules linked in:
+>>>> CPU: 1 PID: 3142 Comm: syzkaller429302 Not tainted 4.15.0-rc3+ #224
+>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>>>> Google 01/01/2011
+>>>> RIP: 0010:native_write_cr4+0x4/0x10 arch/x86/include/asm/special_insns.h:76
+>>>> RSP: 0018:ffff8801ca6f75a0 EFLAGS: 00010093
+>>>> RAX: ffff8801ca1c8700 RBX: 00000000001606e0 RCX: ffffffff811a2a92
+>>>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000001606e0
+>>>> RBP: ffff8801ca6f75a0 R08: 1ffff100394dee0f R09: 0000000000000004
+>>>> R10: ffff8801ca6f7510 R11: 0000000000000004 R12: 0000000000000093
+>>>> R13: ffff8801ca1c8700 R14: ffff8801db514850 R15: ffff8801db514850
+>>>> FS:  0000000001031880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 0000000000000000 CR3: 0000000005e22006 CR4: 00000000001626e0
+>>>> Call Trace:
+>>>>  __write_cr4 arch/x86/include/asm/paravirt.h:76 [inline]
+>>>>  __cr4_set arch/x86/include/asm/tlbflush.h:180 [inline]
+>>>>  cr4_clear_bits arch/x86/include/asm/tlbflush.h:203 [inline]
+>>>>  kvm_cpu_vmxoff arch/x86/kvm/vmx.c:3582 [inline]
+>>>>  hardware_disable+0x34a/0x4b0 arch/x86/kvm/vmx.c:3588
+>>>>  kvm_arch_hardware_disable+0x35/0xd0 arch/x86/kvm/x86.c:7982
+>>>>  hardware_disable_nolock+0x30/0x40
+>>>> arch/x86/kvm/../../../virt/kvm/kvm_main.c:3310
+>>>>  on_each_cpu+0xca/0x1b0 kernel/smp.c:604
+>>>>  hardware_disable_all_nolock+0x3e/0x50
+>>>> arch/x86/kvm/../../../virt/kvm/kvm_main.c:3328
+>>>>  hardware_disable_all arch/x86/kvm/../../../virt/kvm/kvm_main.c:3334
+>>>> [inline]
+>>>>  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:742 [inline]
+>>>>  kvm_put_kvm+0x956/0xdf0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:755
+>>>>  kvm_vm_release+0x42/0x50 arch/x86/kvm/../../../virt/kvm/kvm_main.c:766
+>>>>  __fput+0x327/0x7e0 fs/file_table.c:210
+>>>>  ____fput+0x15/0x20 fs/file_table.c:244
+>>>>  task_work_run+0x199/0x270 kernel/task_work.c:113
+>>>>  exit_task_work include/linux/task_work.h:22 [inline]
+>>>>  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+>>>>  do_group_exit+0x149/0x400 kernel/exit.c:968
+>>>>  SYSC_exit_group kernel/exit.c:979 [inline]
+>>>>  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
+>>>>  entry_SYSCALL_64_fastpath+0x1f/0x96
+>>>> RIP: 0033:0x441c78
+>>>> RSP: 002b:00007ffe68e20f68 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+>>>> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441c78
+>>>> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+>>>> RBP: 00000000006cd018 R08: 00000000000000e7 R09: ffffffffffffffd0
+>>>> R10: 0000000000000012 R11: 0000000000000246 R12: 0000000000404080
+>>>> R13: 0000000000404110 R14: 0000000000000000 R15: 0000000000000000
+>>>> Code: 0f 1f 80 00 00 00 00 55 48 89 e5 0f 20 d8 5d c3 0f 1f 80 00 00 00 00
+>>>> 55 48 89 e5 0f 22 df 5d c3 0f 1f 80 00 00 00 00 55 48 89 e5 <0f> 22 e7 5d c3
+>>>> 0f 1f 80 00 00 00 00 55 48 89 e5 44 0f 20 c0 5d
+>>>> RIP: native_write_cr4+0x4/0x10 arch/x86/include/asm/special_insns.h:76 RSP:
+>>>> ffff8801ca6f75a0
+>>>> ---[ end trace ca14f0c15b26c251 ]---
+>>>>
+>>>>
+>>>> ---
+>>>> This bug is generated by a dumb bot. It may contain errors.
+>>>> See https://goo.gl/tpsmEJ for details.
+>>>> Direct all questions to syzkaller@googlegroups.com.
+>>>> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+>>>>
+>>>> syzbot will keep track of this bug report.
+>>>> Once a fix for this bug is merged into any tree, reply to this email with:
+>>>> #syz fix: exact-commit-title
+>>>> If you want to test a patch for this bug, please reply with:
+>>>> #syz test: git://repo/address.git branch
+>>>> and provide the patch inline or as an attachment.
+>>>> To mark this as a duplicate of another syzbot report, please reply with:
+>>>> #syz dup: exact-subject-of-another-report
+>>>> If it's a one-off invalid bug report, please reply with:
+>>>> #syz invalid
+>>>> Note: if the crash happens again, it will cause creation of a new bug
+>>>> report.
+>>>> Note: all commands must start from beginning of the line in the email body.
