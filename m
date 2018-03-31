@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752994AbeCaDf3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 30 Mar 2018 23:35:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34000 "EHLO mail.kernel.org"
+        id S1753029AbeCaDff (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 30 Mar 2018 23:35:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752966AbeCaDfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Mar 2018 23:35:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E01421772
+        id S1752969AbeCaDfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Mar 2018 23:35:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092E6217D2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
 From: Frederic Weisbecker <frederic@kernel.org>
@@ -21,9 +21,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>,
         "James E . J . Bottomley" <jejb@parisc-linux.org>
-Subject: [PATCH 07/10] powerpc: Switch to generic local_softirq_pending() implementation
-Date: Sat, 31 Mar 2018 05:34:50 +0200
-Message-Id: <1522467293-7320-8-git-send-email-frederic@kernel.org>
+Subject: [PATCH 09/10] x86: Switch to generic local_softirq_pending() implementation
+Date: Sat, 31 Mar 2018 05:34:52 +0200
+Message-Id: <1522467293-7320-10-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522467293-7320-1-git-send-email-frederic@kernel.org>
 References: <1522467293-7320-1-git-send-email-frederic@kernel.org>
@@ -48,28 +48,27 @@ Cc: Helge Deller <deller@gmx.de>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/powerpc/include/asm/hardirq.h | 7 -------
- 1 file changed, 7 deletions(-)
+ arch/x86/include/asm/hardirq.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/hardirq.h b/arch/powerpc/include/asm/hardirq.h
-index 5986d47..383f628 100644
---- a/arch/powerpc/include/asm/hardirq.h
-+++ b/arch/powerpc/include/asm/hardirq.h
-@@ -25,15 +25,8 @@ typedef struct {
- DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
+diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
+index 7c341a7..fd73beb 100644
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -49,14 +49,6 @@ DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
  
- #define __ARCH_IRQ_STAT
--
--#define local_softirq_pending()	__this_cpu_read(irq_stat.__softirq_pending)
+ #define inc_irq_stat(member)	this_cpu_inc(irq_stat.member)
+ 
+-#define local_softirq_pending()	this_cpu_read(irq_stat.__softirq_pending)
 -
 -#define __ARCH_SET_SOFTIRQ_PENDING
- #define __ARCH_IRQ_EXIT_IRQS_DISABLED
- 
--#define set_softirq_pending(x) __this_cpu_write(irq_stat.__softirq_pending, (x))
--#define or_softirq_pending(x) __this_cpu_or(irq_stat.__softirq_pending, (x))
 -
- static inline void ack_bad_irq(unsigned int irq)
- {
- 	printk(KERN_CRIT "unexpected IRQ trap at vector %02x\n", irq);
+-#define set_softirq_pending(x)	\
+-		this_cpu_write(irq_stat.__softirq_pending, (x))
+-#define or_softirq_pending(x)	this_cpu_or(irq_stat.__softirq_pending, (x))
+-
+ extern void ack_bad_irq(unsigned int irq);
+ 
+ extern u64 arch_irq_stat_cpu(unsigned int cpu);
 -- 
 2.7.4
