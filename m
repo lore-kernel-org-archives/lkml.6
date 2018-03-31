@@ -1,115 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753458AbeCaUuI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 16:50:08 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:54961 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751368AbeCaUrG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 16:47:06 -0400
-X-Google-Smtp-Source: AIpwx4/E5mOZ9Q7RlMcmJSEuZpEEi6/EVMkfUU6A9qjCUc/vqAJ258/2yCEHUQTocZlqxT/OoGVBvsF3IF9ZD/PxSunuIpbeR39C
+        id S1751922AbeCaVAB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 17:00:01 -0400
+Received: from tn-76-7-162-187.sta.embarqhsd.net ([76.7.162.187]:54245 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751180AbeCaVAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 17:00:00 -0400
+Date: Sat, 31 Mar 2018 16:59:59 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: linux-kernel@vger.kernel.org
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180331205959.GA21087@animx.eu.org>
+References: <20180331015903.GA29398@animx.eu.org>
 MIME-Version: 1.0
-Date: Sat, 31 Mar 2018 13:47:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113fd904af4b2a0568bb755f@google.com>
-Subject: KASAN: use-after-free Read in __ext4_check_dir_entry
-From: syzbot <syzbot+1236ce66f79263e8a862@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180331015903.GA29398@animx.eu.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Wakko Warner wrote:
+> I reported this before but noone responded.
+> 
+> I have an iscsi target setup with /dev/sr[012] using pscsi.  On the
+> initiator, I mount only 1 disc.  Then I issue find -type f | xargs cat >
+> /dev/null  Then after a few seconds, I get 2 oops and the system has to be
+> hard reset.
+> 
+> I noticed if I cat /dev/sr1 from the initiator, it doesn't crash.  I was
+> also able to burn without crashing.
 
-syzbot hit the following crash on upstream commit
-9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
-Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=1236ce66f79263e8a862
-
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6171830884761600
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5341633302233088
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6080954745487360
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
-compiler: gcc (GCC) 7.1.1 20170620
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1236ce66f79263e8a862@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-==================================================================
-BUG: KASAN: use-after-free in __ext4_check_dir_entry+0x2de/0x320  
-fs/ext4/dir.c:69
-Read of size 2 at addr ffff8801b80bf000 by task syzkaller432828/4365
-
-CPU: 1 PID: 4365 Comm: syzkaller432828 Not tainted 4.16.0-rc7+ #7
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:431
-  __ext4_check_dir_entry+0x2de/0x320 fs/ext4/dir.c:69
-  ext4_readdir+0xd00/0x3600 fs/ext4/dir.c:237
-  iterate_dir+0x1ca/0x530 fs/readdir.c:51
-  SYSC_getdents64 fs/readdir.c:314 [inline]
-  SyS_getdents64+0x221/0x420 fs/readdir.c:295
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x43fd69
-RSP: 002b:00007ffc446ac118 EFLAGS: 00000203 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd69
-RDX: 00000000200015fc RSI: 0000000020001540 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000203 R12: 0000000000401690
-R13: 0000000000401720 R14: 0000000000000000 R15: 0000000000000000
-
-The buggy address belongs to the page:
-page:ffffea0006e02fc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: ffffea0006c095a0 ffffea0006e03020 ffff8801be5f2a50 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b80bef00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8801b80bef80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff8801b80bf000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                    ^
-  ffff8801b80bf080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801b80bf100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+I'd like to add that 4.9.91 does not crash.  I haven't tested newer kernels
+yet.
