@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752885AbeCaIwi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 04:52:38 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:25881 "EHLO
+        id S1753297AbeCaIxX (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 04:53:23 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:63083 "EHLO
         stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751560AbeCaIwf (ORCPT
+        with ESMTP id S1752448AbeCaIwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 04:52:35 -0400
+        Sat, 31 Mar 2018 04:52:37 -0400
 From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
 To: netdev@vger.kernel.org, kexec@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -15,9 +15,9 @@ Cc: davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
         torvalds@linux-foundation.org, ganeshgr@chelsio.com,
         nirranjan@chelsio.com, indranil@chelsio.com,
         Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Subject: [PATCH net-next v3 3/3] cxgb4: collect hardware dump in second kernel
-Date: Sat, 31 Mar 2018 14:20:58 +0530
-Message-Id: <302fb326d8d15d64b5ef85471df40635f25cc890.1522483891.git.rahul.lakkireddy@chelsio.com>
+Subject: [PATCH net-next v3 2/3] vmcore: append device dumps to vmcore as elf notes
+Date: Sat, 31 Mar 2018 14:20:57 +0530
+Message-Id: <53431970d3375a37638fe54c13e35cf6a36a671d.1522483891.git.rahul.lakkireddy@chelsio.com>
 X-Mailer: git-send-email 2.5.3
 In-Reply-To: <cover.1522483890.git.rahul.lakkireddy@chelsio.com>
 References: <cover.1522483890.git.rahul.lakkireddy@chelsio.com>
@@ -27,124 +27,358 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register callback to collect hardware/firmware dumps in second kernel
-before hardware/firmware is initialized. The dumps for each device
-will be available as elf notes in /proc/vmcore in second kernel.
+Update read and mmap logic to append device dumps as additional notes
+before the other elf notes. We add device dumps before other elf notes
+because the other elf notes may not fill the elf notes buffer
+completely and we will end up with zero-filled data between the elf
+notes and the device dumps. Tools will then try to decode this
+zero-filled data as valid notes and we don't want that. Hence, adding
+device dumps before the other elf notes ensure that zero-filled data
+can be avoided. This also ensures that the device dumps and the
+other elf notes can be properly mmaped at page aligned address.
 
+Incorporate device dump size into the total vmcore size. Also update
+offsets for other program headers after the device dumps are added.
+
+Suggested-by: Eric Biederman <ebiederm@xmission.com>.
 Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
 Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
 ---
 v3:
-- Replaced all crashdd* with vmcoredd*.
-- Replaced crashdd_add_dump() with vmcore_add_device_dump().
-- Updated comments and commit message.
+- Patch added in this version.
+- Exported dumps as elf notes. Suggested by Eric Biederman
+  <ebiederm@xmission.com>.
 
-v2:
-- No Changes.
+ fs/proc/vmcore.c | 247 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 243 insertions(+), 4 deletions(-)
 
-Changes since rfc v2:
-- Update comments and commit message for sysfs change.
-
-rfc v2:
-- Updated dump registration to the new API in patch 1.
-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |  4 ++++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c | 25 ++++++++++++++++++++++++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |  3 +++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  | 10 ++++++++++
- 4 files changed, 42 insertions(+)
-
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-index 688f95440af2..01e7aad4ce5b 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-@@ -50,6 +50,7 @@
- #include <linux/net_tstamp.h>
- #include <linux/ptp_clock_kernel.h>
- #include <linux/ptp_classify.h>
-+#include <linux/crash_dump.h>
- #include <asm/io.h>
- #include "t4_chip_type.h"
- #include "cxgb4_uld.h"
-@@ -964,6 +965,9 @@ struct adapter {
- 	struct hma_data hma;
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index b53698f22362..487daef805f3 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -39,6 +39,8 @@ static size_t elfcorebuf_sz_orig;
  
- 	struct srq_data *srq;
+ static char *elfnotes_buf;
+ static size_t elfnotes_sz;
++/* Size of all notes minus the device dump notes */
++static size_t elfnotes_orig_sz;
+ 
+ /* Total size of vmcore file. */
+ static u64 vmcore_size;
+@@ -51,6 +53,9 @@ static LIST_HEAD(vmcoredd_list);
+ static DEFINE_MUTEX(vmcoredd_mutex);
+ #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
+ 
++/* Device Dump Size */
++static size_t vmcoredd_orig_sz;
 +
-+	/* Dump buffer for collecting logs in kdump kernel */
-+	struct vmcoredd_data vmcoredd;
- };
- 
- /* Support for "sched-class" command to allow a TX Scheduling Class to be
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-index 143686c60234..76433d4fe483 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-@@ -488,3 +488,28 @@ void cxgb4_init_ethtool_dump(struct adapter *adapter)
- 	adapter->eth_dump.version = adapter->params.fw_vers;
- 	adapter->eth_dump.len = 0;
+ /*
+  * Returns > 0 for RAM pages, 0 for non-RAM pages, < 0 on error
+  * The called function has to take care of module refcounting.
+@@ -185,6 +190,77 @@ static int copy_to(void *target, void *src, size_t size, int userbuf)
+ 	return 0;
  }
-+
-+static int cxgb4_cudbg_vmcoredd_collect(struct vmcoredd_data *data, void *buf)
+ 
++#ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
++static int vmcoredd_copy_dumps(void *dst, u64 start, size_t size, int userbuf)
 +{
-+	struct adapter *adap = container_of(data, struct adapter, vmcoredd);
-+	u32 len = data->size;
++	struct vmcoredd_node *dump;
++	u64 offset = 0;
++	int ret = 0;
++	size_t tsz;
++	char *buf;
 +
-+	return cxgb4_cudbg_collect(adap, buf, &len, CXGB4_ETH_DUMP_ALL);
++	mutex_lock(&vmcoredd_mutex);
++	list_for_each_entry(dump, &vmcoredd_list, list) {
++		if (start < offset + dump->size) {
++			tsz = min(offset + (u64)dump->size - start, (u64)size);
++			buf = dump->buf + start - offset;
++			if (copy_to(dst, buf, tsz, userbuf)) {
++				ret = -EFAULT;
++				goto out_unlock;
++			}
++
++			size -= tsz;
++			start += tsz;
++			dst += tsz;
++
++			/* Leave now if buffer filled already */
++			if (!size)
++				goto out_unlock;
++		}
++		offset += dump->size;
++	}
++
++out_unlock:
++	mutex_unlock(&vmcoredd_mutex);
++	return ret;
 +}
 +
-+int cxgb4_cudbg_vmcore_add_dump(struct adapter *adap)
++static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
++			       u64 start, size_t size)
 +{
-+	struct vmcoredd_data *data = &adap->vmcoredd;
-+	u32 len;
++	struct vmcoredd_node *dump;
++	u64 offset = 0;
++	int ret = 0;
++	size_t tsz;
++	char *buf;
 +
-+	len = sizeof(struct cudbg_hdr) +
-+	      sizeof(struct cudbg_entity_hdr) * CUDBG_MAX_ENTITY;
-+	len += CUDBG_DUMP_BUFF_SIZE;
++	mutex_lock(&vmcoredd_mutex);
++	list_for_each_entry(dump, &vmcoredd_list, list) {
++		if (start < offset + dump->size) {
++			tsz = min(offset + (u64)dump->size - start, (u64)size);
++			buf = dump->buf + start - offset;
++			if (remap_vmalloc_range_partial(vma, dst, buf, tsz)) {
++				ret = -EFAULT;
++				goto out_unlock;
++			}
 +
-+	data->size = len;
-+	snprintf(data->name, sizeof(data->name), "%s_%s", cxgb4_driver_name,
-+		 adap->name);
-+	data->vmcoredd_callback = cxgb4_cudbg_vmcoredd_collect;
++			size -= tsz;
++			start += tsz;
++			dst += tsz;
 +
-+	return vmcore_add_device_dump(data);
++			/* Leave now if buffer filled already */
++			if (!size)
++				goto out_unlock;
++		}
++		offset += dump->size;
++	}
++
++out_unlock:
++	mutex_unlock(&vmcoredd_mutex);
++	return ret;
 +}
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-index ce1ac9a1c878..ef59ba1ed968 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-@@ -41,8 +41,11 @@ enum CXGB4_ETHTOOL_DUMP_FLAGS {
- 	CXGB4_ETH_DUMP_HW = (1 << 1), /* various FW and HW dumps */
- };
- 
-+#define CXGB4_ETH_DUMP_ALL (CXGB4_ETH_DUMP_MEM | CXGB4_ETH_DUMP_HW)
++#endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
 +
- u32 cxgb4_get_dump_length(struct adapter *adap, u32 flag);
- int cxgb4_cudbg_collect(struct adapter *adap, void *buf, u32 *buf_size,
- 			u32 flag);
- void cxgb4_init_ethtool_dump(struct adapter *adapter);
-+int cxgb4_cudbg_vmcore_add_dump(struct adapter *adap);
- #endif /* __CXGB4_CUDBG_H__ */
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-index 0072580e2c25..040004db4a35 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -5530,6 +5530,16 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (err)
- 		goto out_free_adapter;
+ /* Read from the ELF header and then the crash dump. On error, negative value is
+  * returned otherwise number of bytes read are returned.
+  */
+@@ -222,10 +298,41 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+ 	if (*fpos < elfcorebuf_sz + elfnotes_sz) {
+ 		void *kaddr;
  
-+	if (is_kdump_kernel()) {
-+		/* Collect hardware state and append to /proc/vmcore */
-+		err = cxgb4_cudbg_vmcore_add_dump(adapter);
-+		if (err) {
-+			dev_warn(adapter->pdev_dev,
-+				 "Fail collecting vmcore device dump, err: %d. Continuing\n",
-+				 err);
-+			err = 0;
++		/* We add device dumps before other elf notes because the
++		 * other elf notes may not fill the elf notes buffer
++		 * completely and we will end up with zero-filled data
++		 * between the elf notes and the device dumps. Tools will
++		 * then try to decode this zero-filled data as valid notes
++		 * and we don't want that. Hence, adding device dumps before
++		 * the other elf notes ensure that zero-filled data can be
++		 * avoided.
++		 */
++#ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
++		/* Read device dumps */
++		if (*fpos < elfcorebuf_sz + vmcoredd_orig_sz) {
++			tsz = min(elfcorebuf_sz + vmcoredd_orig_sz -
++				  (size_t)*fpos, buflen);
++			start = *fpos - elfcorebuf_sz;
++			if (vmcoredd_copy_dumps(buffer, start, tsz, userbuf))
++				return -EFAULT;
++
++			buflen -= tsz;
++			*fpos += tsz;
++			buffer += tsz;
++			acc += tsz;
++
++			/* leave now if filled buffer already */
++			if (!buflen)
++				return acc;
++		}
++#endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
++
++		/* Read remaining elf notes */
+ 		tsz = min(elfcorebuf_sz + elfnotes_sz - (size_t)*fpos, buflen);
+-		kaddr = elfnotes_buf + *fpos - elfcorebuf_sz;
++		kaddr = elfnotes_buf + *fpos - elfcorebuf_sz - vmcoredd_orig_sz;
+ 		if (copy_to(buffer, kaddr, tsz, userbuf))
+ 			return -EFAULT;
++
+ 		buflen -= tsz;
+ 		*fpos += tsz;
+ 		buffer += tsz;
+@@ -451,11 +558,46 @@ static int mmap_vmcore(struct file *file, struct vm_area_struct *vma)
+ 	if (start < elfcorebuf_sz + elfnotes_sz) {
+ 		void *kaddr;
+ 
++		/* We add device dumps before other elf notes because the
++		 * other elf notes may not fill the elf notes buffer
++		 * completely and we will end up with zero-filled data
++		 * between the elf notes and the device dumps. Tools will
++		 * then try to decode this zero-filled data as valid notes
++		 * and we don't want that. Hence, adding device dumps before
++		 * the other elf notes ensure that zero-filled data can be
++		 * avoided. This also ensures that the device dumps and
++		 * other elf notes can be properly mmaped at page aligned
++		 * address.
++		 */
++#ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
++		/* Read device dumps */
++		if (start < elfcorebuf_sz + vmcoredd_orig_sz) {
++			u64 start_off;
++
++			tsz = min(elfcorebuf_sz + vmcoredd_orig_sz -
++				  (size_t)start, size);
++			start_off = start - elfcorebuf_sz;
++			if (vmcoredd_mmap_dumps(vma, vma->vm_start + len,
++						start_off, tsz))
++				goto fail;
++
++			size -= tsz;
++			start += tsz;
++			len += tsz;
++
++			/* leave now if filled buffer already */
++			if (!size)
++				return 0;
++		}
++#endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
++
++		/* Read remaining elf notes */
+ 		tsz = min(elfcorebuf_sz + elfnotes_sz - (size_t)start, size);
+-		kaddr = elfnotes_buf + start - elfcorebuf_sz;
++		kaddr = elfnotes_buf + start - elfcorebuf_sz - vmcoredd_orig_sz;
+ 		if (remap_vmalloc_range_partial(vma, vma->vm_start + len,
+ 						kaddr, tsz))
+ 			goto fail;
++
+ 		size -= tsz;
+ 		start += tsz;
+ 		len += tsz;
+@@ -703,6 +845,11 @@ static int __init merge_note_headers_elf64(char *elfptr, size_t *elfsz,
+ 	/* Modify e_phnum to reflect merged headers. */
+ 	ehdr_ptr->e_phnum = ehdr_ptr->e_phnum - nr_ptnote + 1;
+ 
++	/* Store the size of all notes.  We need this to update the note
++	 * header when the device dumps will be added.
++	 */
++	elfnotes_orig_sz = phdr.p_memsz;
++
+ 	return 0;
+ }
+ 
+@@ -889,6 +1036,11 @@ static int __init merge_note_headers_elf32(char *elfptr, size_t *elfsz,
+ 	/* Modify e_phnum to reflect merged headers. */
+ 	ehdr_ptr->e_phnum = ehdr_ptr->e_phnum - nr_ptnote + 1;
+ 
++	/* Store the size of all notes.  We need this to update the note
++	 * header when the device dumps will be added.
++	 */
++	elfnotes_orig_sz = phdr.p_memsz;
++
+ 	return 0;
+ }
+ 
+@@ -981,8 +1133,8 @@ static int __init process_ptload_program_headers_elf32(char *elfptr,
+ }
+ 
+ /* Sets offset fields of vmcore elements. */
+-static void __init set_vmcore_list_offsets(size_t elfsz, size_t elfnotes_sz,
+-					   struct list_head *vc_list)
++static void set_vmcore_list_offsets(size_t elfsz, size_t elfnotes_sz,
++				    struct list_head *vc_list)
+ {
+ 	loff_t vmcore_off;
+ 	struct vmcore *m;
+@@ -1188,6 +1340,92 @@ static void vmcoredd_write_note(const char *name, void *buf, size_t size)
+ 		 name);
+ }
+ 
++/**
++ * vmcoredd_update_program_headers - Update all Elf program headers
++ * @elfptr: Pointer to elf header
++ * @elfnotesz: Size of elf notes aligned to page size
++ * @vmcoreddsz: Size of device dumps to be added to elf note header
++ *
++ * Determine type of Elf header (Elf64 or Elf32) and update the elf note size.
++ * Also update the offsets of all the program headers after the elf note header.
++ */
++static void vmcoredd_update_program_headers(char *elfptr, size_t elfnotesz,
++					    size_t vmcoreddsz)
++{
++	unsigned char *e_ident = (unsigned char *)elfptr;
++	u64 start, end, size;
++	loff_t vmcore_off;
++	u32 i;
++
++	vmcore_off = elfcorebuf_sz + elfnotesz;
++
++	if (e_ident[EI_CLASS] == ELFCLASS64) {
++		Elf64_Ehdr *ehdr = (Elf64_Ehdr *)elfptr;
++		Elf64_Phdr *phdr = (Elf64_Phdr *)(elfptr + sizeof(Elf64_Ehdr));
++
++		/* Update all program headers */
++		for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
++			if (phdr->p_type == PT_NOTE) {
++				/* Update note size */
++				phdr->p_memsz = elfnotes_orig_sz + vmcoreddsz;
++				phdr->p_filesz = phdr->p_memsz;
++				continue;
++			}
++
++			start = rounddown(phdr->p_offset, PAGE_SIZE);
++			end = roundup(phdr->p_offset + phdr->p_memsz,
++				      PAGE_SIZE);
++			size = end - start;
++			phdr->p_offset = vmcore_off + (phdr->p_offset - start);
++			vmcore_off += size;
++		}
++	} else {
++		Elf32_Ehdr *ehdr = (Elf32_Ehdr *)elfptr;
++		Elf32_Phdr *phdr = (Elf32_Phdr *)(elfptr + sizeof(Elf32_Ehdr));
++
++		/* Update all program headers */
++		for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
++			if (phdr->p_type == PT_NOTE) {
++				/* Update note size */
++				phdr->p_memsz = elfnotes_orig_sz + vmcoreddsz;
++				phdr->p_filesz = phdr->p_memsz;
++				continue;
++			}
++
++			start = rounddown(phdr->p_offset, PAGE_SIZE);
++			end = roundup(phdr->p_offset + phdr->p_memsz,
++				      PAGE_SIZE);
++			size = end - start;
++			phdr->p_offset = vmcore_off + (phdr->p_offset - start);
++			vmcore_off += size;
 +		}
 +	}
++}
++
++/**
++ * vmcoredd_update_size - Update the total size of the device dumps and update
++ * Elf header
++ * @dump_size: Size of the current device dump to be added to total size
++ *
++ * Update the total size of all the device dumps and update the Elf program
++ * headers. Calculate the new offsets for the vmcore list and update the
++ * total vmcore size.
++ */
++static void vmcoredd_update_size(size_t dump_size)
++{
++	vmcoredd_orig_sz += dump_size;
++	elfnotes_sz = roundup(elfnotes_orig_sz, PAGE_SIZE) + vmcoredd_orig_sz;
++	vmcoredd_update_program_headers(elfcorebuf, elfnotes_sz,
++					vmcoredd_orig_sz);
++
++	/* Update vmcore list offsets */
++	set_vmcore_list_offsets(elfcorebuf_sz, elfnotes_sz, &vmcore_list);
++
++	vmcore_size = get_vmcore_size(elfcorebuf_sz, elfnotes_sz,
++				      &vmcore_list);
++	proc_vmcore->size = vmcore_size;
++}
++
+ /**
+  * vmcore_add_device_dump - Add a buffer containing device dump to vmcore
+  * @data: dump info.
+@@ -1239,6 +1477,7 @@ int __vmcore_add_device_dump(struct vmcoredd_data *data)
+ 	list_add_tail(&dump->list, &vmcoredd_list);
+ 	mutex_unlock(&vmcoredd_mutex);
  
- 	if (!is_t4(adapter->params.chip)) {
- 		s_qpp = (QUEUESPERPAGEPF0_S +
++	vmcoredd_update_size(data_size);
+ 	return 0;
+ 
+ out_err:
 -- 
 2.14.1
