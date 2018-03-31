@@ -1,79 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeCaS2R (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 14:28:17 -0400
-Received: from mail.us.es ([193.147.175.20]:49260 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753017AbeCaS2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 14:28:15 -0400
-Date: Sat, 31 Mar 2018 20:28:10 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Joe Perches <joe@perches.com>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/12] bridge: netfilter: Use the new global
- ether_<foo>_addr arrays
-Message-ID: <20180331182810.or7attmfpjxw4sfm@salvia>
-References: <cover.1522479607.git.joe@perches.com>
- <df70bafdca663db034626f4f1525826ea263bf2c.1522479607.git.joe@perches.com>
+        id S1753282AbeCaS3x (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 14:29:53 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41942 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753073AbeCaS3v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 14:29:51 -0400
+X-Google-Smtp-Source: AIpwx49m8jYQOJ/eFXT7SsRx8hR+gLIL4Z/ycX8PRRT2XJp6lnhwAFLHaNMF/GnXyNy5tsshBmY4DopgKlVxmiPAVMI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df70bafdca663db034626f4f1525826ea263bf2c.1522479607.git.joe@perches.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <ee25829c-e8de-1171-e54e-3b34206acc9e@oracle.com>
+References: <20180319165804.10636-1-jandryuk@gmail.com> <c3075b0c-a60b-0809-e34b-223701a53b84@oracle.com>
+ <CAKf6xps0HJecKM0gYSK+3BGhKknYp9Ydxr3S0oWBThtXeytegw@mail.gmail.com> <ee25829c-e8de-1171-e54e-3b34206acc9e@oracle.com>
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Sat, 31 Mar 2018 14:29:49 -0400
+Message-ID: <CAKf6xpvhX3_MehbYP-XbJPRgVMyFbZ6f6fsJyaTfHca0xwTpWw@mail.gmail.com>
+Subject: Re: [PATCH] x86/xen: Delay get_cpu_cap until stack canary is established
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        open list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+On Sat, Mar 31, 2018 at 2:10 PM, Boris Ostrovsky
+<boris.ostrovsky@oracle.com> wrote:
+> On 03/31/2018 01:38 PM, Jason Andryuk wrote:
+>> On Wed, Mar 21, 2018, 5:12 PM Boris Ostrovsky <boris.ostrovsky@oracle.com
+>> <mailto:boris.ostrovsky@oracle.com>> wrote:
+>>
+>>     On 03/19/2018 12:58 PM, Jason Andryuk wrote:
+>>      > Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
+>>     introduced a
+>>      > call to get_cpu_cap, which is fstack-protected.  This is works on
+>>     x86-64
+>>      > as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
+>>      > faults with stack protector") ensures the stack protector is
+>>     configured,
+>>      > but it it did not cover x86-32.
+>>      >
+>>      > Delay calling get_cpu_cap until after xen_setup_gdt has
+>>     initialized the
+>>      > stack canary.  Without this, a 32bit PV machine crashes early
+>>      > in boot.
+>>      > (XEN) Domain 0 (vcpu#0) crashed on cpu#0:
+>>      > (XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
+>>      > (XEN) CPU:    0
+>>      > (XEN) RIP:    e019:[<00000000c10362f8>]
+>>      >
+>>      > And the PV kernel IP corresponds to init_scattered_cpuid_features
+>>      >    0xc10362f8 <+24>:    mov    %gs:0x14,%eax
+>>      >
+>>      > Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
+>>      >
+>>      > Signed-off-by: Jason Andryuk <jandryuk@gmail.com
+>>     <mailto:jandryuk@gmail.com>>
+>>      >
+>>
+>>
+>>     Applied to for-linus-4.17
+>>
+>>
+>> Thanks. If it's not too late, can this be cc: stable?
+>
+> We can always try ;-)
+>
+> This is 4.15 and 4.16 only, I believe.
 
-On Sat, Mar 31, 2018 at 12:05:19AM -0700, Joe Perches wrote:
-> Remove the local consts and use the new globals.
+I'm using this patch on 4.14, so there as well.
 
-This one is already upstream:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git/commit/?id=9124a20d8794663a396b5d6f91f66903848a042b
-
-I can see you're using is_broadcast_ether_addr(e->destmsk) in this new
-version, we would need an incremental version.
-
-Thanks.
-
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  net/bridge/netfilter/ebt_stp.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/bridge/netfilter/ebt_stp.c b/net/bridge/netfilter/ebt_stp.c
-> index 3140eb912d7e..2b7479cc0140 100644
-> --- a/net/bridge/netfilter/ebt_stp.c
-> +++ b/net/bridge/netfilter/ebt_stp.c
-> @@ -153,8 +153,6 @@ ebt_stp_mt(const struct sk_buff *skb, struct xt_action_param *par)
->  static int ebt_stp_mt_check(const struct xt_mtchk_param *par)
->  {
->  	const struct ebt_stp_info *info = par->matchinfo;
-> -	const u8 bridge_ula[6] = {0x01, 0x80, 0xc2, 0x00, 0x00, 0x00};
-> -	const u8 msk[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
->  	const struct ebt_entry *e = par->entryinfo;
->  
->  	if (info->bitmask & ~EBT_STP_MASK || info->invflags & ~EBT_STP_MASK ||
-> @@ -162,8 +160,8 @@ static int ebt_stp_mt_check(const struct xt_mtchk_param *par)
->  		return -EINVAL;
->  	/* Make sure the match only receives stp frames */
->  	if (!par->nft_compat &&
-> -	    (!ether_addr_equal(e->destmac, bridge_ula) ||
-> -	     !ether_addr_equal(e->destmsk, msk) ||
-> +	    (!ether_addr_equal(e->destmac, ether_stp_addr) ||
-> +	     !ether_addr_equal(e->destmsk, ether_broadcast_addr) ||
->  	     !(e->bitmask & EBT_DESTMAC)))
->  		return -EINVAL;
->  
-> -- 
-> 2.15.0
-> 
+-Jason
