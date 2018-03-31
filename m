@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753490AbeCaUuL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 16:50:11 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:59296 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751280AbeCaUrG (ORCPT
+        id S1753458AbeCaUuI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 16:50:08 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:54961 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751368AbeCaUrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 31 Mar 2018 16:47:06 -0400
-X-Google-Smtp-Source: AIpwx4/0au6qrG8XKLsqlbqH9p7c+YG2la1W9ZnkoGofRyMM/nq1VhoqGR8EgJ5uKLF90NFUJreAKtvQ+VkBBS8f7Q3PfBn+erZb
+X-Google-Smtp-Source: AIpwx4/E5mOZ9Q7RlMcmJSEuZpEEi6/EVMkfUU6A9qjCUc/vqAJ258/2yCEHUQTocZlqxT/OoGVBvsF3IF9ZD/PxSunuIpbeR39C
 MIME-Version: 1.0
-Date: Sat, 31 Mar 2018 13:47:05 -0700
+Date: Sat, 31 Mar 2018 13:47:06 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a11447acaab591f0568bb75e2@google.com>
-Subject: general protection fault in __mem_cgroup_free
-From: syzbot <syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+Message-ID: <001a113fd904af4b2a0568bb755f@google.com>
+Subject: KASAN: use-after-free Read in __ext4_check_dir_entry
+From: syzbot <syzbot+1236ce66f79263e8a862@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,80 +29,68 @@ syzbot hit the following crash on upstream commit
 9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
 Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=8a5de3cce7cdc70e9ebe
+https://syzkaller.appspot.com/bug?extid=1236ce66f79263e8a862
 
-So far this crash happened 14 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5578311367393280
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6171830884761600
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5708657048158208
+https://syzkaller.appspot.com/x/repro.syz?id=5341633302233088
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6693821748346880
+https://syzkaller.appspot.com/x/log.txt?id=6080954745487360
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com
+Reported-by: syzbot+1236ce66f79263e8a862@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-RBP: 00000000006dcc20 R08: 0000000000000002 R09: 0000000000003335
-R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
-R13: 00007f1747954d80 R14: ffffffffffffffff R15: 0000000000000006
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4422 Comm: syzkaller101598 Not tainted 4.16.0-rc7+ #372
+==================================================================
+BUG: KASAN: use-after-free in __ext4_check_dir_entry+0x2de/0x320  
+fs/ext4/dir.c:69
+Read of size 2 at addr ffff8801b80bf000 by task syzkaller432828/4365
+
+CPU: 1 PID: 4365 Comm: syzkaller432828 Not tainted 4.16.0-rc7+ #7
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:free_mem_cgroup_per_node_info mm/memcontrol.c:4111 [inline]
-RIP: 0010:__mem_cgroup_free+0x71/0x110 mm/memcontrol.c:4120
-RSP: 0018:ffff8801accf75a8 EFLAGS: 00010206
-RAX: 0000000000000011 RBX: 0000000000000000 RCX: ffffffff8310cdfd
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000088
-RBP: ffff8801accf75c8 R08: 0000000000000000 R09: ffff8801accf73a0
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff8801ad210d40 R14: dffffc0000000000 R15: ffff8801ad210d40
-FS:  00007f1747955700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000460000 CR3: 00000001cb367004 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  mem_cgroup_free mm/memcontrol.c:4128 [inline]
-  mem_cgroup_css_alloc+0x403/0x19c0 mm/memcontrol.c:4239
-  css_create kernel/cgroup/cgroup.c:4729 [inline]
-  cgroup_apply_control_enable+0x44d/0xbc0 kernel/cgroup/cgroup.c:2916
-  cgroup_mkdir+0x56f/0xfc0 kernel/cgroup/cgroup.c:4938
-  kernfs_iop_mkdir+0x153/0x1e0 fs/kernfs/dir.c:1099
-  vfs_mkdir+0x390/0x600 fs/namei.c:3800
-  SYSC_mkdirat fs/namei.c:3823 [inline]
-  SyS_mkdirat+0x22b/0x2b0 fs/namei.c:3807
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:431
+  __ext4_check_dir_entry+0x2de/0x320 fs/ext4/dir.c:69
+  ext4_readdir+0xd00/0x3600 fs/ext4/dir.c:237
+  iterate_dir+0x1ca/0x530 fs/readdir.c:51
+  SYSC_getdents64 fs/readdir.c:314 [inline]
+  SyS_getdents64+0x221/0x420 fs/readdir.c:295
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44a0c9
-RSP: 002b:00007f1747954d78 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
-RAX: ffffffffffffffda RBX: 00000000006dcc24 RCX: 000000000044a0c9
-RDX: 0000000000000020 RSI: 0000000020000280 RDI: 0000000000000005
-RBP: 00000000006dcc20 R08: 0000000000000002 R09: 0000000000003335
-R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
-R13: 00007f1747954d80 R14: ffffffffffffffff R15: 0000000000000006
-Code: 00 00 48 89 f8 48 c1 e8 03 42 80 3c 30 00 0f 85 99 00 00 00 4f 8b a4  
-e5 f0 09 00 00 49 8d bc 24 88 00 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 30  
-00 0f 85 88 00 00 00 49 8b bc 24 88 00 00 00 e8 77
-RIP: free_mem_cgroup_per_node_info mm/memcontrol.c:4111 [inline] RSP:  
-ffff8801accf75a8
-RIP: __mem_cgroup_free+0x71/0x110 mm/memcontrol.c:4120 RSP: ffff8801accf75a8
----[ end trace 57ac07c30502ef78 ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+RIP: 0033:0x43fd69
+RSP: 002b:00007ffc446ac118 EFLAGS: 00000203 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd69
+RDX: 00000000200015fc RSI: 0000000020001540 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000203 R12: 0000000000401690
+R13: 0000000000401720 R14: 0000000000000000 R15: 0000000000000000
+
+The buggy address belongs to the page:
+page:ffffea0006e02fc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffea0006c095a0 ffffea0006e03020 ffff8801be5f2a50 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b80bef00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801b80bef80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801b80bf000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                    ^
+  ffff8801b80bf080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801b80bf100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
 
 ---
