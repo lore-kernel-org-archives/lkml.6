@@ -1,60 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752944AbeCaOde (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 10:33:34 -0400
-Received: from smtprelay0056.hostedemail.com ([216.40.44.56]:59783 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752153AbeCaOdc (ORCPT
+        id S1753010AbeCaOi7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 10:38:59 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:41851 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752859AbeCaOi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 10:33:32 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:981:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3865:3867:3870:4321:4605:5007:10004:10400:10848:11026:11232:11658:11914:12043:12048:12050:12438:12555:12740:12760:12895:13069:13161:13229:13255:13311:13357:13439:14659:14721:21080:21433:21627:30003:30012:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: rake49_75d6cc608c806
-X-Filterd-Recvd-Size: 2196
-Message-ID: <1522506808.11653.7.camel@perches.com>
-Subject: Re: [PATCH 06/12] wireless: Convert simple uses of a static const
- Ethernet broadcast address
-From: Joe Perches <joe@perches.com>
-To: Pkshih <pkshih@realtek.com>, "huxm@marvell.com" <huxm@marvell.com>,
-        "gbhat@marvell.com" <gbhat@marvell.com>,
-        "jussi.kivilinna@iki.fi" <jussi.kivilinna@iki.fi>,
-        "nishants@marvell.com" <nishants@marvell.com>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        "amitkarwar@gmail.com" <amitkarwar@gmail.com>,
-        "chunkeey@googlemail.com" <chunkeey@googlemail.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "b43-dev@lists.infradead.org" <b43-dev@lists.infradead.org>
-Date: Sat, 31 Mar 2018 07:33:28 -0700
-In-Reply-To: <1522504872.1910.17.camel@realtek.com>
-References: <cover.1522479607.git.joe@perches.com>
-         <79196f134a513d50968e8e208a0e56b3c0236ee3.1522479607.git.joe@perches.com>
-         <1522504872.1910.17.camel@realtek.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 31 Mar 2018 10:38:57 -0400
+X-Google-Smtp-Source: AIpwx48lv1GOodlISgVakuDmm9sfXhpe6wx2GKdmuuaEsmsZaWRoRyJl7XmJbDdqenNU6XqS7WV6fwcINai0ZJdfdwU=
+MIME-Version: 1.0
+In-Reply-To: <CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
+References: <cover.1522357211.git.sargun@sargun.me> <5240a81494bbe5be5651379cd9828bda34d764e2.1522357211.git.sargun@sargun.me>
+ <3292bbb3-7c9d-f18d-05f3-9b69b3cac922@schaufler-ca.com> <20180330023331.GA10833@ircssh-2.c.rugged-nimbus-611.internal>
+ <8b015e9e-dccb-aefd-f5b2-c66eed3c6815@schaufler-ca.com> <CAMp4zn96Maw8LrdOrdv-fCEZUdPi+kYQVROURcSxOQfiUUyCNA@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Sat, 31 Mar 2018 07:38:54 -0700
+X-Google-Sender-Auth: qyTTNQ1Po01PWiK29s4LI1nYTDs
+Message-ID: <CAGXu5jLn6c=mr5VC=fUP4LUD18EuPAYyDkYTrv_rpxSuxAz--A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] security: Add mechanism to safely (un)load LSMs
+ after boot time
+To: Sargun Dhillon <sargun@sargun.me>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Igor Stoppa <igor.stoppa@huawei.com>, James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Paul Moore <paul@paul-moore.com>,
+        plautrba@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-31 at 14:01 +0000, Pkshih wrote:
-> On Sat, 2018-03-31 at 00:05 -0700, Joe Perches wrote:
-> > Use the new ether_broadcast_addr global instead to save some object code.
-[]
-> > diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c
-[]
-> > @@ -1649,7 +1648,7 @@ static int rtl_op_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
-> >  			memcpy(rtlpriv->sec.key_buf[key_idx],
-> >  			       key->key, key->keylen);
-> >  			rtlpriv->sec.key_len[key_idx] = key->keylen;
-> > -			memcpy(mac_addr, bcast_addr, ETH_ALEN);
-> > +			memcpy(mac_addr, ether_broadcast_addr, ETH_ALEN);
-> 
-> Use ether_addr_copy(mac_addr, ether_broadcast_addr) ?
+On Fri, Mar 30, 2018 at 11:16 PM, Sargun Dhillon <sargun@sargun.me> wrote:
+> On Fri, Mar 30, 2018 at 2:39 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>  static struct security_hook_list     null_hooks[SECURITY_HOOK_COUNT];
+>>> -#define HAS_FUNC(SHL, FUNC)  (SHL->hook.FUNC)
+>>> +DEFINE_STATIC_SRCU(security_hook_srcu);
+>>> +
+>>> +static inline bool is_null_hook(struct security_hook_list *shl)
+>>> +{
+>>> +     union {
+>>> +             void *cb_ptr;
+>>> +             union security_list_options slo;
+>>> +     } hook_options;
+>>> +
+>>> +     hook_options.slo = shl->hook;
+>>> +     return !hook_options.cb_ptr;
+>>> +}
+>>
+>> I like the HAS_FUNC() approach better.
+>
+>  Just curious, why? I personally prefer small static inline functions
+> over macros, if possible.
 
-This should use eth_broadcast_addr(mac_addr) instead.
+Generally speaking, small static inline functions are better since
+they provide type-checking. In this case, though, it looks like you're
+just doing a cast, but with a union. Why isn't this just:
 
-There are similar conversion still possible in the tree.
-One day.
+return !!((uintptr_t)shl->hook)
+
+?
+
+Though the security_list_options union exists for callback type
+checking, so really, having HAS_FUNC() with the explicit function
+you're interested in creates a bit of self-documenting code (even if
+it always resolves to the above test).
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
