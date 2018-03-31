@@ -1,133 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752162AbeCaIKW (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 04:10:22 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:37956 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751564AbeCaIKP (ORCPT
+        id S1752149AbeCaIgh (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 04:36:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34148 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751616AbeCaIgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 04:10:15 -0400
-X-Google-Smtp-Source: AIpwx499jXrK9wXmca/BjWWb5GP8ymzSi1VxWkTBO+D3rHzvtP4iF52z80n3zD7oA/mV5mqIlKUnxQ==
-Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
- <20180317232901.14129-8-paul@crapouillou.net>
- <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
- <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
- <af33e522-7f87-d62a-0a35-d56a403387b7@linaro.org>
- <1522335149.1792.0@smtp.crapouillou.net>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <2234006b-30ff-d5a8-b14a-d6e307c06145@linaro.org>
-Date: Sat, 31 Mar 2018 10:10:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 31 Mar 2018 04:36:36 -0400
+X-Google-Smtp-Source: AIpwx4/TLaktYokoqaFknhiFbHTYUH+2nREdg0bIhK+Whk1easyc0JYB5KXisrpv49gKq8XDfbHHfA==
+Date: Sat, 31 Mar 2018 10:36:32 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] refcount: trim headers
+Message-ID: <20180331083632.zufg2gzgjsyemcsq@gmail.com>
+References: <20180313193410.GA12260@avx2>
 MIME-Version: 1.0
-In-Reply-To: <1522335149.1792.0@smtp.crapouillou.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313193410.GA12260@avx2>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/03/2018 16:52, Paul Cercueil wrote:
+
+* Alexey Dobriyan <adobriyan@gmail.com> wrote:
+
+> kernel.h is not needed, but compiler.h is.
 > 
+> mutex.h is not needed only a forward declaration.
 > 
-> Le mer. 28 mars 2018 à 18:25, Daniel Lezcano <daniel.lezcano@linaro.org>
-> a écrit :
->> On 28/03/2018 17:15, Paul Cercueil wrote:
->>>  Le 2018-03-24 07:26, Daniel Lezcano a écrit :
->>>>  On 18/03/2018 00:29, Paul Cercueil wrote:
->>>>>  This driver will use the TCU (Timer Counter Unit) present on the
->>>>> Ingenic
->>>>>  JZ47xx SoCs to provide the kernel with a clocksource and timers.
->>>>
->>>>  Please provide a more detailed description about the timer.
->>>
->>>  There's a doc file for that :)
->>
->> Usually, when there is a new driver I ask for a description in the
->> changelog for reference.
->>
->>>>  Where is the clocksource ?
->>>
->>>  Right, there is no clocksource, just timers.
->>>
->>>>  I don't see the point of using channel idx and pwm checking here.
->>>>
->>>>  There is one clockevent, why create multiple channels ? Can't you
->>>> stick
->>>>  to the usual init routine for a timer.
->>>
->>>  So the idea is that we use all the TCU channels that won't be used
->>> for PWM
->>>  as timers. Hence the PWM checking. Why is this bad?
->>
->> It is not bad but arguable. By checking the channels used by the pwm in
->> the code, you introduce an adherence between two subsystems even if it
->> is just related to the DT parsing part.
->>
->> As it is not needed to have more than one timer in the time framework
->> (at least with the same characteristics), the pwm channels check is
->> pointless. We can assume the author of the DT file is smart enough to
->> prevent conflicts and define a pwm and a timer properly instead of
->> adding more code complexity.
->>
->> In addition, simplifying the code will allow you to use the timer-of
->> code and reduce very significantly the init function.
+> spinlock.h is not needed, spinlock_types.h is enough.
 > 
-> That's what I had in my V1 and V2, my DT node for the timer-ingenic driver
-> had a "timers" property (e.g. "timers = <4 5>;") to select the channels
-> that
-> should be used as timers. Then Rob told me I shouldn't do that, and instead
-> detect the channels that will be used for PWM.
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> ---
 > 
-
-[ ... ]
-
-How do you specify the channels used for PWM ?
-
->>>>>
->>>>>  +config INGENIC_TIMER
->>>>>  +    bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
->>>>>  +    depends on MACH_INGENIC || COMPILE_TEST
->>>>
->>>>  bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if
->>>> COMPILE_TEST
->>>>
->>>>  Remove the depends MACH_INGENIC.
->>>
->>>  This driver is not useful on anything else than Ingenic SoCs, why
->>> should I
->>>  remove MACH_INGENIC then?
->>
->> For COMPILE_TEST on x86.
+>  include/linux/refcount.h |    7 ++++---
+>  lib/refcount.c           |    2 ++
+>  2 files changed, 6 insertions(+), 3 deletions(-)
 > 
-> Well that's a logical OR right here, so it will work...
+> --- a/include/linux/refcount.h
+> +++ b/include/linux/refcount.h
+> @@ -3,9 +3,10 @@
+>  #define _LINUX_REFCOUNT_H
+>  
+>  #include <linux/atomic.h>
+> -#include <linux/mutex.h>
+> -#include <linux/spinlock.h>
+> -#include <linux/kernel.h>
+> +#include <linux/compiler.h>
+> +#include <linux/spinlock_types.h>
+> +
+> +struct mutex;
+>  
+>  /**
+>   * struct refcount_t - variant of atomic_t specialized for reference counts
+> --- a/lib/refcount.c
+> +++ b/lib/refcount.c
+> @@ -35,7 +35,9 @@
+>   *
+>   */
+>  
+> +#include <linux/mutex.h>
+>  #include <linux/refcount.h>
+> +#include <linux/spinlock.h>
+>  #include <linux/bug.h>
 
-Right, I missed the second part of the condition. For consistency
-reason, we don't add a dependency on the platform. The platform will
-select it. Look the other timer options and you will see there is no
-MACH deps. I'm trying consolidating all these options to have same
-format and hopefully factor them out.
+Doesn't build on x86-64 defconfig...
 
+Thanks,
 
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+	Ingo
