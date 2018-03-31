@@ -1,246 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753057AbeCaJbi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 05:31:38 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:40655 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752793AbeCaJbg (ORCPT
+        id S1753028AbeCaJfw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 05:35:52 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33850 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752829AbeCaJfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 05:31:36 -0400
-X-Google-Smtp-Source: AIpwx48OdJOjXlIZm6cMw0Eao+5sKh99IsOBBwqjlzYkAi8uAdpXKsoiIUjFxa8w+aAF/Za74d7akA==
-From: Varsha Rao <rvarsha016@gmail.com>
-To: Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cocci <cocci@systeme.lip6.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Cc: Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH v2] crypto: cavium: zip: Remove unnecessary parentheses
-Date: Sat, 31 Mar 2018 15:01:14 +0530
-Message-Id: <20180331093114.5034-1-rvarsha016@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        Sat, 31 Mar 2018 05:35:50 -0400
+X-Google-Smtp-Source: AIpwx485x7HtLRCbfKBv/6V78z2G1jjoGfJj8EFxGqhcA1nqe2ENE8+HU4Opu/3SYtKo4DPLayyX6Q==
+Date: Sat, 31 Mar 2018 11:35:46 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Markus Metzger <markus.t.metzger@intel.com>
+Subject: Re: [PATCH] perf: Allow suppressing AUX records
+Message-ID: <20180331093546.ac7ygm4iz4l7hg4x@gmail.com>
+References: <20171115120022.o7hmfdb7vpeikvjl@hirez.programming.kicks-ass.net>
+ <20180115150020.8509-1-alexander.shishkin@linux.intel.com>
+ <20180329115429.GX4043@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180329115429.GX4043@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the clang warning of extraneous parentheses, with the
-following coccinelle script.
 
-@@
-identifier i;
-constant c;
-expression e;
-@@
-(
-!((e))
-|
--((
-\(i == c\|i != c\|i <= c\|i < c\|i >= c\|i > c\)
--))
-)
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
----
-Changes in v2:
- - Modified coccinelle script
+> On Mon, Jan 15, 2018 at 05:00:20PM +0200, Alexander Shishkin wrote:
+> > It has been pointed out to me many times that it is useful to be able
+> > to switch off AUX records to save the bandwidth for records that actually
+> > matter, for example, in AUX overwrite mode.
+> > 
+> > The usefulness of PERF_RECORD_AUX is in some of its flags, like the
+> > TRUNCATED flag that tells the decoder where exactly gaps in the trace are.
+> > The OVERWRITE flag, on the other hand will be set on every single record
+> > in overwrite mode. However, a PERF_RECORD_AUX[flags=OVERWRITE] is
+> > generated on every target task's sched_out, which over time adds up to
+> > a lot of useless information.
+> > 
+> > In case the existing userspace depends on AUX records in the overwrite
+> > mode, we preserve the original behavior and add an opt-in for the new
+> > behavior, wherein the 'useless' records get suppressed.
+> > 
+> > This patch adds an attribute bit to the described effect.
+> > 
+> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Cc: Markus Metzger <markus.t.metzger@intel.com>
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > ---
+> >  include/uapi/linux/perf_event.h |  3 ++-
+> >  kernel/events/core.c            |  5 +++++
+> >  kernel/events/ring_buffer.c     | 13 +++++++++++--
+> >  3 files changed, 18 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> > index c77c9a2ebbbb..d7a981130561 100644
+> > --- a/include/uapi/linux/perf_event.h
+> > +++ b/include/uapi/linux/perf_event.h
+> > @@ -370,7 +370,8 @@ struct perf_event_attr {
+> >  				context_switch :  1, /* context switch data */
+> >  				write_backward :  1, /* Write ring buffer from end to beginning */
+> >  				namespaces     :  1, /* include namespaces data */
+> > -				__reserved_1   : 35;
+> > +				suppress_aux   :  1, /* don't generate PERF_RECORD_AUX */
+> > +				__reserved_1   : 34;
+> >  
+> >  	union {
+> >  		__u32		wakeup_events;	  /* wakeup every n events */
+> 
+> So I'm basically fine with this patch, however I wonder if we really
+> need this suppress flag and can't just unconditionally drop these
+> events.
+> 
+> Ash said that as far as he knows no Intel-PT user actually relies on it;
+> Will is there anything ARM that is known to rely on them?
+> 
+> In anycase, tentative ACK on this, unless we wants to be brave and forgo
+> this flag.
+> 
+> Ingo, any opinions?
 
- drivers/crypto/cavium/zip/zip_regs.h | 42 ++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+Yeah, I'd suggest we just supress those record, and wait for complaints - let's 
+not complicate the ABI if not necessary?
 
-diff --git a/drivers/crypto/cavium/zip/zip_regs.h b/drivers/crypto/cavium/zip/zip_regs.h
-index d0be682305c1..874e0236c87e 100644
---- a/drivers/crypto/cavium/zip/zip_regs.h
-+++ b/drivers/crypto/cavium/zip/zip_regs.h
-@@ -443,7 +443,7 @@ union zip_corex_bist_status {
- 
- static inline u64 ZIP_COREX_BIST_STATUS(u64 param1)
- {
--	if (((param1 <= 1)))
-+	if (param1 <= 1)
- 		return 0x0520ull + (param1 & 1) * 0x8ull;
- 	pr_err("ZIP_COREX_BIST_STATUS: %llu\n", param1);
- 	return 0;
-@@ -537,7 +537,7 @@ union zip_dbg_corex_inst {
- 
- static inline u64 ZIP_DBG_COREX_INST(u64 param1)
- {
--	if (((param1 <= 1)))
-+	if (param1 <= 1)
- 		return 0x0640ull + (param1 & 1) * 0x8ull;
- 	pr_err("ZIP_DBG_COREX_INST: %llu\n", param1);
- 	return 0;
-@@ -568,7 +568,7 @@ union zip_dbg_corex_sta {
- 
- static inline u64 ZIP_DBG_COREX_STA(u64 param1)
- {
--	if (((param1 <= 1)))
-+	if (param1 <= 1)
- 		return 0x0680ull + (param1 & 1) * 0x8ull;
- 	pr_err("ZIP_DBG_COREX_STA: %llu\n", param1);
- 	return 0;
-@@ -599,7 +599,7 @@ union zip_dbg_quex_sta {
- 
- static inline u64 ZIP_DBG_QUEX_STA(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1800ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_DBG_QUEX_STA: %llu\n", param1);
- 	return 0;
-@@ -817,7 +817,7 @@ union zip_msix_pbax {
- 
- static inline u64 ZIP_MSIX_PBAX(u64 param1)
- {
--	if (((param1 == 0)))
-+	if (param1 == 0)
- 		return 0x0000838000FF0000ull;
- 	pr_err("ZIP_MSIX_PBAX: %llu\n", param1);
- 	return 0;
-@@ -846,7 +846,7 @@ union zip_msix_vecx_addr {
- 
- static inline u64 ZIP_MSIX_VECX_ADDR(u64 param1)
- {
--	if (((param1 <= 17)))
-+	if (param1 <= 17)
- 		return 0x0000838000F00000ull + (param1 & 31) * 0x10ull;
- 	pr_err("ZIP_MSIX_VECX_ADDR: %llu\n", param1);
- 	return 0;
-@@ -875,7 +875,7 @@ union zip_msix_vecx_ctl {
- 
- static inline u64 ZIP_MSIX_VECX_CTL(u64 param1)
- {
--	if (((param1 <= 17)))
-+	if (param1 <= 17)
- 		return 0x0000838000F00008ull + (param1 & 31) * 0x10ull;
- 	pr_err("ZIP_MSIX_VECX_CTL: %llu\n", param1);
- 	return 0;
-@@ -900,7 +900,7 @@ union zip_quex_done {
- 
- static inline u64 ZIP_QUEX_DONE(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE: %llu\n", param1);
- 	return 0;
-@@ -925,7 +925,7 @@ union zip_quex_done_ack {
- 
- static inline u64 ZIP_QUEX_DONE_ACK(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2200ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_ACK: %llu\n", param1);
- 	return 0;
-@@ -950,7 +950,7 @@ union zip_quex_done_ena_w1c {
- 
- static inline u64 ZIP_QUEX_DONE_ENA_W1C(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2600ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_ENA_W1C: %llu\n", param1);
- 	return 0;
-@@ -975,7 +975,7 @@ union zip_quex_done_ena_w1s {
- 
- static inline u64 ZIP_QUEX_DONE_ENA_W1S(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2400ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_ENA_W1S: %llu\n", param1);
- 	return 0;
-@@ -1004,7 +1004,7 @@ union zip_quex_done_wait {
- 
- static inline u64 ZIP_QUEX_DONE_WAIT(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2800ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_WAIT: %llu\n", param1);
- 	return 0;
-@@ -1029,7 +1029,7 @@ union zip_quex_doorbell {
- 
- static inline u64 ZIP_QUEX_DOORBELL(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x4000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DOORBELL: %llu\n", param1);
- 	return 0;
-@@ -1058,7 +1058,7 @@ union zip_quex_err_ena_w1c {
- 
- static inline u64 ZIP_QUEX_ERR_ENA_W1C(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3600ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_ENA_W1C: %llu\n", param1);
- 	return 0;
-@@ -1087,7 +1087,7 @@ union zip_quex_err_ena_w1s {
- 
- static inline u64 ZIP_QUEX_ERR_ENA_W1S(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3400ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_ENA_W1S: %llu\n", param1);
- 	return 0;
-@@ -1120,7 +1120,7 @@ union zip_quex_err_int {
- 
- static inline u64 ZIP_QUEX_ERR_INT(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_INT: %llu\n", param1);
- 	return 0;
-@@ -1150,7 +1150,7 @@ union zip_quex_err_int_w1s {
- 
- static inline u64 ZIP_QUEX_ERR_INT_W1S(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3200ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_INT_W1S: %llu\n", param1);
- 	return 0;
-@@ -1179,7 +1179,7 @@ union zip_quex_gcfg {
- 
- static inline u64 ZIP_QUEX_GCFG(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1A00ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_GCFG: %llu\n", param1);
- 	return 0;
-@@ -1204,7 +1204,7 @@ union zip_quex_map {
- 
- static inline u64 ZIP_QUEX_MAP(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1400ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_MAP: %llu\n", param1);
- 	return 0;
-@@ -1236,7 +1236,7 @@ union zip_quex_sbuf_addr {
- 
- static inline u64 ZIP_QUEX_SBUF_ADDR(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_SBUF_ADDR: %llu\n", param1);
- 	return 0;
-@@ -1276,7 +1276,7 @@ union zip_quex_sbuf_ctl {
- 
- static inline u64 ZIP_QUEX_SBUF_CTL(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1200ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_SBUF_CTL: %llu\n", param1);
- 	return 0;
--- 
-2.14.3
+Thanks,
+
+	Ingo
