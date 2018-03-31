@@ -1,160 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeCaKk4 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 06:40:56 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:38900 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751385AbeCaKky (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 06:40:54 -0400
-X-Google-Smtp-Source: AIpwx49CitmjUprYBkBEQLO/1bK/36v/ufXkxBoN0ZE8wDB9POZERY5DCuN3Tr1qrygBCN/7s7a0Xw==
-Date: Sat, 31 Mar 2018 12:40:50 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] perf fixes
-Message-ID: <20180331104050.s4lgdw5vozlqgbap@gmail.com>
+        id S1752268AbeCaK4J (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 06:56:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751520AbeCaK4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 06:56:08 -0400
+Date: Sat, 31 Mar 2018 12:56:58 +0200
+From: Eugene Syromiatnikov <esyr@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org
+Subject: Re: [GIT PULL] siginfo fix for v4.16-rc5
+Message-ID: <20180331105658.GA4332@asgard.redhat.com>
+References: <87woypy8zc.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <87woypy8zc.fsf@xmission.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Tue, Mar 06, 2018 at 01:11:03AM -0600, Eric W. Biederman wrote:
+> Linus,
+> 
+> Please pull the siginfo-linus branch from the git tree:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git siginfo-linus
+> 
+>    HEAD: f6a015498dcaee72f80283cb7873d88deb07129c signal/x86: Include the field offsets in the build time checks
+> 
+> The kbuild test robot found that I accidentally moved si_pkey when I was
+> cleaning up siginfo_t.  A short followed by an int with the int having 8
+> byte alignment.  Sheesh siginfo_t is a weird structure.
+> 
+> I have now corrected it and added build time checks that with a little
+> luck will catch any similar future mistakes.  The build time checks were
+> sufficient for me to verify the bug and to verify my fix.  So they are
+> at least useful this once.
+> 
+> Eric W. Biederman (2):
+>       signal: Correct the offset of si_pkey in struct siginfo
 
-Please pull the latest perf-urgent-for-linus git tree from:
+Looks like this commit changes layout of the siginfo struct on m68k:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+pts/0, esyr@fedora: /tmp % cat si.c
+#include <stddef.h>
+#include "linux/signal.h"
 
-   # HEAD: f67b15037a7a50c57f72e69a6d59941ad90a0f0f perf/hwbp: Simplify the perf-hwbp code, fix documentation
+static const size_t lower_offset = offsetof(struct siginfo, si_lower);
+pts/0, esyr@fedora: /tmp % m68k-linux-gnu-gcc -Ikhdr-v4.16-rc1\~159\^2\~20/include -g -c si.c -o si-orig.o
+pts/0, esyr@fedora: /tmp % m68k-linux-gnu-gcc -Ikhdr-v4.16-rc3\~17\^2/include -g -c si.c -o si-1.o
+pts/0, esyr@fedora: /tmp % m68k-linux-gnu-gcc -Ikhdr-v4.16-rc7-194-g29d9d38/include -g -c si.c -o si-2.o
+pts/0, esyr@fedora: /tmp % for i in si-orig.o si-1.o si-2.o; do echo -------- $i; objdump -t -j .rodata $i; objdump -s -j .rodata $i; done
+-------- si-orig.o
 
-Two fixlets.
+si-orig.o:     file format elf32-big
 
- Thanks,
-
-	Ingo
-
------------------->
-Linus Torvalds (1):
-      perf/hwbp: Simplify the perf-hwbp code, fix documentation
-
-Stephane Eranian (1):
-      perf/x86/intel: Fix linear IP of PEBS real_ip on Haswell and later CPUs
+SYMBOL TABLE:
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l     O .rodata	00000004 lower_offset
 
 
- arch/x86/events/intel/ds.c    | 25 +++++++++++++++++--------
- kernel/events/hw_breakpoint.c | 30 +++++++-----------------------
- 2 files changed, 24 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index d8015235ba76..5e526c54247e 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1153,6 +1153,7 @@ static void setup_pebs_sample_data(struct perf_event *event,
- 	if (pebs == NULL)
- 		return;
- 
-+	regs->flags &= ~PERF_EFLAGS_EXACT;
- 	sample_type = event->attr.sample_type;
- 	dsrc = sample_type & PERF_SAMPLE_DATA_SRC;
- 
-@@ -1197,7 +1198,6 @@ static void setup_pebs_sample_data(struct perf_event *event,
- 	 */
- 	*regs = *iregs;
- 	regs->flags = pebs->flags;
--	set_linear_ip(regs, pebs->ip);
- 
- 	if (sample_type & PERF_SAMPLE_REGS_INTR) {
- 		regs->ax = pebs->ax;
-@@ -1233,13 +1233,22 @@ static void setup_pebs_sample_data(struct perf_event *event,
- #endif
- 	}
- 
--	if (event->attr.precise_ip > 1 && x86_pmu.intel_cap.pebs_format >= 2) {
--		regs->ip = pebs->real_ip;
--		regs->flags |= PERF_EFLAGS_EXACT;
--	} else if (event->attr.precise_ip > 1 && intel_pmu_pebs_fixup_ip(regs))
--		regs->flags |= PERF_EFLAGS_EXACT;
--	else
--		regs->flags &= ~PERF_EFLAGS_EXACT;
-+	if (event->attr.precise_ip > 1) {
-+		/* Haswell and later have the eventing IP, so use it: */
-+		if (x86_pmu.intel_cap.pebs_format >= 2) {
-+			set_linear_ip(regs, pebs->real_ip);
-+			regs->flags |= PERF_EFLAGS_EXACT;
-+		} else {
-+			/* Otherwise use PEBS off-by-1 IP: */
-+			set_linear_ip(regs, pebs->ip);
-+
-+			/* ... and try to fix it up using the LBR entries: */
-+			if (intel_pmu_pebs_fixup_ip(regs))
-+				regs->flags |= PERF_EFLAGS_EXACT;
-+		}
-+	} else
-+		set_linear_ip(regs, pebs->ip);
-+
- 
- 	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR)) &&
- 	    x86_pmu.intel_cap.pebs_format >= 1)
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 3f8cb1e14588..253ae2da13c3 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -427,16 +427,9 @@ EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
-  * modify_user_hw_breakpoint - modify a user-space hardware breakpoint
-  * @bp: the breakpoint structure to modify
-  * @attr: new breakpoint attributes
-- * @triggered: callback to trigger when we hit the breakpoint
-- * @tsk: pointer to 'task_struct' of the process to which the address belongs
-  */
- int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
- {
--	u64 old_addr = bp->attr.bp_addr;
--	u64 old_len = bp->attr.bp_len;
--	int old_type = bp->attr.bp_type;
--	int err = 0;
--
- 	/*
- 	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
- 	 * will not be possible to raise IPIs that invoke __perf_event_disable.
-@@ -451,27 +444,18 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
- 	bp->attr.bp_addr = attr->bp_addr;
- 	bp->attr.bp_type = attr->bp_type;
- 	bp->attr.bp_len = attr->bp_len;
-+	bp->attr.disabled = 1;
- 
--	if (attr->disabled)
--		goto end;
--
--	err = validate_hw_breakpoint(bp);
--	if (!err)
--		perf_event_enable(bp);
-+	if (!attr->disabled) {
-+		int err = validate_hw_breakpoint(bp);
- 
--	if (err) {
--		bp->attr.bp_addr = old_addr;
--		bp->attr.bp_type = old_type;
--		bp->attr.bp_len = old_len;
--		if (!bp->attr.disabled)
--			perf_event_enable(bp);
-+		if (err)
-+			return err;
- 
--		return err;
-+		perf_event_enable(bp);
-+		bp->attr.disabled = 0;
- 	}
- 
--end:
--	bp->attr.disabled = attr->disabled;
--
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(modify_user_hw_breakpoint);
+si-orig.o:     file format elf32-big
+
+Contents of section .rodata:
+ 0000 00000012                             ....            
+-------- si-1.o
+
+si-1.o:     file format elf32-big
+
+SYMBOL TABLE:
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l     O .rodata	00000004 lower_offset
+
+
+
+si-1.o:     file format elf32-big
+
+Contents of section .rodata:
+ 0000 00000012                             ....            
+-------- si-2.o
+
+si-2.o:     file format elf32-big
+
+SYMBOL TABLE:
+00000000 l    d  .rodata	00000000 .rodata
+00000000 l     O .rodata	00000004 lower_offset
+
+
+
+si-2.o:     file format elf32-big
+
+Contents of section .rodata:
+ 0000 00000014                             ....        
+
+So, the offset of the si_lower field is 20 at the current HEAD and was 18 at
+commits v4.16-rc3~17^2 and v4.16-rc1~159^2~20.  I believe this is due to
+the fact that m68k uses 2-byte default alignment and not 4-byte.
+
+>       signal/x86: Include the field offsets in the build time checks
+> 
+>  arch/x86/kernel/signal_compat.c    | 65 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/compat.h             |  4 +--
+>  include/uapi/asm-generic/siginfo.h |  4 +--
+>  3 files changed, 69 insertions(+), 4 deletions(-)
+> 
