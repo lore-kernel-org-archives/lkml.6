@@ -1,114 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeCaTz2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 15:55:28 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53815 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbeCaTz0 (ORCPT
+        id S1752827AbeCaUrK (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 16:47:10 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:55175 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751207AbeCaUrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 15:55:26 -0400
-Date: Sat, 31 Mar 2018 21:55:24 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180331195524.GB19388@amd>
-References: <20180326155828.ttnduivadob4iqmd@earth.universe>
- <20180327121441.GH29239@sirena.org.uk>
- <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
- <20180328022910.GM29239@sirena.org.uk>
- <20180328140219.f6667up5evrrafkv@earth.universe>
- <20180329014507.GM5700@atomide.com>
- <20180331145531.GA10404@amd>
- <20180331181935.GX5700@atomide.com>
- <20180331191939.GA8999@amd>
- <20180331194616.GA19388@amd>
+        Sat, 31 Mar 2018 16:47:06 -0400
+X-Google-Smtp-Source: AIpwx4+vA7frAdr3Mh1GomL19xIjnKIrPkHufQTTELHCRorDfw9VJLtPxQS4Zqg79irNAbx9kg/F1l1O9Yzjldm8ua0ja+jXJN7e
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
-Content-Disposition: inline
-In-Reply-To: <20180331194616.GA19388@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Date: Sat, 31 Mar 2018 13:47:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a113fe4c0a623b10568bb75ea@google.com>
+Subject: general protection fault in __mem_cgroup_free
+From: syzbot <syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com>
+To: cgroups@vger.kernel.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org,
+        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---oC1+HKm2/end4ao3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot hit the following crash on upstream commit
+9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
+Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=8a5de3cce7cdc70e9ebe
 
-On Sat 2018-03-31 21:46:16, Pavel Machek wrote:
-> On Sat 2018-03-31 21:19:39, Pavel Machek wrote:
-> > On Sat 2018-03-31 11:19:35, Tony Lindgren wrote:
-> > > * Pavel Machek <pavel@ucw.cz> [180331 14:56]:
-> > > > Hi!
-> > > >=20
-> > > > > Hmm well I got audio call hacked to work as a proof of concept ha=
-ck,
-> > > > > see below. Maybe it can be used to verify some of the assumptions
-> > > > > above.
-> > > > >=20
-> > > > > Then.. To split the work a bit, can you guys maybe try to decode
-> > > > > the cpcap register values and try to do a proper ASoC driver patc=
-h?
-> > > >=20
-> > > > This is not proper patch yet, but it should be a step in that
-> > > > direction...
-> > >=20
-> > > Cool :) Microphone still does not work for me.. I tried tweaking
-> > > the alsamixer settings but no mic. This is with cold boot with
-> > > droid4-kexecboot if that might make a difference, we may have
-> > > some register uninitialized somewhere. Any ideas?
-> >=20
-> > Ok, I was focusing on the speaker side.
-> >=20
-> > alsamixer, tab to go to capture settings, set it to 37 37 Mic2 Mic1
-> > should work, according to my notes, but not recently tested and not
-> > tested against real human.
-> >=20
-> > I'll attempt to test it, but something in my userland shuts down
-> > system just after boot 60% of time, which is rather annoying.
->=20
-> Hmm. So I tried again, and setting Mic1 and back in the capture
-> settings crashed the modem. Bang, disconnected from the USB.
+So far this crash happened 14 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5578311367393280
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5708657048158208
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6693821748346880
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+compiler: gcc (GCC) 7.1.1 20170620
 
-Next try, and it worked this time.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-_Before the call_, set mode to Normal and then Call. Then go to
-capture, and set 100 100 Mic2 Mic1. Then place a call,
+RBP: 00000000006dcc20 R08: 0000000000000002 R09: 0000000000003335
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 00007f1747954d80 R14: ffffffffffffffff R15: 0000000000000006
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4422 Comm: syzkaller101598 Not tainted 4.16.0-rc7+ #372
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:free_mem_cgroup_per_node_info mm/memcontrol.c:4111 [inline]
+RIP: 0010:__mem_cgroup_free+0x71/0x110 mm/memcontrol.c:4120
+RSP: 0018:ffff8801accf75a8 EFLAGS: 00010206
+RAX: 0000000000000011 RBX: 0000000000000000 RCX: ffffffff8310cdfd
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000088
+RBP: ffff8801accf75c8 R08: 0000000000000000 R09: ffff8801accf73a0
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff8801ad210d40 R14: dffffc0000000000 R15: ffff8801ad210d40
+FS:  00007f1747955700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000460000 CR3: 00000001cb367004 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  mem_cgroup_free mm/memcontrol.c:4128 [inline]
+  mem_cgroup_css_alloc+0x403/0x19c0 mm/memcontrol.c:4239
+  css_create kernel/cgroup/cgroup.c:4729 [inline]
+  cgroup_apply_control_enable+0x44d/0xbc0 kernel/cgroup/cgroup.c:2916
+  cgroup_mkdir+0x56f/0xfc0 kernel/cgroup/cgroup.c:4938
+  kernfs_iop_mkdir+0x153/0x1e0 fs/kernfs/dir.c:1099
+  vfs_mkdir+0x390/0x600 fs/namei.c:3800
+  SYSC_mkdirat fs/namei.c:3823 [inline]
+  SyS_mkdirat+0x22b/0x2b0 fs/namei.c:3807
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x44a0c9
+RSP: 002b:00007f1747954d78 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 00000000006dcc24 RCX: 000000000044a0c9
+RDX: 0000000000000020 RSI: 0000000020000280 RDI: 0000000000000005
+RBP: 00000000006dcc20 R08: 0000000000000002 R09: 0000000000003335
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 00007f1747954d80 R14: ffffffffffffffff R15: 0000000000000006
+Code: 00 00 48 89 f8 48 c1 e8 03 42 80 3c 30 00 0f 85 99 00 00 00 4f 8b a4  
+e5 f0 09 00 00 49 8d bc 24 88 00 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 30  
+00 0f 85 88 00 00 00 49 8b bc 24 88 00 00 00 e8 77
+RIP: free_mem_cgroup_per_node_info mm/memcontrol.c:4111 [inline] RSP:  
+ffff8801accf75a8
+RIP: __mem_cgroup_free+0x71/0x110 mm/memcontrol.c:4120 RSP: ffff8801accf75a8
+---[ end trace 57ac07c30502ef78 ]---
+Kernel panic - not syncing: Fatal exception
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-AT+CFUN=3D1
-OK
-ATD6;
 
-If you change Mic1 setting, GSM modem will likely crash.
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-Good luck,
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---oC1+HKm2/end4ao3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlq/56wACgkQMOfwapXb+vJ/qQCeIU54eQpC57waRBl7oeSUY2iq
-bgMAniWkWV59oz3p91PgHzDFqEDcXX1q
-=5l1u
------END PGP SIGNATURE-----
-
---oC1+HKm2/end4ao3--
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
