@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751773AbeCaKgO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 06:36:14 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33905 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751385AbeCaKgM (ORCPT
+        id S1751989AbeCaKk4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 06:40:56 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:38900 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751385AbeCaKky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 06:36:12 -0400
-X-Google-Smtp-Source: AIpwx4/jbT7KfrnrJheTBkEQjZAW2ZzucwH14ZnWniBUwemoYDyES9jauCNjd3DcrHEfws5DzLq7yQ==
-Date: Sat, 31 Mar 2018 12:36:08 +0200
+        Sat, 31 Mar 2018 06:40:54 -0400
+X-Google-Smtp-Source: AIpwx49CitmjUprYBkBEQLO/1bK/36v/ufXkxBoN0ZE8wDB9POZERY5DCuN3Tr1qrygBCN/7s7a0Xw==
+Date: Sat, 31 Mar 2018 12:40:50 +0200
 From: Ingo Molnar <mingo@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86 fixes
-Message-ID: <20180331103608.xoulw3lvokbuvdxx@gmail.com>
+Subject: [GIT PULL] perf fixes
+Message-ID: <20180331104050.s4lgdw5vozlqgbap@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -26,98 +28,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-Please pull the latest x86-urgent-for-linus git tree from:
+Please pull the latest perf-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
-   # HEAD: bd47a85acd727e27b7283daff557865ad04c59f6 x86/platform/UV: Fix critical UV MMR address error
+   # HEAD: f67b15037a7a50c57f72e69a6d59941ad90a0f0f perf/hwbp: Simplify the perf-hwbp code, fix documentation
 
-Two UV platform fixes, and a kbuild fix.
+Two fixlets.
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Andrew Banman (1):
-      x86/platform/uv/BAU: Add APIC idt entry
+Linus Torvalds (1):
+      perf/hwbp: Simplify the perf-hwbp code, fix documentation
 
-Sven Wegener (1):
-      x86/purgatory: Avoid creating stray .<pid>.d files, remove -MD from KBUILD_CFLAGS
-
-mike.travis@hpe.com (1):
-      x86/platform/UV: Fix critical UV MMR address error
+Stephane Eranian (1):
+      perf/x86/intel: Fix linear IP of PEBS real_ip on Haswell and later CPUs
 
 
- arch/x86/include/asm/hw_irq.h     | 1 +
- arch/x86/include/asm/uv/uv_mmrs.h | 2 +-
- arch/x86/kernel/idt.c             | 3 +++
- arch/x86/platform/uv/tlb_uv.c     | 2 --
- arch/x86/purgatory/Makefile       | 2 +-
- 5 files changed, 6 insertions(+), 4 deletions(-)
+ arch/x86/events/intel/ds.c    | 25 +++++++++++++++++--------
+ kernel/events/hw_breakpoint.c | 30 +++++++-----------------------
+ 2 files changed, 24 insertions(+), 31 deletions(-)
 
-diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
-index 2851077b6051..32e666e1231e 100644
---- a/arch/x86/include/asm/hw_irq.h
-+++ b/arch/x86/include/asm/hw_irq.h
-@@ -36,6 +36,7 @@ extern asmlinkage void kvm_posted_intr_wakeup_ipi(void);
- extern asmlinkage void kvm_posted_intr_nested_ipi(void);
- extern asmlinkage void error_interrupt(void);
- extern asmlinkage void irq_work_interrupt(void);
-+extern asmlinkage void uv_bau_message_intr1(void);
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index d8015235ba76..5e526c54247e 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1153,6 +1153,7 @@ static void setup_pebs_sample_data(struct perf_event *event,
+ 	if (pebs == NULL)
+ 		return;
  
- extern asmlinkage void spurious_interrupt(void);
- extern asmlinkage void thermal_interrupt(void);
-diff --git a/arch/x86/include/asm/uv/uv_mmrs.h b/arch/x86/include/asm/uv/uv_mmrs.h
-index ecb9ddef128f..62c79e26a59a 100644
---- a/arch/x86/include/asm/uv/uv_mmrs.h
-+++ b/arch/x86/include/asm/uv/uv_mmrs.h
-@@ -3833,7 +3833,7 @@ union uvh_rh_gam_mmioh_overlay_config0_mmr_u {
- #define UV1H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR uv_undefined("UV1H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR")
- #define UV2H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR uv_undefined("UV2H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR")
- #define UV3H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR 0x1603000UL
--#define UV4H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR 0x483000UL
-+#define UV4H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR 0x484000UL
- #define UVH_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR (				\
- 	is_uv1_hub() ? UV1H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR :		\
- 	is_uv2_hub() ? UV2H_RH_GAM_MMIOH_OVERLAY_CONFIG1_MMR :		\
-diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
-index 56d99be3706a..5d039c848bd9 100644
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -140,6 +140,9 @@ static const __initconst struct idt_data apic_idts[] = {
- # ifdef CONFIG_IRQ_WORK
- 	INTG(IRQ_WORK_VECTOR,		irq_work_interrupt),
- # endif
-+#ifdef CONFIG_X86_UV
-+	INTG(UV_BAU_MESSAGE,		uv_bau_message_intr1),
-+#endif
- 	INTG(SPURIOUS_APIC_VECTOR,	spurious_interrupt),
- 	INTG(ERROR_APIC_VECTOR,		error_interrupt),
++	regs->flags &= ~PERF_EFLAGS_EXACT;
+ 	sample_type = event->attr.sample_type;
+ 	dsrc = sample_type & PERF_SAMPLE_DATA_SRC;
+ 
+@@ -1197,7 +1198,6 @@ static void setup_pebs_sample_data(struct perf_event *event,
+ 	 */
+ 	*regs = *iregs;
+ 	regs->flags = pebs->flags;
+-	set_linear_ip(regs, pebs->ip);
+ 
+ 	if (sample_type & PERF_SAMPLE_REGS_INTR) {
+ 		regs->ax = pebs->ax;
+@@ -1233,13 +1233,22 @@ static void setup_pebs_sample_data(struct perf_event *event,
  #endif
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index db77e087adaf..b36caae0fb2f 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -2255,8 +2255,6 @@ static int __init uv_bau_init(void)
- 			init_uvhub(uvhub, vector, uv_base_pnode);
  	}
  
--	alloc_intr_gate(vector, uv_bau_message_intr1);
+-	if (event->attr.precise_ip > 1 && x86_pmu.intel_cap.pebs_format >= 2) {
+-		regs->ip = pebs->real_ip;
+-		regs->flags |= PERF_EFLAGS_EXACT;
+-	} else if (event->attr.precise_ip > 1 && intel_pmu_pebs_fixup_ip(regs))
+-		regs->flags |= PERF_EFLAGS_EXACT;
+-	else
+-		regs->flags &= ~PERF_EFLAGS_EXACT;
++	if (event->attr.precise_ip > 1) {
++		/* Haswell and later have the eventing IP, so use it: */
++		if (x86_pmu.intel_cap.pebs_format >= 2) {
++			set_linear_ip(regs, pebs->real_ip);
++			regs->flags |= PERF_EFLAGS_EXACT;
++		} else {
++			/* Otherwise use PEBS off-by-1 IP: */
++			set_linear_ip(regs, pebs->ip);
++
++			/* ... and try to fix it up using the LBR entries: */
++			if (intel_pmu_pebs_fixup_ip(regs))
++				regs->flags |= PERF_EFLAGS_EXACT;
++		}
++	} else
++		set_linear_ip(regs, pebs->ip);
++
+ 
+ 	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR)) &&
+ 	    x86_pmu.intel_cap.pebs_format >= 1)
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 3f8cb1e14588..253ae2da13c3 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -427,16 +427,9 @@ EXPORT_SYMBOL_GPL(register_user_hw_breakpoint);
+  * modify_user_hw_breakpoint - modify a user-space hardware breakpoint
+  * @bp: the breakpoint structure to modify
+  * @attr: new breakpoint attributes
+- * @triggered: callback to trigger when we hit the breakpoint
+- * @tsk: pointer to 'task_struct' of the process to which the address belongs
+  */
+ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
+ {
+-	u64 old_addr = bp->attr.bp_addr;
+-	u64 old_len = bp->attr.bp_len;
+-	int old_type = bp->attr.bp_type;
+-	int err = 0;
 -
- 	for_each_possible_blade(uvhub) {
- 		if (uv_blade_nr_possible_cpus(uvhub)) {
- 			unsigned long val;
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 2f15a2ac4209..d70c15de417b 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -16,7 +16,7 @@ KCOV_INSTRUMENT := n
- # in turn leaves some undefined symbols like __fentry__ in purgatory and not
- # sure how to relocate those. Like kexec-tools, use custom flags.
+ 	/*
+ 	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
+ 	 * will not be possible to raise IPIs that invoke __perf_event_disable.
+@@ -451,27 +444,18 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+ 	bp->attr.bp_addr = attr->bp_addr;
+ 	bp->attr.bp_type = attr->bp_type;
+ 	bp->attr.bp_len = attr->bp_len;
++	bp->attr.disabled = 1;
  
--KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -MD -Os -mcmodel=large
-+KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -Os -mcmodel=large
- KBUILD_CFLAGS += -m$(BITS)
- KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
+-	if (attr->disabled)
+-		goto end;
+-
+-	err = validate_hw_breakpoint(bp);
+-	if (!err)
+-		perf_event_enable(bp);
++	if (!attr->disabled) {
++		int err = validate_hw_breakpoint(bp);
  
+-	if (err) {
+-		bp->attr.bp_addr = old_addr;
+-		bp->attr.bp_type = old_type;
+-		bp->attr.bp_len = old_len;
+-		if (!bp->attr.disabled)
+-			perf_event_enable(bp);
++		if (err)
++			return err;
+ 
+-		return err;
++		perf_event_enable(bp);
++		bp->attr.disabled = 0;
+ 	}
+ 
+-end:
+-	bp->attr.disabled = attr->disabled;
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(modify_user_hw_breakpoint);
