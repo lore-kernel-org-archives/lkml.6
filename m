@@ -1,167 +1,127 @@
 Return-Path: <3y_O_WgkbAI4AGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
 ARC-Seal: i=1; a=rsa-sha256; t=1522529228; cv=none;
         d=google.com; s=arc-20160816;
-        b=mwmQhUtqopXNFSTx41SW1INMfUuMqgMFj67wQa/9U1+cuPUHmw9ylGtAH0M8EBdnmZ
-         zyelz5+n2MNE6Uvi/grUOglrlJO1hYv0IVAV2+lJKGNnjyiazH8+8JFZrFiQlqoK4ckI
-         0dGJ8ipjRbpCugm3lgiJ40k72DUj4TiSM2V1Mqglg3PzxmPAcv41pvsycgd3+0vdqOIZ
-         63HDJSwGiD7HHi2lS846TTknlQOktlvLQvBXGuvB2FGUf3M6+rBhMwPvNloD2WfXzSnv
-         yQtcEVRVX+aZosnPfxEk3RnqC6YhWUu5IAK508untDMQSLhxpNnxX6IG829gxxjn9Rrv
-         BNgw==
+        b=DY013oSxKFVlW4naOpeULNBBO4BqZqFyIzCTyn1MV1fgYDiGBt4O2D76S42F0PZhZx
+         s6NBHCK/Lf22J+2qaHjIOIvFT3/OhnabKm1xVmWBP7eqKCEUQ6jVPyyB4Kvetne/l0l0
+         QuLNofKQqWHVOiTaQ+1CPHpaDVmIqzOOduIbGmBB1WwqxotK2sHwdUOg0+qMGT6G3kIO
+         FVgRsJQtwQbuW/V/ivZjq3w0R8Ey311e9dWW25IRabIZ4FmnhjjOIFLlzNXU18mmaez7
+         LkV7mGvbineq0sIfwNLjpoBodkjABV22VU3ug9/KFuOsx3aAoJbZEAz+Q90H22vrqsMk
+         4bdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=to:from:subject:message-id:date:mime-version
          :arc-authentication-results;
-        bh=SDqk2Acmq9n2NJAOB+56f8CKau5AyTwRdhJagMF4gZ8=;
-        b=G7Xl7mp1yO7+OKdKoqQQaPgpY232njdDOnUOwK4mNCx+bGtnvEnJUWDUobzHxcYcxK
-         MF7G6mt6jnvmLlhgPHLOMdmQP8wuQXbKrbC2yOImt0O4qzYAgWl4ktSeaI/8229OZsuG
-         TZzeGJotLpT0nu8+CSoXLe1jcKDUBhRFLd3IoIWB5stjXLn5ElmNZaV1+HhJtne90bxD
-         dRx3TGX9pAPwXLDOyz/dvwg+UDSKlNiRQxFTYILCk1ddckfsl3TYBd0EGh9Op8ZcOjRe
-         WsHMfDnVXqaETdY8oUgLSdsQ+h6bSpbdZXyoiXcKEYMS0NjXbYlkL2DOw7L2nQvJJdgr
-         JtOQ==
+        bh=Tmfn7RgNkHCpYphrDYKPrIgrSnPhNLreE0ca9HZ23/g=;
+        b=fFgswqEIojIyQIj18tv180RDxgbl2a7gImUeSMZWrUgRaoZ3uNP4/eFtn2xAET4Sxj
+         yDBdt/tp4/woFd+7fyH9xWiETjTNBEGHeCH6KIXct114SdzKlt0RLkevw5GSwHYea5uo
+         kM4dP0YQP7VmlmzTXc9NJ8eefaMJa1AZEIrUyOB25AcDD9u58ynn91aiQjONB6oQxYzM
+         EdKgXWzJFCi6ZjzibjGHJArT8UKuCT4WzWwW3qdowIJqvFfcwvLEWxv5wMFaK74GwksJ
+         ygdcMi55rKMRvSNcFDbtFoQRcIICse6836Q5V96E6RpGHEldoM7uFlDMUsoFGaoa5pn0
+         qdHw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of 3y_o_wgkbai4agh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3y_O_WgkbAI4AGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of 3y_o_wgkbai4agh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3y_O_WgkbAI4AGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AIpwx4/D5xkyY81wL8xuYRJR7M/SJNI3pOoakBMoG4cBBics3ssdfQ+roC6xMg6REnBs4dRHdKESjhIgcs+qaE/TQ7gYiwRZlakL
+X-Google-Smtp-Source: AIpwx48C0i9zMwLKIzqsvb58CVSu9UaW5I0pe0yo1jfILiAkUnUMJ/yfp+QnEUieR5nHkfNUB47wA0qv3yy4HIEPYa9AE5BU+ibn
 MIME-Version: 1.0
 Date: Sat, 31 Mar 2018 13:47:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113f8bf6c849030568bb75d3@google.com>
-Subject: WARNING: refcount bug in put_pid_ns
-From: syzbot <syzbot+66a731f39da94bb14930@syzkaller.appspotmail.com>
+Message-ID: <94eb2c0b816ebcae030568bb756a@google.com>
+Subject: general protection fault in hfs_find_init
+From: syzbot <syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com>
 To: gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, pombredanne@nexb.com,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pombredanne@nexb.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596487607739609259?=
-X-GMAIL-MSGID: =?utf-8?q?1596487607739609259?=
+X-GMAIL-THRID: =?utf-8?q?1596487607750660102?=
+X-GMAIL-MSGID: =?utf-8?q?1596487607624049915?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Hello,
 
 syzbot hit the following crash on upstream commit
-9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
-Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
+10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
+Merge branch 'perf-urgent-for-linus' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=66a731f39da94bb14930
+https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
 
-So far this crash happened 6 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5475665407115264
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6405492943355904
+https://syzkaller.appspot.com/x/repro.syz?id=5340549896732672
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5483914026024960
+https://syzkaller.appspot.com/x/log.txt?id=5639884018548736
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+66a731f39da94bb14930@syzkaller.appspotmail.com
+Reported-by: syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  fail_dump lib/fault-inject.c:51 [inline]
-  should_fail+0x8c0/0xa40 lib/fault-inject.c:149
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 0 PID: 4478 at lib/refcount.c:187  
-refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-  should_failslab+0xec/0x120 mm/failslab.c:32
-Kernel panic - not syncing: panic_on_warn set ...
-
-  slab_pre_alloc_hook mm/slab.h:422 [inline]
-  slab_alloc mm/slab.c:3366 [inline]
-  kmem_cache_alloc+0x47/0x760 mm/slab.c:3540
-  kmem_cache_zalloc include/linux/slab.h:691 [inline]
-  fill_pool lib/debugobjects.c:110 [inline]
-  __debug_object_init+0xa99/0x1040 lib/debugobjects.c:339
-  debug_object_init+0x17/0x20 lib/debugobjects.c:391
-  __init_work+0x2b/0x60 kernel/workqueue.c:506
-  __memcg_schedule_kmem_cache_create mm/memcontrol.c:2203 [inline]
-  memcg_schedule_kmem_cache_create mm/memcontrol.c:2223 [inline]
-  memcg_kmem_get_cache+0x571/0x890 mm/memcontrol.c:2285
-  slab_pre_alloc_hook mm/slab.h:427 [inline]
-  slab_alloc mm/slab.c:3366 [inline]
-  kmem_cache_alloc+0x186/0x760 mm/slab.c:3540
-  proc_alloc_inode+0x1b/0x190 fs/proc/inode.c:63
-  alloc_inode+0x65/0x180 fs/inode.c:209
-  new_inode_pseudo+0x69/0x190 fs/inode.c:890
-  proc_get_inode+0x20/0x620 fs/proc/inode.c:436
-  proc_fill_super+0x1dd/0x300 fs/proc/inode.c:502
-  mount_ns+0xc4/0x190 fs/super.c:1036
-  proc_mount+0x7a/0x90 fs/proc/root.c:101
-  mount_fs+0x66/0x2d0 fs/super.c:1222
-  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:3292 [inline]
-  kern_mount_data+0x50/0xb0 fs/namespace.c:3292
-  pid_ns_prepare_proc+0x1e/0x80 fs/proc/root.c:222
-  alloc_pid+0x87e/0xa00 kernel/pid.c:208
-  copy_process.part.38+0x2516/0x4bd0 kernel/fork.c:1807
-  copy_process kernel/fork.c:1606 [inline]
-  _do_fork+0x1f7/0xf70 kernel/fork.c:2087
-  SYSC_clone kernel/fork.c:2194 [inline]
-  SyS_clone+0x37/0x50 kernel/fork.c:2188
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454e79
-RSP: 002b:00007fe845e3ec68 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 00007fe845e3f6d4 RCX: 0000000000454e79
-RDX: 00000000200008c0 RSI: 0000000020000800 RDI: 000000002000c100
-RBP: 000000000072bea0 R08: 0000000020000940 R09: 0000000000000000
-R10: 0000000020000900 R11: 0000000000000246 R12: 0000000000000004
-R13: 0000000000000051 R14: 00000000006f2838 R15: 0000000000000028
-CPU: 0 PID: 4478 Comm: syz-executor1 Not tainted 4.16.0-rc7+ #372
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
-RSP: 0018:ffff8801ad017318 EFLAGS: 00010282
-RAX: dffffc0000000008 RBX: 0000000000000000 RCX: ffffffff815b193e
-RDX: 0000000000000000 RSI: 1ffff10035a02e13 RDI: 1ffff10035a02de8
-RBP: ffff8801ad0173a8 R08: 0000000000000000 R09: 0000000000000000
-R10: ffff8801ad0172d0 R11: 0000000000000000 R12: 1ffff10035a02e64
-R13: 00000000ffffffff R14: 0000000000000001 R15: ffff8801ad2b0630
-  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
-  kref_put include/linux/kref.h:69 [inline]
-  put_pid_ns+0x9d/0xc0 kernel/pid_namespace.c:192
-  free_nsproxy+0xfa/0x1f0 kernel/nsproxy.c:182
-  switch_task_namespaces+0x9d/0xc0 kernel/nsproxy.c:229
-  exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
-  copy_process.part.38+0x3aba/0x4bd0 kernel/fork.c:1988
-  copy_process kernel/fork.c:1606 [inline]
-  _do_fork+0x1f7/0xf70 kernel/fork.c:2087
-  SYSC_clone kernel/fork.c:2194 [inline]
-  SyS_clone+0x37/0x50 kernel/fork.c:2188
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454e79
-RSP: 002b:00007f64a187cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 00007f64a187d6d4 RCX: 0000000000454e79
-RDX: 00000000200008c0 RSI: 0000000020000800 RDI: 000000002000c100
-RBP: 000000000072bea0 R08: 0000000020000940 R09: 0000000000000000
-R10: 0000000020000900 R11: 0000000000000246 R12: 0000000000000004
-R13: 0000000000000051 R14: 00000000006f2838 R15: 0000000000000028
+hfs: unable to locate alternate MDB
+hfs: continuing without an alternate MDB
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Modules linked in:
+CPU: 0 PID: 4467 Comm: syzkaller143800 Not tainted 4.16.0-rc7+ #9
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:hfs_find_init+0x76/0x180 fs/hfs/bfind.c:21
+RSP: 0018:ffff8801acbe6bd0 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff8801acbe6c58 RCX: ffffffff820dd056
+RDX: 0000000000000008 RSI: ffff8801acbe6c58 RDI: ffff8801acbe6c70
+RBP: ffff8801acbe6bf0 R08: ffffffff820f0430 R09: 0000000000000000
+R10: ffff8801acbe6ce0 R11: ffffed003597cc6f R12: 0000000000000000
+R13: 0000000000000040 R14: ffff8801ad972080 R15: ffff8801acbe6cb8
+FS:  0000000001e2d880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe9b457a9b8 CR3: 00000001ac89e004 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  hfs_ext_read_extent+0x197/0xb50 fs/hfs/extent.c:196
+  hfs_get_block+0x4cc/0x7a0 fs/hfs/extent.c:360
+  block_read_full_page+0x293/0x990 fs/buffer.c:2259
+  hfs_readpage+0x1c/0x20 fs/hfs/inode.c:38
+  do_read_cache_page+0x637/0x11b0 mm/filemap.c:2804
+  read_cache_page+0x61/0x80 mm/filemap.c:2892
+  read_mapping_page include/linux/pagemap.h:402 [inline]
+  hfs_btree_open+0x536/0x1630 fs/hfs/btree.c:78
+  hfs_mdb_get+0x16ab/0x22c0 fs/hfs/mdb.c:193
+  hfs_fill_super+0x1023/0x1930 fs/hfs/super.c:413
+  mount_bdev+0x2b7/0x370 fs/super.c:1119
+  hfs_mount+0x34/0x40 fs/hfs/super.c:463
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2509 [inline]
+  do_new_mount fs/namespace.c:2512 [inline]
+  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
+  SYSC_mount fs/namespace.c:3058 [inline]
+  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x442daa
+RSP: 002b:00007ffd0232faf8 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000258 RCX: 0000000000442daa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffd0232fb00
+RBP: 0000000000000003 R08: 00000000200001c0 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000004
+R13: 0000000000401ca0 R14: 0000000000000000 R15: 0000000000000000
+Code: c1 ea 03 80 3c 02 00 0f 85 f2 00 00 00 4d 8d 6c 24 40 48 b8 00 00 00  
+00 00 fc ff df 48 c7 43 18 00 00 00 00 4c 89 ea 48 c1 ea 03 <0f> b6 04 02  
+84 c0 74 08 3c 03 0f 8e b0 00 00 00 41 8b 44 24 40
+RIP: hfs_find_init+0x76/0x180 fs/hfs/bfind.c:21 RSP: ffff8801acbe6bd0
+---[ end trace 5617fd7a7b5bfbcd ]---
 
 
 ---
