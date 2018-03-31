@@ -1,27 +1,27 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx4/ULZOwqRHyeP50ph1arBMDUvLoKJnV/o2hiuGvlPR4cwax1O2MsYm63NP3cxh4BFcqOD/A
-ARC-Seal: i=1; a=rsa-sha256; t=1522476578; cv=none;
+X-Google-Smtp-Source: AIpwx4/vZnMVqrgrAARi9OrEnpOSEcq8Ksn9M1d8i4Yl70rEiSeJMdEBU4oEh9JJqYBArE4siNuv
+ARC-Seal: i=1; a=rsa-sha256; t=1522476577; cv=none;
         d=google.com; s=arc-20160816;
-        b=QSPy1lV1ViTLdwHV78514MS0M7nhAokeimMBATT36sWn+EeJPbXv+C552rpOyt/m2B
-         sFKy+VpM8I1U+hV+EPir1ajeZ8n/igiZ3r+GnRo8ih0wyRneJfDob6NVomFiQ3YxySk+
-         eesJ+ojNwR86DDNkoBMYcYtNdI58ndSC5ON8M6aLvLuU4RKRbAKasTzoelIqiD5Wr/Ju
-         9CHn3id2JZVmrPV/lLanUvXFKZ/z436iTXYiVApZBkw4D3j/IOYIGXgGQN1hAaKJFpof
-         D5SWOICOcTzE7KbWlyGnBNrpGCUKSR6GEdbGavzJgOCMgJVoxV+yRJrpY9Rm7rNLv4iD
-         WPwA==
+        b=dFDnk2yq7xptuE5c9H+KOOE7Z6e8cWqioQTsSCtr+Qp1GJp8t6F4PFCq4rhY6LmQGq
+         REkmr8A4Wqwar5eOgoTOzA+yEF2F0yATxm5Ir5tSw5lQ3axcgK5PDwTpbQZAoaOVmdRP
+         RNDDclbsSSwtgCDM2CRgY3Z+3ZEzYo6AOy+e7VEZ0zVdEsftxzVahuS4rFzDG8Dc5d8D
+         dJRzkYkk3Amure+OmJcaOHbGsWVFDss83Ugy6Cbj279Azfu1Wg0X+tyqm8RCI9OYiMRo
+         J5U6v7Ya8o9CDxdIoWxVXQvu3Fx/+tTQeef9kJyp1ZsPbo20S1EDmSkmgM7+WHX/JDoH
+         oXNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=n9RODlmCjgcAvT+9OZOHIqNKV69NQb8F3FHI87YoJXI=;
-        b=t7toS6kGE7km8STJ00Mmy7teOMpTOVRl4eacYB9OoYTOzDt67N2LdxDlWYpbxJV836
-         tHi/wfVlOEDZMuFwEpqhKvUgPs8hExo8SonJPMbYDvvkGH2ghHReCii8rokILFQZbKHG
-         iae/fkEyEMl79y/2VGyk1zbsR9pNvFiab+STknu9TvQrXdPIt8qRfLl0NBEi9SjsNEdN
-         xJT9pqxTk2E1Ln51QYnQQOYazZsMBjI5AswOBbyWxX1af31t12Dyw5RFgp6F+x6WYWnw
-         a97BivnleXAqLAj40r4Co0c6CjvglE2o8vGmrj80bSClehzHtmu/YlyVxW1MURbFP1UM
-         6tdw==
+        bh=8r5xNDGONl7ZH/bSnI947oMW7FaZ9T2lh4NHP2A/AbI=;
+        b=QgFTgXgorRK86L6bSkayDMorAcxL4yyv5UA/UKi1BTFxIP1P1LzJxoCGVaOokwqvC+
+         c1ITgNgepMg9j3xsKK43XJauHwhXMN+HEp8713DS6XEaZJlyjtfU3/PWEELwX5Rdhui1
+         tn0COoWVFYABKCq2QtjzticBW+6QIAgBwzIW6DHMjvKilz/MN9QS7Z1/cxV1aWCdrSe8
+         YHQ5BZyf+fBgpHbquMbhrhR2FuTrffFlm23UvRGiBJJrTmv+H7gAGOTusWpTsrWrvEdw
+         ywHn/ZbTtrg2/YnW2lNyiOZWDCw/nXTptDRfttUvX7OU0z+VfQ0MoV1pdM7EDX2mGAsH
+         9N+A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org,
 	wsa@the-dreams.de
@@ -29,73 +29,92 @@ Cc: driverdev-devel@linuxdriverproject.org,
 	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH v2 18/75] staging: ks7010: Remove trailing _t from 'struct rate_set8_t'.
-Date: Fri, 30 Mar 2018 23:07:58 -0700
-Message-Id: <20180331060855.9452-18-quytelda@tamalin.org>
+Subject: [PATCH v2 17/75] staging: ks7010: Remove trailing _t from 'struct ssid_t'.
+Date: Fri, 30 Mar 2018 23:07:57 -0700
+Message-Id: <20180331060855.9452-17-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:CRwOt2GeUbs8WA3MiKvzqRkB6HhZD5yDxrfGnFUOmyNc6gLR4oS
- Ye2PEpQElFEF4fXrbCzPowwW7KhU/6olGJJk2++Qp0AGl+m8W3B/+JoF9G3UtrLTIW2klml
- PokFGF7aHx/65mM7cQXhyryUycXf4niEDiAe14wtQLBIZiKVxU40Rx3W+fOdMYjE6xH35Yb
- tknPwqrnFQYU4tyf36pQQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QCT7CebcdWg=:09lehaGeDNuXdMFh/LMf6O
- FFct5P4oA4fAKnqtFBKsJzlUa6tg+OSAo+PkQ5rd5nn3no7qqaiYRXmMYr9DZDIF7svAuMd2K
- znMBwG87wOfNsBPVNFie21PZoFpf39bYUld44YXCkCNVMFWalourxs/fZNGWdzUFd4i89eGAf
- yBb3ybDudTG1ClvfrKN5jlkvwvvmiqrzDpS4WVDYv5CJzBrWHQAnk2tOAbF7PiQDK/q0vrEnZ
- n4qL6abmZh2InICRBmFNV6YIe84fgwJuk8l8ve1mnbe/mxMmQtOmQrnEQbnhcfgIG2tn18A9e
- thrMqKexMgJpuN/e0NADpM7plkayc8u50BalrsXNuhbJLyf5L/NEmHormhCrFmieAnIrIeCQ4
- 8A1qao4UHv5trhVQ/+7TMFJ9/tdQf08VQY+cjnN7hluz4FRbuqQYF9ycq9ICuF2fB7NfvNlnp
- XQgr+3wgNbYyHaisNPyp0KhMaiHKXPx1V9iEqnJ+v8fRldSCJOJZdGf7Xb3e2H78VuPX3twu4
- 01dEEoHTy1Zjrdyn5Hi8tZf+7Ad2uK5CPa430SxiWYewEN6jGngAYllfKP0aq26opyMcj/GHK
- 7JC/jq6+NkqSNiT4SCFZfxE4oCi2hr/TSgs6Dxu5jCHMPQpD4meA9j0jhtblkMRii46zy3b8A
- GvxSPP6JUXiPA8ibnnp051tdmOamYdeImyrQyFFRlRW22lA0LrWhmtl9jnOaTaegb82HAQYWm
- yfdcpqiXJf+zqmY+ctf5U0laOBZAiRDt0hzaHw==
+X-Provags-ID: V03:K0:URjRgd/VGaAnwpQa7lOF9GAmy63ALjIVw6a4kcE1ZlHaTd0Ptog
+ zdqQt+AJuJiGv8lQ+su4Sw6C5bpgooh8rhb+cTfuN0eNnnRQMuVXbz+t1ZldO0f0q/Q9tX9
+ oeCz3YKsWDv3GFwb61OHjuBKeIlo0EnVkGf7sD2YZw1d8fXPErMoqtvd7zdUGhiefEvY6YI
+ M9k6gH1YYke2o3aYUEf/A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ECkgs/rqdgg=:tBqJgQrYk+3CYpA5phODcU
+ A7d4NmZPCxCyi+29af3DWeIXyGreAkI+KKslxGNe4MclgsUhfY8LAB0EMAZ8/cXPInOS0Ldjd
+ H0fQOu4mUNyvC2LKC5/jOFhW5tXz4pnljWyGUW3yZjGl5goAQ8CP9WZ051nCHfgDFN7tP4Olu
+ WO+d22is5IT1B0NXKn3mEGYJis6av1zrbVVL7oYJHVVvojFcaBrOKlIOP8oQ0VHPKbiK3p4g+
+ GHdPXuAmONdsb5Y6yrcxbebmb8CkcRgELKzFm3Tl9G0aNSPIG2in72zK2PxLGzE9aCT1ImBWN
+ 54sI3vgBhLDViE+IljL5G96jzXs8RCC0AW/5f/DLjuoFGvkrn8xzgU7s6ZupUQA3kouONTGNy
+ BXrpH5Vl3UXmuUqb9jZXVawhvkb0C9sbXqUAEwnRApXBODkGWW+IXWEt2O5oaIPLkCH/O6cci
+ 1kTpX7YgD5wJAbzKCJyrN19Of7gcYGfCioseyu3Chs+fo+klUOhR/X6TGL5tqcL6lgnw+L8DA
+ Mkrxf/x6wsgkAClA31sxkS47Aid05jDo3tV/w07/cQ0ypzZ6kcX5zEu2papgenhCHiHLOPhs1
+ Bm0JHVx0rrN58ilyokBpt1MBDgRrHLrkLErLX3pf5hj/KYDu/UTFoEtm/pWmHxoNZhKn3343T
+ cLLsZ8c3RbTzttgEPEIyY2u01ECswWDAZ/F4ZQsOGBlkuqooU0Ac2K5NiU8tWa14wxi3xp0af
+ QPnjmPC+3/qh2hYAF9Va4KyJ3hbLH+8y1Q0jBA==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596432400617834211?=
-X-GMAIL-MSGID: =?utf-8?q?1596432400617834211?=
+X-GMAIL-THRID: =?utf-8?q?1596432400258107588?=
+X-GMAIL-MSGID: =?utf-8?q?1596432400258107588?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 The "_t" suffix is not needed for structure names in this driver, and is a
 reflection of an older typedef system that is no longer in place. Replace
-all occurences of 'struct rate_set8_t' with 'struct rate_set8'.
+all occurences of 'struct ssid_t' with 'struct ssid'.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/ks7010/ks_hostif.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/ks7010/ks_hostif.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/ks7010/ks_hostif.h b/drivers/staging/ks7010/ks_hostif.h
-index 5abbbb46a804..6ce5d32718b8 100644
+index af656a839a0a..5abbbb46a804 100644
 --- a/drivers/staging/ks7010/ks_hostif.h
 +++ b/drivers/staging/ks7010/ks_hostif.h
-@@ -203,7 +203,7 @@ struct ssid {
+@@ -196,7 +196,7 @@ struct hostif_start_request {
+ #define MODE_ADHOC          3
  } __packed;
  
- #define RATE_SET_MAX_SIZE 16
--struct rate_set8_t {
-+struct rate_set8 {
+-struct ssid_t {
++struct ssid {
  	u8 size;
- 	u8 body[8];
- 	u8 rate_pad;
-@@ -270,14 +270,14 @@ struct link_ap_info_t {
- 	u8 pad0;	/* +09 */
- 	__le16 beacon_period;	/* +10 */
- 	__le16 capability;	/* +12 */
--	struct rate_set8_t rate_set;	/* +14 */
-+	struct rate_set8 rate_set;	/* +14 */
- 	struct fh_parms_t fh_parameter;	/* +24 */
- 	struct ds_parms_t ds_parameter;	/* +29 */
- 	struct cf_parms_t cf_parameter;	/* +30 */
- 	struct ibss_parms_t ibss_parameter;	/* +36 */
- 	struct erp_params_t erp_parameter;	/* +38 */
- 	u8 pad1;	/* +39 */
--	struct rate_set8_t ext_rate_set;	/* +40 */
-+	struct rate_set8 ext_rate_set;	/* +40 */
- 	u8 DTIM_period;	/* +50 */
- 	u8 rsn_mode;	/* +51 */
- #define RSN_MODE_NONE	0
+ 	u8 body[IEEE80211_MAX_SSID_LEN];
+ 	u8 ssid_pad;
+@@ -353,7 +353,7 @@ struct hostif_ps_adhoc_set_confirm_t {
+ struct hostif_infrastructure_set_request_t {
+ 	struct hostif_hdr header;
+ 	struct hostif_request_t request;
+-	struct ssid_t ssid;
++	struct ssid ssid;
+ 	__le16 beacon_lost_count;
+ 	__le16 auth_type;
+ 	struct channel_list channel_list;
+@@ -375,7 +375,7 @@ struct hostif_infrastructure_set_confirm_t {
+ struct hostif_adhoc_set_request_t {
+ 	struct hostif_hdr header;
+ 	struct hostif_request_t request;
+-	struct ssid_t ssid;
++	struct ssid ssid;
+ 	__le16 channel;
+ } __packed;
+ 
+@@ -390,7 +390,7 @@ struct hostif_adhoc_set2_request_t {
+ 	struct hostif_hdr header;
+ 	struct hostif_request_t request;
+ 	__le16 reserved;
+-	struct ssid_t ssid;
++	struct ssid ssid;
+ 	struct channel_list channel_list;
+ 	u8 bssid[ETH_ALEN];
+ } __packed;
+@@ -440,7 +440,7 @@ struct hostif_bss_scan_request_t {
+ 	__le32 ch_time_min;
+ 	__le32 ch_time_max;
+ 	struct channel_list channel_list;
+-	struct ssid_t ssid;
++	struct ssid ssid;
+ } __packed;
+ 
+ struct hostif_bss_scan_confirm_t {
 -- 
 2.16.3
