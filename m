@@ -1,150 +1,444 @@
 Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522515452; cv=none;
+X-Google-Smtp-Source: AIpwx4+mw8ISq1H6UKRiYq4SyhgLh/1T4i/9BUMQ5oe+xIQGq39Zg3zVrhM4QkPIx/wkrxRz7v/K
+ARC-Seal: i=1; a=rsa-sha256; t=1522498790; cv=none;
         d=google.com; s=arc-20160816;
-        b=VBJLkZXf4auaH+OQNDRs38ltKc3Yoo9M3pdIPDwJ6WDP6ebmSRljPm9Gj+RE1rHF1m
-         OdOrh4GOWWtAAKhT4Mtu7BjWwSfrM36F1asL4orLbMWXBpEH8+vN3jE4elqsiIunkCZe
-         wNMfWDtMzIYS0Oj8KjjBmyGa85m3FUr/vfmvGMRf8By8r9dDxxRd4boDklHN4jiuoEmG
-         7WgHzBWnZZ3IbsC8Owvne8jpSNPi2xmI+yYnpO+4ZFuHl120+sXvRYgZMWPoD1Yhxfob
-         Yu3fLRJPjnsQPSeaIdtVvzEHfSo+Ss6yVlW6SH1WBBTfigxQpgaZYwWLRE/WMBCuiBTC
-         +0xA==
+        b=JO13YCH4aQISyXhHtMp8Rof0eZsj+5bQTs0XQOv1mds2H8hVSalz7cPqpvhV6ZcZRK
+         JRoeOsE7a/7WvCLLrnIK81XYgmYP8X6Xi5PCdn9Of4QYx6oiiX+iVTf9YHfaOMnvzJQ7
+         7uNRx/NgdhJcLT+Rlo2fyUw/Y3GgNJ+RfbWgB4aAWrcgz0VBaopZnZbbx2lWN9I1ukrV
+         L5A4E4rklCoaVyainkhxVGG0pLjKbQ7lcJ+9MdaU+7ysjz2XPubwRszQFVlewC/enX5l
+         7ThAn7Q0D+Ylgf2sTW9lblWm9akXOQLYCZ1o5U7snS6K+6AJkOwpc6GWp+xBXhUUx/dj
+         3LKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Jo2ZxghcO1oN5+XmUA8x1OdnQb5agB+P3VCpHDn06Rg=;
-        b=iCxmPvFkFiZCOK2wUOHHOxncDERlyTm1ilS5diop3c8eJYnhN+HKY+A6ZXVkLFsVD2
-         4OSzt3uhlF/iidUGCzkYQ3Fyrbbr8rKDl+9I/zPkRSEClq3t/DJEPgYfY7LynhH9n/Ii
-         X/RMCJ4DB1iWTuAoAWiHqNfvB4dNiL1T1OOATYxA87HAhTf/qVsPowDO3arKYuP+Si/r
-         YpukmfF+y/vtdswNx5VHZbY6otw3ZISl+VNVp1qGGX47XyFNpds3lTAiuKs7fsJRaQ5+
-         yyB83haeYTzY4W88/x2YTqDolbW8UyWtXg/Dszc22XE/TsT9O9v0qt0QMgfo4vfeaU2s
-         jVNA==
+        bh=rueYL6cdgUWqAt2ELpHDpbUORQDybFrjfVefR38nD60=;
+        b=T3h2vwgpoZz0rdVObpPzuDB22vEZB8XY6HssEwV8AseGqlDv0pPn4i7Ma0k/6AYDBX
+         oFIv8Oa8Wd3aGbPIuVidVob4QW03xHUoaXWivcUvafo58vA28eWzqXLRJpxHYdN8Wctf
+         SgOcGB0z32YZj1+2nKJ2gbzDNf+78VkqB2aRGmxH1rB5YreKbwMX8NIoSpahc3I8dpnP
+         l+sRfCsJy1CqKNLCp/b0lTXppThnoz2JneK1C5NVUcIw0R/e0XJ3PQFPcJPJcXrLbMWH
+         2COPu7ZhZdbJvy42vPWatnDlGrI9t/d9r9Xblef2A0jYFq8/a2XaIfqRq9CdZSQcxLmY
+         Ln/Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AIpwx4/4J9yNrmsUbkTN1HCyy+WnacVwaSw4tedVJGwojTHAZ+I4PBQmUekAUu2uGC14YSrRVzCqvg==
-Subject: Re: [PATCH 1/2] efi: Export boot-services code and data as
- debugfs-blobs
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
- "Luis R . Rodriguez" <mcgrof@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>,
- x86@kernel.org, linux-efi@vger.kernel.org
-References: <20180331121944.8618-1-hdegoede@redhat.com>
- <20180331141030.GB1074@kroah.com>
 From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <646d64dc-0c14-a96a-f91b-787a74f7ca35@redhat.com>
-Date: Sat, 31 Mar 2018 18:57:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180331141030.GB1074@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Peter Jones <pjones@redhat.com>,
+	Dave Olsthoorn <dave@bewaar.me>,
+	x86@kernel.org,
+	linux-efi@vger.kernel.org
+Subject: [PATCH 2/2] efi: Add embedded peripheral firmware support
+Date: Sat, 31 Mar 2018 14:19:44 +0200
+Message-Id: <20180331121944.8618-2-hdegoede@redhat.com>
+In-Reply-To: <20180331121944.8618-1-hdegoede@redhat.com>
+References: <20180331121944.8618-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596455689779545050?=
-X-GMAIL-MSGID: =?utf-8?q?1596473163048531745?=
+X-GMAIL-THRID: =?utf-8?q?1596455691844480056?=
+X-GMAIL-MSGID: =?utf-8?q?1596455691844480056?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+Just like with PCI options ROMs, which we save in the setup_efi_pci*
+functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
+sometimes may contain data which is useful/necessary for peripheral drivers
+to have access to.
 
-On 03/31/2018 04:10 PM, Greg Kroah-Hartman wrote:
-> On Sat, Mar 31, 2018 at 02:19:43PM +0200, Hans de Goede wrote:
->> Sometimes it is useful to be able to dump the efi boot-services code and
->> data. This commit adds these as debugfs-blobs to /sys/kernel/debug/efi,
->> but only if efi=debug is passed on the kernel-commandline as this requires
->> not freeing those memory-regions, which costs 20+ MB of RAM.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->>   arch/x86/platform/efi/quirks.c |  4 +++
->>   drivers/firmware/efi/efi.c     | 57 ++++++++++++++++++++++++++++++++++
->>   2 files changed, 61 insertions(+)
->>
->> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
->> index 5b513ccffde4..0f968c7bcfec 100644
->> --- a/arch/x86/platform/efi/quirks.c
->> +++ b/arch/x86/platform/efi/quirks.c
->> @@ -374,6 +374,10 @@ void __init efi_free_boot_services(void)
->>   	int num_entries = 0;
->>   	void *new, *new_md;
->>   
->> +	/* Keep all regions for /sys/kernel/debug/efi */
->> +	if (efi_enabled(EFI_DBG))
->> +		return;
->> +
->>   	for_each_efi_memory_desc(md) {
->>   		unsigned long long start = md->phys_addr;
->>   		unsigned long long size = md->num_pages << EFI_PAGE_SHIFT;
->> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
->> index cd42f66a7c85..fddc5f706fd2 100644
->> --- a/drivers/firmware/efi/efi.c
->> +++ b/drivers/firmware/efi/efi.c
->> @@ -18,6 +18,7 @@
->>   #include <linux/kobject.h>
->>   #include <linux/module.h>
->>   #include <linux/init.h>
->> +#include <linux/debugfs.h>
->>   #include <linux/device.h>
->>   #include <linux/efi.h>
->>   #include <linux/of.h>
->> @@ -316,6 +317,59 @@ static __init int efivar_ssdt_load(void)
->>   static inline int efivar_ssdt_load(void) { return 0; }
->>   #endif
->>   
->> +#ifdef CONFIG_DEBUG_FS
->> +
->> +#define EFI_DEBUGFS_MAX_BLOBS 32
->> +
->> +struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
->> +
->> +static void __init efi_debugfs_init(void)
->> +{
->> +	struct dentry *efi_debugfs;
->> +	efi_memory_desc_t *md;
->> +	char name[32];
->> +	int type_count[EFI_BOOT_SERVICES_DATA + 1] = {};
->> +	int i = 0;
->> +
->> +	efi_debugfs = debugfs_create_dir("efi", NULL);
->> +	if (IS_ERR_OR_NULL(efi_debugfs)) {
->> +		pr_warn("Could not create efi debugfs entry\n");
->> +		return;
->> +	}
-> 
-> {sigh}
-> 
-> No, don't warn, or complain, or do anything else if a debugfs call
-> fails.  Just keep on moving, you can always use the return value
-> properly in any future call if you need it, and no code flow should ever
-> care if a debugfs call succeeded or failed.
+Specifically the EFI code may contain an embedded copy of firmware which
+needs to be (re)loaded into the peripheral. Normally such firmware would be
+part of linux-firmware, but in some cases this is not feasible, for 2
+reasons:
 
-Ok.
+1) The firmware is customized for a specific use-case of the chipset / use
+with a specific hardware model, so we cannot have a single firmware file
+for the chipset. E.g. touchscreen controller firmwares are compiled
+specifically for the hardware model they are used with, as they are
+calibrated for a specific model digitizer.
 
->>   /*
->>    * We register the efi subsystem with the firmware subsystem and the
->>    * efivars subsystem with the efi subsystem, if the system was booted with
->> @@ -360,6 +414,9 @@ static int __init efisubsys_init(void)
->>   		goto err_remove_group;
->>   	}
->>   
->> +	if (efi_enabled(EFI_DBG))
->> +		efi_debugfs_init();
-> 
-> You never remove the directory?
+2) Despite repeated attempts we have failed to get permission to
+redistribute the firmware. This is especially a problem with customized
+firmwares, these get created by the chip vendor for a specific ODM and the
+copyright may partially belong with the ODM, so the chip vendor cannot
+give a blanket permission to distribute these.
 
-Correct, this is happening from a subsys_initcall as such there is no
-efi_cleanup() counterpart.
+This commit adds support for finding peripheral firmware embedded in the
+EFI code and making this available to peripheral drivers through the
+standard firmware loading mechanism.
 
-Note the "if (efi_enabled(EFI_DBG))" check checks for efi=debug on the
-kernel cmdline, so this only happens if the user asked for it.
+Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware pretty
+late in the init sequence, this is on purpose because the typical
+EFI_BOOT_SERVICES_CODE memory-segment is too large for early_memremap().
+This means we rely on the EFI_BOOT_SERVICES_CODE not being free-ed until
+efi_free_boot_services() is called, which means that this will only work
+on x86, if we ever want this on ARM we should make ARM delay the freeing
+of the EFI_BOOT_SERVICES_* memory-segments too.
 
-Regards,
+Note this commit also modifies efi_mem_desc_lookup() to not skip
+EFI_BOOT_SERVICES_CODE memory-segments, so that efi_mem_reserve() works
+on such segments.
 
-Hans
+Reported-by: Dave Olsthoorn <dave@bewaar.me>
+Suggested-by: Peter Jones <pjones@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/base/firmware_class.c            |  29 +++
+ drivers/firmware/efi/Makefile            |   1 +
+ drivers/firmware/efi/efi.c               |   1 +
+ drivers/firmware/efi/embedded-firmware.c | 232 +++++++++++++++++++++++
+ include/linux/efi.h                      |   2 +
+ init/main.c                              |   1 +
+ 6 files changed, 266 insertions(+)
+ create mode 100644 drivers/firmware/efi/embedded-firmware.c
+
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index 7dd36ace6152..b1e7b3de1975 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/capability.h>
+ #include <linux/device.h>
++#include <linux/efi.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/timer.h>
+@@ -1207,6 +1208,32 @@ static inline void unregister_sysfs_loader(void)
+ 
+ #endif /* CONFIG_FW_LOADER_USER_HELPER */
+ 
++#ifdef CONFIG_EFI
++static int
++fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
++{
++	size_t size;
++	int rc;
++
++	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size,
++				 fw_priv->data ? fw_priv->allocated_size : 0);
++	if (rc == 0) {
++		dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
++		fw_priv->size = size;
++		fw_state_done(fw_priv);
++		ret = 0;
++	}
++
++	return ret;
++}
++#else
++static inline int
++fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
++{
++	return ret;
++}
++#endif
++
+ /* prepare firmware and firmware_buf structs;
+  * return 0 if a firmware is already assigned, 1 if need to load one,
+  * or a negative error code
+@@ -1296,6 +1323,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+ 		goto out;
+ 
+ 	ret = fw_get_filesystem_firmware(device, fw->priv);
++	if (ret)
++		ret = fw_get_efi_embedded_fw(device, fw->priv, ret);
+ 	if (ret) {
+ 		if (!(opt_flags & FW_OPT_NO_WARN))
+ 			dev_warn(device,
+diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+index cb805374f4bc..cb946f7d0181 100644
+--- a/drivers/firmware/efi/Makefile
++++ b/drivers/firmware/efi/Makefile
+@@ -13,6 +13,7 @@ KASAN_SANITIZE_runtime-wrappers.o	:= n
+ obj-$(CONFIG_ACPI_BGRT) 		+= efi-bgrt.o
+ obj-$(CONFIG_EFI)			+= efi.o vars.o reboot.o memattr.o tpm.o
+ obj-$(CONFIG_EFI)			+= capsule.o memmap.o
++obj-$(CONFIG_EFI)			+= embedded-firmware.o
+ obj-$(CONFIG_EFI_VARS)			+= efivars.o
+ obj-$(CONFIG_EFI_ESRT)			+= esrt.o
+ obj-$(CONFIG_EFI_VARS_PSTORE)		+= efi-pstore.o
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index fddc5f706fd2..1a5ea950f58f 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -455,6 +455,7 @@ int __init efi_mem_desc_lookup(u64 phys_addr, efi_memory_desc_t *out_md)
+ 		u64 end;
+ 
+ 		if (!(md->attribute & EFI_MEMORY_RUNTIME) &&
++		    md->type != EFI_BOOT_SERVICES_CODE &&
+ 		    md->type != EFI_BOOT_SERVICES_DATA &&
+ 		    md->type != EFI_RUNTIME_SERVICES_DATA) {
+ 			continue;
+diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
+new file mode 100644
+index 000000000000..80848f332b22
+--- /dev/null
++++ b/drivers/firmware/efi/embedded-firmware.c
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Support for extracting embedded firmware for peripherals from EFI code,
++ *
++ * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
++ */
++
++#include <linux/crc32.h>
++#include <linux/dmi.h>
++#include <linux/efi.h>
++#include <linux/types.h>
++
++/* Sofar there are no machines with more then 1 interesting embedded firmware */
++#define MAX_EMBEDDED_FIRMWARES	1
++
++struct embedded_fw_desc {
++	const char *name;
++	u8 prefix[8];
++	u32 length;
++	u32 crc;
++};
++
++struct embedded_fw {
++	const char *name;
++	void *data;
++	size_t length;
++};
++
++static struct embedded_fw found_fw[MAX_EMBEDDED_FIRMWARES];
++static int found_fw_count;
++
++static struct embedded_fw_desc chuwi_vi8_plus_fw[] __initdata = {
++	{
++		.name	= "chipone/icn8318-HAMP0002.fw",
++		.prefix = { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
++		.length	= 35012,
++		.crc	= 0x74dfd3fc,
++	},
++	{}
++};
++
++static struct embedded_fw_desc chuwi_hi8_pro_fw[] __initdata = {
++	{
++		.name	= "silead/gsl3680-chuwi-hi8-pro.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 39864,
++		.crc	= 0xfe2bedba,
++	},
++	{}
++};
++
++static struct embedded_fw_desc cube_iwork8_air_fw[] __initdata = {
++	{
++		.name	= "silead/gsl3670-cube-iwork8-air.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 38808,
++		.crc	= 0xfecde51f,
++	},
++	{}
++};
++
++static struct embedded_fw_desc pipo_w2s_fw[] __initdata = {
++	{
++		.name	= "silead/gsl1680-pipo-w2s.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 39072,
++		.crc	= 0x28d5dc6c,
++	},
++	{}
++};
++
++static struct dmi_system_id embedded_fw_table[] __initdata = {
++	{
++		/* Chuwi Vi8 Plus (CWI506) */
++		.driver_data = (void *)chuwi_vi8_plus_fw,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
++			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++		},
++	},
++	{
++		/* Chuwi Hi8 Pro (CWI513) */
++		.driver_data = (void *)chuwi_hi8_pro_fw,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "X1D3_C806N"),
++		},
++	},
++	{
++		/* Cube iWork8 Air */
++		.driver_data = (void *)cube_iwork8_air_fw,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "cube"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "i1-TF"),
++			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++		},
++	},
++	{
++		/* Pipo W2s */
++		.driver_data = (void *)pipo_w2s_fw,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PIPO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "W2S"),
++		},
++	},
++	{}
++};
++
++/*
++ * Note the efi_check_for_embedded_firmwares() code currently makes the
++ * following 2 assumptions. This may needs to be revisited if embedded firmware
++ * is found where this is not true:
++ * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory segments
++ * 2) The firmware always starts at an offset which is a multiple of 8 bytes
++ */
++static int __init efi_check_md_for_embedded_firmware(
++	efi_memory_desc_t *md, const struct embedded_fw_desc *desc)
++{
++	u64 i, size;
++	u32 crc;
++	u8 *mem;
++
++	size = md->num_pages << EFI_PAGE_SHIFT;
++	mem = memremap(md->phys_addr, size, MEMREMAP_WB);
++	if (!mem) {
++		pr_err("Error mapping EFI mem at %#llx\n", md->phys_addr);
++		return -ENOMEM;
++	}
++
++	size -= desc->length;
++	for (i = 0; i < size; i += 8) {
++		if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
++			continue;
++
++		/* Seed with ~0, invert to match crc32 userspace utility */
++		crc = ~crc32(~0, mem + i, desc->length);
++		if (crc == desc->crc)
++			break;
++	}
++
++	memunmap(mem);
++
++	if (i >= size)
++		return -ENOENT;
++
++	pr_info("Found EFI embedded fw '%s' crc %08x\n", desc->name, desc->crc);
++
++	if (found_fw_count >= MAX_EMBEDDED_FIRMWARES) {
++		pr_err("Error already have %d embedded firmwares\n",
++		       MAX_EMBEDDED_FIRMWARES);
++		return -ENOSPC;
++	}
++
++	found_fw[found_fw_count].data =
++		memremap(md->phys_addr + i, desc->length, MEMREMAP_WB);
++	if (!found_fw[found_fw_count].data) {
++		pr_err("Error mapping embedded firmware\n");
++		return -ENOMEM;
++	}
++
++	found_fw[found_fw_count].name = desc->name;
++	found_fw[found_fw_count].length = desc->length;
++	found_fw_count++;
++
++	/* Note md points to *unmapped* memory after this!!! */
++	efi_mem_reserve(md->phys_addr + i, desc->length);
++	return 0;
++}
++
++void __init efi_check_for_embedded_firmwares(void)
++{
++	const struct embedded_fw_desc *fw_desc;
++	const struct dmi_system_id *dmi_id;
++	efi_memory_desc_t *md;
++	int i, r;
++
++	dmi_id = dmi_first_match(embedded_fw_table);
++	if (!dmi_id)
++		return;
++
++	fw_desc = dmi_id->driver_data;
++	for (i = 0; fw_desc[i].length; i++) {
++		for_each_efi_memory_desc(md) {
++			if (md->type != EFI_BOOT_SERVICES_CODE)
++				continue;
++
++			r = efi_check_md_for_embedded_firmware(md, &fw_desc[i]);
++			if (r == 0) {
++				/*
++				 * On success efi_mem_reserve() has been called
++				 * installing a new memmap, so our pointers
++				 * are invalid now and we MUST break the loop.
++				 */
++				break;
++			}
++		}
++	}
++}
++
++int efi_get_embedded_fw(const char *name, void **data, size_t *size,
++			size_t msize)
++{
++	struct embedded_fw *fw = NULL;
++	void *buf = *data;
++	int i;
++
++	for (i = 0; i < found_fw_count; i++) {
++		if (strcmp(name, found_fw[i].name) == 0) {
++			fw = &found_fw[i];
++			break;
++		}
++	}
++
++	if (!fw)
++		return -ENOENT;
++
++	if (msize && msize < fw->length)
++		return -EFBIG;
++
++	if (!buf) {
++		buf = vmalloc(fw->length);
++		if (!buf)
++			return -ENOMEM;
++	}
++
++	memcpy(buf, fw->data, fw->length);
++	*size = fw->length;
++	*data = buf;
++
++	return 0;
++}
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index f5083aa72eae..bbdfda1d9e8d 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1573,6 +1573,8 @@ efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) { }
+ #endif
+ 
+ void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
++void efi_check_for_embedded_firmwares(void);
++int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
+ 
+ /*
+  * Arch code can implement the following three template macros, avoiding
+diff --git a/init/main.c b/init/main.c
+index 969eaf140ef0..79b4a1b12509 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -710,6 +710,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	sfi_init_late();
+ 
+ 	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
++		efi_check_for_embedded_firmwares();
+ 		efi_free_boot_services();
+ 	}
+ 
+-- 
+2.17.0.rc2
