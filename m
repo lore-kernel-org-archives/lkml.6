@@ -1,186 +1,94 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1495695-1522488125-5-10830692134782424731
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522488125; b=C/+luBdnzO75XlUmom5rRB5R1r4ska4okv7vkohR5Rj26CAMsP
-    E5mrlUyLXX8arvnRIT/uCCvGEuPPplqQ39I3KyEodJyK6o9FeIgeSdYVCLa/Cbce
-    t3Ap6OfpzCQR9yQJI/EpRcQtXkSmrebcIVC5R//8tk0uWVstGZzc2wAn/1L9bIAH
-    iSTBbi58sq/VGf9SKmCNr+NUik43cIOpjL6hHRSGEERfwYW+PCQwW97tH6CG2OLs
-    q3vKR9B7J5Bt2sk9Hj7zQFglxOwdD6x/W/VY8JuqfUP8CtoagAHiwFzl1uB7Mnwp
-    QKE//QWh5YoA1aM/alB4HNNBp9q7Cekt2W8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522488125; bh=BIw00
-    EbKeoX2GSdR2izJKcBDNqcwA/RL5p9Cz8NGlkI=; b=tiQwya33U87j5m4JfXKDY
-    08CZvmHigid9LITY/dIsbFJGccmplGcUqKK8TjjAK9zKmqOFLqLeQWtPQyFHiFxu
-    9HZ1oLKLP1yWuhpQcxdcxveFdVrEs/0gV/ULgXZCjvo/udD174h/UhN8z24AjPPL
-    nkP7DGBLETYl9PqUKf1p94Awc5qRQdnU0FbNhxEpVjH2E/si18ZMT0Vr8vSvmYtm
-    9QoUUxmoqjU7IlRh3V71nOHQu1qTQOM6t/x9EoYR0w2Ptpv88DGi6MxAJcQfHmVs
-    JF2RBmNuY8cx2uWif/vyz3YPgftVlLc/h654togBWXsyDUnQpdm/PJhftuhKZPVC
-    A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=JKaEED0p x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=JKaEED0p x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBmpTBMBKvFdI3k6ktFSOWgk02fQ+7uXIPNhHb5OSnmjipNUnNHlRTpldLnlorWVDqQjU86p/FqUdHme4AnBikrz3tF6TfVqqqlFSfVUDfpemwlYGNcK
-    8CzVDimCgF5uZWTSkHeVhZf6DsZS3iRj9uuwD5qnJqbrLoVj9R2uVWQfUHdwPR5xCBGEDqxUNQO0FDd8cE1Or0Jrw1HSKkcFqvPyjvhduXg6TTdYXnwzWX5a
-    sDpLpFC5ojW6BOnyNmHewA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Feg6x53VAAAA:8 a=DDOyTI_5AAAA:8
-    a=w39jrxuhPLwgjoi6HQgA:9 a=asRK2qnEoISfb6__:21 a=1vXTxL2uy1HA96aY:21
-    a=CjuIK1q_8ugA:10 a=WvgAEFZ7fBLC38U1N6He:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sat, 31 Mar 2018 12:14:20 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Quytelda Kahja <quytelda@tamalin.org>
-Subject: Re: [PATCH v2 68/75] staging: ks7010: Replace manual array copy with
- ether_addr_copy().
-Message-ID: <20180331091420.3gdpzy557j2g443d@mwanda>
+Return-Path: <quytelda@tamalin.org>
+X-Google-Smtp-Source: AIpwx48EUNdZBEUZ/brx75oylmWGBavq8Sn4kIARvBaocW1GmINe79xWgbxaAgNYNBYHDxXBVFW8
+ARC-Seal: i=1; a=rsa-sha256; t=1522476626; cv=none;
+        d=google.com; s=arc-20160816;
+        b=TOEaFw4w3lE7H5EzmGVHnro5o5TYhING9Hw/07omT81OFLOGgb/Ha/QWGlxm45fxiC
+         BfWiZJzhtYVEthkToLMNZ4pkwL/Ea7GnZYECeVui8RdpDcXDn7llnjJzwWLVtf56eMSr
+         M4QDA4BF4q/zfdJ5shq5FvWOeaBdoNhveij33O4MfWYUK9tZq858A6fb1SSP0Q/8R5Nn
+         6h/JimdK4cMsQ6lmaOq6IZUFsUXj45Bmk5LhFWWxja7JVrrbOTEg5OGHEAmDbvHTyNUe
+         1qqZF7YDd3DAiq/zjy1PflJAZfafwoqKarO0aPbe0hZrj7rY65lNpZdLc1PJY/pWKh98
+         RfVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=toZsHcJ5V4Fb9J9FAQx56aAn4a5VxmvX4VFMjwp/Po4=;
+        b=vu3CNgrpODYO0M/FS4IJx7/mRRoFXha/UNgu4GaBA8IHuLTUlXJkqsjPF4R9qeobjL
+         a6ZPPfILepLzLmAYVeDeFOMnf3YkCq3ISrVPxXp4v07zHNg8vwboLBISh0+L1o0Al2CY
+         nsvI3grEezrv9tNEMJHOqR9kH6vJnTZPRmOE9eBY6kBtq3uwqCCc5fDQzesmXJhLSJp1
+         R2vQfHbImtTN2Go1PLixUiO/UXBcqtoEk2C8wdTt2mO289HGwWq/QjY3yt+er/RBO3b7
+         UWXJ1wy/9XtxCSJyodx1K9+t+QcNgxH2UhWzgAKa3R0WojnMXGcQoH5kJvrBnAIHfeLd
+         +CrQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+From: Quytelda Kahja <quytelda@tamalin.org>
+To: gregkh@linuxfoundation.org,
+	wsa@the-dreams.de
+Cc: driverdev-devel@linuxdriverproject.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Quytelda Kahja <quytelda@tamalin.org>
+Subject: [PATCH v2 71/75] staging: ks7010: Remove dummy address set.
+Date: Fri, 30 Mar 2018 23:08:51 -0700
+Message-Id: <20180331060855.9452-71-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180331060855.9452-1-quytelda@tamalin.org>
 References: <CAFLvi23=E6QubTGX0=cHjbJGB=Vx5OJ7d16E2R4HZTscmJuuSw@mail.gmail.com>
  <20180331060855.9452-1-quytelda@tamalin.org>
- <20180331060855.9452-68-quytelda@tamalin.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180331060855.9452-68-quytelda@tamalin.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8848
- signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803310095
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
- driverdev-devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
- wsa@the-dreams.de
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-Provags-ID: V03:K0:2RZxplgVOMXvPKWTfkh9ZXh3ZC+bp6b0Rg4BBcTfnVa25+MA5mK
+ uVl+54QknTg0+2dYmRbrUDXWGRNUTg94XAkIgLpus3o8tSuRDjr12pEHB7X4KUpfYwi7dEn
+ wtbVqWRY4HO/WJAg6u9deTF8rkxBWKKVTm1q/O8WTQ0vI2hQuTJQfx1SWM5CEPnAoNsdQlG
+ JUCU0P4doATlqP+udJb3g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lhEpFCQ+Iuw=:1UX8w/2eSSJGhxXhbgV4F/
+ 5xz/yQEvA3TaTS19xqEiO+mye9zBgaVWRBDJA4LENC5PohPbAq0IWNrZu+o4w41ugvzSE+7EC
+ ngPufu0tlXkaote2iB/unB2D3mHDRzuzrADhv31iccLo6HBxYTG+x3cz4LAv/kXXemHC9BACd
+ mjMe6aahtfbrJkNWVtY0BzGQ9vh3bne3AjQjlZ54R5xpMWwkifmJY8YpQL2XXhnM4GXwdAR2t
+ 183LDxQMgwTwWLimIWWplh9IAC/8xwJb2cFJtT8uYY9vykOhMjWA9wBq8vcNRWmGXsQfAc3xU
+ miIHZdUB05IEmgmgEPQJC3HuyjgiwPrA6Zf6LrNdM6COWf5nSmeiRlh/Z6oRVN6fVy+KNcktk
+ kfdGBX7DsY/EzkL1D8fkQ/4hcyz0k8z99smmvlIX2yF1a9vVSAIhxhOS9COiU14MEqZ9sEacr
+ y0WrYjsduzd6pqnzxybr6YV28hxn1kxOeHpvltfG4s2Buhq1qOYDzjF4Zx9Dgv73nx13kP3vh
+ 80Ey5xEOwqyho2i2Az0qcO6rt7obhuTET0R2R6zWMjsEI2UJEThg40W5MQG/j541Qb9JEBK7r
+ +46D12AYyXNARNnv/R+EDSaOmnqj9zxwYISY9BDUQ38TAE+aX79tW2d+yEsVxUXWKzAaxZ6Dy
+ GwSj/mGfZWUsJxL5cEPWO0cU9rl5lOE7MsWnu9Qc4Z1Rf82BSLLHALzv+d6Dx4Rv7J63i3wJi
+ MryqY4MRGheFLukAbstyOc5bYgv2peKG/0yz3Q==
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596432450752943078?=
+X-GMAIL-MSGID: =?utf-8?q?1596432450752943078?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I'm in a hurry because I'm leaving for a long weekend so I've reviewed
-the first easy 67 patches but this one is tricky and I'm not able to
-review it properly before I leave.
+Setting a dummy address during the driver probe is not necessary.
+The dev_addr field is already zeroed out from alloc_etherdev().
 
-On Fri, Mar 30, 2018 at 11:08:48PM -0700, Quytelda Kahja wrote:
-> Copying the dummy HW address into the struct net_device doesn't need
-> to be done byte by byte; use ether_addr_copy() instead.
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+---
+ drivers/staging/ks7010/ks_wlan_net.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Fine.
-
-> Additionally, dev->dev_addr is not eight bytes long.
-> ether_setup() sets the dev->addr_len to ETH_ALEN (defined as 6)
-> in the net core code.
-
-So it's a buffer overflow?  The subject should have mentioned that this
-is a bug fix.  But I'm not sure it is.  dev->dev_addr is MAX_ADDR_LEN (32)
-bytes long I believe.  See dev_addr_init() for details.
-
-The commit message didn't make it clear that you were getting rid of
-priv->eth_addr.  It's a good change, but it confused me and I am in a
-hurry.
-
-> 
-> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
-> ---
->  drivers/staging/ks7010/ks_hostif.c   | 29 +++++++++++------------------
->  drivers/staging/ks7010/ks_wlan.h     |  2 --
->  drivers/staging/ks7010/ks_wlan_net.c | 13 ++-----------
->  3 files changed, 13 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-> index 1eff78540683..23c637ef147d 100644
-> --- a/drivers/staging/ks7010/ks_hostif.c
-> +++ b/drivers/staging/ks7010/ks_hostif.c
-> @@ -388,6 +388,7 @@ int hostif_data_indication_wpa(struct ks_wlan_private *priv,
->  static
->  void hostif_data_indication(struct ks_wlan_private *priv)
->  {
-> +	struct net_device *dev = priv->net_dev;
->  	unsigned int rx_ind_size;	/* indicate data size */
->  	struct sk_buff *skb;
->  	unsigned short auth_type;
-> @@ -411,9 +412,9 @@ void hostif_data_indication(struct ks_wlan_private *priv)
->  	eth_proto = ntohs(eth_hdr->h_proto);
->  
->  	/* source address check */
-> -	if (memcmp(&priv->eth_addr[0], eth_hdr->h_source, ETH_ALEN) == 0) {
-> -		netdev_err(priv->net_dev, "invalid : source is own mac address !!\n");
-> -		netdev_err(priv->net_dev,
-> +	if (memcmp(dev->dev_addr, eth_hdr->h_source, ETH_ALEN) == 0) {
-> +		netdev_err(dev, "invalid : source is own mac address !!\n");
-> +		netdev_err(dev,
->  			   "eth_hdrernet->h_dest=%02X:%02X:%02X:%02X:%02X:%02X\n",
->  			   eth_hdr->h_source[0], eth_hdr->h_source[1],
->  			   eth_hdr->h_source[2], eth_hdr->h_source[3],
-> @@ -443,7 +444,7 @@ void hostif_data_indication(struct ks_wlan_private *priv)
->  			priv->nstats.rx_dropped++;
->  			return;
->  		}
-> -		netdev_dbg(priv->net_dev, "SNAP, rx_ind_size = %d\n",
-> +		netdev_dbg(dev, "SNAP, rx_ind_size = %d\n",
->  			   rx_ind_size);
-
-I don't like the printk cleanups.  They belong in a separate patch and
-they make it harder for reviewers in a hurry to see what the patch is
-doing.
-
-Sorry, gotta run...
-
-regards,
-dan carpenter
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 5c5569000fce..afbc472baa05 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -2852,9 +2852,6 @@ int ks_wlan_close(struct net_device *dev)
+ /* Operational parameters that usually are not changed. */
+ /* Time in jiffies before concluding the transmitter is hung. */
+ #define TX_TIMEOUT  (3 * HZ)
+-static const unsigned char dummy_addr[] = {
+-	0x00, 0x0b, 0xe3, 0x00, 0x00, 0x00
+-};
+ 
+ static const struct net_device_ops ks_wlan_netdev_ops = {
+ 	.ndo_start_xmit = ks_wlan_start_xmit,
+@@ -2882,9 +2879,6 @@ int ks_wlan_net_start(struct net_device *dev)
+ 	atomic_set(&update_phyinfo, 0);
+ 	timer_setup(&update_phyinfo_timer, ks_wlan_update_phyinfo_timeout, 0);
+ 
+-	/* dummy address set */
+-	ether_addr_copy(dev->dev_addr, dummy_addr);
+-
+ 	/* The ks_wlan-specific entries in the device structure. */
+ 	dev->netdev_ops = &ks_wlan_netdev_ops;
+ 	dev->wireless_handlers = &ks_wlan_handler_def;
+-- 
+2.16.3
