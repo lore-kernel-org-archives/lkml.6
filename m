@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753430AbeCaUtg (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 16:49:36 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:43641 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbeCaUrH (ORCPT
+        id S1753416AbeCaUtf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 16:49:35 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:57308 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751647AbeCaUrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 31 Mar 2018 16:47:07 -0400
-X-Google-Smtp-Source: AIpwx48SVGNUWAyY3Ydf5BjsRMbyToxvfYOxv89Ufn1M+CzZ3ZrWy3edPS3mjd4cuQxa3YBubA2uSgKKYsWz1bzHrOobxs8wyU5m
+X-Google-Smtp-Source: AIpwx49u6vXNmdNXEyO44SuHkW8V10YCt4JmFoGdnZI43miEbss3FqyTc1fVeAhMQfYAvUq6PjyRL/ziA8beUY6pXDexX6is2hgL
 MIME-Version: 1.0
 Date: Sat, 31 Mar 2018 13:47:06 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <089e08e567a5b24ae90568bb75d6@google.com>
-Subject: WARNING: ODEBUG bug in hfsplus_fill_super
-From: syzbot <syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, dhowells@redhat.com,
-        ernesto.mnd.fernandez@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, slava@dubeyko.com,
+Message-ID: <001a113ed49eb535d20568bb75ba@google.com>
+Subject: KASAN: slab-out-of-bounds Read in find_first_zero_bit
+From: syzbot <syzbot+a88c8270030dc5d71e4f@syzkaller.appspotmail.com>
+To: aivazian.tigran@gmail.com, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -27,63 +25,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
-Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
+b5dbc28762fd3fd40ba76303be0c7f707826f982 (Sat Mar 31 04:53:57 2018 +0000)
+Merge tag 'kbuild-fixes-v4.16-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=4f2e5f086147d543ab03
+https://syzkaller.appspot.com/bug?extid=a88c8270030dc5d71e4f
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5787167037063168
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6431707947335680
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5103671176069120
+https://syzkaller.appspot.com/x/repro.syz?id=6420485734662144
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6295681903886336
+https://syzkaller.appspot.com/x/log.txt?id=6746019962290176
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4f2e5f086147d543ab03@syzkaller.appspotmail.com
+Reported-by: syzbot+a88c8270030dc5d71e4f@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-hfsplus: found bad thread record in catalog
-hfsplus: failed to load root directory
-hfsplus: failed to load root directory
-------------[ cut here ]------------
-ODEBUG: free active (active state 0) object type: timer_list hint:  
-delayed_work_timer_fn+0x0/0x90 kernel/workqueue.c:1355
-WARNING: CPU: 1 PID: 5536 at lib/debugobjects.c:291  
-debug_print_object+0x166/0x220 lib/debugobjects.c:288
-Kernel panic - not syncing: panic_on_warn set ...
+==================================================================
+BUG: KASAN: slab-out-of-bounds in find_first_zero_bit+0xc5/0xe0  
+lib/find_bit.c:125
+Read of size 8 at addr ffff8801d7480a00 by task syzkaller291450/4476
 
-CPU: 1 PID: 5536 Comm: syzkaller048155 Not tainted 4.16.0-rc7+ #7
+CPU: 1 PID: 4476 Comm: syzkaller291450 Not tainted 4.16.0-rc7+ #8
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:debug_print_object+0x166/0x220 lib/debugobjects.c:288
-RSP: 0018:ffff8801acbf73d0 EFLAGS: 00010082
-RAX: dffffc0000000008 RBX: 0000000000000003 RCX: ffffffff815b193e
-RDX: 0000000000000000 RSI: 1ffff1003597ee2a RDI: 1ffff1003597edff
-RBP: ffff8801acbf7410 R08: 0000000000000000 R09: 1ffff1003597edd1
-R10: ffffed003597eea9 R11: ffffffff88583158 R12: 0000000000000001
-R13: ffffffff885949e0 R14: ffffffff8775c040 R15: ffffffff81604110
-  __debug_check_no_obj_freed lib/debugobjects.c:745 [inline]
-  debug_check_no_obj_freed+0x662/0xf1f lib/debugobjects.c:774
-  kfree+0xc7/0x260 mm/slab.c:3800
-  hfsplus_fill_super+0x114b/0x2030 fs/hfsplus/super.c:609
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  find_first_zero_bit+0xc5/0xe0 lib/find_bit.c:125
+  bfs_create+0xf7/0x610 fs/bfs/dir.c:92
+  lookup_open+0x1217/0x1970 fs/namei.c:3200
+  do_last fs/namei.c:3291 [inline]
+  path_openat+0xd76/0x3530 fs/namei.c:3519
+  do_filp_open+0x25b/0x3b0 fs/namei.c:3554
+  do_sys_open+0x502/0x6d0 fs/open.c:1059
+  SYSC_open fs/open.c:1077 [inline]
+  SyS_open+0x2d/0x40 fs/open.c:1072
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4404f9
+RSP: 002b:00007ffd2305ebd8 EFLAGS: 00000207 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004404f9
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000020000340
+RBP: 0000000000000003 R08: 000000000000000a R09: 6f6f6c2f7665642f
+R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000000004
+R13: 0000000000401d70 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 4476:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+  __do_kmalloc mm/slab.c:3706 [inline]
+  __kmalloc+0x162/0x760 mm/slab.c:3715
+  kmalloc include/linux/slab.h:517 [inline]
+  kzalloc include/linux/slab.h:701 [inline]
+  bfs_fill_super+0x3d3/0xea0 fs/bfs/inode.c:362
   mount_bdev+0x2b7/0x370 fs/super.c:1119
-  hfsplus_mount+0x34/0x40 fs/hfsplus/super.c:645
+  bfs_mount+0x34/0x40 fs/bfs/inode.c:465
   mount_fs+0x66/0x2d0 fs/super.c:1222
   vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
   vfs_kern_mount fs/namespace.c:2509 [inline]
@@ -93,195 +100,45 @@ R13: ffffffff885949e0 R14: ffffffff8775c040 R15: ffffffff81604110
   SyS_mount+0xab/0x120 fs/namespace.c:3035
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44a51a
-RSP: 002b:00007f40bbaadd38 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00000000200003a8 RCX: 000000000044a51a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f40bbaadd50
-RBP: 00000000006e49c4 R08: 0000000020017900 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000003
-R13: 0000000000000004 R14: 00000000006e49c0 R15: 0073756c70736668
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.16.0-rc7+ #7 Not tainted
-------------------------------------------------------
-syzkaller048155/5536 is trying to acquire lock:
-  ((console_sem).lock){....}, at: [<00000000d4a7cd50>]  
-down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-
-but task is already holding lock:
-  (&obj_hash[i].lock){-.-.}, at: [<00000000507259e1>]  
-__debug_check_no_obj_freed lib/debugobjects.c:736 [inline]
-  (&obj_hash[i].lock){-.-.}, at: [<00000000507259e1>]  
-debug_check_no_obj_freed+0x1e9/0xf1f lib/debugobjects.c:774
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&obj_hash[i].lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        __debug_object_init+0x109/0x1040 lib/debugobjects.c:343
-        debug_object_init+0x17/0x20 lib/debugobjects.c:391
-        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-        debug_init kernel/time/hrtimer.c:458 [inline]
-        hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
-        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1060
-        __sched_fork+0x2bb/0xb60 kernel/sched/core.c:2189
-        init_idle+0x75/0x820 kernel/sched/core.c:5352
-        sched_init+0xb19/0xc43 kernel/sched/core.c:6049
-        start_kernel+0x452/0x819 init/main.c:586
-        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
-        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
-        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
-
--> #2 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1760 [inline]
-        task_fork_fair+0x7a/0x690 kernel/sched/fair.c:9471
-        sched_fork+0x450/0xc10 kernel/sched/core.c:2405
-        copy_process.part.38+0x17c9/0x4bd0 kernel/fork.c:1763
-        copy_process kernel/fork.c:1606 [inline]
-        _do_fork+0x1f7/0xf70 kernel/fork.c:2087
-        kernel_thread+0x34/0x40 kernel/fork.c:2146
-        rest_init+0x22/0xf0 init/main.c:403
-        start_kernel+0x7f1/0x819 init/main.c:717
-        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
-        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
-        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
-
--> #1 (&p->pi_lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xbc/0x15f0 kernel/sched/core.c:1989
-        wake_up_process+0x10/0x20 kernel/sched/core.c:2152
-        __up.isra.0+0x1cc/0x2c0 kernel/locking/semaphore.c:262
-        up+0x13b/0x1d0 kernel/locking/semaphore.c:187
-        __up_console_sem+0xb2/0x1a0 kernel/printk/printk.c:242
-        console_unlock+0x5af/0xfb0 kernel/printk/printk.c:2417
-        do_con_write+0x106e/0x1f70 drivers/tty/vt/vt.c:2433
-        con_write+0x25/0xb0 drivers/tty/vt/vt.c:2782
-        process_output_block drivers/tty/n_tty.c:579 [inline]
-        n_tty_write+0x5ef/0xec0 drivers/tty/n_tty.c:2308
-        do_tty_write drivers/tty/tty_io.c:958 [inline]
-        tty_write+0x3fa/0x840 drivers/tty/tty_io.c:1042
-        __vfs_write+0xef/0x970 fs/read_write.c:480
-        vfs_write+0x189/0x510 fs/read_write.c:544
-        SYSC_write fs/read_write.c:589 [inline]
-        SyS_write+0xef/0x220 fs/read_write.c:581
-        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
--> #0 ((console_sem).lock){....}:
-        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-        __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
-        console_trylock+0x15/0x70 kernel/printk/printk.c:2229
-        console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-        vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
-        vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
-        printk+0xaa/0xca kernel/printk/printk.c:1980
-        __warn_printk+0x90/0xf0 kernel/panic.c:599
-        debug_print_object+0x166/0x220 lib/debugobjects.c:288
-        __debug_check_no_obj_freed lib/debugobjects.c:745 [inline]
-        debug_check_no_obj_freed+0x662/0xf1f lib/debugobjects.c:774
-        kfree+0xc7/0x260 mm/slab.c:3800
-        hfsplus_fill_super+0x114b/0x2030 fs/hfsplus/super.c:609
-        mount_bdev+0x2b7/0x370 fs/super.c:1119
-        hfsplus_mount+0x34/0x40 fs/hfsplus/super.c:645
-        mount_fs+0x66/0x2d0 fs/super.c:1222
-        vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-        vfs_kern_mount fs/namespace.c:2509 [inline]
-        do_new_mount fs/namespace.c:2512 [inline]
-        do_mount+0xea4/0x2bb0 fs/namespace.c:2842
-        SYSC_mount fs/namespace.c:3058 [inline]
-        SyS_mount+0xab/0x120 fs/namespace.c:3035
-        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-other info that might help us debug this:
-
-Chain exists of:
-   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&obj_hash[i].lock);
-                                lock(&rq->lock);
-                                lock(&obj_hash[i].lock);
-   lock((console_sem).lock);
-
-  *** DEADLOCK ***
-
-2 locks held by syzkaller048155/5536:
-  #0:  (&type->s_umount_key#35/1){+.+.}, at: [<00000000651258d3>]  
-alloc_super fs/super.c:211 [inline]
-  #0:  (&type->s_umount_key#35/1){+.+.}, at: [<00000000651258d3>]  
-sget_userns+0x3a1/0xe40 fs/super.c:502
-  #1:  (&obj_hash[i].lock){-.-.}, at: [<00000000507259e1>]  
-__debug_check_no_obj_freed lib/debugobjects.c:736 [inline]
-  #1:  (&obj_hash[i].lock){-.-.}, at: [<00000000507259e1>]  
-debug_check_no_obj_freed+0x1e9/0xf1f lib/debugobjects.c:774
-
-stack backtrace:
-CPU: 1 PID: 5536 Comm: syzkaller048155 Not tainted 4.16.0-rc7+ #7
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2417 [inline]
-  __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-  __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
-  console_trylock+0x15/0x70 kernel/printk/printk.c:2229
-  console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-  vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
-  vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
-  printk+0xaa/0xca kernel/printk/printk.c:1980
-  __warn_printk+0x90/0xf0 kernel/panic.c:599
-  debug_print_object+0x166/0x220 lib/debugobjects.c:288
-  __debug_check_no_obj_freed lib/debugobjects.c:745 [inline]
-  debug_check_no_obj_freed+0x662/0xf1f lib/debugobjects.c:774
-  kfree+0xc7/0x260 mm/slab.c:3800
-  hfsplus_fill_super+0x114b/0x2030 fs/hfsplus/super.c:609
-  mount_bdev+0x2b7/0x370 fs/super.c:1119
-  hfsplus_mount+0x34/0x40 fs/hfsplus/super.c:645
-  mount_fs+0x66/0x2d0 fs/super.c:1222
-  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:2509 [inline]
-  do_new_mount fs/namespace.c:2512 [inline]
-  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
-  SYSC_mount fs/namespace.c:3058 [inline]
-  SyS_mount+0xab/0x120 fs/namespace.c:3035
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+Freed by task 2830:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3486 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3801
+  single_release+0x88/0xb0 fs/seq_file.c:606
+  __fput+0x327/0x7e0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44a51a
-RSP: 002b:00007f40bbaadd38 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00000000200003a8 RCX: 000000000044a51a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f40bbaadd50
-RBP: 00000000006e49c4 R08: 0000000020017900 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000003
-R13: 0000000000000004 R14: 00000000006e49c0 R15: 0073756c70736668
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+
+The buggy address belongs to the object at ffff8801d7480a00
+  which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 0 bytes inside of
+  32-byte region [ffff8801d7480a00, ffff8801d7480a20)
+The buggy address belongs to the page:
+page:ffffea00075d2000 count:1 mapcount:0 mapping:ffff8801d7480000  
+index:0xffff8801d7480fc1
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801d7480000 ffff8801d7480fc1 000000010000003f
+raw: ffffea00075d1ea0 ffffea00075d32a0 ffff8801dac001c0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d7480900: 00 02 fc fc fc fc fc fc 00 02 fc fc fc fc fc fc
+  ffff8801d7480980: 00 02 fc fc fc fc fc fc 00 fc fc fc fc fc fc fc
+> ffff8801d7480a00: 07 fc fc fc fc fc fc fc fb fb fb fb fc fc fc fc
+                    ^
+  ffff8801d7480a80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+  ffff8801d7480b00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+==================================================================
 
 
 ---
