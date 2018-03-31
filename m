@@ -1,444 +1,145 @@
-Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AIpwx4+mw8ISq1H6UKRiYq4SyhgLh/1T4i/9BUMQ5oe+xIQGq39Zg3zVrhM4QkPIx/wkrxRz7v/K
-ARC-Seal: i=1; a=rsa-sha256; t=1522498790; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JO13YCH4aQISyXhHtMp8Rof0eZsj+5bQTs0XQOv1mds2H8hVSalz7cPqpvhV6ZcZRK
-         JRoeOsE7a/7WvCLLrnIK81XYgmYP8X6Xi5PCdn9Of4QYx6oiiX+iVTf9YHfaOMnvzJQ7
-         7uNRx/NgdhJcLT+Rlo2fyUw/Y3GgNJ+RfbWgB4aAWrcgz0VBaopZnZbbx2lWN9I1ukrV
-         L5A4E4rklCoaVyainkhxVGG0pLjKbQ7lcJ+9MdaU+7ysjz2XPubwRszQFVlewC/enX5l
-         7ThAn7Q0D+Ylgf2sTW9lblWm9akXOQLYCZ1o5U7snS6K+6AJkOwpc6GWp+xBXhUUx/dj
-         3LKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=rueYL6cdgUWqAt2ELpHDpbUORQDybFrjfVefR38nD60=;
-        b=T3h2vwgpoZz0rdVObpPzuDB22vEZB8XY6HssEwV8AseGqlDv0pPn4i7Ma0k/6AYDBX
-         oFIv8Oa8Wd3aGbPIuVidVob4QW03xHUoaXWivcUvafo58vA28eWzqXLRJpxHYdN8Wctf
-         SgOcGB0z32YZj1+2nKJ2gbzDNf+78VkqB2aRGmxH1rB5YreKbwMX8NIoSpahc3I8dpnP
-         l+sRfCsJy1CqKNLCp/b0lTXppThnoz2JneK1C5NVUcIw0R/e0XJ3PQFPcJPJcXrLbMWH
-         2COPu7ZhZdbJvy42vPWatnDlGrI9t/d9r9Xblef2A0jYFq8/a2XaIfqRq9CdZSQcxLmY
-         Ln/Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Hans de Goede <hdegoede@redhat.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H . Peter Anvin" <hpa@zytor.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Peter Jones <pjones@redhat.com>,
-	Dave Olsthoorn <dave@bewaar.me>,
-	x86@kernel.org,
-	linux-efi@vger.kernel.org
-Subject: [PATCH 2/2] efi: Add embedded peripheral firmware support
-Date: Sat, 31 Mar 2018 14:19:44 +0200
-Message-Id: <20180331121944.8618-2-hdegoede@redhat.com>
-In-Reply-To: <20180331121944.8618-1-hdegoede@redhat.com>
-References: <20180331121944.8618-1-hdegoede@redhat.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2190098-1522514446-2-14321325241391497048
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522514446; b=ldt24p+2CUlNB3YihnWqfbSyY4am21Z7Jqo7yEDwQaO7qptOXM
+    rOUFD5QsooKGjFo6olyaDM8bEBI0UYiwoja2wRqXUpMHEXQvwBLv1oi6K8FMTiDr
+    tUK0EaVAwXGYqnl827AlvTOC7xD8JHMqDrZWS1OFrz2UBkSqiOkoZqPOTv2tODzY
+    3zielmPSjcZSZGLvnf853OKImmCOjuf9t51VsKgx4NEiCi8U9PwD4uglCNNHXZ+Z
+    rzna5hAf41Dky9ls4u22ORRU6/WpdepURaChaDqgxu5tV1BUt5mpAJeRGvHeBio3
+    huCPjlXMnZi+lVX/2W8U0NM1o0o88iEsDmqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1522514446; bh=ybtBpxm0oFmJZfYYHqbYLdl/5pdfjJ
+    hboZDA/C3qhOc=; b=a/dm7ABooMfs7jKG/E4GTjVdLO//cdpNYuovIcPXqY38Lf
+    KmrVAiLjrgfJ+Fw47A8m1dy3abjjnE4UvpYONtPzVw1Mo8AsL8cl8Ayp3jMcegeW
+    TTjM95OaqpTOGhtp97cLf5SuUFjvCV5UF1rJe7fN16aJJUv6k8Hmz/xIcR8p1Nic
+    eCR4FQ+ZBK100N8L6GcGpQdVwKr7quFkncNN6LHyWUavOvwwR9OchWeMC4dyBHGM
+    eQFwimmCXFU2A51tQOBmzPd3uXRteYmroTq4sm3SuOJ592fWgF8k6FK76JVp2Nxe
+    8MK+SDudzR510fUhYY6HF6IXPuKTyQ8zO0VB0SDA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=canonical.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfO6vKob5n58TEVZ4bAZruTHRiOidbPm/MUlaCV1/Rg7pZZ5/71x3V479fDf2AD2Ot0mFe+BJlgsRizmT5sH/iKDKKqcsweRy0pxRXwgGxCLNFU7Qvy0s
+    T9RBXQbWBnQX7f87M1S31VOAGneXJCeZLUPkAuiIS7MN6BQZhdIs44aMe0xoByAcP5nRkbGlamF0i63+Flx1RF64VbYD3U5fPqt49ZHFPoCUaIvGAVNQk3Qa
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8
+    a=DfNHnWVPAAAA:8 a=YQl0GWw6Zf5YOcMYI_UA:9 a=AjGcO6oz07-iQ99wixmX:22
+    a=rjTVMONInIDnV1a_A2c_:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752873AbeCaQkc (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 31 Mar 2018 12:40:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48746 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752829AbeCaQkb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 31 Mar 2018 12:40:31 -0400
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: bhelgaas@google.com
+Cc: rafael.j.wysocki@intel.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3] PCI / PM: Always check PME wakeup capability for runtime wakeup support
+Date: Sun,  1 Apr 2018 00:40:22 +0800
+Message-Id: <20180331164022.24220-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.15.1
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596455691844480056?=
-X-GMAIL-MSGID: =?utf-8?q?1596455691844480056?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Just like with PCI options ROMs, which we save in the setup_efi_pci*
-functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
-sometimes may contain data which is useful/necessary for peripheral drivers
-to have access to.
+USB controller ASM1042 stops working after commit de3ef1eb1cd0 ("PM /
+core: Drop run_wake flag from struct dev_pm_info").
 
-Specifically the EFI code may contain an embedded copy of firmware which
-needs to be (re)loaded into the peripheral. Normally such firmware would be
-part of linux-firmware, but in some cases this is not feasible, for 2
-reasons:
+The device in question is not power managed by platform firmware,
+furthermore, it only supports PME# from D3cold:
+Capabilities: [78] Power Management version 3
+       Flags: PMEClk- DSI- D1- D2- AuxCurrent=55mA PME(D0-,D1-,D2-,D3hot-,D3cold+)
+       Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
 
-1) The firmware is customized for a specific use-case of the chipset / use
-with a specific hardware model, so we cannot have a single firmware file
-for the chipset. E.g. touchscreen controller firmwares are compiled
-specifically for the hardware model they are used with, as they are
-calibrated for a specific model digitizer.
+Before commit de3ef1eb1cd0, the device never gets runtime suspended.
+After that commit, the device gets runtime suspended, so it does not
+respond to any PME#.
 
-2) Despite repeated attempts we have failed to get permission to
-redistribute the firmware. This is especially a problem with customized
-firmwares, these get created by the chip vendor for a specific ODM and the
-copyright may partially belong with the ODM, so the chip vendor cannot
-give a blanket permission to distribute these.
+usb_hcd_pci_probe() mandatorily calls device_wakeup_enable(), hence
+device_can_wakeup() in pci_dev_run_wake() always returns true.
 
-This commit adds support for finding peripheral firmware embedded in the
-EFI code and making this available to peripheral drivers through the
-standard firmware loading mechanism.
+So pci_dev_run_wake() needs to check PME wakeup capability as its first
+condition.
 
-Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware pretty
-late in the init sequence, this is on purpose because the typical
-EFI_BOOT_SERVICES_CODE memory-segment is too large for early_memremap().
-This means we rely on the EFI_BOOT_SERVICES_CODE not being free-ed until
-efi_free_boot_services() is called, which means that this will only work
-on x86, if we ever want this on ARM we should make ARM delay the freeing
-of the EFI_BOOT_SERVICES_* memory-segments too.
+In addition, change wakeup flag passed to pci_target_state() from false
+to true, because we want to find the deepest state that the device can
+still generate PME#.
 
-Note this commit also modifies efi_mem_desc_lookup() to not skip
-EFI_BOOT_SERVICES_CODE memory-segments, so that efi_mem_reserve() works
-on such segments.
-
-Reported-by: Dave Olsthoorn <dave@bewaar.me>
-Suggested-by: Peter Jones <pjones@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Fixes: de3ef1eb1cd0 ("PM / core: Drop run_wake flag from struct dev_pm_info")
+Cc: stable@vger.kernel.org # 4.13+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- drivers/base/firmware_class.c            |  29 +++
- drivers/firmware/efi/Makefile            |   1 +
- drivers/firmware/efi/efi.c               |   1 +
- drivers/firmware/efi/embedded-firmware.c | 232 +++++++++++++++++++++++
- include/linux/efi.h                      |   2 +
- init/main.c                              |   1 +
- 6 files changed, 266 insertions(+)
- create mode 100644 drivers/firmware/efi/embedded-firmware.c
+v3: State the reason why the wakeup flag gets changed.
 
-diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
-index 7dd36ace6152..b1e7b3de1975 100644
---- a/drivers/base/firmware_class.c
-+++ b/drivers/base/firmware_class.c
-@@ -12,6 +12,7 @@
+v2: Explicitly check dev->pme_support.
+
+ drivers/pci/pci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd10d9b0..52821a21fc07 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2125,16 +2125,16 @@ bool pci_dev_run_wake(struct pci_dev *dev)
+ {
+ 	struct pci_bus *bus = dev->bus;
  
- #include <linux/capability.h>
- #include <linux/device.h>
-+#include <linux/efi.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/timer.h>
-@@ -1207,6 +1208,32 @@ static inline void unregister_sysfs_loader(void)
+-	if (device_can_wakeup(&dev->dev))
+-		return true;
+-
+ 	if (!dev->pme_support)
+ 		return false;
  
- #endif /* CONFIG_FW_LOADER_USER_HELPER */
+ 	/* PME-capable in principle, but not from the target power state */
+-	if (!pci_pme_capable(dev, pci_target_state(dev, false)))
++	if (!pci_pme_capable(dev, pci_target_state(dev, true)))
+ 		return false;
  
-+#ifdef CONFIG_EFI
-+static int
-+fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
-+{
-+	size_t size;
-+	int rc;
++	if (device_can_wakeup(&dev->dev))
++		return true;
 +
-+	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size,
-+				 fw_priv->data ? fw_priv->allocated_size : 0);
-+	if (rc == 0) {
-+		dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
-+		fw_priv->size = size;
-+		fw_state_done(fw_priv);
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+#else
-+static inline int
-+fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
-+{
-+	return ret;
-+}
-+#endif
-+
- /* prepare firmware and firmware_buf structs;
-  * return 0 if a firmware is already assigned, 1 if need to load one,
-  * or a negative error code
-@@ -1296,6 +1323,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 		goto out;
- 
- 	ret = fw_get_filesystem_firmware(device, fw->priv);
-+	if (ret)
-+		ret = fw_get_efi_embedded_fw(device, fw->priv, ret);
- 	if (ret) {
- 		if (!(opt_flags & FW_OPT_NO_WARN))
- 			dev_warn(device,
-diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index cb805374f4bc..cb946f7d0181 100644
---- a/drivers/firmware/efi/Makefile
-+++ b/drivers/firmware/efi/Makefile
-@@ -13,6 +13,7 @@ KASAN_SANITIZE_runtime-wrappers.o	:= n
- obj-$(CONFIG_ACPI_BGRT) 		+= efi-bgrt.o
- obj-$(CONFIG_EFI)			+= efi.o vars.o reboot.o memattr.o tpm.o
- obj-$(CONFIG_EFI)			+= capsule.o memmap.o
-+obj-$(CONFIG_EFI)			+= embedded-firmware.o
- obj-$(CONFIG_EFI_VARS)			+= efivars.o
- obj-$(CONFIG_EFI_ESRT)			+= esrt.o
- obj-$(CONFIG_EFI_VARS_PSTORE)		+= efi-pstore.o
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index fddc5f706fd2..1a5ea950f58f 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -455,6 +455,7 @@ int __init efi_mem_desc_lookup(u64 phys_addr, efi_memory_desc_t *out_md)
- 		u64 end;
- 
- 		if (!(md->attribute & EFI_MEMORY_RUNTIME) &&
-+		    md->type != EFI_BOOT_SERVICES_CODE &&
- 		    md->type != EFI_BOOT_SERVICES_DATA &&
- 		    md->type != EFI_RUNTIME_SERVICES_DATA) {
- 			continue;
-diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
-new file mode 100644
-index 000000000000..80848f332b22
---- /dev/null
-+++ b/drivers/firmware/efi/embedded-firmware.c
-@@ -0,0 +1,232 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Support for extracting embedded firmware for peripherals from EFI code,
-+ *
-+ * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
-+ */
-+
-+#include <linux/crc32.h>
-+#include <linux/dmi.h>
-+#include <linux/efi.h>
-+#include <linux/types.h>
-+
-+/* Sofar there are no machines with more then 1 interesting embedded firmware */
-+#define MAX_EMBEDDED_FIRMWARES	1
-+
-+struct embedded_fw_desc {
-+	const char *name;
-+	u8 prefix[8];
-+	u32 length;
-+	u32 crc;
-+};
-+
-+struct embedded_fw {
-+	const char *name;
-+	void *data;
-+	size_t length;
-+};
-+
-+static struct embedded_fw found_fw[MAX_EMBEDDED_FIRMWARES];
-+static int found_fw_count;
-+
-+static struct embedded_fw_desc chuwi_vi8_plus_fw[] __initdata = {
-+	{
-+		.name	= "chipone/icn8318-HAMP0002.fw",
-+		.prefix = { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
-+		.length	= 35012,
-+		.crc	= 0x74dfd3fc,
-+	},
-+	{}
-+};
-+
-+static struct embedded_fw_desc chuwi_hi8_pro_fw[] __initdata = {
-+	{
-+		.name	= "silead/gsl3680-chuwi-hi8-pro.fw",
-+		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-+		.length	= 39864,
-+		.crc	= 0xfe2bedba,
-+	},
-+	{}
-+};
-+
-+static struct embedded_fw_desc cube_iwork8_air_fw[] __initdata = {
-+	{
-+		.name	= "silead/gsl3670-cube-iwork8-air.fw",
-+		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-+		.length	= 38808,
-+		.crc	= 0xfecde51f,
-+	},
-+	{}
-+};
-+
-+static struct embedded_fw_desc pipo_w2s_fw[] __initdata = {
-+	{
-+		.name	= "silead/gsl1680-pipo-w2s.fw",
-+		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-+		.length	= 39072,
-+		.crc	= 0x28d5dc6c,
-+	},
-+	{}
-+};
-+
-+static struct dmi_system_id embedded_fw_table[] __initdata = {
-+	{
-+		/* Chuwi Vi8 Plus (CWI506) */
-+		.driver_data = (void *)chuwi_vi8_plus_fw,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
-+			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+		},
-+	},
-+	{
-+		/* Chuwi Hi8 Pro (CWI513) */
-+		.driver_data = (void *)chuwi_hi8_pro_fw,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "X1D3_C806N"),
-+		},
-+	},
-+	{
-+		/* Cube iWork8 Air */
-+		.driver_data = (void *)cube_iwork8_air_fw,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "cube"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "i1-TF"),
-+			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+		},
-+	},
-+	{
-+		/* Pipo W2s */
-+		.driver_data = (void *)pipo_w2s_fw,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PIPO"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "W2S"),
-+		},
-+	},
-+	{}
-+};
-+
-+/*
-+ * Note the efi_check_for_embedded_firmwares() code currently makes the
-+ * following 2 assumptions. This may needs to be revisited if embedded firmware
-+ * is found where this is not true:
-+ * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory segments
-+ * 2) The firmware always starts at an offset which is a multiple of 8 bytes
-+ */
-+static int __init efi_check_md_for_embedded_firmware(
-+	efi_memory_desc_t *md, const struct embedded_fw_desc *desc)
-+{
-+	u64 i, size;
-+	u32 crc;
-+	u8 *mem;
-+
-+	size = md->num_pages << EFI_PAGE_SHIFT;
-+	mem = memremap(md->phys_addr, size, MEMREMAP_WB);
-+	if (!mem) {
-+		pr_err("Error mapping EFI mem at %#llx\n", md->phys_addr);
-+		return -ENOMEM;
-+	}
-+
-+	size -= desc->length;
-+	for (i = 0; i < size; i += 8) {
-+		if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
-+			continue;
-+
-+		/* Seed with ~0, invert to match crc32 userspace utility */
-+		crc = ~crc32(~0, mem + i, desc->length);
-+		if (crc == desc->crc)
-+			break;
-+	}
-+
-+	memunmap(mem);
-+
-+	if (i >= size)
-+		return -ENOENT;
-+
-+	pr_info("Found EFI embedded fw '%s' crc %08x\n", desc->name, desc->crc);
-+
-+	if (found_fw_count >= MAX_EMBEDDED_FIRMWARES) {
-+		pr_err("Error already have %d embedded firmwares\n",
-+		       MAX_EMBEDDED_FIRMWARES);
-+		return -ENOSPC;
-+	}
-+
-+	found_fw[found_fw_count].data =
-+		memremap(md->phys_addr + i, desc->length, MEMREMAP_WB);
-+	if (!found_fw[found_fw_count].data) {
-+		pr_err("Error mapping embedded firmware\n");
-+		return -ENOMEM;
-+	}
-+
-+	found_fw[found_fw_count].name = desc->name;
-+	found_fw[found_fw_count].length = desc->length;
-+	found_fw_count++;
-+
-+	/* Note md points to *unmapped* memory after this!!! */
-+	efi_mem_reserve(md->phys_addr + i, desc->length);
-+	return 0;
-+}
-+
-+void __init efi_check_for_embedded_firmwares(void)
-+{
-+	const struct embedded_fw_desc *fw_desc;
-+	const struct dmi_system_id *dmi_id;
-+	efi_memory_desc_t *md;
-+	int i, r;
-+
-+	dmi_id = dmi_first_match(embedded_fw_table);
-+	if (!dmi_id)
-+		return;
-+
-+	fw_desc = dmi_id->driver_data;
-+	for (i = 0; fw_desc[i].length; i++) {
-+		for_each_efi_memory_desc(md) {
-+			if (md->type != EFI_BOOT_SERVICES_CODE)
-+				continue;
-+
-+			r = efi_check_md_for_embedded_firmware(md, &fw_desc[i]);
-+			if (r == 0) {
-+				/*
-+				 * On success efi_mem_reserve() has been called
-+				 * installing a new memmap, so our pointers
-+				 * are invalid now and we MUST break the loop.
-+				 */
-+				break;
-+			}
-+		}
-+	}
-+}
-+
-+int efi_get_embedded_fw(const char *name, void **data, size_t *size,
-+			size_t msize)
-+{
-+	struct embedded_fw *fw = NULL;
-+	void *buf = *data;
-+	int i;
-+
-+	for (i = 0; i < found_fw_count; i++) {
-+		if (strcmp(name, found_fw[i].name) == 0) {
-+			fw = &found_fw[i];
-+			break;
-+		}
-+	}
-+
-+	if (!fw)
-+		return -ENOENT;
-+
-+	if (msize && msize < fw->length)
-+		return -EFBIG;
-+
-+	if (!buf) {
-+		buf = vmalloc(fw->length);
-+		if (!buf)
-+			return -ENOMEM;
-+	}
-+
-+	memcpy(buf, fw->data, fw->length);
-+	*size = fw->length;
-+	*data = buf;
-+
-+	return 0;
-+}
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index f5083aa72eae..bbdfda1d9e8d 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1573,6 +1573,8 @@ efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) { }
- #endif
- 
- void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
-+void efi_check_for_embedded_firmwares(void);
-+int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
- 
- /*
-  * Arch code can implement the following three template macros, avoiding
-diff --git a/init/main.c b/init/main.c
-index 969eaf140ef0..79b4a1b12509 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -710,6 +710,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	sfi_init_late();
- 
- 	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
-+		efi_check_for_embedded_firmwares();
- 		efi_free_boot_services();
- 	}
+ 	while (bus->parent) {
+ 		struct pci_dev *bridge = bus->self;
  
 -- 
-2.17.0.rc2
+2.15.1
