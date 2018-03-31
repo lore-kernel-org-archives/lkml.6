@@ -1,675 +1,818 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752463AbeCaWed (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 18:34:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751766AbeCaWeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 18:34:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E290F21736
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1] PCI/DPC: Rename from pcie-dpc.c to dpc.c.
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>, Oza Pawandeep <poza@codeaurora.org>
-Date: Sat, 31 Mar 2018 17:34:26 -0500
-Message-ID: <152253566671.104119.5361437405172766528.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S1752492AbeCaWrQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 18:47:16 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52736 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751766AbeCaWrM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 18:47:12 -0400
+X-Google-Smtp-Source: AIpwx49Zt96JFaAZ+GyYrsWeP4eX16KS2hCyM6wuoqoC69FUJvLtYUgAWtFE9kmWbsAn+7Qi+6i40lRaXxVPHNy7P/M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180329023024.GA32659@andestech.com>
+References: <1522051075-6442-1-git-send-email-alankao@andestech.com>
+ <1522051075-6442-2-git-send-email-alankao@andestech.com> <CAJ2AOiNQuMJoPZPxy2CDFD0vnxk8E+N-8xiir2nPYKjWJKxshQ@mail.gmail.com>
+ <20180329023024.GA32659@andestech.com>
+From: Alex Solomatnikov <sols@sifive.com>
+Date: Sat, 31 Mar 2018 15:47:10 -0700
+Message-ID: <CAJ2AOiPNquo1hGrYjsDcCM4st5Exa7x_-xUV=QW_MCBVCCCkBw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf: riscv: preliminary RISC-V support
+To: Alan Kao <alankao@andestech.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Hu <nickhu@andestech.com>, Greentime Hu <greentime@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+You can add a skew between cores in qemu, something like this:
 
-Rename from pcie-dpc.c to dpc.c.  The path "drivers/pci/pcie/pcie-dpc.c"
-has more occurrences of "pci" than necessary.
+case CSR_INSTRET:
+        core_id()*return cpu_get_host_ticks()/10;
+    break;
+case CSR_CYCLE:
+        return cpu_get_host_ticks();
+    break;
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/Makefile   |    2 
- drivers/pci/pcie/dpc.c      |  306 +++++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pcie/pcie-dpc.c |  306 -------------------------------------------
- 3 files changed, 307 insertions(+), 307 deletions(-)
- create mode 100644 drivers/pci/pcie/dpc.c
- delete mode 100644 drivers/pci/pcie/pcie-dpc.c
+Alex
 
-diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-index 223e4c34c29a..88d49500e134 100644
---- a/drivers/pci/pcie/Makefile
-+++ b/drivers/pci/pcie/Makefile
-@@ -16,5 +16,5 @@ obj-$(CONFIG_PCIEAER)		+= aer/
- 
- obj-$(CONFIG_PCIE_PME) += pme.o
- 
--obj-$(CONFIG_PCIE_DPC) += pcie-dpc.o
-+obj-$(CONFIG_PCIE_DPC) += dpc.o
- obj-$(CONFIG_PCIE_PTM) += ptm.o
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-new file mode 100644
-index 000000000000..38e40c6c576f
---- /dev/null
-+++ b/drivers/pci/pcie/dpc.c
-@@ -0,0 +1,306 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCI Express Downstream Port Containment services driver
-+ * Author: Keith Busch <keith.busch@intel.com>
-+ *
-+ * Copyright (C) 2016 Intel Corp.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/interrupt.h>
-+#include <linux/init.h>
-+#include <linux/pci.h>
-+#include <linux/pcieport_if.h>
-+#include "../pci.h"
-+#include "aer/aerdrv.h"
-+
-+struct dpc_dev {
-+	struct pcie_device	*dev;
-+	struct work_struct	work;
-+	u16			cap_pos;
-+	bool			rp_extensions;
-+	u32			rp_pio_status;
-+	u8			rp_log_size;
-+};
-+
-+static const char * const rp_pio_error_string[] = {
-+	"Configuration Request received UR Completion",	 /* Bit Position 0  */
-+	"Configuration Request received CA Completion",	 /* Bit Position 1  */
-+	"Configuration Request Completion Timeout",	 /* Bit Position 2  */
-+	NULL,
-+	NULL,
-+	NULL,
-+	NULL,
-+	NULL,
-+	"I/O Request received UR Completion",		 /* Bit Position 8  */
-+	"I/O Request received CA Completion",		 /* Bit Position 9  */
-+	"I/O Request Completion Timeout",		 /* Bit Position 10 */
-+	NULL,
-+	NULL,
-+	NULL,
-+	NULL,
-+	NULL,
-+	"Memory Request received UR Completion",	 /* Bit Position 16 */
-+	"Memory Request received CA Completion",	 /* Bit Position 17 */
-+	"Memory Request Completion Timeout",		 /* Bit Position 18 */
-+};
-+
-+static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
-+{
-+	unsigned long timeout = jiffies + HZ;
-+	struct pci_dev *pdev = dpc->dev->port;
-+	struct device *dev = &dpc->dev->device;
-+	u16 cap = dpc->cap_pos, status;
-+
-+	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
-+	while (status & PCI_EXP_DPC_RP_BUSY &&
-+					!time_after(jiffies, timeout)) {
-+		msleep(10);
-+		pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
-+	}
-+	if (status & PCI_EXP_DPC_RP_BUSY) {
-+		dev_warn(dev, "DPC root port still busy\n");
-+		return -EBUSY;
-+	}
-+	return 0;
-+}
-+
-+static void dpc_wait_link_inactive(struct dpc_dev *dpc)
-+{
-+	unsigned long timeout = jiffies + HZ;
-+	struct pci_dev *pdev = dpc->dev->port;
-+	struct device *dev = &dpc->dev->device;
-+	u16 lnk_status;
-+
-+	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
-+					!time_after(jiffies, timeout)) {
-+		msleep(10);
-+		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-+	}
-+	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
-+		dev_warn(dev, "Link state not disabled for DPC event\n");
-+}
-+
-+static void dpc_work(struct work_struct *work)
-+{
-+	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
-+	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
-+	struct pci_bus *parent = pdev->subordinate;
-+	u16 cap = dpc->cap_pos, ctl;
-+
-+	pci_lock_rescan_remove();
-+	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
-+					 bus_list) {
-+		pci_dev_get(dev);
-+		pci_dev_set_disconnected(dev, NULL);
-+		if (pci_has_subordinate(dev))
-+			pci_walk_bus(dev->subordinate,
-+				     pci_dev_set_disconnected, NULL);
-+		pci_stop_and_remove_bus_device(dev);
-+		pci_dev_put(dev);
-+	}
-+	pci_unlock_rescan_remove();
-+
-+	dpc_wait_link_inactive(dpc);
-+	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
-+		return;
-+	if (dpc->rp_extensions && dpc->rp_pio_status) {
-+		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
-+				       dpc->rp_pio_status);
-+		dpc->rp_pio_status = 0;
-+	}
-+
-+	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
-+		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
-+
-+	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
-+	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
-+			      ctl | PCI_EXP_DPC_CTL_INT_EN);
-+}
-+
-+static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
-+{
-+	struct device *dev = &dpc->dev->device;
-+	struct pci_dev *pdev = dpc->dev->port;
-+	u16 cap = dpc->cap_pos, dpc_status, first_error;
-+	u32 status, mask, sev, syserr, exc, dw0, dw1, dw2, dw3, log, prefix;
-+	int i;
-+
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS, &status);
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_MASK, &mask);
-+	dev_err(dev, "rp_pio_status: %#010x, rp_pio_mask: %#010x\n",
-+		status, mask);
-+
-+	dpc->rp_pio_status = status;
-+
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SEVERITY, &sev);
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SYSERROR, &syserr);
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_EXCEPTION, &exc);
-+	dev_err(dev, "RP PIO severity=%#010x, syserror=%#010x, exception=%#010x\n",
-+		sev, syserr, exc);
-+
-+	/* Get First Error Pointer */
-+	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &dpc_status);
-+	first_error = (dpc_status & 0x1f00) >> 8;
-+
-+	status &= ~mask;
-+	for (i = 0; i < ARRAY_SIZE(rp_pio_error_string); i++) {
-+		if (status & (1 << i))
-+			dev_err(dev, "[%2d] %s%s\n", i, rp_pio_error_string[i],
-+				first_error == i ? " (First)" : "");
-+	}
-+
-+	if (dpc->rp_log_size < 4)
-+		return;
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG,
-+			      &dw0);
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 4,
-+			      &dw1);
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 8,
-+			      &dw2);
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 12,
-+			      &dw3);
-+	dev_err(dev, "TLP Header: %#010x %#010x %#010x %#010x\n",
-+		dw0, dw1, dw2, dw3);
-+
-+	if (dpc->rp_log_size < 5)
-+		return;
-+	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_IMPSPEC_LOG, &log);
-+	dev_err(dev, "RP PIO ImpSpec Log %#010x\n", log);
-+
-+	for (i = 0; i < dpc->rp_log_size - 5; i++) {
-+		pci_read_config_dword(pdev,
-+			cap + PCI_EXP_DPC_RP_PIO_TLPPREFIX_LOG, &prefix);
-+		dev_err(dev, "TLP Prefix Header: dw%d, %#010x\n", i, prefix);
-+	}
-+}
-+
-+static irqreturn_t dpc_irq(int irq, void *context)
-+{
-+	struct dpc_dev *dpc = (struct dpc_dev *)context;
-+	struct pci_dev *pdev = dpc->dev->port;
-+	struct device *dev = &dpc->dev->device;
-+	u16 cap = dpc->cap_pos, ctl, status, source, reason, ext_reason;
-+
-+	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
-+
-+	if (!(ctl & PCI_EXP_DPC_CTL_INT_EN) || ctl == (u16)(~0))
-+		return IRQ_NONE;
-+
-+	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
-+
-+	if (!(status & PCI_EXP_DPC_STATUS_INTERRUPT))
-+		return IRQ_NONE;
-+
-+	if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
-+		pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
-+				      PCI_EXP_DPC_STATUS_INTERRUPT);
-+		return IRQ_HANDLED;
-+	}
-+
-+	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
-+			      ctl & ~PCI_EXP_DPC_CTL_INT_EN);
-+
-+	pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID,
-+			     &source);
-+
-+	dev_info(dev, "DPC containment event, status:%#06x source:%#06x\n",
-+		status, source);
-+
-+	reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN) >> 1;
-+	ext_reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN_EXT) >> 5;
-+
-+	dev_warn(dev, "DPC %s detected, remove downstream devices\n",
-+		 (reason == 0) ? "unmasked uncorrectable error" :
-+		 (reason == 1) ? "ERR_NONFATAL" :
-+		 (reason == 2) ? "ERR_FATAL" :
-+		 (ext_reason == 0) ? "RP PIO error" :
-+		 (ext_reason == 1) ? "software trigger" :
-+				     "reserved error");
-+	/* show RP PIO error detail information */
-+	if (dpc->rp_extensions && reason == 3 && ext_reason == 0)
-+		dpc_process_rp_pio_error(dpc);
-+
-+	schedule_work(&dpc->work);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+#define FLAG(x, y) (((x) & (y)) ? '+' : '-')
-+static int dpc_probe(struct pcie_device *dev)
-+{
-+	struct dpc_dev *dpc;
-+	struct pci_dev *pdev = dev->port;
-+	struct device *device = &dev->device;
-+	int status;
-+	u16 ctl, cap;
-+
-+	if (pcie_aer_get_firmware_first(pdev))
-+		return -ENOTSUPP;
-+
-+	dpc = devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
-+	if (!dpc)
-+		return -ENOMEM;
-+
-+	dpc->cap_pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_DPC);
-+	dpc->dev = dev;
-+	INIT_WORK(&dpc->work, dpc_work);
-+	set_service_data(dev, dpc);
-+
-+	status = devm_request_irq(device, dev->irq, dpc_irq, IRQF_SHARED,
-+				  "pcie-dpc", dpc);
-+	if (status) {
-+		dev_warn(device, "request IRQ%d failed: %d\n", dev->irq,
-+			 status);
-+		return status;
-+	}
-+
-+	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP, &cap);
-+	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
-+
-+	dpc->rp_extensions = (cap & PCI_EXP_DPC_CAP_RP_EXT);
-+	if (dpc->rp_extensions) {
-+		dpc->rp_log_size = (cap & PCI_EXP_DPC_RP_PIO_LOG_SIZE) >> 8;
-+		if (dpc->rp_log_size < 4 || dpc->rp_log_size > 9) {
-+			dev_err(device, "RP PIO log size %u is invalid\n",
-+				dpc->rp_log_size);
-+			dpc->rp_log_size = 0;
-+		}
-+	}
-+
-+	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN;
-+	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
-+
-+	dev_info(device, "DPC error containment capabilities: Int Msg #%d, RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
-+		cap & PCI_EXP_DPC_IRQ, FLAG(cap, PCI_EXP_DPC_CAP_RP_EXT),
-+		FLAG(cap, PCI_EXP_DPC_CAP_POISONED_TLP),
-+		FLAG(cap, PCI_EXP_DPC_CAP_SW_TRIGGER), dpc->rp_log_size,
-+		FLAG(cap, PCI_EXP_DPC_CAP_DL_ACTIVE));
-+	return status;
-+}
-+
-+static void dpc_remove(struct pcie_device *dev)
-+{
-+	struct dpc_dev *dpc = get_service_data(dev);
-+	struct pci_dev *pdev = dev->port;
-+	u16 ctl;
-+
-+	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
-+	ctl &= ~(PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN);
-+	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
-+}
-+
-+static struct pcie_port_service_driver dpcdriver = {
-+	.name		= "dpc",
-+	.port_type	= PCIE_ANY_PORT,
-+	.service	= PCIE_PORT_SERVICE_DPC,
-+	.probe		= dpc_probe,
-+	.remove		= dpc_remove,
-+};
-+
-+static int __init dpc_service_init(void)
-+{
-+	return pcie_port_service_register(&dpcdriver);
-+}
-+device_initcall(dpc_service_init);
-diff --git a/drivers/pci/pcie/pcie-dpc.c b/drivers/pci/pcie/pcie-dpc.c
-deleted file mode 100644
-index 38e40c6c576f..000000000000
---- a/drivers/pci/pcie/pcie-dpc.c
-+++ /dev/null
-@@ -1,306 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * PCI Express Downstream Port Containment services driver
-- * Author: Keith Busch <keith.busch@intel.com>
-- *
-- * Copyright (C) 2016 Intel Corp.
-- */
--
--#include <linux/delay.h>
--#include <linux/interrupt.h>
--#include <linux/init.h>
--#include <linux/pci.h>
--#include <linux/pcieport_if.h>
--#include "../pci.h"
--#include "aer/aerdrv.h"
--
--struct dpc_dev {
--	struct pcie_device	*dev;
--	struct work_struct	work;
--	u16			cap_pos;
--	bool			rp_extensions;
--	u32			rp_pio_status;
--	u8			rp_log_size;
--};
--
--static const char * const rp_pio_error_string[] = {
--	"Configuration Request received UR Completion",	 /* Bit Position 0  */
--	"Configuration Request received CA Completion",	 /* Bit Position 1  */
--	"Configuration Request Completion Timeout",	 /* Bit Position 2  */
--	NULL,
--	NULL,
--	NULL,
--	NULL,
--	NULL,
--	"I/O Request received UR Completion",		 /* Bit Position 8  */
--	"I/O Request received CA Completion",		 /* Bit Position 9  */
--	"I/O Request Completion Timeout",		 /* Bit Position 10 */
--	NULL,
--	NULL,
--	NULL,
--	NULL,
--	NULL,
--	"Memory Request received UR Completion",	 /* Bit Position 16 */
--	"Memory Request received CA Completion",	 /* Bit Position 17 */
--	"Memory Request Completion Timeout",		 /* Bit Position 18 */
--};
--
--static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
--{
--	unsigned long timeout = jiffies + HZ;
--	struct pci_dev *pdev = dpc->dev->port;
--	struct device *dev = &dpc->dev->device;
--	u16 cap = dpc->cap_pos, status;
--
--	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
--	while (status & PCI_EXP_DPC_RP_BUSY &&
--					!time_after(jiffies, timeout)) {
--		msleep(10);
--		pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
--	}
--	if (status & PCI_EXP_DPC_RP_BUSY) {
--		dev_warn(dev, "DPC root port still busy\n");
--		return -EBUSY;
--	}
--	return 0;
--}
--
--static void dpc_wait_link_inactive(struct dpc_dev *dpc)
--{
--	unsigned long timeout = jiffies + HZ;
--	struct pci_dev *pdev = dpc->dev->port;
--	struct device *dev = &dpc->dev->device;
--	u16 lnk_status;
--
--	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
--					!time_after(jiffies, timeout)) {
--		msleep(10);
--		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
--	}
--	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
--		dev_warn(dev, "Link state not disabled for DPC event\n");
--}
--
--static void dpc_work(struct work_struct *work)
--{
--	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
--	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
--	struct pci_bus *parent = pdev->subordinate;
--	u16 cap = dpc->cap_pos, ctl;
--
--	pci_lock_rescan_remove();
--	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
--					 bus_list) {
--		pci_dev_get(dev);
--		pci_dev_set_disconnected(dev, NULL);
--		if (pci_has_subordinate(dev))
--			pci_walk_bus(dev->subordinate,
--				     pci_dev_set_disconnected, NULL);
--		pci_stop_and_remove_bus_device(dev);
--		pci_dev_put(dev);
--	}
--	pci_unlock_rescan_remove();
--
--	dpc_wait_link_inactive(dpc);
--	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
--		return;
--	if (dpc->rp_extensions && dpc->rp_pio_status) {
--		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
--				       dpc->rp_pio_status);
--		dpc->rp_pio_status = 0;
--	}
--
--	pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
--		PCI_EXP_DPC_STATUS_TRIGGER | PCI_EXP_DPC_STATUS_INTERRUPT);
--
--	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
--	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
--			      ctl | PCI_EXP_DPC_CTL_INT_EN);
--}
--
--static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
--{
--	struct device *dev = &dpc->dev->device;
--	struct pci_dev *pdev = dpc->dev->port;
--	u16 cap = dpc->cap_pos, dpc_status, first_error;
--	u32 status, mask, sev, syserr, exc, dw0, dw1, dw2, dw3, log, prefix;
--	int i;
--
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS, &status);
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_MASK, &mask);
--	dev_err(dev, "rp_pio_status: %#010x, rp_pio_mask: %#010x\n",
--		status, mask);
--
--	dpc->rp_pio_status = status;
--
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SEVERITY, &sev);
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_SYSERROR, &syserr);
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_EXCEPTION, &exc);
--	dev_err(dev, "RP PIO severity=%#010x, syserror=%#010x, exception=%#010x\n",
--		sev, syserr, exc);
--
--	/* Get First Error Pointer */
--	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &dpc_status);
--	first_error = (dpc_status & 0x1f00) >> 8;
--
--	status &= ~mask;
--	for (i = 0; i < ARRAY_SIZE(rp_pio_error_string); i++) {
--		if (status & (1 << i))
--			dev_err(dev, "[%2d] %s%s\n", i, rp_pio_error_string[i],
--				first_error == i ? " (First)" : "");
--	}
--
--	if (dpc->rp_log_size < 4)
--		return;
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG,
--			      &dw0);
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 4,
--			      &dw1);
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 8,
--			      &dw2);
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG + 12,
--			      &dw3);
--	dev_err(dev, "TLP Header: %#010x %#010x %#010x %#010x\n",
--		dw0, dw1, dw2, dw3);
--
--	if (dpc->rp_log_size < 5)
--		return;
--	pci_read_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_IMPSPEC_LOG, &log);
--	dev_err(dev, "RP PIO ImpSpec Log %#010x\n", log);
--
--	for (i = 0; i < dpc->rp_log_size - 5; i++) {
--		pci_read_config_dword(pdev,
--			cap + PCI_EXP_DPC_RP_PIO_TLPPREFIX_LOG, &prefix);
--		dev_err(dev, "TLP Prefix Header: dw%d, %#010x\n", i, prefix);
--	}
--}
--
--static irqreturn_t dpc_irq(int irq, void *context)
--{
--	struct dpc_dev *dpc = (struct dpc_dev *)context;
--	struct pci_dev *pdev = dpc->dev->port;
--	struct device *dev = &dpc->dev->device;
--	u16 cap = dpc->cap_pos, ctl, status, source, reason, ext_reason;
--
--	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
--
--	if (!(ctl & PCI_EXP_DPC_CTL_INT_EN) || ctl == (u16)(~0))
--		return IRQ_NONE;
--
--	pci_read_config_word(pdev, cap + PCI_EXP_DPC_STATUS, &status);
--
--	if (!(status & PCI_EXP_DPC_STATUS_INTERRUPT))
--		return IRQ_NONE;
--
--	if (!(status & PCI_EXP_DPC_STATUS_TRIGGER)) {
--		pci_write_config_word(pdev, cap + PCI_EXP_DPC_STATUS,
--				      PCI_EXP_DPC_STATUS_INTERRUPT);
--		return IRQ_HANDLED;
--	}
--
--	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
--			      ctl & ~PCI_EXP_DPC_CTL_INT_EN);
--
--	pci_read_config_word(pdev, cap + PCI_EXP_DPC_SOURCE_ID,
--			     &source);
--
--	dev_info(dev, "DPC containment event, status:%#06x source:%#06x\n",
--		status, source);
--
--	reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN) >> 1;
--	ext_reason = (status & PCI_EXP_DPC_STATUS_TRIGGER_RSN_EXT) >> 5;
--
--	dev_warn(dev, "DPC %s detected, remove downstream devices\n",
--		 (reason == 0) ? "unmasked uncorrectable error" :
--		 (reason == 1) ? "ERR_NONFATAL" :
--		 (reason == 2) ? "ERR_FATAL" :
--		 (ext_reason == 0) ? "RP PIO error" :
--		 (ext_reason == 1) ? "software trigger" :
--				     "reserved error");
--	/* show RP PIO error detail information */
--	if (dpc->rp_extensions && reason == 3 && ext_reason == 0)
--		dpc_process_rp_pio_error(dpc);
--
--	schedule_work(&dpc->work);
--
--	return IRQ_HANDLED;
--}
--
--#define FLAG(x, y) (((x) & (y)) ? '+' : '-')
--static int dpc_probe(struct pcie_device *dev)
--{
--	struct dpc_dev *dpc;
--	struct pci_dev *pdev = dev->port;
--	struct device *device = &dev->device;
--	int status;
--	u16 ctl, cap;
--
--	if (pcie_aer_get_firmware_first(pdev))
--		return -ENOTSUPP;
--
--	dpc = devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
--	if (!dpc)
--		return -ENOMEM;
--
--	dpc->cap_pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_DPC);
--	dpc->dev = dev;
--	INIT_WORK(&dpc->work, dpc_work);
--	set_service_data(dev, dpc);
--
--	status = devm_request_irq(device, dev->irq, dpc_irq, IRQF_SHARED,
--				  "pcie-dpc", dpc);
--	if (status) {
--		dev_warn(device, "request IRQ%d failed: %d\n", dev->irq,
--			 status);
--		return status;
--	}
--
--	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP, &cap);
--	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
--
--	dpc->rp_extensions = (cap & PCI_EXP_DPC_CAP_RP_EXT);
--	if (dpc->rp_extensions) {
--		dpc->rp_log_size = (cap & PCI_EXP_DPC_RP_PIO_LOG_SIZE) >> 8;
--		if (dpc->rp_log_size < 4 || dpc->rp_log_size > 9) {
--			dev_err(device, "RP PIO log size %u is invalid\n",
--				dpc->rp_log_size);
--			dpc->rp_log_size = 0;
--		}
--	}
--
--	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN;
--	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
--
--	dev_info(device, "DPC error containment capabilities: Int Msg #%d, RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
--		cap & PCI_EXP_DPC_IRQ, FLAG(cap, PCI_EXP_DPC_CAP_RP_EXT),
--		FLAG(cap, PCI_EXP_DPC_CAP_POISONED_TLP),
--		FLAG(cap, PCI_EXP_DPC_CAP_SW_TRIGGER), dpc->rp_log_size,
--		FLAG(cap, PCI_EXP_DPC_CAP_DL_ACTIVE));
--	return status;
--}
--
--static void dpc_remove(struct pcie_device *dev)
--{
--	struct dpc_dev *dpc = get_service_data(dev);
--	struct pci_dev *pdev = dev->port;
--	u16 ctl;
--
--	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
--	ctl &= ~(PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN);
--	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
--}
--
--static struct pcie_port_service_driver dpcdriver = {
--	.name		= "dpc",
--	.port_type	= PCIE_ANY_PORT,
--	.service	= PCIE_PORT_SERVICE_DPC,
--	.probe		= dpc_probe,
--	.remove		= dpc_remove,
--};
--
--static int __init dpc_service_init(void)
--{
--	return pcie_port_service_register(&dpcdriver);
--}
--device_initcall(dpc_service_init);
+On Wed, Mar 28, 2018 at 7:30 PM, Alan Kao <alankao@andestech.com> wrote:
+> Hi Alex,
+>
+> I'm appreciated for your reply and tests.
+>
+> On Wed, Mar 28, 2018 at 03:58:41PM -0700, Alex Solomatnikov wrote:
+>> Did you test this code?
+>
+> I did test this patch on QEMU's virt model with multi-hart, which is the only
+> RISC-V machine I have for now.  But as I mentioned in
+> https://github.com/riscv/riscv-qemu/pull/115 , the hardware counter support
+> in QEMU is not fully conformed to the 1.10 Priv-Spec, so I had to slightly
+> tweak the code to make reading work.
+>
+> Specifically, the read to cycle and instret in QEMU looks like this:
+> ...
+> case CSR_INSTRET:
+> case CSR_CYCLE:
+> //  if (ctr_ok) {
+>         return cpu_get_host_ticks();
+> //  }
+>     break;
+> ...
+> and the two lines of comment was the tweak.
+>
+> On such environment, I did not get anything unexpected.  No matter which of them
+> is requested, QEMU returns the host's tick.
+>
+>>
+>> I got funny numbers when I tried to run it on HiFive Unleashed:
+>>
+>> perf stat mem-latency
+>> ...
+>>
+>>  Performance counter stats for 'mem-latency':
+>>
+>>         157.907000      task-clock (msec)         #    0.940 CPUs utilized
+>>
+>>                  1      context-switches          #    0.006 K/sec
+>>
+>>                  1      cpu-migrations            #    0.006 K/sec
+>>
+>>               4102      page-faults               #    0.026 M/sec
+>>
+>>          157923752      cycles                    #    1.000 GHz
+>>
+>> 9223372034948899840      instructions              # 58403957087.78  insn
+>> per cycle
+>>    <not supported>      branches
+>>
+>>    <not supported>      branch-misses
+>>
+>>
+>>        0.168046000 seconds time elapsed
+>>
+>>
+>> Tracing read_counter(), I see this:
+>>
+>> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.058809] CPU 3:
+>> read_counter  idx=0 val=2528358954912
+>> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.063339] CPU 3:
+>> read_counter  idx=1 val=53892244920
+>> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.118160] CPU 3:
+>> read_counter  idx=0 val=2528418303035
+>> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.122694] CPU 3:
+>> read_counter  idx=1 val=53906699665
+>> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.216736] CPU 1:
+>> read_counter  idx=0 val=2528516878664
+>> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.221270] CPU 1:
+>> read_counter  idx=1 val=51986369142
+>>
+>> It looks like the counter values from different cores are subtracted and
+>> wraparound occurs.
+>>
+>
+> Thanks for the hint.  It makes sense.  9223372034948899840 is 7fffffff8e66a400,
+> which should be a wraparound with the mask I set (63-bit) in the code.
+>
+> I will try this direction.  Ideally, we can solve it by explicitly syncing the
+> hwc->prev_count when a cpu migration event happens.
+>
+>>
+>> Also, core IDs and socket IDs are wrong in perf report:
+>>
+>
+> As Palmer has replied to this, I have no comment here.
+>
+>> perf report --header -I
+>> Error:
+>> The perf.data file has no samples!
+>> # ========
+>> # captured on: Thu Jan  1 02:52:07 1970
+>> # hostname : buildroot
+>> # os release : 4.15.0-00045-g0d7c030-dirty
+>> # perf version : 4.15.0
+>> # arch : riscv64
+>> # nrcpus online : 4
+>> # nrcpus avail : 5
+>> # total memory : 8188340 kB
+>> # cmdline : /usr/bin/perf record -F 1000 lat_mem_rd -P 1 -W 1 -N 1 -t 10
+>> # event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } =
+>> 1000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap =
+>> 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3,
+>> sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1
+>> # sibling cores   : 1
+>> # sibling cores   : 2
+>> # sibling cores   : 3
+>> # sibling cores   : 4
+>> # sibling threads : 1
+>> # sibling threads : 2
+>> # sibling threads : 3
+>> # sibling threads : 4
+>> # CPU 0: Core ID -1, Socket ID -1
+>> # CPU 1: Core ID 0, Socket ID -1
+>> # CPU 2: Core ID 0, Socket ID -1
+>> # CPU 3: Core ID 0, Socket ID -1
+>> # CPU 4: Core ID 0, Socket ID -1
+>> # pmu mappings: cpu = 4, software = 1
+>> # CPU cache info:
+>> #  L1 Instruction          32K [1]
+>> #  L1 Data                 32K [1]
+>> #  L1 Instruction          32K [2]
+>> #  L1 Data                 32K [2]
+>> #  L1 Instruction          32K [3]
+>> #  L1 Data                 32K [3]
+>> # missing features: TRACING_DATA BUILD_ID CPUDESC CPUID NUMA_TOPOLOGY
+>> BRANCH_STACK GROUP_DESC AUXTRACE STAT
+>> # ========
+>>
+>>
+>> Alex
+>>
+>
+> Many thanks,
+> Alan
+>
+>> On Mon, Mar 26, 2018 at 12:57 AM, Alan Kao <alankao@andestech.com> wrote:
+>>
+>> > This patch provide a basic PMU, riscv_base_pmu, which supports two
+>> > general hardware event, instructions and cycles.  Furthermore, this
+>> > PMU serves as a reference implementation to ease the portings in
+>> > the future.
+>> >
+>> > riscv_base_pmu should be able to run on any RISC-V machine that
+>> > conforms to the Priv-Spec.  Note that the latest qemu model hasn't
+>> > fully support a proper behavior of Priv-Spec 1.10 yet, but work
+>> > around should be easy with very small fixes.  Please check
+>> > https://github.com/riscv/riscv-qemu/pull/115 for future updates.
+>> >
+>> > Cc: Nick Hu <nickhu@andestech.com>
+>> > Cc: Greentime Hu <greentime@andestech.com>
+>> > Signed-off-by: Alan Kao <alankao@andestech.com>
+>> > ---
+>> >  arch/riscv/Kconfig                  |  12 +
+>> >  arch/riscv/include/asm/perf_event.h |  76 +++++-
+>> >  arch/riscv/kernel/Makefile          |   1 +
+>> >  arch/riscv/kernel/perf_event.c      | 469 ++++++++++++++++++++++++++++++
+>> > ++++++
+>> >  4 files changed, 554 insertions(+), 4 deletions(-)
+>> >  create mode 100644 arch/riscv/kernel/perf_event.c
+>> >
+>> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> > index 310b9a5d6737..dd4aecfb5265 100644
+>> > --- a/arch/riscv/Kconfig
+>> > +++ b/arch/riscv/Kconfig
+>> > @@ -195,6 +195,18 @@ config RISCV_ISA_C
+>> >  config RISCV_ISA_A
+>> >         def_bool y
+>> >
+>> > +menu "PMU type"
+>> > +       depends on PERF_EVENTS
+>> > +
+>> > +config RISCV_BASE_PMU
+>> > +       bool "Base Performance Monitoring Unit"
+>> > +       def_bool y
+>> > +       help
+>> > +         A base PMU that serves as a reference implementation and has
+>> > limited
+>> > +         feature of perf.
+>> > +
+>> > +endmenu
+>> > +
+>> >  endmenu
+>> >
+>> >  menu "Kernel type"
+>> > diff --git a/arch/riscv/include/asm/perf_event.h
+>> > b/arch/riscv/include/asm/perf_event.h
+>> > index e13d2ff29e83..98e2efb02d25 100644
+>> > --- a/arch/riscv/include/asm/perf_event.h
+>> > +++ b/arch/riscv/include/asm/perf_event.h
+>> > @@ -1,13 +1,81 @@
+>> > +/* SPDX-License-Identifier: GPL-2.0 */
+>> >  /*
+>> >   * Copyright (C) 2018 SiFive
+>> > + * Copyright (C) 2018 Andes Technology Corporation
+>> >   *
+>> > - * This program is free software; you can redistribute it and/or
+>> > - * modify it under the terms of the GNU General Public Licence
+>> > - * as published by the Free Software Foundation; either version
+>> > - * 2 of the Licence, or (at your option) any later version.
+>> >   */
+>> >
+>> >  #ifndef _ASM_RISCV_PERF_EVENT_H
+>> >  #define _ASM_RISCV_PERF_EVENT_H
+>> >
+>> > +#include <linux/perf_event.h>
+>> > +#include <linux/ptrace.h>
+>> > +
+>> > +#define RISCV_BASE_COUNTERS    2
+>> > +
+>> > +/*
+>> > + * The RISCV_MAX_COUNTERS parameter should be specified.
+>> > + */
+>> > +
+>> > +#ifdef CONFIG_RISCV_BASE_PMU
+>> > +#define RISCV_MAX_COUNTERS     2
+>> > +#endif
+>> > +
+>> > +#ifndef RISCV_MAX_COUNTERS
+>> > +#error "Please provide a valid RISCV_MAX_COUNTERS for the PMU."
+>> > +#endif
+>> > +
+>> > +/*
+>> > + * These are the indexes of bits in counteren register *minus* 1,
+>> > + * except for cycle.  It would be coherent if it can directly mapped
+>> > + * to counteren bit definition, but there is a *time* register at
+>> > + * counteren[1].  Per-cpu structure is scarce resource here.
+>> > + *
+>> > + * According to the spec, an implementation can support counter up to
+>> > + * mhpmcounter31, but many high-end processors has at most 6 general
+>> > + * PMCs, we give the definition to MHPMCOUNTER8 here.
+>> > + */
+>> > +#define RISCV_PMU_CYCLE                0
+>> > +#define RISCV_PMU_INSTRET      1
+>> > +#define RISCV_PMU_MHPMCOUNTER3 2
+>> > +#define RISCV_PMU_MHPMCOUNTER4 3
+>> > +#define RISCV_PMU_MHPMCOUNTER5 4
+>> > +#define RISCV_PMU_MHPMCOUNTER6 5
+>> > +#define RISCV_PMU_MHPMCOUNTER7 6
+>> > +#define RISCV_PMU_MHPMCOUNTER8 7
+>> > +
+>> > +#define RISCV_OP_UNSUPP                (-EOPNOTSUPP)
+>> > +
+>> > +struct cpu_hw_events {
+>> > +       /* # currently enabled events*/
+>> > +       int                     n_events;
+>> > +       /* currently enabled events */
+>> > +       struct perf_event       *events[RISCV_MAX_COUNTERS];
+>> > +       /* vendor-defined PMU data */
+>> > +       void                    *platform;
+>> > +};
+>> > +
+>> > +struct riscv_pmu {
+>> > +       struct pmu      *pmu;
+>> > +
+>> > +       /* generic hw/cache events table */
+>> > +       const int       *hw_events;
+>> > +       const int       (*cache_events)[PERF_COUNT_HW_CACHE_MAX]
+>> > +                                      [PERF_COUNT_HW_CACHE_OP_MAX]
+>> > +                                      [PERF_COUNT_HW_CACHE_RESULT_MAX];
+>> > +       /* method used to map hw/cache events */
+>> > +       int             (*map_hw_event)(u64 config);
+>> > +       int             (*map_cache_event)(u64 config);
+>> > +
+>> > +       /* max generic hw events in map */
+>> > +       int             max_events;
+>> > +       /* number total counters, 2(base) + x(general) */
+>> > +       int             num_counters;
+>> > +       /* the width of the counter */
+>> > +       int             counter_width;
+>> > +
+>> > +       /* vendor-defined PMU features */
+>> > +       void            *platform;
+>> > +};
+>> > +
+>> >  #endif /* _ASM_RISCV_PERF_EVENT_H */
+>> > diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+>> > index 196f62ffc428..849c38d9105f 100644
+>> > --- a/arch/riscv/kernel/Makefile
+>> > +++ b/arch/riscv/kernel/Makefile
+>> > @@ -36,5 +36,6 @@ obj-$(CONFIG_SMP)             += smp.o
+>> >  obj-$(CONFIG_MODULES)          += module.o
+>> >  obj-$(CONFIG_FUNCTION_TRACER)  += mcount.o
+>> >  obj-$(CONFIG_FUNCTION_GRAPH_TRACER)    += ftrace.o
+>> > +obj-$(CONFIG_PERF_EVENTS)      += perf_event.o
+>> >
+>> >  clean:
+>> > diff --git a/arch/riscv/kernel/perf_event.c b/arch/riscv/kernel/perf_
+>> > event.c
+>> > new file mode 100644
+>> > index 000000000000..b78cb486683b
+>> > --- /dev/null
+>> > +++ b/arch/riscv/kernel/perf_event.c
+>> > @@ -0,0 +1,469 @@
+>> > +/* SPDX-License-Identifier: GPL-2.0 */
+>> > +/*
+>> > + * Copyright (C) 2008 Thomas Gleixner <tglx@linutronix.de>
+>> > + * Copyright (C) 2008-2009 Red Hat, Inc., Ingo Molnar
+>> > + * Copyright (C) 2009 Jaswinder Singh Rajput
+>> > + * Copyright (C) 2009 Advanced Micro Devices, Inc., Robert Richter
+>> > + * Copyright (C) 2008-2009 Red Hat, Inc., Peter Zijlstra
+>> > + * Copyright (C) 2009 Intel Corporation, <markus.t.metzger@intel.com>
+>> > + * Copyright (C) 2009 Google, Inc., Stephane Eranian
+>> > + * Copyright 2014 Tilera Corporation. All Rights Reserved.
+>> > + * Copyright (C) 2018 Andes Technology Corporation
+>> > + *
+>> > + * Perf_events support for RISC-V platforms.
+>> > + *
+>> > + * Since the spec. (as of now, Priv-Spec 1.10) does not provide enough
+>> > + * functionality for perf event to fully work, this file provides
+>> > + * the very basic framework only.
+>> > + *
+>> > + * For platform portings, please check Documentations/riscv/pmu.txt.
+>> > + *
+>> > + * The Copyright line includes x86 and tile ones.
+>> > + */
+>> > +
+>> > +#include <linux/kprobes.h>
+>> > +#include <linux/kernel.h>
+>> > +#include <linux/kdebug.h>
+>> > +#include <linux/mutex.h>
+>> > +#include <linux/bitmap.h>
+>> > +#include <linux/irq.h>
+>> > +#include <linux/interrupt.h>
+>> > +#include <linux/perf_event.h>
+>> > +#include <linux/atomic.h>
+>> > +#include <asm/perf_event.h>
+>> > +
+>> > +static const struct riscv_pmu *riscv_pmu __read_mostly;
+>> > +static DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events);
+>> > +
+>> > +/*
+>> > + * Hardware & cache maps and their methods
+>> > + */
+>> > +
+>> > +static const int riscv_hw_event_map[] = {
+>> > +       [PERF_COUNT_HW_CPU_CYCLES]              = RISCV_PMU_CYCLE,
+>> > +       [PERF_COUNT_HW_INSTRUCTIONS]            = RISCV_PMU_INSTRET,
+>> > +       [PERF_COUNT_HW_CACHE_REFERENCES]        = RISCV_OP_UNSUPP,
+>> > +       [PERF_COUNT_HW_CACHE_MISSES]            = RISCV_OP_UNSUPP,
+>> > +       [PERF_COUNT_HW_BRANCH_INSTRUCTIONS]     = RISCV_OP_UNSUPP,
+>> > +       [PERF_COUNT_HW_BRANCH_MISSES]           = RISCV_OP_UNSUPP,
+>> > +       [PERF_COUNT_HW_BUS_CYCLES]              = RISCV_OP_UNSUPP,
+>> > +};
+>> > +
+>> > +#define C(x) PERF_COUNT_HW_CACHE_##x
+>> > +static const int riscv_cache_event_map[PERF_COUNT_HW_CACHE_MAX]
+>> > +[PERF_COUNT_HW_CACHE_OP_MAX]
+>> > +[PERF_COUNT_HW_CACHE_RESULT_MAX] = {
+>> > +       [C(L1D)] = {
+>> > +               [C(OP_READ)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_WRITE)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_PREFETCH)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +       },
+>> > +       [C(L1I)] = {
+>> > +               [C(OP_READ)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_WRITE)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_PREFETCH)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +       },
+>> > +       [C(LL)] = {
+>> > +               [C(OP_READ)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_WRITE)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_PREFETCH)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +       },
+>> > +       [C(DTLB)] = {
+>> > +               [C(OP_READ)] = {
+>> > +                       [C(RESULT_ACCESS)] =  RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] =  RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_WRITE)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_PREFETCH)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +       },
+>> > +       [C(ITLB)] = {
+>> > +               [C(OP_READ)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_WRITE)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_PREFETCH)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +       },
+>> > +       [C(BPU)] = {
+>> > +               [C(OP_READ)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_WRITE)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +               [C(OP_PREFETCH)] = {
+>> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+>> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+>> > +               },
+>> > +       },
+>> > +};
+>> > +
+>> > +static int riscv_map_hw_event(u64 config)
+>> > +{
+>> > +       if (config >= riscv_pmu->max_events)
+>> > +               return -EINVAL;
+>> > +
+>> > +       return riscv_pmu->hw_events[config];
+>> > +}
+>> > +
+>> > +int riscv_map_cache_decode(u64 config, unsigned int *type,
+>> > +                          unsigned int *op, unsigned int *result)
+>> > +{
+>> > +       return -ENOENT;
+>> > +}
+>> > +
+>> > +static int riscv_map_cache_event(u64 config)
+>> > +{
+>> > +       unsigned int type, op, result;
+>> > +       int err = -ENOENT;
+>> > +               int code;
+>> > +
+>> > +       err = riscv_map_cache_decode(config, &type, &op, &result);
+>> > +       if (!riscv_pmu->cache_events || err)
+>> > +               return err;
+>> > +
+>> > +       if (type >= PERF_COUNT_HW_CACHE_MAX ||
+>> > +           op >= PERF_COUNT_HW_CACHE_OP_MAX ||
+>> > +           result >= PERF_COUNT_HW_CACHE_RESULT_MAX)
+>> > +               return -EINVAL;
+>> > +
+>> > +       code = (*riscv_pmu->cache_events)[type][op][result];
+>> > +       if (code == RISCV_OP_UNSUPP)
+>> > +               return -EINVAL;
+>> > +
+>> > +       return code;
+>> > +}
+>> > +
+>> > +/*
+>> > + * Low-level functions: reading/writing counters
+>> > + */
+>> > +
+>> > +static inline u64 read_counter(int idx)
+>> > +{
+>> > +       u64 val = 0;
+>> > +
+>> > +       switch (idx) {
+>> > +       case RISCV_PMU_CYCLE:
+>> > +               val = csr_read(cycle);
+>> > +               break;
+>> > +       case RISCV_PMU_INSTRET:
+>> > +               val = csr_read(instret);
+>> > +               break;
+>> > +       default:
+>> > +               WARN_ON_ONCE(idx < 0 || idx > RISCV_MAX_COUNTERS);
+>> > +               return -EINVAL;
+>> > +       }
+>> > +
+>> > +       return val;
+>> > +}
+>> > +
+>> > +static inline void write_counter(int idx, u64 value)
+>> > +{
+>> > +       /* currently not supported */
+>> > +}
+>> > +
+>> > +/*
+>> > + * pmu->read: read and update the counter
+>> > + *
+>> > + * Other architectures' implementation often have a xxx_perf_event_update
+>> > + * routine, which can return counter values when called in the IRQ, but
+>> > + * return void when being called by the pmu->read method.
+>> > + */
+>> > +static void riscv_pmu_read(struct perf_event *event)
+>> > +{
+>> > +       struct hw_perf_event *hwc = &event->hw;
+>> > +       u64 prev_raw_count, new_raw_count;
+>> > +       u64 oldval;
+>> > +       int idx = hwc->idx;
+>> > +       u64 delta;
+>> > +
+>> > +       do {
+>> > +               prev_raw_count = local64_read(&hwc->prev_count);
+>> > +               new_raw_count = read_counter(idx);
+>> > +
+>> > +               oldval = local64_cmpxchg(&hwc->prev_count, prev_raw_count,
+>> > +                                        new_raw_count);
+>> > +       } while (oldval != prev_raw_count);
+>> > +
+>> > +       /*
+>> > +        * delta is the value to update the counter we maintain in the
+>> > kernel.
+>> > +        */
+>> > +       delta = (new_raw_count - prev_raw_count) &
+>> > +               ((1ULL << riscv_pmu->counter_width) - 1);
+>> > +       local64_add(delta, &event->count);
+>> > +       /*
+>> > +        * Something like local64_sub(delta, &hwc->period_left) here is
+>> > +        * needed if there is an interrupt for perf.
+>> > +        */
+>> > +}
+>> > +
+>> > +/*
+>> > + * State transition functions:
+>> > + *
+>> > + * stop()/start() & add()/del()
+>> > + */
+>> > +
+>> > +/*
+>> > + * pmu->stop: stop the counter
+>> > + */
+>> > +static void riscv_pmu_stop(struct perf_event *event, int flags)
+>> > +{
+>> > +       struct hw_perf_event *hwc = &event->hw;
+>> > +
+>> > +       WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
+>> > +       hwc->state |= PERF_HES_STOPPED;
+>> > +
+>> > +       if ((flags & PERF_EF_UPDATE) && !(hwc->state & PERF_HES_UPTODATE))
+>> > {
+>> > +               riscv_pmu_read(event);
+>> > +               hwc->state |= PERF_HES_UPTODATE;
+>> > +       }
+>> > +}
+>> > +
+>> > +/*
+>> > + * pmu->start: start the event.
+>> > + */
+>> > +static void riscv_pmu_start(struct perf_event *event, int flags)
+>> > +{
+>> > +       struct hw_perf_event *hwc = &event->hw;
+>> > +
+>> > +       if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
+>> > +               return;
+>> > +
+>> > +       if (flags & PERF_EF_RELOAD) {
+>> > +               WARN_ON_ONCE(!(event->hw.state & PERF_HES_UPTODATE));
+>> > +
+>> > +               /*
+>> > +                * Set the counter to the period to the next interrupt
+>> > here,
+>> > +                * if you have any.
+>> > +                */
+>> > +       }
+>> > +
+>> > +       hwc->state = 0;
+>> > +       perf_event_update_userpage(event);
+>> > +
+>> > +       /*
+>> > +        * Since we cannot write to counters, this serves as an
+>> > initialization
+>> > +        * to the delta-mechanism in pmu->read(); otherwise, the delta
+>> > would be
+>> > +        * wrong when pmu->read is called for the first time.
+>> > +        */
+>> > +       if (local64_read(&hwc->prev_count) == 0)
+>> > +               local64_set(&hwc->prev_count, read_counter(hwc->idx));
+>> > +}
+>> > +
+>> > +/*
+>> > + * pmu->add: add the event to PMU.
+>> > + */
+>> > +static int riscv_pmu_add(struct perf_event *event, int flags)
+>> > +{
+>> > +       struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+>> > +       struct hw_perf_event *hwc = &event->hw;
+>> > +
+>> > +       if (cpuc->n_events == riscv_pmu->num_counters)
+>> > +               return -ENOSPC;
+>> > +
+>> > +       /*
+>> > +        * We don't have general conunters, so no binding-event-to-counter
+>> > +        * process here.
+>> > +        *
+>> > +        * Indexing using hwc->config generally not works, since config may
+>> > +        * contain extra information, but here the only info we have in
+>> > +        * hwc->config is the event index.
+>> > +        */
+>> > +       hwc->idx = hwc->config;
+>> > +       cpuc->events[hwc->idx] = event;
+>> > +       cpuc->n_events++;
+>> > +
+>> > +       hwc->state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
+>> > +
+>> > +       if (flags & PERF_EF_START)
+>> > +               riscv_pmu_start(event, PERF_EF_RELOAD);
+>> > +
+>> > +       return 0;
+>> > +}
+>> > +
+>> > +/*
+>> > + * pmu->del: delete the event from PMU.
+>> > + */
+>> > +static void riscv_pmu_del(struct perf_event *event, int flags)
+>> > +{
+>> > +       struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+>> > +       struct hw_perf_event *hwc = &event->hw;
+>> > +
+>> > +       cpuc->events[hwc->idx] = NULL;
+>> > +       cpuc->n_events--;
+>> > +       riscv_pmu_stop(event, PERF_EF_UPDATE);
+>> > +       perf_event_update_userpage(event);
+>> > +}
+>> > +
+>> > +/*
+>> > + * Interrupt
+>> > + */
+>> > +
+>> > +static DEFINE_MUTEX(pmc_reserve_mutex);
+>> > +typedef void (*perf_irq_t)(void *riscv_perf_irq);
+>> > +perf_irq_t perf_irq;
+>> > +
+>> > +void riscv_pmu_handle_irq(void *riscv_perf_irq)
+>> > +{
+>> > +}
+>> > +
+>> > +static perf_irq_t reserve_pmc_hardware(void)
+>> > +{
+>> > +       perf_irq_t old;
+>> > +
+>> > +       mutex_lock(&pmc_reserve_mutex);
+>> > +       old = perf_irq;
+>> > +       perf_irq = &riscv_pmu_handle_irq;
+>> > +       mutex_unlock(&pmc_reserve_mutex);
+>> > +
+>> > +       return old;
+>> > +}
+>> > +
+>> > +void release_pmc_hardware(void)
+>> > +{
+>> > +       mutex_lock(&pmc_reserve_mutex);
+>> > +       perf_irq = NULL;
+>> > +       mutex_unlock(&pmc_reserve_mutex);
+>> > +}
+>> > +
+>> > +/*
+>> > + * Event Initialization
+>> > + */
+>> > +
+>> > +static atomic_t riscv_active_events;
+>> > +
+>> > +static void riscv_event_destroy(struct perf_event *event)
+>> > +{
+>> > +       if (atomic_dec_return(&riscv_active_events) == 0)
+>> > +               release_pmc_hardware();
+>> > +}
+>> > +
+>> > +static int riscv_event_init(struct perf_event *event)
+>> > +{
+>> > +       struct perf_event_attr *attr = &event->attr;
+>> > +       struct hw_perf_event *hwc = &event->hw;
+>> > +       perf_irq_t old_irq_handler = NULL;
+>> > +       int code;
+>> > +
+>> > +       if (atomic_inc_return(&riscv_active_events) == 1)
+>> > +               old_irq_handler = reserve_pmc_hardware();
+>> > +
+>> > +       if (old_irq_handler) {
+>> > +               pr_warn("PMC hardware busy (reserved by oprofile)\n");
+>> > +               atomic_dec(&riscv_active_events);
+>> > +               return -EBUSY;
+>> > +       }
+>> > +
+>> > +       switch (event->attr.type) {
+>> > +       case PERF_TYPE_HARDWARE:
+>> > +               code = riscv_pmu->map_hw_event(attr->config);
+>> > +               break;
+>> > +       case PERF_TYPE_HW_CACHE:
+>> > +               code = riscv_pmu->map_cache_event(attr->config);
+>> > +               break;
+>> > +       case PERF_TYPE_RAW:
+>> > +               return -EOPNOTSUPP;
+>> > +       default:
+>> > +               return -ENOENT;
+>> > +       }
+>> > +
+>> > +       event->destroy = riscv_event_destroy;
+>> > +       if (code < 0) {
+>> > +               event->destroy(event);
+>> > +               return code;
+>> > +       }
+>> > +
+>> > +       /*
+>> > +        * idx is set to -1 because the index of a general event should
+>> > not be
+>> > +        * decided until binding to some counter in pmu->add().
+>> > +        *
+>> > +        * But since we don't have such support, later in pmu->add(), we
+>> > just
+>> > +        * use hwc->config as the index instead.
+>> > +        */
+>> > +       hwc->config = code;
+>> > +       hwc->idx = -1;
+>> > +
+>> > +       return 0;
+>> > +}
+>> > +
+>> > +/*
+>> > + * Initialization
+>> > + */
+>> > +
+>> > +static struct pmu min_pmu = {
+>> > +       .name           = "riscv-base",
+>> > +       .event_init     = riscv_event_init,
+>> > +       .add            = riscv_pmu_add,
+>> > +       .del            = riscv_pmu_del,
+>> > +       .start          = riscv_pmu_start,
+>> > +       .stop           = riscv_pmu_stop,
+>> > +       .read           = riscv_pmu_read,
+>> > +};
+>> > +
+>> > +static const struct riscv_pmu riscv_base_pmu = {
+>> > +       .pmu = &min_pmu,
+>> > +       .max_events = ARRAY_SIZE(riscv_hw_event_map),
+>> > +       .map_hw_event = riscv_map_hw_event,
+>> > +       .hw_events = riscv_hw_event_map,
+>> > +       .map_cache_event = riscv_map_cache_event,
+>> > +       .cache_events = &riscv_cache_event_map,
+>> > +       .counter_width = 63,
+>> > +       .num_counters = RISCV_BASE_COUNTERS + 0,
+>> > +};
+>> > +
+>> > +struct pmu * __weak __init riscv_init_platform_pmu(void)
+>> > +{
+>> > +       riscv_pmu = &riscv_base_pmu;
+>> > +       return riscv_pmu->pmu;
+>> > +}
+>> > +
+>> > +int __init init_hw_perf_events(void)
+>> > +{
+>> > +       struct pmu *pmu = riscv_init_platform_pmu();
+>> > +
+>> > +       perf_irq = NULL;
+>> > +       perf_pmu_register(pmu, "cpu", PERF_TYPE_RAW);
+>> > +       return 0;
+>> > +}
+>> > +arch_initcall(init_hw_perf_events);
+>> > --
+>> > 2.16.2
+>> >
+>> >
