@@ -1,110 +1,186 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AH8x224TTKKG5k4aYQMw3iY72nbIaEd2y1V5ec1tDhHsFuP6WK2ZfFBSwIBnIK8yEisjBEap6JTF
-ARC-Seal: i=1; a=rsa-sha256; t=1519830330; cv=none;
+Return-Path: <3zPO_WgkbAI8BHI3t44xAt881w.z77z4xDBxAv76Cx6C.v75@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522529228; cv=none;
         d=google.com; s=arc-20160816;
-        b=sC+omdyY7qIE3t+kAYgs76ViuChnKLHGsuDAkaJuOlxsuT99RXFKokN/rfDLyS8rTP
-         GZ6m2HDgKJgcvSbt+5r6y8sO4Gw/VVJQ8KxTdqvK67HG7fYVNJPQe0v2UoUeMVbZYo7v
-         4u2NGFcsID36kmyc3yDow3itApcWssFFW1bQtccFSqqED3to/DhCAljqUbMGq/NcuuSe
-         hBslc/PohDn6sXo8yM1Zi1Y6hS5bVTpfMQvWstMxe3iwNqb4lScdY4j4eAh4tR6SjMT7
-         plLdYDn8//EepOpR30q8uQjnfdbwKAS12WjYgXQafPXb58R3nQwSyBoE4gZ2IUcPLhNf
-         Wm3A==
+        b=VRBKN3LdjnrpuehTQVB7Cq37CJz+I0MrH3o/K2genCha/AQOD69oWXdaGTtdBgoN63
+         m+num88UQHr/4FX95skHxalHMBC2vZC1w6wAJEc8Pv8z7bKwaoUdr7ni9tWqWjdBwm/v
+         pXtiMEkAo95arZsgPRxSHCIJ8XnVt/xM/GsJF+FOHel9zT/JeykBSCD4ulwivbWbMm9r
+         XfpQJckdTH8jCDsDmbSrEWG4e11TMnAReroNnFX1Wu9AkoN8HohwveFAYJy+rg3bOUx4
+         7WL7jOyTs3LjSVisv1PwS/8FbyKRk1IZYPpTFrSPqQOXgZyGQ9Cu6/b1o0Jl7zaOA9GW
+         ctQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=/yfea2aQc23HgpiHaGL1mmLrEQriOFJfWW60bRMO+8w=;
-        b=XBbm5U2+qdgJlmtUygz4HcXEYdyjU838a4IuyJ00X0lPfMRLJp/ahkHCnm037bBHW9
-         Vh3VbAB2JdEpGq5NQsu9OAjS5asgv8wg6idVg17s7jUjxJazODXmILGjygS0H3gFtD6O
-         k07g8PX8foyJojuvedHNSdfi96hq0+vD5dZClNUVZ1bxrrJ419+Nn5v5zWOpigBO16c4
-         fl/SaXAXTlsiWdkMPxO/3SOX56neOzWSIJ2879odJ1XcDccQq58qfIMnIn63Ac/thA9r
-         qiqixWDgDbikiTRv1GSBCqJ1jPQ0bpru/V6Bt2yY9BXbZvUG/z/SS8H/ComF6ABvOzUL
-         MWxA==
+        h=to:from:subject:message-id:date:mime-version
+         :arc-authentication-results;
+        bh=SDqk2Acmq9n2NJAOB+56f8CKau5AyTwRdhJagMF4gZ8=;
+        b=yhKfCM4VBPUfkc3J/1R8bYfshlMweML9x9SV5qo7GsHgusO1hZEm0fFzx+HZaBJX1z
+         cTsk8VVN95vYDooLpTQrBCAzcURnYDxqCe6E8aAlMGIjMpIr5+e/11I1Mm2tpRNfR1dL
+         8SZiF9O6+xYZVoLHcFW4dGwO93U5o3sZkCkXlz+by0Q2+ANxtEAzdqm/DRLd6m4MnyQ7
+         BnlZtJ3sMLxfXNUWPK0ambDUg8lPgqFM1Qb3l1RehwF2b6AmmAnFxOuPyUv1EMJjiouC
+         uaJsSrThzMCuwwPFPa4PpRBzDpjU9AHvq26cgnTysZxHu+Ho2m54y0kUycVvLu3APSPW
+         1sYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=LosZMOc0;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.90 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       spf=pass (google.com: domain of 3zpo_wgkbai8bhi3t44xat881w.z77z4xdbxav76cx6c.v75@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3zPO_WgkbAI8BHI3t44xAt881w.z77z4xDBxAv76Cx6C.v75@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=LosZMOc0;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.90 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w1SF4x5H004800
-X-Nifty-SrcIP: [209.85.213.51]
+       spf=pass (google.com: domain of 3zpo_wgkbai8bhi3t44xat881w.z77z4xdbxav76cx6c.v75@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3zPO_WgkbAI8BHI3t44xAt881w.z77z4xDBxAv76Cx6C.v75@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+X-Google-Smtp-Source: AIpwx4+BASpFC9wKzv/sC3ODPZ0QCamqHULZ5Uxb8OVgSmnqCFEo8I6NMcwo78R/fCJ3Q8xyoYa1OQHdqRSSmEj70hNpz+PXOPgR
 MIME-Version: 1.0
-In-Reply-To: <1519801192-31201-1-git-send-email-arvindprasanna@gmail.com>
-References: <1519801192-31201-1-git-send-email-arvindprasanna@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 1 Mar 2018 00:04:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATafNCOBMsNezrCT8j_N2kJiLt7S063wRtjGsaJTgxLvA@mail.gmail.com>
-Message-ID: <CAK7LNATafNCOBMsNezrCT8j_N2kJiLt7S063wRtjGsaJTgxLvA@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: Update ncurses package names for menuconfig
-To: Arvind Prasanna <arvindprasanna@gmail.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Sat, 31 Mar 2018 13:47:08 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <94eb2c054604d4ac000568bb758c@google.com>
+Subject: WARNING: refcount bug in put_pid_ns
+From: syzbot <syzbot+66a731f39da94bb14930@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, pombredanne@nexb.com,
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593627124178304067?=
-X-GMAIL-MSGID: =?utf-8?q?1593657608135885634?=
+X-GMAIL-THRID: =?utf-8?q?1596487607739609259?=
+X-GMAIL-MSGID: =?utf-8?q?1596487608917142866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-02-28 15:59 GMT+09:00 Arvind Prasanna <arvindprasanna@gmail.com>:
-> The package name is ncurses-devel for Redhat based distros
-> and libncurses-devel for Debian based distros.
->
-> Signed-off-by: Arvind Prasanna <arvindprasanna@gmail.com>
-> ---
->  scripts/kconfig/lxdialog/check-lxdialog.sh | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh b/scripts/kconfig/lxdialog/check-lxdialog.sh
-> index a10bd9d..4353e40 100755
-> --- a/scripts/kconfig/lxdialog/check-lxdialog.sh
-> +++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
-> @@ -55,7 +55,8 @@ EOF
->             echo " *** required header files."                            1>&2
->             echo " *** 'make menuconfig' requires the ncurses libraries." 1>&2
->             echo " *** "                                                  1>&2
-> -           echo " *** Install ncurses (ncurses-devel) and try again."    1>&2
-> +           echo " *** Install ncurses (ncurses-devel or libncurses-dev   1>&2
-> +                  *** depending on your distribution) and try again."    1>&2
->             echo " *** "                                                  1>&2
->             exit 1
->         fi
-> --
-> 2.7.4
+Hello,
+
+syzbot hit the following crash on upstream commit
+9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
+Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=66a731f39da94bb14930
+
+So far this crash happened 6 times on upstream.
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6405492943355904
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5483914026024960
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+compiler: gcc (GCC) 7.1.1 20170620
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+66a731f39da94bb14930@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  fail_dump lib/fault-inject.c:51 [inline]
+  should_fail+0x8c0/0xa40 lib/fault-inject.c:149
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 4478 at lib/refcount.c:187  
+refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
+  should_failslab+0xec/0x120 mm/failslab.c:32
+Kernel panic - not syncing: panic_on_warn set ...
+
+  slab_pre_alloc_hook mm/slab.h:422 [inline]
+  slab_alloc mm/slab.c:3366 [inline]
+  kmem_cache_alloc+0x47/0x760 mm/slab.c:3540
+  kmem_cache_zalloc include/linux/slab.h:691 [inline]
+  fill_pool lib/debugobjects.c:110 [inline]
+  __debug_object_init+0xa99/0x1040 lib/debugobjects.c:339
+  debug_object_init+0x17/0x20 lib/debugobjects.c:391
+  __init_work+0x2b/0x60 kernel/workqueue.c:506
+  __memcg_schedule_kmem_cache_create mm/memcontrol.c:2203 [inline]
+  memcg_schedule_kmem_cache_create mm/memcontrol.c:2223 [inline]
+  memcg_kmem_get_cache+0x571/0x890 mm/memcontrol.c:2285
+  slab_pre_alloc_hook mm/slab.h:427 [inline]
+  slab_alloc mm/slab.c:3366 [inline]
+  kmem_cache_alloc+0x186/0x760 mm/slab.c:3540
+  proc_alloc_inode+0x1b/0x190 fs/proc/inode.c:63
+  alloc_inode+0x65/0x180 fs/inode.c:209
+  new_inode_pseudo+0x69/0x190 fs/inode.c:890
+  proc_get_inode+0x20/0x620 fs/proc/inode.c:436
+  proc_fill_super+0x1dd/0x300 fs/proc/inode.c:502
+  mount_ns+0xc4/0x190 fs/super.c:1036
+  proc_mount+0x7a/0x90 fs/proc/root.c:101
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:3292 [inline]
+  kern_mount_data+0x50/0xb0 fs/namespace.c:3292
+  pid_ns_prepare_proc+0x1e/0x80 fs/proc/root.c:222
+  alloc_pid+0x87e/0xa00 kernel/pid.c:208
+  copy_process.part.38+0x2516/0x4bd0 kernel/fork.c:1807
+  copy_process kernel/fork.c:1606 [inline]
+  _do_fork+0x1f7/0xf70 kernel/fork.c:2087
+  SYSC_clone kernel/fork.c:2194 [inline]
+  SyS_clone+0x37/0x50 kernel/fork.c:2188
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x454e79
+RSP: 002b:00007fe845e3ec68 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007fe845e3f6d4 RCX: 0000000000454e79
+RDX: 00000000200008c0 RSI: 0000000020000800 RDI: 000000002000c100
+RBP: 000000000072bea0 R08: 0000000020000940 R09: 0000000000000000
+R10: 0000000020000900 R11: 0000000000000246 R12: 0000000000000004
+R13: 0000000000000051 R14: 00000000006f2838 R15: 0000000000000028
+CPU: 0 PID: 4478 Comm: syz-executor1 Not tainted 4.16.0-rc7+ #372
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
+RSP: 0018:ffff8801ad017318 EFLAGS: 00010282
+RAX: dffffc0000000008 RBX: 0000000000000000 RCX: ffffffff815b193e
+RDX: 0000000000000000 RSI: 1ffff10035a02e13 RDI: 1ffff10035a02de8
+RBP: ffff8801ad0173a8 R08: 0000000000000000 R09: 0000000000000000
+R10: ffff8801ad0172d0 R11: 0000000000000000 R12: 1ffff10035a02e64
+R13: 00000000ffffffff R14: 0000000000000001 R15: ffff8801ad2b0630
+  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
+  kref_put include/linux/kref.h:69 [inline]
+  put_pid_ns+0x9d/0xc0 kernel/pid_namespace.c:192
+  free_nsproxy+0xfa/0x1f0 kernel/nsproxy.c:182
+  switch_task_namespaces+0x9d/0xc0 kernel/nsproxy.c:229
+  exit_task_namespaces+0x17/0x20 kernel/nsproxy.c:234
+  copy_process.part.38+0x3aba/0x4bd0 kernel/fork.c:1988
+  copy_process kernel/fork.c:1606 [inline]
+  _do_fork+0x1f7/0xf70 kernel/fork.c:2087
+  SYSC_clone kernel/fork.c:2194 [inline]
+  SyS_clone+0x37/0x50 kernel/fork.c:2188
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x454e79
+RSP: 002b:00007f64a187cc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007f64a187d6d4 RCX: 0000000000454e79
+RDX: 00000000200008c0 RSI: 0000000020000800 RDI: 000000002000c100
+RBP: 000000000072bea0 R08: 0000000020000940 R09: 0000000000000000
+R10: 0000000020000900 R11: 0000000000000246 R12: 0000000000000004
+R13: 0000000000000051 R14: 00000000006f2838 R15: 0000000000000028
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-'echo' is missing in the line you added.
-So, the error message will be displayed like follows:
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-
-
- *** Unable to find the ncurses libraries or the
- *** required header files.
- *** 'make menuconfig' requires the ncurses libraries.
- ***
- *** Install ncurses (ncurses-devel or libncurses-dev   1>&2
-           *** depending on your distribution) and try again.
- ***
-
-
-
-
-I fixed it up locally, and applied to linux-kbuild/kconfig.
-Thanks!
-
-
-
-
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
