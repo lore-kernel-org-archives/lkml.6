@@ -1,51 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753820AbeDARco (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 13:32:44 -0400
-Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:39915
-        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753720AbeDARcm (ORCPT
+        id S1753836AbeDASHQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 14:07:16 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:56840 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753728AbeDASHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 13:32:42 -0400
-X-YMail-OSG: 9vOvwUEVM1kapPbBmDS6XMki5q8zsCB.mu48keGH4_OfPXaUIMDQWbTCmALmkKu
- wGLWfBlD4hXNxuSsGDvNzJHv0fmR4UI0_InfJ2BYsXRimX3Z62mZZDKX9p2f3qynkwIcIfnpPop3
- Mt9VHHkKFh2CY9dU0DEGDNwqAWD0wobt5BhjheSjfCMYRHvgkumPczj0AhIpfVNMtseAxBPLfUFr
- am8J0_lYr4_tmjuUOuiBVDAUizjdAHY6UgiCHJ0WGvTp3ndLb33Xtq0Dd__GSBGF3OURp73uhBOO
- jFZombdFK0a5xKTsHXWSArmqhWYgDcA7efXGDFJRLmEOnJgtM1m38ajdMywPBcuw2oWVPiSERpVu
- CfEUe6_0orI7l9hyA3lJp6NPnExE2qhrEWe3_xUkb5Rm66JQN.s5auZtvHI8BxoYOUw9rf8kC1.E
- RdBm0r47IBqeiqyGzJqq7G01vgm2YdkFuH10DiJqTAol3XUp8M1nH_ngJRaAXy3KvM7R__nqCh0Z
- 0JSN8Qzg58HoDsKYKIGPO3eQetLq21g--
-Subject: Re: [PATCH 0/4] security: Split out hook definitions into
- lsm_hook_types.h
-To: Sargun Dhillon <sargun@sargun.me>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
-        igor.stoppa@huawei.com, jmorris@namei.org
-References: <cover.1522577650.git.sargun@sargun.me>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <06c4e61e-399f-a1f8-bd45-a27d0eb4571b@schaufler-ca.com>
-Date: Sun, 1 Apr 2018 10:32:32 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <cover.1522577650.git.sargun@sargun.me>
-Content-Type: text/plain; charset=utf-8
+        Sun, 1 Apr 2018 14:07:14 -0400
+Date: Sun, 01 Apr 2018 14:07:12 -0400 (EDT)
+Message-Id: <20180401.140712.1392918167775655287.davem@davemloft.net>
+To: joe@perches.com
+Cc: andrew@lunn.ch, vivien.didelot@savoirfairelinux.com,
+        f.fainelli@gmail.com, stephen@networkplumber.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bridge@lists.linux-foundation.org
+Subject: Re: [PATCH V2] treewide/net: Rename eth_stp_addr to ether_stp_addr
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <5f5dafaeacbc9e9aa2d969701e510d31ef6e97db.1522521099.git.joe@perches.com>
+References: <20180331173643.GD7460@lunn.ch>
+        <5f5dafaeacbc9e9aa2d969701e510d31ef6e97db.1522521099.git.joe@perches.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/1/2018 3:17 AM, Sargun Dhillon wrote:
-> This moves all of the LSM hooks type information into a separate file,
-> lsm_hook_types.h. This enables us to use this file, along with macros
-> to generate the security_hook_heads struct, as well as the security
-> hooks union without having to duplicate definitions.
->
-> This will be useful for further datastructures which want to use
-> the set of security hooks in a completely unrolled way, along
-> with the type information there within.
+From: Joe Perches <joe@perches.com>
+Date: Sat, 31 Mar 2018 11:34:06 -0700
 
-Can you explain what this patch set is trying to accomplish?
-I see no value. I see massive complexity. Why is this better
-than what is there now?
+> eth_stp_addr is not in the same form as the other global ether_<foo>_addr
+> addresses like ether_broadcast_addr.
+> 
+> Convert it treewide.
+> 
+> Miscellanea:
+> 
+> o Add comment to the ether_stp_addr define to show it's for spanning-tree
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+> 
+> V2: Remove gg from initial comment (bad editing)
+
+Joe this was part of a larger series.
+
+Please repost the entire series when you fix a patch contained
+in that series, not just the patch that is changing.
+
+Thank you.
