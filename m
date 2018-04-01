@@ -1,75 +1,102 @@
-Date: Fri, 6 Apr 2018 09:03:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>, Jiri Olsa <jolsa@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.4 014/134] perf tools: Make
- perf_event__synthesize_mmap_events() scale
-Message-ID: <20180406070316.GC8416@kroah.com>
+Return-Path: <ben.hutchings@codethink.co.uk>
+X-Google-Smtp-Source: AIpwx4+v84YHjjfEkn+pFh56MzKbCAXqSnj+8JuQPkxZlYxExYY3WKai4QhDIc/UY4bM+cl1H/yc
+ARC-Seal: i=1; a=rsa-sha256; t=1522615782; cv=none;
+        d=google.com; s=arc-20160816;
+        b=R7xumIuD0Vd64++byQgqhltKsEojXNlBdBIY7cJ3CNoyQmT3bdd1T5+UsUCCxlr1aP
+         Ni+J0OIa+PbeXJa/bgk2yzaN36NAXtAHmgtXZb6f2/FrvapHmOPFU82tx5ulilMVEgr+
+         66CYBR+s0u2GWPuXdQTZvUdGIRMiK40PTYShEPtJVVTxmp0zwhhi7KKYzkE3sXamkLSi
+         rvBvpfzv0+81gWzgoQRTyMJImq6BINqiU/FWAms3FNzBUrSdHKQN9bZYIs58xOaQAXOT
+         1kU8Xk3zH2bEBHAsYCrpj2JYAQoChTnoMqL4mAobPkjBwO/0sRybTqHo2iZ5ZLtCp0Cx
+         Qf/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:date:cc:to:from:subject:message-id
+         :arc-authentication-results;
+        bh=I56ZJOIMQBKUUyKO+gH/VYdSUpRb+hyZ5kgGw2amXR4=;
+        b=rYbjrNu9lI4O9JBcc3DJWNXKnSPmkHUxkRbkCTTMRKzbkh42zREOgOlc1nAlhU7xfV
+         orPjzx2vG3qLL0Hh+AFPtskBeiQNPAL6DsoLZM5Hqq3OG/zvLUGk0ujLLwZwoa7Ly1zZ
+         eXPEGa5iRaFyRrcVDzDYtnZOYUkI5wqZsOrYMA926JohgspnfZYC1TvuNva1uOsH2YBV
+         7yk3VJSO/11tl7P1tkE5f9TDQPPbErRZtI68F12Gls7jm9IBUBw9c3WBo948qAVukaMj
+         t7ORC2WnPHDrIWx5pXAK480mQMD3xpw1F6pnD/Kugbs2h/tu9X7x3voVmuwH5LkZgeGF
+         IUHg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+Message-ID: <1522615780.2654.76.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 089/134] ARM: dts: omap3-n900: Fix the audio CODECs
+ reset pin
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Tony Lindgren
+	 <tony@atomide.com>, Sasha Levin <alexander.levin@microsoft.com>
+Date: Sun, 01 Apr 2018 21:49:40 +0100
+In-Reply-To: <20180319171902.160796295@linuxfoundation.org>
 References: <20180319171849.024066323@linuxfoundation.org>
- <20180319171851.147448695@linuxfoundation.org>
- <1522340036.2654.20.camel@codethink.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+	 <20180319171902.160796295@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1522340036.2654.20.camel@codethink.co.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595390608912985115?=
+X-GMAIL-MSGID: =?utf-8?q?1596578366304743864?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 05:13:56PM +0100, Ben Hutchings wrote:
-> On Mon, 2018-03-19 at 19:04 +0100, Greg Kroah-Hartman wrote:
-> > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Stephane Eranian <eranian@google.com>
-> > 
-> > 
-> > [ Upstream commit 88b897a30c525c2eee6e7f16e1e8d0f18830845e ]
-> > 
-> > This patch significantly improves the execution time of
-> > perf_event__synthesize_mmap_events() when running perf record on systems
-> > where processes have lots of threads.
-> > 
-> > It just happens that cat /proc/pid/maps support uses a O(N^2) algorithm to
-> > generate each map line in the maps file.  If you have 1000 threads, then you
-> > have necessarily 1000 stacks.  For each vma, you need to check if it
-> > corresponds to a thread's stack.  With a large number of threads, this can take
-> > a very long time. I have seen latencies >> 10mn.
-> > 
-> > As of today, perf does not use the fact that a mapping is a stack, therefore we
-> > can work around the issue by using /proc/pid/tasks/pid/maps.  This entry does
-> > not try to map a vma to stack and is thus much faster with no loss of
-> > functonality.
-> > 
-> > The proc-map-timeout logic is kept in case users still want some upper limit.
-> > 
-> > In V2, we fix the file path from /proc/pid/tasks/pid/maps to actual
-> > /proc/pid/task/pid/maps, tasks -> task.  Thanks Arnaldo for catching this.
-> > 
-> > Committer note:
-> > 
-> > This problem seems to have been elliminated in the kernel since commit :
-> > b18cb64ead40 ("fs/proc: Stop trying to report thread stacks").
-> [...]
+On Mon, 2018-03-19 at 19:06 +0100, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.Â Â If anyone has any objections, please let me know.
 > 
-> I don't think so.  It looks like this was fixed by commit 65376df58217
-> ("proc: revert /proc/<pid>/maps [stack:TID] annotation") which we
-> already have in 4.4-stable.  But older branches (3.16, 3.18, 4.1) don't
-> have that and probably should do.
+> ------------------
+> 
+> From: "Andrew F. Davis" <afd@ti.com>
+> 
+> 
+> [ Upstream commit 7be4b5dc7ffa9499ac6ef33a5ffa9ff43f9b7057 ]
+> 
+> The correct DT property for specifying a GPIO used for reset
+> is "reset-gpios", fix this here.
 
-Now added to 3.18.y
+This also depends on a driver change.  Please revert it for all stable
+branches.
 
-> It looks like commit b18cb64ead40 ("fs/proc: Stop trying to report
-> thread stacks") is also a candidate for stable.
+Ben.
 
-Now added to 3.18.y and 4.4.y, thanks!
+> Fixes: 14e3e295b2b9 ("ARM: dts: omap3-n900: Add TLV320AIC3X support")
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+> Â arch/arm/boot/dts/omap3-n900.dts |Â Â Â Â 4 ++--
+> Â 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- a/arch/arm/boot/dts/omap3-n900.dts
+> +++ b/arch/arm/boot/dts/omap3-n900.dts
+> @@ -488,7 +488,7 @@
+> Â 	tlv320aic3x: tlv320aic3x@18 {
+> Â 		compatible = "ti,tlv320aic3x";
+> Â 		reg = <0x18>;
+> -		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
+> +		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
+> Â 		ai3x-gpio-func = <
+> Â 			0 /* AIC3X_GPIO1_FUNC_DISABLED */
+> Â 			5 /* AIC3X_GPIO2_FUNC_DIGITAL_MIC_INPUT */
+> @@ -505,7 +505,7 @@
+> Â 	tlv320aic3x_aux: tlv320aic3x@19 {
+> Â 		compatible = "ti,tlv320aic3x";
+> Â 		reg = <0x19>;
+> -		gpio-reset = <&gpio2 28 GPIO_ACTIVE_HIGH>; /* 60 */
+> +		reset-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>; /* 60 */
+> Â 
+> Â 		AVDD-supply = <&vmmc2>;
+> Â 		DRVDD-supply = <&vmmc2>;
 
-greg k-h
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
