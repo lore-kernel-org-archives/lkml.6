@@ -1,125 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753661AbeDAOgm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 10:36:42 -0400
-Received: from mail-ua0-f170.google.com ([209.85.217.170]:46474 "EHLO
-        mail-ua0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753400AbeDAOgG (ORCPT
+        id S1753572AbeDAPAJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 11:00:09 -0400
+Received: from smtprelay0036.hostedemail.com ([216.40.44.36]:54936 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753519AbeDAPAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 10:36:06 -0400
-X-Google-Smtp-Source: AIpwx4/KeyG0S0CHH9PUVurB7rjKYyKKtGEdQbTKpkr97oD90J35pc4BxCND7RvWayudRYsA0uUaZqedWLszsy1Y1qo=
-MIME-Version: 1.0
-From: Sitsofe Wheeler <sitsofe@gmail.com>
-Date: Sun, 1 Apr 2018 15:35:35 +0100
-Message-ID: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com>
-Subject: [BISECTED][REGRESSION] Hang while booting EeePC 900
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Asai Thambi SP <asamymuthupa@micron.com>,
-        Stefan Haberland <sth@linux.vnet.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 1 Apr 2018 11:00:08 -0400
+X-Session-Marker: 7368656140736865616C6576792E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::,RULES_HIT:41:355:379:541:800:960:965:966:973:988:989:1260:1345:1359:1437:1534:1541:1711:1730:1747:1777:1792:1978:1981:2194:2196:2199:2200:2393:2559:2562:2892:3138:3139:3140:3141:3142:3352:3865:3866:3867:3868:3870:3871:3872:3874:4321:4385:4390:4395:4605:5007:6261:10004:10848:11026:11473:11658:11914:12555:12895:13069:13149:13161:13229:13230:13311:13357:14096:14181:14384:14394:14721:21080:21433:21451:21627:30012:30054:30056:30075,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.14.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: match19_7561532018e08
+X-Filterd-Recvd-Size: 1981
+From: Shea Levy <shea@shealevy.com>
+To: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Shea Levy <shea@shealevy.com>
+Subject: [PATCH v6 01/16] initrd: Add weakly-linked generic free_initrd_mem.
+Date: Sun,  1 Apr 2018 10:59:15 -0400
+Message-Id: <20180401145931.7932-1-shea@shealevy.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180329113207.30674-1-shea@shealevy.com>
+References: <20180329113207.30674-1-shea@shealevy.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This function is effectively identical across 14 architectures, and
+the generic implementation is small enough to be negligible in the
+architectures that do override it. Many of the remaining divergent
+implementations can be included in the common code path in future,
+further reducing code duplication and sharing improvements between
+architectures.
 
-While trying to boot an EeePC 900 on the latest git mainline kernel a
-hang is encountered while systemd is starting services but this did
-not happen with 4.15. A bisection narrowed it down to the commit
-358f70da49d77c43f2ca11b5da584213b2add29c ("blk-mq: make
-blk_abort_request() trigger timeout path"). Here's the bisection log:
+Series boot-tested on RISC-V (which now uses the generic
+implementation) and x86_64 (which doesn't).
 
-git bisect start
-# bad: [9829fcd7ae99d5955bb76a8fb8060e63339d7c9d] drm-tip:
-2018y-03m-29d-19h-56m-48s UTC integration manifest
-git bisect bad 9829fcd7ae99d5955bb76a8fb8060e63339d7c9d
-# good: [bebc6082da0a9f5d47a1ea2edc099bf671058bd4] Linux 4.14
-git bisect good bebc6082da0a9f5d47a1ea2edc099bf671058bd4
-# skip: [68ae7424583b561c2fda2fb03726e56946b34b19] ixgbe: Drop
-l2_accel_priv data pointer from ring struct
-git bisect skip 68ae7424583b561c2fda2fb03726e56946b34b19
-# good: [d8a5b80568a9cb66810e75b182018e9edb68e8ff] Linux 4.15
-git bisect good d8a5b80568a9cb66810e75b182018e9edb68e8ff
-# bad: [fe53d1443a146326b49d57fe6336b5c2a725223f] Merge tag
-'armsoc-drivers' of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
-git bisect bad fe53d1443a146326b49d57fe6336b5c2a725223f
-# bad: [a103950e0dd2058df5e8a8d4a915707bdcf205f0] Merge branch 'linus'
-of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
-git bisect bad a103950e0dd2058df5e8a8d4a915707bdcf205f0
-# bad: [d8b91dde38f4c43bd0bbbf17a90f735b16aaff2c] Merge branch
-'perf-core-for-linus' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect bad d8b91dde38f4c43bd0bbbf17a90f735b16aaff2c
-# bad: [9697e9da84299d0d715d515dd2cc48f1eceb277d] Merge tag
-'edac_for_4.16' of git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp
-git bisect bad 9697e9da84299d0d715d515dd2cc48f1eceb277d
-# good: [7f3fdd40a7dfaa7405185250974b0fabd08c1f8b] Merge tag
-'pm-4.16-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-git bisect good 7f3fdd40a7dfaa7405185250974b0fabd08c1f8b
-# good: [0fc7e74663447682c904fe375bb680b004ddaa14] Merge tag
-'mtd/for-4.16' of git://git.infradead.org/linux-mtd
-git bisect good 0fc7e74663447682c904fe375bb680b004ddaa14
-# good: [310eb252a78307fc2ac4c4c755290a578c0304d0] mmc: mmci: fix
-error return code in mmci_probe()
-git bisect good 310eb252a78307fc2ac4c4c755290a578c0304d0
-# bad: [3eb2ce825ea1ad89d20f7a3b5780df850e4be274] Linux 4.16-rc7
-git bisect bad 3eb2ce825ea1ad89d20f7a3b5780df850e4be274
-# bad: [537433b6241e067de2d9da3bed5f4fed9c9eac58] Merge tag
-'armsoc-dt' of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
-git bisect bad 537433b6241e067de2d9da3bed5f4fed9c9eac58
-# bad: [a103950e0dd2058df5e8a8d4a915707bdcf205f0] Merge branch 'linus'
-of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
-git bisect bad a103950e0dd2058df5e8a8d4a915707bdcf205f0
-# bad: [efd52b5d363e3e3b6224ad39949219c0df117c91] Merge tag
-'nfs-for-4.16-1' of git://git.linux-nfs.org/projects/trondmy/linux-nfs
-git bisect bad efd52b5d363e3e3b6224ad39949219c0df117c91
-# bad: [6304672b7f0a5c010002e63a075160856dc4f88d] Merge branch
-'x86-pti-for-linus' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect bad 6304672b7f0a5c010002e63a075160856dc4f88d
-# bad: [a4b7fd7d34de5765dece2dd08060d2e1f7be3b39] Merge tag
-'iversion-v4.16-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux
-git bisect bad a4b7fd7d34de5765dece2dd08060d2e1f7be3b39
-# skip: [8c7a8d1c4b9c30a2be3b31a2e6af1cefd45574eb] lib/scatterlist:
-Fix chaining support in sgl_alloc_order()
-git bisect skip 8c7a8d1c4b9c30a2be3b31a2e6af1cefd45574eb
-# skip: [85ba3effc5a0836b9195f2010684062ad230cc23] blk-mq: add missing
-RQF_STARTED to debugfs
-git bisect skip 85ba3effc5a0836b9195f2010684062ad230cc23
-# good: [73d8003749ebfd9617076213c0033e11aacf823c] Merge
-remote-tracking branch 'regulator/topic/core' into regulator-next
-git bisect good 73d8003749ebfd9617076213c0033e11aacf823c
-# bad: [9b9c63f71bddf3dc897aaaa46c0593abc3e09932] Merge branch
-'nvme-4.16' of git://git.infradead.org/nvme into for-4.16/block
-git bisect bad 9b9c63f71bddf3dc897aaaa46c0593abc3e09932
-# good: [b221fc130c49c50f4c2250d22e873420765a9fa2] bcache: ret IOERR
-when read meets metadata error
-git bisect good b221fc130c49c50f4c2250d22e873420765a9fa2
-# bad: [e14575b3d457f5806d79b85886ef94d9c29e3b2a] block: convert
-REQ_ATOM_COMPLETE to stealing rq->__deadline bit
-git bisect bad e14575b3d457f5806d79b85886ef94d9c29e3b2a
-# bad: [5a61c36398d0626bad377a7f5b9391b21e16e91d] blk-mq: remove
-REQ_ATOM_STARTED
-git bisect bad 5a61c36398d0626bad377a7f5b9391b21e16e91d
-# good: [5138ac6748e381501894976f995fb7d1a63f80f4] bcache: fix
-misleading error message in bch_count_io_errors()
-git bisect good 5138ac6748e381501894976f995fb7d1a63f80f4
-# good: [04ced159cec863f9bc27015d6b970bb13cfa6176] blk-mq: move hctx
-lock/unlock into a helper
-git bisect good 04ced159cec863f9bc27015d6b970bb13cfa6176
-# good: [67818d25738b1c9ffb8541ca875b2ae3304869d5] blk-mq: use
-blk_mq_rq_state() instead of testing REQ_ATOM_COMPLETE
-git bisect good 67818d25738b1c9ffb8541ca875b2ae3304869d5
-# bad: [358f70da49d77c43f2ca11b5da584213b2add29c] blk-mq: make
-blk_abort_request() trigger timeout path
-git bisect bad 358f70da49d77c43f2ca11b5da584213b2add29c
-# first bad commit: [358f70da49d77c43f2ca11b5da584213b2add29c] blk-mq:
-make blk_abort_request() trigger timeout path
+v6: Add information about build/run testing.
+v5: Add more complete commit messages.
+v4: Use weak symbols instead of Kconfig.
+v3: Make the generic path opt-out instead of opt-in.
+v2: Mark generic free_initrd_mem __init.
 
+Signed-off-by: Shea Levy <shea@shealevy.com>
+---
+ init/initramfs.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 7e99a0038942..c8fe150f958a 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -526,6 +526,11 @@ extern unsigned long __initramfs_size;
+ #include <linux/initrd.h>
+ #include <linux/kexec.h>
+ 
++void __init __weak free_initrd_mem(unsigned long start, unsigned long end)
++{
++       free_reserved_area((void *)start, (void *)end, -1, "initrd");
++}
++
+ static void __init free_initrd(void)
+ {
+ #ifdef CONFIG_KEXEC_CORE
 -- 
-Sitsofe | http://sucs.org/~sits/
+2.16.2
