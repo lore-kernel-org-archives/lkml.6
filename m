@@ -1,72 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753638AbeDAPmp (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 11:42:45 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:64356 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753584AbeDAPmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 11:42:44 -0400
-From: Peng Hao <peng.hao2@zte.com.cn>
-To: cdall@kernel.org, marc.zyngier@arm.com
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH] kvm : arm/arm64 : fix some warningg
-Date: Mon, 2 Apr 2018 08:00:36 +0800
-Message-Id: <1522627236-3465-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-04-01 23:42:50,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-04-01 23:42:35,
-        Serialize complete at 2018-04-01 23:42:35
-X-MAIL: mse01.zte.com.cn w31Fga21057017
+        id S1753646AbeDAQLm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 12:11:42 -0400
+Received: from manul.sfritsch.de ([138.201.64.112]:59928 "EHLO
+        manul.sfritsch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753623AbeDAQLl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 12:11:41 -0400
+From: Stefan Fritsch <sf@sfritsch.de>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Stefan Fritsch <sf@sfritsch.de>
+Subject: [PATCH] kvm: Add emulation for movups/movupd
+Date: Sun,  1 Apr 2018 17:54:44 +0200
+Message-Id: <20180401155444.7006-1-sf@sfritsch.de>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix some "warning: no previous prototype".
+This is very similar to the aligned versions movaps/movapd.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+We have seen the corresponding emulation failures with openbsd as guest
+and with Windows 10 with intel HD graphics pass through.
+
+Signed-off-by: Christian Ehrhardt <christian_ehrhardt@genua.de>
+Signed-off-by: Stefan Fritsch <sf@sfritsch.de>
 ---
- virt/kvm/arm/vgic/vgic-its.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kvm/emulate.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
-index 4650953..881494b 100644
---- a/virt/kvm/arm/vgic/vgic-its.c
-+++ b/virt/kvm/arm/vgic/vgic-its.c
-@@ -177,12 +177,12 @@ struct vgic_its_abi {
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index d91eaeb01034..7dda8e38c19a 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -4498,6 +4498,10 @@ static const struct gprefix pfx_0f_2b = {
+ 	ID(0, &instr_dual_0f_2b), ID(0, &instr_dual_0f_2b), N, N,
+ };
  
- #define NR_ITS_ABIS	ARRAY_SIZE(its_table_abi_versions)
- 
--inline const struct vgic_its_abi *vgic_its_get_abi(struct vgic_its *its)
-+static inline const struct vgic_its_abi *vgic_its_get_abi(struct vgic_its *its)
- {
- 	return &its_table_abi_versions[its->abi_rev];
- }
- 
--int vgic_its_set_abi(struct vgic_its *its, int rev)
-+static int vgic_its_set_abi(struct vgic_its *its, int rev)
- {
- 	const struct vgic_its_abi *abi;
- 
-@@ -1731,7 +1731,7 @@ static void vgic_its_destroy(struct kvm_device *kvm_dev)
- 	kfree(its);
- }
- 
--int vgic_its_has_attr_regs(struct kvm_device *dev,
-+static int vgic_its_has_attr_regs(struct kvm_device *dev,
- 			   struct kvm_device_attr *attr)
- {
- 	const struct vgic_register_region *region;
-@@ -1752,7 +1752,7 @@ int vgic_its_has_attr_regs(struct kvm_device *dev,
- 	return 0;
- }
- 
--int vgic_its_attr_regs_access(struct kvm_device *dev,
-+static int vgic_its_attr_regs_access(struct kvm_device *dev,
- 			      struct kvm_device_attr *attr,
- 			      u64 *reg, bool is_write)
- {
++static const struct gprefix pfx_0f_10_0f_11 = {
++	I(Unaligned, em_mov), I(Unaligned, em_mov), N, N,
++};
++
+ static const struct gprefix pfx_0f_28_0f_29 = {
+ 	I(Aligned, em_mov), I(Aligned, em_mov), N, N,
+ };
+@@ -4709,7 +4713,9 @@ static const struct opcode twobyte_table[256] = {
+ 	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
+ 	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
+ 	/* 0x10 - 0x1F */
+-	N, N, N, N, N, N, N, N,
++	GP(ModRM | DstReg | SrcMem | Mov | Sse, &pfx_0f_10_0f_11),
++	GP(ModRM | DstMem | SrcReg | Mov | Sse, &pfx_0f_10_0f_11),
++	N, N, N, N, N, N,
+ 	D(ImplicitOps | ModRM | SrcMem | NoAccess),
+ 	N, N, N, N, N, N, D(ImplicitOps | ModRM | SrcMem | NoAccess),
+ 	/* 0x20 - 0x2F */
 -- 
-1.8.3.1
+2.11.0
