@@ -1,157 +1,231 @@
-Return-Path: <dvyukov@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522602900; cv=none;
+Return-Path: <shea@shealevy.com>
+X-Google-Smtp-Source: AIpwx49xdR4D+VNStalX9t9IJOZG/UpaSNi4bw3oo5kN5PQjKi63tgvFQbYpGCaf1dmxFhdjH+eo
+ARC-Seal: i=1; a=rsa-sha256; t=1522595129; cv=none;
         d=google.com; s=arc-20160816;
-        b=mox8XSJfVZJEPyza9Dd5B5I3jOS+HM01eZyofOnE9jtDPams6+WUjoSkxmCCJLitZl
-         IJFrptb+M70a9IlMXthzw/zPp3DdRS+wUtTMWyySkwLvI4PjqfuvIpvy7nKSHAxtAM8e
-         Xsg8zGTAVIspBgWknB/F9os6PldS16ik2f70aMBHBpdgQ8MCPl3UTOsFMhyKhZZU9ofR
-         6AEln6QiRuG9TO9bQDVcOCY2zNxku49DUCA6NPr6zaMSutUTSqhXsC3WNIu4UsbgtZxb
-         F78XwfJ20UqUaArM7bthmFPpePCL7DU28pf9YV572RmgwHp/c9hUPCzoOO20PUfQHlg9
-         bRmg==
+        b=VdAwg/pg/Rgf8XibCL2Tu24DGO4Cc/fiTBtNXi2a+55nUcR5vHqQWPWkoXoaJU2nzb
+         xZ2oOhqCthmJDBpBFtNMt6HcmQki9yo0rMY5jTofv6DWXrhzmUus2JyC4MoTNWMG/tpE
+         FxwG8QhPdl6atOmWo5hzIRFkzud33tEKDhnKbKjSHWAtT0xgrPIeBvUF7bqpkfYrKSU0
+         JRLCDIJVzfUqefz6hn5zCuPvAR+6PapfrIu9UcOXeHQNd0Y3XLjtSwUgvOS96H+LUp5x
+         REQwd35Bv3lvH4OaIX51v+8YqGVHNyG2w6E2Z0wvTcCHmfm4R+xDtqArohy9hVsPhgCC
+         PKuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=KJtwQT26EzxIyS0nfAvclGiuzqK+zIfCuiQ9B4a4Zi4=;
-        b=prFWL428tdm/DszNmIYvNz0Q+0kcx8ukLGdNxZytMt11FygcSQp9GRfGSme2HDz1Bx
-         C1ew+9795SJgo8EPoJV5rXWLP9O9JqA8uwgIjCtXUKK11vUj4GK6fZb/tc/I3gxZNFdA
-         tbBiMqGk/GgvWVLDf68ZNLDzv73olKkuv+/YeZQ8bDG5fwDN1DTCdzEek/jXlGo1Nu9Z
-         fbEOjgWl/cXTSPNlMwd7V0jFx6VwEDELEFQdE95z/hcKddVdWS0+41PlR3o0okooG7b0
-         RIbNUVwAPHmJOYu1rFh0bQyaeZUF81CT3C52kS4x/OAClbQdj0ZqkqBiRerJd9mkPriA
-         nySQ==
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:arc-authentication-results;
+        bh=J3jv/pPqMXT8UEwIXCGz7aVFAx153VZP/6fao73D8xs=;
+        b=IKohmuWVJN+XafGf+c1pSLUu0LQ21mnSsvSD/SUOedGLvfR7Jffhv//ZZV7opMRuWp
+         YfR7mXeZcVaUUK9QY0QLVLAm0Wzjwdv88uZyssK2G7jyEgt4awxkjzK2t6mI6xYwy1Om
+         MUuIXW2ugSvGwohGgcEqNC+yN+uDjnHYHfDgqzqNR6LczRr6G5c+1AE2Y6jmpMXZpMfz
+         k+SFOK0IQDsdW5zJrAogFHax6nvg7OYObAITrs1mnfttfUN710XVktuwlLab7zQdYiiY
+         eOsCEpWXNvOZMUkPIAn+WjdO+vILM1AFOn8kd6sCej+vLnqJNxuh3/+rVbJ1h40SJSpa
+         B3Tg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=oYE7v50j;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=pass (google.com: domain of shea@shealevy.com designates 216.40.44.112 as permitted sender) smtp.mailfrom=shea@shealevy.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=oYE7v50j;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx48AcBDnMtMnAezd+7lyZh8+YZzlOFcQqoVTM4gIkDuuZR69AuNgoDqt7yosbtO0WoQ2lEU3cMaTjswoy6iZ9D8=
+       spf=pass (google.com: domain of shea@shealevy.com designates 216.40.44.112 as permitted sender) smtp.mailfrom=shea@shealevy.com
+X-Session-Marker: 7368656140736865616C6576792E636F6D
+X-Spam-Summary: 
+X-HE-Tag: comb88_11e6e5a2a4c21
+X-Filterd-Recvd-Size: 8704
+From: Shea Levy <shea@shealevy.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Christoph
+ Hellwig <hch@infradead.org>, Richard Henderson <rth@twiddle.net>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+ Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will.deacon@arm.com>, Mark Salter <msalter@redhat.com>, Aurelien Jacquiot
+ <jacquiot.aurelien@gmail.com>, Mikael Starvik <starvik@axis.com>, Jesper
+ Nilsson <jesper.nilsson@axis.com>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>, Richard Kuo <rkuo@codeaurora.org>, Tony Luck
+ <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, James Hogan <jhogan@kernel.org>,
+ Michal Simek <monstr@monstr.eu>, Ralf Baechle <ralf@linux-mips.org>, David
+ Howells <dhowells@redhat.com>, Ley Foon Tan <lftan@altera.com>, Jonas Bonn
+ <jonas@southpole.se>, Stefan Kristiansson
+ <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>,
+ "James E.J. Bottomley" <jejb@parisc-linux.org>, Helge Deller
+ <deller@gmx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul
+ Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>, Martin
+ Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens
+ <heiko.carstens@de.ibm.com>, Chen Liqin <liqin.linux@gmail.com>, Lennox Wu
+ <lennox.wu@gmail.com>, Rich Felker <dalias@libc.org>, "David S. Miller"
+ <davem@davemloft.net>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger
+ <richard@nod.at>, Guan Xuetao <gxt@mprc.pku.edu.cn>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
+ <hpa@zytor.com>, x86@kernel.org, Chris Zankel <chris@zankel.net>, Max
+ Filippov <jcmvbkbc@gmail.com>, Kate Stewart
+ <kstewart@linuxfoundation.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Philippe Ombredanne <pombredanne@nexb.com>,
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Vladimir Murzin <vladimir.murzin@arm.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Michal Hocko <mhocko@suse.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Sudip Mukherjee
+ <sudipm.mukherjee@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Rob
+ Herring <robh@kernel.org>, Kees Cook <keescook@chromium.org>, Vlastimil
+ Babka <vbabka@suse.cz>, Balbir Singh <bsingharora@gmail.com>, Christophe
+ Leroy <christophe.leroy@c-s.fr>, Joe Perches <joe@perches.com>, Oliver
+ O'Halloran <oohall@gmail.com>, Dan Williams <dan.j.williams@intel.com>,
+ Wei Yang <richard.weiyang@gmail.com>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>, Arnd Bergmann <arnd@arndb.de>, Deepa Dinamani
+ <deepa.kernel@gmail.com>, Daniel Thompson <daniel.thompson@linaro.org>,
+ Rob Landley <rob@landley.net>, Florian Fainelli <f.fainelli@gmail.com>,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ adi-buildroot-devel@lists.sourceforge.net, linux-c6x-dev@linux-c6x.org,
+ linux-cris-kernel@axis.com, uclinux-h8-devel@lists.sourceforge.jp,
+ linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-metag@vger.kernel.org,
+ linux-mips@linux-mips.org, linux-am33-list@redhat.com,
+ nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net,
+ user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org
+Subject: Re: [PATCH] Extract initrd free logic from arch-specific code.
+In-Reply-To: <20180330111517.rrx6gs2skkgk336j@gmail.com>
+References: <20180325221853.10839-1-shea@shealevy.com> <20180328152714.6103-1-shea@shealevy.com> <20180330111517.rrx6gs2skkgk336j@gmail.com>
+Date: Sun, 01 Apr 2018 11:05:21 -0400
+Message-ID: <87bmf3rmq6.fsf@xps13.shealevy.com>
 MIME-Version: 1.0
-In-Reply-To: <001a113eba28c654440568cc9604@google.com>
-References: <001a113eba28c654440568cc9604@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sun, 1 Apr 2018 19:14:38 +0200
-Message-ID: <CACT4Y+YbnyOckSDRF2_10jNGX2acdiZ8kdopF5Uc6rjfXdnm=g@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in __bitmap_set
-To: syzbot <syzbot+c479aeac880b090ceeb2@syzkaller.appspotmail.com>,
-	cgroups@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Philippe Ombredanne <pombredanne@nexb.com>,
-	syzkaller-bugs@googlegroups.com, Victor Chibotaru <tchibo@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596564749571556487?=
-X-GMAIL-MSGID: =?utf-8?q?1596564858846356544?=
+X-GMAIL-THRID: =?utf-8?q?1596195734883590774?=
+X-GMAIL-MSGID: =?utf-8?q?1596556710294693098?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Apr 1, 2018 at 7:13 PM, syzbot
-<syzbot+c479aeac880b090ceeb2@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot hit the following crash on upstream commit
-> cb6416592bc2a8b731dabcec0d63cda270764fc6 (Sun Mar 25 17:45:10 2018 +0000)
-> Merge tag 'dmaengine-fix-4.16-rc7' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=c479aeac880b090ceeb2
->
-> So far this crash happened 3 times on upstream.
-> Unfortunately, I don't have any reproducer for this crash yet.
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5205501092560896
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
-> compiler: gcc (GCC) 7.1.1 20170620
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+c479aeac880b090ceeb2@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-#syz dup: INFO: rcu detected stall in bitmap_parselist
+Hi Ingo,
 
-> INFO: rcu_sched self-detected stall on CPU
->         1-....: (124999 ticks this GP) idle=1ca/1/4611686018427387906
-> softirq=17365/17365 fqs=31238
->          (t=125000 jiffies g=7965 c=7964 q=402)
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 6633 Comm: syz-executor6 Not tainted 4.16.0-rc6+ #366
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x24d lib/dump_stack.c:53
->  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
->  rcu_dump_cpu_stacks+0x186/0x1de kernel/rcu/tree.c:1375
->  print_cpu_stall kernel/rcu/tree.c:1524 [inline]
->  check_cpu_stall.isra.61+0xbb8/0x15b0 kernel/rcu/tree.c:1592
->  __rcu_pending kernel/rcu/tree.c:3361 [inline]
->  rcu_pending kernel/rcu/tree.c:3423 [inline]
->  rcu_check_callbacks+0x238/0xd20 kernel/rcu/tree.c:2763
->  update_process_times+0x30/0x60 kernel/time/timer.c:1636
->  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
->  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1194
->  __run_hrtimer kernel/time/hrtimer.c:1349 [inline]
->  __hrtimer_run_queues+0x39c/0xec0 kernel/time/hrtimer.c:1411
->  hrtimer_interrupt+0x2a5/0x6f0 kernel/time/hrtimer.c:1469
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
->  </IRQ>
-> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-> RIP: 0010:__sanitizer_cov_trace_pc+0x3b/0x50 kernel/kcov.c:106
-> RSP: 0018:ffff8801ce8ef680 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff12
-> RAX: 0000000000010000 RBX: ffffffffffffff80 RCX: ffffffff825ae73d
-> RDX: 000000000000ffff RSI: ffffc90004a0d000 RDI: ffff8801d1a15660
-> RBP: ffff8801ce8ef680 R08: ffffed003a342acd R09: ffff8801d1a15660
-> R10: 0000000000000001 R11: ffffed003a342acc R12: ffffffffffffffff
-> R13: 0000000000000000 R14: ffff8801d1a15660 R15: 0000000000000000
->  __bitmap_set+0xdd/0x110 lib/bitmap.c:274
->  bitmap_set include/linux/bitmap.h:365 [inline]
->  __bitmap_parselist+0x310/0x4b0 lib/bitmap.c:616
->  bitmap_parselist+0x3a/0x50 lib/bitmap.c:628
->  cpulist_parse include/linux/cpumask.h:639 [inline]
->  update_cpumask kernel/cgroup/cpuset.c:974 [inline]
->  cpuset_write_resmask+0x1694/0x2850 kernel/cgroup/cpuset.c:1724
->  cgroup_file_write+0x2ae/0x710 kernel/cgroup/cgroup.c:3429
->  kernfs_fop_write+0x2bc/0x440 fs/kernfs/file.c:316
->  __vfs_write+0xef/0x970 fs/read_write.c:480
->  vfs_write+0x189/0x510 fs/read_write.c:544
->  SYSC_write fs/read_write.c:589 [inline]
->  SyS_write+0xef/0x220 fs/read_write.c:581
->  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x454879
-> RSP: 002b:00007fd0e0f38c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007fd0e0f396d4 RCX: 0000000000454879
-> RDX: 0000000000000008 RSI: 0000000020000080 RDI: 0000000000000015
-> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 000000000000067c R14: 00000000006fac40 R15: 0000000000000000
+Ingo Molnar <mingo@kernel.org> writes:
+
+> * Shea Levy <shea@shealevy.com> wrote:
 >
+>> Now only those architectures that have custom initrd free requirements
+>> need to define free_initrd_mem.
+>>=20
+>> Signed-off-by: Shea Levy <shea@shealevy.com>
 >
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
+> Please put the Kconfig symbol name this patch introduces both into the ti=
+tle, so=20
+> that people know what to grep for.
 >
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+>> ---
+>>  arch/alpha/mm/init.c      |  8 --------
+>>  arch/arc/mm/init.c        |  7 -------
+>>  arch/arm/Kconfig          |  1 +
+>>  arch/arm64/Kconfig        |  1 +
+>>  arch/blackfin/Kconfig     |  1 +
+>>  arch/c6x/mm/init.c        |  7 -------
+>>  arch/cris/Kconfig         |  1 +
+>>  arch/frv/mm/init.c        | 11 -----------
+>>  arch/h8300/mm/init.c      |  7 -------
+>>  arch/hexagon/Kconfig      |  1 +
+>>  arch/ia64/Kconfig         |  1 +
+>>  arch/m32r/Kconfig         |  1 +
+>>  arch/m32r/mm/init.c       | 11 -----------
+>>  arch/m68k/mm/init.c       |  7 -------
+>>  arch/metag/Kconfig        |  1 +
+>>  arch/microblaze/mm/init.c |  7 -------
+>>  arch/mips/Kconfig         |  1 +
+>>  arch/mn10300/Kconfig      |  1 +
+>>  arch/nios2/mm/init.c      |  7 -------
+>>  arch/openrisc/mm/init.c   |  7 -------
+>>  arch/parisc/mm/init.c     |  7 -------
+>>  arch/powerpc/mm/mem.c     |  7 -------
+>>  arch/riscv/mm/init.c      |  6 ------
+>>  arch/s390/Kconfig         |  1 +
+>>  arch/score/Kconfig        |  1 +
+>>  arch/sh/mm/init.c         |  7 -------
+>>  arch/sparc/Kconfig        |  1 +
+>>  arch/tile/Kconfig         |  1 +
+>>  arch/um/kernel/mem.c      |  7 -------
+>>  arch/unicore32/Kconfig    |  1 +
+>>  arch/x86/Kconfig          |  1 +
+>>  arch/xtensa/Kconfig       |  1 +
+>>  init/initramfs.c          |  7 +++++++
+>>  usr/Kconfig               |  4 ++++
+>>  34 files changed, 28 insertions(+), 113 deletions(-)
+>
+> Please also put it into Documentation/features/.
+>
+
+I switched this patch series (the latest revision v6 was just posted) to
+using weak symbols instead of Kconfig. Does it still warrant documentation?
+
+>
+>> diff --git a/usr/Kconfig b/usr/Kconfig
+>> index 43658b8a975e..7a94f6df39bf 100644
+>> --- a/usr/Kconfig
+>> +++ b/usr/Kconfig
+>> @@ -233,3 +233,7 @@ config INITRAMFS_COMPRESSION
+>>  	default ".lzma" if RD_LZMA
+>>  	default ".bz2"  if RD_BZIP2
+>>  	default ""
+>> +
+>> +config HAVE_ARCH_FREE_INITRD_MEM
+>> +	bool
+>> +	default n
+>
+> Help text would be nice, to tell arch maintainers what the purpose of thi=
+s switch=20
+> is.
+>
+> Also, a nit, I think this should be named "ARCH_HAS_FREE_INITRD_MEM", whi=
+ch is the=20
+> dominant pattern:
+>
+> triton:~/tip> git grep 'select.*ARCH' arch/x86/Kconfig* | cut -f2 | cut -=
+d_ -f1-2 | sort | uniq -c | sort -n
+>     ...
+>       2 select ARCH_USES
+>       2 select ARCH_WANTS
+>       3 select ARCH_MIGHT
+>       3 select ARCH_WANT
+>       4 select ARCH_SUPPORTS
+>       4 select ARCH_USE
+>      16 select HAVE_ARCH
+>      23 select ARCH_HAS
+>
+> It also reads nicely in English:
+>
+>   "arch has free_initrd_mem()"
+>
+> While the other makes little sense:
+>
+>   "have arch free_initrd_mem()"
+>
+> ?
+>
+> Thanks,
+>
+> 	Ingo
+
+Thanks,
+Shea
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE6ESKvwKkwnxgMLnaXAvWlX2G/icFAlrA9TEACgkQXAvWlX2G
+/ieu+w/9EljMoicXq5AAY0iiZCVMRqXrkcnMT+1jcMEtLA8mLL1ibZrYLGALlTF+
++M0+7Nn2Gs9Nfna/5Mj+IW+WiQ93nFKqKWL22tBheoM6at3oZsOtX0oBI4mB9eIT
+kzwUcCpCQDXvyuVbsV6XqJkCAlpYBAFE2wquWM6DVovxW91kN8cQpP3qZGtTKMkr
+DMAe4LUUbM40/dDsHu43aoFb08mCct1TLf4W/CGMxSapt+8SYow7I6w1QuTJ9NYk
+zTDJuV6J2xP5x4h7zPnzKA/wBkYhMrzgiMC0o3EeKWFUSa+3yCWM+dvHFzqqaz5/
+jW0FUCI3mVaJgkDcdDp41mqI69WqYfpqp9LXdEjuQXRl/m9/icJL41/91XUHEfOk
+k3N6HdGi7eEQ93Qo3Yv4ohr9YlK1Ah7vPK3Zq5c69k4T+sVnk5C1k/wtUkceEfGy
+mgXXL9FxfFi7LpMxEpLsr8NpgkV38H1L4wanzwJGgJAeqn+bqUbhactKwl9AO7mR
+u2xDrICYqEDR6bPuPHQQaF0UrsAR0uyfUGUEnuFLlTdrfgY3cpod5D+UKYCohDCC
+iWuHhKxUY0SQrq99eS9oQD5JSyhqGWF61/nDzMLJ/ApFFBURUiIiW2V4NoRNMB/N
++lyDeFwyn4ApvGm5GvQlfnkaWew/0jVqx9iihclpvw3yNRSbm1M=
+=FCRP
+-----END PGP SIGNATURE-----
+--=-=-=--
