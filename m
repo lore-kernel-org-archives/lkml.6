@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751584AbeDAIQE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 04:16:04 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:39832 "EHLO
+        id S1752851AbeDAIVE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 04:21:04 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:48608 "EHLO
         mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751170AbeDAIQB (ORCPT
+        with ESMTP id S1751168AbeDAIVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 04:16:01 -0400
-X-Google-Smtp-Source: AIpwx49GyQeLU7PFiD46IatFbojxsA5MLFXDmP7RiSS4IWX8KR0shrbHTJWyY5vZQBeJ4lqxyB8ZX1QiQXq7fxKnYXQZnGuJNYIX
+        Sun, 1 Apr 2018 04:21:02 -0400
+X-Google-Smtp-Source: AIpwx48QAbCDTwUNdoY32Tvf6fRwqMkBgZYyWzSRwvZS9Ofy/9r1U9YIn+efSoi4QX/YuAUCN51FX41sEQY8ZJ6L9zJ/kJPRU8z+
 MIME-Version: 1.0
-Date: Sun, 01 Apr 2018 01:16:00 -0700
+Date: Sun, 01 Apr 2018 01:21:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113de6546d13ac0568c51530@google.com>
-Subject: INFO: rcu detected stall in sch_direct_xmit
-From: syzbot <syzbot+536ae84aa971d463d902@syzkaller.appspotmail.com>
-To: davem@davemloft.net, jhs@mojatatu.com, jiri@resnulli.us,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Message-ID: <94eb2c06406c59cccc0568c527c2@google.com>
+Subject: KASAN: use-after-free Read in alloc_pid
+From: syzbot <syzbot+7a1cff37dbbef9e7ba4c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, dhowells@redhat.com, ebiederm@xmission.com,
+        gs051095@gmail.com, linux-kernel@vger.kernel.org, oleg@redhat.com,
+        pasha.tatashin@oracle.com, riel@redhat.com, rppt@linux.vnet.ibm.com,
+        syzkaller-bugs@googlegroups.com, wangkefeng.wang@huawei.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -25,177 +26,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on net-next commit
-18845557fd6fc1998f2d0d8c30467f86db587529 (Thu Mar 29 20:24:06 2018 +0000)
-Merge tag 'wireless-drivers-next-for-davem-2018-03-29' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next
+syzbot hit the following crash on upstream commit
+9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
+Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=536ae84aa971d463d902
+https://syzkaller.appspot.com/bug?extid=7a1cff37dbbef9e7ba4c
 
-So far this crash happened 112 times on net-next.
+So far this crash happened 4 times on upstream.
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4584417414610944
-Kernel config: https://syzkaller.appspot.com/x/.config?id=-37309782588693906
+https://syzkaller.appspot.com/x/log.txt?id=6588786309857280
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+536ae84aa971d463d902@syzkaller.appspotmail.com
+Reported-by: syzbot+7a1cff37dbbef9e7ba4c@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-device bridge0 entered promiscuous mode
-INFO: rcu_sched self-detected stall on CPU
-	1-...!: (1 GPs behind) idle=cfa/1/4611686018427387906 softirq=96595/96596  
-fqs=30
-	 (t=125000 jiffies g=45745 c=45744 q=716)
-rcu_sched kthread starved for 124864 jiffies! g45745 c45744 f0x0  
-RCU_GP_WAIT_FQS(3) ->state=0x402 ->cpu=0
-rcu_sched       I24616     8      2 0x80000000
-Call Trace:
-  context_switch kernel/sched/core.c:2862 [inline]
-  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
-  schedule+0xf5/0x430 kernel/sched/core.c:3499
-  schedule_timeout+0x118/0x230 kernel/time/timer.c:1801
-  rcu_gp_kthread+0x9dd/0x18e0 kernel/rcu/tree.c:2230
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-NMI backtrace for cpu 1
-CPU: 1 PID: 12481 Comm: syz-executor5 Not tainted 4.16.0-rc6+ #286
+R10: 0000000020000900 R11: 0000000000000246 R12: 0000000000000015
+R13: 0000000000000051 R14: 00000000006f2838 R15: 0000000000000028
+==================================================================
+BUG: KASAN: use-after-free in alloc_pid+0x9a6/0xa00 kernel/pid.c:236
+Read of size 4 at addr ffff8801b56d0088 by task syz-executor4/3533
+
+CPU: 1 PID: 3533 Comm: syz-executor4 Not tainted 4.16.0-rc7+ #372
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  <IRQ>
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
-  rcu_dump_cpu_stacks+0x186/0x1de kernel/rcu/tree.c:1375
-  print_cpu_stall kernel/rcu/tree.c:1524 [inline]
-  check_cpu_stall.isra.61+0xbb8/0x15b0 kernel/rcu/tree.c:1592
-  __rcu_pending kernel/rcu/tree.c:3361 [inline]
-  rcu_pending kernel/rcu/tree.c:3423 [inline]
-  rcu_check_callbacks+0x238/0xd20 kernel/rcu/tree.c:2763
-  update_process_times+0x30/0x60 kernel/time/timer.c:1636
-  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
-  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1194
-  __run_hrtimer kernel/time/hrtimer.c:1349 [inline]
-  __hrtimer_run_queues+0x39c/0xec0 kernel/time/hrtimer.c:1411
-  hrtimer_interrupt+0x2a5/0x6f0 kernel/time/hrtimer.c:1469
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
-  </IRQ>
-RIP: 0010:atomic_read arch/x86/include/asm/atomic.h:27 [inline]
-RIP: 0010:virt_spin_lock arch/x86/include/asm/qspinlock.h:68 [inline]
-RIP: 0010:native_queued_spin_lock_slowpath+0x12d/0xfa0  
-kernel/locking/qspinlock.c:305
-RSP: 0018:ffff8801a69da1d0 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff12
-RAX: 0000000000000001 RBX: ffff8801c135c140 RCX: dffffc0000000000
-RDX: 0000000000000004 RSI: ffff8801a69da2a0 RDI: ffff8801c135c140
-RBP: ffff8801a69da548 R08: ffffffff85142d51 R09: 0000000000000000
-R10: ffff8801a69da468 R11: ffff8801c135c158 R12: ffffed0034d3b454
-R13: ffff8801a69da520 R14: 1ffff10034d3b440 R15: 0000000000000003
-  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:669 [inline]
-  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:30 [inline]
-  queued_spin_lock include/asm-generic/qspinlock.h:90 [inline]
-  do_raw_spin_lock+0x185/0x220 kernel/locking/spinlock_debug.c:113
-  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
-  _raw_spin_lock+0x32/0x40 kernel/locking/spinlock.c:144
-  spin_lock include/linux/spinlock.h:310 [inline]
-  __netif_tx_lock include/linux/netdevice.h:3575 [inline]
-  sch_direct_xmit+0x361/0x1140 net/sched/sch_generic.c:325
-  qdisc_restart net/sched/sch_generic.c:393 [inline]
-  __qdisc_run+0x57d/0x18e0 net/sched/sch_generic.c:401
-  __dev_xmit_skb net/core/dev.c:3241 [inline]
-  __dev_queue_xmit+0xb8b/0x2fc0 net/core/dev.c:3549
-  dev_queue_xmit+0x17/0x20 net/core/dev.c:3614
-  br_dev_queue_push_xmit+0x196/0x5a0 net/bridge/br_forward.c:55
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  br_forward_finish+0xc8/0x530 net/bridge/br_forward.c:67
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  __br_forward+0x533/0xc80 net/bridge/br_forward.c:112
-  br_flood+0x665/0x770 net/bridge/br_forward.c:225
-  br_dev_xmit+0xa68/0x1550 net/bridge/br_device.c:87
-  __netdev_start_xmit include/linux/netdevice.h:4080 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4089 [inline]
-  xmit_one net/core/dev.c:3050 [inline]
-  dev_hard_start_xmit+0x24e/0xac0 net/core/dev.c:3066
-  __dev_queue_xmit+0x26bf/0x2fc0 net/core/dev.c:3581
-  dev_queue_xmit+0x17/0x20 net/core/dev.c:3614
-  neigh_hh_output include/net/neighbour.h:472 [inline]
-  neigh_output include/net/neighbour.h:480 [inline]
-  ip_finish_output2+0xf4d/0x1550 net/ipv4/ip_output.c:229
-  ip_finish_output+0x864/0xd60 net/ipv4/ip_output.c:317
-  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
-  ip_mc_output+0x271/0x1350 net/ipv4/ip_output.c:390
-  dst_output include/net/dst.h:444 [inline]
-  ip_local_out+0x95/0x160 net/ipv4/ip_output.c:124
-  iptunnel_xmit+0x556/0x810 net/ipv4/ip_tunnel_core.c:91
-  ip_tunnel_xmit+0x177b/0x3550 net/ipv4/ip_tunnel.c:768
-  __gre_xmit+0x546/0x8b0 net/ipv4/ip_gre.c:449
-  erspan_xmit+0x779/0x22a0 net/ipv4/ip_gre.c:731
-  __netdev_start_xmit include/linux/netdevice.h:4080 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4089 [inline]
-  xmit_one net/core/dev.c:3050 [inline]
-  dev_hard_start_xmit+0x24e/0xac0 net/core/dev.c:3066
-  sch_direct_xmit+0x40d/0x1140 net/sched/sch_generic.c:327
-  qdisc_restart net/sched/sch_generic.c:393 [inline]
-  __qdisc_run+0x57d/0x18e0 net/sched/sch_generic.c:401
-  __dev_xmit_skb net/core/dev.c:3241 [inline]
-  __dev_queue_xmit+0xb8b/0x2fc0 net/core/dev.c:3549
-  dev_queue_xmit+0x17/0x20 net/core/dev.c:3614
-  br_dev_queue_push_xmit+0x196/0x5a0 net/bridge/br_forward.c:55
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  br_forward_finish+0xc8/0x530 net/bridge/br_forward.c:67
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  __br_forward+0x533/0xc80 net/bridge/br_forward.c:112
-  br_flood+0x665/0x770 net/bridge/br_forward.c:225
-  br_dev_xmit+0xa68/0x1550 net/bridge/br_device.c:87
-  __netdev_start_xmit include/linux/netdevice.h:4080 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4089 [inline]
-  xmit_one net/core/dev.c:3050 [inline]
-  dev_hard_start_xmit+0x24e/0xac0 net/core/dev.c:3066
-  __dev_queue_xmit+0x26bf/0x2fc0 net/core/dev.c:3581
-  dev_queue_xmit+0x17/0x20 net/core/dev.c:3614
-  neigh_resolve_output+0x5e2/0xa00 net/core/neighbour.c:1350
-  neigh_output include/net/neighbour.h:482 [inline]
-  ip_finish_output2+0x91a/0x1550 net/ipv4/ip_output.c:229
-  ip_finish_output+0x864/0xd60 net/ipv4/ip_output.c:317
-  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
-  ip_mc_output+0x271/0x1350 net/ipv4/ip_output.c:390
-  dst_output include/net/dst.h:444 [inline]
-  ip_local_out+0x95/0x160 net/ipv4/ip_output.c:124
-  ip_queue_xmit+0x8c0/0x1920 net/ipv4/ip_output.c:504
-  sctp_v4_xmit+0x108/0x140 net/sctp/protocol.c:942
-  sctp_packet_transmit+0x22a5/0x37c0 net/sctp/output.c:642
-  sctp_outq_flush+0xabb/0x4060 net/sctp/outqueue.c:911
-  sctp_outq_uncork+0x5a/0x70 net/sctp/outqueue.c:776
-  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
-  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-  sctp_do_sm+0x4e0/0x7040 net/sctp/sm_sideeffect.c:1191
-  sctp_primitive_ASSOCIATE+0x9d/0xd0 net/sctp/primitive.c:88
-  sctp_sendmsg_to_asoc+0x14bf/0x1ec0 net/sctp/socket.c:1900
-  sctp_sendmsg+0xc50/0x1ad0 net/sctp/socket.c:2088
-  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:639
-  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2047
-  __sys_sendmsg+0xe5/0x210 net/socket.c:2081
-  SYSC_sendmsg net/socket.c:2092 [inline]
-  SyS_sendmsg+0x2d/0x50 net/socket.c:2088
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  alloc_pid+0x9a6/0xa00 kernel/pid.c:236
+  copy_process.part.38+0x2516/0x4bd0 kernel/fork.c:1807
+  copy_process kernel/fork.c:1606 [inline]
+  _do_fork+0x1f7/0xf70 kernel/fork.c:2087
+  SYSC_clone kernel/fork.c:2194 [inline]
+  SyS_clone+0x37/0x50 kernel/fork.c:2188
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4548b9
-RSP: 002b:00007f43d1e5dc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f43d1e5e6d4 RCX: 00000000004548b9
-RDX: 0000000000000040 RSI: 0000000020001f00 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000004e3 R14: 00000000006f95e8 R15: 0000000000000000
+RIP: 0033:0x454e79
+RSP: 002b:00007f6165b9ac68 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007f6165b9b6d4 RCX: 0000000000454e79
+RDX: 00000000200008c0 RSI: 0000000020000800 RDI: 000000002000c100
+RBP: 000000000072bea0 R08: 0000000020000940 R09: 0000000000000000
+R10: 0000000020000900 R11: 0000000000000246 R12: 0000000000000015
+R13: 0000000000000051 R14: 00000000006f2838 R15: 0000000000000028
+
+Allocated by task 3533:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
+  kmem_cache_zalloc include/linux/slab.h:691 [inline]
+  create_pid_namespace kernel/pid_namespace.c:116 [inline]
+  copy_pid_ns+0x257/0xc60 kernel/pid_namespace.c:175
+  create_new_namespaces+0x307/0x880 kernel/nsproxy.c:94
+  copy_namespaces+0x340/0x400 kernel/nsproxy.c:165
+  copy_process.part.38+0x2380/0x4bd0 kernel/fork.c:1796
+  copy_process kernel/fork.c:1606 [inline]
+  _do_fork+0x1f7/0xf70 kernel/fork.c:2087
+  SYSC_clone kernel/fork.c:2194 [inline]
+  SyS_clone+0x37/0x50 kernel/fork.c:2188
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Freed by task 3539:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3486 [inline]
+  kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
+  delayed_free_pidns+0x82/0xb0 kernel/pid_namespace.c:157
+  __rcu_reclaim kernel/rcu/rcu.h:172 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2674 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2933 [inline]
+  __rcu_process_callbacks kernel/rcu/tree.c:2900 [inline]
+  rcu_process_callbacks+0xd6c/0x17f0 kernel/rcu/tree.c:2917
+  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+
+The buggy address belongs to the object at ffff8801b56d0040
+  which belongs to the cache pid_namespace of size 240
+The buggy address is located 72 bytes inside of
+  240-byte region [ffff8801b56d0040, ffff8801b56d0130)
+The buggy address belongs to the page:
+page:ffffea0006d5b400 count:1 mapcount:0 mapping:ffff8801b56d0040 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801b56d0040 0000000000000000 000000010000000d
+raw: ffffea00074458a0 ffffea00073389e0 ffff8801d40b2c00 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b56cff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801b56d0000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> ffff8801b56d0080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                       ^
+  ffff8801b56d0100: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fb fb
+  ffff8801b56d0180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
