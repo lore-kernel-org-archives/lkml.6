@@ -1,144 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753421AbeDAK31 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 06:29:27 -0400
-Received: from mail-pl0-f45.google.com ([209.85.160.45]:44757 "EHLO
-        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753377AbeDAK3Z (ORCPT
+        id S1753455AbeDAKfV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 06:35:21 -0400
+Received: from mail-pg0-f53.google.com ([74.125.83.53]:45765 "EHLO
+        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751130AbeDAKfT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 06:29:25 -0400
-X-Google-Smtp-Source: AIpwx49KWbFXyvqDaJDmlg8CZjryhUP/Q6G7uE7Pj0WG6mXkuZSPRyHa4Pm8h7FqxJoHbJRYRlYgoEU6BEp1BS1Am3U=
+        Sun, 1 Apr 2018 06:35:19 -0400
+X-Google-Smtp-Source: AIpwx48mXux9AA8l4qQECuO+ukaKXEih/jJKu7dPnk6C5YZ7sx4ALI+9cJBmAb5ZACLqUDqG1o45WwfDGBdvDVGk/+E=
 MIME-Version: 1.0
-In-Reply-To: <20180313111245.GB18164@hmswarspite.think-freely.org>
-References: <001a113ec036450c260567464832@google.com> <CADvbK_ctXVom8WDMZ1kRURSFfGZ_wJFtWrJdrnpgpg3=7_7nUg@mail.gmail.com>
- <CACT4Y+Ya49+5rMh30Uy=eteB4WUBC4St6ri1uRcscVGj8h51iQ@mail.gmail.com> <20180313111245.GB18164@hmswarspite.think-freely.org>
+In-Reply-To: <001a113ed5546fb3c00568944220@google.com>
+References: <001a113ed5546fb3c00568944220@google.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sun, 1 Apr 2018 12:29:03 +0200
-Message-ID: <CACT4Y+ZhZw+dKrbM2k_25R1_suNbYSmzDcaVLd8znsMEY_1AJA@mail.gmail.com>
-Subject: Re: BUG: corrupted list in sctp_association_free
-To: Neil Horman <nhorman@tuxdriver.com>
-Cc: Xin Long <lucien.xin@gmail.com>,
-        syzbot <syzbot+e56a5d45f832ef33ad2f@syzkaller.appspotmail.com>,
-        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Vlad Yasevich <vyasevich@gmail.com>
+Date: Sun, 1 Apr 2018 12:34:58 +0200
+Message-ID: <CACT4Y+bd-uJmr+APAxsNLUf7BQPY7x-h5bLH3bHeqSkWm2J6bw@mail.gmail.com>
+Subject: Re: WARNING in refcount_sub_and_test (2)
+To: syzbot <syzbot+c7b0dde061c523bc4b0f@syzkaller.appspotmail.com>
+Cc: David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 12:12 PM, Neil Horman <nhorman@tuxdriver.com> wrote:
-> On Tue, Mar 13, 2018 at 02:09:09PM +0300, Dmitry Vyukov wrote:
->> On Tue, Mar 13, 2018 at 1:44 PM, Xin Long <lucien.xin@gmail.com> wrote:
->> > On Tue, Mar 13, 2018 at 3:34 PM, syzbot
->> > <syzbot+e56a5d45f832ef33ad2f@syzkaller.appspotmail.com> wrote:
->> >> Hello,
->> >>
->> >> syzbot hit the following crash on net-next commit
->> >> fd372a7a9e5e9d8011a0222d10edd3523abcd3b1 (Thu Mar 8 19:43:48 2018 +0000)
->> >> Merge tag 'mlx5-updates-2018-02-28-2' of
->> >> git://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux
->> >>
->> >> Unfortunately, I don't have any reproducer for this crash yet.
->> >> Raw console output is attached.
->> >> compiler: gcc (GCC) 7.1.1 20170620
->> >> .config is attached.
->> >>
->> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> Reported-by: syzbot+e56a5d45f832ef33ad2f@syzkaller.appspotmail.com
->> >> It will help syzbot understand when the bug is fixed. See footer for
->> >> details.
->> >> If you forward the report, please keep this part and the footer.
->> >>
->> >> selinux_nlmsg_perm: 1 callbacks suppressed
->> >> SELinux: unrecognized netlink message: protocol=0 nlmsg_type=0
->> >> sclass=netlink_route_socket pig=12502 comm=syz-executor3
->> >> SELinux: unrecognized netlink message: protocol=0 nlmsg_type=0
->> >> sclass=netlink_route_socket pig=12528 comm=syz-executor3
->> >> list_del corruption, 00000000fcc5fb27->next is LIST_POISON1
->> >> (00000000cb16e51d)
->> >> ------------[ cut here ]------------
->> >> kernel BUG at lib/list_debug.c:47!
->> >> invalid opcode: 0000 [#1] SMP KASAN
->> >> Dumping ftrace buffer:
->> >>    (ftrace buffer empty)
->> >> Modules linked in:
->> >> CPU: 0 PID: 12537 Comm: syz-executor2 Not tainted 4.16.0-rc4+ #258
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> >> Google 01/01/2011
->> >> RIP: 0010:__list_del_entry_valid+0xd3/0x150 lib/list_debug.c:45
->> >> RSP: 0018:ffff8801b6387778 EFLAGS: 00010286
->> >> RAX: 000000000000004e RBX: dead000000000200 RCX: 0000000000000000
->> >> RDX: 000000000000004e RSI: ffffc90002ed6000 RDI: ffffed0036c70ee3
->> >> RBP: ffff8801b6387790 R08: 1ffff10036c70e3b R09: 0000000000000000
->> >> R10: 0000000000000000 R11: 0000000000000000 R12: dead000000000100
->> >> R13: ffff8801d3164000 R14: ffff8801d8502220 R15: ffff8801b6387c58
->> >> FS:  00007ff42042f700(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
->> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >> CR2: 00007ff42040ddb8 CR3: 00000001bd840003 CR4: 00000000001606f0
->> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> >> Call Trace:
->> >>  __list_del_entry include/linux/list.h:117 [inline]
->> >>  list_del include/linux/list.h:125 [inline]
->> >>  sctp_association_free+0x133/0x930 net/sctp/associola.c:341
->> >>  sctp_sendmsg+0xc67/0x1a80 net/sctp/socket.c:2075
->> >>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:763
->> >>  sock_sendmsg_nosec net/socket.c:629 [inline]
->> >>  sock_sendmsg+0xca/0x110 net/socket.c:639
->> >>  SYSC_sendto+0x361/0x5c0 net/socket.c:1748
->> >>  SyS_sendto+0x40/0x50 net/socket.c:1716
->> >>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->> >>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->> >> RIP: 0033:0x453e69
->> >> RSP: 002b:00007ff42042ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
->> >> RAX: ffffffffffffffda RBX: 00007ff42042f6d4 RCX: 0000000000453e69
->> >> RDX: 0000000000000001 RSI: 0000000020000340 RDI: 0000000000000015
->> >> RBP: 000000000072c0c8 R08: 00000000204d9000 R09: 000000000000001c
->> >> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
->> >> R13: 00000000000004cd R14: 00000000006f73d8 R15: 0000000000000003
->> >> Code: 8f 00 00 00 49 8b 54 24 08 48 39 f2 75 3b 48 83 c4 08 b8 01 00 00 00
->> >> 5b 41 5c 5d c3 4c 89 e2 48 c7 c7 c0 7c 40 86 e8 75 f6 fb fe <0f> 0b 48 c7 c7
->> >> 20 7d 40 86 e8 67 f6 fb fe 0f 0b 48 c7 c7 80 7d
->> >> RIP: __list_del_entry_valid+0xd3/0x150 lib/list_debug.c:45 RSP:
->> >> ffff8801b6387778
->> >> ---[ end trace a6b157f61f9bd43a ]---
->> >> Kernel panic - not syncing: Fatal exception
->> >> Dumping ftrace buffer:
->> >>    (ftrace buffer empty)
->> >> Kernel Offset: disabled
->> >> Rebooting in 86400 seconds..
->> >>
->> >>
->> >> ---
->> >> This bug is generated by a dumb bot. It may contain errors.
->> >> See https://goo.gl/tpsmEJ for details.
->> >> Direct all questions to syzkaller@googlegroups.com.
->> >>
->> >> syzbot will keep track of this bug report.
->> >> If you forgot to add the Reported-by tag, once the fix for this bug is
->> >> merged
->> >> into any tree, please reply to this email with:
->> >> #syz fix: exact-commit-title
->> >> To mark this as a duplicate of another syzbot report, please reply with:
->> >> #syz dup: exact-subject-of-another-report
->> >> If it's a one-off invalid bug report, please reply with:
->> >> #syz invalid
->> >> Note: if the crash happens again, it will cause creation of a new bug
->> >> report.
->> >> Note: all commands must start from beginning of the line in the email body.
->> > I'd think the patch Neil just posted would fix it.
->>
->>
->> Hi Xin,
->>
->> Could you point me to that commit? We need to tell syzbot about it.
->>
->> Thanks
-> Its not been pulled in yet, but this is the email thread:
-> https://marc.info/?l=linux-netdev&m=152093814606747&w=2
+On Fri, Mar 30, 2018 at 12:01 AM, syzbot
+<syzbot+c7b0dde061c523bc4b0f@syzkaller.appspotmail.com> wrote:
+> Hello,
 >
-> I agree this patch should fix the crash syzbot noted
+> syzbot hit the following crash on bpf-next commit
+> 22527437e0a0c96ee3153e9d0382942b0fd4f9dd (Thu Mar 29 02:36:15 2018 +0000)
+> Merge branch 'nfp-bpf-updates'
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=c7b0dde061c523bc4b0f
+>
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5996614741131264
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=5947747274326016
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=6215237837520896
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=-1280663959502969741
+> compiler: gcc (GCC) 7.1.1 20170620
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+c7b0dde061c523bc4b0f@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+
+Messed kernel output.
+
+#syz dup: WARNING: refcount bug in sk_alloc
 
 
-#syz fix: sctp: fix error return code in sctp_sendmsg_new_asoc()
+
+> R13: 0030656c69662f2e R14: 0000000000000005 R15: 2f30656c69662f2e
+> ------------[ cut here ]------------
+> ------------[ cut here ]------------
+> refcount_t: increment on 0; use-after-free.
+> refcount_t: underflow; use-after-free.
+> WARNING: CPU: 0 PID: 4450 at lib/refcount.c:187
+> refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
+> WARNING: CPU: 1 PID: 4460 at lib/refcount.c:153 refcount_inc+0x47/0x50
+> lib/refcount.c:153
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+> Modules linked in:
+> CPU: 0 PID: 4450 Comm: syzkaller428798 Not tainted 4.16.0-rc6+ #40
+> CPU: 1 PID: 4460 Comm: syzkaller428798 Not tainted 4.16.0-rc6+ #40
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+> RIP: 0010:refcount_inc+0x47/0x50 lib/refcount.c:153
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x24d lib/dump_stack.c:53
+> RSP: 0018:ffff8801b534f860 EFLAGS: 00010286
+> RAX: dffffc0000000008 RBX: ffff8801b1b8c184 RCX: ffffffff815ba4be
+>  panic+0x1e4/0x41c kernel/panic.c:183
+> RDX: 0000000000000000 RSI: 1ffff10036a69ebc RDI: 1ffff10036a69e91
+> RBP: ffff8801b534f868 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b534faf8
+> R13: ffff8801b04db513 R14: ffff8801b1b8c180 R15: ffff8801b04db501
+> FS:  00000000008e6880(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+> CR2: 00000000006ea510 CR3: 00000001b106f005 CR4: 00000000001606e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>  report_bug+0x1f4/0x2b0 lib/bug.c:186
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+> Call Trace:
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  get_net include/net/net_namespace.h:204 [inline]
+>  sk_alloc+0x3f9/0x1440 net/core/sock.c:1540
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+> RIP: 0010:refcount_sub_and_test+0x167/0x1b0 lib/refcount.c:187
+> RSP: 0018:ffff8801b0e87728 EFLAGS: 00010286
+> RAX: dffffc0000000008 RBX: 0000000000000000 RCX: ffffffff815ba4be
+> RDX: 0000000000000000 RSI: 1ffff100361d0e95 RDI: 0000000000000293
+> RBP: ffff8801b0e877b8 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffff8801b0e87850 R11: 0000000000000000 R12: 1ffff100361d0ee6
+>  inet_create+0x47c/0xf50 net/ipv4/af_inet.c:320
+> R13: 00000000ffffffff R14: 0000000000000001 R15: ffff8801b0816204
+>  __sock_create+0x4d4/0x850 net/socket.c:1285
+>  sock_create net/socket.c:1325 [inline]
+>  SYSC_socket net/socket.c:1355 [inline]
+>  SyS_socket+0xeb/0x1d0 net/socket.c:1335
+>  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
+>  put_net include/net/net_namespace.h:222 [inline]
+>  __sk_destruct+0x560/0x920 net/core/sock.c:1592
+>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+>  sk_destruct+0x47/0x80 net/core/sock.c:1601
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+>  __sk_free+0xf1/0x2b0 net/core/sock.c:1612
+> RIP: 0033:0x44ac67
+>  sk_free+0x2a/0x40 net/core/sock.c:1623
+> RSP: 002b:00007ffcd4f45588 EFLAGS: 00000202
+>  sock_put include/net/sock.h:1660 [inline]
+>  tcp_close+0x967/0x1190 net/ipv4/tcp.c:2321
+>  ORIG_RAX: 0000000000000029
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000044ac67
+> RDX: 0000000000000006 RSI: 0000000000000001 RDI: 0000000000000002
+> RBP: 00007ffcd4f456b0 R08: 0000000000000000 R09: 0000000000000001
+> R10: 0000000000000006 R11: 0000000000000202 R12: 0000000000000002
+>  inet_release+0xed/0x1c0 net/ipv4/af_inet.c:427
+> R13: 0000000000000002 R14: 000000000000b38f R15: 00007ffcd4f456d8
+>  sock_release+0x8d/0x1e0 net/socket.c:594
+> Code:
+> be
+>  sock_close+0x16/0x20 net/socket.c:1149
+> fe
+>  __fput+0x327/0x7e0 fs/file_table.c:209
+> 5b
+> 5d
+> c3
+>  ____fput+0x15/0x20 fs/file_table.c:243
+> e8
+>  task_work_run+0x199/0x270 kernel/task_work.c:113
+> 5a
+> 3c
+> be
+> fe
+>  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+>  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
+> 80
+> 3d
+> 91
+>  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+>  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
+> f5
+> 84
+> 05
+> 00 75 ea e8 4c 3c be
+> fe
+> 48
+> c7
+> c7
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> 80
+> RIP: 0033:0x406fe0
+> 78
+> RSP: 002b:00007ffcd4f45588 EFLAGS: 00000246
+> e5
+>  ORIG_RAX: 0000000000000003
+> 86
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000406fe0
+> c6
+> RDX: 00000000000000e0 RSI: 00007ffcd4f45e70 RDI: 0000000000000003
+> 05
+> RBP: 00007ffcd4f456b0 R08: 00007ffcd4f455b0 R09: 0000000000000001
+> 7c
+> R10: 00007ffcd4f456b0 R11: 0000000000000246 R12: 00000000006de4c0
+> R13: 00000000006dde40 R14: 0000000000001380 R15: 00007ffcd4f456d8
+> f5 84 05 01 e8 f9 47 8e fe <0f> 0b eb ce 0f 1f 44 00 00 55 48 89 e5 41 57 41
+> 56 41 55 41 54
+> ---[ end trace 04af8119701e2164 ]---
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/001a113ed5546fb3c00568944220%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
