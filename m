@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753976AbeDAXFA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 19:05:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44946 "EHLO
+        id S1753987AbeDAXKy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 19:10:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45498 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752325AbeDAXE7 (ORCPT
+        with ESMTP id S1753915AbeDAXKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 19:04:59 -0400
-Subject: Re: [PATCH 01/45] Use UINT_MAX, not -1, to represent an invalid UID,
- GID or project ID
+        Sun, 1 Apr 2018 19:10:53 -0400
+Subject: Re: [PATCH 38/45] C++: mutex_trylock_recursive_enum() int->enum
 To: David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
 References: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
- <152261522136.30503.14306229915768504613.stgit@warthog.procyon.org.uk>
+ <152261544366.30503.65430592511529554.stgit@warthog.procyon.org.uk>
 From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <84a48fa6-cd05-f666-e64c-5f913f942b0a@infradead.org>
-Date: Sun, 1 Apr 2018 16:04:58 -0700
+Message-ID: <100fd0de-2c7c-cbec-ac99-ea3a4aff383b@infradead.org>
+Date: Sun, 1 Apr 2018 16:10:52 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <152261522136.30503.14306229915768504613.stgit@warthog.procyon.org.uk>
+In-Reply-To: <152261544366.30503.65430592511529554.stgit@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -26,50 +25,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/01/2018 01:40 PM, David Howells wrote:
-> Use UINT_MAX, not -1, to represent an invalid UID, GID or project ID as the
-> parameter is an unsigned integer.
+On 04/01/2018 01:44 PM, David Howells wrote:
+> Make mutex_trylock_recursive_enum() cast the int it derives to the enum
+> return type.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  include/linux/projid.h |    2 +-
->  include/linux/uidgid.h |    4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>  include/linux/mutex.h |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/include/linux/projid.h b/include/linux/projid.h
-> index 613730622a1a..7c60a79424c9 100644
-> --- a/include/linux/projid.h
-> +++ b/include/linux/projid.h
-> @@ -30,7 +30,7 @@ static inline projid_t __kprojid_val(kprojid_t projid)
+> diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+> index cb3bbed4e633..2bacc5065980 100644
+> --- a/include/linux/mutex.h
+> +++ b/include/linux/mutex.h
+> @@ -224,13 +224,14 @@ enum mutex_trylock_recursive_enum {
+>   *  - MUTEX_TRYLOCK_SUCCESS   - lock acquired,
+>   *  - MUTEX_TRYLOCK_RECURSIVE - we already owned the lock.
+>   */
+> -static inline /* __deprecated */ __must_check enum mutex_trylock_recursive_enum
+> +static inline /* __deprecated */ __must_check
+> +enum mutex_trylock_recursive_enum
 
-+#include <linux/kernel.h>
+nak that change from 1 to 2 lines. It's only 79 characters.
 
->  #define KPROJIDT_INIT(value) (kprojid_t){ value }
->  
-> -#define INVALID_PROJID KPROJIDT_INIT(-1)
-> +#define INVALID_PROJID KPROJIDT_INIT(UINT_MAX)
->  #define OVERFLOW_PROJID 65534
->  
->  static inline bool projid_eq(kprojid_t left, kprojid_t right)
-> diff --git a/include/linux/uidgid.h b/include/linux/uidgid.h
-> index b0542cd11aeb..75f602075b63 100644
-> --- a/include/linux/uidgid.h
-> +++ b/include/linux/uidgid.h
-> @@ -55,8 +55,8 @@ static inline gid_t __kgid_val(kgid_t gid)
-
-+#include <linux/kernel.h>
-
->  #define GLOBAL_ROOT_UID KUIDT_INIT(0)
->  #define GLOBAL_ROOT_GID KGIDT_INIT(0)
->  
-> -#define INVALID_UID KUIDT_INIT(-1)
-> -#define INVALID_GID KGIDT_INIT(-1)
-> +#define INVALID_UID KUIDT_INIT(UINT_MAX)
-> +#define INVALID_GID KGIDT_INIT(UINT_MAX)
->  
->  static inline bool uid_eq(kuid_t left, kuid_t right)
+>  mutex_trylock_recursive(struct mutex *lock)
 >  {
+>  	if (unlikely(__mutex_owner(lock) == current))
+>  		return MUTEX_TRYLOCK_RECURSIVE;
+>  
+> -	return mutex_trylock(lock);
+> +	return (enum mutex_trylock_recursive_enum)mutex_trylock(lock);
+>  }
+>  
+>  #endif /* __LINUX_MUTEX_H */
 > 
 
 
