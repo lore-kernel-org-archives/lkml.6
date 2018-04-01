@@ -1,60 +1,55 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AIpwx4/8flKG9kTuilUX7XqpikSG/6YvLZndhFqFpRzw8KuJ8eIOPaciwy8WzC4K06JZo5wWBo1M
-ARC-Seal: i=1; a=rsa-sha256; t=1523598317; cv=none;
+Return-Path: <ulfalizer@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522565392; cv=none;
         d=google.com; s=arc-20160816;
-        b=oTCxHSAq91gfaz5Lw11WuU7lMUZ0XhKqGHahlM4vMECpOMSqPI1zJKDGev2P+3Cp6E
-         GY8SWz5sWf+1c6cioUjiaZoJP5/3gUT6N6i2AFcFulairA6FTcy7geTl3H+L1Dwoi3+g
-         WJ7OTynD+6U0mpEzO+JvuRqGVGjidkQOmd3tgNAYCPCg4Ix1fLuzue9jwANFDF/arONP
-         Ulb2aDAtY1gVN4wakpC9XjsuZ02rhUM+tdynq9QX7UirQe7ZMWTJoLrDHwcYaCuwS3Fe
-         ieRpyEydQCu4It4ObF3HbuLHKBGcrEW5Vu1XqAd/HWXPUHVB7Jp98X1Hj5D/kVMzaa4O
-         W3Aw==
+        b=GJm4AGYPocIMtGf+eQkl7vAbuZLbOKdnPkggPnrkrFVp0zcOZAgyOQ0MptxcfNeBTl
+         B6tWmltuXPpeQcUu/mQlmE3t7fbK26K8VASjaoPQyYsdat79PgCl0+Kc4S7lJWGDG8JN
+         TkFF3CH3nsSeLqmiWlSiv+O4LXfZh4QYZhnN4Vk8ANB5fKmKYrC8Ned7PXA39tvhnnuk
+         MXiqIUf+zO4raSb6qgBR/Vi+z3zAuWFv4SmacgUR8ADl6pHSDOuIsBQugvTSNa09Brss
+         C1JvUXFOvOsfNnD7cY5l0JFTdRBtxC06UUFFjg5um1h8ccvA72yYTYUo7P3gaKKnLPsM
+         ZFnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=sk8GaNCfoFDB00s4JCOhovRZ1CxBikxuGoyNRO37co0=;
-        b=cYg8stOX3RtebgdvSmnv+4Zrd9TxsP5a4AdWjto/keyAbYHwffNpTr6/rLgA6HaVsk
-         6pYlWwUEKg/6NzdLLRJCr7GTHtdsBysddWcsSasEqcPoJRsM1deMEVpaXDqqnD09YbOH
-         6LJIirC0VshioDOuvuEUvKClfC7soPd/ARGFYv93SYaC8G4rFUvM6XT5FrdwK+I+BOLY
-         V48Vz9cI7AUAjleJv4+C3aWMr36pI80S9L/p87TsRsUdfviqdTbHBMEXYJBWUUx5Hz+K
-         hL52KCQzM/fvGvB61cqG46a4hZM4bsRjLpNbsEL6Vpzz4n7Cp14CcR80RYE00oZQJffJ
-         EeXQ==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=1CZ/Kycbu9XN2KBEG7tPVgx3zMGRMz2zMWhQG0EnUpg=;
+        b=II5V5A4LlbMc3KMHn3rE1R8W2/XHtkkzBu3zhdUwiW4usRDW3H3nX0Kf8QY8z6qTsM
+         1ZX4Qz9SXviJUMVziPrYBook6P+Mi7SHZXGvzbN3GXnYotwv678fAdB8bllcTibnhl8X
+         +yi8EBOLM3FUnsNXOltN1B+O+KAwi2MeQ/LxzilfySqGQwm9ynW+WJ0LkNM8pU9nDNAz
+         Vd6EwRDLQRlBlojp9zV1yfKshWRBBXF9cOHHReMlyMfj6zFfrQ53yxx37mjSeFnDE43C
+         AAn++mK3X5gyWEBktH5Nh+/ZSw2rSIlFY3OOa2ERxjMXEfNUQigFCii9VKjV9eFt4l6o
+         SOFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=qK9/21OE;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.90 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gUfs2QeV;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=qK9/21OE;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.90 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w3D5ishE022947
-X-Nifty-SrcIP: [209.85.217.177]
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gUfs2QeV;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx48rN47PDJg0ij+/Bz6t3hN+RH9et9AIRQFmGdyJTPiUload6gy+IkF50Rk4pbVirgc2vO5SvyIgNiJik0Xp3Z8=
 MIME-Version: 1.0
 In-Reply-To: <CAFkk2KToVh7YLm0B87ypOcaZsUVFfXgQ2Q3gbDuTujEgkzAmEA@mail.gmail.com>
 References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
  <1522128575-5326-10-git-send-email-yamada.masahiro@socionext.com> <CAFkk2KToVh7YLm0B87ypOcaZsUVFfXgQ2Q3gbDuTujEgkzAmEA@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 13 Apr 2018 14:44:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQjY_yNc51pLhaYPSbW82zdB+cMM2KnOYeDM5Lce9AHDA@mail.gmail.com>
-Message-ID: <CAK7LNAQjY_yNc51pLhaYPSbW82zdB+cMM2KnOYeDM5Lce9AHDA@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Sun, 1 Apr 2018 08:49:51 +0200
+Message-ID: <CAFkk2KTOyQtPuEvh3aWGKFcy2QU8rz_yH_C5vmep078JEqe3Zg@mail.gmail.com>
 Subject: Re: [PATCH v2 09/21] kconfig: add 'macro' keyword to support
  user-defined function
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Nicolas Pitre <nico@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+	Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596067537988116489?=
-X-GMAIL-MSGID: =?utf-8?q?1597608629800769339?=
+X-GMAIL-MSGID: =?utf-8?q?1596525528597344016?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-04-01 15:05 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+On Sun, Apr 1, 2018 at 8:05 AM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
 > On Tue, Mar 27, 2018 at 7:29 AM, Masahiro Yamada
 > <yamada.masahiro@socionext.com> wrote:
 >> Now, we got a basic ability to test compiler capability in Kconfig.
@@ -208,28 +203,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 >
 > Might be nice to warn when a macro call has missing arguments.
 
+Or just error out. There isn't even any backwards compatibility to
+think of, and that'd make the code even simpler. Something like this:
 
-I made this a feature as we see in Make.
+while ((p = strstr(p, "$("))) {
+        if (isdigit(p[2]) && p[3] == ')') {
+                n = p[2] - '0';
+                if (n >= argc)
+                        *ERROR*
 
-In Makefile, it is allowed to pass more or less arguments.
+                newlen = strlen(new) + (p - src) + strlen(argv[n]) + 1;
+                new = xrealloc(new, newlen);
+                strncat(new, src, p - src);
+                strcat(new, argv[n]);
 
-cc-option is often used with one flag.
+                /*
+                 * Jump past macro parameter ("$(n)") and remember the new
+                 * position
+                 */
+                p += 4;
+                src = p;
+        }
+        else {
+                /* Jump past "$(" that isn't from a macro parameter */
+                p += 2;
+        }
+}
 
-   $(call cc-option,-fno-PIE)
-
-But, it can take one more as a fall-back compiler option.
-
-   $(call cc-option,-mtune=marvell-f,-mtune=xscale)
-
-
-Of course, we can describe the first one like follows
-just to pass a blank parameter as the last parameter.
-
-   $(call cc-option,-fno-PIE,)
-
-
-
-
+>
 >> +                       p += 2;
 >> +               }
 >> +               p += 2;
@@ -262,11 +263,7 @@ just to pass a blank parameter as the last parameter.
 >         /* Jump past "$(" that isn't from a macro parameter */
 >         p += 2;
 > }
-
-
-Will work, but I re-implemented the parser in v3.
-
-
+>
 >> +
 >> +       newlen = strlen(new) + strlen(src) + 1;
 >> +       new = xrealloc(new, newlen);
@@ -364,13 +361,3 @@ Will work, but I re-implemented the parser in v3.
 >
 > Cheers,
 > Ulf
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Best Regards
-Masahiro Yamada
