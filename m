@@ -1,23 +1,23 @@
 Return-Path: <fengguang.wu@intel.com>
-X-Google-Smtp-Source: AIpwx4/laD8CU7WmoSN6OHwpJjYKnt24tP0m4ccJ1QvlnlsB/lJilX2NoGN/crN5XMvh3aVJNAtf
-ARC-Seal: i=1; a=rsa-sha256; t=1522541541; cv=none;
+X-Google-Smtp-Source: AIpwx4/BXVphUK9O8N9+injJQ8lGuXfvtAPruygAeKjtv2SbhHguJqpTQ3orFaNpi5cQWyEJVGQt
+ARC-Seal: i=1; a=rsa-sha256; t=1522541539; cv=none;
         d=google.com; s=arc-20160816;
-        b=GrFqlBA0VfLMzoGqxTG2QIWEon2DUVQPcu6EAPvbHV78MKqgqthlW2imGSZhSsKN/3
-         RbA6lGQsus/OuIqHv/a8rRy1gCAKBB5mNe/N3/fCi848kEuLMdZRN6I5j/YYx3H/IAGI
-         CEqPz0KTyOslwn8df7ydE3NvgjM+dIaRw6gOU/fjVPgLnnegcs5wXYh+p9SmgyNgsSaB
-         Vck9TD7bad2ig5FSLRUc7nzuOyK26QSEv7HUxRHiyQfCQSOjzIJHZo1AjXiFBvLvNNxq
-         jC0/qFy2EDlEQ0+tb5pLvQdW6YxrvCEUbZdYEyn3W86xF81lM0pgTg3zS5y/J9cOpwWP
-         x7BQ==
+        b=FgO65BmGI7WqdkAiTeqnY5cNz7yOrMm5nZJIOKUjf1EvBpkybm8WmT2tF9IGcJjBoJ
+         +cdaR1BkNk84X/5+rpHWJo0OV/TtoAVhkf/v8Glv8LdWHzu/PvHJVtC39YHV1mqlyF85
+         7fubVKZiEEg+sExq3jve68swSwfKZ/J35M9yHjIdZM/sCi9OBiEjPgJttPpym/DZSMIa
+         9wvy8/Muh2wlJk+Sd2bPySEdVcODoN0l0kv9iI1Cyuh1QWTuVMAfhxfWTQoTG0f76urk
+         ecacPZzOrtsHABTMQagruNwJJ+YFbx1i/hcRlv0nSg7l9DKMLARAHoVTXJRZvJCIlFe8
+         sipw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=kPjy+79N1B8eUyu6QCwsZRTjtFKtss+r/JeJUsZSfyw=;
-        b=LwJJ2p70isxDJs9MYPK7ZsuyxZyHAKW139nh9RTe6jcHPknVa2NP3MZr1jKadWiTy6
-         ZFXyKkhB2aXYiEoCHFyDnExlGEF4dTGOxdg3wExzpym2V5FMZ93DcBTh+a6ovoR7ptte
-         vI4HNDWPzBNX0e2Ku1irfWNe2Hv3fH27GPaXVJ2xNTXPrki8rb9AxCGhQrK6MEK7Kr+Z
-         iIv0LUB7aB0H4+Hm4kipZlUscuvrMdjMD3LKxLZkP+g6kStXlIjVvMzYadVIpuyHcwhG
-         RyMWXzzD/Kj+1V/y9Uihge1apxDpNBK5b5su6I3KjEcT24TXrc1khC1GqjgHLgNhg8Z8
-         cpvw==
+        bh=RwLQ9FHWo5JhY66CzyFPdtnOg27tXGEABj6J+zgbBZg=;
+        b=fBQgTnbgtFRis6HxZlpOi0zGmM547gAGxQhPV04C0v6UZ85udbv4fnDXIt8P2a/To7
+         JwLSK53836tTBh1z5ZNlO9AVPaMBvko7D7PvZaV0p31CHsDLrUXCA5yVw6aLR/n/ruqu
+         kwN+MJxJVP3d/d43M+Lz5nSuFL+Ou8+p/kSD7zrKvIOcJvDLWWRrC9BaMkjxaPOwL3QV
+         6bkTu4ZXpgwnMVSlHKZzVqcz6yG7zCD00hkw+n6aCTXnaGo2k6xd/AgBKEmJ+JsdFiwV
+         mXw2UNlFOLENJHrNyzTqWffPRzLnhujV6g9YQXrY2/qpt4ug1LNs0Mzup5D1iwWtaOqb
+         5KUg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,389,1517904000";
-   d="scan'208";a="29691171"
+   d="scan'208";a="216445919"
 Date: Sun, 1 Apr 2018 08:12:05 +0800
 From: kbuild test robot <lkp@intel.com>
 To: Hans de Goede <hdegoede@redhat.com>
@@ -38,9 +38,8 @@ Cc: kbuild-all@01.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
 	Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
 	Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>,
 	x86@kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH 1/2] efi: Export boot-services code and data as
- debugfs-blobs
-Message-ID: <201804010732.6JjZvmsF%fengguang.wu@intel.com>
+Subject: [RFC PATCH] efi: debugfs_blob[] can be static
+Message-ID: <20180401001205.GA24604@lkp-wsm-ep2>
 References: <20180331121944.8618-1-hdegoede@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -51,32 +50,28 @@ X-SA-Exim-Connect-IP: <locally generated>
 X-SA-Exim-Mail-From: fengguang.wu@intel.com
 X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596455689779545050?=
-X-GMAIL-MSGID: =?utf-8?q?1596500519049093408?=
+X-GMAIL-THRID: =?utf-8?q?1596500517007832501?=
+X-GMAIL-MSGID: =?utf-8?q?1596500517007832501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Hans,
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.16-rc7 next-20180329]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Hans-de-Goede/efi-Export-boot-services-code-and-data-as-debugfs-blobs/20180401-062627
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/firmware/efi/efi.c:324:29: sparse: symbol 'debugfs_blob' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
+Fixes: ac46fdb7891f ("efi: Export boot-services code and data as debugfs-blobs")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ efi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index fddc5f7..9f1b8e6 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -321,7 +321,7 @@ static inline int efivar_ssdt_load(void) { return 0; }
+ 
+ #define EFI_DEBUGFS_MAX_BLOBS 32
+ 
+-struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
++static struct debugfs_blob_wrapper debugfs_blob[EFI_DEBUGFS_MAX_BLOBS];
+ 
+ static void __init efi_debugfs_init(void)
+ {
