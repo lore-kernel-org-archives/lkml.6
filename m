@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753863AbeDARBb (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 13:01:31 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:41532 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753664AbeDARBD (ORCPT
+        id S1753851AbeDARB3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 13:01:29 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:43640 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753671AbeDARBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 1 Apr 2018 13:01:03 -0400
-X-Google-Smtp-Source: AIpwx48o8xEP9lv+m7A1jQstxWZkdDgo4VJ3cseIo9SYJQAE4v9lPLM9jrEW6G2yp1NdPC+Q2+PLlic/MPJ04eE2gqVykJyJ0+rB
+X-Google-Smtp-Source: AIpwx4/I4psvaPJq8NjsQ+ZgREjQXSWFRsAinx62CDH9lu7bTXYoNUmzvhaMESSHg6sTINMwG1bKN8KDAM9vJEQr7ZIq2t5UhSP1
 MIME-Version: 1.0
-Date: Sun, 01 Apr 2018 10:01:02 -0700
+Date: Sun, 01 Apr 2018 10:01:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113ff9ca1684ab0568cc6bb6@google.com>
-Subject: WARNING in account_page_dirtied
-From: syzbot <syzbot+b7772c65a1d88bfd8fca@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, hannes@cmpxchg.org,
-        jack@suse.cz, jlayton@redhat.com, keescook@chromium.org,
-        laoar.shao@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mhocko@suse.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Message-ID: <94eb2c05beb41a8c8a0568cc6b03@google.com>
+Subject: kernel BUG at fs/ext4/extents.c:LINE!
+From: syzbot <syzbot+06c885be0edcdaeab40c@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -31,93 +30,87 @@ syzbot hit the following crash on upstream commit
 Merge branch 'perf-urgent-for-linus' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=b7772c65a1d88bfd8fca
+https://syzkaller.appspot.com/bug?extid=06c885be0edcdaeab40c
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5705587757154304
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6721172100087808
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5644332530925568
+https://syzkaller.appspot.com/x/repro.syz?id=4701086711545856
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5472755969425408
+https://syzkaller.appspot.com/x/log.txt?id=6392087410900992
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b7772c65a1d88bfd8fca@syzkaller.appspotmail.com
+Reported-by: syzbot+06c885be0edcdaeab40c@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-gfs2: fsid=loop0.0: jid=0, already locked for use
-gfs2: fsid=loop0.0: jid=0: Looking at journal...
-gfs2: fsid=loop0.0: jid=0: Done
-gfs2: fsid=loop0.0: first mount done, others may mount
-gfs2: fsid=loop0.0: found 1 quota changes
-WARNING: CPU: 0 PID: 4469 at ./include/linux/backing-dev.h:341 inode_to_wb  
-include/linux/backing-dev.h:338 [inline]
-WARNING: CPU: 0 PID: 4469 at ./include/linux/backing-dev.h:341  
-account_page_dirtied+0x8f9/0xcb0 mm/page-writeback.c:2416
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 4469 Comm: syzkaller368843 Not tainted 4.16.0-rc7+ #9
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:inode_to_wb include/linux/backing-dev.h:338 [inline]
-RIP: 0010:account_page_dirtied+0x8f9/0xcb0 mm/page-writeback.c:2416
-RSP: 0018:ffff8801d966e5c0 EFLAGS: 00010093
-RAX: ffff8801acb7e600 RBX: 1ffff1003b2cdcba RCX: ffffffff818f47a9
-RDX: 0000000000000000 RSI: ffff8801d3338148 RDI: 0000000000000082
-RBP: ffff8801d966e698 R08: 1ffff1003b2cdc13 R09: 000000000000000c
-R10: ffff8801d966e558 R11: 0000000000000002 R12: ffff8801c96f0368
-R13: ffffea0006b12780 R14: ffff8801c96f01d8 R15: ffff8801c96f01d8
-  __set_page_dirty+0x100/0x4b0 fs/buffer.c:605
-  mark_buffer_dirty+0x454/0x5d0 fs/buffer.c:1126
-  gfs2_unpin+0x143/0x12c0 fs/gfs2/lops.c:108
-  buf_lo_after_commit+0x273/0x430 fs/gfs2/lops.c:512
-  lops_after_commit fs/gfs2/lops.h:67 [inline]
-  gfs2_log_flush+0xe2a/0x2750 fs/gfs2/log.c:809
-  do_sync+0x666/0xe40 fs/gfs2/quota.c:958
-  gfs2_quota_sync+0x2cc/0x570 fs/gfs2/quota.c:1301
-  gfs2_sync_fs+0x46/0xb0 fs/gfs2/super.c:956
-  __sync_filesystem fs/sync.c:39 [inline]
-  sync_filesystem+0x188/0x2e0 fs/sync.c:64
-  generic_shutdown_super+0xd5/0x540 fs/super.c:425
-  kill_block_super+0x9b/0xf0 fs/super.c:1146
-  gfs2_kill_sb+0x133/0x1b0 fs/gfs2/ops_fstype.c:1392
-  deactivate_locked_super+0x88/0xd0 fs/super.c:312
-  deactivate_super+0x141/0x1b0 fs/super.c:343
-  cleanup_mnt+0xb2/0x150 fs/namespace.c:1173
-  __cleanup_mnt+0x16/0x20 fs/namespace.c:1180
-  task_work_run+0x199/0x270 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
-  do_group_exit+0x149/0x400 kernel/exit.c:968
-  SYSC_exit_group kernel/exit.c:979 [inline]
-  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x456c29
-RSP: 002b:00007fff74938dc8 EFLAGS: 00000202 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000456c29
-RDX: 00000000004170e0 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: 0000000000000003 R08: 000000000000000a R09: 0000000000418100
-R10: 00000000200a9300 R11: 0000000000000202 R12: 0000000000000004
-R13: 0000000000418100 R14: 0000000000000000 R15: 0000000000000000
+------------[ cut here ]------------
+kernel BUG at fs/ext4/extents.c:3190!
+invalid opcode: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Modules linked in:
+CPU: 0 PID: 4422 Comm: syzkaller152353 Not tainted 4.16.0-rc7+ #9
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:ext4_split_extent_at+0x75d/0x1160 fs/ext4/extents.c:3190
+RSP: 0018:ffff8801c6b8e290 EFLAGS: 00010293
+RAX: ffff8801acdc0080 RBX: ffff8801b425b018 RCX: ffffffff81e959ad
+RDX: 0000000000000000 RSI: ffff8801a79c11f0 RDI: ffff8801d96ce940
+RBP: ffff8801c6b8e3f8 R08: 0000000000000010 R09: 0000000000000425
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801d96ce930
+R13: 0000000000003010 R14: 1ffff10038d71c5e R15: 0000000000000010
+FS:  00000000014a2880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8298ddf000 CR3: 00000001ad57f002 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  ext4_split_extent.isra.36+0x2b6/0x490 fs/ext4/extents.c:3364
+  ext4_ext_convert_to_initialized fs/ext4/extents.c:3619 [inline]
+  ext4_ext_handle_unwritten_extents+0x1acd/0x3940 fs/ext4/extents.c:4081
+  ext4_ext_map_blocks+0x12d1/0x4410 fs/ext4/extents.c:4339
+  ext4_map_blocks+0xc90/0x1830 fs/ext4/inode.c:636
+  mpage_map_one_extent fs/ext4/inode.c:2452 [inline]
+  mpage_map_and_submit_extent fs/ext4/inode.c:2505 [inline]
+  ext4_writepages+0x2035/0x3c30 fs/ext4/inode.c:2875
+  do_writepages+0xff/0x170 mm/page-writeback.c:2340
+  __filemap_fdatawrite_range+0x32f/0x460 mm/filemap.c:444
+  file_write_and_wait_range+0x8a/0x100 mm/filemap.c:752
+  ext4_sync_file+0x4fb/0x1260 fs/ext4/fsync.c:128
+  vfs_fsync_range+0x110/0x260 fs/sync.c:196
+  generic_write_sync include/linux/fs.h:2680 [inline]
+  ext4_file_write_iter+0x919/0x10c0 fs/ext4/file.c:270
+  call_write_iter include/linux/fs.h:1782 [inline]
+  do_iter_readv_writev+0x55c/0x830 fs/read_write.c:653
+  do_iter_write+0x154/0x540 fs/read_write.c:932
+  vfs_iter_write+0x77/0xb0 fs/read_write.c:945
+  iter_file_splice_write+0x7db/0xf30 fs/splice.c:749
+  do_splice_from fs/splice.c:851 [inline]
+  direct_splice_actor+0x125/0x180 fs/splice.c:1018
+  splice_direct_to_actor+0x2c1/0x820 fs/splice.c:973
+  do_splice_direct+0x29b/0x3c0 fs/splice.c:1061
+  do_sendfile+0x5c9/0xe80 fs/read_write.c:1413
+  SYSC_sendfile64 fs/read_write.c:1468 [inline]
+  SyS_sendfile64+0xbd/0x160 fs/read_write.c:1460
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x440029
+RSP: 002b:00007fff87fd7e68 EFLAGS: 00000217 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00000fffffeff000 RCX: 0000000000440029
+RDX: 0000000020000000 RSI: 0000000000000004 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 00007fff87fd7e80 R09: 00007fff87fd7e80
+R10: 0000000100000001 R11: 0000000000000217 R12: 0000000000401860
+R13: 00000000004018f0 R14: 0000000000000000 R15: 0000000000000000
+Code: fe ff ff 48 c7 c7 c0 9c 56 87 0f b7 43 08 4c 8d 04 40 49 c1 e0 04 49  
+01 d8 e8 a0 66 ff ff 41 89 c7 e9 f8 fd ff ff e8 93 0b 88 ff <0f> 0b e8 8c  
+0b 88 ff 48 8b 8d b8 fe ff ff 48 b8 00 00 00 00 00
+RIP: ext4_split_extent_at+0x75d/0x1160 fs/ext4/extents.c:3190 RSP:  
+ffff8801c6b8e290
+---[ end trace d3416668281344cc ]---
 
 
 ---
