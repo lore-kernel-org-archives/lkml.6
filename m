@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753839AbeDAR0l (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 13:26:41 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:39576 "EHLO
+        id S1753885AbeDAR0p (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 13:26:45 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:42661 "EHLO
         mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753743AbeDAR0j (ORCPT
+        with ESMTP id S1753844AbeDAR0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 13:26:39 -0400
-X-Google-Smtp-Source: AIpwx4+L8ANXUudfSGBSCXsnCN7Hqc5BgVqWOdJfiUvuQZOHKULA2xEZUq9xZBwVo7rJW6nf+8OqlQ==
+        Sun, 1 Apr 2018 13:26:41 -0400
+X-Google-Smtp-Source: AIpwx4+8TWrW19Lf6awxfWLSgQn6G9HxFxnqamhuQmvZrXjBw/iZixjOtanYGTl0gkmnjKnwijBXMQ==
 From: Florian Fainelli <f.fainelli@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Florian Fainelli <f.fainelli@gmail.com>,
@@ -18,27 +18,43 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <ray.jui@broadcom.com>,
         linux-kernel@vger.kernel.org (open list), jon.mason@broadcom.com,
         nbd@nbd.name
-Subject: [PATCH net 0/2] net: bgmac: Couple of sparse warnings
-Date: Sun,  1 Apr 2018 10:26:28 -0700
-Message-Id: <20180401172630.12883-1-f.fainelli@gmail.com>
+Subject: [PATCH net 1/2] net: bgmac: Correctly annotate register space
+Date: Sun,  1 Apr 2018 10:26:29 -0700
+Message-Id: <20180401172630.12883-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180401172630.12883-1-f.fainelli@gmail.com>
+References: <20180401172630.12883-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+All the members: base, idm_base and nicpm_base should be annotated with
+__iomem since they are pointers to register space. This fixes a bunch of
+sparse reported warnings.
 
-This patch series fixes a couple of warnings reported by sparse, should not
-cause any functional problems since bgmac is typically used on LE platforms
-anyway.
-
-Florian Fainelli (2):
-  net: bgmac: Correctly annotate register space
-  net: bgmac: Fix endian access in bgmac_dma_tx_ring_free()
-
- drivers/net/ethernet/broadcom/bgmac.c | 3 ++-
+Fixes: f6a95a24957a ("net: ethernet: bgmac: Add platform device support")
+Fixes: dd5c5d037f5e ("net: ethernet: bgmac: add NS2 support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
  drivers/net/ethernet/broadcom/bgmac.h | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/ethernet/broadcom/bgmac.h b/drivers/net/ethernet/broadcom/bgmac.h
+index 4040d846da8e..40d02fec2747 100644
+--- a/drivers/net/ethernet/broadcom/bgmac.h
++++ b/drivers/net/ethernet/broadcom/bgmac.h
+@@ -479,9 +479,9 @@ struct bgmac_rx_header {
+ struct bgmac {
+ 	union {
+ 		struct {
+-			void *base;
+-			void *idm_base;
+-			void *nicpm_base;
++			void __iomem *base;
++			void __iomem *idm_base;
++			void __iomem *nicpm_base;
+ 		} plat;
+ 		struct {
+ 			struct bcma_device *core;
 -- 
 2.14.1
