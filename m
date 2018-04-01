@@ -1,68 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751957AbeDAImN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 04:42:13 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54781 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751386AbeDAImL (ORCPT
+        id S1753296AbeDAI4l (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 04:56:41 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:43850 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753000AbeDAI4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 04:42:11 -0400
-X-Google-Smtp-Source: AIpwx4+SFJHR2BdVEy35b57IELBbJpHQUrTaxoMoteWxHSm8QpVE+lA1jQuZNKKJrzDdxPn54aTWww==
-Date: Sun, 1 Apr 2018 08:42:08 +0000
-From: Sargun Dhillon <sargun@sargun.me>
-To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: penguin-kernel@i-love.sakura.ne.jp, casey@schaufler-ca.com,
-        jmorris@namei.org
-Subject: [PATCH] security: remove security_settime
-Message-ID: <20180401084205.GA14512@ircssh-2.c.rugged-nimbus-611.internal>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Sun, 1 Apr 2018 04:56:39 -0400
+From: Richard Weinberger <richard@nod.at>
+To: linux-kernel@vger.kernel.org
+Cc: rostedt@goodmis.org, pantelis.antoniou@konsulko.com,
+        mark.rutland@arm.com, pmladek@suse.com,
+        andriy.shevchenko@linux.intel.com, joe@perches.com, corbet@lwn.net,
+        me@tobin.cc, sergey.senozhatsky@gmail.com,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 1/2] lib: vsprintf: Implement %pCOW
+Date: Sun,  1 Apr 2018 10:56:21 +0200
+Message-Id: <20180401085622.7754-2-richard@nod.at>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180401085622.7754-1-richard@nod.at>
+References: <20180401085622.7754-1-richard@nod.at>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-security_settime was a wrapper around security_settime64. There are no more
-users of it. Therefore it can be removed. It was removed in:
-commit 4eb1bca17933 ("time: Use do_settimeofday64() internally")
+Add a new format string to print in cowsay format.
 
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 ---
- include/linux/security.h | 14 --------------
- 1 file changed, 14 deletions(-)
+ lib/vsprintf.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 3f5fd988ee87..5111fe8159ce 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -222,12 +222,6 @@ int security_quotactl(int cmds, int type, int id, struct super_block *sb);
- int security_quota_on(struct dentry *dentry);
- int security_syslog(int type);
- int security_settime64(const struct timespec64 *ts, const struct timezone *tz);
--static inline int security_settime(const struct timespec *ts, const struct timezone *tz)
--{
--	struct timespec64 ts64 = timespec_to_timespec64(*ts);
--
--	return security_settime64(&ts64, tz);
--}
- int security_vm_enough_memory_mm(struct mm_struct *mm, long pages);
- int security_bprm_set_creds(struct linux_binprm *bprm);
- int security_bprm_check(struct linux_binprm *bprm);
-@@ -509,14 +503,6 @@ static inline int security_settime64(const struct timespec64 *ts,
- 	return cap_settime(ts, tz);
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index d7a708f82559..a48df6f1c3f0 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1693,6 +1693,55 @@ static int __init initialize_ptr_random(void)
  }
+ early_initcall(initialize_ptr_random);
  
--static inline int security_settime(const struct timespec *ts,
--				   const struct timezone *tz)
--{
--	struct timespec64 ts64 = timespec_to_timespec64(*ts);
--
--	return cap_settime(&ts64, tz);
--}
--
- static inline int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
++static char *cowsay(char *buf, char *end, void *ptr)
++{
++	static char dashes[] = {[0 ... 256] = '-'};
++	static char unders[] = {[0 ... 256] = '_'};
++	static char spaces[] = {[0 ... 256] = ' '};
++	static struct cow_type {
++		int num_lines;
++		char *cow_lines[];
++	} default_cow = {
++		.num_lines = 5,
++		.cow_lines = {
++			"\\   ^__^",
++			" \\  (oo)\\_______",
++			"    (__)\\       )\\/\\",
++			"        ||----w |",
++			"        ||     ||",
++		},
++	};
++
++	int i, n;
++	char *orig_buf = buf;
++	char *str = ptr;
++	int len = strlen(str);
++
++	n = snprintf(buf, end - buf, "  %.*s\n< %s >\n  %.*s\n", len, unders,
++		     str, len, dashes);
++	if (n < 0 || buf + n >= end)
++		goto cow_too_fat;
++
++	buf += n;
++
++	for (i = 0; i < default_cow.num_lines; i++) {
++		n = snprintf(buf, end - buf, "%.*s%s\n", len / 2, spaces,
++			     default_cow.cow_lines[i]);
++		if (n < 0 || buf + n >= end)
++			goto cow_too_fat;
++
++		buf += n;
++	}
++
++	return buf;
++
++cow_too_fat:
++	n = snprintf(orig_buf, end - orig_buf, "%s\n", str);
++	if (n > 0)
++		orig_buf += n;
++	return orig_buf;
++}
++
+ /* Maps a pointer to a 32 bit unique identifier. */
+ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
  {
- 	return __vm_enough_memory(mm, pages, cap_vm_enough_memory(mm, pages));
+@@ -1941,6 +1990,9 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 	case 'd':
+ 		return dentry_name(buf, end, ptr, spec, fmt);
+ 	case 'C':
++		if (fmt[1] == 'O' && fmt[2] == 'W')
++			return cowsay(buf, end, ptr);
++
+ 		return clock(buf, end, ptr, spec, fmt);
+ 	case 'D':
+ 		return dentry_name(buf, end,
 -- 
-2.14.1
+2.13.6
