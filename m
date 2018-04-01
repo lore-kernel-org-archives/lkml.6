@@ -1,225 +1,143 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AIpwx4+Aj9DHLqJ0NrCtJhveL7ddhkcJz8TOIuQpncpV4uybgTgk6j4ef7miwFJrCWqJDBe45XUk
-ARC-Seal: i=1; a=rsa-sha256; t=1523293970; cv=none;
-        d=google.com; s=arc-20160816;
-        b=qFHq+L4nW7337hjw89fc/xS09tlzJyqiZ7kCCrewfBA1yDf8MPiJp8PHeQ0g8SE2ry
-         C6LTYxbkzKwoip20iT1jXQmq3fc2i/IdKe/cqMvzkrQmGT+6k/XyfyK1aC59tGXI7d8p
-         cfejaQGpp6odOBQQOodDrbyfQ2ps+OLfVzq9dfzMlnfnJxjJmIFb0FuePyDFXXts5D2H
-         +K4FqfDvZThmVj57efp/uMKFhhOOHS2QeLbgGffzDBviuTJrlCyVxK9wVwHsnu4Gpg6K
-         OMxT1sl5BZsFTEjru0MMNR56PcM0zc6dMwlTBRJ932FWwi6heBEpPIuLUJV1c2xxAsyA
-         biDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=Z8EZzMhd1xwJjtOb/rSy8no4mZZYDuX8PaxOI19Nx7w=;
-        b=T6PDnAYgl7VPk+ZmpKQBx1/fDa2Gk/JtbjTYCRiiufBAbdpoSo4pPDpq+TKfLapxd6
-         5X2hF1WtWdJWVDCxO8E7jeUlp4WmZ8sOCT8X/CH51Mg4bDKMee5WePottixs2AWFmBb0
-         WW6EhdlemrwO0FbXBafbvALTM9vUuxuXa6oRth4CqoMfjawW+JyDgWwUI4XnFO1xQMuF
-         rmkS39nRSWP78wBOcf6uTeVmO7hgdLtG+O/g8hFu5245sKe8W7sn65/pxzqUDSwEX4GA
-         MTRyuniKzHi7zLEcU7o1yW4tc5tOyMK4HJdapFh10HYMR0uRmq+bRBn7gPj3d1NNanFe
-         gaTw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Mon, 9 Apr 2018 10:11:54 -0700
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-d1440b23c922d845ff039f64694a32ff356e89fa@git.kernel.org>
-Cc: jpoimboe@redhat.com, bp@alien8.de, luto@kernel.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        arjan@linux.intel.com, dan.j.williams@intel.com, jgross@suse.com,
-        dave.hansen@linux.intel.com, dwmw2@infradead.org, aarcange@redhat.com,
-        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com, namit@vmware.com,
-        peterz@infradead.org, keescook@google.com,
-        linux-kernel@vger.kernel.org, hughd@google.com
-Reply-To: jgross@suse.com, dan.j.williams@intel.com,
-        dave.hansen@linux.intel.com, bp@alien8.de, luto@kernel.org,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, arjan@linux.intel.com,
-        peterz@infradead.org, keescook@google.com, hughd@google.com,
-        linux-kernel@vger.kernel.org, aarcange@redhat.com, dwmw2@infradead.org,
-        mingo@kernel.org, tglx@linutronix.de, namit@vmware.com, hpa@zytor.com
-In-Reply-To: <20180406205502.86E199DA@viggo.jf.intel.com>
-References: <20180406205502.86E199DA@viggo.jf.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/mm: Factor out pageattr _PAGE_GLOBAL setting
-Git-Commit-ID: d1440b23c922d845ff039f64694a32ff356e89fa
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-670106-1522608886-2-9087128972915348397
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522608886; b=AZ1L6s2anegHSPrRHU9FFNe3C7vv4eXts6+DZj6DDomisXPAok
+    LIcFj8tGLXPTOsfWJuKXOc2dhNZYul1K6wnSMl7RJKgRsBtD8z1udXXltmUNkK0s
+    PIMYOcL8mutFgTRNfoScRk6zbtClJ3Zr/o4iormBZLxMyUZ6d0p7pm/2oz7iUOW6
+    dMVnXX48T8epAy9SwoNJsQ8tZGd0wYSRdO5LgZ+/1d3sTyhScJwYas0WKj1HRpic
+    95lpAxftJhRxSICnY6agKGKvx9GOJRZl7MVdUH+UkTCShCWYYbxx8agr8edfBoeg
+    Bue5BFAcDd/h9jF6rtDnBdmWNLlBmFNx7H6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1522608886; bh=IV0xb1zRPHCtEA/Hod73W6RZTlKiuQm5Vcp+tfgUoV
+    E=; b=PaHqfwp4ogDgX8UMmNNFJxFvmslZVTClZZgTMI6a1yhHFCOgrsU+EAfrEn
+    mbhFbAMhVNEMDzOZoBAJnxBqrwnl33XusTPTJkGCnuTb/pxOU0DbYIpP4+mU6qV4
+    YFQXvv6SUQQGgQQmAgz80WI1jjsiEcnfYNOBKYSg60AXUfQfNGS9eg1qC75wSKfC
+    +oj10Hg+tx+eluvVBFTs8S/FY2FnGpSBFvxM0y1YMXeboGQltiBDY1/zqWf7QI/E
+    cNUqxmqfUmkHGFfLW8ip8fVomovP7fRusRaAZBiA8H0vUB6JrsIX098Q0ur/Xhbu
+    Hk5zLj0K9XYD4tv/xd2DGQhwpmmg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=oLHLDIKJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=rq4Sg7SR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=teYEBomH;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=oLHLDIKJ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=rq4Sg7SR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=teYEBomH;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfK6RTcyTzQvnekvcLVOtxeczAHnD5cJt/5jcCzYu5OjwIxGSl9n5X4tHKGKfb/jvYWQ1zaPiPGlCLdDV0VNfvhfVugfg88EuK5q+li8KmYkf569gXGpB
+    WG31th4lRhFgWxfdyhyQfwUW8fs74fBzIlXoDcPt464k41VcKynyol6EVKiBl7lLurQw3INkoAgX9hdKbVKB/5FYnzRW+SnvL9O270fyuhwST3BGnmh2RkxY
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=z1H5ADGQAAAA:8 a=cm27Pg_UAAAA:8 a=VwQbUJbxAAAA:8 a=1pIWTMwhs-Wpeg77ZIUA:9
+    a=0-P_Tjmbljq6deDA:21 a=IpZqebdM1PJyj4yV:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=cNhwqobjEIRUxE0uuXBi:22 a=xmb-EsYY8bH0VWELuYED:22
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753850AbeDASyn (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 1 Apr 2018 14:54:43 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:42618 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753830AbeDASym (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Sun, 1 Apr 2018 14:54:42 -0400
+X-Google-Smtp-Source: AIpwx4/crD9qgdIB4LRrCe7tNAh95ThC9uK0DrJjA4DKfTh47BscuaWdfVdXlsJaup0CpM6thf/2kSwARq5NMNUd438=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180329143400.6d9256a5@alans-desktop>
+References: <20180314003655.12141-1-djkurtz@chromium.org> <20180314003655.12141-2-djkurtz@chromium.org>
+ <CAPybu_0uLNz=tRvwqnMfoogJ=A4b5SgMecE9ZihrZdFrbRvcEw@mail.gmail.com>
+ <CAGS+omCuEYSHFPmknvvvjUpCWFP_rCmwa9utQiO=aEmdm-anwg@mail.gmail.com>
+ <CAHp75VehhNv6pPrRiM9jBAK9FsqZ2Defo8HKhutwn+GPnCFp3w@mail.gmail.com>
+ <CAE2855tGe0i9XoEPe9iLFpCds3fXyj9uGhDACvK06KaqvhvYBg@mail.gmail.com>
+ <20180326192428.71c23abf@alans-desktop> <CAE2855tGOq2jjqaZUnWJKL953iM6+9JCgkCAEXhKLkkLRdgUBg@mail.gmail.com>
+ <20180329143400.6d9256a5@alans-desktop>
+From: Aaron Durbin <adurbin@chromium.org>
+Date: Sun, 1 Apr 2018 11:54:41 -0700
+X-Google-Sender-Auth: fi1rAHQevACk6uLPLGTqnqeY-T4
+Message-ID: <CAE2855tmMwbOWDOs-iJS7i35=Y7gt0xun4ApfhZyY9Kr5N3NJA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] serial: 8250_early: Add earlycon support for AMD
+ Carrizo / Stoneyridge
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc: Aaron Durbin <adurbin@chromium.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Marc Gonzalez <marc_gonzalez@sigmadesigns.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Jeffy <jeffy.chen@rock-chips.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597289498214171150?=
-X-GMAIL-MSGID: =?utf-8?q?1597289498214171150?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  d1440b23c922d845ff039f64694a32ff356e89fa
-Gitweb:     https://git.kernel.org/tip/d1440b23c922d845ff039f64694a32ff356e89fa
-Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Fri, 6 Apr 2018 13:55:02 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 9 Apr 2018 18:27:32 +0200
+On Thu, Mar 29, 2018 at 6:34 AM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+> On Mon, 26 Mar 2018 20:56:45 -0600
+> Aaron Durbin <adurbin@chromium.org> wrote:
+>
+>> On Mon, Mar 26, 2018 at 12:24 PM, Alan Cox <gnomes@lxorguk.ukuu.org.uk> wrote:
+>> >> Sadly, this situation
+>> >> is not unique to this hardware. There is hardware all over that does
+>> >> not meet the current assumptions being made in the early uart drivers
+>> >> within the kernel.
+>> >
+>> > Is there any fundamental reason you can't just embed dt entries in the
+>> > ACPI table to describe the other features you need. I appreciate it
+>> > doesn't solve the generic PC case but it ought to help for anything where
+>> > the firmware cares about Linux ?
+>>
+>> What's the method for doing that? Using _DSD methods? Or have a
+>> pointer to examples? Sorry, I haven't spelunked into the current state
+>> of bridging ACPI and devicetree in a while.
+>
+> ACPI 5.1 adds an _DSD method UUID for device properties.
+>
+> The kernel device_property_* interface will pick them up just as if they
+> came from DT tables etc.
 
-x86/mm: Factor out pageattr _PAGE_GLOBAL setting
+But we don't have the full ACPI interpreter up in the early part of
+the kernel. All these 'early' devices have their own setup/config
+which is the source of the issue. Or maybe I am wrong about the full
+interpreter and the early drivers are just not taking advantage of the
+ACPI device binding?
 
-The pageattr code has a pattern repeated where it sets _PAGE_GLOBAL
-for present PTEs but clears it for non-present PTEs.  The intention
-is to keep _PAGE_GLOBAL from getting confused with _PAGE_PROTNONE
-since _PAGE_GLOBAL is for present PTEs and _PAGE_PROTNONE is for
-non-present
-
-But, this pattern makes no sense.  Effectively, it says, if you use
-the pageattr code, always set _PAGE_GLOBAL when _PAGE_PRESENT.
-canon_pgprot() will clear it if unsupported (because it masks the
-value with __supported_pte_mask) but we *always* set it. Even if
-canon_pgprot() did not filter _PAGE_GLOBAL, it would be OK.
-_PAGE_GLOBAL is ignored when CR4.PGE=0 by the hardware.
-
-This unconditional setting of _PAGE_GLOBAL is a problem when we have
-PTI and non-PTI and we want some areas to have _PAGE_GLOBAL and some
-not.
-
-This updated version of the code says:
-1. Clear _PAGE_GLOBAL when !_PAGE_PRESENT
-2. Never set _PAGE_GLOBAL implicitly
-3. Allow _PAGE_GLOBAL to be in cpa.set_mask
-4. Allow _PAGE_GLOBAL to be inherited from previous PTE
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Kees Cook <keescook@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Nadav Amit <namit@vmware.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180406205502.86E199DA@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/pageattr.c | 66 ++++++++++++++++++--------------------------------
- 1 file changed, 23 insertions(+), 43 deletions(-)
-
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 85cf12219dea..4d369d5c04c5 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -512,6 +512,23 @@ static void __set_pmd_pte(pte_t *kpte, unsigned long address, pte_t pte)
- #endif
- }
- 
-+static pgprot_t pgprot_clear_protnone_bits(pgprot_t prot)
-+{
-+	/*
-+	 * _PAGE_GLOBAL means "global page" for present PTEs.
-+	 * But, it is also used to indicate _PAGE_PROTNONE
-+	 * for non-present PTEs.
-+	 *
-+	 * This ensures that a _PAGE_GLOBAL PTE going from
-+	 * present to non-present is not confused as
-+	 * _PAGE_PROTNONE.
-+	 */
-+	if (!(pgprot_val(prot) & _PAGE_PRESENT))
-+		pgprot_val(prot) &= ~_PAGE_GLOBAL;
-+
-+	return prot;
-+}
-+
- static int
- try_preserve_large_page(pte_t *kpte, unsigned long address,
- 			struct cpa_data *cpa)
-@@ -577,18 +594,11 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
- 	 * different bit positions in the two formats.
- 	 */
- 	req_prot = pgprot_4k_2_large(req_prot);
--
--	/*
--	 * Set the PSE and GLOBAL flags only if the PRESENT flag is
--	 * set otherwise pmd_present/pmd_huge will return true even on
--	 * a non present pmd. The canon_pgprot will clear _PAGE_GLOBAL
--	 * for the ancient hardware that doesn't support it.
--	 */
-+	req_prot = pgprot_clear_protnone_bits(req_prot);
- 	if (pgprot_val(req_prot) & _PAGE_PRESENT)
--		pgprot_val(req_prot) |= _PAGE_PSE | _PAGE_GLOBAL;
-+		pgprot_val(req_prot) |= _PAGE_PSE;
- 	else
--		pgprot_val(req_prot) &= ~(_PAGE_PSE | _PAGE_GLOBAL);
--
-+		pgprot_val(req_prot) &= ~_PAGE_PSE;
- 	req_prot = canon_pgprot(req_prot);
- 
- 	/*
-@@ -698,16 +708,7 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
- 		return 1;
- 	}
- 
--	/*
--	 * Set the GLOBAL flags only if the PRESENT flag is set
--	 * otherwise pmd/pte_present will return true even on a non
--	 * present pmd/pte. The canon_pgprot will clear _PAGE_GLOBAL
--	 * for the ancient hardware that doesn't support it.
--	 */
--	if (pgprot_val(ref_prot) & _PAGE_PRESENT)
--		pgprot_val(ref_prot) |= _PAGE_GLOBAL;
--	else
--		pgprot_val(ref_prot) &= ~_PAGE_GLOBAL;
-+	ref_prot = pgprot_clear_protnone_bits(ref_prot);
- 
- 	/*
- 	 * Get the target pfn from the original entry:
-@@ -930,18 +931,7 @@ static void populate_pte(struct cpa_data *cpa,
- 
- 	pte = pte_offset_kernel(pmd, start);
- 
--	/*
--	 * Set the GLOBAL flags only if the PRESENT flag is
--	 * set otherwise pte_present will return true even on
--	 * a non present pte. The canon_pgprot will clear
--	 * _PAGE_GLOBAL for the ancient hardware that doesn't
--	 * support it.
--	 */
--	if (pgprot_val(pgprot) & _PAGE_PRESENT)
--		pgprot_val(pgprot) |= _PAGE_GLOBAL;
--	else
--		pgprot_val(pgprot) &= ~_PAGE_GLOBAL;
--
-+	pgprot = pgprot_clear_protnone_bits(pgprot);
- 	pgprot = canon_pgprot(pgprot);
- 
- 	while (num_pages-- && start < end) {
-@@ -1234,17 +1224,7 @@ repeat:
- 
- 		new_prot = static_protections(new_prot, address, pfn);
- 
--		/*
--		 * Set the GLOBAL flags only if the PRESENT flag is
--		 * set otherwise pte_present will return true even on
--		 * a non present pte. The canon_pgprot will clear
--		 * _PAGE_GLOBAL for the ancient hardware that doesn't
--		 * support it.
--		 */
--		if (pgprot_val(new_prot) & _PAGE_PRESENT)
--			pgprot_val(new_prot) |= _PAGE_GLOBAL;
--		else
--			pgprot_val(new_prot) &= ~_PAGE_GLOBAL;
-+		new_prot = pgprot_clear_protnone_bits(new_prot);
- 
- 		/*
- 		 * We need to keep the pfn from the existing PTE,
+-Aaron
