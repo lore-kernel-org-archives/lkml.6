@@ -1,79 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753972AbeDAWNT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 18:13:19 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45951 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753947AbeDAWNR (ORCPT
+        id S1753982AbeDAWUH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 18:20:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40352 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753943AbeDAWUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 18:13:17 -0400
-X-Google-Smtp-Source: AIpwx4/ND8e+GKDtWtD7fKmcSeH/OdRGYp5pSgK/YPmz/VlNARGo9QsIffhBrBOfSTJB3kgd5GW+yg==
-Date: Sun, 1 Apr 2018 15:13:40 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: qcom: pm8941: Add vadc nodes needed to
- estimate an ocv
-Message-ID: <20180401221340.GF510@tuxbook-pro>
-References: <20180330200408.12608-1-ctatlor97@gmail.com>
+        Sun, 1 Apr 2018 18:20:06 -0400
+Date: Sun, 1 Apr 2018 15:20:03 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+        syzbot <syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, linux-nfs@vger.kernel.org
+Subject: Re: BUG: corrupted list in __dentry_kill
+Message-ID: <20180401222003.GU13332@bombadil.infradead.org>
+References: <001a11447acaa9eec40568bd5438@google.com>
+ <20180401033519.GZ30522@ZenIV.linux.org.uk>
+ <20180401200531.GA30522@ZenIV.linux.org.uk>
+ <20180401210508.GA743@sol.localdomain>
+ <20180401214854.GB743@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330200408.12608-1-ctatlor97@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180401214854.GB743@sol.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 30 Mar 13:04 PDT 2018, Craig Tatlor wrote:
+On Sun, Apr 01, 2018 at 02:48:54PM -0700, Eric Biggers wrote:
+> list_del corruption. prev->next should be 000000002c929de0, but was 0000000065421b2c
 
-> vbat_sns is needed to estimate a fairly accurate on chip voltage
-> and bat_therm is needed to produce an accurate percentage
-> from the estimated ocv.
-> 
+Shuold probably try applying this; we might get a better clue about
+the corruption.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-> ---
->  arch/arm/boot/dts/qcom-pm8941.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-pm8941.dtsi b/arch/arm/boot/dts/qcom-pm8941.dtsi
-> index 1d5ef55c7ee5..2515c5c217ac 100644
-> --- a/arch/arm/boot/dts/qcom-pm8941.dtsi
-> +++ b/arch/arm/boot/dts/qcom-pm8941.dtsi
-> @@ -139,6 +139,9 @@
->  			#size-cells = <0>;
->  			#io-channel-cells = <1>;
->  
-> +			bat_temp {
-> +				reg = <VADC_LR_MUX1_BAT_THERM>;
-> +			};
->  			die_temp {
->  				reg = <VADC_DIE_TEMP>;
->  			};
-> @@ -154,6 +157,9 @@
->  			ref_vdd {
->  				reg = <VADC_VDD_VADC>;
->  			};
-> +			vbat_sns {
-> +				reg = <VADC_VBAT_SNS>;
-> +			};
->  		};
->  
->  		pm8941_iadc: iadc@3600 {
-> -- 
-> 2.16.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/lib/list_debug.c b/lib/list_debug.c
+index a34db8d27667..5d5424b51b74 100644
+--- a/lib/list_debug.c
++++ b/lib/list_debug.c
+@@ -21,13 +21,13 @@ bool __list_add_valid(struct list_head *new, struct list_head *prev,
+ 		      struct list_head *next)
+ {
+ 	if (CHECK_DATA_CORRUPTION(next->prev != prev,
+-			"list_add corruption. next->prev should be prev (%p), but was %p. (next=%p).\n",
++			"list_add corruption. next->prev should be prev (%px), but was %px. (next=%px).\n",
+ 			prev, next->prev, next) ||
+ 	    CHECK_DATA_CORRUPTION(prev->next != next,
+-			"list_add corruption. prev->next should be next (%p), but was %p. (prev=%p).\n",
++			"list_add corruption. prev->next should be next (%px), but was %px. (prev=%px).\n",
+ 			next, prev->next, prev) ||
+ 	    CHECK_DATA_CORRUPTION(new == prev || new == next,
+-			"list_add double add: new=%p, prev=%p, next=%p.\n",
++			"list_add double add: new=%px, prev=%px, next=%px.\n",
+ 			new, prev, next))
+ 		return false;
+ 
+@@ -43,16 +43,16 @@ bool __list_del_entry_valid(struct list_head *entry)
+ 	next = entry->next;
+ 
+ 	if (CHECK_DATA_CORRUPTION(next == LIST_POISON1,
+-			"list_del corruption, %p->next is LIST_POISON1 (%p)\n",
++			"list_del corruption, %px->next is LIST_POISON1 (%px)\n",
+ 			entry, LIST_POISON1) ||
+ 	    CHECK_DATA_CORRUPTION(prev == LIST_POISON2,
+-			"list_del corruption, %p->prev is LIST_POISON2 (%p)\n",
++			"list_del corruption, %px->prev is LIST_POISON2 (%px)\n",
+ 			entry, LIST_POISON2) ||
+ 	    CHECK_DATA_CORRUPTION(prev->next != entry,
+-			"list_del corruption. prev->next should be %p, but was %p\n",
++			"list_del corruption. prev->next should be %px, but was %px\n",
+ 			entry, prev->next) ||
+ 	    CHECK_DATA_CORRUPTION(next->prev != entry,
+-			"list_del corruption. next->prev should be %p, but was %p\n",
++			"list_del corruption. next->prev should be %px, but was %px\n",
+ 			entry, next->prev))
+ 		return false;
+ 
