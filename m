@@ -1,85 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753820AbeDASXg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 14:23:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36144 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753770AbeDASXe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 14:23:34 -0400
-Date: Sun, 1 Apr 2018 11:24:26 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v3 0/3] Changes, clean-ups and documentation for
- spin_is_locked()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1753839AbeDAS1a (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 14:27:30 -0400
+Received: from tn-76-7-162-187.sta.embarqhsd.net ([76.7.162.187]:54785 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753789AbeDAS12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 14:27:28 -0400
+Date: Sun, 1 Apr 2018 14:27:23 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180401182723.GA31755@animx.eu.org>
+References: <20180331015903.GA29398@animx.eu.org>
+ <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
+ <20180331221252.GA25573@animx.eu.org>
+ <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
+ <20180401113721.GA8471@animx.eu.org>
+ <20180401163604.GB25011@animx.eu.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
+In-Reply-To: <20180401163604.GB25011@animx.eu.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040118-0056-0000-0000-000004360F91
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008784; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01011656; UDB=6.00515531; IPR=6.00790931;
- MB=3.00020360; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-01 18:23:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040118-0057-0000-0000-0000087820C4
-Message-Id: <20180401182426.GJ3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804010203
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 01, 2018 at 06:41:49PM +0200, Andrea Parri wrote:
-> Hi Paul,
+Wakko Warner wrote:
+> Wakko Warner wrote:
+> > Bart Van Assche wrote:
+> > > On Sat, 2018-03-31 at 18:12 -0400, Wakko Warner wrote:
+> > > > Richard Weinberger wrote:
+> > > > > On Sat, Mar 31, 2018 at 3:59 AM, Wakko Warner <wakko@animx.eu.org> wrote:
+> > > > > > I reported this before but noone responded.
+> > > > > 
+> > > > > Because you're sending only to LKML.
+> > > > > CC'ing storage folks.
+> > > > 
+> > > > Thank you.  I wasn't sure who I needed to send it to.
+> > > 
+> > > Can you share the output of lsscsi? I would like to know whether or not you
+> > > are using a (S)ATA CDROM.
+> > 
+> > >From the target:
+> > [4:0:0:0]    cd/dvd  ATAPI    iHAS224   B      GL05  /dev/sr0 
+> > [5:0:0:0]    cd/dvd  ATAPI    iHAS422   8      4L11  /dev/sr1 
+> > [6:0:0:0]    cd/dvd  PBDS     DVD+-RW DH-16W1S 2D14  /dev/sr2 
+> > 
+> > >From the initiator:
+> > [19:0:0:0]   cd/dvd  ATAPI    iHAS224   B      GL05  /dev/sr1
+> > [19:0:0:1]   cd/dvd  ATAPI    iHAS422   8      4L11  /dev/sr2
+> > [19:0:0:2]   cd/dvd  PBDS     DVD+-RW DH-16W1S 2D14  /dev/sr3
+> > 
+> > 
+> > I tested 4.14.32 last night with the same oops.  4.9.91 works fine.
+> > >From the initiator, if I do cat /dev/sr1 > /dev/null it works.  If I mount
+> > /dev/sr1 and then do find -type f | xargs cat > /dev/null the target
+> > crashes.  I'm using the builtin iscsi target with pscsi.  I can burn from
+> > the initiator with out problems.  I'll test other kernels between 4.9 and
+> > 4.14.
 > 
-> This series gathers the change to the arm64 implementation of spin_is_locked()
-> and the clean-up to the generic (q)spinlock presented in [1] together with the
-> patch adding the docbook header to spin_is_locked() [2].
-> 
-> Apart from minor adjustments to the commit messages, the patches are unchanged.
+> So I've tested 4.x.y where x one of 10 11 12 14 15 and y is the latest patch
+> (except for 4.15 which was 1 behind)
+> Each of these kernels crash within seconds or immediate of doing find -type
+> f | xargs cat > /dev/null from the initiator.
 
-I queued these on my lkmm branch and pushed them to -rcu, thank you!
+I tried 4.10.0.  It doesn't completely lockup the system, but the device
+that was used hangs.  So from the initiator, it's /dev/sr1 and from the
+target it's /dev/sr0.  Attempting to read /dev/sr0 after the oops causes the
+process to hang in D state.
 
-I did rework the commit logs a bit, most notably to add the URLs of
-the specific messages discussion the spin_is_locked() investigation.
-Please take a look and let me know if I have broken something.
-
-							Thanx, Paul
-
-> Cheers,
->   Andrea
-> 
-> [1] https://marc.info/?l=linux-kernel&m=152223038924258&w=2
-> [2] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-> 
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> 
-> Andrea Parri (3):
->   arm64: Remove smp_mb() from arch_spin_is_locked()
->   locking: Clean-up comment and #ifndef for {,queued_}spin_is_locked()
->   Documentation/locking: Document the semantics of spin_is_locked()
-> 
->  arch/arm64/include/asm/spinlock.h |  5 -----
->  include/asm-generic/qspinlock.h   |  2 --
->  include/linux/mutex.h             |  3 ---
->  include/linux/spinlock.h          | 11 +++++++++++
->  4 files changed, 11 insertions(+), 10 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+Here's the oops.  There was also another line that was not seen in the newer
+kernels.
+[ 323.105044] ------------[ cut here ]------------
+[ 323.105057] WARNING: CPU: 0 PID: 0 at /usr/src/linux/dist/4.10/drivers/scsi/scsi_lib.c:1043 scsi_init_io+0x143/0x1f0 [scsi_mod]
+[ 323.105058] Modules linked in: iscsi_target_mod af_packet tcm_loop vhost_scsi vhost target_core_file target_core_iblock target_core_pscsi target_core_mod nfsd exportfs dummy bridge stp llc ib_iser rdma_cm iw_cm ib_cm ib_core ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi netconsole configfs sr_mod cdrom sd_mod sg adt7475 hwmon_vid coretemp x86_pkg_temp_thermal kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc snd_hda_codec_realtek snd_hda_codec_generic nouveau video led_class drm_kms_helper cfbfillrect syscopyarea cfbimgblt sysfillrect sysimgblt fb_sys_fops cfbcopyarea ttm drm snd_hda_intel agpgart snd_hda_codec snd_hda_core snd_pcm_oss igb snd_mixer_oss aesni_intel snd_pcm aes_x86_64 hwmon snd_timer crypto_simd i2c_algo_bit mptsas snd glue_helper
+[ 323.105089]  mpt3sas i2c_core mptscsih soundcore ahci mptbase raid_class libahci scsi_transport_sas libata scsi_mod button wmi hed unix
+[ 323.105097] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.10.0 #1
+[ 323.105098] Hardware name: Dell Inc. Precision T5610/0WN7Y6, BIOS A16 02/05/2018
+[ 323.105100] Call Trace:
+[ 323.105101]  <IRQ>
+[ 323.105105]  ? dump_stack+0x46/0x5a
+[ 323.105107]  ? __warn+0xb4/0xd0
+[ 323.105110]  ? scsi_init_io+0x143/0x1f0 [scsi_mod]
+[ 323.105113]  ? scsi_setup_cmnd+0x4c/0x140 [scsi_mod]
+[ 323.105115]  ? scsi_prep_fn+0xe3/0x170 [scsi_mod]
+[ 323.105118]  ? swiotlb_unmap_sg_attrs+0x44/0x60
+[ 323.105119]  ? blk_peek_request+0x130/0x200
+[ 323.105122]  ? scsi_request_fn+0x2b/0x510 [scsi_mod]
+[ 323.105124]  ? __blk_run_queue+0x2a/0x40
+[ 323.105126]  ? blk_run_queue+0x1c/0x30
+[ 323.105129]  ? scsi_run_queue+0x229/0x2b0 [scsi_mod]
+[ 323.105131]  ? scsi_io_completion+0x3d6/0x5c0 [scsi_mod]
+[ 323.105133]  ? blk_done_softirq+0x67/0x80
+[ 323.105135]  ? __do_softirq+0xdb/0x200
+[ 323.105137]  ? irq_exit+0xa3/0xb0
+[ 323.105139]  ? do_IRQ+0x45/0xc0
+[ 323.105141]  ? common_interrupt+0x7c/0x7c
+[ 323.105142]  </IRQ>
+[ 323.105145]  ? cpuidle_enter_state+0x144/0x1f0
+[ 323.105146]  ? cpuidle_enter_state+0x139/0x1f0
+[ 323.105148]  ? do_idle+0xd3/0x190
+[ 323.105150]  ? cpu_startup_entry+0x14/0x20
+[ 323.105152]  ? start_kernel+0x391/0x399
+[ 323.105154]  ? start_cpu+0x14/0x14
+[ 323.105155] ---[ end trace f38cc734e4921bdc ]---
+[ 323.105157] blk_peek_request: bad return=-22
