@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753720AbeDARIE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 13:08:04 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:43101 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753661AbeDARIC (ORCPT
+        id S1753757AbeDARKD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 13:10:03 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:44103 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753687AbeDARKC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 13:08:02 -0400
-X-Google-Smtp-Source: AIpwx482clNjbNOYnEGm8rN/x5MtcF9ysnh+yxGzP5vbW1imestRF3A+yREVn+CF0rzBC4w2Sz8TIHc7R7G7a7mOVXuFB1C2lHaN
+        Sun, 1 Apr 2018 13:10:02 -0400
+X-Google-Smtp-Source: AIpwx48icwTMWXfnLzBi04UqDpZGyPyBfIoyF3xc9lp2FAMCVV3eCEVEgQfJcRNzw1MggUjt/iwqGqc/4BiJxqgC1fU3jCIZiJ/S
 MIME-Version: 1.0
-Date: Sun, 01 Apr 2018 10:08:01 -0700
+Date: Sun, 01 Apr 2018 10:10:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113ed5540f411c0568cc8418@google.com>
-Subject: INFO: task hung in __get_super
-From: syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <94eb2c05b2d83650030568cc8bd9@google.com>
+Subject: INFO: task hung in wb_shutdown (2)
+From: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, christophe.jaillet@wanadoo.fr, jack@suse.cz,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, zhangweiping@didichuxing.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -25,156 +26,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
-Merge branch 'perf-urgent-for-linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
+Linux 4.16-rc7
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=10007d66ca02b08f0e60
+https://syzkaller.appspot.com/bug?extid=c0cf869505e03bdf1a24
 
+So far this crash happened 179 times on upstream.
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5899419228569600
+https://syzkaller.appspot.com/x/log.txt?id=4738516814659584
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com
+Reported-by: syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-random: crng init done
-INFO: task syz-executor3:13421 blocked for more than 120 seconds.
-       Not tainted 4.16.0-rc7+ #9
+unregister_netdevice: waiting for lo to become free. Usage count = 1
+unregister_netdevice: waiting for lo to become free. Usage count = 1
+unregister_netdevice: waiting for lo to become free. Usage count = 1
+unregister_netdevice: waiting for lo to become free. Usage count = 1
+unregister_netdevice: waiting for lo to become free. Usage count = 1
+INFO: task kworker/0:5:16458 blocked for more than 120 seconds.
+       Not tainted 4.16.0-rc7+ #368
 "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor3   D24672 13421   4481 0x00000004
+kworker/0:5     D20928 16458      2 0x80000000
+Workqueue: events cgwb_release_workfn
 Call Trace:
   context_switch kernel/sched/core.c:2862 [inline]
   __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
   schedule+0xf5/0x430 kernel/sched/core.c:3499
-  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
-  rwsem_down_read_failed+0x401/0x6e0 kernel/locking/rwsem-xadd.c:286
-  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
-  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
-  down_read+0xa4/0x150 kernel/locking/rwsem.c:26
-  __get_super.part.9+0x1d3/0x280 fs/super.c:663
-  __get_super include/linux/spinlock.h:310 [inline]
-  get_super+0x2d/0x40 fs/super.c:692
-  fsync_bdev+0x19/0x80 fs/block_dev.c:468
-  invalidate_partition+0x35/0x60 block/genhd.c:1566
-  drop_partitions.isra.12+0xcd/0x1d0 block/partition-generic.c:440
-  rescan_partitions+0x72/0x900 block/partition-generic.c:513
-  __blkdev_reread_part+0x15f/0x1e0 block/ioctl.c:173
-  blkdev_reread_part+0x26/0x40 block/ioctl.c:193
-  loop_reread_partitions+0x12f/0x1a0 drivers/block/loop.c:619
-  loop_set_status+0x9bb/0xf60 drivers/block/loop.c:1161
-  loop_set_status64+0x9d/0x110 drivers/block/loop.c:1271
-  lo_ioctl+0xd86/0x1b70 drivers/block/loop.c:1381
-  __blkdev_driver_ioctl block/ioctl.c:303 [inline]
-  blkdev_ioctl+0x1759/0x1e00 block/ioctl.c:601
-  block_ioctl+0xde/0x120 fs/block_dev.c:1875
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-  SYSC_ioctl fs/ioctl.c:701 [inline]
-  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454e79
-RSP: 002b:00007fda691eec68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fda691ef6d4 RCX: 0000000000454e79
-RDX: 00000000200001c0 RSI: 0000000000004c04 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000287 R14: 00000000006f5d48 R15: 0000000000000000
+  bit_wait+0x18/0x90 kernel/sched/wait_bit.c:250
+  __wait_on_bit+0x88/0x130 kernel/sched/wait_bit.c:51
+  out_of_line_wait_on_bit+0x204/0x3a0 kernel/sched/wait_bit.c:64
+  wait_on_bit include/linux/wait_bit.h:84 [inline]
+  wb_shutdown+0x335/0x430 mm/backing-dev.c:377
+  cgwb_release_workfn+0x8b/0x61d mm/backing-dev.c:520
+  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
+  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
 
 Showing all locks held in the system:
-2 locks held by khungtaskd/878:
-  #0:  (rcu_read_lock){....}, at: [<000000004cf2ddac>]  
+3 locks held by kworker/u4:1/21:
+  #0:  ((wq_completion)"%s""netns"){+.+.}, at: [<00000000c0d07d52>]  
+work_static include/linux/workqueue.h:198 [inline]
+  #0:  ((wq_completion)"%s""netns"){+.+.}, at: [<00000000c0d07d52>]  
+set_work_data kernel/workqueue.c:619 [inline]
+  #0:  ((wq_completion)"%s""netns"){+.+.}, at: [<00000000c0d07d52>]  
+set_work_pool_and_clear_pending kernel/workqueue.c:646 [inline]
+  #0:  ((wq_completion)"%s""netns"){+.+.}, at: [<00000000c0d07d52>]  
+process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
+  #1:  (net_cleanup_work){+.+.}, at: [<000000006c4c2cfd>]  
+process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
+  #2:  (net_mutex){+.+.}, at: [<0000000058427774>] cleanup_net+0x242/0xcb0  
+net/core/net_namespace.c:484
+2 locks held by khungtaskd/869:
+  #0:  (rcu_read_lock){....}, at: [<000000009066e5de>]  
 check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
-  #0:  (rcu_read_lock){....}, at: [<000000004cf2ddac>] watchdog+0x1c5/0xd60  
+  #0:  (rcu_read_lock){....}, at: [<000000009066e5de>] watchdog+0x1c5/0xd60  
 kernel/hung_task.c:249
-  #1:  (tasklist_lock){.+.+}, at: [<00000000fc5e2248>]  
+  #1:  (tasklist_lock){.+.+}, at: [<000000002117cbd8>]  
 debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
-2 locks held by getty/4404:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000c5139392>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000003da58a6e>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4405:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000c5139392>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000003da58a6e>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4406:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000c5139392>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000003da58a6e>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
 2 locks held by getty/4407:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000c5139392>]  
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000015dafb41>]  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000003da58a6e>]  
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000841085d3>]  
 n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
 2 locks held by getty/4408:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000c5139392>]  
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000015dafb41>]  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000003da58a6e>]  
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000841085d3>]  
 n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
 2 locks held by getty/4409:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000c5139392>]  
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000015dafb41>]  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000003da58a6e>]  
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000841085d3>]  
 n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
 2 locks held by getty/4410:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000c5139392>]  
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000015dafb41>]  
 ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<000000003da58a6e>]  
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000841085d3>]  
 n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-3 locks held by syz-executor3/13421:
-  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000834f78af>]  
-lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
-  #1:  (&bdev->bd_mutex){+.+.}, at: [<0000000003605603>]  
-blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
-  #2:  (&type->s_umount_key#77){.+.+}, at: [<0000000077701649>]  
-__get_super.part.9+0x1d3/0x280 fs/super.c:663
-1 lock held by syz-executor3/13464:
-  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000c39e77db>]  
-__blkdev_get+0x176/0x13b0 fs/block_dev.c:1458
-1 lock held by syz-executor3/13466:
-  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000834f78af>]  
-lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
-1 lock held by syz-executor2/13423:
-  #0:  (&bdev->bd_mutex){+.+.}, at: [<0000000032c86bf7>]  
-blkdev_put+0x2a/0x4f0 fs/block_dev.c:1808
-2 locks held by syz-executor0/13428:
-  #0:  (&type->s_umount_key#76/1){+.+.}, at: [<00000000d25ba33a>]  
-alloc_super fs/super.c:211 [inline]
-  #0:  (&type->s_umount_key#76/1){+.+.}, at: [<00000000d25ba33a>]  
-sget_userns+0x3a1/0xe40 fs/super.c:502
-  #1:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000834f78af>]  
-lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
-1 lock held by syz-executor0/13465:
-  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000c39e77db>]  
-__blkdev_get+0x176/0x13b0 fs/block_dev.c:1458
-1 lock held by blkid/13434:
-  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000c39e77db>]  
-__blkdev_get+0x176/0x13b0 fs/block_dev.c:1458
-1 lock held by syz-executor2/13638:
-  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000c39e77db>]  
-__blkdev_get+0x176/0x13b0 fs/block_dev.c:1458
-1 lock held by syz-executor2/13639:
-  #0:  (&bdev->bd_mutex){+.+.}, at: [<00000000c39e77db>]  
-__blkdev_get+0x176/0x13b0 fs/block_dev.c:1458
+2 locks held by getty/4411:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000015dafb41>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000841085d3>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4412:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000015dafb41>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000841085d3>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4413:
+  #0:  (&tty->ldisc_sem){++++}, at: [<0000000015dafb41>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000841085d3>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by kworker/0:5/16458:
+  #0:  ((wq_completion)"events"){+.+.}, at: [<00000000c0d07d52>] work_static  
+include/linux/workqueue.h:198 [inline]
+  #0:  ((wq_completion)"events"){+.+.}, at: [<00000000c0d07d52>]  
+set_work_data kernel/workqueue.c:619 [inline]
+  #0:  ((wq_completion)"events"){+.+.}, at: [<00000000c0d07d52>]  
+set_work_pool_and_clear_pending kernel/workqueue.c:646 [inline]
+  #0:  ((wq_completion)"events"){+.+.}, at: [<00000000c0d07d52>]  
+process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
+  #1:  ((work_completion)(&wb->release_work)){+.+.}, at:  
+[<000000006c4c2cfd>] process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
+1 lock held by syz-executor6/23709:
+  #0:  (net_mutex){+.+.}, at: [<00000000843d65a3>] copy_net_ns+0x1f5/0x580  
+net/core/net_namespace.c:417
 
 =============================================
 
 NMI backtrace for cpu 0
-CPU: 0 PID: 878 Comm: khungtaskd Not tainted 4.16.0-rc7+ #9
+CPU: 0 PID: 869 Comm: khungtaskd Not tainted 4.16.0-rc7+ #368
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
