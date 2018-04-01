@@ -1,152 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753973AbeDAV3q (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 17:29:46 -0400
-Received: from mout.web.de ([212.227.17.11]:53427 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751028AbeDAV3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 17:29:44 -0400
-Subject: Re: [PATCH net] e1000e: Remove Other from EIAC.
-To: Benjamin Poirier <bpoirier@suse.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180131072627.18305-1-bpoirier@suse.com>
-From: Jan Kiszka <jan.kiszka@web.de>
-Openpgp: preference=signencrypt
-Message-ID: <c05c33b7-92f1-d8d5-76f0-64848dae3693@web.de>
-Date: Sun, 1 Apr 2018 23:29:17 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        id S1753971AbeDAVbt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 17:31:49 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35513 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753923AbeDAVbr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 17:31:47 -0400
+X-Google-Smtp-Source: AIpwx488Ags+rpUB6kh3tp1GQZVXy6264D5bEvxCCRgcO2QIR/UaVamTskZ3ly6ZsROIU5NAomzh1g==
+Date: Sun, 1 Apr 2018 14:32:10 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+        david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: qcom-apq8064: disable i2c by default at soc
+ dtsi
+Message-ID: <20180401213210.GE510@tuxbook-pro>
+References: <20180315144434.14095-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180131072627.18305-1-bpoirier@suse.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="2oEjpd7VoCzZehQkdR7JRdUs4ODUFqfCF"
-X-Provags-ID: V03:K0:1kl3tOuyzfvwglRn7R5ECWbqaGCCUutCZ/RNOEari1hkyIBVKR4
- SRt3tTr3tHMWAKLn+L4BA5bDaXf4YbWF0kWUfXldKCnw5r9H/wLciX/z5ll2oUXzB+xoLzP
- 5wq5PZipQgmlTt4TqR6yY8sN4eG2Zx1U9D+tbBNmvvWT+aggqZPpEVEDaRgV7oihx/QESrX
- gfHQFdzee9iOBgqH9/+Xg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hr6D28yJL90=:xAr6gksedfRZEOV9N7kzCM
- q/t+ZidpYBHYiSYYUWKV197raQN87BBVDBRxY4KQzH56x7usCx7M3tpirfuRasiOCc2hyT9m/
- 6pci+VIiC+9t1JDggJy/6jcG9/+XXBbo9mgAJ2SqooNuAJZ1ds+feQrUE6YVoUdVZSx2EcrWp
- FR1JaTcLx+Igq5+dYqZAuymqg2NGZVAa5BQz6eSJFsPAgraCgYNp8DzrXPAO2oJFrxE/0XIOG
- 2l1qJsAoPYLdvZciSJwBNfqY7cvz2vUtVjlImvz6NLe/nrBF5X/AndY/gexg/Pg3O0+BEmNyC
- ItMBQrEirUlUZxjuGXoz6Uyjr8X6qrEvWb69+uSFzuhjmF3qp0i/8md8BRS8KfXj24bwz65yk
- mFn/VW6luze+81mzuOM2ZRD66uNMTNNx5C9OSY0YdhVOs0ycs8n5za/XdaTbU/Ld747Bd7ME1
- X0xeY5YJAaBjh2bg4O+Uw/tl9l9JSKH3uOUDTDdVo6I9YCDKAah2tEFmAcXTtZjHqlpotPXNh
- /hkJOeA55GNumw+U1adqUIeSXc8GxWvp/ctyPohTfdpX6IU29FMT3sAH9SkhETPoSXIFQZGw3
- 60bJyIhWUGdP2Vmux+5gCaUq0CJuDU9spp0At6nuN7p2ZpLbJc2Y+l5uLgX9yyByHjDyPLG4Y
- SD6MpCjp86N0n5aqAoNSSgAm+OQPB/DiIhc9c9X4k2330LGvPsvlv3847EubKwTAoMbNH55M3
- tZz2OnhsC9jR09ReDaQjBII0PxOllinwpmO1Zs+Y9zlFfR8/PGFHlnOrJPfwCm27dVrOTWDbZ
- J87nobMBakM0B9uG84gKOmTeMvmrw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180315144434.14095-1-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---2oEjpd7VoCzZehQkdR7JRdUs4ODUFqfCF
-Content-Type: multipart/mixed; boundary="rnXzrojDxBXIaqqhqgdNSIvkN1q6eb8kX";
- protected-headers="v1"
-From: Jan Kiszka <jan.kiszka@web.de>
-To: Benjamin Poirier <bpoirier@suse.com>,
- Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <c05c33b7-92f1-d8d5-76f0-64848dae3693@web.de>
-Subject: Re: [PATCH net] e1000e: Remove Other from EIAC.
-References: <20180131072627.18305-1-bpoirier@suse.com>
-In-Reply-To: <20180131072627.18305-1-bpoirier@suse.com>
+On Thu 15 Mar 07:44 PDT 2018, Srinivas Kandagatla wrote:
 
---rnXzrojDxBXIaqqhqgdNSIvkN1q6eb8kX
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch marks all the gsbi i2c node at soc level dtsi, so that kernel
+> would not assume that its enabled and result in pin conflicts when gsbi
+> is used for UART or SPI.
+> 
+> Without this patch we see below pin conflict.
+> 
+> apq8064-pinctrl 800000.pinctrl: pin GPIO_20 already requested by
+>  12450000.serial; cannot claim for 12460000.i2c
+> apq8064-pinctrl 800000.pinctrl: pin-20 (12460000.i2c) status -22
+> apq8064-pinctrl 800000.pinctrl: could not request pin 20 (GPIO_20)
+>  from group gpio20  on device 800000.pinctrl
+> i2c_qup 12460000.i2c: Error applying setting, reverse things back
+> i2c_qup: probe of 12460000.i2c failed with error -22
+> 
 
-On 2018-01-31 08:26, Benjamin Poirier wrote:
-> It was reported that emulated e1000e devices in vmware esxi 6.5 Build
-> 7526125 do not link up after commit 4aea7a5c5e94 ("e1000e: Avoid receiv=
-er
-> overrun interrupt bursts", v4.15-rc1). Some tracing shows that after
-> e1000e_trigger_lsc() is called, ICR reads out as 0x0 in e1000_msix_othe=
-r()
-> on emulated e1000e devices. In comparison, on real e1000e 82574 hardwar=
-e,
-> icr=3D0x80000004 (_INT_ASSERTED | _LSC) in the same situation.
->=20
-> Some experimentation showed that this flaw in vmware e1000e emulation c=
-an
-> be worked around by not setting Other in EIAC. This is how it was befor=
-e
-> 16ecba59bc33 ("e1000e: Do not read ICR in Other interrupt", v4.5-rc1).
->=20
-> Fixes: 4aea7a5c5e94 ("e1000e: Avoid receiver overrun interrupt bursts")=
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-> Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Regards,
+Bjorn
+
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  drivers/net/ethernet/intel/e1000e/netdev.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/e=
-thernet/intel/e1000e/netdev.c
-> index 9f18d39bdc8f..625a4c9a86a4 100644
-> --- a/drivers/net/ethernet/intel/e1000e/netdev.c
-> +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-> @@ -1918,6 +1918,8 @@ static irqreturn_t e1000_msix_other(int __always_=
-unused irq, void *data)
->  	bool enable =3D true;
-> =20
->  	icr =3D er32(ICR);
-> +	ew32(ICR, E1000_ICR_OTHER);
-> +
->  	if (icr & E1000_ICR_RXO) {
->  		ew32(ICR, E1000_ICR_RXO);
->  		enable =3D false;
-> @@ -2040,7 +2042,6 @@ static void e1000_configure_msix(struct e1000_ada=
-pter *adapter)
->  		       hw->hw_addr + E1000_EITR_82574(vector));
->  	else
->  		writel(1, hw->hw_addr + E1000_EITR_82574(vector));
-> -	adapter->eiac_mask |=3D E1000_IMS_OTHER;
-> =20
->  	/* Cause Tx interrupts on every write back */
->  	ivar |=3D BIT(31);
-> @@ -2265,7 +2266,7 @@ static void e1000_irq_enable(struct e1000_adapter=
- *adapter)
-> =20
->  	if (adapter->msix_entries) {
->  		ew32(EIAC_82574, adapter->eiac_mask & E1000_EIAC_MASK_82574);
-> -		ew32(IMS, adapter->eiac_mask | E1000_IMS_LSC);
-> +		ew32(IMS, adapter->eiac_mask | E1000_IMS_OTHER | E1000_IMS_LSC);
->  	} else if (hw->mac.type >=3D e1000_pch_lpt) {
->  		ew32(IMS, IMS_ENABLE_MASK | E1000_IMS_ECCER);
->  	} else {
->=20
-
-Shouldn't this be queued for stable as well? I'm missing it in 4.14 LTS
-at least.
-
-BTW, it seems QEMU's e1000e model is affected by the same issue. I've
-proposed a fix for it [1].
-
-Jan
-
-[1] https://www.mail-archive.com/qemu-devel@nongnu.org/msg525182.html
-
-
---rnXzrojDxBXIaqqhqgdNSIvkN1q6eb8kX--
-
---2oEjpd7VoCzZehQkdR7JRdUs4ODUFqfCF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEARECAAYFAlrBTzIACgkQitSsb3rl5xRKnQCeMos2vf7xyUIm/C5m49fpKBVB
-YTQAoM0/7K2BfawPnBwq9vitdVMLMyRb
-=Dppw
------END PGP SIGNATURE-----
-
---2oEjpd7VoCzZehQkdR7JRdUs4ODUFqfCF--
+>  arch/arm/boot/dts/qcom-apq8064.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+> index 3ca96e361878..54cff79f5725 100644
+> --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
+> +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+> @@ -444,6 +444,7 @@
+>  				clock-names = "core", "iface";
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+> +				status = "disabled";
+>  			};
+>  
+>  		};
+> @@ -472,6 +473,7 @@
+>  				clock-names = "core", "iface";
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+> +				status = "disabled";
+>  			};
+>  		};
+>  
+> @@ -497,6 +499,7 @@
+>  				clock-names = "core", "iface";
+>  				#address-cells = <1>;
+>  				#size-cells = <0>;
+> +				status = "disabled";
+>  			};
+>  		};
+>  
+> @@ -521,6 +524,7 @@
+>  				clocks = <&gcc GSBI4_QUP_CLK>,
+>  					 <&gcc GSBI4_H_CLK>;
+>  				clock-names = "core", "iface";
+> +				status = "disabled";
+>  			};
+>  		};
+>  
+> -- 
+> 2.16.2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
