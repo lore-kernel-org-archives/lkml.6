@@ -1,174 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754620AbeDAUsO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 16:48:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52976 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754292AbeDAUl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 16:41:59 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 17/45] C++: Turn READ_ONCE(),
- WRITE_ONCE() & co. into inline template functions
-From: David Howells <dhowells@redhat.com>
-To: linux-kernel@vger.kernel.org
-Date: Sun, 01 Apr 2018 21:41:57 +0100
-Message-ID: <152261531782.30503.2451449805347145060.stgit@warthog.procyon.org.uk>
-In-Reply-To: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
-References: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S1753951AbeDAVEr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 17:04:47 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35880 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751028AbeDAVEp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 17:04:45 -0400
+X-Google-Smtp-Source: AIpwx4/eFtJf2EJMySsaEkQWp2Vp62pz1DQafVahTzKHImH5cKNCnOxna0F7SQRiE+LXmmQ9sMj97A==
+Date: Sun, 1 Apr 2018 14:05:08 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: syzbot <syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: corrupted list in __dentry_kill
+Message-ID: <20180401210508.GA743@sol.localdomain>
+References: <001a11447acaa9eec40568bd5438@google.com>
+ <20180401033519.GZ30522@ZenIV.linux.org.uk>
+ <20180401200531.GA30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180401200531.GA30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turn READ_ONCE(), WRITE_ONCE() and similar into inline template functions.
-This allows the source to be simplified since there doesn't need to be
-magic casting and switch-statements inside macroisation.
+On Sun, Apr 01, 2018 at 09:05:31PM +0100, Al Viro wrote:
+> On Sun, Apr 01, 2018 at 04:35:19AM +0100, Al Viro wrote:
+> > On Sat, Mar 31, 2018 at 04:01:02PM -0700, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot hit the following crash on bpf-next commit
+> > > 7828f20e3779e4e85e55371e0e43f5006a15fb41 (Sat Mar 31 00:17:57 2018 +0000)
+> > > Merge branch 'bpf-cgroup-bind-connect'
+> > > syzbot dashboard link:
+> > > https://syzkaller.appspot.com/bug?extid=f3bd89a5ab3266b10540
+> > > 
+> > > So far this crash happened 22 times on bpf-next, upstream.
+> > > C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6290970458980352
+> > > syzkaller reproducer:
+> > > https://syzkaller.appspot.com/x/repro.syz?id=6577156880596992
+> > > Raw console output:
+> > > https://syzkaller.appspot.com/x/log.txt?id=5107570603720704
+> > > Kernel config:
+> > > https://syzkaller.appspot.com/x/.config?id=5909223872832634926
+> > > compiler: gcc (GCC) 7.1.1 20170620
+> > > 
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com
+> > > It will help syzbot understand when the bug is fixed. See footer for
+> > > details.
+> > > If you forward the report, please keep this part and the footer.
+> > > 
+> > > RBP: 00007ffd1bbb3ae0 R08: 0000000020000200 R09: 0000000300000000
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+> > > R13: 0000000000000003 R14: 0000000000001380 R15: 00007ffd1bbb3378
+> > > list_del corruption. prev->next should be 00000000a8104008, but was
+> > > 00000000081c6144
+> > 
+> > Lovely...  I'll look into that tomorrow morning.
+> 
+> Can't reproduce - it reproducer had been running for several hours, with
+> that kernel and that config (gcc 6.3, not 7.1, though), no oopsen...
+> 
+> If somebody can reproduce that thing, I'd appreciate having it bisected
+> a bit...
+> 
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Apparently the reproducer wants to inject a fault into a specific memory
+allocation, and something is causing the memory allocations to be different.  It
+works for me in ~10 seconds after applying the below patch to the C reproducer.
+(I also did 'echo 0 | tee /sys/kernel/debug/fail*/verbose' beforehand to quiet
+all the fault injection messages.)  I'm guessing the bug is in the error
+handling in "rpc_pipefs", but not sure exactly what yet.  The last messages in
+the kernel log before the BUG() were:
 
- include/linux/compiler.h |   93 ++++++++++++++--------------------------------
- 1 file changed, 29 insertions(+), 64 deletions(-)
+[   42.965515] net/sunrpc/rpc_pipe.c: __rpc_create_common failed to allocate inode for dentry blocklayout
+[   42.967234] net/sunrpc/rpc_pipe.c: rpc_mkpipe_dentry() failed to create pipe nfs/blocklayout (errno = -12)
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ab4711c63601..f9be82b93e20 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -3,6 +3,8 @@
- #define __LINUX_COMPILER_H
- 
- #include <linux/compiler_types.h>
-+#include <linux/kasan-checks.h>
-+#include <asm/barrier.h>
- 
- #ifndef __ASSEMBLY__
- 
-@@ -168,26 +170,6 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 
- #include <uapi/linux/types.h>
- 
--#define __READ_ONCE_SIZE						\
--({									\
--	switch (size) {							\
--	case 1: *(__u8 *)res = *(volatile __u8 *)p; break;		\
--	case 2: *(__u16 *)res = *(volatile __u16 *)p; break;		\
--	case 4: *(__u32 *)res = *(volatile __u32 *)p; break;		\
--	case 8: *(__u64 *)res = *(volatile __u64 *)p; break;		\
--	default:							\
--		barrier();						\
--		__builtin_memcpy((void *)res, (const void *)p, size);	\
--		barrier();						\
--	}								\
--})
--
--static __always_inline
--void __read_once_size(const volatile void *p, void *res, int size)
--{
--	__READ_ONCE_SIZE;
--}
--
- #ifdef CONFIG_KASAN
- /*
-  * We can't declare function 'inline' because __no_sanitize_address confilcts
-@@ -200,26 +182,6 @@ void __read_once_size(const volatile void *p, void *res, int size)
- # define __no_kasan_or_inline __always_inline
- #endif
- 
--static __no_kasan_or_inline
--void __read_once_size_nocheck(const volatile void *p, void *res, int size)
--{
--	__READ_ONCE_SIZE;
--}
--
--static __always_inline void __write_once_size(volatile void *p, void *res, int size)
--{
--	switch (size) {
--	case 1: *(volatile __u8 *)p = *(__u8 *)res; break;
--	case 2: *(volatile __u16 *)p = *(__u16 *)res; break;
--	case 4: *(volatile __u32 *)p = *(__u32 *)res; break;
--	case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
--	default:
--		barrier();
--		__builtin_memcpy((void *)p, (const void *)res, size);
--		barrier();
--	}
--}
--
- /*
-  * Prevent the compiler from merging or refetching reads or writes. The
-  * compiler is also forbidden from reordering successive instances of
-@@ -242,27 +204,30 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
-  * with an explicit memory barrier or atomic instruction that provides the
-  * required ordering.
-  */
--#include <asm/barrier.h>
--#include <linux/kasan-checks.h>
-+template <typename P>
-+static inline P READ_ONCE(P &ptr)
-+{
-+	barrier();
-+	P val = *(volatile P *)&ptr;
-+	smp_read_barrier_depends(); /* Enforce dependency ordering from x */
-+	return val;
-+}
- 
--#define __READ_ONCE(x, check)						\
--({									\
--	union { typeof(x) __val; char __c[1]; } __u;			\
--	if (check)							\
--		__read_once_size(&(x), __u.__c, sizeof(x));		\
--	else								\
--		__read_once_size_nocheck(&(x), __u.__c, sizeof(x));	\
--	smp_read_barrier_depends(); /* Enforce dependency ordering from x */ \
--	__u.__val;							\
--})
--#define READ_ONCE(x) __READ_ONCE(x, 1)
-+template <typename P>
-+static __no_kasan_or_inline P READ_ONCE_NOCHECK(P &ptr)
-+{
-+	barrier();
-+	P val = *(volatile P *)&ptr;
-+	smp_read_barrier_depends(); /* Enforce dependency ordering from x */
-+	return val;
-+}
- 
- /*
-- * Use READ_ONCE_NOCHECK() instead of READ_ONCE() if you need
-- * to hide memory access from KASAN.
-+ * This function is not 'inline' because __no_sanitize_address confilcts
-+ * with inlining. Attempt to inline it may cause a build failure.
-+ * 	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
-+ * '__maybe_unused' allows us to avoid defined-but-not-used warnings.
-  */
--#define READ_ONCE_NOCHECK(x) __READ_ONCE(x, 0)
--
- static __no_kasan_or_inline
- unsigned long read_word_at_a_time(const void *addr)
- {
-@@ -270,13 +235,13 @@ unsigned long read_word_at_a_time(const void *addr)
- 	return *(unsigned long *)addr;
+diff --git a/syz_dentry_kill.c b/syz_dentry_kill.c
+index e38ee57..8c6a76e 100644
+--- a/syz_dentry_kill.c
++++ b/syz_dentry_kill.c
+@@ -723,6 +723,7 @@ static void loop()
+       }
+       if (symlink(cgroupdir_net, "./cgroup.net")) {
+       }
++      srand(getpid());
+       execute_one();
+       doexit(0);
+     }
+@@ -786,7 +787,7 @@ void execute_one()
+          48);
+   write_file("/sys/kernel/debug/failslab/ignore-gfp-wait", "N");
+   write_file("/sys/kernel/debug/fail_futex/ignore-private", "N");
+-  inject_fault(60);
++  inject_fault(rand() % 500);
+   syscall(__NR_mount, 0x20000300, 0x20000140, 0x200002c0, 0, 0x20000200);
  }
- 
--#define WRITE_ONCE(x, val) \
--({							\
--	union { typeof(x) __val; char __c[1]; } __u =	\
--		{ .__val = (__force typeof(x)) (val) }; \
--	__write_once_size(&(x), __u.__c, sizeof(x));	\
--	__u.__val;					\
--})
-+template <typename P, typename T>
-+static inline void WRITE_ONCE(P &ptr, T val)
-+{
-+	barrier();
-+	*(volatile P *)&ptr = val;
-+	barrier();
-+}
- 
- #endif /* __KERNEL__ */
  
