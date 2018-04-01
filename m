@@ -1,151 +1,101 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AIpwx48c7FmPlxNyxt4pOQ8mSh/kUy2QLSaBlB06O0sd0aZwiKL4Ca7IA1dbKujYeANsDhcC3kfm
-ARC-Seal: i=1; a=rsa-sha256; t=1523330200; cv=none;
+Return-Path: <ulfalizer@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522564102; cv=none;
         d=google.com; s=arc-20160816;
-        b=upnfiSYCR7c7oGk9sJkB7SuuhaqX7qAS7KKHl3xIffFdRjE9mjkvhHklCyMIBo23e8
-         Pqu7jIMqGhFWSqTjKKjfjw/x6VIkXKlFPRVZPSGTGFzGOChALEKwtZNaxOWhTk8KEl3W
-         le9jj8lyzikqoSnLdKrd+Sys+d+hDjJ0tqROyu/U3o/bH7bsybjN2g4Jwsg4UOJsYnaW
-         8M3kQuxXEwa5IFD6qBkU+0Vxk2KWEHuvna8O97c7+3SvZ0mfxQ6M6o/mPqssXAilZOL8
-         kLGcjXJB8Eg3PxjY5k5WOdkM5WealQzyACOZ1hHMV7ddg6ghPDjGq1EXqGGAmBo8mFYn
-         xAJA==
+        b=LoLTmybRPHRDUYTKag3TBegU9qHr0LQfi3MqwVy+8BIDOdKvMbOAKSqYr+qMEi+jWr
+         66MgktVlIXMRbm0EBnpeBvgZdYQWalDZQKdF5QYjeYvCn4TbqjGI+jdP/B5YNccLtFpc
+         EDCUGw8BE8wXmF7EEP5tw2GxXEy6nXVb/R0KsOb/6JMJQnEm6asX3cmMxReuxZJIR8Cu
+         3mrVD0ly2mqkRRYWbdATBYykV9720rN0iOhcZMKAYmUGutEJqxz/xp7A6Wx76xbuZz7l
+         LQ29OhkrjKzifNuH3zHXfKqv011vxjpBA3UvCI5dybiUWG/WMhbC/xFzFqIsW/EFhohD
+         agbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=KSiIYmnWCn8t54g9kSnsKbas4U6RcYA4I0ZTeHdX2Mk=;
-        b=jbzowZrJvTzMTJjEtFIZwYU+pBgdlbDGxbsqWcM7IhHL1bgIPcFqZT1fVCU7lG0Elf
-         NBg824Sr3Vw7DJc4nsJwRky869B1AkpM9EIBG0P94bcP9r5jUoE4GOKdeTlwcdJeGimM
-         iGMSsFpGb1ciqvo8ptiRdEobVNDiB8QaTBEvx7lc526jatOSstV8vFseGFoiGu8Q+pEK
-         ZAt261ewrBEBSAYCt8w8d0uxIfc8C31FCug/lf6hDtfLUrjPIQhGPxzoV/yyBD6AdTo5
-         THPyUFBFMLB8ARchRQGj0ZmaopEWddBjGq/ExQigEYcBWmPBgvfFNFNRTFVEC70rSO/9
-         mGyA==
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=0EtwHZEbNn654nEz4V5++0fYftXS+w/B6lpjlcKhzaU=;
+        b=J9/cw+w9Uaegqx/02AYt4TDKyMuebmd3CPjJksbydqz4Dvbj+LAdfqT2byUzacu5qJ
+         DwEsCQc2LPBhSSgPSpoqMEdJafvI9mZ9F4q2Wu664O92+WYQjqBnXz8W+CKWqNWvjC5e
+         07lM5x4gyJaVyb1gk37tflcRK1meFjn8rDXV8rwz6kGEV4gOETLKctxw89cV1JhfsbMv
+         sFHSMp84ygaaYGJrnOP8mk0H7Q5AAk51q25QE4ydQhXy1XhSHMopoaR99Jl4vlHYsDCK
+         PVv3VyX1KCo/lX6J1+TK3lJXJahGP2Pyf8lBqlyh32mdRqaqhkLhYwIVDk8UFr7hW68q
+         okFg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=OeKVbl1g;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tVdLMqJJ;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=OeKVbl1g;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.83 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w3A3GBQN010599
-X-Nifty-SrcIP: [209.85.217.179]
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tVdLMqJJ;
+       spf=pass (google.com: domain of ulfalizer@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulfalizer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx48jbhIeZyBgxsxAmwVVtz0bzLLQmXu9xvjryh4scHbF8BNNCmL4QyxC+QRIyCusokOhCplnM9EYcrTy+N06Rpc=
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJCpDtVcFckLzeTg=Du0TWL=KGUH1_k2LSbv8PTONQ2Mw@mail.gmail.com>
-References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
- <1522128575-5326-12-git-send-email-yamada.masahiro@socionext.com>
- <CAGXu5j+F1GXNE9T3vOo+Sq+GfX2Cy5a8tFU--qVBJwaJkt=s6Q@mail.gmail.com>
- <CAK7LNAScTUhpvgnNzuOGZ2ueh-d4R4r=v5wzOGsd+pYn+MF-rQ@mail.gmail.com> <CAGXu5jJCpDtVcFckLzeTg=Du0TWL=KGUH1_k2LSbv8PTONQ2Mw@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 10 Apr 2018 12:15:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATULgbS6mxYJUumnkVZU_1LhQwS0jL=v_=HAjtRiF12yA@mail.gmail.com>
-Message-ID: <CAK7LNATULgbS6mxYJUumnkVZU_1LhQwS0jL=v_=HAjtRiF12yA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/21] stack-protector: test compiler capability in
- Kconfig and drop AUTO mode
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
+In-Reply-To: <1522128575-5326-11-git-send-email-yamada.masahiro@socionext.com>
+References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-11-git-send-email-yamada.masahiro@socionext.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Sun, 1 Apr 2018 08:28:21 +0200
+Message-ID: <CAFkk2KRexq4Up1roVj_KY-ONohYbG2V8K0cm-jO-1ucCCVxv+A@mail.gmail.com>
+Subject: Re: [PATCH v2 10/21] kconfig: add 'success' and 'cc-option' macros
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+	Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067538122129787?=
-X-GMAIL-MSGID: =?utf-8?q?1597327487499265069?=
+X-GMAIL-THRID: =?utf-8?q?1596067537959344954?=
+X-GMAIL-MSGID: =?utf-8?q?1596524176799259389?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-04-10 0:04 GMT+09:00 Kees Cook <keescook@chromium.org>:
-> On Mon, Apr 9, 2018 at 1:54 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-03-28 20:18 GMT+09:00 Kees Cook <keescook@chromium.org>:
->>> On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
->>> <yamada.masahiro@socionext.com> wrote:
->>>> diff --git a/arch/Kconfig b/arch/Kconfig
->>>> index 8e0d665..b42378d 100644
->>>> --- a/arch/Kconfig
->>>> +++ b/arch/Kconfig
->>>> @@ -535,13 +535,13 @@ config HAVE_CC_STACKPROTECTOR
->>>>         bool
->>>>         help
->>>>           An arch should select this symbol if:
->>>> -         - its compiler supports the -fstack-protector option
->>>
->>> Please leave this note: it's still valid. An arch must still have
->>> compiler support for this to be sensible.
->>>
->>
->> No.
->>
->> "its compiler supports the -fstack-protector option"
->> is tested by $(cc-option -fstack-protector)
->>
->> ARCH does not need to know the GCC support level.
+On Tue, Mar 27, 2018 at 7:29 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 'cc-option' will be the most frequently used macro.  It evaluates to 'y'
+> if the given argument is supported by the compiler, or 'n' otherwise.
 >
-> That's not correct: if you enable stack protector for a kernel
-> architecture that doesn't having it enabled, it's unlikely for the
-> resulting kernel to boot. An architecture must handle the changes that
-> the compiler introduces when adding -fstack-protector (for example,
-> having the stack protector canary value defined, having the failure
-> function defined, handling context switches changing canaries, etc).
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 >
-
-
-
-It is still hard to understand this.
-
-
-When we "its compiler supports the -fstack-protector option",
-we have two meanings
-
-[1] the stack protector feature is implemented in GCC source code.
-
-[2] -fstack-protector is recognized as a valid option in the GCC being used.
-    This can be tested by $(cc-option -fstack-protector)
-
-I guess you were talking about [1], where as I [2].
-Is this correct?
-
-
-Does [2] happen only after [1] happens?
-Or, are they independent?
-
-If there is a case where GCC recognizes -fstack-protector,
-but not implemented?
-
-
-For x86, there are cases where the option is recognized but not working.
-That's why we have
-scripts/gcc-x86_{32,64}-has-stack-protector.sh
-
-Generally, if GCC accepts -fstack-protector as a valid option,
-we expect "it is working".
-
-I wonder why we need additional information about the compiler
-even after $(cc-option -fstack-protector) succeeds.
-
-
-This is just a matter of comment.
-
-Can you clarify your problem?
-
-
-
-
-> resulting kernel to boot. An architecture must handle the changes that
-> the compiler introduces when adding -fstack-protector (for example,
-> having the stack protector canary value defined, having the failure
-> function defined, handling context switches changing canaries, etc).
+> Changes in v2:
+>   - Implement 'success' as a macro
+>
+>  init/Kconfig | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 0d6fe20..c456030 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -8,6 +8,12 @@ config DEFCONFIG_LIST
+>         default ARCH_DEFCONFIG
+>         default "arch/$ARCH/defconfig"
+>
+> +# expanded to y if the command exits with 0, n otherwise
+> +macro success $(shell ($(1) && echo y) || echo n)
+> +
+> +# expanded to y if the given compiler flag is supported, n otherwise
+> +macro cc-option $(success $CC -Werror $(1) -c -x c /dev/null -o /dev/null)
+> +
+>  config CONSTRUCTORS
+>         bool
+>         depends on !UML
+> --
+> 2.7.4
 >
 
-All of these are talking about the kernel side implementation.
-So, it is included in the following comment I am still keeping.
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
 
-  - it has implemented a stack canary (e.g. __stack_chk_guard)
+Some other tests (e.g. scripts/*-stack-protector.sh) also pass -S and
+-O0 and stuff to speed things up. Feels like that could lead to
+gotchas though.
 
+-S does help a bit at least:
 
+    $ time gcc -c -x c /dev/null -o /dev/null
+    real 0m0.020s
+    user 0m0.013s
+    sys 0m0.007s
 
--- 
-Best Regards
-Masahiro Yamada
+    $ time gcc -S -x c /dev/null -o /dev/null
+    real 0m0.012s
+    user 0m0.009s
+    sys 0m0.003s
