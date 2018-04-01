@@ -1,55 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754602AbeDAUn4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 16:43:56 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:38010 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754062AbeDAUnx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 16:43:53 -0400
-X-Google-Smtp-Source: AIpwx4/2J8X87XCjx9BpTFLU+Hg9K+vLKK6pEE/B5gRn11e2SIeID9E7Zlsb4rKItOJnDljnBFlY6jwXNpwPS8KCAh8=
+        id S1754620AbeDAUsO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 16:48:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52976 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754292AbeDAUl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 16:41:59 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 17/45] C++: Turn READ_ONCE(),
+ WRITE_ONCE() & co. into inline template functions
+From: David Howells <dhowells@redhat.com>
+To: linux-kernel@vger.kernel.org
+Date: Sun, 01 Apr 2018 21:41:57 +0100
+Message-ID: <152261531782.30503.2451449805347145060.stgit@warthog.procyon.org.uk>
+In-Reply-To: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
+References: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <06c4e61e-399f-a1f8-bd45-a27d0eb4571b@schaufler-ca.com>
-References: <cover.1522577650.git.sargun@sargun.me> <06c4e61e-399f-a1f8-bd45-a27d0eb4571b@schaufler-ca.com>
-From: Sargun Dhillon <sargun@sargun.me>
-Date: Sun, 1 Apr 2018 13:43:11 -0700
-Message-ID: <CAMp4zn8o0giNY2m=5bmfFA5veKZrux=zYzL0Aaqd2xi0PsZ+bA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] security: Split out hook definitions into lsm_hook_types.h
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: LSM <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>, James Morris <jmorris@namei.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 1, 2018 at 10:32 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 4/1/2018 3:17 AM, Sargun Dhillon wrote:
-> > This moves all of the LSM hooks type information into a separate file,
-> > lsm_hook_types.h. This enables us to use this file, along with macros
-> > to generate the security_hook_heads struct, as well as the security
-> > hooks union without having to duplicate definitions.
-> >
-> > This will be useful for further datastructures which want to use
-> > the set of security hooks in a completely unrolled way, along
-> > with the type information there within.
->
-> Can you explain what this patch set is trying to accomplish?
-> I see no value. I see massive complexity. Why is this better
-> than what is there now?
->
+Turn READ_ONCE(), WRITE_ONCE() and similar into inline template functions.
+This allows the source to be simplified since there doesn't need to be
+magic casting and switch-statements inside macroisation.
 
-1) Reduce the total amount of code
-2) In the process of implementing the loadable hooks stuff, I wanted
-to add a few more unrolled datastructures, specifically around static
-keys, and I realized I would have to write an entirely new
-datastructure like the security heads. To me, rather than having to
-touch 3 different parts of code in order to change something, it seems
-nice to keep it centralized. Same with RCU.
-3) Rather than call_int_hook, and call_void_hook, we could generate an
-actual function definitions. I think that will be a bit cleaner, esp.
-in the context of the 2nd set of hook patches.
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ include/linux/compiler.h |   93 ++++++++++++++--------------------------------
+ 1 file changed, 29 insertions(+), 64 deletions(-)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ab4711c63601..f9be82b93e20 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -3,6 +3,8 @@
+ #define __LINUX_COMPILER_H
+ 
+ #include <linux/compiler_types.h>
++#include <linux/kasan-checks.h>
++#include <asm/barrier.h>
+ 
+ #ifndef __ASSEMBLY__
+ 
+@@ -168,26 +170,6 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 
+ #include <uapi/linux/types.h>
+ 
+-#define __READ_ONCE_SIZE						\
+-({									\
+-	switch (size) {							\
+-	case 1: *(__u8 *)res = *(volatile __u8 *)p; break;		\
+-	case 2: *(__u16 *)res = *(volatile __u16 *)p; break;		\
+-	case 4: *(__u32 *)res = *(volatile __u32 *)p; break;		\
+-	case 8: *(__u64 *)res = *(volatile __u64 *)p; break;		\
+-	default:							\
+-		barrier();						\
+-		__builtin_memcpy((void *)res, (const void *)p, size);	\
+-		barrier();						\
+-	}								\
+-})
+-
+-static __always_inline
+-void __read_once_size(const volatile void *p, void *res, int size)
+-{
+-	__READ_ONCE_SIZE;
+-}
+-
+ #ifdef CONFIG_KASAN
+ /*
+  * We can't declare function 'inline' because __no_sanitize_address confilcts
+@@ -200,26 +182,6 @@ void __read_once_size(const volatile void *p, void *res, int size)
+ # define __no_kasan_or_inline __always_inline
+ #endif
+ 
+-static __no_kasan_or_inline
+-void __read_once_size_nocheck(const volatile void *p, void *res, int size)
+-{
+-	__READ_ONCE_SIZE;
+-}
+-
+-static __always_inline void __write_once_size(volatile void *p, void *res, int size)
+-{
+-	switch (size) {
+-	case 1: *(volatile __u8 *)p = *(__u8 *)res; break;
+-	case 2: *(volatile __u16 *)p = *(__u16 *)res; break;
+-	case 4: *(volatile __u32 *)p = *(__u32 *)res; break;
+-	case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
+-	default:
+-		barrier();
+-		__builtin_memcpy((void *)p, (const void *)res, size);
+-		barrier();
+-	}
+-}
+-
+ /*
+  * Prevent the compiler from merging or refetching reads or writes. The
+  * compiler is also forbidden from reordering successive instances of
+@@ -242,27 +204,30 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+  * with an explicit memory barrier or atomic instruction that provides the
+  * required ordering.
+  */
+-#include <asm/barrier.h>
+-#include <linux/kasan-checks.h>
++template <typename P>
++static inline P READ_ONCE(P &ptr)
++{
++	barrier();
++	P val = *(volatile P *)&ptr;
++	smp_read_barrier_depends(); /* Enforce dependency ordering from x */
++	return val;
++}
+ 
+-#define __READ_ONCE(x, check)						\
+-({									\
+-	union { typeof(x) __val; char __c[1]; } __u;			\
+-	if (check)							\
+-		__read_once_size(&(x), __u.__c, sizeof(x));		\
+-	else								\
+-		__read_once_size_nocheck(&(x), __u.__c, sizeof(x));	\
+-	smp_read_barrier_depends(); /* Enforce dependency ordering from x */ \
+-	__u.__val;							\
+-})
+-#define READ_ONCE(x) __READ_ONCE(x, 1)
++template <typename P>
++static __no_kasan_or_inline P READ_ONCE_NOCHECK(P &ptr)
++{
++	barrier();
++	P val = *(volatile P *)&ptr;
++	smp_read_barrier_depends(); /* Enforce dependency ordering from x */
++	return val;
++}
+ 
+ /*
+- * Use READ_ONCE_NOCHECK() instead of READ_ONCE() if you need
+- * to hide memory access from KASAN.
++ * This function is not 'inline' because __no_sanitize_address confilcts
++ * with inlining. Attempt to inline it may cause a build failure.
++ * 	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
++ * '__maybe_unused' allows us to avoid defined-but-not-used warnings.
+  */
+-#define READ_ONCE_NOCHECK(x) __READ_ONCE(x, 0)
+-
+ static __no_kasan_or_inline
+ unsigned long read_word_at_a_time(const void *addr)
+ {
+@@ -270,13 +235,13 @@ unsigned long read_word_at_a_time(const void *addr)
+ 	return *(unsigned long *)addr;
+ }
+ 
+-#define WRITE_ONCE(x, val) \
+-({							\
+-	union { typeof(x) __val; char __c[1]; } __u =	\
+-		{ .__val = (__force typeof(x)) (val) }; \
+-	__write_once_size(&(x), __u.__c, sizeof(x));	\
+-	__u.__val;					\
+-})
++template <typename P, typename T>
++static inline void WRITE_ONCE(P &ptr, T val)
++{
++	barrier();
++	*(volatile P *)&ptr = val;
++	barrier();
++}
+ 
+ #endif /* __KERNEL__ */
+ 
