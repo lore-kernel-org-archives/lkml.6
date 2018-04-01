@@ -1,102 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753458AbeDABmO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 21:42:14 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47370 "EHLO
+        id S1753438AbeDABmN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 21:42:13 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47372 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753037AbeDABlI (ORCPT
+        with ESMTP id S1753035AbeDABlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 31 Mar 2018 21:41:08 -0400
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <98a06aa971599e04715a718abdd83eb5742a36da.1522546571.git.fthain@telegraphics.com.au>
+Message-Id: <e5bd38c0bd81236e11fd391ec3339d3bdf3c29d5.1522546571.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1522546571.git.fthain@telegraphics.com.au>
 References: <cover.1522546571.git.fthain@telegraphics.com.au>
 From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 05/12] block/swim: Use HEDSEL bit in ISM mode register
+Subject: [PATCH 06/12] block/swim: Fix array bounds check
 Date: Sat, 31 Mar 2018 21:41:05 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The floppy drive 'HEDSEL' line is normally connected to VIA1 but some
-models don't do this. According to 'The Guide to Macintosh Family
-Hardware', on the Mac IIfx the SWIM device has to generate this
-signal.
+In the floppy_find() function in swim.c is a call to
+get_disk(swd->unit[drive].disk). The actual parameter to this call
+can be a NULL pointer when drive == swd->floppy_count. This causes
+an oops in get_disk().
 
+Data read fault at 0x00000198 in Super Data (pc=0x1be5b6)
+BAD KERNEL BUSERR
+Oops: 00000000
+Modules linked in: swim_mod ipv6 mac8390
+PC: [<001be5b6>] get_disk+0xc/0x76
+SR: 2004  SP: 9a078bc1  a2: 0213ed90
+d0: 00000000    d1: 00000000    d2: 00000000    d3: 000000ff
+d4: 00000002    d5: 02983590    a0: 02332e00    a1: 022dfd64
+Process dd (pid: 285, task=020ab25b)
+Frame format=B ssw=074d isc=4a88 isb=6732 daddr=00000198 dobuf=00000000
+baddr=001be5bc dibuf=bfffffff ver=f
+Stack from 022dfca4:
+        00000000 0203fc00 0213ed90 022dfcc0 02982936 00000000 00200000 022dfd08
+        0020f85a 00200000 022dfd64 02332e00 004040fc 00000014 001be77e 022dfd64
+        00334e4a 001be3f8 0800001d 022dfd64 01c04b60 01c04b70 022aba80 029828f8
+        02332e00 022dfd2c 001be7ac 0203fc00 00200000 022dfd64 02103a00 01c04b60
+        01c04b60 0200e400 022dfd68 000e191a 00200000 022dfd64 02103a00 0800001d
+        00000000 00000003 000b89de 00500000 02103a00 01c04b60 02103a08 01c04c2e
+Call Trace: [<02982936>] floppy_find+0x3e/0x4a [swim_mod]
+ [<00200000>] uart_remove_one_port+0x1a2/0x260
+ [<0020f85a>] kobj_lookup+0xde/0x132
+ [<00200000>] uart_remove_one_port+0x1a2/0x260
+ [<001be77e>] get_gendisk+0x0/0x130
+ [<00334e4a>] mutex_lock+0x0/0x2e
+ [<001be3f8>] disk_block_events+0x0/0x6c
+ [<029828f8>] floppy_find+0x0/0x4a [swim_mod]
+ [<001be7ac>] get_gendisk+0x2e/0x130
+ [<00200000>] uart_remove_one_port+0x1a2/0x260
+ [<000e191a>] __blkdev_get+0x32/0x45a
+ [<00200000>] uart_remove_one_port+0x1a2/0x260
+ [<000b89de>] complete_walk+0x0/0x8a
+ [<000e1e22>] blkdev_get+0xe0/0x29a
+ [<000e1fdc>] blkdev_open+0x0/0xb0
+ [<000b89de>] complete_walk+0x0/0x8a
+ [<000e1fdc>] blkdev_open+0x0/0xb0
+ [<000e01cc>] bd_acquire+0x74/0x8a
+ [<000e205c>] blkdev_open+0x80/0xb0
+ [<000e1fdc>] blkdev_open+0x0/0xb0
+ [<000abf24>] do_dentry_open+0x1a4/0x322
+ [<00020000>] __do_proc_douintvec+0x22/0x27e
+ [<000b89de>] complete_walk+0x0/0x8a
+ [<000baa62>] link_path_walk+0x0/0x48e
+ [<000ba3f8>] inode_permission+0x20/0x54
+ [<000ac0e4>] vfs_open+0x42/0x78
+ [<000bc372>] path_openat+0x2b2/0xeaa
+ [<000bc0c0>] path_openat+0x0/0xeaa
+ [<0004463e>] __irq_wake_thread+0x0/0x4e
+ [<0003a45a>] task_tick_fair+0x18/0xc8
+ [<000bd00a>] do_filp_open+0xa0/0xea
+ [<000abae0>] do_sys_open+0x11a/0x1ee
+ [<00020000>] __do_proc_douintvec+0x22/0x27e
+ [<000abbf4>] SyS_open+0x1e/0x22
+ [<00020000>] __do_proc_douintvec+0x22/0x27e
+ [<00002b40>] syscall+0x8/0xc
+ [<00020000>] __do_proc_douintvec+0x22/0x27e
+ [<0000c00b>] dyadic+0x1/0x28
+Code: 4e5e 4e75 4e56 fffc 2f0b 2f02 266e 0008 <206b> 0198 4a88 6732 2428 002c 661e 486b 0058 4eb9 0032 0b96 588f 4a88 672c 2008
+Disabling lock debugging due to kernel taint
+
+Fix the array index bounds check to avoid this.
+
+Fixes: 8852ecd97488 ("[PATCH] m68k: mac - Add SWIM floppy support")
 Cc: Laurent Vivier <lvivier@redhat.com>
 Cc: Jens Axboe <axboe@kernel.dk>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- arch/m68k/mac/iop.c  |  1 +
- drivers/block/swim.c | 20 ++++++++++++++++----
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ drivers/block/swim.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/m68k/mac/iop.c b/arch/m68k/mac/iop.c
-index 7864dcca5891..23cf89da0c2d 100644
---- a/arch/m68k/mac/iop.c
-+++ b/arch/m68k/mac/iop.c
-@@ -130,6 +130,7 @@
- /* Non-zero if the IOPs are present */
- 
- int iop_scc_present, iop_ism_present;
-+EXPORT_SYMBOL(iop_ism_present);
- 
- /* structure for tracking channel listeners */
- 
 diff --git a/drivers/block/swim.c b/drivers/block/swim.c
-index ef4361dc5b26..3e3e72b141d3 100644
+index 3e3e72b141d3..87c70fcce875 100644
 --- a/drivers/block/swim.c
 +++ b/drivers/block/swim.c
-@@ -27,6 +27,7 @@
- #include <linux/platform_device.h>
+@@ -807,7 +807,7 @@ static struct kobject *floppy_find(dev_t dev, int *part, void *data)
+ 	struct swim_priv *swd = data;
+ 	int drive = (*part & 3);
  
- #include <asm/mac_via.h>
-+#include <asm/mac_iop.h>
+-	if (drive > swd->floppy_count)
++	if (drive >= swd->floppy_count)
+ 		return NULL;
  
- #define CARDNAME "swim"
- 
-@@ -135,7 +136,8 @@ struct iwm {
- 
- /* bits in setup register */
- 
--#define S_INV_WDATA	0x01
-+#define S_Q3_OUTPUT	0x01 /* SWIM */
-+#define S_INV_WDATA	0x01 /* SWIM 2 */
- #define S_3_5_SELECT	0x02
- #define S_GCR		0x04
- #define S_FCLK_DIV2	0x08
-@@ -273,8 +275,13 @@ static inline void swim_select(struct swim __iomem *base, int sel)
- {
- 	swim_write(base, phase, RELAX);
- 
--	via1_set_head(sel & 0x100);
--
-+	if (iop_ism_present) {
-+		if (sel & 0x100)
-+			swim_write(base, mode1, HEDSEL);
-+		else
-+			swim_write(base, mode0, HEDSEL);
-+	} else
-+		via1_set_head(sel & 0x100);
- 	swim_write(base, phase, sel & CA_MASK);
- }
- 
-@@ -644,7 +651,12 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
- 	else
- 		fs->ref_count++;
- 
--	swim_write(base, setup, S_IBM_DRIVE  | S_FCLK_DIV2);
-+	if (iop_ism_present)
-+		swim_write(base, setup, S_IBM_DRIVE | S_FCLK_DIV2 |
-+			   S_Q3_OUTPUT);
-+	else
-+		swim_write(base, setup, S_IBM_DRIVE | S_FCLK_DIV2);
-+
- 	udelay(10);
- 	swim_drive(base, INTERNAL_DRIVE);
- 	swim_motor(base, ON);
+ 	*part = 0;
 -- 
 2.16.1
