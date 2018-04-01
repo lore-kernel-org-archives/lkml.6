@@ -1,44 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753335AbeDAJTF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 05:19:05 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:60334 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753259AbeDAJTE (ORCPT
+        id S1753388AbeDAKRc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 06:17:32 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33151 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753338AbeDAKRa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 05:19:04 -0400
-From: Richard Weinberger <richard@nod.at>
-To: Adam Borowski <kilobyte@angband.pl>
-Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        pantelis.antoniou@konsulko.com, mark.rutland@arm.com, pmladek@suse.com,
-        andriy.shevchenko@linux.intel.com, joe@perches.com, corbet@lwn.net,
-        me@tobin.cc, sergey.senozhatsky@gmail.com
-Subject: Re: [PATCH 1/2] lib: vsprintf: Implement %pCOW
-Date: Sun, 01 Apr 2018 11:18:56 +0200
-Message-ID: <4175240.C9idGaHF5e@blindfold>
-In-Reply-To: <20180401091549.lvtqox3adp73mgwk@angband.pl>
-References: <20180401085622.7754-1-richard@nod.at> <20180401085622.7754-2-richard@nod.at> <20180401091549.lvtqox3adp73mgwk@angband.pl>
+        Sun, 1 Apr 2018 06:17:30 -0400
+X-Google-Smtp-Source: AIpwx49fNjTzpVgP7N+JBKsiHSzF85jOV5QyreLhAETBzLy4pdp6t7sdsGcFKBxruDGu3Hq9ZPKLKA==
+Date: Sun, 1 Apr 2018 10:17:27 +0000
+From: Sargun Dhillon <sargun@sargun.me>
+To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: penguin-kernel@i-love.sakura.ne.jp, keescook@chromium.org,
+        igor.stoppa@huawei.com, casey@schaufler-ca.com, jmorris@namei.org
+Subject: [PATCH 0/4] security: Split out hook definitions into
+ lsm_hook_types.h
+Message-ID: <cover.1522577650.git.sargun@sargun.me>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Sonntag, 1. April 2018, 11:15:49 CEST schrieb Adam Borowski:
-> On Sun, Apr 01, 2018 at 10:56:21AM +0200, Richard Weinberger wrote:
-> > +		.cow_lines = {
-> > +			"\\   ^__^",
-> > +			" \\  (oo)\\_______",
-> > +			"    (__)\\       )\\/\\",
-> > +			"        ||----w |",
-> > +			"        ||     ||",
-> 
-> Userspace cowsay(6) knows of different cows.  What about using those as a
-> visual indication of message level?
+This moves all of the LSM hooks type information into a separate file,
+lsm_hook_types.h. This enables us to use this file, along with macros
+to generate the security_hook_heads struct, as well as the security
+hooks union without having to duplicate definitions.
 
-Yeah, this will be implemented for April 1st 2019 if we get funding.
-I think of a eBPF cow engine such that usespace can load different cow types.
+This will be useful for further datastructures which want to use
+the set of security hooks in a completely unrolled way, along
+with the type information there within.
 
-Thanks,
-//richard
+A couple uses are already taken into account:
+ * initialization of security_hook_heads
+ * generation of the security_hook_heads datastructure
+
+There are a few things we can follow up with, including:
+ * generation of security.h
+ * generation of datastructures such as static_keys for performance
+   enhancement
+
+Sargun Dhillon (4):
+  security: Move hook definitions from lsm_hooks.h to lsm_hook_types.h
+  security: Refactor security hooks into structured hooks
+  security: Make security_hook_heads use definitions in lsm_hook_types.h
+  security: generated security hook initialization based on
+    lsm_hook_types.h
+
+ include/linux/lsm_hook_types.h                | 1669 +++++++++++++++++++++
+ include/linux/lsm_hooks.h                     | 1934 +------------------------
+ scripts/gcc-plugins/randomize_layout_plugin.c |    2 -
+ security/security.c                           |   17 +-
+ 4 files changed, 1691 insertions(+), 1931 deletions(-)
+ create mode 100644 include/linux/lsm_hook_types.h
+
+-- 
+2.14.1
