@@ -1,61 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751272AbeDAFJt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 01:09:49 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50904 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbeDAFJs (ORCPT
+        id S1750998AbeDAFQW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 01:16:22 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35798 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750710AbeDAFQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 01:09:48 -0400
-From: rao.shoaib@oracle.com
-To: linux-kernel@vger.kernel.org
-Cc: paulmck@linux.vnet.ibm.com, joe@perches.com, willy@infradead.org,
-        brouer@redhat.com, linux-mm@kvack.org,
-        Rao Shoaib <rao.shoaib@oracle.com>
-Subject: [PATCH 1/1] MACRO_ARG_REUSE in checkpatch.pl is confused about * in typeof
-Date: Sat, 31 Mar 2018 22:04:05 -0700
-Message-Id: <1522559045-18105-1-git-send-email-rao.shoaib@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8849 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=937
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804010054
+        Sun, 1 Apr 2018 01:16:20 -0400
+X-Google-Smtp-Source: AIpwx4+TS+4saVcBi/me7xSWqxKRXat8U7TyFne783OfdW3RDea1zSiGbMnoY7CxA5Ut3fhoSqZSe1/4JN+Q7re/vJM=
+MIME-Version: 1.0
+In-Reply-To: <20180401024015.GA13870@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20180401024015.GA13870@ircssh-2.c.rugged-nimbus-611.internal>
+From: Sargun Dhillon <sargun@sargun.me>
+Date: Sat, 31 Mar 2018 22:15:39 -0700
+Message-ID: <CAMp4zn8EkqQZDc1UW9ux0za+99DHpKAXVx72CMzuwApVFZ_=SQ@mail.gmail.com>
+Subject: Re: [PATCH] security: Split out hook definitions into lsm_hook_types.h
+To: LSM <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>, plautrba@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rao Shoaib <rao.shoaib@oracle.com>
+On Sat, Mar 31, 2018 at 7:40 PM, Sargun Dhillon <sargun@sargun.me> wrote:
+> This moves all of the LSM hooks type information into a separate file,
+> lsm_hook_types.h. This enables us to use this file, along with macros
+> to generate the security_hook_heads struct, as well as the security
+> hooks union without having to duplicate definitions.
+>
+> Since the fall-back hooks still require some logic (dispatching
+> to commoncap, nulling out some buffer, etc..), they still must
+> be created manually.
+>
+> This will be useful for further datastructures which want to use
+> the set of security hooks in a completely unrolled way, along
+> with the type information there within.
+>
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> ---
+>  include/linux/lsm_hook_types.h | 1695 ++++++++++++++++++++++++++++++++++
+>  include/linux/lsm_hooks.h      | 1946 +---------------------------------------
+>  include/linux/security.h       |  416 ++-------
+>  kernel/time/time.c             |    6 +-
+>  security/security.c            |    2 +-
+>  5 files changed, 1783 insertions(+), 2282 deletions(-)
+>  create mode 100644 include/linux/lsm_hook_types.h
+>
+>
+Upon further thought, this patch is somewhat unwieldy. I intent to
+split it up. I plan to split it into the following:
+1. Fixing the settimeofday64 weirdness
+2. 1:1 move from lsm_hooks.h to lsm_hook_types.h of the hook
+definitions (union + comments)
+3. Rewiring lsm_hooks.h to use macros only
+4. Rewiring security.h to use macros only
 
-Example:
-
-CHECK: Macro argument reuse 'ptr' - possible side-effects?
-+#define kfree_rcu(ptr, rcu_name)       \
-+       do {                            \
-+               unsigned long __off = offsetof(typeof(*(ptr)), rcu_name); \
-+               struct rcu_head *__rptr = (void *)ptr + __off; \
-+               __kfree_rcu(__rptr, __off); \
-+       } while (0)
-
-Fix supplied by Joe Perches.
-
-Signed-off-by: Rao Shoaib <rao.shoaib@oracle.com>
----
- scripts/checkpatch.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 3d40403..def6bb2 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -4998,7 +4998,7 @@ sub process {
- 			        next if ($arg =~ /\.\.\./);
- 			        next if ($arg =~ /^type$/i);
- 				my $tmp_stmt = $define_stmt;
--				$tmp_stmt =~ s/\b(typeof|__typeof__|__builtin\w+|typecheck\s*\(\s*$Type\s*,|\#+)\s*\(*\s*$arg\s*\)*\b//g;
-+				$tmp_stmt =~ s/\b(?:typeof|__typeof__|__builtin\w+|typecheck\s*\(\s*$Type\s*,|\#+)\s*\(*(?:\s*\*\s*)*\s*\(*\s*$arg\s*\)*\b//g;
- 				$tmp_stmt =~ s/\#+\s*$arg\b//g;
- 				$tmp_stmt =~ s/\b$arg\s*\#\#//g;
- 				my $use_cnt = $tmp_stmt =~ s/\b$arg\b//g;
--- 
-2.7.4
+Does that sound reasonable?
