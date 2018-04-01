@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754399AbeDAUm0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 16:42:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38018 "EHLO mx1.redhat.com"
+        id S1754416AbeDAUmc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 16:42:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52996 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754382AbeDAUmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 16:42:23 -0400
+        id S1754401AbeDAUm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 16:42:29 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 21/45] C++: Set the type of atomic64_t to s64
+Subject: [PATCH 22/45] C++: Define apic_intr_mode after the enum definition,
+ not before
 From: David Howells <dhowells@redhat.com>
 To: linux-kernel@vger.kernel.org
-Date: Sun, 01 Apr 2018 21:42:21 +0100
-Message-ID: <152261534183.30503.13961922233693133727.stgit@warthog.procyon.org.uk>
+Date: Sun, 01 Apr 2018 21:42:27 +0100
+Message-ID: <152261534776.30503.8538178003485154810.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
 References: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -25,61 +26,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Always declare the type of atomic64_t to be s64 rather than conditionally
-defining it as long in generic code.
+Define apic_intr_mode after the enum definition, not before, otherwise an
+error results.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- arch/x86/include/asm/atomic64_64.h |   12 ++++++------
- include/linux/types.h              |    4 +---
- 2 files changed, 7 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/apic.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
-index 738495caf05f..895292a50c77 100644
---- a/arch/x86/include/asm/atomic64_64.h
-+++ b/arch/x86/include/asm/atomic64_64.h
-@@ -172,20 +172,20 @@ static inline long atomic64_fetch_sub(long i, atomic64_t *v)
- #define atomic64_inc_return(v)  (atomic64_add_return(1, (v)))
- #define atomic64_dec_return(v)  (atomic64_sub_return(1, (v)))
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index 98722773391d..c8eef5e6c46c 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -53,7 +53,6 @@ extern int local_apic_timer_c2_ok;
+ extern int disable_apic;
+ extern unsigned int lapic_timer_frequency;
  
--static inline long atomic64_cmpxchg(atomic64_t *v, long old, long new)
-+static inline long atomic64_cmpxchg(atomic64_t *v, s64 old, s64 new_val)
- {
--	return cmpxchg(&v->counter, old, new);
-+	return cmpxchg(&v->counter, old, new_val);
- }
+-extern enum apic_intr_mode_id apic_intr_mode;
+ enum apic_intr_mode_id {
+ 	APIC_PIC,
+ 	APIC_VIRTUAL_WIRE,
+@@ -61,6 +60,7 @@ enum apic_intr_mode_id {
+ 	APIC_SYMMETRIC_IO,
+ 	APIC_SYMMETRIC_IO_NO_ROUTING
+ };
++extern enum apic_intr_mode_id apic_intr_mode;
  
- #define atomic64_try_cmpxchg atomic64_try_cmpxchg
--static __always_inline bool atomic64_try_cmpxchg(atomic64_t *v, s64 *old, long new)
-+static __always_inline bool atomic64_try_cmpxchg(atomic64_t *v, s64 *old, s64 new_val)
- {
--	return try_cmpxchg(&v->counter, old, new);
-+	return try_cmpxchg(&v->counter, *old, new_val);
- }
- 
--static inline long atomic64_xchg(atomic64_t *v, long new)
-+static inline long atomic64_xchg(atomic64_t *v, long new_val)
- {
--	return xchg(&v->counter, new);
-+	return xchg(&v->counter, new_val);
- }
- 
- /**
-diff --git a/include/linux/types.h b/include/linux/types.h
-index 68323cb03910..d233b12c7ebe 100644
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -179,11 +179,9 @@ typedef struct {
- 	int counter;
- } atomic_t;
- 
--#ifdef CONFIG_64BIT
- typedef struct {
--	long counter;
-+	s64 counter;
- } atomic64_t;
--#endif
- 
- struct list_head {
- 	struct list_head *next, *prev;
+ #ifdef CONFIG_SMP
+ extern void __inquire_remote_apic(int apicid);
