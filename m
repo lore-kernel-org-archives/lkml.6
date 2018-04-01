@@ -1,61 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753769AbeDAPDz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 11:03:55 -0400
-Received: from smtprelay0116.hostedemail.com ([216.40.44.116]:45514 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753555AbeDAPAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 11:00:16 -0400
-X-Session-Marker: 7368656140736865616C6576792E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::::,RULES_HIT:41:355:379:541:800:960:965:966:968:973:988:989:1260:1345:1359:1437:1534:1540:1711:1714:1730:1747:1777:1792:1978:1981:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3351:3865:3867:3868:3870:3871:4385:4390:4395:5007:6261:9592:10004:10848:11026:11473:11658:11914:12438:12555:12895:13069:13161:13229:13311:13357:14096:14181:14384:14394:14721:21080:21627:30054,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: match76_76a2a5aeb6030
-X-Filterd-Recvd-Size: 1707
-From: Shea Levy <shea@shealevy.com>
-To: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Shea Levy <shea@shealevy.com>, Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-c6x-dev@linux-c6x.org
-Subject: [PATCH v6 05/16] c6x: Switch to generic free_initrd_mem.
-Date: Sun,  1 Apr 2018 10:59:19 -0400
-Message-Id: <20180401145931.7932-5-shea@shealevy.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180401145931.7932-1-shea@shealevy.com>
-References: <20180329113207.30674-1-shea@shealevy.com>
- <20180401145931.7932-1-shea@shealevy.com>
+        id S1753625AbeDAPgh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 11:36:37 -0400
+Received: from muru.com ([72.249.23.125]:34776 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753582AbeDAPgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 11:36:35 -0400
+Date: Sun, 1 Apr 2018 08:36:31 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
+Message-ID: <20180401153631.GA5700@atomide.com>
+References: <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180331145531.GA10404@amd>
+ <20180331181935.GX5700@atomide.com>
+ <20180331191939.GA8999@amd>
+ <20180331194616.GA19388@amd>
+ <20180331195524.GB19388@amd>
+ <20180331234314.GZ5700@atomide.com>
+ <20180401131852.GA11086@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180401131852.GA11086@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first patch in this series added a weakly-defined generic
-implementation, which is functionally identical to the
-architecture-specific one removed here.
+* Pavel Machek <pavel@ucw.cz> [180401 13:20]:
+> On Sat 2018-03-31 16:43:14, Tony Lindgren wrote:
+> > * Pavel Machek <pavel@ucw.cz> [180331 19:56]:
+> > > On Sat 2018-03-31 21:46:16, Pavel Machek wrote:
+> > > > On Sat 2018-03-31 21:19:39, Pavel Machek wrote:
+> > > > > On Sat 2018-03-31 11:19:35, Tony Lindgren wrote:
+> > > > > > Cool :) Microphone still does not work for me.. I tried tweaking
+> > > > > > the alsamixer settings but no mic. This is with cold boot with
+> > > > > > droid4-kexecboot if that might make a difference, we may have
+> > > > > > some register uninitialized somewhere. Any ideas?
+> > > > > 
+> > > > > Ok, I was focusing on the speaker side.
+> > > > > 
+> > > > > alsamixer, tab to go to capture settings, set it to 37 37 Mic2 Mic1
+> > > > > should work, according to my notes, but not recently tested and not
+> > > > > tested against real human.
+> > > > > 
+> > > > > I'll attempt to test it, but something in my userland shuts down
+> > > > > system just after boot 60% of time, which is rather annoying.
+> > > > 
+> > > > Hmm. So I tried again, and setting Mic1 and back in the capture
+> > > > settings crashed the modem. Bang, disconnected from the USB.
+> > > 
+> > > Next try, and it worked this time.
+> > > 
+> > > _Before the call_, set mode to Normal and then Call. Then go to
+> > > capture, and set 100 100 Mic2 Mic1. Then place a call,
+> > > 
+> > > AT+CFUN=1
+> > > OK
+> > > ATD6;
+> > 
+> > No luck with microphone here :( Using ttyUSB4, AT+CFUN=1
+> > works, but ATD command on it just hangs the USB interface
+> > and I have to reload phy-mapphone-mdm6600 to reset the
+> > modem.
+> 
+> Test call with real human worked (thanks to Rolf K.), I could hear him
+> well but he reported call was very quiet. And that was with capture
+> settings at 100%.
 
-Series boot-tested on RISC-V (which now uses the generic
-implementation) and x86_64 (which doesn't).
+Maybe the volume also needs to be controlled at mdm6600 end.
+I'm seeing some AT+CLVL=n with n being between [0-7] calls on
+DLCI2 in my Android logcat logs.
 
-Signed-off-by: Shea Levy <shea@shealevy.com>
----
- arch/c6x/mm/init.c | 7 -------
- 1 file changed, 7 deletions(-)
+> If you had a register dump from android with mics working, preferably
+> not in speaker mode, perhaps I could try to figure it out?
 
-diff --git a/arch/c6x/mm/init.c b/arch/c6x/mm/init.c
-index 4cc72b0d1c1d..a11cb657182a 100644
---- a/arch/c6x/mm/init.c
-+++ b/arch/c6x/mm/init.c
-@@ -66,13 +66,6 @@ void __init mem_init(void)
- 	mem_init_print_info(NULL);
- }
- 
--#ifdef CONFIG_BLK_DEV_INITRD
--void __init free_initrd_mem(unsigned long start, unsigned long end)
--{
--	free_reserved_area((void *)start, (void *)end, -1, "initrd");
--}
--#endif
--
- void __init free_initmem(void)
- {
- 	free_initmem_default(-1);
--- 
-2.16.2
+OK here are four diffs against starting the phone app for regular
+call, speaker call, and muted versions of them:
+
+http://muru.com/linux/d4/cpcap/
+
+Also, I'm connected over cdma right now, not 3g, but I doubt
+that makes a difference for the microphone.
+
+Regards,
+
+Tony
