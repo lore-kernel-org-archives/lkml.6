@@ -1,80 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753982AbeDAWUH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 18:20:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40352 "EHLO
+        id S1754035AbeDAWUf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 18:20:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40382 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753943AbeDAWUG (ORCPT
+        with ESMTP id S1753943AbeDAWUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 18:20:06 -0400
-Date: Sun, 1 Apr 2018 15:20:03 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-        syzbot <syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, linux-nfs@vger.kernel.org
-Subject: Re: BUG: corrupted list in __dentry_kill
-Message-ID: <20180401222003.GU13332@bombadil.infradead.org>
-References: <001a11447acaa9eec40568bd5438@google.com>
- <20180401033519.GZ30522@ZenIV.linux.org.uk>
- <20180401200531.GA30522@ZenIV.linux.org.uk>
- <20180401210508.GA743@sol.localdomain>
- <20180401214854.GB743@sol.localdomain>
+        Sun, 1 Apr 2018 18:20:34 -0400
+Subject: Re: [PATCH 00/45] C++: Convert the kernel to C++
+To: David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
+References: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <dad672eb-a343-b899-6936-5d18a62e6beb@infradead.org>
+Date: Sun, 1 Apr 2018 15:20:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180401214854.GB743@sol.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 01, 2018 at 02:48:54PM -0700, Eric Biggers wrote:
-> list_del corruption. prev->next should be 000000002c929de0, but was 0000000065421b2c
+On 04/01/2018 01:40 PM, David Howells wrote:
+> 
+> Here are a series of patches to start converting the kernel to C++.  It
+> requires g++ v8.
+> 
+...
+> 
+> What I would disallow:
+> 
+>  (1) new and delete.  There's no way to pass GFP_* flags in.
+> 
+>  (2) Constructors and destructors.  Nests of implicit code makes the code less
+>      obvious, and the replacement of static initialisation with constructor
+>      calls would make the code size larger.
+> 
+>  (3) Exceptions and RTTI.  RTTI would bulk the kernel up too much and
+>      exception handling is limited without it, and since destructors are not
+>      allowed, you still have to manually clean up after an error.
+> 
+>  (4) Operator overloading (except in special cases).
+> 
+>  (5) Function overloading (except in special inline cases).
+> 
+>  (6) STL (though some type trait bits are needed to replace __builtins that
+>      don't exist in g++).
+> 
+>  (7) 'class', 'private', 'namespace'.
 
-Shuold probably try applying this; we might get a better clue about
-the corruption.
+Please fix https://bugzilla.kernel.org/show_bug.cgi?id=191051
+while you are at it.  :)
 
-diff --git a/lib/list_debug.c b/lib/list_debug.c
-index a34db8d27667..5d5424b51b74 100644
---- a/lib/list_debug.c
-+++ b/lib/list_debug.c
-@@ -21,13 +21,13 @@ bool __list_add_valid(struct list_head *new, struct list_head *prev,
- 		      struct list_head *next)
- {
- 	if (CHECK_DATA_CORRUPTION(next->prev != prev,
--			"list_add corruption. next->prev should be prev (%p), but was %p. (next=%p).\n",
-+			"list_add corruption. next->prev should be prev (%px), but was %px. (next=%px).\n",
- 			prev, next->prev, next) ||
- 	    CHECK_DATA_CORRUPTION(prev->next != next,
--			"list_add corruption. prev->next should be next (%p), but was %p. (prev=%p).\n",
-+			"list_add corruption. prev->next should be next (%px), but was %px. (prev=%px).\n",
- 			next, prev->next, prev) ||
- 	    CHECK_DATA_CORRUPTION(new == prev || new == next,
--			"list_add double add: new=%p, prev=%p, next=%p.\n",
-+			"list_add double add: new=%px, prev=%px, next=%px.\n",
- 			new, prev, next))
- 		return false;
- 
-@@ -43,16 +43,16 @@ bool __list_del_entry_valid(struct list_head *entry)
- 	next = entry->next;
- 
- 	if (CHECK_DATA_CORRUPTION(next == LIST_POISON1,
--			"list_del corruption, %p->next is LIST_POISON1 (%p)\n",
-+			"list_del corruption, %px->next is LIST_POISON1 (%px)\n",
- 			entry, LIST_POISON1) ||
- 	    CHECK_DATA_CORRUPTION(prev == LIST_POISON2,
--			"list_del corruption, %p->prev is LIST_POISON2 (%p)\n",
-+			"list_del corruption, %px->prev is LIST_POISON2 (%px)\n",
- 			entry, LIST_POISON2) ||
- 	    CHECK_DATA_CORRUPTION(prev->next != entry,
--			"list_del corruption. prev->next should be %p, but was %p\n",
-+			"list_del corruption. prev->next should be %px, but was %px\n",
- 			entry, prev->next) ||
- 	    CHECK_DATA_CORRUPTION(next->prev != entry,
--			"list_del corruption. next->prev should be %p, but was %p\n",
-+			"list_del corruption. next->prev should be %px, but was %px\n",
- 			entry, next->prev))
- 		return false;
- 
+
+>  (8) 'virtual'.  Don't want virtual base classes, though virtual function
+>      tables might make operations tables more efficient.
+
+
+ta.
+-- 
+~Randy
