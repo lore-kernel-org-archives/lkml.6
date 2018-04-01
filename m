@@ -1,219 +1,155 @@
-Return-Path: <mhkelley58@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522794943; cv=none;
-        d=google.com; s=arc-20160816;
-        b=mtutPd762eRuQBHliRx6+CRxxHd6uJdBbQbAwnwp3K0u23Kyj3HjmVe9psQEg9luAa
-         IkjQ5/D0Z8u4YvbsYVHA6h8ZqfMDMk6TQhNJvhFzg6ji+S67wdKo1US6YWzxWTsaD1W6
-         k0cTpWlO9UhikkW2xBCxuvcoMZHjH9KfLCTO5SZj6V7DrRc6UC9M0BpYOndrKX46DmdD
-         dnAaCJcVXtMqtFzp66isykH2/rwY4gcC1HLvaWU6vMpxrjBVHgC/AagVAZAecE8SO9Ta
-         hFE7POoXdHOedCmlTZLMptwbOOlE2mV3yDNRXfMZDWrCEES/po77/L0PQ42VQdt6sOxu
-         VhkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=reply-to:message-id:date:subject:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=4PKMEQz20D8qkRLYXfPWNOhbhYVuu8B15//btr01nmM=;
-        b=ngC38qGsYXpHg9HPQ8Fo2A0Wd6eP+FDX+cX3stLYJz7htToDk41Rjm8WUcbMC4qtNm
-         t18O7QsB13szXAu2F+CHwTgREWwt4QsBdU4nP9jU1zxDYjfH8zWI4cvZ6IqzlZBDtMrj
-         QYifLB16HAugeJE5D834gm3tMDjMgKr4/kp/eCsqfQqNfUEgQixAcYsZwZDGRUDJZxFn
-         NV+NbrKe6YoG7IIvZ4i2PC0svb14RrJ9ba6nQhUH4aGdE7hlH1oKQWgFKuNujqdlDoz0
-         NmlIExnv3WxipVmO1XQr6e8812JQ4oXqMk2QcVhiwD5NYuH37BEmkRHrpp8ZOR2lFBmh
-         hz9A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pf8N/ydO;
-       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pf8N/ydO;
-       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx49enyAwmuhAVTFxUO9bDEnSCNHrAF/FzPftIGZoaKdjLrCPUnmCH97Y3zUtyHKDjqA2cAjzBw==
-From: mhkelley58@gmail.com
-X-Google-Original-From: mikelley@microsoft.com
-To: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	devel@linuxdriverproject.org,
-	olaf@aepfle.de,
-	apw@canonical.com,
-	vkuznets@redhat.com,
-	jasowang@redhat.com,
-	leann.ogasawara@canonical.com,
-	marcelo.cerri@canonical.com,
-	sthemmin@microsoft.com,
-	kys@microsoft.com
-Subject: [PATCH char-misc 1/1] Drivers: hv: vmbus: Add comments on ring buffer signaling
-Date: Tue,  3 Apr 2018 15:35:10 -0700
-Message-Id: <1522794910-1675-1-git-send-email-mikelley@microsoft.com>
-X-Mailer: git-send-email 2.7.4
-Reply-To: mikelley@microsoft.com
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-388702-1522599316-2-680815821873742860
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522599316; b=i/q94G4W3yzRw5ZmdRqARA80fW84twZucbUxR0+rT0Vw+D5TVX
+    skynWiNC2/5KBvlKW0/T64w6q08x7jztRzX3h4D18keOMer9zf0DbUteIbruvMmo
+    ePIWYLqyExc06FDT2BB55Ti8f3vGSqjUuLcX3MKMhxbVr/NIm74EQKDOzI9hZOYX
+    XeLlcv0Dxlkt/X8434qBje96UmDWaLZwKzgwSH4WkD0CpE9frzN22g/vgiIrO7I7
+    7Q1KdqHR9jsAob26DjRtiPcKxMbR6lA5tHprqga6m838DDdamts8Su1Kq9udMWZ/
+    3HDqKSPiK01JaMLsa89guY4NKq6nEcm0hT0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1522599316;
+    bh=RBbc9esVVEGFlgQrQVePLcsG5zjYpZodQfjlgVpQiuM=; b=Es5GMBGflUlQ
+    j1TBzoBSTG7iYBJJTvIUalwcXgFWlxqictT6t4YIiAl4yBsU868zj3bUUB95Z3iB
+    xyt1fDH8kdYpz42xKy7vHGW/7rORKVHdfAtxMMjRiM7yp2rK14LUklrkTz+2GSX4
+    iB8A6g2TuV6rXKEFY+oeUi4496+FSBfNXfR+pnYHD47Qq/OeFVd36GwxdbphYnvy
+    Ze1l6rxlNrdK6yuAdwYQ8jBsuAyfKYeFAdrccmsXcg78nTqVRKFsyui6bMoZPhfr
+    Rj9BKEiNVdj8k8BTclbcWsGcFEkrXaRN0nrjb0PWSjcq/7P5eKxgPZRinFu2vc3s
+    RjCaTujbYw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lxorguk.ukuu.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lxorguk.ukuu.org.uk header.result=pass header_org.domain=ukuu.org.uk header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lxorguk.ukuu.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lxorguk.ukuu.org.uk header.result=pass header_org.domain=ukuu.org.uk header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIKBzVpZiXQe1XPeYIxi8oYP71VVMPSwxcLD68T9ce7JfqNhnZazqOOJyGZS6okoIei+9kpaIhlKQ9yUrSRbNGSUh4dnFXwtA+2WbNoflpk1aYF0+v/V
+    5r1WbCp1hlaXy/vTOcLGxHuPr0QWrsgsi0h+LSjSzasr9aaeZ6Sm7BXHjNB3ABy69dRAtO9ZCTH2vGKFrQaGJ7MqdcVB/2oHeeZJsewyzBr9hmc/7EAHwEsi
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=7d_E57ReAAAA:8 a=VwQbUJbxAAAA:8 a=ZJj9Sj1TOB-oLq_LhIMA:9
+    a=a5WCQ_epvVuEe-cq:21 a=9F6LvdJqjKG-yZQV:21 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753609AbeDAQPM (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 1 Apr 2018 12:15:12 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:34418 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753602AbeDAQPM (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Sun, 1 Apr 2018 12:15:12 -0400
+Date: Sun, 1 Apr 2018 17:13:56 +0100
+From: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
+        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH for 4.17 02/21] rseq: Introduce restartable
+ sequences system call (v12)
+Message-ID: <20180401171356.085a2a33@alans-desktop>
+In-Reply-To: <20180327160542.28457-3-mathieu.desnoyers@efficios.com>
+References: <20180327160542.28457-1-mathieu.desnoyers@efficios.com>
+        <20180327160542.28457-3-mathieu.desnoyers@efficios.com>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596766230893401335?=
-X-GMAIL-MSGID: =?utf-8?q?1596766230893401335?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Michael Kelley <mikelley@microsoft.com>
+On Tue, 27 Mar 2018 12:05:23 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-Add comments describing intricacies of Hyper-V ring buffer
-signaling code.  This information is not in Hyper-V public
-documents, so include here to capture the knowledge for
-future coders.
+> Expose a new system call allowing each thread to register one userspace
+> memory area to be used as an ABI between kernel and user-space for two
+> purposes: user-space restartable sequences and quick access to read the
+> current CPU number value from user-space.
 
-There are no code changes in this commit.
+What is the *worst* case timing achievable by using the atomics ? What
+does it do to real time performance requirements ? For cpu_opv you now
+give an answer but your answer is assuming there isn't another thread
+actively thrashing the cache or store buffers, and that the user didn't
+sneakily pass in a page of uncacheable memory (eg framebuffer, or GPU
+space).
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
----
- drivers/hv/ring_buffer.c | 65 ++++++++++++++++++++++++++++++++++++++++--------
- include/linux/hyperv.h   | 31 +++++++++++++++++------
- 2 files changed, 77 insertions(+), 19 deletions(-)
+I don't see anything that restricts it to cached pages. With that check
+in place for x86 at least it would probably be ok and I think the sneaky
+attacks to make it uncacheable would fail becuase you've got the pages
+locked so trying to give them to an accelerator will block until you are
+done.
 
-diff --git a/drivers/hv/ring_buffer.c b/drivers/hv/ring_buffer.c
-index 8699bb9..ce6ea6d 100644
---- a/drivers/hv/ring_buffer.c
-+++ b/drivers/hv/ring_buffer.c
-@@ -429,7 +429,24 @@ static u32 hv_pkt_iter_bytes_read(const struct hv_ring_buffer_info *rbi,
- }
- 
- /*
-- * Update host ring buffer after iterating over packets.
-+ * Update host ring buffer after iterating over packets. If the host has
-+ * stopped queuing new entries because it found the ring buffer full, and
-+ * sufficient space is being freed up, signal the host. But be careful to
-+ * only signal the host when necessary, both for performance reasons and
-+ * because Hyper-V protects itself by throttling guests that signal
-+ * inappropriately.
-+ *
-+ * Determining when to signal is tricky. There are three key data inputs
-+ * that must be handled in this order to avoid race conditions:
-+ *
-+ * 1. Update the read_index
-+ * 2. Read the pending_send_sz
-+ * 3. Read the current write_index
-+ *
-+ * The interrupt_mask is not used to determine when to signal. The
-+ * interrupt_mask is used only on the guest->host ring buffer when
-+ * sending requests to the host. The host does not use it on the host->
-+ * guest ring buffer to indicate whether it should be signaled.
-  */
- void hv_pkt_iter_close(struct vmbus_channel *channel)
- {
-@@ -445,22 +462,30 @@ void hv_pkt_iter_close(struct vmbus_channel *channel)
- 	start_read_index = rbi->ring_buffer->read_index;
- 	rbi->ring_buffer->read_index = rbi->priv_read_index;
- 
-+	/*
-+	 * Older versions of Hyper-V (before WS2102 and Win8) do not
-+	 * implement pending_send_sz and simply poll if the host->guest
-+	 * ring buffer is full.  No signaling is needed or expected.
-+	 */
- 	if (!rbi->ring_buffer->feature_bits.feat_pending_send_sz)
- 		return;
- 
- 	/*
- 	 * Issue a full memory barrier before making the signaling decision.
--	 * Here is the reason for having this barrier:
--	 * If the reading of the pend_sz (in this function)
--	 * were to be reordered and read before we commit the new read
--	 * index (in the calling function)  we could
--	 * have a problem. If the host were to set the pending_sz after we
--	 * have sampled pending_sz and go to sleep before we commit the
-+	 * If reading pending_send_sz were to be reordered and happen
-+	 * before we commit the new read_index, a race could occur.  If the
-+	 * host were to set the pending_send_sz after we have sampled
-+	 * pending_send_sz, and the ring buffer blocks before we commit the
- 	 * read index, we could miss sending the interrupt. Issue a full
- 	 * memory barrier to address this.
- 	 */
- 	virt_mb();
- 
-+	/*
-+	 * If the pending_send_sz is zero, then the ring buffer is not
-+	 * blocked and there is no need to signal.  This is far by the
-+	 * most common case, so exit quickly for best performance.
-+	 */
- 	pending_sz = READ_ONCE(rbi->ring_buffer->pending_send_sz);
- 	if (!pending_sz)
- 		return;
-@@ -474,14 +499,32 @@ void hv_pkt_iter_close(struct vmbus_channel *channel)
- 	bytes_read = hv_pkt_iter_bytes_read(rbi, start_read_index);
- 
- 	/*
--	 * If there was space before we began iteration,
--	 * then host was not blocked.
-+	 * We want to signal the host only if we're transitioning
-+	 * from a "not enough free space" state to a "enough free
-+	 * space" state.  For example, it's possible that this function
-+	 * could run and free up enough space to signal the host, and then
-+	 * run again and free up additional space before the host has a
-+	 * chance to clear the pending_send_sz.  The 2nd invocation would
-+	 * be a null transition from "enough free space" to "enough free
-+	 * space", which doesn't warrant a signal.
-+	 *
-+	 * Exactly filling the ring buffer is treated as "not enough
-+	 * space". The ring buffer always must have at least one byte
-+	 * empty so the empty and full conditions are distinguishable.
-+	 * hv_get_bytes_to_write() doesn't fully tell the truth in
-+	 * this regard.
-+	 *
-+	 * So first check if we were in the "enough free space" state
-+	 * before we began the iteration. If so, the host was not
-+	 * blocked, and there's no need to signal.
- 	 */
--
- 	if (curr_write_sz - bytes_read > pending_sz)
- 		return;
- 
--	/* If pending write will not fit, don't give false hope. */
-+	/*
-+	 * Similarly, if the new state is "not enough space", then
-+	 * there's no need to signal.
-+	 */
- 	if (curr_write_sz <= pending_sz)
- 		return;
- 
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 2048f3c..a0dfe78 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -89,18 +89,33 @@ struct hv_ring_buffer {
- 	u32 interrupt_mask;
- 
- 	/*
--	 * Win8 uses some of the reserved bits to implement
--	 * interrupt driven flow management. On the send side
--	 * we can request that the receiver interrupt the sender
--	 * when the ring transitions from being full to being able
--	 * to handle a message of size "pending_send_sz".
-+	 * WS2012/Win8 and later versions of Hyper-V implement interrupt
-+	 * driven flow management. The feature bit feat_pending_send_sz
-+	 * is set by the host on the host->guest ring buffer, and by the
-+	 * guest on the guest->host ring buffer.
- 	 *
--	 * Add necessary state for this enhancement.
-+	 * The meaning of the feature bit is a bit complex in that it has
-+	 * semantics that apply to both ring buffers.  If the guest sets
-+	 * the feature bit in the guest->host ring buffer, the guest is
-+	 * telling the host that:
-+	 * 1) It will set the pending_send_sz field in the guest->host ring
-+	 *    buffer when it is waiting for space to become available, and
-+	 * 2) It will read the pending_send_sz field in the host->guest
-+	 *    ring buffer and interrupt the host when it frees enough space
-+	 *
-+	 * Similarly, if the host sets the feature bit in the host->guest
-+	 * ring buffer, the host is telling the guest that:
-+	 * 1) It will set the pending_send_sz field in the host->guest ring
-+	 *    buffer when it is waiting for space to become available, and
-+	 * 2) It will read the pending_send_sz field in the guest->host
-+	 *    ring buffer and interrupt the guest when it frees enough space
-+	 *
-+	 * If either the guest or host does not set the feature bit that it
-+	 * owns, that guest or host must do polling if it encounters a full
-+	 * ring buffer, and not signal the other end with an interrupt.
- 	 */
- 	u32 pending_send_sz;
--
- 	u32 reserved1[12];
--
- 	union {
- 		struct {
- 			u32 feat_pending_send_sz:1;
--- 
-2.7.4
+I still like the idea it's just the latencies concern me.
+
+>        Restartable sequences are atomic  with  respect  to  preemption
+>        (making  it atomic with respect to other threads running on the
+>        same CPU), as well as  signal  delivery  (user-space  execution
+>        contexts nested over the same thread).
+
+CPU generally means 'big lump with legs on it'. You are not atomic to the
+same CPU, because that CPU may have 30+ cores with 8 threads per core.
+
+It could do with some better terminology (hardware thread, CPU context ?)
+
+>        In  a  typical  usage scenario, the thread registering the rseq
+>        structure will be performing  loads  and  stores  from/to  that
+>        structure.  It  is  however also allowed to read that structure
+>        from other threads.  The rseq field updates  performed  by  the
+>        kernel  provide  relaxed  atomicity  semantics, which guarantee
+>        that other threads performing relaxed atomic reads of  the  cpu
+>        number cache will always observe a consistent value.
+
+So what happens to your API if the kernel atomics get improved ? You are
+effectively exporting rseq behaviour from private to public.
+
+Alan
