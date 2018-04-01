@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753757AbeDAPAl (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 11:00:41 -0400
-Received: from smtprelay0238.hostedemail.com ([216.40.44.238]:37755 "EHLO
+        id S1753729AbeDAPAg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 11:00:36 -0400
+Received: from smtprelay0185.hostedemail.com ([216.40.44.185]:54974 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753731AbeDAPAh (ORCPT
+        by vger.kernel.org with ESMTP id S1753641AbeDAPAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 11:00:37 -0400
+        Sun, 1 Apr 2018 11:00:34 -0400
 X-Session-Marker: 7368656140736865616C6576792E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::::,RULES_HIT:41:355:379:541:800:960:965:966:968:973:988:989:1260:1345:1359:1437:1534:1540:1711:1730:1747:1777:1792:1978:1981:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3352:3865:3867:3868:3870:3871:4321:4385:4390:4395:5007:6261:8603:9592:10004:10848:11026:11473:11658:11914:12296:12438:12555:12895:12986:13069:13161:13229:13311:13357:14096:14181:14384:14394:14721:21080:21627:30054,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
-X-HE-Tag: shoes83_7997363f2ab4c
-X-Filterd-Recvd-Size: 1793
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::::::,RULES_HIT:41:355:379:541:800:960:965:966:968:973:988:989:1260:1345:1359:1437:1534:1540:1711:1730:1747:1777:1792:1978:1981:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3352:3865:3867:3868:3870:3871:3872:4321:4385:4390:4395:5007:6261:7903:9592:10004:10848:11026:11473:11658:11914:12043:12438:12555:12895:12986:13069:13161:13229:13311:13357:14096:14181:14384:14394:14721:21080:21627:30054,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
+X-HE-Tag: cent82_7946bfb39645a
+X-Filterd-Recvd-Size: 1861
 From: Shea Levy <shea@shealevy.com>
 To: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: Shea Levy <shea@shealevy.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
-Subject: [PATCH v6 15/16] sh: Switch to generic free_initrd_mem.
-Date: Sun,  1 Apr 2018 10:59:29 -0400
-Message-Id: <20180401145931.7932-15-shea@shealevy.com>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v6 14/16] powerpc: Switch to generic free_initrd_mem.
+Date: Sun,  1 Apr 2018 10:59:28 -0400
+Message-Id: <20180401145931.7932-14-shea@shealevy.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180401145931.7932-1-shea@shealevy.com>
 References: <20180329113207.30674-1-shea@shealevy.com>
@@ -34,29 +35,28 @@ architecture-specific one removed here.
 Series boot-tested on RISC-V (which now uses the generic
 implementation) and x86_64 (which doesn't).
 
-Acked-by: Rich Felker <dalias@libc.org>
 Signed-off-by: Shea Levy <shea@shealevy.com>
 ---
- arch/sh/mm/init.c | 7 -------
+ arch/powerpc/mm/mem.c | 7 -------
  1 file changed, 7 deletions(-)
 
-diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-index ce0bbaa7e404..7451459d0725 100644
---- a/arch/sh/mm/init.c
-+++ b/arch/sh/mm/init.c
-@@ -477,13 +477,6 @@ void free_initmem(void)
- 	free_initmem_default(-1);
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index fe8c61149fb8..e85b2a3cd264 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -404,13 +404,6 @@ void free_initmem(void)
+ 	free_initmem_default(POISON_FREE_INITMEM);
  }
  
 -#ifdef CONFIG_BLK_DEV_INITRD
--void free_initrd_mem(unsigned long start, unsigned long end)
+-void __init free_initrd_mem(unsigned long start, unsigned long end)
 -{
 -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
 -}
 -#endif
 -
- #ifdef CONFIG_MEMORY_HOTPLUG
- int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
- 		bool want_memblock)
+ /*
+  * This is called when a page has been modified by the kernel.
+  * It just marks the page as not i-cache clean.  We do the i-cache
 -- 
 2.16.2
