@@ -1,141 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751387AbeDAGjQ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 02:39:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40156 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750934AbeDAGjL (ORCPT
+        id S1751436AbeDAGtC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 02:49:02 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38631 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751283AbeDAGtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 02:39:11 -0400
-Date: Sun, 1 Apr 2018 09:38:58 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 00/32] docs/vm: convert to ReST format
-References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180329154607.3d8bda75@lwn.net>
+        Sun, 1 Apr 2018 02:49:01 -0400
+Date: Sun, 1 Apr 2018 08:48:59 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
+Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
+Message-ID: <20180401064858.GA28665@amd>
+References: <20180327222237.wcx2aqznvdrvbaa5@earth.universe>
+ <20180328022910.GM29239@sirena.org.uk>
+ <20180328140219.f6667up5evrrafkv@earth.universe>
+ <20180329014507.GM5700@atomide.com>
+ <20180331145531.GA10404@amd>
+ <20180331181935.GX5700@atomide.com>
+ <20180331191939.GA8999@amd>
+ <20180331194616.GA19388@amd>
+ <20180331195524.GB19388@amd>
+ <20180331234314.GZ5700@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
 Content-Disposition: inline
-In-Reply-To: <20180329154607.3d8bda75@lwn.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18040106-0040-0000-0000-0000042914C9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040106-0041-0000-0000-0000262C3B5D
-Message-Id: <20180401063857.GA3357@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-01_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804010070
+In-Reply-To: <20180331234314.GZ5700@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(added akpm)
 
-On Thu, Mar 29, 2018 at 03:46:07PM -0600, Jonathan Corbet wrote:
-> On Wed, 21 Mar 2018 21:22:16 +0200
-> Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> 
-> > These patches convert files in Documentation/vm to ReST format, add an
-> > initial index and link it to the top level documentation.
-> > 
-> > There are no contents changes in the documentation, except few spelling
-> > fixes. The relatively large diffstat stems from the indentation and
-> > paragraph wrapping changes.
-> > 
-> > I've tried to keep the formatting as consistent as possible, but I could
-> > miss some places that needed markup and add some markup where it was not
-> > necessary.
-> 
-> So I've been pondering on these for a bit.  It looks like a reasonable and
-> straightforward RST conversion, no real complaints there.  But I do have a
-> couple of concerns...
-> 
-> One is that, as we move documentation into RST, I'm really trying to
-> organize it a bit so that it is better tuned to the various audiences we
-> have.  For example, ksm.txt is going to be of interest to sysadmin types,
-> who might want to tune it.  mmu_notifier.txt is of interest to ...
-> somebody, but probably nobody who is thinking in user space.  And so on.
-> 
-> So I would really like to see this material split up and put into the
-> appropriate places in the RST hierarchy - admin-guide for administrative
-> stuff, core-api for kernel development topics, etc.  That, of course,
-> could be done separately from the RST conversion, but I suspect I know
-> what will (or will not) happen if we agree to defer that for now :)
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well, I was actually planning on doing that ;-)
+On Sat 2018-03-31 16:43:14, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [180331 19:56]:
+> > On Sat 2018-03-31 21:46:16, Pavel Machek wrote:
+> > > On Sat 2018-03-31 21:19:39, Pavel Machek wrote:
+> > > > On Sat 2018-03-31 11:19:35, Tony Lindgren wrote:
+> > > > > Cool :) Microphone still does not work for me.. I tried tweaking
+> > > > > the alsamixer settings but no mic. This is with cold boot with
+> > > > > droid4-kexecboot if that might make a difference, we may have
+> > > > > some register uninitialized somewhere. Any ideas?
+> > > >=20
+> > > > Ok, I was focusing on the speaker side.
+> > > >=20
+> > > > alsamixer, tab to go to capture settings, set it to 37 37 Mic2 Mic1
+> > > > should work, according to my notes, but not recently tested and not
+> > > > tested against real human.
+> > > >=20
+> > > > I'll attempt to test it, but something in my userland shuts down
+> > > > system just after boot 60% of time, which is rather annoying.
+> > >=20
+> > > Hmm. So I tried again, and setting Mic1 and back in the capture
+> > > settings crashed the modem. Bang, disconnected from the USB.
+> >=20
+> > Next try, and it worked this time.
+> >=20
+> > _Before the call_, set mode to Normal and then Call. Then go to
+> > capture, and set 100 100 Mic2 Mic1. Then place a call,
+> >=20
+> > AT+CFUN=3D1
+> > OK
+> > ATD6;
+>=20
+> No luck with microphone here :( Using ttyUSB4, AT+CFUN=3D1
+> works, but ATD command on it just hangs the USB interface
+> and I have to reload phy-mapphone-mdm6600 to reset the
+> modem.
 
-My thinking was to start with mechanical RST conversion and then to start
-working on the contents and ordering of the documentation. Some of the
-existing files, e.g. ksm.txt, can be moved as is into the appropriate
-places, others, like transhuge.txt should be at least split into admin/user
-and developer guides.
+I realized where the difference is.
 
-Another problem with many of the existing mm docs is that they are rather
-developer notes and it wouldn't be really straight forward to assign them
-to a particular topic.
+I have ofonod running there, one from maemo leste distribution. It
+manages to talk to the modem somehow. I guess that accounts for the
+difference.
 
-I believe that keeping the mm docs together will give better visibility of
-what (little) mm documentation we have and will make the updates easier.
-The documents that fit well into a certain topic could be linked there. For
-instance:
+I guess I should get it out of the picture....
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
--------------------------
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 5bb9161..8f6c6e6 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -63,6 +63,7 @@ configure specific aspects of kernel behavior to your liking.
-    pm/index
-    thunderbolt
-    LSM/index
-+   vm/index
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/admin-guide/vm/index.rst b/Documentation/admin-guide/vm/index.rst
-new file mode 100644
-index 0000000..d86f1c8
---- /dev/null
-+++ b/Documentation/admin-guide/vm/index.rst
-@@ -0,0 +1,5 @@
-+==============================================
-+Knobs and Buttons for Memory Management Tuning
-+==============================================
-+
-+* :ref:`ksm <ksm>`
--------------------------
+--n8g4imXOkfNTN/H1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> The other is the inevitable merge conflicts that changing that many doc
-> files will create.  Sending the patches through Andrew could minimize
-> that, I guess, or at least make it his problem.  Alternatively, we could
-> try to do it as an end-of-merge-window sort of thing.  I can try to manage
-> that, but an ack or two from the mm crowd would be nice to have.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-I can rebase on top of Andrew's tree if that would help to minimize the
-merge conflicts.
- 
-> Thanks,
-> 
-> jon
-> 
+iEYEARECAAYFAlrAgNoACgkQMOfwapXb+vIAgACgg/Ilvp9K3F+7uf2y2BkQg/9N
+X0MAn0y/nJdpBTfI39Hqf5g0MQW4Bc4l
+=J88w
+-----END PGP SIGNATURE-----
 
--- 
-Sincerely yours,
-Mike.
+--n8g4imXOkfNTN/H1--
