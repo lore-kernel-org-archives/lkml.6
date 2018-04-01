@@ -1,112 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753438AbeDABmN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 21:42:13 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47372 "EHLO
+        id S1753424AbeDABmL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 21:42:11 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47384 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753035AbeDABlI (ORCPT
+        with ESMTP id S1753073AbeDABlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 31 Mar 2018 21:41:08 -0400
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <e5bd38c0bd81236e11fd391ec3339d3bdf3c29d5.1522546571.git.fthain@telegraphics.com.au>
+Message-Id: <455c2ccbea2f83947630e3068ecadf4ab4434fb9.1522546571.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1522546571.git.fthain@telegraphics.com.au>
 References: <cover.1522546571.git.fthain@telegraphics.com.au>
 From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 06/12] block/swim: Fix array bounds check
+Subject: [PATCH 07/12] block/swim: Remove extra put_disk() call from error
+ path
 Date: Sat, 31 Mar 2018 21:41:05 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the floppy_find() function in swim.c is a call to
-get_disk(swd->unit[drive].disk). The actual parameter to this call
-can be a NULL pointer when drive == swd->floppy_count. This causes
-an oops in get_disk().
-
-Data read fault at 0x00000198 in Super Data (pc=0x1be5b6)
-BAD KERNEL BUSERR
-Oops: 00000000
-Modules linked in: swim_mod ipv6 mac8390
-PC: [<001be5b6>] get_disk+0xc/0x76
-SR: 2004  SP: 9a078bc1  a2: 0213ed90
-d0: 00000000    d1: 00000000    d2: 00000000    d3: 000000ff
-d4: 00000002    d5: 02983590    a0: 02332e00    a1: 022dfd64
-Process dd (pid: 285, task=020ab25b)
-Frame format=B ssw=074d isc=4a88 isb=6732 daddr=00000198 dobuf=00000000
-baddr=001be5bc dibuf=bfffffff ver=f
-Stack from 022dfca4:
-        00000000 0203fc00 0213ed90 022dfcc0 02982936 00000000 00200000 022dfd08
-        0020f85a 00200000 022dfd64 02332e00 004040fc 00000014 001be77e 022dfd64
-        00334e4a 001be3f8 0800001d 022dfd64 01c04b60 01c04b70 022aba80 029828f8
-        02332e00 022dfd2c 001be7ac 0203fc00 00200000 022dfd64 02103a00 01c04b60
-        01c04b60 0200e400 022dfd68 000e191a 00200000 022dfd64 02103a00 0800001d
-        00000000 00000003 000b89de 00500000 02103a00 01c04b60 02103a08 01c04c2e
-Call Trace: [<02982936>] floppy_find+0x3e/0x4a [swim_mod]
- [<00200000>] uart_remove_one_port+0x1a2/0x260
- [<0020f85a>] kobj_lookup+0xde/0x132
- [<00200000>] uart_remove_one_port+0x1a2/0x260
- [<001be77e>] get_gendisk+0x0/0x130
- [<00334e4a>] mutex_lock+0x0/0x2e
- [<001be3f8>] disk_block_events+0x0/0x6c
- [<029828f8>] floppy_find+0x0/0x4a [swim_mod]
- [<001be7ac>] get_gendisk+0x2e/0x130
- [<00200000>] uart_remove_one_port+0x1a2/0x260
- [<000e191a>] __blkdev_get+0x32/0x45a
- [<00200000>] uart_remove_one_port+0x1a2/0x260
- [<000b89de>] complete_walk+0x0/0x8a
- [<000e1e22>] blkdev_get+0xe0/0x29a
- [<000e1fdc>] blkdev_open+0x0/0xb0
- [<000b89de>] complete_walk+0x0/0x8a
- [<000e1fdc>] blkdev_open+0x0/0xb0
- [<000e01cc>] bd_acquire+0x74/0x8a
- [<000e205c>] blkdev_open+0x80/0xb0
- [<000e1fdc>] blkdev_open+0x0/0xb0
- [<000abf24>] do_dentry_open+0x1a4/0x322
- [<00020000>] __do_proc_douintvec+0x22/0x27e
- [<000b89de>] complete_walk+0x0/0x8a
- [<000baa62>] link_path_walk+0x0/0x48e
- [<000ba3f8>] inode_permission+0x20/0x54
- [<000ac0e4>] vfs_open+0x42/0x78
- [<000bc372>] path_openat+0x2b2/0xeaa
- [<000bc0c0>] path_openat+0x0/0xeaa
- [<0004463e>] __irq_wake_thread+0x0/0x4e
- [<0003a45a>] task_tick_fair+0x18/0xc8
- [<000bd00a>] do_filp_open+0xa0/0xea
- [<000abae0>] do_sys_open+0x11a/0x1ee
- [<00020000>] __do_proc_douintvec+0x22/0x27e
- [<000abbf4>] SyS_open+0x1e/0x22
- [<00020000>] __do_proc_douintvec+0x22/0x27e
- [<00002b40>] syscall+0x8/0xc
- [<00020000>] __do_proc_douintvec+0x22/0x27e
- [<0000c00b>] dyadic+0x1/0x28
-Code: 4e5e 4e75 4e56 fffc 2f0b 2f02 266e 0008 <206b> 0198 4a88 6732 2428 002c 661e 486b 0058 4eb9 0032 0b96 588f 4a88 672c 2008
-Disabling lock debugging due to kernel taint
-
-Fix the array index bounds check to avoid this.
-
-Fixes: 8852ecd97488 ("[PATCH] m68k: mac - Add SWIM floppy support")
 Cc: Laurent Vivier <lvivier@redhat.com>
 Cc: Jens Axboe <axboe@kernel.dk>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/block/swim.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/swim.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/block/swim.c b/drivers/block/swim.c
-index 3e3e72b141d3..87c70fcce875 100644
+index 87c70fcce875..19d7d27468c7 100644
 --- a/drivers/block/swim.c
 +++ b/drivers/block/swim.c
-@@ -807,7 +807,7 @@ static struct kobject *floppy_find(dev_t dev, int *part, void *data)
- 	struct swim_priv *swd = data;
- 	int drive = (*part & 3);
- 
--	if (drive > swd->floppy_count)
-+	if (drive >= swd->floppy_count)
- 		return NULL;
- 
- 	*part = 0;
+@@ -873,7 +873,6 @@ static int swim_floppy_init(struct swim_priv *swd)
+ 							      &swd->lock);
+ 		if (!swd->unit[drive].disk->queue) {
+ 			err = -ENOMEM;
+-			put_disk(swd->unit[drive].disk);
+ 			goto exit_put_disks;
+ 		}
+ 		blk_queue_bounce_limit(swd->unit[drive].disk->queue,
 -- 
 2.16.1
