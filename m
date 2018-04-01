@@ -1,65 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752949AbeDABud (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 21:50:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752454AbeDABuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 21:50:32 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA13204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Sun, 1 Apr 2018 03:50:28 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: Re: [PATCH v8 01/10] time: tick-sched: Reorganize idle tick
- management code
-Message-ID: <20180401015027.GA28019@lerouge>
-References: <40092860.XNQZrLjKDd@aspire.rjw.lan>
- <6322298.N2JNOlAanx@aspire.rjw.lan>
+        id S1753105AbeDACBv (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 31 Mar 2018 22:01:51 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50571 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752754AbeDACBt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Mar 2018 22:01:49 -0400
+X-ME-Sender: <xms:jD3AWs7bc7cTTYF5S83bfCWJpxZLd58HW6HDSiDycqi3-Xk6IYdq9w>
+Subject: Re: [PATCH] autofs4: use wake_up() instead of wake_up_interruptible
+From: Ian Kent <raven@themaw.net>
+To: Andrei Vagin <avagin@openvz.org>
+Cc: autofs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20180331022839.21277-1-avagin@openvz.org>
+ <ebdc431d-cea8-378c-aae5-3b7441bb93c0@themaw.net>
+Message-ID: <8d578e49-c1a0-a38d-3b91-f0a07de0089b@themaw.net>
+Date: Sun, 1 Apr 2018 10:01:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6322298.N2JNOlAanx@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <ebdc431d-cea8-378c-aae5-3b7441bb93c0@themaw.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 02:00:01PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 01/04/18 09:31, Ian Kent wrote:
+> On 31/03/18 10:28, Andrei Vagin wrote:
+>> In "autofs4: use wait_event_killable",  wait_event_interruptible() was
+>> replaced by wait_event_killable(), but in this case we have to use
+>> wake_up() instead of wake_up_interruptible().
 > 
-> Prepare the scheduler tick code for reworking the idle loop to
-> avoid stopping the tick in some cases.
+> Why do you believe wake_up() is needed rather than wake_up_interruptible()?
 > 
-> The idea is to split the nohz idle entry call to decouple the idle
-> time stats accounting and preparatory work from the actual tick stop
-> code, in order to later be able to delay the tick stop once we reach
-> more power-knowledgeable callers.
-> 
-> Move away the tick_nohz_start_idle() invocation from
-> __tick_nohz_idle_enter(), rename the latter to
-> __tick_nohz_idle_stop_tick() and define tick_nohz_idle_stop_tick()
-> as a wrapper around it for calling it from the outside.
-> 
-> Make tick_nohz_idle_enter() only call tick_nohz_start_idle() instead
-> of calling the entire __tick_nohz_idle_enter(), add another wrapper
-> disabling and enabling interrupts around tick_nohz_idle_stop_tick()
-> and make the current callers of tick_nohz_idle_enter() call it too
-> to retain their current functionality.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Now that I'm thinking about the wake up I'm wondering if this is in fact
+> what's needed. Rather, I think maybe wake_up_all() is probably the only
+> one that will actually do what's needed.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Ok, so that 1 is the number of exclusive waiters.
+So what is the difference between the two wake_up calls in this case?
 
-Thanks!
+> 
+> There's an individual wait queue for each mount, there can be multiple
+> waiters for a mount, they all should be woken up when the daemon signals
+> mount completion.
+> 
+>>
+>> Cc: Matthew Wilcox <mawilcox@microsoft.com>
+>> Cc: Ian Kent <raven@themaw.net>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Signed-off-by: Andrei Vagin <avagin@openvz.org>
+>> ---
+>>  fs/autofs4/waitq.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/autofs4/waitq.c b/fs/autofs4/waitq.c
+>> index c160e9b3aa0f..be9c3dc048ab 100644
+>> --- a/fs/autofs4/waitq.c
+>> +++ b/fs/autofs4/waitq.c
+>> @@ -549,7 +549,7 @@ int autofs4_wait_release(struct autofs_sb_info *sbi, autofs_wqt_t wait_queue_tok
+>>  	kfree(wq->name.name);
+>>  	wq->name.name = NULL;	/* Do not wait on this queue */
+>>  	wq->status = status;
+>> -	wake_up_interruptible(&wq->queue);
+>> +	wake_up(&wq->queue);
+>>  	if (!--wq->wait_ctr)
+>>  		kfree(wq);
+>>  	mutex_unlock(&sbi->wq_mutex);
+>>
+> 
