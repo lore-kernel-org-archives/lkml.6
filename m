@@ -1,91 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754668AbeDBXXt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 19:23:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:7787 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754550AbeDBXXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 19:23:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,397,1517904000";
-   d="scan'208";a="29600029"
-From: "Pandiyan, Dhinakaran" <dhinakaran.pandiyan@intel.com>
-To: "lyude@redhat.com" <lyude@redhat.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "airlied@linux.ie" <airlied@linux.ie>
-Subject: Re: [Intel-gfx] [PATCH v5 04/10] drm/dp_mst: Remove all evil
- duplicate state pointers
-Thread-Topic: [Intel-gfx] [PATCH v5 04/10] drm/dp_mst: Remove all evil
- duplicate state pointers
-Thread-Index: AQHTytmlqZMEUtTlhkevI0UOVXQ3zw==
-Date: Mon, 2 Apr 2018 23:23:45 +0000
-Message-ID: <1522712898.10101.49.camel@dk-H97M-D3H>
-References: <20180402224800.16080-1-lyude@redhat.com>
-         <20180402224800.16080-5-lyude@redhat.com>
-In-Reply-To: <20180402224800.16080-5-lyude@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.17]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <75970147815C6B40843A8732E555C61C@intel.com>
-MIME-Version: 1.0
+        id S1754701AbeDBXYY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 19:24:24 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38592 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754550AbeDBXYW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 19:24:22 -0400
+X-Google-Smtp-Source: AIpwx4+3+QhSsbsWptcxR7vFv3BZ285f4pJB/TKwOxz6OHDSjLYwAgqsfuPXhXTpS86ueYr1iD3J5A==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: dsa: mt7530: Use NULL instead of plain integer
+Date: Mon,  2 Apr 2018 16:24:14 -0700
+Message-Id: <20180402232414.19671-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w32NNqxn025366
 
-On Mon, 2018-04-02 at 18:47 -0400, Lyude Paul wrote:
-> There's no reason to track the atomic state three times. Unfortunately,
-> this is currently what we're doing, and even worse is that there is only
-> one actually correct state pointer: the one in mst_state->base.state.
-> mgr->state never seems to be used, along with the one in
-> mst_state->state.
-> 
+We would be passing 0 instead of NULL as the rsp argument to
+mt7530_fdb_cmd(), fix that.
 
-Looks like the redundancy got introduced when struct drm_private_state
-was added.
+Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/dsa/mt7530.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Reviewed-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-
-> This confused me for over 4 hours until I realized there was no magic
-> behind these pointers. So, let's save everyone else from the trouble.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>.
-> Cc: Manasi Navare <manasi.d.navare@intel.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  include/drm/drm_dp_mst_helper.h | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-> index 41a8f08da05d..035963fbcd9d 100644
-> --- a/include/drm/drm_dp_mst_helper.h
-> +++ b/include/drm/drm_dp_mst_helper.h
-> @@ -409,7 +409,6 @@ struct drm_dp_payload {
->  struct drm_dp_mst_topology_state {
->  	struct drm_private_state base;
->  	int avail_slots;
-> -	struct drm_atomic_state *state;
->  	struct drm_dp_mst_topology_mgr *mgr;
->  };
->  
-> @@ -497,11 +496,6 @@ struct drm_dp_mst_topology_mgr {
->  	 */
->  	int pbn_div;
->  
-> -	/**
-> -	 * @state: State information for topology manager
-> -	 */
-> -	struct drm_dp_mst_topology_state *state;
-> -
->  	/**
->  	 * @funcs: Atomic helper callbacks
->  	 */
+diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
+index 4e53c5ce23ff..a7f6c0a62fc7 100644
+--- a/drivers/net/dsa/mt7530.c
++++ b/drivers/net/dsa/mt7530.c
+@@ -917,7 +917,7 @@ mt7530_port_fdb_add(struct dsa_switch *ds, int port,
+ 
+ 	mutex_lock(&priv->reg_mutex);
+ 	mt7530_fdb_write(priv, vid, port_mask, addr, -1, STATIC_ENT);
+-	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, 0);
++	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, NULL);
+ 	mutex_unlock(&priv->reg_mutex);
+ 
+ 	return ret;
+@@ -933,7 +933,7 @@ mt7530_port_fdb_del(struct dsa_switch *ds, int port,
+ 
+ 	mutex_lock(&priv->reg_mutex);
+ 	mt7530_fdb_write(priv, vid, port_mask, addr, -1, STATIC_EMP);
+-	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, 0);
++	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, NULL);
+ 	mutex_unlock(&priv->reg_mutex);
+ 
+ 	return ret;
+@@ -1293,7 +1293,7 @@ mt7530_setup(struct dsa_switch *ds)
+ 	}
+ 
+ 	/* Flush the FDB table */
+-	ret = mt7530_fdb_cmd(priv, MT7530_FDB_FLUSH, 0);
++	ret = mt7530_fdb_cmd(priv, MT7530_FDB_FLUSH, NULL);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-- 
+2.14.1
