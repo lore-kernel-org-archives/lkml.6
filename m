@@ -1,44 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752771AbeDBPOi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:14:38 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:38424 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751990AbeDBPOg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:14:36 -0400
-Date: Mon, 02 Apr 2018 11:14:34 -0400 (EDT)
-Message-Id: <20180402.111434.124774623285634501.davem@davemloft.net>
-To: Jisheng.Zhang@synaptics.com
-Cc: thomas.petazzoni@bootlin.com, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] net: mvneta: improve suspend/resume
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180402112229.508e1feb@xhacker.debian>
-References: <20180402112229.508e1feb@xhacker.debian>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1752269AbeDBPRk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:17:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751255AbeDBPRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 11:17:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA82B20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 2 Apr 2018 11:17:36 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/2] trace: Default to using trace_global_clock if
+ sched_clock is unstable
+Message-ID: <20180402111736.763c861e@gandalf.local.home>
+In-Reply-To: <20180330150132.16903-1-chris@chris-wilson.co.uk>
+References: <20180330150132.16903-1-chris@chris-wilson.co.uk>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Date: Mon, 2 Apr 2018 11:22:29 +0800
+On Fri, 30 Mar 2018 16:01:31 +0100
+Chris Wilson <chris@chris-wilson.co.uk> wrote:
 
-> This series tries to optimize the mvneta's suspend/resume
-> implementation by only taking necessary actions.
+> Across suspend, we may see a very large drift in timestamps if the sched
+> clock is unstable, prompting the global trace's ringbuffer code to warn
+> and suggest switching to the global clock. Preempt this request by
+> detecting when the sched clock is unstable (determined during
+> late_initcall) and automatically switching the default clock over to
+> trace_global_clock.
 > 
-> Since v2:
->  - keep rtnl lock when calling mvneta_start_dev() and mvneta_stop_dev()
->    Thank Russell for pointing this out
+> This should prevent requiring user interaction to resolve warnings such
+> as:
 > 
-> Since v1:
->  - unify ret check
->  - try best to keep the suspend/resume behavior
->  - split txq deinit into sw/hw parts as well
->  - adjust mvneta_stop_dev() location
+>     Delta way too big! 18446743856563626466 ts=18446744054496180323 write stamp = 197932553857
+>     If you just came from a suspend/resume,
+>     please switch to the trace global clock:
+>     echo global > /sys/kernel/debug/tracing/trace_clock
+> 
+> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+> v2: Tell the user what's happening and what they can do to correct it.
+>
 
-Series applied, thank you.
+Thanks, I pulled them in. I'll start testing them before I post to git.
+
+-- Steve
