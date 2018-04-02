@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754457AbeDBKqR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 06:46:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51694 "EHLO
+        id S1754495AbeDBKqY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 06:46:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51846 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754417AbeDBKqM (ORCPT
+        with ESMTP id S1754417AbeDBKqT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 06:46:12 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 57BA46037B
+        Mon, 2 Apr 2018 06:46:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0259160224
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From: Taniya Das <tdas@codeaurora.org>
@@ -20,9 +20,9 @@ Cc: Andy Gross <andy.gross@linaro.org>,
         Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 1/3] clk: qcom: gdsc: Add support to reset AON and block reset logic
-Date: Mon,  2 Apr 2018 16:15:43 +0530
-Message-Id: <1522665945-28147-2-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH 2/3] clk: qcom: gdsc: Add support to poll for higher timeout value
+Date: Mon,  2 Apr 2018 16:15:44 +0530
+Message-Id: <1522665945-28147-3-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
 References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
@@ -32,89 +32,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Amit Nischal <anischal@codeaurora.org>
 
-For some of the gdsc power domains, there could be need to reset the
-AON logic or assert/deassert the block control reset before removing
-the clamp_io. Add support for the same by introducing new flags
-SW_RESET and AON_RESET. Both SW reset and AON reset requires to be
-asserted for at least 1us before being de-asserted.
+For some gdscs, it might take longer time up to 500us for
+updating their status. So add support for the same by
+defining a new flag 'GDS_TIMEOUT' to mark such gdsc in
+order to poll their status for longer timeout value.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
 Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/qcom/gdsc.c | 22 ++++++++++++++++++++--
- drivers/clk/qcom/gdsc.h |  4 +++-
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gdsc.c | 9 +++++++--
+ drivers/clk/qcom/gdsc.h | 1 +
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a4f3580..266fefa 100644
+index 266fefa..e89584e 100644
 --- a/drivers/clk/qcom/gdsc.c
 +++ b/drivers/clk/qcom/gdsc.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2015, 2017-2018, The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -31,6 +31,7 @@
- #define HW_CONTROL_MASK		BIT(1)
- #define SW_COLLAPSE_MASK	BIT(0)
- #define GMEM_CLAMP_IO_MASK	BIT(0)
-+#define GMEM_RESET_MASK		BIT(4)
+@@ -42,6 +42,7 @@
+ #define RETAIN_PERIPH		BIT(13)
 
- /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
- #define EN_REST_WAIT_VAL	(0x2 << 20)
-@@ -166,6 +167,14 @@ static inline void gdsc_assert_clamp_io(struct gdsc *sc)
- 			   GMEM_CLAMP_IO_MASK, 1);
- }
+ #define TIMEOUT_US		100
++#define TIMEOUT_US_GDS		500
 
-+static inline void gdsc_assert_reset_aon(struct gdsc *sc)
-+{
-+	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
-+			   GMEM_RESET_MASK, 1);
-+	udelay(1);
-+	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
-+			   GMEM_RESET_MASK, 0);
-+}
- static int gdsc_enable(struct generic_pm_domain *domain)
+ #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+
+@@ -67,12 +68,14 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+ static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
  {
- 	struct gdsc *sc = domain_to_gdsc(domain);
-@@ -174,8 +183,17 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_deassert_reset(sc);
+ 	ktime_t start;
++	ktime_t timeout =
++		(sc->flags & GDS_TIMEOUT) ? TIMEOUT_US_GDS : TIMEOUT_US;
 
--	if (sc->flags & CLAMP_IO)
-+	if (sc->flags & SW_RESET) {
-+		gdsc_assert_reset(sc);
-+		udelay(1);
-+		gdsc_deassert_reset(sc);
-+	}
-+
-+	if (sc->flags & CLAMP_IO) {
-+		if (sc->flags & AON_RESET)
-+			gdsc_assert_reset_aon(sc);
- 		gdsc_deassert_clamp_io(sc);
-+	}
+ 	start = ktime_get();
+ 	do {
+ 		if (gdsc_is_enabled(sc, reg) == en)
+ 			return 0;
+-	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
++	} while (ktime_us_delta(ktime_get(), start) < timeout);
 
- 	ret = gdsc_toggle_logic(sc, true);
+ 	if (gdsc_is_enabled(sc, reg) == en)
+ 		return 0;
+@@ -85,6 +88,8 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 	int ret;
+ 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
+ 	unsigned int status_reg = sc->gdscr;
++	ktime_t timeout =
++		(sc->flags & GDS_TIMEOUT) ? TIMEOUT_US_GDS : TIMEOUT_US;
+
+ 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
  	if (ret)
+@@ -97,7 +102,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 		 * right after it was disabled does not put it in an
+ 		 * unknown state
+ 		 */
+-		udelay(TIMEOUT_US);
++		udelay(timeout);
+ 		return 0;
+ 	}
+
 diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 3964834..9279278 100644
+index 9279278..2e3abbf 100644
 --- a/drivers/clk/qcom/gdsc.h
 +++ b/drivers/clk/qcom/gdsc.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2015, 2017-2018, The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -53,6 +53,8 @@ struct gdsc {
- #define VOTABLE		BIT(0)
- #define CLAMP_IO	BIT(1)
+@@ -55,6 +55,7 @@ struct gdsc {
  #define HW_CTRL		BIT(2)
-+#define SW_RESET	BIT(3)
-+#define AON_RESET	BIT(4)
+ #define SW_RESET	BIT(3)
+ #define AON_RESET	BIT(4)
++#define GDS_TIMEOUT	BIT(5)
  	struct reset_controller_dev	*rcdev;
  	unsigned int			*resets;
  	unsigned int			reset_count;
