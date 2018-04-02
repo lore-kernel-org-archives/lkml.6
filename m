@@ -1,250 +1,255 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751295AbeDBNgx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 09:36:53 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36636 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeDBNgu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 09:36:50 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: jacopo mondi <jacopo@jmondi.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Rob Herring <robh@kernel.org>, architt@codeaurora.org,
-        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
-        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
-Date: Mon, 02 Apr 2018 16:36:55 +0300
-Message-ID: <4549018.sA3EWz2jVz@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <6353eb46-5a2d-7b75-a60b-c31c59c8636a@mentor.com>
-References: <4060923.7DxT9ae38L@avalon> <20180327101008.GM27746@w540> <6353eb46-5a2d-7b75-a60b-c31c59c8636a@mentor.com>
+        id S1751503AbeDBNkq convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 09:40:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751249AbeDBNkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 09:40:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 126AF20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 2 Apr 2018 09:40:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: syzbot <syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        syzkaller-bugs@googlegroups.com, Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: INFO: task hung in perf_trace_event_unreg
+Message-ID: <20180402094040.5b6f2ace@gandalf.local.home>
+In-Reply-To: <0000000000003b5a780568da18cf@google.com>
+References: <0000000000003b5a780568da18cf@google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w32DaxUt003915
 
-Hi Vladimir,
+On Mon, 02 Apr 2018 02:20:02 -0700
+syzbot <syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com> wrote:
 
-On Tuesday, 27 March 2018 14:03:25 EEST Vladimir Zapolskiy wrote:
-> On 03/27/2018 01:10 PM, jacopo mondi wrote:
-> > On Tue, Mar 27, 2018 at 12:37:31PM +0300, Vladimir Zapolskiy wrote:
-> >> On 03/27/2018 11:57 AM, jacopo mondi wrote:
-> >>> On Tue, Mar 27, 2018 at 11:30:29AM +0300, Vladimir Zapolskiy wrote:
-> >>>> On 03/27/2018 11:27 AM, Sergei Shtylyov wrote:
-> >>>>> On 3/27/2018 10:33 AM, jacopo mondi wrote:
-> >>>>> [...]
-> >>>>> 
-> >>>>>>>>>>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
-> >>>>>>>>>>> 
-> >>>>>>>>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >>>>>>>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> >>>>>>>>>>> Reviewed-by: Niklas Söderlund
-> >>>>>>>>>>> <niklas.soderlund+renesas@ragnatech.se>
-> >>>>>>>>>>> ---
-> >>>>>>>>>>> 
-> >>>>>>>>>>>   .../bindings/display/bridge/thine,thc63lvd1024.txt | 66
-> >>>>>>>>>>>   +++++++++++++++++++
-> >>>>>>>>>>>   1 file changed, 66 insertions(+)
-> >>>>>>>>>>>   create mode 100644
-> >>>>>>>>>>> 
-> >>>>>>>>>>> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1
-> >>>>>>>>>>> 024.txt
-> >>>>>>>>>>> 
-> >>>>>>>>>>> diff --git
-> >>>>>>>>>>> a/Documentation/devicetree/bindings/display/bridge/thine,thc63lv
-> >>>>>>>>>>> d1024.txt
-> >>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lv
-> >>>>>>>>>>> d1024.txt
-> >>>>>>>>>>> new file mode 100644
-> >>>>>>>>>>> index 0000000..8225c6a
-> >>>>>>>>>>> --- /dev/null
-> >>>>>>>>>>> +++
-> >>>>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63lv
-> >>>>>>>>>>> d1024.txt
-> >>>>>>>>>>> @@ -0,0 +1,66 @@
-> >>>>>>>>>>> +Thine Electronics THC63LVD1024 LVDS decoder
-> >>>>>>>>>>> +-------------------------------------------
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +The THC63LVD1024 is a dual link LVDS receiver designed to
-> >>>>>>>>>>> convert LVDS streams
-> >>>>>>>>>>> +to parallel data outputs. The chip supports single/dual
-> >>>>>>>>>>> input/output modes, +handling up to two two input LVDS stream
-> >>>>>>>>>>> and up to two digital CMOS/TTL outputs.
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +Single or dual operation modes, output data mapping and DDR
-> >>>>>>>>>>> output modes are
-> >>>>>>>>>>> +configured through input signals and the chip does not expose
-> >>>>>>>>>>> any control bus.
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +Required properties:
-> >>>>>>>>>>> +- compatible: Shall be "thine,thc63lvd1024"
-> >>>>>>>>>>> +
-> >>>>>>>>>>> +Optional properties:
-> >>>>>>>>>>> +- vcc-supply: Power supply for TTL output and digital circuitry
-> >>>>>>>>>>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
-> >>>>>>>>>>> +- lvcc-supply: Power supply for LVDS inputs
-> >>>>>>>>>>> +- pvcc-supply: Power supply for PLL circuitry
-> >>>>>>>>>> 
-> >>>>>>>>>> As explained in a comment to one of the previous versions of this
-> >>>>>>>>>> series, I'm tempted to make vcc-supply mandatory and drop the
-> >>>>>>>>>> three other power supplies for now, as I believe there's very
-> >>>>>>>>>> little chance they will be connected to separately controllable
-> >>>>>>>>>> regulators (all supplies use the same voltage). In the very
-> >>>>>>>>>> unlikely event that this occurs in design we need to support in
-> >>>>>>>>>> the future, the cvcc, lvcc and pvcc supplies can be added later
-> >>>>>>>>>> as optional without breaking backward compatibility.
-> >>>>>>>>> 
-> >>>>>>>>> I'm okay with that.
-> >>>>>>>>> 
-> >>>>>>>>>> Apart from that,
-> >>>>>>>>>> 
-> >>>>>>>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>>>>>>> 
-> >>>>>>>>>>> +- pdwn-gpios: Power down GPIO signal. Active low
-> >>>>>>>>> 
-> >>>>>>>>> powerdown-gpios is the semi-standard name.
-> >>>>>>>> 
-> >>>>>>>> right, I've also noticed it. If possible please avoid shortenings
-> >>>>>>>> in property names.
-> >>>>>>> 
-> >>>>>>> It is not shortening, it just follow pin name from decoder's
-> >>>>>>> datasheet.
-> >>>>>>> 
-> >>>>>>>>>>> +- oe-gpios: Output enable GPIO signal. Active high
-> >>>>>>>>>>> +
-> >>>>>>>> 
-> >>>>>>>> And this one is also a not ever met property name, please consider
-> >>>>>>>> to rename it to 'enable-gpios', for instance display panels define
-> >>>>>>>> it.
-> >>>>>>> 
-> >>>>>>> Again, it follows datasheet naming scheme. Has something changed in
-> >>>>>>> DT conventions?
-> >>>>>> 
-> >>>>>> Seconded. My understanding is that the property name should reflect
-> >>>>>> what reported in the the chip manual. For THC63LVD1024 the enable and
-> >>>>>> power down pins are named 'OE' and 'PDWN' respectively.
-> >>>>>> 
-> >>>>> But don't we need the vendor prefix in the prop names then, like
-> >>>>> "renesas,oe-gpios" then?
-> >>>> 
-> >>>> Seconded, with a correction to "thine,oe-gpios".
-> >>> 
-> >>> mmm, okay then...
-> >>> 
-> >>> A grep for that semi-standard properties names in Documentation/
-> >>> returns only usage examples and no actual definitions, so I assume this
-> >>> is why they are semi-standard.
-> >> 
-> >> Here we have to be specific about a particular property, let it be
-> >> 'oe-gpios' vs. 'enable-gpios' and let's collect some statistics:
-> >> 
-> >> % grep -Hr oe-gpios Documentation/devicetree/bindings/* | wc -l
-> >> 0
-> >> 
-> >> $ grep -Hr enable-gpios Documentation/devicetree/bindings/* | wc -l
-> >> 86
-> >> 
-> >> While 'thine,oe-gpios' would be correct, I see no reason to introduce a
-> >> vendor specific property to define a pin with a common and well
-> >> understood purpose.
-> >> 
-> >> If you go forward with the vendor specific prefix, apparently you can set
-> >> the name to 'thine,oe-gpio' (single) or even to 'thine,oe', or does the
-> >> datasheet names the pin as "OE GPIO" or "OE connected to a GPIO"? I
-> >> guess no.
-> > 
-> > Let me clarify I don't want to push for a vendor specific name or
-> > similar, I'm fine with using 'semi-standard' names, I'm just confused
-> > by the 'semi-standard' definition. I guess from your examples, the
-> > usage count makes a difference here.
+> Hello,
 > 
-> yes, in gneneral you can read "semi-standard" as "widely used", thus
-> collecting statistics is a good enough method to make a reasoning.
+> syzbot hit the following crash on upstream commit
+> 0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
+> Linux 4.16
+> syzbot dashboard link:  
+> https://syzkaller.appspot.com/bug?extid=2dbc55da20fa246378fd
 > 
-> Hopefully the next evolutionary step of "widely used" is "described in
-> standard".
+> Unfortunately, I don't have any reproducer for this crash yet.
+> Raw console output:  
+> https://syzkaller.appspot.com/x/log.txt?id=5487937873510400
+> Kernel config:  
+> https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
+> compiler: gcc (GCC) 7.1.1 20170620
 > 
-> >> Standards do not define '-gpios' suffix, but partially the description is
-> >> found in Documentation/bindings/gpio/gpio.txt, still it is not a section
-> >> in any standard as far as I know.
-> >> 
-> >>> Seems like there is some tribal knowledge involved in defining what
-> >>> is semi-standard and what's not, or are those properties documented
-> >>> somewhere?
-> >> 
-> >> The point is that there is no formal standard which describes every IP,
-> >> every IC and every single their property, some device node names and
-> >> property names are recommended in ePAPR and Devicetree Specification
-> >> though.
-> >> 
-> >> Think of a confusion if 'rst-gpios' (have you seen any ICs with an RST
-> >> pin?) and 'reset-gpios' are different. Same applies to 'pdwn-gpios' vs.
-> >> 'powerdown-gpios'.
-> > 
-> > I see all your points and I agree with most of them. Anyway, if the
-> > chip manual describes a pin as 'RST' I would not find it confusing to
-> > have a 'rst-gpio' defined in bindings :)
-> > 
-> > Let me be a bit pesky here: what if a chip defines a reset GPIO, which
-> > is definitely a reset, but names it, say "XYZ" ? Would you prefer to
-> > see it defined as "reset-gpios" for consistency with other bindings,
-> > or "xyz-gpios" for consistency with documentation?
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for  
+> details.
+> If you forward the report, please keep this part and the footer.
 > 
-> If a pin is definitely an IC reset as you said, then my preference is to see
-> it described under 'reset-gpios' property name, plus a comment in the IC
-> device tree documentation document about it. I can provide two reasons to
-> advocate my position:
-> 
-> 1) developers spend significantly more time reading and editing the actual
->    DTSI/DTS board files rather than reading and editing documentation,
->    it makes sense to use common property names to save time and reduce
->    amount of "what does 'oe' stand for?" type of questions; I suppose
->    that the recommendation to avoid not "widely used" abbreviations in
->    device node and property names arises from the same reasoning,
-> 
-> 2) "widely used" and "standard" properties are excellent candidates for
->    developing (or re-using) generalization wrappers, it happened so many
->    times in the past, and this process shall be supported in my opinion;
->    due to compatibility restrictions it might be problematic to change
->    property names, and every new exception to "widely used" properties
->    makes problematic to develop and maintain these kinds of wrappers, and
->    of course it postpones a desired "described in standard" recognition.
-> 
-> If my point of view is accepted, I do admit that a developer who
-> translates a board schematics to board DTS file may experience a minor
-> discomfort, which is mitigated if relevant pin names are found in device
-> tree binding documentation in comments to properties, still the overall
-> gain is noticeably higher in my personal opinion.
+> REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+> option "gï¿½;eï¿½Kï¿½×«>pquota"
+> INFO: task syz-executor3:10803 blocked for more than 120 seconds.
+>        Not tainted 4.16.0+ #10
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor3   D20944 10803   4492 0x80000002
+> Call Trace:
+>   context_switch kernel/sched/core.c:2862 [inline]
+>   __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
+>   schedule+0xf5/0x430 kernel/sched/core.c:3499
+>   schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
+>   do_wait_for_common kernel/sched/completion.c:86 [inline]
+>   __wait_for_common kernel/sched/completion.c:107 [inline]
+>   wait_for_common kernel/sched/completion.c:118 [inline]
+>   wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
+>   __wait_rcu_gp+0x221/0x340 kernel/rcu/update.c:414
+>   synchronize_sched.part.64+0xac/0x100 kernel/rcu/tree.c:3212
+>   synchronize_sched+0x76/0xf0 kernel/rcu/tree.c:3213
 
-I have to disagree with this. When using a property name that doesn't 
-correspond to the hardware documentation, developers will need to refer to the 
-DT bindings documentation to confirm the property name. "Widely used" property 
-names will not save time, they will use more time. This is of course marginal 
-and I don't think it would have any noticeable impact, but I don't think your 
-argument holds.
+I don't think this is a perf issue. Looks like something is preventing
+rcu_sched from completing. If there's a CPU that is running in kernel
+space and never scheduling, that can cause this issue. Or if RCU
+somehow missed a transition into idle or user space.
 
-I'm all for standardizing properties across DT bindings for multiple 
-components, but doing so in a semi-random fashion will in my opinion not 
-result in any gain. We can decide that power-down or output-enable GPIOS 
-should have common property names (and I'm not even sure that would be useful, 
-but we can certainly discuss it), but in that case someone should make a 
-proposal and get the names standardized. Unless we do so, no matter what 
-property name gets picked for a particular binding, it won't become 
-universally used by magic.
+-- Steve
 
-I'd like to hear the DT bindings maintainers position on this matter.
-
--- 
-Regards,
-
-Laurent Pinchart
+>   tracepoint_synchronize_unregister include/linux/tracepoint.h:80 [inline]
+>   perf_trace_event_unreg.isra.2+0xb7/0x1f0  
+> kernel/trace/trace_event_perf.c:161
+>   perf_trace_destroy+0xbc/0x100 kernel/trace/trace_event_perf.c:236
+>   tp_perf_event_destroy+0x15/0x20 kernel/events/core.c:7976
+>   _free_event+0x3bd/0x10f0 kernel/events/core.c:4121
+>   put_event+0x24/0x30 kernel/events/core.c:4204
+>   perf_event_release_kernel+0x6e8/0xfc0 kernel/events/core.c:4310
+>   perf_release+0x37/0x50 kernel/events/core.c:4320
+>   __fput+0x327/0x7e0 fs/file_table.c:209
+>   ____fput+0x15/0x20 fs/file_table.c:243
+>   task_work_run+0x199/0x270 kernel/task_work.c:113
+>   exit_task_work include/linux/task_work.h:22 [inline]
+>   do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+>   do_group_exit+0x149/0x400 kernel/exit.c:968
+>   get_signal+0x73a/0x16d0 kernel/signal.c:2469
+>   do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
+>   exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
+>   prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+>   do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
+>   entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x455269
+> RSP: 002b:00007f8976371ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> RAX: 0000000000000000 RBX: 000000000072bec8 RCX: 0000000000455269
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bec8
+> RBP: 000000000072bec8 R08: 0000000000000000 R09: 000000000072bea0
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffe793f79cf R14: 00007f89763729c0 R15: 0000000000000000
+> 
+> Showing all locks held in the system:
+> 2 locks held by khungtaskd/876:
+>   #0:  (rcu_read_lock){....}, at: [<000000008f2bec4b>]  
+> check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+>   #0:  (rcu_read_lock){....}, at: [<000000008f2bec4b>] watchdog+0x1c5/0xd60  
+> kernel/hung_task.c:249
+>   #1:  (tasklist_lock){.+.+}, at: [<0000000006b3009f>]  
+> debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
+> 2 locks held by getty/4414:
+>   #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>   #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+> n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4415:
+>   #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>   #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+> n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4416:
+>   #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>   #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+> n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4417:
+>   #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>   #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+> n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4418:
+>   #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>   #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+> n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4419:
+>   #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>   #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+> n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4420:
+>   #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+> ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>   #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+> n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+> 1 lock held by syz-executor3/10803:
+>   #0:  (event_mutex){+.+.}, at: [<00000000c507b78a>]  
+> perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:234
+> 4 locks held by syz-executor5/10816:
+>   #0:  (&tty->legacy_mutex){+.+.}, at: [<00000000567b7b94>]  
+> tty_lock+0x5d/0x90 drivers/tty/tty_mutex.c:19
+>   #1:  (&tty->legacy_mutex/1){+.+.}, at: [<00000000567b7b94>]  
+> tty_lock+0x5d/0x90 drivers/tty/tty_mutex.c:19
+>   #2:  (&tty->ldisc_sem){++++}, at: [<000000002b6b6a29>]  
+> tty_ldisc_ref+0x1b/0x80 drivers/tty/tty_ldisc.c:298
+>   #3:  (&o_tty->termios_rwsem/1){++++}, at: [<0000000007d9a7a4>]  
+> n_tty_flush_buffer+0x21/0x320 drivers/tty/n_tty.c:357
+> 1 lock held by syz-executor2/10827:
+>   #0:  (event_mutex){+.+.}, at: [<00000000c507b78a>]  
+> perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:234
+> 1 lock held by blkid/10832:
+>   #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
+> lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+> 1 lock held by syz-executor4/10835:
+>   #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
+> lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+> 1 lock held by syz-executor4/10845:
+>   #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
+> lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+> 
+> =============================================
+> 
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 876 Comm: khungtaskd Not tainted 4.16.0+ #10
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:17 [inline]
+>   dump_stack+0x194/0x24d lib/dump_stack.c:53
+>   nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
+>   nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
+>   arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>   trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+>   check_hung_task kernel/hung_task.c:132 [inline]
+>   check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
+>   watchdog+0x90c/0xd60 kernel/hung_task.c:249
+> INFO: rcu_sched self-detected stall on CPU
+> 	0-....: (124996 ticks this GP) idle=75e/1/4611686018427387906  
+> softirq=33205/33205 fqs=30980
+> 	
+>   (t=125000 jiffies g=17618 c=17617 q=921)
+>   kthread+0x33c/0x400 kernel/kthread.c:238
+>   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+> Sending NMI from CPU 1 to CPUs 0:
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 7457 Comm: kworker/u4:5 Not tainted 4.16.0+ #10
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Workqueue: events_unbound flush_to_ldisc
+> RIP: 0010:__process_echoes+0x641/0x770 drivers/tty/n_tty.c:733
+> RSP: 0018:ffff8801af4ff078 EFLAGS: 00000217
+> RAX: 0000000000000000 RBX: ffffc90003673000 RCX: ffffffff8352d4c2
+> RDX: 0000000000000006 RSI: 1ffff10039602994 RDI: ffffc9000367515e
+> RBP: ffff8801af4ff0e0 R08: 1ffff10035e9fdb5 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000625628efd
+> R13: dffffc0000000000 R14: 0000000000000efe R15: 0000000000001b15
+> FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffd5bfa4ca8 CR3: 000000000846a005 CR4: 00000000001606f0
+> DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+> Call Trace:
+>   commit_echoes+0x147/0x1b0 drivers/tty/n_tty.c:764
+>   n_tty_receive_char_fast drivers/tty/n_tty.c:1416 [inline]
+>   n_tty_receive_buf_fast drivers/tty/n_tty.c:1576 [inline]
+>   __receive_buf drivers/tty/n_tty.c:1611 [inline]
+>   n_tty_receive_buf_common+0x1156/0x2520 drivers/tty/n_tty.c:1709
+>   n_tty_receive_buf2+0x33/0x40 drivers/tty/n_tty.c:1744
+>   tty_ldisc_receive_buf+0xa7/0x180 drivers/tty/tty_buffer.c:456
+>   tty_port_default_receive_buf+0x106/0x160 drivers/tty/tty_port.c:38
+>   receive_buf drivers/tty/tty_buffer.c:475 [inline]
+>   flush_to_ldisc+0x3c4/0x590 drivers/tty/tty_buffer.c:524
+>   process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
+>   worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+>   kthread+0x33c/0x400 kernel/kthread.c:238
+>   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+> Code: 60 12 00 00 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 42 0f b6 04 28 38  
+> d0 7f 08 84 c0 0f 85 21 01 00 00 42 80 bc 33 60 12 00 00 82 <74> 0f e8 48  
+> 90 1e fe 4d 8d 74 24 02 e9 58 ff ff ff e8 39 90 1e
+> 
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is  
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug  
+> report.
+> Note: all commands must start from beginning of the line in the email body.
