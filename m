@@ -1,426 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754430AbeDBKdh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 06:33:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39288 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751212AbeDBKdf (ORCPT
+        id S1754451AbeDBKeI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 06:34:08 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36385 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754266AbeDBKeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 06:33:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5192F607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Evan Green <evgreen@chromium.org>
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, okukatla@codeaurora.org,
-        anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, collinsd@codeaurora.org
-References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
- <1522304274-18989-2-git-send-email-tdas@codeaurora.org>
- <CAE=gft6-FggNjP0nj6XrLN1rQqnep_PHHWg2fiRUrM8ZBf36Sg@mail.gmail.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <65abfb98-802a-d7aa-5213-9fcd531b18d9@codeaurora.org>
-Date: Mon, 2 Apr 2018 16:03:26 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 2 Apr 2018 06:34:06 -0400
+X-Google-Smtp-Source: AIpwx499826GLcvrXZFmyaNll5Oj94mA29wOs4+GSjvgbOIWebEAVr/00i6WM/YvlvB5qTXKtiYPrg==
+Date: Mon, 2 Apr 2018 12:34:02 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] DMA updates for v4.17
+Message-ID: <20180402103402.yucim64oll6a352r@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft6-FggNjP0nj6XrLN1rQqnep_PHHWg2fiRUrM8ZBf36Sg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Evan,
+Linus,
 
-Thanks for the review comments.
+Please pull the latest x86-dma-for-linus git tree from:
 
-On 3/30/2018 3:19 AM, Evan Green wrote:
-> Hi Taniya,
-> 
-> On Wed, Mar 28, 2018 at 11:19 PM Taniya Das <tdas@codeaurora.org> wrote:
-> 
->> From: Amit Nischal <anischal@codeaurora.org>
-> 
->> Add the RPMh clock driver to control the RPMh managed clock resources on
->> some of the Qualcomm Technologies, Inc. SoCs.
-> 
->> Signed-off-by: David Collins <collinsd@codeaurora.org>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>    drivers/clk/qcom/Kconfig              |   9 +
->>    drivers/clk/qcom/Makefile             |   1 +
->>    drivers/clk/qcom/clk-rpmh.c           | 397
-> ++++++++++++++++++++++++++++++++++
->>    include/dt-bindings/clock/qcom,rpmh.h |  25 +++
->>    4 files changed, 432 insertions(+)
->>    create mode 100644 drivers/clk/qcom/clk-rpmh.c
->>    create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
-> 
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> ...
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> new file mode 100644
->> index 0000000..536d102
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -0,0 +1,397 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#define pr_fmt(fmt) "%s: " fmt, __func__
-> 
-> Stanimir recently commented on a different patch asking for using dev_*
-> instead of this. Seems like an applicable comment here, too.
-> 
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-dma-for-linus
 
-I will drop this to see how I could accomodate dev_xxx.
+   # HEAD: e89f5b37015309a8bdf0b21d08007580b92f92a4 dma-mapping: Don't clear GFP_ZERO in dma_alloc_attrs
 
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/err.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/regmap.h>
->> +#include <soc/qcom/cmd-db.h>
->> +#include <soc/qcom/rpmh.h>
->> +#include <dt-bindings/clock/qcom,rpmh.h>
-> 
-> Alphabetize includes?
+NOTE: this tree depends on the x86/mm tree - if you have not pulled that tree
+      then please disregard this pull request.
 
-I will take care of them in the next patch series.
+This tree, by Christoph Hellwig, switches over the x86 architecture to the generic 
+dma-direct and swiotlb code, and also unifies more of the dma-direct code between 
+architectures. The now unused x86-only primitives are removed.
 
-> 
->> +
->> +#include "common.h"
->> +#include "clk-regmap.h"
->> +
->> +#define CLK_RPMH_ARC_EN_OFFSET 0
->> +#define CLK_RPMH_VRM_EN_OFFSET 4
->> +#define CLK_RPMH_VRM_OFF_VAL 0
->> +#define CLK_RPMH_VRM_ON_VAL 1
->> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
->> +                                        BIT(RPMH_ACTIVE_ONLY_STATE))
->> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
->> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) | \
->> +                                     BIT(RPMH_SLEEP_STATE))
->> +struct clk_rpmh {
->> +       const char *res_name;
->> +       u32 res_addr;
->> +       u32 res_en_offset;
->> +       u32 res_on_val;
->> +       u32 res_off_val;
->> +       u32 state;
->> +       u32 aggr_state;
->> +       u32 last_sent_aggr_state;
->> +       u32 valid_state_mask;
->> +       struct rpmh_client *rpmh_client;
->> +       unsigned long rate;
->> +       struct clk_rpmh *peer;
->> +       struct clk_hw hw;
-> 
-> I believe this member should go at the beginning of the structure. At least
-> that's what everyone else seems to do, and that's what the clk.txt
-> documentation seems to ask for.
->
+ Thanks,
 
-Yes I missed that, would update it in the next patch series.
+	Ingo
 
->> +};
->> +
->> +struct rpmh_cc {
->> +       struct clk_onecell_data data;
->> +       struct clk *clks[];
->> +};
->> +
->> +struct clk_rpmh_desc {
->> +       struct clk_hw **clks;
->> +       size_t num_clks;
->> +};
->> +
->> +static DEFINE_MUTEX(rpmh_clk_lock);
->> +
->> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name, \
->> +                         _res_en_offset, _res_on, _res_off, _rate, \
->> +                         _state_mask, _state_on_mask)
->        \
->> +       static struct clk_rpmh _platform##_##_name_active;
->        \
->> +       static struct clk_rpmh _platform##_##_name = {
->        \
->> +               .res_name = _res_name,
->        \
->> +               .res_en_offset = _res_en_offset,
->        \
->> +               .res_on_val = _res_on,
->        \
->> +               .res_off_val = _res_off,
->        \
->> +               .rate = _rate,
->        \
->> +               .peer = &_platform##_##_name_active,
->        \
->> +               .valid_state_mask = _state_mask,
->        \
->> +               .hw.init = &(struct clk_init_data){
->       \
->> +                       .ops = &clk_rpmh_ops,
->       \
->> +                       .name = #_name,
->       \
->> +               },
->        \
->> +       };
->        \
->> +       static struct clk_rpmh _platform##_##_name_active = {
->       \
->> +               .res_name = _res_name,
->        \
->> +               .res_en_offset = _res_en_offset,
->        \
->> +               .res_on_val = _res_on,
->        \
->> +               .res_off_val = _res_off,
->        \
->> +               .rate = _rate,
->        \
->> +               .peer = &_platform##_##_name,
->       \
->> +               .valid_state_mask = _state_on_mask,
->       \
->> +               .hw.init = &(struct clk_init_data){
->       \
->> +                       .ops = &clk_rpmh_ops,
->       \
->> +                       .name = #_name_active,
->        \
->> +               },
->        \
->> +       }
->> +
->> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
->> +                           _res_on, _res_off, _rate, _state_mask, \
->> +                           _state_on_mask)                             \
->> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
->> +                         CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off, \
->> +                         _rate, _state_mask, _state_on_mask)
->> +
->> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name, \
->> +                           _rate, _state_mask, _state_on_mask) \
->> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
->> +                         CLK_RPMH_VRM_EN_OFFSET, CLK_RPMH_VRM_ON_VAL,  \
->> +                         CLK_RPMH_VRM_OFF_VAL, _rate, _state_mask, \
->> +                         _state_on_mask)
->> +
->> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
->> +{
->> +       return container_of(_hw, struct clk_rpmh, hw);
->> +}
->> +
->> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
->> +{
->> +       return ((c->last_sent_aggr_state & BIT(state))
->> +               != (c->aggr_state & BIT(state)));
->> +}
->> +
->> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
->> +{
->> +       struct tcs_cmd cmd = { 0 };
->> +       int ret = 0;
->> +
->> +       cmd.addr = c->res_addr + c->res_en_offset;
->> +
->> +       if (has_state_changed(c, RPMH_SLEEP_STATE)) {
->> +               cmd.data = (c->aggr_state >> RPMH_SLEEP_STATE) & 1
->> +                       ? c->res_on_val : c->res_off_val;
-> 
-> I found it quite confusing that you're shifting in the opposite direction
-> than in has_state_changed. How about this:
-> 
-> cmd.data = (c->aggr_state & BIT(RPMH_SLEEP_STATE)) ? c->res_on_val :
-> c->res_off_val;
-> 
+------------------>
+Christoph Hellwig (15):
+      x86/dma: Remove dma_alloc_coherent_mask()
+      x86/dma: Use DMA-direct (CONFIG_DMA_DIRECT_OPS=y)
+      x86/dma: Use generic swiotlb_ops
+      x86/dma/amd_gart: Look at dev->coherent_dma_mask instead of GFP_DMA
+      x86/dma/amd_gart: Use dma_direct_{alloc,free}()
+      iommu/amd_iommu: Use CONFIG_DMA_DIRECT_OPS=y and dma_direct_{alloc,free}()
+      iommu/intel-iommu: Enable CONFIG_DMA_DIRECT_OPS=y and clean up intel_{alloc,free}_coherent()
+      x86/dma: Remove dma_alloc_coherent_gfp_flags()
+      set_memory.h: Provide set_memory_{en,de}crypted() stubs
+      dma/swiotlb: Remove swiotlb_set_mem_attributes()
+      dma/direct: Handle the memory encryption bit in common code
+      dma/direct: Handle force decryption for DMA coherent buffers in common code
+      dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()
+      swiotlb: Make swiotlb_{alloc,free}_buffer depend on CONFIG_DMA_DIRECT_OPS
+      dma-mapping: Don't clear GFP_ZERO in dma_alloc_attrs
 
-It is kept keeping in mind the consistency of the command data for all 
-the different states.
+Ingo Molnar (2):
+      Merge branch 'x86/mm' into x86/dma, to pick up dependencies
+      Merge branch 'linus' into x86/dma, to resolve a conflict with upstream
 
-Would it be better if I define a new macro ?
-
-#define RPMH_CMD_DATA(aggr_state, rpmh_state) \
-         ((aggr_state >> rpmh_state) & 1)
-
-If you agree, I could use the new macro in the next series.
-
->> +               ret = rpmh_write_async(c->rpmh_client, RPMH_SLEEP_STATE,
->> +                                      &cmd, 1);
->> +               if (ret) {
->> +                       pr_err("rpmh_write_async(%s, state=%d) failed
-> (%d)\n",
->> +                              c->res_name, RPMH_SLEEP_STATE, ret);
->> +                       return ret;
->> +               }
->> +       }
->> +
->> +       if (has_state_changed(c, RPMH_WAKE_ONLY_STATE)) {
->> +               cmd.data = (c->aggr_state >> RPMH_WAKE_ONLY_STATE) & 1
->> +                       ? c->res_on_val : c->res_off_val;
->> +               ret = rpmh_write_async(c->rpmh_client,
->> +                                      RPMH_WAKE_ONLY_STATE, &cmd, 1);
->> +               if (ret) {
->> +                       pr_err("rpmh_write_async(%s, state=%d) failed
-> (%d)\n",
->> +                              c->res_name, RPMH_WAKE_ONLY_STATE, ret);
->> +                       return ret;
->> +               }
->> +       }
->> +
->> +       if (has_state_changed(c, RPMH_ACTIVE_ONLY_STATE)) {
->> +               cmd.data = (c->aggr_state >> RPMH_ACTIVE_ONLY_STATE) & 1
->> +                       ? c->res_on_val : c->res_off_val;
->> +               ret = rpmh_write(c->rpmh_client, RPMH_ACTIVE_ONLY_STATE,
->> +                                &cmd, 1);
->> +               if (ret) {
->> +                       pr_err("rpmh_write(%s, state=%d) failed (%d)\n",
->> +                              c->res_name, RPMH_ACTIVE_ONLY_STATE, ret);
->> +                       return ret;
->> +               }
->> +       }
->> +
->> +       c->last_sent_aggr_state = c->aggr_state;
->> +       c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
->> +
->> +       return 0;
->> +}
->> +
->> +static void clk_rpmh_aggregate_state(struct clk_rpmh *c, bool enable)
->> +{
->> +       /* Update state and aggregate state values based on enable value.
-> */
->> +       c->state = enable ? c->valid_state_mask : 0;
->> +       c->aggr_state = c->state | c->peer->state;
->> +       c->peer->aggr_state = c->aggr_state;
->> +}
->> +
->> +static int clk_rpmh_prepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +       int ret = 0;
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +
->> +       if (c->state)
->> +               goto out;
->> +
->> +       clk_rpmh_aggregate_state(c, true);
->> +
->> +       ret = clk_rpmh_send_aggregate_command(c);
->> +
->> +       if (ret)
->> +               c->state = 0;
->> +
->> +out:
->> +       mutex_unlock(&rpmh_clk_lock);
->> +       return ret;
->> +};
->> +
->> +static void clk_rpmh_unprepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +       int ret = 0;
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +
->> +       if (!c->state)
->> +               goto out;
->> +
->> +       clk_rpmh_aggregate_state(c, false);
->> +
->> +       ret = clk_rpmh_send_aggregate_command(c);
->> +
->> +       if (ret) {
->> +               c->state = c->valid_state_mask;
->> +               WARN(1, "clk: %s failed to disable\n", c->res_name);
->> +       }
->> +
->> +out:
->> +       mutex_unlock(&rpmh_clk_lock);
->> +       return;
->> +};
-> 
-> The guts of these two functions (clk_rpmh_{un,}prepare) look like they
-> would collapse pretty well into a single helper function that takes an
-> extra enable parameter. The if would change to !!c->state == enable,
-> clk_rpmh_aggregate_state would take the enable parameter, and the failure
-> case could restore a previously saved value. And you could just ditch the
-> WARN entirely (probably should do that anyway). Not critical though, up to
-> you.
-> 
-> ...
-> 
-
-I would have a new helper function, would update in the next series.
-
->> +
->> +static int clk_rpmh_probe(struct platform_device *pdev)
->> +{
->> +       struct clk **clks;
->> +       struct clk *clk;
->> +       struct rpmh_cc *rcc;
->> +       struct clk_onecell_data *data;
->> +       int ret;
->> +       size_t num_clks, i;
->> +       struct clk_hw **hw_clks;
->> +       struct clk_rpmh *rpmh_clk;
->> +       const struct clk_rpmh_desc *desc;
->> +       struct property *prop;
-> 
-> Remove this unused variable. It generates a warning (or an error for some
-> of us).
-> ...
-
-Would clean the unused variables.
-
->> diff --git a/include/dt-bindings/clock/qcom,rpmh.h
-> b/include/dt-bindings/clock/qcom,rpmh.h
->> new file mode 100644
->> index 0000000..34fbf3c
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,rpmh.h
->> @@ -0,0 +1,25 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
->> +#define _DT_BINDINGS_CLK_MSM_RPMH_H
-> 
-> Maybe _DT_BINDINGS_CLK_QCOM_RPMH_H instead?
-> 
-
-Kept inline with the other target header files.
-
-> -Evan
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+ arch/arm/include/asm/dma-direct.h                        |  4 ++--
+ arch/mips/cavium-octeon/dma-octeon.c                     | 10 +++++-----
+ arch/mips/include/asm/mach-cavium-octeon/dma-coherence.h |  4 ++--
+ arch/mips/include/asm/mach-loongson64/dma-coherence.h    | 10 +++++-----
+ arch/mips/loongson64/common/dma-swiotlb.c                |  4 ++--
+ arch/powerpc/include/asm/dma-direct.h                    |  4 ++--
+ arch/x86/Kconfig                                         |  3 ++-
+ arch/x86/include/asm/device.h                            |  3 +++
+ arch/x86/include/asm/dma-direct.h                        | 25 ++-----------------------
+ arch/x86/include/asm/dma-mapping.h                       | 33 ---------------------------------
+ arch/x86/include/asm/iommu.h                             |  3 ---
+ arch/x86/include/asm/mem_encrypt.h                       |  2 --
+ arch/x86/include/asm/swiotlb.h                           |  8 --------
+ arch/x86/kernel/Makefile                                 |  2 +-
+ arch/x86/kernel/amd_gart_64.c                            | 41 ++++++++++++++++-------------------------
+ arch/x86/kernel/pci-calgary_64.c                         |  5 ++---
+ arch/x86/kernel/pci-dma.c                                | 70 +---------------------------------------------------------------------
+ arch/x86/kernel/pci-swiotlb.c                            | 48 +-----------------------------------------------
+ arch/x86/mm/mem_encrypt.c                                | 90 +++---------------------------------------------------------------------------------------
+ arch/x86/pci/sta2x11-fixup.c                             | 52 ++++++++--------------------------------------------
+ drivers/iommu/Kconfig                                    |  2 ++
+ drivers/iommu/amd_iommu.c                                | 75 +++++++++++++++++++++++++--------------------------------------------------
+ drivers/iommu/intel-iommu.c                              | 65 ++++++++++++++++++-----------------------------------------------
+ drivers/xen/swiotlb-xen.c                                | 16 +---------------
+ include/linux/dma-direct.h                               | 21 +++++++++++++++++++--
+ include/linux/dma-mapping.h                              |  8 ++------
+ include/linux/set_memory.h                               | 12 ++++++++++++
+ include/linux/swiotlb.h                                  |  8 --------
+ lib/dma-direct.c                                         | 35 +++++++++++++++++++++++++++++------
+ lib/swiotlb.c                                            | 77 +++++++++++++++++------------------------------------------------------------
+ 30 files changed, 182 insertions(+), 558 deletions(-)
