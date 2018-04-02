@@ -1,95 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754307AbeDBGM0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:12:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41970 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754282AbeDBGMY (ORCPT
+        id S1752316AbeDBGOs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:14:48 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33208 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751231AbeDBGOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:12:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6888601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH v5 10/13] ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2
- board file
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com,
-        richardcochran@gmail.com
-References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
- <1521800336-19266-11-git-send-email-sricharan@codeaurora.org>
- <20180327172917.GM1403@tuxbook-pro>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <a0bf3ee8-10f5-7384-8f87-bec3649040b4@codeaurora.org>
-Date: Mon, 2 Apr 2018 11:42:11 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 2 Apr 2018 02:14:47 -0400
+X-Google-Smtp-Source: AIpwx4972cZvD5895U/YtcqbbLLKgSP9kUim0r8zAZSB7N3b7U5HfmqN4D+QOtmss+X9NefL9I5e3A==
+Date: Mon, 2 Apr 2018 08:14:43 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] misc core kernel changes
+Message-ID: <20180402061443.yismaal7rly6ctpt@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180327172917.GM1403@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Linus,
 
-On 3/27/2018 10:59 PM, Bjorn Andersson wrote:
-> On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
-> 
->> Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  arch/arm/boot/dts/Makefile                      |  1 +
->>  arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts | 26 +++++++++++++++++++++++++
->>  2 files changed, 27 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
->>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index ae7f214..3b65e30 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -750,6 +750,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
->>  	qcom-ipq4019-ap.dk04.1-c1.dtb \
->>  	qcom-ipq4019-ap.dk04.1-c3.dtb \
->>  	qcom-ipq4019-ap.dk07.1-c1.dtb \
->> +	qcom-ipq4019-ap.dk07.1-c2.dtb \
->>  	qcom-ipq8064-ap148.dtb \
->>  	qcom-msm8660-surf.dtb \
->>  	qcom-msm8960-cdp.dtb \
->> diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
->> new file mode 100644
->> index 0000000..c1e909c
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
->> @@ -0,0 +1,26 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> +
->> +#include "qcom-ipq4019-ap.dk07.1.dtsi"
->> +
->> +/ {
->> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1-C2";
-> 
-> compatible
-> 
+Please pull the latest core-core-for-linus git tree from:
 
- ok.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-core-for-linus
 
-> Apart from that you have my
-> 
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
+   # HEAD: 5ad751053704df3f00d2bb2dc9345c697c212150 panic: Add closing panic marker parenthesis
 
- Thanks.
+Two changes:
 
-Regards,
- Sricharan
+ - add membarriers to Documentation/features/
+ - fix a minor nit in panic printk formatting
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+ Thanks,
+
+	Ingo
+
+------------------>
+Borislav Petkov (1):
+      panic: Add closing panic marker parenthesis
+
+Mathieu Desnoyers (2):
+      Documentation/features: Allow comments in arch features files
+      Documentation/features, membarriers: Document membarrier-sync-core architecture support
+
+
+ Documentation/features/list-arch.sh                |  2 +-
+ .../sched/membarrier-sync-core/arch-support.txt    | 62 ++++++++++++++++++++++
+ kernel/panic.c                                     |  2 +-
+ 3 files changed, 64 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/features/sched/membarrier-sync-core/arch-support.txt
+
+diff --git a/Documentation/features/list-arch.sh b/Documentation/features/list-arch.sh
+index c16b5b595688..1ec47c3bb5fa 100755
+--- a/Documentation/features/list-arch.sh
++++ b/Documentation/features/list-arch.sh
+@@ -17,7 +17,7 @@ for F in */*/arch-support.txt; do
+   N=$(grep -h "^# Feature name:"        $F | cut -c25-)
+   C=$(grep -h "^#         Kconfig:"     $F | cut -c25-)
+   D=$(grep -h "^#         description:" $F | cut -c25-)
+-  S=$(grep -hw $ARCH $F | cut -d\| -f3)
++  S=$(grep -hv "^#" $F | grep -w $ARCH | cut -d\| -f3)
+ 
+   printf "%10s/%-22s:%s| %35s # %s\n" "$SUBSYS" "$N" "$S" "$C" "$D"
+ done
+diff --git a/Documentation/features/sched/membarrier-sync-core/arch-support.txt b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
+new file mode 100644
+index 000000000000..2c815a7f1ba7
+--- /dev/null
++++ b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
+@@ -0,0 +1,62 @@
++#
++# Feature name:          membarrier-sync-core
++#         Kconfig:       ARCH_HAS_MEMBARRIER_SYNC_CORE
++#         description:   arch supports core serializing membarrier
++#
++# Architecture requirements
++#
++# * arm64
++#
++# Rely on eret context synchronization when returning from IPI handler, and
++# when returning to user-space.
++#
++# * x86
++#
++# x86-32 uses IRET as return from interrupt, which takes care of the IPI.
++# However, it uses both IRET and SYSEXIT to go back to user-space. The IRET
++# instruction is core serializing, but not SYSEXIT.
++#
++# x86-64 uses IRET as return from interrupt, which takes care of the IPI.
++# However, it can return to user-space through either SYSRETL (compat code),
++# SYSRETQ, or IRET.
++#
++# Given that neither SYSRET{L,Q}, nor SYSEXIT, are core serializing, we rely
++# instead on write_cr3() performed by switch_mm() to provide core serialization
++# after changing the current mm, and deal with the special case of kthread ->
++# uthread (temporarily keeping current mm into active_mm) by issuing a
++# sync_core_before_usermode() in that specific case.
++#
++    -----------------------
++    |         arch |status|
++    -----------------------
++    |       alpha: | TODO |
++    |         arc: | TODO |
++    |         arm: | TODO |
++    |       arm64: |  ok  |
++    |    blackfin: | TODO |
++    |         c6x: | TODO |
++    |        cris: | TODO |
++    |         frv: | TODO |
++    |       h8300: | TODO |
++    |     hexagon: | TODO |
++    |        ia64: | TODO |
++    |        m32r: | TODO |
++    |        m68k: | TODO |
++    |       metag: | TODO |
++    |  microblaze: | TODO |
++    |        mips: | TODO |
++    |     mn10300: | TODO |
++    |       nios2: | TODO |
++    |    openrisc: | TODO |
++    |      parisc: | TODO |
++    |     powerpc: | TODO |
++    |        s390: | TODO |
++    |       score: | TODO |
++    |          sh: | TODO |
++    |       sparc: | TODO |
++    |        tile: | TODO |
++    |          um: | TODO |
++    |   unicore32: | TODO |
++    |         x86: |  ok  |
++    |      xtensa: | TODO |
++    -----------------------
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 2cfef408fec9..9fb023d0cae1 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -289,7 +289,7 @@ void panic(const char *fmt, ...)
+ 		disabled_wait(caller);
+ 	}
+ #endif
+-	pr_emerg("---[ end Kernel panic - not syncing: %s\n", buf);
++	pr_emerg("---[ end Kernel panic - not syncing: %s ]---\n", buf);
+ 	local_irq_enable();
+ 	for (i = 0; ; i += PANIC_TIMER_STEP) {
+ 		touch_softlockup_watchdog();
