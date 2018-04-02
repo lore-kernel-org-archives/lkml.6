@@ -1,102 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756963AbeDBTJp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:09:45 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34260 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754430AbeDBTJj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:09:39 -0400
-X-Google-Smtp-Source: AIpwx4//9chit0fCh81tdhrAB35TF7P/KazfrCndwG34woDRuzIPkOZndzS8G/f8atNcCA1gQaz7Lw==
-Date: Mon, 2 Apr 2018 12:09:36 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        syzbot
-        <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, kvm <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, Radim Krcmar <rkrcmar@redhat.com>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Jim Mattson <jmattson@google.com>
-Subject: Re: general protection fault in native_write_cr4
-Message-ID: <20180402190936.GB59810@gmail.com>
-References: <f403043a9be41c978c0560c0d164@google.com>
- <CANRm+Cy9-R=hBNwwUptVk_f8keX40-9yHkpqstWMP3pLSKpLGw@mail.gmail.com>
- <CACT4Y+ZxPD_6JEntRVGdngn2QBzABwubYohpKVcWJy0Hv-jXBg@mail.gmail.com>
- <CACT4Y+Zto0DQLwFtSxZbbkexqDeCwvJ4ks-QHAMn9=o6zxShnw@mail.gmail.com>
- <CACT4Y+ZvP=TqBhEG1iagYMFbwhAr6jXwXgUvkukrrRg+qaJLQw@mail.gmail.com>
- <37306EFA9975BE469F115FDE982C075BCE92C301@ORSMSX114.amr.corp.intel.com>
- <CACT4Y+b5KggyrgHAtBaL4svYjgQU_WZ3f5uCjmwiQnoYRQdbMQ@mail.gmail.com>
+        id S1756836AbeDBTQy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:16:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47708 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752321AbeDBTQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 15:16:53 -0400
+Date: Mon, 2 Apr 2018 15:16:50 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>, Will Davis <wdavis@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>, linaro-mm-sig@lists.linaro.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+Message-ID: <20180402191649.GB18231@redhat.com>
+References: <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+ <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+ <20180330015854.GA3572@redhat.com>
+ <0234bc5e-495e-0f68-fb0a-debb17a35761@deltatee.com>
+ <20180330194519.GC3198@redhat.com>
+ <31266710-f6bb-99ee-c73d-6e58afe5c38c@deltatee.com>
+ <20180402172027.GA18231@redhat.com>
+ <6f796779-0ba3-d056-de33-341ee55d6b38@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+b5KggyrgHAtBaL4svYjgQU_WZ3f5uCjmwiQnoYRQdbMQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6f796779-0ba3-d056-de33-341ee55d6b38@deltatee.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 08:04:24PM +0200, 'Dmitry Vyukov' via syzkaller-bugs wrote:
-> On Mon, Apr 2, 2018 at 6:36 PM, Christopherson, Sean J
-> <sean.j.christopherson@intel.com> wrote:
-> > On Sat, 2018-03-31, Dmitry Vyukov wrote:
-> >> On Wed, Dec 27, 2017 at 7:31 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> >> > On Tue, Dec 26, 2017 at 9:52 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> >> >> On Wed, Dec 20, 2017 at 8:54 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
-> >> >>> 2017-12-20 15:49 GMT+08:00 syzbot
-> >> >>> <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>:
-> >> >>>> Hello,
-> >> >>>>
-> >> >>>> syzkaller hit the following crash on
-> >> >>>> f6f3732162b5ae3c771b9285a5a32d72b8586920
-> >> >>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> >> >>>> compiler: gcc (GCC) 7.1.1 20170620
-> >> >>>> .config is attached
-> >> >>>> Raw console output is attached.
-> >> >>>> C reproducer is attached
-> >> >>>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> >> >>>> for information about syzkaller reproducers
-> >> >>>>
-> >> >>>>
-> >> >>>
-> >> >>> I will have a look again, you continue to run it in kvm guest, right?
-> >> >>
-> >> >>
-> >> >> Our test machines are GCE VMs, so yes, the kernel that catches GPF is
-> >> >> run as kvm guest.
-> >> >
-> >> > up
-> >> >
-> >> > one of top crashers with 50K crashes
-> >>
-> >>
-> >> This sets a new record of 130000 crashed machines on syzbot infrastructure:
-> >>
-> >> https://syzkaller.appspot.com/bug?id=2bf7b7983c2398ec6f0c4c6c87cb50223e8873f8
-> >
-> > This is more than likely a known bug in the GCE kernel, i.e. the L0
-> > kernel.  The fix that Haozhong referenced needs to be applied to the
-> > L0 kernel (GCE), the L1 kernel (Syzkaller) is irrelevant.  You said
-> > that you double checked an upstream kernel, but I'm assuming you were
-> > referring to patching the L1 kernel (Syzkaller).
-> >
-> > https://lkml.org/lkml/2017/10/31/432
+On Mon, Apr 02, 2018 at 11:37:07AM -0600, Logan Gunthorpe wrote:
 > 
-> Hi Sean,
 > 
-> Thanks! Either I did not associate these 2 threads as we shuffle
-> hundreds of bugs, or I did not realize that this needs to be applied
-> to L0. Anyway...
+> On 02/04/18 11:20 AM, Jerome Glisse wrote:
+> > The point i have been trying to get accross is that you do have this
+> > information with dma_map_resource() you know the device to which you
+> > are trying to map (dev argument to dma_map_resource()) and you can
+> > easily get the device to which the memory belongs because you have the
+> > CPU physical address of the memory hence you can lookup the resource
+> > and get the device from that.
 > 
-> I will check with GCE folks.
-> 
+> How do you go from a physical address to a struct device generally and
+> in a performant manner?
 
-Some hosts have already been updated with the referenced commit but not all yet.
-So assuming that was really the problem, syzbot should stop hitting this crash
-eventually.  (For any Googlers following along, see Google-Bug-Id 72171735.)
+There isn't good API at the moment AFAIK, closest thing would either be
+lookup_resource() or region_intersects(), but a more appropriate one can
+easily be added, code to walk down the tree is readily available. More-
+over this can be optimize like vma lookup are, even more as resource are
+seldomly added so read side (finding a resource) can be heavily favor
+over write side (adding|registering a new resource).
 
-Eric
+> 
+> > IIRC CAPI make P2P mandatory but maybe this is with NVLink. We can ask
+> > the PowerPC folks to confirm. Note CAPI is Power8 and newer AFAICT.
+> 
+> PowerPC folks recently told us specifically that Power9 does not support
+> P2P between PCI root ports. I've said this many times. CAPI has nothing
+> to do with it.
+
+I need to check CAPI, i must have confuse that with NVLink which is also
+on some powerpc arch.
+
+> 
+> > Mapping to userspace have nothing to do here. I am talking at hardware
+> > level. How thing are expose to userspace is a completely different
+> > problems that do not have one solution fit all. For GPU you want this
+> > to be under total control of GPU drivers. For storage like persistent
+> > memory, you might want to expose it userspace more directly ...
+> 
+> My understanding (and I worked on this a while ago) is that CAPI
+> hardware manages memory maps typically for userspace memory. When a
+> userspace program changes it's mapping, the CAPI hardware is updated so
+> that hardware is coherent with the user address space and it is safe to
+> DMA to any address without having to pin memory. (This is very similar
+> to ODP in RNICs.) This is *really* nice but doesn't solve *any* of the
+> problems we've been discussing. Moreover, many developers want to keep
+> P2P in-kernel, for the time being, where the problem of pinning memory
+> does not exist.
+
+What you describe is the ATS(Address Translation Service)/PASID(Process
+Address Space IDentifier) part of CAPI. Which have also been available
+for years on AMD x86 platform (AMD IOMMU-v2), thought it is barely ever
+use. Interesting aspect of CAPI is its cache coherency protocol between
+devices and CPUs. This in both direction, the usual device access to
+system memory can be cache coherent with CPU access and participate in
+cache coherency protocol (bit further than PCIE snoop). But also the
+other direction the CPU access to device memory can also be cache coherent,
+which is not the case in PCIE.
+
+This cache coherency between CPU and device is what made me assume that
+CAPI must have Peer To Peer support as peer must be able to talk to each
+other for cache coherency purpose. But maybe all cache coherency
+arbritration goes through central directory allievating Peer to Peer
+requirement.
+
+Anyway, like you said, this does not matter for the discussion. The
+dma_map_resource() can be just stub out on platform that do not support
+this and they would not allow it. If it get use on other platform and
+shows enough advantages that users start asking for it then maybe those
+platform will attention to the hardware requirement.
+
+Note that with mmu_notifier there isn't any need to pin stuff (even
+without any special hardware capabilities), as long as you can preempt
+what is happening on your hardware to update its page table.
+
+Cheers,
+Jérôme
