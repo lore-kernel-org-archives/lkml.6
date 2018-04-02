@@ -1,140 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757011AbeDBTb1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:31:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50892 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754396AbeDBTb0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:31:26 -0400
-Date: Mon, 2 Apr 2018 12:31:54 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: schwidefsky@de.ibm.com, borntraeger@de.ibm.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180329021812.GV3675@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1803291021500.1292-100000@iolanthe.rowland.org>
+        id S1757035AbeDBTcm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:32:42 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:41250 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757020AbeDBTck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 15:32:40 -0400
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>, Will Davis <wdavis@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>, linaro-mm-sig@lists.linaro.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+References: <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+ <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+ <20180330015854.GA3572@redhat.com>
+ <0234bc5e-495e-0f68-fb0a-debb17a35761@deltatee.com>
+ <20180330194519.GC3198@redhat.com>
+ <31266710-f6bb-99ee-c73d-6e58afe5c38c@deltatee.com>
+ <20180402172027.GA18231@redhat.com>
+ <6f796779-0ba3-d056-de33-341ee55d6b38@deltatee.com>
+ <20180402191649.GB18231@redhat.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <4c672c71-6202-0775-7825-37f8077d1d35@deltatee.com>
+Date: Mon, 2 Apr 2018 13:32:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1803291021500.1292-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040219-0036-0000-0000-000002DAB100
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008790; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01012159; UDB=6.00515827; IPR=6.00791429;
- MB=3.00020378; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-02 19:31:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040219-0037-0000-0000-000043D81E11
-Message-Id: <20180402193154.GA3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-02_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804020212
+In-Reply-To: <20180402191649.GB18231@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: bhelgaas@google.com, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, joro@8bytes.org, wdavis@nvidia.com, hch@infradead.org, christian.koenig@amd.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 10:40:43AM -0400, Alan Stern wrote:
-> On Wed, 28 Mar 2018, Paul E. McKenney wrote:
-> 
-> > > > In the meantime, does the cat file look to you like it correctly
-> > > > models the combination of TSO and multicopy atomicity?  Do the
-> > > > fences really work, or did I just get lucky with my choice of
-> > > > litmus tests?
-> > > 
-> > > You got lucky.  Try creating an SB litmus test where, instead of an
-> > > smp_mb() fence between the write and the read, each thread executes
-> > > some other kind of fence.
-> > 
-> > Ah, it does indeed get "Never" in that case, which I do not believe
-> > to e correct.
-> > 
-> > > The acyclicity condition should have been written more like this:
-> > > 
-> > > let po_ghb = ([R] ; po ; [M]) | ([M] ; po ; [W])
-> > > 
-> > > acyclic mfence | po_ghb | rf | fr | co as tso-mca
-> > > 
-> > > I don't know what the fence instruction is on s390; change the "mfence"
-> > > above accordingly.  The main difference between this and the
-> > > corresponding expression in x86tso.cat is that I replaced rfe with rf.
-> > 
-> > The s390 fence instruction is "bcr 14,0" or "bcr 15,0", depending on
-> > how recent of hardware you are running.  The latter works everywhere,
-> > if I recall correctly.  But I do not believe that herd knows about either
-> > instruction yet.
-> 
-> Herd does not need to understand s390 assembly in order to handle the 
-> things defined in linux.def, such as "smp_mb()".  linux.def doesn't 
-> contain any x86 assembly language stuff either (or PPC or ARM).
-> 
-> >  Ah, and I need to lose the "empty rmw & (fre;coe)".
-> > That appears to be where my spurious ordering was coming from, strange
-> > though that seems to me.
-> 
-> No, don't drop it; it was not the source of your spurious ordering.  
-> The extra ordering came from your "(po \ (W * R))" term, which 
-> unintentionally matches fences as well as memory accesses.
-> 
-> > And your use of "rf" instead of "rfe" makes sense, as that is what makes
-> > the read-from-write provide ordering, correct?  And that should also cover
-> > the "Uniproc check" that would otherwise be required, right?
-> 
-> I don't think so...
-> 
-> > Except that I get "Sometimes" on CoWR+poonceonce+Once.litmus...
-> 
-> Exactly.
-> 
-> > Which I can fix by unioning po-loc into po-ghb.  Or is there some
-> > better way to do this?
-> 
-> You could just keep the "uniproc" check.  These two approaches accept 
-> the same set of litmus tests.
-> 
-> Logically, I think of these as two distinct categories of ordering.  
-> po_ghb and tso-mca have to do with the order in which stores reach the 
-> cache, whereas "uniproc" (AKA sequential consistency per variable) has 
-> to do with enforcement of the cache coherence requirements.  Clearly 
-> they are related, but they aren't the same thing.
-> 
-> > > This doesn't account for atomic operations properly; see the "implied" 
-> > > term in x86tso.cat.
-> > 
-> > I will look at this more later, reaching end of both battery and useful
-> > attention span...
 
-Like the following, perhaps?
 
-							Thanx, Paul
+On 02/04/18 01:16 PM, Jerome Glisse wrote:
+> There isn't good API at the moment AFAIK, closest thing would either be
+> lookup_resource() or region_intersects(), but a more appropriate one can
+> easily be added, code to walk down the tree is readily available. More-
+> over this can be optimize like vma lookup are, even more as resource are
+> seldomly added so read side (finding a resource) can be heavily favor
+> over write side (adding|registering a new resource).
 
-------------------------------------------------------------------------
+So someone needs to create a highly optimized tree that registers all
+physical address on the system and maps them to devices? That seems a
+long way from being realized. I'd hardly characterize that as "easily".
+If we can pass both devices to the API I'd suspect it would be preferred
+over the complicated tree. This, of course, depends on what users of the
+API need.
 
-s390
+> cache coherency protocol (bit further than PCIE snoop). But also the
+> other direction the CPU access to device memory can also be cache coherent,
+> which is not the case in PCIE.
 
-include "fences.cat"
-include "cos.cat"
+I was not aware that CAPI allows PCI device memory to be cache coherent.
+That sounds like it would be very tricky...
 
-(* Fundamental coherence ordering *)
-let com = rf | co | fr
-acyclic po-loc | com as coherence
+> Note that with mmu_notifier there isn't any need to pin stuff (even
+> without any special hardware capabilities), as long as you can preempt
+> what is happening on your hardware to update its page table.
 
-(* Atomic *)
-empty rmw & (fre;coe) as atom 
+I've been told there's a lot of dislike of the mmu_notifier interface.
+And being able to preempt what's happening on hardware, generally, is
+not trivial. But, yes, this is essentially how ODP works.
 
-(* Fences *)
-let mb = [M] ; fencerel(Mb) ; [M]
-
-(* TSO with multicopy atomicity *)
-let po-ghb = ([R] ; po ; [M]) | ([M] ; po ; [W]) 
-acyclic mb | po-ghb | fr | rf | co as sc
+Logan
