@@ -1,116 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756836AbeDBTQy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:16:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47708 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752321AbeDBTQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:16:53 -0400
-Date: Mon, 2 Apr 2018 15:16:50 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@infradead.org>, Will Davis <wdavis@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>, linaro-mm-sig@lists.linaro.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-Message-ID: <20180402191649.GB18231@redhat.com>
-References: <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
- <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
- <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
- <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
- <20180330015854.GA3572@redhat.com>
- <0234bc5e-495e-0f68-fb0a-debb17a35761@deltatee.com>
- <20180330194519.GC3198@redhat.com>
- <31266710-f6bb-99ee-c73d-6e58afe5c38c@deltatee.com>
- <20180402172027.GA18231@redhat.com>
- <6f796779-0ba3-d056-de33-341ee55d6b38@deltatee.com>
+        id S1756967AbeDBT25 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:28:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57504 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754879AbeDBT24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 15:28:56 -0400
+Date: Mon, 2 Apr 2018 21:28:43 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180402212843.164d5d21@bbrezillon>
+In-Reply-To: <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+References: <20180329131054.22506-1-peda@axentia.se>
+        <20180329153322.5e2fc1e7@bbrezillon>
+        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+        <20180329154416.5c1a0013@bbrezillon>
+        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+        <20180402142249.7e076a64@bbrezillon>
+        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6f796779-0ba3-d056-de33-341ee55d6b38@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 11:37:07AM -0600, Logan Gunthorpe wrote:
+On Mon, 2 Apr 2018 19:59:39 +0200
+Peter Rosin <peda@axentia.se> wrote:
+
+> On 2018-04-02 14:22, Boris Brezillon wrote:
+> > On Thu, 29 Mar 2018 16:27:12 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> On 2018-03-29 15:44, Boris Brezillon wrote:  
+> >>> On Thu, 29 Mar 2018 15:37:43 +0200
+> >>> Peter Rosin <peda@axentia.se> wrote:
+> >>>     
+> >>>> On 2018-03-29 15:33, Boris Brezillon wrote:    
+> >>>>> On Thu, 29 Mar 2018 15:10:54 +0200
+> >>>>> Peter Rosin <peda@axentia.se> wrote:
+> >>>>>       
+> >>>>>> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
+> >>>>>> flash accesses have a tendency to cause display disturbances. Add a
+> >>>>>> module param to disable DMA from the NAND controller, since that fixes
+> >>>>>> the display problem for me.
+> >>>>>>
+> >>>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>>>>> ---
+> >>>>>>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
+> >>>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>>>> index b2f00b398490..2ff7a77c7b8e 100644
+> >>>>>> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>>>> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>>>> @@ -129,6 +129,11 @@
+> >>>>>>  #define DEFAULT_TIMEOUT_MS			1000
+> >>>>>>  #define MIN_DMA_LEN				128
+> >>>>>>  
+> >>>>>> +static bool atmel_nand_avoid_dma __read_mostly;
+> >>>>>> +
+> >>>>>> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
+> >>>>>> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);      
+> >>>>>
+> >>>>> I'm not a big fan of those driver specific cmdline parameters. Can't we
+> >>>>> instead give an higher priority to HLCDC master using the bus matrix?      
+> >>>>
+> >>>> I don't know if it will be enough, but we sure can try. However, I have
+> >>>> no idea how to do that. I will happily test stuff though...    
+> >>>
+> >>> There's no interface to configure that from Linux, but you can try to
+> >>> tweak it with devmem and if that does the trick, maybe we can expose a
+> >>> way to configure that from Linux. For more details, see the "Bus Matrix
+> >>> (MATRIX)" section in Atmel datasheets.    
+> >>
+> >> I don't seem to succeed in changing the registers I think I need to change.
+> >> I can poke the "Write Protection Mode Register" by writing MAT0 and MAT1 to
+> >> it.  
+> > 
+> > You mean 0x4D415400, right? ("MAT0" != 0x4D415400).  
+> 
+> Bits 1 through 7 do not matter, so even though not equal they are (or
+> should be) equivalent. But I did use 0x4d415400. I simply used the
+> shorter syntax since that was easier to type and conveyed the relevant
+> info.
+
+Ok.
+
+> 
+> >> But when I try to write to "Priority Registers B For Slaves" it doesn't
+> >> take, regardless of write protect mode.  
+> > 
+> > Did you check MATRIX_WPSR after writing to MATRIX_PRXSY?  
+> 
+> No, but did it again and checked, see transcript below.
+
+I don't use devmem2. Is 'readback' information accurate or is it
+always what's been written? Because when you write 0x33 to 0xFFFFECBC,
+0x33 is read back, but just after that, when you read it again it's 0.
+
+> BTW, how do I
+> know which master is in use for the LCD controller? 8 or 9? Both?
+
+It's configurable on a per-layer basis through the SIF bit in
+LCDC_<layer>CFG0. The driver tries to dispatch the load on those 2 AHB
+masters [1].
+
+> And
+> which DDR slave is the target? 7, 8, 9 or 10? More than one?
+
+This, I don't know. I guess all of them can be used.
+
+> 
+> Cheers,
+> Peter
+> 
+> # devmem2 0xffffede4 w
+> /dev/mem opened.
+> Memory mapped at address 0xb6f50000.
+> Value at address 0xFFFFEDE4 (0xb6f50de4): 0x0
+> # devmem2 0xffffede4 w 0x4d415401
+> /dev/mem opened.
+> Memory mapped at address 0xb6f0d000.
+> Value at address 0xFFFFEDE4 (0xb6f0dde4): 0x0
+> Written 0x4D415401; readback 0x4D415401
+> # devmem2 0xffffede4 w
+> /dev/mem opened.
+> Memory mapped at address 0xb6f55000.
+> Value at address 0xFFFFEDE4 (0xb6f55de4): 0x1
+> # devmem2 0xffffede4 w 0x4d415400
+> /dev/mem opened.
+> Memory mapped at address 0xb6fb5000.
+> Value at address 0xFFFFEDE4 (0xb6fb5de4): 0x1
+> Written 0x4D415400; readback 0x4D415400
+> # devmem2 0xffffede4 w
+> /dev/mem opened.
+> Memory mapped at address 0xb6fef000.
+> Value at address 0xFFFFEDE4 (0xb6fefde4): 0x0
 > 
 > 
-> On 02/04/18 11:20 AM, Jerome Glisse wrote:
-> > The point i have been trying to get accross is that you do have this
-> > information with dma_map_resource() you know the device to which you
-> > are trying to map (dev argument to dma_map_resource()) and you can
-> > easily get the device to which the memory belongs because you have the
-> > CPU physical address of the memory hence you can lookup the resource
-> > and get the device from that.
+> # devmem2 0xffffede8 w
+> /dev/mem opened.
+> Memory mapped at address 0xb6fe9000.
+> Value at address 0xFFFFEDE8 (0xb6fe9de8): 0x0
 > 
-> How do you go from a physical address to a struct device generally and
-> in a performant manner?
-
-There isn't good API at the moment AFAIK, closest thing would either be
-lookup_resource() or region_intersects(), but a more appropriate one can
-easily be added, code to walk down the tree is readily available. More-
-over this can be optimize like vma lookup are, even more as resource are
-seldomly added so read side (finding a resource) can be heavily favor
-over write side (adding|registering a new resource).
-
 > 
-> > IIRC CAPI make P2P mandatory but maybe this is with NVLink. We can ask
-> > the PowerPC folks to confirm. Note CAPI is Power8 and newer AFAICT.
+> # devmem2 0xffffecbc w
+> /dev/mem opened.
+> Memory mapped at address 0xb6ff0000.
+> Value at address 0xFFFFECBC (0xb6ff0cbc): 0x0
+> # devmem2 0xffffecbc w 0x33
+> /dev/mem opened.
+> Memory mapped at address 0xb6f79000.
+> Value at address 0xFFFFECBC (0xb6f79cbc): 0x0
+> Written 0x33; readback 0x33
+> # devmem2 0xffffecbc w
+> /dev/mem opened.
+> Memory mapped at address 0xb6efe000.
+> Value at address 0xFFFFECBC (0xb6efecbc): 0x0
 > 
-> PowerPC folks recently told us specifically that Power9 does not support
-> P2P between PCI root ports. I've said this many times. CAPI has nothing
-> to do with it.
-
-I need to check CAPI, i must have confuse that with NVLink which is also
-on some powerpc arch.
-
 > 
-> > Mapping to userspace have nothing to do here. I am talking at hardware
-> > level. How thing are expose to userspace is a completely different
-> > problems that do not have one solution fit all. For GPU you want this
-> > to be under total control of GPU drivers. For storage like persistent
-> > memory, you might want to expose it userspace more directly ...
+> # devmem2 0xffffede8 w
+> /dev/mem opened.
+> Memory mapped at address 0xb6f9e000.
+> Value at address 0xFFFFEDE8 (0xb6f9ede8): 0x0
 > 
-> My understanding (and I worked on this a while ago) is that CAPI
-> hardware manages memory maps typically for userspace memory. When a
-> userspace program changes it's mapping, the CAPI hardware is updated so
-> that hardware is coherent with the user address space and it is safe to
-> DMA to any address without having to pin memory. (This is very similar
-> to ODP in RNICs.) This is *really* nice but doesn't solve *any* of the
-> problems we've been discussing. Moreover, many developers want to keep
-> P2P in-kernel, for the time being, where the problem of pinning memory
-> does not exist.
 
-What you describe is the ATS(Address Translation Service)/PASID(Process
-Address Space IDentifier) part of CAPI. Which have also been available
-for years on AMD x86 platform (AMD IOMMU-v2), thought it is barely ever
-use. Interesting aspect of CAPI is its cache coherency protocol between
-devices and CPUs. This in both direction, the usual device access to
-system memory can be cache coherent with CPU access and participate in
-cache coherency protocol (bit further than PCIE snoop). But also the
-other direction the CPU access to device memory can also be cache coherent,
-which is not the case in PCIE.
+[1]https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c#L498
 
-This cache coherency between CPU and device is what made me assume that
-CAPI must have Peer To Peer support as peer must be able to talk to each
-other for cache coherency purpose. But maybe all cache coherency
-arbritration goes through central directory allievating Peer to Peer
-requirement.
-
-Anyway, like you said, this does not matter for the discussion. The
-dma_map_resource() can be just stub out on platform that do not support
-this and they would not allow it. If it get use on other platform and
-shows enough advantages that users start asking for it then maybe those
-platform will attention to the hardware requirement.
-
-Note that with mmu_notifier there isn't any need to pin stuff (even
-without any special hardware capabilities), as long as you can preempt
-what is happening on your hardware to update its page table.
-
-Cheers,
-Jérôme
+-- 
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
