@@ -1,229 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754407AbeDBIB1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 04:01:27 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:41674 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754308AbeDBIB0 (ORCPT
+        id S1754371AbeDBIDZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 04:03:25 -0400
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:39486 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754260AbeDBIDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 04:01:26 -0400
-X-Google-Smtp-Source: AIpwx48rsnuCYqd07gQuXDxB5OWB0i1UyPVxfAJbBUoFkU5yQeVZFJ7ksIL+CTxDr/NJfWc+JgUT1jGzQ5nw2AKsziE=
+        Mon, 2 Apr 2018 04:03:23 -0400
+X-Google-Smtp-Source: AIpwx49hpNhEf1+S6ki2jN0fBdC9nmlbB7UV+taKToIqr9zQw9nN+gbRVq1ouLgdsnZveebkPVCIFPTsG38SNADI8Mw=
 MIME-Version: 1.0
-In-Reply-To: <1522636236-12625-3-git-send-email-hejianet@gmail.com>
-References: <1522636236-12625-1-git-send-email-hejianet@gmail.com> <1522636236-12625-3-git-send-email-hejianet@gmail.com>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Mon, 2 Apr 2018 10:01:25 +0200
-Message-ID: <CACjP9X-kwbMY2uHgfTthz0ozxsEKqJUX7KFUEbMqVLjs__r6Xw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] arm: arm64: page_alloc: reduce unnecessary binary
- search in memblock_next_valid_pfn()
-To: Jia He <hejianet@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        Grygorii Strashko <grygorii.strashko@linaro.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Jia He <jia.he@hxt-semitech.com>
+In-Reply-To: <93622938-f532-b8ac-2bca-fe40ed759e71@linux.vnet.ibm.com>
+References: <1522444730-2060-1-git-send-email-rosattig@linux.vnet.ibm.com>
+ <20180330212439.GA28945@localhost.localdomain> <93622938-f532-b8ac-2bca-fe40ed759e71@linux.vnet.ibm.com>
+From: chaitany kulkarni <ckulkarnilinux@gmail.com>
+Date: Mon, 2 Apr 2018 01:03:21 -0700
+Message-ID: <CAK0tqikdyFoZGuRnh3_YXKtrY9NqEZVv5AysL+xGKpvGJ762fA@mail.gmail.com>
+Subject: Re: [PATCH] nvmet: fix nvmet_execute_write_zeroes function
+To: =?UTF-8?Q?Rodrigo_Rosatti_Galv=C3=A3o?=
+        <rosattig@linux.vnet.ibm.com>
+Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        hch@lst.de, Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3283Wa9025662
 
-On Mon, Apr 2, 2018 at 4:30 AM, Jia He <hejianet@gmail.com> wrote:
-> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-> where possible") optimized the loop in memmap_init_zone(). But there is
-> still some room for improvement. E.g. if pfn and pfn+1 are in the same
-> memblock region, we can simply pfn++ instead of doing the binary search
-> in memblock_next_valid_pfn.
->
-> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
-> ---
->  arch/arm/include/asm/page.h   |  1 +
->  arch/arm/mm/init.c            | 28 ++++++++++++++++++++++------
->  arch/arm64/include/asm/page.h |  1 +
->  arch/arm64/mm/init.c          | 28 ++++++++++++++++++++++------
->  4 files changed, 46 insertions(+), 12 deletions(-)
->
-> diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
-> index 489875c..f38909c 100644
-> --- a/arch/arm/include/asm/page.h
-> +++ b/arch/arm/include/asm/page.h
-> @@ -157,6 +157,7 @@ extern void copy_page(void *to, const void *from);
->  typedef struct page *pgtable_t;
->
->  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-> +extern int early_region_idx;
+Please give me a couple of days, I'll look into this.
 
-I believe this is not needed anymore.
-
->  extern int pfn_valid(unsigned long);
->  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
->  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
-> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-> index 0fb85ca..06ed190 100644
-> --- a/arch/arm/mm/init.c
-> +++ b/arch/arm/mm/init.c
-> @@ -193,6 +193,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
->  }
+On Fri, Mar 30, 2018 at 2:48 PM, Rodrigo Rosatti Galvão
+<rosattig@linux.vnet.ibm.com> wrote:
 >
->  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-> +int early_region_idx __meminitdata = -1;
-
-static?
-
-> +
->  int pfn_valid(unsigned long pfn)
->  {
->         return memblock_is_map_memory(__pfn_to_phys(pfn));
-> @@ -203,28 +205,42 @@ EXPORT_SYMBOL(pfn_valid);
->  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
->  {
->         struct memblock_type *type = &memblock.memory;
-> +       struct memblock_region *regions = type->regions;
->         unsigned int right = type->cnt;
->         unsigned int mid, left = 0;
-> +       unsigned long start_pfn, end_pfn;
->         phys_addr_t addr = PFN_PHYS(++pfn);
+>> Doesn't that mean your host is using this command wrong? The NLB is a
+>> 0's based value, we're supposed to +1 to get the correct block count.
 >
-> +       /* fast path, return pfn+1 if next pfn is in the same region */
-> +       if (early_region_idx != -1) {
-> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
-> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
-> +                               regions[early_region_idx].size);
-> +
-> +               if (pfn >= start_pfn && pfn < end_pfn)
-> +                       return pfn;
-> +       }
-> +
-> +       /* slow path, do the binary searching */
->         do {
->                 mid = (right + left) / 2;
 >
-> -               if (addr < type->regions[mid].base)
-> +               if (addr < regions[mid].base)
->                         right = mid;
-> -               else if (addr >= (type->regions[mid].base +
-> -                                 type->regions[mid].size))
-> +               else if (addr >= (regions[mid].base + regions[mid].size))
->                         left = mid + 1;
->                 else {
-> -                       /* addr is within the region, so pfn is valid */
-> +                       early_region_idx = mid;
->                         return pfn;
->                 }
->         } while (left < right);
+> Keith, I tested passing different values to the c (number of blocks) and s
+> (64-bit LBA of first block to access) parameters, and it was failing. When I
+> removed the +1, the command worked fine.
 >
->         if (right == type->cnt)
->                 return -1UL;
-> -       else
-> -               return PHYS_PFN(type->regions[right].base);
-> +
-> +       early_region_idx = right;
-> +
-> +       return PHYS_PFN(regions[early_region_idx].base);
->  }
->  EXPORT_SYMBOL(memblock_next_valid_pfn);
->  #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
-> diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-> index e57d3f2..f0d8c8e5 100644
-> --- a/arch/arm64/include/asm/page.h
-> +++ b/arch/arm64/include/asm/page.h
-> @@ -38,6 +38,7 @@ extern void clear_page(void *to);
->  typedef struct page *pgtable_t;
+> I used a simple script to validate this:
 >
->  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-> +extern int early_region_idx;
-
-ditto
-
->  extern int pfn_valid(unsigned long);
->  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
->  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 13e43ff..342e4e2 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -285,6 +285,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
->  #endif /* CONFIG_NUMA */
+> for s in {0..20}
+>     do
+>             for c in {0..20}
+>             do
+>                     nvme write-zeroes /dev/nvme0 -n 10 -s $s -c $c
+>             done
+>     done
 >
->  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
-> +int early_region_idx __meminitdata = -1;
-
-ditto
-
---nX
-
-> +
->  int pfn_valid(unsigned long pfn)
->  {
->         return memblock_is_map_memory(pfn << PAGE_SHIFT);
-> @@ -295,28 +297,42 @@ EXPORT_SYMBOL(pfn_valid);
->  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
->  {
->         struct memblock_type *type = &memblock.memory;
-> +       struct memblock_region *regions = type->regions;
->         unsigned int right = type->cnt;
->         unsigned int mid, left = 0;
-> +       unsigned long start_pfn, end_pfn;
->         phys_addr_t addr = PFN_PHYS(++pfn);
 >
-> +       /* fast path, return pfn+1 if next pfn is in the same region */
-> +       if (early_region_idx != -1) {
-> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
-> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
-> +                               regions[early_region_idx].size);
-> +
-> +               if (pfn >= start_pfn && pfn < end_pfn)
-> +                       return pfn;
-> +       }
-> +
-> +       /* slow path, do the binary searching */
->         do {
->                 mid = (right + left) / 2;
+> Is there some other way to test it?
 >
-> -               if (addr < type->regions[mid].base)
-> +               if (addr < regions[mid].base)
->                         right = mid;
-> -               else if (addr >= (type->regions[mid].base +
-> -                                 type->regions[mid].size))
-> +               else if (addr >= (regions[mid].base + regions[mid].size))
->                         left = mid + 1;
->                 else {
-> -                       /* addr is within the region, so pfn is valid */
-> +                       early_region_idx = mid;
->                         return pfn;
->                 }
->         } while (left < right);
->
->         if (right == type->cnt)
->                 return -1UL;
-> -       else
-> -               return PHYS_PFN(type->regions[right].base);
-> +
-> +       early_region_idx = right;
-> +
-> +       return PHYS_PFN(regions[early_region_idx].base);
->  }
->  EXPORT_SYMBOL(memblock_next_valid_pfn);
->  #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
 > --
-> 2.7.4
+> Rodrigo R. Galvão
+> Intern - Linux Technology Center - IBM
 >
+>
+>
+> _______________________________________________
+> Linux-nvme mailing list
+> Linux-nvme@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-nvme
