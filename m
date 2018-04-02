@@ -1,86 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753068AbeDBRJm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 13:09:42 -0400
-Received: from mga07.intel.com ([134.134.136.100]:57661 "EHLO mga07.intel.com"
+        id S1753157AbeDBRKC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 13:10:02 -0400
+Received: from mga11.intel.com ([192.55.52.93]:42817 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751647AbeDBRJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 13:09:40 -0400
+        id S1753081AbeDBRKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 13:10:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,396,1517904000";
-   d="scan'208";a="40124085"
-Message-ID: <1522688973.3254.8.camel@tzanussi-mobl.amr.corp.intel.com>
-Subject: Re: [PATCH 3/4] tracing: Add action comparisons when testing
- matching hist triggers
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date: Mon, 02 Apr 2018 12:09:33 -0500
-In-Reply-To: <20180403001025.6dfed9403d50d20104e54458@kernel.org>
-References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-         <a7fd668b87ec10736c8f016ac4279c8480d50c2b.1522256721.git.tom.zanussi@linux.intel.com>
-         <20180403001025.6dfed9403d50d20104e54458@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="43382186"
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To: alsa-devel@alsa-project.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        liam.r.girdwood@linux.intel.com, Vinod Koul <vinod.koul@intel.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Harsha Priya N <harshapriya.n@intel.com>,
+        Naveen M <naveen.m@intel.com>, Daniel Drake <drake@endlessm.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH][RESEND] ASoC: Intel: atom: fix ACPI/PCI Kconfig
+Date: Mon,  2 Apr 2018 12:06:14 -0500
+Message-Id: <20180402170614.5599-1-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+The split between ACPI and PCI platforms generated issues with randconfig:
 
-On Tue, 2018-04-03 at 00:10 +0900, Masami Hiramatsu wrote:
-> On Wed, 28 Mar 2018 15:10:55 -0500
-> Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
-> 
-> > Actions also need to be considered when checking for matching triggers
-> > - triggers differing only by action should be allowed, but currently
-> > aren't because the matching check ignores the action and erroneously
-> > returns -EEXIST.
-> 
-> Hi Tom,
-> 
-> Could you show us the bad/good examples (maybe different onmatch() actions)?
-> And if it is real bugfix, I would like to add a ftracetest testcase for this fix.
-> 
+with SND_SST_ATOM_HIFI2_PLATFORM_PCI=y and
+SND_SST_ATOM_HIFI2_PLATFORM=m, we get this module link failure:
 
-Here's an example using onmatch() actions.  The first -EEXIST shouldn't
-occur because the onmatch() is different in the second wakeup_latency()
-param.  The second -EEXIST shouldn't occur because it's a different
-action (in this case, it doesn't have an action, so shouldn't be seen
-as being the same and therefore rejected).
+ERROR: "sst_context_init"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
 
-In the after case, both are correctly accepted (and trying to add one of
-them again returns -EEXIST as it should).
+ERROR: "sst_context_cleanup"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
 
-before:
+ERROR: "sst_alloc_drv_context"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
 
-  # echo 'wakeup_latency u64 lat; pid_t pid' >> /sys/kernel/debug/tracing/synthetic_events
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0 if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo 'hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,next_pid) if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo 'hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,prev_pid) if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
--su: echo: write error: File exists
-  # echo 'hist:keys=next_pid if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
--su: echo: write error: File exists
+ERROR: "intel_sst_pm" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko]
+undefined!
 
-after:
+ERROR: "sst_configure_runtime_pm"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
 
-  # echo 'wakeup_latency u64 lat; pid_t pid' >> /sys/kernel/debug/tracing/synthetic_events
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0 if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo 'hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,next_pid) if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo 'hist:keys=next_pid:onmatch(sched.sched_wakeup).wakeup_latency(sched.sched_switch.$wakeup_lat,prev_pid) if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-  # echo 'hist:keys=next_pid if next_comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
+To keep things simple, let's expose two configs for
+SND_SST_ATOM_HIFI2_PLATFORM_PCI and SND_SST_ATOM_HIFI2_PLATFORM_ACPI,
+which select a common SND_SST_ATOM_HIFI2_PLATFORM option. To avoid
+breaking existing solutions with the semantics change,
+SND_SST_ATOM_HIFI2_PLATFORM_ACPI uses "default ACPI" so that "make
+oldnoconfig" and "make olddefconfig" still work as expected.
 
-Thanks,
+Also remove mentions of Medfield while we are at it since it was
+removed recently.
 
-Tom
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 4772c16ede52 ("ASoC: Intel: Kconfig: Simplify-clarify ACPI/PCI
+dependencies")
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+already sent on January 23 but apparently missed
+
+
+ sound/soc/intel/Kconfig | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index ceb105cbd461..addac2a8e52a 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -72,24 +72,28 @@ config SND_SOC_INTEL_BAYTRAIL
+ 	  for Baytrail Chromebooks but this option is now deprecated and is
+ 	  not recommended, use SND_SST_ATOM_HIFI2_PLATFORM instead.
+ 
++config SND_SST_ATOM_HIFI2_PLATFORM
++	tristate
++	select SND_SOC_COMPRESS
++
+ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
+-	tristate "PCI HiFi2 (Medfield, Merrifield) Platforms"
++	tristate "PCI HiFi2 (Merrifield) Platforms"
+ 	depends on X86 && PCI
+ 	select SND_SST_IPC_PCI
+-	select SND_SOC_COMPRESS
++	select SND_SST_ATOM_HIFI2_PLATFORM
+ 	help
+-	  If you have a Intel Medfield or Merrifield/Edison platform, then
++	  If you have a Intel Merrifield/Edison platform, then
+ 	  enable this option by saying Y or m. Distros will typically not
+-	  enable this option: Medfield devices are not available to
+-	  developers and while Merrifield/Edison can run a mainline kernel with
+-	  limited functionality it will require a firmware file which
+-	  is not in the standard firmware tree
++	  enable this option: while Merrifield/Edison can run a mainline
++	  kernel with limited functionality it will require a firmware file
++	  which is not in the standard firmware tree
+ 
+-config SND_SST_ATOM_HIFI2_PLATFORM
++config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+ 	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
++	default ACPI
+ 	depends on X86 && ACPI
+ 	select SND_SST_IPC_ACPI
+-	select SND_SOC_COMPRESS
++	select SND_SST_ATOM_HIFI2_PLATFORM
+ 	select SND_SOC_ACPI_INTEL_MATCH
+ 	select IOSF_MBI
+ 	help
+-- 
+2.14.1
