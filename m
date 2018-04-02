@@ -1,46 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754151AbeDBGoo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:44:44 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49974 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752150AbeDBGom (ORCPT
+        id S1754266AbeDBGr3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:47:29 -0400
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:35052 "EHLO
+        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754160AbeDBGr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:44:42 -0400
-Date: Mon, 2 Apr 2018 07:44:37 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: syzbot <syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, linux-nfs@vger.kernel.org
-Subject: Re: BUG: corrupted list in __dentry_kill
-Message-ID: <20180402064437.GB30522@ZenIV.linux.org.uk>
-References: <001a11447acaa9eec40568bd5438@google.com>
- <20180401033519.GZ30522@ZenIV.linux.org.uk>
- <20180401200531.GA30522@ZenIV.linux.org.uk>
- <20180401210508.GA743@sol.localdomain>
- <20180401214854.GB743@sol.localdomain>
+        Mon, 2 Apr 2018 02:47:28 -0400
+X-Google-Smtp-Source: AIpwx49hcwVnpiV8lvehaOvxO/z0fYBf5Z4Yu476XU+ZcA/jFUzAPFBr4sxB+Hnl7vpUZozXb4yHhNOfSr/CWRjdYIM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180401214854.GB743@sol.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180402060123.GB12733@app09>
+References: <20180402060123.GB12733@app09>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 2 Apr 2018 08:47:27 +0200
+X-Google-Sender-Auth: KlrcWPzCPFKrno-s5GoAmK2tYdU
+Message-ID: <CAK8P3a3+LSLWLc8m7xXiAEmACO2Xs4+MNYGfkpct3erm8EJ74Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Andes(nds32) Port for Linux 4.17
+To: Greentime Hu <green.hu@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greentime <greentime@andestech.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 01, 2018 at 02:48:54PM -0700, Eric Biggers wrote:
-> [+Cc linux-nfs]
-> > 
-> > [   42.965515] net/sunrpc/rpc_pipe.c: __rpc_create_common failed to allocate inode for dentry blocklayout
-> > [   42.967234] net/sunrpc/rpc_pipe.c: rpc_mkpipe_dentry() failed to create pipe nfs/blocklayout (errno = -12)
+On Mon, Apr 2, 2018 at 8:01 AM, Greentime Hu <green.hu@gmail.com> wrote:
+> ----------------------------------------------------------------
+> This tag contains the core nds32 Linux port(including interrupt controller
+> driver and timer driver), which has been through 7 rounds of review on mailing
+> list.
 
-	AFAICS, there's nothing to zero nn->bl_device_pipe->dentry after
-nfs4blocklayout_unregister_sb(), is there?  If nothing else, what's
-going to happen after mount/umount/mount with failing
-nfs4blocklayout_register_sb()?  AFAICS, we'll have stale pointer to
-dentry sitting in nn->bl_device_pipe->dentry, and call rpc_unlink()
-on it while cleaning up after the failing mount.
-
-	I don't think that's all there is to it, but it does smell like
-a bug.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
