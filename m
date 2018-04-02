@@ -1,66 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeDBPDS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:03:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44114 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751247AbeDBPDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:03:17 -0400
-Date: Mon, 2 Apr 2018 10:03:15 -0500
-From: David Teigland <teigland@redhat.com>
-To: Gang He <ghe@suse.com>
-Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dlm: prompt the user SCTP is experimental
-Message-ID: <20180402150315.GA7980@redhat.com>
-References: <1521528327-882-1-git-send-email-ghe@suse.com>
- <5AB4F2CC020000F9000B145C@prv-mh.provo.novell.com>
+        id S1752331AbeDBPFY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:05:24 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:16800 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeDBPFW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 11:05:22 -0400
+Subject: Re: [net-next PATCH v3 00/11] Add support for netcp driver on K2G SoC
+To: David Miller <davem@davemloft.net>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
+        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+References: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
+ <20180402.104009.2227758352325722680.davem@davemloft.net>
+From: Murali Karicheri <m-karicheri2@ti.com>
+Organization: Texas Instruments
+Message-ID: <1e043057-9e1a-7463-dc62-3b04c08bfffb@ti.com>
+Date: Mon, 2 Apr 2018 11:07:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5AB4F2CC020000F9000B145C@prv-mh.provo.novell.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180402.104009.2227758352325722680.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 10:27:56PM -0600, Gang He wrote:
-> Hello David,
+On 04/02/2018 10:40 AM, David Miller wrote:
 > 
-> Do you agree to add this prompt to the user? 
-> Since sometimes customers attempted to setup SCTP protocol with two rings, 
-> but they could not get the expected result, then it maybe bring some concerns to the customer for DLM qualities.
+> The net-next tree is closed, please resubmit this after the merge window and
+> the net-next tree is open back up again.
+> 
+Ok. Will do. Thanks
 
-I don't think the kernel message is a good way to communicate this to users.
-Dave
-
-
-> > As you know, DLM module can use TCP or SCTP protocols to
-> > communicate among the cluster.
-> > But, according to our testing, SCTP protocol is still considered
-> > experimental, since not all aspects are working correctly and
-> > it is not full tested.
-> > e.g. SCTP connection channel switch needs about 5mins hang in case
-> > one connection(ring) is broken.
-> > Then, I suggest to add a kernel print, which prompts the user SCTP
-> > protocol for DLM should be considered experimental, it is not
-> > recommended in production environment.
-> > 
-> > Signed-off-by: Gang He <ghe@suse.com>
-> > ---
-> >  fs/dlm/lowcomms.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-> > index cff79ea..18fd85d 100644
-> > --- a/fs/dlm/lowcomms.c
-> > +++ b/fs/dlm/lowcomms.c
-> > @@ -1307,6 +1307,7 @@ static int sctp_listen_for_all(void)
-> >  		return -ENOMEM;
-> >  
-> >  	log_print("Using SCTP for communications");
-> > +	log_print("SCTP protocol is experimental, use at your own risk");
-> >  
-> >  	result = sock_create_kern(&init_net, dlm_local_addr[0]->ss_family,
-> >  				  SOCK_STREAM, IPPROTO_SCTP, &sock);
-> > -- 
-> > 1.8.5.6
+-- 
+Murali Karicheri
+Linux Kernel, Keystone
