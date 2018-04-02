@@ -1,127 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754389AbeDBS0O (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 14:26:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753072AbeDBS0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 14:26:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 594912178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AIpwx4+6QMR7r8XC16AxlJ65tyTSIq7Jf+TrfrccjD2t9UQzfCuEb/NdzzIEFk/vBVu4NSavhbTu0BOLgsgk0ZxB0v0=
-MIME-Version: 1.0
-In-Reply-To: <201804030128.83Wu99al%fengguang.wu@intel.com>
-References: <1522682026-11395-3-git-send-email-p.pisati@gmail.com> <201804030128.83Wu99al%fengguang.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Mon, 2 Apr 2018 13:25:31 -0500
-X-Gmail-Original-Message-ID: <CANk1AXQ7hLLDoY0JLwsP1kQbkbd9diyDDcZtzYN4E8sFcQ=AKg@mail.gmail.com>
-Message-ID: <CANk1AXQ7hLLDoY0JLwsP1kQbkbd9diyDDcZtzYN4E8sFcQ=AKg@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
-To: kbuild test robot <lkp@intel.com>
-Cc: Paolo Pisati <p.pisati@gmail.com>, kbuild-all@01.org,
-        Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754416AbeDBS1b (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 14:27:31 -0400
+Received: from s18231873.onlinehome-server.info ([217.160.179.168]:33540 "EHLO
+        godking.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753231AbeDBS1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 14:27:30 -0400
+From: Alexander Kappner <agk@godking.net>
+To: ibm-acpi@hmh.eng.br, dvhart@infradead.org, andy@infradead.org
+Cc: ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Kappner <agk@godking.net>
+Subject: [PATCH] Add Second Fan Support for Thinkpad P50
+Date: Mon,  2 Apr 2018 11:27:01 -0700
+Message-Id: <1522693621-3124-1-git-send-email-agk@godking.net>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 2, 2018 at 12:43 PM, kbuild test robot <lkp@intel.com> wrote:
+The Thinkpad P50 has 2 fans. Add the 2FAN quirk so the tpacpi driver
+properly reports both fan speeds.
+Because the P50 doesn't report the version of its EC controller, we need to
+identify it by BIOS version (N1).
 
-This is complaining because Paolo's patch was rebased onto a branch
-that had an API change.
+Signed-off-by: Alexander Kappner <agk@godking.net>
+---
+ drivers/platform/x86/thinkpad_acpi.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Alan
-
-> Hi Paolo,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.16 next-20180329]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Paolo-Pisati/fpga-Lattice-MachXO2-Slave-SPI-FPGA-Manager-support/20180403-000300
-> config: i386-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386
->
-> All error/warnings (new ones prefixed by >>):
->
->    drivers/fpga/machxo2-spi.c: In function 'machxo2_spi_probe':
->>> drivers/fpga/machxo2-spi.c:361:5: error: 'struct fpga_manager' has no member named 'parent'
->      mgr->parent = dev;
->         ^~
->>> drivers/fpga/machxo2-spi.c:367:27: error: passing argument 1 of 'fpga_mgr_register' from incompatible pointer type [-Werror=incompatible-pointer-types]
->      return fpga_mgr_register(mgr);
->                               ^~~
->    In file included from drivers/fpga/machxo2-spi.c:12:0:
->    include/linux/fpga/fpga-mgr.h:173:5: note: expected 'struct device *' but argument is of type 'struct fpga_manager *'
->     int fpga_mgr_register(struct device *dev, const char *name,
->         ^~~~~~~~~~~~~~~~~
->>> drivers/fpga/machxo2-spi.c:367:9: error: too few arguments to function 'fpga_mgr_register'
->      return fpga_mgr_register(mgr);
->             ^~~~~~~~~~~~~~~~~
->    In file included from drivers/fpga/machxo2-spi.c:12:0:
->    include/linux/fpga/fpga-mgr.h:173:5: note: declared here
->     int fpga_mgr_register(struct device *dev, const char *name,
->         ^~~~~~~~~~~~~~~~~
->    drivers/fpga/machxo2-spi.c: In function 'machxo2_spi_remove':
->>> drivers/fpga/machxo2-spi.c:374:22: error: passing argument 1 of 'fpga_mgr_unregister' from incompatible pointer type [-Werror=incompatible-pointer-types]
->      fpga_mgr_unregister(mgr);
->                          ^~~
->    In file included from drivers/fpga/machxo2-spi.c:12:0:
->    include/linux/fpga/fpga-mgr.h:176:6: note: expected 'struct device *' but argument is of type 'struct fpga_manager *'
->     void fpga_mgr_unregister(struct device *dev);
->          ^~~~~~~~~~~~~~~~~~~
->    drivers/fpga/machxo2-spi.c: In function 'machxo2_spi_probe':
->>> drivers/fpga/machxo2-spi.c:368:1: warning: control reaches end of non-void function [-Wreturn-type]
->     }
->     ^
->    cc1: some warnings being treated as errors
->
-> vim +361 drivers/fpga/machxo2-spi.c
->
->    346
->    347  static int machxo2_spi_probe(struct spi_device *spi)
->    348  {
->    349          struct device *dev = &spi->dev;
->    350          struct fpga_manager *mgr;
->    351
->    352          if (spi->max_speed_hz > MACHXO2_MAX_SPEED) {
->    353                  dev_err(dev, "Speed is too high\n");
->    354                  return -EINVAL;
->    355          }
->    356
->    357          mgr = devm_kzalloc(dev, sizeof(*mgr), GFP_KERNEL);
->    358          if (!mgr)
->    359                  return -ENOMEM;
->    360
->  > 361          mgr->parent = dev;
->    362          mgr->name = "Lattice MachXO2 SPI FPGA Manager";
->    363          mgr->mops = &machxo2_ops;
->    364          mgr->priv = spi;
->    365          spi_set_drvdata(spi, mgr);
->    366
->  > 367          return fpga_mgr_register(mgr);
->  > 368  }
->    369
->    370  static int machxo2_spi_remove(struct spi_device *spi)
->    371  {
->    372          struct fpga_manager *mgr = spi_get_drvdata(spi);
->    373
->  > 374          fpga_mgr_unregister(mgr);
->    375
->    376          return 0;
->    377  }
->    378
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+index d5eaf3b1..ebdc300 100644
+--- a/drivers/platform/x86/thinkpad_acpi.c
++++ b/drivers/platform/x86/thinkpad_acpi.c
+@@ -8699,16 +8699,24 @@ static const struct attribute_group fan_attr_group = {
+ 	  .ec = TPID(__id1, __id2),		\
+ 	  .quirks = __quirks }
+ 
++#define TPACPI_FAN_QL_BIOS(__id1, __id2, __quirks)	\
++	{ .vendor = PCI_VENDOR_ID_LENOVO,	\
++	  .bios = TPID(__id1, __id2),		\
++	  .ec = TPACPI_MATCH_ANY,		\
++	  .quirks = __quirks }
++
+ static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+ 	TPACPI_FAN_QI('1', 'Y', TPACPI_FAN_Q1),
+ 	TPACPI_FAN_QI('7', '8', TPACPI_FAN_Q1),
+ 	TPACPI_FAN_QI('7', '6', TPACPI_FAN_Q1),
+ 	TPACPI_FAN_QI('7', '0', TPACPI_FAN_Q1),
+ 	TPACPI_FAN_QL('7', 'M', TPACPI_FAN_2FAN),
++	TPACPI_FAN_QL_BIOS('N', '1', TPACPI_FAN_2FAN) // Thinkpad P50 has 2 fans
+ };
+ 
+ #undef TPACPI_FAN_QL
+ #undef TPACPI_FAN_QI
++#undef TPACPI_FAN_QL_BIOS
+ 
+ static int __init fan_init(struct ibm_init_struct *iibm)
+ {
+-- 
+2.1.4
