@@ -1,54 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753166AbeDBRAB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 13:00:01 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:34706 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753124AbeDBQ74 (ORCPT
+        id S1753180AbeDBRBG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 13:01:06 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:35559 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752530AbeDBRBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 12:59:56 -0400
-X-ME-Helo: ubuntu-CJ.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 02 Apr 2018 18:59:55 +0200
-X-ME-IP: 86.244.119.222
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        nfarnesi4@gmail.com
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] iio: sca3000: Handle errors returned by 'sca3000_configure_ring()' in 'sca3000_probe()'
-Date: Mon,  2 Apr 2018 18:59:53 +0200
-Message-Id: <20180402165953.9110-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.14.1
+        Mon, 2 Apr 2018 13:01:03 -0400
+X-Google-Smtp-Source: AIpwx4+SWzE3OYU5qZg6r6bH2R4culG5DQwB4JEFL9P3WEkmNmO4O6u3mjTF7Qc+iD4VHS/jFGDKg5sqUy/yJTJGWAWThVAzGChb
+MIME-Version: 1.0
+Date: Mon, 02 Apr 2018 10:01:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a11447acae6b4560568e08829@google.com>
+Subject: KASAN: slab-out-of-bounds Read in ntfs_attr_find
+From: syzbot <syzbot+aed06913f36eff9b544e@syzkaller.appspotmail.com>
+To: anton@tuxera.com, linux-kernel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'sca3000_configure_ring()' can fail, so test its return value and
-propagate it if needed.
+Hello,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Un-tested and not 100% sure that we should bail-out if it fails.
----
- drivers/iio/accel/sca3000.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+syzbot hit the following crash on upstream commit
+0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
+Linux 4.16
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=aed06913f36eff9b544e
 
-diff --git a/drivers/iio/accel/sca3000.c b/drivers/iio/accel/sca3000.c
-index dae4c594c170..45285edd216f 100644
---- a/drivers/iio/accel/sca3000.c
-+++ b/drivers/iio/accel/sca3000.c
-@@ -1486,7 +1486,9 @@ static int sca3000_probe(struct spi_device *spi)
- 	}
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 
--	sca3000_configure_ring(indio_dev);
-+	ret = sca3000_configure_ring(indio_dev);
-+	if (ret)
-+		return ret;
- 
- 	if (spi->irq) {
- 		ret = request_threaded_irq(spi->irq,
--- 
-2.14.1
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5967192604540928
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5683233123467264
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6754575268708352
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
+compiler: gcc (GCC) 7.1.1 20170620
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+aed06913f36eff9b544e@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+ntfs: (device loop0): is_boot_sector_ntfs(): Invalid end of sector marker.
+==================================================================
+BUG: KASAN: slab-out-of-bounds in ntfs_attr_find+0x99a/0xa00  
+fs/ntfs/attrib.c:613
+Read of size 4 at addr ffff8801d96bfbb5 by task syzkaller786329/4469
+
+CPU: 0 PID: 4469 Comm: syzkaller786329 Not tainted 4.16.0+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_load_n_noabort+0xf/0x20 mm/kasan/report.c:443
+  ntfs_attr_find+0x99a/0xa00 fs/ntfs/attrib.c:613
+  ntfs_attr_lookup+0x10e1/0x22a0 fs/ntfs/attrib.c:1203
+  ntfs_read_inode_mount+0x6cd/0x20f0 fs/ntfs/inode.c:1858
+  ntfs_fill_super+0x13df/0x2fb0 fs/ntfs/super.c:2871
+  mount_bdev+0x2b7/0x370 fs/super.c:1119
+  ntfs_mount+0x34/0x40 fs/ntfs/super.c:3065
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2509 [inline]
+  do_new_mount fs/namespace.c:2512 [inline]
+  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
+  SYSC_mount fs/namespace.c:3058 [inline]
+  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x442eca
+RSP: 002b:00007ffce22e1a98 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000442eca
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffce22e1aa0
+RBP: 00000000006cb018 R08: 000000002007e200 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000004
+R13: 0000000000401dc0 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 2834:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+  __do_kmalloc_node mm/slab.c:3670 [inline]
+  __kmalloc_node+0x47/0x70 mm/slab.c:3677
+  kmalloc_node include/linux/slab.h:554 [inline]
+  kvmalloc_node+0x99/0xd0 mm/util.c:419
+  kvmalloc include/linux/mm.h:541 [inline]
+  seq_buf_alloc fs/seq_file.c:29 [inline]
+  seq_read+0x7fc/0x1410 fs/seq_file.c:208
+  __vfs_read+0xef/0xa00 fs/read_write.c:411
+  vfs_read+0x11e/0x350 fs/read_write.c:447
+  SYSC_read fs/read_write.c:573 [inline]
+  SyS_read+0xef/0x220 fs/read_write.c:566
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Freed by task 2834:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3486 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3801
+  kvfree+0x36/0x60 mm/util.c:438
+  seq_release fs/seq_file.c:368 [inline]
+  single_release+0x78/0xb0 fs/seq_file.c:605
+  __fput+0x327/0x7e0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+The buggy address belongs to the object at ffff8801d96be180
+  which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 2613 bytes to the right of
+  4096-byte region [ffff8801d96be180, ffff8801d96bf180)
+The buggy address belongs to the page:
+page:ffffea000765af80 count:1 mapcount:0 mapping:ffff8801d96be180 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801d96be180 0000000000000000 0000000100000001
+raw: ffffea0006b1b820 ffffea0007622ba0 ffff8801dac00dc0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d96bfa80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d96bfb00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801d96bfb80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                      ^
+  ffff8801d96bfc00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d96bfc80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
