@@ -1,45 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeDBQOe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 12:14:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53951 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752105AbeDBQOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 12:14:31 -0400
-Date: Mon, 2 Apr 2018 16:14:29 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk,
-        torvalds@linux-foundation.org, arnd@arndb.de,
-        linux-arch@vger.kernel.org, "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 002/109] kernel: use kernel_wait4() instead of sys_wait4()
-Message-ID: <20180402161429.GS30543@wotan.suse.de>
-References: <20180329112426.23043-1-linux@dominikbrodowski.net>
- <20180329112426.23043-3-linux@dominikbrodowski.net>
+        id S1752959AbeDBQOr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 12:14:47 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:49846 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeDBQOk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 12:14:40 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <w-kwok2@ti.com>, <linux-kernel@vger.kernel.org>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>, <nsekhar@ti.com>,
+        <grygorii.strashko@ti.com>
+Subject: [net-next 1/2] net: netcp: add api to support set rx mode in netcp modules
+Date: Mon, 2 Apr 2018 12:17:18 -0400
+Message-ID: <1522685839-9497-2-git-send-email-m-karicheri2@ti.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522685839-9497-1-git-send-email-m-karicheri2@ti.com>
+References: <1522685839-9497-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180329112426.23043-3-linux@dominikbrodowski.net>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 01:22:39PM +0200, Dominik Brodowski wrote:
-> All call sites of sys_wait4() set *rusage to NULL. Therefore, there is
-> no need for the copy_to_user() handling of *rusage, and we can use
-> kernel_wait4() directly.
-> 
-> This patch is part of a series which removes in-kernel calls to syscalls.
-> On this basis, the syscall entry path can be streamlined. For details, see
-> http://lkml.kernel.org/r/20180325162527.GA17492@light.dominikbrodowski.net
-> 
-> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+From: WingMan Kwok <w-kwok2@ti.com>
 
-Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
+This patch adds an API to support setting rx mode in
+netcp modules.  If a netcp module needs to be notified
+when upper layer transitions from one rx mode to
+another and react accordingly, such a module will implement
+the new API set_rx_mode added in this patch.  Currently
+rx modes supported are PROMISCUOUS and NON_PROMISCUOUS
+modes.
 
-  Luis
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/netcp.h      |  1 +
+ drivers/net/ethernet/ti/netcp_core.c | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/net/ethernet/ti/netcp.h b/drivers/net/ethernet/ti/netcp.h
+index 416f732..c4ffdf4 100644
+--- a/drivers/net/ethernet/ti/netcp.h
++++ b/drivers/net/ethernet/ti/netcp.h
+@@ -214,6 +214,7 @@ struct netcp_module {
+ 	int	(*add_vid)(void *intf_priv, int vid);
+ 	int	(*del_vid)(void *intf_priv, int vid);
+ 	int	(*ioctl)(void *intf_priv, struct ifreq *req, int cmd);
++	int	(*set_rx_mode)(void *intf_priv, bool promisc);
+ 
+ 	/* used internally */
+ 	struct list_head	module_list;
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index 736f6f7..e40aa3e 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -1509,6 +1509,24 @@ static void netcp_addr_sweep_add(struct netcp_intf *netcp)
+ 	}
+ }
+ 
++static int netcp_set_promiscuous(struct netcp_intf *netcp, bool promisc)
++{
++	struct netcp_intf_modpriv *priv;
++	struct netcp_module *module;
++	int error;
++
++	for_each_module(netcp, priv) {
++		module = priv->netcp_module;
++		if (!module->set_rx_mode)
++			continue;
++
++		error = module->set_rx_mode(priv->module_priv, promisc);
++		if (error)
++			return error;
++	}
++	return 0;
++}
++
+ static void netcp_set_rx_mode(struct net_device *ndev)
+ {
+ 	struct netcp_intf *netcp = netdev_priv(ndev);
+@@ -1538,6 +1556,7 @@ static void netcp_set_rx_mode(struct net_device *ndev)
+ 	/* finally sweep and callout into modules */
+ 	netcp_addr_sweep_del(netcp);
+ 	netcp_addr_sweep_add(netcp);
++	netcp_set_promiscuous(netcp, promisc);
+ 	spin_unlock(&netcp->lock);
+ }
+ 
+-- 
+1.9.1
