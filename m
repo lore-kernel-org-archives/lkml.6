@@ -1,36 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754556AbeDBWFD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:05:03 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:37794 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754429AbeDBWFB (ORCPT
+        id S1754573AbeDBWGF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:06:05 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:45866 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754429AbeDBWGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:05:01 -0400
-X-Google-Smtp-Source: AIpwx4//kOqgU4RMDptHMKjibCHNJXc7SjgrkxnSdbVTwi/VrOoITvtARK4Re94lf493XrgeatfM9g==
-Date: Mon, 2 Apr 2018 15:04:58 -0700
+        Mon, 2 Apr 2018 18:06:02 -0400
+X-Google-Smtp-Source: AIpwx49kF5lQSZRk33UBi6o0g+jMCU29lARMCqiPXQfHZEjhXYLyWT4OhEYcgKKLyiYXWmZK5Xcrmg==
+Date: Mon, 2 Apr 2018 15:05:58 -0700
 From: Tejun Heo <tj@kernel.org>
-To: Sitsofe Wheeler <sitsofe@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>
-Subject: [PATCH] blk-mq: Directly schedule q->timeout_work when aborting a
- request
-Message-ID: <20180402220458.GJ388343@devbig577.frc2.facebook.com>
-References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com>
- <de102067-b589-af05-ae71-496e948000f0@kernel.dk>
- <CALjAwxgtuEv=d1TfvH3EdXqZs=_6F7TinyVhbPdUmTsdK_5ghw@mail.gmail.com>
- <20180402202951.GE388343@devbig577.frc2.facebook.com>
- <CALjAwxj1urPPNadmkmhLngHvYcfhh8d+_vPstPDQHXLiGL0oTw@mail.gmail.com>
+To: Meelis Roos <mroos@linux.ee>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: 4.16-rc2+git: pata_serverworks: hanging ata detection thread on
+ HP DL380G3
+Message-ID: <20180402220558.GK388343@devbig577.frc2.facebook.com>
+References: <alpine.LRH.2.21.1802261049140.4893@math.ut.ee>
+ <alpine.LRH.2.21.1803291153070.12825@math.ut.ee>
+ <CGME20180329101255epcas2p22aeb95d869cdd2954bb9183037dace5f@epcas2p2.samsung.com>
+ <1597679.yzYZqmDdA5@amdc3058>
+ <alpine.LRH.2.21.1803301144380.11026@math.ut.ee>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALjAwxj1urPPNadmkmhLngHvYcfhh8d+_vPstPDQHXLiGL0oTw@mail.gmail.com>
+In-Reply-To: <alpine.LRH.2.21.1803301144380.11026@math.ut.ee>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+Hello, Meelis.
+
+Can you please verify whether the following patch fixes the problem?
+
+Thanks.
+
+Subject: blk-mq: Directly schedule q->timeout_work when aborting a request
 
 Request abortion is performed by overriding deadline to now and
 scheduling timeout handling immediately.  For the latter part, the
@@ -45,17 +52,7 @@ above described race condition.
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Reported-by: Sitsofe Wheeler <sitsofe@gmail.com>
 Reported-by: Meelis Roos <mroos@linux.ee>
-Fixes: 358f70da49d7 ("blk-mq: make blk_abort_request() trigger timeout path")
-Cc: stable@vger.kernel.org # v4.16
-Link: http://lkml.kernel.org/r/CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com
-Link: http://lkml.kernel.org/r/alpine.LRH.2.21.1802261049140.4893@math.ut.ee
 ---
-Hello,
-
-I don't have the full explanation yet but here's a preliminary patch.
-
-Thanks.
-
  block/blk-timeout.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
