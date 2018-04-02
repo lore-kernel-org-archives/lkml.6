@@ -1,157 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeDBPSe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:18:34 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39229 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752248AbeDBPS2 (ORCPT
+        id S1752753AbeDBPSt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:18:49 -0400
+Received: from aer-iport-1.cisco.com ([173.38.203.51]:35468 "EHLO
+        aer-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeDBPSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:18:28 -0400
-X-Google-Smtp-Source: AIpwx4+K61GjpkaMVsCckaKaDP2JrnTqbKVAzZnvfKQMrDDzcD/cgRfrwKSpVtOAsVFVRO9ZhDZBkg==
-From: Khan M Rashedun-Naby <naby88@gmail.com>
-To: tglx@linutronix.de
-Cc: mingo@redhat.com, hpa@zytor.com, x86@kernel.org, bp@suse.de,
-        thomas.lendacky@amd.com, jgross@suse.com, r.marek@assembler.cz,
-        qianyue.zj@alibaba-inc.com, linux-kernel@vger.kernel.org,
-        Khan M Rashedun-Naby <naby88@gmail.com>
-Subject: [PATCH] Fixed some style warnings and errors
-Date: Mon,  2 Apr 2018 21:17:43 +0600
-Message-Id: <1522682263-11935-1-git-send-email-naby88@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 2 Apr 2018 11:18:46 -0400
+X-IronPort-AV: E=Sophos;i="5.48,395,1517875200";
+   d="scan'208";a="2955471"
+Subject: Re: [PATCH] connector: add parent pid and tgid to coredump and exit
+ events
+To: David Miller <davem@davemloft.net>
+Cc: zbr@ioremap.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xe-linux-external@cisco.com, jderehag@hotmail.com,
+        matt.helsley@gmail.com, minipli@googlemail.com
+References: <20180329141247.20943-1-sstrogin@cisco.com>
+ <20180330.125921.653839794312978457.davem@davemloft.net>
+From: Stefan Strogin <sstrogin@cisco.com>
+Message-ID: <7d976488-6375-b3a8-e9d7-dc86b4c51b86@cisco.com>
+Date: Mon, 2 Apr 2018 18:18:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180330.125921.653839794312978457.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Khan M Rashedun-Naby <naby88@gmail.com>
----
- arch/x86/kernel/cpu/amd.c | 46 ++++++++++++++++++++++++++--------------------
- 1 file changed, 26 insertions(+), 20 deletions(-)
+Hi David,
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index f0e6456..1a6e45e 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -32,7 +32,7 @@ static bool cpu_has_amd_erratum(struct cpuinfo_x86 *cpu, const int *erratum);
-  */
- static u32 nodes_per_socket = 1;
- 
--static inline int rdmsrl_amd_safe(unsigned msr, unsigned long long *p)
-+static inline int rdmsrl_amd_safe(unsigned int msr, unsigned long long *p)
- {
- 	u32 gprs[8] = { 0 };
- 	int err;
-@@ -50,7 +50,7 @@ static inline int rdmsrl_amd_safe(unsigned msr, unsigned long long *p)
- 	return err;
- }
- 
--static inline int wrmsrl_amd_safe(unsigned msr, unsigned long long val)
-+static inline int wrmsrl_amd_safe(unsigned int msr, unsigned long long val)
- {
- 	u32 gprs[8] = { 0 };
- 
-@@ -157,6 +157,7 @@ static void init_amd_k6(struct cpuinfo_x86 *c)
- 		rdmsr(MSR_K6_WHCR, l, h);
- 		if ((l&0x0000FFFF) == 0) {
- 			unsigned long flags;
-+
- 			l = (1<<0)|((mbytes/4)<<1);
- 			local_irq_save(flags);
- 			wbinvd();
-@@ -178,6 +179,7 @@ static void init_amd_k6(struct cpuinfo_x86 *c)
- 		rdmsr(MSR_K6_WHCR, l, h);
- 		if ((l&0xFFFF0000) == 0) {
- 			unsigned long flags;
-+
- 			l = ((mbytes>>2)<<22)|(1<<16);
- 			local_irq_save(flags);
- 			wbinvd();
-@@ -268,8 +270,7 @@ static void init_amd_k7(struct cpuinfo_x86 *c)
- 	 * Don't taint if we are running SMP kernel on a single non-MP
- 	 * approved Athlon
- 	 */
--	WARN_ONCE(1, "WARNING: This combination of AMD"
--		" processors is not suitable for SMP.\n");
-+	WARN_ONCE(1, "WARNING: This combination of AMD processors is not suitable for SMP.\n");
- 	add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_NOW_UNRELIABLE);
- #endif
- }
-@@ -384,7 +385,7 @@ static void amd_get_topology(struct cpuinfo_x86 *c)
- static void amd_detect_cmp(struct cpuinfo_x86 *c)
- {
- #ifdef CONFIG_SMP
--	unsigned bits;
-+	unsigned int bits;
- 	int cpu = smp_processor_id();
- 
- 	bits = c->x86_coreid_bits;
-@@ -419,7 +420,7 @@ static void srat_detect_node(struct cpuinfo_x86 *c)
- #ifdef CONFIG_NUMA
- 	int cpu = smp_processor_id();
- 	int node;
--	unsigned apicid = c->apicid;
-+	unsigned int apicid = c->apicid;
- 
- 	node = numa_cpu_node(cpu);
- 	if (node == NUMA_NO_NODE)
-@@ -468,7 +469,7 @@ static void srat_detect_node(struct cpuinfo_x86 *c)
- static void early_init_amd_mc(struct cpuinfo_x86 *c)
- {
- #ifdef CONFIG_SMP
--	unsigned bits, ecx;
-+	unsigned int bits, ecx;
- 
- 	/* Multi core CPU? */
- 	if (c->extended_cpuid_level < 0x80000008)
-@@ -820,14 +821,22 @@ static void init_amd(struct cpuinfo_x86 *c)
- 		clear_cpu_cap(c, X86_FEATURE_MCE);
- 
- 	switch (c->x86) {
--	case 4:    init_amd_k5(c); break;
--	case 5:    init_amd_k6(c); break;
--	case 6:	   init_amd_k7(c); break;
--	case 0xf:  init_amd_k8(c); break;
--	case 0x10: init_amd_gh(c); break;
--	case 0x12: init_amd_ln(c); break;
--	case 0x15: init_amd_bd(c); break;
--	case 0x17: init_amd_zn(c); break;
-+	case 4:
-+	  init_amd_k5(c); break;
-+	case 5:
-+	  init_amd_k6(c); break;
-+	case 6:
-+	  init_amd_k7(c); break;
-+	case 0xf:
-+	  init_amd_k8(c); break;
-+	case 0x10:
-+	  init_amd_gh(c); break;
-+	case 0x12:
-+	  init_amd_ln(c); break;
-+	case 0x15:
-+	  init_amd_bd(c); break;
-+	case 0x17:
-+	  init_amd_zn(c); break;
- 	}
- 
- 	/*
-@@ -970,17 +979,14 @@ static const struct cpu_dev amd_cpu_dev = {
- 	.c_vendor	= "AMD",
- 	.c_ident	= { "AuthenticAMD" },
- #ifdef CONFIG_X86_32
--	.legacy_models = {
--		{ .family = 4, .model_names =
--		  {
-+	.legacy_models = { { .family = 4, .model_names = {
- 			  [3] = "486 DX/2",
- 			  [7] = "486 DX/2-WB",
- 			  [8] = "486 DX/4",
- 			  [9] = "486 DX/4-WB",
- 			  [14] = "Am5x86-WT",
- 			  [15] = "Am5x86-WB"
--		  }
--		},
-+		  } },
- 	},
- 	.legacy_cache_size = amd_size_cache,
- #endif
--- 
-2.7.4
+I don't see how it breaks UAPI. The point is that structures
+coredump_proc_event and exit_proc_event are members of *union*
+event_data, thus position of the existing data in the structure is
+unchanged. Furthermore, this change won't increase size of struct
+proc_event, because comm_proc_event (also a member of event_data) is
+of bigger size than the changed structures.
+
+If I'm wrong, could you please explain what exactly will the change
+break in UAPI?
+
+
+On 30/03/18 19:59, David Miller wrote:
+> From: Stefan Strogin <sstrogin@cisco.com>
+> Date: Thu, 29 Mar 2018 17:12:47 +0300
+> 
+>> diff --git a/include/uapi/linux/cn_proc.h b/include/uapi/linux/cn_proc.h
+>> index 68ff25414700..db210625cee8 100644
+>> --- a/include/uapi/linux/cn_proc.h
+>> +++ b/include/uapi/linux/cn_proc.h
+>> @@ -116,12 +116,16 @@ struct proc_event {
+>>  		struct coredump_proc_event {
+>>  			__kernel_pid_t process_pid;
+>>  			__kernel_pid_t process_tgid;
+>> +			__kernel_pid_t parent_pid;
+>> +			__kernel_pid_t parent_tgid;
+>>  		} coredump;
+>>  
+>>  		struct exit_proc_event {
+>>  			__kernel_pid_t process_pid;
+>>  			__kernel_pid_t process_tgid;
+>>  			__u32 exit_code, exit_signal;
+>> +			__kernel_pid_t parent_pid;
+>> +			__kernel_pid_t parent_tgid;
+>>  		} exit;
+>>  
+>>  	} event_data;
+> 
+> I don't think you can add these members without breaking UAPI.
+> 
