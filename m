@@ -1,118 +1,120 @@
 Return-Path: <nks@flawful.org>
-X-Google-Smtp-Source: AIpwx4/2OVRFcGrwaAnXTtmpOv0hWEAbmqA+Kv5R2bZ39qOgbNkE8kCpv21L/UQA4EvlGf61U9u7
-ARC-Seal: i=1; a=rsa-sha256; t=1522697973; cv=none;
+X-Google-Smtp-Source: AIpwx48PdHwimwCdzDME0MESXSZqcwesWeDBc6c+xDM7xAFjFjwQsRuQREslQ+vYa4d8KrplSk69
+ARC-Seal: i=1; a=rsa-sha256; t=1522694825; cv=none;
         d=google.com; s=arc-20160816;
-        b=uHGsVZPCVewM4CCAQ0HrcXOHDQWhdx8LubM77dlI4Q+YDi/YuWovfOJ8B5l4G2QQ5A
-         EL4yRb72yF91KBFR/pRh5r/Oj6Nr6n7g+84KF/JZsC1XmxpGqIsdrEjEk+7P8MwAYMtl
-         IsF7qXFBGPSLn6rFMJei6g7ZAl1Vq+iseOz2eAI7A1aX756TzfAxSfNjsNQ+9dBjCKHN
-         3CVcAZXct5kUKXa74aT2LuPpsBNHUhcfRwnPwIgdkyXxBBS5gwDxyLpliJPq7Wgvy/L3
-         nzVKdTzmlsbxOgakI0nxQXf77Zum193UuJNuc2UlCoV+HH8AcsEaguVGMWLtR9HDJ9Nc
-         O6yA==
+        b=Id78q84pcfiwleoQkPZRwLOn/5+cDkO3/NwVHTaeAfrS8Fwd+AGkY/Thbc+CsJmf+T
+         qHJp9IrWzTNsywApnUmCZRQK15jFmretAUfHmmzfxBpbYNywhlMV3OBAUHxGLY+9X58o
+         UlDs69hm/FlDZ5aYp3UPy1aYdIpbdpM+CsqSct88WWiSh6szNOB4i97FJFiA2kLyGvuQ
+         r4b3HHZELRHLNXyJk46WOFrkJ7pJ8b/m6/xVoYvY57r6qQA9XqZk1pc2nhMQ0yhXIJqR
+         eWC4EcY7P4LJ86+4XEqlDovLD9OdWls/ew7HAemSgIbJkp6QbDMQ0oAM3mZd3fj/2DC7
+         O05A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=FC7pSP8EI0qVd4DFpodBHvXBI+lKoeRdKaQvfZBuOh0=;
-        b=Yvn27OWvWrltaATMFXYCshM3vR5TFlutroMGFQQSaQufz5wAwVLsm3mO1ByHomedaT
-         RSGij0yIZ5S9KAloHDnvX3ghEJ2uhEDqKRoKuuTfu1zm7ORFjrO1bclqDNuzsbqSkYrx
-         jiq27bxlNYeuItDqhmUYagZuB1/tTUfWc2CefWDAc9oL90du7doFd2WgOU7dHl5xVYVJ
-         k/Zb0NDWWC3Qd9bfLu0UL15K/twcXZAB3+YKC6vU8g0u5o7McjT4ti1hCy2D2J3cPxGh
-         9iNPdfaa762NVnGtseFgUdrA59rhyVtsMIb8a12W8PT3llJlWAxWi+yfjjt27HT732wm
-         /mGQ==
+        bh=LDS2xsJcjzROs1Jrx1AMyogOQ1Q/GkNN4yhdpeKndTA=;
+        b=098FWeDBkdsH8jAyOSoBvQPw0J4Mj06wfNMIyMx356AECGUH3e3LkOtCscUIzojvy0
+         s8pyK6WZBrEIKPxMrQxcKvmA922ZdUlGjJlg/ALLqzW6VMcfJnQxea4a32yM7RH/ShHN
+         y4nDxsX+tWtP16lbCYvs4rHrN0Z3njsRu80K6ebTNqSH6nYBJkRAKytgfR7fDl6IPAO5
+         Hs8VBbpmU1BWP8Gg07RsGJEArm6BuZkzhHFzywPjHfqQDSmHgRaU0lLJKpwubs/oBsci
+         5Wv8LQoTuGp5W6cDudQDnA691Uf6n5CsxvlmWfTU8RnMIJXhlweluXfJ260t5CEgPHn9
+         DqCA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@flawful.org header.s=mail header.b=dhw5R/+h;
-       spf=softfail (google.com: domain of transitioning nks@flawful.org does not designate 79.136.2.42 as permitted sender) smtp.mailfrom=nks@flawful.org
+       dkim=pass (test mode) header.i=@flawful.org header.s=mail header.b=H6n4Zn58;
+       spf=pass (google.com: domain of nks@flawful.org designates 213.80.101.71 as permitted sender) smtp.mailfrom=nks@flawful.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@flawful.org header.s=mail header.b=dhw5R/+h;
-       spf=softfail (google.com: domain of transitioning nks@flawful.org does not designate 79.136.2.42 as permitted sender) smtp.mailfrom=nks@flawful.org
-Authentication-Results: pio-pvt-msa3.bahnhof.se (amavisd-new);
+       dkim=pass (test mode) header.i=@flawful.org header.s=mail header.b=H6n4Zn58;
+       spf=pass (google.com: domain of nks@flawful.org designates 213.80.101.71 as permitted sender) smtp.mailfrom=nks@flawful.org
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
 	dkim=pass (1024-bit key) header.d=flawful.org
-Date: Mon, 2 Apr 2018 21:39:21 +0200
+Date: Mon, 2 Apr 2018 20:47:01 +0200
 From: Niklas Cassel <nks@flawful.org>
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Niklas Cassel <niklas.cassel@axis.com>, "kishon@ti.com" <kishon@ti.com>,
-	"cyrille.pitchen@free-electrons.com" <cyrille.pitchen@free-electrons.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Niklas Cassel <niklas.cassel@axis.com>,
+	cyrille.pitchen@free-electrons.com,
 	Alan Douglas <adouglas@cadence.com>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Jingoo Han <jingoohan1@gmail.com>,
 	Joao Pinto <Joao.Pinto@synopsys.com>,
-	Niklas Cassel <niklass@axis.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 00/12] PCI endpoint 64-bit BAR fixes
-Message-ID: <20180402193920.GC23587@flawful.org>
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Niklas Cassel <niklass@axis.com>, John Keeping <john@metanate.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 09/12] PCI: endpoint: Make
+ epc->ops->clear_bar()/pci_epc_clear_bar() take struct *epf_bar
+Message-ID: <20180402184701.GA23587@flawful.org>
 References: <20180328115018.31921-1-niklas.cassel@axis.com>
- <e2fb68a0-c860-71cc-1983-2ecf30d5a2aa@synopsys.com>
+ <20180328115018.31921-10-niklas.cassel@axis.com>
+ <ac3131cb-468d-5143-62a4-68d6e6b47e82@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e2fb68a0-c860-71cc-1983-2ecf30d5a2aa@synopsys.com>
+In-Reply-To: <ac3131cb-468d-5143-62a4-68d6e6b47e82@ti.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596182050655819288?=
-X-GMAIL-MSGID: =?utf-8?q?1596664550231849397?=
+X-GMAIL-THRID: =?utf-8?q?1596182110870306641?=
+X-GMAIL-MSGID: =?utf-8?q?1596661248789374749?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 29, 2018 at 02:52:56PM +0100, Gustavo Pimentel wrote:
+On Thu, Mar 29, 2018 at 03:30:23PM +0530, Kishon Vijay Abraham I wrote:
 > Hi Niklas,
 > 
-> On 28/03/2018 12:50, Niklas Cassel wrote:
-> > PCI endpoint fixes to improve the way 64-bit BARs are handled.
+> On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
+> > Make epc->ops->clear_bar()/pci_epc_clear_bar() take struct *epf_bar.
 > > 
+> > This is needed so that epc->ops->clear_bar() can clear the BAR pair,
+> > if the BAR is 64-bits wide.
 > > 
-> > There are still future improvements that could be made:
+> > This also makes it possible for pci_epc_clear_bar() to sanity check
+> > the flags.
 > > 
-> > pci-epf-test.c always allocates space for
-> > 6 BARs, even when using 64-bit BARs (which
-> > really only requires us to allocate 3 BARs).
+> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> > ---
+> >  drivers/pci/cadence/pcie-cadence-ep.c         |  3 ++-
+> >  drivers/pci/dwc/pcie-designware-ep.c          | 13 ++++++++++---
+> >  drivers/pci/endpoint/functions/pci-epf-test.c |  5 ++++-
+> >  drivers/pci/endpoint/pci-epc-core.c           |  7 ++++---
+> >  include/linux/pci-epc.h                       |  5 +++--
+> >  5 files changed, 23 insertions(+), 10 deletions(-)
 > > 
-> > pcitest.sh will print "NOT OKAY" for BAR1,
-> > BAR3, and BAR5 when using 64-bit BARs.
-> > This could probably be improved to say
-> > something like "N/A (64-bit BAR)".
-> > 
-> > Niklas Cassel (12):
-> >   PCI: endpoint: BAR width should not depend on sizeof dma_addr_t
-> >   PCI: endpoint: Simplify epc->ops->set_bar()/pci_epc_set_bar()
-> >   PCI: endpoint: Setting BAR_5 to 64-bits wide is invalid
-> >   PCI: endpoint: Setting 64-bit/prefetch bit is invalid when IO is set
-> >   PCI: endpoint: Setting a BAR size > 4 GB is invalid if 64-bit flag is
-> >     not set
-> >   PCI: designware-ep: Make dw_pcie_ep_set_bar() handle 64-bit BARs
-> >     properly
-> >   PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64 if a 64-bit BAR was
-> >     set-up
-> >   PCI: endpoint: Handle 64-bit BARs properly
-> >   PCI: endpoint: Make epc->ops->clear_bar()/pci_epc_clear_bar() take
-> >     struct *epf_bar
-> >   PCI: endpoint: Make sure that BAR_5 does not have 64-bit flag set when
-> >     clearing
-> >   PCI: designware-ep: Make dw_pcie_ep_reset_bar() handle 64-bit BARs
-> >     properly
-> >   misc: pci_endpoint_test: Handle 64-bit BARs properly
-> > 
-> >  drivers/misc/pci_endpoint_test.c              | 12 +++++----
-> >  drivers/pci/cadence/pcie-cadence-ep.c         | 15 ++++++++---
-> >  drivers/pci/dwc/pcie-designware-ep.c          | 36 +++++++++++++++++++++------
-> >  drivers/pci/endpoint/functions/pci-epf-test.c | 28 +++++++++++++--------
-> >  drivers/pci/endpoint/pci-epc-core.c           | 32 +++++++++++++++---------
-> >  drivers/pci/endpoint/pci-epf-core.c           |  4 +++
-> >  include/linux/pci-epc.h                       | 11 ++++----
-> >  include/linux/pci-epf.h                       |  2 ++
-> >  8 files changed, 95 insertions(+), 45 deletions(-)
-> > 
+> > diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+> > index 2905e098678c..3d8283e450a9 100644
+> > --- a/drivers/pci/cadence/pcie-cadence-ep.c
+> > +++ b/drivers/pci/cadence/pcie-cadence-ep.c
+> > @@ -145,10 +145,11 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn,
+> >  }
+> >  
+> >  static void cdns_pcie_ep_clear_bar(struct pci_epc *epc, u8 fn,
+> > -				   enum pci_barno bar)
+> > +				   struct pci_epf_bar *epf_bar)
+> >  {
+> >  	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> >  	struct cdns_pcie *pcie = &ep->pcie;
+> > +	enum pci_barno bar = epf_bar->barno;
+> >  	u32 reg, cfg, b, ctrl;
+> >  
+> >  	if (bar < BAR_4) {
+> > diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+> > index 571b90f88d84..cc4d8381c1dc 100644
+> > --- a/drivers/pci/dwc/pcie-designware-ep.c
+> > +++ b/drivers/pci/dwc/pcie-designware-ep.c
+> > @@ -19,7 +19,8 @@ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+> >  	pci_epc_linkup(epc);
+> >  }
+> >  
+> > -void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+> > +static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar,
+> > +				   int flags)
 > 
-> For the whole series:
-> 
-> Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Looks like the 'flags' are not used anywhere here?
 
-Hello Gustavo,
+Hello Kishon,
 
-Thanks a lot for testing!
+That is correct, this patch is simply refactoring, flags is first used
+in patch 11/12, since I didn't want to refactor + add new code in the
+same commit.
 
 Kind regards,
 Niklas
