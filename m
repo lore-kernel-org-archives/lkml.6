@@ -1,145 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754338AbeDBKAt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 06:00:49 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:59646
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754130AbeDBKAr (ORCPT
+        id S1754405AbeDBKA6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 06:00:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60718 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754384AbeDBKA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 06:00:47 -0400
-X-ASG-Debug-ID: 1522663242-093b7e10b30c1a0001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To: "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
- capabilities
-Thread-Topic: [PATCH] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
- capabilities
-X-ASG-Orig-Subj: Re: [PATCH] cpufreq: cppc_cpufreq: Initialize shared cpu's perf
- capabilities
-Thread-Index: AQHTxnej2cVTpFHCIEicwJJ9iRTflKPsj6EAgAAwPYA=
-Date: Mon, 2 Apr 2018 10:00:42 +0000
-Message-ID: <1522663241.8018.3.camel@hxt-semitech.com>
-References: <1522229514-14377-1-git-send-email-shunyong.yang@hxt-semitech.com>
-         <20180402070802.GE4714@vireshk-i7>
-In-Reply-To: <20180402070802.GE4714@vireshk-i7>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.64.6.69]
-Content-Type: text/plain; charset="iso-8859-15"
-Content-ID: <13C51476FCD5504D862AD055F20F9A28@hxt-semitech.com>
-Content-Transfer-Encoding: 8BIT
+        Mon, 2 Apr 2018 06:00:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85CC6607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH v1] scsi: ufs: add 2 lane support
+To: Can Guo <cang@codeaurora.org>, subhashj@codeaurora.org,
+        asutoshd@codeaurora.org, rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180302082346.8188-1-cang@codeaurora.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <2af3023d-caaf-4b62-e2ba-fc3cb56b331c@codeaurora.org>
+Date: Mon, 2 Apr 2018 15:30:49 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Barracuda-Connect: localhost[10.128.0.15]
-X-Barracuda-Start-Time: 1522663242
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5294 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.49513
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+In-Reply-To: <20180302082346.8188-1-cang@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Kumar,
-
-On Mon, 2018-04-02 at 12:38 +0530, Viresh Kumar wrote:
-> On 28-03-18, 17:31, Shunyong Yang wrote:
-> > 
-> > When multiple cpus are related in one cpufreq policy, the first
-> > online
-> > cpu will be chosen by default to handle cpufreq operations. Let's
-> > take
-> > cpu0 and cpu1 as an example.
-> > 
-> > When cpu0 is offline, policy->cpu will be shifted to cpu1. Cpu1's
-> > should
-> > be initialized. Otherwise, perf capabilities are 0s and speed
-> > change can
-> > not take effect.
-> > 
-> > This patch copies perf capabilities of the first online cpu to
-> > other
-> > shared cpus when policy shared type is CPUFREQ_SHARED_TYPE_ANY.
-> > 
-> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-> > ---
-> > 
-> > The original RFC link,
-> >   https://patchwork.kernel.org/patch/10299055/.
-> > 
-> > This patch solves same issue as RFC above.
-> > 
-> > Patch name is changed as code is too much different with RFC above.
-> > 
-> > Remove extra init() per Viresh Kumar's comments and only handle
-> > CPPC CPUFREQ_SHARED_TYPE_ANY case.
-> > 
-> > ---
-> >  drivers/cpufreq/cppc_cpufreq.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/cpufreq/cppc_cpufreq.c
-> > b/drivers/cpufreq/cppc_cpufreq.c
-> > index 8f7b21a4d537..dc625a93a58e 100644
-> > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > @@ -164,8 +164,18 @@ static int cppc_cpufreq_cpu_init(struct
-> > cpufreq_policy *policy)
-> >  	policy->cpuinfo.transition_latency =
-> > cppc_get_transition_latency(cpu_num);
-> >  	policy->shared_type = cpu->shared_type;
-> >  
-> > -	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
-> > +	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY) {
-> > +		int i;
-> > +
-> >  		cpumask_copy(policy->cpus, cpu->shared_cpu_map);
-> > +
-> > +		for_each_cpu(i, policy->cpus) {
-> > +			if (i != policy->cpu)
-> I would rather do:
-> 
->                         if (unlikely(i == policy->cpu))
->                                 continue;
-
-Thanks. Will change in v2.
-
-> > 
-> > +				memcpy(&all_cpu_data[i]-
-> > >perf_caps,
-> > +				       &cpu->perf_caps,
-> > +				       sizeof(cpu->perf_caps));
-> > +		}
-> > +	}
-> >  	else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL) {
-> It should be:
-> 
->   	} else if (policy->shared_type == CPUFREQ_SHARED_TYPE_ALL)
-> {
-> 
-
-Thanks. Will change in v2. I ignored this as checkpatch.pl reports
-nothing here.
-
-Thanks.
-Shunyong.
+Hi Can,
 
 
-> > 
-> >  		/* Support only SW_ANY for now. */
-> >  		pr_debug("Unsupported CPU co-ord type\n");
-> And thanks for making it work this way.
-> 
+On 3/2/2018 1:48 PM, Can Guo wrote:
+> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>
+> Qcom ufs controller v3.1.0 supports 2 lanes, add support
+> to configure 2 lanes during phy initialization.
+>
+> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>   drivers/scsi/ufs/ufs-qcom.c | 20 +++++++++-----------
+>   1 file changed, 9 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index 2b38db2..51889ad 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -113,10 +113,10 @@ static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
+>   	if (!host->is_lane_clks_enabled)
+>   		return;
+>   
+> -	if (host->hba->lanes_per_direction > 1)
+> +	if (host->tx_l1_sync_clk)
+>   		clk_disable_unprepare(host->tx_l1_sync_clk);
+>   	clk_disable_unprepare(host->tx_l0_sync_clk);
+> -	if (host->hba->lanes_per_direction > 1)
+> +	if (host->rx_l1_sync_clk)
+>   		clk_disable_unprepare(host->rx_l1_sync_clk);
+>   	clk_disable_unprepare(host->rx_l0_sync_clk);
+>   
+> @@ -147,18 +147,15 @@ static int ufs_qcom_enable_lane_clks(struct ufs_qcom_host *host)
+>   		if (err)
+>   			goto disable_tx_l0;
+>   
+> -		err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+> -			host->tx_l1_sync_clk);
+> -		if (err)
+> -			goto disable_rx_l1;
+> +		/* The tx lane1 clk could be muxed, hence keep this optional */
+
+You need a similar change for "rx_l1_sync_clk" also.
+And also get rid of 'lanes_per_direction' flag as well for 
+ufs_qcom_enable_lane_clks()
+and ufs_qcom_init_lane_clks() too, as you are doing in 
+ufs_qcom_disable_lane_clks().
+
+> +		if (host->tx_l1_sync_clk)
+> +			ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+> +						 host->tx_l1_sync_clk);
+>   	}
+>   
+>   	host->is_lane_clks_enabled = true;
+>   	goto out;
+>   
+> -disable_rx_l1:
+> -	if (host->hba->lanes_per_direction > 1)
+> -		clk_disable_unprepare(host->rx_l1_sync_clk);
+>   disable_tx_l0:
+>   	clk_disable_unprepare(host->tx_l0_sync_clk);
+>   disable_rx_l0:
+> @@ -189,8 +186,9 @@ static int ufs_qcom_init_lane_clks(struct ufs_qcom_host *host)
+>   		if (err)
+>   			goto out;
+>   
+> -		err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+> -			&host->tx_l1_sync_clk);
+> +		/* The tx lane1 clk could be muxed, hence keep this optional */
+> +		ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+> +					&host->tx_l1_sync_clk);
+
+same here.
+
+Best regards
+Vivek
+
+>   	}
+>   out:
+>   	return err;
