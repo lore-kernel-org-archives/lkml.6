@@ -1,60 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754115AbeDBB5W (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 21:57:22 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46995 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754037AbeDBB5V (ORCPT
+        id S1754132AbeDBB6H (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 21:58:07 -0400
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:44044 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754037AbeDBB6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 21:57:21 -0400
-X-Google-Smtp-Source: AIpwx4+oAjwDuQktc9QnumZiTyWec1VSWeXUkxG6TohkyoWy8sLGsqLjdWHm/oL6u/gAJ8qlcKKd7A==
-Date: Mon, 2 Apr 2018 10:57:16 +0900
+        Sun, 1 Apr 2018 21:58:05 -0400
+X-Google-Smtp-Source: AIpwx4/z8lziEhGfVt5FyH7jHxbvEr/WJkuK5tFEcu9mCRy8AlzPsCAYiq8bieg5Ek+4xHuj2xvI7w==
+Date: Mon, 2 Apr 2018 10:57:59 +0900
 From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        pantelis.antoniou@konsulko.com, mark.rutland@arm.com, pmladek@suse.com,
-        andriy.shevchenko@linux.intel.com, joe@perches.com, corbet@lwn.net,
-        me@tobin.cc, sergey.senozhatsky@gmail.com
-Subject: Re: [PATCH 0/2] cowsay support
-Message-ID: <20180402015716.GB3795@jagdpanzerIV>
-References: <20180401085622.7754-1-richard@nod.at>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+19c436b56eaa98e50e98@syzkaller.appspotmail.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        David Miller <davem@davemloft.net>, linux-wireless@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: INFO: rcu detected stall in vprintk_default
+Message-ID: <20180402015759.GC3795@jagdpanzerIV>
+References: <000000000000cc8f100568c73c82@google.com>
+ <CACT4Y+bM0-QmQOQBjvGCJ+yKjXjOHHi9khDr=R4Xi79GF+Ej4w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180401085622.7754-1-richard@nod.at>
+In-Reply-To: <CACT4Y+bM0-QmQOQBjvGCJ+yKjXjOHHi9khDr=R4Xi79GF+Ej4w@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/01/18 10:56), Richard Weinberger wrote:
-> As the printk subsystem gains more and more popularity it is time to add
-> the final missing feature to make it perfect, namely cowsay output.
-> Currently only one type of cow is supported and the only user is kmsg,
-> but I can see more use cases for it and the need for different cow types.
+On (04/01/18 12:52), Dmitry Vyukov wrote:
 > 
-> Example of /dev/kmsg usage:
-> [    1.309561]   _________________________________________
-> [    1.309561] < systemd[1]: Detected architecture x86-64. >
-> [    1.309561]   -----------------------------------------
-> [    1.309561]                     \   ^__^
-> [    1.309561]                      \  (oo)\_______
-> [    1.309561]                         (__)\       )\/\
-> [    1.309561]                             ||----w |
-> [    1.309561]                             ||     ||
+> Seems to be the same as:
 > 
-> Richard Weinberger (2):
->   lib: vsprintf: Implement %pCOW
->   printk: Use %pCOW for kmsg
+> #syz dup: INFO: rcu detected stall in vprintk_func
 > 
+> +nfc maintainers
 
-   ___________________________________________________________
- < Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com> >
-   -----------------------------------------------------------
-                     \   ^__^
-                      \  (oo)\_______
-                         (__)\       )\/\
-                             ||----w |
-                             ||     ||
+Yes, seems to be the same issue.
 
 	-ss
