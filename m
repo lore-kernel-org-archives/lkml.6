@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753207AbeDBRBX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 13:01:23 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:49098 "EHLO
+        id S1753201AbeDBRBS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 13:01:18 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:49909 "EHLO
         mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753035AbeDBRBD (ORCPT
+        with ESMTP id S1753096AbeDBRBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Apr 2018 13:01:03 -0400
-X-Google-Smtp-Source: AIpwx4+aTH8HpZKdmIhth7McEgVhQjzfTYPJEHsdEBOVY4NZMIANLCy+reujy78qaA71CwJ/kiFvYGT4u3AARg691yI2K+wdnlPk
+X-Google-Smtp-Source: AIpwx4+EQ3wKLD5JoRYNYfi06D/OJrbrITKMNfixeCMdeq9DFUS+vWThECaH01kodwaOG3+3cmNFSa7IUpfxvaSTh1LshEJig0/4
 MIME-Version: 1.0
 Date: Mon, 02 Apr 2018 10:01:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113fd904ee846d0568e088b9@google.com>
-Subject: KASAN: use-after-free Write in __ext4_expand_extra_isize
-From: syzbot <syzbot+f584efa0ac7213c226b7@syzkaller.appspotmail.com>
+Message-ID: <001a113ec036ea84f90568e088dc@google.com>
+Subject: WARNING in ext4_superblock_csum_set
+From: syzbot <syzbot+f3b1a2c79758f3eec76c@syzkaller.appspotmail.com>
 To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
         tytso@mit.edu
@@ -29,79 +29,83 @@ syzbot hit the following crash on upstream commit
 0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
 Linux 4.16
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=f584efa0ac7213c226b7
+https://syzkaller.appspot.com/bug?extid=f3b1a2c79758f3eec76c
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6513385206185984
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6181981368877056
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5304036769136640
+https://syzkaller.appspot.com/x/repro.syz?id=6303722082664448
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5041749693038592
+https://syzkaller.appspot.com/x/log.txt?id=5129995567497216
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f584efa0ac7213c226b7@syzkaller.appspotmail.com
+Reported-by: syzbot+f3b1a2c79758f3eec76c@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-IPVS: ftp: loaded support on port[0] = 21
-EXT4-fs (sda1): re-mounted. Opts: debug_want_extra_isize=7632
-==================================================================
-BUG: KASAN: use-after-free in memset include/linux/string.h:330 [inline]
-BUG: KASAN: use-after-free in __ext4_expand_extra_isize+0x157/0x230  
-fs/ext4/inode.c:5779
-Write of size 7600 at addr ffff8801c7ee86a0 by task syzkaller547255/4428
+EXT4-fs (loop0): mounted filesystem without journal. Opts:
+EXT4-fs (loop0): warning: mounting unchecked fs, running e2fsck is  
+recommended
+EXT4-fs warning (device loop0): ext4_update_dynamic_rev:774: updating to  
+rev 1 because of new feature flag, running e2fsck is recommended
+EXT4-fs (loop0): mounted filesystem without journal. Opts:
+WARNING: CPU: 0 PID: 5126 at fs/ext4/ext4.h:2690 ext4_has_metadata_csum  
+fs/ext4/ext4.h:2689 [inline]
+WARNING: CPU: 0 PID: 5126 at fs/ext4/ext4.h:2690  
+ext4_superblock_csum_set+0x2b8/0x350 fs/ext4/super.c:179
+Kernel panic - not syncing: panic_on_warn set ...
 
-CPU: 0 PID: 4428 Comm: syzkaller547255 Not tainted 4.16.0+ #10
+CPU: 0 PID: 5126 Comm: syzkaller957684 Not tainted 4.16.0+ #10
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
-  memset+0x23/0x40 mm/kasan/kasan.c:285
-  memset include/linux/string.h:330 [inline]
-  __ext4_expand_extra_isize+0x157/0x230 fs/ext4/inode.c:5779
-  ext4_try_to_expand_extra_isize fs/ext4/inode.c:5831 [inline]
-  ext4_mark_inode_dirty+0x7a9/0xa10 fs/ext4/inode.c:5907
-  ext4_unlink+0xc6f/0x1100 fs/ext4/namei.c:3038
-  vfs_unlink+0x283/0x480 fs/namei.c:3978
-  do_unlinkat+0x731/0x940 fs/namei.c:4041
-  SYSC_unlink fs/namei.c:4088 [inline]
-  SyS_unlink+0x26/0x30 fs/namei.c:4086
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:ext4_has_metadata_csum fs/ext4/ext4.h:2689 [inline]
+RIP: 0010:ext4_superblock_csum_set+0x2b8/0x350 fs/ext4/super.c:179
+RSP: 0000:ffff8801b3e97868 EFLAGS: 00010293
+RAX: ffff8801bf85e1c0 RBX: 1ffff100367d2f0d RCX: ffffffff81fd4308
+RDX: 0000000000000000 RSI: ffff8801bea41400 RDI: ffff8801bea41464
+RBP: ffff8801b3e978f0 R08: 1ffff100367d2ede R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801c28a46c0
+R13: ffff8801b3e978c8 R14: ffff8801bea41400 R15: ffff8801c28a4c40
+  ext4_commit_super+0x609/0xb60 fs/ext4/super.c:4720
+  ext4_put_super+0x25b/0xf50 fs/ext4/super.c:898
+  generic_shutdown_super+0x1b5/0x540 fs/super.c:439
+  kill_block_super+0x9b/0xf0 fs/super.c:1146
+  deactivate_locked_super+0x88/0xd0 fs/super.c:312
+  deactivate_super+0x141/0x1b0 fs/super.c:343
+  cleanup_mnt+0xb2/0x150 fs/namespace.c:1173
+  __cleanup_mnt+0x16/0x20 fs/namespace.c:1180
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x447b77
-RSP: 002b:00007ffc704d9d88 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000447b77
-RDX: 00007ffc704d9d90 RSI: 00007ffc704d9d90 RDI: 00007ffc704d9e20
-RBP: 00007ffc704db5a0 R08: 0000000000000000 R09: 000000000000000a
-R10: 0000000000000006 R11: 0000000000000206 R12: 0000000001c648a0
-R13: 0000000000000000 R14: 0000000000007384 R15: 00007ffc704daf98
-
-The buggy address belongs to the page:
-page:ffffea00071fba00 count:2 mapcount:0 mapping:ffff8801d52ef660  
-index:0x4a7
-flags: 0x2fffc0000001064(referenced|lru|active|private)
-raw: 02fffc0000001064 ffff8801d52ef660 00000000000004a7 00000002ffffffff
-raw: ffffea0006e70c20 ffffea0006d9a5a0 ffff8801a99933f0 ffff8801d9a96b40
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8801d9a96b40
-
-Memory state around the buggy address:
-  ffff8801c7ee9f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8801c7ee9f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff8801c7eea000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                    ^
-  ffff8801c7eea080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801c7eea100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
+RIP: 0033:0x449d2a
+RSP: 002b:00007f07d6e22cf8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffec RBX: 0000000020000100 RCX: 0000000000449d2a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f07d6e22d10
+RBP: 0000000000000012 R08: 0000000020012f00 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000000006
+R13: 0000000000000007 R14: 0000000000000000 R15: 0000000000000012
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
