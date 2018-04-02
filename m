@@ -1,119 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753109AbeDBQPf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 12:15:35 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:45475 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752737AbeDBQOm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 12:14:42 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <w-kwok2@ti.com>, <linux-kernel@vger.kernel.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>, <nsekhar@ti.com>,
-        <grygorii.strashko@ti.com>
-Subject: [net-next 2/2] net: netcp: ethss: k2g: add promiscuous mode support
-Date: Mon, 2 Apr 2018 12:17:19 -0400
-Message-ID: <1522685839-9497-3-git-send-email-m-karicheri2@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522685839-9497-1-git-send-email-m-karicheri2@ti.com>
-References: <1522685839-9497-1-git-send-email-m-karicheri2@ti.com>
+        id S1752832AbeDBQSS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 12:18:18 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40064 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751647AbeDBQSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 12:18:14 -0400
+Date: Mon, 2 Apr 2018 18:17:08 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Khan M Rashedun-Naby <naby88@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        thomas.lendacky@amd.com, jgross@suse.com, r.marek@assembler.cz,
+        qianyue.zj@alibaba-inc.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fixed some style warnings and errors
+Message-ID: <20180402161708.GA22516@pd.tnic>
+References: <1522682263-11935-1-git-send-email-naby88@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1522682263-11935-1-git-send-email-naby88@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: WingMan Kwok <w-kwok2@ti.com>
+On Mon, Apr 02, 2018 at 09:17:43PM +0600, Khan M Rashedun-Naby wrote:
+> @@ -820,14 +821,22 @@ static void init_amd(struct cpuinfo_x86 *c)
+>  		clear_cpu_cap(c, X86_FEATURE_MCE);
+>  
+>  	switch (c->x86) {
+> -	case 4:    init_amd_k5(c); break;
+> -	case 5:    init_amd_k6(c); break;
+> -	case 6:	   init_amd_k7(c); break;
+> -	case 0xf:  init_amd_k8(c); break;
+> -	case 0x10: init_amd_gh(c); break;
+> -	case 0x12: init_amd_ln(c); break;
+> -	case 0x15: init_amd_bd(c); break;
+> -	case 0x17: init_amd_zn(c); break;
+> +	case 4:
+> +	  init_amd_k5(c); break;
+> +	case 5:
+> +	  init_amd_k6(c); break;
+> +	case 6:
+> +	  init_amd_k7(c); break;
+> +	case 0xf:
+> +	  init_amd_k8(c); break;
+> +	case 0x10:
+> +	  init_amd_gh(c); break;
+> +	case 0x12:
+> +	  init_amd_ln(c); break;
+> +	case 0x15:
+> +	  init_amd_bd(c); break;
+> +	case 0x17:
+> +	  init_amd_zn(c); break;
 
-This patch adds support for promiscuous mode in k2g's network
-driver. When upper layer instructs to transition from
-non-promiscuous mode to promiscuous mode or vice versa
-K2G network driver needs to configure ALE accordingly
-so that in case of non-promiscuous mode, ALE will not flood
-all unicast packets to host port, while in promiscuous
-mode, it will pass all received unicast packets to
-host port.
+No, it was compact and more readable before.
 
-Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
- drivers/net/ethernet/ti/netcp_ethss.c | 56 +++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+In general, I'd very much advise *not* to do checkpatch-only patches.
 
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index f7af999..1ac2cd6 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -2771,6 +2771,61 @@ static inline int gbe_hwtstamp_set(struct gbe_intf *gbe_intf, struct ifreq *req)
- }
- #endif /* CONFIG_TI_CPTS */
- 
-+static int gbe_set_rx_mode(void *intf_priv, bool promisc)
-+{
-+	struct gbe_intf *gbe_intf = intf_priv;
-+	struct gbe_priv *gbe_dev = gbe_intf->gbe_dev;
-+	struct cpsw_ale *ale = gbe_dev->ale;
-+	unsigned long timeout;
-+	int i, ret = -ETIMEDOUT;
-+
-+	/* Disable(1)/Enable(0) Learn for all ports (host is port 0 and
-+	 * slaves are port 1 and up
-+	 */
-+	for (i = 0; i <= gbe_dev->num_slaves; i++) {
-+		cpsw_ale_control_set(ale, i,
-+				     ALE_PORT_NOLEARN, !!promisc);
-+		cpsw_ale_control_set(ale, i,
-+				     ALE_PORT_NO_SA_UPDATE, !!promisc);
-+	}
-+
-+	if (!promisc) {
-+		/* Don't Flood All Unicast Packets to Host port */
-+		cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 0);
-+		dev_vdbg(gbe_dev->dev, "promiscuous mode disabled\n");
-+		return 0;
-+	}
-+
-+	timeout = jiffies + HZ;
-+
-+	/* Clear All Untouched entries */
-+	cpsw_ale_control_set(ale, 0, ALE_AGEOUT, 1);
-+	do {
-+		cpu_relax();
-+		if (cpsw_ale_control_get(ale, 0, ALE_AGEOUT)) {
-+			ret = 0;
-+			break;
-+		}
-+
-+	} while (time_after(timeout, jiffies));
-+
-+	/* Make sure it is not a false timeout */
-+	if (ret && !cpsw_ale_control_get(ale, 0, ALE_AGEOUT))
-+		return ret;
-+
-+	cpsw_ale_control_set(ale, 0, ALE_AGEOUT, 1);
-+
-+	/* Clear all mcast from ALE */
-+	cpsw_ale_flush_multicast(ale,
-+				 GBE_PORT_MASK(gbe_dev->ale_ports),
-+				 -1);
-+
-+	/* Flood All Unicast Packets to Host port */
-+	cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 1);
-+	dev_vdbg(gbe_dev->dev, "promiscuous mode enabled\n");
-+	return ret;
-+}
-+
- static int gbe_ioctl(void *intf_priv, struct ifreq *req, int cmd)
- {
- 	struct gbe_intf *gbe_intf = intf_priv;
-@@ -3523,6 +3578,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
- 		gbe_dev->max_num_slaves = 8;
- 	} else if (of_device_is_compatible(node, "ti,netcp-gbe-2")) {
- 		gbe_dev->max_num_slaves = 1;
-+		gbe_module.set_rx_mode = gbe_set_rx_mode;
- 	} else if (of_device_is_compatible(node, "ti,netcp-xgbe")) {
- 		gbe_dev->max_num_slaves = 2;
- 	} else {
 -- 
-1.9.1
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
