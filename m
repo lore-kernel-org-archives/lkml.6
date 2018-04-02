@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756805AbeDBTGs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:06:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42292 "EHLO
+        id S1756896AbeDBTIh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:08:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42338 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756760AbeDBTGn (ORCPT
+        with ESMTP id S1756782AbeDBTGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:06:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48936601D3
+        Mon, 2 Apr 2018 15:06:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E894060F6C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -16,9 +16,9 @@ Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
         linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v8 4/7] igb: eliminate duplicate barriers on weakly-ordered archs
-Date: Mon,  2 Apr 2018 15:06:27 -0400
-Message-Id: <1522695990-31082-5-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v8 5/7] fm10k: Eliminate duplicate barriers on weakly-ordered archs
+Date: Mon,  2 Apr 2018 15:06:28 -0400
+Message-Id: <1522695990-31082-6-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522695990-31082-1-git-send-email-okaya@codeaurora.org>
 References: <1522695990-31082-1-git-send-email-okaya@codeaurora.org>
@@ -48,16 +48,30 @@ mmio_wb()
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/intel/fm10k/fm10k_main.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index c1c0bc3..c3f7130 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -5652,11 +5652,7 @@ static int igb_tx_map(struct igb_ring *tx_ring,
- 	/* set the timestamp */
- 	first->time_stamp = jiffies;
+diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_main.c b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
+index df86070..41e3aaa 100644
+--- a/drivers/net/ethernet/intel/fm10k/fm10k_main.c
++++ b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
+@@ -172,13 +172,6 @@ void fm10k_alloc_rx_buffers(struct fm10k_ring *rx_ring, u16 cleaned_count)
+ 		/* update next to alloc since we have filled the ring */
+ 		rx_ring->next_to_alloc = i;
+ 
+-		/* Force memory writes to complete before letting h/w
+-		 * know there are new descriptors to fetch.  (Only
+-		 * applicable for weak-ordered memory model archs,
+-		 * such as IA-64).
+-		 */
+-		wmb();
+-
+ 		/* notify hardware of new descriptors */
+ 		writel(i, rx_ring->tail);
+ 	}
+@@ -1036,11 +1029,7 @@ static void fm10k_tx_map(struct fm10k_ring *tx_ring,
+ 	/* record SW timestamp if HW timestamp is not available */
+ 	skb_tx_timestamp(first->skb);
  
 -	/* Force memory writes to complete before letting h/w know there
 -	 * are new descriptors to fetch.  (Only applicable for weak-ordered
@@ -68,27 +82,14 @@ index c1c0bc3..c3f7130 100644
  	 * status bits have been updated before next_to_watch is written.
  	 */
  	wmb();
-@@ -5674,7 +5670,7 @@ static int igb_tx_map(struct igb_ring *tx_ring,
- 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
+@@ -1055,7 +1044,7 @@ static void fm10k_tx_map(struct fm10k_ring *tx_ring,
  
+ 	/* notify HW of packet */
  	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
 -		writel(i, tx_ring->tail);
 +		writel_relaxed(i, tx_ring->tail);
  
  		/* we need this if more than one processor can write to our tail
  		 * at a time, it synchronizes IO on IA64/Altix systems
-@@ -8073,12 +8069,6 @@ void igb_alloc_rx_buffers(struct igb_ring *rx_ring, u16 cleaned_count)
- 		/* update next to alloc since we have filled the ring */
- 		rx_ring->next_to_alloc = i;
- 
--		/* Force memory writes to complete before letting h/w
--		 * know there are new descriptors to fetch.  (Only
--		 * applicable for weak-ordered memory model archs,
--		 * such as IA-64).
--		 */
--		wmb();
- 		writel(i, rx_ring->tail);
- 	}
- }
 -- 
 2.7.4
