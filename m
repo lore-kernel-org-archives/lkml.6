@@ -1,301 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeDBMcE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 08:32:04 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:17147 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751897AbeDBMb5 (ORCPT
+        id S1752278AbeDBMcL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 08:32:11 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:47797 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751897AbeDBMcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 08:31:57 -0400
-From: Alan Kao <alankao@andestech.com>
-To: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, "Namhyung Kim" <namhyung@kernel.org>,
-        Alex Solomatnikov <sols@sifive.com>,
-        "Jonathan Corbet" <corbet@lwn.net>, <linux-riscv@lists.infradead.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Alan Kao <alankao@andestech.com>, Nick Hu <nickhu@andestech.com>,
-        Greentime Hu <greentime@andestech.com>
-Subject: [PATCH v2 2/2] perf: riscv: Add Document for Future Porting Guide
-Date: Mon, 2 Apr 2018 20:31:24 +0800
-Message-ID: <1522672284-29593-3-git-send-email-alankao@andestech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522672284-29593-1-git-send-email-alankao@andestech.com>
-References: <1522672284-29593-1-git-send-email-alankao@andestech.com>
+        Mon, 2 Apr 2018 08:32:05 -0400
+Date: Mon, 2 Apr 2018 18:00:45 +0530
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        Indranil Choudhury <indranil@chelsio.com>
+Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
+ dump in second kernel
+Message-ID: <20180402123044.GA31231@chelsio.com>
+References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <20180330103907.GC3313@nanopsycho>
+ <20180330105156.GA24344@chelsio.com>
+ <87k1tt2yo7.fsf@xmission.com>
+ <20180402091143.GD3313@nanopsycho>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w32CQiKt097154
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180402091143.GD3313@nanopsycho>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc: Nick Hu <nickhu@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Signed-off-by: Alan Kao <alankao@andestech.com>
----
- Documentation/riscv/pmu.txt | 249 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 249 insertions(+)
- create mode 100644 Documentation/riscv/pmu.txt
+On Monday, April 04/02/18, 2018 at 14:41:43 +0530, Jiri Pirko wrote:
+> Fri, Mar 30, 2018 at 08:42:00PM CEST, ebiederm@xmission.com wrote:
+> >Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> writes:
+> >
+> >> On Friday, March 03/30/18, 2018 at 16:09:07 +0530, Jiri Pirko wrote:
+> >>> Sat, Mar 24, 2018 at 11:56:33AM CET, rahul.lakkireddy@chelsio.com wrote:
+> >>> >Add a new module crashdd that exports the /sys/kernel/crashdd/
+> >>> >directory in second kernel, containing collected hardware/firmware
+> >>> >dumps.
+> >>> >
+> >>> >The sequence of actions done by device drivers to append their device
+> >>> >specific hardware/firmware logs to /sys/kernel/crashdd/ directory are
+> >>> >as follows:
+> >>> >
+> >>> >1. During probe (before hardware is initialized), device drivers
+> >>> >register to the crashdd module (via crashdd_add_dump()), with
+> >>> >callback function, along with buffer size and log name needed for
+> >>> >firmware/hardware log collection.
+> >>> >
+> >>> >2. Crashdd creates a driver's directory under
+> >>> >/sys/kernel/crashdd/<driver>. Then, it allocates the buffer with
+> >>> 
+> >>> This smells. I need to identify the exact ASIC instance that produced
+> >>> the dump. To identify by driver name does not help me if I have multiple
+> >>> instances of the same driver. This looks wrong to me. This looks like
+> >>> a job for devlink where you have 1 devlink instance per 1 ASIC instance.
+> >>> 
+> >>> Please see:
+> >>> http://patchwork.ozlabs.org/project/netdev/list/?series=36524
+> >>> 
+> >>> I bevieve that the solution in the patchset could be used for
+> >>> your usecase too.
+> >>> 
+> >>> 
+> >>
+> >> The sysfs approach proposed here had been dropped in favour exporting
+> >> the dumps as ELF notes in /proc/vmcore.
+> >>
+> >> Will be posting the new patches soon.
+> >
+> >The concern was actually how you identify which device that came from.
+> >Where you read the identifier changes but sysfs or /proc/vmcore the
+> >change remains valid.
+> 
+> Yeah. I still don't see how you link the dump and the device.
 
-diff --git a/Documentation/riscv/pmu.txt b/Documentation/riscv/pmu.txt
-new file mode 100644
-index 000000000000..a3e930ed5141
---- /dev/null
-+++ b/Documentation/riscv/pmu.txt
-@@ -0,0 +1,249 @@
-+Supporting PMUs on RISC-V platforms
-+==========================================
-+Alan Kao <alankao@andestech.com>, Mar 2018
-+
-+Introduction
-+------------
-+
-+As of this writing, perf_event-related features mentioned in The RISC-V ISA
-+Privileged Version 1.10 are as follows:
-+(please check the manual for more details)
-+
-+* [m|s]counteren
-+* mcycle[h], cycle[h]
-+* minstret[h], instret[h]
-+* mhpeventx, mhpcounterx[h]
-+
-+With such function set only, porting perf would require a lot of work, due to
-+the lack of the following general architectural performance monitoring features:
-+
-+* Enabling/Disabling counters
-+  Counters are just free-running all the time in our case.
-+* Interrupt caused by counter overflow
-+  No such design in the spec.
-+* Interrupt indicator
-+  It is not possible to have many interrupt ports for all counters, so an
-+  interrupt indicator is required for software to tell which counter has
-+  just overflowed.
-+* Writing to counters
-+  There will be an SBI to support this since the kernel cannot modify the
-+  counters [1].  Alternatively, some vendor considers to implement
-+  hardware-extension for M-S-U model machines to write counters directly.
-+
-+This document aims to provide developers a quick guide on supporting their
-+PMUs in the kernel.  The following sections briefly explain perf' mechanism
-+and todos.
-+
-+You may check previous discussions here [1][2].  Also, it might be helpful
-+to check the appendix for related kernel structures.
-+
-+
-+1. Initialization
-+-----------------
-+
-+*riscv_pmu* is a global pointer of type *struct riscv_pmu*, which contains
-+various methods according to perf's internal convention and PMU-specific
-+parameters.  One should declare such instance to represent the PMU.  By default,
-+*riscv_pmu* points to a constant structure *riscv_base_pmu*, which has very
-+basic support to a baseline QEMU model.
-+
-+Then he/she can either assign the instance's pointer to *riscv_pmu* so that
-+the minimal and already-implemented logic can be leveraged, or invent his/her
-+own *riscv_init_platform_pmu* implementation.
-+
-+In other words, existing sources of *riscv_base_pmu* merely provide a
-+reference implementation.  Developers can flexibly decide how many parts they
-+can leverage, and in the most extreme case, they can customize every function
-+according to their needs.
-+
-+
-+2. Event Initialization
-+-----------------------
-+
-+When a user launches a perf command to monitor some events, it is first
-+interpreted by the userspace perf tool into multiple *perf_event_open*
-+system calls, and then each of them calls to the body of *event_init*
-+member function that was assigned in the previous step.  In *riscv_base_pmu*'s
-+case, it is *riscv_event_init*.
-+
-+The main purpose of this function is to translate the event provided by user
-+into bitmap, so that HW-related control registers or counters can directly be
-+manipulated.  The translation is based on the mappings and methods provided in
-+*riscv_pmu*.
-+
-+Note that some features can be done in this stage as well:
-+
-+(1) interrupt setting, which is stated in the next section;
-+(2) privilege level setting (user space only, kernel space only, both);
-+(3) destructor setting.  Normally it is sufficient to apply *riscv_destroy_event*;
-+(4) tweaks for non-sampling events, which will be utilized by functions such as
-+*perf_adjust_period*, usually something like the follows:
-+
-+if (!is_sampling_event(event)) {
-+        hwc->sample_period = x86_pmu.max_period;
-+        hwc->last_period = hwc->sample_period;
-+        local64_set(&hwc->period_left, hwc->sample_period);
-+}
-+
-+In the case of *riscv_base_pmu*, only (3) is provided for now.
-+
-+
-+3. Interrupt
-+------------
-+
-+3.1. Interrupt Initialization
-+
-+This often occurs at the beginning of the *event_init* method. In common
-+practice, this should be a code segment like
-+
-+int x86_reserve_hardware(void)
-+{
-+        int err = 0;
-+
-+        if (!atomic_inc_not_zero(&pmc_refcount)) {
-+                mutex_lock(&pmc_reserve_mutex);
-+                if (atomic_read(&pmc_refcount) == 0) {
-+                        if (!reserve_pmc_hardware())
-+                                err = -EBUSY;
-+                        else
-+                                reserve_ds_buffers();
-+                }
-+                if (!err)
-+                        atomic_inc(&pmc_refcount);
-+                mutex_unlock(&pmc_reserve_mutex);
-+        }
-+
-+        return err;
-+}
-+
-+And the magic is in *reserve_pmc_hardware*, which usually does atomic
-+operations to make implemented IRQ accessible from some global function pointer.
-+*release_pmc_hardware* serves the opposite purpose, and it is used in event
-+destructors mentioned in previous section.
-+
-+(Note: From the implementations in all the architectures, the *reserve/release*
-+pair are always IRQ settings, so the *pmc_hardware* seems somehow misleading.
-+It does NOT deal with the binding between an event and a physical counter,
-+which will be introduced in the next section.)
-+
-+3.2. IRQ Structure
-+
-+Basically, a IRQ runs the following pseudo code:
-+
-+for each hardware counter that triggered this overflow
-+
-+    get the event of this counter
-+
-+    // following two steps are defined as *read()*,
-+    // check the section Reading/Writing Counters for details.
-+    count the delta value since previous interrupt
-+    update the event->count (# event occurs) by adding delta, and
-+               event->hw.period_left by subtracting delta
-+
-+    if the event overflows
-+        sample data
-+        set the counter appropriately for the next overflow
-+
-+        if the event overflows again
-+            too frequently, throttle this event
-+        fi
-+    fi
-+
-+end for
-+
-+However as of this writing, none of the RISC-V implementations have designed an
-+interrupt for perf, so the details are to be completed in the future.
-+
-+4. Reading/Writing Counters
-+---------------------------
-+
-+They seem symmetric but perf treats them quite differently.  For reading, there
-+is a *read* interface in *struct pmu*, but it serves more than just reading.
-+According to the context, the *read* function not only read the content of the
-+counter (event->count), but also update the left period to the next interrupt
-+(event->hw.period_left).
-+
-+But the core of perf does not need direct write to counters.  Writing counters
-+hides behind the abstraction of 1) *pmu->start*, literally start counting so one
-+has to set the counter to a good value for the next interrupt; 2) inside the IRQ
-+it should set the counter with the same reason.
-+
-+Reading is not a problem in RISC-V but writing would need some effort, since
-+counters are not allowed to be written by S-mode.
-+
-+
-+5. add()/del()/start()/stop()
-+-----------------------------
-+
-+Basic idea: add()/del() adds/deletes events to/from a PMU, and start()/stop()
-+starts/stop the counter of some event in the PMU.  All of them take the same
-+arguments: *struct perf_event *event* and *int flag*.
-+
-+Consider perf as a state machine, then you will find that these functions serve
-+as the state transition process between those states.
-+Three states (event->hw.state) are defined:
-+
-+* PERF_HES_STOPPED:	the counter is stopped
-+* PERF_HES_UPTODATE:	the event->count is up-to-date
-+* PERF_HES_ARCH:	arch-dependent usage ... we don't need this for now
-+
-+A normal flow of these state transitions are as follows:
-+
-+* A user launches a perf event, resulting in calling to *event_init*.
-+* When being context-switched in, *add* is called by the perf core, with flag
-+  PERF_EF_START, which mean that the event should be started after it is added.
-+  In this stage, an general event is binded to a physical counter, if any.
-+  The state changes to PERF_HES_STOPPED and PERF_HES_UPTODATE, because it is now
-+  stopped, and the (software) event count does not need updating.
-+** *start* is then called, and the counter is enabled.
-+   With flag PERF_EF_RELOAD, it write the counter to an appropriate value (check
-+   previous section for detail).
-+   No writing is made if the flag does not contain PERF_EF_RELOAD.
-+   The state now is reset to none, because it is neither stopped nor update
-+   (the counting already starts)
-+* When being context-switched out, *del* is called.  It then checkout all the
-+  events in the PMU and call *stop* to update their counts.
-+** *stop* is called by *del*
-+   and the perf core with flag PERF_EF_UPDATE, and it often shares the same
-+   subroutine as *read* with the same logic.
-+   The state changes to PERF_HES_STOPPED and PERF_HES_UPTODATE, again.
-+
-+** Life cycles of these two pairs: *add* and *del* are called repeatedly as
-+  tasks switch in-and-out; *start* and *stop* is also called when the perf core
-+  needs a quick stop-and-start, for instance, when the interrupt period is being
-+  adjusted.
-+
-+Current implementation is sufficient for now and can be easily extend to
-+features in the future.
-+
-+A. Related Structures
-+---------------------
-+
-+* struct pmu: include/linux/perf_events.h
-+* struct riscv_pmu: arch/riscv/include/asm/perf_events.h
-+
-+  Both structures are designed to be read-only.
-+
-+  *struct pmu* defines some function pointer interfaces, and most of them take
-+*struct perf_event* as a main argument, dealing with perf events according to
-+perf's internal state machine (check kernel/events/core.c for details).
-+
-+  *struct riscv_pmu* defines PMU-specific parameters.  The naming follows the
-+convention of all other architectures.
-+
-+* struct perf_event: include/linux/perf_events.h
-+* struct hw_perf_event
-+
-+  The generic structure that represents perf events, and the hardware-related
-+details.
-+
-+* struct riscv_hw_events: arch/riscv/include/asm/perf_events.h
-+
-+  The structure that holds the status of events, has two fixed members:
-+the number of events and the array of the events.
-+
-+References
-+----------
-+
-+[1] https://github.com/riscv/riscv-linux/pull/124
-+[2] https://groups.google.com/a/groups.riscv.org/forum/#!topic/sw-dev/f19TmCNP6yA
--- 
-2.16.2
+In our case, the dump and the device are being identified by the
+driver’s name followed by its corresponding pci bus id.  I’ve posted an
+example in my v3 series:
+
+https://www.spinics.net/lists/netdev/msg493781.html
+
+Here’s an extract from the link above:
+
+# readelf -n /proc/vmcore
+
+Displaying notes found at file offset 0x00001000 with length 0x04003288:
+Owner                 Data size     Description
+VMCOREDD_cxgb4_0000:02:00.4 0x02000fd8      Unknown note type:(0x00000700)
+VMCOREDD_cxgb4_0000:04:00.4 0x02000fd8      Unknown note type:(0x00000700)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+CORE                 0x00000150     NT_PRSTATUS (prstatus structure)
+VMCOREINFO           0x0000074f     Unknown note type: (0x00000000)
+
+Here, for my two devices, the dump’s names are
+VMCOREDD_cxgb4_0000:02:00.4 and VMCOREDD_cxgb4_0000:04:00.4.
+
+It’s really up to the callers to write their own unique name for the
+dump.  The name is appended to “VMCOREDD_” string.
+
+> Rahul, did you look at the patchset I pointed out?
+
+For devlink, I think the dump name would be identified by
+bus_type/device_name; i.e. “pci/0000:02:00.4” for my example.
+Is my understanding correct?
+
+Thanks,
+Rahul
