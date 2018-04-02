@@ -1,68 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754371AbeDBRaQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 13:30:16 -0400
-Received: from mga04.intel.com ([192.55.52.120]:39561 "EHLO mga04.intel.com"
+        id S1754426AbeDBRar (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 13:30:47 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58730 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753405AbeDBR36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 13:29:58 -0400
+        id S1753291AbeDBR3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 13:29:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,396,1517904000";
-   d="scan'208";a="29535135"
-Subject: [PATCH 11/11] x86/pti: leave kernel text global for !PCID
+   d="scan'208";a="188042274"
+Subject: [PATCH 07/11] x86/mm: comment _PAGE_GLOBAL mystery
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
         keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
         namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Mon, 02 Apr 2018 10:27:17 -0700
+Date: Mon, 02 Apr 2018 10:27:10 -0700
 References: <20180402172700.65CAE838@viggo.jf.intel.com>
 In-Reply-To: <20180402172700.65CAE838@viggo.jf.intel.com>
-Message-Id: <20180402172717.EFD7ECBC@viggo.jf.intel.com>
+Message-Id: <20180402172710.9AEB9D53@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Note: This has changed since the last version.  It now clones the
-kernel text PMDs at a much later point and also disables this
-functionality on AMD K8 processors.  Details in the patch.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
---
+I was mystified as to where the _PAGE_GLOBAL in the kernel page tables
+for kernel text came from.  I audited all the places I could find, but
+I missed one: head_64.S.
 
-I'm sticking this at the end of the series because it's a bit weird.
-It can be dropped and the rest of the series is still useful without
-it.
+The page tables that we create in here live for a long time, and they
+also have _PAGE_GLOBAL set, despite whether the processor supports it
+or not.  It's harmless, and we got *lucky* that the pageattr code
+accidentally clears it when we wipe it out of __supported_pte_mask and
+then later try to mark kernel text read-only.
 
-Global pages are bad for hardening because they potentially let an
-exploit read the kernel image via a Meltdown-style attack which
-makes it easier to find gadgets.
-
-But, global pages are good for performance because they reduce TLB
-misses when making user/kernel transitions, especially when PCIDs
-are not available, such as on older hardware, or where a hypervisor
-has disabled them for some reason.
-
-This patch implements a basic, sane policy: If you have PCIDs, you
-only map a minimal amount of kernel text global.  If you do not have
-PCIDs, you map all kernel text global.
-
-This policy effectively makes PCIDs something that not only adds
-performance but a little bit of hardening as well.
-
-I ran a simple "lseek" microbenchmark[1] to test the benefit on
-a modern Atom microserver.  Most of the benefit comes from applying
-the series before this patch ("entry only"), but there is still a
-signifiant benefit from this patch.
-
-No Global Lines (baseline  ): 6077741 lseeks/sec
-88 Global Lines (entry only): 7528609 lseeks/sec (+23.9%)
-94 Global Lines (this patch): 8433111 lseeks/sec (+38.8%)
-
-1. https://github.com/antonblanchard/will-it-scale/blob/master/tests/lseek1.c
+Comment some of these properties to make it easier to find and
+understand in the future.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -75,191 +53,36 @@ Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/include/asm/pti.h |    2 +
- b/arch/x86/mm/init_64.c      |    6 +++
- b/arch/x86/mm/pti.c          |   79 ++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 83 insertions(+), 4 deletions(-)
+ b/arch/x86/kernel/head_64.S |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff -puN arch/x86/include/asm/pti.h~kpti-global-text-option arch/x86/include/asm/pti.h
---- a/arch/x86/include/asm/pti.h~kpti-global-text-option	2018-04-02 10:26:48.335661204 -0700
-+++ b/arch/x86/include/asm/pti.h	2018-04-02 10:26:48.342661204 -0700
-@@ -6,8 +6,10 @@
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- extern void pti_init(void);
- extern void pti_check_boottime_disable(void);
-+extern void pti_clone_kernel_text(void);
+diff -puN arch/x86/kernel/head_64.S~comment-global-page arch/x86/kernel/head_64.S
+--- a/arch/x86/kernel/head_64.S~comment-global-page	2018-04-02 10:26:46.113661210 -0700
++++ b/arch/x86/kernel/head_64.S	2018-04-02 10:26:46.116661210 -0700
+@@ -399,8 +399,13 @@ NEXT_PAGE(level3_ident_pgt)
+ 	.quad	level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+ 	.fill	511, 8, 0
+ NEXT_PAGE(level2_ident_pgt)
+-	/* Since I easily can, map the first 1G.
++	/*
++	 * Since I easily can, map the first 1G.
+ 	 * Don't set NX because code runs from these pages.
++	 *
++	 * Note: This sets _PAGE_GLOBAL despite whether
++	 * the CPU supports it or it is enabled.  But,
++	 * the CPU should ignore the bit.
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
  #else
- static inline void pti_check_boottime_disable(void) { }
-+static inline void pti_clone_kernel_text(void) { }
- #endif
- 
- #endif /* __ASSEMBLY__ */
-diff -puN arch/x86/mm/init_64.c~kpti-global-text-option arch/x86/mm/init_64.c
---- a/arch/x86/mm/init_64.c~kpti-global-text-option	2018-04-02 10:26:48.337661204 -0700
-+++ b/arch/x86/mm/init_64.c	2018-04-02 10:26:48.342661204 -0700
-@@ -1294,6 +1294,12 @@ void mark_rodata_ro(void)
- 			(unsigned long) __va(__pa_symbol(_sdata)));
- 
- 	debug_checkwx();
-+
-+	/*
-+	 * Do this after all of the manipulation of the
-+	 * kernel text page tables are complete.
-+	 */
-+	pti_clone_kernel_text();
- }
- 
- int kern_addr_valid(unsigned long addr)
-diff -puN arch/x86/mm/pti.c~kpti-global-text-option arch/x86/mm/pti.c
---- a/arch/x86/mm/pti.c~kpti-global-text-option	2018-04-02 10:26:48.339661204 -0700
-+++ b/arch/x86/mm/pti.c	2018-04-02 10:26:48.343661204 -0700
-@@ -66,12 +66,22 @@ static void __init pti_print_if_secure(c
- 		pr_info("%s\n", reason);
- }
- 
-+enum pti_mode {
-+	PTI_AUTO = 0,
-+	PTI_FORCE_OFF,
-+	PTI_FORCE_ON
-+} pti_mode;
-+
- void __init pti_check_boottime_disable(void)
- {
- 	char arg[5];
- 	int ret;
- 
-+	/* Assume mode is auto unless overridden. */
-+	pti_mode = PTI_AUTO;
-+
- 	if (hypervisor_is_type(X86_HYPER_XEN_PV)) {
-+		pti_mode = PTI_FORCE_OFF;
- 		pti_print_if_insecure("disabled on XEN PV.");
- 		return;
- 	}
-@@ -79,18 +89,23 @@ void __init pti_check_boottime_disable(v
- 	ret = cmdline_find_option(boot_command_line, "pti", arg, sizeof(arg));
- 	if (ret > 0)  {
- 		if (ret == 3 && !strncmp(arg, "off", 3)) {
-+			pti_mode = PTI_FORCE_OFF;
- 			pti_print_if_insecure("disabled on command line.");
- 			return;
- 		}
- 		if (ret == 2 && !strncmp(arg, "on", 2)) {
-+			pti_mode = PTI_FORCE_ON;
- 			pti_print_if_secure("force enabled on command line.");
- 			goto enable;
- 		}
--		if (ret == 4 && !strncmp(arg, "auto", 4))
-+		if (ret == 4 && !strncmp(arg, "auto", 4)) {
-+			pti_mode = PTI_AUTO;
- 			goto autosel;
-+		}
- 	}
- 
- 	if (cmdline_find_option_bool(boot_command_line, "nopti")) {
-+		pti_mode = PTI_FORCE_OFF;
- 		pti_print_if_insecure("disabled on command line.");
- 		return;
- 	}
-@@ -149,7 +164,7 @@ pgd_t __pti_set_user_pgd(pgd_t *pgdp, pg
-  *
-  * Returns a pointer to a P4D on success, or NULL on failure.
-  */
--static __init p4d_t *pti_user_pagetable_walk_p4d(unsigned long address)
-+static p4d_t *pti_user_pagetable_walk_p4d(unsigned long address)
- {
- 	pgd_t *pgd = kernel_to_user_pgdp(pgd_offset_k(address));
- 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
-@@ -177,7 +192,7 @@ static __init p4d_t *pti_user_pagetable_
-  *
-  * Returns a pointer to a PMD on success, or NULL on failure.
-  */
--static __init pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
-+static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
- {
- 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
- 	p4d_t *p4d = pti_user_pagetable_walk_p4d(address);
-@@ -267,7 +282,7 @@ static void __init pti_setup_vsyscall(vo
- static void __init pti_setup_vsyscall(void) { }
- #endif
- 
--static void __init
-+void
- pti_clone_pmds(unsigned long start, unsigned long end, pmdval_t clear)
- {
- 	unsigned long addr;
-@@ -360,10 +375,63 @@ static void __init pti_clone_entry_text(
- }
- 
- /*
-+ * Global pages and PCIDs are both ways to make kernel TLB entries
-+ * live longer, reduce TLB misses and improve kernel performance.
-+ * But, leaving all kernel text Global makes it potentially accessible
-+ * to Meltdown-style attacks which make it trivial to find gadgets or
-+ * defeat KASLR.
-+ *
-+ * Only use global pages when it is really worth it.
-+ */
-+static inline bool pti_kernel_image_global_ok(void)
-+{
-+	/*
-+	 * Systems with PCIDs get litlle benefit from global
-+	 * kernel text and are not worth the downsides.
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_PCID))
-+		return false;
-+
-+	/*
-+	 * Only do global kernel image for pti=auto.  Do the most
-+	 * secure thing (not global) if pti=on specified.
-+	 */
-+	if (pti_mode != PTI_AUTO)
-+		return false;
-+
-+	/*
-+	 * K8 may not tolerate the cleared _PAGE_RW on the userspace
-+	 * global kernel image pages.  Do the safe thing (disable
-+	 * global kernel image).  This is unlikely to ever be
-+	 * noticed because PTI is disabled by default on AMD CPUs.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_K8))
-+		return false;
-+
-+	return true;
-+}
-+
-+/*
-+ * For some configurations, map all of kernel text into the user page
-+ * tables.  This reduces TLB misses, especially on non-PCID systems.
-+ */
-+void pti_clone_kernel_text(void)
-+{
-+	unsigned long start = PFN_ALIGN(_text);
-+	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
-+
-+	if (!pti_kernel_image_global_ok())
-+		return;
-+
-+	pti_clone_pmds(start, end, _PAGE_RW);
-+}
-+
-+/*
-  * This is the only user for it and it is not arch-generic like
-  * the other set_memory.h functions.  Just extern it.
-  */
- extern int set_memory_nonglobal(unsigned long addr, int numpages);
-+
- void pti_set_kernel_image_nonglobal(void)
- {
- 	/*
-@@ -375,6 +443,9 @@ void pti_set_kernel_image_nonglobal(void
- 	unsigned long start = PFN_ALIGN(_text);
- 	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
- 
-+	if (pti_kernel_image_global_ok())
-+		return;
-+
- 	pr_debug("set kernel image non-global\n");
- 
- 	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
+@@ -431,6 +436,10 @@ NEXT_PAGE(level2_kernel_pgt)
+ 	 * (NOTE: at +512MB starts the module area, see MODULES_VADDR.
+ 	 *  If you want to increase this then increase MODULES_VADDR
+ 	 *  too.)
++	 *
++	 *  This table is eventually used by the kernel during normal
++	 *  runtime.  Care must be taken to clear out undesired bits
++	 *  later, like _PAGE_RW or _PAGE_GLOBAL in some cases.
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_LARGE_EXEC,
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
 _
