@@ -1,79 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932432AbeDBUAk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:00:40 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43242 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932400AbeDBUAh (ORCPT
+        id S932437AbeDBUBu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 16:01:50 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:39474 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756542AbeDBUBs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:00:37 -0400
-X-Google-Smtp-Source: AIpwx4/T7QqD/a3MDgwtZr4E/ovnEmDwwAoyVumCP8phup0vsUYh333sq+LFeINerq09aBIevMZ7yg==
-From: Nasser Afshin <afshin.nasser@gmail.com>
-X-Google-Original-From: Nasser Afshin <Afshin.Nasser@gmail.com>
-To: mchehab@kernel.org
-Cc: Nasser Afshin <Afshin.Nasser@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] media: i2c: tvp5150: Use the correct comment style
-Date: Tue,  3 Apr 2018 00:29:04 +0430
-Message-Id: <20180402195907.14368-3-Afshin.Nasser@gmail.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20180402195907.14368-1-Afshin.Nasser@gmail.com>
-References: <20180402195907.14368-1-Afshin.Nasser@gmail.com>
+        Mon, 2 Apr 2018 16:01:48 -0400
+X-Google-Smtp-Source: AIpwx4+ODr+btGD8h2fUM9/TCSOLFTk7wzfCMYkxBNxTYBXOcpO+3vLbAA0thEXIXLQIhI9GNj9wMiWxvMRX/+Dj1ms=
+MIME-Version: 1.0
+In-Reply-To: <014501d3cabc$e5f22370$b1d66a50$@nexbridge.com>
+References: <xmqq6059z9kz.fsf@gitster-ct.c.googlers.com> <014501d3cabc$e5f22370$b1d66a50$@nexbridge.com>
+From: Stefan Beller <sbeller@google.com>
+Date: Mon, 2 Apr 2018 13:01:46 -0700
+Message-ID: <CAGZ79kZOpwQFFf7CM1Msjat_bQXcuPb6eym7z28iU=8UYjfvDg@mail.gmail.com>
+Subject: Re: [ANNOUNCE] Git v2.17.0
+To: "Randall S. Becker" <rsbecker@nexbridge.com>
+Cc: Junio C Hamano <gitster@pobox.com>, git <git@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch resolves some checkpatch.pl warnings about comments.
+On Mon, Apr 2, 2018 at 12:57 PM, Randall S. Becker
+<rsbecker@nexbridge.com> wrote:
+> On April 2, 2018 3:34 PM, Junio C Hamano wrote:
+>> The latest feature release Git v2.17.0 is now available at the usual places.  It is
+>> comprised of 516 non-merge commits since v2.16.0, contributed by 71
+>> people, 20 of which are new faces.
+>
+> Just a heads up. I think this one might have gotten missed at some point a few months back. I think it was submitted back in January. Not sure where it fell off or whether it was just dropped.
+>
+> diff --git a/transport-helper.c b/transport-helper.c
+> index 3f380d87d..5ee7007f6 100644
+> --- a/transport-helper.c
+> +++ b/transport-helper.c
+> @@ -1212,7 +1212,7 @@ static int udt_do_read(struct unidirectional_transfer *t)
+>                 return 0;       /* No space for more. */
+>
+>         transfer_debug("%s is readable", t->src_name);
+> -       bytes = read(t->src, t->buf + t->bufuse, BUFFERSIZE - t->bufuse);
+> +       bytes = xread(t->src, t->buf + t->bufuse, BUFFERSIZE - t->bufuse);
+>         if (bytes < 0 && errno != EWOULDBLOCK && errno != EAGAIN &&
+>                 errno != EINTR) {
+>                 error_errno("read(%s) failed", t->src_name);
 
-Signed-off-by: Nasser Afshin <Afshin.Nasser@gmail.com>
----
- drivers/media/i2c/tvp5150.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-index af56a5a6db65..d561d87d219a 100644
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -500,10 +500,12 @@ struct i2c_vbi_ram_value {
-  * and so on. There are 16 possible locations from 0 to 15.
-  */
- 
--static struct i2c_vbi_ram_value vbi_ram_default[] =
--{
--	/* FIXME: Current api doesn't handle all VBI types, those not
--	   yet supported are placed under #if 0 */
-+static struct i2c_vbi_ram_value vbi_ram_default[] = {
-+
-+	/*
-+	 * FIXME: Current api doesn't handle all VBI types, those not
-+	 * yet supported are placed under #if 0
-+	 */
- #if 0
- 	[0] = {0x010, /* Teletext, SECAM, WST System A */
- 		{V4L2_SLICED_TELETEXT_SECAM, 6, 23, 1},
-@@ -1101,11 +1103,14 @@ static int tvp5150_s_routing(struct v4l2_subdev *sd,
- 
- static int tvp5150_s_raw_fmt(struct v4l2_subdev *sd, struct v4l2_vbi_format *fmt)
- {
--	/* this is for capturing 36 raw vbi lines
--	   if there's a way to cut off the beginning 2 vbi lines
--	   with the tvp5150 then the vbi line count could be lowered
--	   to 17 lines/field again, although I couldn't find a register
--	   which could do that cropping */
-+	/*
-+	 * this is for capturing 36 raw vbi lines
-+	 * if there's a way to cut off the beginning 2 vbi lines
-+	 * with the tvp5150 then the vbi line count could be lowered
-+	 * to 17 lines/field again, although I couldn't find a register
-+	 * which could do that cropping
-+	 */
-+
- 	if (fmt->sample_format == V4L2_PIX_FMT_GREY)
- 		tvp5150_write(sd, TVP5150_LUMA_PROC_CTL_1, 0x70);
- 	if (fmt->count[0] == 18 && fmt->count[1] == 18) {
--- 
-2.15.0
+Patch at https://public-inbox.org/git/010f01d38a9e$a5c4f290$f14ed7b0$@nexbridge.com/
