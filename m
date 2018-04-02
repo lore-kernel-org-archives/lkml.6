@@ -1,112 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754465AbeDBKlz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 06:41:55 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36688 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754277AbeDBKlx (ORCPT
+        id S1754412AbeDBKqI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 06:46:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51526 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754257AbeDBKqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 06:41:53 -0400
-X-Google-Smtp-Source: AIpwx48a/3b0DN6Xiwdo4JhokuGTiwv5Mt2YTg3NS56Vn7PDExPriEe5NEcNT903f55iLoIcdmOjZQ==
-Date: Mon, 2 Apr 2018 12:41:48 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-efi@vger.kernel.org
-Subject: [GIT PULL] EFI updates for v4.17
-Message-ID: <20180402104148.m3hhkhjhdb5y7gyu@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 2 Apr 2018 06:46:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E03256037B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/3] Update reset and poll logic for GDSCs
+Date: Mon,  2 Apr 2018 16:15:42 +0530
+Message-Id: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+This series implements the below logic for the GDSCs
 
-Please pull the latest efi-core-for-linus git tree from:
+1. logic to reset the AON logic before or assert/deassert the block
+   control reset removing the clamp io for few GDSCs on SDM845 SoC.
+2. It also introduces the requirement to poll for higher timeout values
+   for few of the GDSCs.
+3. There is a new poll register for the GDSCs on SDM845 SoCs which needs
+   to be polled for the correct hardware status of the GDSCs.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-core-for-linus
+Amit Nischal (3):
+  clk: qcom: gdsc: Add support to reset AON and block reset logic
+  clk: qcom: gdsc: Add support to poll for higher timeout value
+  clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
 
-   # HEAD: 03781e40890c18bdea40092355b61431d0073c1d x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
+ drivers/clk/qcom/gdsc.c | 77 +++++++++++++++++++++++++++++++++++++++++++++----
+ drivers/clk/qcom/gdsc.h |  6 +++-
+ 2 files changed, 76 insertions(+), 7 deletions(-)
 
-NOTE: this tree depends on the x86/mm tree - if you have not pulled that tree
-      then please disregard this pull request.
-
-The main EFI changes in this cycle were:
-
- - Fix the apple-properties code                 (Andy Shevchenko)
-
- - Add WARN() on arm64 if UEFI Runtime Services corrupt the
-   reserved x18 register
-                                                 (Ard Biesheuvel)
-
- - Use efi_switch_mm() on x86 instead of manipulating %cr3 directly
-
-                                                 (Sai Praneeth)
-
- - Fix early memremap leak in ESRT code          (Ard Biesheuvel)
-
- - Switch to L"xxx" notation for wide string literals
-
-                                                 (Ard Biesheuvel)
-
- - ... plus misc other cleanups and bugfixes
-
- Thanks,
-
-	Ingo
-
------------------->
-Andy Shevchenko (2):
-      efi/apple-properties: Remove redundant attribute initialization from unmarshal_key_value_pairs()
-      efi/apple-properties: Use memremap() instead of ioremap()
-
-Ard Biesheuvel (5):
-      efi/arm*: Stop printing addresses of virtual mappings
-      efi/arm64: Check whether x18 is preserved by runtime services calls
-      efi: Reorder pr_notice() with add_device_randomness() call
-      efi/esrt: Fix handling of early ESRT table mapping
-      efi: Use string literals for efi_char16_t variable initializers
-
-Colin Ian King (1):
-      efi: Make const array 'apple' static
-
-Ingo Molnar (1):
-      Merge branch 'x86/mm' into efi/core
-
-Jia-Ju Bai (1):
-      x86/efi: Replace GFP_ATOMIC with GFP_KERNEL in efi_query_variable_store()
-
-Mark Rutland (1):
-      efi/arm*: Only register page tables when they exist
-
-Sai Praneeth (3):
-      efi: Use efi_mm in x86 as well as ARM
-      x86/efi: Replace efi_pgd with efi_mm.pgd
-      x86/efi: Use efi_switch_mm() rather than manually twiddling with %cr3
-
- arch/arm64/include/asm/efi.h              |  4 +++-
- arch/arm64/kernel/Makefile                |  3 ++-
- arch/arm64/kernel/efi-rt-wrapper.S        | 41 +++++++++++++++++++++++++++++++++++++++++
- arch/arm64/kernel/efi.c                   |  6 ++++++
- arch/x86/boot/compressed/eboot.c          |  3 ++-
- arch/x86/include/asm/efi.h                | 26 +++++++++++---------------
- arch/x86/mm/debug_pagetables.c            |  6 +++---
- arch/x86/platform/efi/efi_64.c            | 60 +++++++++++++++++++++++++++++++++---------------------------
- arch/x86/platform/efi/efi_thunk_64.S      |  2 +-
- arch/x86/platform/efi/quirks.c            | 10 ++++++----
- drivers/firmware/efi/apple-properties.c   | 20 +++++++-------------
- drivers/firmware/efi/arm-runtime.c        | 17 ++++-------------
- drivers/firmware/efi/efi.c                | 11 ++++++++++-
- drivers/firmware/efi/esrt.c               | 17 ++++-------------
- drivers/firmware/efi/libstub/Makefile     |  2 +-
- drivers/firmware/efi/libstub/secureboot.c | 12 +++---------
- drivers/firmware/efi/libstub/tpm.c        |  7 ++-----
- include/linux/efi.h                       |  2 ++
- 18 files changed, 141 insertions(+), 108 deletions(-)
- create mode 100644 arch/arm64/kernel/efi-rt-wrapper.S
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
