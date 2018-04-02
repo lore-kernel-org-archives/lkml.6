@@ -1,456 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754698AbeDBWsb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:48:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58432 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754516AbeDBWs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:48:28 -0400
-From: Lyude Paul <lyude@redhat.com>
-To: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Manasi Navare <manasi.d.navare@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Ben Skeggs <bskeggs@redhat.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Tony Cheng <Tony.Cheng@amd.com>,
-        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>, Shirish S <shirish.s@amd.com>,
-        "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>, Roman Li <Roman.Li@amd.com>,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        nouveau@lists.freedesktop.org
-Subject: [PATCH v5 05/10] drm/dp_mst: Make drm_dp_mst_topology_state subclassable
-Date: Mon,  2 Apr 2018 18:47:41 -0400
-Message-Id: <20180402224800.16080-6-lyude@redhat.com>
-In-Reply-To: <20180402224800.16080-1-lyude@redhat.com>
-References: <20180402224800.16080-1-lyude@redhat.com>
+        id S1754787AbeDBWtx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:49:53 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:35300 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754535AbeDBWtr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 18:49:47 -0400
+X-IronPort-AV: E=Sophos;i="5.48,397,1517846400";
+   d="scan'208";a="178126564"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "tj@kernel.org" <tj@kernel.org>
+CC: "kernel-team@fb.com" <kernel-team@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH 2/2] blk-mq: Fix request handover from timeout path to
+ normal execution
+Thread-Topic: [PATCH 2/2] blk-mq: Fix request handover from timeout path to
+ normal execution
+Thread-Index: AQHTyrUNkNkjnUv7yk+FmjLOLTu6JKPt+B6AgAAAm4CAAAzSAIAAAWEAgAACJYCAAAIlgIAACSYA
+Date: Mon, 2 Apr 2018 22:49:43 +0000
+Message-ID: <e2b9b49876c9979cdadef1a04904b5899cf34b1a.camel@wdc.com>
+References: <20180402190053.GC388343@devbig577.frc2.facebook.com>
+         <20180402190120.GD388343@devbig577.frc2.facebook.com>
+         <b52fa22c-c7fa-5ebd-35cb-527786e6d08e@wdc.com>
+         <20180402211047.GF388343@devbig577.frc2.facebook.com>
+         <afef8f4812b357deeadc0999f4c85d7b0049b738.camel@wdc.com>
+         <20180402220136.GI388343@devbig577.frc2.facebook.com>
+         <6d6985b8d95317aa5572809f1b987c45e932c5b2.camel@wdc.com>
+         <20180402221657.GL388343@devbig577.frc2.facebook.com>
+In-Reply-To: <20180402221657.GL388343@devbig577.frc2.facebook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.172]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0751;7:KF2OHbKld9xdUNIgqvInVKnyqvXzvKZMj2isH1m2hWqHT63D5jEVhXlvlm6GldHwQazm8go8FoEVg2ne/ISZvfIZbKMUwSkJghcnfFRqztwzS5oK/nmd55MTLG44QmJZpR+XQbvZymsKVakYNzutTJHyNeVN0ogks/EiYYAuPkkggjQLiNmlYoA1qrXL7+u+Fkn/h1CcRC0sgISZK04JCH8cQdR/YgwSQVmJG1k25D0iFz+5geZ6kOcFsic8qmHE;20:HvQQbZC2BM6FgRRbRNbj3fUPdXteBpCcCEAZXwDN3dZ482noADZaEFatSQb2M1NrvFBMl+3aOMgERni/8rrHnDj6Jz7bBBIaRVkXW396lNjOZdZGEUmiDYKhI7ZMw70sBNAUKAGSHv70oa9Ir7LEj07URsQLvdnmlrn6OLBFnts=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bead1b59-ee05-4c7e-1bff-08d598ec06db
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0751;
+x-ms-traffictypediagnostic: MWHPR04MB0751:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0751A48972E22BD1D1482E7298A60@MWHPR04MB0751.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB0751;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0751;
+x-forefront-prvs: 0630013541
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39380400002)(39860400002)(366004)(396003)(189003)(377424004)(199004)(478600001)(8676002)(2501003)(81156014)(1730700003)(6506007)(86362001)(476003)(2351001)(5250100002)(2616005)(5660300001)(486005)(6512007)(81166006)(3280700002)(486005)(6246003)(26005)(11346002)(66066001)(25786009)(102836004)(99286004)(53936002)(97736004)(186003)(3660700001)(68736007)(93886005)(106356001)(72206003)(3846002)(6916009)(6116002)(316002)(446003)(14454004)(2900100001)(8936002)(105586002)(305945005)(118296001)(5640700003)(6436002)(7736002)(4326008)(6486002)(2906002)(54906003)(36756003)(76176011)(229853002)(59450400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0751;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: 1afFipC/t0ps82WmmzwVsOGs8shW8rELcd1Nd4l+0EPACTwK0E4Zn1j1zo/O6VnFRNj6BKINe7HfMBMGr8Jwy19RbXdTBfEWqa1S9+JQSn71JuzRAPwyraQQkR/raZEqo5P/fPYIbfbK/kFApDvNggwevhAAItBx2NOfVuwo5L0ayz59pwyYHw8bp3MI8HjlrT8Sox+NYKj/5SdOCgZk32hkATJiSRohC7qFPi/uCjKd6w7jzz+GblzcS6slCNEXV96roS7NbQUkf0z5JLCtasrvIBytTNIOyOrf+0HrP+ehJw5g07eukIwNtv14mynmTOqxTbC7STGeJNm0K0HpeSdwR4/aEBuIBRCwEpYaP16DFIqBm69/8r7mGMiJUYEHMTzgoNWtqJA9QwKq+1sePCZRWr3O0cBMmVRvBzTAff4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F33F8FB7F44E47439ADBE7E2FB5D904A@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bead1b59-ee05-4c7e-1bff-08d598ec06db
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Apr 2018 22:49:43.6582
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0751
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w32MnxEu025240
 
-This is useful for drivers (which will probably be all of them soon)
-which need to track state that is exclusive to the topology, and not a
-specific connector on said topology. This includes things such as the
-link rate and lane count that are shared by all of the connectors on the
-topology.
+On Mon, 2018-04-02 at 15:16 -0700, tj@kernel.org wrote:
+> AFAIK,
+> there's one non-critical race condition which has always been there.
+> We have a larger race window for that case but don't yet know whether
+> that's problematic or not.  If that actually is problematic, we can
+> figure out a way to solve that but such effort / added complexity
+> doesn't seem justified yet.  No?
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 14 +++-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 35 +++++++-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.h    |  4 +-
- drivers/gpu/drm/drm_dp_mst_topology.c              | 94 +++++++++++++++++-----
- drivers/gpu/drm/i915/intel_dp_mst.c                | 13 ++-
- drivers/gpu/drm/nouveau/nv50_display.c             | 15 +++-
- drivers/gpu/drm/radeon/radeon_dp_mst.c             | 13 ++-
- include/drm/drm_dp_mst_helper.h                    |  8 ++
- 8 files changed, 165 insertions(+), 31 deletions(-)
+Hello Tejun,
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index e42a28e3adc5..2c3660c36732 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -3626,9 +3626,17 @@ static int amdgpu_dm_connector_init(struct amdgpu_display_manager *dm,
- 
- 	drm_connector_register(&aconnector->base);
- 
--	if (connector_type == DRM_MODE_CONNECTOR_DisplayPort
--		|| connector_type == DRM_MODE_CONNECTOR_eDP)
--		amdgpu_dm_initialize_dp_connector(dm, aconnector);
-+	if (connector_type == DRM_MODE_CONNECTOR_DisplayPort ||
-+	    connector_type == DRM_MODE_CONNECTOR_eDP) {
-+		res = amdgpu_dm_initialize_dp_connector(dm, aconnector);
-+		if (res) {
-+			drm_connector_unregister(&aconnector->base);
-+			drm_connector_cleanup(&aconnector->base);
-+			aconnector->connector_id = -1;
-+
-+			goto out_free;
-+		}
-+	}
- 
- #if defined(CONFIG_BACKLIGHT_CLASS_DEVICE) ||\
- 	defined(CONFIG_BACKLIGHT_CLASS_DEVICE_MODULE)
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 8291d74f26bc..a3a43b1b30df 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -475,22 +475,49 @@ static const struct drm_dp_mst_topology_cbs dm_mst_cbs = {
- 	.register_connector = dm_dp_mst_register_connector
- };
- 
--void amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
--				       struct amdgpu_dm_connector *aconnector)
-+static const struct drm_private_state_funcs dm_mst_state_funcs = {
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+};
-+
-+int amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
-+				      struct amdgpu_dm_connector *aconnector)
- {
-+	struct drm_dp_mst_topology_state *state =
-+		kzalloc(sizeof(*state), GFP_KERNEL);
-+	int ret = 0;
-+
-+	if (!state)
-+		return -ENOMEM;
-+
- 	aconnector->dm_dp_aux.aux.name = "dmdc";
- 	aconnector->dm_dp_aux.aux.dev = dm->adev->dev;
- 	aconnector->dm_dp_aux.aux.transfer = dm_dp_aux_transfer;
- 	aconnector->dm_dp_aux.ddc_service = aconnector->dc_link->ddc;
- 
--	drm_dp_aux_register(&aconnector->dm_dp_aux.aux);
-+	ret = drm_dp_aux_register(&aconnector->dm_dp_aux.aux);
-+	if (ret)
-+		goto err_aux;
-+
- 	aconnector->mst_mgr.cbs = &dm_mst_cbs;
--	drm_dp_mst_topology_mgr_init(
-+	aconnector->mst_mgr.funcs = &dm_mst_state_funcs;
-+	ret = drm_dp_mst_topology_mgr_init(
- 		&aconnector->mst_mgr,
-+		state,
- 		dm->adev->ddev,
- 		&aconnector->dm_dp_aux.aux,
- 		16,
- 		4,
- 		aconnector->connector_id);
-+	if (ret)
-+		goto err_mst;
-+
-+	return 0;
-+
-+err_mst:
-+	drm_dp_aux_unregister(&aconnector->dm_dp_aux.aux);
-+err_aux:
-+	kfree(state);
-+	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h
-index 8cf51da26657..d28fb456d2d5 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h
-@@ -29,8 +29,8 @@
- struct amdgpu_display_manager;
- struct amdgpu_dm_connector;
- 
--void amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
--				       struct amdgpu_dm_connector *aconnector);
-+int amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
-+				      struct amdgpu_dm_connector *aconnector);
- void dm_dp_mst_dc_sink_create(struct drm_connector *connector);
- 
- #endif
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index ba67f1782a04..8a72eed0ae05 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -3100,33 +3100,89 @@ static void drm_dp_destroy_connector_work(struct work_struct *work)
- 		(*mgr->cbs->hotplug)(mgr);
- }
- 
--static struct drm_private_state *
--drm_dp_mst_duplicate_state(struct drm_private_obj *obj)
-+/**
-+ * drm_atomic_dp_mst_duplicate_topology_state - default
-+ * drm_dp_mst_topology_state duplicate handler
-+ *
-+ * For drivers which don't yet subclass drm_dp_mst_topology_state
-+ *
-+ * RETURNS: the duplicated state on success, or an error code embedded into a
-+ * pointer value otherwise.
-+ */
-+struct drm_private_state *
-+drm_atomic_dp_mst_duplicate_topology_state(struct drm_private_obj *obj)
- {
-+	struct drm_dp_mst_topology_mgr *mgr = to_dp_mst_topology_mgr(obj);
- 	struct drm_dp_mst_topology_state *state;
-+	int ret;
- 
- 	state = kmemdup(obj->state, sizeof(*state), GFP_KERNEL);
- 	if (!state)
- 		return NULL;
- 
--	__drm_atomic_helper_private_obj_duplicate_state(obj, &state->base);
-+	ret = __drm_atomic_dp_mst_duplicate_topology_state(mgr, state);
-+	if (ret) {
-+		kfree(state);
-+		return NULL;
-+	}
- 
- 	return &state->base;
- }
-+EXPORT_SYMBOL(drm_atomic_dp_mst_duplicate_topology_state);
- 
--static void drm_dp_mst_destroy_state(struct drm_private_obj *obj,
--				     struct drm_private_state *state)
-+/**
-+ * __drm_atomic_dp_mst_duplicate_topology_state - default
-+ * drm_dp_mst_topology_state duplicate hook
-+ *
-+ * Copies atomic state from an MST topology's current state. This is useful
-+ * for drivers that subclass the MST topology state.
-+ *
-+ * RETURNS: 0 on success, negative error code on failure.
-+ */
-+int
-+__drm_atomic_dp_mst_duplicate_topology_state(struct drm_dp_mst_topology_mgr *mgr,
-+					     struct drm_dp_mst_topology_state *state)
-+{
-+	struct drm_private_obj *obj = &mgr->base;
-+
-+	memcpy(state, obj->state, sizeof(*state));
-+
-+	__drm_atomic_helper_private_obj_duplicate_state(&mgr->base,
-+							&state->base);
-+	return 0;
-+}
-+EXPORT_SYMBOL(__drm_atomic_dp_mst_duplicate_topology_state);
-+
-+/**
-+ * drm_atomic_dp_mst_destroy_topology_state - default
-+ * drm_dp_mst_topology_state destroy handler
-+ *
-+ * For drivers which don't yet subclass drm_dp_mst_topology_state.
-+ */
-+void
-+drm_atomic_dp_mst_destroy_topology_state(struct drm_private_obj *obj,
-+					 struct drm_private_state *state)
- {
- 	struct drm_dp_mst_topology_state *mst_state =
- 		to_dp_mst_topology_state(state);
- 
-+	__drm_atomic_dp_mst_destroy_topology_state(mst_state);
-+
- 	kfree(mst_state);
- }
-+EXPORT_SYMBOL(drm_atomic_dp_mst_destroy_topology_state);
- 
--static const struct drm_private_state_funcs mst_state_funcs = {
--	.atomic_duplicate_state = drm_dp_mst_duplicate_state,
--	.atomic_destroy_state = drm_dp_mst_destroy_state,
--};
-+/**
-+ * __drm_atomic_dp_mst_destroy_topology_state - default
-+ * drm_dp_mst_topology_state destroy hook
-+ *
-+ * Frees the resources associated with the given drm_dp_mst_topology_state.
-+ * This is useful for drivers that subclass the MST topology state.
-+ */
-+void
-+__drm_atomic_dp_mst_destroy_topology_state(struct drm_dp_mst_topology_state *state) {
-+}
-+EXPORT_SYMBOL(__drm_atomic_dp_mst_destroy_topology_state);
- 
- /**
-  * drm_atomic_dp_mst_get_topology_state: get MST topology state
-@@ -3157,21 +3213,25 @@ EXPORT_SYMBOL(drm_atomic_dp_mst_get_topology_state);
- /**
-  * drm_dp_mst_topology_mgr_init - initialise a topology manager
-  * @mgr: manager struct to initialise
-+ * @state: atomic topology state to init, allocated by the driver
-  * @dev: device providing this structure - for i2c addition.
-  * @aux: DP helper aux channel to talk to this device
-  * @max_dpcd_transaction_bytes: hw specific DPCD transaction limit
-  * @max_payloads: maximum number of payloads this GPU can source
-  * @conn_base_id: the connector object ID the MST device is connected to.
-  *
-+ * Note that this function doesn't take care of allocating the atomic MST
-+ * state, this must be handled by the caller before calling
-+ * drm_dp_mst_topology_mgr_init().
-+ *
-  * Return 0 for success, or negative error code on failure
-  */
- int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
-+				 struct drm_dp_mst_topology_state *state,
- 				 struct drm_device *dev, struct drm_dp_aux *aux,
- 				 int max_dpcd_transaction_bytes,
- 				 int max_payloads, int conn_base_id)
- {
--	struct drm_dp_mst_topology_state *mst_state;
--
- 	mutex_init(&mgr->lock);
- 	mutex_init(&mgr->qlock);
- 	mutex_init(&mgr->payload_lock);
-@@ -3200,18 +3260,14 @@ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
- 	if (test_calc_pbn_mode() < 0)
- 		DRM_ERROR("MST PBN self-test failed\n");
- 
--	mst_state = kzalloc(sizeof(*mst_state), GFP_KERNEL);
--	if (mst_state == NULL)
--		return -ENOMEM;
--
--	mst_state->mgr = mgr;
-+	state->mgr = mgr;
- 
- 	/* max. time slots - one slot for MTP header */
--	mst_state->avail_slots = 63;
-+	state->avail_slots = 63;
- 
- 	drm_atomic_private_obj_init(&mgr->base,
--				    &mst_state->base,
--				    &mst_state_funcs);
-+				    &state->base,
-+				    mgr->funcs);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index c3de0918ee13..e308962cde05 100644
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -581,19 +581,30 @@ intel_dp_create_fake_mst_encoders(struct intel_digital_port *intel_dig_port)
- 	return true;
- }
- 
-+static const struct drm_private_state_funcs mst_state_funcs = {
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+};
-+
- int
- intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_base_id)
- {
- 	struct intel_dp *intel_dp = &intel_dig_port->dp;
-+	struct drm_dp_mst_topology_state *mst_state;
- 	struct drm_device *dev = intel_dig_port->base.base.dev;
- 	int ret;
- 
-+	mst_state = kzalloc(sizeof(*mst_state), GFP_KERNEL);
-+	if (!mst_state)
-+		return -ENOMEM;
-+
- 	intel_dp->can_mst = true;
- 	intel_dp->mst_mgr.cbs = &mst_cbs;
-+	intel_dp->mst_mgr.funcs = &mst_state_funcs;
- 
- 	/* create encoders */
- 	intel_dp_create_fake_mst_encoders(intel_dig_port);
--	ret = drm_dp_mst_topology_mgr_init(&intel_dp->mst_mgr, dev,
-+	ret = drm_dp_mst_topology_mgr_init(&intel_dp->mst_mgr, mst_state, dev,
- 					   &intel_dp->aux, 16, 3, conn_base_id);
- 	if (ret) {
- 		intel_dp->can_mst = false;
-diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
-index 8bd739cfd00d..1cacd806eb8d 100644
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -3310,6 +3310,12 @@ nv50_mstm = {
- 	.hotplug = nv50_mstm_hotplug,
- };
- 
-+static const struct drm_private_state_funcs
-+nv50_mst_state_funcs = {
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+};
-+
- void
- nv50_mstm_service(struct nv50_mstm *mstm)
- {
-@@ -3438,6 +3444,7 @@ nv50_mstm_new(struct nouveau_encoder *outp, struct drm_dp_aux *aux, int aux_max,
- {
- 	const int max_payloads = hweight8(outp->dcb->heads);
- 	struct drm_device *dev = outp->base.base.dev;
-+	struct drm_dp_mst_topology_state *state;
- 	struct nv50_mstm *mstm;
- 	int ret, i;
- 	u8 dpcd;
-@@ -3454,10 +3461,16 @@ nv50_mstm_new(struct nouveau_encoder *outp, struct drm_dp_aux *aux, int aux_max,
- 
- 	if (!(mstm = *pmstm = kzalloc(sizeof(*mstm), GFP_KERNEL)))
- 		return -ENOMEM;
-+	if (!(state = kzalloc(sizeof(*state), GFP_KERNEL))) {
-+		kfree(mstm);
-+		return -ENOMEM;
-+	}
- 	mstm->outp = outp;
- 	mstm->mgr.cbs = &nv50_mstm;
-+	mstm->mgr.funcs = &nv50_mst_state_funcs;
- 
--	ret = drm_dp_mst_topology_mgr_init(&mstm->mgr, dev, aux, aux_max,
-+	ret = drm_dp_mst_topology_mgr_init(&mstm->mgr, state, dev,
-+					   aux, aux_max,
- 					   max_payloads, conn_base_id);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/gpu/drm/radeon/radeon_dp_mst.c b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-index cd8a3ee16649..6edf52404256 100644
---- a/drivers/gpu/drm/radeon/radeon_dp_mst.c
-+++ b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-@@ -335,6 +335,11 @@ static const struct drm_dp_mst_topology_cbs mst_cbs = {
- 	.hotplug = radeon_dp_mst_hotplug,
- };
- 
-+static const struct drm_private_state_funcs mst_state_funcs = {
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+};
-+
- static struct
- radeon_connector *radeon_mst_find_connector(struct drm_encoder *encoder)
- {
-@@ -657,12 +662,18 @@ int
- radeon_dp_mst_init(struct radeon_connector *radeon_connector)
- {
- 	struct drm_device *dev = radeon_connector->base.dev;
-+	struct drm_dp_mst_topology_state *state =
-+		kzalloc(sizeof(*state), GFP_KERNEL);
- 
-+	if (!state)
-+		return -ENOMEM;
- 	if (!radeon_connector->ddc_bus->has_aux)
- 		return 0;
- 
- 	radeon_connector->mst_mgr.cbs = &mst_cbs;
--	return drm_dp_mst_topology_mgr_init(&radeon_connector->mst_mgr, dev,
-+	radeon_connector->mst_mgr.funcs = &mst_state_funcs;
-+	return drm_dp_mst_topology_mgr_init(&radeon_connector->mst_mgr,
-+					    state, dev,
- 					    &radeon_connector->ddc_bus->aux, 16, 6,
- 					    radeon_connector->base.base.id);
- }
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 035963fbcd9d..b42922987470 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -565,6 +565,7 @@ struct drm_dp_mst_topology_mgr {
- };
- 
- int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
-+				 struct drm_dp_mst_topology_state *state,
- 				 struct drm_device *dev, struct drm_dp_aux *aux,
- 				 int max_dpcd_transaction_bytes,
- 				 int max_payloads, int conn_base_id);
-@@ -620,6 +621,13 @@ int drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr);
- 
- struct drm_dp_mst_topology_state *drm_atomic_dp_mst_get_topology_state(struct drm_atomic_state *state,
- 								       struct drm_dp_mst_topology_mgr *mgr);
-+struct drm_private_state *drm_atomic_dp_mst_duplicate_topology_state(struct drm_private_obj *obj);
-+int __drm_atomic_dp_mst_duplicate_topology_state(struct drm_dp_mst_topology_mgr *mgr,
-+						 struct drm_dp_mst_topology_state *state);
-+void drm_atomic_dp_mst_destroy_topology_state(struct drm_private_obj *obj,
-+					      struct drm_private_state *state);
-+void __drm_atomic_dp_mst_destroy_topology_state(struct drm_dp_mst_topology_state *state);
-+
- int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
- 				  struct drm_dp_mst_topology_mgr *mgr,
- 				  struct drm_dp_mst_port *port, int pbn);
--- 
-2.14.3
+Some important block drivers systematically return BLK_EH_RESET_TIMER
+from their timeout handler, e.g. the virtio-scsi initiator driver. What
+will the consequence be for these drivers if a blk_mq_complete_request()
+call is ignored? Will the request for which the completion was ignored
+get stuck?
+
+Thanks,
+
+Bart.
