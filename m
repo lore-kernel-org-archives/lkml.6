@@ -1,31 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754605AbeDBW1R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:27:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54720 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754492AbeDBW1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:27:16 -0400
-Subject: Re: [PATCH] sched: support dynamiQ cluster
-To: Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>
-References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
- <20180329125324.GR4589@e105550-lin.cambridge.arm.com>
- <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
-From: Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com>
-Date: Mon, 2 Apr 2018 23:27:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1754589AbeDBWgE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:36:04 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44541 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754526AbeDBWgC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 18:36:02 -0400
+X-Google-Smtp-Source: AIpwx49g8o3rqmik5BLmw6C8aC/J/BdhgE0pYt6RiMzROMiPY8rNSUMLoIh62D6ZSAk8vUi6Cyoz8A==
+Subject: Re: [PATCH] blk-mq: Directly schedule q->timeout_work when aborting a
+ request
+To: Tejun Heo <tj@kernel.org>, Sitsofe Wheeler <sitsofe@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Stefan Haberland <sth@linux.vnet.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>
+References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com>
+ <de102067-b589-af05-ae71-496e948000f0@kernel.dk>
+ <CALjAwxgtuEv=d1TfvH3EdXqZs=_6F7TinyVhbPdUmTsdK_5ghw@mail.gmail.com>
+ <20180402202951.GE388343@devbig577.frc2.facebook.com>
+ <CALjAwxj1urPPNadmkmhLngHvYcfhh8d+_vPstPDQHXLiGL0oTw@mail.gmail.com>
+ <20180402220458.GJ388343@devbig577.frc2.facebook.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <47e8098e-478e-542c-d447-8b8d03bda562@kernel.dk>
+Date: Mon, 2 Apr 2018 16:35:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
+In-Reply-To: <20180402220458.GJ388343@devbig577.frc2.facebook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -33,70 +35,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 30/03/18 13:34, Vincent Guittot wrote:
-> Hi Morten,
+On 4/2/18 4:04 PM, Tejun Heo wrote:
+> Request abortion is performed by overriding deadline to now and
+> scheduling timeout handling immediately.  For the latter part, the
+> code was using mod_timer(timeout, 0) which can't guarantee that the
+> timer runs afterwards.  Let's schedule the underlying work item
+> directly instead.
 > 
-[..]
->>
->> As I see it, the main differences is that ASYM_PACKING attempts to pack
->> all tasks regardless of task utilization on the higher capacity cpus
->> whereas the "misfit task" series carefully picks cpus with tasks they
->> can't handle so we don't risk migrating tasks which are perfectly
+> This fixes the hangs during probing reported by Sitsofe but it isn't
+> yet clear to me how the failure can happen reliably if it's just the
+> above described race condition.
 > 
-> That's one main difference because misfit task will let middle range
-> load task on little CPUs which will not provide maximum performance.
-> I have put an example below
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Sitsofe Wheeler <sitsofe@gmail.com>
+> Reported-by: Meelis Roos <mroos@linux.ee>
+> Fixes: 358f70da49d7 ("blk-mq: make blk_abort_request() trigger timeout path")
+> Cc: stable@vger.kernel.org # v4.16
+> Link: http://lkml.kernel.org/r/CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com
+> Link: http://lkml.kernel.org/r/alpine.LRH.2.21.1802261049140.4893@math.ut.ee
+> ---
+> Hello,
 > 
->> suitable to for a little cpu to a big cpu unnecessarily. Also it is
->> based directly on utilization and cpu capacity like the capacity
->> awareness we already have to deal with big.LITTLE in the wake-up path.
-
-I think that bit is quite important. AFAICT, ASYM_PACKING disregards
-task utilization, it only makes sure that (with your patch) tasks will be
-migrated to big CPUS if those ever go idle (pulls at NEWLY_IDLE balance or
-later on during nohz balance). I didn't see anything related to ASYM_PACKING
-in the wake path.
-
->> Have to tried taking the misfit patches for a spin on your setup? I
->> expect them give you the same behaviour as you report above.
+> I don't have the full explanation yet but here's a preliminary patch.
 > 
-> So I have tried both your tests and mine on both patchset and they
-> provide same results which is somewhat expected as the benches are run
-> for several seconds.
-> In other to highlight the main difference between misfit task and
-> ASYM_PACKING, I have reused your test and reduced the number of
-> max-request for sysbench so that the test duration was in the range of
-> hundreds ms.
+> Thanks.
 > 
-> Hikey960 (emulate dynamiq topology)
->        min         avg(stdev)          max
-> misfit 0.097500    0.114911(+- 10%)    0.138500
-> asym   0.092500    0.106072(+-  6%)    0.122900
+>  block/blk-timeout.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> In this case, we can see that ASYM_PACKING is doing better( 8%)
-> because it migrates sysbench threads on big core as soon as they are
-> available whereas misfit task has to wait for the utilization to
-> increase above the 80% which takes around 70ms when starting with an
-> utilization that is null
-> 
+> diff --git a/block/blk-timeout.c b/block/blk-timeout.c
+> index a05e367..f0e6e41 100644
+> --- a/block/blk-timeout.c
+> +++ b/block/blk-timeout.c
+> @@ -165,7 +165,7 @@ void blk_abort_request(struct request *req)
+>  		 * No need for fancy synchronizations.
+>  		 */
+>  		blk_rq_set_deadline(req, jiffies);
+> -		mod_timer(&req->q->timeout, 0);
+> +		kblockd_schedule_work(&req->q->timeout_work);
+>  	} else {
+>  		if (blk_mark_rq_complete(req))
+>  			return;
 
-I believe ASYM_PACKING behaves better here because the workload is only
-sysbench threads. As stated above, since task utilization is disregarded, I
-think we could have a scenario where the big CPUs are filled with "small"
-tasks and the LITTLE CPUs hold a few "big" tasks - because what mostly
-matters here is the order in which the tasks spawn, not their utilization -
-which is potentially broken.
+In any case, it's cleaner than relying on mod_timer(.., 0). If that
+doesn't guarantee that the timer runs again, I can see how a race
+with the running timer could prevent us from seeing the timeout
+after an abort.
 
-There's that bit in *update_sd_pick_busiest()*:
+I'll apply this, thanks.
 
-/* No ASYM_PACKING if target CPU is already busy */                                     
-if (env->idle == CPU_NOT_IDLE)                                                          
-	return true;
-
-So I'm not entirely sure how realistic that scenario is, but I suppose it
-could still happen. Food for thought in any case.
-
-Regards,
-Valentin
+-- 
+Jens Axboe
