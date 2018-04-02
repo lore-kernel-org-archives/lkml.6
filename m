@@ -1,151 +1,146 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3270552-1522946596-2-3321362799647493200
+X-Cyrus-Session-Id: sloti22d1t05-3868303-1522704131-2-3666061254993534353
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522946596; b=cIlZVQ/xc6gh2vUqEsud/qGnwKD1Q8+rG6kBQyDAgHTQnITNGK
-    jtGmbRvb92VFPnkfXx5SxALmZ5KmGcPCDy2gGMuJ5vA/6orhk4WJUtVjFKrBtq6B
-    35t/weZDAhs4kvrhoWdHHmmD9bc1V8yi+3FDRefQBJ8E8wi8uuUiJvnIUTcurcGf
-    AdAexmjpZ78KStPE400mWKUsOwhA2hQ7QlgXaEdqjbHiCUXYx9B4zJ+Ve4BlIK7y
-    6sJbWg5Di+DUTL8Ji/PPZHB8mE4JK189dwt23T3E+tcWb9ht47pyPl+HNNbZuqD+
-    IeBxyHs5RNJk4x4eXA1sgnKJA/OIAc3KyJFw==
+    1522704130; b=PZLrYVZkwIjnTAY5dUCf2I3KG6BsuMbjyG4Bd37bg/6sp2bzXS
+    EsdPlXArmT6q57dTajJU4vZG+wyrwgtibyqPsPLnV3RIvO3IxtAOLRyV4FrTwWz0
+    E2/0b3F7/Wld/myX1NNEbJH70WXrCpFORduTbp9K2+e9kA+oy8S6jLkzdKooDn0w
+    3/a2UWABsDBoFYxxrG7fdjVgTSz3/e2ejd02NJ5cJ2d7R5KCDdAJJhy2e/6bwbjI
+    VPpsXiBTI1VG/4EFDZaPZvMkYDTcxraCm91EYHmrRsXLxlq1GupqbRuidwRzlmsU
+    DqG77uu/fGh0N60QU9/ypPMcRLYpcGPexBXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1522946596; bh=qhJ/ww7dN3
-    XqkfPpp+7SGZ2CVKzufAWHnVw++rR3yCU=; b=n+pibWGoU3S4A515mzNW0ZNuf2
-    gGOH544Jk5SARN2RESqMOU1iyD69p3o/KxbF9YuSrXRgKYybPhnQKZlK6A5u0h2x
-    1mOCiGn4DIEmt97Hp38+JPQQ6feSh9SDD81HTy1VNMvtlHpdhHJ0SOALTaOXa+Yk
-    hJixlsVqxrxQJC889yHwSqMDc62c2yDzrXRowyTc47fEON6Ppf2oj4jos9mPfsAm
-    RyLhRo26YfLOGe2joYIyxNZUTRardtAkbTMIGjdJxkOhSE9bKqzo+qi7ONwFZPU+
-    FvMTJx/jd1A7SqXb0NNWUO9S5YYRl7QRKUtauXtkIfUawOBdrlUvPjqaxYSA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Le3crI6y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1522704130; bh=an6XexS36+dViML+r/QtluAyC9cRG3
+    RAO+9zwBwV+bA=; b=YiT5IZ6CRdfTULnHuiRZvag70mEz8T3h7v/DXZVIltsOyP
+    vqygxLb/4WMhDyZxKsCAeXGmuJhjIP5ONdXgnUjf3ZVMaP6B2r3Pb3hJE3UlnbnQ
+    rKmVgT4hViyHuzHqpvrDs2TRjA+7tazDh7pONqJlIEtknY581RvDd0Z2uVJiENLn
+    OykiCdyhHotZr2Adt/Pzhbhjt9nZaOYiRgVRtda+QJWBDiw0ROhUpg/H9pci5Sl2
+    0+dRedZtPX9L94Q0qSZ40NEgAJbN3UNtV5GWFayhnnwPje9+PQEr910eQPIERN3H
+    5Y4uFaMm3e5hPg01Ll4+cF4WrX+2qdTr8y7ckUQA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Le3crI6y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB8/HNCGu3BOZ+tt8bpsX4wAOT63Yxa2RaXq6XNVRPbdLZg6e/30U1+HYcimiK1rMQTDZ/gV/pIhoLGD4pjgpk+HxOtkvd+SNvnHr8+llFFkTwIZuSId
-    gZxrRY5BuohVfdB968jYH6yNn0wOLyuNMi4/3I2Y3a2RSIM43AmYYrtx8BliFPP86LVi3yq/INVQqvTICRL2+/XHop0sm2/n9k2hTCMyVLBuD7P2YgZs+Lhb
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=WCLRXoBrZ2UA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=hEBxi9MLR1DCsw2oq4cA:9 a=wPNLvfGTeEIA:10
+X-CM-Envelope: MS4wfHxQbWOHUreq5aOMqitGnqN21bP/G7L6bWIVvfFAb/F+rvzZtU2k2QlSz3NjI1e6hQyGTAyWt3eSXHOq2bVuSE+HrCzwCs+XIe6c9NWil4DNizvFmvAt
+    3wOtddMbc0m9E6441fQC+XSpoGIetfN0/YdccehrY4Q8+hsCxvz1O5EDpQcRGK3A/onZZvBcbX2S76ebHJG02mbfK0tSykb32JBXpkmpc+rlLnCXjazo+lI4
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=fgeN0leQug2GkSvOKpYA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750726AbeDEQnP (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 12:43:15 -0400
-Received: from mail-sn1nam01on0132.outbound.protection.outlook.com ([104.47.32.132]:10022
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S1753322AbeDBVWH (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 2 Apr 2018 17:22:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57090 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750736AbeDEQnO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 5 Apr 2018 12:43:14 -0400
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: Sasha Levin <Alexander.Levin@microsoft.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 5/6] clocksource/drivers/imx-tpm: Correct some registers
- operation flow
-Thread-Topic: [PATCH 5/6] clocksource/drivers/imx-tpm: Correct some registers
- operation flow
-Thread-Index: AQHTzP0vec7ZJo0PukKG8/jdhV6zZw==
-Date: Thu, 5 Apr 2018 16:43:12 +0000
-Message-ID: <DM5PR2101MB103225190F1A58D268C1F007FBBB0@DM5PR2101MB1032.namprd21.prod.outlook.com>
-References: <1522760432-32048-5-git-send-email-daniel.lezcano@linaro.org>
-In-Reply-To: <1522760432-32048-5-git-send-email-daniel.lezcano@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0999;7:hNyuJHza3K3NKCAjevg8VWLjlno61+vou0hNjRAqR+thPYWFzQJ2FNuX5+A2CJe+mhghbw6fspvSftzYq6QjkU2oWTN2h78bDZx7US9nt8ngwhdmZGXmXGpJCZ0GKAONO1roeWpkuFcmLBMUbgY8HbNMtp/s6ZvlnZfCYNgokRdk27V9w1OZ4YipzYfyuq4yLDiBYtG7sd82BR8aKqYLgb7w7BIJTE5D0xz0SZbUxrMHJqxK2kOH5BKz7fyEyaZf;20:6vM4td8wCJ4b7MTQPxjQ/9toxiyiUSdwPHRioDskPDP8i5NYcF6VUiVQUXlhuY68rKByTxQ9MHNkTDaH72MT+4gBPp4zMC6nBIefzuT/C3SN1xXEov3bW0XoL+eAU9Si1B7S88Z2rTIeMsZqbXykD+trguWFcJTzwRbu2Y1peNs=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 44abe358-72ca-488a-ffb8-08d59b14523c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB0999;
-x-ms-traffictypediagnostic: DM5PR2101MB0999:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0999984E740931C0A04852EBFBBB0@DM5PR2101MB0999.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0999;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0999;
-x-forefront-prvs: 06339BAE63
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(39380400002)(346002)(376002)(199004)(189003)(9686003)(8990500004)(54906003)(10090500001)(6436002)(476003)(110136005)(86362001)(105586002)(74316002)(81166006)(1511001)(2501003)(11346002)(99286004)(72206003)(478600001)(25786009)(486006)(5660300001)(6116002)(4326008)(446003)(7736002)(316002)(8936002)(2900100001)(86612001)(97736004)(22452003)(66066001)(3846002)(305945005)(10290500003)(14454004)(8676002)(3280700002)(81156014)(33656002)(3660700001)(7696005)(8656006)(106356001)(26005)(229853002)(55016002)(6506007)(76176011)(6246003)(53936002)(68736007)(2906002)(5250100002)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0999;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: bEwO7EQAS7AkJ1HuFEXUZUTXIb6jcE1v7ndQE+3mLyijKtoJi04KiCE0rPG6HipdufFqHkK6v7RYeTMkcKkoeylygYG6E30cJxLlFcfMpT6YcwLi6UbGxcHxKuJPrd5VV4fVYVi8rbud60QcMcpmY+Kg7pXxh0EZDL3gxDtNAeUFXI/ankMKxXUqQwMuEO3RgxqHVxFCU2pT8YDsk61iQ6NgH1Z5NK5GvDWCy9rbBHgngAxZcCwz7uw7NWnOIRqB93AVcuUTxSdTnk7qqsiqLTVwpP6NrfEuhY/DAIxOQ/mQhRTXiz7amgfK/I7lvdnPOgQT4RfZSPkFV0ozJiIdhAxoN5LdKEU+99ucRKClxcRinsCissoJQM5Gpw9cTJ5vjU11dzBla3HYWqyFeK+9hhPhF8NW7xbpNkckGY4QS1w=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1752311AbeDBVWH (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 2 Apr 2018 17:22:07 -0400
+From: Lyude Paul <lyude@redhat.com>
+To: intel-gfx@lists.freedesktop.org
+Cc: Laura Abbott <labbott@redhat.com>,
+        Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>, stable@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i915/dp_mst: Keep AUX block running when disabling DPMS
+Date: Mon,  2 Apr 2018 17:21:41 -0400
+Message-Id: <20180402212142.19841-1-lyude@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44abe358-72ca-488a-ffb8-08d59b14523c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Apr 2018 16:43:12.2612
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0999
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi.
+While enabling/disabling DPMS before link training with MST hubs is
+perfectly valid; unfortunately disabling DPMS results in some devices
+disabling their AUX CH block as well. For SST this isn't as much of a
+problem, but for MST we need to be able to continue handling aux
+transactions even when none of the sinks are turned on since it's
+possible for us to have a single atomic commit which results in
+disabling each downstream sink, followed by subsequently re-enabling
+each sink.
 
-[This is an automated email]
+If we don't do this, we'll end up stalling any pending ESI interrupts
+from the sink for up to 1ms. Unfortunately, dropping ESIs during this
+timespan makes it so that link fallback retraining for MST (which I will
+be submitting to the ML shortly) fails due to the channel EQ failure
+interrupts potentially getting dropped. Additionally, when performing a
+modeset that brings the hub status's link status from bad -> good having
+ESIs disabled for that long causes us to miss the hub's response to us
+trying to start link training as well.
 
-This commit has been processed by the -stable helper bot and determined
-to be a high probability candidate for -stable trees. (score: 11.8806)
+Since any sink with MST is going to support DisplayPort 1.2 anyway, save
+us the hassle of trying to wait until the sink comes back up and just
+never shut the aux block down.
 
-The bot has tested the following trees: v4.15.15, v4.14.32, v4.9.92, v4.4.1=
-26,=20
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: stable@vger.kernel.org
+Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
+---
+ drivers/gpu/drm/i915/intel_dp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-v4.15.15: Build OK!
-v4.14.32: Build OK!
-v4.9.92: Failed to apply! Possible dependencies:
-    506a7be93ff7 ("clocksource/drivers/imx-tpm: Correct some registers oper=
-ation flow")
-
-v4.4.126: Failed to apply! Possible dependencies:
-    506a7be93ff7 ("clocksource/drivers/imx-tpm: Correct some registers oper=
-ation flow")
-
-
-Please let us know if you'd like to have this patch included in a stable tr=
-ee.
-
---
-Thanks.
-Sasha=
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index 62f82c4298ac..0479c377981b 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -2589,11 +2589,13 @@ void intel_dp_sink_dpms(struct intel_dp *intel_dp, int mode)
+ 		return;
+ 
+ 	if (mode != DRM_MODE_DPMS_ON) {
++		unsigned char data = intel_dp->is_mst ?
++			DP_SET_POWER_D3_AUX_ON : DP_SET_POWER_D3;
++
+ 		if (downstream_hpd_needs_d0(intel_dp))
+ 			return;
+ 
+-		ret = drm_dp_dpcd_writeb(&intel_dp->aux, DP_SET_POWER,
+-					 DP_SET_POWER_D3);
++		ret = drm_dp_dpcd_writeb(&intel_dp->aux, DP_SET_POWER, data);
+ 	} else {
+ 		struct intel_lspcon *lspcon = dp_to_lspcon(intel_dp);
+ 
+-- 
+2.14.3
