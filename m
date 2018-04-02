@@ -1,29 +1,29 @@
 Return-Path: <martink@posteo.de>
-X-Google-Smtp-Source: AIpwx4+2C2Wd472+q4jKuVFOJwjjZFEspI9p8LDfI96q36gGsY9Goa05q0Wh5T/Y/850x3ZVFGyh
+X-Google-Smtp-Source: AIpwx48CTHHaSUE9yH34vI8YzE38etvDPNJxQ3Wow7u9FRA5+Ij30iJF8UlL2AZHG/ZjbK9ATz7g
 ARC-Seal: i=1; a=rsa-sha256; t=1522673787; cv=none;
         d=google.com; s=arc-20160816;
-        b=rUK3L+c+INP5ekrxt0XSP5evskHfyBcWIgKOC0D4QrIYhuiQRP/DXM1oglBCEdrIOA
-         tjQVuqDsj8R3ueaYCDobH9o8eGyZfOa4ByvuyHDVR952tSIFHDg6Y9FKohIJsl2+H8Xx
-         aNRXgebjaIwf/tM4l/7Pdy0WLIJZymk34gO+GqB9rypqxrBRVK5k+/Z9+G4rb8UlaU7b
-         lwwBZZ2rj6e/jbkCPmL+I4hL7t0+GSTI4ZALhrhhB+RClxjk1jYyzcIQ5KNK5+5DpKNE
-         trVgqeyezHkMyw11yLQXt28V62V7K6d/k8yLhYm4dYDRM2pJrn373tNLYOMvv/6pOzyj
-         Ln3w==
+        b=Dq3+YuZkjDPXp8s3VMOOAXjTKNoinFUa8IxzoDslnm6K5qIjJCtzLzEuGOrcZ2iYiV
+         o7EpBizeGxJ8NNK1Cwn0QKhn5Nw6gyqzb64qyOnXfRJi7ux3ahuXZ1fRiUU2t4n5vLbv
+         g7Jeu4RgwmCiA8zTliBVjffgWBWrgJRneq9Bhqfm+6ANRdLVLvkPg+8uq6Ag7FQkqLCw
+         z//EyG8Ur1F16bXL7hCVcv3MwR3tT5p2vqfJp+i35K1w6xgFTYHpgg0K9d2S1ljJxIxV
+         s2Gijy5cUzPlAi/bI/HWnrp0fLvDq1HZ2WvK0Ms197FbYwEAZ70TfFIMPlLivYzDM/d0
+         Y3DA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=8PGO6llNut7Vj9zBBIcDooAcrs2HC+nHeeFLqoSiJ9s=;
-        b=S3So9M9+lCkK4aSBT3471IamFu38BiPniQbbHo2XU28TFnBbMig9Sq9/jywlGiYt45
-         Se+u0B02rjGYNZBytqigLu/AM1DryeA+3/U3SxL2Es+Tk3EEvYn2/wBMh9M2SfCrBdA8
-         gQP84ityZ10GkPS4av41nnD1WQpWY2/cinoouBjHwOxW7ZXk5qyZ2YJGw6UEuoyZUC0w
-         9/JPA1wUt4L7crarRAfGG5ARabFOstPlOTJ0BzzBz8quszxGHXLjodBlPoYzIglOYUcM
-         F6UzV1VAla8F7F+zpZegh1N16X2HaCgjXKpf+j+1ViU0RpVGIAUJhS5EMd3ZGUWPq+oB
-         BELA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=i0/hd/o8HrakCCF45aaAIxIp9LAO1nYUYbo+Ghd/q4M=;
+        b=vK2F7HucH6KnNra/6i3ahKuvlFaZ5PKUQ49a6GeTdkHlGMWC04Pmh/gTFU21Af6P3S
+         lziV0IQ3fuf03wyvJ2oKVlVlDwPfIMrHHDKHjXLkbeXazok1bMJTCAMeQ+B8ufIsUsIA
+         0WqFPGpOBRqmI+3Vce2zXKtawF6Qfzx82n3fqbpe9lyoN3oxQ3UeXSBWllMhoDVfjLyx
+         i7KgkpG9DdnJO0zP13x3TCNcFQJDnQmrIgZ1xPVjj5lA3r3lF3lCCa61gKHbsxVoErQQ
+         3uj52i0WircnFMBGAZ9yz/t6aPTTyRh6veSweYaAdWsLRe+rDLNlrfNDweW9IpHtSSmH
+         iD3w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@posteo.de header.s=2017 header.b=h+BrfPCJ;
+       dkim=pass header.i=@posteo.de header.s=2017 header.b=Vmlj+kHL;
        spf=pass (google.com: domain of martink@posteo.de designates 185.67.36.65 as permitted sender) smtp.mailfrom=martink@posteo.de;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=posteo.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@posteo.de header.s=2017 header.b=h+BrfPCJ;
+       dkim=pass header.i=@posteo.de header.s=2017 header.b=Vmlj+kHL;
        spf=pass (google.com: domain of martink@posteo.de designates 185.67.36.65 as permitted sender) smtp.mailfrom=martink@posteo.de;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=posteo.de
 From: Martin Kepplinger <martink@posteo.de>
@@ -36,37 +36,45 @@ Cc: gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-input@vger.kernel.org,
 	Martin Kepplinger <martink@posteo.de>
-Subject: [PATCH 1/2] Input: mk712: update documentation web link
-Date: Mon,  2 Apr 2018 14:55:50 +0200
-Message-Id: <20180402125551.13641-1-martink@posteo.de>
+Subject: [PATCH 2/2] Documentation: devices.txt: remove the mk712 touchscreen device from the list
+Date: Mon,  2 Apr 2018 14:55:51 +0200
+Message-Id: <20180402125551.13641-2-martink@posteo.de>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180402125551.13641-1-martink@posteo.de>
+References: <20180402125551.13641-1-martink@posteo.de>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596639189437434101?=
-X-GMAIL-MSGID: =?utf-8?q?1596639189437434101?=
+X-GMAIL-THRID: =?utf-8?q?1596639188800698682?=
+X-GMAIL-MSGID: =?utf-8?q?1596639188800698682?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-At the mentioned address there's nothing found. By searching information
-on the controller chip still can be found, so update the link to the
-resulting page.
+The input/touchscreen/mk712.c driver has been rewritten for the common
+input event system. in 2005. There shouldn't a special device node be
+created anymore.
 
 Signed-off-by: Martin Kepplinger <martink@posteo.de>
 ---
- drivers/input/touchscreen/mk712.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/mk712.c b/drivers/input/touchscreen/mk712.c
-index bd5352824f77..c179060525ae 100644
---- a/drivers/input/touchscreen/mk712.c
-+++ b/drivers/input/touchscreen/mk712.c
-@@ -17,7 +17,7 @@
-  * found in Gateway AOL Connected Touchpad computers.
-  *
-  * Documentation for ICS MK712 can be found at:
-- *	http://www.idt.com/products/getDoc.cfm?docID=18713923
-+ *	https://www.idt.com/general-parts/mk712-touch-screen-controller
-  */
- 
- /*
+Please review this by looking at the driver too. Thanks,
+
+                    martin
+
+
+
+ Documentation/admin-guide/devices.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/devices.txt b/Documentation/admin-guide/devices.txt
+index 4ec843123cc3..fb39bbf0789a 100644
+--- a/Documentation/admin-guide/devices.txt
++++ b/Documentation/admin-guide/devices.txt
+@@ -259,7 +259,6 @@
+ 		 11 = /dev/vrtpanel	Vr41xx embedded touch panel
+ 		 13 = /dev/vpcmouse	Connectix Virtual PC Mouse
+ 		 14 = /dev/touchscreen/ucb1x00  UCB 1x00 touchscreen
+-		 15 = /dev/touchscreen/mk712	MK712 touchscreen
+ 		128 = /dev/beep		Fancy beep device
+ 		129 =
+ 		130 = /dev/watchdog	Watchdog timer port
 -- 
 2.16.2
