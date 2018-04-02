@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754120AbeDBIvv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 04:51:51 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52370 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbeDBIvu (ORCPT
+        id S1754130AbeDBJDj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 05:03:39 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38057 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752011AbeDBJDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 04:51:50 -0400
-X-Google-Smtp-Source: AIpwx4+eqIGmKMXAGO3s+n3AcM7Ka3OsQdmWIbbvRMobp2K28i+swhGOt9yAnvrBi0F2stLWJ0x54w==
-Date: Mon, 2 Apr 2018 10:51:46 +0200
+        Mon, 2 Apr 2018 05:03:38 -0400
+X-Google-Smtp-Source: AIpwx4+hQoN16c0VrBXsLkxNHTNtcYOCh1fPvJCwN0j/+la2GCokesYdVDj1PXPmlCwcXdl8LUocyg==
+Date: Mon, 2 Apr 2018 11:03:34 +0200
 From: Ingo Molnar <mingo@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] scheduler changes for v4.17
-Message-ID: <20180402085146.asht73murbfbhycz@gmail.com>
+Subject: [GIT PULL] SMP hotplug changes for v4.17
+Message-ID: <20180402090334.45ekwthhshuz3mf6@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -26,145 +26,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-Please pull the latest sched-core-for-linus git tree from:
+Please pull the latest smp-hotplug-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-hotplug-for-linus
 
-   # HEAD: b720342849fe685310fca01748a32730a6eca5aa sched/core: Update preempt_notifier_key to modern API
+   # HEAD: fcb3029a8d89487470f2e175645a9a993949233c cpu/hotplug: Fix unused function warning
 
-The main scheduler changes in this cycle were:
-
- - NUMA balancing improvements               (Mel Gorman)
-
- - Further load tracking improvements        (Patrick Bellasi)
-
- - Various NOHZ balancing cleanups and
-   optimizations                             (Peter Zijlstra)
-
- - Improve blocked load handling, in particular we can now reduce
-   and eventually stop periodic load updates on 'very idle' CPUs.
-
-                                             (Vincent Guittot)
-
- - On isolated CPUs offload the final 1Hz scheduler tick as well,
-   plus related cleanups and reorganization.
-                                             (Frederic Weisbecker)
-
- - Core scheduler code cleanups              (Ingo Molnar)
+Simplify the CPU hot-plug state machine.
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Claudio Scordino (1):
-      sched/cpufreq: Rate limits for SCHED_DEADLINE
+Arnd Bergmann (1):
+      cpu/hotplug: Fix unused function warning
 
-Davidlohr Bueso (1):
-      sched/core: Update preempt_notifier_key to modern API
-
-Frederic Weisbecker (7):
-      sched/core: Rename init_rq_hrtick() to hrtick_rq_init()
-      nohz: Convert tick_nohz_tick_stopped() to bool
-      nohz: Allow to check if remote CPU tick is stopped
-      sched/isolation: Isolate workqueues when "nohz_full=" is set
-      sched/isolation: Offload residual 1Hz scheduler tick
-      sched/nohz: Remove the 1 Hz tick code
-      sched/isolation: Update nohz documentation to explain tick offload
-
-Ingo Molnar (5):
-      sched: Clean up and harmonize the coding style of the scheduler code base
-      sched/headers: Simplify and clean up header usage in the scheduler
-      sched/idle: Merge kernel/sched/idle.c and kernel/sched/idle_task.c
-      sched/deadline, rt: Rename queue_push_tasks/queue_pull_task to create separate namespace
-      sched/core: Undefine tracepoint creation at the end of core.c
-
-Mario Leinweber (1):
-      sched/deadline: Clean up various coding style details
-
-Mel Gorman (5):
-      sched/fair: Avoid an unnecessary lookup of current CPU ID during wake_affine
-      sched/fair: Defer calculation of 'prev_eff_load' in wake_affine_weight() until needed
-      sched/fair: Do not migrate on wake_affine_weight() if weights are equal
-      sched/fair: Consider SD_NUMA when selecting the most idle group to schedule on
-      sched/numa: Delay retrying placement for automatic NUMA balance after wake_affine()
-
-Norbert Manthey (1):
-      sched/fair: Add ';' after label attributes
-
-Patrick Bellasi (4):
-      sched/fair: Add util_est on top of PELT
-      sched/fair: Use util_est in LB and WU paths
-      sched/cpufreq/schedutil: Use util_est for OPP selection
-      sched/fair: Update util_est only on util_avg updates
-
-Peter Zijlstra (15):
-      sched/fair: Do not migrate due to a sync wakeup on exit
-      cpufreq/schedutil: Remove unused CPUFREQ_DL
-      cpufreq/schedutil: Rewrite CPUFREQ_RT support
-      sched/core: Convert nohz_flags to atomic_t
-      sched/fair: Add NOHZ_STATS_KICK
-      sched/fair: Restructure nohz_balance_kick()
-      sched/fair: Add NOHZ stats balancing
-      sched/fair: Update blocked load from NEWIDLE
-      sched/nohz: Clean up nohz enter/exit
-      sched/cpufreq: Provide migration hint
-      sched/nohz: Optimize nohz_idle_balance()
-      sched/fair: Move rebalance_domains()
-      sched/nohz: Merge CONFIG_NO_HZ_COMMON blocks
-      sched/fair: Move idle_balance()
-      sched/core: Remove TASK_ALL
-
-Vincent Guittot (4):
-      sched/fair: Remove stray space in #ifdef
-      sched/nohz: Stop NOHZ stats when decayed
-      sched/fair: Reduce the periodic update duration
-      sched/fair: Update blocked load when newly idle
-
-gaurav jindal (1):
-      sched/completions: Use bool in try_wait_for_completion()
+Lai Jiangshan (1):
+      cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states
 
 
- Documentation/admin-guide/kernel-parameters.txt |   11 +
- include/linux/sched.h                           |   30 +-
- include/linux/sched/cpufreq.h                   |    5 +-
- include/linux/sched/deadline.h                  |    6 -
- include/linux/sched/isolation.h                 |    1 +
- include/linux/sched/nohz.h                      |    6 -
- include/linux/tick.h                            |    4 +-
- kernel/sched/Makefile                           |    5 +-
- kernel/sched/autogroup.c                        |   21 +-
- kernel/sched/autogroup.h                        |   12 +-
- kernel/sched/clock.c                            |   36 +-
- kernel/sched/completion.c                       |   11 +-
- kernel/sched/core.c                             |  186 ++-
- kernel/sched/cpuacct.c                          |   33 +-
- kernel/sched/cpudeadline.c                      |   23 +-
- kernel/sched/cpudeadline.h                      |   29 +-
- kernel/sched/cpufreq.c                          |    1 -
- kernel/sched/cpufreq_schedutil.c                |  221 ++--
- kernel/sched/cpupri.c                           |   15 +-
- kernel/sched/cpupri.h                           |   25 +-
- kernel/sched/cputime.c                          |   58 +-
- kernel/sched/deadline.c                         |   82 +-
- kernel/sched/debug.c                            |  103 +-
- kernel/sched/fair.c                             | 1479 +++++++++++++++--------
- kernel/sched/features.h                         |    5 +
- kernel/sched/idle.c                             |  142 ++-
- kernel/sched/idle_task.c                        |  110 --
- kernel/sched/isolation.c                        |   14 +-
- kernel/sched/loadavg.c                          |   34 +-
- kernel/sched/membarrier.c                       |   27 +-
- kernel/sched/rt.c                               |   60 +-
- kernel/sched/sched.h                            |  650 +++++-----
- kernel/sched/stats.c                            |   20 +-
- kernel/sched/stats.h                            |   86 +-
- kernel/sched/stop_task.c                        |   11 +-
- kernel/sched/swait.c                            |    6 +-
- kernel/sched/topology.c                         |   46 +-
- kernel/sched/wait.c                             |   13 +-
- kernel/sched/wait_bit.c                         |   23 +-
- kernel/time/tick-sched.c                        |   22 +-
- kernel/workqueue.c                              |    3 +-
- 41 files changed, 2114 insertions(+), 1561 deletions(-)
- delete mode 100644 kernel/sched/idle_task.c
+ kernel/cpu.c | 60 ++++++++++++++++++++++++------------------------------------
+ 1 file changed, 24 insertions(+), 36 deletions(-)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 53f7dc65f9a3..0db8938fbb23 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -124,24 +124,11 @@ struct cpuhp_step {
+ };
+ 
+ static DEFINE_MUTEX(cpuhp_state_mutex);
+-static struct cpuhp_step cpuhp_bp_states[];
+-static struct cpuhp_step cpuhp_ap_states[];
+-
+-static bool cpuhp_is_ap_state(enum cpuhp_state state)
+-{
+-	/*
+-	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
+-	 * purposes as that state is handled explicitly in cpu_down.
+-	 */
+-	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
+-}
++static struct cpuhp_step cpuhp_hp_states[];
+ 
+ static struct cpuhp_step *cpuhp_get_step(enum cpuhp_state state)
+ {
+-	struct cpuhp_step *sp;
+-
+-	sp = cpuhp_is_ap_state(state) ? cpuhp_ap_states : cpuhp_bp_states;
+-	return sp + state;
++	return cpuhp_hp_states + state;
+ }
+ 
+ /**
+@@ -239,6 +226,15 @@ static int cpuhp_invoke_callback(unsigned int cpu, enum cpuhp_state state,
+ }
+ 
+ #ifdef CONFIG_SMP
++static bool cpuhp_is_ap_state(enum cpuhp_state state)
++{
++	/*
++	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
++	 * purposes as that state is handled explicitly in cpu_down.
++	 */
++	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
++}
++
+ static inline void wait_for_ap_thread(struct cpuhp_cpu_state *st, bool bringup)
+ {
+ 	struct completion *done = bringup ? &st->done_up : &st->done_down;
+@@ -1224,7 +1220,7 @@ int __boot_cpu_id;
+ #endif /* CONFIG_SMP */
+ 
+ /* Boot processor state steps */
+-static struct cpuhp_step cpuhp_bp_states[] = {
++static struct cpuhp_step cpuhp_hp_states[] = {
+ 	[CPUHP_OFFLINE] = {
+ 		.name			= "offline",
+ 		.startup.single		= NULL,
+@@ -1289,24 +1285,6 @@ static struct cpuhp_step cpuhp_bp_states[] = {
+ 		.teardown.single	= NULL,
+ 		.cant_stop		= true,
+ 	},
+-	/*
+-	 * Handled on controll processor until the plugged processor manages
+-	 * this itself.
+-	 */
+-	[CPUHP_TEARDOWN_CPU] = {
+-		.name			= "cpu:teardown",
+-		.startup.single		= NULL,
+-		.teardown.single	= takedown_cpu,
+-		.cant_stop		= true,
+-	},
+-#else
+-	[CPUHP_BRINGUP_CPU] = { },
+-#endif
+-};
+-
+-/* Application processor state steps */
+-static struct cpuhp_step cpuhp_ap_states[] = {
+-#ifdef CONFIG_SMP
+ 	/* Final state before CPU kills itself */
+ 	[CPUHP_AP_IDLE_DEAD] = {
+ 		.name			= "idle:dead",
+@@ -1340,6 +1318,16 @@ static struct cpuhp_step cpuhp_ap_states[] = {
+ 	[CPUHP_AP_ONLINE] = {
+ 		.name			= "ap:online",
+ 	},
++	/*
++	 * Handled on controll processor until the plugged processor manages
++	 * this itself.
++	 */
++	[CPUHP_TEARDOWN_CPU] = {
++		.name			= "cpu:teardown",
++		.startup.single		= NULL,
++		.teardown.single	= takedown_cpu,
++		.cant_stop		= true,
++	},
+ 	/* Handle smpboot threads park/unpark */
+ 	[CPUHP_AP_SMPBOOT_THREADS] = {
+ 		.name			= "smpboot/threads:online",
+@@ -1408,11 +1396,11 @@ static int cpuhp_reserve_state(enum cpuhp_state state)
+ 
+ 	switch (state) {
+ 	case CPUHP_AP_ONLINE_DYN:
+-		step = cpuhp_ap_states + CPUHP_AP_ONLINE_DYN;
++		step = cpuhp_hp_states + CPUHP_AP_ONLINE_DYN;
+ 		end = CPUHP_AP_ONLINE_DYN_END;
+ 		break;
+ 	case CPUHP_BP_PREPARE_DYN:
+-		step = cpuhp_bp_states + CPUHP_BP_PREPARE_DYN;
++		step = cpuhp_hp_states + CPUHP_BP_PREPARE_DYN;
+ 		end = CPUHP_BP_PREPARE_DYN_END;
+ 		break;
+ 	default:
