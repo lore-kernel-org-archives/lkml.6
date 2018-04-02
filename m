@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754589AbeDBXL7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 19:11:59 -0400
-Received: from mail-pl0-f42.google.com ([209.85.160.42]:43490 "EHLO
-        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754550AbeDBXL6 (ORCPT
+        id S1754620AbeDBXM0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 19:12:26 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45533 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754550AbeDBXMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 19:11:58 -0400
-X-Google-Smtp-Source: AIpwx4+nYudG/XoSXfSQ2RLYj/pN64eaa1uEl8Uft1Dp0urWstdlDTuNMTDn4g6S6dGhQk1yp2W83A==
-Date: Mon, 2 Apr 2018 16:11:55 -0700 (PDT)
+        Mon, 2 Apr 2018 19:12:24 -0400
+X-Google-Smtp-Source: AIpwx4/AUW4amVWCJXplX5hnhTK3e5wVGvJY9THDe5YFaXBgZql8v5qF3h4btn22dP7mvvNf+cDGQg==
+Date: Mon, 2 Apr 2018 16:12:22 -0700 (PDT)
 From: David Rientjes <rientjes@google.com>
 X-X-Sender: rientjes@chino.kir.corp.google.com
 To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
@@ -29,11 +29,10 @@ cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         npiggin@gmail.com, bsingharora@gmail.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: Re: [PATCH v9 13/24] mm: Introduce
- __lru_cache_add_active_or_unevictable
-In-Reply-To: <1520963994-28477-14-git-send-email-ldufour@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1804021611430.102694@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-14-git-send-email-ldufour@linux.vnet.ibm.com>
+Subject: Re: [PATCH v9 14/24] mm: Introduce __maybe_mkwrite()
+In-Reply-To: <1520963994-28477-15-git-send-email-ldufour@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1804021611590.102694@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-15-git-send-email-ldufour@linux.vnet.ibm.com>
 User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -43,12 +42,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
-> The speculative page fault handler which is run without holding the
-> mmap_sem is calling lru_cache_add_active_or_unevictable() but the vm_flags
-> is not guaranteed to remain constant.
-> Introducing __lru_cache_add_active_or_unevictable() which has the vma flags
-> value parameter instead of the vma pointer.
-> 
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index dfa81a638b7c..a84ddc218bbd 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -684,13 +684,18 @@ void free_compound_page(struct page *page);
+>   * pte_mkwrite.  But get_user_pages can cause write faults for mappings
+>   * that do not have writing enabled, when used by access_process_vm.
+>   */
+> -static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
+> +static inline pte_t __maybe_mkwrite(pte_t pte, unsigned long vma_flags)
+>  {
+> -	if (likely(vma->vm_flags & VM_WRITE))
+> +	if (likely(vma_flags & VM_WRITE))
+>  		pte = pte_mkwrite(pte);
+>  	return pte;
+>  }
+>  
+> +static inline pte_t maybe_mkwrite(pte_t pte, struct vm_area_struct *vma)
+> +{
+> +	return __maybe_mkwrite(pte, vma->vm_flags);
+> +}
+> +
+>  int alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
+>  		struct page *page);
+>  int finish_fault(struct vm_fault *vmf);
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 0a0a483d9a65..af0338fbc34d 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2472,7 +2472,7 @@ static inline void wp_page_reuse(struct vm_fault *vmf)
+>  
+>  	flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
+>  	entry = pte_mkyoung(vmf->orig_pte);
+> -	entry = maybe_mkwrite(pte_mkdirty(entry), vma);
+> +	entry = __maybe_mkwrite(pte_mkdirty(entry), vmf->vma_flags);
+>  	if (ptep_set_access_flags(vma, vmf->address, vmf->pte, entry, 1))
+>  		update_mmu_cache(vma, vmf->address, vmf->pte);
+>  	pte_unmap_unlock(vmf->pte, vmf->ptl);
+> @@ -2549,8 +2549,8 @@ static int wp_page_copy(struct vm_fault *vmf)
+>  			inc_mm_counter_fast(mm, MM_ANONPAGES);
+>  		}
+>  		flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
+> -		entry = mk_pte(new_page, vma->vm_page_prot);
+> -		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
+> +		entry = mk_pte(new_page, vmf->vma_page_prot);
+> +		entry = __maybe_mkwrite(pte_mkdirty(entry), vmf->vma_flags);
+>  		/*
+>  		 * Clear the pte entry and flush it first, before updating the
+>  		 * pte with the new entry. This will avoid a race condition
 
-Acked-by: David Rientjes <rientjes@google.com>
+Don't you also need to do this in do_swap_page()?
+
+diff --git a/mm/memory.c b/mm/memory.c
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3067,9 +3067,9 @@ int do_swap_page(struct vm_fault *vmf)
+ 
+ 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
+ 	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
+-	pte = mk_pte(page, vma->vm_page_prot);
++	pte = mk_pte(page, vmf->vma_page_prot);
+ 	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
+-		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
++		pte = __maybe_mkwrite(pte_mkdirty(pte), vmf->vma_flags);
+ 		vmf->flags &= ~FAULT_FLAG_WRITE;
+ 		ret |= VM_FAULT_WRITE;
+ 		exclusive = RMAP_EXCLUSIVE;
