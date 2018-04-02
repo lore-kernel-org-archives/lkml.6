@@ -1,135 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753168AbeDBR2g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 13:28:36 -0400
-Received: from mga09.intel.com ([134.134.136.24]:43247 "EHLO mga09.intel.com"
+        id S1753196AbeDBR3m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 13:29:42 -0400
+Received: from mga02.intel.com ([134.134.136.20]:65131 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752898AbeDBR2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 13:28:35 -0400
+        id S1753049AbeDBR3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 13:29:41 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,396,1517904000";
-   d="scan'208";a="188042078"
-Message-ID: <1522690110.21176.202.camel@linux.intel.com>
-Subject: Re: [PATCH][RESEND] ASoC: Intel: atom: fix ACPI/PCI Kconfig
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        liam.r.girdwood@linux.intel.com, Vinod Koul <vinod.koul@intel.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Harsha Priya N <harshapriya.n@intel.com>,
-        Naveen M <naveen.m@intel.com>, Daniel Drake <drake@endlessm.com>
-Date: Mon, 02 Apr 2018 20:28:30 +0300
-In-Reply-To: <20180402170614.5599-1-pierre-louis.bossart@linux.intel.com>
-References: <20180402170614.5599-1-pierre-louis.bossart@linux.intel.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="44278244"
+Subject: [PATCH 00/11] [v3] Use global pages with PTI
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
+        keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
+        namit@vmware.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Mon, 02 Apr 2018 10:27:00 -0700
+Message-Id: <20180402172700.65CAE838@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-02 at 12:06 -0500, Pierre-Louis Bossart wrote:
-> The split between ACPI and PCI platforms generated issues with
-> randconfig:
-> 
-> with SND_SST_ATOM_HIFI2_PLATFORM_PCI=y and
-> SND_SST_ATOM_HIFI2_PLATFORM=m, we get this module link failure:
-> 
-> ERROR: "sst_context_init"
-> [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
-> 
-> ERROR: "sst_context_cleanup"
-> [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
-> 
-> ERROR: "sst_alloc_drv_context"
-> [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
-> 
-> ERROR: "intel_sst_pm" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko]
-> undefined!
-> 
-> ERROR: "sst_configure_runtime_pm"
-> [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
-> 
-> To keep things simple, let's expose two configs for
-> SND_SST_ATOM_HIFI2_PLATFORM_PCI and SND_SST_ATOM_HIFI2_PLATFORM_ACPI,
-> which select a common SND_SST_ATOM_HIFI2_PLATFORM option. To avoid
-> breaking existing solutions with the semantics change,
-> SND_SST_ATOM_HIFI2_PLATFORM_ACPI uses "default ACPI" so that "make
-> oldnoconfig" and "make olddefconfig" still work as expected.
-> 
-> Also remove mentions of Medfield while we are at it since it was
-> removed recently.
-> 
+Changes from v2:
 
-Assuming we will see no more kbuild bot complains,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ * Add performance numbers to changelogs
+ * Fix compile error resulting from use of x86-specific
+   __default_kernel_pte_mask in arch-generic mm/early_ioremap.c
+ * Delay kernel text cloning until after we are done messing
+   with it (patch 11).
+ * Blacklist K8 explicitly from mapping all kernel text as
+   global (this should never happen because K8 does not use
+   pti when pti=auto, but we on the safe side). (patch 11)
 
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 4772c16ede52 ("ASoC: Intel: Kconfig: Simplify-clarify ACPI/PCI
-> dependencies")
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.
-> com>
-> ---
-> already sent on January 23 but apparently missed
-> 
-> 
->  sound/soc/intel/Kconfig | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
-> 
-> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-> index ceb105cbd461..addac2a8e52a 100644
-> --- a/sound/soc/intel/Kconfig
-> +++ b/sound/soc/intel/Kconfig
-> @@ -72,24 +72,28 @@ config SND_SOC_INTEL_BAYTRAIL
->  	  for Baytrail Chromebooks but this option is now deprecated
-> and is
->  	  not recommended, use SND_SST_ATOM_HIFI2_PLATFORM instead.
->  
-> +config SND_SST_ATOM_HIFI2_PLATFORM
-> +	tristate
-> +	select SND_SOC_COMPRESS
-> +
->  config SND_SST_ATOM_HIFI2_PLATFORM_PCI
-> -	tristate "PCI HiFi2 (Medfield, Merrifield) Platforms"
-> +	tristate "PCI HiFi2 (Merrifield) Platforms"
->  	depends on X86 && PCI
->  	select SND_SST_IPC_PCI
-> -	select SND_SOC_COMPRESS
-> +	select SND_SST_ATOM_HIFI2_PLATFORM
->  	help
-> -	  If you have a Intel Medfield or Merrifield/Edison platform,
-> then
-> +	  If you have a Intel Merrifield/Edison platform, then
->  	  enable this option by saying Y or m. Distros will typically
-> not
-> -	  enable this option: Medfield devices are not available to
-> -	  developers and while Merrifield/Edison can run a mainline
-> kernel with
-> -	  limited functionality it will require a firmware file which
-> -	  is not in the standard firmware tree
-> +	  enable this option: while Merrifield/Edison can run a
-> mainline
-> +	  kernel with limited functionality it will require a
-> firmware file
-> +	  which is not in the standard firmware tree
->  
-> -config SND_SST_ATOM_HIFI2_PLATFORM
-> +config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
->  	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
-> +	default ACPI
->  	depends on X86 && ACPI
->  	select SND_SST_IPC_ACPI
-> -	select SND_SOC_COMPRESS
-> +	select SND_SST_ATOM_HIFI2_PLATFORM
->  	select SND_SOC_ACPI_INTEL_MATCH
->  	select IOSF_MBI
->  	help
+--
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+The later versions of the KAISER patches (pre-PTI) allowed the
+user/kernel shared areas to be GLOBAL.  The thought was that this would
+reduce the TLB overhead of keeping two copies of these mappings.
+
+During the switch over to PTI, we seem to have lost our ability to have
+GLOBAL mappings.  This adds them back.
+
+To measure the benefits of this, I took a modern Atom system without
+PCIDs and ran a microbenchmark[1] (higher is better):
+
+No Global Lines (baseline  ): 6077741 lseeks/sec
+88 Global Lines (kern entry): 7528609 lseeks/sec (+23.9%)
+94 Global Lines (all ktext ): 8433111 lseeks/sec (+38.8%)
+
+On a modern Skylake desktop with PCIDs, the benefits are tangible, but not
+huge:
+
+No Global pages (baseline): 15783951 lseeks/sec
+28 Global pages (this set): 16054688 lseeks/sec
+                             +270737 lseeks/sec (+1.71%)
+
+I also double-checked with a kernel compile on the Skylake system (lower
+is better):
+
+No Global pages (baseline): 186.951 seconds time elapsed  ( +-  0.35% )
+28 Global pages (this set): 185.756 seconds time elapsed  ( +-  0.09% )
+                             -1.195 seconds (-0.64%)
+
+1. https://github.com/antonblanchard/will-it-scale/blob/master/tests/lseek1.c
+
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@google.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: x86@kernel.org
+Cc: Nadav Amit <namit@vmware.com>
