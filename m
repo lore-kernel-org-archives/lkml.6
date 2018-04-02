@@ -1,23 +1,23 @@
 Return-Path: <liuwenliang@huawei.com>
-X-Google-Smtp-Source: AIpwx49OcFBl5xE1JETdEZXFJnK5jV1naOAElutBLz38oU5ewmn3kaM8X77OUY64Ya2jWBohDYWm
-ARC-Seal: i=1; a=rsa-sha256; t=1522671905; cv=none;
+X-Google-Smtp-Source: AIpwx4+1zTTlDk6JJ7qKvX2wUoqrytKNTHqwXCUpMHR5wr/XGduMwOAO3om1Gh7Me18w78WD3a2n
+ARC-Seal: i=1; a=rsa-sha256; t=1522671904; cv=none;
         d=google.com; s=arc-20160816;
-        b=rGNCkaLxVqUjNM9mepFMCnAPDiXwtyONP4dQRigvkkOApEnwHTts3CQLHb7rckyMnn
-         zLW7D0QruSehGxKSoUSZ0IgZ7mAG1iMQvbjS5plpPKVyeffzJSvuOTmLLABCllzOvsCq
-         FnnkRljFYzhW1VTjsdKtwp1IIrVQIzUlABDjJnxUl2eRBJ5aLUw/ViokumJgUnqp2WuH
-         Do89HxuJ5ZTlqG0tjBLvkVtChOUObvx9cKokuNzNhTI74TWbloSEU8zXpW4J7Q7VOy95
-         grCUDpEaXQiMMXB6c1QzBTdStoOcYu8XdhsDFKWEJzqc9ACmg7stJh71y5V10GNQU6EY
-         xIjw==
+        b=XvPPY1h8oXbVCg83O395lsRt9pqGQjrKddXtGtNLrzjGnxDth03en5YvIkJiDaeOJL
+         FsFzC8Jb+VoXN1M2usM5dTbjUW6KhRVOphDy6eZzR3kmqDjjlgExk0N9RL1LrSqf8XAT
+         xQRB+nb+AcdUrwrDMFkuLqoe4eT46C2mebBfgGvEa1hH92wxkgeWcGOZnZk2THkIioJL
+         tRduZ2JpPbys575FBgRoUW8crL1b9FK1GFplmEBD85oj+MhGE9o09feeSEguiGaau3wK
+         97cqBUN/Qrh9kEzmhTMG3Q7vRMihexwk7tPUGXiQd99nXjejrJLHB9d/L3mRfjHQQnwp
+         795w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:to:from
          :arc-authentication-results;
-        bh=Gpb+7F6xZlAlrjXr4acQmvpbV+LDUn3PAW9kWPRDQ7Q=;
-        b=K9JvpYST/7otlin9pb09aa375bBqT5dXu6/M17MHmvYjlggjUQzvVWVHF2E68OSF4b
-         cph45l8mEWhqmzILKPWl+QtuMcBcta303/Ms8zgklvM7Ur48TgujY0W4R2V2wzvraGqM
-         NRJ0ZqWwybRWCOE8bBdiTJGYhDzcEa9ROYR/PczeqlFRNfd92sY+ZXJ8OypgTQQBBMac
-         8Pgv6kTbITB9pcPVsdzX9cs9V1BDjZYTP/tcwEX6QG1yddEgSLIxVOVkUDrz0ASQVjj+
-         MTYZX8qKViFaRpBEyqHwERs0cLERrXF7lA5/+zwoHr8e9aMM9IouEr+xW8YFJ0cHfBLt
-         FiWA==
+        bh=pTdQosHMF1FtBC+0dSweMVR0lWUgjE6E1hdYiklXg14=;
+        b=kcAsvhCFwrMS5wVaohkOYS5oz4yorzaia5mbmypx6BlPn21R8uxjVWz7DMcw+qYTJf
+         4fm/M3s3zKwGAuhDLU8F4AwNFqcHGFQMzgJlRz7kE9zhx7HmB9bRlJbvgfWEwcp7fZNM
+         6+cariJkB3jChzYEb6hLNkuNSwsVOQeGxxegN0oEMJIdkWIuC7NzwYJP+tYOLAqr4HZz
+         PLpErSnuWY71Q7wZHy351wT7TrhQ6Dien8qKsdRMjwLntRsqHp4xptDVFnARePLPKWmy
+         uGic0+RaGJ9t9zLwib2GdtltoTwbiONn6NH6/ffT7ueHo2LadVGkc2WbrK13WUCDSqXr
+         wfZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
@@ -41,9 +41,9 @@ To: <aryabinin@virtuozzo.com>, <dvyukov@google.com>, <corbet@lwn.net>,
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.cs.columbia.edu>,
 	<linux-mm@kvack.org>
-Subject: [PATCH v3 3/6] Replace memory function for kasan
-Date: Mon, 2 Apr 2018 20:04:37 +0800
-Message-ID: <20180402120440.31900-4-liuwenliang@huawei.com>
+Subject: [PATCH v3 1/6] Add TTBR operator for kasan_init
+Date: Mon, 2 Apr 2018 20:04:35 +0800
+Message-ID: <20180402120440.31900-2-liuwenliang@huawei.com>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180402120440.31900-1-liuwenliang@huawei.com>
 References: <20180402120440.31900-1-liuwenliang@huawei.com>
@@ -52,197 +52,282 @@ Content-Type: text/plain
 X-Originating-IP: [10.67.187.223]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596637215476051533?=
-X-GMAIL-MSGID: =?utf-8?q?1596637215476051533?=
+X-GMAIL-THRID: =?utf-8?q?1596637214891878015?=
+X-GMAIL-MSGID: =?utf-8?q?1596637214891878015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andrey Ryabinin <a.ryabinin@samsung.com>
+The purpose of this patch is to provide set_ttbr0/get_ttbr0
+to kasan_init function. The definitions of cp15 registers
+should be in arch/arm/include/asm/cp15.h rather than
+arch/arm/include/asm/kvm_hyp.h, so move them.
 
-Functions like memset/memmove/memcpy do a lot of memory accesses.
-If bad pointer passed to one of these function it is important
-to catch this. Compiler's instrumentation cannot do this since
-these functions are written in assembly.
-
-KASan replaces memory functions with manually instrumented variants.
-Original functions declared as weak symbols so strong definitions
-in mm/kasan/kasan.c could replace them. Original functions have aliases
-with '__' prefix in name, so we could call non-instrumented variant
-if needed.
-
-We must use __memcpy/__memset to replace memcpy/memset when we copy
-.data to RAM and when we clear .bss, because kasan_early_init can't
-be called before the initialization of .data and .bss.
-
+Cc: Andrey Ryabinin <a.ryabinin@samsung.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 Reviewed-by: Russell King - ARM Linux <linux@armlinux.org.uk>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Christoffer Dall <cdall@linaro.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 Tested-by: Florian Fainelli <f.fainelli@gmail.com>
 Tested-by: Joel Stanley <joel@jms.id.au>
 Tested-by: Abbott Liu <liuwenliang@huawei.com>
 Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
 ---
- arch/arm/boot/compressed/decompress.c |  2 ++
- arch/arm/boot/compressed/libfdt_env.h |  2 ++
- arch/arm/include/asm/string.h         | 17 +++++++++++++++++
- arch/arm/kernel/head-common.S         |  4 ++--
- arch/arm/lib/memcpy.S                 |  3 +++
- arch/arm/lib/memmove.S                |  5 ++++-
- arch/arm/lib/memset.S                 |  3 +++
- 7 files changed, 33 insertions(+), 3 deletions(-)
+ arch/arm/include/asm/cp15.h    | 104 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/include/asm/kvm_hyp.h |  52 ---------------------
+ arch/arm/kvm/hyp/cp15-sr.c     |  12 ++---
+ arch/arm/kvm/hyp/switch.c      |   6 +--
+ 4 files changed, 113 insertions(+), 61 deletions(-)
 
-diff --git a/arch/arm/boot/compressed/decompress.c b/arch/arm/boot/compressed/decompress.c
-index a2ac3fe..0596077 100644
---- a/arch/arm/boot/compressed/decompress.c
-+++ b/arch/arm/boot/compressed/decompress.c
-@@ -49,8 +49,10 @@ extern int memcmp(const void *cs, const void *ct, size_t count);
- #endif
+diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
+index 4c9fa72..99ebb31 100644
+--- a/arch/arm/include/asm/cp15.h
++++ b/arch/arm/include/asm/cp15.h
+@@ -3,6 +3,7 @@
+ #define __ASM_ARM_CP15_H
  
- #ifdef CONFIG_KERNEL_XZ
-+#ifndef CONFIG_KASAN
- #define memmove memmove
- #define memcpy memcpy
-+#endif
- #include "../../../../lib/decompress_unxz.c"
- #endif
+ #include <asm/barrier.h>
++#include <linux/stringify.h>
  
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index 0743781..736ed36 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -17,4 +17,6 @@ typedef __be64 fdt64_t;
- #define fdt64_to_cpu(x)		be64_to_cpu(x)
- #define cpu_to_fdt64(x)		cpu_to_be64(x)
+ /*
+  * CR1 bits (CP#15 CR1)
+@@ -65,8 +66,111 @@
+ #define __write_sysreg(v, r, w, c, t)	asm volatile(w " " c : : "r" ((t)(v)))
+ #define write_sysreg(v, ...)		__write_sysreg(v, __VA_ARGS__)
  
-+#undef memset
++#define TTBR0_32	__ACCESS_CP15(c2, 0, c0, 0)
++#define TTBR1_32	__ACCESS_CP15(c2, 0, c0, 1)
++#define PAR_32		__ACCESS_CP15(c7, 0, c4, 0)
++#define TTBR0_64	__ACCESS_CP15_64(0, c2)
++#define TTBR1_64	__ACCESS_CP15_64(1, c2)
++#define PAR_64		__ACCESS_CP15_64(0, c7)
++#define VTTBR		__ACCESS_CP15_64(6, c2)
++#define CNTV_CVAL	__ACCESS_CP15_64(3, c14)
++#define CNTVOFF		__ACCESS_CP15_64(4, c14)
 +
- #endif
-diff --git a/arch/arm/include/asm/string.h b/arch/arm/include/asm/string.h
-index 111a1d8..1f9016b 100644
---- a/arch/arm/include/asm/string.h
-+++ b/arch/arm/include/asm/string.h
-@@ -15,15 +15,18 @@ extern char * strchr(const char * s, int c);
- 
- #define __HAVE_ARCH_MEMCPY
- extern void * memcpy(void *, const void *, __kernel_size_t);
-+extern void *__memcpy(void *dest, const void *src, __kernel_size_t n);
- 
- #define __HAVE_ARCH_MEMMOVE
- extern void * memmove(void *, const void *, __kernel_size_t);
-+extern void *__memmove(void *dest, const void *src, __kernel_size_t n);
- 
- #define __HAVE_ARCH_MEMCHR
- extern void * memchr(const void *, int, __kernel_size_t);
- 
- #define __HAVE_ARCH_MEMSET
- extern void * memset(void *, int, __kernel_size_t);
-+extern void *__memset(void *s, int c, __kernel_size_t n);
- 
- #define __HAVE_ARCH_MEMSET32
- extern void *__memset32(uint32_t *, uint32_t v, __kernel_size_t);
-@@ -39,4 +42,18 @@ static inline void *memset64(uint64_t *p, uint64_t v, __kernel_size_t n)
- 	return __memset64(p, v, n * 8, v >> 32);
- }
- 
++#define MIDR		__ACCESS_CP15(c0, 0, c0, 0)
++#define CSSELR		__ACCESS_CP15(c0, 2, c0, 0)
++#define VPIDR		__ACCESS_CP15(c0, 4, c0, 0)
++#define VMPIDR		__ACCESS_CP15(c0, 4, c0, 5)
++#define SCTLR		__ACCESS_CP15(c1, 0, c0, 0)
++#define CPACR		__ACCESS_CP15(c1, 0, c0, 2)
++#define HCR		__ACCESS_CP15(c1, 4, c1, 0)
++#define HDCR		__ACCESS_CP15(c1, 4, c1, 1)
++#define HCPTR		__ACCESS_CP15(c1, 4, c1, 2)
++#define HSTR		__ACCESS_CP15(c1, 4, c1, 3)
++#define TTBCR		__ACCESS_CP15(c2, 0, c0, 2)
++#define HTCR		__ACCESS_CP15(c2, 4, c0, 2)
++#define VTCR		__ACCESS_CP15(c2, 4, c1, 2)
++#define DACR		__ACCESS_CP15(c3, 0, c0, 0)
++#define DFSR		__ACCESS_CP15(c5, 0, c0, 0)
++#define IFSR		__ACCESS_CP15(c5, 0, c0, 1)
++#define ADFSR		__ACCESS_CP15(c5, 0, c1, 0)
++#define AIFSR		__ACCESS_CP15(c5, 0, c1, 1)
++#define HSR		__ACCESS_CP15(c5, 4, c2, 0)
++#define DFAR		__ACCESS_CP15(c6, 0, c0, 0)
++#define IFAR		__ACCESS_CP15(c6, 0, c0, 2)
++#define HDFAR		__ACCESS_CP15(c6, 4, c0, 0)
++#define HIFAR		__ACCESS_CP15(c6, 4, c0, 2)
++#define HPFAR		__ACCESS_CP15(c6, 4, c0, 4)
++#define ICIALLUIS	__ACCESS_CP15(c7, 0, c1, 0)
++#define BPIALLIS	__ACCESS_CP15(c7, 0, c1, 6)
++#define ICIMVAU		__ACCESS_CP15(c7, 0, c5, 1)
++#define ATS1CPR		__ACCESS_CP15(c7, 0, c8, 0)
++#define TLBIALLIS	__ACCESS_CP15(c8, 0, c3, 0)
++#define TLBIALL		__ACCESS_CP15(c8, 0, c7, 0)
++#define TLBIALLNSNHIS	__ACCESS_CP15(c8, 4, c3, 4)
++#define PRRR		__ACCESS_CP15(c10, 0, c2, 0)
++#define NMRR		__ACCESS_CP15(c10, 0, c2, 1)
++#define AMAIR0		__ACCESS_CP15(c10, 0, c3, 0)
++#define AMAIR1		__ACCESS_CP15(c10, 0, c3, 1)
++#define VBAR		__ACCESS_CP15(c12, 0, c0, 0)
++#define CID		__ACCESS_CP15(c13, 0, c0, 1)
++#define TID_URW		__ACCESS_CP15(c13, 0, c0, 2)
++#define TID_URO		__ACCESS_CP15(c13, 0, c0, 3)
++#define TID_PRIV	__ACCESS_CP15(c13, 0, c0, 4)
++#define HTPIDR		__ACCESS_CP15(c13, 4, c0, 2)
++#define CNTKCTL		__ACCESS_CP15(c14, 0, c1, 0)
++#define CNTV_CTL	__ACCESS_CP15(c14, 0, c3, 1)
++#define CNTHCTL		__ACCESS_CP15(c14, 4, c1, 0)
 +
+ extern unsigned long cr_alignment;	/* defined in entry-armv.S */
+ 
++static inline void set_par(u64 val)
++{
++	if (IS_ENABLED(CONFIG_ARM_LPAE))
++		write_sysreg(val, PAR_64);
++	else
++		write_sysreg(val, PAR_32);
++}
 +
-+#if defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__)
++static inline u64 get_par(void)
++{
++	if (IS_ENABLED(CONFIG_ARM_LPAE))
++		return read_sysreg(PAR_64);
++	else
++		return read_sysreg(PAR_32);
++}
 +
-+/*
-+ * For files that not instrumented (e.g. mm/slub.c) we
-+ * should use not instrumented version of mem* functions.
-+ */
++static inline void set_ttbr0(u64 val)
++{
++	if (IS_ENABLED(CONFIG_ARM_LPAE))
++		write_sysreg(val, TTBR0_64);
++	else
++		write_sysreg(val, TTBR0_32);
++}
 +
-+#define memcpy(dst, src, len) __memcpy(dst, src, len)
-+#define memmove(dst, src, len) __memmove(dst, src, len)
-+#define memset(s, c, n) __memset(s, c, n)
-+#endif
++static inline u64 get_ttbr0(void)
++{
++	if (IS_ENABLED(CONFIG_ARM_LPAE))
++		return read_sysreg(TTBR0_64);
++	else
++		return read_sysreg(TTBR0_32);
++}
 +
- #endif
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 6e0375e..c79b829 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -99,7 +99,7 @@ __mmap_switched:
-  THUMB(	ldmia	r4!, {r0, r1, r2, r3} )
-  THUMB(	mov	sp, r3 )
- 	sub	r2, r2, r1
--	bl	memcpy				@ copy .data to RAM
-+	bl	__memcpy			@ copy .data to RAM
- #endif
++static inline void set_ttbr1(u64 val)
++{
++	if (IS_ENABLED(CONFIG_ARM_LPAE))
++		write_sysreg(val, TTBR1_64);
++	else
++		write_sysreg(val, TTBR1_32);
++}
++
++static inline u64 get_ttbr1(void)
++{
++	if (IS_ENABLED(CONFIG_ARM_LPAE))
++		return read_sysreg(TTBR1_64);
++	else
++		return read_sysreg(TTBR1_32);
++}
++
+ static inline unsigned long get_cr(void)
+ {
+ 	unsigned long val;
+diff --git a/arch/arm/include/asm/kvm_hyp.h b/arch/arm/include/asm/kvm_hyp.h
+index 1ab8329..8e8592e 100644
+--- a/arch/arm/include/asm/kvm_hyp.h
++++ b/arch/arm/include/asm/kvm_hyp.h
+@@ -36,58 +36,6 @@
+ 	__val;							\
+ })
  
-    ARM(	ldmia	r4!, {r0, r1, sp} )
-@@ -107,7 +107,7 @@ __mmap_switched:
-  THUMB(	mov	sp, r3 )
- 	sub	r2, r1, r0
- 	mov	r1, #0
--	bl	memset				@ clear .bss
-+	bl	__memset			@ clear .bss
+-#define TTBR0		__ACCESS_CP15_64(0, c2)
+-#define TTBR1		__ACCESS_CP15_64(1, c2)
+-#define VTTBR		__ACCESS_CP15_64(6, c2)
+-#define PAR		__ACCESS_CP15_64(0, c7)
+-#define CNTV_CVAL	__ACCESS_CP15_64(3, c14)
+-#define CNTVOFF		__ACCESS_CP15_64(4, c14)
+-
+-#define MIDR		__ACCESS_CP15(c0, 0, c0, 0)
+-#define CSSELR		__ACCESS_CP15(c0, 2, c0, 0)
+-#define VPIDR		__ACCESS_CP15(c0, 4, c0, 0)
+-#define VMPIDR		__ACCESS_CP15(c0, 4, c0, 5)
+-#define SCTLR		__ACCESS_CP15(c1, 0, c0, 0)
+-#define CPACR		__ACCESS_CP15(c1, 0, c0, 2)
+-#define HCR		__ACCESS_CP15(c1, 4, c1, 0)
+-#define HDCR		__ACCESS_CP15(c1, 4, c1, 1)
+-#define HCPTR		__ACCESS_CP15(c1, 4, c1, 2)
+-#define HSTR		__ACCESS_CP15(c1, 4, c1, 3)
+-#define TTBCR		__ACCESS_CP15(c2, 0, c0, 2)
+-#define HTCR		__ACCESS_CP15(c2, 4, c0, 2)
+-#define VTCR		__ACCESS_CP15(c2, 4, c1, 2)
+-#define DACR		__ACCESS_CP15(c3, 0, c0, 0)
+-#define DFSR		__ACCESS_CP15(c5, 0, c0, 0)
+-#define IFSR		__ACCESS_CP15(c5, 0, c0, 1)
+-#define ADFSR		__ACCESS_CP15(c5, 0, c1, 0)
+-#define AIFSR		__ACCESS_CP15(c5, 0, c1, 1)
+-#define HSR		__ACCESS_CP15(c5, 4, c2, 0)
+-#define DFAR		__ACCESS_CP15(c6, 0, c0, 0)
+-#define IFAR		__ACCESS_CP15(c6, 0, c0, 2)
+-#define HDFAR		__ACCESS_CP15(c6, 4, c0, 0)
+-#define HIFAR		__ACCESS_CP15(c6, 4, c0, 2)
+-#define HPFAR		__ACCESS_CP15(c6, 4, c0, 4)
+-#define ICIALLUIS	__ACCESS_CP15(c7, 0, c1, 0)
+-#define BPIALLIS	__ACCESS_CP15(c7, 0, c1, 6)
+-#define ICIMVAU		__ACCESS_CP15(c7, 0, c5, 1)
+-#define ATS1CPR		__ACCESS_CP15(c7, 0, c8, 0)
+-#define TLBIALLIS	__ACCESS_CP15(c8, 0, c3, 0)
+-#define TLBIALL		__ACCESS_CP15(c8, 0, c7, 0)
+-#define TLBIALLNSNHIS	__ACCESS_CP15(c8, 4, c3, 4)
+-#define PRRR		__ACCESS_CP15(c10, 0, c2, 0)
+-#define NMRR		__ACCESS_CP15(c10, 0, c2, 1)
+-#define AMAIR0		__ACCESS_CP15(c10, 0, c3, 0)
+-#define AMAIR1		__ACCESS_CP15(c10, 0, c3, 1)
+-#define VBAR		__ACCESS_CP15(c12, 0, c0, 0)
+-#define CID		__ACCESS_CP15(c13, 0, c0, 1)
+-#define TID_URW		__ACCESS_CP15(c13, 0, c0, 2)
+-#define TID_URO		__ACCESS_CP15(c13, 0, c0, 3)
+-#define TID_PRIV	__ACCESS_CP15(c13, 0, c0, 4)
+-#define HTPIDR		__ACCESS_CP15(c13, 4, c0, 2)
+-#define CNTKCTL		__ACCESS_CP15(c14, 0, c1, 0)
+-#define CNTV_CTL	__ACCESS_CP15(c14, 0, c3, 1)
+-#define CNTHCTL		__ACCESS_CP15(c14, 4, c1, 0)
+-
+ #define VFP_FPEXC	__ACCESS_VFP(FPEXC)
  
- 	ldmia	r4, {r0, r1, r2, r3}
- 	str	r9, [r0]			@ Save processor ID
-diff --git a/arch/arm/lib/memcpy.S b/arch/arm/lib/memcpy.S
-index 64111bd..79a83f8 100644
---- a/arch/arm/lib/memcpy.S
-+++ b/arch/arm/lib/memcpy.S
-@@ -61,6 +61,8 @@
+ /* AArch64 compatibility macros, only for the timer so far */
+diff --git a/arch/arm/kvm/hyp/cp15-sr.c b/arch/arm/kvm/hyp/cp15-sr.c
+index c478281..d365e3c 100644
+--- a/arch/arm/kvm/hyp/cp15-sr.c
++++ b/arch/arm/kvm/hyp/cp15-sr.c
+@@ -31,8 +31,8 @@ void __hyp_text __sysreg_save_state(struct kvm_cpu_context *ctxt)
+ 	ctxt->cp15[c0_CSSELR]		= read_sysreg(CSSELR);
+ 	ctxt->cp15[c1_SCTLR]		= read_sysreg(SCTLR);
+ 	ctxt->cp15[c1_CPACR]		= read_sysreg(CPACR);
+-	*cp15_64(ctxt, c2_TTBR0)	= read_sysreg(TTBR0);
+-	*cp15_64(ctxt, c2_TTBR1)	= read_sysreg(TTBR1);
++	*cp15_64(ctxt, c2_TTBR0)	= read_sysreg(TTBR0_64);
++	*cp15_64(ctxt, c2_TTBR1)	= read_sysreg(TTBR1_64);
+ 	ctxt->cp15[c2_TTBCR]		= read_sysreg(TTBCR);
+ 	ctxt->cp15[c3_DACR]		= read_sysreg(DACR);
+ 	ctxt->cp15[c5_DFSR]		= read_sysreg(DFSR);
+@@ -41,7 +41,7 @@ void __hyp_text __sysreg_save_state(struct kvm_cpu_context *ctxt)
+ 	ctxt->cp15[c5_AIFSR]		= read_sysreg(AIFSR);
+ 	ctxt->cp15[c6_DFAR]		= read_sysreg(DFAR);
+ 	ctxt->cp15[c6_IFAR]		= read_sysreg(IFAR);
+-	*cp15_64(ctxt, c7_PAR)		= read_sysreg(PAR);
++	*cp15_64(ctxt, c7_PAR)		= read_sysreg(PAR_64);
+ 	ctxt->cp15[c10_PRRR]		= read_sysreg(PRRR);
+ 	ctxt->cp15[c10_NMRR]		= read_sysreg(NMRR);
+ 	ctxt->cp15[c10_AMAIR0]		= read_sysreg(AMAIR0);
+@@ -60,8 +60,8 @@ void __hyp_text __sysreg_restore_state(struct kvm_cpu_context *ctxt)
+ 	write_sysreg(ctxt->cp15[c0_CSSELR],	CSSELR);
+ 	write_sysreg(ctxt->cp15[c1_SCTLR],	SCTLR);
+ 	write_sysreg(ctxt->cp15[c1_CPACR],	CPACR);
+-	write_sysreg(*cp15_64(ctxt, c2_TTBR0),	TTBR0);
+-	write_sysreg(*cp15_64(ctxt, c2_TTBR1),	TTBR1);
++	write_sysreg(*cp15_64(ctxt, c2_TTBR0),	TTBR0_64);
++	write_sysreg(*cp15_64(ctxt, c2_TTBR1),	TTBR1_64);
+ 	write_sysreg(ctxt->cp15[c2_TTBCR],	TTBCR);
+ 	write_sysreg(ctxt->cp15[c3_DACR],	DACR);
+ 	write_sysreg(ctxt->cp15[c5_DFSR],	DFSR);
+@@ -70,7 +70,7 @@ void __hyp_text __sysreg_restore_state(struct kvm_cpu_context *ctxt)
+ 	write_sysreg(ctxt->cp15[c5_AIFSR],	AIFSR);
+ 	write_sysreg(ctxt->cp15[c6_DFAR],	DFAR);
+ 	write_sysreg(ctxt->cp15[c6_IFAR],	IFAR);
+-	write_sysreg(*cp15_64(ctxt, c7_PAR),	PAR);
++	write_sysreg(*cp15_64(ctxt, c7_PAR),	PAR_64);
+ 	write_sysreg(ctxt->cp15[c10_PRRR],	PRRR);
+ 	write_sysreg(ctxt->cp15[c10_NMRR],	NMRR);
+ 	write_sysreg(ctxt->cp15[c10_AMAIR0],	AMAIR0);
+diff --git a/arch/arm/kvm/hyp/switch.c b/arch/arm/kvm/hyp/switch.c
+index ae45ae9..94d5bb9 100644
+--- a/arch/arm/kvm/hyp/switch.c
++++ b/arch/arm/kvm/hyp/switch.c
+@@ -134,12 +134,12 @@ static bool __hyp_text __populate_fault_info(struct kvm_vcpu *vcpu)
+ 	if (!(hsr & HSR_DABT_S1PTW) && (hsr & HSR_FSC_TYPE) == FSC_PERM) {
+ 		u64 par, tmp;
  
- /* Prototype: void *memcpy(void *dest, const void *src, size_t n); */
+-		par = read_sysreg(PAR);
++		par = read_sysreg(PAR_64);
+ 		write_sysreg(far, ATS1CPR);
+ 		isb();
  
-+.weak memcpy
-+ENTRY(__memcpy)
- ENTRY(mmiocpy)
- ENTRY(memcpy)
+-		tmp = read_sysreg(PAR);
+-		write_sysreg(par, PAR);
++		tmp = read_sysreg(PAR_64);
++		write_sysreg(par, PAR_64);
  
-@@ -68,3 +70,4 @@ ENTRY(memcpy)
- 
- ENDPROC(memcpy)
- ENDPROC(mmiocpy)
-+ENDPROC(__memcpy)
-diff --git a/arch/arm/lib/memmove.S b/arch/arm/lib/memmove.S
-index 69a9d47..313db6c 100644
---- a/arch/arm/lib/memmove.S
-+++ b/arch/arm/lib/memmove.S
-@@ -27,12 +27,14 @@
-  * occurring in the opposite direction.
-  */
- 
-+.weak memmove
-+ENTRY(__memmove)
- ENTRY(memmove)
- 	UNWIND(	.fnstart			)
- 
- 		subs	ip, r0, r1
- 		cmphi	r2, ip
--		bls	memcpy
-+		bls	__memcpy
- 
- 		stmfd	sp!, {r0, r4, lr}
- 	UNWIND(	.fnend				)
-@@ -225,3 +227,4 @@ ENTRY(memmove)
- 18:		backward_copy_shift	push=24	pull=8
- 
- ENDPROC(memmove)
-+ENDPROC(__memmove)
-diff --git a/arch/arm/lib/memset.S b/arch/arm/lib/memset.S
-index ed6d35d..64aa06a 100644
---- a/arch/arm/lib/memset.S
-+++ b/arch/arm/lib/memset.S
-@@ -16,6 +16,8 @@
- 	.text
- 	.align	5
- 
-+.weak memset
-+ENTRY(__memset)
- ENTRY(mmioset)
- ENTRY(memset)
- UNWIND( .fnstart         )
-@@ -135,6 +137,7 @@ UNWIND( .fnstart            )
- UNWIND( .fnend   )
- ENDPROC(memset)
- ENDPROC(mmioset)
-+ENDPROC(__memset)
- 
- ENTRY(__memset32)
- UNWIND( .fnstart         )
+ 		if (unlikely(tmp & 1))
+ 			return false; /* Translation failed, back to guest */
 -- 
 2.9.0
