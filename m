@@ -1,93 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756924AbeDBTJR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:09:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52510 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756743AbeDBTJO (ORCPT
+        id S1756942AbeDBTJi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:09:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42124 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754430AbeDBTGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:09:14 -0400
-Date: Mon, 2 Apr 2018 12:09:03 -0700
-From: Ram Pai <linuxram@us.ibm.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-        Michael Henders <hendersm@shaw.ca>
-Subject: Re: [PATCH] resource: Fix integer overflow at reallocation
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <20180402071616.27177-1-tiwai@suse.de>
+        Mon, 2 Apr 2018 15:06:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83BAA60817
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: jeffrey.t.kirsher@intel.com
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v8 2/7] ixgbe: eliminate duplicate barriers on weakly-ordered archs
+Date: Mon,  2 Apr 2018 15:06:25 -0400
+Message-Id: <1522695990-31082-3-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522695990-31082-1-git-send-email-okaya@codeaurora.org>
+References: <1522695990-31082-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180402071616.27177-1-tiwai@suse.de>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18040219-0008-0000-0000-000004E5D717
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040219-0009-0000-0000-00001E78DE5A
-Message-Id: <20180402190903.GH5743@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-02_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804020208
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 09:16:16AM +0200, Takashi Iwai wrote:
-> We've got a bug report indicating a kernel panic at booting on an
-> x86-32 system, and it turned out to be the invalid resource assigned
-> after reallocation.  __find_resource() first aligns the resource start
-> address and resets the end address with start+size-1 accordingly, then
-> checks whether it's contained.  Here the end address may overflow the
-> integer, although resource_contains() still returns true because the
-> function validates only start and end address.  So this ends up with
-> returning an invalid resource (start > end).
-> 
-> There was already an attempt to cover such a problem in the commit
-> 47ea91b4052d ("Resource: fix wrong resource window calculation"), but
-> this case is an overseen one.
-> 
-> This patch adds the validity check of the newly calculated resource
-> for avoiding the integer overflow problem.
+memory-barriers.txt has been updated as follows:
 
-Should we move this check "alloc.start <= alloc.end" into resource_contains()?
-Doing so will catch all uses of such erroneous (overflowing) resources.
+"When using writel(), a prior wmb() is not needed to guarantee that the
+cache coherent memory writes have completed before writing to the MMIO
+region."
 
-RP
+Remove old IA-64 comments in the code along with unneeded wmb() in front
+of writel().
 
-> 
-> Bugzilla: https://urldefense.proofpoint.com/v2/url?u=http-3A__bugzilla.opensuse.org_show-5Fbug.cgi-3Fid-3D1086739&d=DwIBAg&c=jf_iaSHvJObTbx-siA1ZOg&r=m-UrKChQVkZtnPpjbF6YY99NbT8FBByQ-E-ygV8luxw&m=FoiwlR-LTJ9_EBQsLYSCqXuWrGhU1lXycdvhbaK7wOk&s=clxOtFUIAMlPNwQJZTaKnmIta9pMtJ8XprmwVd-ylvo&e=
-> Fixes: 23c570a67448 ("resource: ability to resize an allocated resource")
-> Reported-and-tested-by: Michael Henders <hendersm@shaw.ca>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
-> 
-> Bjorn, I send this to you since the bug hits during PCI init, although
-> the culprit is in generic resource management.
-> 
->  kernel/resource.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/resource.c b/kernel/resource.c
-> index e270b5048988..2af6c03858b9 100644
-> --- a/kernel/resource.c
-> +++ b/kernel/resource.c
-> @@ -651,7 +651,8 @@ static int __find_resource(struct resource *root, struct resource *old,
->  			alloc.start = constraint->alignf(constraint->alignf_data, &avail,
->  					size, constraint->align);
->  			alloc.end = alloc.start + size - 1;
-> -			if (resource_contains(&avail, &alloc)) {
-> +			if (alloc.start <= alloc.end &&
-> +			    resource_contains(&avail, &alloc)) {
->  				new->start = alloc.start;
->  				new->end = alloc.end;
->  				return 0;
-> -- 
-> 2.16.2
+There are places in the code where wmb() has been used as a double barrier
+for CPU and IO in place of smp_wmb() and wmb() as an optimization. For
+such places, keep the wmb() but replace the following writel() with
+writel_relaxed() to have a sequence as
 
+wmb()
+writel_relaxed()
+mmio_wb()
+
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 23 ++---------------------
+ 1 file changed, 2 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index afadba9..c17924b 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -1696,12 +1696,6 @@ void ixgbe_alloc_rx_buffers(struct ixgbe_ring *rx_ring, u16 cleaned_count)
+ 		/* update next to alloc since we have filled the ring */
+ 		rx_ring->next_to_alloc = i;
+ 
+-		/* Force memory writes to complete before letting h/w
+-		 * know there are new descriptors to fetch.  (Only
+-		 * applicable for weak-ordered memory model archs,
+-		 * such as IA-64).
+-		 */
+-		wmb();
+ 		writel(i, rx_ring->tail);
+ 	}
+ }
+@@ -2467,10 +2461,6 @@ static int ixgbe_clean_rx_irq(struct ixgbe_q_vector *q_vector,
+ 	if (xdp_xmit) {
+ 		struct ixgbe_ring *ring = adapter->xdp_ring[smp_processor_id()];
+ 
+-		/* Force memory writes to complete before letting h/w
+-		 * know there are new descriptors to fetch.
+-		 */
+-		wmb();
+ 		writel(ring->next_to_use, ring->tail);
+ 
+ 		xdp_do_flush_map();
+@@ -8080,12 +8070,7 @@ static int ixgbe_tx_map(struct ixgbe_ring *tx_ring,
+ 	/* set the timestamp */
+ 	first->time_stamp = jiffies;
+ 
+-	/*
+-	 * Force memory writes to complete before letting h/w know there
+-	 * are new descriptors to fetch.  (Only applicable for weak-ordered
+-	 * memory model archs, such as IA-64).
+-	 *
+-	 * We also need this memory barrier to make certain all of the
++	/* We need this memory barrier to make certain all of the
+ 	 * status bits have been updated before next_to_watch is written.
+ 	 */
+ 	wmb();
+@@ -8102,7 +8087,7 @@ static int ixgbe_tx_map(struct ixgbe_ring *tx_ring,
+ 	ixgbe_maybe_stop_tx(tx_ring, DESC_NEEDED);
+ 
+ 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
+-		writel(i, tx_ring->tail);
++		writel_relaxed(i, tx_ring->tail);
+ 
+ 		/* we need this if more than one processor can write to our tail
+ 		 * at a time, it synchronizes IO on IA64/Altix systems
+@@ -10034,10 +10019,6 @@ static void ixgbe_xdp_flush(struct net_device *dev)
+ 	if (unlikely(!ring))
+ 		return;
+ 
+-	/* Force memory writes to complete before letting h/w know there
+-	 * are new descriptors to fetch.
+-	 */
+-	wmb();
+ 	writel(ring->next_to_use, ring->tail);
+ 
+ 	return;
 -- 
-Ram Pai
+2.7.4
