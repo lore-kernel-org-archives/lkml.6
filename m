@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754130AbeDBJDj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 05:03:39 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38057 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752011AbeDBJDi (ORCPT
+        id S1754145AbeDBJK4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 05:10:56 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38091 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbeDBJKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 05:03:38 -0400
-X-Google-Smtp-Source: AIpwx4+hQoN16c0VrBXsLkxNHTNtcYOCh1fPvJCwN0j/+la2GCokesYdVDj1PXPmlCwcXdl8LUocyg==
-Date: Mon, 2 Apr 2018 11:03:34 +0200
+        Mon, 2 Apr 2018 05:10:54 -0400
+X-Google-Smtp-Source: AIpwx49HGNAXLl/naw4ms3mpA5Bnmj26hjiBayC4DMjt5lxNln//RB3vDE1eERNnb+Q0DFUnQybspA==
+Date: Mon, 2 Apr 2018 11:10:48 +0200
 From: Ingo Molnar <mingo@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] SMP hotplug changes for v4.17
-Message-ID: <20180402090334.45ekwthhshuz3mf6@gmail.com>
+Subject: [GIT PULL] x86/apic changes for v4.17
+Message-ID: <20180402091048.fzyog2ypghquwn7m@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -26,138 +26,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-Please pull the latest smp-hotplug-for-linus git tree from:
+Please pull the latest x86-apic-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-hotplug-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-apic-for-linus
 
-   # HEAD: fcb3029a8d89487470f2e175645a9a993949233c cpu/hotplug: Fix unused function warning
+   # HEAD: e25283bf83bd97a61007ab383695f4872e2eb43f x86/apic: Finish removing unused callbacks
 
-Simplify the CPU hot-plug state machine.
+The main x86 APIC/IOAPIC changes in this cycle were:
+
+ - Robustify kexec support to more carefully restore
+   IRQ hardware state before  calling into
+   kexec/kdump kernels.                                (Baoquan He)
+
+ - Clean up the local APIC code a bit                  (Dou Liyang)
+
+ - Remove unused callbacks                             (David Rientjes)
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Arnd Bergmann (1):
-      cpu/hotplug: Fix unused function warning
+Baoquan He (6):
+      x86/apic: Split out restore_boot_irq_mode() from disable_IO_APIC()
+      x86/apic: Split disable_IO_APIC() into two functions to fix CONFIG_KEXEC_JUMP=y
+      x86/apic: Fix restoring boot IRQ mode in reboot and kexec/kdump
+      x86/apic: Remove the (now) unused disable_IO_APIC() function
+      x86/apic: Rename variables and functions related to x86_io_apic_ops
+      x86/apic: Set up through-local-APIC mode on the boot CPU if 'noapic' specified
 
-Lai Jiangshan (1):
-      cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states
+David Rientjes (1):
+      x86/apic: Finish removing unused callbacks
+
+Dou Liyang (6):
+      x86/x2apic: Mark set_x2apic_phys_mode() as __init
+      x86/apic: Simplify init_bsp_APIC() usage
+      x86/apic: Make setup_local_APIC() static
+      x86/apic: Move pending interrupt check code into it's own function
+      x86/apic: Modernize the pending interrupt code
+      x86/apic: Drop logical_smp_processor_id() inline
 
 
- kernel/cpu.c | 60 ++++++++++++++++++++++++------------------------------------
- 1 file changed, 24 insertions(+), 36 deletions(-)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 53f7dc65f9a3..0db8938fbb23 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -124,24 +124,11 @@ struct cpuhp_step {
- };
- 
- static DEFINE_MUTEX(cpuhp_state_mutex);
--static struct cpuhp_step cpuhp_bp_states[];
--static struct cpuhp_step cpuhp_ap_states[];
--
--static bool cpuhp_is_ap_state(enum cpuhp_state state)
--{
--	/*
--	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
--	 * purposes as that state is handled explicitly in cpu_down.
--	 */
--	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
--}
-+static struct cpuhp_step cpuhp_hp_states[];
- 
- static struct cpuhp_step *cpuhp_get_step(enum cpuhp_state state)
- {
--	struct cpuhp_step *sp;
--
--	sp = cpuhp_is_ap_state(state) ? cpuhp_ap_states : cpuhp_bp_states;
--	return sp + state;
-+	return cpuhp_hp_states + state;
- }
- 
- /**
-@@ -239,6 +226,15 @@ static int cpuhp_invoke_callback(unsigned int cpu, enum cpuhp_state state,
- }
- 
- #ifdef CONFIG_SMP
-+static bool cpuhp_is_ap_state(enum cpuhp_state state)
-+{
-+	/*
-+	 * The extra check for CPUHP_TEARDOWN_CPU is only for documentation
-+	 * purposes as that state is handled explicitly in cpu_down.
-+	 */
-+	return state > CPUHP_BRINGUP_CPU && state != CPUHP_TEARDOWN_CPU;
-+}
-+
- static inline void wait_for_ap_thread(struct cpuhp_cpu_state *st, bool bringup)
- {
- 	struct completion *done = bringup ? &st->done_up : &st->done_down;
-@@ -1224,7 +1220,7 @@ int __boot_cpu_id;
- #endif /* CONFIG_SMP */
- 
- /* Boot processor state steps */
--static struct cpuhp_step cpuhp_bp_states[] = {
-+static struct cpuhp_step cpuhp_hp_states[] = {
- 	[CPUHP_OFFLINE] = {
- 		.name			= "offline",
- 		.startup.single		= NULL,
-@@ -1289,24 +1285,6 @@ static struct cpuhp_step cpuhp_bp_states[] = {
- 		.teardown.single	= NULL,
- 		.cant_stop		= true,
- 	},
--	/*
--	 * Handled on controll processor until the plugged processor manages
--	 * this itself.
--	 */
--	[CPUHP_TEARDOWN_CPU] = {
--		.name			= "cpu:teardown",
--		.startup.single		= NULL,
--		.teardown.single	= takedown_cpu,
--		.cant_stop		= true,
--	},
--#else
--	[CPUHP_BRINGUP_CPU] = { },
--#endif
--};
--
--/* Application processor state steps */
--static struct cpuhp_step cpuhp_ap_states[] = {
--#ifdef CONFIG_SMP
- 	/* Final state before CPU kills itself */
- 	[CPUHP_AP_IDLE_DEAD] = {
- 		.name			= "idle:dead",
-@@ -1340,6 +1318,16 @@ static struct cpuhp_step cpuhp_ap_states[] = {
- 	[CPUHP_AP_ONLINE] = {
- 		.name			= "ap:online",
- 	},
-+	/*
-+	 * Handled on controll processor until the plugged processor manages
-+	 * this itself.
-+	 */
-+	[CPUHP_TEARDOWN_CPU] = {
-+		.name			= "cpu:teardown",
-+		.startup.single		= NULL,
-+		.teardown.single	= takedown_cpu,
-+		.cant_stop		= true,
-+	},
- 	/* Handle smpboot threads park/unpark */
- 	[CPUHP_AP_SMPBOOT_THREADS] = {
- 		.name			= "smpboot/threads:online",
-@@ -1408,11 +1396,11 @@ static int cpuhp_reserve_state(enum cpuhp_state state)
- 
- 	switch (state) {
- 	case CPUHP_AP_ONLINE_DYN:
--		step = cpuhp_ap_states + CPUHP_AP_ONLINE_DYN;
-+		step = cpuhp_hp_states + CPUHP_AP_ONLINE_DYN;
- 		end = CPUHP_AP_ONLINE_DYN_END;
- 		break;
- 	case CPUHP_BP_PREPARE_DYN:
--		step = cpuhp_bp_states + CPUHP_BP_PREPARE_DYN;
-+		step = cpuhp_hp_states + CPUHP_BP_PREPARE_DYN;
- 		end = CPUHP_BP_PREPARE_DYN_END;
- 		break;
- 	default:
+ arch/x86/include/asm/apic.h        |  18 +-----
+ arch/x86/include/asm/io_apic.h     |  10 ++--
+ arch/x86/include/asm/smp.h         |  10 ----
+ arch/x86/include/asm/x86_init.h    |   8 +--
+ arch/x86/kernel/apic/apic.c        | 111 ++++++++++++++++++++-----------------
+ arch/x86/kernel/apic/io_apic.c     |  16 ++----
+ arch/x86/kernel/apic/x2apic_phys.c |   2 +-
+ arch/x86/kernel/crash.c            |   3 +-
+ arch/x86/kernel/irqinit.c          |   9 ++-
+ arch/x86/kernel/machine_kexec_32.c |   8 +--
+ arch/x86/kernel/machine_kexec_64.c |   8 +--
+ arch/x86/kernel/reboot.c           |   3 +-
+ arch/x86/kernel/x86_init.c         |   6 +-
+ arch/x86/xen/apic.c                |   2 +-
+ drivers/iommu/irq_remapping.c      |   4 +-
+ 15 files changed, 101 insertions(+), 117 deletions(-)
