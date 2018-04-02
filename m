@@ -1,133 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752680AbeDBGaI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:30:08 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38357 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751928AbeDBGaG (ORCPT
+        id S1754174AbeDBGbE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:31:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45878 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754124AbeDBGbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:30:06 -0400
-X-Google-Smtp-Source: AIpwx4/Iaa5DcAtZ+3cg4ff3+diI7W0X8ju4WSvxaWJmquxO9JPX0kDdjMTpm7nLV1Cmi0okuQkZvw==
-Date: Mon, 2 Apr 2018 08:30:02 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@us.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] RCU changes for v4.17
-Message-ID: <20180402063002.l2kaek47dxsaayfh@gmail.com>
+        Mon, 2 Apr 2018 02:31:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD24C601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=varada@codeaurora.org
+Date: Mon, 2 Apr 2018 12:00:45 +0530
+From: Varadarajan Narayanan <varada@codeaurora.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
+Subject: Re: [PATCH v5 06/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1
+ board file
+Message-ID: <20180402063044.GA15767@codeaurora.org>
+References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
+ <1521800336-19266-7-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1521800336-19266-7-git-send-email-sricharan@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri, Mar 23, 2018 at 03:48:49PM +0530, Sricharan R wrote:
+> Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> ---
+>  arch/arm/boot/dts/Makefile                      |  1 +
+>  arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts | 20 ++++++++++++++++++++
+>  2 files changed, 21 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+> 
 
-Please pull the latest core-rcu-for-linus git tree from:
+NAND, BAM and SPI work fine.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-rcu-for-linus
+Tested-by: Varadarajan Narayanan <varada@codeaurora.org>
 
-   # HEAD: c4fb5f37001514c0004d17b79cf74a499b9bc320 Merge branch 'for-mingo' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu into core/rcu
+-Varada
 
-The main RCU subsystem changes in this cycle were:
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index ade7a38..b6c62c6 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -747,6 +747,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+>  	qcom-apq8084-ifc6540.dtb \
+>  	qcom-apq8084-mtp.dtb \
+>  	qcom-ipq4019-ap.dk01.1-c1.dtb \
+> +	qcom-ipq4019-ap.dk04.1-c1.dtb \
+>  	qcom-ipq8064-ap148.dtb \
+>  	qcom-msm8660-surf.dtb \
+>  	qcom-msm8960-cdp.dtb \
+> diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+> new file mode 100644
+> index 0000000..526b7f8
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+> @@ -0,0 +1,20 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> +
+> +#include "qcom-ipq4019-ap.dk04.1.dtsi"
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1-C1";
+> +
+> +	soc {
+> +		dma@7984000 {
+> +			status = "ok";
+> +		};
+> +
+> +		qpic-nand@79b0000 {
+> +			pinctrl-0 = <&nand_pins>;
+> +			pinctrl-names = "default";
+> +			status = "ok";
+> +		};
+> +	};
+> +};
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
- - Miscellaneous fixes, perhaps most notably removing obsolete
-   code whose only purpose in life was to gather information for
-   the now-removed RCU debugfs facility.  Other notable changes
-   include removing NO_HZ_FULL_ALL in favor of the nohz_full kernel
-   boot parameter, minor optimizations for expedited grace periods,
-   some added tracing, creating an RCU-specific workqueue using Tejun's
-   new WQ_MEM_RECLAIM flag, and several cleanups to code and comments.
-
- - SRCU cleanups and optimizations.
-
- - Torture-test updates, perhaps most notably the adding of ARMv8
-   support, but also including numerous cleanups and usability fixes.
-
- Thanks,
-
-	Ingo
-
------------------->
-Byungchul Park (1):
-      srcu: Remove dead code in srcu_gp_end()
-
-Ildar Ismagilov (3):
-      rcu: Fix misprint in srcu_funnel_exp_start
-      srcu: Prevent sdp->srcu_gp_seq_needed_exp counter wrap
-      srcu: Reduce scans of srcu_data in counter wrap check
-
-Lihao Liang (4):
-      rcu: Remove unnecessary spinlock in rcu_boot_init_percpu_data()
-      doc: Fix typo in rcutorture documentation
-      doc: Fix typo in rcu_head comments
-      rcutorture: Add basic ARM64 support to run scripts
-
-Liu, Changcheng (1):
-      rcu: Remove redundant nxttail index macro define
-
-Matthew Wilcox (1):
-      rcu: Use wrapper for lockdep asserts
-
-Paul E. McKenney (26):
-      sched/isolation: Eliminate NO_HZ_FULL_ALL
-      rcu: Fix CPU offload boot message when no CPUs are offloaded
-      rcu: Remove obsolete boost statistics for debugfs
-      rcu: Remove obsolete callback-invocation statistics for debugfs
-      rcu: Remove obsolete __rcu_pending() statistics for debugfs
-      rcu: Remove obsolete force-quiescent-state statistics for debugfs
-      rcu: More clearly identify grace-period kthread stack dump
-      rcu: Consolidate rcu.h #ifdefs
-      rcu: Fix init_rcu_head() comment.
-      rcu: Add more tracing of expedited grace periods
-      rcu: Trace expedited GP delays due to transitioning CPUs
-      rcu: Make expedited RCU CPU selection avoid unnecessary stores
-      srcu: Abstract function name
-      rcu: Remove SRCU throttling
-      rcutorture: Replace multi-instance kzalloc() with kcalloc()
-      rcutorture: Abstract function and module names
-      rcutorture: Avoid fake-writer use of undefined primitives
-      rcutorture: Re-enable testing of dynamic expediting
-      rcutorture: Record which grace-period primitives are tested
-      rcutorture: Update kvm.sh header comment
-      torture: Specify qemu memory size with --memory argument
-      torture: Default jitter off when running rcuperf
-      torture: Adjust rcuperf trace processing to allow for workqueues
-      torture: Grace periods do not piggyback off of themselves
-      torture: Provide more sensible nreader/nwriter defaults for rcuperf
-      rcu: Create RCU-specific workqueues with rescuers
-
-Tejun Heo (1):
-      rcu: Call touch_nmi_watchdog() while printing stall warnings
-
-
- Documentation/timers/NO_HZ.txt                     |  7 ---
- include/linux/rcupdate.h                           | 10 +--
- include/linux/types.h                              |  2 +-
- include/trace/events/rcu.h                         |  4 ++
- kernel/rcu/rcu.h                                   | 38 ++++++++----
- kernel/rcu/rcuperf.c                               | 21 ++++++-
- kernel/rcu/rcutorture.c                            | 72 ++++++++++++----------
- kernel/rcu/srcutree.c                              | 29 +++++----
- kernel/rcu/tree.c                                  | 72 ++++++++--------------
- kernel/rcu/tree.h                                  | 36 +----------
- kernel/rcu/tree_exp.h                              | 36 ++++++++---
- kernel/rcu/tree_plugin.h                           | 34 ++++++----
- kernel/time/Kconfig                                | 10 ---
- kernel/time/tick-sched.c                           | 22 +------
- .../testing/selftests/rcutorture/bin/functions.sh  | 17 ++++-
- .../rcutorture/bin/kvm-recheck-rcuperf-ftrace.sh   | 11 ++--
- .../selftests/rcutorture/bin/kvm-test-1-run.sh     |  4 +-
- tools/testing/selftests/rcutorture/bin/kvm.sh      | 22 +++++--
- .../selftests/rcutorture/configs/rcu/TASKS03       |  1 -
- .../selftests/rcutorture/configs/rcu/TASKS03.boot  |  2 +-
- .../selftests/rcutorture/configs/rcu/TREE04        |  1 -
- .../selftests/rcutorture/configs/rcu/TREE04.boot   |  2 +-
- .../selftests/rcutorture/configs/rcu/TREE07        |  1 -
- .../rcutorture/configs/rcuperf/ver_functions.sh    | 24 +-------
- .../selftests/rcutorture/doc/rcu-test-image.txt    |  2 +-
- 25 files changed, 238 insertions(+), 242 deletions(-)
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
