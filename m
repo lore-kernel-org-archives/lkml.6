@@ -1,53 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754364AbeDBJMi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 05:12:38 -0400
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:43001 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbeDBJMg (ORCPT
+        id S1754217AbeDBJQY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 05:16:24 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33092 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752420AbeDBJQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 05:12:36 -0400
-X-Google-Smtp-Source: AIpwx48OoYosJRyDLfHLBqyKjDzEoKFuYK7mV/n/V5lKClHwFdDl7ycuXV7FqfFxpgRwoFpAlOOWWA==
-Date: Mon, 2 Apr 2018 11:12:32 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com, valex@mellanox.com
-Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
- dump in second kernel
-Message-ID: <20180402091232.GE3313@nanopsycho>
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
- <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
- <20180330103907.GC3313@nanopsycho>
- <20180330151129.GG28244@lunn.ch>
+        Mon, 2 Apr 2018 05:16:21 -0400
+X-Google-Smtp-Source: AIpwx4/ILoqWeeorc0USnA/vEI9qtdKvgsoeWtOk85fpXBKek6+dveUK+Kb89KJlFRJfLx+6FaPtvQ==
+Date: Mon, 2 Apr 2018 14:46:17 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
+Message-ID: <20180402091617.GA3572@vireshk-i7>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180330151129.GG28244@lunn.ch>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fri, Mar 30, 2018 at 05:11:29PM CEST, andrew@lunn.ch wrote:
->> Please see:
->> http://patchwork.ozlabs.org/project/netdev/list/?series=36524
->> 
->> I bevieve that the solution in the patchset could be used for
->> your usecase too.
->
->Hi Jiri
->
->https://lkml.org/lkml/2018/3/20/436
->
->How well does this API work for a 2Gbyte snapshot?
+On 30-03-18, 00:26, Ilia Lin wrote:
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 275 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 267 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 410ae78..a0792bd 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -14,6 +14,7 @@
+>  #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+>  #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+>  #include <dt-bindings/clock/qcom,rpmcc.h>
+> +#include <dt-bindings/thermal/thermal.h>
+>  
+>  / {
+>  	model = "Qualcomm Technologies, Inc. MSM8996";
+> @@ -97,6 +98,11 @@
+>  			compatible = "qcom,kryo";
+>  			reg = <0x0 0x0>;
+>  			enable-method = "psci";
+> +			clocks = <&kryocc 0>;
+> +			operating-points-v2 = <&cluster0_opp>;
+> +			cooling-min-level = <0>;
+> +			cooling-max-level = <15>;
 
-Ccing Alex who did the tests.
+The min/max properties are removed from DT documentation now. You don't need to
+add them anymore.
 
->
->    Andrew
+> +	cluster0_opp: opp_table0 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
+
+Is Kryo like krait where CPUs do DVFS independently ? If yes, then opp-shared
+thing should be dropped.
+
+> +
+> +		opp-307200000 {
+> +			opp-hz = /bits/ 64 <  307200000 >;
+
+Why have you added spaces after < and before > here ?
+
+-- 
+viresh
