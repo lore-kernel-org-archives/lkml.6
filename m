@@ -1,80 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751263AbeDBL6l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 07:58:41 -0400
-Received: from mx-fe5-210.meituan.com ([103.37.138.210]:34964 "EHLO
-        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750927AbeDBL6j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 07:58:39 -0400
-DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 90B052976048
-Subject: [RFC] Is it correctly that the usage for spin_{lock|unlock}_irq in
- clear_page_dirty_for_io
-References: <157ed606-4a61-508b-d26a-2f5d638f39bb@meituan.com>
-To: tj@kernel.org, hannes@cmpxchg.org
-Cc: gthelen@google.com, npiggin@suse.de, akpm@osdl.org,
-        linux-kernel@vger.kernel.org, wanglong19@meituan.com
-From: Wang Long <wanglong19@meituan.com>
-X-Forwarded-Message-Id: <157ed606-4a61-508b-d26a-2f5d638f39bb@meituan.com>
-Message-ID: <d5f73e91-6fd5-12ab-d005-93a72e146464@meituan.com>
-Date: Mon, 2 Apr 2018 19:50:50 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <157ed606-4a61-508b-d26a-2f5d638f39bb@meituan.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1751298AbeDBMKg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 08:10:36 -0400
+Received: from mga17.intel.com ([192.55.52.151]:19875 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750927AbeDBMKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 08:10:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,395,1517904000";
+   d="scan'208";a="40063953"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: [PATCH] x86/mm: Fix documentation of module mapping with 4-level paging
+Date: Mon,  2 Apr 2018 15:10:25 +0300
+Message-Id: <20180402121025.10244-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w32BwoRs030867
 
+f5a40711fa58 ("x86/mm: Set MODULES_END to 0xffffffffff000000") changed
+MODULES_END back to fixed value, but didn't update documentation of
+memory layout for 4-level paging.
 
-Hi,  Johannes Weiner and Tejun Heo
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Fixes: f5a40711fa58 ("x86/mm: Set MODULES_END to 0xffffffffff000000")
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+---
+ Documentation/x86/x86_64/mm.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I use linux-4.4.y to test the new cgroup controller io and the current
-stable kernel linux-4.4.y has the follow logic
-
-
-int clear_page_dirty_for_io(struct page *page){
-...
-...
-                 memcg = mem_cgroup_begin_page_stat(page); ----------(a)
-                 wb = unlocked_inode_to_wb_begin(inode, &locked); ---------(b)
-                 if (TestClearPageDirty(page)) {
-                         mem_cgroup_dec_page_stat(memcg, MEM_CGROUP_STAT_DIRTY);
-                         dec_zone_page_state(page, NR_FILE_DIRTY);
-                         dec_wb_stat(wb, WB_RECLAIMABLE);
-                         ret =1;
-                 }
-                 unlocked_inode_to_wb_end(inode, locked); -----------(c)
-                 mem_cgroup_end_page_stat(memcg); -------------(d)
-                 return ret;
-...
-...
-}
-
-
-when memcg is moving, and I_WB_SWITCH flags for inode is set. the logic
-is the following:
-
-
-spin_lock_irqsave(&memcg->move_lock, flags); -------------(a)
-         spin_lock_irq(&inode->i_mapping->tree_lock); ------------(b)
-         spin_unlock_irq(&inode->i_mapping->tree_lock); -----------(c)
-spin_unlock_irqrestore(&memcg->move_lock, flags); -----------(d)
-
-
-after (c) , the local irq is enabled. I think it is not correct.
-
-We get a deadlock backtrace after (c), the cpu get an softirq and in the
-irq it also call mem_cgroup_begin_page_stat to lock the same
-memcg->move_lock.
-
-Since the conditions are too harsh, this scenario is difficult to
-reproduce.  But it really exists.
-
-So how about change (b) (c) to spin_lock_irqsave/spin_lock_irqrestore?
-
-Thanks:-)
+diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
+index ea91cb61a602..5432a96d31ff 100644
+--- a/Documentation/x86/x86_64/mm.txt
++++ b/Documentation/x86/x86_64/mm.txt
+@@ -20,7 +20,7 @@ ffffff0000000000 - ffffff7fffffffff (=39 bits) %esp fixup stacks
+ ffffffef00000000 - fffffffeffffffff (=64 GB) EFI region mapping space
+ ... unused hole ...
+ ffffffff80000000 - ffffffff9fffffff (=512 MB)  kernel text mapping, from phys 0
+-ffffffffa0000000 - [fixmap start]   (~1526 MB) module mapping space (variable)
++ffffffffa0000000 - fffffffffeffffff (1520 MB) module mapping space
+ [fixmap start]   - ffffffffff5fffff kernel-internal fixmap range
+ ffffffffff600000 - ffffffffff600fff (=4 kB) legacy vsyscall ABI
+ ffffffffffe00000 - ffffffffffffffff (=2 MB) unused hole
+-- 
+2.16.2
