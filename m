@@ -1,124 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752938AbeDBQeR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 12:34:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39818 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752627AbeDBQeQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 12:34:16 -0400
-Date: Mon, 2 Apr 2018 17:34:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [GIT PULL] regulator updates for v4.17
-Message-ID: <20180402163413.GV29239@sirena.org.uk>
+        id S1753049AbeDBQhF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 12:37:05 -0400
+Received: from mga11.intel.com ([192.55.52.93]:40933 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751443AbeDBQhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 12:37:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,396,1517904000";
+   d="scan'208";a="30101806"
+From: "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+To: Dmitry Vyukov <dvyukov@google.com>, Wanpeng Li <kernellwp@gmail.com>
+CC: syzbot
+        <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, kvm <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, Radim Krcmar <rkrcmar@redhat.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: RE: general protection fault in native_write_cr4
+Thread-Topic: general protection fault in native_write_cr4
+Thread-Index: AQHTeWfP9cfYc1jY/0ywH2eFaRZyXaNV4QeAgAI0EQCAk4VuAIACs20g
+Date: Mon, 2 Apr 2018 16:36:59 +0000
+Message-ID: <37306EFA9975BE469F115FDE982C075BCE92C301@ORSMSX114.amr.corp.intel.com>
+References: <f403043a9be41c978c0560c0d164@google.com>
+ <CANRm+Cy9-R=hBNwwUptVk_f8keX40-9yHkpqstWMP3pLSKpLGw@mail.gmail.com>
+ <CACT4Y+ZxPD_6JEntRVGdngn2QBzABwubYohpKVcWJy0Hv-jXBg@mail.gmail.com>
+ <CACT4Y+Zto0DQLwFtSxZbbkexqDeCwvJ4ks-QHAMn9=o6zxShnw@mail.gmail.com>
+ <CACT4Y+ZvP=TqBhEG1iagYMFbwhAr6jXwXgUvkukrrRg+qaJLQw@mail.gmail.com>
+In-Reply-To: <CACT4Y+ZvP=TqBhEG1iagYMFbwhAr6jXwXgUvkukrrRg+qaJLQw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTgzMjQ2NGEtYWEyMy00MzExLWE3NDItNmMyMDliNzdlNzE2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJuM09WRE01YkxSUTdsa2VRakwwZUlVWEtTeHRcL0tFK09vblwvR1F4QU5UZUJMVWtpOFd1MnlacmIwU2hWZitCa2UifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3ig5MTpp3LwprTX9"
-Content-Disposition: inline
-X-Cookie: Serenity through viciousness.
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w32GbApV019341
 
+On Sat, 2018-03-31, Dmitry Vyukov wrote:
+> On Wed, Dec 27, 2017 at 7:31 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> > On Tue, Dec 26, 2017 at 9:52 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >> On Wed, Dec 20, 2017 at 8:54 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+> >>> 2017-12-20 15:49 GMT+08:00 syzbot
+> >>> <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>:
+> >>>> Hello,
+> >>>>
+> >>>> syzkaller hit the following crash on
+> >>>> f6f3732162b5ae3c771b9285a5a32d72b8586920
+> >>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+> >>>> compiler: gcc (GCC) 7.1.1 20170620
+> >>>> .config is attached
+> >>>> Raw console output is attached.
+> >>>> C reproducer is attached
+> >>>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> >>>> for information about syzkaller reproducers
+> >>>>
+> >>>>
+> >>>
+> >>> I will have a look again, you continue to run it in kvm guest, right?
+> >>
+> >>
+> >> Our test machines are GCE VMs, so yes, the kernel that catches GPF is
+> >> run as kvm guest.
+> >
+> > up
+> >
+> > one of top crashers with 50K crashes
+> 
+> 
+> This sets a new record of 130000 crashed machines on syzbot infrastructure:
+> 
+> https://syzkaller.appspot.com/bug?id=2bf7b7983c2398ec6f0c4c6c87cb50223e8873f8
 
---3ig5MTpp3LwprTX9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is more than likely a known bug in the GCE kernel, i.e. the L0
+kernel.  The fix that Haozhong referenced needs to be applied to the
+L0 kernel (GCE), the L1 kernel (Syzkaller) is irrelevant.  You said
+that you double checked an upstream kernel, but I'm assuming you were
+referring to patching the L1 kernel (Syzkaller).
 
-The following changes since commit 3eb2ce825ea1ad89d20f7a3b5780df850e4be274:
+https://lkml.org/lkml/2017/10/31/432
 
-  Linux 4.16-rc7 (2018-03-25 12:44:30 -1000)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v4.17
-
-for you to fetch changes up to 36fd679f45a25a7c634b3dbec35a2d7fdb832a65:
-
-  Merge remote-tracking branches 'regulator/topic/88pg86x', 'regulator/topic/dt', 'regulator/topic/formatting' and 'regulator/topic/gpio' into regulator-next (2018-03-28 10:33:53 +0800)
-
-----------------------------------------------------------------
-regulator: Updates for v4.17
-
-A very small set of updates for the regulator API this time around,
-there's a few bug fixes and also:
-
- - Conversion of the regulator API to use GPIO descriptors rather than
-   numbers from Linus Walleij.
- - New drivers for Marvell 88PG86x and Qualcomm PM8998 and PMI8998.
-
-----------------------------------------------------------------
-Alexander Monakov (2):
-      regulator: 88pg86x: add DT bindings document
-      regulator: 88pg86x: new i2c dual regulator chip
-
-Bjorn Andersson (1):
-      regulator: qcom: smd: Add pm8998 and pmi8998 regulators
-
-Christophe JAILLET (1):
-      regulator: of: Add a missing 'of_node_put()' in an error handling path of 'of_regulator_match()'
-
-Christophe Jaillet (1):
-      regulator: gpio: Fix some error handling paths in 'gpio_regulator_probe()'
-
-Harald Geyer (1):
-      regulator: dt: regulator-name is required property
-
-Linus Walleij (3):
-      regulator: core: Support passing an initialized GPIO enable descriptor
-      regulator: da9055: Pass descriptor instead of GPIO number
-      regulator: da9211: Pass descriptors instead of GPIO numbers
-
-Mark Brown (5):
-      regulator: core: Add missing blank line between functions
-      Merge remote-tracking branch 'regulator/topic/core' into regulator-next
-      Merge remote-tracking branch 'regulator/topic/qcom' into regulator-next
-      Merge remote-tracking branch 'regulator/topic/qcom_smd' into regulator-next
-      Merge remote-tracking branches 'regulator/topic/88pg86x', 'regulator/topic/dt', 'regulator/topic/formatting' and 'regulator/topic/gpio' into regulator-next
-
-Nicholas Lowell (1):
-      regulator: giving regulator controlling gpios a non-empty label when used through the devicetree.
-
-Stephen Boyd (1):
-      regulator: qcom_smd: Drop regulator/{machine,of_regulator} includes
-
- .../devicetree/bindings/regulator/88pg86x.txt      |  22 ++++
- .../bindings/regulator/fixed-regulator.txt         |   1 +
- .../bindings/regulator/gpio-regulator.txt          |   2 +
- .../bindings/regulator/qcom,smd-rpm-regulator.txt  |  48 ++++++++
- drivers/regulator/88pg86x.c                        | 114 +++++++++++++++++++
- drivers/regulator/Kconfig                          |   9 ++
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/core.c                           |  26 +++--
- drivers/regulator/da9055-regulator.c               |   4 +-
- drivers/regulator/da9211-regulator.c               |  23 ++--
- drivers/regulator/gpio-regulator.c                 |  17 ++-
- drivers/regulator/of_regulator.c                   |   1 +
- drivers/regulator/qcom_smd-regulator.c             | 123 ++++++++++++++++++++-
- include/linux/mfd/da9055/pdata.h                   |   5 +-
- include/linux/regulator/da9211.h                   |   4 +-
- include/linux/regulator/driver.h                   |   3 +
- include/linux/soc/qcom/smd-rpm.h                   |   1 +
- 17 files changed, 367 insertions(+), 37 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/88pg86x.txt
- create mode 100644 drivers/regulator/88pg86x.c
-
---3ig5MTpp3LwprTX9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrCW4UACgkQJNaLcl1U
-h9BeRgf+OtMqxPWjX+9z9IeLFQggfe3SqUG9fGyi8erxQYoEx5tU1kjyoRP/fMMs
-pZoC006UuqjyFTb3blO0wX5DBouyXDMUXmJptVgJ1fFeYEorXgMjkni7y5YbfTBE
-WoSVqZZnB88hKRFWWQCQKB113fUwPoHQKWsVZhLnviE+FOv89sNuhqL2Ufr/xKLL
-R14ax15kzTjPQlA3umxG9sK2tfuo0sHUrYNTMGqDwlPDaC/3LRtmgok8t+SXxH/O
-kbu9QPuvUi5pNZMSwx15WfXXqxgUvL9LCT0NXcSqUUDsR95LKuIgO+o8M5IU5FwU
-E8LuxXAEJiMJGtQMHFPaSuVlHAOvug==
-=odP2
------END PGP SIGNATURE-----
-
---3ig5MTpp3LwprTX9--
+> >>>> kvm: KVM_SET_TSS_ADDR need to be called before entering vcpu
+> >>>> kasan: CONFIG_KASAN_INLINE enabled
+> >>>> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> >>>> general protection fault: 0000 [#1] SMP KASAN
+> >>>> Dumping ftrace buffer:
+> >>>>    (ftrace buffer empty)
+> >>>> Modules linked in:
+> >>>> CPU: 1 PID: 3142 Comm: syzkaller429302 Not tainted 4.15.0-rc3+ #224
+> >>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >>>> Google 01/01/2011
+> >>>> RIP: 0010:native_write_cr4+0x4/0x10 arch/x86/include/asm/special_insns.h:76
+> >>>> RSP: 0018:ffff8801ca6f75a0 EFLAGS: 00010093
+> >>>> RAX: ffff8801ca1c8700 RBX: 00000000001606e0 RCX: ffffffff811a2a92
+> >>>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000001606e0
+> >>>> RBP: ffff8801ca6f75a0 R08: 1ffff100394dee0f R09: 0000000000000004
+> >>>> R10: ffff8801ca6f7510 R11: 0000000000000004 R12: 0000000000000093
+> >>>> R13: ffff8801ca1c8700 R14: ffff8801db514850 R15: ffff8801db514850
+> >>>> FS:  0000000001031880(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+> >>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >>>> CR2: 0000000000000000 CR3: 0000000005e22006 CR4: 00000000001626e0
+> >>>> Call Trace:
+> >>>>  __write_cr4 arch/x86/include/asm/paravirt.h:76 [inline]
+> >>>>  __cr4_set arch/x86/include/asm/tlbflush.h:180 [inline]
+> >>>>  cr4_clear_bits arch/x86/include/asm/tlbflush.h:203 [inline]
+> >>>>  kvm_cpu_vmxoff arch/x86/kvm/vmx.c:3582 [inline]
+> >>>>  hardware_disable+0x34a/0x4b0 arch/x86/kvm/vmx.c:3588
+> >>>>  kvm_arch_hardware_disable+0x35/0xd0 arch/x86/kvm/x86.c:7982
+> >>>>  hardware_disable_nolock+0x30/0x40
+> >>>> arch/x86/kvm/../../../virt/kvm/kvm_main.c:3310
+> >>>>  on_each_cpu+0xca/0x1b0 kernel/smp.c:604
+> >>>>  hardware_disable_all_nolock+0x3e/0x50
+> >>>> arch/x86/kvm/../../../virt/kvm/kvm_main.c:3328
+> >>>>  hardware_disable_all arch/x86/kvm/../../../virt/kvm/kvm_main.c:3334
+> >>>> [inline]
+> >>>>  kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:742 [inline]
+> >>>>  kvm_put_kvm+0x956/0xdf0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:755
+> >>>>  kvm_vm_release+0x42/0x50 arch/x86/kvm/../../../virt/kvm/kvm_main.c:766
+> >>>>  __fput+0x327/0x7e0 fs/file_table.c:210
+> >>>>  ____fput+0x15/0x20 fs/file_table.c:244
+> >>>>  task_work_run+0x199/0x270 kernel/task_work.c:113
+> >>>>  exit_task_work include/linux/task_work.h:22 [inline]
+> >>>>  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+> >>>>  do_group_exit+0x149/0x400 kernel/exit.c:968
+> >>>>  SYSC_exit_group kernel/exit.c:979 [inline]
+> >>>>  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
+> >>>>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> >>>> RIP: 0033:0x441c78
+> >>>> RSP: 002b:00007ffe68e20f68 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> >>>> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441c78
+> >>>> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+> >>>> RBP: 00000000006cd018 R08: 00000000000000e7 R09: ffffffffffffffd0
+> >>>> R10: 0000000000000012 R11: 0000000000000246 R12: 0000000000404080
+> >>>> R13: 0000000000404110 R14: 0000000000000000 R15: 0000000000000000
+> >>>> Code: 0f 1f 80 00 00 00 00 55 48 89 e5 0f 20 d8 5d c3 0f 1f 80 00 00 00 00
+> >>>> 55 48 89 e5 0f 22 df 5d c3 0f 1f 80 00 00 00 00 55 48 89 e5 <0f> 22 e7 5d c3
+> >>>> 0f 1f 80 00 00 00 00 55 48 89 e5 44 0f 20 c0 5d
+> >>>> RIP: native_write_cr4+0x4/0x10 arch/x86/include/asm/special_insns.h:76 RSP:
+> >>>> ffff8801ca6f75a0
+> >>>> ---[ end trace ca14f0c15b26c251 ]---
+> >>>>
+> >>>>
+> >>>> ---
+> >>>> This bug is generated by a dumb bot. It may contain errors.
+> >>>> See https://goo.gl/tpsmEJ for details.
+> >>>> Direct all questions to syzkaller@googlegroups.com.
+> >>>> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+> >>>>
+> >>>> syzbot will keep track of this bug report.
+> >>>> Once a fix for this bug is merged into any tree, reply to this email with:
+> >>>> #syz fix: exact-commit-title
+> >>>> If you want to test a patch for this bug, please reply with:
+> >>>> #syz test: git://repo/address.git branch
+> >>>> and provide the patch inline or as an attachment.
+> >>>> To mark this as a duplicate of another syzbot report, please reply with:
+> >>>> #syz dup: exact-subject-of-another-report
+> >>>> If it's a one-off invalid bug report, please reply with:
+> >>>> #syz invalid
+> >>>> Note: if the crash happens again, it will cause creation of a new bug
+> >>>> report.
+> >>>> Note: all commands must start from beginning of the line in the email body.
