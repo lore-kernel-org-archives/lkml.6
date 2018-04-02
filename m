@@ -1,84 +1,91 @@
-Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AIpwx49I8UnwTVr9ztxPtVky7nsYwerbmyx4+owJiE/uuI8cd3n08/n7PyBVv5qsg5lXBmxch1Wo
-ARC-Seal: i=1; a=rsa-sha256; t=1522833554; cv=none;
+Return-Path: <mka@chromium.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1522708703; cv=none;
         d=google.com; s=arc-20160816;
-        b=g7ARXaOGX0lIIuR3i3jn6O2NlIoUln8HWQfm1Ef841mtBzOAr6Hn6iji+8u4g6UJSO
-         ylzSYCJ8Faz7k+UWTcO2cJis/6AqJ7uZDAnLL33wv2kwIvgnPXMOa0H3W/p4KQ7FYew3
-         JBorNZrVqHKE2n1U4CF9H8RHAA8KHlz4bV46wwQO+CC1GgaGB1LunCjJsUSP8uxLjeGQ
-         PqwKHPXUZ0I/EVfPsY1LkviZxive3V0ujlruRJCUQL7oSkyrQZw1oMxoKLHyx1bk3g+b
-         1VJwXxz6H8zF+HgmflAWG334J//ed5HGbKyxwhc1wnYXVzT/eDRkyo0FT4weWuNYCmQi
-         WqEw==
+        b=dWIuNIL6JjfFwGDEuKVDFFQ10qHXWNLvKB927bJmxgWsLyb/k5x65jUJ1/fj0Knexi
+         hIFMBHSfXDLQWI/HQ2VVuRb8AIB3O6ra2xoXr/orI2Nv/+WawejmUXGsENu9DtHbAeG1
+         TMuupt9C1Q6qwOOSIwdbgePuJmUJYr0SOjgoOV924eGwPIBpitWwQXm9D+bA4A5qUoZu
+         7Hx80AuETDkaV9vrN6YXX6r7NAkdrqi7k1Vg15w+UL5ibSEONecpjZRmK/RD6G8VuDZL
+         yDDyzYTKR9yPbIGRQ4tjbYBy/sDQc5OohwRTVr23ZXtcSO5fvSbNZL8SCqO66EahA09X
+         Qj8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=6rrBUm09oTQalFRxSqKf6vxMKoxP128izyMvI8yvkl4=;
-        b=AUBHqBWe878RsrV9ImgOCHR5wkkCPWkTzMnKe5o/I+NcAnyukFKttLap5POTMCAt+R
-         ujBsc4RXal/6XTnuIm8BcGjbAEMrz0ooh5nFg1na6fGqwV6UpbCmSfJs5BBq/tpEtHRl
-         rVNGZgS7n4dT75TpFkS0jde3RSjZU4vfOqpuDyGjZy0GvMBSjkMexUrR8lesDWTg5rcu
-         vTU0O7Rru1kcPdoPwZ9W1tuGeWtTQLaDq8KXkOGwEje+R1GGihuthb/kF/q+eggXwbcr
-         1fzhXtwk1EGSPBvC4yr7BKFrNNSLSXKoOap9n3goKDUiK/QpLCcU26ao3WSQWRZODFfi
-         ShKg==
+        bh=mWoDxO0pJPUTS3KMXzUh/m4XDiztfwTqv6AFAlLZHf8=;
+        b=s7hgxQmZ9qxiMfDehYK19dAIke48inWNMwxHG1oPI5ocPkX9Zs8ffgWfcs2+VPLI57
+         UsHxdYJZpLU+GBBNZHvCNYDaxOhVHLsoVGsHypu9yDvltEXwaWyhINr0fkUWEI1cQcHG
+         7/OfOoK/jwBDhHW6IV1+3kC3LXstF8f05hQxE1BRZAv/XmnL66vfI94dsdYlPW+wU3z8
+         +bl885PivfpycX9TCJsuYX/hFHBi8GT1LaNwsoo+R8jvcr0MUgIu/vkwDUx8E2x5LhlL
+         R+07L+9dxHVJnA9yUXIZ26BSWJbHwQi/2YW76rNCbjb0INzUMvu2LhUQ0m460ICAmwxV
+         CqLw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=kh3koJNt;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=peterz@infradead.org
+       dkim=pass header.i=@chromium.org header.s=google header.b=ab1B2PAC;
+       spf=pass (google.com: domain of mka@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mka@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=kh3koJNt;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Date: Wed, 4 Apr 2018 11:19:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>, Ingo Molnar <mingo@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
+       dkim=pass header.i=@chromium.org header.s=google header.b=ab1B2PAC;
+       spf=pass (google.com: domain of mka@chromium.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mka@chromium.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AIpwx4/aLnd/PXPJ9RSOUI3bKogt5jyL2raMWjZi0GsuhYJhV9pZDHQg6tTGhRYp1CvFxsVHsYOHSw==
+Date: Mon, 2 Apr 2018 15:38:21 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <a.p.zijlstra@chello.nl>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	James Y Knight <jyknight@google.com>,
 	Chandler Carruth <chandlerc@google.com>,
-	Stephen Hines <srhines@google.com>, Kees Cook <keescook@google.com>,
-	groeck@chromium.org, Greg Hackmann <ghackmann@google.com>,
-	Greg KH <gregkh@linuxfoundation.org>
+	Stephen Hines <srhines@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Kees Cook <keescook@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [GIT PULL] x86/build changes for v4.17
-Message-ID: <20180404091909.GH4082@hirez.programming.kicks-ass.net>
+Message-ID: <20180402223821.GC87376@google.com>
 References: <20180402095033.nfzcrmxvpm46dhbl@gmail.com>
  <CA+55aFzV8L-uv9706ryJ2mP9VGBuzqFVPu1cgYY+sZAtDAroqg@mail.gmail.com>
- <20180403085904.GY4082@hirez.programming.kicks-ass.net>
- <20180403095118.rpf7tj577dppvx7d@gmail.com>
- <20180403180658.GE87376@google.com>
- <CAKwvOdkaBNTyNjackJcWYkdfwyR2wjAruMFqN8LuYqC8V0ii_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdkaBNTyNjackJcWYkdfwyR2wjAruMFqN8LuYqC8V0ii_A@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CA+55aFzV8L-uv9706ryJ2mP9VGBuzqFVPu1cgYY+sZAtDAroqg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1596675801568391777?=
-X-GMAIL-MSGID: =?utf-8?q?1596806717508595645?=
+X-GMAIL-MSGID: =?utf-8?q?1596675801568391777?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 03, 2018 at 09:58:03PM +0000, Nick Desaulniers wrote:
-> Speaking more with our internal LLVM teams, there ARE a few different
-> approaches to implementing asm-goto in LLVM proposed, by external parties
-> to Google.  These proposals haven't progressed to code review, so we've
-> asked our LLVM teams to reignite these discussions with increased priority,
-> if not implement the feature outright.  We (Google kernel AND llvm hackers)
-> are committed to supporting the Linux kernel being built with Clang.
+El Mon, Apr 02, 2018 at 02:44:48PM -0700 Linus Torvalds ha dit:
+
+> On Mon, Apr 2, 2018 at 2:50 AM, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > The biggest change is the forcing of asm-goto support on x86, which effectively
+> > increases the GCC minimum supported version to gcc-4.5 (on x86).
 > 
-> I can see both sides where eventually a long-requested feature-request
-> should come to a head, especially with good evidence (
-> https://lkml.org/lkml/2018/2/14/895), but just as you wouldn't accept a
-> patch that doesn't compile with GCC, I'd like to request that we don't
-> merge patches that fail to compile with Clang (or at least start to think
-> what that might look like).
+> So my biggest worry isn't gcc-4.5 (anybody who hasn't updated deserves
+> to be forced, or can stay with old kernels).
+> 
+> No, my biggest worry is clang. What's the status there?
 
-Again, I ask what the plans are for asm-cc-output, hard depending on
-that is a few years out I imagine, but if you don't promise feature
-parity for all the features we use, I can see this all happening again.
+I know there is work in progress for asm-goto in clang, but I don't
+know the details or an ETA. Some folks in cc might have more
+information.
 
-Also, it would be good to get input on the whole memory model situation;
-esp. with people looking to do LTO builds, the C/C++ memory model can
-cause us quite some grief, for specifics I feel we should start a new
-thread. But this is another issue that's been raised several times
-without feedback.
+> I've pulled this, and honestly, the disaster with
+> -fmerge-all-constants makes me think that clang isn't that good a
+> compiler choice anyway, but it's sad if this undoes a lot of clang
+> work just because of the worries about Spectre and mis-speculated
+> branches.
+
+It would indeed be very unfortunate to loose clang support again, now
+that it just got added after years of joint efforts from different
+people. And this wasn't exclusively kernel work, in my experience over
+the past year the LLVM community was very open to adopt/implement
+changes needed to build the kernel without ugly hacks. It's still not
+a perfect world, but I think LLVM folks deserve some credit.
+
+Couldn't we just raise the minimum gcc version without enforcing
+asm-goto for clang (yet)? This would give almost everybody the desired
+extra protection, and give clang some slack to implement asm goto.
