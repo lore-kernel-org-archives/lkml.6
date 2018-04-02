@@ -1,75 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754140AbeDBB6h (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 21:58:37 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:47422 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754036AbeDBB6g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 21:58:36 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07402;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T-TpD53_1522634294;
-Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-To: Michal Hocko <mhocko@kernel.org>
-Cc: adobriyan@gmail.com, willy@infradead.org, mguzik@redhat.com,
-        gorcunov@openvz.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180327062939.GV5652@dhcp22.suse.cz>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <df28d1cb-0d43-1c40-9c24-c1abf1b9889a@linux.alibaba.com>
-Date: Sun, 1 Apr 2018 18:58:07 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180327062939.GV5652@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1754098AbeDBCAs (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 22:00:48 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:25874 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754036AbeDBCAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 22:00:47 -0400
+From: Wen Yang <wen.yang99@zte.com.cn>
+To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart.VanAssche@wdc.com, pmladek@suse.com,
+        sergey.senozhatsky.work@gmail.com, tj@kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn,
+        wen.yang99@zte.com.cn, Tan Hu <tan.hu@zte.com.cn>
+Subject: [PATCH v2] scsi: Introduce sdev_printk_ratelimited to throttle frequent printk
+Date: Mon, 2 Apr 2018 09:58:52 +0800
+Message-Id: <1522634332-151328-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-04-02 10:00:28,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-04-02 10:00:27,
+        Serialize complete at 2018-04-02 10:00:27
+X-MAIL: mse01.zte.com.cn w3220Rq3078174
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There would be so many same lines printed by frequent printk if one 
+disk went wrong, like,
+[  546.185242] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185258] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185280] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185307] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185334] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185364] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185390] sd 0:1:0:0: rejecting I/O to offline device
+[  546.185410] sd 0:1:0:0: rejecting I/O to offline device
+For slow serial console, the frequent printk may be blocked for a 
+long time, and if any spin_lock has been acquired before the printk 
+like in scsi_request_fn, watchdog could be triggered.
 
+Related disscussion can be found here,
+https://bugzilla.kernel.org/show_bug.cgi?id=199003
+And Petr brought the idea to throttle the frequent printk, it's 
+useless to print the same lines frequently after all.
 
-On 3/26/18 11:29 PM, Michal Hocko wrote:
-> On Tue 27-03-18 02:20:39, Yang Shi wrote:
-> [...]
-> The patch looks reasonable to me. Maybe it would be better to be more
-> explicit about the purpose of the patch. As others noticed, this alone
-> wouldn't solve the mmap_sem contention issues. I _think_ that if you
-> were more explicit about the mmap_sem abuse it would trigger less
-> questions.
->
-> I have just one more question. Now that you are touching this area,
-> would you be willing to remove the following ugliness?
->
->> diff --git a/kernel/sys.c b/kernel/sys.c
->> index f2289de..17bddd2 100644
->> --- a/kernel/sys.c
->> +++ b/kernel/sys.c
->> @@ -1959,7 +1959,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
->>   			return error;
->>   	}
->>   
->> -	down_write(&mm->mmap_sem);
->> +	down_read(&mm->mmap_sem);
-> Why do we need to hold mmap_sem here and call find_vma, when only
-> PR_SET_MM_ENV_END: is consuming it? I guess we can replace it wit the
-> new lock and take the mmap_sem only for PR_SET_MM_ENV_END.
+v2->v1: fix some typos
+ 
+Suggested-by: Petr Mladek <pmladek@suse.com>
+Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+CC: BartVanAssche <Bart.VanAssche@wdc.com>
+CC: Petr Mladek <pmladek@suse.com>
+CC: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC: Martin K. Petersen <martin.petersen@oracle.com>
+CC: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+CC: Tejun Heo <tj@kernel.org>
+---
+ drivers/scsi/scsi_lib.c    |  6 +++---
+ include/scsi/scsi_device.h | 10 ++++++++++
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-Sorry for taking a little bit longer to get back since I was traveling. 
-I think all the stuff can be protected by the new arg_lock except 
-mm->brk since arg_lock can't prevent from concurrent writing from sys_brk().
-
-We may use arg_lock to protect everything else other than mm->brk. The 
-complexity sounds acceptable.
-
-Of course, as Cyrill mentioned, he prefers to deprecating prctl_set_mm 
-since C/R is the only user of it. We may wait until he is done?
-
-Thanks,
-Yang
-
->
-> Thanks!
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index c84f931..f77e801 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1301,7 +1301,7 @@ static int scsi_setup_cmnd(struct scsi_device *sdev, struct request *req)
+ 			 * commands.  The device must be brought online
+ 			 * before trying any recovery commands.
+ 			 */
+-			sdev_printk(KERN_ERR, sdev,
++			sdev_printk_ratelimited(KERN_ERR, sdev,
+ 				    "rejecting I/O to offline device\n");
+ 			ret = BLKPREP_KILL;
+ 			break;
+@@ -1310,7 +1310,7 @@ static int scsi_setup_cmnd(struct scsi_device *sdev, struct request *req)
+ 			 * If the device is fully deleted, we refuse to
+ 			 * process any commands as well.
+ 			 */
+-			sdev_printk(KERN_ERR, sdev,
++			sdev_printk_ratelimited(KERN_ERR, sdev,
+ 				    "rejecting I/O to dead device\n");
+ 			ret = BLKPREP_KILL;
+ 			break;
+@@ -1802,7 +1802,7 @@ static void scsi_request_fn(struct request_queue *q)
+ 			break;
+ 
+ 		if (unlikely(!scsi_device_online(sdev))) {
+-			sdev_printk(KERN_ERR, sdev,
++			sdev_printk_ratelimited(KERN_ERR, sdev,
+ 				    "rejecting I/O to offline device\n");
+ 			scsi_kill_request(req, q);
+ 			continue;
+diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+index 7ae177c..378d3f2 100644
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -249,6 +249,16 @@ struct scsi_device {
+ #define sdev_printk(l, sdev, fmt, a...)				\
+ 	sdev_prefix_printk(l, sdev, NULL, fmt, ##a)
+ 
++#define sdev_printk_ratelimited(l, sdev, fmt, a...)			\
++({									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++									\
++	if (__ratelimit(&_rs))						\
++		sdev_prefix_printk(l, sdev, NULL, fmt, ##a);		\
++})
++
+ __printf(3, 4) void
+ scmd_printk(const char *, const struct scsi_cmnd *, const char *, ...);
+ 
+-- 
+1.8.3.1
