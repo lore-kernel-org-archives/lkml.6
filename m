@@ -1,80 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754200AbeDBGvA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:51:00 -0400
-Received: from ozlabs.org ([103.22.144.67]:38317 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752150AbeDBGu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:50:58 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 2 Apr 2018 16:50:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Johan Hedberg <johan.hedberg@intel.com>
-Cc: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
- tree
-Message-ID: <20180402165001.02856dee@canb.auug.org.au>
-In-Reply-To: <20180402053803.GA17750@x1c.home>
-References: <20180402123019.2e04f084@canb.auug.org.au>
-        <20180402053803.GA17750@x1c.home>
+        id S1754213AbeDBG4C (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:56:02 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36190 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752150AbeDBG4B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 02:56:01 -0400
+X-Google-Smtp-Source: AIpwx4//u90mb7c5FyyCGh8t/9Dn1EyvSazXY5jM+9ijFmi/Ck/zSopds0noS5qAAxyNlKhYvqpCyYa8mMMZXfsPdns=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/c4Js4VYBEqVhdF45z6tpi9y"; protocol="application/pgp-signature"
+In-Reply-To: <1522636236-12625-2-git-send-email-hejianet@gmail.com>
+References: <1522636236-12625-1-git-send-email-hejianet@gmail.com> <1522636236-12625-2-git-send-email-hejianet@gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Mon, 2 Apr 2018 08:55:59 +0200
+Message-ID: <CAKv+Gu96_sC1Q6-w4O-AXFZzNnH1WoGwJfqvSR+Q_k_bZbrUGg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/5] mm: page_alloc: remain memblock_next_valid_pfn()
+ on arm and arm64
+To: Jia He <hejianet@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        Grygorii Strashko <grygorii.strashko@linaro.org>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/c4Js4VYBEqVhdF45z6tpi9y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Johan,
-
-On Mon, 2 Apr 2018 08:38:03 +0300 Johan Hedberg <johan.hedberg@intel.com> w=
-rote:
+On 2 April 2018 at 04:30, Jia He <hejianet@gmail.com> wrote:
+> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+> where possible") optimized the loop in memmap_init_zone(). But it causes
+> possible panic bug. So Daniel Vacek reverted it later.
 >
-> On Mon, Apr 02, 2018, Stephen Rothwell wrote:
-> >   45a42bc9cc65 ("Bluetooth: hci_bcm: Remove DMI quirk for the MINIX Z83=
--4")
-> >   f9b95db0165a ("Bluetooth: btrsi: remove unused including <linux/versi=
-on.h>")
-> >   96e58d368fa6 ("Bluetooth: Set HCI_QUIRK_SIMULTANEOUS_DISCOVERY for BT=
-USB_QCA_ROME")
-> >   9ea471320e13 ("Bluetooth: Mark expected switch fall-throughs")
-> >=20
-> > are missing a Signed-off-by from their committer. =20
->=20
-> I think this is because I fixed up a missing author name in "Bluetooth:
-> hci_bcm: Remove DMI quirk for the MINIX Z83-4" and did a push --force,
-> whereas these patches were originally committed by Marcel. Should I be
-> adding my signed-off-by to all affected patches when doing such rebases?
+> But as suggested by Daniel Vacek, it is fine to using memblock to skip
+> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+>
+> On arm and arm64, memblock is used by default. But generic version of
+> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+> not always return the next valid one but skips more resulting in some
+> valid frames to be skipped (as if they were invalid). And that's why
+> kernel was eventually crashing on some !arm machines.
+>
+> And as verified by Eugeniu Rosca, arm can benifit from commit
+> b92df1de5d28. So remain the memblock_next_valid_pfn on arm{,64} and move
+> the related codes to arm64 arch directory.
+>
+> Suggested-by: Daniel Vacek <neelx@redhat.com>
+> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
 
-Yep, Ideally we should have a Signed-off-by from everyone who involved
-in getting the patches into the final tree.  That definitely means that
-the final committer needs to add one.
+Hello Jia,
 
---=20
-Cheers,
-Stephen Rothwell
+Apologies for chiming in late.
 
---Sig_/c4Js4VYBEqVhdF45z6tpi9y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+If we are going to rearchitect this, I'd rather we change the loop in
+memmap_init_zone() so that we skip to the next valid PFN directly
+rather than skipping to the last invalid PFN so that the pfn++ in the
+for () results in the next value. Can we replace the pfn++ there with
+a function calls that defaults to 'return pfn + 1', but does the skip
+for architectures that implement it?
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrB0pkACgkQAVBC80lX
-0GwuWwgAkn8XouVUI4euAd36PCPJgRdzjARYoxbVpDXPjaB3O8r9ExVshQpcolR1
-rX1NRCz3RWybUGNq92LB253VUlutzyl+7fDs2Jj1H6jjVRQxHbniyKVmuOP5E3An
-14e85SOagxjklSenaz2R92NakxSfOh7Dm1DOqtU846x1OZ38TeJWCR6i+9gmg5RE
-GRtYAPI4Zjj5gCxHcSO6o5ujJTRQcr3KUGTq2qNBKxfrOApiiGhSVvY+Y1tVVK3D
-/2uEUAxNRce/v0fWmqIDktfehfKDagwSMtlMo2N8Wi0oxqDGkWCskZ0OYD0lZM73
-fLFcQS94V8ETI6k/bPDs+ndI+5/yhA==
-=UAcJ
------END PGP SIGNATURE-----
-
---Sig_/c4Js4VYBEqVhdF45z6tpi9y--
+> ---
+>  arch/arm/include/asm/page.h   |  2 ++
+>  arch/arm/mm/init.c            | 31 ++++++++++++++++++++++++++++++-
+>  arch/arm64/include/asm/page.h |  2 ++
+>  arch/arm64/mm/init.c          | 31 ++++++++++++++++++++++++++++++-
+>  include/linux/mmzone.h        |  1 +
+>  mm/page_alloc.c               |  4 +++-
+>  6 files changed, 68 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
+> index 4355f0e..489875c 100644
+> --- a/arch/arm/include/asm/page.h
+> +++ b/arch/arm/include/asm/page.h
+> @@ -158,6 +158,8 @@ typedef struct page *pgtable_t;
+>
+>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>  extern int pfn_valid(unsigned long);
+> +extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+> +#define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
+>  #endif
+>
+>  #include <asm/memory.h>
+> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+> index a1f11a7..0fb85ca 100644
+> --- a/arch/arm/mm/init.c
+> +++ b/arch/arm/mm/init.c
+> @@ -198,7 +198,36 @@ int pfn_valid(unsigned long pfn)
+>         return memblock_is_map_memory(__pfn_to_phys(pfn));
+>  }
+>  EXPORT_SYMBOL(pfn_valid);
+> -#endif
+> +
+> +/* HAVE_MEMBLOCK is always enabled on arm */
+> +unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
+> +{
+> +       struct memblock_type *type = &memblock.memory;
+> +       unsigned int right = type->cnt;
+> +       unsigned int mid, left = 0;
+> +       phys_addr_t addr = PFN_PHYS(++pfn);
+> +
+> +       do {
+> +               mid = (right + left) / 2;
+> +
+> +               if (addr < type->regions[mid].base)
+> +                       right = mid;
+> +               else if (addr >= (type->regions[mid].base +
+> +                                 type->regions[mid].size))
+> +                       left = mid + 1;
+> +               else {
+> +                       /* addr is within the region, so pfn is valid */
+> +                       return pfn;
+> +               }
+> +       } while (left < right);
+> +
+> +       if (right == type->cnt)
+> +               return -1UL;
+> +       else
+> +               return PHYS_PFN(type->regions[right].base);
+> +}
+> +EXPORT_SYMBOL(memblock_next_valid_pfn);
+> +#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+>
+>  #ifndef CONFIG_SPARSEMEM
+>  static void __init arm_memory_present(void)
+> diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+> index 60d02c8..e57d3f2 100644
+> --- a/arch/arm64/include/asm/page.h
+> +++ b/arch/arm64/include/asm/page.h
+> @@ -39,6 +39,8 @@ typedef struct page *pgtable_t;
+>
+>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>  extern int pfn_valid(unsigned long);
+> +extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+> +#define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
+>  #endif
+>
+>  #include <asm/memory.h>
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 00e7b90..13e43ff 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -290,7 +290,36 @@ int pfn_valid(unsigned long pfn)
+>         return memblock_is_map_memory(pfn << PAGE_SHIFT);
+>  }
+>  EXPORT_SYMBOL(pfn_valid);
+> -#endif
+> +
+> +/* HAVE_MEMBLOCK is always enabled on arm64 */
+> +unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
+> +{
+> +       struct memblock_type *type = &memblock.memory;
+> +       unsigned int right = type->cnt;
+> +       unsigned int mid, left = 0;
+> +       phys_addr_t addr = PFN_PHYS(++pfn);
+> +
+> +       do {
+> +               mid = (right + left) / 2;
+> +
+> +               if (addr < type->regions[mid].base)
+> +                       right = mid;
+> +               else if (addr >= (type->regions[mid].base +
+> +                                 type->regions[mid].size))
+> +                       left = mid + 1;
+> +               else {
+> +                       /* addr is within the region, so pfn is valid */
+> +                       return pfn;
+> +               }
+> +       } while (left < right);
+> +
+> +       if (right == type->cnt)
+> +               return -1UL;
+> +       else
+> +               return PHYS_PFN(type->regions[right].base);
+> +}
+> +EXPORT_SYMBOL(memblock_next_valid_pfn);
+> +#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+>
+>  #ifndef CONFIG_SPARSEMEM
+>  static void __init arm64_memory_present(void)
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index d797716..f9c0c46 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -1245,6 +1245,7 @@ static inline int pfn_valid(unsigned long pfn)
+>                 return 0;
+>         return valid_section(__nr_to_section(pfn_to_section_nr(pfn)));
+>  }
+> +#define skip_to_last_invalid_pfn(pfn) (pfn)
+>  #endif
+>
+>  static inline int pfn_present(unsigned long pfn)
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index c19f5ac..30f7d76 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5483,8 +5483,10 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>                 if (context != MEMMAP_EARLY)
+>                         goto not_early;
+>
+> -               if (!early_pfn_valid(pfn))
+> +               if (!early_pfn_valid(pfn)) {
+> +                       pfn = skip_to_last_invalid_pfn(pfn);
+>                         continue;
+> +               }
+>                 if (!early_pfn_in_nid(pfn, nid))
+>                         continue;
+>                 if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
+> --
+> 2.7.4
+>
