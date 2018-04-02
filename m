@@ -1,50 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752224AbeDBF30 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 01:29:26 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:45679 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751466AbeDBF3Z (ORCPT
+        id S1751904AbeDBFbh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 01:31:37 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54916 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751314AbeDBFbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 01:29:25 -0400
-X-Google-Smtp-Source: AIpwx49031Gk59xSLp+p6p7lwsO845EPLwLI35KDp5+7AYLlIO9/GxgYMgrUaquihO8W5SvkaHRD2g==
-Date: Mon, 2 Apr 2018 14:29:20 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: wen.yang99@zte.com.cn
-Cc: yanaijie@huawei.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bart.VanAssche@wdc.com, pmladek@suse.com,
-        sergey.senozhatsky.work@gmail.com, tj@kernel.org,
-        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn, tan.hu@zte.com.cn
-Subject: Re: =?utf-8?B?562U5aSNOiBSZTogW1BBVENIIHYy?=
- =?utf-8?Q?=5D_scsi=3A_Introduc?= =?utf-8?Q?e?= sdev_printk_ratelimited to
- throttlefrequent printk
-Message-ID: <20180402052920.GF3795@jagdpanzerIV>
-References: <5AC1976F.1040801@huawei.com>
- <201804021314481872986@zte.com.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <201804021314481872986@zte.com.cn>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 2 Apr 2018 01:31:36 -0400
+From: rao.shoaib@oracle.com
+To: linux-kernel@vger.kernel.org
+Cc: paulmck@linux.vnet.ibm.com, joe@perches.com, willy@infradead.org,
+        brouer@redhat.com, linux-mm@kvack.org,
+        Rao Shoaib <rao.shoaib@oracle.com>
+Subject: [PATCH 0/2] Move kfree_rcu out of rcu code and use kfree_bulk
+Date: Sun,  1 Apr 2018 22:31:02 -0700
+Message-Id: <1522647064-27167-1-git-send-email-rao.shoaib@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8850 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=484
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804020059
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/02/18 13:14), wen.yang99@zte.com.cn wrote:
-> 
->    > It's true that this print for the same device is useless. But it's
->    > useful for different devices. Is it possible to limit the print only
->    > for the same device?
-> 
->    In our scene, it's  just for the same device (q->queuedata), Thanks.
+From: Rao Shoaib <rao.shoaib@oracle.com>
 
-Yes, what Jason meant was that rate limit struct is shared by different call
-sites - including scsi_request_fn() from different devices.
+This patch moves kfree_call_rcu() out of rcu related code to
+mm/slab_common and updates kfree_rcu() to use new bulk memory free
+functions as they are more efficient.
 
-If device1->scsi_request_fn()->sdev_printk_ratelimited() causes printk rate
-limit, then messages from device2->scsi_request_fn()->sdev_printk_ratelimited()
-may be lost entirely, unless you have enough of them.
+This is a resubmission of the previous patch.
 
-	-ss
+Changes:
+
+1) checkpatch.pl has been fixed, so kfree_rcu macro is much simpler
+
+2) To handle preemption, preempt_enable()/preempt_disable() statements
+   have been added to __rcu_bulk_free().
+
+
+Rao Shoaib (2):
+  Move kfree_call_rcu() to slab_common.c
+  kfree_rcu() should use kfree_bulk() interface
+
+ include/linux/mm.h       |   5 ++
+ include/linux/rcupdate.h |  43 +-----------
+ include/linux/rcutiny.h  |   8 ++-
+ include/linux/rcutree.h  |   2 -
+ include/linux/slab.h     |  42 ++++++++++++
+ kernel/rcu/tree.c        |  24 +++----
+ kernel/sysctl.c          |  40 +++++++++++
+ mm/slab.h                |  23 +++++++
+ mm/slab_common.c         | 172 +++++++++++++++++++++++++++++++++++++++++++++++
+ 9 files changed, 302 insertions(+), 57 deletions(-)
+
+-- 
+2.7.4
