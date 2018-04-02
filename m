@@ -1,90 +1,248 @@
-Return-Path: <nicolas.pitre@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1522693218; cv=none;
+Return-Path: <liuwenliang@huawei.com>
+X-Google-Smtp-Source: AIpwx49OcFBl5xE1JETdEZXFJnK5jV1naOAElutBLz38oU5ewmn3kaM8X77OUY64Ya2jWBohDYWm
+ARC-Seal: i=1; a=rsa-sha256; t=1522671905; cv=none;
         d=google.com; s=arc-20160816;
-        b=GPunxmuE9ankSoO5942ju3+doa/OxhkiEyUnnTYBpDACVYE+2ClKj1rdoqQ2jZ/ZyI
-         oW1FPwsyopoY4/kh1sp/7IXq/FC7L+xYS9yg0jXxMUsx/oZXxtn3JU5Wjb1R8F6hqoHl
-         4CCstmPr7wW1DMr1NtglUnFFMSIyw9wi3l+aNSG4JIjj9RTxNdPBu2JBh4mXxowoYJ+F
-         QgU+eXe83zUJX2A6RGT7TRGuJaDikSwVzJoTtY3ViDGMrcoFsmSe1yNOakVfGZtvWFd7
-         jg0COLkNJQ+jgaL89AVSHhBzRKgnezZ48xV1Gl5dqHBm5c6NeShkFKdZ5q0bU0KXsIQ1
-         dX7A==
+        b=rGNCkaLxVqUjNM9mepFMCnAPDiXwtyONP4dQRigvkkOApEnwHTts3CQLHb7rckyMnn
+         zLW7D0QruSehGxKSoUSZ0IgZ7mAG1iMQvbjS5plpPKVyeffzJSvuOTmLLABCllzOvsCq
+         FnnkRljFYzhW1VTjsdKtwp1IIrVQIzUlABDjJnxUl2eRBJ5aLUw/ViokumJgUnqp2WuH
+         Do89HxuJ5ZTlqG0tjBLvkVtChOUObvx9cKokuNzNhTI74TWbloSEU8zXpW4J7Q7VOy95
+         grCUDpEaXQiMMXB6c1QzBTdStoOcYu8XdhsDFKWEJzqc9ACmg7stJh71y5V10GNQU6EY
+         xIjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=PXnl9t3unwaczbJ7SBchb7sQfQIY9LA3+ZKbrnDz1iU=;
-        b=s6LS+O+zXLPKZ7Jfl/pi0vlTywRFEuVCC7B7OFXPAD1U6+BSr65GqaOuW9fJbL1ima
-         VL/DWfmFNQCE8MhCEnp7dCLWAv0epDFYccsQGCXDq9kn+M5IyPhVPbqFCzNTn7Dt9lP8
-         f67YKYVZGV8jXiFLmouHJkGc870ieHhXg/e8wPXAPhJGlyl3i+FI0vCShjmoddSk+fHt
-         AcSO5XpmlZmrAsyAuhcIN7+2mEEkk96LXD6+dHwSb4Da3R4tej2Nyw4ZwcdWdr3RgQUh
-         osdTP7OfiUULYJO0eDjyN34ncIyTuG5/L/J+GRUYU2P47DpFSpJkzQ1ZLJcM6TIWPSSq
-         VVjQ==
+        h=mime-version:references:in-reply-to:message-id:date:subject:to:from
+         :arc-authentication-results;
+        bh=Gpb+7F6xZlAlrjXr4acQmvpbV+LDUn3PAW9kWPRDQ7Q=;
+        b=K9JvpYST/7otlin9pb09aa375bBqT5dXu6/M17MHmvYjlggjUQzvVWVHF2E68OSF4b
+         cph45l8mEWhqmzILKPWl+QtuMcBcta303/Ms8zgklvM7Ur48TgujY0W4R2V2wzvraGqM
+         NRJ0ZqWwybRWCOE8bBdiTJGYhDzcEa9ROYR/PczeqlFRNfd92sY+ZXJ8OypgTQQBBMac
+         8Pgv6kTbITB9pcPVsdzX9cs9V1BDjZYTP/tcwEX6QG1yddEgSLIxVOVkUDrz0ASQVjj+
+         MTYZX8qKViFaRpBEyqHwERs0cLERrXF7lA5/+zwoHr8e9aMM9IouEr+xW8YFJ0cHfBLt
+         FiWA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=EHVdI8Lg;
-       spf=pass (google.com: domain of nicolas.pitre@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=nicolas.pitre@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=EHVdI8Lg;
-       spf=pass (google.com: domain of nicolas.pitre@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=nicolas.pitre@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx49WEhHo6w8rYiPIiTDgAT18DqlCDp8wI//Zr+IJ5boxupxA8RQduvO3BG0T9BrmPU669QVC9g==
-Date: Mon, 2 Apr 2018 14:20:15 -0400 (EDT)
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-cc: Abbott Liu <liuwenliang@huawei.com>, kstewart@linuxfoundation.org,
-    tixy@linaro.org, grygorii.strashko@linaro.org, julien.thierry@arm.com,
-    Catalin Marinas <catalin.marinas@arm.com>, linux@rasmusvillemoes.dk,
-    dhowells@redhat.com, linux-mm@kvack.org, mark.rutland@arm.com,
-    kvmarm@lists.cs.columbia.edu, f.fainelli@gmail.com,
-    Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-    kasan-dev@googlegroups.com, geert@linux-m68k.org,
-    linux-arm-kernel@lists.infradead.org, zhichao.huang@linaro.org,
-    aryabinin@virtuozzo.com, labbott@redhat.com, vladimir.murzin@arm.com,
-    keescook@chromium.org, Arnd Bergmann <arnd@arndb.de>, marc.zyngier@arm.com,
-    philip@cog.systems, jinb.park7@gmail.com, opendmb@gmail.com,
-    tglx@linutronix.de, dvyukov@google.com, ard.biesheuvel@linaro.org,
-    gregkh@linuxfoundation.org, mawilcox@microsoft.com,
-    linux-kernel@vger.kernel.org, alexander.levin@verizon.com,
-    james.morse@arm.com, kirill.shutemov@linux.intel.com, pombredanne@nexb.com,
-    Andrew Morton <akpm@linux-foundation.org>, thgarnie@google.com,
-    christoffer.dall@linaro.org
-Subject: Re: [PATCH v3 5/6] Initialize the mapping of KASan shadow memory
-In-Reply-To: <20180402181536.GJ16141@n2100.armlinux.org.uk>
-Message-ID: <nycvar.YSQ.7.76.1804021418220.28462@knanqh.ubzr>
-References: <20180402120440.31900-1-liuwenliang@huawei.com> <20180402120440.31900-6-liuwenliang@huawei.com> <nycvar.YSQ.7.76.1804021402521.28462@knanqh.ubzr> <20180402181536.GJ16141@n2100.armlinux.org.uk>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
+From: Abbott Liu <liuwenliang@huawei.com>
+To: <aryabinin@virtuozzo.com>, <dvyukov@google.com>, <corbet@lwn.net>,
+	<linux@armlinux.org.uk>, <christoffer.dall@linaro.org>,
+	<marc.zyngier@arm.com>, <kstewart@linuxfoundation.org>,
+	<gregkh@linuxfoundation.org>, <f.fainelli@gmail.com>,
+	<liuwenliang@huawei.com>, <akpm@linux-foundation.org>,
+	<linux@rasmusvillemoes.dk>, <mawilcox@microsoft.com>, <pombredanne@nexb.com>,
+	<ard.biesheuvel@linaro.org>, <vladimir.murzin@arm.com>,
+	<alexander.levin@verizon.com>, <nicolas.pitre@linaro.org>,
+	<tglx@linutronix.de>, <thgarnie@google.com>, <dhowells@redhat.com>,
+	<keescook@chromium.org>, <arnd@arndb.de>, <geert@linux-m68k.org>,
+	<tixy@linaro.org>, <julien.thierry@arm.com>, <mark.rutland@arm.com>,
+	<james.morse@arm.com>, <zhichao.huang@linaro.org>, <jinb.park7@gmail.com>,
+	<labbott@redhat.com>, <philip@cog.systems>, <grygorii.strashko@linaro.org>,
+	<catalin.marinas@arm.com>, <opendmb@gmail.com>,
+	<kirill.shutemov@linux.intel.com>, <kasan-dev@googlegroups.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.cs.columbia.edu>,
+	<linux-mm@kvack.org>
+Subject: [PATCH v3 3/6] Replace memory function for kasan
+Date: Mon, 2 Apr 2018 20:04:37 +0800
+Message-ID: <20180402120440.31900-4-liuwenliang@huawei.com>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180402120440.31900-1-liuwenliang@huawei.com>
+References: <20180402120440.31900-1-liuwenliang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.67.187.223]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596637214651692602?=
-X-GMAIL-MSGID: =?utf-8?q?1596659563722839106?=
+X-GMAIL-THRID: =?utf-8?q?1596637215476051533?=
+X-GMAIL-MSGID: =?utf-8?q?1596637215476051533?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2 Apr 2018, Russell King - ARM Linux wrote:
+From: Andrey Ryabinin <a.ryabinin@samsung.com>
 
-> On Mon, Apr 02, 2018 at 02:08:13PM -0400, Nicolas Pitre wrote:
-> > On Mon, 2 Apr 2018, Abbott Liu wrote:
-> > 
-> > > index c79b829..20161e2 100644
-> > > --- a/arch/arm/kernel/head-common.S
-> > > +++ b/arch/arm/kernel/head-common.S
-> > > @@ -115,6 +115,9 @@ __mmap_switched:
-> > >  	str	r8, [r2]			@ Save atags pointer
-> > >  	cmp	r3, #0
-> > >  	strne	r10, [r3]			@ Save control register values
-> > > +#ifdef CONFIG_KASAN
-> > > +	bl	kasan_early_init
-> > > +#endif
-> > >  	mov	lr, #0
-> > >  	b	start_kernel
-> > >  ENDPROC(__mmap_switched)
-> > 
-> > Would be better if lr was cleared before calling kasan_early_init.
-> 
-> No.  The code is correct - please remember that "bl" writes to LR.
+Functions like memset/memmove/memcpy do a lot of memory accesses.
+If bad pointer passed to one of these function it is important
+to catch this. Compiler's instrumentation cannot do this since
+these functions are written in assembly.
 
-You're right of course.
+KASan replaces memory functions with manually instrumented variants.
+Original functions declared as weak symbols so strong definitions
+in mm/kasan/kasan.c could replace them. Original functions have aliases
+with '__' prefix in name, so we could call non-instrumented variant
+if needed.
 
-/me giving up on patch review and going back to bed
+We must use __memcpy/__memset to replace memcpy/memset when we copy
+.data to RAM and when we clear .bss, because kasan_early_init can't
+be called before the initialization of .data and .bss.
 
+Reviewed-by: Russell King - ARM Linux <linux@armlinux.org.uk>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Tested-by: Florian Fainelli <f.fainelli@gmail.com>
+Tested-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Abbott Liu <liuwenliang@huawei.com>
+Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
+---
+ arch/arm/boot/compressed/decompress.c |  2 ++
+ arch/arm/boot/compressed/libfdt_env.h |  2 ++
+ arch/arm/include/asm/string.h         | 17 +++++++++++++++++
+ arch/arm/kernel/head-common.S         |  4 ++--
+ arch/arm/lib/memcpy.S                 |  3 +++
+ arch/arm/lib/memmove.S                |  5 ++++-
+ arch/arm/lib/memset.S                 |  3 +++
+ 7 files changed, 33 insertions(+), 3 deletions(-)
 
-Nicolas
+diff --git a/arch/arm/boot/compressed/decompress.c b/arch/arm/boot/compressed/decompress.c
+index a2ac3fe..0596077 100644
+--- a/arch/arm/boot/compressed/decompress.c
++++ b/arch/arm/boot/compressed/decompress.c
+@@ -49,8 +49,10 @@ extern int memcmp(const void *cs, const void *ct, size_t count);
+ #endif
+ 
+ #ifdef CONFIG_KERNEL_XZ
++#ifndef CONFIG_KASAN
+ #define memmove memmove
+ #define memcpy memcpy
++#endif
+ #include "../../../../lib/decompress_unxz.c"
+ #endif
+ 
+diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
+index 0743781..736ed36 100644
+--- a/arch/arm/boot/compressed/libfdt_env.h
++++ b/arch/arm/boot/compressed/libfdt_env.h
+@@ -17,4 +17,6 @@ typedef __be64 fdt64_t;
+ #define fdt64_to_cpu(x)		be64_to_cpu(x)
+ #define cpu_to_fdt64(x)		cpu_to_be64(x)
+ 
++#undef memset
++
+ #endif
+diff --git a/arch/arm/include/asm/string.h b/arch/arm/include/asm/string.h
+index 111a1d8..1f9016b 100644
+--- a/arch/arm/include/asm/string.h
++++ b/arch/arm/include/asm/string.h
+@@ -15,15 +15,18 @@ extern char * strchr(const char * s, int c);
+ 
+ #define __HAVE_ARCH_MEMCPY
+ extern void * memcpy(void *, const void *, __kernel_size_t);
++extern void *__memcpy(void *dest, const void *src, __kernel_size_t n);
+ 
+ #define __HAVE_ARCH_MEMMOVE
+ extern void * memmove(void *, const void *, __kernel_size_t);
++extern void *__memmove(void *dest, const void *src, __kernel_size_t n);
+ 
+ #define __HAVE_ARCH_MEMCHR
+ extern void * memchr(const void *, int, __kernel_size_t);
+ 
+ #define __HAVE_ARCH_MEMSET
+ extern void * memset(void *, int, __kernel_size_t);
++extern void *__memset(void *s, int c, __kernel_size_t n);
+ 
+ #define __HAVE_ARCH_MEMSET32
+ extern void *__memset32(uint32_t *, uint32_t v, __kernel_size_t);
+@@ -39,4 +42,18 @@ static inline void *memset64(uint64_t *p, uint64_t v, __kernel_size_t n)
+ 	return __memset64(p, v, n * 8, v >> 32);
+ }
+ 
++
++
++#if defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__)
++
++/*
++ * For files that not instrumented (e.g. mm/slub.c) we
++ * should use not instrumented version of mem* functions.
++ */
++
++#define memcpy(dst, src, len) __memcpy(dst, src, len)
++#define memmove(dst, src, len) __memmove(dst, src, len)
++#define memset(s, c, n) __memset(s, c, n)
++#endif
++
+ #endif
+diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
+index 6e0375e..c79b829 100644
+--- a/arch/arm/kernel/head-common.S
++++ b/arch/arm/kernel/head-common.S
+@@ -99,7 +99,7 @@ __mmap_switched:
+  THUMB(	ldmia	r4!, {r0, r1, r2, r3} )
+  THUMB(	mov	sp, r3 )
+ 	sub	r2, r2, r1
+-	bl	memcpy				@ copy .data to RAM
++	bl	__memcpy			@ copy .data to RAM
+ #endif
+ 
+    ARM(	ldmia	r4!, {r0, r1, sp} )
+@@ -107,7 +107,7 @@ __mmap_switched:
+  THUMB(	mov	sp, r3 )
+ 	sub	r2, r1, r0
+ 	mov	r1, #0
+-	bl	memset				@ clear .bss
++	bl	__memset			@ clear .bss
+ 
+ 	ldmia	r4, {r0, r1, r2, r3}
+ 	str	r9, [r0]			@ Save processor ID
+diff --git a/arch/arm/lib/memcpy.S b/arch/arm/lib/memcpy.S
+index 64111bd..79a83f8 100644
+--- a/arch/arm/lib/memcpy.S
++++ b/arch/arm/lib/memcpy.S
+@@ -61,6 +61,8 @@
+ 
+ /* Prototype: void *memcpy(void *dest, const void *src, size_t n); */
+ 
++.weak memcpy
++ENTRY(__memcpy)
+ ENTRY(mmiocpy)
+ ENTRY(memcpy)
+ 
+@@ -68,3 +70,4 @@ ENTRY(memcpy)
+ 
+ ENDPROC(memcpy)
+ ENDPROC(mmiocpy)
++ENDPROC(__memcpy)
+diff --git a/arch/arm/lib/memmove.S b/arch/arm/lib/memmove.S
+index 69a9d47..313db6c 100644
+--- a/arch/arm/lib/memmove.S
++++ b/arch/arm/lib/memmove.S
+@@ -27,12 +27,14 @@
+  * occurring in the opposite direction.
+  */
+ 
++.weak memmove
++ENTRY(__memmove)
+ ENTRY(memmove)
+ 	UNWIND(	.fnstart			)
+ 
+ 		subs	ip, r0, r1
+ 		cmphi	r2, ip
+-		bls	memcpy
++		bls	__memcpy
+ 
+ 		stmfd	sp!, {r0, r4, lr}
+ 	UNWIND(	.fnend				)
+@@ -225,3 +227,4 @@ ENTRY(memmove)
+ 18:		backward_copy_shift	push=24	pull=8
+ 
+ ENDPROC(memmove)
++ENDPROC(__memmove)
+diff --git a/arch/arm/lib/memset.S b/arch/arm/lib/memset.S
+index ed6d35d..64aa06a 100644
+--- a/arch/arm/lib/memset.S
++++ b/arch/arm/lib/memset.S
+@@ -16,6 +16,8 @@
+ 	.text
+ 	.align	5
+ 
++.weak memset
++ENTRY(__memset)
+ ENTRY(mmioset)
+ ENTRY(memset)
+ UNWIND( .fnstart         )
+@@ -135,6 +137,7 @@ UNWIND( .fnstart            )
+ UNWIND( .fnend   )
+ ENDPROC(memset)
+ ENDPROC(mmioset)
++ENDPROC(__memset)
+ 
+ ENTRY(__memset32)
+ UNWIND( .fnstart         )
+-- 
+2.9.0
