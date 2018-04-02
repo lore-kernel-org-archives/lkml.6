@@ -1,36 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754496AbeDBUs5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:48:57 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:4804 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753393AbeDBUsz (ORCPT
+        id S1753397AbeDBVCq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 17:02:46 -0400
+Received: from mail-ua0-f174.google.com ([209.85.217.174]:39215 "EHLO
+        mail-ua0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752321AbeDBVCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:48:55 -0400
-X-IronPort-AV: E=Sophos;i="5.48,397,1517846400";
-   d="scan'208";a="75769502"
-Subject: Re: [PATCH 1/2] blk-mq: Factor out [s]rcu synchronization
-To: Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-References: <20180402190053.GC388343@devbig577.frc2.facebook.com>
-From: Bart Van Assche <bart.vanassche@wdc.com>
-Message-ID: <f3ad5e36-11b8-2371-d634-a97280c4407e@wdc.com>
-Date: Mon, 2 Apr 2018 13:48:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 2 Apr 2018 17:02:44 -0400
+X-Google-Smtp-Source: AIpwx4/uBMvkHkkvRgM8zSGIGRqvwDbdEvPDuV/4hBq4CCJjPSM3ZnCW6AA88705aEjlG5BH1FnIOjZ+XlU46gmVb30=
 MIME-Version: 1.0
-In-Reply-To: <20180402190053.GC388343@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180402202951.GE388343@devbig577.frc2.facebook.com>
+References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com>
+ <de102067-b589-af05-ae71-496e948000f0@kernel.dk> <CALjAwxgtuEv=d1TfvH3EdXqZs=_6F7TinyVhbPdUmTsdK_5ghw@mail.gmail.com>
+ <20180402202951.GE388343@devbig577.frc2.facebook.com>
+From: Sitsofe Wheeler <sitsofe@gmail.com>
+Date: Mon, 2 Apr 2018 22:02:13 +0100
+Message-ID: <CALjAwxj1urPPNadmkmhLngHvYcfhh8d+_vPstPDQHXLiGL0oTw@mail.gmail.com>
+Subject: Re: [BISECTED][REGRESSION] Hang while booting EeePC 900
+To: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/18 12:00, Tejun Heo wrote:
-> Factor out [s]rcu synchronization in blk_mq_timeout_work() into
-> blk_mq_timeout_sync_rcu().  This is to add another user in the future
-> and doesn't cause any functional changes.
+Hi Tejun,
 
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+On 2 April 2018 at 21:29, Tejun Heo <tj@kernel.org> wrote:
+>
+> Can you see whether the following patch makes any difference?
+>
+> Thanks.
+>
+> diff --git a/block/blk-timeout.c b/block/blk-timeout.c
+> index a05e367..f0e6e41 100644
+> --- a/block/blk-timeout.c
+> +++ b/block/blk-timeout.c
+> @@ -165,7 +165,7 @@ void blk_abort_request(struct request *req)
+>                  * No need for fancy synchronizations.
+>                  */
+>                 blk_rq_set_deadline(req, jiffies);
+> -               mod_timer(&req->q->timeout, 0);
+> +               kblockd_schedule_work(&req->q->timeout_work);
+>         } else {
+>                 if (blk_mark_rq_complete(req))
+>                         return;
+
+That patch seems to fix the issue.
+
+-- 
+Sitsofe | http://sucs.org/~sits/
