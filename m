@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754326AbeDBG5q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:57:46 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44143 "EHLO
+        id S1754375AbeDBG7H (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:59:07 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46680 "EHLO
         mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754307AbeDBG5p (ORCPT
+        with ESMTP id S1754223AbeDBG7F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:57:45 -0400
-X-Google-Smtp-Source: AIpwx48RNEqtSsft40EGubgieWyAKzIb9xkV3AWkUunT1S3oRV+hd2lmT/VmrrBBI8NdKknN+xJw8a3I36QEqNj+Yag=
+        Mon, 2 Apr 2018 02:59:05 -0400
+X-Google-Smtp-Source: AIpwx4/+W7i5IA8+23UTSTlVPAPw4taUQro1Cvq2iEVLe+8bd6WGoam6svd1xuif4fCWRhBh2EAxN6qYKcteRge9YNQ=
 MIME-Version: 1.0
-In-Reply-To: <1522636236-12625-4-git-send-email-hejianet@gmail.com>
-References: <1522636236-12625-1-git-send-email-hejianet@gmail.com> <1522636236-12625-4-git-send-email-hejianet@gmail.com>
+In-Reply-To: <1522636236-12625-5-git-send-email-hejianet@gmail.com>
+References: <1522636236-12625-1-git-send-email-hejianet@gmail.com> <1522636236-12625-5-git-send-email-hejianet@gmail.com>
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 2 Apr 2018 08:57:44 +0200
-Message-ID: <CAKv+Gu8dO=fn+MLvZEGzJMvw6u1vMaACz5utBzE4YLLFduGRFQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] mm/memblock: introduce memblock_search_pfn_regions()
+Date: Mon, 2 Apr 2018 08:59:03 +0200
+Message-ID: <CAKv+Gu9x9bCvrHtXULtvk=bef3Yz0KsdQ8am7GuZj40cohodmQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/5] arm64: introduce pfn_valid_region()
 To: Jia He <hejianet@gmail.com>
 Cc: Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -24,6 +24,7 @@ Cc: Russell King <linux@armlinux.org.uk>,
         Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
         Vladimir Murzin <vladimir.murzin@arm.com>,
         Philip Derrin <philip@cog.systems>,
+        Grygorii Strashko <grygorii.strashko@linaro.org>,
         AKASHI Takahiro <takahiro.akashi@linaro.org>,
         James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
@@ -45,51 +46,126 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 2 April 2018 at 04:30, Jia He <hejianet@gmail.com> wrote:
-> This api is the preparation for further optimizing early_pfn_valid
+> This is the preparation for further optimizing in early_pfn_valid
+> on arm and arm64.
 >
 
-Please add more explanatation here of what it is you are doing and why.
-
+Same as before
+- please share the code between ARM and arm64. if necessary, you can
+invent a new HAVE_ARCH_xxx symbol that is only defined by ARM and
+arm64
+- please explain what the patch does and more importantly, why
 
 > Signed-off-by: Jia He <jia.he@hxt-semitech.com>
 > ---
->  include/linux/memblock.h | 2 ++
->  mm/memblock.c            | 9 +++++++++
->  2 files changed, 11 insertions(+)
+>  arch/arm/include/asm/page.h   |  3 ++-
+>  arch/arm/mm/init.c            | 24 ++++++++++++++++++++++++
+>  arch/arm64/include/asm/page.h |  3 ++-
+>  arch/arm64/mm/init.c          | 24 ++++++++++++++++++++++++
+>  4 files changed, 52 insertions(+), 2 deletions(-)
 >
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index 0257aee..a0127b3 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -203,6 +203,8 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
->              i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
->  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+> diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
+> index f38909c..3bd810e 100644
+> --- a/arch/arm/include/asm/page.h
+> +++ b/arch/arm/include/asm/page.h
+> @@ -158,9 +158,10 @@ typedef struct page *pgtable_t;
 >
-> +int memblock_search_pfn_regions(unsigned long pfn);
-> +
->  /**
->   * for_each_free_mem_range - iterate through free memblock areas
->   * @i: u64 used as loop variable
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index ba7c878..0f4004c 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1617,6 +1617,15 @@ static int __init_memblock memblock_search(struct memblock_type *type, phys_addr
->         return -1;
+>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>  extern int early_region_idx;
+> -extern int pfn_valid(unsigned long);
+> +extern int pfn_valid(unsigned long pfn);
+>  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+>  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
+> +extern int pfn_valid_region(unsigned long pfn);
+>  #endif
+>
+>  #include <asm/memory.h>
+> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+> index 06ed190..bdcbf58 100644
+> --- a/arch/arm/mm/init.c
+> +++ b/arch/arm/mm/init.c
+> @@ -201,6 +201,30 @@ int pfn_valid(unsigned long pfn)
 >  }
+>  EXPORT_SYMBOL(pfn_valid);
 >
-> +/* search memblock with the input pfn, return the region idx */
-> +int __init_memblock memblock_search_pfn_regions(unsigned long pfn)
+> +int pfn_valid_region(unsigned long pfn)
 > +{
+> +       unsigned long start_pfn, end_pfn;
 > +       struct memblock_type *type = &memblock.memory;
-> +       int mid = memblock_search(type, PFN_PHYS(pfn));
+> +       struct memblock_region *regions = type->regions;
 > +
-> +       return mid;
+> +       if (early_region_idx != -1) {
+> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
+> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
+> +                                       regions[early_region_idx].size);
+> +
+> +               if (pfn >= start_pfn && pfn < end_pfn)
+> +                       return !memblock_is_nomap(
+> +                                       &regions[early_region_idx]);
+> +       }
+> +
+> +       early_region_idx = memblock_search_pfn_regions(pfn);
+> +       if (early_region_idx == -1)
+> +               return false;
+> +
+> +       return !memblock_is_nomap(&regions[early_region_idx]);
 > +}
+> +EXPORT_SYMBOL(pfn_valid_region);
 > +
->  bool __init memblock_is_reserved(phys_addr_t addr)
+>  /* HAVE_MEMBLOCK is always enabled on arm */
+>  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
 >  {
->         return memblock_search(&memblock.reserved, addr) != -1;
+> diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+> index f0d8c8e5..7087b63 100644
+> --- a/arch/arm64/include/asm/page.h
+> +++ b/arch/arm64/include/asm/page.h
+> @@ -39,9 +39,10 @@ typedef struct page *pgtable_t;
+>
+>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>  extern int early_region_idx;
+> -extern int pfn_valid(unsigned long);
+> +extern int pfn_valid(unsigned long pfn);
+>  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+>  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
+> +extern int pfn_valid_region(unsigned long pfn);
+>  #endif
+>
+>  #include <asm/memory.h>
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 342e4e2..a1646b6 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -293,6 +293,30 @@ int pfn_valid(unsigned long pfn)
+>  }
+>  EXPORT_SYMBOL(pfn_valid);
+>
+> +int pfn_valid_region(unsigned long pfn)
+> +{
+> +       unsigned long start_pfn, end_pfn;
+> +       struct memblock_type *type = &memblock.memory;
+> +       struct memblock_region *regions = type->regions;
+> +
+> +       if (early_region_idx != -1) {
+> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
+> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
+> +                               regions[early_region_idx].size);
+> +
+> +               if (pfn >= start_pfn && pfn < end_pfn)
+> +                       return !memblock_is_nomap(
+> +                                       &regions[early_region_idx]);
+> +       }
+> +
+> +       early_region_idx = memblock_search_pfn_regions(pfn);
+> +       if (early_region_idx == -1)
+> +               return false;
+> +
+> +       return !memblock_is_nomap(&regions[early_region_idx]);
+> +}
+> +EXPORT_SYMBOL(pfn_valid_region);
+> +
+>  /* HAVE_MEMBLOCK is always enabled on arm64 */
+>  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
+>  {
 > --
 > 2.7.4
 >
