@@ -1,104 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeDBMWx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 08:22:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47392 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751239AbeDBMWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 08:22:52 -0400
-Date: Mon, 2 Apr 2018 14:22:49 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-kernel@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-Message-ID: <20180402142249.7e076a64@bbrezillon>
-In-Reply-To: <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
-References: <20180329131054.22506-1-peda@axentia.se>
-        <20180329153322.5e2fc1e7@bbrezillon>
-        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
-        <20180329154416.5c1a0013@bbrezillon>
-        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752431AbeDBMZu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 08:25:50 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:39231 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751260AbeDBMZr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 08:25:47 -0400
+X-Google-Smtp-Source: AIpwx4+2eJyo/o7QYk6sJoFMznzyLZCVVpbesi761xoaj8mbEq1erc8Fd7hXzdd0TvwiOCt+DACKNg==
+From: Jason Andryuk <jandryuk@gmail.com>
+To: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: benjamin.tissoires@redhat.com, andyrtr@archlinux.org,
+        aduggan@synaptics.com, Jason Andryuk <jandryuk@gmail.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: i801: blacklist Host Notify on HP EliteBook G3 850
+Date: Mon,  2 Apr 2018 08:25:36 -0400
+Message-Id: <20180402122536.5083-1-jandryuk@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018 16:27:12 +0200
-Peter Rosin <peda@axentia.se> wrote:
+The HP EliteBook G3 850 has a weird bug where a subsequent cold boot
+hangs while plugged in if Linux enables the Host Notify features of
+i2c-i801.  The cold boot hang depends on how the system boots.  It does
+not hang on UEFI Grub text boot or legacy Grub text boot.  But it does
+hang on legacy Grub graphical boot and Intel Boot Agent PXE text boot.
+Booting unplugged is not affected.
 
-> On 2018-03-29 15:44, Boris Brezillon wrote:
-> > On Thu, 29 Mar 2018 15:37:43 +0200
-> > Peter Rosin <peda@axentia.se> wrote:
-> >   
-> >> On 2018-03-29 15:33, Boris Brezillon wrote:  
-> >>> On Thu, 29 Mar 2018 15:10:54 +0200
-> >>> Peter Rosin <peda@axentia.se> wrote:
-> >>>     
-> >>>> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
-> >>>> flash accesses have a tendency to cause display disturbances. Add a
-> >>>> module param to disable DMA from the NAND controller, since that fixes
-> >>>> the display problem for me.
-> >>>>
-> >>>> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >>>> ---
-> >>>>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
-> >>>>  1 file changed, 6 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> >>>> index b2f00b398490..2ff7a77c7b8e 100644
-> >>>> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-> >>>> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> >>>> @@ -129,6 +129,11 @@
-> >>>>  #define DEFAULT_TIMEOUT_MS			1000
-> >>>>  #define MIN_DMA_LEN				128
-> >>>>  
-> >>>> +static bool atmel_nand_avoid_dma __read_mostly;
-> >>>> +
-> >>>> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
-> >>>> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);    
-> >>>
-> >>> I'm not a big fan of those driver specific cmdline parameters. Can't we
-> >>> instead give an higher priority to HLCDC master using the bus matrix?    
-> >>
-> >> I don't know if it will be enough, but we sure can try. However, I have
-> >> no idea how to do that. I will happily test stuff though...  
-> > 
-> > There's no interface to configure that from Linux, but you can try to
-> > tweak it with devmem and if that does the trick, maybe we can expose a
-> > way to configure that from Linux. For more details, see the "Bus Matrix
-> > (MATRIX)" section in Atmel datasheets.  
-> 
-> I don't seem to succeed in changing the registers I think I need to change.
-> I can poke the "Write Protection Mode Register" by writing MAT0 and MAT1 to
-> it.
+Disabling the Host Notify feature with disable_feature=0x20 works around
+the bug, so automatically do so based on DMI information.
 
-You mean 0x4D415400, right? ("MAT0" != 0x4D415400).
+More information can be found here:
+https://www.spinics.net/lists/linux-i2c/msg33938.html
 
-> But when I try to write to "Priority Registers B For Slaves" it doesn't
-> take, regardless of write protect mode.
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+I only added my machine to the blacklist, since it's the only one I've
+tested.  More systems can be added when identified and tested.
 
-Did you check MATRIX_WPSR after writing to MATRIX_PRXSY?
+ drivers/i2c/busses/i2c-i801.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-> 
-> Can the relevant bits only be written when the HLCDC is inactive or
-> something?
-
-I don't know, but maybe Nicolas does.
-
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index 692b34125866..2ff10c41ccad 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1042,6 +1042,24 @@ static const struct pci_device_id i801_ids[] = {
+ MODULE_DEVICE_TABLE(pci, i801_ids);
+ 
+ #if defined CONFIG_X86 && defined CONFIG_DMI
++static const struct dmi_system_id host_notify_dmi_blacklist[] = {
++	{
++		.ident = "HP EliteBook G3 850",
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "HP"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "HP EliteBook 850 G3"),
++		},
++	},
++};
++
++static void blacklist_features(struct i801_priv *priv) {
++	if (dmi_check_system(host_notify_dmi_blacklist)) {
++		dev_warn(&priv->pci_dev->dev,
++			 "SMBus Host Notify disabled on this system");
++		priv->features &= ~FEATURE_HOST_NOTIFY;
++	}
++}
++
+ static unsigned char apanel_addr;
+ 
+ /* Scan the system ROM for the signature "FJKEYINF" */
+@@ -1159,6 +1177,7 @@ static void i801_probe_optional_slaves(struct i801_priv *priv)
+ #else
+ static void __init input_apanel_init(void) {}
+ static void i801_probe_optional_slaves(struct i801_priv *priv) {}
++static void blacklist_features(struct i801_priv *priv) {}
+ #endif	/* CONFIG_X86 && CONFIG_DMI */
+ 
+ #if IS_ENABLED(CONFIG_I2C_MUX_GPIO) && defined CONFIG_DMI
+@@ -1562,6 +1581,7 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 				   i801_feature_names[i]);
+ 	}
+ 	priv->features &= ~disable_features;
++	blacklist_features(priv);
+ 
+ 	err = pcim_enable_device(dev);
+ 	if (err) {
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.14.3
