@@ -1,53 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751298AbeDBMKg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 08:10:36 -0400
-Received: from mga17.intel.com ([192.55.52.151]:19875 "EHLO mga17.intel.com"
+        id S1751709AbeDBMWG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 08:22:06 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:48796 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750927AbeDBMKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 08:10:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,395,1517904000";
-   d="scan'208";a="40063953"
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: [PATCH] x86/mm: Fix documentation of module mapping with 4-level paging
-Date: Mon,  2 Apr 2018 15:10:25 +0300
-Message-Id: <20180402121025.10244-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.16.2
+        id S1751198AbeDBMWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 08:22:01 -0400
+Date: Mon, 2 Apr 2018 14:21:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        Indranil Choudhury <indranil@chelsio.com>
+Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
+ dump in second kernel
+Message-ID: <20180402122140.GB8159@lunn.ch>
+References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <20180330103907.GC3313@nanopsycho>
+ <20180330105156.GA24344@chelsio.com>
+ <87k1tt2yo7.fsf@xmission.com>
+ <20180402091143.GD3313@nanopsycho>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180402091143.GD3313@nanopsycho>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f5a40711fa58 ("x86/mm: Set MODULES_END to 0xffffffffff000000") changed
-MODULES_END back to fixed value, but didn't update documentation of
-memory layout for 4-level paging.
+> >> The sysfs approach proposed here had been dropped in favour exporting
+> >> the dumps as ELF notes in /proc/vmcore.
+> >>
+> >> Will be posting the new patches soon.
+> >
+> >The concern was actually how you identify which device that came from.
+> >Where you read the identifier changes but sysfs or /proc/vmcore the
+> >change remains valid.
+> 
+> Yeah. I still don't see how you link the dump and the device.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Fixes: f5a40711fa58 ("x86/mm: Set MODULES_END to 0xffffffffff000000")
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
----
- Documentation/x86/x86_64/mm.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Jiri
 
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index ea91cb61a602..5432a96d31ff 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -20,7 +20,7 @@ ffffff0000000000 - ffffff7fffffffff (=39 bits) %esp fixup stacks
- ffffffef00000000 - fffffffeffffffff (=64 GB) EFI region mapping space
- ... unused hole ...
- ffffffff80000000 - ffffffff9fffffff (=512 MB)  kernel text mapping, from phys 0
--ffffffffa0000000 - [fixmap start]   (~1526 MB) module mapping space (variable)
-+ffffffffa0000000 - fffffffffeffffff (1520 MB) module mapping space
- [fixmap start]   - ffffffffff5fffff kernel-internal fixmap range
- ffffffffff600000 - ffffffffff600fff (=4 kB) legacy vsyscall ABI
- ffffffffffe00000 - ffffffffffffffff (=2 MB) unused hole
--- 
-2.16.2
+You can see in the third version the core code accept a free form
+name. The driver builds a name using the driver name and the adaptor
+name.
+
+What i think would be good is to try to have one API to the driver
+that can be used for both crash dumps and devlink snapshots. These are
+used at different times, but have basically the same purpose, get
+state from the device.
+
+      Andrew
