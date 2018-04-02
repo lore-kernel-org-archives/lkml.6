@@ -1,100 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754602AbeDBW6l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:58:41 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45419 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754522AbeDBW6k (ORCPT
+        id S1754662AbeDBW7L (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:59:11 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40257 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754604AbeDBW7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:58:40 -0400
-X-Google-Smtp-Source: AIpwx4/b6L016KxVZGlFb8sLtNBleTsvydaEJKNDoIQOzx/L5tWhY+429FydKx87e3XibIaKEXrYMQ==
-From: Omar Sandoval <osandov@osandov.com>
-To: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-team@fb.com, Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>, stable@kernel.org
-Subject: [PATCH] bitmap: fix memset optimization on big-endian systems
-Date: Mon,  2 Apr 2018 15:58:31 -0700
-Message-Id: <817147544aa3ecc2b78d6cadeab713869d8805e6.1522709616.git.osandov@fb.com>
-X-Mailer: git-send-email 2.16.3
+        Mon, 2 Apr 2018 18:59:08 -0400
+X-Google-Smtp-Source: AIpwx4+9NECXjglU71mxkyckhvlANRa0bebtxtOnH76ZcRHXS2h4v2VyEWl8IEYJN5Cy7AResY3i8w==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        Doug Berger <opendmb@gmail.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net 1/2] net: bcmgenet: Fix sparse warnings in bcmgenet_put_tx_csum()
+Date: Mon,  2 Apr 2018 15:58:55 -0700
+Message-Id: <20180402225856.4351-2-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180402225856.4351-1-f.fainelli@gmail.com>
+References: <20180402225856.4351-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+skb->protocol is a __be16 which we would be calling htons() against,
+while this is not wrong per-se as it correctly results in swapping the
+value on LE hosts, this still upsets sparse. Adopt a similar pattern to
+what other drivers do and just assign ip_ver to skb->protocol, and then
+use htons() against the different constants such that the compiler can
+resolve the values at build time.
 
-Commit 2a98dc028f91 introduced an optimization to bitmap_{set,clear}()
-which uses memset() when the start and length are constants aligned to a
-byte. This is wrong on big-endian systems; our bitmaps are arrays of
-unsigned long, so bit n is not at byte n / 8 in memory. This was caught
-by the Btrfs selftests, but the bitmap selftests also fail when run on a
-big-endian machine.
-
-We can still use memset if the start and length are aligned to an
-unsigned long, so do that on big-endian. The same problem applies to the
-memcmp in bitmap_equal(), so fix it there, too.
-
-Fixes: 2a98dc028f91 ("include/linux/bitmap.h: turn bitmap_set and bitmap_clear into memset when possible")
-Fixes: 2c6deb01525a ("bitmap: use memcmp optimisation in more situations")
-Cc: stable@kernel.org
-Reported-by: "Erhard F." <erhard_f@mailbox.org>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
+Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- include/linux/bitmap.h | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 5f11fbdc27f8..1ee46f492267 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -302,12 +302,20 @@ static inline void bitmap_complement(unsigned long *dst, const unsigned long *sr
- 		__bitmap_complement(dst, src, nbits);
- }
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+index b1e35a9accf1..aeb329690f78 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -1460,7 +1460,7 @@ static struct sk_buff *bcmgenet_put_tx_csum(struct net_device *dev,
+ 	struct sk_buff *new_skb;
+ 	u16 offset;
+ 	u8 ip_proto;
+-	u16 ip_ver;
++	__be16 ip_ver;
+ 	u32 tx_csum_info;
  
-+#ifdef __LITTLE_ENDIAN
-+#define BITMAP_MEM_ALIGNMENT 8
-+#else
-+#define BITMAP_MEM_ALIGNMENT (8 * sizeof(unsigned long))
-+#endif
-+#define BITMAP_MEM_MASK (BITMAP_MEM_ALIGNMENT - 1)
-+
- static inline int bitmap_equal(const unsigned long *src1,
- 			const unsigned long *src2, unsigned int nbits)
- {
- 	if (small_const_nbits(nbits))
- 		return !((*src1 ^ *src2) & BITMAP_LAST_WORD_MASK(nbits));
--	if (__builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	if (__builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+	    IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		return !memcmp(src1, src2, nbits / 8);
- 	return __bitmap_equal(src1, src2, nbits);
- }
-@@ -358,8 +366,10 @@ static __always_inline void bitmap_set(unsigned long *map, unsigned int start,
- {
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__set_bit(start, map);
--	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
--		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
-+		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		memset((char *)map + start / 8, 0xff, nbits / 8);
- 	else
- 		__bitmap_set(map, start, nbits);
-@@ -370,8 +380,10 @@ static __always_inline void bitmap_clear(unsigned long *map, unsigned int start,
- {
- 	if (__builtin_constant_p(nbits) && nbits == 1)
- 		__clear_bit(start, map);
--	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
--		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
-+	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
-+		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
-+		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
- 		memset((char *)map + start / 8, 0, nbits / 8);
- 	else
- 		__bitmap_clear(map, start, nbits);
+ 	if (unlikely(skb_headroom(skb) < sizeof(*status))) {
+@@ -1480,12 +1480,12 @@ static struct sk_buff *bcmgenet_put_tx_csum(struct net_device *dev,
+ 	status = (struct status_64 *)skb->data;
+ 
+ 	if (skb->ip_summed  == CHECKSUM_PARTIAL) {
+-		ip_ver = htons(skb->protocol);
++		ip_ver = skb->protocol;
+ 		switch (ip_ver) {
+-		case ETH_P_IP:
++		case htons(ETH_P_IP):
+ 			ip_proto = ip_hdr(skb)->protocol;
+ 			break;
+-		case ETH_P_IPV6:
++		case htons(ETH_P_IPV6):
+ 			ip_proto = ipv6_hdr(skb)->nexthdr;
+ 			break;
+ 		default:
+@@ -1501,7 +1501,8 @@ static struct sk_buff *bcmgenet_put_tx_csum(struct net_device *dev,
+ 		 */
+ 		if (ip_proto == IPPROTO_TCP || ip_proto == IPPROTO_UDP) {
+ 			tx_csum_info |= STATUS_TX_CSUM_LV;
+-			if (ip_proto == IPPROTO_UDP && ip_ver == ETH_P_IP)
++			if (ip_proto == IPPROTO_UDP &&
++			    ip_ver == htons(ETH_P_IP))
+ 				tx_csum_info |= STATUS_TX_CSUM_PROTO_UDP;
+ 		} else {
+ 			tx_csum_info = 0;
 -- 
-2.16.3
+2.14.1
