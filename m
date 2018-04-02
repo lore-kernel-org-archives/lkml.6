@@ -1,68 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754417AbeDBIEv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 04:04:51 -0400
-Received: from mga01.intel.com ([192.55.52.88]:39011 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754288AbeDBIEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 04:04:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,394,1517904000";
-   d="scan'208";a="30329792"
-Message-ID: <1522685086.2498.24.camel@intel.com>
-Subject: Re: [PATCH v6 11/16] nios2: Switch to generic free_initrd_mem.
-From: Ley Foon Tan <ley.foon.tan@intel.com>
-To: Shea Levy <shea@shealevy.com>, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc: nios2-dev@lists.rocketboards.org
-Date: Tue, 03 Apr 2018 00:04:46 +0800
-In-Reply-To: <20180401145931.7932-11-shea@shealevy.com>
-References: <20180329113207.30674-1-shea@shealevy.com>
-         <20180401145931.7932-1-shea@shealevy.com>
-         <20180401145931.7932-11-shea@shealevy.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
+        id S1754392AbeDBIPa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 04:15:30 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44367 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751869AbeDBIP2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 04:15:28 -0400
+X-Google-Smtp-Source: AIpwx4+0IyanFAqo56+Mcr0yzUDPRdNUpNzmpuhVrOdkAoeCLWP/wHPB/D+70ovglTke2asmljWD2g==
+Subject: Re: [PATCH v5 5/5] mm: page_alloc: reduce unnecessary binary search
+ in early_pfn_valid()
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
+References: <1522636236-12625-1-git-send-email-hejianet@gmail.com>
+ <1522636236-12625-6-git-send-email-hejianet@gmail.com>
+ <CAKv+Gu9jSXq7YN68Mk7WV4+aLr=nRtHmuQnHMdM8YhgeA-SYsg@mail.gmail.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <75088758-f59c-c65a-6e88-116c1e6b6675@gmail.com>
+Date: Mon, 2 Apr 2018 16:15:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu9jSXq7YN68Mk7WV4+aLr=nRtHmuQnHMdM8YhgeA-SYsg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-04-01 at 10:59 -0400, Shea Levy wrote:
-> The first patch in this series added a weakly-defined generic
-> implementation, which is functionally identical to the
-> architecture-specific one removed here.
-> 
-> Series boot-tested on RISC-V (which now uses the generic
-> implementation) and x86_64 (which doesn't).
-> 
-> Signed-off-by: Shea Levy <shea@shealevy.com>
 
-Acked-by: Ley Foon Tan <ley.foon.tan@intel.com>
 
-> ---
->  arch/nios2/mm/init.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/arch/nios2/mm/init.c b/arch/nios2/mm/init.c
-> index c92fe4234009..3df75ff8c768 100644
-> --- a/arch/nios2/mm/init.c
-> +++ b/arch/nios2/mm/init.c
-> @@ -82,13 +82,6 @@ void __init mmu_init(void)
->         flush_tlb_all();
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void __init free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -       free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void __ref free_initmem(void)
->  {
->         free_initmem_default(-1);
-> --
-> 2.16.2
+On 4/2/2018 3:00 PM, Ard Biesheuvel Wrote:
+> How much does it improve the performance? And in which cases?
+>
+> I guess it improves boot time on systems with physical address spaces
+> that are sparsely populated with DRAM, but you really have to quantify
+> this if you want other people to care.
+Yes, I write the performance in patch 0/5. I will write it in the patch 
+description later.
+
+-- 
+Cheers,
+Jia
