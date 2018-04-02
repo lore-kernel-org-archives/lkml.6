@@ -1,33 +1,33 @@
 Return-Path: <mathieu.poirier@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1522706257; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522704881; cv=none;
         d=google.com; s=arc-20160816;
-        b=xFku0zc5wxisY/itLTs0MtwFydCRhJbmP5BW5Jti93S5bbSjT43pLBI1iXKa82cIma
-         tmGOyYjhtHOtppl8tAmXcg4QECjpUk43vYCs+VH6qKekGxNy8icZxfuzB2c6JvdaACCZ
-         uymHoJi6NYxU1iyFyI9QZAlH/Jrom2LSBFhU7AZCfXmKOwPGP1uAyCRQ1pnE0BhQJhFe
-         tf9wGTgdYTVitK3kDlag+rh6/hxgZGmVS/rTavSZqdoY/6bSRLh1mGYrPlpgAlGIt2ht
-         Be302uSGljqnYKQWf1V055ajNq3namiy5YAgeSzHAMWDGYdvX9pnMozWZ/B4ZaJuh/WE
-         ZhKg==
+        b=jslKkXQrOSRJzUpOiE37PHxwfrjcP50+2pnv9sh0xIaQd1OY8yQOuYVaeJ8eE3ecHw
+         T+YIjY1lxlcfJf7ye9p52JP7WCzL96wXR884BpfQRUwo1WeqLo08d/M2RJLuYhN1gza2
+         +Jqy5ZkVo3CkozgptUBEprsDbKc43IplCGCo4PTqhQZ2etSZMKoCqld4xFjUPDL/wGfQ
+         4rKy32fl7rPsMISMbsFqdkeaVik/HsoOeIARwScrztSNmMLxvnHOwe5RpI4APElp+0WO
+         6BbxUt8hM561wbFRbd7mAZfPmztkZDZ+R5vJmS1tMf49D6OhXGyAbHMYhCSoquUs5z5m
+         65lQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=RX08+l6XaypFpdor6d4T5X4x5aSyDU+EdHc4Xo99AqY=;
-        b=Ip1l5YjrJ5WhtsAVjrNHZDk7E6Kl72Pn958WRZuXjwa12Y67CjH4AlpxqbBrayGr84
-         ycXMLKVy6aSFbZT186uSUvyR/SO+ahZRksG099rOSuGiQxy2TztcZERBCgMBP069fotF
-         F6wCxFO+dU7vFTXAT+tN3d8T0j0gLHY+m/Tln+OapWxKeD5aThhv0MGnStpVbNwtJiE6
-         z6JM5gX5QfLlUYeBDq3nnYTPJtMbqa9z7v426LGc9RF2IqxzlNLzVVEpT4oH1zsgyJUy
-         dvN6MASYXfUL1R35rXSMzYAFl3KV1N+FldRc9cgiNqlj33o0kNHvd7G8OXjgJa1EVTXC
-         AJ/w==
+        bh=my/7ODWSnRSdp+KD1BTh9MmSkFYi9fn5/R5YAwbX9tI=;
+        b=DvgeGBYMlA7GrCLiWKTLsKqcp8um4uXlIGNmA5YKxA/L2CZkQmyj7X/zDjx8FGi3+w
+         jr8gl8OrD6M2umRi94JRT/XqsCVSu+JJW/xbUi/FzuFLko7NwOESW2amtRJeqRBS7Mll
+         qwOkA6z4P3Wo1sYTFxQIfYCPhDNgUJeETjObLhGITYS+ZpOwiJjmL8V3DdydmC2eSEeL
+         6/aLwKPqieBtouBUPMV20NqJ8gQnTxkfU6mtvkOsC+BdqWm7+PwJAcjakL0i+5B1uWWv
+         qYrHGF5A90ASTgF34xodtREpatCXgSaZWNNmU7X34xIoWHTBzV/6LPmrX25haPvjkXxi
+         DjqA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=RkRX9EcA;
+       dkim=pass header.i=@linaro.org header.s=google header.b=bduNZ9nO;
        spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=RkRX9EcA;
+       dkim=pass header.i=@linaro.org header.s=google header.b=bduNZ9nO;
        spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx48KXmB7swUv7Sh4oc7nJsgGQiEunKcNlSqil1++aQ/B8zCFmo9j3tKuPUzgv3Um1gWFFu3dUg==
-Date: Mon, 2 Apr 2018 15:57:33 -0600
+X-Google-Smtp-Source: AIpwx49ha1FDrwKXkZAdsli7zao/K28ZNo7ZNCde3wpfBOjFabhPgdcEQ6MhLV1FpGMi33TfOEtOjg==
+Date: Mon, 2 Apr 2018 15:34:37 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: Leo Yan <leo.yan@linaro.org>
 Cc: Jonathan Corbet <corbet@lwn.net>,
@@ -36,162 +36,144 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
 	Kim Phillips <kim.phillips@arm.com>,
 	Mike Leach <mike.leach@linaro.org>
-Subject: Re: [PATCH v4 6/6] coresight: etm4x: Support panic kdump
-Message-ID: <20180402215733.GF15452@xps15>
+Subject: Re: [PATCH v4 5/6] coresight: Set and clear sink device handler for
+ kdump node
+Message-ID: <20180402213437.GE15452@xps15>
 References: <1522379724-30648-1-git-send-email-leo.yan@linaro.org>
- <1522379724-30648-7-git-send-email-leo.yan@linaro.org>
+ <1522379724-30648-6-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522379724-30648-7-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1522379724-30648-6-git-send-email-leo.yan@linaro.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596330894018976405?=
-X-GMAIL-MSGID: =?utf-8?q?1596673236977647906?=
+X-GMAIL-THRID: =?utf-8?q?1596330889082321383?=
+X-GMAIL-MSGID: =?utf-8?q?1596671793972155452?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 11:15:24AM +0800, Leo Yan wrote:
-> ETMv4 hardware information and configuration needs to be saved as
-> metadata; the metadata format should be compatible with 'perf' tool and
-> finally is used by tracing data decoder.  ETMv4 works as tracer per CPU,
-> we cannot wait for gathering ETM info after CPU panic has happened in
-> case there have CPU is locked up and can't response inter-processor
-> interrupt for execution dump operations; so it's more reliable to gather
-> tracer metadata when all of the CPUs are alive.
+On Fri, Mar 30, 2018 at 11:15:23AM +0800, Leo Yan wrote:
+> If Coresight path is enabled for specific CPU, the sink device handler
+> need to be set to kdump node; on the other hand we also need to clear
+> sink device handler when path is disabled.
 > 
-> This patch saves ETMv4 metadata but with the different method for
-> different registers.  Since values in TRCIDR{0, 1, 2, 8} and
-> TRCAUTHSTATUS are read-only and won't change afterward, thus those
-> registers values are filled into metadata structure when tracers are
-> instantiated.  The configuration and control registers TRCCONFIGR and
-> TRCTRACEIDR are dynamically configured, their values are recorded during
-> tracer enabling phase.
+> This patch sets sink devices handler for kdump node for two separate
+> Coresight enabling modes: CS_MODE_SYSFS and CS_MODE_PERF; and clear the
+> handler when Coresight is disabled.
 > 
-> To avoid unnecessary overload introduced by set/clear operations for
-> updating kdump node, we only set ETMv4 metadata info for the
-> corresponding kdump node at initialization and won't be cleared anymore.
-> 
-> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > Signed-off-by: Leo Yan <leo.yan@linaro.org>
 > ---
->  drivers/hwtracing/coresight/coresight-etm4x.c | 27 +++++++++++++++++++++++++++
->  drivers/hwtracing/coresight/coresight-etm4x.h | 15 +++++++++++++++
->  2 files changed, 42 insertions(+)
+>  drivers/hwtracing/coresight/coresight-etm-perf.c |  5 +++++
+>  drivers/hwtracing/coresight/coresight.c          | 16 ++++++++++++++--
+>  2 files changed, 19 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-> index cf364a5..88b1e19 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-> @@ -288,6 +288,8 @@ static int etm4_enable(struct coresight_device *csdev,
->  	int ret;
->  	u32 val;
->  	struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> +	struct etmv4_config *config = &drvdata->config;
-> +	struct etmv4_metadata *metadata = &drvdata->metadata;
->  
->  	val = local_cmpxchg(&drvdata->mode, CS_MODE_DISABLED, mode);
->  
-> @@ -306,6 +308,10 @@ static int etm4_enable(struct coresight_device *csdev,
->  		ret = -EINVAL;
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index 8a0ad77..f8b159c 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -139,6 +139,8 @@ static void free_event_data(struct work_struct *work)
+>  	for_each_cpu(cpu, mask) {
+>  		if (!(IS_ERR_OR_NULL(event_data->path[cpu])))
+>  			coresight_release_path(event_data->path[cpu]);
+> +
+> +		coresight_kdump_sink(cpu, NULL);
 >  	}
 >  
-> +	/* Update tracer meta data after tracer configuration */
-> +	metadata->trcconfigr = config->cfg;
-> +	metadata->trctraceidr = drvdata->trcid;
+>  	kfree(event_data->path);
+> @@ -238,6 +240,9 @@ static void *etm_setup_aux(int event_cpu, void **pages,
+>  		event_data->path[cpu] = coresight_build_path(csdev, sink);
+>  		if (IS_ERR(event_data->path[cpu]))
+>  			goto err;
 > +
->  	/* The tracer didn't start */
+> +		if (coresight_kdump_sink(cpu, sink))
+> +			goto err;
+
+I remember telling you to use free_event_data() and etm_setup_aux().  _Maybe_ it
+made sense in the previous patchset but in this one it won't work.  We need to
+reflect the current trace context, as such use etm_event_start() and
+etm_event_stop().
+
+In etm_event_start() call coresight_kdump_sink(cpu, sink) just before
+source_ops(csdev)->enable().  Similarly call coresight_kdump_sink(cpu, NULL)
+right after source_ops(csdev)->disable() in etm_event_stop().
+
+Find me on IRC if you want more information on this.
+
+>  	}
+>  
+>  	if (!sink_ops(sink)->alloc_buffer)
+> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+> index 389c4ba..483a1f7 100644
+> --- a/drivers/hwtracing/coresight/coresight.c
+> +++ b/drivers/hwtracing/coresight/coresight.c
+> @@ -272,6 +272,7 @@ static int coresight_enable_source(struct coresight_device *csdev, u32 mode)
+>  static bool coresight_disable_source(struct coresight_device *csdev)
+>  {
+>  	if (atomic_dec_return(csdev->refcnt) == 0) {
+> +
+
+This newline shouldn't be part of this set.
+
+>  		if (source_ops(csdev)->disable)
+>  			source_ops(csdev)->disable(csdev, NULL);
+>  		csdev->enable = false;
+> @@ -612,6 +613,13 @@ int coresight_enable(struct coresight_device *csdev)
 >  	if (ret)
->  		local_set(&drvdata->mode, CS_MODE_DISABLED);
-> @@ -438,6 +444,7 @@ static void etm4_init_arch_data(void *info)
->  	u32 etmidr4;
->  	u32 etmidr5;
->  	struct etmv4_drvdata *drvdata = info;
-> +	struct etmv4_metadata *metadata = &drvdata->metadata;
+>  		goto err_source;
 >  
->  	/* Make sure all registers are accessible */
->  	etm4_os_unlock(drvdata);
-> @@ -590,6 +597,16 @@ static void etm4_init_arch_data(void *info)
->  	drvdata->nrseqstate = BMVAL(etmidr5, 25, 27);
->  	/* NUMCNTR, bits[30:28] number of counters available for tracing */
->  	drvdata->nr_cntr = BMVAL(etmidr5, 28, 30);
+> +	cpu = source_ops(csdev)->cpu_id(csdev);
 > +
-> +	/* Update metadata */
-> +	metadata->magic = ETM4_METADATA_MAGIC;
-> +	metadata->cpu = drvdata->cpu;
-> +	metadata->trcidr0 = readl_relaxed(drvdata->base + TRCIDR0);
-> +	metadata->trcidr1 = readl_relaxed(drvdata->base + TRCIDR1);
-> +	metadata->trcidr2 = readl_relaxed(drvdata->base + TRCIDR2);
-> +	metadata->trcidr8 = readl_relaxed(drvdata->base + TRCIDR8);
-> +	metadata->trcauthstatus = readl_relaxed(drvdata->base + TRCAUTHSTATUS);
+> +	/* Set sink device handler into kdump node */
+> +	ret = coresight_kdump_sink(cpu, sink);
+> +	if (ret)
+> +		goto err_kdump;
 > +
->  	CS_LOCK(drvdata->base);
->  }
+
+Call coresight_kdump_sink() just before coresight_enable_source().  That way if
+there is a dump just after coresight_enable_source() is called we get the chance
+of getting some traces in the dump file. 
+
+>  	switch (subtype) {
+>  	case CORESIGHT_DEV_SUBTYPE_SOURCE_PROC:
+>  		/*
+> @@ -621,7 +629,6 @@ int coresight_enable(struct coresight_device *csdev)
+>  		 * be a single session per tracer (when working from sysFS)
+>  		 * a per-cpu variable will do just fine.
+>  		 */
+> -		cpu = source_ops(csdev)->cpu_id(csdev);
+>  		per_cpu(tracer_path, cpu) = path;
+>  		break;
+>  	case CORESIGHT_DEV_SUBTYPE_SOURCE_SOFTWARE:
+> @@ -636,6 +643,9 @@ int coresight_enable(struct coresight_device *csdev)
+>  	mutex_unlock(&coresight_mutex);
+>  	return ret;
 >  
-> @@ -957,6 +974,7 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
->  	struct device *dev = &adev->dev;
->  	struct coresight_platform_data *pdata = NULL;
->  	struct etmv4_drvdata *drvdata;
-> +	struct etmv4_metadata *metadata;
->  	struct resource *res = &adev->res;
->  	struct coresight_desc desc = { 0 };
->  	struct device_node *np = adev->dev.of_node;
-> @@ -1027,6 +1045,15 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
->  		goto err_arch_supported;
+> +err_kdump:
+> +	coresight_disable_source(csdev);
+> +
+>  err_source:
+>  	coresight_disable_path(path);
+>  
+> @@ -659,9 +669,10 @@ void coresight_disable(struct coresight_device *csdev)
+>  	if (!csdev->enable || !coresight_disable_source(csdev))
+>  		goto out;
+>  
+> +	cpu = source_ops(csdev)->cpu_id(csdev);
+> +
+>  	switch (csdev->subtype.source_subtype) {
+>  	case CORESIGHT_DEV_SUBTYPE_SOURCE_PROC:
+> -		cpu = source_ops(csdev)->cpu_id(csdev);
+>  		path = per_cpu(tracer_path, cpu);
+>  		per_cpu(tracer_path, cpu) = NULL;
+>  		break;
+> @@ -674,6 +685,7 @@ void coresight_disable(struct coresight_device *csdev)
+>  		break;
 >  	}
 >  
-> +	/* Set source device handler and metadata into kdump node */
-> +	metadata = &drvdata->metadata;
-> +	ret = coresight_kdump_source(drvdata->cpu, drvdata->csdev,
-> +				     (char *)metadata, sizeof(*metadata));
-> +	if (ret) {
-> +		coresight_unregister(drvdata->csdev);
-> +		goto err_arch_supported;
-> +	}
-> +
->  	ret = etm_perf_symlink(drvdata->csdev, true);
->  	if (ret) {
->  		coresight_unregister(drvdata->csdev);
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
-> index b3b5ea7..08dc8b7 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x.h
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
-> @@ -198,6 +198,20 @@
->  #define ETM_EXLEVEL_NS_HYP		BIT(14)
->  #define ETM_EXLEVEL_NS_NA		BIT(15)
+> +	coresight_kdump_sink(cpu, NULL);
+>  	coresight_disable_path(path);
+>  	coresight_release_path(path);
 >  
-> +#define ETM4_METADATA_MAGIC		0x4040404040404040ULL
-
-Please dd a comment that this needs to be kept in sync with
-__perf_cs_etmv4_magic in tools/perf/util/cs-etm.h.
-
-> +
-> +struct etmv4_metadata {
-> +	u64 magic;
-> +	u64 cpu;
-> +	u64 trcconfigr;
-> +	u64 trctraceidr;
-> +	u64 trcidr0;
-> +	u64 trcidr1;
-> +	u64 trcidr2;
-> +	u64 trcidr8;
-> +	u64 trcauthstatus;
-> +};
-> +
->  /**
->   * struct etmv4_config - configuration information related to an ETMv4
->   * @mode:	Controls various modes supported by this ETM.
-> @@ -393,6 +407,7 @@ struct etmv4_drvdata {
->  	bool				atbtrig;
->  	bool				lpoverride;
->  	struct etmv4_config		config;
-> +	struct etmv4_metadata		metadata;
-
-Structure documentation please.
-
->  };
->  
->  /* Address comparator access types */
 > -- 
 > 2.7.4
 > 
