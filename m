@@ -1,90 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754319AbeDBJ2I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 05:28:08 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:36820 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeDBJ2G (ORCPT
+        id S1754271AbeDBJaZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 05:30:25 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45806 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754178AbeDBJaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 05:28:06 -0400
-X-Google-Smtp-Source: AIpwx4+uUAjv0Zh5DObLBoU3KGxGLFPYWYYMsGqPWumvvFxiR/4e91pxPgPoGuqiHZrCui7OF7Ls+hqOqLB9+HDWvCA=
+        Mon, 2 Apr 2018 05:30:21 -0400
+X-Google-Smtp-Source: AIpwx48e4QHZqYvvN0GWhQIkAgO1PhwKITB60+np5lDyLYLko5ZxGFnSYifqNcdPwIQ09uXW8cJPmg==
+Date: Mon, 2 Apr 2018 15:00:18 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+        broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org,
+        sricharan@codeaurora.org
+Subject: Re: [PATCH v4 13/14] dt-bindings: cpufreq: Document
+ operating-points-v2-kryo-cpu
+Message-ID: <20180402093018.GC3572@vireshk-i7>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
-References: <152261521484.30503.16131389653845029164.stgit@warthog.procyon.org.uk>
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Mon, 2 Apr 2018 11:28:04 +0200
-Message-ID: <CAOMGZ=HwTjk9JbGNeWHd+Jr3rwOkFOU0r8hMSdputZ47bhRO+A@mail.gmail.com>
-Subject: Re: [PATCH 00/45] C++: Convert the kernel to C++
-To: David Howells <dhowells@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 April 2018 at 22:40, David Howells <dhowells@redhat.com> wrote:
->
-> Here are a series of patches to start converting the kernel to C++.  It
-> requires g++ v8.
++Sricharan,
 
-Nice!
+On 30-03-18, 00:26, Ilia Lin wrote:
+> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> that have KRYO processors, the CPU ferequencies subset and voltage value
+> of each OPP varies based on the silicon variant in use.
+> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
+> 
+> This change adds documentation.
+> 
+> Change-Id: I1953f652a48249fb516d175f0e965a9510cd4209
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
+>  1 file changed, 693 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
 
-I tried something similar a few years ago, but I don't think it was
-nearly as neat. I did get RTTI and exceptions to work (using libcxxrt
-+ libunwind), though. Having noticed that a lot of really trivial
-kernel bugs are due to control flow issues (e.g. when somebody adds a
-possibly-failing step to a function but forget to add a new label to
-clean it up) I really wanted to see how/whether exceptions and RAII
-could help in that space.
+This should really go in opp directory.
 
-Just in case you want to compare notes, I've pushed my branch to:
+> new file mode 100644
+> index 0000000..20cef9d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+> @@ -0,0 +1,693 @@
+> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
+> +===================================
+> +
+> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> +that have KRYO processors, the CPU ferequencies subset and voltage value
+> +of each OPP varies based on the silicon variant in use.
+> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+> +defines the voltage and frequency value based on the msm-id in SMEM
+> +and speedbin blown in the efuse combination.
+> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> +to provide the OPP framework with required information (existing HW bitmap).
+> +This is used to determine the voltage and frequency value for each OPP of
+> +operating-points-v2 table when it is parsed by the OPP framework.
+> +
+> +Required properties:
+> +--------------------
+> +In 'cpus' nodes:
+> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
+> +
+> +In 'operating-points-v2' table:
+> +- compatible: Should be
+> +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
+> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
+> +		efuse registers that has information about the
+> +		speedbin that is used to select the right frequency/voltage
+> +		value pair.
+> +		Please refer the for nvmem-cells
+> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
+> +		and also examples below.
 
-https://github.com/vegard/linux-2.6/tree/cxx
+Sricharan is also working on adding these, just make sure you guys do the same
+thing..
 
-I also started a little bit of work on converting a driver to use
-RAII, and quickly ran into a few problems: C++ destructors don't take
-arguments, which means that some objects would have to carry extra
-state around because some of the information needed to destroy an
-object resides with somebody else. This means that you would have to
-do more refactoring work to avoid needing this in the first place,
-i.e. mapping creation/destructing of various C-style structs to C++ is
-_not_ straightforward.
-
-Take dma_alloc_coherent() for example. It pairs up with
-dma_free_coherent() and that one needs to know the device and buffer
-size that you passed too:
-
-void *dma_alloc_coherent(struct device *, size_t, dma_addr_t *, gfp_t);
-void dma_free_coherent(struct device *, size_t, void *, dma_addr_t);
-
-This means that if you have 1 device using 2 buffers of the same size
-and the size is stored only by the device struct, then you must always
-do the destruction from the device struct, since the individual
-buffers don't know their size (unless you move the member there; but
-it feels like a waste of memory if you could do it just fine in C).
-Maybe there's a "proper" way to do it that I didn't see, but problems
-like this turned me off the whole approach a little.
-
-Another real bummer is the size and complexity of the RTTI and
-unwinding support code. First of all, unwinding requires parsing and
-executing DWARF code on the fly, and that just makes everything very
-slow. Not to mention that it needs to be threading-aware and does a
-lot of memory allocations. IIRC handling out-of-memory conditions was
-extremely ugly (not that the kernel is perfect in this respect to
-start with) and involved the use of "reserve buffers". I didn't like
-it at all.
-
-Also, for reference, I found a few other projects doing similar things
-in the past:
-
-https://github.com/veltzer/kcpp
-http://www.drdobbs.com/cpp/c-exceptions-the-linux-kernel/229100146
-https://pograph.wordpress.com/2009/04/05/porting-cpp-code-to-linux-kernel/
-https://www.threatstack.com/blog/c-in-the-linux-kernel/
-
-There's probably more, I seem to remember at least 1 commercial
-product using C++ for their out-of-tree module (albeit without
-RTTI/exceptions), but I can't find it right now.
-
-
-Vegard
+-- 
+viresh
