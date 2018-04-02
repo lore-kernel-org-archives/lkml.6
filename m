@@ -1,86 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754104AbeDBFec (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 01:34:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59720 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752226AbeDBFea (ORCPT
+        id S1754120AbeDBFfR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 01:35:17 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:23023 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbeDBFfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 01:34:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC115607A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH v5 06/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1
- board file
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: mark.rutland@arm.com, robh@kernel.org, devicetree@vger.kernel.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com,
-        richardcochran@gmail.com, will.deacon@arm.com, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        absahu@codeaurora.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        linux-soc@vger.kernel.org, sboyd@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
- <1521800336-19266-7-git-send-email-sricharan@codeaurora.org>
- <20180327171249.GI1403@tuxbook-pro>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <591f7429-e574-f983-0cdd-45aa07d5c9b1@codeaurora.org>
-Date: Mon, 2 Apr 2018 11:04:21 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 2 Apr 2018 01:35:15 -0400
+Subject: Re: [PATCH 3/8] bindings: PCI: designware: Add support for the EP in
+ designware driver
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <405911c8-fffc-5bd7-76c5-f7aabde3b7bc@ti.com>
+Date: Mon, 2 Apr 2018 11:05:05 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180327171249.GI1403@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <dd582bfc2780679b7a092d23547c316234a84c34.1522235224.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
-On 3/27/2018 10:42 PM, Bjorn Andersson wrote:
-> On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
->> +#include "qcom-ipq4019-ap.dk04.1.dtsi"
->> +
->> +/ {
->> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1-C1";
->> +
-> 
-> If this is the board and qcom-ipq4019-ap.dk04.1.dtsi is the platform
-> file then the compatible should be here and not there. Also qcom,ipq4019
-> is not an awesome compatible for a board file.
-> 
 
- ok, agree. Will correct the compatible and move it here.
+On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
->> +	soc {
->> +		dma@7984000 {
->> +			status = "ok";
->> +		};
->> +
->> +		qpic-nand@79b0000 {
->> +			pinctrl-0 = <&nand_pins>;
->> +			pinctrl-names = "default";
->> +			status = "ok";
->> +		};
+Please add a commit message.
+> ---
+>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
-> nand_pins defines the muxing and is defined in the other dtsi. So please
-> move these pinctrl-* properties to the dtsi.
-> 
-> As long as the node is disabled the pinctrl state won't be applied
-> anyways.
-> 
-> 
-> If there are electrical properties that needs to be specified you can
-> override the pinctrl state in the board specific file.
-> 
+> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> index 6300762..4bb2e08 100644
+> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> @@ -3,6 +3,7 @@
+>  Required properties:
+>  - compatible:
+>  	"snps,dw-pcie" for RC mode;
+> +	"snps,dw-pcie-ep" for EP mode;
+>  - reg: Should contain the configuration address space.
+>  - reg-names: Must be "config" for the PCIe configuration space.
+>      (The old way of getting the configuration address space from "ranges"
+> @@ -56,3 +57,15 @@ Example configuration:
+>  		#interrupt-cells = <1>;
+>  		num-lanes = <1>;
+>  	};
+> +or
+> +	pcie_ep: pcie_ep@dfc00000 {
+> +		compatible = "snps,dw-pcie-ep";
+> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
+> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
 
- ok, understood. Will follow these conventions in rest of the places as well.
+Doesn't this have iATU unroll space?
 
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Thanks
+Kishon
