@@ -1,62 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751906AbeDBOzi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 10:55:38 -0400
-Received: from mga18.intel.com ([134.134.136.126]:47287 "EHLO mga18.intel.com"
+        id S1752216AbeDBOzu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 10:55:50 -0400
+Received: from mga03.intel.com ([134.134.136.65]:13570 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751131AbeDBOzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 10:55:37 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1751965AbeDBOzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 10:55:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,395,1517904000";
-   d="scan'208";a="30418714"
-Date: Mon, 2 Apr 2018 08:58:13 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: "Rodrigo R. Galvao" <rosattig@linux.vnet.ibm.com>
-Cc: hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] nvmet: fix nvmet_execute_write_zeroes function
-Message-ID: <20180402145813.GE28945@localhost.localdomain>
-References: <1522680581-10220-1-git-send-email-rosattig@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522680581-10220-1-git-send-email-rosattig@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+   d="scan'208";a="216842713"
+Message-ID: <1522680941.21176.180.camel@linux.intel.com>
+Subject: Re: [tip:x86/urgent] x86/io: Define readq()/writeq() to use 64-bit
+ type
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>, sohil.mehta@intel.com,
+        mitake@dcl.info.waseda.ac.jp, linux-tip-commits@vger.kernel.org
+Date: Mon, 02 Apr 2018 17:55:41 +0300
+In-Reply-To: <20180331184528.dwpmpkpjj6ocwqhp@gmail.com>
+References: <20180119143322.16555-1-andriy.shevchenko@linux.intel.com>
+         <tip-0fc8483b698620ea3d8cc6635b54eccc613c23a3@git.kernel.org>
+         <1522163426.21176.24.camel@linux.intel.com>
+         <20180331101914.ylrlgxhdohcosbnr@gmail.com>
+         <20180331102220.kmtu62uktmfrfe4a@gmail.com>
+         <CAHp75Vd6O-=2dtbQ6eH8ye7QpW9PNEyZRdVwAyCDkS4TQW5vPQ@mail.gmail.com>
+         <CAHp75VdPEG0xFcNYZZCpx4SPX8+7FHFcAGuSVd0vX7TuknmKiQ@mail.gmail.com>
+         <20180331184528.dwpmpkpjj6ocwqhp@gmail.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 11:49:41AM -0300, Rodrigo R. Galvao wrote:
-> When trying to issue write_zeroes command against TARGET with a 4K block
-> size, it ends up hitting the following condition at __blkdev_issue_zeroout:
+On Sat, 2018-03-31 at 20:45 +0200, Ingo Molnar wrote:
+> * Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 > 
->      if ((sector | nr_sects) & bs_mask)
->                 return -EINVAL;
+> > On Sat, Mar 31, 2018 at 3:06 PM, Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Sat, Mar 31, 2018 at 1:22 PM, Ingo Molnar <mingo@kernel.org>
+> > > wrote:
+> > > > * Ingo Molnar <mingo@kernel.org> wrote:
+> > > >   [tip:x86/urgent 14/14]
+> > > > drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1690:22: sparse:
+> > > > incorrect type in argument 1 (different base types)
+> > > > 
+> > > > Since you were on Cc: of that report I assumed you'd take care
+> > > > of it.
+> > > 
+> > > Ah, yes. This one I fixed.
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit
+> > /?h=for-next&id=71591d1280e5ef02c2af2ffb9801d0c842973be9
 > 
-> Causing the command to always fail.
-> Considering we need to add 1 to get the correct block count, that addition
-> needs to be performed in the native format, so we moved the +1 to within
-> le16_to_cpu prior to converting to 512b.
-> 
-> Signed-off-by: Rodrigo R. Galvao <rosattig@linux.vnet.ibm.com>
-> ---
->  drivers/nvme/target/io-cmd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/nvme/target/io-cmd.c b/drivers/nvme/target/io-cmd.c
-> index 28bbdff..5292bc3 100644
-> --- a/drivers/nvme/target/io-cmd.c
-> +++ b/drivers/nvme/target/io-cmd.c
-> @@ -173,8 +173,8 @@ static void nvmet_execute_write_zeroes(struct nvmet_req *req)
->  
->  	sector = le64_to_cpu(write_zeroes->slba) <<
->  		(req->ns->blksize_shift - 9);
-> -	nr_sector = (((sector_t)le16_to_cpu(write_zeroes->length)) <<
-> -		(req->ns->blksize_shift - 9)) + 1;
-> +	nr_sector = (((sector_t)le16_to_cpu(write_zeroes->length + 1)) <<
-> +		(req->ns->blksize_shift - 9));
+> Yeah, so this fix in the RDMA tree needs to go upstream first, before
+> we can apply 
+> the changes to the interface. Could you resend at around v4.17-rc1 or
+> so?
 
-I'm terribly sorry, but the +1 actually needs to be outside the
-le16_to_cpu. The above will work on little-endian machines, but not big.
+Sure. Thanks!
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
