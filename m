@@ -1,120 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754131AbeDBGdB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:33:01 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:41374 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751971AbeDBGc7 (ORCPT
+        id S1754151AbeDBGeo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:34:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47750 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752336AbeDBGem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:32:59 -0400
-X-Google-Smtp-Source: AIpwx4+bnbblgS2ttIVRajS5klpcDlcPGqhj9BXzNjGi/O7dpYXfqF/X2qogglfBstZYAtna9vAARg==
-Date: Mon, 2 Apr 2018 12:02:55 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Suman Anna <s-anna@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dave Gerlach <d-gerlach@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zumeng Chen <zumeng.chen@gmail.com>
-Subject: Re: [PATCH] cpufreq: ti-cpufreq: Fix couple of minor issues in
- probe()
-Message-ID: <20180402063255.GC4714@vireshk-i7>
-References: <20180326215244.26304-1-s-anna@ti.com>
+        Mon, 2 Apr 2018 02:34:42 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 34C33602BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH v5 11/13] ARM: dts: ipq8074: Add peripheral nodes
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: mark.rutland@arm.com, robh@kernel.org, devicetree@vger.kernel.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com,
+        richardcochran@gmail.com, will.deacon@arm.com, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        absahu@codeaurora.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
+        linux-soc@vger.kernel.org, sboyd@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
+ <1521800336-19266-12-git-send-email-sricharan@codeaurora.org>
+ <20180327174501.GN1403@tuxbook-pro>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <67c43e89-c986-e548-c7f1-ce9ac095c509@codeaurora.org>
+Date: Mon, 2 Apr 2018 12:04:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326215244.26304-1-s-anna@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180327174501.GN1403@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-03-18, 16:52, Suman Anna wrote:
-> Commit 05829d9431df ("cpufreq: ti-cpufreq: kfree opp_data when
-> failure") has fixed a memory leak in the failure path, however
-> kmemleak still keeps reporting a leak even on successful probes.
-> This is a false-positive and is mostly a result of the opp_data
 
-I don't agree to this reasoning for this particular patch. The code is just fine
-and kmemleak is something that requires a fix.
 
-> variable not being stored anywhere in the probe function. The
-> patch also returned a positive value on the get_cpu_device()
-> failure instead of a negative value.
-
-Maybe that could have been fixed in a separate patch, cc'ing stable kernels as
-well.
-
-> unreferenced object 0xecae4d80 (size 64):
->   comm "swapper/0", pid 1, jiffies 4294937673 (age 154.420s)
->   hex dump (first 32 bytes):
->     10 40 d9 ee 74 b7 db ee 00 24 ac ec 20 a3 ea c0  .@..t....$.. ...
->     00 26 ac ec 00 00 00 00 00 00 00 00 00 00 00 00  .&..............
->   backtrace:
->     [<ec080d62>] platform_drv_probe+0x50/0xac
->     [<cbde8566>] driver_probe_device+0x24c/0x330
->     [<a5818eb4>] bus_for_each_drv+0x54/0xb8
->     [<2c6f7021>] __device_attach+0xcc/0x13c
->     [<a04478a2>] bus_probe_device+0x88/0x90
->     [<b322c963>] device_add+0x38c/0x5b4
->     [<6f1af99b>] platform_device_add+0x100/0x220
->     [<cef42bca>] platform_device_register_full+0xf0/0x104
->     [<4d492439>] ti_cpufreq_init+0x44/0x6c
->     [<81222e89>] do_one_initcall+0x48/0x190
->     [<3bebf42a>] kernel_init_freeable+0x1f4/0x2b8
->     [<230ad7df>] kernel_init+0x8/0x110
->     [<43a165c3>] ret_from_fork+0x14/0x20
->     [<  (null)>]   (null)
->     [<87288797>] 0xffffffff
+On 3/27/2018 11:15 PM, Bjorn Andersson wrote:
+> On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
+>> +		serial_blsp0: serial@78af000 {
 > 
-> Fix both issues by replacing the previous logic by using the devres
-> managed API for allocating the opp_data variable, and simplifying
-> the get_cpu_device() failure return path.
+> Please try to have a single scheme for how you name your labels; this is
+> serial0 or blsp1_uart1.
 > 
-> Fixes: 05829d9431df ("cpufreq: ti-cpufreq: kfree opp_data when failure")
-> Cc: Zumeng Chen <zumeng.chen@gmail.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
->  drivers/cpufreq/ti-cpufreq.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+> [..]
+>> +		i2c_0: i2c@78b6000 {
 > 
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index a099b7bf74cd..7d353a21935b 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -217,7 +217,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->  	if (!match)
->  		return -ENODEV;
->  
-> -	opp_data = kzalloc(sizeof(*opp_data), GFP_KERNEL);
-> +	opp_data = devm_kzalloc(&pdev->dev, sizeof(*opp_data), GFP_KERNEL);
->  	if (!opp_data)
->  		return -ENOMEM;
->  
-> @@ -226,8 +226,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->  	opp_data->cpu_dev = get_cpu_device(0);
->  	if (!opp_data->cpu_dev) {
->  		pr_err("%s: Failed to get device for CPU0\n", __func__);
-> -		ret = ENODEV;
-> -		goto free_opp_data;
-> +		return -ENODEV;
->  	}
->  
->  	opp_data->opp_node = dev_pm_opp_of_get_opp_desc_node(opp_data->cpu_dev);
-> @@ -285,8 +284,6 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->  
->  fail_put_node:
->  	of_node_put(opp_data->opp_node);
-> -free_opp_data:
-> -	kfree(opp_data);
->  
->  	return ret;
->  }
+> As in the previous patches, this is the 2nd i2c master in the SoC,
+> please label it accordingly.
 
-I am fine with the diff though, as that makes sense. So maybe do this ?
+ ok, sure. will correct the label names uniformly.
 
-- send separate patch for ENODEV thing
-- and another patch to move to devres with a different reason than fixing false
-  positive.
+Regards,
+ Sricharan
 
 -- 
-viresh
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
