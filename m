@@ -1,98 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753625AbeDAPgh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 11:36:37 -0400
-Received: from muru.com ([72.249.23.125]:34776 "EHLO muru.com"
+        id S1753638AbeDAPmp (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 11:42:45 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:64356 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753582AbeDAPgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 11:36:35 -0400
-Date: Sun, 1 Apr 2018 08:36:31 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180401153631.GA5700@atomide.com>
-References: <20180328022910.GM29239@sirena.org.uk>
- <20180328140219.f6667up5evrrafkv@earth.universe>
- <20180329014507.GM5700@atomide.com>
- <20180331145531.GA10404@amd>
- <20180331181935.GX5700@atomide.com>
- <20180331191939.GA8999@amd>
- <20180331194616.GA19388@amd>
- <20180331195524.GB19388@amd>
- <20180331234314.GZ5700@atomide.com>
- <20180401131852.GA11086@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180401131852.GA11086@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1753584AbeDAPmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 11:42:44 -0400
+From: Peng Hao <peng.hao2@zte.com.cn>
+To: cdall@kernel.org, marc.zyngier@arm.com
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH] kvm : arm/arm64 : fix some warningg
+Date: Mon, 2 Apr 2018 08:00:36 +0800
+Message-Id: <1522627236-3465-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-04-01 23:42:50,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-04-01 23:42:35,
+        Serialize complete at 2018-04-01 23:42:35
+X-MAIL: mse01.zte.com.cn w31Fga21057017
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180401 13:20]:
-> On Sat 2018-03-31 16:43:14, Tony Lindgren wrote:
-> > * Pavel Machek <pavel@ucw.cz> [180331 19:56]:
-> > > On Sat 2018-03-31 21:46:16, Pavel Machek wrote:
-> > > > On Sat 2018-03-31 21:19:39, Pavel Machek wrote:
-> > > > > On Sat 2018-03-31 11:19:35, Tony Lindgren wrote:
-> > > > > > Cool :) Microphone still does not work for me.. I tried tweaking
-> > > > > > the alsamixer settings but no mic. This is with cold boot with
-> > > > > > droid4-kexecboot if that might make a difference, we may have
-> > > > > > some register uninitialized somewhere. Any ideas?
-> > > > > 
-> > > > > Ok, I was focusing on the speaker side.
-> > > > > 
-> > > > > alsamixer, tab to go to capture settings, set it to 37 37 Mic2 Mic1
-> > > > > should work, according to my notes, but not recently tested and not
-> > > > > tested against real human.
-> > > > > 
-> > > > > I'll attempt to test it, but something in my userland shuts down
-> > > > > system just after boot 60% of time, which is rather annoying.
-> > > > 
-> > > > Hmm. So I tried again, and setting Mic1 and back in the capture
-> > > > settings crashed the modem. Bang, disconnected from the USB.
-> > > 
-> > > Next try, and it worked this time.
-> > > 
-> > > _Before the call_, set mode to Normal and then Call. Then go to
-> > > capture, and set 100 100 Mic2 Mic1. Then place a call,
-> > > 
-> > > AT+CFUN=1
-> > > OK
-> > > ATD6;
-> > 
-> > No luck with microphone here :( Using ttyUSB4, AT+CFUN=1
-> > works, but ATD command on it just hangs the USB interface
-> > and I have to reload phy-mapphone-mdm6600 to reset the
-> > modem.
-> 
-> Test call with real human worked (thanks to Rolf K.), I could hear him
-> well but he reported call was very quiet. And that was with capture
-> settings at 100%.
+fix some "warning: no previous prototype".
 
-Maybe the volume also needs to be controlled at mdm6600 end.
-I'm seeing some AT+CLVL=n with n being between [0-7] calls on
-DLCI2 in my Android logcat logs.
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ virt/kvm/arm/vgic/vgic-its.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> If you had a register dump from android with mics working, preferably
-> not in speaker mode, perhaps I could try to figure it out?
-
-OK here are four diffs against starting the phone app for regular
-call, speaker call, and muted versions of them:
-
-http://muru.com/linux/d4/cpcap/
-
-Also, I'm connected over cdma right now, not 3g, but I doubt
-that makes a difference for the microphone.
-
-Regards,
-
-Tony
+diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+index 4650953..881494b 100644
+--- a/virt/kvm/arm/vgic/vgic-its.c
++++ b/virt/kvm/arm/vgic/vgic-its.c
+@@ -177,12 +177,12 @@ struct vgic_its_abi {
+ 
+ #define NR_ITS_ABIS	ARRAY_SIZE(its_table_abi_versions)
+ 
+-inline const struct vgic_its_abi *vgic_its_get_abi(struct vgic_its *its)
++static inline const struct vgic_its_abi *vgic_its_get_abi(struct vgic_its *its)
+ {
+ 	return &its_table_abi_versions[its->abi_rev];
+ }
+ 
+-int vgic_its_set_abi(struct vgic_its *its, int rev)
++static int vgic_its_set_abi(struct vgic_its *its, int rev)
+ {
+ 	const struct vgic_its_abi *abi;
+ 
+@@ -1731,7 +1731,7 @@ static void vgic_its_destroy(struct kvm_device *kvm_dev)
+ 	kfree(its);
+ }
+ 
+-int vgic_its_has_attr_regs(struct kvm_device *dev,
++static int vgic_its_has_attr_regs(struct kvm_device *dev,
+ 			   struct kvm_device_attr *attr)
+ {
+ 	const struct vgic_register_region *region;
+@@ -1752,7 +1752,7 @@ int vgic_its_has_attr_regs(struct kvm_device *dev,
+ 	return 0;
+ }
+ 
+-int vgic_its_attr_regs_access(struct kvm_device *dev,
++static int vgic_its_attr_regs_access(struct kvm_device *dev,
+ 			      struct kvm_device_attr *attr,
+ 			      u64 *reg, bool is_write)
+ {
+-- 
+1.8.3.1
