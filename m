@@ -1,95 +1,271 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756833AbeDBThJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:37:09 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:3357 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754655AbeDBThH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:37:07 -0400
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=flawful.org
-Date: Mon, 2 Apr 2018 21:37:03 +0200
-From: Niklas Cassel <nks@flawful.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Niklas Cassel <niklas.cassel@axis.com>,
-        cyrille.pitchen@free-electrons.com, Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar()
- handle 64-bit BARs properly
-Message-ID: <20180402193703.GB23587@flawful.org>
-References: <20180328115018.31921-1-niklas.cassel@axis.com>
- <20180328115018.31921-7-niklas.cassel@axis.com>
- <45971780-3a46-061d-bb76-2f450401c797@ti.com>
+        id S1757128AbeDBTh6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:37:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754655AbeDBTh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 15:37:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC668217A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 2 Apr 2018 14:37:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Keller, Jacob E" <jacob.e.keller@intel.com>
+Cc: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "everest-linux-l2@cavium.com" <everest-linux-l2@cavium.com>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
+ max supported link bandwidth
+Message-ID: <20180402193754.GK9322@bhelgaas-glaptop.roam.corp.google.com>
+References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152244390359.135666.14890735614456271032.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <31e66048-e8b8-47ba-baf5-023560b4c124@mellanox.com>
+ <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
+ <50346f44-de3f-b226-69ad-6de45e94e261@mellanox.com>
+ <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
+ <3decbba0-74a2-c906-b5b4-a04f261860eb@mellanox.com>
+ <02874ECE860811409154E81DA85FBB5882D4980A@ORSMSX115.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45971780-3a46-061d-bb76-2f450401c797@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <02874ECE860811409154E81DA85FBB5882D4980A@ORSMSX115.amr.corp.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 03:17:11PM +0530, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
-> > Since a 64-bit BAR consists of a BAR pair, we need to write to both
-> > BARs in the BAR pair to setup the BAR properly.
+On Mon, Apr 02, 2018 at 04:00:16PM +0000, Keller, Jacob E wrote:
+> > -----Original Message-----
+> > From: Tal Gilboa [mailto:talgi@mellanox.com]
+> > Sent: Monday, April 02, 2018 7:34 AM
+> > To: Bjorn Helgaas <helgaas@kernel.org>
+> > Cc: Tariq Toukan <tariqt@mellanox.com>; Keller, Jacob E
+> > <jacob.e.keller@intel.com>; Ariel Elior <ariel.elior@cavium.com>; Ganesh
+> > Goudar <ganeshgr@chelsio.com>; Kirsher, Jeffrey T
+> > <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com; intel-wired-
+> > lan@lists.osuosl.org; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linux-pci@vger.kernel.org
+> > Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
+> > max supported link bandwidth
 > > 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> > ---
-> >  drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
+> > On 4/2/2018 5:05 PM, Bjorn Helgaas wrote:
+> > > On Mon, Apr 02, 2018 at 10:34:58AM +0300, Tal Gilboa wrote:
+> > >> On 4/2/2018 3:40 AM, Bjorn Helgaas wrote:
+> > >>> On Sun, Apr 01, 2018 at 11:38:53PM +0300, Tal Gilboa wrote:
+> > >>>> On 3/31/2018 12:05 AM, Bjorn Helgaas wrote:
+> > >>>>> From: Tal Gilboa <talgi@mellanox.com>
+> > >>>>>
+> > >>>>> Add pcie_bandwidth_capable() to compute the max link bandwidth
+> > supported by
+> > >>>>> a device, based on the max link speed and width, adjusted by the
+> > encoding
+> > >>>>> overhead.
+> > >>>>>
+> > >>>>> The maximum bandwidth of the link is computed as:
+> > >>>>>
+> > >>>>>      max_link_speed * max_link_width * (1 - encoding_overhead)
+> > >>>>>
+> > >>>>> The encoding overhead is about 20% for 2.5 and 5.0 GT/s links using
+> > 8b/10b
+> > >>>>> encoding, and about 1.5% for 8 GT/s or higher speed links using 128b/130b
+> > >>>>> encoding.
+> > >>>>>
+> > >>>>> Signed-off-by: Tal Gilboa <talgi@mellanox.com>
+> > >>>>> [bhelgaas: adjust for pcie_get_speed_cap() and pcie_get_width_cap()
+> > >>>>> signatures, don't export outside drivers/pci]
+> > >>>>> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > >>>>> Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+> > >>>>> ---
+> > >>>>>     drivers/pci/pci.c |   21 +++++++++++++++++++++
+> > >>>>>     drivers/pci/pci.h |    9 +++++++++
+> > >>>>>     2 files changed, 30 insertions(+)
+> > >>>>>
+> > >>>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > >>>>> index 43075be79388..9ce89e254197 100644
+> > >>>>> --- a/drivers/pci/pci.c
+> > >>>>> +++ b/drivers/pci/pci.c
+> > >>>>> @@ -5208,6 +5208,27 @@ enum pcie_link_width
+> > pcie_get_width_cap(struct pci_dev *dev)
+> > >>>>>     	return PCIE_LNK_WIDTH_UNKNOWN;
+> > >>>>>     }
+> > >>>>> +/**
+> > >>>>> + * pcie_bandwidth_capable - calculates a PCI device's link bandwidth
+> > capability
+> > >>>>> + * @dev: PCI device
+> > >>>>> + * @speed: storage for link speed
+> > >>>>> + * @width: storage for link width
+> > >>>>> + *
+> > >>>>> + * Calculate a PCI device's link bandwidth by querying for its link speed
+> > >>>>> + * and width, multiplying them, and applying encoding overhead.
+> > >>>>> + */
+> > >>>>> +u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed
+> > *speed,
+> > >>>>> +			   enum pcie_link_width *width)
+> > >>>>> +{
+> > >>>>> +	*speed = pcie_get_speed_cap(dev);
+> > >>>>> +	*width = pcie_get_width_cap(dev);
+> > >>>>> +
+> > >>>>> +	if (*speed == PCI_SPEED_UNKNOWN || *width ==
+> > PCIE_LNK_WIDTH_UNKNOWN)
+> > >>>>> +		return 0;
+> > >>>>> +
+> > >>>>> +	return *width * PCIE_SPEED2MBS_ENC(*speed);
+> > >>>>> +}
+> > >>>>> +
+> > >>>>>     /**
+> > >>>>>      * pci_select_bars - Make BAR mask from the type of resource
+> > >>>>>      * @dev: the PCI device for which BAR mask is made
+> > >>>>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > >>>>> index 66738f1050c0..2a50172b9803 100644
+> > >>>>> --- a/drivers/pci/pci.h
+> > >>>>> +++ b/drivers/pci/pci.h
+> > >>>>> @@ -261,8 +261,17 @@ void pci_disable_bridge_window(struct pci_dev
+> > *dev);
+> > >>>>>     	 (speed) == PCIE_SPEED_2_5GT ? "2.5 GT/s" : \
+> > >>>>>     	 "Unknown speed")
+> > >>>>> +/* PCIe speed to Mb/s with encoding overhead: 20% for gen2, ~1.5% for
+> > gen3 */
+> > >>>>> +#define PCIE_SPEED2MBS_ENC(speed) \
+> > >>>>
+> > >>>> Missing gen4.
+> > >>>
+> > >>> I made it "gen3+".  I think that's accurate, isn't it?  The spec
+> > >>> doesn't seem to actually use "gen3" as a specific term, but sec 4.2.2
+> > >>> says rates of 8 GT/s or higher (which I think includes gen3 and gen4)
+> > >>> use 128b/130b encoding.
+> > >>>
+> > >>
+> > >> I meant that PCIE_SPEED_16_0GT will return 0 from this macro since it wasn't
+> > >> added. Need to return 15754.
+> > >
+> > > Oh, duh, of course!  Sorry for being dense.  What about the following?
+> > > I included the calculation as opposed to just the magic numbers to try
+> > > to make it clear how they're derived.  This has the disadvantage of
+> > > truncating the result instead of rounding, but I doubt that's
+> > > significant in this context.  If it is, we could use the magic numbers
+> > > and put the computation in a comment.
 > > 
-> > diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-> > index 5a0bb53c795c..571b90f88d84 100644
-> > --- a/drivers/pci/dwc/pcie-designware-ep.c
-> > +++ b/drivers/pci/dwc/pcie-designware-ep.c
-> > @@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
-> >  		return ret;
-> >  
-> >  	dw_pcie_dbi_ro_wr_en(pci);
-> > -	dw_pcie_writel_dbi2(pci, reg, size - 1);
-> > -	dw_pcie_writel_dbi(pci, reg, flags);
-> > +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> > +		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> > +		dw_pcie_writel_dbi(pci, reg, flags);
-> > +		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> > +		dw_pcie_writel_dbi(pci, reg + 4, 0);
-> > +	} else {
-> > +		dw_pcie_writel_dbi2(pci, reg, size - 1);
-> > +		dw_pcie_writel_dbi(pci, reg, flags);
-> > +	}
+> > We can always use DIV_ROUND_UP((speed * enc_nominator),
+> > enc_denominator). I think this is confusing and since this introduces a
+> > bandwidth limit I would prefer to give a wider limit than a wrong one,
+> > even it is by less than 1Mb/s. My vote is for leaving it as you wrote below.
+> > 
+> > > Another question: we currently deal in Mb/s, not MB/s.  Mb/s has the
+> > > advantage of sort of corresponding to the GT/s numbers, but using MB/s
+> > > would have the advantage of smaller numbers that match the table here:
+> > > https://en.wikipedia.org/wiki/PCI_Express#History_and_revisions,
+> > > but I don't know what's most typical in user-facing situations.
+> > > What's better?
+> > 
+> > I don't know what's better but for network devices we measure bandwidth
+> > in Gb/s, so presenting bandwidth in MB/s would mean additional
+> > calculations. The truth is I would have prefer to use Gb/s instead of
+> > Mb/s, but again, don't want to loss up to 1Gb/s.
 > 
-> 
-> I think this should work too?
-> 	dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
-> 	dw_pcie_writel_dbi(pci, reg, flags);
-> 
-> 	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
-> 		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
-> 		dw_pcie_writel_dbi(pci, reg + 4, 0);
-> 	}
-> 
+> I prefer this version with the calculation in line since it makes
+> the derivation clear. Keeping them in Mb/s makes it easier to
+> convert to Gb/s, which is what most people would expect.
 
-Hello Kishon,
+OK, let's keep this patch as-is since returning Mb/s means we
+don't have to worry about floating point, and it sounds like we
+agree the truncation isn't a big deal.
 
-I agree, your suggestion is more neat.
+I'll post a proposal to convert to Gb/s when printing.
 
-
-Kishon, please tell me if you insist that the long if-statement
-in pci_epc_set_bar() should be split, since there are 5 different
-conditions. Because imho, having 5 succeeding if-statements isn't
-clearer than having 1 long if-statement.
-
-If Kishon agrees with me, then the review comment in this mail
-seems to be the only review comment.
-And in that case, perhaps Lorenzo wouldn't mind fixing this up.
-Or perhaps Lorenzo prefers if I reroll the whole patch series?
-
-Kind regards,
-Niklas
+> > > commit 946435491b35b7782157e9a4d1bd73071fba7709
+> > > Author: Tal Gilboa <talgi@mellanox.com>
+> > > Date:   Fri Mar 30 08:32:03 2018 -0500
+> > >
+> > >      PCI: Add pcie_bandwidth_capable() to compute max supported link
+> > bandwidth
+> > >
+> > >      Add pcie_bandwidth_capable() to compute the max link bandwidth
+> > supported by
+> > >      a device, based on the max link speed and width, adjusted by the encoding
+> > >      overhead.
+> > >
+> > >      The maximum bandwidth of the link is computed as:
+> > >
+> > >        max_link_width * max_link_speed * (1 - encoding_overhead)
+> > >
+> > >      2.5 and 5.0 GT/s links use 8b/10b encoding, which reduces the raw
+> > bandwidth
+> > >      available by 20%; 8.0 GT/s and faster links use 128b/130b encoding, which
+> > >      reduces it by about 1.5%.
+> > >
+> > >      The result is in Mb/s, i.e., megabits/second, of raw bandwidth.
+> > >
+> > >      Signed-off-by: Tal Gilboa <talgi@mellanox.com>
+> > >      [bhelgaas: add 16 GT/s, adjust for pcie_get_speed_cap() and
+> > >      pcie_get_width_cap() signatures, don't export outside drivers/pci]
+> > >      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > >      Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+> > >
+> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > > index 43075be79388..ff1e72060952 100644
+> > > --- a/drivers/pci/pci.c
+> > > +++ b/drivers/pci/pci.c
+> > > @@ -5208,6 +5208,28 @@ enum pcie_link_width pcie_get_width_cap(struct
+> > pci_dev *dev)
+> > >   	return PCIE_LNK_WIDTH_UNKNOWN;
+> > >   }
+> > >
+> > > +/**
+> > > + * pcie_bandwidth_capable - calculate a PCI device's link bandwidth capability
+> > > + * @dev: PCI device
+> > > + * @speed: storage for link speed
+> > > + * @width: storage for link width
+> > > + *
+> > > + * Calculate a PCI device's link bandwidth by querying for its link speed
+> > > + * and width, multiplying them, and applying encoding overhead.  The result
+> > > + * is in Mb/s, i.e., megabits/second of raw bandwidth.
+> > > + */
+> > > +u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed
+> > *speed,
+> > > +			   enum pcie_link_width *width)
+> > > +{
+> > > +	*speed = pcie_get_speed_cap(dev);
+> > > +	*width = pcie_get_width_cap(dev);
+> > > +
+> > > +	if (*speed == PCI_SPEED_UNKNOWN || *width ==
+> > PCIE_LNK_WIDTH_UNKNOWN)
+> > > +		return 0;
+> > > +
+> > > +	return *width * PCIE_SPEED2MBS_ENC(*speed);
+> > > +}
+> > > +
+> > >   /**
+> > >    * pci_select_bars - Make BAR mask from the type of resource
+> > >    * @dev: the PCI device for which BAR mask is made
+> > > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > > index 66738f1050c0..37f9299ed623 100644
+> > > --- a/drivers/pci/pci.h
+> > > +++ b/drivers/pci/pci.h
+> > > @@ -261,8 +261,18 @@ void pci_disable_bridge_window(struct pci_dev *dev);
+> > >   	 (speed) == PCIE_SPEED_2_5GT ? "2.5 GT/s" : \
+> > >   	 "Unknown speed")
+> > >
+> > > +/* PCIe speed to Mb/s reduced by encoding overhead */
+> > > +#define PCIE_SPEED2MBS_ENC(speed) \
+> > > +	((speed) == PCIE_SPEED_16_0GT ? (16000*(128/130)) : \
+> > > +	 (speed) == PCIE_SPEED_8_0GT  ?  (8000*(128/130)) : \
+> > > +	 (speed) == PCIE_SPEED_5_0GT  ?  (5000*(8/10)) : \
+> > > +	 (speed) == PCIE_SPEED_2_5GT  ?  (2500*(8/10)) : \
+> > > +	 0)
+> > > +
+> > >   enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
+> > >   enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
+> > > +u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed
+> > *speed,
+> > > +			   enum pcie_link_width *width);
+> > >
+> > >   /* Single Root I/O Virtualization */
+> > >   struct pci_sriov {
+> > >
