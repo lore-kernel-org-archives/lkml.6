@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752664AbeDBOfv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 10:35:51 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:53680 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbeDBOfq (ORCPT
+        id S1752856AbeDBOgs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 10:36:48 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:41161 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752627AbeDBOfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 10:35:46 -0400
+        Mon, 2 Apr 2018 10:35:51 -0400
 From: Murali Karicheri <m-karicheri2@ti.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
         <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH v3 09/11] net: netcp: ethss: use of_get_phy_mode() to support different RGMII modes
-Date: Mon, 2 Apr 2018 10:37:59 -0400
-Message-ID: <1522679881-25643-10-git-send-email-m-karicheri2@ti.com>
+Subject: [net-next PATCH v3 04/11] net: netcp: ethss: make call to gbe_sgmii_config() conditional
+Date: Mon, 2 Apr 2018 10:37:54 -0400
+Message-ID: <1522679881-25643-5-git-send-email-m-karicheri2@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
 References: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
@@ -25,65 +25,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The phy used for K2G allows for internal delays to be added optionally
-to the clock circuitry based on board desing. To add this support,
-enhance the driver to use of_get_phy_mode() to read the phy-mode from
-the phy device and pass the same to phy through of_phy_connect().
+As a preparatory patch to add support for 2u cpsw hardware found on
+K2G SoC, make call to gbe_sgmii_config() conditional. This is required
+since 2u uses RGMII interface instead of SGMII and to allow for driver
+re-use.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 ---
- drivers/net/ethernet/ti/netcp_ethss.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/net/ethernet/ti/netcp_ethss.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 7b3b373..f7af999 100644
+index 1b79fe5..1628fbe 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -21,6 +21,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of_mdio.h>
-+#include <linux/of_net.h>
- #include <linux/of_address.h>
- #include <linux/if_vlan.h>
- #include <linux/ptp_classify.h>
-@@ -705,6 +706,7 @@ struct gbe_slave {
- 	u32				link_interface;
- 	u32				mac_control;
- 	u8				phy_port_t;
-+	struct device_node		*node;
- 	struct device_node		*phy_node;
- 	struct ts_ctl                   ts_ctl;
- 	struct list_head		slave_list;
-@@ -2318,6 +2320,21 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
- 		has_phy = true;
- 		phy_mode = PHY_INTERFACE_MODE_SGMII;
- 		slave->phy_port_t = PORT_MII;
-+	} else if (slave->link_interface == RGMII_LINK_MAC_PHY) {
-+		has_phy = true;
-+		phy_mode = of_get_phy_mode(slave->node);
-+		/* if phy-mode is not present, default to
-+		 * PHY_INTERFACE_MODE_RGMII
-+		 */
-+		if (phy_mode < 0)
-+			phy_mode = PHY_INTERFACE_MODE_RGMII;
-+
-+		if (!phy_interface_mode_is_rgmii(phy_mode)) {
-+			dev_err(priv->dev,
-+				"Unsupported phy mode %d\n", phy_mode);
-+			return -EINVAL;
-+		}
-+		slave->phy_port_t = PORT_MII;
- 	} else if (slave->link_interface == XGMII_LINK_MAC_PHY) {
- 		has_phy = true;
- 		phy_mode = PHY_INTERFACE_MODE_NA;
-@@ -2943,6 +2960,7 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
- 		slave->link_interface = SGMII_LINK_MAC_PHY;
- 	}
+@@ -2274,7 +2274,8 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
  
-+	slave->node = node;
- 	slave->open = false;
- 	if ((slave->link_interface == SGMII_LINK_MAC_PHY) ||
- 	    (slave->link_interface == RGMII_LINK_MAC_PHY) ||
+ 	void (*hndlr)(struct net_device *) = gbe_adjust_link;
+ 
+-	gbe_sgmii_config(priv, slave);
++	if (IS_SS_ID_VER_14(priv) || IS_SS_ID_NU(priv))
++		gbe_sgmii_config(priv, slave);
+ 	gbe_port_reset(slave);
+ 	gbe_sgmii_rtreset(priv, slave, false);
+ 	gbe_port_config(priv, slave, priv->rx_packet_max);
+@@ -3042,7 +3043,8 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
+ 			continue;
+ 		}
+ 
+-		gbe_sgmii_config(gbe_dev, slave);
++		if (IS_SS_ID_VER_14(gbe_dev) || IS_SS_ID_NU(gbe_dev))
++			gbe_sgmii_config(gbe_dev, slave);
+ 		gbe_port_reset(slave);
+ 		gbe_port_config(gbe_dev, slave, gbe_dev->rx_packet_max);
+ 		list_add_tail(&slave->slave_list, &gbe_dev->secondary_slaves);
 -- 
 1.9.1
