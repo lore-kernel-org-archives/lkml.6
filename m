@@ -1,110 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751574AbeDBN4h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 09:56:37 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:34281 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeDBN4e (ORCPT
+        id S1751655AbeDBOD0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 10:03:26 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:34654 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1751324AbeDBODX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 09:56:34 -0400
-X-Google-Smtp-Source: AIpwx4+JiL4Vuj3i3T/hX/Chw85tUWQWQAAwfiklrUxI4RoYUypa0bvuOhpUN03CgvupwEKJPRo3UwfuwsJFrrw5Ggc=
+        Mon, 2 Apr 2018 10:03:23 -0400
+Date: Mon, 2 Apr 2018 10:03:22 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+cc: paulmck@linux.vnet.ibm.com, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 1/3] locking: Document the semantics of spin_is_locked()
+In-Reply-To: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
+Message-ID: <Pine.LNX.4.44L0.1804021001130.1415-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-From: Turritopsis Dohrnii Teo En Ming <tdteoenming2@gmail.com>
-Date: Mon, 2 Apr 2018 21:56:33 +0800
-Message-ID: <CAPK33YiX13JEM-M-HnbtDiH5nUj1rMeOQ-g_Qp9HnfyfPpbqxg@mail.gmail.com>
-Subject: What is the universal (world wide) understanding behind degaussing harddisks?
-To: linux-kernel@vger.kernel.org
-Cc: tdteoenming2@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good evening from Singapore!
+On Sun, 1 Apr 2018, Andrea Parri wrote:
 
-The foremost question which I want to ask is, what is the universal
-(world wide) understanding behind degaussing hard drives?
+> There appeared to be a certain, recurrent uncertainty concerning the
+> semantics of spin_is_locked(), likely a consequence of the fact that
+> this semantics remains undocumented or that it has been historically
+> linked to the (likewise unclear) semantics of spin_unlock_wait().
+> 
+> A recent auditing [1] of the callers of the primitive confirmed that
+> none of them are relying on particular ordering guarantees; document
+> this semantics by adding a docbook header to spin_is_locked().
+> 
+> [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+> 
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> ---
+>  include/linux/spinlock.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+> index 4894d322d2584..2639fdc9a916c 100644
+> --- a/include/linux/spinlock.h
+> +++ b/include/linux/spinlock.h
+> @@ -380,6 +380,17 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
+>  	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
+>  })
+>  
+> +/**
+> + * spin_is_locked() - Check whether a spinlock is locked.
+> + * @lock: Pointer to the spinlock.
+> + *
+> + * This function is NOT required to provide any memory ordering
+> + * guarantees; it could be used for debugging purposes or, when
+> + * additional synchronization is needed, accompanied with other
+> + * constructs (memory barriers) enforcing the synchronization.
+> + *
+> + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
 
-I work for No Secrets Agency (NSA) Pte Ltd (fictitious company name
-used). My sales manager Edward Joseph Snowden (fictitious individual
-name used) had *promised* our customer Leave Me in the Lurch (S) Pte
-Ltd (fictitious company name used) that we would "DEGAUSS" their hard
-disks after the PC replacement and data migration exercise for 15
-trillion PCs (fictitious number used).
+This is a good addition.  But please remove the parenthetical phrase.  
+Or if you prefer to keep it, at least remove the parentheses.
 
-PC = Personal Computer, which includes desktops and laptops
+Alan
 
-Last Friday, I had already reflected to my sales manager Edward
-Snowden that since we are definitely NOT going to wipe our customer's
-data by using strong and powerful magnets (physical means), should I
-send an email to the IT Administrator of our customer Lady Gaga
-(fictitious individual name used) asking her which data sanitization
-method (by software means) I should use? My sales manager Edward
-Snowden had quickly deflected my concerns (that is, wanting to send an
-email to our customer Lady Gaga asking her which data sanitization
-method I should use).
-
-I had brought up to the sales manager Edward Snowden a number of data
-wiping methods by software means last Friday.
-
-(1) Very very simple 1-pass data wiping, quickest
-
-a. Using "sudo dd if=/dev/zero of=/dev/sda", overwriting harddisks
-from beginning to end with zeroes, where /dev/sda refers to the 500 GB
-harddisk, not /dev/loop0 and not /dev/sdb which refers to the bootable
-live operating system on thumb drive
-
-b. Using "sudo dd if=/dev/urandom of=/dev/sda", overwriting harddisks
-from beginning to end with random data, where /dev/sda refers to the
-500 GB harddisk, not /dev/loop0 and not /dev/sdb which refers to the
-bootable live operating system on thumb drive
-
-Any bootable Live CD/DVD/flash media could do it.
-
-(2) 3-pass U.S. Government/Department of Defense (DoD) standard (DoD 5220.22-M)
-
-Certified commercial software required
-
-(3) 7-pass U.S. Government/Department of Defense (DoD) standard (DoD 5220.22-M)
-
-Certified commercial software required
-
-(4) 35-pass Gutmann method, slowest
-
-Certified commercial software required
-
-All these was last Friday. In the midst of our argument over the
-cellular network "just now", my sales manager Edward Snowden tried to
-cover up himself by suddenly and unexpectedly making an excuse that he
-had told me last Friday I was supposed to wipe user data only, not the
-operating system!
-
-If he had wanted me to wipe user data and retain/keep the Windows
-operating system, he should simply have told me to Reset the PC (for
-Windows 10 only) or use a =secure File Shredder=! For Windows 7, you
-can still wipe user data and preserve the operating system by using
-the Recovery Partition. On Lenovo desktops, press and hold F11 when
-Windows 7 is starting and reset to factory defaults.
-
-I had advised my sales manager Edward Snowden not to use BIG WORDS
-like "degaussing the harddisk" and market to the customer using these
-big words. Any person who sees the word "degauss" would have
-understood it to mean sanitize *ALL* data on the harddisk straight
-away and without question.
-
-Please refer to Figure 1. Exhibit A below for the "degaussing"
-instructions communicated to me by my sales manager Edward Snowden.
-Please click the link below.
-
-URI: https://i.imgur.com/bGOMyVs.png
-
-Please advise.
-
-Thank you very much.
-
-Regards,
-
-Mr. Turritopsis Dohrnii Teo En Ming
-Systems and Network Engineer
-Republic of Singapore
-2nd April 2018 Monday 9:35 PM Singapore Time GMT+8
+> + */
+>  static __always_inline int spin_is_locked(spinlock_t *lock)
+>  {
+>  	return raw_spin_is_locked(&lock->rlock);
+> 
