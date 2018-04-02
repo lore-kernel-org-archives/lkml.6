@@ -1,168 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756666AbeDBUTK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:19:10 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:48106 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753382AbeDBUTH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:19:07 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org
-References: <87woypy8zc.fsf@xmission.com>
-        <20180331105658.GA4332@asgard.redhat.com>
-Date: Mon, 02 Apr 2018 15:17:58 -0500
-In-Reply-To: <20180331105658.GA4332@asgard.redhat.com> (Eugene Syromiatnikov's
-        message of "Sat, 31 Mar 2018 12:56:58 +0200")
-Message-ID: <87woxpz7k9.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S932408AbeDBUUe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 16:20:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58098 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756258AbeDBUUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 16:20:33 -0400
+Date: Mon, 2 Apr 2018 22:20:20 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180402222020.1d344c14@bbrezillon>
+In-Reply-To: <20180402212843.164d5d21@bbrezillon>
+References: <20180329131054.22506-1-peda@axentia.se>
+        <20180329153322.5e2fc1e7@bbrezillon>
+        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+        <20180329154416.5c1a0013@bbrezillon>
+        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+        <20180402142249.7e076a64@bbrezillon>
+        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+        <20180402212843.164d5d21@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f35uy-0008M8-Pq;;;mid=<87woxpz7k9.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+/mcFXZqwXToOqzso4Wq/iGPEO0+gx2Oo=
-X-SA-Exim-Connect-IP: 67.3.145.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Eugene Syromiatnikov <esyr@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 767 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 2.9 (0.4%), b_tie_ro: 1.89 (0.2%), parse: 1.41 (0.2%),
-        extract_message_metadata: 27 (3.6%), get_uri_detail_list: 5 (0.7%),
-        tests_pri_-1000: 10 (1.3%), tests_pri_-950: 2.1 (0.3%), tests_pri_-900: 1.66
-        (0.2%), tests_pri_-400: 39 (5.1%), check_bayes: 37 (4.8%), b_tokenize: 16
-        (2.0%), b_tok_get_all: 9 (1.2%), b_comp_prob: 4.8 (0.6%), b_tok_touch_all:
-        3.6 (0.5%), b_finish: 0.83 (0.1%), tests_pri_0: 669 (87.3%),
-        check_dkim_signature: 0.96 (0.1%), check_dkim_adsp: 7 (0.9%), tests_pri_500:
-        8 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [GIT PULL] siginfo fix for v4.16-rc5
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eugene Syromiatnikov <esyr@redhat.com> writes:
+On Mon, 2 Apr 2018 21:28:43 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-> So, the offset of the si_lower field is 20 at the current HEAD and was 18 at
-> commits v4.16-rc3~17^2 and v4.16-rc1~159^2~20.  I believe this is due to
-> the fact that m68k uses 2-byte default alignment and not 4-byte.
+> On Mon, 2 Apr 2018 19:59:39 +0200
+> Peter Rosin <peda@axentia.se> wrote:
+> 
+> > On 2018-04-02 14:22, Boris Brezillon wrote:  
+> > > On Thu, 29 Mar 2018 16:27:12 +0200
+> > > Peter Rosin <peda@axentia.se> wrote:
+> > >     
+> > >> On 2018-03-29 15:44, Boris Brezillon wrote:    
+> > >>> On Thu, 29 Mar 2018 15:37:43 +0200
+> > >>> Peter Rosin <peda@axentia.se> wrote:
+> > >>>       
+> > >>>> On 2018-03-29 15:33, Boris Brezillon wrote:      
+> > >>>>> On Thu, 29 Mar 2018 15:10:54 +0200
+> > >>>>> Peter Rosin <peda@axentia.se> wrote:
+> > >>>>>         
+> > >>>>>> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
+> > >>>>>> flash accesses have a tendency to cause display disturbances. Add a
+> > >>>>>> module param to disable DMA from the NAND controller, since that fixes
+> > >>>>>> the display problem for me.
+> > >>>>>>
+> > >>>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> > >>>>>> ---
+> > >>>>>>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
+> > >>>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >>>>>>
+> > >>>>>> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> > >>>>>> index b2f00b398490..2ff7a77c7b8e 100644
+> > >>>>>> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+> > >>>>>> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> > >>>>>> @@ -129,6 +129,11 @@
+> > >>>>>>  #define DEFAULT_TIMEOUT_MS			1000
+> > >>>>>>  #define MIN_DMA_LEN				128
+> > >>>>>>  
+> > >>>>>> +static bool atmel_nand_avoid_dma __read_mostly;
+> > >>>>>> +
+> > >>>>>> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
+> > >>>>>> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);        
+> > >>>>>
+> > >>>>> I'm not a big fan of those driver specific cmdline parameters. Can't we
+> > >>>>> instead give an higher priority to HLCDC master using the bus matrix?        
+> > >>>>
+> > >>>> I don't know if it will be enough, but we sure can try. However, I have
+> > >>>> no idea how to do that. I will happily test stuff though...      
+> > >>>
+> > >>> There's no interface to configure that from Linux, but you can try to
+> > >>> tweak it with devmem and if that does the trick, maybe we can expose a
+> > >>> way to configure that from Linux. For more details, see the "Bus Matrix
+> > >>> (MATRIX)" section in Atmel datasheets.      
+> > >>
+> > >> I don't seem to succeed in changing the registers I think I need to change.
+> > >> I can poke the "Write Protection Mode Register" by writing MAT0 and MAT1 to
+> > >> it.    
+> > > 
+> > > You mean 0x4D415400, right? ("MAT0" != 0x4D415400).    
+> > 
+> > Bits 1 through 7 do not matter, so even though not equal they are (or
+> > should be) equivalent. But I did use 0x4d415400. I simply used the
+> > shorter syntax since that was easier to type and conveyed the relevant
+> > info.  
+> 
+> Ok.
+> 
+> >   
+> > >> But when I try to write to "Priority Registers B For Slaves" it doesn't
+> > >> take, regardless of write protect mode.    
+> > > 
+> > > Did you check MATRIX_WPSR after writing to MATRIX_PRXSY?    
+> > 
+> > No, but did it again and checked, see transcript below.  
+> 
+> I don't use devmem2. Is 'readback' information accurate or is it
+> always what's been written? Because when you write 0x33 to 0xFFFFECBC,
+> 0x33 is read back, but just after that, when you read it again it's 0.
+> 
+> > BTW, how do I
+> > know which master is in use for the LCD controller? 8 or 9? Both?  
+> 
+> It's configurable on a per-layer basis through the SIF bit in
+> LCDC_<layer>CFG0. The driver tries to dispatch the load on those 2 AHB
+> masters [1].
+> 
+> > And
+> > which DDR slave is the target? 7, 8, 9 or 10? More than one?  
+> 
+> This, I don't know. I guess all of them can be used.
 
-A 2-byte alignment for 4 byte pointers.  That is a new one to me.
+Looks like I was wrong. According to "Table 15-3. SAMA5D3 Master to
+Slave Access", LCDC port 0 can only access DDR port 2 and LCDC port 1
+can only access DDR port 3.
 
-Euguene can you test the patch below.  It should be fully robust against
-this kind of craziness.  It certainly passes my BUILD_BUG_ON tests for
-m68k.
+Can you try to write 0x3 to 0xFFFFECCC and 0x30 to 0xFFFFECD4?
 
-Eric
+> 
+> > 
+> > Cheers,
+> > Peter
+> > 
+> > # devmem2 0xffffede4 w
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6f50000.
+> > Value at address 0xFFFFEDE4 (0xb6f50de4): 0x0
+> > # devmem2 0xffffede4 w 0x4d415401
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6f0d000.
+> > Value at address 0xFFFFEDE4 (0xb6f0dde4): 0x0
+> > Written 0x4D415401; readback 0x4D415401
+> > # devmem2 0xffffede4 w
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6f55000.
+> > Value at address 0xFFFFEDE4 (0xb6f55de4): 0x1
+> > # devmem2 0xffffede4 w 0x4d415400
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6fb5000.
+> > Value at address 0xFFFFEDE4 (0xb6fb5de4): 0x1
+> > Written 0x4D415400; readback 0x4D415400
+> > # devmem2 0xffffede4 w
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6fef000.
+> > Value at address 0xFFFFEDE4 (0xb6fefde4): 0x0
+> > 
+> > 
+> > # devmem2 0xffffede8 w
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6fe9000.
+> > Value at address 0xFFFFEDE8 (0xb6fe9de8): 0x0
+> > 
+> > 
+> > # devmem2 0xffffecbc w
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6ff0000.
+> > Value at address 0xFFFFECBC (0xb6ff0cbc): 0x0
+> > # devmem2 0xffffecbc w 0x33
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6f79000.
+> > Value at address 0xFFFFECBC (0xb6f79cbc): 0x0
+> > Written 0x33; readback 0x33
+> > # devmem2 0xffffecbc w
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6efe000.
+> > Value at address 0xFFFFECBC (0xb6efecbc): 0x0
+> > 
+> > 
+> > # devmem2 0xffffede8 w
+> > /dev/mem opened.
+> > Memory mapped at address 0xb6f9e000.
+> > Value at address 0xFFFFEDE8 (0xb6f9ede8): 0x0
+> >   
+> 
+> [1]https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c#L498
+> 
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Mon, 2 Apr 2018 14:45:42 -0500
-Subject: [PATCH] signal: Correct the offset of si_pkey and si_lower in struct siginfo on m68k
 
-The change moving addr_lsb into the _sigfault union failed to take
-into account that _sigfault._addr_bnd._lower being a pointer forced
-the entire union to have pointer alignment.  The fix for
-_sigfault._addr_bnd._lower having pointer alignment failed to take
-into account that m68k has a pointer alignment less than the size
-of a pointer.  So simply making the padding members pointers changed
-the location of later members in the structure.
 
-Fix this by directly computing the needed size of the padding members,
-and making the padding members char arrays of the needed size.  AKA
-if __alignof__(void *) is 1 sizeof(short) otherwise __alignof__(void *).
-Which should be exactly the same rules the compiler whould have
-used when computing the padding.
-
-I have tested this change by adding BUILD_BUG_ONs to m68k to verify
-the offset of every member of struct siginfo, and with those testing
-that the offsets of the fields in struct siginfo is the same before
-I changed the generic _sigfault member and after the correction
-to the _sigfault member.
-
-I have also verified that the x86 with it's own BUILD_BUG_ONs to verify
-the offsets of the siginfo members also compiles cleanly.
-
-Cc: stable@vger.kernel.org
-Reported-by: Eugene Syromiatnikov <esyr@redhat.com>
-Fixes: 859d880cf544 ("signal: Correct the offset of si_pkey in struct siginfo")
-Fixes: b68a68d3dcc1 ("signal: Move addr_lsb into the _sigfault union for clarity")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- include/linux/compat.h             | 6 ++++--
- include/uapi/asm-generic/siginfo.h | 7 +++++--
- 2 files changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index e16d07eb08cf..d770e62632d7 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -221,6 +221,8 @@ typedef struct compat_siginfo {
- #ifdef __ARCH_SI_TRAPNO
- 			int _trapno;	/* TRAP # which caused the signal */
- #endif
-+#define __COMPAT_ADDR_BND_PKEY_PAD  (__alignof__(compat_uptr_t) < sizeof(short) ? \
-+				     sizeof(short) : __alignof__(compat_uptr_t))
- 			union {
- 				/*
- 				 * used when si_code=BUS_MCEERR_AR or
-@@ -229,13 +231,13 @@ typedef struct compat_siginfo {
- 				short int _addr_lsb;	/* Valid LSB of the reported address. */
- 				/* used when si_code=SEGV_BNDERR */
- 				struct {
--					compat_uptr_t _dummy_bnd;
-+					char _dummy_bnd[__COMPAT_ADDR_BND_PKEY_PAD];
- 					compat_uptr_t _lower;
- 					compat_uptr_t _upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
- 				struct {
--					compat_uptr_t _dummy_pkey;
-+					char _dummy_pkey[__COMPAT_ADDR_BND_PKEY_PAD];
- 					u32 _pkey;
- 				} _addr_pkey;
- 			};
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index 4b3520bf67ba..6d789648473d 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -94,6 +94,9 @@ typedef struct siginfo {
- 			unsigned int _flags;	/* see ia64 si_flags */
- 			unsigned long _isr;	/* isr */
- #endif
-+
-+#define __ADDR_BND_PKEY_PAD  (__alignof__(void *) < sizeof(short) ? \
-+			      sizeof(short) : __alignof__(void *))
- 			union {
- 				/*
- 				 * used when si_code=BUS_MCEERR_AR or
-@@ -102,13 +105,13 @@ typedef struct siginfo {
- 				short _addr_lsb; /* LSB of the reported address */
- 				/* used when si_code=SEGV_BNDERR */
- 				struct {
--					void *_dummy_bnd;
-+					char _dummy_bnd[__ADDR_BND_PKEY_PAD];
- 					void __user *_lower;
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
- 				struct {
--					void *_dummy_pkey;
-+					char _dummy_pkey[__ADDR_BND_PKEY_PAD];
- 					__u32 _pkey;
- 				} _addr_pkey;
- 			};
 -- 
-2.14.1
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
