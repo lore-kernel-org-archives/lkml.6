@@ -1,130 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753201AbeDBRBS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 13:01:18 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:49909 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753096AbeDBRBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 13:01:03 -0400
-X-Google-Smtp-Source: AIpwx4+EQ3wKLD5JoRYNYfi06D/OJrbrITKMNfixeCMdeq9DFUS+vWThECaH01kodwaOG3+3cmNFSa7IUpfxvaSTh1LshEJig0/4
+        id S1753226AbeDBRCW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 13:02:22 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:40390 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753139AbeDBRCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 13:02:19 -0400
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>, Will Davis <wdavis@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>, linaro-mm-sig@lists.linaro.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+References: <6a5c9a10-50fe-b03d-dfc1-791d62d79f8e@amd.com>
+ <e751cd28-f115-569f-5248-d24f30dee3cb@deltatee.com>
+ <73578b4e-664b-141c-3e1f-e1fae1e4db07@amd.com>
+ <1b08c13e-b4a2-08f2-6194-93e6c21b7965@deltatee.com>
+ <70adc2cc-f7aa-d4b9-7d7a-71f3ae99f16c@gmail.com>
+ <98ce6cfd-bcf3-811e-a0f1-757b60da467a@deltatee.com>
+ <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
+ <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
+ <20180330015854.GA3572@redhat.com>
+ <0234bc5e-495e-0f68-fb0a-debb17a35761@deltatee.com>
+ <20180330194519.GC3198@redhat.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <31266710-f6bb-99ee-c73d-6e58afe5c38c@deltatee.com>
+Date: Mon, 2 Apr 2018 11:02:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Mon, 02 Apr 2018 10:01:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113ec036ea84f90568e088dc@google.com>
-Subject: WARNING in ext4_superblock_csum_set
-From: syzbot <syzbot+f3b1a2c79758f3eec76c@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180330194519.GC3198@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: bhelgaas@google.com, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, joro@8bytes.org, wdavis@nvidia.com, hch@infradead.org, christian.koenig@amd.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot hit the following crash on upstream commit
-0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
-Linux 4.16
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=f3b1a2c79758f3eec76c
-
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6181981368877056
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6303722082664448
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5129995567497216
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
-compiler: gcc (GCC) 7.1.1 20170620
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f3b1a2c79758f3eec76c@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-EXT4-fs (loop0): mounted filesystem without journal. Opts:
-EXT4-fs (loop0): warning: mounting unchecked fs, running e2fsck is  
-recommended
-EXT4-fs warning (device loop0): ext4_update_dynamic_rev:774: updating to  
-rev 1 because of new feature flag, running e2fsck is recommended
-EXT4-fs (loop0): mounted filesystem without journal. Opts:
-WARNING: CPU: 0 PID: 5126 at fs/ext4/ext4.h:2690 ext4_has_metadata_csum  
-fs/ext4/ext4.h:2689 [inline]
-WARNING: CPU: 0 PID: 5126 at fs/ext4/ext4.h:2690  
-ext4_superblock_csum_set+0x2b8/0x350 fs/ext4/super.c:179
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 5126 Comm: syzkaller957684 Not tainted 4.16.0+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:ext4_has_metadata_csum fs/ext4/ext4.h:2689 [inline]
-RIP: 0010:ext4_superblock_csum_set+0x2b8/0x350 fs/ext4/super.c:179
-RSP: 0000:ffff8801b3e97868 EFLAGS: 00010293
-RAX: ffff8801bf85e1c0 RBX: 1ffff100367d2f0d RCX: ffffffff81fd4308
-RDX: 0000000000000000 RSI: ffff8801bea41400 RDI: ffff8801bea41464
-RBP: ffff8801b3e978f0 R08: 1ffff100367d2ede R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801c28a46c0
-R13: ffff8801b3e978c8 R14: ffff8801bea41400 R15: ffff8801c28a4c40
-  ext4_commit_super+0x609/0xb60 fs/ext4/super.c:4720
-  ext4_put_super+0x25b/0xf50 fs/ext4/super.c:898
-  generic_shutdown_super+0x1b5/0x540 fs/super.c:439
-  kill_block_super+0x9b/0xf0 fs/super.c:1146
-  deactivate_locked_super+0x88/0xd0 fs/super.c:312
-  deactivate_super+0x141/0x1b0 fs/super.c:343
-  cleanup_mnt+0xb2/0x150 fs/namespace.c:1173
-  __cleanup_mnt+0x16/0x20 fs/namespace.c:1180
-  task_work_run+0x199/0x270 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-  exit_to_usermode_loop+0x275/0x2f0 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x449d2a
-RSP: 002b:00007f07d6e22cf8 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffec RBX: 0000000020000100 RCX: 0000000000449d2a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f07d6e22d10
-RBP: 0000000000000012 R08: 0000000020012f00 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000000006
-R13: 0000000000000007 R14: 0000000000000000 R15: 0000000000000012
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
 
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+On 30/03/18 01:45 PM, Jerome Glisse wrote:
+> Looking at upstream code it seems that the x86 bits never made it upstream
+> and thus what is now upstream is only for ARM. See [1] for x86 code. Dunno
+> what happen, i was convince it got merge. So yes current code is broken on
+> x86. ccing Joerg maybe he remembers what happened there.
+> 
+> [1] https://lwn.net/Articles/646605/
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+That looks like a significant improvement over what's upstream. But it's
+three years old and looks to have been abandoned. I think I agree with
+Bjorn's comments in that if it's going to be a general P2P API it will
+need the device the resource belongs to in addition to the device that's
+initiating the DMA request.
+
+> Given it is currently only used by ARM folks it appear to at least work
+> for them (tm) :) Note that Christian is doing this in PCIE only context
+> and again dma_map_resource can easily figure that out if the address is
+> a PCIE or something else. Note that the exporter export the CPU bus
+> address. So again dma_map_resource has all the informations it will ever
+> need, if the peer to peer is fundamentaly un-doable it can return dma
+> error and it is up to the caller to handle this, just like GPU code do.
+> 
+> Do you claim that dma_map_resource is missing any information ?
+
+Yes, that's what I said. All the existing ARM code appears to use it for
+platform devices only. I suspect platform P2P is relatively trivial to
+support on ARM. I think it's a big difference from using it for PCI P2P
+or general P2P on any bus.
+
+> I agree and understand that but for platform where such feature make sense
+> this will work. For me it is PowerPC and x86 and given PowerPC has CAPI
+> which has far more advance feature when it comes to peer to peer, i don't
+> see something more basic not working. On x86, Intel is a bit of lone wolf,
+> dunno if they gonna support this usecase pro-actively. AMD definitly will.
+
+Well PowerPC doesn't even support P2P between root ports. And I fail to
+see how CAPI applies unless/until we get this memory mapped into
+userspace and the mappings need to be dynamically managed. Seems like
+that's a long way away.
+
+Logan
