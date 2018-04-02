@@ -1,123 +1,195 @@
-Return-Path: <andrew@lunn.ch>
-X-Google-Smtp-Source: AIpwx49G62OoTE8yQx1o01dO16a97XVHQBsPBujy5BayN530cmmOO+Bhg7iuesfOFpY+p0REZhxt
-ARC-Seal: i=1; a=rsa-sha256; t=1522760643; cv=none;
+Return-Path: <ioana.ciornei@nxp.com>
+X-Google-Smtp-Source: AIpwx48+oghElHGMHV8IRuVftJj83LEcCwTgCd3PJNh7qTm82i4954YwR5OhnRJZYoq0xbbuyTK2
+ARC-Seal: i=1; a=rsa-sha256; t=1522676778; cv=none;
         d=google.com; s=arc-20160816;
-        b=D/Y5KaxgUI8WA2VeMhOjGlXKLYZkVf7EAeZ40E1KTPCtxoVH8svYxJqdpmzuotq/RQ
-         OWbhnBtLdZOL1mHqdNaFjrERDcFXhF/xdjfwy4Z7DU2RHpGdi7RJnyqO5ng32NPkHwAG
-         pgV3Ms/5b0FU0MoXH6nmvLHt/kHur8fGK+BU78sQb6Kb0cfHhHgxrVNx5A+aQHFM8T5F
-         U50yvkEquiso42M9JA5eJJ12BEzbdVOBhYKoxoJ6wJpRx9ercSpYBDk4PGqykrLIWRwI
-         uygEXOp4BLpfh9pZ39DSjLv7YBzLJ/SBAsidMddxNIzOP3VjwDcgoqEkajA8fWFOIQsA
-         nfXQ==
+        b=A5tPtDykMwF45S53suc8DbJVUS+C7vCQZUBQwbILDAyN3uHmfFYMuyG+RWVeexBdhE
+         Tdfn9dxzdKg85hZLPqoh2B0kffdhuE0x46Xjvl6W+yzb6677D1y3DflXJ8ahePa0Q+dp
+         GQUtEFrz8cPMoiraEQVqihKYQ+KFNCeVdzaLSfZlVke+oo6saqlu2Rs5Bg8Tak3eflwW
+         9IKkf0EyM7md49JdkTnaoy9o5rcNFLiLJ8JVyynpg5lRkpYxh4bNaYm6bi3K1TPyxlFL
+         D2nK62lAKe7Xj6Wq7lHVqHnwW9URabqngicl199ABHvaDO/yu6j2s+7YJKX9u19kVSr7
+         r4bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=4EG7mkai4asAscMY5ZY6lFALKP0IUJAHA43hs1H7ohg=;
-        b=xLzH0qFV6446GbkeTiqjV4fLa36xaQeAG/iZyzzRGJeMNZQOh3Zk5B505uW0pbTqEv
-         KPvplHu39Z57lanrUqy0pY3F60odz9O91lH9udhnVzuUB5W5N3hZIiIMm0b40wz4CFJF
-         b1MLK9pQyErxsVXmCIWRaf4RyIrTxinKeQUY2pfunXT7F3Peoa0sBpE34CBnAfYDI4wE
-         R/aBeyXUTy0uZSl8CVOPpzzZ9WlJb0FQTUbbiGs/xKqa4lT/pfCeiJA78MCqXc5r4UI7
-         L1sZHMU57y1+9dzRZYIOM0OilqtnYRuTSWFW7n/dftY8GhgtZ13X1MPy3htPNhkJ94Tk
-         VIaQ==
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=eW9thCxkYxU225AtNvcw/8HXV7nYxJpViolu8W9D1Bw=;
+        b=m1VUIEtw+VxlHypOusIiebju0b5myBMaFX0TEofp3251K4PCewLHf/cxCWyQ7P6ap/
+         OqS/mZ2+DuppfsuO0DyzG+Q6FHGx0HyJoXIAFlXfL+ZNRIIThogNNKclbhJ7mcCA38WC
+         wr4GnUNb6SZXHD2oCgdP7DPm1eH2k8dkHZLF/bJWsxsM7zbnVH1FdYNign3mf472nI6K
+         wpdzViTiAhyKtfZtrzKKNgVoXX+MCbqKXnjLEepltggz37iIkm3/bImYhnMSRybarqFW
+         2yv4wOI0t3ydIWxwAQ6lDqvrycEp3IpjRF++0crJiBWpiW8b5JbKETY5BHKEyQ/amtgV
+         kS/g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=lCh50d0E;
-       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=kXvsQInY;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 40.107.0.86 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=lCh50d0E;
-       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
-Date: Tue, 3 Apr 2018 15:04:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Razvan Stefanescu <razvan.stefanescu@nxp.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, gregkh <gregkh@linuxfoundation.org>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Stuart Yoder <stuyoder@gmail.com>,
-	Ruxandra Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
-	Roy Pledge <roy.pledge@nxp.com>,
-	Networking <netdev@vger.kernel.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: Re: [PATCH v3 2/4] bus: fsl-mc: add restool userspace support
-Message-ID: <20180403130401.GB31740@lunn.ch>
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=kXvsQInY;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 40.107.0.86 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: Laurentiu Tudor <laurentiu.tudor@nxp.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "stuyoder@gmail.com" <stuyoder@gmail.com>,
+	Ruxandra Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>, "arnd@arndb.de"
+	<arnd@arndb.de>, Razvan Stefanescu <razvan.stefanescu@nxp.com>, Roy Pledge
+	<roy.pledge@nxp.com>
+Subject: RE: [PATCH v3 4/4] bus: fsl-mc: add bus rescan attribute
+Thread-Topic: [PATCH v3 4/4] bus: fsl-mc: add bus rescan attribute
+Thread-Index: AQHTwr0wQpewYSPXPk2gS/MBZ86FQqPd97CAgA+QFuA=
+Date: Mon, 2 Apr 2018 13:46:13 +0000
+Message-ID: <HE1PR04MB3212736F979C78C2269D9D6BE0A60@HE1PR04MB3212.eurprd04.prod.outlook.com>
 References: <cover.1521818402.git.ioana.ciornei@nxp.com>
- <d8c243a9ead2fe1375dee242aec26d1276129409.1521818402.git.ioana.ciornei@nxp.com>
- <CAK8P3a089ZiPdp1CcVct8Kac+ejkNP8TrVpWYSr_nMGo4goO1Q@mail.gmail.com>
- <HE1PR04MB32126A07A4B4CC7225E661E4E0A30@HE1PR04MB3212.eurprd04.prod.outlook.com>
- <CAK8P3a1aQCm_r95Ka4x+j8SJLCLFvLuX3A4twK1WJcJs66YwKg@mail.gmail.com>
- <20180328162811.GB15827@lunn.ch>
- <HE1PR04MB32127E14E0953910746A6363E0A60@HE1PR04MB3212.eurprd04.prod.outlook.com>
- <20180402134441.GB10520@lunn.ch>
- <AM3PR04MB07439B79DD857CD2F8033623E6A50@AM3PR04MB0743.eurprd04.prod.outlook.com>
+ <2ea1db0e7d43255f8d13f6c3cb4ce3d12df89eef.1521818403.git.ioana.ciornei@nxp.com>
+ <20180323154953.GC382@kroah.com>
+In-Reply-To: <20180323154953.GC382@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ioana.ciornei@nxp.com;
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB3050;7:OAloT7W58cWx05AzQqBqnXhkzj7v8Zf04H/2kYWEjdJ47lUjnEQF/Y2yY6ZsyMv5D4fknSYTZ40Jfk7Hd0VrrfnJXGK4dITfx/kAyoBPyPII4Tv/Ey9emJl9fuXarF/F9BhAUuy/j2hO3e9P2H5q7PMU35FHpOYXeTZObmrhfFOMJ/KqMPvnWifGDfznDKzaMxz7alL6l6G6aSAfIWLf0ZDeHUVhtxWzlnS70UeWDXH5fbyAwjm+9iV246cpBufC
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 5a5ce4cd-7c19-4e8b-d2d5-08d598a01abe
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB3050;
+x-ms-traffictypediagnostic: HE1PR04MB3050:
+x-microsoft-antispam-prvs: <HE1PR04MB3050B8F7BD46BB0FD5B9FE19E0A60@HE1PR04MB3050.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:HE1PR04MB3050;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB3050;
+x-forefront-prvs: 0630013541
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39380400002)(396003)(39860400002)(376002)(366004)(50944005)(199004)(189003)(76176011)(7696005)(4326008)(99286004)(105586002)(54906003)(2900100001)(59450400001)(6506007)(7736002)(305945005)(74316002)(39060400002)(5250100002)(14454004)(55016002)(446003)(316002)(478600001)(33656002)(6436002)(11346002)(3846002)(8676002)(68736007)(8936002)(81166006)(81156014)(25786009)(186003)(66066001)(97736004)(6246003)(3660700001)(3280700002)(106356001)(102836004)(2906002)(26005)(53936002)(6916009)(86362001)(229853002)(486005)(486005)(9686003)(6116002)(5660300001)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB3050;H:HE1PR04MB3212.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 9w6zJ64h+LYCrF7P9wfp3V3e0DXkMm5K8TkIjgWMDmgD7YQTbLNkZaMVaaFj5zqonJBgEqxq+fK3BQhpTi0a+TNDX3GoqTmEk29Sk89A3FQCmah7OwNa9uHWhoP+QAp2O6HKaFwmbnMzgdQOi9hTKrwe5fmRogYs0c4Iti+HoXdSnJRye8jcsRNH4xAUOMUMx9HybxJhZ1LEG7dCJPSAnMnG4ymxHQ5ePA6SiBmMA8fHi55GkXFiT1ToL+wkhJ+vDqLwvrrbeKhMdk3H5ExSMDGtYFyeFpLt+HcbZwMQEOPTFdwz/weWjgfgYt2aB+KBQyO4sY+K8OXlEWF4YGxdZ+qbcK1tZTO4diQpPfrf4eBb9QOKQr6pFbTa9f636Ef980F3ifQHoIFZ2yXdPII1j0H36WTLoB3VqzaYjHWWRe8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM3PR04MB07439B79DD857CD2F8033623E6A50@AM3PR04MB0743.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a5ce4cd-7c19-4e8b-d2d5-08d598a01abe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Apr 2018 13:46:13.9008
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB3050
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595743497041548891?=
-X-GMAIL-MSGID: =?utf-8?q?1596730264824852311?=
+X-GMAIL-THRID: =?utf-8?q?1595743505535969149?=
+X-GMAIL-MSGID: =?utf-8?q?1596642326103699907?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 03, 2018 at 11:12:52AM +0000, Razvan Stefanescu wrote:
-> DPAA2 offers several object-based abstractions for modeling network
-> related devices (interfaces, L2 Ethernet switch) or accelerators
-> (DPSECI - crypto and DPDCEI - compression), the latter not up-streamed yet.
-> They are modeled using various low-level resources (e.g. queues,
-> classification tables, physical ports) and have multiple configuration and
-> interconnectivity options, managed by the Management Complex. 
-> Resources are limited and they are only used when needed by the objects,
-> to accommodate more configurations and usage scenarios.
->  
-> Some of the objects have a 1-to-1 correspondence to physical resources
-> (e.g. DPMACs to physical ports), while others (like DPNIs and DPSW)
-> can be seen as a collection of the mentioned resources. The types and 
-> number of such objects are not predetermined.
-> 
-> When the board boots up, none of them exist yet. Restool allows a user to
-> define the system topology, by providing a way to dynamically create, destroy
-> and interconnect these objects.
+> > Introduce the rescan attribute as a bus attribute to synchronize the
+> > fsl-mc bus objects and the MC firmware.
+> >
+> > To rescan the fsl-mc bus, e.g.,
+> > echo 1 > /sys/bus/fsl-mc/rescan
+> >
+> > Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> > ---
+> > Changes in v2:
+> >   - added proper documentation in /Documentation/ABI/
+> >   - updated the MAINTAINERS file
+> > Changes in v3:
+> >   - no change
+> >
+> >  Documentation/ABI/stable/sysfs-bus-fsl-mc |  7 +++++
+> >  drivers/bus/fsl-mc/fsl-mc-bus.c           | 48
+> +++++++++++++++++++++++++++++++
+> >  2 files changed, 55 insertions(+)
+> >
+> > diff --git a/Documentation/ABI/stable/sysfs-bus-fsl-mc
+> > b/Documentation/ABI/stable/sysfs-bus-fsl-mc
+> > index e530e8c..0663fbd 100644
+> > --- a/Documentation/ABI/stable/sysfs-bus-fsl-mc
+> > +++ b/Documentation/ABI/stable/sysfs-bus-fsl-mc
+> > @@ -4,3 +4,10 @@ KernelVersion:	4.16
+> >  Contact:	Ioana Ciornei <ioana.ciornei@nxp.com>
+> >  Description:	Root dprc rescan attribute
+> >  Users:		Userspace drivers and management tools
+> > +
+> > +What:		/sys/bus/fsl-mc/rescan
+> > +Date:		March. 2018
+> > +KernelVersion:	4.16
+>=20
+> Same comments as previous review.
+>=20
+> > +Contact:	Ioana Ciornei <ioana.ciornei@nxp.com>
+> > +Description:	Bus rescan attribute
+>=20
+> Again, describe this better please.
+>=20
+> > +Users:		Userspace drivers and management tools
+> > diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c
+> > b/drivers/bus/fsl-mc/fsl-mc-bus.c index 9d02984..80010d1 100644
+> > --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
+> > +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> > @@ -172,11 +172,59 @@ static ssize_t rescan_store(struct device *dev,
+> >
+> >  ATTRIBUTE_GROUPS(fsl_mc_dev);
+> >
+> > +static int scan_fsl_mc_bus(struct device *dev, void *data) {
+> > +	struct fsl_mc_device *root_mc_dev;
+> > +	struct fsl_mc_bus *root_mc_bus;
+> > +
+> > +	if (!fsl_mc_is_root_dprc(dev))
+> > +		goto exit;
+> > +
+> > +	root_mc_dev =3D to_fsl_mc_device(dev);
+> > +	root_mc_bus =3D to_fsl_mc_bus(root_mc_dev);
+> > +	mutex_lock(&root_mc_bus->scan_mutex);
+> > +	dprc_scan_objects(root_mc_dev, NULL);
+> > +	mutex_unlock(&root_mc_bus->scan_mutex);
+> > +
+> > +exit:
+> > +	return 0;
+> > +}
+> > +
+> > +static ssize_t bus_rescan_store(struct bus_type *bus,
+> > +				const char *buf, size_t count)
+> > +{
+> > +	unsigned long val;
+> > +
+> > +	if (kstrtoul(buf, 0, &val) < 0)
+> > +		return -EINVAL;
+> > +
+> > +	if (val)
+> > +		bus_for_each_dev(bus, NULL, NULL, scan_fsl_mc_bus);
+> > +
+> > +	return count;
+> > +}
+> > +static BUS_ATTR(rescan, 0220, NULL, bus_rescan_store);
+>=20
+> BUS_ATTR_RO()?
+>=20
+>=20
 
-Hi Razvan
+Since this is a write-only attribute, a BUS_ATTR_WO would be needed but the=
+re is no WO macro defined.
 
-The core concept with Linux networking and offload is that the
-hardware is there to accelerate what Linux can already do. Since Linux
-can already do it, i don't need any additional tools.
+Ioana
 
-You have new hardware. It might offer features which we currently
-don't have offload support for. But all the means is you need to
-extend the core networking code which implements the software version
-of that feature to offload to the hardware.
-
-The board knows how many physical ports it has. switchdev can then
-setup the plumbing to create the objects needed to represent the
-ports. Restool is not needed for that.
-
-> In the latter case, the two DPNIs will not be connected to any physical
-> port, but can be used as a point-to-point connection between two virtual
-> machines for instance.
- 
-Can Linux already do this? Isn't that what PCI Virtual Functions are
-all about? You need to find the current Linux concept for this, and
-extend it to offload the functionality to hardware. If Linux can do
-it, it already has the tools to configure it. Restool is not needed
-for that.
-
-> So, it is not possible to connect a DPNI to a DPSW after it was
-> connected to a DPMAC. The DPNI-DPMAC pair would have to be
-> disconnected and DPMAC will be reconnected to the switch. DPNI
-> interface that is no longer connected to a DPMAC will be destroyed
-> and any new addition/deletion of a DPNI/DPMAC interface to the
-> switch port will trigger the entire switch re-configuration.
-
-Switches and ports connected to switches are dynamic. They come and
-go. You don't expect it to happen very often, but Linux has no
-restrictions on this. You need to figure out how best to offload this
-to your hardware. Maybe when you create the switch object you make a
-guess as to how many ports you need. Leave some of the ports not
-connected to anything. You can then add ports to the switch using the
-free ports. If you run out of ports, you have no choice but to destroy
-the switch object and create a new one. Hopefully that does not take
-too long. Restool is not needed for this, it all happens within the
-switchdev driver.
-
-	  Andrew
+>=20
+> > +
+> > +static struct attribute *fsl_mc_bus_attrs[] =3D {
+> > +	&bus_attr_rescan.attr,
+> > +	NULL,
+> > +};
+> > +
+> > +static const struct attribute_group fsl_mc_bus_group =3D {
+> > +	.attrs =3D fsl_mc_bus_attrs,
+> > +};
+> > +
+> > +static const struct attribute_group *fsl_mc_bus_groups[] =3D {
+> > +	&fsl_mc_bus_group,
+> > +	NULL,
+> > +};
+>=20
+> ATTRIBUTE_GROUPS()?
+>=20
+> thanks,
+>=20
+> greg k-h
