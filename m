@@ -1,116 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeDBPrQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:47:16 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:50236 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752269AbeDBPrN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:47:13 -0400
-From: Thomas Tai <thomas.tai@oracle.com>
-To: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: thomas.tai@oracle.com
-Subject: [PATCH] PCI/AER: add pcie TLP header information in the tracepoint
-Date: Mon,  2 Apr 2018 11:47:08 -0400
-Message-Id: <20180402154708.5032-1-thomas.tai@oracle.com>
-X-Mailer: git-send-email 2.14.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8851 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=708
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804020168
+        id S1752614AbeDBPuO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:50:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42808 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751913AbeDBPuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 11:50:13 -0400
+Message-ID: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
+Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
+From: Dan Williams <dcbw@redhat.com>
+To: Tony Lindgren <tony@atomide.com>, Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Date: Mon, 02 Apr 2018 10:50:08 -0500
+In-Reply-To: <20180401173012.GB5700@atomide.com>
+References: <20180328140219.f6667up5evrrafkv@earth.universe>
+         <20180329014507.GM5700@atomide.com> <20180331145531.GA10404@amd>
+         <20180331181935.GX5700@atomide.com> <20180331191939.GA8999@amd>
+         <20180331194616.GA19388@amd> <20180331195524.GB19388@amd>
+         <20180331234314.GZ5700@atomide.com> <20180401131852.GA11086@amd>
+         <20180401153631.GA5700@atomide.com> <20180401173012.GB5700@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a PCIe AER occurs, the TLP header information is
-printed in the kernel message but it is missing from
-the tracepoint. A userspace program can use this information
-in the tracepoint to better analyze problems.
+On Sun, 2018-04-01 at 10:30 -0700, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [180401 15:38]:
+> > * Pavel Machek <pavel@ucw.cz> [180401 13:20]:
+> > > On Sat 2018-03-31 16:43:14, Tony Lindgren wrote:
+> > > > * Pavel Machek <pavel@ucw.cz> [180331 19:56]:
+> > > > > On Sat 2018-03-31 21:46:16, Pavel Machek wrote:
+> > > > > > On Sat 2018-03-31 21:19:39, Pavel Machek wrote:
+> > > > > > > On Sat 2018-03-31 11:19:35, Tony Lindgren wrote:
+> > > > > > > > Cool :) Microphone still does not work for me.. I tried
+> > > > > > > > tweaking
+> > > > > > > > the alsamixer settings but no mic. This is with cold
+> > > > > > > > boot with
+> > > > > > > > droid4-kexecboot if that might make a difference, we
+> > > > > > > > may have
+> > > > > > > > some register uninitialized somewhere. Any ideas?
+> > > > > > > 
+> > > > > > > Ok, I was focusing on the speaker side.
+> > > > > > > 
+> > > > > > > alsamixer, tab to go to capture settings, set it to 37 37
+> > > > > > > Mic2 Mic1
+> > > > > > > should work, according to my notes, but not recently
+> > > > > > > tested and not
+> > > > > > > tested against real human.
+> > > > > > > 
+> > > > > > > I'll attempt to test it, but something in my userland
+> > > > > > > shuts down
+> > > > > > > system just after boot 60% of time, which is rather
+> > > > > > > annoying.
+> > > > > > 
+> > > > > > Hmm. So I tried again, and setting Mic1 and back in the
+> > > > > > capture
+> > > > > > settings crashed the modem. Bang, disconnected from the
+> > > > > > USB.
+> > > > > 
+> > > > > Next try, and it worked this time.
+> > > > > 
+> > > > > _Before the call_, set mode to Normal and then Call. Then go
+> > > > > to
+> > > > > capture, and set 100 100 Mic2 Mic1. Then place a call,
+> > > > > 
+> > > > > AT+CFUN=1
+> > > > > OK
+> > > > > ATD6;
+> > > > 
+> > > > No luck with microphone here :( Using ttyUSB4, AT+CFUN=1
+> > > > works, but ATD command on it just hangs the USB interface
+> > > > and I have to reload phy-mapphone-mdm6600 to reset the
+> > > > modem.
+> > > 
+> > > Test call with real human worked (thanks to Rolf K.), I could
+> > > hear him
+> > > well but he reported call was very quiet. And that was with
+> > > capture
+> > > settings at 100%.
+> > 
+> > Maybe the volume also needs to be controlled at mdm6600 end.
+> > I'm seeing some AT+CLVL=n with n being between [0-7] calls on
+> > DLCI2 in my Android logcat logs.
+> > 
+> > > If you had a register dump from android with mics working,
+> > > preferably
+> > > not in speaker mode, perhaps I could try to figure it out?
+> > 
+> > OK here are four diffs against starting the phone app for regular
+> > call, speaker call, and muted versions of them:
+> > 
+> > http://muru.com/linux/d4/cpcap/
+> > 
+> > Also, I'm connected over cdma right now, not 3g, but I doubt
+> > that makes a difference for the microphone.
+> 
+> Found it! Here's what I need to do over n_gsm:
+> 
+> ngsm 1 "AT+CFUN=1"
+> ngsm 1 "AT+CFUN?"
+> ngsm 2 "AT+EACC=3,0"    # enable mic
+> ngsm 2 "AT+CLVL=4"      # set speaker volume
+> ngsm 2 "AT+CMUT=0"      # unmute mic
 
-Example tracepoint output:
-aer_event: 0000:01:00.0
-PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
-TLP Header={0x0,0x1,0x2,0x3}
+I tried to look through the QMI dumps we have in libqmi from 2013
+(latest Qualcomm posted) and couldn't find anything to do with mic
+control, speaker volume, or anything like that.
 
-Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
----
- drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
- include/ras/ras_event.h                | 20 ++++++++++++++++----
- 2 files changed, 18 insertions(+), 6 deletions(-)
+If the modem supports the AT service (which I think it does?  Not
+looking at the libqmi dumps right now) then it could potentially tunnel
+these AT commands through QMI too.
 
-diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-index 6a352e638699..0a78a773bd25 100644
---- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-+++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-@@ -192,7 +192,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
- 		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
- 
- 	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
--			info->severity);
-+			info->severity, info->tlp_header_valid, &info->tlp);
- }
- 
- void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
-@@ -252,6 +252,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
- 		__print_tlp_header(dev, &aer->header_log);
- 
- 	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
--			aer_severity);
-+			aer_severity, tlp_header_valid, &aer->header_log);
- }
- #endif
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index 9c689868eb4d..90f59556f595 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -298,30 +298,42 @@ TRACE_EVENT(non_standard_event,
- TRACE_EVENT(aer_event,
- 	TP_PROTO(const char *dev_name,
- 		 const u32 status,
--		 const u8 severity),
-+		 const u8 severity,
-+		 const u32 tlp_header_valid,
-+		 struct aer_header_log_regs *tlp),
- 
--	TP_ARGS(dev_name, status, severity),
-+	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
- 
- 	TP_STRUCT__entry(
- 		__string(	dev_name,	dev_name	)
- 		__field(	u32,		status		)
- 		__field(	u8,		severity	)
-+		__field(	u32, 		tlp_header_valid)
-+		__array(	u32, 		buf, 4		)
- 	),
- 
- 	TP_fast_assign(
- 		__assign_str(dev_name, dev_name);
- 		__entry->status		= status;
- 		__entry->severity	= severity;
-+		__entry->tlp_header_valid = tlp_header_valid;
-+		__entry->buf[0] = tlp->dw0;
-+		__entry->buf[1] = tlp->dw1;
-+		__entry->buf[2] = tlp->dw2;
-+		__entry->buf[3] = tlp->dw3;
- 	),
- 
--	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
-+	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
- 		__get_str(dev_name),
- 		__entry->severity == AER_CORRECTABLE ? "Corrected" :
- 			__entry->severity == AER_FATAL ?
- 			"Fatal" : "Uncorrected, non-fatal",
- 		__entry->severity == AER_CORRECTABLE ?
- 		__print_flags(__entry->status, "|", aer_correctable_errors) :
--		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
-+		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
-+		__entry->tlp_header_valid ?
-+			__print_array(__entry->buf, 4, sizeof(unsigned int)) :
-+			"Not available")
- );
- 
- /*
--- 
-2.14.1
+Perhaps Qualcomm added something to the Voice service after 2013, or
+perhaps there are other services that might control speaker/mic that we
+don't have public dumps for yet though.
+
+Dan
+
+> ngsm 1 "ATD${number}"
+> ngsm 1 "AT+CLCC"	# list current calls
+> ngsm 2 "AT+NREC=1"	# enable noise cancellation
+> ngsm 1 "AT+SCRN=0"	# ??? not sure if this does anything
+> 
+> while [ 1 ]; do
+> 	date
+> 	ngsm 1 "AT+CLCC"
+> 	sleep 10
+> done
+> 
+> So speaker phone call works just fine, I just tested with a
+> human at the other end :)
+> 
+> Hmm let's hope all those also translate to some qmi calls.
+> 
+> Regards,
+> 
+> Tony
