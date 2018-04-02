@@ -1,23 +1,23 @@
 Return-Path: <liuwenliang@huawei.com>
-X-Google-Smtp-Source: AIpwx49Vt6as5PusNjCRmSkfv6+j7wu/K6jMBHQ/GnNtps7OJZsCbKknx/px6fosgyRXR1IyegUh
-ARC-Seal: i=1; a=rsa-sha256; t=1522671902; cv=none;
+X-Google-Smtp-Source: AIpwx49E1EsNvHj30y7qjkkvB7m9LGp1u/MaNrVkYPgB7N+R3neoDhTcvw2aDQczgHC/ZVh1GeFW
+ARC-Seal: i=1; a=rsa-sha256; t=1522671904; cv=none;
         d=google.com; s=arc-20160816;
-        b=RKcNu9swvxGaajtVx+aZ/H+VwD16rJd/6h1Jl6aVEmXmj4TO4b1vzENXYPCFLFV6+9
-         43xDLlUNOdhcwHVQxUFySOrkjktrDPsaKTsP6mqj58kZji1xx9gohuQHizvwxZWhnmDm
-         2gTMH++QNHx/de1R8geugDJ9/u0v+cSvEF9cmP13HoRmEpzSAg53u7MAz9ZNmiGeNf6b
-         9XIAFZrjtyco+1bKFUn+IpO5q14pMIzTRcWGpEpQfjqLMCFHDvokGHMBZA7+N0q+JV6Q
-         VEaZ5Y24MWGbVhlTXa25BZFNn+6TISOVZKiZc/xlrsZk+H5iuQoiCCiEj42GV8L0Pa53
-         47MQ==
+        b=aaueX4EyU0PuRUC9E+/24JOgNv29WBpNVOybCTTv0G4u00GFK/9IwAbbFjZ9kLysj1
+         QY0nNZuHkKAl/SKtwCZIuFyVvz1NBpB/s6j9RSS+h5+efKNz8ZnkCzTvjRDfM85EA0cC
+         rWSDu4bldRS2ce9/8QAaqNXDXnKu+pZ8/KbHg/JaVM4c7B0XZdgWJX6jxL8ZR7hEA27j
+         UBILCjeIEA2w66qBXP+F0Uk8AAU8B6i04m8hl3QIEHyodSGFcgI91ZyxpXsIxCcwsP3y
+         sMF+PgqiPT89+bYys00nHy4V3eS3/z7bGXzc5rfhQbZQfUq4QKkQr3NxzMrE/341pY6A
+         oZ9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:to:from
+        h=mime-version:references:in-reply-to:message-id:date:subject:to:from
          :arc-authentication-results;
-        bh=kvHY7RWbHFG1FXPZeZVlck2qdhRpYkYwqCr/BxJ/2HY=;
-        b=fZzU1QVgU47ZYMpFekL5MxRr9gImAkyoMPiTeJJxCfa+1H7t4bO7O4ZDzx0fdeCJb5
-         oOi49gLby5haqGWo2hDak9OSGNpT1o63bcGIhg25ZD4io58akQxkcYH1L95WlPUNOcDz
-         H016jABIzCJ3GA/bIqRBDAloZOgaRI7E/IbqL0+S2+RuStsMepaXQJAFzgHaM5grwLpi
-         NjZM1z4nzWd17UfqJNFDSz78CKBLng2RZOwH6jWhfrown2MAkcScbFKV31Si8Tz92WBZ
-         zREpsK138JywzbR5Zy4nSdzuilzqhks1E2wKXjQG499Nw02F3tlHgebjkfc32au5PZJn
-         rYHQ==
+        bh=53Fp4WTPSxm9in+fys+oCx87HpMIeXTLmZmGB/nUx14=;
+        b=cSQHCe84gwhLIskzijC0WGfCdP1wnOwU/7BCBD/lczJBJgBXIPq7jL0esVWi6FnJK5
+         tuGET0robeqeKGRE79r017UFl7OXvSqOSVsj2tLFCW2x/uhm/ceKiv2DgUsX3iFKqO3v
+         8rvggIeSMTYt0b8vJB8+beSCHkBARV1MzBTW515zccOJcAzh083xg+AcbYqjyt4sedrB
+         A5/VrGXdhas9sZffJ/GWRzWUTKVR4ZAnOWsf9E4BEtEChkKF9XwklzaB+d5zwkhNv6Ww
+         Rt0jGjuL3SgwLCT6au4V+ySrUR9ipFdRu0D0Jx1DxSY39m8OBxSB3L7gMFO7T6hIAM9J
+         hh+w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
@@ -41,180 +41,96 @@ To: <aryabinin@virtuozzo.com>, <dvyukov@google.com>, <corbet@lwn.net>,
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.cs.columbia.edu>,
 	<linux-mm@kvack.org>
-Subject: [PATCH v3 0/6] KASan for arm
-Date: Mon, 2 Apr 2018 20:04:34 +0800
-Message-ID: <20180402120440.31900-1-liuwenliang@huawei.com>
+Subject: [PATCH v3 2/6] Disable instrumentation for some code
+Date: Mon, 2 Apr 2018 20:04:36 +0800
+Message-ID: <20180402120440.31900-3-liuwenliang@huawei.com>
 X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180402120440.31900-1-liuwenliang@huawei.com>
+References: <20180402120440.31900-1-liuwenliang@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.187.223]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596637212619510245?=
-X-GMAIL-MSGID: =?utf-8?q?1596637212619510245?=
+X-GMAIL-THRID: =?utf-8?q?1596637215509017214?=
+X-GMAIL-MSGID: =?utf-8?q?1596637215509017214?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andrey Ryabinin <a.ryabinin@samsung.com>
 
-Changelog:
-v3 - v2
-- Remove this patch: 2 1-byte checks more safer for memory_is_poisoned_16
-  because a unaligned load/store of 16 bytes is rare on arm, and this
-  patch is very likely to affect the performance of modern CPUs.
-  ---Acked by: Russell King - ARM Linux <linux@armlinux.org.uk>
-- Fixed some link error which kasan_pmd_populate,kasan_pte_populate and
-  kasan_pud_populate are in section .meminit.text but the function
-  kasan_alloc_block which is called by kasan_pmd_populate,
-  kasan_pte_populate and kasan_pud_populate is in section .init.text. So
-  we need change kasan_pmd_populate,kasan_pte_populate and
-  kasan_pud_populate into the section .init.text.
-  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>
-- Fixed some compile error which caused by the wrong access instruction in
-  arch/arm/kernel/entry-common.S.
-  ---Reported by: kbuild test robot <lkp@intel.com>
-- Disable instrumentation for arch/arm/kvm/hyp/*.
-  ---Acked by: Marc Zyngier <marc.zyngier@arm.com>
-- Update the set of supported architectures in
-  Documentation/dev-tools/kasan.rst.
-  ---Acked by:Dmitry Vyukov <dvyukov@google.com>
-- The version 2 is tested by:
-  Florian Fainelli <f.fainelli@gmail.com> (compile test)
-  kbuild test robot <lkp@intel.com>       (compile test)
-  Joel Stanley <joel@jms.id.au>           (on ASPEED ast2500(ARMv5))
-  
-v2 - v1
-- Fixed some compiling error which happens on changing kernel compression
-  mode to lzma/xz/lzo/lz4.
-  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
-             Russell King - ARM Linux <linux@armlinux.org.uk>
-- Fixed a compiling error cause by some older arm instruction set(armv4t)
-  don't suppory movw/movt which is reported by kbuild.
-- Changed the pte flag from _L_PTE_DEFAULT | L_PTE_DIRTY | L_PTE_XN to
-  pgprot_val(PAGE_KERNEL).
-  ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
-- Moved Enable KASan patch as the last one.
-  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
-     Russell King - ARM Linux <linux@armlinux.org.uk>
-- Moved the definitions of cp15 registers from
-  arch/arm/include/asm/kvm_hyp.h to arch/arm/include/asm/cp15.h.
-  ---Asked by: Mark Rutland <mark.rutland@arm.com>
-- Merge the following commits into the commit
-  Define the virtual space of KASan's shadow region:
-  1) Define the virtual space of KASan's shadow region;
-  2) Avoid cleaning the KASan shadow area's mapping table;
-  3) Add KASan layout;
-- Merge the following commits into the commit
-  Initialize the mapping of KASan shadow memory:
-  1) Initialize the mapping of KASan shadow memory;
-  2) Add support arm LPAE;
-  3) Don't need to map the shadow of KASan's shadow memory;
-     ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
-  4) Change mapping of kasan_zero_page int readonly.
-- The version 1 is tested by Florian Fainelli <f.fainelli@gmail.com>
-  on a Cortex-A5 (no LPAE).
+Disable instrumentation for arch/arm/boot/compressed/*
+,arch/arm/kvm/hyp/* and arch/arm/vdso/* because those
+code won't linkd with kernel image.
 
-Hi,all:
-   These patches add arch specific code for kernel address sanitizer
-(see Documentation/kasan.txt).
+Disable kasan check in the function unwind_pop_register
+because it doesn't matter that kasan checks failed when
+unwind_pop_register read stack memory of task.
 
-   1/8 of kernel addresses reserved for shadow memory. There was no
-big enough hole for this, so virtual addresses for shadow were
-stolen from user space.
-
-   At early boot stage the whole shadow region populated with just
-one physical page (kasan_zero_page). Later, this page reused
-as readonly zero shadow for some memory that KASan currently
-don't track (vmalloc).
-
-  After mapping the physical memory, pages for shadow memory are
-allocated and mapped.
-
-  KASan's stack instrumentation significantly increases stack's
-consumption, so CONFIG_KASAN doubles THREAD_SIZE.
-
-  Functions like memset/memmove/memcpy do a lot of memory accesses.
-If bad pointer passed to one of these function it is important
-to catch this. Compiler's instrumentation cannot do this since
-these functions are written in assembly.
-
-  KASan replaces memory functions with manually instrumented variants.
-Original functions declared as weak symbols so strong definitions
-in mm/kasan/kasan.c could replace them. Original functions have aliases
-with '__' prefix in name, so we could call non-instrumented variant
-if needed.
-
-  Some files built without kasan instrumentation (e.g. mm/slub.c).
-Original mem* function replaced (via #define) with prefixed variants
-to disable memory access checks for such files.
-
-  On arm LPAE architecture,  the mapping table of KASan shadow memory(if
-PAGE_OFFSET is 0xc0000000, the KASan shadow memory's virtual space is
-0xb6e000000~0xbf000000) can't be filled in do_translation_fault function,
-because kasan instrumentation maybe cause do_translation_fault function
-accessing KASan shadow memory. The accessing of KASan shadow memory in
-do_translation_fault function maybe cause dead circle. So the mapping table
-of KASan shadow memory need be copyed in pgd_alloc function.
-
-
-Most of the code comes from:
-https://github.com/aryabinin/linux/commit/0b54f17e70ff50a902c4af05bb92716eb95acefe
-
-These patches are tested on vexpress-ca15, vexpress-ca9
-
-
-
-Cc: Andrey Ryabinin <a.ryabinin@samsung.com>
-Tested-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Russell King - ARM Linux <linux@armlinux.org.uk>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 Tested-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Florian Fainelli <f.fainelli@gmail.com>
 Tested-by: Abbott Liu <liuwenliang@huawei.com>
 Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
+---
+ arch/arm/boot/compressed/Makefile | 1 +
+ arch/arm/kernel/unwind.c          | 3 ++-
+ arch/arm/kvm/hyp/Makefile         | 4 ++++
+ arch/arm/vdso/Makefile            | 2 ++
+ 4 files changed, 9 insertions(+), 1 deletion(-)
 
-Abbott Liu (2):
-  Add TTBR operator for kasan_init
-  Define the virtual space of KASan's shadow region
-
-Andrey Ryabinin (4):
-  Disable instrumentation for some code
-  Replace memory function for kasan
-  Initialize the mapping of KASan shadow memory
-  Enable KASan for arm
-
- Documentation/dev-tools/kasan.rst     |   2 +-
- arch/arm/Kconfig                      |   1 +
- arch/arm/boot/compressed/Makefile     |   1 +
- arch/arm/boot/compressed/decompress.c |   2 +
- arch/arm/boot/compressed/libfdt_env.h |   2 +
- arch/arm/include/asm/cp15.h           | 104 ++++++++++++
- arch/arm/include/asm/kasan.h          |  35 ++++
- arch/arm/include/asm/kasan_def.h      |  64 +++++++
- arch/arm/include/asm/kvm_hyp.h        |  52 ------
- arch/arm/include/asm/memory.h         |   5 +
- arch/arm/include/asm/pgalloc.h        |   7 +-
- arch/arm/include/asm/string.h         |  17 ++
- arch/arm/include/asm/thread_info.h    |   4 +
- arch/arm/kernel/entry-armv.S          |   5 +-
- arch/arm/kernel/entry-common.S        |   9 +-
- arch/arm/kernel/head-common.S         |   7 +-
- arch/arm/kernel/setup.c               |   2 +
- arch/arm/kernel/unwind.c              |   3 +-
- arch/arm/kvm/hyp/Makefile             |   4 +
- arch/arm/kvm/hyp/cp15-sr.c            |  12 +-
- arch/arm/kvm/hyp/switch.c             |   6 +-
- arch/arm/lib/memcpy.S                 |   3 +
- arch/arm/lib/memmove.S                |   5 +-
- arch/arm/lib/memset.S                 |   3 +
- arch/arm/mm/Makefile                  |   3 +
- arch/arm/mm/init.c                    |   6 +
- arch/arm/mm/kasan_init.c              | 302 ++++++++++++++++++++++++++++++++++
- arch/arm/mm/mmu.c                     |   7 +-
- arch/arm/mm/pgd.c                     |  14 ++
- arch/arm/vdso/Makefile                |   2 +
- mm/kasan/kasan.c                      |   5 +-
- 31 files changed, 618 insertions(+), 76 deletions(-)
- create mode 100644 arch/arm/include/asm/kasan.h
- create mode 100644 arch/arm/include/asm/kasan_def.h
- create mode 100644 arch/arm/mm/kasan_init.c
-
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index 45a6b9b..966103e 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -24,6 +24,7 @@ OBJS		+= hyp-stub.o
+ endif
+ 
+ GCOV_PROFILE		:= n
++KASAN_SANITIZE		:= n
+ 
+ #
+ # Architecture dependencies
+diff --git a/arch/arm/kernel/unwind.c b/arch/arm/kernel/unwind.c
+index 0bee233..2e55c7d 100644
+--- a/arch/arm/kernel/unwind.c
++++ b/arch/arm/kernel/unwind.c
+@@ -249,7 +249,8 @@ static int unwind_pop_register(struct unwind_ctrl_block *ctrl,
+ 		if (*vsp >= (unsigned long *)ctrl->sp_high)
+ 			return -URC_FAILURE;
+ 
+-	ctrl->vrs[reg] = *(*vsp)++;
++	ctrl->vrs[reg] = READ_ONCE_NOCHECK(*(*vsp));
++	(*vsp)++;
+ 	return URC_OK;
+ }
+ 
+diff --git a/arch/arm/kvm/hyp/Makefile b/arch/arm/kvm/hyp/Makefile
+index 63d6b40..0a8b500 100644
+--- a/arch/arm/kvm/hyp/Makefile
++++ b/arch/arm/kvm/hyp/Makefile
+@@ -24,3 +24,7 @@ obj-$(CONFIG_KVM_ARM_HOST) += hyp-entry.o
+ obj-$(CONFIG_KVM_ARM_HOST) += switch.o
+ CFLAGS_switch.o		   += $(CFLAGS_ARMV7VE)
+ obj-$(CONFIG_KVM_ARM_HOST) += s2-setup.o
++
++GCOV_PROFILE	:= n
++KASAN_SANITIZE	:= n
++UBSAN_SANITIZE	:= n
+diff --git a/arch/arm/vdso/Makefile b/arch/arm/vdso/Makefile
+index bb411821..87abbb7 100644
+--- a/arch/arm/vdso/Makefile
++++ b/arch/arm/vdso/Makefile
+@@ -30,6 +30,8 @@ CFLAGS_vgettimeofday.o = -O2
+ # Disable gcov profiling for VDSO code
+ GCOV_PROFILE := n
+ 
++KASAN_SANITIZE := n
++
+ # Force dependency
+ $(obj)/vdso.o : $(obj)/vdso.so
+ 
 -- 
 2.9.0
