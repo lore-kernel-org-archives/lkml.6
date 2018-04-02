@@ -1,74 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeDBPOV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:14:21 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39702 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751990AbeDBPNu (ORCPT
+        id S1752771AbeDBPOi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:14:38 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:38424 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751990AbeDBPOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:13:50 -0400
-X-Google-Smtp-Source: AIpwx491OVOrE2b1vH4aooGECiRbNT0KuauGI7OIP9Ap/F6o4Rihe0XdIVkFf0dPLSvHJXhale61MA==
-From: Paolo Pisati <p.pisati@gmail.com>
-To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
+        Mon, 2 Apr 2018 11:14:36 -0400
+Date: Mon, 02 Apr 2018 11:14:34 -0400 (EDT)
+Message-Id: <20180402.111434.124774623285634501.davem@davemloft.net>
+To: Jisheng.Zhang@synaptics.com
+Cc: thomas.petazzoni@bootlin.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 1/2] dt: bindings: fpga: add lattice machxo2 slave spi binding description
-Date: Mon,  2 Apr 2018 17:13:45 +0200
-Message-Id: <1522682026-11395-2-git-send-email-p.pisati@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522682026-11395-1-git-send-email-p.pisati@gmail.com>
-References: <1522682026-11395-1-git-send-email-p.pisati@gmail.com>
+Subject: Re: [PATCH v3 0/2] net: mvneta: improve suspend/resume
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180402112229.508e1feb@xhacker.debian>
+References: <20180402112229.508e1feb@xhacker.debian>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add dt binding documentation details for Lattice MachXO2 FPGA configuration
-over Slave SPI interface.
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Date: Mon, 2 Apr 2018 11:22:29 +0800
 
-Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
-Acked-by: Alan Tull <atull@kernel.org>
----
- .../bindings/fpga/lattice-machxo2-spi.txt          | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
+> This series tries to optimize the mvneta's suspend/resume
+> implementation by only taking necessary actions.
+> 
+> Since v2:
+>  - keep rtnl lock when calling mvneta_start_dev() and mvneta_stop_dev()
+>    Thank Russell for pointing this out
+> 
+> Since v1:
+>  - unify ret check
+>  - try best to keep the suspend/resume behavior
+>  - split txq deinit into sw/hw parts as well
+>  - adjust mvneta_stop_dev() location
 
-diff --git a/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt b/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
-new file mode 100644
-index 0000000..a8c362e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
-@@ -0,0 +1,29 @@
-+Lattice MachXO2 Slave SPI FPGA Manager
-+
-+Lattice MachXO2 FPGAs support a method of loading the bitstream over
-+'slave SPI' interface.
-+
-+See 'MachXO2ProgrammingandConfigurationUsageGuide.pdf' on www.latticesemi.com
-+
-+Required properties:
-+- compatible: should contain "lattice,machxo2-slave-spi"
-+- reg: spi chip select of the FPGA
-+
-+Example for full FPGA configuration:
-+
-+	fpga-region0 {
-+		compatible = "fpga-region";
-+		fpga-mgr = <&fpga_mgr_spi>;
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+	};
-+
-+	spi1: spi@2000 {
-+        ...
-+
-+		fpga_mgr_spi: fpga-mgr@0 {
-+			compatible = "lattice,machxo2-slave-spi";
-+			spi-max-frequency = <8000000>;
-+			reg = <0>;
-+		};
-+	};
--- 
-2.7.4
+Series applied, thank you.
