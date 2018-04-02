@@ -1,73 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756796AbeDBUfw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:35:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58577 "EHLO mail.bootlin.com"
+        id S1756840AbeDBUgO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 16:36:14 -0400
+Received: from mga11.intel.com ([192.55.52.93]:53132 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756412AbeDBUfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:35:51 -0400
-Date: Mon, 2 Apr 2018 22:35:39 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-kernel@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-Message-ID: <20180402223539.6dff3f38@bbrezillon>
-In-Reply-To: <8e35701f-1bfa-c9c0-62e6-48ed19d7ba37@axentia.se>
-References: <20180329131054.22506-1-peda@axentia.se>
-        <20180329153322.5e2fc1e7@bbrezillon>
-        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
-        <20180329154416.5c1a0013@bbrezillon>
-        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
-        <20180402142249.7e076a64@bbrezillon>
-        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
-        <20180402212843.164d5d21@bbrezillon>
-        <8e35701f-1bfa-c9c0-62e6-48ed19d7ba37@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1756678AbeDBUgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 16:36:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,397,1517904000";
+   d="scan'208";a="44316759"
+From: "Keller, Jacob E" <jacob.e.keller@intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "everest-linux-l2@cavium.com" <everest-linux-l2@cavium.com>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: RE: [PATCH v5 12/14] fm10k: Report PCIe link properties with
+ pcie_print_link_status()
+Thread-Topic: [PATCH v5 12/14] fm10k: Report PCIe link properties with
+ pcie_print_link_status()
+Thread-Index: AQHTyGrxIzt7s2y8aE68Xz7ilEcaGaPtpMFggADC/AD//4vGIA==
+Date: Mon, 2 Apr 2018 20:36:08 +0000
+Message-ID: <02874ECE860811409154E81DA85FBB5882D49BAE@ORSMSX115.amr.corp.intel.com>
+References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152244397259.135666.12655029447932912161.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <02874ECE860811409154E81DA85FBB5882D497EE@ORSMSX115.amr.corp.intel.com>
+ <20180402203144.GM9322@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180402203144.GM9322@bhelgaas-glaptop.roam.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmE0MTcwNDItMTgzMS00ODBhLWIwMmQtYzAyZTdhNjEwZmM5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IktCdVozRHpmUklBS3NuT2djSDlWSW1sZEVxM1UrQk9KVVlaZ3RWNXRWYjA9In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Apr 2018 22:23:17 +0200
-Peter Rosin <peda@axentia.se> wrote:
-
-
-> > I don't use devmem2. Is 'readback' information accurate or is it
-> > always what's been written? Because when you write 0x33 to 0xFFFFECBC,
-> > 0x33 is read back, but just after that, when you read it again it's 0.  
+> -----Original Message-----
+> From: netdev-owner@vger.kernel.org [mailto:netdev-owner@vger.kernel.org]
+> On Behalf Of Bjorn Helgaas
+> Sent: Monday, April 02, 2018 1:32 PM
+> To: Keller, Jacob E <jacob.e.keller@intel.com>
+> Cc: Tal Gilboa <talgi@mellanox.com>; Tariq Toukan <tariqt@mellanox.com>; Ariel
+> Elior <ariel.elior@cavium.com>; Ganesh Goudar <ganeshgr@chelsio.com>;
+> Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com;
+> intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-pci@vger.kernel.org
+> Subject: Re: [PATCH v5 12/14] fm10k: Report PCIe link properties with
+> pcie_print_link_status()
 > 
-> Looking at the devmem2 source, it seems very likely that the compiler
-> optimizes out the read and thus outputs what has been written.
-
-Yep, had a look too, and it's missing a volatile specifier to prevent
-that sort of optimizations.
-
+> On Mon, Apr 02, 2018 at 03:56:06PM +0000, Keller, Jacob E wrote:
+> > > -----Original Message-----
+> > > From: Bjorn Helgaas [mailto:helgaas@kernel.org]
+> > > Sent: Friday, March 30, 2018 2:06 PM
+> > > To: Tal Gilboa <talgi@mellanox.com>
+> > > Cc: Tariq Toukan <tariqt@mellanox.com>; Keller, Jacob E
+> > > <jacob.e.keller@intel.com>; Ariel Elior <ariel.elior@cavium.com>; Ganesh
+> > > Goudar <ganeshgr@chelsio.com>; Kirsher, Jeffrey T
+> > > <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com; intel-wired-
+> > > lan@lists.osuosl.org; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > linux-pci@vger.kernel.org
+> > > Subject: [PATCH v5 12/14] fm10k: Report PCIe link properties with
+> > > pcie_print_link_status()
+> > >
+> > > From: Bjorn Helgaas <bhelgaas@google.com>
+> > >
+> > > Use pcie_print_link_status() to report PCIe link speed and possible
+> > > limitations instead of implementing this in the driver itself.
+> > >
+> > > Note that pcie_get_minimum_link() can return misleading information
+> because
+> > > it finds the slowest link and the narrowest link without considering the
+> > > total bandwidth of the link.  If the path contains a 16 GT/s x1 link and a
+> > > 2.5 GT/s x16 link, pcie_get_minimum_link() returns 2.5 GT/s x1, which
+> > > corresponds to 250 MB/s of bandwidth, not the actual available bandwidth of
+> > > about 2000 MB/s for a 16 GT/s x1 link.
+> >
+> > This comment is about what's being fixed, so it would have been easier to
+> > parse if it were written to more clearly indicate that we're removing
+> > (and not adding) this behavior.
 > 
-> >> BTW, how do I
-> >> know which master is in use for the LCD controller? 8 or 9? Both?  
-> > 
-> > It's configurable on a per-layer basis through the SIF bit in
-> > LCDC_<layer>CFG0. The driver tries to dispatch the load on those 2 AHB
-> > masters [1].  
+> Good point.  Is this any better?
 > 
-> Ok, I only have one plane (in this case, i.e. no cursor, no overlays etc),
-> would that mean that only one master is used?
+>   fm10k: Report PCIe link properties with pcie_print_link_status()
+> 
+>   Previously the driver used pcie_get_minimum_link() to warn when the NIC
+>   is in a slot that can't supply as much bandwidth as the NIC could use.
+> 
+>   pcie_get_minimum_link() can be misleading because it finds the slowest link
+>   and the narrowest link (which may be different links) without considering
+>   the total bandwidth of each link.  For a path with a 16 GT/s x1 link and a
+>   2.5 GT/s x16 link, it returns 2.5 GT/s x1, which corresponds to 250 MB/s of
+>   bandwidth, not the true available bandwidth of about 1969 MB/s for a
+>   16 GT/s x1 link.
+> 
+>   Use pcie_print_link_status() to report PCIe link speed and possible
+>   limitations instead of implementing this in the driver itself.  This finds
+>   the slowest link in the path to the device by computing the total bandwidth
+>   of each link and compares that with the capabilities of the device.
+> 
+>   Note that the driver previously used dev_warn() to suggest using a
+>   different slot, but pcie_print_link_status() uses dev_info() because if the
+>   platform has no faster slot available, the user can't do anything about the
+>   warning and may not want to be bothered with it.
 
-Yep, it's always using the first one (master 8 on a sama5d3).
+Perfect! Thanks!
 
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-Jake
