@@ -1,93 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754111AbeDBBy3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 21:54:29 -0400
-Received: from mail-pf0-f178.google.com ([209.85.192.178]:46074 "EHLO
-        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754046AbeDBBy1 (ORCPT
+        id S1754115AbeDBB5W (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 21:57:22 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46995 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754037AbeDBB5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 21:54:27 -0400
-X-Google-Smtp-Source: AIpwx4/ZxRs5OegSdxAHSQgpETnFPDPPHw/t/mCR8dWH1Ty8XzksAqx860c+oETVKjyaguEAhWreHg==
-Date: Mon, 2 Apr 2018 10:54:22 +0900
+        Sun, 1 Apr 2018 21:57:21 -0400
+X-Google-Smtp-Source: AIpwx4+oAjwDuQktc9QnumZiTyWec1VSWeXUkxG6TohkyoWy8sLGsqLjdWHm/oL6u/gAJ8qlcKKd7A==
+Date: Mon, 2 Apr 2018 10:57:16 +0900
 From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+3f28bd18291266ec826b@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller-bugs@googlegroups.com, Samuel Ortiz <sameo@linux.intel.com>,
-        David Miller <davem@davemloft.net>, linux-wireless@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: INFO: rcu detected stall in vprintk_func
-Message-ID: <20180402015422.GA3795@jagdpanzerIV>
-References: <001a113fe6c0a6ec650568c7384f@google.com>
- <CACT4Y+YxuvQLZjWau99-7i8dmtxtjnpX6uteabF5rorYMj5v1w@mail.gmail.com>
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        pantelis.antoniou@konsulko.com, mark.rutland@arm.com, pmladek@suse.com,
+        andriy.shevchenko@linux.intel.com, joe@perches.com, corbet@lwn.net,
+        me@tobin.cc, sergey.senozhatsky@gmail.com
+Subject: Re: [PATCH 0/2] cowsay support
+Message-ID: <20180402015716.GB3795@jagdpanzerIV>
+References: <20180401085622.7754-1-richard@nod.at>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+YxuvQLZjWau99-7i8dmtxtjnpX6uteabF5rorYMj5v1w@mail.gmail.com>
+In-Reply-To: <20180401085622.7754-1-richard@nod.at>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/01/18 12:51), Dmitry Vyukov wrote:
-[..]
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+3f28bd18291266ec826b@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for
-> > details.
-> > If you forward the report, please keep this part and the footer.
-> >
-> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
-> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
-> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
-> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+On (04/01/18 10:56), Richard Weinberger wrote:
+> As the printk subsystem gains more and more popularity it is time to add
+> the final missing feature to make it perfect, namely cowsay output.
+> Currently only one type of cow is supported and the only user is kmsg,
+> but I can see more use cases for it and the need for different cow types.
+> 
+> Example of /dev/kmsg usage:
+> [    1.309561]   _________________________________________
+> [    1.309561] < systemd[1]: Detected architecture x86-64. >
+> [    1.309561]   -----------------------------------------
+> [    1.309561]                     \   ^__^
+> [    1.309561]                      \  (oo)\_______
+> [    1.309561]                         (__)\       )\/\
+> [    1.309561]                             ||----w |
+> [    1.309561]                             ||     ||
+> 
+> Richard Weinberger (2):
+>   lib: vsprintf: Implement %pCOW
+>   printk: Use %pCOW for kmsg
+> 
 
-Yes, this thing
+   ___________________________________________________________
+ < Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com> >
+   -----------------------------------------------------------
+                     \   ^__^
+                      \  (oo)\_______
+                         (__)\       )\/\
+                             ||----w |
+                             ||     ||
 
-	do {
-		remote_miu = sock->remote_miu > LLCP_MAX_MIU ?
-				local->remote_miu : sock->remote_miu;
-
-		frag_len = min_t(size_t, remote_miu, remaining_len);
-
-		pr_debug("Fragment %zd bytes remaining %zd",
-			 frag_len, remaining_len);
-
-		pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
-					 frag_len + LLCP_HEADER_SIZE, &err);
-		if (pdu == NULL) {
-			pr_err("Could not allocate PDU\n");
-			continue;
-			^^^^^^^^
-		}
-
-is basically
-
-	do {
-		pr_err("Could not allocate PDU\n");
-	} while (1)
-
-Can cause problems sometimes. But this loop is a bit worrisome
-even without the printk() call.
-
->From printk() side, we only can do rate limiting here. Would be
-great if nfc maintainers could take a look and tweak the loop
-maybe.
-
----
-
-diff --git a/net/nfc/llcp_core.c b/net/nfc/llcp_core.c
-index ef4026a23e80..a309a27581da 100644
---- a/net/nfc/llcp_core.c
-+++ b/net/nfc/llcp_core.c
-@@ -1386,7 +1386,7 @@ static void nfc_llcp_recv_agf(struct nfc_llcp_local *local, struct sk_buff *skb)
- 
- 		new_skb = nfc_alloc_recv_skb(pdu_len, GFP_KERNEL);
- 		if (new_skb == NULL) {
--			pr_err("Could not allocate PDU\n");
-+			pr_err_ratelimited("Could not allocate PDU\n");
- 			return;
- 		}
- 
+	-ss
