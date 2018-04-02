@@ -1,124 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756840AbeDBUgO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:36:14 -0400
-Received: from mga11.intel.com ([192.55.52.93]:53132 "EHLO mga11.intel.com"
+        id S932520AbeDBUgp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 16:36:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756678AbeDBUgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:36:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,397,1517904000";
-   d="scan'208";a="44316759"
-From: "Keller, Jacob E" <jacob.e.keller@intel.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "everest-linux-l2@cavium.com" <everest-linux-l2@cavium.com>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: RE: [PATCH v5 12/14] fm10k: Report PCIe link properties with
- pcie_print_link_status()
-Thread-Topic: [PATCH v5 12/14] fm10k: Report PCIe link properties with
- pcie_print_link_status()
-Thread-Index: AQHTyGrxIzt7s2y8aE68Xz7ilEcaGaPtpMFggADC/AD//4vGIA==
-Date: Mon, 2 Apr 2018 20:36:08 +0000
-Message-ID: <02874ECE860811409154E81DA85FBB5882D49BAE@ORSMSX115.amr.corp.intel.com>
-References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152244397259.135666.12655029447932912161.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <02874ECE860811409154E81DA85FBB5882D497EE@ORSMSX115.amr.corp.intel.com>
- <20180402203144.GM9322@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180402203144.GM9322@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmE0MTcwNDItMTgzMS00ODBhLWIwMmQtYzAyZTdhNjEwZmM5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IktCdVozRHpmUklBS3NuT2djSDlWSW1sZEVxM1UrQk9KVVlaZ3RWNXRWYjA9In0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S932425AbeDBUgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 16:36:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C30C20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
+Date: Mon, 2 Apr 2018 22:36:39 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v8 02/10] sched: idle: Do not stop the tick upfront in
+ the idle loop
+Message-ID: <20180402203638.GA19895@lerouge>
+References: <40092860.XNQZrLjKDd@aspire.rjw.lan>
+ <1665095.utJuM4vCji@aspire.rjw.lan>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1665095.utJuM4vCji@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: netdev-owner@vger.kernel.org [mailto:netdev-owner@vger.kernel.org]
-> On Behalf Of Bjorn Helgaas
-> Sent: Monday, April 02, 2018 1:32 PM
-> To: Keller, Jacob E <jacob.e.keller@intel.com>
-> Cc: Tal Gilboa <talgi@mellanox.com>; Tariq Toukan <tariqt@mellanox.com>; Ariel
-> Elior <ariel.elior@cavium.com>; Ganesh Goudar <ganeshgr@chelsio.com>;
-> Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com;
-> intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-pci@vger.kernel.org
-> Subject: Re: [PATCH v5 12/14] fm10k: Report PCIe link properties with
-> pcie_print_link_status()
+On Thu, Mar 29, 2018 at 02:01:14PM +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> On Mon, Apr 02, 2018 at 03:56:06PM +0000, Keller, Jacob E wrote:
-> > > -----Original Message-----
-> > > From: Bjorn Helgaas [mailto:helgaas@kernel.org]
-> > > Sent: Friday, March 30, 2018 2:06 PM
-> > > To: Tal Gilboa <talgi@mellanox.com>
-> > > Cc: Tariq Toukan <tariqt@mellanox.com>; Keller, Jacob E
-> > > <jacob.e.keller@intel.com>; Ariel Elior <ariel.elior@cavium.com>; Ganesh
-> > > Goudar <ganeshgr@chelsio.com>; Kirsher, Jeffrey T
-> > > <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com; intel-wired-
-> > > lan@lists.osuosl.org; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > linux-pci@vger.kernel.org
-> > > Subject: [PATCH v5 12/14] fm10k: Report PCIe link properties with
-> > > pcie_print_link_status()
-> > >
-> > > From: Bjorn Helgaas <bhelgaas@google.com>
-> > >
-> > > Use pcie_print_link_status() to report PCIe link speed and possible
-> > > limitations instead of implementing this in the driver itself.
-> > >
-> > > Note that pcie_get_minimum_link() can return misleading information
-> because
-> > > it finds the slowest link and the narrowest link without considering the
-> > > total bandwidth of the link.  If the path contains a 16 GT/s x1 link and a
-> > > 2.5 GT/s x16 link, pcie_get_minimum_link() returns 2.5 GT/s x1, which
-> > > corresponds to 250 MB/s of bandwidth, not the actual available bandwidth of
-> > > about 2000 MB/s for a 16 GT/s x1 link.
-> >
-> > This comment is about what's being fixed, so it would have been easier to
-> > parse if it were written to more clearly indicate that we're removing
-> > (and not adding) this behavior.
+> Push the decision whether or not to stop the tick somewhat deeper
+> into the idle loop.
 > 
-> Good point.  Is this any better?
+> Stopping the tick upfront leads to unpleasant outcomes in case the
+> idle governor doesn't agree with the nohz code on the duration of the
+> upcoming idle period.  Specifically, if the tick has been stopped and
+> the idle governor predicts short idle, the situation is bad regardless
+> of whether or not the prediction is accurate.  If it is accurate, the
+> tick has been stopped unnecessarily which means excessive overhead.
+> If it is not accurate, the CPU is likely to spend too much time in
+> the (shallow, because short idle has been predicted) idle state
+> selected by the governor [1].
 > 
->   fm10k: Report PCIe link properties with pcie_print_link_status()
+> As the first step towards addressing this problem, change the code
+> to make the tick stopping decision inside of the loop in do_idle().
+> In particular, do not stop the tick in the cpu_idle_poll() code path.
+> Also don't do that in tick_nohz_irq_exit() which doesn't really have
+> enough information on whether or not to stop the tick.
 > 
->   Previously the driver used pcie_get_minimum_link() to warn when the NIC
->   is in a slot that can't supply as much bandwidth as the NIC could use.
-> 
->   pcie_get_minimum_link() can be misleading because it finds the slowest link
->   and the narrowest link (which may be different links) without considering
->   the total bandwidth of each link.  For a path with a 16 GT/s x1 link and a
->   2.5 GT/s x16 link, it returns 2.5 GT/s x1, which corresponds to 250 MB/s of
->   bandwidth, not the true available bandwidth of about 1969 MB/s for a
->   16 GT/s x1 link.
-> 
->   Use pcie_print_link_status() to report PCIe link speed and possible
->   limitations instead of implementing this in the driver itself.  This finds
->   the slowest link in the path to the device by computing the total bandwidth
->   of each link and compares that with the capabilities of the device.
-> 
->   Note that the driver previously used dev_warn() to suggest using a
->   different slot, but pcie_print_link_status() uses dev_info() because if the
->   platform has no faster slot available, the user can't do anything about the
->   warning and may not want to be bothered with it.
+> Link: https://marc.info/?l=linux-pm&m=150116085925208&w=2 # [1]
+> Link: https://tu-dresden.de/zih/forschung/ressourcen/dateien/projekte/haec/powernightmares.pdf
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Perfect! Thanks!
-
--Jake
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
