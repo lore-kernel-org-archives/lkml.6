@@ -1,74 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeDBOZz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 10:25:55 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6721 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751418AbeDBOZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 10:25:50 -0400
-Subject: Re: [PATCH 2/2] perf: add arm64 smmuv3 pmu driver
-To: Yisheng Xie <xieyisheng1@huawei.com>,
-        Neil Leeder <neil.m.leeder@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Mark Langsdorf <mlangsdo@redhat.com>, Mark Salter <msalter@redhat.com>,
-        "Jon Masters" <jcm@redhat.com>, Timur Tabi <timur@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>
-References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
- <1501876754-1064-3-git-send-email-nleeder@codeaurora.org>
- <883d32ce-6581-ecf6-5088-ecb238322ebe@huawei.com>
- <e55ab4404143ea0b3cc4795a93e37480@codeaurora.org>
- <14f90cc6-f2c1-5a63-67c6-a5c8ddb4799e@gmail.com>
- <c1f9230b-8ff0-5b2e-def9-cbf6b2e2e99c@huawei.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <66ef3bf4-9550-94c7-f8ad-ee53d6c75025@huawei.com>
-Date: Mon, 2 Apr 2018 22:24:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1752134AbeDBO0O (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 10:26:14 -0400
+Received: from ms.lwn.net ([45.79.88.28]:47886 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751418AbeDBO0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 10:26:11 -0400
+Date: Mon, 2 Apr 2018 08:26:09 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+Subject: [PULL] Documentation for 4.17
+Message-ID: <20180402082609.5dc13279@lwn.net>
+Organization: LWN.net
 MIME-Version: 1.0
-In-Reply-To: <c1f9230b-8ff0-5b2e-def9-cbf6b2e2e99c@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/2 14:37, Yisheng Xie wrote:
-> Hi Neil,
-> 
-> On 2018/4/1 13:44, Neil Leeder wrote:
->> Hi Yisheng Xie,
->>
->> On 3/29/2018 03:03 AM, Yisheng Xie wrote:
->>>
->>> Hi Neil,
->>>
->>> On 2017/8/5 3:59, Neil Leeder wrote:
->>>> +    mem_resource_0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>>> +    mem_map_0 = devm_ioremap_resource(&pdev->dev, mem_resource_0);
->>>> +
->>> Can we use devm_ioremap instead? for the reg_base of smmu_pmu is
->>> IMPLEMENTATION DEFINED. If the reg of smmu_pmu is inside smmu,
->>> devm_ioremap_resource will failed and return -EBUSY, eg.:
->>>
->>>   smmu reg ranges:        0x180000000 ~ 0x1801fffff
->>>   its smmu_pmu reg ranges:    0x180001000 ~ 0x180001fff
->>>
->> Just to let you know that I no longer work at Qualcomm and I won't be able to provide updates to this patchset. I expect that others from my former team at Qualcomm will pick up ownership.
-> 
-> Thanks for this infomation.
-> 
-> hi Agustin and Timur,
-> 
-> Is there any new status about this patchset?
+The following changes since commit
+7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-I think we need to wait for the new version of IORT spec,
-which includes the fix for the two base address for SMMUv3
-PMCG (now just represent one).
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
-Thanks
-Hanjun
+are available in the Git repository at:
+
+  git://git.lwn.net/linux.git tags/docs-4.17
+
+for you to fetch changes up to 86afad7d87f535ebb1a0e978bc32a8c58ac99268:
+
+  Documentation/process: update FUSE project website (2018-03-29 15:49:18 -0600)
+
+----------------------------------------------------------------
+There's been a fair amount of activity in Documentation/ this time around:
+
+ - Lots of work aligning Documentation/ABI with reality, done by Aishwarya
+   Pant.
+
+ - The trace documentation has been converted to RST by Changbin Du
+
+ - I thrashed up kernel-doc to deal with a parsing issue and to try to make
+   the code more readable.  It's still a 20+-year-old Perl hack, though.
+
+ - Lots of other updates, typo fixes, and more.
+
+Expect some annoying merge conflicts with ftrace - changes in
+Documentation/trace were made independently of the RST conversion.
+Probably the conversion should have gone through that tree as well, in
+retrospect.  The resolution in linux-next seems good.
+----------------------------------------------------------------
+Aaro Koskinen (1):
+      documentation: add my name to kernel driver statement
+
+Aishwarya Pant (13):
+      Documentation/ABI: clean up sysfs-class-pktcdvd
+      Documentation/ABI: add sysfs interface for s6e63m0 lcd driver
+      aoe: document sysfs interface
+      Documentation/ABI: update infiniband sysfs interfaces
+      block/loop: add documentation for sysfs interface
+      backlight: lm3639: document sysfs attributes
+      backlight: adp5520: document sysfs attributes
+      backlight: adp8860: document sysfs attributes
+      Documentation: rapidio: move sysfs interface to ABI
+      block: rbd: update sysfs interface
+      acpi: nfit: document sysfs interface
+      char/bsr: add sysfs interface documentation
+      Input: trackpoint: document sysfs interface
+
+Andy Shevchenko (3):
+      dmaengine: Add note to dmatest documentation about supported channels
+      dmaengine: Make dmatest.rst indeed reST compatible
+      dmaengine: Fix spelling for parenthesis in dmatest documentation
+
+Changbin Du (17):
+      Documentation: add Linux tracing to Sphinx TOC tree
+      trace doc: convert trace/ftrace-design.txt to rst format
+      trace doc: add ftrace-uses.rst to doc tree
+      trace doc: convert trace/tracepoint-analysis.txt to rst format
+      trace doc: convert trace/ftrace.txt to rst format
+      trace doc: convert trace/kprobetrace.txt to rst format
+      trace doc: convert trace/uprobetracer.txt to rst format
+      trace doc: convert trace/tracepoints.txt to rst format
+      trace doc: convert trace/events.txt to rst format
+      trace doc: convert trace/events-kmem.txt to rst format
+      trace doc: convert trace/events-power.txt to rst format
+      trace doc: convert trace/events-nmi.txt to rst format
+      trace doc: convert trace/events-msr.txt to rst format
+      trace doc: convert trace/mmiotrace.txt to rst format
+      trace doc: convert trace/hwlat_detector.txt to rst fromat
+      trace doc: convert trace/intel_th.txt to rst format
+      trace doc: convert trace/stm.txt to rst format
+
+Dave Hansen (1):
+      docs: clarify security-bugs disclosure policy
+
+Dominik Brodowski (1):
+      Documentation/process: Co-developed-by instead of Co-Developed-by
+
+Eric Engestrom (1):
+      Documentation/sparse: fix typo
+
+Gary R Hook (1):
+      Documentation/CodingStyle: Add an example for braces
+
+Joel Stanley (1):
+      Documentation: Mention why %p prints ptrval
+
+Jonathan Corbet (12):
+      docs: kernel-doc: Get rid of xml_escape() and friends
+      docs: kernel-doc: Rename and split STATE_FIELD
+      docs: kernel-doc: Move STATE_NORMAL processing into its own function
+      docs: kernel-doc: Move STATE_NAME processing into its own function
+      docs: kernel-doc: Move STATE_BODY processing to a separate function
+      docs: kernel-doc: Move STATE_PROTO processing into its own function
+      docs: kernel-doc: Finish moving STATE_* code out of process_file()
+      docs: kernel-doc: Don't mangle literal code blocks in comments
+      docs: Add an SPDX header to kernel-doc
+      Merge branch 'kerneldoc2' into docs-next
+      docs: ftrace: fix a few formatting issues
+      Docs: Added a pointer to the formatted docs to README
+
+Jonathan Neuschäfer (2):
+      Documentation/process/howto: Remove outdated info about bugzilla mailing lists
+      admin-guide: Fix list formatting in tained-kernels.html
+
+Martin Kepplinger (4):
+      README: Improve documentation descriptions
+      Documentation: admin-guide: add kvmconfig, xenconfig and tinyconfig commands
+      Documentation: magic-numbers: Fix typo
+      Documentation/process: update FUSE project website
+
+Masanari Iida (2):
+      linux-next: SLIMbus: doc: Fix a warning "Title underline too short"
+      xfs: Change URL for the project in xfs.txt
+
+Matthew Wilcox (7):
+      Add documentation for Context section
+      Minor fixes to kernel-doc.rst
+      Add scripts/split-man.pl
+      Fix whitespace in example
+      Restructure kernel-doc.rst
+      Documentation/sphinx: Fix Directive import error
+      kernel-doc: Remove __sched markings
+
+Mauro Carvalho Chehab (8):
+      doc-guide: kernel-doc: fix example for nested_foobar struct
+      doc-guide: kernel-doc: fix example for inlined comments
+      doc-guide: kernel-doc: move in-line section to be after nested struct
+      scripts: kernel-doc: support in-line comments on nested structs/unions
+      doc-guide: kernel-doc: add examples about nested union/structs
+      COPYING: create a new file with points to the Kernel license files
+      COPYING: use the new text with points to the license files
+      docs: kernel-doc: fix parsing of arrays
+
+Mike Rapoport (3):
+      scripts: kernel_doc: fixup reporting of function identifiers
+      doc-guide: kernel-doc: add comment about formatting verification
+      docs/vm: update 00-INDEX
+
+Minghui Liu (1):
+      Documentation: Delete reference to the kernel-mentors mailing list
+
+Pali Rohár (1):
+      Input: alps - Update documentation for trackstick v3 format
+
+Philipp Hahn (2):
+      doc: Rename .system_keyring to .builtin_trusted_keys
+      doc: module-signing.rst: Fix reST formatting
+
+Tobin C. Harding (1):
+      docs: add Co-Developed-by docs
+
+Xiongwei Song (1):
+      tracing: Fix incorrect file name
+
+ COPYING                                            |  358 +--
+ Documentation/ABI/stable/sysfs-class-infiniband    |  818 +++++
+ Documentation/ABI/testing/sysfs-block-aoe          |   45 +
+ Documentation/ABI/testing/sysfs-block-loop         |   50 +
+ Documentation/ABI/testing/sysfs-bus-nfit           |  233 ++
+ Documentation/ABI/testing/sysfs-bus-rapidio        |  198 ++
+ Documentation/ABI/testing/sysfs-bus-rbd            |  203 +-
+ .../ABI/testing/sysfs-class-backlight-adp5520      |   31 +
+ .../ABI/testing/sysfs-class-backlight-adp8860      |   54 +
+ .../ABI/testing/sysfs-class-backlight-lm3639       |   11 +
+ Documentation/ABI/testing/sysfs-class-bsr          |   25 +
+ Documentation/ABI/testing/sysfs-class-infiniband   |   16 -
+ Documentation/ABI/testing/sysfs-class-lcd-s6e63m0  |   27 +
+ Documentation/ABI/testing/sysfs-class-pktcdvd      |  129 +-
+ Documentation/ABI/testing/sysfs-class-rapidio      |   55 +
+ .../ABI/testing/sysfs-devices-platform-trackpoint  |  115 +
+ Documentation/admin-guide/README.rst               |    7 +
+ Documentation/admin-guide/module-signing.rst       |   10 +-
+ Documentation/admin-guide/security-bugs.rst        |   24 +-
+ Documentation/admin-guide/tainted-kernels.rst      |   18 +-
+ Documentation/core-api/printk-formats.rst          |    4 +-
+ Documentation/dev-tools/sparse.rst                 |    2 +-
+ Documentation/doc-guide/kernel-doc.rst             |  555 ++--
+ Documentation/driver-api/dmaengine/dmatest.rst     |   40 +-
+ Documentation/driver-api/slimbus.rst               |    2 +-
+ Documentation/filesystems/xfs.txt                  |    2 +-
+ Documentation/index.rst                            |    1 +
+ Documentation/infiniband/sysfs.txt                 |  129 +-
+ Documentation/input/devices/alps.rst               |    7 +-
+ Documentation/process/5.Posting.rst                |    2 +-
+ Documentation/process/changes.rst                  |    2 +-
+ Documentation/process/coding-style.rst             |    9 +
+ Documentation/process/howto.rst                    |   15 -
+ Documentation/process/kernel-driver-statement.rst  |    1 +
+ Documentation/process/license-rules.rst            |   20 +-
+ Documentation/process/magic-number.rst             |    2 +-
+ Documentation/process/submitting-patches.rst       |    9 +-
+ Documentation/rapidio/sysfs.txt                    |  161 +-
+ Documentation/sphinx/kerneldoc.py                  |    3 +-
+ .../trace/{events-kmem.txt => events-kmem.rst}     |   50 +-
+ Documentation/trace/events-msr.rst                 |   40 +
+ Documentation/trace/events-msr.txt                 |   37 -
+ Documentation/trace/events-nmi.rst                 |   45 +
+ Documentation/trace/events-nmi.txt                 |   43 -
+ .../trace/{events-power.txt => events-power.rst}   |   52 +-
+ Documentation/trace/{events.txt => events.rst}     |  677 ++--
+ .../trace/{ftrace-design.txt => ftrace-design.rst} |  252 +-
+ Documentation/trace/ftrace-uses.rst                |   23 +-
+ Documentation/trace/ftrace.rst                     | 3332 ++++++++++++++++++++
+ Documentation/trace/ftrace.txt                     | 3220 -------------------
+ .../{hwlat_detector.txt => hwlat_detector.rst}     |   26 +-
+ Documentation/trace/index.rst                      |   23 +
+ Documentation/trace/{intel_th.txt => intel_th.rst} |   43 +-
+ .../trace/{kprobetrace.txt => kprobetrace.rst}     |  100 +-
+ .../trace/{mmiotrace.txt => mmiotrace.rst}         |   86 +-
+ Documentation/trace/{stm.txt => stm.rst}           |   23 +-
+ ...epoint-analysis.txt => tracepoint-analysis.rst} |   41 +-
+ .../trace/{tracepoints.txt => tracepoints.rst}     |   77 +-
+ .../trace/{uprobetracer.txt => uprobetracer.rst}   |   44 +-
+ Documentation/vm/00-INDEX                          |   18 +
+ README                                             |   11 +-
+ scripts/kernel-doc                                 |  671 ++--
+ scripts/split-man.pl                               |   28 +
+ 63 files changed, 6901 insertions(+), 5454 deletions(-)
+ create mode 100644 Documentation/ABI/stable/sysfs-class-infiniband
+ create mode 100644 Documentation/ABI/testing/sysfs-block-aoe
+ create mode 100644 Documentation/ABI/testing/sysfs-block-loop
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-nfit
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-rapidio
+ create mode 100644 Documentation/ABI/testing/sysfs-class-backlight-adp5520
+ create mode 100644 Documentation/ABI/testing/sysfs-class-backlight-adp8860
+ create mode 100644 Documentation/ABI/testing/sysfs-class-backlight-lm3639
+ create mode 100644 Documentation/ABI/testing/sysfs-class-bsr
+ delete mode 100644 Documentation/ABI/testing/sysfs-class-infiniband
+ create mode 100644 Documentation/ABI/testing/sysfs-class-lcd-s6e63m0
+ create mode 100644 Documentation/ABI/testing/sysfs-class-rapidio
+ create mode 100644 Documentation/ABI/testing/sysfs-devices-platform-trackpoint
+ rename Documentation/trace/{events-kmem.txt => events-kmem.rst} (76%)
+ create mode 100644 Documentation/trace/events-msr.rst
+ delete mode 100644 Documentation/trace/events-msr.txt
+ create mode 100644 Documentation/trace/events-nmi.rst
+ delete mode 100644 Documentation/trace/events-nmi.txt
+ rename Documentation/trace/{events-power.txt => events-power.rst} (65%)
+ rename Documentation/trace/{events.txt => events.rst} (82%)
+ rename Documentation/trace/{ftrace-design.txt => ftrace-design.rst} (74%)
+ create mode 100644 Documentation/trace/ftrace.rst
+ delete mode 100644 Documentation/trace/ftrace.txt
+ rename Documentation/trace/{hwlat_detector.txt => hwlat_detector.rst} (83%)
+ create mode 100644 Documentation/trace/index.rst
+ rename Documentation/trace/{intel_th.txt => intel_th.rst} (82%)
+ rename Documentation/trace/{kprobetrace.txt => kprobetrace.rst} (63%)
+ rename Documentation/trace/{mmiotrace.txt => mmiotrace.rst} (78%)
+ rename Documentation/trace/{stm.txt => stm.rst} (91%)
+ rename Documentation/trace/{tracepoint-analysis.txt => tracepoint-analysis.rst} (93%)
+ rename Documentation/trace/{tracepoints.txt => tracepoints.rst} (74%)
+ rename Documentation/trace/{uprobetracer.txt => uprobetracer.rst} (86%)
+ create mode 100755 scripts/split-man.pl
