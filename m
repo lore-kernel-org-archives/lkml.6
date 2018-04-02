@@ -1,23 +1,23 @@
 Return-Path: <liuwenliang@huawei.com>
-X-Google-Smtp-Source: AIpwx4+1zTTlDk6JJ7qKvX2wUoqrytKNTHqwXCUpMHR5wr/XGduMwOAO3om1Gh7Me18w78WD3a2n
-ARC-Seal: i=1; a=rsa-sha256; t=1522671904; cv=none;
+X-Google-Smtp-Source: AIpwx4+hpL390jBy/WRiZpDAD09Qz+EC7+BE8m94LtyUX20eQFWHJKn4RYf5OXS+uLdB4RycHz4O
+ARC-Seal: i=1; a=rsa-sha256; t=1522671903; cv=none;
         d=google.com; s=arc-20160816;
-        b=XvPPY1h8oXbVCg83O395lsRt9pqGQjrKddXtGtNLrzjGnxDth03en5YvIkJiDaeOJL
-         FsFzC8Jb+VoXN1M2usM5dTbjUW6KhRVOphDy6eZzR3kmqDjjlgExk0N9RL1LrSqf8XAT
-         xQRB+nb+AcdUrwrDMFkuLqoe4eT46C2mebBfgGvEa1hH92wxkgeWcGOZnZk2THkIioJL
-         tRduZ2JpPbys575FBgRoUW8crL1b9FK1GFplmEBD85oj+MhGE9o09feeSEguiGaau3wK
-         97cqBUN/Qrh9kEzmhTMG3Q7vRMihexwk7tPUGXiQd99nXjejrJLHB9d/L3mRfjHQQnwp
-         795w==
+        b=j5G+4WFTwnifTU5zHEtmP5yv3ovG7dk+D5j6RHTCACyo2sGxmb+pLalD0bM36JuZW7
+         pS6TVzVdPOVVI7FFzVdjiAEihO5SO7sNyjqOgBI64hFhPmHcTKLxHgSuDDBTGhQGtmbB
+         nqmusBnZfpskJBORizGn7n3CBd9yctx6rszr64YWPPMepa7mmLBq44TnPER8gWJpMoZh
+         b8VFXeUJOcXREEoYmPDBCpvmNCVx7ppot3QbYTZISoqbLdgqJtMtD1v1J6PzyLI7kAZZ
+         RYXrXl7k1mgsMuF3JrNUu4YtNrx8x/GLfiljkbePy9b0NES3XBmYXI7tqBAe1UTlnvUu
+         j7Rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:to:from
          :arc-authentication-results;
-        bh=pTdQosHMF1FtBC+0dSweMVR0lWUgjE6E1hdYiklXg14=;
-        b=kcAsvhCFwrMS5wVaohkOYS5oz4yorzaia5mbmypx6BlPn21R8uxjVWz7DMcw+qYTJf
-         4fm/M3s3zKwGAuhDLU8F4AwNFqcHGFQMzgJlRz7kE9zhx7HmB9bRlJbvgfWEwcp7fZNM
-         6+cariJkB3jChzYEb6hLNkuNSwsVOQeGxxegN0oEMJIdkWIuC7NzwYJP+tYOLAqr4HZz
-         PLpErSnuWY71Q7wZHy351wT7TrhQ6Dien8qKsdRMjwLntRsqHp4xptDVFnARePLPKWmy
-         uGic0+RaGJ9t9zLwib2GdtltoTwbiONn6NH6/ffT7ueHo2LadVGkc2WbrK13WUCDSqXr
-         wfZg==
+        bh=42BcgaJnAkq+2rJ1rntz2JwK5cZiMbI/Af8WYX0NF08=;
+        b=qy5uxTY8+iBUUE5Ysmb2HX998STi34iPZVMR9Ozu/+mXDPS/gG/dU/l4xaKhkYryZu
+         A0UPlMcOZ54tvsNLh32VlTMm1oDkMSCUgmldbT/zf9GYKJoqVO8ORajkdtZ16RwO7yCB
+         r57RyDvsnYNMspo2xvrEWynea07h88JOvtjQjXq86v0ZoxXWhVjjWAvBG8fpc4CzH1G8
+         A8u9QsAEzH6bFYAt7bQKiwX7n69sTX12VzK2FTTogefaU/4trXejRpdP8cQu27W6HGU6
+         8FY0IbCtMLUi+Ba6LycUzm6FNqEluhpT4yNrFsKAG4NFCjpyE/ptdHYUSdUCcDwi8WKQ
+         9ktw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.35 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
@@ -41,9 +41,9 @@ To: <aryabinin@virtuozzo.com>, <dvyukov@google.com>, <corbet@lwn.net>,
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.cs.columbia.edu>,
 	<linux-mm@kvack.org>
-Subject: [PATCH v3 1/6] Add TTBR operator for kasan_init
-Date: Mon, 2 Apr 2018 20:04:35 +0800
-Message-ID: <20180402120440.31900-2-liuwenliang@huawei.com>
+Subject: [PATCH v3 6/6] Enable KASan for arm
+Date: Mon, 2 Apr 2018 20:04:40 +0800
+Message-ID: <20180402120440.31900-7-liuwenliang@huawei.com>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180402120440.31900-1-liuwenliang@huawei.com>
 References: <20180402120440.31900-1-liuwenliang@huawei.com>
@@ -52,282 +52,50 @@ Content-Type: text/plain
 X-Originating-IP: [10.67.187.223]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596637214891878015?=
-X-GMAIL-MSGID: =?utf-8?q?1596637214891878015?=
+X-GMAIL-THRID: =?utf-8?q?1596637213618557598?=
+X-GMAIL-MSGID: =?utf-8?q?1596637213618557598?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The purpose of this patch is to provide set_ttbr0/get_ttbr0
-to kasan_init function. The definitions of cp15 registers
-should be in arch/arm/include/asm/cp15.h rather than
-arch/arm/include/asm/kvm_hyp.h, so move them.
+From: Andrey Ryabinin <a.ryabinin@samsung.com>
+
+This patch enable kernel address sanitizer for arm.
 
 Cc: Andrey Ryabinin <a.ryabinin@samsung.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Russell King - ARM Linux <linux@armlinux.org.uk>
-Reviewed-by: Christoffer Dall <cdall@linaro.org>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
 Tested-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Florian Fainelli <f.fainelli@gmail.com>
 Tested-by: Abbott Liu <liuwenliang@huawei.com>
 Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
 ---
- arch/arm/include/asm/cp15.h    | 104 +++++++++++++++++++++++++++++++++++++++++
- arch/arm/include/asm/kvm_hyp.h |  52 ---------------------
- arch/arm/kvm/hyp/cp15-sr.c     |  12 ++---
- arch/arm/kvm/hyp/switch.c      |   6 +--
- 4 files changed, 113 insertions(+), 61 deletions(-)
+ Documentation/dev-tools/kasan.rst | 2 +-
+ arch/arm/Kconfig                  | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
-index 4c9fa72..99ebb31 100644
---- a/arch/arm/include/asm/cp15.h
-+++ b/arch/arm/include/asm/cp15.h
-@@ -3,6 +3,7 @@
- #define __ASM_ARM_CP15_H
+diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
+index f7a18f2..d92120d 100644
+--- a/Documentation/dev-tools/kasan.rst
++++ b/Documentation/dev-tools/kasan.rst
+@@ -12,7 +12,7 @@ KASAN uses compile-time instrumentation for checking every memory access,
+ therefore you will need a GCC version 4.9.2 or later. GCC 5.0 or later is
+ required for detection of out-of-bounds accesses to stack or global variables.
  
- #include <asm/barrier.h>
-+#include <linux/stringify.h>
+-Currently KASAN is supported only for the x86_64 and arm64 architectures.
++Currently KASAN is supported only for the x86_64, arm64 and arm architectures.
  
- /*
-  * CR1 bits (CP#15 CR1)
-@@ -65,8 +66,111 @@
- #define __write_sysreg(v, r, w, c, t)	asm volatile(w " " c : : "r" ((t)(v)))
- #define write_sysreg(v, ...)		__write_sysreg(v, __VA_ARGS__)
- 
-+#define TTBR0_32	__ACCESS_CP15(c2, 0, c0, 0)
-+#define TTBR1_32	__ACCESS_CP15(c2, 0, c0, 1)
-+#define PAR_32		__ACCESS_CP15(c7, 0, c4, 0)
-+#define TTBR0_64	__ACCESS_CP15_64(0, c2)
-+#define TTBR1_64	__ACCESS_CP15_64(1, c2)
-+#define PAR_64		__ACCESS_CP15_64(0, c7)
-+#define VTTBR		__ACCESS_CP15_64(6, c2)
-+#define CNTV_CVAL	__ACCESS_CP15_64(3, c14)
-+#define CNTVOFF		__ACCESS_CP15_64(4, c14)
-+
-+#define MIDR		__ACCESS_CP15(c0, 0, c0, 0)
-+#define CSSELR		__ACCESS_CP15(c0, 2, c0, 0)
-+#define VPIDR		__ACCESS_CP15(c0, 4, c0, 0)
-+#define VMPIDR		__ACCESS_CP15(c0, 4, c0, 5)
-+#define SCTLR		__ACCESS_CP15(c1, 0, c0, 0)
-+#define CPACR		__ACCESS_CP15(c1, 0, c0, 2)
-+#define HCR		__ACCESS_CP15(c1, 4, c1, 0)
-+#define HDCR		__ACCESS_CP15(c1, 4, c1, 1)
-+#define HCPTR		__ACCESS_CP15(c1, 4, c1, 2)
-+#define HSTR		__ACCESS_CP15(c1, 4, c1, 3)
-+#define TTBCR		__ACCESS_CP15(c2, 0, c0, 2)
-+#define HTCR		__ACCESS_CP15(c2, 4, c0, 2)
-+#define VTCR		__ACCESS_CP15(c2, 4, c1, 2)
-+#define DACR		__ACCESS_CP15(c3, 0, c0, 0)
-+#define DFSR		__ACCESS_CP15(c5, 0, c0, 0)
-+#define IFSR		__ACCESS_CP15(c5, 0, c0, 1)
-+#define ADFSR		__ACCESS_CP15(c5, 0, c1, 0)
-+#define AIFSR		__ACCESS_CP15(c5, 0, c1, 1)
-+#define HSR		__ACCESS_CP15(c5, 4, c2, 0)
-+#define DFAR		__ACCESS_CP15(c6, 0, c0, 0)
-+#define IFAR		__ACCESS_CP15(c6, 0, c0, 2)
-+#define HDFAR		__ACCESS_CP15(c6, 4, c0, 0)
-+#define HIFAR		__ACCESS_CP15(c6, 4, c0, 2)
-+#define HPFAR		__ACCESS_CP15(c6, 4, c0, 4)
-+#define ICIALLUIS	__ACCESS_CP15(c7, 0, c1, 0)
-+#define BPIALLIS	__ACCESS_CP15(c7, 0, c1, 6)
-+#define ICIMVAU		__ACCESS_CP15(c7, 0, c5, 1)
-+#define ATS1CPR		__ACCESS_CP15(c7, 0, c8, 0)
-+#define TLBIALLIS	__ACCESS_CP15(c8, 0, c3, 0)
-+#define TLBIALL		__ACCESS_CP15(c8, 0, c7, 0)
-+#define TLBIALLNSNHIS	__ACCESS_CP15(c8, 4, c3, 4)
-+#define PRRR		__ACCESS_CP15(c10, 0, c2, 0)
-+#define NMRR		__ACCESS_CP15(c10, 0, c2, 1)
-+#define AMAIR0		__ACCESS_CP15(c10, 0, c3, 0)
-+#define AMAIR1		__ACCESS_CP15(c10, 0, c3, 1)
-+#define VBAR		__ACCESS_CP15(c12, 0, c0, 0)
-+#define CID		__ACCESS_CP15(c13, 0, c0, 1)
-+#define TID_URW		__ACCESS_CP15(c13, 0, c0, 2)
-+#define TID_URO		__ACCESS_CP15(c13, 0, c0, 3)
-+#define TID_PRIV	__ACCESS_CP15(c13, 0, c0, 4)
-+#define HTPIDR		__ACCESS_CP15(c13, 4, c0, 2)
-+#define CNTKCTL		__ACCESS_CP15(c14, 0, c1, 0)
-+#define CNTV_CTL	__ACCESS_CP15(c14, 0, c3, 1)
-+#define CNTHCTL		__ACCESS_CP15(c14, 4, c1, 0)
-+
- extern unsigned long cr_alignment;	/* defined in entry-armv.S */
- 
-+static inline void set_par(u64 val)
-+{
-+	if (IS_ENABLED(CONFIG_ARM_LPAE))
-+		write_sysreg(val, PAR_64);
-+	else
-+		write_sysreg(val, PAR_32);
-+}
-+
-+static inline u64 get_par(void)
-+{
-+	if (IS_ENABLED(CONFIG_ARM_LPAE))
-+		return read_sysreg(PAR_64);
-+	else
-+		return read_sysreg(PAR_32);
-+}
-+
-+static inline void set_ttbr0(u64 val)
-+{
-+	if (IS_ENABLED(CONFIG_ARM_LPAE))
-+		write_sysreg(val, TTBR0_64);
-+	else
-+		write_sysreg(val, TTBR0_32);
-+}
-+
-+static inline u64 get_ttbr0(void)
-+{
-+	if (IS_ENABLED(CONFIG_ARM_LPAE))
-+		return read_sysreg(TTBR0_64);
-+	else
-+		return read_sysreg(TTBR0_32);
-+}
-+
-+static inline void set_ttbr1(u64 val)
-+{
-+	if (IS_ENABLED(CONFIG_ARM_LPAE))
-+		write_sysreg(val, TTBR1_64);
-+	else
-+		write_sysreg(val, TTBR1_32);
-+}
-+
-+static inline u64 get_ttbr1(void)
-+{
-+	if (IS_ENABLED(CONFIG_ARM_LPAE))
-+		return read_sysreg(TTBR1_64);
-+	else
-+		return read_sysreg(TTBR1_32);
-+}
-+
- static inline unsigned long get_cr(void)
- {
- 	unsigned long val;
-diff --git a/arch/arm/include/asm/kvm_hyp.h b/arch/arm/include/asm/kvm_hyp.h
-index 1ab8329..8e8592e 100644
---- a/arch/arm/include/asm/kvm_hyp.h
-+++ b/arch/arm/include/asm/kvm_hyp.h
-@@ -36,58 +36,6 @@
- 	__val;							\
- })
- 
--#define TTBR0		__ACCESS_CP15_64(0, c2)
--#define TTBR1		__ACCESS_CP15_64(1, c2)
--#define VTTBR		__ACCESS_CP15_64(6, c2)
--#define PAR		__ACCESS_CP15_64(0, c7)
--#define CNTV_CVAL	__ACCESS_CP15_64(3, c14)
--#define CNTVOFF		__ACCESS_CP15_64(4, c14)
--
--#define MIDR		__ACCESS_CP15(c0, 0, c0, 0)
--#define CSSELR		__ACCESS_CP15(c0, 2, c0, 0)
--#define VPIDR		__ACCESS_CP15(c0, 4, c0, 0)
--#define VMPIDR		__ACCESS_CP15(c0, 4, c0, 5)
--#define SCTLR		__ACCESS_CP15(c1, 0, c0, 0)
--#define CPACR		__ACCESS_CP15(c1, 0, c0, 2)
--#define HCR		__ACCESS_CP15(c1, 4, c1, 0)
--#define HDCR		__ACCESS_CP15(c1, 4, c1, 1)
--#define HCPTR		__ACCESS_CP15(c1, 4, c1, 2)
--#define HSTR		__ACCESS_CP15(c1, 4, c1, 3)
--#define TTBCR		__ACCESS_CP15(c2, 0, c0, 2)
--#define HTCR		__ACCESS_CP15(c2, 4, c0, 2)
--#define VTCR		__ACCESS_CP15(c2, 4, c1, 2)
--#define DACR		__ACCESS_CP15(c3, 0, c0, 0)
--#define DFSR		__ACCESS_CP15(c5, 0, c0, 0)
--#define IFSR		__ACCESS_CP15(c5, 0, c0, 1)
--#define ADFSR		__ACCESS_CP15(c5, 0, c1, 0)
--#define AIFSR		__ACCESS_CP15(c5, 0, c1, 1)
--#define HSR		__ACCESS_CP15(c5, 4, c2, 0)
--#define DFAR		__ACCESS_CP15(c6, 0, c0, 0)
--#define IFAR		__ACCESS_CP15(c6, 0, c0, 2)
--#define HDFAR		__ACCESS_CP15(c6, 4, c0, 0)
--#define HIFAR		__ACCESS_CP15(c6, 4, c0, 2)
--#define HPFAR		__ACCESS_CP15(c6, 4, c0, 4)
--#define ICIALLUIS	__ACCESS_CP15(c7, 0, c1, 0)
--#define BPIALLIS	__ACCESS_CP15(c7, 0, c1, 6)
--#define ICIMVAU		__ACCESS_CP15(c7, 0, c5, 1)
--#define ATS1CPR		__ACCESS_CP15(c7, 0, c8, 0)
--#define TLBIALLIS	__ACCESS_CP15(c8, 0, c3, 0)
--#define TLBIALL		__ACCESS_CP15(c8, 0, c7, 0)
--#define TLBIALLNSNHIS	__ACCESS_CP15(c8, 4, c3, 4)
--#define PRRR		__ACCESS_CP15(c10, 0, c2, 0)
--#define NMRR		__ACCESS_CP15(c10, 0, c2, 1)
--#define AMAIR0		__ACCESS_CP15(c10, 0, c3, 0)
--#define AMAIR1		__ACCESS_CP15(c10, 0, c3, 1)
--#define VBAR		__ACCESS_CP15(c12, 0, c0, 0)
--#define CID		__ACCESS_CP15(c13, 0, c0, 1)
--#define TID_URW		__ACCESS_CP15(c13, 0, c0, 2)
--#define TID_URO		__ACCESS_CP15(c13, 0, c0, 3)
--#define TID_PRIV	__ACCESS_CP15(c13, 0, c0, 4)
--#define HTPIDR		__ACCESS_CP15(c13, 4, c0, 2)
--#define CNTKCTL		__ACCESS_CP15(c14, 0, c1, 0)
--#define CNTV_CTL	__ACCESS_CP15(c14, 0, c3, 1)
--#define CNTHCTL		__ACCESS_CP15(c14, 4, c1, 0)
--
- #define VFP_FPEXC	__ACCESS_VFP(FPEXC)
- 
- /* AArch64 compatibility macros, only for the timer so far */
-diff --git a/arch/arm/kvm/hyp/cp15-sr.c b/arch/arm/kvm/hyp/cp15-sr.c
-index c478281..d365e3c 100644
---- a/arch/arm/kvm/hyp/cp15-sr.c
-+++ b/arch/arm/kvm/hyp/cp15-sr.c
-@@ -31,8 +31,8 @@ void __hyp_text __sysreg_save_state(struct kvm_cpu_context *ctxt)
- 	ctxt->cp15[c0_CSSELR]		= read_sysreg(CSSELR);
- 	ctxt->cp15[c1_SCTLR]		= read_sysreg(SCTLR);
- 	ctxt->cp15[c1_CPACR]		= read_sysreg(CPACR);
--	*cp15_64(ctxt, c2_TTBR0)	= read_sysreg(TTBR0);
--	*cp15_64(ctxt, c2_TTBR1)	= read_sysreg(TTBR1);
-+	*cp15_64(ctxt, c2_TTBR0)	= read_sysreg(TTBR0_64);
-+	*cp15_64(ctxt, c2_TTBR1)	= read_sysreg(TTBR1_64);
- 	ctxt->cp15[c2_TTBCR]		= read_sysreg(TTBCR);
- 	ctxt->cp15[c3_DACR]		= read_sysreg(DACR);
- 	ctxt->cp15[c5_DFSR]		= read_sysreg(DFSR);
-@@ -41,7 +41,7 @@ void __hyp_text __sysreg_save_state(struct kvm_cpu_context *ctxt)
- 	ctxt->cp15[c5_AIFSR]		= read_sysreg(AIFSR);
- 	ctxt->cp15[c6_DFAR]		= read_sysreg(DFAR);
- 	ctxt->cp15[c6_IFAR]		= read_sysreg(IFAR);
--	*cp15_64(ctxt, c7_PAR)		= read_sysreg(PAR);
-+	*cp15_64(ctxt, c7_PAR)		= read_sysreg(PAR_64);
- 	ctxt->cp15[c10_PRRR]		= read_sysreg(PRRR);
- 	ctxt->cp15[c10_NMRR]		= read_sysreg(NMRR);
- 	ctxt->cp15[c10_AMAIR0]		= read_sysreg(AMAIR0);
-@@ -60,8 +60,8 @@ void __hyp_text __sysreg_restore_state(struct kvm_cpu_context *ctxt)
- 	write_sysreg(ctxt->cp15[c0_CSSELR],	CSSELR);
- 	write_sysreg(ctxt->cp15[c1_SCTLR],	SCTLR);
- 	write_sysreg(ctxt->cp15[c1_CPACR],	CPACR);
--	write_sysreg(*cp15_64(ctxt, c2_TTBR0),	TTBR0);
--	write_sysreg(*cp15_64(ctxt, c2_TTBR1),	TTBR1);
-+	write_sysreg(*cp15_64(ctxt, c2_TTBR0),	TTBR0_64);
-+	write_sysreg(*cp15_64(ctxt, c2_TTBR1),	TTBR1_64);
- 	write_sysreg(ctxt->cp15[c2_TTBCR],	TTBCR);
- 	write_sysreg(ctxt->cp15[c3_DACR],	DACR);
- 	write_sysreg(ctxt->cp15[c5_DFSR],	DFSR);
-@@ -70,7 +70,7 @@ void __hyp_text __sysreg_restore_state(struct kvm_cpu_context *ctxt)
- 	write_sysreg(ctxt->cp15[c5_AIFSR],	AIFSR);
- 	write_sysreg(ctxt->cp15[c6_DFAR],	DFAR);
- 	write_sysreg(ctxt->cp15[c6_IFAR],	IFAR);
--	write_sysreg(*cp15_64(ctxt, c7_PAR),	PAR);
-+	write_sysreg(*cp15_64(ctxt, c7_PAR),	PAR_64);
- 	write_sysreg(ctxt->cp15[c10_PRRR],	PRRR);
- 	write_sysreg(ctxt->cp15[c10_NMRR],	NMRR);
- 	write_sysreg(ctxt->cp15[c10_AMAIR0],	AMAIR0);
-diff --git a/arch/arm/kvm/hyp/switch.c b/arch/arm/kvm/hyp/switch.c
-index ae45ae9..94d5bb9 100644
---- a/arch/arm/kvm/hyp/switch.c
-+++ b/arch/arm/kvm/hyp/switch.c
-@@ -134,12 +134,12 @@ static bool __hyp_text __populate_fault_info(struct kvm_vcpu *vcpu)
- 	if (!(hsr & HSR_DABT_S1PTW) && (hsr & HSR_FSC_TYPE) == FSC_PERM) {
- 		u64 par, tmp;
- 
--		par = read_sysreg(PAR);
-+		par = read_sysreg(PAR_64);
- 		write_sysreg(far, ATS1CPR);
- 		isb();
- 
--		tmp = read_sysreg(PAR);
--		write_sysreg(par, PAR);
-+		tmp = read_sysreg(PAR_64);
-+		write_sysreg(par, PAR_64);
- 
- 		if (unlikely(tmp & 1))
- 			return false; /* Translation failed, back to guest */
+ Usage
+ -----
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 7e3d535..ac2287b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -49,6 +49,7 @@ config ARM
+ 	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7) && !CPU_32v6
+ 	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU
+ 	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32 && MMU
++	select HAVE_ARCH_KASAN if MMU
+ 	select HAVE_ARCH_MMAP_RND_BITS if MMU
+ 	select HAVE_ARCH_SECCOMP_FILTER if (AEABI && !OABI_COMPAT)
+ 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
 -- 
 2.9.0
