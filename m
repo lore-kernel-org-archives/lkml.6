@@ -1,117 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756942AbeDBTJi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:09:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42124 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754430AbeDBTGk (ORCPT
+        id S1756963AbeDBTJp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:09:45 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34260 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754430AbeDBTJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:06:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83BAA60817
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: jeffrey.t.kirsher@intel.com
-Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 2/7] ixgbe: eliminate duplicate barriers on weakly-ordered archs
-Date: Mon,  2 Apr 2018 15:06:25 -0400
-Message-Id: <1522695990-31082-3-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522695990-31082-1-git-send-email-okaya@codeaurora.org>
-References: <1522695990-31082-1-git-send-email-okaya@codeaurora.org>
+        Mon, 2 Apr 2018 15:09:39 -0400
+X-Google-Smtp-Source: AIpwx4//9chit0fCh81tdhrAB35TF7P/KazfrCndwG34woDRuzIPkOZndzS8G/f8atNcCA1gQaz7Lw==
+Date: Mon, 2 Apr 2018 12:09:36 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        syzbot
+        <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, kvm <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, Radim Krcmar <rkrcmar@redhat.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Jim Mattson <jmattson@google.com>
+Subject: Re: general protection fault in native_write_cr4
+Message-ID: <20180402190936.GB59810@gmail.com>
+References: <f403043a9be41c978c0560c0d164@google.com>
+ <CANRm+Cy9-R=hBNwwUptVk_f8keX40-9yHkpqstWMP3pLSKpLGw@mail.gmail.com>
+ <CACT4Y+ZxPD_6JEntRVGdngn2QBzABwubYohpKVcWJy0Hv-jXBg@mail.gmail.com>
+ <CACT4Y+Zto0DQLwFtSxZbbkexqDeCwvJ4ks-QHAMn9=o6zxShnw@mail.gmail.com>
+ <CACT4Y+ZvP=TqBhEG1iagYMFbwhAr6jXwXgUvkukrrRg+qaJLQw@mail.gmail.com>
+ <37306EFA9975BE469F115FDE982C075BCE92C301@ORSMSX114.amr.corp.intel.com>
+ <CACT4Y+b5KggyrgHAtBaL4svYjgQU_WZ3f5uCjmwiQnoYRQdbMQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+b5KggyrgHAtBaL4svYjgQU_WZ3f5uCjmwiQnoYRQdbMQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-memory-barriers.txt has been updated as follows:
+On Mon, Apr 02, 2018 at 08:04:24PM +0200, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+> On Mon, Apr 2, 2018 at 6:36 PM, Christopherson, Sean J
+> <sean.j.christopherson@intel.com> wrote:
+> > On Sat, 2018-03-31, Dmitry Vyukov wrote:
+> >> On Wed, Dec 27, 2017 at 7:31 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >> > On Tue, Dec 26, 2017 at 9:52 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >> >> On Wed, Dec 20, 2017 at 8:54 AM, Wanpeng Li <kernellwp@gmail.com> wrote:
+> >> >>> 2017-12-20 15:49 GMT+08:00 syzbot
+> >> >>> <bot+ab09454bf4b7a7f8ce7e5e8d97e644d3314a0799@syzkaller.appspotmail.com>:
+> >> >>>> Hello,
+> >> >>>>
+> >> >>>> syzkaller hit the following crash on
+> >> >>>> f6f3732162b5ae3c771b9285a5a32d72b8586920
+> >> >>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+> >> >>>> compiler: gcc (GCC) 7.1.1 20170620
+> >> >>>> .config is attached
+> >> >>>> Raw console output is attached.
+> >> >>>> C reproducer is attached
+> >> >>>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> >> >>>> for information about syzkaller reproducers
+> >> >>>>
+> >> >>>>
+> >> >>>
+> >> >>> I will have a look again, you continue to run it in kvm guest, right?
+> >> >>
+> >> >>
+> >> >> Our test machines are GCE VMs, so yes, the kernel that catches GPF is
+> >> >> run as kvm guest.
+> >> >
+> >> > up
+> >> >
+> >> > one of top crashers with 50K crashes
+> >>
+> >>
+> >> This sets a new record of 130000 crashed machines on syzbot infrastructure:
+> >>
+> >> https://syzkaller.appspot.com/bug?id=2bf7b7983c2398ec6f0c4c6c87cb50223e8873f8
+> >
+> > This is more than likely a known bug in the GCE kernel, i.e. the L0
+> > kernel.  The fix that Haozhong referenced needs to be applied to the
+> > L0 kernel (GCE), the L1 kernel (Syzkaller) is irrelevant.  You said
+> > that you double checked an upstream kernel, but I'm assuming you were
+> > referring to patching the L1 kernel (Syzkaller).
+> >
+> > https://lkml.org/lkml/2017/10/31/432
+> 
+> Hi Sean,
+> 
+> Thanks! Either I did not associate these 2 threads as we shuffle
+> hundreds of bugs, or I did not realize that this needs to be applied
+> to L0. Anyway...
+> 
+> I will check with GCE folks.
+> 
 
-"When using writel(), a prior wmb() is not needed to guarantee that the
-cache coherent memory writes have completed before writing to the MMIO
-region."
+Some hosts have already been updated with the referenced commit but not all yet.
+So assuming that was really the problem, syzbot should stop hitting this crash
+eventually.  (For any Googlers following along, see Google-Bug-Id 72171735.)
 
-Remove old IA-64 comments in the code along with unneeded wmb() in front
-of writel().
-
-There are places in the code where wmb() has been used as a double barrier
-for CPU and IO in place of smp_wmb() and wmb() as an optimization. For
-such places, keep the wmb() but replace the following writel() with
-writel_relaxed() to have a sequence as
-
-wmb()
-writel_relaxed()
-mmio_wb()
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 23 ++---------------------
- 1 file changed, 2 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index afadba9..c17924b 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -1696,12 +1696,6 @@ void ixgbe_alloc_rx_buffers(struct ixgbe_ring *rx_ring, u16 cleaned_count)
- 		/* update next to alloc since we have filled the ring */
- 		rx_ring->next_to_alloc = i;
- 
--		/* Force memory writes to complete before letting h/w
--		 * know there are new descriptors to fetch.  (Only
--		 * applicable for weak-ordered memory model archs,
--		 * such as IA-64).
--		 */
--		wmb();
- 		writel(i, rx_ring->tail);
- 	}
- }
-@@ -2467,10 +2461,6 @@ static int ixgbe_clean_rx_irq(struct ixgbe_q_vector *q_vector,
- 	if (xdp_xmit) {
- 		struct ixgbe_ring *ring = adapter->xdp_ring[smp_processor_id()];
- 
--		/* Force memory writes to complete before letting h/w
--		 * know there are new descriptors to fetch.
--		 */
--		wmb();
- 		writel(ring->next_to_use, ring->tail);
- 
- 		xdp_do_flush_map();
-@@ -8080,12 +8070,7 @@ static int ixgbe_tx_map(struct ixgbe_ring *tx_ring,
- 	/* set the timestamp */
- 	first->time_stamp = jiffies;
- 
--	/*
--	 * Force memory writes to complete before letting h/w know there
--	 * are new descriptors to fetch.  (Only applicable for weak-ordered
--	 * memory model archs, such as IA-64).
--	 *
--	 * We also need this memory barrier to make certain all of the
-+	/* We need this memory barrier to make certain all of the
- 	 * status bits have been updated before next_to_watch is written.
- 	 */
- 	wmb();
-@@ -8102,7 +8087,7 @@ static int ixgbe_tx_map(struct ixgbe_ring *tx_ring,
- 	ixgbe_maybe_stop_tx(tx_ring, DESC_NEEDED);
- 
- 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
--		writel(i, tx_ring->tail);
-+		writel_relaxed(i, tx_ring->tail);
- 
- 		/* we need this if more than one processor can write to our tail
- 		 * at a time, it synchronizes IO on IA64/Altix systems
-@@ -10034,10 +10019,6 @@ static void ixgbe_xdp_flush(struct net_device *dev)
- 	if (unlikely(!ring))
- 		return;
- 
--	/* Force memory writes to complete before letting h/w know there
--	 * are new descriptors to fetch.
--	 */
--	wmb();
- 	writel(ring->next_to_use, ring->tail);
- 
- 	return;
--- 
-2.7.4
+Eric
