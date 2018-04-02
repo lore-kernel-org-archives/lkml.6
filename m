@@ -1,66 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754371AbeDBIDZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 04:03:25 -0400
-Received: from mail-qk0-f181.google.com ([209.85.220.181]:39486 "EHLO
-        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754260AbeDBIDX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 04:03:23 -0400
-X-Google-Smtp-Source: AIpwx49hpNhEf1+S6ki2jN0fBdC9nmlbB7UV+taKToIqr9zQw9nN+gbRVq1ouLgdsnZveebkPVCIFPTsG38SNADI8Mw=
-MIME-Version: 1.0
-In-Reply-To: <93622938-f532-b8ac-2bca-fe40ed759e71@linux.vnet.ibm.com>
-References: <1522444730-2060-1-git-send-email-rosattig@linux.vnet.ibm.com>
- <20180330212439.GA28945@localhost.localdomain> <93622938-f532-b8ac-2bca-fe40ed759e71@linux.vnet.ibm.com>
-From: chaitany kulkarni <ckulkarnilinux@gmail.com>
-Date: Mon, 2 Apr 2018 01:03:21 -0700
-Message-ID: <CAK0tqikdyFoZGuRnh3_YXKtrY9NqEZVv5AysL+xGKpvGJ762fA@mail.gmail.com>
-Subject: Re: [PATCH] nvmet: fix nvmet_execute_write_zeroes function
-To: =?UTF-8?Q?Rodrigo_Rosatti_Galv=C3=A3o?=
-        <rosattig@linux.vnet.ibm.com>
-Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        hch@lst.de, Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+        id S1754417AbeDBIEv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 04:04:51 -0400
+Received: from mga01.intel.com ([192.55.52.88]:39011 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754288AbeDBIEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 04:04:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,394,1517904000";
+   d="scan'208";a="30329792"
+Message-ID: <1522685086.2498.24.camel@intel.com>
+Subject: Re: [PATCH v6 11/16] nios2: Switch to generic free_initrd_mem.
+From: Ley Foon Tan <ley.foon.tan@intel.com>
+To: Shea Levy <shea@shealevy.com>, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: nios2-dev@lists.rocketboards.org
+Date: Tue, 03 Apr 2018 00:04:46 +0800
+In-Reply-To: <20180401145931.7932-11-shea@shealevy.com>
+References: <20180329113207.30674-1-shea@shealevy.com>
+         <20180401145931.7932-1-shea@shealevy.com>
+         <20180401145931.7932-11-shea@shealevy.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3283Wa9025662
 
-Please give me a couple of days, I'll look into this.
+On Sun, 2018-04-01 at 10:59 -0400, Shea Levy wrote:
+> The first patch in this series added a weakly-defined generic
+> implementation, which is functionally identical to the
+> architecture-specific one removed here.
+> 
+> Series boot-tested on RISC-V (which now uses the generic
+> implementation) and x86_64 (which doesn't).
+> 
+> Signed-off-by: Shea Levy <shea@shealevy.com>
 
-On Fri, Mar 30, 2018 at 2:48 PM, Rodrigo Rosatti Galvão
-<rosattig@linux.vnet.ibm.com> wrote:
->
->> Doesn't that mean your host is using this command wrong? The NLB is a
->> 0's based value, we're supposed to +1 to get the correct block count.
->
->
-> Keith, I tested passing different values to the c (number of blocks) and s
-> (64-bit LBA of first block to access) parameters, and it was failing. When I
-> removed the +1, the command worked fine.
->
-> I used a simple script to validate this:
->
-> for s in {0..20}
->     do
->             for c in {0..20}
->             do
->                     nvme write-zeroes /dev/nvme0 -n 10 -s $s -c $c
->             done
->     done
->
->
-> Is there some other way to test it?
->
+Acked-by: Ley Foon Tan <ley.foon.tan@intel.com>
+
+> ---
+>  arch/nios2/mm/init.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/arch/nios2/mm/init.c b/arch/nios2/mm/init.c
+> index c92fe4234009..3df75ff8c768 100644
+> --- a/arch/nios2/mm/init.c
+> +++ b/arch/nios2/mm/init.c
+> @@ -82,13 +82,6 @@ void __init mmu_init(void)
+>         flush_tlb_all();
+>  }
+> 
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -void __init free_initrd_mem(unsigned long start, unsigned long end)
+> -{
+> -       free_reserved_area((void *)start, (void *)end, -1, "initrd");
+> -}
+> -#endif
+> -
+>  void __ref free_initmem(void)
+>  {
+>         free_initmem_default(-1);
 > --
-> Rodrigo R. Galvão
-> Intern - Linux Technology Center - IBM
->
->
->
-> _______________________________________________
-> Linux-nvme mailing list
-> Linux-nvme@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-nvme
+> 2.16.2
