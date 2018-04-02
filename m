@@ -1,47 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756632AbeDBS5L (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 14:57:11 -0400
-Received: from mail-io0-f182.google.com ([209.85.223.182]:36294 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755234AbeDBS5H (ORCPT
+        id S1754437AbeDBTA7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:00:59 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:36868 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753177AbeDBTA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 14:57:07 -0400
-X-Google-Smtp-Source: AIpwx4+td6Xq1vp/oLbQFOVrv5LQ2gKsU3JAYH/dwyhYw0DwGcMLTjYaGcLj26wwuPEbSu/55sW9jrTLxGP0QLplqKQ=
+        Mon, 2 Apr 2018 15:00:57 -0400
+X-Google-Smtp-Source: AIpwx48vj6bBPBE4mvPPjV7arR/c/KKTgdDC4gPr0Hz8LXyNTyKBcuqI9dqUMCL3DWKVn40H/sJIyw==
+Date: Mon, 2 Apr 2018 12:00:53 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH 1/2] blk-mq: Factor out [s]rcu synchronization
+Message-ID: <20180402190053.GC388343@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0q70FYtBaCcsBPejVULgsbJPwUG7QmrkU9NJpr7oTzpQ@mail.gmail.com>
-References: <CAK8P3a0q70FYtBaCcsBPejVULgsbJPwUG7QmrkU9NJpr7oTzpQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 2 Apr 2018 11:57:05 -0700
-X-Google-Sender-Auth: 9n1IzOMZfjiiHGVGqGJ4pyC9PqI
-Message-ID: <CA+55aFzmQ9specaytsjEb=iNm-NHE5kxMSy_H_jKvqZa4-Fomw@mail.gmail.com>
-Subject: Re: [GIT PULL] arch: remove obsolete architecture ports
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>, David Howells <dhowells@redhat.com>,
-        linux-am33-list@redhat.com, Hirokazu Takata <takata@linux-m32r.org>,
-        Lennox Wu <lennox.wu@gmail.com>, Aaron Wu <Aaron.Wu@analog.com>,
-        Bryan Wu <cooloney@gmail.com>,
-        Chris Metcalf <chris.d.metcalf@gmail.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 2, 2018 at 12:17 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> (dirstat only for brevity)
+Factor out [s]rcu synchronization in blk_mq_timeout_work() into
+blk_mq_timeout_sync_rcu().  This is to add another user in the future
+and doesn't cause any functional changes.
 
-Shortlog?
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>
+---
+Hello,
 
-I'd like to see that each architecture removal is independent of the
-others, so that if somebody wants to resurrect any particular
-architecture, he/she can do so with a revert.
+We were tracking this down in the following thread
 
-Can I just fetch things and see? Sure. But there's no excuse not to
-have a shortlog in the pull request, even if the full diffstat itself
-might be prohibitive.
+  http://lkml.kernel.org/r/20180207011133.25957-1-bart.vanassche@wdc.com
 
-                Linus
+but lost the reproducer in the middle and couldn't fully verify these
+two patches fix the problem; however, the identified race is real and
+a bug, so I think it'd be best to apply these two patches.
+
+Given the lack of further reports on this front, I don't think it's
+necessary to rush these patches.  I think it'd be best to apply these
+once the merge window closes.  If we need to backport these to
+-stable, we can tag them later.
+
+Thanks.
+
+ block/blk-mq.c         |   39 +++++++++++++++++++++++----------------
+ include/linux/blk-mq.h |    2 +-
+ 2 files changed, 24 insertions(+), 17 deletions(-)
+
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -876,13 +876,34 @@ static void blk_mq_check_expired(struct
+ 	    time_after_eq(jiffies, deadline)) {
+ 		blk_mq_rq_update_aborted_gstate(rq, gstate);
+ 		data->nr_expired++;
+-		hctx->nr_expired++;
++		hctx->need_sync_rcu = true;
+ 	} else if (!data->next_set || time_after(data->next, deadline)) {
+ 		data->next = deadline;
+ 		data->next_set = 1;
+ 	}
+ }
+ 
++static void blk_mq_timeout_sync_rcu(struct request_queue *q)
++{
++	struct blk_mq_hw_ctx *hctx;
++	bool has_rcu = false;
++	int i;
++
++	queue_for_each_hw_ctx(q, hctx, i) {
++		if (!hctx->need_sync_rcu)
++			continue;
++
++		if (!(hctx->flags & BLK_MQ_F_BLOCKING))
++			has_rcu = true;
++		else
++			synchronize_srcu(hctx->srcu);
++
++		hctx->need_sync_rcu = false;
++	}
++	if (has_rcu)
++		synchronize_rcu();
++}
++
+ static void blk_mq_terminate_expired(struct blk_mq_hw_ctx *hctx,
+ 		struct request *rq, void *priv, bool reserved)
+ {
+@@ -930,27 +951,13 @@ static void blk_mq_timeout_work(struct w
+ 	blk_mq_queue_tag_busy_iter(q, blk_mq_check_expired, &data);
+ 
+ 	if (data.nr_expired) {
+-		bool has_rcu = false;
+-
+ 		/*
+ 		 * Wait till everyone sees ->aborted_gstate.  The
+ 		 * sequential waits for SRCUs aren't ideal.  If this ever
+ 		 * becomes a problem, we can add per-hw_ctx rcu_head and
+ 		 * wait in parallel.
+ 		 */
+-		queue_for_each_hw_ctx(q, hctx, i) {
+-			if (!hctx->nr_expired)
+-				continue;
+-
+-			if (!(hctx->flags & BLK_MQ_F_BLOCKING))
+-				has_rcu = true;
+-			else
+-				synchronize_srcu(hctx->srcu);
+-
+-			hctx->nr_expired = 0;
+-		}
+-		if (has_rcu)
+-			synchronize_rcu();
++		blk_mq_timeout_sync_rcu(q);
+ 
+ 		/* terminate the ones we won */
+ 		blk_mq_queue_tag_busy_iter(q, blk_mq_terminate_expired, NULL);
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -51,7 +51,7 @@ struct blk_mq_hw_ctx {
+ 	unsigned int		queue_num;
+ 
+ 	atomic_t		nr_active;
+-	unsigned int		nr_expired;
++	bool			need_sync_rcu;
+ 
+ 	struct hlist_node	cpuhp_dead;
+ 	struct kobject		kobj;
