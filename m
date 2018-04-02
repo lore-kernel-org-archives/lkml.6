@@ -1,26 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754257AbeDBJUE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 05:20:04 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:32900 "EHLO
+        id S1754349AbeDBJUW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 05:20:22 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:47281 "EHLO
         mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754087AbeDBJUC (ORCPT
+        with ESMTP id S1754124AbeDBJUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Apr 2018 05:20:02 -0400
-X-Google-Smtp-Source: AIpwx4/ADB1UH17TAt4BzCkSOHEpnvyjOuGlrLQLDUYSbN5poA1s32rTnqQ8LFi4pwtesGJJ3YZMho2BWQjn5mbQ2/N51REua7sw
+X-Google-Smtp-Source: AIpwx4+q89HOay3aCom2MJzYRIeJPRdI8bAyA2p4MgHoQtj1WJGdX4vIs+0LRM6fBlD8eJf6I8pWCLNocEfD6e2i4tc0Y/7EnYJj
 MIME-Version: 1.0
-Date: Mon, 02 Apr 2018 02:20:01 -0700
+Date: Mon, 02 Apr 2018 02:20:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003584570568da18dd@google.com>
-Subject: possible deadlock in skb_queue_tail
-From: syzbot <syzbot+6b495100f17ca8554ab9@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dh.herrmann@gmail.com, dvlasenk@redhat.com,
-        dwindsor@gmail.com, elena.reshetova@intel.com, ishkamiel@gmail.com,
-        keescook@chromium.org, ktkhai@virtuozzo.com,
-        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
-        mjurczyk@google.com, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <0000000000003872fd0568da185f@google.com>
+Subject: KASAN: use-after-free Read in ccid2_hc_tx_packet_recv
+From: syzbot <syzbot+554ccde221001ab5479a@syzkaller.appspotmail.com>
+To: alexey.kodanev@oracle.com, davem@davemloft.net, dccp@vger.kernel.org,
+        edumazet@google.com, gerrit@erg.abdn.ac.uk, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        soheil@google.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,155 +26,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on net-next commit
-06b19fe9a6df7aaa423cd8404ebe5ac9ec4b2960 (Sun Apr 1 03:37:33 2018 +0000)
-Merge branch 'chelsio-inline-tls'
+syzbot hit the following crash on upstream commit
+0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
+Linux 4.16
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=6b495100f17ca8554ab9
+https://syzkaller.appspot.com/bug?extid=554ccde221001ab5479a
 
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6218830443446272
+https://syzkaller.appspot.com/x/log.txt?id=5822430194958336
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=3327544840960562528
+https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
 compiler: gcc (GCC) 7.1.1 20170620
+user-space arch: i386
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6b495100f17ca8554ab9@syzkaller.appspotmail.com
+Reported-by: syzbot+554ccde221001ab5479a@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+dccp_parse_options: DCCP(000000007d56a000): Option 32 (len=7) error=9
+==================================================================
+dccp_check_seqno: Step 6 failed for RESET packet, (LSWL(279336972291068) <=  
+P.seqno(279336972291066) <= S.SWH(279336972291142)) and (P.ackno exists or  
+LAWL(234137106534459) <= P.ackno(234137106534459) <=  
+S.AWH(234137106534460), sending SYNC...
+BUG: KASAN: use-after-free in ccid2_hc_tx_packet_recv+0x234a/0x2440  
+net/dccp/ccids/ccid2.c:598
+Read of size 1 at addr ffff8801bb7a4a82 by task syz-executor1/1660
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.16.0-rc6+ #290 Not tainted
-------------------------------------------------------
-syz-executor7/20971 is trying to acquire lock:
-  (&af_unix_sk_receive_queue_lock_key){+.+.}, at: [<00000000271ef0d8>]  
-skb_queue_tail+0x26/0x150 net/core/skbuff.c:2899
-
-but task is already holding lock:
-  (&(&u->lock)->rlock/1){+.+.}, at: [<000000004e725e14>]  
-unix_state_double_lock+0x7b/0xb0 net/unix/af_unix.c:1088
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&(&u->lock)->rlock/1){+.+.}:
-        _raw_spin_lock_nested+0x28/0x40 kernel/locking/spinlock.c:354
-        sk_diag_dump_icons net/unix/diag.c:82 [inline]
-        sk_diag_fill.isra.4+0xa52/0xfe0 net/unix/diag.c:144
-        sk_diag_dump net/unix/diag.c:178 [inline]
-        unix_diag_dump+0x400/0x4f0 net/unix/diag.c:206
-        netlink_dump+0x492/0xcf0 net/netlink/af_netlink.c:2221
-        __netlink_dump_start+0x4ec/0x710 net/netlink/af_netlink.c:2318
-        netlink_dump_start include/linux/netlink.h:214 [inline]
-        unix_diag_handler_dump+0x3e7/0x750 net/unix/diag.c:307
-        __sock_diag_cmd net/core/sock_diag.c:230 [inline]
-        sock_diag_rcv_msg+0x204/0x360 net/core/sock_diag.c:261
-        netlink_rcv_skb+0x14b/0x380 net/netlink/af_netlink.c:2443
-        sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:272
-        netlink_unicast_kernel net/netlink/af_netlink.c:1307 [inline]
-        netlink_unicast+0x4c4/0x6b0 net/netlink/af_netlink.c:1333
-        netlink_sendmsg+0xa4a/0xe80 net/netlink/af_netlink.c:1896
-        sock_sendmsg_nosec net/socket.c:629 [inline]
-        sock_sendmsg+0xca/0x110 net/socket.c:639
-        sock_write_iter+0x31a/0x5d0 net/socket.c:908
-        call_write_iter include/linux/fs.h:1782 [inline]
-        new_sync_write fs/read_write.c:469 [inline]
-        __vfs_write+0x684/0x970 fs/read_write.c:482
-        vfs_write+0x189/0x510 fs/read_write.c:544
-        SYSC_write fs/read_write.c:589 [inline]
-        SyS_write+0xef/0x220 fs/read_write.c:581
-        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
--> #0 (&af_unix_sk_receive_queue_lock_key){+.+.}:
-        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        skb_queue_tail+0x26/0x150 net/core/skbuff.c:2899
-        unix_dgram_sendmsg+0xa30/0x1610 net/unix/af_unix.c:1807
-        sock_sendmsg_nosec net/socket.c:629 [inline]
-        sock_sendmsg+0xca/0x110 net/socket.c:639
-        ___sys_sendmsg+0x320/0x8b0 net/socket.c:2047
-        __sys_sendmmsg+0x1ee/0x620 net/socket.c:2137
-        SYSC_sendmmsg net/socket.c:2168 [inline]
-        SyS_sendmmsg+0x35/0x60 net/socket.c:2163
-        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-other info that might help us debug this:
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&(&u->lock)->rlock/1);
-                                lock(&af_unix_sk_receive_queue_lock_key);
-                                lock(&(&u->lock)->rlock/1);
-   lock(&af_unix_sk_receive_queue_lock_key);
-
-  *** DEADLOCK ***
-
-1 lock held by syz-executor7/20971:
-  #0:  (&(&u->lock)->rlock/1){+.+.}, at: [<000000004e725e14>]  
-unix_state_double_lock+0x7b/0xb0 net/unix/af_unix.c:1088
-
-stack backtrace:
-CPU: 0 PID: 20971 Comm: syz-executor7 Not tainted 4.16.0-rc6+ #290
+CPU: 1 PID: 1660 Comm: syz-executor1 Not tainted 4.16.0+ #285
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2417 [inline]
-  __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-  skb_queue_tail+0x26/0x150 net/core/skbuff.c:2899
-  unix_dgram_sendmsg+0xa30/0x1610 net/unix/af_unix.c:1807
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:639
-  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2047
-  __sys_sendmmsg+0x1ee/0x620 net/socket.c:2137
-  SYSC_sendmmsg net/socket.c:2168 [inline]
-  SyS_sendmmsg+0x35/0x60 net/socket.c:2163
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x455269
-RSP: 002b:00007f71ffad6c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00007f71ffad76d4 RCX: 0000000000455269
-RDX: 04924924924924f4 RSI: 0000000020000200 RDI: 0000000000000016
-RBP: 000000000072bf58 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000200000d4 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000004ca R14: 00000000006f9390 R15: 0000000000000001
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: sync thread started: state = BACKUP, mcast_ifn = bcsh0, syncid = 0,  
-id = 0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
-IPVS: Unknown mcast interface: bcsh0
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  ccid2_hc_tx_packet_recv+0x234a/0x2440 net/dccp/ccids/ccid2.c:598
+  ccid_hc_tx_packet_recv net/dccp/ccid.h:192 [inline]
+  dccp_deliver_input_to_ccids+0x1d0/0x250 net/dccp/input.c:186
+  dccp_rcv_established+0x88/0xb0 net/dccp/input.c:378
+  dccp_v4_do_rcv+0x135/0x160 net/dccp/ipv4.c:653
+  sk_backlog_rcv include/net/sock.h:908 [inline]
+  __release_sock+0x124/0x360 net/core/sock.c:2271
+  release_sock+0xa4/0x2a0 net/core/sock.c:2786
+  dccp_sendmsg+0x528/0xe60 net/dccp/proto.c:820
+  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:640
+  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
+  __sys_sendmmsg+0x31b/0x620 net/socket.c:2129
+  C_SYSC_sendmmsg net/compat.c:745 [inline]
+  compat_SyS_sendmmsg+0x32/0x40 net/compat.c:742
+  do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
+  do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f6dc99
+RSP: 002b:00000000f5f690ac EFLAGS: 00000282 ORIG_RAX: 0000000000000159
+RAX: ffffffffffffffda RBX: 0000000000000013 RCX: 000000002000b880
+RDX: 0000000000000122 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 1660:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+  __do_kmalloc_node mm/slab.c:3670 [inline]
+  __kmalloc_node_track_caller+0x47/0x70 mm/slab.c:3684
+  __kmalloc_reserve.isra.39+0x41/0xd0 net/core/skbuff.c:137
+  __alloc_skb+0x13b/0x780 net/core/skbuff.c:205
+  alloc_skb include/linux/skbuff.h:983 [inline]
+  dccp_send_ack+0xb6/0x350 net/dccp/output.c:580
+  ccid2_hc_rx_packet_recv+0x10d/0x180 net/dccp/ccids/ccid2.c:766
+  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
+  dccp_deliver_input_to_ccids+0xd9/0x250 net/dccp/input.c:180
+  dccp_rcv_established+0x88/0xb0 net/dccp/input.c:378
+  dccp_v4_do_rcv+0x135/0x160 net/dccp/ipv4.c:653
+  sk_backlog_rcv include/net/sock.h:908 [inline]
+  __sk_receive_skb+0x33e/0xc10 net/core/sock.c:513
+  dccp_v4_rcv+0xf5f/0x1c80 net/dccp/ipv4.c:874
+  ip_local_deliver_finish+0x2f1/0xc50 net/ipv4/ip_input.c:216
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_local_deliver+0x1ce/0x6e0 net/ipv4/ip_input.c:257
+  dst_input include/net/dst.h:449 [inline]
+  ip_rcv_finish+0xa36/0x2040 net/ipv4/ip_input.c:397
+  NF_HOOK include/linux/netfilter.h:288 [inline]
+  ip_rcv+0xb76/0x1820 net/ipv4/ip_input.c:493
+  __netif_receive_skb_core+0x1a41/0x3460 net/core/dev.c:4562
+  __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4627
+  process_backlog+0x203/0x740 net/core/dev.c:5307
+  napi_poll net/core/dev.c:5705 [inline]
+  net_rx_action+0x792/0x1910 net/core/dev.c:5771
+  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+
+Freed by task 1660:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3486 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3801
+  skb_free_head+0x74/0xb0 net/core/skbuff.c:550
+  skb_release_data+0x58c/0x790 net/core/skbuff.c:570
+  skb_release_all+0x4a/0x60 net/core/skbuff.c:627
+  __kfree_skb net/core/skbuff.c:641 [inline]
+  kfree_skb+0x15d/0x4c0 net/core/skbuff.c:659
+  dccp_v4_do_rcv+0x10d/0x160 net/dccp/ipv4.c:688
+  sk_backlog_rcv include/net/sock.h:908 [inline]
+  __release_sock+0x124/0x360 net/core/sock.c:2271
+  release_sock+0xa4/0x2a0 net/core/sock.c:2786
+  dccp_sendmsg+0x528/0xe60 net/dccp/proto.c:820
+  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:640
+  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
+  __sys_sendmmsg+0x31b/0x620 net/socket.c:2129
+  C_SYSC_sendmmsg net/compat.c:745 [inline]
+  compat_SyS_sendmmsg+0x32/0x40 net/compat.c:742
+  do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
+  do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+The buggy address belongs to the object at ffff8801bb7a4600
+  which belongs to the cache kmalloc-2048 of size 2048
+The buggy address is located 1154 bytes inside of
+  2048-byte region [ffff8801bb7a4600, ffff8801bb7a4e00)
+The buggy address belongs to the page:
+page:ffffea0006ede900 count:1 mapcount:0 mapping:ffff8801bb7a4600 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801bb7a4600 0000000000000000 0000000100000003
+raw: ffffea0006bcbd20 ffffea0006f5b1a0 ffff8801dac00c40 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801bb7a4980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801bb7a4a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801bb7a4a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                    ^
+  ffff8801bb7a4b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801bb7a4b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
