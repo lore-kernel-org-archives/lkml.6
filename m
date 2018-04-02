@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752832AbeDBOhz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 10:37:55 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:15113 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752272AbeDBOfs (ORCPT
+        id S1752718AbeDBOhv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 10:37:51 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:45653 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbeDBOft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 10:35:48 -0400
+        Mon, 2 Apr 2018 10:35:49 -0400
 From: Murali Karicheri <m-karicheri2@ti.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
         <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH v3 05/11] net: netcp: ethss: add support for handling sgmii link interface
-Date: Mon, 2 Apr 2018 10:37:55 -0400
-Message-ID: <1522679881-25643-6-git-send-email-m-karicheri2@ti.com>
+Subject: [net-next PATCH v3 00/11] Add support for netcp driver on K2G SoC
+Date: Mon, 2 Apr 2018 10:37:50 -0400
+Message-ID: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
-References: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -25,82 +23,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2u cpsw hardware on K2G uses sgmii link to interface with Phy. So add
-support for this interface in the code so that drover can be re-used
-for 2u hardware.
+K2G SoC is another variant of Keystone family of SoCs. This patch
+series add support for NetCP driver on this SoC. The QMSS found on
+K2G SoC is a cut down version of the QMSS found on other keystone
+devices with less number of queues, internal link ram etc. The patch
+series has 2 patch sets that goes into the drivers/soc and the
+rest has to be applied to net sub system. Please review and merge
+if this looks good.
 
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
- drivers/net/ethernet/ti/netcp.h       |  2 ++
- drivers/net/ethernet/ti/netcp_ethss.c | 15 +++++++++++----
- 2 files changed, 13 insertions(+), 4 deletions(-)
+K2G TRM is located at http://www.ti.com/lit/ug/spruhy8g/spruhy8g.pdf
 
-diff --git a/drivers/net/ethernet/ti/netcp.h b/drivers/net/ethernet/ti/netcp.h
-index 8900a6f..416f732 100644
---- a/drivers/net/ethernet/ti/netcp.h
-+++ b/drivers/net/ethernet/ti/netcp.h
-@@ -33,6 +33,8 @@
- #define SGMII_LINK_MAC_MAC_FORCED	2
- #define SGMII_LINK_MAC_FIBER		3
- #define SGMII_LINK_MAC_PHY_NO_MDIO	4
-+#define RGMII_LINK_MAC_PHY		5
-+#define RGMII_LINK_MAC_PHY_NO_MDIO	7
- #define XGMII_LINK_MAC_PHY		10
- #define XGMII_LINK_MAC_MAC_FORCED	11
- 
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 1628fbe..06bbb65 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -2094,8 +2094,9 @@ static void netcp_ethss_link_state_action(struct gbe_priv *gbe_dev,
- 				     ALE_PORT_STATE_FORWARD);
- 
- 		if (ndev && slave->open &&
--		    slave->link_interface != SGMII_LINK_MAC_PHY &&
--		    slave->link_interface != XGMII_LINK_MAC_PHY)
-+		    ((slave->link_interface != SGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != RGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != XGMII_LINK_MAC_PHY)))
- 			netif_carrier_on(ndev);
- 	} else {
- 		writel(mac_control, GBE_REG_ADDR(slave, emac_regs,
-@@ -2104,8 +2105,9 @@ static void netcp_ethss_link_state_action(struct gbe_priv *gbe_dev,
- 				     ALE_PORT_STATE,
- 				     ALE_PORT_STATE_DISABLE);
- 		if (ndev &&
--		    slave->link_interface != SGMII_LINK_MAC_PHY &&
--		    slave->link_interface != XGMII_LINK_MAC_PHY)
-+		    ((slave->link_interface != SGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != RGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != XGMII_LINK_MAC_PHY)))
- 			netif_carrier_off(ndev);
- 	}
- 
-@@ -2917,6 +2919,7 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
- 
- 	slave->open = false;
- 	if ((slave->link_interface == SGMII_LINK_MAC_PHY) ||
-+	    (slave->link_interface == RGMII_LINK_MAC_PHY) ||
- 	    (slave->link_interface == XGMII_LINK_MAC_PHY))
- 		slave->phy_node = of_parse_phandle(node, "phy-handle", 0);
- 	slave->port_num = gbe_get_slave_port(gbe_dev, slave->slave_num);
-@@ -3078,6 +3081,9 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
- 	if (slave->link_interface == SGMII_LINK_MAC_PHY) {
- 		phy_mode = PHY_INTERFACE_MODE_SGMII;
- 		slave->phy_port_t = PORT_MII;
-+	} else if (slave->link_interface == RGMII_LINK_MAC_PHY) {
-+		phy_mode = PHY_INTERFACE_MODE_RGMII;
-+		slave->phy_port_t = PORT_MII;
- 	} else {
- 		phy_mode = PHY_INTERFACE_MODE_NA;
- 		slave->phy_port_t = PORT_FIBRE;
-@@ -3085,6 +3091,7 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
- 
- 	for_each_sec_slave(slave, gbe_dev) {
- 		if ((slave->link_interface != SGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != RGMII_LINK_MAC_PHY) &&
- 		    (slave->link_interface != XGMII_LINK_MAC_PHY))
- 			continue;
- 		slave->phy =
+Thanks
+
+The boot logs on K2G ICE board (tftp boot over Ethernet)
+is at https://pastebin.ubuntu.com/p/VQTv3c2XBS/
+
+The boot logs on K2G GP board (tftp boot over Ethernet)
+is at https://pastebin.ubuntu.com/p/6Vh55DW8vT/
+
+Also regressed boot on K2HK and K2L EVMs as we have modified GBE
+version detection logic.
+
+This series applies to net-next master branch.
+
+Change history:
+  v3 - Addressed comments from Andrew Lunn and Grygorii Strashko
+       against v2. 
+  v2 - Addressed following comments on initial version
+       - split patch 3/5 to multiple patches from Andrew Lunn
+
+Murali Karicheri (11):
+  soc: ti: K2G: enhancement to support QMSS in K2G NAVSS
+  soc: ti: K2G: provide APIs to support driver probe deferral
+  net: netcp: ethss: use macro for checking ss_version consistently
+  net: netcp: ethss: make call to gbe_sgmii_config() conditional
+  net: netcp: ethss: add support for handling sgmii link interface
+  net: netcp: ethss: use rgmii link status for 2u cpsw hardware
+  net: netcp: ethss: map vlan priorities to zero flow
+  net: netcp: ethss: re-use stats handling code for 2u hardware
+  net: netcp: ethss: use of_get_phy_mode() to support different RGMII
+    modes
+  Revert "net: netcp: remove dead code from the driver"
+  net: netcp: support probe deferral
+
+ .../bindings/soc/ti/keystone-navigator-qmss.txt    |   9 +-
+ drivers/net/ethernet/ti/netcp.h                    |   2 +
+ drivers/net/ethernet/ti/netcp_core.c               |  13 +++
+ drivers/net/ethernet/ti/netcp_ethss.c              | 113 ++++++++++++++++-----
+ drivers/soc/ti/knav_dma.c                          |   8 ++
+ drivers/soc/ti/knav_qmss.h                         |   6 ++
+ drivers/soc/ti/knav_qmss_queue.c                   |  98 ++++++++++++++----
+ include/linux/soc/ti/knav_dma.h                    |  12 +++
+ include/linux/soc/ti/knav_qmss.h                   |   1 +
+ 9 files changed, 212 insertions(+), 50 deletions(-)
+
 -- 
 1.9.1
