@@ -1,286 +1,481 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756684AbeDBTDJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:03:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39836 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754356AbeDBTDG (ORCPT
+        id S1756753AbeDBTFv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:05:51 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:59904 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754430AbeDBTFt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:03:06 -0400
+        Mon, 2 Apr 2018 15:05:49 -0400
+Date: Mon, 2 Apr 2018 21:04:54 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, viro@ZenIV.linux.org.uk, arnd@arndb.de,
+        linux-arch@vger.kernel.org, hmclauchlan@fb.com, tautschn@amazon.co.uk,
+        Amir Goldstein <amir73il@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Jaswinder Singh <jaswinder@infradead.org>,
+        Jeff Dike <jdike@addtoit.com>, Jiri Slaby <jslaby@suse.com>,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-s390@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, netdev@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        user-mode-linux-devel@lists.sourceforge.net, x86@kernel.org
+Subject: [GIT PULL] remove in-kernel calls to syscalls
+Message-ID: <20180402190454.GB29890@light.dominikbrodowski.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Mon, 02 Apr 2018 12:03:04 -0700
-From: Channa <ckadabi@codeaurora.org>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, kyan@codeaurora.org,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] drivers: soc: Add LLCC driver
-In-Reply-To: <faddb372-4efa-9032-e5cd-54778071b0dd@linaro.org>
-References: <1522176722-12691-1-git-send-email-rishabhb@codeaurora.org>
- <1522176722-12691-3-git-send-email-rishabhb@codeaurora.org>
- <ff949d44-1b2a-15d4-511d-8686a973b081@linaro.org>
- <79f87ed77b4b6b446d0ee065ecefe6fa@codeaurora.org>
- <faddb372-4efa-9032-e5cd-54778071b0dd@linaro.org>
-Message-ID: <ed8a9454164ef573ffefff123aeb2a37@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-02 02:11, Stanimir Varbanov wrote:
-> Hi,
-> 
-> Please adjust your mail client to drop on new line on 80 column!
-> 
-> On 03/29/2018 08:55 PM, Channa wrote:
->> On 2018-03-29 01:08, Stanimir Varbanov wrote:
->>> Hi,
->>> 
->>> On 03/27/2018 09:52 PM, Rishabh Bhatnagar wrote:
->>>> LLCC (Last Level Cache Controller) provides additional cache memory
->>>> in the system. LLCC is partitioned into muliple slices and each
->>>> slice getting its own priority, size, ID and other config 
->>>> parameters.
->>>> LLCC driver programs these parameters for each slice. Clients that
->>>> are assigned to use LLCC need to get information such size & ID of 
->>>> the
->>>>  slice they get and activate or deactivate the slice as needed. LLCC
->>>> driver
->>>> provides API interfaces for the clients to perform these operations.
->>>> 
->>>> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
->>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->>>> ---
->>>>  drivers/soc/qcom/Kconfig           |  16 ++
->>>>  drivers/soc/qcom/Makefile          |   2 +
->>>>  drivers/soc/qcom/llcc-sdm845.c     | 120 ++++++++++
->>>>  drivers/soc/qcom/llcc-slice.c      | 454
->>>> +++++++++++++++++++++++++++++++++++++
->>> 
->>> I'd name it just llcc.c, slice suffix didn't add any value.
->>> 
->>>>  include/linux/soc/qcom/llcc-qcom.h | 178 +++++++++++++++
->>>>  5 files changed, 770 insertions(+)
->>>>  create mode 100644 drivers/soc/qcom/llcc-sdm845.c
->>>>  create mode 100644 drivers/soc/qcom/llcc-slice.c
->>>>  create mode 100644 include/linux/soc/qcom/llcc-qcom.h
->>>> 
->>>> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
->>>> index e050eb8..28237fc 100644
->>>> --- a/drivers/soc/qcom/Kconfig
->>>> +++ b/drivers/soc/qcom/Kconfig
->>>> @@ -21,6 +21,22 @@ config QCOM_GSBI
->>>>            functions for connecting the underlying serial UART, SPI,
->>>> and I2C
->>>>            devices to the output pins.
->>>> 
->>>> +config QCOM_LLCC
->>>> +    tristate "Qualcomm Technologies, Inc. LLCC driver"
->>>> +    depends on ARCH_QCOM
->>>> +    help
->>>> +      Qualcomm Technologies, Inc. platform specific LLCC driver for
->>>> Last
->>>> +      Level Cache. This provides interfaces to client's that use 
->>>> the
->>>> LLCC.
->>>> +      Say yes here to enable LLCC slice driver.
->>>> +
->>>> +config QCOM_SDM845_LLCC
->>>> +    tristate "Qualcomm Technologies, Inc. SDM845 LLCC driver"
->>>> +    depends on QCOM_LLCC
->>>> +    help
->>>> +      Say yes here to enable the LLCC driver for SDM845. This is
->>>> provides
->>>> +      data required to configure LLCC so that clients can start
->>>> using the
->>>> +      LLCC slices.
->>>> +
->>>>  config QCOM_MDT_LOADER
->>>>      tristate
->>>>      select QCOM_SCM
->>>> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
->>>> index dcebf28..e16d6a2 100644
->>>> --- a/drivers/soc/qcom/Makefile
->>>> +++ b/drivers/soc/qcom/Makefile
->>>> @@ -12,3 +12,5 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
->>>>  obj-$(CONFIG_QCOM_SMP2P)    += smp2p.o
->>>>  obj-$(CONFIG_QCOM_SMSM)    += smsm.o
->>>>  obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
->>>> +obj-$(CONFIG_QCOM_LLCC) += llcc-slice.o
->>>> +obj-$(CONFIG_QCOM_SDM845_LLCC) += llcc-sdm845.o
->>>> diff --git a/drivers/soc/qcom/llcc-sdm845.c
->>>> b/drivers/soc/qcom/llcc-sdm845.c
->>>> new file mode 100644
->>>> index 0000000..cd431d9
->>>> --- /dev/null
->>>> +++ b/drivers/soc/qcom/llcc-sdm845.c
->>>> @@ -0,0 +1,120 @@
->>>> +/* Copyright (c) 2017-2018, The Linux Foundation. All rights 
->>>> reserved.
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or 
->>>> modify
->>>> + * it under the terms of the GNU General Public License version 2 
->>>> and
->>>> + * only version 2 as published by the Free Software Foundation.
->>>> + *
->>>> + * This program is distributed in the hope that it will be useful,
->>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>>> + * GNU General Public License for more details.
->>>> + */
->>>> +
->>>> +#include <linux/err.h>
->>>> +#include <linux/kernel.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/of.h>
->>>> +#include <linux/of_device.h>
->>>> +#include <linux/platform_device.h>
->>>> +#include <linux/soc/qcom/llcc-qcom.h>
->>>> +#include <linux/mfd/syscon.h>
->>>> +#include <linux/regmap.h>
->>>> +
->>>> +
->>>> +/*
->>>> + * SCT entry contains of the following parameters
->>>> + * name: Name of the client's use case for which the llcc slice is 
->>>> used
->>>> + * uid: Unique id for the client's use case
->>>> + * slice_id: llcc slice id for each client
->>>> + * max_cap: The maximum capacity of the cache slice provided in KB
->>>> + * priority: Priority of the client used to select victim line for
->>>> replacement
->>>> + * fixed_size: Determine of the slice has a fixed capacity
->>>> + * bonus_ways: Bonus ways to be used by any slice, bonus way is 
->>>> used
->>>> only if
->>>> + *             it't not a reserved way.
->>>> + * res_ways: Reserved ways for the cache slice, the reserved ways
->>>> cannot be used
->>>> + *           by any other client than the one its assigned to.
->>>> + * cache_mode: Each slice operates as a cache, this controls the
->>>> mode of the
->>>> + *             slice normal or TCM
->>>> + * probe_target_ways: Determines what ways to probe for access hit.
->>>> When
->>>> + *                    configured to 1 only bonus and reseved ways
->>>> are probed.
->>>> + *                    when configured to 0 all ways in llcc are 
->>>> probed.
->>>> + * dis_cap_alloc: Disable capacity based allocation for a client
->>>> + * retain_on_pc: If this bit is set and client has maitained active
->>>> vote
->>>> + *               then the ways assigned to this client are not
->>>> flushed on power
->>>> + *               collapse.
->>>> + * activate_on_init: Activate the slice immidiately after the SCT 
->>>> is
->>>> programmed
->>>> + */
->>>> +#define SCT_ENTRY(n, uid, sid, mc, p, fs, bway, rway, cmod, ptw,
->>>> dca, rp, a) \
->>>> +    {                    \
->>>> +        .name = n,            \
->>>> +        .usecase_id = uid,        \
->>>> +        .slice_id = sid,        \
->>>> +        .max_cap = mc,            \
->>>> +        .priority = p,            \
->>>> +        .fixed_size = fs,        \
->>>> +        .bonus_ways = bway,        \
->>>> +        .res_ways = rway,        \
->>>> +        .cache_mode = cmod,        \
->>>> +        .probe_target_ways = ptw,    \
->>>> +        .dis_cap_alloc = dca,        \
->>>> +        .retain_on_pc = rp,        \
->>>> +        .activate_on_init = a,        \
->>>> +    }
->>>> +
->>>> +
->>>> +static struct llcc_slice_config sdm845_data[] =  {
->>>> +    SCT_ENTRY("cpuss",       1, 1, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1,
->>>> 1, 1),
->>>> +    SCT_ENTRY("vidsc0",      2, 2, 512, 2, 1, 0x0,  0x0F0, 0, 0, 1,
->>>> 1, 0),
->>>> +    SCT_ENTRY("vidsc1",      3, 3, 512, 2, 1, 0x0,  0x0F0, 0, 0, 1,
->>>> 1, 0),
->>>> +    SCT_ENTRY("rotator",     4, 4, 563, 2, 1, 0x0,  0x00e, 2, 0, 1,
->>>> 1, 0),
->>>> +    SCT_ENTRY("voice",       5, 5, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1,
->>>> 1, 0),
->>>> +    SCT_ENTRY("audio",       6, 6, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1,
->>>> 1, 0),
->>>> +    SCT_ENTRY("modemhp_grow", 7, 7, 1024, 2, 0, 0x0FC, 0xF00, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("modem",       8, 8, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1,
->>>> 1, 0),
->>>> +    SCT_ENTRY("compute",     10, 10, 2816, 1, 0, 0xFFC, 0x2, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("gpuhtw",      11, 11, 512, 1, 1, 0xC,  0x0, 0, 0, 1,
->>>> 1, 0),
->>>> +    SCT_ENTRY("gpu",         12, 12, 2304, 1, 0, 0xFF0, 0x2, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("mmuhwt",      13, 13, 256, 2, 0, 0x0,  0x1, 0, 0, 1,
->>>> 0, 1),
->>>> +    SCT_ENTRY("compute_dma", 15, 15, 2816, 1, 0, 0xFFC, 0x2, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("display",     16, 16, 2816, 1, 0, 0xFFC, 0x2, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("videofw",     17, 17, 2816, 1, 0, 0xFFC, 0x2, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("modemhp_fix", 20, 20, 1024, 2, 1, 0x0,  0xF00, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("modem_paging", 21, 21, 1024, 0, 1, 0x1e, 0x0, 0, 0,
->>>> 1, 1, 0),
->>>> +    SCT_ENTRY("audiohw",     22, 22, 1024, 1, 1, 0xFFC, 0x2, 0, 0,
->>>> 1, 1, 0),
->>>> +};
->>>> +
->>>> +
->>>> +static int sdm845_qcom_llcc_probe(struct platform_device *pdev)
->>>> +{
->>>> +    return qcom_llcc_probe(pdev, sdm845_data, 
->>>> ARRAY_SIZE(sdm845_data));
->>> 
->>> I think having separate driver just for this config structure is
->>> pointless. Please move this in llcc driver and select the 
->>> configuration
->>> based on compatible string.
->> 
->> Thanks Stan for your review.
->> 
->> Wanted to highlight the reason we chose this approach. The System 
->> cache
->> table data
->> changes from chipset to chipset and overtime the table could have more
->> parameters.
->> Adding it as part of the core driver and selecting the table based on
->> compatible
->> would clutter the core driver. If we have 4 chipsets supporting system
->> cache then
->> core driver would have 4 tables as above and we select one of them 
->> based
->> on compatible
->> string. That is why we followed the pin control approach to have data 
->> in
->> per chipset
->> driver and pass it to common driver.
-> 
-> OK, do you plan to extend this with some more code?
+Linus,
 
-Not this particular file, this is chipset specific file. We don't expect
-more changes to this file.
-A new driver is added for every chipset, so the data maintained here 
-could
-change in future. So the idea is to keep the chipset driver separate
-from core driver.
+please pull the following changes since commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
 
--- 
---
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-a Linux Foundation Collaborative Project
+  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
+
+which are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-next
+
+up to commit c9a211951c7c79cfb5de888d7d9550872868b086:
+
+  bpf: whitelist all syscalls for error injection (2018-04-02 20:16:21 +0200)
+
+to remove all in-kernel calls to syscalls except from arch/ .
+
+Since the last time I sent the patches out for review,[*] I have solely
+added a few more ACKs. Jon Corbet raised the question whether the
+documentation really should go to Documentation/process/adding-syscalls.rst
+and not to Documentation/process/coding-style.rst (even though, as he said,
+that isn't quite right either). As most of the existing instances where
+syscalls were called in the kernel were (1) common codepaths for old
+and new syscalls, (2) common codepaths for native and compat syscalls, and
+(3) syscall multiplexers like sys_ipc(), I have kept it at the former
+location for the time being, but will be happy to submit a follow-up patch
+to move the documentation bits to a different file.
+
+	[*] lkml.kernel.org/r/20180329112426.23043-1-linux@dominikbrodowski.net
+
+All these patches have been in -next, but got rebased a few minutes ago to
+include another ACK in patch 2/109 (no code changes). There were/are a few
+trivial conflicts against the net, sparc and vfs trees, but not (yet) against
+what is in your tree up to commit 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc.
+
+Thanks,
+	Dominik
+
+----------------------------------------------------------------
+System calls are interaction points between userspace and the kernel.
+Therefore, system call functions such as sys_xyzzy() or compat_sys_xyzzy()
+should only be called from userspace via the syscall table, but not from
+elsewhere in the kernel.
+
+At least on 64-bit x86, it will likely be a hard requirement from v4.17
+onwards to not call system call functions in the kernel: It is better to
+use use a different calling convention for system calls there, where
+struct pt_regs is decoded on-the-fly in a syscall wrapper which then hands
+processing over to the actual syscall function. This means that only those
+parameters which are actually needed for a specific syscall are passed on
+during syscall entry, instead of filling in six CPU registers with random
+user space content all the time (which may cause serious trouble down the
+call chain). Those x86-specific patches will be pushed through the x86
+tree in the near future.
+
+Moreover, rules on how data may be accessed may differ between kernel data
+and user data. This is another reason why calling sys_xyzzy() is
+generally a bad idea, and -- at most -- acceptable in arch-specific code.
+
+This patchset removes all in-kernel calls to syscall functions in the
+kernel with the exception of arch/. On top of this, it cleans up the
+three places where many syscalls are referenced or prototyped, namely
+kernel/sys_ni.c, include/linux/syscalls.h and include/linux/compat.h.
+
+First goes a patch which defines the goal and explains the rationale:
+
+  syscalls: define and explain goal to not call syscalls in the kernel
+
+A few codepaths can trivially be converted to existing in-kernel interfaces:
+
+  kernel: use kernel_wait4() instead of sys_wait4()
+  kernel: open-code sys_rt_sigpending() in sys_sigpending()
+  kexec: call do_kexec_load() in compat syscall directly
+  mm: use do_futex() instead of sys_futex() in mm_release()
+  x86: use _do_fork() in compat_sys_x86_clone()
+  x86: remove compat_sys_x86_waitpid()
+
+Then follow many patches which only affect specfic subsystems each, and
+replace sys_*() with internal helpers named __sys_*() or do_sys_*(). Let's
+start with net/:
+
+  net: socket: add __sys_recvfrom() helper; remove in-kernel call to syscall
+  net: socket: add __sys_sendto() helper; remove in-kernel call to syscall
+  net: socket: add __sys_accept4() helper; remove in-kernel call to syscall
+  net: socket: add __sys_socket() helper; remove in-kernel call to syscall
+  net: socket: add __sys_bind() helper; remove in-kernel call to syscall
+  net: socket: add __sys_connect() helper; remove in-kernel call to syscall
+  net: socket: add __sys_listen() helper; remove in-kernel call to syscall
+  net: socket: add __sys_getsockname() helper; remove in-kernel call to syscall
+  net: socket: add __sys_getpeername() helper; remove in-kernel call to syscall
+  net: socket: add __sys_socketpair() helper; remove in-kernel call to syscall
+  net: socket: add __sys_shutdown() helper; remove in-kernel call to syscall
+  net: socket: add __sys_setsockopt() helper; remove in-kernel call to syscall
+  net: socket: add __sys_getsockopt() helper; remove in-kernel call to syscall
+  net: socket: add do_sys_recvmmsg() helper; remove in-kernel call to syscall
+  net: socket: move check for forbid_cmsg_compat to __sys_...msg()
+  net: socket: replace calls to sys_send() with __sys_sendto()
+  net: socket: replace call to sys_recv() with __sys_recvfrom()
+  net: socket: add __compat_sys_recvfrom() helper; remove in-kernel call to compat syscall
+  net: socket: add __compat_sys_setsockopt() helper; remove in-kernel call to compat syscall
+  net: socket: add __compat_sys_getsockopt() helper; remove in-kernel call to compat syscall
+  net: socket: add __compat_sys_recvmmsg() helper; remove in-kernel call to compat syscall
+  net: socket: add __compat_sys_...msg() helpers; remove in-kernel calls to compat syscalls
+
+The changes in ipc/ are limited to this specific subsystem. The wrappers are
+named ksys_*() to denote that these functions are meant as a drop-in replacement
+for the syscalls.
+
+  ipc: add semtimedop syscall/compat_syscall wrappers
+  ipc: add semget syscall wrapper
+  ipc: add semctl syscall/compat_syscall wrappers
+  ipc: add msgget syscall wrapper
+  ipc: add shmget syscall wrapper
+  ipc: add shmdt syscall wrapper
+  ipc: add shmctl syscall/compat_syscall wrappers
+  ipc: add msgctl syscall/compat_syscall wrappers
+  ipc: add msgrcv syscall/compat_syscall wrappers
+  ipc: add msgsnd syscall/compat_syscall wrappers
+
+A few mindless conversions in kernel/ and mm/:
+
+  kernel: add do_getpgid() helper; remove internal call to sys_getpgid()
+  kernel: add do_compat_sigaltstack() helper; remove in-kernel call to compat syscall
+  kernel: provide ksys_*() wrappers for syscalls called by kernel/uid16.c
+  sched: add do_sched_yield() helper; remove in-kernel call to sched_yield()
+  mm: add kernel_migrate_pages() helper, move compat syscall to mm/mempolicy.c
+  mm: add kernel_move_pages() helper, move compat syscall to mm/migrate.c
+  mm: add kernel_mbind() helper; remove in-kernel call to syscall
+  mm: add kernel_[sg]et_mempolicy() helpers; remove in-kernel calls to syscalls
+
+Then, let's handle those instances internal to fs/ which call syscalls:
+
+  fs: add do_readlinkat() helper; remove internal call to sys_readlinkat()
+  fs: add do_pipe2() helper; remove internal call to sys_pipe2()
+  fs: add do_renameat2() helper; remove internal call to sys_renameat2()
+  fs: add do_futimesat() helper; remove internal call to sys_futimesat()
+  fs: add do_epoll_*() helpers; remove internal calls to sys_epoll_*()
+  fs: add do_signalfd4() helper; remove internal calls to sys_signalfd4()
+  fs: add do_eventfd() helper; remove internal call to sys_eventfd()
+  fs: add do_lookup_dcookie() helper; remove in-kernel call to syscall
+  fs: add do_vmsplice() helper; remove in-kernel call to syscall
+  fs: add kern_select() helper; remove in-kernel call to sys_select()
+  fs: add do_compat_fcntl64() helper; remove in-kernel call to compat syscall
+  fs: add do_compat_select() helper; remove in-kernel call to compat syscall
+  fs: add do_compat_signalfd4() helper; remove in-kernel call to compat syscall
+  fs: add do_compat_futimesat() helper; remove in-kernel call to compat syscall
+  inotify: add do_inotify_init() helper; remove in-kernel call to syscall
+  fanotify: add do_fanotify_mark() helper; remove in-kernel call to syscall
+  fs/quota: add kernel_quotactl() helper; remove in-kernel call to syscall
+  fs/quota: use COMPAT_SYSCALL_DEFINE for sys32_quotactl()
+
+Several fs- and some mm-related syscalls are called in initramfs, initrd and
+init, devtmpfs, and pm code. While at least many of these instances should be
+converted to use proper in-kernel VFS interfaces in future, convert them
+mindlessly to ksys_*() helpers or wrappers for now.
+
+  fs: add ksys_mount() helper; remove in-kernel calls to sys_mount()
+  fs: add ksys_umount() helper; remove in-kernel call to sys_umount()
+  fs: add ksys_dup{,3}() helper; remove in-kernel calls to sys_dup{,3}()
+  fs: add ksys_chroot() helper; remove-in kernel calls to sys_chroot()
+  fs: add ksys_write() helper; remove in-kernel calls to sys_write()
+  fs: add ksys_chdir() helper; remove in-kernel calls to sys_chdir()
+  fs: add ksys_unlink() wrapper; remove in-kernel calls to sys_unlink()
+  hostfs: rename do_rmdir() to hostfs_do_rmdir()
+  fs: add ksys_rmdir() wrapper; remove in-kernel calls to sys_rmdir()
+  fs: add do_mkdirat() helper and ksys_mkdir() wrapper; remove in-kernel calls to syscall
+  fs: add do_symlinkat() helper and ksys_symlink() wrapper; remove in-kernel calls to syscall
+  fs: add do_mknodat() helper and ksys_mknod() wrapper; remove in-kernel calls to syscall
+  fs: add do_linkat() helper and ksys_link() wrapper; remove in-kernel calls to syscall
+  fs: add ksys_fchmod() and do_fchmodat() helpers and ksys_chmod() wrapper; remove in-kernel calls to syscall
+  fs: add do_faccessat() helper and ksys_access() wrapper; remove in-kernel calls to syscall
+  fs: add do_fchownat(), ksys_fchown() helpers and ksys_{,l}chown() wrappers
+  fs: add ksys_ftruncate() wrapper; remove in-kernel calls to sys_ftruncate()
+  fs: add ksys_close() wrapper; remove in-kernel calls to sys_close()
+  fs: add ksys_open() wrapper; remove in-kernel calls to sys_open()
+  fs: add ksys_getdents64() helper; remove in-kernel calls to sys_getdents64()
+  fs: add ksys_ioctl() helper; remove in-kernel calls to sys_ioctl()
+  fs: add ksys_lseek() helper; remove in-kernel calls to sys_lseek()
+  fs: add ksys_read() helper; remove in-kernel calls to sys_read()
+  fs: add ksys_sync() helper; remove in-kernel calls to sys_sync()
+  kernel: add ksys_unshare() helper; remove in-kernel calls to sys_unshare()
+  kernel: add ksys_setsid() helper; remove in-kernel call to sys_setsid()
+
+To reach the goal to get rid of all in-kernel calls to syscalls for x86, we
+need to handle a few further syscalls called from compat syscalls in x86 and
+(mostly) from other architectures. Those could be made generic making use of
+Al Viro's macro trickery. For v4.17, I'd suggest to keep it simple:
+
+  fs: add ksys_sync_file_range helper(); remove in-kernel calls to syscall
+  fs: add ksys_truncate() wrapper; remove in-kernel calls to sys_truncate()
+  fs: add ksys_p{read,write}64() helpers; remove in-kernel calls to syscalls
+  fs: add ksys_fallocate() wrapper; remove in-kernel calls to sys_fallocate()
+  mm: add ksys_fadvise64_64() helper; remove in-kernel call to sys_fadvise64_64()
+  mm: add ksys_mmap_pgoff() helper; remove in-kernel calls to sys_mmap_pgoff()
+  mm: add ksys_readahead() helper; remove in-kernel calls to sys_readahead()
+  x86/ioport: add ksys_ioperm() helper; remove in-kernel calls to sys_ioperm()
+
+Then, throw in two fixes for x86:
+
+  x86: fix sys_sigreturn() return type to be long, not unsigned long
+  x86/sigreturn: use SYSCALL_DEFINE0 (by Michael Tautschnig)
+
+... and clean up the three places where many syscalls are referenced or
+prototyped (kernel/sys_ni.c, include/linux/syscalls.h and
+include/linux/compat.h):
+
+  kexec: move sys_kexec_load() prototype to syscalls.h
+  syscalls: sort syscall prototypes in include/linux/syscalls.h
+  net: remove compat_sys_*() prototypes from net/compat.h
+  syscalls: sort syscall prototypes in include/linux/compat.h
+  syscalls/x86: auto-create compat_sys_*() prototypes
+  kernel/sys_ni: sort cond_syscall() entries
+  kernel/sys_ni: remove {sys_,sys_compat} from cond_syscall definitions
+
+Last but not least, add a patch by Howard McLauchlan to whitelist all syscalls
+for error injection:
+
+  bpf: whitelist all syscalls for error injection (by Howard McLauchlan)
+
+----------------------------------------------------------------
+Dominik Brodowski (107):
+      syscalls: define and explain goal to not call syscalls in the kernel
+      kernel: use kernel_wait4() instead of sys_wait4()
+      kernel: open-code sys_rt_sigpending() in sys_sigpending()
+      kexec: call do_kexec_load() in compat syscall directly
+      mm: use do_futex() instead of sys_futex() in mm_release()
+      x86: use _do_fork() in compat_sys_x86_clone()
+      x86: remove compat_sys_x86_waitpid()
+      net: socket: add __sys_recvfrom() helper; remove in-kernel call to syscall
+      net: socket: add __sys_sendto() helper; remove in-kernel call to syscall
+      net: socket: add __sys_accept4() helper; remove in-kernel call to syscall
+      net: socket: add __sys_socket() helper; remove in-kernel call to syscall
+      net: socket: add __sys_bind() helper; remove in-kernel call to syscall
+      net: socket: add __sys_connect() helper; remove in-kernel call to syscall
+      net: socket: add __sys_listen() helper; remove in-kernel call to syscall
+      net: socket: add __sys_getsockname() helper; remove in-kernel call to syscall
+      net: socket: add __sys_getpeername() helper; remove in-kernel call to syscall
+      net: socket: add __sys_socketpair() helper; remove in-kernel call to syscall
+      net: socket: add __sys_shutdown() helper; remove in-kernel call to syscall
+      net: socket: add __sys_setsockopt() helper; remove in-kernel call to syscall
+      net: socket: add __sys_getsockopt() helper; remove in-kernel call to syscall
+      net: socket: add do_sys_recvmmsg() helper; remove in-kernel call to syscall
+      net: socket: move check for forbid_cmsg_compat to __sys_...msg()
+      net: socket: replace calls to sys_send() with __sys_sendto()
+      net: socket: replace call to sys_recv() with __sys_recvfrom()
+      net: socket: add __compat_sys_recvfrom() helper; remove in-kernel call to compat syscall
+      net: socket: add __compat_sys_setsockopt() helper; remove in-kernel call to compat syscall
+      net: socket: add __compat_sys_getsockopt() helper; remove in-kernel call to compat syscall
+      net: socket: add __compat_sys_recvmmsg() helper; remove in-kernel call to compat syscall
+      net: socket: add __compat_sys_...msg() helpers; remove in-kernel calls to compat syscalls
+      ipc: add semtimedop syscall/compat_syscall wrappers
+      ipc: add semget syscall wrapper
+      ipc: add semctl syscall/compat_syscall wrappers
+      ipc: add msgget syscall wrapper
+      ipc: add shmget syscall wrapper
+      ipc: add shmdt syscall wrapper
+      ipc: add shmctl syscall/compat_syscall wrappers
+      ipc: add msgctl syscall/compat_syscall wrappers
+      ipc: add msgrcv syscall/compat_syscall wrappers
+      ipc: add msgsnd syscall/compat_syscall wrappers
+      kernel: add do_getpgid() helper; remove internal call to sys_getpgid()
+      kernel: add do_compat_sigaltstack() helper; remove in-kernel call to compat syscall
+      kernel: provide ksys_*() wrappers for syscalls called by kernel/uid16.c
+      sched: add do_sched_yield() helper; remove in-kernel call to sched_yield()
+      mm: add kernel_migrate_pages() helper, move compat syscall to mm/mempolicy.c
+      mm: add kernel_move_pages() helper, move compat syscall to mm/migrate.c
+      mm: add kernel_mbind() helper; remove in-kernel call to syscall
+      mm: add kernel_[sg]et_mempolicy() helpers; remove in-kernel calls to syscalls
+      fs: add do_readlinkat() helper; remove internal call to sys_readlinkat()
+      fs: add do_pipe2() helper; remove internal call to sys_pipe2()
+      fs: add do_renameat2() helper; remove internal call to sys_renameat2()
+      fs: add do_futimesat() helper; remove internal call to sys_futimesat()
+      fs: add do_epoll_*() helpers; remove internal calls to sys_epoll_*()
+      fs: add do_signalfd4() helper; remove internal calls to sys_signalfd4()
+      fs: add do_eventfd() helper; remove internal call to sys_eventfd()
+      fs: add do_lookup_dcookie() helper; remove in-kernel call to syscall
+      fs: add do_vmsplice() helper; remove in-kernel call to syscall
+      fs: add kern_select() helper; remove in-kernel call to sys_select()
+      fs: add do_compat_fcntl64() helper; remove in-kernel call to compat syscall
+      fs: add do_compat_select() helper; remove in-kernel call to compat syscall
+      fs: add do_compat_signalfd4() helper; remove in-kernel call to compat syscall
+      fs: add do_compat_futimesat() helper; remove in-kernel call to compat syscall
+      inotify: add do_inotify_init() helper; remove in-kernel call to syscall
+      fanotify: add do_fanotify_mark() helper; remove in-kernel call to syscall
+      fs/quota: add kernel_quotactl() helper; remove in-kernel call to syscall
+      fs/quota: use COMPAT_SYSCALL_DEFINE for sys32_quotactl()
+      fs: add ksys_mount() helper; remove in-kernel calls to sys_mount()
+      fs: add ksys_umount() helper; remove in-kernel call to sys_umount()
+      fs: add ksys_dup{,3}() helper; remove in-kernel calls to sys_dup{,3}()
+      fs: add ksys_chroot() helper; remove-in kernel calls to sys_chroot()
+      fs: add ksys_write() helper; remove in-kernel calls to sys_write()
+      fs: add ksys_chdir() helper; remove in-kernel calls to sys_chdir()
+      fs: add ksys_unlink() wrapper; remove in-kernel calls to sys_unlink()
+      hostfs: rename do_rmdir() to hostfs_do_rmdir()
+      fs: add ksys_rmdir() wrapper; remove in-kernel calls to sys_rmdir()
+      fs: add do_mkdirat() helper and ksys_mkdir() wrapper; remove in-kernel calls to syscall
+      fs: add do_symlinkat() helper and ksys_symlink() wrapper; remove in-kernel calls to syscall
+      fs: add do_mknodat() helper and ksys_mknod() wrapper; remove in-kernel calls to syscall
+      fs: add do_linkat() helper and ksys_link() wrapper; remove in-kernel calls to syscall
+      fs: add ksys_fchmod() and do_fchmodat() helpers and ksys_chmod() wrapper; remove in-kernel calls to syscall
+      fs: add do_faccessat() helper and ksys_access() wrapper; remove in-kernel calls to syscall
+      fs: add do_fchownat(), ksys_fchown() helpers and ksys_{,l}chown() wrappers
+      fs: add ksys_ftruncate() wrapper; remove in-kernel calls to sys_ftruncate()
+      fs: add ksys_close() wrapper; remove in-kernel calls to sys_close()
+      fs: add ksys_open() wrapper; remove in-kernel calls to sys_open()
+      fs: add ksys_getdents64() helper; remove in-kernel calls to sys_getdents64()
+      fs: add ksys_ioctl() helper; remove in-kernel calls to sys_ioctl()
+      fs: add ksys_lseek() helper; remove in-kernel calls to sys_lseek()
+      fs: add ksys_read() helper; remove in-kernel calls to sys_read()
+      fs: add ksys_sync() helper; remove in-kernel calls to sys_sync()
+      kernel: add ksys_unshare() helper; remove in-kernel calls to sys_unshare()
+      kernel: add ksys_setsid() helper; remove in-kernel call to sys_setsid()
+      fs: add ksys_sync_file_range helper(); remove in-kernel calls to syscall
+      fs: add ksys_truncate() wrapper; remove in-kernel calls to sys_truncate()
+      fs: add ksys_p{read,write}64() helpers; remove in-kernel calls to syscalls
+      fs: add ksys_fallocate() wrapper; remove in-kernel calls to sys_fallocate()
+      mm: add ksys_fadvise64_64() helper; remove in-kernel call to sys_fadvise64_64()
+      mm: add ksys_mmap_pgoff() helper; remove in-kernel calls to sys_mmap_pgoff()
+      mm: add ksys_readahead() helper; remove in-kernel calls to sys_readahead()
+      x86/ioport: add ksys_ioperm() helper; remove in-kernel calls to sys_ioperm()
+      x86: fix sys_sigreturn() return type to be long, not unsigned long
+      kexec: move sys_kexec_load() prototype to syscalls.h
+      syscalls: sort syscall prototypes in include/linux/syscalls.h
+      net: remove compat_sys_*() prototypes from net/compat.h
+      syscalls: sort syscall prototypes in include/linux/compat.h
+      syscalls/x86: auto-create compat_sys_*() prototypes
+      kernel/sys_ni: sort cond_syscall() entries
+      kernel/sys_ni: remove {sys_,sys_compat} from cond_syscall definitions
+
+Howard McLauchlan (1):
+      bpf: whitelist all syscalls for error injection
+
+Tautschnig, Michael (1):
+      x86/sigreturn: use SYSCALL_DEFINE0
+
+ Documentation/process/adding-syscalls.rst |   34 +-
+ arch/alpha/kernel/osf_sys.c               |    2 +-
+ arch/arm/kernel/sys_arm.c                 |    2 +-
+ arch/arm64/kernel/sys.c                   |    2 +-
+ arch/ia64/kernel/sys_ia64.c               |    4 +-
+ arch/m68k/kernel/sys_m68k.c               |    2 +-
+ arch/microblaze/kernel/sys_microblaze.c   |    6 +-
+ arch/mips/kernel/linux32.c                |   22 +-
+ arch/mips/kernel/syscall.c                |    6 +-
+ arch/parisc/kernel/sys_parisc.c           |   30 +-
+ arch/powerpc/kernel/sys_ppc32.c           |   18 +-
+ arch/powerpc/kernel/syscalls.c            |    6 +-
+ arch/riscv/kernel/sys_riscv.c             |    4 +-
+ arch/s390/kernel/compat_linux.c           |   37 +-
+ arch/s390/kernel/sys_s390.c               |    2 +-
+ arch/sh/kernel/sys_sh.c                   |    4 +-
+ arch/sh/kernel/sys_sh32.c                 |   12 +-
+ arch/sparc/kernel/setup_32.c              |    2 +-
+ arch/sparc/kernel/sys_sparc32.c           |   26 +-
+ arch/sparc/kernel/sys_sparc_32.c          |    6 +-
+ arch/sparc/kernel/sys_sparc_64.c          |    2 +-
+ arch/um/kernel/syscall.c                  |    2 +-
+ arch/x86/entry/syscalls/syscall_32.tbl    |    4 +-
+ arch/x86/ia32/ia32_signal.c               |    1 -
+ arch/x86/ia32/sys_ia32.c                  |   50 +-
+ arch/x86/include/asm/sys_ia32.h           |   67 --
+ arch/x86/include/asm/syscalls.h           |    3 +-
+ arch/x86/kernel/ioport.c                  |    7 +-
+ arch/x86/kernel/signal.c                  |    5 +-
+ arch/x86/kernel/sys_x86_64.c              |    2 +-
+ arch/xtensa/kernel/syscall.c              |    2 +-
+ drivers/base/devtmpfs.c                   |   11 +-
+ drivers/tty/sysrq.c                       |    2 +-
+ drivers/tty/vt/vt_ioctl.c                 |    6 +-
+ fs/autofs4/dev-ioctl.c                    |    2 +-
+ fs/binfmt_misc.c                          |    2 +-
+ fs/dcookies.c                             |   11 +-
+ fs/eventfd.c                              |    9 +-
+ fs/eventpoll.c                            |   23 +-
+ fs/fcntl.c                                |   12 +-
+ fs/file.c                                 |   17 +-
+ fs/hostfs/hostfs.h                        |    2 +-
+ fs/hostfs/hostfs_kern.c                   |    2 +-
+ fs/hostfs/hostfs_user.c                   |    2 +-
+ fs/internal.h                             |   14 +
+ fs/ioctl.c                                |    7 +-
+ fs/namei.c                                |   61 +-
+ fs/namespace.c                            |   19 +-
+ fs/notify/fanotify/fanotify_user.c        |   14 +-
+ fs/notify/inotify/inotify_user.c          |    9 +-
+ fs/open.c                                 |   77 +-
+ fs/pipe.c                                 |    9 +-
+ fs/quota/compat.c                         |   13 +-
+ fs/quota/quota.c                          |   10 +-
+ fs/read_write.c                           |   45 +-
+ fs/readdir.c                              |   11 +-
+ fs/select.c                               |   29 +-
+ fs/signalfd.c                             |   31 +-
+ fs/splice.c                               |   12 +-
+ fs/stat.c                                 |   12 +-
+ fs/sync.c                                 |   19 +-
+ fs/utimes.c                               |   25 +-
+ include/linux/compat.h                    |  644 ++++++------
+ include/linux/futex.h                     |   13 +-
+ include/linux/kexec.h                     |    4 -
+ include/linux/quotaops.h                  |    3 +
+ include/linux/socket.h                    |   37 +-
+ include/linux/syscalls.h                  | 1511 +++++++++++++++++------------
+ include/net/compat.h                      |   11 -
+ init/do_mounts.c                          |   26 +-
+ init/do_mounts.h                          |    4 +-
+ init/do_mounts_initrd.c                   |   42 +-
+ init/do_mounts_md.c                       |   29 +-
+ init/do_mounts_rd.c                       |   40 +-
+ init/initramfs.c                          |   52 +-
+ init/main.c                               |    9 +-
+ init/noinitramfs.c                        |    6 +-
+ ipc/msg.c                                 |   60 +-
+ ipc/sem.c                                 |   44 +-
+ ipc/shm.c                                 |   28 +-
+ ipc/syscall.c                             |   58 +-
+ ipc/util.h                                |   31 +
+ kernel/compat.c                           |   55 --
+ kernel/exit.c                             |    2 +-
+ kernel/fork.c                             |   11 +-
+ kernel/kexec.c                            |   52 +-
+ kernel/pid_namespace.c                    |    6 +-
+ kernel/power/hibernate.c                  |    2 +-
+ kernel/power/suspend.c                    |    2 +-
+ kernel/power/user.c                       |    2 +-
+ kernel/sched/core.c                       |    8 +-
+ kernel/signal.c                           |   29 +-
+ kernel/sys.c                              |   74 +-
+ kernel/sys_ni.c                           |  617 +++++++-----
+ kernel/uid16.c                            |   25 +-
+ kernel/uid16.h                            |   14 +
+ kernel/umh.c                              |    4 +-
+ mm/fadvise.c                              |   10 +-
+ mm/mempolicy.c                            |   92 +-
+ mm/migrate.c                              |   39 +-
+ mm/mmap.c                                 |   17 +-
+ mm/nommu.c                                |   17 +-
+ mm/readahead.c                            |    7 +-
+ net/compat.c                              |  136 ++-
+ net/socket.c                              |  234 +++--
+ 105 files changed, 3129 insertions(+), 1868 deletions(-)
+ delete mode 100644 arch/x86/include/asm/sys_ia32.h
+ create mode 100644 kernel/uid16.h
