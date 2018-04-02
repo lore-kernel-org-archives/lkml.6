@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754349AbeDBJUW (ORCPT <rfc822;w@1wt.eu>);
+        id S1754324AbeDBJUW (ORCPT <rfc822;w@1wt.eu>);
         Mon, 2 Apr 2018 05:20:22 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:47281 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754124AbeDBJUC (ORCPT
+Received: from mail-io0-f199.google.com ([209.85.223.199]:55392 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754169AbeDBJUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Apr 2018 05:20:02 -0400
-X-Google-Smtp-Source: AIpwx4+q89HOay3aCom2MJzYRIeJPRdI8bAyA2p4MgHoQtj1WJGdX4vIs+0LRM6fBlD8eJf6I8pWCLNocEfD6e2i4tc0Y/7EnYJj
+X-Google-Smtp-Source: AIpwx4/GTfxMyHXvsrKlrc8hufN2Q87hAgjg8qTfso9knTyt5cYgBQ/u5Nn0V+99YaRvyTpl+rQvBy7QIVz6uh3Te5TsKSxCNcbB
 MIME-Version: 1.0
 Date: Mon, 02 Apr 2018 02:20:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003872fd0568da185f@google.com>
-Subject: KASAN: use-after-free Read in ccid2_hc_tx_packet_recv
-From: syzbot <syzbot+554ccde221001ab5479a@syzkaller.appspotmail.com>
-To: alexey.kodanev@oracle.com, davem@davemloft.net, dccp@vger.kernel.org,
-        edumazet@google.com, gerrit@erg.abdn.ac.uk, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        soheil@google.com, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000003b5a780568da18cf@google.com>
+Subject: INFO: task hung in perf_trace_event_unreg
+From: syzbot <syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w329KkqU009091
 
 Hello,
 
@@ -30,151 +30,196 @@ syzbot hit the following crash on upstream commit
 0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
 Linux 4.16
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=554ccde221001ab5479a
+https://syzkaller.appspot.com/bug?extid=2dbc55da20fa246378fd
 
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5822430194958336
+https://syzkaller.appspot.com/x/log.txt?id=5487937873510400
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
 compiler: gcc (GCC) 7.1.1 20170620
-user-space arch: i386
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+554ccde221001ab5479a@syzkaller.appspotmail.com
+Reported-by: syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-dccp_parse_options: DCCP(000000007d56a000): Option 32 (len=7) error=9
-==================================================================
-dccp_check_seqno: Step 6 failed for RESET packet, (LSWL(279336972291068) <=  
-P.seqno(279336972291066) <= S.SWH(279336972291142)) and (P.ackno exists or  
-LAWL(234137106534459) <= P.ackno(234137106534459) <=  
-S.AWH(234137106534460), sending SYNC...
-BUG: KASAN: use-after-free in ccid2_hc_tx_packet_recv+0x234a/0x2440  
-net/dccp/ccids/ccid2.c:598
-Read of size 1 at addr ffff8801bb7a4a82 by task syz-executor1/1660
+REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
+option "g�;e�K�׫>pquota"
+INFO: task syz-executor3:10803 blocked for more than 120 seconds.
+       Not tainted 4.16.0+ #10
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor3   D20944 10803   4492 0x80000002
+Call Trace:
+  context_switch kernel/sched/core.c:2862 [inline]
+  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
+  schedule+0xf5/0x430 kernel/sched/core.c:3499
+  schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
+  do_wait_for_common kernel/sched/completion.c:86 [inline]
+  __wait_for_common kernel/sched/completion.c:107 [inline]
+  wait_for_common kernel/sched/completion.c:118 [inline]
+  wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
+  __wait_rcu_gp+0x221/0x340 kernel/rcu/update.c:414
+  synchronize_sched.part.64+0xac/0x100 kernel/rcu/tree.c:3212
+  synchronize_sched+0x76/0xf0 kernel/rcu/tree.c:3213
+  tracepoint_synchronize_unregister include/linux/tracepoint.h:80 [inline]
+  perf_trace_event_unreg.isra.2+0xb7/0x1f0  
+kernel/trace/trace_event_perf.c:161
+  perf_trace_destroy+0xbc/0x100 kernel/trace/trace_event_perf.c:236
+  tp_perf_event_destroy+0x15/0x20 kernel/events/core.c:7976
+  _free_event+0x3bd/0x10f0 kernel/events/core.c:4121
+  put_event+0x24/0x30 kernel/events/core.c:4204
+  perf_event_release_kernel+0x6e8/0xfc0 kernel/events/core.c:4310
+  perf_release+0x37/0x50 kernel/events/core.c:4320
+  __fput+0x327/0x7e0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+  do_group_exit+0x149/0x400 kernel/exit.c:968
+  get_signal+0x73a/0x16d0 kernel/signal.c:2469
+  do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
+  exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x455269
+RSP: 002b:00007f8976371ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: 0000000000000000 RBX: 000000000072bec8 RCX: 0000000000455269
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bec8
+RBP: 000000000072bec8 R08: 0000000000000000 R09: 000000000072bea0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe793f79cf R14: 00007f89763729c0 R15: 0000000000000000
 
-CPU: 1 PID: 1660 Comm: syz-executor1 Not tainted 4.16.0+ #285
+Showing all locks held in the system:
+2 locks held by khungtaskd/876:
+  #0:  (rcu_read_lock){....}, at: [<000000008f2bec4b>]  
+check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+  #0:  (rcu_read_lock){....}, at: [<000000008f2bec4b>] watchdog+0x1c5/0xd60  
+kernel/hung_task.c:249
+  #1:  (tasklist_lock){.+.+}, at: [<0000000006b3009f>]  
+debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
+2 locks held by getty/4414:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4415:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4416:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4417:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4418:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4419:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4420:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+1 lock held by syz-executor3/10803:
+  #0:  (event_mutex){+.+.}, at: [<00000000c507b78a>]  
+perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:234
+4 locks held by syz-executor5/10816:
+  #0:  (&tty->legacy_mutex){+.+.}, at: [<00000000567b7b94>]  
+tty_lock+0x5d/0x90 drivers/tty/tty_mutex.c:19
+  #1:  (&tty->legacy_mutex/1){+.+.}, at: [<00000000567b7b94>]  
+tty_lock+0x5d/0x90 drivers/tty/tty_mutex.c:19
+  #2:  (&tty->ldisc_sem){++++}, at: [<000000002b6b6a29>]  
+tty_ldisc_ref+0x1b/0x80 drivers/tty/tty_ldisc.c:298
+  #3:  (&o_tty->termios_rwsem/1){++++}, at: [<0000000007d9a7a4>]  
+n_tty_flush_buffer+0x21/0x320 drivers/tty/n_tty.c:357
+1 lock held by syz-executor2/10827:
+  #0:  (event_mutex){+.+.}, at: [<00000000c507b78a>]  
+perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:234
+1 lock held by blkid/10832:
+  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
+lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+1 lock held by syz-executor4/10835:
+  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
+lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+1 lock held by syz-executor4/10845:
+  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
+lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 876 Comm: khungtaskd Not tainted 4.16.0+ #10
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-  ccid2_hc_tx_packet_recv+0x234a/0x2440 net/dccp/ccids/ccid2.c:598
-  ccid_hc_tx_packet_recv net/dccp/ccid.h:192 [inline]
-  dccp_deliver_input_to_ccids+0x1d0/0x250 net/dccp/input.c:186
-  dccp_rcv_established+0x88/0xb0 net/dccp/input.c:378
-  dccp_v4_do_rcv+0x135/0x160 net/dccp/ipv4.c:653
-  sk_backlog_rcv include/net/sock.h:908 [inline]
-  __release_sock+0x124/0x360 net/core/sock.c:2271
-  release_sock+0xa4/0x2a0 net/core/sock.c:2786
-  dccp_sendmsg+0x528/0xe60 net/dccp/proto.c:820
-  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:640
-  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
-  __sys_sendmmsg+0x31b/0x620 net/socket.c:2129
-  C_SYSC_sendmmsg net/compat.c:745 [inline]
-  compat_SyS_sendmmsg+0x32/0x40 net/compat.c:742
-  do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
-  do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f6dc99
-RSP: 002b:00000000f5f690ac EFLAGS: 00000282 ORIG_RAX: 0000000000000159
-RAX: ffffffffffffffda RBX: 0000000000000013 RCX: 000000002000b880
-RDX: 0000000000000122 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 1660:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
-  __do_kmalloc_node mm/slab.c:3670 [inline]
-  __kmalloc_node_track_caller+0x47/0x70 mm/slab.c:3684
-  __kmalloc_reserve.isra.39+0x41/0xd0 net/core/skbuff.c:137
-  __alloc_skb+0x13b/0x780 net/core/skbuff.c:205
-  alloc_skb include/linux/skbuff.h:983 [inline]
-  dccp_send_ack+0xb6/0x350 net/dccp/output.c:580
-  ccid2_hc_rx_packet_recv+0x10d/0x180 net/dccp/ccids/ccid2.c:766
-  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
-  dccp_deliver_input_to_ccids+0xd9/0x250 net/dccp/input.c:180
-  dccp_rcv_established+0x88/0xb0 net/dccp/input.c:378
-  dccp_v4_do_rcv+0x135/0x160 net/dccp/ipv4.c:653
-  sk_backlog_rcv include/net/sock.h:908 [inline]
-  __sk_receive_skb+0x33e/0xc10 net/core/sock.c:513
-  dccp_v4_rcv+0xf5f/0x1c80 net/dccp/ipv4.c:874
-  ip_local_deliver_finish+0x2f1/0xc50 net/ipv4/ip_input.c:216
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_local_deliver+0x1ce/0x6e0 net/ipv4/ip_input.c:257
-  dst_input include/net/dst.h:449 [inline]
-  ip_rcv_finish+0xa36/0x2040 net/ipv4/ip_input.c:397
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_rcv+0xb76/0x1820 net/ipv4/ip_input.c:493
-  __netif_receive_skb_core+0x1a41/0x3460 net/core/dev.c:4562
-  __netif_receive_skb+0x2c/0x1b0 net/core/dev.c:4627
-  process_backlog+0x203/0x740 net/core/dev.c:5307
-  napi_poll net/core/dev.c:5705 [inline]
-  net_rx_action+0x792/0x1910 net/core/dev.c:5771
-  __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
-
-Freed by task 1660:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
-  __cache_free mm/slab.c:3486 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3801
-  skb_free_head+0x74/0xb0 net/core/skbuff.c:550
-  skb_release_data+0x58c/0x790 net/core/skbuff.c:570
-  skb_release_all+0x4a/0x60 net/core/skbuff.c:627
-  __kfree_skb net/core/skbuff.c:641 [inline]
-  kfree_skb+0x15d/0x4c0 net/core/skbuff.c:659
-  dccp_v4_do_rcv+0x10d/0x160 net/dccp/ipv4.c:688
-  sk_backlog_rcv include/net/sock.h:908 [inline]
-  __release_sock+0x124/0x360 net/core/sock.c:2271
-  release_sock+0xa4/0x2a0 net/core/sock.c:2786
-  dccp_sendmsg+0x528/0xe60 net/dccp/proto.c:820
-  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:640
-  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
-  __sys_sendmmsg+0x31b/0x620 net/socket.c:2129
-  C_SYSC_sendmmsg net/compat.c:745 [inline]
-  compat_SyS_sendmmsg+0x32/0x40 net/compat.c:742
-  do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
-  do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-The buggy address belongs to the object at ffff8801bb7a4600
-  which belongs to the cache kmalloc-2048 of size 2048
-The buggy address is located 1154 bytes inside of
-  2048-byte region [ffff8801bb7a4600, ffff8801bb7a4e00)
-The buggy address belongs to the page:
-page:ffffea0006ede900 count:1 mapcount:0 mapping:ffff8801bb7a4600 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801bb7a4600 0000000000000000 0000000100000003
-raw: ffffea0006bcbd20 ffffea0006f5b1a0 ffff8801dac00c40 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801bb7a4980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801bb7a4a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801bb7a4a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff8801bb7a4b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801bb7a4b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+  check_hung_task kernel/hung_task.c:132 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
+  watchdog+0x90c/0xd60 kernel/hung_task.c:249
+INFO: rcu_sched self-detected stall on CPU
+	0-....: (124996 ticks this GP) idle=75e/1/4611686018427387906  
+softirq=33205/33205 fqs=30980
+	
+  (t=125000 jiffies g=17618 c=17617 q=921)
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 7457 Comm: kworker/u4:5 Not tainted 4.16.0+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events_unbound flush_to_ldisc
+RIP: 0010:__process_echoes+0x641/0x770 drivers/tty/n_tty.c:733
+RSP: 0018:ffff8801af4ff078 EFLAGS: 00000217
+RAX: 0000000000000000 RBX: ffffc90003673000 RCX: ffffffff8352d4c2
+RDX: 0000000000000006 RSI: 1ffff10039602994 RDI: ffffc9000367515e
+RBP: ffff8801af4ff0e0 R08: 1ffff10035e9fdb5 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000625628efd
+R13: dffffc0000000000 R14: 0000000000000efe R15: 0000000000001b15
+FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd5bfa4ca8 CR3: 000000000846a005 CR4: 00000000001606f0
+DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+  commit_echoes+0x147/0x1b0 drivers/tty/n_tty.c:764
+  n_tty_receive_char_fast drivers/tty/n_tty.c:1416 [inline]
+  n_tty_receive_buf_fast drivers/tty/n_tty.c:1576 [inline]
+  __receive_buf drivers/tty/n_tty.c:1611 [inline]
+  n_tty_receive_buf_common+0x1156/0x2520 drivers/tty/n_tty.c:1709
+  n_tty_receive_buf2+0x33/0x40 drivers/tty/n_tty.c:1744
+  tty_ldisc_receive_buf+0xa7/0x180 drivers/tty/tty_buffer.c:456
+  tty_port_default_receive_buf+0x106/0x160 drivers/tty/tty_port.c:38
+  receive_buf drivers/tty/tty_buffer.c:475 [inline]
+  flush_to_ldisc+0x3c4/0x590 drivers/tty/tty_buffer.c:524
+  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
+  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+Code: 60 12 00 00 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 42 0f b6 04 28 38  
+d0 7f 08 84 c0 0f 85 21 01 00 00 42 80 bc 33 60 12 00 00 82 <74> 0f e8 48  
+90 1e fe 4d 8d 74 24 02 e9 58 ff ff ff e8 39 90 1e
 
 
 ---
