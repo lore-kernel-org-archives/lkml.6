@@ -1,158 +1,498 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752442AbeDBPel (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:34:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55202 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751749AbeDBPej (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:34:39 -0400
-Date: Mon, 2 Apr 2018 08:35:30 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mandeep Singh Baines <msb@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vegard Nossum <vegard.nossum@oracle.com>
-Subject: Re: [PATCH] locking/hung_task: Show all hung tasks before panic
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1522678324-4855-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        id S1752289AbeDBPjs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:39:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751749AbeDBPjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 11:39:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 370522178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AIpwx4/HrfkyAamfP9ysDV0oOFHavnj1MSYfhN9L9HkcTdqX8IwXTL9U5w+mrdR6FJGOnavL2adBovEe2623kFFfTz8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522678324-4855-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040215-0048-0000-0000-00000254182D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008789; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01012080; UDB=6.00515779; IPR=6.00791350;
- MB=3.00020376; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-02 15:34:37
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040215-0049-0000-0000-000044A28AC2
-Message-Id: <20180402153530.GN3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-02_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804020173
+In-Reply-To: <1522682026-11395-3-git-send-email-p.pisati@gmail.com>
+References: <1522682026-11395-1-git-send-email-p.pisati@gmail.com> <1522682026-11395-3-git-send-email-p.pisati@gmail.com>
+From: Alan Tull <atull@kernel.org>
+Date: Mon, 2 Apr 2018 10:39:04 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQ9vx_iqTrDrGGah2TAkEoEJZMwAe0NRX8b7K49S+ZLKg@mail.gmail.com>
+Message-ID: <CANk1AXQ9vx_iqTrDrGGah2TAkEoEJZMwAe0NRX8b7K49S+ZLKg@mail.gmail.com>
+Subject: Re: [PATCH v9 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
+To: Paolo Pisati <p.pisati@gmail.com>
+Cc: Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 11:12:04PM +0900, Tetsuo Handa wrote:
-> When we get a hung task it can often be valuable to see _all_ the hung
-> tasks on the system before calling panic().
-> 
-> Quoting from https://syzkaller.appspot.com/text?tag=CrashReport&id=5412451675799552
-> ----------------------------------------
-> INFO: task syz-executor3:13421 blocked for more than 120 seconds.
->       Not tainted 4.16.0-rc7+ #9
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> syz-executor3   D24672 13421   4481 0x00000004
-> Call Trace:
->  context_switch kernel/sched/core.c:2862 [inline]
->  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
->  schedule+0xf5/0x430 kernel/sched/core.c:3499
->  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
->  rwsem_down_read_failed+0x401/0x6e0 kernel/locking/rwsem-xadd.c:286
->  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
->  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
->  down_read+0xa4/0x150 kernel/locking/rwsem.c:26
->  __get_super.part.9+0x1d3/0x280 fs/super.c:663
->  __get_super include/linux/spinlock.h:310 [inline]
->  get_super+0x2d/0x40 fs/super.c:692
->  fsync_bdev+0x19/0x80 fs/block_dev.c:468
->  invalidate_partition+0x35/0x60 block/genhd.c:1566
->  drop_partitions.isra.12+0xcd/0x1d0 block/partition-generic.c:440
->  rescan_partitions+0x72/0x900 block/partition-generic.c:513
->  __blkdev_reread_part+0x15f/0x1e0 block/ioctl.c:173
->  blkdev_reread_part+0x26/0x40 block/ioctl.c:193
->  loop_reread_partitions+0x12f/0x1a0 drivers/block/loop.c:619
->  loop_set_status+0x9bb/0xf60 drivers/block/loop.c:1161
->  loop_set_status64+0x9d/0x110 drivers/block/loop.c:1271
->  lo_ioctl+0xd86/0x1b70 drivers/block/loop.c:1381
-> (...snipped...)
-> Showing all locks held in the system:
-> (...snipped...)
-> 3 locks held by syz-executor3/13421:
->  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000834f78af>] lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
->  #1:  (&bdev->bd_mutex){+.+.}, at: [<0000000003605603>] blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
->  #2:  (&type->s_umount_key#77){.+.+}, at: [<0000000077701649>] __get_super.part.9+0x1d3/0x280 fs/super.c:663 /* down_read(&sb->s_umount); */
-> (...snipped...)
-> 2 locks held by syz-executor0/13428:
->  #0:  (&type->s_umount_key#76/1){+.+.}, at: [<00000000d25ba33a>] alloc_super fs/super.c:211 [inline]
->  #0:  (&type->s_umount_key#76/1){+.+.}, at: [<00000000d25ba33a>] sget_userns+0x3a1/0xe40 fs/super.c:502 /* down_write_nested(&s->s_umount, SINGLE_DEPTH_NESTING); */
->  #1:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000834f78af>] lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355 /* mutex_lock_nested(&lo->lo_ctl_mutex, 1); */
-> ----------------------------------------
-> 
-> In addition to showing hashed address of lock instances, it would be
-> nice if trace of 13428 is printed as well as 13421.
-> 
-> Showing hung tasks up to /proc/sys/kernel/hung_task_warnings could delay
-> calling panic() but normally there should not be so many hung tasks.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Vegard Nossum <vegard.nossum@oracle.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Mandeep Singh Baines <msb@chromium.org>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+On Mon, Apr 2, 2018 at 10:13 AM, Paolo Pisati <p.pisati@gmail.com> wrote:
 
-I just know that I am going to regret this the first time this happens
-on a low-speed console port, but...
+Hi Paolo,
 
-Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Thanks for making the changes I asked for.  Except... is there a
+reason to not get state in machxo2_spi_state?
 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
+It turns out the API will change again.  I can do the fixup when that happens.
+
+Alan
+
+> This patch adds support to the FPGA manager for programming
+> MachXO2 device’s internal flash memory, via slave SPI.
+>
+> Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
 > ---
->  kernel/hung_task.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 751593e..32b4794 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -44,6 +44,7 @@
-> 
->  static int __read_mostly did_panic;
->  static bool hung_task_show_lock;
-> +static bool hung_task_call_panic;
-> 
->  static struct task_struct *watchdog_task;
-> 
-> @@ -127,10 +128,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
->  	touch_nmi_watchdog();
-> 
->  	if (sysctl_hung_task_panic) {
-> -		if (hung_task_show_lock)
-> -			debug_show_all_locks();
-> -		trigger_all_cpu_backtrace();
-> -		panic("hung_task: blocked tasks");
-> +		hung_task_show_lock = true;
-> +		hung_task_call_panic = true;
->  	}
->  }
-> 
-> @@ -193,6 +192,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->  	rcu_read_unlock();
->  	if (hung_task_show_lock)
->  		debug_show_all_locks();
-> +	if (hung_task_call_panic) {
-> +		trigger_all_cpu_backtrace();
-> +		panic("hung_task: blocked tasks");
-> +	}
->  }
-> 
->  static long hung_timeout_jiffies(unsigned long last_checked,
-> -- 
-> 1.8.3.1
-> 
+>  drivers/fpga/Kconfig       |   7 +
+>  drivers/fpga/Makefile      |   1 +
+>  drivers/fpga/machxo2-spi.c | 405 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 413 insertions(+)
+>  create mode 100644 drivers/fpga/machxo2-spi.c
+>
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index f47ef84..53d3f55 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -70,6 +70,13 @@ config FPGA_MGR_ICE40_SPI
+>         help
+>           FPGA manager driver support for Lattice iCE40 FPGAs over SPI.
+>
+> +config FPGA_MGR_MACHXO2_SPI
+> +       tristate "Lattice MachXO2 SPI"
+> +       depends on SPI
+> +       help
+> +         FPGA manager driver support for Lattice MachXO2 configuration
+> +         over slave SPI interface.
+> +
+>  config FPGA_MGR_TS73XX
+>         tristate "Technologic Systems TS-73xx SBC FPGA Manager"
+>         depends on ARCH_EP93XX && MACH_TS72XX
+> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> index 3cb276a..f9803da 100644
+> --- a/drivers/fpga/Makefile
+> +++ b/drivers/fpga/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_FPGA)                    += fpga-mgr.o
+>  obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)      += altera-cvp.o
+>  obj-$(CONFIG_FPGA_MGR_ALTERA_PS_SPI)   += altera-ps-spi.o
+>  obj-$(CONFIG_FPGA_MGR_ICE40_SPI)       += ice40-spi.o
+> +obj-$(CONFIG_FPGA_MGR_MACHXO2_SPI)     += machxo2-spi.o
+>  obj-$(CONFIG_FPGA_MGR_SOCFPGA)         += socfpga.o
+>  obj-$(CONFIG_FPGA_MGR_SOCFPGA_A10)     += socfpga-a10.o
+>  obj-$(CONFIG_FPGA_MGR_TS73XX)          += ts73xx-fpga.o
+> diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
+> new file mode 100644
+> index 0000000..783aaf2
+> --- /dev/null
+> +++ b/drivers/fpga/machxo2-spi.c
+> @@ -0,0 +1,405 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Lattice MachXO2 Slave SPI Driver
+> + *
+> + * Manage Lattice FPGA firmware that is loaded over SPI using
+> + * the slave serial configuration interface.
+> + *
+> + * Copyright (C) 2018 Paolo Pisati <p.pisati@gmail.com>
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/fpga/fpga-mgr.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/spi/spi.h>
+> +
+> +/* MachXO2 Programming Guide - sysCONFIG Programming Commands */
+> +#define IDCODE_PUB             {0xe0, 0x00, 0x00, 0x00}
+> +#define ISC_ENABLE             {0xc6, 0x08, 0x00, 0x00}
+> +#define ISC_ERASE              {0x0e, 0x04, 0x00, 0x00}
+> +#define ISC_PROGRAMDONE                {0x5e, 0x00, 0x00, 0x00}
+> +#define LSC_INITADDRESS                {0x46, 0x00, 0x00, 0x00}
+> +#define LSC_PROGINCRNV         {0x70, 0x00, 0x00, 0x01}
+> +#define LSC_READ_STATUS                {0x3c, 0x00, 0x00, 0x00}
+> +#define LSC_REFRESH            {0x79, 0x00, 0x00, 0x00}
+> +
+> +/*
+> + * Max CCLK in Slave SPI mode according to 'MachXO2 Family Data
+> + * Sheet' sysCONFIG Port Timing Specifications (3-36)
+> + */
+> +#define MACHXO2_MAX_SPEED              66000000
+> +
+> +#define MACHXO2_LOW_DELAY_USEC         5
+> +#define MACHXO2_HIGH_DELAY_USEC                200
+> +#define MACHXO2_REFRESH_USEC           4800
+> +#define MACHXO2_MAX_BUSY_LOOP          128
+> +#define MACHXO2_MAX_REFRESH_LOOP       16
+> +
+> +#define MACHXO2_PAGE_SIZE              16
+> +#define MACHXO2_BUF_SIZE               (MACHXO2_PAGE_SIZE + 4)
+> +
+> +/* Status register bits, errors and error mask */
+> +#define BUSY   12
+> +#define DONE   8
+> +#define DVER   27
+> +#define ENAB   9
+> +#define ERRBITS        23
+> +#define ERRMASK        7
+> +#define FAIL   13
+> +
+> +#define ENOERR 0 /* no error */
+> +#define EID    1
+> +#define ECMD   2
+> +#define ECRC   3
+> +#define EPREAM 4 /* preamble error */
+> +#define EABRT  5 /* abort error */
+> +#define EOVERFL        6 /* overflow error */
+> +#define ESDMEOF        7 /* SDM EOF */
+> +
+> +static inline u8 get_err(unsigned long *status)
+> +{
+> +       return (*status >> ERRBITS) & ERRMASK;
+> +}
+> +
+> +static int get_status(struct spi_device *spi, unsigned long *status)
+> +{
+> +       struct spi_message msg;
+> +       struct spi_transfer rx, tx;
+> +       static const u8 cmd[] = LSC_READ_STATUS;
+> +       int ret;
+> +
+> +       memset(&rx, 0, sizeof(rx));
+> +       memset(&tx, 0, sizeof(tx));
+> +       tx.tx_buf = cmd;
+> +       tx.len = sizeof(cmd);
+> +       rx.rx_buf = status;
+> +       rx.len = 4;
+> +       spi_message_init(&msg);
+> +       spi_message_add_tail(&tx, &msg);
+> +       spi_message_add_tail(&rx, &msg);
+> +       ret = spi_sync(spi, &msg);
+> +       if (ret)
+> +               return ret;
+> +
+> +       *status = be32_to_cpu(*status);
+> +
+> +       return 0;
+> +}
+> +
+> +#ifdef DEBUG
+> +static const char *get_err_string(u8 err)
+> +{
+> +       switch (err) {
+> +       case ENOERR:    return "No Error";
+> +       case EID:       return "ID ERR";
+> +       case ECMD:      return "CMD ERR";
+> +       case ECRC:      return "CRC ERR";
+> +       case EPREAM:    return "Preamble ERR";
+> +       case EABRT:     return "Abort ERR";
+> +       case EOVERFL:   return "Overflow ERR";
+> +       case ESDMEOF:   return "SDM EOF";
+> +       }
+> +
+> +       return "Default switch case";
+> +}
+> +#endif
+> +
+> +static void dump_status_reg(unsigned long *status)
+> +{
+> +#ifdef DEBUG
+> +       pr_debug("machxo2 status: 0x%08lX - done=%d, cfgena=%d, busy=%d, fail=%d, devver=%d, err=%s\n",
+> +                *status, test_bit(DONE, status), test_bit(ENAB, status),
+> +                test_bit(BUSY, status), test_bit(FAIL, status),
+> +                test_bit(DVER, status), get_err_string(get_err(status)));
+> +#endif
+> +}
+> +
+> +static int wait_until_not_busy(struct spi_device *spi)
+> +{
+> +       unsigned long status;
+> +       int ret, loop = 0;
+> +
+> +       do {
+> +               ret = get_status(spi, &status);
+> +               if (ret)
+> +                       return ret;
+> +               if (++loop >= MACHXO2_MAX_BUSY_LOOP)
+> +                       return -EBUSY;
+> +       } while (test_bit(BUSY, &status));
+> +
+> +       return 0;
+> +}
+> +
+> +static int machxo2_cleanup(struct fpga_manager *mgr)
+> +{
+> +       struct spi_device *spi = mgr->priv;
+> +       struct spi_message msg;
+> +       struct spi_transfer tx[2];
+> +       static const u8 erase[] = ISC_ERASE;
+> +       static const u8 refresh[] = LSC_REFRESH;
+> +       int ret;
+> +
+> +       memset(tx, 0, sizeof(tx));
+> +       spi_message_init(&msg);
+> +       tx[0].tx_buf = &erase;
+> +       tx[0].len = sizeof(erase);
+> +       spi_message_add_tail(&tx[0], &msg);
+> +       ret = spi_sync(spi, &msg);
+> +       if (ret)
+> +               goto fail;
+> +
+> +       ret = wait_until_not_busy(spi);
+> +       if (ret)
+> +               goto fail;
+> +
+> +       spi_message_init(&msg);
+> +       tx[1].tx_buf = &refresh;
+> +       tx[1].len = sizeof(refresh);
+> +       tx[1].delay_usecs = MACHXO2_REFRESH_USEC;
+> +       spi_message_add_tail(&tx[1], &msg);
+> +       ret = spi_sync(spi, &msg);
+> +       if (ret)
+> +               goto fail;
+> +
+> +       return 0;
+> +fail:
+> +       dev_err(&mgr->dev, "Cleanup failed\n");
+> +
+> +       return ret;
+> +}
+> +
+> +static enum fpga_mgr_states machxo2_spi_state(struct fpga_manager *mgr)
+> +{
+> +       return FPGA_MGR_STATE_UNKNOWN;
+> +}
+> +
+> +static int machxo2_write_init(struct fpga_manager *mgr,
+> +                             struct fpga_image_info *info,
+> +                             const char *buf, size_t count)
+> +{
+> +       struct spi_device *spi = mgr->priv;
+> +       struct spi_message msg;
+> +       struct spi_transfer tx[3];
+> +       static const u8 enable[] = ISC_ENABLE;
+> +       static const u8 erase[] = ISC_ERASE;
+> +       static const u8 initaddr[] = LSC_INITADDRESS;
+> +       unsigned long status;
+> +       int ret;
+> +
+> +       if ((info->flags & FPGA_MGR_PARTIAL_RECONFIG)) {
+> +               dev_err(&mgr->dev,
+> +                       "Partial reconfiguration is not supported\n");
+> +               return -ENOTSUPP;
+> +       }
+> +
+> +       get_status(spi, &status);
+> +       dump_status_reg(&status);
+> +       memset(tx, 0, sizeof(tx));
+> +       spi_message_init(&msg);
+> +       tx[0].tx_buf = &enable;
+> +       tx[0].len = sizeof(enable);
+> +       tx[0].delay_usecs = MACHXO2_LOW_DELAY_USEC;
+> +       spi_message_add_tail(&tx[0], &msg);
+> +
+> +       tx[1].tx_buf = &erase;
+> +       tx[1].len = sizeof(erase);
+> +       spi_message_add_tail(&tx[1], &msg);
+> +       ret = spi_sync(spi, &msg);
+> +       if (ret)
+> +               goto fail;
+> +
+> +       ret = wait_until_not_busy(spi);
+> +       if (ret)
+> +               goto fail;
+> +
+> +       get_status(spi, &status);
+> +       if (test_bit(FAIL, &status))
+> +               goto fail;
+> +       dump_status_reg(&status);
+> +
+> +       spi_message_init(&msg);
+> +       tx[2].tx_buf = &initaddr;
+> +       tx[2].len = sizeof(initaddr);
+> +       spi_message_add_tail(&tx[2], &msg);
+> +       ret = spi_sync(spi, &msg);
+> +       if (ret)
+> +               goto fail;
+> +
+> +       get_status(spi, &status);
+> +       dump_status_reg(&status);
+> +
+> +       return 0;
+> +fail:
+> +       dev_err(&mgr->dev, "Error during FPGA init.\n");
+> +
+> +       return ret;
+> +}
+> +
+> +static int machxo2_write(struct fpga_manager *mgr, const char *buf,
+> +                        size_t count)
+> +{
+> +       struct spi_device *spi = mgr->priv;
+> +       struct spi_message msg;
+> +       struct spi_transfer tx;
+> +       static const u8 progincr[] = LSC_PROGINCRNV;
+> +       u8 payload[MACHXO2_BUF_SIZE];
+> +       unsigned long status;
+> +       int i, ret;
+> +
+> +       if (count % MACHXO2_PAGE_SIZE != 0) {
+> +               dev_err(&mgr->dev, "Malformed payload.\n");
+> +               return -EINVAL;
+> +       }
+> +       get_status(spi, &status);
+> +       dump_status_reg(&status);
+> +       memcpy(payload, &progincr, sizeof(progincr));
+> +       for (i = 0; i < count; i += MACHXO2_PAGE_SIZE) {
+> +               memcpy(&payload[sizeof(progincr)], &buf[i], MACHXO2_PAGE_SIZE);
+> +               memset(&tx, 0, sizeof(tx));
+> +               spi_message_init(&msg);
+> +               tx.tx_buf = payload;
+> +               tx.len = MACHXO2_BUF_SIZE;
+> +               tx.delay_usecs = MACHXO2_HIGH_DELAY_USEC;
+> +               spi_message_add_tail(&tx, &msg);
+> +               ret = spi_sync(spi, &msg);
+> +               if (ret) {
+> +                       dev_err(&mgr->dev, "Error loading the bitstream.\n");
+> +                       return ret;
+> +               }
+> +       }
+> +       get_status(spi, &status);
+> +       dump_status_reg(&status);
+> +
+> +       return 0;
+> +}
+> +
+> +static int machxo2_write_complete(struct fpga_manager *mgr,
+> +                                 struct fpga_image_info *info)
+> +{
+> +       struct spi_device *spi = mgr->priv;
+> +       struct spi_message msg;
+> +       struct spi_transfer tx[2];
+> +       static const u8 progdone[] = ISC_PROGRAMDONE;
+> +       static const u8 refresh[] = LSC_REFRESH;
+> +       unsigned long status;
+> +       int ret, refreshloop = 0;
+> +
+> +       memset(tx, 0, sizeof(tx));
+> +       spi_message_init(&msg);
+> +       tx[0].tx_buf = &progdone;
+> +       tx[0].len = sizeof(progdone);
+> +       spi_message_add_tail(&tx[0], &msg);
+> +       ret = spi_sync(spi, &msg);
+> +       if (ret)
+> +               goto fail;
+> +       ret = wait_until_not_busy(spi);
+> +       if (ret)
+> +               goto fail;
+> +
+> +       get_status(spi, &status);
+> +       dump_status_reg(&status);
+> +       if (!test_bit(DONE, &status)) {
+> +               machxo2_cleanup(mgr);
+> +               goto fail;
+> +       }
+> +
+> +       do {
+> +               spi_message_init(&msg);
+> +               tx[1].tx_buf = &refresh;
+> +               tx[1].len = sizeof(refresh);
+> +               tx[1].delay_usecs = MACHXO2_REFRESH_USEC;
+> +               spi_message_add_tail(&tx[1], &msg);
+> +               ret = spi_sync(spi, &msg);
+> +               if (ret)
+> +                       goto fail;
+> +
+> +               /* check refresh status */
+> +               get_status(spi, &status);
+> +               dump_status_reg(&status);
+> +               if (!test_bit(BUSY, &status) && test_bit(DONE, &status) &&
+> +                   get_err(&status) == ENOERR)
+> +                       break;
+> +               if (++refreshloop == MACHXO2_MAX_REFRESH_LOOP) {
+> +                       machxo2_cleanup(mgr);
+> +                       goto fail;
+> +               }
+> +       } while (1);
+> +
+> +       get_status(spi, &status);
+> +       dump_status_reg(&status);
+> +
+> +       return 0;
+> +fail:
+> +       dev_err(&mgr->dev, "Refresh failed.\n");
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct fpga_manager_ops machxo2_ops = {
+> +       .state = machxo2_spi_state,
+> +       .write_init = machxo2_write_init,
+> +       .write = machxo2_write,
+> +       .write_complete = machxo2_write_complete,
+> +};
+> +
+> +static int machxo2_spi_probe(struct spi_device *spi)
+> +{
+> +       struct device *dev = &spi->dev;
+> +       struct fpga_manager *mgr;
+> +
+> +       if (spi->max_speed_hz > MACHXO2_MAX_SPEED) {
+> +               dev_err(dev, "Speed is too high\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       mgr = devm_kzalloc(dev, sizeof(*mgr), GFP_KERNEL);
+> +       if (!mgr)
+> +               return -ENOMEM;
+> +
+> +       mgr->parent = dev;
+> +       mgr->name = "Lattice MachXO2 SPI FPGA Manager";
+> +       mgr->mops = &machxo2_ops;
+> +       mgr->priv = spi;
+> +       spi_set_drvdata(spi, mgr);
+> +
+> +       return fpga_mgr_register(mgr);
+> +}
+> +
+> +static int machxo2_spi_remove(struct spi_device *spi)
+> +{
+> +       struct fpga_manager *mgr = spi_get_drvdata(spi);
+> +
+> +       fpga_mgr_unregister(mgr);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id of_match[] = {
+> +       { .compatible = "lattice,machxo2-slave-spi", },
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(of, of_match);
+> +
+> +static const struct spi_device_id lattice_ids[] = {
+> +       { "machxo2-slave-spi", 0 },
+> +       { },
+> +};
+> +MODULE_DEVICE_TABLE(spi, lattice_ids);
+> +
+> +static struct spi_driver machxo2_spi_driver = {
+> +       .driver = {
+> +               .name = "machxo2-slave-spi",
+> +               .of_match_table = of_match_ptr(of_match),
+> +       },
+> +       .probe = machxo2_spi_probe,
+> +       .remove = machxo2_spi_remove,
+> +       .id_table = lattice_ids,
+> +};
+> +
+> +module_spi_driver(machxo2_spi_driver)
+> +
+> +MODULE_AUTHOR("Paolo Pisati <p.pisati@gmail.com>");
+> +MODULE_DESCRIPTION("Load Lattice FPGA firmware over SPI");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.7.4
+>
