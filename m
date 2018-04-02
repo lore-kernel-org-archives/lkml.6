@@ -1,132 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752791AbeDBPKd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:10:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751281AbeDBPKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:10:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7837720838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Tue, 3 Apr 2018 00:10:25 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel.opensrc@gmail.com, joelaf@google.com,
-        mathieu.desnoyers@efficios.com, baohong.liu@intel.com,
-        rajvi.jingar@intel.com, julia@ni.com, fengguang.wu@intel.com,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH 3/4] tracing: Add action comparisons when testing
- matching hist triggers
-Message-Id: <20180403001025.6dfed9403d50d20104e54458@kernel.org>
-In-Reply-To: <a7fd668b87ec10736c8f016ac4279c8480d50c2b.1522256721.git.tom.zanussi@linux.intel.com>
-References: <cover.1522256721.git.tom.zanussi@linux.intel.com>
-        <a7fd668b87ec10736c8f016ac4279c8480d50c2b.1522256721.git.tom.zanussi@linux.intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752464AbeDBPNw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:13:52 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34017 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751281AbeDBPNt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 11:13:49 -0400
+X-Google-Smtp-Source: AIpwx49L8dYaNW6MoTuYAm0ACM64QrH+1mxCFNHjpeE0k0338EXcijo9Xk1LiJbvLirR3SfyLlSmNw==
+From: Paolo Pisati <p.pisati@gmail.com>
+To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/2] fpga: Lattice MachXO2 Slave SPI FPGA Manager support
+Date: Mon,  2 Apr 2018 17:13:44 +0200
+Message-Id: <1522682026-11395-1-git-send-email-p.pisati@gmail.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Mar 2018 15:10:55 -0500
-Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+Hi all,
+this series adds support for the Lattice MachXO2 FPGA chip, programmed
+over slave SPI.
 
-> Actions also need to be considered when checking for matching triggers
-> - triggers differing only by action should be allowed, but currently
-> aren't because the matching check ignores the action and erroneously
-> returns -EEXIST.
+Tested on a raspberry pi3, beaglebone black (little endian mode) and imx6
+hummingboard (big endian mode) + bugblat's pif2 fpga hat (machxo2 7000HC) or
+tinyfpga A1/A2 (machxo2 256HC / 1200HC), in SPI slave mode with varying bus
+speed.
 
-Hi Tom,
+Changes since v8:
+* style fixes pointed out by Alan
+* rebase on the new fpga_mgr_register() API
 
-Could you show us the bad/good examples (maybe different onmatch() actions)?
-And if it is real bugfix, I would like to add a ftracetest testcase for this fix.
+Paolo Pisati (2):
+  dt: bindings: fpga: add lattice machxo2 slave spi binding description
+  fpga: lattice machxo2: Add Lattice MachXO2 support
 
-Thank you,
-
-> 
-> Add and call an actions_match() function to address that.
-> 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> ---
->  kernel/trace/trace_events_hist.c | 50 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index 468e43f..ae84470 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -4363,6 +4363,53 @@ static void print_onmatch_spec(struct seq_file *m,
->  	seq_puts(m, ")");
->  }
->  
-> +static bool actions_match(struct hist_trigger_data *hist_data,
-> +			  struct hist_trigger_data *hist_data_test)
-> +{
-> +	unsigned int i, j;
-> +
-> +	if (hist_data->n_actions != hist_data_test->n_actions)
-> +		return false;
-> +
-> +	for (i = 0; i < hist_data->n_actions; i++) {
-> +		struct action_data *data = hist_data->actions[i];
-> +		struct action_data *data_test = hist_data_test->actions[i];
-> +
-> +		if (data->fn != data_test->fn)
-> +			return false;
-> +
-> +		if (data->n_params != data_test->n_params)
-> +			return false;
-> +
-> +		for (j = 0; j < data->n_params; j++) {
-> +			if (strcmp(data->params[j], data_test->params[j]) != 0)
-> +				return false;
-> +		}
-> +
-> +		if (data->fn == action_trace) {
-> +			if (strcmp(data->onmatch.synth_event_name,
-> +				   data_test->onmatch.synth_event_name) != 0)
-> +				return false;
-> +			if (strcmp(data->onmatch.match_event_system,
-> +				   data_test->onmatch.match_event_system) != 0)
-> +				return false;
-> +			if (strcmp(data->onmatch.match_event,
-> +				   data_test->onmatch.match_event) != 0)
-> +				return false;
-> +		} else if (data->fn == onmax_save) {
-> +			if (strcmp(data->onmax.var_str,
-> +				   data_test->onmax.var_str) != 0)
-> +				return false;
-> +			if (strcmp(data->onmax.fn_name,
-> +				   data_test->onmax.fn_name) != 0)
-> +				return false;
-> +		}
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +
->  static void print_actions_spec(struct seq_file *m,
->  			       struct hist_trigger_data *hist_data)
->  {
-> @@ -5173,6 +5220,9 @@ static bool hist_trigger_match(struct event_trigger_data *data,
->  	    (strcmp(data->filter_str, data_test->filter_str) != 0))
->  		return false;
->  
-> +	if (!actions_match(hist_data, hist_data_test))
-> +		return false;
-> +
->  	return true;
->  }
->  
-> -- 
-> 1.9.3
-> 
-
+ .../bindings/fpga/lattice-machxo2-spi.txt          |  29 ++
+ drivers/fpga/Kconfig                               |   7 +
+ drivers/fpga/Makefile                              |   1 +
+ drivers/fpga/machxo2-spi.c                         | 405 +++++++++++++++++++++
+ 4 files changed, 442 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
+ create mode 100644 drivers/fpga/machxo2-spi.c
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.7.4
