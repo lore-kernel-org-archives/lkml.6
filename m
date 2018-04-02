@@ -1,66 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751709AbeDBMWG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 08:22:06 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:48796 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751198AbeDBMWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 08:22:01 -0400
-Date: Mon, 2 Apr 2018 14:21:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "stephen@networkplumber.org" <stephen@networkplumber.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Ganesh GR <ganeshgr@chelsio.com>,
-        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
-        Indranil Choudhury <indranil@chelsio.com>
-Subject: Re: [PATCH net-next v2 1/2] fs/crashdd: add API to collect hardware
- dump in second kernel
-Message-ID: <20180402122140.GB8159@lunn.ch>
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
- <296ffbd47fd4f30238689e636bd2480683224227.1521888444.git.rahul.lakkireddy@chelsio.com>
- <20180330103907.GC3313@nanopsycho>
- <20180330105156.GA24344@chelsio.com>
- <87k1tt2yo7.fsf@xmission.com>
- <20180402091143.GD3313@nanopsycho>
+        id S1752021AbeDBMWg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 08:22:36 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56519 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751239AbeDBMWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 08:22:35 -0400
+From: Yunlong Song <yunlong.song@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] f2fs: make assignment of t->dentry_bitmap more readable
+Date: Mon, 2 Apr 2018 20:22:20 +0800
+Message-ID: <1522671740-92824-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180402091143.GD3313@nanopsycho>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >> The sysfs approach proposed here had been dropped in favour exporting
-> >> the dumps as ELF notes in /proc/vmcore.
-> >>
-> >> Will be posting the new patches soon.
-> >
-> >The concern was actually how you identify which device that came from.
-> >Where you read the identifier changes but sysfs or /proc/vmcore the
-> >change remains valid.
-> 
-> Yeah. I still don't see how you link the dump and the device.
+In make_dentry_ptr_block, it is confused with "&" for t->dentry_bitmap
+but without "&" for t->dentry, so delete "&" to make code more readable.
 
-Hi Jiri
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You can see in the third version the core code accept a free form
-name. The driver builds a name using the driver name and the adaptor
-name.
-
-What i think would be good is to try to have one API to the driver
-that can be used for both crash dumps and devlink snapshots. These are
-used at different times, but have basically the same purpose, get
-state from the device.
-
-      Andrew
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 191ee57..474b9e9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -471,7 +471,7 @@ static inline void make_dentry_ptr_block(struct inode *inode,
+ 	d->inode = inode;
+ 	d->max = NR_DENTRY_IN_BLOCK;
+ 	d->nr_bitmap = SIZE_OF_DENTRY_BITMAP;
+-	d->bitmap = &t->dentry_bitmap;
++	d->bitmap = t->dentry_bitmap;
+ 	d->dentry = t->dentry;
+ 	d->filename = t->filename;
+ }
+-- 
+1.8.5.2
