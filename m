@@ -1,142 +1,252 @@
-Return-Path: <pasha.tatashin@oracle.com>
-X-Google-Smtp-Source: AIpwx490V0mKL2xgImDowQQ1YwoHAgpwxRAT3LQTWCB0YGKMl2At6f9rH0WAhX4CT1jCZ/ZdqYNK
-ARC-Seal: i=1; a=rsa-sha256; t=1522779428; cv=none;
+Return-Path: <jlayton@kernel.org>
+X-Google-Smtp-Source: AIpwx4+ns36kH4davB8YsEjetgD5DAdU5ExzD2f+okImf8CZqM0o+IOjJQhCAoOFyV0q2EPTU7ts
+ARC-Seal: i=1; a=rsa-sha256; t=1522673817; cv=none;
         d=google.com; s=arc-20160816;
-        b=DaeKXwqyavWimbneeTFmktTYo4vb46pEk063pGRJqejIbYC/c9Od7DqzNkdzjM545D
-         Aqw9vsRfQQ5OVJKXB7Xp0V5KjEyR79DrxFRjM3fRRMBMOp6s/E4txSYVxXSQv5P6zUlI
-         VjyRZzJqI2Y4oThLjTa312qdVOkjbCpvXqG2Q64n36mjM0IaGEB0eUrsjscSK3tkSlQR
-         LX6BgEsPOxfm9q+2VIzI6jsSlYZW+88wjSxcLUGBEGsPUfXH63w5rbv6aiFMFtCPnRH4
-         YNfPe+JQfdBD8EsORy6ajJjU/EHJO7kGfQnQtMOYDRtYGq9lEBEzSdn83xillglQWvdR
-         s0QQ==
+        b=ujcvRkTRNdya1AmhvsXofxbqqNy/OjjCtcUVyjZx8CydalYi3Z2BTBWRU3xiFoBjNZ
+         dzi34ep6LiabNbVLP6KsSBptvUW4em2g58uTmVc2y+6VxwnWYayIALF7Z2co+eKzEvEO
+         Izb+j/BwZ+nLBoCcCHNUs+NvzEd5AF7Gfw4QccHrM4VvDQwxaduax4+cbI6WxxwDDa6u
+         Gw6mWCwMCOeBOFCttC+1q75HraDYnUJTgeIU6uaxKqNW131SQdWqOTh11jpExQ/w/kNZ
+         /fSKKK4PSCqf7zPTXiw1UsE+JjQU+Fg8Od3jafP2VwB6tceRQtKLvH7IJ25kK5jydQYA
+         CHeQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=y4OKo41vLpMXGdKQj+jpCawiErpHz39ACwhTxpnBZ+U=;
-        b=EuXt73VVuzMtpwUTd7BVKD0z8i1vD4qMwPiyxYlYhRIF0bO5rHerp+bRqlpr+sxpZp
-         z/jcUzmFdLUIiWNErAWaH8o+lI+YsPsigTsr1CBnZF/cAVuVOlkzNeZQ9pxsS0fhkGci
-         F7faf4XQr++X1Fx18fcXEXuWSGDIgdLskoahOrSx0Nu4bgYRyqlQfsH15x+nK59Q0PHo
-         QAgcvKj6/3N00DGqFDza1FzxCpSWNUEWc4JkDM8fpH0ha2yFeuR+NG3yNLedqlSn6Ht/
-         EB+zjde0Es5ghSiEVUhQKE3vSFRR3Cj5Q3b+BLuAqIsRpxuGCYxaTE4/jESLNW8zUosj
-         IQvQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:dmarc-filter
+         :arc-authentication-results;
+        bh=jGmS/vfcqQdFoe6rxI/V//DJEwQC3DbECIWCPMJbsMs=;
+        b=dvcoLEUzpkFTRAbdxEX79Fze01GjzMaNCLWlRE15Ek/0JjGOhsfNZr8qRBofRBHLIM
+         iydFO4j6B305PT3MTCuA3mEKhnWcj54zirwwnBpD/WN6tVU1aiyxt/aHp6frqMgOSqs/
+         ExTyF3n2ppGKovoLDXweZ61puO8sCzk5MIlk9sasJleNr69PfoXdu5u0wp3F4ojXwxVm
+         BH7Sya9lWtoXSiWb4L0Yj5AyQU0ywsFqZuVfo+Ap+IDi9prA/X5axr4leb4QpBCdbYTM
+         tGe/s0bRxUDET9QJhoFnhBV3woJi+Z7395f16EhIt4EPjsGPLNe4euQuAZ5rcmAmh22V
+         64AQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=q5JJYyL1;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: best guess record for domain of jlayton@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jlayton@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=q5JJYyL1;
-       spf=pass (google.com: domain of pasha.tatashin@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=pasha.tatashin@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        akpm@linux-foundation.org, mgorman@techsingularity.net,
-        mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, vbabka@suse.cz, bharata@linux.vnet.ibm.com,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
-        bhe@redhat.com, alexander.levin@microsoft.com
-Subject: [v6 2/6] x86/mm/memory_hotplug: determine block size based on the end of boot memory
-Date: Tue,  3 Apr 2018 14:16:39 -0400
-Message-Id: <20180403181643.28127-3-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180403181643.28127-1-pasha.tatashin@oracle.com>
-References: <20180403181643.28127-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804030185
+       spf=pass (google.com: best guess record for domain of jlayton@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jlayton@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFC1214EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
+Message-ID: <1522673814.4914.36.camel@kernel.org>
+Subject: Re: [PATCH v2] locks: change POSIX lock ownership on execve when
+ files_struct is displaced
+From: Jeff Layton <jlayton@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander
+ Viro <viro@zeniv.linux.org.uk>, "J. Bruce Fields" <bfields@fieldses.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Daniel
+ =?ISO-8859-1?Q?P=2EBerrang=E9?= <berrange@redhat.com>,  Kate Stewart
+ <kstewart@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
+ Philippe Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "open list:NFS, SUNRPC, AND..."
+ <linux-nfs@vger.kernel.org>
+Date: Mon, 02 Apr 2018 08:56:54 -0400
+In-Reply-To: <871sgcvfh7.fsf@xmission.com>
+References: <20180317142520.30520-1-jlayton@kernel.org>
+	 <20180317165859.26200-1-jlayton@kernel.org> <87bmfgvg8w.fsf@xmission.com>
+	 <871sgcvfh7.fsf@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596749961639892649?=
-X-GMAIL-MSGID: =?utf-8?q?1596749961639892649?=
+X-GMAIL-THRID: =?utf-8?q?1595195233416759536?=
+X-GMAIL-MSGID: =?utf-8?q?1596639220513931530?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Memory sections are combined into "memory block" chunks.  These chunks are
-the units upon which memory can be added and removed.
+On Thu, 2018-03-22 at 00:36 -0500, Eric W. Biederman wrote:
+> ebiederm@xmission.com (Eric W. Biederman) writes:
+> 
+> > Jeff Layton <jlayton@kernel.org> writes:
+> > 
+> > > From: Jeff Layton <jlayton@redhat.com>
+> > > 
+> > > POSIX mandates that open fds and their associated file locks should be
+> > > preserved across an execve. This works, unless the process is
+> > > multithreaded at the time that execve is called.
+> > Would this perhaps work better if we moved unshare_files to after or
+> > inside of de_thread.  That would remove any cases where fd->count is > 1
+> > simply because you are multi-threaded.  It would only leave the strange
+> > cases where files struct is shared between different processes.
+> 
+> The fact we have a problem here appears to be a regression caused by:
+> fd8328be874f ("[PATCH] sanitize handling of shared descriptor tables in
+> failing execve()")
+> 
+> So I really think we are calling unshare_files in the wrong location.
+> 
+> We could perhaps keep the benefit of being able to fail exec cleanly
+> if we freeze the threads and then only unshare if the count of threads
+> differs from the fd->count.  I don't know if it is worth it.
+> 
+> Eric
+> 
 
-On x86 the new memory may be added after the end of the boot memory,
-therefore, if block size does not align with end of boot memory, memory
-hotplugging/hotremoving can be broken.
+Yeah, that's a possibility. If you can freeze the other threads, and
+ensure that they don't execute before they are killed, then in almost
+all cases, unshare_files would be a noop.
 
-Currently, whenever machine is booted with more than 64G the block size
-is unconditionally increased to 2G from the base 128M. This is done in
-order to reduce number of memory device files in sysfs:
-	/sys/devices/system/memory/memoryXXX
+Also, I have spotted a potential problem with this patch too:
 
-We must use the largest allowed block size that aligns to the next
-address to be able to hotplug the next block of memory.
+If this situation occurs on NFS, then the state handling code is likely
+to get very confused. It uses the fl_owner as the key to the
+lock_stateid.
 
-So, when memory is larger or equal to 64G, we check the end address and
-find the largest block size that is still power of two but smaller or
-equal to 2G.
+After you execve, the all the locks will still be present but you won't
+be able to find them by fl_owner anymore. I imagine they'll just hang
+out until the client expires.
 
-Before, the fix:
-Run qemu with:
--m 64G,slots=2,maxmem=66G -object memory-backend-ram,id=mem1,size=2G
+David Howells suggested: "you could allocate a 1-byte lock cookie and
+point to that from fdtable, then pass that cookie over exec"
 
-(qemu) device_add pc-dimm,id=dimm1,memdev=mem1
-Block size [0x80000000] unaligned hotplug range: start 0x1040000000,
-							size 0x80000000
-acpi PNP0C80:00: add_memory failed
-acpi PNP0C80:00: acpi_memory_enable_device() error
-acpi PNP0C80:00: Enumeration failure
+I'm not sure about that implementation (maybe consider using ida?), but
+an opaque fl_owner cookie for posix locks might be the way to go. It
+would mean growing struct fdtable however.
 
-With the fix memory is added successfully as the block size is set to 1G,
-and therefore aligns with start address 0x1040000000.
+> > > In that case, we'll end up unsharing the files_struct but the locks will
+> > > still have their fl_owner set to the address of the old one. Eventually,
+> > > when the other threads die and the last reference to the old
+> > > files_struct is put, any POSIX locks get torn down since it looks like
+> > > a close occurred on them.
+> > > 
+> > > The result is that all of your open files will be intact with none of
+> > > the locks you held before execve. The simple answer to this is "use OFD
+> > > locks", but this is a nasty surprise and it violates the spec.
+> > > 
+> > > On a successful execve, change ownership of any POSIX file_locks
+> > > associated with the old files_struct to the new one, if we ended up
+> > > swapping it out.
+> > 
+> > If we can move unshare_files I believe the need for changing the
+> > ownership would go away.  Which seems like easier to understand
+> > and simpler code in the end.  With fewer surprises.
+> > 
+> > Eric
+> > 
+> > 
+> > > Reported-by: Daniel P. Berrangé <berrange@redhat.com>
+> > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> > 
+> > 
+> > > ---
+> > >  fs/exec.c          |  4 +++-
+> > >  fs/locks.c         | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/fs.h |  8 ++++++++
+> > >  3 files changed, 71 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/exec.c b/fs/exec.c
+> > > index 7eb8d21bcab9..35b05376bf78 100644
+> > > --- a/fs/exec.c
+> > > +++ b/fs/exec.c
+> > > @@ -1812,8 +1812,10 @@ static int do_execveat_common(int fd, struct filename *filename,
+> > >  	free_bprm(bprm);
+> > >  	kfree(pathbuf);
+> > >  	putname(filename);
+> > > -	if (displaced)
+> > > +	if (displaced) {
+> > > +		posix_change_lock_owners(current->files, displaced);
+> > >  		put_files_struct(displaced);
+> > > +	}
+> > >  	return retval;
+> > >  
+> > >  out:
+> > > diff --git a/fs/locks.c b/fs/locks.c
+> > > index d6ff4beb70ce..ab428ca8bb11 100644
+> > > --- a/fs/locks.c
+> > > +++ b/fs/locks.c
+> > > @@ -993,6 +993,66 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+> > >  	return error;
+> > >  }
+> > >  
+> > > +struct posix_change_lock_owners_arg {
+> > > +	fl_owner_t old;
+> > > +	fl_owner_t new;
+> > > +};
+> > > +
+> > > +static int posix_change_lock_owners_cb(const void *varg, struct file *file,
+> > > +					  unsigned int fd)
+> > > +{
+> > > +	const struct posix_change_lock_owners_arg *arg = varg;
+> > > +	struct inode *inode = file_inode(file);
+> > > +	struct file_lock_context *ctx;
+> > > +	struct file_lock *fl, *tmp;
+> > > +
+> > > +	/* If there is no context, then no locks need to be changed */
+> > > +	ctx = locks_get_lock_context(inode, F_UNLCK);
+> > > +	if (!ctx)
+> > > +		return 0;
+> > > +
+> > > +	percpu_down_read_preempt_disable(&file_rwsem);
+> > > +	spin_lock(&ctx->flc_lock);
+> > > +	/* Find the first lock with the old owner */
+> > > +	list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
+> > > +		if (fl->fl_owner == arg->old)
+> > > +			break;
+> > > +	}
+> > > +
+> > > +	list_for_each_entry_safe_from(fl, tmp, &ctx->flc_posix, fl_list) {
+> > > +		if (fl->fl_owner != arg->old)
+> > > +			break;
+> > > +
+> > > +		/* This should only be used for normal userland lockmanager */
+> > > +		if (fl->fl_lmops) {
+> > > +			WARN_ON_ONCE(1);
+> > > +			break;
+> > > +		}
+> > > +		fl->fl_owner = arg->new;
+> > > +	}
+> > > +	spin_unlock(&ctx->flc_lock);
+> > > +	percpu_up_read_preempt_enable(&file_rwsem);
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/**
+> > > + * posix_change_lock_owners - change lock owners from old files_struct to new
+> > > + * @files: new files struct to own locks
+> > > + * @old: old files struct that previously held locks
+> > > + *
+> > > + * On execve, a process may end up with a new files_struct. In that case, we
+> > > + * must change all of the locks that were owned by the previous files_struct
+> > > + * to the new one.
+> > > + */
+> > > +void posix_change_lock_owners(struct files_struct *new,
+> > > +			      struct files_struct *old)
+> > > +{
+> > > +	struct posix_change_lock_owners_arg arg = { .old = old,
+> > > +						    .new = new };
+> > > +
+> > > +	iterate_fd(new, 0, posix_change_lock_owners_cb, &arg);
+> > > +}
+> > > +
+> > >  static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+> > >  			    struct file_lock *conflock)
+> > >  {
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index 79c413985305..65fa99707bf9 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -1098,6 +1098,8 @@ extern int lease_modify(struct file_lock *, int, struct list_head *);
+> > >  struct files_struct;
+> > >  extern void show_fd_locks(struct seq_file *f,
+> > >  			 struct file *filp, struct files_struct *files);
+> > > +extern void posix_change_lock_owners(struct files_struct *new,
+> > > +				     struct files_struct *old);
+> > >  #else /* !CONFIG_FILE_LOCKING */
+> > >  static inline int fcntl_getlk(struct file *file, unsigned int cmd,
+> > >  			      struct flock __user *user)
+> > > @@ -1232,6 +1234,12 @@ static inline int lease_modify(struct file_lock *fl, int arg,
+> > >  struct files_struct;
+> > >  static inline void show_fd_locks(struct seq_file *f,
+> > >  			struct file *filp, struct files_struct *files) {}
+> > > +
+> > > +static inline void posix_change_lock_owners(struct files_struct *new,
+> > > +					    struct files_struct *old)
+> > > +{
+> > > +}
+> > > +
+> > >  #endif /* !CONFIG_FILE_LOCKING */
+> > >  
+> > >  static inline struct inode *file_inode(const struct file *f)
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/init_64.c | 33 +++++++++++++++++++++++++++++----
- 1 file changed, 29 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 45241de66785..dca9abf2b85c 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1328,14 +1328,39 @@ int kern_addr_valid(unsigned long addr)
- 	return pfn_valid(pte_pfn(*pte));
- }
- 
-+/*
-+ * Block size is the minimum amount of memory which can be hotplugged or
-+ * hotremoved. It must be power of two and must be equal or larger than
-+ * MIN_MEMORY_BLOCK_SIZE.
-+ */
-+#define MAX_BLOCK_SIZE (2UL << 30)
-+
-+/* Amount of ram needed to start using large blocks */
-+#define MEM_SIZE_FOR_LARGE_BLOCK (64UL << 30)
-+
- static unsigned long probe_memory_block_size(void)
- {
--	unsigned long bz = MIN_MEMORY_BLOCK_SIZE;
-+	unsigned long boot_mem_end = max_pfn << PAGE_SHIFT;
-+	unsigned long bz;
- 
--	/* if system is UV or has 64GB of RAM or more, use large blocks */
--	if (is_uv_system() || ((max_pfn << PAGE_SHIFT) >= (64UL << 30)))
--		bz = 2UL << 30; /* 2GB */
-+	/* If this is UV system, always set 2G block size */
-+	if (is_uv_system()) {
-+		bz = MAX_BLOCK_SIZE;
-+		goto done;
-+	}
- 
-+	/* Use regular block if RAM is smaller than MEM_SIZE_FOR_LARGE_BLOCK */
-+	if (boot_mem_end < MEM_SIZE_FOR_LARGE_BLOCK) {
-+		bz = MIN_MEMORY_BLOCK_SIZE;
-+		goto done;
-+	}
-+
-+	/* Find the largest allowed block size that aligns to memory end */
-+	for (bz = MAX_BLOCK_SIZE; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
-+		if (IS_ALIGNED(boot_mem_end, bz))
-+			break;
-+	}
-+done:
- 	pr_info("x86/mm: Memory block size: %ldMB\n", bz >> 20);
- 
- 	return bz;
 -- 
-2.16.3
+Jeff Layton <jlayton@kernel.org>
