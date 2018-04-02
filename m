@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754131AbeDBGBH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:01:07 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:45043 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751619AbeDBGBE (ORCPT
+        id S1752641AbeDBGBG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:01:06 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:54636 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751556AbeDBGBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Apr 2018 02:01:04 -0400
-X-Google-Smtp-Source: AIpwx4/EUyth+D05WZV11QEs9tu4Qg200qrNtNje872W+f68f8X+Vxu6SUj5DK3VLFOjT8buxtMOAsx5dvo4IA86V77AeZ+aByaV
+X-Google-Smtp-Source: AIpwx48qbJrWkINiCNsoD6Dzrf4jOtCDkIDOonpJiw2twPWsfcna5fEhqhubJVoO7xi0Y2lT2z/x2p86S9rWgdUIa93DSiMlE65t
 MIME-Version: 1.0
 Date: Sun, 01 Apr 2018 23:01:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a2a25b0568d750c3@google.com>
-Subject: KASAN: use-after-free Read in rdma_listen
-From: syzbot <syzbot+f3ce716af730c8f96637@syzkaller.appspotmail.com>
-To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
-        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
-        parav@mellanox.com, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000a010b80568d75018@google.com>
+Subject: WARNING in add_uevent_var
+From: syzbot <syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com>
+To: davem@davemloft.net, johannes@sipsolutions.net,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -31,116 +30,88 @@ syzbot hit the following crash on upstream commit
 Merge branch 'perf-urgent-for-linus' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=f3ce716af730c8f96637
+https://syzkaller.appspot.com/bug?extid=230d9e642a85d3fec29c
 
-So far this crash happened 4 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6306348723601408
+So far this crash happened 5 times on net-next, upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6614377067184128
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6405720039751680
+https://syzkaller.appspot.com/x/repro.syz?id=6535492073947136
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6416847360491520
+https://syzkaller.appspot.com/x/log.txt?id=6339348970602496
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f3ce716af730c8f96637@syzkaller.appspotmail.com
+Reported-by: syzbot+230d9e642a85d3fec29c@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-==================================================================
-BUG: KASAN: use-after-free in __list_add_valid+0xc6/0xd0 lib/list_debug.c:26
-Read of size 8 at addr ffff8801d7ba9cd8 by task syzkaller817651/5232
+------------[ cut here ]------------
+add_uevent_var: buffer size too small
+WARNING: CPU: 0 PID: 4431 at lib/kobject_uevent.c:594  
+add_uevent_var+0x2aa/0x2d0 lib/kobject_uevent.c:594
+Kernel panic - not syncing: panic_on_warn set ...
 
-CPU: 1 PID: 5232 Comm: syzkaller817651 Not tainted 4.16.0-rc7+ #374
+CPU: 0 PID: 4431 Comm: syzkaller678536 Not tainted 4.16.0-rc7+ #374
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __list_add_valid+0xc6/0xd0 lib/list_debug.c:26
-  __list_add include/linux/list.h:60 [inline]
-  list_add_tail include/linux/list.h:93 [inline]
-  cma_listen_on_all drivers/infiniband/core/cma.c:2309 [inline]
-  rdma_listen+0x581/0x8e0 drivers/infiniband/core/cma.c:3333
-  ucma_listen+0x172/0x1f0 drivers/infiniband/core/ucma.c:1074
-  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1656
-  __vfs_write+0xef/0x970 fs/read_write.c:480
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:add_uevent_var+0x2aa/0x2d0 lib/kobject_uevent.c:594
+RSP: 0018:ffff8801adba6810 EFLAGS: 00010286
+RAX: dffffc0000000008 RBX: ffff8801ad7a6d40 RCX: ffffffff815b193e
+RDX: 0000000000000000 RSI: 1ffff10035b74cb2 RDI: 1ffff10035b74c87
+RBP: ffff8801adba68d8 R08: 1ffff10035b74c49 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000000 R12: 1ffff10035b74d03
+R13: ffff8801ad7a6e58 R14: 00000000000003e6 R15: 0000000000000438
+  rfkill_dev_uevent+0x31/0x170 net/rfkill/core.c:813
+  dev_uevent+0x2b6/0x7e0 drivers/base/core.c:913
+  kobject_uevent_env+0x3fe/0xd30 lib/kobject_uevent.c:476
+  kobject_uevent+0x1f/0x30 lib/kobject_uevent.c:565
+  device_add+0xd04/0x1650 drivers/base/core.c:1834
+  rfkill_register+0x254/0xd60 net/rfkill/core.c:1019
+  wiphy_register+0x19d1/0x2050 net/wireless/core.c:872
+  ieee80211_register_hw+0x1162/0x3100 net/mac80211/main.c:1041
+  mac80211_hwsim_new_radio+0x1d06/0x2fb0  
+drivers/net/wireless/mac80211_hwsim.c:2757
+  hwsim_new_radio_nl+0x67a/0x8c0 drivers/net/wireless/mac80211_hwsim.c:3214
+  genl_family_rcv_msg+0x7b7/0xfb0 net/netlink/genetlink.c:599
+  genl_rcv_msg+0xb2/0x140 net/netlink/genetlink.c:624
+  netlink_rcv_skb+0x14b/0x380 net/netlink/af_netlink.c:2447
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
+  netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
+  netlink_unicast+0x4c4/0x6b0 net/netlink/af_netlink.c:1337
+  netlink_sendmsg+0xa4a/0xe60 net/netlink/af_netlink.c:1900
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:640
+  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2046
+  __sys_sendmsg+0xe5/0x210 net/socket.c:2080
+  SYSC_sendmsg net/socket.c:2091 [inline]
+  SyS_sendmsg+0x2d/0x50 net/socket.c:2087
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4415e9
-RSP: 002b:00007fffa7eaaf98 EFLAGS: 00000207 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004415e9
-RDX: 00000000fffffd4e RSI: 00000000200008c0 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00000000a7eab118 R09: 00000000a7eab118
-R10: 00000000a7eab118 R11: 0000000000000207 R12: 0000000000006463
-R13: 00000000006cd448 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 5230:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
-  kmem_cache_alloc_trace+0x136/0x740 mm/slab.c:3608
-  kmalloc include/linux/slab.h:512 [inline]
-  kzalloc include/linux/slab.h:701 [inline]
-  rdma_create_id+0xd0/0x630 drivers/infiniband/core/cma.c:787
-  ucma_create_id+0x35f/0x920 drivers/infiniband/core/ucma.c:480
-  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1656
-  __vfs_write+0xef/0x970 fs/read_write.c:480
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 5230:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
-  __cache_free mm/slab.c:3486 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3801
-  rdma_destroy_id+0x821/0xda0 drivers/infiniband/core/cma.c:1691
-  ucma_close+0x100/0x2f0 drivers/infiniband/core/ucma.c:1735
-  __fput+0x327/0x7e0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x199/0x270 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
-  do_group_exit+0x149/0x400 kernel/exit.c:968
-  SYSC_exit_group kernel/exit.c:979 [inline]
-  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-The buggy address belongs to the object at ffff8801d7ba9b00
-  which belongs to the cache kmalloc-1024 of size 1024
-The buggy address is located 472 bytes inside of
-  1024-byte region [ffff8801d7ba9b00, ffff8801d7ba9f00)
-The buggy address belongs to the page:
-page:ffffea00075eea00 count:1 mapcount:0 mapping:ffff8801d7ba8000 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801d7ba8000 0000000000000000 0000000100000007
-raw: ffffea0006b2af20 ffffea00075f6520 ffff8801dac00ac0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801d7ba9b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801d7ba9c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801d7ba9c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                     ^
-  ffff8801d7ba9d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801d7ba9d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+RIP: 0033:0x43fda9
+RSP: 002b:00007ffde548edb8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fda9
+RDX: 0000000000000000 RSI: 0000000020b3dfc8 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016d0
+R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
