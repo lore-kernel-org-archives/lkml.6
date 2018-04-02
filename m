@@ -1,125 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754304AbeDBHxf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 03:53:35 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:45188 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752775AbeDBHxe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 03:53:34 -0400
-X-Google-Smtp-Source: AIpwx49xHJalD6NImU/GMTUI69oJc0vdDtrpGeSHYozTlSgvBbIWLgz86gO9WnI6RIxrluJXqYBPQaxyCI+QhGBua70=
+        id S1754345AbeDBH6B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 03:58:01 -0400
+Received: from mga17.intel.com ([192.55.52.151]:37062 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754231AbeDBH57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 03:57:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,394,1517904000";
+   d="scan'208";a="42673106"
+Date: Mon, 2 Apr 2018 15:57:18 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Anton Gary Ceph <agaceph@gmail.com>
+Cc: kbuild-all@01.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: improve ipv4 performances
+Message-ID: <201804021425.2Zqa6ICF%fengguang.wu@intel.com>
+References: <20180401183121.13022-1-agaceph@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <41445229-043c-976f-3961-13770163444f@gmail.com>
-References: <1522636236-12625-1-git-send-email-hejianet@gmail.com>
- <1522636236-12625-2-git-send-email-hejianet@gmail.com> <CAKv+Gu96_sC1Q6-w4O-AXFZzNnH1WoGwJfqvSR+Q_k_bZbrUGg@mail.gmail.com>
- <41445229-043c-976f-3961-13770163444f@gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 2 Apr 2018 09:53:33 +0200
-Message-ID: <CAKv+Gu_CwWnW15jyTCY55akAikEjbgK4zRq_9=YuSDot3O3dQg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] mm: page_alloc: remain memblock_next_valid_pfn()
- on arm and arm64
-To: Jia He <hejianet@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180401183121.13022-1-agaceph@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 April 2018 at 09:49, Jia He <hejianet@gmail.com> wrote:
->
->
-> On 4/2/2018 2:55 PM, Ard Biesheuvel Wrote:
->>
->> On 2 April 2018 at 04:30, Jia He <hejianet@gmail.com> wrote:
->>>
->>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->>> where possible") optimized the loop in memmap_init_zone(). But it causes
->>> possible panic bug. So Daniel Vacek reverted it later.
->>>
->>> But as suggested by Daniel Vacek, it is fine to using memblock to skip
->>> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
->>>
->>> On arm and arm64, memblock is used by default. But generic version of
->>> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
->>> not always return the next valid one but skips more resulting in some
->>> valid frames to be skipped (as if they were invalid). And that's why
->>> kernel was eventually crashing on some !arm machines.
->>>
->>> And as verified by Eugeniu Rosca, arm can benifit from commit
->>> b92df1de5d28. So remain the memblock_next_valid_pfn on arm{,64} and move
->>> the related codes to arm64 arch directory.
->>>
->>> Suggested-by: Daniel Vacek <neelx@redhat.com>
->>> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
->>
->> Hello Jia,
->>
->> Apologies for chiming in late.
->
-> no problem, thanks for your comments  ;-)
->>
->>
->> If we are going to rearchitect this, I'd rather we change the loop in
->> memmap_init_zone() so that we skip to the next valid PFN directly
->> rather than skipping to the last invalid PFN so that the pfn++ in the
->
-> hmm... Maybe this macro name makes you confused
->
-> pfn = skip_to_last_invalid_pfn(pfn);
->
-> how about skip_to_next_valid_pfn?
->
->> for () results in the next value. Can we replace the pfn++ there with
->> a function calls that defaults to 'return pfn + 1', but does the skip
->> for architectures that implement it?
->
-> I am not sure I understand your question here.
-> With this patch, on !arm arches, skip_to_last_invalid_pfn is equal to (pfn),
-> and will be increased
-> when for{} loop continue. We only *skip* to the start pfn of next valid
-> region when
-> CONFIG_HAVE_MEMBLOCK and CONFIG_HAVE_ARCH_PFN_VALID(arm/arm64 supports
-> both).
->
+Hi Anton,
 
-What I am saying is that the loop in memmap_init_zone
+Thank you for the patch! Perhaps something to improve:
 
-for (pfn = start_pfn; pfn < end_pfn; pfn++) { ... }
+[auto build test WARNING on net/master]
+[also build test WARNING on v4.16 next-20180329]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-should be replaced by something like
+url:    https://github.com/0day-ci/linux/commits/Anton-Gary-Ceph/net-improve-ipv4-performances/20180402-103807
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-for (pfn = start_pfn; pfn < end_pfn; pfn = next_valid_pfn(pfn))
 
-where next_valid_pfn() is simply defined as
+sparse warnings: (new ones prefixed by >>)
 
-static ulong next_valid_pfn(ulong pfn)
-{
-  return pfn + 1;
-}
+>> net/bridge/br_private.h:690:15: sparse: restricted __be16 degrades to integer
+   net/bridge/br_private.h:694:15: sparse: restricted __be16 degrades to integer
+--
+>> net/bridge/br_multicast.c:66:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:69:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:96:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:99:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:171:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:175:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:96:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:99:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:581:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:584:14: sparse: restricted __be16 degrades to integer
+>> net/bridge/br_multicast.c:66:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:69:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:96:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:99:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:96:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:99:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:1325:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:1328:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:1765:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:1769:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:1913:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:1917:14: sparse: restricted __be16 degrades to integer
+>> net/bridge/br_private.h:690:15: sparse: restricted __be16 degrades to integer
+   net/bridge/br_private.h:694:15: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:2497:14: sparse: restricted __be16 degrades to integer
+   net/bridge/br_multicast.c:2532:14: sparse: restricted __be16 degrades to integer
+--
+   net/core/filter.c:318:33: sparse: subtraction of functions? Share your drugs
+   net/core/filter.c:321:33: sparse: subtraction of functions? Share your drugs
+   net/core/filter.c:324:33: sparse: subtraction of functions? Share your drugs
+   net/core/filter.c:327:33: sparse: subtraction of functions? Share your drugs
+   net/core/filter.c:330:33: sparse: subtraction of functions? Share your drugs
+   net/core/filter.c:1184:39: sparse: incorrect type in argument 1 (different address spaces) @@    expected struct sock_filter const *filter @@    got struct sockstruct sock_filter const *filter @@
+   net/core/filter.c:1184:39:    expected struct sock_filter const *filter
+   net/core/filter.c:1184:39:    got struct sock_filter [noderef] <asn:1>*filter
+   net/core/filter.c:1286:39: sparse: incorrect type in argument 1 (different address spaces) @@    expected struct sock_filter const *filter @@    got struct sockstruct sock_filter const *filter @@
+   net/core/filter.c:1286:39:    expected struct sock_filter const *filter
+   net/core/filter.c:1286:39:    got struct sock_filter [noderef] <asn:1>*filter
+   net/core/filter.c:1547:43: sparse: incorrect type in argument 2 (different base types) @@    expected restricted __wsum [usertype] diff @@    got unsigned lonrestricted __wsum [usertype] diff @@
+   net/core/filter.c:1547:43:    expected restricted __wsum [usertype] diff
+   net/core/filter.c:1547:43:    got unsigned long long [unsigned] [usertype] to
+   net/core/filter.c:1550:36: sparse: incorrect type in argument 2 (different base types) @@    expected restricted __be16 [usertype] old @@    got unsigned lonrestricted __be16 [usertype] old @@
+   net/core/filter.c:1550:36:    expected restricted __be16 [usertype] old
+   net/core/filter.c:1550:36:    got unsigned long long [unsigned] [usertype] from
+   net/core/filter.c:1550:42: sparse: incorrect type in argument 3 (different base types) @@    expected restricted __be16 [usertype] new @@    got unsigned lonrestricted __be16 [usertype] new @@
+   net/core/filter.c:1550:42:    expected restricted __be16 [usertype] new
+   net/core/filter.c:1550:42:    got unsigned long long [unsigned] [usertype] to
+   net/core/filter.c:1553:36: sparse: incorrect type in argument 2 (different base types) @@    expected restricted __be32 [usertype] from @@    got unsigned lonrestricted __be32 [usertype] from @@
+   net/core/filter.c:1553:36:    expected restricted __be32 [usertype] from
+   net/core/filter.c:1553:36:    got unsigned long long [unsigned] [usertype] from
+   net/core/filter.c:1553:42: sparse: incorrect type in argument 3 (different base types) @@    expected restricted __be32 [usertype] to @@    got unsigned lonrestricted __be32 [usertype] to @@
+   net/core/filter.c:1553:42:    expected restricted __be32 [usertype] to
+   net/core/filter.c:1553:42:    got unsigned long long [unsigned] [usertype] to
+   net/core/filter.c:1598:59: sparse: incorrect type in argument 3 (different base types) @@    expected restricted __wsum [usertype] diff @@    got unsigned lonrestricted __wsum [usertype] diff @@
+   net/core/filter.c:1598:59:    expected restricted __wsum [usertype] diff
+   net/core/filter.c:1598:59:    got unsigned long long [unsigned] [usertype] to
+   net/core/filter.c:1601:52: sparse: incorrect type in argument 3 (different base types) @@    expected restricted __be16 [usertype] from @@    got unsigned lonrestricted __be16 [usertype] from @@
+   net/core/filter.c:1601:52:    expected restricted __be16 [usertype] from
+   net/core/filter.c:1601:52:    got unsigned long long [unsigned] [usertype] from
+   net/core/filter.c:1601:58: sparse: incorrect type in argument 4 (different base types) @@    expected restricted __be16 [usertype] to @@    got unsigned lonrestricted __be16 [usertype] to @@
+   net/core/filter.c:1601:58:    expected restricted __be16 [usertype] to
+   net/core/filter.c:1601:58:    got unsigned long long [unsigned] [usertype] to
+   net/core/filter.c:1604:52: sparse: incorrect type in argument 3 (different base types) @@    expected restricted __be32 [usertype] from @@    got unsigned lonrestricted __be32 [usertype] from @@
+   net/core/filter.c:1604:52:    expected restricted __be32 [usertype] from
+   net/core/filter.c:1604:52:    got unsigned long long [unsigned] [usertype] from
+   net/core/filter.c:1604:58: sparse: incorrect type in argument 4 (different base types) @@    expected restricted __be32 [usertype] to @@    got unsigned lonrestricted __be32 [usertype] to @@
+   net/core/filter.c:1604:58:    expected restricted __be32 [usertype] to
+   net/core/filter.c:1604:58:    got unsigned long long [unsigned] [usertype] to
+   net/core/filter.c:1650:28: sparse: incorrect type in return expression (different base types) @@    expected unsigned long long @@    got nsigned long long @@
+   net/core/filter.c:1650:28:    expected unsigned long long
+   net/core/filter.c:1650:28:    got restricted __wsum
+   net/core/filter.c:1672:35: sparse: incorrect type in return expression (different base types) @@    expected unsigned long long @@    got restricted unsigned long long @@
+   net/core/filter.c:1672:35:    expected unsigned long long
+   net/core/filter.c:1672:35:    got restricted __wsum [usertype] csum
+>> net/core/filter.c:2244:14: sparse: restricted __be16 degrades to integer
+   net/core/filter.c:2246:14: sparse: restricted __be16 degrades to integer
+--
+>> include/linux/netdevice.h:4035:14: sparse: restricted __be16 degrades to integer
+   include/linux/netdevice.h:4037:14: sparse: restricted __be16 degrades to integer
+>> net/core/skbuff.c:4646:14: sparse: restricted __be16 degrades to integer
+   net/core/skbuff.c:4650:14: sparse: restricted __be16 degrades to integer
+--
+>> include/net/netfilter/nf_queue.h:83:14: sparse: restricted __be16 degrades to integer
+   include/net/netfilter/nf_queue.h:89:14: sparse: restricted __be16 degrades to integer
+>> include/net/netfilter/nf_queue.h:83:14: sparse: restricted __be16 degrades to integer
+   include/net/netfilter/nf_queue.h:89:14: sparse: restricted __be16 degrades to integer
+--
+>> net/netfilter/nf_tables_netdev.c:27:14: sparse: restricted __be16 degrades to integer
+   net/netfilter/nf_tables_netdev.c:30:14: sparse: restricted __be16 degrades to integer
+--
+>> include/net/netfilter/nf_queue.h:83:14: sparse: restricted __be16 degrades to integer
+   include/net/netfilter/nf_queue.h:89:14: sparse: restricted __be16 degrades to integer
+--
+>> net/netfilter/nf_flow_table_inet.c:14:14: sparse: restricted __be16 degrades to integer
+   net/netfilter/nf_flow_table_inet.c:16:14: sparse: restricted __be16 degrades to integer
+--
+>> net/openvswitch/conntrack.c:1113:14: sparse: restricted __be16 degrades to integer
+   net/openvswitch/conntrack.c:1116:14: sparse: restricted __be16 degrades to integer
 
-by default, unless we do something special like you are proposing for
-ARM and arm64, in which case you provide a different implementation.
-That way, we no longer have to reason around the pfn++, and return an
-invalid pfn so that the ++ will produce a valid pfn
+vim +690 net/bridge/br_private.h
+
+cc0fdd80 Linus Lüssing       2013-08-30  685  
+cc0fdd80 Linus Lüssing       2013-08-30  686  static inline bool br_multicast_querier_exists(struct net_bridge *br,
+cc0fdd80 Linus Lüssing       2013-08-30  687  					       struct ethhdr *eth)
+b00589af Linus Lüssing       2013-08-01  688  {
+f9ba1e10 Anton Gary Ceph     2018-04-01  689  	switch (__builtin_expect(eth->h_proto, ETH_P_IP)) {
+cc0fdd80 Linus Lüssing       2013-08-30 @690  	case (htons(ETH_P_IP)):
+0888d5f3 daniel              2016-06-24  691  		return __br_multicast_querier_exists(br,
+0888d5f3 daniel              2016-06-24  692  			&br->ip4_other_query, false);
+cc0fdd80 Linus Lüssing       2013-08-30  693  #if IS_ENABLED(CONFIG_IPV6)
+cc0fdd80 Linus Lüssing       2013-08-30  694  	case (htons(ETH_P_IPV6)):
+0888d5f3 daniel              2016-06-24  695  		return __br_multicast_querier_exists(br,
+0888d5f3 daniel              2016-06-24  696  			&br->ip6_other_query, true);
+cc0fdd80 Linus Lüssing       2013-08-30  697  #endif
+cc0fdd80 Linus Lüssing       2013-08-30  698  	default:
+cc0fdd80 Linus Lüssing       2013-08-30  699  		return false;
+cc0fdd80 Linus Lüssing       2013-08-30  700  	}
+b00589af Linus Lüssing       2013-08-01  701  }
+1080ab95 Nikolay Aleksandrov 2016-06-28  702  
+
+:::::: The code at line 690 was first introduced by commit
+:::::: cc0fdd802859eaeb00e1c87dbb655594bed2844c bridge: separate querier and query timer into IGMP/IPv4 and MLD/IPv6 ones
+
+:::::: TO: Linus Lüssing <linus.luessing@web.de>
+:::::: CC: David S. Miller <davem@davemloft.net>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
