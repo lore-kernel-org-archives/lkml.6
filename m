@@ -1,80 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754768AbeDBWvm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:51:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49674 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754522AbeDBWvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:51:41 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net-next] rxrpc: Fix undefined packet handling
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 02 Apr 2018 23:51:39 +0100
-Message-ID: <152270949946.20618.15535005483715424318.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1754602AbeDBW6l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:58:41 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45419 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754522AbeDBW6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 18:58:40 -0400
+X-Google-Smtp-Source: AIpwx4/b6L016KxVZGlFb8sLtNBleTsvydaEJKNDoIQOzx/L5tWhY+429FydKx87e3XibIaKEXrYMQ==
+From: Omar Sandoval <osandov@osandov.com>
+To: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-team@fb.com, Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>, stable@kernel.org
+Subject: [PATCH] bitmap: fix memset optimization on big-endian systems
+Date: Mon,  2 Apr 2018 15:58:31 -0700
+Message-Id: <817147544aa3ecc2b78d6cadeab713869d8805e6.1522709616.git.osandov@fb.com>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By analogy with other Rx implementations, RxRPC packet types 9, 10 and 11
-should just be discarded rather than being aborted like other undefined
-packet types.
+From: Omar Sandoval <osandov@fb.com>
 
-Reported-by: Jeffrey Altman <jaltman@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Commit 2a98dc028f91 introduced an optimization to bitmap_{set,clear}()
+which uses memset() when the start and length are constants aligned to a
+byte. This is wrong on big-endian systems; our bitmaps are arrays of
+unsigned long, so bit n is not at byte n / 8 in memory. This was caught
+by the Btrfs selftests, but the bitmap selftests also fail when run on a
+big-endian machine.
+
+We can still use memset if the start and length are aligned to an
+unsigned long, so do that on big-endian. The same problem applies to the
+memcmp in bitmap_equal(), so fix it there, too.
+
+Fixes: 2a98dc028f91 ("include/linux/bitmap.h: turn bitmap_set and bitmap_clear into memset when possible")
+Fixes: 2c6deb01525a ("bitmap: use memcmp optimisation in more situations")
+Cc: stable@kernel.org
+Reported-by: "Erhard F." <erhard_f@mailbox.org>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
+ include/linux/bitmap.h | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
- net/rxrpc/input.c    |    6 ++++++
- net/rxrpc/protocol.h |    6 ++++++
- 2 files changed, 12 insertions(+)
-
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 21800e6f5019..0410d2277ca2 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -1200,6 +1200,12 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 		    !rxrpc_validate_jumbo(skb))
- 			goto bad_message;
- 		break;
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 5f11fbdc27f8..1ee46f492267 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -302,12 +302,20 @@ static inline void bitmap_complement(unsigned long *dst, const unsigned long *sr
+ 		__bitmap_complement(dst, src, nbits);
+ }
+ 
++#ifdef __LITTLE_ENDIAN
++#define BITMAP_MEM_ALIGNMENT 8
++#else
++#define BITMAP_MEM_ALIGNMENT (8 * sizeof(unsigned long))
++#endif
++#define BITMAP_MEM_MASK (BITMAP_MEM_ALIGNMENT - 1)
 +
-+		/* Packet types 9-11 should just be ignored. */
-+	case RXRPC_PACKET_TYPE_PARAMS:
-+	case RXRPC_PACKET_TYPE_10:
-+	case RXRPC_PACKET_TYPE_11:
-+		goto discard;
- 	}
- 
- 	rcu_read_lock();
-diff --git a/net/rxrpc/protocol.h b/net/rxrpc/protocol.h
-index 4bddcf3face3..93da73bf7098 100644
---- a/net/rxrpc/protocol.h
-+++ b/net/rxrpc/protocol.h
-@@ -46,6 +46,9 @@ struct rxrpc_wire_header {
- #define RXRPC_PACKET_TYPE_CHALLENGE	6	/* connection security challenge (SRVR->CLNT) */
- #define RXRPC_PACKET_TYPE_RESPONSE	7	/* connection secutity response (CLNT->SRVR) */
- #define RXRPC_PACKET_TYPE_DEBUG		8	/* debug info request */
-+#define RXRPC_PACKET_TYPE_PARAMS	9	/* Parameter negotiation (unspec'd, ignore) */
-+#define RXRPC_PACKET_TYPE_10		10	/* Ignored */
-+#define RXRPC_PACKET_TYPE_11		11	/* Ignored */
- #define RXRPC_PACKET_TYPE_VERSION	13	/* version string request */
- #define RXRPC_N_PACKET_TYPES		14	/* number of packet types (incl type 0) */
- 
-@@ -78,6 +81,9 @@ struct rxrpc_wire_header {
- 		(1 << RXRPC_PACKET_TYPE_CHALLENGE) |	\
- 		(1 << RXRPC_PACKET_TYPE_RESPONSE) |	\
- 		/*(1 << RXRPC_PACKET_TYPE_DEBUG) | */	\
-+		(1 << RXRPC_PACKET_TYPE_PARAMS) |	\
-+		(1 << RXRPC_PACKET_TYPE_10) |		\
-+		(1 << RXRPC_PACKET_TYPE_11) |		\
- 		(1 << RXRPC_PACKET_TYPE_VERSION))
- 
- /*****************************************************************************/
+ static inline int bitmap_equal(const unsigned long *src1,
+ 			const unsigned long *src2, unsigned int nbits)
+ {
+ 	if (small_const_nbits(nbits))
+ 		return !((*src1 ^ *src2) & BITMAP_LAST_WORD_MASK(nbits));
+-	if (__builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
++	if (__builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
++	    IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
+ 		return !memcmp(src1, src2, nbits / 8);
+ 	return __bitmap_equal(src1, src2, nbits);
+ }
+@@ -358,8 +366,10 @@ static __always_inline void bitmap_set(unsigned long *map, unsigned int start,
+ {
+ 	if (__builtin_constant_p(nbits) && nbits == 1)
+ 		__set_bit(start, map);
+-	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
+-		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
++	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
++		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
++		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
++		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
+ 		memset((char *)map + start / 8, 0xff, nbits / 8);
+ 	else
+ 		__bitmap_set(map, start, nbits);
+@@ -370,8 +380,10 @@ static __always_inline void bitmap_clear(unsigned long *map, unsigned int start,
+ {
+ 	if (__builtin_constant_p(nbits) && nbits == 1)
+ 		__clear_bit(start, map);
+-	else if (__builtin_constant_p(start & 7) && IS_ALIGNED(start, 8) &&
+-		 __builtin_constant_p(nbits & 7) && IS_ALIGNED(nbits, 8))
++	else if (__builtin_constant_p(start & BITMAP_MEM_MASK) &&
++		 IS_ALIGNED(start, BITMAP_MEM_ALIGNMENT) &&
++		 __builtin_constant_p(nbits & BITMAP_MEM_MASK) &&
++		 IS_ALIGNED(nbits, BITMAP_MEM_ALIGNMENT))
+ 		memset((char *)map + start / 8, 0, nbits / 8);
+ 	else
+ 		__bitmap_clear(map, start, nbits);
+-- 
+2.16.3
