@@ -1,62 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932436AbeDBUVH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:21:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932412AbeDBUVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:21:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2071C217A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Mon, 2 Apr 2018 13:21:05 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        chao@kernel.org
-Subject: Re: [PATCH] f2fs: fix to show encrypt flag in FS_IOC_GETFLAGS
-Message-ID: <20180402202105.GB19195@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180402102446.32832-1-yuchao0@huawei.com>
+        id S1756746AbeDBUWx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 16:22:53 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34548 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756412AbeDBUWv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 16:22:51 -0400
+X-Google-Smtp-Source: AIpwx4//RxERT9nVwXjuHpoTcrXUgubv8CRhUuECWNFAGPOS7kQgmBnlDkxsQmccJ8DEC/DHHwPakQF/EdVBLbp40uY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180402102446.32832-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <1522693621-3124-1-git-send-email-agk@godking.net>
+References: <1522693621-3124-1-git-send-email-agk@godking.net>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 2 Apr 2018 23:22:50 +0300
+Message-ID: <CAHp75Vc1KV3i6Jp-t=cD5DjYDMPHA0Zz77RkN0kmrvb1WLj6gA@mail.gmail.com>
+Subject: Re: [PATCH] Add Second Fan Support for Thinkpad P50
+To: Alexander Kappner <agk@godking.net>
+Cc: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02, Chao Yu wrote:
-> This patch fixes to show encrypt flag in FS_IOC_GETFLAGS like ext4 does.
-
-Actually, we have to show internal flags owned by f2fs, not generic ones.
-We may need to define all of them separately?
-
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+On Mon, Apr 2, 2018 at 9:27 PM, Alexander Kappner <agk@godking.net> wrote:
+> The Thinkpad P50 has 2 fans. Add the 2FAN quirk so the tpacpi driver
+> properly reports both fan speeds.
+> Because the P50 doesn't report the version of its EC controller, we need to
+> identify it by BIOS version (N1).
+>
+> Signed-off-by: Alexander Kappner <agk@godking.net>
 > ---
->  fs/f2fs/file.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 8068b015ece5..271fadadaa36 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1584,8 +1584,13 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
+>  drivers/platform/x86/thinkpad_acpi.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+> index d5eaf3b1..ebdc300 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -8699,16 +8699,24 @@ static const struct attribute_group fan_attr_group = {
+>           .ec = TPID(__id1, __id2),             \
+>           .quirks = __quirks }
+>
+> +#define TPACPI_FAN_QL_BIOS(__id1, __id2, __quirks)     \
+
+I would rather name it ..._QB() instead
+
+Better of course to use three letters, though let's leave this when we
+really have a need.
+
+> +       { .vendor = PCI_VENDOR_ID_LENOVO,       \
+> +         .bios = TPID(__id1, __id2),           \
+> +         .ec = TPACPI_MATCH_ANY,               \
+> +         .quirks = __quirks }
+> +
+>  static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+>         TPACPI_FAN_QI('1', 'Y', TPACPI_FAN_Q1),
+>         TPACPI_FAN_QI('7', '8', TPACPI_FAN_Q1),
+>         TPACPI_FAN_QI('7', '6', TPACPI_FAN_Q1),
+>         TPACPI_FAN_QI('7', '0', TPACPI_FAN_Q1),
+>         TPACPI_FAN_QL('7', 'M', TPACPI_FAN_2FAN),
+> +       TPACPI_FAN_QL_BIOS('N', '1', TPACPI_FAN_2FAN) // Thinkpad P50 has 2 fans
+>  };
+>
+>  #undef TPACPI_FAN_QL
+>  #undef TPACPI_FAN_QI
+> +#undef TPACPI_FAN_QL_BIOS
+>
+>  static int __init fan_init(struct ibm_init_struct *iibm)
 >  {
->  	struct inode *inode = file_inode(filp);
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> -	unsigned int flags = fi->i_flags &
-> -			(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL);
-> +	unsigned int flags = fi->i_flags;
-> +
-> +	if (file_is_encrypt(inode))
-> +		flags |= FS_ENCRYPT_FL;
-> +
-> +	flags &= FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL;
-> +
->  	return put_user(flags, (int __user *)arg);
->  }
->  
-> -- 
-> 2.15.0.55.gc2ece9dc4de6
+> --
+> 2.1.4
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
