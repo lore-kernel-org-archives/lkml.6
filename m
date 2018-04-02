@@ -1,182 +1,851 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754339AbeDBHfK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 03:35:10 -0400
-Received: from mail-he1eur01on0050.outbound.protection.outlook.com ([104.47.0.50]:3360
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754213AbeDBHfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 03:35:07 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=talgi@mellanox.com;
-Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute max
- supported link bandwidth
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Tariq Toukan <tariqt@mellanox.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152244390359.135666.14890735614456271032.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <31e66048-e8b8-47ba-baf5-023560b4c124@mellanox.com>
- <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
-From: Tal Gilboa <talgi@mellanox.com>
-Message-ID: <50346f44-de3f-b226-69ad-6de45e94e261@mellanox.com>
-Date: Mon, 2 Apr 2018 10:34:58 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754358AbeDBHgW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 03:36:22 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:37076 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752583AbeDBHgU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 03:36:20 -0400
+Date: Mon, 2 Apr 2018 15:36:12 +0800
+From: Alan Kao <alankao@andestech.com>
+To: Alex Solomatnikov <sols@sifive.com>
+CC: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, "Namhyung Kim" <namhyung@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-riscv@lists.infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nick Hu <nickhu@andestech.com>, Greentime Hu <greentime@andestech.com>
+Subject: Re: [PATCH 1/2] perf: riscv: preliminary RISC-V support
+Message-ID: <20180402073611.GA7694@andestech.com>
+References: <1522051075-6442-1-git-send-email-alankao@andestech.com>
+ <1522051075-6442-2-git-send-email-alankao@andestech.com>
+ <CAJ2AOiNQuMJoPZPxy2CDFD0vnxk8E+N-8xiir2nPYKjWJKxshQ@mail.gmail.com>
+ <20180329023024.GA32659@andestech.com>
+ <CAJ2AOiPNquo1hGrYjsDcCM4st5Exa7x_-xUV=QW_MCBVCCCkBw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [193.47.165.251]
-X-ClientProxiedBy: AM4PR0701CA0032.eurprd07.prod.outlook.com
- (2603:10a6:200:42::42) To AM5PR0501MB2596.eurprd05.prod.outlook.com
- (2603:10a6:203:d::11)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: d4fd472d-5677-4f80-90ac-08d5986c3f4b
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0501MB2596;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0501MB2596;3:yI+NeNK+qQp41GixYGZJl711X3m7w3Dkvfk+W0Ruqqvm6LlYC2lloAx8FQV8v1jJVMzssrfsNl03GV08JBCQVs7z/UMdmb+AXhI168ejpxKlVC477x3DqdtYdsdpEE+SR27YsICQ3dEKxPXwvhZbN13eQRE+NQCDoCMjx/oOdqqew3l577wH0daHD9Iv2KDxwOangsLOc+9QJQVEd6tPWk+FC20u5r9TuynXjeKsmHfYLvQV/P8+dFXpORD0Z4B5;25:ESPvEVpFGzfQj9y5cpaQYhlvc/5su5fB4Ji2s417fib7yGDlMqlwq/PwM4+T/XfTsWs3Tb+FLwOW8eC3/mqC5LOcpiMeOij4vRGojPwP9Lp7IdvcHk7AikcXcbCKyzOP5EAqNQDgrZ5iM8ohy4ki+C9TYS4hNgoBPAlb/lxzJU+8PtIhKws/K08+YfE84IfClukbnAMUNC5ksvm5dn4XzkgTgtVIxxlvm5ZGc+cLdm2N0XylHlGyJ+w+cFgp0X3heprIpbD+O6w0W/imO/OJJXNov1xnE0/PMLy1Tujbsc2hfAxlZzl7sd3MiHFxXdKuZoLe6zD79C9usoQ01XjnGw==;31:iGgLE6scTvpyT1bt/j4Q9kjOg5nXXkXUGWrErpsFgtciRiB4jtaHBzCzf0ude701wrXjWLgwRLsS5oajRoGGRwOYyeb5qclyl26BQZ2z4azvXH+7e5+A38oRHPJAXny/J9XpWRAgnH132RUjs89+4tX7kOOiZTMDjLKppoJbSO8htupRBIePMaUQFYoP4Fk5P89lMpYJ221RmVfFUTBMb5qSQlwL6hil7iZJ91XwfgE=
-X-MS-TrafficTypeDiagnostic: AM5PR0501MB2596:
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0501MB2596;20:M+wcSYnDeFR+M+7t+xsxv140mIqZ/fkhbTUbf3NnAHRa+BJ37YF+KPciC2WjyxDEi5SMmVOnaBEL27KUKDscZWANSadwUoGdHCuN7ZDJdQsnISbs9FgM6GjvsFihgZG0q7Udu8Dzu+NOKuWZAmjx+jAoDl3kR2vR1VWsBqdq7aL/keIBwHoN9DNhyC+g8crtyomoxhmcIPT0ZLyzAUS8EEhmo042QQMV/sbASWtxBwStG99z24ZW1g2KrUDlFZLF+PXBwywgW/dwfcSZjWEmZKfQdPrEiDLovSyk1NJ0yGFxLclgoR04XdqF1CfUZ5unGznOdDmLcSTSlz1Ga3OP8yWtLxYyqrrmqzbhoSwlTzwcpEIn848h6fG+UMXRvrEexBiappZ0mtcdCEyT/sNSyQv5EymASKnpBY7iiM5qOiMD5/pXPhDCFrer+r5sNE47r5PwxFNtDuNV7IUFmfheNBzkBjI12j+mxhdU2g+VaS3eiMJVuRpw06WX1JSbaLX8;4:rRD2Jy/ox2tdmIg2metv52XtBBypqDLfgGgA9ptO+8q7Yh1rc/HzcDJQ3VCQdDL2ndansZwsM9b4ZUmGl4e4M2w0jH3Gkhe3PsQh/awiHcwFiHXWgEigymqyQtUW4+i1H5VeY0VMacoVwscQ2hO3WWsD5Ut2BYy8MvSlArSWg3EP5TrPqrV3KJx08RlkNKzPrFBXETKHiPcc3Njp9uS2u5WoeptanuhUJa8T75L6uT+lVWvZNPYpnRw0vif5s45dzKWMrPvtLLymYEinx5KOHNnxu6p7ewLm1rxH9mCBpe3ZqP+zLS+1oxydJXEqcnGVP+uiEuKLBl+TFTvVl2DQidEQ0owB0ouc3uv0GeZCkcc=
-X-Microsoft-Antispam-PRVS: <AM5PR0501MB2596A83B7D982BA324D24595D2A60@AM5PR0501MB2596.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(211936372134217)(153496737603132);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:AM5PR0501MB2596;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0501MB2596;
-X-Forefront-PRVS: 0630013541
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(346002)(366004)(396003)(376002)(39860400002)(39380400002)(199004)(189003)(51444003)(4326008)(59450400001)(186003)(16526019)(316002)(16576012)(50466002)(478600001)(77096007)(386003)(6116002)(3846002)(53936002)(105586002)(65806001)(26005)(65956001)(53546011)(23676004)(47776003)(106356001)(54906003)(52146003)(6246003)(58126008)(68736007)(66066001)(3260700006)(25786009)(76176011)(31696002)(31686004)(230700001)(97736004)(52116002)(2486003)(64126003)(36756003)(67846002)(6486002)(11346002)(6916009)(86362001)(305945005)(446003)(7736002)(229853002)(8936002)(93886005)(7416002)(8676002)(2616005)(81166006)(81156014)(65826007)(6666003)(5660300001)(476003)(2906002)(486005)(486005)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0501MB2596;H:[10.207.0.54];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA1MDFNQjI1OTY7MjM6bDNVQVN5OG9MaFRscUdoVHM4VFpZeUVD?=
- =?utf-8?B?T2VmNUxpV1g0dkpodW1FQmQweVJDYWRkS1hxeU9Ma0FGa2ZxdGVNR3Y3V3Z5?=
- =?utf-8?B?bXlYSlZhUzdFVHVWZTM1QldZTEQ1ejgzcmNrdXJ4dk5NeEFseERNaDZMaGVN?=
- =?utf-8?B?WVpBeCtPSi85T0VCZXRnZUpMM2VhYWFjbU13d25SeEtQMSs2U2JTV1lrY2Fl?=
- =?utf-8?B?bHNKK0VWemU0d3hhSlBtY1RLcmtQYmR5R3drNnpEQjd6Q0tHYU9WTDdVWXNH?=
- =?utf-8?B?cVNSWTRTMmZwZ2pySjlnQ0RwNkdBZU41R1FncFkvTzAwb0UyazN6LzFNakJT?=
- =?utf-8?B?NVovQ3RUQUMyVW5nRFh6UXQzMmxJTHJKbTg0WGlFVk90Y0FiYkZUZlFidnRR?=
- =?utf-8?B?RGt5bGtyeDYyK05yL2FDNnUvSXE3RVRuQUlLT2EwYUtnZ2IzTU1kNUJQSTJj?=
- =?utf-8?B?UkNEWng3b2FBNWtFcVlSSTdHY082alI5dFVLbTZKVEFOV2taTnBzZ2ZxVTNU?=
- =?utf-8?B?SC9rbE5BL0huaEM3ME9xdXRkYzgzeS9BVURLUlg5dEgyKy9GK0Z2SzFiZlB4?=
- =?utf-8?B?S2hHN0FTRzBvSC9uL1dob1lFMjY2UVVKZHpCZm9vUk1jSytrMnVlM3QxVXNL?=
- =?utf-8?B?RVFCYUY1eVhnUEN3K2s4eGEzZWhrdmZGMzh5ODJzVmQvTXY1bTFJQ25XVFRL?=
- =?utf-8?B?dnFsQ0pjeXZjV1krdG05WHRCSG9rcnlEZEM0WmwyMXdzelNFRVRheFk4Qm5B?=
- =?utf-8?B?QlNIaGRmaEYxSkhzbkpGRWl1bGtNQ1NTUHNEUG1xdGdFZXZNZGI0Ujg0am5L?=
- =?utf-8?B?Kzh6UExqUWdlczcxTTJWeURBYityZGtVVVZTaWIvd05WMG5Wai8rbzNhOFMr?=
- =?utf-8?B?dXFJVHlRMUhRS0NqVHVXRU44eWFXZWsrcEFtalpIZ2FSSU9oOGNVMXh5ZnFM?=
- =?utf-8?B?MDFHZEN3cVd0b2I1eXlWc0tncllpZDFtRW9LWWk1dVhnUFozUGo2bUtLa0Jm?=
- =?utf-8?B?a3NUZU0raWw0SFhZTlRmSllOSERYYmZHY01Ca2NycituRkM3b1VMdFR5K1JG?=
- =?utf-8?B?N0pSRzlzWDA4V2RwaG5BMmZYOTd6NWpneUQ1SXg0K2ZWemwwV0xlT0VBSmxl?=
- =?utf-8?B?cEdtenR5YVM5Wi9KQmRTRloxWVNidkNnSEFOT2ErWm44LzRpNEVycDVKWXZ1?=
- =?utf-8?B?RlVwampQZkdKSzluSTg4Ukk4STJFeEZuekxOL0tvMjJwWU5UTXZEdGNXYjFz?=
- =?utf-8?B?NHVHdXE5cjJ3aGdhdVRYTUFvd1Q5amJLY1JmVDc1SUhXUkVhR09BemtoZ29B?=
- =?utf-8?B?NUFMOWRUNEhPa2VPd2ZuWEJ3VGJUSHJvdk4zbUZFc1RYSmdhZjlkbHd0U3Uz?=
- =?utf-8?B?bEh5Y25nQWN1NFdmM21pUzRCWlRURmE3RFN3MUJVMS9tOGJUOHFpZXlOTXNG?=
- =?utf-8?B?SU4vQ2F5QUYwV3B5ajJ5VHhIQjdpaGtqK2VSQ0orUFIvanBJdG9VckQwN0di?=
- =?utf-8?B?bWxrK1Jrd2F2NDFrZjNac1ludXZZaVMxVTQ5bUJ0NlFkU25mM2plMzNqOW1v?=
- =?utf-8?B?a2N0RU0wTHgyQlFsbWw2LzZ0TFlyK0hVcW1ncVh5bTViRkNEd3JYZXU5MlN2?=
- =?utf-8?B?S1Z5ZW02My9kSUwvNUFudStpVUIrdllPSVRmSlFQZUVwOWZoU25Jd3padWJt?=
- =?utf-8?B?bGJRK2U2Zkt2NWNsbXlSU3lNU3lXNzFXd1lSVUNoczFvczB4NFRZOEpRdTB0?=
- =?utf-8?B?bjhpc05WQ2J1aVR2SW4yRHpNa3Jib1VVMWdOdGVqczFYaVJPQ2E4MG1WbHBk?=
- =?utf-8?B?SjBoelE0eXZoRnc0cTN2N1c1QTFCVGxySi82dDlCRHJ3M1hlZHpzMzRVNmNR?=
- =?utf-8?B?cm9rUGlPUnlCTUNGOGN6MCtWY2FWNm1TWWcvL25nSDlHZ0NVcDdLTzFJemYv?=
- =?utf-8?B?S1g2ejZZM2t6MXl0QjZmaS9rclNXWjdJclQwbE05QmZKVmNmTjZYTlh4OTFs?=
- =?utf-8?B?RHNGcmxsNHV4YVZUTmUvTkF4d0Z2b3RhbjF2ZllveHkrTm1YMUZjMnpSUDNL?=
- =?utf-8?B?WHUrTnBXSlQ4OGlmZEpWMW5QQkN6dVFwRUZNVXV3cldoQS9lZzkwYksvbWpi?=
- =?utf-8?Q?vZc+gNap3JK1yDCv3u7UtrXTNDWBBcqPFtuM4CeZv4lPS4?=
-X-Microsoft-Antispam-Message-Info: m8avAksBDxh7mjg1a4Vc6jAE1VFtm7vxZpB5q03YVILQJyJpy6kEXzNl17uhb89zFqgI/mb0w8a7iAIvIPQX3yz1M1nTFexD8A4vDwTOUeJgO3z3NAGHrvW3YiUjEW/bAnG9n1Ry4j/9iGPXG3fOLhY/0IF1InbCrXDg94FLOc+1bE3BLV7PBWr0f73Wy9C2
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0501MB2596;6:YVHCxzjxyUk1emPymYqpNN2/vVIDJfxZEn+ANDc4octHVcNE4P0Bx11BSZ+AuN7sOmhF4ZPUXOxemw7fOlvmIOs2ap4IdxfDxh1TKpyNFm5xAC4Bqlrstghajj5bzVvFu2lNn73/Aoca+rngsOJUZEP0JVNmRmnuwFIVVH8Is3Sq+SgeNfGzvexuUDjvQvfAwAAUZjI6Gdt25WUG6zUiHEb+sjH4KIXxtHwftodqcC6HFv3h1a/SjqSEdlcF5bvN+c0LCcJruFDpRPgBW915HZ0jnUwUeraQ7yslz5Va9NYkf8LJB3XQjXwOcZn7/7d78v79Pi2ZeYmDBhIEJJpvjeJJyHK/+Q8A8eVDL105VwGm32aT0S5aDpC+H2ZQis+x6GPsvXbPNGtI2NIre3lo0PLpRenMVp3im286gxEB/vUi91fKUXCr3dx548C/ewbOdGO4/+acek3Mosv9uZHU7A==;5:3b3X+mhhph39ArBe0mJzDynyFAsQJ95CWms79nwRJb4Ks9N1g/3yhrio1zxIWsYMqtbi2wB5rdT3R064dQacCnto0DGQUL2NSNEkreGYXiuKkntVzhmDFjOi9q0FG9OXRMleGKUQ5UdsXazszM79xvQiMpAxbXvMkTQLlhhQTEA=;24:pfRsGY1jEJB23aa10b/Ee4xSMhHd9r0KWyWtIE+knIxuJgKk4Bs6Ktws0lVbSLi1oqrpQBK0yh4nfFv20TwFSl3iavKU7M4CXCigaKh/Lok=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0501MB2596;7:hEsuYwdfAzWG6I7MJpoDfhTF2TipmhUhSAQ24ZytwAabYPIEh/BKr5cXxRmfuaCMklZgn4JCem7zvWJJWy0Qf/arIaUrWi9xWexRGYuCENT9gxxQBFA5j9SOhuDnMQwGL6VEyJDVx0zryIzBZnSUDlD+MMksEogpi6uop661/tjn/7CSGF47X7hiwkeyu8nohCS1MLJB5MtRyZ5jEIdRS11fLLXmGlKgghDyTsXWPLPL/SH06na88euESRxMbGNH
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2018 07:35:01.8761
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4fd472d-5677-4f80-90ac-08d5986c3f4b
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0501MB2596
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAJ2AOiPNquo1hGrYjsDcCM4st5Exa7x_-xUV=QW_MCBVCCCkBw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w327V9vT052225
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/2/2018 3:40 AM, Bjorn Helgaas wrote:
-> On Sun, Apr 01, 2018 at 11:38:53PM +0300, Tal Gilboa wrote:
->> On 3/31/2018 12:05 AM, Bjorn Helgaas wrote:
->>> From: Tal Gilboa <talgi@mellanox.com>
->>>
->>> Add pcie_bandwidth_capable() to compute the max link bandwidth supported by
->>> a device, based on the max link speed and width, adjusted by the encoding
->>> overhead.
->>>
->>> The maximum bandwidth of the link is computed as:
->>>
->>>     max_link_speed * max_link_width * (1 - encoding_overhead)
->>>
->>> The encoding overhead is about 20% for 2.5 and 5.0 GT/s links using 8b/10b
->>> encoding, and about 1.5% for 8 GT/s or higher speed links using 128b/130b
->>> encoding.
->>>
->>> Signed-off-by: Tal Gilboa <talgi@mellanox.com>
->>> [bhelgaas: adjust for pcie_get_speed_cap() and pcie_get_width_cap()
->>> signatures, don't export outside drivers/pci]
->>> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
->>> Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
->>> ---
->>>    drivers/pci/pci.c |   21 +++++++++++++++++++++
->>>    drivers/pci/pci.h |    9 +++++++++
->>>    2 files changed, 30 insertions(+)
->>>
->>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->>> index 43075be79388..9ce89e254197 100644
->>> --- a/drivers/pci/pci.c
->>> +++ b/drivers/pci/pci.c
->>> @@ -5208,6 +5208,27 @@ enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev)
->>>    	return PCIE_LNK_WIDTH_UNKNOWN;
->>>    }
->>> +/**
->>> + * pcie_bandwidth_capable - calculates a PCI device's link bandwidth capability
->>> + * @dev: PCI device
->>> + * @speed: storage for link speed
->>> + * @width: storage for link width
->>> + *
->>> + * Calculate a PCI device's link bandwidth by querying for its link speed
->>> + * and width, multiplying them, and applying encoding overhead.
->>> + */
->>> +u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed *speed,
->>> +			   enum pcie_link_width *width)
->>> +{
->>> +	*speed = pcie_get_speed_cap(dev);
->>> +	*width = pcie_get_width_cap(dev);
->>> +
->>> +	if (*speed == PCI_SPEED_UNKNOWN || *width == PCIE_LNK_WIDTH_UNKNOWN)
->>> +		return 0;
->>> +
->>> +	return *width * PCIE_SPEED2MBS_ENC(*speed);
->>> +}
->>> +
->>>    /**
->>>     * pci_select_bars - Make BAR mask from the type of resource
->>>     * @dev: the PCI device for which BAR mask is made
->>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
->>> index 66738f1050c0..2a50172b9803 100644
->>> --- a/drivers/pci/pci.h
->>> +++ b/drivers/pci/pci.h
->>> @@ -261,8 +261,17 @@ void pci_disable_bridge_window(struct pci_dev *dev);
->>>    	 (speed) == PCIE_SPEED_2_5GT ? "2.5 GT/s" : \
->>>    	 "Unknown speed")
->>> +/* PCIe speed to Mb/s with encoding overhead: 20% for gen2, ~1.5% for gen3 */
->>> +#define PCIE_SPEED2MBS_ENC(speed) \
->>
->> Missing gen4.
+On Sat, Mar 31, 2018 at 03:47:10PM -0700, Alex Solomatnikov wrote:
+
+The original guess was that maybe, an counter value on a hart is picked
+as the minusend, and an old counter value on another hart was recorded
+as the subtrahend but numerically larger.  Then, the overflow causes 
+by that subtraction.  Please let me name this guess as 
+"cross-hart subtraction."
+
+> You can add a skew between cores in qemu, something like this:
 > 
-> I made it "gen3+".  I think that's accurate, isn't it?  The spec
-> doesn't seem to actually use "gen3" as a specific term, but sec 4.2.2
-> says rates of 8 GT/s or higher (which I think includes gen3 and gen4)
-> use 128b/130b encoding.
+> case CSR_INSTRET:
+>         core_id()*return cpu_get_host_ticks()/10;
+>     break;
+> case CSR_CYCLE:
+>         return cpu_get_host_ticks();
+>     break;
 > 
 
-I meant that PCIE_SPEED_16_0GT will return 0 from this macro since it 
-wasn't added. Need to return 15754.
+However, I tried similar stuff to reproduce the phenomenon but in vain.
+It seems that the cross-hart subtration doesn't even happen, because generic
+code handles them.   While I am still looking for the proof to it, I would 
+like to have more information on this first:
+
+* What is the frequency of that "funny number" event?  Was that often?
+
+* If you monitor only one hart, will the event disappear?
+
+* What will happen if you change the counter_width to fit U54's counter width?
+
+* Is the test program you used open-sourced?
+
+> Alex
+> 
+
+Many thanks,
+Alan
+
+> On Wed, Mar 28, 2018 at 7:30 PM, Alan Kao <alankao@andestech.com> wrote:
+> > Hi Alex,
+> >
+> > I'm appreciated for your reply and tests.
+> >
+> > On Wed, Mar 28, 2018 at 03:58:41PM -0700, Alex Solomatnikov wrote:
+> >> Did you test this code?
+> >
+> > I did test this patch on QEMU's virt model with multi-hart, which is the only
+> > RISC-V machine I have for now.  But as I mentioned in
+> > https://github.com/riscv/riscv-qemu/pull/115 , the hardware counter support
+> > in QEMU is not fully conformed to the 1.10 Priv-Spec, so I had to slightly
+> > tweak the code to make reading work.
+> >
+> > Specifically, the read to cycle and instret in QEMU looks like this:
+> > ...
+> > case CSR_INSTRET:
+> > case CSR_CYCLE:
+> > //  if (ctr_ok) {
+> >         return cpu_get_host_ticks();
+> > //  }
+> >     break;
+> > ...
+> > and the two lines of comment was the tweak.
+> >
+> > On such environment, I did not get anything unexpected.  No matter which of them
+> > is requested, QEMU returns the host's tick.
+> >
+> >>
+> >> I got funny numbers when I tried to run it on HiFive Unleashed:
+> >>
+> >> perf stat mem-latency
+> >> ...
+> >>
+> >>  Performance counter stats for 'mem-latency':
+> >>
+> >>         157.907000      task-clock (msec)         #    0.940 CPUs utilized
+> >>
+> >>                  1      context-switches          #    0.006 K/sec
+> >>
+> >>                  1      cpu-migrations            #    0.006 K/sec
+> >>
+> >>               4102      page-faults               #    0.026 M/sec
+> >>
+> >>          157923752      cycles                    #    1.000 GHz
+> >>
+> >> 9223372034948899840      instructions              # 58403957087.78  insn
+> >> per cycle
+> >>    <not supported>      branches
+> >>
+> >>    <not supported>      branch-misses
+> >>
+> >>
+> >>        0.168046000 seconds time elapsed
+> >>
+> >>
+> >> Tracing read_counter(), I see this:
+> >>
+> >> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.058809] CPU 3:
+> >> read_counter  idx=0 val=2528358954912
+> >> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.063339] CPU 3:
+> >> read_counter  idx=1 val=53892244920
+> >> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.118160] CPU 3:
+> >> read_counter  idx=0 val=2528418303035
+> >> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.122694] CPU 3:
+> >> read_counter  idx=1 val=53906699665
+> >> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.216736] CPU 1:
+> >> read_counter  idx=0 val=2528516878664
+> >> Jan  1 00:41:50 buildroot user.info kernel: [ 2510.221270] CPU 1:
+> >> read_counter  idx=1 val=51986369142
+> >>
+> >> It looks like the counter values from different cores are subtracted and
+> >> wraparound occurs.
+> >>
+> >
+> > Thanks for the hint.  It makes sense.  9223372034948899840 is 7fffffff8e66a400,
+> > which should be a wraparound with the mask I set (63-bit) in the code.
+> >
+> > I will try this direction.  Ideally, we can solve it by explicitly syncing the
+> > hwc->prev_count when a cpu migration event happens.
+> >
+> >>
+> >> Also, core IDs and socket IDs are wrong in perf report:
+> >>
+> >
+> > As Palmer has replied to this, I have no comment here.
+> >
+> >> perf report --header -I
+> >> Error:
+> >> The perf.data file has no samples!
+> >> # ========
+> >> # captured on: Thu Jan  1 02:52:07 1970
+> >> # hostname : buildroot
+> >> # os release : 4.15.0-00045-g0d7c030-dirty
+> >> # perf version : 4.15.0
+> >> # arch : riscv64
+> >> # nrcpus online : 4
+> >> # nrcpus avail : 5
+> >> # total memory : 8188340 kB
+> >> # cmdline : /usr/bin/perf record -F 1000 lat_mem_rd -P 1 -W 1 -N 1 -t 10
+> >> # event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } =
+> >> 1000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap =
+> >> 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3,
+> >> sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1
+> >> # sibling cores   : 1
+> >> # sibling cores   : 2
+> >> # sibling cores   : 3
+> >> # sibling cores   : 4
+> >> # sibling threads : 1
+> >> # sibling threads : 2
+> >> # sibling threads : 3
+> >> # sibling threads : 4
+> >> # CPU 0: Core ID -1, Socket ID -1
+> >> # CPU 1: Core ID 0, Socket ID -1
+> >> # CPU 2: Core ID 0, Socket ID -1
+> >> # CPU 3: Core ID 0, Socket ID -1
+> >> # CPU 4: Core ID 0, Socket ID -1
+> >> # pmu mappings: cpu = 4, software = 1
+> >> # CPU cache info:
+> >> #  L1 Instruction          32K [1]
+> >> #  L1 Data                 32K [1]
+> >> #  L1 Instruction          32K [2]
+> >> #  L1 Data                 32K [2]
+> >> #  L1 Instruction          32K [3]
+> >> #  L1 Data                 32K [3]
+> >> # missing features: TRACING_DATA BUILD_ID CPUDESC CPUID NUMA_TOPOLOGY
+> >> BRANCH_STACK GROUP_DESC AUXTRACE STAT
+> >> # ========
+> >>
+> >>
+> >> Alex
+> >>
+> >
+> > Many thanks,
+> > Alan
+> >
+> >> On Mon, Mar 26, 2018 at 12:57 AM, Alan Kao <alankao@andestech.com> wrote:
+> >>
+> >> > This patch provide a basic PMU, riscv_base_pmu, which supports two
+> >> > general hardware event, instructions and cycles.  Furthermore, this
+> >> > PMU serves as a reference implementation to ease the portings in
+> >> > the future.
+> >> >
+> >> > riscv_base_pmu should be able to run on any RISC-V machine that
+> >> > conforms to the Priv-Spec.  Note that the latest qemu model hasn't
+> >> > fully support a proper behavior of Priv-Spec 1.10 yet, but work
+> >> > around should be easy with very small fixes.  Please check
+> >> > https://github.com/riscv/riscv-qemu/pull/115 for future updates.
+> >> >
+> >> > Cc: Nick Hu <nickhu@andestech.com>
+> >> > Cc: Greentime Hu <greentime@andestech.com>
+> >> > Signed-off-by: Alan Kao <alankao@andestech.com>
+> >> > ---
+> >> >  arch/riscv/Kconfig                  |  12 +
+> >> >  arch/riscv/include/asm/perf_event.h |  76 +++++-
+> >> >  arch/riscv/kernel/Makefile          |   1 +
+> >> >  arch/riscv/kernel/perf_event.c      | 469 ++++++++++++++++++++++++++++++
+> >> > ++++++
+> >> >  4 files changed, 554 insertions(+), 4 deletions(-)
+> >> >  create mode 100644 arch/riscv/kernel/perf_event.c
+> >> >
+> >> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> >> > index 310b9a5d6737..dd4aecfb5265 100644
+> >> > --- a/arch/riscv/Kconfig
+> >> > +++ b/arch/riscv/Kconfig
+> >> > @@ -195,6 +195,18 @@ config RISCV_ISA_C
+> >> >  config RISCV_ISA_A
+> >> >         def_bool y
+> >> >
+> >> > +menu "PMU type"
+> >> > +       depends on PERF_EVENTS
+> >> > +
+> >> > +config RISCV_BASE_PMU
+> >> > +       bool "Base Performance Monitoring Unit"
+> >> > +       def_bool y
+> >> > +       help
+> >> > +         A base PMU that serves as a reference implementation and has
+> >> > limited
+> >> > +         feature of perf.
+> >> > +
+> >> > +endmenu
+> >> > +
+> >> >  endmenu
+> >> >
+> >> >  menu "Kernel type"
+> >> > diff --git a/arch/riscv/include/asm/perf_event.h
+> >> > b/arch/riscv/include/asm/perf_event.h
+> >> > index e13d2ff29e83..98e2efb02d25 100644
+> >> > --- a/arch/riscv/include/asm/perf_event.h
+> >> > +++ b/arch/riscv/include/asm/perf_event.h
+> >> > @@ -1,13 +1,81 @@
+> >> > +/* SPDX-License-Identifier: GPL-2.0 */
+> >> >  /*
+> >> >   * Copyright (C) 2018 SiFive
+> >> > + * Copyright (C) 2018 Andes Technology Corporation
+> >> >   *
+> >> > - * This program is free software; you can redistribute it and/or
+> >> > - * modify it under the terms of the GNU General Public Licence
+> >> > - * as published by the Free Software Foundation; either version
+> >> > - * 2 of the Licence, or (at your option) any later version.
+> >> >   */
+> >> >
+> >> >  #ifndef _ASM_RISCV_PERF_EVENT_H
+> >> >  #define _ASM_RISCV_PERF_EVENT_H
+> >> >
+> >> > +#include <linux/perf_event.h>
+> >> > +#include <linux/ptrace.h>
+> >> > +
+> >> > +#define RISCV_BASE_COUNTERS    2
+> >> > +
+> >> > +/*
+> >> > + * The RISCV_MAX_COUNTERS parameter should be specified.
+> >> > + */
+> >> > +
+> >> > +#ifdef CONFIG_RISCV_BASE_PMU
+> >> > +#define RISCV_MAX_COUNTERS     2
+> >> > +#endif
+> >> > +
+> >> > +#ifndef RISCV_MAX_COUNTERS
+> >> > +#error "Please provide a valid RISCV_MAX_COUNTERS for the PMU."
+> >> > +#endif
+> >> > +
+> >> > +/*
+> >> > + * These are the indexes of bits in counteren register *minus* 1,
+> >> > + * except for cycle.  It would be coherent if it can directly mapped
+> >> > + * to counteren bit definition, but there is a *time* register at
+> >> > + * counteren[1].  Per-cpu structure is scarce resource here.
+> >> > + *
+> >> > + * According to the spec, an implementation can support counter up to
+> >> > + * mhpmcounter31, but many high-end processors has at most 6 general
+> >> > + * PMCs, we give the definition to MHPMCOUNTER8 here.
+> >> > + */
+> >> > +#define RISCV_PMU_CYCLE                0
+> >> > +#define RISCV_PMU_INSTRET      1
+> >> > +#define RISCV_PMU_MHPMCOUNTER3 2
+> >> > +#define RISCV_PMU_MHPMCOUNTER4 3
+> >> > +#define RISCV_PMU_MHPMCOUNTER5 4
+> >> > +#define RISCV_PMU_MHPMCOUNTER6 5
+> >> > +#define RISCV_PMU_MHPMCOUNTER7 6
+> >> > +#define RISCV_PMU_MHPMCOUNTER8 7
+> >> > +
+> >> > +#define RISCV_OP_UNSUPP                (-EOPNOTSUPP)
+> >> > +
+> >> > +struct cpu_hw_events {
+> >> > +       /* # currently enabled events*/
+> >> > +       int                     n_events;
+> >> > +       /* currently enabled events */
+> >> > +       struct perf_event       *events[RISCV_MAX_COUNTERS];
+> >> > +       /* vendor-defined PMU data */
+> >> > +       void                    *platform;
+> >> > +};
+> >> > +
+> >> > +struct riscv_pmu {
+> >> > +       struct pmu      *pmu;
+> >> > +
+> >> > +       /* generic hw/cache events table */
+> >> > +       const int       *hw_events;
+> >> > +       const int       (*cache_events)[PERF_COUNT_HW_CACHE_MAX]
+> >> > +                                      [PERF_COUNT_HW_CACHE_OP_MAX]
+> >> > +                                      [PERF_COUNT_HW_CACHE_RESULT_MAX];
+> >> > +       /* method used to map hw/cache events */
+> >> > +       int             (*map_hw_event)(u64 config);
+> >> > +       int             (*map_cache_event)(u64 config);
+> >> > +
+> >> > +       /* max generic hw events in map */
+> >> > +       int             max_events;
+> >> > +       /* number total counters, 2(base) + x(general) */
+> >> > +       int             num_counters;
+> >> > +       /* the width of the counter */
+> >> > +       int             counter_width;
+> >> > +
+> >> > +       /* vendor-defined PMU features */
+> >> > +       void            *platform;
+> >> > +};
+> >> > +
+> >> >  #endif /* _ASM_RISCV_PERF_EVENT_H */
+> >> > diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> >> > index 196f62ffc428..849c38d9105f 100644
+> >> > --- a/arch/riscv/kernel/Makefile
+> >> > +++ b/arch/riscv/kernel/Makefile
+> >> > @@ -36,5 +36,6 @@ obj-$(CONFIG_SMP)             += smp.o
+> >> >  obj-$(CONFIG_MODULES)          += module.o
+> >> >  obj-$(CONFIG_FUNCTION_TRACER)  += mcount.o
+> >> >  obj-$(CONFIG_FUNCTION_GRAPH_TRACER)    += ftrace.o
+> >> > +obj-$(CONFIG_PERF_EVENTS)      += perf_event.o
+> >> >
+> >> >  clean:
+> >> > diff --git a/arch/riscv/kernel/perf_event.c b/arch/riscv/kernel/perf_
+> >> > event.c
+> >> > new file mode 100644
+> >> > index 000000000000..b78cb486683b
+> >> > --- /dev/null
+> >> > +++ b/arch/riscv/kernel/perf_event.c
+> >> > @@ -0,0 +1,469 @@
+> >> > +/* SPDX-License-Identifier: GPL-2.0 */
+> >> > +/*
+> >> > + * Copyright (C) 2008 Thomas Gleixner <tglx@linutronix.de>
+> >> > + * Copyright (C) 2008-2009 Red Hat, Inc., Ingo Molnar
+> >> > + * Copyright (C) 2009 Jaswinder Singh Rajput
+> >> > + * Copyright (C) 2009 Advanced Micro Devices, Inc., Robert Richter
+> >> > + * Copyright (C) 2008-2009 Red Hat, Inc., Peter Zijlstra
+> >> > + * Copyright (C) 2009 Intel Corporation, <markus.t.metzger@intel.com>
+> >> > + * Copyright (C) 2009 Google, Inc., Stephane Eranian
+> >> > + * Copyright 2014 Tilera Corporation. All Rights Reserved.
+> >> > + * Copyright (C) 2018 Andes Technology Corporation
+> >> > + *
+> >> > + * Perf_events support for RISC-V platforms.
+> >> > + *
+> >> > + * Since the spec. (as of now, Priv-Spec 1.10) does not provide enough
+> >> > + * functionality for perf event to fully work, this file provides
+> >> > + * the very basic framework only.
+> >> > + *
+> >> > + * For platform portings, please check Documentations/riscv/pmu.txt.
+> >> > + *
+> >> > + * The Copyright line includes x86 and tile ones.
+> >> > + */
+> >> > +
+> >> > +#include <linux/kprobes.h>
+> >> > +#include <linux/kernel.h>
+> >> > +#include <linux/kdebug.h>
+> >> > +#include <linux/mutex.h>
+> >> > +#include <linux/bitmap.h>
+> >> > +#include <linux/irq.h>
+> >> > +#include <linux/interrupt.h>
+> >> > +#include <linux/perf_event.h>
+> >> > +#include <linux/atomic.h>
+> >> > +#include <asm/perf_event.h>
+> >> > +
+> >> > +static const struct riscv_pmu *riscv_pmu __read_mostly;
+> >> > +static DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events);
+> >> > +
+> >> > +/*
+> >> > + * Hardware & cache maps and their methods
+> >> > + */
+> >> > +
+> >> > +static const int riscv_hw_event_map[] = {
+> >> > +       [PERF_COUNT_HW_CPU_CYCLES]              = RISCV_PMU_CYCLE,
+> >> > +       [PERF_COUNT_HW_INSTRUCTIONS]            = RISCV_PMU_INSTRET,
+> >> > +       [PERF_COUNT_HW_CACHE_REFERENCES]        = RISCV_OP_UNSUPP,
+> >> > +       [PERF_COUNT_HW_CACHE_MISSES]            = RISCV_OP_UNSUPP,
+> >> > +       [PERF_COUNT_HW_BRANCH_INSTRUCTIONS]     = RISCV_OP_UNSUPP,
+> >> > +       [PERF_COUNT_HW_BRANCH_MISSES]           = RISCV_OP_UNSUPP,
+> >> > +       [PERF_COUNT_HW_BUS_CYCLES]              = RISCV_OP_UNSUPP,
+> >> > +};
+> >> > +
+> >> > +#define C(x) PERF_COUNT_HW_CACHE_##x
+> >> > +static const int riscv_cache_event_map[PERF_COUNT_HW_CACHE_MAX]
+> >> > +[PERF_COUNT_HW_CACHE_OP_MAX]
+> >> > +[PERF_COUNT_HW_CACHE_RESULT_MAX] = {
+> >> > +       [C(L1D)] = {
+> >> > +               [C(OP_READ)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_WRITE)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_PREFETCH)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +       },
+> >> > +       [C(L1I)] = {
+> >> > +               [C(OP_READ)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_WRITE)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_PREFETCH)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +       },
+> >> > +       [C(LL)] = {
+> >> > +               [C(OP_READ)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_WRITE)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_PREFETCH)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +       },
+> >> > +       [C(DTLB)] = {
+> >> > +               [C(OP_READ)] = {
+> >> > +                       [C(RESULT_ACCESS)] =  RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] =  RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_WRITE)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_PREFETCH)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +       },
+> >> > +       [C(ITLB)] = {
+> >> > +               [C(OP_READ)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_WRITE)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_PREFETCH)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +       },
+> >> > +       [C(BPU)] = {
+> >> > +               [C(OP_READ)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_WRITE)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +               [C(OP_PREFETCH)] = {
+> >> > +                       [C(RESULT_ACCESS)] = RISCV_OP_UNSUPP,
+> >> > +                       [C(RESULT_MISS)] = RISCV_OP_UNSUPP,
+> >> > +               },
+> >> > +       },
+> >> > +};
+> >> > +
+> >> > +static int riscv_map_hw_event(u64 config)
+> >> > +{
+> >> > +       if (config >= riscv_pmu->max_events)
+> >> > +               return -EINVAL;
+> >> > +
+> >> > +       return riscv_pmu->hw_events[config];
+> >> > +}
+> >> > +
+> >> > +int riscv_map_cache_decode(u64 config, unsigned int *type,
+> >> > +                          unsigned int *op, unsigned int *result)
+> >> > +{
+> >> > +       return -ENOENT;
+> >> > +}
+> >> > +
+> >> > +static int riscv_map_cache_event(u64 config)
+> >> > +{
+> >> > +       unsigned int type, op, result;
+> >> > +       int err = -ENOENT;
+> >> > +               int code;
+> >> > +
+> >> > +       err = riscv_map_cache_decode(config, &type, &op, &result);
+> >> > +       if (!riscv_pmu->cache_events || err)
+> >> > +               return err;
+> >> > +
+> >> > +       if (type >= PERF_COUNT_HW_CACHE_MAX ||
+> >> > +           op >= PERF_COUNT_HW_CACHE_OP_MAX ||
+> >> > +           result >= PERF_COUNT_HW_CACHE_RESULT_MAX)
+> >> > +               return -EINVAL;
+> >> > +
+> >> > +       code = (*riscv_pmu->cache_events)[type][op][result];
+> >> > +       if (code == RISCV_OP_UNSUPP)
+> >> > +               return -EINVAL;
+> >> > +
+> >> > +       return code;
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * Low-level functions: reading/writing counters
+> >> > + */
+> >> > +
+> >> > +static inline u64 read_counter(int idx)
+> >> > +{
+> >> > +       u64 val = 0;
+> >> > +
+> >> > +       switch (idx) {
+> >> > +       case RISCV_PMU_CYCLE:
+> >> > +               val = csr_read(cycle);
+> >> > +               break;
+> >> > +       case RISCV_PMU_INSTRET:
+> >> > +               val = csr_read(instret);
+> >> > +               break;
+> >> > +       default:
+> >> > +               WARN_ON_ONCE(idx < 0 || idx > RISCV_MAX_COUNTERS);
+> >> > +               return -EINVAL;
+> >> > +       }
+> >> > +
+> >> > +       return val;
+> >> > +}
+> >> > +
+> >> > +static inline void write_counter(int idx, u64 value)
+> >> > +{
+> >> > +       /* currently not supported */
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * pmu->read: read and update the counter
+> >> > + *
+> >> > + * Other architectures' implementation often have a xxx_perf_event_update
+> >> > + * routine, which can return counter values when called in the IRQ, but
+> >> > + * return void when being called by the pmu->read method.
+> >> > + */
+> >> > +static void riscv_pmu_read(struct perf_event *event)
+> >> > +{
+> >> > +       struct hw_perf_event *hwc = &event->hw;
+> >> > +       u64 prev_raw_count, new_raw_count;
+> >> > +       u64 oldval;
+> >> > +       int idx = hwc->idx;
+> >> > +       u64 delta;
+> >> > +
+> >> > +       do {
+> >> > +               prev_raw_count = local64_read(&hwc->prev_count);
+> >> > +               new_raw_count = read_counter(idx);
+> >> > +
+> >> > +               oldval = local64_cmpxchg(&hwc->prev_count, prev_raw_count,
+> >> > +                                        new_raw_count);
+> >> > +       } while (oldval != prev_raw_count);
+> >> > +
+> >> > +       /*
+> >> > +        * delta is the value to update the counter we maintain in the
+> >> > kernel.
+> >> > +        */
+> >> > +       delta = (new_raw_count - prev_raw_count) &
+> >> > +               ((1ULL << riscv_pmu->counter_width) - 1);
+> >> > +       local64_add(delta, &event->count);
+> >> > +       /*
+> >> > +        * Something like local64_sub(delta, &hwc->period_left) here is
+> >> > +        * needed if there is an interrupt for perf.
+> >> > +        */
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * State transition functions:
+> >> > + *
+> >> > + * stop()/start() & add()/del()
+> >> > + */
+> >> > +
+> >> > +/*
+> >> > + * pmu->stop: stop the counter
+> >> > + */
+> >> > +static void riscv_pmu_stop(struct perf_event *event, int flags)
+> >> > +{
+> >> > +       struct hw_perf_event *hwc = &event->hw;
+> >> > +
+> >> > +       WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
+> >> > +       hwc->state |= PERF_HES_STOPPED;
+> >> > +
+> >> > +       if ((flags & PERF_EF_UPDATE) && !(hwc->state & PERF_HES_UPTODATE))
+> >> > {
+> >> > +               riscv_pmu_read(event);
+> >> > +               hwc->state |= PERF_HES_UPTODATE;
+> >> > +       }
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * pmu->start: start the event.
+> >> > + */
+> >> > +static void riscv_pmu_start(struct perf_event *event, int flags)
+> >> > +{
+> >> > +       struct hw_perf_event *hwc = &event->hw;
+> >> > +
+> >> > +       if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
+> >> > +               return;
+> >> > +
+> >> > +       if (flags & PERF_EF_RELOAD) {
+> >> > +               WARN_ON_ONCE(!(event->hw.state & PERF_HES_UPTODATE));
+> >> > +
+> >> > +               /*
+> >> > +                * Set the counter to the period to the next interrupt
+> >> > here,
+> >> > +                * if you have any.
+> >> > +                */
+> >> > +       }
+> >> > +
+> >> > +       hwc->state = 0;
+> >> > +       perf_event_update_userpage(event);
+> >> > +
+> >> > +       /*
+> >> > +        * Since we cannot write to counters, this serves as an
+> >> > initialization
+> >> > +        * to the delta-mechanism in pmu->read(); otherwise, the delta
+> >> > would be
+> >> > +        * wrong when pmu->read is called for the first time.
+> >> > +        */
+> >> > +       if (local64_read(&hwc->prev_count) == 0)
+> >> > +               local64_set(&hwc->prev_count, read_counter(hwc->idx));
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * pmu->add: add the event to PMU.
+> >> > + */
+> >> > +static int riscv_pmu_add(struct perf_event *event, int flags)
+> >> > +{
+> >> > +       struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+> >> > +       struct hw_perf_event *hwc = &event->hw;
+> >> > +
+> >> > +       if (cpuc->n_events == riscv_pmu->num_counters)
+> >> > +               return -ENOSPC;
+> >> > +
+> >> > +       /*
+> >> > +        * We don't have general conunters, so no binding-event-to-counter
+> >> > +        * process here.
+> >> > +        *
+> >> > +        * Indexing using hwc->config generally not works, since config may
+> >> > +        * contain extra information, but here the only info we have in
+> >> > +        * hwc->config is the event index.
+> >> > +        */
+> >> > +       hwc->idx = hwc->config;
+> >> > +       cpuc->events[hwc->idx] = event;
+> >> > +       cpuc->n_events++;
+> >> > +
+> >> > +       hwc->state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
+> >> > +
+> >> > +       if (flags & PERF_EF_START)
+> >> > +               riscv_pmu_start(event, PERF_EF_RELOAD);
+> >> > +
+> >> > +       return 0;
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * pmu->del: delete the event from PMU.
+> >> > + */
+> >> > +static void riscv_pmu_del(struct perf_event *event, int flags)
+> >> > +{
+> >> > +       struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+> >> > +       struct hw_perf_event *hwc = &event->hw;
+> >> > +
+> >> > +       cpuc->events[hwc->idx] = NULL;
+> >> > +       cpuc->n_events--;
+> >> > +       riscv_pmu_stop(event, PERF_EF_UPDATE);
+> >> > +       perf_event_update_userpage(event);
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * Interrupt
+> >> > + */
+> >> > +
+> >> > +static DEFINE_MUTEX(pmc_reserve_mutex);
+> >> > +typedef void (*perf_irq_t)(void *riscv_perf_irq);
+> >> > +perf_irq_t perf_irq;
+> >> > +
+> >> > +void riscv_pmu_handle_irq(void *riscv_perf_irq)
+> >> > +{
+> >> > +}
+> >> > +
+> >> > +static perf_irq_t reserve_pmc_hardware(void)
+> >> > +{
+> >> > +       perf_irq_t old;
+> >> > +
+> >> > +       mutex_lock(&pmc_reserve_mutex);
+> >> > +       old = perf_irq;
+> >> > +       perf_irq = &riscv_pmu_handle_irq;
+> >> > +       mutex_unlock(&pmc_reserve_mutex);
+> >> > +
+> >> > +       return old;
+> >> > +}
+> >> > +
+> >> > +void release_pmc_hardware(void)
+> >> > +{
+> >> > +       mutex_lock(&pmc_reserve_mutex);
+> >> > +       perf_irq = NULL;
+> >> > +       mutex_unlock(&pmc_reserve_mutex);
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * Event Initialization
+> >> > + */
+> >> > +
+> >> > +static atomic_t riscv_active_events;
+> >> > +
+> >> > +static void riscv_event_destroy(struct perf_event *event)
+> >> > +{
+> >> > +       if (atomic_dec_return(&riscv_active_events) == 0)
+> >> > +               release_pmc_hardware();
+> >> > +}
+> >> > +
+> >> > +static int riscv_event_init(struct perf_event *event)
+> >> > +{
+> >> > +       struct perf_event_attr *attr = &event->attr;
+> >> > +       struct hw_perf_event *hwc = &event->hw;
+> >> > +       perf_irq_t old_irq_handler = NULL;
+> >> > +       int code;
+> >> > +
+> >> > +       if (atomic_inc_return(&riscv_active_events) == 1)
+> >> > +               old_irq_handler = reserve_pmc_hardware();
+> >> > +
+> >> > +       if (old_irq_handler) {
+> >> > +               pr_warn("PMC hardware busy (reserved by oprofile)\n");
+> >> > +               atomic_dec(&riscv_active_events);
+> >> > +               return -EBUSY;
+> >> > +       }
+> >> > +
+> >> > +       switch (event->attr.type) {
+> >> > +       case PERF_TYPE_HARDWARE:
+> >> > +               code = riscv_pmu->map_hw_event(attr->config);
+> >> > +               break;
+> >> > +       case PERF_TYPE_HW_CACHE:
+> >> > +               code = riscv_pmu->map_cache_event(attr->config);
+> >> > +               break;
+> >> > +       case PERF_TYPE_RAW:
+> >> > +               return -EOPNOTSUPP;
+> >> > +       default:
+> >> > +               return -ENOENT;
+> >> > +       }
+> >> > +
+> >> > +       event->destroy = riscv_event_destroy;
+> >> > +       if (code < 0) {
+> >> > +               event->destroy(event);
+> >> > +               return code;
+> >> > +       }
+> >> > +
+> >> > +       /*
+> >> > +        * idx is set to -1 because the index of a general event should
+> >> > not be
+> >> > +        * decided until binding to some counter in pmu->add().
+> >> > +        *
+> >> > +        * But since we don't have such support, later in pmu->add(), we
+> >> > just
+> >> > +        * use hwc->config as the index instead.
+> >> > +        */
+> >> > +       hwc->config = code;
+> >> > +       hwc->idx = -1;
+> >> > +
+> >> > +       return 0;
+> >> > +}
+> >> > +
+> >> > +/*
+> >> > + * Initialization
+> >> > + */
+> >> > +
+> >> > +static struct pmu min_pmu = {
+> >> > +       .name           = "riscv-base",
+> >> > +       .event_init     = riscv_event_init,
+> >> > +       .add            = riscv_pmu_add,
+> >> > +       .del            = riscv_pmu_del,
+> >> > +       .start          = riscv_pmu_start,
+> >> > +       .stop           = riscv_pmu_stop,
+> >> > +       .read           = riscv_pmu_read,
+> >> > +};
+> >> > +
+> >> > +static const struct riscv_pmu riscv_base_pmu = {
+> >> > +       .pmu = &min_pmu,
+> >> > +       .max_events = ARRAY_SIZE(riscv_hw_event_map),
+> >> > +       .map_hw_event = riscv_map_hw_event,
+> >> > +       .hw_events = riscv_hw_event_map,
+> >> > +       .map_cache_event = riscv_map_cache_event,
+> >> > +       .cache_events = &riscv_cache_event_map,
+> >> > +       .counter_width = 63,
+> >> > +       .num_counters = RISCV_BASE_COUNTERS + 0,
+> >> > +};
+> >> > +
+> >> > +struct pmu * __weak __init riscv_init_platform_pmu(void)
+> >> > +{
+> >> > +       riscv_pmu = &riscv_base_pmu;
+> >> > +       return riscv_pmu->pmu;
+> >> > +}
+> >> > +
+> >> > +int __init init_hw_perf_events(void)
+> >> > +{
+> >> > +       struct pmu *pmu = riscv_init_platform_pmu();
+> >> > +
+> >> > +       perf_irq = NULL;
+> >> > +       perf_pmu_register(pmu, "cpu", PERF_TYPE_RAW);
+> >> > +       return 0;
+> >> > +}
+> >> > +arch_initcall(init_hw_perf_events);
+> >> > --
+> >> > 2.16.2
+> >> >
+> >> >
