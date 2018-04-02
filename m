@@ -1,66 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932520AbeDBUgp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:36:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43280 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932425AbeDBUgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:36:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C30C20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=frederic@kernel.org
-Date: Mon, 2 Apr 2018 22:36:39 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <len.brown@intel.com>
-Subject: Re: [PATCH v8 02/10] sched: idle: Do not stop the tick upfront in
- the idle loop
-Message-ID: <20180402203638.GA19895@lerouge>
-References: <40092860.XNQZrLjKDd@aspire.rjw.lan>
- <1665095.utJuM4vCji@aspire.rjw.lan>
+        id S932487AbeDBUht (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 16:37:49 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37034 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756678AbeDBUhs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 16:37:48 -0400
+Date: Mon, 2 Apr 2018 21:37:46 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: syzbot <syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, linux-nfs@vger.kernel.org
+Subject: Re: BUG: corrupted list in __dentry_kill
+Message-ID: <20180402203745.GE30522@ZenIV.linux.org.uk>
+References: <001a11447acaa9eec40568bd5438@google.com>
+ <20180401033519.GZ30522@ZenIV.linux.org.uk>
+ <20180401200531.GA30522@ZenIV.linux.org.uk>
+ <20180401210508.GA743@sol.localdomain>
+ <20180401214854.GB743@sol.localdomain>
+ <20180402064437.GB30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1665095.utJuM4vCji@aspire.rjw.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180402064437.GB30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 02:01:14PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Apr 02, 2018 at 07:44:37AM +0100, Al Viro wrote:
+> On Sun, Apr 01, 2018 at 02:48:54PM -0700, Eric Biggers wrote:
+> > [+Cc linux-nfs]
+> > > 
+> > > [   42.965515] net/sunrpc/rpc_pipe.c: __rpc_create_common failed to allocate inode for dentry blocklayout
+> > > [   42.967234] net/sunrpc/rpc_pipe.c: rpc_mkpipe_dentry() failed to create pipe nfs/blocklayout (errno = -12)
 > 
-> Push the decision whether or not to stop the tick somewhat deeper
-> into the idle loop.
+> 	AFAICS, there's nothing to zero nn->bl_device_pipe->dentry after
+> nfs4blocklayout_unregister_sb(), is there?  If nothing else, what's
+> going to happen after mount/umount/mount with failing
+> nfs4blocklayout_register_sb()?  AFAICS, we'll have stale pointer to
+> dentry sitting in nn->bl_device_pipe->dentry, and call rpc_unlink()
+> on it while cleaning up after the failing mount.
 > 
-> Stopping the tick upfront leads to unpleasant outcomes in case the
-> idle governor doesn't agree with the nohz code on the duration of the
-> upcoming idle period.  Specifically, if the tick has been stopped and
-> the idle governor predicts short idle, the situation is bad regardless
-> of whether or not the prediction is accurate.  If it is accurate, the
-> tick has been stopped unnecessarily which means excessive overhead.
-> If it is not accurate, the CPU is likely to spend too much time in
-> the (shallow, because short idle has been predicted) idle state
-> selected by the governor [1].
-> 
-> As the first step towards addressing this problem, change the code
-> to make the tick stopping decision inside of the loop in do_idle().
-> In particular, do not stop the tick in the cpu_idle_poll() code path.
-> Also don't do that in tick_nohz_irq_exit() which doesn't really have
-> enough information on whether or not to stop the tick.
-> 
-> Link: https://marc.info/?l=linux-pm&m=150116085925208&w=2 # [1]
-> Link: https://tu-dresden.de/zih/forschung/ressourcen/dateien/projekte/haec/powernightmares.pdf
-> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 	I don't think that's all there is to it, but it does smell like
+> a bug.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+That's not all.  Making nfs4blocklayout_register_sb() immediately fail
+(without doing anything) leads to that oops on the very first attempt
+to mount rpc_pipefs.
+
+Matter of fact, rpc_gssd_dummy_depopulate() is garbage.  I don't know
+how it had been tested, but it will do an extra dput() of gssd_dentry
+whenever it's called.  _Any_ failure that sends us to err_depopulate:
+(== any failure in rpc_pipefs_notifier_list callbacks) means an oops
+there on attempt to dput() an already freed dentry.
+
+Hell, turn that if (err) goto err_depopulate; into
+if (err || !strcmp(current->comm, "bugger")) goto err_depopulate;
+cp /bin/mount /root/bugger, then boot with init=/bin/sh
+and
+cd /root; ./bugger -t rpc_pipefs none /mnt
+will trigger just that.
