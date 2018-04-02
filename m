@@ -1,30 +1,30 @@
 Return-Path: <robert.jarzmik@free.fr>
-X-Google-Smtp-Source: AIpwx4+dooOMoI0EwwgSFBfE2I9jYCnafmBO/Yo0s1bGEszGujknnLeX37XGGjs6/f+zjCEQGdD3
-ARC-Seal: i=1; a=rsa-sha256; t=1522679252; cv=none;
+X-Google-Smtp-Source: AIpwx48gKoHIRmCdO/zdB8qwCddvUDEVoRQwp/3YNUfAjafLqxNaPQY/IVz7Mtljkl3GtA2FZkok
+ARC-Seal: i=1; a=rsa-sha256; t=1522679244; cv=none;
         d=google.com; s=arc-20160816;
-        b=zaM2c/WyZtzQbT3JhaQkIq+th8IySoOnosgOoJLIJ4vqannJ1JS5QzFkdUd1F0uujV
-         CtystYrNYt4aXJBaP8Y4EAiDn+67oPnykQz60WHGNdAM/i59CSgtF8G4WiOFxeFj3rvK
-         wlZgyjosDquYWePc5Z1ggOPfjvmmrxxg3K6txarZAz72iNx5BvrTu6cvRDBt+OZ+J6Kv
-         ocyM9KpweEPXzLUJcj1JtalRCu6Z0yAN7mKelABVdJS3dr9WoH6dHzKN241Z0NKIXX0L
-         gAcnzjF3VLk9PXFNjopL8WP2/+/OXUW8nFPqLpCCRGAEeA02lTnLnSAwsyJvUtumPP8b
-         NJfg==
+        b=GOHEZiQyrZgM5mneb1P0MpbSRlis+eddopqPfiflaQMed2aGlmnuuVHGLDj3GZrJai
+         MA+oYRusp160Q3GoItsFNYXaIs+9f2tL76bG5IwCrq+RdvV+2apPkUC8oj7pL2ra51/G
+         zNBKkCw4LdAGHhVJIW91aFj7UL2VlSmozPXOAkwD2p6uKRtMq+Ouj6lzTkGAcRfGDc2j
+         jqZq75AYLst+ZJeecE5kn9wa3SgK35jmQUx07eB1EIf3ESgLkUEcouYv+hSpDf+RQnbe
+         QMwSPlpOHikyGp8WCH2RKH/Kkjt9wUQAyMHCq/MYZzVsJpKW7pf4XvhImQ4x3Ue8e0Rr
+         tkCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=QSE4x+Mn0Rg6czmeVAG+5Q0deMIPQNl8KkJneAPnKTM=;
-        b=TNnjFPQSe6CMwMs2NCn+RVWbEtGE8//kWY8r3OC3qIYb4/cA5fBfAwjHMgDnMV5QRg
-         NtCIjTjgXrWc7vO+Yhj1AaJWGAkAhqOskC0zv6in+5xOdXx6iKoJsz/jZ7IMaQ4RoCBv
-         SPn+x//pA4rhJIV/nm5MWeyq26yM+WBTcfnt9I9EH0lqUt7uT8yMdfmM/iZ2BEYKMDi5
-         S6zk/4br5vJae8XVNU2lNW+lmxfIEE1JPEUmonDzAMSgGGEEE+k/DaHIvU7kTXJYcreq
-         mBm0Vp6KJp8du2r2FUEcAv02dpJwjiEKzWgCAz32ViK20cGJ5/0W0L7T2rRKelHd3xM2
-         UgwA==
+        bh=R+fIo5AiLSnOjA8pHLvSCJCdg1AM/tXohm5XhgjVeGk=;
+        b=PUup6W6el3Ztd3XHSl7E//g/LXmy82yqugF9Zn+EvWKmTLnp3ZNYBVjWcJKDb5EsYx
+         em1sjR9vfF83t51odlTv+sy5LksynzZ4EJAB2uLsU1pijh7JnFccUvhn0sze9qwRMEnI
+         Z8v2FycnudQFKr63sHjDbekLPMD7mtoHAHXg04c9P0Vz7fxEjEy/iMTzJonpgcO8ao0r
+         cWMSfJToANzrOSSPRwT0Xlb0MtySbwE/gSAKDE1ExDr3cN8Rni+2JtDoPr6QjYGFkcxJ
+         0kREZIm8xEwcbLHf+xrm72G4wrYxf7WcgU6RsYRyFLtcJdkcgV/FWAsgiCeMVsAVxwYW
+         9AGg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
 Authentication-Results: mx.google.com;
        spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
 X-ME-Helo: belgarion.home
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 02 Apr 2018 16:27:32 +0200
+X-ME-Date: Mon, 02 Apr 2018 16:27:24 +0200
 X-ME-IP: 86.201.130.131
 From: Robert Jarzmik <robert.jarzmik@free.fr>
 To: Daniel Mack <daniel@zonque.org>,
@@ -49,8 +49,7 @@ To: Daniel Mack <daniel@zonque.org>,
 	Takashi Iwai <tiwai@suse.com>,
 	Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>
+	Arnd Bergmann <arnd@arndb.de>
 Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-ide@vger.kernel.org,
@@ -61,90 +60,95 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	netdev@vger.kernel.org,
 	devel@driverdev.osuosl.org,
 	alsa-devel@alsa-project.org
-Subject: [PATCH 03/15] mmc: pxamci: remove the dmaengine compat need
-Date: Mon,  2 Apr 2018 16:26:44 +0200
-Message-Id: <20180402142656.26815-4-robert.jarzmik@free.fr>
+Subject: [PATCH 01/15] dmaengine: pxa: use a dma slave map
+Date: Mon,  2 Apr 2018 16:26:42 +0200
+Message-Id: <20180402142656.26815-2-robert.jarzmik@free.fr>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180402142656.26815-1-robert.jarzmik@free.fr>
 References: <20180402142656.26815-1-robert.jarzmik@free.fr>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596644920313214274?=
-X-GMAIL-MSGID: =?utf-8?q?1596644920313214274?=
+X-GMAIL-THRID: =?utf-8?q?1596644911523217790?=
+X-GMAIL-MSGID: =?utf-8?q?1596644911523217790?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-As the pxa architecture switched towards the dmaengine slave map, the
-old compatibility mechanism to acquire the dma requestor line number and
-priority are not needed anymore.
+In order to remove the specific knowledge of the dma mapping from PXA
+drivers, add a default slave map for pxa architectures.
 
-This patch simplifies the dma resource acquisition, using the more
-generic function dma_request_slave_channel().
+This won't impact MMP architecture, but is aimed only at all PXA boards.
+
+This is the first step, and once all drivers are converted,
+pxad_filter_fn() will be made static, and the DMA resources removed from
+device.c.
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/mmc/host/pxamci.c | 29 +++--------------------------
- 1 file changed, 3 insertions(+), 26 deletions(-)
+ drivers/dma/pxa_dma.c                 | 10 +++++++++-
+ include/linux/platform_data/mmp_dma.h |  4 ++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index c763b404510f..6c94474e36f4 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -24,7 +24,6 @@
- #include <linux/interrupt.h>
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
--#include <linux/dma/pxa-dma.h>
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/mmc/host.h>
-@@ -637,10 +636,8 @@ static int pxamci_probe(struct platform_device *pdev)
+diff --git a/drivers/dma/pxa_dma.c b/drivers/dma/pxa_dma.c
+index b53fb618bbf6..9505334f9c6e 100644
+--- a/drivers/dma/pxa_dma.c
++++ b/drivers/dma/pxa_dma.c
+@@ -179,6 +179,8 @@ static unsigned int pxad_drcmr(unsigned int line)
+ 	return 0x1000 + line * 4;
+ }
+ 
++bool pxad_filter_fn(struct dma_chan *chan, void *param);
++
+ /*
+  * Debug fs
+  */
+@@ -1396,9 +1398,10 @@ static int pxad_probe(struct platform_device *op)
  {
- 	struct mmc_host *mmc;
- 	struct pxamci_host *host = NULL;
--	struct resource *r, *dmarx, *dmatx;
--	struct pxad_param param_rx, param_tx;
-+	struct resource *r;
- 	int ret, irq, gpio_cd = -1, gpio_ro = -1, gpio_power = -1;
--	dma_cap_mask_t mask;
- 
- 	ret = pxamci_of_init(pdev);
- 	if (ret)
-@@ -739,34 +736,14 @@ static int pxamci_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, mmc);
- 
--	if (!pdev->dev.of_node) {
--		dmarx = platform_get_resource(pdev, IORESOURCE_DMA, 0);
--		dmatx = platform_get_resource(pdev, IORESOURCE_DMA, 1);
--		if (!dmarx || !dmatx) {
--			ret = -ENXIO;
--			goto out;
--		}
--		param_rx.prio = PXAD_PRIO_LOWEST;
--		param_rx.drcmr = dmarx->start;
--		param_tx.prio = PXAD_PRIO_LOWEST;
--		param_tx.drcmr = dmatx->start;
--	}
--
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--
--	host->dma_chan_rx =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param_rx, &pdev->dev, "rx");
-+	host->dma_chan_rx = dma_request_slave_channel(&pdev->dev, "rx");
- 	if (host->dma_chan_rx == NULL) {
- 		dev_err(&pdev->dev, "unable to request rx dma channel\n");
- 		ret = -ENODEV;
- 		goto out;
+ 	struct pxad_device *pdev;
+ 	const struct of_device_id *of_id;
++	const struct dma_slave_map *slave_map = NULL;
+ 	struct mmp_dma_platdata *pdata = dev_get_platdata(&op->dev);
+ 	struct resource *iores;
+-	int ret, dma_channels = 0, nb_requestors = 0;
++	int ret, dma_channels = 0, nb_requestors = 0, slave_map_cnt = 0;
+ 	const enum dma_slave_buswidth widths =
+ 		DMA_SLAVE_BUSWIDTH_1_BYTE   | DMA_SLAVE_BUSWIDTH_2_BYTES |
+ 		DMA_SLAVE_BUSWIDTH_4_BYTES;
+@@ -1429,6 +1432,8 @@ static int pxad_probe(struct platform_device *op)
+ 	} else if (pdata && pdata->dma_channels) {
+ 		dma_channels = pdata->dma_channels;
+ 		nb_requestors = pdata->nb_requestors;
++		slave_map = pdata->slave_map;
++		slave_map_cnt = pdata->slave_map_cnt;
+ 	} else {
+ 		dma_channels = 32;	/* default 32 channel */
  	}
+@@ -1440,6 +1445,9 @@ static int pxad_probe(struct platform_device *op)
+ 	pdev->slave.device_prep_dma_memcpy = pxad_prep_memcpy;
+ 	pdev->slave.device_prep_slave_sg = pxad_prep_slave_sg;
+ 	pdev->slave.device_prep_dma_cyclic = pxad_prep_dma_cyclic;
++	pdev->slave.filter.map = slave_map;
++	pdev->slave.filter.mapcnt = slave_map_cnt;
++	pdev->slave.filter.fn = pxad_filter_fn;
  
--	host->dma_chan_tx =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param_tx,  &pdev->dev, "tx");
-+	host->dma_chan_tx = dma_request_slave_channel(&pdev->dev, "tx");
- 	if (host->dma_chan_tx == NULL) {
- 		dev_err(&pdev->dev, "unable to request tx dma channel\n");
- 		ret = -ENODEV;
+ 	pdev->slave.copy_align = PDMA_ALIGNMENT;
+ 	pdev->slave.src_addr_widths = widths;
+diff --git a/include/linux/platform_data/mmp_dma.h b/include/linux/platform_data/mmp_dma.h
+index d1397c8ed94e..6397b9c8149a 100644
+--- a/include/linux/platform_data/mmp_dma.h
++++ b/include/linux/platform_data/mmp_dma.h
+@@ -12,9 +12,13 @@
+ #ifndef MMP_DMA_H
+ #define MMP_DMA_H
+ 
++struct dma_slave_map;
++
+ struct mmp_dma_platdata {
+ 	int dma_channels;
+ 	int nb_requestors;
++	int slave_map_cnt;
++	const struct dma_slave_map *slave_map;
+ };
+ 
+ #endif /* MMP_DMA_H */
 -- 
 2.11.0
