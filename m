@@ -1,30 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754115AbeDBDS4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 23:18:56 -0400
-Received: from mga17.intel.com ([192.55.52.151]:13923 "EHLO mga17.intel.com"
+        id S1754142AbeDBDWO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 23:22:14 -0400
+Received: from mga03.intel.com ([134.134.136.65]:65395 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754048AbeDBDSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 23:18:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1754048AbeDBDWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Apr 2018 23:22:12 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,393,1517904000";
-   d="yaml'?scan'208";a="29928020"
-Date: Mon, 2 Apr 2018 11:16:41 +0800
+   d="yaml'?scan'208";a="39975344"
+Date: Mon, 2 Apr 2018 11:20:00 +0800
 From: kernel test robot <xiaolong.ye@intel.com>
-To: Vratislav Bendel <vbendel@redhat.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        lkp@01.org
-Subject: [lkp-robot] [xfs]  19957a1816:  blogbench.write_score 5.2%
- improvement
-Message-ID: <20180402031641.GB3101@yexl-desktop>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Chris Redpath <chris.redpath@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Joel Fernandes <joelaf@google.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Steve Muckle <smuckle@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Todd Kjos <tkjos@android.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: [lkp-robot] [sched/fair]  d519329f72:  unixbench.score -9.9%
+ regression
+Message-ID: <20180402032000.GD3101@yexl-desktop>
 Reply-To: kernel test robot <xiaolong.ye@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="d6Gm4EdcadzBjdND"
+Content-Type: multipart/mixed; boundary="raC6veAxrt5nqIoY"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 User-Agent: NeoMutt/20170113 (1.7.2)
@@ -33,7 +42,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---d6Gm4EdcadzBjdND
+--raC6veAxrt5nqIoY
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -41,22 +50,22 @@ Content-Transfer-Encoding: 8bit
 
 Greeting,
 
-FYI, we noticed a 5.2% improvement of blogbench.write_score due to commit:
+FYI, we noticed a -9.9% regression of unixbench.score due to commit:
 
 
-commit: 19957a181608d25c8f4136652d0ea00b3738972d ("xfs: Correctly invert xfs_buftarg LRU isolation logic")
-https://git.kernel.org/cgit/fs/xfs/xfs-linux.git xfs-4.17-merge
+commit: d519329f72a6f36bc4f2b85452640cfe583b4f81 ("sched/fair: Update util_est only on util_avg updates")
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
-in testcase: blogbench
-on test machine: 16 threads Intel(R) Xeon(R) CPU D-1541 @ 2.10GHz with 8G memory
+in testcase: unixbench
+on test machine: 8 threads Intel(R) Core(TM) i7 CPU 870 @ 2.93GHz with 6G memory
 with following parameters:
 
-	disk: 1SSD
-	fs: xfs
-	cpufreq_governor: performance
+	runtime: 300s
+	nr_task: 100%
+	test: execl
 
-test-description: Blogbench is a portable filesystem benchmark that tries to reproduce the load of a real-world busy file server.
-test-url: https://www.pureftpd.org/project/blogbench
+test-description: UnixBench is the original BYTE UNIX benchmark suite aims to test performance of Unix-like system.
+test-url: https://github.com/kdlucas/byte-unixbench
 
 
 
@@ -72,56 +81,129 @@ To reproduce:
         bin/lkp run     job.yaml
 
 =========================================================================================
-compiler/cpufreq_governor/disk/fs/kconfig/rootfs/tbox_group/testcase:
-  gcc-7/performance/1SSD/xfs/x86_64-rhel-7.2/debian-x86_64-2016-08-31.cgz/lkp-bdw-de1/blogbench
+compiler/kconfig/nr_task/rootfs/runtime/tbox_group/test/testcase:
+  gcc-7/x86_64-rhel-7.2/100%/debian-x86_64-2016-08-31.cgz/300s/nhm-white/execl/unixbench
 
 commit: 
-  4df0f7f145 ("xfs: fix transaction allocation deadlock in IO path")
-  19957a1816 ("xfs: Correctly invert xfs_buftarg LRU isolation logic")
+  a07630b8b2 ("sched/cpufreq/schedutil: Use util_est for OPP selection")
+  d519329f72 ("sched/fair: Update util_est only on util_avg updates")
 
-4df0f7f145f2ac14 19957a181608d25c8f4136652d 
+a07630b8b2c16f82 d519329f72a6f36bc4f2b85452 
 ---------------- -------------------------- 
          %stddev     %change         %stddev
              \          |                \  
-     10702            +5.2%      11259        blogbench.write_score
-  76694732           -12.2%   67350219        blogbench.time.file_system_inputs
-  76001327            +5.4%   80102749        blogbench.time.file_system_outputs
-    661724            -3.2%     640345        blogbench.time.involuntary_context_switches
-    578.00            -1.2%     571.20        blogbench.time.percent_of_cpu_this_job_got
-      1603            -1.1%       1585        blogbench.time.system_time
-   3413089            -8.1%    3138095        blogbench.time.voluntary_context_switches
-      1.42 ±  5%     -45.0%       0.78 ±  6%  turbostat.CPU%c6
-    128458           -12.8%     112013        vmstat.io.bi
-    144255            +7.8%     155524        vmstat.io.bo
-     36242            -4.6%      34586        vmstat.system.cs
-     25403            -2.2%      24852        vmstat.system.in
-      2.13            +0.0        2.15        perf-stat.branch-miss-rate%
- 1.078e+11            -1.5%  1.062e+11        perf-stat.cache-misses
- 1.078e+11            -1.5%  1.062e+11        perf-stat.cache-references
-  10993347            -4.7%   10482153        perf-stat.context-switches
-      2.09            -1.1%       2.07        perf-stat.cpi
-    329741            -9.2%     299471        perf-stat.cpu-migrations
-      0.48            +1.1%       0.48        perf-stat.ipc
-   2468477 ± 31%     -50.9%    1212905 ± 32%  proc-vmstat.compact_daemon_free_scanned
-   2468726 ± 31%     -50.7%    1216044 ± 31%  proc-vmstat.compact_free_scanned
-   2923481           -13.6%    2527242        proc-vmstat.kswapd_inodesteal
-      1837 ±  5%     -16.7%       1530 ±  4%  proc-vmstat.kswapd_low_wmark_hit_quickly
-      1707 ±  7%     +16.6%       1989 ±  6%  proc-vmstat.nr_writeback
-      2536 ±  3%     -10.8%       2262 ±  2%  proc-vmstat.pageoutrun
-  38900337           -12.7%   33941396        proc-vmstat.pgpgin
-    813055 ±  3%     -12.7%     709846 ±  2%  proc-vmstat.workingset_activate
-   1041709 ±  2%     -10.4%     932898        proc-vmstat.workingset_refault
-      2331           -12.0%       2052        slabinfo.kmalloc-2048.active_objs
-      2568 ±  2%     -12.6%       2244 ±  2%  slabinfo.kmalloc-2048.num_objs
-    749.80 ±  2%     -15.0%     637.20 ±  2%  slabinfo.kmalloc-4096.active_objs
-    860.50 ±  2%     -15.1%     730.60 ±  3%  slabinfo.kmalloc-4096.num_objs
-     25369 ±  2%     +12.1%      28440 ±  3%  slabinfo.kmalloc-512.num_objs
-      1051 ±  2%     -15.2%     891.80 ±  2%  slabinfo.kmalloc-8192.active_objs
-      1131 ±  2%     -16.2%     947.90 ±  2%  slabinfo.kmalloc-8192.num_objs
-     18441           +16.3%      21452        slabinfo.mnt_cache.active_objs
-     19600           +14.6%      22462        slabinfo.mnt_cache.num_objs
-      5358 ±  3%     -27.5%       3886 ±  4%  slabinfo.pool_workqueue.active_objs
-      6708 ±  4%     -25.8%       4974 ±  6%  slabinfo.pool_workqueue.num_objs
+      4626            -9.9%       4167        unixbench.score
+   3495362 ±  4%     +70.4%    5957769 ±  2%  unixbench.time.involuntary_context_switches
+ 2.866e+08           -11.6%  2.534e+08        unixbench.time.minor_page_faults
+    666.75            -9.7%     602.25        unixbench.time.percent_of_cpu_this_job_got
+      1830            -9.7%       1653        unixbench.time.system_time
+    395.13            -5.2%     374.58        unixbench.time.user_time
+   8611715           -58.9%    3537314 ±  3%  unixbench.time.voluntary_context_switches
+   6639375            -9.1%    6033775        unixbench.workload
+     26025         +3849.3%    1027825        interrupts.CAL:Function_call_interrupts
+      4856 ± 14%     -27.4%       3523 ± 11%  slabinfo.filp.active_objs
+   3534356            -8.8%    3223918        softirqs.RCU
+     77929           -11.2%      69172        vmstat.system.cs
+     19489 ±  2%      +7.5%      20956        vmstat.system.in
+      9.05 ±  9%     +11.0%      10.05 ±  8%  boot-time.dhcp
+    131.63 ±  4%      +8.6%     142.89 ±  7%  boot-time.idle
+      9.07 ±  9%     +11.0%      10.07 ±  8%  boot-time.kernel_boot
+     76288 ±  3%     -12.8%      66560 ±  3%  meminfo.DirectMap4k
+     16606           -13.1%      14433        meminfo.Inactive
+     16515           -13.2%      14341        meminfo.Inactive(anon)
+     11.87 ±  5%      +7.8       19.63 ±  4%  mpstat.cpu.idle%
+      0.07 ± 35%      -0.0        0.04 ± 17%  mpstat.cpu.soft%
+     68.91            -6.1       62.82        mpstat.cpu.sys%
+  29291570          +325.4%  1.246e+08        cpuidle.C1.time
+   8629105           -36.1%    5513780        cpuidle.C1.usage
+    668733 ± 12%  +11215.3%   75668902 ±  2%  cpuidle.C1E.time
+      9763 ± 12%  +16572.7%    1627882 ±  2%  cpuidle.C1E.usage
+ 1.834e+08 ±  9%     +23.1%  2.258e+08 ± 11%  cpuidle.C3.time
+    222674 ±  8%    +133.4%     519690 ±  6%  cpuidle.C3.usage
+      4129           -13.3%       3581        proc-vmstat.nr_inactive_anon
+      4129           -13.3%       3581        proc-vmstat.nr_zone_inactive_anon
+ 2.333e+08           -12.2%  2.049e+08        proc-vmstat.numa_hit
+ 2.333e+08           -12.2%  2.049e+08        proc-vmstat.numa_local
+      6625           -10.9%       5905        proc-vmstat.pgactivate
+ 2.392e+08           -12.1%  2.102e+08        proc-vmstat.pgalloc_normal
+ 2.936e+08           -12.6%  2.566e+08        proc-vmstat.pgfault
+ 2.392e+08           -12.1%  2.102e+08        proc-vmstat.pgfree
+      2850           -15.3%       2413        turbostat.Avg_MHz
+   8629013           -36.1%    5513569        turbostat.C1
+      1.09            +3.5        4.61        turbostat.C1%
+      9751 ± 12%  +16593.0%    1627864 ±  2%  turbostat.C1E
+      0.03 ± 19%      +2.8        2.80        turbostat.C1E%
+    222574 ±  8%    +133.4%     519558 ±  6%  turbostat.C3
+      6.84 ±  8%      +1.5        8.34 ± 10%  turbostat.C3%
+      2.82 ±  7%    +250.3%       9.87 ±  2%  turbostat.CPU%c1
+   6552773 ±  3%     +23.8%    8111699 ±  2%  turbostat.IRQ
+      2.02 ± 11%     +28.3%       2.58 ±  9%  turbostat.Pkg%pc3
+ 7.635e+11           -12.5%  6.682e+11        perf-stat.branch-instructions
+ 3.881e+10           -12.9%  3.381e+10        perf-stat.branch-misses
+      2.09            -0.3        1.77 ±  4%  perf-stat.cache-miss-rate%
+ 1.551e+09           -15.1%  1.316e+09 ±  4%  perf-stat.cache-misses
+  26177920           -10.5%   23428188        perf-stat.context-switches
+      1.99            -2.8%       1.93        perf-stat.cpi
+ 7.553e+12           -14.7%  6.446e+12        perf-stat.cpu-cycles
+    522523 ±  2%    +628.3%    3805664        perf-stat.cpu-migrations
+ 2.425e+10 ±  4%     -14.3%  2.078e+10        perf-stat.dTLB-load-misses
+ 1.487e+12           -11.3%  1.319e+12        perf-stat.dTLB-loads
+ 1.156e+10 ±  3%      -7.7%  1.066e+10        perf-stat.dTLB-store-misses
+ 6.657e+11           -11.1%  5.915e+11        perf-stat.dTLB-stores
+      0.15            +0.0        0.15        perf-stat.iTLB-load-miss-rate%
+ 5.807e+09           -11.0%  5.166e+09        perf-stat.iTLB-load-misses
+ 3.799e+12           -12.1%   3.34e+12        perf-stat.iTLB-loads
+ 3.803e+12           -12.2%  3.338e+12        perf-stat.instructions
+    654.99            -1.4%     646.07        perf-stat.instructions-per-iTLB-miss
+      0.50            +2.8%       0.52        perf-stat.ipc
+ 2.754e+08           -11.6%  2.435e+08        perf-stat.minor-faults
+ 1.198e+08 ±  7%     +73.1%  2.074e+08 ±  4%  perf-stat.node-stores
+ 2.754e+08           -11.6%  2.435e+08        perf-stat.page-faults
+    572928            -3.4%     553258        perf-stat.path-length
+
+
+                                                                                
+                                  unixbench.score                               
+                                                                                
+  4800 +-+------------------------------------------------------------------+   
+       |+                                      +     +                      |   
+  4700 +-+ +                +                  :+ +. :+ + +                 |   
+       |  + +   +    +.     :  +              +  +  +  + + + .+++++    .+  +|   
+  4600 +-+   +++ :+++  + ++: : :+  +++ ++.++++              +      ++++  ++ |   
+       |         +      +  + ++  ++   +                                     |   
+  4500 +-+                                                                  |   
+       |                                                                    |   
+  4400 +-+                                                                  |   
+       |                                                                    |   
+  4300 +-+                                                                  |   
+       O                                                                    |   
+  4200 +-O        O O    OOOO OO OOO OOOO  OOOO O O                         |   
+       |O OO OOOOO O O OO    O      O     O    O O  OO                      |   
+  4100 +-+------------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                  unixbench.workload                            
+                                                                                
+    9e+06 +-+---------------------------------------------------------------+   
+          |                   :                                             |   
+  8.5e+06 +-+                 :                                             |   
+          |                   :                                             |   
+    8e+06 +-+                 :                                             |   
+          |                   ::                                            |   
+  7.5e+06 +-+                : : +                                          |   
+          |                 +: : :       +                                  |   
+    7e+06 +-+      +    +   :: : ::  + + :  +   +     +    +            +   |   
+          |:+ +   + :   :: : : :: :  :+ : : ::+ :+ .+ :+ ++ ++ + ++     ::++|   
+  6.5e+06 +-O+ +++  ++++ +++ + ++ +.+   + ++ + +  +  +  +     + +  +.+++ +  |   
+          O                O    O            O O O    O                     |   
+    6e+06 +O+OOO O OOOOOOOO OOOO OO OOOOOOOOO O O O OO                      |   
+          |     O                                                           |   
+  5.5e+06 +-+---------------------------------------------------------------+   
+                                                                                
+                                                                                
+                                                                                
+[*] bisect-good sample
+[O] bisect-bad  sample
 
 
 
@@ -134,13 +216,13 @@ design or configuration may affect actual performance.
 Thanks,
 Xiaolong
 
---d6Gm4EdcadzBjdND
+--raC6veAxrt5nqIoY
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-4.16.0-rc5-00008-g19957a1"
+Content-Disposition: attachment; filename="config-4.16.0-rc6-00081-gd519329"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 4.16.0-rc5 Kernel Configuration
+# Linux/x86_64 4.16.0-rc6 Kernel Configuration
 #
 CONFIG_64BIT=y
 CONFIG_X86_64=y
@@ -5139,7 +5221,7 @@ CONFIG_USB_SERIAL_SAFE=m
 CONFIG_USB_SERIAL_SAFE_PADDED=y
 CONFIG_USB_SERIAL_SIERRAWIRELESS=m
 CONFIG_USB_SERIAL_SYMBOL=m
-# CONFIG_USB_SERIAL_TI is not set
+CONFIG_USB_SERIAL_TI=m
 CONFIG_USB_SERIAL_CYBERJACK=m
 CONFIG_USB_SERIAL_XIRCOM=m
 CONFIG_USB_SERIAL_WWAN=m
@@ -6907,7 +6989,7 @@ CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
 CONFIG_SBITMAP=y
 # CONFIG_STRING_SELFTEST is not set
 
---d6Gm4EdcadzBjdND
+--raC6veAxrt5nqIoY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -6915,58 +6997,51 @@ Content-Disposition: attachment; filename=job-script
 
 export_top_env()
 {
-	export suite='blogbench'
-	export testcase='blogbench'
+	export suite='unixbench'
+	export testcase='unixbench'
 	export category='benchmark'
-	export job_origin='/lkp/lkp/.src-20180328-142725/allot/cyclic:linux-devel:devel-hourly/lkp-bdw-de1/blogbench-1ssd.yaml'
+	export runtime=300
+	export nr_task=8
+	export job_origin='/lkp/lkp/.src-20180320-151333/allot/cyclic:linux-next:master/nhm-white/unixbench.yaml'
 	export queue='bisect'
-	export testbox='lkp-bdw-de1'
-	export tbox_group='lkp-bdw-de1'
-	export submit_id='5abdb3210b9a930e48f23dbc'
-	export job_file='/lkp/scheduled/lkp-bdw-de1/blogbench-1SSD-xfs-performance-debian-x86_64-2016-08-31.cgz-19957a181608d25c8f4136652d0ea00b3738972d-20180330-69192-1tjcjuu-0.yaml'
-	export id='5a1a878269239f43037f16139ec0beb06a0d1bee'
-	export model='Broadwell-DE'
-	export nr_cpu=16
-	export memory='8G'
-	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2BB480G6_BTWA6075012T480FGN'
+	export testbox='nhm-white'
+	export tbox_group='nhm-white'
+	export submit_id='5abed9a90b9a9341df99f691'
+	export job_file='/lkp/scheduled/nhm-white/unixbench-300s-100%-execl-debian-x86_64-2016-08-31.cgz-d519329f72a6f36bc4f2b85452640cfe583b4f81-20180331-82399-iyx79h-0.yaml'
+	export id='93663631e7d2f0cff66eb35293e77ed2b4a7ab60'
+	export model='Nehalem'
+	export nr_node=1
+	export nr_cpu=8
+	export memory='6G'
 	export swap_partitions=
-	export rootfs_partition=
-	export kernel_cmdline='console=ttyS1,115200 console=tty0'
-	export brand='Intel(R) Xeon(R) CPU D-1541 @ 2.10GHz'
-	export need_kconfig='CONFIG_BLK_DEV_SD
-CONFIG_SCSI
-CONFIG_BLOCK=y
-CONFIG_SATA_AHCI
-CONFIG_SATA_AHCI_PLATFORM
-CONFIG_ATA
-CONFIG_PCI=y
-CONFIG_XFS_FS'
-	export commit='19957a181608d25c8f4136652d0ea00b3738972d'
+	export rootfs_partition='/dev/disk/by-id/ata-Hitachi_HDT721050SLA360_STH3D7ME0YEM5Y-part1'
+	export netconsole_port=6647
+	export brand='Intel(R) Core(TM) i7 CPU 870 @ 2.93GHz'
+	export commit='d519329f72a6f36bc4f2b85452640cfe583b4f81'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
 	export rootfs='debian-x86_64-2016-08-31.cgz'
-	export enqueue_time='2018-03-30 11:46:41 +0800'
-	export _id='5abdb3210b9a930e48f23dbc'
-	export _rt='/result/blogbench/1SSD-xfs-performance/lkp-bdw-de1/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d'
+	export enqueue_time='2018-03-31 08:43:21 +0800'
+	export _id='5abed9a90b9a9341df99f691'
+	export _rt='/result/unixbench/300s-100%-execl/nhm-white/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81'
 	export user='lkp'
-	export head_commit='6478d6842b83dabd97ee4a1d288649740e46294b'
-	export base_commit='0c8efd610b58cb23cefdfa12015799079aef94ae'
-	export branch='linux-devel/devel-hourly-2018031702'
-	export result_root='/result/blogbench/1SSD-xfs-performance/lkp-bdw-de1/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/0'
+	export head_commit='7373fc81dadd068a8f2ea26011774f00f1f156bd'
+	export base_commit='3eb2ce825ea1ad89d20f7a3b5780df850e4be274'
+	export branch='linux-next/master'
+	export result_root='/result/unixbench/300s-100%-execl/nhm-white/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/0'
 	export LKP_SERVER='inn'
-	export max_uptime=3142.3200000000006
+	export max_uptime=1500
 	export initrd='/osimage/debian/debian-x86_64-2016-08-31.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/scheduled/lkp-bdw-de1/blogbench-1SSD-xfs-performance-debian-x86_64-2016-08-31.cgz-19957a181608d25c8f4136652d0ea00b3738972d-20180330-69192-1tjcjuu-0.yaml
+job=/lkp/scheduled/nhm-white/unixbench-300s-100%-execl-debian-x86_64-2016-08-31.cgz-d519329f72a6f36bc4f2b85452640cfe583b4f81-20180331-82399-iyx79h-0.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
-branch=linux-devel/devel-hourly-2018031702
-commit=19957a181608d25c8f4136652d0ea00b3738972d
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/vmlinuz-4.16.0-rc5-00008-g19957a1
-console=ttyS1,115200 console=tty0
-max_uptime=3142
-RESULT_ROOT=/result/blogbench/1SSD-xfs-performance/lkp-bdw-de1/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/0
+branch=linux-next/master
+commit=d519329f72a6f36bc4f2b85452640cfe583b4f81
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/vmlinuz-4.16.0-rc6-00081-gd519329
+max_uptime=1500
+RESULT_ROOT=/result/unixbench/300s-100%-execl/nhm-white/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/0
 LKP_SERVER=inn
 debug
 apic=debug
@@ -6981,21 +7056,23 @@ oops=panic
 load_ramdisk=2
 prompt_ramdisk=0
 drbd.minor_count=8
-earlyprintk=ttyS1,115200
 systemd.log_level=err
-console=ttyS1,115200
+ignore_loglevel
 console=tty0
+earlyprintk=ttyS0,115200
+console=ttyS0,115200
+vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/modules.cgz'
-	export bm_initrd='/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fs_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/blogbench-x86_64_2016-09-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-01-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-30a7acd57389_2018-01-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/modules.cgz'
+	export bm_initrd='/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/unixbench_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/unixbench-x86_64_2017-04-11.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-01-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-30a7acd57389_2018-01-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
 	export repeat_to=2
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/vmlinuz-4.16.0-rc5-00008-g19957a1'
-	export dequeue_time='2018-03-30 12:07:29 +0800'
-	export job_initrd='/lkp/scheduled/lkp-bdw-de1/blogbench-1SSD-xfs-performance-debian-x86_64-2016-08-31.cgz-19957a181608d25c8f4136652d0ea00b3738972d-20180330-69192-1tjcjuu-0.cgz'
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/vmlinuz-4.16.0-rc6-00081-gd519329'
+	export dequeue_time='2018-03-31 08:50:23 +0800'
+	export job_initrd='/lkp/scheduled/nhm-white/unixbench-300s-100%-execl-debian-x86_64-2016-08-31.cgz-d519329f72a6f36bc4f2b85452640cfe583b4f81-20180331-82399-iyx79h-0.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -7010,12 +7087,6 @@ run_job()
 	. $LKP_SRC/lib/env.sh
 
 	export_top_env
-
-	run_setup nr_ssd=1 $LKP_SRC/setup/disk
-
-	run_setup fs='xfs' $LKP_SRC/setup/fs
-
-	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
 
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
 	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
@@ -7042,16 +7113,16 @@ run_job()
 	run_monitor $LKP_SRC/monitors/wrapper sched_debug
 	run_monitor $LKP_SRC/monitors/wrapper perf-stat
 	run_monitor $LKP_SRC/monitors/wrapper mpstat
-	run_monitor $LKP_SRC/monitors/no-stdout/wrapper perf-profile
+	run_monitor duration=2 $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test $LKP_SRC/tests/wrapper blogbench
+	run_test test='execl' $LKP_SRC/tests/wrapper unixbench
 }
 
 extract_stats()
 {
-	$LKP_SRC/stats/wrapper blogbench
+	$LKP_SRC/stats/wrapper unixbench
 	$LKP_SRC/stats/wrapper kmsg
 	$LKP_SRC/stats/wrapper boot-time
 	$LKP_SRC/stats/wrapper iostat
@@ -7075,7 +7146,7 @@ extract_stats()
 	$LKP_SRC/stats/wrapper mpstat
 	$LKP_SRC/stats/wrapper perf-profile
 
-	$LKP_SRC/stats/wrapper time blogbench.time
+	$LKP_SRC/stats/wrapper time unixbench.time
 	$LKP_SRC/stats/wrapper time
 	$LKP_SRC/stats/wrapper dmesg
 	$LKP_SRC/stats/wrapper kmsg
@@ -7085,38 +7156,39 @@ extract_stats()
 
 "$@"
 
---d6Gm4EdcadzBjdND
+--raC6veAxrt5nqIoY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="job.yaml"
 
 ---
 
-#! jobs/blogbench-1ssd.yaml
-suite: blogbench
-testcase: blogbench
+#! jobs/unixbench.yaml
+suite: unixbench
+testcase: unixbench
 category: benchmark
-disk: 1SSD
-fs: xfs
-blogbench: 
-job_origin: "/lkp/lkp/.src-20180328-142725/allot/cyclic:linux-devel:devel-hourly/lkp-bdw-de1/blogbench-1ssd.yaml"
+runtime: 300s
+nr_task: 100%
+unixbench:
+  test: execl
+job_origin: "/lkp/lkp/.src-20180320-151333/allot/cyclic:linux-next:master/nhm-white/unixbench.yaml"
 
 #! queue options
 queue: bisect
-testbox: lkp-bdw-de1
-tbox_group: lkp-bdw-de1
-submit_id: 5abdb3210b9a930e48f23dbc
-job_file: "/lkp/scheduled/lkp-bdw-de1/blogbench-1SSD-xfs-performance-debian-x86_64-2016-08-31.cgz-19957a181608d25c8f4136652d0ea00b3738972d-20180330-69192-1tjcjuu-0.yaml"
-id: 5a1a878269239f43037f16139ec0beb06a0d1bee
+testbox: nhm-white
+tbox_group: nhm-white
+submit_id: 5abed9a90b9a9341df99f691
+job_file: "/lkp/scheduled/nhm-white/unixbench-300s-100%-execl-debian-x86_64-2016-08-31.cgz-d519329f72a6f36bc4f2b85452640cfe583b4f81-20180331-82399-iyx79h-0.yaml"
+id: 93663631e7d2f0cff66eb35293e77ed2b4a7ab60
 
-#! hosts/lkp-bdw-de1
-model: Broadwell-DE
-nr_cpu: 16
-memory: 8G
-ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BB480G6_BTWA6075012T480FGN"
+#! hosts/nhm-white
+model: Nehalem
+nr_node: 1
+nr_cpu: 8
+memory: 6G
 swap_partitions: 
-rootfs_partition: 
-kernel_cmdline: console=ttyS1,115200 console=tty0
-brand: Intel(R) Xeon(R) CPU D-1541 @ 2.10GHz
+rootfs_partition: "/dev/disk/by-id/ata-Hitachi_HDT721050SLA360_STH3D7ME0YEM5Y-part1"
+netconsole_port: 6647
+brand: Intel(R) Core(TM) i7 CPU 870 @ 2.93GHz
 
 #! include/category/benchmark
 kmsg: 
@@ -7144,56 +7216,47 @@ turbostat:
 sched_debug: 
 perf-stat: 
 mpstat: 
-perf-profile: 
+perf-profile:
+  duration: 2
 
 #! include/category/ALL
-cpufreq_governor: performance
-
-#! include/disk/nr_ssd
-need_kconfig:
-- CONFIG_BLK_DEV_SD
-- CONFIG_SCSI
-- CONFIG_BLOCK=y
-- CONFIG_SATA_AHCI
-- CONFIG_SATA_AHCI_PLATFORM
-- CONFIG_ATA
-- CONFIG_PCI=y
-- CONFIG_XFS_FS
+cpufreq_governor: 
 
 #! include/queue/cyclic
-commit: 19957a181608d25c8f4136652d0ea00b3738972d
+commit: d519329f72a6f36bc4f2b85452640cfe583b4f81
 
-#! include/fs/OTHERS
+#! include/testbox/nhm-white
+
+# execl uses a lot of mmap syscall which will cause perf to record
 
 #! default params
 kconfig: x86_64-rhel-7.2
 compiler: gcc-7
 rootfs: debian-x86_64-2016-08-31.cgz
-enqueue_time: 2018-03-30 11:46:41.370585400 +08:00
-_id: 5abdb3210b9a930e48f23dbc
-_rt: "/result/blogbench/1SSD-xfs-performance/lkp-bdw-de1/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d"
+enqueue_time: 2018-03-31 08:43:21.146678593 +08:00
+_id: 5abed9a90b9a9341df99f691
+_rt: "/result/unixbench/300s-100%-execl/nhm-white/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81"
 
 #! schedule options
 user: lkp
-head_commit: 6478d6842b83dabd97ee4a1d288649740e46294b
-base_commit: 0c8efd610b58cb23cefdfa12015799079aef94ae
-branch: linux-devel/devel-hourly-2018031702
-result_root: "/result/blogbench/1SSD-xfs-performance/lkp-bdw-de1/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/0"
+head_commit: 7373fc81dadd068a8f2ea26011774f00f1f156bd
+base_commit: 3eb2ce825ea1ad89d20f7a3b5780df850e4be274
+branch: linux-next/master
+result_root: "/result/unixbench/300s-100%-execl/nhm-white/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/0"
 LKP_SERVER: inn
-max_uptime: 3142.3200000000006
+max_uptime: 1500
 initrd: "/osimage/debian/debian-x86_64-2016-08-31.cgz"
 bootloader_append:
 - root=/dev/ram0
 - user=lkp
-- job=/lkp/scheduled/lkp-bdw-de1/blogbench-1SSD-xfs-performance-debian-x86_64-2016-08-31.cgz-19957a181608d25c8f4136652d0ea00b3738972d-20180330-69192-1tjcjuu-0.yaml
+- job=/lkp/scheduled/nhm-white/unixbench-300s-100%-execl-debian-x86_64-2016-08-31.cgz-d519329f72a6f36bc4f2b85452640cfe583b4f81-20180331-82399-iyx79h-0.yaml
 - ARCH=x86_64
 - kconfig=x86_64-rhel-7.2
-- branch=linux-devel/devel-hourly-2018031702
-- commit=19957a181608d25c8f4136652d0ea00b3738972d
-- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/vmlinuz-4.16.0-rc5-00008-g19957a1
-- console=ttyS1,115200 console=tty0
-- max_uptime=3142
-- RESULT_ROOT=/result/blogbench/1SSD-xfs-performance/lkp-bdw-de1/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/0
+- branch=linux-next/master
+- commit=d519329f72a6f36bc4f2b85452640cfe583b4f81
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/vmlinuz-4.16.0-rc6-00081-gd519329
+- max_uptime=1500
+- RESULT_ROOT=/result/unixbench/300s-100%-execl/nhm-white/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/0
 - LKP_SERVER=inn
 - debug
 - apic=debug
@@ -7208,17 +7271,19 @@ bootloader_append:
 - load_ramdisk=2
 - prompt_ramdisk=0
 - drbd.minor_count=8
-- earlyprintk=ttyS1,115200
 - systemd.log_level=err
-- console=ttyS1,115200
+- ignore_loglevel
 - console=tty0
+- earlyprintk=ttyS0,115200
+- console=ttyS0,115200
+- vga=normal
 - rw
-modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/modules.cgz"
-bm_initrd: "/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/fs_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/blogbench-x86_64_2016-09-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-01-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-30a7acd57389_2018-01-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz"
+modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/modules.cgz"
+bm_initrd: "/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/unixbench_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/unixbench-x86_64_2017-04-11.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-01-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-30a7acd57389_2018-01-01.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz"
 lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
 site: inn
 
-#! /lkp/lkp/.src-20180328-142725/include/site/inn
+#! /lkp/lkp/.src-20180330-153540/include/site/inn
 LKP_CGI_PORT: 80
 LKP_CIFS_PORT: 139
 oom-killer: 
@@ -7228,35 +7293,20 @@ watchdog:
 repeat_to: 2
 
 #! user overrides
-kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/19957a181608d25c8f4136652d0ea00b3738972d/vmlinuz-4.16.0-rc5-00008-g19957a1"
-dequeue_time: 2018-03-30 12:07:29.552817539 +08:00
+kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/d519329f72a6f36bc4f2b85452640cfe583b4f81/vmlinuz-4.16.0-rc6-00081-gd519329"
+dequeue_time: 2018-03-31 08:50:23.366002459 +08:00
 
-#! /lkp/lkp/.src-20180330-110445/include/site/inn
+#! /lkp/lkp/.src-20180330-200957/include/site/inn
 job_state: finished
-loadavg: 93.04 65.99 29.12 1/283 5398
-start_time: '1522382981'
-end_time: '1522383281'
-version: "/lkp/lkp/.src-20180330-110445"
+loadavg: 3.19 4.45 2.29 2/150 5914
+start_time: '1522457468'
+end_time: '1522457808'
+version: "/lkp/lkp/.src-20180330-200957"
 
---d6Gm4EdcadzBjdND
+--raC6veAxrt5nqIoY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=reproduce
 
-dmsetup remove_all
-wipefs -a --force /dev/sda
-mkfs -t xfs /dev/sda
-mkdir -p /fs/sda
-mount -t xfs -o nobarrier,inode64 /dev/sda /fs/sda
+ "./Run" "execl" "-c" "8" "-i" "30"
 
-for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
-do
-	online_file="$cpu_dir"/online
-	[ -f "$online_file" ] && [ "$(cat "$online_file")" -eq 0 ] && continue
-
-	file="$cpu_dir"/cpufreq/scaling_governor
-	[ -f "$file" ] && echo "performance" > "$file"
-done
-
- "./blogbench" "-d" "/fs/sda"
-
---d6Gm4EdcadzBjdND--
+--raC6veAxrt5nqIoY--
