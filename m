@@ -1,111 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751384AbeDBNWN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 09:22:13 -0400
-Received: from mail-io0-f171.google.com ([209.85.223.171]:44244 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750812AbeDBNWH (ORCPT
+        id S1751163AbeDBN3s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 09:29:48 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:43153 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750724AbeDBN3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 09:22:07 -0400
-X-Google-Smtp-Source: AIpwx4+iSXZp57DGRuzKWNU3t5uzGfFijFz6JBItCYVNyIoKj9YJy2hkL27QOVRQt8rKEEN9JzouzrVS6ysmddsbmaA=
+        Mon, 2 Apr 2018 09:29:45 -0400
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: <kishon@ti.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH] PCI: endpoint: Create configfs entry for each pci_epf_device_id table entry
+Date: Mon, 2 Apr 2018 18:59:35 +0530
+Message-ID: <20180402132935.32008-1-kishon@ti.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-In-Reply-To: <DM5PR12MB1916AC5CC36AEF4364C7D317F8A60@DM5PR12MB1916.namprd12.prod.outlook.com>
-References: <20180324184940.19762-1-Yazen.Ghannam@amd.com> <20180324184940.19762-4-Yazen.Ghannam@amd.com>
- <20180329105448.GB29198@pd.tnic> <DM5PR12MB19162707D0F98D1A061F0A7AF8A20@DM5PR12MB1916.namprd12.prod.outlook.com>
- <CAKv+Gu_6D03iGvxsmiQS_ODET2cv4f7kVsK5S5EKhiVN1YxRaw@mail.gmail.com> <DM5PR12MB1916AC5CC36AEF4364C7D317F8A60@DM5PR12MB1916.namprd12.prod.outlook.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 2 Apr 2018 15:22:06 +0200
-Message-ID: <CAKv+Gu_6=WEapKMaqpkg+qKh1f4HqQRx0ascZXfr4HYJAPOBnA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/8] efi: Decode IA32/X64 Processor Error Info Structure
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 April 2018 at 15:21, Ghannam, Yazen <Yazen.Ghannam@amd.com> wrote:
->> -----Original Message-----
->> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> Sent: Friday, March 30, 2018 7:25 AM
->> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
->> Cc: Borislav Petkov <bp@alien8.de>; linux-efi@vger.kernel.org; linux-
->> kernel@vger.kernel.org; x86@kernel.org; tony.luck@intel.com
->> Subject: Re: [PATCH v3 3/8] efi: Decode IA32/X64 Processor Error Info Structure
->>
->> On 29 March 2018 at 14:53, Ghannam, Yazen <Yazen.Ghannam@amd.com>
->> wrote:
->> >> -----Original Message-----
->> >> From: Borislav Petkov <bp@alien8.de>
->> >> Sent: Thursday, March 29, 2018 6:55 AM
->> >> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
->> >> Cc: linux-efi@vger.kernel.org; linux-kernel@vger.kernel.org;
->> >> ard.biesheuvel@linaro.org; x86@kernel.org; tony.luck@intel.com
->> >> Subject: Re: [PATCH v3 3/8] efi: Decode IA32/X64 Processor Error Info
->> >> Structure
->> >>
->> >> On Sat, Mar 24, 2018 at 01:49:35PM -0500, Yazen Ghannam wrote:
->> >> > From: Yazen Ghannam <yazen.ghannam@amd.com>
->> >> >
->> >> > Print the fields in the IA32/X64 Processor Error Info Structure.
->> >> >
->> >> > Based on UEFI 2.7 Table 253. IA32/X64 Processor Error Information
->> >> > Structure.
->> >> >
->> >> > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
->> >> > ---
->> >> > Link:
->> >> > https://lkml.kernel.org/r/20180226193904.20532-4-
->> >> Yazen.Ghannam@amd.com
->> >> >
->> >> > v2->v3:
->> >> > * Fix table number in commit message.
->> >> > * Don't print raw validation bits.
->> >> >
->> >> > v1->v2:
->> >> > * Add parantheses around "bits" expression in macro.
->> >> > * Fix indentation on multi-line statements.
->> >> >
->> >> >  drivers/firmware/efi/cper-x86.c | 50
->> >> +++++++++++++++++++++++++++++++++++++++++
->> >> >  1 file changed, 50 insertions(+)
->> >> >
->> >> > diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-
->> >> x86.c
->> >> > index 863f0cd2a0ff..a9ab3bbf7986 100644
->> >> > --- a/drivers/firmware/efi/cper-x86.c
->> >> > +++ b/drivers/firmware/efi/cper-x86.c
->> >> > @@ -3,15 +3,28 @@
->> >> >
->> >> >  #include <linux/cper.h>
->> >> >
->> >> > +#define INDENT_SP  " "
->> >>
->> >> There's that thing again. So it was a total waste of time discussing
->> >> this last time. So let me save my time this time:
->> >>
->> >> NAKed-by: Borislav Petkov <bp@suse.de>
->> >>
->> >
->> > IIRC, the arguments for keeping this are
->> > 1) convention for CPER
->> > 2) code readability
->> >
->> > The argument against was
->> > 1) it's dumb
->> >
->> > So I decided to keep it. I don't really mind either way so I'll change it
->> > if there's a second opinion.
->> >
->>
->> Yes, please change it.
->
-> Okay, will do. Should I include a patch that changes it for the other CPER
-> code also?
->
+In order to be able to provide correct driver_data for pci_epf device,
+a separate configfs entry for each pci_epf_device_id table entry in
+pci_epf_driver is required.
 
-No worries, Boris already sent that out.
+Add support to create configfs entry for each pci_epf_device_id
+table entry here.
+
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ drivers/pci/endpoint/pci-epf-core.c | 23 +++++++++++++++++++++--
+ include/linux/pci-epf.h             |  4 ++--
+ 2 files changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
+index 59ed29e550e9..d6787f39fd41 100644
+--- a/drivers/pci/endpoint/pci-epf-core.c
++++ b/drivers/pci/endpoint/pci-epf-core.c
+@@ -15,6 +15,8 @@
+ #include <linux/pci-epf.h>
+ #include <linux/pci-ep-cfs.h>
+ 
++static DEFINE_MUTEX(pci_epf_mutex);
++
+ static struct bus_type pci_epf_bus_type;
+ static const struct device_type pci_epf_type;
+ 
+@@ -139,7 +141,13 @@ EXPORT_SYMBOL_GPL(pci_epf_alloc_space);
+  */
+ void pci_epf_unregister_driver(struct pci_epf_driver *driver)
+ {
+-	pci_ep_cfs_remove_epf_group(driver->group);
++	struct config_group *group;
++
++	mutex_lock(&pci_epf_mutex);
++	list_for_each_entry(group, &driver->epf_group, group_entry)
++		pci_ep_cfs_remove_epf_group(group);
++	list_del(&driver->epf_group);
++	mutex_unlock(&pci_epf_mutex);
+ 	driver_unregister(&driver->driver);
+ }
+ EXPORT_SYMBOL_GPL(pci_epf_unregister_driver);
+@@ -155,6 +163,8 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
+ 			      struct module *owner)
+ {
+ 	int ret;
++	struct config_group *group;
++	const struct pci_epf_device_id *id;
+ 
+ 	if (!driver->ops)
+ 		return -EINVAL;
+@@ -169,7 +179,16 @@ int __pci_epf_register_driver(struct pci_epf_driver *driver,
+ 	if (ret)
+ 		return ret;
+ 
+-	driver->group = pci_ep_cfs_add_epf_group(driver->driver.name);
++	INIT_LIST_HEAD(&driver->epf_group);
++
++	id = driver->id_table;
++	while (id->name[0]) {
++		group = pci_ep_cfs_add_epf_group(id->name);
++		mutex_lock(&pci_epf_mutex);
++		list_add_tail(&group->group_entry, &driver->epf_group);
++		mutex_unlock(&pci_epf_mutex);
++		id++;
++	}
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+index e897bf076701..a30dcaafa6e8 100644
+--- a/include/linux/pci-epf.h
++++ b/include/linux/pci-epf.h
+@@ -72,7 +72,7 @@ struct pci_epf_ops {
+  * @driver: PCI EPF driver
+  * @ops: set of function pointers for performing EPF operations
+  * @owner: the owner of the module that registers the PCI EPF driver
+- * @group: configfs group corresponding to the PCI EPF driver
++ * @epf_group: list of configfs group corresponding to the PCI EPF driver
+  * @id_table: identifies EPF devices for probing
+  */
+ struct pci_epf_driver {
+@@ -82,7 +82,7 @@ struct pci_epf_driver {
+ 	struct device_driver	driver;
+ 	struct pci_epf_ops	*ops;
+ 	struct module		*owner;
+-	struct config_group	*group;
++	struct list_head	epf_group;
+ 	const struct pci_epf_device_id	*id_table;
+ };
+ 
+-- 
+2.16.2
