@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753423AbeDBS23 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 14:28:29 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:35835 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753013AbeDBS21 (ORCPT
+        id S1754329AbeDBS2g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 14:28:36 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:44585 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753013AbeDBS2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 14:28:27 -0400
-X-Google-Smtp-Source: AIpwx48wlE4PVKwKKGYg7A/I89n2BNv0El1fGaSBUnFDg4GQovJIQyBibccC93HQomzPqN1SrHFcIQ==
+        Mon, 2 Apr 2018 14:28:30 -0400
+X-Google-Smtp-Source: AIpwx49BlnR2tmDIylLcU4VEMBSg2nSDysnei7bWEFjgXzDeJ7ja53xP+Yu6Dm+ry5Wj/UMpbYEYMw==
 From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 To: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
@@ -16,109 +16,226 @@ To: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         lkml <linux-kernel@vger.kernel.org>,
         linux-input <linux-input@vger.kernel.org>
 Cc: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-Subject: [PATCH v8 0/2] hid-steam driver with user mode client dection
-Date: Mon,  2 Apr 2018 20:28:05 +0200
-Message-Id: <20180402182807.19878-1-rodrigorivascosta@gmail.com>
+Subject: [PATCH v8 2/2] HID: steam: add battery device.
+Date: Mon,  2 Apr 2018 20:28:07 +0200
+Message-Id: <20180402182807.19878-3-rodrigorivascosta@gmail.com>
 X-Mailer: git-send-email 2.16.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180402182807.19878-1-rodrigorivascosta@gmail.com>
+References: <20180402182807.19878-1-rodrigorivascosta@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Another reroll of the Steam Controller driver.
+The wireless Steam Controller is battery operated, so add the battery
+device and power information.
+---
+ drivers/hid/hid-steam.c | 141 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 140 insertions(+), 1 deletion(-)
 
-This time there is a complete rewrite of steam_probe(), that had been
-growing _organically_. I gave up on trying to initialize the hidraw
-device on partial probe failure, it makes the code much more complicated
-and for little gain.
-
-Maybe it is not to appropriate to add features on reroll 8, but...
-now that we are, I think, race-free regarding to the Steam Client, and
-I've been playing with a few games, I noticed a couple of issues:
- * The right pad has a dead margin, I don't know what its use is, but
-   Steam Client disables it, so I'm doing the same in game-pad mode. It
-   just serves no function (left pad does not have it). I enable it
-   together with lizard-mode, of course.
- * The DPAD (clicking on the border of the left pad) cannot emit
-   diagonals. That's not nice, so I'm currently synthesizing them from
-   the lpad coordinates. I don't know if it is appropriate... if not,
-   just let me know. This is register 0x18.
-
-Since now there are quite a few registers and commands, I've added names
-for the major constants in the protocol.
-
-Also there was an overflow when any Y coordinate reached -32768, fixed.
-
-And I changed the lizard_mode to a boolean parameter, but with a
-callback. I've added a global list of steam_device to be able to do the
-runtime change. The meaning of this parameter is now:
- * When hidraw is in use, nothing is done.
- * When the gamepad is in use, lizard_mode is always disabled.
- * When the gamepad is not in use:
-    - lizard_mode=N: mouse/keyboard emulation disabled.
-    - lizard_mode=Y (default): mouse/keyboard emulation enabled.
-
-Changes in v8:
- * Add constants for the protocol major magic numbers.
- * Disable/Enable margin of the rpad, together with the lizard-mode.
- * Synthesize diagonals for the DPAD.
- * Fix overflow with Y=-32768.
- * Make lizard_mode parameter a bool, dynamically updatable.
-
-Changes in v7:
- * All the automatic lizard_mode stuff.
- * Added the lizard_mode parameter.
- * The patchset is reduced to 2 commits. The separation of the
-   steam_get_serial command no longer makes sense, since I need the
-   steam_send_cmd in the first commit to implement the lizard mode.
- * Change the input mapping to conform to Documentation/gamepad.rst.
-
-(v6 was a RFC, it does not count).
-
-Changes in v5:
- * Fix license SPDX to GPL-2.0+.
- * Minor stylistic changes (BIT(3) instead 0x08 and so on).
-
-Changes in v4:
- * Add command to check the wireless connection status on probe, without
-   waiting for a message (thanks to Clément Vuchener for the tip).
- * Removed the error code on redundant connection/disconnection messages. That
-   was harmless but polluted dmesg.
- * Added buttons for touching the left-pad and right-pad.
- * Fixed a misplaced #include from 2/4 to 1/4.
-
-Changes in v3:
- * Use RCU to do the dynamic connec/disconnect of wireless devices.
- * Remove entries in hid-quirks.c as they are no longer needed. This allows
-   this module to be blacklisted without side effects.
- * Do not bypass the virtual keyboard/mouse HID devices to avoid breaking
-   existing use cases (lizard mode). A user-space tool to do that is
-   linked.
- * Fully separated axes for joystick and left-pad. As it happens.
- * Add fuzz values for left/right pad axes, they are a little wiggly.
-
-Changes in v2:
- * Remove references to USB. Now the interesting interfaces are selected by
-   looking for the ones with feature reports.
- * Feature reports buffers are allocated with hid_alloc_report_buf().
- * Feature report length is checked, to avoid overflows in case of
-   corrupt/malicius USB devices.
- * Resolution added to the ABS axes.
- * A lot of minor cleanups.
-
-Rodrigo Rivas Costa (2):
-  HID: add driver for Valve Steam Controller
-  HID: steam: add battery device.
-
- drivers/hid/Kconfig     |    8 +
- drivers/hid/Makefile    |    1 +
- drivers/hid/hid-ids.h   |    4 +
- drivers/hid/hid-steam.c | 1112 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/hid.h     |    1 +
- 5 files changed, 1126 insertions(+)
- create mode 100644 drivers/hid/hid-steam.c
-
+diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
+index 1e496075acbc..d4cb509999b7 100644
+--- a/drivers/hid/hid-steam.c
++++ b/drivers/hid/hid-steam.c
+@@ -40,6 +40,7 @@
+ #include <linux/mutex.h>
+ #include <linux/rcupdate.h>
+ #include <linux/delay.h>
++#include <linux/power_supply.h>
+ #include "hid-ids.h"
+ 
+ MODULE_LICENSE("GPL");
+@@ -105,6 +106,10 @@ struct steam_device {
+ 	struct work_struct work_connect;
+ 	bool connected;
+ 	char serial_no[STEAM_SERIAL_LEN + 1];
++	struct power_supply_desc battery_desc;
++	struct power_supply __rcu *battery;
++	u8 battery_charge;
++	u16 voltage;
+ };
+ 
+ static int steam_recv_report(struct steam_device *steam,
+@@ -302,6 +307,85 @@ static void steam_input_close(struct input_dev *dev)
+ 	hid_hw_close(steam->hdev);
+ }
+ 
++static enum power_supply_property steam_battery_props[] = {
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_SCOPE,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
++	POWER_SUPPLY_PROP_CAPACITY,
++};
++
++static int steam_battery_get_property(struct power_supply *psy,
++				enum power_supply_property psp,
++				union power_supply_propval *val)
++{
++	struct steam_device *steam = power_supply_get_drvdata(psy);
++	unsigned long flags;
++	s16 volts;
++	u8 batt;
++	int ret = 0;
++
++	spin_lock_irqsave(&steam->lock, flags);
++	volts = steam->voltage;
++	batt = steam->battery_charge;
++	spin_unlock_irqrestore(&steam->lock, flags);
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_PRESENT:
++		val->intval = 1;
++		break;
++	case POWER_SUPPLY_PROP_SCOPE:
++		val->intval = POWER_SUPPLY_SCOPE_DEVICE;
++		break;
++	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
++		val->intval = volts * 1000; /* mV -> uV */
++		break;
++	case POWER_SUPPLY_PROP_CAPACITY:
++		val->intval = batt;
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++	return ret;
++}
++
++static int steam_battery_register(struct steam_device *steam)
++{
++	struct power_supply *battery;
++	struct power_supply_config battery_cfg = { .drv_data = steam, };
++	unsigned long flags;
++	int ret;
++
++	steam->battery_desc.type = POWER_SUPPLY_TYPE_BATTERY;
++	steam->battery_desc.properties = steam_battery_props;
++	steam->battery_desc.num_properties = ARRAY_SIZE(steam_battery_props);
++	steam->battery_desc.get_property = steam_battery_get_property;
++	steam->battery_desc.name = devm_kasprintf(&steam->hdev->dev,
++			GFP_KERNEL, "steam-controller-%s-battery",
++			steam->serial_no);
++	if (!steam->battery_desc.name)
++		return -ENOMEM;
++
++	/* avoid the warning of 0% battery while waiting for the first info */
++	spin_lock_irqsave(&steam->lock, flags);
++	steam->voltage = 3000;
++	steam->battery_charge = 100;
++	spin_unlock_irqrestore(&steam->lock, flags);
++
++	battery = power_supply_register(&steam->hdev->dev,
++			&steam->battery_desc, &battery_cfg);
++	if (IS_ERR(battery)) {
++		ret = PTR_ERR(battery);
++		hid_err(steam->hdev,
++				"%s:power_supply_register failed with error %d\n",
++				__func__, ret);
++		return ret;
++	}
++	rcu_assign_pointer(steam->battery, battery);
++	power_supply_powers(battery, &steam->hdev->dev);
++	return 0;
++}
++
+ static int steam_register(struct steam_device *steam)
+ {
+ 	struct hid_device *hdev = steam->hdev;
+@@ -391,6 +475,10 @@ static int steam_register(struct steam_device *steam)
+ 
+ 	rcu_assign_pointer(steam->input, input);
+ 
++	/* ignore battery errors, we can live without it */
++	if (steam->quirks & STEAM_QUIRK_WIRELESS)
++		steam_battery_register(steam);
++
+ 	return 0;
+ 
+ input_register_fail:
+@@ -401,11 +489,18 @@ static int steam_register(struct steam_device *steam)
+ static void steam_unregister(struct steam_device *steam)
+ {
+ 	struct input_dev *input;
++	struct power_supply *battery;
+ 
+ 	rcu_read_lock();
+ 	input = rcu_dereference(steam->input);
++	battery = rcu_dereference(steam->battery);
+ 	rcu_read_unlock();
+ 
++	if (battery) {
++		RCU_INIT_POINTER(steam->battery, NULL);
++		synchronize_rcu();
++		power_supply_unregister(battery);
++	}
+ 	if (input) {
+ 		RCU_INIT_POINTER(steam->input, NULL);
+ 		synchronize_rcu();
+@@ -851,12 +946,44 @@ static void steam_do_input_event(struct steam_device *steam,
+ 	input_sync(input);
+ }
+ 
++/*
++ * The size for this message payload is 11.
++ * The known values are:
++ *  Offset| Type  | Meaning
++ * -------+-------+---------------------------
++ *  4-7   | u32   | sequence number
++ *  8-11  | --    | always 0
++ *  12-13 | u16   | voltage (mV)
++ *  14    | u8    | battery percent
++ */
++static void steam_do_battery_event(struct steam_device *steam,
++		struct power_supply *battery, u8 *data)
++{
++	unsigned long flags;
++
++	s16 volts = steam_le16(data + 12);
++	u8 batt = data[14];
++
++	/* Creating the battery may have failed */
++	rcu_read_lock();
++	battery = rcu_dereference(steam->battery);
++	if (likely(battery)) {
++		spin_lock_irqsave(&steam->lock, flags);
++		steam->voltage = volts;
++		steam->battery_charge = batt;
++		spin_unlock_irqrestore(&steam->lock, flags);
++		power_supply_changed(battery);
++	}
++	rcu_read_unlock();
++}
++
+ static int steam_raw_event(struct hid_device *hdev,
+ 			struct hid_report *report, u8 *data,
+ 			int size)
+ {
+ 	struct steam_device *steam = hid_get_drvdata(hdev);
+ 	struct input_dev *input;
++	struct power_supply *battery;
+ 
+ 	if (!steam)
+ 		return 0;
+@@ -914,7 +1041,19 @@ static int steam_raw_event(struct hid_device *hdev,
+ 		}
+ 		break;
+ 	case STEAM_EV_BATTERY:
+-		/* TODO: battery info */
++		if (steam->quirks & STEAM_QUIRK_WIRELESS) {
++			rcu_read_lock();
++			battery = rcu_dereference(steam->battery);
++			if (likely(battery)) {
++				steam_do_battery_event(steam, battery, data);
++			} else {
++				dbg_hid(
++					"%s: battery data without connect event\n",
++					__func__);
++				steam_do_connect_event(steam, true);
++			}
++			rcu_read_unlock();
++		}
+ 		break;
+ 	}
+ 	return 0;
 -- 
 2.16.3
