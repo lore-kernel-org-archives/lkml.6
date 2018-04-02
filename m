@@ -1,146 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeDBPuO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:50:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42808 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751913AbeDBPuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:50:13 -0400
-Message-ID: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-From: Dan Williams <dcbw@redhat.com>
-To: Tony Lindgren <tony@atomide.com>, Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Date: Mon, 02 Apr 2018 10:50:08 -0500
-In-Reply-To: <20180401173012.GB5700@atomide.com>
-References: <20180328140219.f6667up5evrrafkv@earth.universe>
-         <20180329014507.GM5700@atomide.com> <20180331145531.GA10404@amd>
-         <20180331181935.GX5700@atomide.com> <20180331191939.GA8999@amd>
-         <20180331194616.GA19388@amd> <20180331195524.GB19388@amd>
-         <20180331234314.GZ5700@atomide.com> <20180401131852.GA11086@amd>
-         <20180401153631.GA5700@atomide.com> <20180401173012.GB5700@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+        id S1752696AbeDBPwg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:52:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34648 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751415AbeDBPwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 11:52:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1C920838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 2 Apr 2018 11:52:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] tracing: Uninitialized variable in
+ create_tracing_map_fields()
+Message-ID: <20180402115232.2319bcef@gandalf.local.home>
+In-Reply-To: <1522245880.520.1.camel@tzanussi-mobl.amr.corp.intel.com>
+References: <20180328114815.GC29050@mwanda>
+        <1522245880.520.1.camel@tzanussi-mobl.amr.corp.intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-04-01 at 10:30 -0700, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [180401 15:38]:
-> > * Pavel Machek <pavel@ucw.cz> [180401 13:20]:
-> > > On Sat 2018-03-31 16:43:14, Tony Lindgren wrote:
-> > > > * Pavel Machek <pavel@ucw.cz> [180331 19:56]:
-> > > > > On Sat 2018-03-31 21:46:16, Pavel Machek wrote:
-> > > > > > On Sat 2018-03-31 21:19:39, Pavel Machek wrote:
-> > > > > > > On Sat 2018-03-31 11:19:35, Tony Lindgren wrote:
-> > > > > > > > Cool :) Microphone still does not work for me.. I tried
-> > > > > > > > tweaking
-> > > > > > > > the alsamixer settings but no mic. This is with cold
-> > > > > > > > boot with
-> > > > > > > > droid4-kexecboot if that might make a difference, we
-> > > > > > > > may have
-> > > > > > > > some register uninitialized somewhere. Any ideas?
-> > > > > > > 
-> > > > > > > Ok, I was focusing on the speaker side.
-> > > > > > > 
-> > > > > > > alsamixer, tab to go to capture settings, set it to 37 37
-> > > > > > > Mic2 Mic1
-> > > > > > > should work, according to my notes, but not recently
-> > > > > > > tested and not
-> > > > > > > tested against real human.
-> > > > > > > 
-> > > > > > > I'll attempt to test it, but something in my userland
-> > > > > > > shuts down
-> > > > > > > system just after boot 60% of time, which is rather
-> > > > > > > annoying.
-> > > > > > 
-> > > > > > Hmm. So I tried again, and setting Mic1 and back in the
-> > > > > > capture
-> > > > > > settings crashed the modem. Bang, disconnected from the
-> > > > > > USB.
-> > > > > 
-> > > > > Next try, and it worked this time.
-> > > > > 
-> > > > > _Before the call_, set mode to Normal and then Call. Then go
-> > > > > to
-> > > > > capture, and set 100 100 Mic2 Mic1. Then place a call,
-> > > > > 
-> > > > > AT+CFUN=1
-> > > > > OK
-> > > > > ATD6;
-> > > > 
-> > > > No luck with microphone here :( Using ttyUSB4, AT+CFUN=1
-> > > > works, but ATD command on it just hangs the USB interface
-> > > > and I have to reload phy-mapphone-mdm6600 to reset the
-> > > > modem.
-> > > 
-> > > Test call with real human worked (thanks to Rolf K.), I could
-> > > hear him
-> > > well but he reported call was very quiet. And that was with
-> > > capture
-> > > settings at 100%.
-> > 
-> > Maybe the volume also needs to be controlled at mdm6600 end.
-> > I'm seeing some AT+CLVL=n with n being between [0-7] calls on
-> > DLCI2 in my Android logcat logs.
-> > 
-> > > If you had a register dump from android with mics working,
-> > > preferably
-> > > not in speaker mode, perhaps I could try to figure it out?
-> > 
-> > OK here are four diffs against starting the phone app for regular
-> > call, speaker call, and muted versions of them:
-> > 
-> > http://muru.com/linux/d4/cpcap/
-> > 
-> > Also, I'm connected over cdma right now, not 3g, but I doubt
-> > that makes a difference for the microphone.
-> 
-> Found it! Here's what I need to do over n_gsm:
-> 
-> ngsm 1 "AT+CFUN=1"
-> ngsm 1 "AT+CFUN?"
-> ngsm 2 "AT+EACC=3,0"    # enable mic
-> ngsm 2 "AT+CLVL=4"      # set speaker volume
-> ngsm 2 "AT+CMUT=0"      # unmute mic
+On Wed, 28 Mar 2018 09:04:40 -0500
+Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
 
-I tried to look through the QMI dumps we have in libqmi from 2013
-(latest Qualcomm posted) and couldn't find anything to do with mic
-control, speaker volume, or anything like that.
+> Yes, this should definitely be initialized to 0, thanks for the patch!
+> 
+> Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-If the modem supports the AT service (which I think it does?  Not
-looking at the libqmi dumps right now) then it could potentially tunnel
-these AT commands through QMI too.
+Thanks, I applied it and will push to git after it has succeeded in
+testing.
 
-Perhaps Qualcomm added something to the Voice service after 2013, or
-perhaps there are other services that might control speaker/mic that we
-don't have public dumps for yet though.
-
-Dan
-
-> ngsm 1 "ATD${number}"
-> ngsm 1 "AT+CLCC"	# list current calls
-> ngsm 2 "AT+NREC=1"	# enable noise cancellation
-> ngsm 1 "AT+SCRN=0"	# ??? not sure if this does anything
-> 
-> while [ 1 ]; do
-> 	date
-> 	ngsm 1 "AT+CLCC"
-> 	sleep 10
-> done
-> 
-> So speaker phone call works just fine, I just tested with a
-> human at the other end :)
-> 
-> Hmm let's hope all those also translate to some qmi calls.
-> 
-> Regards,
-> 
-> Tony
+-- Steve
