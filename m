@@ -1,58 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932483AbeDBUl7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 16:41:59 -0400
-Received: from mga03.intel.com ([134.134.136.65]:30897 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756760AbeDBUl6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 16:41:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,397,1517904000";
-   d="scan'208";a="188081413"
-Subject: Re: [PATCH 09/11] x86/pti: enable global pages for shared areas
-To: Linus Torvalds <torvalds@linux-foundation.org>
-References: <20180402172700.65CAE838@viggo.jf.intel.com>
- <20180402172713.B7D6F0C0@viggo.jf.intel.com>
- <CA+55aFx5GCahkr_-Y0qF5S=USCXhNcvWZ6gr_TxpvUVAh46STA@mail.gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        the arch/x86 maintainers <x86@kernel.org>, namit@vmware.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <503339cf-7e54-0888-1767-c8ac87ce2130@linux.intel.com>
-Date: Mon, 2 Apr 2018 13:41:57 -0700
+        id S932509AbeDBUm0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 16:42:26 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.61]:14035 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756760AbeDBUmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 16:42:25 -0400
+Subject: Re: [PATCH 3/3] media: i2c: tvp5150: Use parentheses for sizeof
+To: Nasser Afshin <afshin.nasser@gmail.com>, mchehab@kernel.org
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180402195907.14368-1-Afshin.Nasser@gmail.com>
+ <20180402195907.14368-4-Afshin.Nasser@gmail.com>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Message-ID: <d5e8dbe4-b68b-ac4e-0076-a3ee995f8327@embeddedor.com>
+Date: Mon, 2 Apr 2018 15:17:37 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFx5GCahkr_-Y0qF5S=USCXhNcvWZ6gr_TxpvUVAh46STA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180402195907.14368-4-Afshin.Nasser@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f35ta-002rRS-W7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.145.54.187]:33462
+X-Source-Auth: garsilva@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/2018 10:56 AM, Linus Torvalds wrote:
-> On Mon, Apr 2, 2018 at 10:27 AM, Dave Hansen
-> <dave.hansen@linux.intel.com> wrote:
->> +       /*
->> +        * The cpu_entry_area is shared between the user and kernel
->> +        * page tables.  All of its ptes can safely be global.
->> +        */
->> +       if (boot_cpu_has(X86_FEATURE_PGE))
->> +               pte = pte_set_flags(pte, _PAGE_GLOBAL);
-> So this is where the quesion of "why is this conditional" is valid.
-> 
-> We could set _PAGE_GLOBAL unconditionally, not bothering with testing
-> X86_FEATURE_PGE.
+Hi,
 
-I think we should just keep the check for now.  Before this patch set,
-on !X86_FEATURE_PGE systems, we cleared _PAGE_GLOBAL in virtually all
-places due to masking via __supported_pte_mask.
+On 04/02/2018 02:59 PM, Nasser Afshin wrote:
+> This patch resolves a checkpatch.pl warning
 
-It is rather harmless either way, but being _consistent_ (by keeping the
-check) with all of our PTEs is nice.
+It would be nice if you explicitly mention the warning.
+
+Thanks.
+--
+Gustavo
+
+> Signed-off-by: Nasser Afshin <Afshin.Nasser@gmail.com>
+> ---
+>   drivers/media/i2c/tvp5150.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+> index d561d87d219a..d528fddbea16 100644
+> --- a/drivers/media/i2c/tvp5150.c
+> +++ b/drivers/media/i2c/tvp5150.c
+> @@ -625,7 +625,7 @@ static int tvp5150_g_sliced_vbi_cap(struct v4l2_subdev *sd,
+>   	int line, i;
+>   
+>   	dev_dbg_lvl(sd->dev, 1, debug, "g_sliced_vbi_cap\n");
+> -	memset(cap, 0, sizeof *cap);
+> +	memset(cap, 0, sizeof(*cap));
+>   
+>   	for (i = 0; i < ARRAY_SIZE(vbi_ram_default); i++) {
+>   		const struct i2c_vbi_ram_value *regs = &vbi_ram_default[i];
