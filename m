@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754623AbeDBWZA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:25:00 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40955 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754457AbeDBWY5 (ORCPT
+        id S1754641AbeDBWZG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:25:06 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45232 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754457AbeDBWZC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:24:57 -0400
-X-Google-Smtp-Source: AIpwx49frNS78Q3CcUJv/T7MhUUK5mukdj7QqTav7XMgEPtisuEFpnhHnb1HU/ZujCPBuS5qvHcX+g==
+        Mon, 2 Apr 2018 18:25:02 -0400
+X-Google-Smtp-Source: AIpwx4/fYy4o3NgcNBNeO04ik1jGcHowVjYoKxwZ18QYpFYWv0HFJsq5EEf+YlD+pq5Kt1n7FRTYgA==
 From: Nasser Afshin <afshin.nasser@gmail.com>
 X-Google-Original-From: Nasser Afshin <Afshin.Nasser@gmail.com>
 Cc: Nasser Afshin <Afshin.Nasser@gmail.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] media: i2c: tvp5150: Use the correct comment style
-Date: Tue,  3 Apr 2018 02:53:18 +0430
-Message-Id: <20180402222322.30385-3-Afshin.Nasser@gmail.com>
+Subject: [PATCH v2 3/4] media: i2c: tvp5150: Fix open brace placement codding style
+Date: Tue,  3 Apr 2018 02:53:19 +0430
+Message-Id: <20180402222322.30385-4-Afshin.Nasser@gmail.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20180402222322.30385-1-Afshin.Nasser@gmail.com>
 References: <d5e8dbe4-b68b-ac4e-0076-a3ee995f8327@embeddedor.com>
@@ -29,51 +29,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch resolves checkpatch.pl warnings:
-    WARNING: Block comments use * on subsequent lines
-    WARNING: Block comments use a trailing */ on a separate line
+This patch resolves the following checkpatch.pl error:
+    ERROR: that open brace { should be on the previous line
 
 Signed-off-by: Nasser Afshin <Afshin.Nasser@gmail.com>
 ---
- drivers/media/i2c/tvp5150.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/media/i2c/tvp5150.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-index af56a5a6db65..fd23138cc6a3 100644
+index fd23138cc6a3..d561d87d219a 100644
 --- a/drivers/media/i2c/tvp5150.c
 +++ b/drivers/media/i2c/tvp5150.c
-@@ -502,8 +502,10 @@ struct i2c_vbi_ram_value {
+@@ -500,8 +500,8 @@ struct i2c_vbi_ram_value {
+  * and so on. There are 16 possible locations from 0 to 15.
+  */
  
- static struct i2c_vbi_ram_value vbi_ram_default[] =
- {
--	/* FIXME: Current api doesn't handle all VBI types, those not
--	   yet supported are placed under #if 0 */
-+	/*
-+	 * FIXME: Current api doesn't handle all VBI types, those not
-+	 * yet supported are placed under #if 0
-+	 */
- #if 0
- 	[0] = {0x010, /* Teletext, SECAM, WST System A */
- 		{V4L2_SLICED_TELETEXT_SECAM, 6, 23, 1},
-@@ -1101,11 +1103,14 @@ static int tvp5150_s_routing(struct v4l2_subdev *sd,
- 
- static int tvp5150_s_raw_fmt(struct v4l2_subdev *sd, struct v4l2_vbi_format *fmt)
- {
--	/* this is for capturing 36 raw vbi lines
--	   if there's a way to cut off the beginning 2 vbi lines
--	   with the tvp5150 then the vbi line count could be lowered
--	   to 17 lines/field again, although I couldn't find a register
--	   which could do that cropping */
-+	/*
-+	 * this is for capturing 36 raw vbi lines
-+	 * if there's a way to cut off the beginning 2 vbi lines
-+	 * with the tvp5150 then the vbi line count could be lowered
-+	 * to 17 lines/field again, although I couldn't find a register
-+	 * which could do that cropping
-+	 */
+-static struct i2c_vbi_ram_value vbi_ram_default[] =
+-{
++static struct i2c_vbi_ram_value vbi_ram_default[] = {
 +
- 	if (fmt->sample_format == V4L2_PIX_FMT_GREY)
- 		tvp5150_write(sd, TVP5150_LUMA_PROC_CTL_1, 0x70);
- 	if (fmt->count[0] == 18 && fmt->count[1] == 18) {
+ 	/*
+ 	 * FIXME: Current api doesn't handle all VBI types, those not
+ 	 * yet supported are placed under #if 0
 -- 
 2.15.0
