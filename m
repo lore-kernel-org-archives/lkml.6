@@ -1,72 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754200AbeDBGiD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:38:03 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6718 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752485AbeDBGiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:38:01 -0400
-Subject: Re: [PATCH 2/2] perf: add arm64 smmuv3 pmu driver
-To: Neil Leeder <neil.m.leeder@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
-References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
- <1501876754-1064-3-git-send-email-nleeder@codeaurora.org>
- <883d32ce-6581-ecf6-5088-ecb238322ebe@huawei.com>
- <e55ab4404143ea0b3cc4795a93e37480@codeaurora.org>
- <14f90cc6-f2c1-5a63-67c6-a5c8ddb4799e@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Mark Langsdorf <mlangsdo@redhat.com>, Mark Salter <msalter@redhat.com>,
-        "Jon Masters" <jcm@redhat.com>, Timur Tabi <timur@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <c1f9230b-8ff0-5b2e-def9-cbf6b2e2e99c@huawei.com>
-Date: Mon, 2 Apr 2018 14:37:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1754151AbeDBGoo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:44:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:49974 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752150AbeDBGom (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 02:44:42 -0400
+Date: Mon, 2 Apr 2018 07:44:37 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: syzbot <syzbot+f3bd89a5ab3266b10540@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, linux-nfs@vger.kernel.org
+Subject: Re: BUG: corrupted list in __dentry_kill
+Message-ID: <20180402064437.GB30522@ZenIV.linux.org.uk>
+References: <001a11447acaa9eec40568bd5438@google.com>
+ <20180401033519.GZ30522@ZenIV.linux.org.uk>
+ <20180401200531.GA30522@ZenIV.linux.org.uk>
+ <20180401210508.GA743@sol.localdomain>
+ <20180401214854.GB743@sol.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <14f90cc6-f2c1-5a63-67c6-a5c8ddb4799e@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180401214854.GB743@sol.localdomain>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+On Sun, Apr 01, 2018 at 02:48:54PM -0700, Eric Biggers wrote:
+> [+Cc linux-nfs]
+> > 
+> > [   42.965515] net/sunrpc/rpc_pipe.c: __rpc_create_common failed to allocate inode for dentry blocklayout
+> > [   42.967234] net/sunrpc/rpc_pipe.c: rpc_mkpipe_dentry() failed to create pipe nfs/blocklayout (errno = -12)
 
-On 2018/4/1 13:44, Neil Leeder wrote:
-> Hi Yisheng Xie,
-> 
-> On 3/29/2018 03:03 AM, Yisheng Xie wrote:
->>
->> Hi Neil,
->>
->> On 2017/8/5 3:59, Neil Leeder wrote:
->>> +    mem_resource_0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +    mem_map_0 = devm_ioremap_resource(&pdev->dev, mem_resource_0);
->>> +
->> Can we use devm_ioremap instead? for the reg_base of smmu_pmu is
->> IMPLEMENTATION DEFINED. If the reg of smmu_pmu is inside smmu,
->> devm_ioremap_resource will failed and return -EBUSY, eg.:
->>
->>   smmu reg ranges:        0x180000000 ~ 0x1801fffff
->>   its smmu_pmu reg ranges:    0x180001000 ~ 0x180001fff
->>
-> Just to let you know that I no longer work at Qualcomm and I won't be able to provide updates to this patchset. I expect that others from my former team at Qualcomm will pick up ownership.
+	AFAICS, there's nothing to zero nn->bl_device_pipe->dentry after
+nfs4blocklayout_unregister_sb(), is there?  If nothing else, what's
+going to happen after mount/umount/mount with failing
+nfs4blocklayout_register_sb()?  AFAICS, we'll have stale pointer to
+dentry sitting in nn->bl_device_pipe->dentry, and call rpc_unlink()
+on it while cleaning up after the failing mount.
 
-Thanks for this infomation.
-
-hi Agustin and Timur,
-
-Is there any new status about this patchset?
-
-Thanks
-Yisheng
-
-> 
-> Neil
-> 
-> .
-> 
+	I don't think that's all there is to it, but it does smell like
+a bug.
