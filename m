@@ -1,73 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDBOfh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 10:35:37 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:40163 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751678AbeDBOfd (ORCPT
+        id S1752754AbeDBOfy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 10:35:54 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:53679 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751418AbeDBOfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 10:35:33 -0400
-X-Google-Smtp-Source: AIpwx492Bk/68HTQhd48bvYQX78AahTF8Qs9qhhAg+ncXR9dSawzvV4neHyF0IHvSfUv0HrhaWOheYrUa2Pk1xG6BF0=
+        Mon, 2 Apr 2018 10:35:45 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
+        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>
+Subject: [net-next PATCH v3 11/11] net: netcp: support probe deferral
+Date: Mon, 2 Apr 2018 10:38:01 -0400
+Message-ID: <1522679881-25643-12-git-send-email-m-karicheri2@ti.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
+References: <1522679881-25643-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180309140358.11432-1-hdegoede@redhat.com>
-References: <20180309140358.11432-1-hdegoede@redhat.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 2 Apr 2018 17:35:31 +0300
-Message-ID: <CAHp75VcAir59zB_pKjyt8=rRGchokvr_6=YhxBOwxTKWWvqtKg@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: silead_dmi: Add entry for the Yours Y8W81 tablet
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 4:03 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> Add an entry with touchscreen info for the Yours Y8W81 8" tablet.
->
-> This tablet has the same case and mostly the same internals as the Chuwi
-> Vi8. Both seem to be from an ODM called inet-tek. Both are labelled:
-> "INET-I86M-REVxx" on the PCB, with the Chuwi Vi8 being REV03 (and having
-> an ALC5640 audio codec) and the Yours Y8W81 being REV21 (and having an
-> ALC5651 audio codec). The wifi, accelerometer and touchscreen are
-> identical on both.
->
+The netcp driver shouldn't proceed until the knav qmss and dma
+devices are ready. So return -EPROBE_DEFER if these devices are not
+ready.
 
-Pushed to my review and testing queue, thanks!
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/netcp_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/platform/x86/silead_dmi.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/platform/x86/silead_dmi.c b/drivers/platform/x86/silead_dmi.c
-> index 1091539fa230..452aacabaa8e 100644
-> --- a/drivers/platform/x86/silead_dmi.c
-> +++ b/drivers/platform/x86/silead_dmi.c
-> @@ -455,6 +455,14 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
->                         DMI_MATCH(DMI_BIOS_VERSION, "itWORKS.G.WI71C.JGBMRB"),
->                 },
->         },
-> +       {
-> +               /* Yours Y8W81, same case and touchscreen as Chuwi Vi8 */
-> +               .driver_data = (void *)&chuwi_vi8_data,
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "YOURS"),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "Y8W81"),
-> +               },
-> +       },
->         { },
->  };
->
-> --
-> 2.14.3
->
-
-
-
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index 9c51b25..736f6f7 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -2158,6 +2158,10 @@ static int netcp_probe(struct platform_device *pdev)
+ 	struct netcp_module *module;
+ 	int ret;
+ 
++	if (!knav_dma_device_ready() ||
++	    !knav_qmss_device_ready())
++		return -EPROBE_DEFER;
++
+ 	if (!node) {
+ 		dev_err(dev, "could not find device info\n");
+ 		return -ENODEV;
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
