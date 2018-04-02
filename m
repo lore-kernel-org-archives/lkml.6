@@ -1,52 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752150AbeDBGGY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 02:06:24 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47310 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751231AbeDBGGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:06:23 -0400
-Subject: =?UTF-8?Q?Re:_=e7=ad=94=e5=a4=8d:_Re:_[PATCH_v2]_scsi:_Introduce_sd?=
- =?UTF-8?Q?ev=5fprintk=5fratelimited_to_throttlefrequent_printk?=
-To: <wen.yang99@zte.com.cn>
-References: 1522634332-151328-1-git-send-email-wen.yang99@zte.com.cn
- 5AC1976F.1040801@huawei.com <201804021314481872986@zte.com.cn>
-CC: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Bart.VanAssche@wdc.com>, <pmladek@suse.com>,
-        <sergey.senozhatsky.work@gmail.com>, <tj@kernel.org>,
-        <jiang.biao2@zte.com.cn>, <zhong.weidong@zte.com.cn>,
-        <tan.hu@zte.com.cn>
-From: Jason Yan <yanaijie@huawei.com>
-Message-ID: <5AC1C85B.4010804@huawei.com>
-Date: Mon, 2 Apr 2018 14:06:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        id S1754122AbeDBGHi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 02:07:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37278 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751612AbeDBGHf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 02:07:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 14C48602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH v5 07/13] ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk04.1-c3
+ board file
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: mark.rutland@arm.com, robh@kernel.org, devicetree@vger.kernel.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com,
+        richardcochran@gmail.com, will.deacon@arm.com, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        absahu@codeaurora.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
+        linux-soc@vger.kernel.org, sboyd@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
+ <1521800336-19266-8-git-send-email-sricharan@codeaurora.org>
+ <20180327171414.GJ1403@tuxbook-pro>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <4af1f110-ccbf-872f-21fd-d0557b6e6b1b@codeaurora.org>
+Date: Mon, 2 Apr 2018 11:37:23 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <201804021314481872986@zte.com.cn>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20180327171414.GJ1403@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018/4/2 13:14, wen.yang99@zte.com.cn wrote:
-> Hello,
->
->  > It's true that this print for the same device is useless. But it's
->
->  > useful for different devices. Is it possible to limit the print only
->
->  > for the same device?
->
->
-> In our scene, it's  just for the same device (q->queuedata), Thanks.
->
+On 3/27/2018 10:44 PM, Bjorn Andersson wrote:
+> On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
+>> +#include "qcom-ipq4019-ap.dk04.1.dtsi"
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1-C3";
+> 
+> Add a compatible to the board file.
+> 
 
-I mean the print limit you add will affect all devices. One device's 
-print *may* cause another device's print limited even if it only printed 
-one message.
+ ok.
+
+> Also, things like alias would make sense to put in the board unless
+> there's some restriction making every board having the same layout.
+> 
+>> +};
+
+ hmm. i also thought of having them in board specific files initially.
+ In this case, at-least the aliases for serial nodes seems to match across
+ dk-01/04/07 base variants. But might be if we add something else in future
+ it might not be common. Yeah, would move it to board specific files.
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
