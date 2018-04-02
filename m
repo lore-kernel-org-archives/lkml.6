@@ -1,206 +1,147 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2389914-1522787552-2-12705573900062407008
+X-Cyrus-Session-Id: sloti22d1t05-3243475-1522681444-2-12216467493526584764
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='CA'
-X-Spam-charsets: plain='utf-8'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522787551; b=pYSKE0Hnmp/6fISHDKeqwJZ0/wO0XZg1Wsi6hNZ2IhQAWk8+m0
-    Z7QYC6uQ+M4DDMxFTuAZ4gAb3ExjmJ2uPDOjNyU/Go3eKCGeojkfl0/PS7nmveXg
-    Bqp0l8s7ToKGvp0Pj+xYtIkuDP1awPMFiRXzbLxn8j95jS09yswNMKB8R1fppGeU
-    731ZU+y0M1ag8KszS1zzidjO5qGxLQQuMrgFrWK84l3Sq5nJclJjbJq/xgGS6wCE
-    MY338fNDjZhzLPVknN6Fym3UEW80fMO4zWFZVKO9Nf8y6kY/uUivyCjIPu0rx3R3
-    A/9T02bsRQEDggmvab/UetMOZITWT2iJA5kA==
+    1522681444; b=uIetnJEen52/rRBwEe4FQzmX+mSHuSIsiceGOPkAUztl/hCnLK
+    P+nORUJR5hVHl4o7jwApEoDPOPHgBHQypoL2bP6Zxlew6Fk2oc3p20ZQXemfmWMS
+    vZcJB7UEqQb5+2XSZWcQ64JAfosCmD27O1PFN0dzym1Nim7szGso3kH/6pb6ZAYD
+    fJoodUks1pcgWYgLX7cb7Jhf0owJxrhpCC+sqmROzK+DIZZxAokKv5GhXrxeZPQN
+    e/OG2UDjrGZKEWN+GUk/IKpHGG7CxIjmcNo137sMV6+1KP2rl6a5ReqqjHilVf/5
+    tMx0FGQXSGu/RK5E9LUNITCpOR3PXvcLJSGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:message-id:in-reply-to
-    :references:subject:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522787551;
-    bh=7nVxoW2mWHQZHVqLXcFahK38g8UyIo/yMO0yU/5QXlE=; b=u/Qz93cs8YXz
-    NeYjnLTfGQb3Ssx3Vbv+Fz7iNvbCWwlsUO94NlOye2vWtwyNIt981YwvTE2PDdlm
-    iA2TiUbAp0VPzdhHOvlwWxIK/CEuF9hk3Omj9ahTVtVBcmO4spVfvD1cIlK2ofqH
-    gPJ9RtpGWiS15juuX8VuWC3NlD50Z2j4+2mCmshGrmbs1liiD/lPfT/qgVAWHuHZ
-    fT6qbSmzLuyjABr+qapNlrebiEVpJGb2jMUjbLnPGqsxbCURL0qgpe/bsuh71jRF
-    zuMC4YLUZ55gZ5QvjZO7W6aB89cgfPO2XrRblsWdg+waDBOlBB5NEjWmJUg+4iNz
-    elvKV9yd6Q==
+    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
+    :message-id:references:mime-version:content-type:sender:list-id;
+    s=fm2; t=1522681444; bh=ezz+3TfdE9I4HUXKBzOU1VRxoqK6qKDb1IbM5Oo
+    y8jQ=; b=qZlsmr6oByw8tuU7RDmU6y64iglYpcguEWixKEIybci55ZKvii/wF2P
+    cIvX3pU6P0IYUc/QQxxgIMCeZu4QTXIkj2GxNglx5MjjLiUXZSAm052I9jZEI1Fa
+    DgXIfVTYUv2eG/p69dcFcIhL9A0tvgnkFqhyTZinHGOjYgbIFsaXSbrerg8+s7zg
+    kjBR9buJfev4bcW1g1t+pqEWXFALWfDpSfYmSVg+4kTztyJrOpoiVbZ9MtmevCQf
+    Omfv7mCSjYzUYEBH5dLdohka49MgrumnPh1QC8E1taWKblrnQtCKYGMbweFkehOX
+    FR4UD5HMJE97Bjymccbm8mgvfdiCdqw==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFJOUI6iLNDMSHBjG+VIPCroVIetd/UvqtbO4/9ol4e1alieXTxHb8cnFtPMnmt5VWAWNC/cJdnWCY2/gG41luXDpG7452FlEgDs1BX8DPCSWrMeKEd+
-    hfcgtJAsS9PgMfDAZFPNqljhwCWbzVvvMVPHiAuNzhFazv+1aCvaY91SrK+VJqJSQOB6WgQJepH2h6ZP/QL2yf3e8q6KZtL/hbINJaosSnDi30Ij8WPuoVbp
+X-CM-Envelope: MS4wfGNppGLuolwzU95/O5tc2MrLFGP4NxqcujjUS0z9gCc1XgD/tkcUsfpguwGy3kESI6l1YcXXKkJ5G1GccEF16xM9Acbk/VfDTxME0hFgYXBtyuf9N8AF
+    HPseBffd2FEseTrA2iD2dnHM3Mlpx/WSXyg2uB4Kmne/knV13VJq+T+2GlDErYI7Tq2mdBltH6YyVmIcBjg/Rk/o/tQF5czqtBYbXQ6enk50kjU+wkSUo7ap
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=FKkrIqjQGGEA:10 a=alcw4SYXYecA:10
-    a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10 a=FqpbrowB-PMA:10 a=7d_E57ReAAAA:8
-    a=z1H5ADGQAAAA:8 a=VwQbUJbxAAAA:8 a=edYEmElN1ERKE9bkRq4A:9
-    a=O5yQwVLplLfhOP8h:21 a=HD7VF34pCW-a5tCm:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=cNhwqobjEIRUxE0uuXBi:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=khwyK8DuSVkA:10
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=-2vJVp6Nht3eZwDVjHkA:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752600AbeDCUc3 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 3 Apr 2018 16:32:29 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45932 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752454AbeDCUc2 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Tue, 3 Apr 2018 16:32:28 -0400
-Date: Tue, 3 Apr 2018 16:32:26 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        id S1752077AbeDBPEC (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 2 Apr 2018 11:04:02 -0400
+Received: from resqmta-ch2-05v.sys.comcast.net ([69.252.207.37]:60392 "EHLO
+        resqmta-ch2-05v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751433AbeDBPEC (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 2 Apr 2018 11:04:02 -0400
+Date: Mon, 2 Apr 2018 10:03:58 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
         Boqun Feng <boqun.feng@gmail.com>,
         Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Paul Turner <pjt@google.com>,
+        Dave Watson <davejwatson@fb.com>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Paul Turner <pjt@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Russell King <linux@arm.linux.org.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
+        Andi Kleen <andi@firstfloor.org>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Josh Triplett <josh@joshtriplett.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Message-ID: <1649799886.2451.1522787546557.JavaMail.zimbra@efficios.com>
-In-Reply-To: <17439540.2334.1522773387555.JavaMail.zimbra@efficios.com>
-References: <20180327160542.28457-1-mathieu.desnoyers@efficios.com> <20180327160542.28457-3-mathieu.desnoyers@efficios.com> <20180401171356.085a2a33@alans-desktop> <1890356924.1736.1522683188833.JavaMail.zimbra@efficios.com> <17439540.2334.1522773387555.JavaMail.zimbra@efficios.com>
-Subject: Re: [RFC PATCH for 4.17 02/21] rseq: Introduce restartable
- sequences system call (v12)
+Subject: Re: [RFC PATCH for 4.17 02/21] rseq: Introduce restartable sequences
+ system call (v12)
+In-Reply-To: <20180401171356.085a2a33@alans-desktop>
+Message-ID: <alpine.DEB.2.20.1804021000290.23911@nuc-kabylake>
+References: <20180327160542.28457-1-mathieu.desnoyers@efficios.com> <20180327160542.28457-3-mathieu.desnoyers@efficios.com> <20180401171356.085a2a33@alans-desktop>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.7_GA_1964 (ZimbraWebClient - FF52 (Linux)/8.8.7_GA_1964)
-Thread-Topic: rseq: Introduce restartable sequences system call (v12)
-Thread-Index: ZlI8yYRhtR4Zm8XQBnk6z8Kg2ePiGrPMLD+wVMwzSuE=
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfL7vMM2q1MR4bAwHTPZ9sTwW7Ys5OR32VPXDmgMnJfcF1J2vm7uG6E4OTD8PQqal1S6MZ15r/NG5+PyG9P70h+ZFchHIrc+pLAabj22ASu7r2Bs2khri
+ drZmTnhVZSUhxkhlSYqez34lHfKBuR+h+NLWqEotfJssXmA2WTGDhpbcMzOALVf4Ys88cuJONXDfa/UnkgRPzsHBMOW5UDleZ84MVSsemjQsfCYCZWht5u17
+ 0ECjBy3znVvG4yqhSzos/AbvecDP7yTvCmqc1Ti5bPhu9PmXoEK37zutw0F9tLJvWj76qKYzran0lRKCkcLbxYLTsWBhf7mN/SBomQeeS1AgT8+nIK5E50BX
+ TejOQ/1TXx7tAXetZtFcWZOienl63FlWmTScsol2NgZkhDA7u+xQgdcN3D8/Ei6C9CXfbH2E0TcZChNQ47p5bfK6EBOEW/REU7eWNDUP0Iag7I1IcF1atcHg
+ omYGUCErU/DDuVZzpglNFX1IUtYCKB53xZp2kbvzyDePvtDtxHZiiQWhkJdJeXBqV7hveYuta/+vY4uP1H3EEtpyyiJoMl6Y99c7lx/3nZXQQIJD9RGBs06t
+ 5DR0klefi8ZtYUF/bFXvszmWUbrPBtVwq/GFRHVUyD0NZDyuF+Wop1CfwGDRZ+blNaXYwWbhfxFbOonZavsQQfQr/MXx1LumLH7NGtQ3QcZzGCWUa1aF+1Th
+ oJ4wwizuBvMtEyN8D+VOAFG3B33eSf5LP0F7pT+QHGZRZ4xuevJjuTJmj3k4Mgr8boS/9+qL4GTcz5nNscFtczo8rK4nPV8cBNl8w5GzuR9nBm5HWaYbvjA8
+ P7z9tuEOHmdmC8EXga6byXyhCYyMMZAplyaIORzmk+KUifHH/tt5BFHAUA7TuU4o2tLG24JKt8IIDHvrd/NCsvnwIOufw4LqMWHpa0RAq3vB5bDjTp20n2A0
+ ooAnGA==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
------ On Apr 3, 2018, at 12:36 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+On Sun, 1 Apr 2018, Alan Cox wrote:
 
-> ----- On Apr 2, 2018, at 11:33 AM, Mathieu Desnoyers
-> mathieu.desnoyers@efficios.com wrote:
-> 
->> ----- On Apr 1, 2018, at 12:13 PM, One Thousand Gnomes
->> gnomes@lxorguk.ukuu.org.uk wrote:
->> 
-[...]
->>> I still like the idea it's just the latencies concern me.
->> 
-[...]
-> 
-> Looking into this a bit more, I notice the following: The pgprot_noncached
-> (_PAGE_NOCACHE on x86) pgprot is part of the vma->vm_page_prot. Therefore,
-> in order to have userspace provide pointers to noncached pages as input
-> to cpu_opv, they need to be part of a userspace vma which has a
-> pgprot_noncached vm_page_prot.
-> 
-> The cpu_opv system call uses get_user_pages_fast() to grab the struct page
-> from the userspace addresses, and then passes those pages to vm_map_ram(),
-> with a PAGE_KERNEL pgprot. This creates a temporary kernel mapping to those
-> pages, which is then used to read/write from/to those pages with preemption
-> disabled.
-> 
-> Therefore, with the proposed cpu_opv implementation, the kernel is not
-> touching noncached mappings with preemption disabled, which should take
-> care of your latency concern.
+> >        Restartable sequences are atomic  with  respect  to  preemption
+> >        (making  it atomic with respect to other threads running on the
+> >        same CPU), as well as  signal  delivery  (user-space  execution
+> >        contexts nested over the same thread).
+>
+> CPU generally means 'big lump with legs on it'. You are not atomic to the
+> same CPU, because that CPU may have 30+ cores with 8 threads per core.
+>
+> It could do with some better terminology (hardware thread, CPU context ?)
 
-[...]
+Well we call it a "CPU" in the scheduler context I think.  We could use
+better terminology throughout the kernel tools and source.
 
-The following extra check should let userspace know it's trying to
-provide a pointer to noncached memory by returning -1, errno=EFAULT.
+Hardware Execution Context?
 
-Is the approach acceptable ?
+> >        In  a  typical  usage scenario, the thread registering the rseq
+> >        structure will be performing  loads  and  stores  from/to  that
+> >        structure.  It  is  however also allowed to read that structure
+> >        from other threads.  The rseq field updates  performed  by  the
+> >        kernel  provide  relaxed  atomicity  semantics, which guarantee
+> >        that other threads performing relaxed atomic reads of  the  cpu
+> >        number cache will always observe a consistent value.
+>
+> So what happens to your API if the kernel atomics get improved ? You are
+> effectively exporting rseq behaviour from private to public.
 
-Thanks,
-
-Mathieu
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ad06d42..0245481 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2425,6 +2425,18 @@ static inline struct page *follow_page(struct vm_area_struct *vma,
-        return follow_page_mask(vma, address, foll_flags, &unused_page_mask);
- }
- 
-+static inline bool is_vma_noncached(struct vm_area_struct *vma)
-+{
-+       pgprot_t pgprot = vma->vm_page_prot;
-+
-+       /* Check whether architecture implements noncached pages. */
-+       if (pgprot_val(pgprot_noncached(PAGE_KERNEL)) == pgprot_val(PAGE_KERNEL))
-+               return false;
-+       if (pgprot_val(pgprot) != pgprot_val(pgprot_noncached(pgprot)))
-+               return false;
-+       return true;
-+}
-+
- #define FOLL_WRITE     0x01    /* check pte is writable */
- #define FOLL_TOUCH     0x02    /* mark page accessed */
- #define FOLL_GET       0x04    /* do get_page on page */
-diff --git a/kernel/cpu_opv.c b/kernel/cpu_opv.c
-index 197339e..e4395b4 100644
---- a/kernel/cpu_opv.c
-+++ b/kernel/cpu_opv.c
-@@ -362,7 +362,19 @@ static int cpu_op_pin_pages(unsigned long addr, unsigned long len,
-        int ret, nr_pages, nr_put_pages, n;
-        unsigned long _vaddr;
-        struct vaddr *va;
-+       struct vm_area_struct *vma;
- 
-+       vma = find_vma_intersection(current->mm, addr, addr + len);
-+       if (!vma)
-+               return -EFAULT;
-+       /*
-+        * cpu_opv() accesses its own cached mapping of the userspace pages.
-+        * Considering that concurrent noncached and cached accesses may yield
-+        * to unexpected results in terms of memory consistency, explicitly
-+        * disallow cpu_opv on noncached memory.
-+        */
-+       if (is_vma_noncached(vma))
-+               return -EFAULT;
-        nr_pages = cpu_op_count_pages(addr, len);
-        if (!nr_pages)
-                return 0;
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+There is already a pretty complex coherency model guiding kernel atomics.
+Improvements/changes to that are difficult and the effect will ripple
+throughout the kernel. So I would suggest that these areas of the kernel
+are pretty "petrified" (or written in stone).
