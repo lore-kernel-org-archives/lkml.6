@@ -1,94 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752959AbeDBQOr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 12:14:47 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:49846 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeDBQOk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 12:14:40 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <w-kwok2@ti.com>, <linux-kernel@vger.kernel.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>, <nsekhar@ti.com>,
-        <grygorii.strashko@ti.com>
-Subject: [net-next 1/2] net: netcp: add api to support set rx mode in netcp modules
-Date: Mon, 2 Apr 2018 12:17:18 -0400
-Message-ID: <1522685839-9497-2-git-send-email-m-karicheri2@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522685839-9497-1-git-send-email-m-karicheri2@ti.com>
-References: <1522685839-9497-1-git-send-email-m-karicheri2@ti.com>
+        id S1753035AbeDBQPE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 12:15:04 -0400
+Received: from vern.gendns.com ([206.190.152.46]:48639 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752982AbeDBQO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 12:14:58 -0400
+Subject: Re: [PATCH v8 42/42] ARM: dts: da850: Add clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-43-git-send-email-david@lechnology.com>
+ <cf0c4153-b65d-da57-cd0f-0a16cb186377@lechnology.com>
+ <510309d2-2df0-a915-a6f6-082b41c6b28b@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <5502d0ee-b5dc-e90a-a041-882350c7d339@lechnology.com>
+Date: Mon, 2 Apr 2018 11:15:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <510309d2-2df0-a915-a6f6-082b41c6b28b@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: WingMan Kwok <w-kwok2@ti.com>
+On 04/02/2018 06:12 AM, Sekhar Nori wrote:
+> On Friday 16 March 2018 10:50 PM, David Lechner wrote:
+>> On 03/15/2018 09:52 PM, David Lechner wrote:
+>>> This adds clock provider nodes for da850 and wires them up to all of the
+>>> devices.
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>> ---
+>>
+>> ...
+>>
+>> This is the mcasp0: mcasp@100000 node...
+>>
+>>> @@ -560,6 +720,7 @@
+>>>                dmas = <&edma0 1 1>,
+>>>                    <&edma0 0 1>;
+>>>                dma-names = "tx", "rx";
+>>> +            clocks = <&psc1 7>;
+>>
+>> After some testing, it looks like it needs to be:
+>>
+>> +            power-domains = <&psc1 7>;
+>>
+>> instead of
+>>
+>> +            clocks = <&psc1 7>;
+> 
+> We should probably have both clocks and power-domains properties for all
+> PSC clocks. This way, the driver can change without a corresponding DT
+> update dependency.
+> 
+> Thanks,
+> Sekhar
+> 
 
-This patch adds an API to support setting rx mode in
-netcp modules.  If a netcp module needs to be notified
-when upper layer transitions from one rx mode to
-another and react accordingly, such a module will implement
-the new API set_rx_mode added in this patch.  Currently
-rx modes supported are PROMISCUOUS and NON_PROMISCUOUS
-modes.
-
-Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
- drivers/net/ethernet/ti/netcp.h      |  1 +
- drivers/net/ethernet/ti/netcp_core.c | 19 +++++++++++++++++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/netcp.h b/drivers/net/ethernet/ti/netcp.h
-index 416f732..c4ffdf4 100644
---- a/drivers/net/ethernet/ti/netcp.h
-+++ b/drivers/net/ethernet/ti/netcp.h
-@@ -214,6 +214,7 @@ struct netcp_module {
- 	int	(*add_vid)(void *intf_priv, int vid);
- 	int	(*del_vid)(void *intf_priv, int vid);
- 	int	(*ioctl)(void *intf_priv, struct ifreq *req, int cmd);
-+	int	(*set_rx_mode)(void *intf_priv, bool promisc);
- 
- 	/* used internally */
- 	struct list_head	module_list;
-diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index 736f6f7..e40aa3e 100644
---- a/drivers/net/ethernet/ti/netcp_core.c
-+++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -1509,6 +1509,24 @@ static void netcp_addr_sweep_add(struct netcp_intf *netcp)
- 	}
- }
- 
-+static int netcp_set_promiscuous(struct netcp_intf *netcp, bool promisc)
-+{
-+	struct netcp_intf_modpriv *priv;
-+	struct netcp_module *module;
-+	int error;
-+
-+	for_each_module(netcp, priv) {
-+		module = priv->netcp_module;
-+		if (!module->set_rx_mode)
-+			continue;
-+
-+		error = module->set_rx_mode(priv->module_priv, promisc);
-+		if (error)
-+			return error;
-+	}
-+	return 0;
-+}
-+
- static void netcp_set_rx_mode(struct net_device *ndev)
- {
- 	struct netcp_intf *netcp = netdev_priv(ndev);
-@@ -1538,6 +1556,7 @@ static void netcp_set_rx_mode(struct net_device *ndev)
- 	/* finally sweep and callout into modules */
- 	netcp_addr_sweep_del(netcp);
- 	netcp_addr_sweep_add(netcp);
-+	netcp_set_promiscuous(netcp, promisc);
- 	spin_unlock(&netcp->lock);
- }
- 
--- 
-1.9.1
+That's fine with me. I just didn't know how people felt about using properties
+that are not documented.
