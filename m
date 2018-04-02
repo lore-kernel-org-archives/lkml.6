@@ -1,241 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754324AbeDBJUW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 05:20:22 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:55392 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754169AbeDBJUC (ORCPT
+        id S1754211AbeDBJZJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 05:25:09 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35862 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752257AbeDBJZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 05:20:02 -0400
-X-Google-Smtp-Source: AIpwx4/GTfxMyHXvsrKlrc8hufN2Q87hAgjg8qTfso9knTyt5cYgBQ/u5Nn0V+99YaRvyTpl+rQvBy7QIVz6uh3Te5TsKSxCNcbB
-MIME-Version: 1.0
-Date: Mon, 02 Apr 2018 02:20:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003b5a780568da18cf@google.com>
-Subject: INFO: task hung in perf_trace_event_unreg
-From: syzbot <syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Mon, 2 Apr 2018 05:25:08 -0400
+From: Buddy Lumpkin <buddy.lumpkin@oracle.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: buddy.lumpkin@oracle.com, hannes@cmpxchg.org, riel@surriel.com,
+        mgorman@suse.de, willy@infradead.org, akpm@linux-foundation.org
+Subject: [RFC PATCH 0/1] mm: Support multiple kswapd threads per node
+Date: Mon,  2 Apr 2018 09:24:21 +0000
+Message-Id: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8850 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804020103
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w329KkqU009091
 
-Hello,
+I created this patch to address performance problems we are seeing in 
+Oracle Cloud Infrastructure. We run the Oracle Linux UEK4 kernel
+internally, which is based on upstream 4.1. I created and tested this
+patch for the latest upstream kernel and UEK4. I was able to show
+substantial benefits in both kernels, using workloads that provide a
+mix of anonymous memory allocations with filesystem writes.
 
-syzbot hit the following crash on upstream commit
-0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
-Linux 4.16
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=2dbc55da20fa246378fd
+As I went through the process of getting this patch approved internally, I 
+learned that it was hard to come up with a concise set of test results 
+that clearly demonstrate that devoting more threads toward proactive page 
+replacement is actually necessary. I was more focused on the impact that 
+direct reclaims had on latency at the time, so I came up with a systemtap 
+script that measures the latency of direct reclaims. On systems that were 
+doing large volumes of filesystem IO, I saw order 0 allocations regularly 
+taking over 10ms, and occasionally over 100ms. Since we were seeing large 
+volumes of direct reclaims triggered as a side effect of filesystem IO, I 
+figured this had to have a substantial impact on throughput.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5487937873510400
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
-compiler: gcc (GCC) 7.1.1 20170620
+I compared the maximum read throughput that could be obtained using direct 
+IO streams to standard filesystem IO through the page cache on one of the 
+dense storage systems that we vend. Direct IO was 55% higher in throughput 
+than standard filesystem IO. I can't remember the last time I measured 
+this but I know it was over 15 years ago, and I am quite sure the number 
+was no more than 10%. I was pretty sure that direct reclaims were to blame 
+for most of this and it would only take a few more tests to prove it. At 
+23GB/s, it only takes 32.6 seconds to fill the page cache on one of these 
+systems, but that is enough time to measure throughput without any page 
+replacement occuring. In this case direct IO throughput was only 13.5% 
+higher. It was pretty clear that direct reclaims were causing a 
+substantial reduction in throughput. I decided this would be the ideal way 
+to show the benefits of threading kswapd.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+On the UEK4 kernel, six kswapd threads provided a 48% increase over one.
+When I ran the same tests on upstream kernel version 4.16.0-rc7, I only
+saw a 20% increase with 6 threads and the numbers fluctuated quite a bit
+when I watched with iostat with a 2 second sample interval. The output
+stalled periodically as well. When I profiled the system using perf, I
+saw that 70% of the CPU time was being spent in a single function, it was
+native_queued_spin_lock_slowpath(). 38% was during shrink_inactive_list()
+and another 34% was spent during __lru_cache_add()
 
-REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount  
-option "g�;e�K�׫>pquota"
-INFO: task syz-executor3:10803 blocked for more than 120 seconds.
-       Not tainted 4.16.0+ #10
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor3   D20944 10803   4492 0x80000002
-Call Trace:
-  context_switch kernel/sched/core.c:2862 [inline]
-  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
-  schedule+0xf5/0x430 kernel/sched/core.c:3499
-  schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
-  do_wait_for_common kernel/sched/completion.c:86 [inline]
-  __wait_for_common kernel/sched/completion.c:107 [inline]
-  wait_for_common kernel/sched/completion.c:118 [inline]
-  wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
-  __wait_rcu_gp+0x221/0x340 kernel/rcu/update.c:414
-  synchronize_sched.part.64+0xac/0x100 kernel/rcu/tree.c:3212
-  synchronize_sched+0x76/0xf0 kernel/rcu/tree.c:3213
-  tracepoint_synchronize_unregister include/linux/tracepoint.h:80 [inline]
-  perf_trace_event_unreg.isra.2+0xb7/0x1f0  
-kernel/trace/trace_event_perf.c:161
-  perf_trace_destroy+0xbc/0x100 kernel/trace/trace_event_perf.c:236
-  tp_perf_event_destroy+0x15/0x20 kernel/events/core.c:7976
-  _free_event+0x3bd/0x10f0 kernel/events/core.c:4121
-  put_event+0x24/0x30 kernel/events/core.c:4204
-  perf_event_release_kernel+0x6e8/0xfc0 kernel/events/core.c:4310
-  perf_release+0x37/0x50 kernel/events/core.c:4320
-  __fput+0x327/0x7e0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x199/0x270 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
-  do_group_exit+0x149/0x400 kernel/exit.c:968
-  get_signal+0x73a/0x16d0 kernel/signal.c:2469
-  do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
-  exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x455269
-RSP: 002b:00007f8976371ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: 0000000000000000 RBX: 000000000072bec8 RCX: 0000000000455269
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bec8
-RBP: 000000000072bec8 R08: 0000000000000000 R09: 000000000072bea0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe793f79cf R14: 00007f89763729c0 R15: 0000000000000000
+I eventually determined that my tests were presenting a difficult pattern 
+for the logic that uses shadow entries to periodically resize the LRU 
+lists. This was not a problem in the UEK4 kernel which also has shadow 
+entries, so something has changed in that regard. I have not had time to 
+really dig into this particular problem however, I assume those that are 
+more familiar with the code might see the test results below and have an 
+idea about what is going on.
 
-Showing all locks held in the system:
-2 locks held by khungtaskd/876:
-  #0:  (rcu_read_lock){....}, at: [<000000008f2bec4b>]  
-check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
-  #0:  (rcu_read_lock){....}, at: [<000000008f2bec4b>] watchdog+0x1c5/0xd60  
-kernel/hung_task.c:249
-  #1:  (tasklist_lock){.+.+}, at: [<0000000006b3009f>]  
-debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
-2 locks held by getty/4414:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4415:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4416:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4417:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4418:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4419:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-2 locks held by getty/4420:
-  #0:  (&tty->ldisc_sem){++++}, at: [<00000000e51437c8>]  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
-  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000762a7320>]  
-n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
-1 lock held by syz-executor3/10803:
-  #0:  (event_mutex){+.+.}, at: [<00000000c507b78a>]  
-perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:234
-4 locks held by syz-executor5/10816:
-  #0:  (&tty->legacy_mutex){+.+.}, at: [<00000000567b7b94>]  
-tty_lock+0x5d/0x90 drivers/tty/tty_mutex.c:19
-  #1:  (&tty->legacy_mutex/1){+.+.}, at: [<00000000567b7b94>]  
-tty_lock+0x5d/0x90 drivers/tty/tty_mutex.c:19
-  #2:  (&tty->ldisc_sem){++++}, at: [<000000002b6b6a29>]  
-tty_ldisc_ref+0x1b/0x80 drivers/tty/tty_ldisc.c:298
-  #3:  (&o_tty->termios_rwsem/1){++++}, at: [<0000000007d9a7a4>]  
-n_tty_flush_buffer+0x21/0x320 drivers/tty/n_tty.c:357
-1 lock held by syz-executor2/10827:
-  #0:  (event_mutex){+.+.}, at: [<00000000c507b78a>]  
-perf_trace_destroy+0x28/0x100 kernel/trace/trace_event_perf.c:234
-1 lock held by blkid/10832:
-  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
-lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
-1 lock held by syz-executor4/10835:
-  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
-lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
-1 lock held by syz-executor4/10845:
-  #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<000000006e2f031e>]  
-lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+I have appended a small patch to the end of this cover letter that 
+effectively disables most of the routines in mm/workingset.c so that 
+filesystem IO can be used to demonstrate the benefits of a threaded 
+kswapd. I am not suggesting that this is the correct solution for this 
+problem.
 
-=============================================
+Test results below are the same that were run to demonstrate threaded 
+kswapd performance. For more context, read the patch commit log before 
+continuing and the test results below will make more sense
 
-NMI backtrace for cpu 1
-CPU: 1 PID: 876 Comm: khungtaskd Not tainted 4.16.0+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  nmi_cpu_backtrace+0x1d2/0x210 lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x123/0x180 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
-  check_hung_task kernel/hung_task.c:132 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
-  watchdog+0x90c/0xd60 kernel/hung_task.c:249
-INFO: rcu_sched self-detected stall on CPU
-	0-....: (124996 ticks this GP) idle=75e/1/4611686018427387906  
-softirq=33205/33205 fqs=30980
-	
-  (t=125000 jiffies g=17618 c=17617 q=921)
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 7457 Comm: kworker/u4:5 Not tainted 4.16.0+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events_unbound flush_to_ldisc
-RIP: 0010:__process_echoes+0x641/0x770 drivers/tty/n_tty.c:733
-RSP: 0018:ffff8801af4ff078 EFLAGS: 00000217
-RAX: 0000000000000000 RBX: ffffc90003673000 RCX: ffffffff8352d4c2
-RDX: 0000000000000006 RSI: 1ffff10039602994 RDI: ffffc9000367515e
-RBP: ffff8801af4ff0e0 R08: 1ffff10035e9fdb5 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000625628efd
-R13: dffffc0000000000 R14: 0000000000000efe R15: 0000000000001b15
-FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd5bfa4ca8 CR3: 000000000846a005 CR4: 00000000001606f0
-DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
-  commit_echoes+0x147/0x1b0 drivers/tty/n_tty.c:764
-  n_tty_receive_char_fast drivers/tty/n_tty.c:1416 [inline]
-  n_tty_receive_buf_fast drivers/tty/n_tty.c:1576 [inline]
-  __receive_buf drivers/tty/n_tty.c:1611 [inline]
-  n_tty_receive_buf_common+0x1156/0x2520 drivers/tty/n_tty.c:1709
-  n_tty_receive_buf2+0x33/0x40 drivers/tty/n_tty.c:1744
-  tty_ldisc_receive_buf+0xa7/0x180 drivers/tty/tty_buffer.c:456
-  tty_port_default_receive_buf+0x106/0x160 drivers/tty/tty_port.c:38
-  receive_buf drivers/tty/tty_buffer.c:475 [inline]
-  flush_to_ldisc+0x3c4/0x590 drivers/tty/tty_buffer.c:524
-  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
-  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Code: 60 12 00 00 48 89 f8 48 89 fa 48 c1 e8 03 83 e2 07 42 0f b6 04 28 38  
-d0 7f 08 84 c0 0f 85 21 01 00 00 42 80 bc 33 60 12 00 00 82 <74> 0f e8 48  
-90 1e fe 4d 8d 74 24 02 e9 58 ff ff ff e8 39 90 1e
+Direct IO results are roughly the same as expected ...
 
+Test #1: Direct IO - shadow entries enabled
+dd sy dd_cpu throughput
+6  0  2.33   14726026.40
+10 1  2.95   19954974.80
+16 1  2.63   24419689.30
+22 1  2.63   25430303.20
+28 1  2.91   26026513.20
+34 1  2.53   26178618.00
+40 1  2.18   26239229.20
+46 1  1.91   26250550.40
+52 1  1.69   26251845.60
+58 1  1.54   26253205.60
+64 1  1.43   26253780.80
+70 1  1.31   26254154.80
+76 1  1.21   26253660.80
+82 1  1.12   26254214.80
+88 1  1.07   26253770.00
+90 1  1.04   26252406.40
+
+Going through the pagecache is a different story entirely. Let's look at 
+throughput with a single kswapd thread with shadow entries enabled, vs 
+disabled:
+
+shadow entries ENABLED, 1 kswapd thread per node
+dd sy dd_cpu kswapd0 kswapd1 throughput  dr     pgscan_kswapd pgscan_direct
+10 5  27.96  35.52   34.94   7964174.80  0      460161197     0
+16 8  40.75  84.86   81.92   11143540.00 0      907793664     0
+22 12 45.01  99.96   99.98   12790778.40 6751   884827215     162344947
+28 18 49.10  99.97   99.97   14410621.02 17989  719328362     536886953
+34 22 52.87  99.80   99.98   14331978.80 25180  609680315     661201785
+40 26 55.66  99.90   99.96   14612901.20 26843  449047388     810399311
+46 28 56.37  99.74   99.96   15831410.40 33854  518952367     807944791
+52 37 59.78  99.80   99.97   15264190.80 37042  372258422     881626890
+58 50 71.90  99.44   99.53   14979692.40 45761  190511392     1114810023
+64 53 72.14  99.84   99.95   14747164.80 83665  168461850     1013498958
+70 50 68.09  99.80   99.90   15176129.60 113546 203506041     1008655113
+76 59 73.77  99.73   99.96   14947922.40 98798  137174015     1057487320
+82 66 79.25  99.66   99.98   14624100.40 100242 101830859     1074332196
+88 73 81.26  98.85   99.98   14827533.60 101262 90402914      1086186724
+90 78 85.48  99.55   99.98   14469963.20 101063 75722196      1083603245
+
+shadow entries DISABLED, 1 kswapd thread per node
+dd sy dd_cpu kswapd0 kswapd1 throughput  dr    pgscan_kswapd pgscan_direct
+10 4  26.07  28.56   27.03   7355924.40  0     459316976     0
+16 7  34.94  69.33   69.66   10867895.20 0     872661643     0
+22 10 36.03  93.99   99.33   13130613.60 489   1037654473    11268334
+28 10 30.34  95.90   98.60   14601509.60 671   1182591373    15429142
+34 14 34.77  97.50   99.23   16468012.00 10850 1069005644    249839515
+40 17 36.32  91.49   97.11   17335987.60 18903 975417728     434467710
+46 19 38.40  90.54   91.61   17705394.40 25369 855737040     582427973
+52 22 40.88  83.97   83.70   17607680.40 31250 709532935     724282458
+58 25 40.89  82.19   80.14   17976905.60 35060 657796473     804117540
+64 28 41.77  73.49   75.20   18001910.00 39073 561813658     895289337
+70 33 45.51  63.78   64.39   17061897.20 44523 379465571     1020726436
+76 36 46.95  57.96   60.32   16964459.60 47717 291299464     1093172384
+82 39 47.16  55.43   56.16   16949956.00 49479 247071062     1134163008
+88 42 47.41  53.75   47.62   16930911.20 51521 195449924     1180442208
+90 43 47.18  51.40   50.59   16864428.00 51618 190758156     1183203901
+
+When shadow entries are disabled, kernel mode CPU consumption drops and 
+peak throughput increases by 13.7%
+
+Here is the same test with 4 kswapd threads:
+
+shadow entries ENABLED, 4 kswapd threads per node
+dd sy dd_cpu kswapd0 kswapd1 throughput  dr    pgscan_kswapd pgscan_direct
+10 6  30.09  17.36   16.82   7692440.40  0     460386412     0
+16 11 42.86  34.35   33.86   10836456.80 23    885908695     550482
+22 14 46.00  55.30   50.53   13125285.20 0     1075382922    0
+28 17 43.74  87.18   44.18   15298355.20 0     1254927179    0
+34 26 53.78  99.88   89.93   16203179.20 3443  1247514636    80817567
+40 35 62.99  99.88   97.58   16653526.80 15376 960519369     369681969
+46 36 51.66  99.85   90.87   18668439.60 10907 1239045416    259575692
+52 46 66.96  99.61   99.96   16970211.60 24264 751180033     577278765
+58 52 76.53  99.91   99.97   15336601.60 30676 513418729     725394427
+64 58 78.20  99.79   99.96   15266654.40 33466 450869495     791218349
+70 65 82.98  99.93   99.98   15285421.60 35647 370270673     843608871
+76 69 81.52  99.87   99.87   15681812.00 37625 358457523     889023203
+82 78 85.68  99.97   99.98   15370775.60 39010 302132025     921379809
+88 85 88.52  99.88   99.56   15410439.20 40100 267031806     947441566
+90 88 90.11  99.67   99.41   15400593.20 40443 249090848     953893493
+
+shadow entries DISABLED, 4 kswapd threads per node
+dd sy dd_cpu kswapd0 kswapd1 throughput  dr    pgscan_kswapd pgscan_direct
+10 5  27.09  16.65   14.17   7842605.60  0     459105291     0
+16 10 37.12  26.02   24.85   11352920.40 15    920527796     358515
+22 11 36.94  37.13   35.82   13771869.60 0     1132169011    0
+28 13 35.23  48.43   46.86   16089746.00 0     1312902070    0
+34 15 33.37  53.02   55.69   18314856.40 0     1476169080    0
+40 19 35.90  69.60   64.41   19836126.80 0     1629999149    0
+46 22 36.82  88.55   57.20   20740216.40 0     1708478106    0
+52 24 34.38  93.76   68.34   21758352.00 0     1794055559    0
+58 24 30.51  79.20   82.33   22735594.00 0     1872794397    0
+64 26 30.21  97.12   76.73   23302203.60 176   1916593721    4206821
+70 33 32.92  92.91   92.87   23776588.00 3575  1817685086    85574159
+76 37 31.62  91.20   89.83   24308196.80 4752  1812262569    113981763
+82 29 25.53  93.23   92.33   24802791.20 306   2032093122    7350704
+88 43 37.12  76.18   77.01   25145694.40 20310 1253204719    487048202
+90 42 38.56  73.90   74.57   22516787.60 22774 1193637495    545463615
+
+With four kswapd threads, the effects are more pronounced. Kernel mode CPU 
+consumption is substantially higher with shadow entries enabled while 
+throughput is substantially lower. 
+
+When shadow entries are disabled, additional kswapd tasks increase 
+throughput while kernel mode CPU consumption stays roughly the same 
 
 ---
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+ mm/workingset.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+diff --git a/mm/workingset.c b/mm/workingset.c
+index b7d616a3bbbe..656451ce2d5e 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -213,6 +213,7 @@ void *workingset_eviction(struct address_space *mapping, struct page *page)
+ 	unsigned long eviction;
+ 	struct lruvec *lruvec;
+ 
++	return NULL;
+ 	/* Page is fully exclusive and pins page->mem_cgroup */
+ 	VM_BUG_ON_PAGE(PageLRU(page), page);
+ 	VM_BUG_ON_PAGE(page_count(page), page);
+-- 
+
+Buddy Lumpkin (1):
+  vmscan: Support multiple kswapd threads per node
+
+ Documentation/sysctl/vm.txt |  21 ++++++++
+ include/linux/mm.h          |   2 +
+ include/linux/mmzone.h      |  10 +++-
+ kernel/sysctl.c             |  10 ++++
+ mm/page_alloc.c             |  15 ++++++
+ mm/vmscan.c                 | 116 +++++++++++++++++++++++++++++++++++++-------
+ 6 files changed, 155 insertions(+), 19 deletions(-)
+
+-- 
+1.8.3.1
