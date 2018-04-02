@@ -1,75 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752018AbeDBF2j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 01:28:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57564 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751466AbeDBF2h (ORCPT
+        id S1752224AbeDBF30 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 01:29:26 -0400
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:45679 "EHLO
+        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbeDBF3Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 01:28:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0931E6022C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH v5 05/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: mark.rutland@arm.com, robh@kernel.org, devicetree@vger.kernel.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com,
-        richardcochran@gmail.com, will.deacon@arm.com, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        absahu@codeaurora.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        linux-soc@vger.kernel.org, sboyd@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
- <1521800336-19266-6-git-send-email-sricharan@codeaurora.org>
- <20180327170450.GH1403@tuxbook-pro>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <41dbb135-f392-3450-029f-bab5a8e2f9d8@codeaurora.org>
-Date: Mon, 2 Apr 2018 10:58:30 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 2 Apr 2018 01:29:25 -0400
+X-Google-Smtp-Source: AIpwx49031Gk59xSLp+p6p7lwsO845EPLwLI35KDp5+7AYLlIO9/GxgYMgrUaquihO8W5SvkaHRD2g==
+Date: Mon, 2 Apr 2018 14:29:20 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: wen.yang99@zte.com.cn
+Cc: yanaijie@huawei.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bart.VanAssche@wdc.com, pmladek@suse.com,
+        sergey.senozhatsky.work@gmail.com, tj@kernel.org,
+        jiang.biao2@zte.com.cn, zhong.weidong@zte.com.cn, tan.hu@zte.com.cn
+Subject: Re: =?utf-8?B?562U5aSNOiBSZTogW1BBVENIIHYy?=
+ =?utf-8?Q?=5D_scsi=3A_Introduc?= =?utf-8?Q?e?= sdev_printk_ratelimited to
+ throttlefrequent printk
+Message-ID: <20180402052920.GF3795@jagdpanzerIV>
+References: <5AC1976F.1040801@huawei.com>
+ <201804021314481872986@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <20180327170450.GH1403@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <201804021314481872986@zte.com.cn>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 3/27/2018 10:34 PM, Bjorn Andersson wrote:
-> On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
->> +	soc {
->> +		pinctrl@1000000 {
->> +			serial_0_pins: serial0_pinmux {
+On (04/02/18 13:14), wen.yang99@zte.com.cn wrote:
 > 
-> Please, no underscores in the node name.
-
- ok.
-
+>    > It's true that this print for the same device is useless. But it's
+>    > useful for different devices. Is it possible to limit the print only
+>    > for the same device?
 > 
->> +				mux {
-> 
-> Fyi, you can put the pinctrl properties directly into the state node,
-> omitting the "mux" level.
-> 
+>    In our scene, it's  just for the same device (q->queuedata), Thanks.
 
- ok, will change.
+Yes, what Jason meant was that rate limit struct is shared by different call
+sites - including scsi_request_fn() from different devices.
 
->> +					pins = "gpio16", "gpio17";
->> +					function = "blsp_uart0";
->> +					bias-disable;
->> +				};
->> +			};
->> +
-> 
-> Apart from this the patch looks good.
- Thanks.
+If device1->scsi_request_fn()->sdev_printk_ratelimited() causes printk rate
+limit, then messages from device2->scsi_request_fn()->sdev_printk_ratelimited()
+may be lost entirely, unless you have enough of them.
 
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+	-ss
