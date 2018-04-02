@@ -1,170 +1,118 @@
-Return-Path: <mathieu.poirier@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1522687262; cv=none;
+Return-Path: <nks@flawful.org>
+X-Google-Smtp-Source: AIpwx4/2OVRFcGrwaAnXTtmpOv0hWEAbmqA+Kv5R2bZ39qOgbNkE8kCpv21L/UQA4EvlGf61U9u7
+ARC-Seal: i=1; a=rsa-sha256; t=1522697973; cv=none;
         d=google.com; s=arc-20160816;
-        b=lj0mnfAu6L6M5mYGadwLcoVONJewohvD41bspNaJrVM+moRK8oLYycDI+EggtTxS6E
-         HrMLS2egAnCsUN7vgFPCjeR+Np8T7SZ4tPy58cu7udOw4kHY44P5sq+SR+Ycaf/suKR+
-         jwg4lrVwLqUgwUDfJfM293IFBF0JmBq9YwSiJRRb05fDUmq6rYDVhW3pCbKn//k6Mqn5
-         5S4YiSbKApIOsgxmejZm6YFcgqPvn4L0PYAB0CXA1YhIASO8Pvcgf0wm/3QsVwnFPMcH
-         a2TVUWy7FgggHa+D0DZyApmHOAuj2NLX5pLGitp/7ThlcbfuF4uxPYtpFXddTXlQIWAZ
-         h4RA==
+        b=uHGsVZPCVewM4CCAQ0HrcXOHDQWhdx8LubM77dlI4Q+YDi/YuWovfOJ8B5l4G2QQ5A
+         EL4yRb72yF91KBFR/pRh5r/Oj6Nr6n7g+84KF/JZsC1XmxpGqIsdrEjEk+7P8MwAYMtl
+         IsF7qXFBGPSLn6rFMJei6g7ZAl1Vq+iseOz2eAI7A1aX756TzfAxSfNjsNQ+9dBjCKHN
+         3CVcAZXct5kUKXa74aT2LuPpsBNHUhcfRwnPwIgdkyXxBBS5gwDxyLpliJPq7Wgvy/L3
+         nzVKdTzmlsbxOgakI0nxQXf77Zum193UuJNuc2UlCoV+HH8AcsEaguVGMWLtR9HDJ9Nc
+         O6yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=kNs6Bvt92WgZyYfS+meAWMLmujaXzWQkApzNqQaZmag=;
-        b=QFKecIYwqPMsrC9G08sbu+QXc0Ga7EuKvx6PVEG4OEpz1VjyxOvDZDyWrKGrRnUaoz
-         +tvFDavqhjf6EkbuLUBnxyI9KG3PUV+eHTUQFnv4z3NI8SEusBRSRYM+ULOE7qusbzDf
-         PzymZdAJd0fuBJD+PTQozBVN6sii/NQ+j7pdeLUwQmtgSMF1WLnpoGPHluZVQlsSrL3J
-         bjRn6w6Q+dPHradKd7MnKMGvHnM8hoOwXgCzXWAuaRvX1iV8joKhs3+Ag1+vfYu58Lkb
-         BwtbfsSME7+pcVqTQum8noLKrb0EqK70MMg4oMtLGjf4bZiT5JF2777NeehYLpHcN1YC
-         wngA==
+        bh=FC7pSP8EI0qVd4DFpodBHvXBI+lKoeRdKaQvfZBuOh0=;
+        b=Yvn27OWvWrltaATMFXYCshM3vR5TFlutroMGFQQSaQufz5wAwVLsm3mO1ByHomedaT
+         RSGij0yIZ5S9KAloHDnvX3ghEJ2uhEDqKRoKuuTfu1zm7ORFjrO1bclqDNuzsbqSkYrx
+         jiq27bxlNYeuItDqhmUYagZuB1/tTUfWc2CefWDAc9oL90du7doFd2WgOU7dHl5xVYVJ
+         k/Zb0NDWWC3Qd9bfLu0UL15K/twcXZAB3+YKC6vU8g0u5o7McjT4ti1hCy2D2J3cPxGh
+         9iNPdfaa762NVnGtseFgUdrA59rhyVtsMIb8a12W8PT3llJlWAxWi+yfjjt27HT732wm
+         /mGQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=DO+MexaQ;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass (test mode) header.i=@flawful.org header.s=mail header.b=dhw5R/+h;
+       spf=softfail (google.com: domain of transitioning nks@flawful.org does not designate 79.136.2.42 as permitted sender) smtp.mailfrom=nks@flawful.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=DO+MexaQ;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx4/GXxh8FJdhD6Ax2nhkH3CKiCSOmBPjk+vlOqWiEoBOBwCEyiVargwEGVzemGHEoJf7bTreCg==
-Date: Mon, 2 Apr 2018 10:40:58 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
+       dkim=pass (test mode) header.i=@flawful.org header.s=mail header.b=dhw5R/+h;
+       spf=softfail (google.com: domain of transitioning nks@flawful.org does not designate 79.136.2.42 as permitted sender) smtp.mailfrom=nks@flawful.org
+Authentication-Results: pio-pvt-msa3.bahnhof.se (amavisd-new);
+	dkim=pass (1024-bit key) header.d=flawful.org
+Date: Mon, 2 Apr 2018 21:39:21 +0200
+From: Niklas Cassel <nks@flawful.org>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: Niklas Cassel <niklas.cassel@axis.com>, "kishon@ti.com" <kishon@ti.com>,
+	"cyrille.pitchen@free-electrons.com" <cyrille.pitchen@free-electrons.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
-	Kim Phillips <kim.phillips@arm.com>,
-	Mike Leach <mike.leach@linaro.org>
-Subject: Re: [PATCH v4 0/6] Coresight: Support panic kdump
-Message-ID: <20180402164058.GA15452@xps15>
-References: <1522379724-30648-1-git-send-email-leo.yan@linaro.org>
+	Alan Douglas <adouglas@cadence.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Joao Pinto <Joao.Pinto@synopsys.com>,
+	Niklas Cassel <niklass@axis.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 00/12] PCI endpoint 64-bit BAR fixes
+Message-ID: <20180402193920.GC23587@flawful.org>
+References: <20180328115018.31921-1-niklas.cassel@axis.com>
+ <e2fb68a0-c860-71cc-1983-2ecf30d5a2aa@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522379724-30648-1-git-send-email-leo.yan@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <e2fb68a0-c860-71cc-1983-2ecf30d5a2aa@synopsys.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596330865086330396?=
-X-GMAIL-MSGID: =?utf-8?q?1596653318832237403?=
+X-GMAIL-THRID: =?utf-8?q?1596182050655819288?=
+X-GMAIL-MSGID: =?utf-8?q?1596664550231849397?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Leo,
+On Thu, Mar 29, 2018 at 02:52:56PM +0100, Gustavo Pimentel wrote:
+> Hi Niklas,
+> 
+> On 28/03/2018 12:50, Niklas Cassel wrote:
+> > PCI endpoint fixes to improve the way 64-bit BARs are handled.
+> > 
+> > 
+> > There are still future improvements that could be made:
+> > 
+> > pci-epf-test.c always allocates space for
+> > 6 BARs, even when using 64-bit BARs (which
+> > really only requires us to allocate 3 BARs).
+> > 
+> > pcitest.sh will print "NOT OKAY" for BAR1,
+> > BAR3, and BAR5 when using 64-bit BARs.
+> > This could probably be improved to say
+> > something like "N/A (64-bit BAR)".
+> > 
+> > Niklas Cassel (12):
+> >   PCI: endpoint: BAR width should not depend on sizeof dma_addr_t
+> >   PCI: endpoint: Simplify epc->ops->set_bar()/pci_epc_set_bar()
+> >   PCI: endpoint: Setting BAR_5 to 64-bits wide is invalid
+> >   PCI: endpoint: Setting 64-bit/prefetch bit is invalid when IO is set
+> >   PCI: endpoint: Setting a BAR size > 4 GB is invalid if 64-bit flag is
+> >     not set
+> >   PCI: designware-ep: Make dw_pcie_ep_set_bar() handle 64-bit BARs
+> >     properly
+> >   PCI: cadence: Set PCI_BASE_ADDRESS_MEM_TYPE_64 if a 64-bit BAR was
+> >     set-up
+> >   PCI: endpoint: Handle 64-bit BARs properly
+> >   PCI: endpoint: Make epc->ops->clear_bar()/pci_epc_clear_bar() take
+> >     struct *epf_bar
+> >   PCI: endpoint: Make sure that BAR_5 does not have 64-bit flag set when
+> >     clearing
+> >   PCI: designware-ep: Make dw_pcie_ep_reset_bar() handle 64-bit BARs
+> >     properly
+> >   misc: pci_endpoint_test: Handle 64-bit BARs properly
+> > 
+> >  drivers/misc/pci_endpoint_test.c              | 12 +++++----
+> >  drivers/pci/cadence/pcie-cadence-ep.c         | 15 ++++++++---
+> >  drivers/pci/dwc/pcie-designware-ep.c          | 36 +++++++++++++++++++++------
+> >  drivers/pci/endpoint/functions/pci-epf-test.c | 28 +++++++++++++--------
+> >  drivers/pci/endpoint/pci-epc-core.c           | 32 +++++++++++++++---------
+> >  drivers/pci/endpoint/pci-epf-core.c           |  4 +++
+> >  include/linux/pci-epc.h                       | 11 ++++----
+> >  include/linux/pci-epf.h                       |  2 ++
+> >  8 files changed, 95 insertions(+), 45 deletions(-)
+> > 
+> 
+> For the whole series:
+> 
+> Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
-Please see below (and in upcoming patches) my comments related to your latest
-work.
+Hello Gustavo,
 
-Thanks,
-Mathieu
+Thanks a lot for testing!
 
-On Fri, Mar 30, 2018 at 11:15:18AM +0800, Leo Yan wrote:
-> This patch set is to explore Coresight tracing data for postmortem
-> debugging.  When kernel panic happens, the Coresight panic kdump can
-> help to save on-chip tracing data and tracer metadata into DRAM, later
-> relies on kdump and crash/perf tools to recovery tracing data for
-> "offline" analysis.
-> 
-> The documentation is important to understand the purpose of Coresight
-> panic kdump, the implementation of framework and usage. Patches 0001
-> and patch 0002 are used for creating new sub directory for placing
-> Coresight docs and add a new doc for Coresight panic kdump.
-> 
-> Patch 0003 introduces the simple panic kdump framework which provides
-> helper functions can be used by Coresight devices, and it registers
-> panic notifier for dump tracing data.
-> 
-> Patches 0004/0005 support panic kdump for ETB; Patch 0006 supports the
-> kdump for ETMv4.
-> 
-> This patch set has been reworked by following suggestions at Linaro
-> HKG18 connect (mainly suggestions from Mathieu, thanks a lot!), and
-> it's rebased on acme git tree [1] with last commit 109d59b900e7 ('perf
-> vendor events s390: Add JSON files for IBM z14').
-> 
-> Due Coresight kdump data structure has been changed significantly, the
-> corresponding crash extension program also has been updated for this
-> reason [2]; furthermore the crash extension program is updated to
-> dynamically generate kernel buildid according to vmlinux elf info [3],
-> this is a fixing for the old code which uses hard-coded buildid value.
-> 
-> This patch set has been verified on 96boards Hikey620 with Coresight
-> enabling by the sysFS interface.  Also the updated crash extension
-> program has been verified to cowork with Coresight panic kdump and it
-> successfully extracts tracing data from the vmcore and finally can be
-> decoded by perf tool.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
-> [2] https://git.linaro.org/people/leo.yan/crash.git/tree/extensions/csdump.c
-> [3] https://git.linaro.org/people/leo.yan/crash.git/tree/extensions/csdump_buildid.c
-> 
-> Changes from v3:
-> * Following Mathieu suggestion, reworked the panic kdump framework,
->   used kdump array to maintain source and sink device handlers;
-> * According to Mathieu suggestion, optimized panic notifier to
->   firstly dump panic CPU tracing data and then dump other CPUs tracing
->   data;
-> * Refined doc to reflect these implementation changes;
-> * Changed ETMv4 driver to add source device handler at probe phase;
-> * Refactored crash extension program to reflect kernel changes.
-> 
-> Changes from v2:
-> * Add the two patches for documentation.
-> * Following Mathieu suggestion, reworked the panic kdump framework,
->   removed the useless flag "PRE_PANIC".
-> * According to comment, changed to add and delete kdump node operations
->   in sink enable/disable functions;
-> * According to Mathieu suggestion, handle kdump node
->   addition/deletion/updating separately for sysFS interface and perf
->   method.
-> 
-> Changes from v1:
-> * Add support to dump ETMv4 meta data.
-> * Wrote 'crash' extension csdump.so so rely on it to generate 'perf'
->   format compatible file.
-> * Refactored panic dump driver to support pre & post panic dump.
-> 
-> Changes from RFC:
-> * Follow Mathieu's suggestion, use general framework to support dump
->   functionality.
-> * Changed to use perf to analyse trace data.
-> 
-> Leo Yan (6):
->   doc: Add Coresight documentation directory
->   doc: Add documentation for Coresight panic kdump
->   coresight: Support panic kdump functionality
->   coresight: tmc: Hook callback for panic kdump
->   coresight: Set and clear sink device handler for kdump node
->   coresight: etm4x: Support panic kdump
-> 
->  Documentation/trace/coresight-cpu-debug.txt        | 187 ----------
->  Documentation/trace/coresight.txt                  | 383 ---------------------
->  .../trace/coresight/coresight-cpu-debug.txt        | 187 ++++++++++
->  .../trace/coresight/coresight-panic-kdump.txt      | 130 +++++++
->  Documentation/trace/coresight/coresight.txt        | 383 +++++++++++++++++++++
-
-Please use the -M option with git format-patch in order to prevent the metrics
-associated with the renaming of files to be tallied.
-
->  MAINTAINERS                                        |   5 +-
->  drivers/hwtracing/coresight/Kconfig                |   9 +
->  drivers/hwtracing/coresight/Makefile               |   1 +
->  drivers/hwtracing/coresight/coresight-etm-perf.c   |   5 +
->  drivers/hwtracing/coresight/coresight-etm4x.c      |  27 ++
->  drivers/hwtracing/coresight/coresight-etm4x.h      |  15 +
->  .../hwtracing/coresight/coresight-panic-kdump.c    | 199 +++++++++++
->  drivers/hwtracing/coresight/coresight-priv.h       |  12 +
->  drivers/hwtracing/coresight/coresight-tmc-etf.c    |  30 ++
->  drivers/hwtracing/coresight/coresight.c            |  16 +-
->  include/linux/coresight.h                          |   4 +
->  16 files changed, 1019 insertions(+), 574 deletions(-)
->  delete mode 100644 Documentation/trace/coresight-cpu-debug.txt
->  delete mode 100644 Documentation/trace/coresight.txt
->  create mode 100644 Documentation/trace/coresight/coresight-cpu-debug.txt
->  create mode 100644 Documentation/trace/coresight/coresight-panic-kdump.txt
->  create mode 100644 Documentation/trace/coresight/coresight.txt
->  create mode 100644 drivers/hwtracing/coresight/coresight-panic-kdump.c
-> 
-> -- 
-> 2.7.4
-> 
+Kind regards,
+Niklas
