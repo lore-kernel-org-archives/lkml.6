@@ -1,67 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754122AbeDBI1A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 04:27:00 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54933 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751638AbeDBI06 (ORCPT
+        id S1754087AbeDBIoC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 04:44:02 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:41958 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbeDBIoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 04:26:58 -0400
-X-Google-Smtp-Source: AIpwx49F9B1lAgK6sWsO28ou8sfylEZZ+AN1oAR0qiqwzWm6d/N9ycoQ2d/7hnw63ArHehG/QD9nBA==
-Date: Mon, 2 Apr 2018 10:26:54 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] RAS changes for v4.17
-Message-ID: <20180402082654.nyyzqno5pzrccrtk@gmail.com>
+        Mon, 2 Apr 2018 04:44:00 -0400
+X-Google-Smtp-Source: AIpwx4/lmfr7Fo1WNRwMEqMM134cbUDJoBaSadfweGGg/7N2doCs6MyYVumpPmPp3n7pDA5E53swKrIjVc0WhLenCXY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAKv+Gu8=6adUTGMna45ZnJhRhqkW_gU5T1WZaVRDOF0S5uEFgQ@mail.gmail.com>
+References: <1522636236-12625-1-git-send-email-hejianet@gmail.com>
+ <1522636236-12625-3-git-send-email-hejianet@gmail.com> <CAKv+Gu8=6adUTGMna45ZnJhRhqkW_gU5T1WZaVRDOF0S5uEFgQ@mail.gmail.com>
+From: Daniel Vacek <neelx@redhat.com>
+Date: Mon, 2 Apr 2018 10:43:59 +0200
+Message-ID: <CACjP9X_WTVA8dqdiSmf91VchkGm+qGyGWv7R9MmuCui+uFzunQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] arm: arm64: page_alloc: reduce unnecessary binary
+ search in memblock_next_valid_pfn()
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Jia He <hejianet@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        Grygorii Strashko <grygorii.strashko@linaro.org>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Mon, Apr 2, 2018 at 8:57 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On 2 April 2018 at 04:30, Jia He <hejianet@gmail.com> wrote:
+>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>> where possible") optimized the loop in memmap_init_zone(). But there is
+>> still some room for improvement. E.g. if pfn and pfn+1 are in the same
+>> memblock region, we can simply pfn++ instead of doing the binary search
+>> in memblock_next_valid_pfn.
+>>
+>> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+>> ---
+>>  arch/arm/include/asm/page.h   |  1 +
+>>  arch/arm/mm/init.c            | 28 ++++++++++++++++++++++------
+>>  arch/arm64/include/asm/page.h |  1 +
+>>  arch/arm64/mm/init.c          | 28 ++++++++++++++++++++++------
+>>  4 files changed, 46 insertions(+), 12 deletions(-)
+>>
+>
+> Could we put this in a shared file somewhere? This is the second patch
+> where you put make identical changes to ARM and arm64.
 
-Please pull the latest ras-core-for-linus git tree from:
+Ard, I was wondering if we can actually have this changed to something
+like CONFIG_MEMBLOCK_PFN_VALID and shared instead of it being arm
+specific? Is there a reason it's only usable for arm? The rest is
+dependent on this, hence I suggested to place it close-by. But
+generalizing it all would make it a lot cleaner.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras-core-for-linus
+arch/arm/mm/init.c:196:
+#ifdef CONFIG_HAVE_ARCH_PFN_VALID
+int pfn_valid(unsigned long pfn)
+{
+        return memblock_is_map_memory(__pfn_to_phys(pfn));
+}
+EXPORT_SYMBOL(pfn_valid);
+#endif
 
-   # HEAD: e2efacb6a54ab54626da3507be1008d0040492cc Revert "x86/mce/AMD: Collect error info even if valid bits are not set"
+arch/arm64/mm/init.c:287:
+#ifdef CONFIG_HAVE_ARCH_PFN_VALID
+int pfn_valid(unsigned long pfn)
+{
+        return memblock_is_map_memory(pfn << PAGE_SHIFT);
+}
+EXPORT_SYMBOL(pfn_valid);
+#endif
 
-The main changes in this cycle were:
+--nX
 
-  - AMD MCE support/decoding improvements            (Yazen Ghannam)
-  - general MCE header cleanups and reorganization   (Borislav Petkov)
-
- Thanks,
-
-	Ingo
-
------------------->
-Borislav Petkov (5):
-      x86/mce: Put private structures and definitions into the internal header
-      x86/mce: Convert 'struct mca_config' bools to a bitfield
-      x86/mce: Issue the 'mcelog --ascii' message only on !AMD
-      x86/mce/AMD: Collect error info even if valid bits are not set
-      x86/MCE: Cleanup and complete struct mce fields definitions
-
-Yazen Ghannam (5):
-      x86/mce/AMD: Pass the bank number to smca_get_bank_type()
-      x86/mce/AMD, EDAC/mce_amd: Enumerate Reserved SMCA bank type
-      x86/mce/AMD: Get address from already initialized block
-      x86/mce/AMD: Carve out SMCA get_block_address() code
-      Revert "x86/mce/AMD: Collect error info even if valid bits are not set"
-
-
- arch/x86/include/asm/mce.h                | 53 +--------------------
- arch/x86/include/uapi/asm/mce.h           | 52 +++++++++++----------
- arch/x86/kernel/cpu/mcheck/mce-internal.h | 59 ++++++++++++++++++++++-
- arch/x86/kernel/cpu/mcheck/mce.c          | 20 ++++----
- arch/x86/kernel/cpu/mcheck/mce_amd.c      | 78 ++++++++++++++++++++-----------
- drivers/edac/mce_amd.c                    | 11 +++--
- 6 files changed, 156 insertions(+), 117 deletions(-)
+>> diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
+>> index 489875c..f38909c 100644
+>> --- a/arch/arm/include/asm/page.h
+>> +++ b/arch/arm/include/asm/page.h
+>> @@ -157,6 +157,7 @@ extern void copy_page(void *to, const void *from);
+>>  typedef struct page *pgtable_t;
+>>
+>>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>> +extern int early_region_idx;
+>>  extern int pfn_valid(unsigned long);
+>>  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+>>  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
+>> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+>> index 0fb85ca..06ed190 100644
+>> --- a/arch/arm/mm/init.c
+>> +++ b/arch/arm/mm/init.c
+>> @@ -193,6 +193,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+>>  }
+>>
+>>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>> +int early_region_idx __meminitdata = -1;
+>> +
+>>  int pfn_valid(unsigned long pfn)
+>>  {
+>>         return memblock_is_map_memory(__pfn_to_phys(pfn));
+>> @@ -203,28 +205,42 @@ EXPORT_SYMBOL(pfn_valid);
+>>  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
+>>  {
+>>         struct memblock_type *type = &memblock.memory;
+>> +       struct memblock_region *regions = type->regions;
+>>         unsigned int right = type->cnt;
+>>         unsigned int mid, left = 0;
+>> +       unsigned long start_pfn, end_pfn;
+>>         phys_addr_t addr = PFN_PHYS(++pfn);
+>>
+>> +       /* fast path, return pfn+1 if next pfn is in the same region */
+>> +       if (early_region_idx != -1) {
+>> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
+>> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
+>> +                               regions[early_region_idx].size);
+>> +
+>> +               if (pfn >= start_pfn && pfn < end_pfn)
+>> +                       return pfn;
+>> +       }
+>> +
+>> +       /* slow path, do the binary searching */
+>>         do {
+>>                 mid = (right + left) / 2;
+>>
+>> -               if (addr < type->regions[mid].base)
+>> +               if (addr < regions[mid].base)
+>>                         right = mid;
+>> -               else if (addr >= (type->regions[mid].base +
+>> -                                 type->regions[mid].size))
+>> +               else if (addr >= (regions[mid].base + regions[mid].size))
+>>                         left = mid + 1;
+>>                 else {
+>> -                       /* addr is within the region, so pfn is valid */
+>> +                       early_region_idx = mid;
+>>                         return pfn;
+>>                 }
+>>         } while (left < right);
+>>
+>>         if (right == type->cnt)
+>>                 return -1UL;
+>> -       else
+>> -               return PHYS_PFN(type->regions[right].base);
+>> +
+>> +       early_region_idx = right;
+>> +
+>> +       return PHYS_PFN(regions[early_region_idx].base);
+>>  }
+>>  EXPORT_SYMBOL(memblock_next_valid_pfn);
+>>  #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+>> diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+>> index e57d3f2..f0d8c8e5 100644
+>> --- a/arch/arm64/include/asm/page.h
+>> +++ b/arch/arm64/include/asm/page.h
+>> @@ -38,6 +38,7 @@ extern void clear_page(void *to);
+>>  typedef struct page *pgtable_t;
+>>
+>>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>> +extern int early_region_idx;
+>>  extern int pfn_valid(unsigned long);
+>>  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
+>>  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
+>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>> index 13e43ff..342e4e2 100644
+>> --- a/arch/arm64/mm/init.c
+>> +++ b/arch/arm64/mm/init.c
+>> @@ -285,6 +285,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
+>>  #endif /* CONFIG_NUMA */
+>>
+>>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>> +int early_region_idx __meminitdata = -1;
+>> +
+>>  int pfn_valid(unsigned long pfn)
+>>  {
+>>         return memblock_is_map_memory(pfn << PAGE_SHIFT);
+>> @@ -295,28 +297,42 @@ EXPORT_SYMBOL(pfn_valid);
+>>  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
+>>  {
+>>         struct memblock_type *type = &memblock.memory;
+>> +       struct memblock_region *regions = type->regions;
+>>         unsigned int right = type->cnt;
+>>         unsigned int mid, left = 0;
+>> +       unsigned long start_pfn, end_pfn;
+>>         phys_addr_t addr = PFN_PHYS(++pfn);
+>>
+>> +       /* fast path, return pfn+1 if next pfn is in the same region */
+>> +       if (early_region_idx != -1) {
+>> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
+>> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
+>> +                               regions[early_region_idx].size);
+>> +
+>> +               if (pfn >= start_pfn && pfn < end_pfn)
+>> +                       return pfn;
+>> +       }
+>> +
+>> +       /* slow path, do the binary searching */
+>>         do {
+>>                 mid = (right + left) / 2;
+>>
+>> -               if (addr < type->regions[mid].base)
+>> +               if (addr < regions[mid].base)
+>>                         right = mid;
+>> -               else if (addr >= (type->regions[mid].base +
+>> -                                 type->regions[mid].size))
+>> +               else if (addr >= (regions[mid].base + regions[mid].size))
+>>                         left = mid + 1;
+>>                 else {
+>> -                       /* addr is within the region, so pfn is valid */
+>> +                       early_region_idx = mid;
+>>                         return pfn;
+>>                 }
+>>         } while (left < right);
+>>
+>>         if (right == type->cnt)
+>>                 return -1UL;
+>> -       else
+>> -               return PHYS_PFN(type->regions[right].base);
+>> +
+>> +       early_region_idx = right;
+>> +
+>> +       return PHYS_PFN(regions[early_region_idx].base);
+>>  }
+>>  EXPORT_SYMBOL(memblock_next_valid_pfn);
+>>  #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+>> --
+>> 2.7.4
+>>
