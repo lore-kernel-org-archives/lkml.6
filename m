@@ -1,247 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754087AbeDBIoC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 04:44:02 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:41958 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbeDBIoA (ORCPT
+        id S1754120AbeDBIvv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 04:51:51 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52370 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751588AbeDBIvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 04:44:00 -0400
-X-Google-Smtp-Source: AIpwx4/lmfr7Fo1WNRwMEqMM134cbUDJoBaSadfweGGg/7N2doCs6MyYVumpPmPp3n7pDA5E53swKrIjVc0WhLenCXY=
+        Mon, 2 Apr 2018 04:51:50 -0400
+X-Google-Smtp-Source: AIpwx4+eqIGmKMXAGO3s+n3AcM7Ka3OsQdmWIbbvRMobp2K28i+swhGOt9yAnvrBi0F2stLWJ0x54w==
+Date: Mon, 2 Apr 2018 10:51:46 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] scheduler changes for v4.17
+Message-ID: <20180402085146.asht73murbfbhycz@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8=6adUTGMna45ZnJhRhqkW_gU5T1WZaVRDOF0S5uEFgQ@mail.gmail.com>
-References: <1522636236-12625-1-git-send-email-hejianet@gmail.com>
- <1522636236-12625-3-git-send-email-hejianet@gmail.com> <CAKv+Gu8=6adUTGMna45ZnJhRhqkW_gU5T1WZaVRDOF0S5uEFgQ@mail.gmail.com>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Mon, 2 Apr 2018 10:43:59 +0200
-Message-ID: <CACjP9X_WTVA8dqdiSmf91VchkGm+qGyGWv7R9MmuCui+uFzunQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] arm: arm64: page_alloc: reduce unnecessary binary
- search in memblock_next_valid_pfn()
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Jia He <hejianet@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        Grygorii Strashko <grygorii.strashko@linaro.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 2, 2018 at 8:57 AM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 2 April 2018 at 04:30, Jia He <hejianet@gmail.com> wrote:
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") optimized the loop in memmap_init_zone(). But there is
->> still some room for improvement. E.g. if pfn and pfn+1 are in the same
->> memblock region, we can simply pfn++ instead of doing the binary search
->> in memblock_next_valid_pfn.
->>
->> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
->> ---
->>  arch/arm/include/asm/page.h   |  1 +
->>  arch/arm/mm/init.c            | 28 ++++++++++++++++++++++------
->>  arch/arm64/include/asm/page.h |  1 +
->>  arch/arm64/mm/init.c          | 28 ++++++++++++++++++++++------
->>  4 files changed, 46 insertions(+), 12 deletions(-)
->>
->
-> Could we put this in a shared file somewhere? This is the second patch
-> where you put make identical changes to ARM and arm64.
+Linus,
 
-Ard, I was wondering if we can actually have this changed to something
-like CONFIG_MEMBLOCK_PFN_VALID and shared instead of it being arm
-specific? Is there a reason it's only usable for arm? The rest is
-dependent on this, hence I suggested to place it close-by. But
-generalizing it all would make it a lot cleaner.
+Please pull the latest sched-core-for-linus git tree from:
 
-arch/arm/mm/init.c:196:
-#ifdef CONFIG_HAVE_ARCH_PFN_VALID
-int pfn_valid(unsigned long pfn)
-{
-        return memblock_is_map_memory(__pfn_to_phys(pfn));
-}
-EXPORT_SYMBOL(pfn_valid);
-#endif
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
 
-arch/arm64/mm/init.c:287:
-#ifdef CONFIG_HAVE_ARCH_PFN_VALID
-int pfn_valid(unsigned long pfn)
-{
-        return memblock_is_map_memory(pfn << PAGE_SHIFT);
-}
-EXPORT_SYMBOL(pfn_valid);
-#endif
+   # HEAD: b720342849fe685310fca01748a32730a6eca5aa sched/core: Update preempt_notifier_key to modern API
 
---nX
+The main scheduler changes in this cycle were:
 
->> diff --git a/arch/arm/include/asm/page.h b/arch/arm/include/asm/page.h
->> index 489875c..f38909c 100644
->> --- a/arch/arm/include/asm/page.h
->> +++ b/arch/arm/include/asm/page.h
->> @@ -157,6 +157,7 @@ extern void copy_page(void *to, const void *from);
->>  typedef struct page *pgtable_t;
->>
->>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
->> +extern int early_region_idx;
->>  extern int pfn_valid(unsigned long);
->>  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
->>  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
->> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
->> index 0fb85ca..06ed190 100644
->> --- a/arch/arm/mm/init.c
->> +++ b/arch/arm/mm/init.c
->> @@ -193,6 +193,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
->>  }
->>
->>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
->> +int early_region_idx __meminitdata = -1;
->> +
->>  int pfn_valid(unsigned long pfn)
->>  {
->>         return memblock_is_map_memory(__pfn_to_phys(pfn));
->> @@ -203,28 +205,42 @@ EXPORT_SYMBOL(pfn_valid);
->>  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
->>  {
->>         struct memblock_type *type = &memblock.memory;
->> +       struct memblock_region *regions = type->regions;
->>         unsigned int right = type->cnt;
->>         unsigned int mid, left = 0;
->> +       unsigned long start_pfn, end_pfn;
->>         phys_addr_t addr = PFN_PHYS(++pfn);
->>
->> +       /* fast path, return pfn+1 if next pfn is in the same region */
->> +       if (early_region_idx != -1) {
->> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
->> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
->> +                               regions[early_region_idx].size);
->> +
->> +               if (pfn >= start_pfn && pfn < end_pfn)
->> +                       return pfn;
->> +       }
->> +
->> +       /* slow path, do the binary searching */
->>         do {
->>                 mid = (right + left) / 2;
->>
->> -               if (addr < type->regions[mid].base)
->> +               if (addr < regions[mid].base)
->>                         right = mid;
->> -               else if (addr >= (type->regions[mid].base +
->> -                                 type->regions[mid].size))
->> +               else if (addr >= (regions[mid].base + regions[mid].size))
->>                         left = mid + 1;
->>                 else {
->> -                       /* addr is within the region, so pfn is valid */
->> +                       early_region_idx = mid;
->>                         return pfn;
->>                 }
->>         } while (left < right);
->>
->>         if (right == type->cnt)
->>                 return -1UL;
->> -       else
->> -               return PHYS_PFN(type->regions[right].base);
->> +
->> +       early_region_idx = right;
->> +
->> +       return PHYS_PFN(regions[early_region_idx].base);
->>  }
->>  EXPORT_SYMBOL(memblock_next_valid_pfn);
->>  #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
->> diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
->> index e57d3f2..f0d8c8e5 100644
->> --- a/arch/arm64/include/asm/page.h
->> +++ b/arch/arm64/include/asm/page.h
->> @@ -38,6 +38,7 @@ extern void clear_page(void *to);
->>  typedef struct page *pgtable_t;
->>
->>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
->> +extern int early_region_idx;
->>  extern int pfn_valid(unsigned long);
->>  extern unsigned long memblock_next_valid_pfn(unsigned long pfn);
->>  #define skip_to_last_invalid_pfn(pfn) (memblock_next_valid_pfn(pfn) - 1)
->> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->> index 13e43ff..342e4e2 100644
->> --- a/arch/arm64/mm/init.c
->> +++ b/arch/arm64/mm/init.c
->> @@ -285,6 +285,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
->>  #endif /* CONFIG_NUMA */
->>
->>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
->> +int early_region_idx __meminitdata = -1;
->> +
->>  int pfn_valid(unsigned long pfn)
->>  {
->>         return memblock_is_map_memory(pfn << PAGE_SHIFT);
->> @@ -295,28 +297,42 @@ EXPORT_SYMBOL(pfn_valid);
->>  unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
->>  {
->>         struct memblock_type *type = &memblock.memory;
->> +       struct memblock_region *regions = type->regions;
->>         unsigned int right = type->cnt;
->>         unsigned int mid, left = 0;
->> +       unsigned long start_pfn, end_pfn;
->>         phys_addr_t addr = PFN_PHYS(++pfn);
->>
->> +       /* fast path, return pfn+1 if next pfn is in the same region */
->> +       if (early_region_idx != -1) {
->> +               start_pfn = PFN_DOWN(regions[early_region_idx].base);
->> +               end_pfn = PFN_DOWN(regions[early_region_idx].base +
->> +                               regions[early_region_idx].size);
->> +
->> +               if (pfn >= start_pfn && pfn < end_pfn)
->> +                       return pfn;
->> +       }
->> +
->> +       /* slow path, do the binary searching */
->>         do {
->>                 mid = (right + left) / 2;
->>
->> -               if (addr < type->regions[mid].base)
->> +               if (addr < regions[mid].base)
->>                         right = mid;
->> -               else if (addr >= (type->regions[mid].base +
->> -                                 type->regions[mid].size))
->> +               else if (addr >= (regions[mid].base + regions[mid].size))
->>                         left = mid + 1;
->>                 else {
->> -                       /* addr is within the region, so pfn is valid */
->> +                       early_region_idx = mid;
->>                         return pfn;
->>                 }
->>         } while (left < right);
->>
->>         if (right == type->cnt)
->>                 return -1UL;
->> -       else
->> -               return PHYS_PFN(type->regions[right].base);
->> +
->> +       early_region_idx = right;
->> +
->> +       return PHYS_PFN(regions[early_region_idx].base);
->>  }
->>  EXPORT_SYMBOL(memblock_next_valid_pfn);
->>  #endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
->> --
->> 2.7.4
->>
+ - NUMA balancing improvements               (Mel Gorman)
+
+ - Further load tracking improvements        (Patrick Bellasi)
+
+ - Various NOHZ balancing cleanups and
+   optimizations                             (Peter Zijlstra)
+
+ - Improve blocked load handling, in particular we can now reduce
+   and eventually stop periodic load updates on 'very idle' CPUs.
+
+                                             (Vincent Guittot)
+
+ - On isolated CPUs offload the final 1Hz scheduler tick as well,
+   plus related cleanups and reorganization.
+                                             (Frederic Weisbecker)
+
+ - Core scheduler code cleanups              (Ingo Molnar)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Claudio Scordino (1):
+      sched/cpufreq: Rate limits for SCHED_DEADLINE
+
+Davidlohr Bueso (1):
+      sched/core: Update preempt_notifier_key to modern API
+
+Frederic Weisbecker (7):
+      sched/core: Rename init_rq_hrtick() to hrtick_rq_init()
+      nohz: Convert tick_nohz_tick_stopped() to bool
+      nohz: Allow to check if remote CPU tick is stopped
+      sched/isolation: Isolate workqueues when "nohz_full=" is set
+      sched/isolation: Offload residual 1Hz scheduler tick
+      sched/nohz: Remove the 1 Hz tick code
+      sched/isolation: Update nohz documentation to explain tick offload
+
+Ingo Molnar (5):
+      sched: Clean up and harmonize the coding style of the scheduler code base
+      sched/headers: Simplify and clean up header usage in the scheduler
+      sched/idle: Merge kernel/sched/idle.c and kernel/sched/idle_task.c
+      sched/deadline, rt: Rename queue_push_tasks/queue_pull_task to create separate namespace
+      sched/core: Undefine tracepoint creation at the end of core.c
+
+Mario Leinweber (1):
+      sched/deadline: Clean up various coding style details
+
+Mel Gorman (5):
+      sched/fair: Avoid an unnecessary lookup of current CPU ID during wake_affine
+      sched/fair: Defer calculation of 'prev_eff_load' in wake_affine_weight() until needed
+      sched/fair: Do not migrate on wake_affine_weight() if weights are equal
+      sched/fair: Consider SD_NUMA when selecting the most idle group to schedule on
+      sched/numa: Delay retrying placement for automatic NUMA balance after wake_affine()
+
+Norbert Manthey (1):
+      sched/fair: Add ';' after label attributes
+
+Patrick Bellasi (4):
+      sched/fair: Add util_est on top of PELT
+      sched/fair: Use util_est in LB and WU paths
+      sched/cpufreq/schedutil: Use util_est for OPP selection
+      sched/fair: Update util_est only on util_avg updates
+
+Peter Zijlstra (15):
+      sched/fair: Do not migrate due to a sync wakeup on exit
+      cpufreq/schedutil: Remove unused CPUFREQ_DL
+      cpufreq/schedutil: Rewrite CPUFREQ_RT support
+      sched/core: Convert nohz_flags to atomic_t
+      sched/fair: Add NOHZ_STATS_KICK
+      sched/fair: Restructure nohz_balance_kick()
+      sched/fair: Add NOHZ stats balancing
+      sched/fair: Update blocked load from NEWIDLE
+      sched/nohz: Clean up nohz enter/exit
+      sched/cpufreq: Provide migration hint
+      sched/nohz: Optimize nohz_idle_balance()
+      sched/fair: Move rebalance_domains()
+      sched/nohz: Merge CONFIG_NO_HZ_COMMON blocks
+      sched/fair: Move idle_balance()
+      sched/core: Remove TASK_ALL
+
+Vincent Guittot (4):
+      sched/fair: Remove stray space in #ifdef
+      sched/nohz: Stop NOHZ stats when decayed
+      sched/fair: Reduce the periodic update duration
+      sched/fair: Update blocked load when newly idle
+
+gaurav jindal (1):
+      sched/completions: Use bool in try_wait_for_completion()
+
+
+ Documentation/admin-guide/kernel-parameters.txt |   11 +
+ include/linux/sched.h                           |   30 +-
+ include/linux/sched/cpufreq.h                   |    5 +-
+ include/linux/sched/deadline.h                  |    6 -
+ include/linux/sched/isolation.h                 |    1 +
+ include/linux/sched/nohz.h                      |    6 -
+ include/linux/tick.h                            |    4 +-
+ kernel/sched/Makefile                           |    5 +-
+ kernel/sched/autogroup.c                        |   21 +-
+ kernel/sched/autogroup.h                        |   12 +-
+ kernel/sched/clock.c                            |   36 +-
+ kernel/sched/completion.c                       |   11 +-
+ kernel/sched/core.c                             |  186 ++-
+ kernel/sched/cpuacct.c                          |   33 +-
+ kernel/sched/cpudeadline.c                      |   23 +-
+ kernel/sched/cpudeadline.h                      |   29 +-
+ kernel/sched/cpufreq.c                          |    1 -
+ kernel/sched/cpufreq_schedutil.c                |  221 ++--
+ kernel/sched/cpupri.c                           |   15 +-
+ kernel/sched/cpupri.h                           |   25 +-
+ kernel/sched/cputime.c                          |   58 +-
+ kernel/sched/deadline.c                         |   82 +-
+ kernel/sched/debug.c                            |  103 +-
+ kernel/sched/fair.c                             | 1479 +++++++++++++++--------
+ kernel/sched/features.h                         |    5 +
+ kernel/sched/idle.c                             |  142 ++-
+ kernel/sched/idle_task.c                        |  110 --
+ kernel/sched/isolation.c                        |   14 +-
+ kernel/sched/loadavg.c                          |   34 +-
+ kernel/sched/membarrier.c                       |   27 +-
+ kernel/sched/rt.c                               |   60 +-
+ kernel/sched/sched.h                            |  650 +++++-----
+ kernel/sched/stats.c                            |   20 +-
+ kernel/sched/stats.h                            |   86 +-
+ kernel/sched/stop_task.c                        |   11 +-
+ kernel/sched/swait.c                            |    6 +-
+ kernel/sched/topology.c                         |   46 +-
+ kernel/sched/wait.c                             |   13 +-
+ kernel/sched/wait_bit.c                         |   23 +-
+ kernel/time/tick-sched.c                        |   22 +-
+ kernel/workqueue.c                              |    3 +-
+ 41 files changed, 2114 insertions(+), 1561 deletions(-)
+ delete mode 100644 kernel/sched/idle_task.c
