@@ -1,55 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753397AbeDBVCq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 17:02:46 -0400
-Received: from mail-ua0-f174.google.com ([209.85.217.174]:39215 "EHLO
-        mail-ua0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752321AbeDBVCo (ORCPT
+        id S1754337AbeDBVFe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 17:05:34 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38432 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752321AbeDBVFc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 17:02:44 -0400
-X-Google-Smtp-Source: AIpwx4/uBMvkHkkvRgM8zSGIGRqvwDbdEvPDuV/4hBq4CCJjPSM3ZnCW6AA88705aEjlG5BH1FnIOjZ+XlU46gmVb30=
+        Mon, 2 Apr 2018 17:05:32 -0400
+X-Google-Smtp-Source: AIpwx4+9w3hO4r4y5KIfc6TrzCFnLfU3wAdNSVEFxHyaNYEEMu1kX/vLijVN4hjUnVT6D4HXVI5niA==
+Date: Mon, 2 Apr 2018 14:05:29 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Ondrej Zary <linux@rainbow-software.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Sony Vaio VGN-CS31S touch sensor buttons breaking touchpad
+Message-ID: <20180402210529.GA62080@dtor-ws>
+References: <201804012321.56423.linux@rainbow-software.org>
+ <201804022239.59370.linux@rainbow-software.org>
 MIME-Version: 1.0
-In-Reply-To: <20180402202951.GE388343@devbig577.frc2.facebook.com>
-References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com>
- <de102067-b589-af05-ae71-496e948000f0@kernel.dk> <CALjAwxgtuEv=d1TfvH3EdXqZs=_6F7TinyVhbPdUmTsdK_5ghw@mail.gmail.com>
- <20180402202951.GE388343@devbig577.frc2.facebook.com>
-From: Sitsofe Wheeler <sitsofe@gmail.com>
-Date: Mon, 2 Apr 2018 22:02:13 +0100
-Message-ID: <CALjAwxj1urPPNadmkmhLngHvYcfhh8d+_vPstPDQHXLiGL0oTw@mail.gmail.com>
-Subject: Re: [BISECTED][REGRESSION] Hang while booting EeePC 900
-To: Tejun Heo <tj@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201804022239.59370.linux@rainbow-software.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun,
-
-On 2 April 2018 at 21:29, Tejun Heo <tj@kernel.org> wrote:
->
-> Can you see whether the following patch makes any difference?
->
-> Thanks.
->
-> diff --git a/block/blk-timeout.c b/block/blk-timeout.c
-> index a05e367..f0e6e41 100644
-> --- a/block/blk-timeout.c
-> +++ b/block/blk-timeout.c
-> @@ -165,7 +165,7 @@ void blk_abort_request(struct request *req)
->                  * No need for fancy synchronizations.
+On Mon, Apr 02, 2018 at 10:39:59PM +0200, Ondrej Zary wrote:
+> On Sunday 01 April 2018 23:21:55 Ondrej Zary wrote:
+> > Hello,
+> > I got a Sony Vaio VGN-CS31S laptop with Synaptics touchpad that exhibits
+> > weird behavior. It seems to work until I touch the "Touch Sensor Buttons"
+> > bar above the keyboard - then the buttons start to act weirdly: click or
+> > remain pressed (sometimes it breaks even without touching the bar).
+> >
+> > It seems to be a known problem with VGN-CS series:
+> > https://bugs.launchpad.net/ubuntu/+source/xserver-xorg-input-synaptics/+bug
+> >/774877 https://wiki.freegeekvancouver.org/article/Laptop_Troubleshooting
+> > (mentions nasty partial workaround: psmouse.resetafter=1)
+> >
+> > Many models of the VGN-CS series have the Touch Sensor Buttons:
+> > ftp://124.40.41.224/PUB/MANUALS/SWT/Z009/Z009690111.PDF
+> >
+> > From the hardware side (can be found in MBX-196 Quanta GD2 schematic), the
+> > touch bar is a separate PS/2 device connected to third PS/2 port of the EC
+> > (Embedded Controller) WPC775L. The touchpad is on the 1st PS/2 port, 2nd
+> > port is unused. However, the i8042 does not seem to support multiplexing,
+> > the firmware probably combines the data internally somehow.
+> 
+> Good news: it supports multiplexing but i8042_nomux is set because of:
+>                 /*
+>                  * Most (all?) VAIOs do not have external PS/2 ports nor
+>                  * they implement active multiplexing properly, and
+>                  * MUX discovery usually messes up keyboard/touchpad.
 >                  */
->                 blk_rq_set_deadline(req, jiffies);
-> -               mod_timer(&req->q->timeout, 0);
-> +               kblockd_schedule_work(&req->q->timeout_work);
->         } else {
->                 if (blk_mark_rq_complete(req))
->                         return;
+>                 .matches = {
+>                         DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
+>                         DMI_MATCH(DMI_BOARD_NAME, "VAIO"),
+>                 },
+> in drivers/input/serio/i8042-x86ia64io.h
+> (How can this be modified to exclude VGN-CS series?)
 
-That patch seems to fix the issue.
+I guess we'd need a whitelist for MUXes, because older VAIOs would
+behave really really badly when one tried to probe for active
+multiplexing...
+
+If you enable MUX, does it survive suspend/resume?
+
+Thanks.
 
 -- 
-Sitsofe | http://sucs.org/~sits/
+Dmitry
