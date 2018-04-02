@@ -1,64 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754200AbeDBDeR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 23:34:17 -0400
-Received: from zxshcas2.zhaoxin.com ([180.169.121.92]:22991 "EHLO
-        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754139AbeDBDeL (ORCPT
+        id S1754145AbeDBDkj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 23:40:39 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:21208 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754074AbeDBDkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 23:34:11 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: <tony.luck@intel.com>, <bp@alien8.de>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <hpa@zytor.com>, <x86@kernel.org>,
-        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
-        <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
-        David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH v2 1/2] x86/mce: new Centaur CPUs support MCE broadcasting
-Date: Mon, 2 Apr 2018 11:33:51 +0800
-Message-ID: <1522640032-3357-2-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522640032-3357-1-git-send-email-davidwang@zhaoxin.com>
-References: <1522640032-3357-1-git-send-email-davidwang@zhaoxin.com>
+        Sun, 1 Apr 2018 23:40:37 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w323eD6P021894
+X-Nifty-SrcIP: [209.85.213.51]
+X-Google-Smtp-Source: AIpwx48k4tpkyFNg/565DW+m9hL9g6jHe4j0FBiIqF0fAD3NrLsnOIbaYeUVMkdkLIWOBMnQbKc7xfGnQP3ruQ/OH2g=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.54]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+In-Reply-To: <1522403084-18780-2-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1522403084-18780-1-git-send-email-hayashi.kunihiko@socionext.com> <1522403084-18780-2-git-send-email-hayashi.kunihiko@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 2 Apr 2018 12:39:32 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQoURnPzWpkZ9uyhsqHJuTB983R-qVdYCMy1XUTLSrurg@mail.gmail.com>
+Message-ID: <CAK7LNAQoURnPzWpkZ9uyhsqHJuTB983R-qVdYCMy1XUTLSrurg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] reset: uniphier: add PCIe reset control support
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is used to tell the kernel that newer Centaur CPU support
-MCE broadcasting.
+2018-03-30 18:44 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
+> Add reset lines for PCIe controller on UniPhier SoCs. This adds support for
+> Pro5, LD20 and PXs3.
+>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
----
- arch/x86/kernel/cpu/mcheck/mce.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 7065846..c3db7ce 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1688,6 +1688,17 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
- 		if (c->x86 == 6 && c->x86_model == 45)
- 			quirk_no_way_out = quirk_sandybridge_ifu;
- 	}
-+
-+	if (c->x86_vendor == X86_VENDOR_CENTAUR) {
-+		/*
-+		 * All newer Centaur CPUs support MCE broadcasting. Enable
-+		 * synchronization with a one second timeout.
-+		 */
-+		if ((c->x86 > 6 || (c->x86 == 6 && c->x86_model == 0xf && c->x86_mask >=0xe)) &&
-+			cfg->monarch_timeout < 0)
-+			cfg->monarch_timeout = USEC_PER_SEC;
-+	}
-+
- 	if (cfg->monarch_timeout < 0)
- 		cfg->monarch_timeout = 0;
- 	if (cfg->bootlog != 0)
+
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
