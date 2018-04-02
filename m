@@ -1,50 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeDBMWg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 08:22:36 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56519 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751239AbeDBMWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 08:22:35 -0400
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] f2fs: make assignment of t->dentry_bitmap more readable
-Date: Mon, 2 Apr 2018 20:22:20 +0800
-Message-ID: <1522671740-92824-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
+        id S1752106AbeDBMWx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 08:22:53 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47392 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751239AbeDBMWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 08:22:52 -0400
+Date: Mon, 2 Apr 2018 14:22:49 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180402142249.7e076a64@bbrezillon>
+In-Reply-To: <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+References: <20180329131054.22506-1-peda@axentia.se>
+        <20180329153322.5e2fc1e7@bbrezillon>
+        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+        <20180329154416.5c1a0013@bbrezillon>
+        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In make_dentry_ptr_block, it is confused with "&" for t->dentry_bitmap
-but without "&" for t->dentry, so delete "&" to make code more readable.
+On Thu, 29 Mar 2018 16:27:12 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/f2fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 2018-03-29 15:44, Boris Brezillon wrote:
+> > On Thu, 29 Mar 2018 15:37:43 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> On 2018-03-29 15:33, Boris Brezillon wrote:  
+> >>> On Thu, 29 Mar 2018 15:10:54 +0200
+> >>> Peter Rosin <peda@axentia.se> wrote:
+> >>>     
+> >>>> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
+> >>>> flash accesses have a tendency to cause display disturbances. Add a
+> >>>> module param to disable DMA from the NAND controller, since that fixes
+> >>>> the display problem for me.
+> >>>>
+> >>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>>> ---
+> >>>>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
+> >>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>> index b2f00b398490..2ff7a77c7b8e 100644
+> >>>> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>> @@ -129,6 +129,11 @@
+> >>>>  #define DEFAULT_TIMEOUT_MS			1000
+> >>>>  #define MIN_DMA_LEN				128
+> >>>>  
+> >>>> +static bool atmel_nand_avoid_dma __read_mostly;
+> >>>> +
+> >>>> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
+> >>>> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);    
+> >>>
+> >>> I'm not a big fan of those driver specific cmdline parameters. Can't we
+> >>> instead give an higher priority to HLCDC master using the bus matrix?    
+> >>
+> >> I don't know if it will be enough, but we sure can try. However, I have
+> >> no idea how to do that. I will happily test stuff though...  
+> > 
+> > There's no interface to configure that from Linux, but you can try to
+> > tweak it with devmem and if that does the trick, maybe we can expose a
+> > way to configure that from Linux. For more details, see the "Bus Matrix
+> > (MATRIX)" section in Atmel datasheets.  
+> 
+> I don't seem to succeed in changing the registers I think I need to change.
+> I can poke the "Write Protection Mode Register" by writing MAT0 and MAT1 to
+> it.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 191ee57..474b9e9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -471,7 +471,7 @@ static inline void make_dentry_ptr_block(struct inode *inode,
- 	d->inode = inode;
- 	d->max = NR_DENTRY_IN_BLOCK;
- 	d->nr_bitmap = SIZE_OF_DENTRY_BITMAP;
--	d->bitmap = &t->dentry_bitmap;
-+	d->bitmap = t->dentry_bitmap;
- 	d->dentry = t->dentry;
- 	d->filename = t->filename;
- }
+You mean 0x4D415400, right? ("MAT0" != 0x4D415400).
+
+> But when I try to write to "Priority Registers B For Slaves" it doesn't
+> take, regardless of write protect mode.
+
+Did you check MATRIX_WPSR after writing to MATRIX_PRXSY?
+
+> 
+> Can the relevant bits only be written when the HLCDC is inactive or
+> something?
+
+I don't know, but maybe Nicolas does.
+
 -- 
-1.8.5.2
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
