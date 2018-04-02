@@ -1,33 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754612AbeDBWsP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:48:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55806 "EHLO mx1.redhat.com"
+        id S1754711AbeDBWu4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:50:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58412 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754516AbeDBWsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:48:14 -0400
+        id S1754583AbeDBWsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 18:48:15 -0400
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: "David Airlie" <airlied@linux.ie>, "Sean Paul" <seanpaul@chromium.org>,
-        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        linux-kernel@vger.kernel.org, "Gustavo Padovan" <gustavo@padovan.org>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        "Jani Nikula" <jani.nikula@linux.intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
-        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
-        "Andrey Grodzovsky" <andrey.grodzovsky@amd.com>,
-        "Alex Deucher" <alexander.deucher@amd.com>,
-        nouveau@lists.freedesktop.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "Roman Li" <roman.li@amd.com>, "Ben Skeggs" <bskeggs@redhat.com>,
-        "David (ChunMing) Zhou" <david1.zhou@amd.com>,
-        "Jerry (Fangzhi) Zuo" <jerry.zuo@amd.com>,
-        "Shirish S" <shirish.s@amd.com>, "Tony Cheng" <tony.cheng@amd.com>,
-        "Harry Wentland" <harry.wentland@amd.com>,
-        amd-gfx@lists.freedesktop.org, "Lyude Paul" <lyude@redhat.com>
-Subject: [PATCH v5 00/10] Implement proper MST fallback retraining in i915
-Date: Mon,  2 Apr 2018 18:47:36 -0400
-Message-Id: <20180402224800.16080-1-lyude@redhat.com>
+Cc: Manasi Navare <manasi.d.navare@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 02/10] drm/i915: Move DP modeset retry work into intel_dp
+Date: Mon,  2 Apr 2018 18:47:38 -0400
+Message-Id: <20180402224800.16080-3-lyude@redhat.com>
+In-Reply-To: <20180402224800.16080-1-lyude@redhat.com>
+References: <20180402224800.16080-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -35,38 +27,136 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Latest version of https://patchwork.freedesktop.org/series/39642/ ,
-hopefully patchwork understands this and doesn't break anything!
+While having the modeset_retry_work in intel_connector makes sense with
+SST, this paradigm doesn't make a whole ton of sense when it comes to
+MST since we have to deal with multiple connectors. In most cases, it's
+more useful to just use the intel_dp struct since it indicates whether
+or not we're dealing with an MST device, along with being able to easily
+trace the intel_dp struct back to it's respective connector (if there is
+any). So, move the modeset_retry_work function out of the
+intel_connector struct and into intel_dp.
 
-Lots of changes.
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
+Cc: Manasi Navare <manasi.d.navare@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Lyude Paul (10):
-  drm/atomic: Print debug message on atomic check failure
-  drm/i915: Move DP modeset retry work into intel_dp
-  drm/dp_mst: Fix naming on drm_atomic_get_mst_topology_state()
-  drm/dp_mst: Remove all evil duplicate state pointers
-  drm/dp_mst: Make drm_dp_mst_topology_state subclassable
-  drm/dp_mst: Add reset_state callback to topology mgr
-  drm/i915: Only use one link bw config for MST topologies
-  drm/i915: Make intel_dp_mst_atomic_check() idempotent
-  drm/dp_mst: Add MST fallback retraining helpers
-  drm/i915: Implement proper fallback training for MST
+V2:
+ - Remove accidental duplicate modeset_retry_work in intel_connector
+V3:
+ - Also check against eDP in intel_hpd_poll_fini() - mdnavare
+V4:
+ - Don't bother looping over connectors for canceling modeset rety work,
+   just encoders.
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ drivers/gpu/drm/i915/intel_display.c          | 14 +++++++++++---
+ drivers/gpu/drm/i915/intel_dp.c               | 10 ++++------
+ drivers/gpu/drm/i915/intel_dp_link_training.c |  2 +-
+ drivers/gpu/drm/i915/intel_drv.h              |  6 +++---
+ 4 files changed, 19 insertions(+), 13 deletions(-)
 
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  14 +-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  35 +-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.h    |   4 +-
- drivers/gpu/drm/drm_atomic.c                       |   5 +-
- drivers/gpu/drm/drm_dp_mst_topology.c              | 548 ++++++++++++++++++++-
- drivers/gpu/drm/i915/intel_ddi.c                   |  10 +-
- drivers/gpu/drm/i915/intel_display.c               |  14 +-
- drivers/gpu/drm/i915/intel_dp.c                    | 361 ++++++++++----
- drivers/gpu/drm/i915/intel_dp_link_training.c      |   6 +-
- drivers/gpu/drm/i915/intel_dp_mst.c                | 180 +++++--
- drivers/gpu/drm/i915/intel_drv.h                   |  20 +-
- drivers/gpu/drm/nouveau/nv50_display.c             |  15 +-
- drivers/gpu/drm/radeon/radeon_dp_mst.c             |  13 +-
- include/drm/drm_dp_mst_helper.h                    |  42 +-
- 14 files changed, 1088 insertions(+), 179 deletions(-)
-
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 3acd75753a31..6357d8d8e36f 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -15406,20 +15406,28 @@ void intel_connector_unregister(struct drm_connector *connector)
+ 
+ static void intel_hpd_poll_fini(struct drm_device *dev)
+ {
+-	struct intel_connector *connector;
+ 	struct drm_connector_list_iter conn_iter;
++	struct intel_connector *connector;
++	struct intel_encoder *encoder;
++	struct intel_dp *intel_dp;
+ 
+ 	/* Kill all the work that may have been queued by hpd. */
+ 	drm_connector_list_iter_begin(dev, &conn_iter);
+ 	for_each_intel_connector_iter(connector, &conn_iter) {
+-		if (connector->modeset_retry_work.func)
+-			cancel_work_sync(&connector->modeset_retry_work);
+ 		if (connector->hdcp_shim) {
+ 			cancel_delayed_work_sync(&connector->hdcp_check_work);
+ 			cancel_work_sync(&connector->hdcp_prop_work);
+ 		}
+ 	}
+ 	drm_connector_list_iter_end(&conn_iter);
++
++	for_each_intel_encoder(dev, encoder) {
++		if (encoder->type == INTEL_OUTPUT_DP ||
++		    encoder->type == INTEL_OUTPUT_EDP) {
++			intel_dp = enc_to_intel_dp(&encoder->base);
++			cancel_work_sync(&intel_dp->modeset_retry_work);
++		}
++	}
+ }
+ 
+ void intel_modeset_cleanup(struct drm_device *dev)
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index 0479c377981b..0aaeb3294799 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -6251,12 +6251,10 @@ static bool intel_edp_init_connector(struct intel_dp *intel_dp,
+ 
+ static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
+ {
+-	struct intel_connector *intel_connector;
+-	struct drm_connector *connector;
++	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
++						 modeset_retry_work);
++	struct drm_connector *connector = &intel_dp->attached_connector->base;
+ 
+-	intel_connector = container_of(work, typeof(*intel_connector),
+-				       modeset_retry_work);
+-	connector = &intel_connector->base;
+ 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
+ 		      connector->name);
+ 
+@@ -6285,7 +6283,7 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
+ 	int type;
+ 
+ 	/* Initialize the work for modeset in case of link train failure */
+-	INIT_WORK(&intel_connector->modeset_retry_work,
++	INIT_WORK(&intel_dp->modeset_retry_work,
+ 		  intel_dp_modeset_retry_work_fn);
+ 
+ 	if (WARN(intel_dig_port->max_lanes < 1,
+diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c b/drivers/gpu/drm/i915/intel_dp_link_training.c
+index f59b59bb0a21..2cfa58ce1f95 100644
+--- a/drivers/gpu/drm/i915/intel_dp_link_training.c
++++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
+@@ -340,7 +340,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
+ 							     intel_dp->link_rate,
+ 							     intel_dp->lane_count))
+ 			/* Schedule a Hotplug Uevent to userspace to start modeset */
+-			schedule_work(&intel_connector->modeset_retry_work);
++			schedule_work(&intel_dp->modeset_retry_work);
+ 	} else {
+ 		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
+ 			  intel_connector->base.base.id,
+diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+index d1452fd2a58d..f3e87c5e3fde 100644
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -406,9 +406,6 @@ struct intel_connector {
+ 
+ 	struct intel_dp *mst_port;
+ 
+-	/* Work struct to schedule a uevent on link train failure */
+-	struct work_struct modeset_retry_work;
+-
+ 	const struct intel_hdcp_shim *hdcp_shim;
+ 	struct mutex hdcp_mutex;
+ 	uint64_t hdcp_value; /* protected by hdcp_mutex */
+@@ -1139,6 +1136,9 @@ struct intel_dp {
+ 
+ 	/* Displayport compliance testing */
+ 	struct intel_dp_compliance compliance;
++
++	/* Work struct to schedule a uevent on link train failure */
++	struct work_struct modeset_retry_work;
+ };
+ 
+ struct intel_lspcon {
 -- 
 2.14.3
