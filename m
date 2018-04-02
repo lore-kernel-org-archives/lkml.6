@@ -1,70 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752502AbeDBPHQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:07:16 -0400
+        id S1752587AbeDBPH0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 11:07:26 -0400
 Received: from mail-co1nam03on0040.outbound.protection.outlook.com ([104.47.40.40]:48864
         "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752318AbeDBPHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:07:13 -0400
+        id S1752472AbeDBPHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 11:07:16 -0400
 From: Yazen Ghannam <Yazen.Ghannam@amd.com>
 To: linux-efi@vger.kernel.org
 Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, linux-kernel@vger.kernel.org,
         ard.biesheuvel@linaro.org, bp@suse.de, x86@kernel.org,
         tony.luck@intel.com
-Subject: [PATCH v4 0/8] Decode IA32/X64 CPER
-Date: Mon,  2 Apr 2018 10:06:48 -0500
-Message-Id: <20180402150656.101022-1-Yazen.Ghannam@amd.com>
+Subject: [PATCH v4 2/8] efi: Decode IA32/X64 Processor Error Section
+Date: Mon,  2 Apr 2018 10:06:50 -0500
+Message-Id: <20180402150656.101022-3-Yazen.Ghannam@amd.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180402150656.101022-1-Yazen.Ghannam@amd.com>
+References: <20180402150656.101022-1-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [165.204.78.1]
 X-ClientProxiedBy: BN7PR10CA0030.namprd10.prod.outlook.com (20.176.16.43) To
  BN6PR12MB1905.namprd12.prod.outlook.com (10.175.102.11)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c7a3f6cb-703d-4334-fd10-08d598ab6986
+X-MS-Office365-Filtering-Correlation-Id: 08a2be6e-e36e-4d62-f71f-08d598ab6a6e
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1905;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;3:E2+cZ1yGgMUKNkFBDvByJrd0zlUDKna5hdLO9EV5wQErIFEmwLo5+xF8e/0JwPrqBlTJj0rFNvtYz0ZX7JKcy/JCvOCEP6ANEZUp0O7iDY83ErlRZIGm/VMBucvBL+BcPYme7Xy/ToajKUuT4vNBX067E5989LhGvQcJgAsmw81r/cJKQU5BNak7N8cBiGuaDINluWw81WFzaHvKPwXy0yUtzcdNiknMoQjQqTjktuz3+KRTuLL7POg2JW8uTX80;25:9ZSJUDpbGTh6VRcn9pM4OSPoWcrL831Ryie0ayr1FDT7e2swZp6nzVrN+lKJgN7a4/Kw7JlTXosMWm/ETLYaVszL+hRolazzZj67qw3sr83ui/lpUKj87MDxTJrST9++1mEKuTAW3b7UyyXnzOsI23m7N1mDxQcc9FZxgT+pbyosBhZio9wFUXqjxIueknXYRRpeJPkfNiTCTNn4+JAqFrNYwHBRc9JAIFjkXB3C/+0A83WkxdHbJHbfzsSeZevtnVYrFTJV4hJZ5lFSwg94Qq/dB2TwSY09eJxC+W+hHxeIVgkiaeU6s5mwFE+vg344RPftUmzmLAjvDcm2gn95nA==;31:fK5LnPUF2RopCyPAjH1BMW498B09MnXaL1WDGT0KNVueZ8clZOgma0o4s8O7wpltr0m0H5BMGLtqVSbvyQHyETrAX5af78d8Rgn7giuBLp9EWcXjnuPahvKTsd5jqAHSt8EBU0eLfdo9yxiwEOfyftHVCc0YJ0mAhIn1gjeX+diRdXhm4xE15BD7rinaWIJ3nZXpfw/0oaiOw6ypOQyAUGg+zjWWkSr/3XMtHxO/WEU=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;3:hNC7TpjeF3czrzRQ44urWj6gfhZbxkFt30mb5h5Rq5ZEihO/ogBAtlNDad77IroN9JnOtFwx1wIBRu3CXXFFKQEwow5+d3xemy9hsx33yKwk30xDsTSaEBCmxp24Wle1C4hGI875mAszsnD4bMSc1yElnrs5VtEQg1zPemlLanPPTQGCkKOiRfF+lRynicGi3/n8aWTFLiDqYJAY5ok1h3F/m89MyftFDMswxwmme414CaqeQRHN1d1St0k02aQB;25:2JeItTlnJJtp1S5BejYxd54okB0HUfE4r1iK+u5lBtJ545YrAdBWzkh8bZCCHP2UqlnTgFBocwSnqltMh89ql2EJ81Fq9+PdXsJahzimtoL9LJT5xJD2DV3i1+qGxHbkkQy1RdWJ0OkFcQ6chE94n+JLoOdCRm0BgSSCYldnoe6QOrUGauWM6r1DL6omsrB/5n1MQsyL97EkflVpklH5K5PPZhvsd+XD5xf508GyyefcwwVFy2uYysRlbSzhwfncC0gs6HEgvTFIrR0wlaKg2FQtQjbT8TSdqxZPvaWPQS+ap25IcdnLxlSXkeIhuULRn8YhUv+LuPbUHTY01Ip+Rg==;31:w07Tdq77YaYfiq+1iZcpPyHEHxqxYZplNQp+V8XAxENHnzlYEDGgwQJIm+pHbrdkWoCgtY43pSfiIYoEcHNPU58vRh1CQUt7pULSOU+bGD/m8SoJHXO9uYYkMguAwt3ooiTSCi1+WwqPjaJpxLT/BV6fmVWujRk3C/XV9L2dltbs7AgiDG10ssqswMpxEOkgSO/k0DIGiw9++tOsRaaop8xaQu5ebMeV/1/QRSzw84w=
 X-MS-TrafficTypeDiagnostic: BN6PR12MB1905:
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yazen.Ghannam@amd.com;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;20:igIo5luaq9hpRXLvFVMKD4D5w0Hpr0SwqmNXb0FZ6wo+cC+FAt4wiLmQ9vGC4pmOQJXl1u6E4U359ruo8wbkq5ItDTS5uj3VmgcQSEpvMQyLVJFJJYLYxDN0ndOsnskvawbl1k+3IbXB4/WA/Xw/ZyJQ8mXyX8Z1txsd/kOsesDYNbrJfi1bsunEADEWxPnGtAPceq2/osC3elnl0Mt0j3xSseA1fAJ2TJ+HG6hBCpsB93b7A9vjWbq1/Jd7isjlMYwlyWJe+CDNc7eD4bHtt1kmXWINhZEDcRdCzVVbdc3DC3c611Q/AChHiyOXaK7Mi9YYqK6hIaVfgI8xVvJG1I2F+OxEqmTtyTI0KHRurGKsXXQN7FRG/CPAb02pNLgQOs7M9h+CSdrtwvo6kqpiOUerauoBf++n6Qu2sct0UDBypPeCYUjrQM4k3UOJ0MAwAvShmpEwOgR9PyRjWyh7ecvPxAxMJeFV0v7kGXbOPkA5qsziGBsrF4R3VlQit69n;4:VRkdG5TPPJQZzaCXzJlWjtbLVjCR3OYi3se23QnRoUjqCUqwO8YxzYDAUgf//xt2pNp81Gh118l3ByiR5Ir0WkKNiZCXT0NGJOJEMz9Y/+jx4sYBsGGr2mZYkJ9WAGWxgjkrLVJbKl1NUl9LEP4lvv/ltqLSRpYyII+Cruhe6Y/Fcx37u4SJReRPsSxeiXH+g63hvZyw6n3vr9hRTMur5OUx/VKir+Qgu9HLh0w0PESbh3cX2PYaU4L54cAWbpq14E6JEwfLG62b3403x7wmNBZNR4f4yYOI+2S9JkSkoT5FpitKoDjr5Xh9h3JafcOMzBB+S//UHTE6FNVj/ZiGW9aRMwq9FHghuHrf5E6jNiU=
-X-Microsoft-Antispam-PRVS: <BN6PR12MB19056931B508BD07CC5DF2CEF8A60@BN6PR12MB1905.namprd12.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;20:0u+2PdhuFtNc5cuGQ1ekVISrVSQRSNqJyaRWL1VPtAHuDbk3Cg0jVHKhtQrr3V8HoXYH48C11dT2Vx7UZdinKkmn98zfiDJhcufBjrkwyy0DZOJZbnSjLjAhu9Q2bsrZJ2u8B2oZiTIALBvxBI/eZVxgOIyu7VkYhjMrDTZYYe+Tr1po/UbEJOXo+AQNnSQCY/RgElLe+2jeFaJg98deGAGQRtXanQDYI6naz33tOYyoABIdbXcKRvMKNc4ABR6fBpiGuRkRdA61oRPuNanvcj3ZYUe1BGgqI5m0Ql2ZWa16oy9/9WN/1PnlQeMnmFi62drTg7/e+5B4iXtzJUWPZ/1dJ9ck29xlZIVloNKxow4b+eG5sOmMfqEnM+l/ByA+Kfxb1YbCs0Z1li4Xzzt9Maod7oCFcodY84/QaHUJ2+CGQoHMfUJj92hlSw9LggBrd3zgcCnfO8vhE0IWg5GY7+smbiDFpOFE9uUkK4S7HuYDnl5vkqdmSXD1Z+FOGlPq;4:4nj3Lyh/MC4DiD0Vfs4gP3GQ7f/y2KnBLASfzlHLNmku05tP5AcMM4CveRFewQG/rG9U/4vDhwhE1c1o4UMr87eLPYlJpI2LpmLZ1NIPb+5I9iKN0tVVn2IUNH04RM4cYi/GXJvU/gsz+zUW8n+dXUTqLfReKXQ+3tdvHKkUh6hfkkcTIjUX/eXjpzClUiNxS2i+FnqjOBwemk62HmKnBG3xgFUNeTmDP7UpxxQMBwP8tKDmiiryc1twmVBP889qfZHBZFGJqU5l2YfCRaTmZu1mpi1oti8G01Un605NSIPENO0Ck29hnzBs6BCY32yhlde4tZr2vB1/49ERrs0Vf4kVsyfJUJu3YXjsoV71nxo=
+X-Microsoft-Antispam-PRVS: <BN6PR12MB19059AC7D935E5E2B986FC4EF8A60@BN6PR12MB1905.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(42068640409301);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN6PR12MB1905;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1905;
 X-Forefront-PRVS: 0630013541
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(39380400002)(39860400002)(396003)(199004)(189003)(2351001)(97736004)(86362001)(105586002)(25786009)(26005)(6666003)(6486002)(8676002)(5660300001)(106356001)(50226002)(8936002)(2906002)(16526019)(81156014)(81166006)(2361001)(50466002)(6306002)(66066001)(53936002)(386003)(48376002)(1076002)(6916009)(6116002)(52116002)(68736007)(4326008)(36756003)(3846002)(7736002)(59450400001)(316002)(966005)(51416003)(305945005)(7696005)(47776003)(2616005)(478600001)(956004)(16586007)(186003)(53416004)(72206003)(486005)(486005)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1905;H:yaz-diesel.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR12MB1905;23:D4mLh3XjaDm2F3184WsTWyfHxIXz3Z7pk2LTjguCb?=
- =?us-ascii?Q?qINrcmpSqrgcT/+29A60E0I4gRDAixLKGjy1PL+RA6xLiMhGWE+5czUoEk9K?=
- =?us-ascii?Q?QRUBIYgcQ7UaFMolBKB6SpnGY7hS/EWZv93uTJeyhHr0x9AYD1zN5OOWdyqo?=
- =?us-ascii?Q?mPvlsJhysl6CkukNojL9jFRfOiGuahYABRkEO0Z8toso80SqmnI64sDHS7AL?=
- =?us-ascii?Q?sQWV7z6eXqzarold69JoyJT1ooreseK5zy45AkmHAMjaVfAxB9gp2a/ubIrL?=
- =?us-ascii?Q?W7wuipCMiqs2hgdBTbrEzTLizKK2sosC8sySpCO5T0lAw9Sr9ezwo80r3JV0?=
- =?us-ascii?Q?F9k/KNeyo080Sq/qyZbRNdtBWjViNcpDtjLza5PZklPvuyzyV8PQ1Kezvprx?=
- =?us-ascii?Q?JN7WGwkWGTsT6DDKRj0VnL7n6lyKc6ATmDZfrntyAhw7YiWK4naYipDrWg+T?=
- =?us-ascii?Q?XgF7aQ/5qPp3fB6PMaPa9GA7do0X8CpcoP+CFlXF/mENkyJC4quvXMpQTDiF?=
- =?us-ascii?Q?Nv2sqs+Kio6zjP2lnOqaTZy3AGwlXViCfvIYYk3vKtfipTpijQBDNBSlVlrB?=
- =?us-ascii?Q?JgUapLm5nr5HtIfhvQjM1AyXZOKPYK/n7IWYQo8+kUiKBZMXgY09MNMzpndR?=
- =?us-ascii?Q?3QKc8zp+pXyKHAK+x/kVS+4uKaavZvKqfTdPdbZpKUtsBN9zXU8cCj9MJjPu?=
- =?us-ascii?Q?dmLPhko4n7V4dLDhJDYS5qktczZmi3YLPRScVM58XOE8lPcZr7qxtaKcHMQZ?=
- =?us-ascii?Q?vQOyyLI2E/EdtEhWDekJw+CNyXDRqfTHZkjgRjIyOR9WRYI0mdwhQ6VqZqNL?=
- =?us-ascii?Q?SrY0bdxdnfPOOMy3D6yUw8MhfkTxY/Bw335jUIqjEr5ndOSEnd6tUQ3ptzQn?=
- =?us-ascii?Q?0gUaYPi7P3cxxb38tNQWe7NlqaWTSLVeZBa7WMM5Xr+130/eGHDhr5Fw3IU4?=
- =?us-ascii?Q?dkDQj2kk+9kESJHNEcUKbERJ60d0N+RXKoqA1+OlfUirOvAg+qMzGmh6nSAQ?=
- =?us-ascii?Q?bkWYG9Ume2iYptdEz2uasj3nEak9JR2nOE9GRHu2XnOoN4Nl0QnIBJLEtVIe?=
- =?us-ascii?Q?BUpZZ+k9kWJImeg44kd2GFffEZ8NJx40Dc0NfQKzdD/NOFm2ITsUfXyc9MD5?=
- =?us-ascii?Q?Prff4vYLQUwbajcvAX+6x+D+5CNPnuairM5egrKmMqLIF5OybiQR7w0WuTN3?=
- =?us-ascii?Q?2cy92fqSkkbn38l2tjlOL4ixV025++i4GUegdVayiubXJncEgKOIjqRkS40v?=
- =?us-ascii?Q?15C4/iqwXrn9wR6lQnRDRSvimP8noVjTipO+lwM?=
-X-Microsoft-Antispam-Message-Info: m64kAyngUtOcixLmk2dw3dlkTFuU1LnnoyhX2q01KJbmYzDEJaNY7z5rP6mFW3cXBW/OqFytuWFSMWotICIFOjlu8iYm4dFMjUtIn+JFHBxRUzVGp5bxQMqeWJ3e3ngkFq1uxhHRZVS/b7JDy0KYfPa+gDgz9EXeYHfRfHXwPn/PBHZNBtz4RHJIyMCGi3RM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;6:J19XW34PBTiJFW9mdLi46A5EVZs3k8f7ujUNnmcz/Azz7RmrD2f0oO+9+bzFofXfFPjQOv0IiyCn4Zsn2Fr4HHwywR6gkp2HLOcHP1K7RG1Pok/PdqOc5rYsZVlwJ2BA8bYkeBBHLKEkHR4V+IODJ+e6/evx1n3D7N6gsx2HHHAgtJRLsRoyYDBg6xNmbxcg+RVaPfOpOi973Iz+qjIxzBAx/3Kgy5OE723zED33GY+EBuqwUor39wG+nrjXB6SuMyEN+GBAMyGDOQzzKF0VbMR06imy7+b7YrRpjnVoqS7v+3CqaWyBt2J5Z6aYt3mvruQ72zwdKXBLNpLofeCYoFaRqn7+nC9SFE5lVPM7NBkNwPRqOS77Hn6IXM+ZnDDZjolYKEzo5VZ9EsFgRfQ1Q6YOy/uWl4gyJlhfkOTiKGV/kyElnQMgh50ZUT89E4+RAO2nG+7c/rFHG4vSQUf9eA==;5:FNZ4hsvFvavdy3arfYDg39TYZq94ubYdlJgcrb0T4AKmkJBjQyCSKjCNpMea+EzU4eVZBeeH+Bn0xXSwZoKVqvIDOT6DBsJto3+wiwW3Ms/fODw/LRB0Mzvs3RKwUsY5junTdNnUR3S9GW/WYEVqL9p19DWPeSKRHXNhDSZFXHQ=;24:02OJvL4sXWdzE4G3JlA/Ty0/tKsI96AUFK0R7Nd4rz8ta/6PRu/Y+Ft0d/15JfdOe6L9Cjsj6i0KaJMz4hRCPjYTKeGUhyGFxbPyb6fUd6o=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(39380400002)(39860400002)(396003)(199004)(189003)(2351001)(97736004)(86362001)(575784001)(105586002)(25786009)(26005)(6666003)(6486002)(8676002)(5660300001)(106356001)(50226002)(8936002)(2906002)(16526019)(81156014)(81166006)(2361001)(50466002)(11346002)(6306002)(66066001)(53936002)(386003)(48376002)(1076002)(446003)(6916009)(6116002)(52116002)(68736007)(4326008)(36756003)(3846002)(7736002)(76176011)(316002)(966005)(51416003)(305945005)(7696005)(47776003)(2616005)(478600001)(956004)(16586007)(186003)(53416004)(72206003)(486005)(486005)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1905;H:yaz-diesel.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR12MB1905;23:0DPOYuwbkyKe5X30S2e1plfAoOUiM/LnPcvW9g/Vg?=
+ =?us-ascii?Q?YujPNQw6Z42JKZIFNSSJTCwM0imyNx//QlMbTvWSp0j/3eKF3Dp9r5r+4gVB?=
+ =?us-ascii?Q?TZq4Rp4UbEY7PLPyGuIXnaRRANuuA5K5L5MuPVO6Hm+snMgGAIo/3ha4u1cH?=
+ =?us-ascii?Q?YR4ePjpJrmI2VLTwBEkF4p9IPkMt61l27SVunPm0Y2LrQlO8YdmI4P0xp83B?=
+ =?us-ascii?Q?f795Lp3eu6zzQ35osT9/Kus0uHfkFH3at9VH2V1mPc2A0HaS9oAwXwUahPTu?=
+ =?us-ascii?Q?0mCvHsxJGY9uNhn6iNIId7vzk+H2g10IWhtayVcDps6TjQH39t4ZqGmu7PVD?=
+ =?us-ascii?Q?HVrKtYwBsuzJ7eJOAwLyl0WqPUvCLVim69zhwtofTgghMHVshQpqFTi5V+8C?=
+ =?us-ascii?Q?tSuadCCCAznf5luJLw+86Gh0Vhw2g5iqI7pABcWqahmzT0qTqjtcMPQxu9bK?=
+ =?us-ascii?Q?RU38gFVCWDl/xFdpmxeObQm2almIzL9enBLLAzxtAc72Izi2kBe666LYl5/y?=
+ =?us-ascii?Q?+NSKKZd3Uyf0nAefpvO3+0iygm4er9rTcAKykUkF3VcNdw99rROHO42r7nVo?=
+ =?us-ascii?Q?tYE4FALdWH1ou+0NpfTD0ES7Far4xiaHcGFyn+qfvHFhLPhkIhsnIKwr9D8t?=
+ =?us-ascii?Q?vkR89zb3ImRU38eNstIBes6vKAsgB1dpIBJwMoIeACVhzOPEU5mrAr+IkD/d?=
+ =?us-ascii?Q?fhepOYryYzQL4ZFXwQRqVb5m1yEE8lNYwlfDQlkeCle1hKKpBA9k3n7IacBL?=
+ =?us-ascii?Q?thnvFhRXAWHMovzscElMfWFSGKYfdU7jPR1ueNVysL6We2HUJpzjTrbbrPp1?=
+ =?us-ascii?Q?Ta0160gdZTXT6Wlw5/0NQJYG51eTzeA3ze6Trt+bZZUqJ6wTACPotD7+/0DG?=
+ =?us-ascii?Q?4GialBdBneuEa2tPLOGezdrXeV/DjLarhsQRc9SuXwEBBTYom6v5R36IPH8q?=
+ =?us-ascii?Q?AAJ0jEJrG0LcZN1aY5c+Z4KtSvYFibbKv/YpkSNFmys2YGN0e92MeXzzdv3W?=
+ =?us-ascii?Q?X4nj0G9AQ1jtLKRx3lZKlOopisprknkMltMEOID3gsSO9vgLs4Yl2bTJScuT?=
+ =?us-ascii?Q?T8BL6hEEDzRtilXN/n5hBJ6+tVVFa+EdvUbEhtVUv56wSF8fr8ut/856zdu4?=
+ =?us-ascii?Q?XE0XECVHw1hpsT6BVwTTx7mvrhfUsQzry7fe6XlWnhbTv0Ng9EV3e9QoI2Lz?=
+ =?us-ascii?Q?pn/9IkzQsxtOlb/KX7GJGnJjINK+/ZPd0no1IokakDLRpRpV2QFuHPVVXbVL?=
+ =?us-ascii?Q?i+KGS5L/I+e4/VJ1iEWUPr3Rf1gGQba8ZnOoYoZsNuvogkeMXVsaHmxBcenR?=
+ =?us-ascii?Q?p6uPpJtq62YZ896df0dcnLC6tvcnfwf8iykRF383PPk?=
+X-Microsoft-Antispam-Message-Info: DCe6Y4eQOFu+pu29JhX4XNnNmL74HYvvRaZvnnWqTY3gt6wBV0y/Ezg/Z3a1Vuk7fuT1OsE7DQNNIX8nEUty6B+cboEIJfNL/2CkkG0EWmzlHdtejKif8/QMwxDmVteZMwyxzV+3tCsfDMnR/dUhjHfWLX7CWbF8SkqihBH45d6P/NCEqD8rqaL+Q9cwELqn
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;6:srXgxh8mKX5mJRcISM1Hknu2X1oTttbO0byKk3D3LzbY68c1hBfDD2i1vPge3227zUxHrUz8wh/Sl3JHaXaGR1w0a8K0WLw7XbXQ3rwM/2pgxjNJ6vSiDLdfAtVKcd2RqxAU25Kn9J33qkpfLnfwRhqlekDwdtpYaecVXzJkhYu/0T+dkPfm8OS7yvjL3z3mlRRAF/wiZrHWWdbT9cR8OxRFBTkczH+7n5ZhLozGRizJNY0b9B4Pm5RMGQ7T7VZAjkNnWUmeom3j9f4OY9EbpOSxLcxh7n3ajEmMVq79yg8WPaHdA3bH7ZwY+IOTc6J5ToomUX5bzWL2OEpeP/LY0UI8Q9s9rWT64NNQxouD0w916o9HhyeZj8x4voWMuvDeTE8f1wTtDzLIfZU6K6RHmHe7LmUO+mvSSC/uCJW+/forNrUvLJQkTG4TqZTxEdDYcvmoZcxHMG1LeWij9iThcA==;5:wkYQuleJwuIqMlV/jNnvVsJ6Fh6pwj+CQ7CHQIHgSXeYMWLncYZhMLfhqcy2mGWKnNMKJNpeVVycN+0V8XWwwrM9LHXSWKXei9KK017rvdHBKRsdNRAuuct6hwKTOEl3T2i5nI86Z1EL+9+e4queBEQNOifKqMnCWuBGO9K/Asg=;24:AFGKMjQpZ/hv+VxaQGl2CUH9rSCtFwOYy2OQdEGMmCXu0W6I0I47Z86NNn7RlPXRefsYiei2Vb9jbFopo7WBBjNKvjL9L/Pp5QD7Ti+g3dI=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;7:Nc7UxK1SlVEOmOUfwRurKEsqS3JAGelWFcSE+1kL31dbKEH94//oJeRy9kC/r15ETd6aQF4AIfQxko2KEfXz6zqIopaXjiRwHymqOaH91UVEBBvA68xjZfFT/8nmDx9CsvaovnV8DpaBbN1O6o+mrepxeMUyK3g7UlknKyPdlSQBflDNSyFtaOJx0jipU2yOKlX7tXiJ66klSI7Jyg9POvXJYIqTLVF+oeA10JBWUYjpvvc3eokKTPhKCgbII578;20:u7qGlPTQP3NuKLhiS6AzFzB2JYcbCtD0nL719PxSsgucdTp42C9aEuOgdqK4zaNRHwzvxcG8KWQX90uzYQ6qMXyeX0U4lEkEAESYh1VhDgIyYSrsV5YqJxxIcXd5JC77GDUEdVgUnup0uUSOG0r5+GPLz2RyH+hmiAvGepVt+2OOfjx2EhL4iR8vnO7pMz8Y033nxNWlXNUTO88yRNClu/2qE59ip9X619gEf0Fm5UdRWYOjYbr2S3EUgC6HYLTk
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR12MB1905;7:BQ5DeiM31xN6+EBoZ0qxgGk2xsQFjjMCDF7n/JRNPBkWE9vvVaf+3s8N0J2itW6HbWN78KH4Oay7cmFIfJ/pjY02YUnO8fifzkt0McAlMqaOghPc88xiqXYohX1MwMfRY56jwDvsmrN6boimYnMIgM0/mdxt/dzVwpeqSnWAe74QYH+notSJqjJxQu/cJFvAkNf/5ZWNEVy0pyTui0Tq8rgI+byyMnM4o7ah317ld/pzgt1Mb0YRHOuOgEfl9b+s;20:vDyXgjLKiLHj84rRQY2e9U69hjvkaLQRaOaC2IThqUqi3z2mjbNGORc8AyilX5pc4ps7uINcrP5P3yNXtvxhjfRZspCgvorULkRTG0lFGVVSEwpvkPuUAifmWGIhulGYHYAe/Gnxaz7RWC0UPUcoUJvxl1Hi0WPzQFIvAaq3e6vfo6Yc9I0qgV96AZcQCiPa0o82Kh4QnIOxOB5MGI0jKDJC4vtzOFrfF80/GxsrGCiQtQCk9Y2WXefI03cnOkxc
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2018 15:07:11.5973 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7a3f6cb-703d-4334-fd10-08d598ab6986
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2018 15:07:13.1186 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08a2be6e-e36e-4d62-f71f-08d598ab6a6e
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1905
@@ -74,56 +77,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-This series adds decoding for the IA32/X64 Common Platform Error Record.
+Recognize the IA32/X64 Processor Error Section.
 
-Patch 1 fixes the IA32/X64 Processor Error Section definition to match
-the UEFI spec.
+Do the section decoding in a new "cper-x86.c" file and add this to the
+Makefile depending on a new "UEFI_CPER_X86" config option.
 
-Patches 2-8 add the new decoding. The patches incrementally add the
-decoding starting from the top-level "Error Section". Hopefully, this
-will make reviewing a bit easier compared to one large patch.
+Print the Local APIC ID and CPUID info from the Processor Error Record.
 
-The formatting of the field names and options is taken from the UEFI
-spec. I tried to keep everything the same to make searching easier.
+The "Processor Error Info" and "Processor Context" fields will be
+decoded in following patches.
 
-The patches were written to the UEFI 2.7 spec though the definition of
-the IA32/X64 CPER seems to be the same as when it was introduced in
-the UEFI 2.1 spec.
+Based on UEFI 2.7 Table 252. Processor Error Record.
 
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+---
 Link:
-https://lkml.kernel.org/r/20180324184940.19762-1-Yazen.Ghannam@amd.com
+https://lkml.kernel.org/r/20180324184940.19762-3-Yazen.Ghannam@amd.com
 
-Changes V3 to V4:
-* Drop INDENT_SP use.
+v3->v4:
+* No changes.
 
-Changes V2 to V3:
-* Fix table numbers in commit messages.
+v2->v3:
+* Fix table number in commit message.
 * Don't print raw validation bits.
-* Only print GUID for unknown error types.
 
-Changes V1 to V2:
-* Remove stable request for all patches.
-* Address Ard's comments on formatting and other issues.
-* In Patch 8, always print context info even if the type is not
-  recognized.
+v1->v2:
+* Change config option depends to "X86" instead of "X86_32 || X64_64".
+* Remove extra newline in Makefile changes.
+* Drop author copyright line.
 
-Yazen Ghannam (8):
-  efi: Fix IA32/X64 Processor Error Record definition
-  efi: Decode IA32/X64 Processor Error Section
-  efi: Decode IA32/X64 Processor Error Info Structure
-  efi: Decode UEFI-defined IA32/X64 Error Structure GUIDs
-  efi: Decode IA32/X64 Cache, TLB, and Bus Check structures
-  efi: Decode additional IA32/X64 Bus Check fields
-  efi: Decode IA32/X64 MS Check structure
-  efi: Decode IA32/X64 Context Info structure
-
- drivers/firmware/efi/Kconfig    |   5 +
- drivers/firmware/efi/Makefile   |   1 +
- drivers/firmware/efi/cper-x86.c | 356 ++++++++++++++++++++++++++++++++++++++++
- drivers/firmware/efi/cper.c     |  10 ++
- include/linux/cper.h            |   4 +-
- 5 files changed, 375 insertions(+), 1 deletion(-)
+ drivers/firmware/efi/Kconfig    |  5 +++++
+ drivers/firmware/efi/Makefile   |  1 +
+ drivers/firmware/efi/cper-x86.c | 23 +++++++++++++++++++++++
+ drivers/firmware/efi/cper.c     | 10 ++++++++++
+ include/linux/cper.h            |  2 ++
+ 5 files changed, 41 insertions(+)
  create mode 100644 drivers/firmware/efi/cper-x86.c
 
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index 3098410abad8..781a4a337557 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -174,6 +174,11 @@ config UEFI_CPER_ARM
+ 	depends on UEFI_CPER && ( ARM || ARM64 )
+ 	default y
+ 
++config UEFI_CPER_X86
++	bool
++	depends on UEFI_CPER && X86
++	default y
++
+ config EFI_DEV_PATH_PARSER
+ 	bool
+ 	depends on ACPI
+diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+index cb805374f4bc..5f9f5039de50 100644
+--- a/drivers/firmware/efi/Makefile
++++ b/drivers/firmware/efi/Makefile
+@@ -31,3 +31,4 @@ obj-$(CONFIG_ARM)			+= $(arm-obj-y)
+ obj-$(CONFIG_ARM64)			+= $(arm-obj-y)
+ obj-$(CONFIG_EFI_CAPSULE_LOADER)	+= capsule-loader.o
+ obj-$(CONFIG_UEFI_CPER_ARM)		+= cper-arm.o
++obj-$(CONFIG_UEFI_CPER_X86)		+= cper-x86.o
+diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
+new file mode 100644
+index 000000000000..863f0cd2a0ff
+--- /dev/null
++++ b/drivers/firmware/efi/cper-x86.c
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018, Advanced Micro Devices, Inc.
++
++#include <linux/cper.h>
++
++/*
++ * We don't need a "CPER_IA" prefix since these are all locally defined.
++ * This will save us a lot of line space.
++ */
++#define VALID_LAPIC_ID			BIT_ULL(0)
++#define VALID_CPUID_INFO		BIT_ULL(1)
++
++void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
++{
++	if (proc->validation_bits & VALID_LAPIC_ID)
++		printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
++
++	if (proc->validation_bits & VALID_CPUID_INFO) {
++		printk("%sCPUID Info:\n", pfx);
++		print_hex_dump(pfx, "", DUMP_PREFIX_OFFSET, 16, 4, proc->cpuid,
++			       sizeof(proc->cpuid), 0);
++	}
++}
+diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+index c165933ebf38..5a59b582c9aa 100644
+--- a/drivers/firmware/efi/cper.c
++++ b/drivers/firmware/efi/cper.c
+@@ -469,6 +469,16 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
+ 			cper_print_proc_arm(newpfx, arm_err);
+ 		else
+ 			goto err_section_too_small;
++#endif
++#if defined(CONFIG_UEFI_CPER_X86)
++	} else if (guid_equal(sec_type, &CPER_SEC_PROC_IA)) {
++		struct cper_sec_proc_ia *ia_err = acpi_hest_get_payload(gdata);
++
++		printk("%ssection_type: IA32/X64 processor error\n", newpfx);
++		if (gdata->error_data_length >= sizeof(*ia_err))
++			cper_print_proc_ia(newpfx, ia_err);
++		else
++			goto err_section_too_small;
+ #endif
+ 	} else {
+ 		const void *err = acpi_hest_get_payload(gdata);
+diff --git a/include/linux/cper.h b/include/linux/cper.h
+index 4b5f8459b403..9c703a0abe6e 100644
+--- a/include/linux/cper.h
++++ b/include/linux/cper.h
+@@ -551,5 +551,7 @@ const char *cper_mem_err_unpack(struct trace_seq *,
+ 				struct cper_mem_err_compact *);
+ void cper_print_proc_arm(const char *pfx,
+ 			 const struct cper_sec_proc_arm *proc);
++void cper_print_proc_ia(const char *pfx,
++			const struct cper_sec_proc_ia *proc);
+ 
+ #endif
 -- 
 2.14.1
