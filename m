@@ -1,75 +1,283 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752737AbeDBP6A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 11:58:00 -0400
-Received: from muru.com ([72.249.23.125]:34938 "EHLO muru.com"
+        id S1752627AbeDBQAY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 12:00:24 -0400
+Received: from mga01.intel.com ([192.55.52.88]:56246 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751415AbeDBP56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 11:57:58 -0400
-Date: Mon, 2 Apr 2018 08:57:54 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Dan Williams <dcbw@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180402155754.GD5700@atomide.com>
-References: <20180331145531.GA10404@amd>
- <20180331181935.GX5700@atomide.com>
- <20180331191939.GA8999@amd>
- <20180331194616.GA19388@amd>
- <20180331195524.GB19388@amd>
- <20180331234314.GZ5700@atomide.com>
- <20180401131852.GA11086@amd>
- <20180401153631.GA5700@atomide.com>
- <20180401173012.GB5700@atomide.com>
- <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
+        id S1751244AbeDBQAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 12:00:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,396,1517904000";
+   d="scan'208";a="40109177"
+From: "Keller, Jacob E" <jacob.e.keller@intel.com>
+To: Tal Gilboa <talgi@mellanox.com>, Bjorn Helgaas <helgaas@kernel.org>
+CC: Tariq Toukan <tariqt@mellanox.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
+        "everest-linux-l2@cavium.com" <everest-linux-l2@cavium.com>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: RE: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
+ max supported link bandwidth
+Thread-Topic: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
+ max supported link bandwidth
+Thread-Index: AQHTyGrIFr77DKg4/kStVKf2xuGFuqPs12iAgABDmICAAHO3AIAAbPqAgAAIIAD//6JfEA==
+Date: Mon, 2 Apr 2018 16:00:16 +0000
+Message-ID: <02874ECE860811409154E81DA85FBB5882D4980A@ORSMSX115.amr.corp.intel.com>
+References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152244390359.135666.14890735614456271032.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <31e66048-e8b8-47ba-baf5-023560b4c124@mellanox.com>
+ <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
+ <50346f44-de3f-b226-69ad-6de45e94e261@mellanox.com>
+ <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
+ <3decbba0-74a2-c906-b5b4-a04f261860eb@mellanox.com>
+In-Reply-To: <3decbba0-74a2-c906-b5b4-a04f261860eb@mellanox.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjk5YmU0OTYtZTFjMi00ZTlmLWFhZDUtN2EwMGZlYjkwODYyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImhHMk1GSnJvVWlBaHNsWkFrS2FUeEZPYlBkZWZ1cWFMN1I3eTUxNzdzRDg9In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w32G0Wvx018073
 
-* Dan Williams <dcbw@redhat.com> [180402 15:51]:
-> On Sun, 2018-04-01 at 10:30 -0700, Tony Lindgren wrote:
-> > * Tony Lindgren <tony@atomide.com> [180401 15:38]:
-> > Found it! Here's what I need to do over n_gsm:
-> > 
-> > ngsm 1 "AT+CFUN=1"
-> > ngsm 1 "AT+CFUN?"
-> > ngsm 2 "AT+EACC=3,0"    # enable mic
-> > ngsm 2 "AT+CLVL=4"      # set speaker volume
-> > ngsm 2 "AT+CMUT=0"      # unmute mic
+> -----Original Message-----
+> From: Tal Gilboa [mailto:talgi@mellanox.com]
+> Sent: Monday, April 02, 2018 7:34 AM
+> To: Bjorn Helgaas <helgaas@kernel.org>
+> Cc: Tariq Toukan <tariqt@mellanox.com>; Keller, Jacob E
+> <jacob.e.keller@intel.com>; Ariel Elior <ariel.elior@cavium.com>; Ganesh
+> Goudar <ganeshgr@chelsio.com>; Kirsher, Jeffrey T
+> <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com; intel-wired-
+> lan@lists.osuosl.org; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-pci@vger.kernel.org
+> Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
+> max supported link bandwidth
 > 
-> I tried to look through the QMI dumps we have in libqmi from 2013
-> (latest Qualcomm posted) and couldn't find anything to do with mic
-> control, speaker volume, or anything like that.
+> On 4/2/2018 5:05 PM, Bjorn Helgaas wrote:
+> > On Mon, Apr 02, 2018 at 10:34:58AM +0300, Tal Gilboa wrote:
+> >> On 4/2/2018 3:40 AM, Bjorn Helgaas wrote:
+> >>> On Sun, Apr 01, 2018 at 11:38:53PM +0300, Tal Gilboa wrote:
+> >>>> On 3/31/2018 12:05 AM, Bjorn Helgaas wrote:
+> >>>>> From: Tal Gilboa <talgi@mellanox.com>
+> >>>>>
+> >>>>> Add pcie_bandwidth_capable() to compute the max link bandwidth
+> supported by
+> >>>>> a device, based on the max link speed and width, adjusted by the
+> encoding
+> >>>>> overhead.
+> >>>>>
+> >>>>> The maximum bandwidth of the link is computed as:
+> >>>>>
+> >>>>>      max_link_speed * max_link_width * (1 - encoding_overhead)
+> >>>>>
+> >>>>> The encoding overhead is about 20% for 2.5 and 5.0 GT/s links using
+> 8b/10b
+> >>>>> encoding, and about 1.5% for 8 GT/s or higher speed links using 128b/130b
+> >>>>> encoding.
+> >>>>>
+> >>>>> Signed-off-by: Tal Gilboa <talgi@mellanox.com>
+> >>>>> [bhelgaas: adjust for pcie_get_speed_cap() and pcie_get_width_cap()
+> >>>>> signatures, don't export outside drivers/pci]
+> >>>>> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> >>>>> Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+> >>>>> ---
+> >>>>>     drivers/pci/pci.c |   21 +++++++++++++++++++++
+> >>>>>     drivers/pci/pci.h |    9 +++++++++
+> >>>>>     2 files changed, 30 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> >>>>> index 43075be79388..9ce89e254197 100644
+> >>>>> --- a/drivers/pci/pci.c
+> >>>>> +++ b/drivers/pci/pci.c
+> >>>>> @@ -5208,6 +5208,27 @@ enum pcie_link_width
+> pcie_get_width_cap(struct pci_dev *dev)
+> >>>>>     	return PCIE_LNK_WIDTH_UNKNOWN;
+> >>>>>     }
+> >>>>> +/**
+> >>>>> + * pcie_bandwidth_capable - calculates a PCI device's link bandwidth
+> capability
+> >>>>> + * @dev: PCI device
+> >>>>> + * @speed: storage for link speed
+> >>>>> + * @width: storage for link width
+> >>>>> + *
+> >>>>> + * Calculate a PCI device's link bandwidth by querying for its link speed
+> >>>>> + * and width, multiplying them, and applying encoding overhead.
+> >>>>> + */
+> >>>>> +u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed
+> *speed,
+> >>>>> +			   enum pcie_link_width *width)
+> >>>>> +{
+> >>>>> +	*speed = pcie_get_speed_cap(dev);
+> >>>>> +	*width = pcie_get_width_cap(dev);
+> >>>>> +
+> >>>>> +	if (*speed == PCI_SPEED_UNKNOWN || *width ==
+> PCIE_LNK_WIDTH_UNKNOWN)
+> >>>>> +		return 0;
+> >>>>> +
+> >>>>> +	return *width * PCIE_SPEED2MBS_ENC(*speed);
+> >>>>> +}
+> >>>>> +
+> >>>>>     /**
+> >>>>>      * pci_select_bars - Make BAR mask from the type of resource
+> >>>>>      * @dev: the PCI device for which BAR mask is made
+> >>>>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> >>>>> index 66738f1050c0..2a50172b9803 100644
+> >>>>> --- a/drivers/pci/pci.h
+> >>>>> +++ b/drivers/pci/pci.h
+> >>>>> @@ -261,8 +261,17 @@ void pci_disable_bridge_window(struct pci_dev
+> *dev);
+> >>>>>     	 (speed) == PCIE_SPEED_2_5GT ? "2.5 GT/s" : \
+> >>>>>     	 "Unknown speed")
+> >>>>> +/* PCIe speed to Mb/s with encoding overhead: 20% for gen2, ~1.5% for
+> gen3 */
+> >>>>> +#define PCIE_SPEED2MBS_ENC(speed) \
+> >>>>
+> >>>> Missing gen4.
+> >>>
+> >>> I made it "gen3+".  I think that's accurate, isn't it?  The spec
+> >>> doesn't seem to actually use "gen3" as a specific term, but sec 4.2.2
+> >>> says rates of 8 GT/s or higher (which I think includes gen3 and gen4)
+> >>> use 128b/130b encoding.
+> >>>
+> >>
+> >> I meant that PCIE_SPEED_16_0GT will return 0 from this macro since it wasn't
+> >> added. Need to return 15754.
+> >
+> > Oh, duh, of course!  Sorry for being dense.  What about the following?
+> > I included the calculation as opposed to just the magic numbers to try
+> > to make it clear how they're derived.  This has the disadvantage of
+> > truncating the result instead of rounding, but I doubt that's
+> > significant in this context.  If it is, we could use the magic numbers
+> > and put the computation in a comment.
 > 
-> If the modem supports the AT service (which I think it does?  Not
-> looking at the libqmi dumps right now) then it could potentially tunnel
-> these AT commands through QMI too.
+> We can always use DIV_ROUND_UP((speed * enc_nominator),
+> enc_denominator). I think this is confusing and since this introduces a
+> bandwidth limit I would prefer to give a wider limit than a wrong one,
+> even it is by less than 1Mb/s. My vote is for leaving it as you wrote below.
 > 
-> Perhaps Qualcomm added something to the Voice service after 2013, or
-> perhaps there are other services that might control speaker/mic that we
-> don't have public dumps for yet though.
+> >
+> > Another question: we currently deal in Mb/s, not MB/s.  Mb/s has the
+> > advantage of sort of corresponding to the GT/s numbers, but using MB/s
+> > would have the advantage of smaller numbers that match the table here:
+> > https://en.wikipedia.org/wiki/PCI_Express#History_and_revisions,
+> > but I don't know what's most typical in user-facing situations.
+> > What's better?
+> 
+> I don't know what's better but for network devices we measure bandwidth
+> in Gb/s, so presenting bandwidth in MB/s would mean additional
+> calculations. The truth is I would have prefer to use Gb/s instead of
+> Mb/s, but again, don't want to loss up to 1Gb/s.
+> 
 
-OK thanks for checking. So probably only n_gsm channel 1 is for normal
-Qualcomm at commands, and then channel 2 and others are commands
-implemented by Motorola on the mdm6600.
+I prefer this version with the calculation in line since it makes the derivation clear. Keeping them in Mb/s makes it easier to convert to Gb/s, which is what most people would expect.
 
-I guess we'd have to add support for reading and writing to
-/dev/gsmtty2 at least as it looks like these cannot be accessed
-via /dev/ttyUSB4. Or at least I have not figured out any other
-way to access them.
+Thanks,
+Jake
 
-Regards,
-
-Tony
+> >
+> >
+> > commit 946435491b35b7782157e9a4d1bd73071fba7709
+> > Author: Tal Gilboa <talgi@mellanox.com>
+> > Date:   Fri Mar 30 08:32:03 2018 -0500
+> >
+> >      PCI: Add pcie_bandwidth_capable() to compute max supported link
+> bandwidth
+> >
+> >      Add pcie_bandwidth_capable() to compute the max link bandwidth
+> supported by
+> >      a device, based on the max link speed and width, adjusted by the encoding
+> >      overhead.
+> >
+> >      The maximum bandwidth of the link is computed as:
+> >
+> >        max_link_width * max_link_speed * (1 - encoding_overhead)
+> >
+> >      2.5 and 5.0 GT/s links use 8b/10b encoding, which reduces the raw
+> bandwidth
+> >      available by 20%; 8.0 GT/s and faster links use 128b/130b encoding, which
+> >      reduces it by about 1.5%.
+> >
+> >      The result is in Mb/s, i.e., megabits/second, of raw bandwidth.
+> >
+> >      Signed-off-by: Tal Gilboa <talgi@mellanox.com>
+> >      [bhelgaas: add 16 GT/s, adjust for pcie_get_speed_cap() and
+> >      pcie_get_width_cap() signatures, don't export outside drivers/pci]
+> >      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> >      Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+> >
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 43075be79388..ff1e72060952 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -5208,6 +5208,28 @@ enum pcie_link_width pcie_get_width_cap(struct
+> pci_dev *dev)
+> >   	return PCIE_LNK_WIDTH_UNKNOWN;
+> >   }
+> >
+> > +/**
+> > + * pcie_bandwidth_capable - calculate a PCI device's link bandwidth capability
+> > + * @dev: PCI device
+> > + * @speed: storage for link speed
+> > + * @width: storage for link width
+> > + *
+> > + * Calculate a PCI device's link bandwidth by querying for its link speed
+> > + * and width, multiplying them, and applying encoding overhead.  The result
+> > + * is in Mb/s, i.e., megabits/second of raw bandwidth.
+> > + */
+> > +u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed
+> *speed,
+> > +			   enum pcie_link_width *width)
+> > +{
+> > +	*speed = pcie_get_speed_cap(dev);
+> > +	*width = pcie_get_width_cap(dev);
+> > +
+> > +	if (*speed == PCI_SPEED_UNKNOWN || *width ==
+> PCIE_LNK_WIDTH_UNKNOWN)
+> > +		return 0;
+> > +
+> > +	return *width * PCIE_SPEED2MBS_ENC(*speed);
+> > +}
+> > +
+> >   /**
+> >    * pci_select_bars - Make BAR mask from the type of resource
+> >    * @dev: the PCI device for which BAR mask is made
+> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> > index 66738f1050c0..37f9299ed623 100644
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -261,8 +261,18 @@ void pci_disable_bridge_window(struct pci_dev *dev);
+> >   	 (speed) == PCIE_SPEED_2_5GT ? "2.5 GT/s" : \
+> >   	 "Unknown speed")
+> >
+> > +/* PCIe speed to Mb/s reduced by encoding overhead */
+> > +#define PCIE_SPEED2MBS_ENC(speed) \
+> > +	((speed) == PCIE_SPEED_16_0GT ? (16000*(128/130)) : \
+> > +	 (speed) == PCIE_SPEED_8_0GT  ?  (8000*(128/130)) : \
+> > +	 (speed) == PCIE_SPEED_5_0GT  ?  (5000*(8/10)) : \
+> > +	 (speed) == PCIE_SPEED_2_5GT  ?  (2500*(8/10)) : \
+> > +	 0)
+> > +
+> >   enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
+> >   enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
+> > +u32 pcie_bandwidth_capable(struct pci_dev *dev, enum pci_bus_speed
+> *speed,
+> > +			   enum pcie_link_width *width);
+> >
+> >   /* Single Root I/O Virtualization */
+> >   struct pci_sriov {
+> >
