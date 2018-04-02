@@ -1,55 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753322AbeDBSNs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 14:13:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50690 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753030AbeDBSNr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 14:13:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6FA06037B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-mips@linux-mips.org, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: arnd@arndb.de, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Paul Burton <paul.burton@mips.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] MIPS: io: add a barrier after register read in readX()
-Date: Mon,  2 Apr 2018 14:13:39 -0400
-Message-Id: <1522692821-27706-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S1754389AbeDBS0O (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 14:26:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753072AbeDBS0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 14:26:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 594912178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AIpwx4+6QMR7r8XC16AxlJ65tyTSIq7Jf+TrfrccjD2t9UQzfCuEb/NdzzIEFk/vBVu4NSavhbTu0BOLgsgk0ZxB0v0=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <201804030128.83Wu99al%fengguang.wu@intel.com>
+References: <1522682026-11395-3-git-send-email-p.pisati@gmail.com> <201804030128.83Wu99al%fengguang.wu@intel.com>
+From: Alan Tull <atull@kernel.org>
+Date: Mon, 2 Apr 2018 13:25:31 -0500
+X-Gmail-Original-Message-ID: <CANk1AXQ7hLLDoY0JLwsP1kQbkbd9diyDDcZtzYN4E8sFcQ=AKg@mail.gmail.com>
+Message-ID: <CANk1AXQ7hLLDoY0JLwsP1kQbkbd9diyDDcZtzYN4E8sFcQ=AKg@mail.gmail.com>
+Subject: Re: [PATCH v9 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
+To: kbuild test robot <lkp@intel.com>
+Cc: Paolo Pisati <p.pisati@gmail.com>, kbuild-all@01.org,
+        Moritz Fischer <mdf@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-fpga@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While a barrier is present in writeX() function before the register write,
-a similar barrier is missing in the readX() function after the register
-read. This could allow memory accesses following readX() to observe
-stale data.
+On Mon, Apr 2, 2018 at 12:43 PM, kbuild test robot <lkp@intel.com> wrote:
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/mips/include/asm/io.h | 1 +
- 1 file changed, 1 insertion(+)
+This is complaining because Paolo's patch was rebased onto a branch
+that had an API change.
 
-diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-index 0cbf3af..7f9068d 100644
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -377,6 +377,7 @@ static inline type pfx##read##bwlq(const volatile void __iomem *mem)	\
- 		BUG();							\
- 	}								\
- 									\
-+	war_io_reorder_wmb();						\
- 	return pfx##ioswab##bwlq(__mem, __val);				\
- }
- 
--- 
-2.7.4
+Alan
+
+> Hi Paolo,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16 next-20180329]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Paolo-Pisati/fpga-Lattice-MachXO2-Slave-SPI-FPGA-Manager-support/20180403-000300
+> config: i386-allmodconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
+>
+> All error/warnings (new ones prefixed by >>):
+>
+>    drivers/fpga/machxo2-spi.c: In function 'machxo2_spi_probe':
+>>> drivers/fpga/machxo2-spi.c:361:5: error: 'struct fpga_manager' has no member named 'parent'
+>      mgr->parent = dev;
+>         ^~
+>>> drivers/fpga/machxo2-spi.c:367:27: error: passing argument 1 of 'fpga_mgr_register' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      return fpga_mgr_register(mgr);
+>                               ^~~
+>    In file included from drivers/fpga/machxo2-spi.c:12:0:
+>    include/linux/fpga/fpga-mgr.h:173:5: note: expected 'struct device *' but argument is of type 'struct fpga_manager *'
+>     int fpga_mgr_register(struct device *dev, const char *name,
+>         ^~~~~~~~~~~~~~~~~
+>>> drivers/fpga/machxo2-spi.c:367:9: error: too few arguments to function 'fpga_mgr_register'
+>      return fpga_mgr_register(mgr);
+>             ^~~~~~~~~~~~~~~~~
+>    In file included from drivers/fpga/machxo2-spi.c:12:0:
+>    include/linux/fpga/fpga-mgr.h:173:5: note: declared here
+>     int fpga_mgr_register(struct device *dev, const char *name,
+>         ^~~~~~~~~~~~~~~~~
+>    drivers/fpga/machxo2-spi.c: In function 'machxo2_spi_remove':
+>>> drivers/fpga/machxo2-spi.c:374:22: error: passing argument 1 of 'fpga_mgr_unregister' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      fpga_mgr_unregister(mgr);
+>                          ^~~
+>    In file included from drivers/fpga/machxo2-spi.c:12:0:
+>    include/linux/fpga/fpga-mgr.h:176:6: note: expected 'struct device *' but argument is of type 'struct fpga_manager *'
+>     void fpga_mgr_unregister(struct device *dev);
+>          ^~~~~~~~~~~~~~~~~~~
+>    drivers/fpga/machxo2-spi.c: In function 'machxo2_spi_probe':
+>>> drivers/fpga/machxo2-spi.c:368:1: warning: control reaches end of non-void function [-Wreturn-type]
+>     }
+>     ^
+>    cc1: some warnings being treated as errors
+>
+> vim +361 drivers/fpga/machxo2-spi.c
+>
+>    346
+>    347  static int machxo2_spi_probe(struct spi_device *spi)
+>    348  {
+>    349          struct device *dev = &spi->dev;
+>    350          struct fpga_manager *mgr;
+>    351
+>    352          if (spi->max_speed_hz > MACHXO2_MAX_SPEED) {
+>    353                  dev_err(dev, "Speed is too high\n");
+>    354                  return -EINVAL;
+>    355          }
+>    356
+>    357          mgr = devm_kzalloc(dev, sizeof(*mgr), GFP_KERNEL);
+>    358          if (!mgr)
+>    359                  return -ENOMEM;
+>    360
+>  > 361          mgr->parent = dev;
+>    362          mgr->name = "Lattice MachXO2 SPI FPGA Manager";
+>    363          mgr->mops = &machxo2_ops;
+>    364          mgr->priv = spi;
+>    365          spi_set_drvdata(spi, mgr);
+>    366
+>  > 367          return fpga_mgr_register(mgr);
+>  > 368  }
+>    369
+>    370  static int machxo2_spi_remove(struct spi_device *spi)
+>    371  {
+>    372          struct fpga_manager *mgr = spi_get_drvdata(spi);
+>    373
+>  > 374          fpga_mgr_unregister(mgr);
+>    375
+>    376          return 0;
+>    377  }
+>    378
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
