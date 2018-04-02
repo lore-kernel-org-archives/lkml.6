@@ -1,240 +1,370 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754113AbeDBFcB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 01:32:01 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46390 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751482AbeDBFbh (ORCPT
+        id S1752100AbeDBFeP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 01:34:15 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:28190 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751314AbeDBFeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 01:31:37 -0400
-From: rao.shoaib@oracle.com
-To: linux-kernel@vger.kernel.org
-Cc: paulmck@linux.vnet.ibm.com, joe@perches.com, willy@infradead.org,
-        brouer@redhat.com, linux-mm@kvack.org,
-        Rao Shoaib <rao.shoaib@oracle.com>
-Subject: [PATCH 1/2] Move kfree_call_rcu() to slab_common.c
-Date: Sun,  1 Apr 2018 22:31:03 -0700
-Message-Id: <1522647064-27167-2-git-send-email-rao.shoaib@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522647064-27167-1-git-send-email-rao.shoaib@oracle.com>
-References: <1522647064-27167-1-git-send-email-rao.shoaib@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8850 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804020059
+        Mon, 2 Apr 2018 01:34:13 -0400
+Subject: Re: [PATCH 2/8] PCI: dwc: designware: Add support for endpoint mode
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <93aafb03af86885994e633da240ef58dbd3f4d53.1522235224.git.gustavo.pimentel@synopsys.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <df477a39-25b9-68f6-bd10-aa45226101e4@ti.com>
+Date: Mon, 2 Apr 2018 11:04:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <93aafb03af86885994e633da240ef58dbd3f4d53.1522235224.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rao Shoaib <rao.shoaib@oracle.com>
+Hi,
 
-kfree_call_rcu does not belong in linux/rcupdate.h and should be moved to
-slab_common.c
+On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+> The PCIe controller dual mode is capable of operating in host mode as well
+> as endpoint mode by configuration, therefore this patch aims to add
+> endpoint mode support to the designware driver.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+>  drivers/pci/dwc/Kconfig                       |  45 ++++++--
+>  drivers/pci/dwc/pcie-designware-plat.c        | 157 ++++++++++++++++++++++++--
+>  drivers/pci/endpoint/functions/pci-epf-test.c |   5 +
+>  3 files changed, 187 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
+> index 2f3f5c5..3fd7daf 100644
+> --- a/drivers/pci/dwc/Kconfig
+> +++ b/drivers/pci/dwc/Kconfig
+> @@ -7,8 +7,7 @@ config PCIE_DW
+>  
+>  config PCIE_DW_HOST
+>          bool
+> -	depends on PCI
+> -	depends on PCI_MSI_IRQ_DOMAIN
+> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
+>          select PCIE_DW
+>  
+>  config PCIE_DW_EP
+> @@ -52,16 +51,42 @@ config PCI_DRA7XX_EP
+>  
+>  config PCIE_DW_PLAT
+>  	bool "Platform bus based DesignWare PCIe Controller"
+> -	depends on PCI
+> -	depends on PCI_MSI_IRQ_DOMAIN
+> -	select PCIE_DW_HOST
+> -	---help---
+> -	 This selects the DesignWare PCIe controller support. Select this if
+> -	 you have a PCIe controller on Platform bus.
+> +	help
+> +	  There are two instances of PCIe controller in Designware IP.
+> +	  This controller can work either as EP or RC. In order to enable
+> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
+> +	  order to enable device-specific features PCIE_DW_PLAT_EP must be
+> +	  selected.
+>  
+> -	 If you have a controller with this interface, say Y or M here.
+> +config PCIE_DW_PLAT_HOST
+> +	bool "Platform bus based DesignWare PCIe Controller - Host mode"
+> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
+> +	select PCIE_DW_HOST
+> +	select PCIE_DW_PLAT
+> +	default y
+> +	help
+> +	  Enables support for the PCIe controller in the Designware IP to
+> +	  work in host mode. There are two instances of PCIe controller in
+> +	  Designware IP.
+> +	  This controller can work either as EP or RC. In order to enable
+> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
+> +	  order to enable device-specific features PCI_DW_PLAT_EP must be
+> +	  selected.
+>  
+> -	 If unsure, say N.
+> +config PCIE_DW_PLAT_EP
+> +	bool "Platform bus based DesignWare PCIe Controller - Endpoint mode"
+> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
+> +	depends on PCI_ENDPOINT
+> +	select PCIE_DW_EP
+> +	select PCIE_DW_PLAT
+> +	help
+> +	  Enables support for the PCIe controller in the Designware IP to
+> +	  work in endpoint mode. There are two instances of PCIe controller
+> +	  in Designware IP.
+> +	  This controller can work either as EP or RC. In order to enable
+> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
+> +	  order to enable device-specific features PCI_DW_PLAT_EP must be
+> +	  selected.
+>  
+>  config PCI_EXYNOS
+>  	bool "Samsung Exynos PCIe controller"
+> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
+> index 5416aa8..921ab07 100644
+> --- a/drivers/pci/dwc/pcie-designware-plat.c
+> +++ b/drivers/pci/dwc/pcie-designware-plat.c
+> @@ -12,19 +12,29 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> +#include <linux/of_device.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/resource.h>
+>  #include <linux/signal.h>
+>  #include <linux/types.h>
+> +#include <linux/regmap.h>
+>  
+>  #include "pcie-designware.h"
+>  
+>  struct dw_plat_pcie {
+> -	struct dw_pcie		*pci;
+> +	struct dw_pcie			*pci;
+> +	struct regmap			*regmap;
+> +	enum dw_pcie_device_mode	mode;
+>  };
+>  
+> +struct dw_plat_pcie_of_data {
+> +	enum dw_pcie_device_mode	mode;
+> +};
+> +
+> +static const struct of_device_id dw_plat_pcie_of_match[];
+> +
+>  static int dw_plat_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> @@ -42,9 +52,61 @@ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+>  	.host_init = dw_plat_pcie_host_init,
+>  };
+>  
+> -static int dw_plat_add_pcie_port(struct pcie_port *pp,
+> +static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
+> +{
+> +	dw_pcie_ep_linkup(&pci->ep);
 
-Signed-off-by: Rao Shoaib <rao.shoaib@oracle.com>
----
- include/linux/rcupdate.h | 43 +++----------------------------------------
- include/linux/rcutree.h  |  2 --
- include/linux/slab.h     | 42 ++++++++++++++++++++++++++++++++++++++++++
- kernel/rcu/tree.c        | 24 ++++++++++--------------
- mm/slab_common.c         | 10 ++++++++++
- 5 files changed, 65 insertions(+), 56 deletions(-)
+.start_link ops is used incorrectly here. .start_link is used when all the
+endpoint side configuration is done and "is ready" to establish a link with the
+host. But dw_pcie_ep_linkup is used to inform the function devices that the
+link "has been" established.
+> +
+> +	return 0;
+> +}
+> +
+> +static void dw_plat_pcie_stop_link(struct dw_pcie *pci)
+> +{
+> +
+> +}
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 043d047..6338fb6 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -55,6 +55,9 @@ void call_rcu(struct rcu_head *head, rcu_callback_t func);
- #define	call_rcu	call_rcu_sched
- #endif /* #else #ifdef CONFIG_PREEMPT_RCU */
- 
-+/* only for use by kfree_call_rcu() */
-+void call_rcu_lazy(struct rcu_head *head, rcu_callback_t func);
-+
- void call_rcu_bh(struct rcu_head *head, rcu_callback_t func);
- void call_rcu_sched(struct rcu_head *head, rcu_callback_t func);
- void synchronize_sched(void);
-@@ -837,45 +840,6 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
- #define __is_kfree_rcu_offset(offset) ((offset) < 4096)
- 
- /*
-- * Helper macro for kfree_rcu() to prevent argument-expansion eyestrain.
-- */
--#define __kfree_rcu(head, offset) \
--	do { \
--		BUILD_BUG_ON(!__is_kfree_rcu_offset(offset)); \
--		kfree_call_rcu(head, (rcu_callback_t)(unsigned long)(offset)); \
--	} while (0)
--
--/**
-- * kfree_rcu() - kfree an object after a grace period.
-- * @ptr:	pointer to kfree
-- * @rcu_head:	the name of the struct rcu_head within the type of @ptr.
-- *
-- * Many rcu callbacks functions just call kfree() on the base structure.
-- * These functions are trivial, but their size adds up, and furthermore
-- * when they are used in a kernel module, that module must invoke the
-- * high-latency rcu_barrier() function at module-unload time.
-- *
-- * The kfree_rcu() function handles this issue.  Rather than encoding a
-- * function address in the embedded rcu_head structure, kfree_rcu() instead
-- * encodes the offset of the rcu_head structure within the base structure.
-- * Because the functions are not allowed in the low-order 4096 bytes of
-- * kernel virtual memory, offsets up to 4095 bytes can be accommodated.
-- * If the offset is larger than 4095 bytes, a compile-time error will
-- * be generated in __kfree_rcu().  If this error is triggered, you can
-- * either fall back to use of call_rcu() or rearrange the structure to
-- * position the rcu_head structure into the first 4096 bytes.
-- *
-- * Note that the allowable offset might decrease in the future, for example,
-- * to allow something like kmem_cache_free_rcu().
-- *
-- * The BUILD_BUG_ON check must not involve any function calls, hence the
-- * checks are done in macros here.
-- */
--#define kfree_rcu(ptr, rcu_head)					\
--	__kfree_rcu(&((ptr)->rcu_head), offsetof(typeof(*(ptr)), rcu_head))
--
--
--/*
-  * Place this after a lock-acquisition primitive to guarantee that
-  * an UNLOCK+LOCK pair acts as a full barrier.  This guarantee applies
-  * if the UNLOCK and LOCK are executed by the same CPU or if the
-@@ -887,5 +851,4 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
- #define smp_mb__after_unlock_lock()	do { } while (0)
- #endif /* #else #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE */
- 
--
- #endif /* __LINUX_RCUPDATE_H */
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index fd996cd..567ef58 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -48,8 +48,6 @@ void synchronize_rcu_bh(void);
- void synchronize_sched_expedited(void);
- void synchronize_rcu_expedited(void);
- 
--void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func);
--
- /**
-  * synchronize_rcu_bh_expedited - Brute-force RCU-bh grace period
-  *
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 231abc8..116e870 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -355,6 +355,48 @@ void *__kmalloc(size_t size, gfp_t flags) __assume_kmalloc_alignment __malloc;
- void *kmem_cache_alloc(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
- void kmem_cache_free(struct kmem_cache *, void *);
- 
-+void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func);
-+
-+/* Helper macro for kfree_rcu() to prevent argument-expansion eyestrain. */
-+#define __kfree_rcu(head, offset) \
-+	do { \
-+		unsigned long __of = (unsigned long)offset;	\
-+		BUILD_BUG_ON(!__is_kfree_rcu_offset(__of)); \
-+		kfree_call_rcu(head, (rcu_callback_t)(__of));	\
-+	} while (0)
-+
-+/**
-+ * kfree_rcu() - kfree an object after a grace period.
-+ * @ptr:	pointer to kfree
-+ * @rcu_name:	the name of the struct rcu_head within the type of @ptr.
-+ *
-+ * Many rcu callbacks functions just call kfree() on the base structure.
-+ * These functions are trivial, but their size adds up, and furthermore
-+ * when they are used in a kernel module, that module must invoke the
-+ * high-latency rcu_barrier() function at module-unload time.
-+ *
-+ * The kfree_rcu() function handles this issue.  Rather than encoding a
-+ * function address in the embedded rcu_head structure, kfree_rcu() instead
-+ * encodes the offset of the rcu_head structure within the base structure.
-+ * Because the functions are not allowed in the low-order 4096 bytes of
-+ * kernel virtual memory, offsets up to 4095 bytes can be accommodated.
-+ * If the offset is larger than 4095 bytes, a compile-time error will
-+ * be generated in __kfree_rcu().  If this error is triggered, you can
-+ * either fall back to use of call_rcu() or rearrange the structure to
-+ * position the rcu_head structure into the first 4096 bytes.
-+ *
-+ * Note that the allowable offset might decrease in the future, for example,
-+ * to allow something like kmem_cache_free_rcu().
-+ *
-+ * The BUILD_BUG_ON check must not involve any function calls, hence the
-+ * checks are done in macros here.
-+ */
-+#define kfree_rcu(ptr, rcu_name)	\
-+	do {				\
-+		unsigned long __off = offsetof(typeof(*(ptr)), rcu_name); \
-+		struct rcu_head *__rptr = (void *)ptr + __off; \
-+		__kfree_rcu(__rptr, __off); \
-+	} while (0)
- /*
-  * Bulk allocation and freeing operations. These are accelerated in an
-  * allocator specific way to avoid taking locks repeatedly or building
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 491bdf3..e40f014 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3101,6 +3101,16 @@ void call_rcu_sched(struct rcu_head *head, rcu_callback_t func)
- }
- EXPORT_SYMBOL_GPL(call_rcu_sched);
- 
-+/* Queue an RCU callback for lazy invocation after a grace period.
-+ * Currently there is no way of tagging the lazy RCU callbacks in the
-+ * list of pending callbacks. Until then, this function may only be
-+ * called from kfree_call_rcu().
-+ */
-+void call_rcu_lazy(struct rcu_head *head, rcu_callback_t func)
-+{
-+	__call_rcu(head, func, rcu_state_p, -1, 1);
-+}
-+
- /**
-  * call_rcu_bh() - Queue an RCU for invocation after a quicker grace period.
-  * @head: structure to be used for queueing the RCU updates.
-@@ -3130,20 +3140,6 @@ void call_rcu_bh(struct rcu_head *head, rcu_callback_t func)
- EXPORT_SYMBOL_GPL(call_rcu_bh);
- 
- /*
-- * Queue an RCU callback for lazy invocation after a grace period.
-- * This will likely be later named something like "call_rcu_lazy()",
-- * but this change will require some way of tagging the lazy RCU
-- * callbacks in the list of pending callbacks. Until then, this
-- * function may only be called from __kfree_rcu().
-- */
--void kfree_call_rcu(struct rcu_head *head,
--		    rcu_callback_t func)
--{
--	__call_rcu(head, func, rcu_state_p, -1, 1);
--}
--EXPORT_SYMBOL_GPL(kfree_call_rcu);
--
--/*
-  * Because a context switch is a grace period for RCU-sched and RCU-bh,
-  * any blocking grace-period wait automatically implies a grace period
-  * if there is only one CPU online at any point time during execution
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 10f127b..2ea9866 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1525,6 +1525,16 @@ void kzfree(const void *p)
- }
- EXPORT_SYMBOL(kzfree);
- 
-+/*
-+ * Queue Memory to be freed by RCU after a grace period.
-+ */
-+void kfree_call_rcu(struct rcu_head *head,
-+		    rcu_callback_t func)
-+{
-+	call_rcu_lazy(head, func);
-+}
-+EXPORT_SYMBOL_GPL(kfree_call_rcu);
-+
- /* Tracepoints definitions. */
- EXPORT_TRACEPOINT_SYMBOL(kmalloc);
- EXPORT_TRACEPOINT_SYMBOL(kmem_cache_alloc);
--- 
-2.7.4
+Not necessary to have empty function here. pci-epc-core will not try to invoke
+ops which are not populated.
+> +
+> +static const struct dw_pcie_ops dw_pcie_ops = {
+> +	.start_link = dw_plat_pcie_establish_link,
+> +	.stop_link = dw_plat_pcie_stop_link,
+> +};
+> +
+> +static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	enum pci_barno bar;
+> +
+> +	for (bar = BAR_0; bar <= BAR_5; bar++)
+> +		dw_pcie_ep_reset_bar(pci, bar);
+> +}
+> +
+> +static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> +				     enum pci_epc_irq_type type,
+> +				     u8 interrupt_num)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +
+> +	switch (type) {
+> +	case PCI_EPC_IRQ_LEGACY:
+> +		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
+> +		return -EINVAL;
+> +	case PCI_EPC_IRQ_MSI:
+> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+> +	default:
+> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct dw_pcie_ep_ops pcie_ep_ops = {
+> +	.ep_init = dw_plat_pcie_ep_init,
+> +	.raise_irq = dw_plat_pcie_ep_raise_irq,
+> +};
+> +
+> +static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
+>  				 struct platform_device *pdev)
+>  {
+> +	struct dw_pcie *pci = dw_plat_pcie->pci;
+> +	struct pcie_port *pp = &pci->pp;
+>  	struct device *dev = &pdev->dev;
+>  	int ret;
+>  
+> @@ -63,15 +125,44 @@ static int dw_plat_add_pcie_port(struct pcie_port *pp,
+>  
+>  	ret = dw_pcie_host_init(pp);
+>  	if (ret) {
+> -		dev_err(dev, "failed to initialize host\n");
+> +		dev_err(dev, "Failed to initialize host\n");
+>  		return ret;
+>  	}
+>  
+>  	return 0;
+>  }
+>  
+> -static const struct dw_pcie_ops dw_pcie_ops = {
+> -};
+> +static int dw_plat_add_pcie_ep(struct dw_plat_pcie *dw_plat_pcie,
+> +			       struct platform_device *pdev)
+> +{
+> +	int ret;
+> +	struct dw_pcie_ep *ep;
+> +	struct resource *res;
+> +	struct device *dev = &pdev->dev;
+> +	struct dw_pcie *pci = dw_plat_pcie->pci;
+> +
+> +	ep = &pci->ep;
+> +	ep->ops = &pcie_ep_ops;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi2");
+> +	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
+> +	if (IS_ERR(pci->dbi_base2))
+> +		return PTR_ERR(pci->dbi_base2);
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
+> +	if (!res)
+> +		return -EINVAL;
+> +
+> +	ep->phys_base = res->start;
+> +	ep->addr_size = resource_size(res);
+> +
+> +	ret = dw_pcie_ep_init(ep);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to initialize endpoint\n");
+> +		return ret;
+> +	}
+> +	return 0;
+> +}
+>  
+>  static int dw_plat_pcie_probe(struct platform_device *pdev)
+>  {
+> @@ -80,6 +171,16 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
+>  	struct dw_pcie *pci;
+>  	struct resource *res;  /* Resource from DT */
+>  	int ret;
+> +	const struct of_device_id *match;
+> +	const struct dw_plat_pcie_of_data *data;
+> +	enum dw_pcie_device_mode mode;
+> +
+> +	match = of_match_device(dw_plat_pcie_of_match, dev);
+> +	if (!match)
+> +		return -EINVAL;
+> +
+> +	data = (struct dw_plat_pcie_of_data *)match->data;
+> +	mode = (enum dw_pcie_device_mode)data->mode;
+>  
+>  	dw_plat_pcie = devm_kzalloc(dev, sizeof(*dw_plat_pcie), GFP_KERNEL);
+>  	if (!dw_plat_pcie)
+> @@ -93,23 +194,59 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
+>  	pci->ops = &dw_pcie_ops;
+>  
+>  	dw_plat_pcie->pci = pci;
+> +	dw_plat_pcie->mode = mode;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
+> +	if (!res)
+> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	pci->dbi_base = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(pci->dbi_base))
+>  		return PTR_ERR(pci->dbi_base);
+>  
+>  	platform_set_drvdata(pdev, dw_plat_pcie);
+>  
+> -	ret = dw_plat_add_pcie_port(&pci->pp, pdev);
+> -	if (ret < 0)
+> -		return ret;
+> +	switch (dw_plat_pcie->mode) {
+> +	case DW_PCIE_RC_TYPE:
+> +		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_HOST))
+> +			return -ENODEV;
+> +
+> +		ret = dw_plat_add_pcie_port(dw_plat_pcie, pdev);
+> +		if (ret < 0)
+> +			return ret;
+> +		break;
+> +	case DW_PCIE_EP_TYPE:
+> +		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_EP))
+> +			return -ENODEV;
+> +
+> +		ret = dw_plat_add_pcie_ep(dw_plat_pcie, pdev);
+> +		if (ret < 0)
+> +			return ret;
+> +		break;
+> +	default:
+> +		dev_err(dev, "INVALID device type %d\n", dw_plat_pcie->mode);
+> +	}
+>  
+>  	return 0;
+>  }
+>  
+> +static const struct dw_plat_pcie_of_data dw_plat_pcie_rc_of_data = {
+> +	.mode = DW_PCIE_RC_TYPE,
+> +};
+> +
+> +static const struct dw_plat_pcie_of_data dw_plat_pcie_ep_of_data = {
+> +	.mode = DW_PCIE_EP_TYPE,
+> +};
+> +
+>  static const struct of_device_id dw_plat_pcie_of_match[] = {
+> -	{ .compatible = "snps,dw-pcie", },
+> +	{
+> +		.compatible = "snps,dw-pcie",
+> +		.data = &dw_plat_pcie_rc_of_data,
+> +	},
+> +	{
+> +		.compatible = "snps,dw-pcie-ep",
+> +		.data = &dw_plat_pcie_ep_of_data,
+> +	},
+>  	{},
+>  };
+>  
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 64d8a17..d7de684 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -451,9 +451,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>  	return 0;
+>  }
+>  
+> +static const struct pci_epf_test_data pci_epf_data = {
+> +	.linkup_notifier = false
+> +};
+> +
+>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+>  	{
+>  		.name = "pci_epf_test",
+> +		.driver_data = (kernel_ulong_t)&pci_epf_data,
+
+This will disable linkup_notifier for existing devices. Please add a new entry
+to the table to make any modifications to driver data. (I have a configfs fix
+for this to work. Will post that today).
+
+Thanks
+Kishon
