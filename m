@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754684AbeDBWsa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 18:48:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55178 "EHLO mx1.redhat.com"
+        id S1754649AbeDBWsS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 18:48:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58428 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754615AbeDBWs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 18:48:28 -0400
+        id S1754615AbeDBWsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 18:48:15 -0400
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc: Manasi Navare <manasi.d.navare@intel.com>,
@@ -15,9 +15,9 @@ Cc: Manasi Navare <manasi.d.navare@intel.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 06/10] drm/dp_mst: Add reset_state callback to topology mgr
-Date: Mon,  2 Apr 2018 18:47:42 -0400
-Message-Id: <20180402224800.16080-7-lyude@redhat.com>
+Subject: [PATCH v5 03/10] drm/dp_mst: Fix naming on drm_atomic_get_mst_topology_state()
+Date: Mon,  2 Apr 2018 18:47:39 -0400
+Message-Id: <20180402224800.16080-4-lyude@redhat.com>
 In-Reply-To: <20180402224800.16080-1-lyude@redhat.com>
 References: <20180402224800.16080-1-lyude@redhat.com>
 MIME-Version: 1.0
@@ -27,69 +27,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This gives drivers subclassing drm_dp_mst_topology_state the ability to
-prepare their topology states for a new hub to be connected whenever
-it's detected that the currently connected topology has been
-disconnected from the system. We'll need this in order to correctly
-track RX capabilities in i915 from the topology's atomic state.
+Since these functions are dealing with an atomic state that needs to be
+modified during atomic check and commit, change the naming on this
+function to drm_atomic_dp_mst_get_topology_state() since we're the only
+one using the function, and it's more consistent with the naming
+scheme used in drm_atomic.c/drm_atomic_helper.c.
 
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: Manasi Navare <manasi.d.navare@intel.com>
 Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 11 +++++++++++
- include/drm/drm_dp_mst_helper.h       |  3 ++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 13 +++++++------
+ include/drm/drm_dp_mst_helper.h       |  5 +++--
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 8a72eed0ae05..b55fd545d6a3 100644
+index 6fac4129e6a2..ba67f1782a04 100644
 --- a/drivers/gpu/drm/drm_dp_mst_topology.c
 +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2096,6 +2096,16 @@ static bool drm_dp_get_vc_payload_bw(int dp_link_bw,
- 	return true;
- }
+@@ -2622,7 +2622,7 @@ int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
+ 	struct drm_dp_mst_topology_state *topology_state;
+ 	int req_slots;
  
-+static void drm_dp_mst_topology_reset_state(struct drm_dp_mst_topology_mgr *mgr)
-+{
-+	struct drm_dp_mst_topology_state *state =
-+		to_dp_mst_topology_state(mgr->base.state);
-+
-+
-+	if (mgr->cbs->reset_state)
-+		mgr->cbs->reset_state(state);
-+}
-+
- /**
-  * drm_dp_mst_topology_mgr_set_mst() - Set the MST state for a topology manager
-  * @mgr: manager to set state for
-@@ -2171,6 +2181,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool ms
- 		mgr->payload_mask = 0;
- 		set_bit(0, &mgr->payload_mask);
- 		mgr->vcpi_mask = 0;
-+		drm_dp_mst_topology_reset_state(mgr);
- 	}
+-	topology_state = drm_atomic_get_mst_topology_state(state, mgr);
++	topology_state = drm_atomic_dp_mst_get_topology_state(state, mgr);
+ 	if (IS_ERR(topology_state))
+ 		return PTR_ERR(topology_state);
  
- out_unlock:
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index b42922987470..fd856c371a6e 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -381,6 +381,7 @@ struct drm_dp_sideband_msg_tx {
+@@ -2662,7 +2662,7 @@ int drm_dp_atomic_release_vcpi_slots(struct drm_atomic_state *state,
+ {
+ 	struct drm_dp_mst_topology_state *topology_state;
  
- /* sideband msg handler */
- struct drm_dp_mst_topology_mgr;
-+struct drm_dp_mst_topology_state;
- struct drm_dp_mst_topology_cbs {
- 	/* create a connector for a port */
- 	struct drm_connector *(*add_connector)(struct drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port, const char *path);
-@@ -388,7 +389,7 @@ struct drm_dp_mst_topology_cbs {
- 	void (*destroy_connector)(struct drm_dp_mst_topology_mgr *mgr,
- 				  struct drm_connector *connector);
- 	void (*hotplug)(struct drm_dp_mst_topology_mgr *mgr);
--
-+	void (*reset_state)(struct drm_dp_mst_topology_state *state);
+-	topology_state = drm_atomic_get_mst_topology_state(state, mgr);
++	topology_state = drm_atomic_dp_mst_get_topology_state(state, mgr);
+ 	if (IS_ERR(topology_state))
+ 		return PTR_ERR(topology_state);
+ 
+@@ -3129,7 +3129,7 @@ static const struct drm_private_state_funcs mst_state_funcs = {
  };
  
- #define DP_MAX_PAYLOAD (sizeof(unsigned long) * 8)
+ /**
+- * drm_atomic_get_mst_topology_state: get MST topology state
++ * drm_atomic_dp_mst_get_topology_state: get MST topology state
+  *
+  * @state: global atomic state
+  * @mgr: MST topology manager, also the private object in this case
+@@ -3143,15 +3143,16 @@ static const struct drm_private_state_funcs mst_state_funcs = {
+  *
+  * The MST topology state or error pointer.
+  */
+-struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
+-								    struct drm_dp_mst_topology_mgr *mgr)
++struct drm_dp_mst_topology_state *
++drm_atomic_dp_mst_get_topology_state(struct drm_atomic_state *state,
++				     struct drm_dp_mst_topology_mgr *mgr)
+ {
+ 	struct drm_device *dev = mgr->dev;
+ 
+ 	WARN_ON(!drm_modeset_is_locked(&dev->mode_config.connection_mutex));
+ 	return to_dp_mst_topology_state(drm_atomic_get_private_obj_state(state, &mgr->base));
+ }
+-EXPORT_SYMBOL(drm_atomic_get_mst_topology_state);
++EXPORT_SYMBOL(drm_atomic_dp_mst_get_topology_state);
+ 
+ /**
+  * drm_dp_mst_topology_mgr_init - initialise a topology manager
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index 7f78d26a0766..41a8f08da05d 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -623,8 +623,9 @@ void drm_dp_mst_dump_topology(struct seq_file *m,
+ 
+ void drm_dp_mst_topology_mgr_suspend(struct drm_dp_mst_topology_mgr *mgr);
+ int drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr);
+-struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
+-								    struct drm_dp_mst_topology_mgr *mgr);
++
++struct drm_dp_mst_topology_state *drm_atomic_dp_mst_get_topology_state(struct drm_atomic_state *state,
++								       struct drm_dp_mst_topology_mgr *mgr);
+ int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
+ 				  struct drm_dp_mst_topology_mgr *mgr,
+ 				  struct drm_dp_mst_port *port, int pbn);
 -- 
 2.14.3
