@@ -1,83 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756955AbeDBTp6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 15:45:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43180 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752321AbeDBTp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 15:45:56 -0400
-Date: Mon, 2 Apr 2018 15:45:53 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@infradead.org>, Will Davis <wdavis@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>, linaro-mm-sig@lists.linaro.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-Message-ID: <20180402194553.GC18231@redhat.com>
-References: <8d050848-8970-b8c4-a657-429fefd31769@amd.com>
- <d2de0c2e-4c2d-9e46-1c26-bfa40ca662ff@deltatee.com>
- <20180330015854.GA3572@redhat.com>
- <0234bc5e-495e-0f68-fb0a-debb17a35761@deltatee.com>
- <20180330194519.GC3198@redhat.com>
- <31266710-f6bb-99ee-c73d-6e58afe5c38c@deltatee.com>
- <20180402172027.GA18231@redhat.com>
- <6f796779-0ba3-d056-de33-341ee55d6b38@deltatee.com>
- <20180402191649.GB18231@redhat.com>
- <4c672c71-6202-0775-7825-37f8077d1d35@deltatee.com>
+        id S1756789AbeDBTzE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 15:55:04 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:45834 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753109AbeDBTzB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 15:55:01 -0400
+X-Google-Smtp-Source: AIpwx4/GJgDddfouEx/e5tWy4JIUcdWDlogsSZqOUe20PrByf+n45VSbKrADPGvNMMPHzMNv+iNCzxC0WfOZepVLD9E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4c672c71-6202-0775-7825-37f8077d1d35@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CA+55aFzmQ9specaytsjEb=iNm-NHE5kxMSy_H_jKvqZa4-Fomw@mail.gmail.com>
+References: <CAK8P3a0q70FYtBaCcsBPejVULgsbJPwUG7QmrkU9NJpr7oTzpQ@mail.gmail.com>
+ <CA+55aFzmQ9specaytsjEb=iNm-NHE5kxMSy_H_jKvqZa4-Fomw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 2 Apr 2018 21:54:59 +0200
+X-Google-Sender-Auth: 7CSd8uA4dzR74H1VXhaV5w6ta7c
+Message-ID: <CAK8P3a2pdmLOHb2wkPVvqLDo71Rf3hLVfhG7vsMzaPD-DMEzSg@mail.gmail.com>
+Subject: Re: [GIT PULL] arch: remove obsolete architecture ports
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        James Hogan <jhogan@kernel.org>, David Howells <dhowells@redhat.com>,
+        linux-am33-list@redhat.com, Hirokazu Takata <takata@linux-m32r.org>,
+        Lennox Wu <lennox.wu@gmail.com>, Aaron Wu <Aaron.Wu@analog.com>,
+        Bryan Wu <cooloney@gmail.com>,
+        Chris Metcalf <chris.d.metcalf@gmail.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 01:32:37PM -0600, Logan Gunthorpe wrote:
-> 
-> 
-> On 02/04/18 01:16 PM, Jerome Glisse wrote:
-> > There isn't good API at the moment AFAIK, closest thing would either be
-> > lookup_resource() or region_intersects(), but a more appropriate one can
-> > easily be added, code to walk down the tree is readily available. More-
-> > over this can be optimize like vma lookup are, even more as resource are
-> > seldomly added so read side (finding a resource) can be heavily favor
-> > over write side (adding|registering a new resource).
-> 
-> So someone needs to create a highly optimized tree that registers all
-> physical address on the system and maps them to devices? That seems a
-> long way from being realized. I'd hardly characterize that as "easily".
-> If we can pass both devices to the API I'd suspect it would be preferred
-> over the complicated tree. This, of course, depends on what users of the
-> API need.
+On Mon, Apr 2, 2018 at 8:57 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Apr 2, 2018 at 12:17 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> (dirstat only for brevity)
+>
+> Shortlog?
+>
+> I'd like to see that each architecture removal is independent of the
+> others, so that if somebody wants to resurrect any particular
+> architecture, he/she can do so with a revert.
+>
+> Can I just fetch things and see? Sure. But there's no excuse not to
+> have a shortlog in the pull request, even if the full diffstat itself
+> might be prohibitive.
 
-This tree already exist, it is all there upstream see kernel/resource.c
-What is missing is something that take a single address and return the
-device struct. There is function that take a range region_intersects()
-or one that take the start address lookup_resource(). It isn't hard to
-think that using roughly same code as region_intersects() an helper
-that return the device for a resource can be added.
+Right, that was a mistake on my end, I just cut too much, see below
+for the missing shortlog.
 
-And yes currently this does not have a pointer back to the device that
-own the resource but this can be added. It wasn't needed until now.
+Regarding a possible revert, that would indeed involve reverting
+multiple patches for most architectures, plus parts of at least these
+three:
 
-It can latter be optimize if device lookup shows as a bottleneck in perf
-profile.
+  Documentation: arch-support: remove obsolete architectures
+  treewide: simplify Kconfig dependencies for removed archs
+  ktest: remove obsolete architectures
 
+For those, I went the other way, and removed all architectures at
+once to simplify my work and to avoid touching the same files up
+to eight times with interdependent patches (which couldn't
+be reverted without conflicts either).
 
-> 
-> > cache coherency protocol (bit further than PCIE snoop). But also the
-> > other direction the CPU access to device memory can also be cache coherent,
-> > which is not the case in PCIE.
-> 
-> I was not aware that CAPI allows PCI device memory to be cache coherent.
-> That sounds like it would be very tricky...
+There are a couple of driver removal patches that got picked up
+into subsystem trees instead of this tree, so a full revert would also
+involve finding other drivers, but if you prefer to have the patches
+completely split up by arch, I could rework the series that way.
 
-And yet CAPI, CCIX, Gen-Z, NVLink, ... are all inter-connect that aim at
-achieving this cache coherency between multiple devices and CPUs.
+      Arnd
 
-Jérôme
+Aaron Wu (2):
+      misc: Remove Blackfin DSP echo support
+      usb: Remove Blackfin references in USB support
+
+Arnd Bergmann (58):
+      Merge tag 'metag_remove_2' of
+ssh://gitolite.kernel.org/.../jhogan/metag into asm-generic
+      arch: remove frv port
+      arch: remove m32r port
+      arch: remove score port
+      arch: remove blackfin port
+      arch: remove tile port
+      procfs: remove CONFIG_HARDWALL dependency
+      mm: remove blackfin MPU support
+      mm: remove obsolete alloc_remap()
+      treewide: simplify Kconfig dependencies for removed archs
+      asm-generic: siginfo: remove obsolete #ifdefs
+      asm-generic: siginfo: define ia64 si_codes unconditionally
+      asm-generic: clean up asm/unistd.h
+      Documentation: arch-support: remove obsolete architectures
+      recordmcount.pl: drop blackin and tile support
+      ktest: remove obsolete architectures
+      edac: remove tile driver
+      net: tile: remove ethernet drivers
+      net: adi: remove blackfin ethernet drivers
+      net: 8390: remove m32r specific bits
+      net: remove cris etrax ethernet driver
+      net: smsc: remove m32r/mn10300 specific smc91x configuration
+      raid: remove tile specific raid6 implementation
+      rtc: remove tile driver
+      rtc: remove bfin driver
+      char: remove obsolete ds1302 rtc driver
+      char: remove tile-srom.c
+      char: remove blackfin OTP driver
+      pcmcia: remove m32r drivers
+      pcmcia: remove blackfin driver
+      video/logo: remove obsolete logo files
+      fbdev: remove blackfin drivers
+      fbdev: s1d13xxxfb: remove m32r specific hacks
+      media: platform: remove blackfin capture driver
+      media: platform: remove m32r specific arv driver
+      cpufreq: remove blackfin driver
+      cpufreq: remove cris specific drivers
+      gpio: remove etraxfs driver
+      pinctrl: remove adi2/blackfin drivers
+      ata: remove bf54x driver
+      input: keyboard: remove bf54x driver
+      input: misc: remove blackfin rotary driver
+      mmc: remove bfin_sdh driver
+      can: remove bfin_can driver
+      watchdog: remove bfin_wdt driver
+      spi: remove blackfin related host drivers
+      i2c: remove bfin-twi driver
+      pwm: remove pwm-bfin driver
+      usb: host: remove tilegx platform glue
+      usb: musb: remove blackfin port
+      usb: isp1362: remove blackfin arch glue
+      serial: remove cris/etrax uart drivers
+      serial: remove blackfin drivers
+      serial: remove m32r_sio driver
+      serial: remove tile uart driver
+      tty: remove bfin_jtag_comm and hvc_bfin_jtag drivers
+      tty: hvc: remove tile driver
+      staging: iio: remove iio-trig-bfin-timer driver
+
+David Howells (1):
+      mn10300: Remove the architecture
+
+Guan Xuetao (1):
+      MAINTAINERS: UNICORE32: Change email account
+
+James Hogan (11):
+      metag: Remove arch/metag/
+      docs: Remove metag docs
+      docs: Remove remaining references to metag
+      Drop a bunch of metag references
+      irqchip: Remove metag irqchip drivers
+      clocksource: Remove metag generic timer driver
+      tty: Remove metag DA TTY and console driver
+      MAINTAINERS/CREDITS: Drop METAG ARCHITECTURE
+      watchdog: imgpdc: Drop METAG dependency
+      media: img-ir: Drop METAG dependency
+      i2c: img-scb: Drop METAG dependency
+
+Jesper Nilsson (1):
+      CRIS: Drop support for the CRIS port
+
+Tobias Klauser (1):
+      scripts/checkstack.pl: remove blackfin support
