@@ -1,59 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754091AbeDBAww (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 1 Apr 2018 20:52:52 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51312 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753988AbeDBAwu (ORCPT
+        id S1754111AbeDBBy3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 1 Apr 2018 21:54:29 -0400
+Received: from mail-pf0-f178.google.com ([209.85.192.178]:46074 "EHLO
+        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754046AbeDBBy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Apr 2018 20:52:50 -0400
-X-Google-Smtp-Source: AIpwx48jW6kle/kLozriqWwRw1r//eVWNIwLAv524w0GuChBBOs/1SEV3/eVXb0LPYbhemQW9VErQE2usM29BtBPCXA=
+        Sun, 1 Apr 2018 21:54:27 -0400
+X-Google-Smtp-Source: AIpwx4/ZxRs5OegSdxAHSQgpETnFPDPPHw/t/mCR8dWH1Ty8XzksAqx860c+oETVKjyaguEAhWreHg==
+Date: Mon, 2 Apr 2018 10:54:22 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+3f28bd18291266ec826b@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller-bugs@googlegroups.com, Samuel Ortiz <sameo@linux.intel.com>,
+        David Miller <davem@davemloft.net>, linux-wireless@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: INFO: rcu detected stall in vprintk_func
+Message-ID: <20180402015422.GA3795@jagdpanzerIV>
+References: <001a113fe6c0a6ec650568c7384f@google.com>
+ <CACT4Y+YxuvQLZjWau99-7i8dmtxtjnpX6uteabF5rorYMj5v1w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180330174209.4cb77003@gandalf.local.home>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
- <20180330102038.2378925b@gandalf.local.home> <20180330205356.GA13332@bombadil.infradead.org>
- <20180330173031.257a491a@gandalf.local.home> <20180330174209.4cb77003@gandalf.local.home>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Mon, 2 Apr 2018 08:52:49 +0800
-Message-ID: <CAGWkznE_ff0mf+=+5KjKXJmavw9pv2+1+d4_ktYpjsg4ugGOwA@mail.gmail.com>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, Michal Hocko <mhocko@suse.com>,
-        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YxuvQLZjWau99-7i8dmtxtjnpX6uteabF5rorYMj5v1w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 31, 2018 at 5:42 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Fri, 30 Mar 2018 17:30:31 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
->
->> I'll take a look at si_mem_available() that Joel suggested and see if
->> we can make that work.
->
-> Wow, this appears to work great! Joel and Zhaoyang, can you test this?
->
-> -- Steve
->
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index a2fd3893cc02..32a803626ee2 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -1164,6 +1164,11 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
->         struct buffer_page *bpage, *tmp;
->         long i;
->
-> +       /* Check if the available memory is there first */
-> +       i = si_mem_available();
-> +       if (i < nr_pages)
-> +               return -ENOMEM;
-> +
->         for (i = 0; i < nr_pages; i++) {
->                 struct page *page;
->                 /*
-Hi Steve, It works as my previous patch does.
+On (04/01/18 12:51), Dmitry Vyukov wrote:
+[..]
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+3f28bd18291266ec826b@syzkaller.appspotmail.com
+> > It will help syzbot understand when the bug is fixed. See footer for
+> > details.
+> > If you forward the report, please keep this part and the footer.
+> >
+> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+> > llcp: nfc_llcp_send_ui_frame: Could not allocate PDU
+
+Yes, this thing
+
+	do {
+		remote_miu = sock->remote_miu > LLCP_MAX_MIU ?
+				local->remote_miu : sock->remote_miu;
+
+		frag_len = min_t(size_t, remote_miu, remaining_len);
+
+		pr_debug("Fragment %zd bytes remaining %zd",
+			 frag_len, remaining_len);
+
+		pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
+					 frag_len + LLCP_HEADER_SIZE, &err);
+		if (pdu == NULL) {
+			pr_err("Could not allocate PDU\n");
+			continue;
+			^^^^^^^^
+		}
+
+is basically
+
+	do {
+		pr_err("Could not allocate PDU\n");
+	} while (1)
+
+Can cause problems sometimes. But this loop is a bit worrisome
+even without the printk() call.
+
+>From printk() side, we only can do rate limiting here. Would be
+great if nfc maintainers could take a look and tweak the loop
+maybe.
+
+---
+
+diff --git a/net/nfc/llcp_core.c b/net/nfc/llcp_core.c
+index ef4026a23e80..a309a27581da 100644
+--- a/net/nfc/llcp_core.c
++++ b/net/nfc/llcp_core.c
+@@ -1386,7 +1386,7 @@ static void nfc_llcp_recv_agf(struct nfc_llcp_local *local, struct sk_buff *skb)
+ 
+ 		new_skb = nfc_alloc_recv_skb(pdu_len, GFP_KERNEL);
+ 		if (new_skb == NULL) {
+-			pr_err("Could not allocate PDU\n");
++			pr_err_ratelimited("Could not allocate PDU\n");
+ 			return;
+ 		}
+ 
