@@ -1,218 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755031AbeDCHRZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 03:17:25 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:43704 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752845AbeDCHQM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 03:16:12 -0400
-X-UUID: f256c21335124e59a93e97c1c294b6a5-20180403
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <marcel@holtmann.org>,
-        <johan.hedberg@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Weiyi Lu" <weiyi.lu@mediatek.com>
-Subject: [PATCH v1 3/7] soc: mediatek: reuse read[l,x]_poll_timeout helpers
-Date: Tue, 3 Apr 2018 15:15:53 +0800
-Message-ID: <2c0d233c658fa6093a18a54e82a3e51340251bc9.1522736996.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1522736996.git.sean.wang@mediatek.com>
-References: <cover.1522736996.git.sean.wang@mediatek.com>
+        id S932076AbeDCHRp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 03:17:45 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48342 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754233AbeDCHRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 03:17:43 -0400
+Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
+ fsync
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180330055126.36202-1-jaegeuk@kernel.org>
+ <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
+ <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
+ <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
+Date: Tue, 3 Apr 2018 15:17:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23760.005
-X-TM-AS-Result: No-4.829000-8.000000-10
-X-TMASE-MatchedRID: Ei0WBMmFdJikwTZnxyBJ8wPZZctd3P4BCt59Uh3p/NXTNpsvj7/hy8EY
-        HnJZxFh9E4XSoP7sKf/0p/NaRJTHE5pOsuuafTEbjtK7dC6UBnn/GH6wnR4D5rKMPhGFsui/Tjh
-        be5bZI0g1aWq/d65GNYBStp5jwgJ5HxPMjOKY7A8LbigRnpKlKZvjAepGmdoORau7mly9HNQaJx
-        7Ynm9myhUImKtMZOWWaYov/6JcruQ/kA3Verb7Mm+Nqft+LUuWii2bTHk7bARygIJR9gUu5JcKK
-        5LU6un15APDq2B3cAxn2JWP8qFf9FKehBzm9vnO5B2Qzud0EsI35c5BnKCu9g==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.829000-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23760.005
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+In-Reply-To: <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On 2018/4/3 13:23, Jaegeuk Kim wrote:
+> On 04/03, Chao Yu wrote:
+>> On 2018/3/31 0:30, Jaegeuk Kim wrote:
+>>> Change log from v1:
+>>>  - add more description
+>>>
+>>> This fixes xfstests/generic/392.
+>>>
+>>> The failure was caused by different times between 1) one marked in the last
+>>> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
+>>> The reason was that we skipped updating inode block at 1), since its i_size
+>>> was recoverable along with 4KB-aligned data writes, which was fixed by:
+>>>   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
+>>>  fs/f2fs/inode.c |  4 ++++
+>>>  2 files changed, 19 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 000f93f6767e..675c39d85111 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
+>>>  	kprojid_t i_projid;		/* id for project quota */
+>>>  	int i_inline_xattr_size;	/* inline xattr size */
+>>>  	struct timespec i_crtime;	/* inode creation time */
+>>> +	struct timespec i_disk_time[4];	/* inode disk times */
+>>>  };
+>>>  
+>>>  static inline void get_extent_info(struct extent_info *ext,
+>>> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
+>>>  	f2fs_mark_inode_dirty_sync(inode, true);
+>>>  }
+>>>  
+>>> +static inline bool time_equal(struct timespec a, struct timespec b)
+>>> +{
+>>> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
+>>> +}
+>>
+>> We can use existing timespec_equal in <linux/time.h> instead of defining a
+>> duplicated one?
+> 
+> It is defined with const parameters.
 
-Reuse the common helpers read[l,x]_poll_timeout provided by Linux core
-instead of an open-coded handling. The name of the local variable
-sram_pdn_ack in scpsys_power_on is renamed to pdn_ack in order to be
-consistent with the one used in scpsys_power_off.
+I didn't get it, const keyword can used to protect parameter not to be changed
+in that function, that will be more safe, so it will be better to use that one?
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c | 91 ++++++++++-----------------------------
- 1 file changed, 23 insertions(+), 68 deletions(-)
+Thanks,
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index d762a46..f9b7248 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -13,6 +13,7 @@
- #include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-@@ -27,6 +28,9 @@
- #include <dt-bindings/power/mt7623a-power.h>
- #include <dt-bindings/power/mt8173-power.h>
- 
-+#define MTK_POLL_DELAY_US   10
-+#define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
-+
- #define SPM_VDE_PWR_CON			0x0210
- #define SPM_MFG_PWR_CON			0x0214
- #define SPM_VEN_PWR_CON			0x0230
-@@ -184,12 +188,10 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- {
- 	struct scp_domain *scpd = container_of(genpd, struct scp_domain, genpd);
- 	struct scp *scp = scpd->scp;
--	unsigned long timeout;
--	bool expired;
- 	void __iomem *ctl_addr = scp->base + scpd->data->ctl_offs;
--	u32 sram_pdn_ack = scpd->data->sram_pdn_ack_bits;
-+	u32 pdn_ack = scpd->data->sram_pdn_ack_bits;
- 	u32 val;
--	int ret;
-+	int ret, tmp;
- 	int i;
- 
- 	if (scpd->supply) {
-@@ -215,23 +217,10 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	writel(val, ctl_addr);
- 
- 	/* wait until PWR_ACK = 1 */
--	timeout = jiffies + HZ;
--	expired = false;
--	while (1) {
--		ret = scpsys_domain_is_on(scpd);
--		if (ret > 0)
--			break;
--
--		if (expired) {
--			ret = -ETIMEDOUT;
--			goto err_pwr_ack;
--		}
--
--		cpu_relax();
--
--		if (time_after(jiffies, timeout))
--			expired = true;
--	}
-+	ret = readx_poll_timeout(scpsys_domain_is_on, scpd, tmp, tmp > 0,
-+				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+	if (ret < 0)
-+		goto err_pwr_ack;
- 
- 	val &= ~PWR_CLK_DIS_BIT;
- 	writel(val, ctl_addr);
-@@ -246,20 +235,10 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	writel(val, ctl_addr);
- 
- 	/* wait until SRAM_PDN_ACK all 0 */
--	timeout = jiffies + HZ;
--	expired = false;
--	while (sram_pdn_ack && (readl(ctl_addr) & sram_pdn_ack)) {
--
--		if (expired) {
--			ret = -ETIMEDOUT;
--			goto err_pwr_ack;
--		}
--
--		cpu_relax();
--
--		if (time_after(jiffies, timeout))
--			expired = true;
--	}
-+	ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
-+				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+	if (ret < 0)
-+		goto err_pwr_ack;
- 
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-@@ -289,12 +268,10 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- {
- 	struct scp_domain *scpd = container_of(genpd, struct scp_domain, genpd);
- 	struct scp *scp = scpd->scp;
--	unsigned long timeout;
--	bool expired;
- 	void __iomem *ctl_addr = scp->base + scpd->data->ctl_offs;
- 	u32 pdn_ack = scpd->data->sram_pdn_ack_bits;
- 	u32 val;
--	int ret;
-+	int ret, tmp;
- 	int i;
- 
- 	if (scpd->data->bus_prot_mask) {
-@@ -310,19 +287,10 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	writel(val, ctl_addr);
- 
- 	/* wait until SRAM_PDN_ACK all 1 */
--	timeout = jiffies + HZ;
--	expired = false;
--	while (pdn_ack && (readl(ctl_addr) & pdn_ack) != pdn_ack) {
--		if (expired) {
--			ret = -ETIMEDOUT;
--			goto out;
--		}
--
--		cpu_relax();
--
--		if (time_after(jiffies, timeout))
--			expired = true;
--	}
-+	ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == pdn_ack,
-+				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+	if (ret < 0)
-+		goto out;
- 
- 	val |= PWR_ISO_BIT;
- 	writel(val, ctl_addr);
-@@ -340,23 +308,10 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	writel(val, ctl_addr);
- 
- 	/* wait until PWR_ACK = 0 */
--	timeout = jiffies + HZ;
--	expired = false;
--	while (1) {
--		ret = scpsys_domain_is_on(scpd);
--		if (ret == 0)
--			break;
--
--		if (expired) {
--			ret = -ETIMEDOUT;
--			goto out;
--		}
--
--		cpu_relax();
--
--		if (time_after(jiffies, timeout))
--			expired = true;
--	}
-+	ret = readx_poll_timeout(scpsys_domain_is_on, scpd, tmp, tmp == 0,
-+				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+	if (ret < 0)
-+		goto out;
- 
- 	for (i = 0; i < MAX_CLKS && scpd->clk[i]; i++)
- 		clk_disable_unprepare(scpd->clk[i]);
--- 
-2.7.4
+> 
+>>
+>>> +
+>>>  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>>>  {
+>>>  	bool ret;
+>>> @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>>>  			i_size_read(inode) & ~PAGE_MASK)
+>>>  		return false;
+>>>  
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
+>>> +		return false;
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
+>>> +		return false;
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
+>>> +		return false;
+>>> +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
+>>> +		return false;
+>>> +
+>>>  	down_read(&F2FS_I(inode)->i_sem);
+>>>  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
+>>>  	up_read(&F2FS_I(inode)->i_sem);
+>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>> index 401f09ccce7e..70aba580f4b0 100644
+>>> --- a/fs/f2fs/inode.c
+>>> +++ b/fs/f2fs/inode.c
+>>> @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
+>>>  	if (inode->i_nlink == 0)
+>>>  		clear_inline_node(node_page);
+>>>  
+>>> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
+>>> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
+>>> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+>>> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+>>
+>> We need initialize them in do_read_inode?
+> 
+> Done.
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>  }
+>>>  
+>>>  void update_inode_page(struct inode *inode)
+>>>
+> 
+> .
+> 
