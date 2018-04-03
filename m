@@ -1,88 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755426AbeDCLRB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:17:01 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:35569 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755337AbeDCLRA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:17:00 -0400
-X-Google-Smtp-Source: AIpwx49a2vj1mue4GcCYsAOoSCfQsudOwmmgnqyv3JkDHo5pbfGUefYwvR/OkeGPN46XyOV1JDIcQQ==
-Date: Tue, 3 Apr 2018 14:16:18 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
-Message-ID: <20180403111618.o2w44gtcfzvu3yjv@node.shutemov.name>
-References: <1522730788-24530-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180403075928.GC5501@dhcp22.suse.cz>
- <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
- <20180403083451.GG5501@dhcp22.suse.cz>
- <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
- <20180403105815.GL5501@dhcp22.suse.cz>
+        id S1755476AbeDCLSG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:18:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755242AbeDCLSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:18:05 -0400
+Date: Tue, 3 Apr 2018 13:17:59 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+Subject: Re: [PATCH v3 09/14] s390: vfio-ap: sysfs interfaces to configure
+ domains
+Message-ID: <20180403131759.24516cf4.cohuck@redhat.com>
+In-Reply-To: <1521051954-25715-10-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1521051954-25715-10-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403105815.GL5501@dhcp22.suse.cz>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 12:58:15PM +0200, Michal Hocko wrote:
-> On Tue 03-04-18 13:54:11, Kirill A. Shutemov wrote:
-> > On Tue, Apr 03, 2018 at 10:34:51AM +0200, Michal Hocko wrote:
-> > > On Tue 03-04-18 08:24:06, Naoya Horiguchi wrote:
-> > > > On Tue, Apr 03, 2018 at 09:59:28AM +0200, Michal Hocko wrote:
-> > > > > On Tue 03-04-18 13:46:28, Naoya Horiguchi wrote:
-> > > > > > My testing for the latest kernel supporting thp migration found out an
-> > > > > > infinite loop in offlining the memory block that is filled with shmem
-> > > > > > thps.  We can get out of the loop with a signal, but kernel should
-> > > > > > return with failure in this case.
-> > > > > >
-> > > > > > What happens in the loop is that scan_movable_pages() repeats returning
-> > > > > > the same pfn without any progress. That's because page migration always
-> > > > > > fails for shmem thps.
-> > > > >
-> > > > > Why does it fail? Shmem pages should be movable without any issues.
-> > > > 
-> > > > .. because try_to_unmap_one() explicitly skips unmapping for migration.
-> > > > 
-> > > >   #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> > > >                   /* PMD-mapped THP migration entry */
-> > > >                   if (!pvmw.pte && (flags & TTU_MIGRATION)) {
-> > > >                           VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
-> > > >   
-> > > >                           if (!PageAnon(page))
-> > > >                                   continue;
-> > > >   
-> > > >                           set_pmd_migration_entry(&pvmw, page);
-> > > >                           continue;
-> > > >                   }
-> > > >   #endif
-> > > > 
-> > > > When I implemented this code, I felt hard to work on both of anon thp
-> > > > and shmem thp at one time, so I separated the proposal into smaller steps.
-> > > > Shmem uses pagecache so we need some non-trivial effort (including testing)
-> > > > to extend thp migration for shmem. But I think it's a reasonable next step.
-> > > 
-> > > OK, I see. I have forgot about this part. Please be explicit about that
-> > > in the changelog. Also the proper fix is to not use movable zone for
-> > > shmem page THP rather than hack around it in the hotplug specific code
-> > > IMHO.
-> > 
-> > No. We should just split the page before running
-> > try_to_unmap(TTU_MIGRATION) on the page.
+On Wed, 14 Mar 2018 14:25:49 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+
+> Provides the sysfs interfaces for assigning AP domains to
+> and unassigning AP domains from a mediated matrix device.
 > 
-> If splitting is a preffered way then I do not have any objection. We
-> just cannot keep unmovable objects in the zone movable.
+> An AP domain ID corresponds to an AP queue index (APQI). For
+> each domain assigned to the mediated matrix device, its
+> corresponging APQI is stored in an AP queue mask (AQM).
+> The bits in the AQM, from most significant to least
+> significant bit, correspond to AP domain numbers 0 to 255.
+> When a domain is assigned, the bit corresponding to its
+> APQI will be set in the AQM. Likewise, when a domain is
+> unassigned, the bit corresponding to its APQI will be
+> cleared from the AQM.
+> 
+> The relevant sysfs structures are:
+> 
+> /sys/devices/vfio_ap
+> ... [matrix]
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ [devices]
+> ...............[$uuid]
+> .................. assign_domain
+> .................. unassign_domain
+> 
+> To assign a domain to the $uuid mediated matrix device,
+> write the domain's ID to the assign_domain file. To
+> unassign a domain, write the domain's ID to the
+> unassign_domain file. The ID is specified using
+> conventional semantics: If it begins with 0x, the number
+> will be parsed as a hexadecimal (case insensitive) number;
+> otherwise, it will be parsed as a decimal number.
+> 
+> For example, to assign domain 173 (0xad) to the mediated matrix
+> device $uuid:
+> 
+> 	echo 173 > assign_domain
+> 
+> 	or
+> 
+> 	echo 0xad > assign_domain
+> 
+> To unassign domain 173 (0xad):
+> 
+> 	echo 173 > unassign_domain
+> 
+> 	or
+> 
+> 	echo 0xad > unassign_domain
+> 
+> The assignment will be rejected:
+> 
+> * If the domain ID exceeds the maximum value for an AP domain:
+> 
+>   * If the AP Extended Addressing (APXA) facility is installed,
+>     the max value is 255
+> 
+>   * Else the max value is 15
+> 
+> * If no AP adapters have yet been assigned and there are
+>   no AP queues reserved by the VFIO AP driver that have an APQN
+>   with an APQI matching that of the AP domain number being
+>   assigned.
+> 
+> * If any of the APQNs that can be derived from the intersection
+>   of the APQI being assigned and the AP adapter ID (APID) of
+>   each of the AP adapters previously assigned can not be matched
+>   with an APQN of an AP queue device reserved by the VFIO AP
+>   driver.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> ---
+>  arch/s390/include/asm/kvm-ap.h    |    1 +
+>  drivers/s390/crypto/vfio_ap_ops.c |  215 ++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 215 insertions(+), 1 deletions(-)
+> 
 
-We had anon-thp in movable zone for ages, long before THP migration was
-implemented.
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 90512a6..c448835 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -377,10 +377,223 @@ static ssize_t unassign_adapter_store(struct device *dev,
+>  }
+>  DEVICE_ATTR_WO(unassign_adapter);
+>  
+> +/**
+> + * vfio_ap_validate_queues_for_apqi
+> + *
+> + * @ap_matrix: the matrix device
+> + * @matrix_mdev: the mediated matrix device
+> + * @apqi: an AP queue index (APQI) - corresponds to a domain ID
+> + *
+> + * Verifies that each APQN that is derived from the intersection of @apqi and
+> + * each AP adapter ID (APID) corresponding to an AP domain assigned to the
+> + * @matrix_mdev matches the APQN of an AP queue reserved by the VFIO AP device
+> + * driver.
+> + *
+> + * Returns 0 if validation succeeds; otherwise, returns an error.
+> + */
+> +static int vfio_ap_validate_queues_for_apqi(struct ap_matrix *ap_matrix,
+> +					    struct ap_matrix_mdev *matrix_mdev,
+> +					    unsigned long apqi)
+> +{
+> +	int ret;
+> +	struct vfio_ap_qid_match qid_match;
+> +	unsigned long apid;
+> +	struct device_driver *drv = ap_matrix->device.driver;
+> +
+> +	/**
+> +	 * Examine each APQN with the specified APQI
+> +	 */
+> +	for_each_set_bit_inv(apid, matrix_mdev->matrix->apm,
+> +			     matrix_mdev->matrix->apm_max) {
+> +		qid_match.qid = AP_MKQID(apid, apqi);
+> +		qid_match.dev = NULL;
+> +
+> +		ret = driver_for_each_device(drv, NULL, &qid_match,
+> +					     vfio_ap_queue_match);
+> +		if (ret)
+> +			return ret;
 
--- 
- Kirill A. Shutemov
+Hm, I'm wondering whether jumping out of the outer loop is the correct
+thing to do here - and if yes, whether we should log an error?
+
+> +
+> +		/*
+> +		 * If the APQN identifies an AP queue that is reserved by the
+> +		 * VFIO AP device driver, continue processing.
+> +		 */
+> +		if (qid_match.dev)
+> +			continue;
+> +
+> +		pr_err("%s: AP queue %02lx.%04lx not reserved by %s driver",
+> +		       VFIO_AP_MATRIX_MODULE_NAME, apqi, apqi,
+> +		       VFIO_AP_DRV_NAME);
+> +
+> +		return -ENXIO;
+> +	}
+> +
+> +	return 0;
+> +}
