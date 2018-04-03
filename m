@@ -1,159 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeDCQIL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:08:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeDCQIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:08:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776FE2178C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Tue, 3 Apr 2018 09:08:08 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
- fsync
-Message-ID: <20180403160808.GA68167@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180330055126.36202-1-jaegeuk@kernel.org>
- <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
- <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
- <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
- <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
+        id S1751946AbeDCQLG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:11:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54256 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751430AbeDCQLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:11:05 -0400
+Date: Tue, 3 Apr 2018 09:11:34 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: David Howells <dhowells@redhat.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 1/3] locking: Document the semantics of
+ spin_is_locked()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180403133543.GA26653@andrea>
+ <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
+ <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <29562.1522759749@warthog.procyon.org.uk>
+ <13191.1522763553@warthog.procyon.org.uk>
+ <20180403141718.GG3948@linux.vnet.ibm.com>
+ <20180403144300.GE4082@hirez.programming.kicks-ass.net>
+ <20180403150356.GJ3948@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180403150356.GJ3948@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18040316-2213-0000-0000-0000028962A9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008795; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000255; SDB=6.01012571; UDB=6.00516069; IPR=6.00791837;
+ MB=3.00020394; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-03 16:11:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040316-2214-0000-0000-0000599F86D3
+Message-Id: <20180403161134.GA31898@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804030166
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03, Chao Yu wrote:
-> On 2018/4/3 13:23, Jaegeuk Kim wrote:
-> > On 04/03, Chao Yu wrote:
-> >> On 2018/3/31 0:30, Jaegeuk Kim wrote:
-> >>> Change log from v1:
-> >>>  - add more description
-> >>>
-> >>> This fixes xfstests/generic/392.
-> >>>
-> >>> The failure was caused by different times between 1) one marked in the last
-> >>> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
-> >>> The reason was that we skipped updating inode block at 1), since its i_size
-> >>> was recoverable along with 4KB-aligned data writes, which was fixed by:
-> >>>   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
-> >>>  fs/f2fs/inode.c |  4 ++++
-> >>>  2 files changed, 19 insertions(+)
-> >>>
-> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>> index 000f93f6767e..675c39d85111 100644
-> >>> --- a/fs/f2fs/f2fs.h
-> >>> +++ b/fs/f2fs/f2fs.h
-> >>> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
-> >>>  	kprojid_t i_projid;		/* id for project quota */
-> >>>  	int i_inline_xattr_size;	/* inline xattr size */
-> >>>  	struct timespec i_crtime;	/* inode creation time */
-> >>> +	struct timespec i_disk_time[4];	/* inode disk times */
-> >>>  };
-> >>>  
-> >>>  static inline void get_extent_info(struct extent_info *ext,
-> >>> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
-> >>>  	f2fs_mark_inode_dirty_sync(inode, true);
-> >>>  }
-> >>>  
-> >>> +static inline bool time_equal(struct timespec a, struct timespec b)
-> >>> +{
-> >>> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
-> >>> +}
-> >>
-> >> We can use existing timespec_equal in <linux/time.h> instead of defining a
-> >> duplicated one?
+On Tue, Apr 03, 2018 at 08:03:56AM -0700, Paul E. McKenney wrote:
+> On Tue, Apr 03, 2018 at 04:43:00PM +0200, Peter Zijlstra wrote:
+> > On Tue, Apr 03, 2018 at 07:17:18AM -0700, Paul E. McKenney wrote:
+> > > Suggestions for a fix?  Clearly great care is required when using it
+> > > in things like WARN_ON()...
 > > 
-> > It is defined with const parameters.
+> > Yeah, don't use it there, use lockdep_assert_held().
 > 
-> I didn't get it, const keyword can used to protect parameter not to be changed
-> in that function, that will be more safe, so it will be better to use that one?
+> Good point, -ETOOEARLY.  ;-)
+> 
+> > As I stated before in this thread, ideally we'd make *_is_locked() go
+> > away entirely.
+> 
+> After being reminded of the issues on UP systems, I now have much more
+> sympathy for that view...
 
-Oh, I just made a mistake when testing timespec_equal().
-I really need more recess time. :P
+And so the main remaining use case is debug prints on !PROVE_LOCKING
+builds.  Which need some thought about the UP case.
 
-Change log from v3:
- - use timespec_equal()
+Or am I missing something here?
 
-This fixes xfstests/generic/392.
-
-The failure was caused by different times between 1) one marked in the last
-fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
-The reason was that we skipped updating inode block at 1), since its i_size
-was recoverable along with 4KB-aligned data writes, which was fixed by:
-  "f2fs: fix a wrong condition in f2fs_skip_inode_update"
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h  | 11 +++++++++++
- fs/f2fs/inode.c |  8 ++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7102d3965fea..1df7f10476d6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -664,6 +664,7 @@ struct f2fs_inode_info {
- 	kprojid_t i_projid;		/* id for project quota */
- 	int i_inline_xattr_size;	/* inline xattr size */
- 	struct timespec i_crtime;	/* inode creation time */
-+	struct timespec i_disk_time[4];	/* inode disk times */
- };
- 
- static inline void get_extent_info(struct extent_info *ext,
-@@ -2474,6 +2475,16 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
- 			i_size_read(inode) & ~PAGE_MASK)
- 		return false;
- 
-+	if (!timespec_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
-+		return false;
-+	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
-+		return false;
-+	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
-+		return false;
-+	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 3,
-+						&F2FS_I(inode)->i_crtime))
-+		return false;
-+
- 	down_read(&F2FS_I(inode)->i_sem);
- 	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
- 	up_read(&F2FS_I(inode)->i_sem);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 401f09ccce7e..e0d9e8f27ed2 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -284,6 +284,10 @@ static int do_read_inode(struct inode *inode)
- 		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
- 	}
- 
-+	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-+	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-+	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
-+	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
- 	f2fs_put_page(node_page, 1);
- 
- 	stat_inc_inline_xattr(inode);
-@@ -444,6 +448,10 @@ void update_inode(struct inode *inode, struct page *node_page)
- 	if (inode->i_nlink == 0)
- 		clear_inline_node(node_page);
- 
-+	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-+	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-+	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
-+	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
- }
- 
- void update_inode_page(struct inode *inode)
--- 
-2.15.0.531.g2ccb3012c9-goog
+							Thanx, Paul
