@@ -1,203 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeDCPTU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:19:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54644 "EHLO mx1.redhat.com"
+        id S1752093AbeDCPWI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:22:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58482 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751219AbeDCPTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:19:18 -0400
-Date: Tue, 3 Apr 2018 17:19:10 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v3 09/14] s390: vfio-ap: sysfs interfaces to configure
- domains
-Message-ID: <20180403171910.2edaf63c.cohuck@redhat.com>
-In-Reply-To: <1860430c-df59-6d58-77f9-b36c51595b4b@linux.vnet.ibm.com>
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1521051954-25715-10-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180403131759.24516cf4.cohuck@redhat.com>
-        <1860430c-df59-6d58-77f9-b36c51595b4b@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1751323AbeDCPWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:22:07 -0400
+Date: Tue, 3 Apr 2018 17:22:04 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] perf stat: enable 1ms interval for printing event
+ counters values
+Message-ID: <20180403152204.GA2313@krava>
+References: <1480cba7-2307-8827-0ca6-0d6029ccdad9@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1480cba7-2307-8827-0ca6-0d6029ccdad9@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018 11:12:45 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On Tue, Apr 03, 2018 at 06:04:13PM +0300, Alexey Budankov wrote:
+> 
+> Currently print count interval for performance counters values is 
+> limited by 10ms so reading the values at frequencies higher than 100Hz 
+> is restricted by the tool.
+> 
+> This change makes perf stat -I possible on frequencies up to 1KHz and, 
+> to some extent, makes perf stat -I to be on-par with perf record 
+> sampling profiling.
+> 
+> When running perf stat -I for monitoring e.g. PCIe uncore counters and 
+> at the same time profiling some I/O workload by perf record e.g. for 
+> cpu-cycles and context switches, it is then possible to observe 
+> consolidated CPU/OS/IO(Uncore) performance picture for that workload.
+> 
+> Tool overhead warning printed when specifying -v option can be missed 
+> due to screen scrolling in case you have output to the console 
+> so message is moved into help available by running perf stat -h.
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> ---
+>  tools/perf/builtin-stat.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
 
-> On 04/03/2018 07:17 AM, Cornelia Huck wrote:
-> > On Wed, 14 Mar 2018 14:25:49 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >  
-> >> Provides the sysfs interfaces for assigning AP domains to
-> >> and unassigning AP domains from a mediated matrix device.
-> >>
-> >> An AP domain ID corresponds to an AP queue index (APQI). For
-> >> each domain assigned to the mediated matrix device, its
-> >> corresponging APQI is stored in an AP queue mask (AQM).
-> >> The bits in the AQM, from most significant to least
-> >> significant bit, correspond to AP domain numbers 0 to 255.
-> >> When a domain is assigned, the bit corresponding to its
-> >> APQI will be set in the AQM. Likewise, when a domain is
-> >> unassigned, the bit corresponding to its APQI will be
-> >> cleared from the AQM.
-> >>
-> >> The relevant sysfs structures are:
-> >>
-> >> /sys/devices/vfio_ap
-> >> ... [matrix]
-> >> ...... [mdev_supported_types]
-> >> ......... [vfio_ap-passthrough]
-> >> ............ [devices]
-> >> ...............[$uuid]
-> >> .................. assign_domain
-> >> .................. unassign_domain
-> >>
-> >> To assign a domain to the $uuid mediated matrix device,
-> >> write the domain's ID to the assign_domain file. To
-> >> unassign a domain, write the domain's ID to the
-> >> unassign_domain file. The ID is specified using
-> >> conventional semantics: If it begins with 0x, the number
-> >> will be parsed as a hexadecimal (case insensitive) number;
-> >> otherwise, it will be parsed as a decimal number.
-> >>
-> >> For example, to assign domain 173 (0xad) to the mediated matrix
-> >> device $uuid:
-> >>
-> >> 	echo 173 > assign_domain
-> >>
-> >> 	or
-> >>
-> >> 	echo 0xad > assign_domain
-> >>
-> >> To unassign domain 173 (0xad):
-> >>
-> >> 	echo 173 > unassign_domain
-> >>
-> >> 	or
-> >>
-> >> 	echo 0xad > unassign_domain
-> >>
-> >> The assignment will be rejected:
-> >>
-> >> * If the domain ID exceeds the maximum value for an AP domain:
-> >>
-> >>    * If the AP Extended Addressing (APXA) facility is installed,
-> >>      the max value is 255
-> >>
-> >>    * Else the max value is 15
-> >>
-> >> * If no AP adapters have yet been assigned and there are
-> >>    no AP queues reserved by the VFIO AP driver that have an APQN
-> >>    with an APQI matching that of the AP domain number being
-> >>    assigned.
-> >>
-> >> * If any of the APQNs that can be derived from the intersection
-> >>    of the APQI being assigned and the AP adapter ID (APID) of
-> >>    each of the AP adapters previously assigned can not be matched
-> >>    with an APQN of an AP queue device reserved by the VFIO AP
-> >>    driver.
-> >>
-> >> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> >> ---
-> >>   arch/s390/include/asm/kvm-ap.h    |    1 +
-> >>   drivers/s390/crypto/vfio_ap_ops.c |  215 ++++++++++++++++++++++++++++++++++++-
-> >>   2 files changed, 215 insertions(+), 1 deletions(-)
-> >>
-> >> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> >> index 90512a6..c448835 100644
-> >> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> >> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> >> @@ -377,10 +377,223 @@ static ssize_t unassign_adapter_store(struct device *dev,
-> >>   }
-> >>   DEVICE_ATTR_WO(unassign_adapter);
-> >>   
-> >> +/**
-> >> + * vfio_ap_validate_queues_for_apqi
-> >> + *
-> >> + * @ap_matrix: the matrix device
-> >> + * @matrix_mdev: the mediated matrix device
-> >> + * @apqi: an AP queue index (APQI) - corresponds to a domain ID
-> >> + *
-> >> + * Verifies that each APQN that is derived from the intersection of @apqi and
-> >> + * each AP adapter ID (APID) corresponding to an AP domain assigned to the
-> >> + * @matrix_mdev matches the APQN of an AP queue reserved by the VFIO AP device
-> >> + * driver.
-> >> + *
-> >> + * Returns 0 if validation succeeds; otherwise, returns an error.
-> >> + */
-> >> +static int vfio_ap_validate_queues_for_apqi(struct ap_matrix *ap_matrix,
-> >> +					    struct ap_matrix_mdev *matrix_mdev,
-> >> +					    unsigned long apqi)
-> >> +{
-> >> +	int ret;
-> >> +	struct vfio_ap_qid_match qid_match;
-> >> +	unsigned long apid;
-> >> +	struct device_driver *drv = ap_matrix->device.driver;
-> >> +
-> >> +	/**
-> >> +	 * Examine each APQN with the specified APQI
-> >> +	 */
-> >> +	for_each_set_bit_inv(apid, matrix_mdev->matrix->apm,
-> >> +			     matrix_mdev->matrix->apm_max) {
-> >> +		qid_match.qid = AP_MKQID(apid, apqi);
-> >> +		qid_match.dev = NULL;
-> >> +
-> >> +		ret = driver_for_each_device(drv, NULL, &qid_match,
-> >> +					     vfio_ap_queue_match);
-> >> +		if (ret)
-> >> +			return ret;  
-> > Hm, I'm wondering whether jumping out of the outer loop is the correct
-> > thing to do here - and if yes, whether we should log an error?  
-> If you look at the vfio_ap_queue_match() function which is passed to the
-> driver_for_each_device() function, it never returns an error. The
-> driver_for_each_device() function only returns an error if the function
-> passed in returns an error, so in reality, the value of *ret *will never
-> be anything but 0. Having said that, there are no guarantees that the
-> vfio_ap_queue_match() function will never change, so it would probably
-> be a good idea to log an error if *ret *is not 0.**I think returning at
-> this point is valid because a non-zero is returned from
-> driver_for_each_device() function as soon as the input function returns
-> a non-zero value for a specific device. This means that subsequent
-> devices will not be processed, so we may not know whether an AP queue
-> has been reserved or not - see check below.
+I don't mind taking out the limit, but please update also
+the stat man page, it mentiones the 10ms minimum
 
-OK, then logging an error makes the most sense.
-
-Is there a source tree with the patches somewhere, btw? Checking out a
-branch is less time-consuming than applying a series (and helps
-review). Same applies to the qemu patches; maybe one of the IBM
-maintainers can push to a branch?
+thanks,
+jirka
 
 > 
-> >  
-> >> +
-> >> +		/*
-> >> +		 * If the APQN identifies an AP queue that is reserved by the
-> >> +		 * VFIO AP device driver, continue processing.
-> >> +		 */
-> >> +		if (qid_match.dev)
-> >> +			continue;
-> >> +
-> >> +		pr_err("%s: AP queue %02lx.%04lx not reserved by %s driver",
-> >> +		       VFIO_AP_MATRIX_MODULE_NAME, apqi, apqi,
-> >> +		       VFIO_AP_DRV_NAME);
-> >> +
-> >> +		return -ENXIO;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}  
-> 
-> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index f5c454855908..147a27e8c937 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -1943,7 +1943,8 @@ static const struct option stat_options[] = {
+>  	OPT_STRING(0, "post", &post_cmd, "command",
+>  			"command to run after to the measured command"),
+>  	OPT_UINTEGER('I', "interval-print", &stat_config.interval,
+> -		    "print counts at regular interval in ms (>= 10)"),
+> +		    "print counts at regular interval in ms "
+> +		    "(overhead is possible for values <= 100ms)"),
+>  	OPT_INTEGER(0, "interval-count", &stat_config.times,
+>  		    "print counts for fixed number of times"),
+>  	OPT_UINTEGER(0, "timeout", &stat_config.timeout,
+> @@ -2923,17 +2924,6 @@ int cmd_stat(int argc, const char **argv)
+>  		}
+>  	}
+>  
+> -	if (interval && interval < 100) {
+> -		if (interval < 10) {
+> -			pr_err("print interval must be >= 10ms\n");
+> -			parse_options_usage(stat_usage, stat_options, "I", 1);
+> -			goto out;
+> -		} else
+> -			pr_warning("print interval < 100ms. "
+> -				   "The overhead percentage could be high in some cases. "
+> -				   "Please proceed with caution.\n");
+> -	}
+> -
+>  	if (stat_config.times && interval)
+>  		interval_count = true;
+>  	else if (stat_config.times && !interval) {
