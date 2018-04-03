@@ -1,36 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932131AbeDCLyL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:54:11 -0400
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:39689 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932066AbeDCLyK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:54:10 -0400
-X-Google-Smtp-Source: AIpwx4/GvjuqDIApxEzKLKKzlc1qupSBxEpvgmqSCT+ApYZtZ45ibE8Vd04yD+JYHLPlCcRu3Km1pA==
-Subject: Re: [PATCH v6 RESEND 0/1] drm/xen-front: Add support for Xen PV
- display frontend
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180403112317.28751-1-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <168add2a-63fc-e5c3-337e-ddfa764c667f@gmail.com>
-Date: Tue, 3 Apr 2018 14:54:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180403112317.28751-1-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1755417AbeDCLyY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:54:24 -0400
+Received: from mga07.intel.com ([134.134.136.100]:54366 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755335AbeDCLyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:54:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,400,1517904000";
+   d="scan'208";a="188259315"
+Message-ID: <1522756458.21176.314.camel@linux.intel.com>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date: Tue, 03 Apr 2018 14:54:18 +0300
+In-Reply-To: <20180403114600.uc7sqeoqt7fmdd66@pathway.suse.cz>
+References: <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
+         <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+         <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+         <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+         <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+         <1521119343.10722.665.camel@linux.intel.com>
+         <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
+         <1521224375.23017.41.camel@linux.intel.com>
+         <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
+         <1522678523.21176.178.camel@linux.intel.com>
+         <20180403114600.uc7sqeoqt7fmdd66@pathway.suse.cz>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 02:23 PM, Oleksandr Andrushchenko wrote:
-> Resending with even more checkpatch code-style fixes.
-Applied,
-thank you!
+On Tue, 2018-04-03 at 13:46 +0200, Petr Mladek wrote:
+> On Mon 2018-04-02 17:15:23, Andy Shevchenko wrote:
+> > On Thu, 2018-03-29 at 16:53 +0200, Petr Mladek wrote:
+> > > On Fri 2018-03-16 20:19:35, Andy Shevchenko wrote:
+> > > > On Thu, 2018-03-15 at 16:26 +0100, Petr Mladek wrote:
+> > > > > On Thu 2018-03-15 15:09:03, Andy Shevchenko wrote:
+> > > > > > I still think that printing a hex value of the error code is
+> > > > > > much
+> > > > > > better
+> > > > > > than some odd "(efault)".
+> > > > > 
+> > > > > Do you mean (err:0e)? Google gives rather confusing answers
+> > > > > for
+> > > > > this.
+> > > > 
+> > > > More like "(0xHHHH)" (we have already more than 512 error code
+> > > > numbers.
+> > > 
+> > > Hmm, I have never seen the error code in this form.
+> > 
+> > We have limited space to print it and error numbers currently can be
+> > up
+> > to 0xfff (4095). So, I have no better idea how to squeeze them while
+> > thinking that "(efault)" is much harder to parse in case of error
+> > pointer.
+> 
+> But this will not be used instead of address value. It is used in
+> situations
+> where we print the information that is stored at the address, for
+> example,
+> string, IP address, dentry name.
+
+We have a lot of API functions which returns:
+-ERR_PTR
+NULL
+struct foo *
+
+There is no guarantee that one of that API won't be used as a supplier
+for printf().
+
+You can't dereference ERR_PTR value, but anything else except the actual
+error value is worse than value itself...
+
+> 
+> > >  Also google gives
+> > > rather confusing results when searching, for example for
+> > > "(0x000E)".
+> > 
+> > It's not primarily for google, though yeah, people would google for
+> > error messages...
+> > 
+> > Another question is what the format: decimal versus hex for errors.
+> > Maybe just "(-DDDDD)"?
+> 
+> This still looks confusing and google does not help.
+
+...then we have a last option just to print a value as a pointer
+address.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
