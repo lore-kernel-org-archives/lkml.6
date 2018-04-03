@@ -1,66 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753565AbeDCVVD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:21:03 -0400
-Received: from smtprelay0219.hostedemail.com ([216.40.44.219]:40739 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752246AbeDCVVC (ORCPT
+        id S1753645AbeDCVVb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:21:31 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37214 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753261AbeDCVV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:21:02 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3866:3868:3870:3874:4321:5007:6119:10004:10400:10848:11232:11658:11914:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21221:21451:21627:30054:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
-X-HE-Tag: blade92_4300c7dc68623
-X-Filterd-Recvd-Size: 1960
-Message-ID: <1522790459.11653.65.camel@perches.com>
-Subject: Re: [PATCH 1/1] checkpatch: allow space between colon and bracket
-From: Joe Perches <joe@perches.com>
-To: Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Date: Tue, 03 Apr 2018 14:20:59 -0700
-In-Reply-To: <20180403191655.23700-1-xypron.glpk@gmx.de>
-References: <20180403190214.23082-1-xypron.glpk@gmx.de>
-         <20180403191655.23700-1-xypron.glpk@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Apr 2018 17:21:29 -0400
+Date: Tue, 3 Apr 2018 22:21:02 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Matthew Garrett <mjg59@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, luto@kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jforbes@redhat.com, linux-man@vger.kernel.org, jlee@suse.com,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+Message-ID: <20180403212102.GL30522@ZenIV.linux.org.uk>
+References: <4136.1522452584@warthog.procyon.org.uk>
+ <alpine.LRH.2.21.1803311145180.7769@namei.org>
+ <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
+ <30459.1522739219@warthog.procyon.org.uk>
+ <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
+ <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+ <CA+55aFy5EPxAyqyGGaYUUyakuLbjXHiseWCkz-oNdo=Y-878tg@mail.gmail.com>
+ <CACdnJuuXOP5T-BRAwMvc7XF8S49wyvp4ZYgcU=EZkaGNgPAQig@mail.gmail.com>
+ <CA+55aFzGFZT68ih446DeQbB69Fyk_wT6b7PGq0iz-gctUGQq_A@mail.gmail.com>
+ <CACdnJuvheCbuvTLyDWMQWcUytc4EvuSUaEKywfEX8Kp6qYL9dg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACdnJuvheCbuvTLyDWMQWcUytc4EvuSUaEKywfEX8Kp6qYL9dg@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-03 at 21:16 +0200, Heinrich Schuchardt wrote:
-> Allow a space between a colon and subsequent opening bracket.
-> This sequence may occur in inline assembler statements like
-> 
-> 	asm(
-> 		"ldr %[out], [%[in]]\n\t"
-> 		: [out] "=r" (ret)
-> 		: [in] "r" (addr)
-> 	);
-> 
-> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+On Tue, Apr 03, 2018 at 09:08:54PM +0000, Matthew Garrett wrote:
 
-I can't think of a valid c90 sequence that has a colon
-before a bracket so
-
-Acked-by: Joe Perches <joe@perches.com>
-
-> ---
->  scripts/checkpatch.pl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > The fact is, some hardware pushes secure boot pretty hard. That has
+> > *nothing* to do with some "lockdown" mode.
 > 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index d2464002bb40..2cbab86e6d4c 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -4083,7 +4083,7 @@ sub process {
->  			my ($where, $prefix) = ($-[1], $1);
->  			if ($prefix !~ /$Type\s+$/ &&
->  			    ($where != 0 || $prefix !~ /^.\s+$/) &&
-> -			    $prefix !~ /[{,]\s+$/) {
-> +			    $prefix !~ /[{,:]\s+$/) {
->  				if (ERROR("BRACKET_SPACE",
->  					  "space prohibited before open square bracket '['\n" . $herecurr) &&
->  				    $fix) {
+> Secure Boot ensures that the firmware will only load signed bootloaders. If
+> a signed bootloader loads a kernel that's effectively an unsigned
+> bootloader, there's no point in using Secure Boot - you should just turn it
+> off instead, because it's not giving you any meaningful security. Andy's
+> example gives a scenario where by constraining your *userland* sufficiently
+> you can get close to having the same guarantees, but that involves you
+> having a read-only filesystem and takes you even further away from having a
+> general purpose computer.
+> 
+> If you don't want Secure Boot, turn it off. If you want Secure Boot, use a
+> kernel that behaves in a way that actually increases your security.
+
+That assumes you *can* turn that shit off.  On the hardware where manufacturer
+has installed firmware that doesn't allow that SB is a misfeature that has
+to be worked around.  Making that harder might improve the value of SB to
+said manufacturers, but what's the benefit for everybody else?
