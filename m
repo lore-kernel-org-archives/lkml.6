@@ -1,81 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeDCVMe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:12:34 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.163]:25006 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753156AbeDCVMd (ORCPT
+        id S1753425AbeDCVM5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:12:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43898 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752639AbeDCVM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:12:33 -0400
-Date: Tue, 3 Apr 2018 16:12:32 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Zhichang Yuan <yuanzhichang@hisilicon.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] lib: logic_pio: Fix potential NULL pointer dereference
-Message-ID: <20180403211232.GA29526@embeddedor.com>
+        Tue, 3 Apr 2018 17:12:56 -0400
+Date: Tue, 3 Apr 2018 14:12:53 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Buddy Lumpkin <buddy.lumpkin@oracle.com>
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, hannes@cmpxchg.org, riel@surriel.com,
+        mgorman@suse.de, akpm@linux-foundation.org
+Subject: Re: [RFC PATCH 1/1] vmscan: Support multiple kswapd threads per node
+Message-ID: <20180403211253.GC30145@bombadil.infradead.org>
+References: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
+ <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
+ <20180403133115.GA5501@dhcp22.suse.cz>
+ <20180403190759.GB6779@bombadil.infradead.org>
+ <A1EF8129-7F59-49CB-BEEC-E615FB878CE2@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f3TEH-000TEW-1u
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.54.187]:53738
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <A1EF8129-7F59-49CB-BEEC-E615FB878CE2@oracle.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-new_range is being dereferenced before it is null checked, hence
-there is a potential null pointer dereference.
+On Tue, Apr 03, 2018 at 01:49:25PM -0700, Buddy Lumpkin wrote:
+> > Yes, very much this.  If you have a single-threaded workload which is
+> > using the entirety of memory and would like to use even more, then it
+> > makes sense to use as many CPUs as necessary getting memory out of its
+> > way.  If you have N CPUs and N-1 threads happily occupying themselves in
+> > their own reasonably-sized working sets with one monster process trying
+> > to use as much RAM as possible, then I'd be pretty unimpressed to see
+> > the N-1 well-behaved threads preempted by kswapd.
+> 
+> The default value provides one kswapd thread per NUMA node, the same
+> it was without the patch. Also, I would point out that just because you devote
+> more threads to kswapd, doesn’t mean they are busy. If multiple kswapd threads
+> are busy, they are almost certainly doing work that would have resulted in
+> direct reclaims, which are often substantially more expensive than a couple
+> extra context switches due to preemption.
 
-Fix this by moving the pointer dereference after new_range has
-been properly null checked.
+[...]
 
-Addresses-Coverity-ID: 1466163 ("Dereference before null check")
-Fixes: 0a7198426259 ("lib: Add generic PIO mapping method")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- lib/logic_pio.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> In my previous response to Michal Hocko, I described
+> how I think we could scale watermarks in response to direct reclaims, and
+> launch more kswapd threads when kswapd peaks at 100% CPU usage.
 
-diff --git a/lib/logic_pio.c b/lib/logic_pio.c
-index 29cedea..30dfdce 100644
---- a/lib/logic_pio.c
-+++ b/lib/logic_pio.c
-@@ -33,8 +33,8 @@ static DEFINE_MUTEX(io_range_mutex);
- int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
- {
- 	struct logic_pio_hwaddr *range;
--	resource_size_t start = new_range->hw_start;
--	resource_size_t end = new_range->hw_start + new_range->size;
-+	resource_size_t start;
-+	resource_size_t end;
- 	resource_size_t mmio_sz = 0;
- 	resource_size_t iio_sz = MMIO_UPPER_LIMIT;
- 	int ret = 0;
-@@ -42,6 +42,9 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
- 	if (!new_range || !new_range->fwnode || !new_range->size)
- 		return -EINVAL;
- 
-+	start = new_range->hw_start;
-+	end = new_range->hw_start + new_range->size;
-+
- 	mutex_lock(&io_range_mutex);
- 	list_for_each_entry_rcu(range, &io_range_list, list) {
- 		if (range->fwnode == new_range->fwnode) {
--- 
-2.7.4
+I think you're missing my point about the workload ... kswapd isn't
+"nice", so it will compete with the N-1 threads which are chugging along
+at 100% CPU inside their working sets.  In this scenario, we _don't_
+want to kick off kswapd at all; we want the monster thread to clean up
+its own mess.  If we have idle CPUs, then yes, absolutely, lets have
+them clean up for the monster, but otherwise, I want my N-1 threads
+doing their own thing.
+
+Maybe we should renice kswapd anyway ... thoughts?  We don't seem to have
+had a nice'd kswapd since 2.6.12, but maybe we played with that earlier
+and discovered it was a bad idea?
