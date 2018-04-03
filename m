@@ -1,90 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751314AbeDCNvJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:51:09 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:57884 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750728AbeDCNvI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:51:08 -0400
-Subject: Re: [PATCH v4 1/3] Add notrace to lib/ucmpdi2.c
-To: Palmer Dabbelt <palmer@sifive.com>
-CC: <antonynpavlov@gmail.com>, <jhogan@kernel.org>, <ralf@linux-mips.org>,
-        <linux-mips@linux-mips.org>, <geert@linux-m68k.org>,
-        <linux-kernel@vger.kernel.org>
-References: <mhng-e7e3dffe-bc80-4bea-8cf5-4d8afb76565a@palmer-si-x1c4>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <4ba976ed-7294-18ec-187f-7105a9782283@mips.com>
-Date: Tue, 3 Apr 2018 14:51:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751356AbeDCNwi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:52:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60228 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750777AbeDCNwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:52:37 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20180403133543.GA26653@andrea>
+References: <20180403133543.GA26653@andrea> <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com> <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com> <29562.1522759749@warthog.procyon.org.uk>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: dhowells@redhat.com, paulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Andrea Parri <parri.andrea@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 1/3] locking: Document the semantics of spin_is_locked()
 MIME-Version: 1.0
-In-Reply-To: <mhng-e7e3dffe-bc80-4bea-8cf5-4d8afb76565a@palmer-si-x1c4>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <13190.1522763553.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1522763428-298553-26930-64224-2
-X-BESS-VER: 2018.4-r1803302247
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191654
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Date: Tue, 03 Apr 2018 14:52:33 +0100
+Message-ID: <13191.1522763553@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Palmer,
+Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
 
-On 29/03/18 22:59, Palmer Dabbelt wrote:
-> On Thu, 29 Mar 2018 03:41:21 PDT (-0700), matt.redfearn@mips.com wrote:
->> From: Palmer Dabbelt <palmer@sifive.com>
->>
->> As part of the MIPS conversion to use the generic GCC library routines,
->> Matt Redfearn discovered that I'd missed a notrace on __ucmpdi2().  This
->> patch rectifies the problem.
->>
->> CC: Matt Redfearn <matt.redfearn@mips.com>
->> CC: Antony Pavlov <antonynpavlov@gmail.com>
->> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
->> Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
->> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
->> ---
->>
->> Changes in v4: None
->> Changes in v3: None
->> Changes in v2:
->>   add notrace to lib/ucmpdi2.c
->>
->>  lib/ucmpdi2.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/lib/ucmpdi2.c b/lib/ucmpdi2.c
->> index 25ca2d4c1e19..597998169a96 100644
->> --- a/lib/ucmpdi2.c
->> +++ b/lib/ucmpdi2.c
->> @@ -17,7 +17,7 @@
->>  #include <linux/module.h>
->>  #include <linux/libgcc.h>
->>
->> -word_type __ucmpdi2(unsigned long long a, unsigned long long b)
->> +word_type notrace __ucmpdi2(unsigned long long a, unsigned long long b)
->>  {
->>      const DWunion au = {.ll = a};
->>      const DWunion bu = {.ll = b};
+> > It's more complicated than that.  This function is dangerous and should be
+> > used with extreme care.  In the case where CONFIG_SMP=n the value is locked
+> > one way or the other and it might be the wrong way.
 > 
-> Ah, thanks, I think I must have forgotten about this.  I assume these 
-> three are going through your tree?
+> You mean "unlocked"? (aka, return 0)
 
-Yeah I think that's the plan - James will need your ack to patch 2 if 
-that's ok.
+No, I mean "fixed", sorry.  We've had problems stemming from this before on UP
+systems.
 
-Thanks,
-Matt
+David
