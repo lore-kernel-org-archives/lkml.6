@@ -1,65 +1,70 @@
-Return-Path: <catalin.marinas@arm.com>
-X-Google-Smtp-Source: AB8JxZqOyhUUKoh1KTjf1SLHYptqMftZw0fhY4fp0BSJJKhpDHn4HzhbgFSzGalyb0wshSDKRu9j
-ARC-Seal: i=1; a=rsa-sha256; t=1524824831; cv=none;
+Return-Path: <marc.zyngier@arm.com>
+X-Google-Smtp-Source: AIpwx48venE4qdz7EDL/iairLyM90X43Vbn5ljeUS0kCAqeStDg3wjm/TmznmBUNkUMDN1OkzFB+
+ARC-Seal: i=1; a=rsa-sha256; t=1522745014; cv=none;
         d=google.com; s=arc-20160816;
-        b=GcM5BM13xYi6zqTkF1Q37TuF00qyjyx/MARRSkviC+1f5E2axxfPXwBf7qYhFLzQYK
-         qAHhR6/YEVPBYYybjb6cLVC+ZRvAp9zfvsG9eWuYu5CXInFbJI7Sjd2U0qn7wBMshz9e
-         NFj8VB9Rb/o5cWDqL+9y/6pm8zZY/O6jZ7bZ6tkqM4caF2h0nW3hwKjQeTZ1zI8Eiosh
-         V/W1g/QwYVNITbW1UBzxPs/DNkqOyYcVXiwle1n8scgfoP6iO6e8kmOS7YiJkK8SNoSn
-         v8xxPtKvb5FiLzBLfNDGZabG3pY+uyGi7qH4eEa3KM2roINCAPtnR8PN2z1IHdQuhrCp
-         Vr9A==
+        b=h3RIF7w7YMPXod9hC4D8NHpagC1f04lphZVf+vLMNF0Nz42SJ0za9gCsdlb5GHCOlk
+         0ehqNIUjRE6WqGxG3ZsPW1BpKXRRFjTb1NMx6qQs35Gq18IPxATEIyH2joaaVubyTeFL
+         HGS/5wtCpMikVugl8EwYiwXlY0Gmtq4s/QqTKuBE7lJFw0fN4i+IuC0faVM8btkeCgmb
+         EbajDim4EGF64UPodhAr32Fz1KkI2AXx9n8SbepTxqKgV6m+jfWHxTGsP1PK47/XbpCz
+         irdr5iwFDyYbVO7vsesNYbFFzeSFc7KLESBTgleMyH4/e5GJyvbmuhNNsYUBlVP2GXY7
+         Mxeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=bWql+dyxEtcgSqevt84SQ5ecvhHlJP2LMhXxDsKYLJc=;
-        b=AfGPblzTCZKm5N0s6B4u3E3t/LCWTJrEuA0ey/hTY0I6P9KnilVytHZcb/U5+nuNeA
-         fHsUAd06JHFX+q3NfAAnPV2uWfnXpus5r18kNaYCA4XsIFP6rGHzGIgB5u98U0wfZMS7
-         0T2YbxQ72RFc1IOurtuZ4P1T5YLs9lzwji3mdoVn6SzbagYJSONGz2ObmVUXIwIYZ0Be
-         SO4pv81gG2rppWF+XmCZAoH/BULnJW9lYk5ZyrW7ZSliGMeOpRzgWQyCo1lKoJFqBfJg
-         SUJd9hcvOvCDyE5arLBq3UgjnVA5JaBoJs5lrrk6YadiWeDtVKbAckSTcrB1A4Xo/ak2
-         8wxQ==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:arc-authentication-results;
+        bh=3DiL5iwWYRGWej2Skso1/C0UMOAnFa7DjynkJzGU0TE=;
+        b=bqyok6ku/ZYwBIWdAY5KewiFsWLcbcPfYkseNqn1Z17iHp46uQRiCTW5UlX6c+R4kf
+         j6wnPHJRBtToXy8gcchfrP4kYbR2JzS3FkLsrTIbIanEp3sbSmhZafMpb7IGfdZ+wBXM
+         rRwwqObEB8HxmydrZYmUKQS7vUaDMKdZV5K8vZCXIkm6UErL+73519dp3GI+J+EWg7le
+         CnWEe++ZV00fsWw8hQgR6jbEgwe0Y5iBAfz4XNvqHdLPQ7t2VtM+gPGBRlUIw39sGu3Y
+         4q9MOgIKBE4ajXdPNkmKa40I+NHQpcaVejjpVHsqMPvZsgfabySUdj/MW2nu0Az/WpSX
+         KjEA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of catalin.marinas@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=catalin.marinas@arm.com
+       spf=pass (google.com: domain of marc.zyngier@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=marc.zyngier@arm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of catalin.marinas@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=catalin.marinas@arm.com
-Date: Fri, 27 Apr 2018 11:27:05 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Chintan Pandya <cpandya@codeaurora.org>
-Cc: will.deacon@arm.com, mark.rutland@arm.com, toshi.kani@hpe.com,
-	linux-arch@vger.kernel.org, arnd@arndb.de,
-	ard.biesheuvel@linaro.org, marc.zyngier@arm.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	kristina.martsenko@arm.com, takahiro.akashi@linaro.org,
-	james.morse@arm.com, tglx@linutronix.de, akpm@linux-foundation.org,
-	linux-arm-kernel@lists.infradead.org
+       spf=pass (google.com: domain of marc.zyngier@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=marc.zyngier@arm.com
 Subject: Re: [PATCH v8 0/4] Fix issues with huge mapping in ioremap for ARM64
-Message-ID: <20180427102705.giwkzgqp43qiptws@armageddon.cambridge.arm.com>
+To: Chintan Pandya <cpandya@codeaurora.org>, catalin.marinas@arm.com,
+ will.deacon@arm.com, mark.rutland@arm.com, toshi.kani@hpe.com
+Cc: arnd@arndb.de, ard.biesheuvel@linaro.org, james.morse@arm.com,
+ kristina.martsenko@arm.com, takahiro.akashi@linaro.org,
+ gregkh@linuxfoundation.org, tglx@linutronix.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, akpm@linux-foundation.org
 References: <1522742446-5084-1-git-send-email-cpandya@codeaurora.org>
- <b2ea9760-cad4-8f30-98ac-86a04c4d42a4@codeaurora.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <a613f834-f356-a826-526f-aef532f62951@arm.com>
+Date: Tue, 3 Apr 2018 09:43:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b2ea9760-cad4-8f30-98ac-86a04c4d42a4@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1522742446-5084-1-git-send-email-cpandya@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596711199968894044?=
-X-GMAIL-MSGID: =?utf-8?q?1598894722257839189?=
+X-GMAIL-MSGID: =?utf-8?q?1596713875823060333?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 03:55:08PM +0530, Chintan Pandya wrote:
-> Ping...
+Hi Chintan,
+
+On 03/04/18 09:00, Chintan Pandya wrote:
+> This series of patches are follow up work (and depends on)
+> Toshi Kani <toshi.kani@hpe.com>'s patches "fix memory leak/
+> panic in ioremap huge pages".
 > 
-> On 4/3/2018 1:30 PM, Chintan Pandya wrote:
-> > This series of patches are follow up work (and depends on)
-> > Toshi Kani <toshi.kani@hpe.com>'s patches "fix memory leak/
-> > panic in ioremap huge pages".
+> This series of patches are tested on 4.9 kernel with Cortex-A75
+> based SoC.
 
-First of all, you'd need to post patches against the latest mainline
-(4.17-rcX).
+Given that this is targeting mainline, can you please test with 4.16?
+Basing your patches on something that is over 15 months old is not
+exactly reassuring.
 
-Second, since they depend on another series, we'd have to wait for the
-comments on that series to settle.
+Thanks,
 
+	M.
 -- 
-Catalin
+Jazz is not dead. It just smells funny...
