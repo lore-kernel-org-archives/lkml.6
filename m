@@ -1,129 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753027AbeDCTYO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:24:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38304 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752230AbeDCTYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:24:12 -0400
-Date: Tue, 3 Apr 2018 21:24:08 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH v4 2/2] KVM: X86: Add Force Emulation Prefix for "emulate
- the next instruction"
-Message-ID: <20180403192407.GA7351@flask>
-References: <1522400804-4578-1-git-send-email-wanpengli@tencent.com>
- <1522400804-4578-3-git-send-email-wanpengli@tencent.com>
+        id S1752515AbeDCT1D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:27:03 -0400
+Received: from mga11.intel.com ([192.55.52.93]:59475 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751179AbeDCT1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:27:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,402,1517904000";
+   d="scan'208";a="33965909"
+Subject: Re: [alsa-devel] [PATCH v3 0/2] ASoC: topology: Improve parsing
+ hw_configs
+To: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>,
+        Pan Xiuli <xiuli.pan@linux.intel.com>, linux-kernel@vger.kernel.org,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+References: <20180327205632.3677-1-k.marinushkin@gmail.com>
+ <17f0767a-2dea-92dd-a88e-a3f3e670d0d2@gmail.com>
+ <461bbabf-7c36-1361-8f66-5abbe3c7f4d8@linux.intel.com>
+ <ee6ba140-fa5c-78e9-47bc-125b1aca7672@gmail.com>
+ <260f1850-37f2-fffa-fb33-4b5ff823ba0b@linux.intel.com>
+ <21dd211e-2b93-b5af-0606-726432e40795@gmail.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <f03cb3f6-0346-685c-7c81-5c67a919a2b1@linux.intel.com>
+Date: Tue, 3 Apr 2018 14:19:12 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <21dd211e-2b93-b5af-0606-726432e40795@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1522400804-4578-3-git-send-email-wanpengli@tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-30 02:06-0700, Wanpeng Li:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 4/3/18 1:16 PM, Kirill Marinushkin wrote:
+> On 04/03/18 19:21, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 04/03/2018 12:15 AM, Kirill Marinushkin wrote:
+>>> On 04/03/18 02:57, Pierre-Louis Bossart wrote:
+>>>>
+>>>> On 04/02/2018 04:17 PM, Kirill Marinushkin wrote:
+>>>>> Hello Pierre-Louis,
+>>>>>
+>>>>> I explicitly clarified with Takashi: to have this patch series merged, we
+>>>>> need a
+>>>>> tag "Reviewed-by" from you.
+>>>> I am fine with the changes, but maybe while we are at it, we should clarify
+>>>> what mclk_direction means?
+>>> That's a good idea to have it solved within this patch series.
+>>>
+>>>>       __u8 mclk_direction;    /* 0 for input, 1 for output */
+>>>>
+>>>> This is really awful and might benefit for additional clarity using
+>>>> codec-centric conventions.
+>>>>
+>>> I agree that having a clear naming will avoid confusion for future usage.
+>>> I see from the code, that this variable is ignored. So we have no technical
+>>> restriction on how to interpret this.
+>>> I suggest to do similar to what we did for bclk_master:
+>>>
+>>> /* DAI mclk_direction */
+>>> #define SND_SOC_TPLG_MCLK_CO        0 /* for codec, mclk is output */
+>>> #define SND_SOC_TPLG_MCLK_CI          1 /* for codec, mclk is input */
+>>>
+>>>> We also had a discussion internally and can't figure out why the strings are
+>>>> different from the fields in the structure, I feel it'd be simpler to align
+>>>> config and code to avoid issues but keep existing notation for backwards
+>>>> compatibility, e.g.
+>>>>
+>>>> if (strcmp(id, "mclk_freq") == 0) || strcmp(id, "mclk_rate") == 0) {
+>>>>           if (snd_config_get_string(n, &val) < 0)
+>>>>                   return -EINVAL;
+>>>>
+>>>>               hw_cfg->mclk_rate = atoi(val);
+>>>>               continue;
+>>>> }
+>>> I agree with this. I will also do the same (keeping backwards-compatibility)
+>>> for:
+>>>
+>>> "format" => "fmt"
+>>> "bclk" => "bclk_master"
+>>> "bclk_freq" => "bclk_rate"
+>>> "bclk_invert" => "invert_bclk"
+>>> "fsync" => "fsync_master"
+>>> "fsync_invert" => "invert_fsync"
+>>> "fsync_freq" => "fsync_rate"
+>>> "mclk_freq" => "mclk_rate"
+>>> "mclk" => "mclk_direction"
+>>> "pm_gate_clocks" => "clock_gated"
+>>>
+>>> If you agree with both proposals, I will add patches to this patch series, and
+>>> re-send as patch v4.
+>>> Or can we handle it in a better way?
+>> A v4 is fine with me.
+>>
+>> These topology definitions appear in hindsight quite problematic, there are
+>> missing definitions and capabilities, e.g we have the ability to 'gate the
+>> clock' but without knowing which clock, and we have no ability to force the
+>> mclk/bclk/fsync on (be it on demand from a codec driver or on startup as a
+>> system requirement). And there is no real extension capability with a protocol
+>> version. The net effect is that people will have to create custom tokens and
+>> parsing for things that should be common...
+>>
 > 
-> There is no easy way to force KVM to run an instruction through the emulator 
-> (by design as that will expose the x86 emulator as a significant attack-surface).
-> However, we do wish to expose the x86 emulator in case we are testing it
-> (e.g. via kvm-unit-tests). Therefore, this patch adds a "force emulation prefix"
-> that is designed to raise #UD which KVM will trap and it's #UD exit-handler will
-> match "force emulation prefix" to run instruction after prefix by the x86 emulator.
-> To not expose the x86 emulator by default, we add a module parameter that should 
-> be off by default.
+> Yes, definitions which you mentioned really can become a problem.
+> But, I see from the header that topology files support versioning:
 > 
-> A simple testcase here:
+> ~~~~
+> #define SND_SOC_TPLG_ABI_VERSION    0x5    /* current version */
+> ~~~~
 > 
-> #include <stdio.h>
-> #include <string.h>
->    
-> #define HYPERVISOR_INFO 0x40000000
->    
-> #define CPUID(idx, eax, ebx, ecx, edx) \
->     asm volatile (\
->     "ud2a; .ascii \"kvm\"; cpuid" \
->     :"=b" (*ebx), "=a" (*eax), "=c" (*ecx), "=d" (*edx) \
->         :"0"(idx) );  
->    
-> void main()  
-> {  
-> 	unsigned int eax, ebx, ecx, edx;  
-> 	char string[13];  
->    
-> 	CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);  
-> 	*(unsigned int *)(string + 0) = ebx;  
-> 	*(unsigned int *)(string + 4) = ecx;  
-> 	*(unsigned int *)(string + 8) = edx;  
->    
-> 	string[12] = 0;  
-> 	if (strncmp(string, "KVMKVMKVM\0\0\0", 12) == 0)
-> 		printf("kvm guest\n");  
-> 	else  
-> 		printf("bare hardware\n");  
-> }
-> 
-> Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
-> Reviewed-By: Liran Alon <liran.alon@oracle.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/x86.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 1eb495e..c619564 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -146,6 +146,9 @@ bool __read_mostly enable_vmware_backdoor = false;
->  module_param(enable_vmware_backdoor, bool, S_IRUGO);
->  EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
->  
-> +static bool __read_mostly force_emulation_prefix = false;
-> +module_param(force_emulation_prefix, bool, S_IRUGO);
-> +
->  #define KVM_NR_SHARED_MSRS 16
->  
->  struct kvm_shared_msrs_global {
-> @@ -4844,6 +4847,18 @@ int handle_ud(struct kvm_vcpu *vcpu)
->  {
->  	enum emulation_result er;
->  
-> +	if (force_emulation_prefix) {
-> +		char sig[5]; /* ud2; .ascii "kvm" */
-> +		struct x86_exception e;
-> +
-> +		kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
-> +				kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e);
+> So, in future such problems can be solved by incrementing the version, if no
+> backwards capabilities are available.
 
-Looking at it again, we should skip the following check if the call
-failed (the sig is undefined in that case).
+Maybe I misunderstood this version number, I thought this was only for 
+the initial stages where there was quite a few evolutions in a couple of 
+months. If this can be upgraded then we might want to add new 
+definitions that we came up with during the SOF work but are of interest 
+to others.
 
-With that, or even without as we're talking about a feature that has no
-place in any production system,
-
-Reviewed-by: Radim Krčmář <rkrcmar@redhat.com>
-
-> +		if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
-> +			kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
-> +			return emulate_instruction(vcpu, 0) == EMULATE_DONE;
-> +		}
-> +	}
-> +
->  	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
->  	if (er == EMULATE_USER_EXIT)
->  		return 0;
-> -- 
-> 2.7.4
 > 
+> 
+> 
+> 
+> Before I continue with the patch v4, I want to clarify with you, so that we
+> avoid the misunderstanding:
+> 
+> * in the existing 4 patches, I will add a tag
+>    "Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>"
+> * in the new 2 patches, which we recently discussed, I will add a tag
+>    "Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>"
+> 
+> Do you agree with that?
+
+Yes, that's fine.
