@@ -1,86 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932300AbeDCNDh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:03:37 -0400
-Received: from smtp38.i.mail.ru ([94.100.177.98]:45514 "EHLO smtp38.i.mail.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932153AbeDCNDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:03:35 -0400
-Subject: Re: [PATCH 6/6] spi: sun4i: add DMA transfers support
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20180329185907.27281-1-ssuloev@orpaltech.com>
- <20180329185907.27281-7-ssuloev@orpaltech.com>
- <20180403081711.rqsp77mgnuvlnzt5@flea>
-From: Sergey Suloev <ssuloev@orpaltech.com>
-Message-ID: <19d5907c-f081-21ce-1b72-7c0a331eb073@orpaltech.com>
-Date: Tue, 3 Apr 2018 16:03:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932231AbeDCNG2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:06:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47282 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932168AbeDCNG0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:06:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 34EE960767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
+ readX() implementation
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, Timur Tabi <timur@codeaurora.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1522425494-2916-1-git-send-email-okaya@codeaurora.org>
+ <1522425494-2916-2-git-send-email-okaya@codeaurora.org>
+ <20180403104925.fuyajja6tyanlna4@lakrids.cambridge.arm.com>
+ <CAK8P3a3fZx42sQY41Pf+Q3fMNrP2FgXvvntnrLkQXbAezOQjEw@mail.gmail.com>
+ <d5c0c170-07ab-273f-7d4f-301d2bedb992@codeaurora.org>
+ <CAK8P3a0+Q-aBbKsqqypZfCVzHTwcepL9KhBP9qJKE+2FknWHMg@mail.gmail.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <587b59bb-2794-ffc2-3cd3-b77de85d3e7d@codeaurora.org>
+Date: Tue, 3 Apr 2018 09:06:23 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180403081711.rqsp77mgnuvlnzt5@flea>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAK8P3a0+Q-aBbKsqqypZfCVzHTwcepL9KhBP9qJKE+2FknWHMg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Authentication-Results: smtp38.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
-X-7FA49CB5: 0D63561A33F958A56E96B8F32EF386FA9E4130E898BA3A9A535400B9010DFEBA725E5C173C3A84C30584FF81F342DA07226B25F53A7E5D1CD2457FAF19517CF2C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F5D41B9178041F3E72623479134186CDE6BA297DBC24807EABDAD6C7F3747799A
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D8491734E5BE2966C42ED35C980218CED0720F069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 11:17 AM, Maxime Ripard wrote:
-> On Thu, Mar 29, 2018 at 09:59:07PM +0300, Sergey Suloev wrote:
->> +static int sun4i_spi_dma_setup(struct device *dev,
->> +			       struct resource *res)
->> +{
->> +	struct spi_master *master = dev_get_drvdata(dev);
->> +	struct dma_slave_config dma_sconf;
->> +	int ret;
->> +
->> +	master->dma_tx = dma_request_slave_channel_reason(dev, "tx");
->> +	if (IS_ERR(master->dma_tx)) {
->> +		dev_err(dev, "Unable to acquire DMA TX channel\n");
->> +		ret = PTR_ERR(master->dma_tx);
->> +		goto out;
->> +	}
->> +
->> +	dma_sconf.direction = DMA_MEM_TO_DEV;
->> +	dma_sconf.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
->> +	dma_sconf.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-> I guess that would depend on the size of the transfer, right?
-no
-"this is the width in bytes of the source (RX)register where DMA data 
-shall be read. If the sourceis memory this may be ignored depending on 
-architecture."
-AFAIK is should be 1 byte for SPI side and seems to be ignored for 
-memory side, but as soon as I don't know what should be correct value 
-for memory side I just put 1 there too.
->
->> +	dma_sconf.dst_addr = res->start + SUN4I_TXDATA_REG;
->> +	dma_sconf.dst_maxburst = 1;
->> +	dma_sconf.src_maxburst = 1;
-> And a burst of 1 seems sub-optimal here.
-I did some tests before with 3/4 FIFO size but it didn't work and I got 
-stuck with 1 byte.
-It seems like 1 byte is the correct value because in SPI protocol we can 
-only send 1 byte in 1 burst.
+On 4/3/2018 8:56 AM, Arnd Bergmann wrote:
+> On Tue, Apr 3, 2018 at 2:44 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
+>> On 4/3/2018 7:13 AM, Arnd Bergmann wrote:
+>>> On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>>>> Hi,
+>>>>
+>>>> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
+>>>>> The default implementation of mapping readX() to __raw_readX() is wrong.
+>>>>> readX() has stronger ordering semantics. Compiler is allowed to reorder
+>>>>> __raw_readX().
+>>>>
+>>>> Could you please specify what the compiler is potentially reordering
+>>>> __raw_readX() against, and why this would be wrong?
+>>>>
+>>>> e.g. do we care about prior normal memory accesses, subsequent normal
+>>>> memory accesses, and/or other IO accesses?
+>>>>
+>>>> I assume that the asm-generic __raw_{read,write}X() implementations are
+>>>> all ordered w.r.t. each other (at least for a specific device).
+>>>
+>>> I think that is correct: the compiler won't reorder those because of the
+>>> 'volatile' pointer dereference, but it can reorder access to a normal
+>>> pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
+>>> of using writel to trigger a DMA, or using a readl to see if a DMA has
+>>> completed.
+>>
+>> Yes, we are worried about memory update vs. IO update ordering here.
+>> That was the reason why barrier() was introduced in this patch. I'll try to
+>> clarify that better in the commit text.
+>>
+>>>
+>>> The question is whether we should use a stronger barrier such
+>>> as rmb() amd wmb() here rather than a simple compiler barrier.
+>>>
+>>> I would assume that on complex architectures with write buffers and
+>>> out-of-order prefetching, those are required, while on architectures
+>>> without those features, the barriers are cheap.
+>>
+>> That's my reasoning too. I'm trying to follow the x86 example here where there
+>> is a compiler barrier in writeX() and readX() family of functions.
+> 
+> I think x86 is the special case here because it implicitly guarantees
+> the strict ordering in the hardware, as long as the compiler gets it
+> right. For the asm-generic version, it may be better to play safe and
+> do the safest version, requiring architectures to override that barrier
+> if they want to be faster.
+> 
+> We could use the same macros that riscv has, using __io_br(),
+> __io_ar(), __io_bw() and __io_aw() for before/after read/write.
 
->
->> +	ret = sun4i_spi_dma_setup(&pdev->dev, res);
->> +	if (ret) {
->> +		if (ret == -EPROBE_DEFER) {
->> +			/* wait for the dma driver to load */
->> +			goto err_free_master;
->> +		}
->> +		dev_warn(&pdev->dev, "DMA transfer not supported\n");
-> Saying why it's not supported would be great.
-I can put more info in this log
-but there is already a message printed from sun4_spi_dma_setup() if any 
-error occurs
->
-> Maxime
->
+Sure, let me take a stab at it. 
+
+> 
+>       Arnd
+> 
+
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
