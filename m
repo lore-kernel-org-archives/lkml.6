@@ -1,202 +1,158 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3758934-1522961405-2-16014113643070885881
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='ISO-8859-1', plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522961404; b=SbqVybQ4PmXOYOaJkYY1fEQxiF0UH+Bs/gvc8R3IChRe9CvNyV
-    mNfqAF8fM4+5WOTrwkPjya1PXQJ+h//HbO3S5gdojJAQLjco1T9wlUQM799rU0pV
-    twzlWWOFPBZ10e66u4+BJhdmmeLTV+smMxZFKB8k5P2Y7ngqHdobfLIzqRIszFtU
-    WctYjvWEPtJJFDuyYi5m5KuPl/1k9ycVcVgwDi0+Z1G3St9tFUzUinBCV19YQQ+n
-    07phsy2pTUohOvVp2kTy+MHCLFy4pWC5UI7gpVErFNKqx2MC2p3OokBwnIWIBEcY
-    BiOX6tZYixphn0omxgM6c47gt93SU6AJmBPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522961404;
-    bh=8iEx7hH3whAz9fQOUCOTut4Spjv6u3oiprCnhu1hFEk=; b=gaEA4lgJVWYi
-    mzIh6qwX5+bC3ZqZNbXGrgKaEtTbJ/0eerpMphjZozMM7aanbs8AONvrbJDmuHfe
-    Dxww9FU1b4x75NRw9Rk/QM3n5U3bRf0KPCexFOgV5nT7eWPaLjxgNgMOLq9PapKZ
-    Dj+iSZkyedQ+/7+4bIKQwgnejkidWYVZXttCmsaVIBCwe/MOD6+4Y26CeymL3mu/
-    r2S7c78I5RBZpZ4MLCW2fCRxFdaK1aPXY6xjqP0OWd4zfeFRTwAgh3rYQAgTWgPM
-    DA6lDYRLZ8OU9SChIHZd1AKyxiXBr3U6P7Vdi8VeF9gJrgQ9eWCki9d2ut0VITTk
-    IuQq5XnhLA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fOf2x/jI;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fOf2x/jI;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG699Fuyl2JleOGySZcp/7ooSbxdb2L6MVwUzywcaUQm/vji3CU26MKjsN3U3bzGZjttTpPCPeiKiURMqEaYQ1JHK28IzGvs/O1UU50o1VudQn9s4uWj
-    2YrtknSRnM16B4mQFZnNfUT4uUOMLV0DTPRpO74y7bM1bzLt8Rcfgp44ezlBDuHSrnjqABaMj3RYriiWawSk9F9g3NwIA5+TeOIBJrIlGedYDEfqvx10oOzM
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=NTfZxkeiJG3UAG_HXy8A:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751262AbeDEUuB (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 16:50:01 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:42789 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751251AbeDEUuA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 5 Apr 2018 16:50:00 -0400
-X-Google-Smtp-Source: AIpwx4+oZyJ0XE27EakYP5Qbu3CzceOv7YC84+V0nuIrb/Pr/F8IStjh7f537FXl5il0e49oSw3vwQ==
-Message-ID: <1522961397.4019.0.camel@redhat.com>
-Subject: Re: [PATCH v2] drm/i915/dp: Send DPCD ON for MST before phy_up
-From: Lyude Paul <lyude@redhat.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
-        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?=
-        <ville.syrjala@linux.intel.com>, Laura Abbott <labbott@redhat.com>,
-        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Thu, 05 Apr 2018 16:49:57 -0400
-In-Reply-To: <20180405203601.23242-1-lyude@redhat.com>
-References: <20180405203601.23242-1-lyude@redhat.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <peda@axentia.se>
+X-Google-Smtp-Source: AIpwx4/yQYCtKfu2RBiE5QPGqNe+dckXVUczAbcDhwBF8/sZbwB5P88uJhkX90scMHaDd60FL3zo
+ARC-Seal: i=1; a=rsa-sha256; t=1522769808; cv=none;
+        d=google.com; s=arc-20160816;
+        b=v0+GYujWU8mYO0MwTwOY8p7LO3uD+kGyEpgH0V9StUYEocrfOdr/6/4Esv1oB6C77X
+         pa+XrReIMrW5cB2z+xZGyQ5Y103QExiHuS2qe5sV/tSxaDo/NE2KBBCd8XP1RUOAFg3K
+         xVrQ7lOjUHvVfMzTEe60Rs3mftuCUPZAA3K/GQO+kUT5BOzaGUtbFozwzQRuJGy6/2Ek
+         TGdbsKO6eD+Alt9fol8/BTgfyBrLdMu2/iMU0vnvgP1uqvDQxFYFQ3mExZtTQu8oBfxZ
+         tZ7SWN819jFhAQqjumL5S8jUHPwPoAL1Ws/BYjoBtpJrqdVqtrMNmsriUgwILw+a2FBd
+         nGtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:message-id
+         :date:subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=FSC4umCOUkd5pvxhU0cKLjqWNOV8KLdNSkdTr/F6f1U=;
+        b=NE3KhAMg2suKOICUA0fkLBJ3WTn3UfOx1g+q4hH9hnmS+FBINO4xhc74PDdVlkhUC6
+         QdDK5b2yIb18468/ACpZb1ORn+W0TjkZAaPhcyngli9lhKw/9RPses70xIgIJW96Dt3H
+         3ovhqDxZDwi7XrINPRBTUHCjd6kVKEJ4OVkM8JBSLiUGLtZMe+nQVYtlw7co9WiyAZai
+         KMzhfMCuE/hOiObNM5FjaY9kc5BQOs9IzV9pczuS3zGsz4NqzHJ7Dqub5jgIJacqEZpH
+         tyJyP1Gn1i2qp0uDufpNyG+2/haMS91RukXIH2NBVyzzwzz8Pz0gQ1bwMUhmeQ7m0aa6
+         9LiA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=TTM9INL6;
+       spf=pass (google.com: domain of peda@axentia.se designates 104.47.2.120 as permitted sender) smtp.mailfrom=peda@axentia.se
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=TTM9INL6;
+       spf=pass (google.com: domain of peda@axentia.se designates 104.47.2.120 as permitted sender) smtp.mailfrom=peda@axentia.se
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Hartmut Knaack <knaack.h@gmx.de>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Phil Reid <preid@electromag.com.au>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/2] iio: add unit converter
+Date: Tue,  3 Apr 2018 17:36:33 +0200
+Message-Id: <20180403153635.8228-1-peda@axentia.se>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: VI1PR0101CA0046.eurprd01.prod.exchangelabs.com
+ (2603:10a6:800:1f::14) To AM4PR0202MB2772.eurprd02.prod.outlook.com
+ (2603:10a6:200:8c::22)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 79e1662a-c135-43a1-41bb-08d59978b4fd
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR0202MB2772;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;3:1CkaGmIHpH13CwNNuLafYUPBtQ5zZuIf9R4rPTqDbEFBMjbTX1OaUA3OcGBq5hNt8YVLVly5sCzodtP18b7AST4UBwsefhPgBTg45M9UUT6ly0s7LKGhQaFjlKJFr3ouIehXcYzNfKKlfM0oorBYWXTslAf0hn4K5HuK7X0i2pk8tgxVGZj7MjxXi1S8gDKmb+0LuL1ZTYc5IaA+5jm3csGiNj0lHckm9udeUrANM53pSRh18cR3K5ia9KiNPTGX;25:Brf/bzpagYMSBN4Q4CPlk1sR7qHbl796o88cCV/uHWf8fcGl3XyLlxc6OrlEBNlPUtC+OO8YwnY2psTzjAc5kETC99P53wvv9rNRoi6eL0poUvlJQ6kworRB79T8bACzR3SqyVaDVdxNC6fmEkrUPZWyvcthILG6/+BWRlAIR/F4G96MpjCMfRTkj3lAWAvBzRiFvGzVKnwWQ2ClJXsUgyv2NRiBx6e1WFvQnlrAL7HrHkeNZDc1sQjnk7RK3qYKDqBIVzfLw/vpAqdGMphswV38buogYmobUk0IvLMlWYHNycKdFpP5yiLa6lP1PrSwbuneDOsYqX6lJva7mrXUEg==;31:LIXAnUggfzHhI9gIoU155du+p84/kLIaGNtrC9GFmxhrh+c+rSCt+9FP3bJmg8pKOTYzXQ/7Z7ywmR7AZ5sy3yVzIia8mCGwyNfs0kgrH6lg/ZdZh1xEZfMyTcWt8BQfpWs15pSEUeMNXfN5D0dF8GEN6lyCx+uYVdROF0P2Xt4/jk7/w3C5DwtwrVOuWOZ8krLjUd1ax6UF5Ai+jO6zPUfjimgPx92vP2Cb630p8a0=
+X-MS-TrafficTypeDiagnostic: AM4PR0202MB2772:
+X-Microsoft-Antispam-PRVS: <AM4PR0202MB2772623CB1D67DD1FAE1B422BCA50@AM4PR0202MB2772.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(6041310)(20161123564045)(20161123562045)(20161123558120)(2016111802025)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:AM4PR0202MB2772;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0202MB2772;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;4:hfk1fmo/A26XwmYaqd81V+zkhgD9Jb1VRU+4OdfQVdQExy0UYqssiyfpTA8tlx4mAAwhnfxZnKdAjciYn2BLq4GD288pT1OBa9CxnNj9sxDGm3y5v1D9bxXeFlNUbi3BVy7JqQWGTnvbTbfb3fCQ+IOF+7DplJYyResNMfkbiq7A4cjQyRmQPuuRtc4OZA3j5LusE6A28w9zzuP73oNfGdj1VrHA6noE19CFgtZjaJggfaYiKX/7hWJq+/PN+P+MjqqECMlLEkyGRGOqpKtDpA==
+X-Forefront-PRVS: 0631F0BC3D
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39840400004)(346002)(366004)(396003)(376002)(39380400002)(189003)(199004)(47776003)(6512007)(6306002)(476003)(105586002)(53936002)(16526019)(186003)(66066001)(97736004)(52116002)(4326008)(106356001)(51416003)(6486002)(8666007)(36756003)(6916009)(25786009)(6506007)(486005)(54906003)(386003)(26005)(956004)(486005)(2616005)(81166006)(81156014)(6116002)(50466002)(2351001)(316002)(74482002)(2361001)(1076002)(16586007)(8936002)(5660300001)(50226002)(68736007)(48376002)(3846002)(2906002)(7736002)(305945005)(6666003)(966005)(7416002)(478600001)(8676002)(86362001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2772;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2772;23:QeKE3ZW4lG8xoTI3Yx8yVl01cUJ/q9JZurhkHtL?=
+ =?us-ascii?Q?b8ThsLqW7ERMiIR7XyUl8riU9NdoS2mXewHn0wzLA4rgkavFMc77ZnxzUe+7?=
+ =?us-ascii?Q?XahhGyco7VXL9PGu76u10ekkcGoDKnPXXUmtnK89tC0xKdGtcOoOExrl1S4V?=
+ =?us-ascii?Q?PMUHGMXW/BZKhQcjnzjOHk/UYY13psMWd6g7yTlY3iJWHCuKM3xj/vptsGyo?=
+ =?us-ascii?Q?g6Yp0muRcDM6U95G/S0F74FGbzWbjwUgUEnuNTM+eAXHuOl/wOTSnNMG6vOE?=
+ =?us-ascii?Q?FfL/YLEoVExifjL7eEJM1i6o0r0hnxFjMeYM87Ykvua/cJV+8Lex+K999Yh5?=
+ =?us-ascii?Q?Qc1T/EX+6gpM5OxaouB720/SX2sD88rrQOHNfd6eKiv9mPSKdkEyazXVoDHY?=
+ =?us-ascii?Q?1HfY8rdYWaALXeWJ6rsFsUcD8gG/8uSmd8OsX92/2Legt99CUYULvWB4+wmm?=
+ =?us-ascii?Q?K6jJIBX5G8Bv63g5kHSo7cU/wL9e1aPLEwh7PT46OH2z4aUqtkQ35e4wLN6b?=
+ =?us-ascii?Q?l7wX1YqFltlxiXRDaOC5WimrVrnZ0mVmK1yyzlOkc9rNAP05v3PaAN87qFrM?=
+ =?us-ascii?Q?pdIPernuNbZvUayheZtshEDfys57w/adn9zSWW0FczKGYPcA1tre/hT+ujsN?=
+ =?us-ascii?Q?DvK0SWOpugTvqyIJ77adBViE0F+7l0e+yy9dok39dTqvLOsqmOH/NkjrbOg0?=
+ =?us-ascii?Q?jA0L7yNdojXdI6h6wH1c18JhSidg9aAhsvsw/lIQOocSqYYY5QmD2QFSs6V9?=
+ =?us-ascii?Q?R5sO1excE0I0UG6uVXSJBIhlPVB7U8xj+AYIhMfM+0fE9kMQk57gZpWvEEKz?=
+ =?us-ascii?Q?t/YCZUbGxdxZgQK0YNl1AsP3Oxcc7jU/3GTYq3s1WX6EsQ7OtRTsRvNImyWz?=
+ =?us-ascii?Q?wumQANMXAlh16uwsSYgSsUpc4b6fFcxkxoYJ1+eIPlQVpDxZf5iJQulNL77x?=
+ =?us-ascii?Q?PqU9GdT/DGlZwFbhrpJCGfN5qv7FIlG5PrFbsXCUH3smfdPI+bythO3TCruR?=
+ =?us-ascii?Q?GlW7CCg4raSjrBAyD8YQumftfyjAN5/8WZZtxmNkPyr073kfWIAHqzIatOKh?=
+ =?us-ascii?Q?tZNRYpTp1ci6TS+mAz30NIaAxB38zL5CLy4Mx883iUYe5xbbVw0Uf/QAvk80?=
+ =?us-ascii?Q?jqE94KItI+I2+vTLnHlrbTSDQNR3QuVXiOX0fUsqZAcGNNzPOF1lfGguAnrc?=
+ =?us-ascii?Q?0g0A0w16hQErb04BaluwfjioOnhriqaq3qxeR4PflLl68Ixzdg0rW+Mm3KGU?=
+ =?us-ascii?Q?/Ec2uQRphINy8FscuIK5HIJ04LTlTleAot4nNAci3xx9iJTxurZGivNU2JNb?=
+ =?us-ascii?Q?eekyX4zRQVXnMit/uSUFMy1d+z62iv2ubqFwf2ivUt7/b?=
+X-Microsoft-Antispam-Message-Info: nL6ON3ZZ/0N7Zc1O9tio6Oc5Dv2xa8Ygp5YEsxrW5/TrRjsFnk5nk8mAaXVeimCxK0vBudss7xzGh9R1uGDt5fUT/xvIrxWukBqBldG8tc1GlvM4JWUf1sHPqJGWMzY5W3/3V3WA3/GebqPRUYRLMTy2NKktacTgeKK9rDdao5LznV10W66qaR2S1nAuQ7St
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;6:CoDlF3p4Dc1WOHr57gBWFzTBsMXm12IGEQOm9N7ad8+MTI3gu3/KI/eKfBGBhHqvT4idxREVUtHb8E6wuSneo6ZUb0oNW3iwLyFkuOItgJX74iSPvAf0ZM1axTbFXAvBWBH3cDr0KFRVz6Ok12QiNZzFXcpf0tO0SptJcQ1W0cSl3nmnqMcROMNJs3ZBLAbWRjs+0BBUndoqb+2utw3P0uzYbVhDERbrgiytNpL/K/SRpBEmW0Gm0Vyr8bOkQV32ATzL34ir9y7Seu2VEwFi7fgfhU+du/atPBBVYHBLgSaRuRGdqposBlIhsIbFPraS8mTMaGnw/kNN+m1JXoOhmfbTRPUDvk1nX+2D/u+ka7pu7n2w/S6tADdkj/xU9xWwVqg53ZZDppYyrtl88GTOu2aZz74p8XTzhEc4eh3hUELbLeO5DlaJnx09MqZ5OM5jGppodmyw9oCpou8ack5Ljg==;5:93+88a8iBXCCMIRav8y/mTtpm3GGTh+pb6jgkA9/cHxHM4XkOREKl5awwznIGiLL4awVGW//rf6y67rvbRoidTKkIwG3nnmrWtGjFXAtw3WHc3XtL+TX9lFFYC1Go3pXk29n55QK+bdz1ChBaonQ/y0O6Yir5xgt4z9vUJdWJa8=;24:Smb5u1AM514p12WBNXZRQ4KfVvxGcLZGoyCy7LRF+9htCKqJ6sHkpra6tCFUK2ZG9Wk8hPAnfrBMxkft5mf1PHJQ5MDvMVqOxMhoO4xaubo=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2772;7:iiosaQPuqwuiTWMEJy+7KH5gsHv0jg0eeW2ZcS85YdQ2NdWapGNQI6UuyVPt9T23GSmy2VEsdkHBXPgrFOitHMn/ORnQU48WFut/XymX3FW4qaMM+Ibw6ImC58LCBkoM5JQc70dAy7CDP3SvZFIi/iUwZKRDEfnmY/Y9sSnnUNmE5RmLvbZPj9H07HCa0E4fRIXBhyGBr2eVP9DOl/Y1/bMWNAbHwOnptqP5YJqpasSQPUk6lON7L4q0+wMEZwAH
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2018 15:36:44.1574 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79e1662a-c135-43a1-41bb-08d59978b4fd
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0202MB2772
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596739875121160497?=
+X-GMAIL-MSGID: =?utf-8?q?1596739875121160497?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Actually - ignore this patch, I'm going to do a v3 because i just noticed
-there is something very silly and broken I just introduced into the disable
-codepath
+Hi!
 
-On Thu, 2018-04-05 at 16:36 -0400, Lyude Paul wrote:
-> When doing a modeset where the sink is transitioning from D3 to D0 , it
-> would sometimes be possible for the initial power_up_phy() to start
-> timing out. This would only be observed in the last action before the
-> sink went into D3 mode was intel_dp_sink_dpms(DRM_MODE_DPMS_OFF). We
-> originally thought this might be an issue with us accidentally shutting
-> off the aux block when putting the sink into D3, but since the DP spec
-> mandates that sinks must wake up within 1ms while we have 100ms to
-> respond to an ESI irq, this didn't really add up. Turns out that the
-> problem is more subtle then that:
-> 
-> It turns out that the timeout is from us not enabling DPMS on the MST
-> hub before actually trying to initiate sideband communications. This
-> would cause the first sideband communication (power_up_phy()), to start
-> timing out because the sink wasn't ready to respond. Afterwards, we
-> would call intel_dp_sink_dpms(DRM_MODE_DPMS_ON) in
-> intel_ddi_pre_enable_dp(), which would actually result in waking up the
-> sink so that sideband requests would work again.
-> 
-> Since DPMS is what lets us actually bring the hub up into a state where
-> sideband communications become functional again, we just need to make
-> sure to enable DPMS on the display before attempting to perform sideband
-> communications.
-> 
-> Changes since v1:
-> - Remove comment above if (!intel_dp->is_mst) - vsryjala
-> - Move intel_dp_sink_dpms() for MST into intel_dp_post_disable_mst() to
->   keep enable/disable paths symmetrical
-> - Improve commit message - dhnkrn
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: stable@vger.kernel.org
-> Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST
-> hub.")
-> ---
-> This email should hopefully actually be picked up by patchwork this
-> time, hooray!
-> 
->  drivers/gpu/drm/i915/intel_ddi.c    | 6 ++++--
->  drivers/gpu/drm/i915/intel_dp_mst.c | 2 ++
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_ddi.c
-> b/drivers/gpu/drm/i915/intel_ddi.c
-> index a6672a9abd85..c0bf7419e1c1 100644
-> --- a/drivers/gpu/drm/i915/intel_ddi.c
-> +++ b/drivers/gpu/drm/i915/intel_ddi.c
-> @@ -2324,7 +2324,8 @@ static void intel_ddi_pre_enable_dp(struct
-> intel_encoder *encoder,
->  		intel_prepare_dp_ddi_buffers(encoder, crtc_state);
->  
->  	intel_ddi_init_dp_buf_reg(encoder);
-> -	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
-> +	if (!intel_dp->is_mst)
-> +		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
->  	intel_dp_start_link_train(intel_dp);
->  	if (port != PORT_A || INTEL_GEN(dev_priv) >= 9)
->  		intel_dp_stop_link_train(intel_dp);
-> @@ -2427,7 +2428,8 @@ static void intel_ddi_post_disable_dp(struct
-> intel_encoder *encoder,
->  	 * Power down sink before disabling the port, otherwise we end
->  	 * up getting interrupts from the sink on detecting link loss.
->  	 */
-> -	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
-> +	if (!intel_dp->is_mst)
-> +		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
->  
->  	intel_disable_ddi_buf(encoder);
->  
-> diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c
-> b/drivers/gpu/drm/i915/intel_dp_mst.c
-> index c3de0918ee13..2493bd1e0e59 100644
-> --- a/drivers/gpu/drm/i915/intel_dp_mst.c
-> +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-> @@ -176,6 +176,7 @@ static void intel_mst_post_disable_dp(struct
-> intel_encoder *encoder,
->  	 */
->  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port,
->  				     false);
-> +	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
->  
->  	intel_dp->active_mst_links--;
->  
-> @@ -223,6 +224,7 @@ static void intel_mst_pre_enable_dp(struct intel_encoder
-> *encoder,
->  
->  	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
->  
-> +	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
->  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port,
-> true);
->  	if (intel_dp->active_mst_links == 0)
->  		intel_dig_port->base.pre_enable(&intel_dig_port->base,
--- 
+This driver implements support for voltage dividers and current
+sense circuits. It's pretty generic and should be easily adaptable
+to other linear scaling purposes...
+
+The driver is still named "unit converter", because it was not
+clear to me that there was a real problem with the driver being
+named that. I got the impression that the naming discussion in
+v1 was mainly about the category, and that it kind of looked odd
+and non-specific with unit-converter in the DT bindings, but
+what do I know?
+
 Cheers,
-	Lyude Paul
+Peter
+
+Changes since v1:    https://lkml.org/lkml/2018/3/19/801
+- Put the driver in the new afe category (Analog Front Ends) and do not
+  move the iio-mux driver.
+- Do not refer to the source channel as "parent", use "source" instead.
+- Have the DT compatible drive the target unit, instead of relying on a
+  "type" DT-property for that.
+- In the DT bindings, use an unnamed source channel.
+- Do not set up writes to _RAW (sorry Phil) as I don't need it and have
+  not tested it. It's easy to add back if needed.
+- Fail if the source channel does not support _RAW or _SCALE.
+- Fix various spelling issues.
+- Fix various code style issues.
+
+Peter Rosin (2):
+  dt-bindings: iio: afe: add current-sense-cuicuit and voltage-divider
+  iio: afe: unit-converter: new driver
+
+ .../bindings/iio/afe/current-sense-circuit.txt     |  45 ++++
+ .../bindings/iio/afe/voltage-divider.txt           |  45 ++++
+ MAINTAINERS                                        |   8 +
+ drivers/iio/Kconfig                                |   1 +
+ drivers/iio/Makefile                               |   1 +
+ drivers/iio/afe/Kconfig                            |  18 ++
+ drivers/iio/afe/Makefile                           |   6 +
+ drivers/iio/afe/iio-unit-converter.c               | 257 +++++++++++++++++++++
+ 8 files changed, 381 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/afe/current-sense-circuit.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
+ create mode 100644 drivers/iio/afe/Kconfig
+ create mode 100644 drivers/iio/afe/Makefile
+ create mode 100644 drivers/iio/afe/iio-unit-converter.c
+
+-- 
+2.11.0
