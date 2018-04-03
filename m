@@ -1,72 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754796AbeDCH12 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 03:27:28 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37546 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754276AbeDCH10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 03:27:26 -0400
-Date: Tue, 3 Apr 2018 09:27:24 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 01/13] ARM: move cputype definitions into another
- file
-Message-ID: <20180403092724.607e8e37@dell-desktop.home>
-In-Reply-To: <CAGb2v64GL=1UcYs1tFp-mS07vbHBao82SEhyzUrUHB++2-EKBg@mail.gmail.com>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
-        <20180403061836.3926-2-mylene.josserand@bootlin.com>
-        <CAGb2v64GL=1UcYs1tFp-mS07vbHBao82SEhyzUrUHB++2-EKBg@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1754830AbeDCHaU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 03:30:20 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:19718 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753267AbeDCHaS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 03:30:18 -0400
+From: Amelie DELAUNAY <amelie.delaunay@st.com>
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre TORGUE" <alexandre.torgue@st.com>
+CC: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ldv-project@linuxtesting.org" <ldv-project@linuxtesting.org>
+Subject: RE: [PATCH] spi: stm32: Fix error handling in stm32_spi_probe()
+Thread-Topic: [PATCH] spi: stm32: Fix error handling in stm32_spi_probe()
+Thread-Index: AQHTyGD5P5VwJj4yIEKyiuAgFvxYGKPuqJew
+Date: Tue, 3 Apr 2018 07:24:47 +0000
+Message-ID: <1c12d20a40384fc78262bcd82c68ba6a@SFHDAG3NODE2.st.com>
+References: <1522439684-7510-1-git-send-email-khoroshilov@ispras.ru>
+In-Reply-To: <1522439684-7510-1-git-send-email-khoroshilov@ispras.ru>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen-Yu,
+Hi,
 
-Thank you for your review!
-
-On Tue, 3 Apr 2018 14:52:45 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
-
-> On Tue, Apr 3, 2018 at 2:18 PM, Mylène Josserand
-> <mylene.josserand@bootlin.com> wrote:
-> > To add the support for SMP on sun8i-a83t, we will use some
-> > definitions in an assembly file so move definitions into
-> > another file to separate C functions and macro defintions.  
+> -----Original Message-----
+> From: Alexey Khoroshilov [mailto:khoroshilov@ispras.ru]
+> Sent: vendredi 30 mars 2018 21:55
+> To: Mark Brown <broonie@kernel.org>; Amelie DELAUNAY
+> <amelie.delaunay@st.com>; Maxime Coquelin
+> <mcoquelin.stm32@gmail.com>; Alexandre TORGUE
+> <alexandre.torgue@st.com>
+> Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>; linux-spi@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; ldv-
+> project@linuxtesting.org
+> Subject: [PATCH] spi: stm32: Fix error handling in stm32_spi_probe()
 > 
-> Instead of moving the definitions, you could guard all the C
-> stuff in "#ifndef __ASSEMBLY__". AFAIK a few header files do that.
-
-Oh, right. It is better with this check so I will use that in the next
-iteration of my series.
-
-Best regards,
-
-Mylène
-
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
-
+> clk_get_rate() is below clk_prepare_enable(), so its error should lead to goto
+> err_clk_disable, not to err_master_put.
 > 
-> ChenYu
+> Found by Linux Driver Verification project (linuxtesting.org).
 > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  arch/arm/include/asm/cputype.h     | 94 +-----------------------------------
-> >  arch/arm/include/asm/cputype_def.h | 98 ++++++++++++++++++++++++++++++++++++++  
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> ---
+>  drivers/spi/spi-stm32.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c index
+> ba9743fa2326..ad1e55d3d5d5 100644
+> --- a/drivers/spi/spi-stm32.c
+> +++ b/drivers/spi/spi-stm32.c
+> @@ -1129,7 +1129,7 @@ static int stm32_spi_probe(struct platform_device
+> *pdev)
+>  	if (!spi->clk_rate) {
+>  		dev_err(&pdev->dev, "clk rate = 0\n");
+>  		ret = -EINVAL;
+> -		goto err_master_put;
+> +		goto err_clk_disable;
+>  	}
+> 
+>  	spi->rst = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> --
+> 2.7.4
+
+Thanks for the patch!
+
+Reviewed-by: Amelie Delaunay <amelie.delaunay@st.com>
+
+Regards,
+Amelie
