@@ -1,118 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeDCPop (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:44:45 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:60800 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751773AbeDCPon (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:44:43 -0400
-Message-ID: <1522770281.4522.14.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state
- during dom0 boot
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Daniel Kiper <daniel.kiper@oracle.com>, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Cc: ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
-        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
-        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
-Date: Tue, 03 Apr 2018 08:44:41 -0700
-In-Reply-To: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
-References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1752390AbeDCPo6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:44:58 -0400
+Received: from smtp57.i.mail.ru ([217.69.128.37]:42930 "EHLO smtp57.i.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752093AbeDCPo4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:44:56 -0400
+From: Sergey Suloev <ssuloev@orpaltech.com>
+To: Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Sergey Suloev <ssuloev@orpaltech.com>
+Subject: [PATCH v3 1/6] spi: sun6i: coding style/readability improvements
+Date: Tue,  3 Apr 2018 18:44:44 +0300
+Message-Id: <20180403154449.2443-2-ssuloev@orpaltech.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180403154449.2443-1-ssuloev@orpaltech.com>
+References: <20180403154449.2443-1-ssuloev@orpaltech.com>
+Authentication-Results: smtp57.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A5D9710FBD82255F3F840FE9263A247D775E609A0E4B1FB347725E5C173C3A84C3A1C30C8AFC676C8BB15F31373ADA20CCD246AA24B5346CFAC4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F05F538519369F3743B503F486389A921A5CC5B56E945C8DA
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D849172E4A9A1860CE5F6E9FA406F210032F5B069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-03 at 16:39 +0200, Daniel Kiper wrote:
-> Initialize UEFI secure boot state during dom0 boot. Otherwise the
-> kernel
-> may not even know that it runs on secure boot enabled platform.
-> 
-> Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
-> ---
->  arch/x86/xen/efi.c                        |   57
-> +++++++++++++++++++++++++++++
->  drivers/firmware/efi/libstub/secureboot.c |    3 ++
->  2 files changed, 60 insertions(+)
-> 
-> diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
-> index a18703b..1804b27 100644
-> --- a/arch/x86/xen/efi.c
-> +++ b/arch/x86/xen/efi.c
-> @@ -115,6 +115,61 @@ static efi_system_table_t __init
-> *xen_efi_probe(void)
->  	return &efi_systab_xen;
->  }
->  
-> +/*
-> + * Determine whether we're in secure boot mode.
-> + *
-> + * Please keep the logic in sync with
-> + * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
-> + */
-> +static enum efi_secureboot_mode xen_efi_get_secureboot(void)
-> +{
-> +	static efi_guid_t efi_variable_guid =
-> EFI_GLOBAL_VARIABLE_GUID;
-> +	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
-> +	efi_status_t status;
-> +	u8 moksbstate, secboot, setupmode;
-> +	unsigned long size;
-> +
-> +	size = sizeof(secboot);
-> +	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
-> +				  NULL, &size, &secboot);
-> +
-> +	if (status == EFI_NOT_FOUND)
-> +		return efi_secureboot_mode_disabled;
-> +
-> +	if (status != EFI_SUCCESS)
-> +		goto out_efi_err;
-> +
-> +	size = sizeof(setupmode);
-> +	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
-> +				  NULL, &size, &setupmode);
-> +
-> +	if (status != EFI_SUCCESS)
-> +		goto out_efi_err;
-> +
-> +	if (secboot == 0 || setupmode == 1)
-> +		return efi_secureboot_mode_disabled;
-> +
-> +	/* See if a user has put the shim into insecure mode. */
-> +	size = sizeof(moksbstate);
-> +	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
-> +				  NULL, &size, &moksbstate);
-> +
-> +	/* If it fails, we don't care why. Default to secure. */
-> +	if (status != EFI_SUCCESS)
-> +		goto secure_boot_enabled;
-> +
-> +	if (moksbstate == 1)
-> +		return efi_secureboot_mode_disabled;
-> +
-> + secure_boot_enabled:
-> +	pr_info("UEFI Secure Boot is enabled.\n");
-> +	return efi_secureboot_mode_enabled;
-> +
-> + out_efi_err:
-> +	pr_err("Could not determine UEFI Secure Boot status.\n");
-> +	return efi_secureboot_mode_unknown;
-> +}
-> +
+Minor changes to fulfill the coding style and improve
+the readability of the code.
 
-This looks like a bad idea: you're duplicating the secure boot check in
+Changes in v2:
+1) Fixed issue with misplacing a piece of code that requires access
+to the transfer structure into sun6i_spi_prepare_message() function
+where the transfer structure is not available.
 
-drivers/firmware/efi/libstub/secureboot.c
+Signed-off-by: Sergey Suloev <ssuloev@orpaltech.com>
+---
+ drivers/spi/spi-sun6i.c | 97 +++++++++++++++++++++++++++++--------------------
+ 1 file changed, 58 insertions(+), 39 deletions(-)
 
-Which is an implementation of policy.  If we have to have policy in the
-kernel, it should really only be in one place to prevent drift; why
-can't you simply use the libstub efi_get_secureboot() so we're not
-duplicating the implementation of policy?
-
-James
+diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
+index 8533f4e..88ad45e 100644
+--- a/drivers/spi/spi-sun6i.c
++++ b/drivers/spi/spi-sun6i.c
+@@ -88,8 +88,12 @@
+ #define SUN6I_TXDATA_REG		0x200
+ #define SUN6I_RXDATA_REG		0x300
+ 
++#define SUN6I_SPI_MODE_BITS		(SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST)
++
++#define SUN6I_SPI_MAX_SPEED_HZ		100000000
++#define SUN6I_SPI_MIN_SPEED_HZ		3000
++
+ struct sun6i_spi {
+-	struct spi_master	*master;
+ 	void __iomem		*base_addr;
+ 	struct clk		*hclk;
+ 	struct clk		*mclk;
+@@ -189,6 +193,9 @@ static void sun6i_spi_set_cs(struct spi_device *spi, bool enable)
+ 	else
+ 		reg &= ~SUN6I_TFR_CTL_CS_LEVEL;
+ 
++	/* We want to control the chip select manually */
++	reg |= SUN6I_TFR_CTL_CS_MANUAL;
++
+ 	sun6i_spi_write(sspi, SUN6I_TFR_CTL_REG, reg);
+ }
+ 
+@@ -197,6 +204,39 @@ static size_t sun6i_spi_max_transfer_size(struct spi_device *spi)
+ 	return SUN6I_MAX_XFER_SIZE - 1;
+ }
+ 
++static int sun6i_spi_prepare_message(struct spi_master *master,
++				     struct spi_message *msg)
++{
++	struct spi_device *spi = msg->spi;
++	struct sun6i_spi *sspi = spi_master_get_devdata(master);
++	u32 reg;
++
++	/*
++	 * Setup the transfer control register: Chip Select,
++	 * polarities, etc.
++	 */
++	reg = sun6i_spi_read(sspi, SUN6I_TFR_CTL_REG);
++
++	if (spi->mode & SPI_CPOL)
++		reg |= SUN6I_TFR_CTL_CPOL;
++	else
++		reg &= ~SUN6I_TFR_CTL_CPOL;
++
++	if (spi->mode & SPI_CPHA)
++		reg |= SUN6I_TFR_CTL_CPHA;
++	else
++		reg &= ~SUN6I_TFR_CTL_CPHA;
++
++	if (spi->mode & SPI_LSB_FIRST)
++		reg |= SUN6I_TFR_CTL_FBS;
++	else
++		reg &= ~SUN6I_TFR_CTL_FBS;
++
++	sun6i_spi_write(sspi, SUN6I_TFR_CTL_REG, reg);
++
++	return 0;
++}
++
+ static int sun6i_spi_transfer_one(struct spi_master *master,
+ 				  struct spi_device *spi,
+ 				  struct spi_transfer *tfr)
+@@ -235,27 +275,8 @@ static int sun6i_spi_transfer_one(struct spi_master *master,
+ 			(trig_level << SUN6I_FIFO_CTL_RF_RDY_TRIG_LEVEL_BITS) |
+ 			(trig_level << SUN6I_FIFO_CTL_TF_ERQ_TRIG_LEVEL_BITS));
+ 
+-	/*
+-	 * Setup the transfer control register: Chip Select,
+-	 * polarities, etc.
+-	 */
+-	reg = sun6i_spi_read(sspi, SUN6I_TFR_CTL_REG);
+-
+-	if (spi->mode & SPI_CPOL)
+-		reg |= SUN6I_TFR_CTL_CPOL;
+-	else
+-		reg &= ~SUN6I_TFR_CTL_CPOL;
+-
+-	if (spi->mode & SPI_CPHA)
+-		reg |= SUN6I_TFR_CTL_CPHA;
+-	else
+-		reg &= ~SUN6I_TFR_CTL_CPHA;
+-
+-	if (spi->mode & SPI_LSB_FIRST)
+-		reg |= SUN6I_TFR_CTL_FBS;
+-	else
+-		reg &= ~SUN6I_TFR_CTL_FBS;
+ 
++	reg = sun6i_spi_read(sspi, SUN6I_TFR_CTL_REG);
+ 	/*
+ 	 * If it's a TX only transfer, we don't want to fill the RX
+ 	 * FIFO with bogus data
+@@ -265,11 +286,9 @@ static int sun6i_spi_transfer_one(struct spi_master *master,
+ 	else
+ 		reg |= SUN6I_TFR_CTL_DHB;
+ 
+-	/* We want to control the chip select manually */
+-	reg |= SUN6I_TFR_CTL_CS_MANUAL;
+-
+ 	sun6i_spi_write(sspi, SUN6I_TFR_CTL_REG, reg);
+ 
++
+ 	/* Ensure that we have a parent clock fast enough */
+ 	mclk_rate = clk_get_rate(sspi->mclk);
+ 	if (mclk_rate < (2 * tfr->speed_hz)) {
+@@ -442,12 +461,24 @@ static int sun6i_spi_probe(struct platform_device *pdev)
+ 	struct resource	*res;
+ 	int ret = 0, irq;
+ 
+-	master = spi_alloc_master(&pdev->dev, sizeof(struct sun6i_spi));
++	master = spi_alloc_master(&pdev->dev, sizeof(*sspi));
+ 	if (!master) {
+ 		dev_err(&pdev->dev, "Unable to allocate SPI Master\n");
+ 		return -ENOMEM;
+ 	}
+ 
++	master->max_speed_hz = SUN6I_SPI_MAX_SPEED_HZ;
++	master->min_speed_hz = SUN6I_SPI_MIN_SPEED_HZ;
++	master->num_chipselect = 4;
++	master->mode_bits = SUN6I_SPI_MODE_BITS;
++	master->bits_per_word_mask = SPI_BPW_MASK(8);
++	master->set_cs = sun6i_spi_set_cs;
++	master->prepare_message = sun6i_spi_prepare_message;
++	master->transfer_one = sun6i_spi_transfer_one;
++	master->max_transfer_size = sun6i_spi_max_transfer_size;
++	master->dev.of_node = pdev->dev.of_node;
++	master->auto_runtime_pm = true;
++
+ 	platform_set_drvdata(pdev, master);
+ 	sspi = spi_master_get_devdata(master);
+ 
+@@ -466,26 +497,14 @@ static int sun6i_spi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, sun6i_spi_handler,
+-			       0, "sun6i-spi", sspi);
++			       0, dev_name(&pdev->dev), sspi);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Cannot request IRQ\n");
+ 		goto err_free_master;
+ 	}
+ 
+-	sspi->master = master;
+ 	sspi->fifo_depth = (unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+-	master->max_speed_hz = 100 * 1000 * 1000;
+-	master->min_speed_hz = 3 * 1000;
+-	master->set_cs = sun6i_spi_set_cs;
+-	master->transfer_one = sun6i_spi_transfer_one;
+-	master->num_chipselect = 4;
+-	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST;
+-	master->bits_per_word_mask = SPI_BPW_MASK(8);
+-	master->dev.of_node = pdev->dev.of_node;
+-	master->auto_runtime_pm = true;
+-	master->max_transfer_size = sun6i_spi_max_transfer_size;
+-
+ 	sspi->hclk = devm_clk_get(&pdev->dev, "ahb");
+ 	if (IS_ERR(sspi->hclk)) {
+ 		dev_err(&pdev->dev, "Unable to acquire AHB clock\n");
+@@ -525,7 +544,7 @@ static int sun6i_spi_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "cannot register SPI master\n");
++		dev_err(&pdev->dev, "Couldn't register SPI master\n");
+ 		goto err_pm_disable;
+ 	}
+ 
+-- 
+2.16.2
