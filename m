@@ -1,73 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755238AbeDCKHn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:07:43 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:59052 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755162AbeDCKHe (ORCPT
+        id S1755060AbeDCKMA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:12:00 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:48993 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754298AbeDCKL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:07:34 -0400
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Nan Li <nan.li@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh@kernel.org>,
-        <linux-mmc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] mmc: meson: update doc to support Meson-AXG platform
-Date: Tue, 3 Apr 2018 18:06:51 +0800
-Message-ID: <20180403100652.41056-4-yixun.lan@amlogic.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180403100652.41056-1-yixun.lan@amlogic.com>
-References: <20180403100652.41056-1-yixun.lan@amlogic.com>
+        Tue, 3 Apr 2018 06:11:58 -0400
+Subject: Re: [PATCH 4/8] misc: pci_endpoint_test: Add designware EP entry
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <1bc09dfd205d0721366267e023550c4a5a4a84db.1522235224.git.gustavo.pimentel@synopsys.com>
+ <76c6e35c-5659-7313-a1b4-aa93e323ef79@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <77999353-fd50-b90f-ab00-b2cd29048257@synopsys.com>
+Date: Tue, 3 Apr 2018 11:11:04 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.20.235]
+In-Reply-To: <76c6e35c-5659-7313-a1b4-aa93e323ef79@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nan Li <nan.li@amlogic.com>
+Hi Kishon,
 
-Explicitly update the docomentation to support the Meson-AXG platform.
+On 02/04/2018 06:36, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+>> Adds the designware EP device ID entry to pci_endpoint_test driver table
+>> to allow this device to be recognize and handle by the pci_endpoint_test
+>> driver.
+>>
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> ---
+>>  drivers/misc/pci_endpoint_test.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+>> index 320276f..e80c533 100644
+>> --- a/drivers/misc/pci_endpoint_test.c
+>> +++ b/drivers/misc/pci_endpoint_test.c
+>> @@ -632,6 +632,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+>>  static const struct pci_device_id pci_endpoint_test_tbl[] = {
+>>  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
+>>  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
+>> +	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
+> 
+> Add device ids to include/linux/pci_ids.h and use the macro here.
 
-Signed-off-by: Nan Li <nan.li@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/mmc/host/Kconfig        | 4 ++--
- drivers/mmc/host/meson-gx-mmc.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Add device id request sent, as soon as I get a positive confirmation from them
+I'll change for the macro. It works for you?
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 620c2d90a646..751090d1d94c 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -345,11 +345,11 @@ config MMC_SDHCI_IPROC
- 	  If unsure, say N.
- 
- config MMC_MESON_GX
--	tristate "Amlogic S905/GX* SD/MMC Host Controller support"
-+	tristate "Amlogic S905/GX*/AXG SD/MMC Host Controller support"
- 	depends on ARCH_MESON && MMC
- 	help
- 	  This selects support for the Amlogic SD/MMC Host Controller
--	  found on the S905/GX* family of SoCs.  This controller is
-+	  found on the S905/GX*/AXG family of SoCs.  This controller is
- 	  MMC 5.1 compliant and supports SD, eMMC and SDIO interfaces.
- 
- 	  If you have a controller with this interface, say Y here.
-diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-index 56c90542ac29..55bbd67177df 100644
---- a/drivers/mmc/host/meson-gx-mmc.c
-+++ b/drivers/mmc/host/meson-gx-mmc.c
-@@ -1376,6 +1376,6 @@ static struct platform_driver meson_mmc_driver = {
- 
- module_platform_driver(meson_mmc_driver);
- 
--MODULE_DESCRIPTION("Amlogic S905*/GX* SD/eMMC driver");
-+MODULE_DESCRIPTION("Amlogic S905*/GX*/AXG SD/eMMC driver");
- MODULE_AUTHOR("Kevin Hilman <khilman@baylibre.com>");
- MODULE_LICENSE("GPL v2");
--- 
-2.16.2
+> 
+> Thanks
+> Kishon
+> 
+
+Regards,
+Gustavo
