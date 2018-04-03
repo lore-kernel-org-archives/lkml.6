@@ -1,208 +1,195 @@
-Return-Path: <thierry.reding@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522763134; cv=none;
+Return-Path: <john.garry@huawei.com>
+X-Google-Smtp-Source: AIpwx4/6MFd9h3m1TCR+HjWVF6YOA9JVHbxpZ8NgnR7fE5ba8H84GbcmL26iWf9fivtKPbMqkykY
+ARC-Seal: i=1; a=rsa-sha256; t=1522764196; cv=none;
         d=google.com; s=arc-20160816;
-        b=GnruFGDwVZvbmFlKO1nUCDvA4okIfywhIqpqOgumhIhd5HD3X6YRRmqJa7SdC0J+Ak
-         e7anuZ5kdSnhU98iDbyAtuzLz+VYFuBzJZ5dnleppv3yBP7tZ4EZR6i7rTuPruveIkHU
-         zUwwHPQ9kHr+GEIIf43Re5k3Y5xaL1m2w1Ts86QKQgGJHtLLNE+c/D0hUlxw1YPngbaX
-         k+u+b0WZoe1tx9kZWIemX/8Wf1JKML8dgqjkJtljIwam4CXYnI6LX4P6F3mNJ3SM068L
-         iJQhkLunrx0jSCF2Cc+3WBRrVDLGyOZ42ZDe+7d+DGkrLCuOi+DyP7d1GVGNImOa/Nc4
-         okOg==
+        b=HBs/grD7FIkCjcAg4L6RjkMOUz3/GYNejPO00NQDket7gV6UjXolFc2DZ7gGKCPdIm
+         y8H3X+8kZlKsdF0A3yb8cWa97cTTKZ5rrhZOSxx8zLHQwyHX/DpSyqRBm10Z8dE6EZOm
+         QAkN+v+qYTqyZ/677rz+VmLCQ9twQ0M0AAzc0wZvjfR4YSODpmxKbo5ixx3qtZM4Qb3p
+         9s7mt9fmL5JyO3IyyanGai3J1zrCdlB/KrBEwycmiEpc2naWy5HOmydD/f01wPIu93FZ
+         ybrEMXjeVOK9bGNdh3X5fVdXMr/j6heWomTZvhjehA+XNQxsyJpUrjVJER0DdaVR8Als
+         17Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=RQGYh7SiuiSxRT5BLOtj9zyPhCMTxVp/Zz+sJQegvpo=;
-        b=UfDY9iGceAfC7Lao9IqEhXAjuDxE1L1pBrOxhvxIX+tinP6TGmXu5QsZMSbBVKwjNT
-         THkNsp4DjWqqBKdjx0yJNTjgzhcGvnGt+mBXjhBC8X8FMCM3i6Gf6cog5mWkIVSo/5US
-         dMo73eXdb2qLi1W/wi1gGacnKoFlVnPPHNWkNuQnIUs/A2GrM9Cy/V5h2jzAk7eom3ff
-         F/ykjITnw7nAtuMzvRXcPcCV+tjk1nHorrMwypPn0LlFxnMAW//t5C0/3aTChlX+3irP
-         mN9uR4OZomXNxrVatjBbBdGyQeHHFpHLKtGzExUw8OAXVO60rd3BwjH+D5EUBLw/Ovwv
-         jh+A==
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:cc:references:to:subject:arc-authentication-results;
+        bh=WbfoZWIZ6ytIXwaTxujs+WVqcJ2erWBMintyLrA4RBk=;
+        b=Ss3a2lVHz2udmoslrOi6ASWuEKZGd331kkTPZXdZKUY9mQTFHJpacweMmca5WhVxyL
+         bed421Lwrp/IbIE9S5dvwnbdkYejAfgT9y3B0vYl7yOuWVn8vqgzmEPrcm/lnWvTVK3z
+         fwruEiFbn7fRkrEoQVloBki2rSbgXiwRCzBPv4E1PYQr11QKhTm93KJjng02LamyAiRa
+         zPblwmoqkevRa8IsWMBoxHVqU/fsqAXRZ7dOvqJnj3wlCP9LtqmweqXKiKFCVdCynEZK
+         wuJ5ILEF/GLCCzblMSTtsLwbVpb0tv9a1SR0OQdKOo4AUHne9tbinrWTve6U1wMrczUA
+         VUzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CjdFtjFM;
-       spf=pass (google.com: domain of thierry.reding@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thierry.reding@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.191 as permitted sender) smtp.mailfrom=john.garry@huawei.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CjdFtjFM;
-       spf=pass (google.com: domain of thierry.reding@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=thierry.reding@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+aD5RdhjwRGUsoFFe/dqoZ9vnh8WB7MUOi6gk0N1iafGDXoEhdYc7zUD8GOJLR7GL1ZDgkig==
-Date: Tue, 3 Apr 2018 15:45:31 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: John Garry <john.garry@huawei.com>
-Cc: mika.westerberg@linux.intel.com, rafael@kernel.org,
-	lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, hanjun.guo@linaro.org,
-	robh+dt@kernel.org, bhelgaas@google.com, arnd@arndb.de,
-	mark.rutland@arm.com, olof@lixom.net, dann.frazier@canonical.com,
-	andy.shevchenko@gmail.com, robh@kernel.org,
-	andriy.shevchenko@linux.intel.com, joe@perches.com,
-	benh@kernel.crashing.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linuxarm@huawei.com, minyard@acm.org, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org, rdunlap@infradead.org,
-	gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-	frowand.list@gmail.com, agraf@suse.de
+       spf=pass (google.com: domain of john.garry@huawei.com designates 45.249.212.191 as permitted sender) smtp.mailfrom=john.garry@huawei.com
 Subject: Re: [PATCH v17 04/10] PCI: Apply the new generic I/O management on
  PCI IO hosts
-Message-ID: <20180403134531.GD27789@ulmo>
+To: Thierry Reding <thierry.reding@gmail.com>
 References: <1521051359-34473-1-git-send-email-john.garry@huawei.com>
  <1521051359-34473-5-git-send-email-john.garry@huawei.com>
+ <20180403134531.GD27789@ulmo>
+CC: <mika.westerberg@linux.intel.com>, <rafael@kernel.org>,
+	<lorenzo.pieralisi@arm.com>, <rjw@rjwysocki.net>, <hanjun.guo@linaro.org>,
+	<robh+dt@kernel.org>, <bhelgaas@google.com>, <arnd@arndb.de>,
+	<mark.rutland@arm.com>, <olof@lixom.net>, <dann.frazier@canonical.com>,
+	<andy.shevchenko@gmail.com>, <robh@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>, <joe@perches.com>,
+	<benh@kernel.crashing.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linuxarm@huawei.com>, <minyard@acm.org>, <devicetree@vger.kernel.org>,
+	<linux-arch@vger.kernel.org>, <rdunlap@infradead.org>,
+	<gregkh@linuxfoundation.org>, <akpm@linux-foundation.org>,
+	<frowand.list@gmail.com>, <agraf@suse.de>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <40460bc7-401f-9625-fe59-26dc6408f60e@huawei.com>
+Date: Tue, 3 Apr 2018 15:02:44 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7DO5AaGCk89r4vaK"
-Content-Disposition: inline
-In-Reply-To: <1521051359-34473-5-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180403134531.GD27789@ulmo>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594938017737328012?=
-X-GMAIL-MSGID: =?utf-8?q?1596732876308701010?=
+X-GMAIL-MSGID: =?utf-8?q?1596733990329048096?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 03/04/2018 14:45, Thierry Reding wrote:
+> On Thu, Mar 15, 2018 at 02:15:53AM +0800, John Garry wrote:
+>> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
+>>
+>> After introducing the new generic I/O space management(Logical PIO), the
+>> original PCI MMIO relevant helpers need to be updated based on the new
+>> interfaces defined in logical PIO.
+>> This patch adapts the corresponding code to match the changes introduced
+>> by logical PIO.
+>>
+>> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
+>> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>        #earlier draft
+>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>> Tested-by: dann frazier <dann.frazier@canonical.com>
+>> ---
+>>  drivers/pci/pci.c        | 92 +++++++++---------------------------------------
+>>  include/asm-generic/io.h |  2 +-
+>>  2 files changed, 18 insertions(+), 76 deletions(-)
+>
+> Today's linux-next regresses on NFS boot for Jetson TK1. I was able to
+> bisect it to this commit. I'll comment below for where I think this is
+> buggy.
+>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 3f30b7d..09c2490 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -22,6 +22,7 @@
+>>  #include <linux/spinlock.h>
+>>  #include <linux/string.h>
+>>  #include <linux/log2.h>
+>> +#include <linux/logic_pio.h>
+>>  #include <linux/pci-aspm.h>
+>>  #include <linux/pm_wakeup.h>
+>>  #include <linux/interrupt.h>
+>> @@ -3436,17 +3437,6 @@ int pci_request_regions_exclusive(struct pci_dev *pdev, const char *res_name)
+>>  }
+>>  EXPORT_SYMBOL(pci_request_regions_exclusive);
+>>
+>> -#ifdef PCI_IOBASE
+>> -struct io_range {
+>> -	struct list_head list;
+>> -	phys_addr_t start;
+>> -	resource_size_t size;
+>> -};
+>> -
+>> -static LIST_HEAD(io_range_list);
+>> -static DEFINE_SPINLOCK(io_range_lock);
+>> -#endif
+>> -
+>>  /*
+>>   * Record the PCI IO range (expressed as CPU physical address + size).
+>>   * Return a negative value if an error has occured, zero otherwise
+>> @@ -3454,51 +3444,28 @@ struct io_range {
+>>  int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
+>>  			resource_size_t	size)
+>>  {
+>> -	int err = 0;
+>> -
+>> +	int ret = 0;
+>>  #ifdef PCI_IOBASE
+>> -	struct io_range *range;
+>> -	resource_size_t allocated_size = 0;
+>> -
+>> -	/* check if the range hasn't been previously recorded */
+>> -	spin_lock(&io_range_lock);
+>> -	list_for_each_entry(range, &io_range_list, list) {
+>> -		if (addr >= range->start && addr + size <= range->start + size) {
+>> -			/* range already registered, bail out */
+>> -			goto end_register;
+>> -		}
+>> -		allocated_size += range->size;
+>> -	}
+>> +	struct logic_pio_hwaddr *range;
+>>
+>> -	/* range not registed yet, check for available space */
+>> -	if (allocated_size + size - 1 > IO_SPACE_LIMIT) {
+>> -		/* if it's too big check if 64K space can be reserved */
+>> -		if (allocated_size + SZ_64K - 1 > IO_SPACE_LIMIT) {
+>> -			err = -E2BIG;
+>> -			goto end_register;
+>> -		}
+>> -
+>> -		size = SZ_64K;
+>> -		pr_warn("Requested IO range too big, new size set to 64K\n");
+>> -	}
+>> +	if (!size || addr + size < addr)
+>> +		return -EINVAL;
+>>
+>> -	/* add the range to the list */
+>>  	range = kzalloc(sizeof(*range), GFP_ATOMIC);
+>> -	if (!range) {
+>> -		err = -ENOMEM;
+>> -		goto end_register;
+>> -	}
+>> +	if (!range)
+>> +		return -ENOMEM;
+>>
+>> -	range->start = addr;
+>> +	range->fwnode = fwnode;
+>>  	range->size = size;
+>> +	range->hw_start = addr;
+>> +	range->flags = LOGIC_PIO_CPU_MMIO;
+>>
+>> -	list_add_tail(&range->list, &io_range_list);
+>> -
+>> -end_register:
+>> -	spin_unlock(&io_range_lock);
+>> +	ret = logic_pio_register_range(range);
+>
+> This ends up returning -EFAULT at some point, causing the driver's
+> (pci-tegra.c) ->probe() to fail.
+>
+> Let me comment on a prior patch to pinpoint what exactly goes wrong.
 
---7DO5AaGCk89r4vaK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Thierry,
 
-On Thu, Mar 15, 2018 at 02:15:53AM +0800, John Garry wrote:
-> From: Zhichang Yuan <yuanzhichang@hisilicon.com>
->=20
-> After introducing the new generic I/O space management(Logical PIO), the
-> original PCI MMIO relevant helpers need to be updated based on the new
-> interfaces defined in logical PIO.
-> This patch adapts the corresponding code to match the changes introduced
-> by logical PIO.
->=20
-> Signed-off-by: Zhichang Yuan <yuanzhichang@hisilicon.com>
-> Signed-off-by: Gabriele Paoloni <gabriele.paoloni@huawei.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>        #earlier draft
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Tested-by: dann frazier <dann.frazier@canonical.com>
-> ---
->  drivers/pci/pci.c        | 92 +++++++++---------------------------------=
-------
->  include/asm-generic/io.h |  2 +-
->  2 files changed, 18 insertions(+), 76 deletions(-)
+Thanks for the notification. So this patch is where we transistion from 
+using the PCI internal pio management to the new framework.
 
-Today's linux-next regresses on NFS boot for Jetson TK1. I was able to
-bisect it to this commit. I'll comment below for where I think this is
-buggy.
+I already had tried today's linux-next with hisi PCI host controller in 
+pcie-hisi.c on an arm64 system, and it looked ok.
 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 3f30b7d..09c2490 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -22,6 +22,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/string.h>
->  #include <linux/log2.h>
-> +#include <linux/logic_pio.h>
->  #include <linux/pci-aspm.h>
->  #include <linux/pm_wakeup.h>
->  #include <linux/interrupt.h>
-> @@ -3436,17 +3437,6 @@ int pci_request_regions_exclusive(struct pci_dev *=
-pdev, const char *res_name)
->  }
->  EXPORT_SYMBOL(pci_request_regions_exclusive);
-> =20
-> -#ifdef PCI_IOBASE
-> -struct io_range {
-> -	struct list_head list;
-> -	phys_addr_t start;
-> -	resource_size_t size;
-> -};
-> -
-> -static LIST_HEAD(io_range_list);
-> -static DEFINE_SPINLOCK(io_range_lock);
-> -#endif
-> -
->  /*
->   * Record the PCI IO range (expressed as CPU physical address + size).
->   * Return a negative value if an error has occured, zero otherwise
-> @@ -3454,51 +3444,28 @@ struct io_range {
->  int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
->  			resource_size_t	size)
->  {
-> -	int err =3D 0;
-> -
-> +	int ret =3D 0;
->  #ifdef PCI_IOBASE
-> -	struct io_range *range;
-> -	resource_size_t allocated_size =3D 0;
-> -
-> -	/* check if the range hasn't been previously recorded */
-> -	spin_lock(&io_range_lock);
-> -	list_for_each_entry(range, &io_range_list, list) {
-> -		if (addr >=3D range->start && addr + size <=3D range->start + size) {
-> -			/* range already registered, bail out */
-> -			goto end_register;
-> -		}
-> -		allocated_size +=3D range->size;
-> -	}
-> +	struct logic_pio_hwaddr *range;
-> =20
-> -	/* range not registed yet, check for available space */
-> -	if (allocated_size + size - 1 > IO_SPACE_LIMIT) {
-> -		/* if it's too big check if 64K space can be reserved */
-> -		if (allocated_size + SZ_64K - 1 > IO_SPACE_LIMIT) {
-> -			err =3D -E2BIG;
-> -			goto end_register;
-> -		}
-> -
-> -		size =3D SZ_64K;
-> -		pr_warn("Requested IO range too big, new size set to 64K\n");
-> -	}
-> +	if (!size || addr + size < addr)
-> +		return -EINVAL;
-> =20
-> -	/* add the range to the list */
->  	range =3D kzalloc(sizeof(*range), GFP_ATOMIC);
-> -	if (!range) {
-> -		err =3D -ENOMEM;
-> -		goto end_register;
-> -	}
-> +	if (!range)
-> +		return -ENOMEM;
-> =20
-> -	range->start =3D addr;
-> +	range->fwnode =3D fwnode;
->  	range->size =3D size;
-> +	range->hw_start =3D addr;
-> +	range->flags =3D LOGIC_PIO_CPU_MMIO;
-> =20
-> -	list_add_tail(&range->list, &io_range_list);
-> -
-> -end_register:
-> -	spin_unlock(&io_range_lock);
-> +	ret =3D logic_pio_register_range(range);
+Function logic_pio_register_range() returns fault when we try to 
+register the same range twice or there is an overlap in ranges.
 
-This ends up returning -EFAULT at some point, causing the driver's
-(pci-tegra.c) ->probe() to fail.
+I wonder if is there something special about this host controller driver 
+in terms of IO space management. And what arch/system was the host?
 
-Let me comment on a prior patch to pinpoint what exactly goes wrong.
+John
 
-Thierry
-
---7DO5AaGCk89r4vaK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrDhXkACgkQ3SOs138+
-s6F7pg/8CQFtf5RHxNaZb5V8K1P/lB1HG4URViYpzlooy/NUaLxFjjlBaCBc6glR
-mviQR2CzLpKIjDs4OvkNs+oQXVNVAf9kT3dl3cvMtXadgXbnm2NhnHlkQdv5fve2
-4V1F2aOFfGj3T/jH4+o63yZ7eJ7DzgCaFUoeHYH6O4S80Uk4gK9iNTFNEApMO6uF
-14M6yAJsPU+mn69JyGLkADSYJej5XoT7keCc9IyBArBonn2TCsI9Wl4xURp4cW3h
-a8I9Ts2KzVP4TtZ0Qm0SBXsVF7anf5/ukHGbnSBEOclRSO6ojxJQAcnZjrQt/uez
-0Uc3QdowmC4X3BRVv2NCRth8dfK255GDffobVs5cgd4PjdrZSonRpYpP9Cy27Nu4
-01uO568zENdGXVmjEZduh0F+XBauBD4k8EkfEKBnD4wKfZUkflv0mY8ATJ51+XcL
-uxeFXtxNhIskdr4oZy3bVpjNRO1OXugaiqx98h7hhfwLAK1w6gu8XMgvP2CFqVIP
-AvugRZdf1oxrupeLDatJwe/IGCUplUD9zki6SPk7AtZuDJUop0b+OLp9PNiCDiTw
-0PPZfhMKErlpepAaACNzk5B4Xs8LFyy5L9K+VVtwLXLn104E9i0H5l7b5isNnHrH
-DYFas4uAeDTtQA5U96J1OSwA64mFAGOjKLAxlCpwnRt8z0yDuqY=
-=/ZDM
------END PGP SIGNATURE-----
-
---7DO5AaGCk89r4vaK--
+>
+> Thierry
+>
