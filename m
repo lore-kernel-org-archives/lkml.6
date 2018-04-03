@@ -1,181 +1,88 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1491286-1522760429-2-2964006207068680994
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522760428; b=efVk/nxwLnd6olX59VG4mzVYqOS6oeDXnf+wWuHxkbZSlV/UeC
-    vbfjNyMXOLf8OXBdmTYtF6pLjJ+dpkSoHMUqna4G/8PezNoulZ5KGgT9s5e++5yt
-    4SJC7+Wy0NzdP3jiOEtUZVJBKiYLzSxWoOqiCa0znRq+GYHM8dJLHnJtqgQrb6h5
-    JlkyqDFEw/adReVMjsUPQ2zvGta8qEFKSvIpZgXllUT2nmNYNv27l5EG6KQGmzWR
-    MCg5Lu0PLBlBfujnwKtNaO92OvDx/dclJ9OFKwcLVcjbmVxYsM95c5QIhy+Q+/Da
-    ellKnCNA1GTcuHUcd2+Ho1soHKHftL/Lb38w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1522760428; bh=8ZXUGyMR700
-    gi+ldrzi2Ep6LoGxz63BhaZpzt+kpVzM=; b=OKRNddyHNb4gQbULa9xxKTThSrX
-    wlUq+X9YScLyFxoz/vOp65lkwWSA7SIUURpM+u8JmI1tdAE7Mcx4U7WGrWQ4HwvV
-    H2hKSW+1q5jM9O8na1DIRSzX9Kfa+jipPWfH/PlwQNPwqooeDVevZ0YIr3LEthPT
-    gI+y7WAUa5YskO0TlFv+JIXOOPHWns9blCS5mMrSFeIcsKy5gVMd5rbC4Io7xmfA
-    4BD3q7cUc4k7Iwzb3Zv0n4/Y67wtuYVK3tzWORmbl/fX4m6joOCuiwkaOrw92d1r
-    +e6owHqdb+SlvruOKiJbj0f1p+6+2Scycuydp+KYhSzYzewwC22jFHe/Bzw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Z8Oq08rV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VIJsjqEZ;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=Z8Oq08rV x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=VIJsjqEZ;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHGeI+u0UCcifAjMQ/XJBSbrRvL8fdUhKHHDbDUS9WThw2+OTsJ8xXmIJkiSoJ1obqPbN15/hApxyU/uIuy/kghMLlpUNrrmTyX2GBr5ZuDpLWk+cHTG
-    gMvcyWnf79tdFDahTCucTUPWhqb1ckfdQzf8fs/hApLRkUtS1suCzFatynsZ9tXozkC1+IG/pmXROl0HU92gv0MwwMug8ObPA9icaCczdZD3AkGtRiiCn3IK
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=KKAkSRfTAAAA:8 a=D19gQVrFAAAA:8 a=VwQbUJbxAAAA:8 a=He-yJPhLhVRUihxi6CsA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=cvBusfyB2V15izCimMoJ:22
-    a=W4TVW4IDbPiebHqcZpNg:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932173AbeDCNAA (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 3 Apr 2018 09:00:00 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35254 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932151AbeDCM76 (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 3 Apr 2018 08:59:58 -0400
-X-Google-Smtp-Source: AIpwx4+mjJ+raGQ3XkKVeV9mT+XgjeKO11aArBcAOlqgh3CMto6XVexLmEQ4k/f0urMc3tOySTFUPw==
-Date: Tue, 3 Apr 2018 13:59:53 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        linux-usb@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [Question] MFD driver that handles clocks/resets and populates
- child nodes
-Message-ID: <20180403125953.qzpbnlsyuxm4w7nm@dell>
-References: <CAK7LNARFWDMgmWsCjUmVrm4ZeYOcKCbizijxmDXob618ABjNWg@mail.gmail.com>
- <20180402120414.GA8159@lunn.ch>
- <CAK7LNAQ6LKk3NtGLB8g07ocyvXidpTHsApeDuctvEHyyLvk2ew@mail.gmail.com>
- <20180402133219.GA10520@lunn.ch>
- <20180403080335.ksekhxwvbzbxhmln@dell>
- <CAK7LNAQbWUYuhow5VdNDc+SuttY+u3xh9zk92kLEy9id6TNCFg@mail.gmail.com>
+Return-Path: <hverkuil@xs4all.nl>
+X-Google-Smtp-Source: AIpwx4+FlS6VfTdA/jirhHOe2IdV+YhFCIMEg0WsVEQ/Bjuw0YBFIX7Vm6UdjILZHGIEuQf4QPcq
+ARC-Seal: i=1; a=rsa-sha256; t=1522758242; cv=none;
+        d=google.com; s=arc-20160816;
+        b=W6h0k8Xd/QUzgh1z56J+aAHjGN5Qrkqv+u25jxAaqqa0NSP+hT8L+owKd2hSlwJ1nu
+         TcNg5l+NGtwf8seXVDfppqvN0as/B+0Zu/VaX87mspKiVUYdeFNNorrfIYe8YGR5pksT
+         /4+zmoZ3efwGQMepeN09Bxng0zUpXWHYUBWRWHAbauP+3hvuZMf+GZl9GHrdj8KilDRG
+         ML/bAIzEUZkQ6XlB1XyAGxKHryclwAEl05upqSG3hqcQ0qc36LGrvy0Ynnv9J83FXd/1
+         V8LvKiG5m9gVPuxhRlszJKPQ3QQ7F6QX4Ve55aAsRIjXAu/bRASgOtNuMJdYfxU8/tZ8
+         8m8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=PvN1mtUgn7iquy05YnFcmKDqtChnYRR3MqwEfvsWSHI=;
+        b=L9KKhWID+l2Qc6Vv1vlp8IPirUnUOrtNFfrFReA79zGJQYtIa3ff/2avqeIEKfm4yj
+         KNH78z6aChYeXUWyA9tMemQ0A+gvoWf8s5+kXBnTzXUGz2FAc2Gjx/wyrEm46RrByzBK
+         K6VWGHwIFv+8TBLKvNpY5mJhtYzbnU2Cn2SuFTCklvPKFj6k8dhHawlZAJqZ7orSI81o
+         DTg+1e4L5/59xsZApNXO6UFcMRuZmqLZ5lKeGDskhSL0GPkjkHadD95gHWRjfD+Gp4i/
+         9bh9h560CXChXLQikby1t2yenjzq0xWV59KPR65MXXnykVZcFFtTDEeUUnRU2GLg6DYl
+         L2xQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of hverkuil@xs4all.nl designates 194.109.24.24 as permitted sender) smtp.mailfrom=hverkuil@xs4all.nl
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of hverkuil@xs4all.nl designates 194.109.24.24 as permitted sender) smtp.mailfrom=hverkuil@xs4all.nl
+Subject: Re: [PATCH v9 2/2] media: V3s: Add support for Allwinner CSI.
+To: Yong Deng <yong.deng@magewell.com>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Chen-Yu Tsai <wens@csie.org>, "David S. Miller" <davem@davemloft.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Randy Dunlap <rdunlap@infradead.org>, Hans Verkuil <hans.verkuil@cisco.com>,
+ Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ Yannick Fertre <yannick.fertre@st.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Todor Tomov <todor.tomov@linaro.org>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <1520302562-1577-1-git-send-email-yong.deng@magewell.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <218b07cd-4490-517e-1dff-ada7d73dfcf1@xs4all.nl>
+Date: Tue, 3 Apr 2018 14:23:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1520302562-1577-1-git-send-email-yong.deng@magewell.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAQbWUYuhow5VdNDc+SuttY+u3xh9zk92kLEy9id6TNCFg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfL0sGgC6qH20QntbIvi3cXISbtHayvotZCiqd0UrfWBMecvQvEVjsQ4OHMOtdW3gqH0jXB2ad97cDMF5Vwz6dT/R53jnhy4vf0/v9pvKM650DIUqFwNu
+ W3NX3LWlen9/vmrN2Z7sdhkg1CgCkVLJM/IVwrHDhYws2v57VrRMPJOvtrku952cT12zd2l1H5R6cEK719KRembBVvz7ihYPkLP1tmoI2LWfourw3Ztb9jhw
+ OxoeH5w+7Zt4B0OLt6EDFOi1Tj01NBuFECYaO7jMDmLLqztHUbzY2g1V9mQC8if//eTGM5zrnBuRI0DjGkkx5D0HMA12e9WxYslkGnnY4K7SfD6LYSu27Wls
+ 7+vvY+qQZLWDPxhEnYrQ/tDVYlfYpZ5FZyZbZ7Me0QlLScPSXVHgb7QGtu7Ojk2FGYQvK3islU5n33sOa9nW1pFkbojEnN1QeNDwt8NAc148MchLqfpwaN2u
+ eOqxPN+z2ZInsK4Y6tLgQ7JyiK9OiyXPU7pITWbSnnQ++E374IDnM76Hq0mM96aur9kI0GGsMTox2fQHxTjivVAY8demthMDNBw2ZgRnx2kDtGKQaLxatjTV
+ GeFIC5n/bCauLpv7Pnp+a4yQmXE3YAf32GH86Pldq4vim/CP+fJJULoyZlRZrRkV3YzDyLQ2YFxPpQgdo9fB4ixXE5X6dvgvEOLpTUBjwE72V/NL8VslYe4i
+ MUk2Kxv+evhVcaE9ujSpRZPZt07noAFEMdgJccRUmXsYUy6dKaUGfJXf7YM39DJ6X3GULimcq73gjgVWS/nuKgbfD/Y9i4ExxbS4QAeCjWrS+53gGrM5iKy1
+ IgVl6vQ6AkJSa79YMdA94jIkGEqWt2t/0cp/+lYJVSFWlfb/3Ur3YrPVtM+RPW9tczoJkQ8RwFDXmHmEwAHjzS/LN13V1x0sUMy6ZXFV3gkz0uWEdzIHaWD1
+ p+EQo31kKt9EC+KqU3PR7ju9QQg=
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594152837685471403?=
+X-GMAIL-MSGID: =?utf-8?q?1596727746250271196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 03 Apr 2018, Masahiro Yamada wrote:
+On 06/03/18 03:16, Yong Deng wrote:
+> Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+> interface and CSI1 is used for parallel interface. This is not
+> documented in datasheet but by test and guess.
+> 
+> This patch implement a v4l2 framework driver for it.
+> 
+> Currently, the driver only support the parallel interface. MIPI-CSI2,
+> ISP's support are not included in this patch.
+> 
+> Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Tested-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Signed-off-by: Yong Deng <yong.deng@magewell.com>
 
-> 2018-04-03 17:03 GMT+09:00 Lee Jones <lee.jones@linaro.org>:
-> > On Mon, 02 Apr 2018, Andrew Lunn wrote:
-> >
-> >> On Mon, Apr 02, 2018 at 10:21:01PM +0900, Masahiro Yamada wrote:
-> >> > 2018-04-02 21:04 GMT+09:00 Andrew Lunn <andrew@lunn.ch>:
-> >> > >> The maintainer of DWC3, Felipe Balbi, requested to
-> >> > >> split the glue layer driver into small parts such as
-> >> > >> reset, regulator, phy, etc.
-> >> > >
-> >> > > What exactly did Felipe ask for? Did he ask that the patch be split
-> >> > > up, one patch per reset, regulator, phy etc?
-> >> >
-> >> >
-> >> > Yeah.  That is what we understood from his comments.
-> >> >
-> >> >
-> >> > These are the feed-backs from him.
-> >> >
-> >> > https://lkml.org/lkml/2018/1/23/298
-> >> > https://lkml.org/lkml/2018/1/24/352
-> >>
-> >> > > Are all these resources used just by the DWC3? Or is it a true MFD,
-> >> > > multiple functions?
-> >> >
-> >> > I do not think this is a real MFD.
-> >> >
-> >> > This is a DWC3 glue layer, i.e.
-> >> > a collection of misc registers that control
-> >> > the DWC3 IP.
-> >> >
-> >> >
-> >> > Just splitting it into small pieces
-> >> > to use PHY, reset, regulator framework in Linux.
-> >> >
-> >> > Of course, the price of this approach
-> >> > is so cluttered Device Tree,
-> >> > honestly I do not like it much.
-> >>
-> >> This however the correct way to do this. You should have a phy driver,
-> >> and a regulator driver, and a reset driver. The DWC3 then uses
-> >> phandles to these drivers.
-> >>
-> >> How is the IO map area 65b00000 split up. Can you cleanly separate it
-> >> into sub areas, which do not overlap, so you have a sub-area for the
-> >> PHY driver, a sub-area for the regulator driver and a sub-area for the
-> >> reset area? If you can cleanly split it up, you don't need an MFD. If
-> >> however the registers are in overlapping areas, you do need an
-> >> MFD. The MFD core provides access to the registers, while its children
-> >> implement PHY, reset, regulator etc.
-> >
-> > This device certainly sounds like an MFD to me.
-> >
-> > Can you share the DT you've written please?
-> 
-> 
-> This is still under the internal review in Socionext,
-> but I attached it below FWIW.
-> 
-> (I am not the author of this DT.
->  Written by Kunihiko Hayashi,
-> 
-> Just skimming the driver, I guess it will be possible to flatten
-> the node structure by separating the register space into sub-areas.
-> If this is success, we do not the MFD driver.
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Sounds like a plan.  Pretty sure this isn't really an MFD.
+Thanks!
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+	Hans
