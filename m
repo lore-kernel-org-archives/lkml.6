@@ -1,75 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755335AbeDCJZG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 05:25:06 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:41198 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755172AbeDCJZF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:25:05 -0400
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: Palmer Dabbelt <palmer@sifive.com>,
-        Antony Pavlov <antonynpavlov@gmail.com>,
-        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 1/3] Add notrace to lib/ucmpdi2.c
-Date: Tue, 3 Apr 2018 10:24:24 +0100
-Message-ID: <1522747466-22081-1-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
+        id S1755346AbeDCJ3F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 05:29:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41440 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755172AbeDCJ3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 05:29:04 -0400
+Date: Tue, 3 Apr 2018 11:29:03 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: syzbot <syzbot+d1fe9b7b917f2715c7d4@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        sergey.senozhatsky@gmail.com, syzkaller-bugs@googlegroups.com,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        x86@kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Eric Dumazet <edumazet@google.com>
+Subject: Re: general protection fault in try_to_wake_up
+Message-ID: <20180403092902.i2xg3dmdlcv477aw@pathway.suse.cz>
+References: <000000000000f2c42e05688f3ab6@google.com>
+ <20180403085002.cq6rjxcmggypo4kh@pathway.suse.cz>
+ <20180403091333.GZ4082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1522747462-452059-13822-47957-1
-X-BESS-VER: 2018.4.1-r1803302241
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191650
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403091333.GZ4082@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Palmer Dabbelt <palmer@sifive.com>
+On Tue 2018-04-03 11:13:33, Peter Zijlstra wrote:
+> On Tue, Apr 03, 2018 at 10:50:03AM +0200, Petr Mladek wrote:
+> > raw_spin_lock() succeeded here. Therefore lockdep was still working
+> > at this stage.
+> 
+> What does the success of raw_spin_lock() have to do with lockdep ?
 
-As part of the MIPS conversion to use the generic GCC library routines,
-Matt Redfearn discovered that I'd missed a notrace on __ucmpdi2().  This
-patch rectifies the problem.
+It means that also lockdep succeeded there. Therefore the general
+protection fault in __lock_acquire() was specific to the spinlock
+taken by try_to_wake_up(). I though that it might had been an useful
+information.
 
-CC: Matt Redfearn <matt.redfearn@mips.com>
-CC: Antony Pavlov <antonynpavlov@gmail.com>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
-Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
----
+Anyway, the other replay from Dmitry suggested that it was a known
+bug, see
+https://lkml.kernel.org/r/CACT4Y+ZJ2QD7MPy4hB-M=mz2LuVu3bRbLg1QdY=z=+Su1QWMqg@mail.gmail.com
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2:
-  add notrace to lib/ucmpdi2.c
-
- lib/ucmpdi2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/ucmpdi2.c b/lib/ucmpdi2.c
-index 25ca2d4c1e19..597998169a96 100644
---- a/lib/ucmpdi2.c
-+++ b/lib/ucmpdi2.c
-@@ -17,7 +17,7 @@
- #include <linux/module.h>
- #include <linux/libgcc.h>
- 
--word_type __ucmpdi2(unsigned long long a, unsigned long long b)
-+word_type notrace __ucmpdi2(unsigned long long a, unsigned long long b)
- {
- 	const DWunion au = {.ll = a};
- 	const DWunion bu = {.ll = b};
--- 
-2.7.4
+Best Regards,
+Petr
