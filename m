@@ -1,24 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753734AbeDCVnr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:43:47 -0400
-Received: from mail-ua0-f171.google.com ([209.85.217.171]:44104 "EHLO
-        mail-ua0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753638AbeDCVnq (ORCPT
+        id S1753843AbeDCVnz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:43:55 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:59471 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753764AbeDCVnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:43:46 -0400
-X-Google-Smtp-Source: AIpwx4+CQ/7M9a6Ub2GSaYx/JyTFBr5uJXEs5QRkUNGNf9Pc0fd21yzoVqLOgC1z5l8Clp1XbqsfyeV2PmsPJXEVZKI=
-MIME-Version: 1.0
-In-Reply-To: <20180403173126.4f79af9e@gandalf.local.home>
-References: <20180403173126.4f79af9e@gandalf.local.home>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 3 Apr 2018 14:43:43 -0700
-X-Google-Sender-Auth: BHdjrG8WzL_HyHKdoz7kxCexUfI
-Message-ID: <CAGXu5jLbNtn9CqqCeG3UHmWfC9=qPmhjSLw9vu0Zcyt04XaQ+A@mail.gmail.com>
-Subject: Re: [PATCH v2] tracing, printk: Force no hashing when trace_printk()
- is used
+        Tue, 3 Apr 2018 17:43:53 -0400
+X-ME-Sender: <xms:mPXDWlbbzPz70m2afiHKje4P1gpbpqcKbwqLYhVidlBbj6CADC2HBQ>
+Date: Wed, 4 Apr 2018 07:43:49 +1000
+From: "Tobin C. Harding" <me@tobin.cc>
 To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>,
+Cc: Kees Cook <keescook@chromium.org>, LKML <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         David Laight <David.Laight@aculab.com>,
@@ -26,54 +19,115 @@ Cc: LKML <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>,
         Thomas Gleixner <tglx@linutronix.de>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC][PATCH] tracing, printk: Force no hashing when
+ trace_printk() is used
+Message-ID: <20180403214349.GF781@eros>
+References: <20180403154102.150b1be0@gandalf.local.home>
+ <CAGXu5j+g6nbDz+gjAxZTSf1004J=naAf7b9dPTE0q8+7UtXCLw@mail.gmail.com>
+ <20180403170612.7b11fc41@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403170612.7b11fc41@gandalf.local.home>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 2:31 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
->
-> While debugging an issue I needed to see if the pointers were being
-> processed correctly with trace_printk() and after using "%p" and
-> triggering my bug and trace output, I was disappointed that all my
-> pointers were random garbage and didn't produce anything useful for me.
-> I had to rewrite all the trace_printk()s to use "%lx" instead.
->
-> As trace_printk() is not to be used for anything but debugging, and
-> this is enforced by printing in the dmesg:
->
->  **********************************************************
->  **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
->  **                                                      **
->  ** trace_printk() being used. Allocating extra memory.  **
->  **                                                      **
->  ** This means that this is a DEBUG kernel and it is     **
->  ** unsafe for production use.                           **
->  **                                                      **
->  ** If you see this message and you are not debugging    **
->  ** the kernel, report this immediately to your vendor!  **
->  **                                                      **
->  **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
->  **********************************************************
->
-> on boot up if trace_printk() is used (or when a module is loaded that
-> uses trace_printk()), we can safely assume that the use of
-> trace_printk() is not going to be accidentally added to production code
-> (and if it is, they should be whacked with an overcooked spaghetti
-> noodle).
->
-> A static_key is added called "trace_debug" and if it is set, then %p will
-> not be hashed.
+On Tue, Apr 03, 2018 at 05:06:12PM -0400, Steven Rostedt wrote:
+> On Tue, 3 Apr 2018 13:07:58 -0700
+> Kees Cook <keescook@chromium.org> wrote:
+> 
+> > On Tue, Apr 3, 2018 at 12:41 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > Both trace_debug is set and kptr_restrict is set to zero in the same
+> > > code that produces the above banner. This will allow trace_printk() to
+> > > not be affected by security code, as trace_printk() should never be run
+> > > on a machine that needs security of this kind.  
+> > 
+> > While I think it'd be nice to have a boot-time knob for this (a debate
+> > that was unsuccessful in earlier threads), I remain skeptical of
+> > having a _runtime_ knob for this, as then it becomes a target (and
+> > yes, there are plenty of targets, but why add another).
+> > 
+> > If this was __ro_after_init, maybe that'd be nicer. CONFIG_TRACING=y
+> 
+> Well, then of course this would need a check to keep modules from
+> setting it. But I think I know of a nice alternative.
+> 
+> 
+> > is used everywhere, so this is really just the whole knob debate over
+> > again. Instead, I've been following Linus's distillation of %p usage
+> > in the kernel:
+> > 
+> > http://lkml.kernel.org/r/CA+55aFwQEd_d40g4mUCSsVRZzrFPUJt74vc6PPpb675hYNXcKw@mail.gmail.com
+> 
+> Remember, this isn't a printk() that hangs around for production. I was
+> debugging code that modified pointers, and I wanted to make sure that
+> the pointer arithmetic was correct (it wasn't), and randomizing the
+> output made my prints useless.
+> 
+> If you are concerned about attack surface, I could make it a bit more
+> difficult to tweak by malicious software. What about the patch below?
+> It would be much more difficult to modify this knob from an attack
+> vector.
+> 
+> -- Steve
+> 
+> diff --git a/include/linux/printk.h b/include/linux/printk.h
+> index e9b603ee9953..b624493b3991 100644
+> --- a/include/linux/printk.h
+> +++ b/include/linux/printk.h
+> @@ -278,6 +278,7 @@ static inline void printk_safe_flush_on_panic(void)
+>  #endif
+>  
+>  extern int kptr_restrict;
+> +extern struct static_key trace_debug;
+>  
+>  extern asmlinkage void dump_stack(void) __cold;
+>  
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 0f47e653ffd8..6c151d00848b 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -2864,6 +2864,10 @@ void trace_printk_init_buffers(void)
+>  
+>  	buffers_allocated = 1;
+>  
+> +	/* This is a debug kernel, allow pointers to be shown */
+> +	static_key_enable(&trace_debug);
+> +	kptr_restrict = 0;
+> +
+>  	/*
+>  	 * trace_printk_init_buffers() can be called by modules.
+>  	 * If that happens, then we need to start cmdline recording
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 89f8a4a4b770..c3d8eafecb39 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1345,6 +1345,7 @@ char *uuid_string(char *buf, char *end, const u8 *addr,
+>  }
+>  
+>  int kptr_restrict __read_mostly;
+> +struct static_key trace_debug = STATIC_KEY_INIT_FALSE;
+>  
+>  static noinline_for_stack
+>  char *restricted_pointer(char *buf, char *end, const void *ptr,
+> @@ -1962,6 +1963,10 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+>  		return pointer_string(buf, end, ptr, spec);
+>  	}
+>  
+> +	/* When the kernel is in debugging mode, show all pointers */
+> +	if (static_key_false(&trace_debug))
+> +		return restricted_pointer(buf, end, ptr, spec);
+> +
+>  	/* default is to _not_ leak addresses, hash before printing */
+>  	return ptr_to_id(buf, end, ptr, spec);
+>  }
 
-Hrm, well, using a static key does make it weirder for an attacker to enable. :)
+This uses the deprecated API Steve (I only know because I went to read
+Documentation/static-keys.txt after seeing this patch).
 
-Whatever the case, if you can get Linus's Ack, sure. I would expect
-he'd want you to change all the trace_printk()s to %px with
-justifications, though.
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Hope this helps,
+Tobin.
