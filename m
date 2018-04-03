@@ -1,39 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeDCO6M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:58:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50656 "EHLO mail.bootlin.com"
+        id S1752020AbeDCO6g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:58:36 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50697 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751414AbeDCO6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:58:11 -0400
-Date: Tue, 3 Apr 2018 16:57:41 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: sean.wang@mediatek.com
-Cc: a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: mt7622: fix module autoloading for OF platform
- drivers
-Message-ID: <20180403145741.GB6444@piout.net>
-References: <4231c0b6038764f68324297a40b18b15ecda5a92.1522055289.git.sean.wang@mediatek.com>
+        id S1751233AbeDCO6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 10:58:35 -0400
+Date: Tue, 3 Apr 2018 16:58:21 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: isl12022: use true and false for boolean values
+Message-ID: <20180403145821.GC6444@piout.net>
+References: <20180322195328.GA25733@embeddedgus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4231c0b6038764f68324297a40b18b15ecda5a92.1522055289.git.sean.wang@mediatek.com>
+In-Reply-To: <20180322195328.GA25733@embeddedgus>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/03/2018 18:05:52+0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On 22/03/2018 14:53:28-0500, Gustavo A. R. Silva wrote:
+> Assign true or false to boolean variables instead of an integer value.
 > 
-> It's required to create a modules.alias via MODULE_DEVICE_TABLE helper
-> for the OF platform driver. Otherwise, module autoloading cannot work.
+> This issue was detected with the help of Coccinelle.
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->  drivers/rtc/rtc-mt7622.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/rtc/rtc-isl12022.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 Applied, thanks.
 
