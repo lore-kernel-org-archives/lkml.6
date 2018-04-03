@@ -1,54 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755290AbeDCItF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:49:05 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:38469 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754961AbeDCItE (ORCPT
+        id S1755297AbeDCIth (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:49:37 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51439 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755086AbeDCItf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:49:04 -0400
-X-Google-Smtp-Source: AIpwx4/SFAI8jCacak4/keIRciKQDETNF7lCEU8pVGbL7i9rChdL+IBkYD40XINSUA/scCgNrAKNLQ==
+        Tue, 3 Apr 2018 04:49:35 -0400
+Date: Tue, 3 Apr 2018 10:49:32 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        David Laight <David.Laight@ACULAB.COM>,
+        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+Message-ID: <20180403084932.GA3926@amd>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
+ <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
+ <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+ <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de>
+ <20180320090802.qw4tqjmhy6yfd6sf@gmail.com>
+ <alpine.DEB.2.21.1803201039460.6506@nanos.tec.linutronix.de>
+ <20180320105427.bm4od7cpessbraag@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180403084655.x6u7s4jzqdvq2eey@flea>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
- <20180403061836.3926-12-mylene.josserand@bootlin.com> <20180403084655.x6u7s4jzqdvq2eey@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 3 Apr 2018 16:48:41 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67EzOHd5_Xj9K3ZuAKVZhA4WrwfTM0gE_eR+H4mF1J4eA@mail.gmail.com>
-Message-ID: <CAGb2v67EzOHd5_Xj9K3ZuAKVZhA4WrwfTM0gE_eR+H4mF1J4eA@mail.gmail.com>
-Subject: Re: [PATCH v5 11/13] ARM: sun9i: smp: Add is_sun9i field
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>, quentin.schulz@bootlin.com,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Disposition: inline
+In-Reply-To: <20180320105427.bm4od7cpessbraag@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 4:46 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> On Tue, Apr 03, 2018 at 08:18:34AM +0200, Mylène Josserand wrote:
->> To prepare the support of sun8i-a83t, add a field in the smp_data
->> structure to enable the case of sun9i.
->>
->> Start to handle the differences between sun9i-a80 and sun8i-a83t
->> by using this variable.
->>
->> Add an index to retrieve which structures we are using.
->
-> This should have been in a separate commit, but maybe we can store a
-> pointer to the array cell we're using instead of always using the
-> index?
 
-Using a pointer would also avoid some of the code movement from the
-previous patch.
+--bp/iNruPH9dso1Pn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ChenYu
+Hi!
+
+> > On Tue, 20 Mar 2018, Ingo Molnar wrote:
+> > > * Thomas Gleixner <tglx@linutronix.de> wrote:
+> > >=20
+> > > > > So I do think we could do more in this area to improve driver per=
+formance, if the=20
+> > > > > code is correct and if there's actual benchmarks that are showing=
+ real benefits.
+> > > >=20
+> > > > If it's about hotpath performance I'm all for it, but the use case =
+here is
+> > > > a debug facility...
+> > > >=20
+> > > > And if we go down that road then we want a AVX based memcpy()
+> > > > implementation which is runtime conditional on the feature bit(s) a=
+nd
+> > > > length dependent. Just slapping a readqq() at it and use it in a lo=
+op does
+> > > > not make any sense.
+> > >=20
+> > > Yeah, so generic memcpy() replacement is only feasible I think if the=
+ most=20
+> > > optimistic implementation is actually correct:
+> > >=20
+> > >  - if no preempt disable()/enable() is required
+> > >=20
+> > >  - if direct access to the AVX[2] registers does not disturb legacy F=
+PU state in=20
+> > >    any fashion
+> > >=20
+> > >  - if direct access to the AVX[2] registers cannot raise weird except=
+ions or have
+> > >    weird behavior if the FPU control word is modified to non-standard=
+ values by=20
+> > >    untrusted user-space
+> > >=20
+> > > If we have to touch the FPU tag or control words then it's probably o=
+nly good for=20
+> > > a specialized API.
+> >=20
+> > I did not mean to have a general memcpy replacement. Rather something l=
+ike
+> > magic_memcpy() which falls back to memcpy when AVX is not usable or the
+> > length does not justify the AVX stuff at all.
+>=20
+> OK, fair enough.
+>=20
+> Note that a generic version might still be worth trying out, if and only =
+if it's=20
+> safe to access those vector registers directly: modern x86 CPUs will do t=
+heir=20
+> non-constant memcpy()s via the common memcpy_erms() function - which coul=
+d in=20
+> theory be an easy common point to be (cpufeatures-) patched to an AVX2 va=
+riant, if=20
+> size (and alignment, perhaps) is a multiple of 32 bytes or so.
+
+How is AVX2 supposed to help the memcpy speed?
+
+If the copy is small, constant overhead will dominate, and I don't
+think AVX2 is going to be win there.
+
+If the copy is big, well, the copy loop will likely run out of L1 and
+maybe even out of L2, and at that point speed of the loop does not
+matter because memory is slow...?
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--bp/iNruPH9dso1Pn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrDQBwACgkQMOfwapXb+vJC7wCdFJ9ASTxZjRfHbQWQbbXhKcJo
+ADQAoIoi+qXwoXzoQ/BPF+rnCSbNrhT0
+=Nuw2
+-----END PGP SIGNATURE-----
+
+--bp/iNruPH9dso1Pn--
