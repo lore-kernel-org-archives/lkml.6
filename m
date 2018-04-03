@@ -1,126 +1,219 @@
-Return-Path: <3-RXEWgkbABIAGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522800121; cv=none;
+Return-Path: <mhkelley58@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522794943; cv=none;
         d=google.com; s=arc-20160816;
-        b=IXJs5WgvTzZUMu1Jt6LZQ+oJGDWOpmZUHENOpTRpJcVUtRI3//glruu3ost1ZDKkNK
-         2fOpTn1wey7IdKmjPvK2iIRgXB568zyenCk6t/18WYnz5Adl3OpOZ0tt/hGfaTwC743g
-         rY7tM47jx4yhEE2VFztZIDpqctvbfnh4U6OX+6z69trrNXunYPBUDgJKIKvwM2Dntrmw
-         vaqjWu+Q9Z9a5tUxayn02b3ffjIXm2KoIq8vDvLTUnpPyL9/XmALPNgsNeEkSoQ9qAcX
-         jA+y25s8b4XEfF49vRyi6pKPRFQq3lgDc+hguefTCyOwjr8sO5K+oA8yg9SMhRm3FnX6
-         GyXw==
+        b=mtutPd762eRuQBHliRx6+CRxxHd6uJdBbQbAwnwp3K0u23Kyj3HjmVe9psQEg9luAa
+         IkjQ5/D0Z8u4YvbsYVHA6h8ZqfMDMk6TQhNJvhFzg6ji+S67wdKo1US6YWzxWTsaD1W6
+         k0cTpWlO9UhikkW2xBCxuvcoMZHjH9KfLCTO5SZj6V7DrRc6UC9M0BpYOndrKX46DmdD
+         dnAaCJcVXtMqtFzp66isykH2/rwY4gcC1HLvaWU6vMpxrjBVHgC/AagVAZAecE8SO9Ta
+         hFE7POoXdHOedCmlTZLMptwbOOlE2mV3yDNRXfMZDWrCEES/po77/L0PQ42VQdt6sOxu
+         VhkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        h=reply-to:message-id:date:subject:to:from:dkim-signature
          :arc-authentication-results;
-        bh=arxixZZr4dA0d9ABG4kaRb1mVfaJUacCWVOrCmDvB0k=;
-        b=CgbqwOwDhZlmHik+yplkGpHg16n/mfwFQJKyI5du/Jl4OwND5KXEj2mK/1LHBz+LeX
-         7ohJ0X0NXvTW4cUn6osuG0nrsNTRbiTz3tN/bXlPGYVY6Dh8qnezeR6FwA5070xt6cq3
-         Og/aKa7g9JuHegKHHisBFObd9/EvoW36N1euLfNPWtgMEf9TQXSkb1+nJPGr+hWH0q81
-         siUaW7B3MuE+rqp5KPbnO133FcKoXuaYbSeLkuIao/Uoqpf+KrtrpJqZHo2VVPXbpsKn
-         OMH2JFQOztmjExxoWHg5vTD61BIniB7Nr6tnOD+LD66u96k4xo9IpUlmxiToNrK9K87T
-         4RTg==
+        bh=4PKMEQz20D8qkRLYXfPWNOhbhYVuu8B15//btr01nmM=;
+        b=ngC38qGsYXpHg9HPQ8Fo2A0Wd6eP+FDX+cX3stLYJz7htToDk41Rjm8WUcbMC4qtNm
+         t18O7QsB13szXAu2F+CHwTgREWwt4QsBdU4nP9jU1zxDYjfH8zWI4cvZ6IqzlZBDtMrj
+         QYifLB16HAugeJE5D834gm3tMDjMgKr4/kp/eCsqfQqNfUEgQixAcYsZwZDGRUDJZxFn
+         NV+NbrKe6YoG7IIvZ4i2PC0svb14RrJ9ba6nQhUH4aGdE7hlH1oKQWgFKuNujqdlDoz0
+         NmlIExnv3WxipVmO1XQr6e8812JQ4oXqMk2QcVhiwD5NYuH37BEmkRHrpp8ZOR2lFBmh
+         hz9A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 3-rxewgkbabiagh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3-RXEWgkbABIAGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pf8N/ydO;
+       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 3-rxewgkbabiagh2s33w9s770v.y66y3wcaw9u65bw5b.u64@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3-RXEWgkbABIAGH2s33w9s770v.y66y3wCAw9u65Bw5B.u64@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AIpwx49anTuF/AAQduxYjcCrYPTzNKIxjbW+GLNhK0EUwoNR2j5Aii5TM2BQlBFk6RKweda03KP02lENkNi0xiWzOveJjXFouj5V
-MIME-Version: 1.0
-Date: Tue, 03 Apr 2018 17:02:01 -0700
-In-Reply-To: <001a1140e9201dd16b0568cc6beb@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a114ab89c4f23a90568fa88f7@google.com>
-Subject: Re: BUG: unable to handle kernel paging request in cleanup_bitmap_list
-From: syzbot <syzbot+008ac33be9dec51e0ca3@syzkaller.appspotmail.com>
-To: colin.king@canonical.com, dhowells@redhat.com, gregkh@linuxfoundation.org,
-	jack@suse.cz, kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	mingo@kernel.org, pombredanne@nexb.com, reiserfs-devel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pf8N/ydO;
+       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx49enyAwmuhAVTFxUO9bDEnSCNHrAF/FzPftIGZoaKdjLrCPUnmCH97Y3zUtyHKDjqA2cAjzBw==
+From: mhkelley58@gmail.com
+X-Google-Original-From: mikelley@microsoft.com
+To: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	devel@linuxdriverproject.org,
+	olaf@aepfle.de,
+	apw@canonical.com,
+	vkuznets@redhat.com,
+	jasowang@redhat.com,
+	leann.ogasawara@canonical.com,
+	marcelo.cerri@canonical.com,
+	sthemmin@microsoft.com,
+	kys@microsoft.com
+Subject: [PATCH char-misc 1/1] Drivers: hv: vmbus: Add comments on ring buffer signaling
+Date: Tue,  3 Apr 2018 15:35:10 -0700
+Message-Id: <1522794910-1675-1-git-send-email-mikelley@microsoft.com>
+X-Mailer: git-send-email 2.7.4
+Reply-To: mikelley@microsoft.com
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596563981441211634?=
-X-GMAIL-MSGID: =?utf-8?q?1596771660612776275?=
+X-GMAIL-THRID: =?utf-8?q?1596766230893401335?=
+X-GMAIL-MSGID: =?utf-8?q?1596766230893401335?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-syzbot has found reproducer for the following crash on upstream commit
-f2d285669aae656dfeafa0bf25e86bbbc5d22329 (Tue Apr 3 17:45:39 2018 +0000)
-Merge tag 'pm-4.17-rc1' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=008ac33be9dec51e0ca3
+From: Michael Kelley <mikelley@microsoft.com>
 
-So far this crash happened 3 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5967772961996800
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4833954477637632
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5985556743847936
-Kernel config: https://syzkaller.appspot.com/x/.config?id=686016073509112605
-compiler: gcc (GCC) 7.1.1 20170620
+Add comments describing intricacies of Hyper-V ring buffer
+signaling code.  This information is not in Hyper-V public
+documents, so include here to capture the knowledge for
+future coders.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+008ac33be9dec51e0ca3@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+There are no code changes in this commit.
 
-syzkaller001137 (4456) used greatest stack depth: 15592 bytes left
-REISERFS (device loop0): found reiserfs format "3.6" with non-standard  
-journal
-REISERFS (device loop0): using ordered data mode
-reiserfs: using flush barriers
-REISERFS warning (device loop0): sh-460 journal_init: journal header magic  
-0 (device loop0) does not match to magic found in super block 4c3955ba
-BUG: unable to handle kernel paging request at ffffc90001f23000
-PGD 1dad42067 P4D 1dad42067 PUD 1dad43067 PMD 1b0857067 PTE 0
-Oops: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4461 Comm: syzkaller001137 Not tainted 4.16.0+ #13
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0  
-fs/reiserfs/journal.c:233
-RSP: 0018:ffff8801adc7f0b0 EFLAGS: 00010246
-RAX: 0000000000001000 RBX: dffffc0000000000 RCX: ffffc90001f202b0
-RDX: 1ffff920003e4600 RSI: 0000000000008000 RDI: 0000000000000001
-RBP: ffff8801adc7f188 R08: ffffed003b6046c3 R09: ffffed003b6046c3
-R10: 0000000000000001 R11: ffffed003b6046c2 R12: ffffc90001f23000
-R13: 0000000000000200 R14: ffff8801d962fb40 R15: ffff8801d9a08a80
-FS:  00007f2354935700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90001f23000 CR3: 00000001b0f93000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  cleanup_bitmap_list fs/reiserfs/journal.c:229 [inline]
-  free_list_bitmaps+0x6f/0xf0 fs/reiserfs/journal.c:251
-  free_journal_ram+0x148/0x5a0 fs/reiserfs/journal.c:1894
-  journal_init+0x2320/0x6320 fs/reiserfs/journal.c:2901
-  reiserfs_fill_super+0xf9f/0x33a0 fs/reiserfs/super.c:2034
-  mount_bdev+0x2b7/0x370 fs/super.c:1119
-  get_super_block+0x34/0x40 fs/reiserfs/super.c:2605
-  mount_fs+0x66/0x2d0 fs/super.c:1222
-  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:2514 [inline]
-  do_new_mount fs/namespace.c:2517 [inline]
-  do_mount+0xea4/0x2b90 fs/namespace.c:2847
-  ksys_mount+0xab/0x120 fs/namespace.c:3063
-  SYSC_mount fs/namespace.c:3077 [inline]
-  SyS_mount+0x39/0x50 fs/namespace.c:3074
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44990a
-RSP: 002b:00007f2354934cf8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000100 RCX: 000000000044990a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f2354934d10
-RBP: 0000000000000004 R08: 0000000020011500 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000004
-R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000004
-Code: ff ff 4d 63 e5 4a 8d 04 e5 00 00 00 00 4c 8b 21 48 89 85 68 ff ff ff  
-49 01 c4 4c 89 e2 48 c1 ea 03 80 3c 1a 00 0f 85 76 02 00 00 <4d> 8b 24 24  
-4d 85 e4 0f 84 e5 fe ff ff e8 b1 81 8c ff 49 8d 7e
-RIP: cleanup_bitmap_list.isra.7.part.8+0x3dd/0x6b0  
-fs/reiserfs/journal.c:233 RSP: ffff8801adc7f0b0
-CR2: ffffc90001f23000
----[ end trace 834bcfee184feda9 ]---
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+---
+ drivers/hv/ring_buffer.c | 65 ++++++++++++++++++++++++++++++++++++++++--------
+ include/linux/hyperv.h   | 31 +++++++++++++++++------
+ 2 files changed, 77 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/hv/ring_buffer.c b/drivers/hv/ring_buffer.c
+index 8699bb9..ce6ea6d 100644
+--- a/drivers/hv/ring_buffer.c
++++ b/drivers/hv/ring_buffer.c
+@@ -429,7 +429,24 @@ static u32 hv_pkt_iter_bytes_read(const struct hv_ring_buffer_info *rbi,
+ }
+ 
+ /*
+- * Update host ring buffer after iterating over packets.
++ * Update host ring buffer after iterating over packets. If the host has
++ * stopped queuing new entries because it found the ring buffer full, and
++ * sufficient space is being freed up, signal the host. But be careful to
++ * only signal the host when necessary, both for performance reasons and
++ * because Hyper-V protects itself by throttling guests that signal
++ * inappropriately.
++ *
++ * Determining when to signal is tricky. There are three key data inputs
++ * that must be handled in this order to avoid race conditions:
++ *
++ * 1. Update the read_index
++ * 2. Read the pending_send_sz
++ * 3. Read the current write_index
++ *
++ * The interrupt_mask is not used to determine when to signal. The
++ * interrupt_mask is used only on the guest->host ring buffer when
++ * sending requests to the host. The host does not use it on the host->
++ * guest ring buffer to indicate whether it should be signaled.
+  */
+ void hv_pkt_iter_close(struct vmbus_channel *channel)
+ {
+@@ -445,22 +462,30 @@ void hv_pkt_iter_close(struct vmbus_channel *channel)
+ 	start_read_index = rbi->ring_buffer->read_index;
+ 	rbi->ring_buffer->read_index = rbi->priv_read_index;
+ 
++	/*
++	 * Older versions of Hyper-V (before WS2102 and Win8) do not
++	 * implement pending_send_sz and simply poll if the host->guest
++	 * ring buffer is full.  No signaling is needed or expected.
++	 */
+ 	if (!rbi->ring_buffer->feature_bits.feat_pending_send_sz)
+ 		return;
+ 
+ 	/*
+ 	 * Issue a full memory barrier before making the signaling decision.
+-	 * Here is the reason for having this barrier:
+-	 * If the reading of the pend_sz (in this function)
+-	 * were to be reordered and read before we commit the new read
+-	 * index (in the calling function)  we could
+-	 * have a problem. If the host were to set the pending_sz after we
+-	 * have sampled pending_sz and go to sleep before we commit the
++	 * If reading pending_send_sz were to be reordered and happen
++	 * before we commit the new read_index, a race could occur.  If the
++	 * host were to set the pending_send_sz after we have sampled
++	 * pending_send_sz, and the ring buffer blocks before we commit the
+ 	 * read index, we could miss sending the interrupt. Issue a full
+ 	 * memory barrier to address this.
+ 	 */
+ 	virt_mb();
+ 
++	/*
++	 * If the pending_send_sz is zero, then the ring buffer is not
++	 * blocked and there is no need to signal.  This is far by the
++	 * most common case, so exit quickly for best performance.
++	 */
+ 	pending_sz = READ_ONCE(rbi->ring_buffer->pending_send_sz);
+ 	if (!pending_sz)
+ 		return;
+@@ -474,14 +499,32 @@ void hv_pkt_iter_close(struct vmbus_channel *channel)
+ 	bytes_read = hv_pkt_iter_bytes_read(rbi, start_read_index);
+ 
+ 	/*
+-	 * If there was space before we began iteration,
+-	 * then host was not blocked.
++	 * We want to signal the host only if we're transitioning
++	 * from a "not enough free space" state to a "enough free
++	 * space" state.  For example, it's possible that this function
++	 * could run and free up enough space to signal the host, and then
++	 * run again and free up additional space before the host has a
++	 * chance to clear the pending_send_sz.  The 2nd invocation would
++	 * be a null transition from "enough free space" to "enough free
++	 * space", which doesn't warrant a signal.
++	 *
++	 * Exactly filling the ring buffer is treated as "not enough
++	 * space". The ring buffer always must have at least one byte
++	 * empty so the empty and full conditions are distinguishable.
++	 * hv_get_bytes_to_write() doesn't fully tell the truth in
++	 * this regard.
++	 *
++	 * So first check if we were in the "enough free space" state
++	 * before we began the iteration. If so, the host was not
++	 * blocked, and there's no need to signal.
+ 	 */
+-
+ 	if (curr_write_sz - bytes_read > pending_sz)
+ 		return;
+ 
+-	/* If pending write will not fit, don't give false hope. */
++	/*
++	 * Similarly, if the new state is "not enough space", then
++	 * there's no need to signal.
++	 */
+ 	if (curr_write_sz <= pending_sz)
+ 		return;
+ 
+diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+index 2048f3c..a0dfe78 100644
+--- a/include/linux/hyperv.h
++++ b/include/linux/hyperv.h
+@@ -89,18 +89,33 @@ struct hv_ring_buffer {
+ 	u32 interrupt_mask;
+ 
+ 	/*
+-	 * Win8 uses some of the reserved bits to implement
+-	 * interrupt driven flow management. On the send side
+-	 * we can request that the receiver interrupt the sender
+-	 * when the ring transitions from being full to being able
+-	 * to handle a message of size "pending_send_sz".
++	 * WS2012/Win8 and later versions of Hyper-V implement interrupt
++	 * driven flow management. The feature bit feat_pending_send_sz
++	 * is set by the host on the host->guest ring buffer, and by the
++	 * guest on the guest->host ring buffer.
+ 	 *
+-	 * Add necessary state for this enhancement.
++	 * The meaning of the feature bit is a bit complex in that it has
++	 * semantics that apply to both ring buffers.  If the guest sets
++	 * the feature bit in the guest->host ring buffer, the guest is
++	 * telling the host that:
++	 * 1) It will set the pending_send_sz field in the guest->host ring
++	 *    buffer when it is waiting for space to become available, and
++	 * 2) It will read the pending_send_sz field in the host->guest
++	 *    ring buffer and interrupt the host when it frees enough space
++	 *
++	 * Similarly, if the host sets the feature bit in the host->guest
++	 * ring buffer, the host is telling the guest that:
++	 * 1) It will set the pending_send_sz field in the host->guest ring
++	 *    buffer when it is waiting for space to become available, and
++	 * 2) It will read the pending_send_sz field in the guest->host
++	 *    ring buffer and interrupt the guest when it frees enough space
++	 *
++	 * If either the guest or host does not set the feature bit that it
++	 * owns, that guest or host must do polling if it encounters a full
++	 * ring buffer, and not signal the other end with an interrupt.
+ 	 */
+ 	u32 pending_send_sz;
+-
+ 	u32 reserved1[12];
+-
+ 	union {
+ 		struct {
+ 			u32 feat_pending_send_sz:1;
+-- 
+2.7.4
