@@ -1,56 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751638AbeDCO5f (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:57:35 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:49828 "EHLO gum.cmpxchg.org"
+        id S1751968AbeDCO6M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:58:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50656 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751241AbeDCO5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:57:33 -0400
-Date: Tue, 3 Apr 2018 10:58:53 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
-Message-ID: <20180403145853.GB21411@cmpxchg.org>
-References: <20180321205928.22240-1-mhocko@kernel.org>
+        id S1751414AbeDCO6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 10:58:11 -0400
+Date: Tue, 3 Apr 2018 16:57:41 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: sean.wang@mediatek.com
+Cc: a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: mt7622: fix module autoloading for OF platform
+ drivers
+Message-ID: <20180403145741.GB6444@piout.net>
+References: <4231c0b6038764f68324297a40b18b15ecda5a92.1522055289.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180321205928.22240-1-mhocko@kernel.org>
+In-Reply-To: <4231c0b6038764f68324297a40b18b15ecda5a92.1522055289.git.sean.wang@mediatek.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 09:59:28PM +0100, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On 26/03/2018 18:05:52+0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> David has noticed that THP memcg charge can trigger the oom killer
-> since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
-> madvised allocations"). We have used an explicit __GFP_NORETRY
-> previously which ruled the OOM killer automagically.
+> It's required to create a modules.alias via MODULE_DEVICE_TABLE helper
+> for the OF platform driver. Otherwise, module autoloading cannot work.
 > 
-> Memcg charge path should be semantically compliant with the allocation
-> path and that means that if we do not trigger the OOM killer for costly
-> orders which should do the same in the memcg charge path as well.
-> Otherwise we are forcing callers to distinguish the two and use
-> different gfp masks which is both non-intuitive and bug prone. Not to
-> mention the maintenance burden.
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  drivers/rtc/rtc-mt7622.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Teach mem_cgroup_oom to bail out on costly order requests to fix the THP
-> issue as well as any other costly OOM eligible allocations to be added
-> in future.
-> 
-> Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
-> Reported-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+Applied, thanks.
 
-I also prefer this fix over having separate OOM behaviors (which is
-user-visible, and not just about technical ability to satisfy the
-allocation) between the allocator and memcg.
-
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
