@@ -1,138 +1,173 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3787617-1522830521-2-14519461955462751683
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-923211-1522742433-2-7625105784054160731
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='ru',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
   MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522830521; b=Vviq1CdQZE+1KPRJsZOSs21d6TnZB7a4X2KqCb6wuT+9sg15Ot
-    1VWGvtFy6RjrWTLxijES0+fguEI8QwfxRy6KVqANKbQu3urGsTN/c9hf09iuMZ5T
-    63IlwEheXeCybqaV/UZG5TNm02pL2kRm9Fqv+GE9AaQVyx6oSwKNJ3ZB/en+p4dr
-    YHzbCha8YH4mPEvRl13j4Vs4gi/cE4eZTCIzCzGfEQOS2IBMXTXyrvSayEYChm1L
-    +lRRCB+vjkuivnxMXXPfDnFhHJM1hg+5B24CSjgZDshgy4RCmI/LF2KqeO++5zin
-    lTE8ltnbH4DvVyxzt+x5WaqCaHUGeYB/2WRA==
+    1522742432; b=drH76De6apUCMzexzUKKQOZQRAnkfNRB1lxgdb5/P4sMgPIjoO
+    SRsGvIBsxiPV3qAbbTDNt8mTZkQwoGW+/O5wsLeNUzDs9AphqF4iWVgJEUo6hXiN
+    wexd+ftoLouiy7OTYElCmXWO+F5Ogj2wiac59KJNle+UEG3QUjw3xbRhWoUtV177
+    yw5pde+1brwUrpS+mBANqBNJTk3jIARGpkMbuSzAXtPxaLAhMcNUSE2ZA+M/KgP+
+    C1voHAKMVFHH1Cms9N/KUTffQYy7BJAfchq0zXa6cyfnoYiGcBQRCVkgmcxqKlQ/
+    diRuGqJZGwW4ukjDPYCjAeD+INRYmj7Gv1Xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522830521;
-    bh=aS2w3kZ4TXswR5j9kuNClEEk0feBA9TqiviPLdtPZA0=; b=rHApR8ZE9lDl
-    GFo6vJgGbPju9KhNlM12EnnVJ5bWBldQvvaXwlFiRaZZ88mxIjaF9ITJnLcZxJw+
-    bAlSk3LeIaZvBlhezs2I6haWQY38DmLPEw307HMQeWZ6JPlXKu6UPZN5T717mgX4
-    TBnBI86pOKSKTs/+Jd2Zv8vMb0F8fUO3Ry+ZgB5sEon2IdgZVGlAEIs4cw6eEJcd
-    ejs+l4gSUPNmvkPW2DRkQ/9ijsDtdqWkWmy+Zv4dI+4fO0B3tZEh9Jv4gSHcrl5x
-    Ns1EG7Jkx/sPXngsTZOKrG0XnSxBqZrfvCa/F+i9MPYPRgCs1Lf8tgDx7EBmsHlA
-    zxWDUIsR2Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim-adsp=unknown (ADSP policy from yandex-team.ru);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=NO30PeCC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=yandex-team.ru;
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1522742432;
+    bh=C4QDGVL/fzV982r6ZX2Fm4V9tMpFh5w+FgPd1gYvvS8=; b=vPNBCFocmUnK
+    BguGlLLKSYsHCikfBhYQA7u074O1yL4LBdsu9rLTUALA+ETakiocvZhUL9t3PP+/
+    Hh3j5VY+nhzLlUz/6VOb6w7mYbSIWCF0foVE2Igl0ELJvuYx5KyKElB59HsEhfrK
+    +mLxHgeHLs23QZOOh9NGRM6sDrfx3frGN1XGp/rZBEDurH/R/bsvVcTOnw3OO/nQ
+    vwX4Q4d3RmUVNca/+j0u79+7fz27wi8gShWEZyTLBMT6Ee/LsKs8vXumAmqbF3iJ
+    xqwDQ1zbqsXAMP6BgKf96wl9zcpGgLDKMYfNm9GQqckBDvoFS9aH9Vv8TLwjWMpQ
+    GtuzfgHSDw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=yandex-team.ru header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=pengutronix.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim-adsp=unknown (ADSP policy from yandex-team.ru);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=NO30PeCC x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=yandex-team.ru;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=yandex-team.ru header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=pengutronix.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHMXkWeVSw1reRQCBCoZ/34KaeoKO6pTMijjjDJ5toNaI6JHH5FDUWkgH07sHxiphBNYdpkG+5S2vAnRPfDoFFlBpLtJ/o/0zV0KQ9PtdHQFYVL6PzLi
-    JFWcKSCu2ECHIDGGSF78DzrdUGb2l+eegm9NEAUzeF+5j2Baa/ZZw+hpZAiyXwYtslmXuQ//MTChes9EQEgtxkugSCH74QQeTzqV6N8fTSKqFDhKEHyjwGvW
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGK60LufInTtZk1qmycfr1X5HJsr8x2CMLBZA0GLeZS4C1zD4M5cNgh3jL77HQak+H/gx2HAv42mDyc4MdDy4F84RBIFdYrXF8hEkboiST3Paqhk6ngl
+    Aj1kZyqcz58fy9EryGCFYTHTgJ3gf7fvihv8/vSxY0mGwAXmM8KL6D35pcKGmz5wQBIJu0TVM9LY4gd78pH1h8qtUxcHmcjbYccbDciAgey/m6YQqdH25gpR
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=Kd1tUaAdevIA:10 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ycfoZbH95-1PLewt86gA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Kd1tUaAdevIA:10 a=c-n4J4-pAAAA:8 a=VwQbUJbxAAAA:8 a=7G0kO3H3RDkZq6OZ0yoA:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=L0NDqeB7ZLmQzAogN4cw:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751350AbeDDI2i (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 4 Apr 2018 04:28:38 -0400
-Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:43441 "EHLO
-        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751314AbeDDI2h (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 4 Apr 2018 04:28:37 -0400
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: Re: [RESEND PATCH V4] pidns: introduce syscall translate_pid
-To: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ebiederm@xmission.com, serge.hallyn@ubuntu.com, oleg@redhat.com,
-        luto@amacapital.net, jannh@google.com, prakash.sangappa@oracle.com
-References: <1522706249-11578-1-git-send-email-nagarathnam.muthusamy@oracle.com>
- <20180403143838.614ecc083835d07d409a699c@linux-foundation.org>
- <678f275b-8d78-9b0f-177f-5ff5c9c55657@oracle.com>
- <20180403145248.fb4cd8c5ccd270ca77fd18f3@linux-foundation.org>
- <6a117d9a-f005-e1ae-5632-25e5c61dcb8f@oracle.com>
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Message-ID: <0f0a03df-9171-fc29-194b-77d1792b5698@yandex-team.ru>
-Date: Wed, 4 Apr 2018 11:28:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <6a117d9a-f005-e1ae-5632-25e5c61dcb8f@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1754874AbeDCIA3 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 3 Apr 2018 04:00:29 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54447 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752581AbeDCIA3 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 3 Apr 2018 04:00:29 -0400
+Message-ID: <1522742421.5089.1.camel@pengutronix.de>
+Subject: Re: [PATCH] usb: dwc3: of-simple: use managed and shared reset
+ control
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        linux-usb@vger.kernel.org
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org
+Date: Tue, 03 Apr 2018 10:00:21 +0200
+In-Reply-To: <1522303676-7035-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1522303676-7035-1-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-usb@vger.kernel.org
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04.04.2018 00:51, Nagarathnam Muthusamy wrote:
+On Thu, 2018-03-29 at 15:07 +0900, Masahiro Yamada wrote:
+> This driver handles the reset control in a common manner; deassert
+> resets before use, assert them after use.  There is no good reason
+> why it should be exclusive.
+
+Is this preemptive cleanup, or do you have hardware on the horizon that
+shares these reset lines with other peripherals?
+
+> Also, use devm_ for clean-up.
 > 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 > 
-> On 04/03/2018 02:52 PM, Andrew Morton wrote:
->> On Tue, 3 Apr 2018 14:45:28 -0700 Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com> wrote:
->>
->>>> This changelog doesn't explain what the value is to our users.  I
->>>> assume it is a performance optimization because "backward translation
->>>> requires scanning all tasks"?  If so, please show us real-world
->>>> examples of the performance benefit from this patch, and please go to
->>>> great lengths to explain to us why this optimisation is needed by our
->>>> users.
->>> One of the usecase by Oracle database involves multiple levels of
->>> nested pid namespaces and we require pid translation between the
->>> levels. Discussions on the particular usecase, why any of the existing
->>> methods was not usable happened in the following thread.
->>>
->>> https://patchwork.kernel.org/patch/10276785/
->>>
->>> At the end, it was agreed that this patch along with flocks will solve the
->>> issue.
->> Nobody who reads this patch's changelog will know any of this.  Please
->> let's get all this information into the proper place.
-> Sure! Will resend the patch with updated change log.
+> CCing Philipp Zabel.
+> I see his sob in commit 06c47e6286d5.
 
-I have v5 version of this proposal in work.
+At the time I was concerned with the reset_control_array addition and
+didn't look closely at the exclusive vs shared issue.
 
-I've redesigned interface to be more convenient for cases where
-strict race-protection isn't required and pid-ns could be referenced pid.
+>  drivers/usb/dwc3/dwc3-of-simple.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+> index e54c362..bd6ab65 100644
+> --- a/drivers/usb/dwc3/dwc3-of-simple.c
+> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
+> @@ -91,7 +91,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, simple);
+>  	simple->dev = dev;
+>  
+> -	simple->resets = of_reset_control_array_get_optional_exclusive(np);
+> +	simple->resets = devm_reset_control_array_get_optional_shared(dev);
 
-It has 5 arguments rather than 3 because types of references are
-defined explicitly rather than magic like -1, >0, <0.
-This more verbose but protects against errors like passing -1 from
-failed previous syscall as argument.
+>From the usage in the driver, it does indeed look like _shared reset
+usage is appropriate. I assume that the hardware has no need for the
+reset to be asserted right before probe or after remove, it just
+requires that the reset line is kept deasserted while the driver is
+probed.
 
-kind of
-translate_pid(pid, TRANSLATE_PID_FD_PIDNS, ns_fd, TRANSLATE_PID_CURRENT_PIDNS, 0)
+>  	if (IS_ERR(simple->resets)) {
+>  		ret = PTR_ERR(simple->resets);
+>  		dev_err(dev, "failed to get device resets, err=%d\n", ret);
+> @@ -100,7 +100,7 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+>  
+>  	ret = reset_control_deassert(simple->resets);
+>  	if (ret)
+> -		goto err_resetc_put;
+> +		return ret;
+>  
+>  	ret = dwc3_of_simple_clk_init(simple, of_count_phandle_with_args(np,
+>  						"clocks", "#clock-cells"));
+> @@ -126,8 +126,6 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
+>  err_resetc_assert:
+>  	reset_control_assert(simple->resets);
+>  
+> -err_resetc_put:
+> -	reset_control_put(simple->resets);
+>  	return ret;
+>  }
+>  
+> @@ -146,7 +144,6 @@ static int dwc3_of_simple_remove(struct platform_device *pdev)
+>  	simple->num_clocks = 0;
+>  
+>  	reset_control_assert(simple->resets);
+> -	reset_control_put(simple->resets);
+>  
+>  	pm_runtime_put_sync(dev);
+>  	pm_runtime_disable(dev);
 
-I'll send it today with including more detailed motivation for patch.
+Changing to devm_ changes the order here. Whether or not it could be a
+problem to assert the reset only after pm_runtime_put (or potentially
+never), I can't say. I assume this is a non-issue, but somebody who
+knows the hardware better would have to decide.
+
+regards
+Philipp
