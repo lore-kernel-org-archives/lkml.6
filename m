@@ -1,75 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751403AbeDCC1Z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 22:27:25 -0400
-Received: from ozlabs.org ([103.22.144.67]:46687 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750798AbeDCC1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 22:27:24 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 3 Apr 2018 12:26:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mateusz Guzik <mguzik@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Message-ID: <20180403122629.688f2cab@canb.auug.org.au>
-In-Reply-To: <20180319170627.04eae43b@canb.auug.org.au>
-References: <20180319170627.04eae43b@canb.auug.org.au>
+        id S1751564AbeDCC3Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 22:29:16 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50760 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751249AbeDCC3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 22:29:15 -0400
+Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
+ fsync
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180330055126.36202-1-jaegeuk@kernel.org>
+ <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
+Date: Tue, 3 Apr 2018 10:29:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2j93cYseQ+/pdycqKHdsIJE"; protocol="application/pgp-signature"
+In-Reply-To: <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/2j93cYseQ+/pdycqKHdsIJE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2018/3/31 0:30, Jaegeuk Kim wrote:
+> Change log from v1:
+>  - add more description
+> 
+> This fixes xfstests/generic/392.
+> 
+> The failure was caused by different times between 1) one marked in the last
+> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
+> The reason was that we skipped updating inode block at 1), since its i_size
+> was recoverable along with 4KB-aligned data writes, which was fixed by:
+>   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
+>  fs/f2fs/inode.c |  4 ++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 000f93f6767e..675c39d85111 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
+>  	kprojid_t i_projid;		/* id for project quota */
+>  	int i_inline_xattr_size;	/* inline xattr size */
+>  	struct timespec i_crtime;	/* inode creation time */
+> +	struct timespec i_disk_time[4];	/* inode disk times */
+>  };
+>  
+>  static inline void get_extent_info(struct extent_info *ext,
+> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
+>  	f2fs_mark_inode_dirty_sync(inode, true);
+>  }
+>  
+> +static inline bool time_equal(struct timespec a, struct timespec b)
+> +{
+> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
+> +}
 
-Hi Al,
+We can use existing timespec_equal in <linux/time.h> instead of defining a
+duplicated one?
 
-On Mon, 19 Mar 2018 17:06:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
-> failed like this:
->=20
-> fs/super.c: In function 'do_thaw_all_callback':
-> fs/super.c:942:3: error: implicit declaration of function 'emergency_thaw=
-_bdev'; did you mean 'emergency_remount'? [-Werror=3Dimplicit-function-decl=
-aration]
->    emergency_thaw_bdev(sb);
->    ^~~~~~~~~~~~~~~~~~~
->    emergency_remount
->=20
-> Caused by commit
->=20
->   92afc556e622 ("buffer.c: call thaw_super during emergency thaw")
->=20
-> I have reverted that commit for today.
+> +
+>  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>  {
+>  	bool ret;
+> @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>  			i_size_read(inode) & ~PAGE_MASK)
+>  		return false;
+>  
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
+> +		return false;
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
+> +		return false;
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
+> +		return false;
+> +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
+> +		return false;
+> +
+>  	down_read(&F2FS_I(inode)->i_sem);
+>  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
+>  	up_read(&F2FS_I(inode)->i_sem);
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 401f09ccce7e..70aba580f4b0 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
+>  	if (inode->i_nlink == 0)
+>  		clear_inline_node(node_page);
+>  
+> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
+> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
+> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+> +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
 
-I am still doing that revert ...
+We need initialize them in do_read_inode?
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks,
 
---Sig_/2j93cYseQ+/pdycqKHdsIJE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC5lUACgkQAVBC80lX
-0Gyx6Af/f2yVMI3cSY69kghx2iiBw7se/h0Vmw5k75gTvzLylWeztVTQnibtVs2F
-B43Nx7hKLGKbIhinCVsoOWCGVyUfyWqZ3QqNoGUHAW78meLoXOm4894juuoGLlPg
-JWEITdEDA3NKRw9+F5mN+RLc0RTl060phD0j3hTdzREN9aonmQOrKjMhw6MLYech
-nQgXro7dIUghLhWe5yrNZcxA0PGpU+olCRliiYcZPbOCWxk3CNFlfdq/eg0nNErp
-bvSaZLojapNXNLVoVR6GtQhloEOw2lkGFb89OAt7tywp15sqx0j93s1EpyLtBJ9G
-bcgFjEbDiXbAiEZ48PoncIiNOzeK8w==
-=ZKV7
------END PGP SIGNATURE-----
-
---Sig_/2j93cYseQ+/pdycqKHdsIJE--
+>  }
+>  
+>  void update_inode_page(struct inode *inode)
+> 
