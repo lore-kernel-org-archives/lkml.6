@@ -1,46 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752216AbeDCQpt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:45:49 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59758 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751244AbeDCQps (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:45:48 -0400
-Date: Tue, 3 Apr 2018 17:45:45 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: David Miller <davem@davemloft.net>
-Cc: f.fainelli@gmail.com, netdev@vger.kernel.org, opendmb@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 1/2] net: bcmgenet: Fix sparse warnings in
- bcmgenet_put_tx_csum()
-Message-ID: <20180403164545.GK30522@ZenIV.linux.org.uk>
-References: <20180402225856.4351-1-f.fainelli@gmail.com>
- <20180402225856.4351-2-f.fainelli@gmail.com>
- <20180403162933.GJ30522@ZenIV.linux.org.uk>
- <20180403.123305.1783530733365447500.davem@davemloft.net>
+        id S1752425AbeDCQqH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:46:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752278AbeDCQqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:46:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 478DB206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AIpwx49mQWoMcAb3VvEGw+1CF89vqfnrnTp6K/tVIt+8TlOWRSPC2+6IukYkcA5x9rkVosOpjlw6V3SqPV6HFe1e+K8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403.123305.1783530733365447500.davem@davemloft.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
+ <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
+ <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com> <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Tue, 3 Apr 2018 09:45:41 -0700
+X-Gmail-Original-Message-ID: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+Message-ID: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+To: Matthew Garrett <mjg59@google.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Justin Forbes <jforbes@redhat.com>,
+        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 12:33:05PM -0400, David Miller wrote:
+On Tue, Apr 3, 2018 at 9:29 AM, Matthew Garrett <mjg59@google.com> wrote:
+> On Tue, Apr 3, 2018 at 8:11 AM Andy Lutomirski <luto@kernel.org> wrote:
+>> Can you explain that much more clearly?  I'm asking why booting via
+>> UEFI Secure Boot should enable lockdown, and I don't see what this has
+>> to do with kexec.  And "someone blacklist[ing] your key in the
+>> bootloader" sounds like a political issue, not a technical issue.
+>
+> A kernel that allows users arbitrary access to ring 0 is just an
+> overfeatured bootloader. Why would you want secure boot in that case?
 
-> Yes Al, however the pattern choosen here is probably cheaper on little endian:
-> 
-> 	__beXX val = x;
-> 	switch (val) {
-> 	case htons(ETH_P_FOO):
-> 	 ...
-> 	}
-> 
-> This way only the compiler byte swaps the constants at compile time,
-> no code is actually generated to do it.
+To get a chain of trust.  I can provision a system with some public
+keys, stored in UEFI authenticated variables, such that the system
+will only boot a signed image.  That signed image, can, in turn, load
+a signed (or hashed or otherwise verfified) kernel and a verified
+initramfs.  The initramfs can run a full system from a verified (using
+dm-verity or similar) filesystem, for example.  Now it's very hard to
+persistently attack this system.  Chromium OS does something very much
+like this, except that it doesn't use UEFI as far as I know.  So does
+iOS, and so do some Android versions.  None of this requires lockdown,
+or even a separation between usermode and kernelmode, to work
+correctly.  One could even do this on an MMU-less system if one really
+cared to.  More usefully, someone probably has done this using a
+unikernel.
 
-That's not obvious, actually - depends upon how sparse the switch ends
-up being.  You can easily lose more than a single byteswap insn on
-worse cascase of comparisons.
+If I had to guess at a motivation that makes this patchset work, it
+would be that there is an uneasy truce between Microsoft and the
+various vendors of signed Linux bootloaders.  That truce could
+conceivably require that the signed bootloaders not knowingly ship a
+system that allows a non-physically-present user to chainload Windows.
+If so, the patchset should say that loud and clear in its description
+and the parts that block bpf should go away.
