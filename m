@@ -1,72 +1,242 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755062AbeDCI0k convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:26:40 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:57551 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754850AbeDCI0j (ORCPT
+        id S1755072AbeDCI2o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:28:44 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41869 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754891AbeDCI2m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:26:39 -0400
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To: Michal Hocko <mhocko@kernel.org>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
-Thread-Topic: [PATCH v1] mm: consider non-anonymous thp as unmovable page
-Thread-Index: AQHTywbBR3VGVrQJfUWs9ILMOA3NvqPuFnMAgAAG4YA=
-Date: Tue, 3 Apr 2018 08:24:06 +0000
-Message-ID: <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
-References: <1522730788-24530-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180403075928.GC5501@dhcp22.suse.cz>
-In-Reply-To: <20180403075928.GC5501@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.128.101.8]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <95C456C3C9681E43A23D653F1A98C7B7@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Tue, 3 Apr 2018 04:28:42 -0400
+X-Google-Smtp-Source: AIpwx4+Fs3XUyDI0dv6AbemuxgMnbIFoWZZGe2Cn7saJb7/bBWEVFlG0qad3SjXcRB93FfMKa0WQKQ==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v6 0/1] drm/xen-front: Add support for Xen PV display frontend
+Date: Tue,  3 Apr 2018 11:28:32 +0300
+Message-Id: <20180403082833.26249-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 09:59:28AM +0200, Michal Hocko wrote:
-> On Tue 03-04-18 13:46:28, Naoya Horiguchi wrote:
-> > My testing for the latest kernel supporting thp migration found out an
-> > infinite loop in offlining the memory block that is filled with shmem
-> > thps.  We can get out of the loop with a signal, but kernel should
-> > return with failure in this case.
-> >
-> > What happens in the loop is that scan_movable_pages() repeats returning
-> > the same pfn without any progress. That's because page migration always
-> > fails for shmem thps.
->
-> Why does it fail? Shmem pages should be movable without any issues.
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-.. because try_to_unmap_one() explicitly skips unmapping for migration.
+Hello!
 
-  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-                  /* PMD-mapped THP migration entry */
-                  if (!pvmw.pte && (flags & TTU_MIGRATION)) {
-                          VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
-  
-                          if (!PageAnon(page))
-                                  continue;
-  
-                          set_pmd_migration_entry(&pvmw, page);
-                          continue;
-                  }
-  #endif
+Boris/Daniel, I put your R-b tags, so please do let me know if this is not
+acceptable, so I remove the tags.
 
-When I implemented this code, I felt hard to work on both of anon thp
-and shmem thp at one time, so I separated the proposal into smaller steps.
-Shmem uses pagecache so we need some non-trivial effort (including testing)
-to extend thp migration for shmem. But I think it's a reasonable next step.
+This patch series adds support for Xen [1] para-virtualized
+frontend display driver. It implements the protocol from
+include/xen/interface/io/displif.h [2].
+Accompanying backend [3] is implemented as a user-space application
+and its helper library [4], capable of running as a Weston client
+or DRM master.
+Configuration of both backend and frontend is done via 
+Xen guest domain configuration options [5].
 
-Thanks,
-Naoya Horiguchi
+*******************************************************************************
+* Driver limitations
+*******************************************************************************
+ 1. Configuration options 1.1 (contiguous display buffers) and 2 (backend
+    allocated buffers) below are not supported at the same time.
+
+ 2. Only primary plane without additional properties is supported.
+
+ 3. Only one video mode supported which resolution is configured via XenStore.
+
+ 4. All CRTCs operate at fixed frequency of 60Hz.
+
+*******************************************************************************
+* Driver modes of operation in terms of display buffers used
+*******************************************************************************
+ Depending on the requirements for the para-virtualized environment, namely
+ requirements dictated by the accompanying DRM/(v)GPU drivers running in both
+ host and guest environments, number of operating modes of para-virtualized
+ display driver are supported:
+  - display buffers can be allocated by either frontend driver or backend
+  - display buffers can be allocated to be contiguous in memory or not
+
+ Note! Frontend driver itself has no dependency on contiguous memory for
+       its operation.
+
+*******************************************************************************
+* 1. Buffers allocated by the frontend driver.
+*******************************************************************************
+
+ The below modes of operation are configured at compile-time via
+ frontend driver's kernel configuration.
+
+ 1.1. Front driver configured to use GEM CMA helpers
+      This use-case is useful when used with accompanying DRM/vGPU driver in
+      guest domain which was designed to only work with contiguous buffers,
+      e.g. DRM driver based on GEM CMA helpers: such drivers can only import
+      contiguous PRIME buffers, thus requiring frontend driver to provide
+      such. In order to implement this mode of operation para-virtualized
+      frontend driver can be configured to use GEM CMA helpers.
+
+ 1.2. Front driver doesn't use GEM CMA
+      If accompanying drivers can cope with non-contiguous memory then, to
+      lower pressure on CMA subsystem of the kernel, driver can allocate
+      buffers from system memory.
+
+ Note! If used with accompanying DRM/(v)GPU drivers this mode of operation
+   may require IOMMU support on the platform, so accompanying DRM/vGPU
+   hardware can still reach display buffer memory while importing PRIME
+   buffers from the frontend driver.
+
+*******************************************************************************
+* 2. Buffers allocated by the backend
+*******************************************************************************
+
+ This mode of operation is run-time configured via guest domain configuration
+ through XenStore entries.
+
+ For systems which do not provide IOMMU support, but having specific
+ requirements for display buffers it is possible to allocate such buffers
+ at backend side and share those with the frontend.
+ For example, if host domain is 1:1 mapped and has DRM/GPU hardware expecting
+ physically contiguous memory, this allows implementing zero-copying
+ use-cases.
+
+
+I would like to thank at least, but not at last the following
+people/communities who helped this driver to happen ;)
+
+1. My team at EPAM for continuous support
+2. Xen community for answering tons of questions on different
+modes of operation of the driver with respect to virtualized
+environment.
+3. Rob Clark for "GEM allocation for para-virtualized DRM driver" [6]
+4. Maarten Lankhorst for "Atomic driver and old remove FB behavior" [7]
+5. Ville Syrjälä for "Questions on page flips and atomic modeset" [8]
+
+Changes since v5:
+*******************************************************************************
+- fixed most of scripts/checkpatch.pl warnings
+
+Changes since v4:
+*******************************************************************************
+- updated the driver after "drm/simple-kms-helper: Plumb plane state
+  to the enable hook" [14]
+- made display_mode_valid static
+- fixed page leak on event channel error path
+- changed title of the documentation to match the rest of the drivers
+- removed from the series the patch from Noralf Trønnes [12] as it was sent out
+  as a standalone one
+
+Changes since v3:
+*******************************************************************************
+- no changes to Xen related code (shared buffer handling, event channels etc.),
+  but minor changes to xenbus_driver state machine due to re-worked unplug
+  implementation: additional state checks added
+- re-worked dumb creation code to fix race condition (drm_gem_handle_create)
+- use drm_dev_{enter|exit} to protect code which must not run when unplugged
+- re-work unplug code to fully support "zombie" DRM devices on backend
+  disconnect
+- implement a dedicated page flip time-out worker, remove logic from connector
+  detect callback
+- move mode_valid from drm_connector_helper_funcs to drm_simple_display_pipe_funcs
+- use drm_gem_object_put_unlocked instead of obsolete drm_gem_object_unreference_unlocked
+- minor cleanups
+
+Changes since v2:
+*******************************************************************************
+- no changes to Xen related code (shared buffer handling, event channels etc.)
+- rework DRM driver release with hotplug (Daniel)
+- squash xen_drm_front and xen_drm_front_drv as they depend on each
+  other too heavily now
+- remove platform driver and instantiate DRM device
+  from xenbus driver directly
+- have serializing mutex per connector, not a single one,
+  so we don't introduce a bottle neck for multiple connectors
+- minor comments addressed (Daniel)
+
+Changes since v1:
+*******************************************************************************
+- use SPDX license identifier, set license to GPLv2 OR MIT
+- changed midlayers to direct function calls, removed:
+  - front_ops
+  - gem_ops
+- renamed xenbus_driver callbacks to align with exisitng PV drivers
+- re-worked backend error handling with connector hotplug uevents
+- removed vblank handling so user-space doesn't have an impression
+  we really support that
+- directly use front's mode_set in display enable/disable
+- removed BUG_ON, error handling implemented
+- moved driver documentation into Documentation/gpu
+- other comments from Xen community addressed (Boris and Juergen)
+- squashed Xen and DRM patches for better interrconnection visibility
+- for your convenience driver is available at [11]
+
+Thank you,
+Oleksandr Andrushchenko
+
+[1] https://wiki.xen.org/wiki/Paravirtualization_(PV)#PV_IO_Drivers
+[2] https://elixir.bootlin.com/linux/v4.16-rc2/source/include/xen/interface/io/displif.h
+[3] https://github.com/xen-troops/displ_be
+[4] https://github.com/xen-troops/libxenbe
+[5] https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=docs/man/xl.cfg.pod.5.in;h=a699367779e2ae1212ff8f638eff0206ec1a1cc9;hb=refs/heads/master#l1257
+[6] https://lists.freedesktop.org/archives/dri-devel/2017-March/136038.html
+[7] https://www.spinics.net/lists/dri-devel/msg164102.html
+[8] https://www.spinics.net/lists/dri-devel/msg164463.html
+[9] https://patchwork.freedesktop.org/series/38073/
+[10] https://patchwork.freedesktop.org/series/38139/
+[11] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v2
+[12] https://patchwork.freedesktop.org/patch/175779/
+[13] https://www.spinics.net/lists/dri-devel/msg170453.html
+[14] https://patchwork.freedesktop.org/patch/212321/
+
+Oleksandr Andrushchenko (1):
+  drm/xen-front: Add support for Xen PV display frontend
+
+ Documentation/gpu/drivers.rst               |   1 +
+ Documentation/gpu/xen-front.rst             |  43 ++
+ drivers/gpu/drm/Kconfig                     |   2 +
+ drivers/gpu/drm/Makefile                    |   1 +
+ drivers/gpu/drm/xen/Kconfig                 |  30 +
+ drivers/gpu/drm/xen/Makefile                |  16 +
+ drivers/gpu/drm/xen/xen_drm_front.c         | 882 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front.h         | 188 ++++++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.c     |  77 +++
+ drivers/gpu/drm/xen/xen_drm_front_cfg.h     |  37 ++
+ drivers/gpu/drm/xen/xen_drm_front_conn.c    | 115 ++++
+ drivers/gpu/drm/xen/xen_drm_front_conn.h    |  27 +
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.c | 386 ++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_evtchnl.h |  81 +++
+ drivers/gpu/drm/xen/xen_drm_front_gem.c     | 311 ++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_gem.h     |  41 ++
+ drivers/gpu/drm/xen/xen_drm_front_gem_cma.c |  77 +++
+ drivers/gpu/drm/xen/xen_drm_front_kms.c     | 370 ++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_kms.h     |  26 +
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 432 ++++++++++++++
+ drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  72 +++
+ 21 files changed, 3215 insertions(+)
+ create mode 100644 Documentation/gpu/xen-front.rst
+ create mode 100644 drivers/gpu/drm/xen/Kconfig
+ create mode 100644 drivers/gpu/drm/xen/Makefile
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_cfg.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_conn.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_evtchnl.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_kms.h
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+ create mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+
+-- 
+2.16.2
