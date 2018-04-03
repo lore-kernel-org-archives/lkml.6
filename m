@@ -1,71 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755309AbeDCIvF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:51:05 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:14581 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755110AbeDCIvD (ORCPT
+        id S1755266AbeDCIvC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:51:02 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51498 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755110AbeDCIvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:51:03 -0400
-X-IronPort-AV: E=Sophos;i="5.48,400,1517900400";
-   d="scan'208";a="10230322"
-Subject: Re: [PATCH] ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" ->
- "Stopping"
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Colin King <colin.king@canonical.com>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180330154420.6903-1-colin.king@canonical.com>
- <20180331085420.GE14180@piout.net>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <051e667b-6a62-1c9c-344f-c1aed341fe8d@microchip.com>
-Date: Tue, 3 Apr 2018 10:50:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 3 Apr 2018 04:51:01 -0400
+Date: Tue, 3 Apr 2018 10:50:59 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-mm@kvack.org,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH 3/4] mm: Add free()
+Message-ID: <20180403085059.GB3926@amd>
+References: <20180322195819.24271-1-willy@infradead.org>
+ <20180322195819.24271-4-willy@infradead.org>
+ <1e95ce64-828b-1214-a930-1ffaedfa00b8@rasmusvillemoes.dk>
+ <20180323143435.GB5624@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180331085420.GE14180@piout.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
+Content-Disposition: inline
+In-Reply-To: <20180323143435.GB5624@bombadil.infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/03/2018 at 10:54, Alexandre Belloni wrote:
-> On 30/03/2018 at 16:44:20 +0100, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> Trivial fix to spelling mistake in pr_debug message text
->>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>   sound/soc/atmel/atmel_ssc_dai.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
->> index a1e2c5682dcd..1c7af0ca98ec 100644
->> --- a/sound/soc/atmel/atmel_ssc_dai.c
->> +++ b/sound/soc/atmel/atmel_ssc_dai.c
->> @@ -820,7 +820,7 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
->>   		if (ret < 0) {
->>   			printk(KERN_WARNING
->>   					"atmel_ssc_dai: request_irq failure\n");
->> -			pr_debug("Atmel_ssc_dai: Stoping clock\n");
->> +			pr_debug("Atmel_ssc_dai: Stopping clock\n");
->>   			clk_disable(ssc_p->ssc->clk);
->>   			return ret;
->>   		}
->> -- 
->> 2.15.1
->>
-> 
+--wq9mPyueHGvFACwf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
 
--- 
-Nicolas Ferre
+> > And sure, your free() implementation obviously also has that property,
+> > but I'm worried that they might one day decide to warn about the
+> > prototype mismatch (actually, I'm surprised it doesn't warn now, given
+> > that it obviously pretends to know what free() function I'm calling...),
+> > or make some crazy optimization that will break stuff in very subtle wa=
+ys.
+> >=20
+> > Also, we probably don't want people starting to use free() (or whatever
+> > name is chosen) if they do know the kind of memory they're freeing?
+> > Maybe it should not be advertised that widely (i.e., in kernel.h).
+>=20
+> All that you've said I see as an advantage, not a disadvantage.
+> Maybe I should change the prototype to match the userspace
+> free(), although gcc is deliberately lax about the constness of
+> function arguments when determining compatibility with builtins.
+> See match_builtin_function_types() if you're really curious.
+>=20
+> gcc already does some nice optimisations around free().  For example, it
+> can eliminate dead stores:
+
+Are we comfortable with that optimalization for kernel?
+
+us: "Hey, let's remove those encryption keys before freeing memory."
+gcc: :-).
+
+us: "Hey, we want to erase lock magic values not to cause confusion
+later."
+gcc: "I like confusion!"
+
+Yes, these probably can be fixed by strategic "volatile" and/or
+barriers, but...
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--wq9mPyueHGvFACwf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrDQHMACgkQMOfwapXb+vLrSgCeNOji+4hBPeycnjBAONNSs1CB
+bpoAoLiCussX5yWpsJiygcsSdM/1gXYI
+=BEih
+-----END PGP SIGNATURE-----
+
+--wq9mPyueHGvFACwf--
