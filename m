@@ -1,77 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752949AbeDCToZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:44:25 -0400
-Received: from muru.com ([72.249.23.125]:35114 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752240AbeDCToY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:44:24 -0400
-Date: Tue, 3 Apr 2018 12:44:19 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Dan Williams <dcbw@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180403194419.GG5700@atomide.com>
-References: <20180331194616.GA19388@amd>
- <20180331195524.GB19388@amd>
- <20180331234314.GZ5700@atomide.com>
- <20180401131852.GA11086@amd>
- <20180401153631.GA5700@atomide.com>
- <20180401173012.GB5700@atomide.com>
- <67086fdd0cdd69142cb89cd00f90e5a580e6607a.camel@redhat.com>
- <20180402155754.GD5700@atomide.com>
- <20180403150444.GE5700@atomide.com>
- <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
+        id S1753195AbeDCTog (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:44:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40466 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753045AbeDCTof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:44:35 -0400
+Date: Tue, 3 Apr 2018 21:44:31 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Stefan Fritsch <sf@sfritsch.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kvm: Add emulation for movups/movupd
+Message-ID: <20180403194430.GB7386@flask>
+References: <20180401155444.7006-1-sf@sfritsch.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180403155023.GA14638@atrey.karlin.mff.cuni.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180401155444.7006-1-sf@sfritsch.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180403 15:51]:
-> Hi!
-> 
-> > > OK thanks for checking. So probably only n_gsm channel 1 is for normal
-> > > Qualcomm at commands, and then channel 2 and others are commands
-> > > implemented by Motorola on the mdm6600.
-> > > 
-> > > I guess we'd have to add support for reading and writing to
-> > > /dev/gsmtty2 at least as it looks like these cannot be accessed
-> > > via /dev/ttyUSB4. Or at least I have not figured out any other
-> > > way to access them.
-> > 
-> > Hmm or maybe there is some way to select where qmi to tunnels the
-> > AT commands to? Some kind of channel type paramenter like n_gsm
-> > has?
-> > 
-> > Anyways, for trying to figure out things for alsamixer, I tested
-> > that ngsm 2 "AT+EACC=3,0" is not related to cpcap audio register
-> > settings and the mic is enabled during the call with Pavel's patch
-> > with alsamixer "Mode" set to either "Call" or "Normal". Also speaker
-> > keeps working during the call toggling between "Call" and "Normal".
-> > "Voice" in alsamixer does also control the speaker volume during
-> > the call. And setting the second "Speaker" from "Voice" to "HiFi"
-> > mutes the speaker.
-> 
-> Take a look at the patch. Selecting "call" does something at hardware
-> level, selecting "normal" is a nop.
-> 
-> Sorry for confusion.
-> 
-> Yes, that patch needs more work.
+[The subject could mention "x86:" as well]
 
-OK that explains why the speaker keeps working then :)
+2018-04-01 17:54+0200, Stefan Fritsch:
+> This is very similar to the aligned versions movaps/movapd.
+> 
+> We have seen the corresponding emulation failures with openbsd as guest
+> and with Windows 10 with intel HD graphics pass through.
+> 
+> Signed-off-by: Christian Ehrhardt <christian_ehrhardt@genua.de>
+> Signed-off-by: Stefan Fritsch <sf@sfritsch.de>
+> ---
 
-Regards,
+Nicely follows the implementation of aligned variants,
 
-Tony
+Reviewed-by: Radim Krčmář <rkrcmar@redhat.com>
