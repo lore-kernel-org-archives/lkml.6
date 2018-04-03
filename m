@@ -1,61 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751685AbeDCRNe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:13:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43620 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751270AbeDCRNd (ORCPT
+        id S1752388AbeDCROP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:14:15 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:39187 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbeDCROM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:13:33 -0400
-Date: Tue, 3 Apr 2018 10:14:23 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: SeongJae Park <sj38.park@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] memory-barriers.txt: Applies upstream changes to the
- Korean version
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180403092027.13471-1-sj38.park@gmail.com>
+        Tue, 3 Apr 2018 13:14:12 -0400
+X-Google-Smtp-Source: AIpwx4/HUESXpraBo4bhGpn/Pg6pB/DfYz3ct8GPl6KXX9phbnb8E58M3YL6qwUOLA1iG5PcowmUCA==
+Date: Tue, 3 Apr 2018 22:44:01 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        Mani Sadhasivam <manivannanece23@gmail.com>
+Subject: Re: [PATCH v6 3/9] pinctrl: actions: Add Actions S900 pinctrl driver
+Message-ID: <20180403171401.etcvqe4xrkcl7sbh@linaro.org>
+References: <20180328174703.19778-1-manivannan.sadhasivam@linaro.org>
+ <20180328174703.19778-4-manivannan.sadhasivam@linaro.org>
+ <CAHp75VeRh9hORs=4nPqc=rUOCRzAfp0z2_1_xpJUScAeE07yqw@mail.gmail.com>
+ <20180403170016.w3scjt57ssvk6zyi@linaro.org>
+ <d86b21a7-e269-6c27-c0e7-d46bee8e5c1d@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180403092027.13471-1-sj38.park@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040317-0052-0000-0000-000002D3B5EC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008796; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01012592; UDB=6.00516081; IPR=6.00791858;
- MB=3.00020396; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-03 17:13:28
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040317-0053-0000-0000-00005C349CF8
-Message-Id: <20180403171423.GQ3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804030176
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d86b21a7-e269-6c27-c0e7-d46bee8e5c1d@suse.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 06:20:22PM +0900, SeongJae Park wrote:
-> This patchset applies upstream changes for memory-barriers.txt to the Korean
-> version of it.
+On Tue, Apr 03, 2018 at 07:03:46PM +0200, Andreas Färber wrote:
+> Hi Mani,
 > 
-> SeongJae Park (5):
->   kokr/doc: READ_ONCE() now implies smp_barrier_depends()
->   kokr/doc: De-emphasize smp_read_barrier_depends
->   kokr/Documentation/memory-barriers.txt: Cross-reference
->     "tools/memory-model/"
->   kokr/memory-barriers: Fix description of data dependency barriers
->   kokr/locking/memory-barriers: De-emphasize smp_read_barrier_depends()
->     some more
+> Am 03.04.2018 um 19:00 schrieb Manivannan Sadhasivam:
+> > On Sat, Mar 31, 2018 at 12:16:49AM +0300, Andy Shevchenko wrote:
+> >> On Wed, Mar 28, 2018 at 8:46 PM, Manivannan Sadhasivam
+> >> <manivannan.sadhasivam@linaro.org> wrote:
+> >>> +static const struct pinconf_ops owl_pinconf_ops = {
+> >>> +       .is_generic = true,
+> >>> +       .pin_config_get = owl_pin_config_get,
+> >>> +       .pin_config_set = owl_pin_config_set,
+> >>> +       .pin_config_group_get = owl_group_config_get,
+> >>> +       .pin_config_group_set = owl_group_config_set
+> >>
+> >> It's still good idea to leave comma here...
+> >>
+> > 
+> > I'm confused. What is the criteria for removing/keeping comma for last member
+> > of struct? I followed your gpio driver suggestion.
 > 
->  .../translations/ko_KR/memory-barriers.txt         | 50 +++++++++++++++-------
->  1 file changed, 34 insertions(+), 16 deletions(-)
+> No comma for list terminator ("{}") because nothing goes after it; comma
+> whenever it allows adding a new line without touching the old one, i.e.
+> keeping future diff small.
+>
 
-Thank you!  I have pulled these into the "lkmm" branch of -rcu.
+Thanks for the clarification Andreas! Keeping the future diff small is the
+key, understood.
 
-							Thanx, Paul
+Thanks,
+Mani
+ 
+> Cheers,
+> Andreas
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
