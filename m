@@ -1,90 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751413AbeDCOqc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:46:32 -0400
-Received: from ozlabs.org ([103.22.144.67]:60731 "EHLO ozlabs.org"
+        id S1751503AbeDCOpv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:45:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751231AbeDCOqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:46:31 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 4 Apr 2018 00:45:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tejun Heo <tj@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux F2FS Dev Mailing List
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yufen Yu <yuyufen@huawei.com>, David Sterba <dsterba@suse.cz>
-Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Message-ID: <20180404004509.4ec40d0d@canb.auug.org.au>
-In-Reply-To: <20180403142029.GM388343@devbig577.frc2.facebook.com>
-References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180131095446.443670dc@canb.auug.org.au>
-        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180201092551.759f32be@canb.auug.org.au>
-        <20180314101704.51aaae7f@canb.auug.org.au>
-        <20180403122919.3c503f74@canb.auug.org.au>
-        <20180403142029.GM388343@devbig577.frc2.facebook.com>
+        id S1751413AbeDCOpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 10:45:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 081D420CAA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Tue, 3 Apr 2018 15:45:45 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, antonynpavlov@gmail.com,
+        ralf@linux-mips.org, linux-mips@linux-mips.org, geert@linux-m68k.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] Add notrace to lib/ucmpdi2.c
+Message-ID: <20180403144544.GA3275@saruman>
+References: <mhng-e7e3dffe-bc80-4bea-8cf5-4d8afb76565a@palmer-si-x1c4>
+ <4ba976ed-7294-18ec-187f-7105a9782283@mips.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lQ0dANtEY6zun.ZHxgP.t.X"; protocol="application/pgp-signature"
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Disposition: inline
+In-Reply-To: <4ba976ed-7294-18ec-187f-7105a9782283@mips.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/lQ0dANtEY6zun.ZHxgP.t.X
-Content-Type: text/plain; charset=US-ASCII
+
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
-
-On Tue, 3 Apr 2018 07:20:29 -0700 Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, Stephen.
+On Tue, Apr 03, 2018 at 02:51:06PM +0100, Matt Redfearn wrote:
+> On 29/03/18 22:59, Palmer Dabbelt wrote:
+> > Ah, thanks, I think I must have forgotten about this.=C2=A0 I assume th=
+ese=20
+> > three are going through your tree?
 >=20
-> On Tue, Apr 03, 2018 at 12:29:19PM +1000, Stephen Rothwell wrote:
-> > > I am still applying this to the merge of the btrfs tree every day ...
-> > >=20
-> > > Commit
-> > >   578c647879f7 ("f2fs: implement cgroup writeback support")
-> > > was merged into Linus' tree on Jan 31.
-> > >=20
-> > > Here is the actual merge fix patch: =20
->=20
-> Yeah, the merge fix looks correct to me.  Depending on the merge
-> order, it can go either after the btrfs merge or the f2fs merge, I
-> guess.  Stephen, beyond appyling the merge fix afterwards, is there
-> somethine else you are concerned about?
+> Yeah I think that's the plan - James will need your ack to patch 2 if=20
+> that's ok.
 
-The f2fs part of the conflict was merged into Linus' tree on Jan 31,
-and I have been applying the conflict resolution patch for a whole
-release cycle i.e. the btrfs tree part of the conflict did not get
-merged during the last merge window, and has not been updated since
-then - in fact the btrfs tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git#next)
-has not been updated or merged into Linus' tree since last December.
+Yeh, I've applied v5 for 4.17 with Palmer's reviewed-by, but I'll change
+to an ack if thats okay with Palmer.
 
-:-(
---=20
-Cheers,
-Stephen Rothwell
+Cheers
+James
 
---Sig_/lQ0dANtEY6zun.ZHxgP.t.X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrDk3UACgkQAVBC80lX
-0GwVNAf+Pf59wdhx47aU01ixtXFWMkYl9tJeqGxZ1Ce9iGQdZPv2CmiwoE6gqSwR
-RUAa9YYfq71qg72dkUOds01Nz5DRFwJIKq4b4CWJhCRxEJAgmA5Mb5tKvIbyWXla
-uRfCZT6O66rgYwrBUY+qq6XUKwc6hQ8Quzvdxf8s1EzV0wZxsJKZ/yVMMebsrFTP
-WsiInyhR7tbwQu5exLAsP3YSiStzoaBFqH7874RlccXiaLw/gb5dJAJIGe8Zx0p1
-65s8WJ6G/BhS1+KaJ0yYFumr2T6e1ugi0nydxEld4ifkpqRL8lizjmG1u33TnH5T
-6k5Kzt6ID6BFKVBKUTkblwftZFBiTw==
-=ptOT
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrDk5gACgkQbAtpk944
+dnqamg//R64Ip5J/m4tBbd+nw0V2HUzzGYqFe+K/+TSNn/pOo0zmqye1xNxuuPak
+PUSH/3PgPeXkg/QadTi1DTxAIA8e9b5fyTX0H5OrOrTU3Ov5eQPrX/8tEoKd9j2H
+49CibKK+A/VWrxnwYhEcJxeVDH0ELacXvYmhpjVpuaJbakJaHWj4x7ioTlPdPb6h
+4juhWk0bIlrbt5DG3dxh5DVE+x45kbINMTMyGgIHt83JEzGfbPDV5k507b/5dGoV
+Wxm/RlnclVKzwJsx62jF/WBu87c1G1dSZ8y8Q3vowRBuFExH3ic+OlMjNdh+VxtU
+4jyrh3+EA2nON6INMKVqJOCvxcyd5v1yy0BnrjBUGebTaR1+UiiLDEbLLOe3uF+W
+TlohkRBjTrnf9ODLmaBaGg1ccyeD/dM0jdpJryBddZF5H6x16XVPiAg2yGQli4rB
+p7jY/k5qXAGVGHCrRZBd5l3c7TPYwPhdJwflRcLB7jjJK8qBP+Bt8itFtOKH4gF3
+PeRv6/ggnRFV1EKPSgolAZOruA5ebsOjqAWIp8n+LDqcws0gkxhw1OsQfikMUb+B
+zyI5yvI+WE6tHVYGYhKhb714ozpJ2wn4npmI/J1stXuy56gQnQ1Tpwfcu8eplio4
+W3U99tJMe4adDlGtgBlGxTbXI/9nA3p0G/VKpgdX99c33i6txsw=
+=Wr6i
 -----END PGP SIGNATURE-----
 
---Sig_/lQ0dANtEY6zun.ZHxgP.t.X--
+--x+6KMIRAuhnl3hBn--
