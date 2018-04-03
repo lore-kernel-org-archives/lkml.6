@@ -1,94 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754705AbeDCALq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 20:11:46 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41742 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754550AbeDCALo (ORCPT
+        id S1754693AbeDCAbS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 20:31:18 -0400
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:55910 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754604AbeDCAbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 20:11:44 -0400
-X-Google-Smtp-Source: AIpwx49zHzYrALZT47sMYF6wGENGdZXteMQJoZSb/7BEWiYLkc4OPmy5uck1VL+RDnx5F5R+QS/0Sw==
-Date: Mon, 2 Apr 2018 17:11:42 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 17/24] mm: Protect mm_rb tree with a rwlock
-In-Reply-To: <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1804021711090.34466@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 2 Apr 2018 20:31:16 -0400
+X-Google-Smtp-Source: AIpwx499SxbdnkXIAef6BmQCJw5V3FIjl/5TqbkF7BlpwuYyHn7LAy5wcWoX8Ief01Rnhkztp3BKT6gE/MCjLjT3WNA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
+References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152244390359.135666.14890735614456271032.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <31e66048-e8b8-47ba-baf5-023560b4c124@mellanox.com> <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
+ <50346f44-de3f-b226-69ad-6de45e94e261@mellanox.com> <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
+From: Jacob Keller <jacob.keller@gmail.com>
+Date: Mon, 2 Apr 2018 17:30:54 -0700
+Message-ID: <CA+P7+xr1N+X5DyPwNpWUtfqr9U4pLL9bMoB1wkBdf2K9n6cxKw@mail.gmail.com>
+Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute max
+ supported link bandwidth
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Laurent Dufour wrote:
+On Mon, Apr 2, 2018 at 7:05 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> +/* PCIe speed to Mb/s reduced by encoding overhead */
+> +#define PCIE_SPEED2MBS_ENC(speed) \
+> +       ((speed) == PCIE_SPEED_16_0GT ? (16000*(128/130)) : \
+> +        (speed) == PCIE_SPEED_8_0GT  ?  (8000*(128/130)) : \
+> +        (speed) == PCIE_SPEED_5_0GT  ?  (5000*(8/10)) : \
+> +        (speed) == PCIE_SPEED_2_5GT  ?  (2500*(8/10)) : \
+> +        0)
+> +
 
-> This change is inspired by the Peter's proposal patch [1] which was
-> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
-> that particular case, and it is introducing major performance degradation
-> due to excessive scheduling operations.
-> 
-> To allow access to the mm_rb tree without grabbing the mmap_sem, this patch
-> is protecting it access using a rwlock.  As the mm_rb tree is a O(log n)
-> search it is safe to protect it using such a lock.  The VMA cache is not
-> protected by the new rwlock and it should not be used without holding the
-> mmap_sem.
-> 
-> To allow the picked VMA structure to be used once the rwlock is released, a
-> use count is added to the VMA structure. When the VMA is allocated it is
-> set to 1.  Each time the VMA is picked with the rwlock held its use count
-> is incremented. Each time the VMA is released it is decremented. When the
-> use count hits zero, this means that the VMA is no more used and should be
-> freed.
-> 
-> This patch is preparing for 2 kind of VMA access :
->  - as usual, under the control of the mmap_sem,
->  - without holding the mmap_sem for the speculative page fault handler.
-> 
-> Access done under the control the mmap_sem doesn't require to grab the
-> rwlock to protect read access to the mm_rb tree, but access in write must
-> be done under the protection of the rwlock too. This affects inserting and
-> removing of elements in the RB tree.
-> 
-> The patch is introducing 2 new functions:
->  - vma_get() to find a VMA based on an address by holding the new rwlock.
->  - vma_put() to release the VMA when its no more used.
-> These services are designed to be used when access are made to the RB tree
-> without holding the mmap_sem.
-> 
-> When a VMA is removed from the RB tree, its vma->vm_rb field is cleared and
-> we rely on the WMB done when releasing the rwlock to serialize the write
-> with the RMB done in a later patch to check for the VMA's validity.
-> 
-> When free_vma is called, the file associated with the VMA is closed
-> immediately, but the policy and the file structure remained in used until
-> the VMA's use count reach 0, which may happens later when exiting an
-> in progress speculative page fault.
-> 
-> [1] https://patchwork.kernel.org/patch/5108281/
-> 
-> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Should this be "(speed * x ) / y" instead? wouldn't they calculate
+128/130 and truncate that to zero before multiplying by the speed? Or
+are compilers smart enough to do this the other way to avoid the
+losses?
 
-Can __free_vma() be generalized for mm/nommu.c's delete_vma() and 
-do_mmap()?
+Thanks,
+Jake
