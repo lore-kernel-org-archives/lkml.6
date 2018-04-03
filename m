@@ -1,41 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752892AbeDCCm0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 22:42:26 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60725 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751476AbeDCCmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 22:42:25 -0400
-Subject: Re: [PATCH] f2fs: make assignment of t->dentry_bitmap more readable
-To: Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yunlong.song@icloud.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1522671740-92824-1-git-send-email-yunlong.song@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <b68f7f6c-0a3b-f1f2-41a0-2b03c7681944@huawei.com>
-Date: Tue, 3 Apr 2018 10:42:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <1522671740-92824-1-git-send-email-yunlong.song@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1752422AbeDCC5R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 22:57:17 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38736 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751528AbeDCC5O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 22:57:14 -0400
+X-Google-Smtp-Source: AIpwx4+3Ak8mn3Itx0iHGLxq5SRCAUKCmHpHuXvRn3cr2lbGE5z2rk2x+sxTTyqy1PeTAaJ+XHYXHA==
+Date: Mon, 02 Apr 2018 19:57:13 -0700 (PDT)
+X-Google-Original-Date: Mon, 02 Apr 2018 19:52:24 PDT (-0700)
+Subject: Re: [GIT PULL] arch: remove obsolete architecture ports
+In-Reply-To: <CAK8P3a0q70FYtBaCcsBPejVULgsbJPwUG7QmrkU9NJpr7oTzpQ@mail.gmail.com>
+CC: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        jhogan@kernel.org, dhowells@redhat.com, linux-am33-list@redhat.com,
+        takata@linux-m32r.org, lennox.wu@gmail.com, Aaron.Wu@analog.com,
+        cooloney@gmail.com, chris.d.metcalf@gmail.com, jesper.nilsson@axis.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Message-ID: <mhng-ef075a77-24a8-4764-bb5d-c4b06722c0bb@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/2 20:22, Yunlong Song wrote:
-> In make_dentry_ptr_block, it is confused with "&" for t->dentry_bitmap
-> but without "&" for t->dentry, so delete "&" to make code more readable.
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+On Mon, 02 Apr 2018 00:17:30 PDT (-0700), Arnd Bergmann wrote:
+> - openrisc, risc-v and nds32 are still in the process of finishing their
+>   support or getting it added to mainline gcc in the first place.
+>   They all have patched gcc-7.3 ports that work to some degree, but
+>   complete upstream support won't happen before gcc-8.1. Csky posted
+>   their first kernel patch set last week, their situation will be similar.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+FWIW, RISC-V landed in GCC 7.  The 7.3.0 release (and binutils-2.30) is the 
+first one we recommend for kernel development as there have been a handful of 
+bug fixes, but there's nothing major.  SiFive ships GCC versions with a few 
+extra patches applied, and while I still recommend people use these they should 
+all be performance improvements at this point.  With compilers you never know 
+if a performance improvement is hiding a bug, but what's tagged as gcc-7.3.0 
+passes the test suite.
 
-Thanks,
+Our 32-bit glibc port isn't upstream yet, but our 32-bit kernel is a bit of a 
+mess so that's not the blocking issue in rv32-land right now :).
