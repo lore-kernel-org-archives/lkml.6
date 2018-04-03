@@ -1,90 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeDCDb3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 23:31:29 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50069 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751368AbeDCDb2 (ORCPT
+        id S1752831AbeDCDg1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 23:36:27 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:41936 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751368AbeDCDgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 23:31:28 -0400
-X-ME-Sender: <xms:j_XCWoOK2OJnQWX-FHsXiFE_NIUcgD7cQ1UFfDMNPDVR9cOuFPZFvg>
-Date: Tue, 3 Apr 2018 13:31:23 +1000
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [PATCH] list_debug: Print unmangled addresses
-Message-ID: <20180403033123.GB781@eros>
-References: <20180401223237.GV13332@bombadil.infradead.org>
+        Mon, 2 Apr 2018 23:36:25 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="38478272"
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-doc@vger.kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <fanc.fnst@cn.fujitsu.com>,
+        <indou.takao@jp.fujitsu.com>, Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [RESEND PATCH] x86/boot/KASLR: Extend movable_node option for KASLR
+Date: Tue, 3 Apr 2018 11:36:12 +0800
+Message-ID: <20180403033612.19925-1-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180401223237.GV13332@bombadil.infradead.org>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: BE64348AE922.A277B
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 01, 2018 at 03:32:37PM -0700, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> The entire point of printing the pointers in list_debug is to see if
-> there's any useful information in them (eg poison values, ASCII, etc);
-> obscuring them to see if they compare equal makes them much less useful.
-> If an attacker can force this message to be printed, we've already lost.
+The movable_node option is a boot-time switch to make sure the physical
+NUMA nodes can be hot-added/removed when ACPI table can't be parsed to
+provide the memory hotplug information.
 
-Is this because CONFIG_DEBUG_LIST should not be enabled on production
-kernels so an attacker should never hit this?
+As we all know, there is always one node, called "home node", which
+can't be movabled and the kernel image resides in it. With movable_node
+option, Linux allocates new early memorys near the kernel image to avoid
+using the other movable node.
 
-I'm inclined to agree, if there is already a memory corruption bug,
-causing this code to execute, the extra address is probably not making
-the situation any worse.
+But, due to KASLR also can't get the the memory hotplug information, it may
+randomize the kernel image into a movable node which breaks the rule of
+movable_node option and makes the physical hot-add/remove operation failed.
 
-(I am in no way a security expert.)
+The perfect solution is providing the memory hotplug information to KASLR.
+But, it needs the efforts from hardware engineers and software engineers.
 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Here is an alternative method. Extend movable_node option to restrict kernel
+to be randomized in the home node by adding a parameter. this parameter sets
+up the boundaries between the home nodes and other nodes.
 
-Reviewed-by: Tobin C. Harding <me@tobin.cc>
+Reported-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+---
+Changelog:
+  -Rewrite the commit log and document.
 
-> diff --git a/lib/list_debug.c b/lib/list_debug.c
-> index a34db8d27667..5d5424b51b74 100644
-> --- a/lib/list_debug.c
-> +++ b/lib/list_debug.c
-> @@ -21,13 +21,13 @@ bool __list_add_valid(struct list_head *new, struct list_head *prev,
->  		      struct list_head *next)
->  {
->  	if (CHECK_DATA_CORRUPTION(next->prev != prev,
-> -			"list_add corruption. next->prev should be prev (%p), but was %p. (next=%p).\n",
-> +			"list_add corruption. next->prev should be prev (%px), but was %px. (next=%px).\n",
->  			prev, next->prev, next) ||
->  	    CHECK_DATA_CORRUPTION(prev->next != next,
-> -			"list_add corruption. prev->next should be next (%p), but was %p. (prev=%p).\n",
-> +			"list_add corruption. prev->next should be next (%px), but was %px. (prev=%px).\n",
->  			next, prev->next, prev) ||
->  	    CHECK_DATA_CORRUPTION(new == prev || new == next,
-> -			"list_add double add: new=%p, prev=%p, next=%p.\n",
-> +			"list_add double add: new=%px, prev=%px, next=%px.\n",
->  			new, prev, next))
->  		return false;
->  
-> @@ -43,16 +43,16 @@ bool __list_del_entry_valid(struct list_head *entry)
->  	next = entry->next;
->  
->  	if (CHECK_DATA_CORRUPTION(next == LIST_POISON1,
-> -			"list_del corruption, %p->next is LIST_POISON1 (%p)\n",
-> +			"list_del corruption, %px->next is LIST_POISON1 (%px)\n",
->  			entry, LIST_POISON1) ||
->  	    CHECK_DATA_CORRUPTION(prev == LIST_POISON2,
-> -			"list_del corruption, %p->prev is LIST_POISON2 (%p)\n",
-> +			"list_del corruption, %px->prev is LIST_POISON2 (%px)\n",
->  			entry, LIST_POISON2) ||
->  	    CHECK_DATA_CORRUPTION(prev->next != entry,
-> -			"list_del corruption. prev->next should be %p, but was %p\n",
-> +			"list_del corruption. prev->next should be %px, but was %px\n",
->  			entry, prev->next) ||
->  	    CHECK_DATA_CORRUPTION(next->prev != entry,
-> -			"list_del corruption. next->prev should be %p, but was %p\n",
-> +			"list_del corruption. next->prev should be %px, but was %px\n",
->  			entry, next->prev))
->  		return false;
->  
+ Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++--
+ arch/x86/boot/compressed/kaslr.c                | 19 ++++++++++++++++---
+ 2 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1d1d53f85ddd..0cfc0b10a117 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2353,7 +2353,8 @@
+ 	mousedev.yres=	[MOUSE] Vertical screen resolution, used for devices
+ 			reporting absolute coordinates, such as tablets
+ 
+-	movablecore=nn[KMG]	[KNL,X86,IA-64,PPC] This parameter
++	movablecore=nn[KMG]
++			[KNL,X86,IA-64,PPC] This parameter
+ 			is similar to kernelcore except it specifies the
+ 			amount of memory used for migratable allocations.
+ 			If both kernelcore and movablecore is specified,
+@@ -2363,12 +2364,19 @@
+ 			that the amount of memory usable for all allocations
+ 			is not too small.
+ 
+-	movable_node	[KNL] Boot-time switch to make hotplugable memory
++	movable_node	[KNL] Boot-time switch to make hot-pluggable memory
+ 			NUMA nodes to be movable. This means that the memory
+ 			of such nodes will be usable only for movable
+ 			allocations which rules out almost all kernel
+ 			allocations. Use with caution!
+ 
++	movable_node=nn[KMG]
++			[KNL] Extend movable_node to make it work well with KASLR.
++			This parameter is the boundaries between the "home node" and
++			the other nodes. The "home node" is an immovable node and is
++			defined by BIOS. Set the 'nn' to the memory size of "home
++			node", the kernel image will be extracted in immovable nodes.
++
+ 	MTD_Partition=	[MTD]
+ 			Format: <name>,<region-number>,<size>,<offset>
+ 
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index 8199a6187251..f906d7890e69 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -92,7 +92,10 @@ struct mem_vector {
+ static bool memmap_too_large;
+ 
+ 
+-/* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
++/*
++ * Store memory limit specified by the following situations:
++ * "mem=nn[KMG]" or "memmap=nn[KMG]" or "movable_node=nn[KMG]"
++ */
+ unsigned long long mem_limit = ULLONG_MAX;
+ 
+ 
+@@ -214,7 +217,8 @@ static int handle_mem_memmap(void)
+ 	char *param, *val;
+ 	u64 mem_size;
+ 
+-	if (!strstr(args, "memmap=") && !strstr(args, "mem="))
++	if (!strstr(args, "memmap=") && !strstr(args, "mem=") &&
++		!strstr(args, "movable_node="))
+ 		return 0;
+ 
+ 	tmp_cmdline = malloc(len + 1);
+@@ -249,7 +253,16 @@ static int handle_mem_memmap(void)
+ 				free(tmp_cmdline);
+ 				return -EINVAL;
+ 			}
+-			mem_limit = mem_size;
++			mem_limit = mem_limit > mem_size ? mem_size : mem_limit;
++		} else if (!strcmp(param, "movable_node")) {
++			char *p = val;
++
++			mem_size = memparse(p, &p);
++			if (mem_size == 0) {
++				free(tmp_cmdline);
++				return -EINVAL;
++			}
++			mem_limit = mem_limit > mem_size ? mem_size : mem_limit;
+ 		}
+ 	}
+ 
+-- 
+2.14.3
