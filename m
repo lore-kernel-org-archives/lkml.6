@@ -1,89 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753848AbeDCVwm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:52:42 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.122]:26448 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753340AbeDCVwk (ORCPT
+        id S1753697AbeDCV5Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:57:24 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:32936 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753121AbeDCV5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:52:40 -0400
-Subject: Re: [PATCH] net: thunderx: nicvf_main: Fix potential NULL pointer
- dereference
-To: Eric Dumazet <eric.dumazet@gmail.com>,
-        Sunil Goutham <sgoutham@cavium.com>, Robert Richter <rric@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180403212925.GA31093@embeddedor.com>
- <f0deebb5-06e8-d788-0e68-0c15c979028c@gmail.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <15d8d776-3768-b93e-8e38-0f2387668477@embeddedor.com>
-Date: Tue, 3 Apr 2018 16:52:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 3 Apr 2018 17:57:22 -0400
+X-Google-Smtp-Source: AIpwx48SXFkRMsHEZiLPDHj/zJgHavsujtnAY0XSW2ENAjKHtk9eM6R7OKhC3DX9LvcQrVQQ4zNnSw==
+Date: Tue, 3 Apr 2018 14:57:20 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 04/24] mm: Prepare for FAULT_FLAG_SPECULATIVE
+In-Reply-To: <361fa6e7-3c17-e1b8-8046-af72c4459613@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1804031449130.153232@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-5-git-send-email-ldufour@linux.vnet.ibm.com> <alpine.DEB.2.20.1803251426120.80485@chino.kir.corp.google.com>
+ <361fa6e7-3c17-e1b8-8046-af72c4459613@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <f0deebb5-06e8-d788-0e68-0c15c979028c@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f3Tr5-00125G-US
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.145.54.187]:42648
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 37
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 28 Mar 2018, Laurent Dufour wrote:
 
-
-On 04/03/2018 04:47 PM, Eric Dumazet wrote:
+> >> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> >> index 4d02524a7998..2f3e98edc94a 100644
+> >> --- a/include/linux/mm.h
+> >> +++ b/include/linux/mm.h
+> >> @@ -300,6 +300,7 @@ extern pgprot_t protection_map[16];
+> >>  #define FAULT_FLAG_USER		0x40	/* The fault originated in userspace */
+> >>  #define FAULT_FLAG_REMOTE	0x80	/* faulting for non current tsk/mm */
+> >>  #define FAULT_FLAG_INSTRUCTION  0x100	/* The fault was during an instruction fetch */
+> >> +#define FAULT_FLAG_SPECULATIVE	0x200	/* Speculative fault, not holding mmap_sem */
+> >>  
+> >>  #define FAULT_FLAG_TRACE \
+> >>  	{ FAULT_FLAG_WRITE,		"WRITE" }, \
+> > 
+> > I think FAULT_FLAG_SPECULATIVE should be introduced in the patch that 
+> > actually uses it.
 > 
+> I think you're right, I'll move down this define in the series.
 > 
-> On 04/03/2018 02:29 PM, Gustavo A. R. Silva wrote:
->> Add null check on kmalloc() return value in order to prevent
->> a null pointer dereference.
->>
->> Addresses-Coverity-ID: 1467429 ("Dereference null return value")
->> Fixes: 37c3347eb247 ("net: thunderx: add ndo_set_rx_mode callback implementation for VF")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/net/ethernet/cavium/thunder/nicvf_main.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
->> index 1e9a31f..468321a 100644
->> --- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
->> +++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
->> @@ -1999,6 +1999,8 @@ static void nicvf_set_rx_mode(struct net_device *netdev)
->>   				struct xcast_addr *xaddr;
->>   
->>   				mc_list = kmalloc(sizeof(*mc_list), GFP_ATOMIC);
->> +				if (unlikely(!mc_list))
->> +					return;
->>   				INIT_LIST_HEAD(&mc_list->list);
->>   				netdev_hw_addr_list_for_each(ha, &netdev->mc) {
->>   					xaddr = kmalloc(sizeof(*xaddr),
->>
+> >> diff --git a/mm/memory.c b/mm/memory.c
+> >> index e0ae4999c824..8ac241b9f370 100644
+> >> --- a/mm/memory.c
+> >> +++ b/mm/memory.c
+> >> @@ -2288,6 +2288,13 @@ int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(apply_to_page_range);
+> >>  
+> >> +static bool pte_map_lock(struct vm_fault *vmf)
+> > 
+> > inline?
 > 
-> What about the second kmalloc() right there ?
+> Agreed.
 > 
 
-Oops. I thought I had it covered.
+Ignore this, the final form of the function after the full patchset 
+shouldn't be inline.
 
-I'll send v2 with that change shortly.
+> >> +{
+> >> +	vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
+> >> +				       vmf->address, &vmf->ptl);
+> >> +	return true;
+> >> +}
+> >> +
+> >>  /*
+> >>   * handle_pte_fault chooses page fault handler according to an entry which was
+> >>   * read non-atomically.  Before making any commitment, on those architectures
+> >> @@ -2477,6 +2484,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+> >>  	const unsigned long mmun_start = vmf->address & PAGE_MASK;
+> >>  	const unsigned long mmun_end = mmun_start + PAGE_SIZE;
+> >>  	struct mem_cgroup *memcg;
+> >> +	int ret = VM_FAULT_OOM;
+> >>  
+> >>  	if (unlikely(anon_vma_prepare(vma)))
+> >>  		goto oom;
+> >> @@ -2504,7 +2512,11 @@ static int wp_page_copy(struct vm_fault *vmf)
+> >>  	/*
+> >>  	 * Re-check the pte - we dropped the lock
+> >>  	 */
+> >> -	vmf->pte = pte_offset_map_lock(mm, vmf->pmd, vmf->address, &vmf->ptl);
+> >> +	if (!pte_map_lock(vmf)) {
+> >> +		mem_cgroup_cancel_charge(new_page, memcg, false);
+> >> +		ret = VM_FAULT_RETRY;
+> >> +		goto oom_free_new;
+> >> +	}
+> > 
+> > Ugh, but we aren't oom here, so maybe rename oom_free_new so that it makes 
+> > sense for return values other than VM_FAULT_OOM?
+> 
+> You're right, now this label name is not correct, I'll rename it to
+> "out_free_new" and rename also the label "oom" to "out" since it is generic too
+> now.
+> 
 
-Thanks for the feedback, Eric.
---
-Gustavo
+I think it would just be better to introduce a out_uncharge that handles 
+the mem_cgroup_cancel_charge() in the exit path.
+
+diff --git a/mm/memory.c b/mm/memory.c
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2645,9 +2645,8 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 	 * Re-check the pte - we dropped the lock
+ 	 */
+ 	if (!pte_map_lock(vmf)) {
+-		mem_cgroup_cancel_charge(new_page, memcg, false);
+ 		ret = VM_FAULT_RETRY;
+-		goto oom_free_new;
++		goto out_uncharge;
+ 	}
+ 	if (likely(pte_same(*vmf->pte, vmf->orig_pte))) {
+ 		if (old_page) {
+@@ -2735,6 +2734,8 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 		put_page(old_page);
+ 	}
+ 	return page_copied ? VM_FAULT_WRITE : 0;
++out_uncharge:
++	mem_cgroup_cancel_charge(new_page, memcg, false);
+ oom_free_new:
+ 	put_page(new_page);
+ oom:
