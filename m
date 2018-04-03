@@ -1,49 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756641AbeDCWbL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 18:31:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50446 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756099AbeDCWat (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 18:30:49 -0400
-Date: Tue, 3 Apr 2018 15:30:46 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: jglisse@redhat.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH] mm/migrate: properly preserve write attribute in
- special migrate entry
-Message-Id: <20180403153046.88cae4ab18646e8e23a648ce@linux-foundation.org>
-In-Reply-To: <20180402023506.12180-1-jglisse@redhat.com>
-References: <20180402023506.12180-1-jglisse@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1756660AbeDCWc5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 18:32:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43464 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754402AbeDCWcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 18:32:53 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+In-Reply-To: <CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com>
+References: <CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com> <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org> <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk> <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com> <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com> <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com> <9758.1522775763@warthog.procyon.org.uk> <CALCETrWHS9p1My=j07=V=OP7v4SwQkW-kJ3JOx6EbPU8fb_XEQ@mail.gmail.com> <13189.1522784944@warthog.procyon.org.uk>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: dhowells@redhat.com, Matthew Garrett <mjg59@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Justin Forbes <jforbes@redhat.com>,
+        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8614.1522794399.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+From: David Howells <dhowells@redhat.com>
+Date: Tue, 03 Apr 2018 23:32:49 +0100
+Message-ID: <9349.1522794769@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  1 Apr 2018 22:35:06 -0400 jglisse@redhat.com wrote:
+Andy Lutomirski <luto@kernel.org> wrote:
 
-> From: Ralph Campbell <rcampbell@nvidia.com>
+> > If the user can arbitrarily modify the running kernel image, you cannot
+> > trust anything.  You cannot determine the trustworthiness of something
+> > because your basis for determining that trust can be compromised.
 > 
-> Use of pte_write(pte) is only valid for present pte, the common code
-> which set the migration entry can be reach for both valid present
-> pte and special swap entry (for device memory). Fix the code to use
-> the mpfn value which properly handle both cases.
+> I'm having a very, very hard time coming up with a scenario where I
+> can "trust" something if an attacker can get root but can't modify the
+> running kernel image but I can't "trust" something if the attacker
+> can't.
+
+Eh?  If the attacker can't what?  Did you mean to put "can" at the end of that
+rather than "can't"?  I don't see why the kernel-level trust would be
+compromised if an attacker can't get root and can't modify the running kernel
+image.
+
+Here's a simple scenario: You boot your machine.  You have module verification
+keys in your kernel.  You have /dev/mem available for root to read/write.  A
+program running as root can modify the keys in your kernel or just disable the
+checking code entirely.  It can now insmod any module it likes.  You may as
+well not bother with signed modules.  In fact, it can modify the running
+kernel image in any way it likes, without even having to load modules.
+There's no point bothering with UID/GID checking either.
+
+> > Stopping the kernel from being arbitrarily read stops any encryption keys it
+> > may be using from being retrieved.
 > 
-> On x86 this did not have any bad side effect because pte write bit
-> is below PAGE_BIT_GLOBAL and thus special swap entry have it set to
-> 0 which in turn means we were always creating read only special
-> migration entry.
+> If I build a server that runs Panera Bread 2.0's website, and the
+> attacker exploits my machine to steal tens of millions of customer
+> records by getting the machine to talk to some database server using
+> keys that are securely stored in the kernel keyring, ...
 
-Does this mean that the patch only affects behaviour of non-x86 systems?
+I was thinking more in terms of preventing access to the encrypted data on
+your own disk.  The key for that could be unlocked using a TPM, but the
+session key then has to be retained in RAM for performance reasons unless you
+can transfer the session key to, say, your SATA controller without it going
+through the CPU.
 
-> So once migration did finish we always write protected the CPU page
-> table entry (moreover this is only an issue when migrating from device
-> memory to system memory). End effect is that CPU write access would
-> fault again and restore write permission.
+However, if /dev/mem can be read, any root process can extract the session key
+for your disk.
 
-That sounds a bit serious.  Was a -stable backport considered?
+But, as you suggest, they could also protect secrets used in communications.
+However, the communications themselves have to be exposed to userspace for
+userspace to be able to use them.  That is unavoidable.  The kernel keyring,
+for example, tries to restrict who can even see a key, much less use it as
+much as possible - but ptrace() exists...  You are no less vulnerable if the
+key is held in a userspace process; then the attacker can get the key and the
+data.
+
+If the kernel is locked down, the aim is to try and make sure that keys
+stashed in the kernel cannot be read, though they have to be able to be used,
+or there's no point to them.
+
+David
