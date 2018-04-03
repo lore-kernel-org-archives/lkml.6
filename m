@@ -1,122 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754796AbeDCCBI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 22:01:08 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:43508 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752109AbeDCCBC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 22:01:02 -0400
-X-Google-Smtp-Source: AIpwx4+2zk/LMF6kz0PIzF7Sfy2YOtpOx+4E/ND4B0kgtrI24ctrtCm+y8aoLEyOSZU81sgRiaq9r+Xra+vxGdD5iqDBqbDe19Dx
+        id S1754739AbeDCCBA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 22:01:00 -0400
+Received: from ozlabs.org ([103.22.144.67]:54797 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752109AbeDCCA7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 22:00:59 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 3 Apr 2018 12:00:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bjorn Helgaas <bhelgaas@google.com>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhichang Yuan <yuanzhichang@hisilicon.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: linux-next: manual merge of the pci tree with the arm-soc tree
+Message-ID: <20180403120000.4ff083a0@canb.auug.org.au>
 MIME-Version: 1.0
-Date: Mon, 02 Apr 2018 19:01:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a1148578c10e4700568e814eb@google.com>
-Subject: WARNING in up_write
-From: syzbot <syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/MUJ_M+vyF6Y5JlAUTP45beY"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--Sig_/MUJ_M+vyF6Y5JlAUTP45beY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-syzbot hit the following crash on upstream commit
-86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
-Merge branch 'ras-core-for-linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=dc5ab2babdf22ca091af
+Hi all,
 
-So far this crash happened 8 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5688491102961664
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5709211904245760
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5720789257027584
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=6801295859785128502
-compiler: gcc (GCC) 7.1.1 20170620
+Today's linux-next merge of the pci tree got a conflict in:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+dc5ab2babdf22ca091af@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+  drivers/bus/Makefile
 
-EXT4-fs (sda1): shut down requested (0)
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
-WARNING: CPU: 1 PID: 4441 at kernel/locking/rwsem.c:133  
-up_write+0x1cc/0x210 kernel/locking/rwsem.c:133
-Kernel panic - not syncing: panic_on_warn set ...
+between commit:
 
-CPU: 1 PID: 4441 Comm: syzkaller594909 Not tainted 4.16.0+ #11
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x1a7/0x27d lib/dump_stack.c:53
-  panic+0x1f8/0x42c kernel/panic.c:183
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:up_write+0x1cc/0x210 kernel/locking/rwsem.c:133
-RSP: 0018:ffff8801b349f710 EFLAGS: 00010286
-RAX: dffffc0000000008 RBX: ffff8801ccc0ce40 RCX: ffffffff815ae26e
-RDX: 0000000000000000 RSI: 1ffff10036693e92 RDI: 1ffff10036693e67
-RBP: ffff8801b349f798 R08: fffffbfff10b0659 R09: fffffbfff10b0659
-R10: ffff8801b349f708 R11: fffffbfff10b0658 R12: 1ffff10036693ee2
-R13: dffffc0000000000 R14: ffff8801b349f770 R15: ffff8801ccc0ce98
-  percpu_up_write+0xca/0x110 kernel/locking/percpu-rwsem.c:183
-  sb_freeze_unlock fs/super.c:1390 [inline]
-  thaw_super+0x1ca/0x260 fs/super.c:1524
-  thaw_bdev+0x151/0x180 fs/block_dev.c:555
-  ext4_shutdown fs/ext4/ioctl.c:489 [inline]
-  ext4_ioctl+0x1f85/0x3e60 fs/ext4/ioctl.c:1048
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-  SYSC_ioctl fs/ioctl.c:701 [inline]
-  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x440109
-RSP: 002b:00007fffce185d28 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440109
-RDX: 0000000020000100 RSI: 000000008004587d RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 000000000000000f R09: 65732f636f72702f
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401990
-R13: 0000000000401a20 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+  1888d3ddc3d6 ("drivers/bus: Move Arm CCN PMU driver")
 
+from the arm-soc tree and commit:
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+  38e3446c5d06 ("HISI LPC: Support the LPC host on Hip06/Hip07 with DT bind=
+ings")
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/bus/Makefile
+index 3d473b8adeac,50bb12a971a0..000000000000
+--- a/drivers/bus/Makefile
++++ b/drivers/bus/Makefile
+@@@ -5,11 -5,10 +5,13 @@@
+ =20
+  # Interconnect bus drivers for ARM platforms
+  obj-$(CONFIG_ARM_CCI)		+=3D arm-cci.o
+ -obj-$(CONFIG_ARM_CCN)		+=3D arm-ccn.o
++=20
++ obj-$(CONFIG_HISILICON_LPC)	+=3D hisi_lpc.o
+  obj-$(CONFIG_BRCMSTB_GISB_ARB)	+=3D brcmstb_gisb.o
+ +
+ +# DPAA2 fsl-mc bus
+ +obj-$(CONFIG_FSL_MC_BUS)	+=3D fsl-mc/
+ +
+  obj-$(CONFIG_IMX_WEIM)		+=3D imx-weim.o
+  obj-$(CONFIG_MIPS_CDMM)		+=3D mips_cdmm.o
+  obj-$(CONFIG_MVEBU_MBUS) 	+=3D mvebu-mbus.o
+
+--Sig_/MUJ_M+vyF6Y5JlAUTP45beY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC4CAACgkQAVBC80lX
+0GzvgAgAl3PV0uFTw6/sbNGN8HIIqBalcfJy7aLKPDE09+P+T0a/ggVoXjX7DN5v
+uW7qfl0jtCiTXJGoOKYrwwUJxhbg1OMtOWF422W0ntUo/KvAY9Tkg/neUJp89mJe
+SbQ3kRpbgmAXb827J3z3SoOSdSbQW9LsUlpVBY/8+wA34HRNVx1pE5r07Xj+dYC/
+CkusrQows6IduYLhQQsXzq04EdGypOvc1Sr6846ja8wKiBDmIETbhCRPsAsbDxlA
+HGnQNVuR2fFMk7py6NSxg3K6Ta4HtRUAf/SPvV7e93JYlMOAQEDD5ghra455qiYW
+/YYFbJ6+l9mpAje8pHqAo0h//RbzcA==
+=QNxP
+-----END PGP SIGNATURE-----
+
+--Sig_/MUJ_M+vyF6Y5JlAUTP45beY--
