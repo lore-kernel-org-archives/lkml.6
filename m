@@ -1,63 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754863AbeDCFqi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 01:46:38 -0400
-Received: from mail-vk0-f49.google.com ([209.85.213.49]:43036 "EHLO
-        mail-vk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754807AbeDCFqg (ORCPT
+        id S1754820AbeDCFwn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 01:52:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55174 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754305AbeDCFwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 01:46:36 -0400
-X-Google-Smtp-Source: AIpwx4+hSznMYTzd6ISmf1/zAl7nHkIwWgIeuUhiWVnLyvBjhMNGl7aS/QvUGH4ybD0yCZj9zdm+p3KpAGBBGJxdHTg=
+        Tue, 3 Apr 2018 01:52:42 -0400
+Date: Tue, 3 Apr 2018 07:52:25 +0200
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH 10/10] softirq: Remove __ARCH_SET_SOFTIRQ_PENDING
+In-Reply-To: <20180329180836.GS4082@hirez.programming.kicks-ass.net>
+References: <1522290425-22844-1-git-send-email-frederic@kernel.org>
+        <1522290425-22844-11-git-send-email-frederic@kernel.org>
+        <20180329071619.GO4082@hirez.programming.kicks-ass.net>
+        <20180329134745.GA12958@lerouge>
+        <20180329140111.GC4043@hirez.programming.kicks-ass.net>
+        <20180329140748.GB12958@lerouge>
+        <20180329165343.39f4486f@mschwideX1>
+        <20180329180836.GS4082@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFzwCiRrT5Ltfg0Uci7jXVRX2hw_fHp_srK_f7yacNKwwg@mail.gmail.com>
-References: <20180402060123.GB12733@app09> <CA+55aFzwCiRrT5Ltfg0Uci7jXVRX2hw_fHp_srK_f7yacNKwwg@mail.gmail.com>
-From: Greentime Hu <green.hu@gmail.com>
-Date: Tue, 3 Apr 2018 13:45:55 +0800
-Message-ID: <CAEbi=3c9Y4D+6cf+oYJJdTpzTWNbqw7tWBJsK7VOAnS9q2+K3A@mail.gmail.com>
-Subject: Re: [GIT PULL] Andes(nds32) Port for Linux 4.17
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greentime <greentime@andestech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18040305-0040-0000-0000-00000448FD40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040305-0041-0000-0000-000020ED0620
+Message-Id: <20180403075225.69ad3d25@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804030062
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w335kiRf008949
 
-2018-04-03 0:04 GMT+08:00 Linus Torvalds <torvalds@linux-foundation.org>:
-> On Sun, Apr 1, 2018 at 11:01 PM, Greentime Hu <green.hu@gmail.com> wrote:
->>
->> This tag contains the core nds32 Linux port(including interrupt controller
->> driver and timer driver), which has been through 7 rounds of review on mailing
->> list.
->
-> Can I get an overview of the nds32 architecture (uses, quirks, reasons
-> for existing?) to add to the initial merge message? Just an overview,
-> not some kind of architecture manual thing.
->
-> Yeah, yeah, I can google it myself and write something up, but it's
-> the kind of information I'd like to see when merging an architecture I
-> hadn't really ever heard about, and I suspect most others haven't
-> either.
->
+On Thu, 29 Mar 2018 20:08:36 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Hi, Linus:
+> On Thu, Mar 29, 2018 at 04:53:43PM +0200, Martin Schwidefsky wrote:
+> > The lowcore optimization for softirq_pending field is not really needed,
+> > just nice to have. But if there is a strong reason to make a common
+> > definition for it we can certainly do that.  
+> 
+> A slightly related question; would it make sense to move all kernel
+> static per-cpu stuff into lowcore, or is that asking for too much
+> trickery?
+ 
+The space in lowcore is quite limited, for zArch the structure is 8K with
+many pre-defined fields. I fear that putting all of the static per-cpu
+stuff in there is too much. 
 
-Andes nds32 architecture supports Linux for Andes's N10, D10, N13,
-N15, D15 processor cores.
+So far I used the lowcore as optimization for selected per-cpu fields
+which are performance relevant.
 
-Based on the patented 16/32-bit AndeStar RISC-like architecture, we
-designed the configurable AndesCore series of embedded processor
-families. AndesCores range from highly performance-efficient
-small-footprint cores for microcontrollers and deeply-embedded
-applications to 1GHz+ cores running Linux, covering general-purpose
-N-series cores for a wide range of computing need, DSP-capable
-D-series cores for digital signal control, instruction-extensible
-E-series cores for application-specific acceleration, and secure
-S-series cores for best protection of the most valuable.
+-- 
+blue skies,
+   Martin.
 
-Our customers together have shipped over 2.5 billion SoC’s with Andes
-processors embedded (including non-MMU IP cores). It will help our
-customers to get better Linux support if we are merged into mainline.
+"Reality continues to ruin my life." - Calvin.
