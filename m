@@ -1,88 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753666AbeDCVq4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:46:56 -0400
-Received: from gateway21.websitewelcome.com ([192.185.46.109]:22762 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753478AbeDCVqy (ORCPT
+        id S1753838AbeDCVrj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:47:39 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43192 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752813AbeDCVrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:46:54 -0400
-Date: Tue, 3 Apr 2018 16:46:52 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Atul Gupta <atul.gupta@chelsio.com>, Harsh Jain <harsh@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [crypto-chtls] Supicious code in chtls_io
-Message-ID: <20180403214652.GA31283@embeddedor.com>
+        Tue, 3 Apr 2018 17:47:37 -0400
+X-Google-Smtp-Source: AIpwx4+3ocfOmihk55vhzp1nfW94Au5u2diACigWIJB5nQpqp6OH2nipT4xQDlQlU4KmnsZBItIfXg==
+Subject: Re: [PATCH] net: thunderx: nicvf_main: Fix potential NULL pointer
+ dereference
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Sunil Goutham <sgoutham@cavium.com>, Robert Richter <rric@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180403212925.GA31093@embeddedor.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <f0deebb5-06e8-d788-0e68-0c15c979028c@gmail.com>
+Date: Tue, 3 Apr 2018 14:47:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1f3TlV-000xS4-Q0
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.54.187]:54006
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 31
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180403212925.GA31093@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-
-While doing some static analysis I came across the following piece of code at drivers/crypto/chelsio/chtls/chtls_io.c:1203:
-
-1203                 if (!size)
-1204                         break;
-1205 
-1206                 if (unlikely(ULP_SKB_CB(skb)->flags & ULPCB_FLAG_NO_APPEND))
-1207                         push_frames_if_head(sk);
-1208                 continue;
-1209 
-1210                 set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
-1211         }
 
 
-The issue is that in the code above, set_bit is never reached due to the 'continue' statement at line 1208.
+On 04/03/2018 02:29 PM, Gustavo A. R. Silva wrote:
+> Add null check on kmalloc() return value in order to prevent
+> a null pointer dereference.
+> 
+> Addresses-Coverity-ID: 1467429 ("Dereference null return value")
+> Fixes: 37c3347eb247 ("net: thunderx: add ndo_set_rx_mode callback implementation for VF")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/net/ethernet/cavium/thunder/nicvf_main.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+> index 1e9a31f..468321a 100644
+> --- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+> +++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+> @@ -1999,6 +1999,8 @@ static void nicvf_set_rx_mode(struct net_device *netdev)
+>  				struct xcast_addr *xaddr;
+>  
+>  				mc_list = kmalloc(sizeof(*mc_list), GFP_ATOMIC);
+> +				if (unlikely(!mc_list))
+> +					return;
+>  				INIT_LIST_HEAD(&mc_list->list);
+>  				netdev_hw_addr_list_for_each(ha, &netdev->mc) {
+>  					xaddr = kmalloc(sizeof(*xaddr),
+> 
 
-I wonder if the actual intention of the code was something like this:
-
-diff --git a/drivers/crypto/chelsio/chtls/chtls_io.c b/drivers/crypto/chelsio/chtls/chtls_io.c
-index 5a75be4..a949a6c 100644
---- a/drivers/crypto/chelsio/chtls/chtls_io.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_io.c
-@@ -1203,9 +1203,10 @@ int chtls_sendpage(struct sock *sk, struct page *page,
-                if (!size)
-                        break;
- 
--               if (unlikely(ULP_SKB_CB(skb)->flags & ULPCB_FLAG_NO_APPEND))
-+               if (unlikely(ULP_SKB_CB(skb)->flags & ULPCB_FLAG_NO_APPEND)) {
-                        push_frames_if_head(sk);
--               continue;
-+                       continue;
-+               }
- 
-                set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
-        }
-
-
-What do you think?
-
-I can send a proper patch for this.
-
-Thanks
---
-Gustavo
+What about the second kmalloc() right there ?
