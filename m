@@ -1,98 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeDCRGt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:06:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36334 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752397AbeDCRGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:06:48 -0400
-Date: Tue, 3 Apr 2018 13:06:45 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: christian.koenig@amd.com, linaro-mm-sig@lists.linaro.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180403170645.GB5935@redhat.com>
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-4-christian.koenig@amd.com>
- <20180329065753.GD3881@phenom.ffwll.local>
- <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
- <20180403090909.GN3881@phenom.ffwll.local>
+        id S1751897AbeDCRII (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:08:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40536 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751270AbeDCRIG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 13:08:06 -0400
+Date: Tue, 3 Apr 2018 10:08:58 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org, cmetcalf@mellanox.com, cl@linux.com,
+        lcapitulino@redhat.com, efault@gmx.de, peterz@infradead.org,
+        riel@redhat.com, tglx@linutronix.de, kernellwp@gmail.com,
+        mingo@kernel.org
+Subject: Re: NO_HZ_FULL and tick running within a reasonable amount of time
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180402220438.GA15885@linux.vnet.ibm.com>
+ <20180403114130.GA22765@lerouge>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180403090909.GN3881@phenom.ffwll.local>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180403114130.GA22765@lerouge>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18040317-0040-0000-0000-000004110870
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008796; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000255; SDB=6.01012590; UDB=6.00516080; IPR=6.00791856;
+ MB=3.00020395; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-03 17:08:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040317-0041-0000-0000-000008121B84
+Message-Id: <20180403170858.GO3948@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804030176
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 11:09:09AM +0200, Daniel Vetter wrote:
-> On Thu, Mar 29, 2018 at 01:34:24PM +0200, Christian König wrote:
-> > Am 29.03.2018 um 08:57 schrieb Daniel Vetter:
-> > > On Sun, Mar 25, 2018 at 12:59:56PM +0200, Christian König wrote:
-> > > > Add a peer2peer flag noting that the importer can deal with device
-> > > > resources which are not backed by pages.
-> > > > 
-> > > > Signed-off-by: Christian König <christian.koenig@amd.com>
-> > > Um strictly speaking they all should, but ttm never bothered to use the
-> > > real interfaces but just hacked around the provided sg list, grabbing the
-> > > underlying struct pages, then rebuilding&remapping the sg list again.
+On Tue, Apr 03, 2018 at 01:41:31PM +0200, Frederic Weisbecker wrote:
+> On Mon, Apr 02, 2018 at 03:04:38PM -0700, Paul E. McKenney wrote:
+> > Hello!
 > > 
-> > Actually that isn't correct. TTM converts them to a dma address array
-> > because drivers need it like this (at least nouveau, radeon and amdgpu).
+> > I am hitting the following on today's mainline under rcutorture, but
+> > only on scenarios built with CONFIG_NO_HZ_FULL=y:
 > > 
-> > I've fixed radeon and amdgpu to be able to deal without it and mailed with
-> > Ben about nouveau, but the outcome is they don't really know.
+> > ------------------------------------------------------------------------
 > > 
-> > TTM itself doesn't have any need for the pages on imported BOs (you can't
-> > mmap them anyway), the real underlying problem is that sg tables doesn't
-> > provide what drivers need.
+> > WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0x113/0x120
+> > Modules linked in:
+> > CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> > Workqueue: events_unbound sched_tick_remote
+> > RIP: 0010:sched_tick_remote+0x113/0x120
+> > RSP: 0018:ffff94d540103e20 EFLAGS: 00010002
+> > RAX: 000000012e9bb357 RBX: ffff8f95dfd21840 RCX: 000000000000001f
+> > RDX: 00000000b2d05e00 RSI: 00000000ffffffff RDI: ffff8f95dfd21858
+> > RBP: ffff94d540103e48 R08: 00000000f6499019 R09: 00000000f6499000
+> > R10: 00000000b163d33b R11: ffffffffa5c8c212 R12: ffff8f95dfd25518
+> > R13: ffff8f95de9e4200 R14: 0000000000003402 R15: ffff8f95dfd21858
+> > FS:  0000000000000000(0000) GS:ffff8f95dfc00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 000000000a015b40 CR3: 000000001de14000 CR4: 00000000000006f0
+> > Call Trace:
+> >  process_one_work+0x1d9/0x6a0
+> >  worker_thread+0x42/0x420
+> >  kthread+0xf3/0x130
+> >  ? rescuer_thread+0x340/0x340
+> >  ? kthread_delayed_work_timer_fn+0x80/0x80
+> >  ret_from_fork+0x3a/0x50
+> > Code: ff 48 8b 83 80 0b 00 00 48 85 c0 0f 85 41 ff ff ff e9 45 ff ff ff be ff ff ff ff 4c 89 ff e8 55 44 02 00 85 c0 75 87 0f 0b eb 83 <0f> 0b eb 97 66 0f 1f 84 00 00 00 00 00 41 57 41 56 41 55 41 54
+> > ---[ end trace fbdcbe529a8ae799 ]--
 > > 
-> > I think we could rather easily fix sg tables, but that is a totally separate
-> > task.
+> > ------------------------------------------------------------------------
+> > 
+> > The WARN_ON_ONCE() triggering is this guy:
+> > 
+> > 	delta = rq_clock_task(rq) - curr->se.exec_start;
+> > 	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
 > 
-> Looking at patch 8, the sg table seems perfectly sufficient to convey the
-> right dma addresses to the importer. Ofcourse the exporter has to set up
-> the right kind of iommu mappings to make this work.
+> Weird. Can you try to print up those values and see how much they drift?
 > 
-> > > The entire point of using sg lists was exactly to allow this use case of
-> > > peer2peer dma (or well in general have special exporters which managed
-> > > memory/IO ranges not backed by struct page). So essentially you're having
-> > > a "I'm totally not broken flag" here.
-> > 
-> > No, independent of needed struct page pointers we need to note if the
-> > exporter can handle peer2peer stuff from the hardware side in general.
-> > 
-> > So what I've did is just to set peer2peer allowed on the importer because of
-> > the driver needs and clear it in the exporter if the hardware can't handle
-> > that.
-> 
-> The only thing the importer seems to do is call the
-> pci_peer_traffic_supported, which the exporter could call too. What am I
-> missing (since the sturct_page stuff sounds like it's fixed already by
-> you)?
-> -Daniel
+>         if (WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3))
+>                printk_once("clock_task: %lld exec_start: %lld\n", rq_clock_task(rq), curr->se.exec_start);
 
-AFAIK Logan patchset require to register and initialize struct page
-for the device memory you want to map (export from exporter point of
-view).
+Here you go!
 
-With GPU this isn't something we want, struct page is >~= 2^6 so for
-4GB GPU = 2^6*2^32/2^12 = 2^26 = 64MB of RAM
-8GB GPU = 2^6*2^33/2^12 = 2^27 = 128MB of RAM
-16GB GPU = 2^6*2^34/2^12 = 2^28 = 256MB of RAM
-32GB GPU = 2^6*2^34/2^12 = 2^29 = 512MB of RAM
+							Thanx, Paul
 
-All this is mostly wasted as only a small sub-set (that can not be
-constraint to specific range) will ever be exported at any point in
-time. For GPU work load this is hardly justifiable, even for HMM i
-do not plan to register all those pages.
+------------------------------------------------------------------------
 
-Hence why i argue that dma_map_resource() like use by Christian is
-good enough for us. People that care about SG can fix that but i
-rather not have to depend on that and waste system memory.
-
-Cheers,
-Jérôme
+WARNING: CPU: 0 PID: 7 at /home/paulmck/public_git/linux-rcu/kernel/sched/core.c:3124 sched_tick_remote+0xdb/0x100
+Modules linked in:
+CPU: 0 PID: 7 Comm: kworker/u4:0 Not tainted 4.16.0+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+Workqueue: events_unbound sched_tick_remote
+RIP: 0010:sched_tick_remote+0xdb/0x100
+RSP: 0018:ffffa2c440103e60 EFLAGS: 00010006
+RAX: 00000000b2d05e00 RBX: ffff96f0dfd20980 RCX: 000000016a8de322
+RDX: 000000000d33a301 RSI: 0000000177c18623 RDI: fffffffeb0bf0e53
+RBP: ffff96f0dfd24328 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff96f0de9d2640
+R13: 0000000000000000 R14: 0ffff96f0de81700 R15: ffff96f0de96f540
+FS:  0000000000000000(0000) GS:ffff96f0dfc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000f7ec6ca3 CR3: 000000001e03e000 CR4: 00000000000006f0
+Call Trace:
+ process_one_work+0x139/0x3e0
+ worker_thread+0x42/0x420
+ kthread+0xf3/0x130
+ ? create_worker+0x190/0x190
+ ? kthread_destroy_worker+0x40/0x40
+ ret_from_fork+0x35/0x40
+Code: 89 8b 43 04 85 c0 0f 85 75 ff ff ff 48 8b 83 e0 0a 00 00 48 85 c0 0f 85 65 ff ff ff e9 69 ff ff ff 48 89 df e8 87 fe ff ff eb 8d <0f> 0b 80 3d 7d 57 2b 01 00 75 a8 48 c7 c7 e8 e1 fd a4 c6 05 6d
+---[ end trace f0c6a1afa55d130d ]---
+clock_task: 6304138787 exec_start: 221487873
