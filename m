@@ -1,56 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751700AbeDCOgC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:36:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751466AbeDCOfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:35:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D01A204EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 3 Apr 2018 10:35:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] lockdep: Add print_irqtrace_events() to __warn
-Message-ID: <20180403103540.2d407eb8@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751869AbeDCOgb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:36:31 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:38838 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751295AbeDCOga (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 10:36:30 -0400
+X-Google-Smtp-Source: AIpwx49PHURop4iiEASS50fgFvr9JShb837P4WhypXJIAHk6wESJTNdUvXWyj2t5SkXpGhKZqVSv9Q==
+Date: Tue, 3 Apr 2018 07:36:27 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] workqueue changes for v4.17-rc1
+Message-ID: <20180403143627.GO388343@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Hello, Linus.
 
-Running a test on a x86_32 kernel I triggered a bug that an interrupt
-disable/enable isn't being catched by lockdep. At least knowing where the
-last one was found would be helpful, but the warnings that are produced do
-not show this information. Even without debugging lockdep, having the WARN()
-display the last place hard and soft irqs were enabled or disabled is
-valuable.
+rcu_work addition and a couple trivial changes.
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/panic.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks.
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 2cfef408fec9..fa8d4cc4956a 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -554,6 +554,8 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
- 	else
- 		dump_stack();
- 
-+	print_irqtrace_events(current);
-+
- 	print_oops_end_marker();
- 
- 	/* Just a warning, don't kill lockdep. */
+The following changes since commit c698ca5278934c0ae32297a8725ced2e27585d7f:
+
+  Linux 4.16-rc6 (2018-03-18 17:48:42 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-4.17
+
+for you to fetch changes up to f75da8a8a918d7c343a2ec95d1ed99e5689e0f23:
+
+  workqueue: remove the comment about the old manager_arb mutex (2018-03-20 13:01:45 -0700)
+
+----------------------------------------------------------------
+Lai Jiangshan (2):
+      workqueue: fix the comments of nr_idle
+      workqueue: remove the comment about the old manager_arb mutex
+
+Tejun Heo (3):
+      RCU, workqueue: Implement rcu_work
+      cgroup: Use rcu_work instead of explicit rcu and work item
+      fs/aio: Use rcu_work instead of explicit rcu and work item
+
+ fs/aio.c                    | 21 +++++-----------
+ include/linux/cgroup-defs.h |  2 +-
+ include/linux/workqueue.h   | 23 +++++++++++++++++
+ kernel/cgroup/cgroup.c      | 21 ++++++----------
+ kernel/workqueue.c          | 60 ++++++++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 93 insertions(+), 34 deletions(-)
+
 -- 
-2.13.6
+tejun
