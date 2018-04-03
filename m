@@ -1,74 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751850AbeDCQAZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:00:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59958 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751270AbeDCQAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:00:24 -0400
-Date: Wed, 4 Apr 2018 00:00:05 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Laurence Oberman <loberman@redhat.com>
-Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-Message-ID: <20180403160001.GA25255@ming.t460p>
-References: <20180308105358.1506-1-ming.lei@redhat.com>
- <20180308105358.1506-5-ming.lei@redhat.com>
- <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
+        id S1752246AbeDCQBB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:01:01 -0400
+Received: from smtp37.i.mail.ru ([94.100.177.97]:36416 "EHLO smtp37.i.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751469AbeDCQBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:01:00 -0400
+Subject: Re: [PATCH v2 1/6] spi: core: handle timeout error from
+ transfer_one()
+To: Mark Brown <broonie@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180403152905.1524-1-ssuloev@orpaltech.com>
+ <20180403152905.1524-2-ssuloev@orpaltech.com>
+ <20180403155224.GA11578@sirena.org.uk>
+From: Sergey Suloev <ssuloev@orpaltech.com>
+Message-ID: <c0476d75-821f-7a0d-3c3f-270304e7b032@orpaltech.com>
+Date: Tue, 3 Apr 2018 19:00:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180403155224.GA11578@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Authentication-Results: smtp37.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A521CF74858968C1FA24F7F11A85DFF40117C3D9B8D07C2777725E5C173C3A84C30584FF81F342DA07130BDA849125FBD6A91E23F1B6B78B78B5C8C57E37DE458B4C7702A67D5C3316FA3894348FB808DB48C21F01D89DB561574AF45C6390F7469DAA53EE0834AAEE
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917E8CBD4EE5B0A9065ABD080F4C3DE7A92069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 03:32:21PM +0200, Thomas Gleixner wrote:
-> On Thu, 8 Mar 2018, Ming Lei wrote:
-> > 1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> > 	irq 39, cpu list 0
-> > 	irq 40, cpu list 1
-> > 	irq 41, cpu list 2
-> > 	irq 42, cpu list 3
-> > 
-> > 2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> > 	irq 39, cpu list 0-2
-> > 	irq 40, cpu list 3-4,6
-> > 	irq 41, cpu list 5
-> > 	irq 42, cpu list 7
-> > 
-> > 3) after applying this patch against V4.15+:
-> > 	irq 39, cpu list 0,4
-> > 	irq 40, cpu list 1,6
-> > 	irq 41, cpu list 2,5
-> > 	irq 42, cpu list 3,7
-> 
-> That's more or less window dressing. If the device is already in use when
-> the offline CPUs get hot plugged, then the interrupts still stay on cpu 0-3
-> because the effective affinity of interrupts on X86 (and other
-> architectures) is always a single CPU.
-> 
-> So this only might move interrupts to the hotplugged CPUs when the device
-> is initialized after CPU hotplug and the actual vector allocation moves an
-> interrupt out to the higher numbered CPUs if they have less vectors
-> allocated than the lower numbered ones.
+On 04/03/2018 06:52 PM, Mark Brown wrote:
+> On Tue, Apr 03, 2018 at 06:29:00PM +0300, Sergey Suloev wrote:
+>> As long as sun4i/sun6i SPI drivers have overriden the default
+>> "wait for completion" procedure then we need to properly
+>> handle -ETIMEDOUT error from transfer_one().
+> Why is this connected to those drivers specifically?
 
-It works for blk-mq devices, such as NVMe.
-
-Now NVMe driver creates num_possible_cpus() hw queues, and each
-hw queue is assigned one msix irq vector.
-
-Storage is Client/Server model, that means the interrupt is only
-delivered to CPU after one IO request is submitted to hw queue and
-it is completed by this hw queue.
-
-When CPUs is hotplugged, and there will be IO submitted from these
-CPUs, then finally IOs complete and irq events are generated from
-hw queues, and notify these submission CPU by IRQ finally.
-
-Thanks,
-Ming
+These 2 drivers have their own "waiting" code and not using the code 
+from SPI core.
