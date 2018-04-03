@@ -1,300 +1,349 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755466AbeDCLnF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:43:05 -0400
-Received: from mail-he1eur01on0136.outbound.protection.outlook.com ([104.47.0.136]:23317
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755135AbeDCLnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:43:03 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-Subject: Re: possible deadlock in skb_queue_tail
-To: Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@kernel.org>
-Cc: syzbot <syzbot+6b495100f17ca8554ab9@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        David Windsor <dwindsor@gmail.com>, elena.reshetova@intel.com,
-        ishkamiel@gmail.com, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, matthew@mjdsystems.ca,
-        Mateusz Jurczyk <mjurczyk@google.com>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
-        xemul@virtuozzo.com
-References: <0000000000003584570568da18dd@google.com>
- <06c79d3f-3f28-7f1e-9431-66c18149c9e6@virtuozzo.com>
- <CACT4Y+Zb4Y1=H8Vtd1d+ULKu-P3ftud=SgFqSAfu9SE6Lu3LMA@mail.gmail.com>
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <0eb5ed24-012a-89c9-bac9-796a0276221a@virtuozzo.com>
-Date: Tue, 3 Apr 2018 14:42:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755499AbeDCLnb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:43:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59920 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755135AbeDCLn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:43:28 -0400
+Date: Tue, 3 Apr 2018 12:43:22 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Chris Redpath <chris.redpath@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Joel Fernandes <joelaf@google.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Steve Muckle <smuckle@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Todd Kjos <tkjos@android.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: Re: [lkp-robot] [sched/fair]  d519329f72:  unixbench.score -9.9%
+ regression
+Message-ID: <20180403114322.GF13951@e110439-lin>
+References: <20180402032000.GD3101@yexl-desktop>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Zb4Y1=H8Vtd1d+ULKu-P3ftud=SgFqSAfu9SE6Lu3LMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1PR0402CA0002.eurprd04.prod.outlook.com
- (2603:10a6:3:d0::12) To HE1PR0801MB1338.eurprd08.prod.outlook.com
- (2603:10a6:3:39::28)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 46ac9ea0-5960-4020-76af-08d599580b81
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1338;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1338;3:qoMrDXlTgvOA/ok4vmbylSp6dWzWusqK7bxFDR+FvmbS6/ZBwn8rZ9MNI/dnzj65bnWlCEwoGTHPuzN7i7WfLbuGkexASJapA1Y+v6dcTIrXbPNnlWRx9Pgnm1xqfIiGvSJpPHZzpC9eFvhS0/ysFTZqZLubg4QgjMVeWScMN43IYRNu/xJiWDqEGpe4aiWI0Adx7gBgPB1lKaRIUirRumnYDiyndGPEO67rdhYOaUCX3TTE+lIF0nTHLtCDv8N6;25:Bi+oPgmfHE1F14tdIfl+KRgNUnqNvjmTFpEJQs3T9ETBq9OmWQKpPUulT1gsebrV4R2nUOMxCX75s/QvigVjS2/kQFFlk//zeZT2eAKXKd/lCBGT95qcHVQz00ZHmQDt4j/0xq/mGGXxkAhh/CqHOSVvDSSBsosO8ENMAopeC5DvPnsGFerma4VOEmKCJ72er+00wocxsVb7CupMkN5DJKuxk24sCnOJqW2FZ2bg8g8GmeKynZrwVF/I/l5d+vvURswV6YIiO53Rx1Hh4Dm1hAi2G0rZlo0dQuxeSkS3M9WvnUnIRktLqiftCYktvR1jcuMwhxHoL7PQ0pZ0E2aDHQ==;31:YAss3WBi05YakSlR5KlOLyQQ2Urr3luMzo7RatoJNd0Co7GLUmMctyRwggnLWdAcu/9oeRrAiimiOQdmHIgeUYdwTMmGGEmfo4xUxZHZO5m1OBBWiCQgU6zDOgnJcntv1UfQRJUXE6sseoUI2hbRQgtraDKnOeFVp3GPcjnWIq3PL4mQ83jl2lavziaE4EkSgZgHWja8pE5VcUsRYoovZeRfTEdtwJ/rdxpSUmEPp+Q=
-X-MS-TrafficTypeDiagnostic: HE1PR0801MB1338:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1338;20:qG8PchOSlJm4dx7LWiOghI6YQbGxWnras6X4Q/Ce0v4bEAbI4ZV6hg8Bo9R57UXFXlmtEeO6J2iDfloMsQvdFZvIjJ1vU2D3WaAvfzZKU2yb7TRsKqlq18xk9yV/jTN9vDyQy1EEVaqaOMOA8LQqB2mqaFOF0CzqhBXt805zyi2wRrCgL+CQk3Mg0oB/VRtvurypBEasS5G/WN6V3WvRIDDY4Wuk2FYJLQ6QZglN9vWmejT3er5IkBiuT6+IeB0lHdVF+/FlA/PK3/VyouOX3vyahIcJGRzcpjRJjIAReNIpOitalHizTq7dqqzdxEg4ISccv7vaFxtOxj44RK3mIn0bHwHDaE2KRtPP6zBVJ050t4QujkDY4/MK7VQ/9vbWAaHCoJ0KunEg7oty9rnHdrqNIGH1k73LLNhoQkVKkR7QpuY+/wcnNe1iMtGvzeV79RFKuzJOneTele7IbGzRGmN5fJYR1BHt2LZUfDZJNQ/OIj1zdEGj2RhKI6l8UyrM;4:nVLXfCwCYKcOyspWg9H2eezMKNC4EkmwrRFf+F2KgSGxVBL2Bj+lWH2WX2hNzBZyt+O7csWXg3cuYspws59lhezjGKDsSIPKW1OHXYRTwIHG8dgRT1oaeTXPjNU4dGGVLk8kqRJpk5rajXwXtm4gRPouDRC9V8eILWZZ2J96vjXMXsIB+nM6sBYHDgDB9pc4AKmohjIyB6MFw0dSID+tIyDy8Ea3srqOHJnb7yQJbagrNZVxH3pNpi72WB8JMjw23iv6/LeQt1+4CakMrh+yJVe0vzRMspeYroTK8nh2YhQJmWLwpOGf0hUsfz4eczqE4TVvv1+Uas3obCAQekkw2vF7DiuPi7CeY5gxXhknTW5cSB0BARGhImX2CPG9U3WP
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB13389C8DE0A859457E09B350CDA50@HE1PR0801MB1338.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(228788266533470)(148501403981450)(211936372134217);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:HE1PR0801MB1338;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1338;
-X-Forefront-PRVS: 0631F0BC3D
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(366004)(376002)(396003)(39380400002)(39840400004)(346002)(199004)(189003)(57704003)(52116002)(77096007)(105586002)(76176011)(2486003)(107886003)(68736007)(106356001)(65806001)(31686004)(23676004)(47776003)(31696002)(229853002)(110136005)(58126008)(66066001)(65956001)(54906003)(52146003)(316002)(16526019)(50466002)(16576012)(26005)(2906002)(7736002)(6666003)(575784001)(305945005)(86362001)(6116002)(3846002)(476003)(65826007)(486005)(39060400002)(11609785009)(25786009)(36756003)(486005)(11346002)(446003)(4326008)(5660300001)(97736004)(7416002)(53936002)(6306002)(8936002)(386003)(230700001)(59450400001)(53546011)(81166006)(6486002)(81156014)(6246003)(8676002)(64126003)(956004)(966005)(478600001)(2616005)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1338;H:[172.16.25.196];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjEzMzg7MjM6TWJ4WnNJaXFlNEhsQkVsSW5xNGhVVnBX?=
- =?utf-8?B?bEh2VVpCTDVsMldiMW5qL0lvTWp1ME1ZRkdxSlNsa0p5L1R2SFNoLzlaS1Qw?=
- =?utf-8?B?c1NKa3RDNnpvQ1V4anE1dm1MRXFBNUM4QjVSL3RsYXNreTRLdGkrMDFRSlVJ?=
- =?utf-8?B?UGpXQnUyMXZUeWwxaU5ScHlNd3dQQVNmL0Qwb0xNeUdIWEFWYzlnMFVhYXJh?=
- =?utf-8?B?ZGVsZTdzUXNrbEZLMUEyeE5DRzNBdUJNa1ExUkM4Qm9aRnNPTFZyTFpHOEpw?=
- =?utf-8?B?YlAvcVljUVlhKzNVZEpEVnI3V2FJVk5XYUFJRXEzQ3lKOUNrS29ZR25ERnpN?=
- =?utf-8?B?Nmk3a3FCbmJNOUNsTVFhWW5ReGVNQmFaZXUyUXVTYXhmOEpKdXhWZ0xNSnJv?=
- =?utf-8?B?dFlweEEzeVNVbVhaeFR5VERMZXB1d1REU0w5VnRTWFUzb1pBTFRiVnZ6c2hu?=
- =?utf-8?B?cEYyRDg3bDh4dlMyeU0rQjRwS2wxYnZQQmVROTJ5WStoaWNwOGNyTWdTUUhT?=
- =?utf-8?B?VDNhajJQZnhjMkJ6YitWTFlETHNUQWs2ZFZEV2I3SU5tdFowK2Nycmp5UjlJ?=
- =?utf-8?B?NUhJa09DS2JPR2NkZ0Q0QmRReDBQVTh3WmtBTHVYZ1gxYWtCanExTlhaMkJR?=
- =?utf-8?B?ZEp3MTAvWmJaYmJoUFNwMWpGUzJ6d2M4aUtsd0dTN1c4MzJBYW03ZEtua3F2?=
- =?utf-8?B?NGZEQm5Ud3lyMkg1c3Z5RG5ObGQ0WjZIYUwzZHVFaUs2OUh0cFR4S04zN2gr?=
- =?utf-8?B?ajYwQ25ZRGJWMTJTSkpjL05HR09oN041NTdXU2hMcDJJZUk1aEhSdTNTdXFI?=
- =?utf-8?B?RUIxRnhCNmhkcGpQcG5vRDZxRXgvZXlJbEU3a2xGOXNCRVJJVWhEaXdmZEU0?=
- =?utf-8?B?dzFZNEtwaHRtR0cyUVFiNGN3c0pZNG5vTUpnWDJUeXBOWTlXQkxhYnNZL2ly?=
- =?utf-8?B?YnExVmtRUEFzelY4aDJPUURDMWNaa2FXTEZVMG0xZnBBdXNNczRlV1U5T0hG?=
- =?utf-8?B?MFhUUXJ0c1V0bjF0bkdBMWNybE5ab1A5NzlZVWtqQXdJQW8vYzdFMTlDMi9z?=
- =?utf-8?B?cHFFY1NhYlc5MVlvQzhTUGNYT0lxVG9Zd3VFNWpsT25IQ2tvMHQ3Q3hsNS9r?=
- =?utf-8?B?UXFiWnVmN0U4bmFsYnBTN0ZRTElnWFozdTZPNFl0Ry9MeHQyTGFhdEFlOXFB?=
- =?utf-8?B?alVtUDE3MkJuK2t4Sy9jYUkrQVN4NWdUb2R4THl4dHZSanZVT2RleGNJM0h4?=
- =?utf-8?B?dHlGaXRwbVUxc1YvUEUzZ0lKM2cxNzVXeHVwWHFPRkpDQWJ0enlJM0hwWm8y?=
- =?utf-8?B?WjVTS3RsUGMvc2p6N2RHTGFwWVVtSWFVWVBUQkUrcTNVbTJFWGJoandNSkdI?=
- =?utf-8?B?SjVrNnRyTVpYay9QcnZyVzVsWDNnSkpacFBocnBlUGxTQi93STFORXN1N21v?=
- =?utf-8?B?TFQ1S0E0MmE3MlRqZkNhdDRRUmRpcTV0NjNTVDR6c0ZkZEJtSmErckpRd3JT?=
- =?utf-8?B?dld2WXEwai8wd0FhUCtwbkpkTFlWTzJwZHFOSURoYmI2VVEwVEVyaFBIcFN2?=
- =?utf-8?B?Z2lCcVBTTG55c0l3VjdMNFBvU2U3ZFFsUkkySXdWcFdqdVdYM0xvUENWeDZT?=
- =?utf-8?B?MzVwWHc3S2tTaEszM09DYUpqWEEwM285WGE3UVR3emNKY2p2SHd0eWxWTXMr?=
- =?utf-8?B?dHZCWmNGeGpzUHhPS2ZRRytYSE5EWnNIendqMlpGcFRmeGhZRkNxdkJUZlpL?=
- =?utf-8?B?cVd0dEpjeUVDb2dZL1lpOTRTSFlZTzQrSk9uN01jWFhkMFBGNDErbHg2WFpx?=
- =?utf-8?B?bGlZQXkrZGNHU3VocWJST1JLUklna3NhQnhwTUo5RENEbnBvL1Z0aFl1MjND?=
- =?utf-8?B?TnUwT09ocm5LQVR5eURyZUJyNWphTnJYaHZlbWVTWGtmNnB5b3M4RGgwRm9S?=
- =?utf-8?B?SkRaWUJwdXhFc01ScjlZYkVDY2g0bzZKQ2JGN0c5TkxvVDdVK2RtdU8yMW9E?=
- =?utf-8?B?bFByb1kwTUZ5aVNTT244a0VBWmZNbjlNdlJHbDFCeUJ4RjdrcjJhaUhMMG5l?=
- =?utf-8?B?cC9xNTRyQWM5ZSswYkt4Sk9oSVBhZ1N2clVzNjVoVldvRmNtN01naVcyR3pu?=
- =?utf-8?B?c0VKR0hmOTdYMUZsOUJNK3p0UGlsUUorNHlwVHRvc2VuS0NiYWI4b3J1U05k?=
- =?utf-8?B?M0xHN24vY3NQc2MvV2ZLaXBvQ2Rpc1RKZ0s2ZVBUM2ZMVEFFN09TcER3Z2ls?=
- =?utf-8?Q?3mQgOWtTfdM9yTO1zHqz?=
-X-Microsoft-Antispam-Message-Info: smdAlPLFJDBlsNr+ygjcGHuw8JpCAdck+OmnpmME7ps08eJSiTtmQWzkOC/ltG5+9Xf9Hp4U57S4otwOoW1ZdKvDT2Uy5yRTMiCr3qORthblbrPA+ACBO3lJDxqsbY6U55Rj0n8Y1fsHRpWJ0cNJKgbZBz7UaW9cyk+phHrOEBUKV/Ehv2GODT1UiN1SY19j
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1338;6:87WiqTXDccCH7B+ySZ9jfEa3/4EUT3dHC6zqKHqIYLyP8Foxl6yb28Z03JRo8iMzbNfwnt3IAiKlvuLlgmF2FJnD6i9kpTfjZkHVrGIEVqyJEBlG9k6S4/8ciQ1e3RdECq8yVirBCyDI5+ZXLPrzYHQb3/cxCojevVqaIT3L6Ga0SGG9jQS2esXM5NjG2KqE/sXvym+p1lKKswwi6bQItLRTm49PYmKE8oQ0+N8vTmOZNyOL0IQpHXN4Bi2PPePZfsgeAI8OKIgAKNOR2CUkgj9ioZE8Ey/3dS/mKezv1QPhSk4/YKELFBl0/FxsKUuyz/a+M0HUzTwdv0Y6Dezg5CHsCXbVZ6ShoDaSxWNxKwdKG/S86vuVyCbkFLopHmm9EL5y5u9fXoftPFNIOodpaKmYGDXFjwGDu3KB/5ot9JOYvC96q8gaJ4DzWXXEmX8PnpN7naoDnmsVZyf2hcG6rQ==;5:921OL8zV39pwVy+8qSA11jB3zTOBL2uBOVh9ufc5lV+UmVHWXUePrzmFOhTNC0FUmznomvmxVYvNQQnSxgaE1OCdbu/EqaUkoe8Ibh9VitY9UilLFAEyk2nQCbdFovbLkhz/EawYHORTotLDynIoYlp6JRDG4v85h+ofX9P0zZI=;24:WKlAFUFK7yCskTKmNx4du8MRKD9cKb7t06dVz1eU2bbAj6hUXII73Is7e2Flv/96YbkQ0TfuKNRIr5a1TNOaD2x3i40/atZob7EfauPvDs8=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1338;7:HqCxj61CV4auitjhjLp7JVLX17qssFDqNK3x13/w1chsdweRNrsJaBbOob5Wp7mBQ9kbydNE6qSUpJScDJV29e0htrm3346rs+DzJq9wmFuKcwpVPwEOFPI/g3QP8tVpICujfWuT78KSgma5civ5zHzpf8PYF40ScnDkXXpYzEawNvznnSFCQv/WqqqQlu24uaeScz7S5AGterpLjzNyRvnM7lhJAeLT3GrU+kUit0EBgKauY3lkE8ifncaK1dyj;20:YRyzIC4jM2vUslp85eummGusR7/ZiZC0SgsEamckUJP59acfHEpxbin5bZ3viskAe+Z0HWdZWvg6bsN8bGtY8KQoO4G92XjguboJnBsVj0aurlvN9Tp1vghLulmJE65SfGiEtf8aU2Rna0+m62a+UerKCpohL9aAqwwCBEjnCI4=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2018 11:42:56.5592 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46ac9ea0-5960-4020-76af-08d599580b81
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1338
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180402032000.GD3101@yexl-desktop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.04.2018 14:25, Dmitry Vyukov wrote:
-> On Tue, Apr 3, 2018 at 11:50 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->> On 02.04.2018 12:20, syzbot wrote:
->>> Hello,
->>>
->>> syzbot hit the following crash on net-next commit
->>> 06b19fe9a6df7aaa423cd8404ebe5ac9ec4b2960 (Sun Apr 1 03:37:33 2018 +0000)
->>> Merge branch 'chelsio-inline-tls'
->>> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=6b495100f17ca8554ab9
->>>
->>> Unfortunately, I don't have any reproducer for this crash yet.
->>> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=6218830443446272
->>> Kernel config: https://syzkaller.appspot.com/x/.config?id=3327544840960562528
->>> compiler: gcc (GCC) 7.1.1 20170620
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+6b495100f17ca8554ab9@syzkaller.appspotmail.com
->>> It will help syzbot understand when the bug is fixed. See footer for details.
->>> If you forward the report, please keep this part and the footer.
->>>
->>>
->>> ======================================================
->>> WARNING: possible circular locking dependency detected
->>> 4.16.0-rc6+ #290 Not tainted
->>> ------------------------------------------------------
->>> syz-executor7/20971 is trying to acquire lock:
->>>  (&af_unix_sk_receive_queue_lock_key){+.+.}, at: [<00000000271ef0d8>] skb_queue_tail+0x26/0x150 net/core/skbuff.c:2899
->>>
->>> but task is already holding lock:
->>>  (&(&u->lock)->rlock/1){+.+.}, at: [<000000004e725e14>] unix_state_double_lock+0x7b/0xb0 net/unix/af_unix.c:1088
->>>
->>> which lock already depends on the new lock.
->>>
->>>
->>> the existing dependency chain (in reverse order) is:
->>>
->>> -> #1 (&(&u->lock)->rlock/1){+.+.}:
->>>        _raw_spin_lock_nested+0x28/0x40 kernel/locking/spinlock.c:354
->>>        sk_diag_dump_icons net/unix/diag.c:82 [inline]
->>>        sk_diag_fill.isra.4+0xa52/0xfe0 net/unix/diag.c:144
->>>        sk_diag_dump net/unix/diag.c:178 [inline]
->>>        unix_diag_dump+0x400/0x4f0 net/unix/diag.c:206
->>>        netlink_dump+0x492/0xcf0 net/netlink/af_netlink.c:2221
->>>        __netlink_dump_start+0x4ec/0x710 net/netlink/af_netlink.c:2318
->>>        netlink_dump_start include/linux/netlink.h:214 [inline]
->>>        unix_diag_handler_dump+0x3e7/0x750 net/unix/diag.c:307
->>>        __sock_diag_cmd net/core/sock_diag.c:230 [inline]
->>>        sock_diag_rcv_msg+0x204/0x360 net/core/sock_diag.c:261
->>>        netlink_rcv_skb+0x14b/0x380 net/netlink/af_netlink.c:2443
->>>        sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:272
->>>        netlink_unicast_kernel net/netlink/af_netlink.c:1307 [inline]
->>>        netlink_unicast+0x4c4/0x6b0 net/netlink/af_netlink.c:1333
->>>        netlink_sendmsg+0xa4a/0xe80 net/netlink/af_netlink.c:1896
->>>        sock_sendmsg_nosec net/socket.c:629 [inline]
->>>        sock_sendmsg+0xca/0x110 net/socket.c:639
->>>        sock_write_iter+0x31a/0x5d0 net/socket.c:908
->>>        call_write_iter include/linux/fs.h:1782 [inline]
->>>        new_sync_write fs/read_write.c:469 [inline]
->>>        __vfs_write+0x684/0x970 fs/read_write.c:482
->>>        vfs_write+0x189/0x510 fs/read_write.c:544
->>>        SYSC_write fs/read_write.c:589 [inline]
->>>        SyS_write+0xef/0x220 fs/read_write.c:581
->>>        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->>>        entry_SYSCALL_64_after_hwframe+0x42/0xb7
->>>
->>> -> #0 (&af_unix_sk_receive_queue_lock_key){+.+.}:
->>>        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
->>>        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->>>        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->>>        skb_queue_tail+0x26/0x150 net/core/skbuff.c:2899
->>>        unix_dgram_sendmsg+0xa30/0x1610 net/unix/af_unix.c:1807
->>>        sock_sendmsg_nosec net/socket.c:629 [inline]
->>>        sock_sendmsg+0xca/0x110 net/socket.c:639
->>>        ___sys_sendmsg+0x320/0x8b0 net/socket.c:2047
->>>        __sys_sendmmsg+0x1ee/0x620 net/socket.c:2137
->>>        SYSC_sendmmsg net/socket.c:2168 [inline]
->>>        SyS_sendmmsg+0x35/0x60 net/socket.c:2163
->>>        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->>>        entry_SYSCALL_64_after_hwframe+0x42/0xb7
->>
->> sk_diag_dump_icons() dumps only sockets in TCP_LISTEN state.
->> TCP_LISTEN state may be assigned in only place in net/unix/af_unix.c:
->> it's unix_listen(). The function is applied to stream and seqpacket
->> socket types.
->>
->> It can't be stream because of the second stack, and seqpacket also can't,
->> as I don't think it's possible for gcc to inline unix_seqpacket_sendmsg()
->> in the way, we don't see it in the stack.
->>
->> So, this is looks like false positive result for me.
->>
->> Kirill
+Hi Xiaolong,
+
+On 02-Apr 11:20, kernel test robot wrote:
 > 
-> Do you mean that these &(&u->lock)->rlock/1 referenced in 2 stacks are
-> always different?
+> Greeting,
+> 
+> FYI, we noticed a -9.9% regression of unixbench.score due to commit:
 
-In these 2 particular stacks they have to be different.
+thanks for the report, I'll try to reproduce it locally to better
+understand what's going on.
 
-But we may meet another stacks, where stream or seqpacket
-functions are used instead of unix_dgram_sendmsg(), and
-they may be true positive.
+Meanwhile, I'm a little puzzled about some of the following
+numbers... likely looking at the code it should be more clear.
+But, maybe someone already knows the response.
 
-Kirill
- 
-> +Ingo for lockdep false positive
-> Do we need some kind of annotation here?
+> commit: d519329f72a6f36bc4f2b85452640cfe583b4f81 ("sched/fair: Update util_est only on util_avg updates")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+
+To give a bit of context, this patch is the last of a small series
+introducing util_est:
+   https://lkml.org/lkml/2018/3/9/245
+where we actually enable it by turning of by default the corresponding SCHED_FEAT.
+Thus, all the effect of util_est are visible just after this very last patch.
+
+I'm not surprised that, if there are issues related to util_est, they
+manifest at this stage.
+
+> in testcase: unixbench
+> on test machine: 8 threads Intel(R) Core(TM) i7 CPU 870 @ 2.93GHz with 6G memory
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	nr_task: 100%
+> 	test: execl
+> 
+> test-description: UnixBench is the original BYTE UNIX benchmark suite aims to test performance of Unix-like system.
+> test-url: https://github.com/kdlucas/byte-unixbench
+
+AFAIU, this benchmark is composed of 12 different test cases:
+   https://github.com/intel/lkp-tests/blob/master/jobs/unixbench.yaml
+and it's reporting a regression for "only" 1 of those tests (execl).
+
+Is that correct?
+
+> Details are as below:
+> -------------------------------------------------------------------------------------------------->
 > 
 > 
->>> other info that might help us debug this:
->>>
->>>  Possible unsafe locking scenario:
->>>
->>>        CPU0                    CPU1
->>>        ----                    ----
->>>   lock(&(&u->lock)->rlock/1);
->>>                                lock(&af_unix_sk_receive_queue_lock_key);
->>>                                lock(&(&u->lock)->rlock/1);
->>>   lock(&af_unix_sk_receive_queue_lock_key);
->>>
->>>  *** DEADLOCK ***
->>>
->>> 1 lock held by syz-executor7/20971:
->>>  #0:  (&(&u->lock)->rlock/1){+.+.}, at: [<000000004e725e14>] unix_state_double_lock+0x7b/0xb0 net/unix/af_unix.c:1088
->>>
->>> stack backtrace:
->>> CPU: 0 PID: 20971 Comm: syz-executor7 Not tainted 4.16.0-rc6+ #290
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->>> Call Trace:
->>>  __dump_stack lib/dump_stack.c:17 [inline]
->>>  dump_stack+0x194/0x24d lib/dump_stack.c:53
->>>  print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
->>>  check_prev_add kernel/locking/lockdep.c:1863 [inline]
->>>  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
->>>  validate_chain kernel/locking/lockdep.c:2417 [inline]
->>>  __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
->>>  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
->>>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->>>  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->>>  skb_queue_tail+0x26/0x150 net/core/skbuff.c:2899
->>>  unix_dgram_sendmsg+0xa30/0x1610 net/unix/af_unix.c:1807
->>>  sock_sendmsg_nosec net/socket.c:629 [inline]
->>>  sock_sendmsg+0xca/0x110 net/socket.c:639
->>>  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2047
->>>  __sys_sendmmsg+0x1ee/0x620 net/socket.c:2137
->>>  SYSC_sendmmsg net/socket.c:2168 [inline]
->>>  SyS_sendmmsg+0x35/0x60 net/socket.c:2163
->>>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->>>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
->>> RIP: 0033:0x455269
->>> RSP: 002b:00007f71ffad6c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
->>> RAX: ffffffffffffffda RBX: 00007f71ffad76d4 RCX: 0000000000455269
->>> RDX: 04924924924924f4 RSI: 0000000020000200 RDI: 0000000000000016
->>> RBP: 000000000072bf58 R08: 0000000000000000 R09: 0000000000000000
->>> R10: 00000000200000d4 R11: 0000000000000246 R12: 00000000ffffffff
->>> R13: 00000000000004ca R14: 00000000006f9390 R15: 0000000000000001
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: sync thread started: state = BACKUP, mcast_ifn = bcsh0, syncid = 0, id = 0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>> IPVS: Unknown mcast interface: bcsh0
->>>
->>>
->>> ---
->>> This bug is generated by a dumb bot. It may contain errors.
->>> See https://goo.gl/tpsmEJ for details.
->>> Direct all questions to syzkaller@googlegroups.com.
->>>
->>> syzbot will keep track of this bug report.
->>> If you forgot to add the Reported-by tag, once the fix for this bug is merged
->>> into any tree, please reply to this email with:
->>> #syz fix: exact-commit-title
->>> To mark this as a duplicate of another syzbot report, please reply with:
->>> #syz dup: exact-subject-of-another-report
->>> If it's a one-off invalid bug report, please reply with:
->>> #syz invalid
->>> Note: if the crash happens again, it will cause creation of a new bug report.
->>> Note: all commands must start from beginning of the line in the email body.
->>
->> --
->> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
->> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
->> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/06c79d3f-3f28-7f1e-9431-66c18149c9e6%40virtuozzo.com.
->> For more options, visit https://groups.google.com/d/optout.
+> To reproduce:
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp install job.yaml  # job file is attached in this email
+>         bin/lkp run     job.yaml
+
+Will try to give it a run in the next days.
+
+> 
+> =========================================================================================
+> compiler/kconfig/nr_task/rootfs/runtime/tbox_group/test/testcase:
+>   gcc-7/x86_64-rhel-7.2/100%/debian-x86_64-2016-08-31.cgz/300s/nhm-white/execl/unixbench
+> 
+> commit: 
+>   a07630b8b2 ("sched/cpufreq/schedutil: Use util_est for OPP selection")
+>   d519329f72 ("sched/fair: Update util_est only on util_avg updates")
+> 
+> a07630b8b2c16f82 d519329f72a6f36bc4f2b85452 
+> ---------------- -------------------------- 
+>          %stddev     %change         %stddev
+>              \          |                \  
+>       4626            -9.9%       4167        unixbench.score
+
+Is this overall score a composition of the following scores?
+
+In general, it would be nice to see in the following metrics which one
+is considered "the lower the better" or "the higher the better".
+
+>    3495362 ±  4%     +70.4%    5957769 ±  2%  unixbench.time.involuntary_context_switches
+
+The above seems to indicate an increase in contention which generated
+scheduler enforced context switches. But, AFAIU, the test under
+analysis generates just one single task which keep execl itself.
+I can't see how util_est can this generated an increase in context
+switches? Will investigate better.
+
+>  2.866e+08           -11.6%  2.534e+08        unixbench.time.minor_page_faults
+>     666.75            -9.7%     602.25        unixbench.time.percent_of_cpu_this_job_got
+>       1830            -9.7%       1653        unixbench.time.system_time
+>     395.13            -5.2%     374.58        unixbench.time.user_time
+
+When I read "system_time" and "user_time" I'm expecting it to be a
+"the lower the better" metric.
+Thus, if that's the case, by just looking at these last two metrics:
+doesn't that means that the test is actually completing faster with
+util_est enabled?
+
+>    8611715           -58.9%    3537314 ±  3%  unixbench.time.voluntary_context_switches
+>    6639375            -9.1%    6033775        unixbench.workload
+
+What the above metric represents?
+
+>      26025         +3849.3%    1027825        interrupts.CAL:Function_call_interrupts
+
+What this metric represents?
+
+This is a big variation which I cannot easily see as related to
+util_est overheads... unless these are interrupts related to tasks
+migrations, which potentially can affect LB and WKP code paths.
+
+>       4856 ± 14%     -27.4%       3523 ± 11%  slabinfo.filp.active_objs
+>    3534356            -8.8%    3223918        softirqs.RCU
+>      77929           -11.2%      69172        vmstat.system.cs
+>      19489 ±  2%      +7.5%      20956        vmstat.system.in
+>       9.05 ±  9%     +11.0%      10.05 ±  8%  boot-time.dhcp
+>     131.63 ±  4%      +8.6%     142.89 ±  7%  boot-time.idle
+>       9.07 ±  9%     +11.0%      10.07 ±  8%  boot-time.kernel_boot
+>      76288 ±  3%     -12.8%      66560 ±  3%  meminfo.DirectMap4k
+>      16606           -13.1%      14433        meminfo.Inactive
+>      16515           -13.2%      14341        meminfo.Inactive(anon)
+>      11.87 ±  5%      +7.8       19.63 ±  4%  mpstat.cpu.idle%
+>       0.07 ± 35%      -0.0        0.04 ± 17%  mpstat.cpu.soft%
+>      68.91            -6.1       62.82        mpstat.cpu.sys%
+
+The following:
+
+>   29291570          +325.4%  1.246e+08        cpuidle.C1.time
+>    8629105           -36.1%    5513780        cpuidle.C1.usage
+>     668733 ± 12%  +11215.3%   75668902 ±  2%  cpuidle.C1E.time
+>       9763 ± 12%  +16572.7%    1627882 ±  2%  cpuidle.C1E.usage
+>  1.834e+08 ±  9%     +23.1%  2.258e+08 ± 11%  cpuidle.C3.time
+>     222674 ±  8%    +133.4%     519690 ±  6%  cpuidle.C3.usage
+
+are other really big variations which metrics represents, AFAIU, the
+following IDLE states:
+- C1  : Core doesn't work, clocks stopped
+- C1E : Core doesn't work, clocks stopped and voltage lowered
+- C3  : L1 and L2 copied to L3, all core clocks stopped
+
+Thus, it seems to me that, with the patches in, we are more likely to
+sleep longer. Which suggests a more aggressive race-to-idle policy:
+running at higher frequencies to complete faster and sleep
+longer and deeper.
+
+This would kind-of match with the idea of completing faster, but I'm
+not completely sure... however, if that should be the case, again I
+would say that's a benefit, not a regression.
+
+
+>       4129           -13.3%       3581        proc-vmstat.nr_inactive_anon
+>       4129           -13.3%       3581        proc-vmstat.nr_zone_inactive_anon
+>  2.333e+08           -12.2%  2.049e+08        proc-vmstat.numa_hit
+>  2.333e+08           -12.2%  2.049e+08        proc-vmstat.numa_local
+>       6625           -10.9%       5905        proc-vmstat.pgactivate
+>  2.392e+08           -12.1%  2.102e+08        proc-vmstat.pgalloc_normal
+>  2.936e+08           -12.6%  2.566e+08        proc-vmstat.pgfault
+>  2.392e+08           -12.1%  2.102e+08        proc-vmstat.pgfree
+
+All the following metrics:
+
+>       2850           -15.3%       2413        turbostat.Avg_MHz
+>    8629013           -36.1%    5513569        turbostat.C1
+>       1.09            +3.5        4.61        turbostat.C1%
+>       9751 ± 12%  +16593.0%    1627864 ±  2%  turbostat.C1E
+>       0.03 ± 19%      +2.8        2.80        turbostat.C1E%
+>     222574 ±  8%    +133.4%     519558 ±  6%  turbostat.C3
+>       6.84 ±  8%      +1.5        8.34 ± 10%  turbostat.C3%
+>       2.82 ±  7%    +250.3%       9.87 ±  2%  turbostat.CPU%c1
+>    6552773 ±  3%     +23.8%    8111699 ±  2%  turbostat.IRQ
+>       2.02 ± 11%     +28.3%       2.58 ±  9%  turbostat.Pkg%pc3
+
+maybe they can help to understand better what's going on with respect
+to the race-to-idle theory...
+
+
+>  7.635e+11           -12.5%  6.682e+11        perf-stat.branch-instructions
+>  3.881e+10           -12.9%  3.381e+10        perf-stat.branch-misses
+>       2.09            -0.3        1.77 ±  4%  perf-stat.cache-miss-rate%
+>  1.551e+09           -15.1%  1.316e+09 ±  4%  perf-stat.cache-misses
+>   26177920           -10.5%   23428188        perf-stat.context-switches
+>       1.99            -2.8%       1.93        perf-stat.cpi
+>  7.553e+12           -14.7%  6.446e+12        perf-stat.cpu-cycles
+
+This:
+
+>     522523 ±  2%    +628.3%    3805664        perf-stat.cpu-migrations
+
+is another good point. With util_est we are affecting LB and WKP
+paths... but, give the specific execl test, not entirely sure how we
+can affect migrations using util_est.
+
+Have to check better these two points:
+- do we reset PELT after an execl?
+- do we trigger a possible task migration after and execl
+
+
+>  2.425e+10 ±  4%     -14.3%  2.078e+10        perf-stat.dTLB-load-misses
+>  1.487e+12           -11.3%  1.319e+12        perf-stat.dTLB-loads
+>  1.156e+10 ±  3%      -7.7%  1.066e+10        perf-stat.dTLB-store-misses
+>  6.657e+11           -11.1%  5.915e+11        perf-stat.dTLB-stores
+>       0.15            +0.0        0.15        perf-stat.iTLB-load-miss-rate%
+>  5.807e+09           -11.0%  5.166e+09        perf-stat.iTLB-load-misses
+>  3.799e+12           -12.1%   3.34e+12        perf-stat.iTLB-loads
+>  3.803e+12           -12.2%  3.338e+12        perf-stat.instructions
+>     654.99            -1.4%     646.07        perf-stat.instructions-per-iTLB-miss
+>       0.50            +2.8%       0.52        perf-stat.ipc
+>  2.754e+08           -11.6%  2.435e+08        perf-stat.minor-faults
+>  1.198e+08 ±  7%     +73.1%  2.074e+08 ±  4%  perf-stat.node-stores
+>  2.754e+08           -11.6%  2.435e+08        perf-stat.page-faults
+>     572928            -3.4%     553258        perf-stat.path-length
+> 
+> 
+>                                                                                 
+>                                   unixbench.score                               
+>                                                                                 
+>   4800 +-+------------------------------------------------------------------+   
+>        |+                                      +     +                      |   
+>   4700 +-+ +                +                  :+ +. :+ + +                 |   
+>        |  + +   +    +.     :  +              +  +  +  + + + .+++++    .+  +|   
+>   4600 +-+   +++ :+++  + ++: : :+  +++ ++.++++              +      ++++  ++ |   
+>        |         +      +  + ++  ++   +                                     |   
+>   4500 +-+                                                                  |   
+>        |                                                                    |   
+>   4400 +-+                                                                  |   
+>        |                                                                    |   
+>   4300 +-+                                                                  |   
+>        O                                                                    |   
+>   4200 +-O        O O    OOOO OO OOO OOOO  OOOO O O                         |   
+>        |O OO OOOOO O O OO    O      O     O    O O  OO                      |   
+>   4100 +-+------------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                                   unixbench.workload                            
+>                                                                                 
+>     9e+06 +-+---------------------------------------------------------------+   
+>           |                   :                                             |   
+>   8.5e+06 +-+                 :                                             |   
+>           |                   :                                             |   
+>     8e+06 +-+                 :                                             |   
+>           |                   ::                                            |   
+>   7.5e+06 +-+                : : +                                          |   
+>           |                 +: : :       +                                  |   
+>     7e+06 +-+      +    +   :: : ::  + + :  +   +     +    +            +   |   
+>           |:+ +   + :   :: : : :: :  :+ : : ::+ :+ .+ :+ ++ ++ + ++     ::++|   
+>   6.5e+06 +-O+ +++  ++++ +++ + ++ +.+   + ++ + +  +  +  +     + +  +.+++ +  |   
+>           O                O    O            O O O    O                     |   
+>     6e+06 +O+OOO O OOOOOOOO OOOO OO OOOOOOOOO O O O OO                      |   
+>           |     O                                                           |   
+>   5.5e+06 +-+---------------------------------------------------------------+   
+>                                                                                 
+>                                                                                 
+>                                                                                 
+> [*] bisect-good sample
+> [O] bisect-bad  sample
+> 
+> 
+> 
+> Disclaimer:
+> Results have been estimated based on internal Intel analysis and are provided
+> for informational purposes only. Any difference in system hardware or software
+> design or configuration may affect actual performance.
+> 
+> 
+> Thanks,
+> Xiaolong
+
+[...]
+
+> #
+> # CPU Frequency scaling
+> #
+> CONFIG_CPU_FREQ=y
+> CONFIG_CPU_FREQ_GOV_ATTR_SET=y
+> CONFIG_CPU_FREQ_GOV_COMMON=y
+> # CONFIG_CPU_FREQ_STAT is not set
+> # CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
+> # CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE is not set
+> # CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE is not set
+
+The governor in use is not schedutil... thus util_est could effect the
+test just because of signals tracking overheads, of because of the way
+we affect tasks placement in WK and LB paths... which can be
+correlated to the impact on task migrations and preemption...
+
+> CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+> # CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE is not set
+> # CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not set
+> CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+> CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+> CONFIG_CPU_FREQ_GOV_USERSPACE=y
+> CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+> CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+> # CONFIG_CPU_FREQ_GOV_SCHEDUTIL is not set
+> 
+> #
+> # CPU frequency scaling drivers
+> #
+> CONFIG_X86_INTEL_PSTATE=y
+> CONFIG_X86_PCC_CPUFREQ=m
+> CONFIG_X86_ACPI_CPUFREQ=m
+> CONFIG_X86_ACPI_CPUFREQ_CPB=y
+> CONFIG_X86_POWERNOW_K8=m
+> CONFIG_X86_AMD_FREQ_SENSITIVITY=m
+> # CONFIG_X86_SPEEDSTEP_CENTRINO is not set
+> CONFIG_X86_P4_CLOCKMOD=m
+> 
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
