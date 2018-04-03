@@ -1,73 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755712AbeDCXDj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 19:03:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47546 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754297AbeDCXDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 19:03:38 -0400
-Date: Tue, 3 Apr 2018 19:03:36 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH] mm/migrate: properly preserve write attribute in special
- migrate entry
-Message-ID: <20180403230336.GH5935@redhat.com>
-References: <20180402023506.12180-1-jglisse@redhat.com>
- <20180403153046.88cae4ab18646e8e23a648ce@linux-foundation.org>
+        id S1755765AbeDCXHP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 19:07:15 -0400
+Received: from ozlabs.org ([103.22.144.67]:42425 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755732AbeDCXHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 19:07:14 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 4 Apr 2018 09:06:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: manual merge of the asm-generic tree with the
+ input-current tree
+Message-ID: <20180404090600.1ea10f79@canb.auug.org.au>
+In-Reply-To: <20180315095656.6007fe3a@canb.auug.org.au>
+References: <20180315093705.4e75ab90@canb.auug.org.au>
+        <20180315095656.6007fe3a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180403153046.88cae4ab18646e8e23a648ce@linux-foundation.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dz0QU.sXmxaqfyUBSfgpgGo"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 03:30:46PM -0700, Andrew Morton wrote:
-> On Sun,  1 Apr 2018 22:35:06 -0400 jglisse@redhat.com wrote:
-> 
-> > From: Ralph Campbell <rcampbell@nvidia.com>
-> > 
-> > Use of pte_write(pte) is only valid for present pte, the common code
-> > which set the migration entry can be reach for both valid present
-> > pte and special swap entry (for device memory). Fix the code to use
-> > the mpfn value which properly handle both cases.
-> > 
-> > On x86 this did not have any bad side effect because pte write bit
-> > is below PAGE_BIT_GLOBAL and thus special swap entry have it set to
-> > 0 which in turn means we were always creating read only special
-> > migration entry.
-> 
-> Does this mean that the patch only affects behaviour of non-x86 systems?
+--Sig_/dz0QU.sXmxaqfyUBSfgpgGo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No it affect x86 as explained below (ie it forces a second page fault).
+Hi all,
 
-> 
-> > So once migration did finish we always write protected the CPU page
-> > table entry (moreover this is only an issue when migrating from device
-> > memory to system memory). End effect is that CPU write access would
-> > fault again and restore write permission.
-> 
-> That sounds a bit serious.  Was a -stable backport considered?
+On Thu, 15 Mar 2018 09:56:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> [Just adding Dimitry to cc]
+>=20
+> On Thu, 15 Mar 2018 09:37:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Today's linux-next merge of the asm-generic tree got a conflict in:
+> >=20
+> >   drivers/input/joystick/analog.c
+> >=20
+> > between commit:
+> >=20
+> >   c9ab800167e1 ("Input: analog - use get_cycles() on PPC")
+> >=20
+> > from the input-current tree and commits:
+> >=20
+> >   739d875dd698 ("mn10300: Remove the architecture")
+> >   588020dcb92a ("treewide: simplify Kconfig dependencies for removed ar=
+chs")
+> >=20
+> > from the asm-generic tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> >=20
+> > --=20
+> > Cheers,
+> > Stephen Rothwell
+> >=20
+> > diff --cc drivers/input/joystick/analog.c
+> > index a942c4ccd2af,eefac7978f93..000000000000
+> > --- a/drivers/input/joystick/analog.c
+> > +++ b/drivers/input/joystick/analog.c
+> > @@@ -163,7 -163,7 +163,7 @@@ static unsigned int get_time_pit(void
+> >   #define GET_TIME(x)	do { x =3D (unsigned int)rdtsc(); } while (0)
+> >   #define DELTA(x,y)	((y)-(x))
+> >   #define TIME_NAME	"TSC"
+> > - #elif defined(__alpha__) || defined(CONFIG_MN10300) || defined(CONFIG=
+_ARM) || defined(CONFIG_ARM64) || defined(CONFIG_PPC) || defined(CONFIG_RIS=
+CV) || defined(CONFIG_TILE)
+> >  -#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM=
+64) || defined(CONFIG_RISCV)
+> > ++#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM=
+64) || defined(CONFIG_PPC) || defined(CONFIG_RISCV)
+> >   #define GET_TIME(x)	do { x =3D get_cycles(); } while (0)
+> >   #define DELTA(x,y)	((y)-(x))
+> >   #define TIME_NAME	"get_cycles" =20
 
-Like discuss previously with Michal, for lack of upstream user yet
-(and PowerPC users of this code are not upstream either yet AFAIK).
+This conflict now exists between the input-current tree and Linus' tree.
 
-Once i get HMM inside nouveau upstream, i will evaluate if people
-wants all fixes to be back ported to stable.
-
-Finaly this one isn't too bad, it just burn CPU cycles by forcing
-CPU to take a second fault on write access ie double fault the same
-address. There is no corruption or incorrect states (it behave as
-a COWed page from a fork with a mapcount of 1).
-
-
-Do you still want me to be more aggressive with stable backport ?
-I don't mind either way. I expect to get HMM nouveau upstream over
-next couple release cycle.
-
+--=20
 Cheers,
-Jérôme
+Stephen Rothwell
+
+--Sig_/dz0QU.sXmxaqfyUBSfgpgGo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrECNgACgkQAVBC80lX
+0Gy2Lwf+OgItgNnMppo741qAvkZubHM7v/FUe1RmCo1UTAdnY5afMQtBsTK4cDQY
+PMTTAU6Coj7GT/Ils2dkhABbeP2/L1QGb1CxbvCvvwvIJ+mvF7wiFhbvBsYZlfNj
+lMSI2O3/n2KGm1bS4SS5lGHT8M9bAQg8U+wz4cNbQBE9+pLaqpuk50X9mdHUSrLS
+aV7czL+7F5cq3WgEwoZ7eJDp+1nYwMghTw4hA7O4NwMXdG01weX9Lpq2NLk8rX4w
+C6W7JvTUY62EEse7cvhqBeAxse4/emOFcPKrkQTJ4v0MMRdu0WuZKnxei8mHrAd5
+wIKI/uzSryqhvHVkO6NQq6hs5I46/A==
+=W1nA
+-----END PGP SIGNATURE-----
+
+--Sig_/dz0QU.sXmxaqfyUBSfgpgGo--
