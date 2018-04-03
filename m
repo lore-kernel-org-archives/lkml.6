@@ -1,93 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932317AbeDCNVG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:21:06 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:17021 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932212AbeDCNVB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:21:01 -0400
-Subject: Re: Signal handling in a page fault handler
-To: Chris Wilson <chris@chris-wilson.co.uk>,
-        Matthew Wilcox <willy@infradead.org>, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, Souptick Joarder <jrdr.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20180402141058.GL13332@bombadil.infradead.org>
- <152275879566.32747.9293394837417347482@mail.alporthouse.com>
-From: Thomas Hellstrom <thomas@shipmail.org>
-Message-ID: <e10f5e18-299b-57fd-4ba7-800caa1a105d@shipmail.org>
-Date: Tue, 3 Apr 2018 15:12:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932293AbeDCNMo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:12:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50306 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932260AbeDCNMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:12:41 -0400
+Date: Tue, 3 Apr 2018 16:12:39 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+Message-ID: <20180403161151-mutt-send-email-mst@kernel.org>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184132.3102.90947.stgit@localhost.localdomain>
+ <20180316183042-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <152275879566.32747.9293394837417347482@mail.alporthouse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 02:33 PM, Chris Wilson wrote:
-> Quoting Matthew Wilcox (2018-04-02 15:10:58)
->> Souptick and I have been auditing the various page fault handler routines
->> and we've noticed that graphics drivers assume that a signal should be
->> able to interrupt a page fault.  In contrast, the page cache takes great
->> care to allow only fatal signals to interrupt a page fault.
->>
->> I believe (but have not verified) that a non-fatal signal being delivered
->> to a task which is in the middle of a page fault may well end up in an
->> infinite loop, attempting to handle the page fault and failing forever.
->>
->> Here's one of the simpler ones:
->>
->>          ret = mutex_lock_interruptible(&etnaviv_obj->lock);
->>          if (ret)
->>                  return VM_FAULT_NOPAGE;
->>
->> (many other drivers do essentially the same thing including i915)
->>
->> On seeing NOPAGE, the fault handler believes the PTE is in the page
->> table, so does nothing before it returns to arch code at which point
->> I get lost in the magic assembler macros.  I believe it will end up
->> returning to userspace if the signal is non-fatal, at which point it'll
->> go right back into the page fault handler, and mutex_lock_interruptible()
->> will immediately fail.  So we've converted a sleeping lock into the most
->> expensive spinlock.
-> I'll ask the obvious question: why isn't the signal handled on return to
-> userspace?
+On Fri, Mar 16, 2018 at 09:40:34AM -0700, Alexander Duyck wrote:
+> On Fri, Mar 16, 2018 at 9:34 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > On Thu, Mar 15, 2018 at 11:42:41AM -0700, Alexander Duyck wrote:
+> >> From: Alexander Duyck <alexander.h.duyck@intel.com>
+> >>
+> >> Hardware-realized virtio_pci devices can implement SR-IOV, so this
+> >> patch enables its use. The device in question is an upcoming Intel
+> >> NIC that implements both a virtio_net PF and virtio_net VFs. These
+> >> are hardware realizations of what has been up to now been a software
+> >> interface.
+> >>
+> >> The device in question has the following 4-part PCI IDs:
+> >>
+> >> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+> >> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+> >>
+> >> The patch currently needs no check for device ID, because the callback
+> >> will never be made for devices that do not assert the capability or
+> >> when run on a platform incapable of SR-IOV.
+> >>
+> >> One reason for this patch is because the hardware requires the
+> >> vendor ID of a VF to be the same as the vendor ID of the PF that
+> >> created it. So it seemed logical to simply have a fully-functioning
+> >> virtio_net PF create the VFs. This patch makes that possible.
+> >>
+> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> >
+> > So if and when virtio PFs can manage the VFs, then we can
+> > add a feature bit for that?
+> > Seems reasonable.
+> 
+> Yes. If nothing else you may not even need a feature bit depending on
+> how things go.
 
-+1
+OTOH if the interface is changed in an incompatible way,
+and old Linux will attempt to drive the new device
+since there is no check.
 
->
->> I don't think the graphics drivers really want to be interrupted by
->> any signal.
-> Assume the worst case and we may block for 10s. Even a 10ms delay may be
-> unacceptable to some signal handlers (one presumes). For the number one
-> ^C usecase, yes that may be reduced to only bother if it's killable, but
-> I wonder if there are not timing loops (e.g. sigitimer in Xorg < 1.19)
-> that want to be able to interrupt random blockages.
-> -Chris
-
-I think the TTM page fault handler originally set the standard for this. 
-First, IMO any critical section that waits for the GPU (like typically 
-the page fault handler does), should be locked at least killable. The 
-need for interruptible locks came from the X server's silken mouse 
-relying on signals for smooth mouse operations: You didn't want the X 
-server to be stuck in the kernel waiting for GPU completion when it 
-should handle the cursor move request.. Now that doesn't seem to be the 
-case anymore but to reiterate Chris' question, why would the signal 
-persist once returned to user-space?
-
-/Thomas
+I think we should add a feature bit right away.
 
 
-
-
-
-
-
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> One of the reasons why Mark called out the
+> subvendor/subdevice was because that might be able to be used to
+> identify the specific hardware that is providing the SR-IOV feature so
+> in the future if it is added to virtio itself then you could exclude
+> devices like this by just limiting things based on subvendor/subdevice
+> IDs.
+> 
+> > Also, I am guessing that hardware implementations will want
+> > to add things like stong memory barriers - I guess we
+> > will add new feature bits for that too down the road?
+> 
+> That piece I don't have visibility into at this time. Perhaps Dan
+> might have more visibility into future plans on what this might need.
+> 
+> Thanks.
+> 
+> - Alex
