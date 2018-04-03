@@ -1,52 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754693AbeDCAbS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 20:31:18 -0400
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:55910 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754604AbeDCAbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 20:31:16 -0400
-X-Google-Smtp-Source: AIpwx499SxbdnkXIAef6BmQCJw5V3FIjl/5TqbkF7BlpwuYyHn7LAy5wcWoX8Ief01Rnhkztp3BKT6gE/MCjLjT3WNA=
+        id S1754704AbeDCAm0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 20:42:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754550AbeDCAmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 20:42:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96A3F20CAA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+Subject: Re: [RFC PATCH v1] fw_lockdown: new micro LSM module to prevent
+ loading unsigned firmware
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@suse.com>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+References: <1510347775.3549.2.camel@linux.vnet.ibm.com>
+From: Andy Lutomirski <luto@kernel.org>
+Message-ID: <21dd4b88-f6e7-f6bb-e34d-ba8ef3755622@kernel.org>
+Date: Mon, 2 Apr 2018 17:42:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
-References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152244390359.135666.14890735614456271032.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <31e66048-e8b8-47ba-baf5-023560b4c124@mellanox.com> <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
- <50346f44-de3f-b226-69ad-6de45e94e261@mellanox.com> <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
-From: Jacob Keller <jacob.keller@gmail.com>
-Date: Mon, 2 Apr 2018 17:30:54 -0700
-Message-ID: <CA+P7+xr1N+X5DyPwNpWUtfqr9U4pLL9bMoB1wkBdf2K9n6cxKw@mail.gmail.com>
-Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute max
- supported link bandwidth
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1510347775.3549.2.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 2, 2018 at 7:05 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> +/* PCIe speed to Mb/s reduced by encoding overhead */
-> +#define PCIE_SPEED2MBS_ENC(speed) \
-> +       ((speed) == PCIE_SPEED_16_0GT ? (16000*(128/130)) : \
-> +        (speed) == PCIE_SPEED_8_0GT  ?  (8000*(128/130)) : \
-> +        (speed) == PCIE_SPEED_5_0GT  ?  (5000*(8/10)) : \
-> +        (speed) == PCIE_SPEED_2_5GT  ?  (2500*(8/10)) : \
-> +        0)
-> +
+On 11/10/2017 01:02 PM, Mimi Zohar wrote:
+> If the kernel is locked down and IMA-appraisal is not enabled, prevent
+> loading of unsigned firmware.
 
-Should this be "(speed * x ) / y" instead? wouldn't they calculate
-128/130 and truncate that to zero before multiplying by the speed? Or
-are compilers smart enough to do this the other way to avoid the
-losses?
+> diff --git a/security/fw_lockdown/Kconfig b/security/fw_lockdown/Kconfig
+> new file mode 100644
+> index 000000000000..d6aef6ce8fee
+> --- /dev/null
+> +++ b/security/fw_lockdown/Kconfig
+> @@ -0,0 +1,6 @@
+> +config SECURITY_FW_LOCKDOWN
+> +	bool "Prevent loading unsigned firmware"
+> +	depends on LOCK_DOWN_KERNEL
+> +	default y
+> +	help
+> +	  Prevent loading unsigned firmware in lockdown mode,
 
-Thanks,
-Jake
+Please be honest about what this does.  This option makes your system 
+useless if you don't use IMA-Appraisal and it offers a particular 
+security benefit if you do you IMA-Appraisal.  How about making it 
+depend on IMA-Appraisal?  Change the name to 
+SECURITY_ONLY_LOAD_IMA_APPRAISED_FIRMWARE and adjust the text 
+accordingly, please.
+
+> +/**
+> + * fw_lockdown_read_file - prevent loading of unsigned firmware
+> + * @file: pointer to firmware
+> + * @read_id: caller identifier
+> + *
+> + * Prevent loading of unsigned firmware in lockdown mode.
+
+That comment gives a highly misleading impression of what this function 
+does.
+
+> + */
+> +static int fw_lockdown_read_file(struct file *file, enum kernel_read_file_id id)
