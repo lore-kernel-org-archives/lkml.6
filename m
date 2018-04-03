@@ -1,45 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751283AbeDCN1R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:27:17 -0400
-Received: from mga07.intel.com ([134.134.136.100]:57885 "EHLO mga07.intel.com"
+        id S1750915AbeDCNbT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:31:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48524 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751000AbeDCN1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:27:16 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,401,1517904000";
-   d="scan'208";a="40343165"
-Date: Tue, 3 Apr 2018 21:27:13 +0800
-From: Fengguang Wu <fengguang.wu@intel.com>
-To: David Howells <dhowells@redhat.com>
-Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/45] C++: Set compilation as C++ for .c files
-Message-ID: <20180403132713.cffx5mpfrnwuokeh@wfg-t540p.sh.intel.com>
-References: <201804021242.NgXgixG7%fengguang.wu@intel.com>
- <152261524532.30503.16094079179209557382.stgit@warthog.procyon.org.uk>
- <18231.1522761410@warthog.procyon.org.uk>
+        id S1750714AbeDCNbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:31:18 -0400
+Date: Tue, 3 Apr 2018 15:31:15 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Buddy Lumpkin <buddy.lumpkin@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, hannes@cmpxchg.org,
+        riel@surriel.com, mgorman@suse.de, willy@infradead.org,
+        akpm@linux-foundation.org
+Subject: Re: [RFC PATCH 1/1] vmscan: Support multiple kswapd threads per node
+Message-ID: <20180403133115.GA5501@dhcp22.suse.cz>
+References: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
+ <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <18231.1522761410@warthog.procyon.org.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 02:16:50PM +0100, David Howells wrote:
->kbuild test robot <lkp@intel.com> wrote:
->
->>    scripts/Makefile.kasan:17: Cannot use CONFIG_KASAN: -fsanitize=kernel-address is not supported by compiler
->>    cc1: warning: command line option '-fno-rtti' is valid for C++/ObjC++ but not for C
->>    cc1: warning: command line option '-fpermissive' is valid for C++/ObjC++ but not for C
->
->It would need to use g++-8 to compile it ;-)
+On Mon 02-04-18 09:24:22, Buddy Lumpkin wrote:
+> Page replacement is handled in the Linux Kernel in one of two ways:
+> 
+> 1) Asynchronously via kswapd
+> 2) Synchronously, via direct reclaim
+> 
+> At page allocation time the allocating task is immediately given a page
+> from the zone free list allowing it to go right back to work doing
+> whatever it was doing; Probably directly or indirectly executing business
+> logic.
+> 
+> Just prior to satisfying the allocation, free pages is checked to see if
+> it has reached the zone low watermark and if so, kswapd is awakened.
+> Kswapd will start scanning pages looking for inactive pages to evict to
+> make room for new page allocations. The work of kswapd allows tasks to
+> continue allocating memory from their respective zone free list without
+> incurring any delay.
+> 
+> When the demand for free pages exceeds the rate that kswapd tasks can
+> supply them, page allocation works differently. Once the allocating task
+> finds that the number of free pages is at or below the zone min watermark,
+> the task will no longer pull pages from the free list. Instead, the task
+> will run the same CPU-bound routines as kswapd to satisfy its own
+> allocation by scanning and evicting pages. This is called a direct reclaim.
+> 
+> The time spent performing a direct reclaim can be substantial, often
+> taking tens to hundreds of milliseconds for small order0 allocations to
+> half a second or more for order9 huge-page allocations. In fact, kswapd is
+> not actually required on a linux system. It exists for the sole purpose of
+> optimizing performance by preventing direct reclaims.
+> 
+> When memory shortfall is sufficient to trigger direct reclaims, they can
+> occur in any task that is running on the system. A single aggressive
+> memory allocating task can set the stage for collateral damage to occur in
+> small tasks that rarely allocate additional memory. Consider the impact of
+> injecting an additional 100ms of latency when nscd allocates memory to
+> facilitate caching of a DNS query.
+> 
+> The presence of direct reclaims 10 years ago was a fairly reliable
+> indicator that too much was being asked of a Linux system. Kswapd was
+> likely wasting time scanning pages that were ineligible for eviction.
+> Adding RAM or reducing the working set size would usually make the problem
+> go away. Since then hardware has evolved to bring a new struggle for
+> kswapd. Storage speeds have increased by orders of magnitude while CPU
+> clock speeds stayed the same or even slowed down in exchange for more
+> cores per package. This presents a throughput problem for a single
+> threaded kswapd that will get worse with each generation of new hardware.
 
-Awesome! :)
+AFAIR we used to scale the number of kswapd workers many years ago. It
+just turned out to be not all that great. We have a kswapd reclaim
+window for quite some time and that can allow to tune how much proactive
+kswapd should be.
 
-Cheers,
-Fengguang
+Also please note that the direct reclaim is a way to throttle overly
+aggressive memory consumers. The more we do in the background context
+the easier for them it will be to allocate faster. So I am not really
+sure that more background threads will solve the underlying problem. It
+is just a matter of memory hogs tunning to end in the very same
+situtation AFAICS. Moreover the more they are going to allocate the more
+less CPU time will _other_ (non-allocating) task get.
+
+> Test Details
+
+I will have to study this more to comment.
+
+[...]
+> By increasing the number of kswapd threads, throughput increased by ~50%
+> while kernel mode CPU utilization decreased or stayed the same, likely due
+> to a decrease in the number of parallel tasks at any given time doing page
+> replacement.
+
+Well, isn't that just an effect of more work being done on behalf of
+other workload that might run along with your tests (and which doesn't
+really need to allocate a lot of memory)? In other words how
+does the patch behaves with a non-artificial mixed workloads?
+
+Please note that I am not saying that we absolutely have to stick with the
+current single-thread-per-node implementation but I would really like to
+see more background on why we should be allowing heavy memory hogs to
+allocate faster or how to prevent that. I would be also very interested
+to see how to scale the number of threads based on how CPUs are utilized
+by other workloads.
+-- 
+Michal Hocko
+SUSE Labs
