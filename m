@@ -1,96 +1,118 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4/NEb6X3HWiDt5FEJgyrFB3QnCsuT+o26OeE8f+rDt+EW2KhT7zVmoLq5NmTIZoer2hBOy6
-ARC-Seal: i=1; a=rsa-sha256; t=1522652334; cv=none;
-        d=google.com; s=arc-20160816;
-        b=fatUKt65CZvCu6EcYXis8vzfmJXzFE29hEmN7l2zJ+DgVGU3kMiro3VcfjjLkhaRcu
-         i09vueQcJRE/Q+ZnfIzoqZLeqapK/26fkEMjGqELgTirJgR5KVps7oeYFXLVZH9OEzIg
-         iouCJvYbXvxjHvyFt6cGg5DMSMEOdtr1K2xTtp06RuIreFqHdNMykvrgYhNSOIWQEQNb
-         gIrCU/D59fCdIuprSwvSzFI25F6DsS0vjFxUtDYFT2Jgnq19B147fR70tDb/tg2JINI1
-         /CSkXtQ3x5+896xMsV7qnawyCUquv/RjtSWs4tqIHTyj1PlRaC024+qZn24EnrVnR//1
-         Evog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :references:in-reply-to:message-id:subject:cc:to:from:date
-         :dmarc-filter:arc-authentication-results;
-        bh=2ZVOzmndJaybX+cZkhkYS3wh29vwIwnBqTjXkfoirDk=;
-        b=nbx1YmfJwSz0DVES86/I1ib1Ufo8TuemELrKavcCDYGkxDvgFmk2uJqYc0B3eYDw13
-         hqmKaNHz0HBJtxoa1rZ21E60Iz9N/GWjLaDCuL8T5v/4FlTcniISN4suDLGv0aMFwMmS
-         RRMBq2R3LxjnDzWwozg/whjVY7+jmz9K8DLn3E5iwz2gNqZzvjBODo5OzdhmQzW5GUKN
-         GH550908H+DIH1Df0Fdr5nWCmVGht0949zFWxuaEDXQ04WDqj97H1IDZyoIy/hIisvEK
-         7tOAA8FilJSKYnPEZ+YswuQ7kK7svTYRCHjsr64/u3iM2kKZ++6P9fEZa8EGK4wmY/lP
-         pfkg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754163AbeDBG6x (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 2 Apr 2018 02:58:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754132AbeDBG6w (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 2 Apr 2018 02:58:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE40217A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 2 Apr 2018 15:58:49 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Colin King <colin.king@canonical.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/ftrace: fix spelling mistake: "tiggers" ->
- "triggers"
-Message-Id: <20180402155849.109fcb9c5d4653fc7adcddf1@kernel.org>
-In-Reply-To: <20180329172431.8171-1-colin.king@canonical.com>
-References: <20180329172431.8171-1-colin.king@canonical.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1311226-1522755099-2-7282373749550641788
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522755099; b=mEfLlejDYbyoziqjZTcYjkFqErIFzyG+xPGz6/HvYaa5/ugTOG
+    gZQC+4Xr2liG2WkFMYllWgNL+k0NnPzKePV41HLhoGOZdXEKLZpfiMXHRG/1JMjW
+    BxziOmw+Hf+deEAq5VwMt1DKwuNmhNVY12qBhRgWY4/ZwyzAByJ/f4BA/us8cP6s
+    +tk5Kt0LLWHYRIAUvG/G/nmRMUf9W6cVXJiiLRYxgVzghVFAFbGph/KE7ffXfXc1
+    90YmwGWvnlYVhjPctT+xN5BCiAHtguakJLRnonwHPqhGCC3ENBQ3TQAKBekG194C
+    62ZCBUGcygI2dyUljreUzMuxBVCtTmcWBTiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522755099; bh=W5SO0
+    R4pnMX2cAN+cv40e9nCBf/I3NjsHvmmcWGsAMI=; b=LVvPoLeeHicQx6zmoz8TS
+    t5ZFP09RIPwUhecUxZIZM6H05P+tt32E3vX1hkHws87YbL8wjl+xgPKQE/ilQwfR
+    /pHcbzi7bzmzEanqtgvinUOEEHvCeb2q6HtJc2DqU4m6BA6fNm8/n7uG6Yn1urgj
+    d3F0+5fJpo0DmMUfwgD2uzDjzr4KD090qehlaLudQBL7+9YDWNazKozFVXdEjZBA
+    6ldN4MGLogy6FzqCWSbAKaHk269K55vzH+7uvCBlpl55OOn//neYo6DlMz7lbd4P
+    AhopGWqbefxxoqY3PPlOnlePWv/MCui5siGn+/WmQtNKYnoavj7Sh38Xq9FRe8GQ
+    Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=G2y2L62g x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=G2y2L62g x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBp/Lv+nGdhWiX9yCZMg2CkR/w3kHLgHTRL/Fm+jK3mZmgo94rkzZ+W1a4zG8xsA5zZ/+WEtay1TmSaDA7ZEMA285JgzJMCP0LataRQVhcEX/BuzXUz5
+    C6tLTxsqqr+TNDka3h9mITQmr517fIW3VBFSHCR8Y7GUMgbcYiS2VnFJ3vtbE6Es/bUUkTiHPT1+uLuV4XFWNDJrUisyoioGAHKx57d0HrmvcTqQuoz82ApS
+    ljo8+/32a2dL79sa6j3esw==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=pcpMsqnfEaXoKf1XRqIA:9
+    a=CjuIK1q_8ugA:10 a=pC-h2on8RWMA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Tue, 3 Apr 2018 14:12:10 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Ji-Hun Kim <ji_hun.kim@samsung.com>
+Subject: Re: [PATCH v4 1/2] staging: vt6655: check for memory allocation
+ failures
+Message-ID: <20180403111210.utskcq6255k6o6tq@mwanda>
+References: <CGME20180330055207epcas1p14d562f44802bac86a8a7cd95fe2d009f@epcas1p1.samsung.com>
+ <1522389115-1124-1-git-send-email-ji_hun.kim@samsung.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <1522389115-1124-1-git-send-email-ji_hun.kim@samsung.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8851
+ signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=551
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804030118
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, y.k.oh@samsung.com, gregkh@linuxfoundation.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ julia.lawall@lip6.fr, baijiaju1990@gmail.com, forest@alittletooquiet.net,
+ santhameena13@gmail.com
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596293672950856020?=
-X-GMAIL-MSGID: =?utf-8?q?1596616693953283540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 29 Mar 2018 18:24:31 +0100
-Colin King <colin.king@canonical.com> wrote:
+This will crash.  Please see my comments that I just posted to v3.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+regards,
+dan carpenter
 
-Oops, thanks!
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-> ---
->  tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
-> index c5ef8b9d02b3..1b8faf4c318c 100644
-> --- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-multihist.tc
-> @@ -35,7 +35,7 @@ do_reset
->  
->  reset_trigger
->  
-> -echo "Test histogram multiple tiggers"
-> +echo "Test histogram multiple triggers"
->  
->  echo 'hist:keys=parent_pid:vals=child_pid' > events/sched/sched_process_fork/trigger
->  echo 'hist:keys=parent_comm:vals=child_pid' >> events/sched/sched_process_fork/trigger
-> -- 
-> 2.15.1
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
