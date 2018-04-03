@@ -1,103 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753207AbeDCT4p (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:56:45 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38215 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeDCT4n (ORCPT
+        id S1752675AbeDCUD4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 16:03:56 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52682 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751179AbeDCUDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:56:43 -0400
-X-Google-Smtp-Source: AIpwx48roV4+SKgOBu0CkgARZZ2wqO/tgiJ6dV7vFnU8WBiOfDJO/VQoItztiPYp6la4RRUIoohiYQ==
-Subject: Re: [PATCH v5 01/13] ARM: move cputype definitions into another file
-To: Chen-Yu Tsai <wens@csie.org>,
-        =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
- <20180403061836.3926-2-mylene.josserand@bootlin.com>
- <CAGb2v64GL=1UcYs1tFp-mS07vbHBao82SEhyzUrUHB++2-EKBg@mail.gmail.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <4ba0f1c4-a52a-b9f5-67ac-bf348a13228a@gmail.com>
-Date: Tue, 3 Apr 2018 12:56:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 3 Apr 2018 16:03:54 -0400
+X-Google-Smtp-Source: AIpwx48zkxdZ8nrJ1pl3CEUYFwetMWNK5hgTVbuUekOzb9VBP2FjLsKCG4WD4qEsEWEgPkQpEzWWNw==
+Date: Tue, 3 Apr 2018 14:03:48 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
+Cc: Sinan Kaya <okaya@codeaurora.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "timur@codeaurora.org" <timur@codeaurora.org>,
+        "sulrich@codeaurora.org" <sulrich@codeaurora.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "Elior, Ariel" <Ariel.Elior@cavium.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/3] RDMA/qedr: eliminate duplicate barriers on
+ weakly-ordered archs #2
+Message-ID: <20180403200348.GB21167@ziepe.ca>
+References: <1521736009-23387-1-git-send-email-okaya@codeaurora.org>
+ <1521736009-23387-4-git-send-email-okaya@codeaurora.org>
+ <ac46b4e4-7e6c-c15f-06eb-01b1e4893d50@codeaurora.org>
+ <CY1PR0701MB201215C9F38E8760732B595088A50@CY1PR0701MB2012.namprd07.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64GL=1UcYs1tFp-mS07vbHBao82SEhyzUrUHB++2-EKBg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY1PR0701MB201215C9F38E8760732B595088A50@CY1PR0701MB2012.namprd07.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/2018 11:52 PM, Chen-Yu Tsai wrote:
-> On Tue, Apr 3, 2018 at 2:18 PM, Mylène Josserand
-> <mylene.josserand@bootlin.com> wrote:
->> To add the support for SMP on sun8i-a83t, we will use some
->> definitions in an assembly file so move definitions into
->> another file to separate C functions and macro defintions.
+On Tue, Apr 03, 2018 at 07:42:28AM +0000, Kalderon, Michal wrote:
+> > From: Sinan Kaya [mailto:okaya@codeaurora.org]
+> > Sent: Tuesday, April 03, 2018 5:30 AM
+> > To: linux-rdma@vger.kernel.org; timur@codeaurora.org;
+> > sulrich@codeaurora.org
+> > Cc: linux-arm-msm@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > Kalderon, Michal <Michal.Kalderon@cavium.com>; Elior, Ariel
+> > <Ariel.Elior@cavium.com>; Doug Ledford <dledford@redhat.com>; Jason
+> > Gunthorpe <jgg@ziepe.ca>; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v5 3/3] RDMA/qedr: eliminate duplicate barriers on
+> > weakly-ordered archs #2
+> > 
+> > On 3/22/2018 12:26 PM, Sinan Kaya wrote:
+> > > @@ -860,7 +860,7 @@ static void doorbell_cq(struct qedr_cq *cq, u32
+> > cons, u8 flags)
+> > >  	wmb();
+> > >  	cq->db.data.agg_flags = flags;
+> > >  	cq->db.data.value = cpu_to_le32(cons);
+> > > -	writeq(cq->db.raw, cq->db_addr);
+> > > +	writeq_relaxed(cq->db.raw, cq->db_addr);
+> > 
+> > Given the direction to get rid of wmb() in front of writeX() functions, I have
+> > been reviewing this code. Under normal circumstances, I can get rid of all
+> > wmb() as follows.
+> > 
+> > However, I started having my doubts now. Are these wmb() used as a SMP
+> > barrier too?
+> > I can't find any smp_Xmb() in drivers/infiniband/hw/qedr directory.
 > 
-> Instead of moving the definitions, you could guard all the C
-> stuff in "#ifndef __ASSEMBLY__". AFAIK a few header files do that.
+> Your doubts are in place. You initial patch series modified writel to writel_relaxed
+> Simply removing the wmb is dangerous. The wmb before writel are used to make sure the
+> HW observes the changes in memory before we trigger the doorbell. Smp barriers here
+> wouldn't suffice, as on a single processor. we still need to make sure memory is updated
+> and not remained in cache when HW accesses it.
+> Reviewing the qedr barriers, I can find places where this may have not been necessary, 
+> But definitely you can't simply remove this wmb barriers. 
 
-Which is effectively what this patch does (still waiting for an ACK):
+As Sinan said, the consensus is that wmb();writel(); is redundant if
+the only purpose of the wmb is to order DMA and system memory.
 
-https://patchwork.kernel.org/patch/10239855/
+So can you review these patches on that basis please? Is the WMB doing
+something else, eg SMP related? If yes, please send a patch adding
+appropriate comments.
 
-> 
-> ChenYu
-> 
->> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
->> ---
->>  arch/arm/include/asm/cputype.h     | 94 +-----------------------------------
->>  arch/arm/include/asm/cputype_def.h | 98 ++++++++++++++++++++++++++++++++++++++
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
-
--- 
-Florian
+Thanks,
+Jason
