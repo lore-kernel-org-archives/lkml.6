@@ -1,220 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932311AbeDCNE2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:04:28 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48494 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932153AbeDCNE0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:04:26 -0400
-Subject: Re: [PATCH v3 05/14] s390: vfio-ap: base implementation of VFIO AP
- device driver
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1521051954-25715-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180403125737.15cb55fb.cohuck@redhat.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 3 Apr 2018 09:02:24 -0400
+        id S932300AbeDCNDh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:03:37 -0400
+Received: from smtp38.i.mail.ru ([94.100.177.98]:45514 "EHLO smtp38.i.mail.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932153AbeDCNDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:03:35 -0400
+Subject: Re: [PATCH 6/6] spi: sun4i: add DMA transfers support
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180329185907.27281-1-ssuloev@orpaltech.com>
+ <20180329185907.27281-7-ssuloev@orpaltech.com>
+ <20180403081711.rqsp77mgnuvlnzt5@flea>
+From: Sergey Suloev <ssuloev@orpaltech.com>
+Message-ID: <19d5907c-f081-21ce-1b72-7c0a331eb073@orpaltech.com>
+Date: Tue, 3 Apr 2018 16:03:32 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180403125737.15cb55fb.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180403081711.rqsp77mgnuvlnzt5@flea>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18040313-0028-0000-0000-00000963DFF1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008795; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01012509; UDB=6.00516031; IPR=6.00791774;
- MB=3.00020390; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-03 13:02:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040313-0029-0000-0000-00003A38F6B6
-Message-Id: <fa399df2-de08-2700-9cb5-6a7248a62896@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804030138
+Authentication-Results: smtp38.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
+X-7FA49CB5: 0D63561A33F958A56E96B8F32EF386FA9E4130E898BA3A9A535400B9010DFEBA725E5C173C3A84C30584FF81F342DA07226B25F53A7E5D1CD2457FAF19517CF2C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F5D41B9178041F3E72623479134186CDE6BA297DBC24807EABDAD6C7F3747799A
+X-Mailru-Sender: C5364AD02485212F3ACDC11E67D8491734E5BE2966C42ED35C980218CED0720F069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
+X-Mras: OK
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 06:57 AM, Cornelia Huck wrote:
-> On Wed, 14 Mar 2018 14:25:45 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
->
->> Introduces a new AP device driver. This device driver
->> is built on the VFIO mediated device framework. The framework
->> provides sysfs interfaces that facilitate passthrough
->> access by guests to devices installed on the linux host.
->>
->> The VFIO AP device driver will serve two purposes:
->>
->> 1. Provide the interfaces to reserve AP devices for exclusive
->>     use by KVM guests. This is accomplished by unbinding the
->>     devices to be reserved for guest usage from the default AP
->>     device driver and binding them to the VFIO AP device driver.
->>
->> 2. Implements the functions, callbacks and sysfs attribute
->>     interfaces required to create one or more VFIO mediated
->>     devices each of which will be used to configure the AP
->>     matrix for a guest and serve as a file descriptor
->>     for facilitating communication between QEMU and the
->>     VFIO AP device driver.
->>
->> When the VFIO AP device driver is initialized:
->>
->> * It registers with the AP bus for control of type 10 (CEX4
->>    and newer) AP queue devices. The probe and remove callbacks
->>    will be provided to support the binding/unbinding of
->>    AP queue devices to/from the VFIO AP device driver.
->>
->> * Creates a /sys/devices/vfio-ap/matrix device to hold
->>    the APQNs of the AP devices bound to the VFIO
->>    AP device driver and serves as the parent of the
->>    mediated devices created for each guest.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> ---
->>   MAINTAINERS                           |    2 +
->>   arch/s390/Kconfig                     |   11 +++
->>   drivers/s390/crypto/Makefile          |    4 +
->>   drivers/s390/crypto/vfio_ap_drv.c     |  135 +++++++++++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |   22 ++++++
->>   include/uapi/linux/vfio.h             |    2 +
->>   6 files changed, 176 insertions(+), 0 deletions(-)
->>   create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
->>   create mode 100644 drivers/s390/crypto/vfio_ap_private.h
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
->> new file mode 100644
->> index 0000000..459e595
->> --- /dev/null
->> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->> @@ -0,0 +1,135 @@
->> +/*
->> + * VFIO based AP device driver
->> + *
->> + * Copyright IBM Corp. 2017
-> Update to 2018?
-Okay, will do.
->
->> + *
->> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/slab.h>
->> +
->> +#include "vfio_ap_private.h"
->> +
->> +#define VFIO_AP_ROOT_NAME "vfio_ap"
->> +#define VFIO_AP_DEV_TYPE_NAME "ap_matrix"
->> +#define VFIO_AP_DEV_NAME "matrix"
->> +
->> +MODULE_AUTHOR("IBM Corporation");
->> +MODULE_DESCRIPTION("VFIO AP device driver, Copyright IBM Corp. 2017");
->> +MODULE_LICENSE("GPL v2");
->> +
->> +static struct device *vfio_ap_root_device;
->> +
->> +static struct ap_driver vfio_ap_drv;
->> +
->> +static struct ap_matrix *ap_matrix;
->> +
->> +static struct device_type vfio_ap_dev_type = {
->> +	.name = VFIO_AP_DEV_TYPE_NAME,
->> +};
->> +
->> +/* Only type 10 adapters (CEX4 and later) are supported
->> + * by the AP matrix device driver
->> + */
->> +static struct ap_device_id ap_queue_ids[] = {
->> +	{ .dev_type = AP_DEVICE_TYPE_CEX4,
->> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
->> +	{ .dev_type = AP_DEVICE_TYPE_CEX5,
->> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
->> +	{ .dev_type = AP_DEVICE_TYPE_CEX6,
->> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
->> +	{ /* end of sibling */ },
->> +};
->> +
->> +MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
->> +
->> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
+On 04/03/2018 11:17 AM, Maxime Ripard wrote:
+> On Thu, Mar 29, 2018 at 09:59:07PM +0300, Sergey Suloev wrote:
+>> +static int sun4i_spi_dma_setup(struct device *dev,
+>> +			       struct resource *res)
 >> +{
->> +	return 0;
->> +}
->> +
->> +static void vfio_ap_matrix_dev_release(struct device *dev)
->> +{
->> +	struct ap_matrix *ap_matrix = dev_get_drvdata(dev);
->> +
->> +	kfree(ap_matrix);
->> +}
->> +
->> +static int vfio_ap_matrix_dev_create(void)
->> +{
+>> +	struct spi_master *master = dev_get_drvdata(dev);
+>> +	struct dma_slave_config dma_sconf;
 >> +	int ret;
 >> +
->> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
+>> +	master->dma_tx = dma_request_slave_channel_reason(dev, "tx");
+>> +	if (IS_ERR(master->dma_tx)) {
+>> +		dev_err(dev, "Unable to acquire DMA TX channel\n");
+>> +		ret = PTR_ERR(master->dma_tx);
+>> +		goto out;
+>> +	}
 >> +
->> +	ret = IS_ERR(vfio_ap_root_device);
+>> +	dma_sconf.direction = DMA_MEM_TO_DEV;
+>> +	dma_sconf.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+>> +	dma_sconf.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+> I guess that would depend on the size of the transfer, right?
+no
+"this is the width in bytes of the source (RX)register where DMA data 
+shall be read. If the sourceis memory this may be ignored depending on 
+architecture."
+AFAIK is should be 1 byte for SPI side and seems to be ignored for 
+memory side, but as soon as I don't know what should be correct value 
+for memory side I just put 1 there too.
+>
+>> +	dma_sconf.dst_addr = res->start + SUN4I_TXDATA_REG;
+>> +	dma_sconf.dst_maxburst = 1;
+>> +	dma_sconf.src_maxburst = 1;
+> And a burst of 1 seems sub-optimal here.
+I did some tests before with 3/4 FIFO size but it didn't work and I got 
+stuck with 1 byte.
+It seems like 1 byte is the correct value because in SPI protocol we can 
+only send 1 byte in 1 burst.
+
+>
+>> +	ret = sun4i_spi_dma_setup(&pdev->dev, res);
 >> +	if (ret) {
-> Minor nit: I'd contract that to
+>> +		if (ret == -EPROBE_DEFER) {
+>> +			/* wait for the dma driver to load */
+>> +			goto err_free_master;
+>> +		}
+>> +		dev_warn(&pdev->dev, "DMA transfer not supported\n");
+> Saying why it's not supported would be great.
+I can put more info in this log
+but there is already a message printed from sun4_spi_dma_setup() if any 
+error occurs
 >
-> if (IS_ERR(vfio_ap_root_device)) {
+> Maxime
 >
-> (you're writing ret in any case)
-Okay, will do.
->
->> +		ret = PTR_ERR(vfio_ap_root_device);
->> +		goto done;
->> +	}
->> +
->> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
->> +	if (!ap_matrix) {
->> +		ret = -ENOMEM;
->> +		goto matrix_alloc_err;
->> +	}
->> +
->> +	ap_matrix->device.type = &vfio_ap_dev_type;
->> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
->> +	ap_matrix->device.parent = vfio_ap_root_device;
->> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
->> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
->> +
->> +	ret = device_register(&ap_matrix->device);
->> +	if (ret)
->> +		goto matrix_reg_err;
->> +
->> +	goto done;
->> +
->> +matrix_reg_err:
->> +	put_device(&ap_matrix->device);
->> +	kfree(ap_matrix);
-> The kfree() is wrong: If you called device_register for the embedded
-> struct device, this needs to be handled via the ->release callback
-> exclusively (IOW, the put_device() is enough and the kfree needs to go).
-Ah yes, I see that. I will fix it.
->
->> +
->> +matrix_alloc_err:
->> +	root_device_unregister(vfio_ap_root_device);
->> +
->> +done:
->> +	return ret;
->> +}
