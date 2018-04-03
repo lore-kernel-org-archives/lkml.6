@@ -1,133 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752488AbeDCPbd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:31:33 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:53370 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752414AbeDCPbb (ORCPT
+        id S1752278AbeDCPdD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:33:03 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:38023 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeDCPdB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:31:31 -0400
-Date: Tue, 03 Apr 2018 11:31:29 -0400 (EDT)
-Message-Id: <20180403.113129.1922264570950091622.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-CC: akpm@linux-foundation.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Sparc
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Apr 2018 11:33:01 -0400
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Tue, 03 Apr 2018 17:33:00 +0200
+X-ME-IP: 86.201.130.131
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Vinod Koul <vinod.koul@intel.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 14/15] ARM: pxa: change SSP devices allocation
+References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+        <20180402142656.26815-15-robert.jarzmik@free.fr>
+        <CAK8P3a2hYWO2eweg3zpR7iJoqtH4uxJLAxJAno7L96G7nA2HxQ@mail.gmail.com>
+X-URL: http://belgarath.falguerolles.org/
+Date: Tue, 03 Apr 2018 17:32:58 +0200
+In-Reply-To: <CAK8P3a2hYWO2eweg3zpR7iJoqtH4uxJLAxJAno7L96G7nA2HxQ@mail.gmail.com>
+        (Arnd Bergmann's message of "Tue, 3 Apr 2018 09:06:46 +0200")
+Message-ID: <87lge4485x.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Arnd Bergmann <arnd@arndb.de> writes:
 
-1) Add support for ADI (Application Data Integrity) found in more recent
-   sparc64 cpus.  Essentially this is keyed based access to virtual memory,
-   and if the key encoded in the virual address is wrong you get a trap.
+chop chop ... removed several mail recipients to leave only the ASoC / PXA
+subset ...
 
-   The mm changes were reviewed by Andrew Morton and others.
+> On Mon, Apr 2, 2018 at 4:26 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>
+>>
+>> +static struct pxa_ssp_info pxa_ssp_infos[] = {
+>> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
+>> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
+>> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
+>> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
+>> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
+>> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
+>> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
+>> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
+>> +};
+>
+> This part looks odd to me, you're adding an extra level of indirection to
+> do two stages of lookups in some form of platform data.
+That's unfortunately right.
 
-   Work by Khalid Aziz.
+> Why can't you just always use "rx" and "tx" as the names here?
+Well I couldn't. I'll explain you why, and maybe you'll find a better solution.
 
-2) Validate DAX completion index range properly, from Rob Gardner.
+That all is related to how ASoC and SSP interact.
+If I remember correctly, here is how it works :
+ - the DMA channel is requested in sound/arm/pxa2xx-pcm-lib.c:128
+	return snd_dmaengine_pcm_open(
+		substream, dma_request_slave_channel(rtd->platform->dev,
+   The trick is that the device here is _not_ the SSP one, it's if memory serves
+   me well the pxa-pcm-audio one.
 
-3) Add proper Kconfig deps for DAX driver.  From Guenter Roeck.
+   As a consequence, the device cannot be used to differenciate which SSP
+   exactly is providing the sound samples stream. This information is
+   nevertheless required to choose the correct requestor line, which is a 1-to-1
+   match to the SSP port.
 
-Please pull, thanks a lot.
+   The indirection in the channel name is used to choose the correct requestor
+   line for a given SSP port providing the samples.
 
-The following changes since commit 8f5fd927c3a7576d57248a2d7a0861c3f2795973:
+   It also must be underlined that this dma request serves both AC97 and SSP as
+   sample providers.
 
-  Merge tag 'for-4.16-rc5-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux (2018-03-16 13:37:42 -0700)
+> (also, I don't see why each line is duplicated, but I'm sure there's
+> an easy answer for that).
+Ahh that is an unfortunate rebase most probably :)
 
-are available in the Git repository at:
+Cheers.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next.git 
-
-for you to fetch changes up to d13864b68e41c11e4231de90cf358658f6ecea45:
-
-  sparc64: Make atomic_xchg() an inline function rather than a macro. (2018-04-03 08:24:35 -0700)
-
-----------------------------------------------------------------
-David S. Miller (3):
-      Merge branch 'sparc64-ADI'
-      Merge git://git.kernel.org/.../davem/sparc
-      sparc64: Make atomic_xchg() an inline function rather than a macro.
-
-Guenter Roeck (1):
-      sparc64: Oracle DAX driver depends on SPARC64
-
-Khalid Aziz (12):
-      signals, sparc: Add signal codes for ADI violations
-      mm, swap: Add infrastructure for saving page metadata on swap
-      sparc64: Add support for ADI register fields, ASIs and traps
-      sparc64: Add HV fault type handlers for ADI related faults
-      sparc64: Add handler for "Memory Corruption Detected" trap
-      sparc64: Add auxiliary vectors to report platform ADI properties
-      mm: Add address parameter to arch_validate_prot()
-      mm: Clear arch specific VM flags on protection change
-      mm: Allow arch code to override copy_highpage()
-      sparc64: Add support for ADI (Application Data Integrity)
-      sparc64: Update signal delivery to use new helper functions
-      sparc: Make auxiliary vectors for ADI available on 32-bit as well
-
-Rob Gardner (1):
-      sparc64: Properly range check DAX completion index
-
- Documentation/sparc/adi.txt             | 278 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/powerpc/include/asm/mman.h         |   4 +-
- arch/powerpc/kernel/syscalls.c          |   2 +-
- arch/sparc/include/asm/adi.h            |   6 ++
- arch/sparc/include/asm/adi_64.h         |  47 +++++++++++++
- arch/sparc/include/asm/atomic_64.h      |   6 +-
- arch/sparc/include/asm/elf_64.h         |   5 ++
- arch/sparc/include/asm/hypervisor.h     |   2 +
- arch/sparc/include/asm/mman.h           |  84 ++++++++++++++++++++++-
- arch/sparc/include/asm/mmu_64.h         |  17 +++++
- arch/sparc/include/asm/mmu_context_64.h |  51 ++++++++++++++
- arch/sparc/include/asm/page_64.h        |   6 ++
- arch/sparc/include/asm/pgtable_64.h     |  48 ++++++++++++++
- arch/sparc/include/asm/thread_info_64.h |   2 +-
- arch/sparc/include/asm/trap_block.h     |   2 +
- arch/sparc/include/asm/ttable.h         |  10 +++
- arch/sparc/include/uapi/asm/asi.h       |   5 ++
- arch/sparc/include/uapi/asm/auxvec.h    |   9 ++-
- arch/sparc/include/uapi/asm/mman.h      |   2 +
- arch/sparc/include/uapi/asm/pstate.h    |  10 +++
- arch/sparc/kernel/Makefile              |   1 +
- arch/sparc/kernel/adi_64.c              | 397 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/sparc/kernel/entry.h               |   3 +
- arch/sparc/kernel/etrap_64.S            |  27 +++++++-
- arch/sparc/kernel/head_64.S             |   1 +
- arch/sparc/kernel/mdesc.c               |   2 +
- arch/sparc/kernel/process_64.c          |  25 +++++++
- arch/sparc/kernel/rtrap_64.S            |  33 ++++++++-
- arch/sparc/kernel/setup_64.c            |   2 +
- arch/sparc/kernel/sun4v_mcd.S           |  18 +++++
- arch/sparc/kernel/traps_64.c            | 130 ++++++++++++++++++++++++++++++++++--
- arch/sparc/kernel/ttable_64.S           |   6 +-
- arch/sparc/kernel/urtt_fill.S           |   7 +-
- arch/sparc/kernel/vmlinux.lds.S         |   5 ++
- arch/sparc/mm/gup.c                     |  37 +++++++++++
- arch/sparc/mm/hugetlbpage.c             |  14 +++-
- arch/sparc/mm/init_64.c                 |  69 +++++++++++++++++++
- arch/sparc/mm/tsb.c                     |  21 ++++++
- arch/x86/kernel/signal_compat.c         |   2 +-
- drivers/sbus/char/Kconfig               |   3 +-
- drivers/sbus/char/oradax.c              |   2 +-
- include/asm-generic/pgtable.h           |  36 ++++++++++
- include/linux/highmem.h                 |   4 ++
- include/linux/mm.h                      |   9 +++
- include/linux/mman.h                    |   2 +-
- include/uapi/asm-generic/siginfo.h      |   5 +-
- mm/ksm.c                                |   4 ++
- mm/memory.c                             |   1 +
- mm/mprotect.c                           |   4 +-
- mm/rmap.c                               |  14 ++++
- 50 files changed, 1451 insertions(+), 29 deletions(-)
- create mode 100644 Documentation/sparc/adi.txt
- create mode 100644 arch/sparc/include/asm/adi.h
- create mode 100644 arch/sparc/include/asm/adi_64.h
- create mode 100644 arch/sparc/kernel/adi_64.c
- create mode 100644 arch/sparc/kernel/sun4v_mcd.S
+-- 
+Robert
