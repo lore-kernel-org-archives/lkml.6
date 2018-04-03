@@ -1,252 +1,366 @@
-Return-Path: <jlayton@kernel.org>
-X-Google-Smtp-Source: AIpwx4+ns36kH4davB8YsEjetgD5DAdU5ExzD2f+okImf8CZqM0o+IOjJQhCAoOFyV0q2EPTU7ts
-ARC-Seal: i=1; a=rsa-sha256; t=1522673817; cv=none;
+Return-Path: <ebiederm@xmission.com>
+X-Google-Smtp-Source: AIpwx49u4wMbi4ruYK/VtkTths6OO9sWtfeVygQIuzA51mkEev/nT8yUH6E4tQfa/kYbArp45Zng
+ARC-Seal: i=1; a=rsa-sha256; t=1522776206; cv=none;
         d=google.com; s=arc-20160816;
-        b=ujcvRkTRNdya1AmhvsXofxbqqNy/OjjCtcUVyjZx8CydalYi3Z2BTBWRU3xiFoBjNZ
-         dzi34ep6LiabNbVLP6KsSBptvUW4em2g58uTmVc2y+6VxwnWYayIALF7Z2co+eKzEvEO
-         Izb+j/BwZ+nLBoCcCHNUs+NvzEd5AF7Gfw4QccHrM4VvDQwxaduax4+cbI6WxxwDDa6u
-         Gw6mWCwMCOeBOFCttC+1q75HraDYnUJTgeIU6uaxKqNW131SQdWqOTh11jpExQ/w/kNZ
-         /fSKKK4PSCqf7zPTXiw1UsE+JjQU+Fg8Od3jafP2VwB6tceRQtKLvH7IJ25kK5jydQYA
-         CHeQ==
+        b=P0PA+BPJLYgMrnFYvmTo7QxuUBH1xh4P0GMybe/iSH4PJevQKcwYpngAsbWHh3VGx7
+         ngGK1PhC6U/+Mpgyc/QumdhH9Jl4rwC0vFG5+ZQsozjpWtHt3K3qHTR7UgRWqApxIXds
+         Uh99S9dvrGP6xaFlRma7zkDNOrk6idqlmx9p97ZTLdgv5mzrhUSYAjmmi3xFuXRj19aP
+         3PTlVIZNC1l9EOJF/NSmsoWDaR87hBf0SZGxPqvknoO5BYZDBqwpORE1b35aMLEadWML
+         lBpbEy+4+GGCjdjZfjc7Mn4/6ujqHy9nDo944ogOiA3D9lNZGpt89q1ts5Wf6oCsXp/K
+         WSqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:dmarc-filter
-         :arc-authentication-results;
-        bh=jGmS/vfcqQdFoe6rxI/V//DJEwQC3DbECIWCPMJbsMs=;
-        b=dvcoLEUzpkFTRAbdxEX79Fze01GjzMaNCLWlRE15Ek/0JjGOhsfNZr8qRBofRBHLIM
-         iydFO4j6B305PT3MTCuA3mEKhnWcj54zirwwnBpD/WN6tVU1aiyxt/aHp6frqMgOSqs/
-         ExTyF3n2ppGKovoLDXweZ61puO8sCzk5MIlk9sasJleNr69PfoXdu5u0wp3F4ojXwxVm
-         BH7Sya9lWtoXSiWb4L0Yj5AyQU0ywsFqZuVfo+Ap+IDi9prA/X5axr4leb4QpBCdbYTM
-         tGe/s0bRxUDET9QJhoFnhBV3woJi+Z7395f16EhIt4EPjsGPLNe4euQuAZ5rcmAmh22V
-         64AQ==
+        h=subject:mime-version:user-agent:message-id:in-reply-to:date
+         :references:cc:to:from:arc-authentication-results;
+        bh=h40GJPHQvll1+JR2HOJdLeoxF3qYJiyr4aQulqxsyuM=;
+        b=CUXg1TAxCSR6FjsKZvNH3ZKNk1H+TgpZanB+avQB2zDdEDTkKqdnB93lhNQLu6zKeg
+         FZDVCBxJFuhpn+3pksdSML2BzIkZHKwxYVvpBQ7PVqKaAdfg2nfj0W8xDKGZnZqpRlHU
+         IonvdnwFP79kBn5PkNIWVwg02rN1KI0kkokZaJgxm2Zr4OYUXbJXO/4vNooxKqkDCfgn
+         /xTPW8vkxM9O9sQvzLY7MMm2X9bB3OMVlRoTeuXWCkktvMrIib/ku6TNRrM4dSUiVVmJ
+         t7GkaQ5aiW5/UMynMdpz1swIcNqKGS5bzqVRikwxFewGrX7zOLLwJmc1TcYT+4J96geE
+         Z1Zg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jlayton@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jlayton@kernel.org
+       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jlayton@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jlayton@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCFC1214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
-Message-ID: <1522673814.4914.36.camel@kernel.org>
-Subject: Re: [PATCH v2] locks: change POSIX lock ownership on execve when
- files_struct is displaced
-From: Jeff Layton <jlayton@kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander
- Viro <viro@zeniv.linux.org.uk>, "J. Bruce Fields" <bfields@fieldses.org>,
- Thomas Gleixner <tglx@linutronix.de>, Daniel
- =?ISO-8859-1?Q?P=2EBerrang=E9?= <berrange@redhat.com>,  Kate Stewart
- <kstewart@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
- Philippe Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "open list:NFS, SUNRPC, AND..."
+       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Alexander
+ Viro <viro@zeniv.linux.org.uk>,  "J. Bruce Fields" <bfields@fieldses.org>,
+  Thomas Gleixner <tglx@linutronix.de>,  Daniel =?utf-8?Q?P=2EBerrang?=
+ =?utf-8?Q?=C3=A9?= <berrange@redhat.com>,  Kate Stewart
+ <kstewart@linuxfoundation.org>,  Dan Williams <dan.j.williams@intel.com>,
+  Philippe Ombredanne <pombredanne@nexb.com>,  Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  "open list\:NFS\, SUNRPC\, AND..."
  <linux-nfs@vger.kernel.org>
-Date: Mon, 02 Apr 2018 08:56:54 -0400
-In-Reply-To: <871sgcvfh7.fsf@xmission.com>
 References: <20180317142520.30520-1-jlayton@kernel.org>
-	 <20180317165859.26200-1-jlayton@kernel.org> <87bmfgvg8w.fsf@xmission.com>
-	 <871sgcvfh7.fsf@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+	<20180317165859.26200-1-jlayton@kernel.org>
+	<87bmfgvg8w.fsf@xmission.com> <871sgcvfh7.fsf@xmission.com>
+	<1522673814.4914.36.camel@kernel.org>
+Date: Tue, 03 Apr 2018 12:22:08 -0500
+In-Reply-To: <1522673814.4914.36.camel@kernel.org> (Jeff Layton's message of
+	"Mon, 02 Apr 2018 08:56:54 -0400")
+Message-ID: <87r2nwqk73.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1f3PeO-0003m3-5L;;;mid=<87r2nwqk73.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19RJEGGVMZeTJhfQ0FAkW3ZyBbmw8Ys1+k=
+X-SA-Exim-Connect-IP: 67.3.145.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.7 XMSubLong Long Subject
+	*  0.0 TVD_RCVD_IP Message was received from an IP address
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.1 XMSolicitRefs_0 Weightloss drug
+	*  1.0 T_XMDrugObfuBody_04 obfuscated drug references
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Jeff Layton <jlayton@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 3463 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 2.7 (0.1%), b_tie_ro: 1.93 (0.1%), parse: 0.93 (0.0%),
+	extract_message_metadata: 28 (0.8%), get_uri_detail_list: 6 (0.2%),
+	tests_pri_-1000: 14 (0.4%), tests_pri_-950: 1.10 (0.0%), tests_pri_-900: 1.07
+	(0.0%), tests_pri_-400: 54 (1.6%), check_bayes: 53 (1.5%), b_tokenize: 18
+	(0.5%), b_tok_get_all: 18 (0.5%), b_comp_prob: 4.5 (0.1%), b_tok_touch_all: 6
+	(0.2%), b_finish: 0.76 (0.0%), tests_pri_0: 421 (12.2%),
+	check_dkim_signature: 0.49 (0.0%), check_dkim_adsp: 3.4 (0.1%),
+	tests_pri_500: 2937 (84.8%), poll_dns_idle: 2930 (84.6%), rewrite_mail: 0.00
+	(0.0%)
+Subject: Re: [PATCH v2] locks: change POSIX lock ownership on execve when files_struct is displaced
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595195233416759536?=
-X-GMAIL-MSGID: =?utf-8?q?1596639220513931530?=
+X-GMAIL-MSGID: =?utf-8?q?1596746582827261100?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 2018-03-22 at 00:36 -0500, Eric W. Biederman wrote:
-> ebiederm@xmission.com (Eric W. Biederman) writes:
-> 
-> > Jeff Layton <jlayton@kernel.org> writes:
-> > 
-> > > From: Jeff Layton <jlayton@redhat.com>
-> > > 
-> > > POSIX mandates that open fds and their associated file locks should be
-> > > preserved across an execve. This works, unless the process is
-> > > multithreaded at the time that execve is called.
-> > Would this perhaps work better if we moved unshare_files to after or
-> > inside of de_thread.  That would remove any cases where fd->count is > 1
-> > simply because you are multi-threaded.  It would only leave the strange
-> > cases where files struct is shared between different processes.
-> 
-> The fact we have a problem here appears to be a regression caused by:
-> fd8328be874f ("[PATCH] sanitize handling of shared descriptor tables in
-> failing execve()")
-> 
-> So I really think we are calling unshare_files in the wrong location.
-> 
-> We could perhaps keep the benefit of being able to fail exec cleanly
-> if we freeze the threads and then only unshare if the count of threads
-> differs from the fd->count.  I don't know if it is worth it.
-> 
-> Eric
-> 
+Jeff Layton <jlayton@kernel.org> writes:
 
-Yeah, that's a possibility. If you can freeze the other threads, and
-ensure that they don't execute before they are killed, then in almost
-all cases, unshare_files would be a noop.
+> On Thu, 2018-03-22 at 00:36 -0500, Eric W. Biederman wrote:
+>> ebiederm@xmission.com (Eric W. Biederman) writes:
+>> 
+>> > Jeff Layton <jlayton@kernel.org> writes:
+>> > 
+>> > > From: Jeff Layton <jlayton@redhat.com>
+>> > > 
+>> > > POSIX mandates that open fds and their associated file locks should be
+>> > > preserved across an execve. This works, unless the process is
+>> > > multithreaded at the time that execve is called.
+>> > Would this perhaps work better if we moved unshare_files to after or
+>> > inside of de_thread.  That would remove any cases where fd->count is > 1
+>> > simply because you are multi-threaded.  It would only leave the strange
+>> > cases where files struct is shared between different processes.
+>> 
+>> The fact we have a problem here appears to be a regression caused by:
+>> fd8328be874f ("[PATCH] sanitize handling of shared descriptor tables in
+>> failing execve()")
+>> 
+>> So I really think we are calling unshare_files in the wrong location.
+>> 
+>> We could perhaps keep the benefit of being able to fail exec cleanly
+>> if we freeze the threads and then only unshare if the count of threads
+>> differs from the fd->count.  I don't know if it is worth it.
+>> 
+>> Eric
+>> 
+>
+> Yeah, that's a possibility. If you can freeze the other threads, and
+> ensure that they don't execute before they are killed, then in almost
+> all cases, unshare_files would be a noop.
 
-Also, I have spotted a potential problem with this patch too:
+The only problem is the handlful of places like proc/fd and binder that
+call get_files_struct then put_files_struct.  So the count on the files
+struct may be artificually elevated.
 
-If this situation occurs on NFS, then the state handling code is likely
-to get very confused. It uses the fl_owner as the key to the
-lock_stateid.
+Which actually means there is a race and if someone opens files in
+/proc/<execing pid>/fd at the right moment unshare_files may even
+unshare_files for a single threaded process.
 
-After you execve, the all the locks will still be present but you won't
-be able to find them by fl_owner anymore. I imagine they'll just hang
-out until the client expires.
+> Also, I have spotted a potential problem with this patch too:
+>
+> If this situation occurs on NFS, then the state handling code is likely
+> to get very confused. It uses the fl_owner as the key to the
+> lock_stateid.
+>
+> After you execve, the all the locks will still be present but you won't
+> be able to find them by fl_owner anymore. I imagine they'll just hang
+> out until the client expires.
+>
+> David Howells suggested: "you could allocate a 1-byte lock cookie and
+> point to that from fdtable, then pass that cookie over exec"
+>
+> I'm not sure about that implementation (maybe consider using ida?), but
+> an opaque fl_owner cookie for posix locks might be the way to go. It
+> would mean growing struct fdtable however.
 
-David Howells suggested: "you could allocate a 1-byte lock cookie and
-point to that from fdtable, then pass that cookie over exec"
+It looks like struct file_table has 32 bytes of padding on any
+architecture with 64byte cache lines.  So with care I believe you can
+avoid growing struct file_table.
 
-I'm not sure about that implementation (maybe consider using ida?), but
-an opaque fl_owner cookie for posix locks might be the way to go. It
-would mean growing struct fdtable however.
+The cookie would needs to be a pointer because it is stored in the same
+space as other pointers so it needs to disambiguate between pointers.
+Plus the cookie would need a reference count, as multiple instances
+of struct file_table could point to it.
 
-> > > In that case, we'll end up unsharing the files_struct but the locks will
-> > > still have their fl_owner set to the address of the old one. Eventually,
-> > > when the other threads die and the last reference to the old
-> > > files_struct is put, any POSIX locks get torn down since it looks like
-> > > a close occurred on them.
-> > > 
-> > > The result is that all of your open files will be intact with none of
-> > > the locks you held before execve. The simple answer to this is "use OFD
-> > > locks", but this is a nasty surprise and it violates the spec.
-> > > 
-> > > On a successful execve, change ownership of any POSIX file_locks
-> > > associated with the old files_struct to the new one, if we ended up
-> > > swapping it out.
-> > 
-> > If we can move unshare_files I believe the need for changing the
-> > ownership would go away.  Which seems like easier to understand
-> > and simpler code in the end.  With fewer surprises.
-> > 
-> > Eric
-> > 
-> > 
-> > > Reported-by: Daniel P. Berrangé <berrange@redhat.com>
-> > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> > 
-> > 
-> > > ---
-> > >  fs/exec.c          |  4 +++-
-> > >  fs/locks.c         | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  include/linux/fs.h |  8 ++++++++
-> > >  3 files changed, 71 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/exec.c b/fs/exec.c
-> > > index 7eb8d21bcab9..35b05376bf78 100644
-> > > --- a/fs/exec.c
-> > > +++ b/fs/exec.c
-> > > @@ -1812,8 +1812,10 @@ static int do_execveat_common(int fd, struct filename *filename,
-> > >  	free_bprm(bprm);
-> > >  	kfree(pathbuf);
-> > >  	putname(filename);
-> > > -	if (displaced)
-> > > +	if (displaced) {
-> > > +		posix_change_lock_owners(current->files, displaced);
-> > >  		put_files_struct(displaced);
-> > > +	}
-> > >  	return retval;
-> > >  
-> > >  out:
-> > > diff --git a/fs/locks.c b/fs/locks.c
-> > > index d6ff4beb70ce..ab428ca8bb11 100644
-> > > --- a/fs/locks.c
-> > > +++ b/fs/locks.c
-> > > @@ -993,6 +993,66 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
-> > >  	return error;
-> > >  }
-> > >  
-> > > +struct posix_change_lock_owners_arg {
-> > > +	fl_owner_t old;
-> > > +	fl_owner_t new;
-> > > +};
-> > > +
-> > > +static int posix_change_lock_owners_cb(const void *varg, struct file *file,
-> > > +					  unsigned int fd)
-> > > +{
-> > > +	const struct posix_change_lock_owners_arg *arg = varg;
-> > > +	struct inode *inode = file_inode(file);
-> > > +	struct file_lock_context *ctx;
-> > > +	struct file_lock *fl, *tmp;
-> > > +
-> > > +	/* If there is no context, then no locks need to be changed */
-> > > +	ctx = locks_get_lock_context(inode, F_UNLCK);
-> > > +	if (!ctx)
-> > > +		return 0;
-> > > +
-> > > +	percpu_down_read_preempt_disable(&file_rwsem);
-> > > +	spin_lock(&ctx->flc_lock);
-> > > +	/* Find the first lock with the old owner */
-> > > +	list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
-> > > +		if (fl->fl_owner == arg->old)
-> > > +			break;
-> > > +	}
-> > > +
-> > > +	list_for_each_entry_safe_from(fl, tmp, &ctx->flc_posix, fl_list) {
-> > > +		if (fl->fl_owner != arg->old)
-> > > +			break;
-> > > +
-> > > +		/* This should only be used for normal userland lockmanager */
-> > > +		if (fl->fl_lmops) {
-> > > +			WARN_ON_ONCE(1);
-> > > +			break;
-> > > +		}
-> > > +		fl->fl_owner = arg->new;
-> > > +	}
-> > > +	spin_unlock(&ctx->flc_lock);
-> > > +	percpu_up_read_preempt_enable(&file_rwsem);
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +/**
-> > > + * posix_change_lock_owners - change lock owners from old files_struct to new
-> > > + * @files: new files struct to own locks
-> > > + * @old: old files struct that previously held locks
-> > > + *
-> > > + * On execve, a process may end up with a new files_struct. In that case, we
-> > > + * must change all of the locks that were owned by the previous files_struct
-> > > + * to the new one.
-> > > + */
-> > > +void posix_change_lock_owners(struct files_struct *new,
-> > > +			      struct files_struct *old)
-> > > +{
-> > > +	struct posix_change_lock_owners_arg arg = { .old = old,
-> > > +						    .new = new };
-> > > +
-> > > +	iterate_fd(new, 0, posix_change_lock_owners_cb, &arg);
-> > > +}
-> > > +
-> > >  static int posix_lock_inode(struct inode *inode, struct file_lock *request,
-> > >  			    struct file_lock *conflock)
-> > >  {
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index 79c413985305..65fa99707bf9 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -1098,6 +1098,8 @@ extern int lease_modify(struct file_lock *, int, struct list_head *);
-> > >  struct files_struct;
-> > >  extern void show_fd_locks(struct seq_file *f,
-> > >  			 struct file *filp, struct files_struct *files);
-> > > +extern void posix_change_lock_owners(struct files_struct *new,
-> > > +				     struct files_struct *old);
-> > >  #else /* !CONFIG_FILE_LOCKING */
-> > >  static inline int fcntl_getlk(struct file *file, unsigned int cmd,
-> > >  			      struct flock __user *user)
-> > > @@ -1232,6 +1234,12 @@ static inline int lease_modify(struct file_lock *fl, int arg,
-> > >  struct files_struct;
-> > >  static inline void show_fd_locks(struct seq_file *f,
-> > >  			struct file *filp, struct files_struct *files) {}
-> > > +
-> > > +static inline void posix_change_lock_owners(struct files_struct *new,
-> > > +					    struct files_struct *old)
-> > > +{
-> > > +}
-> > > +
-> > >  #endif /* !CONFIG_FILE_LOCKING */
-> > >  
-> > >  static inline struct inode *file_inode(const struct file *f)
+Thinking about it I am not a fan of the cooking solution or of the
+moving the owner solution because when two processes share a file_table
+it changes which process owns the locks from the fdtable after exec.
+Currently it is the process that doesn't exec.
 
--- 
-Jeff Layton <jlayton@kernel.org>
+
+Separating counting down for task_structs and users of get_files_struct
+would seem to be a straight forward solution to the possibility of
+overcounts.
+
+
+Ignoring backwards compatibily.  I would argue that the proper solution
+is to remove unshare_files completely.  Do what we do with the fs_struct
+in check_unsafe_exec and simply set LSM_UNSAFE_UNSHARE if we are sharing
+the files struct with anything other than a thread.
+
+That said we do have backwards compatibility to worry about, and there
+is the weirdness of a process which does not exec having file
+descriptors close in their file table.  So I do think it is best
+to unshare the file descriptor table.
+
+
+The only file descriptor I have find that in the exec code path is the
+file descriptor that is passed into exec.  So I don't think races with
+file descriptors are a reason to be doing unshare_files early.
+
+The only race I can think of that might be worth considering is what
+happens if one thread calls clone(CLONE_FILES) while we are calling
+exec.  The clone(CLONE_FS) case prevents that race by returning
+-EAGAIN from clone if fs->in_exec is set.  So there is a known
+path for handling that race.
+
+
+
+I think the way I would fix the issue is:
+- Use a different counter on file_table for get_files_struct than for
+  threads.  Solving the miscount issue.
+- Protect the thread_counter in struct file_table with files_lock.
+- Add an in_exec field in struct file_table.
+- Cause clone(CLONE_FILES) to fail if in_exec is set.
+- Write the code to see if file_table is shared beyond a single process
+  in a race free way.
+- Set in_exec if the file_table is not shared between processes.
+- Unshare the fd table if the fd table is shared between processes.
+
+
+To help understand what is going on and why I dug through the history
+and found a couple of key commits that pretty much say when and why
+things are happening.  Some of them come from tglx's history tree so you
+need to look there for the earlier commits.
+
+commit 04e9bcb4d10643da38b434492fb75dd10e0ceba8
+Author: Andrew Morton <akpm@osdl.org>
+Date:   Mon Dec 29 05:41:27 2003 -0800
+
+    [PATCH] use new unshare_files helper
+    
+    From: Chris Wright <chrisw@osdl.org>
+    
+    Use unshare_files during binary loading to eliminate potential leak of
+    the binary's fd installed during execve().  As is, this breaks
+    binfmt_som.c
+
+<--- Adds unshare_files in flush_old_exec --->
+
+ommit 02c541ec8ffa92178a93e74f1c77963d73772454
+Author: Andrew Morton <akpm@osdl.org>
+Date:   Mon Dec 29 05:41:43 2003 -0800
+
+    [PATCH] use new steal_locks helper
+    
+    From: Chris Wright <chrisw@osdl.org>
+    
+    Use the new steal_locks helper to steal the locks from the old files struct
+    left from unshare_files() when the new unshared struct files gets used.
+
+<--- Adds a helper like you are suggesting to add now --->
+
+
+commit c89681ed7d0e4a61d35bdc12c06c6733b718b2cb
+Author: Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu Jun 22 14:47:22 2006 -0700
+
+    [PATCH] remove steal_locks()
+    
+    This patch removes the steal_locks() function.
+    
+    steal_locks() doesn't work correctly with any filesystem that does it's own
+    lock management, including NFS, CIFS, etc.
+    
+    In addition it has weird semantics on local filesystems in case tasks
+    sharing file-descriptor tables are doing POSIX locking operations in
+    parallel to execve().
+    
+    The steal_locks() function has an effect on applications doing:
+    
+    clone(CLONE_FILES)
+      /* in child */
+      lock
+      execve
+      lock
+    
+    POSIX locks acquired before execve (by "child", "parent" or any further
+    task sharing files_struct) will after the execve be owned exclusively by
+    "child".
+    
+    According to Chris Wright some LSB/LTP kind of suite triggers without the
+    stealing behavior, but there's no known real-world application that would
+    also fail.
+    
+    Apps using NPTL are not affected, since all other threads are killed before
+    execve.
+    
+    Apps using LinuxThreads are only affected if they
+    
+      - have multiple threads during exec (LinuxThreads doesn't kill other
+        threads, the app may do it with pthread_kill_other_threads_np())
+      - rely on POSIX locks being inherited across exec
+    
+    Both conditions are documented, but not their interaction.
+    
+    Apps using clone() natively are affected if they
+    
+      - use clone(CLONE_FILES)
+      - rely on POSIX locks being inherited across exec
+    
+    The above scenarios are unlikely, but possible.
+    
+    If the patch is vetoed, there's a plan B, that involves mostly keeping the
+    weird stealing semantics, but changing the way lock ownership is handled so
+    that network and local filesystems work consistently.
+    
+    That would add more complexity though, so this solution seems to be
+    preferred by most people.
+    
+    Signed-off-by: Miklos Szeredi <miklos@szeredi.hu>
+    Cc: Trond Myklebust <trond.myklebust@fys.uio.no>
+    Cc: Matthew Wilcox <willy@debian.org>
+    Cc: Chris Wright <chrisw@sous-sol.org>
+    Cc: Christoph Hellwig <hch@lst.de>
+    Cc: Steven French <sfrench@us.ibm.com>
+    Signed-off-by: Andrew Morton <akpm@osdl.org>
+    Signed-off-by: Linus Torvalds <torvalds@osdl.org>
+
+<--- This removes code that looks essentially like the code in your
+     patch for the reasons you have mentioned. --->
+
+commit fd8328be874f4190a811c58cd4778ec2c74d2c05
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Tue Apr 22 05:11:59 2008 -0400
+
+    [PATCH] sanitize handling of shared descriptor tables in failing execve()
+    
+    * unshare_files() can fail; doing it after irreversible actions is wrong
+      and de_thread() is certainly irreversible.
+    * since we do it unconditionally anyway, we might as well do it in do_execve()
+      and save ourselves the PITA in binfmt handlers, etc.
+    * while we are at it, binfmt_som actually leaked files_struct on failure.
+    
+    As a side benefit, unshare_files(), put_files_struct() and reset_files_struct()
+    become unexported.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+<--- This change guaranteed that unshare_files will fail for thread
+     programs which ultimately got the conversation started again --->
+
+
+commit e7b9b550f53e81ea38e71d322d6f95730df058a2
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Mar 29 16:31:16 2009 -0400
+
+    Don't mess with descriptor table in load_elf_binary()
+    
+    ... since we don't tell anyone which descriptor does the file get.
+    We used to, but only in case of ELF binary with a.out loader and
+    that stuff has been gone for a while.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+
+commit d9e66c7296f3a39f6ac847f11ada8ddf10a4f8b1
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Mar 29 16:34:56 2009 -0400
+
+    Don't crap into descriptor table in binfmt_som
+    
+    Same story as in binfmt_elf, except that in binfmt_som we
+    actually forget to close the sucker.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+
+<--- At this point there don't appear any other file descriptors to
+     worry about --->
+
+commit 35e88d5c22e1916c819b5a8756aed2f09a4aba18
+Author: Helge Deller <deller@gmx.de>
+Date:   Tue Feb 17 15:41:51 2015 +0100
+
+    fs/binfmt_som: Drop kernel support for HP-UX SOM binaries
+    
+    The parisc arch has been the only user of HP-UX SOM binaries.
+    
+    Support for HP-UX executables was never finished and since we now drop support
+    for the HP-UX compat layer anyway, it does not makes sense to keep the
+    BINFMT_SOM support.
+    
+    Cc: linux-fsdevel@vger.kernel.org
+    Cc: linux-parisc@vger.kernel.org
+    Signed-off-by: Helge Deller <deller@gmx.de>
+
+<--- The original motivation for unshare_files has been removed --->
+
+
+Eric
