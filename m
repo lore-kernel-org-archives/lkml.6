@@ -1,105 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752777AbeDCQai (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:30:38 -0400
-Received: from vern.gendns.com ([206.190.152.46]:57396 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751620AbeDCQaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:30:35 -0400
-Subject: Re: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using
- common clock framework
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-26-git-send-email-david@lechnology.com>
- <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <43c266b8-c023-a1b4-c751-bd46c2fb910d@lechnology.com>
-Date: Tue, 3 Apr 2018 11:30:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752520AbeDCQb3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:31:29 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:23388 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752065AbeDCQb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:31:27 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w33GV5Sb028779
+X-Nifty-SrcIP: [209.85.213.48]
+X-Google-Smtp-Source: AIpwx4//H43nsWlquihE6+3awvy/mWtBSzInDDhSSfpGFvVMs7UTFfGQ49jRlbMu+2yVX/e/5jrevG6YqGt3AXPlm3Y=
 MIME-Version: 1.0
-In-Reply-To: <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 4 Apr 2018 01:30:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQM7V2bz0o1Gwb+w3xjkbdJ=rvg5Hxg0iuTT=4fzZ0D3A@mail.gmail.com>
+Message-ID: <CAK7LNAQM7V2bz0o1Gwb+w3xjkbdJ=rvg5Hxg0iuTT=4fzZ0D3A@mail.gmail.com>
+Subject: [GIT PULL 1/2] Kbuild updates for 4.17
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 05:26 AM, Sekhar Nori wrote:
-> On Friday 16 March 2018 08:22 AM, David Lechner wrote:
->> +static struct resource dm644x_pll1_resources[] = {
->> +	{
->> +		.start	= DAVINCI_PLL1_BASE,
->> +		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
-> 
-> The .end should be DAVINCI_PLL1_BASE + SZ_1K - 1, otherwise it prevents
-> PLL2 from getting registered.
-> 
->> +		.flags	= IORESOURCE_MEM,
->> +	},
->> +};
->> +
->> +static struct platform_device dm644x_pll1_device = {
->> +	.name		= "dm644x-pll1",
->> +	.id		= -1,
->> +	.resource	= dm644x_pll1_resources,
->> +	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
->> +};
->> +
->> +static struct resource dm644x_pll2_resources[] = {
->> +	{
->> +		.start	= DAVINCI_PLL2_BASE,
->> +		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
-> 
-> And this too should be fixed, else it prevents the PSC from getting
-> registered.
-> 
->> +		.flags	= IORESOURCE_MEM,
->> +	},
->> +};
-> 
-> With these fixed, I still had to enable 'clk_ignore_unused' on DM644x
-> EVM to get to NFS boot. I think root of the problem is that pm_runtime()
-> APIs are not working in the legacy boot mode.
-> 
-> This can be seen even on the DA850 LCDK in legacy boot. pm_genpd_summary
-> in debugfs shows all domains are off and there are no devices registered
-> under the "da850-psc1: emac" domain. NFS mounting still works on the
-> DA850 LCDK because clk_summary shows enable and prepare count of 4 for
-> emac. Not sure how that's happening. But on DM644x EVM, the emac clock
-> enable count is 0.
-> 
-> Still looking at whats going wrong here. I am testing your v8 branch
-> with clk-davinci branch from clk-next merged to get the fixes Stephen made.
-> 
+Hi Linus,
 
-In legacy mode, genpd is not being used. I didn't see any mechanism for
-genpd lookup without device tree. So, we are still relying on the
-matching in arch/arm/mach-davinci/pm_domain.c.
+Please pull Kbuild updates for v4.17.
 
-I suspect we need to fix the clock lookups in
-drivers/clk/davinci/psc-dm644x.c.
 
-LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
-					"fck",		"davinci_mdio.0");
+You will see a merge conflict in
+arch/blackfin/kernel/bfin_ksyms.c
 
-NULL might need to be changed to "fck" to be picked up by pm matching
-and "davinci_emac.1" should be verified that it matches the actual EMAC
-device name.
+This file was already removed since
+the blackfin support was entirely dropped.
+So, please remove it.
+
+
+
+
+The following changes since commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
+
+  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-v4.17
+
+for you to fetch changes up to a95b37e20db9a2b05354eec009b2188523a21c8e:
+
+  kbuild: get <linux/compiler_types.h> out of <linux/kconfig.h>
+(2018-03-31 12:22:38 +0900)
+
+----------------------------------------------------------------
+Kbuild updates for v4.17
+
+- add a shell script to get Clang version
+
+- improve portability of build scripts
+
+- drop always-enabled CONFIG_THIN_ARCHIVE and remove unused code
+
+- rename built-in.o which is now thin archive to built-in.a
+
+- process clean/build targets one by one to get along with -j option
+
+- simplify ld-option
+
+- improve building with CONFIG_TRIM_UNUSED_KSYMS
+
+- define KBUILD_MODNAME even for objects shared among multiple modules
+
+- avoid linking multiple instances of same objects from composite objects
+
+- move <linux/compiler_types.h> to c_flags to include it only for C files
+
+- clean-up various Makefiles
+
+----------------------------------------------------------------
+Cao jin (1):
+      kbuild: fix modname for composite modules
+
+Masahiro Yamada (23):
+      kbuild: process mixture of clean/build targets one by one
+      kbuild: simplify ld-option implementation
+      kbuild: remove command line interface LDFLAGS_MODULE from makefiles.txt
+      kbuild: remove internally used LDFLAGS_vmlinux from kbuild.txt
+      kbuild: clear LDFLAGS in the top Makefile
+      kbuild: remove wrong 'touch' in adjust_autoksyms.sh
+      kbuild: move 'scripts' target below
+      kbuild: restore autoksyms.h touch to the top Makefile
+      kbuild: move CONFIG_TRIM_UNUSED_KSYMS code unneeded for external module
+      kbuild: move include/config/ksym/* to include/ksym/*
+      kbuild: link vmlinux only once for CONFIG_TRIM_UNUSED_KSYMS
+      kbuild: remove unnecessary $(subst $(obj)/, , ...) in modname-multi
+      kbuild: define KBUILD_MODNAME even if multiple modules share objects
+      kbuild: simplify modname calculation
+      kbuild: move modname and modname-multi close to modname_flags
+      kbuild: rename real-objs-y/m to real-obj-y/m
+      kbuild: link $(real-obj-y) instead of $(obj-y) into built-in.a
+      lib: zstd: clean up Makefile for simpler composite object handling
+      net: liquidio: clean up Makefile for simpler composite object handling
+      kbuild: remove partial section mismatch detection for built-in.a
+      kbuild: clean up archive rule of built-in.a
+      kbuild: clean up link rule of composite modules
+      kbuild: get <linux/compiler_types.h> out of <linux/kconfig.h>
+
+Michael Forney (2):
+      kbuild: Improve portability of some sed invocations
+      kbuild: Use ls(1) instead of stat(1) to obtain file size
+
+Nicholas Piggin (2):
+      kbuild: remove incremental linking option
+      kbuild: rename built-in.o to built-in.a
+
+Sami Tolvanen (1):
+      kbuild: add clang-version.sh
+
+ .gitignore                                    |   1 +
+ Documentation/kbuild/kbuild.txt               |   4 --
+ Documentation/kbuild/makefiles.txt            |  28 ++++-----
+ Documentation/process/changes.rst             |   2 +-
+ Makefile                                      |  89 ++++++++++++++-------------
+ arch/Kconfig                                  |   6 --
+ arch/arm/boot/deflate_xip_data.sh             |   2 +-
+ arch/blackfin/kernel/bfin_ksyms.c             |   2 +-
+ arch/powerpc/boot/wrapper                     |   2 +-
+ arch/powerpc/kernel/Makefile                  |   2 +-
+ drivers/net/ethernet/cavium/liquidio/Makefile |  51 +++++-----------
+ drivers/s390/Makefile                         |   2 +-
+ include/linux/kconfig.h                       |   3 -
+ lib/Kconfig.debug                             |   4 +-
+ lib/zstd/Makefile                             |  17 ++----
+ scripts/Kbuild.include                        |   6 +-
+ scripts/Makefile.build                        |  97
+++++++++++--------------------
+ scripts/Makefile.lib                          |  47 +++++++--------
+ scripts/adjust_autoksyms.sh                   |   9 ++-
+ scripts/basic/fixdep.c                        |   8 +--
+ scripts/clang-version.sh                      |  33 ++++++++++
+ scripts/file-size.sh                          |   4 ++
+ scripts/gen_initramfs_list.sh                 |   2 +-
+ scripts/headers_install.sh                    |  10 ++--
+ scripts/kconfig/Makefile                      |   2 -
+ scripts/link-vmlinux.sh                       | 103
+++++++++++++--------------------
+ scripts/namespace.pl                          |   2 +-
+ usr/initramfs_data.S                          |   2 +-
+ 28 files changed, 235 insertions(+), 305 deletions(-)
+ create mode 100755 scripts/clang-version.sh
+ create mode 100755 scripts/file-size.sh
+
+
+-- 
+Best Regards
+Masahiro Yamada
