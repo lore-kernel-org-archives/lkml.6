@@ -1,69 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753004AbeDCUEp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 16:04:45 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:32968 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1751859AbeDCUEo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 16:04:44 -0400
-Date: Tue, 3 Apr 2018 16:04:43 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-cc: David Howells <dhowells@redhat.com>, <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        <linux-kernel@vger.kernel.org>, Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 1/3] locking: Document the semantics of spin_is_locked()
-In-Reply-To: <20180403193139.GA6143@andrea>
-Message-ID: <Pine.LNX.4.44L0.1804031557470.1399-100000@iolanthe.rowland.org>
+        id S1752845AbeDCUGd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 16:06:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59153 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751179AbeDCUGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 16:06:31 -0400
+Date: Tue, 3 Apr 2018 22:06:28 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 08/13] ARM: sunxi: Add initialization of CNTVOFF
+Message-ID: <20180403220628.19c9acaf@dell-desktop.home>
+In-Reply-To: <20180403091218.t6xuq6csjp4uyy5u@flea>
+References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
+        <20180403061836.3926-9-mylene.josserand@bootlin.com>
+        <20180403091218.t6xuq6csjp4uyy5u@flea>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018, Andrea Parri wrote:
+Hello,
 
-> On Tue, Apr 03, 2018 at 04:23:07PM +0100, David Howells wrote:
-> > Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+Thank you for the review.
+
+On Tue, 3 Apr 2018 11:12:18 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+
+> On Tue, Apr 03, 2018 at 08:18:31AM +0200, Mylène Josserand wrote:
+> > Add the initialization of CNTVOFF for sun8i-a83t.
 > > 
-> > > Sorry, but I don't understand your objection: are you suggesting to add
-> > > something like "Always return 0 on !SMP" to the comment?  what else?
+> > For boot CPU, Create a new machine that handles this
+> > function's call in an "init_early" callback.
+> > For secondary CPUs, add this function into secondary_startup
+> > assembly entry.
 > > 
-> > Something like that, possibly along with a warning that this might not be what
-> > you want.  You might actually want it to return true on !SMP, it depends on
-> > what you're using it for.
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  arch/arm/mach-sunxi/headsmp.S |  1 +
+> >  arch/arm/mach-sunxi/sunxi.c   | 18 +++++++++++++++++-
+> >  2 files changed, 18 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+> > index 79890fbe5613..b586b7cf803a 100644
+> > --- a/arch/arm/mach-sunxi/headsmp.S
+> > +++ b/arch/arm/mach-sunxi/headsmp.S
+> > @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+> >  
+> >  ENTRY(sunxi_mc_smp_secondary_startup)
+> >  	bl	sunxi_mc_smp_cluster_cache_enable
+> > +	bl	smp_init_cntvoff
+> >  	b	secondary_startup
+> >  ENDPROC(sunxi_mc_smp_secondary_startup)
+> >  
+> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> > index 5e9602ce1573..090784108c0a 100644
+> > --- a/arch/arm/mach-sunxi/sunxi.c
+> > +++ b/arch/arm/mach-sunxi/sunxi.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/platform_device.h>
+> >  
+> >  #include <asm/mach/arch.h>
+> > +#include <asm/smp_cntvoff.h>
+> >  
+> >  static const char * const sunxi_board_dt_compat[] = {
+> >  	"allwinner,sun4i-a10",
+> > @@ -62,7 +63,6 @@ MACHINE_END
+> >  static const char * const sun8i_board_dt_compat[] = {
+> >  	"allwinner,sun8i-a23",
+> >  	"allwinner,sun8i-a33",
+> > -	"allwinner,sun8i-a83t",
+> >  	"allwinner,sun8i-h2-plus",
+> >  	"allwinner,sun8i-h3",
+> >  	"allwinner,sun8i-r40",
+> > @@ -75,6 +75,22 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
+> >  	.dt_compat	= sun8i_board_dt_compat,
+> >  MACHINE_END
+> >  
+> > +void __init sun8i_cntvoff_init(void)
+> > +{
+> > +	smp_init_cntvoff();  
 > 
-> I ended up with the following revision.  I hesitated on whether to refer
-> to 'include/linux/spinlock_up.h' or not, but in the end I decided to not
-> include the reference.  Please let me know what you think about this.
+> Can't this be moved to the SMP setup code?
 
+I tried to put it in the first lines of "sunxi_mc_smp_init" function
+but it did not work. I tried to find some callbacks to have an
+early "init" and I only found the "init_early"'s one. There is probably
+another way to handle that so do not hesitate to tell me any ideas.
 
-> +/**
-> + * spin_is_locked() - Check whether a spinlock is locked.
-> + * @lock: Pointer to the spinlock.
-> + *
-> + * This function is NOT required to provide any memory ordering
-> + * guarantees; it could be used for debugging purposes or, when
-> + * additional synchronization is needed, accompanied with other
-> + * constructs (memory barriers) enforcing the synchronization.
-> + *
-> + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
-> + *
-> + *	   Remark that this primitve can return a fixed value
-> + *	   under certain !SMP configurations.
+> 
+> > +}
+> > +
+> > +static const char * const sun8i_cntvoff_board_dt_compat[] = {
+> > +	"allwinner,sun8i-a83t",
+> > +	NULL,
+> > +};
+> > +
+> > +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i boards needing cntvoff")  
+> 
+> All of the SoCs need CNTVOFF, so that doesn't really make sense. Why
+> not just calling it for what it is: an A83t?
 
-I would change these last two paragraphs as follows:
+Sure, I will update it.
 
-+ * Returns: 1 if @lock is locked, 0 otherwise.
-+ * However, on !CONFIG_SMP builds with !CONFIG_DEBUG_SPINLOCK,
-+ * the return value is always 0 (see include/linux/spinlock_up.h).
-+ * Therefore you should not rely heavily on the return value.
+Best regards,
 
-Alan
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
