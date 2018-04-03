@@ -1,123 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932091AbeDCKtg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:49:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:59064 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755049AbeDCKtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:49:33 -0400
-Date: Tue, 3 Apr 2018 11:49:25 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: arnd@arndb.de, timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
- readX() implementation
-Message-ID: <20180403104925.fuyajja6tyanlna4@lakrids.cambridge.arm.com>
-References: <1522425494-2916-1-git-send-email-okaya@codeaurora.org>
- <1522425494-2916-2-git-send-email-okaya@codeaurora.org>
+        id S932070AbeDCKta (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:49:30 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54695 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755049AbeDCKt2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 06:49:28 -0400
+Date: Tue, 3 Apr 2018 12:49:26 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCHv3 5/8] dt-bindings: panel: common: document orientation
+ property
+Message-ID: <20180403104926.GF6758@amd>
+References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
+ <20180330171822.25896-6-sebastian.reichel@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="dgjlcl3Tl+kb3YDk"
 Content-Disposition: inline
-In-Reply-To: <1522425494-2916-2-git-send-email-okaya@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180330171822.25896-6-sebastian.reichel@collabora.co.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
-> The default implementation of mapping readX() to __raw_readX() is wrong.
-> readX() has stronger ordering semantics. Compiler is allowed to reorder
-> __raw_readX().
+--dgjlcl3Tl+kb3YDk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you please specify what the compiler is potentially reordering
-__raw_readX() against, and why this would be wrong?
+Hi!
 
-e.g. do we care about prior normal memory accesses, subsequent normal
-memory accesses, and/or other IO accesses?
+> +- rotation: Display rotation in degrees counter clockwise (0,90,180,270).
+> +  The following values are possible:
+> +
+> +    0 =3D The top side of the panel matches the top side of the
+> +        device's casing (default).
 
-I assume that the asm-generic __raw_{read,write}X() implementations are
-all ordered w.r.t. each other (at least for a specific device).
+This is still ambiguous for devices such as N900 and Droid4, which can
+be used in two modes.
 
-Thanks,
-Mark.
+"For phone-like devices that can be used in two orientations, top side
+is the one that is pointing up in keyboard-closed, portrait mode."
 
-> In the abscence of a read barrier or when using a strongly ordered
-> architecture, readX() should at least have a compiler barrier in
-> it to prevent commpiler from clobbering the execution order.
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> ---
->  include/asm-generic/io.h | 28 ++++++++++++++++++++++++----
->  1 file changed, 24 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-> index e8c2078..2554f15 100644
-> --- a/include/asm-generic/io.h
-> +++ b/include/asm-generic/io.h
-> @@ -110,7 +110,12 @@ static inline void __raw_writeq(u64 value, volatile void __iomem *addr)
->  #define readb readb
->  static inline u8 readb(const volatile void __iomem *addr)
->  {
-> -	return __raw_readb(addr);
-> +	u8 val;
-> +
-> +	val = __raw_readb(addr);
-> +	barrier();
-> +
-> +	return val;
->  }
->  #endif
->  
-> @@ -118,7 +123,12 @@ static inline u8 readb(const volatile void __iomem *addr)
->  #define readw readw
->  static inline u16 readw(const volatile void __iomem *addr)
->  {
-> -	return __le16_to_cpu(__raw_readw(addr));
-> +	u16 val;
-> +
-> +	val = __le16_to_cpu(__raw_readw(addr));
-> +	barrier();
-> +
-> +	return val;
->  }
->  #endif
->  
-> @@ -126,7 +136,12 @@ static inline u16 readw(const volatile void __iomem *addr)
->  #define readl readl
->  static inline u32 readl(const volatile void __iomem *addr)
->  {
-> -	return __le32_to_cpu(__raw_readl(addr));
-> +	u32 val;
-> +
-> +	val = __le32_to_cpu(__raw_readl(addr));
-> +	barrier();
-> +
-> +	return val;
->  }
->  #endif
->  
-> @@ -135,7 +150,12 @@ static inline u32 readl(const volatile void __iomem *addr)
->  #define readq readq
->  static inline u64 readq(const volatile void __iomem *addr)
->  {
-> -	return __le64_to_cpu(__raw_readq(addr));
-> +	u64 val;
-> +
-> +	val = __le64_to_cpu(__raw_readq(addr));
-> +	barrier();
-> +
-> +	return val;
->  }
->  #endif
->  #endif /* CONFIG_64BIT */
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+?
+
+
+Best regards,
+									Pavel
+								=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--dgjlcl3Tl+kb3YDk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrDXDYACgkQMOfwapXb+vLX3gCgt1iOxeD5HLwc7yVkCQChYjuq
+kboAni7iZkwiEX7Tz4CnM7H9jmmALplR
+=3/kQ
+-----END PGP SIGNATURE-----
+
+--dgjlcl3Tl+kb3YDk--
