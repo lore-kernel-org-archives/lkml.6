@@ -1,78 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755495AbeDCM0s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:26:48 -0400
-Received: from mail-pl0-f48.google.com ([209.85.160.48]:37932 "EHLO
-        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755300AbeDCM0r (ORCPT
+        id S932130AbeDCM3y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:29:54 -0400
+Received: from mail4.tencent.com ([183.57.53.109]:35264 "EHLO
+        mail4.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932080AbeDCM3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:26:47 -0400
-X-Google-Smtp-Source: AIpwx4/VajJCs88UwXg+7AABx7av4yZV3HOxnwgAf5uHEfDWOv1C0/n6vRGa6ABvi5KR4FX59yoJAA==
-Date: Tue, 3 Apr 2018 21:26:42 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Maninder Singh <maninder1.s@samsung.com>
-Cc: "sergey.senozhatsky.work@gmail.com"
-        <sergey.senozhatsky.work@gmail.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "ngupta@vflare.org" <ngupta@vflare.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Tue, 3 Apr 2018 08:29:52 -0400
+From: =?utf-8?B?aGFpYmluemhhbmco5byg5rW35paMKQ==?=
+        <haibinzhang@tencent.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+CC: Jason Wang <jasowang@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        PANKAJ MISHRA <pankaj.m@samsung.com>,
-        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
-        Vaneet Narang <v.narang@samsung.com>
-Subject: Re: [PATCH 1/1] lz4: Implement lz4 with dynamic offset length.
-Message-ID: <20180403122642.GA26934@jagdpanzerIV>
-References: <20180321074948.GA2746@jagdpanzerIV>
- <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
- <1521607242-3968-2-git-send-email-maninder1.s@samsung.com>
- <CGME20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd@epcms5p5>
- <20180402055152epcms5p546fdb62381b769ed0c719f3bedcee3b8@epcms5p5>
+        =?utf-8?B?bGlkb25nY2hlbijpmYjnq4vkuJwp?= <lidongchen@tencent.com>,
+        =?utf-8?B?eXVuZmFuZ3RhaSjlj7Dov5Dmlrkp?= <yunfangtai@tencent.com>
+Subject: Re: [PATCH] vhost-net: add limitation of sent packets for tx polling
+Thread-Topic: [PATCH] vhost-net: add limitation of sent packets for tx
+ polling
+Thread-Index: AdPLRtoBUHmD1ii9SnGk1MWNCm3IpA==
+Date: Tue, 3 Apr 2018 12:29:47 +0000
+Message-ID: <88D661ADF6AFBF42B2AB88D8E7682B0901FC465B@EXMBX-SZMAIL011.tencent.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.90.75]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180402055152epcms5p546fdb62381b769ed0c719f3bedcee3b8@epcms5p5>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w33CU34R026521
 
-On (04/02/18 11:21), Maninder Singh wrote:
-[..]
-> >>  static const char * const backends[] = {
-> >>          "lzo",
-> >>  #if IS_ENABLED(CONFIG_CRYPTO_LZ4)
-> >>          "lz4",
-> >> +#if (PAGE_SIZE < (32 * KB))
-> >> +        "lz4_dyn",
-> >> +#endif
-> > 
-> >This is not the list of supported algorithms. It's the list of
-> >recommended algorithms. You can configure zram to use any of
-> >available and known to Crypto API algorithms. Including lz4_dyn
-> >on PAGE_SIZE > 32K systems.
-> > 
-> Yes, we want to integrate new compression(lz4_dyn) for ZRAM 
-> only if PAGE_SIZE is less than 32KB to get maximum benefit. 
-> so we added lz4_dyn to available list of ZRAM compression alhorithms.
 
-Which is not what I was talking about.
+>On Tue, Apr 03, 2018 at 08:08:26AM +0000, haibinzhang wrote:
+>> handle_tx will delay rx for a long time when tx busy polling udp packets
+>> with small length(e.g. 1byte udp payload), because setting VHOST_NET_WEIGHT
+>> takes into account only sent-bytes but no single packet length.
+>> 
+>> Tests were done between two Virtual Machines using netperf(UDP_STREAM, len=1),
+>> then another machine pinged the client. Result shows as follow:
+>> 
+>> Packet#       Ping-Latency(ms)
+>>               min     avg     max
+>> Origin      3.319  18.489  57.503
+>> 64          1.643   2.021   2.552
+>> 128         1.825   2.600   3.224
+>> 256         1.997   2.710   4.295
+>> 512*        1.860   3.171   4.631
+>> 1024        2.002   4.173   9.056
+>> 2048        2.257   5.650   9.688
+>> 4096        2.093   8.508  15.943
+>> 
+>> 512 is selected, which is multi-VRING_SIZE
+>
+>There's no guarantee vring size is 256.
+>
+>Could you pls try with a different tx ring size?
+>
+>I suspect we want:
+>
+>#define VHOST_NET_PKT_WEIGHT(vq) ((vq)->num * 2)
+>
+>
+>> and close to VHOST_NET_WEIGHT/MTU.
+>
+>Puzzled by this part.  Does tweaking MTU change anything?
 
-You shrink a 2 bytes offset down to a 1 byte offset, thus you enforce that
-'page should be less than 32KB', which I'm sure will be confusing. And you
-rely on lz4_dyn users to do the right thing - namely, to use that 'nice'
-`#if (PAGE_SIZE < (32 * KB))'. Apart from that, lz4_dyn supports only data
-in up to page_size chunks. Suppose my system has page_size of less than 32K,
-so I legitimately can enable lz4_dyn, but suppose that I will use it
-somewhere where I don't work with page_size-d chunks. Will I able to just
-do tfm->compress(src, sz) on random buffers? The whole thing looks to be
-quite fragile.
+The MTU of ethernet is 1500, so VHOST_NET_WEIGHT/MTU equals 0x80000/1500=350.
+Then sent-bytes cannot reach VHOST_NET_WEIGHT in one handle_tx even with 1500-bytes 
+frame if packet# is less than 350. So packet# must be bigger than 350.
+512 meets this condition and is also DEFAULT VRING_SIZE aligned.
 
-	-ss
+>
+>> To evaluate this change, another tests were done using netperf(RR, TX) between
+>> two machines with Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz. Result as follow
+>> does not show obvious changes:
+>> 
+>> TCP_RR
+>> 
+>> size/sessions/+thu%/+normalize%
+>>    1/       1/  -7%/        -2%
+>>    1/       4/  +1%/         0%
+>>    1/       8/  +1%/        -2%
+>>   64/       1/  -6%/         0%
+>>   64/       4/   0%/        +2%
+>>   64/       8/   0%/         0%
+>>  256/       1/  -3%/        -4%
+>>  256/       4/  +3%/        +4%
+>>  256/       8/  +2%/         0%
+>> 
+>> UDP_RR
+>> 
+>> size/sessions/+thu%/+normalize%
+>>    1/       1/  -5%/        +1%
+>>    1/       4/  +4%/        +1%
+>>    1/       8/  -1%/        -1%
+>>   64/       1/  -2%/        -3%
+>>   64/       4/  -5%/        -1%
+>>   64/       8/   0%/        -1%
+>>  256/       1/  +7%/        +1%
+>>  256/       4/  +1%/        +1%
+>>  256/       8/  +2%/        +2%
+>> 
+>> TCP_STREAM
+>> 
+>> size/sessions/+thu%/+normalize%
+>>   64/       1/   0%/        -3%
+>>   64/       4/  +3%/        -1%
+>>   64/       8/  +9%/        -4%
+>>  256/       1/  +1%/        -4%
+>>  256/       4/  -1%/        -1%
+>>  256/       8/  +7%/        +5%
+>>  512/       1/  +1%/         0%
+>>  512/       4/  +1%/        -1%
+>>  512/       8/  +7%/        -5%
+>> 1024/       1/   0%/        -1%
+>> 1024/       4/  +3%/         0%
+>> 1024/       8/  +8%/        +5%
+>> 2048/       1/  +2%/        +2%
+>> 2048/       4/  +1%/         0%
+>> 2048/       8/  -2%/         0%
+>> 4096/       1/  -2%/         0%
+>> 4096/       4/  +2%/         0%
+>> 4096/       8/  +9%/        -2%
+>> 
+>> Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
+>> Signed-off-by: Yunfang Tai <yunfangtai@tencent.com>
+>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+>> ---
+>>  drivers/vhost/net.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>> index 8139bc70ad7d..13a23f3f3ea4 100644
+>> --- a/drivers/vhost/net.c
+>> +++ b/drivers/vhost/net.c
+>> @@ -44,6 +44,10 @@ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+>>   * Using this limit prevents one virtqueue from starving others. */
+>>  #define VHOST_NET_WEIGHT 0x80000
+>>  
+>> +/* Max number of packets transferred before requeueing the job.
+>> + * Using this limit prevents one virtqueue from starving rx. */
+>> +#define VHOST_NET_PKT_WEIGHT 512
+>> +
+>>  /* MAX number of TX used buffers for outstanding zerocopy */
+>>  #define VHOST_MAX_PEND 128
+>>  #define VHOST_GOODCOPY_LEN 256
+>> @@ -473,6 +477,7 @@ static void handle_tx(struct vhost_net *net)
+>>  	struct socket *sock;
+>>  	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+>>  	bool zcopy, zcopy_used;
+>> +	int sent_pkts = 0;
+>>  
+>>  	mutex_lock(&vq->mutex);
+>>  	sock = vq->private_data;
+>> @@ -580,7 +585,8 @@ static void handle_tx(struct vhost_net *net)
+>>  		else
+>>  			vhost_zerocopy_signal_used(net, vq);
+>>  		vhost_net_tx_packet(net);
+>> -		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+>> +		if (unlikely(total_len >= VHOST_NET_WEIGHT) ||
+>> +		    unlikely(++sent_pkts >= VHOST_NET_PKT_WEIGHT)) {
+>>  			vhost_poll_queue(&vq->poll);
+>>  			break;
+>>  		}
+>> -- 
+>> 2.12.3
+>> 
