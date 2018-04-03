@@ -1,66 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755193AbeDCLD5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:03:57 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53184 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754869AbeDCLD4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:03:56 -0400
-X-Google-Smtp-Source: AIpwx4/YHwUaaa1jpOvOP3tiGsYy/0XJLKDLl9pHziGWdM9L4NZgQR77pGKcWeVGwUKnlMRzEmByAg==
-Date: Tue, 3 Apr 2018 13:03:52 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, bp@suse.de
-Subject: Re: [PATCH] x86/smpboot: Don't do mwait_play_dead() on AMD systems
-Message-ID: <20180403110352.izr2kvsd3ys4drjq@gmail.com>
-References: <20180402183424.48222-1-Yazen.Ghannam@amd.com>
+        id S1755300AbeDCLGR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:06:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54115 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755172AbeDCLGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:06:16 -0400
+Date: Tue, 3 Apr 2018 13:06:12 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180403110612.GM5501@dhcp22.suse.cz>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180330102038.2378925b@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180402183424.48222-1-Yazen.Ghannam@amd.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180330102038.2378925b@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Yazen Ghannam <Yazen.Ghannam@amd.com> wrote:
-
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Fri 30-03-18 10:20:38, Steven Rostedt wrote:
 > 
-> Recent AMD systems support using MWAIT for C1 state. However, MWAIT will
-> not allow deeper cstates than C1 on current systems.
+> [ Adding memory management folks to discuss the issue ]
 > 
-> With play_dead() we expect the OS to use the deepest state available.
-> The deepest state available on AMD systems is reached through SystemIO
-> or HALT. If MWAIT is available, we use it instead of the other methods,
-> so we never reach the deepest state.
+> On Thu, 29 Mar 2018 18:41:44 +0800
+> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
 > 
-> Don't try to use MWAIT to play_dead() on AMD systems. Instead, we'll use
-> CPUIDLE to enter the deepest state advertised by firmware. If CPUIDLE is
-> not available then we fallback to HALT.
+> > It is reported that some user app would like to echo a huge
+> > number to "/sys/kernel/debug/tracing/buffer_size_kb" regardless
+> >  of the available memory, which will cause the coinstantaneous
+> > page allocation failed and introduce OOM. The commit checking the
+> > val against the available mem first to avoid the consequence allocation.
+> > 
+> > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
+> > ---
+> >  kernel/trace/trace.c | 39 ++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 38 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> > index 2d0ffcc..a4a4237 100644
+> > --- a/kernel/trace/trace.c
+> > +++ b/kernel/trace/trace.c
+> > @@ -43,6 +43,8 @@
+> >  #include <linux/trace.h>
+> >  #include <linux/sched/rt.h>
+> >  
+> > +#include <linux/mm.h>
+> > +#include <linux/swap.h>
+> >  #include "trace.h"
+> >  #include "trace_output.h"
+> >  
+> > @@ -5967,6 +5969,39 @@ static ssize_t tracing_splice_read_pipe(struct file *filp,
+> >  	return ret;
+> >  }
+> >  
+> > +static long get_available_mem(void)
+> > +{
+> > +	struct sysinfo i;
+> > +	long available;
+> > +	unsigned long pagecache;
+> > +	unsigned long wmark_low = 0;
+> > +	unsigned long pages[NR_LRU_LISTS];
+> > +	struct zone *zone;
+> > +	int lru;
+> > +
+> > +	si_meminfo(&i);
+> > +	si_swapinfo(&i);
+> > +
+> > +	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+> > +		pages[lru] = global_page_state(NR_LRU_BASE + lru);
+> > +
+> > +	for_each_zone(zone)
+> > +		wmark_low += zone->watermark[WMARK_LOW];
+> > +
+> > +	available = i.freeram - wmark_low;
+> > +
+> > +	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+> > +	pagecache -= min(pagecache / 2, wmark_low);
+> > +	available += pagecache;
+> > +
+> > +	available += global_page_state(NR_SLAB_RECLAIMABLE) -
+> > +		min(global_page_state(NR_SLAB_RECLAIMABLE) / 2, wmark_low);
+> > +
+> > +	if (available < 0)
+> > +		available = 0;
+> > +	return available;
+> > +}
+> > +
 > 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
->  arch/x86/kernel/smpboot.c | 3 +++
->  1 file changed, 3 insertions(+)
+> As I stated in my other reply, the above function does not belong in
+> tracing.
 > 
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index ff99e2b6fc54..67cf00b25f83 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -1536,6 +1536,9 @@ static inline void mwait_play_dead(void)
->  	void *mwait_ptr;
->  	int i;
->  
-> +	/* Don't try native MWAIT on AMD. Stick to CPUIDLE and HALT. */
-> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-> +		return;
+> That said, it appears you are having issues that were caused by the
+> change by commit 848618857d2 ("tracing/ring_buffer: Try harder to
+> allocate"), where we replaced NORETRY with RETRY_MAYFAIL. The point of
+> NORETRY was to keep allocations of the tracing ring-buffer from causing
+> OOMs. But the RETRY was too strong in that case, because there were
+> those that wanted to allocate large ring buffers but it would fail due
+> to memory being used that could be reclaimed. Supposedly, RETRY_MAYFAIL
+> is to allocate with reclaim but still allow to fail, and isn't suppose
+> to trigger an OOM. From my own tests, this is obviously not the case.
+> 
+> Perhaps this is because the ring buffer allocates one page at a time,
+> and by doing so, it can get every last available page, and if anything
+> in the mean time does an allocation without MAYFAIL, it will cause an
+> OOM. For example, when I stressed this I triggered this:
 
-The comment should mainly explain the 'why is this done', not the 'what is done' 
-which is pretty obvious from the code ...
+Yes, this is indeed the case.
 
-Thanks,
+>  pool invoked oom-killer: gfp_mask=0x14200ca(GFP_HIGHUSER_MOVABLE), nodemask=(null), order=0, oom_score_adj=0
+>  pool cpuset=/ mems_allowed=0
+>  CPU: 7 PID: 1040 Comm: pool Not tainted 4.16.0-rc4-test+ #663
+>  Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+>  Call Trace:
+>   dump_stack+0x8e/0xce
+>   dump_header.isra.30+0x6e/0x28f
+>   ? _raw_spin_unlock_irqrestore+0x30/0x60
+>   oom_kill_process+0x218/0x400
+>   ? has_capability_noaudit+0x17/0x20
+>   out_of_memory+0xe3/0x5c0
+>   __alloc_pages_slowpath+0xa8e/0xe50
+>   __alloc_pages_nodemask+0x206/0x220
+>   alloc_pages_current+0x6a/0xe0
+>   __page_cache_alloc+0x6a/0xa0
+>   filemap_fault+0x208/0x5f0
+>   ? __might_sleep+0x4a/0x80
+>   ext4_filemap_fault+0x31/0x44
+>   __do_fault+0x20/0xd0
+>   __handle_mm_fault+0xc08/0x1160
+>   handle_mm_fault+0x76/0x110
+>   __do_page_fault+0x299/0x580
+>   do_page_fault+0x2d/0x110
+>   ? page_fault+0x2f/0x50
+>   page_fault+0x45/0x50
+> 
+> I wonder if I should have the ring buffer allocate groups of pages, to
+> avoid this. Or try to allocate with NORETRY, one page at a time, and
+> when that fails, allocate groups of pages with RETRY_MAYFAIL, and that
+> may keep it from causing an OOM?
 
-	Ingo
+I wonder why it really matters. The interface is root only and we expect
+some sanity from an admin, right? So allocating such a large ring buffer
+that it sends the system to the OOM is a sign that the admin should be
+more careful. Balancing on the OOM edge is always a risk and the result
+will highly depend on the workload running in parallel.
+-- 
+Michal Hocko
+SUSE Labs
