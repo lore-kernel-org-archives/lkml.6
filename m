@@ -1,349 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755499AbeDCLnb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:43:31 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59920 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755135AbeDCLn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:43:28 -0400
-Date: Tue, 3 Apr 2018 12:43:22 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: kernel test robot <xiaolong.ye@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Chris Redpath <chris.redpath@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Joel Fernandes <joelaf@google.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Paul Turner <pjt@google.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Steve Muckle <smuckle@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Todd Kjos <tkjos@android.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
-Subject: Re: [lkp-robot] [sched/fair]  d519329f72:  unixbench.score -9.9%
- regression
-Message-ID: <20180403114322.GF13951@e110439-lin>
-References: <20180402032000.GD3101@yexl-desktop>
+        id S1755434AbeDCLoj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:44:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58672 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755135AbeDCLoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:44:37 -0400
+Date: Tue, 3 Apr 2018 13:44:33 +0200
+From: Borislav Petkov <bp@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC tree for 4.17
+Message-ID: <20180403114432.GA29513@pd.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180402032000.GD3101@yexl-desktop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaolong,
+Hi Linus,
 
-On 02-Apr 11:20, kernel test robot wrote:
-> 
-> Greeting,
-> 
-> FYI, we noticed a -9.9% regression of unixbench.score due to commit:
+here's this round of EDAC updates. Noteworthy is the NVDIMM support
+by Tony Luck.
 
-thanks for the report, I'll try to reproduce it locally to better
-understand what's going on.
+Please pull,
+thanks!
 
-Meanwhile, I'm a little puzzled about some of the following
-numbers... likely looking at the code it should be more clear.
-But, maybe someone already knows the response.
+---
+The following changes since commit bf8486709ac7fad99e4040dea73fe466c57a4ae1:
 
-> commit: d519329f72a6f36bc4f2b85452640cfe583b4f81 ("sched/fair: Update util_est only on util_avg updates")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+  EDAC, sb_edac: Fix out of bound writes during DIMM configuration on KNL (2018-02-23 12:05:37 +0100)
 
-To give a bit of context, this patch is the last of a small series
-introducing util_est:
-   https://lkml.org/lkml/2018/3/9/245
-where we actually enable it by turning of by default the corresponding SCHED_FEAT.
-Thus, all the effect of util_est are visible just after this very last patch.
+are available in the git repository at:
 
-I'm not surprised that, if there are issues related to util_est, they
-manifest at this stage.
+  git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_for_4.17
 
-> in testcase: unixbench
-> on test machine: 8 threads Intel(R) Core(TM) i7 CPU 870 @ 2.93GHz with 6G memory
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	nr_task: 100%
-> 	test: execl
-> 
-> test-description: UnixBench is the original BYTE UNIX benchmark suite aims to test performance of Unix-like system.
-> test-url: https://github.com/kdlucas/byte-unixbench
+for you to fetch changes up to 6fd052665274b4e7570491ba272f2dbb09cbbcd5:
 
-AFAIU, this benchmark is composed of 12 different test cases:
-   https://github.com/intel/lkp-tests/blob/master/jobs/unixbench.yaml
-and it's reporting a regression for "only" 1 of those tests (execl).
+  EDAC, sb_edac: Remove variable length array usage (2018-03-17 05:24:55 +0100)
 
-Is that correct?
+----------------------------------------------------------------
+* Add NVDIMM support to EDAC (Tony Luck)
 
-> Details are as below:
-> -------------------------------------------------------------------------------------------------->
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp install job.yaml  # job file is attached in this email
->         bin/lkp run     job.yaml
+* misc fixes
 
-Will try to give it a run in the next days.
+----------------------------------------------------------------
+Gustavo A. R. Silva (1):
+      EDAC, sb_edac: Remove variable length array usage
 
-> 
-> =========================================================================================
-> compiler/kconfig/nr_task/rootfs/runtime/tbox_group/test/testcase:
->   gcc-7/x86_64-rhel-7.2/100%/debian-x86_64-2016-08-31.cgz/300s/nhm-white/execl/unixbench
-> 
-> commit: 
->   a07630b8b2 ("sched/cpufreq/schedutil: Use util_est for OPP selection")
->   d519329f72 ("sched/fair: Update util_est only on util_avg updates")
-> 
-> a07630b8b2c16f82 d519329f72a6f36bc4f2b85452 
-> ---------------- -------------------------- 
->          %stddev     %change         %stddev
->              \          |                \  
->       4626            -9.9%       4167        unixbench.score
+Rasmus Villemoes (1):
+      EDAC, layerscape: Allow building for LS1021A
 
-Is this overall score a composition of the following scores?
+Tony Luck (5):
+      EDAC: Drop duplicated array of strings for memory type names
+      EDAC: Add new memory type for non-volatile DIMMs
+      acpi, nfit: Add function to look up nvdimm device and provide SMBIOS handle
+      firmware, DMI: Add function to look up a handle and return DIMM size
+      EDAC, skx_edac: Detect non-volatile DIMMs
 
-In general, it would be nice to see in the following metrics which one
-is considered "the lower the better" or "the higher the better".
-
->    3495362 ±  4%     +70.4%    5957769 ±  2%  unixbench.time.involuntary_context_switches
-
-The above seems to indicate an increase in contention which generated
-scheduler enforced context switches. But, AFAIU, the test under
-analysis generates just one single task which keep execl itself.
-I can't see how util_est can this generated an increase in context
-switches? Will investigate better.
-
->  2.866e+08           -11.6%  2.534e+08        unixbench.time.minor_page_faults
->     666.75            -9.7%     602.25        unixbench.time.percent_of_cpu_this_job_got
->       1830            -9.7%       1653        unixbench.time.system_time
->     395.13            -5.2%     374.58        unixbench.time.user_time
-
-When I read "system_time" and "user_time" I'm expecting it to be a
-"the lower the better" metric.
-Thus, if that's the case, by just looking at these last two metrics:
-doesn't that means that the test is actually completing faster with
-util_est enabled?
-
->    8611715           -58.9%    3537314 ±  3%  unixbench.time.voluntary_context_switches
->    6639375            -9.1%    6033775        unixbench.workload
-
-What the above metric represents?
-
->      26025         +3849.3%    1027825        interrupts.CAL:Function_call_interrupts
-
-What this metric represents?
-
-This is a big variation which I cannot easily see as related to
-util_est overheads... unless these are interrupts related to tasks
-migrations, which potentially can affect LB and WKP code paths.
-
->       4856 ± 14%     -27.4%       3523 ± 11%  slabinfo.filp.active_objs
->    3534356            -8.8%    3223918        softirqs.RCU
->      77929           -11.2%      69172        vmstat.system.cs
->      19489 ±  2%      +7.5%      20956        vmstat.system.in
->       9.05 ±  9%     +11.0%      10.05 ±  8%  boot-time.dhcp
->     131.63 ±  4%      +8.6%     142.89 ±  7%  boot-time.idle
->       9.07 ±  9%     +11.0%      10.07 ±  8%  boot-time.kernel_boot
->      76288 ±  3%     -12.8%      66560 ±  3%  meminfo.DirectMap4k
->      16606           -13.1%      14433        meminfo.Inactive
->      16515           -13.2%      14341        meminfo.Inactive(anon)
->      11.87 ±  5%      +7.8       19.63 ±  4%  mpstat.cpu.idle%
->       0.07 ± 35%      -0.0        0.04 ± 17%  mpstat.cpu.soft%
->      68.91            -6.1       62.82        mpstat.cpu.sys%
-
-The following:
-
->   29291570          +325.4%  1.246e+08        cpuidle.C1.time
->    8629105           -36.1%    5513780        cpuidle.C1.usage
->     668733 ± 12%  +11215.3%   75668902 ±  2%  cpuidle.C1E.time
->       9763 ± 12%  +16572.7%    1627882 ±  2%  cpuidle.C1E.usage
->  1.834e+08 ±  9%     +23.1%  2.258e+08 ± 11%  cpuidle.C3.time
->     222674 ±  8%    +133.4%     519690 ±  6%  cpuidle.C3.usage
-
-are other really big variations which metrics represents, AFAIU, the
-following IDLE states:
-- C1  : Core doesn't work, clocks stopped
-- C1E : Core doesn't work, clocks stopped and voltage lowered
-- C3  : L1 and L2 copied to L3, all core clocks stopped
-
-Thus, it seems to me that, with the patches in, we are more likely to
-sleep longer. Which suggests a more aggressive race-to-idle policy:
-running at higher frequencies to complete faster and sleep
-longer and deeper.
-
-This would kind-of match with the idea of completing faster, but I'm
-not completely sure... however, if that should be the case, again I
-would say that's a benefit, not a regression.
-
-
->       4129           -13.3%       3581        proc-vmstat.nr_inactive_anon
->       4129           -13.3%       3581        proc-vmstat.nr_zone_inactive_anon
->  2.333e+08           -12.2%  2.049e+08        proc-vmstat.numa_hit
->  2.333e+08           -12.2%  2.049e+08        proc-vmstat.numa_local
->       6625           -10.9%       5905        proc-vmstat.pgactivate
->  2.392e+08           -12.1%  2.102e+08        proc-vmstat.pgalloc_normal
->  2.936e+08           -12.6%  2.566e+08        proc-vmstat.pgfault
->  2.392e+08           -12.1%  2.102e+08        proc-vmstat.pgfree
-
-All the following metrics:
-
->       2850           -15.3%       2413        turbostat.Avg_MHz
->    8629013           -36.1%    5513569        turbostat.C1
->       1.09            +3.5        4.61        turbostat.C1%
->       9751 ± 12%  +16593.0%    1627864 ±  2%  turbostat.C1E
->       0.03 ± 19%      +2.8        2.80        turbostat.C1E%
->     222574 ±  8%    +133.4%     519558 ±  6%  turbostat.C3
->       6.84 ±  8%      +1.5        8.34 ± 10%  turbostat.C3%
->       2.82 ±  7%    +250.3%       9.87 ±  2%  turbostat.CPU%c1
->    6552773 ±  3%     +23.8%    8111699 ±  2%  turbostat.IRQ
->       2.02 ± 11%     +28.3%       2.58 ±  9%  turbostat.Pkg%pc3
-
-maybe they can help to understand better what's going on with respect
-to the race-to-idle theory...
-
-
->  7.635e+11           -12.5%  6.682e+11        perf-stat.branch-instructions
->  3.881e+10           -12.9%  3.381e+10        perf-stat.branch-misses
->       2.09            -0.3        1.77 ±  4%  perf-stat.cache-miss-rate%
->  1.551e+09           -15.1%  1.316e+09 ±  4%  perf-stat.cache-misses
->   26177920           -10.5%   23428188        perf-stat.context-switches
->       1.99            -2.8%       1.93        perf-stat.cpi
->  7.553e+12           -14.7%  6.446e+12        perf-stat.cpu-cycles
-
-This:
-
->     522523 ±  2%    +628.3%    3805664        perf-stat.cpu-migrations
-
-is another good point. With util_est we are affecting LB and WKP
-paths... but, give the specific execl test, not entirely sure how we
-can affect migrations using util_est.
-
-Have to check better these two points:
-- do we reset PELT after an execl?
-- do we trigger a possible task migration after and execl
-
-
->  2.425e+10 ±  4%     -14.3%  2.078e+10        perf-stat.dTLB-load-misses
->  1.487e+12           -11.3%  1.319e+12        perf-stat.dTLB-loads
->  1.156e+10 ±  3%      -7.7%  1.066e+10        perf-stat.dTLB-store-misses
->  6.657e+11           -11.1%  5.915e+11        perf-stat.dTLB-stores
->       0.15            +0.0        0.15        perf-stat.iTLB-load-miss-rate%
->  5.807e+09           -11.0%  5.166e+09        perf-stat.iTLB-load-misses
->  3.799e+12           -12.1%   3.34e+12        perf-stat.iTLB-loads
->  3.803e+12           -12.2%  3.338e+12        perf-stat.instructions
->     654.99            -1.4%     646.07        perf-stat.instructions-per-iTLB-miss
->       0.50            +2.8%       0.52        perf-stat.ipc
->  2.754e+08           -11.6%  2.435e+08        perf-stat.minor-faults
->  1.198e+08 ±  7%     +73.1%  2.074e+08 ±  4%  perf-stat.node-stores
->  2.754e+08           -11.6%  2.435e+08        perf-stat.page-faults
->     572928            -3.4%     553258        perf-stat.path-length
-> 
-> 
->                                                                                 
->                                   unixbench.score                               
->                                                                                 
->   4800 +-+------------------------------------------------------------------+   
->        |+                                      +     +                      |   
->   4700 +-+ +                +                  :+ +. :+ + +                 |   
->        |  + +   +    +.     :  +              +  +  +  + + + .+++++    .+  +|   
->   4600 +-+   +++ :+++  + ++: : :+  +++ ++.++++              +      ++++  ++ |   
->        |         +      +  + ++  ++   +                                     |   
->   4500 +-+                                                                  |   
->        |                                                                    |   
->   4400 +-+                                                                  |   
->        |                                                                    |   
->   4300 +-+                                                                  |   
->        O                                                                    |   
->   4200 +-O        O O    OOOO OO OOO OOOO  OOOO O O                         |   
->        |O OO OOOOO O O OO    O      O     O    O O  OO                      |   
->   4100 +-+------------------------------------------------------------------+   
->                                                                                 
->                                                                                                                                                                 
->                                   unixbench.workload                            
->                                                                                 
->     9e+06 +-+---------------------------------------------------------------+   
->           |                   :                                             |   
->   8.5e+06 +-+                 :                                             |   
->           |                   :                                             |   
->     8e+06 +-+                 :                                             |   
->           |                   ::                                            |   
->   7.5e+06 +-+                : : +                                          |   
->           |                 +: : :       +                                  |   
->     7e+06 +-+      +    +   :: : ::  + + :  +   +     +    +            +   |   
->           |:+ +   + :   :: : : :: :  :+ : : ::+ :+ .+ :+ ++ ++ + ++     ::++|   
->   6.5e+06 +-O+ +++  ++++ +++ + ++ +.+   + ++ + +  +  +  +     + +  +.+++ +  |   
->           O                O    O            O O O    O                     |   
->     6e+06 +O+OOO O OOOOOOOO OOOO OO OOOOOOOOO O O O OO                      |   
->           |     O                                                           |   
->   5.5e+06 +-+---------------------------------------------------------------+   
->                                                                                 
->                                                                                 
->                                                                                 
-> [*] bisect-good sample
-> [O] bisect-bad  sample
-> 
-> 
-> 
-> Disclaimer:
-> Results have been estimated based on internal Intel analysis and are provided
-> for informational purposes only. Any difference in system hardware or software
-> design or configuration may affect actual performance.
-> 
-> 
-> Thanks,
-> Xiaolong
-
-[...]
-
-> #
-> # CPU Frequency scaling
-> #
-> CONFIG_CPU_FREQ=y
-> CONFIG_CPU_FREQ_GOV_ATTR_SET=y
-> CONFIG_CPU_FREQ_GOV_COMMON=y
-> # CONFIG_CPU_FREQ_STAT is not set
-> # CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
-> # CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE is not set
-> # CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE is not set
-
-The governor in use is not schedutil... thus util_est could effect the
-test just because of signals tracking overheads, of because of the way
-we affect tasks placement in WK and LB paths... which can be
-correlated to the impact on task migrations and preemption...
-
-> CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-> # CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE is not set
-> # CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not set
-> CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
-> CONFIG_CPU_FREQ_GOV_POWERSAVE=y
-> CONFIG_CPU_FREQ_GOV_USERSPACE=y
-> CONFIG_CPU_FREQ_GOV_ONDEMAND=y
-> CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
-> # CONFIG_CPU_FREQ_GOV_SCHEDUTIL is not set
-> 
-> #
-> # CPU frequency scaling drivers
-> #
-> CONFIG_X86_INTEL_PSTATE=y
-> CONFIG_X86_PCC_CPUFREQ=m
-> CONFIG_X86_ACPI_CPUFREQ=m
-> CONFIG_X86_ACPI_CPUFREQ_CPB=y
-> CONFIG_X86_POWERNOW_K8=m
-> CONFIG_X86_AMD_FREQ_SENSITIVITY=m
-> # CONFIG_X86_SPEEDSTEP_CENTRINO is not set
-> CONFIG_X86_P4_CLOCKMOD=m
-> 
+ drivers/acpi/nfit/core.c     | 27 ++++++++++++++++++
+ drivers/edac/Kconfig         |  7 +++--
+ drivers/edac/edac_mc.c       | 41 ++++++++++++++-------------
+ drivers/edac/edac_mc_sysfs.c | 26 ++---------------
+ drivers/edac/sb_edac.c       | 12 ++++----
+ drivers/edac/skx_edac.c      | 67 ++++++++++++++++++++++++++++++++++++++++----
+ drivers/firmware/dmi_scan.c  | 31 ++++++++++++++++++++
+ include/acpi/nfit.h          | 18 ++++++++++++
+ include/linux/dmi.h          |  2 ++
+ include/linux/edac.h         |  3 ++
+ 10 files changed, 175 insertions(+), 59 deletions(-)
+ create mode 100644 include/acpi/nfit.h
 
 -- 
-#include <best/regards.h>
+Regards/Gruss,
+    Boris.
 
-Patrick Bellasi
+SUSE Linux GmbH, GF: Felix Imend√∂rffer, Jane Smithard, Graham Norton, HRB 21284 (AG N√ºrnberg)
+-- 
