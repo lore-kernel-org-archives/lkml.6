@@ -1,81 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756693AbeDCWeD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 18:34:03 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37182 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756133AbeDCW3m (ORCPT
+        id S1756719AbeDCWfL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 18:35:11 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42823 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755582AbeDCW2V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 18:29:42 -0400
-X-Google-Smtp-Source: AIpwx48w0yRyV4uz2zFhso5WrJvqfYr2AhDY8ojTtO+pE2VpCQzaKuwe/dI3lTOeS7bM8/jvmc0/9Q==
-Date: Tue, 03 Apr 2018 15:29:40 -0700 (PDT)
-X-Google-Original-Date: Tue, 03 Apr 2018 15:29:39 PDT (-0700)
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default readX() implementation
-In-Reply-To: <CAK8P3a0+Q-aBbKsqqypZfCVzHTwcepL9KhBP9qJKE+2FknWHMg@mail.gmail.com>
-CC: okaya@codeaurora.org, mark.rutland@arm.com, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Message-ID: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 3 Apr 2018 18:28:21 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/5] allow override of bus format in bridges
+Date: Wed, 04 Apr 2018 01:28:29 +0300
+Message-ID: <2233231.my6BbD3pcT@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180328070826.GY14155@phenom.ffwll.local>
+References: <20180326212447.7380-1-peda@axentia.se> <20180328070826.GY14155@phenom.ffwll.local>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 03 Apr 2018 05:56:18 PDT (-0700), Arnd Bergmann wrote:
-> On Tue, Apr 3, 2018 at 2:44 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
->> On 4/3/2018 7:13 AM, Arnd Bergmann wrote:
->>> On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->>>> Hi,
->>>>
->>>> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
->>>>> The default implementation of mapping readX() to __raw_readX() is wrong.
->>>>> readX() has stronger ordering semantics. Compiler is allowed to reorder
->>>>> __raw_readX().
->>>>
->>>> Could you please specify what the compiler is potentially reordering
->>>> __raw_readX() against, and why this would be wrong?
->>>>
->>>> e.g. do we care about prior normal memory accesses, subsequent normal
->>>> memory accesses, and/or other IO accesses?
->>>>
->>>> I assume that the asm-generic __raw_{read,write}X() implementations are
->>>> all ordered w.r.t. each other (at least for a specific device).
->>>
->>> I think that is correct: the compiler won't reorder those because of the
->>> 'volatile' pointer dereference, but it can reorder access to a normal
->>> pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
->>> of using writel to trigger a DMA, or using a readl to see if a DMA has
->>> completed.
->>
->> Yes, we are worried about memory update vs. IO update ordering here.
->> That was the reason why barrier() was introduced in this patch. I'll try to
->> clarify that better in the commit text.
->>
->>>
->>> The question is whether we should use a stronger barrier such
->>> as rmb() amd wmb() here rather than a simple compiler barrier.
->>>
->>> I would assume that on complex architectures with write buffers and
->>> out-of-order prefetching, those are required, while on architectures
->>> without those features, the barriers are cheap.
->>
->> That's my reasoning too. I'm trying to follow the x86 example here where there
->> is a compiler barrier in writeX() and readX() family of functions.
->
-> I think x86 is the special case here because it implicitly guarantees
-> the strict ordering in the hardware, as long as the compiler gets it
-> right. For the asm-generic version, it may be better to play safe and
-> do the safest version, requiring architectures to override that barrier
-> if they want to be faster.
->
-> We could use the same macros that riscv has, using __io_br(),
-> __io_ar(), __io_bw() and __io_aw() for before/after read/write.
+Hi Daniel,
 
-FWIW, when I wrote this I wasn't sure what the RISC-V memory model was going to 
-be so I just picked something generic.  In other words, it's already a generic 
-interface, just one that we're the only users of :).
+On Wednesday, 28 March 2018 10:08:26 EEST Daniel Vetter wrote:
+> On Mon, Mar 26, 2018 at 11:24:42PM +0200, Peter Rosin wrote:
+> > Hi!
+> > 
+> > [I got to v2 sooner than expected]
+> > 
+> > I have an Atmel sama5d31 hooked up to an lvds encoder and then
+> > on to an lvds panel. Which seems like something that has been
+> > done one or two times before...
+> > 
+> > The problem is that the bus_format of the SoC and the panel do
+> > not agree. The SoC driver (atmel-hlcdc) can handle the
+> > rgb444, rgb565, rgb666 and rgb888 bus formats. The hardware is
+> > wired for the rgb565 case. The lvds encoder supports rgb888 on
+> > its input side with the LSB wires for each color simply pulled
+> > down internally in the encoder in my case which means that the
+> > rgb565 bus_format is the format that works best. And the panel
+> > is expecting lvds (vesa-24), which is what the encoder outputs.
+> > 
+> > The reason I "blame" the bus_format of the drm_connector is that
+> > with the below DT snippet, things do not work *exactly* due to
+> > that. At least, it starts to work if I hack the panel-lvds driver
+> > to report the rgb565 bus_format instead of vesa-24.
+> > 
+> > 	panel: panel {
+> > 		compatible = "panel-lvds";
+> > 		
+> > 		width-mm = <304>;
+> > 		height-mm = <228;
+> > 		
+> > 		data-mapping = "vesa-24";
+> > 		
+> > 		panel-timing {
+> > 			// 1024x768 @ 60Hz (typical)
+> > 			clock-frequency = <52140000 65000000 71100000>;
+> > 			hactive = <1024>;
+> > 			vactive = <768>;
+> > 			hfront-porch = <48 88 88>;
+> > 			hback-porch = <96 168 168>;
+> > 			hsync-len = <32 64 64>;
+> > 			vfront-porch = <8 13 14>;
+> > 			vback-porch = <8 13 14>;
+> > 			vsync-len = <8 12 14>;
+> > 		};
+> > 		
+> > 		port {
+> > 			panel_input: endpoint {
+> > 				remote-endpoint = <&lvds_encoder_output>;
+> > 			};
+> > 		};
+> > 	};
+> > 	
+> > 	lvds-encoder {
+> > 		compatible = "ti,ds90c185", "lvds-encoder";
+> > 		
+> > 		ports {
+> > 			#address-cells = <1>;
+> > 			#size-cells = <0>;
+> > 			
+> > 			port@0 {
+> > 				reg = <0>;
+> > 				
+> > 				lvds_encoder_input: endpoint {
+> > 					remote-endpoint = <&hlcdc_output>;
+> > 				};
+> > 			};
+> > 			
+> > 			port@1 {
+> > 				reg = <1>;
+> > 				
+> > 				lvds_encoder_output: endpoint {
+> > 					remote-endpoint = <&panel_input>;
+> > 				};
+> > 			};
+> > 		};
+> > 	};
+> > 
+> > But, instead of perverting the panel-lvds driver with support
+> > for a totally fake non-lvds bus_format, I intruduce an API that allows
+> > display controller drivers to query the required bus_format of any
+> > intermediate bridges, and match up with that instead of the formats
+> > given by the drm_connector. I trigger this with this addition to the
+> > 
+> > lvds-encoder DT node:
+> > 		interface-pix-fmt = "rgb565";
+> > 
+> > Naming is hard though, so I'm not sure if that's good?
+> > 
+> > I threw in the first patch, since that is the actual lvds encoder
+> > I have in this case.
+> > 
+> > Suggestions welcome.
+> 
+> Took a quick look, feels rather un-atomic. And there's beend discussing
+> for other bridge related state that we might want to track (like the full
+> adjusted_mode that might need to be adjusted at each stage in the chain).
+> So here's my suggestions:
+> 
+> - Add an optional per-bridge internal state struct using the support in
+> 
+> https://dri.freedesktop.org/docs/drm/gpu/drm-kms.html#handling-driver-privat
+> e-state
+> 
+>   Yes it says "driver private", but since bridge is just helper stuff
+>   that's all included. "driver private" == "not exposed as uapi" here.
+>   Include all the usual convenience wrappers to get at the state for a
+>   bridge.
+> 
+> - Then stuff your bus_format into that new drm_bridge_state struct.
+> 
+> - Add a new bridge callback atomic_check, which gets that bridge state as
+>   parameter (similar to all the other atomic_check functions).
+> 
+> This way we can even handle the bus_format dynamically, through the atomic
+> framework your bridge's atomic_check callback can look at the entire
+> atomic state (both up and down the chain if needed), it all neatly fits
+> into atomic overall and it's much easier to extend.
+
+While I think we'll eventually need bridge states, I don't think that's need 
+yet. The bus formats reported by this patch series are static. We're not 
+talking about the currently configured format for a bridge, but about the list 
+of supported formats. This is similar to the bus_formats field present in the 
+drm_display_info structure. There is thus in my opinion no need to interface 
+this with atomic until we need to track the current format (and I think that 
+will indeed happen at some point, but I don't think Peter needs this feature 
+for now). That's why I've told Peter that I would like a bridge API to report 
+the information and haven't requested a state-based implementation.
+
+> Please also cc Laurent Pinchart on this.
+> 
+> > Changes since v1 https://lkml.org/lkml/2018/3/17/221
+> > - Add a proper bridge API to query the bus_format instead of abusing
+> >   the ->get_modes part of the code. This is cleaner but requires
+> >   changes to all display controller drivers wishing to participate.
+> > - Add patch to adjust the atmel-hlcdc driver according to the above.
+> > - Hook the new info into the bridge local to the lvds-encoder instead
+> >   of messing about with new interfaces for the panel-bridge driver.
+> > - Add patch with a DT parsing function of bus_formats in a central place.
+> > - Rephrase the addition of ti,ds90c185 to the lvds-transmitter binding.
+> > 
+> > Peter Rosin (5):
+> >   dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
+> >   drm: bridge: add API to query the expected input formats of bridges
+> >   drm: of: add display bus-format parser
+> >   drm: bridge: lvds-encoder: allow specifying the input bus format
+> >   drm/atmel-hlcdc: take bridges into account when selecting output
+> >     format
+> >  
+> >  .../bindings/display/bridge/lvds-transmitter.txt   | 14 ++++-
+> >  .../devicetree/bindings/display/bus-format.txt     | 35 +++++++++++++
+> >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     | 49 +++++++++++++++--
+> >  drivers/gpu/drm/bridge/lvds-encoder.c              | 25 +++++++++
+> >  drivers/gpu/drm/drm_bridge.c                       | 32 ++++++++++++
+> >  drivers/gpu/drm/drm_of.c                           | 59 +++++++++++++++++
+> >  include/drm/drm_bridge.h                           | 18 +++++++
+> >  include/drm/drm_of.h                               |  9 ++++
+> >  8 files changed, 237 insertions(+), 4 deletions(-)
+> >  create mode 100644
+> >  Documentation/devicetree/bindings/display/bus-format.txt
+
+-- 
+Regards,
+
+Laurent Pinchart
