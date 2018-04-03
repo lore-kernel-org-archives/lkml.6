@@ -1,113 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754999AbeDCJ4S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 05:56:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51096 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754690AbeDCJ4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:56:17 -0400
-Date: Tue, 3 Apr 2018 11:56:08 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v3 05/14] s390: vfio-ap: base implementation of VFIO AP
- device driver
-Message-ID: <20180403115608.34eabb46.cohuck@redhat.com>
-In-Reply-To: <29443c81-19b4-5811-798c-e324b34c083a@linux.vnet.ibm.com>
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1521051954-25715-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1d5a5e18-1886-dd73-a17e-9bec617507ba@linux.vnet.ibm.com>
-        <e4d7621c-a09c-bdfd-ffe2-35c5ea3acdc7@linux.vnet.ibm.com>
-        <20180327131705.46fded40.cohuck@redhat.com>
-        <29443c81-19b4-5811-798c-e324b34c083a@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1755121AbeDCJ7y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 05:59:54 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:37395 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754233AbeDCJ7v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 05:59:51 -0400
+X-Google-Smtp-Source: AIpwx48cPjCwtY0ySArm0KhhMU6I9kH6QfCi8tzJ2FA7ojLTjO3MqcAejlgTKDG34GK2OsDjc+3WYQ==
+Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-8-paul@crapouillou.net>
+ <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
+ <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
+ <af33e522-7f87-d62a-0a35-d56a403387b7@linaro.org>
+ <1522335149.1792.0@smtp.crapouillou.net>
+ <2234006b-30ff-d5a8-b14a-d6e307c06145@linaro.org>
+ <4532f9e86184afab8c46e8debd8abe61@crapouillou.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <73091b00-205b-3133-6650-21b6e3fda70f@linaro.org>
+Date: Tue, 3 Apr 2018 11:59:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <4532f9e86184afab8c46e8debd8abe61@crapouillou.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018 16:45:02 +0200
-Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+On 31/03/2018 19:46, Paul Cercueil wrote:
+> Le 2018-03-31 10:10, Daniel Lezcano a écrit :
+>> On 29/03/2018 16:52, Paul Cercueil wrote:
+>>>
+>>>
+>>> Le mer. 28 mars 2018 à 18:25, Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> a écrit :
+>>>> On 28/03/2018 17:15, Paul Cercueil wrote:
+>>>>>  Le 2018-03-24 07:26, Daniel Lezcano a écrit :
+>>>>>>  On 18/03/2018 00:29, Paul Cercueil wrote:
+>>>>>>>  This driver will use the TCU (Timer Counter Unit) present on the
+>>>>>>> Ingenic
+>>>>>>>  JZ47xx SoCs to provide the kernel with a clocksource and timers.
+>>>>>>
+>>>>>>  Please provide a more detailed description about the timer.
+>>>>>
+>>>>>  There's a doc file for that :)
+>>>>
+>>>> Usually, when there is a new driver I ask for a description in the
+>>>> changelog for reference.
+>>>>
+>>>>>>  Where is the clocksource ?
+>>>>>
+>>>>>  Right, there is no clocksource, just timers.
+>>>>>
+>>>>>>  I don't see the point of using channel idx and pwm checking here.
+>>>>>>
+>>>>>>  There is one clockevent, why create multiple channels ? Can't you
+>>>>>> stick
+>>>>>>  to the usual init routine for a timer.
+>>>>>
+>>>>>  So the idea is that we use all the TCU channels that won't be used
+>>>>> for PWM
+>>>>>  as timers. Hence the PWM checking. Why is this bad?
+>>>>
+>>>> It is not bad but arguable. By checking the channels used by the pwm in
+>>>> the code, you introduce an adherence between two subsystems even if it
+>>>> is just related to the DT parsing part.
+>>>>
+>>>> As it is not needed to have more than one timer in the time framework
+>>>> (at least with the same characteristics), the pwm channels check is
+>>>> pointless. We can assume the author of the DT file is smart enough to
+>>>> prevent conflicts and define a pwm and a timer properly instead of
+>>>> adding more code complexity.
+>>>>
+>>>> In addition, simplifying the code will allow you to use the timer-of
+>>>> code and reduce very significantly the init function.
+>>>
+>>> That's what I had in my V1 and V2, my DT node for the timer-ingenic
+>>> driver
+>>> had a "timers" property (e.g. "timers = <4 5>;") to select the channels
+>>> that
+>>> should be used as timers. Then Rob told me I shouldn't do that, and
+>>> instead
+>>> detect the channels that will be used for PWM.
+>>>
+>>
+>> [ ... ]
+>>
+>> How do you specify the channels used for PWM ?
+> 
+> To detect the channels that will be used as PWM I parse the whole
+> devicetree
+> searching for "pwms" properties; check that the PWM handle is for our
+> TCU PWM
+> driver; then read the PWM number from there.
+> 
+> Of course it's hackish, and it only works for devicetree. I preferred the
+> method with the "timers" property.
 
-> On 27/03/2018 13:17, Cornelia Huck wrote:
-> > On Thu, 15 Mar 2018 13:25:25 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >  
-> >> On 03/15/2018 09:25 AM, Pierre Morel wrote:  
-> >>> On 14/03/2018 19:25, Tony Krowiak wrote:  
-> >>>> +config VFIO_AP
-> >>>> +    def_tristate m  
-> >>> not sure it must be module by default.
-> >>> I would not set it by default.  
-> >> Connie also asked about this in the last review, so I will go ahead
-> >> and change it.  
-> >>>     
-> >>>> +    prompt "VFIO support for AP devices"
-> >>>> +    depends on ZCRYPT && VFIO_MDEV_DEVICE  
-> >>> VFIO_MDEV_DEVICE is a general feature *needed* by VFIO_AP
-> >>> and has no use case by its own. If it is set it is obviously because some
-> >>> mediated device drivers needs it.
-> >>> while ZCRYPT is a Z feature which may be set without VFIO_AP.
-> >>>
-> >>> So you need:
-> >>>
-> >>> config VFIO_AP
-> >>>      def_tristate n
-> >>>      prompt "VFIO support for AP devices"
-> >>>      depends on ZCRYPT
-> >>>      select VFIO_MDEV
-> >>>      select VFIO_MDEV_DEVICE
-> >>> ...  
-> >> I was thinking the same just yesterday and I agree, this makes sense.  
-> > OTOH, nobody else seems to do a select on these symbols so far.
-> >
-> > If you decide to go that route, you'll also need to depend on VFIO  
-> 
-> I think a select is better (again).
-> 
-> > (otherwise you could end up selecting symbols with unmet dependencies).
-> > All in all, I prefer the 'depends' approach.
-> >  
-> Why do you prefer this approach?
+Do you have a DT portion describing that? Eg somewhere in the kernel's
+git tree ?
 
-Hm, I thought I had already written a mail, but apparently I didn't....
- 
-> I can tell you why I prefer a mixed approach:
-> 
-> We have two tools, depends and select.
-> 
-> It seems to me that depends should be used for things we can not choose 
-> to be there or not, but things that just are there, like hardware 
-> dependencies. For example MMU, CPU type, CRYPTO hardware...
-> 
-> Select on the other hand is useful to choose things that we need like 
-> libraries, VFIO, VIRTIO, crypto libraries etc.
-> 
-> Using this policy is clear and makes easy to choose functionalities and 
-> get the utilities automatically.
-> 
-> On the other hand, only using depends makes things to hide the 
-> functionalities behind the utilities.
+>From what I understood, we can specify the channel for a pwm but not for
+a timer, there is certainly something I'm missing.
 
-My view is the following:
-- select is useful for library functionality or for enabling
-  architecture-specific optimizations (the HAVE_xxx symbols),
-  especially things you don't want the user to deal with. If you select
-  something, you need to take care of any dependencies yourself.
-- depends is useful for more complex dependencies, and especially
-  things you don't want automagically enabled. [In modern menuconfig,
-  it is easy to figure out any missing dependencies for a config option
-  anyway.]
+>>>>>>>
+>>>>>>>  +config INGENIC_TIMER
+>>>>>>>  +    bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
+>>>>>>>  +    depends on MACH_INGENIC || COMPILE_TEST
+>>>>>>
+>>>>>>  bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if
+>>>>>> COMPILE_TEST
+>>>>>>
+>>>>>>  Remove the depends MACH_INGENIC.
+>>>>>
+>>>>>  This driver is not useful on anything else than Ingenic SoCs, why
+>>>>> should I
+>>>>>  remove MACH_INGENIC then?
+>>>>
+>>>> For COMPILE_TEST on x86.
+>>>
+>>> Well that's a logical OR right here, so it will work...
+>>
+>> Right, I missed the second part of the condition. For consistency
+>> reason, we don't add a dependency on the platform. The platform will
+>> select it. Look the other timer options and you will see there is no
+>> MACH deps. I'm trying consolidating all these options to have same
+>> format and hopefully factor them out.
+> 
+> I'm all for factorisation, but what I dislike with not depending on
+> MACH_INGENIC, is that the driver now appears in the menuconfig for
+> every arch, even if it only applies to one MIPS SoC.
 
-The mdev infrastructure is too complex to be considered a simple
-library IMO (cf. the missing VFIO dependency).
+Can you do the following change?
+
+bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if COMPILE_TEST
+
+so it will appear only when the COMPILE_TEST option is set whatever the
+platform which is the purpose of this option to increase compile test
+coverage.
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
