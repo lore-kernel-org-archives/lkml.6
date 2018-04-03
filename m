@@ -1,121 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754774AbeDCFXM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 01:23:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753350AbeDCFXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 01:23:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A75C214EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Mon, 2 Apr 2018 22:23:10 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
- fsync
-Message-ID: <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180330055126.36202-1-jaegeuk@kernel.org>
- <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
- <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
+        id S1754784AbeDCFj7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 01:39:59 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:16450 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754305AbeDCFj5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 01:39:57 -0400
+Subject: Re: [PATCH v5 06/12] PCI: designware-ep: Make dw_pcie_ep_set_bar()
+ handle 64-bit BARs properly
+To: Niklas Cassel <nks@flawful.org>
+References: <20180328115018.31921-1-niklas.cassel@axis.com>
+ <20180328115018.31921-7-niklas.cassel@axis.com>
+ <45971780-3a46-061d-bb76-2f450401c797@ti.com>
+ <20180402193703.GB23587@flawful.org>
+CC: Niklas Cassel <niklas.cassel@axis.com>,
+        <cyrille.pitchen@free-electrons.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <niklass@axis.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <fbb19171-5318-70c5-d6fa-9a405b5c8db4@ti.com>
+Date: Tue, 3 Apr 2018 11:09:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180402193703.GB23587@flawful.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03, Chao Yu wrote:
-> On 2018/3/31 0:30, Jaegeuk Kim wrote:
-> > Change log from v1:
-> >  - add more description
-> > 
-> > This fixes xfstests/generic/392.
-> > 
-> > The failure was caused by different times between 1) one marked in the last
-> > fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
-> > The reason was that we skipped updating inode block at 1), since its i_size
-> > was recoverable along with 4KB-aligned data writes, which was fixed by:
-> >   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/f2fs.h  | 15 +++++++++++++++
-> >  fs/f2fs/inode.c |  4 ++++
-> >  2 files changed, 19 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 000f93f6767e..675c39d85111 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -664,6 +664,7 @@ struct f2fs_inode_info {
-> >  	kprojid_t i_projid;		/* id for project quota */
-> >  	int i_inline_xattr_size;	/* inline xattr size */
-> >  	struct timespec i_crtime;	/* inode creation time */
-> > +	struct timespec i_disk_time[4];	/* inode disk times */
-> >  };
-> >  
-> >  static inline void get_extent_info(struct extent_info *ext,
-> > @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
-> >  	f2fs_mark_inode_dirty_sync(inode, true);
-> >  }
-> >  
-> > +static inline bool time_equal(struct timespec a, struct timespec b)
-> > +{
-> > +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
-> > +}
-> 
-> We can use existing timespec_equal in <linux/time.h> instead of defining a
-> duplicated one?
 
-It is defined with const parameters.
 
+On Tuesday 03 April 2018 01:07 AM, Niklas Cassel wrote:
+> On Thu, Mar 29, 2018 at 03:17:11PM +0530, Kishon Vijay Abraham I wrote:
+>> Hi,
+>>
+>> On Wednesday 28 March 2018 05:20 PM, Niklas Cassel wrote:
+>>> Since a 64-bit BAR consists of a BAR pair, we need to write to both
+>>> BARs in the BAR pair to setup the BAR properly.
+>>>
+>>> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+>>> ---
+>>>  drivers/pci/dwc/pcie-designware-ep.c | 11 +++++++++--
+>>>  1 file changed, 9 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+>>> index 5a0bb53c795c..571b90f88d84 100644
+>>> --- a/drivers/pci/dwc/pcie-designware-ep.c
+>>> +++ b/drivers/pci/dwc/pcie-designware-ep.c
+>>> @@ -138,8 +138,15 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
+>>>  		return ret;
+>>>  
+>>>  	dw_pcie_dbi_ro_wr_en(pci);
+>>> -	dw_pcie_writel_dbi2(pci, reg, size - 1);
+>>> -	dw_pcie_writel_dbi(pci, reg, flags);
+>>> +	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+>>> +		dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
+>>> +		dw_pcie_writel_dbi(pci, reg, flags);
+>>> +		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
+>>> +		dw_pcie_writel_dbi(pci, reg + 4, 0);
+>>> +	} else {
+>>> +		dw_pcie_writel_dbi2(pci, reg, size - 1);
+>>> +		dw_pcie_writel_dbi(pci, reg, flags);
+>>> +	}
+>>
+>>
+>> I think this should work too?
+>> 	dw_pcie_writel_dbi2(pci, reg, lower_32_bits(size - 1));
+>> 	dw_pcie_writel_dbi(pci, reg, flags);
+>>
+>> 	if (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) {
+>> 		dw_pcie_writel_dbi2(pci, reg + 4, upper_32_bits(size - 1));
+>> 		dw_pcie_writel_dbi(pci, reg + 4, 0);
+>> 	}
+>>
 > 
-> > +
-> >  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
-> >  {
-> >  	bool ret;
-> > @@ -2474,6 +2480,15 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
-> >  			i_size_read(inode) & ~PAGE_MASK)
-> >  		return false;
-> >  
-> > +	if (!time_equal(F2FS_I(inode)->i_disk_time[0], inode->i_atime))
-> > +		return false;
-> > +	if (!time_equal(F2FS_I(inode)->i_disk_time[1], inode->i_ctime))
-> > +		return false;
-> > +	if (!time_equal(F2FS_I(inode)->i_disk_time[2], inode->i_mtime))
-> > +		return false;
-> > +	if (!time_equal(F2FS_I(inode)->i_disk_time[3], F2FS_I(inode)->i_crtime))
-> > +		return false;
-> > +
-> >  	down_read(&F2FS_I(inode)->i_sem);
-> >  	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
-> >  	up_read(&F2FS_I(inode)->i_sem);
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index 401f09ccce7e..70aba580f4b0 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -444,6 +444,10 @@ void update_inode(struct inode *inode, struct page *node_page)
-> >  	if (inode->i_nlink == 0)
-> >  		clear_inline_node(node_page);
-> >  
-> > +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-> > +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-> > +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
-> > +	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+> Hello Kishon,
 > 
-> We need initialize them in do_read_inode?
+> I agree, your suggestion is more neat.
+> 
+> 
+> Kishon, please tell me if you insist that the long if-statement
+> in pci_epc_set_bar() should be split, since there are 5 different
+> conditions. Because imho, having 5 succeeding if-statements isn't
 
-Done.
-Thanks,
+I'm okay as it is as well if Lorenzo/Bjorn is also fine with it.
 
-> 
-> Thanks,
-> 
-> >  }
-> >  
-> >  void update_inode_page(struct inode *inode)
-> > 
+Thanks
+Kishon
