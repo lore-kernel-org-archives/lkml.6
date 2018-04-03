@@ -1,60 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753207AbeDCTjd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:39:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39008 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752478AbeDCTja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:39:30 -0400
-Date: Tue, 3 Apr 2018 15:39:27 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 15/24] mm: Introduce __vm_normal_page()
-Message-ID: <20180403193927.GD5935@redhat.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
+        id S1752989AbeDCTlH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:41:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751749AbeDCTlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:41:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F71214EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 3 Apr 2018 15:41:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Petr Mladek <pmladek@suse.com>
+Subject: [RFC][PATCH] tracing, printk: Force no hashing when trace_printk()
+ is used
+Message-ID: <20180403154102.150b1be0@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1520963994-28477-16-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 06:59:45PM +0100, Laurent Dufour wrote:
-> When dealing with the speculative fault path we should use the VMA's field
-> cached value stored in the vm_fault structure.
-> 
-> Currently vm_normal_page() is using the pointer to the VMA to fetch the
-> vm_flags value. This patch provides a new __vm_normal_page() which is
-> receiving the vm_flags flags value as parameter.
-> 
-> Note: The speculative path is turned on for architecture providing support
-> for special PTE flag. So only the first block of vm_normal_page is used
-> during the speculative path.
+While debugging an issue I needed to see if the pointers were being
+processed correctly with trace_printk() and after using "%p" and
+triggering my bug and trace output, I was disappointed that all my
+pointers were random garbage and didn't produce anything useful for me.
+I had to rewrite all the trace_printk()s to use "%lx" instead.
 
-Might be a good idea to explicitly have SPECULATIVE Kconfig option depends
-on ARCH_PTE_SPECIAL and a comment for !HAVE_PTE_SPECIAL in the function
-explaining that speculative page fault should never reach that point.
+As trace_printk() is not to be used for anything but debugging, and
+this is enforced by printing in the dmesg:
 
-Cheers,
-Jérôme
+ **********************************************************
+ **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
+ **                                                      **
+ ** trace_printk() being used. Allocating extra memory.  **
+ **                                                      **
+ ** This means that this is a DEBUG kernel and it is     **
+ ** unsafe for production use.                           **
+ **                                                      **
+ ** If you see this message and you are not debugging    **
+ ** the kernel, report this immediately to your vendor!  **
+ **                                                      **
+ **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
+ **********************************************************
+
+on boot up if trace_printk() is used (or when a module is loaded that
+uses trace_printk()), we can safely assume that the use of
+trace_printk() is not going to be accidentally added to production code
+(and if it is, they should be whacked with an overcooked spaghetti
+noodle).
+
+A new bool is added called "trace_debug" and if it is set, then %p will
+not be hashed.
+
+Both trace_debug is set and kptr_restrict is set to zero in the same
+code that produces the above banner. This will allow trace_printk() to
+not be affected by security code, as trace_printk() should never be run
+on a machine that needs security of this kind.
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index e9b603ee9953..7ef6c31d874a 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -278,6 +278,7 @@ static inline void printk_safe_flush_on_panic(void)
+ #endif
+ 
+ extern int kptr_restrict;
++extern bool trace_debug;
+ 
+ extern asmlinkage void dump_stack(void) __cold;
+ 
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 0f47e653ffd8..cb58cd4ee3a7 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2864,6 +2864,10 @@ void trace_printk_init_buffers(void)
+ 
+ 	buffers_allocated = 1;
+ 
++	/* This is a debug kernel, allow pointers to be shown */
++	trace_debug = true;
++	kptr_restrict = 0;
++
+ 	/*
+ 	 * trace_printk_init_buffers() can be called by modules.
+ 	 * If that happens, then we need to start cmdline recording
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 89f8a4a4b770..425644ceedcb 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1345,6 +1345,7 @@ char *uuid_string(char *buf, char *end, const u8 *addr,
+ }
+ 
+ int kptr_restrict __read_mostly;
++bool trace_debug __read_mostly;
+ 
+ static noinline_for_stack
+ char *restricted_pointer(char *buf, char *end, const void *ptr,
+@@ -1962,6 +1963,10 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 		return pointer_string(buf, end, ptr, spec);
+ 	}
+ 
++	/* When the kernel is in debugging mode, show all pointers */
++	if (trace_debug)
++		return restricted_pointer(buf, end, ptr, spec);
++
+ 	/* default is to _not_ leak addresses, hash before printing */
+ 	return ptr_to_id(buf, end, ptr, spec);
+ }
