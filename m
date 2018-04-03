@@ -1,223 +1,116 @@
-Return-Path: <cohuck@redhat.com>
-X-Google-Smtp-Source: AB8JxZqDZUCbEbPiqIZ7ZTJx7QWMPItl3dHfsrRxVP2Qd/1VbT7cSg9CkwTNxjM7qu6AqjugJd7q
-ARC-Seal: i=1; a=rsa-sha256; t=1524832614; cv=none;
+Return-Path: <cpandya@codeaurora.org>
+X-Google-Smtp-Source: AIpwx49csB6WQGC22rLaQ/5XApn0zwbHibe8RGr4xmX4xP+hDfPc6+AHbnDXQz+zcbDGbjOyGLTL
+ARC-Seal: i=1; a=rsa-sha256; t=1522742462; cv=none;
         d=google.com; s=arc-20160816;
-        b=kwb50yvXgCFmd7TaWhCANJtMY0U4ciUfp3gA38aERyKsF5L0RU9NGQNzmKksPahSZ7
-         zOAljP17E/mgP1kNI6e90hieuV6WtaStmdYY7YZ6//yKBXsDYk9sqPR0BUBjmGYvU3uV
-         5xOIny+EgVKX6+38WDaWz0yV0TsFGoQUhU7RVMYXq7DKy5vsR+29YFfVCBnnxy8pJdh/
-         k6a+7P4E/yVp3YnUHaGHS4qQmAzanhfR/XWzycvFz08k1F4xeqQj+2LrWES6bZoSMQBP
-         6pcvsCXcx6y/xt3mLOMqtDqRfIikla1xhDA/dkSMVkQLoUyyGV9zz7/gVsNURvVZ9K8l
-         +fIQ==
+        b=u72EEvCH2a//YmKYyOYxdLtknQs8iRBNVXQdMPzgvU7tIZNwbAFALQ57gbLNIlWcXF
+         +jeUyWgClFwV3BcRS/7fFZ+64CNhiS40hdMcasoT5Kg1pKjyS1wrd594x7FQcmtbsgX0
+         P3L3GDuZ5Oos4sc+QStEFHxDzJVOSBnCz4no/Jl7zzEoLriqrVBtOTfCdL3QwN3nI2/O
+         5iAIDDxyzSH4I61bd57V14XVcmZnRoVfkjPyT5rkJySL1KZ5DuTC0FIf5WjhxyAuq/6d
+         vTn+C/plq2qIazFYc7+elmEdL7umUDbBBezG2x+3nKQw7mtUogcWWUsdZi1Doh5FwaEG
+         GSIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=Hy6TZFc4ocMmHRCunXvx0BEsKAdi4CJvw/tWIbFE0Ak=;
-        b=cBipDRxUkij62GaQoAQGytt+l7gIuFiI6JvSngGRywex1I6eZ8yXR9m5vAeifz3uIP
-         I7cPJeIit4o/8RwYEuqFGm/uOmaeqKeLtkM5fq1pC/oHJoCv+DxS1OXxkNuoys8vCROm
-         EBJSCHJvcw0FQ9rUN1w5nW77jLUTbMZpCdUxCZnpOHLD4FMbN/7ygWKG9BA33wKAqOUQ
-         Z48pbdgQpzU+8J/fTsMTAjkkz5HczNMlTiXFUnxveF4hJwHql/EOjzqBlYww5B2pKOmz
-         zOgUrQWhG60VU+OldNjKQOMpxX12GVMzWDlmTfzINO+mxGQy/HQyjMx3/a1j87M7v5oL
-         ZrCg==
+        h=message-id:date:subject:cc:to:from:dmarc-filter:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=izlosYSX2Z2ixUlImOJkArGmhuf2QgixllKKuHJ8PWE=;
+        b=XVgkXf7jDjetv1aF4d9OLTpbuZ2NEISuowYBsITpDmtcLLEPKe0hvMipiaaagrEy6X
+         vuIxzI9k9RNDe6th8Vdz2TTKtpa8U0L9kft9foPjmKTS4YpkMImdySR9agcH/dt1mQ0P
+         cr3jJ/ZrBEPI4Kw6zNme+He0xm6cwoPGOGkLH6ayELfRm7UTze2i+5Wv2PucyIGUIuA1
+         9Lh+6qXGJBv0zd0dBFur0dP+yWR3ZZy2wCqSUtZW05+kOhtNIUNXhtifFQ++H3UukLkO
+         ZODXbkRSrb9DWnfygaVm6rd50OYnkuPxFwK5eb2bZPG5/1pxc5nXGkZrorz+UUCBX3Oe
+         iF/g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of cohuck@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=cohuck@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=NTIz6mIW;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WoPF3OXs;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of cohuck@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=cohuck@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Fri, 27 Apr 2018 14:36:50 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>, kwankhede@nvidia.com,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, cordius.wu@huawei.com,
- eskultet@redhat.com
-Subject: Re: [PATCH RFC] vfio/mdev: delay uevent after initialization
- complete
-Message-ID: <20180427143650.69cb4a10.cohuck@redhat.com>
-In-Reply-To: <20180425154211.GA6784@kroah.com>
-References: <20180209102716.32253-1-cohuck@redhat.com>
-	<20180212142057.66e2b15c@w520.home>
-	<20180213140901.44d55aa4.cohuck@redhat.com>
-	<20180213171502.167da0e9@w520.home>
-	<20180214182035.69f69c49.cohuck@redhat.com>
-	<20180425154211.GA6784@kroah.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=NTIz6mIW;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WoPF3OXs;
+       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C14A6602B7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+From: Chintan Pandya <cpandya@codeaurora.org>
+To: catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	mark.rutland@arm.com,
+	toshi.kani@hpe.com
+Cc: arnd@arndb.de,
+	ard.biesheuvel@linaro.org,
+	marc.zyngier@arm.com,
+	james.morse@arm.com,
+	kristina.martsenko@arm.com,
+	takahiro.akashi@linaro.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v8 0/4] Fix issues with huge mapping in ioremap for ARM64
+Date: Tue,  3 Apr 2018 13:30:42 +0530
+Message-Id: <1522742446-5084-1-git-send-email-cpandya@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1592397756759604308?=
-X-GMAIL-MSGID: =?utf-8?q?1598902884489315953?=
+X-GMAIL-THRID: =?utf-8?q?1596711199968894044?=
+X-GMAIL-MSGID: =?utf-8?q?1596711199968894044?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 25 Apr 2018 17:42:11 +0200
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+This series of patches are follow up work (and depends on)
+Toshi Kani <toshi.kani@hpe.com>'s patches "fix memory leak/
+panic in ioremap huge pages".
 
-> On Wed, Feb 14, 2018 at 06:20:35PM +0100, Cornelia Huck wrote:
-> > [cc:ing Greg for his opinion on this; retaining quoting for context]  
-> 
-> Ick, just found this in my inbox, sorry for the delay...
-> 
-> > 
-> > On Tue, 13 Feb 2018 17:15:02 -0700
-> > Alex Williamson <alex.williamson@redhat.com> wrote:
-> >   
-> > > On Tue, 13 Feb 2018 14:09:01 +0100
-> > > Cornelia Huck <cohuck@redhat.com> wrote:
-> > >   
-> > > > On Mon, 12 Feb 2018 14:20:57 -0700
-> > > > Alex Williamson <alex.williamson@redhat.com> wrote:
-> > > >     
-> > > > > On Fri,  9 Feb 2018 11:27:16 +0100
-> > > > > Cornelia Huck <cohuck@redhat.com> wrote:
-> > > > >       
-> > > > > > The registration code first registers the mdev device, and then
-> > > > > > proceeds to populate sysfs. An userspace application that listens
-> > > > > > for the ADD uevent is therefore likely to look for sysfs entries
-> > > > > > that have not yet been created.
-> > > > > > 
-> > > > > > The canonical way to fix this is to use attribute groups that are
-> > > > > > registered by the driver core before it sends the ADD uevent; I
-> > > > > > unfortunately did not find a way to make this work in this case,
-> > > > > > though.
-> > > > > > 
-> > > > > > An alternative approach is to suppress uevents before we register
-> > > > > > with the core and generate the ADD uevent ourselves after the
-> > > > > > sysfs infrastructure is in place.
-> > > > > > 
-> > > > > > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-> > > > > > ---
-> > > > > > 
-> > > > > > This feels like a band-aid, but I can't figure out how to handle creating
-> > > > > > attribute groups when there's a callback in the parent involved.
-> > > > > > 
-> > > > > > This should address the issue with libvirt's processing of mdevs raised in
-> > > > > > https://www.redhat.com/archives/libvir-list/2018-February/msg00023.html
-> > > > > > - although libvirt will still need to deal with older kernels, of course.
-> > > > > > 
-> > > > > > Best to consider this an untested patch :)        
-> > > > > 
-> > > > > I agree, this feels like a band-aide.  If every device in the kernel
-> > > > > needs to suppress udev events until until some key component is added,
-> > > > > that suggests that either udev is broken in general or not being used
-> > > > > as intended.        
-> > > > 
-> > > > I think udev is working exactly as designed - it's more a problem of
-> > > > when the kernel is sending what kind of notification to userspace, and
-> > > > the particular issue here is how the code sending the event (driver
-> > > > core) and the code assembling part of the user interface (mdev)
-> > > > interact.
-> > > >     
-> > > > > Zongyong submitted a different proposal to fix this
-> > > > > here[1].  That proposal seems a bit more sound and has precedence
-> > > > > elsewhere in the kernel.  What do you think of that approach?  We
-> > > > > don't need both afaict.  Thanks,
-> > > > > 
-> > > > > Alex
-> > > > > 
-> > > > > [1]https://patchwork.kernel.org/patch/10196197/      
-> > > > 
-> > > > Zongyong's patch is sending an additional CHANGE uevent, and I agree
-> > > > that doing both does not make sense. However, I think the CHANGE uevent
-> > > > is not quite suitable in this case, and delaying the ADD uevent is
-> > > > better.
-> > > > 
-> > > > [Warning, the following may be a bit rambling.]
-> > > > 
-> > > > The Linux driver model works under the assumption that any device is
-> > > > represented as an in-kernel object that exposes information and knobs
-> > > > through sysfs. As long as the device exists, userspace can poke at the
-> > > > sysfs entries and retrieve information or configure things.
-> > > > 
-> > > > The idea of the 'ADD' uevent is basically to let userspace know that
-> > > > there is now a new device with its related sysfs entries, and it may
-> > > > look at it and configure it. IOW, if I (as a userspace application) get
-> > > > the ADD uevent, I expect to be able to look at the device's sysfs
-> > > > entries and find all the files/directories that are usually there,
-> > > > without having to wait.
-> > > > 
-> > > > This expectation is broken if a device is first registered with the
-> > > > driver core (generating the ADD uevent) and the driver adds sysfs
-> > > > attributes later. To fix this, the driver core added a way to specify
-> > > > default attribute groups for the device, which are registered by the
-> > > > driver core itself before it generates the ADD uevent. Unfortunately, I
-> > > > did not see a way to do this here (which does not mean there isn't).
-> > > > The alternative was to prevent the driver core from sending the ADD
-> > > > uevent and do it from the mdev code when it was ready.
-> > > > 
-> > > > The 'CHANGE' uevent, on the other hand, tells userspace that something
-> > > > has changed for the device (that already existed). I (as a userspace
-> > > > application) would expect to see it if, for example, the information
-> > > > exposed via sysfs has changed, or maybe even if new, optional, entries
-> > > > have appeared and I might want to rescan. With Zongyong's patch,
-> > > > userspace gets the CHANGE uevent for something that was already
-> > > > expected to be there, and is now _really_ there. It does give userspace
-> > > > an indication that it can now work with the device (which certainly
-> > > > improves things), but I would prefer to get rid of the too-early uevent
-> > > > completely so that userspace does not get notified at all before the
-> > > > device is completely present in sysfs.
-> > > > 
-> > > > So, in short, my patch does 'don't tell userspace until we're really
-> > > > done', and Zongyong's patch does 'tell userspace again when we're
-> > > > really done'.    
-> > > 
-> > > This all sounds reasonable, but don't we have this synchronization
-> > > problem _everywhere_?  I apologize for referencing this bug because it's
-> > > not public (https://bugzilla.redhat.com/show_bug.cgi?id=1376907) but
-> > > the gist of it is that soft-unplugging PCI devices using the remove
-> > > entry in sysfs and re-adding with rescan sysfs entry results in libvirt
-> > > seeing the ADD uevent before the PCI config attribute is created and it
-> > > balks on the device.   
-> > 
-> > Yikes. So it seems that _any_ PCI device is incomplete when the ADD
-> > uevent is sent? Or does this just apply to an unfortunately large
-> > number of drivers?  
-> 
-> What do you mean by "incomplete"?  The device is added to the bus at
-> that point in time, yes.  BUT, if a driver decides to add their own
-> attributes to the sysfs node, then that will happen afterward, unless
-> the bus has properly set that up (there are default attributes it can
-> use for that type of thing.)
-> 
-> It's a common problem that has been there since the beginning, and now
-> there's a new uevent that is "KOBJ_BIND" that is emitted when the driver
-> is finished being "bound" to the device.  Is that what you are looking
-> for here?
+This series of patches are tested on 4.9 kernel with Cortex-A75
+based SoC.
 
-Yes, that sounds exactly like the right thing (libvirt had been looking
-for the config pci device attribute).
+These patches can also go into '-stable' branch (if accepted)
+for 4.6 onwards.
 
-> 
-> > > So at the PCI core we have this same issue and
-> > > developers are saying that there's no guarantee that sysfs entries
-> > > won't be added and removed at any time in the lifecycle of the device
-> > > and it's not the kernel's responsibility to provide that
-> > > synchronization.   
-> > 
-> > I think this is mixing up two things:
-> > - sysfs entries that are there by default. These not being in place
-> >   when the ADD uevent is sent sounds broken.  
-> 
-> Yes it is, fix that in your bus code, default device attributes should
-> always be set up before ADD happens.  Driver specific ones will be there
-> by the time BIND happens.
+>From V7->V8:
+ - Properly fixed compilation issue in x86 file
 
-In this case (mdev), the mediated device is interacting with the
-physical device as well (including specific attributes). I looked at
-the code, but soon was lost in a maze of twisty passages, all alike.
-Suppressing the uevent was a quick fix, but likely not the best one.
+>From V6->V7:
+ - Fixed compilation issue in x86 case
+ - V6 patches were not properly enumarated
 
-> 
-> > - Optional sysfs entries that might change. There may be a case for
-> >   those to be added/removed later on (probably paired with a CHANGE
-> >   uevent.)  
-> 
-> CHANGE is pretty rare, and best used for things that are polled.  Or
-> major system events, like docking station changes.  Not for things that
-> happen all the time (like power state changes.)
-> 
-> does that help?
+>From V5->V6:
+ - Use __flush_tlb_kernel_pgtable() for both PUD and PMD. Remove
+   "bool tlb_inv" based variance as it is not need now
+ - Re-naming for consistency
 
-Yes, thanks!
+>From V4->V5:
+ - Add new API __flush_tlb_kernel_pgtable(unsigned long addr)
+   for kernel addresses
+
+>From V3->V4:
+ - Add header for 'addr' in x86 implementation
+ - Re-order pmd/pud clear and table free
+ - Avoid redundant TLB invalidatation in one perticular case
+
+>From V2->V3:
+ - Use the exisiting page table free interface to do arm64
+   specific things
+
+>From V1->V2:
+ - Rebased my patches on top of "[PATCH v2 1/2] mm/vmalloc:
+   Add interfaces to free unmapped page table"
+ - Honored BBM for ARM64
+
+Chintan Pandya (4):
+  ioremap: Update pgtable free interfaces with addr
+  arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable
+  arm64: Implement page table free interfaces
+  Revert "arm64: Enforce BBM for huge IO/VMAP mappings"
+
+ arch/arm64/include/asm/tlbflush.h |  6 ++++++
+ arch/arm64/mm/mmu.c               | 37 +++++++++++++++++++++++++------------
+ arch/x86/mm/pgtable.c             |  8 +++++---
+ include/asm-generic/pgtable.h     |  8 ++++----
+ lib/ioremap.c                     |  4 ++--
+ 5 files changed, 42 insertions(+), 21 deletions(-)
+
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
