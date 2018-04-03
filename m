@@ -1,181 +1,199 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3387485-1522950494-2-961882876780502080
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: to='ISO-8859-1', plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522950493; b=k2DOXT8wn2zohaY1dN0tM++MK+39Ldj8hejz7tE+5d0QrLnsEN
-    Pcu1eeucicr+9mIPkAq+zGPP0hEpOoqrOiGuVDcKJsAs+eYN6O/g33ciRo0d065s
-    +jTdqfD0k7DgAcvySQGWBAUuQ84G7PanL5+tRQc8qzpvDnekgbQbMTVnMG1JAoit
-    TryaY3bn00D5c2oUXCZLyvEm2VynItcf1GXkxpvRKfsf3irwv3spVaePIfSnNnwZ
-    GyJeCZ5eyskRbDSjzizTv2mayQ+ZsNPFyXdqiFEPY5nuDFDoUHA0S+ei1Q44P7Gz
-    ZtbUtLueRIE3lVreIjWUdktzABajYzEfTr5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:reply-to:to:cc
-    :date:in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522950493;
-    bh=Y7Vm7j1fZS5/xLezaGzSJY+vKGoSPbPxYSeoAZAofiY=; b=Gxo12RVJypkW
-    NaeKvVbnETN/8sDmb+X2Ua5MrVGEb/AIbq4EEHbcdnVHhJLYy8T7WJqePeMzp/7T
-    TdPnB8xzU2kFx102SUaOrON/CCdPBS+FbgSjfVk7eCZMtSDpMBZAqyUSluWe1XV8
-    lmcdX/0EYOGmygY6QEe6+bcflIX9h8iphqE0BJFOwqW3t87tIhNfrbXJXR4fu80g
-    PjmcoYklgKebigtWbK59egWY8oYaYmn9fY7sVoca+xIiBk/SftSniPPsYrZoyd7V
-    RLd5XQ0NCDlmpXIsq123Oo4ZCZKRp9kkdR9mWddKZdBCWsNCDDkYSXTthmPN5Pam
-    FbkdokZftA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNqs0YE/R49SUJQWwqEdi4LF26eHXKDrwXyd7/+QYZry4GOImu1nAH0j7mJP/ZA/gj3cSbxmiPexgB52r/htq2tk/cintroRmy7pXDdaQPN+4HQJWWkN
-    6RAA9iNuE9rCiDWI/hEYfCgHmp6Te5Ftn6ZJB79PI1rD5aJmbzJW+qHTACOy9okJdHbmju2lOHpG/RpaKuw2iyevKLliM3tNct6Wmc64qHAYihwBhceVN4xs
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=unC3xbkhgIKkgdBOvdkA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751649AbeDERsF (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 13:48:05 -0400
-Received: from mga07.intel.com ([134.134.136.100]:61096 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751579AbeDERsD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 5 Apr 2018 13:48:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,411,1517904000";
-   d="scan'208";a="217900657"
-Message-ID: <1522951938.2418.12.camel@dk-H97M-D3H>
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/dp: Send DPCD ON for MST before
- phy_up
-From: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Reply-To: dhinakaran.pandiyan@intel.com
-To: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, stable@vger.kernel.org,
-        Laura Abbott <labbott@redhat.com>
-Date: Thu, 05 Apr 2018 11:12:18 -0700
-In-Reply-To: <20180405163853.GK5453@intel.com>
-References: <20180404232721.28044-1-lyude@redhat.com>
-         <20180405163853.GK5453@intel.com>
+Return-Path: <stuyoder@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522799866; cv=none;
+        d=google.com; s=arc-20160816;
+        b=fFcYcjQKfmrLNYYVXU5XwDK0p/HvYReFRnv2Qgr/NcDYh6OiUzdhfH396KpGl3RmWK
+         Y2zNE0/nGl57An6Ng8pw0r8NK9nkHohOE3Bx2uAOX4k/DQ8Lv7jbfqHdqc3THX0hQB+S
+         TuIUzkYlLyPJT8HBpTcw/QbneL0pUcvURFCRRZXtTXo2irs6LxIK//MY6afJOEEg/nIO
+         8AQkdfyVKjKSNGjhxtr6irOcflzfdQz34qFo9aKSI2GoPVTNS3Elsrrjs7Kj70r2ccIY
+         yxrEF97M8W4vkdCZlMbzR4OcMWN5J4FxshsJc6B8YlTtmDwNLKNTALOwtWJJ1qHvgYxW
+         Rmhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=HcZKPrX/cIMlRH+vCSxi4MOtfO5pO7Ui5MmDhXLmd/w=;
+        b=YFCq4BusDvB87IFrmWD2PL+UEVwRJe0N/RNGJuDBYBeqZn9p6NzokZL59k/6Ek+8PA
+         gYTN3hDknCrAQg5Rr61QfK6quw3z7JB9gnTrEusOPDEyB+iCzkWLVF64Y53rzJKH/Fve
+         +sitFDJbCjxMtTKnMHYXNyLDMm27iNOP2psY8F0NgzchwJmpf8tKPJ9PUrE3THE1g1w8
+         /v3zF4jHzNDDImuOj1QVRuT8f6I0b2xG+MtkSSkN1wJQkvHXkD0C526xqN6IzvWZvQjH
+         0lChOnb13AxCwrJerDSch6VbDArFpIdHYw8oXg9xCGMfMc4nNOYWnl/2MDT+a9cJGGmH
+         lX/w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o1i2ztHf;
+       spf=pass (google.com: domain of stuyoder@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=stuyoder@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=o1i2ztHf;
+       spf=pass (google.com: domain of stuyoder@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=stuyoder@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx48rrzmOTBgu6SimLDqmlnj7ZEiJyVV6RGdo4NEBm/2r/M/etNUWxIS710NffAU8A2VntD4Lv+3X35ooV6MXH+8=
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a1aQCm_r95Ka4x+j8SJLCLFvLuX3A4twK1WJcJs66YwKg@mail.gmail.com>
+References: <cover.1521818402.git.ioana.ciornei@nxp.com> <d8c243a9ead2fe1375dee242aec26d1276129409.1521818402.git.ioana.ciornei@nxp.com>
+ <CAK8P3a089ZiPdp1CcVct8Kac+ejkNP8TrVpWYSr_nMGo4goO1Q@mail.gmail.com>
+ <HE1PR04MB32126A07A4B4CC7225E661E4E0A30@HE1PR04MB3212.eurprd04.prod.outlook.com>
+ <CAK8P3a1aQCm_r95Ka4x+j8SJLCLFvLuX3A4twK1WJcJs66YwKg@mail.gmail.com>
+From: Stuart Yoder <stuyoder@gmail.com>
+Date: Tue, 3 Apr 2018 18:57:44 -0500
+Message-ID: <CAEac7tZ4we46EEa2DuAbmMr+hW6Q4BoBKJFFf1k_k57r2oJpng@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] bus: fsl-mc: add restool userspace support
+To: Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>, gregkh <gregkh@linuxfoundation.org>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Ruxandra Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>, Razvan Stefanescu <razvan.stefanescu@nxp.com>,
+	Roy Pledge <roy.pledge@nxp.com>, Networking <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595743497041548891?=
+X-GMAIL-MSGID: =?utf-8?q?1596771392643302687?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Wed, Mar 28, 2018 at 10:43 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Mar 28, 2018 at 4:27 PM, Ioana Ciornei <ioana.ciornei@nxp.com> wrote:
+>> Hi,
+>>
+>>>
+>>> Hi Ioana,
+>>>
+>>> So this driver is a direct passthrough to your hardware for passing fixed-
+>>> length command/response pairs. Have you considered using a higher-level
+>>> interface instead?
+>>>
+>>> Can you list some of the commands that are passed here as clarification, and
+>>> explain what the tradeoffs are that have led to adopting a low-level interface
+>>> instead of a high-level interface?
+>>>
+>>> The main downside of the direct passthrough obviously is that you tie your
+>>> user space to a particular hardware implementation, while a high-level
+>>> abstraction could in principle work across a wider range of hardware revisions
+>>> or even across multiple vendors implementing the same concept by different
+>>> means.
+>>
+>> If by "higher-level" you mean an implementation where commands are created by the kernel at userspace's request, then I believe this approach is not really viable because of the sheer number of possible commands that would bloat the driver.
+>>
+>> For example, a DPNI (Data Path Network Interface) can be created using a command that has the following structure:
+>>
+>> struct dpni_cmd_create {
+>>         uint32_t options;
+>>         uint8_t num_queues;
+>>         uint8_t num_tcs;
+>>         uint8_t mac_filter_entries;
+>>         uint8_t pad1;
+>>         uint8_t vlan_filter_entries;
+>>         uint8_t pad2;
+>>         uint8_t qos_entries;
+>>         uint8_t pad3;
+>>         uint16_t fs_entries;
+>> };
+>>
+>> In the above structure, each field has a meaning that the end-user might want to be able to change according to their particular use-case (not much is left at its default value).
+>> The same level of complexity is encountered for all the commands that interact with Data Path objects such as DPBP(buffer pools), DPRC(Resource Container) etc.
+>> You can find more examples of commands in restool's repo: https://github.com/qoriq-open-source/restool/tree/integration/mc_v10
+>>
+>> In my opinion, an in-kernel implementation that is equivalent in terms of flexibility will turn
+>> into a giant ioctl parser, all while also exposing an userspace API that is not as simple/easy to use.
+>
+> (adding the netdev list)
+>
+> The command you list there seems to be networking related, so instead of
+> an ioctl based interface, a high-lever interface would likely use netlink
+> for consistency with other drivers. Are all commands for networking
+> or are there some that are talking to the device to do something unrelated?
+>
+> Obviously creating a high-level interface would be a lot of work in the kernel,
+> and it only pays off if there are multiple independent users, we wouldn't do
+> that for just one driver.
+>
+> I'm still not convinced either way (high-level or low-level
+> interface), but I think
+> this needs to be discussed with the networking maintainers. Given the examples
+> on the github page you linked to, the high-level user space commands
+> based on these ioctls
+>
+>    ls-addni   # adds a network interface
+>    ls-addmux  # adds a dpdmux
+>    ls-addsw   # adds an l2switch
+>    ls-listmac # lists MACs and their connections
+>    ls-listni  # lists network interfaces and their connections
+>
+> and I see that you also support the switchdev interface in
+> drivers/staging/fsl-dpaa2, which I think does some of the same
+> things, presumably by implementing the switchdev API using
+> fsl_mc_command low-level interfaces in the kernel.
+>
+> Is that a correct interpretation? If yes, could we extend switchdev
+> or other networking interfaces to fill in whatever those don't handle
+> yet?
 
+The wrapper scripts you referenced are not sufficient to show the scope
+of what the proposed user space interface is for.  The command list is
+not just about networking related objects, as there are quite a few
+other types of  objects as well:
+    dprc - container object representing an fsl-mc bus instance...i.e. other
+           objects are attached to this bus
+    dpio - used for queuing operations towards any accelerator or network
+           interface
+    dpbp - buffer pool object
+    dpmcp - command portal interface
+    dpdmai - DMA engine
+    dpseci - crypto accelerator
+    dpdcei - compression/decompression accelerator
+    dpni - network interface
+    dprtc - real time counter
+    dpaiop - heterogenous core complex for packet processing offload
+    dpmac - represents an Ethernet MAC
+    dpsw - network switch
+    dpcon - network concentrator
+    dpci - communication interface
 
+The proposed ioctl interface is about:
+   A)  creating and destroying all those object types
+   B)  managing the dprc containers they live in, including moving
+       objects between containers
+   C)  where applicable establishing connections between different
+       objects
 
-On Thu, 2018-04-05 at 19:38 +0300, Ville Syrjälä wrote:
-> On Wed, Apr 04, 2018 at 07:27:21PM -0400, Lyude Paul wrote:
-> > As it turns out, the aux block being off was not the real problem here,
-> > as transition from D3 to D0 is mandated by the DP spec to take a maximum
-> > of 1ms, whereas we're allowed a 100ms timeframe to respond to ESI irqs.
-> > The real problem here is a bit more subtle.
-> > 
-> > When doing a modeset where the problem of the sink timing out to our
-> > sideband requests when transitioning from D3 to D0 occurs, the timeout
-> > is from the aux block not coming on. However, nothing else times out
-> > other than the initial phy_up message because the DPCD on call in
-> > intel_ddi_enable_dp() ends up waking up the AUX block on the hub, not
-> > the phy_up sideband message. 
+No _operational_ aspects of these object/devices is being handled
+through this interface.  The network interface should be managed
+through ethtool, for example.  The proposed ioctl interface is about
+bringing the devices into existence and getting them "wired" up.
 
+Suppose you want to create and assign a network interface to a KVM
+virtual machine, you would do something like the following using
+a user space tool like restool:
+   -create a new (empty) dprc object
+   -create a new dpni and assign it to the dprc
+   -create a new dpio and assign it to the dprc
+   -create a new dpbp and assign it to the dprc
+   -create a new dpmcp and assign it to the dprc
+   -create a new dpmac and assign it to the dprc
+   -connect the dpni to the dpmac
 
-This is the case only when intel_dp_sink_dpms(DRM_MODE_DPMS_OFF) was the
-last action. With power_down_phy in post_disable() and power_up_phy in
-pre_enable(), we weren't seeing this issue.
+Now, at this point you have a functional set of objects that
+can function as a network interface.
 
+That dprc can now be assigned to a KVM VM using vfio and the
+guest will see a dprc that it can probe and enumerate using the
+fsl-mc bus infrastructure that is now upstream.
 
+There is no existing kernel <--> user space mechanism that will
+work to do all that, so something new was needed.
 
+As far as low-level vs high-level...we did consider a higher level
+interface that would expose operations on individual object such
+as "create dpbp", but the user space API gets complex and
+fragile for no obvious value.  Every object needs commands to
+create/destroy and get attributes.  There is a sizeable dprc command
+set.  Every time an object is enhanced (with a corresponding major
+or minor version rev) you have to change the ioctl interface.
 
-> This means that the real fix we need is to
-> > use the DPMS on before sending a phy_up to ensure that the hub is ready
-> > to accept sideband messages.
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > Cc: Laura Abbott <labbott@redhat.com>
-> > Cc: stable@vger.kernel.org
-> > Fixes: ad260ab32a4d9 ("drm/i915/dp: Write to SET_POWER dpcd to enable MST hub.")
-> > ---
-> >  drivers/gpu/drm/i915/intel_ddi.c    | 6 +++++-
-> >  drivers/gpu/drm/i915/intel_dp_mst.c | 1 +
-> >  2 files changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/i915/intel_ddi.c b/drivers/gpu/drm/i915/intel_ddi.c
-> > index a6672a9abd85..9bd675f73f7b 100644
-> > --- a/drivers/gpu/drm/i915/intel_ddi.c
-> > +++ b/drivers/gpu/drm/i915/intel_ddi.c
-> > @@ -2324,7 +2324,11 @@ static void intel_ddi_pre_enable_dp(struct intel_encoder *encoder,
-> >  		intel_prepare_dp_ddi_buffers(encoder, crtc_state);
-> >  
-> >  	intel_ddi_init_dp_buf_reg(encoder);
-> > -	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
-> > +	/* for MST, we do DPMS_ON outside of here so that DPMS_ON can happen
-> > +	 * before drm_dp_send_power_updown_phy()
-> > +	 */
-> > +	if (!intel_dp->is_mst)
-> 
-> Just 'is_mst' should do here.
-> 
-> And in general I'd like to see the enable and disable paths remain
-> symmetric. Ie. also move out the dpms call in the disable path (or
-> maybe move the phy_power_up/down in?).
-> 
-> > +		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
-> >  	intel_dp_start_link_train(intel_dp);
-> >  	if (port != PORT_A || INTEL_GEN(dev_priv) >= 9)
-> >  		intel_dp_stop_link_train(intel_dp);
-> > diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-> > index c3de0918ee13..eff9a4eae1f0 100644
-> > --- a/drivers/gpu/drm/i915/intel_dp_mst.c
-> > +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-> > @@ -223,6 +223,7 @@ static void intel_mst_pre_enable_dp(struct intel_encoder *encoder,
-> >  
-> >  	DRM_DEBUG_KMS("active links %d\n", intel_dp->active_mst_links);
-> >  
-> > +	intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_ON);
-> >  	drm_dp_send_power_updown_phy(&intel_dp->mst_mgr, connector->port, true);
-> 
-> This could use a comment to remind people that the order does matter.
-> 
-> >  	if (intel_dp->active_mst_links == 0)
-> >  		intel_dig_port->base.pre_enable(&intel_dig_port->base,
-> > -- 
-> > 2.14.3
-> 
+Having a simple command passthrough interface reduces complexity
+in the kernel and provides an interface that should be very stable.
+
+The fsl-mc bus and DPAA2 is very NXP-specific, so there doesn't
+seem to be anything that can be made generic here to provide
+more common benefit.
+
+Thanks,
+Stuart
