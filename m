@@ -1,140 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752547AbeDCQ4U (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:56:20 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39985 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751414AbeDCQ4R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:56:17 -0400
-X-Google-Smtp-Source: AIpwx4+6l0ue6p1vgK2lTNB59MKE61Guw7jhu/e5jKpWqw8C+2pougTmQi0UKg9A93Yrn5D4txCACw==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [RFC PATCH 0/3] Documentation/features: Provide and apply "features-refresh.sh"
-Date: Tue,  3 Apr 2018 18:55:48 +0200
-Message-Id: <1522774551-9503-1-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752661AbeDCQ4e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:56:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50303 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752397AbeDCQ4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:56:31 -0400
+Date: Tue, 3 Apr 2018 16:56:27 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>, Peter Jones <pjones@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Gary Lin <GLin@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [RFC PATCH v1] fw_lockdown: new micro LSM module to prevent
+ loading unsigned firmware
+Message-ID: <20180403165627.GW30543@wotan.suse.de>
+References: <1510347775.3549.2.camel@linux.vnet.ibm.com>
+ <21dd4b88-f6e7-f6bb-e34d-ba8ef3755622@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21dd4b88-f6e7-f6bb-e34d-ba8ef3755622@kernel.org>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In Ingo's words [1]:
+On Mon, Apr 02, 2018 at 05:42:22PM -0700, Andy Lutomirski wrote:
+> On 11/10/2017 01:02 PM, Mimi Zohar wrote:
+> > If the kernel is locked down and IMA-appraisal is not enabled, prevent
+> > loading of unsigned firmware.
+> 
+> > diff --git a/security/fw_lockdown/Kconfig b/security/fw_lockdown/Kconfig
+> > new file mode 100644
+> > index 000000000000..d6aef6ce8fee
+> > --- /dev/null
+> > +++ b/security/fw_lockdown/Kconfig
+> > @@ -0,0 +1,6 @@
+> > +config SECURITY_FW_LOCKDOWN
+> > +	bool "Prevent loading unsigned firmware"
+> > +	depends on LOCK_DOWN_KERNEL
+> > +	default y
+> > +	help
+> > +	  Prevent loading unsigned firmware in lockdown mode,
+> 
+> Please be honest about what this does.  This option makes your system
+> useless if you don't use IMA-Appraisal and it offers a particular security
+> benefit if you do you IMA-Appraisal.  How about making it depend on
+> IMA-Appraisal?  Change the name to SECURITY_ONLY_LOAD_IMA_APPRAISED_FIRMWARE
+> and adjust the text accordingly, please.
 
-  "[...]  what should be done instead is to write a script that refreshes
-   all the arch-support.txt files in-place. [...]
+Mimi is on vacation right now so I'll address this.
 
-   It's OK for the script to have various quirks for weirdly implemented
-   features and exceptions: i.e. basically whenever it gets a feature wrong,
-   we can just tweak the script with quirks to make it all work out of box.
+All the above makes sense, but just keep in mind the patch was posted just as
+an illustration of how IMA *can* live up to the original intent proposed by
+David Howells on kernel lockdown. David's old kernel lockdown documentation
+stipulated that a requirement was to also prevent loading unsigned firmware.
 
-   [...]  But in the end there should only be a single new script:
+Does the kernel lockdown documentation still have a section indicating signed
+firmware is a requirement? Or was that removed in the end?
 
-     Documentation/features/scripts/features-refresh.sh
+Mimi's RFC was at a time when we still had on our roadmap the prospect of
+adding generic signed firmware support into Linux. Mimi's point and RFC patch
+was an illustration then on how IMA users can already meet these assumed
+requirements on 'kernel lockdown', and that if we used a micro LSM hook this
+could be easily managed, given the firmware signing support we intended on
+adding would not be needed for IMA systems. Her point was that with IMA you can
+already meet the definition and IMA systems would not have to wait for "generic
+firmware signing" to be merged.
 
-   ... which operates on the arch-support.txt files and refreshes them in
-   place, and which, after all the refreshes have been committed, should
-   produce an empty 'git diff' result."
+The biggest thing which has changed since then is that we decided to *not*
+support or streamline generic firmware signing (non-IMA) for now for a few
+reasons [0] [1] which are important to re-iterate as these are easy to forget,
+and AFAICT not documented anywhere.
 
-  "[...]  New features can then be added by basically just creating a
-   header-only arch-support.txt file, such as:
+One was that my own requirement for it was already done -- cfg80211 already
+open codes firmware signing checking on its own through the new
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB thereby also not requiring CRDA anymore,
+the userspace component which used to read the signed regulatory database and
+then send regulatory content to the wireless subsystem. So CRDA is no longer
+needed if you enable CONFIG_CFG80211_REQUIRE_SIGNED_REGDB.
 
-     triton:~/tip/Documentation/features> cat foo/bar/arch-support.txt
-     #
-     # Feature name:          shiny new fubar kernel feature
-     #         Kconfig:       ARCH_USE_FUBAR
-     #         description:   arch supports the fubar feature
-     #
+Second, is is that the whole UEFI movement pushed hardware vendors to start
+embracing requiring signed firmware on peripherals themselves. So a lot of
+hardware these days *does* do firmware signing already and a generic kernel
+firmware signing facility would then just make us do double work then. There
+are exceptions and there are a few reasons for this. For instance USB devices
+are not allowed to pee on random memory (thanks for the analogy Alan!), so
+not all USB devices have support for checking their own firmware signature.
+This is one reason also why why some operating systems do not allow users
+to use random USB devices. If companies *really* need to vet for these they
+have a few options, one is to use IMA, the other is to have the driver open
+code the firmware signing component just as we did with cfg80211 through the
+new CONFIG_CFG80211_REQUIRE_SIGNED_REGDB. If we end up later with enough
+open coded firmware checking users we can later revisit adding a generic
+firmware signing facility.
 
-   And running Documentation/features/scripts/features-refresh.sh would
-   auto-generate the arch support matrix. [...]
- 
-   This way we soft- decouple the refreshing of the entries from the
-   introduction of the features, while still making it all easy to keep
-   sync and to extend."
+Third is that there is no strong evidence of any security issue with having
+firmware in /lib/firmware not be signed. I can attest to this, in my research
+of all the history of this, I cannot find a single incident which calls bloody
+murder for unsigned firmware.  There are concerns and known backdoors on
+firmware for storage drives for instance, but these are not /lib/firmware
+files, for instance. If you also consider the second reason above, it may also
+help explain why perhaps there is also any serious threat on this front.
+Granted, there are known cases know of a third party using some signing key to
+sign malicious firmware and using that to exploit an OS, but if they did that
+and we trusted each vendor signing key as well we'd be just as vulnerable.
 
-This RFC presents a first attempt to implement such a feature/script, and
-applies it script on top of Arnd's:
+Fourth, if you want signed /lib/firmware, you might want signed binaries, and
+if you want signed binaries, we already have IMA.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git arch-removal
+So.. until there is no real strong reason to support and maintain a generic
+firmware signing mechanism, no need to add it. We can wait for the open coded
+boom, and if that really does happen we'll revisit later.
 
-Patch 1/3 provides the "features-refresh.sh" script.  Patch 2/3 removes the
-"BPF-JIT" feature file and it creates header-only files for "cBPF-JIT" and
-"eBPF-JIT".  Patch 3/3 presents the results of running the script; this run
-also printed to standard output the following warnings:
+So the kernel lockdown definition may want to revise all the above, review its
+documentation and if the "firmware signing" aspect is still there, update it
+somehow to reflect or ignore the above.
 
-  WARNING: '__HAVE_ARCH_STRNCASECMP' is not a valid Kconfig
-  WARNING: 'Optimized asm/rwsem.h' is not a valid Kconfig
-  WARNING: '!ARCH_USES_GETTIMEOFFSET' is not a valid Kconfig
-  WARNING: '__HAVE_ARCH_PTE_SPECIAL' is not a valid Kconfig
+If we want to keep "signed firmware" as a requirement for "kernel lockdown"
+then we have no option to also amend the definition I think to consider signed
+executables, and imply or recommend the use of IMA. If the assumption is that
+peripherals or drivers all have hardware firmware signing support and are OK
+with random USB gadgets, then perhaps we are OK in removing (if its not already
+removed) the "signed firmware" requirement from the "kernel lockdown"
+definition, and the concept of signed firmware or IMA can live on as additional
+effort for now.
 
-(I'm sending these patches with empty commit messagges, for early feedback:
- I'll fill in these messages in subsequent versions if this makes sense...)
+However, *iff* we *really* want to push again for generic "signed firmware", we
+want a good justification for it considering all the above. To be fair I'll
+note that I don't recall a super strong justification for signed modules back
+in the day, other than Rusty saying 'its happening', 'its being merged', and that
+some companies wanted it.  I think we do have the case of companies wanting signed
+firmware in this case as well... however the issue is the foundations may be on
+a warm fuzzy feeling only, and a big difference is that with modules you don't
+have peripherals checking for the signed bits, with firmware we do have this
+practice growing these days.
 
-Cheers,
-  Andrea
+If we *do* end up moving forward with generic "signed firmware" later though,
+the architecture for it would be through a micro LSM as Mimi suggested in this
+patch, and it would whitelists IMA. The patch would also need to be updated to
+whitelist the new CONFIG_CFG80211_REQUIRE_SIGNED_REGDB and any other open coded
+signed firmware bits which may get merged later.
 
-Andrea Parri (3):
-  Documentation/features: Add script that refreshes the arch support
-    status files in place
-  Documentation/features/core: Add arch support status files for
-    'cBPF-JIT' and 'eBPF-JIT'
-  Documentation/features: Refresh and auto-generate the arch support
-    status files in place
+  Luis
 
- .../features/core/BPF-JIT/arch-support.txt         | 31 ------------
- .../features/core/cBPF-JIT/arch-support.txt        | 32 +++++++++++++
- .../features/core/eBPF-JIT/arch-support.txt        | 32 +++++++++++++
- .../core/generic-idle-thread/arch-support.txt      |  3 +-
- .../features/core/jump-labels/arch-support.txt     |  1 +
- .../features/core/tracehook/arch-support.txt       |  1 +
- .../features/debug/KASAN/arch-support.txt          |  3 +-
- .../debug/gcov-profile-all/arch-support.txt        |  1 +
- Documentation/features/debug/kgdb/arch-support.txt |  3 +-
- .../debug/kprobes-on-ftrace/arch-support.txt       |  1 +
- .../features/debug/kprobes/arch-support.txt        |  3 +-
- .../features/debug/kretprobes/arch-support.txt     |  3 +-
- .../features/debug/optprobes/arch-support.txt      |  3 +-
- .../features/debug/stackprotector/arch-support.txt |  1 +
- .../features/debug/uprobes/arch-support.txt        |  5 +-
- .../debug/user-ret-profiler/arch-support.txt       |  1 +
- .../features/io/dma-api-debug/arch-support.txt     |  1 +
- .../features/io/dma-contiguous/arch-support.txt    |  3 +-
- .../features/io/sg-chain/arch-support.txt          |  1 +
- .../features/lib/strncasecmp/arch-support.txt      |  1 +
- .../locking/cmpxchg-local/arch-support.txt         |  3 +-
- .../features/locking/lockdep/arch-support.txt      |  3 +-
- .../locking/queued-rwlocks/arch-support.txt        |  9 ++--
- .../locking/queued-spinlocks/arch-support.txt      |  7 +--
- .../locking/rwsem-optimized/arch-support.txt       |  1 +
- .../features/perf/kprobes-event/arch-support.txt   |  5 +-
- .../features/perf/perf-regs/arch-support.txt       |  3 +-
- .../features/perf/perf-stackdump/arch-support.txt  |  3 +-
- .../sched/membarrier-sync-core/arch-support.txt    |  1 +
- .../features/sched/numa-balancing/arch-support.txt |  5 +-
- Documentation/features/scripts/features-refresh.sh | 55 ++++++++++++++++++++++
- .../seccomp/seccomp-filter/arch-support.txt        |  5 +-
- .../time/arch-tick-broadcast/arch-support.txt      |  3 +-
- .../features/time/clockevents/arch-support.txt     |  3 +-
- .../time/context-tracking/arch-support.txt         |  1 +
- .../features/time/irq-time-acct/arch-support.txt   |  3 +-
- .../time/modern-timekeeping/arch-support.txt       |  1 +
- .../features/time/virt-cpuacct/arch-support.txt    |  1 +
- .../features/vm/ELF-ASLR/arch-support.txt          |  3 +-
- .../features/vm/PG_uncached/arch-support.txt       |  1 +
- Documentation/features/vm/THP/arch-support.txt     |  1 +
- Documentation/features/vm/TLB/arch-support.txt     |  1 +
- .../features/vm/huge-vmap/arch-support.txt         |  1 +
- .../features/vm/ioremap_prot/arch-support.txt      |  1 +
- .../features/vm/numa-memblock/arch-support.txt     |  3 +-
- .../features/vm/pte_special/arch-support.txt       |  1 +
- 46 files changed, 192 insertions(+), 62 deletions(-)
- delete mode 100644 Documentation/features/core/BPF-JIT/arch-support.txt
- create mode 100644 Documentation/features/core/cBPF-JIT/arch-support.txt
- create mode 100644 Documentation/features/core/eBPF-JIT/arch-support.txt
- create mode 100755 Documentation/features/scripts/features-refresh.sh
+> > +/**
+> > + * fw_lockdown_read_file - prevent loading of unsigned firmware
+> > + * @file: pointer to firmware
+> > + * @read_id: caller identifier
+> > + *
+> > + * Prevent loading of unsigned firmware in lockdown mode.
+> 
+> That comment gives a highly misleading impression of what this function
+> does.
+> 
+> > + */
+> > +static int fw_lockdown_read_file(struct file *file, enum kernel_read_file_id id)
+> 
 
 -- 
-2.7.4
+Luis Rodriguez, SUSE LINUX GmbH
+Maxfeldstrasse 5; D-90409 Nuernberg
