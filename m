@@ -1,56 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932184AbeDCMct (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:32:49 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33616 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932080AbeDCMcr (ORCPT
+        id S932207AbeDCMdV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:33:21 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:49631 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932100AbeDCMdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:32:47 -0400
-X-Google-Smtp-Source: AIpwx49rFHgt4MJd8dg0yP37DGHfWQeMJNgSy1ldAPpwyO5+z3rDGalpKQjKVKDiOVASp279NrjeDQ==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: andr2000@gmail.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH] MAINTAINERS: Add drm/xen-front maintainer entry
-Date: Tue,  3 Apr 2018 15:32:38 +0300
-Message-Id: <20180403123238.19294-1-andr2000@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        Tue, 3 Apr 2018 08:33:20 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To: Matthew Wilcox <willy@infradead.org>, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org, "Souptick Joarder" <jrdr.linux@gmail.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20180402141058.GL13332@bombadil.infradead.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20180402141058.GL13332@bombadil.infradead.org>
+Message-ID: <152275879566.32747.9293394837417347482@mail.alporthouse.com>
+User-Agent: alot/0.3.6
+Subject: Re: Signal handling in a page fault handler
+Date: Tue, 03 Apr 2018 13:33:15 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Quoting Matthew Wilcox (2018-04-02 15:10:58)
+> 
+> Souptick and I have been auditing the various page fault handler routines
+> and we've noticed that graphics drivers assume that a signal should be
+> able to interrupt a page fault.  In contrast, the page cache takes great
+> care to allow only fatal signals to interrupt a page fault.
+> 
+> I believe (but have not verified) that a non-fatal signal being delivered
+> to a task which is in the middle of a page fault may well end up in an
+> infinite loop, attempting to handle the page fault and failing forever.
+> 
+> Here's one of the simpler ones:
+> 
+>         ret = mutex_lock_interruptible(&etnaviv_obj->lock);
+>         if (ret)
+>                 return VM_FAULT_NOPAGE;
+> 
+> (many other drivers do essentially the same thing including i915)
+> 
+> On seeing NOPAGE, the fault handler believes the PTE is in the page
+> table, so does nothing before it returns to arch code at which point
+> I get lost in the magic assembler macros.  I believe it will end up
+> returning to userspace if the signal is non-fatal, at which point it'll
+> go right back into the page fault handler, and mutex_lock_interruptible()
+> will immediately fail.  So we've converted a sleeping lock into the most
+> expensive spinlock.
 
-Add myself as drivers/gpu/drm/xen maintainer.
+I'll ask the obvious question: why isn't the signal handled on return to
+userspace?
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> I don't think the graphics drivers really want to be interrupted by
+> any signal.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 622f3e4c5efa..6cf1bd5593b0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4834,6 +4834,15 @@ S:	Maintained
- F:	drivers/gpu/drm/tinydrm/
- F:	include/drm/tinydrm/
- 
-+DRM DRIVERS FOR XEN
-+M:	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-+T:	git git://anongit.freedesktop.org/drm/drm-misc
-+L:	dri-devel@lists.freedesktop.org
-+L:	xen-devel@lists.xen.org
-+S:	Supported
-+F:	drivers/gpu/drm/xen/
-+F:	Documentation/gpu/xen-front.rst
-+
- DRM TTM SUBSYSTEM
- M:	Christian Koenig <christian.koenig@amd.com>
- M:	Roger He <Hongbo.He@amd.com>
--- 
-2.16.2
+Assume the worst case and we may block for 10s. Even a 10ms delay may be
+unacceptable to some signal handlers (one presumes). For the number one
+^C usecase, yes that may be reduced to only bother if it's killable, but
+I wonder if there are not timing loops (e.g. sigitimer in Xorg < 1.19)
+that want to be able to interrupt random blockages.
+-Chris
