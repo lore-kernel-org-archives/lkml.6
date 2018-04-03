@@ -1,141 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752816AbeDCRAc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:00:32 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34776 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752756AbeDCRA1 (ORCPT
+        id S1752839AbeDCRA4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:00:56 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33370 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752483AbeDCRAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:00:27 -0400
-X-Google-Smtp-Source: AIpwx4+FbtCXkP8c9/UN30csSGCb1N7aywoHSM1qNwWYNFjS8JgqL1MP6ci/xBziWyvXbfM9qjSbHg==
-Date: Tue, 3 Apr 2018 22:30:16 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>
-Subject: Re: [PATCH v6 3/9] pinctrl: actions: Add Actions S900 pinctrl driver
-Message-ID: <20180403170016.w3scjt57ssvk6zyi@linaro.org>
-References: <20180328174703.19778-1-manivannan.sadhasivam@linaro.org>
- <20180328174703.19778-4-manivannan.sadhasivam@linaro.org>
- <CAHp75VeRh9hORs=4nPqc=rUOCRzAfp0z2_1_xpJUScAeE07yqw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeRh9hORs=4nPqc=rUOCRzAfp0z2_1_xpJUScAeE07yqw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 3 Apr 2018 13:00:55 -0400
+Message-ID: <1522774852.4522.25.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state
+ during dom0 boot
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Daniel Kiper <daniel.kiper@oracle.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
+        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
+Date: Tue, 03 Apr 2018 10:00:52 -0700
+In-Reply-To: <20180403160712.GL26100@olila.local.net-space.pl>
+References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+         <1522770281.4522.14.camel@HansenPartnership.com>
+         <20180403160712.GL26100@olila.local.net-space.pl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Tue, 2018-04-03 at 18:07 +0200, Daniel Kiper wrote:
+> On Tue, Apr 03, 2018 at 08:44:41AM -0700, James Bottomley wrote:
+> > 
+> > On Tue, 2018-04-03 at 16:39 +0200, Daniel Kiper wrote:
+> > > 
+> > > Initialize UEFI secure boot state during dom0 boot. Otherwise the
+> > > kernel may not even know that it runs on secure boot enabled
+> > > platform.
+> > > 
+> > > Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+> > > ---
+> > >  arch/x86/xen/efi.c                        |   57
+> > > +++++++++++++++++++++++++++++
+> > >  drivers/firmware/efi/libstub/secureboot.c |    3 ++
+> > >  2 files changed, 60 insertions(+)
+> > > 
+> > > diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
+> > > index a18703b..1804b27 100644
+> > > --- a/arch/x86/xen/efi.c
+> > > +++ b/arch/x86/xen/efi.c
+> > > @@ -115,6 +115,61 @@ static efi_system_table_t __init
+> > > *xen_efi_probe(void)
+> > >  	return &efi_systab_xen;
+> > >  }
+> > >  
+> > > +/*
+> > > + * Determine whether we're in secure boot mode.
+> > > + *
+> > > + * Please keep the logic in sync with
+> > > + *
+> > > drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
+> > > + */
+> > > +static enum efi_secureboot_mode xen_efi_get_secureboot(void)
+> > > +{
+> > > +	static efi_guid_t efi_variable_guid =
+> > > EFI_GLOBAL_VARIABLE_GUID;
+> > > +	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
+> > > +	efi_status_t status;
+> > > +	u8 moksbstate, secboot, setupmode;
+> > > +	unsigned long size;
+> > > +
+> > > +	size = sizeof(secboot);
+> > > +	status = efi.get_variable(L"SecureBoot",
+> > > &efi_variable_guid,
+> > > +				  NULL, &size, &secboot);
+> > > +
+> > > +	if (status == EFI_NOT_FOUND)
+> > > +		return efi_secureboot_mode_disabled;
+> > > +
+> > > +	if (status != EFI_SUCCESS)
+> > > +		goto out_efi_err;
+> > > +
+> > > +	size = sizeof(setupmode);
+> > > +	status = efi.get_variable(L"SetupMode",
+> > > &efi_variable_guid,
+> > > +				  NULL, &size, &setupmode);
+> > > +
+> > > +	if (status != EFI_SUCCESS)
+> > > +		goto out_efi_err;
+> > > +
+> > > +	if (secboot == 0 || setupmode == 1)
+> > > +		return efi_secureboot_mode_disabled;
+> > > +
+> > > +	/* See if a user has put the shim into insecure mode. */
+> > > +	size = sizeof(moksbstate);
+> > > +	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
+> > > +				  NULL, &size, &moksbstate);
+> > > +
+> > > +	/* If it fails, we don't care why. Default to secure. */
+> > > +	if (status != EFI_SUCCESS)
+> > > +		goto secure_boot_enabled;
+> > > +
+> > > +	if (moksbstate == 1)
+> > > +		return efi_secureboot_mode_disabled;
+> > > +
+> > > + secure_boot_enabled:
+> > > +	pr_info("UEFI Secure Boot is enabled.\n");
+> > > +	return efi_secureboot_mode_enabled;
+> > > +
+> > > + out_efi_err:
+> > > +	pr_err("Could not determine UEFI Secure Boot
+> > > status.\n");
+> > > +	return efi_secureboot_mode_unknown;
+> > > +}
+> > > +
+> > 
+> > This looks like a bad idea: you're duplicating the secure boot
+> > check in
+> > 
+> > drivers/firmware/efi/libstub/secureboot.c
+> > 
+> > Which is an implementation of policy.  If we have to have policy in
+> > the kernel, it should really only be in one place to prevent drift;
+> > why can't you simply use the libstub efi_get_secureboot() so we're
+> > not duplicating the implementation of policy?
+> 
+> Well, here is the first version of this patch:
+> https://lkml.org/lkml/2018/1/9/496 Ard did not like it. I was not
+> happy too. In general both approaches are not perfect. More you can
+> find in the discussion around this patchset. If you have better idea
+> how to do that I am happy to implement it.
 
-On Sat, Mar 31, 2018 at 12:16:49AM +0300, Andy Shevchenko wrote:
-> On Wed, Mar 28, 2018 at 8:46 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > Add pinctrl driver for Actions Semi S900 SoC. The driver supports
-> > pinctrl, pinmux and pinconf functionalities through a range of registers
-> > common to both gpio driver and pinctrl driver.
-> >
-> > Pinmux functionality is available only for the pin groups while the
-> > pinconf functionality is available for both pin groups and individual
-> > pins.
-> 
-> > +static void owl_update_bits(void __iomem *base, u32 mask, u32 val)
-> > +{
-> > +       u32 reg_val;
-> > +
-> > +       reg_val = readl_relaxed(base);
-> > +
-> > +       reg_val &= ~mask;
-> > +       reg_val |= val;
-> 
-> Usual pattern here is
-> 
-> reg_val = (reg_val & ~mask) | (val & mask);
-> 
-> This will allow to avoid possible overflow.
-> 
+One way might be simply to have the pre exit-boot-services code lay
+down a variable containing the state which you pick up, rather than you
+calling efi code separately and trying to use the insecure RT
+variables.  That way there's a uniform view of the internal kernel
+secure boot state that everyone can use.
 
-Ack.
-
-> > +
-> > +       writel_relaxed(reg_val, base);
-> > +}
-> 
-> > +       tmp = readl_relaxed(pctrl->base + reg);
-> > +       mask = (1 << width) - 1;
-> > +       arg = (tmp >> bit) & mask;
-> 
-> This looks like a candidate for a helper function. You have at least
-> one more same code.
-> 
-> Something like
-> 
-> ..._read_field(reg, mask, shift)
-> 
->
-
-Okay. Will add owl_read_field helper function.
- 
-> > +               mask = (1 << width) - 1;
-> > +               mask = mask << bit;
-> > +
-> > +               owl_update_bits(pctrl->base + reg, mask, (arg << bit));
-> 
-> Similar here,
-> 
-> ..._write_field(regm mask, shift, arg)
-> 
-
-Will add owl_write_field helper function.
-
-> > +       tmp = readl_relaxed(pctrl->base + reg);
-> > +       mask = (1 << width) - 1;
-> > +       arg = (tmp >> bit) & mask;
-> 
-> > +               mask = (1 << width) - 1;
-> > +               mask = mask << bit;
-> > +
-> > +               owl_update_bits(pctrl->base + reg, mask, (arg << bit));
-> 
-> > +static const struct pinconf_ops owl_pinconf_ops = {
-> > +       .is_generic = true,
-> > +       .pin_config_get = owl_pin_config_get,
-> > +       .pin_config_set = owl_pin_config_set,
-> > +       .pin_config_group_get = owl_group_config_get,
-> > +       .pin_config_group_set = owl_group_config_set
-> 
-> It's still good idea to leave comma here...
->
-
-I'm confused. What is the criteria for removing/keeping comma for last member
-of struct? I followed your gpio driver suggestion.
-
-Thanks,
-Mani
-
-> > +};
-> > +
-> > +static struct pinctrl_desc owl_pinctrl_desc = {
-> > +       .pctlops = &owl_pinctrl_ops,
-> > +       .pmxops = &owl_pinmux_ops,
-> > +       .confops = &owl_pinconf_ops,
-> > +       .owner = THIS_MODULE
-> 
-> ...and here, and in all similar places.
-> 
-> > +};
-> > +
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+James
