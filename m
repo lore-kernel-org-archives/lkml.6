@@ -1,171 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752262AbeDCPzO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:55:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43385 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751713AbeDCPzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:55:13 -0400
-Date: Tue, 3 Apr 2018 17:55:09 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
-Message-ID: <20180403155509.GD5501@dhcp22.suse.cz>
-References: <20180321205928.22240-1-mhocko@kernel.org>
- <20180403145853.GB21411@cmpxchg.org>
+        id S1751850AbeDCQAZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:00:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59958 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751270AbeDCQAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:00:24 -0400
+Date: Wed, 4 Apr 2018 00:00:05 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+Message-ID: <20180403160001.GA25255@ming.t460p>
+References: <20180308105358.1506-1-ming.lei@redhat.com>
+ <20180308105358.1506-5-ming.lei@redhat.com>
+ <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180403145853.GB21411@cmpxchg.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 03-04-18 10:58:53, Johannes Weiner wrote:
-> On Wed, Mar 21, 2018 at 09:59:28PM +0100, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
+On Tue, Apr 03, 2018 at 03:32:21PM +0200, Thomas Gleixner wrote:
+> On Thu, 8 Mar 2018, Ming Lei wrote:
+> > 1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
+> > 	irq 39, cpu list 0
+> > 	irq 40, cpu list 1
+> > 	irq 41, cpu list 2
+> > 	irq 42, cpu list 3
 > > 
-> > David has noticed that THP memcg charge can trigger the oom killer
-> > since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
-> > madvised allocations"). We have used an explicit __GFP_NORETRY
-> > previously which ruled the OOM killer automagically.
+> > 2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
+> > 	irq 39, cpu list 0-2
+> > 	irq 40, cpu list 3-4,6
+> > 	irq 41, cpu list 5
+> > 	irq 42, cpu list 7
 > > 
-> > Memcg charge path should be semantically compliant with the allocation
-> > path and that means that if we do not trigger the OOM killer for costly
-> > orders which should do the same in the memcg charge path as well.
-> > Otherwise we are forcing callers to distinguish the two and use
-> > different gfp masks which is both non-intuitive and bug prone. Not to
-> > mention the maintenance burden.
-> > 
-> > Teach mem_cgroup_oom to bail out on costly order requests to fix the THP
-> > issue as well as any other costly OOM eligible allocations to be added
-> > in future.
-> > 
-> > Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
-> > Reported-by: David Rientjes <rientjes@google.com>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > 3) after applying this patch against V4.15+:
+> > 	irq 39, cpu list 0,4
+> > 	irq 40, cpu list 1,6
+> > 	irq 41, cpu list 2,5
+> > 	irq 42, cpu list 3,7
 > 
-> I also prefer this fix over having separate OOM behaviors (which is
-> user-visible, and not just about technical ability to satisfy the
-> allocation) between the allocator and memcg.
+> That's more or less window dressing. If the device is already in use when
+> the offline CPUs get hot plugged, then the interrupts still stay on cpu 0-3
+> because the effective affinity of interrupts on X86 (and other
+> architectures) is always a single CPU.
 > 
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> So this only might move interrupts to the hotplugged CPUs when the device
+> is initialized after CPU hotplug and the actual vector allocation moves an
+> interrupt out to the higher numbered CPUs if they have less vectors
+> allocated than the lower numbered ones.
 
-I will repost the patch with the currently merged THP specific handling
-reverted (see below). While 9d3c3354bb85 might have been an appropriate
-quick fix, we shouldn't keep it longterm for 4.17+ IMHO.
+It works for blk-mq devices, such as NVMe.
 
-Does you ack apply to that patch as well?
----
->From 3e1b127dd6107a0e51654e90d9faef7f196f5a10 Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Wed, 21 Mar 2018 10:10:37 +0100
-Subject: [PATCH] memcg, thp: do not invoke oom killer on thp charges
+Now NVMe driver creates num_possible_cpus() hw queues, and each
+hw queue is assigned one msix irq vector.
 
-David has noticed that THP memcg charge can trigger the oom killer
-since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
-madvised allocations"). We have used an explicit __GFP_NORETRY
-previously which ruled the OOM killer automagically.
+Storage is Client/Server model, that means the interrupt is only
+delivered to CPU after one IO request is submitted to hw queue and
+it is completed by this hw queue.
 
-Memcg charge path should be semantically compliant with the allocation
-path and that means that if we do not trigger the OOM killer for
-costly orders which should do the same in the memcg charge path as
-well.  Otherwise we are forcing callers to distinguish the two and use
-different gfp masks which is both non-intuitive and bug prone. As soon
-as we get a costly high order kmalloc user we even do not have any means
-to tell the memcg specific gfp mask to prevent from OOM because the
-charging is deep within guts of the slab allocator.
+When CPUs is hotplugged, and there will be IO submitted from these
+CPUs, then finally IOs complete and irq events are generated from
+hw queues, and notify these submission CPU by IRQ finally.
 
-The unexpected memcg OOM on THP has already been fixed upstream by
-9d3c3354bb85 ("mm, thp: do not cause memcg oom for thp") but this is
-one-off fix rather than a generic solution. Teach mem_cgroup_oom to bail
-out on costly order requests to fix the THP issue as well as any other
-costly OOM eligible allocations to be added in future.
-
-Also revert 9d3c3354bb85 because special gfp for THP is no longer
-needed.
-
-Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
-Reported-by: David Rientjes <rientjes@google.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/huge_memory.c | 5 ++---
- mm/khugepaged.c  | 8 ++------
- mm/memcontrol.c  | 2 +-
- 3 files changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2297dd9cc7c3..0cc62405de9c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -555,8 +555,7 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
- 
- 	VM_BUG_ON_PAGE(!PageCompound(page), page);
- 
--	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp | __GFP_NORETRY, &memcg,
--				  true)) {
-+	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
- 		put_page(page);
- 		count_vm_event(THP_FAULT_FALLBACK);
- 		return VM_FAULT_FALLBACK;
-@@ -1317,7 +1316,7 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	}
- 
- 	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
--				huge_gfp | __GFP_NORETRY, &memcg, true))) {
-+					huge_gfp, &memcg, true))) {
- 		put_page(new_page);
- 		split_huge_pmd(vma, vmf->pmd, vmf->address);
- 		if (page)
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 214e614b62b0..b7e2268dfc9a 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -960,9 +960,7 @@ static void collapse_huge_page(struct mm_struct *mm,
- 		goto out_nolock;
- 	}
- 
--	/* Do not oom kill for khugepaged charges */
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
--					   &memcg, true))) {
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out_nolock;
- 	}
-@@ -1321,9 +1319,7 @@ static void collapse_shmem(struct mm_struct *mm,
- 		goto out;
- 	}
- 
--	/* Do not oom kill for khugepaged charges */
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
--					   &memcg, true))) {
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out;
- 	}
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d1a917b5b7b7..08accbcd1a18 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
- 
- static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
- {
--	if (!current->memcg_may_oom)
-+	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
- 		return;
- 	/*
- 	 * We are in the middle of the charge context here, so we
--- 
-2.16.3
-
-
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Ming
