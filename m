@@ -1,94 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756660AbeDCWc5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 18:32:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43464 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754402AbeDCWcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 18:32:53 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-In-Reply-To: <CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com>
-References: <CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com> <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org> <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk> <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com> <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com> <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com> <9758.1522775763@warthog.procyon.org.uk> <CALCETrWHS9p1My=j07=V=OP7v4SwQkW-kJ3JOx6EbPU8fb_XEQ@mail.gmail.com> <13189.1522784944@warthog.procyon.org.uk>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: dhowells@redhat.com, Matthew Garrett <mjg59@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8614.1522794399.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-From: David Howells <dhowells@redhat.com>
-Date: Tue, 03 Apr 2018 23:32:49 +0100
-Message-ID: <9349.1522794769@warthog.procyon.org.uk>
+        id S1756693AbeDCWeD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 18:34:03 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:37182 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756133AbeDCW3m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 18:29:42 -0400
+X-Google-Smtp-Source: AIpwx48w0yRyV4uz2zFhso5WrJvqfYr2AhDY8ojTtO+pE2VpCQzaKuwe/dI3lTOeS7bM8/jvmc0/9Q==
+Date: Tue, 03 Apr 2018 15:29:40 -0700 (PDT)
+X-Google-Original-Date: Tue, 03 Apr 2018 15:29:39 PDT (-0700)
+Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default readX() implementation
+In-Reply-To: <CAK8P3a0+Q-aBbKsqqypZfCVzHTwcepL9KhBP9qJKE+2FknWHMg@mail.gmail.com>
+CC: okaya@codeaurora.org, mark.rutland@arm.com, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@sifive.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Message-ID: <mhng-fe49c525-788d-4ce7-9703-95e2b3eaeca6@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@kernel.org> wrote:
+On Tue, 03 Apr 2018 05:56:18 PDT (-0700), Arnd Bergmann wrote:
+> On Tue, Apr 3, 2018 at 2:44 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
+>> On 4/3/2018 7:13 AM, Arnd Bergmann wrote:
+>>> On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>>>> Hi,
+>>>>
+>>>> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
+>>>>> The default implementation of mapping readX() to __raw_readX() is wrong.
+>>>>> readX() has stronger ordering semantics. Compiler is allowed to reorder
+>>>>> __raw_readX().
+>>>>
+>>>> Could you please specify what the compiler is potentially reordering
+>>>> __raw_readX() against, and why this would be wrong?
+>>>>
+>>>> e.g. do we care about prior normal memory accesses, subsequent normal
+>>>> memory accesses, and/or other IO accesses?
+>>>>
+>>>> I assume that the asm-generic __raw_{read,write}X() implementations are
+>>>> all ordered w.r.t. each other (at least for a specific device).
+>>>
+>>> I think that is correct: the compiler won't reorder those because of the
+>>> 'volatile' pointer dereference, but it can reorder access to a normal
+>>> pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
+>>> of using writel to trigger a DMA, or using a readl to see if a DMA has
+>>> completed.
+>>
+>> Yes, we are worried about memory update vs. IO update ordering here.
+>> That was the reason why barrier() was introduced in this patch. I'll try to
+>> clarify that better in the commit text.
+>>
+>>>
+>>> The question is whether we should use a stronger barrier such
+>>> as rmb() amd wmb() here rather than a simple compiler barrier.
+>>>
+>>> I would assume that on complex architectures with write buffers and
+>>> out-of-order prefetching, those are required, while on architectures
+>>> without those features, the barriers are cheap.
+>>
+>> That's my reasoning too. I'm trying to follow the x86 example here where there
+>> is a compiler barrier in writeX() and readX() family of functions.
+>
+> I think x86 is the special case here because it implicitly guarantees
+> the strict ordering in the hardware, as long as the compiler gets it
+> right. For the asm-generic version, it may be better to play safe and
+> do the safest version, requiring architectures to override that barrier
+> if they want to be faster.
+>
+> We could use the same macros that riscv has, using __io_br(),
+> __io_ar(), __io_bw() and __io_aw() for before/after read/write.
 
-> > If the user can arbitrarily modify the running kernel image, you cannot
-> > trust anything.  You cannot determine the trustworthiness of something
-> > because your basis for determining that trust can be compromised.
-> 
-> I'm having a very, very hard time coming up with a scenario where I
-> can "trust" something if an attacker can get root but can't modify the
-> running kernel image but I can't "trust" something if the attacker
-> can't.
-
-Eh?  If the attacker can't what?  Did you mean to put "can" at the end of that
-rather than "can't"?  I don't see why the kernel-level trust would be
-compromised if an attacker can't get root and can't modify the running kernel
-image.
-
-Here's a simple scenario: You boot your machine.  You have module verification
-keys in your kernel.  You have /dev/mem available for root to read/write.  A
-program running as root can modify the keys in your kernel or just disable the
-checking code entirely.  It can now insmod any module it likes.  You may as
-well not bother with signed modules.  In fact, it can modify the running
-kernel image in any way it likes, without even having to load modules.
-There's no point bothering with UID/GID checking either.
-
-> > Stopping the kernel from being arbitrarily read stops any encryption keys it
-> > may be using from being retrieved.
-> 
-> If I build a server that runs Panera Bread 2.0's website, and the
-> attacker exploits my machine to steal tens of millions of customer
-> records by getting the machine to talk to some database server using
-> keys that are securely stored in the kernel keyring, ...
-
-I was thinking more in terms of preventing access to the encrypted data on
-your own disk.  The key for that could be unlocked using a TPM, but the
-session key then has to be retained in RAM for performance reasons unless you
-can transfer the session key to, say, your SATA controller without it going
-through the CPU.
-
-However, if /dev/mem can be read, any root process can extract the session key
-for your disk.
-
-But, as you suggest, they could also protect secrets used in communications.
-However, the communications themselves have to be exposed to userspace for
-userspace to be able to use them.  That is unavoidable.  The kernel keyring,
-for example, tries to restrict who can even see a key, much less use it as
-much as possible - but ptrace() exists...  You are no less vulnerable if the
-key is held in a userspace process; then the attacker can get the key and the
-data.
-
-If the kernel is locked down, the aim is to try and make sure that keys
-stashed in the kernel cannot be read, though they have to be able to be used,
-or there's no point to them.
-
-David
+FWIW, when I wrote this I wasn't sure what the RISC-V memory model was going to 
+be so I just picked something generic.  In other words, it's already a generic 
+interface, just one that we're the only users of :).
