@@ -1,124 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750903AbeDCNiT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:38:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750714AbeDCNiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:38:17 -0400
-Date: Tue, 3 Apr 2018 15:38:11 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v3 07/14] KVM: s390: interfaces to configure/deconfigure
- guest's AP matrix
-Message-ID: <20180403153811.64c16788.cohuck@redhat.com>
-In-Reply-To: <474b7d18-69ea-631f-214c-f9345119e537@linux.vnet.ibm.com>
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1521051954-25715-8-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180403130758.43851026.cohuck@redhat.com>
-        <474b7d18-69ea-631f-214c-f9345119e537@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751223AbeDCNm6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:42:58 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:54349 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750728AbeDCNm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:42:57 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] arm64: allwinner: h6: restore the usage of CCU slice macros
+Date: Tue,  3 Apr 2018 21:40:24 +0800
+Message-Id: <20180403134024.43156-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Apr 2018 09:17:59 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+As the definition of CCU slice macros are already merged into the source
+tree, restore the usage of the macros now.
 
-> On 04/03/2018 07:07 AM, Cornelia Huck wrote:
-> > On Wed, 14 Mar 2018 14:25:47 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >  
-> >> Provides interfaces to assign AP adapters, usage domains
-> >> and control domains to a KVM guest.
-> >>
-> >> A KVM guest is started by executing the Start Interpretive Execution (SIE)
-> >> instruction. The SIE state description is a control block that contains the
-> >> state information for a KVM guest and is supplied as input to the SIE
-> >> instruction. The SIE state description has a satellite structure called the
-> >> Crypto Control Block (CRYCB). The CRYCB contains three bitmask fields
-> >> identifying the adapters, queues (domains) and control domains assigned to
-> >> the KVM guest:
-> >>
-> >> * The AP Adapter Mask (APM) field identifies the AP adapters assigned to
-> >>    the KVM guest
-> >>
-> >> * The AP Queue Mask (AQM) field identifies the AP queues assigned to
-> >>    the KVM guest. Each AP queue is connected to a usage domain within
-> >>    an AP adapter.
-> >>
-> >> * The AP Domain Mask (ADM) field identifies the control domains
-> >>    assigned to the KVM guest.
-> >>
-> >> Each adapter, queue (usage domain) and control domain are identified by
-> >> a number from 0 to 255. The bits in each mask, from most significant to
-> >> least significant bit, correspond to the numbers 0-255. When a bit is
-> >> set, the corresponding adapter, queue (usage domain) or control domain
-> >> is assigned to the KVM guest.
-> >>
-> >> This patch will set the bits in the APM, AQM and ADM fields of the
-> >> CRYCB referenced by the KVM guest's SIE state description. The process
-> >> used is:
-> >>
-> >> 1. Verify that the bits to be set do not exceed the maximum bit
-> >>     number for the given mask.
-> >>
-> >> 2. Verify that the APQNs that can be derived from the intersection
-> >>     of the bits set in the APM and AQM fields of the KVM guest's CRYCB
-> >>     are not assigned to any other KVM guest running on the same linux
-> >>     host.
-> >>
-> >> 3. Set the APM, AQM and ADM in the CRYCB according to the matrix
-> >>     configured for the mediated matrix device via its sysfs
-> >>     adapter, domain and control domain attribute files respectively.
-> >>
-> >> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> >> ---
-> >>   arch/s390/include/asm/kvm-ap.h        |   36 +++++
-> >>   arch/s390/kvm/kvm-ap.c                |  268 +++++++++++++++++++++++++++++++++
-> >>   drivers/s390/crypto/vfio_ap_ops.c     |   19 +++
-> >>   drivers/s390/crypto/vfio_ap_private.h |    4 +
-> >>   4 files changed, 327 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-> >> index a2c6ad2..eb365e2 100644
-> >> --- a/arch/s390/kvm/kvm-ap.c
-> >> +++ b/arch/s390/kvm/kvm-ap.c
-> >> @@ -8,9 +8,129 @@
-> >>   
-> >>   #include <asm/kvm-ap.h>
-> >>   #include <asm/ap.h>
-> >> +#include <linux/bitops.h>
-> >>   
-> >>   #include "kvm-s390.h"
-> >>   
-> >> +static inline void kvm_ap_clear_crycb_masks(struct kvm *kvm)
-> >> +{
-> >> +	int crycb_fmt = kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK;
-> >> +
-> >> +	if (crycb_fmt == CRYCB_FORMAT2)
-> >> +		memset(&kvm->arch.crypto.crycb->apcb1, 0,
-> >> +		       sizeof(kvm->arch.crypto.crycb->apcb1));
-> >> +	else
-> >> +		memset(&kvm->arch.crypto.crycb->apcb0, 0,
-> >> +		       sizeof(kvm->arch.crypto.crycb->apcb0));
-> >> +}  
-> > Should that rather be a switch/case? If there's a CRYCB_FORMAT3 in the
-> > future, I'd think that it's more likely that it uses apcb1 and not
-> > apcb0. Can't comment further without the architecture, obviously.  
-> Maybe we should just clear both structures without regard to the CRYCB 
-> format.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-Yes; but my concern applies to the other checks for CRYCB_FORMAT2 as
-well (snipped).
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 56563150d61a..4debc3962830 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -4,6 +4,8 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sun50i-h6-ccu.h>
++#include <dt-bindings/reset/sun50i-h6-ccu.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -115,7 +117,7 @@
+ 				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&ccu 26>, <&osc24M>, <&osc32k>;
++			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
+ 			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			#gpio-cells = <3>;
+@@ -134,8 +136,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 70>;
+-			resets = <&ccu 21>;
++			clocks = <&ccu CLK_BUS_UART0>;
++			resets = <&ccu RST_BUS_UART0>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -145,8 +147,8 @@
+ 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 71>;
+-			resets = <&ccu 22>;
++			clocks = <&ccu CLK_BUS_UART1>;
++			resets = <&ccu RST_BUS_UART1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -156,8 +158,8 @@
+ 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 72>;
+-			resets = <&ccu 23>;
++			clocks = <&ccu CLK_BUS_UART2>;
++			resets = <&ccu RST_BUS_UART2>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -167,8 +169,8 @@
+ 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu 73>;
+-			resets = <&ccu 24>;
++			clocks = <&ccu CLK_BUS_UART3>;
++			resets = <&ccu RST_BUS_UART3>;
+ 			status = "disabled";
+ 		};
+ 	};
+-- 
+2.15.1
