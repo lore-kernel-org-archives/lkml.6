@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753658AbeDCVQD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:16:03 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:45253 "EHLO
+        id S1753598AbeDCVQC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:16:02 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:42296 "EHLO
         srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752525AbeDCVQA (ORCPT
+        with ESMTP id S1752246AbeDCVQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Apr 2018 17:16:00 -0400
 From: Luca Ceresoli <luca@lucaceresoli.net>
@@ -12,12 +12,10 @@ To: linux-media@vger.kernel.org
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
         Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH 2/5] media: docs: clarify relationship between crop and selection APIs
-Date: Tue,  3 Apr 2018 23:15:43 +0200
-Message-Id: <1522790146-16061-2-git-send-email-luca@lucaceresoli.net>
+Subject: [PATCH 1/5] media: docs: selection: fix typos
+Date: Tue,  3 Apr 2018 23:15:42 +0200
+Message-Id: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
-References: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -32,105 +30,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having two somewhat similar and largely overlapping APIs is confusing,
-especially since the older one appears in the docs before the newer
-and most featureful counterpart.
-
-Clarify all of this in several ways:
- - swap the two sections
- - give a name to the two APIs in the section names
- - add a note at the beginning of the CROP API section
-
-Also remove a note that is incorrect (correct wording is in
-vidioc-cropcap.rst).
-
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Based on info from: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- Documentation/media/uapi/v4l/common.rst            |  2 +-
- Documentation/media/uapi/v4l/crop.rst              | 21 ++++++++++++---------
- Documentation/media/uapi/v4l/selection-api-005.rst |  2 ++
- Documentation/media/uapi/v4l/selection-api.rst     |  4 ++--
- 4 files changed, 17 insertions(+), 12 deletions(-)
+ Documentation/media/uapi/v4l/selection-api-004.rst | 2 +-
+ Documentation/media/uapi/v4l/selection.svg         | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/media/uapi/v4l/common.rst b/Documentation/media/uapi/v4l/common.rst
-index 13f2ed3fc5a6..5f93e71122ef 100644
---- a/Documentation/media/uapi/v4l/common.rst
-+++ b/Documentation/media/uapi/v4l/common.rst
-@@ -41,6 +41,6 @@ applicable to all devices.
-     extended-controls
-     format
-     planar-apis
--    crop
-     selection-api
-+    crop
-     streaming-par
-diff --git a/Documentation/media/uapi/v4l/crop.rst b/Documentation/media/uapi/v4l/crop.rst
-index 182565b9ace4..83fa16eb347e 100644
---- a/Documentation/media/uapi/v4l/crop.rst
-+++ b/Documentation/media/uapi/v4l/crop.rst
-@@ -2,9 +2,18 @@
+diff --git a/Documentation/media/uapi/v4l/selection-api-004.rst b/Documentation/media/uapi/v4l/selection-api-004.rst
+index d782cd5b2117..0a4ddc2d71db 100644
+--- a/Documentation/media/uapi/v4l/selection-api-004.rst
++++ b/Documentation/media/uapi/v4l/selection-api-004.rst
+@@ -41,7 +41,7 @@ The driver may further adjust the requested size and/or position
+ according to hardware limitations.
  
- .. _crop:
- 
--*************************************
--Image Cropping, Insertion and Scaling
--*************************************
-+*****************************************************
-+Image Cropping, Insertion and Scaling -- the CROP API
-+*****************************************************
-+
-+.. note::
-+
-+   The CROP API is mostly superseded by the newer :ref:`SELECTION API
-+   <selection-api>`. The new API should be preferred in most cases,
-+   with the exception of pixel aspect ratio detection, which is
-+   implemented by :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` and has no
-+   equivalent in the SELECTION API. See :ref:`selection-vs-crop` for a
-+   comparison of the two APIs.
- 
- Some video capture devices can sample a subsection of the picture and
- shrink or enlarge it to an image of arbitrary size. We call these
-@@ -40,12 +49,6 @@ support scaling or the :ref:`VIDIOC_G_CROP <VIDIOC_G_CROP>` and
- :ref:`VIDIOC_S_CROP <VIDIOC_G_CROP>` ioctls. Their size (and position
- where applicable) will be fixed in this case.
- 
--.. note::
--
--   All capture and output devices must support the
--   :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl such that applications
--   can determine if scaling takes place.
--
- 
- Cropping Structures
- ===================
-diff --git a/Documentation/media/uapi/v4l/selection-api-005.rst b/Documentation/media/uapi/v4l/selection-api-005.rst
-index 5b47a28ac6d7..2ad30a49184f 100644
---- a/Documentation/media/uapi/v4l/selection-api-005.rst
-+++ b/Documentation/media/uapi/v4l/selection-api-005.rst
-@@ -1,5 +1,7 @@
- .. -*- coding: utf-8; mode: rst -*-
- 
-+.. _selection-vs-crop:
-+
- ********************************
- Comparison with old cropping API
- ********************************
-diff --git a/Documentation/media/uapi/v4l/selection-api.rst b/Documentation/media/uapi/v4l/selection-api.rst
-index 81ea52d785b9..e4e623824b30 100644
---- a/Documentation/media/uapi/v4l/selection-api.rst
-+++ b/Documentation/media/uapi/v4l/selection-api.rst
-@@ -2,8 +2,8 @@
- 
- .. _selection-api:
- 
--API for cropping, composing and scaling
--=======================================
-+Cropping, composing and scaling -- the SELECTION API
-+====================================================
- 
- 
- .. toctree::
+ Each capture device has a default source rectangle, given by the
+-``V4L2_SEL_TGT_CROP_DEFAULT`` target. This rectangle shall over what the
++``V4L2_SEL_TGT_CROP_DEFAULT`` target. This rectangle shall cover what the
+ driver writer considers the complete picture. Drivers shall set the
+ active crop rectangle to the default when the driver is first loaded,
+ but not later.
+diff --git a/Documentation/media/uapi/v4l/selection.svg b/Documentation/media/uapi/v4l/selection.svg
+index a93e3b59786d..911062bd2844 100644
+--- a/Documentation/media/uapi/v4l/selection.svg
++++ b/Documentation/media/uapi/v4l/selection.svg
+@@ -1128,11 +1128,11 @@
+    </text>
+   </g>
+   <text transform="matrix(.96106 0 0 1.0405 48.571 195.53)" x="2438.062" y="1368.429" enable-background="new" font-size="50" style="line-height:125%">
+-   <tspan x="2438.062" y="1368.429">COMPOSE_BONDS</tspan>
++   <tspan x="2438.062" y="1368.429">COMPOSE_BOUNDS</tspan>
+   </text>
+   <g font-size="40">
+    <text transform="translate(48.571 195.53)" x="8.082" y="1438.896" enable-background="new" style="line-height:125%">
+-    <tspan x="8.082" y="1438.896" font-size="50">CROP_BONDS</tspan>
++    <tspan x="8.082" y="1438.896" font-size="50">CROP_BOUNDS</tspan>
+    </text>
+    <text transform="translate(48.571 195.53)" x="1455.443" y="-26.808" enable-background="new" style="line-height:125%">
+     <tspan x="1455.443" y="-26.808" font-size="50">overscan area</tspan>
 -- 
 2.7.4
