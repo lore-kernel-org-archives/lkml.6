@@ -1,83 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755434AbeDCLoj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:44:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58672 "EHLO mx2.suse.de"
+        id S1755454AbeDCLqD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:46:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58927 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755135AbeDCLoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:44:37 -0400
-Date: Tue, 3 Apr 2018 13:44:33 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC tree for 4.17
-Message-ID: <20180403114432.GA29513@pd.tnic>
+        id S1755335AbeDCLqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:46:02 -0400
+Date: Tue, 3 Apr 2018 13:46:00 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
+Message-ID: <20180403114600.uc7sqeoqt7fmdd66@pathway.suse.cz>
+References: <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
+ <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
+ <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+ <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+ <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+ <1521119343.10722.665.camel@linux.intel.com>
+ <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
+ <1521224375.23017.41.camel@linux.intel.com>
+ <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
+ <1522678523.21176.178.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1522678523.21176.178.camel@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon 2018-04-02 17:15:23, Andy Shevchenko wrote:
+> On Thu, 2018-03-29 at 16:53 +0200, Petr Mladek wrote:
+> > On Fri 2018-03-16 20:19:35, Andy Shevchenko wrote:
+> > > On Thu, 2018-03-15 at 16:26 +0100, Petr Mladek wrote:
+> > > > On Thu 2018-03-15 15:09:03, Andy Shevchenko wrote:
+> 
+> > > > > I still think that printing a hex value of the error code is
+> > > > > much
+> > > > > better
+> > > > > than some odd "(efault)".
+> > > > 
+> > > > Do you mean (err:0e)? Google gives rather confusing answers for
+> > > > this.
+> > > 
+> > > More like "(0xHHHH)" (we have already more than 512 error code
+> > > numbers.
+> > 
+> > Hmm, I have never seen the error code in this form.
+> 
+> We have limited space to print it and error numbers currently can be up
+> to 0xfff (4095). So, I have no better idea how to squeeze them while
+> thinking that "(efault)" is much harder to parse in case of error
+> pointer.
 
-here's this round of EDAC updates. Noteworthy is the NVDIMM support
-by Tony Luck.
+But this will not be used instead of address value. It is used in situations
+where we print the information that is stored at the address, for example,
+string, IP address, dentry name.
 
-Please pull,
-thanks!
+> >  Also google gives
+> > rather confusing results when searching, for example for "(0x000E)".
+> 
+> It's not primarily for google, though yeah, people would google for
+> error messages...
+> 
+> Another question is what the format: decimal versus hex for errors.
+> Maybe just "(-DDDDD)"?
 
----
-The following changes since commit bf8486709ac7fad99e4040dea73fe466c57a4ae1:
+This still looks confusing and google does not help.
 
-  EDAC, sb_edac: Fix out of bound writes during DIMM configuration on KNL (2018-02-23 12:05:37 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_for_4.17
-
-for you to fetch changes up to 6fd052665274b4e7570491ba272f2dbb09cbbcd5:
-
-  EDAC, sb_edac: Remove variable length array usage (2018-03-17 05:24:55 +0100)
-
-----------------------------------------------------------------
-* Add NVDIMM support to EDAC (Tony Luck)
-
-* misc fixes
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (1):
-      EDAC, sb_edac: Remove variable length array usage
-
-Rasmus Villemoes (1):
-      EDAC, layerscape: Allow building for LS1021A
-
-Tony Luck (5):
-      EDAC: Drop duplicated array of strings for memory type names
-      EDAC: Add new memory type for non-volatile DIMMs
-      acpi, nfit: Add function to look up nvdimm device and provide SMBIOS handle
-      firmware, DMI: Add function to look up a handle and return DIMM size
-      EDAC, skx_edac: Detect non-volatile DIMMs
-
- drivers/acpi/nfit/core.c     | 27 ++++++++++++++++++
- drivers/edac/Kconfig         |  7 +++--
- drivers/edac/edac_mc.c       | 41 ++++++++++++++-------------
- drivers/edac/edac_mc_sysfs.c | 26 ++---------------
- drivers/edac/sb_edac.c       | 12 ++++----
- drivers/edac/skx_edac.c      | 67 ++++++++++++++++++++++++++++++++++++++++----
- drivers/firmware/dmi_scan.c  | 31 ++++++++++++++++++++
- include/acpi/nfit.h          | 18 ++++++++++++
- include/linux/dmi.h          |  2 ++
- include/linux/edac.h         |  3 ++
- 10 files changed, 175 insertions(+), 59 deletions(-)
- create mode 100644 include/acpi/nfit.h
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+Best Regards,
+Petr
