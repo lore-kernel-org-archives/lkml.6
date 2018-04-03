@@ -1,61 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754808AbeDCHep convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 03:34:45 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:52740 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753250AbeDCHen (ORCPT
+        id S1754790AbeDCHhN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 03:37:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56154 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753267AbeDCHhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 03:34:43 -0400
-X-Google-Smtp-Source: AIpwx49AH2KRLbR+W61S1CKWrTOMVjVD2G4zGlmo7qDXCCJfTligLs5OBnTjAw9m2rDBumX1HYFurQ==
+        Tue, 3 Apr 2018 03:37:12 -0400
+Date: Tue, 3 Apr 2018 09:37:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Norbert Manthey <nmanthey@amazon.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: v4.16+ seeing many unaligned access in dequeue_task_fair() on
+ IA64
+Message-ID: <20180403073706.GV4082@hirez.programming.kicks-ass.net>
+References: <20180402232448.fbop7k5xicblski5@agluck-desk>
 MIME-Version: 1.0
-In-Reply-To: <20180403092724.607e8e37@dell-desktop.home>
-References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
- <20180403061836.3926-2-mylene.josserand@bootlin.com> <CAGb2v64GL=1UcYs1tFp-mS07vbHBao82SEhyzUrUHB++2-EKBg@mail.gmail.com>
- <20180403092724.607e8e37@dell-desktop.home>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 3 Apr 2018 15:34:21 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67RduaktYimLAuFwYB=Q8qD8f3AbZmoX5QssAGDtWwS6Q@mail.gmail.com>
-Message-ID: <CAGb2v67RduaktYimLAuFwYB=Q8qD8f3AbZmoX5QssAGDtWwS6Q@mail.gmail.com>
-Subject: Re: [PATCH v5 01/13] ARM: move cputype definitions into another file
-To: =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>, quentin.schulz@bootlin.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180402232448.fbop7k5xicblski5@agluck-desk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 3:27 PM, Mylène Josserand
-<mylene.josserand@bootlin.com> wrote:
-> Hi Chen-Yu,
->
-> Thank you for your review!
->
-> On Tue, 3 Apr 2018 14:52:45 +0800
-> Chen-Yu Tsai <wens@csie.org> wrote:
->
->> On Tue, Apr 3, 2018 at 2:18 PM, Mylène Josserand
->> <mylene.josserand@bootlin.com> wrote:
->> > To add the support for SMP on sun8i-a83t, we will use some
->> > definitions in an assembly file so move definitions into
->> > another file to separate C functions and macro defintions.
->>
->> Instead of moving the definitions, you could guard all the C
->> stuff in "#ifndef __ASSEMBLY__". AFAIK a few header files do that.
->
-> Oh, right. It is better with this check so I will use that in the next
-> iteration of my series.
+On Mon, Apr 02, 2018 at 04:24:49PM -0700, Luck, Tony wrote:
+> v4.16 boots cleanly. But with the first bunch of merges
+> (Linus HEAD = 46e0d28bdb8e6d00e27a0fe9e1d15df6098f0ffb)
+> I see a bunch of:
+> 
+> ia64_handle_unaligned: 4863 callbacks suppressed
+> kernel unaligned access to 0xe00000031660fd74, ip=0xa0000001000f23e0
+> kernel unaligned access to 0xe00000033bdffbcc, ip=0xa0000001000f2370
+> kernel unaligned access to 0xe00000031660fd74, ip=0xa0000001000f23e0
+> kernel unaligned access to 0xe00000033bdffbcc, ip=0xa0000001000f2370
+> kernel unaligned access to 0xe00000031660fd74, ip=0xa0000001000f23e0
+> 
+> The addresses are all 4-byte, but not 8-byte aligned.
+> 
+> Any guesses before I start to bisect?
 
-I'm not sure about the policy, but I kind of assume any header under
-"asm" would be usable in assembly files, so the guard would be better.
+That doesn't sound good. The only guess I have at this moment is you
+accidentially enabled RANDSTRUCT_PLUGIN and that messes things up.
 
-ChenYu
+struct task_struct whould be at least L1_CACHE_BYTES aligned, and C
+otherwise makes it fairly hard to cause unaligned accesses. Packed
+structures and/or casting are required, and I don't think we added
+anything dodgy like that here.
