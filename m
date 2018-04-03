@@ -1,74 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754775AbeDCCPQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 22:15:16 -0400
-Received: from ozlabs.org ([103.22.144.67]:37345 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754722AbeDCCPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 22:15:12 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 3 Apr 2018 12:14:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jesper Nilsson <jesper@jni.nu>, David Howells <dhowells@redhat.com>
-Subject: linux-next: manual merge of the pci tree with the asm-generic tree
-Message-ID: <20180403121415.20c4843e@canb.auug.org.au>
+        id S1754784AbeDCCSh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 22:18:37 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:13008 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754725AbeDCCSg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 22:18:36 -0400
+X-UUID: ec513e69d1c547e68bea8ac885686feb-20180403
+Message-ID: <1522721904.18424.51.camel@mtkswgap22>
+Subject: Re: [PATCH net] net: dsa: mt7530: Use NULL instead of plain integer
+From: Sean Wang <sean.wang@mediatek.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+CC: <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Date: Tue, 3 Apr 2018 10:18:24 +0800
+In-Reply-To: <20180402232414.19671-1-f.fainelli@gmail.com>
+References: <20180402232414.19671-1-f.fainelli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EtAJOtp6TzJsOUSKgvjaxlK"; protocol="application/pgp-signature"
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23760.004
+X-TM-AS-Result: No-15.290600-8.000000-10
+X-TMASE-MatchedRID: +c13yJDs9034OiVTWoD8RMmB4bNJoA6MjLOy13Cgb4+qvcIF1TcLYBCz
+        9g14hIMaUxPAM3J2QaoL6G+1LgVPyzAPG7OdV/f5XP5rFAucBUHzvNxVvAWejd9RlPzeVuQQXGl
+        pMstVe4Ra43+J+risUKUS0MnJVHzyTX7PJ/OU3vKDGx/OQ1GV8rHlqZYrZqdI+gtHj7OwNO3DW0
+        xVTs41PCxRafCzgzVfdYvI3q/OzLoOpuLrAtPac1w60UwZ9GtI
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--15.290600-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23760.004
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/EtAJOtp6TzJsOUSKgvjaxlK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2018-04-02 at 16:24 -0700, Florian Fainelli wrote:
+> We would be passing 0 instead of NULL as the rsp argument to
+> mt7530_fdb_cmd(), fix that.
+> 
 
-Hi all,
+Acked-by: Sean Wang <sean.wang@mediatek.com>
 
-Today's linux-next merge of the pci tree got a conflict in:
+BTW, does the part of the commit message should be updated with "passing
+NULL instead of 0"?
 
-  arch/cris/arch-v32/drivers/pci/bios.c
 
-between commits:
-
-  c690eddc2f3b ("CRIS: Drop support for the CRIS port")
-  fd8773f9f544 ("arch: remove frv port")
-  739d875dd698 ("mn10300: Remove the architecture")
-
-from the asm-generic tree and commit:
-
-  31cbca85df15 ("PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled")
-
-from the pci tree.
-
-I fixed it up (I just removed the files) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EtAJOtp6TzJsOUSKgvjaxlK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC43cACgkQAVBC80lX
-0GyIUQf9EX5A9NuqbXV4L7ruOh/idShldigxDgznAFj0zujYZGleB9FuUl4nzP6O
-HmaCRVVFgG67UDjj+pTkp+T5Q7Ixx0nqP94VrpRh7AeDK6caHXG8k5+NlM+qSYER
-NhiQAl6oRoYw7JQpMzxRistijWqrys0+rOXCUmakz98u2Etb8Zj33JOd8xh0iFLW
-pVxykVuCKzMbO7loU2cyx3XUEssVYu3c2DaouiheORoJ/FhG/BCR0bLsLLhdjH+p
-reI2IJUIGoRdjMZKfGH+himXXbzVcS7lSzBC6ebDhYpgZa2iMi4YIGpEhFQBPQsy
-nQca983JJCoulyjJb1a9Yd6bq7cy5Q==
-=3YYZ
------END PGP SIGNATURE-----
-
---Sig_/EtAJOtp6TzJsOUSKgvjaxlK--
+> Fixes: b8f126a8d543 ("net-next: dsa: add dsa support for Mediatek MT7530 switch")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  drivers/net/dsa/mt7530.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
+> index 4e53c5ce23ff..a7f6c0a62fc7 100644
+> --- a/drivers/net/dsa/mt7530.c
+> +++ b/drivers/net/dsa/mt7530.c
+> @@ -917,7 +917,7 @@ mt7530_port_fdb_add(struct dsa_switch *ds, int port,
+>  
+>  	mutex_lock(&priv->reg_mutex);
+>  	mt7530_fdb_write(priv, vid, port_mask, addr, -1, STATIC_ENT);
+> -	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, 0);
+> +	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, NULL);
+>  	mutex_unlock(&priv->reg_mutex);
+>  
+>  	return ret;
+> @@ -933,7 +933,7 @@ mt7530_port_fdb_del(struct dsa_switch *ds, int port,
+>  
+>  	mutex_lock(&priv->reg_mutex);
+>  	mt7530_fdb_write(priv, vid, port_mask, addr, -1, STATIC_EMP);
+> -	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, 0);
+> +	ret = mt7530_fdb_cmd(priv, MT7530_FDB_WRITE, NULL);
+>  	mutex_unlock(&priv->reg_mutex);
+>  
+>  	return ret;
+> @@ -1293,7 +1293,7 @@ mt7530_setup(struct dsa_switch *ds)
+>  	}
+>  
+>  	/* Flush the FDB table */
+> -	ret = mt7530_fdb_cmd(priv, MT7530_FDB_FLUSH, 0);
+> +	ret = mt7530_fdb_cmd(priv, MT7530_FDB_FLUSH, NULL);
+>  	if (ret < 0)
+>  		return ret;
+>  
