@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753747AbeDCVWf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:22:35 -0400
-Received: from gateway34.websitewelcome.com ([192.185.150.107]:42645 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752495AbeDCVWd (ORCPT
+        id S1753610AbeDCV32 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:29:28 -0400
+Received: from gateway21.websitewelcome.com ([192.185.46.109]:49914 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752788AbeDCV31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:22:33 -0400
-Date: Tue, 3 Apr 2018 15:55:12 -0500
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <sfrench@samba.org>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        Tue, 3 Apr 2018 17:29:27 -0400
+Date: Tue, 3 Apr 2018 16:29:25 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Sunil Goutham <sgoutham@cavium.com>, Robert Richter <rric@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] cifs: cifssmb: Fix potential NULL pointer dereference
-Message-ID: <20180403205512.GA28804@embeddedor.com>
+Subject: [PATCH] net: thunderx: nicvf_main: Fix potential NULL pointer
+ dereference
+Message-ID: <20180403212925.GA31093@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -28,53 +28,41 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.145.54.187
 X-Source-L: No
-X-Exim-ID: 1f3Sxe-000Db2-I5
+X-Exim-ID: 1f3TUc-000j1Q-Db
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.145.54.187]:53564
+X-Source-Sender: (embeddedor) [189.145.54.187]:53894
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
+X-Email-Count: 25
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcon->ses is being dereferenced before it is null checked, hence
-there is a potential null pointer dereference.
+Add null check on kmalloc() return value in order to prevent
+a null pointer dereference.
 
-Fix this by moving the pointer dereference after tcon->ses has
-been properly null checked.
-
-Addresses-Coverity-ID: 1467426 ("Dereference before null check")
-Fixes: 93012bf98416 ("cifs: add server->vals->header_preamble_size")
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Addresses-Coverity-ID: 1467429 ("Dereference null return value")
+Fixes: 37c3347eb247 ("net: thunderx: add ndo_set_rx_mode callback implementation for VF")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/cifs/smb2pdu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cavium/thunder/nicvf_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index f7741ce..e5ac474 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -3454,7 +3454,7 @@ static int
- build_qfs_info_req(struct kvec *iov, struct cifs_tcon *tcon, int level,
- 		   int outbuf_len, u64 persistent_fid, u64 volatile_fid)
- {
--	struct TCP_Server_Info *server = tcon->ses->server;
-+	struct TCP_Server_Info *server;
- 	int rc;
- 	struct smb2_query_info_req *req;
- 	unsigned int total_len;
-@@ -3464,6 +3464,8 @@ build_qfs_info_req(struct kvec *iov, struct cifs_tcon *tcon, int level,
- 	if ((tcon->ses == NULL) || (tcon->ses->server == NULL))
- 		return -EIO;
+diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+index 1e9a31f..468321a 100644
+--- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
++++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+@@ -1999,6 +1999,8 @@ static void nicvf_set_rx_mode(struct net_device *netdev)
+ 				struct xcast_addr *xaddr;
  
-+	server = tcon->ses->server;
-+
- 	rc = smb2_plain_req_init(SMB2_QUERY_INFO, tcon, (void **) &req,
- 			     &total_len);
- 	if (rc)
+ 				mc_list = kmalloc(sizeof(*mc_list), GFP_ATOMIC);
++				if (unlikely(!mc_list))
++					return;
+ 				INIT_LIST_HEAD(&mc_list->list);
+ 				netdev_hw_addr_list_for_each(ha, &netdev->mc) {
+ 					xaddr = kmalloc(sizeof(*xaddr),
 -- 
 2.7.4
