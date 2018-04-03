@@ -1,106 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752316AbeDCRVm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:21:42 -0400
-Received: from mga18.intel.com ([134.134.136.126]:61778 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751926AbeDCRVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:21:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,402,1517904000";
-   d="scan'208";a="217210354"
-Subject: Re: [alsa-devel] [PATCH v3 0/2] ASoC: topology: Improve parsing
- hw_configs
-To: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>, linux-kernel@vger.kernel.org,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-References: <20180327205632.3677-1-k.marinushkin@gmail.com>
- <17f0767a-2dea-92dd-a88e-a3f3e670d0d2@gmail.com>
- <461bbabf-7c36-1361-8f66-5abbe3c7f4d8@linux.intel.com>
- <ee6ba140-fa5c-78e9-47bc-125b1aca7672@gmail.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <260f1850-37f2-fffa-fb33-4b5ff823ba0b@linux.intel.com>
-Date: Tue, 3 Apr 2018 12:21:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <ee6ba140-fa5c-78e9-47bc-125b1aca7672@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1752486AbeDCRXj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:23:39 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60296 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751897AbeDCRXg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 13:23:36 -0400
+From: rao.shoaib@oracle.com
+To: linux-kernel@vger.kernel.org
+Cc: paulmck@linux.vnet.ibm.com, joe@perches.com, willy@infradead.org,
+        brouer@redhat.com, linux-mm@kvack.org,
+        Rao Shoaib <rao.shoaib@oracle.com>
+Subject: [PATCH 0/2] Move kfree_rcu out of rcu code and use kfree_bulk
+Date: Tue,  3 Apr 2018 10:22:51 -0700
+Message-Id: <1522776173-7190-1-git-send-email-rao.shoaib@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=987
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804030176
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rao Shoaib <rao.shoaib@oracle.com>
 
+This patch moves kfree_call_rcu() out of rcu related code to
+mm/slab_common and updates kfree_rcu() to use new bulk memory free
+functions as they are more efficient.
 
-On 04/03/2018 12:15 AM, Kirill Marinushkin wrote:
-> On 04/03/18 02:57, Pierre-Louis Bossart wrote:
->>
->> On 04/02/2018 04:17 PM, Kirill Marinushkin wrote:
->>> Hello Pierre-Louis,
->>>
->>> I explicitly clarified with Takashi: to have this patch series merged, we need a
->>> tag "Reviewed-by" from you.
->> I am fine with the changes, but maybe while we are at it, we should clarify
->> what mclk_direction means?
-> That's a good idea to have it solved within this patch series.
->
->>      __u8 mclk_direction;    /* 0 for input, 1 for output */
->>
->> This is really awful and might benefit for additional clarity using
->> codec-centric conventions.
->>
-> I agree that having a clear naming will avoid confusion for future usage.
-> I see from the code, that this variable is ignored. So we have no technical
-> restriction on how to interpret this.
-> I suggest to do similar to what we did for bclk_master:
->
-> /* DAI mclk_direction */
-> #define SND_SOC_TPLG_MCLK_CO        0 /* for codec, mclk is output */
-> #define SND_SOC_TPLG_MCLK_CI          1 /* for codec, mclk is input */
->
->> We also had a discussion internally and can't figure out why the strings are
->> different from the fields in the structure, I feel it'd be simpler to align
->> config and code to avoid issues but keep existing notation for backwards
->> compatibility, e.g.
->>
->> if (strcmp(id, "mclk_freq") == 0) || strcmp(id, "mclk_rate") == 0) {
->>          if (snd_config_get_string(n, &val) < 0)
->>                  return -EINVAL;
->>
->>              hw_cfg->mclk_rate = atoi(val);
->>              continue;
->> }
-> I agree with this. I will also do the same (keeping backwards-compatibility) for:
->
-> "format" => "fmt"
-> "bclk" => "bclk_master"
-> "bclk_freq" => "bclk_rate"
-> "bclk_invert" => "invert_bclk"
-> "fsync" => "fsync_master"
-> "fsync_invert" => "invert_fsync"
-> "fsync_freq" => "fsync_rate"
-> "mclk_freq" => "mclk_rate"
-> "mclk" => "mclk_direction"
-> "pm_gate_clocks" => "clock_gated"
->
-> If you agree with both proposals, I will add patches to this patch series, and
-> re-send as patch v4.
-> Or can we handle it in a better way?
-A v4 is fine with me.
+This is a resubmission of the previous patch.
 
-These topology definitions appear in hindsight quite problematic, there 
-are missing definitions and capabilities, e.g we have the ability to 
-'gate the clock' but without knowing which clock, and we have no ability 
-to force the mclk/bclk/fsync on (be it on demand from a codec driver or 
-on startup as a system requirement). And there is no real extension 
-capability with a protocol version. The net effect is that people will 
-have to create custom tokens and parsing for things that should be common...
+Changes since last submission
+	Surrounded code with 'CONFIG_TREE_RCU || CONFIG_PREEMPT_RCU'
+	to separate tinyurl definitions.
 
-Thanks
--Pierre
+Diff of the changes:
+
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 6338fb6..102a93f 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -55,8 +55,6 @@ void call_rcu(struct rcu_head *head, rcu_callback_t func);
+ #define        call_rcu        call_rcu_sched
+ #endif /* #else #ifdef CONFIG_PREEMPT_RCU */
+ 
+-/* only for use by kfree_call_rcu() */
+-void call_rcu_lazy(struct rcu_head *head, rcu_callback_t func);
+ 
+ void call_rcu_bh(struct rcu_head *head, rcu_callback_t func);
+ void call_rcu_sched(struct rcu_head *head, rcu_callback_t func);
+@@ -210,6 +208,8 @@ do { \
+ 
+ #if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+ #include <linux/rcutree.h>
++/* only for use by kfree_call_rcu() */
++void call_rcu_lazy(struct rcu_head *head, rcu_callback_t func);
+ #elif defined(CONFIG_TINY_RCU)
+ #include <linux/rcutiny.h>
+ #else
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 6e8afff..f126d08 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1526,6 +1526,7 @@ void kzfree(const void *p)
+ }
+ EXPORT_SYMBOL(kzfree);
+ 
++#if defined(CONFIG_TREE_RCU) || defined(CONFIG_PREEMPT_RCU)
+ static DEFINE_PER_CPU(struct rcu_bulk_free, cpu_rbf);
+ 
+ /* drain if atleast these many objects */
+@@ -1696,6 +1697,7 @@ void kfree_call_rcu(struct rcu_head *head,
+        __rcu_bulk_free(head, func);
+ }
+ EXPORT_SYMBOL_GPL(kfree_call_rcu);
++#endif
+
+Previous Changes:
+
+1) checkpatch.pl has been fixed, so kfree_rcu macro is much simpler
+
+2) To handle preemption, preempt_enable()/preempt_disable() statements
+   have been added to __rcu_bulk_free().
+
+Rao Shoaib (2):
+  Move kfree_call_rcu() to slab_common.c
+  kfree_rcu() should use kfree_bulk() interface
+
+ include/linux/mm.h       |   5 ++
+ include/linux/rcupdate.h |  43 +-----------
+ include/linux/rcutiny.h  |   8 ++-
+ include/linux/rcutree.h  |   2 -
+ include/linux/slab.h     |  42 ++++++++++++
+ kernel/rcu/tree.c        |  24 +++----
+ kernel/sysctl.c          |  40 +++++++++++
+ mm/slab.h                |  23 +++++++
+ mm/slab_common.c         | 174 +++++++++++++++++++++++++++++++++++++++++++++++
+ 9 files changed, 304 insertions(+), 57 deletions(-)
+
+-- 
+2.7.4
