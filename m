@@ -1,56 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753196AbeDCS7C (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 14:59:02 -0400
-Received: from mga11.intel.com ([192.55.52.93]:56242 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752420AbeDCS7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 14:59:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,402,1517904000";
-   d="scan'208";a="217334802"
-Date: Tue, 3 Apr 2018 11:58:34 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Norbert Manthey <nmanthey@amazon.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: v4.16+ seeing many unaligned access in dequeue_task_fair() on
- IA64
-Message-ID: <20180403185829.yteixqsb5zazmav6@agluck-desk>
-References: <20180402232448.fbop7k5xicblski5@agluck-desk>
- <20180403073706.GV4082@hirez.programming.kicks-ass.net>
+        id S1753058AbeDCTA0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:00:26 -0400
+Received: from mail-it0-f48.google.com ([209.85.214.48]:53803 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752132AbeDCTAZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:00:25 -0400
+X-Google-Smtp-Source: AIpwx483bRm82G2pmxTq3B5F+NBrJzHXxerrsRJZizPAk+7IxXIatztxWB0Opc2Ov9mI3XD5cb9QHV55RgDTa/m+SNM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403073706.GV4082@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180402163413.GV29239@sirena.org.uk>
+References: <20180402163413.GV29239@sirena.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 3 Apr 2018 12:00:24 -0700
+X-Google-Sender-Auth: UpU6hddqxbR-aFLLoawGrACD6UU
+Message-ID: <CA+55aFwXUh6AkFoYN4DihjaYwNjD-ti=hw5jz6f-bhjXYS+dNQ@mail.gmail.com>
+Subject: Re: [GIT PULL] regulator updates for v4.17
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 09:37:06AM +0200, Peter Zijlstra wrote:
-> On Mon, Apr 02, 2018 at 04:24:49PM -0700, Luck, Tony wrote:
-> > Any guesses before I start to bisect?
-> 
-> That doesn't sound good. The only guess I have at this moment is you
-> accidentially enabled RANDSTRUCT_PLUGIN and that messes things up.
-> 
-> struct task_struct whould be at least L1_CACHE_BYTES aligned, and C
-> otherwise makes it fairly hard to cause unaligned accesses. Packed
-> structures and/or casting are required, and I don't think we added
-> anything dodgy like that here.
+On Mon, Apr 2, 2018 at 9:34 AM, Mark Brown <broonie@kernel.org> wrote:
+>
+> A very small set of updates for the regulator API this time around,
+> there's a few bug fixes and also:
 
-bisect says:
+Heh. This one was "very small", and the regmap update was "fairly large".
 
-d519329f72a6 ("sched/fair: Update util_est only on util_avg updates")
+I think the regmap one was smaller. This one actually has a new
+driver, the regmap one looked like mostly cleanups.
 
-Reverting just this commit makes the problem go away.
+But I've used your words for the commit logs.
 
--Tony
+               Linus
