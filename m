@@ -1,5 +1,5 @@
 Return-Path: <linux-efi-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2751240-1522798992-2-11799110970480013926
+X-Cyrus-Session-Id: sloti22d1t05-2706406-1522798053-5-13595179179699230065
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='UTF-8'
@@ -7,64 +7,65 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-efi-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522798992; b=q3pGGYJMZL315CD+sxBhRoXS7hp/VY1MlqVaislMmvx2jP1NnY
-    RjHzfFXGbck545dq9zjJZGH7hUSrze8nRSRiY1/4PCOyESR9mGEt1WlecTBUfaUm
-    vdB8YmYYDsevwoAehdgboMzfCKOQRWUiEoKddQuzczAQFoGlRzPJeV9W7SE5y1Sq
-    OnyjrWe84VIsa7Qp+1zDnTe3V04UPPrpg7Bd8InbmQoxQ47LKWohgTbyz/vmRB7P
-    +SyOZh/T4hi4OmsFHAOUcMm9k7BwwJH/O9Njma/jcAkiK6rjRaDc7lQsTKXoLnGp
-    Tq17hXvWqMYgfhxOq0oHZmYEYRS5/wPIeNVQ==
+    1522798053; b=SWsOION9hIeVTwX3dWzGoC4qBAgp0/9hkLFNwMh+A+uLhtR3EL
+    klCnpBJNZ/uOSxaBKW10JdO4RXLvI4w1kkYFOsroEP+t6q8zuNxEWKytSvf2jzGS
+    cYShU7zIA6UAxXrX895J7/lnVvXq1iXvObEmSXWhAHvmlNcAbPRZHwTw7JZTh/ph
+    Hx8/c21GaCUghKhaPLG2AOaUgyAfEXIRPvOaGTBxp6pg2XTZk5uKOFoX3KZ07JE0
+    RCm1xcJdCae0E14VIRMjabA5ODb35gzEdB8L5ypMMPGbSjI6G9WL2AA+mCTR3Fi7
+    J1WW8zWh52GqiaUMV8i0A8cnYeWoxibmwifA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1522798992; bh=rmuZ5Kbap4aDkfPE0G7KxMoUD93Xo9B+hSfKPWqO6v
-    0=; b=VH9P4+sxWByZNT8OaRJa7OhKPENuEc+HL5FmgfH/cV+fyBGJjCWEdqKOu+
-    mCkp5RpDWIuJ2pdllgqygfJohzDqcqCGA0+zxx9XO9Jm2S7sAqq2B4qq2OBojOcO
-    8SBn5ATW8yLWMWNFfEac/2SYhS7btS5sxC0xBBMUSLC2lFFv9x3n3x4nfyybGzla
-    MskBU5ZQtFpWOzvMkftCNKelxzOoOFk19O3oqUBRLpKLtNNpJ+KIbdTIp+KUbnbu
-    Nbd9imxANRi7CQliDmn+J7Rk2X1LQXsa9mMvDpqqJmkvjQvXNT3XzelHaGccEMOk
-    HV6PH8rtC2dzwtRIe+8zj9kwXUVg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    fm2; t=1522798053; bh=k1kgRzcD+tPtBxhEShGvgVY4S0j3FOdK+p7jpNHm6u
+    I=; b=PvYik/qBC0nT/iZF8FLnLpMf0Qykg7VVGpC6XMie91M3n5LUaD4db418cK
+    jQjLc6Rw5vlmH5DzgAczC0bxD2+Ews4OEWK2/loPreTdLp30Qynue2piKNnnpclh
+    ARvShCtFq5uVoTZcQIas/0tNB5mH/NnTOdoEQpo0rmnA5Cztr2hY3ICZEUo5TR11
+    S4ipQVgh6SQox84xgz4GoIqH0UHVlMTMR8Q8p7/a9wCZ4vVd1f8lA7JEZn9ONDTL
+    QcF4+HzLCm8TX4MhFE/PZrI35NLKgAGsBIFcUBVrEt7WzncZ3onDZ9aR9/R+FG8R
+    e+RABaAoUdh1/EDPianrC/hjKw7Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VE0MgpWD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=JgFkCf+m x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UtiR6qP7;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VE0MgpWD x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=JgFkCf+m x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UtiR6qP7;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJHvrQjBiFhjzNLtjzWKmGNNBX+SvBI9J6AYs7mMJptEEIrK5RGjzx+lzcafkvnDdaHC2hr6/04TUT9CDUt/oEMPuRBW82I5gDiaucD0WFTd4DYSVrQQ
-    HbBQdth+ndhalTDzqJJnM+nhKxHSiYSe13eJ7MgQ109hv1UfPD3OEYvpmWmYUifNjWl/GPuUx8wYegxiD6iFtAtdPVsJGoo6zwFn60PvtnZKnWQCj3/ou86c
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfC7G3HFwF+it0NXSHJz0dBQesvV/E0lrusUOp6C19v53/lL4ceTr2N6IQk0YuCTs+BLw55hm4R82FpP3tqKQ3kvAVECPBOENhvjPIxxBziTZ8TzPXOVM
+    2psEFh9b4ih7LAAy/K31f/2zBnmeQsfW2Jm2P09UTzhs7VnfvrGT9HFOvAWpL4RyQ+zkGOFDv1DEPh+HmVEuYzV8KMFrj7ZPP9kgt8InkCR8u6b6VRMOYLOE
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=FwQw-k4DleNXT8Fyj70A:9
-    a=M38OURcyst1hynUs:21 a=RYt_kXUFO3tfPbWe:21 a=QEXdDO2ut3YA:10
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=MqrLuBBcaSQT8kBTHjwA:9
+    a=mkaj10dLGZ8OLYoF:21 a=COelctXQOu2P-CM6:21 a=QEXdDO2ut3YA:10
     a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753837AbeDCXnJ (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 3 Apr 2018 19:43:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753693AbeDCXnI (ORCPT <rfc822;linux-efi@vger.kernel.org>);
-        Tue, 3 Apr 2018 19:43:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95DA2183B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AIpwx49rURbWlj2tNtBBTxB5L0bdpb0RcidQ+URAq8QgbDyrb5i/V4/ly7za/rkLcDZTNeWTLzE26oAkMBkbl/avBhA=
+        id S1755102AbeDCX1b (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 3 Apr 2018 19:27:31 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36106 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754164AbeDCX13 (ORCPT
+        <rfc822;linux-efi@vger.kernel.org>); Tue, 3 Apr 2018 19:27:29 -0400
+X-Google-Smtp-Source: AIpwx48JAvvgTtOslSOrj99G6nHl4soy4xLRBiL0qFq6knrYqTXJxnr8y0tNz93BEH+zH/2NtGd8Y/OCFLWfGY2R4ME=
 MIME-Version: 1.0
 In-Reply-To: <10232.1522797179@warthog.procyon.org.uk>
 References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
@@ -76,10 +77,10 @@ References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145
  <13189.1522784944@warthog.procyon.org.uk> <CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com>
  <9349.1522794769@warthog.procyon.org.uk> <CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
  <10232.1522797179@warthog.procyon.org.uk>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 3 Apr 2018 16:42:46 -0700
-X-Gmail-Original-Message-ID: <CALCETrXThwok-koDREAP-0ycjphjpc_o0mSBB3zoNXb9rWGLCQ@mail.gmail.com>
-Message-ID: <CALCETrXThwok-koDREAP-0ycjphjpc_o0mSBB3zoNXb9rWGLCQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 3 Apr 2018 16:27:28 -0700
+X-Google-Sender-Auth: 0bhHB1E77AOJB1NVuqIlkK30iso
+Message-ID: <CA+55aFwJd_AqrnrKfiCX++pWqrTuoduKUKhEwxvx=wVhMaQH3g@mail.gmail.com>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
 To: David Howells <dhowells@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>,
@@ -87,7 +88,6 @@ Cc: Andy Lutomirski <luto@kernel.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         James Morris <jmorris@namei.org>,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Justin Forbes <jforbes@redhat.com>,
@@ -104,63 +104,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 On Tue, Apr 3, 2018 at 4:12 PM, David Howells <dhowells@redhat.com> wrote:
-> Andy Lutomirski <luto@kernel.org> wrote:
->
->> I'm having a very, very hard time coming up with a scenario where I
->> can "trust" something if an attacker can get root but can't modify the
->> running kernel image but I can't "trust" something if the attacker
->> can [modify the running kernel image].
->
-> (I think the above is what you meant)
->
-> Let's go at this a different way.  How do you decide you can trust something
-> in this context?  You compare it to something.  Signing it, keeping a hash
-> whitelist, IMA - these are all ways of comparing something.  Do you agree with
-> that?
-
-I trust or distrust a system as a whole.  I don't make that decision
-by comparing it to anything.  I make it by evaluating how the system
-works and deciding whether it's trustworthy.
-
 >
 > What use is secure boot if processes run as root can subvert your kernel?
->
 
-Secure boot serves several purposes:
+Stop this idiocy.
 
-1. Anti-competitive purposes.  It's intentionally difficult to run
-non-Windows OSes on Windows ARM machines, for example.
+The above has now been answered multiple times, several different ways.
 
-2. Allowing me to use a stock UEFI machine to have a verified boot chain.
+The "point" of secure boot may be that you had no choice, or there was
+no point at all, it just came that way.
 
-The latter has nothing whatsoever to do with CPL0.  The former,
-however, does.  If I could easily write some Windows program to run
-CPL0 code, then I could chainload Linux using the Windows image, and
-I've subverted the purpose.
+Or the "point" of secure boot may be that you don't trust anybody else
+than yourself, but once you've booted you do trust what you booted.
 
-Cynical?  Yes.
+But the *real* point is that this has nothing what-so-ever to do with
+secure boot. You may want (or not want) lockdown independently of it.
+Don't tie magic boot issues with kernel runtime behavior.
 
->> > There's no point bothering with UID/GID checking either.
->>
->> Give me a break.  There's a *huge* difference between a system where
->> only root can load unsigned modules and a system where anyone can load
->> unsigned modules.
->
-> I don't think we've ever advocated letting just anyone load a module.
->
-> But my point is that if you can modify the running kernel, you can nullify all
-> security checks, including UID/GID checks.
->
->> > However, if /dev/mem can be read, any root process can extract the session
->> > key for your disk.
->>
->> Any root process can read /dev/mapper/plaintext_disk, lockdown or otherwise.
->
-> True - for now - and they can also access the mounted filesystem.  But if they
-> get their hands on your powered-off computer, no, they can't.
-
-This is, IMO, a silly argument.  You're saying that some bad guy has
-managed to run code as root on my laptop.  Then, next week, the bad
-guy steals my laptop while it's powered off, and Lockdown is supposed
-to protect me against that bad guy.  If this happens, I've already
-lost completely, lockdown or no.
+                    Linus
