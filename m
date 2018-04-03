@@ -1,134 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752881AbeDCTbm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:31:42 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33061 "EHLO
+        id S1753071AbeDCTbv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:31:51 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37635 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751469AbeDCTbl (ORCPT
+        with ESMTP id S1752973AbeDCTbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:31:41 -0400
-X-Google-Smtp-Source: AIpwx4+X+Ntj1ZdevQ/4M3LLiqn+foV58KVvOXZp2ddHxdTiSRNDSidFxbtL7j77r/VSRYXPy9z8PA==
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Vlastimil Babka <vbabka@suse.cz>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] memcg, thp: do not invoke oom killer on thp charges
-Date: Tue,  3 Apr 2018 21:31:29 +0200
-Message-Id: <20180403193129.22146-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.16.3
+        Tue, 3 Apr 2018 15:31:49 -0400
+X-Google-Smtp-Source: AIpwx4+S2CXTX8krX9XxxygoCPIFS8r/mPjQT2280t0uWepDRHAXgKy+eCNDMPvoNObsBlBi7I299w==
+Date: Tue, 3 Apr 2018 21:31:39 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: David Howells <dhowells@redhat.com>
+Cc: paulmck@linux.vnet.ibm.com, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 1/3] locking: Document the semantics of
+ spin_is_locked()
+Message-ID: <20180403193139.GA6143@andrea>
+References: <20180403140715.GA5375@andrea>
+ <20180403133543.GA26653@andrea>
+ <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
+ <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <29562.1522759749@warthog.procyon.org.uk>
+ <13191.1522763553@warthog.procyon.org.uk>
+ <3766.1522768987@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3766.1522768987@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Tue, Apr 03, 2018 at 04:23:07PM +0100, David Howells wrote:
+> Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+> 
+> > Sorry, but I don't understand your objection: are you suggesting to add
+> > something like "Always return 0 on !SMP" to the comment?  what else?
+> 
+> Something like that, possibly along with a warning that this might not be what
+> you want.  You might actually want it to return true on !SMP, it depends on
+> what you're using it for.
 
-David has noticed that THP memcg charge can trigger the oom killer
-since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
-madvised allocations"). We have used an explicit __GFP_NORETRY
-previously which ruled the OOM killer automagically.
+I ended up with the following revision.  I hesitated on whether to refer
+to 'include/linux/spinlock_up.h' or not, but in the end I decided to not
+include the reference.  Please let me know what you think about this.
 
-Memcg charge path should be semantically compliant with the allocation
-path and that means that if we do not trigger the OOM killer for
-costly orders which should do the same in the memcg charge path as
-well.  Otherwise we are forcing callers to distinguish the two and use
-different gfp masks which is both non-intuitive and bug prone. As soon
-as we get a costly high order kmalloc user we even do not have any means
-to tell the memcg specific gfp mask to prevent from OOM because the
-charging is deep within guts of the slab allocator.
+  Andrea
 
-The unexpected memcg OOM on THP has already been fixed upstream by
-9d3c3354bb85 ("mm, thp: do not cause memcg oom for thp") but this is
-one-off fix rather than a generic solution. Teach mem_cgroup_oom to bail
-out on costly order requests to fix the THP issue as well as any other
-costly OOM eligible allocations to be added in future.
 
-Also revert 9d3c3354bb85 because special gfp for THP is no longer
-needed.
+>From 85f2d12d4ad9769cc9f69cc5f447fdb8c5ed4d14 Mon Sep 17 00:00:00 2001
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+Date: Tue, 3 Apr 2018 21:23:07 +0200
+Subject: [PATCH v3 1/3] locking: Document the semantics of spin_is_locked()
 
-Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
-Reported-by: David Rientjes <rientjes@google.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
+There appeared to be a certain, recurrent uncertainty concerning the
+semantics of spin_is_locked(), likely a consequence of the fact that
+this semantics remains undocumented or that it has been historically
+linked to the (likewise unclear) semantics of spin_unlock_wait().
+
+A recent auditing [1] of the callers of the primitive confirmed that
+none of them are relying on particular ordering guarantees; document
+this semantics by adding a docbook header to spin_is_locked().
+
+[1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Akira Yokosawa <akiyks@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
 ---
+ include/linux/spinlock.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Hi Andrew,
-I have posted core of this patch here [1]. This version just reverts
-2516035499b9 on top. I think that we should aim either the next merge
-window or keep the patch in the mmotm for the 4.18 merge window. I do
-not have a strong preference. 2516035499b9 acts as a stop gap fix for
-the time being.
-
-[1] http://lkml.kernel.org/r/20180321205928.22240-1-mhocko@kernel.org
-
- mm/huge_memory.c | 5 ++---
- mm/khugepaged.c  | 8 ++------
- mm/memcontrol.c  | 2 +-
- 3 files changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2297dd9cc7c3..0cc62405de9c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -555,8 +555,7 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 4894d322d2584..636a4436191c1 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -380,6 +380,20 @@ static __always_inline int spin_trylock_irq(spinlock_t *lock)
+ 	raw_spin_trylock_irqsave(spinlock_check(lock), flags); \
+ })
  
- 	VM_BUG_ON_PAGE(!PageCompound(page), page);
- 
--	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp | __GFP_NORETRY, &memcg,
--				  true)) {
-+	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
- 		put_page(page);
- 		count_vm_event(THP_FAULT_FALLBACK);
- 		return VM_FAULT_FALLBACK;
-@@ -1317,7 +1316,7 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	}
- 
- 	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
--				huge_gfp | __GFP_NORETRY, &memcg, true))) {
-+					huge_gfp, &memcg, true))) {
- 		put_page(new_page);
- 		split_huge_pmd(vma, vmf->pmd, vmf->address);
- 		if (page)
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 214e614b62b0..b7e2268dfc9a 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -960,9 +960,7 @@ static void collapse_huge_page(struct mm_struct *mm,
- 		goto out_nolock;
- 	}
- 
--	/* Do not oom kill for khugepaged charges */
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
--					   &memcg, true))) {
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out_nolock;
- 	}
-@@ -1321,9 +1319,7 @@ static void collapse_shmem(struct mm_struct *mm,
- 		goto out;
- 	}
- 
--	/* Do not oom kill for khugepaged charges */
--	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
--					   &memcg, true))) {
-+	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
- 		result = SCAN_CGROUP_CHARGE_FAIL;
- 		goto out;
- 	}
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d1a917b5b7b7..08accbcd1a18 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
- 
- static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
++/**
++ * spin_is_locked() - Check whether a spinlock is locked.
++ * @lock: Pointer to the spinlock.
++ *
++ * This function is NOT required to provide any memory ordering
++ * guarantees; it could be used for debugging purposes or, when
++ * additional synchronization is needed, accompanied with other
++ * constructs (memory barriers) enforcing the synchronization.
++ *
++ * Return: 1, if @lock is (found to be) locked; 0, otherwise.
++ *
++ *	   Remark that this primitve can return a fixed value
++ *	   under certain !SMP configurations.
++ */
+ static __always_inline int spin_is_locked(spinlock_t *lock)
  {
--	if (!current->memcg_may_oom)
-+	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
- 		return;
- 	/*
- 	 * We are in the middle of the charge context here, so we
+ 	return raw_spin_is_locked(&lock->rlock);
 -- 
-2.16.3
+2.7.4
+
+
+
+> 
+> David
