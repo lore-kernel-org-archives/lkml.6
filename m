@@ -1,62 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeDCTaC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:30:02 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44737 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751749AbeDCT37 (ORCPT
+        id S1752881AbeDCTbm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:31:42 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33061 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbeDCTbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:29:59 -0400
-X-Google-Smtp-Source: AIpwx48V6XlV/o5FpTf+uYfp3Q0kkj6kejUum2jHOMado8JLfSRlybJtwTyns+D5Ox9XnYrssQv0aJ9xlUQdeEkJwdA=
-MIME-Version: 1.0
-References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
- <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
- <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
- <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com> <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-In-Reply-To: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-From: Matthew Garrett <mjg59@google.com>
-Date: Tue, 03 Apr 2018 19:29:47 +0000
-Message-ID: <CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: luto@kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jforbes@redhat.com, linux-man@vger.kernel.org, jlee@suse.com,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 3 Apr 2018 15:31:41 -0400
+X-Google-Smtp-Source: AIpwx4+X+Ntj1ZdevQ/4M3LLiqn+foV58KVvOXZp2ddHxdTiSRNDSidFxbtL7j77r/VSRYXPy9z8PA==
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: [PATCH] memcg, thp: do not invoke oom killer on thp charges
+Date: Tue,  3 Apr 2018 21:31:29 +0200
+Message-Id: <20180403193129.22146-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 9:46 AM Andy Lutomirski <luto@kernel.org> wrote:
-> On Tue, Apr 3, 2018 at 9:29 AM, Matthew Garrett <mjg59@google.com> wrote:
-> > A kernel that allows users arbitrary access to ring 0 is just an
-> > overfeatured bootloader. Why would you want secure boot in that case?
+From: Michal Hocko <mhocko@suse.com>
 
-> To get a chain of trust.  I can provision a system with some public
-> keys, stored in UEFI authenticated variables, such that the system
-> will only boot a signed image.  That signed image, can, in turn, load
-> a signed (or hashed or otherwise verfified) kernel and a verified
-> initramfs.  The initramfs can run a full system from a verified (using
-> dm-verity or similar) filesystem, for example.  Now it's very hard to
-> persistently attack this system.  Chromium OS does something very much
-> like this, except that it doesn't use UEFI as far as I know.  So does
-> iOS, and so do some Android versions.  None of this requires lockdown,
-> or even a separation between usermode and kernelmode, to work
-> correctly.  One could even do this on an MMU-less system if one really
-> cared to.  More usefully, someone probably has done this using a
-> unikernel.
+David has noticed that THP memcg charge can trigger the oom killer
+since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
+madvised allocations"). We have used an explicit __GFP_NORETRY
+previously which ruled the OOM killer automagically.
 
-That's only viable if you're the only person with the ability to sign stuff
-for your machine - the moment there are generic distributions that your
-machine trusts, an attacker can use one as a bootloader to compromise your
-trust chain. Since most UEFI secure boot systems have to trust generic
-distributions (if you don't trust the third party signing key then your GPU
-won't post), the ecosystem depends on it not being possible for people to
-use generic distributions as bootloaders.
+Memcg charge path should be semantically compliant with the allocation
+path and that means that if we do not trigger the OOM killer for
+costly orders which should do the same in the memcg charge path as
+well.  Otherwise we are forcing callers to distinguish the two and use
+different gfp masks which is both non-intuitive and bug prone. As soon
+as we get a costly high order kmalloc user we even do not have any means
+to tell the memcg specific gfp mask to prevent from OOM because the
+charging is deep within guts of the slab allocator.
+
+The unexpected memcg OOM on THP has already been fixed upstream by
+9d3c3354bb85 ("mm, thp: do not cause memcg oom for thp") but this is
+one-off fix rather than a generic solution. Teach mem_cgroup_oom to bail
+out on costly order requests to fix the THP issue as well as any other
+costly OOM eligible allocations to be added in future.
+
+Also revert 9d3c3354bb85 because special gfp for THP is no longer
+needed.
+
+Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
+Reported-by: David Rientjes <rientjes@google.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+
+Hi Andrew,
+I have posted core of this patch here [1]. This version just reverts
+2516035499b9 on top. I think that we should aim either the next merge
+window or keep the patch in the mmotm for the 4.18 merge window. I do
+not have a strong preference. 2516035499b9 acts as a stop gap fix for
+the time being.
+
+[1] http://lkml.kernel.org/r/20180321205928.22240-1-mhocko@kernel.org
+
+ mm/huge_memory.c | 5 ++---
+ mm/khugepaged.c  | 8 ++------
+ mm/memcontrol.c  | 2 +-
+ 3 files changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2297dd9cc7c3..0cc62405de9c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -555,8 +555,7 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
+ 
+ 	VM_BUG_ON_PAGE(!PageCompound(page), page);
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp | __GFP_NORETRY, &memcg,
+-				  true)) {
++	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
+ 		put_page(page);
+ 		count_vm_event(THP_FAULT_FALLBACK);
+ 		return VM_FAULT_FALLBACK;
+@@ -1317,7 +1316,7 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ 	}
+ 
+ 	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
+-				huge_gfp | __GFP_NORETRY, &memcg, true))) {
++					huge_gfp, &memcg, true))) {
+ 		put_page(new_page);
+ 		split_huge_pmd(vma, vmf->pmd, vmf->address);
+ 		if (page)
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 214e614b62b0..b7e2268dfc9a 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -960,9 +960,7 @@ static void collapse_huge_page(struct mm_struct *mm,
+ 		goto out_nolock;
+ 	}
+ 
+-	/* Do not oom kill for khugepaged charges */
+-	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
+-					   &memcg, true))) {
++	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
+ 		result = SCAN_CGROUP_CHARGE_FAIL;
+ 		goto out_nolock;
+ 	}
+@@ -1321,9 +1319,7 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		goto out;
+ 	}
+ 
+-	/* Do not oom kill for khugepaged charges */
+-	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp | __GFP_NORETRY,
+-					   &memcg, true))) {
++	if (unlikely(mem_cgroup_try_charge(new_page, mm, gfp, &memcg, true))) {
+ 		result = SCAN_CGROUP_CHARGE_FAIL;
+ 		goto out;
+ 	}
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index d1a917b5b7b7..08accbcd1a18 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+ 
+ static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+ {
+-	if (!current->memcg_may_oom)
++	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+ 		return;
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
+-- 
+2.16.3
