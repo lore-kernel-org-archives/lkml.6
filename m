@@ -1,131 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752336AbeDCQHp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:07:45 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:53654 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752110AbeDCQHn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:07:43 -0400
-Date: Tue, 3 Apr 2018 18:07:12 +0200
-From: Daniel Kiper <daniel.kiper@oracle.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, xen-devel@lists.xenproject.org,
-        ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
-        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
-        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
-Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during
- dom0 boot
-Message-ID: <20180403160712.GL26100@olila.local.net-space.pl>
-References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
- <1522770281.4522.14.camel@HansenPartnership.com>
+        id S1752517AbeDCQIL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:08:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752478AbeDCQIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:08:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776FE2178C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Tue, 3 Apr 2018 09:08:08 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2] f2fs: remain written times to update inode during
+ fsync
+Message-ID: <20180403160808.GA68167@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180330055126.36202-1-jaegeuk@kernel.org>
+ <20180330163036.GC44823@jaegeuk-macbookpro.roam.corp.google.com>
+ <90a3d827-5447-437b-b742-79e7084e4a2c@huawei.com>
+ <20180403052310.GB57227@jaegeuk-macbookpro.roam.corp.google.com>
+ <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1522770281.4522.14.camel@HansenPartnership.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804030166
+In-Reply-To: <d67b0a31-ef40-e981-729b-b93758d88ccd@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 08:44:41AM -0700, James Bottomley wrote:
-> On Tue, 2018-04-03 at 16:39 +0200, Daniel Kiper wrote:
-> > Initialize UEFI secure boot state during dom0 boot. Otherwise the
-> > kernel
-> > may not even know that it runs on secure boot enabled platform.
-> >
-> > Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
-> > ---
-> >  arch/x86/xen/efi.c                        |   57
-> > +++++++++++++++++++++++++++++
-> >  drivers/firmware/efi/libstub/secureboot.c |    3 ++
-> >  2 files changed, 60 insertions(+)
-> >
-> > diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
-> > index a18703b..1804b27 100644
-> > --- a/arch/x86/xen/efi.c
-> > +++ b/arch/x86/xen/efi.c
-> > @@ -115,6 +115,61 @@ static efi_system_table_t __init
-> > *xen_efi_probe(void)
-> >  	return &efi_systab_xen;
-> >  }
-> >  
-> > +/*
-> > + * Determine whether we're in secure boot mode.
-> > + *
-> > + * Please keep the logic in sync with
-> > + * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
-> > + */
-> > +static enum efi_secureboot_mode xen_efi_get_secureboot(void)
-> > +{
-> > +	static efi_guid_t efi_variable_guid =
-> > EFI_GLOBAL_VARIABLE_GUID;
-> > +	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
-> > +	efi_status_t status;
-> > +	u8 moksbstate, secboot, setupmode;
-> > +	unsigned long size;
-> > +
-> > +	size = sizeof(secboot);
-> > +	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
-> > +				  NULL, &size, &secboot);
-> > +
-> > +	if (status == EFI_NOT_FOUND)
-> > +		return efi_secureboot_mode_disabled;
-> > +
-> > +	if (status != EFI_SUCCESS)
-> > +		goto out_efi_err;
-> > +
-> > +	size = sizeof(setupmode);
-> > +	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
-> > +				  NULL, &size, &setupmode);
-> > +
-> > +	if (status != EFI_SUCCESS)
-> > +		goto out_efi_err;
-> > +
-> > +	if (secboot == 0 || setupmode == 1)
-> > +		return efi_secureboot_mode_disabled;
-> > +
-> > +	/* See if a user has put the shim into insecure mode. */
-> > +	size = sizeof(moksbstate);
-> > +	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
-> > +				  NULL, &size, &moksbstate);
-> > +
-> > +	/* If it fails, we don't care why. Default to secure. */
-> > +	if (status != EFI_SUCCESS)
-> > +		goto secure_boot_enabled;
-> > +
-> > +	if (moksbstate == 1)
-> > +		return efi_secureboot_mode_disabled;
-> > +
-> > + secure_boot_enabled:
-> > +	pr_info("UEFI Secure Boot is enabled.\n");
-> > +	return efi_secureboot_mode_enabled;
-> > +
-> > + out_efi_err:
-> > +	pr_err("Could not determine UEFI Secure Boot status.\n");
-> > +	return efi_secureboot_mode_unknown;
-> > +}
-> > +
->
-> This looks like a bad idea: you're duplicating the secure boot check in
->
-> drivers/firmware/efi/libstub/secureboot.c
->
-> Which is an implementation of policy.  If we have to have policy in the
-> kernel, it should really only be in one place to prevent drift; why
-> can't you simply use the libstub efi_get_secureboot() so we're not
-> duplicating the implementation of policy?
+On 04/03, Chao Yu wrote:
+> On 2018/4/3 13:23, Jaegeuk Kim wrote:
+> > On 04/03, Chao Yu wrote:
+> >> On 2018/3/31 0:30, Jaegeuk Kim wrote:
+> >>> Change log from v1:
+> >>>  - add more description
+> >>>
+> >>> This fixes xfstests/generic/392.
+> >>>
+> >>> The failure was caused by different times between 1) one marked in the last
+> >>> fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
+> >>> The reason was that we skipped updating inode block at 1), since its i_size
+> >>> was recoverable along with 4KB-aligned data writes, which was fixed by:
+> >>>   "f2fs: fix a wrong condition in f2fs_skip_inode_update"
+> >>>
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> ---
+> >>>  fs/f2fs/f2fs.h  | 15 +++++++++++++++
+> >>>  fs/f2fs/inode.c |  4 ++++
+> >>>  2 files changed, 19 insertions(+)
+> >>>
+> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>> index 000f93f6767e..675c39d85111 100644
+> >>> --- a/fs/f2fs/f2fs.h
+> >>> +++ b/fs/f2fs/f2fs.h
+> >>> @@ -664,6 +664,7 @@ struct f2fs_inode_info {
+> >>>  	kprojid_t i_projid;		/* id for project quota */
+> >>>  	int i_inline_xattr_size;	/* inline xattr size */
+> >>>  	struct timespec i_crtime;	/* inode creation time */
+> >>> +	struct timespec i_disk_time[4];	/* inode disk times */
+> >>>  };
+> >>>  
+> >>>  static inline void get_extent_info(struct extent_info *ext,
+> >>> @@ -2457,6 +2458,11 @@ static inline void clear_file(struct inode *inode, int type)
+> >>>  	f2fs_mark_inode_dirty_sync(inode, true);
+> >>>  }
+> >>>  
+> >>> +static inline bool time_equal(struct timespec a, struct timespec b)
+> >>> +{
+> >>> +	return (a.tv_sec == b.tv_sec) && (a.tv_nsec == b.tv_nsec);
+> >>> +}
+> >>
+> >> We can use existing timespec_equal in <linux/time.h> instead of defining a
+> >> duplicated one?
+> > 
+> > It is defined with const parameters.
+> 
+> I didn't get it, const keyword can used to protect parameter not to be changed
+> in that function, that will be more safe, so it will be better to use that one?
 
-Well, here is the first version of this patch: https://lkml.org/lkml/2018/1/9/496
-Ard did not like it. I was not happy too. In general both approaches are not perfect.
-More you can find in the discussion around this patchset. If you have better idea
-how to do that I am happy to implement it.
+Oh, I just made a mistake when testing timespec_equal().
+I really need more recess time. :P
 
-Daniel
+Change log from v3:
+ - use timespec_equal()
+
+This fixes xfstests/generic/392.
+
+The failure was caused by different times between 1) one marked in the last
+fsync(2) call and 2) the other given by roll-forward recovery after power-cut.
+The reason was that we skipped updating inode block at 1), since its i_size
+was recoverable along with 4KB-aligned data writes, which was fixed by:
+  "f2fs: fix a wrong condition in f2fs_skip_inode_update"
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h  | 11 +++++++++++
+ fs/f2fs/inode.c |  8 ++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7102d3965fea..1df7f10476d6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -664,6 +664,7 @@ struct f2fs_inode_info {
+ 	kprojid_t i_projid;		/* id for project quota */
+ 	int i_inline_xattr_size;	/* inline xattr size */
+ 	struct timespec i_crtime;	/* inode creation time */
++	struct timespec i_disk_time[4];	/* inode disk times */
+ };
+ 
+ static inline void get_extent_info(struct extent_info *ext,
+@@ -2474,6 +2475,16 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ 			i_size_read(inode) & ~PAGE_MASK)
+ 		return false;
+ 
++	if (!timespec_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
++		return false;
++	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
++		return false;
++	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
++		return false;
++	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 3,
++						&F2FS_I(inode)->i_crtime))
++		return false;
++
+ 	down_read(&F2FS_I(inode)->i_sem);
+ 	ret = F2FS_I(inode)->last_disk_size == i_size_read(inode);
+ 	up_read(&F2FS_I(inode)->i_sem);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 401f09ccce7e..e0d9e8f27ed2 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -284,6 +284,10 @@ static int do_read_inode(struct inode *inode)
+ 		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
+ 	}
+ 
++	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
++	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
++	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
++	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+ 	f2fs_put_page(node_page, 1);
+ 
+ 	stat_inc_inline_xattr(inode);
+@@ -444,6 +448,10 @@ void update_inode(struct inode *inode, struct page *node_page)
+ 	if (inode->i_nlink == 0)
+ 		clear_inline_node(node_page);
+ 
++	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
++	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
++	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
++	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+ }
+ 
+ void update_inode_page(struct inode *inode)
+-- 
+2.15.0.531.g2ccb3012c9-goog
