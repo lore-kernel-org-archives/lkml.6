@@ -1,107 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751353AbeDCN4L (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:56:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53997 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbeDCN4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:56:09 -0400
-Date: Tue, 3 Apr 2018 15:56:07 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-patch-test@lists.linaro.org,
+        id S1751314AbeDCN53 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:57:29 -0400
+Received: from mail-pl0-f53.google.com ([209.85.160.53]:44417 "EHLO
+        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeDCN52 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:57:28 -0400
+X-Google-Smtp-Source: AIpwx4+4jACwZr9zRihWP0ZZ+NI7PlCt+xexb4viF59Fk4Ys3L6EBVvEuxBwM5q6kaTrDxe/zBjylA==
+Date: Tue, 3 Apr 2018 22:57:23 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
-Message-ID: <20180403135607.GC5501@dhcp22.suse.cz>
-References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
- <20180330102038.2378925b@gandalf.local.home>
- <20180403110612.GM5501@dhcp22.suse.cz>
- <20180403075158.0c0a2795@gandalf.local.home>
- <20180403121614.GV5501@dhcp22.suse.cz>
- <20180403082348.28cd3c1c@gandalf.local.home>
- <20180403123514.GX5501@dhcp22.suse.cz>
- <20180403093245.43e7e77c@gandalf.local.home>
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
+ pointers
+Message-ID: <20180403135723.GA7593@tigerII.localdomain>
+References: <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
+ <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
+ <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
+ <1521119343.10722.665.camel@linux.intel.com>
+ <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
+ <1521224375.23017.41.camel@linux.intel.com>
+ <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
+ <1522678523.21176.178.camel@linux.intel.com>
+ <20180403011237.GA7129@jagdpanzerIV>
+ <20180403115216.mgq3omvl4up24uic@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180403093245.43e7e77c@gandalf.local.home>
+In-Reply-To: <20180403115216.mgq3omvl4up24uic@pathway.suse.cz>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 03-04-18 09:32:45, Steven Rostedt wrote:
-> On Tue, 3 Apr 2018 14:35:14 +0200
-> Michal Hocko <mhocko@kernel.org> wrote:
-[...]
-> > Being clever is OK if it doesn't add a tricky code. And relying on
-> > si_mem_available is definitely tricky and obscure.
-> 
-> Can we get the mm subsystem to provide a better method to know if an
-> allocation will possibly succeed or not before trying it? It doesn't
-> have to be free of races. Just "if I allocate this many pages right
-> now, will it work?" If that changes from the time it asks to the time
-> it allocates, that's fine. I'm not trying to prevent OOM to never
-> trigger. I just don't want to to trigger consistently.
-
-How do you do that without an actuall allocation request? And more
-fundamentally, what if your _particular_ request is just fine but it
-will get us so close to the OOM edge that the next legit allocation
-request simply goes OOM? There is simply no sane interface I can think
-of that would satisfy a safe/sensible "will it cause OOM" semantic.
- 
-> > > Perhaps I should try to allocate a large group of pages with
-> > > RETRY_MAYFAIL, and if that fails go back to NORETRY, with the thinking
-> > > that the large allocation may reclaim some memory that would allow the
-> > > NORETRY to succeed with smaller allocations (one page at a time)?  
+On (04/03/18 13:52), Petr Mladek wrote:
+> On Tue 2018-04-03 10:12:37, Sergey Senozhatsky wrote:
+> > On (04/02/18 17:15), Andy Shevchenko wrote:
+> > > > 
+> > > > Hmm, I have never seen the error code in this form.
+> > > 
+> > > We have limited space to print it and error numbers currently can be up
+> > > to 0xfff (4095). So, I have no better idea how to squeeze them while
+> > > thinking that "(efault)" is much harder to parse in case of error
 > > 
-> > That again relies on a subtle dependencies of the current
-> > implementation. So I would rather ask whether this is something that
-> > really deserves special treatment. If admin asks for a buffer of a
-> > certain size then try to do so. If we get OOM then bad luck you cannot
-> > get large memory buffers for free...
+> > 'efault' looks to me like a misspelled 'default', for some reason.
 > 
-> That is not acceptable to me nor to the people asking for this.
-> 
-> The problem is known. The ring buffer allocates memory page by page,
-> and this can allow it to easily take all memory in the system before it
-> fails to allocate and free everything it had done.
+> I wonder if (-efault) would help a bit.
 
-Then do not allow buffers that are too large. How often do you need
-buffers that are larger than few megs or small % of the available
-memory? Consuming excessive amount of memory just to trace workload
-which will need some memory on its own sounds just dubious to me.
+Dunno. If the pointer is invalid and -EFAULTS then I guess we are not
+leaking anything critical and may be can just print it out. May be I'm
+wrong.
 
-> If you don't like the use of si_mem_available() I'll do the larger
-> pages method. Yes it depends on the current implementation of memory
-> allocation. It will depend on RETRY_MAYFAIL trying to allocate a large
-> number of pages, and fail if it can't (leaving memory for other
-> allocations to succeed).
-> 
-> The allocation of the ring buffer isn't critical. It can fail to
-> expand, and we can tell the user -ENOMEM. I original had NORETRY
-> because I rather have it fail than cause an OOM. But there's folks
-> (like Joel) that want it to succeed when there's available memory in
-> page caches.
-
-Then implement a retry logic on top of NORETRY. You can control how hard
-to retry to satisfy the request yourself. You still risk that your
-allocation will get us close to OOM for _somebody_ else though.
-
-> I'm fine if the admin shoots herself in the foot if the ring buffer
-> gets big enough to start causing OOMs, but I don't want it to cause
-> OOMs if there's not even enough memory to fulfill the ring buffer size
-> itself.
-
-I simply do not see the difference between the two. Both have the same
-deadly effect in the end. The direct OOM has an arguable advantage that
-the effect is immediate rather than subtle with potential performance
-side effects until the machine OOMs after crawling for quite some time.
-
--- 
-Michal Hocko
-SUSE Labs
+	-ss
