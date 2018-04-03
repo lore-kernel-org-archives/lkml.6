@@ -1,74 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755060AbeDCKMA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:12:00 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:48993 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754298AbeDCKL6 (ORCPT
+        id S1755064AbeDCKPr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:15:47 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:50149 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754838AbeDCKPq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:11:58 -0400
-Subject: Re: [PATCH 4/8] misc: pci_endpoint_test: Add designware EP entry
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <1bc09dfd205d0721366267e023550c4a5a4a84db.1522235224.git.gustavo.pimentel@synopsys.com>
- <76c6e35c-5659-7313-a1b4-aa93e323ef79@ti.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <77999353-fd50-b90f-ab00-b2cd29048257@synopsys.com>
-Date: Tue, 3 Apr 2018 11:11:04 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <76c6e35c-5659-7313-a1b4-aa93e323ef79@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 3 Apr 2018 06:15:46 -0400
+X-Auth-Info: jH421ovmOFdgEFnq8pedUc8JHXFodeH0kG3Gs4UJCWY=
+From: Lukasz Majewski <lukma@denx.de>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH] display: panel: Add AUO g070vvn01 display support (800x480)
+Date: Tue,  3 Apr 2018 12:15:25 +0200
+Message-Id: <20180403101525.22369-1-lukma@denx.de>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
+This commit adds support for AUO's 7.0" display.
 
-On 02/04/2018 06:36, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
->> Adds the designware EP device ID entry to pci_endpoint_test driver table
->> to allow this device to be recognize and handle by the pci_endpoint_test
->> driver.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->>  drivers/misc/pci_endpoint_test.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
->> index 320276f..e80c533 100644
->> --- a/drivers/misc/pci_endpoint_test.c
->> +++ b/drivers/misc/pci_endpoint_test.c
->> @@ -632,6 +632,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
->>  static const struct pci_device_id pci_endpoint_test_tbl[] = {
->>  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
->>  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
->> +	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
-> 
-> Add device ids to include/linux/pci_ids.h and use the macro here.
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+ .../bindings/display/panel/auo,g070vvn01           | 30 +++++++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 31 ++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/auo,g070vvn01
 
-Add device id request sent, as soon as I get a positive confirmation from them
-I'll change for the macro. It works for you?
-
-> 
-> Thanks
-> Kishon
-> 
-
-Regards,
-Gustavo
+diff --git a/Documentation/devicetree/bindings/display/panel/auo,g070vvn01 b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01
+new file mode 100644
+index 000000000000..bd4017362094
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01
+@@ -0,0 +1,30 @@
++AU Optronics Corporation 7.0" FHD (800 x 480) TFT LCD panel
++
++Required properties:
++- compatible: should be "auo,g070vvn01"
++- backlight: phandle of the backlight device attached to the panel
++- power-supply: single regulator to provide the supply voltage
++
++Required nodes:
++- port: Parallel port mapping to connect this display
++
++This panel needs single power supply voltage. Its backlight is conntrolled
++via PWM signal.
++
++Example:
++--------
++
++Example device-tree definition when connected to iMX6Q based board
++
++	lcd_panel: lcd-panel {
++		compatible = "auo,g070vvn01";
++		backlight = <&backlight_lcd>;
++		bus-format-override = "rgb565";
++		power-supply = <&reg_display>;
++
++		port {
++			lcd_panel_in: endpoint {
++				remote-endpoint = <&lcd_display_out>;
++			};
++		};
++	};
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 5591984a392b..62314085b635 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -581,6 +581,34 @@ static const struct panel_desc auo_b133htn01 = {
+ 	},
+ };
+ 
++static const struct display_timing auo_g070vvn01_timings = {
++	.pixelclock = { 33300000, 34209000, 45000000 },
++	.hactive = { 800, 800, 800 },
++	.hfront_porch = { 20, 40, 200 },
++	.hback_porch = { 87, 40, 1 },
++	.hsync_len = { 1, 48, 87 },
++	.vactive = { 480, 480, 480 },
++	.vfront_porch = { 5, 13, 200 },
++	.vback_porch = { 31, 31, 29 },
++	.vsync_len = { 1, 1, 3 },
++};
++
++static const struct panel_desc auo_g070vvn01 = {
++	.timings = &auo_g070vvn01_timings,
++	.num_timings = 1,
++	.bpc = 8,
++	.size = {
++		.width = 152,
++		.height = 91,
++	},
++	.delay = {
++		.prepare = 200,
++		.enable = 50,
++		.disable = 50,
++		.unprepare = 1000,
++	},
++};
++
+ static const struct display_timing auo_g133han01_timings = {
+ 	.pixelclock = { 134000000, 141200000, 149000000 },
+ 	.hactive = { 1920, 1920, 1920 },
+@@ -2049,6 +2077,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "auo,b133xtn01",
+ 		.data = &auo_b133xtn01,
+ 	}, {
++		.compatible = "auo,g070vvn01",
++		.data = &auo_g070vvn01,
++	}, {
+ 		.compatible = "auo,g133han01",
+ 		.data = &auo_g133han01,
+ 	}, {
+-- 
+2.11.0
