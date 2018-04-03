@@ -1,102 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755300AbeDCK3f convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:29:35 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:35788 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755098AbeDCK3d (ORCPT
+        id S1755135AbeDCKdz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:33:55 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:49344 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754183AbeDCKdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:29:33 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH v1 2/7] serdev: add dev_pm_domain_attach|detach()
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <f976766cd499c8d7053a1f442aba1494b4d3314f.1522736996.git.sean.wang@mediatek.com>
-Date: Tue, 3 Apr 2018 12:29:31 +0200
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <FD85DED4-589C-4113-8A8B-BC5A39494130@holtmann.org>
-References: <cover.1522736996.git.sean.wang@mediatek.com>
- <f976766cd499c8d7053a1f442aba1494b4d3314f.1522736996.git.sean.wang@mediatek.com>
-To: sean.wang@mediatek.com
-X-Mailer: Apple Mail (2.3445.6.18)
+        Tue, 3 Apr 2018 06:33:54 -0400
+Subject: Re: [PATCH 1/8] bindings: PCI: designware: Example update
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <33aa86ee667e8b435db080b8c683cb5df1bd6544.1522235224.git.gustavo.pimentel@synopsys.com>
+ <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <36a36857-2d79-2c2d-198d-a3b65cafc768@synopsys.com>
+Date: Tue, 3 Apr 2018 11:33:00 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
+Hi Kishon,
 
-> In order to open up the required power gate before any operation can be
-> effectively performed over the serial bus between CPU and serdev, it's
-> clearly essential to add common attach functions for PM domains to serdev
-> at the probe phase.
+On 02/04/2018 06:23, Kishon Vijay Abraham I wrote:
+> Hi,
 > 
-> Similarly, the relevant dettach function for the PM domains should be
-> properly and reversely added at the remove phase.
+> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+>> Changes the IP registers size to accommodate the ATU unroll space.
+>>
+>> Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers.
+>>
+>> Replaces the pcie base address example by a real pcie base address in use.
+>>
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> ---
+>>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> index 1da7ade..6300762 100644
+>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>> @@ -1,7 +1,8 @@
+>>  * Synopsys DesignWare PCIe interface
+>>  
+>>  Required properties:
+>> -- compatible: should contain "snps,dw-pcie" to identify the core.
+>> +- compatible:
+>> +	"snps,dw-pcie" for RC mode;
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: linux-serial@vger.kernel.org
-> ---
-> drivers/tty/serdev/core.c | 14 +++++++++++++-
-> 1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-> index df93b72..c93d8ee 100644
-> --- a/drivers/tty/serdev/core.c
-> +++ b/drivers/tty/serdev/core.c
-> @@ -13,6 +13,7 @@
-> #include <linux/module.h>
-> #include <linux/of.h>
-> #include <linux/of_device.h>
-> +#include <linux/pm_domain.h>
-> #include <linux/serdev.h>
-> #include <linux/slab.h>
-> 
-> @@ -330,8 +331,16 @@ EXPORT_SYMBOL_GPL(serdev_device_set_tiocm);
-> static int serdev_drv_probe(struct device *dev)
-> {
-> 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
-> +	int ret;
-> +
-> +	ret = dev_pm_domain_attach(dev, true);
-> +	if (ret != -EPROBE_DEFER) {
-> +		ret = sdrv->probe(to_serdev_device(dev));
-> +		if (ret)
-> +			dev_pm_domain_detach(dev, true);
-> +	}
+> I think irrespective of RC mode or EP mode, "snps,dw-pcie" can be used to
+> identify the pcie core?
 
-so if this is deferred, when does the serdev device gets probed?
+I guess so. What you suggest? I was just folling the same guideline present
+here: https://lkml.org/lkml/2017/11/3/310
+
+>>  - reg: Should contain the configuration address space.
+>>  - reg-names: Must be "config" for the PCIe configuration space.
+>>      (The old way of getting the configuration address space from "ranges"
+>> @@ -41,11 +42,11 @@ EP mode:
+>>  
+>>  Example configuration:
+>>  
+>> -	pcie: pcie@dffff000 {
+>> +	pcie: pcie@dfc00000 {
+>>  		compatible = "snps,dw-pcie";
+>> -		reg = <0xdffff000 0x1000>, /* Controller registers */
+>> -		      <0xd0000000 0x2000>; /* PCI config space */
+>> -		reg-names = "ctrlreg", "config";
+>> +		reg = <0xdfc00000 0x302000>, /* IP registers */
+> 
+> which version of synopsys IP is this. I think the ideal thing to do here is to
+> have a separate register space for iATU.
+
+I also agree with that. The unroll iATU was introduced on Synopsys IP version
+4.80 and the kernel patch was release on 2016-08-10
+https://patchwork.ozlabs.org/patch/657796/
+However a separate register space for iATU implies some extra code do handle it
+(and of course some tests) that don't fit into this patch series, in my point of
+view. Can this task enter in the backlog in order to be done in another patch
+series?
 
 > 
-> -	return sdrv->probe(to_serdev_device(dev));
-> +	return ret;
-> }
+> Thanks
+> Kishon
 > 
-> static int serdev_drv_remove(struct device *dev)
-> @@ -339,6 +348,9 @@ static int serdev_drv_remove(struct device *dev)
-> 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
-> 	if (sdrv->remove)
-> 		sdrv->remove(to_serdev_device(dev));
-> +
-> +	dev_pm_domain_detach(dev, true);
-> +
-> 	return 0;
-> }
-
-Regards
-
-Marcel
