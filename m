@@ -1,79 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755421AbeDCLLl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:11:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52389 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755311AbeDCLLk (ORCPT
+        id S1755459AbeDCLNd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:13:33 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40340 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755121AbeDCLNb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:11:40 -0400
-Date: Tue, 3 Apr 2018 04:10:59 -0700
-From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-9a3b7e5e65c4b4d332df5f607c0838c3fb918673@git.kernel.org>
-Cc: hpa@zytor.com, kirill.shutemov@linux.intel.com, mingo@kernel.org,
-        tglx@linutronix.de, peterz@infradead.org,
-        torvalds@linux-foundation.org, aryabinin@virtuozzo.com,
-        linux-kernel@vger.kernel.org
-Reply-To: torvalds@linux-foundation.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com,
-        kirill.shutemov@linux.intel.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@kernel.org
-In-Reply-To: <20180402121025.10244-1-kirill.shutemov@linux.intel.com>
-References: <20180402121025.10244-1-kirill.shutemov@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Fix documentation of module mapping range
- with 4-level paging
-Git-Commit-ID: 9a3b7e5e65c4b4d332df5f607c0838c3fb918673
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 3 Apr 2018 07:13:31 -0400
+X-Google-Smtp-Source: AIpwx48okgZAOEXiDSRR2Au2n1thzBlEnKp/yjQGN6EqWTRyM0RzA02mFg14J1kpwSr9/jF8GAh1/3AVAQ7NiUSMmh8=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180403104925.fuyajja6tyanlna4@lakrids.cambridge.arm.com>
+References: <1522425494-2916-1-git-send-email-okaya@codeaurora.org>
+ <1522425494-2916-2-git-send-email-okaya@codeaurora.org> <20180403104925.fuyajja6tyanlna4@lakrids.cambridge.arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 3 Apr 2018 13:13:30 +0200
+X-Google-Sender-Auth: rh75qjH-56zMTIUrKrLrFsX8Y4g
+Message-ID: <CAK8P3a3fZx42sQY41Pf+Q3fMNrP2FgXvvntnrLkQXbAezOQjEw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
+ readX() implementation
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Sinan Kaya <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9a3b7e5e65c4b4d332df5f607c0838c3fb918673
-Gitweb:     https://git.kernel.org/tip/9a3b7e5e65c4b4d332df5f607c0838c3fb918673
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Mon, 2 Apr 2018 15:10:25 +0300
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 3 Apr 2018 12:59:02 +0200
+On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> Hi,
+>
+> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
+>> The default implementation of mapping readX() to __raw_readX() is wrong.
+>> readX() has stronger ordering semantics. Compiler is allowed to reorder
+>> __raw_readX().
+>
+> Could you please specify what the compiler is potentially reordering
+> __raw_readX() against, and why this would be wrong?
+>
+> e.g. do we care about prior normal memory accesses, subsequent normal
+> memory accesses, and/or other IO accesses?
+>
+> I assume that the asm-generic __raw_{read,write}X() implementations are
+> all ordered w.r.t. each other (at least for a specific device).
 
-x86/mm: Fix documentation of module mapping range with 4-level paging
+I think that is correct: the compiler won't reorder those because of the
+'volatile' pointer dereference, but it can reorder access to a normal
+pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
+of using writel to trigger a DMA, or using a readl to see if a DMA has
+completed.
 
-Commit:
+The question is whether we should use a stronger barrier such
+as rmb() amd wmb() here rather than a simple compiler barrier.
 
-  f5a40711fa58 ("x86/mm: Set MODULES_END to 0xffffffffff000000")
+I would assume that on complex architectures with write buffers and
+out-of-order prefetching, those are required, while on architectures
+without those features, the barriers are cheap.
 
-changed MODULES_END back to a fixed value, but didn't update the documentation
-of memory layout for 4-level paging.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: f5a40711fa58 ("x86/mm: Set MODULES_END to 0xffffffffff000000")
-Link: http://lkml.kernel.org/r/20180402121025.10244-1-kirill.shutemov@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- Documentation/x86/x86_64/mm.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index ea91cb61a602..5432a96d31ff 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -20,7 +20,7 @@ ffffff0000000000 - ffffff7fffffffff (=39 bits) %esp fixup stacks
- ffffffef00000000 - fffffffeffffffff (=64 GB) EFI region mapping space
- ... unused hole ...
- ffffffff80000000 - ffffffff9fffffff (=512 MB)  kernel text mapping, from phys 0
--ffffffffa0000000 - [fixmap start]   (~1526 MB) module mapping space (variable)
-+ffffffffa0000000 - fffffffffeffffff (1520 MB) module mapping space
- [fixmap start]   - ffffffffff5fffff kernel-internal fixmap range
- ffffffffff600000 - ffffffffff600fff (=4 kB) legacy vsyscall ABI
- ffffffffffe00000 - ffffffffffffffff (=2 MB) unused hole
+      Arnd
