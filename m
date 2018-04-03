@@ -1,74 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755380AbeDCKyB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:54:01 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33058 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752410AbeDCKx5 (ORCPT
+        id S1755403AbeDCKyy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:54:54 -0400
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:55551 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755267AbeDCKyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:53:57 -0400
-X-Google-Smtp-Source: AIpwx4/vDc5m4e+CjWhfXQu1R3Cz8KQNZBbFWQny9Kmx3wwxGO2fcV41NICZq+nm8BsIVw8FVPK9RQ==
-Date: Tue, 3 Apr 2018 12:53:52 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>, hmclauchlan@fb.com,
-        tautschn@amazon.co.uk, Amir Goldstein <amir73il@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
+        Tue, 3 Apr 2018 06:54:53 -0400
+X-Google-Smtp-Source: AIpwx4+SHIeuW1eyH0bCyPrWanWdP+HtRXKnGVzM/8WmLPA7qMvfiR1XaXRMyb8+7fC1Z1WGPW5KUw==
+Date: Tue, 3 Apr 2018 13:54:11 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jaswinder Singh <jaswinder@infradead.org>,
-        Jeff Dike <jdike@addtoit.com>, Jiri Slaby <jslaby@suse.com>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, linux-s390 <linux-s390@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [GIT PULL] remove in-kernel calls to syscalls
-Message-ID: <20180403105352.eicib6jcicif5zoo@gmail.com>
-References: <20180402190454.GB29890@light.dominikbrodowski.net>
- <CA+55aFyaVVKKbXPFzW1Tr7CTpiLCK+1nGdhS21wnm1j64bqWPA@mail.gmail.com>
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] mm: consider non-anonymous thp as unmovable page
+Message-ID: <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
+References: <1522730788-24530-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180403075928.GC5501@dhcp22.suse.cz>
+ <20180403082405.GA23809@hori1.linux.bs1.fc.nec.co.jp>
+ <20180403083451.GG5501@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFyaVVKKbXPFzW1Tr7CTpiLCK+1nGdhS21wnm1j64bqWPA@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180403083451.GG5501@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Mon, Apr 2, 2018 at 12:04 PM, Dominik Brodowski
-> <linux@dominikbrodowski.net> wrote:
-> >
-> > This patchset removes all in-kernel calls to syscall functions in the
-> > kernel with the exception of arch/.
+On Tue, Apr 03, 2018 at 10:34:51AM +0200, Michal Hocko wrote:
+> On Tue 03-04-18 08:24:06, Naoya Horiguchi wrote:
+> > On Tue, Apr 03, 2018 at 09:59:28AM +0200, Michal Hocko wrote:
+> > > On Tue 03-04-18 13:46:28, Naoya Horiguchi wrote:
+> > > > My testing for the latest kernel supporting thp migration found out an
+> > > > infinite loop in offlining the memory block that is filled with shmem
+> > > > thps.  We can get out of the loop with a signal, but kernel should
+> > > > return with failure in this case.
+> > > >
+> > > > What happens in the loop is that scan_movable_pages() repeats returning
+> > > > the same pfn without any progress. That's because page migration always
+> > > > fails for shmem thps.
+> > >
+> > > Why does it fail? Shmem pages should be movable without any issues.
+> > 
+> > .. because try_to_unmap_one() explicitly skips unmapping for migration.
+> > 
+> >   #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >                   /* PMD-mapped THP migration entry */
+> >                   if (!pvmw.pte && (flags & TTU_MIGRATION)) {
+> >                           VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
+> >   
+> >                           if (!PageAnon(page))
+> >                                   continue;
+> >   
+> >                           set_pmd_migration_entry(&pvmw, page);
+> >                           continue;
+> >                   }
+> >   #endif
+> > 
+> > When I implemented this code, I felt hard to work on both of anon thp
+> > and shmem thp at one time, so I separated the proposal into smaller steps.
+> > Shmem uses pagecache so we need some non-trivial effort (including testing)
+> > to extend thp migration for shmem. But I think it's a reasonable next step.
 > 
-> Ok, this finished off my arch updates for today, I'll probably move on
-> to driver pulls tomorrow.
-> 
-> Anyway, it's in my tree, will push out once my test build finishes.
+> OK, I see. I have forgot about this part. Please be explicit about that
+> in the changelog. Also the proper fix is to not use movable zone for
+> shmem page THP rather than hack around it in the hotplug specific code
+> IMHO.
 
-Thanks!
+No. We should just split the page before running
+try_to_unmap(TTU_MIGRATION) on the page.
 
-Dominik, if you submit the x86 ptregs conversion patches in the next 1-2 days on 
-top of Linus's tree (642e7fd23353), then I can apply them and if they are 
-problem-free I can perhaps tempt Linus with a pull request early next week or so.
-
-The Spectre angle does make me want those changes as well.
-
-Thanks,
-
-	Ingo
+-- 
+ Kirill A. Shutemov
