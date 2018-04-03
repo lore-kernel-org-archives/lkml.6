@@ -1,138 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752650AbeDCTRQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:17:16 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:51309 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDCTRP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:17:15 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <james.morris@microsoft.com>
-Date: Tue, 03 Apr 2018 14:16:04 -0500
-Message-ID: <87k1tonlsb.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f3RQe-0002Cz-FA;;;mid=<87k1tonlsb.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+s6X6vcpNTmIGN5lZ5EDSgbJjCaJWlgak=
-X-SA-Exim-Connect-IP: 67.3.145.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 749 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.2 (0.4%), b_tie_ro: 2.2 (0.3%), parse: 1.21 (0.2%),
-        extract_message_metadata: 7 (1.0%), get_uri_detail_list: 4.5 (0.6%),
-        tests_pri_-1000: 6 (0.8%), tests_pri_-950: 2.2 (0.3%), tests_pri_-900: 1.74
-        (0.2%), tests_pri_-400: 41 (5.5%), check_bayes: 39 (5.2%), b_tokenize: 15
-        (2.1%), b_tok_get_all: 11 (1.4%), b_comp_prob: 6 (0.7%), b_tok_touch_all: 3.4
-        (0.4%), b_finish: 0.87 (0.1%), tests_pri_0: 656 (87.6%),
-        check_dkim_signature: 0.87 (0.1%), check_dkim_adsp: 5 (0.7%), tests_pri_500:
-        9 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: [GIT PULL] namespace changes for 4.17-rc1
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        id S1752949AbeDCTRW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:17:22 -0400
+Received: from mout.gmx.net ([212.227.17.21]:60503 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752675AbeDCTRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:17:19 -0400
+From: Heinrich Schuchardt <xypron.glpk@gmx.de>
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org, Heinrich Schuchardt <xypron.glpk@gmx.de>
+Subject: [PATCH 1/1] checkpatch: allow space between colon and bracket
+Date: Tue,  3 Apr 2018 21:16:55 +0200
+Message-Id: <20180403191655.23700-1-xypron.glpk@gmx.de>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180403190214.23082-1-xypron.glpk@gmx.de>
+References: <20180403190214.23082-1-xypron.glpk@gmx.de>
+X-Provags-ID: V03:K0:0vYSF0fikT1yl123naZKs91yBnbCaOabmypzU2RI9KlU+X84P3F
+ NtXGQnaJ9sCAJVF2YBkBsrbXEMpQ4IsuDbBwoFdM4Gt79mOOG/8lm4jy+dKAhNqZNx1lYk6
+ BNiMc9azb85mQ/H+zdzyc5d2LPJsyJNTNlVyOjnuMx2LGkdi9BqDqyPUm1rW4yTqH6jceSq
+ BgT5cWrWQyEjd0p23IPIA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AgOkwy3HZnU=:zaWwqUkBqmMMrtAMTp6FxU
+ KvCjVMxZp6ofU7m50a0l06Pr9KY855ABdhOikoG9HgBtCql0qM7cMewaxJRAxlhIUwG4/XdEq
+ ZX5T4qUBKbBJjqV0NB7dodNJWzLr6L+3FAPtgeS9apgaRQAZ3urhM7vH+OMa9hi3rtYuo3zqS
+ xVJdlnAIZ5q8+/ofTLVValGa6S+rN1d6KSHvNEvSORMk7fmn1aoMBwMDhs36rhirKDUxLSGj9
+ GAi139sFwh/bkE3ZNLjjjA1urDiJ1UO6CrBGF5scdyitecEI4XMiBrs4qLZN8lSUPly71kIJS
+ S6QiwOwqmpkA5x+8qsCP0cO8Vo6lSjt5t/ho22WCqwB1Kkx+LWtWFOXvMFqyVE/4PL951VWRl
+ 0BiqgU8cuCak3zTpqr6NJAW7bjCOvxY2Xm4tGmgPOvEsUaFjmmjumlxOg640/NBjrekRNTeGG
+ PVeYNXFSB/BEJ/No/4SU/oIqGR3jeXtZIQENpQW6Qe7vRu9CojD4wmRGHdYu21nQ8OorizFdJ
+ z8TBcofwTQJC/RHfUVpDpWzh1ILWNyVbdGADhJCvrEKH6Nfzlqbk+6coxKFxbO68pZf9Q02/3
+ zCvQKwWbXP93/m+AoUGvt3EdNZcbxGxzCsJpAzGb1n1YPW56FHIFIe6Z+SYwlVBlYAcHaAojr
+ xQpdqOykL6Wb2O15kAyqDIzv9poehgNG3VIQasmu0Lrsul0+VKng0UUSnTnMNsxN1BsMhtZ7F
+ iVRJAdVcOI1Rr4OjQhKDPO2HezQ6UbEpiK7wZc69vsT3v0S1uiDX5iC7vYjcDFQBsv2UltA9t
+ UNUYYU1P3pht2XxtFowBiO92qjxCA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Allow a space between a colon and subsequent opening bracket.
+This sequence may occur in inline assembler statements like
 
-Linus,
+	asm(
+		"ldr %[out], [%[in]]\n\t"
+		: [out] "=r" (ret)
+		: [in] "r" (addr)
+	);
 
-Please pull the userns-linus branch from the git tree:
+Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+---
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-linus
-
-   HEAD: 2236d4d39035b9839944603ec4b65ce71180a9ea ipc/shm: Fix pid freeing.
-
-There was a lot of work this cycle fixing bugs that were discovered after
-the merge window and getting everything ready where we can reasonably
-support fully unprivileged fuse.   The bug fixes you already have and
-much of the unprivileged fuse work is coming in via other trees.
-
-Still left for fully unprivileged fuse is figuring out how to cleanly
-handle .set_acl and .get_acl in the legacy case, and properly handling
-of evm xattrs on unprivileged mounts.
-
-Included in the tree is a cleanup from Alexely that replaced a linked
-list with a statically allocated fix sized array for the pid caches,
-which simplifies and speeds things up.
-
-Then there is are some cleanups and fixes for the ipc namespace.  The
-motivation was that in reviewing other code it was discovered that
-access ipc objects from different pid namespaces recorded pids in such a
-way that when asked the wrong pids were returned.  In the worst case
-there has been a mearsured 30% performance impact for sysvipc
-semaphores.  Other test cases showed no measurable performance impact.
-Manfred Spraul and Davidlohr Bueso who tend to work on sysvipc
-performance both gave the nod that this is good enough.
-
-Casey Schaufler and James Morris have given their approval to the LSM
-side of the changes.
-
-I simplified the types and the code dealing with sysvipc to pass just
-kern_ipc_perm for all three types of ipc.  Which reduced the header
-dependencies throughout the kernel and simplified the lsm code.
-
-Which let me work on the pid fixes without having to worry about trivial
-changes causing complete kernel recompiles.
-
-When merging you may see a trivial conflict with the syscalls tree
-where adjacent lines in the sysvipc code were touched.
-
-Alexey Dobriyan (1):
-      pidns: simpler allocation of pid_* caches
-
-Eric W. Biederman (14):
-      sem/security: Pass kern_ipc_perm not sem_array into the sem security hooks
-      shm/security: Pass kern_ipc_perm not shmid_kernel into the shm security hooks
-      msg/security: Pass kern_ipc_perm not msg_queue into the msg_queue security hooks
-      sem: Move struct sem and struct sem_array into ipc/sem.c
-      shm: Move struct shmid_kernel into ipc/shm.c
-      msg: Move struct msg_queue into ipc/msg.c
-      ipc: Move IPCMNI from include/ipc.h into ipc/util.h
-      ipc/util: Helpers for making the sysvipc operations pid namespace aware
-      ipc/shm: Fix shmctl(..., IPC_STAT, ...) between pid namespaces.
-      ipc/msg: Fix msgctl(..., IPC_STAT, ...) between pid namespaces
-      ipc/sem: Fix semctl(..., GETPID, ...) between pid namespaces
-      ipc: Directly call the security hook in ipc_ops.associate
-      ipc/smack: Tidy up from the change in type of the ipc security hooks
-      ipc/shm: Fix pid freeing.
-
-Stephen Rothwell (1):
-      ipc/shm: fix up for struct file no longer being available in shm.h
-
- include/linux/ipc.h        |   2 -
- include/linux/lsm_hooks.h  |  32 ++++----
- include/linux/msg.h        |  18 -----
- include/linux/security.h   |  67 ++++++++-------
- include/linux/sem.h        |  40 +--------
- include/linux/shm.h        |  22 +----
- ipc/msg.c                  |  62 ++++++++------
- ipc/sem.c                  |  81 ++++++++++++-------
- ipc/shm.c                  |  68 ++++++++++------
- ipc/util.c                 |   9 +++
- ipc/util.h                 |  12 +++
- kernel/pid_namespace.c     |  67 ++++++---------
- security/security.c        |  32 ++++----
- security/selinux/hooks.c   |  92 ++++++++++-----------
- security/smack/smack_lsm.c | 197 +++++++++++++--------------------------------
- 15 files changed, 346 insertions(+), 455 deletions(-)
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index d2464002bb40..2cbab86e6d4c 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -4083,7 +4083,7 @@ sub process {
+ 			my ($where, $prefix) = ($-[1], $1);
+ 			if ($prefix !~ /$Type\s+$/ &&
+ 			    ($where != 0 || $prefix !~ /^.\s+$/) &&
+-			    $prefix !~ /[{,]\s+$/) {
++			    $prefix !~ /[{,:]\s+$/) {
+ 				if (ERROR("BRACKET_SPACE",
+ 					  "space prohibited before open square bracket '['\n" . $herecurr) &&
+ 				    $fix) {
+-- 
+2.16.3
