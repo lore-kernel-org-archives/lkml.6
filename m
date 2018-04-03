@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752898AbeDCRBH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:01:07 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:46618 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752501AbeDCRBC (ORCPT
+        id S1752869AbeDCRBF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:01:05 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:44558 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751649AbeDCRBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Apr 2018 13:01:02 -0400
-X-Google-Smtp-Source: AIpwx4/n5clm9K8uK7TIiPWuqr9T6bPxt15VjnOqMPawc8ehbtmDj3U/ypru8KfdG9kDTTHQGSPVTCy15UMXoeijQThwcNc9iPkU
+X-Google-Smtp-Source: AIpwx4+/eivCO8uRlrQ0k+H8zpdi/DjZGs0p16G3WYy9goaKppjWQ16gPOfDyRTg6/wQ+FfR8WvV5MPJINSPKZuxqJzBlntHTdrP
 MIME-Version: 1.0
 Date: Tue, 03 Apr 2018 10:01:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b696800568f4a6c6@google.com>
-Subject: KASAN: global-out-of-bounds Write in string
-From: syzbot <syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, linux-kernel@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000b320810568f4a6f1@google.com>
+Subject: KASAN: use-after-free Read in xfs_inobt_init_key_from_rec
+From: syzbot <syzbot+08ab33be0178b76851c8@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, darrick.wong@oracle.com, dchinner@redhat.com,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,52 +30,53 @@ syzbot hit the following crash on upstream commit
 Merge branch 'syscalls-next' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=b890b3335a4d8c608963
+https://syzkaller.appspot.com/bug?extid=08ab33be0178b76851c8
 
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5951352765153280
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4698588919627776
+https://syzkaller.appspot.com/x/repro.syz?id=5417464171069440
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5456053378482176
+https://syzkaller.appspot.com/x/log.txt?id=6712144213049344
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-6874493495260513980
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
+Reported-by: syzbot+08ab33be0178b76851c8@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-IPVS: ftp: loaded support on port[0] = 21
-REISERFS warning (device loop0): sh-2021 reiserfs_fill_super: can not find  
-reiserfs on loop0
-syz-executor0 (4503) used greatest stack depth: 15560 bytes left
-REISERFS warning (device loop0): sh-2021 reiserfs_fill_super: can not find  
-reiserfs on loop0
+XFS (loop0): Mounting V4 Filesystem
+XFS (loop0): totally zeroed log
 ==================================================================
-BUG: KASAN: global-out-of-bounds in string+0x1cb/0x200 lib/vsprintf.c:598
-Write of size 1 at addr ffffffff89e166a0 by task syz-executor0/4522
+BUG: KASAN: use-after-free in xfs_inobt_init_key_from_rec+0x6a/0x70  
+fs/xfs/libxfs/xfs_ialloc_btree.c:195
+Read of size 4 at addr ffff8801af98cf00 by task syzkaller185183/4464
 
-CPU: 1 PID: 4522 Comm: syz-executor0 Not tainted 4.16.0+ #12
+CPU: 0 PID: 4464 Comm: syzkaller185183 Not tainted 4.16.0+ #12
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x1a7/0x27d lib/dump_stack.c:53
-  print_address_description+0x178/0x250 mm/kasan/report.c:256
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
   kasan_report_error mm/kasan/report.c:354 [inline]
   kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
-  string+0x1cb/0x200 lib/vsprintf.c:598
-  vsnprintf+0x863/0x1900 lib/vsprintf.c:2282
-  vsprintf+0x2a/0x40 lib/vsprintf.c:2462
-  prepare_error_buf+0x1d2/0x1820 fs/reiserfs/prints.c:240
-  __reiserfs_warning+0xc8/0x1a0 fs/reiserfs/prints.c:267
-  reiserfs_getopt fs/reiserfs/super.c:1044 [inline]
-  reiserfs_parse_options+0x11e5/0x24e0 fs/reiserfs/super.c:1194
-  reiserfs_fill_super+0x520/0x33a0 fs/reiserfs/super.c:1946
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  xfs_inobt_init_key_from_rec+0x6a/0x70 fs/xfs/libxfs/xfs_ialloc_btree.c:195
+  xfs_lookup_get_search_key+0x7e/0xc0 fs/xfs/libxfs/xfs_btree.c:1858
+  xfs_btree_lookup+0x932/0x1180 fs/xfs/libxfs/xfs_btree.c:1948
+  xfs_inobt_lookup fs/xfs/libxfs/xfs_ialloc.c:75 [inline]
+  xfs_imap_lookup+0x216/0x640 fs/xfs/libxfs/xfs_ialloc.c:2235
+  xfs_imap+0x78f/0x960 fs/xfs/libxfs/xfs_ialloc.c:2364
+  xfs_iread+0xc7/0x770 fs/xfs/libxfs/xfs_inode_buf.c:556
+  xfs_iget_cache_miss fs/xfs/xfs_icache.c:475 [inline]
+  xfs_iget+0xcec/0x3060 fs/xfs/xfs_icache.c:626
+  xfs_mountfs+0x139a/0x2690 fs/xfs/xfs_mount.c:881
+  xfs_fs_fill_super+0xc8d/0x1250 fs/xfs/xfs_super.c:1703
   mount_bdev+0x2b7/0x370 fs/super.c:1119
-  get_super_block+0x34/0x40 fs/reiserfs/super.c:2605
+  xfs_fs_mount+0x34/0x40 fs/xfs/xfs_super.c:1770
   mount_fs+0x66/0x2d0 fs/super.c:1222
   vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
   vfs_kern_mount fs/namespace.c:2514 [inline]
@@ -85,24 +87,61 @@ Call Trace:
   SyS_mount+0x39/0x50 fs/namespace.c:3074
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x457d0a
-RSP: 002b:00007f0655cddbb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 0000000000457d0a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f0655cddc00
-RBP: 0000000000000004 R08: 0000000020013f00 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000005
-R13: 000000000000066d R14: 00000000006fcad8 R15: 0000000000000001
+RIP: 0033:0x44371a
+RSP: 002b:00007fff43e464c8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000840 RCX: 000000000044371a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fff43e464d0
+RBP: 0000000000000003 R08: 0000000020018900 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000004
+R13: 0000000000402610 R14: 0000000000000000 R15: 0000000000000000
 
-The buggy address belongs to the variable:
-  error_buf+0x400/0x420
+Allocated by task 4462:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
+  getname_flags+0xcb/0x580 fs/namei.c:138
+  getname+0x19/0x20 fs/namei.c:209
+  do_sys_open+0x2e7/0x6d0 fs/open.c:1095
+  SYSC_open fs/open.c:1119 [inline]
+  SyS_open+0x2d/0x40 fs/open.c:1114
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Freed by task 4462:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3486 [inline]
+  kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
+  putname+0xee/0x130 fs/namei.c:258
+  do_sys_open+0x31b/0x6d0 fs/open.c:1110
+  SYSC_open fs/open.c:1119 [inline]
+  SyS_open+0x2d/0x40 fs/open.c:1114
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+The buggy address belongs to the object at ffff8801af98c600
+  which belongs to the cache names_cache of size 4096
+The buggy address is located 2304 bytes inside of
+  4096-byte region [ffff8801af98c600, ffff8801af98d600)
+The buggy address belongs to the page:
+page:ffffea0006be6300 count:1 mapcount:0 mapping:ffff8801af98c600 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801af98c600 0000000000000000 0000000100000001
+raw: ffffea0006be7aa0 ffffea0006be5f20 ffff8801da5ea600 0000000000000000
+page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffffffff89e16580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffffffff89e16600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffffffff89e16680: 00 00 00 00 fa fa fa fa 04 fa fa fa fa fa fa fa
-                                ^
-  ffffffff89e16700: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
-  ffffffff89e16780: 00 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
+  ffff8801af98ce00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801af98ce80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801af98cf00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                    ^
+  ffff8801af98cf80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801af98d000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 ==================================================================
 
 
