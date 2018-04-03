@@ -1,89 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751496AbeDCPPx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:15:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56764 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751233AbeDCPPw (ORCPT
+        id S1752068AbeDCPTK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:19:10 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:40044 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751457AbeDCPTG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:15:52 -0400
-Date: Tue, 3 Apr 2018 08:16:42 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: schwidefsky@de.ibm.com, borntraeger@de.ibm.com,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH RFC tools/memory-model] Add s390.{cfg,cat}
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180402193154.GA3948@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1804030946400.1399-100000@iolanthe.rowland.org>
+        Tue, 3 Apr 2018 11:19:06 -0400
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Tue, 03 Apr 2018 17:19:04 +0200
+X-ME-IP: 86.201.130.131
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tejun Heo <tj@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Nicolas Pitre <nico@fluxnic.net>, Samuel Ortiz <samuel@sortiz.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>, dmaengine@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Networking <netdev@vger.kernel.org>, devel@driverdev.osuosl.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 02/15] ARM: pxa: add dma slave map
+References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+        <20180402142656.26815-3-robert.jarzmik@free.fr>
+        <CAK8P3a3pSitVqfiF2LK0cMrAKLOeCWXXJBLeVc5f_Tg=vALkUA@mail.gmail.com>
+X-URL: http://belgarath.falguerolles.org/
+Date: Tue, 03 Apr 2018 17:18:49 +0200
+In-Reply-To: <CAK8P3a3pSitVqfiF2LK0cMrAKLOeCWXXJBLeVc5f_Tg=vALkUA@mail.gmail.com>
+        (Arnd Bergmann's message of "Tue, 3 Apr 2018 08:51:37 +0200")
+Message-ID: <87tvss48ti.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1804030946400.1399-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040315-0048-0000-0000-00000254A1DC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008795; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01012553; UDB=6.00516057; IPR=6.00791819;
- MB=3.00020392; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-03 15:15:49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040315-0049-0000-0000-000044A54043
-Message-Id: <20180403151642.GK3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804030157
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 09:50:19AM -0400, Alan Stern wrote:
-> On Mon, 2 Apr 2018, Paul E. McKenney wrote:
-> 
-> > > > I will look at this more later, reaching end of both battery and useful
-> > > > attention span...
-> > 
-> > Like the following, perhaps?
-> > 
-> > 							Thanx, Paul
-> > 
-> > ------------------------------------------------------------------------
-> > 
-> > s390
-> > 
-> > include "fences.cat"
-> > include "cos.cat"
-> > 
-> > (* Fundamental coherence ordering *)
-> > let com = rf | co | fr
-> > acyclic po-loc | com as coherence
-> > 
-> > (* Atomic *)
-> > empty rmw & (fre;coe) as atom 
-> > 
-> > (* Fences *)
-> > let mb = [M] ; fencerel(Mb) ; [M]
-> > 
-> > (* TSO with multicopy atomicity *)
-> > let po-ghb = ([R] ; po ; [M]) | ([M] ; po ; [W]) 
-> > acyclic mb | po-ghb | fr | rf | co as sc
-> 
-> Yes, that should work okay (apart from issues related to ordering of
-> atomic accesses).
-> 
-> By the way, what does that last "sc" stand for?  Surely not Sequential
-> Consistency!  You might consider renaming it to "tso-mca".
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Good point, fixed.
+>> +       { "smc911x.0", "rx", PDMA_FILTER_PARAM(LOWEST, -1) },
+>> +       { "smc911x.0", "tx", PDMA_FILTER_PARAM(LOWEST, -1) },
+>> +       { "smc91x.0", "data", PDMA_FILTER_PARAM(LOWEST, -1) },
+>
+> This one is interesting, as you are dealing with an off-chip device,
+> and the channel number is '-'1. How does this even work? Does it
+> mean
 
-But it is the closest to SC in commercial computing systems, for whatever
-that is worth.  ;-)
+This relies on pxa_dma, in which the "-1" for a requestor line means "no
+requestor" or said in another way "always requesting". As a consequence, as soon
+as the DMA descriptors are queued, the transfer begins, and it is supposed
+implicitely that the FIFO output availability is at least as quick as the system
+bus and the DMA size is perfectly fit for the FIFO available bytes.
 
-							Thanx, Paul
+This is what has been the underlying of DMA transfers of smc91x(x) on the PXA
+platforms, where the smc91x(s) are directly wired on the system bus (the same
+bus having DRAM, SRAM, IO-mapped devices).
+
+>
+>> +       /* PXA25x specific map */
+>> +       { "pxa25x-ssp.0", "rx", PDMA_FILTER_PARAM(LOWEST, 13) },
+>> +       { "pxa25x-ssp.0", "tx", PDMA_FILTER_PARAM(LOWEST, 14) },
+>> +       { "pxa25x-nssp.1", "rx", PDMA_FILTER_PARAM(LOWEST, 15) },
+>> +       { "pxa25x-nssp.1", "tx", PDMA_FILTER_PARAM(LOWEST, 16) },
+>> +       { "pxa25x-nssp.2", "rx", PDMA_FILTER_PARAM(LOWEST, 23) },
+>> +       { "pxa25x-nssp.2", "tx", PDMA_FILTER_PARAM(LOWEST, 24) },
+>> +       { "pxa-pcm-audio", "nssp2_rx", PDMA_FILTER_PARAM(LOWEST, 15) },
+>> +       { "pxa-pcm-audio", "nssp2_tx", PDMA_FILTER_PARAM(LOWEST, 16) },
+>> +       { "pxa-pcm-audio", "nssp3_rx", PDMA_FILTER_PARAM(LOWEST, 23) },
+>> +       { "pxa-pcm-audio", "nssp3_tx", PDMA_FILTER_PARAM(LOWEST, 24) },
+>> +
+>> +       /* PXA27x specific map */
+>> +       { "pxa-pcm-audio", "ssp3_rx", PDMA_FILTER_PARAM(LOWEST, 66) },
+>> +       { "pxa-pcm-audio", "ssp3_tx", PDMA_FILTER_PARAM(LOWEST, 67) },
+>> +       { "pxa27x-camera.0", "CI_Y", PDMA_FILTER_PARAM(HIGHEST, 68) },
+>> +       { "pxa27x-camera.0", "CI_U", PDMA_FILTER_PARAM(HIGHEST, 69) },
+>> +       { "pxa27x-camera.0", "CI_V", PDMA_FILTER_PARAM(HIGHEST, 70) },
+>> +
+>> +       /* PXA3xx specific map */
+>> +       { "pxa-pcm-audio", "ssp4_rx", PDMA_FILTER_PARAM(LOWEST, 2) },
+>> +       { "pxa-pcm-audio", "ssp4_tx", PDMA_FILTER_PARAM(LOWEST, 3) },
+>> +       { "pxa2xx-mci.1", "rx", PDMA_FILTER_PARAM(LOWEST, 93) },
+>> +       { "pxa2xx-mci.1", "tx", PDMA_FILTER_PARAM(LOWEST, 94) },
+>> +       { "pxa3xx-nand", "data", PDMA_FILTER_PARAM(LOWEST, 97) },
+>> +       { "pxa2xx-mci.2", "rx", PDMA_FILTER_PARAM(LOWEST, 100) },
+>> +       { "pxa2xx-mci.2", "tx", PDMA_FILTER_PARAM(LOWEST, 101) },
+>> +};
+>
+> Since more than half the entries in here are chip specific, maybe it would be
+> better to split that table into three and have a copy for each one in
+> arch/arm/mach-pxa/pxa{25x.27x.3xx}.c?
+Mmmh, today the split is :
+ - 16 common entries
+ - 10 pxa25x specific entries
+ - 5 pxa27x specific entries
+ - 7 pxa3xx specific entries
+ => total of 38 lines
+
+After the split we'll have :
+ - 26 pxa25x specific entries
+ - 21 pxa27x specific entries
+ - 23 pxa3xx specific entries
+ => total of 70 lines
+
+That doubles the number of lines, not counting the declarations, and amending of
+pxa2xx_set_dmac_info().
+
+If you think it's worth it, what is the driving benefit behind ?
+
+> Does that mean it's actually a memory-to-memory transfer with a device being
+> on the external SRAM interface?
+I'm taking this is the follow up to the "-1" question :0
+
+Cheers.
+
+-- 
+Robert
