@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755302AbeDCKIL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:08:11 -0400
+        id S1755206AbeDCKHf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:07:35 -0400
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:59052 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754813AbeDCKHb (ORCPT
+        with ESMTP id S1754874AbeDCKHd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:07:31 -0400
+        Tue, 3 Apr 2018 06:07:33 -0400
 From: Yixun Lan <yixun.lan@amlogic.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>
 CC: Nan Li <nan.li@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
@@ -14,11 +14,10 @@ CC: Nan Li <nan.li@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh@kernel.org>,
         <linux-mmc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH 1/3] mmc: dt-bindings: update bindings doc to support Meson-AXG SoC
-Date: Tue, 3 Apr 2018 18:06:49 +0800
-Message-ID: <20180403100652.41056-2-yixun.lan@amlogic.com>
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 2/3] mmc: meson-axg: add support for the Meson-AXG platform
+Date: Tue, 3 Apr 2018 18:06:50 +0800
+Message-ID: <20180403100652.41056-3-yixun.lan@amlogic.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180403100652.41056-1-yixun.lan@amlogic.com>
 References: <20180403100652.41056-1-yixun.lan@amlogic.com>
@@ -31,27 +30,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nan Li <nan.li@amlogic.com>
 
-Update the documentation to list support for Meson-AXG SoC explicitly.
-The new binding string is necessary since this SoC introduce a few
-IP difference comparing to previous old generation.
+Introduce the compatible data to cover the register offset & mask
+change of the eMMC controller in Amlogic's Meson-AXG SoC.
 
 Signed-off-by: Nan Li <nan.li@amlogic.com>
 Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/meson-gx-mmc.c | 61 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 51 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt b/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-index 50bf611a4d2c..5add8d7d855f 100644
---- a/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-+++ b/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-@@ -12,6 +12,7 @@ Required properties:
-   - "amlogic,meson-gxbb-mmc"
-   - "amlogic,meson-gxl-mmc"
-   - "amlogic,meson-gxm-mmc"
-+  - "amlogic,meson-axg-mmc"
- - clocks     : A list of phandle + clock-specifier pairs for the clocks listed in clock-names.
- - clock-names: Should contain the following:
- 	"core" - Main peripheral bus clock
+diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+index 4f972b879fe6..56c90542ac29 100644
+--- a/drivers/mmc/host/meson-gx-mmc.c
++++ b/drivers/mmc/host/meson-gx-mmc.c
+@@ -47,15 +47,29 @@
+ #define   CLK_CORE_PHASE_MASK GENMASK(9, 8)
+ #define   CLK_TX_PHASE_MASK GENMASK(11, 10)
+ #define   CLK_RX_PHASE_MASK GENMASK(13, 12)
+-#define   CLK_TX_DELAY_MASK GENMASK(19, 16)
+-#define   CLK_RX_DELAY_MASK GENMASK(23, 20)
++#define   CLK_V2_TX_DELAY_MASK GENMASK(19, 16)
++#define   CLK_V2_RX_DELAY_MASK GENMASK(23, 20)
++#define   CLK_V2_ALWAYS_ON BIT(24)
++
++#define   CLK_V3_TX_DELAY_MASK GENMASK(21, 16)
++#define   CLK_V3_RX_DELAY_MASK GENMASK(27, 22)
++#define   CLK_V3_ALWAYS_ON BIT(28)
++
+ #define   CLK_DELAY_STEP_PS 200
+ #define   CLK_PHASE_STEP 30
+ #define   CLK_PHASE_POINT_NUM (360 / CLK_PHASE_STEP)
+-#define   CLK_ALWAYS_ON BIT(24)
++
++#define   CLK_TX_DELAY_MASK(h)		(h->data->tx_delay_mask)
++#define   CLK_RX_DELAY_MASK(h)		(h->data->rx_delay_mask)
++#define   CLK_ALWAYS_ON(h)		(h->data->always_on)
+ 
+ #define SD_EMMC_DELAY 0x4
+ #define SD_EMMC_ADJUST 0x8
++
++#define SD_EMMC_DELAY1 0x4
++#define SD_EMMC_DELAY2 0x8
++#define SD_EMMC_V3_ADJUST 0xc
++
+ #define SD_EMMC_CALOUT 0x10
+ #define SD_EMMC_START 0x40
+ #define   START_DESC_INIT BIT(0)
+@@ -122,6 +136,12 @@
+ 
+ #define MUX_CLK_NUM_PARENTS 2
+ 
++struct meson_mmc_data {
++	unsigned int tx_delay_mask;
++	unsigned int rx_delay_mask;
++	unsigned int always_on;
++};
++
+ struct sd_emmc_desc {
+ 	u32 cmd_cfg;
+ 	u32 cmd_arg;
+@@ -131,6 +151,7 @@ struct sd_emmc_desc {
+ 
+ struct meson_host {
+ 	struct	device		*dev;
++	struct	meson_mmc_data *data;
+ 	struct	mmc_host	*mmc;
+ 	struct	mmc_command	*cmd;
+ 
+@@ -474,7 +495,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
+ 
+ 	/* init SD_EMMC_CLOCK to sane defaults w/min clock rate */
+ 	clk_reg = 0;
+-	clk_reg |= CLK_ALWAYS_ON;
++	clk_reg |= CLK_ALWAYS_ON(host);
+ 	clk_reg |= CLK_DIV_MASK;
+ 	writel(clk_reg, host->regs + SD_EMMC_CLOCK);
+ 
+@@ -574,7 +595,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
+ 
+ 	tx->reg = host->regs + SD_EMMC_CLOCK;
+ 	tx->phase_mask = CLK_TX_PHASE_MASK;
+-	tx->delay_mask = CLK_TX_DELAY_MASK;
++	tx->delay_mask = CLK_TX_DELAY_MASK(host);
+ 	tx->delay_step_ps = CLK_DELAY_STEP_PS;
+ 	tx->hw.init = &init;
+ 
+@@ -597,7 +618,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
+ 
+ 	rx->reg = host->regs + SD_EMMC_CLOCK;
+ 	rx->phase_mask = CLK_RX_PHASE_MASK;
+-	rx->delay_mask = CLK_RX_DELAY_MASK;
++	rx->delay_mask = CLK_RX_DELAY_MASK(host);
+ 	rx->delay_step_ps = CLK_DELAY_STEP_PS;
+ 	rx->hw.init = &init;
+ 
+@@ -1184,6 +1205,13 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 		goto free_host;
+ 	}
+ 
++	host->data = (struct meson_mmc_data *)
++		of_device_get_match_data(&pdev->dev);
++	if (!host->data) {
++		ret = -EINVAL;
++		goto free_host;
++	}
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	host->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(host->regs)) {
+@@ -1315,11 +1343,24 @@ static int meson_mmc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct meson_mmc_data meson_gx_data = {
++	.tx_delay_mask	= CLK_V2_TX_DELAY_MASK,
++	.rx_delay_mask	= CLK_V2_RX_DELAY_MASK,
++	.always_on	= CLK_V2_ALWAYS_ON,
++};
++
++static const struct meson_mmc_data meson_axg_data = {
++	.tx_delay_mask	= CLK_V3_TX_DELAY_MASK,
++	.rx_delay_mask	= CLK_V3_RX_DELAY_MASK,
++	.always_on	= CLK_V3_ALWAYS_ON,
++};
++
+ static const struct of_device_id meson_mmc_of_match[] = {
+-	{ .compatible = "amlogic,meson-gx-mmc", },
+-	{ .compatible = "amlogic,meson-gxbb-mmc", },
+-	{ .compatible = "amlogic,meson-gxl-mmc", },
+-	{ .compatible = "amlogic,meson-gxm-mmc", },
++	{ .compatible = "amlogic,meson-gx-mmc",		.data = &meson_gx_data },
++	{ .compatible = "amlogic,meson-gxbb-mmc", 	.data = &meson_gx_data },
++	{ .compatible = "amlogic,meson-gxl-mmc",	.data = &meson_gx_data },
++	{ .compatible = "amlogic,meson-gxm-mmc",	.data = &meson_gx_data },
++	{ .compatible = "amlogic,meson-axg-mmc",	.data = &meson_axg_data },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, meson_mmc_of_match);
 -- 
 2.16.2
