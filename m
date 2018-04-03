@@ -1,56 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753045AbeDCUIB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 16:08:01 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:44116 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDCUIA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 16:08:00 -0400
-X-Google-Smtp-Source: AIpwx494bnIHqnlyzb/mlhmJDNzTEO3e+O8ZdXZKUbDKrJX0rtZfgetQdWDYcB8HtjJ6fS99c5oE0d2megDkJUcuwAw=
+        id S1753250AbeDCUIn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 16:08:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59279 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752650AbeDCUIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 16:08:42 -0400
+Date: Tue, 3 Apr 2018 22:08:39 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>, quentin.schulz@bootlin.com,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        LABBE Corentin <clabbe.montjoie@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 11/13] ARM: sun9i: smp: Add is_sun9i field
+Message-ID: <20180403220839.0ec8f9b8@dell-desktop.home>
+In-Reply-To: <CAGb2v67EzOHd5_Xj9K3ZuAKVZhA4WrwfTM0gE_eR+H4mF1J4eA@mail.gmail.com>
+References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
+        <20180403061836.3926-12-mylene.josserand@bootlin.com>
+        <20180403084655.x6u7s4jzqdvq2eey@flea>
+        <CAGb2v67EzOHd5_Xj9K3ZuAKVZhA4WrwfTM0gE_eR+H4mF1J4eA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180403154102.150b1be0@gandalf.local.home>
-References: <20180403154102.150b1be0@gandalf.local.home>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 3 Apr 2018 13:07:58 -0700
-X-Google-Sender-Auth: R-acmqlBjKHSgqV5aMOk4Gsozug
-Message-ID: <CAGXu5j+g6nbDz+gjAxZTSf1004J=naAf7b9dPTE0q8+7UtXCLw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] tracing, printk: Force no hashing when
- trace_printk() is used
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 12:41 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> Both trace_debug is set and kptr_restrict is set to zero in the same
-> code that produces the above banner. This will allow trace_printk() to
-> not be affected by security code, as trace_printk() should never be run
-> on a machine that needs security of this kind.
+Hi,
 
-While I think it'd be nice to have a boot-time knob for this (a debate
-that was unsuccessful in earlier threads), I remain skeptical of
-having a _runtime_ knob for this, as then it becomes a target (and
-yes, there are plenty of targets, but why add another).
+On Tue, 3 Apr 2018 16:48:41 +0800
+Chen-Yu Tsai <wens@csie.org> wrote:
 
-If this was __ro_after_init, maybe that'd be nicer. CONFIG_TRACING=y
-is used everywhere, so this is really just the whole knob debate over
-again. Instead, I've been following Linus's distillation of %p usage
-in the kernel:
+> On Tue, Apr 3, 2018 at 4:46 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > On Tue, Apr 03, 2018 at 08:18:34AM +0200, Mylène Josserand wrote:  
+> >> To prepare the support of sun8i-a83t, add a field in the smp_data
+> >> structure to enable the case of sun9i.
+> >>
+> >> Start to handle the differences between sun9i-a80 and sun8i-a83t
+> >> by using this variable.
+> >>
+> >> Add an index to retrieve which structures we are using.  
+> >
+> > This should have been in a separate commit, but maybe we can store a
+> > pointer to the array cell we're using instead of always using the
+> > index?  
+> 
+> Using a pointer would also avoid some of the code movement from the
+> previous patch.
+> 
+> ChenYu
 
-http://lkml.kernel.org/r/CA+55aFwQEd_d40g4mUCSsVRZzrFPUJt74vc6PPpb675hYNXcKw@mail.gmail.com
+Yep, I will use a pointer instead. Thanks for the correction.
 
--Kees
+Best regards,
 
 -- 
-Kees Cook
-Pixel Security
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
