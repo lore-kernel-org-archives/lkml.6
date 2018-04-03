@@ -1,59 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751503AbeDCO2s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:28:48 -0400
-Received: from smtp826.redehostenvio.com.br ([187.84.239.40]:47244 "EHLO
-        smtp826.redehostenvio.com.br" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751247AbeDCO2r (ORCPT
+        id S1751376AbeDCOUe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:20:34 -0400
+Received: from mail-yb0-f173.google.com ([209.85.213.173]:39116 "EHLO
+        mail-yb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeDCOUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:28:47 -0400
-Subject: Re: [PATCH] net: improve ipv4 performances
-To: Anton Gary Ceph <agaceph@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180401183121.13022-1-agaceph@gmail.com>
-From: Douglas Caetano dos Santos <douglascs@taghos.com.br>
-Message-ID: <fd3c1749-dedc-10b0-e5a5-f4c88ae434b5@taghos.com.br>
-Date: Tue, 3 Apr 2018 11:18:40 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 3 Apr 2018 10:20:32 -0400
+X-Google-Smtp-Source: AIpwx4/e7dLdIvRZmMs3CfBbqk+0iGAwCqJo2SSBGJd418tzsU00qCCyiVOJLoFq/Z+XlEyyjCMYzA==
+Date: Tue, 3 Apr 2018 07:20:29 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux F2FS Dev Mailing List
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yufen Yu <yuyufen@huawei.com>, David Sterba <dsterba@suse.cz>
+Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
+Message-ID: <20180403142029.GM388343@devbig577.frc2.facebook.com>
+References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180131095446.443670dc@canb.auug.org.au>
+ <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180201092551.759f32be@canb.auug.org.au>
+ <20180314101704.51aaae7f@canb.auug.org.au>
+ <20180403122919.3c503f74@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180401183121.13022-1-agaceph@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [179.219.244.203]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403122919.3c503f74@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anton, everyone,
+Hello, Stephen.
 
-On 04/01/18 15:31, Anton Gary Ceph wrote:
-> As the Linux networking stack is growing, more and more protocols are
-> added, increasing the complexity of stack itself.
-> Modern processors, contrary to common belief, are very bad in branch
-> prediction, so it's our task to give hints to the compiler when possible.
-> 
-> After a few profiling and analysis, turned out that the ethertype field
-> of the packets has the following distribution:
-> 
->     92.1% ETH_P_IP
->      3.2% ETH_P_ARP
->      2.7% ETH_P_8021Q
->      1.4% ETH_P_PPP_SES
->      0.6% don't know/no opinion
-> 
-> From a projection on statistics collected by Google about IPv6 adoption[1],
-> IPv6 should peak at 25% usage at the beginning of 2030. Hence, we should
-> give proper hints to the compiler about the low IPv6 usage.
+On Tue, Apr 03, 2018 at 12:29:19PM +1000, Stephen Rothwell wrote:
+> > I am still applying this to the merge of the btrfs tree every day ...
+> > 
+> > Commit
+> >   578c647879f7 ("f2fs: implement cgroup writeback support")
+> > was merged into Linus' tree on Jan 31.
+> > 
+> > Here is the actual merge fix patch:
 
-My two cents on the matter:
+Yeah, the merge fix looks correct to me.  Depending on the merge
+order, it can go either after the btrfs merge or the f2fs merge, I
+guess.  Stephen, beyond appyling the merge fix afterwards, is there
+somethine else you are concerned about?
 
-You should not consider favoring some parts of code in detriment of another just because of one use case. In your patch, you're considering one server that attends for IPv4 and IPv6 connections simultaneously, in a proportion seen on the Internet, but you completely disregard the use cases of servers that could serve, for example, only IPv6. What about those, just let them slow down?
-
-What I think about such hints and optimizations - someone correct me if I'm wrong - is that they should be done not with specific use cases in mind, but according to the code flow in general. For example, it could be a good idea to slow down ARP requests, because there is AFAIK not such a server that attends only ARP (not that I'm advocating for it, just using as an example). But slowing down IPv6, as Eric already said, is utterly non-sense.
-
-Again, "low IPv6 usage" doesn't mean code that is barely touched, with an IPv6-only server being the obvious example.
+Thanks.
 
 -- 
-Douglas
+tejun
