@@ -1,538 +1,669 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AIpwx493ad8cTzuR1zGrY2r3fNRzmoK1B7ARAHXsFFvHy6ILONvpnqf3Vo4zTx0F1sq6XRI67vqW
-ARC-Seal: i=1; a=rsa-sha256; t=1522711420; cv=none;
+Return-Path: <hdegoede@redhat.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522744407; cv=none;
         d=google.com; s=arc-20160816;
-        b=wAEqExuy67jnKhkznEqDSnmhNUp3xDGPWf2/OCTgFDqlaIdsHb0uh2FinnmRA0lnlc
-         eBFRlO7l80OxY+sekfmuEq5xXoo4bjSpU1soEazQ2WhZ69/yNBa9f5j73PFsMsRkDjQ1
-         6k/J7j+eK16k+cqrdsmhHb0kYrhFFs5HMdyKaUGAptWXFiUyNgomC9/8XQYsQNu9D320
-         78Co++ElUJ04iuPBiuV0hrUhonfAKqYsPHbNr48BbJihKhHMnfDZiSC2CDk7gtaPUW56
-         29rXWdBohtmgLmayMq0h5sbbv4ojwsqi0mgYAhHxUxlb9j7mddJyfrnspHCpPn8iIChj
-         6ydQ==
+        b=eU6FGe6mHhc4ChtLC5AbBx3n1sC9lLnhGHdiSwLZASdvKRMt6s0nV1DeD9uXcWTWCK
+         +ZbHfzsnV8/JlQhJgqKYQotnaDc8KiYQPDU4HLrtyEbbdpKXUHgvSaKVulzEfYFGFSF4
+         0vC6yWxYI6018vCuem4gPsoLO5wQ1Csa9E/W4GkoHTTrXDV/eA3HDeHPf6GlYnRAsHEc
+         VGnE5mfradET3+aUvNxng+U+ClmXKpySQ/zP+nofnZaDzEe6t7OpzrfsQD+C5W9/rh3N
+         U1mi+88/tywsi4wAuFrn2T2WGuB85ITl7e/CpiXpVHNffBkKyIZClHwGftYn2FeIBy7r
+         ieBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=P7ckecrjq8p/bpa1X12S4zx435nAwogcNxXWBpwITzU=;
-        b=ItduMtdSR0d+LYRRrTwHfkHDPxqX5pGOxc6mpwqQkCtjuralMcVJTtWocpdV/XTrbG
-         x+wlkiG7SKxhfYm07K7VgelCBPel/xGSBI/2S9ljesHBrzAmGJcsd45IOX7FhB/9m95x
-         QJZXWwwb4/W3EFZk7ZJiVLbILOVXCWc5XFXWhBW5gDubO0rVgT1dmEoxe+oiGnrPG0wP
-         QWPAltZvtEEArxEtiVD9KN7oqUNZryVRA4Ih5RxsHj1G/DtpIKdqcBGqS6R+KSREbD58
-         5Icf3HMPGD6NQXD2bOL8iG+WbZ34GId3VVp20l7YdK2beP2RwXn3XlQYBZTb4g4D8drI
-         BQjw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=DO4DupBfyrAcvVSdjPkkzlwR0KH/fiEJAFIHAhSN1I4=;
+        b=0R7Cbj23TNAiBS8wPujib/ii+x+0+eN9lCzppTBpquUug7moa6idv7hssAYKkwpzJE
+         8NLs314A7AJdsvSQ5CTDvGN2CXEEbcQuOCL6cU+RqSM1dK/Iud6v45XfokwEEj7+ELyC
+         a+ZTJqhT08EaGC2Kwh+xooIxZc0wNmMT+gZXbDI3JtFqkAoAzbwVOQb5pFgp3IUIJdh3
+         DkUhZSDfzXnEc3TvPHKMbq95P8npCvSsVUyHaFqDSsIaJQKS7qBzmpp+R/tMM6DbaLNQ
+         AbSxYk2IkgcgnDq2TT/smI4t6vUjvyPe5krTVB1DCz+joyI//cYpx4nxUvwijfOebijo
+         Tl/A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Mon, 2 Apr 2018 23:23:33 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kalle Valo <kvalo@codeaurora.org>,
-	Arend Van Spriel <arend.vanspriel@broadcom.com>,
-	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org, Peter Jones <pjones@redhat.com>,
-	Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org,
-	linux-efi@vger.kernel.org
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+X-Google-Smtp-Source: AIpwx49sZPVl/JNzV8EjP2QN2bxCMp9UkmI5ZnZhDqluIMN7T++5+dM/e+0fTzf4kjMxXIUn2/FHPw==
 Subject: Re: [PATCH 2/2] efi: Add embedded peripheral firmware support
-Message-ID: <20180402232333.GU30543@wotan.suse.de>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Kalle Valo <kvalo@codeaurora.org>,
+ Arend Van Spriel <arend.vanspriel@broadcom.com>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, Peter Jones <pjones@redhat.com>,
+ Dave Olsthoorn <dave@bewaar.me>, x86@kernel.org, linux-efi@vger.kernel.org
 References: <20180331121944.8618-1-hdegoede@redhat.com>
  <20180331121944.8618-2-hdegoede@redhat.com>
+ <20180402232333.GU30543@wotan.suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <17fb3c28-78ff-2e1f-2ada-d33320567761@redhat.com>
+Date: Tue, 3 Apr 2018 10:33:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180331121944.8618-2-hdegoede@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180402232333.GU30543@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596455691844480056?=
-X-GMAIL-MSGID: =?utf-8?q?1596678649844445949?=
+X-GMAIL-MSGID: =?utf-8?q?1596713240116590911?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Mar 31, 2018 at 02:19:44PM +0200, Hans de Goede wrote:
-> Just like with PCI options ROMs, which we save in the setup_efi_pci*
-> functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
-> sometimes may contain data which is useful/necessary for peripheral drivers
-> to have access to.
+Hi Luis,
+
+Thank you for the review.
+
+On 03-04-18 01:23, Luis R. Rodriguez wrote:
+> On Sat, Mar 31, 2018 at 02:19:44PM +0200, Hans de Goede wrote:
+>> Just like with PCI options ROMs, which we save in the setup_efi_pci*
+>> functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
+>> sometimes may contain data which is useful/necessary for peripheral drivers
+>> to have access to.
+>>
+>> Specifically the EFI code may contain an embedded copy of firmware which
+>> needs to be (re)loaded into the peripheral. Normally such firmware would be
+>> part of linux-firmware, but in some cases this is not feasible, for 2
+>> reasons:
+>>
+>> 1) The firmware is customized for a specific use-case of the chipset / use
+>> with a specific hardware model, so we cannot have a single firmware file
+>> for the chipset. E.g. touchscreen controller firmwares are compiled
+>> specifically for the hardware model they are used with, as they are
+>> calibrated for a specific model digitizer.
 > 
-> Specifically the EFI code may contain an embedded copy of firmware which
-> needs to be (re)loaded into the peripheral. Normally such firmware would be
-> part of linux-firmware, but in some cases this is not feasible, for 2
-> reasons:
+> Some devices have OTP and use this sort of calibration data,
+
+Right, I'm not sure it really is OTP and not flash, but many touchscreen
+controllers do come with their firmware embedded into the controller, but
+not all unfortunately.
+
+> I was unaware of
+> the use of EFI to stash firmware. Good to know, but can you also provide
+> references to what part of what standard should be followed for it in
+> documentation?
+
+This is not part of the standard. There has been a long(ish) standing issue
+with us not being able to get re-distribute permission for the firmware for
+some touchscreen controllers found on cheap x86 devices. Which means that
+we cannot put it in Linux firmware.
+
+Dave Olsthoorn (in the Cc) noticed that the touchscreen did work in the
+refind bootload UI, so the EFI code must have a copy of the firmware.
+
+I asked Peter Jones for suggestions how to extract this during boot and
+he suggested seeing if there was a copy of the firmware in the
+EFI_BOOT_SERVICES_CODE memory segment, which it turns out there is.
+
+My patch to add support for this contains a table of device-model (dmi
+strings), firmware header (first 64 bits), length and crc32 and then if
+we boot on a device-model which is in the table the code scans the
+EFI_BOOT_SERVICES_CODE for the prefix, if found checks the crc and
+caches the firmware for later use by request-firmware.
+
+So I just do a brute-force search for the firmware, this really is hack,
+nothing standard about it I'm afraid. But it works on 4 different x86
+tablets I have and makes the touchscreen work OOTB on them, so I believe
+it is a worthwhile hack to have.
+
+>> 2) Despite repeated attempts we have failed to get permission to
+>> redistribute the firmware. This is especially a problem with customized
+>> firmwares, these get created by the chip vendor for a specific ODM and the
+>> copyright may partially belong with the ODM, so the chip vendor cannot
+>> give a blanket permission to distribute these.
+>>
+>> This commit adds support for finding peripheral firmware embedded in the
+>> EFI code and making this available to peripheral drivers through the
+>> standard firmware loading mechanism.
 > 
-> 1) The firmware is customized for a specific use-case of the chipset / use
-> with a specific hardware model, so we cannot have a single firmware file
-> for the chipset. E.g. touchscreen controller firmwares are compiled
-> specifically for the hardware model they are used with, as they are
-> calibrated for a specific model digitizer.
-
-Some devices have OTP and use this sort of calibration data, I was unaware of
-the use of EFI to stash firmware. Good to know, but can you also provide
-references to what part of what standard should be followed for it in
-documentation?
-
-> 2) Despite repeated attempts we have failed to get permission to
-> redistribute the firmware. This is especially a problem with customized
-> firmwares, these get created by the chip vendor for a specific ODM and the
-> copyright may partially belong with the ODM, so the chip vendor cannot
-> give a blanket permission to distribute these.
+> Neat.
 > 
-> This commit adds support for finding peripheral firmware embedded in the
-> EFI code and making this available to peripheral drivers through the
-> standard firmware loading mechanism.
-
-Neat.
-
-> Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware pretty
-> late in the init sequence, 
-
-This also creates a technical limitation on use for the API that users
-should be aware of. Its important to document such limitation.
-
-Also if we can address the limitation that would be even better.
-
-For instance, on what part of the driver is the call to request firmware
-being made? Note that we support async probe now, so if the call was done
-on probe, it may be wise to use async probe, however, can we be *certain*
-that the EFI firmware would have been parsed and ready by then? Please
-check. It just may be the case.
-
-Or, if we use late_initcall() would that suffice on the driver, if they
-used a request firmware call on init or probe?
-
-> this is on purpose because the typical
-> EFI_BOOT_SERVICES_CODE memory-segment is too large for early_memremap().
-
-To be clear you neede to use memremap()
-
-What mechanism would have in place to ensure that a driver which expects
-firmware to be on EFI data to be already available prior to its driver's
-call to initialize?
-
-You seem to say its this consumes about about 25 MiB now, and for now you
-have made this a debug thing only? How have these size requirements changed
-over time? Has EFI_BOOT_SERVICES_CODE grown over time? How much? Do we
-expect it will blow up later?
-
-> This means we rely on the EFI_BOOT_SERVICES_CODE not being free-ed until
-> efi_free_boot_services() is called, which means that this will only work
-> on x86, if we ever want this on ARM we should make ARM delay the freeing
-> of the EFI_BOOT_SERVICES_* memory-segments too.
-
-Why not do that as well with your patch?
-
-> Note this commit also modifies efi_mem_desc_lookup() to not skip
-> EFI_BOOT_SERVICES_CODE memory-segments, so that efi_mem_reserve() works
-> on such segments.
+>> Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware pretty
+>> late in the init sequence,
 > 
-> Reported-by: Dave Olsthoorn <dave@bewaar.me>
-> Suggested-by: Peter Jones <pjones@redhat.com>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/base/firmware_class.c            |  29 +++
->  drivers/firmware/efi/Makefile            |   1 +
->  drivers/firmware/efi/efi.c               |   1 +
->  drivers/firmware/efi/embedded-firmware.c | 232 +++++++++++++++++++++++
->  include/linux/efi.h                      |   2 +
->  init/main.c                              |   1 +
->  6 files changed, 266 insertions(+)
->  create mode 100644 drivers/firmware/efi/embedded-firmware.c
+> This also creates a technical limitation on use for the API that users
+> should be aware of. Its important to document such limitation.
+
+I don't think this is a problem for any normal drivers, when I say pretty
+late I mean late in init/main.c: start_kernel(), so still before any normal
+drivers load.
+
+The first idea was to scan for the firmware at the same time we check for
+things as the ACPI BGRT logo stuff, but as mentioned that requires using
+early_mmap() which does not work for the amount of memory we want to map.
+
+> Also if we can address the limitation that would be even better.
 > 
-> diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
-> index 7dd36ace6152..b1e7b3de1975 100644
-> --- a/drivers/base/firmware_class.c
-> +++ b/drivers/base/firmware_class.c
-> @@ -12,6 +12,7 @@
->  
->  #include <linux/capability.h>
->  #include <linux/device.h>
-> +#include <linux/efi.h>
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/timer.h>
-> @@ -1207,6 +1208,32 @@ static inline void unregister_sysfs_loader(void)
->  
->  #endif /* CONFIG_FW_LOADER_USER_HELPER */
->  
-> +#ifdef CONFIG_EFI
-> +static int
-> +fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
-> +{
-> +	size_t size;
-> +	int rc;
-> +
-> +	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size,
-> +				 fw_priv->data ? fw_priv->allocated_size : 0);
-> +	if (rc == 0) {
-> +		dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
-> +		fw_priv->size = size;
-> +		fw_state_done(fw_priv);
-> +		ret = 0;
-> +	}
-> +
-> +	return ret;
-> +}
-> +#else
-> +static inline int
-> +fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
-> +{
-> +	return ret;
-> +}
-> +#endif
-> +
->  /* prepare firmware and firmware_buf structs;
->   * return 0 if a firmware is already assigned, 1 if need to load one,
->   * or a negative error code
-> @@ -1296,6 +1323,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
->  		goto out;
->  
->  	ret = fw_get_filesystem_firmware(device, fw->priv);
-> +	if (ret)
-> +		ret = fw_get_efi_embedded_fw(device, fw->priv, ret);
-
-This EFI firmware lookup is being used as a fallback mechanism, for *all*
-requests. That's pretty aggressive and I'd like a bit more justification
-for that approach.
-
-For instance, if its just a few drivers that really can use this, can't we just
-add anew API call, say firmware_request_efi(), then add an internal flag for
-this type of lookup and then this fallback mechanism would *only* be used for
-those drivers.
-
-BTW please use linux-next to base your changes as a lot of things have changed
-on the firmware API code, on queue on its way for v4.17-rc1. Please be sure
-to also extend the documentation on Documentation/driver-api/firmware/
-respectively.
-
->  	if (ret) {
->  		if (!(opt_flags & FW_OPT_NO_WARN))
->  			dev_warn(device,
-> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-> index cb805374f4bc..cb946f7d0181 100644
-> --- a/drivers/firmware/efi/Makefile
-> +++ b/drivers/firmware/efi/Makefile
-> @@ -13,6 +13,7 @@ KASAN_SANITIZE_runtime-wrappers.o	:= n
->  obj-$(CONFIG_ACPI_BGRT) 		+= efi-bgrt.o
->  obj-$(CONFIG_EFI)			+= efi.o vars.o reboot.o memattr.o tpm.o
->  obj-$(CONFIG_EFI)			+= capsule.o memmap.o
-> +obj-$(CONFIG_EFI)			+= embedded-firmware.o
->  obj-$(CONFIG_EFI_VARS)			+= efivars.o
->  obj-$(CONFIG_EFI_ESRT)			+= esrt.o
->  obj-$(CONFIG_EFI_VARS_PSTORE)		+= efi-pstore.o
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index fddc5f706fd2..1a5ea950f58f 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -455,6 +455,7 @@ int __init efi_mem_desc_lookup(u64 phys_addr, efi_memory_desc_t *out_md)
->  		u64 end;
->  
->  		if (!(md->attribute & EFI_MEMORY_RUNTIME) &&
-> +		    md->type != EFI_BOOT_SERVICES_CODE &&
->  		    md->type != EFI_BOOT_SERVICES_DATA &&
->  		    md->type != EFI_RUNTIME_SERVICES_DATA) {
->  			continue;
-> diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
-> new file mode 100644
-> index 000000000000..80848f332b22
-> --- /dev/null
-> +++ b/drivers/firmware/efi/embedded-firmware.c
-> @@ -0,0 +1,232 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Support for extracting embedded firmware for peripherals from EFI code,
-> + *
-> + * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
-> + */
-> +
-> +#include <linux/crc32.h>
-> +#include <linux/dmi.h>
-> +#include <linux/efi.h>
-> +#include <linux/types.h>
-> +
-> +/* Sofar there are no machines with more then 1 interesting embedded firmware */
-> +#define MAX_EMBEDDED_FIRMWARES	1
-> +
-> +struct embedded_fw_desc {
-> +	const char *name;
-> +	u8 prefix[8];
-> +	u32 length;
-> +	u32 crc;
-> +};
-> +
-> +struct embedded_fw {
-> +	const char *name;
-> +	void *data;
-> +	size_t length;
-> +};
-> +
-> +static struct embedded_fw found_fw[MAX_EMBEDDED_FIRMWARES];
-
-This is just saving a few bytes, and is still pretty inflexible.
-If were going to support this, this is a rather inflexible way to
-support this. I'd prefer we link list this. This way if we support,
-its an empty list and grows depending on what we find.
-
-I don't see the benefit of a static array here in any way.
-
-> +static int found_fw_count;
-> +
-> +static struct embedded_fw_desc chuwi_vi8_plus_fw[] __initdata = {
-> +	{
-> +		.name	= "chipone/icn8318-HAMP0002.fw",
-> +		.prefix = { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
-> +		.length	= 35012,
-> +		.crc	= 0x74dfd3fc,
-> +	},
-> +	{}
-> +};
-> +
-> +static struct embedded_fw_desc chuwi_hi8_pro_fw[] __initdata = {
-> +	{
-> +		.name	= "silead/gsl3680-chuwi-hi8-pro.fw",
-> +		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-> +		.length	= 39864,
-> +		.crc	= 0xfe2bedba,
-> +	},
-> +	{}
-> +};
-> +
-> +static struct embedded_fw_desc cube_iwork8_air_fw[] __initdata = {
-> +	{
-> +		.name	= "silead/gsl3670-cube-iwork8-air.fw",
-> +		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-> +		.length	= 38808,
-> +		.crc	= 0xfecde51f,
-> +	},
-> +	{}
-> +};
-> +
-> +static struct embedded_fw_desc pipo_w2s_fw[] __initdata = {
-> +	{
-> +		.name	= "silead/gsl1680-pipo-w2s.fw",
-> +		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-> +		.length	= 39072,
-> +		.crc	= 0x28d5dc6c,
-> +	},
-> +	{}
-> +};
-> +
-> +static struct dmi_system_id embedded_fw_table[] __initdata = {
-> +	{
-> +		/* Chuwi Vi8 Plus (CWI506) */
-> +		.driver_data = (void *)chuwi_vi8_plus_fw,
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-> +		},
-> +	},
-> +	{
-> +		/* Chuwi Hi8 Pro (CWI513) */
-> +		.driver_data = (void *)chuwi_hi8_pro_fw,
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "X1D3_C806N"),
-> +		},
-> +	},
-> +	{
-> +		/* Cube iWork8 Air */
-> +		.driver_data = (void *)cube_iwork8_air_fw,
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "cube"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "i1-TF"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-> +		},
-> +	},
-> +	{
-> +		/* Pipo W2s */
-> +		.driver_data = (void *)pipo_w2s_fw,
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "PIPO"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "W2S"),
-> +		},
-> +	},
-> +	{}
-> +};
-
-Maintaining these on a separate file might be easier to maintain.
-
-> +
-> +/*
-> + * Note the efi_check_for_embedded_firmwares() code currently makes the
-> + * following 2 assumptions. This may needs to be revisited if embedded firmware
-> + * is found where this is not true:
-> + * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory segments
-> + * 2) The firmware always starts at an offset which is a multiple of 8 bytes
-
-Who's defining this? Is this an agreed upon thing between a few companies, or
-is this written as part of a standard which we can refer to in documentation.
-
-> + */
-> +static int __init efi_check_md_for_embedded_firmware(
-> +	efi_memory_desc_t *md, const struct embedded_fw_desc *desc)
-> +{
-> +	u64 i, size;
-> +	u32 crc;
-> +	u8 *mem;
-> +
-> +	size = md->num_pages << EFI_PAGE_SHIFT;
-> +	mem = memremap(md->phys_addr, size, MEMREMAP_WB);
-> +	if (!mem) {
-> +		pr_err("Error mapping EFI mem at %#llx\n", md->phys_addr);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	size -= desc->length;
-> +	for (i = 0; i < size; i += 8) {
-> +		if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
-> +			continue;
-> +
-> +		/* Seed with ~0, invert to match crc32 userspace utility */
-> +		crc = ~crc32(~0, mem + i, desc->length);
-> +		if (crc == desc->crc)
-> +			break;
-> +	}
-> +
-> +	memunmap(mem);
-> +
-> +	if (i >= size)
-> +		return -ENOENT;
-> +
-> +	pr_info("Found EFI embedded fw '%s' crc %08x\n", desc->name, desc->crc);
-> +
-> +	if (found_fw_count >= MAX_EMBEDDED_FIRMWARES) {
-> +		pr_err("Error already have %d embedded firmwares\n",
-> +		       MAX_EMBEDDED_FIRMWARES);
-> +		return -ENOSPC;
-> +	}
-> +
-> +	found_fw[found_fw_count].data =
-> +		memremap(md->phys_addr + i, desc->length, MEMREMAP_WB);
-
-I've heard of some firmware bing over hundreds of MB these days. Once
-the can of worms is open its just a matter of time before someone
-tries to abuse, so do we have any limitation size? How about spec
-wise? Are there any limitations implied by it?
-
-If there are rather small, do we stand to gain instead to just kzalloc()
-and memcpy the found firmware? If done this way, wouldn't you be able
-to run this earlier?
-
-> +	if (!found_fw[found_fw_count].data) {
-> +		pr_err("Error mapping embedded firmware\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	found_fw[found_fw_count].name = desc->name;
-> +	found_fw[found_fw_count].length = desc->length;
-> +	found_fw_count++;
-> +
-> +	/* Note md points to *unmapped* memory after this!!! */
-> +	efi_mem_reserve(md->phys_addr + i, desc->length);
-
-Do you need a for_each_efi_memory_desc_safe() perhaps?
-
-> +	return 0;
-> +}
-> +
-> +void __init efi_check_for_embedded_firmwares(void)
-> +{
-> +	const struct embedded_fw_desc *fw_desc;
-> +	const struct dmi_system_id *dmi_id;
-> +	efi_memory_desc_t *md;
-> +	int i, r;
-> +
-> +	dmi_id = dmi_first_match(embedded_fw_table);
-> +	if (!dmi_id)
-> +		return;
-> +
-> +	fw_desc = dmi_id->driver_data;
-> +	for (i = 0; fw_desc[i].length; i++) {
-> +		for_each_efi_memory_desc(md) {
-> +			if (md->type != EFI_BOOT_SERVICES_CODE)
-> +				continue;
-> +
-> +			r = efi_check_md_for_embedded_firmware(md, &fw_desc[i]);
-> +			if (r == 0) {
-> +				/*
-> +				 * On success efi_mem_reserve() has been called
-> +				 * installing a new memmap, so our pointers
-> +				 * are invalid now and we MUST break the loop.
-> +				 */
-> +				break;
-
-Yeah this seems fragile. Can we do better?
-
-  Luis
-
-> +			}
-> +		}
-> +	}
-> +}
-> +
-> +int efi_get_embedded_fw(const char *name, void **data, size_t *size,
-> +			size_t msize)
-> +{
-> +	struct embedded_fw *fw = NULL;
-> +	void *buf = *data;
-> +	int i;
-> +
-> +	for (i = 0; i < found_fw_count; i++) {
-> +		if (strcmp(name, found_fw[i].name) == 0) {
-> +			fw = &found_fw[i];
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!fw)
-> +		return -ENOENT;
-> +
-> +	if (msize && msize < fw->length)
-> +		return -EFBIG;
-> +
-> +	if (!buf) {
-> +		buf = vmalloc(fw->length);
-> +		if (!buf)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	memcpy(buf, fw->data, fw->length);
-> +	*size = fw->length;
-> +	*data = buf;
-> +
-> +	return 0;
-> +}
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index f5083aa72eae..bbdfda1d9e8d 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1573,6 +1573,8 @@ efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) { }
->  #endif
->  
->  void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
-> +void efi_check_for_embedded_firmwares(void);
-> +int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
->  
->  /*
->   * Arch code can implement the following three template macros, avoiding
-> diff --git a/init/main.c b/init/main.c
-> index 969eaf140ef0..79b4a1b12509 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -710,6 +710,7 @@ asmlinkage __visible void __init start_kernel(void)
->  	sfi_init_late();
->  
->  	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
-> +		efi_check_for_embedded_firmwares();
->  		efi_free_boot_services();
->  	}
->  
-> -- 
-> 2.17.0.rc2
+> For instance, on what part of the driver is the call to request firmware
+> being made? Note that we support async probe now, so if the call was done
+> on probe, it may be wise to use async probe, however, can we be *certain*
+> that the EFI firmware would have been parsed and ready by then? Please
+> check. It just may be the case.
 > 
-> 
+> Or, if we use late_initcall() would that suffice on the driver, if they
+> used a request firmware call on init or probe?
 
--- 
-Luis Rodriguez, SUSE LINUX GmbH
-Maxfeldstrasse 5; D-90409 Nuernberg
+As said I think we still do it early enough for any driver use, when
+I wrote "late in the init sequence" I should have probably written something
+else, like "near the end of start_kernel() instead of from setup_arch()"
+
+> 
+>> this is on purpose because the typical
+>> EFI_BOOT_SERVICES_CODE memory-segment is too large for early_memremap().
+> 
+> To be clear you neede to use memremap()
+
+Yes.
+
+> What mechanism would have in place to ensure that a driver which expects
+> firmware to be on EFI data to be already available prior to its driver's
+> call to initialize?
+
+See above, this still runs before start_kernel() calls rest_init() which is
+where any normal init calls (and driver probing) happens so still early
+enough for any users I can think of. I think my poorly worded commit
+message is causing a bit of unnecessary confusion here, sorry about that.
+
+> You seem to say its this consumes about about 25 MiB now, and for now you
+> have made this a debug thing only? How have these size requirements changed
+> over time? Has EFI_BOOT_SERVICES_CODE grown over time? How much? Do we
+> expect it will blow up later?
+
+The debug only thing is only patch 1/2, which is mostly independent of this
+patch (which is 2/2), patch 1 exports the EFI_BOOT_SERVICES_* memory segments
+as blobs under /sys/kernel/debug/efi, which requires not freeing them
+(or making a copy) and this costs memory. The purpose of this is to be
+able to easily check them for embedded firmwares when adding new entries
+to the table of known embedded firmwares used by this patch.
+
+This patch will work fine without the first patch even being present in
+the kernel and will also work fine without efi=debug.
+
+>> This means we rely on the EFI_BOOT_SERVICES_CODE not being free-ed until
+>> efi_free_boot_services() is called, which means that this will only work
+>> on x86, if we ever want this on ARM we should make ARM delay the freeing
+>> of the EFI_BOOT_SERVICES_* memory-segments too.
+> 
+> Why not do that as well with your patch?
+
+That requires making significant changes to the early bringup code on
+ARM, x86 keeps EFI_BOOT_SERVICES_* memory-segments around until near
+the end of start_kernel() because freeing them earlier triggers bugs
+in some x86 EFI implementations, ARM EFI implementations do not have
+these bugs, so they free them almost directly at boot.
+
+Changing this really falls outside the scope of this patch.
+
+> 
+>> Note this commit also modifies efi_mem_desc_lookup() to not skip
+>> EFI_BOOT_SERVICES_CODE memory-segments, so that efi_mem_reserve() works
+>> on such segments.
+>>
+>> Reported-by: Dave Olsthoorn <dave@bewaar.me>
+>> Suggested-by: Peter Jones <pjones@redhat.com>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>>   drivers/base/firmware_class.c            |  29 +++
+>>   drivers/firmware/efi/Makefile            |   1 +
+>>   drivers/firmware/efi/efi.c               |   1 +
+>>   drivers/firmware/efi/embedded-firmware.c | 232 +++++++++++++++++++++++
+>>   include/linux/efi.h                      |   2 +
+>>   init/main.c                              |   1 +
+>>   6 files changed, 266 insertions(+)
+>>   create mode 100644 drivers/firmware/efi/embedded-firmware.c
+>>
+>> diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+>> index 7dd36ace6152..b1e7b3de1975 100644
+>> --- a/drivers/base/firmware_class.c
+>> +++ b/drivers/base/firmware_class.c
+>> @@ -12,6 +12,7 @@
+>>   
+>>   #include <linux/capability.h>
+>>   #include <linux/device.h>
+>> +#include <linux/efi.h>
+>>   #include <linux/module.h>
+>>   #include <linux/init.h>
+>>   #include <linux/timer.h>
+>> @@ -1207,6 +1208,32 @@ static inline void unregister_sysfs_loader(void)
+>>   
+>>   #endif /* CONFIG_FW_LOADER_USER_HELPER */
+>>   
+>> +#ifdef CONFIG_EFI
+>> +static int
+>> +fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
+>> +{
+>> +	size_t size;
+>> +	int rc;
+>> +
+>> +	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size,
+>> +				 fw_priv->data ? fw_priv->allocated_size : 0);
+>> +	if (rc == 0) {
+>> +		dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
+>> +		fw_priv->size = size;
+>> +		fw_state_done(fw_priv);
+>> +		ret = 0;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +#else
+>> +static inline int
+>> +fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
+>> +{
+>> +	return ret;
+>> +}
+>> +#endif
+>> +
+>>   /* prepare firmware and firmware_buf structs;
+>>    * return 0 if a firmware is already assigned, 1 if need to load one,
+>>    * or a negative error code
+>> @@ -1296,6 +1323,8 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+>>   		goto out;
+>>   
+>>   	ret = fw_get_filesystem_firmware(device, fw->priv);
+>> +	if (ret)
+>> +		ret = fw_get_efi_embedded_fw(device, fw->priv, ret);
+> 
+> This EFI firmware lookup is being used as a fallback mechanism, for *all*
+> requests. That's pretty aggressive and I'd like a bit more justification
+> for that approach.
+
+The fw_get_efi_embedded_fw() call is not that expensive, it walks the
+list of found firmwares, does a strcmp on the name and that is all it does,
+so I did not really see this as a problem, but if you want me to change this
+that is certainly possible.
+
+> For instance, if its just a few drivers that really can use this, can't we just
+> add anew API call, say firmware_request_efi(), then add an internal flag for
+> this type of lookup and then this fallback mechanism would *only* be used for
+> those drivers.
+
+Yes that is certainly possible, currently there are 2 touchscreen drivers which
+can use this drivers/input/touchscreen/silead.c and
+drivers/input/touchscreen/chipone_icn8505.c, with the latter being a driver I just
+finished this weekend and which I will submit upstream soon.
+
+> BTW please use linux-next to base your changes as a lot of things have changed
+> on the firmware API code, on queue on its way for v4.17-rc1.
+
+Ok, I usually prefer to only merge the relevant subsys-next into my personal
+tree rather then consuming the entirety of -next, which subsys tree has
+the firmware bits ?
+
+> Please be sure
+> to also extend the documentation on Documentation/driver-api/firmware/
+> respectively.
+
+Ok.
+
+>>   	if (ret) {
+>>   		if (!(opt_flags & FW_OPT_NO_WARN))
+>>   			dev_warn(device,
+>> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
+>> index cb805374f4bc..cb946f7d0181 100644
+>> --- a/drivers/firmware/efi/Makefile
+>> +++ b/drivers/firmware/efi/Makefile
+>> @@ -13,6 +13,7 @@ KASAN_SANITIZE_runtime-wrappers.o	:= n
+>>   obj-$(CONFIG_ACPI_BGRT) 		+= efi-bgrt.o
+>>   obj-$(CONFIG_EFI)			+= efi.o vars.o reboot.o memattr.o tpm.o
+>>   obj-$(CONFIG_EFI)			+= capsule.o memmap.o
+>> +obj-$(CONFIG_EFI)			+= embedded-firmware.o
+>>   obj-$(CONFIG_EFI_VARS)			+= efivars.o
+>>   obj-$(CONFIG_EFI_ESRT)			+= esrt.o
+>>   obj-$(CONFIG_EFI_VARS_PSTORE)		+= efi-pstore.o
+>> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+>> index fddc5f706fd2..1a5ea950f58f 100644
+>> --- a/drivers/firmware/efi/efi.c
+>> +++ b/drivers/firmware/efi/efi.c
+>> @@ -455,6 +455,7 @@ int __init efi_mem_desc_lookup(u64 phys_addr, efi_memory_desc_t *out_md)
+>>   		u64 end;
+>>   
+>>   		if (!(md->attribute & EFI_MEMORY_RUNTIME) &&
+>> +		    md->type != EFI_BOOT_SERVICES_CODE &&
+>>   		    md->type != EFI_BOOT_SERVICES_DATA &&
+>>   		    md->type != EFI_RUNTIME_SERVICES_DATA) {
+>>   			continue;
+>> diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
+>> new file mode 100644
+>> index 000000000000..80848f332b22
+>> --- /dev/null
+>> +++ b/drivers/firmware/efi/embedded-firmware.c
+>> @@ -0,0 +1,232 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Support for extracting embedded firmware for peripherals from EFI code,
+>> + *
+>> + * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
+>> + */
+>> +
+>> +#include <linux/crc32.h>
+>> +#include <linux/dmi.h>
+>> +#include <linux/efi.h>
+>> +#include <linux/types.h>
+>> +
+>> +/* Sofar there are no machines with more then 1 interesting embedded firmware */
+>> +#define MAX_EMBEDDED_FIRMWARES	1
+>> +
+>> +struct embedded_fw_desc {
+>> +	const char *name;
+>> +	u8 prefix[8];
+>> +	u32 length;
+>> +	u32 crc;
+>> +};
+>> +
+>> +struct embedded_fw {
+>> +	const char *name;
+>> +	void *data;
+>> +	size_t length;
+>> +};
+>> +
+>> +static struct embedded_fw found_fw[MAX_EMBEDDED_FIRMWARES];
+> 
+> This is just saving a few bytes, and is still pretty inflexible.
+> If were going to support this, this is a rather inflexible way to
+> support this. I'd prefer we link list this. This way if we support,
+> its an empty list and grows depending on what we find.
+> 
+> I don't see the benefit of a static array here in any way.
+
+It is not like we are ever going to have more then 2-3 embedded
+firmwares in the foreseeable future and having a static array
+saves the need to kmalloc the struct embedded_fw and the additional
+error handling for when this fails, so the array leads to simpler
+code. But if you really want me to change this over to a linked
+list I can change it.
+
+>> +static int found_fw_count;
+>> +
+>> +static struct embedded_fw_desc chuwi_vi8_plus_fw[] __initdata = {
+>> +	{
+>> +		.name	= "chipone/icn8318-HAMP0002.fw",
+>> +		.prefix = { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
+>> +		.length	= 35012,
+>> +		.crc	= 0x74dfd3fc,
+>> +	},
+>> +	{}
+>> +};
+>> +
+>> +static struct embedded_fw_desc chuwi_hi8_pro_fw[] __initdata = {
+>> +	{
+>> +		.name	= "silead/gsl3680-chuwi-hi8-pro.fw",
+>> +		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
+>> +		.length	= 39864,
+>> +		.crc	= 0xfe2bedba,
+>> +	},
+>> +	{}
+>> +};
+>> +
+>> +static struct embedded_fw_desc cube_iwork8_air_fw[] __initdata = {
+>> +	{
+>> +		.name	= "silead/gsl3670-cube-iwork8-air.fw",
+>> +		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
+>> +		.length	= 38808,
+>> +		.crc	= 0xfecde51f,
+>> +	},
+>> +	{}
+>> +};
+>> +
+>> +static struct embedded_fw_desc pipo_w2s_fw[] __initdata = {
+>> +	{
+>> +		.name	= "silead/gsl1680-pipo-w2s.fw",
+>> +		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
+>> +		.length	= 39072,
+>> +		.crc	= 0x28d5dc6c,
+>> +	},
+>> +	{}
+>> +};
+>> +
+>> +static struct dmi_system_id embedded_fw_table[] __initdata = {
+>> +	{
+>> +		/* Chuwi Vi8 Plus (CWI506) */
+>> +		.driver_data = (void *)chuwi_vi8_plus_fw,
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
+>> +			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
+>> +		},
+>> +	},
+>> +	{
+>> +		/* Chuwi Hi8 Pro (CWI513) */
+>> +		.driver_data = (void *)chuwi_hi8_pro_fw,
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "X1D3_C806N"),
+>> +		},
+>> +	},
+>> +	{
+>> +		/* Cube iWork8 Air */
+>> +		.driver_data = (void *)cube_iwork8_air_fw,
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_SYS_VENDOR, "cube"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "i1-TF"),
+>> +			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
+>> +		},
+>> +	},
+>> +	{
+>> +		/* Pipo W2s */
+>> +		.driver_data = (void *)pipo_w2s_fw,
+>> +		.matches = {
+>> +			DMI_MATCH(DMI_SYS_VENDOR, "PIPO"),
+>> +			DMI_MATCH(DMI_PRODUCT_NAME, "W2S"),
+>> +		},
+>> +	},
+>> +	{}
+>> +};
+> 
+> Maintaining these on a separate file might be easier to maintain.
+
+Sure, I can move these to say:
+
+drivers/firmware/efi/embedded-firmware-table.c ?
+
+>> +
+>> +/*
+>> + * Note the efi_check_for_embedded_firmwares() code currently makes the
+>> + * following 2 assumptions. This may needs to be revisited if embedded firmware
+>> + * is found where this is not true:
+>> + * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory segments
+>> + * 2) The firmware always starts at an offset which is a multiple of 8 bytes
+> 
+> Who's defining this? Is this an agreed upon thing between a few companies, or
+> is this written as part of a standard which we can refer to in documentation.
+
+Definitely not part of the standard, this is just observed behavior on
+devices which have (interesting) peripheral firmware embedded in their EFI
+code.
+
+>> + */
+>> +static int __init efi_check_md_for_embedded_firmware(
+>> +	efi_memory_desc_t *md, const struct embedded_fw_desc *desc)
+>> +{
+>> +	u64 i, size;
+>> +	u32 crc;
+>> +	u8 *mem;
+>> +
+>> +	size = md->num_pages << EFI_PAGE_SHIFT;
+>> +	mem = memremap(md->phys_addr, size, MEMREMAP_WB);
+>> +	if (!mem) {
+>> +		pr_err("Error mapping EFI mem at %#llx\n", md->phys_addr);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	size -= desc->length;
+>> +	for (i = 0; i < size; i += 8) {
+>> +		if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
+>> +			continue;
+>> +
+>> +		/* Seed with ~0, invert to match crc32 userspace utility */
+>> +		crc = ~crc32(~0, mem + i, desc->length);
+>> +		if (crc == desc->crc)
+>> +			break;
+>> +	}
+>> +
+>> +	memunmap(mem);
+>> +
+>> +	if (i >= size)
+>> +		return -ENOENT;
+>> +
+>> +	pr_info("Found EFI embedded fw '%s' crc %08x\n", desc->name, desc->crc);
+>> +
+>> +	if (found_fw_count >= MAX_EMBEDDED_FIRMWARES) {
+>> +		pr_err("Error already have %d embedded firmwares\n",
+>> +		       MAX_EMBEDDED_FIRMWARES);
+>> +		return -ENOSPC;
+>> +	}
+>> +
+>> +	found_fw[found_fw_count].data =
+>> +		memremap(md->phys_addr + i, desc->length, MEMREMAP_WB);
+> 
+> I've heard of some firmware bing over hundreds of MB these days. Once
+> the can of worms is open its just a matter of time before someone
+> tries to abuse, so do we have any limitation size? How about spec
+> wise? Are there any limitations implied by it?
+> 
+> If there are rather small, do we stand to gain instead to just kzalloc()
+> and memcpy the found firmware? If done this way, wouldn't you be able
+> to run this earlier?
+
+Using kmalloc still requires memory-management to be setup, just as
+using memremap does. The whole "needs to be run late" comment is
+about this needing to run after mm_init(). Anyways as said I think
+the whole when to run this discussion is a red herring based on my
+poor choice of words in the commit message.
+
+But doing a kmemdup on found firmware instead would avoid
+the need for efi_mem_reserve()...
+
+>> +	if (!found_fw[found_fw_count].data) {
+>> +		pr_err("Error mapping embedded firmware\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	found_fw[found_fw_count].name = desc->name;
+>> +	found_fw[found_fw_count].length = desc->length;
+>> +	found_fw_count++;
+>> +
+>> +	/* Note md points to *unmapped* memory after this!!! */
+>> +	efi_mem_reserve(md->phys_addr + i, desc->length);
+> 
+> Do you need a for_each_efi_memory_desc_safe() perhaps?
+
+See below.
+
+>> +	return 0;
+>> +}
+>> +
+>> +void __init efi_check_for_embedded_firmwares(void)
+>> +{
+>> +	const struct embedded_fw_desc *fw_desc;
+>> +	const struct dmi_system_id *dmi_id;
+>> +	efi_memory_desc_t *md;
+>> +	int i, r;
+>> +
+>> +	dmi_id = dmi_first_match(embedded_fw_table);
+>> +	if (!dmi_id)
+>> +		return;
+>> +
+>> +	fw_desc = dmi_id->driver_data;
+>> +	for (i = 0; fw_desc[i].length; i++) {
+>> +		for_each_efi_memory_desc(md) {
+>> +			if (md->type != EFI_BOOT_SERVICES_CODE)
+>> +				continue;
+>> +
+>> +			r = efi_check_md_for_embedded_firmware(md, &fw_desc[i]);
+>> +			if (r == 0) {
+>> +				/*
+>> +				 * On success efi_mem_reserve() has been called
+>> +				 * installing a new memmap, so our pointers
+>> +				 * are invalid now and we MUST break the loop.
+>> +				 */
+>> +				break;
+> 
+> Yeah this seems fragile. Can we do better?
+
+If we want to use efi_mem_reserve() no, because the memory descriptors
+are in an array and the entire array gets re-allocated on changes.
+
+Note AFAICT this MUST be an array because we pass it to the EFI firmware,
+but your suggestion to use kmemdup on the firmware would fix the need for
+efi_mem_reserve() fixing the fragility, so that probably is a better way
+to deal with this.
+
+Regards,
+
+Hans
+
+
+> 
+>    Luis
+> 
+>> +			}
+>> +		}
+>> +	}
+>> +}
+>> +
+>> +int efi_get_embedded_fw(const char *name, void **data, size_t *size,
+>> +			size_t msize)
+>> +{
+>> +	struct embedded_fw *fw = NULL;
+>> +	void *buf = *data;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < found_fw_count; i++) {
+>> +		if (strcmp(name, found_fw[i].name) == 0) {
+>> +			fw = &found_fw[i];
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	if (!fw)
+>> +		return -ENOENT;
+>> +
+>> +	if (msize && msize < fw->length)
+>> +		return -EFBIG;
+>> +
+>> +	if (!buf) {
+>> +		buf = vmalloc(fw->length);
+>> +		if (!buf)
+>> +			return -ENOMEM;
+>> +	}
+>> +
+>> +	memcpy(buf, fw->data, fw->length);
+>> +	*size = fw->length;
+>> +	*data = buf;
+>> +
+>> +	return 0;
+>> +}
+>> diff --git a/include/linux/efi.h b/include/linux/efi.h
+>> index f5083aa72eae..bbdfda1d9e8d 100644
+>> --- a/include/linux/efi.h
+>> +++ b/include/linux/efi.h
+>> @@ -1573,6 +1573,8 @@ efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) { }
+>>   #endif
+>>   
+>>   void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
+>> +void efi_check_for_embedded_firmwares(void);
+>> +int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
+>>   
+>>   /*
+>>    * Arch code can implement the following three template macros, avoiding
+>> diff --git a/init/main.c b/init/main.c
+>> index 969eaf140ef0..79b4a1b12509 100644
+>> --- a/init/main.c
+>> +++ b/init/main.c
+>> @@ -710,6 +710,7 @@ asmlinkage __visible void __init start_kernel(void)
+>>   	sfi_init_late();
+>>   
+>>   	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
+>> +		efi_check_for_embedded_firmwares();
+>>   		efi_free_boot_services();
+>>   	}
+>>   
+>> -- 
+>> 2.17.0.rc2
+>>
+>>
+> 
