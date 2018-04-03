@@ -1,93 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932121AbeDCL0K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:26:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46884 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932082AbeDCL0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:26:08 -0400
-Date: Tue, 3 Apr 2018 13:26:02 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v3 01/14] KVM: s390: refactor crypto initialization
-Message-ID: <20180403132602.34972959.cohuck@redhat.com>
-In-Reply-To: <5c659a5e-1933-366b-65fc-6e9eabe504d5@linux.vnet.ibm.com>
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1521051954-25715-2-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <f87a6adb-8982-c194-7925-0c88060ebef2@linux.vnet.ibm.com>
-        <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
-        <3227b02e-4a16-295d-9a01-043702cf149d@linux.vnet.ibm.com>
-        <20180326104455.7773be7b.cohuck@redhat.com>
-        <5c659a5e-1933-366b-65fc-6e9eabe504d5@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S932139AbeDCLbs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:31:48 -0400
+Received: from lucky1.263xmail.com ([211.157.147.130]:45070 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932066AbeDCLbo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:31:44 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <8cb01b0dda2855c68856409c8b947b39>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: shawn.lin@rock-chips.com, Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: dw_mmc-k3: Fix DDR52 mode by setting required clock
+ divisor
+To: oscardagrach <ryan@edited.us>
+References: <20180329182423.21201-1-ryan@edited.us>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <e3ec3a77-f2f3-2164-4dbb-80e1ba3ebc63@rock-chips.com>
+Date: Tue, 3 Apr 2018 19:31:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180329182423.21201-1-ryan@edited.us>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018 14:57:22 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On 2018/3/30 2:24, oscardagrach wrote:
 
-> On 03/26/2018 04:44 AM, Cornelia Huck wrote:
-> > On Thu, 15 Mar 2018 15:55:39 +0100
-> > Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
-> >  
-> >> On 15/03/2018 15:48, Tony Krowiak wrote:  
-> >>> On 03/15/2018 08:26 AM, Pierre Morel wrote:  
-> >>>> On 14/03/2018 19:25, Tony Krowiak wrote:  
-> >>>>> diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
-> >>>>> index a3dbd45..4ca9077 100644
-> >>>>> --- a/arch/s390/kvm/Kconfig
-> >>>>> +++ b/arch/s390/kvm/Kconfig
-> >>>>> @@ -33,6 +33,7 @@ config KVM
-> >>>>>        select HAVE_KVM_INVALID_WAKEUPS
-> >>>>>        select SRCU
-> >>>>>        select KVM_VFIO
-> >>>>> +    select ZCRYPT  
-> >>>> I do not think it is a good solution to *always* enable ZCRYPT
-> >>>> when we have KVM.  
-> >>> If CONFIG_ZCRYPT is not selected, then the kvm_ap_apxa_installed()
-> >>> function will not compile
-> >>> because it calls a zcrypt interface. How would you suggest we make
-> >>> sure zcrypt interfaces
-> >>> used in KVM are built if CONFIG_ZCRYPT is not selected?  
-> >> if zcrypt is not configured, I suppose that the KVM code initializaing CRYCB
-> >> has no use but the function will be called from KVM.
-> >> So I would do something like:
-> >>
-> >> #ifdef ZCRYPT
-> >> external definitions.
-> >> #else
-> >> stubs returning error -ENOZCRYPT (or whatever)
-> >> #endif  
-> > The kvm code used some kind of detection for crycb before (IIRC it was
-> > for the key-wrapping stuff). I assume that usage is independent of
-> > zcrypt driver usage in the host?  
-> A function in kvm-s390.c was replaced with a call to the function in
-> ap_bus.c that was externalized in patch 2/14. This was done to remove
-> duplicate code. Since zcrypt is built into the kernel, I didn't think
-> it would be a problem, but apparently because of the way zcrypt is
-> configured, it is still possible to remove it from the kernel build.
+Need at least one line commit body.
 
-Yes.
+> Signed-off-by: oscardagrach <ryan@edited.us>
+> ---
+>   drivers/mmc/host/dw_mmc-k3.c | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-k3.c b/drivers/mmc/host/dw_mmc-k3.c
+> index 89cdb3d533bb..efc546cb4db8 100644
+> --- a/drivers/mmc/host/dw_mmc-k3.c
+> +++ b/drivers/mmc/host/dw_mmc-k3.c
+> @@ -194,8 +194,14 @@ static void dw_mci_hi6220_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>   	int ret;
+>   	unsigned int clock;
+>   
+> -	clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+> -
+> +	/* CLKDIV must be 1 for DDR52/8-bit mode */
+> +	if (ios->bus_width == MMC_BUS_WIDTH_8 &&
+> +		ios->timing == MMC_TIMING_MMC_DDR52) {
+> +		mci_writel(host, CLKDIV, 0x1);
+> +		clock = ios->clock;
+> +	} else {
+> +		clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+> +	}
 
-> >
-> > So, I think that apxa detection function should be used to s390
-> > architecture base code and not be conditional on anything.  
-> I am convinced that the original function from kvm_s390.c should be
-> restored.
+I undertand DDR52/8-bit need CLKDIV fixed 1, but shouldn't the following
+change is more sensible?
 
-That would work as well, but removing the code duplication via moving
-to s390 architecture code should not be that bad, either. Leaving the
-decision to the respective maintainers.
+if (ios->bus_width == MMC_BUS_WIDTH_8 && ios->timing ==
+MMC_TIMING_MMC_DDR52)
+	clock = ios->clock * 2;
+else
+	clock = (ios->clock <= 25000000) ? 25000000 : ios->clock;
+
+
+The reason is ios->clock is 52MHz and you could claim 104MHz from the
+clock provider and let dw_mmc core take care of the divder to be 1.
+Otherwise, you just force it to be DDR52/8-bit with a clk rate of 26MHz.
+
+>   	ret = clk_set_rate(host->biu_clk, clock);
+>   	if (ret)
+>   		dev_warn(host->dev, "failed to set rate %uHz\n", clock);
+> 
