@@ -1,167 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752869AbeDCRBF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:01:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:44558 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751649AbeDCRBC (ORCPT
+        id S1752515AbeDCRCw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:02:52 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44836 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751461AbeDCRCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:01:02 -0400
-X-Google-Smtp-Source: AIpwx4+/eivCO8uRlrQ0k+H8zpdi/DjZGs0p16G3WYy9goaKppjWQ16gPOfDyRTg6/wQ+FfR8WvV5MPJINSPKZuxqJzBlntHTdrP
+        Tue, 3 Apr 2018 13:02:49 -0400
+X-Google-Smtp-Source: AIpwx48d/SFBzdsbwcdFtuyr6uAIcSXBKBwQ6UsWsmdte5Zs1TGOF/99PxpxcBYgJ0jCrOv38HiI2A==
+Subject: Re: [PATCH net] net: dsa: mt7530: Use NULL instead of plain integer
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org
+References: <20180402232414.19671-1-f.fainelli@gmail.com>
+ <1522721904.18424.51.camel@mtkswgap22>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <f5aa0467-8124-b097-2b89-dcf1698a5ba5@gmail.com>
+Date: Tue, 3 Apr 2018 10:02:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Date: Tue, 03 Apr 2018 10:01:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b320810568f4a6f1@google.com>
-Subject: KASAN: use-after-free Read in xfs_inobt_init_key_from_rec
-From: syzbot <syzbot+08ab33be0178b76851c8@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, darrick.wong@oracle.com, dchinner@redhat.com,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1522721904.18424.51.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 04/02/2018 07:18 PM, Sean Wang wrote:
+> On Mon, 2018-04-02 at 16:24 -0700, Florian Fainelli wrote:
+>> We would be passing 0 instead of NULL as the rsp argument to
+>> mt7530_fdb_cmd(), fix that.
+>>
+> 
+> Acked-by: Sean Wang <sean.wang@mediatek.com>
+> 
+> BTW, does the part of the commit message should be updated with "passing
+> NULL instead of 0"?
 
-syzbot hit the following crash on upstream commit
-642e7fd23353e22290e3d51719fcb658dc252342 (Tue Apr 3 04:22:12 2018 +0000)
-Merge branch 'syscalls-next' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=08ab33be0178b76851c8
-
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5951352765153280
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5417464171069440
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6712144213049344
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-6874493495260513980
-compiler: gcc (GCC) 7.1.1 20170620
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+08ab33be0178b76851c8@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-XFS (loop0): Mounting V4 Filesystem
-XFS (loop0): totally zeroed log
-==================================================================
-BUG: KASAN: use-after-free in xfs_inobt_init_key_from_rec+0x6a/0x70  
-fs/xfs/libxfs/xfs_ialloc_btree.c:195
-Read of size 4 at addr ffff8801af98cf00 by task syzkaller185183/4464
-
-CPU: 0 PID: 4464 Comm: syzkaller185183 Not tainted 4.16.0+ #12
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x1a7/0x27d lib/dump_stack.c:53
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  xfs_inobt_init_key_from_rec+0x6a/0x70 fs/xfs/libxfs/xfs_ialloc_btree.c:195
-  xfs_lookup_get_search_key+0x7e/0xc0 fs/xfs/libxfs/xfs_btree.c:1858
-  xfs_btree_lookup+0x932/0x1180 fs/xfs/libxfs/xfs_btree.c:1948
-  xfs_inobt_lookup fs/xfs/libxfs/xfs_ialloc.c:75 [inline]
-  xfs_imap_lookup+0x216/0x640 fs/xfs/libxfs/xfs_ialloc.c:2235
-  xfs_imap+0x78f/0x960 fs/xfs/libxfs/xfs_ialloc.c:2364
-  xfs_iread+0xc7/0x770 fs/xfs/libxfs/xfs_inode_buf.c:556
-  xfs_iget_cache_miss fs/xfs/xfs_icache.c:475 [inline]
-  xfs_iget+0xcec/0x3060 fs/xfs/xfs_icache.c:626
-  xfs_mountfs+0x139a/0x2690 fs/xfs/xfs_mount.c:881
-  xfs_fs_fill_super+0xc8d/0x1250 fs/xfs/xfs_super.c:1703
-  mount_bdev+0x2b7/0x370 fs/super.c:1119
-  xfs_fs_mount+0x34/0x40 fs/xfs/xfs_super.c:1770
-  mount_fs+0x66/0x2d0 fs/super.c:1222
-  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:2514 [inline]
-  do_new_mount fs/namespace.c:2517 [inline]
-  do_mount+0xea4/0x2b90 fs/namespace.c:2847
-  ksys_mount+0xab/0x120 fs/namespace.c:3063
-  SYSC_mount fs/namespace.c:3077 [inline]
-  SyS_mount+0x39/0x50 fs/namespace.c:3074
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44371a
-RSP: 002b:00007fff43e464c8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000840 RCX: 000000000044371a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fff43e464d0
-RBP: 0000000000000003 R08: 0000000020018900 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000004
-R13: 0000000000402610 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 4462:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
-  getname_flags+0xcb/0x580 fs/namei.c:138
-  getname+0x19/0x20 fs/namei.c:209
-  do_sys_open+0x2e7/0x6d0 fs/open.c:1095
-  SYSC_open fs/open.c:1119 [inline]
-  SyS_open+0x2d/0x40 fs/open.c:1114
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 4462:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
-  __cache_free mm/slab.c:3486 [inline]
-  kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
-  putname+0xee/0x130 fs/namei.c:258
-  do_sys_open+0x31b/0x6d0 fs/open.c:1110
-  SYSC_open fs/open.c:1119 [inline]
-  SyS_open+0x2d/0x40 fs/open.c:1114
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-The buggy address belongs to the object at ffff8801af98c600
-  which belongs to the cache names_cache of size 4096
-The buggy address is located 2304 bytes inside of
-  4096-byte region [ffff8801af98c600, ffff8801af98d600)
-The buggy address belongs to the page:
-page:ffffea0006be6300 count:1 mapcount:0 mapping:ffff8801af98c600 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801af98c600 0000000000000000 0000000100000001
-raw: ffffea0006be7aa0 ffffea0006be5f20 ffff8801da5ea600 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801af98ce00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801af98ce80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801af98cf00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff8801af98cf80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801af98d000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+I don't follow you, the commit message indicates what we were doing
+which implies it was wrong and fixes it. Would you want me to reword
+that part?
+-- 
+Florian
