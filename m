@@ -1,62 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751272AbeDCNf4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:35:56 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37526 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750714AbeDCNfy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:35:54 -0400
-X-Google-Smtp-Source: AIpwx49AO1LeKfCS4R8NGV/zUrrXjFeFlQt4JesgtHRtGlXrgWIwBRnT8G78zFXccm58qP4inT+A2g==
-Date: Tue, 3 Apr 2018 15:35:43 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: David Howells <dhowells@redhat.com>
-Cc: paulmck@linux.vnet.ibm.com, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 1/3] locking: Document the semantics of
- spin_is_locked()
-Message-ID: <20180403133543.GA26653@andrea>
-References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
- <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
- <29562.1522759749@warthog.procyon.org.uk>
+        id S1750903AbeDCNiT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:38:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54312 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750714AbeDCNiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:38:17 -0400
+Date: Tue, 3 Apr 2018 15:38:11 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+Subject: Re: [PATCH v3 07/14] KVM: s390: interfaces to configure/deconfigure
+ guest's AP matrix
+Message-ID: <20180403153811.64c16788.cohuck@redhat.com>
+In-Reply-To: <474b7d18-69ea-631f-214c-f9345119e537@linux.vnet.ibm.com>
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1521051954-25715-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180403130758.43851026.cohuck@redhat.com>
+        <474b7d18-69ea-631f-214c-f9345119e537@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29562.1522759749@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 01:49:09PM +0100, David Howells wrote:
-> Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
-> 
-> > +/**
-> > + * spin_is_locked() - Check whether a spinlock is locked.
-> > + * @lock: Pointer to the spinlock.
-> > + *
-> > + * This function is NOT required to provide any memory ordering
-> > + * guarantees; it could be used for debugging purposes or, when
-> > + * additional synchronization is needed, accompanied with other
-> > + * constructs (memory barriers) enforcing the synchronization.
-> > + *
-> > + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
-> 
-> It's more complicated than that.  This function is dangerous and should be
-> used with extreme care.  In the case where CONFIG_SMP=n the value is locked
-> one way or the other and it might be the wrong way.
+On Tue, 3 Apr 2018 09:17:59 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-You mean "unlocked"? (aka, return 0)
+> On 04/03/2018 07:07 AM, Cornelia Huck wrote:
+> > On Wed, 14 Mar 2018 14:25:47 -0400
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+> >  
+> >> Provides interfaces to assign AP adapters, usage domains
+> >> and control domains to a KVM guest.
+> >>
+> >> A KVM guest is started by executing the Start Interpretive Execution (SIE)
+> >> instruction. The SIE state description is a control block that contains the
+> >> state information for a KVM guest and is supplied as input to the SIE
+> >> instruction. The SIE state description has a satellite structure called the
+> >> Crypto Control Block (CRYCB). The CRYCB contains three bitmask fields
+> >> identifying the adapters, queues (domains) and control domains assigned to
+> >> the KVM guest:
+> >>
+> >> * The AP Adapter Mask (APM) field identifies the AP adapters assigned to
+> >>    the KVM guest
+> >>
+> >> * The AP Queue Mask (AQM) field identifies the AP queues assigned to
+> >>    the KVM guest. Each AP queue is connected to a usage domain within
+> >>    an AP adapter.
+> >>
+> >> * The AP Domain Mask (ADM) field identifies the control domains
+> >>    assigned to the KVM guest.
+> >>
+> >> Each adapter, queue (usage domain) and control domain are identified by
+> >> a number from 0 to 255. The bits in each mask, from most significant to
+> >> least significant bit, correspond to the numbers 0-255. When a bit is
+> >> set, the corresponding adapter, queue (usage domain) or control domain
+> >> is assigned to the KVM guest.
+> >>
+> >> This patch will set the bits in the APM, AQM and ADM fields of the
+> >> CRYCB referenced by the KVM guest's SIE state description. The process
+> >> used is:
+> >>
+> >> 1. Verify that the bits to be set do not exceed the maximum bit
+> >>     number for the given mask.
+> >>
+> >> 2. Verify that the APQNs that can be derived from the intersection
+> >>     of the bits set in the APM and AQM fields of the KVM guest's CRYCB
+> >>     are not assigned to any other KVM guest running on the same linux
+> >>     host.
+> >>
+> >> 3. Set the APM, AQM and ADM in the CRYCB according to the matrix
+> >>     configured for the mediated matrix device via its sysfs
+> >>     adapter, domain and control domain attribute files respectively.
+> >>
+> >> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> >> ---
+> >>   arch/s390/include/asm/kvm-ap.h        |   36 +++++
+> >>   arch/s390/kvm/kvm-ap.c                |  268 +++++++++++++++++++++++++++++++++
+> >>   drivers/s390/crypto/vfio_ap_ops.c     |   19 +++
+> >>   drivers/s390/crypto/vfio_ap_private.h |    4 +
+> >>   4 files changed, 327 insertions(+), 0 deletions(-)
+> >>
+> >> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+> >> index a2c6ad2..eb365e2 100644
+> >> --- a/arch/s390/kvm/kvm-ap.c
+> >> +++ b/arch/s390/kvm/kvm-ap.c
+> >> @@ -8,9 +8,129 @@
+> >>   
+> >>   #include <asm/kvm-ap.h>
+> >>   #include <asm/ap.h>
+> >> +#include <linux/bitops.h>
+> >>   
+> >>   #include "kvm-s390.h"
+> >>   
+> >> +static inline void kvm_ap_clear_crycb_masks(struct kvm *kvm)
+> >> +{
+> >> +	int crycb_fmt = kvm->arch.crypto.crycbd & CRYCB_FORMAT_MASK;
+> >> +
+> >> +	if (crycb_fmt == CRYCB_FORMAT2)
+> >> +		memset(&kvm->arch.crypto.crycb->apcb1, 0,
+> >> +		       sizeof(kvm->arch.crypto.crycb->apcb1));
+> >> +	else
+> >> +		memset(&kvm->arch.crypto.crycb->apcb0, 0,
+> >> +		       sizeof(kvm->arch.crypto.crycb->apcb0));
+> >> +}  
+> > Should that rather be a switch/case? If there's a CRYCB_FORMAT3 in the
+> > future, I'd think that it's more likely that it uses apcb1 and not
+> > apcb0. Can't comment further without the architecture, obviously.  
+> Maybe we should just clear both structures without regard to the CRYCB 
+> format.
 
-  Andrea
-
-
-> 
-> David
+Yes; but my concern applies to the other checks for CRYCB_FORMAT2 as
+well (snipped).
