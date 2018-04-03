@@ -1,58 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755312AbeDCJJ0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 05:09:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43752 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753441AbeDCJJY (ORCPT
+        id S1755223AbeDCJKn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 05:10:43 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38245 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751226AbeDCJKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:09:24 -0400
-Date: Tue, 3 Apr 2018 10:09:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Arkadiusz Kwiatkowski <arkadiusz.kwiatkowski@aptiv.com>
-Cc: vigneshr@ti.com, sourav.poddar@ti.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] spi: spi-ti-qspi: Fix parameters order in
- regmap_update_bits calls
-Message-ID: <20180403090920.GA30411@sirena.org.uk>
-References: <496c162d-5e3c-e008-a14b-6b990e253e64@ti.com>
- <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
+        Tue, 3 Apr 2018 05:10:41 -0400
+X-Google-Smtp-Source: AIpwx4+QrzhoeAXMFZwWY3dT6hBX/+jFo1S8x0UTjBr8XhqobiKUVBuyXmsk0O8iFtSvqnZfK8ImKg==
+Date: Tue, 3 Apr 2018 11:10:37 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Peter Rosin <peda@axentia.se>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Egbert Eich <eich@suse.de>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Takashi Iwai <tiwai@suse.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drm/atmel-hlcdc: add command line option to specify
+ preferred depth
+Message-ID: <20180403091037.GO3881@phenom.ffwll.local>
+Mail-Followup-To: Peter Rosin <peda@axentia.se>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Egbert Eich <eich@suse.de>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Takashi Iwai <tiwai@suse.com>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180326073502.19259-1-peda@axentia.se>
+ <20180328093454.4149fa3b@bbrezillon>
+ <ce723d9f-6858-0bad-bffb-85ab036510ee@axentia.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
-X-Cookie: Have at you!
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <ce723d9f-6858-0bad-bffb-85ab036510ee@axentia.se>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 28, 2018 at 12:03:39PM +0200, Peter Rosin wrote:
+> On 2018-03-28 09:34, Boris Brezillon wrote:
+> > Hi Peter,
+> > 
+> > On Mon, 26 Mar 2018 09:35:02 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> > 
+> >> I have an sama5d31-based system with 64MB of memory and a 1920x1080
+> >> LVDS display wired for 16-bpp. When I enable legacy fbdev support,
+> >> the contiguous memory allocator invariably fails with the order-11
+> >> allocation for a 1920x1080@24-bpp buffer (~6MB). But this HW can never
+> >> make any good use of RGB888, so that is a wasted attempt anyway that
+> >> would also waste precious memory should it succeed.
+> >>
+> >> Sure, I could rewrite user-space to go directly to KMS etc, and that
+> >> makes the (attempted) order-11 allocation go away, replacing it with
+> >> one order-10 allocation per application restart for a 1920x1080@16-bpp
+> >> buffer (<4MB). But after a few restarts, order-10 allocations start to
+> >> fail as well, which is only to be expected AFAIU.
+> >>
+> >> So, I'd rather not change user-space (which was originally written
+> >> to target a smaller display) so that I at the same time get the
+> >> benefit of an early pre-allocated fbdev frame-buffer that can be
+> >> reused over and over. But to do that I need to tell the driver that
+> >> 16-bpp is the preferred depth. Add a module parameter to do just that.
+> >>
+> >> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >> ---
+> >>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 18 +++++++++++++++++-
+> >>  1 file changed, 17 insertions(+), 1 deletion(-)
+> >>
+> >> I found some inspiration regarding naming and implementation here:
+> >> https://patchwork.kernel.org/patch/9848631/
+> >>
+> >> I have found no feedback on that patch though, which makes me wonder if
+> >> I'm perhaps barking up the wronig tree?
+> > 
+> > Hm, isn't that something you can already overload with the video=
+> > parameter?
+> > 
+> > 	video=<output>:<resolution>[-<bpp>]
+> 
+> Heh, you are right...
+> 
+> > AFAIR, <bpp> encodes the color depth, so what is the benefit of adding
+> > this new property to overload the default depth?
+> 
+> ...but hhhmmm, I think I will have to have to encode the display size
+> in the bootargs so I will have to use distinct barebox environments
+> depending on the panel, but that's no biggie.
+> 
+> Splendid, please throw away the patch!
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think we could fix the parsing to allow -bpp without the resolution ...
+Not sure how to best do that though. Maybe state that 0x0-bpp means to not
+change the resolution from the default?
+-Daniel
 
-On Fri, Mar 30, 2018 at 11:41:23AM +0200, Arkadiusz Kwiatkowski wrote:
-> This commit fixes the order of parameters passed to regmap_update_bits
-> function inside spi-ti-qspi driver. Accidentally the code worked
-> correctly when cs=0, but it is not the case for other values.
+> 
+> Cheers,
+> Peter
+> 
+> > Maybe I'm wrong and the default depth param is actually useful, but in
+> > this case we should probably make it generic since other drivers seems
+> > to need it too, and we might want to attach it to a specific display
+> > engine instance.
+> > 
+> > Thanks,
+> > 
+> > Boris
+> > 
+> >>
+> >> Cheers,
+> >> Peter
+> >>
+> >> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> >> index c1ea5c36b006..f0148627c221 100644
+> >> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> >> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> >> @@ -29,6 +29,11 @@
+> >>  
+> >>  #define ATMEL_HLCDC_LAYER_IRQS_OFFSET		8
+> >>  
+> >> +static int atmel_hlcdc_preferred_depth __read_mostly;
+> >> +
+> >> +MODULE_PARM_DESC(preferreddepth, "Set preferred bpp");
+> >> +module_param_named(preferreddepth, atmel_hlcdc_preferred_depth, int, 0400);
+> >> +
+> >>  static const struct atmel_hlcdc_layer_desc atmel_hlcdc_at91sam9n12_layers[] = {
+> >>  	{
+> >>  		.name = "base",
+> >> @@ -590,6 +595,7 @@ static int atmel_hlcdc_dc_modeset_init(struct drm_device *dev)
+> >>  	dev->mode_config.min_height = dc->desc->min_height;
+> >>  	dev->mode_config.max_width = dc->desc->max_width;
+> >>  	dev->mode_config.max_height = dc->desc->max_height;
+> >> +	dev->mode_config.preferred_depth = 24;
+> >>  	dev->mode_config.funcs = &mode_config_funcs;
+> >>  
+> >>  	return 0;
+> >> @@ -658,7 +664,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+> >>  
+> >>  	platform_set_drvdata(pdev, dev);
+> >>  
+> >> -	drm_fb_cma_fbdev_init(dev, 24, 0);
+> >> +	drm_fb_cma_fbdev_init(dev, atmel_hlcdc_preferred_depth, 0);
+> >>  
+> >>  	drm_kms_helper_poll_init(dev);
+> >>  
+> >> @@ -756,6 +762,16 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
+> >>  	struct drm_device *ddev;
+> >>  	int ret;
+> >>  
+> >> +	switch (atmel_hlcdc_preferred_depth) {
+> >> +	case 0: /* driver default */
+> >> +	case 8:
+> >> +	case 16:
+> >> +	case 24:
+> >> +		break;
+> >> +	default:
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >>  	ddev = drm_dev_alloc(&atmel_hlcdc_dc_driver, &pdev->dev);
+> >>  	if (IS_ERR(ddev))
+> >>  		return PTR_ERR(ddev);
+> > 
+> > 
+> > 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-This doesn't apply against current code, please check and resend.
-
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrDRL8ACgkQJNaLcl1U
-h9BZ9Qf/a5Ds2OxypkXyedwPwkzkiJA32hBqEh1HiWQvPtOljc1wvKMFNFlAG2Lf
-FPCSJWyOiSIMbrN48SMKUn0zshOpY5fOxavHpI16GE0EFlP36Pf9TS9u8N6Qy3nS
-+lrmWdVysrUia/d9sg6hNLLs2YNRdfmBijX6XPGaOPqnpGyPSP3y5hXZr9AdKscG
-q1JDPiqtk1NFagiLb4BmO6PJ3CawZQ5jod5qu029BPi8wL/zffLyYaBQRYBfbp8U
-nmHEcrn+urMpmmgmFVSSqMb/puaYx5MbMtngWE6yXTY4Pp8PC/16zBE2/O2gExuw
-JEKYpnq11LWoVGJt+e6O8WUI8eK+vw==
-=CoBX
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
