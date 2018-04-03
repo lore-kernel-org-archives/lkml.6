@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755231AbeDCI3O (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:29:14 -0400
+        id S1755217AbeDCI3M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:29:12 -0400
 Received: from mga11.intel.com ([192.55.52.93]:8543 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755065AbeDCI3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:29:10 -0400
+        id S1755048AbeDCI3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 04:29:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,400,1517904000";
-   d="scan'208";a="217182028"
+   d="scan'208";a="217182034"
 From: Wei Wang <wei.w.wang@intel.com>
 To: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
         virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
@@ -20,9 +20,9 @@ Cc: pbonzini@redhat.com, wei.w.wang@intel.com,
         liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
         quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
         huangzhichao@huawei.com
-Subject: [PATCH v30 3/4] mm/page_poison: expose page_poisoning_enabled to kernel modules
-Date: Wed,  4 Apr 2018 00:10:04 +0800
-Message-Id: <1522771805-78927-4-git-send-email-wei.w.wang@intel.com>
+Subject: [PATCH v30 4/4] virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
+Date: Wed,  4 Apr 2018 00:10:05 +0800
+Message-Id: <1522771805-78927-5-git-send-email-wei.w.wang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
 References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
@@ -30,42 +30,82 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some usages, e.g. virtio-balloon, a kernel module needs to know if
-page poisoning is in use. This patch exposes the page_poisoning_enabled
-function to kernel modules.
+The VIRTIO_BALLOON_F_PAGE_POISON feature bit is used to indicate if the
+guest is using page poisoning. Guest writes to the poison_val config
+field to tell host about the page poisoning value in use.
 
 Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>
+Suggested-by: Michael S. Tsirkin <mst@redhat.com>
 Cc: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- mm/page_poison.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/virtio/virtio_balloon.c     | 10 ++++++++++
+ include/uapi/linux/virtio_balloon.h |  3 +++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/mm/page_poison.c b/mm/page_poison.c
-index e83fd44..762b472 100644
---- a/mm/page_poison.c
-+++ b/mm/page_poison.c
-@@ -17,6 +17,11 @@ static int early_page_poison_param(char *buf)
- }
- early_param("page_poison", early_page_poison_param);
- 
-+/**
-+ * page_poisoning_enabled - check if page poisoning is enabled
-+ *
-+ * Return true if page poisoning is enabled, or false if not.
-+ */
- bool page_poisoning_enabled(void)
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 18d24a4..6de9339 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -699,6 +699,7 @@ static struct dentry *balloon_mount(struct file_system_type *fs_type,
+ static int virtballoon_probe(struct virtio_device *vdev)
  {
- 	/*
-@@ -29,6 +34,7 @@ bool page_poisoning_enabled(void)
- 		(!IS_ENABLED(CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC) &&
- 		debug_pagealloc_enabled()));
- }
-+EXPORT_SYMBOL_GPL(page_poisoning_enabled);
+ 	struct virtio_balloon *vb;
++	__u32 poison_val;
+ 	int err;
  
- static void poison_page(struct page *page)
+ 	if (!vdev->config->get) {
+@@ -744,6 +745,11 @@ static int virtballoon_probe(struct virtio_device *vdev)
+ 		vb->stop_cmd_id = cpu_to_virtio32(vb->vdev,
+ 				VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID);
+ 		INIT_WORK(&vb->report_free_page_work, report_free_page_func);
++		if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
++			memset(&poison_val, PAGE_POISON, sizeof(poison_val));
++			virtio_cwrite(vb->vdev, struct virtio_balloon_config,
++				      poison_val, &poison_val);
++		}
+ 	}
+ 
+ 	vb->nb.notifier_call = virtballoon_oom_notify;
+@@ -862,6 +868,9 @@ static int virtballoon_restore(struct virtio_device *vdev)
+ 
+ static int virtballoon_validate(struct virtio_device *vdev)
  {
++	if (!page_poisoning_enabled())
++		__virtio_clear_bit(vdev, VIRTIO_BALLOON_F_PAGE_POISON);
++
+ 	__virtio_clear_bit(vdev, VIRTIO_F_IOMMU_PLATFORM);
+ 	return 0;
+ }
+@@ -871,6 +880,7 @@ static int virtballoon_validate(struct virtio_device *vdev)
+ 	VIRTIO_BALLOON_F_STATS_VQ,
+ 	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
+ 	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
++	VIRTIO_BALLOON_F_PAGE_POISON,
+ };
+ 
+ static struct virtio_driver virtio_balloon_driver = {
+diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+index b2d86c2..8b93581 100644
+--- a/include/uapi/linux/virtio_balloon.h
++++ b/include/uapi/linux/virtio_balloon.h
+@@ -35,6 +35,7 @@
+ #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
+ #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
+ #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
++#define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
+ 
+ /* Size of a PFN in the balloon interface. */
+ #define VIRTIO_BALLOON_PFN_SHIFT 12
+@@ -47,6 +48,8 @@ struct virtio_balloon_config {
+ 	__u32 actual;
+ 	/* Free page report command id, readonly by guest */
+ 	__u32 free_page_report_cmd_id;
++	/* Stores PAGE_POISON if page poisoning is in use */
++	__u32 poison_val;
+ };
+ 
+ #define VIRTIO_BALLOON_S_SWAP_IN  0   /* Amount of memory swapped in */
 -- 
 1.8.3.1
