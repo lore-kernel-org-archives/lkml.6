@@ -1,81 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754874AbeDCGAc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 02:00:32 -0400
-Received: from mga02.intel.com ([134.134.136.20]:63204 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754835AbeDCGAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 02:00:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,398,1517904000";
-   d="scan'208";a="217041619"
-Subject: Re: [PATCH ipmi/kcs_bmc v1] ipmi: kcs_bmc: optimize the data buffers
- allocation
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
-From: "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-Message-ID: <50ba7cd8-0e14-d8b7-a10c-5dee17946722@linux.intel.com>
-Date: Tue, 3 Apr 2018 14:00:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754854AbeDCGDA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 02:03:00 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:30868 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754331AbeDCGC7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 02:02:59 -0400
+Subject: Re: [PATCH v2 1/2] spi: spi-ti-qspi: Fix parameters order in
+ regmap_update_bits calls
+To: Arkadiusz Kwiatkowski <arkadiusz.kwiatkowski@aptiv.com>,
+        <broonie@kernel.org>
+CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <496c162d-5e3c-e008-a14b-6b990e253e64@ti.com>
+ <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
+From: Vignesh R <vigneshr@ti.com>
+Message-ID: <87e92c69-60bb-37b0-87d3-c4c688e94d09@ti.com>
+Date: Tue, 3 Apr 2018 11:33:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1521116452-4993-1-git-send-email-haiyue.wang@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Corey,
 
-The 4.17 merge window is opened now, this patch is not yet in linux-next 
-tree,
 
-so it will be merged into 4.18 ?
+On Friday 30 March 2018 03:11 PM, Arkadiusz Kwiatkowski wrote:
+> This commit fixes the order of parameters passed to regmap_update_bits
+> function inside spi-ti-qspi driver. Accidentally the code worked
+> correctly when cs=0, but it is not the case for other values.
+> 
 
-Thanks & Regards,
+Add:
+Fixes: 4dea6c9b0b64 ("spi: spi-ti-qspi: add mmap mode read support")
+before Signed-off-by
 
-Haiyue
-
-On 2018-03-15 20:20, Haiyue Wang wrote:
-> Allocate a continuous memory block for the three KCS data buffers with
-> related index assignment.
->
-> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+> Signed-off-by: Arkadiusz Kwiatkowski <arkadiusz.kwiatkowski@aptiv.com>
 > ---
->   drivers/char/ipmi/kcs_bmc.c | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/char/ipmi/kcs_bmc.c b/drivers/char/ipmi/kcs_bmc.c
-> index fbfc05e..dc19c0d 100644
-> --- a/drivers/char/ipmi/kcs_bmc.c
-> +++ b/drivers/char/ipmi/kcs_bmc.c
-> @@ -435,6 +435,7 @@ static const struct file_operations kcs_bmc_fops = {
->   struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, u32 channel)
->   {
->   	struct kcs_bmc *kcs_bmc;
-> +	void *buf;
->   
->   	kcs_bmc = devm_kzalloc(dev, sizeof(*kcs_bmc) + sizeof_priv, GFP_KERNEL);
->   	if (!kcs_bmc)
-> @@ -448,11 +449,12 @@ struct kcs_bmc *kcs_bmc_alloc(struct device *dev, int sizeof_priv, u32 channel)
->   	mutex_init(&kcs_bmc->mutex);
->   	init_waitqueue_head(&kcs_bmc->queue);
->   
-> -	kcs_bmc->data_in = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
-> -	kcs_bmc->data_out = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
-> -	kcs_bmc->kbuffer = devm_kmalloc(dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
-> -	if (!kcs_bmc->data_in || !kcs_bmc->data_out || !kcs_bmc->kbuffer)
-> +	buf = devm_kmalloc_array(dev, 3, KCS_MSG_BUFSIZ, GFP_KERNEL);
-> +	if (!buf)
->   		return NULL;
-> +	kcs_bmc->data_in  = buf;
-> +	kcs_bmc->data_out = buf + KCS_MSG_BUFSIZ;
-> +	kcs_bmc->kbuffer  = buf + KCS_MSG_BUFSIZ * 2;
->   
->   	kcs_bmc->miscdev.minor = MISC_DYNAMIC_MINOR;
->   	kcs_bmc->miscdev.name = dev_name(dev);
+
+Unfortunately, your mail client is still mangling the patch and "git am"
+ still fails to apply this from my inbox. Could you try using "git
+send-email" to send patches? See
+https://www.kernel.org/doc/Documentation/process/email-clients.rst for
+more info
+
+>  drivers/spi/spi-ti-qspi.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+> index c24d9b4..d0ea62d 100644
+> --- a/drivers/spi/spi-ti-qspi.c
+> +++ b/drivers/spi/spi-ti-qspi.c
+> @@ -490,8 +490,8 @@ static void ti_qspi_enable_memory_map(struct spi_device *spi)
+>         ti_qspi_write(qspi, MM_SWITCH, QSPI_SPI_SWITCH_REG);
+>         if (qspi->ctrl_base) {
+>                 regmap_update_bits(qspi->ctrl_base, qspi->ctrl_reg,
+> -                                  MEM_CS_EN(spi->chip_select),
+> -                                  MEM_CS_MASK);
+> +                                  MEM_CS_MASK,
+> +                                  MEM_CS_EN(spi->chip_select));
+>         }
+>         qspi->mmap_enabled = true;
+>  }
+> @@ -503,7 +503,7 @@ static void ti_qspi_disable_memory_map(struct spi_device *spi)
+>         ti_qspi_write(qspi, 0, QSPI_SPI_SWITCH_REG);
+>         if (qspi->ctrl_base)
+>                 regmap_update_bits(qspi->ctrl_base, qspi->ctrl_reg,
+> -                                  0, MEM_CS_MASK);
+> +                                  MEM_CS_MASK, 0);
+>         qspi->mmap_enabled = false;
+>  }
+> 
+> --
+> 2.7.4
+> 
+> **************************************************************************************** Note: If the reader of this message is not the intended recipient, or an employee or agent responsible for delivering this message to the intended recipient, you are hereby notified that any dissemination, distribution or copying of this communication is strictly prohibited. If you have received this communication in error, please notify us immediately by replying to the message and deleting it from your computer. Thank you. ****************************************************************************************
+> 
+
+-- 
+Regards
+Vignesh
