@@ -1,61 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751869AbeDCOgb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:36:31 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:38838 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751295AbeDCOga (ORCPT
+        id S1751713AbeDCOjn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:39:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45696 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751353AbeDCOjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:36:30 -0400
-X-Google-Smtp-Source: AIpwx49PHURop4iiEASS50fgFvr9JShb837P4WhypXJIAHk6wESJTNdUvXWyj2t5SkXpGhKZqVSv9Q==
-Date: Tue, 3 Apr 2018 07:36:27 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] workqueue changes for v4.17-rc1
-Message-ID: <20180403143627.GO388343@devbig577.frc2.facebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 3 Apr 2018 10:39:41 -0400
+From: Daniel Kiper <daniel.kiper@oracle.com>
+To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org
+Cc: ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
+        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
+Subject: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during dom0 boot
+Date: Tue,  3 Apr 2018 16:39:05 +0200
+Message-Id: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+X-Mailer: git-send-email 1.7.10.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8851 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804030148
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+Initialize UEFI secure boot state during dom0 boot. Otherwise the kernel
+may not even know that it runs on secure boot enabled platform.
 
-rcu_work addition and a couple trivial changes.
+Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+---
+ arch/x86/xen/efi.c                        |   57 +++++++++++++++++++++++++++++
+ drivers/firmware/efi/libstub/secureboot.c |    3 ++
+ 2 files changed, 60 insertions(+)
 
-Thanks.
-
-The following changes since commit c698ca5278934c0ae32297a8725ced2e27585d7f:
-
-  Linux 4.16-rc6 (2018-03-18 17:48:42 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-4.17
-
-for you to fetch changes up to f75da8a8a918d7c343a2ec95d1ed99e5689e0f23:
-
-  workqueue: remove the comment about the old manager_arb mutex (2018-03-20 13:01:45 -0700)
-
-----------------------------------------------------------------
-Lai Jiangshan (2):
-      workqueue: fix the comments of nr_idle
-      workqueue: remove the comment about the old manager_arb mutex
-
-Tejun Heo (3):
-      RCU, workqueue: Implement rcu_work
-      cgroup: Use rcu_work instead of explicit rcu and work item
-      fs/aio: Use rcu_work instead of explicit rcu and work item
-
- fs/aio.c                    | 21 +++++-----------
- include/linux/cgroup-defs.h |  2 +-
- include/linux/workqueue.h   | 23 +++++++++++++++++
- kernel/cgroup/cgroup.c      | 21 ++++++----------
- kernel/workqueue.c          | 60 ++++++++++++++++++++++++++++++++++++++++++---
- 5 files changed, 93 insertions(+), 34 deletions(-)
-
+diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
+index a18703b..1804b27 100644
+--- a/arch/x86/xen/efi.c
++++ b/arch/x86/xen/efi.c
+@@ -115,6 +115,61 @@ static efi_system_table_t __init *xen_efi_probe(void)
+ 	return &efi_systab_xen;
+ }
+ 
++/*
++ * Determine whether we're in secure boot mode.
++ *
++ * Please keep the logic in sync with
++ * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
++ */
++static enum efi_secureboot_mode xen_efi_get_secureboot(void)
++{
++	static efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
++	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
++	efi_status_t status;
++	u8 moksbstate, secboot, setupmode;
++	unsigned long size;
++
++	size = sizeof(secboot);
++	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
++				  NULL, &size, &secboot);
++
++	if (status == EFI_NOT_FOUND)
++		return efi_secureboot_mode_disabled;
++
++	if (status != EFI_SUCCESS)
++		goto out_efi_err;
++
++	size = sizeof(setupmode);
++	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
++				  NULL, &size, &setupmode);
++
++	if (status != EFI_SUCCESS)
++		goto out_efi_err;
++
++	if (secboot == 0 || setupmode == 1)
++		return efi_secureboot_mode_disabled;
++
++	/* See if a user has put the shim into insecure mode. */
++	size = sizeof(moksbstate);
++	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
++				  NULL, &size, &moksbstate);
++
++	/* If it fails, we don't care why. Default to secure. */
++	if (status != EFI_SUCCESS)
++		goto secure_boot_enabled;
++
++	if (moksbstate == 1)
++		return efi_secureboot_mode_disabled;
++
++ secure_boot_enabled:
++	pr_info("UEFI Secure Boot is enabled.\n");
++	return efi_secureboot_mode_enabled;
++
++ out_efi_err:
++	pr_err("Could not determine UEFI Secure Boot status.\n");
++	return efi_secureboot_mode_unknown;
++}
++
+ void __init xen_efi_init(void)
+ {
+ 	efi_system_table_t *efi_systab_xen;
+@@ -129,6 +184,8 @@ void __init xen_efi_init(void)
+ 	boot_params.efi_info.efi_systab = (__u32)__pa(efi_systab_xen);
+ 	boot_params.efi_info.efi_systab_hi = (__u32)(__pa(efi_systab_xen) >> 32);
+ 
++	boot_params.secure_boot = xen_efi_get_secureboot();
++
+ 	set_bit(EFI_BOOT, &efi.flags);
+ 	set_bit(EFI_PARAVIRT, &efi.flags);
+ 	set_bit(EFI_64BIT, &efi.flags);
+diff --git a/drivers/firmware/efi/libstub/secureboot.c b/drivers/firmware/efi/libstub/secureboot.c
+index 8f07eb4..72d9dfb 100644
+--- a/drivers/firmware/efi/libstub/secureboot.c
++++ b/drivers/firmware/efi/libstub/secureboot.c
+@@ -30,6 +30,9 @@
+ 
+ /*
+  * Determine whether we're in secure boot mode.
++ *
++ * Please keep the logic in sync with
++ * arch/x86/xen/efi.c:xen_efi_get_secureboot().
+  */
+ enum efi_secureboot_mode efi_get_secureboot(efi_system_table_t *sys_table_arg)
+ {
 -- 
-tejun
+1.7.10.4
