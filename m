@@ -1,148 +1,293 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1533401-1523556900-2-14405809389303719442
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523556899; b=e9QrdaCtbH9nsiqn3XROBrv5mu7ZE5O8V0/KfDEjU4hbpLmhQs
-    iCaF9wrxGyB/qMxEnnmJiJhfoMmVUZ19vKUcsW40Q7D5MvZCInviSqTsRA1UNW0O
-    ARiyVD8A1KPmuA6jF2AzPXMGe7DHT+AovAaQuyaHOu6o3KCUR1bf+T7MnzZUS/OQ
-    lzMezkmuGo3nO4HGIhYGhE05HCEYm73dM9P56ol/zub6GhXHlcuqiEp53tbEsREq
-    XJ8b7mijNTqgVLcoHwDKubEqeqGmNRLvhfKEhPKXxF5sUZyGurFRAMeJk3uI6QjE
-    XdSwVSC1VI6goyjhVVjaaifIrU7pSJVsEd0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=cc:subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523556899;
-    bh=6JTRmSk6NJ8tRXnmXrJ4ln2wM1CBb2G+ZZNG9e3SfnQ=; b=BESIpFIT6leG
-    6RjWrLTXs72jeJXfzKMoCLpURLtiX07aEBCUwSa2DkeHoFtaJtXQ8hSUh3vO2JQf
-    pRRigNS+8FOOx1oEiN1u9THSkf8HRHJ1qnYquBFnSgWLSBKqI4RL3U0tLfxG2juy
-    VU+Eg2g1Sp3H3F1L+7yEvMZjKRIMXZlXpHgAjVdKu4aJtaCbjSaupVadgUPha50F
-    WvhSg+icdjUcwuLcA3GR7VFjpV8hFJrjjAGmuGOcsj+QSjmzNaHIieGGgMxoO6s4
-    hI6R1tjrpXmbG83TgQ8w30ak0nW2geWfP3krHXl9uE3apN/TJIrfBISjEp++TLtm
-    k33hFPOESA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MoHin1bQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MOEN/zDM;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=MoHin1bQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=MOEN/zDM;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM5r29fJQuQzzeZNvYHdg1ayubcJjHHYQiuvX04ZcXDpD7r3H//7G+o5bzJQikLMDD2P5cnju3iYPgw8dGn7I2LtFdtNKCS0qsqVanPGaXgkbnP1QBUN
-    5elSOQpRK7NQyB7MFD5/ULeq75lASwZcgTN4gi+qRTgNJwB05zmr0QicSN9nRlABWVxWKSisxDDdYda1jKp0x5z5IbtFJhTKTze++5vcWUDPabqxUWgfY4/Q
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=ZvkwkgPurpcA:10 a=xqWC_Br6kY4A:10 a=4_-BN3WEXhEA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=GcyzOjIWAAAA:8 a=WTURtKxC1N7JI8txClQA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=hQL3dl6oAZ8NdCsdz28n:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752794AbeDLSO5 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 14:14:57 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54593 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752622AbeDLSO4 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 14:14:56 -0400
-X-Google-Smtp-Source: AIpwx48GBQxdlOy8qPw95NQwVcWmauJCj+0u2a5w82e6qhEf9vkpxICsB0NTHtgN1yBH0AXs1zkUIA==
-Cc: mtk.manpages@gmail.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andrew Hunter <ahh@google.com>,
-        maged michael <maged.michael@gmail.com>,
-        Avi Kivity <avi@scylladb.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Dave Watson <davejwatson@fb.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
-        Greg Hackmann <ghackmann@google.com>,
-        Will Deacon <will.deacon@arm.com>, David Sehr <sehr@google.com>
-Subject: Re: [PATCH manpages] membarrier.2: New membarrier commands introduced
- in 4.16
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20180212195549.11485-1-mathieu.desnoyers@efficios.com>
- <CAKgNAkiGXL6Th4DGS_OD0MuwCtM6f7_nAehOVcbpU=u5L9atKA@mail.gmail.com>
- <1431121546.8624.1523535608737.JavaMail.zimbra@efficios.com>
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <b03422f8-53c3-97c5-32b6-de8f9fb63e2f@gmail.com>
-Date: Thu, 12 Apr 2018 20:14:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522767599; cv=none;
+        d=google.com; s=arc-20160816;
+        b=vG/NzAqQgB2eONtjrLuAPndKFi/xWndVqv8bgsbXKsURMZkpHw3wqoK4WPLksOEm+o
+         K2Hv4e0zYA9fd2f9cHchcJCQzVFNO503X0gg2OZZG2Bk91PN2gVAmJ8JZtXlHf5J9xoi
+         DPVto/5TWCbgTYajOPVGTi/u2sqoCb5aefMUdwA6domQp7KC/58RsHNtBl+dn8YOx/tN
+         Tzi3vUFyj/GuVYetQW6E1hhw97PUMz9EaqKTbaOoue9ByhrltIW3LFCKZ+ul3A1XpRu0
+         ybcxLrp550bUeBYBc8rCQZKOkH76l+jnlRQ/rB8al3aJAiQRWfimGSR3pAEH6nSF+gTc
+         3uwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=h2XzlWK2DWmlXJBn/8EIcNO/B9E0AYXHhvL7iV9hdAc=;
+        b=cZDuuSxJsTKz9snY4VXXnSklApNMNzJRaV75mOmDIz2gRrRuV6NNFmN6ZIIwv7I7F9
+         IjN4C6ud2ltQpL2QbywOom9d5sg1GOAAPgiLNVwR+haSPeoteke+z3mYkpcYKJrSxXfZ
+         BoF+8QDdw0ZxNG96HJGEXU41JXdPE7S3Q1cFpcPeUq2DBtTutyrTUxyp8ftZbUJ8FI2u
+         ndLgYrP8j7K6FWxS8cexyf8LUeL8HNvjJ32otPqgo5Qs2/mZwHcg0SsUuIChg2Bq+wj3
+         RVyYCIgCbdHRqeDXQWpwh13X2KIX7nYQoNx/qCQzpHmJmdP0TshwQAVv0X0CBh+6Py5y
+         sKMQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=korq3RVu;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=korq3RVu;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx4+q7uzen3ckNyTSaUVXmNOe57+09tSdVgFCY9nwfOm475kESrgBiNde/TiKLvzg5LJ2zSakL2PXJ8ZLEQ9E2GM=
 MIME-Version: 1.0
-In-Reply-To: <1431121546.8624.1523535608737.JavaMail.zimbra@efficios.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+In-Reply-To: <805d1e85-2d3c-2327-6e6c-f14a56dc0b67@virtuozzo.com>
+References: <cover.1521828273.git.andreyknvl@google.com> <ba4a74ba1bc48dd66a3831143c3119d13c291fe3.1521828274.git.andreyknvl@google.com>
+ <805d1e85-2d3c-2327-6e6c-f14a56dc0b67@virtuozzo.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Tue, 3 Apr 2018 16:59:58 +0200
+Message-ID: <CAAeHK+yg5ODeDy7k9fako5mcCLLnBrO729Zp_-UtDuzh3hZgZA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 13/15] khwasan: add hooks implementation
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	Christopher Li <sparse@chrisli.org>, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Michal Marek <michal.lkml@markovi.net>, Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>, Yury Norov <ynorov@caviumnetworks.com>,
+	Nick Desaulniers <ndesaulniers@google.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Kristina Martsenko <kristina.martsenko@arm.com>, Punit Agrawal <punit.agrawal@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>, Michael Weiser <michael.weiser@gmx.de>,
+	James Morse <james.morse@arm.com>, Julien Thierry <julien.thierry@arm.com>,
+	Steve Capper <steve.capper@arm.com>, Tyler Baicar <tbaicar@codeaurora.org>,
+	"Eric W . Biederman" <ebiederm@xmission.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, Paul Lawrence <paullawrence@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Woodhouse <dwmw@amazon.co.uk>,
+	Sandipan Das <sandipan@linux.vnet.ibm.com>, Kees Cook <keescook@chromium.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	kasan-dev <kasan-dev@googlegroups.com>, linux-doc@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, kvmarm@lists.cs.columbia.edu,
+	linux-sparse@vger.kernel.org,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Kostya Serebryany <kcc@google.com>,
+	Evgeniy Stepanov <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
+	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>, Jacob Bramley <Jacob.Bramley@arm.com>,
+	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>, Kees Cook <keescook@google.com>,
+	Jann Horn <jannh@google.com>, Mark Brand <markbrand@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595752721075121286?=
+X-GMAIL-MSGID: =?utf-8?q?1596737558709701550?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/12/2018 02:20 PM, Mathieu Desnoyers wrote:
-> ----- On Apr 12, 2018, at 7:42 AM, Michael Kerrisk mtk.manpages@gmail.com wrote:
-> 
-> Hi Michael,
-> 
-> [...]
+On Fri, Mar 30, 2018 at 7:47 PM, Andrey Ryabinin
+<aryabinin@virtuozzo.com> wrote:
+> On 03/23/2018 09:05 PM, Andrey Konovalov wrote:
+>> This commit adds KHWASAN hooks implementation.
 >>
->> I have applied the above patch, and done quite a bit of tweaking, and
->> pushed the results to the git repo.
+>> 1. When a new slab cache is created, KHWASAN rounds up the size of the
+>>    objects in this cache to KASAN_SHADOW_SCALE_SIZE (== 16).
 >>
->> I would be grateful if you would read the entire manual page as it
->> currently stands, to see if anything needs improving. I isolated some
->> of the more significant changes into a simple patch, shown below, and
->> especially I'd like your confirmation that all of those changes are
->> okay.
-> 
-> Thanks for applying my membarrier man pages updates. I've reviewed the
-> result and it is all good.
+>> 2. On each kmalloc KHWASAN generates a random tag, sets the shadow memory,
+>>    that corresponds to this object to this tag, and embeds this tag value
+>>    into the top byte of the returned pointer.
+>>
+>> 3. On each kfree KHWASAN poisons the shadow memory with a random tag to
+>>    allow detection of use-after-free bugs.
+>>
+>> The rest of the logic of the hook implementation is very much similar to
+>> the one provided by KASAN. KHWASAN saves allocation and free stack metadata
+>> to the slab object the same was KASAN does this.
+>>
+>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>> ---
+>>  mm/kasan/khwasan.c | 200 ++++++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 197 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mm/kasan/khwasan.c b/mm/kasan/khwasan.c
+>> index da4b17997c71..e8bed5a078c7 100644
+>> --- a/mm/kasan/khwasan.c
+>> +++ b/mm/kasan/khwasan.c
+>> @@ -90,69 +90,260 @@ void *khwasan_reset_tag(const void *addr)
+>>       return reset_tag(addr);
+>>  }
+>>
+>> +void kasan_poison_shadow(const void *address, size_t size, u8 value)
+>> +{
+>> +     void *shadow_start, *shadow_end;
+>> +
+>> +     /* Perform shadow offset calculation based on untagged address */
+>> +     address = reset_tag(address);
+>> +
+>> +     shadow_start = kasan_mem_to_shadow(address);
+>> +     shadow_end = kasan_mem_to_shadow(address + size);
+>> +
+>> +     memset(shadow_start, value, shadow_end - shadow_start);
+>> +}
+>> +
+>>  void kasan_unpoison_shadow(const void *address, size_t size)
+>>  {
+>> +     /* KHWASAN only allows 16-byte granularity */
+>> +     size = round_up(size, KASAN_SHADOW_SCALE_SIZE);
+>> +     kasan_poison_shadow(address, size, get_tag(address));
+>>  }
+>>
+>
+>
+> This is way too much of copy-paste/code duplication. Ideally, you should have only
+> check_memory_region() stuff separated, the rest (poisoning/unpoisoning, slabs management) should be
+> in common.c code.
+>
+> So it should be something like this:
+>
+> in kasan.h
+> ...
+> #ifdef CONFIG_KASAN_CLASSIC
+> #define KASAN_FREE_PAGE         0xFF  /* page was freed */
+> #define KASAN_PAGE_REDZONE      0xFE  /* redzone for kmalloc_large allocations */
+> #define KASAN_KMALLOC_REDZONE   0xFC  /* redzone inside slub object */
+> #define KASAN_KMALLOC_FREE      0xFB  /* object was freed (kmem_cache_free/kfree) */
+> #else
+> #define KASAN_FREE_PAGE         0xFE
+> #define KASAN_PAGE_REDZONE      0xFE
+> #define KASAN_KMALLOC_REDZONE   0xFE
+> #define KASAN_KMALLOC_FREE      0xFE
+> #endif
+>
+> ...
+>
+> #ifdef CONFIG_KASAN_CLASSIC
+> static inline void *reset_tag(const void *addr)
+> {
+>         return (void *)addr;
+> }
+> static inline u8 get_tag(const void *addr)
+> {
+>         return 0;
+> }
+> #else
+> static inline u8 get_tag(const void *addr)
+> {
+>         return (u8)((u64)addr >> KHWASAN_TAG_SHIFT);
+> }
+>
+> static inline void *reset_tag(const void *addr)
+> {
+>         return set_tag(addr, KHWASAN_TAG_KERNEL);
+> }
+> #endif
+>
+>
+> in kasan/common.c:
+>
+>
+> void kasan_poison_shadow(const void *address, size_t size, u8 value)
+> {
+>         void *shadow_start, *shadow_end;
+>
+>         address = reset_tag(address);
+>
+>         shadow_start = kasan_mem_to_shadow(address);
+>         shadow_end = kasan_mem_to_shadow(address + size);
+>
+>         memset(shadow_start, value, shadow_end - shadow_start);
+> }
+>
+> void kasan_unpoison_shadow(const void *address, size_t size)
+> {
+>
+>         kasan_poison_shadow(address, size, get_tag(address));
+>
+>         if (size & KASAN_SHADOW_MASK) {
+>                 u8 *shadow = (u8 *)kasan_mem_to_shadow(address + size);
+>
+>                 if (IS_ENABLED(CONFIG_KASAN_TAGS)
+>                         *shadow = get_tag(address);
+>                 else
+>                         *shadow = size & KASAN_SHADOW_MASK;
+>         }
+> }
+>
+> void kasan_free_pages(struct page *page, unsigned int order)
+> {
+>         if (likely(!PageHighMem(page)))
+>                 kasan_poison_shadow(page_address(page),
+>                                 PAGE_SIZE << order,
+>                                 KASAN_FREE_PAGE);
+> }
+>
+> etc.
 
-Thanks Mathieu!
+OK, I'll rework this part.
 
-Cheers,
+>
+>
+>
+>>  void check_memory_region(unsigned long addr, size_t size, bool write,
+>>                               unsigned long ret_ip)
+>>  {
+>> +     u8 tag;
+>> +     u8 *shadow_first, *shadow_last, *shadow;
+>> +     void *untagged_addr;
+>> +
+>> +     tag = get_tag((const void *)addr);
+>> +
+>> +     /* Ignore accesses for pointers tagged with 0xff (native kernel
+>> +      * pointer tag) to suppress false positives caused by kmap.
+>> +      *
+>> +      * Some kernel code was written to account for archs that don't keep
+>> +      * high memory mapped all the time, but rather map and unmap particular
+>> +      * pages when needed. Instead of storing a pointer to the kernel memory,
+>> +      * this code saves the address of the page structure and offset within
+>> +      * that page for later use. Those pages are then mapped and unmapped
+>> +      * with kmap/kunmap when necessary and virt_to_page is used to get the
+>> +      * virtual address of the page. For arm64 (that keeps the high memory
+>> +      * mapped all the time), kmap is turned into a page_address call.
+>> +
+>> +      * The issue is that with use of the page_address + virt_to_page
+>> +      * sequence the top byte value of the original pointer gets lost (gets
+>> +      * set to 0xff.
+>> +      */
+>> +     if (tag == 0xff)
+>> +             return;
+>
+> You can save tag somewhere in page struct and make page_address() return tagged address.
+>
+> I'm not sure it might be even possible to squeeze the tag into page->flags on some configurations,
+> see include/linux/page-flags-layout.h
 
-Michael
+One page can contain multiple objects with different tags, so we would
+need to save the tag for each of them.
 
+>
+>
+>>  void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t flags)
+>>  {
+>> +     if (!READ_ONCE(khwasan_enabled))
+>> +             return object;
+>
+> ...
+>
+>>  void *kasan_kmalloc(struct kmem_cache *cache, const void *object,
+>>                       size_t size, gfp_t flags)
+>>  {
+>
+>> +     if (!READ_ONCE(khwasan_enabled))
+>> +             return (void *)object;
+>> +
+>
+> ...
+>
+>>  void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
+>>  {
+>
+> ...
+>
+>> +
+>> +     if (!READ_ONCE(khwasan_enabled))
+>> +             return (void *)ptr;
+>> +
+>
+> I don't see any possible way of khwasan_enabled being 0 here.
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+Can't kmem_cache_alloc be called for the temporary caches that are
+used before the slab allocator and kasan are initialized?
+
+>
+> --
+> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> To post to this group, send email to kasan-dev@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/805d1e85-2d3c-2327-6e6c-f14a56dc0b67%40virtuozzo.com.
+> For more options, visit https://groups.google.com/d/optout.
