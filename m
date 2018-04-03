@@ -1,89 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752892AbeDCRcH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:32:07 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50425 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbeDCRcD (ORCPT
+        id S1752845AbeDCRcG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:32:06 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:10850 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752515AbeDCRcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:32:03 -0400
-X-Google-Smtp-Source: AIpwx4/yTODeSWTjAQUrflI1Nk+4P8MnZFuyGtS7yXtk9PLQEC6oyQoYtKWt3msutLlwQxr6RkD/6pNI48wZKkyJUMY=
-MIME-Version: 1.0
-In-Reply-To: <20180403161151-mutt-send-email-mst@kernel.org>
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
- <20180315184132.3102.90947.stgit@localhost.localdomain> <20180316183042-mutt-send-email-mst@kernel.org>
- <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com> <20180403161151-mutt-send-email-mst@kernel.org>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Tue, 3 Apr 2018 10:32:00 -0700
-Message-ID: <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
-Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
- unmanaged SR-IOV on virtio_pci devices
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
+        Tue, 3 Apr 2018 13:32:01 -0400
+X-UUID: 182b9e8e680041cda79addd0aeccb837-20180404
+Message-ID: <1522776711.12959.1.camel@mtkswgap22>
+Subject: Re: [PATCH net] net: dsa: mt7530: Use NULL instead of plain integer
+From: Sean Wang <sean.wang@mediatek.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+CC: <netdev@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Date: Wed, 4 Apr 2018 01:31:51 +0800
+In-Reply-To: <f5aa0467-8124-b097-2b89-dcf1698a5ba5@gmail.com>
+References: <20180402232414.19671-1-f.fainelli@gmail.com>
+         <1522721904.18424.51.camel@mtkswgap22>
+         <f5aa0467-8124-b097-2b89-dcf1698a5ba5@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23762.000
+X-TM-AS-Result: No-14.225000-8.000000-10
+X-TMASE-MatchedRID: wQVy7q402w2Fh/7ZHArNZya1MaKuob8PC/ExpXrHizyrmaMm8BwMJLmn
+        rGB/kwGMvqKlPiBL76fer8mrTnO76o0To7oIUo/i7TLIvnWov9F+K68qL2G5pqj5v7I4/SgY+lM
+        TBggE22Hi8zVgXoAltkWL4rBlm20vZiFQvkZhFu1q8/xv2Um1avoLR4+zsDTtGM6W3U+Lnnd66b
+        Y/H2Tl/9GMBuiZp3MPHNIopW7peJywbar+3aE25Q==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--14.225000-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23762.000
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 6:12 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Fri, Mar 16, 2018 at 09:40:34AM -0700, Alexander Duyck wrote:
->> On Fri, Mar 16, 2018 at 9:34 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
->> > On Thu, Mar 15, 2018 at 11:42:41AM -0700, Alexander Duyck wrote:
->> >> From: Alexander Duyck <alexander.h.duyck@intel.com>
->> >>
->> >> Hardware-realized virtio_pci devices can implement SR-IOV, so this
->> >> patch enables its use. The device in question is an upcoming Intel
->> >> NIC that implements both a virtio_net PF and virtio_net VFs. These
->> >> are hardware realizations of what has been up to now been a software
->> >> interface.
->> >>
->> >> The device in question has the following 4-part PCI IDs:
->> >>
->> >> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
->> >> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
->> >>
->> >> The patch currently needs no check for device ID, because the callback
->> >> will never be made for devices that do not assert the capability or
->> >> when run on a platform incapable of SR-IOV.
->> >>
->> >> One reason for this patch is because the hardware requires the
->> >> vendor ID of a VF to be the same as the vendor ID of the PF that
->> >> created it. So it seemed logical to simply have a fully-functioning
->> >> virtio_net PF create the VFs. This patch makes that possible.
->> >>
->> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> >> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
->> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
->> >
->> > So if and when virtio PFs can manage the VFs, then we can
->> > add a feature bit for that?
->> > Seems reasonable.
->>
->> Yes. If nothing else you may not even need a feature bit depending on
->> how things go.
->
-> OTOH if the interface is changed in an incompatible way,
-> and old Linux will attempt to drive the new device
-> since there is no check.
->
-> I think we should add a feature bit right away.
+On Tue, 2018-04-03 at 10:02 -0700, Florian Fainelli wrote:
+> On 04/02/2018 07:18 PM, Sean Wang wrote:
+> > On Mon, 2018-04-02 at 16:24 -0700, Florian Fainelli wrote:
+> >> We would be passing 0 instead of NULL as the rsp argument to
+> >> mt7530_fdb_cmd(), fix that.
+> >>
+> > 
+> > Acked-by: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > BTW, does the part of the commit message should be updated with "passing
+> > NULL instead of 0"?
+> 
+> I don't follow you, the commit message indicates what we were doing
+> which implies it was wrong and fixes it. Would you want me to reword
+> that part?
 
-I'm not sure why you would need a feature bit. The capability is
-controlled via PCI configuration space. If it is present the device
-has the capability. If it is not then it does not.
+thanks for the explanation.
 
-Basically if the PCI configuration space is not present then the sysfs
-entries will not be spawned and nothing will attempt to use this
-function.
-
-- ALex
+the commit message is clear and okay for me now
