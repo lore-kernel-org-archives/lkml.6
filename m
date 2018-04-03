@@ -1,142 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752515AbeDCT1D (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:27:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:59475 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751179AbeDCT1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:27:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,402,1517904000";
-   d="scan'208";a="33965909"
-Subject: Re: [alsa-devel] [PATCH v3 0/2] ASoC: topology: Improve parsing
- hw_configs
-To: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.de>,
-        Pan Xiuli <xiuli.pan@linux.intel.com>, linux-kernel@vger.kernel.org,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-References: <20180327205632.3677-1-k.marinushkin@gmail.com>
- <17f0767a-2dea-92dd-a88e-a3f3e670d0d2@gmail.com>
- <461bbabf-7c36-1361-8f66-5abbe3c7f4d8@linux.intel.com>
- <ee6ba140-fa5c-78e9-47bc-125b1aca7672@gmail.com>
- <260f1850-37f2-fffa-fb33-4b5ff823ba0b@linux.intel.com>
- <21dd211e-2b93-b5af-0606-726432e40795@gmail.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <f03cb3f6-0346-685c-7c81-5c67a919a2b1@linux.intel.com>
-Date: Tue, 3 Apr 2018 14:19:12 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        id S1752675AbeDCTaC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:30:02 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:44737 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751749AbeDCT37 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:29:59 -0400
+X-Google-Smtp-Source: AIpwx48V6XlV/o5FpTf+uYfp3Q0kkj6kejUum2jHOMado8JLfSRlybJtwTyns+D5Ox9XnYrssQv0aJ9xlUQdeEkJwdA=
 MIME-Version: 1.0
-In-Reply-To: <21dd211e-2b93-b5af-0606-726432e40795@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
+ <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
+ <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
+ <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com> <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+In-Reply-To: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+From: Matthew Garrett <mjg59@google.com>
+Date: Tue, 03 Apr 2018 19:29:47 +0000
+Message-ID: <CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+To: luto@kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, jmorris@namei.org,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jforbes@redhat.com, linux-man@vger.kernel.org, jlee@suse.com,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-api@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/3/18 1:16 PM, Kirill Marinushkin wrote:
-> On 04/03/18 19:21, Pierre-Louis Bossart wrote:
->>
->>
->> On 04/03/2018 12:15 AM, Kirill Marinushkin wrote:
->>> On 04/03/18 02:57, Pierre-Louis Bossart wrote:
->>>>
->>>> On 04/02/2018 04:17 PM, Kirill Marinushkin wrote:
->>>>> Hello Pierre-Louis,
->>>>>
->>>>> I explicitly clarified with Takashi: to have this patch series merged, we
->>>>> need a
->>>>> tag "Reviewed-by" from you.
->>>> I am fine with the changes, but maybe while we are at it, we should clarify
->>>> what mclk_direction means?
->>> That's a good idea to have it solved within this patch series.
->>>
->>>>       __u8 mclk_direction;    /* 0 for input, 1 for output */
->>>>
->>>> This is really awful and might benefit for additional clarity using
->>>> codec-centric conventions.
->>>>
->>> I agree that having a clear naming will avoid confusion for future usage.
->>> I see from the code, that this variable is ignored. So we have no technical
->>> restriction on how to interpret this.
->>> I suggest to do similar to what we did for bclk_master:
->>>
->>> /* DAI mclk_direction */
->>> #define SND_SOC_TPLG_MCLK_CO        0 /* for codec, mclk is output */
->>> #define SND_SOC_TPLG_MCLK_CI          1 /* for codec, mclk is input */
->>>
->>>> We also had a discussion internally and can't figure out why the strings are
->>>> different from the fields in the structure, I feel it'd be simpler to align
->>>> config and code to avoid issues but keep existing notation for backwards
->>>> compatibility, e.g.
->>>>
->>>> if (strcmp(id, "mclk_freq") == 0) || strcmp(id, "mclk_rate") == 0) {
->>>>           if (snd_config_get_string(n, &val) < 0)
->>>>                   return -EINVAL;
->>>>
->>>>               hw_cfg->mclk_rate = atoi(val);
->>>>               continue;
->>>> }
->>> I agree with this. I will also do the same (keeping backwards-compatibility)
->>> for:
->>>
->>> "format" => "fmt"
->>> "bclk" => "bclk_master"
->>> "bclk_freq" => "bclk_rate"
->>> "bclk_invert" => "invert_bclk"
->>> "fsync" => "fsync_master"
->>> "fsync_invert" => "invert_fsync"
->>> "fsync_freq" => "fsync_rate"
->>> "mclk_freq" => "mclk_rate"
->>> "mclk" => "mclk_direction"
->>> "pm_gate_clocks" => "clock_gated"
->>>
->>> If you agree with both proposals, I will add patches to this patch series, and
->>> re-send as patch v4.
->>> Or can we handle it in a better way?
->> A v4 is fine with me.
->>
->> These topology definitions appear in hindsight quite problematic, there are
->> missing definitions and capabilities, e.g we have the ability to 'gate the
->> clock' but without knowing which clock, and we have no ability to force the
->> mclk/bclk/fsync on (be it on demand from a codec driver or on startup as a
->> system requirement). And there is no real extension capability with a protocol
->> version. The net effect is that people will have to create custom tokens and
->> parsing for things that should be common...
->>
-> 
-> Yes, definitions which you mentioned really can become a problem.
-> But, I see from the header that topology files support versioning:
-> 
-> ~~~~
-> #define SND_SOC_TPLG_ABI_VERSION    0x5    /* current version */
-> ~~~~
-> 
-> So, in future such problems can be solved by incrementing the version, if no
-> backwards capabilities are available.
+On Tue, Apr 3, 2018 at 9:46 AM Andy Lutomirski <luto@kernel.org> wrote:
+> On Tue, Apr 3, 2018 at 9:29 AM, Matthew Garrett <mjg59@google.com> wrote:
+> > A kernel that allows users arbitrary access to ring 0 is just an
+> > overfeatured bootloader. Why would you want secure boot in that case?
 
-Maybe I misunderstood this version number, I thought this was only for 
-the initial stages where there was quite a few evolutions in a couple of 
-months. If this can be upgraded then we might want to add new 
-definitions that we came up with during the SOF work but are of interest 
-to others.
+> To get a chain of trust.  I can provision a system with some public
+> keys, stored in UEFI authenticated variables, such that the system
+> will only boot a signed image.  That signed image, can, in turn, load
+> a signed (or hashed or otherwise verfified) kernel and a verified
+> initramfs.  The initramfs can run a full system from a verified (using
+> dm-verity or similar) filesystem, for example.  Now it's very hard to
+> persistently attack this system.  Chromium OS does something very much
+> like this, except that it doesn't use UEFI as far as I know.  So does
+> iOS, and so do some Android versions.  None of this requires lockdown,
+> or even a separation between usermode and kernelmode, to work
+> correctly.  One could even do this on an MMU-less system if one really
+> cared to.  More usefully, someone probably has done this using a
+> unikernel.
 
-> 
-> 
-> 
-> 
-> Before I continue with the patch v4, I want to clarify with you, so that we
-> avoid the misunderstanding:
-> 
-> * in the existing 4 patches, I will add a tag
->    "Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>"
-> * in the new 2 patches, which we recently discussed, I will add a tag
->    "Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>"
-> 
-> Do you agree with that?
-
-Yes, that's fine.
+That's only viable if you're the only person with the ability to sign stuff
+for your machine - the moment there are generic distributions that your
+machine trusts, an attacker can use one as a bootloader to compromise your
+trust chain. Since most UEFI secure boot systems have to trust generic
+distributions (if you don't trust the third party signing key then your GPU
+won't post), the ecosystem depends on it not being possible for people to
+use generic distributions as bootloaders.
