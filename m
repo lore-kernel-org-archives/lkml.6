@@ -1,97 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932293AbeDCNMo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:12:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50306 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932260AbeDCNMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:12:41 -0400
-Date: Tue, 3 Apr 2018 16:12:39 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
-Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
- unmanaged SR-IOV on virtio_pci devices
-Message-ID: <20180403161151-mutt-send-email-mst@kernel.org>
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
- <20180315184132.3102.90947.stgit@localhost.localdomain>
- <20180316183042-mutt-send-email-mst@kernel.org>
- <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
+        id S932304AbeDCNOT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:14:19 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:52214 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932151AbeDCNOS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:14:18 -0400
+Subject: Re: [PATCH 1/8] bindings: PCI: designware: Example update
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <33aa86ee667e8b435db080b8c683cb5df1bd6544.1522235224.git.gustavo.pimentel@synopsys.com>
+ <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
+ <36a36857-2d79-2c2d-198d-a3b65cafc768@synopsys.com>
+ <c5ffa7d6-40b1-1702-c0fd-9ebb1b4197f8@ti.com>
+ <170b150d-d2c6-fee8-17f7-12a3107c13ff@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <342e7438-ef13-e297-cc51-3df3a43a45d4@synopsys.com>
+Date: Tue, 3 Apr 2018 14:13:24 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
+In-Reply-To: <170b150d-d2c6-fee8-17f7-12a3107c13ff@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 09:40:34AM -0700, Alexander Duyck wrote:
-> On Fri, Mar 16, 2018 at 9:34 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > On Thu, Mar 15, 2018 at 11:42:41AM -0700, Alexander Duyck wrote:
-> >> From: Alexander Duyck <alexander.h.duyck@intel.com>
-> >>
-> >> Hardware-realized virtio_pci devices can implement SR-IOV, so this
-> >> patch enables its use. The device in question is an upcoming Intel
-> >> NIC that implements both a virtio_net PF and virtio_net VFs. These
-> >> are hardware realizations of what has been up to now been a software
-> >> interface.
-> >>
-> >> The device in question has the following 4-part PCI IDs:
-> >>
-> >> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
-> >> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
-> >>
-> >> The patch currently needs no check for device ID, because the callback
-> >> will never be made for devices that do not assert the capability or
-> >> when run on a platform incapable of SR-IOV.
-> >>
-> >> One reason for this patch is because the hardware requires the
-> >> vendor ID of a VF to be the same as the vendor ID of the PF that
-> >> created it. So it seemed logical to simply have a fully-functioning
-> >> virtio_net PF create the VFs. This patch makes that possible.
-> >>
-> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> >> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
-> >
-> > So if and when virtio PFs can manage the VFs, then we can
-> > add a feature bit for that?
-> > Seems reasonable.
-> 
-> Yes. If nothing else you may not even need a feature bit depending on
-> how things go.
+Hi Kishon,
 
-OTOH if the interface is changed in an incompatible way,
-and old Linux will attempt to drive the new device
-since there is no check.
+On 03/04/2018 11:53, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Tuesday 03 April 2018 04:22 PM, Kishon Vijay Abraham I wrote:
+>>
+>>
+>> On Tuesday 03 April 2018 04:03 PM, Gustavo Pimentel wrote:
+>>> Hi Kishon,
+>>>
+>>> On 02/04/2018 06:23, Kishon Vijay Abraham I wrote:
+>>>> Hi,
+>>>>
+>>>> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+>>>>> Changes the IP registers size to accommodate the ATU unroll space.
+>>>>>
+>>>>> Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers.
+>>>>>
+>>>>> Replaces the pcie base address example by a real pcie base address in use.
+>>>>>
+>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
+>>>>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>>> index 1da7ade..6300762 100644
+>>>>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>>>> @@ -1,7 +1,8 @@
+>>>>>  * Synopsys DesignWare PCIe interface
+>>>>>  
+>>>>>  Required properties:
+>>>>> -- compatible: should contain "snps,dw-pcie" to identify the core.
+>>>>> +- compatible:
+>>>>> +	"snps,dw-pcie" for RC mode;
+>>>>
+>>>> I think irrespective of RC mode or EP mode, "snps,dw-pcie" can be used to
+>>>> identify the pcie core?
+>>>
+>>> I guess so. What you suggest? I was just folling the same guideline present
+>>> here: https://urldefense.proofpoint.com/v2/url?u=https-3A__lkml.org_lkml_2017_11_3_310&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=G1MqB_DY6ZwWtvS60L9PZMHnMe6rClMnrakAyQT_hDc&s=BhQYkrcp6y3QkD23qn1I6lU882BDUfLiXjBVWQ91cmg&e=
+>>
+>> Okay, I think you should have
+>> "snps,dw-pcie-rc", "snps,dw-pcie" for RC mode;
+>>
+>> and in the later patch
+>> "snps,dw-pcie-ep", "snps,dw-pcie" for EP mode;
+>>
 
-I think we should add a feature bit right away.
+Ok, I'll change it.
 
+>>>
+>>>>>  - reg: Should contain the configuration address space.
+>>>>>  - reg-names: Must be "config" for the PCIe configuration space.
+>>>>>      (The old way of getting the configuration address space from "ranges"
+>>>>> @@ -41,11 +42,11 @@ EP mode:
+>>>>>  
+>>>>>  Example configuration:
+>>>>>  
+>>>>> -	pcie: pcie@dffff000 {
+>>>>> +	pcie: pcie@dfc00000 {
+>>>>>  		compatible = "snps,dw-pcie";
+>>>>> -		reg = <0xdffff000 0x1000>, /* Controller registers */
+>>>>> -		      <0xd0000000 0x2000>; /* PCI config space */
+>>>>> -		reg-names = "ctrlreg", "config";
+>>>>> +		reg = <0xdfc00000 0x302000>, /* IP registers */
+>>>>
+>>>> which version of synopsys IP is this. I think the ideal thing to do here is to
+>>>> have a separate register space for iATU.
+>>>
+>>> I also agree with that. The unroll iATU was introduced on Synopsys IP version
+>>> 4.80 and the kernel patch was release on 2016-08-10
+>>> https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.ozlabs.org_patch_657796_&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=G1MqB_DY6ZwWtvS60L9PZMHnMe6rClMnrakAyQT_hDc&s=EgKKDbg4ywCxu4-lG_scYAgPMnxirsjS0uSS7SzBTeM&e=
+>>> However a separate register space for iATU implies some extra code do handle it
+>>> (and of course some tests) that don't fit into this patch series, in my point of
+>>> view. Can this task enter in the backlog in order to be done in another patch
+>>> series?
+>>
+>> Yes sure. I think we should also make sure existing binding doesn't break.
 
-> One of the reasons why Mark called out the
-> subvendor/subdevice was because that might be able to be used to
-> identify the specific hardware that is providing the SR-IOV feature so
-> in the future if it is added to virtio itself then you could exclude
-> devices like this by just limiting things based on subvendor/subdevice
-> IDs.
+I'll remove the any iATU unroll reference or change from this patch to avoid any
+confusion.
+
 > 
-> > Also, I am guessing that hardware implementations will want
-> > to add things like stong memory barriers - I guess we
-> > will add new feature bits for that too down the road?
+> And IMO we should have a new compatible "snps,dw-pcie-4.80" in order to enable
+> iATU unroll.
 > 
-> That piece I don't have visibility into at this time. Perhaps Dan
-> might have more visibility into future plans on what this might need.
+> Thanks
+> Kishon
 > 
-> Thanks.
-> 
-> - Alex
