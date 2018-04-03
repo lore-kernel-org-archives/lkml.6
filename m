@@ -1,56 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932212AbeDCMzX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:55:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33226 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932175AbeDCMzS (ORCPT
+        id S932169AbeDCMzL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:55:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59469 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932087AbeDCMzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:55:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C12F160C65
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Paul Burton <paul.burton@mips.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] MIPS: io: add a barrier after register read in readX()
-Date: Tue,  3 Apr 2018 08:55:04 -0400
-Message-Id: <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
-References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
+        Tue, 3 Apr 2018 08:55:09 -0400
+Date: Tue, 3 Apr 2018 14:55:07 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Ming Lei <ming.lei@redhat.com>
+cc: Artem Bityutskiy <dedekind1@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Laurence Oberman <loberman@redhat.com>
+Subject: Re: [PATCH V3 0/4] genirq/affinity: irq vector spread among online
+ CPUs as far as possible
+In-Reply-To: <20180330031554.GC12412@ming.t460p>
+Message-ID: <alpine.DEB.2.21.1804031435450.2511@nanos.tec.linutronix.de>
+References: <20180308105358.1506-1-ming.lei@redhat.com> <1520515113.20980.31.camel@gmail.com> <20180308133440.GA2713@ming.t460p> <alpine.DEB.2.21.1803090011150.1454@nanos.tec.linutronix.de> <20180309012458.GD5228@ming.t460p> <alpine.DEB.2.21.1803091107520.1364@nanos.tec.linutronix.de>
+ <20180309120833.GB30257@ming.t460p> <alpine.DEB.2.21.1803091531000.1364@nanos.tec.linutronix.de> <20180330031554.GC12412@ming.t460p>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While a barrier is present in writeX() function before the register write,
-a similar barrier is missing in the readX() function after the register
-read. This could allow memory accesses following readX() to observe
-stale data.
+Ming,
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/mips/include/asm/io.h | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, 30 Mar 2018, Ming Lei wrote:
+> On Fri, Mar 09, 2018 at 04:08:19PM +0100, Thomas Gleixner wrote:
+> > Thoughts?
+> 
+> Given this patchset doesn't have effect on normal machines without
+> supporting physical CPU hotplug, it can fix performance regression on
+> machines which might support physical CPU hotplug(cpu_present_mask !=
+> cpu_possible_mask) with some extra memory allocation cost.
+>
+> So is there any chance to make it in v4.17?
 
-diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-index fd00ddaf..6ac502f 100644
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -377,6 +377,7 @@ static inline type pfx##read##bwlq(const volatile void __iomem *mem)	\
- 		BUG();							\
- 	}								\
- 									\
-+	rmb();								\
- 	return pfx##ioswab##bwlq(__mem, __val);				\
- }
- 
--- 
-2.7.4
+Sorry, that thing fell through the cracks. I'll queue it now and try to do
+a pull request late in the merge window.
+
+Thanks,
+
+	tglx
