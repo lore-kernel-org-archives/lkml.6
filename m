@@ -1,102 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755262AbeDCIaC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:30:02 -0400
-Received: from mx23.baidu.com ([61.135.165.120]:39504 "EHLO baidu.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754969AbeDCI35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:29:57 -0400
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Michal Hocko <mhocko@kernel.org>
-CC: "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: re: [PATCH] mm: avoid the unnecessary waiting when force empty a
- cgroup
-Thread-Topic: [PATCH] mm: avoid the unnecessary waiting when force empty a
- cgroup
-Thread-Index: AdPLJMHeeMKUHXBDROio5VQy2ewJrQ==
-Date: Tue, 3 Apr 2018 08:29:39 +0000
-Message-ID: <2AD939572F25A448A3AE3CAEA61328C23756E4F1@BC-MAIL-M28.internal.baidu.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.31.62.16]
-x-baidu-bdmsfe-datecheck: 1_BC-MAIL-HUB02_2018-04-03 16:29:46:750
-x-baidu-bdmsfe-viruscheck: BC-MAIL-HUB02_GRAY_Inside_WithoutAtta_2018-04-03
- 16:29:45:362
-Content-Type: text/plain; charset="gb2312"
+        id S1755288AbeDCIbO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:31:14 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40007 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755154AbeDCIbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 04:31:12 -0400
+Date: Tue, 3 Apr 2018 10:30:57 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180403103057.26bebe27@bbrezillon>
+In-Reply-To: <8e5ad32e-f6fd-a8c1-8c04-7fc0d67dcc37@axentia.se>
+References: <20180329131054.22506-1-peda@axentia.se>
+        <20180329153322.5e2fc1e7@bbrezillon>
+        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
+        <20180329154416.5c1a0013@bbrezillon>
+        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
+        <20180402142249.7e076a64@bbrezillon>
+        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
+        <20180402212843.164d5d21@bbrezillon>
+        <20180402222020.1d344c14@bbrezillon>
+        <d9da5ae4-68d0-df88-1214-f53f6b18d718@axentia.se>
+        <20180403091522.1a498544@bbrezillon>
+        <8e5ad32e-f6fd-a8c1-8c04-7fc0d67dcc37@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w338U7tS011504
 
+On Tue, 3 Apr 2018 10:14:31 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
-
-> -----邮件原件-----
-> 发件人: Michal Hocko [mailto:mhocko@kernel.org]
-> 发送时间: 2018年4月3日 16:05
-> 收件人: Li,Rongqing <lirongqing@baidu.com>
-> 抄送: hannes@cmpxchg.org; vdavydov.dev@gmail.com;
-> cgroups@vger.kernel.org; linux-mm@kvack.org;
-> linux-kernel@vger.kernel.org
-> 主题: Re: [PATCH] mm: avoid the unnecessary waiting when force empty a
-> cgroup
+> On 2018-04-03 09:15, Boris Brezillon wrote:
+> > On Tue, 3 Apr 2018 08:51:10 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> On 2018-04-02 22:20, Boris Brezillon wrote:  
+> >>> On Mon, 2 Apr 2018 21:28:43 +0200
+> >>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> >>>     
+> >>>> On Mon, 2 Apr 2018 19:59:39 +0200
+> >>>> Peter Rosin <peda@axentia.se> wrote:
+> >>>>    
+> >>>>> On 2018-04-02 14:22, Boris Brezillon wrote:      
+> >>>>>> On Thu, 29 Mar 2018 16:27:12 +0200
+> >>>>>> Peter Rosin <peda@axentia.se> wrote:
+> >>>>>>         
+> >>>>>>> On 2018-03-29 15:44, Boris Brezillon wrote:        
+> >>>>>>>> On Thu, 29 Mar 2018 15:37:43 +0200
+> >>>>>>>> Peter Rosin <peda@axentia.se> wrote:
+> >>>>>>>>           
+> >>>>>>>>> On 2018-03-29 15:33, Boris Brezillon wrote:          
+> >>>>>>>>>> On Thu, 29 Mar 2018 15:10:54 +0200
+> >>>>>>>>>> Peter Rosin <peda@axentia.se> wrote:
+> >>>>>>>>>>             
+> >>>>>>>>>>> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
+> >>>>>>>>>>> flash accesses have a tendency to cause display disturbances. Add a
+> >>>>>>>>>>> module param to disable DMA from the NAND controller, since that fixes
+> >>>>>>>>>>> the display problem for me.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>>>>>>>>>> ---
+> >>>>>>>>>>>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
+> >>>>>>>>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+> >>>>>>>>>>>
+> >>>>>>>>>>> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>>>>>>>>> index b2f00b398490..2ff7a77c7b8e 100644
+> >>>>>>>>>>> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>>>>>>>>> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> >>>>>>>>>>> @@ -129,6 +129,11 @@
+> >>>>>>>>>>>  #define DEFAULT_TIMEOUT_MS			1000
+> >>>>>>>>>>>  #define MIN_DMA_LEN				128
+> >>>>>>>>>>>  
+> >>>>>>>>>>> +static bool atmel_nand_avoid_dma __read_mostly;
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
+> >>>>>>>>>>> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);            
+> >>>>>>>>>>
+> >>>>>>>>>> I'm not a big fan of those driver specific cmdline parameters. Can't we
+> >>>>>>>>>> instead give an higher priority to HLCDC master using the bus matrix?            
+> >>>>>>>>>
+> >>>>>>>>> I don't know if it will be enough, but we sure can try. However, I have
+> >>>>>>>>> no idea how to do that. I will happily test stuff though...          
+> >>>>>>>>
+> >>>>>>>> There's no interface to configure that from Linux, but you can try to
+> >>>>>>>> tweak it with devmem and if that does the trick, maybe we can expose a
+> >>>>>>>> way to configure that from Linux. For more details, see the "Bus Matrix
+> >>>>>>>> (MATRIX)" section in Atmel datasheets.          
+> >>>>>>>
+> >>>>>>> I don't seem to succeed in changing the registers I think I need to change.
+> >>>>>>> I can poke the "Write Protection Mode Register" by writing MAT0 and MAT1 to
+> >>>>>>> it.        
+> >>>>>>
+> >>>>>> You mean 0x4D415400, right? ("MAT0" != 0x4D415400).        
+> >>>>>
+> >>>>> Bits 1 through 7 do not matter, so even though not equal they are (or
+> >>>>> should be) equivalent. But I did use 0x4d415400. I simply used the
+> >>>>> shorter syntax since that was easier to type and conveyed the relevant
+> >>>>> info.      
+> >>>>
+> >>>> Ok.
+> >>>>    
+> >>>>>       
+> >>>>>>> But when I try to write to "Priority Registers B For Slaves" it doesn't
+> >>>>>>> take, regardless of write protect mode.        
+> >>>>>>
+> >>>>>> Did you check MATRIX_WPSR after writing to MATRIX_PRXSY?        
+> >>>>>
+> >>>>> No, but did it again and checked, see transcript below.      
+> >>>>
+> >>>> I don't use devmem2. Is 'readback' information accurate or is it
+> >>>> always what's been written? Because when you write 0x33 to 0xFFFFECBC,
+> >>>> 0x33 is read back, but just after that, when you read it again it's 0.
+> >>>>    
+> >>>>> BTW, how do I
+> >>>>> know which master is in use for the LCD controller? 8 or 9? Both?      
+> >>>>
+> >>>> It's configurable on a per-layer basis through the SIF bit in
+> >>>> LCDC_<layer>CFG0. The driver tries to dispatch the load on those 2 AHB
+> >>>> masters [1].
+> >>>>    
+> >>>>> And
+> >>>>> which DDR slave is the target? 7, 8, 9 or 10? More than one?      
+> >>>>
+> >>>> This, I don't know. I guess all of them can be used.    
+> >>>
+> >>> Looks like I was wrong. According to "Table 15-3. SAMA5D3 Master to
+> >>> Slave Access", LCDC port 0 can only access DDR port 2 and LCDC port 1
+> >>> can only access DDR port 3.
+> >>>
+> >>> Can you try to write 0x3 to 0xFFFFECCC and 0x30 to 0xFFFFECD4?    
+> >>
+> >> Given the matrix dump in the other mail, it is not surprising that I
+> >> can't. But if I change the matrix from the default
+> >>
+> >>  0 33--3--3--3333--
+> >>  1 33--3--3--3333--
+> >>  2 33--------------
+> >>  3 -3--------333---
+> >>  4 33--------------
+> >>  5 3---------------
+> >>  6 33--33-33333333-
+> >>  7 --3-3--3--------
+> >>  8 -3---3--3--3----
+> >>  9 --3-3--3-33-333-
+> >> 10 3--3------------
+> >> 11 3-----3---------
+> >> 12 ----------------
+> >> 13 ----------------
+> >> 14 ----------------
+> >> 15 ----------------  
+> > 
+> > Is it really the default? I thought all entries were set to 0 by
+> > default.  
 > 
-> On Tue 03-04-18 15:12:09, Li RongQing wrote:
-> > The number of writeback and dirty page can be read out from memcg, the
-> > unnecessary waiting can be avoided by these counts
+> Yes, the datasheet claims 0 to be the reset default, but there is
+> a note in my datasheet that "Values in the Bus Matrix Priority
+> Registers are product dependent". I was referring to what I see
+> with devmem2 from the shell directly after boot. I have no idea
+> where the threes are coming from; they could be reset default or
+> from some loop somewhere that simply tries to write the highest
+> priority everywhere, but that the write then only sticks in the
+> allowed entries.
 > 
-> This changelog doesn't explain the problem and how the patch fixes it.
+> BTW, the sanity of everybody screaming "I'm super-important" is
+> a bit questionable...
 
-If a process in a memory cgroup takes some RSS, when force empty this memory cgroup, congestion_wait will be called unconditionally, there is 0.5 seconds delay
-
-If use this patch, nearly no delay.
-
-
-> Why do wee another throttling when we do already throttle in the reclaim
-> path?
-
-Do you mean we should remove congestion_wait(BLK_RW_ASYNC, HZ/10) from mem_cgroup_force_empty, since try_to_free_mem_cgroup_pages [shrink_inactive_list] has called congestion_wait
-
-
--RongQing
-
-> 
-> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> > ---
-> >  mm/memcontrol.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c index
-> > 9ec024b862ac..5258651bd4ec 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -2613,9 +2613,13 @@ static int mem_cgroup_force_empty(struct
-> mem_cgroup *memcg)
-> >  		progress = try_to_free_mem_cgroup_pages(memcg, 1,
-> >  							GFP_KERNEL, true);
-> >  		if (!progress) {
-> > +			unsigned long num;
-> > +
-> > +			num = memcg_page_state(memcg, NR_WRITEBACK) +
-> > +					memcg_page_state(memcg, NR_FILE_DIRTY);
-> >  			nr_retries--;
-> > -			/* maybe some writeback is necessary */
-> > -			congestion_wait(BLK_RW_ASYNC, HZ/10);
-> > +			if (num)
-> > +				congestion_wait(BLK_RW_ASYNC, HZ/10);
-> >  		}
-> >
-> >  	}
-> > --
-> > 2.11.0
-> 
-> --
-> Michal Hocko
-> SUSE Labs
+It is indeed.
