@@ -1,51 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755346AbeDCJ3F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 05:29:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41440 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755172AbeDCJ3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:29:04 -0400
-Date: Tue, 3 Apr 2018 11:29:03 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: syzbot <syzbot+d1fe9b7b917f2715c7d4@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        sergey.senozhatsky@gmail.com, syzkaller-bugs@googlegroups.com,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        x86@kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <edumazet@google.com>
-Subject: Re: general protection fault in try_to_wake_up
-Message-ID: <20180403092902.i2xg3dmdlcv477aw@pathway.suse.cz>
-References: <000000000000f2c42e05688f3ab6@google.com>
- <20180403085002.cq6rjxcmggypo4kh@pathway.suse.cz>
- <20180403091333.GZ4082@hirez.programming.kicks-ass.net>
+        id S1755393AbeDCJam (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 05:30:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35660 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755198AbeDCJak (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 05:30:40 -0400
+Date: Tue, 3 Apr 2018 11:30:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20180403093030.GB4082@hirez.programming.kicks-ass.net>
+References: <20180403154122.00d76d61@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180403091333.GZ4082@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180403154122.00d76d61@canb.auug.org.au>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-04-03 11:13:33, Peter Zijlstra wrote:
-> On Tue, Apr 03, 2018 at 10:50:03AM +0200, Petr Mladek wrote:
-> > raw_spin_lock() succeeded here. Therefore lockdep was still working
-> > at this stage.
+On Tue, Apr 03, 2018 at 03:41:22PM +1000, Stephen Rothwell wrote:
+
+> Caused by commit
 > 
-> What does the success of raw_spin_lock() have to do with lockdep ?
+>   9b8cce52c4b5 ("sched/wait: Remove the wait_on_atomic_t() API")
+> 
+> interacting with commits
+> 
+>   d3be4d244330 ("xrpc: Fix potential call vs socket/net destruction race")
+>   31f5f9a1691e ("rxrpc: Fix apparent leak of rxrpc_local objects")
+> 
+> from the net-next tree.
+> 
+> Haven't we figured out how to remove/change APIs yet? :-(
 
-It means that also lockdep succeeded there. Therefore the general
-protection fault in __lock_acquire() was specific to the spinlock
-taken by try_to_wake_up(). I though that it might had been an useful
-information.
-
-Anyway, the other replay from Dmitry suggested that it was a known
-bug, see
-https://lkml.kernel.org/r/CACT4Y+ZJ2QD7MPy4hB-M=mz2LuVu3bRbLg1QdY=z=+Su1QWMqg@mail.gmail.com
-
-Best Regards,
-Petr
+I figured that since there were only a handful of users it wasn't a
+popular API, also David very much knew of those patches changing it so
+could easily have pulled in the special tip/sched/wait branch :/
