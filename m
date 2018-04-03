@@ -1,88 +1,89 @@
-Return-Path: <wangxidong_97@163.com>
-X-Google-Smtp-Source: AIpwx48GQMh6utK+iwOIIBLZp/7flHHI19cZznxPRENuuLJ19lpLj0bnR7jGOADvmMcvYnfAXX/O
-ARC-Seal: i=1; a=rsa-sha256; t=1522762439; cv=none;
+Return-Path: <joe@perches.com>
+X-Google-Smtp-Source: AIpwx48m5sU+e3iWs1pyrXEQpetINtgHyzH8iD1ignf1oqJmnWz8ov4FfHfuK6ZMFteXhR5e/W59
+ARC-Seal: i=1; a=rsa-sha256; t=1522772462; cv=none;
         d=google.com; s=arc-20160816;
-        b=sSk8IWs2fPJjTOpeYW32l9JoAQ3PUhG0JqQMxM27arDipLv+76AAz/FRbcuOdkTz5U
-         ZE+ZgWQgq2VeiH99p1S4WKyw4CzjDW5kXDlsSrrB8ErJwKcPr7LC1qxfbnMRGHoVNe3L
-         /AHjn3CMWXECC6I1q/dczoFrRGqgwoEounzgVgAy1lhW7EiLyU4XiBH4fWSAsi3NS5J8
-         AfW3EoUvtSXJm1oXvv1oH2SV4XRNHSLW6SxgCec5nLwzLFwCTnekglC/I5zh+J32tkpN
-         wdl3msLMtPXW6iq0vg9MSoCo4t09UbaV4KvLV527tqZj6qz57Le1MCjFfRdO2uIJ4e8c
-         3Vnw==
+        b=JmaYeUKWFXaHMc+sa1C95m5W7J6r8NpDwsezeXLBQNB1TLmkzBsNDLHtaDui0cDyyb
+         JYlxvHrovpUNhHIpQjcVyBL0Q6DYuQxY1rdsVlOS7k3r/Xb7eN92RuJpEUjUCc5BRp8n
+         /0yIm+3KFhVuk5jOE3PjLRe+MPR20KNthb/UVl3PciUTfxajB6lqU7KSGjezV+ByXlTP
+         dx6x0ioaNLTlhz4M3Y5no69B2btdPlZ1kW9LJFg4SjAeI+tX7oGhlo3DAO6DAbasP89M
+         PbP64O+RBmaHnnZdojE3X8v00Cjbkg99xD85SHJsCQN2O3SEfFg4PEw/TtYv2IOeC6vB
+         6TPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=O27ZuhaigASmotBJ5KHZUSPzeDWZr2nRX6nGK3G+VN4=;
-        b=Af0DN3jnMb1BXqGQz9+uZ2tMB7bPMB08ejpMTeF9BHrSDVUwyooxld0z9kEQBntsTt
-         pQY8IP3pbtGFAjnXQ4gUQV+QCxaEcZOWJpR2JnaV1317ZSv4s1h6Uu6SKLxbywwNUr26
-         tkDsNBqEB+WST2fqijtGrxicFwMYOJNocw0sswND0hs83/WYSuwSOM1sKWXyRO1lMxbq
-         EvK2mv3A+0T8uGdN2NqGxLGLMBIdCBZlIEbjGPsUx6LpOG+z/4gi3z0p96/XiSdE9rEj
-         vgADxZymR04KH9V0ixTrCQ+faPGSVR1UmLDgKwvLLBlb5mTqI4c7i8w9KN+WSB/p7m/7
-         IPiw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:arc-authentication-results;
+        bh=cN2c2hO+gvKU4yJ0O0AC1l27WBdVIcPcDctI+364luc=;
+        b=QMq2BwrPJ/z4D+lGBjK7WHkj/mC7/x7FcddO1MGIWWC+gpfaU3uYnfzI7O2mzkouTR
+         w07thISLf3aoTPpSclr+ScQ2latQ5pG1QQhAvzqbJ9600lE6CA84Lv179zU1qy99AP73
+         ljNslsUNxx4i6s72+SNyDdU2rrCP0VMdWXK3bwNbZNssbkdwY1mbfvM8AwgwJf/Usnrr
+         sjVGjtg+zwVQWEzbN9QGZdYaRC+sFTE+FJ9QS6FjxXWbWXKNAjEflRmAq/xKUOyc31LJ
+         KhYBpH8cJ8lNamMCDpSZiZrg5838SO1aqpumr2E5wFgIKfRO/gVLDY3wNEb2wEjtH+ka
+         uEzA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@163.com header.s=s110527 header.b=QUYscxP1;
-       spf=pass (google.com: domain of wangxidong_97@163.com designates 220.181.12.11 as permitted sender) smtp.mailfrom=wangxidong_97@163.com
+       spf=neutral (google.com: 216.40.44.169 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@163.com header.s=s110527 header.b=QUYscxP1;
-       spf=pass (google.com: domain of wangxidong_97@163.com designates 220.181.12.11 as permitted sender) smtp.mailfrom=wangxidong_97@163.com
-From: Xidong Wang <wangxidong_97@163.com>
-To: Xidong Wang <wangxidong_97@163.com>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devel@driverdev.osuosl.org,
+       spf=neutral (google.com: 216.40.44.169 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:800:960:966:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3151:3352:3622:3865:3866:3868:3870:3871:3872:3874:4321:4385:5007:7576:10004:10400:10848:11026:11232:11658:11914:12043:12048:12296:12438:12555:12740:12760:12895:12986:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21600:21627:30054:30075:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
+X-HE-Tag: shoe19_42fa2f0942a44
+X-Filterd-Recvd-Size: 2134
+Message-ID: <1522772458.11653.51.camel@perches.com>
+Subject: Re: [PATCH 1/1] taging: fbtft: fix memory leak
+From: Joe Perches <joe@perches.com>
+To: Xidong Wang <wangxidong_97@163.com>, Thomas Petazzoni
+	 <thomas.petazzoni@free-electrons.com>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	Xidong Wang <2711406067@qq.com>
-Subject: [PATCH 1/1] taging: fbtft: fix memory leak
-Date: Tue,  3 Apr 2018 21:33:06 +0800
-Message-Id: <1522762386-13990-1-git-send-email-wangxidong_97@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: C8CowAAXypWZgsNa6BnxNA--.1119S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GF1UJr18Zr48Aw1UJFWkWFg_yoWkCrX_Wa
-	92v347ArW8CryIyr1xCFZxZFyIgr4fAr4v9Fy3tFZxJ3y5Wa1rJay8Xwnxtw42q3y7ua4r
-	Cr4ktr4avw40gjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU5t3kJUUUUU==
-X-Originating-IP: [106.120.213.14]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbiyAId81p62GyJSAAAsx
+Cc: stable@vger.kernel.org, Xidong Wang <2711406067@qq.com>
+Date: Tue, 03 Apr 2018 09:20:58 -0700
+In-Reply-To: <1522762386-13990-1-git-send-email-wangxidong_97@163.com>
+References: <1522762386-13990-1-git-send-email-wangxidong_97@163.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596731155733578693?=
-X-GMAIL-MSGID: =?utf-8?q?1596732147740837075?=
+X-GMAIL-MSGID: =?utf-8?q?1596742657582666749?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Xidong Wang <2711406067@qq.com>
+On Tue, 2018-04-03 at 21:33 +0800, Xidong Wang wrote:
+> From: Xidong Wang <2711406067@qq.com>
+> 
+> In function fbtft_framebuffer_alloc(), the memory allocated by
+> framebuffer_alloc() is not released on the error path that txbuflen > 0
+> and txbuf, which holds the return value of devm_kzalloc(), is NULL.
+> This will result in a memory leak bug.
+[]
+> diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+[]
+> @@ -836,7 +836,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
+>  	if (txbuflen > 0) {
+>  		txbuf = devm_kzalloc(par->info->device, txbuflen, GFP_KERNEL);
+>  		if (!txbuf)
+> -			goto alloc_fail;
+> +			goto err_info;
+>  		par->txbuf.buf = txbuf;
+>  		par->txbuf.len = txbuflen;
+>  	}
+> @@ -872,6 +872,9 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
+>  
+>  	return info;
+>  
+> +err_info:
+> +	framebuffer_release(info);
+> +
+>  alloc_fail:
+>  	vfree(vmem);
 
-In function fbtft_framebuffer_alloc(), the memory allocated by
-framebuffer_alloc() is not released on the error path that txbuflen > 0
-and txbuf, which holds the return value of devm_kzalloc(), is NULL.
-This will result in a memory leak bug.
+What about the
 
-Signed-off-by: Xidong Wang <2711406067@qq.com>
----
- drivers/staging/fbtft/fbtft-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+	if (par->gamma.curves && gamma) {
+		if (fbtft_gamma_parse_str(par,
+			par->gamma.curves, gamma, strlen(gamma)))
+			goto alloc_fail;
+	}
 
-diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
-index 0e36b66..e92771e 100644
---- a/drivers/staging/fbtft/fbtft-core.c
-+++ b/drivers/staging/fbtft/fbtft-core.c
-@@ -836,7 +836,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
- 	if (txbuflen > 0) {
- 		txbuf = devm_kzalloc(par->info->device, txbuflen, GFP_KERNEL);
- 		if (!txbuf)
--			goto alloc_fail;
-+			goto err_info;
- 		par->txbuf.buf = txbuf;
- 		par->txbuf.len = txbuflen;
- 	}
-@@ -872,6 +872,9 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
- 
- 	return info;
- 
-+err_info:
-+	framebuffer_release(info);
-+
- alloc_fail:
- 	vfree(vmem);
- 
--- 
-2.7.4
+a little above this?
+
+Presumable then it should goto err_info too.
