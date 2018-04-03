@@ -1,93 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752320AbeDCQy4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:54:56 -0400
-Received: from mga18.intel.com ([134.134.136.126]:59973 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeDCQyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:54:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,401,1517904000";
-   d="scan'208";a="40391597"
-From: "Keller, Jacob E" <jacob.e.keller@intel.com>
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Jacob Keller <jacob.keller@gmail.com>
-CC: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "everest-linux-l2@cavium.com" <everest-linux-l2@cavium.com>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: RE: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
- max supported link bandwidth
-Thread-Topic: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
- max supported link bandwidth
-Thread-Index: AQHTyGrIFr77DKg4/kStVKf2xuGFuqPs12iAgABDmICAAHO3AIAAbPqAgACu3wCAAOOzAP//ucyQ
-Date: Tue, 3 Apr 2018 16:54:52 +0000
-Message-ID: <02874ECE860811409154E81DA85FBB5882D4AA53@ORSMSX115.amr.corp.intel.com>
-References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152244390359.135666.14890735614456271032.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <31e66048-e8b8-47ba-baf5-023560b4c124@mellanox.com>
- <20180402004049.GA131023@bhelgaas-glaptop.roam.corp.google.com>
- <50346f44-de3f-b226-69ad-6de45e94e261@mellanox.com>
- <20180402140501.GA244675@bhelgaas-glaptop.roam.corp.google.com>
- <CA+P7+xr1N+X5DyPwNpWUtfqr9U4pLL9bMoB1wkBdf2K9n6cxKw@mail.gmail.com>
- <20180403140552.GB60020@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180403140552.GB60020@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTMwZmZjODgtYWIyNS00ZWU1LWJlODQtYTlmM2UzZmNhNGMzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlloTDM5MmozSnY0NzR6MDQrbHN3XC92a3Z0bVNHcUFCWXBwTHlCdUsxK09NPSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1752547AbeDCQ4U (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:56:20 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39985 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeDCQ4R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:56:17 -0400
+X-Google-Smtp-Source: AIpwx4+6l0ue6p1vgK2lTNB59MKE61Guw7jhu/e5jKpWqw8C+2pougTmQi0UKg9A93Yrn5D4txCACw==
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: [RFC PATCH 0/3] Documentation/features: Provide and apply "features-refresh.sh"
+Date: Tue,  3 Apr 2018 18:55:48 +0200
+Message-Id: <1522774551-9503-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Bjorn Helgaas [mailto:helgaas@kernel.org]
-> Sent: Tuesday, April 03, 2018 7:06 AM
-> To: Jacob Keller <jacob.keller@gmail.com>
-> Cc: Tal Gilboa <talgi@mellanox.com>; Tariq Toukan <tariqt@mellanox.com>;
-> Keller, Jacob E <jacob.e.keller@intel.com>; Ariel Elior <ariel.elior@cavium.com>;
-> Ganesh Goudar <ganeshgr@chelsio.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com; intel-wired-
-> lan@lists.osuosl.org; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-pci@vger.kernel.org
-> Subject: Re: [PATCH v5 03/14] PCI: Add pcie_bandwidth_capable() to compute
-> max supported link bandwidth
-> 
-> On Mon, Apr 02, 2018 at 05:30:54PM -0700, Jacob Keller wrote:
-> > On Mon, Apr 2, 2018 at 7:05 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > +/* PCIe speed to Mb/s reduced by encoding overhead */
-> > > +#define PCIE_SPEED2MBS_ENC(speed) \
-> > > +       ((speed) == PCIE_SPEED_16_0GT ? (16000*(128/130)) : \
-> > > +        (speed) == PCIE_SPEED_8_0GT  ?  (8000*(128/130)) : \
-> > > +        (speed) == PCIE_SPEED_5_0GT  ?  (5000*(8/10)) : \
-> > > +        (speed) == PCIE_SPEED_2_5GT  ?  (2500*(8/10)) : \
-> > > +        0)
-> > > +
-> >
-> > Should this be "(speed * x ) / y" instead? wouldn't they calculate
-> > 128/130 and truncate that to zero before multiplying by the speed? Or
-> > are compilers smart enough to do this the other way to avoid the
-> > losses?
-> 
-> Yep, thanks for saving me yet more embarrassment.
+In Ingo's words [1]:
 
-That's what patch review is for :D
+  "[...]  what should be done instead is to write a script that refreshes
+   all the arch-support.txt files in-place. [...]
 
-Thanks,
-Jake
+   It's OK for the script to have various quirks for weirdly implemented
+   features and exceptions: i.e. basically whenever it gets a feature wrong,
+   we can just tweak the script with quirks to make it all work out of box.
+
+   [...]  But in the end there should only be a single new script:
+
+     Documentation/features/scripts/features-refresh.sh
+
+   ... which operates on the arch-support.txt files and refreshes them in
+   place, and which, after all the refreshes have been committed, should
+   produce an empty 'git diff' result."
+
+  "[...]  New features can then be added by basically just creating a
+   header-only arch-support.txt file, such as:
+
+     triton:~/tip/Documentation/features> cat foo/bar/arch-support.txt
+     #
+     # Feature name:          shiny new fubar kernel feature
+     #         Kconfig:       ARCH_USE_FUBAR
+     #         description:   arch supports the fubar feature
+     #
+
+   And running Documentation/features/scripts/features-refresh.sh would
+   auto-generate the arch support matrix. [...]
+ 
+   This way we soft- decouple the refreshing of the entries from the
+   introduction of the features, while still making it all easy to keep
+   sync and to extend."
+
+This RFC presents a first attempt to implement such a feature/script, and
+applies it script on top of Arnd's:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git arch-removal
+
+Patch 1/3 provides the "features-refresh.sh" script.  Patch 2/3 removes the
+"BPF-JIT" feature file and it creates header-only files for "cBPF-JIT" and
+"eBPF-JIT".  Patch 3/3 presents the results of running the script; this run
+also printed to standard output the following warnings:
+
+  WARNING: '__HAVE_ARCH_STRNCASECMP' is not a valid Kconfig
+  WARNING: 'Optimized asm/rwsem.h' is not a valid Kconfig
+  WARNING: '!ARCH_USES_GETTIMEOFFSET' is not a valid Kconfig
+  WARNING: '__HAVE_ARCH_PTE_SPECIAL' is not a valid Kconfig
+
+(I'm sending these patches with empty commit messagges, for early feedback:
+ I'll fill in these messages in subsequent versions if this makes sense...)
+
+Cheers,
+  Andrea
+
+Andrea Parri (3):
+  Documentation/features: Add script that refreshes the arch support
+    status files in place
+  Documentation/features/core: Add arch support status files for
+    'cBPF-JIT' and 'eBPF-JIT'
+  Documentation/features: Refresh and auto-generate the arch support
+    status files in place
+
+ .../features/core/BPF-JIT/arch-support.txt         | 31 ------------
+ .../features/core/cBPF-JIT/arch-support.txt        | 32 +++++++++++++
+ .../features/core/eBPF-JIT/arch-support.txt        | 32 +++++++++++++
+ .../core/generic-idle-thread/arch-support.txt      |  3 +-
+ .../features/core/jump-labels/arch-support.txt     |  1 +
+ .../features/core/tracehook/arch-support.txt       |  1 +
+ .../features/debug/KASAN/arch-support.txt          |  3 +-
+ .../debug/gcov-profile-all/arch-support.txt        |  1 +
+ Documentation/features/debug/kgdb/arch-support.txt |  3 +-
+ .../debug/kprobes-on-ftrace/arch-support.txt       |  1 +
+ .../features/debug/kprobes/arch-support.txt        |  3 +-
+ .../features/debug/kretprobes/arch-support.txt     |  3 +-
+ .../features/debug/optprobes/arch-support.txt      |  3 +-
+ .../features/debug/stackprotector/arch-support.txt |  1 +
+ .../features/debug/uprobes/arch-support.txt        |  5 +-
+ .../debug/user-ret-profiler/arch-support.txt       |  1 +
+ .../features/io/dma-api-debug/arch-support.txt     |  1 +
+ .../features/io/dma-contiguous/arch-support.txt    |  3 +-
+ .../features/io/sg-chain/arch-support.txt          |  1 +
+ .../features/lib/strncasecmp/arch-support.txt      |  1 +
+ .../locking/cmpxchg-local/arch-support.txt         |  3 +-
+ .../features/locking/lockdep/arch-support.txt      |  3 +-
+ .../locking/queued-rwlocks/arch-support.txt        |  9 ++--
+ .../locking/queued-spinlocks/arch-support.txt      |  7 +--
+ .../locking/rwsem-optimized/arch-support.txt       |  1 +
+ .../features/perf/kprobes-event/arch-support.txt   |  5 +-
+ .../features/perf/perf-regs/arch-support.txt       |  3 +-
+ .../features/perf/perf-stackdump/arch-support.txt  |  3 +-
+ .../sched/membarrier-sync-core/arch-support.txt    |  1 +
+ .../features/sched/numa-balancing/arch-support.txt |  5 +-
+ Documentation/features/scripts/features-refresh.sh | 55 ++++++++++++++++++++++
+ .../seccomp/seccomp-filter/arch-support.txt        |  5 +-
+ .../time/arch-tick-broadcast/arch-support.txt      |  3 +-
+ .../features/time/clockevents/arch-support.txt     |  3 +-
+ .../time/context-tracking/arch-support.txt         |  1 +
+ .../features/time/irq-time-acct/arch-support.txt   |  3 +-
+ .../time/modern-timekeeping/arch-support.txt       |  1 +
+ .../features/time/virt-cpuacct/arch-support.txt    |  1 +
+ .../features/vm/ELF-ASLR/arch-support.txt          |  3 +-
+ .../features/vm/PG_uncached/arch-support.txt       |  1 +
+ Documentation/features/vm/THP/arch-support.txt     |  1 +
+ Documentation/features/vm/TLB/arch-support.txt     |  1 +
+ .../features/vm/huge-vmap/arch-support.txt         |  1 +
+ .../features/vm/ioremap_prot/arch-support.txt      |  1 +
+ .../features/vm/numa-memblock/arch-support.txt     |  3 +-
+ .../features/vm/pte_special/arch-support.txt       |  1 +
+ 46 files changed, 192 insertions(+), 62 deletions(-)
+ delete mode 100644 Documentation/features/core/BPF-JIT/arch-support.txt
+ create mode 100644 Documentation/features/core/cBPF-JIT/arch-support.txt
+ create mode 100644 Documentation/features/core/eBPF-JIT/arch-support.txt
+ create mode 100755 Documentation/features/scripts/features-refresh.sh
+
+-- 
+2.7.4
