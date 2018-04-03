@@ -1,54 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754790AbeDCHhN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 03:37:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56154 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753267AbeDCHhM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 03:37:12 -0400
-Date: Tue, 3 Apr 2018 09:37:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Norbert Manthey <nmanthey@amazon.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: v4.16+ seeing many unaligned access in dequeue_task_fair() on
- IA64
-Message-ID: <20180403073706.GV4082@hirez.programming.kicks-ass.net>
-References: <20180402232448.fbop7k5xicblski5@agluck-desk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180402232448.fbop7k5xicblski5@agluck-desk>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1754848AbeDCHk4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 03:40:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52801 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754690AbeDCHky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 03:40:54 -0400
+Message-ID: <1522741252.3709.0.camel@suse.de>
+Subject: Re: [PATCH] scsi: hosts: remove redundant assingment of
+ shost->use_blk_mq
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Tue, 03 Apr 2018 09:40:52 +0200
+In-Reply-To: <4c62b8f8da1175ddcdcdf0a234dacbf620d73060.camel@wdc.com>
+References: <20180402093749.6862-1-jthumshirn@suse.de>
+         <4c62b8f8da1175ddcdcdf0a234dacbf620d73060.camel@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 04:24:49PM -0700, Luck, Tony wrote:
-> v4.16 boots cleanly. But with the first bunch of merges
-> (Linus HEAD = 46e0d28bdb8e6d00e27a0fe9e1d15df6098f0ffb)
-> I see a bunch of:
-> 
-> ia64_handle_unaligned: 4863 callbacks suppressed
-> kernel unaligned access to 0xe00000031660fd74, ip=0xa0000001000f23e0
-> kernel unaligned access to 0xe00000033bdffbcc, ip=0xa0000001000f2370
-> kernel unaligned access to 0xe00000031660fd74, ip=0xa0000001000f23e0
-> kernel unaligned access to 0xe00000033bdffbcc, ip=0xa0000001000f2370
-> kernel unaligned access to 0xe00000031660fd74, ip=0xa0000001000f23e0
-> 
-> The addresses are all 4-byte, but not 8-byte aligned.
-> 
-> Any guesses before I start to bisect?
+On Mon, 2018-04-02 at 13:53 +0000, Bart Van Assche wrote:
+> A similar patch has already been queued by Martin. See also
+> https://patchwork.kernel.org/patch/10313569/.
 
-That doesn't sound good. The only guess I have at this moment is you
-accidentially enabled RANDSTRUCT_PLUGIN and that messes things up.
-
-struct task_struct whould be at least L1_CACHE_BYTES aligned, and C
-otherwise makes it fairly hard to cause unaligned accesses. Packed
-structures and/or casting are required, and I don't think we added
-anything dodgy like that here.
+Ah OK, fine then :-)
+-- 
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
