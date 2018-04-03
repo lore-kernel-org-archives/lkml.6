@@ -1,68 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754740AbeDCBRF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 21:17:05 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6722 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754665AbeDCBRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 21:17:04 -0400
-Subject: Re: [PATCH 2/2] perf: add arm64 smmuv3 pmu driver
-To: Neil Leeder <neil.m.leeder@gmail.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Mark Langsdorf <mlangsdo@redhat.com>, Mark Salter <msalter@redhat.com>,
-        "Jon Masters" <jcm@redhat.com>, Timur Tabi <timur@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>,
-        "Lorenzo Pieralisi" <Lorenzo.Pieralisi@arm.com>
-References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
- <1501876754-1064-3-git-send-email-nleeder@codeaurora.org>
- <883d32ce-6581-ecf6-5088-ecb238322ebe@huawei.com>
- <e55ab4404143ea0b3cc4795a93e37480@codeaurora.org>
- <14f90cc6-f2c1-5a63-67c6-a5c8ddb4799e@gmail.com>
- <c1f9230b-8ff0-5b2e-def9-cbf6b2e2e99c@huawei.com>
- <66ef3bf4-9550-94c7-f8ad-ee53d6c75025@huawei.com>
- <0094c5ab-89db-409f-d5fb-c961f9d84740@gmail.com>
-From: Hanjun Guo <guohanjun@huawei.com>
-Message-ID: <23363f05-0fe0-0af3-5f3d-5f2e14181e95@huawei.com>
-Date: Tue, 3 Apr 2018 09:15:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1754735AbeDCBYd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 21:24:33 -0400
+Received: from mga03.intel.com ([134.134.136.65]:43531 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754675AbeDCBYb (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 21:24:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,398,1517904000";
+   d="scan'208";a="213430424"
+Subject: Re: [PATCH v4 4/6] perf version: Print the compiled-in status of
+ libraries
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+References: <1522402036-22915-1-git-send-email-yao.jin@linux.intel.com>
+ <1522402036-22915-5-git-send-email-yao.jin@linux.intel.com>
+ <20180402164738.GA23295@kernel.org>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <27e4500b-8bd1-14b0-8f5f-c09af2bf7d99@linux.intel.com>
+Date: Tue, 3 Apr 2018 09:24:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <0094c5ab-89db-409f-d5fb-c961f9d84740@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180402164738.GA23295@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.223.23]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Cc Lorenzo]
 
-Hi Neil,
 
-On 2018/4/3 1:59, Neil Leeder wrote:
-> Hi Hanjun,
+On 4/3/2018 12:47 AM, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Mar 30, 2018 at 05:27:14PM +0800, Jin Yao escreveu:
+>> This patch checks the values passed by CFLAGS (-DHAVE_XXX) and then
+>> print the status of libraries.
+>>
+>> For example, if HAVE_DWARF_SUPPORT is defined, that means the
+>> library "dwarf" is compiled-in. The patch will print the status
+>> "on" for this library otherwise it print the status "OFF".
+>>
+>> A new option '--build-options' created for 'perf version' supports
+>> the printing of library status.
+>>
+>> For example:
+>>
+>> $ ./perf version --build-options
+>>      or
+>>    ./perf --version --build-options
+>>      or
+>>    ./perf -v --build-options
+>>
+>> perf version 4.13.rc5.g6727c5
+>>                   dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+>>      dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+>>                   glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
+>>                    gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
+>>                libaudit: [ OFF ]  # HAVE_LIBAUDIT_SUPPORT
 > 
-> On 4/2/2018 10:24 AM, Hanjun Guo wrote:
-> <SNIP>
->>
->> I think we need to wait for the new version of IORT spec,
->> which includes the fix for the two base address for SMMUv3
->> PMCG (now just represent one).
->>
->> Thanks
->> Hanjun
->>
-> It's in rev D which is available now:
-> http://infocenter.arm.com/help/topic/com.arm.doc.den0049d/DEN0049D_IO_Remapping_Table.pdf
+> Ok, while testing this I noticed the above, which may be distracting,
+> i.e. on x86-64 and s/390 not having libaudit means nothing, it is not
+> needed for anything.
+> 
+> It is only needed for architectures where HAVE_SYSCALL_TABLE is not
+> defined, that, btw, is not listed here, so I suggest that we stop
+> printing this "libaudit [ OFF ]" line if HAVE_SYSCALL_TABLE is
+> available, and also add a line for HAVE_SYSCALL_TABLE.
+> 
+> Anyways, this can be done on top of this series, but please do a grep
+> looking for other HAVE_* to fix, and we need to rename
+> HAVE_SYSCALL_TABLE to HAVE_SYSCALL_TABLE_SUPPORT...
+> 
+> - Arnaldo
+> 
 
-Thanks for let me know, I didn't notice the update :)
+Hi Arnaldo,
 
-Lorenzo, do you have a plan for ACPICA changes?
+Thanks for the suggestions. Yes, some follow-up patches are needed.
+
+1. Remove -DNO_LIBPERL and use -DHAVE_LIBPERL_SUPPORT in C code.
+
+2. Remove -DNO_LIBPYTHON and use -DHAVE_LIBPYTHON_SUPPORT in C code.
+
+3. Rename HAVE_SYSCALL_TABLE to HAVE_SYSCALL_TABLE_SUPPORT.
+
+4. Don't print "libaudit [ OFF ]" line if HAVE_SYSCALL_TABLE_SUPPORT is 
+available and add a line for HAVE_SYSCALL_TABLE_SUPPORT.
+
+I will do it in follow-up patch.
 
 Thanks
-Hanjun
+Jin Yao
