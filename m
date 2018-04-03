@@ -1,101 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeDCNG2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:06:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47282 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932168AbeDCNG0 (ORCPT
+        id S932272AbeDCNKa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:10:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58350 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbeDCNK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:06:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 34EE960767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v2 2/2] io: prevent compiler reordering on the default
- readX() implementation
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, Timur Tabi <timur@codeaurora.org>,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1522425494-2916-1-git-send-email-okaya@codeaurora.org>
- <1522425494-2916-2-git-send-email-okaya@codeaurora.org>
- <20180403104925.fuyajja6tyanlna4@lakrids.cambridge.arm.com>
- <CAK8P3a3fZx42sQY41Pf+Q3fMNrP2FgXvvntnrLkQXbAezOQjEw@mail.gmail.com>
- <d5c0c170-07ab-273f-7d4f-301d2bedb992@codeaurora.org>
- <CAK8P3a0+Q-aBbKsqqypZfCVzHTwcepL9KhBP9qJKE+2FknWHMg@mail.gmail.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <587b59bb-2794-ffc2-3cd3-b77de85d3e7d@codeaurora.org>
-Date: Tue, 3 Apr 2018 09:06:23 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 3 Apr 2018 09:10:28 -0400
+Date: Tue, 3 Apr 2018 06:10:25 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: Signal handling in a page fault handler
+Message-ID: <20180403131025.GF5832@bombadil.infradead.org>
+References: <20180402141058.GL13332@bombadil.infradead.org>
+ <152275879566.32747.9293394837417347482@mail.alporthouse.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0+Q-aBbKsqqypZfCVzHTwcepL9KhBP9qJKE+2FknWHMg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152275879566.32747.9293394837417347482@mail.alporthouse.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/3/2018 8:56 AM, Arnd Bergmann wrote:
-> On Tue, Apr 3, 2018 at 2:44 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
->> On 4/3/2018 7:13 AM, Arnd Bergmann wrote:
->>> On Tue, Apr 3, 2018 at 12:49 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->>>> Hi,
->>>>
->>>> On Fri, Mar 30, 2018 at 11:58:13AM -0400, Sinan Kaya wrote:
->>>>> The default implementation of mapping readX() to __raw_readX() is wrong.
->>>>> readX() has stronger ordering semantics. Compiler is allowed to reorder
->>>>> __raw_readX().
->>>>
->>>> Could you please specify what the compiler is potentially reordering
->>>> __raw_readX() against, and why this would be wrong?
->>>>
->>>> e.g. do we care about prior normal memory accesses, subsequent normal
->>>> memory accesses, and/or other IO accesses?
->>>>
->>>> I assume that the asm-generic __raw_{read,write}X() implementations are
->>>> all ordered w.r.t. each other (at least for a specific device).
->>>
->>> I think that is correct: the compiler won't reorder those because of the
->>> 'volatile' pointer dereference, but it can reorder access to a normal
->>> pointer against a __raw_readl()/__raw_writel(), which breaks the scenario
->>> of using writel to trigger a DMA, or using a readl to see if a DMA has
->>> completed.
->>
->> Yes, we are worried about memory update vs. IO update ordering here.
->> That was the reason why barrier() was introduced in this patch. I'll try to
->> clarify that better in the commit text.
->>
->>>
->>> The question is whether we should use a stronger barrier such
->>> as rmb() amd wmb() here rather than a simple compiler barrier.
->>>
->>> I would assume that on complex architectures with write buffers and
->>> out-of-order prefetching, those are required, while on architectures
->>> without those features, the barriers are cheap.
->>
->> That's my reasoning too. I'm trying to follow the x86 example here where there
->> is a compiler barrier in writeX() and readX() family of functions.
+On Tue, Apr 03, 2018 at 01:33:15PM +0100, Chris Wilson wrote:
+> Quoting Matthew Wilcox (2018-04-02 15:10:58)
+> > Souptick and I have been auditing the various page fault handler routines
+> > and we've noticed that graphics drivers assume that a signal should be
+> > able to interrupt a page fault.  In contrast, the page cache takes great
+> > care to allow only fatal signals to interrupt a page fault.
+> > 
+> > I believe (but have not verified) that a non-fatal signal being delivered
+> > to a task which is in the middle of a page fault may well end up in an
+> > infinite loop, attempting to handle the page fault and failing forever.
+> > 
+> > Here's one of the simpler ones:
+> > 
+> >         ret = mutex_lock_interruptible(&etnaviv_obj->lock);
+> >         if (ret)
+> >                 return VM_FAULT_NOPAGE;
+> > 
+> > (many other drivers do essentially the same thing including i915)
+> > 
+> > On seeing NOPAGE, the fault handler believes the PTE is in the page
+> > table, so does nothing before it returns to arch code at which point
+> > I get lost in the magic assembler macros.  I believe it will end up
+> > returning to userspace if the signal is non-fatal, at which point it'll
+> > go right back into the page fault handler, and mutex_lock_interruptible()
+> > will immediately fail.  So we've converted a sleeping lock into the most
+> > expensive spinlock.
 > 
-> I think x86 is the special case here because it implicitly guarantees
-> the strict ordering in the hardware, as long as the compiler gets it
-> right. For the asm-generic version, it may be better to play safe and
-> do the safest version, requiring architectures to override that barrier
-> if they want to be faster.
+> I'll ask the obvious question: why isn't the signal handled on return to
+> userspace?
+
+As I said, I don't know exactly how it works due to getting lost in the
+assembler parts of kernel entry/exit.  But if it did work, then wouldn't
+the page cache use it, rather than taking such great pains to only handle
+fatal signals?  See commit 37b23e0525d393d48a7d59f870b3bc061a30ccdb
+which introduced it.
+
+One thing I did come up with is: What if the signal handler is the
+one touching the page that needs to be faulted in?  And for the page
+cache case, what if the page that needs to be faulted in is the page
+containing the text of the signal handler?  (I don't think we support
+mapping graphics memory PROT_EXEC ;-)
+
+> > I don't think the graphics drivers really want to be interrupted by
+> > any signal.
 > 
-> We could use the same macros that riscv has, using __io_br(),
-> __io_ar(), __io_bw() and __io_aw() for before/after read/write.
+> Assume the worst case and we may block for 10s. Even a 10ms delay may be
+> unacceptable to some signal handlers (one presumes). For the number one
+> ^C usecase, yes that may be reduced to only bother if it's killable, but
+> I wonder if there are not timing loops (e.g. sigitimer in Xorg < 1.19)
+> that want to be able to interrupt random blockages.
 
-Sure, let me take a stab at it. 
-
-> 
->       Arnd
-> 
-
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Ah, setitimer / SIGALRM.  So what do we want to have happen if that
+signal handler touches the mmaped device memory?
