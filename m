@@ -1,128 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751713AbeDCOjn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:39:43 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45696 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751353AbeDCOjl (ORCPT
+        id S1751850AbeDCOkt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:40:49 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37773 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeDCOkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:39:41 -0400
-From: Daniel Kiper <daniel.kiper@oracle.com>
-To: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, xen-devel@lists.xenproject.org
-Cc: ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
-        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
-        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
-Subject: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during dom0 boot
-Date: Tue,  3 Apr 2018 16:39:05 +0200
-Message-Id: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
-X-Mailer: git-send-email 1.7.10.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8851 signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804030148
+        Tue, 3 Apr 2018 10:40:47 -0400
+X-Google-Smtp-Source: AIpwx4/tcsjG8H4cW8CyefIC2OTvbCk+OlBc5T/i/7yBOj4Yk4jxHzQf0yV11U73ZsdPatEjpGBhAA==
+Date: Tue, 3 Apr 2018 16:40:43 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bp@suse.de" <bp@suse.de>
+Subject: Re: [PATCH] x86/smpboot: Don't do mwait_play_dead() on AMD systems
+Message-ID: <20180403144043.23o5aijs4hlyj2dj@gmail.com>
+References: <20180402183424.48222-1-Yazen.Ghannam@amd.com>
+ <20180403110352.izr2kvsd3ys4drjq@gmail.com>
+ <CY4PR12MB1557216A1882A4CFC43248D3F8A50@CY4PR12MB1557.namprd12.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY4PR12MB1557216A1882A4CFC43248D3F8A50@CY4PR12MB1557.namprd12.prod.outlook.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize UEFI secure boot state during dom0 boot. Otherwise the kernel
-may not even know that it runs on secure boot enabled platform.
 
-Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
----
- arch/x86/xen/efi.c                        |   57 +++++++++++++++++++++++++++++
- drivers/firmware/efi/libstub/secureboot.c |    3 ++
- 2 files changed, 60 insertions(+)
+* Ghannam, Yazen <Yazen.Ghannam@amd.com> wrote:
 
-diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
-index a18703b..1804b27 100644
---- a/arch/x86/xen/efi.c
-+++ b/arch/x86/xen/efi.c
-@@ -115,6 +115,61 @@ static efi_system_table_t __init *xen_efi_probe(void)
- 	return &efi_systab_xen;
- }
- 
-+/*
-+ * Determine whether we're in secure boot mode.
-+ *
-+ * Please keep the logic in sync with
-+ * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
-+ */
-+static enum efi_secureboot_mode xen_efi_get_secureboot(void)
-+{
-+	static efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
-+	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
-+	efi_status_t status;
-+	u8 moksbstate, secboot, setupmode;
-+	unsigned long size;
-+
-+	size = sizeof(secboot);
-+	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
-+				  NULL, &size, &secboot);
-+
-+	if (status == EFI_NOT_FOUND)
-+		return efi_secureboot_mode_disabled;
-+
-+	if (status != EFI_SUCCESS)
-+		goto out_efi_err;
-+
-+	size = sizeof(setupmode);
-+	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
-+				  NULL, &size, &setupmode);
-+
-+	if (status != EFI_SUCCESS)
-+		goto out_efi_err;
-+
-+	if (secboot == 0 || setupmode == 1)
-+		return efi_secureboot_mode_disabled;
-+
-+	/* See if a user has put the shim into insecure mode. */
-+	size = sizeof(moksbstate);
-+	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
-+				  NULL, &size, &moksbstate);
-+
-+	/* If it fails, we don't care why. Default to secure. */
-+	if (status != EFI_SUCCESS)
-+		goto secure_boot_enabled;
-+
-+	if (moksbstate == 1)
-+		return efi_secureboot_mode_disabled;
-+
-+ secure_boot_enabled:
-+	pr_info("UEFI Secure Boot is enabled.\n");
-+	return efi_secureboot_mode_enabled;
-+
-+ out_efi_err:
-+	pr_err("Could not determine UEFI Secure Boot status.\n");
-+	return efi_secureboot_mode_unknown;
-+}
-+
- void __init xen_efi_init(void)
- {
- 	efi_system_table_t *efi_systab_xen;
-@@ -129,6 +184,8 @@ void __init xen_efi_init(void)
- 	boot_params.efi_info.efi_systab = (__u32)__pa(efi_systab_xen);
- 	boot_params.efi_info.efi_systab_hi = (__u32)(__pa(efi_systab_xen) >> 32);
- 
-+	boot_params.secure_boot = xen_efi_get_secureboot();
-+
- 	set_bit(EFI_BOOT, &efi.flags);
- 	set_bit(EFI_PARAVIRT, &efi.flags);
- 	set_bit(EFI_64BIT, &efi.flags);
-diff --git a/drivers/firmware/efi/libstub/secureboot.c b/drivers/firmware/efi/libstub/secureboot.c
-index 8f07eb4..72d9dfb 100644
---- a/drivers/firmware/efi/libstub/secureboot.c
-+++ b/drivers/firmware/efi/libstub/secureboot.c
-@@ -30,6 +30,9 @@
- 
- /*
-  * Determine whether we're in secure boot mode.
-+ *
-+ * Please keep the logic in sync with
-+ * arch/x86/xen/efi.c:xen_efi_get_secureboot().
-  */
- enum efi_secureboot_mode efi_get_secureboot(efi_system_table_t *sys_table_arg)
- {
--- 
-1.7.10.4
+> > -----Original Message-----
+> > From: Ingo Molnar <mingo.kernel.org@gmail.com> On Behalf Of Ingo Molnar
+> > Sent: Tuesday, April 3, 2018 7:04 AM
+> > To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
+> > Cc: x86@kernel.org; linux-kernel@vger.kernel.org; bp@suse.de
+> > Subject: Re: [PATCH] x86/smpboot: Don't do mwait_play_dead() on AMD
+> > systems
+> > 
+> > 
+> > * Yazen Ghannam <Yazen.Ghannam@amd.com> wrote:
+> > 
+> > > From: Yazen Ghannam <yazen.ghannam@amd.com>
+> > >
+> > > Recent AMD systems support using MWAIT for C1 state. However, MWAIT will
+> > > not allow deeper cstates than C1 on current systems.
+> > >
+> > > With play_dead() we expect the OS to use the deepest state available.
+> > > The deepest state available on AMD systems is reached through SystemIO
+> > > or HALT. If MWAIT is available, we use it instead of the other methods,
+> > > so we never reach the deepest state.
+> > >
+> > > Don't try to use MWAIT to play_dead() on AMD systems. Instead, we'll use
+> > > CPUIDLE to enter the deepest state advertised by firmware. If CPUIDLE is
+> > > not available then we fallback to HALT.
+> > >
+> > > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> > > ---
+> > >  arch/x86/kernel/smpboot.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> > > index ff99e2b6fc54..67cf00b25f83 100644
+> > > --- a/arch/x86/kernel/smpboot.c
+> > > +++ b/arch/x86/kernel/smpboot.c
+> > > @@ -1536,6 +1536,9 @@ static inline void mwait_play_dead(void)
+> > >  	void *mwait_ptr;
+> > >  	int i;
+> > >
+> > > +	/* Don't try native MWAIT on AMD. Stick to CPUIDLE and HALT. */
+> > > +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+> > > +		return;
+> > 
+> > The comment should mainly explain the 'why is this done', not the 'what is done'
+> > which is pretty obvious from the code ...
+> > 
+> 
+> Yes, I'll drop that comment since the commit message has the explanation.
+
+Or rather, explain the 'why' in the comment, because otherwise this is a pretty 
+obscure condition that is not self-documenting?
+
+Thanks,
+
+	Ingo
