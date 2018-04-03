@@ -1,70 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932154AbeDCMam (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:30:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60362 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932080AbeDCMal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:30:41 -0400
-Subject: Re: [kvmtool PATCH 20/17] kvmtool: arm64: Switch memory layout
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "cdall@kernel.org" <cdall@kernel.org>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Punit Agrawal <Punit.Agrawal@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        Kristina Martsenko <Kristina.Martsenko@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-21-git-send-email-suzuki.poulose@arm.com>
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <f04a9ac7-a555-47e1-0bef-f5ff28b287f8@arm.com>
-Date: Tue, 3 Apr 2018 13:34:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932233AbeDCMfS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:35:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37393 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932104AbeDCMfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 08:35:16 -0400
+Date: Tue, 3 Apr 2018 14:35:14 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180403123514.GX5501@dhcp22.suse.cz>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180330102038.2378925b@gandalf.local.home>
+ <20180403110612.GM5501@dhcp22.suse.cz>
+ <20180403075158.0c0a2795@gandalf.local.home>
+ <20180403121614.GV5501@dhcp22.suse.cz>
+ <20180403082348.28cd3c1c@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <1522156531-28348-21-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403082348.28cd3c1c@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-
-On 27/03/18 14:15, Suzuki K Poulose wrote:
-> If the guest wants to use a larger physical address space place
-> the RAM at upper half of the address space. Otherwise, it uses the
-> default layout.
+On Tue 03-04-18 08:23:48, Steven Rostedt wrote:
+> On Tue, 3 Apr 2018 14:16:14 +0200
+> Michal Hocko <mhocko@kernel.org> wrote:
 > 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arm/aarch32/include/kvm/kvm-arch.h |  1 +
->  arm/aarch64/include/kvm/kvm-arch.h | 15 ++++++++++++---
->  arm/include/arm-common/kvm-arch.h  | 11 ++++++-----
->  arm/kvm.c                          |  2 +-
->  4 files changed, 20 insertions(+), 9 deletions(-)
+> > > This came up because there's scripts or programs that set the size of
+> > > the ring buffer. The complaint was that the application would just set
+> > > the size to something bigger than what was available and cause an OOM
+> > > killing other applications. The final solution is to simply check the
+> > > available memory before allocating the ring buffer:
+> > > 
+> > > 	/* Check if the available memory is there first */
+> > > 	i = si_mem_available();
+> > > 	if (i < nr_pages)
+> > > 		return -ENOMEM;
+> > > 
+> > > And it works well.  
+> > 
+> > Except that it doesn't work. si_mem_available is not really suitable for
+> > any allocation estimations. Its only purpose is to provide a very rough
+> > estimation for userspace. Any other use is basically abuse. The
+> > situation can change really quickly. Really it is really hard to be
+> > clever here with the volatility the memory allocations can cause.
 > 
-> diff --git a/arm/aarch32/include/kvm/kvm-arch.h b/arm/aarch32/include/kvm/kvm-arch.h
-> index cd31e72..2d62aab 100644
-> --- a/arm/aarch32/include/kvm/kvm-arch.h
-> +++ b/arm/aarch32/include/kvm/kvm-arch.h
-> @@ -4,6 +4,7 @@
->  #define ARM_KERN_OFFSET(...)	0x8000
->  
->  #define ARM_MAX_MEMORY(...)	ARM_LOMAP_MAX_MEMORY
+> OK, then what do you suggest? Because currently, it appears to work. A
+> rough estimate may be good enough.
+> 
+> If we use NORETRY, then we have those that complain that we do not try
+> hard enough to reclaim memory. If we use RETRY_MAYFAIL we have this
+> issue of taking up all memory before we get what we want.
 
-I guess this should now be ARM32_MAX_MEMORY?
+Just try to do what admin asks for and trust it will not try to shoot
+his foot? I mean there are other ways admin can shoot the machine down.
+Being clever is OK if it doesn't add a tricky code. And relying on
+si_mem_available is definitely tricky and obscure.
 
-Thanks,
-Jean
+> Perhaps I should try to allocate a large group of pages with
+> RETRY_MAYFAIL, and if that fails go back to NORETRY, with the thinking
+> that the large allocation may reclaim some memory that would allow the
+> NORETRY to succeed with smaller allocations (one page at a time)?
+
+That again relies on a subtle dependencies of the current
+implementation. So I would rather ask whether this is something that
+really deserves special treatment. If admin asks for a buffer of a
+certain size then try to do so. If we get OOM then bad luck you cannot
+get large memory buffers for free...
+-- 
+Michal Hocko
+SUSE Labs
