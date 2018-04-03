@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2496537-1522791992-2-4983399337720901381
+X-Cyrus-Session-Id: sloti22d1t05-1765435-1522767255-2-2194881247271444991
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,24 +14,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522791992; b=YRJXKOdGgMZevBaVMY9nFEFIgaYMIo3Df/U78SPgbSZqD90AAe
-    Mri+RFdxIwmy301EF+sWEdoQ0/d2LJ+B+O4INBX1DWbqXIO57uiSbc1CoGEEBb46
-    VjsVCRjT9bQWVmJLkD+c8cXlmTkD6Z9NKL8ZMXdGVkq96KCudauSQVmxdjBsVSV0
-    5YGhUGMdClO1uKJXb2JoQzShAic+AcXK2CnLQYL8r18DlDOXMmsLkbfqjBpIUb+J
-    ohGOFBSq9IpRdpF7KsaUEBaPPhBDOVShVReMPySWCH4yNAIRoSxW3d1fHOrsKmMR
-    fq3/dglW96TMs1v8qGoYHVvqMGKplas4DFDQ==
+    1522767254; b=gFIEQUIUjti3z0khw2aUT842QJg3FWxkGwgU0K2rmp1KlVchj+
+    K9P+2KAFGPIidXYnU4MGKm/k62F3rfSFwGp2Pe8ID9U7gHzuly+pFZfRaF7xPFxj
+    W7WvvWHtDFzse9Czpouul5tKaCXX9Bj5bmmGMAFXSqQmX3iRDPvcR3CtxNxARaX2
+    O4f8lKm2u+2KVN+lVXryMsurQc1Qwc2DyYNJwOm7X3/M+53ee4yChmHYHgkvrqAG
+    hlIFE1ZHu3+b7ws4ZXB1H7O7dhmoHWoXA1XO6cibm5InMYpOKUWnODWH+wIoZd+l
+    q6XfB2mVPTvMVsQwmJorxGgDcdUmOxsk5jfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=message-id:subject:from:to:cc:date
     :in-reply-to:references:content-type:mime-version
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1522791992;
-    bh=+L5ea0qDgzGj1aSA/SiUFSyS+pNRI1kxzCfqcNKPV+g=; b=CMSXK7pMjCzk
-    1/hFb7ed7Dv+S5AzGOy1RyOcyRhrX6l601QHiHHU1keMYYX6ga9IKCzy4sJ6JkCk
-    fZkU+uCkRIo2ZuKRHmNLyCiPV3/vNrX6S2ajwpdAp4LHgIGxb2bdH//OugwfIIuD
-    IDbold/EDsQc2bSs55EwPqqbQfHPp19ySFBolrRztVzJPNlR/I4igi5lrBxWnuaa
-    fESa1t95AVPBgzxdTwnHlxe4wIe/U8O2Vj6aVvLX0M7B382idy9NIVxTWh3stb6X
-    1cZ5ndWBIi6j/WsUDlE8nj3DMdgoEYFcaQsrLvKdFDhTqcHog4VoFfX+Fs1kKqMU
-    VzQbA2hjpQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1522767254;
+    bh=jMTb3vFzLX4o+QJn/m4aXR6CwxZ+Kyb4qT9lIQROLYI=; b=hhsJ29jomLFi
+    Tk5Rc4D6W9ETgpeUANZ8+hf4dK2lcsyLjz6PDbzSQ1U09OpHrLPi+XQ+3CCdkYGh
+    yNv33cobBa7EHedfZ7kyHVh/ynIePUCQuWlrEDhuNznC4VmSSEQE0G1VwarkYA/s
+    36Wfk/P10LIIp/WkE6bacDDg8PU4PfX0eZIJmGsLcBX72hVA1m7yrbro6oPTkwrN
+    lhYNMC3OIRJ0aZ5Ml99HSJiGOTATsDPLoTCVOtbi4uRzqCbIyTG7t0eBQnVTMB1i
+    rMcG8zmIJexauNt16GL/FPV5nzyHuSsRLmfCsK8StkbSIVGVNQDCbVnER71RsN+g
+    KnbroZnjTg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
@@ -53,35 +53,34 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codethink.co.uk header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBpNyWawDHueVkZfIqaVh6bF8WAbLumBEdAxa0wnjBhzL05VppHXcRralWlPLMH8iq5hKmFn2SeIE3egw/KL/pdqT0QkCT8asKgJfoV201iFZbWVNJqi
-    m+pzHv3rx4lgy/JF8bf0gJHARRr6JZdRmSxpPN+CGJl3UYmPAgsBHwaM7T8qgbM6kNldbF3JTNR1CN065P4raHFzACwzZoDeDt4kGi85v45QRnf9EIWFB+bA
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAZS4Ygnfa+y8V7aCekw4uq2di6nEMOCPnfb+NoBdn2JLzBHjv1r5cDuys52BFTum9jRMMOlaFz9pd0fwVV+rLi5ZSKRgChqWgi7usDx3+hiSotoO/mx
+    CPBQOVzv43JRRKyjPDUFBBimPAkdkTkpQW2DLTcFvr/Q24eeSmwyYjLj57oKM5v5ymq4wtUvn2BFgl1DAX+xnYP8bC0ChA/uNvXT/TlwMiaBlAoftH3CxDq0
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=Csv93wv4BVeGjb8N8akA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=20KFwNOVAAAA:8 a=xRsK6Ehpj9F3wmsJmaAA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753004AbeDCVq3 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 3 Apr 2018 17:46:29 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:34082 "EHLO
+        id S1751333AbeDCOyM (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 3 Apr 2018 10:54:12 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:56313 "EHLO
         imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752813AbeDCVq2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 3 Apr 2018 17:46:28 -0400
-Message-ID: <1522791985.2654.142.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 70/97] rtc: ds1374: wdt: Fix issue with timeout
- scaling from secs to wdt ticks
+        with ESMTP id S1751223AbeDCOyL (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 3 Apr 2018 10:54:11 -0400
+Message-ID: <1522767248.2654.105.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 22/97] scsi: virtio_scsi: Always try to read VPD
+ pages
 From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Moritz Fischer <mdf@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: stable@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Tue, 03 Apr 2018 22:46:25 +0100
-In-Reply-To: <20180323094201.536829633@linuxfoundation.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Date: Tue, 03 Apr 2018 15:54:08 +0100
+In-Reply-To: <20180323094158.812011199@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
-         <20180323094201.536829633@linuxfoundation.org>
+         <20180323094158.812011199@linuxfoundation.org>
 Organization: Codethink Ltd.
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
@@ -98,18 +97,20 @@ On Fri, 2018-03-23 at 10:54 +0100, Greg Kroah-Hartman wrote:
 > 
 > ------------------
 > 
-> From: Moritz Fischer <mdf@kernel.org>
+> From: David Gibson <david@gibson.dropbear.id.au>
 > 
 > 
-> [ Upstream commit 453d0744f6c6ca3f9749b8c57c2e85b5b9f52514 ]
-> 
-> The issue is that the internal counter that triggers the watchdog reset
-> is actually running at 4096 Hz instead of 1Hz, therefore the value
-> given by userland (in sec) needs to be multiplied by 4096 to get the
-> correct behavior.
+> [ Upstream commit 25d1d50e23275e141e3a3fe06c25a99f4c4bf4e0 ]
 [...]
 
-The wdt_margin module parameter has the same problem.
+This is an incomplete fix as it only touches the single-queue host
+template.  The other part is:
+
+commit a680f1d463aeaeb00d22af257a56e111967c2f18
+Author: Paolo Bonzini <pbonzini@redhat.com>
+Date:   Wed Jul 5 10:30:56 2017 +0200
+
+    scsi: virtio_scsi: always read VPD pages for multiqueue too
 
 Ben.
 
