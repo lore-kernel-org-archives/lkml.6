@@ -1,392 +1,149 @@
-Return-Path: <robert.jarzmik@free.fr>
-X-Google-Smtp-Source: AIpwx48I3y8EayhTd703gMQz8GQ3DYdobJVPR1N1XJ+RajFC4coSxlqYOv6HqpIHI/JiXjY/IEmH
-ARC-Seal: i=1; a=rsa-sha256; t=1522679316; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dMRvfTpP6A6ShDbWE+44Sgv6/hz8kcQ5supwYawVK87m7MivGzW/TMUvHSG0FJ8jUl
-         bnwp4MlVZwvuAbGY2b8Yq6wqT17MhZB7EaL3iuGPk8TOlgEVQoECj8jbaI8+KLvZn80N
-         OjNYRs4AiSWCAM+DxCx+OsgZdaw4yLSGxeSGJK2uL9OuEDR9li5jPGs7uJaX6Z/BOgqi
-         FyCChiKsqcqy3soALVzGHhk5hLmDg0hNpt3L2s+A6+ssmzn4g3lvC2NYh+JTQFK5gd0u
-         0GyvFnpSsHCSJWVke5vhaTIjA7vJF4wCDPOFGHuhpXGm77HQUhtkXV/TFy7Qz1YkpE6+
-         M8Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=Qr68OPvfz+V3jjRAKMoxOD+4lkdeiE6eJ2F6w9Eiz2c=;
-        b=DXTYWPk2aq6OQBaqCNqfrGecWNd8WLypK/WEfc3loNJqzZ3EwZnBfu4Eb2ycCSCggS
-         Z8R9U3eWyYvRTK7GVNhIqoZACdw2+Ng/061J93q0lEUA0E0TdU0vjytGnbV6EUP2lsZv
-         thUsNLG1bMZ3p8EuAn5iF+uhG7biUwf4PeG/kOSCvcW1R8WdZc7yaMmc7tbfuuVfqD/J
-         guMmRmKgDjKIvnRORGet0QNr2Q1dKUP69jIzHQHweNXNOGky3H03F4SoXpbhnNi0iPNY
-         B8ernMM0MGGHEGQ95To4W1clI+YzkjycBkr7bi6w6hMKnTgRJ7RdUO+T4YNL7Lcy5HHT
-         H0yg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 02 Apr 2018 16:28:35 +0200
-X-ME-IP: 86.201.130.131
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Tejun Heo <tj@kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Richard Weinberger <richard@nod.at>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Samuel Ortiz <samuel@sortiz.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	alsa-devel@alsa-project.org
-Subject: [PATCH 14/15] ARM: pxa: change SSP devices allocation
-Date: Mon,  2 Apr 2018 16:26:55 +0200
-Message-Id: <20180402142656.26815-15-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180402142656.26815-1-robert.jarzmik@free.fr>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-909279-1522739215-2-13940222002491802247
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522739215; b=GXtjB5vbffiSmxt2MSMaYln2ByswYUIjSfdBr3KcFOpx2TQ8uJ
+    a5aAuk50lfjKFY5wgpFBp0ClIYfABk4yMW29Jy1wtL5ENJ2eeyROeDS7f22mkfxv
+    BCiJcFkY7rud+8X4MtblyCHdW+pC8dUFG1gaxellczqbg6Dp6nRFFg0lpexxO7oU
+    2kvIEyys6BNOi7Ena9qBd3IUnk31k2U3pReoy9nl/8hsQEbD0Lo2pTRbZm2ypShF
+    t8j35R+P+wBfGFGArrrm6bcB68uoGxCBa+I+zRdxkKccOUDU737ArCR3FsJHRqZ8
+    LTLSpRqkltupVMhR7abmSNJVmAf4Rz0ivprw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1522739215; bh=Zzny5
+    eHV0LFVFsXbcatcJXyP5LS+/WDKt6arPTKRp3Q=; b=XASNHm/g7CTDA4jO6d/6Y
+    VTBsRTC2gdrDUFmjWoTWI+LuyL05vuBZ/s1koQqvQEJmc1BEfWm08kiPeGmvhawg
+    wnwCHez++iQFnF5Pj+gadj2ge4C8D2kgQOCBwLVpk2n4Atnhn1q+mLQGIlwLJyZk
+    0AGgI9JEud9rhHX411VqC6cIVGsZsVlpIT/IBvIBn5shuE7vPlDefaFyCMPE7QJN
+    uPIvljH1hfstPX3epz5oUu0MEZ+SYa5woPtt/ZZqVrxl/Tdl8oax3zojEBCYsS/V
+    zg7R5130QKOA2Wgsbwd2GG7wBjk2C2+b/oMDWKyR2Rqef4XycrKVt5CSAByElmF8
+    w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Xq6fKgnv x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fe6ozm9e;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Xq6fKgnv x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=fe6ozm9e;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfF0e0CEAwroM5YR1NW323p9x5ZG+4aEHB8/3zXGKZiT0yMT0Yuusp1x0FwvsSZoSbcQXjgtFTephX8GGvW6ZXIaWljwFcE7ZXHFsyY+frgggXR817Uuj
+    OHjUo3ZeRLlefCtlozEcy1AwdOQ8gPv4jWFys1Gds96aqefuRqJ5NH6cRtPmP8fGK2LBtFF1mdff9329Tphvl8faFDLkVzds4lWtaUcIj6d/31IblshwBw/3
+    Xnaxl+iBHQpzMqGjLftU/w==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=36Dk5VdrRMVujahIgl4A:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4+aBmt383iJRhSbGzl1mpLYHxjTlDQVUk6i6wvA9GjO5MwtYfgY7Z+BKP09Q2DJ6Zh9RQPWsjsBWQjOvC6k8F4=
+MIME-Version: 1.0
+In-Reply-To: <20180402142656.26815-15-robert.jarzmik@free.fr>
 References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+ <20180402142656.26815-15-robert.jarzmik@free.fr>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 3 Apr 2018 09:06:46 +0200
+X-Google-Sender-Auth: UyYJjYD_XY9oOqM_az1JcumPJEw
+Message-ID: <CAK8P3a2hYWO2eweg3zpR7iJoqtH4uxJLAxJAno7L96G7nA2HxQ@mail.gmail.com>
+Subject: Re: [PATCH 14/15] ARM: pxa: change SSP devices allocation
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, alsa-devel@alsa-project.org,
+ Jaroslav Kysela <perex@perex.cz>, IDE-ML <linux-ide@vger.kernel.org>,
+ Networking <netdev@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>,
+ devel@driverdev.osuosl.org,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Vinod Koul <vinod.koul@intel.com>, Richard Weinberger <richard@nod.at>,
+ Takashi Iwai <tiwai@suse.com>, Russell King <linux@armlinux.org.uk>,
+ Marek Vasut <marek.vasut@gmail.com>,
+ Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+ Linux Media Mailing List <linux-media@vger.kernel.org>,
+ Samuel Ortiz <samuel@sortiz.org>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>, dmaengine@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ Nicolas Pitre <nico@fluxnic.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-mmc <linux-mmc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Tejun Heo <tj@kernel.org>,
+ Brian Norris <computersforpeace@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>, Daniel Mack <daniel@zonque.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596644987431151366?=
-X-GMAIL-MSGID: =?utf-8?q?1596644987431151366?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In order to prepare for the dma_slave_map change for SSP DMA channels
-allocation, the SSP platform devices will now include a platform data
-structure which in turn selects which dma channel has to be used for
-data transfers, especially the PCM ones.
+On Mon, Apr 2, 2018 at 4:26 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- arch/arm/mach-pxa/devices.c            | 78 +++++++++++++++++++++++++++++-----
- arch/arm/mach-pxa/devices.h            | 14 ++----
- arch/arm/mach-pxa/include/mach/audio.h | 12 ++++++
- arch/arm/mach-pxa/pxa25x.c             |  4 +-
- arch/arm/mach-pxa/pxa27x.c             |  4 +-
- arch/arm/mach-pxa/pxa3xx.c             |  5 +--
- 6 files changed, 86 insertions(+), 31 deletions(-)
+>
+> +static struct pxa_ssp_info pxa_ssp_infos[] = {
+> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
+> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
+> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
+> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
+> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
+> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
+> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
+> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
+> +};
 
-diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
-index c0b3c90fd67f..955d255dc4f4 100644
---- a/arch/arm/mach-pxa/devices.c
-+++ b/arch/arm/mach-pxa/devices.c
-@@ -481,6 +481,17 @@ void __init pxa_set_ac97_info(pxa2xx_audio_ops_t *ops)
- 	pxa_register_device(&pxa_device_ac97, ops);
- }
- 
-+static struct pxa_ssp_info pxa_ssp_infos[] = {
-+	{ .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
-+	{ .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
-+	{ .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
-+	{ .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
-+	{ .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
-+	{ .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
-+	{ .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
-+	{ .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
-+};
-+
- #ifdef CONFIG_PXA25x
- 
- static struct resource pxa25x_resource_pwm0[] = {
-@@ -528,7 +539,7 @@ static struct resource pxa25x_resource_ssp[] = {
- 	},
- };
- 
--struct platform_device pxa25x_device_ssp = {
-+static struct platform_device pxa25x_device_ssp = {
- 	.name		= "pxa25x-ssp",
- 	.id		= 0,
- 	.dev		= {
-@@ -554,7 +565,7 @@ static struct resource pxa25x_resource_nssp[] = {
- 	},
- };
- 
--struct platform_device pxa25x_device_nssp = {
-+static struct platform_device pxa25x_device_nssp = {
- 	.name		= "pxa25x-nssp",
- 	.id		= 1,
- 	.dev		= {
-@@ -580,7 +591,7 @@ static struct resource pxa25x_resource_assp[] = {
- 	},
- };
- 
--struct platform_device pxa25x_device_assp = {
-+static struct platform_device pxa25x_device_assp = {
- 	/* ASSP is basically equivalent to NSSP */
- 	.name		= "pxa25x-nssp",
- 	.id		= 2,
-@@ -591,6 +602,22 @@ struct platform_device pxa25x_device_assp = {
- 	.resource	= pxa25x_resource_assp,
- 	.num_resources	= ARRAY_SIZE(pxa25x_resource_assp),
- };
-+
-+static struct platform_device *pxa25x_device_ssps[] = {
-+	&pxa25x_device_ssp,
-+	&pxa25x_device_nssp,
-+	&pxa25x_device_assp,
-+};
-+
-+void __init pxa25x_set_ssp_info(void)
-+{
-+	int ssp;
-+
-+	for (ssp = 0; ssp < ARRAY_SIZE(pxa25x_device_ssps); ssp++)
-+		pxa_register_device(pxa25x_device_ssps[ssp],
-+				    &pxa_ssp_infos[ssp]);
-+}
-+
- #endif /* CONFIG_PXA25x */
- 
- #if defined(CONFIG_PXA27x) || defined(CONFIG_PXA3xx)
-@@ -698,7 +725,7 @@ static struct resource pxa27x_resource_ssp1[] = {
- 	},
- };
- 
--struct platform_device pxa27x_device_ssp1 = {
-+static struct platform_device pxa27x_device_ssp1 = {
- 	.name		= "pxa27x-ssp",
- 	.id		= 0,
- 	.dev		= {
-@@ -724,7 +751,7 @@ static struct resource pxa27x_resource_ssp2[] = {
- 	},
- };
- 
--struct platform_device pxa27x_device_ssp2 = {
-+static struct platform_device pxa27x_device_ssp2 = {
- 	.name		= "pxa27x-ssp",
- 	.id		= 1,
- 	.dev		= {
-@@ -750,7 +777,7 @@ static struct resource pxa27x_resource_ssp3[] = {
- 	},
- };
- 
--struct platform_device pxa27x_device_ssp3 = {
-+static struct platform_device pxa27x_device_ssp3 = {
- 	.name		= "pxa27x-ssp",
- 	.id		= 2,
- 	.dev		= {
-@@ -761,6 +788,21 @@ struct platform_device pxa27x_device_ssp3 = {
- 	.num_resources	= ARRAY_SIZE(pxa27x_resource_ssp3),
- };
- 
-+static struct platform_device *pxa27x_device_ssps[] = {
-+	&pxa27x_device_ssp1,
-+	&pxa27x_device_ssp2,
-+	&pxa27x_device_ssp3,
-+};
-+
-+void __init pxa27x_set_ssp_info(void)
-+{
-+	int ssp;
-+
-+	for (ssp = 0; ssp < ARRAY_SIZE(pxa27x_device_ssps); ssp++)
-+		pxa_register_device(pxa27x_device_ssps[ssp],
-+				    &pxa_ssp_infos[ssp]);
-+}
-+
- static struct resource pxa27x_resource_pwm0[] = {
- 	[0] = {
- 		.start	= 0x40b00000,
-@@ -951,7 +993,7 @@ static struct resource pxa3xx_resource_ssp4[] = {
-  * make the driver set the correct internal type, hence we provide specific
-  * platform_devices for each of them.
-  */
--struct platform_device pxa3xx_device_ssp1 = {
-+static struct platform_device pxa3xx_device_ssp1 = {
- 	.name		= "pxa3xx-ssp",
- 	.id		= 0,
- 	.dev		= {
-@@ -962,7 +1004,7 @@ struct platform_device pxa3xx_device_ssp1 = {
- 	.num_resources	= ARRAY_SIZE(pxa27x_resource_ssp1),
- };
- 
--struct platform_device pxa3xx_device_ssp2 = {
-+static struct platform_device pxa3xx_device_ssp2 = {
- 	.name		= "pxa3xx-ssp",
- 	.id		= 1,
- 	.dev		= {
-@@ -973,7 +1015,7 @@ struct platform_device pxa3xx_device_ssp2 = {
- 	.num_resources	= ARRAY_SIZE(pxa27x_resource_ssp2),
- };
- 
--struct platform_device pxa3xx_device_ssp3 = {
-+static struct platform_device pxa3xx_device_ssp3 = {
- 	.name		= "pxa3xx-ssp",
- 	.id		= 2,
- 	.dev		= {
-@@ -984,7 +1026,7 @@ struct platform_device pxa3xx_device_ssp3 = {
- 	.num_resources	= ARRAY_SIZE(pxa27x_resource_ssp3),
- };
- 
--struct platform_device pxa3xx_device_ssp4 = {
-+static struct platform_device pxa3xx_device_ssp4 = {
- 	.name		= "pxa3xx-ssp",
- 	.id		= 3,
- 	.dev		= {
-@@ -994,6 +1036,22 @@ struct platform_device pxa3xx_device_ssp4 = {
- 	.resource	= pxa3xx_resource_ssp4,
- 	.num_resources	= ARRAY_SIZE(pxa3xx_resource_ssp4),
- };
-+
-+static struct platform_device *pxa3xx_device_ssps[] = {
-+	&pxa3xx_device_ssp1,
-+	&pxa3xx_device_ssp2,
-+	&pxa3xx_device_ssp3,
-+	&pxa3xx_device_ssp4,
-+};
-+
-+void __init pxa3xx_set_ssp_info(void)
-+{
-+	int ssp;
-+
-+	for (ssp = 0; ssp < ARRAY_SIZE(pxa3xx_device_ssps); ssp++)
-+		pxa_register_device(pxa3xx_device_ssps[ssp],
-+				    &pxa_ssp_infos[ssp]);
-+}
- #endif /* CONFIG_PXA3xx */
- 
- struct resource pxa_resource_gpio[] = {
-diff --git a/arch/arm/mach-pxa/devices.h b/arch/arm/mach-pxa/devices.h
-index 11263f7c455b..5909805e7d84 100644
---- a/arch/arm/mach-pxa/devices.h
-+++ b/arch/arm/mach-pxa/devices.h
-@@ -22,17 +22,6 @@ extern struct platform_device pxa27x_device_i2c_power;
- extern struct platform_device pxa27x_device_ohci;
- extern struct platform_device pxa27x_device_keypad;
- 
--extern struct platform_device pxa25x_device_ssp;
--extern struct platform_device pxa25x_device_nssp;
--extern struct platform_device pxa25x_device_assp;
--extern struct platform_device pxa27x_device_ssp1;
--extern struct platform_device pxa27x_device_ssp2;
--extern struct platform_device pxa27x_device_ssp3;
--extern struct platform_device pxa3xx_device_ssp1;
--extern struct platform_device pxa3xx_device_ssp2;
--extern struct platform_device pxa3xx_device_ssp3;
--extern struct platform_device pxa3xx_device_ssp4;
--
- extern struct platform_device pxa25x_device_pwm0;
- extern struct platform_device pxa25x_device_pwm1;
- extern struct platform_device pxa27x_device_pwm0;
-@@ -65,3 +54,6 @@ extern void pxa27x_set_i2c_power_info(struct i2c_pxa_platform_data *info);
- #ifdef CONFIG_PXA3xx
- extern void pxa3xx_set_i2c_power_info(struct i2c_pxa_platform_data *info);
- #endif
-+void pxa25x_set_ssp_info(void);
-+void pxa27x_set_ssp_info(void);
-+void pxa3xx_set_ssp_info(void);
-diff --git a/arch/arm/mach-pxa/include/mach/audio.h b/arch/arm/mach-pxa/include/mach/audio.h
-index 7beebf7297b5..f1f6bc7673a1 100644
---- a/arch/arm/mach-pxa/include/mach/audio.h
-+++ b/arch/arm/mach-pxa/include/mach/audio.h
-@@ -28,4 +28,16 @@ typedef struct {
- 
- extern void pxa_set_ac97_info(pxa2xx_audio_ops_t *ops);
- 
-+/*
-+ * struct pxa_ssp_info - platform data for SSP devices
-+ * @dma_chan_rx_name: name of the receive dma channel to query, see
-+ *		      pxa_slave_map
-+ * @dma_chan_tx_name: name of the transmit dma channel to query, see
-+ *		      pxa_slave_map
-+ */
-+struct pxa_ssp_info {
-+	const char *dma_chan_rx_name;
-+	const char *dma_chan_tx_name;
-+};
-+
- #endif
-diff --git a/arch/arm/mach-pxa/pxa25x.c b/arch/arm/mach-pxa/pxa25x.c
-index ba431fad5c47..74779afbf200 100644
---- a/arch/arm/mach-pxa/pxa25x.c
-+++ b/arch/arm/mach-pxa/pxa25x.c
-@@ -193,9 +193,6 @@ static struct platform_device *pxa25x_devices[] __initdata = {
- 	&pxa_device_pmu,
- 	&pxa_device_i2s,
- 	&sa1100_device_rtc,
--	&pxa25x_device_ssp,
--	&pxa25x_device_nssp,
--	&pxa25x_device_assp,
- 	&pxa25x_device_pwm0,
- 	&pxa25x_device_pwm1,
- 	&pxa_device_asoc_platform,
-@@ -219,6 +216,7 @@ static int __init pxa25x_init(void)
- 			pxa_register_device(&pxa25x_device_gpio, &pxa25x_gpio_info);
- 			ret = platform_add_devices(pxa25x_devices,
- 						   ARRAY_SIZE(pxa25x_devices));
-+			pxa25x_set_ssp_info();
- 		}
- 	}
- 
-diff --git a/arch/arm/mach-pxa/pxa27x.c b/arch/arm/mach-pxa/pxa27x.c
-index 0c06f383ad52..f3896d164fd3 100644
---- a/arch/arm/mach-pxa/pxa27x.c
-+++ b/arch/arm/mach-pxa/pxa27x.c
-@@ -290,9 +290,6 @@ static struct platform_device *devices[] __initdata = {
- 	&pxa_device_asoc_ssp3,
- 	&pxa_device_asoc_platform,
- 	&pxa_device_rtc,
--	&pxa27x_device_ssp1,
--	&pxa27x_device_ssp2,
--	&pxa27x_device_ssp3,
- 	&pxa27x_device_pwm0,
- 	&pxa27x_device_pwm1,
- };
-@@ -313,6 +310,7 @@ static int __init pxa27x_init(void)
- 		if (!of_have_populated_dt()) {
- 			pxa_register_device(&pxa27x_device_gpio,
- 					    &pxa27x_gpio_info);
-+			pxa27x_set_ssp_info();
- 			pxa2xx_set_dmac_info(32, 75);
- 			ret = platform_add_devices(devices,
- 						   ARRAY_SIZE(devices));
-diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
-index 4b8a0df8ea57..2a5044dd463e 100644
---- a/arch/arm/mach-pxa/pxa3xx.c
-+++ b/arch/arm/mach-pxa/pxa3xx.c
-@@ -413,10 +413,6 @@ static struct platform_device *devices[] __initdata = {
- 	&pxa_device_asoc_ssp4,
- 	&pxa_device_asoc_platform,
- 	&pxa_device_rtc,
--	&pxa3xx_device_ssp1,
--	&pxa3xx_device_ssp2,
--	&pxa3xx_device_ssp3,
--	&pxa3xx_device_ssp4,
- 	&pxa27x_device_pwm0,
- 	&pxa27x_device_pwm1,
- };
-@@ -456,6 +452,7 @@ static int __init pxa3xx_init(void)
- 		ret = platform_add_devices(devices, ARRAY_SIZE(devices));
- 		if (ret)
- 			return ret;
-+		pxa3xx_set_ssp_info();
- 		if (cpu_is_pxa300() || cpu_is_pxa310() || cpu_is_pxa320()) {
- 			platform_device_add_data(&pxa3xx_device_gpio,
- 						 &pxa3xx_gpio_pdata,
--- 
-2.11.0
+This part looks odd to me, you're adding an extra level of indirection to
+do two stages of lookups in some form of platform data.
+
+Why can't you just always use "rx" and "tx" as the names here?
+
+(also, I don't see why each line is duplicated, but I'm sure there's
+an easy answer for that).
+
+       Arnd
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
