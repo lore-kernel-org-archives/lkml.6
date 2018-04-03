@@ -1,109 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752397AbeDCSDP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 14:03:15 -0400
-Received: from mga09.intel.com ([134.134.136.24]:49547 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751461AbeDCSDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 14:03:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,402,1517904000";
-   d="scan'208";a="30739329"
-Subject: Re: [PATCH v1] perf stat: enable 1ms interval for printing event
- counters values
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1480cba7-2307-8827-0ca6-0d6029ccdad9@linux.intel.com>
- <20180403152204.GA2313@krava>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <ecf91362-76b9-0df9-c28a-e10c8ccc56d4@linux.intel.com>
-Date: Tue, 3 Apr 2018 21:03:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752718AbeDCSIi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 14:08:38 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:36510 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751904AbeDCSIg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 14:08:36 -0400
+X-Google-Smtp-Source: AIpwx49gpz200LQ+BMY6sDsK11s6ggFaqj0gwAzbCGvBoVRHXvvwQh+pMzuhLEVIk+SJbVobK2VPXQ==
+Date: Tue, 3 Apr 2018 20:08:32 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: christian.koenig@amd.com, linaro-mm-sig@lists.linaro.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180403180832.GZ3881@phenom.ffwll.local>
+Mail-Followup-To: Jerome Glisse <jglisse@redhat.com>,
+        christian.koenig@amd.com, linaro-mm-sig@lists.linaro.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-4-christian.koenig@amd.com>
+ <20180329065753.GD3881@phenom.ffwll.local>
+ <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
+ <20180403090909.GN3881@phenom.ffwll.local>
+ <20180403170645.GB5935@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180403152204.GA2313@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180403170645.GB5935@redhat.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.04.2018 18:22, Jiri Olsa wrote:
-> On Tue, Apr 03, 2018 at 06:04:13PM +0300, Alexey Budankov wrote:
->>
->> Currently print count interval for performance counters values is 
->> limited by 10ms so reading the values at frequencies higher than 100Hz 
->> is restricted by the tool.
->>
->> This change makes perf stat -I possible on frequencies up to 1KHz and, 
->> to some extent, makes perf stat -I to be on-par with perf record 
->> sampling profiling.
->>
->> When running perf stat -I for monitoring e.g. PCIe uncore counters and 
->> at the same time profiling some I/O workload by perf record e.g. for 
->> cpu-cycles and context switches, it is then possible to observe 
->> consolidated CPU/OS/IO(Uncore) performance picture for that workload.
->>
->> Tool overhead warning printed when specifying -v option can be missed 
->> due to screen scrolling in case you have output to the console 
->> so message is moved into help available by running perf stat -h.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  tools/perf/builtin-stat.c | 14 ++------------
->>  1 file changed, 2 insertions(+), 12 deletions(-)
+On Tue, Apr 03, 2018 at 01:06:45PM -0400, Jerome Glisse wrote:
+> On Tue, Apr 03, 2018 at 11:09:09AM +0200, Daniel Vetter wrote:
+> > On Thu, Mar 29, 2018 at 01:34:24PM +0200, Christian König wrote:
+> > > Am 29.03.2018 um 08:57 schrieb Daniel Vetter:
+> > > > On Sun, Mar 25, 2018 at 12:59:56PM +0200, Christian König wrote:
+> > > > > Add a peer2peer flag noting that the importer can deal with device
+> > > > > resources which are not backed by pages.
+> > > > > 
+> > > > > Signed-off-by: Christian König <christian.koenig@amd.com>
+> > > > Um strictly speaking they all should, but ttm never bothered to use the
+> > > > real interfaces but just hacked around the provided sg list, grabbing the
+> > > > underlying struct pages, then rebuilding&remapping the sg list again.
+> > > 
+> > > Actually that isn't correct. TTM converts them to a dma address array
+> > > because drivers need it like this (at least nouveau, radeon and amdgpu).
+> > > 
+> > > I've fixed radeon and amdgpu to be able to deal without it and mailed with
+> > > Ben about nouveau, but the outcome is they don't really know.
+> > > 
+> > > TTM itself doesn't have any need for the pages on imported BOs (you can't
+> > > mmap them anyway), the real underlying problem is that sg tables doesn't
+> > > provide what drivers need.
+> > > 
+> > > I think we could rather easily fix sg tables, but that is a totally separate
+> > > task.
+> > 
+> > Looking at patch 8, the sg table seems perfectly sufficient to convey the
+> > right dma addresses to the importer. Ofcourse the exporter has to set up
+> > the right kind of iommu mappings to make this work.
+> > 
+> > > > The entire point of using sg lists was exactly to allow this use case of
+> > > > peer2peer dma (or well in general have special exporters which managed
+> > > > memory/IO ranges not backed by struct page). So essentially you're having
+> > > > a "I'm totally not broken flag" here.
+> > > 
+> > > No, independent of needed struct page pointers we need to note if the
+> > > exporter can handle peer2peer stuff from the hardware side in general.
+> > > 
+> > > So what I've did is just to set peer2peer allowed on the importer because of
+> > > the driver needs and clear it in the exporter if the hardware can't handle
+> > > that.
+> > 
+> > The only thing the importer seems to do is call the
+> > pci_peer_traffic_supported, which the exporter could call too. What am I
+> > missing (since the sturct_page stuff sounds like it's fixed already by
+> > you)?
+> > -Daniel
 > 
-> I don't mind taking out the limit, but please update also
-> the stat man page, it mentiones the 10ms minimum
+> AFAIK Logan patchset require to register and initialize struct page
+> for the device memory you want to map (export from exporter point of
+> view).
+> 
+> With GPU this isn't something we want, struct page is >~= 2^6 so for
+> 4GB GPU = 2^6*2^32/2^12 = 2^26 = 64MB of RAM
+> 8GB GPU = 2^6*2^33/2^12 = 2^27 = 128MB of RAM
+> 16GB GPU = 2^6*2^34/2^12 = 2^28 = 256MB of RAM
+> 32GB GPU = 2^6*2^34/2^12 = 2^29 = 512MB of RAM
+> 
+> All this is mostly wasted as only a small sub-set (that can not be
+> constraint to specific range) will ever be exported at any point in
+> time. For GPU work load this is hardly justifiable, even for HMM i
+> do not plan to register all those pages.
+> 
+> Hence why i argue that dma_map_resource() like use by Christian is
+> good enough for us. People that care about SG can fix that but i
+> rather not have to depend on that and waste system memory.
 
-Yep, will do. Thanks for noticing this.
+I did not mean you should dma_map_sg/page. I just meant that using
+dma_map_resource to fill only the dma address part of the sg table seems
+perfectly sufficient. And that's exactly why the importer gets an already
+mapped sg table, so that it doesn't have to call dma_map_sg on something
+that dma_map_sg can't handle.
 
-Thanks,
-Alexey
+Assuming you get an sg table that's been mapping by calling dma_map_sg was
+always a bit a case of bending the abstraction to avoid typing code. The
+only thing an importer ever should have done is look at the dma addresses
+in that sg table, nothing else.
 
-> 
-> thanks,
-> jirka
-> 
->>
->> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
->> index f5c454855908..147a27e8c937 100644
->> --- a/tools/perf/builtin-stat.c
->> +++ b/tools/perf/builtin-stat.c
->> @@ -1943,7 +1943,8 @@ static const struct option stat_options[] = {
->>  	OPT_STRING(0, "post", &post_cmd, "command",
->>  			"command to run after to the measured command"),
->>  	OPT_UINTEGER('I', "interval-print", &stat_config.interval,
->> -		    "print counts at regular interval in ms (>= 10)"),
->> +		    "print counts at regular interval in ms "
->> +		    "(overhead is possible for values <= 100ms)"),
->>  	OPT_INTEGER(0, "interval-count", &stat_config.times,
->>  		    "print counts for fixed number of times"),
->>  	OPT_UINTEGER(0, "timeout", &stat_config.timeout,
->> @@ -2923,17 +2924,6 @@ int cmd_stat(int argc, const char **argv)
->>  		}
->>  	}
->>  
->> -	if (interval && interval < 100) {
->> -		if (interval < 10) {
->> -			pr_err("print interval must be >= 10ms\n");
->> -			parse_options_usage(stat_usage, stat_options, "I", 1);
->> -			goto out;
->> -		} else
->> -			pr_warning("print interval < 100ms. "
->> -				   "The overhead percentage could be high in some cases. "
->> -				   "Please proceed with caution.\n");
->> -	}
->> -
->>  	if (stat_config.times && interval)
->>  		interval_count = true;
->>  	else if (stat_config.times && !interval) {
-> 
+And p2p seems to perfectly fit into this (surprise, it was meant to).
+That's why I suggested we annotate the broken importers who assume the sg
+table is mapped using dma_map_sg or has a struct_page backing the memory
+(but there doesn't seem to be any left it seems) instead of annotating the
+ones that aren't broken with a flag that's confusing - you could also have
+a dma-buf sgt that points at some other memory that doesn't have struct
+pages backing it.
+
+Aside: At least internally in i915 we've been using this forever for our
+own private/stolen memory. Unfortunately no other device can access that
+range of memory, which is why we don't allow it to be imported to anything
+but i915 itself. But if that hw restriction doesn't exist, it'd would
+work.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
