@@ -1,73 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752117AbeDCPDI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:03:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55214 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751332AbeDCPDG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:03:06 -0400
-Date: Tue, 3 Apr 2018 08:03:56 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 1/3] locking: Document the semantics of
- spin_is_locked()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180403133543.GA26653@andrea>
- <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
- <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
- <29562.1522759749@warthog.procyon.org.uk>
- <13191.1522763553@warthog.procyon.org.uk>
- <20180403141718.GG3948@linux.vnet.ibm.com>
- <20180403144300.GE4082@hirez.programming.kicks-ass.net>
+        id S1751698AbeDCPEU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:04:20 -0400
+Received: from mga04.intel.com ([192.55.52.120]:20454 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751312AbeDCPES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:04:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,401,1517904000";
+   d="scan'208";a="29770752"
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v1] perf stat: enable 1ms interval for printing event counters
+ values
+Organization: Intel Corp.
+Message-ID: <1480cba7-2307-8827-0ca6-0d6029ccdad9@linux.intel.com>
+Date: Tue, 3 Apr 2018 18:04:13 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403144300.GE4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18040315-0024-0000-0000-0000034015FC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008795; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01012548; UDB=6.00516055; IPR=6.00791815;
- MB=3.00020392; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-03 15:03:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18040315-0025-0000-0000-000047888969
-Message-Id: <20180403150356.GJ3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804030155
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 04:43:00PM +0200, Peter Zijlstra wrote:
-> On Tue, Apr 03, 2018 at 07:17:18AM -0700, Paul E. McKenney wrote:
-> > Suggestions for a fix?  Clearly great care is required when using it
-> > in things like WARN_ON()...
-> 
-> Yeah, don't use it there, use lockdep_assert_held().
 
-Good point, -ETOOEARLY.  ;-)
+Currently print count interval for performance counters values is 
+limited by 10ms so reading the values at frequencies higher than 100Hz 
+is restricted by the tool.
 
-> As I stated before in this thread, ideally we'd make *_is_locked() go
-> away entirely.
+This change makes perf stat -I possible on frequencies up to 1KHz and, 
+to some extent, makes perf stat -I to be on-par with perf record 
+sampling profiling.
 
-After being reminded of the issues on UP systems, I now have much more
-sympathy for that view...
+When running perf stat -I for monitoring e.g. PCIe uncore counters and 
+at the same time profiling some I/O workload by perf record e.g. for 
+cpu-cycles and context switches, it is then possible to observe 
+consolidated CPU/OS/IO(Uncore) performance picture for that workload.
 
-							Thanx, Paul
+Tool overhead warning printed when specifying -v option can be missed 
+due to screen scrolling in case you have output to the console 
+so message is moved into help available by running perf stat -h.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/perf/builtin-stat.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index f5c454855908..147a27e8c937 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -1943,7 +1943,8 @@ static const struct option stat_options[] = {
+ 	OPT_STRING(0, "post", &post_cmd, "command",
+ 			"command to run after to the measured command"),
+ 	OPT_UINTEGER('I', "interval-print", &stat_config.interval,
+-		    "print counts at regular interval in ms (>= 10)"),
++		    "print counts at regular interval in ms "
++		    "(overhead is possible for values <= 100ms)"),
+ 	OPT_INTEGER(0, "interval-count", &stat_config.times,
+ 		    "print counts for fixed number of times"),
+ 	OPT_UINTEGER(0, "timeout", &stat_config.timeout,
+@@ -2923,17 +2924,6 @@ int cmd_stat(int argc, const char **argv)
+ 		}
+ 	}
+ 
+-	if (interval && interval < 100) {
+-		if (interval < 10) {
+-			pr_err("print interval must be >= 10ms\n");
+-			parse_options_usage(stat_usage, stat_options, "I", 1);
+-			goto out;
+-		} else
+-			pr_warning("print interval < 100ms. "
+-				   "The overhead percentage could be high in some cases. "
+-				   "Please proceed with caution.\n");
+-	}
+-
+ 	if (stat_config.times && interval)
+ 		interval_count = true;
+ 	else if (stat_config.times && !interval) {
