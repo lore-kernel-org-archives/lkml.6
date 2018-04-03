@@ -1,70 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932123AbeDCKtt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:49:49 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54717 "EHLO
+        id S932142AbeDCKtz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:49:55 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54727 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755049AbeDCKtp (ORCPT
+        with ESMTP id S1755060AbeDCKtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:49:45 -0400
-Date: Tue, 3 Apr 2018 12:49:43 +0200
+        Tue, 3 Apr 2018 06:49:52 -0400
+Date: Tue, 3 Apr 2018 12:49:50 +0200
 From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCHv3 7/8] drm/omap: panel-dsi-cm: add rotation support
-Message-ID: <20180403104943.GH6758@amd>
-References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
- <20180330171822.25896-8-sebastian.reichel@collabora.co.uk>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PM / QoS: mark expected switch fall-throughs
+Message-ID: <20180403104950.GI6758@amd>
+References: <20180330211844.GA23072@embeddedgus>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="fmEUq8M7S0s+Fl0V"
+        protocol="application/pgp-signature"; boundary="pe+tqlI1iYzVj1X/"
 Content-Disposition: inline
-In-Reply-To: <20180330171822.25896-8-sebastian.reichel@collabora.co.uk>
+In-Reply-To: <20180330211844.GA23072@embeddedgus>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---fmEUq8M7S0s+Fl0V
+--pe+tqlI1iYzVj1X/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri 2018-03-30 19:18:21, Sebastian Reichel wrote:
-> From: Sebastian Reichel <sre@kernel.org>
+On Fri 2018-03-30 16:18:44, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 >=20
-> Add support to inform the DRM subsystem about the orientation
-> the display has been mounted to the casing.
->=20
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-1-5,7: Reviewed-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Thanks,
-									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---fmEUq8M7S0s+Fl0V
+--pe+tqlI1iYzVj1X/
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlrDXEcACgkQMOfwapXb+vKlTQCfRevNFNSBuOoYVMUdspgwdc5d
-8WEAoLN8ENBPzuDDP7p1iXUyzVs/cN2x
-=DM+N
+iEYEARECAAYFAlrDXE4ACgkQMOfwapXb+vLkmgCbB80CiFmKMNG0Tmeor6hhbyLK
+TcMAnji0LXVnZPoM7yx6f1vo8KQNh4Pe
+=BzI7
 -----END PGP SIGNATURE-----
 
---fmEUq8M7S0s+Fl0V--
+--pe+tqlI1iYzVj1X/--
