@@ -1,64 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751314AbeDCN53 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:57:29 -0400
-Received: from mail-pl0-f53.google.com ([209.85.160.53]:44417 "EHLO
-        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbeDCN52 (ORCPT
+        id S1751312AbeDCN6l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:58:41 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:34389 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeDCN6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:57:28 -0400
-X-Google-Smtp-Source: AIpwx4+4jACwZr9zRihWP0ZZ+NI7PlCt+xexb4viF59Fk4Ys3L6EBVvEuxBwM5q6kaTrDxe/zBjylA==
-Date: Tue, 3 Apr 2018 22:57:23 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-Message-ID: <20180403135723.GA7593@tigerII.localdomain>
-References: <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
- <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
- <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
- <1521119343.10722.665.camel@linux.intel.com>
- <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
- <1521224375.23017.41.camel@linux.intel.com>
- <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
- <1522678523.21176.178.camel@linux.intel.com>
- <20180403011237.GA7129@jagdpanzerIV>
- <20180403115216.mgq3omvl4up24uic@pathway.suse.cz>
+        Tue, 3 Apr 2018 09:58:39 -0400
+X-Google-Smtp-Source: AIpwx4852CKxWvfHmBjlKHwhBMsWXHstGxbxxRd7r8EMDTKrI5K3avZMNFWBxdZYuQuU1pZnFzn1l224bduI9W/avqc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403115216.mgq3omvl4up24uic@pathway.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CA+55aFzwCiRrT5Ltfg0Uci7jXVRX2hw_fHp_srK_f7yacNKwwg@mail.gmail.com>
+References: <20180402060123.GB12733@app09> <CA+55aFzwCiRrT5Ltfg0Uci7jXVRX2hw_fHp_srK_f7yacNKwwg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 3 Apr 2018 15:58:38 +0200
+X-Google-Sender-Auth: D5fcJ3oZnAfp89LDHoKHDvqnVKw
+Message-ID: <CAK8P3a1GRKneXEiHpnKt2bE-ez+zE=WB6sV=xmBccqFDT8noxw@mail.gmail.com>
+Subject: Re: [GIT PULL] Andes(nds32) Port for Linux 4.17
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greentime Hu <green.hu@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greentime <greentime@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/03/18 13:52), Petr Mladek wrote:
-> On Tue 2018-04-03 10:12:37, Sergey Senozhatsky wrote:
-> > On (04/02/18 17:15), Andy Shevchenko wrote:
-> > > > 
-> > > > Hmm, I have never seen the error code in this form.
-> > > 
-> > > We have limited space to print it and error numbers currently can be up
-> > > to 0xfff (4095). So, I have no better idea how to squeeze them while
-> > > thinking that "(efault)" is much harder to parse in case of error
-> > 
-> > 'efault' looks to me like a misspelled 'default', for some reason.
-> 
-> I wonder if (-efault) would help a bit.
+On Mon, Apr 2, 2018 at 6:04 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Sun, Apr 1, 2018 at 11:01 PM, Greentime Hu <green.hu@gmail.com> wrote:
+>>
+>> This tag contains the core nds32 Linux port(including interrupt controller
+>> driver and timer driver), which has been through 7 rounds of review on mailing
+>> list.
+>
+> Can I get an overview of the nds32 architecture (uses, quirks, reasons
+> for existing?) to add to the initial merge message? Just an overview,
+> not some kind of architecture manual thing.
+>
+> Yeah, yeah, I can google it myself and write something up, but it's
+> the kind of information I'd like to see when merging an architecture I
+> hadn't really ever heard about, and I suspect most others haven't
+> either.
 
-Dunno. If the pointer is invalid and -EFAULTS then I guess we are not
-leaking anything critical and may be can just print it out. May be I'm
-wrong.
+The non-marketing description is that this is a fairly conventional
+(in a good way) low-end RISC architecture that is usually integrated
+into custom microcontroller and SoC designs, competing with
+the similar ARM32, ARC, MIPS32, RISC-V, Xtensa and (currently
+under review) C-Sky architectures that occupy the same space.
 
-	-ss
+The most interesting bit from my perspective is that Andestech
+are already selling a new generation of CPU cores that are
+based on 32-bit and 64-bit RISC-V, but are still supporting enough
+customers on the existing cores to invest in both.
+
+     Arnd
