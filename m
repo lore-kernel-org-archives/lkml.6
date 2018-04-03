@@ -1,93 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752196AbeDCC36 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 22:29:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57926 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751129AbeDCC34 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 22:29:56 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7683F60591
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v5 3/3] RDMA/qedr: eliminate duplicate barriers on
- weakly-ordered archs #2
-To: linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org
-References: <1521736009-23387-1-git-send-email-okaya@codeaurora.org>
- <1521736009-23387-4-git-send-email-okaya@codeaurora.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <ac46b4e4-7e6c-c15f-06eb-01b1e4893d50@codeaurora.org>
-Date: Mon, 2 Apr 2018 22:29:53 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752460AbeDCCaQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 22:30:16 -0400
+Received: from ozlabs.org ([103.22.144.67]:43445 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751295AbeDCCaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 22:30:14 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 3 Apr 2018 12:29:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux F2FS Dev Mailing List
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>,
+        David Sterba <dsterba@suse.cz>
+Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
+Message-ID: <20180403122919.3c503f74@canb.auug.org.au>
+In-Reply-To: <20180314101704.51aaae7f@canb.auug.org.au>
+References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
+        <20180131095446.443670dc@canb.auug.org.au>
+        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
+        <20180201092551.759f32be@canb.auug.org.au>
+        <20180314101704.51aaae7f@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <1521736009-23387-4-git-send-email-okaya@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6D4vWARE+glh+6FsOjzXU2."; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/22/2018 12:26 PM, Sinan Kaya wrote:
-> @@ -860,7 +860,7 @@ static void doorbell_cq(struct qedr_cq *cq, u32 cons, u8 flags)
->  	wmb();
->  	cq->db.data.agg_flags = flags;
->  	cq->db.data.value = cpu_to_le32(cons);
-> -	writeq(cq->db.raw, cq->db_addr);
-> +	writeq_relaxed(cq->db.raw, cq->db_addr);
+--Sig_/6D4vWARE+glh+6FsOjzXU2.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Given the direction to get rid of wmb() in front of writeX() functions, I have been
-reviewing this code. Under normal circumstances, I can get rid of all wmb() as follows.
+Hi all,
 
-However, I started having my doubts now. Are these wmb() used as a SMP barrier too?
-I can't find any smp_Xmb() in drivers/infiniband/hw/qedr directory.
+Ping?
 
-static void doorbell_cq(struct qedr_cq *cq, u32 cons, u8 flags)
- {
--       /* Flush data before signalling doorbell */
--       wmb();
-        cq->db.data.agg_flags = flags;
-        cq->db.data.value = cpu_to_le32(cons);
-        writeq(cq->db.raw, cq->db_addr);
-@@ -1870,8 +1868,7 @@ static int qedr_update_qp_state(struct qedr_dev *dev,
-                         */
+On Wed, 14 Mar 2018 10:17:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 1 Feb 2018 09:25:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > On Tue, 30 Jan 2018 16:25:35 -0800 Jaegeuk Kim <jaegeuk@kernel.org> wro=
+te: =20
+> > >
+> > > On 01/31, Stephen Rothwell wrote:   =20
+> > > >=20
+> > > > On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.org>=
+ wrote:     =20
+> > > > >
+> > > > > Could you please consider the below pull request?
+> > > > >=20
+> > > > > Thanks,
+> > > > >=20
+> > > > > The following changes since commit ace52288edf0cb5e7a52b681f057f8=
+6224c49c27:
+> > > > >=20
+> > > > >   Merge tag 'for-linus-20171218' of git://git.infradead.org/linux=
+-mtd (2017-12-18 16:18:01 -0800)
+> > > > >=20
+> > > > > are available in the Git repository at:
+> > > > >=20
+> > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git =
+tags/f2fs-for-4.16-rc1
+> > > > >=20
+> > > > > for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22c3=
+34c9d6:
+> > > > >=20
+> > > > >   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)  =
+   =20
+> > > >=20
+> > > > This has an interesting conflict with the btrfs tree:
+> > > >=20
+> > > > -------------------------------------------------------------------=
+----
+> > > > After merging the f2fs tree, today's linux-next build (x86_64
+> > > > allmodconfig) failed like this:
+> > > >=20
+> > > > /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super':
+> > > > /home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB'=
+ undeclared (first use in this function); did you mean 'S_CGROUPWB'?
+> > > >   sb->s_iflags |=3D SB_I_CGROUPWB;
+> > > >                   ^~~~~~~~~~~~~
+> > > >                   S_CGROUPWB
+> > > >=20
+> > > > Caused by commit
+> > > >=20
+> > > >   578c647879f7 ("f2fs: implement cgroup writeback support")
+> > > >=20
+> > > > interacting with commit
+> > > >=20
+> > > >   34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with per-=
+inode S_CGROUPWB"
+> > > >=20
+> > > > from the btrfs tree.
+> > > >=20
+> > > > I have reverted the f2fs tree commit for today, but a better resolu=
+tion
+> > > > would be appreciated.
+> > > > -------------------------------------------------------------------=
+----
+> > > >=20
+> > > > I have seen no response to the above email and have been reverting =
+that
+> > > > commit since Jan 18.     =20
+> > >=20
+> > > I think this can be addressed by:
+> > >=20
+> > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > > index 89c838bfb067..c743b73976d0 100644
+> > > --- a/fs/f2fs/inode.c
+> > > +++ b/fs/f2fs/inode.c
+> > > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
+> > >                 new_fl |=3D S_DIRSYNC;
+> > >         if (f2fs_encrypted_inode(inode))
+> > >                 new_fl |=3D S_ENCRYPTED;
+> > > +       new_fl |=3D S_CGROUPWB;
+> > >         inode_set_flags(inode, new_fl,
+> > >                         S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSY=
+NC|
+> > > -                       S_ENCRYPTED);
+> > > +                       S_ENCRYPTED|S_CGROUPWB);
+> > >  }
+> > >=20
+> > >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode =
+*ri)
+> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > index 8173ae688814..ebcd58476fc7 100644
+> > > --- a/fs/f2fs/super.c
+> > > +++ b/fs/f2fs/super.c
+> > > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *=
+sb, void *data, int silent)
+> > >         sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
+> > >                 (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+> > >         memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
+> > > -       sb->s_iflags |=3D SB_I_CGROUPWB;
+> > >=20
+> > >         /* init f2fs-specific super block info */
+> > >         sbi->valid_super_block =3D valid_super_block;
+> > >    =20
+> >=20
+> > I have applied that (by hand) as a merge fix patch for the merge of teh
+> > btrfs tree for today.  Thanks for the resolution. =20
+>=20
+> I am still applying this to the merge of the btrfs tree every day ...
+>=20
+> Commit
+>   578c647879f7 ("f2fs: implement cgroup writeback support")
+> was merged into Linus' tree on Jan 31.
+>=20
+> Here is the actual merge fix patch:
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 1 Feb 2018 09:21:06 +1100
+> Subject: [PATCH] f2fs: fixup for cgroup/writeback change
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/f2fs/inode.c | 3 ++-
+>  fs/f2fs/super.c | 1 -
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 205add3d0f3a..f34652c4288f 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
+>  		new_fl |=3D S_DIRSYNC;
+>  	if (f2fs_encrypted_inode(inode))
+>  		new_fl |=3D S_ENCRYPTED;
+> +	new_fl |=3D S_CGROUPWB;
+>  	inode_set_flags(inode, new_fl,
+>  			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
+> -			S_ENCRYPTED);
+> +			S_ENCRYPTED|S_CGROUPWB);
+>  }
+> =20
+>  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 8173ae688814..ebcd58476fc7 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb, =
+void *data, int silent)
+>  	sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
+>  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+>  	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
+> -	sb->s_iflags |=3D SB_I_CGROUPWB;
+> =20
+>  	/* init f2fs-specific super block info */
+>  	sbi->valid_super_block =3D valid_super_block;
+> --=20
+> 2.15.1
 
-                        if (rdma_protocol_roce(&dev->ibdev, 1)) {
--                               wmb();
--                               writel_relaxed(qp->rq.db_data.raw, qp->rq.db);
-+                               writel(qp->rq.db_data.raw, qp->rq.db);
-                                /* Make sure write takes effect */
-                                mmiowb();
-                        }
-@@ -3275,8 +3272,7 @@ int qedr_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
-         * unchanged). For performance reasons we avoid checking for this
-         * redundant doorbell.
-         */
--       wmb();
--       writel_relaxed(qp->sq.db_data.raw, qp->sq.db);
-+       writel(qp->sq.db_data.raw, qp->sq.db);
+--=20
+Cheers,
+Stephen Rothwell
 
-        /* Make sure write sticks */
-        mmiowb();
-@@ -3362,9 +3358,6 @@ int qedr_post_recv(struct ib_qp *ibqp, struct ib_recv_wr *wr,
+--Sig_/6D4vWARE+glh+6FsOjzXU2.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-                qedr_inc_sw_prod(&qp->rq);
+-----BEGIN PGP SIGNATURE-----
 
--               /* Flush all the writes before signalling doorbell */
--               wmb();
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC5v8ACgkQAVBC80lX
+0Gzikgf/QdTzz7lCg1m1zQQchknDi13qqNeVtH8t4iZTKY1N35uP2OLT9LF1TVDu
+QRKCoSGrWIOIVGIVcxYQieGyjWonEAp0/i1kYNFn8uOvUiKaqVIRg+iB2ajBAL0k
+DW3lRoraqrGyjZx171UXdMaAWYkG3xB42lWbRZ1UwQT9ITEO+a9rZmSw24Skebu4
+sDxl5Di5tr3R/C2DqRGRkRY5Q5l5S1qcmBR/+0CcOJKdtDXhT51HalCSeKb0uW81
+gCOJvu7P+zEGjntOEI+zcOR/cfyl4sVDr1WoieFqcpPcqpNqfxAmza02pJYV5aJm
+jTwkV9qbYtzWHWmLJlok3lboj0G3kg==
+=kGqX
+-----END PGP SIGNATURE-----
 
-
-
-
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+--Sig_/6D4vWARE+glh+6FsOjzXU2.--
