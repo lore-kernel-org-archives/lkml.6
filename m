@@ -1,250 +1,131 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3959850-1522835621-2-4617440202239230485
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522835620; b=nxnx0d8ztHPJkMUtGLTT+qM/qcMBkidOab/CqEHx7Mj6A4Ovhq
-    5On8Bq1WLB1VdGPFSposl3z1wxFvYvV3QBRT+Mhdx5k969c4WfLN2lE2P2S/nXNo
-    8orrt5S/QpRt6KLXyNsok33SWZWW/0TYJEee2vE1TYY9qpGVX36QPdyQ04/kpPbt
-    ZUbq4gxaws39oMsa7bj2429yfPp2VGpH2UDNWsynAlGZgc0UxCv3lH6iGkFIJOeJ
-    Tj59rXi0I4pGlhdQsLNwjW5J9jiYICCNPCxD+rfgA0USHslyGJwFa/dT767XWRMt
-    kMVMKiENdIWDd5XDWYYz65GPGG8rQAj6tLRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1522835620; bh=MOr0q
-    U0R0/FzXg4eMR33yc2UO8w08COOjxTWy2sM+78=; b=SlvdB98EX5bEe8ym3sbby
-    v7wR+HwWd7uvtyuuQQ3tLus2xuMBoPM2x4l4M6orMEgCNBhV2OkyFpJFnIRTvdb7
-    rgRRDsWtdEWMu0NqQUXHAov2DwtsGL/OY0vHd1kwVI+hfQKhT2MeBzw0GePnMjjR
-    PoaToYK9ADz6cchhuO0GnCTnOSK+za7EUaIPmzxQraDgSQrObemJd8BLSy7AK8iD
-    s5xVTMPWLL3RxO8ThmYPByh48X3T7I5GD4DxwRL938SdwUcOq/FcjslPlUAYKffK
-    L/4rE+Ao1CQqSh1yXn95ahZ+Fs2QE6uoAwjN6p6kJ9DZOJKvctsJDGAevRHrIrJ1
-    w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=n8aWcVcI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=n8aWcVcI x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ3GfnSdrdfIlNP6Dl1YWBKZifpZHZ5VVq/e68IU2199ZTitpgqiB5VL6oMsMRQPjKhAk0ltrMf89Ahy4Nl4/tJCz3VnBl0yrigK1AxnILJwPgBBZF/Q
-    8V2QRAVWTZyFmQD2CEVR8Npcv4NE5X9oPBO+hAZzbc2m0gLcHjfs6Z9p+vBC1aCan/ef6NxFKDQrpAbeFRdBY062Mft0UEzkk7FwR4myV+KPX8rLJFvn52DP
-    mxtLZwFpVrHHHK13eM4M/w==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=-g8SutxOOoXPudxWzVcA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Wed, 4 Apr 2018 12:53:19 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Ji-Hun Kim <ji_hun.kim@samsung.com>
-Subject: Re: [PATCH v3] staging: vt6655: check for memory allocation failures
-Message-ID: <20180404095319.zshtp3cbyf6sxsfq@mwanda>
-References: <CGME20180330024416epcas2p2f566f43a8f5af8b4ebc17659e3cf0ecf@epcas2p2.samsung.com>
- <1522377844-23591-1-git-send-email-ji_hun.kim@samsung.com>
- <20180403104052.6wbomdguifrmlmpz@mwanda>
- <20180404072410.GA31134@ubuntu>
+Return-Path: <kernel-hardening-return-12846-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+ghtnPGg0KilxH2k9g0rAzTqZgOWyH1psnSlXdVWfFm+A/4k2XlD06F3G9ATxLRw6YuWR5
+ARC-Seal: i=1; a=rsa-sha256; t=1522791445; cv=none;
+        d=google.com; s=arc-20160816;
+        b=OMI1NsyWUpaoZ0Huzxwcr1colEdErwKEDoBJUIF5W+3zuA9WG18T86BYX2UgmFZPDA
+         ZvsBXnC34H2sXXjgpdOM231L9gmsqsFUMcZc+82lS3O6QrjX+RupzVDDAH1cuguJFTn9
+         RHjnnV+nrMy2q87YqDMIONVNg1PKoHlmay244ajv5t5nSHM04tTh5OryNrLtFmhoeNHw
+         6YNlwaR+ubvJre6c7DXWucagLEGPS4AOWpVe7HxZJ30TtnyXL4d0lLPjjQM0ecMdj3M0
+         kSg3L/REwc8cWjQY6EpD1QW43BlWy8TokYQLLRTzYERoukS3ivXBHBD3k560OMQjWNrp
+         4ayg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=hLxrMjalgMBXj7CM7s9ZOdVVPS9izkteu8Gmd42oHow=;
+        b=C/JDEqlzrx/zTDCwu9Lvahk9d0GSMs6khq2XYCx0GIJNWM5dt1eYvYmVG6uQS/NHvG
+         8isN2unQPuFgsXIq+wd0cnmWu6aYHmfXqZUn4+RdxxChcaJOoHj8Kdd6x+lvhl3JY4b5
+         fdqnvw3r1T1bfYXUeSij4z/jUmvY0iFbdTwAFKfvy+RehnUHDXQwTvxtvnH/6ZDmvORi
+         H21JhvIhFZsqa+VHir+nq2Cpaw8Kln+M/N8FOEHgEcyAwoOx5InyOtKat5N7HQFR+dGp
+         vomtuuICXB5rq5TciWB+a9MQ6mvsuvJ+o5HHpZtxd6vqwxOJC2z1AWUc8/kgjAiT1q1p
+         W2oQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12846-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12846-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12846-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12846-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Subject: Re: [v3] crypto: ctr - avoid VLA use
+To: Salvatore Mesoraca <s.mesoraca16@gmail.com>, linux-kernel@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com, linux-crypto@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Kees Cook <keescook@chromium.org>,
+ Eric Biggers <ebiggers3@gmail.com>
+References: <1522400006-8859-1-git-send-email-s.mesoraca16@gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <4e536889-439a-49e6-dd95-2d4286913202@redhat.com>
+Date: Tue, 3 Apr 2018 14:37:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180404072410.GA31134@ubuntu>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852
- signatures=668697
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804040097
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, y.k.oh@samsung.com, gregkh@linuxfoundation.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- julia.lawall@lip6.fr, baijiaju1990@gmail.com, forest@alittletooquiet.net,
- santhameena13@gmail.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1522400006-8859-1-git-send-email-s.mesoraca16@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596352141229362174?=
+X-GMAIL-MSGID: =?utf-8?q?1596762562814641393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 04, 2018 at 04:24:10PM +0900, Ji-Hun Kim wrote:
-> > Since we only partially allocated the
-> > rd0 ring, device_free_rd0_ring() will crash when we do:
-> > 
-> > 		dma_unmap_single(&priv->pcid->dev, rd_info->skb_dma,
-> > 				 priv->rx_buf_sz, DMA_FROM_DEVICE);
-> > 
-> > "rd_info" is NULL so rd_info->skb_dma is a NULL dereference.
+On 03/30/2018 01:53 AM, Salvatore Mesoraca wrote:
+> All ciphers implemented in Linux have a block size less than or
+> equal to 16 bytes and the most demanding hw require 16 bytes
+> alignment for the block buffer.
+> We avoid 2 VLAs[1] by always allocating 16 bytes with 16 bytes
+> alignment, unless the architecture supports efficient unaligned
+> accesses.
+> We also check the selected cipher at instance creation time, if
+> it doesn't comply with these limits, we fail the creation.
 > 
-> For dealing with this problem, I added below code on patch v3. I think it
-> would not make Null dereferencing issues, because it will not enter 
-> dma_unmap_single(), if "rd_info" is Null.
+> [1] https://lkml.org/lkml/2018/3/7/621
 > 
-> +               if (rd_info) {
-> +                       dma_unmap_single(&priv->pcid->dev, rd_info->skb_dma,
-> +                                       priv->rx_buf_sz, DMA_FROM_DEVICE);
-> +                       dev_kfree_skb(rd_info->skb);
-> +                       kfree(desc->rd_info);
-> +               }
+> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+> ---
+>   crypto/ctr.c | 15 +++++++++++++--
+>   1 file changed, 13 insertions(+), 2 deletions(-)
 > 
-> I would appreciate for your opinions what would be better way for freeing
-> allocated "rd_info"s in the loop previously.
+> diff --git a/crypto/ctr.c b/crypto/ctr.c
+> index 854d924..49c469d 100644
+> --- a/crypto/ctr.c
+> +++ b/crypto/ctr.c
+> @@ -21,6 +21,9 @@
+>   #include <linux/scatterlist.h>
+>   #include <linux/slab.h>
+>   
+> +#define MAX_BLOCKSIZE 16
+> +#define MAX_ALIGNMASK 15
+> +
 
-Of course, that works for this particular bug but I'm not a fan of that
-approach...
+Can we pull this out into a header file, I think this would cover
 
-When I say "do nothing" gotos, I mean.
+crypto/cipher.c: In function ‘cipher_crypt_unaligned’:
+crypto/cipher.c:70:2: warning: ISO C90 forbids variable length array ‘buffer’ [-Wvla]
+   u8 buffer[size + alignmask];
+   ^~
 
-err:
-	return ret;
 
-And what I mean by "one err" is this:
 
-err:
-	free(a);
-	free(b)
-	free(c);
-
-	return ret;
-
-There is only one error label even though we are freeing three things.
-The problem with that is that you might be freeing something this hasn't
-been allocated like "rd_info->skb_dma" but "rd_info" wasn't allocated.
-It's a very normally problem to have with this style of error handling.
-
-Most kernel error handling is very simple.
-
-err_free_c:
-	free(c);
-err_free_b:
-	free(b);
-err_free_a:
-	free(a);
-
-	return ret;
-
-Side note:  Part of the problem here is that device_alloc_rx_buf() does
-not have a corresponding free function.  Every alloc should have a
-matching free function so that if we ever change the alloc function, we
-just have to update one free function.  And it's just cleaner.
-
-static void device_free_rx_buf(struct vnt_private *priv,
-			       struct vnt_rx_desc *rd)
-{
-	struct vnt_rd_info *rd_info = rd->rd_info;
-
-	dma_unmap_single(&priv->pcid->dev, rd_info->skb_dma, priv->rx_buf_sz,
-			 DMA_FROM_DEVICE);
-	dev_kfree_skb(rd_info->skb);
-}
-
-Maybe send a patch that adds that and changes device_free_rd0_ring() to
-use the new free function instead of open coding it.  [PATCH 1/2].
-
-These particular functions are slighttly complicated because they have
-loops and the error handling for loops is tricky and bug prone.  Here is
-what I would like the error handling to look like:
-
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
-index 0dc902022a91..e12a959fe080 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -533,15 +533,23 @@ static void device_init_rd0_ring(struct vnt_private *priv)
- 	int i;
- 	dma_addr_t      curr = priv->rd0_pool_dma;
- 	struct vnt_rx_desc *desc;
-+	int ret;
- 
- 	/* Init the RD0 ring entries */
- 	for (i = 0; i < priv->opts.rx_descs0;
- 	     i ++, curr += sizeof(struct vnt_rx_desc)) {
- 		desc = &priv->aRD0Ring[i];
- 		desc->rd_info = kzalloc(sizeof(*desc->rd_info), GFP_KERNEL);
-+		if (!desc->rd_info) {
-+			ret = -ENOMEM;
-+			goto err_free_descs;
-+		}
- 
--		if (!device_alloc_rx_buf(priv, desc))
-+		if (!device_alloc_rx_buf(priv, desc)) {
- 			dev_err(&priv->pcid->dev, "can not alloc rx bufs\n");
-+			ret = -ENOMEM;
-+			goto err_free_rd;
-+		}
- 
- 		desc->next = &(priv->aRD0Ring[(i + 1) % priv->opts.rx_descs0]);
- 		desc->next_desc = cpu_to_le32(curr + sizeof(struct vnt_rx_desc));
-@@ -550,6 +558,20 @@ static void device_init_rd0_ring(struct vnt_private *priv)
- 	if (i > 0)
- 		priv->aRD0Ring[i-1].next_desc = cpu_to_le32(priv->rd0_pool_dma);
- 	priv->pCurrRD[0] = &priv->aRD0Ring[0];
-+
-+	return 0;
-+
-+err_free_rd:
-+	kfree(desc->rd_info);
-+
-+err_free_descs:
-+	while (--i) {
-+		desc = &priv->aRD0Ring[i];
-+		device_free_rx_buf(priv, desc);
-+		kfree(desc->rd_info);
-+	}
-+
-+	return ret;
- }
- 
- static void device_init_rd1_ring(struct vnt_private *priv)
-
-It's more work to do it this way.  It's also more lines of code, but
-it's easier to read and review because you can look at the function and
-see that it's correct without jumping to other functions to verify that
-they check if rd_info is NULL or not.
-
-regards,
-dan carpenter
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+>   struct crypto_ctr_ctx {
+>   	struct crypto_cipher *child;
+>   };
+> @@ -58,7 +61,7 @@ static void crypto_ctr_crypt_final(struct blkcipher_walk *walk,
+>   	unsigned int bsize = crypto_cipher_blocksize(tfm);
+>   	unsigned long alignmask = crypto_cipher_alignmask(tfm);
+>   	u8 *ctrblk = walk->iv;
+> -	u8 tmp[bsize + alignmask];
+> +	u8 tmp[MAX_BLOCKSIZE + MAX_ALIGNMASK];
+>   	u8 *keystream = PTR_ALIGN(tmp + 0, alignmask + 1);
+>   	u8 *src = walk->src.virt.addr;
+>   	u8 *dst = walk->dst.virt.addr;
+> @@ -106,7 +109,7 @@ static int crypto_ctr_crypt_inplace(struct blkcipher_walk *walk,
+>   	unsigned int nbytes = walk->nbytes;
+>   	u8 *ctrblk = walk->iv;
+>   	u8 *src = walk->src.virt.addr;
+> -	u8 tmp[bsize + alignmask];
+> +	u8 tmp[MAX_BLOCKSIZE + MAX_ALIGNMASK];
+>   	u8 *keystream = PTR_ALIGN(tmp + 0, alignmask + 1);
+>   
+>   	do {
+> @@ -206,6 +209,14 @@ static struct crypto_instance *crypto_ctr_alloc(struct rtattr **tb)
+>   	if (alg->cra_blocksize < 4)
+>   		goto out_put_alg;
+>   
+> +	/* Block size must be <= MAX_BLOCKSIZE. */
+> +	if (alg->cra_blocksize > MAX_BLOCKSIZE)
+> +		goto out_put_alg;
+> +
+> +	/* Alignmask must be <= MAX_ALIGNMASK. */
+> +	if (alg->cra_alignmask > MAX_ALIGNMASK)
+> +		goto out_put_alg;
+> +
+>   	/* If this is false we'd fail the alignment of crypto_inc. */
+>   	if (alg->cra_blocksize % 4)
+>   		goto out_put_alg;
+> 
