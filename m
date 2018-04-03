@@ -1,82 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752515AbeDCRCw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:02:52 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:44836 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751461AbeDCRCt (ORCPT
+        id S1752957AbeDCRDb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:03:31 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:48892 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752918AbeDCRD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:02:49 -0400
-X-Google-Smtp-Source: AIpwx48d/SFBzdsbwcdFtuyr6uAIcSXBKBwQ6UsWsmdte5Zs1TGOF/99PxpxcBYgJ0jCrOv38HiI2A==
-Subject: Re: [PATCH net] net: dsa: mt7530: Use NULL instead of plain integer
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org
-References: <20180402232414.19671-1-f.fainelli@gmail.com>
- <1522721904.18424.51.camel@mtkswgap22>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <f5aa0467-8124-b097-2b89-dcf1698a5ba5@gmail.com>
-Date: Tue, 3 Apr 2018 10:02:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1522721904.18424.51.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
+        Tue, 3 Apr 2018 13:03:28 -0400
+X-IronPort-AV: E=Sophos;i="5.48,401,1517846400";
+   d="scan'208";a="75168534"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "wakko@animx.eu.org" <wakko@animx.eu.org>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Thread-Topic: 4.15.14 crash with iscsi target and dvd
+Thread-Index: AQHTyTSBb5uvLpZh0kGvcKoLkXFdJKPq6GkAgABbqICAAIUdgIAAU3eAgAAfGYCAAw0ygA==
+Date: Tue, 3 Apr 2018 17:03:24 +0000
+Message-ID: <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+References: <20180331015903.GA29398@animx.eu.org>
+         <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
+         <20180331221252.GA25573@animx.eu.org>
+         <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
+         <20180401113721.GA8471@animx.eu.org> <20180401163604.GB25011@animx.eu.org>
+         <20180401182723.GA31755@animx.eu.org>
+In-Reply-To: <20180401182723.GA31755@animx.eu.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.172]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0497;7:GTj3NXF0QMhrO9GhGXyA3WpSqkjYhS0JF1YhU3wb6ycjxo1CMrBQrc1RPJ1X8LAFdFY3Hxy3gYw4PS22w04K0YXe5wjVv4K8jV1qtKYLPzG7l702hzXSA4PhClm/Ch86/MjgXIJu0Sjeuv85RTNQiReTSIa1z1U/wVhhWRcQlVgOPX1fSg3MNe02knOdZpStELh2F/0u5CLEsNSX8q+tG9oD3vwBR38jKPO41NB7QHWTnrsYiNA4rMTGuslER/8B;20:AmBuspmj5RXYmGxMCfWNiSd9ub1KhF7APCCVBIKIlNw1VKzm7OsGQvPtW35koV07EYsrePz1ejLBpqBkqU69g5Zfrfk1cZ7cmWX3GO96sZdI2w9wdJ8nQhgRgcSD3eEUGZkZgvXvVQZr3HPopHb0mC7s2Uj0weJSTSwwTmFNmho=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 151c6fcc-d614-4b4c-9c55-08d59984cff7
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0497;
+x-ms-traffictypediagnostic: MWHPR04MB0497:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB04971660E07AD19FB7E34A0D98A50@MWHPR04MB0497.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB0497;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0497;
+x-forefront-prvs: 0631F0BC3D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(366004)(346002)(39380400002)(377424004)(51444003)(189003)(199004)(25786009)(72206003)(66066001)(305945005)(99286004)(6436002)(2900100001)(97736004)(3660700001)(5640700003)(93886005)(102836004)(3280700002)(316002)(478600001)(7736002)(105586002)(76176011)(229853002)(6486002)(54906003)(6916009)(5660300001)(14454004)(68736007)(39060400002)(81156014)(6246003)(53936002)(2351001)(6506007)(3846002)(6116002)(186003)(8936002)(446003)(345774005)(11346002)(6512007)(118296001)(59450400001)(2906002)(26005)(4326008)(2501003)(8676002)(486005)(2616005)(36756003)(476003)(106356001)(486005)(86362001)(1730700003)(81166006)(5250100002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0497;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: 3ZGthnRlzGb1jLbAprRCOaqFzk4X/32YvalrZ+FauwqECSBBWSedHIddG7yJbpfWX1gYqvzosZJhBxXkM/DNTvP1MxWBkGXbWDi3mU0c3LUltlfh1HoaqdO0sdflOjvDwV6jODVtKPmU5RW5ntsa8CGwlqidBIa55D1XGjVgEFYs+6mki0XJMAlDBbZWV6QJQPViILxfRcL29sWCDHLdXwglfff+ejujAspPOIluBhiLB0iadKekrQrmivXKHl7dOdBlVrEmkCA5oUMwCUkEwWoWcIqLgGOzWM6JkSZ1/25lD6d59CZb/5awNrBheSZM1avEPSd9ChGTjXgmu1yG4K8Rw4p2f6nOVL7XVMhJIpQJABkcAvoRSlPPL5H6RLXOVnT4AfOcgOjw2UI+/imbXgga+UyITaIQazUQ+rpkYBI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <975FE1C936EAA14D9160DD23BCD90BCE@namprd04.prod.outlook.com>
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 151c6fcc-d614-4b4c-9c55-08d59984cff7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Apr 2018 17:03:24.5543
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0497
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w33H3ZRr013781
 
-On 04/02/2018 07:18 PM, Sean Wang wrote:
-> On Mon, 2018-04-02 at 16:24 -0700, Florian Fainelli wrote:
->> We would be passing 0 instead of NULL as the rsp argument to
->> mt7530_fdb_cmd(), fix that.
->>
+On Sun, 2018-04-01 at 14:27 -0400, Wakko Warner wrote:
+> Wakko Warner wrote:
+> > Wakko Warner wrote:
+> > > I tested 4.14.32 last night with the same oops.  4.9.91 works fine.
+> > > From the initiator, if I do cat /dev/sr1 > /dev/null it works.  If I mount
+> > > /dev/sr1 and then do find -type f | xargs cat > /dev/null the target
+> > > crashes.  I'm using the builtin iscsi target with pscsi.  I can burn from
+> > > the initiator with out problems.  I'll test other kernels between 4.9 and
+> > > 4.14.
+> > 
+> > So I've tested 4.x.y where x one of 10 11 12 14 15 and y is the latest patch
+> > (except for 4.15 which was 1 behind)
+> > Each of these kernels crash within seconds or immediate of doing find -type
+> > f | xargs cat > /dev/null from the initiator.
 > 
-> Acked-by: Sean Wang <sean.wang@mediatek.com>
-> 
-> BTW, does the part of the commit message should be updated with "passing
-> NULL instead of 0"?
+> I tried 4.10.0.  It doesn't completely lockup the system, but the device
+> that was used hangs.  So from the initiator, it's /dev/sr1 and from the
+> target it's /dev/sr0.  Attempting to read /dev/sr0 after the oops causes the
+> process to hang in D state.
 
-I don't follow you, the commit message indicates what we were doing
-which implies it was wrong and fixes it. Would you want me to reword
-that part?
--- 
-Florian
+Hello Wakko,
+
+Thank you for having narrowed down this further. I think that you encountered
+a regression either in the block layer core or in the SCSI core. Unfortunately
+the number of changes between kernel versions v4.9 and v4.10 in these two
+subsystems is huge. I see two possible ways forward:
+- Either that you perform a bisect to identify the patch that introduced this
+  regression. However, I'm not sure whether you are familiar with the bisect
+  process.
+- Or that you identify the command that triggers this crash such that others
+  can reproduce this issue without needing access to your setup.
+
+How about reproducing this crash with the below patch applied on top of
+kernel v4.15.x? The additional output sent by this patch to the system log
+should allow us to reproduce this issue by submitting the same SCSI command
+with sg_raw.
+
+Thanks,
+
+Bart.
+
+
+Subject: [PATCH] Report commands with no physical segments in the system log
+
+---
+ drivers/scsi/scsi_lib.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 6b6a6705f6e5..74a39db57d49 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1093,8 +1093,10 @@ int scsi_init_io(struct scsi_cmnd *cmd)
+ 	bool is_mq = (rq->mq_ctx != NULL);
+ 	int error = BLKPREP_KILL;
+ 
+-	if (WARN_ON_ONCE(!blk_rq_nr_phys_segments(rq)))
++	if (WARN_ON_ONCE(!blk_rq_nr_phys_segments(rq))) {
++		scsi_print_command(cmd);
+ 		goto err_exit;
++	}
+ 
+ 	error = scsi_init_sgtable(rq, &cmd->sdb);
+ 	if (error)
