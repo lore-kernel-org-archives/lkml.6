@@ -1,83 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755454AbeDCLqD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 07:46:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58927 "EHLO mx2.suse.de"
+        id S932101AbeDCLuJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 07:50:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59578 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755335AbeDCLqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 07:46:02 -0400
-Date: Tue, 3 Apr 2018 13:46:00 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-Message-ID: <20180403114600.uc7sqeoqt7fmdd66@pathway.suse.cz>
-References: <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
- <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
- <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
- <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
- <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
- <1521119343.10722.665.camel@linux.intel.com>
- <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
- <1521224375.23017.41.camel@linux.intel.com>
- <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
- <1522678523.21176.178.camel@linux.intel.com>
+        id S932066AbeDCLuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 07:50:07 -0400
+Date: Tue, 3 Apr 2018 13:50:03 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-nvdimm@lists.01.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, david@fromorbit.com, hch@lst.de,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, snitzer@redhat.com
+Subject: Re: [PATCH v8 05/18] ext4, dax: introduce ext4_dax_aops
+Message-ID: <20180403115003.qfbedsjtxwirqkh6@quack2.suse.cz>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246895649.36038.5391043415273091960.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522678523.21176.178.camel@linux.intel.com>
+In-Reply-To: <152246895649.36038.5391043415273091960.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-04-02 17:15:23, Andy Shevchenko wrote:
-> On Thu, 2018-03-29 at 16:53 +0200, Petr Mladek wrote:
-> > On Fri 2018-03-16 20:19:35, Andy Shevchenko wrote:
-> > > On Thu, 2018-03-15 at 16:26 +0100, Petr Mladek wrote:
-> > > > On Thu 2018-03-15 15:09:03, Andy Shevchenko wrote:
+On Fri 30-03-18 21:02:36, Dan Williams wrote:
+> In preparation for the dax implementation to start associating dax pages
+> to inodes via page->mapping, we need to provide a 'struct
+> address_space_operations' instance for dax. Otherwise, direct-I/O
+> triggers incorrect page cache assumptions and warnings.
 > 
-> > > > > I still think that printing a hex value of the error code is
-> > > > > much
-> > > > > better
-> > > > > than some odd "(efault)".
-> > > > 
-> > > > Do you mean (err:0e)? Google gives rather confusing answers for
-> > > > this.
-> > > 
-> > > More like "(0xHHHH)" (we have already more than 512 error code
-> > > numbers.
-> > 
-> > Hmm, I have never seen the error code in this form.
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+
+Looks good. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/inode.c |   42 +++++++++++++++++++++++++++++++-----------
+>  1 file changed, 31 insertions(+), 11 deletions(-)
 > 
-> We have limited space to print it and error numbers currently can be up
-> to 0xfff (4095). So, I have no better idea how to squeeze them while
-> thinking that "(efault)" is much harder to parse in case of error
-> pointer.
-
-But this will not be used instead of address value. It is used in situations
-where we print the information that is stored at the address, for example,
-string, IP address, dentry name.
-
-> >  Also google gives
-> > rather confusing results when searching, for example for "(0x000E)".
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index c94780075b04..249a97b19181 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -2725,12 +2725,6 @@ static int ext4_writepages(struct address_space *mapping,
+>  	percpu_down_read(&sbi->s_journal_flag_rwsem);
+>  	trace_ext4_writepages(inode, wbc);
+>  
+> -	if (dax_mapping(mapping)) {
+> -		ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev,
+> -						  wbc);
+> -		goto out_writepages;
+> -	}
+> -
+>  	/*
+>  	 * No pages to write? This is mainly a kludge to avoid starting
+>  	 * a transaction for special inodes like journal inode on last iput()
+> @@ -2955,6 +2949,27 @@ static int ext4_writepages(struct address_space *mapping,
+>  	return ret;
+>  }
+>  
+> +static int ext4_dax_writepages(struct address_space *mapping,
+> +			       struct writeback_control *wbc)
+> +{
+> +	int ret;
+> +	long nr_to_write = wbc->nr_to_write;
+> +	struct inode *inode = mapping->host;
+> +	struct ext4_sb_info *sbi = EXT4_SB(mapping->host->i_sb);
+> +
+> +	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+> +		return -EIO;
+> +
+> +	percpu_down_read(&sbi->s_journal_flag_rwsem);
+> +	trace_ext4_writepages(inode, wbc);
+> +
+> +	ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
+> +	trace_ext4_writepages_result(inode, wbc, ret,
+> +				     nr_to_write - wbc->nr_to_write);
+> +	percpu_up_read(&sbi->s_journal_flag_rwsem);
+> +	return ret;
+> +}
+> +
+>  static int ext4_nonda_switch(struct super_block *sb)
+>  {
+>  	s64 free_clusters, dirty_clusters;
+> @@ -3857,10 +3872,6 @@ static ssize_t ext4_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	if (ext4_has_inline_data(inode))
+>  		return 0;
+>  
+> -	/* DAX uses iomap path now */
+> -	if (WARN_ON_ONCE(IS_DAX(inode)))
+> -		return 0;
+> -
+>  	trace_ext4_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+>  	if (iov_iter_rw(iter) == READ)
+>  		ret = ext4_direct_IO_read(iocb, iter);
+> @@ -3946,6 +3957,13 @@ static const struct address_space_operations ext4_da_aops = {
+>  	.error_remove_page	= generic_error_remove_page,
+>  };
+>  
+> +static const struct address_space_operations ext4_dax_aops = {
+> +	.writepages		= ext4_dax_writepages,
+> +	.direct_IO		= noop_direct_IO,
+> +	.set_page_dirty		= noop_set_page_dirty,
+> +	.invalidatepage		= noop_invalidatepage,
+> +};
+> +
+>  void ext4_set_aops(struct inode *inode)
+>  {
+>  	switch (ext4_inode_journal_mode(inode)) {
+> @@ -3958,7 +3976,9 @@ void ext4_set_aops(struct inode *inode)
+>  	default:
+>  		BUG();
+>  	}
+> -	if (test_opt(inode->i_sb, DELALLOC))
+> +	if (IS_DAX(inode))
+> +		inode->i_mapping->a_ops = &ext4_dax_aops;
+> +	else if (test_opt(inode->i_sb, DELALLOC))
+>  		inode->i_mapping->a_ops = &ext4_da_aops;
+>  	else
+>  		inode->i_mapping->a_ops = &ext4_aops;
 > 
-> It's not primarily for google, though yeah, people would google for
-> error messages...
-> 
-> Another question is what the format: decimal versus hex for errors.
-> Maybe just "(-DDDDD)"?
-
-This still looks confusing and google does not help.
-
-Best Regards,
-Petr
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
