@@ -1,83 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751638AbeDCPoO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:44:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34598 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751195AbeDCPoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:44:13 -0400
-Subject: Re: [PATCH v2 11/17] kvm: arm64: Configure VTCR per VM
-To: James Morse <james.morse@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, cdall@kernel.org,
-        marc.zyngier@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        catalin.marinas@arm.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        ard.biesheuvel@linaro.org, peter.maydell@linaro.org,
-        kristina.martsenko@arm.com, mark.rutland@arm.com
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-12-git-send-email-suzuki.poulose@arm.com>
- <be9e8c47-8366-2d8f-8d8d-b8d2f978107b@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <f3ea2a6c-6c98-1768-0eef-b57b74ab91fa@arm.com>
-Date: Tue, 3 Apr 2018 16:44:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <be9e8c47-8366-2d8f-8d8d-b8d2f978107b@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752220AbeDCPop (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:44:45 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:60800 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751773AbeDCPon (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:44:43 -0400
+Message-ID: <1522770281.4522.14.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state
+ during dom0 boot
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Daniel Kiper <daniel.kiper@oracle.com>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Cc: ard.biesheuvel@linaro.org, boris.ostrovsky@oracle.com,
+        eric.snowberg@oracle.com, hpa@zytor.com, jgross@suse.com,
+        konrad.wilk@oracle.com, mingo@redhat.com, tglx@linutronix.de
+Date: Tue, 03 Apr 2018 08:44:41 -0700
+In-Reply-To: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/04/18 15:58, James Morse wrote:
-> Hi Suzuki,
+On Tue, 2018-04-03 at 16:39 +0200, Daniel Kiper wrote:
+> Initialize UEFI secure boot state during dom0 boot. Otherwise the
+> kernel
+> may not even know that it runs on secure boot enabled platform.
 > 
-> On 27/03/18 14:15, Suzuki K Poulose wrote:
->> We set VTCR_EL2 very early during the stage2 init and don't
->> touch it ever. This is fine as we had a fixed IPA size. This
->> patch changes the behavior to set the VTCR for a given VM,
->> depending on its stage2 table. The common configuration for
->> VTCR is still performed during the early init as we have to
->> retain the hardware access flag update bits (VTCR_EL2_HA)
->> per CPU (as they are only set for the CPUs which are capabile).
+> Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
+> ---
+>  arch/x86/xen/efi.c                        |   57
+> +++++++++++++++++++++++++++++
+>  drivers/firmware/efi/libstub/secureboot.c |    3 ++
+>  2 files changed, 60 insertions(+)
 > 
-> (Nit: capable)
-> 
+> diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
+> index a18703b..1804b27 100644
+> --- a/arch/x86/xen/efi.c
+> +++ b/arch/x86/xen/efi.c
+> @@ -115,6 +115,61 @@ static efi_system_table_t __init
+> *xen_efi_probe(void)
+>  	return &efi_systab_xen;
+>  }
+>  
+> +/*
+> + * Determine whether we're in secure boot mode.
+> + *
+> + * Please keep the logic in sync with
+> + * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
+> + */
+> +static enum efi_secureboot_mode xen_efi_get_secureboot(void)
+> +{
+> +	static efi_guid_t efi_variable_guid =
+> EFI_GLOBAL_VARIABLE_GUID;
+> +	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
+> +	efi_status_t status;
+> +	u8 moksbstate, secboot, setupmode;
+> +	unsigned long size;
+> +
+> +	size = sizeof(secboot);
+> +	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
+> +				  NULL, &size, &secboot);
+> +
+> +	if (status == EFI_NOT_FOUND)
+> +		return efi_secureboot_mode_disabled;
+> +
+> +	if (status != EFI_SUCCESS)
+> +		goto out_efi_err;
+> +
+> +	size = sizeof(setupmode);
+> +	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
+> +				  NULL, &size, &setupmode);
+> +
+> +	if (status != EFI_SUCCESS)
+> +		goto out_efi_err;
+> +
+> +	if (secboot == 0 || setupmode == 1)
+> +		return efi_secureboot_mode_disabled;
+> +
+> +	/* See if a user has put the shim into insecure mode. */
+> +	size = sizeof(moksbstate);
+> +	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
+> +				  NULL, &size, &moksbstate);
+> +
+> +	/* If it fails, we don't care why. Default to secure. */
+> +	if (status != EFI_SUCCESS)
+> +		goto secure_boot_enabled;
+> +
+> +	if (moksbstate == 1)
+> +		return efi_secureboot_mode_disabled;
+> +
+> + secure_boot_enabled:
+> +	pr_info("UEFI Secure Boot is enabled.\n");
+> +	return efi_secureboot_mode_enabled;
+> +
+> + out_efi_err:
+> +	pr_err("Could not determine UEFI Secure Boot status.\n");
+> +	return efi_secureboot_mode_unknown;
+> +}
+> +
 
-Thanks for spotting, will fix it.
+This looks like a bad idea: you're duplicating the secure boot check in
 
-> 
->> The bits defining the number of levels in the page table (SL0)
->> and and the size of the Input address to the translation (T0SZ)
->> are programmed for each VM upon entry to the guest.
-> 
->> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
->> index 870f4b1..5ccd3ae 100644
->> --- a/arch/arm64/kvm/hyp/switch.c
->> +++ b/arch/arm64/kvm/hyp/switch.c
->> @@ -164,6 +164,12 @@ static void __hyp_text __deactivate_traps(struct kvm_vcpu *vcpu)
->>   static void __hyp_text __activate_vm(struct kvm_vcpu *vcpu)
->>   {
->>   	struct kvm *kvm = kern_hyp_va(vcpu->kvm);
->> +	u64 vtcr = read_sysreg(vtcr_el2);
->> +
->> +	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
->> +	vtcr |= VTCR_EL2_SL0(kvm_stage2_levels(kvm)) |
->> +		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
->> +	write_sysreg(vtcr, vtcr_el2);
->>   	write_sysreg(kvm->arch.vttbr, vttbr_el2);
->>   }
-> 
-> Do we need to set this register for tlb maintenance too?
-> e.g. tlbi for a 3-level-stage2 vm when a 2-level-stage2 vm's vtcr is loaded...
-> 
-> (The ARM-ARM has 'Any of the bits of VTCR_EL2 are permitted to be cached in a TLB'.)
+drivers/firmware/efi/libstub/secureboot.c
 
-You're right. We need to set the VTCR for the tlb operations. I think
-we can do this by hooking it to the __tlb_switch_to_guest() routine.
-Will address it in the next version.
+Which is an implementation of policy.  If we have to have policy in the
+kernel, it should really only be in one place to prevent drift; why
+can't you simply use the libstub efi_get_secureboot() so we're not
+duplicating the implementation of policy?
 
-Cheers
-Suzuki
+James
