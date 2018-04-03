@@ -1,83 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753781AbeDCVvr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 17:51:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753367AbeDCVvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 17:51:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A03721837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AIpwx48N6dqNXosuSQrhLGJQcOEfAvBJHPhTlDD5RBGJ8iwEbci4eyujrUXFg0pfmIhZ6ohYeHjxXbbHwx4efHIm//0=
+        id S1753848AbeDCVwm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 17:52:42 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.122]:26448 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753340AbeDCVwk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 17:52:40 -0400
+Subject: Re: [PATCH] net: thunderx: nicvf_main: Fix potential NULL pointer
+ dereference
+To: Eric Dumazet <eric.dumazet@gmail.com>,
+        Sunil Goutham <sgoutham@cavium.com>, Robert Richter <rric@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180403212925.GA31093@embeddedor.com>
+ <f0deebb5-06e8-d788-0e68-0c15c979028c@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <15d8d776-3768-b93e-8e38-0f2387668477@embeddedor.com>
+Date: Tue, 3 Apr 2018 16:52:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
-References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
- <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
- <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
- <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
- <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com> <CACdnJuutJeeaaB2kwma0MMd9uDDbKavoHEk4koDLe1M6gYZWXQ@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 3 Apr 2018 14:51:23 -0700
-X-Gmail-Original-Message-ID: <CALCETrVR_EcbKv5-4AR6Zm02XHhJQQGNDeO8FGkMbYozmuDTJw@mail.gmail.com>
-Message-ID: <CALCETrVR_EcbKv5-4AR6Zm02XHhJQQGNDeO8FGkMbYozmuDTJw@mail.gmail.com>
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: Matthew Garrett <mjg59@google.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f0deebb5-06e8-d788-0e68-0c15c979028c@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1f3Tr5-00125G-US
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.145.54.187]:42648
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 37
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 12:29 PM, Matthew Garrett <mjg59@google.com> wrote:
-> On Tue, Apr 3, 2018 at 9:46 AM Andy Lutomirski <luto@kernel.org> wrote:
->> On Tue, Apr 3, 2018 at 9:29 AM, Matthew Garrett <mjg59@google.com> wrote:
->> > A kernel that allows users arbitrary access to ring 0 is just an
->> > overfeatured bootloader. Why would you want secure boot in that case?
->
->> To get a chain of trust.  I can provision a system with some public
->> keys, stored in UEFI authenticated variables, such that the system
->> will only boot a signed image.  That signed image, can, in turn, load
->> a signed (or hashed or otherwise verfified) kernel and a verified
->> initramfs.  The initramfs can run a full system from a verified (using
->> dm-verity or similar) filesystem, for example.  Now it's very hard to
->> persistently attack this system.  Chromium OS does something very much
->> like this, except that it doesn't use UEFI as far as I know.  So does
->> iOS, and so do some Android versions.  None of this requires lockdown,
->> or even a separation between usermode and kernelmode, to work
->> correctly.  One could even do this on an MMU-less system if one really
->> cared to.  More usefully, someone probably has done this using a
->> unikernel.
->
-> That's only viable if you're the only person with the ability to sign stuff
-> for your machine - the moment there are generic distributions that your
-> machine trusts, an attacker can use one as a bootloader to compromise your
-> trust chain.
 
 
-If you removed "as a bootloader", then I agree with that sentence.
+On 04/03/2018 04:47 PM, Eric Dumazet wrote:
+> 
+> 
+> On 04/03/2018 02:29 PM, Gustavo A. R. Silva wrote:
+>> Add null check on kmalloc() return value in order to prevent
+>> a null pointer dereference.
+>>
+>> Addresses-Coverity-ID: 1467429 ("Dereference null return value")
+>> Fixes: 37c3347eb247 ("net: thunderx: add ndo_set_rx_mode callback implementation for VF")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/net/ethernet/cavium/thunder/nicvf_main.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_main.c b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+>> index 1e9a31f..468321a 100644
+>> --- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+>> +++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+>> @@ -1999,6 +1999,8 @@ static void nicvf_set_rx_mode(struct net_device *netdev)
+>>   				struct xcast_addr *xaddr;
+>>   
+>>   				mc_list = kmalloc(sizeof(*mc_list), GFP_ATOMIC);
+>> +				if (unlikely(!mc_list))
+>> +					return;
+>>   				INIT_LIST_HEAD(&mc_list->list);
+>>   				netdev_hw_addr_list_for_each(ha, &netdev->mc) {
+>>   					xaddr = kmalloc(sizeof(*xaddr),
+>>
+> 
+> What about the second kmalloc() right there ?
+> 
 
-Can someone please explain why the UEFI crowd cares so much about "as
-a bootloader"?  Once I'm able to install an OS (Linux kernel +
-bootloader, Windows embedded doodad, OpenBSD, whatever) on your
-machine, I can use your peripherals, read your data, write your data,
-see your keystrokes, use your network connection, re-flash your BIOS
-(at least as well as any OS can), run VMs, and generally own your
-system.  Somehow you all seem fine with all of this, except that the
-fact that I can chainload something else gives UEFI people the
-willies.
+Oops. I thought I had it covered.
 
-Can someone explain why?
+I'll send v2 with that change shortly.
+
+Thanks for the feedback, Eric.
+--
+Gustavo
