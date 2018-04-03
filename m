@@ -1,49 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752196AbeDCPZE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:25:04 -0400
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:41708 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751430AbeDCPZD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:25:03 -0400
-X-Google-Smtp-Source: AIpwx4/OmENeI+VD74BSQAljACr+iUgmYjWlc4SOErlMGc4KF7dbL2amd4jJOpfHW5x07hwcEc04Zg==
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
-Subject: Re: [GIT PULL] siginfo fix for v4.16-rc5
-From: Josh Juran <jjuran@gmail.com>
-In-Reply-To: <87in98xt4p.fsf@xmission.com>
-Date: Tue, 3 Apr 2018 11:24:58 -0400
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux/m68k <linux-m68k@vger.kernel.org>
-Message-Id: <4A16C7EF-B8B7-457C-B49C-829B44F12FFE@gmail.com>
-References: <87woypy8zc.fsf@xmission.com> <20180331105658.GA4332@asgard.redhat.com> <87woxpz7k9.fsf@xmission.com> <CAMuHMdVtbhGJ=nGbB21O73DcYM-4csyuJbx2NksN379ww6c1Gw@mail.gmail.com> <87in98xt4p.fsf@xmission.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-X-Mailer: Apple Mail (2.1878.6)
+        id S1752353AbeDCP0H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:26:07 -0400
+Received: from sauhun.de ([88.99.104.3]:43166 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751488AbeDCP0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 11:26:05 -0400
+Date: Tue, 3 Apr 2018 17:26:04 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] i2c: i2c-stm32f7: Add slave support
+Message-ID: <20180403152604.udgh4v2erpsupgo3@ninjato>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+ <1521650940-11651-3-git-send-email-pierre-yves.mordret@st.com>
+ <20180325181600.vehqe3xcx55qxtd7@katana>
+ <94737125-c0b7-08ca-c2f7-feb4e5d0498c@st.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qfvqwuivg7flquuk"
+Content-Disposition: inline
+In-Reply-To: <94737125-c0b7-08ca-c2f7-feb4e5d0498c@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w33FP7JX005425
 
-On Apr 3, 2018, at 10:27 AM, Eric W. Biederman <ebiederm@xmission.com> wrote:
 
-> Geert Uytterhoeven <geert@linux-m68k.org> writes:
-> 
->> On Mon, Apr 2, 2018 at 10:17 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
->> 
->>> A 2-byte alignment for 4 byte pointers.  That is a new one to me.
->> 
->> Not just for pointers, also for int and long.
-> 
-> The smallest I have seen previously has been 64bit integers having
-> 32bit alignment.  32bit entities having only 16bit alignment on a 32bit
-> arch was simply a surprise.  Even when it works there tend to be good
-> reasons not to do that by default.
+--qfvqwuivg7flquuk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The 68K architecture began as 16-bit with the 68000.  Rather than tightening requirements, the 68020 not only maintained compatibility with 16-bit alignment, but also forgave byte-misaligned data accesses (albeit with a performance penalty).  Jumping to an odd address is still an error, though.
+On Mon, Mar 26, 2018 at 10:41:51AM +0200, Pierre Yves MORDRET wrote:
+>=20
+>=20
+> On 03/25/2018 08:16 PM, Wolfram Sang wrote:
+> > On Wed, Mar 21, 2018 at 05:48:56PM +0100, Pierre-Yves MORDRET wrote:
+> >> This patch adds slave support for I2C controller embedded in STM32F7 S=
+oC
+> >>
+> >> Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+> >> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> >=20
+> > Looks OK from a first look. What kind of tests did you do?
+>=20
+> As mentioned for 10-bit, I'm using 2 I2C instances from the SoC.
+> Here are the tests I dit:
+>  - Master/slave send in 7 and 10 bits
+>  - master/slave recv in 7 and 10 bits
+>  - E2PROM Read/Write
 
-Josh
+As far as I understand the code now, both instances can be master /
+slave simultanously on the same bus?
+
+
+--qfvqwuivg7flquuk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrDnQgACgkQFA3kzBSg
+KbaRKA/8DwUMYUgeaNpboD15JOfVpRCDDVJIphlon3oRKvBxH4ryR4xkQT7fsueH
+xvCnK0w+C10pjKDWIf52iIzcsnjDtvGYb5b4ZZCeGhC+5bnuit3pgXg9pmbWVFmH
+POBTVxBsB+gyhNACSNsahZ2QyHOyy6wLreaQlJHtbOAU3s7mCHWSsmb9cyeElq6v
+V9JNyiuI+3rcWUQy2oqtmZ4GoJ0Rs3doCHIE9YjxXSQS/dNuSdJ+mbgMX2Qe4lCf
+KLqyUaxERuAiMgbEURXn+MAp7+nTJ3QZJekyrXE+DwvXI/zsdbLjcDoCN+l85hcc
+GmB+/CpIos7XkEM+QYq8lPfNk7yUeRp6j8U3qt6tgiLIh02f6RhXc9MvXssqCl6k
+/4SkeccuyP0Sapft/it16D/bQU23skuZMhu84k49TV5fAHfNGovIVa8kLQ6o2g+A
+NspD0GxObOPqIbwh3lPXkgStmTneZvzw5Y2rPkUjC7KlEiLgmItGybOJfnR6c2Dr
+byni7FmvZ1OGNHFiTINZVFU6AVRV18+HdYlO2sejkVjHDdiB7XKmJ6EAutPDqHzk
+lefYT9/29ePoL3M5zNxXS13tKAdMJlaKW6q2HEii1fvAiV2n2aHyClPZOMVzCHHk
+fcQhjoJFHnrb61qHYlfFO1kYAfn59cdrfalMF7phvx0ZHrsSV8w=
+=y8Qs
+-----END PGP SIGNATURE-----
+
+--qfvqwuivg7flquuk--
