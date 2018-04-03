@@ -1,141 +1,187 @@
-Return-Path: <linux-efi-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1905978-1522772812-2-625609335972731625
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-141800-1522717155-2-14409469522756540304
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: linux@kroah.com
-X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-efi-owner@vger.kernel.org
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522772812; b=CfR2LwPD/9nLmuj+l0ybZZ+ha9CN+0klj5YGA1Buo9wgyXKvpk
-    tvG7HhIZFlMjAojRh/1iUVPZveGHy/cOjbwlVjEjitUkMixsc2N5J+kxQGvokJkP
-    sVjdPhB8UgmqSRgmc4MXfzC9B5XDuJl4s/WmnFdEPj8Cdf1YKeLZ3B1d3JEB7I0h
-    Es5rN6/pl2q3Dy2JI6b3gB+OBoQ26wdAvwuVdF7bSOfJAwxdauR+nUUHcQOG3af0
-    5FBTcSxI4k/Mj+5CZjhuXT8ojsOraub4OwjT/SDrQEvsfm3zLH6MFllUqI+Pg9lo
-    n1Dr45NHwSKtPqrxwmKCJVFwsZ9MhTEs7vCA==
+    1522717154; b=I51AQsLr7qAU+pY26bAKYkziK5bRZtJP3ChH2dHSjUbJqm9as1
+    a5LFtlbu+M1NS90cLra4oCBzDEKX7vPuXtAsu5Nywsq3kLfOI9hnUIwd/c4ymguS
+    YWBBDjD8lO8K9roxNH/nGli26DeF7Uj/kHXXQGlfK7reiSBZqE2tTdmRaNb6Ttxm
+    +/H+K6nY1ScOPfBTH9TIsGvPO/IeSd5MxIgc9QcUpDDfZnpnPEI7r1ZpqZ9MWV45
+    Bj4mXEIkpatsMOFH3K2p7nLN3VgginlMS93zUe1tNXJGTnW4TNg8B+nbMd2u4NkI
+    uxcX+162dXZmptRCVV43G17JxA2qb5MdT6qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1522772812; bh=bkeTj3bUkScbo+xX4c+iHplaDxsBo52mJMblMxdC0/
-    o=; b=SRK/xOlS4Q9F6qX1z4K0jv/7YJihwFXnRlSTelHCyyqdSPccOkfXVlx9Yw
-    dajM7rxJgHeqd4oAVtH6NExwDGEHa+5OPtgDXW71oFJe1PXnKUfyat2VfOoNcWU2
-    yRABivFE7e8Ej5TchTwiv7RGRUXuMgb/5Swq5sxs2KZOeavRtcF2/y7qAlVs/XOz
-    HQMALIq9PbJjHILzTYP2I6E3hph22QG0eoDJu6BXEDc1rlNXri7X8EpNbhbSJVrC
-    C5ORnFP70I9BMphBvb352QSxWXeUKPeNVmxlXaCA3V8e7OfTcuhC7bSiBfRrTKuL
-    E2G05s/SbrO3RrsSMBocy2uEZDWg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    fm2; t=1522717154; bh=IRmxydwUSp/C29p0roDUrUb7YpLGw8ibH75yTyjj6r
+    c=; b=n2PbqRAwRZaBf+o1Tya+C1tX86uoZDBmH+H2LHVY2wetiOVh2xjVClQ1Is
+    tsWvYY2TjdC+/N+VfaDijtsbYDpNDK4vmGawLreXr+IJBInji3OlQNG/ilkzZ3m8
+    cdKdqAma/InMaROoI/uTTL1NTtOvcaXAtCwGDpr8wCQYiLSzw7FoVUxiKnVZJ/7N
+    CQAIQh/GUWPRbxD6kZk4IopU62N1/ivhCXlagFXQzK1jKru97zLISTwGV9co4C9m
+    f6xoKnq0NkNYXekyRDc4efXhERmj6yjRapB2kSvp22g43VhjIyeiNaRaZqC3n/M6
+    LIxEtMdbY19wYnpur0OFc3QD89+w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=msKnmBZz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=fwT9TfD+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Z+xyK7PA;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=msKnmBZz x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=fwT9TfD+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Z+xyK7PA;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFYL+084byyc402rAew7iMudM7RxfMwN8qRFYmwnSf/mj6xJmyTzaHOBQM+UHE7euPkq7FDp48e4X9ihPEez6FQEokjoKc2zafvzrRuI+37kaCPYmOTB
-    SBUyC/Br/gUbw6nUbhCxC3q7FNIMAFc7ZcB/TjNHGZ9J3yMFsyiWacVHLkOCCjIYOOeepqg7xpy1OdnqpW/ypK+mE+nkPiQbaTCNer0i8bBcLNj6GW9XusY6
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHO5lRMNTKTshT9N/qexdoMQmc4KI1JqsnEwq6voumt49QGxOct7u6JX5FiYCeuqGXyeu0BTW5t6h1qUUyv3WW1Yw+xb9PKf8hfxCodEX588GLbd+HLX
+    2b6Oo5Wh9RUyfOJUk0ROaGBYwUrwcXBmCYvd8HMEKkw9Bmz6aKbsZpEecARwGEwUe9N7iHIFUW8RtOlzUkiMUdjC4ZrUDNnVpCyt3ZWWunSue+w9rO47r86/
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=BkHumz7Idt46OS9E1LIA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=8roLvd9qI6OLlgUwLloA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeDCQ0t (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 3 Apr 2018 12:26:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751461AbeDCQ0r (ORCPT <rfc822;linux-efi@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:26:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B3E2183E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AIpwx48FZM038FZSaccMttD0eyaOLhHpsjlAhL5HCqzz82Omov3qvgZO/nV+GoEoXOEP9XBQeK63CgeoH4eB6W3KDRQ=
+        id S1754691AbeDCA7N (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 2 Apr 2018 20:59:13 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:40141 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754604AbeDCA7L (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 2 Apr 2018 20:59:11 -0400
+X-Google-Smtp-Source: AIpwx4/8pfsJC3lKpLyqeFSrbtZQKD8RR+xDMIaXGH3DDBQ5uJ4coHBtK/ivUeb3ttqdqSGNxWWRKV5CaEGScM4ko1Q=
 MIME-Version: 1.0
-In-Reply-To: <20180403154156.f37wrzjhuvijzi2i@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
 References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
- <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
- <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com> <20180403154156.f37wrzjhuvijzi2i@ast-mbp.dhcp.thefacebook.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 3 Apr 2018 09:26:26 -0700
-X-Gmail-Original-Message-ID: <CALCETrX3D3jrr=Vq70H+ttdCKSevU-cC-cvZrfaoahEQoO7wzA@mail.gmail.com>
-Message-ID: <CALCETrX3D3jrr=Vq70H+ttdCKSevU-cC-cvZrfaoahEQoO7wzA@mail.gmail.com>
+ <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 2 Apr 2018 17:59:10 -0700
+X-Google-Sender-Auth: a8T4tMJ04ka7T1xm-eZiCotGrTs
+Message-ID: <CAGXu5j+UWQWDacMvvRCke3xUOb7uTkxn=WaHzG4kJTKWh-6tAA@mail.gmail.com>
 Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>,
+To: Andy Lutomirski <luto@kernel.org>
+Cc: James Morris <jmorris@namei.org>,
         David Howells <dhowells@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Matthew Garrett <mjg59@google.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Justin Forbes <jforbes@redhat.com>,
         linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-efi-owner@vger.kernel.org
-X-Mailing-List: linux-efi@vger.kernel.org
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 3, 2018 at 8:41 AM, Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-> On Tue, Apr 03, 2018 at 08:11:07AM -0700, Andy Lutomirski wrote:
->> >
->> >> "bpf: Restrict kernel image access functions when the kernel is locked down":
->> >> This patch just sucks in general.
->> >
->> > Yes - but that's what Alexei Starovoitov specified.  bpf kind of sucks since
->> > it gives you unrestricted access to the kernel.
+On Mon, Apr 2, 2018 at 5:37 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> On 03/30/2018 05:46 PM, James Morris wrote:
 >>
->> bpf, in certain contexts, gives you unrestricted access to *reading*
->> kernel memory.  bpf should, under no circumstances, let you write to
->> the kernel unless you're using fault injection or similar.
+>> On Sat, 31 Mar 2018, David Howells wrote:
 >>
->> I'm surprised that Alexei acked this patch.  If something like XDP or
->> bpfilter starts becoming widely used, this patch will require a lot of
->> reworking to avoid breaking standard distros.
+>>> Date: Thu, 26 Oct 2017 17:37:38 +0100
+>>>
+>>> Hi James,
+>>>
+>>> Can you pull this patchset into security/next please?  It has been in
+>>> linux-next since the beginning of March.
+>>>
+>>> It adds kernel lockdown support for EFI secure boot.
+>>
+>>
+>> Applied to
+>> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+>> next-lockdown and next-testing
+>>
+>> Are there any known coverage gaps now?
+>>
+>>
+>>
 >
-> my understanding was that this lockdown set attemps to disallow _reads_
-> of kernel memory from anything, so first version of patch was adding
-> run-time checks for bpf_probe_read() which is no-go
-> and without this helper the bpf for tracing is losing a lot of its power,
-> so the easiest is to disable it all.
-
-Fair enough.
-
-> I think lockdown suppose to disable xdp, bpfilter, nflog, raw sockets + pcap too
-> otherwise even cap_net_admin can see traffic coming into host.
-> Similarly kprobe, perf_event, ftrace should be off as well?
+> This is an attempt at a review.  I'm replying here because I can't find the
+> actual relevant patch emails.
 >
+> Cover letter:
+>
+>> Here's a set of patches to institute a "locked-down mode" in the
+>> kernel and to trigger that mode if the kernel is booted in secure-boot >
+>> mode or through the command line.
+>
+> I think this is seriously problematic in that it's not well defined.  It
+> sounds like "locked-down mode" means "make me feel good about something".
 
-I'm reasonably sure that lockdown is not intended to be this far
-reaching.  cap_net_admin can see traffic coming into the host, and I
-don't think lockdown is intended to change that.
+Naming of this feature has been multi-year bikeshedding, so if we
+could just leave the name, that'd be nice.
 
-David, I think this is exactly why you need to define what "lockdown"
-means.  As it stands, the best argument I've seen involves
-"blacklisting", but that's a political thing and almost no one
-involved has any ability to evaluate it.  Right now there's a series
-of patches that check for "lockdown" and seem to disable things that
-make someone uncomfortable.  That's not a good way to design a
-security feature.
+> For the rest of this review, I'm going to pretend that you actually want two
+> features: "try-prevent-root-from-corrupting-the-kernel" and
+> "try-to-prevent-root-from-reading-kernel-memory".
+
+That is how I view it, yes. It's about creating a bright line between
+uid-0 and ring-0. The most powerful of these distinctions was made
+long ago with signed modules. It hasn't been enough, though, since
+there have been many ways for uid-0 to read or write kernel memory. My
+expectation for this was to reasonably fill all the remaining gaps.
+
+> Also, there should be a justification that allows normal people (i.e. those
+> who are not involved in the UEFI signing process) to understand *why* this
+> should have anything to do with UEFI.  I can very easily see why it would
+> make sense for a UEFI authenticated variable to tell the kernel to enable
+> one or both of these modes or for there to be an authenticated mechanism for
+> the bootloader to tell the kernel to enable it.  I do *not* see why the mere
+> act of using Secure Boot should have this effect.
+>
+> In particular, UEFI Secure Boot should *not* enable
+> "try-to-prevent-root-from-reading-kernel-memory", which means that, unless
+> you actually implement the split, you should drop a bunch of the patches.
+>
+> In fact, I think the kernel should try to get away from the idea that UEFI
+> Secure Boot should imply annoying restrictions.  It's really annoying and
+> it's never been clear to me that it has a benefit.
+
+FWIW, I've never been a fan of this being UEFI-centric: more than
+Secure Boot needs this. For example, Chrome OS's static root of trust
+and boot firmware isn't UEFI, but it wants this feature enabled.
+Chrome OS would set it on the command line, since the command line is
+part of the signed boot image along with the kernel, etc.
+
+> "Restrict /dev/{mem,kmem,port} when the kernel is locked down": this should
+> probably split into one restriction for read and one for write.
+
+I think splitting read and write is only useful if there is a use-case
+for only blocking one of them. I struggle to imagine allowing write
+and blocking read, so really it's the case of wanting to allow read
+and disallow write. Is there actually a use-case for this? In all the
+"locked down" cases I've seen, both are desired.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
