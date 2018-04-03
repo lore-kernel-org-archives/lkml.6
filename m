@@ -1,44 +1,39 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523554649; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522766730; cv=none;
         d=google.com; s=arc-20160816;
-        b=ULRiz664peExAVm7nGIBWPDJajuOHPBdbC6WjDbDKseV+CaM525soGopt5a1zgRg6m
-         XOm1hOUqrloo2PQ52aPo0lFK+dYYTtygzWvW1anM28khS+6ZgjuvwOwErp8fKzEtYWF/
-         BCYpK2+n3bqO8anEdDZJj82cbT911U+nPXQCnGL5ksruTx++8dg6wYckdRXil/zLjRk2
-         4liCCCaTfU5yrATkMIw4sSQ9qjhagUj8n2YublIA4QpYG/A3s4TvyMfKvvSc+oMkWmFC
-         WSC2Jl2oDPAZqh9vCrBqZfp1+EioyehYQtKzCjgh9/rl5l1IoUARpzoigqCqxuSp7b7+
-         /Vog==
+        b=Fp1f1jzagx9EPBYGr0JzMyrC9i/hAyaxQsbBgXPzgWWmGsGCcxUYwxl4GDoDJsonD0
+         ImfySleXiI+9GiFs9FqGmkCZJv2+dsJuZAVLaAVdJswrwnjr36QLKuGwQt6ttY+k4/8H
+         9e1K9nkVPP1+VPIKyBWlHyA0hWbyY8cUpBaik51bhKRmmx6y8T2zRjKfGPfrc0w3CIFP
+         UlFnXvaxgYiGcsQAmz/Jyl3Ksq/vg+pwhY4i5GVOaqN/ZuRMMEwYUpXCbaTyEGPEfN5n
+         V9k34MN5Q+QQAobTspWmzQSk5Gq8RamBPxA4CGjoGX5WEQCa/8DG0EDAzG/2bcLduM9l
+         97fA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=aRGQiPOQ2Ax/mA+iYWZKVjMuBtc+gZ+7DZAIk3VKTnY=;
-        b=o9tb+AkdRDhk/5u6NZ4qu5FO0XGoi18aUaEbOZj89l8DKjVrwesW/R8gZ94vSrKeti
-         YgLJHD/YhhdgdIYo5zDonjsu+n28+SZ8UV/4/BqoO8vZb7id3fTY2ozR+yddP3W5JnP3
-         KzfH6Wcujg3r9fumPngbc6kjK3FW8wmrvUaNqGFY/0UfJFQqBukeIc0AwmUNjvUxNUTh
-         YcJKUOWPXTB2Fiem/Uv3MwDFEEZpTViVxPtDS9+ahsXfSzkFT8Pz4yAn4bLb1jjmeHbv
-         vcPfCwIJE4aAoTAjcKH/md6QXNr1G82DcgThoWmgkuU0BRB/T56GrowhietFSVQ8IV5H
-         WBeg==
+        bh=1a5oEW7isbL9XxyI+mp4Xx36o7kfKeWwd9hU7nPOHUU=;
+        b=MUm8a9I9kvbsm8OPOqGmvarckmwzEVqinNdfB7m1QvL0g2oiRADkAxw+sjgu47cxp5
+         D8SLRaEvnLly0Rr0N8IwlWWN8wPfrVZRbXqRGBEnwv+Pxs3tJ9QsxuRg6q1socKSzGgH
+         q2rYXb/9m4JIhDMbjR+5MRvJ/kDBRDhWxkIr+GiyE5dnNkbBeqhSlkBFtulVs2hD7hwT
+         jkuJzvlX0oKBK+tc06ivC1s5a0ur2EfShFYyD39MuLhX9zoDl192LTnc6A870MGVgmYF
+         7sQHIm7SOV9Lhl0KTnUfJxslhs74qLDVNf/3f8uwV95cHw4cJk8hmf6lvzl4gFLOIs5s
+         kufQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=K2UGWBaI;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=qUwoasuI;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=K2UGWBaI;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=qUwoasuI;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx48wKoUx1qfFqkZlw/IoUgdbuMp9D+PRPlSB2wIYarrDreVm9Go0bVYO86/x4Qrp1fWrHfobk9dLyyLC0cf9I3U=
+X-Google-Smtp-Source: AIpwx48lwj2dfhG/pq/WQ7FjG8z4+mOcp7YpthP/LkiN15DAJG04UiHySYY963O6dVxKddJgVP/e0jmtk7oMiWEj2MA=
 MIME-Version: 1.0
-In-Reply-To: <a29d22c7-bcae-ec8d-1810-95eef013e699@virtuozzo.com>
-References: <cover.1521828273.git.andreyknvl@google.com> <ba4a74ba1bc48dd66a3831143c3119d13c291fe3.1521828274.git.andreyknvl@google.com>
- <805d1e85-2d3c-2327-6e6c-f14a56dc0b67@virtuozzo.com> <CAAeHK+yg5ODeDy7k9fako5mcCLLnBrO729Zp_-UtDuzh3hZgZA@mail.gmail.com>
- <0c4397da-e231-0044-986f-b8468314be76@virtuozzo.com> <CAAeHK+xmCLe85_QNDam_BVTp9wVzjxgvko2+0JapJCzmciGa5g@mail.gmail.com>
- <0857f052-a27a-501e-8923-c6f31510e4fe@virtuozzo.com> <CAAeHK+xnHeznZwofNQVDcBCCMnaEQ6fcRxOcrFM-qQFUsZ51Rg@mail.gmail.com>
- <0f448799-3a06-a25d-d604-21db3e8577fc@virtuozzo.com> <CAAeHK+wWN=phNZgC_g5SMf61sCAVM7SGX9GdF1X4v+P3mK=uZA@mail.gmail.com>
- <bfc3da50-66df-c6ed-ad6a-a285efe617ec@virtuozzo.com> <CAAeHK+wzwXnJh1bbhUN6bm788q52BA2EfC+Q3dMS=peP7Px4Rg@mail.gmail.com>
- <a29d22c7-bcae-ec8d-1810-95eef013e699@virtuozzo.com>
+In-Reply-To: <a724eee6-7aff-df8b-de2b-8e9446e94623@virtuozzo.com>
+References: <cover.1521828273.git.andreyknvl@google.com> <b79947167d09478d3f61d2ec8de37322c0e1fe92.1521828274.git.andreyknvl@google.com>
+ <a724eee6-7aff-df8b-de2b-8e9446e94623@virtuozzo.com>
 From: Andrey Konovalov <andreyknvl@google.com>
-Date: Thu, 12 Apr 2018 19:37:27 +0200
-Message-ID: <CAAeHK+w1f4QSuan4onv-2ZxxSsi-ZYsdPOSuJ4=2ygJ2=q=VmA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 13/15] khwasan: add hooks implementation
+Date: Tue, 3 Apr 2018 16:45:26 +0200
+Message-ID: <CAAeHK+w9T8dTKP8tuw+B2MojvzRE6YQ1=O1FddZA62cYaeLV2g@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 08/15] khwasan: add tag related helper functions
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Cc: Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
 	Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>,
@@ -71,50 +66,46 @@ Cc: Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
 	Jann Horn <jannh@google.com>, Mark Brand <markbrand@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595752721075121286?=
-X-GMAIL-MSGID: =?utf-8?q?1597562840542616775?=
+X-GMAIL-THRID: =?utf-8?q?1595752710383893280?=
+X-GMAIL-MSGID: =?utf-8?q?1596736647149717567?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 12, 2018 at 7:20 PM, Andrey Ryabinin
+On Fri, Mar 30, 2018 at 6:13 PM, Andrey Ryabinin
 <aryabinin@virtuozzo.com> wrote:
->> 1. Tag memory with a random tag in kasan_alloc_pages() and returned a
->> tagged pointer from pagealloc.
 >
-> Tag memory with a random tag in kasan_alloc_pages() and store that tag in page struct (that part is also in kasan_alloc_pages()).
-> page_address(page) will retrieve that tag from struct page to return tagged address.
 >
-> I've no idea what do you mean by "returning a tagged pointer from pagealloc".
-> Once again, the page allocator (__alloc_pages_nodemask()) returns pointer to *struct page*,
-> not the address in the linear mapping where is that page mapped (or not mapped at all if this is highmem).
-> One have to call page_address()/kmap() to use that page.
+> On 03/23/2018 09:05 PM, Andrey Konovalov wrote:
+>
+>> diff --git a/mm/kasan/khwasan.c b/mm/kasan/khwasan.c
+>> index 24d75245e9d0..da4b17997c71 100644
+>> --- a/mm/kasan/khwasan.c
+>> +++ b/mm/kasan/khwasan.c
+>> @@ -39,6 +39,57 @@
+>>  #include "kasan.h"
+>>  #include "../slab.h"
+>>
+>> +int khwasan_enabled;
+>
+> This is not unused (set, but never used).
 
-Ah, that's what I've been missing.
-
-OK, I'll do that.
+It's used in the "khwasan: add hooks implementation" patch. I'll move
+it's declaration there as well.
 
 Thanks!
 
 >
->
->> 2. Restore the tag for the pointers returned from page_address for
->> !PageSlab() pages.
->>
->
-> Right.
->
->> 3. Set the tag to 0xff for the pointers returned from page_address for
->> PageSlab() pages.
->>
->
-> Right.
->
->> Is this correct?
->>
->> In 2 instead of storing the tag in page_struct, we can just recover it
->> from the shadow memory that corresponds to that page. What do you
->> think about this?
->
-> Sounds ok. Don't see any problem with that.
->
+>> +
+>> +static DEFINE_PER_CPU(u32, prng_state);
+>> +
+>> +void khwasan_init(void)
+>> +{
+>> +     int cpu;
+>> +
+>> +     for_each_possible_cpu(cpu) {
+>> +             per_cpu(prng_state, cpu) = get_random_u32();
+>> +     }
+>> +     WRITE_ONCE(khwasan_enabled, 1);
+>> +}
+>> +
 >
