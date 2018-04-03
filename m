@@ -1,74 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755269AbeDCJMN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 05:12:13 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54639 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751226AbeDCJML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:12:11 -0400
-Subject: Re: [PATCH v3] scsi: Introduce sdev_printk_ratelimited to throttle
- frequent printk
-To: Wen Yang <wen.yang99@zte.com.cn>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>
-References: <1522735480-159023-1-git-send-email-wen.yang99@zte.com.cn>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Bart.VanAssche@wdc.com>, <pmladek@suse.com>,
-        <sergey.senozhatsky.work@gmail.com>, <tj@kernel.org>,
-        <jiang.biao2@zte.com.cn>, <zhong.weidong@zte.com.cn>,
-        Tan Hu <tan.hu@zte.com.cn>
-From: Jason Yan <yanaijie@huawei.com>
-Message-ID: <5AC34562.6030207@huawei.com>
-Date: Tue, 3 Apr 2018 17:12:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        id S1755305AbeDCJMW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 05:12:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41364 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753441AbeDCJMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 05:12:20 -0400
+Date: Tue, 3 Apr 2018 11:12:18 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 08/13] ARM: sunxi: Add initialization of CNTVOFF
+Message-ID: <20180403091218.t6xuq6csjp4uyy5u@flea>
+References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
+ <20180403061836.3926-9-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <1522735480-159023-1-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4m3zop5wrmxfi2tg"
+Content-Disposition: inline
+In-Reply-To: <20180403061836.3926-9-mylene.josserand@bootlin.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2018/4/3 14:04, Wen Yang wrote:
-> There would be so many same lines printed by frequent printk if one
-> disk went wrong, like,
-> [  546.185242] sd 0:1:0:0: rejecting I/O to offline device
-> [  546.185258] sd 0:1:0:0: rejecting I/O to offline device
-> [  546.185280] sd 0:1:0:0: rejecting I/O to offline device
-> [  546.185307] sd 0:1:0:0: rejecting I/O to offline device
-> [  546.185334] sd 0:1:0:0: rejecting I/O to offline device
-> [  546.185364] sd 0:1:0:0: rejecting I/O to offline device
-> [  546.185390] sd 0:1:0:0: rejecting I/O to offline device
-> [  546.185410] sd 0:1:0:0: rejecting I/O to offline device
-> For slow serial console, the frequent printk may be blocked for a
-> long time, and if any spin_lock has been acquired before the printk
-> like in scsi_request_fn, watchdog could be triggered.
->
-> Related disscussion can be found here,
-> https://bugzilla.kernel.org/show_bug.cgi?id=199003
-> And Petr brought the idea to throttle the frequent printk, it's
-> useless to print the same lines frequently after all.
->
-> v2: fix some typos
-> v3: limit the print only for the same device
->
-> Suggested-by: Petr Mladek<pmladek@suse.com>
-> Suggested-by: Sergey Senozhatsky<sergey.senozhatsky.work@gmail.com>
-> Signed-off-by: Wen Yang<wen.yang99@zte.com.cn>
-> Signed-off-by: Jiang Biao<jiang.biao2@zte.com.cn>
-> Signed-off-by: Tan Hu<tan.hu@zte.com.cn>
-> Reviewed-by: Bart Van Assche<bart.vanassche@wdc.com>
-> CC: BartVanAssche<Bart.VanAssche@wdc.com>
-> CC: Petr Mladek<pmladek@suse.com>
-> CC: Sergey Senozhatsky<sergey.senozhatsky.work@gmail.com>
-> CC: Martin K. Petersen<martin.petersen@oracle.com>
-> CC: "James E.J. Bottomley"<jejb@linux.vnet.ibm.com>
-> CC: Tejun Heo<tj@kernel.org>
-> CC: JasonYan<yanaijie@huawei.com>
+--4m3zop5wrmxfi2tg
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In my machine it works fine.
+On Tue, Apr 03, 2018 at 08:18:31AM +0200, Myl=E8ne Josserand wrote:
+> Add the initialization of CNTVOFF for sun8i-a83t.
+>=20
+> For boot CPU, Create a new machine that handles this
+> function's call in an "init_early" callback.
+> For secondary CPUs, add this function into secondary_startup
+> assembly entry.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+> ---
+>  arch/arm/mach-sunxi/headsmp.S |  1 +
+>  arch/arm/mach-sunxi/sunxi.c   | 18 +++++++++++++++++-
+>  2 files changed, 18 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+> index 79890fbe5613..b586b7cf803a 100644
+> --- a/arch/arm/mach-sunxi/headsmp.S
+> +++ b/arch/arm/mach-sunxi/headsmp.S
+> @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+> =20
+>  ENTRY(sunxi_mc_smp_secondary_startup)
+>  	bl	sunxi_mc_smp_cluster_cache_enable
+> +	bl	smp_init_cntvoff
+>  	b	secondary_startup
+>  ENDPROC(sunxi_mc_smp_secondary_startup)
+> =20
+> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> index 5e9602ce1573..090784108c0a 100644
+> --- a/arch/arm/mach-sunxi/sunxi.c
+> +++ b/arch/arm/mach-sunxi/sunxi.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/platform_device.h>
+> =20
+>  #include <asm/mach/arch.h>
+> +#include <asm/smp_cntvoff.h>
+> =20
+>  static const char * const sunxi_board_dt_compat[] =3D {
+>  	"allwinner,sun4i-a10",
+> @@ -62,7 +63,6 @@ MACHINE_END
+>  static const char * const sun8i_board_dt_compat[] =3D {
+>  	"allwinner,sun8i-a23",
+>  	"allwinner,sun8i-a33",
+> -	"allwinner,sun8i-a83t",
+>  	"allwinner,sun8i-h2-plus",
+>  	"allwinner,sun8i-h3",
+>  	"allwinner,sun8i-r40",
+> @@ -75,6 +75,22 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
+>  	.dt_compat	=3D sun8i_board_dt_compat,
+>  MACHINE_END
+> =20
+> +void __init sun8i_cntvoff_init(void)
+> +{
+> +	smp_init_cntvoff();
 
-Tested-by: Jason Yan <yanaijie@huawei.com>
+Can't this be moved to the SMP setup code?
+
+> +}
+> +
+> +static const char * const sun8i_cntvoff_board_dt_compat[] =3D {
+> +	"allwinner,sun8i-a83t",
+> +	NULL,
+> +};
+> +
+> +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i boards needing cntvo=
+ff")
+
+All of the SoCs need CNTVOFF, so that doesn't really make sense. Why
+not just calling it for what it is: an A83t?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--4m3zop5wrmxfi2tg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrDRXEACgkQ0rTAlCFN
+r3QFoA/9ENYIhzJJ4IrJXS0ndHyFQXwOquqJryc9vPyTtguGBoVDeuN+IuIdfsEP
+ybg42BWa7uTa3arB7kmxaqijKX7m3E3ijYljedwBFLzLe4TzFtmzI214CKNPaTWu
+uC1hY35SXgr8dTbFYPvhe9YXZHZTKaQ77Dhel7JegtwnnfmR8lHR9TBLnmnxNlaL
+W1bsyc4A2E9zABwSS8Ahpg1oCQX+iIurK2H1YT0YAd/SzVNu5jfbk46UXbe7nWOP
+QeWAfuKgU9v8Z+ilDDn1nDV6zgLu+czNkWyqOqWDE22F7ovZoUqnFAZSojOg6fnr
+ZfzS4X0rsMO0etV+u44buAFX3+r7j5mNU39ZLJvaRf+D1Gy14nQS1DMeWAYXX/fO
+zuiCQJfQ4k/q+RFLEeNr/J7ZMpv5XXIeCJhXWamcctFTSOPnXqnLjfSU0sY1ulg9
+39opb9Zkso+Ncg9EOjWMF4PW/3wybdFJGmvIQTKOig8ytz1dzuV7hqknfTMFFW4A
+JyMMVzLx7lKcWp467no+axkjWbSRrUU1CktPmMF/WUdjY7MOIVaw8LIru7X7rmcE
+g+WJaNub0q1ck/XEnb6Zj20GbpFMHayKCjC/rN7D2ihYaFVtpebR+BleFvYpqdG4
+PkzjYHEa+xJwCOeB2d0o2arAs16n9PFH6B2enigYu1UaVBH1Aek=
+=NLuM
+-----END PGP SIGNATURE-----
+
+--4m3zop5wrmxfi2tg--
