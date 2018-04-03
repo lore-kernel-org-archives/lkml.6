@@ -1,102 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755135AbeDCKdz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:33:55 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:49344 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754183AbeDCKdy (ORCPT
+        id S1755278AbeDCKhC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:37:02 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36007 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754915AbeDCKg7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:33:54 -0400
-Subject: Re: [PATCH 1/8] bindings: PCI: designware: Example update
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Tue, 3 Apr 2018 06:36:59 -0400
+X-Google-Smtp-Source: AIpwx49r5qJJefzgiO6P0CSqXQ2bEHVgzeHIe08+/pjAV/4vXLL8WnyQm/KkOvBzFqvObjgJKxadnA==
+Date: Tue, 3 Apr 2018 12:36:55 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        David Laight <David.Laight@ACULAB.COM>,
+        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
- <33aa86ee667e8b435db080b8c683cb5df1bd6544.1522235224.git.gustavo.pimentel@synopsys.com>
- <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <36a36857-2d79-2c2d-198d-a3b65cafc768@synopsys.com>
-Date: Tue, 3 Apr 2018 11:33:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+Message-ID: <20180403103655.oa235p3h65twf4ct@gmail.com>
+References: <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
+ <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
+ <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+ <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de>
+ <20180320090802.qw4tqjmhy6yfd6sf@gmail.com>
+ <alpine.DEB.2.21.1803201039460.6506@nanos.tec.linutronix.de>
+ <20180320105427.bm4od7cpessbraag@gmail.com>
+ <20180403084932.GA3926@amd>
 MIME-Version: 1.0
-In-Reply-To: <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180403084932.GA3926@amd>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
 
-On 02/04/2018 06:23, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
->> Changes the IP registers size to accommodate the ATU unroll space.
->>
->> Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers.
->>
->> Replaces the pcie base address example by a real pcie base address in use.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> index 1da7ade..6300762 100644
->> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> @@ -1,7 +1,8 @@
->>  * Synopsys DesignWare PCIe interface
->>  
->>  Required properties:
->> -- compatible: should contain "snps,dw-pcie" to identify the core.
->> +- compatible:
->> +	"snps,dw-pcie" for RC mode;
-> 
-> I think irrespective of RC mode or EP mode, "snps,dw-pcie" can be used to
-> identify the pcie core?
+* Pavel Machek <pavel@ucw.cz> wrote:
 
-I guess so. What you suggest? I was just folling the same guideline present
-here: https://lkml.org/lkml/2017/11/3/310
-
->>  - reg: Should contain the configuration address space.
->>  - reg-names: Must be "config" for the PCIe configuration space.
->>      (The old way of getting the configuration address space from "ranges"
->> @@ -41,11 +42,11 @@ EP mode:
->>  
->>  Example configuration:
->>  
->> -	pcie: pcie@dffff000 {
->> +	pcie: pcie@dfc00000 {
->>  		compatible = "snps,dw-pcie";
->> -		reg = <0xdffff000 0x1000>, /* Controller registers */
->> -		      <0xd0000000 0x2000>; /* PCI config space */
->> -		reg-names = "ctrlreg", "config";
->> +		reg = <0xdfc00000 0x302000>, /* IP registers */
+> > > > Yeah, so generic memcpy() replacement is only feasible I think if the most 
+> > > > optimistic implementation is actually correct:
+> > > > 
+> > > >  - if no preempt disable()/enable() is required
+> > > > 
+> > > >  - if direct access to the AVX[2] registers does not disturb legacy FPU state in 
+> > > >    any fashion
+> > > > 
+> > > >  - if direct access to the AVX[2] registers cannot raise weird exceptions or have
+> > > >    weird behavior if the FPU control word is modified to non-standard values by 
+> > > >    untrusted user-space
+> > > > 
+> > > > If we have to touch the FPU tag or control words then it's probably only good for 
+> > > > a specialized API.
+> > > 
+> > > I did not mean to have a general memcpy replacement. Rather something like
+> > > magic_memcpy() which falls back to memcpy when AVX is not usable or the
+> > > length does not justify the AVX stuff at all.
+> > 
+> > OK, fair enough.
+> > 
+> > Note that a generic version might still be worth trying out, if and only if it's 
+> > safe to access those vector registers directly: modern x86 CPUs will do their 
+> > non-constant memcpy()s via the common memcpy_erms() function - which could in 
+> > theory be an easy common point to be (cpufeatures-) patched to an AVX2 variant, if 
+> > size (and alignment, perhaps) is a multiple of 32 bytes or so.
 > 
-> which version of synopsys IP is this. I think the ideal thing to do here is to
-> have a separate register space for iATU.
-
-I also agree with that. The unroll iATU was introduced on Synopsys IP version
-4.80 and the kernel patch was release on 2016-08-10
-https://patchwork.ozlabs.org/patch/657796/
-However a separate register space for iATU implies some extra code do handle it
-(and of course some tests) that don't fit into this patch series, in my point of
-view. Can this task enter in the backlog in order to be done in another patch
-series?
-
+> How is AVX2 supposed to help the memcpy speed?
 > 
-> Thanks
-> Kishon
-> 
+> If the copy is small, constant overhead will dominate, and I don't
+> think AVX2 is going to be win there.
+
+There are several advantages:
+
+1)
+
+"REP; MOVS" (also called ERMS) has a significant constant "setup cost".
+
+In the scheme I suggested (and if it's possible) then single-register AVX2 access 
+on the other hand has a setup cost on the "few cycles" order of magnitude.
+
+2)
+
+AVX2 have various non-temporary load and store behavioral variants - while "REP; 
+MOVS" doesn't (or rather, any such caching optimizations, to the extent they 
+exist, are hidden in the microcode).
+
+> If the copy is big, well, the copy loop will likely run out of L1 and maybe even 
+> out of L2, and at that point speed of the loop does not matter because memory is 
+> slow...?
+
+In many cases "memory" will be something very fast, such as another level of 
+cache. Also, on NUMA "memory" can also be something locally wired to the CPU - 
+again accessible at ridiculous bandwidths.
+
+Nevertheless ERMS is probably wins for the regular bulk memcpy by a few percentage 
+points, so I don't think AVX2 is a win in the generic large-memcpy case, as long 
+as continued caching of both the loads and the stores is beneficial.
+
+Thanks,
+
+	Ingo
