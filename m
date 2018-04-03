@@ -1,143 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755297AbeDCIth (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:49:37 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51439 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755086AbeDCItf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:49:35 -0400
-Date: Tue, 3 Apr 2018 10:49:32 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        David Laight <David.Laight@ACULAB.COM>,
-        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
+        id S1755269AbeDCIuH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:50:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33880 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755086AbeDCIuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 04:50:05 -0400
+Date: Tue, 3 Apr 2018 10:50:03 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: syzbot <syzbot+d1fe9b7b917f2715c7d4@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        sergey.senozhatsky@gmail.com, syzkaller-bugs@googlegroups.com,
         Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
-Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Message-ID: <20180403084932.GA3926@amd>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
- <alpine.DEB.2.21.1803200933320.6506@nanos.tec.linutronix.de>
- <20180320090802.qw4tqjmhy6yfd6sf@gmail.com>
- <alpine.DEB.2.21.1803201039460.6506@nanos.tec.linutronix.de>
- <20180320105427.bm4od7cpessbraag@gmail.com>
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        x86@kernel.org
+Subject: Re: general protection fault in try_to_wake_up
+Message-ID: <20180403085002.cq6rjxcmggypo4kh@pathway.suse.cz>
+References: <000000000000f2c42e05688f3ab6@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180320105427.bm4od7cpessbraag@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <000000000000f2c42e05688f3ab6@google.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 2018-03-29 09:01:02, syzbot wrote:
+> Hello,
+> 
+> syzbot hit the following crash on upstream commit
+> bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
+> Merge tag 'pinctrl-v4.16-3' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=d1fe9b7b917f2715c7d4
+> 
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=4649457446551552
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=4909621332410368
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
+> compiler: gcc (GCC) 7.1.1 20170620
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+d1fe9b7b917f2715c7d4@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> IPVS: ftp: loaded support on port[0] = 21
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is already 2nd level fault. I wonder if KASAN or lockdep should
+have already been disabled at this point. Adding some more people
+into CC.
 
-Hi!
 
-> > On Tue, 20 Mar 2018, Ingo Molnar wrote:
-> > > * Thomas Gleixner <tglx@linutronix.de> wrote:
-> > >=20
-> > > > > So I do think we could do more in this area to improve driver per=
-formance, if the=20
-> > > > > code is correct and if there's actual benchmarks that are showing=
- real benefits.
-> > > >=20
-> > > > If it's about hotpath performance I'm all for it, but the use case =
-here is
-> > > > a debug facility...
-> > > >=20
-> > > > And if we go down that road then we want a AVX based memcpy()
-> > > > implementation which is runtime conditional on the feature bit(s) a=
-nd
-> > > > length dependent. Just slapping a readqq() at it and use it in a lo=
-op does
-> > > > not make any sense.
-> > >=20
-> > > Yeah, so generic memcpy() replacement is only feasible I think if the=
- most=20
-> > > optimistic implementation is actually correct:
-> > >=20
-> > >  - if no preempt disable()/enable() is required
-> > >=20
-> > >  - if direct access to the AVX[2] registers does not disturb legacy F=
-PU state in=20
-> > >    any fashion
-> > >=20
-> > >  - if direct access to the AVX[2] registers cannot raise weird except=
-ions or have
-> > >    weird behavior if the FPU control word is modified to non-standard=
- values by=20
-> > >    untrusted user-space
-> > >=20
-> > > If we have to touch the FPU tag or control words then it's probably o=
-nly good for=20
-> > > a specialized API.
-> >=20
-> > I did not mean to have a general memcpy replacement. Rather something l=
-ike
-> > magic_memcpy() which falls back to memcpy when AVX is not usable or the
-> > length does not justify the AVX stuff at all.
->=20
-> OK, fair enough.
->=20
-> Note that a generic version might still be worth trying out, if and only =
-if it's=20
-> safe to access those vector registers directly: modern x86 CPUs will do t=
-heir=20
-> non-constant memcpy()s via the common memcpy_erms() function - which coul=
-d in=20
-> theory be an easy common point to be (cpufeatures-) patched to an AVX2 va=
-riant, if=20
-> size (and alignment, perhaps) is a multiple of 32 bytes or so.
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 4170 Comm: syz-executor0 Not tainted 4.16.0-rc6+ #1
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__lock_acquire+0x209/0x3e00 kernel/locking/lockdep.c:3320
+> RSP: 0018:ffff8801db206f60 EFLAGS: 00010002
+> RAX: 078e0401078e0401 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 1ffff100389fe583 RSI: 0000000000000000 RDI: ffff8801c4ff2c18
+> RBP: ffff8801db2072f0 R08: ffffffff814d839c R09: 0000000000000001
+> R10: 0000000000000000 R11: ffff8801c4ff2c10 R12: 0000000000000000
+> R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b793c440
+> FS:  00000000014fa940(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00000000004cb4e0 CR3: 00000001b7980002 CR4: 00000000001606f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>  try_to_wake_up+0xbc/0x15f0 kernel/sched/core.c:1989
+>  default_wake_function+0x30/0x50 kernel/sched/core.c:3693
+>  autoremove_wake_function+0x78/0x350 kernel/sched/wait.c:377
+>  __wake_up_common+0x18e/0x780 kernel/sched/wait.c:97
+>  __wake_up_common_lock+0x1b4/0x310 kernel/sched/wait.c:125
+>  __wake_up+0xe/0x10 kernel/sched/wait.c:149
+>  wake_up_klogd_work_func+0x4a/0x70 kernel/printk/printk.c:2869
+>  irq_work_run_list+0x184/0x240 kernel/irq_work.c:155
+>  irq_work_tick+0x136/0x1a0 kernel/irq_work.c:181
+>  update_process_times+0x48/0x60 kernel/time/timer.c:1639
+>  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
+>  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1194
+>  __run_hrtimer kernel/time/hrtimer.c:1349 [inline]
+>  __hrtimer_run_queues+0x39c/0xec0 kernel/time/hrtimer.c:1411
+>  hrtimer_interrupt+0x2a5/0x6f0 kernel/time/hrtimer.c:1469
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+>  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
+>  </IRQ>
+> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:778
+> [inline]
+> RIP: 0010:console_unlock+0xb18/0xfb0 kernel/printk/printk.c:2403
+> RSP: 0018:ffff8801b79068d8 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff12
+> RAX: ffff8801b793c440 RBX: 0000000000000200 RCX: ffffffff815a8d6f
+> RDX: 0000000000000000 RSI: 1ffff10036f279af RDI: 0000000000000293
+> RBP: ffff8801b7906a40 R08: 1ffff10036f20ce9 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: 0000000000000000 R14: ffffffff83ba15e0 R15: dffffc0000000000
+>  vprintk_emit+0x5c3/0xb90 kernel/printk/printk.c:1907
 
-How is AVX2 supposed to help the memcpy speed?
+raw_spin_lock() succeeded here. Therefore lockdep was still working
+at this stage.
 
-If the copy is small, constant overhead will dominate, and I don't
-think AVX2 is going to be win there.
+>  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+>  vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
+>  printk+0xaa/0xca kernel/printk/printk.c:1980
+>  kasan_die_handler+0x3d/0x3f arch/x86/mm/kasan_init_64.c:248
+>  notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
+>  __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
+>  atomic_notifier_call_chain+0x77/0x140 kernel/notifier.c:193
+>  notify_die+0x18c/0x280 kernel/notifier.c:549
 
-If the copy is big, well, the copy loop will likely run out of L1 and
-maybe even out of L2, and at that point speed of the loop does not
-matter because memory is slow...?
+It must have been general protection fault as well.
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Best Regards,
+Petr
 
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrDQBwACgkQMOfwapXb+vJC7wCdFJ9ASTxZjRfHbQWQbbXhKcJo
-ADQAoIoi+qXwoXzoQ/BPF+rnCSbNrhT0
-=Nuw2
------END PGP SIGNATURE-----
-
---bp/iNruPH9dso1Pn--
+>  do_general_protection+0x331/0x3e0 arch/x86/kernel/traps.c:558
+>  general_protection+0x25/0x50 arch/x86/entry/entry_64.S:1150
+> RIP: 0010:find_entry.isra.14+0x9f/0x1d0 fs/proc/proc_sysctl.c:119
+> RSP: 0018:ffff8801b7906fc8 EFLAGS: 00010202
+> RAX: 00f1c08020f1c080 RBX: ffff8801c4f95058 RCX: ffffffff81d29eae
+> RDX: 0000000000000000 RSI: ffff8801b8991678 RDI: ffff8801c4f95070
+> RBP: ffff8801b7907008 R08: 1ffff10036f20d55 R09: 0000000000000004
+> R10: ffff8801b7906f70 R11: 0000000000000000 R12: ffff8801b89915f8
+> R13: dffffc0000000000 R14: 078e0401078e0401 R15: ffff8801b8991678
+>  find_subdir+0xa8/0x170 fs/proc/proc_sysctl.c:923
+>  get_subdir fs/proc/proc_sysctl.c:977 [inline]
+>  __register_sysctl_table+0x6d5/0x10b0 fs/proc/proc_sysctl.c:1327
+>  register_net_sysctl+0x29/0x30 net/sysctl_net.c:120
+>  mpls_dev_sysctl_register+0x1cf/0x2e0 net/mpls/af_mpls.c:1369
+>  mpls_add_dev net/mpls/af_mpls.c:1420 [inline]
+>  mpls_dev_notify+0x2af/0x980 net/mpls/af_mpls.c:1542
+>  notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
+>  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+>  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+>  call_netdevice_notifiers_info+0x32/0x70 net/core/dev.c:1707
+>  call_netdevice_notifiers net/core/dev.c:1725 [inline]
+>  register_netdevice+0xd40/0x1020 net/core/dev.c:7929
+>  register_netdev+0x1a/0x30 net/core/dev.c:8014
+>  sit_init_net+0x384/0xa70 net/ipv6/sit.c:1852
+>  ops_init+0x10a/0x570 net/core/net_namespace.c:118
+>  setup_net+0x351/0x760 net/core/net_namespace.c:302
+>  copy_net_ns+0x238/0x580 net/core/net_namespace.c:426
+>  create_new_namespaces+0x425/0x880 kernel/nsproxy.c:107
+>  unshare_nsproxy_namespaces+0xae/0x1e0 kernel/nsproxy.c:206
+>  SYSC_unshare kernel/fork.c:2407 [inline]
+>  SyS_unshare+0x653/0xfa0 kernel/fork.c:2357
+>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x457327
+> RSP: 002b:00007ffdd0bf1928 EFLAGS: 00000202 ORIG_RAX: 0000000000000110
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000457327
+> RDX: 0000000000000000 RSI: 00007ffdd0bf1900 RDI: 0000000040000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001
+> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000410710
+> R13: 00000000004107a0 R14: 0000000000000000 R15: 0000000000000000
+> Code: 48 85 c0 4c 8b 9d e8 fc ff ff 8b 8d e0 fc ff ff 44 8b 8d d8 fc ff ff
+> 4c 8b 85 d0 fc ff ff 44 8b 95 c8 fc ff ff 0f 84 9b 07 00 00 <f0> ff 80 38 01
+> 00 00 49 8d bf 70 08 00 00 48 ba 00 00 00 00 00
+> RIP: __lock_acquire+0x209/0x3e00 kernel/locking/lockdep.c:3320 RSP:
+> ffff8801db206f60
+> ---[ end trace b962f2b4a8ee2930 ]---
+> 
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
