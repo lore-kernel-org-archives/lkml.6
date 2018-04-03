@@ -1,206 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753697AbeDCWLR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 18:11:17 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46482 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753289AbeDCWLP (ORCPT
+        id S1753688AbeDCWS2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 18:18:28 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42776 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751457AbeDCWS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 18:11:15 -0400
-Date: Wed, 4 Apr 2018 00:11:13 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com, Dan Williams <dcbw@redhat.com>
-Subject: Re: call/normal switch was Re: omap4-droid4: voice call support was
-Message-ID: <20180403221113.GA9463@amd>
-References: <20180328140219.f6667up5evrrafkv@earth.universe>
- <20180329014507.GM5700@atomide.com>
- <20180331145531.GA10404@amd>
- <20180331181935.GX5700@atomide.com>
- <20180331191939.GA8999@amd>
- <20180331194616.GA19388@amd>
- <20180331195524.GB19388@amd>
- <20180331234314.GZ5700@atomide.com>
- <20180401131852.GA11086@amd>
- <20180401153631.GA5700@atomide.com>
+        Tue, 3 Apr 2018 18:18:27 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Peter Rosin <peda@axentia.se>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [RFC PATCH 2/3] drm: bridge: panel: allow override of the bus format
+Date: Wed, 04 Apr 2018 01:18:35 +0300
+Message-ID: <39049661.yQjn2ecPlO@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180327081601.GJ27746@w540>
+References: <20180317221525.18534-1-peda@axentia.se> <1986009.iWteaM7My3@avalon> <20180327081601.GJ27746@w540>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Content-Disposition: inline
-In-Reply-To: <20180401153631.GA5700@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacopo,
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday, 27 March 2018 11:16:01 EEST jacopo mondi wrote:
+> On Mon, Mar 26, 2018 at 10:03:31PM +0300, Laurent Pinchart wrote:
+> > On Sunday, 25 March 2018 15:01:11 EEST Peter Rosin wrote:
+> >> On 2018-03-20 14:56, Laurent Pinchart wrote:
+> >>> On Sunday, 18 March 2018 00:15:24 EET Peter Rosin wrote:
+> >>>> Useful if the bridge does some kind of conversion of the bus format.
+> >>>> 
+> >>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>>> ---
+> >>>> 
+> >>>>  drivers/gpu/drm/bridge/panel.c | 22 +++++++++++++++++++++-
+> >>>>  include/drm/drm_bridge.h       |  1 +
+> >>>>  2 files changed, 22 insertions(+), 1 deletion(-)
+> >>>> 
+> >>>> diff --git a/drivers/gpu/drm/bridge/panel.c
+> >>>> b/drivers/gpu/drm/bridge/panel.c index 6d99d4a3beb3..ccef0283ff41
+> >>>> 100644
+> >>>> --- a/drivers/gpu/drm/bridge/panel.c
+> >>>> +++ b/drivers/gpu/drm/bridge/panel.c
+> >>>> @@ -22,6 +22,7 @@ struct panel_bridge {
+> >>>>  	struct drm_connector connector;
+> >>>>  	struct drm_panel *panel;
+> >>>>  	u32 connector_type;
+> >>>> +	u32 bus_format;
+> >>>>  };
+> >>>>  
+> >>>>  static inline struct panel_bridge *
+> >>>> @@ -40,8 +41,15 @@ static int panel_bridge_connector_get_modes(struct
+> >>>> drm_connector *connector) {
+> >>>>  	struct panel_bridge *panel_bridge =
+> >>>>  		drm_connector_to_panel_bridge(connector);
+> >>>> +	int ret;
+> >>>> +
+> >>>> +	ret = drm_panel_get_modes(panel_bridge->panel);
+> >>>> +
+> >>>> +	if (panel_bridge->bus_format)
+> >>>> +		drm_display_info_set_bus_formats(&connector->display_info,
+> >>>> +						 &panel_bridge->bus_format, 1);
+> >>> 
+> >>> While I agree with the problem statement and, to some extent, the DT
+> >>> bindings, I don't think this is the right implementation. You've
+> >>> correctly noted that display controller shouldn't blindly use the
+> >>> formats reported by the panel through the connector formats, and that
+> >>> hacking the panel driver to override the formats isn't a good idea, so
+> >>> I wouldn't override the formats reported by the connector. I would
+> >>> instead extend the drm_bridge API to report formats at bridge inputs.
+> >>> This would be more generic and allow each bridge to configure itself
+> >>> according to the next bridge in the chain.
+> >>> 
+> >>> I'm not sure whether this API extension should be in the form of a new
+> >>> bridge function, or if the formats should be stored in the drm_bridge
+> >>> structure directly as done for connectors in the display info
+> >>> structure. I'm tempted by the former, but I'm open to discussions.
+> >> 
+> >> Ok, I can look into that, but let me check if I got this right. From the
+> >> very little of the code that I have looked at, I have gathered that
+> >> display controllers handle bridges explicitly, right?
+> > 
+> > That's correct, yes. Or, rather, they handle the first bridge in the
+> > chain, and then other bridges are handled recursively.
+> > 
+> >> If so, by extending the bridge (with either a new function or new data)
+> >> you impose changes to all display controllers wanting to handle this new
+> >> bridge input-format. If so, I assume I can leave out the changes to all
+> >> display controllers that I do not care about. Correct?
+> > 
+> > That's correct.
+> > 
+> >> Also, don't hold your breath waiting for a v2, but I'll try to get to it
+> >> :-)
+> > 
+> > I won't hold my breath, but Jacopo might :-) He has a similar issue to
+> > solve (reporting the LVDS modes supported by the bridge).
+> 
+> I was not :) I jumped late on this, as I restarted the DRM bridge work
+> yesterday. Peter, can I summarize you my current use case? (which is
+> quite similar to yours actually)
+> 
+> At the R-Car DU (Display Unit) output, we have an LVDS encoder
+> connected to a 'transparent' LVDS bridge that converts the input LVDS
+> stream into digital RGB output to be then HDMI encoded by another
+> component.
+> 
+> The 'transparent LVDS decoder', for which I'm now writing a driver,
+> should report what pixel bus format it accepts as input as the DU LVDS
+> encoder can output an LVDS stream with several different component ordering
+> schemes. I was about to come up with a proposal last week but you beat
+> me at time, so I'm happy to base my work on what comes out from this
+> series.
+> 
+> ---- Laurent: On the THC63LVD driver
+> Laurent: at the same time I would not block the THC63LVD1024 driver. I
+> can extend bindings to include the "mode map" configuration property,
+> and squash my Eagle DTS patch on top of Niklas' one. Then make the newly
+> introduced driver use whatever API comes out from this series with an
+> incremental patch. Does this work for you? It is true, though, that
+> we're anyway late for v4.17 and I could send one single series based
+> on some future version of this and that includes all (bridge driver
+> and bindings, DU LVDS changes and Eagle DTS), but I feel it's easier
+> if we got the bridge driver accepted first, and then develop on top of
+> that.
 
-Hi!
+I'm fine with both options, you can pick the one that will match what is ready 
+in upstream by the time you get to submit the patches.
 
-> > If you had a register dump from android with mics working, preferably
-> > not in speaker mode, perhaps I could try to figure it out?
->=20
-> OK here are four diffs against starting the phone app for regular
-> call, speaker call, and muted versions of them:
->=20
-> http://muru.com/linux/d4/cpcap/
->=20
-> Also, I'm connected over cdma right now, not 3g, but I doubt
-> that makes a difference for the microphone.
+> >>>> -	return drm_panel_get_modes(panel_bridge->panel);
+> >>>> +	return ret;
+> >>>>  }
+> >>>>  
+> >>>>  static const struct drm_connector_helper_funcs
+> >>>> @@ -203,6 +211,18 @@ void drm_panel_bridge_remove(struct drm_bridge
+> >>>> *bridge)
+> >>>>  }
+> >>>>  EXPORT_SYMBOL(drm_panel_bridge_remove);
+> >>>> 
+> >>>> +void drm_panel_bridge_set_bus_format(struct drm_bridge *bridge, u32
+> >>>> bus_format)
+> >>>> +{
+> >>>> +	struct panel_bridge *panel_bridge;
+> >>>> +
+> >>>> +	if (!bridge)
+> >>>> +		return;
+> >>>> +
+> >>>> +	panel_bridge = drm_bridge_to_panel_bridge(bridge);
+> >>>> +	panel_bridge->bus_format = bus_format;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL(drm_panel_bridge_set_bus_format);
+> >>>> +
+> >>>>  static void devm_drm_panel_bridge_release(struct device *dev, void
+> >>>>  *res)
+> >>>>  {
+> >>>>  	struct drm_bridge **bridge = res;
+> >>>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> >>>> index 682d01ba920c..81903b92f187 100644
+> >>>> --- a/include/drm/drm_bridge.h
+> >>>> +++ b/include/drm/drm_bridge.h
+> >>>> @@ -268,6 +268,7 @@ void drm_bridge_enable(struct drm_bridge
+> >>>> *bridge);
+> >>>>  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+> >>>>  					u32 connector_type);
+> >>>>  void drm_panel_bridge_remove(struct drm_bridge *bridge);
+> >>>> +void drm_panel_bridge_set_bus_format(struct drm_bridge *bridge, u32
+> >>>> bus_format);
+> >>>> struct drm_bridge *devm_drm_panel_bridge_add(struct device *dev,
+> >>>>  					     struct drm_panel *panel,
+> >>>>  					     u32 connector_type);
 
-Thanks!
+-- 
+Regards,
 
-When I apply register settings directly, I indeed get working "normal"
-call working. Good. Diff for illustration is below. Clearly needs some
-improvements.
-
-And it shows that alsa mixers are expected to be simple and obvious on
-D4 -- they just do not work.
-
-Current version of phone gui is at
- https://github.com/pavelmachek/unicsy_demo
-
-- ofono interface should be usable
-- AT commands need a lot more work, and they'll probably never work
-nicely in this design. They are just a temporary hack.
-
-(ouch, and it should be rewritten, in Vala or better Rust...)
-									Pavel
-
-commit 06acc26c318558ed6a50b5a22afffeb9abbe7553
-Author: Pavel <pavel@ucw.cz>
-Date:   Wed Apr 4 00:04:34 2018 +0200
-
-    Add support for "normal" (not handsfree) call.
-
-diff --git a/sound/soc/codecs/cpcap.c b/sound/soc/codecs/cpcap.c
-index 7aaa4db..59c02b7 100644
---- a/sound/soc/codecs/cpcap.c
-+++ b/sound/soc/codecs/cpcap.c
-@@ -331,7 +331,7 @@ static const char * const cpcap_in_left_mux_texts[] =3D=
- {
- };
-=20
- static const char * const cpcap_mode_texts[] =3D {
--	"Normal", "Call"
-+	"Normal", "Handsfree", "Call",
- };
-=20
-=20
-@@ -464,25 +464,11 @@ static int cpcap_mode_get_enum(struct snd_kcontrol *k=
-control,
- 	return 0;
- }
-=20
--static int cpcap_mode_put_enum(struct snd_kcontrol *kcontrol,
--				     struct snd_ctl_elem_value *ucontrol)
-+static int enable_call(struct cpcap_audio *cpcap, int on)
- {
--	struct snd_soc_codec *codec =3D snd_soc_dapm_kcontrol_codec(kcontrol);
--	struct cpcap_audio *cpcap =3D snd_soc_codec_get_drvdata(codec);
--	struct snd_soc_dapm_context *dapm =3D
--		snd_soc_dapm_kcontrol_dapm(kcontrol);
--	struct soc_enum *e =3D (struct soc_enum *)kcontrol->private_value;
--	unsigned int muxval =3D ucontrol->value.enumerated.item[0];
--	unsigned int mask =3D BIT(e->shift_l);
- 	int err;
--
--	printk("Requested mode %d\n", muxval);
--
--	mode =3D muxval;
--
--	switch (muxval) {
--	case 1:
--
-+	unsigned long mask;
-+=09
- 		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_VAUDIOC,
- 					 0xffff, 0x0025);	// OK
- 		if (err)
-@@ -516,6 +502,56 @@ static int cpcap_mode_put_enum(struct snd_kcontrol *kc=
-ontrol,
- 				   0x0400, 0x0400);
- 		if (err)
- 			printk("error #1\n");
-+
-+		return 0;
-+out:
-+		printk("Error!\n");
-+		return -EIO;
-+}
-+
-+static int cpcap_mode_put_enum(struct snd_kcontrol *kcontrol,
-+				     struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_codec *codec =3D snd_soc_dapm_kcontrol_codec(kcontrol);
-+	struct cpcap_audio *cpcap =3D snd_soc_codec_get_drvdata(codec);
-+	struct snd_soc_dapm_context *dapm =3D
-+		snd_soc_dapm_kcontrol_dapm(kcontrol);
-+	struct soc_enum *e =3D (struct soc_enum *)kcontrol->private_value;
-+	unsigned int muxval =3D ucontrol->value.enumerated.item[0];
-+	unsigned int mask =3D BIT(e->shift_l);
-+	int err;
-+
-+	printk("Requested mode %d\n", muxval);
-+
-+	mode =3D muxval;
-+
-+	switch (muxval) {
-+	case 1:
-+		enable_call(cpcap, 1);
-+		break;
-+	case 2:
-+		enable_call(cpcap, 1);
-+
-+		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
-+					 0xffff, 0x0cc6);
-+		if (err)
-+			goto out;
-+
-+		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_TXMP,
-+					 0xffff, 0x0673);
-+		if (err)
-+			goto out;
-+
-+
-+		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_RXOA,
-+					 0xffff, 0x0001);
-+		if (err)
-+			goto out;
-+	=09
-+		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_RXCOA,
-+					 0xffff, 0x0601);
-+		if (err)
-+			goto out;
- 	=09
- 	default:
- 		break;
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrD/AEACgkQMOfwapXb+vKvAQCeK77gxTe+RBIJ3N/CjjJ3OWAN
-oMYAoIonr0IkrxqyFhQ9wu4KmOi9ob7o
-=1m4h
------END PGP SIGNATURE-----
-
---ReaqsoxgOBHFXBhH--
+Laurent Pinchart
