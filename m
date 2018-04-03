@@ -1,366 +1,106 @@
-Return-Path: <ebiederm@xmission.com>
-X-Google-Smtp-Source: AIpwx49u4wMbi4ruYK/VtkTths6OO9sWtfeVygQIuzA51mkEev/nT8yUH6E4tQfa/kYbArp45Zng
-ARC-Seal: i=1; a=rsa-sha256; t=1522776206; cv=none;
-        d=google.com; s=arc-20160816;
-        b=P0PA+BPJLYgMrnFYvmTo7QxuUBH1xh4P0GMybe/iSH4PJevQKcwYpngAsbWHh3VGx7
-         ngGK1PhC6U/+Mpgyc/QumdhH9Jl4rwC0vFG5+ZQsozjpWtHt3K3qHTR7UgRWqApxIXds
-         Uh99S9dvrGP6xaFlRma7zkDNOrk6idqlmx9p97ZTLdgv5mzrhUSYAjmmi3xFuXRj19aP
-         3PTlVIZNC1l9EOJF/NSmsoWDaR87hBf0SZGxPqvknoO5BYZDBqwpORE1b35aMLEadWML
-         lBpbEy+4+GGCjdjZfjc7Mn4/6ujqHy9nDo944ogOiA3D9lNZGpt89q1ts5Wf6oCsXp/K
-         WSqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:mime-version:user-agent:message-id:in-reply-to:date
-         :references:cc:to:from:arc-authentication-results;
-        bh=h40GJPHQvll1+JR2HOJdLeoxF3qYJiyr4aQulqxsyuM=;
-        b=CUXg1TAxCSR6FjsKZvNH3ZKNk1H+TgpZanB+avQB2zDdEDTkKqdnB93lhNQLu6zKeg
-         FZDVCBxJFuhpn+3pksdSML2BzIkZHKwxYVvpBQ7PVqKaAdfg2nfj0W8xDKGZnZqpRlHU
-         IonvdnwFP79kBn5PkNIWVwg02rN1KI0kkokZaJgxm2Zr4OYUXbJXO/4vNooxKqkDCfgn
-         /xTPW8vkxM9O9sQvzLY7MMm2X9bB3OMVlRoTeuXWCkktvMrIib/ku6TNRrM4dSUiVVmJ
-         t7GkaQ5aiW5/UMynMdpz1swIcNqKGS5bzqVRikwxFewGrX7zOLLwJmc1TcYT+4J96geE
-         Z1Zg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Alexander
- Viro <viro@zeniv.linux.org.uk>,  "J. Bruce Fields" <bfields@fieldses.org>,
-  Thomas Gleixner <tglx@linutronix.de>,  Daniel =?utf-8?Q?P=2EBerrang?=
- =?utf-8?Q?=C3=A9?= <berrange@redhat.com>,  Kate Stewart
- <kstewart@linuxfoundation.org>,  Dan Williams <dan.j.williams@intel.com>,
-  Philippe Ombredanne <pombredanne@nexb.com>,  Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  "open list\:NFS\, SUNRPC\, AND..."
- <linux-nfs@vger.kernel.org>
-References: <20180317142520.30520-1-jlayton@kernel.org>
-	<20180317165859.26200-1-jlayton@kernel.org>
-	<87bmfgvg8w.fsf@xmission.com> <871sgcvfh7.fsf@xmission.com>
-	<1522673814.4914.36.camel@kernel.org>
-Date: Tue, 03 Apr 2018 12:22:08 -0500
-In-Reply-To: <1522673814.4914.36.camel@kernel.org> (Jeff Layton's message of
-	"Mon, 02 Apr 2018 08:56:54 -0400")
-Message-ID: <87r2nwqk73.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1679646-1522766857-2-512378529126821938
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1522766856; b=L8fYE0oKm+7fkt9omQ35MfI5V2VpzXlBZ+FUO1CEadQtwfBS3h
+    Ps03aI+46d7M/RUWBPTBaxfMOfY4cEdPE+ZYjoODtp1UmER2AWKAxLQ0CssXUVjf
+    NAdDLlz5LPWeAvTIB7qRzuqL2uUqpU30DSSP+/Ni3F7cLyw2xe89ChRTvYxWpc2h
+    TShYBr92vUv0ZoJxg6GR4S/D7hgxvxpazuhv4TuH4TnXgBaiEudntSDBWbFbMDE2
+    3PVpXrFnNPcwtwQoI4cBRB42pBJwD6w+lTbNN5xHt9wjGAkRxLeLgYV2d8IQWf+0
+    lzzohs846eH8Vcr3EDr0n3bUSO/A2WM8YZVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1522766856; bh=mCLoqjJf7ECpB3zYM4CFVDYTHTxdbzZvUPygQ6SI8Q
+    g=; b=P7HKg5gRI3/QWM68z9VpVWZAmoY2ARyxgW+LqLbd1c4nN+ejbMJnhKPNZI
+    8NDJ3xqDCt+Naloh1DRWdxMBBIoxdRgfi4z5JWEVjaubh/tIdbI9liK0XJdoz1JD
+    USzbTo27oQw/swlHD2O1Y3dZpaBEwhSS5U78lmQpsW7eQD8moosu1FkWTukk99Qj
+    hk+Ez+P0qdJ0NmdcsaJABQwsdTV2D38nEmpCwFEYVema3znelGBd43kBoxmBUD+c
+    nYfX41jF4HD2uoz7CKP2cLqpfcKR2dFkK6UUqg+L4AcwFxIABeiHCOb4o7hzZUVY
+    yjeBv9IPFea42nIIooWa8K4zUfjw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=uQNFySJ7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=T1oZ1SoQ;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=uQNFySJ7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=T1oZ1SoQ;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHjqZluD2csMAD+vjy8sbLIiUOHA6O40uvh7MV66WNwiVG/KsNXoodCczbOmTnv+Cnj6HZeyRUdMFum8e/Mh1uAI6/71PiaoyW8qO/zHuy0AY94MPj4U
+    p733SWhRwzOwcSMWJmrpJZdAaA3X8uQ4oS0FJw5E7tl9P/aXyd8rxd90psoX5vTqwoqZe1KsfeIoU99Ujj/DuPmuXt/dldRL+q2IVVeswrGsLXTeRLR/ihKR
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=6zb38KopAAAA:8 a=R3wYQoVIoFRURugnPIcA:9 a=QEXdDO2ut3YA:10 a=mDT8kg4rI6sA:10
+    a=sLgWHmCJlhLUVLMAeJB5:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751231AbeDCOre (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 3 Apr 2018 10:47:34 -0400
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:38115 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbeDCOrd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 3 Apr 2018 10:47:33 -0400
+X-Google-Smtp-Source: AIpwx49HbXOgPdXB/xJIRuboYVTEu6qaUvUtyGeY7e8DCjOpdaGXvM/rrJveHQyybf0Nmlc9dgpnwiX0geEC4sjMWxk=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f3PeO-0003m3-5L;;;mid=<87r2nwqk73.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19RJEGGVMZeTJhfQ0FAkW3ZyBbmw8Ys1+k=
-X-SA-Exim-Connect-IP: 67.3.145.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.7 XMSubLong Long Subject
-	*  0.0 TVD_RCVD_IP Message was received from an IP address
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.1 XMSolicitRefs_0 Weightloss drug
-	*  1.0 T_XMDrugObfuBody_04 obfuscated drug references
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Jeff Layton <jlayton@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 3463 ms - load_scoreonly_sql: 0.03 (0.0%),
-	signal_user_changed: 2.7 (0.1%), b_tie_ro: 1.93 (0.1%), parse: 0.93 (0.0%),
-	extract_message_metadata: 28 (0.8%), get_uri_detail_list: 6 (0.2%),
-	tests_pri_-1000: 14 (0.4%), tests_pri_-950: 1.10 (0.0%), tests_pri_-900: 1.07
-	(0.0%), tests_pri_-400: 54 (1.6%), check_bayes: 53 (1.5%), b_tokenize: 18
-	(0.5%), b_tok_get_all: 18 (0.5%), b_comp_prob: 4.5 (0.1%), b_tok_touch_all: 6
-	(0.2%), b_finish: 0.76 (0.0%), tests_pri_0: 421 (12.2%),
-	check_dkim_signature: 0.49 (0.0%), check_dkim_adsp: 3.4 (0.1%),
-	tests_pri_500: 2937 (84.8%), poll_dns_idle: 2930 (84.6%), rewrite_mail: 0.00
-	(0.0%)
-Subject: Re: [PATCH v2] locks: change POSIX lock ownership on execve when files_struct is displaced
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <5abfca32.5d57620a.a2eca.898b@mx.google.com>
+References: <5abfca32.5d57620a.a2eca.898b@mx.google.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 3 Apr 2018 16:47:31 +0200
+X-Google-Sender-Auth: ud8Jy8c3ET2f3NjFckzmWcNWoAE
+Message-ID: <CAK8P3a1-VqB8mbixuHdsZbfCbGBpVppO4KX4VuZ5AJCHbYooAA@mail.gmail.com>
+Subject: Re: stable-rc build: 4 warnings 0 failures (stable-rc/v4.15.15)
+To: "Olof's autobuilder" <build@lixom.net>,
+        "4.15.y" <stable@vger.kernel.org>
+Cc: Olof Johansson <olof@lixom.net>,
+        Kernel Build Reports Mailman List
+        <kernel-build-reports@lists.linaro.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595195233416759536?=
-X-GMAIL-MSGID: =?utf-8?q?1596746582827261100?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Jeff Layton <jlayton@kernel.org> writes:
+On Sat, Mar 31, 2018 at 7:49 PM, Olof's autobuilder <build@lixom.net> wrote:
 
-> On Thu, 2018-03-22 at 00:36 -0500, Eric W. Biederman wrote:
->> ebiederm@xmission.com (Eric W. Biederman) writes:
->> 
->> > Jeff Layton <jlayton@kernel.org> writes:
->> > 
->> > > From: Jeff Layton <jlayton@redhat.com>
->> > > 
->> > > POSIX mandates that open fds and their associated file locks should be
->> > > preserved across an execve. This works, unless the process is
->> > > multithreaded at the time that execve is called.
->> > Would this perhaps work better if we moved unshare_files to after or
->> > inside of de_thread.  That would remove any cases where fd->count is > 1
->> > simply because you are multi-threaded.  It would only leave the strange
->> > cases where files struct is shared between different processes.
->> 
->> The fact we have a problem here appears to be a regression caused by:
->> fd8328be874f ("[PATCH] sanitize handling of shared descriptor tables in
->> failing execve()")
->> 
->> So I really think we are calling unshare_files in the wrong location.
->> 
->> We could perhaps keep the benefit of being able to fail exec cleanly
->> if we freeze the threads and then only unshare if the count of threads
->> differs from the fd->count.  I don't know if it is worth it.
->> 
->> Eric
->> 
+> Warnings:
 >
-> Yeah, that's a possibility. If you can freeze the other threads, and
-> ensure that they don't execute before they are killed, then in almost
-> all cases, unshare_files would be a noop.
+>         arm64.allmodconfig:
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/phy/qualcomm/phy-qcom-ufs.o
 
-The only problem is the handlful of places like proc/fd and binder that
-call get_files_struct then put_files_struct.  So the count on the files
-struct may be artificually elevated.
+This needs a backport of
 
-Which actually means there is a race and if someone opens files in
-/proc/<execing pid>/fd at the right moment unshare_files may even
-unshare_files for a single threaded process.
+59fba0869aca ("phy: qcom-ufs: add MODULE_LICENSE tag")
 
-> Also, I have spotted a potential problem with this patch too:
->
-> If this situation occurs on NFS, then the state handling code is likely
-> to get very confused. It uses the fl_owner as the key to the
-> lock_stateid.
->
-> After you execve, the all the locks will still be present but you won't
-> be able to find them by fl_owner anymore. I imagine they'll just hang
-> out until the client expires.
->
-> David Howells suggested: "you could allocate a 1-byte lock cookie and
-> point to that from fdtable, then pass that cookie over exec"
->
-> I'm not sure about that implementation (maybe consider using ida?), but
-> an opaque fl_owner cookie for posix locks might be the way to go. It
-> would mean growing struct fdtable however.
-
-It looks like struct file_table has 32 bytes of padding on any
-architecture with 64byte cache lines.  So with care I believe you can
-avoid growing struct file_table.
-
-The cookie would needs to be a pointer because it is stored in the same
-space as other pointers so it needs to disambiguate between pointers.
-Plus the cookie would need a reference count, as multiple instances
-of struct file_table could point to it.
-
-Thinking about it I am not a fan of the cooking solution or of the
-moving the owner solution because when two processes share a file_table
-it changes which process owns the locks from the fdtable after exec.
-Currently it is the process that doesn't exec.
-
-
-Separating counting down for task_structs and users of get_files_struct
-would seem to be a straight forward solution to the possibility of
-overcounts.
-
-
-Ignoring backwards compatibily.  I would argue that the proper solution
-is to remove unshare_files completely.  Do what we do with the fs_struct
-in check_unsafe_exec and simply set LSM_UNSAFE_UNSHARE if we are sharing
-the files struct with anything other than a thread.
-
-That said we do have backwards compatibility to worry about, and there
-is the weirdness of a process which does not exec having file
-descriptors close in their file table.  So I do think it is best
-to unshare the file descriptor table.
-
-
-The only file descriptor I have find that in the exec code path is the
-file descriptor that is passed into exec.  So I don't think races with
-file descriptors are a reason to be doing unshare_files early.
-
-The only race I can think of that might be worth considering is what
-happens if one thread calls clone(CLONE_FILES) while we are calling
-exec.  The clone(CLONE_FS) case prevents that race by returning
--EAGAIN from clone if fs->in_exec is set.  So there is a known
-path for handling that race.
-
-
-
-I think the way I would fix the issue is:
-- Use a different counter on file_table for get_files_struct than for
-  threads.  Solving the miscount issue.
-- Protect the thread_counter in struct file_table with files_lock.
-- Add an in_exec field in struct file_table.
-- Cause clone(CLONE_FILES) to fail if in_exec is set.
-- Write the code to see if file_table is shared beyond a single process
-  in a race free way.
-- Set in_exec if the file_table is not shared between processes.
-- Unshare the fd table if the fd table is shared between processes.
-
-
-To help understand what is going on and why I dug through the history
-and found a couple of key commits that pretty much say when and why
-things are happening.  Some of them come from tglx's history tree so you
-need to look there for the earlier commits.
-
-commit 04e9bcb4d10643da38b434492fb75dd10e0ceba8
-Author: Andrew Morton <akpm@osdl.org>
-Date:   Mon Dec 29 05:41:27 2003 -0800
-
-    [PATCH] use new unshare_files helper
-    
-    From: Chris Wright <chrisw@osdl.org>
-    
-    Use unshare_files during binary loading to eliminate potential leak of
-    the binary's fd installed during execve().  As is, this breaks
-    binfmt_som.c
-
-<--- Adds unshare_files in flush_old_exec --->
-
-ommit 02c541ec8ffa92178a93e74f1c77963d73772454
-Author: Andrew Morton <akpm@osdl.org>
-Date:   Mon Dec 29 05:41:43 2003 -0800
-
-    [PATCH] use new steal_locks helper
-    
-    From: Chris Wright <chrisw@osdl.org>
-    
-    Use the new steal_locks helper to steal the locks from the old files struct
-    left from unshare_files() when the new unshared struct files gets used.
-
-<--- Adds a helper like you are suggesting to add now --->
-
-
-commit c89681ed7d0e4a61d35bdc12c06c6733b718b2cb
-Author: Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu Jun 22 14:47:22 2006 -0700
-
-    [PATCH] remove steal_locks()
-    
-    This patch removes the steal_locks() function.
-    
-    steal_locks() doesn't work correctly with any filesystem that does it's own
-    lock management, including NFS, CIFS, etc.
-    
-    In addition it has weird semantics on local filesystems in case tasks
-    sharing file-descriptor tables are doing POSIX locking operations in
-    parallel to execve().
-    
-    The steal_locks() function has an effect on applications doing:
-    
-    clone(CLONE_FILES)
-      /* in child */
-      lock
-      execve
-      lock
-    
-    POSIX locks acquired before execve (by "child", "parent" or any further
-    task sharing files_struct) will after the execve be owned exclusively by
-    "child".
-    
-    According to Chris Wright some LSB/LTP kind of suite triggers without the
-    stealing behavior, but there's no known real-world application that would
-    also fail.
-    
-    Apps using NPTL are not affected, since all other threads are killed before
-    execve.
-    
-    Apps using LinuxThreads are only affected if they
-    
-      - have multiple threads during exec (LinuxThreads doesn't kill other
-        threads, the app may do it with pthread_kill_other_threads_np())
-      - rely on POSIX locks being inherited across exec
-    
-    Both conditions are documented, but not their interaction.
-    
-    Apps using clone() natively are affected if they
-    
-      - use clone(CLONE_FILES)
-      - rely on POSIX locks being inherited across exec
-    
-    The above scenarios are unlikely, but possible.
-    
-    If the patch is vetoed, there's a plan B, that involves mostly keeping the
-    weird stealing semantics, but changing the way lock ownership is handled so
-    that network and local filesystems work consistently.
-    
-    That would add more complexity though, so this solution seems to be
-    preferred by most people.
-    
-    Signed-off-by: Miklos Szeredi <miklos@szeredi.hu>
-    Cc: Trond Myklebust <trond.myklebust@fys.uio.no>
-    Cc: Matthew Wilcox <willy@debian.org>
-    Cc: Chris Wright <chrisw@sous-sol.org>
-    Cc: Christoph Hellwig <hch@lst.de>
-    Cc: Steven French <sfrench@us.ibm.com>
-    Signed-off-by: Andrew Morton <akpm@osdl.org>
-    Signed-off-by: Linus Torvalds <torvalds@osdl.org>
-
-<--- This removes code that looks essentially like the code in your
-     patch for the reasons you have mentioned. --->
-
-commit fd8328be874f4190a811c58cd4778ec2c74d2c05
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Tue Apr 22 05:11:59 2008 -0400
-
-    [PATCH] sanitize handling of shared descriptor tables in failing execve()
-    
-    * unshare_files() can fail; doing it after irreversible actions is wrong
-      and de_thread() is certainly irreversible.
-    * since we do it unconditionally anyway, we might as well do it in do_execve()
-      and save ourselves the PITA in binfmt handlers, etc.
-    * while we are at it, binfmt_som actually leaked files_struct on failure.
-    
-    As a side benefit, unshare_files(), put_files_struct() and reset_files_struct()
-    become unexported.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-<--- This change guaranteed that unshare_files will fail for thread
-     programs which ultimately got the conversation started again --->
-
-
-commit e7b9b550f53e81ea38e71d322d6f95730df058a2
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Sun Mar 29 16:31:16 2009 -0400
-
-    Don't mess with descriptor table in load_elf_binary()
-    
-    ... since we don't tell anyone which descriptor does the file get.
-    We used to, but only in case of ELF binary with a.out loader and
-    that stuff has been gone for a while.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-
-commit d9e66c7296f3a39f6ac847f11ada8ddf10a4f8b1
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Sun Mar 29 16:34:56 2009 -0400
-
-    Don't crap into descriptor table in binfmt_som
-    
-    Same story as in binfmt_elf, except that in binfmt_som we
-    actually forget to close the sucker.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-
-<--- At this point there don't appear any other file descriptors to
-     worry about --->
-
-commit 35e88d5c22e1916c819b5a8756aed2f09a4aba18
-Author: Helge Deller <deller@gmx.de>
-Date:   Tue Feb 17 15:41:51 2015 +0100
-
-    fs/binfmt_som: Drop kernel support for HP-UX SOM binaries
-    
-    The parisc arch has been the only user of HP-UX SOM binaries.
-    
-    Support for HP-UX executables was never finished and since we now drop support
-    for the HP-UX compat layer anyway, it does not makes sense to keep the
-    BINFMT_SOM support.
-    
-    Cc: linux-fsdevel@vger.kernel.org
-    Cc: linux-parisc@vger.kernel.org
-    Signed-off-by: Helge Deller <deller@gmx.de>
-
-<--- The original motivation for unshare_files has been removed --->
-
-
-Eric
+       Arnd
