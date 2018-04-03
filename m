@@ -1,66 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751344AbeDCNec (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:34:32 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:38524 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750714AbeDCNea (ORCPT
+        id S1751272AbeDCNf4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:35:56 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37526 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750714AbeDCNfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:34:30 -0400
-X-Google-Smtp-Source: AIpwx4/KgJpjKJV9VlfJ5N1GFQPWuggSTnxG9BOZ8hy3ytIAiZ/MSMxQlMNaDUA7/JP3KTszdxV3jw==
-Subject: Re: [PATCH] MAINTAINERS: Add drm/xen-front maintainer entry
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180403123238.19294-1-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <e829b033-5f7d-c632-4f04-c867c7fb379a@gmail.com>
-Date: Tue, 3 Apr 2018 16:34:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 3 Apr 2018 09:35:54 -0400
+X-Google-Smtp-Source: AIpwx49AO1LeKfCS4R8NGV/zUrrXjFeFlQt4JesgtHRtGlXrgWIwBRnT8G78zFXccm58qP4inT+A2g==
+Date: Tue, 3 Apr 2018 15:35:43 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: David Howells <dhowells@redhat.com>
+Cc: paulmck@linux.vnet.ibm.com, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 1/3] locking: Document the semantics of
+ spin_is_locked()
+Message-ID: <20180403133543.GA26653@andrea>
+References: <1522600912-6208-2-git-send-email-andrea.parri@amarulasolutions.com>
+ <1522600912-6208-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <29562.1522759749@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180403123238.19294-1-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29562.1522759749@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/03/2018 03:32 PM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> Add myself as drivers/gpu/drm/xen maintainer.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   MAINTAINERS | 9 +++++++++
->   1 file changed, 9 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 622f3e4c5efa..6cf1bd5593b0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4834,6 +4834,15 @@ S:	Maintained
->   F:	drivers/gpu/drm/tinydrm/
->   F:	include/drm/tinydrm/
->   
-> +DRM DRIVERS FOR XEN
-> +M:	Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> +T:	git git://anongit.freedesktop.org/drm/drm-misc
-> +L:	dri-devel@lists.freedesktop.org
-> +L:	xen-devel@lists.xen.org
-> +S:	Supported
-> +F:	drivers/gpu/drm/xen/
-> +F:	Documentation/gpu/xen-front.rst
-> +
->   DRM TTM SUBSYSTEM
->   M:	Christian Koenig <christian.koenig@amd.com>
->   M:	Roger He <Hongbo.He@amd.com>
-Acked-by Daniel on irc,
-applied
+On Tue, Apr 03, 2018 at 01:49:09PM +0100, David Howells wrote:
+> Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+> 
+> > +/**
+> > + * spin_is_locked() - Check whether a spinlock is locked.
+> > + * @lock: Pointer to the spinlock.
+> > + *
+> > + * This function is NOT required to provide any memory ordering
+> > + * guarantees; it could be used for debugging purposes or, when
+> > + * additional synchronization is needed, accompanied with other
+> > + * constructs (memory barriers) enforcing the synchronization.
+> > + *
+> > + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
+> 
+> It's more complicated than that.  This function is dangerous and should be
+> used with extreme care.  In the case where CONFIG_SMP=n the value is locked
+> one way or the other and it might be the wrong way.
 
-Thank you,
-Oleksandr
+You mean "unlocked"? (aka, return 0)
+
+  Andrea
+
+
+> 
+> David
