@@ -1,59 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeDCPwo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 11:52:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42458 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751649AbeDCPwm (ORCPT
+        id S1752117AbeDCPx2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 11:53:28 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35829 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751323AbeDCPx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 11:52:42 -0400
-Date: Tue, 3 Apr 2018 16:52:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sergey Suloev <ssuloev@orpaltech.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] spi: core: handle timeout error from
- transfer_one()
-Message-ID: <20180403155224.GA11578@sirena.org.uk>
-References: <20180403152905.1524-1-ssuloev@orpaltech.com>
- <20180403152905.1524-2-ssuloev@orpaltech.com>
+        Tue, 3 Apr 2018 11:53:26 -0400
+X-Google-Smtp-Source: AIpwx48JaDwN7MciTtYTDn/h4HsmQh/MoLi7Z/EhNXlp+XlEHAvydVUPMwtrNU2FVLHOHKlxZevgu4v4/IbeNL5h0bo=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
-Content-Disposition: inline
-In-Reply-To: <20180403152905.1524-2-ssuloev@orpaltech.com>
-X-Cookie: Cynic, n.:
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <87lge4485x.fsf@belgarion.home>
+References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+ <20180402142656.26815-15-robert.jarzmik@free.fr> <CAK8P3a2hYWO2eweg3zpR7iJoqtH4uxJLAxJAno7L96G7nA2HxQ@mail.gmail.com>
+ <87lge4485x.fsf@belgarion.home>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 3 Apr 2018 17:53:25 +0200
+X-Google-Sender-Auth: b9PiRJfgvb85xWPetN67qKCVRXw
+Message-ID: <CAK8P3a1ko=YEwR2VOahH0OWHfeOyWAzDYah4DSohBcvTNq_MKQ@mail.gmail.com>
+Subject: Re: [PATCH 14/15] ARM: pxa: change SSP devices allocation
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Vinod Koul <vinod.koul@intel.com>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 3, 2018 at 5:32 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+>
+> chop chop ... removed several mail recipients to leave only the ASoC / PXA
+> subset ...
+>
+>> On Mon, Apr 2, 2018 at 4:26 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>>
+>>>
+>>> +static struct pxa_ssp_info pxa_ssp_infos[] = {
+>>> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
+>>> +       { .dma_chan_rx_name = "ssp1_rx", .dma_chan_tx_name = "ssp1_tx", },
+>>> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
+>>> +       { .dma_chan_rx_name = "ssp2_rx", .dma_chan_tx_name = "ssp2_tx", },
+>>> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
+>>> +       { .dma_chan_rx_name = "ssp3_rx", .dma_chan_tx_name = "ssp3_tx", },
+>>> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
+>>> +       { .dma_chan_rx_name = "ssp4_rx", .dma_chan_tx_name = "ssp4_tx", },
+>>> +};
+>>
+>> This part looks odd to me, you're adding an extra level of indirection to
+>> do two stages of lookups in some form of platform data.
+> That's unfortunately right.
+>
+>> Why can't you just always use "rx" and "tx" as the names here?
+> Well I couldn't. I'll explain you why, and maybe you'll find a better solution.
+>
+> That all is related to how ASoC and SSP interact.
+> If I remember correctly, here is how it works :
+>  - the DMA channel is requested in sound/arm/pxa2xx-pcm-lib.c:128
+>         return snd_dmaengine_pcm_open(
+>                 substream, dma_request_slave_channel(rtd->platform->dev,
+>    The trick is that the device here is _not_ the SSP one, it's if memory serves
+>    me well the pxa-pcm-audio one.
+>
+>    As a consequence, the device cannot be used to differenciate which SSP
+>    exactly is providing the sound samples stream. This information is
+>    nevertheless required to choose the correct requestor line, which is a 1-to-1
+>    match to the SSP port.
+>
+>    The indirection in the channel name is used to choose the correct requestor
+>    line for a given SSP port providing the samples.
+>
+>    It also must be underlined that this dma request serves both AC97 and SSP as
+>    sample providers.
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'm still unable to follow through that code, but I understand now that
+the device you pass to dma_request_slave_channel() is not the one
+we'd like it to be here.
 
-On Tue, Apr 03, 2018 at 06:29:00PM +0300, Sergey Suloev wrote:
-> As long as sun4i/sun6i SPI drivers have overriden the default
-> "wait for completion" procedure then we need to properly
-> handle -ETIMEDOUT error from transfer_one().
+Where exactly does that call to dma_request_chan() happen? Is this
+the one in dmaengine_pcm_new()? Could we perhaps put a
+pointer to the SSP device into snd_dmaengine_dai_dma_data?
 
-Why is this connected to those drivers specifically?
-
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrDozUACgkQJNaLcl1U
-h9DiiAf/TxkH07nauiAh1vLXq1Cgu4J0BnUFgZLNMuEr7efgpYGxPmJRsvuSMVJp
-uJWPVl6WsI4xnogwnz1LwzOGJ65BJx9RJYvDf+I9Gq6Y1tvAA1qJMlnGjTyGSD35
-+VG9+jDfSv0kwmR+Fawf6i4Yzod3VBIRnWVg1E8jSIFSf7yNx17fJ7XBoqwMKGBT
-71RtzHLbKdtkPj98nr7hZcUoytB7qDZxJw6NROZDZzZXNGA0k5OtioTXbKJGnCkn
-LpitfZWqKPSQQ1B6/2sUTjXEX8nJw7LWVvAduiq8mzongCkicJlEwSurjZ7K8UcW
-m3Apg9c9OGAa65v4GOLC1lEcQkl88A==
-=zoIV
------END PGP SIGNATURE-----
-
---VS++wcV0S1rZb1Fb--
+       Arnd
