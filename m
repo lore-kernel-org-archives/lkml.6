@@ -1,42 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753195AbeDCTog (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:44:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40466 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753045AbeDCTof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:44:35 -0400
-Date: Tue, 3 Apr 2018 21:44:31 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Stefan Fritsch <sf@sfritsch.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kvm: Add emulation for movups/movupd
-Message-ID: <20180403194430.GB7386@flask>
-References: <20180401155444.7006-1-sf@sfritsch.de>
+        id S1753169AbeDCTrR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:47:17 -0400
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:42557 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752420AbeDCTrP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:47:15 -0400
+X-Google-Smtp-Source: AIpwx4+3lR/6zjDThPFrz7/OL7TszAc26KtHIQXlFT9Yu9iBUvULYIrH53Uo0MHw90PneW8ME4R3tc4FkqdyhZjP+ck=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180401155444.7006-1-sf@sfritsch.de>
+In-Reply-To: <20180403193912.GC6556@redhat.com>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246898322.36038.17918469633893320678.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAPcyv4jaZV3AhYaOA3d0SQ-AOvb4RKhj4_q-PR0bpt3aoax2mA@mail.gmail.com> <20180403193912.GC6556@redhat.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 3 Apr 2018 12:47:14 -0700
+Message-ID: <CAPcyv4gSh29g7ZSuWnZVTdgXXS_027qvQNLgAUA+JrFwefXW+w@mail.gmail.com>
+Subject: Re: [PATCH v8 10/18] dax, dm: introduce ->fs_{claim, release}()
+ dax_device infrastructure
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Alasdair Kergon <agk@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        david <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[The subject could mention "x86:" as well]
+On Tue, Apr 3, 2018 at 12:39 PM, Mike Snitzer <snitzer@redhat.com> wrote:
+> On Tue, Apr 03 2018 at  2:24pm -0400,
+> Dan Williams <dan.j.williams@intel.com> wrote:
+>
+>> On Fri, Mar 30, 2018 at 9:03 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+>> > In preparation for allowing filesystems to augment the dev_pagemap
+>> > associated with a dax_device, add an ->fs_claim() callback. The
+>> > ->fs_claim() callback is leveraged by the device-mapper dax
+>> > implementation to iterate all member devices in the map and repeat the
+>> > claim operation across the array.
+>> >
+>> > In order to resolve collisions between filesystem operations and DMA to
+>> > DAX mapped pages we need a callback when DMA completes. With a callback
+>> > we can hold off filesystem operations while DMA is in-flight and then
+>> > resume those operations when the last put_page() occurs on a DMA page.
+>> > The ->fs_claim() operation arranges for this callback to be registered,
+>> > although that implementation is saved for a later patch.
+>> >
+>> > Cc: Alasdair Kergon <agk@redhat.com>
+>> > Cc: Mike Snitzer <snitzer@redhat.com>
+>>
+>> Mike, do these DM touches look ok to you?  We need these ->fs_claim()
+>> / ->fs_release() interfaces for device-mapper to set up filesystem-dax
+>> infrastructure on all sub-devices whenever a dax-capable DM device is
+>> mounted. It builds on the device-mapper dax dependency removal
+>> patches.
+>
+> I'd prefer dm_dax_iterate() be renamed to dm_dax_iterate_devices()
 
-2018-04-01 17:54+0200, Stefan Fritsch:
-> This is very similar to the aligned versions movaps/movapd.
-> 
-> We have seen the corresponding emulation failures with openbsd as guest
-> and with Windows 10 with intel HD graphics pass through.
-> 
-> Signed-off-by: Christian Ehrhardt <christian_ehrhardt@genua.de>
-> Signed-off-by: Stefan Fritsch <sf@sfritsch.de>
-> ---
+Ok, I'll fix that up.
 
-Nicely follows the implementation of aligned variants,
+> But dm_dax_iterate() is weird... it is simply returning the struct
+> dax_device *dax_dev that is passed: seemingly without actually directly
+> changing anything about that dax_device (I can infer that you're
+> claiming the underlying devices, but...)
 
-Reviewed-by: Radim Krčmář <rkrcmar@redhat.com>
+I could at least add a note to see the comment in dm_dax_dev_claim().
+The filesystem caller expects to get a dax_dev back or NULL from
+fs_dax_claim_bdev() if the claim failed. For fs_dax_claim() the return
+value could simply be bool for pass / fail, but I used dax_dev NULL /
+not-NULL instead.
+
+In the case of device-mapper the claim attempt can't fail for
+conflicting ownership reasons because the exclusive ownership of the
+underlying block device is already established by device-mapper before
+the fs claims the device-mapper dax device.
+
+> In general user's of ti->type->iterate_devices can get a result back
+> (via 'int' return).. you aren't using it that way (and maybe dax will
+> never have a need to return an answer).  But all said, I think I'd
+> prefer to see dm_dax_iterate_devices() return void.
+>
+> But please let me know if I'm missing something, thanks.
+
+Oh, yeah, I like that better. I'll just make it return void and have
+dm_dax_fs_claim() return the dax_dev directly.
+
+Thanks Mike!
