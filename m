@@ -1,146 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751730AbeDCOuV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:50:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34357 "EHLO mx2.suse.de"
+        id S1755185AbeDCI3H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:29:07 -0400
+Received: from mga11.intel.com ([192.55.52.93]:8533 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeDCOuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:50:20 -0400
-Date: Tue, 3 Apr 2018 16:50:18 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-Message-ID: <20180403145017.n6iksx7hchf4ppib@pathway.suse.cz>
-References: <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
- <1521119343.10722.665.camel@linux.intel.com>
- <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
- <1521224375.23017.41.camel@linux.intel.com>
- <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
- <1522678523.21176.178.camel@linux.intel.com>
- <20180403114600.uc7sqeoqt7fmdd66@pathway.suse.cz>
- <1522756458.21176.314.camel@linux.intel.com>
- <20180403131346.vwjpz475fzah5a6p@pathway.suse.cz>
- <1522762858.21176.327.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522762858.21176.327.camel@linux.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1755048AbeDCI3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 04:29:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,400,1517904000";
+   d="scan'208";a="217181998"
+From: Wei Wang <wei.w.wang@intel.com>
+To: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
+        akpm@linux-foundation.org
+Cc: pbonzini@redhat.com, wei.w.wang@intel.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        huangzhichao@huawei.com
+Subject: [PATCH v30 0/4] Virtio-balloon: support free page reporting
+Date: Wed,  4 Apr 2018 00:10:01 +0800
+Message-Id: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-04-03 16:40:58, Andy Shevchenko wrote:
-> On Tue, 2018-04-03 at 15:13 +0200, Petr Mladek wrote:
-> > On Tue 2018-04-03 14:54:18, Andy Shevchenko wrote:
-> > > On Tue, 2018-04-03 at 13:46 +0200, Petr Mladek wrote:
-> > > > On Mon 2018-04-02 17:15:23, Andy Shevchenko wrote:
-> > > We have a lot of API functions which returns:
-> > > -ERR_PTR
-> > > NULL
-> > > struct foo *
-> > > 
-> > > There is no guarantee that one of that API won't be used as a
-> > > supplier
-> > > for printf().
-> > 
-> > OK, I think that I have finally understood it. You would like to
-> > detect ERR_PTR values and handle them specially? I mean to show
-> > the value?
-> > 
-> > But then we would need to distinguish three types of errors,
-> > something like:
-> > 
-> >  + (null)       for pure NULL address
-> >  + (e:XXXX)     for address in IS_ERR_VALUE() range
-> 
-> // Just IS_ERR(). IS_ERR_VALUE() is not meant to be used widely
+This patch series is separated from the previous "Virtio-balloon
+Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
+implemented by this series enables the virtio-balloon driver to report
+hints of guest free pages to the host. It can be used to accelerate live
+migration of VMs. Here is an introduction of this usage:
 
-IS_ERR() is just a wrapper above IS_ERR_VALUE(). The range is important
-here and it is the same for both.
+Live migration needs to transfer the VM's memory from the source machine
+to the destination round by round. For the 1st round, all the VM's memory
+is transferred. From the 2nd round, only the pieces of memory that were
+written by the guest (after the 1st round) are transferred. One method
+that is popularly used by the hypervisor to track which part of memory is
+written is to write-protect all the guest memory.
 
+This feature enables the optimization by skipping the transfer of guest
+free pages during VM live migration. It is not concerned that the memory
+pages are used after they are given to the hypervisor as a hint of the
+free pages, because they will be tracked by the hypervisor and transferred
+in the subsequent round if they are used and written.
 
-> >  + (efault)     for any other invalid address
-> > 
-> > Then people might want to see values also from the first 4096 bytes.
-> > This is getting too complicated.
-> 
-> No, it's not. (null) case is already in kernel, you came with (efault),
-> but IS_ERR() case or any other case like it is just printing of standard
-> pointer value. See in the code where special_hex_number() is called.
-> 
-> >  I am not sure if it is worth it.
-> 
-> Your patch will hide values for error codes. Not good for debugging.
+* Tests
+- Test Environment
+    Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+    Guest: 8G RAM, 4 vCPU
+    Migration setup: migrate_set_speed 100G, migrate_set_downtime 2 second
 
-It does it in situation where we mostly silently crashed so
-far. Therefore I do not see this as a big regression.
+- Test Results
+    - Idle Guest Live Migration Time (results are averaged over 10 runs):
+        - Optimization v.s. Legacy = 271ms vs 1769ms --> ~86% reduction
+    - Guest with Linux Compilation Workload (make bzImage -j4):
+        - Live Migration Time (average)
+          Optimization v.s. Legacy = 1265ms v.s. 2634ms --> ~51% reduction
+        - Linux Compilation Time
+          Optimization v.s. Legacy = 4min56s v.s. 5min3s
+          --> no obvious difference
 
-If we hanle IS_ERR() a special way, it will mean more code and more types
-of error messages. People might be confused by the difference between
-(e:000e) and (efault).
+ChangeLog:
+v29->v30:
+    - mm/walk_free_mem_block: add cond_sched() for each order
+v28->v29:
+    - mm/page_poison: only expose page_poison_enabled(), rather than more
+      changes did in v28, as we are not 100% confident about that for now.
+    - virtio-balloon: use a separate buffer for the stop cmd, instead of
+      having the start and stop cmd use the same buffer. This avoids the
+      corner case that the start cmd is overridden by the stop cmd when
+      the host has a delay in reading the start cmd.
+v27->v28:
+    - mm/page_poison: Move PAGE_POISON to page_poison.c and add a function
+      to expose page poison val to kernel modules.
+v26->v27:
+    - add a new patch to expose page_poisoning_enabled to kernel modules
+    - virtio-balloon: set poison_val to 0xaaaaaaaa, instead of 0xaa
+v25->v26: virtio-balloon changes only
+    - remove kicking free page vq since the host now polls the vq after
+      initiating the reporting
+    - report_free_page_func: detach all the used buffers after sending
+      the stop cmd id. This avoids leaving the detaching burden (i.e.
+      overhead) to the next cmd id. Detaching here isn't considered
+      overhead since the stop cmd id has been sent, and host has already
+      moved formard.
+v24->v25:
+    - mm: change walk_free_mem_block to return 0 (instead of true) on
+          completing the report, and return a non-zero value from the
+          callabck, which stops the reporting.
+    - virtio-balloon:
+        - use enum instead of define for VIRTIO_BALLOON_VQ_INFLATE etc.
+        - avoid __virtio_clear_bit when bailing out;
+        - a new method to avoid reporting the some cmd id to host twice
+        - destroy_workqueue can cancel free page work when the feature is
+          negotiated;
+        - fail probe when the free page vq size is less than 2.
+v23->v24:
+    - change feature name VIRTIO_BALLOON_F_FREE_PAGE_VQ to
+      VIRTIO_BALLOON_F_FREE_PAGE_HINT
+    - kick when vq->num_free < half full, instead of "= half full"
+    - replace BUG_ON with bailing out
+    - check vb->balloon_wq in probe(), if null, bail out
+    - add a new feature bit for page poisoning
+    - solve the corner case that one cmd id being sent to host twice
+v22->v23:
+    - change to kick the device when the vq is half-way full;
+    - open-code batch_free_page_sg into add_one_sg;
+    - change cmd_id from "uint32_t" to "__virtio32";
+    - reserver one entry in the vq for the driver to send cmd_id, instead
+      of busywaiting for an available entry;
+    - add "stop_update" check before queue_work for prudence purpose for
+      now, will have a separate patch to discuss this flag check later;
+    - init_vqs: change to put some variables on stack to have simpler
+      implementation;
+    - add destroy_workqueue(vb->balloon_wq);
+v21->v22:
+    - add_one_sg: some code and comment re-arrangement
+    - send_cmd_id: handle a cornercase
 
-Yes, it might help to distinguish this situation in some cases.
-But typically the information about invalid address access should be
-enough. People will either see the problem from the code or they would
-need to add more debug messages anyway.
+For previous ChangeLog, please reference
+https://lwn.net/Articles/743660/
 
+Wei Wang (4):
+  mm: support reporting free page blocks
+  virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+  mm/page_poison: expose page_poisoning_enabled to kernel modules
+  virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
 
+ drivers/virtio/virtio_balloon.c     | 267 +++++++++++++++++++++++++++++++-----
+ include/linux/mm.h                  |   6 +
+ include/uapi/linux/virtio_balloon.h |   7 +
+ mm/page_alloc.c                     |  97 +++++++++++++
+ mm/page_poison.c                    |   6 +
+ 5 files changed, 347 insertions(+), 36 deletions(-)
 
-> > > You can't dereference ERR_PTR value, but anything else except the
-> > > > 
-> > > > > >  Also google gives
-> > > > > > rather confusing results when searching, for example for
-> > > > > > "(0x000E)".
-> > > > > 
-> > > > > It's not primarily for google, though yeah, people would google
-> > > > > for
-> > > > > error messages...
-> > > > > 
-> > > > > Another question is what the format: decimal versus hex for
-> > > > > errors.
-> > > > > Maybe just "(-DDDDD)"?
-> > > > 
-> > > > This still looks confusing and google does not help.
-> > > 
-> > > ...then we have a last option just to print a value as a pointer
-> > > address.
-> > 
-> > We could not print the real address from security reasons. The hashed
-> > pointer value is not much helpful. IMHO, a common error string is
-> > easier to spot or search for.
-> 
-> Did you read what I'm writing? How on the earth the pointer in the range
-> of -1...-4095 would be a security issue?!
-
-Please, read your mails again. You never wrote that you were talking
-about handling error codes specially. I mean this thread starting at
-https://lkml.kernel.org/r/20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz
-
-Most of the time I though that you were talking about displaying the
-single error code -EFAULT for any invalid address or showing any
-invalid address directly. I am not a psychic.
-
-OK, you mentioned this in the early mail at
-https://lkml.kernel.org/r/1520446689.10722.493.camel@linux.intel.com
-But it was in a bit different context. Also it was right before the mail
-from Linus who wrote:
-
-"Guys, stop this idiocy. printk() needs to be *simple* and *reliable*,
-not fancy."
-
-He then wrote many times that NULL might be considered special.
-But that we should really keep it simple.
-
-Best Regards,
-Petr
+-- 
+1.8.3.1
