@@ -1,62 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752877AbeDCDJ4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 23:09:56 -0400
-Received: from mail-pl0-f47.google.com ([209.85.160.47]:41013 "EHLO
-        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbeDCDJy (ORCPT
+        id S1752483AbeDCDPr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 23:15:47 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39123 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750905AbeDCDPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 23:09:54 -0400
-X-Google-Smtp-Source: AIpwx4+0KCYJeHHj6hxRTnkJAa0JL4PKU81B/R0FE3liJ4juL41MuNN18EWEcL7OGnH2oq91W2G6Ag==
-Date: Mon, 2 Apr 2018 20:10:21 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: syzbot <syzbot+7a1cff37dbbef9e7ba4c@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, dhowells@redhat.com, gs051095@gmail.com,
-        linux-kernel@vger.kernel.org, oleg@redhat.com,
-        pasha.tatashin@oracle.com, riel@redhat.com, rppt@linux.vnet.ibm.com,
-        syzkaller-bugs@googlegroups.com, wangkefeng.wang@huawei.com
-Subject: Re: KASAN: use-after-free Read in alloc_pid
-Message-ID: <20180403031021.GB685@sol.localdomain>
-References: <94eb2c06406c59cccc0568c527c2@google.com>
- <878ta5z00m.fsf@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878ta5z00m.fsf@xmission.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 2 Apr 2018 23:15:45 -0400
+X-Google-Smtp-Source: AIpwx4/HMLH8hdweXBhe1sIWF6doxr0SFpCTrFMo1qxOKg8GlKXHlOYOdAmkQOiV408cND8h3Ob6iw==
+Date: Mon, 02 Apr 2018 20:15:44 -0700 (PDT)
+X-Google-Original-Date: Mon, 02 Apr 2018 20:09:20 PDT (-0700)
+Subject: Re: [PATCH 0/2] perf: riscv: Preliminary Perf Event Support on RISC-V
+In-Reply-To: <1522672284-29593-1-git-send-email-alankao@andestech.com>
+CC: albert@sifive.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, sols@sifive.com, corbet@lwn.net,
+        linux-riscv@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alankao@andestech.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: alankao@andestech.com
+Message-ID: <mhng-678de5a0-ca3d-48d1-848f-9a2431a874f2@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 06:00:57PM -0500, Eric W. Biederman wrote:
-> syzbot <syzbot+7a1cff37dbbef9e7ba4c@syzkaller.appspotmail.com> writes:
-> 
-> > Hello,
-> >
-> > syzbot hit the following crash on upstream commit
-> > 9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
-> > Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
-> > syzbot dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=7a1cff37dbbef9e7ba4c
-> >
-> > So far this crash happened 4 times on upstream.
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> Do you have any of the other traces?  This looks like a something is
-> calling put_pid_ns more than it is calling get_pid_ns causing a
-> reference count mismatch.
-> 
-> If this is not: 9ee332d99e4d5a97548943b81c54668450ce641b
-> 
-> I could use a few more hints to help narrow down what is going wrong.
-> 
-> It would be nice to know what the other 3 crashes looked like and
-> exactly which upstream they were on.
-> 
+On Mon, 02 Apr 2018 05:31:22 PDT (-0700), alankao@andestech.com wrote:
+> This implements the baseline PMU for RISC-V platforms.
+>
+> To ease future PMU portings, a guide is also written, containing
+> perf concepts, arch porting practices and some hints.
+>
+> Changes in v2:
+>  - Fix the bug reported by Alex, which was caused by not sufficient
+>    initialization.  Check https://lkml.org/lkml/2018/3/31/251 for the
+>    discussion.
+>
+> Alan Kao (2):
+>   perf: riscv: preliminary RISC-V support
+>   perf: riscv: Add Document for Future Porting Guide
+>
+>  Documentation/riscv/pmu.txt         | 249 +++++++++++++++++++
+>  arch/riscv/Kconfig                  |  12 +
+>  arch/riscv/include/asm/perf_event.h |  76 +++++-
+>  arch/riscv/kernel/Makefile          |   1 +
+>  arch/riscv/kernel/perf_event.c      | 468 ++++++++++++++++++++++++++++++++++++
+>  5 files changed, 802 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/riscv/pmu.txt
+>  create mode 100644 arch/riscv/kernel/perf_event.c
 
-The other crashes are shown on the syzbot dashboard (link was given in the
-original email).
+I'm having some trouble pulling this into my tree.  I think you might have 
+another patch floating around somewhere, as I don't have any 
+arch/riscv/include/asm/perf_event.h right now.
 
-Eric
+Do you mind rebasing this on top of linux-4.16 so I can look properly?
+
+Thanks!
