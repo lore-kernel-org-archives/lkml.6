@@ -1,81 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755971AbeDCXJ7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 19:09:59 -0400
-Received: from ozlabs.org ([103.22.144.67]:35471 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753835AbeDCXJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 19:09:58 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 4 Apr 2018 09:09:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with the
- asm-generic tree
-Message-ID: <20180404090900.2cc0645e@canb.auug.org.au>
-In-Reply-To: <20180315122921.24520368@canb.auug.org.au>
-References: <20180315122921.24520368@canb.auug.org.au>
+        id S1755122AbeDCXLA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 19:11:00 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:40438 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753305AbeDCXK5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 19:10:57 -0400
+X-Google-Smtp-Source: AIpwx4/9yl5Y7mtxMra4zc4jSlxm1OGYqERiGGHKNOU8sT21YL3ROcDuSUmrySPzoxb2sFJWC8Vevhs7nwUF9cJZgdA=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bnSX5echcgcus8A1+9rAPYA"; protocol="application/pgp-signature"
+In-Reply-To: <CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
+References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
+ <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
+ <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com>
+ <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
+ <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
+ <9758.1522775763@warthog.procyon.org.uk> <CALCETrWHS9p1My=j07=V=OP7v4SwQkW-kJ3JOx6EbPU8fb_XEQ@mail.gmail.com>
+ <13189.1522784944@warthog.procyon.org.uk> <CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com>
+ <9349.1522794769@warthog.procyon.org.uk> <CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
+ <CA+55aFxKzxdRZthzaokaGPAsWCp3a-p3aVfJSutF+9Fp9sbaVA@mail.gmail.com>
+ <CACdnJusSfwULV-ubvgtYd8G_cTF4LnJ4DAeTCux4XRhHKVpBUw@mail.gmail.com> <CA+55aFzG==xr2OLK8F03RH0nkUDeP6btWqepFTuHZqkPTAOWjQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 3 Apr 2018 16:10:55 -0700
+X-Google-Sender-Auth: eelB7W0ujQUOEttPJ5D8HE-6R5I
+Message-ID: <CA+55aFyrDUPj_VscC2T+erHeUHZws_ixuRiU4HDWmoeOSZO1QQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+To: Matthew Garrett <mjg59@google.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Justin Forbes <jforbes@redhat.com>,
+        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bnSX5echcgcus8A1+9rAPYA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Thu, 15 Mar 2018 12:29:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Tue, Apr 3, 2018 at 4:08 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Today's linux-next merge of the v4l-dvb tree got a conflict in:
->=20
->   drivers/media/platform/blackfin/bfin_capture.c
->=20
-> between commit:
->=20
->   b9ec40bf7d29 ("media: platform: remove blackfin capture driver")
->=20
-> from the asm-generic tree and commit:
->=20
->   4471109e3894 ("media: convert g/s_parm to g/s_frame_interval in subdevs=
-")
->=20
-> from the v4l-dvb tree.
->=20
-> I fixed it up (I just removed the file) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> This discussion is over until you give an actual honest-to-goodness
+> reason for why you tied the two features together. No more "Why not?"
+> crap.
 
-This conflict now exists between the v4l-dvb tree and Linus' tree.
---=20
-Cheers,
-Stephen Rothwell
+Side note: I suspect the reason is something along the lines of "there
+are political reasons".
 
---Sig_/bnSX5echcgcus8A1+9rAPYA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+But dammit, if that's the case, those should be documented and
+explained, not answered with "why not" when people ask why something
+is the case.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrECY0ACgkQAVBC80lX
-0Gy0mQf9Ha/66Ac7LzKJJ+XRJE6KqI5HtIdKDyVkPP0RMpzHjFiCd+nFf4BcUQU1
-LzcBndSFIoqwK8+LTkBQmr4MXRDJ6o6CzxKH8r3K8ppVC0RFksWxYtK9l4I+u+HK
-FmjHho4oqYCLlQ6hlc4xlm9dowqESyl5rbnK2GBxzPXlnXvEdw87e2YI81konXlw
-9yiTf2DT17r/WUO2LYba3BjRg3wNy/uQuV2bDhRwBy9TL+ez6qswst6UlDzpAxva
-cIYiysb580VssSD+hV19ywA/vHQS/gG+mem57KcSB0CKz6WBYYrWC++dnIQJwDGk
-C+9PyFPGayAR7Js/fuf0ZlKGkiCetA==
-=DILR
------END PGP SIGNATURE-----
-
---Sig_/bnSX5echcgcus8A1+9rAPYA--
+                   Linus
