@@ -1,72 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeDCRb5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 13:31:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:35954 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751462AbeDCRb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 13:31:56 -0400
-Date: Tue, 3 Apr 2018 18:32:08 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Markus Metzger <markus.t.metzger@intel.com>
-Subject: Re: [PATCH] perf: Allow suppressing AUX records
-Message-ID: <20180403173207.GA8921@arm.com>
-References: <20171115120022.o7hmfdb7vpeikvjl@hirez.programming.kicks-ass.net>
- <20180115150020.8509-1-alexander.shishkin@linux.intel.com>
- <20180329115429.GX4043@hirez.programming.kicks-ass.net>
- <20180331093546.ac7ygm4iz4l7hg4x@gmail.com>
+        id S1752892AbeDCRcH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 13:32:07 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50425 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752547AbeDCRcD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 13:32:03 -0400
+X-Google-Smtp-Source: AIpwx4/yTODeSWTjAQUrflI1Nk+4P8MnZFuyGtS7yXtk9PLQEC6oyQoYtKWt3msutLlwQxr6RkD/6pNI48wZKkyJUMY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180331093546.ac7ygm4iz4l7hg4x@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180403161151-mutt-send-email-mst@kernel.org>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184132.3102.90947.stgit@localhost.localdomain> <20180316183042-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com> <20180403161151-mutt-send-email-mst@kernel.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Tue, 3 Apr 2018 10:32:00 -0700
+Message-ID: <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 31, 2018 at 11:35:46AM +0200, Ingo Molnar wrote:
-> * Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Mon, Jan 15, 2018 at 05:00:20PM +0200, Alexander Shishkin wrote:
-> > > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> > > index c77c9a2ebbbb..d7a981130561 100644
-> > > --- a/include/uapi/linux/perf_event.h
-> > > +++ b/include/uapi/linux/perf_event.h
-> > > @@ -370,7 +370,8 @@ struct perf_event_attr {
-> > >  				context_switch :  1, /* context switch data */
-> > >  				write_backward :  1, /* Write ring buffer from end to beginning */
-> > >  				namespaces     :  1, /* include namespaces data */
-> > > -				__reserved_1   : 35;
-> > > +				suppress_aux   :  1, /* don't generate PERF_RECORD_AUX */
-> > > +				__reserved_1   : 34;
-> > >  
-> > >  	union {
-> > >  		__u32		wakeup_events;	  /* wakeup every n events */
-> > 
-> > So I'm basically fine with this patch, however I wonder if we really
-> > need this suppress flag and can't just unconditionally drop these
-> > events.
-> > 
-> > Ash said that as far as he knows no Intel-PT user actually relies on it;
-> > Will is there anything ARM that is known to rely on them?
-> > 
-> > In anycase, tentative ACK on this, unless we wants to be brave and forgo
-> > this flag.
-> > 
-> > Ingo, any opinions?
-> 
-> Yeah, I'd suggest we just supress those record, and wait for complaints - let's 
-> not complicate the ABI if not necessary?
+On Tue, Apr 3, 2018 at 6:12 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Fri, Mar 16, 2018 at 09:40:34AM -0700, Alexander Duyck wrote:
+>> On Fri, Mar 16, 2018 at 9:34 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+>> > On Thu, Mar 15, 2018 at 11:42:41AM -0700, Alexander Duyck wrote:
+>> >> From: Alexander Duyck <alexander.h.duyck@intel.com>
+>> >>
+>> >> Hardware-realized virtio_pci devices can implement SR-IOV, so this
+>> >> patch enables its use. The device in question is an upcoming Intel
+>> >> NIC that implements both a virtio_net PF and virtio_net VFs. These
+>> >> are hardware realizations of what has been up to now been a software
+>> >> interface.
+>> >>
+>> >> The device in question has the following 4-part PCI IDs:
+>> >>
+>> >> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+>> >> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+>> >>
+>> >> The patch currently needs no check for device ID, because the callback
+>> >> will never be made for devices that do not assert the capability or
+>> >> when run on a platform incapable of SR-IOV.
+>> >>
+>> >> One reason for this patch is because the hardware requires the
+>> >> vendor ID of a VF to be the same as the vendor ID of the PF that
+>> >> created it. So it seemed logical to simply have a fully-functioning
+>> >> virtio_net PF create the VFs. This patch makes that possible.
+>> >>
+>> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> >> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+>> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+>> >
+>> > So if and when virtio PFs can manage the VFs, then we can
+>> > add a feature bit for that?
+>> > Seems reasonable.
+>>
+>> Yes. If nothing else you may not even need a feature bit depending on
+>> how things go.
+>
+> OTOH if the interface is changed in an incompatible way,
+> and old Linux will attempt to drive the new device
+> since there is no check.
+>
+> I think we should add a feature bit right away.
 
-Works for me. We've not had SPE support in mainline perf for very long and
-the availability of hardware is extremely limited at the moment, so I don't
-anticipate any ABI implications on the arm64 side.
+I'm not sure why you would need a feature bit. The capability is
+controlled via PCI configuration space. If it is present the device
+has the capability. If it is not then it does not.
 
-Cheers,
+Basically if the PCI configuration space is not present then the sysfs
+entries will not be spawned and nothing will attempt to use this
+function.
 
-Will
+- ALex
