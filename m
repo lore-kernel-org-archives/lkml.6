@@ -1,87 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753371AbeDCTIE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 15:08:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34402 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752832AbeDCTIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 15:08:02 -0400
-Date: Tue, 3 Apr 2018 12:07:59 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Buddy Lumpkin <buddy.lumpkin@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, hannes@cmpxchg.org, riel@surriel.com,
-        mgorman@suse.de, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH 1/1] vmscan: Support multiple kswapd threads per node
-Message-ID: <20180403190759.GB6779@bombadil.infradead.org>
-References: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
- <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
- <20180403133115.GA5501@dhcp22.suse.cz>
+        id S1753183AbeDCTKQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 15:10:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37924 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752688AbeDCTKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 15:10:15 -0400
+Date: Tue, 3 Apr 2018 15:10:05 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 06/24] mm: make pte_unmap_same compatible with SPF
+Message-ID: <20180403191005.GC5935@redhat.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180403133115.GA5501@dhcp22.suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 03:31:15PM +0200, Michal Hocko wrote:
-> On Mon 02-04-18 09:24:22, Buddy Lumpkin wrote:
-> > The presence of direct reclaims 10 years ago was a fairly reliable
-> > indicator that too much was being asked of a Linux system. Kswapd was
-> > likely wasting time scanning pages that were ineligible for eviction.
-> > Adding RAM or reducing the working set size would usually make the problem
-> > go away. Since then hardware has evolved to bring a new struggle for
-> > kswapd. Storage speeds have increased by orders of magnitude while CPU
-> > clock speeds stayed the same or even slowed down in exchange for more
-> > cores per package. This presents a throughput problem for a single
-> > threaded kswapd that will get worse with each generation of new hardware.
+On Tue, Mar 13, 2018 at 06:59:36PM +0100, Laurent Dufour wrote:
+> pte_unmap_same() is making the assumption that the page table are still
+> around because the mmap_sem is held.
+> This is no more the case when running a speculative page fault and
+> additional check must be made to ensure that the final page table are still
+> there.
 > 
-> AFAIR we used to scale the number of kswapd workers many years ago. It
-> just turned out to be not all that great. We have a kswapd reclaim
-> window for quite some time and that can allow to tune how much proactive
-> kswapd should be.
+> This is now done by calling pte_spinlock() to check for the VMA's
+> consistency while locking for the page tables.
 > 
-> Also please note that the direct reclaim is a way to throttle overly
-> aggressive memory consumers. The more we do in the background context
-> the easier for them it will be to allocate faster. So I am not really
-> sure that more background threads will solve the underlying problem. It
-> is just a matter of memory hogs tunning to end in the very same
-> situtation AFAICS. Moreover the more they are going to allocate the more
-> less CPU time will _other_ (non-allocating) task get.
+> This is requiring passing a vm_fault structure to pte_unmap_same() which is
+> containing all the needed parameters.
 > 
-> > Test Details
+> As pte_spinlock() may fail in the case of a speculative page fault, if the
+> VMA has been touched in our back, pte_unmap_same() should now return 3
+> cases :
+> 	1. pte are the same (0)
+> 	2. pte are different (VM_FAULT_PTNOTSAME)
+> 	3. a VMA's changes has been detected (VM_FAULT_RETRY)
 > 
-> I will have to study this more to comment.
+> The case 2 is handled by the introduction of a new VM_FAULT flag named
+> VM_FAULT_PTNOTSAME which is then trapped in cow_user_page().
+> If VM_FAULT_RETRY is returned, it is passed up to the callers to retry the
+> page fault while holding the mmap_sem.
 > 
-> [...]
-> > By increasing the number of kswapd threads, throughput increased by ~50%
-> > while kernel mode CPU utilization decreased or stayed the same, likely due
-> > to a decrease in the number of parallel tasks at any given time doing page
-> > replacement.
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> ---
+>  include/linux/mm.h |  1 +
+>  mm/memory.c        | 29 +++++++++++++++++++----------
+>  2 files changed, 20 insertions(+), 10 deletions(-)
 > 
-> Well, isn't that just an effect of more work being done on behalf of
-> other workload that might run along with your tests (and which doesn't
-> really need to allocate a lot of memory)? In other words how
-> does the patch behaves with a non-artificial mixed workloads?
-> 
-> Please note that I am not saying that we absolutely have to stick with the
-> current single-thread-per-node implementation but I would really like to
-> see more background on why we should be allowing heavy memory hogs to
-> allocate faster or how to prevent that. I would be also very interested
-> to see how to scale the number of threads based on how CPUs are utilized
-> by other workloads.
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 2f3e98edc94a..b6432a261e63 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1199,6 +1199,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
+>  #define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
+>  					 * and needs fsync() to complete (for
+>  					 * synchronous page faults in DAX) */
+> +#define VM_FAULT_PTNOTSAME 0x4000	/* Page table entries have changed */
+>  
+>  #define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
+>  			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 21b1212a0892..4bc7b0bdcb40 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2309,21 +2309,29 @@ static bool pte_map_lock(struct vm_fault *vmf)
+>   * parts, do_swap_page must check under lock before unmapping the pte and
+>   * proceeding (but do_wp_page is only called after already making such a check;
+>   * and do_anonymous_page can safely check later on).
+> + *
+> + * pte_unmap_same() returns:
+> + *	0			if the PTE are the same
+> + *	VM_FAULT_PTNOTSAME	if the PTE are different
+> + *	VM_FAULT_RETRY		if the VMA has changed in our back during
+> + *				a speculative page fault handling.
+>   */
+> -static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
+> -				pte_t *page_table, pte_t orig_pte)
+> +static inline int pte_unmap_same(struct vm_fault *vmf)
+>  {
+> -	int same = 1;
+> +	int ret = 0;
+> +
+>  #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
+>  	if (sizeof(pte_t) > sizeof(unsigned long)) {
+> -		spinlock_t *ptl = pte_lockptr(mm, pmd);
+> -		spin_lock(ptl);
+> -		same = pte_same(*page_table, orig_pte);
+> -		spin_unlock(ptl);
+> +		if (pte_spinlock(vmf)) {
+> +			if (!pte_same(*vmf->pte, vmf->orig_pte))
+> +				ret = VM_FAULT_PTNOTSAME;
+> +			spin_unlock(vmf->ptl);
+> +		} else
+> +			ret = VM_FAULT_RETRY;
+>  	}
+>  #endif
+> -	pte_unmap(page_table);
+> -	return same;
+> +	pte_unmap(vmf->pte);
+> +	return ret;
+>  }
+>  
+>  static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
+> @@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
+>  	int exclusive = 0;
+>  	int ret = 0;
+>  
+> -	if (!pte_unmap_same(vma->vm_mm, vmf->pmd, vmf->pte, vmf->orig_pte))
+> +	ret = pte_unmap_same(vmf);
+> +	if (ret)
+>  		goto out;
+>  
 
-Yes, very much this.  If you have a single-threaded workload which is
-using the entirety of memory and would like to use even more, then it
-makes sense to use as many CPUs as necessary getting memory out of its
-way.  If you have N CPUs and N-1 threads happily occupying themselves in
-their own reasonably-sized working sets with one monster process trying
-to use as much RAM as possible, then I'd be pretty unimpressed to see
-the N-1 well-behaved threads preempted by kswapd.
+This change what do_swap_page() returns ie before it was returning 0
+when locked pte lookup was different from orig_pte. After this patch
+it returns VM_FAULT_PTNOTSAME but this is a new return value for
+handle_mm_fault() (the do_swap_page() return value is what ultimately
+get return by handle_mm_fault())
 
-My biggest problem with the patch-as-presented is that it's yet one more
-thing for admins to get wrong.  We should spawn more threads automatically
-if system conditions are right to do that.
+Do we really want that ? This might confuse some existing user of
+handle_mm_fault() and i am not sure of the value of that information
+to caller.
+
+Note i do understand that you want to return retry if anything did
+change from underneath and thus need to differentiate from when the
+pte value are not the same.
+
+Cheers,
+Jérôme
