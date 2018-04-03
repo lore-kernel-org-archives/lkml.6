@@ -1,99 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754975AbeDCIRY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:17:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39738 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754856AbeDCIRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:17:22 -0400
-Date: Tue, 3 Apr 2018 10:17:11 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Sergey Suloev <ssuloev@orpaltech.com>
-Cc: Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] spi: sun4i: add DMA transfers support
-Message-ID: <20180403081711.rqsp77mgnuvlnzt5@flea>
-References: <20180329185907.27281-1-ssuloev@orpaltech.com>
- <20180329185907.27281-7-ssuloev@orpaltech.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yhiohrrbift4fmzp"
-Content-Disposition: inline
-In-Reply-To: <20180329185907.27281-7-ssuloev@orpaltech.com>
-User-Agent: NeoMutt/20180323
+        id S1755123AbeDCISc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:18:32 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45019 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755048AbeDCISb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 04:18:31 -0400
+Message-ID: <1522743506.5089.4.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] reset: uniphier: add SATA reset control support and
+ change SATA-PHY ID
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 03 Apr 2018 10:18:26 +0200
+In-Reply-To: <1522403084-18780-3-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1522403084-18780-1-git-send-email-hayashi.kunihiko@socionext.com>
+         <1522403084-18780-3-git-send-email-hayashi.kunihiko@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2018-03-30 at 18:44 +0900, Kunihiko Hayashi wrote:
+> Add reset lines for SATA controller on UniPhier SoCs.
+> This adds support for Pro4 and PXs3 in addition to PXs2.
+> 
+> And this changes the ID of the reset line for SATA-PHY on PXs2.
+> Since some SoCs have two controller instances with a common PHY, this moves
+> the ID of SATA-PHY for consistency.
+> 
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+>  drivers/reset/reset-uniphier.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/reset/reset-uniphier.c b/drivers/reset/reset-uniphier.c
+> index 55ae0f1..90e6caf 100644
+> --- a/drivers/reset/reset-uniphier.c
+> +++ b/drivers/reset/reset-uniphier.c
+> @@ -63,6 +63,9 @@ static const struct uniphier_reset_data uniphier_pro4_sys_reset_data[] = {
+>  	UNIPHIER_RESETX(12, 0x2000, 6),		/* GIO (Ether, SATA, USB3) */
+>  	UNIPHIER_RESETX(14, 0x2000, 17),	/* USB30 */
+>  	UNIPHIER_RESETX(15, 0x2004, 17),	/* USB31 */
+> +	UNIPHIER_RESETX(28, 0x2000, 18),	/* SATA0 */
+> +	UNIPHIER_RESETX(29, 0x2004, 18),	/* SATA1 */
+> +	UNIPHIER_RESETX(30, 0x2000, 19),	/* SATA-PHY */
+>  	UNIPHIER_RESETX(40, 0x2000, 13),	/* AIO */
+>  	UNIPHIER_RESET_END,
+>  };
+> @@ -90,7 +93,7 @@ static const struct uniphier_reset_data uniphier_pxs2_sys_reset_data[] = {
+>  	UNIPHIER_RESETX(20, 0x2014, 5),		/* USB31-PHY0 */
+>  	UNIPHIER_RESETX(21, 0x2014, 1),		/* USB31-PHY1 */
+>  	UNIPHIER_RESETX(28, 0x2014, 12),	/* SATA */
+> -	UNIPHIER_RESET(29, 0x2014, 8),		/* SATA-PHY (active high) */
+> +	UNIPHIER_RESET(30, 0x2014, 8),		/* SATA-PHY (active high) */
 
---yhiohrrbift4fmzp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a backwards incompatible change.
+There is no DT in use that relies on this being 29 ?
 
-On Thu, Mar 29, 2018 at 09:59:07PM +0300, Sergey Suloev wrote:
-> +static int sun4i_spi_dma_setup(struct device *dev,
-> +			       struct resource *res)
-> +{
-> +	struct spi_master *master =3D dev_get_drvdata(dev);
-> +	struct dma_slave_config dma_sconf;
-> +	int ret;
-> +
-> +	master->dma_tx =3D dma_request_slave_channel_reason(dev, "tx");
-> +	if (IS_ERR(master->dma_tx)) {
-> +		dev_err(dev, "Unable to acquire DMA TX channel\n");
-> +		ret =3D PTR_ERR(master->dma_tx);
-> +		goto out;
-> +	}
-> +
-> +	dma_sconf.direction =3D DMA_MEM_TO_DEV;
-> +	dma_sconf.src_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;
-> +	dma_sconf.dst_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;
-
-I guess that would depend on the size of the transfer, right?
-
-> +	dma_sconf.dst_addr =3D res->start + SUN4I_TXDATA_REG;
-> +	dma_sconf.dst_maxburst =3D 1;
-> +	dma_sconf.src_maxburst =3D 1;
-
-And a burst of 1 seems sub-optimal here.
-
-> +	ret =3D sun4i_spi_dma_setup(&pdev->dev, res);
-> +	if (ret) {
-> +		if (ret =3D=3D -EPROBE_DEFER) {
-> +			/* wait for the dma driver to load */
-> +			goto err_free_master;
-> +		}
-> +		dev_warn(&pdev->dev, "DMA transfer not supported\n");
-
-Saying why it's not supported would be great.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---yhiohrrbift4fmzp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrDOIYACgkQ0rTAlCFN
-r3TTnBAAgcFscT4aSqpBZIvbBl4ZyzqGYOoxXFaYBE9m+tnkrbpVU0aIVx4Zfogg
-M5d0r+FkrS6IhKSCCQ6xabOJN8EQvB1bkk7whcq8+584YcGxeqbAuAqY9pqARJ+f
-9Nn5MUkLATPqgzT8efuu+Fjfwj4g4DHDWFiFqOcULPVYLfiYySkWfqYfPhGAdHKd
-2AARSbFuURp3JeIspP/N9xMx9Oggw0J+Ba5R5KwMyF+/qhwGue0vsB3/JOMACg9E
-eHlTXxUYfM2oCL1Jybh7xUvnumrwQnixYnNGJZV66v+twI/UjXsXpSVJhDkL8rDG
-+HNZvaH2x5ymhpiTgm/6IWvYW5IdeB6WZXoV4cM1qHBQMBrpgQI+vofoSf7LJiWY
-RnACbUk9ls3Sh+zrZY3Xn0ZsneQ303EcvCrRyQuir5bXCUi6dCCZH4iWG2060pO3
-U1mxL7DshzLUfjl0rB31rjjm6VpeclvlASHcVSqHlO3Ax34nSkwIysLEAkeQq+nU
-CfsAvwJAjtDHMGPlfjKG+kPZ0otO66ZTfcE6X+mgHQtr/odcL05nn3u/VX1LJUqn
-b3ILTtVC1qop+W0+umEB9avV8dd8OM6GtN0TrgDrzTfrJNgbLr+0wpas+jm8g/m+
-MP6m9eycG6N7e/vIjPkbAGuP4oJHJDAYHzKHvLCddq4J9zUZJ8s=
-=7lOd
------END PGP SIGNATURE-----
-
---yhiohrrbift4fmzp--
+regards
+Philipp
