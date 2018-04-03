@@ -1,102 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755633AbeDCXNE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 19:13:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41152 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754292AbeDCXNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 19:13:02 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com>
-References: <CALCETrV6E+r942K+fu-ALNf-x6qOZ3o1hNKGeu7qEMvr8sMP9A@mail.gmail.com> <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org> <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk> <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com> <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com> <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com> <9758.1522775763@warthog.procyon.org.uk> <CALCETrWHS9p1My=j07=V=OP7v4SwQkW-kJ3JOx6EbPU8fb_XEQ@mail.gmail.com> <13189.1522784944@warthog.procyon.org.uk> <CALCETrX4CuHVpn38R24TCcJgCBLSbh-sOD-qcD5kYF8Zo53ZJw@mail.gmail.com> <9349.1522794769@warthog.procyon.org.uk>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: dhowells@redhat.com, Matthew Garrett <mjg59@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
+        id S1754093AbeDCXPj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 19:15:39 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:44116 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753305AbeDCXPi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 19:15:38 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T-dXevc_1522797320;
+Subject: Re: [RFC] prctl: Deprecate non PR_SET_MM_MAP operations
+To: Cyrill Gorcunov <gorcunov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Andrey Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <20180403223722.GA15783@uranus.lan>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <48bcd917-4eb8-9da6-ec4b-e76a654695c4@linux.alibaba.com>
+Date: Tue, 3 Apr 2018 16:15:20 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <10231.1522797179.1@warthog.procyon.org.uk>
-Date: Wed, 04 Apr 2018 00:12:59 +0100
-Message-ID: <10232.1522797179@warthog.procyon.org.uk>
+In-Reply-To: <20180403223722.GA15783@uranus.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@kernel.org> wrote:
 
-> I'm having a very, very hard time coming up with a scenario where I
-> can "trust" something if an attacker can get root but can't modify the
-> running kernel image but I can't "trust" something if the attacker
-> can [modify the running kernel image].
 
-(I think the above is what you meant)
+On 4/3/18 3:37 PM, Cyrill Gorcunov wrote:
+> An ability to manipulate mm_struct fields was introduced in
+> sake of CRIU in first place. Later we provide more suitable
+> and safe operation PR_SET_MM_MAP where all fields to be modifed
+> are passed in one structure which allows us to make more detailed
+> verification.
+>
+> Still old interface remains present for compatibility reason
+> though CRIU itself already switched to PR_SET_MM_MAP on its
+> own long ago.
+>
+> Googling didn't reveal some other users of this operation
+> so I think it should be safe to issue deprecation warning
+> first time and get rid of this interface after a couple
+> of releases.
+>
+> CC: Andrey Vagin <avagin@openvz.org>
+> CC: Andrew Morton <akpm@linuxfoundation.org>
+> CC: Pavel Emelyanov <xemul@virtuozzo.com>
+> CC: Michael Kerrisk <mtk.manpages@gmail.com>
+> CC: Yang Shi <yang.shi@linux.alibaba.com>
+> CC: Michal Hocko <mhocko@kernel.org>
+> Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+> ---
+> Or we can simply drop it off because PR_SET_MM_MAP covers all needs,
+> and I would rather prefer to do that asap.
 
-Let's go at this a different way.  How do you decide you can trust something
-in this context?  You compare it to something.  Signing it, keeping a hash
-whitelist, IMA - these are all ways of comparing something.  Do you agree with
-that?
+Thanks for making it deprecated. I'd prefer just drop it off if nobody 
+objects. The change will get soaked in linux-next for a while , we will 
+know if it breaks compatibility (it sounds very unlikely).
 
-However, the comparison can be subverted if the running kernel image (I might
-be better saying running kernel state here since I'm not talking about the
-source bzImage file) can be modified arbitrarily by userspace, either by
-modifying the data against which the comparison is made - e.g. the public key
-set or the hash list - or by modifying the code that makes the comparison.
+Yang
 
-/dev/mem, direct access to DMA, bpf, etc. all provide ways of modifying the
-kernel image arbitrarily, which leads me to this:
-
-> I *don't* buy into the party line about why signed modules should be needed
-> for Secure Boot.
-
-Modules are just another way of modifying the kernel image.  If I can just
-create an arbitrary module and load it, then I can modify the kernel image
-from within the module.
-
-Locking down modules by signing, hashing or IMA practically prevents the
-loading of arbitrarily constructed modules and only permits modules from a set
-that the provider of the modules somewhat trusts.
-
-What use is secure boot if processes run as root can subvert your kernel?
-
-> > There's no point bothering with UID/GID checking either.
-> 
-> Give me a break.  There's a *huge* difference between a system where
-> only root can load unsigned modules and a system where anyone can load
-> unsigned modules.
-
-I don't think we've ever advocated letting just anyone load a module.
-
-But my point is that if you can modify the running kernel, you can nullify all
-security checks, including UID/GID checks.
-
-> > However, if /dev/mem can be read, any root process can extract the session
-> > key for your disk.
-> 
-> Any root process can read /dev/mapper/plaintext_disk, lockdown or otherwise.
-
-True - for now - and they can also access the mounted filesystem.  But if they
-get their hands on your powered-off computer, no, they can't.
-
-> But I don't think the upstream kernel should apply a patch that ties any of
-> this to Secure Boot without a genuine technical reason why it makes sense.
-
-Because unless you turn lockdown on during kernel boot, there exists a window
-of opportunity where the kernel isn't locked down and can be accessed, thereby
-obviating the fact that you started in Secure Boot mode.
-
-David
+>
+>   kernel/sys.c |    2 ++
+>   1 file changed, 2 insertions(+)
+>
+> Index: linux-ml.git/kernel/sys.c
+> ===================================================================
+> --- linux-ml.git.orig/kernel/sys.c
+> +++ linux-ml.git/kernel/sys.c
+> @@ -2052,6 +2052,8 @@ static int prctl_set_mm(int opt, unsigne
+>   	if (!capable(CAP_SYS_RESOURCE))
+>   		return -EPERM;
+>   
+> +	pr_warn_once("Non PR_SET_MM_MAP operations are deprecated\n");
+> +
+>   	if (opt == PR_SET_MM_EXE_FILE)
+>   		return prctl_set_mm_exe_file(mm, (unsigned int)addr);
+>   
