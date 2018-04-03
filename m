@@ -1,135 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932274AbeDCNB7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:01:59 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35683 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932130AbeDCNBz (ORCPT
+        id S932311AbeDCNE2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:04:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932153AbeDCNE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:01:55 -0400
-X-Google-Smtp-Source: AIpwx48Hg2AskbW6bntwvQTUzG9wGuANYjRv+5o9oihGDbL7AOoxMKWjfCUTxQaX2PT9JLBY+kXwOw==
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>
-Subject: [PATCH 6/6] clocksource/drivers/imx-tpm: Add different counter width support
-Date: Tue,  3 Apr 2018 15:00:30 +0200
-Message-Id: <1522760432-32048-6-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522760432-32048-1-git-send-email-daniel.lezcano@linaro.org>
-References: <b2886156-4d6e-4c0c-1047-a54da8049ef6@linaro.org>
- <1522760432-32048-1-git-send-email-daniel.lezcano@linaro.org>
+        Tue, 3 Apr 2018 09:04:26 -0400
+Subject: Re: [PATCH v3 05/14] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1521051954-25715-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180403125737.15cb55fb.cohuck@redhat.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Tue, 3 Apr 2018 09:02:24 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180403125737.15cb55fb.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18040313-0028-0000-0000-00000963DFF1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008795; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000255; SDB=6.01012509; UDB=6.00516031; IPR=6.00791774;
+ MB=3.00020390; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-03 13:02:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040313-0029-0000-0000-00003A38F6B6
+Message-Id: <fa399df2-de08-2700-9cb5-6a7248a62896@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-04-03_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804030138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
-
-Different TPM modules have different width counters which is 16-bit or 32-bit,
-the counter width can be read from TPM_PARAM register bit[23:16], this patch
-adds dynamic check for counter width to support both 16-bit and 32-bit TPM
-modules.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/timer-imx-tpm.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-index 7403e49..05d97a6 100644
---- a/drivers/clocksource/timer-imx-tpm.c
-+++ b/drivers/clocksource/timer-imx-tpm.c
-@@ -17,9 +17,13 @@
- #include <linux/of_irq.h>
- #include <linux/sched_clock.h>
- 
-+#define TPM_PARAM			0x4
-+#define TPM_PARAM_WIDTH_SHIFT		16
-+#define TPM_PARAM_WIDTH_MASK		(0xff << 16)
- #define TPM_SC				0x10
- #define TPM_SC_CMOD_INC_PER_CNT		(0x1 << 3)
- #define TPM_SC_CMOD_DIV_DEFAULT		0x3
-+#define TPM_SC_CMOD_DIV_MAX		0x7
- #define TPM_SC_TOF_MASK			(0x1 << 7)
- #define TPM_CNT				0x14
- #define TPM_MOD				0x18
-@@ -33,6 +37,8 @@
- #define TPM_C0SC_CHF_MASK		(0x1 << 7)
- #define TPM_C0V				0x24
- 
-+static int counter_width;
-+static int rating;
- static void __iomem *timer_base;
- static struct clock_event_device clockevent_tpm;
- 
-@@ -85,10 +91,11 @@ static int __init tpm_clocksource_init(unsigned long rate)
- 	tpm_delay_timer.freq = rate;
- 	register_current_timer_delay(&tpm_delay_timer);
- 
--	sched_clock_register(tpm_read_sched_clock, 32, rate);
-+	sched_clock_register(tpm_read_sched_clock, counter_width, rate);
- 
- 	return clocksource_mmio_init(timer_base + TPM_CNT, "imx-tpm",
--				     rate, 200, 32, clocksource_mmio_readl_up);
-+				     rate, rating, counter_width,
-+				     clocksource_mmio_readl_up);
- }
- 
- static int tpm_set_next_event(unsigned long delta,
-@@ -141,7 +148,6 @@ static struct clock_event_device clockevent_tpm = {
- 	.set_state_oneshot	= tpm_set_state_oneshot,
- 	.set_next_event		= tpm_set_next_event,
- 	.set_state_shutdown	= tpm_set_state_shutdown,
--	.rating			= 200,
- };
- 
- static int __init tpm_clockevent_init(unsigned long rate, int irq)
-@@ -151,10 +157,11 @@ static int __init tpm_clockevent_init(unsigned long rate, int irq)
- 	ret = request_irq(irq, tpm_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
- 			  "i.MX7ULP TPM Timer", &clockevent_tpm);
- 
-+	clockevent_tpm.rating = rating;
- 	clockevent_tpm.cpumask = cpumask_of(0);
- 	clockevent_tpm.irq = irq;
--	clockevents_config_and_register(&clockevent_tpm,
--					rate, 300, 0xfffffffe);
-+	clockevents_config_and_register(&clockevent_tpm, rate, 300,
-+					GENMASK(counter_width - 1, 1));
- 
- 	return ret;
- }
-@@ -199,6 +206,11 @@ static int __init tpm_timer_init(struct device_node *np)
- 		goto err_per_clk_enable;
- 	}
- 
-+	counter_width = (readl(timer_base + TPM_PARAM) & TPM_PARAM_WIDTH_MASK)
-+		>> TPM_PARAM_WIDTH_SHIFT;
-+	/* use rating 200 for 32-bit counter and 150 for 16-bit counter */
-+	rating = counter_width == 0x20 ? 200 : 150;
-+
- 	/*
- 	 * Initialize tpm module to a known state
- 	 * 1) Counter disabled
-@@ -215,12 +227,17 @@ static int __init tpm_timer_init(struct device_node *np)
- 	/* CHF is W1C */
- 	writel(TPM_C0SC_CHF_MASK, timer_base + TPM_C0SC);
- 
--	/* increase per cnt, div 8 by default */
--	writel(TPM_SC_CMOD_INC_PER_CNT | TPM_SC_CMOD_DIV_DEFAULT,
-+	/*
-+	 * increase per cnt,
-+	 * div 8 for 32-bit counter and div 128 for 16-bit counter
-+	 */
-+	writel(TPM_SC_CMOD_INC_PER_CNT |
-+		(counter_width == 0x20 ?
-+		TPM_SC_CMOD_DIV_DEFAULT : TPM_SC_CMOD_DIV_MAX),
- 		     timer_base + TPM_SC);
- 
- 	/* set MOD register to maximum for free running mode */
--	writel(0xffffffff, timer_base + TPM_MOD);
-+	writel(GENMASK(counter_width - 1, 0), timer_base + TPM_MOD);
- 
- 	rate = clk_get_rate(per) >> 3;
- 	ret = tpm_clocksource_init(rate);
--- 
-2.7.4
+On 04/03/2018 06:57 AM, Cornelia Huck wrote:
+> On Wed, 14 Mar 2018 14:25:45 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+>
+>> Introduces a new AP device driver. This device driver
+>> is built on the VFIO mediated device framework. The framework
+>> provides sysfs interfaces that facilitate passthrough
+>> access by guests to devices installed on the linux host.
+>>
+>> The VFIO AP device driver will serve two purposes:
+>>
+>> 1. Provide the interfaces to reserve AP devices for exclusive
+>>     use by KVM guests. This is accomplished by unbinding the
+>>     devices to be reserved for guest usage from the default AP
+>>     device driver and binding them to the VFIO AP device driver.
+>>
+>> 2. Implements the functions, callbacks and sysfs attribute
+>>     interfaces required to create one or more VFIO mediated
+>>     devices each of which will be used to configure the AP
+>>     matrix for a guest and serve as a file descriptor
+>>     for facilitating communication between QEMU and the
+>>     VFIO AP device driver.
+>>
+>> When the VFIO AP device driver is initialized:
+>>
+>> * It registers with the AP bus for control of type 10 (CEX4
+>>    and newer) AP queue devices. The probe and remove callbacks
+>>    will be provided to support the binding/unbinding of
+>>    AP queue devices to/from the VFIO AP device driver.
+>>
+>> * Creates a /sys/devices/vfio-ap/matrix device to hold
+>>    the APQNs of the AP devices bound to the VFIO
+>>    AP device driver and serves as the parent of the
+>>    mediated devices created for each guest.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> ---
+>>   MAINTAINERS                           |    2 +
+>>   arch/s390/Kconfig                     |   11 +++
+>>   drivers/s390/crypto/Makefile          |    4 +
+>>   drivers/s390/crypto/vfio_ap_drv.c     |  135 +++++++++++++++++++++++++++++++++
+>>   drivers/s390/crypto/vfio_ap_private.h |   22 ++++++
+>>   include/uapi/linux/vfio.h             |    2 +
+>>   6 files changed, 176 insertions(+), 0 deletions(-)
+>>   create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+>>   create mode 100644 drivers/s390/crypto/vfio_ap_private.h
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+>> new file mode 100644
+>> index 0000000..459e595
+>> --- /dev/null
+>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+>> @@ -0,0 +1,135 @@
+>> +/*
+>> + * VFIO based AP device driver
+>> + *
+>> + * Copyright IBM Corp. 2017
+> Update to 2018?
+Okay, will do.
+>
+>> + *
+>> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include "vfio_ap_private.h"
+>> +
+>> +#define VFIO_AP_ROOT_NAME "vfio_ap"
+>> +#define VFIO_AP_DEV_TYPE_NAME "ap_matrix"
+>> +#define VFIO_AP_DEV_NAME "matrix"
+>> +
+>> +MODULE_AUTHOR("IBM Corporation");
+>> +MODULE_DESCRIPTION("VFIO AP device driver, Copyright IBM Corp. 2017");
+>> +MODULE_LICENSE("GPL v2");
+>> +
+>> +static struct device *vfio_ap_root_device;
+>> +
+>> +static struct ap_driver vfio_ap_drv;
+>> +
+>> +static struct ap_matrix *ap_matrix;
+>> +
+>> +static struct device_type vfio_ap_dev_type = {
+>> +	.name = VFIO_AP_DEV_TYPE_NAME,
+>> +};
+>> +
+>> +/* Only type 10 adapters (CEX4 and later) are supported
+>> + * by the AP matrix device driver
+>> + */
+>> +static struct ap_device_id ap_queue_ids[] = {
+>> +	{ .dev_type = AP_DEVICE_TYPE_CEX4,
+>> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
+>> +	{ .dev_type = AP_DEVICE_TYPE_CEX5,
+>> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
+>> +	{ .dev_type = AP_DEVICE_TYPE_CEX6,
+>> +	  .match_flags = AP_DEVICE_ID_MATCH_QUEUE_TYPE },
+>> +	{ /* end of sibling */ },
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
+>> +
+>> +static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static void vfio_ap_matrix_dev_release(struct device *dev)
+>> +{
+>> +	struct ap_matrix *ap_matrix = dev_get_drvdata(dev);
+>> +
+>> +	kfree(ap_matrix);
+>> +}
+>> +
+>> +static int vfio_ap_matrix_dev_create(void)
+>> +{
+>> +	int ret;
+>> +
+>> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
+>> +
+>> +	ret = IS_ERR(vfio_ap_root_device);
+>> +	if (ret) {
+> Minor nit: I'd contract that to
+>
+> if (IS_ERR(vfio_ap_root_device)) {
+>
+> (you're writing ret in any case)
+Okay, will do.
+>
+>> +		ret = PTR_ERR(vfio_ap_root_device);
+>> +		goto done;
+>> +	}
+>> +
+>> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
+>> +	if (!ap_matrix) {
+>> +		ret = -ENOMEM;
+>> +		goto matrix_alloc_err;
+>> +	}
+>> +
+>> +	ap_matrix->device.type = &vfio_ap_dev_type;
+>> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
+>> +	ap_matrix->device.parent = vfio_ap_root_device;
+>> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
+>> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
+>> +
+>> +	ret = device_register(&ap_matrix->device);
+>> +	if (ret)
+>> +		goto matrix_reg_err;
+>> +
+>> +	goto done;
+>> +
+>> +matrix_reg_err:
+>> +	put_device(&ap_matrix->device);
+>> +	kfree(ap_matrix);
+> The kfree() is wrong: If you called device_register for the embedded
+> struct device, this needs to be handled via the ->release callback
+> exclusively (IOW, the put_device() is enough and the kfree needs to go).
+Ah yes, I see that. I will fix it.
+>
+>> +
+>> +matrix_alloc_err:
+>> +	root_device_unregister(vfio_ap_root_device);
+>> +
+>> +done:
+>> +	return ret;
+>> +}
