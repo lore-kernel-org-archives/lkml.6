@@ -1,66 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751225AbeDCNc1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 09:32:27 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59534 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbeDCNc0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 09:32:26 -0400
-Date: Tue, 3 Apr 2018 15:32:21 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Ming Lei <ming.lei@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Laurence Oberman <loberman@redhat.com>
-Subject: Re: [PATCH V3 4/4] genirq/affinity: irq vector spread among online
- CPUs as far as possible
-In-Reply-To: <20180308105358.1506-5-ming.lei@redhat.com>
-Message-ID: <alpine.DEB.2.21.1804031522480.2511@nanos.tec.linutronix.de>
-References: <20180308105358.1506-1-ming.lei@redhat.com> <20180308105358.1506-5-ming.lei@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1751312AbeDCNcu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 09:32:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750855AbeDCNcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 09:32:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303A720852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 3 Apr 2018 09:32:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180403093245.43e7e77c@gandalf.local.home>
+In-Reply-To: <20180403123514.GX5501@dhcp22.suse.cz>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+        <20180330102038.2378925b@gandalf.local.home>
+        <20180403110612.GM5501@dhcp22.suse.cz>
+        <20180403075158.0c0a2795@gandalf.local.home>
+        <20180403121614.GV5501@dhcp22.suse.cz>
+        <20180403082348.28cd3c1c@gandalf.local.home>
+        <20180403123514.GX5501@dhcp22.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Mar 2018, Ming Lei wrote:
-> 1) before 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> 	irq 39, cpu list 0
-> 	irq 40, cpu list 1
-> 	irq 41, cpu list 2
-> 	irq 42, cpu list 3
+On Tue, 3 Apr 2018 14:35:14 +0200
+Michal Hocko <mhocko@kernel.org> wrote:
+
+> > If we use NORETRY, then we have those that complain that we do not try
+> > hard enough to reclaim memory. If we use RETRY_MAYFAIL we have this
+> > issue of taking up all memory before we get what we want.  
 > 
-> 2) after 84676c1f21 ("genirq/affinity: assign vectors to all possible CPUs")
-> 	irq 39, cpu list 0-2
-> 	irq 40, cpu list 3-4,6
-> 	irq 41, cpu list 5
-> 	irq 42, cpu list 7
+> Just try to do what admin asks for and trust it will not try to shoot
+> his foot? I mean there are other ways admin can shoot the machine down.
+
+Allowing the admin to just shoot her foot is not an option.
+
+Yes there are many ways to bring down a machine, but this shouldn't be
+one of them. All one needs to do is echo too big of a number
+into /sys/kernel/tracing/buffer_size_kb and OOM may kill a critical
+program on a production machine. Tracing is made for production, and
+should not allow an easy way to trigger OOM.
+
+> Being clever is OK if it doesn't add a tricky code. And relying on
+> si_mem_available is definitely tricky and obscure.
+
+Can we get the mm subsystem to provide a better method to know if an
+allocation will possibly succeed or not before trying it? It doesn't
+have to be free of races. Just "if I allocate this many pages right
+now, will it work?" If that changes from the time it asks to the time
+it allocates, that's fine. I'm not trying to prevent OOM to never
+trigger. I just don't want to to trigger consistently.
+
 > 
-> 3) after applying this patch against V4.15+:
-> 	irq 39, cpu list 0,4
-> 	irq 40, cpu list 1,6
-> 	irq 41, cpu list 2,5
-> 	irq 42, cpu list 3,7
+> > Perhaps I should try to allocate a large group of pages with
+> > RETRY_MAYFAIL, and if that fails go back to NORETRY, with the thinking
+> > that the large allocation may reclaim some memory that would allow the
+> > NORETRY to succeed with smaller allocations (one page at a time)?  
+> 
+> That again relies on a subtle dependencies of the current
+> implementation. So I would rather ask whether this is something that
+> really deserves special treatment. If admin asks for a buffer of a
+> certain size then try to do so. If we get OOM then bad luck you cannot
+> get large memory buffers for free...
 
-That's more or less window dressing. If the device is already in use when
-the offline CPUs get hot plugged, then the interrupts still stay on cpu 0-3
-because the effective affinity of interrupts on X86 (and other
-architectures) is always a single CPU.
+That is not acceptable to me nor to the people asking for this.
 
-So this only might move interrupts to the hotplugged CPUs when the device
-is initialized after CPU hotplug and the actual vector allocation moves an
-interrupt out to the higher numbered CPUs if they have less vectors
-allocated than the lower numbered ones.
+The problem is known. The ring buffer allocates memory page by page,
+and this can allow it to easily take all memory in the system before it
+fails to allocate and free everything it had done.
 
-Probably not an issue for the majority of machines where ACPI stupidly
-claims that extra CPUs are possible while there is absolute no support for
-physical hotplug.
+If you don't like the use of si_mem_available() I'll do the larger
+pages method. Yes it depends on the current implementation of memory
+allocation. It will depend on RETRY_MAYFAIL trying to allocate a large
+number of pages, and fail if it can't (leaving memory for other
+allocations to succeed).
 
-Though in scenarios where "physical" hotplug is possible, e.g. virt, this
-might come surprising.
+The allocation of the ring buffer isn't critical. It can fail to
+expand, and we can tell the user -ENOMEM. I original had NORETRY
+because I rather have it fail than cause an OOM. But there's folks
+(like Joel) that want it to succeed when there's available memory in
+page caches.
 
-Thanks,
+I'm fine if the admin shoots herself in the foot if the ring buffer
+gets big enough to start causing OOMs, but I don't want it to cause
+OOMs if there's not even enough memory to fulfill the ring buffer size
+itself.
 
-	tglx
+-- Steve
