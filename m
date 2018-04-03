@@ -1,62 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752885AbeDCSI6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 14:08:58 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45490 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752832AbeDCSI4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 14:08:56 -0400
-X-Google-Smtp-Source: AIpwx4+Rwc3Kw9e63MZkmaicfy5tQxFtzlIbDZWileiVK6HOBUwJCP/7GzsxLM5hHbfSIXBKHI9HEA==
-Date: Tue, 3 Apr 2018 11:08:54 -0700
-From: Omar Sandoval <osandov@osandov.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH] bitmap: fix memset optimization on big-endian systems
-Message-ID: <20180403180854.GA17679@vader>
-References: <817147544aa3ecc2b78d6cadeab713869d8805e6.1522709616.git.osandov@fb.com>
- <CA+55aFxqFMdVoSHVWnoek-6SFgfJLO16L=WAEA6=zcr2HOQnrw@mail.gmail.com>
- <CA+55aFxQdzZjQ__dX6AVZfoA_=Uqu+rvidVT6YtJO15RS307Ew@mail.gmail.com>
+        id S1752132AbeDCSKm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 14:10:42 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:49864 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751413AbeDCSKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 14:10:41 -0400
+Date: Tue, 3 Apr 2018 14:11:57 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
+Message-ID: <20180403181157.GA23560@cmpxchg.org>
+References: <20180321205928.22240-1-mhocko@kernel.org>
+ <20180403145853.GB21411@cmpxchg.org>
+ <20180403155509.GD5501@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFxQdzZjQ__dX6AVZfoA_=Uqu+rvidVT6YtJO15RS307Ew@mail.gmail.com>
+In-Reply-To: <20180403155509.GD5501@dhcp22.suse.cz>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 02, 2018 at 04:49:39PM -0700, Linus Torvalds wrote:
-> On Mon, Apr 2, 2018 at 4:37 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > We should probably have at least switched it to "unsigned long int"
+On Tue, Apr 03, 2018 at 05:55:09PM +0200, Michal Hocko wrote:
+> On Tue 03-04-18 10:58:53, Johannes Weiner wrote:
+> > On Wed, Mar 21, 2018 at 09:59:28PM +0100, Michal Hocko wrote:
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > David has noticed that THP memcg charge can trigger the oom killer
+> > > since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
+> > > madvised allocations"). We have used an explicit __GFP_NORETRY
+> > > previously which ruled the OOM killer automagically.
+> > > 
+> > > Memcg charge path should be semantically compliant with the allocation
+> > > path and that means that if we do not trigger the OOM killer for costly
+> > > orders which should do the same in the memcg charge path as well.
+> > > Otherwise we are forcing callers to distinguish the two and use
+> > > different gfp masks which is both non-intuitive and bug prone. Not to
+> > > mention the maintenance burden.
+> > > 
+> > > Teach mem_cgroup_oom to bail out on costly order requests to fix the THP
+> > > issue as well as any other costly OOM eligible allocations to be added
+> > > in future.
+> > > 
+> > > Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
+> > > Reported-by: David Rientjes <rientjes@google.com>
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > I also prefer this fix over having separate OOM behaviors (which is
+> > user-visible, and not just about technical ability to satisfy the
+> > allocation) between the allocator and memcg.
+> > 
+> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 > 
-> I meant just "unsigned int", of course.
+> I will repost the patch with the currently merged THP specific handling
+> reverted (see below). While 9d3c3354bb85 might have been an appropriate
+> quick fix, we shouldn't keep it longterm for 4.17+ IMHO.
 > 
-> Right now we occasionally have a silly 64-bit field just for a couple of flags.
+> Does you ack apply to that patch as well?
 
-Not to mention the mix of bit fields, macros, and enums, some of which
-are bit masks, some of which are the bit number :)
+Yep, looks good to me.
 
-> Of course, we do have cases where 64-bit architectures happily end up
-> using more than 32 bits too, so the "unsigned long" is occasionally
-> useful. But it's rare enough that it probably wasn't the right thing
-> to do.
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Wed, 21 Mar 2018 10:10:37 +0100
+> Subject: [PATCH] memcg, thp: do not invoke oom killer on thp charges
 > 
-> Water under the bridge. Part of it is due to another historical
-> accident: the alpha port was one of the early ports, and it didn't do
-> atomic byte accesses at all.
+> David has noticed that THP memcg charge can trigger the oom killer
+> since 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and
+> madvised allocations"). We have used an explicit __GFP_NORETRY
+> previously which ruled the OOM killer automagically.
 > 
-> So we had multiple issues that all conspired to "unsigned long arrays
-> are the natural for atomic bit operations" even though they have this
-> really annoying byte order issue.
+> Memcg charge path should be semantically compliant with the allocation
+> path and that means that if we do not trigger the OOM killer for
+> costly orders which should do the same in the memcg charge path as
+> well.  Otherwise we are forcing callers to distinguish the two and use
+> different gfp masks which is both non-intuitive and bug prone. As soon
+> as we get a costly high order kmalloc user we even do not have any means
+> to tell the memcg specific gfp mask to prevent from OOM because the
+> charging is deep within guts of the slab allocator.
+> 
+> The unexpected memcg OOM on THP has already been fixed upstream by
+> 9d3c3354bb85 ("mm, thp: do not cause memcg oom for thp") but this is
+> one-off fix rather than a generic solution. Teach mem_cgroup_oom to bail
+> out on costly order requests to fix the THP issue as well as any other
+> costly OOM eligible allocations to be added in future.
+> 
+> Also revert 9d3c3354bb85 because special gfp for THP is no longer
+> needed.
+> 
+> Fixes: 2516035499b9 ("mm, thp: remove __GFP_NORETRY from khugepaged and madvised allocations")
+> Reported-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Thanks for the historical context, this is exactly what I was wondering
-when I spotted this bug and fixed a similar one in Btrfs a couple of
-years back.
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
