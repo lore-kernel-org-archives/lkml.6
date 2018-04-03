@@ -1,73 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeDCQqH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 12:46:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50784 "EHLO mail.kernel.org"
+        id S1752021AbeDCQrn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 12:47:43 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50263 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752278AbeDCQqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 12:46:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 478DB206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AIpwx49mQWoMcAb3VvEGw+1CF89vqfnrnTp6K/tVIt+8TlOWRSPC2+6IukYkcA5x9rkVosOpjlw6V3SqPV6HFe1e+K8=
+        id S1751270AbeDCQrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 12:47:41 -0400
+Date: Tue, 3 Apr 2018 18:47:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/4] mfd: add Gateworks System Controller core driver
+Message-ID: <20180403164715.GA5676@lunn.ch>
+References: <1522250043-8065-1-git-send-email-tharvey@gateworks.com>
+ <1522250043-8065-3-git-send-email-tharvey@gateworks.com>
+ <CAJ+vNU3-gaTcMAzo5wB6oSfE-JQC3NBVRJS5zFMTE-nVpD4F5g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
-References: <4136.1522452584@warthog.procyon.org.uk> <alpine.LRH.2.21.1803311145180.7769@namei.org>
- <186aeb7e-1225-4bb8-3ff5-863a1cde86de@kernel.org> <30459.1522739219@warthog.procyon.org.uk>
- <CALCETrUFOdrH5ShCCd8yguGjC2NtG8fJY7AW26HH467-02UVGA@mail.gmail.com> <CACdnJut31+ZtiR40nkOjm89cfUxS0EM=w-oG69PtWHbXYJQxPg@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 3 Apr 2018 09:45:41 -0700
-X-Gmail-Original-Message-ID: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-Message-ID: <CALCETrXeVod=kNpG-M7yKAMM0-n+PMg_OakN6ecWrTPmKXgMLg@mail.gmail.com>
-Subject: Re: [GIT PULL] Kernel lockdown for secure boot
-To: Matthew Garrett <mjg59@google.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Justin Forbes <jforbes@redhat.com>,
-        linux-man <linux-man@vger.kernel.org>, joeyli <jlee@suse.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJ+vNU3-gaTcMAzo5wB6oSfE-JQC3NBVRJS5zFMTE-nVpD4F5g@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 3, 2018 at 9:29 AM, Matthew Garrett <mjg59@google.com> wrote:
-> On Tue, Apr 3, 2018 at 8:11 AM Andy Lutomirski <luto@kernel.org> wrote:
->> Can you explain that much more clearly?  I'm asking why booting via
->> UEFI Secure Boot should enable lockdown, and I don't see what this has
->> to do with kexec.  And "someone blacklist[ing] your key in the
->> bootloader" sounds like a political issue, not a technical issue.
->
-> A kernel that allows users arbitrary access to ring 0 is just an
-> overfeatured bootloader. Why would you want secure boot in that case?
+On Tue, Apr 03, 2018 at 08:48:27AM -0700, Tim Harvey wrote:
+> On Wed, Mar 28, 2018 at 8:14 AM, Tim Harvey <tharvey@gateworks.com> wrote:
+> > The Gateworks System Controller (GSC) is an I2C slave controller
+> > implemented with an MSP430 micro-controller whose firmware embeds the
+> > following features:
+> >  - I/O expander (16 GPIO's) using PCA955x protocol
+> >  - Real Time Clock using DS1672 protocol
+> >  - User EEPROM using AT24 protocol
+> >  - HWMON using custom protocol
+> >  - Interrupt controller with tamper detect, user pushbotton
+> >  - Watchdog controller capable of full board power-cycle
+> >  - Power Control capable of full board power-cycle
+> >
+> > see http://trac.gateworks.com/wiki/gsc for more details
+> >
+> <snip>
+> > +
+> > +/*
+> > + * gsc_powerdown - API to use GSC to power down board for a specific time
+> > + *
+> > + * secs - number of seconds to remain powered off
+> > + */
+> > +static int gsc_powerdown(struct gsc_dev *gsc, unsigned long secs)
+> > +{
+> > +       int ret;
+> > +       unsigned char regs[4];
+> > +
+> > +       dev_info(&gsc->i2c->dev, "GSC powerdown for %ld seconds\n",
+> > +                secs);
+> > +       regs[0] = secs & 0xff;
+> > +       regs[1] = (secs >> 8) & 0xff;
+> > +       regs[2] = (secs >> 16) & 0xff;
+> > +       regs[3] = (secs >> 24) & 0xff;
+> > +       ret = regmap_bulk_write(gsc->regmap, GSC_TIME_ADD, regs, 4);
+> > +
+> > +       return ret;
+> > +}
+> 
+> Any feedback on the 'powerdown' sysfs attribute that hooks to this
+> function? This allows the GSC to disable the board primary power
+> supply for 2^32 seconds and is often used to 'reset' the board
+> although it could also be used to put the board in a power down state
+> longer. I'm wondering if there is a more appropriate API for this in
+> the kernel that I don't know about.
 
-To get a chain of trust.  I can provision a system with some public
-keys, stored in UEFI authenticated variables, such that the system
-will only boot a signed image.  That signed image, can, in turn, load
-a signed (or hashed or otherwise verfified) kernel and a verified
-initramfs.  The initramfs can run a full system from a verified (using
-dm-verity or similar) filesystem, for example.  Now it's very hard to
-persistently attack this system.  Chromium OS does something very much
-like this, except that it doesn't use UEFI as far as I know.  So does
-iOS, and so do some Android versions.  None of this requires lockdown,
-or even a separation between usermode and kernelmode, to work
-correctly.  One could even do this on an MMU-less system if one really
-cared to.  More usefully, someone probably has done this using a
-unikernel.
+Hi Tim
 
-If I had to guess at a motivation that makes this patchset work, it
-would be that there is an uneasy truce between Microsoft and the
-various vendors of signed Linux bootloaders.  That truce could
-conceivably require that the signed bootloaders not knowingly ship a
-system that allows a non-physically-present user to chainload Windows.
-If so, the patchset should say that loud and clear in its description
-and the parts that block bpf should go away.
+RTC can cause wakeup when an alarm is set. It looks like the DS1672
+does not have this. But you are emulating the DS1672 right? You could
+add a second emulated RTC which does support an alarm? DS3232?
+
+> I would also like to register a restart handler using this but I
+> believe that ARM restart handlers currently can not use I2C - is that
+> correct?
+
+There are plenty which use GPIOs, or UARTs. Not seen any which use
+i2c. What do you think does not work at this point?
+
+     Andrew
