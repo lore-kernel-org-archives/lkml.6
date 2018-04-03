@@ -1,214 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751397AbeDCO2b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 10:28:31 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:58197 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbeDCO21 (ORCPT
+        id S1751436AbeDCO2l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:28:41 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:32971 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeDCO2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 10:28:27 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Eugene Syromiatnikov <esyr@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Linux\/m68k" <linux-m68k@vger.kernel.org>
-References: <87woypy8zc.fsf@xmission.com>
-        <20180331105658.GA4332@asgard.redhat.com>
-        <87woxpz7k9.fsf@xmission.com>
-        <CAMuHMdVtbhGJ=nGbB21O73DcYM-4csyuJbx2NksN379ww6c1Gw@mail.gmail.com>
-Date: Tue, 03 Apr 2018 09:27:18 -0500
-In-Reply-To: <CAMuHMdVtbhGJ=nGbB21O73DcYM-4csyuJbx2NksN379ww6c1Gw@mail.gmail.com>
-        (Geert Uytterhoeven's message of "Tue, 3 Apr 2018 09:30:36 +0200")
-Message-ID: <87in98xt4p.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f3MvB-00039X-75;;;mid=<87in98xt4p.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.145.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+ddgsCL4Dwtb/AD3nALiPHJriQZ2JzMRs=
-X-SA-Exim-Connect-IP: 67.3.145.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Geert Uytterhoeven <geert@linux-m68k.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 401 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.7 (0.7%), b_tie_ro: 1.80 (0.4%), parse: 1.01 (0.3%),
-        extract_message_metadata: 16 (4.1%), get_uri_detail_list: 4.1 (1.0%),
-        tests_pri_-1000: 7 (1.7%), tests_pri_-950: 1.25 (0.3%), tests_pri_-900: 0.97
-        (0.2%), tests_pri_-400: 36 (9.1%), check_bayes: 35 (8.8%), b_tokenize: 12
-        (2.9%), b_tok_get_all: 13 (3.1%), b_comp_prob: 2.8 (0.7%), b_tok_touch_all: 5
-        (1.3%), b_finish: 2.00 (0.5%), tests_pri_0: 326 (81.2%),
-        check_dkim_signature: 0.57 (0.1%), check_dkim_adsp: 3.0 (0.7%),
-        tests_pri_500: 7 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [GIT PULL] siginfo fix for v4.16-rc5
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Tue, 3 Apr 2018 10:28:30 -0400
+X-Google-Smtp-Source: AIpwx4+F8/EuxC8U03fvunOCo4Du7lTYlnRjq3jPVRD18/WNL4ZZa7gv2avjfKljTMX/FBeR6lyL4w==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Message-Id: <07972A79-4E2E-4CC3-B856-318EFAC553E3@javigon.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_4F16BE9B-32EA-4771-A04C-2A907A5DC976";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: problem with bio handling on raid5 and pblk
+Date: Tue, 3 Apr 2018 16:28:24 +0200
+In-Reply-To: <04D5C038-969C-49EB-A9AA-EBE0548521E6@javigon.com>
+Cc: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, shli@kernel.org,
+        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Huaicheng Li <huaicheng@cs.uchicago.edu>
+To: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+References: <66350920-EC5E-447F-B5DF-0F3C2CDEAA65@javigon.com>
+ <97678ddd-140f-5a8b-75ee-cbb584308260@lightnvm.io>
+ <04D5C038-969C-49EB-A9AA-EBE0548521E6@javigon.com>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-> Hi Eric,
->
-> On Mon, Apr 2, 2018 at 10:17 PM, Eric W. Biederman
-> <ebiederm@xmission.com> wrote:
->> Eugene Syromiatnikov <esyr@redhat.com> writes:
->>
->>> So, the offset of the si_lower field is 20 at the current HEAD and was 18 at
->>> commits v4.16-rc3~17^2 and v4.16-rc1~159^2~20.  I believe this is due to
->>> the fact that m68k uses 2-byte default alignment and not 4-byte.
->>
->> A 2-byte alignment for 4 byte pointers.  That is a new one to me.
->
-> Not just for pointers, also for int and long.
-> And m68k is not the only architecture having such alignment rules.
+--Apple-Mail=_4F16BE9B-32EA-4771-A04C-2A907A5DC976
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-The smallest I have seen previously has been 64bit integers having
-32bit alignment.  32bit entities having only 16bit alignment on a 32bit
-arch was simply a surprise.  Even when it works there tend to be good
-reasons not to do that by default.
+> On 23 Mar 2018, at 13.52, Javier Gonz=C3=A1lez <javier@javigon.com> =
+wrote:
+>=20
+>> On 22 Mar 2018, at 18.00, Matias Bj=C3=B8rling <mb@lightnvm.io> =
+wrote:
+>>=20
+>> On 03/22/2018 03:34 PM, Javier Gonz=C3=A1lez wrote:
+>>> Hi,
+>>> I have been looking into a bug report when using pblk and raid5 on =
+top
+>>> and I am having problems understanding if the problem is in pblk's =
+bio
+>>> handling or on raid5's bio assumptions on the completion path.
+>>> The problem occurs on the read path. In pblk, we take a reference to
+>>> every read bio as it enters, and release it after completing the =
+bio.
+>>>   generic_make_request()
+>>>   pblk_submit_read()
+>>>     bio_get()
+>>>     ...
+>>>     bio_endio()
+>>>     bio_put()
+>>> The problem seems to be that on raid5's bi_end_io completion path,
+>>> raid5_end_read_request(), bio_reset() is called. When put together
+>>> with pblk's bio handling:
+>>>   generic_make_request()
+>>>   pblk_submit_read()
+>>>     bio_get()
+>>>     ...
+>>>     bio_endio()
+>>>     raid5_end_read_request()
+>>>       bio_reset()
+>>>     bio_put()
+>>> it results in the newly reset bio being put immediately, thus freed.
+>>> When the bio is reused then, we have an invalid pointer. In the =
+report
+>>> we received things crash at BUG_ON(bio->bi_next) at
+>>> generic_make_request().
+>>> As far as I understand, it is part of the bio normal operation for
+>>> drivers under generic_make_request() to be able to take references =
+and
+>>> release them after bio completion. Thus, in this case, the =
+assumption
+>>> made by raid5, that it can issue a bio_reset() is incorrect. But I =
+might
+>>> be missing an implicit cross layer rule that we are violating in =
+pblk.
+>>> Any ideas?
+>>> This said, after analyzing the problem from pblk's perspective, I =
+see
+>>> not reason to use bio_get()/bio_put() in the read path as it is at =
+the
+>>> pblk level that we are submitting bio_endio(), thus we cannot risk =
+the
+>>> bio being freed underneath us. Is this reasoning correct? I remember =
+I
+>>> introduced these at the time there was a bug on the aio path, which =
+was
+>>> not cleaning up correctly and could trigger an early bio free, but
+>>> revisiting it now, it seems unnecessary.
+>>> Thanks for the help!
+>>> Javier
+>>=20
+>> I think I sent a longer e-mail to you and Huaicheng about this a =
+while back.
+>=20
+> I don't think I was in that email.
+>=20
+> There are two parts to the question. One is raid5's bio completion
+> assumptions and the other is whether we can avoid bio_get()/put() in
+> pblk's read path. The first part is pblk independent and I would like =
+to
+> leave it open as I would like to understand how bio_reset() in this
+> context is correct. Right now, I cannot see how this is correct
+> behaviour.
+>=20
+> For the pblk specific part, see below.
+>=20
+>> The problem is that the pblk encapsulates the bio in its own request.
+>> So the bio's are freed before the struct request completion is done
+>> (as you identify). If you can make the completion path (as bio's are
+>> completed before the struct request completion fn is called) to not
+>> use the bio, then the bio_get/put code can be removed.
+>>=20
+>> If it needs the bio on the completion path (e.g., for partial reads,
+>> and if needed in the struct request completion path), one should =
+clone
+>> the bio, submit, and complete the original bio afterwards.
+>=20
+> I don't follow how the relationship with struct request completion is
+> different with bio_get/put and without.
+>=20
+> The flow in terms of bio and struct request management is today:
+>=20
+>  generic_make_request()
+>   pblk_submit_read()
+>     bio_get()
+>      ...
+>     blk_init_request_from_bio()
+>     blk_execute_rq_nowait() / blk_execute_rq() // denepnding on =
+sync/async
+>      ...
+>     bio_endio()
+>     bio_put()
+>      ...
+>     blk_mq_free_request()
+>=20
+> bios risk to always freed in any case, as bio_put() will the last pblk
+> reference. The only case in which this will not happen is that =
+somebody
+> else took a bio_get() on the way down. But we cannot assume anything.
+>=20
+> I guess the problem I am having understanding this is how we can risk
+> the bio disappearing underneath when we are the ones completing the =
+bio.
+> As I understand it, in this case we are always guaranteed that the
+> bio is alive due to the allocation reference. Therefore, =
+bio_get()/put()
+> is not needed. Am I missing anything?
+>=20
+> Thanks,
+> Javier
 
->> Euguene can you test the patch below.  It should be fully robust against
->> this kind of craziness.  It certainly passes my BUILD_BUG_ON tests for
->> m68k.
->>
->> Eric
->>
->> From: "Eric W. Biederman" <ebiederm@xmission.com>
->> Date: Mon, 2 Apr 2018 14:45:42 -0500
->> Subject: [PATCH] signal: Correct the offset of si_pkey and si_lower in struct siginfo on m68k
->>
->> The change moving addr_lsb into the _sigfault union failed to take
->> into account that _sigfault._addr_bnd._lower being a pointer forced
->> the entire union to have pointer alignment.  The fix for
->> _sigfault._addr_bnd._lower having pointer alignment failed to take
->> into account that m68k has a pointer alignment less than the size
->> of a pointer.  So simply making the padding members pointers changed
->> the location of later members in the structure.
->>
->> Fix this by directly computing the needed size of the padding members,
->> and making the padding members char arrays of the needed size.  AKA
->> if __alignof__(void *) is 1 sizeof(short) otherwise __alignof__(void *).
->> Which should be exactly the same rules the compiler whould have
->> used when computing the padding.
->
-> __alignof__(void *) is 2 not 1 on m68k.
+After an offline discussion with Matias, we have agreed that
+bio_get/put() should not be necessary on pblk's read path (Matias,
+please correct me if my understanding is not correct). As mentioned
+before too, we have been running internally without them for some time
+without problems. I'll send a patch for the next window removing them.
 
-I was not expecting __alignof__(void *) to be 1 on m68k.  I was testing
-for anything crazier than m68k.  Since there used to be a short in the
-hole.  If your alignment is less than sizeof(short) aka 2 we do need two
-bytes of pad in there.
+This said, I believe that a generic_make_request driver should be able
+to do bio_get/put without side consequences. Thus, I still doubt that
+raid5's assumption that it can reset the bio on bio_end_io is correct
+(and if yes, I would like to understand why). Thoughts?
 
->> I have tested this change by adding BUILD_BUG_ONs to m68k to verify
->> the offset of every member of struct siginfo, and with those testing
->> that the offsets of the fields in struct siginfo is the same before
->> I changed the generic _sigfault member and after the correction
->> to the _sigfault member.
->>
->> I have also verified that the x86 with it's own BUILD_BUG_ONs to verify
->> the offsets of the siginfo members also compiles cleanly.
->>
->> Cc: stable@vger.kernel.org
->> Reported-by: Eugene Syromiatnikov <esyr@redhat.com>
->> Fixes: 859d880cf544 ("signal: Correct the offset of si_pkey in struct siginfo")
->> Fixes: b68a68d3dcc1 ("signal: Move addr_lsb into the _sigfault union for clarity")
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> ---
->>  include/linux/compat.h             | 6 ++++--
->>  include/uapi/asm-generic/siginfo.h | 7 +++++--
->>  2 files changed, 9 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/linux/compat.h b/include/linux/compat.h
->> index e16d07eb08cf..d770e62632d7 100644
->> --- a/include/linux/compat.h
->> +++ b/include/linux/compat.h
->> @@ -221,6 +221,8 @@ typedef struct compat_siginfo {
->>  #ifdef __ARCH_SI_TRAPNO
->>                         int _trapno;    /* TRAP # which caused the signal */
->>  #endif
->> +#define __COMPAT_ADDR_BND_PKEY_PAD  (__alignof__(compat_uptr_t) < sizeof(short) ? \
->> +                                    sizeof(short) : __alignof__(compat_uptr_t))
->
-> On m68k, __alignof__(compat_uptr_t) == 2, so it will use
-> __alignof__(compat_uptr_t) padding bytes.
->
-> Note that while the test is wrong, the end result is correct :-)
->
-> Hence you could just use __alignof__(compat_uptr_t) padding bytes
-> unconditionally?
+Javier
 
-Unless there is something crazier than m68k that only needs 1 byte
-alignment for pointers.  In which case this code really needs 2 padding
-bytes to avoid introducing a regression there as historically there was
-a short in the padding hole.
 
-So I don't see anything wrong with the test.
+--Apple-Mail=_4F16BE9B-32EA-4771-A04C-2A907A5DC976
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
->>                         union {
->>                                 /*
->>                                  * used when si_code=BUS_MCEERR_AR or
->> @@ -229,13 +231,13 @@ typedef struct compat_siginfo {
->>                                 short int _addr_lsb;    /* Valid LSB of the reported address. */
->>                                 /* used when si_code=SEGV_BNDERR */
->>                                 struct {
->> -                                       compat_uptr_t _dummy_bnd;
->> +                                       char _dummy_bnd[__COMPAT_ADDR_BND_PKEY_PAD];
->>                                         compat_uptr_t _lower;
->>                                         compat_uptr_t _upper;
->>                                 } _addr_bnd;
->>                                 /* used when si_code=SEGV_PKUERR */
->>                                 struct {
->> -                                       compat_uptr_t _dummy_pkey;
->> +                                       char _dummy_pkey[__COMPAT_ADDR_BND_PKEY_PAD];
->>                                         u32 _pkey;
->>                                 } _addr_pkey;
->>                         };
->> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
->> index 4b3520bf67ba..6d789648473d 100644
->> --- a/include/uapi/asm-generic/siginfo.h
->> +++ b/include/uapi/asm-generic/siginfo.h
->> @@ -94,6 +94,9 @@ typedef struct siginfo {
->>                         unsigned int _flags;    /* see ia64 si_flags */
->>                         unsigned long _isr;     /* isr */
->>  #endif
->> +
->> +#define __ADDR_BND_PKEY_PAD  (__alignof__(void *) < sizeof(short) ? \
->> +                             sizeof(short) : __alignof__(void *))
->
-> Likewise.
->
->>                         union {
->>                                 /*
->>                                  * used when si_code=BUS_MCEERR_AR or
->> @@ -102,13 +105,13 @@ typedef struct siginfo {
->>                                 short _addr_lsb; /* LSB of the reported address */
->>                                 /* used when si_code=SEGV_BNDERR */
->>                                 struct {
->> -                                       void *_dummy_bnd;
->> +                                       char _dummy_bnd[__ADDR_BND_PKEY_PAD];
->>                                         void __user *_lower;
->>                                         void __user *_upper;
->>                                 } _addr_bnd;
->>                                 /* used when si_code=SEGV_PKUERR */
->>                                 struct {
->> -                                       void *_dummy_pkey;
->> +                                       char _dummy_pkey[__ADDR_BND_PKEY_PAD];
->>                                         __u32 _pkey;
->>                                 } _addr_pkey;
->>                         };
->
-> Gr{oetje,eeting}s,
->
->                         Geert
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlrDj4gACgkQPEYBfS0l
+eOAAqBAAoIXO7qbN/66nLtwSVkgyT+1nsh9EeaK+pE/Ksfg1TtLkpFiB73Ahl6nx
+X3B+/PUyLZYZfW2+8xvxbMhWhav6c/LeG3PXL2XTYDCUX5XwH90Jx5n8HBZS44Cy
+jz5fTKk6KFF5LDUb6J91JsM3h0HXwWLn8LdemzYaBd05J5gcVEZkfEtkGZGIVrQv
+PkgKOeW5Gdk+pLIkfiXhtNi7GDJIF1pgyhlbinJVqf4NleHpL3OAy2apU6CWl7YS
+Yae46Su1BfTxn+mG5Px14xd2IXPJa/vQ/A0dXy2qolA+bf3lycv7//SD6vI6epjm
+qyROfCzpRo3lfLGlTMgW9/OJfZ/b8QD30/oCtPVgjP3EfrfcWJbzQQ+o3DkJKNxi
+dfyYds0Yus8eI4tJHH1Tcn8eAxvg+6q52Rhi8eZ3HidTDZdQ890czF6g18mstIZX
+h/oSJncM0nA5D6LnZQDsyDmjFUn6PbWE4EsBppVqTqVfCBcMmyiWwxgnRgfY693W
+WWElEMp6MT+IIhTgheAf6JAILGmF9HSqn4Yz5Z4NkjVd6TJw6QbqVC/eTfQ6gy+D
+p5UuL23LFHKMJjUDvEzYPa1zaBhF+u59OJW3fZIl8dXhkhAQ4kkxWWePVVDFMqzU
+mOgptaYuWNquCfvbUHIyJvNtd/JI7Xg5JjacVFSbu9N76YNC0uY=
+=kF43
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_4F16BE9B-32EA-4771-A04C-2A907A5DC976--
