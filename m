@@ -1,85 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeDCUD4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 16:03:56 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52682 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751179AbeDCUDy (ORCPT
+        id S1753004AbeDCUEp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 16:04:45 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:32968 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1751859AbeDCUEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 16:03:54 -0400
-X-Google-Smtp-Source: AIpwx48zkxdZ8nrJ1pl3CEUYFwetMWNK5hgTVbuUekOzb9VBP2FjLsKCG4WD4qEsEWEgPkQpEzWWNw==
-Date: Tue, 3 Apr 2018 14:03:48 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Kalderon, Michal" <Michal.Kalderon@cavium.com>
-Cc: Sinan Kaya <okaya@codeaurora.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "timur@codeaurora.org" <timur@codeaurora.org>,
-        "sulrich@codeaurora.org" <sulrich@codeaurora.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "Elior, Ariel" <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] RDMA/qedr: eliminate duplicate barriers on
- weakly-ordered archs #2
-Message-ID: <20180403200348.GB21167@ziepe.ca>
-References: <1521736009-23387-1-git-send-email-okaya@codeaurora.org>
- <1521736009-23387-4-git-send-email-okaya@codeaurora.org>
- <ac46b4e4-7e6c-c15f-06eb-01b1e4893d50@codeaurora.org>
- <CY1PR0701MB201215C9F38E8760732B595088A50@CY1PR0701MB2012.namprd07.prod.outlook.com>
+        Tue, 3 Apr 2018 16:04:44 -0400
+Date: Tue, 3 Apr 2018 16:04:43 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+cc: David Howells <dhowells@redhat.com>, <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>, Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 1/3] locking: Document the semantics of spin_is_locked()
+In-Reply-To: <20180403193139.GA6143@andrea>
+Message-ID: <Pine.LNX.4.44L0.1804031557470.1399-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY1PR0701MB201215C9F38E8760732B595088A50@CY1PR0701MB2012.namprd07.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 07:42:28AM +0000, Kalderon, Michal wrote:
-> > From: Sinan Kaya [mailto:okaya@codeaurora.org]
-> > Sent: Tuesday, April 03, 2018 5:30 AM
-> > To: linux-rdma@vger.kernel.org; timur@codeaurora.org;
-> > sulrich@codeaurora.org
-> > Cc: linux-arm-msm@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > Kalderon, Michal <Michal.Kalderon@cavium.com>; Elior, Ariel
-> > <Ariel.Elior@cavium.com>; Doug Ledford <dledford@redhat.com>; Jason
-> > Gunthorpe <jgg@ziepe.ca>; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v5 3/3] RDMA/qedr: eliminate duplicate barriers on
-> > weakly-ordered archs #2
+On Tue, 3 Apr 2018, Andrea Parri wrote:
+
+> On Tue, Apr 03, 2018 at 04:23:07PM +0100, David Howells wrote:
+> > Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
 > > 
-> > On 3/22/2018 12:26 PM, Sinan Kaya wrote:
-> > > @@ -860,7 +860,7 @@ static void doorbell_cq(struct qedr_cq *cq, u32
-> > cons, u8 flags)
-> > >  	wmb();
-> > >  	cq->db.data.agg_flags = flags;
-> > >  	cq->db.data.value = cpu_to_le32(cons);
-> > > -	writeq(cq->db.raw, cq->db_addr);
-> > > +	writeq_relaxed(cq->db.raw, cq->db_addr);
+> > > Sorry, but I don't understand your objection: are you suggesting to add
+> > > something like "Always return 0 on !SMP" to the comment?  what else?
 > > 
-> > Given the direction to get rid of wmb() in front of writeX() functions, I have
-> > been reviewing this code. Under normal circumstances, I can get rid of all
-> > wmb() as follows.
-> > 
-> > However, I started having my doubts now. Are these wmb() used as a SMP
-> > barrier too?
-> > I can't find any smp_Xmb() in drivers/infiniband/hw/qedr directory.
+> > Something like that, possibly along with a warning that this might not be what
+> > you want.  You might actually want it to return true on !SMP, it depends on
+> > what you're using it for.
 > 
-> Your doubts are in place. You initial patch series modified writel to writel_relaxed
-> Simply removing the wmb is dangerous. The wmb before writel are used to make sure the
-> HW observes the changes in memory before we trigger the doorbell. Smp barriers here
-> wouldn't suffice, as on a single processor. we still need to make sure memory is updated
-> and not remained in cache when HW accesses it.
-> Reviewing the qedr barriers, I can find places where this may have not been necessary, 
-> But definitely you can't simply remove this wmb barriers. 
+> I ended up with the following revision.  I hesitated on whether to refer
+> to 'include/linux/spinlock_up.h' or not, but in the end I decided to not
+> include the reference.  Please let me know what you think about this.
 
-As Sinan said, the consensus is that wmb();writel(); is redundant if
-the only purpose of the wmb is to order DMA and system memory.
 
-So can you review these patches on that basis please? Is the WMB doing
-something else, eg SMP related? If yes, please send a patch adding
-appropriate comments.
+> +/**
+> + * spin_is_locked() - Check whether a spinlock is locked.
+> + * @lock: Pointer to the spinlock.
+> + *
+> + * This function is NOT required to provide any memory ordering
+> + * guarantees; it could be used for debugging purposes or, when
+> + * additional synchronization is needed, accompanied with other
+> + * constructs (memory barriers) enforcing the synchronization.
+> + *
+> + * Return: 1, if @lock is (found to be) locked; 0, otherwise.
+> + *
+> + *	   Remark that this primitve can return a fixed value
+> + *	   under certain !SMP configurations.
 
-Thanks,
-Jason
+I would change these last two paragraphs as follows:
+
++ * Returns: 1 if @lock is locked, 0 otherwise.
++ * However, on !CONFIG_SMP builds with !CONFIG_DEBUG_SPINLOCK,
++ * the return value is always 0 (see include/linux/spinlock_up.h).
++ * Therefore you should not rely heavily on the return value.
+
+Alan
