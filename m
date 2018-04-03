@@ -1,65 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755471AbeDCMWr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 08:22:47 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42701 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755300AbeDCMWp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 08:22:45 -0400
-X-Google-Smtp-Source: AIpwx4+5bwDV6t8qnk7TjyaB0WYGipxVEpXMWpGbuREXLmHrxkpAB5UR+6b8VOw0Dcdee42X5D/6+A==
-Subject: Re: [PATCH 2/2] crypto: ccree: enable support for hardware keys
-To: Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-References: <1522049540-10042-1-git-send-email-gilad@benyossef.com>
- <1522049540-10042-3-git-send-email-gilad@benyossef.com>
- <20180330172616.GB28120@gondor.apana.org.au>
- <CAOtvUMd6MMyQBHU4E=5DKXndhZw90=K1V1apD0uRRaMLyp-0Ag@mail.gmail.com>
-From: Milan Broz <gmazyland@gmail.com>
-Message-ID: <13b816b2-cae1-a926-d60b-734c77a6361c@gmail.com>
-Date: Tue, 3 Apr 2018 14:22:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
- Thunderbird/31.3.0
+        id S1755506AbeDCMXw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 08:23:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755300AbeDCMXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 08:23:51 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366342133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 3 Apr 2018 08:23:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-patch-test@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1] kernel/trace:check the val against the available mem
+Message-ID: <20180403082348.28cd3c1c@gandalf.local.home>
+In-Reply-To: <20180403121614.GV5501@dhcp22.suse.cz>
+References: <1522320104-6573-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+        <20180330102038.2378925b@gandalf.local.home>
+        <20180403110612.GM5501@dhcp22.suse.cz>
+        <20180403075158.0c0a2795@gandalf.local.home>
+        <20180403121614.GV5501@dhcp22.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAOtvUMd6MMyQBHU4E=5DKXndhZw90=K1V1apD0uRRaMLyp-0Ag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/31/2018 07:30 PM, Gilad Ben-Yossef wrote:
-...
->> Are there other crypto drivers doing this?
+On Tue, 3 Apr 2018 14:16:14 +0200
+Michal Hocko <mhocko@kernel.org> wrote:
+
+> > This came up because there's scripts or programs that set the size of
+> > the ring buffer. The complaint was that the application would just set
+> > the size to something bigger than what was available and cause an OOM
+> > killing other applications. The final solution is to simply check the
+> > available memory before allocating the ring buffer:
+> > 
+> > 	/* Check if the available memory is there first */
+> > 	i = si_mem_available();
+> > 	if (i < nr_pages)
+> > 		return -ENOMEM;
+> > 
+> > And it works well.  
 > 
-> I thought the exact same thing until I ran into a presentation about the s390
-> secure keys implementation. I basically imitated their use (or abuse?)
-> of the Crypto API
-> assuming it is the way to go.
-> 
-> Take a look at arch/s390/crypto/paes_s390.c
-> 
-> The slide for the presentation describing this is here:
-> http://schd.ws/hosted_files/ossna2017/89/LC2017SecKeyDmCryptV5.pdf
-> 
-> And they seem to even have support for it in the DM-Crypt tools, which at
-> the time they claimed to be in the process of getting it up-streamed.
+> Except that it doesn't work. si_mem_available is not really suitable for
+> any allocation estimations. Its only purpose is to provide a very rough
+> estimation for userspace. Any other use is basically abuse. The
+> situation can change really quickly. Really it is really hard to be
+> clever here with the volatility the memory allocations can cause.
 
-It is "in the process", but definitely not accepted.
+OK, then what do you suggest? Because currently, it appears to work. A
+rough estimate may be good enough.
 
-We are just discussing how to integrate paes wrapped keys in cryptsetup and
-it will definitely not be the way presented in the slides above.
+If we use NORETRY, then we have those that complain that we do not try
+hard enough to reclaim memory. If we use RETRY_MAYFAIL we have this
+issue of taking up all memory before we get what we want.
 
-If you plan more such ciphers, I would welcome some unified way in crypto API
-how to handle these HSM keys flavors.
+Perhaps I should try to allocate a large group of pages with
+RETRY_MAYFAIL, and if that fails go back to NORETRY, with the thinking
+that the large allocation may reclaim some memory that would allow the
+NORETRY to succeed with smaller allocations (one page at a time)?
 
-For kernel dm-crypt, there is no change needed (dmcrypt just treats it as a normal cipher key).
-(I would say that it is not the best idea either, IMHO it would be better to use
-kernel keyring reference instead and somehow handle hw keys through keyring.)
-
-Milan
+-- Steve
