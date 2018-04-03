@@ -1,91 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753128AbeDCUsW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 16:48:22 -0400
-Received: from smtp-1b.atlantis.sk ([80.94.52.26]:45902 "EHLO
-        smtp-1b.atlantis.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752495AbeDCUsV (ORCPT
+        id S1753344AbeDCUuJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 16:50:09 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60550 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752495AbeDCUuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 16:48:21 -0400
-From: Ondrej Zary <linux@rainbow-software.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: Sony Vaio VGN-CS31S touch sensor buttons breaking touchpad
-Date: Tue, 3 Apr 2018 22:48:16 +0200
-User-Agent: KMail/1.9.10 (enterprise35 0.20100827.1168748)
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <201804012321.56423.linux@rainbow-software.org> <201804022239.59370.linux@rainbow-software.org>
-In-Reply-To: <201804022239.59370.linux@rainbow-software.org>
-X-KMail-QuotePrefix: > 
-MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-Message-Id: <201804032248.16465.linux@rainbow-software.org>
+        Tue, 3 Apr 2018 16:50:07 -0400
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [RFC PATCH 1/1] vmscan: Support multiple kswapd threads per node
+From: Buddy Lumpkin <buddy.lumpkin@oracle.com>
+In-Reply-To: <20180403190759.GB6779@bombadil.infradead.org>
+Date: Tue, 3 Apr 2018 13:49:25 -0700
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, hannes@cmpxchg.org, riel@surriel.com,
+        mgorman@suse.de, akpm@linux-foundation.org
+Message-Id: <A1EF8129-7F59-49CB-BEEC-E615FB878CE2@oracle.com>
+References: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
+ <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
+ <20180403133115.GA5501@dhcp22.suse.cz>
+ <20180403190759.GB6779@bombadil.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3273)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8852 signatures=668697
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804030201
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w33KoE12014132
 
-On Monday 02 April 2018 22:39:59 Ondrej Zary wrote:
-> On Sunday 01 April 2018 23:21:55 Ondrej Zary wrote:
-> > Hello,
-> > I got a Sony Vaio VGN-CS31S laptop with Synaptics touchpad that exhibits
-> > weird behavior. It seems to work until I touch the "Touch Sensor Buttons"
-> > bar above the keyboard - then the buttons start to act weirdly: click or
-> > remain pressed (sometimes it breaks even without touching the bar).
-> >
-> > It seems to be a known problem with VGN-CS series:
-> > https://bugs.launchpad.net/ubuntu/+source/xserver-xorg-input-synaptics/+b
-> >ug /774877
-> > https://wiki.freegeekvancouver.org/article/Laptop_Troubleshooting
-> > (mentions nasty partial workaround: psmouse.resetafter=1)
-> >
-> > Many models of the VGN-CS series have the Touch Sensor Buttons:
-> > ftp://124.40.41.224/PUB/MANUALS/SWT/Z009/Z009690111.PDF
-> >
-> > From the hardware side (can be found in MBX-196 Quanta GD2 schematic),
-> > the touch bar is a separate PS/2 device connected to third PS/2 port of
-> > the EC (Embedded Controller) WPC775L. The touchpad is on the 1st PS/2
-> > port, 2nd port is unused. However, the i8042 does not seem to support
-> > multiplexing, the firmware probably combines the data internally somehow.
->
-> Good news: it supports multiplexing but i8042_nomux is set because of:
->                 /*
->                  * Most (all?) VAIOs do not have external PS/2 ports nor
->                  * they implement active multiplexing properly, and
->                  * MUX discovery usually messes up keyboard/touchpad.
->                  */
->                 .matches = {
->                         DMI_MATCH(DMI_SYS_VENDOR, "Sony Corporation"),
->                         DMI_MATCH(DMI_BOARD_NAME, "VAIO"),
->                 },
-> in drivers/input/serio/i8042-x86ia64io.h
-> (How can this be modified to exclude VGN-CS series?)
->
-> Now only to write the touchbar driver... (seems to be detected at serio2 as
-> PS/2 Generic Mouse)
 
-The device acts almost as a synaptics touchpad. The 0x47 magic number (used in
-detection) is replaced by 0x43.
+> On Apr 3, 2018, at 12:07 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> On Tue, Apr 03, 2018 at 03:31:15PM +0200, Michal Hocko wrote:
+>> On Mon 02-04-18 09:24:22, Buddy Lumpkin wrote:
+>>> The presence of direct reclaims 10 years ago was a fairly reliable
+>>> indicator that too much was being asked of a Linux system. Kswapd was
+>>> likely wasting time scanning pages that were ineligible for eviction.
+>>> Adding RAM or reducing the working set size would usually make the problem
+>>> go away. Since then hardware has evolved to bring a new struggle for
+>>> kswapd. Storage speeds have increased by orders of magnitude while CPU
+>>> clock speeds stayed the same or even slowed down in exchange for more
+>>> cores per package. This presents a throughput problem for a single
+>>> threaded kswapd that will get worse with each generation of new hardware.
+>> 
+>> AFAIR we used to scale the number of kswapd workers many years ago. It
+>> just turned out to be not all that great. We have a kswapd reclaim
+>> window for quite some time and that can allow to tune how much proactive
+>> kswapd should be.
+>> 
+>> Also please note that the direct reclaim is a way to throttle overly
+>> aggressive memory consumers. The more we do in the background context
+>> the easier for them it will be to allocate faster. So I am not really
+>> sure that more background threads will solve the underlying problem. It
+>> is just a matter of memory hogs tunning to end in the very same
+>> situtation AFAICS. Moreover the more they are going to allocate the more
+>> less CPU time will _other_ (non-allocating) task get.
+>> 
+>>> Test Details
+>> 
+>> I will have to study this more to comment.
+>> 
+>> [...]
+>>> By increasing the number of kswapd threads, throughput increased by ~50%
+>>> while kernel mode CPU utilization decreased or stayed the same, likely due
+>>> to a decrease in the number of parallel tasks at any given time doing page
+>>> replacement.
+>> 
+>> Well, isn't that just an effect of more work being done on behalf of
+>> other workload that might run along with your tests (and which doesn't
+>> really need to allocate a lot of memory)? In other words how
+>> does the patch behaves with a non-artificial mixed workloads?
+>> 
+>> Please note that I am not saying that we absolutely have to stick with the
+>> current single-thread-per-node implementation but I would really like to
+>> see more background on why we should be allowing heavy memory hogs to
+>> allocate faster or how to prevent that. I would be also very interested
+>> to see how to scale the number of threads based on how CPUs are utilized
+>> by other workloads.
+> 
+> Yes, very much this.  If you have a single-threaded workload which is
+> using the entirety of memory and would like to use even more, then it
+> makes sense to use as many CPUs as necessary getting memory out of its
+> way.  If you have N CPUs and N-1 threads happily occupying themselves in
+> their own reasonably-sized working sets with one monster process trying
+> to use as much RAM as possible, then I'd be pretty unimpressed to see
+> the N-1 well-behaved threads preempted by kswapd.
 
-The absolute packet format is simple:
+The default value provides one kswapd thread per NUMA node, the same
+it was without the patch. Also, I would point out that just because you devote
+more threads to kswapd, doesn’t mean they are busy. If multiple kswapd threads
+are busy, they are almost certainly doing work that would have resulted in
+direct reclaims, which are often substantially more expensive than a couple
+extra context switches due to preemption.
 
-BYTE  BIT 7 6 5 4 3 2 1 0
-  1       1 0 Z Z Z Z Z Z  pressure (left)
-  2       0 0 0 0 L L L L  position (left:11-8)
-  3       L L L L L L L L  position (left:7-0)
-  4       1 1 Z Z Z Z Z Z  pressure (right)
-  5       0 0 0 A R R R R  position (right:11-8), A = AV MODE (center "button")
-  6       R R R R R R R R  position (right:7-0)
+Also, the code still uses wake_up_interruptible to wake kswapd threads, so
+after starting the first kswapd thread, free pages minus the size of the allocation
+would still need to be below the low watermark for a page allocation at that time
+to cause another kswapd thread to wake up.
 
-(left = media player part, right = volume part)
-maximum observed pressure was 0x38
+When I first decided to try this out, I figured a lot of tuning would be needed to
+see good behavior. But what I found in practice was that it actually works quite
+well. When you look closely, you see that there is very little difference between
+a direct reclaim and kswapd. In fact, direct reclaims work a little harder than
+kswapd, and they should continue to do so because that prevents the number
+of parallel scanning tasks from increasing unnecessarily.
 
-Now find the command(s) to control the LEDs...
+Please try it out, you might be surprised at how well it works. 
 
-What's the best way to present these controls to user space?
-Process the touch/drag actions in kernel. light up corresponding LEDs and
-emit key presses?
+> 
+> My biggest problem with the patch-as-presented is that it's yet one more
+> thing for admins to get wrong.  We should spawn more threads automatically
+> if system conditions are right to do that.
 
--- 
-Ondrej Zary
+I totally agree with this. In my previous response to Michal Hocko, I described
+how I think we could scale watermarks in response to direct reclaims, and
+launch more kswapd threads when kswapd peaks at 100% CPU usage.
