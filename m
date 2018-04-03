@@ -1,111 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755217AbeDCI3M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:29:12 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8543 "EHLO mga11.intel.com"
+        id S1751904AbeDCOwz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 10:52:55 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:49812 "EHLO gum.cmpxchg.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755048AbeDCI3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:29:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,400,1517904000";
-   d="scan'208";a="217182034"
-From: Wei Wang <wei.w.wang@intel.com>
-To: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org
-Cc: pbonzini@redhat.com, wei.w.wang@intel.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        huangzhichao@huawei.com
-Subject: [PATCH v30 4/4] virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
-Date: Wed,  4 Apr 2018 00:10:05 +0800
-Message-Id: <1522771805-78927-5-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
-References: <1522771805-78927-1-git-send-email-wei.w.wang@intel.com>
+        id S1751679AbeDCOwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 10:52:54 -0400
+Date: Tue, 3 Apr 2018 10:54:08 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
+Message-ID: <20180403145408.GA21411@cmpxchg.org>
+References: <20180321205928.22240-1-mhocko@kernel.org>
+ <alpine.DEB.2.20.1803211418170.107059@chino.kir.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1803211418170.107059@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VIRTIO_BALLOON_F_PAGE_POISON feature bit is used to indicate if the
-guest is using page poisoning. Guest writes to the poison_val config
-field to tell host about the page poisoning value in use.
+On Wed, Mar 21, 2018 at 02:22:13PM -0700, David Rientjes wrote:
+> PAGE_ALLOC_COSTLY_ORDER is a heuristic used by the page allocator because 
+> it cannot free high-order contiguous memory.  Memcg just needs to reclaim 
+> a number of pages.  Two order-3 charges can cause a memcg oom kill but now 
+> an order-4 charge cannot.  It's an unfair bias against high-order charges 
+> that are not explicitly using __GFP_NORETRY.
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Suggested-by: Michael S. Tsirkin <mst@redhat.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- drivers/virtio/virtio_balloon.c     | 10 ++++++++++
- include/uapi/linux/virtio_balloon.h |  3 +++
- 2 files changed, 13 insertions(+)
+I agree with your premise: unlike the page allocator, memcg could OOM
+kill to help satisfy higher order allocations.
 
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 18d24a4..6de9339 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -699,6 +699,7 @@ static struct dentry *balloon_mount(struct file_system_type *fs_type,
- static int virtballoon_probe(struct virtio_device *vdev)
- {
- 	struct virtio_balloon *vb;
-+	__u32 poison_val;
- 	int err;
- 
- 	if (!vdev->config->get) {
-@@ -744,6 +745,11 @@ static int virtballoon_probe(struct virtio_device *vdev)
- 		vb->stop_cmd_id = cpu_to_virtio32(vb->vdev,
- 				VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID);
- 		INIT_WORK(&vb->report_free_page_work, report_free_page_func);
-+		if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
-+			memset(&poison_val, PAGE_POISON, sizeof(poison_val));
-+			virtio_cwrite(vb->vdev, struct virtio_balloon_config,
-+				      poison_val, &poison_val);
-+		}
- 	}
- 
- 	vb->nb.notifier_call = virtballoon_oom_notify;
-@@ -862,6 +868,9 @@ static int virtballoon_restore(struct virtio_device *vdev)
- 
- static int virtballoon_validate(struct virtio_device *vdev)
- {
-+	if (!page_poisoning_enabled())
-+		__virtio_clear_bit(vdev, VIRTIO_BALLOON_F_PAGE_POISON);
-+
- 	__virtio_clear_bit(vdev, VIRTIO_F_IOMMU_PLATFORM);
- 	return 0;
- }
-@@ -871,6 +880,7 @@ static int virtballoon_validate(struct virtio_device *vdev)
- 	VIRTIO_BALLOON_F_STATS_VQ,
- 	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
- 	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
-+	VIRTIO_BALLOON_F_PAGE_POISON,
- };
- 
- static struct virtio_driver virtio_balloon_driver = {
-diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-index b2d86c2..8b93581 100644
---- a/include/uapi/linux/virtio_balloon.h
-+++ b/include/uapi/linux/virtio_balloon.h
-@@ -35,6 +35,7 @@
- #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
- #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
- #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
-+#define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoning */
- 
- /* Size of a PFN in the balloon interface. */
- #define VIRTIO_BALLOON_PFN_SHIFT 12
-@@ -47,6 +48,8 @@ struct virtio_balloon_config {
- 	__u32 actual;
- 	/* Free page report command id, readonly by guest */
- 	__u32 free_page_report_cmd_id;
-+	/* Stores PAGE_POISON if page poisoning is in use */
-+	__u32 poison_val;
- };
- 
- #define VIRTIO_BALLOON_S_SWAP_IN  0   /* Amount of memory swapped in */
--- 
-1.8.3.1
+Technically.
+
+But the semantics and expectations matter too.
+
+Because of the allocator's restriction, we've been telling and
+teaching callsites to fail gracefully and implement fallbacks forever,
+and that makes costly-order allocations inherently speculative and to
+a certain extent often optional. They've been written with that in
+mind forever.
+
+OOM is not graceful failure, though. We don't want to OOM kill when an
+the callsite can easily fallback to smaller allocations, trigger a
+packet resend, fail the syscall, what have you.
+
+We could argue what the default should be if callsites aren't
+specifically annotated - and whether we should change it.
+
+But the page allocator has established the default behavior already,
+and this is a bugfix. I prefer this fix not fundamentally change
+semantics for costly-order allocations.
