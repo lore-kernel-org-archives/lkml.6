@@ -1,81 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755244AbeDCIrO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 04:47:14 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34549 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755062AbeDCIrN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 04:47:13 -0400
-Message-ID: <1522745229.5089.11.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] reset: uniphier: add SATA reset control support and
- change SATA-PHY ID
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Tue, 03 Apr 2018 10:47:09 +0200
-In-Reply-To: <CAK7LNAR0emjbECwZq7zVygzFvhBs0iLNu--WqUQ2yZVvNUgSOw@mail.gmail.com>
-References: <1522403084-18780-1-git-send-email-hayashi.kunihiko@socionext.com>
-         <1522403084-18780-3-git-send-email-hayashi.kunihiko@socionext.com>
-         <1522743506.5089.4.camel@pengutronix.de>
-         <CAK7LNAR0emjbECwZq7zVygzFvhBs0iLNu--WqUQ2yZVvNUgSOw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1755271AbeDCIrs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 04:47:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40556 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755154AbeDCIrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 04:47:46 -0400
+Date: Tue, 3 Apr 2018 10:47:45 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 10/13] ARM: sun9i: smp: Move structures
+Message-ID: <20180403084745.zuq6o3tlxpvcynev@flea>
+References: <20180403061836.3926-1-mylene.josserand@bootlin.com>
+ <20180403061836.3926-11-mylene.josserand@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="blum7rsypaplwhpn"
+Content-Disposition: inline
+In-Reply-To: <20180403061836.3926-11-mylene.josserand@bootlin.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-03 at 17:35 +0900, Masahiro Yamada wrote:
-> 2018-04-03 17:18 GMT+09:00 Philipp Zabel <p.zabel@pengutronix.de>:
-> > On Fri, 2018-03-30 at 18:44 +0900, Kunihiko Hayashi wrote:
-> > > Add reset lines for SATA controller on UniPhier SoCs.
-> > > This adds support for Pro4 and PXs3 in addition to PXs2.
-> > > 
-> > > And this changes the ID of the reset line for SATA-PHY on PXs2.
-> > > Since some SoCs have two controller instances with a common PHY, this moves
-> > > the ID of SATA-PHY for consistency.
-> > > 
-> > > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > > ---
-> > >  drivers/reset/reset-uniphier.c | 8 +++++++-
-> > >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/reset/reset-uniphier.c b/drivers/reset/reset-uniphier.c
-> > > index 55ae0f1..90e6caf 100644
-> > > --- a/drivers/reset/reset-uniphier.c
-> > > +++ b/drivers/reset/reset-uniphier.c
-> > > @@ -63,6 +63,9 @@ static const struct uniphier_reset_data uniphier_pro4_sys_reset_data[] = {
-> > >       UNIPHIER_RESETX(12, 0x2000, 6),         /* GIO (Ether, SATA, USB3) */
-> > >       UNIPHIER_RESETX(14, 0x2000, 17),        /* USB30 */
-> > >       UNIPHIER_RESETX(15, 0x2004, 17),        /* USB31 */
-> > > +     UNIPHIER_RESETX(28, 0x2000, 18),        /* SATA0 */
-> > > +     UNIPHIER_RESETX(29, 0x2004, 18),        /* SATA1 */
-> > > +     UNIPHIER_RESETX(30, 0x2000, 19),        /* SATA-PHY */
-> > >       UNIPHIER_RESETX(40, 0x2000, 13),        /* AIO */
-> > >       UNIPHIER_RESET_END,
-> > >  };
-> > > @@ -90,7 +93,7 @@ static const struct uniphier_reset_data uniphier_pxs2_sys_reset_data[] = {
-> > >       UNIPHIER_RESETX(20, 0x2014, 5),         /* USB31-PHY0 */
-> > >       UNIPHIER_RESETX(21, 0x2014, 1),         /* USB31-PHY1 */
-> > >       UNIPHIER_RESETX(28, 0x2014, 12),        /* SATA */
-> > > -     UNIPHIER_RESET(29, 0x2014, 8),          /* SATA-PHY (active high) */
-> > > +     UNIPHIER_RESET(30, 0x2014, 8),          /* SATA-PHY (active high) */
-> > 
-> > This is a backwards incompatible change.
-> > There is no DT in use that relies on this being 29 ?
-> 
-> 
-> Right.  No user for this reset line ever.
 
-Thank you, I have applied both patches to reset/next.
+--blum7rsypaplwhpn
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-regards
-Philipp
+On Tue, Apr 03, 2018 at 08:18:33AM +0200, Myl=E8ne Josserand wrote:
+> To prepare the support for sun8i-a83t, move some structures
+> at the beginning of the file.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+
+I'm not quite sure what would be the benefit from that, if it's was
+working before, then it would probably work in your case as welle, right?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--blum7rsypaplwhpn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrDP7AACgkQ0rTAlCFN
+r3ShhhAAmZpovgsG7AMg9YreUNPWAtJonO+8Zwz9waQyGy4Qkc3RhvMBCkGx9I/b
+SC88gHuzKWrqfxLKhzV/9tea7y0gSZzm8cpAiTwWkAQPXr+y2ZTWMFXtH0R6Mz+p
+w4KzRso96Q3/mGh9wAbOn84TKdz3d82Z2vwN1p8LMJRFtwCep+iicDYQg2DUtTkQ
+MUs/ySrJXsBWYvzEJZELxoMBbeDJBTxKje2s/KHYLODPEPPcNhkVHFvuiB4O+ZaM
+6hozEtNgiRumoStlAerx2qAmtyEALZZiZw/ozV8kp2AP3OdunkgjBjDSuIAfjDYD
+IIi1N12WVPW2S4dJqlgbRJCxsUwuGmJEhvi7KrLBvrmz+bxtVk2y3DdaRj+Nk66y
+9LahMsb2oVA0YCBGgsq1HryY59/ArgLmCxSnbMJipS780YgGAwT1wbOHH2UhNrKx
+xomHrXdiF2F+70M99JjdgYetV10FR1pJ2Kzl9camev7mtQ1rrXMNYyXETSNwGfX3
+7T/jGh1yQV72Ruk/mF2+2Az1YwIJnaqTZZs2k+YehUlmv+zJx8nh/0gjhu9xPLzC
+IjaD7HY/uueyK17i1Wpz4yBpi4VISzcMMIpc8kB34pzf1PvbaaS8oAiaEQ96EbJM
+Y+c3/WLZlmcKqY91ROz9wvbp8YIcO6IjptYDz/UXMP7tY7BDvNg=
+=qh1r
+-----END PGP SIGNATURE-----
+
+--blum7rsypaplwhpn--
