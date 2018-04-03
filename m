@@ -1,74 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932173AbeDCKu5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 3 Apr 2018 06:50:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51410 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932090AbeDCKuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Apr 2018 06:50:51 -0400
-Date: Tue, 3 Apr 2018 12:50:48 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: syzbot <syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com>
-Cc: cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: general protection fault in __mem_cgroup_free
-Message-ID: <20180403105048.GK5501@dhcp22.suse.cz>
-References: <001a113fe4c0a623b10568bb75ea@google.com>
- <20180403093733.GI5501@dhcp22.suse.cz>
- <20180403094329.GJ5501@dhcp22.suse.cz>
+        id S1755368AbeDCK5P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 3 Apr 2018 06:57:15 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:11500 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754869AbeDCK5N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Apr 2018 06:57:13 -0400
+Subject: Re: [PATCH 1/8] bindings: PCI: designware: Example update
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+References: <cover.1522235224.git.gustavo.pimentel@synopsys.com>
+ <33aa86ee667e8b435db080b8c683cb5df1bd6544.1522235224.git.gustavo.pimentel@synopsys.com>
+ <fa001440-0dfe-b84a-e5ef-9285043b5ede@ti.com>
+ <36a36857-2d79-2c2d-198d-a3b65cafc768@synopsys.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <c5ffa7d6-40b1-1702-c0fd-9ebb1b4197f8@ti.com>
+Date: Tue, 3 Apr 2018 16:22:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403094329.GJ5501@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <36a36857-2d79-2c2d-198d-a3b65cafc768@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here we go
 
->From 38f0f08a3f9f19c106ae53350e43dc97e2e3a4d8 Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Tue, 3 Apr 2018 12:40:41 +0200
-Subject: [PATCH] memcg: fix per_node_info cleanup
 
-syzbot has triggered a NULL ptr dereference when allocation fault
-injection enforces a failure and alloc_mem_cgroup_per_node_info
-initializes memcg->nodeinfo only half way through. __mem_cgroup_free
-still tries to free all per-node data and dereferences pn->lruvec_stat_cpu
-unconditioanlly even if the specific per-node data hasn't been
-initialized.
+On Tuesday 03 April 2018 04:03 PM, Gustavo Pimentel wrote:
+> Hi Kishon,
+> 
+> On 02/04/2018 06:23, Kishon Vijay Abraham I wrote:
+>> Hi,
+>>
+>> On Wednesday 28 March 2018 05:08 PM, Gustavo Pimentel wrote:
+>>> Changes the IP registers size to accommodate the ATU unroll space.
+>>>
+>>> Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers.
+>>>
+>>> Replaces the pcie base address example by a real pcie base address in use.
+>>>
+>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
+>>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>> index 1da7ade..6300762 100644
+>>> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+>>> @@ -1,7 +1,8 @@
+>>>  * Synopsys DesignWare PCIe interface
+>>>  
+>>>  Required properties:
+>>> -- compatible: should contain "snps,dw-pcie" to identify the core.
+>>> +- compatible:
+>>> +	"snps,dw-pcie" for RC mode;
+>>
+>> I think irrespective of RC mode or EP mode, "snps,dw-pcie" can be used to
+>> identify the pcie core?
+> 
+> I guess so. What you suggest? I was just folling the same guideline present
+> here: https://lkml.org/lkml/2017/11/3/310
 
-The bug is quite unlikely to hit because small allocations do not fail
-and we would need quite some numa nodes to make struct mem_cgroup_per_node
-large enough to cross the costly order.
+Okay, I think you should have
+"snps,dw-pcie-rc", "snps,dw-pcie" for RC mode;
 
-Reported-by: syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com
-Fixes: 00f3ca2c2d66 ("mm: memcontrol: per-lruvec stats infrastructure")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/memcontrol.c | 3 +++
- 1 file changed, 3 insertions(+)
+and in the later patch
+"snps,dw-pcie-ep", "snps,dw-pcie" for EP mode;
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e3d5a0a7917f..0a9c4d5194f3 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4340,6 +4340,9 @@ static void free_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
- {
- 	struct mem_cgroup_per_node *pn = memcg->nodeinfo[node];
- 
-+	if (!pn)
-+		return;
-+
- 	free_percpu(pn->lruvec_stat_cpu);
- 	kfree(pn);
- }
--- 
-2.16.3
+> 
+>>>  - reg: Should contain the configuration address space.
+>>>  - reg-names: Must be "config" for the PCIe configuration space.
+>>>      (The old way of getting the configuration address space from "ranges"
+>>> @@ -41,11 +42,11 @@ EP mode:
+>>>  
+>>>  Example configuration:
+>>>  
+>>> -	pcie: pcie@dffff000 {
+>>> +	pcie: pcie@dfc00000 {
+>>>  		compatible = "snps,dw-pcie";
+>>> -		reg = <0xdffff000 0x1000>, /* Controller registers */
+>>> -		      <0xd0000000 0x2000>; /* PCI config space */
+>>> -		reg-names = "ctrlreg", "config";
+>>> +		reg = <0xdfc00000 0x302000>, /* IP registers */
+>>
+>> which version of synopsys IP is this. I think the ideal thing to do here is to
+>> have a separate register space for iATU.
+> 
+> I also agree with that. The unroll iATU was introduced on Synopsys IP version
+> 4.80 and the kernel patch was release on 2016-08-10
+> https://patchwork.ozlabs.org/patch/657796/
+> However a separate register space for iATU implies some extra code do handle it
+> (and of course some tests) that don't fit into this patch series, in my point of
+> view. Can this task enter in the backlog in order to be done in another patch
+> series?
 
--- 
-Michal Hocko
-SUSE Labs
+Yes sure. I think we should also make sure existing binding doesn't break.
+
+Thanks
+Kishon
