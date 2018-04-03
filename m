@@ -1,56 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754732AbeDCBMo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 2 Apr 2018 21:12:44 -0400
-Received: from mail-pl0-f42.google.com ([209.85.160.42]:43676 "EHLO
-        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754665AbeDCBMm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Apr 2018 21:12:42 -0400
-X-Google-Smtp-Source: AIpwx4+ynEfRwntaJhLmpBQSyMEu1bVZUzFfVvutf882b9qGtihHo7aWl9oE2tB9m8VWxs1yQhJ/Vg==
-Date: Tue, 3 Apr 2018 10:12:37 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH v3] vsprintf: Prevent crash when dereferencing invalid
- pointers
-Message-ID: <20180403011237.GA7129@jagdpanzerIV>
-References: <CA+55aFyDbr4JpiPoHXq=3wJu+WVCLZPpAVsmY=5HVStawmEiRw@mail.gmail.com>
- <CA+55aFwaNTC2HV9ERDFWCrmhvgZ58SKMM+ik9Ypr3i-ZUyU6Fw@mail.gmail.com>
- <20180309150153.3sxbbpd6jdn2d5yy@pathway.suse.cz>
- <CA+55aFwT-Vd+sVdAVemUjUvkNYFiLyVMHZxv9hF6KzRM7i4Yrg@mail.gmail.com>
- <20180314140947.rs3b6i5gguzzu5wi@pathway.suse.cz>
- <1521119343.10722.665.camel@linux.intel.com>
- <20180315152607.xgzjmj5as6lg42dy@pathway.suse.cz>
- <1521224375.23017.41.camel@linux.intel.com>
- <20180329145312.4uqygrjqy3fqyl26@pathway.suse.cz>
- <1522678523.21176.178.camel@linux.intel.com>
+        id S1754740AbeDCBRF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 2 Apr 2018 21:17:05 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6722 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754665AbeDCBRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Apr 2018 21:17:04 -0400
+Subject: Re: [PATCH 2/2] perf: add arm64 smmuv3 pmu driver
+To: Neil Leeder <neil.m.leeder@gmail.com>,
+        Yisheng Xie <xieyisheng1@huawei.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Mark Langsdorf <mlangsdo@redhat.com>, Mark Salter <msalter@redhat.com>,
+        "Jon Masters" <jcm@redhat.com>, Timur Tabi <timur@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Agustin Vega-Frias <agustinv@codeaurora.org>,
+        "Lorenzo Pieralisi" <Lorenzo.Pieralisi@arm.com>
+References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
+ <1501876754-1064-3-git-send-email-nleeder@codeaurora.org>
+ <883d32ce-6581-ecf6-5088-ecb238322ebe@huawei.com>
+ <e55ab4404143ea0b3cc4795a93e37480@codeaurora.org>
+ <14f90cc6-f2c1-5a63-67c6-a5c8ddb4799e@gmail.com>
+ <c1f9230b-8ff0-5b2e-def9-cbf6b2e2e99c@huawei.com>
+ <66ef3bf4-9550-94c7-f8ad-ee53d6c75025@huawei.com>
+ <0094c5ab-89db-409f-d5fb-c961f9d84740@gmail.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <23363f05-0fe0-0af3-5f3d-5f2e14181e95@huawei.com>
+Date: Tue, 3 Apr 2018 09:15:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522678523.21176.178.camel@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <0094c5ab-89db-409f-d5fb-c961f9d84740@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/02/18 17:15), Andy Shevchenko wrote:
-> > 
-> > Hmm, I have never seen the error code in this form.
+[+Cc Lorenzo]
+
+Hi Neil,
+
+On 2018/4/3 1:59, Neil Leeder wrote:
+> Hi Hanjun,
 > 
-> We have limited space to print it and error numbers currently can be up
-> to 0xfff (4095). So, I have no better idea how to squeeze them while
-> thinking that "(efault)" is much harder to parse in case of error
+> On 4/2/2018 10:24 AM, Hanjun Guo wrote:
+> <SNIP>
+>>
+>> I think we need to wait for the new version of IORT spec,
+>> which includes the fix for the two base address for SMMUv3
+>> PMCG (now just represent one).
+>>
+>> Thanks
+>> Hanjun
+>>
+> It's in rev D which is available now:
+> http://infocenter.arm.com/help/topic/com.arm.doc.den0049d/DEN0049D_IO_Remapping_Table.pdf
 
-'efault' looks to me like a misspelled 'default', for some reason.
+Thanks for let me know, I didn't notice the update :)
 
-	-ss
+Lorenzo, do you have a plan for ACPICA changes?
+
+Thanks
+Hanjun
