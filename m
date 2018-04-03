@@ -1,94 +1,78 @@
-Return-Path: <mpe@ellerman.id.au>
-X-Google-Smtp-Source: AIpwx49pTf1UrZiqQzELklDIJKECjlB0xagy+3xnRws3JRbhl+GI/dV82dHKRhPJH8EhL2yoPCGE
-ARC-Seal: i=1; a=rsa-sha256; t=1523352883; cv=none;
+Return-Path: <edward.chang.mcs@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522722901; cv=none;
         d=google.com; s=arc-20160816;
-        b=AD4hrbEBD3wWeIE+moD/luZUODts8d69i16OQQVUfIMoYrPUziLyk5pAAuXCuoFxwI
-         j6IFCZBvhfV9qu83dhcwywDb73mW3I1c0d82dgEZiJNniNDSoBbLrBJ0gsSVby57rRt3
-         nQTWHlCDNllkldP0RNlSwqH+iM0AzxkZD8/iuJZEtDQVECbYLjUrpjVUH5x6IzTH1tWg
-         PnEtdvDRcTnblel8NYM+qsE8qlkWo/6I3RUf2lnZ0QAp8fYAFsERuJ+VRv8seP6mixNC
-         o/74Q0IGqsA3b+Q1a4aW83Dn4zdWd++zm1YSKGvKtVdcSej0a2f3XFJ4+Z827076NyPS
-         mK9Q==
+        b=jNyrMEW4JIrCE8FgsRXv8jX4NvE5xUvXSecQx6rqFpulcb6IV7EAT2Zi3tPjDp18LB
+         sYJxUMrWgOBbXAlza5ZwHV115yWL1ElGSHXrpL06ROFEgUQgfAE4lh7W8/8dcrIS3/IS
+         WqMsOfsGyK6wDLu6QZxWqKPPr2mvj0l0Vl8UkUAGrYfshUPUD4wbvFhoIK+5EWedJSd7
+         sDzSFw6ku2qiSyp8kt92kLHxfc3slnNsca1VxpiqAB05fcVabLmseXJph2JPwcMoOHrf
+         oKSSLgUBeGzyqT64fu+F+RZRGfScG2K5BNuBWKX/udkwXv3vzzmGZKGGC702hK/Mr2uW
+         9x2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:arc-authentication-results;
-        bh=KYAk+PnOt/O3OIYCtB08cBLv/h/oB2dfvCql0VvRSvI=;
-        b=YJ56V4Qblh0JGSGfIS+eIR9hUIZUQhSqXct4aHdX4C9o135f6ct/m0AakNbRMeKOkJ
-         MFi6A6DcHFBmB6vySOgJLBgUwEB47bRQmqpPIvbftftXus8gA630wHyhu1H0tcKHriDg
-         Rcstb30QAszB9zXGkKzc+phXFrybSh+stcznzS/lnbFj60mKySTtdHCwlY1Sv0BsnU2n
-         Gy+ww6uHrndgyZQit1kShRKooLnTuQFf2NZEYFfsqGiXVXEhboefIl0RAAsecXZYEF7t
-         hOjWdchqaOGKOrc3l0vqnkgcsm4/A1fIIFa/YsjkCK73mL7NcIisCkgNqckjVTuXEN6I
-         o8AQ==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=tDQgsy0LAx1ZXTr/BnuECc+mt+BWe08vWFNFLz7WwJg=;
+        b=euWonID3OOuWUQw8z+TVNRNUoktVjS0KQRS2RVfxigg8vpaRuWpQ46yurmUUFpMiBx
+         WbQwgLUczum0QCXqqeDgTV2pKOiW4THLxXU4OWiA42/QjOOuNyNrNVYHy/9uPaMxnIbO
+         TkPQYKrC8R+RfBAiqIkBVtpPcW2jPdobgPCQNGbXUSgk/AXyU0ysk+4tKfo8+B+vEadT
+         YGIw6hGHKLyLW7/0EO9x/+UcEpGzvHbup8fu8F5DZZPRhFOcYhwqSm79KLNn74DSIqNe
+         kY0UulhggK8Cfo7BwHWXXGCYvz5YeJPAPFf6xx+ORGacmNjl+LGHI0CB5ybat/Xi8UPK
+         +z3g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 203.11.71.1 is neither permitted nor denied by best guess record for domain of mpe@ellerman.id.au) smtp.mailfrom=mpe@ellerman.id.au
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YTSmYLp9;
+       spf=pass (google.com: domain of edward.chang.mcs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=edward.chang.mcs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 203.11.71.1 is neither permitted nor denied by best guess record for domain of mpe@ellerman.id.au) smtp.mailfrom=mpe@ellerman.id.au
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, ebiederm@xmission.com, torvalds@linux-foundation.org, gregkh@linuxfoundation.org, containers@lists.linux-foundation.org
-Subject: Re: [PATCH 4/4 v5 RESEND] selftests: add devpts selftests
-In-Reply-To: <20180410084208.GA14520@mailbox.org>
-References: <20180313165527.24038-1-christian.brauner@ubuntu.com> <20180313165527.24038-5-christian.brauner@ubuntu.com> <87efjnbn0j.fsf@concordia.ellerman.id.au> <20180410084208.GA14520@mailbox.org>
-Date: Tue, 10 Apr 2018 19:34:36 +1000
-Message-ID: <87bmerbe1f.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YTSmYLp9;
+       spf=pass (google.com: domain of edward.chang.mcs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=edward.chang.mcs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4/WGslqoySpMnHi1UGrFxsHuXfQ7oA1gqm4otakUxwacMqN6zEnVUPg6BNWBz/748++75uZiw==
+From: Edward Chang <edward.chang.mcs@gmail.com>
+To: johan@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Edward Chang <edward.chang.mcs@gmail.com>
+Subject: [PATCH] usb: serial: option: add HP LT4220 support 
+Date: Tue,  3 Apr 2018 10:34:39 +0800
+Message-Id: <1522722879-2171-1-git-send-email-edward.chang.mcs@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594842300602680139?=
-X-GMAIL-MSGID: =?utf-8?q?1597351272896379876?=
+X-GMAIL-THRID: =?utf-8?q?1596690689481175486?=
+X-GMAIL-MSGID: =?utf-8?q?1596690689481175486?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Christian Brauner <christian.brauner@ubuntu.com> writes:
-> On Tue, Apr 10, 2018 at 04:20:44PM +1000, Michael Ellerman wrote:
->> Christian Brauner <christian.brauner@ubuntu.com> writes:
->> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
->> > index 7442dfb73b7f..dbda89c9d9b9 100644
->> > --- a/tools/testing/selftests/Makefile
->> > +++ b/tools/testing/selftests/Makefile
->> > @@ -7,6 +7,7 @@ TARGETS += cpufreq
->> >  TARGETS += cpu-hotplug
->> >  TARGETS += efivarfs
->> >  TARGETS += exec
->> > +TARGETS += filesystems
->>    ^ This, and ...
->> 
->> > diff --git a/tools/testing/selftests/filesystems/Makefile b/tools/testing/selftests/filesystems/Makefile
->> > index 13a73bf725b5..4e6d09fb166f 100644
->> > --- a/tools/testing/selftests/filesystems/Makefile
->> > +++ b/tools/testing/selftests/filesystems/Makefile
->> > @@ -1,5 +1,5 @@
->> >  # SPDX-License-Identifier: GPL-2.0
->> > -TEST_PROGS := dnotify_test
->> > +TEST_PROGS := dnotify_test devpts_pts
->>                  ^
->>                  this ...
->> 
->> Have the unfortunate effect of running dnotify_test as part of the
->> default selftest run.
->> 
->> dnotify_test boils down to:
->> 
->> 	while (1) {
->> 		pause();
->> 		printf("Got event on fd=%d\n", event_fd);
->> 	}
->> 
->> 
->> ie. an infinite loop :)
->
-> Hi Michael,
->
-> Ugh, didn't notice this before. Weird test.
+This patch adds support for HP LT4220. 
 
-No worries. It looks like it was copied from Documentation where it was
-really just sample code, rather than a test.
+Signed-off-by: Edward Chang <edward.chang.mcs@gmail.com>
+
+---
+ drivers/usb/serial/option.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 2d8d915..a8988d5 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -548,6 +548,10 @@ static int  option_probe(struct usb_serial *serial,
+ #define WETELECOM_PRODUCT_6802			0x6802
+ #define WETELECOM_PRODUCT_WMD300		0x6803
  
->> I'll send a patch to fix it.
->
-> Excellent, you can likely route it through Greg's tty tree.
-
-I've sent it to the kselftest list as well as Greg, so whoever wants to
-merge it is fine by me.
-
-cheers
++/* HP products */
++#define HP_VENDOR_ID				0x03f0
++#define HP_PRODUCT_LT4220			0x0857
++
+ struct option_blacklist_info {
+ 	/* bitmask of interface numbers blacklisted for send_setup */
+ 	const unsigned long sendsetup;
+@@ -2066,6 +2070,8 @@ struct option_blacklist_info {
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_INTERFACE_CLASS(HP_VENDOR_ID, HP_PRODUCT_LT4220, USB_CLASS_VENDOR_SPEC),
++	  .driver_info = (kernel_ulong_t)&telit_le920a4_blacklist_1 },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
+-- 
+1.9.1
